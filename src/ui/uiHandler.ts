@@ -1,0 +1,38 @@
+import BattleScene from "../battle-scene";
+import UI, { Mode } from "./ui";
+
+export default abstract class UiHandler {
+  protected scene: BattleScene;
+  protected mode: integer;
+  protected cursor: integer = 0;
+  protected active: boolean = false;
+
+  constructor(scene: BattleScene, mode: Mode) {
+    this.scene = scene;
+    this.mode = mode;
+  }
+
+  abstract setup(): void;
+
+  show(_args: any[]): void {
+    this.active = true;
+  }
+
+  abstract processInput(keyCode: integer);
+
+  getUi() {
+    return this.scene.ui;
+  }
+
+  setCursor(cursor: integer): boolean {
+    const changed = this.cursor !== cursor;
+    if (changed)
+      this.cursor = cursor;
+
+    return changed;
+  }
+
+  clear() {
+    this.active = false;
+  }
+}
