@@ -232,7 +232,7 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    pokemon.hp = Math.min(pokemon.hp + (this.restorePercent * 0.01) * pokemon.getMaxHp(), pokemon.getMaxHp());
+    pokemon.hp = Math.min(pokemon.hp + Math.max((this.restorePercent * 0.01) * pokemon.getMaxHp(), this.restorePercent), pokemon.getMaxHp());
 
     return true;
   }
@@ -338,7 +338,7 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
   protected restorePercent: integer;
 
   constructor(name: string, restorePercent: integer, iconImage?: string) {
-    super(name, `Restore ${restorePercent}% HP for one POKéMON`, (_type, args) => new PokemonHpRestoreModifier(this, args[0], this.restorePercent),
+    super(name, `Restore ${restorePercent} HP or ${restorePercent}% HP for one POKéMON, whichever is higher`, (_type, args) => new PokemonHpRestoreModifier(this, args[0], this.restorePercent),
     (pokemon: PlayerPokemon) => {
       if (pokemon.hp >= pokemon.getMaxHp())
         return PartyUiHandler.NoEffectMessage;
@@ -372,21 +372,17 @@ export class PokemonBaseStatBoosterModifierType extends PokemonModifierType {
   }
 }
 
-class AllPokemonHpRestoreModifierType extends ModifierType {
-  private restorePercent: integer;
-
-  constructor(name: string, restorePercent: integer, iconImage?: string) {
-    super(name, `Restore ${restorePercent}% HP for all POKéMON`, (_type, _args) => new PokemonHpRestoreModifier(this, -1, this.restorePercent), iconImage);
-
-    this.restorePercent = restorePercent;
+class AllPokemonFullHpRestoreModifierType extends ModifierType {
+  constructor(name: string, iconImage?: string) {
+    super(name, `Restore 100% HP for all POKéMON`, (_type, _args) => new PokemonHpRestoreModifier(this, -1, 100), iconImage);
   }
 }
 
 class WeightedModifierType {
   public modifierType: ModifierType;
-  public weight: integer;
+  public weight: integer | Function;
 
-  constructor(modifierType: ModifierType, weight: integer) {
+  constructor(modifierType: ModifierType, weight: integer | Function) {
     this.modifierType = modifierType;
     this.weight = weight;
   }
@@ -399,8 +395,15 @@ class WeightedModifierType {
 const modifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(new AddPokeballModifierType(PokeballType.POKEBALL, 5, 'pb'), 2),
-    new WeightedModifierType(new PokemonHpRestoreModifierType('POTION', 20), 3),
-    new PokemonHpRestoreModifierType('SUPER POTION', 50),
+    new WeightedModifierType(new PokemonHpRestoreModifierType('POTION', 20), (party: Array<PlayerPokemon>) => {
+      const thresholdPartyMemberCount = party.filter(p => p.getHpRatio() <= 0.9).length;
+      console.log(thresholdPartyMemberCount, party.map(p => p.getHpRatio()));
+      return thresholdPartyMemberCount;
+    }),
+    new WeightedModifierType(new PokemonHpRestoreModifierType('SUPER POTION', 50), (party: Array<PlayerPokemon>) => {
+      const thresholdPartyMemberCount = party.filter(p => p.getHpRatio() <= 0.75).length;
+      return Math.ceil(thresholdPartyMemberCount / 3);
+    }),
     new PokemonBaseStatBoosterModifierType('HP-UP', Stat.HP),
     new PokemonBaseStatBoosterModifierType('PROTEIN', Stat.ATK),
     new PokemonBaseStatBoosterModifierType('IRON', Stat.DEF),
@@ -410,12 +413,21 @@ const modifierPool = {
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [
     new AddPokeballModifierType(PokeballType.GREAT_BALL, 5, 'gb'),
-    new PokemonReviveModifierType('REVIVE', 50),
-    new PokemonHpRestoreModifierType('HYPER POTION', 100)
+    new WeightedModifierType(new PokemonReviveModifierType('REVIVE', 50), (party: Array<PlayerPokemon>) => {
+      const faintedPartyMemberCount = party.filter(p => !p.hp).length;
+      return faintedPartyMemberCount;
+    }),
+    new WeightedModifierType(new PokemonHpRestoreModifierType('HYPER POTION', 80), (party: Array<PlayerPokemon>) => {
+      const thresholdPartyMemberCount = party.filter(p => p.getHpRatio() <= 0.6).length;
+      return Math.ceil(thresholdPartyMemberCount / 3);
+    })
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
     new AddPokeballModifierType(PokeballType.ULTRA_BALL, 5, 'ub'),
-    new AllPokemonHpRestoreModifierType('MAX POTION', 100),
+    new WeightedModifierType(new AllPokemonFullHpRestoreModifierType('MAX POTION'), (party: Array<PlayerPokemon>) => {
+      const thresholdPartyMemberCount = party.filter(p => p.getHpRatio() <= 0.5).length;
+      return Math.ceil(thresholdPartyMemberCount / 3);
+    }),
     new ModifierType('LUCKY EGG', 'Increases gain of EXP. Points by 25%', (type, _args) => new ExpBoosterModifier(type))
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
@@ -424,18 +436,36 @@ const modifierPool = {
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
 };
 
-const modifierPoolThresholds = Object.fromEntries(new Map(Object.keys(modifierPool).map(t => {
-  const thresholds = new Map();
-  let i = 0;
-  modifierPool[t].reduce((total: integer, modifierType: ModifierType | WeightedModifierType) => {
-    total += modifierType instanceof WeightedModifierType ? (modifierType as WeightedModifierType).weight : 1;
-    thresholds.set(total, i++);
-    return total;
-  }, 0);
-  return [ t, Object.fromEntries(thresholds) ]
-})));
+let modifierPoolThresholds = {};
+let ignoredPoolIndexes = {};
 
-console.log(modifierPoolThresholds)
+export function regenerateModifierPoolThresholds(party: Array<PlayerPokemon>) {
+  ignoredPoolIndexes = {};
+  modifierPoolThresholds = Object.fromEntries(new Map(Object.keys(modifierPool).map(t => {
+    ignoredPoolIndexes[t] = [];
+    const thresholds = new Map();
+    let i = 0;
+    modifierPool[t].reduce((total: integer, modifierType: ModifierType | WeightedModifierType) => {
+      if (modifierType instanceof WeightedModifierType) {
+        const weightedModifierType = modifierType as WeightedModifierType;
+        const weight = weightedModifierType.weight instanceof Function
+        ? (weightedModifierType.weight as Function)(party)
+        : weightedModifierType.weight as integer;
+        if (weight)
+          total += weight;
+        else {
+          ignoredPoolIndexes[t].push(i++);
+          return total;
+        }
+      } else
+        total++;
+      thresholds.set(total, i++);
+      return total;
+    }, 0);
+    return [ t, Object.fromEntries(thresholds) ]
+  })));
+  console.log(modifierPoolThresholds)
+}
 
 export function getNewModifierType(): ModifierType {
   const tierValue = Utils.randInt(256);
@@ -451,6 +481,7 @@ export function getNewModifierType(): ModifierType {
       break;
     }
   }
+  console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier])
   let modifierType: ModifierType | WeightedModifierType = modifierPool[tier][index];
   if (modifierType instanceof WeightedModifierType)
     return (modifierType as WeightedModifierType).modifierType;

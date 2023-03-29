@@ -12,7 +12,7 @@ import { initAutoPlay } from './auto-play';
 
 export default class BattleScene extends Phaser.Scene {
 	private auto: boolean;
-	private autoSpeed: integer = 10;
+	private autoSpeed: integer = 3;
 
 	private phaseQueue: Array<BattlePhase>;
 	private phaseQueuePrepend: Array<BattlePhase>;
@@ -198,10 +198,10 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.arena = arena;
 
-		this.arenaBg = this.add.image(0, 0, `arena_${Utils.padInt(arena.type, 2)}`);
-		this.arenaPlayer = this.add.image(340, 20, `arena_${Utils.padInt(arena.type, 2)}a`);
-		this.arenaEnemy = this.add.image(-240, 13, `arena_${Utils.padInt(arena.type, 2)}b`);
-		this.arenaEnemy2 = this.add.image(-240, 13, `arena_${Utils.padInt(arena.type, 2)}b`);
+		this.arenaBg = this.add.image(0, 0, `arena_${Utils.padInt(arena.arenaType, 2)}`);
+		this.arenaPlayer = this.add.image(340, 20, `arena_${Utils.padInt(arena.arenaType, 2)}a`);
+		this.arenaEnemy = this.add.image(-240, 13, `arena_${Utils.padInt(arena.arenaType, 2)}b`);
+		this.arenaEnemy2 = this.add.image(-240, 13, `arena_${Utils.padInt(arena.arenaType, 2)}b`);
 
 		[this.arenaBg, this.arenaPlayer, this.arenaEnemy, this.arenaEnemy2].forEach(a => {
 			a.setOrigin(0, 0);

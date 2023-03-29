@@ -82,47 +82,47 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
   }
 
-  initInfo(battler: Pokemon) {
-    this.nameText.setText(battler.name);
-    this.lastName = battler.species.name;
+  initInfo(pokemon: Pokemon) {
+    this.nameText.setText(pokemon.name);
+    this.lastName = pokemon.species.name;
 
-    this.hpBar.setScale(battler.hp / battler.getMaxHp(), 1);
+    this.hpBar.setScale(pokemon.getHpRatio(), 1);
     if (this.player)
-      this.setHpNumbers(battler.hp, battler.getMaxHp());
-    this.lastHp = battler.hp;
+      this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
+    this.lastHp = pokemon.hp;
     this.lastHpFrame = this.hpBar.scaleX > 0.5 ? 'high' : this.hpBar.scaleX > 0.25 ? 'medium' : 'low';
-    this.lastMaxHp = battler.getMaxHp();
+    this.lastMaxHp = pokemon.getMaxHp();
 
-    this.setLevel(battler.level);
-    this.lastLevel = battler.level;
+    this.setLevel(pokemon.level);
+    this.lastLevel = pokemon.level;
 
     if (this.player) {
-      this.expBar.setScale(battler.levelExp / getLevelTotalExp(battler.level, battler.species.growthRate), 1);
-      this.lastExp = battler.exp;
-      this.lastLevelExp = battler.levelExp;
+      this.expBar.setScale(pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate), 1);
+      this.lastExp = pokemon.exp;
+      this.lastLevelExp = pokemon.levelExp;
     }
   }
 
-  updateInfo(battler: Pokemon, callback?: Function) {
+  updateInfo(pokemon: Pokemon, callback?: Function) {
     if (!this.scene)
       return;
 
-    if (this.lastName !== battler.species.name) {
-      this.nameText.setText(battler.name);
-      this.lastName = battler.species.name;
+    if (this.lastName !== pokemon.species.name) {
+      this.nameText.setText(pokemon.name);
+      this.lastName = pokemon.species.name;
     }
 
     const updatePokemonHp = () => {
-      const duration = Utils.clampInt(Math.abs((this.lastHp) - battler.hp) * 5, 250, 5000);
+      const duration = Utils.clampInt(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000);
       this.scene.tweens.add({
         targets: this.hpBar,
         ease: 'Sine.easeOut',
-        scaleX: battler.hp / battler.getMaxHp(),
+        scaleX: pokemon.getHpRatio(),
         duration: duration,
         onUpdate: () => {
-          if (this.player && this.lastHp !== battler.hp) {
-            const tweenHp = Math.ceil(this.hpBar.scaleX * battler.getMaxHp());
-            this.setHpNumbers(tweenHp, battler.getMaxHp())
+          if (this.player && this.lastHp !== pokemon.hp) {
+            const tweenHp = Math.ceil(this.hpBar.scaleX * pokemon.getMaxHp());
+            this.setHpNumbers(tweenHp, pokemon.getMaxHp())
             this.lastHp = tweenHp;
           }
 
@@ -140,20 +140,20 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         }
       });
       if (!this.player)
-        this.lastHp = battler.hp;
-      this.lastMaxHp = battler.getMaxHp();
+        this.lastHp = pokemon.hp;
+      this.lastMaxHp = pokemon.getMaxHp();
     };
 
-    if (this.player && this.lastExp !== battler.exp) {
+    if (this.player && this.lastExp !== pokemon.exp) {
       const originalCallback = callback;
-      callback = () => this.updatePokemonExp(battler, originalCallback);
+      callback = () => this.updatePokemonExp(pokemon, originalCallback);
     }
 
-    if (this.lastHp !== battler.hp || this.lastMaxHp !== battler.getMaxHp())
+    if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp())
       updatePokemonHp();
-    else if (!this.player && this.lastLevel !== battler.level) {
-      this.setLevel(battler.level);
-      this.lastLevel = battler.level;
+    else if (!this.player && this.lastLevel !== pokemon.level) {
+      this.setLevel(pokemon.level);
+      this.lastLevel = pokemon.level;
       if (callback)
         callback();
     } else if (callback)

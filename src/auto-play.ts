@@ -66,7 +66,7 @@ export function initAutoPlay(speed: number) {
         let bestPartyMemberEffectiveness = 0.5;
         for (let p = 0; p < party.length; p++) {
             const pokemon = party[p];
-            if ((pokemon.hp / pokemon.getMaxHp()) <= 0.4)
+            if (pokemon.getHpRatio() <= 0.4)
                 continue;
             const effectiveness = getMaxMoveEffectiveness(pokemon, enemyPokemon) / getMaxMoveEffectiveness(enemyPokemon, pokemon);
             if (effectiveness > bestPartyMemberEffectiveness) {
@@ -199,8 +199,8 @@ export function initAutoPlay(speed: number) {
         const party = thisArg.getParty();
         const modifierTypes = modifierSelectUiHandler.options.map(o => o.modifierType);
         const faintedPartyMemberIndex = party.findIndex(p => !p.hp);
-        const lowHpPartyMemberIndex = party.findIndex(p => (p.hp / p.getMaxHp()) <= 0.5);
-        const criticalHpPartyMemberIndex = party.findIndex(p => (p.hp / p.getMaxHp()) <= 0.25);
+        const lowHpPartyMemberIndex = party.findIndex(p => p.getHpRatio() <= 0.5);
+        const criticalHpPartyMemberIndex = party.findIndex(p => p.getHpRatio() <= 0.25);
 
         let optionIndex = tryGetBestModifier(modifierTypes, (modifierType: ModifierType) => {
             if (modifierType instanceof PokemonHpRestoreModifierType) {

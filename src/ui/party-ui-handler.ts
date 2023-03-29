@@ -285,7 +285,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     slotHpBar.setPositionRelative(slotBg, this.slotIndex ? 72 : 8, this.slotIndex ? 7 : 31);
     slotHpBar.setOrigin(0, 0);
 
-    const hpRatio = this.pokemon.hp / this.pokemon.getMaxHp();
+    const hpRatio = this.pokemon.getHpRatio();
 
     const slotHpOverlay = this.scene.add.sprite(0, 0, 'party_slot_hp_overlay', hpRatio > 0.5 ? 'high' : hpRatio > 0.25 ? 'medium' : 'low');
     slotHpOverlay.setPositionRelative(slotHpBar, 16, 2);

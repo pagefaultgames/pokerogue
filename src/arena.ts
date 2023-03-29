@@ -33,28 +33,34 @@ enum PoolTier {
 
 export class Arena {
   private scene: BattleScene;
-  public type: integer;
+  public arenaType: integer;
   private bgm: string;
 
   private pokemonPool: PokemonSpecies[][];
 
-  constructor(scene: BattleScene, type: integer, bgm: string) {
+  constructor(scene: BattleScene, arenaType: integer, bgm: string) {
     this.scene = scene;
-    this.type = type;
+    this.arenaType = arenaType;
     this.bgm = bgm;
 
-    const predicate = arenaPoolPredicates[type] || (() => {});
-    this.pokemonPool = Utils.getEnumValues(PoolTier).map(t => allSpecies.filter(p => predicate(p, t)));
+    if (arenaPools.hasOwnProperty(arenaType))
+      this.pokemonPool = arenaPools[arenaType];
+    else {
+      const predicate = arenaPoolPredicates[arenaType] || (() => {});
+      this.pokemonPool =  Utils.getEnumValues(PoolTier).map(t => allSpecies.filter(p => predicate(p, t)));
+    }
   }
-
   randomSpecies(waveIndex: integer): PokemonSpecies {
-    const tier: PoolTier = Utils.randInt(5);
+    const tierValue = Utils.randInt(512);
+    const tier = tierValue >= 156 ? PoolTier.COMMON : tierValue >= 32 ? PoolTier.UNCOMMON : tierValue >= 6 ? PoolTier.RARE : tierValue >= 1 ? PoolTier.ULTRA_RARE : PoolTier.LEGENDARY;
     const tierPool = this.pokemonPool[tier];
     let ret: PokemonSpecies;
     if (!tierPool.length)
       ret = this.scene.randomSpecies();
-    else
-      ret = tierPool[Utils.randInt(tierPool.length)];
+    else {
+      const species = tierPool[Utils.randInt(tierPool.length)];
+      ret = species instanceof PokemonSpecies ? species : getPokemonSpecies(species);
+    }
     const newSpeciesId = ret.getSpeciesForLevel(5);
     if (newSpeciesId !== ret.speciesId) {
       console.log('Replaced', Species[ret.speciesId], 'with', Species[newSpeciesId]);
@@ -68,6 +74,16 @@ export class Arena {
     this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => this.scene.playBgm(this.bgm));
   }
 }
+
+const arenaPools = {
+  [ArenaType.PLAINS]: {
+    [PoolTier.COMMON]: [ Species.CATERPIE, Species.METAPOD, Species.WEEDLE, Species.KAKUNA, Species.PIDGEY, Species.RATTATA, Species.SPEAROW, Species.SENTRET, Species.HOOTHOOT, Species.HOPPIP, Species.SUNKERN, Species.POOCHYENA, Species.ZIGZAGOON, Species.WURMPLE, Species.SILCOON, Species.CASCOON, Species.TAILLOW, Species.STARLY, Species.BIDOOF, Species.KRICKETOT, Species.PATRAT, Species.LILLIPUP, Species.PIDOVE, Species.COTTONEE, Species.PETILIL, Species.MINCCINO, Species.FOONGUS ],
+    [PoolTier.UNCOMMON]: [ Species.EKANS, Species.NIDORAN_F, Species.NIDORAN_M, Species.PARAS, Species.VENONAT, Species.MEOWTH, Species.BELLSPROUT, Species.LEDYBA, Species.SPINARAK, Species.PINECO, Species.LOTAD, Species.SEEDOT, Species.SHROOMISH, Species.NINCADA, Species.AZURILL, Species.WHISMUR, Species.SKITTY, Species.GULPIN, Species.BUDEW, Species.BURMY, Species.COMBEE, Species.CHERUBI, Species.VENIPEDE ],
+    [PoolTier.RARE]: [ Species.PICHU, Species.CLEFFA, Species.IGGLYBUFF, Species.WOOPER, Species.RALTS, Species.SURSKIT, Species.SLAKOTH, Species.BARBOACH, Species.DUCKLETT ],
+    [PoolTier.ULTRA_RARE]: [ Species.EEVEE, Species.TOGEPI, Species.TYROGUE ],
+    [PoolTier.LEGENDARY]: [ Species.DITTO ] 
+  }
+};
 
 const arenaPoolPredicates = {
   [ArenaType.PLAINS]: (p, t) => {

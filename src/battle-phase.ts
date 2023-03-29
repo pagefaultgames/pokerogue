@@ -6,7 +6,7 @@ import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { interp } from "./temp_interpreter";
 import { Stat } from "./pokemon-stat";
-import { ExpBoosterModifier, getNewModifierType, PokemonBaseStatModifier as PokemonBaseStatModifier, PokemonModifierType } from "./modifier";
+import { ExpBoosterModifier, getNewModifierType, PokemonBaseStatModifier, PokemonModifierType, regenerateModifierPoolThresholds } from "./modifier";
 import PartyUiHandler from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getTintColor as getPokeballTintColor, PokeballType } from "./pokeball";
 import { pokemonLevelMoves } from "./pokemon-level-moves";
@@ -332,7 +332,7 @@ abstract class MovePhase extends BattlePhase {
     this.move = move;
   }
 
-  abstract getDamagePhase(): MoveEffectPhase;
+  abstract getEffectPhase(): MoveEffectPhase;
 
   canMove(): boolean {
     return !!this.pokemon.hp;
@@ -347,7 +347,7 @@ abstract class MovePhase extends BattlePhase {
       console.log(this.pokemon.moveset);
     this.scene.ui.showText(`${this.pokemon.name} used\n${this.move.getName()}!`, null, () => this.end(), 500);
     if (this.move.getMove().category !== MOVE_CATEGORY.STATUS)
-      this.scene.unshiftPhase(this.getDamagePhase());
+      this.scene.unshiftPhase(this.getEffectPhase());
   }
 }
 
@@ -356,7 +356,7 @@ export class PlayerMovePhase extends MovePhase {
     super(scene, pokemon, move);
   }
 
-  getDamagePhase(): MoveEffectPhase {
+  getEffectPhase(): MoveEffectPhase {
     return new PlayerMoveEffectPhase(this.scene, this.move);
   }
 }
@@ -366,7 +366,7 @@ export class EnemyMovePhase extends MovePhase {
     super(scene, pokemon, move);
   }
 
-  getDamagePhase(): MoveEffectPhase {
+  getEffectPhase(): MoveEffectPhase {
     return new EnemyMoveEffectPhase(this.scene, this.move);
   }
 }
@@ -756,7 +756,8 @@ export class SelectModifierPhase extends BattlePhase {
   start() {
     super.start();
 
-    const types = [ getNewModifierType(), getNewModifierType(), getNewModifierType() ];
+    regenerateModifierPoolThresholds(this.scene.getParty());
+    const types = [ getNewModifierType(), getNewModifierType(), getNewModifierType(), getNewModifierType(), getNewModifierType(), getNewModifierType() ];
 
     this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, (cursor: integer) => {
       if (cursor < 0) {
