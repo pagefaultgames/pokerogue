@@ -757,7 +757,7 @@ export class SelectModifierPhase extends BattlePhase {
     super.start();
 
     regenerateModifierPoolThresholds(this.scene.getParty());
-    const types = [ getNewModifierType(), getNewModifierType(), getNewModifierType(), getNewModifierType(), getNewModifierType(), getNewModifierType() ];
+    const types = [ getNewModifierType(), getNewModifierType(), getNewModifierType() ];
 
     this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, (cursor: integer) => {
       if (cursor < 0) {

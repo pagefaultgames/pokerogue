@@ -921,12 +921,3 @@ export const allSpecies = [
   let i = 0;
   return new PokemonSpecies(p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++], p[i++]);
 });
-
-console.log(
-  Species[getPokemonSpecies(Species.PICHU).getSpeciesForLevel(5)],
-  Species[getPokemonSpecies(Species.PICHU).getSpeciesForLevel(20)],
-  Species[getPokemonSpecies(Species.PICHU).getSpeciesForLevel(50)],
-  Species[getPokemonSpecies(Species.EXEGGUTOR).getSpeciesForLevel(5)],
-  Species[getPokemonSpecies(Species.EXEGGUTOR).getSpeciesForLevel(20)],
-  Species[getPokemonSpecies(Species.EXEGGUTOR).getSpeciesForLevel(50)]
-);

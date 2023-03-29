@@ -117,12 +117,12 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('party_cancel', 'ui');
 
 		// Load arena images
-		for (let a = 1; a <= 15; a++) {
-			const arenaId = Utils.padInt(a, 2);
-			this.loadImage(`arena_${arenaId}`, 'arenas', `${arenaId}.png`);
-			this.loadImage(`arena_${arenaId}a`, 'arenas', `${arenaId}a.png`);
-			this.loadImage(`arena_${arenaId}b`, 'arenas', `${arenaId}b.png`);
-		}
+		Utils.getEnumValues(ArenaType).map(at => {
+			const atKey = ArenaType[at].toLowerCase();
+			this.loadImage(`${atKey}_bg`, 'arenas', `${atKey}_bg.png`);
+			this.loadImage(`${atKey}_a`, 'arenas', `${atKey}_a.png`);
+			this.loadImage(`${atKey}_b`, 'arenas', `${atKey}_b.png`);
+		});
 
 		// Load trainer images
 		this.loadImage('trainer_m', 'trainer');
@@ -177,31 +177,15 @@ export default class BattleScene extends Phaser.Scene {
 		this.field = field;
 
 		// Init arena
-		const arenas = [
-			new Arena(this, ArenaType.PLAINS, 'battle'),
-			new Arena(this, ArenaType.GRASS, 'grass'),
-			new Arena(this, ArenaType.FOREST, 'forest'),
-			new Arena(this, ArenaType.WATER, 'water'),
-			new Arena(this, ArenaType.SWAMP, 'swamp'),
-			new Arena(this, ArenaType.SEA, 'sea'),
-			new Arena(this, ArenaType.MOUNTAIN, 'mountain'),
-			new Arena(this, ArenaType.LAND, 'land'),
-			new Arena(this, ArenaType.CAVE, 'cave'),
-			new Arena(this, ArenaType.DESERT, 'desert'),
-			new Arena(this, ArenaType.ARENA_BROWN, 'elite_1'),
-			new Arena(this, ArenaType.ARENA_BLUE, 'elite_2'),
-			new Arena(this, ArenaType.ARENA_PURPLE, 'elite_3'),
-			new Arena(this, ArenaType.ARENA_PINK, 'elite_4'),
-			new Arena(this, ArenaType.ARENA_ORANGE, 'elite_5')
-		];
-		const arena = arenas[0];//arenas[Utils.randInt(15)];
+		const arenas = Utils.getEnumValues(ArenaType).map(at => new Arena(this, at, ArenaType[at].toLowerCase()));
+		const arena = arenas[Utils.randInt(11)];
 
 		this.arena = arena;
 
-		this.arenaBg = this.add.image(0, 0, `arena_${Utils.padInt(arena.arenaType, 2)}`);
-		this.arenaPlayer = this.add.image(340, 20, `arena_${Utils.padInt(arena.arenaType, 2)}a`);
-		this.arenaEnemy = this.add.image(-240, 13, `arena_${Utils.padInt(arena.arenaType, 2)}b`);
-		this.arenaEnemy2 = this.add.image(-240, 13, `arena_${Utils.padInt(arena.arenaType, 2)}b`);
+		this.arenaBg = this.add.image(0, 0, `${ArenaType[arena.arenaType].toLowerCase()}_bg`);
+		this.arenaPlayer = this.add.image(340, 20, `${ArenaType[arena.arenaType].toLowerCase()}_a`);
+		this.arenaEnemy = this.add.image(-240, 13, `${ArenaType[arena.arenaType].toLowerCase()}_b`);
+		this.arenaEnemy2 = this.add.image(-240, 13, `${ArenaType[arena.arenaType].toLowerCase()}_b`);
 
 		[this.arenaBg, this.arenaPlayer, this.arenaEnemy, this.arenaEnemy2].forEach(a => {
 			a.setOrigin(0, 0);

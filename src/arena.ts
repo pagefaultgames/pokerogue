@@ -16,11 +16,15 @@ export enum ArenaType {
   LAND,
   CAVE,
   DESERT,
-  ARENA_BROWN,
-  ARENA_PURPLE,
-  ARENA_BLUE,
-  ARENA_ORANGE,
-  ARENA_PINK
+  ICE_CAVE,
+  MEADOW,
+  POWER_PLANT,
+  VOLCANO,
+  GRAVEYARD,
+  DOJO,
+  RUINS,
+  ABYSS,
+  SPACE
 };
 
 enum PoolTier {
@@ -77,10 +81,18 @@ export class Arena {
 
 const arenaPools = {
   [ArenaType.PLAINS]: {
-    [PoolTier.COMMON]: [ Species.CATERPIE, Species.METAPOD, Species.WEEDLE, Species.KAKUNA, Species.PIDGEY, Species.RATTATA, Species.SPEAROW, Species.SENTRET, Species.HOOTHOOT, Species.HOPPIP, Species.SUNKERN, Species.POOCHYENA, Species.ZIGZAGOON, Species.WURMPLE, Species.SILCOON, Species.CASCOON, Species.TAILLOW, Species.STARLY, Species.BIDOOF, Species.KRICKETOT, Species.PATRAT, Species.LILLIPUP, Species.PIDOVE, Species.COTTONEE, Species.PETILIL, Species.MINCCINO, Species.FOONGUS ],
-    [PoolTier.UNCOMMON]: [ Species.EKANS, Species.NIDORAN_F, Species.NIDORAN_M, Species.PARAS, Species.VENONAT, Species.MEOWTH, Species.BELLSPROUT, Species.LEDYBA, Species.SPINARAK, Species.PINECO, Species.LOTAD, Species.SEEDOT, Species.SHROOMISH, Species.NINCADA, Species.AZURILL, Species.WHISMUR, Species.SKITTY, Species.GULPIN, Species.BUDEW, Species.BURMY, Species.COMBEE, Species.CHERUBI, Species.VENIPEDE ],
-    [PoolTier.RARE]: [ Species.PICHU, Species.CLEFFA, Species.IGGLYBUFF, Species.WOOPER, Species.RALTS, Species.SURSKIT, Species.SLAKOTH, Species.BARBOACH, Species.DUCKLETT ],
-    [PoolTier.ULTRA_RARE]: [ Species.EEVEE, Species.TOGEPI, Species.TYROGUE ],
+    [PoolTier.COMMON]: [
+      Species.CATERPIE, Species.METAPOD, Species.WEEDLE, Species.KAKUNA, Species.PIDGEY, Species.RATTATA, Species.SPEAROW, Species.SENTRET, Species.HOOTHOOT, Species.LEDYBA,
+      Species.HOPPIP, Species.SUNKERN, Species.POOCHYENA, Species.ZIGZAGOON, Species.WURMPLE, Species.SILCOON, Species.CASCOON, Species.TAILLOW, Species.STARLY, Species.BIDOOF,
+      Species.KRICKETOT, Species.PATRAT, Species.LILLIPUP, Species.PIDOVE, Species.COTTONEE, Species.PETILIL, Species.MINCCINO, Species.FOONGUS
+    ],
+    [PoolTier.UNCOMMON]: [
+      Species.EKANS, Species.NIDORAN_F, Species.NIDORAN_M, Species.ODDISH, Species.PARAS, Species.VENONAT, Species.MEOWTH, Species.BELLSPROUT, Species.PICHU, Species.IGGLYBUFF,
+      Species.LOTAD, Species.SEEDOT, Species.SHROOMISH, Species.NINCADA, Species.AZURILL, Species.WHISMUR, Species.SKITTY, Species.BUDEW, Species.COMBEE, Species.CHERUBI,
+      Species.VENIPEDE
+    ],
+    [PoolTier.RARE]: [ Species.ABRA, Species.CLEFFA, Species.WOOPER, Species.RALTS, Species.SURSKIT, Species.SLAKOTH, Species.DUCKLETT ],
+    [PoolTier.ULTRA_RARE]: [ Species.EEVEE, Species.TOGEPI, Species.SMEARGLE, Species.TYROGUE, Species.WYNAUT ],
     [PoolTier.LEGENDARY]: [ Species.DITTO ] 
   }
 };
@@ -172,7 +184,28 @@ const arenaPoolPredicates = {
   [ArenaType.DESERT]: (p, t) => {
     return p.isOfType(Type.GROUND) || p.isOfType(Type.ROCK);
   },
-  [ArenaType.ARENA_PINK]: (p, t) => {
-    return p.legendary || p.mythical;
+  [ArenaType.ICE_CAVE]: (p, t) => {
+    return p.isOfType(Type.ICE);
+  },
+  [ArenaType.MEADOW]: (p, t) => {
+    return p.isOfType(Type.FAIRY);
+  },
+  [ArenaType.POWER_PLANT]: (p, t) => {
+    return p.isOfType(Type.ELECTRIC);
+  },
+  [ArenaType.VOLCANO]: (p, t) => {
+    return p.isOfType(Type.FIRE);
+  },
+  [ArenaType.GRAVEYARD]: (p, t) => {
+    return p.isOfType(Type.GHOST);
+  },
+  [ArenaType.DOJO]: (p, t) => {
+    return p.isOfType(Type.FIGHTING);
+  },
+  [ArenaType.RUINS]: (p, t) => {
+    return p.isOfType(Type.PSYCHIC);
+  },
+  [ArenaType.ABYSS]: (p, t) => {
+    return p.isOfType(Type.DARK);
   }
 };
