@@ -334,7 +334,7 @@ export abstract class PokemonModifierType extends ModifierType {
   }
 }
 
-class PokemonHpRestoreModifierType extends PokemonModifierType {
+export class PokemonHpRestoreModifierType extends PokemonModifierType {
   protected restorePercent: integer;
 
   constructor(name: string, restorePercent: integer, iconImage?: string) {
@@ -349,7 +349,7 @@ class PokemonHpRestoreModifierType extends PokemonModifierType {
   }
 }
 
-class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
+export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
   constructor(name: string, restorePercent: integer, iconImage?: string) {
     super(name, restorePercent, iconImage);
 
@@ -362,7 +362,7 @@ class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
   }
 }
 
-class PokemonBaseStatBoosterModifierType extends PokemonModifierType {
+export class PokemonBaseStatBoosterModifierType extends PokemonModifierType {
   private stat: Stat;
 
   constructor(name: string, stat: Stat, _iconImage?: string) {

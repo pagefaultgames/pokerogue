@@ -74,23 +74,26 @@ export class NextEncounterPhase extends BattlePhase {
 
     this.scene.getEnemyPokemon().destroy();
     const newEnemyPokemon = new EnemyPokemon(this.scene, this.scene.randomSpecies(true), this.scene.getLevelForWave());
-    this.scene.setEnemyPokemon(newEnemyPokemon);
-    this.scene.field.add(newEnemyPokemon);
-    this.scene.field.moveBelow(newEnemyPokemon, this.scene.getPlayerPokemon());
-    newEnemyPokemon.tint(0, 0.5);
-    this.scene.tweens.add({
-			targets: [ this.scene.arenaEnemy, this.scene.arenaEnemy2, newEnemyPokemon ],
-			x: '+=300',
-			duration: 2000,
-			onComplete: () => {
-        this.scene.arenaEnemy.setX(this.scene.arenaEnemy2.x);
-        this.scene.arenaEnemy2.setX(this.scene.arenaEnemy2.x - 300);
-        newEnemyPokemon.untint(100, 'Sine.easeOut');
-        newEnemyPokemon.cry();
-        newEnemyPokemon.showInfo();
-        this.scene.ui.showText(`A wild ${newEnemyPokemon.name} appeared!`, null, () => this.end(), 1500);
-      }
-		});
+    newEnemyPokemon.loadAssets().then(() => {
+      this.scene.setEnemyPokemon(newEnemyPokemon);
+      this.scene.field.add(newEnemyPokemon);
+      this.scene.field.moveBelow(newEnemyPokemon, this.scene.getPlayerPokemon());
+      newEnemyPokemon.tint(0, 0.5);
+      this.scene.tweens.add({
+        targets: [ this.scene.arenaEnemy, this.scene.arenaEnemy2, newEnemyPokemon ],
+        x: '+=300',
+        duration: 2000,
+        onComplete: () => {
+          this.scene.arenaEnemy.setX(this.scene.arenaEnemy2.x);
+          this.scene.arenaEnemy2.setX(this.scene.arenaEnemy2.x - 300);
+          newEnemyPokemon.untint(100, 'Sine.easeOut');
+          newEnemyPokemon.cry();
+          newEnemyPokemon.showInfo();
+          this.scene.ui.showText(`A wild ${newEnemyPokemon.name} appeared!`, null, () => this.end(), 1500);
+        }
+      });
+    });
+    this.scene.load.start();
   }
 
   end() {
@@ -241,7 +244,7 @@ export class CheckSwitchPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.ui.showText('Will you switch\nPokémon?', null, () => {
+    this.scene.ui.showText('Will you switch\nPOKéMON?', null, () => {
       this.scene.ui.setMode(Mode.SWITCH_CHECK, () => this.end());
     });
   }
@@ -340,6 +343,8 @@ abstract class MovePhase extends BattlePhase {
       this.end();
       return;
     }
+    if (!this.move)
+      console.log(this.pokemon.moveset);
     this.scene.ui.showText(`${this.pokemon.name} used\n${this.move.getName()}!`, null, () => this.end(), 500);
     if (this.move.getMove().category !== MOVE_CATEGORY.STATUS)
       this.scene.unshiftPhase(this.getDamagePhase());

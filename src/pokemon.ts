@@ -114,25 +114,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     tintSprite.setVisible(false);
 
-    (this.scene as BattleScene).loadAtlas(this.getSpriteKey(), 'pokemon', this.getAtlasPath());
-    this.scene.load.audio(this.species.speciesId.toString(), `audio/cry/${this.species.speciesId}.mp3`);
-    this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-      const originalWarn = console.warn;
-      // Ignore warnings for missing frames, because there will be a lot
-      console.warn = () => {};
-      const frameNames = this.scene.anims.generateFrameNames(this.getSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 256 });
-      console.warn = originalWarn;
-      this.scene.anims.create({
-        key: this.getSpriteKey(),
-        frames: frameNames,
-        frameRate: 12,
-        repeat: -1
-      });
-      sprite.play(this.getSpriteKey());
-      tintSprite.play(this.getSpriteKey());
-    });
-
-    this.scene.load.start()
     this.add(sprite);
     this.add(tintSprite);
 
@@ -156,35 +137,58 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract isPlayer(): boolean;
 
-  getAtlasPath() {
+  loadAssets(): Promise<void> {
+    return new Promise(resolve => {
+      (this.scene as BattleScene).loadAtlas(this.getSpriteKey(), 'pokemon', this.getAtlasPath());
+      this.scene.load.audio(this.species.speciesId.toString(), `audio/cry/${this.species.speciesId}.mp3`);
+      this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+        const originalWarn = console.warn;
+        // Ignore warnings for missing frames, because there will be a lot
+        console.warn = () => {};
+        const frameNames = this.scene.anims.generateFrameNames(this.getSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 256 });
+        console.warn = originalWarn;
+        this.scene.anims.create({
+          key: this.getSpriteKey(),
+          frames: frameNames,
+          frameRate: 12,
+          repeat: -1
+        });
+        this.getSprite().play(this.getSpriteKey());
+        this.getTintSprite().play(this.getSpriteKey());
+        resolve();
+      });
+    });
+  }
+
+  getAtlasPath(): string {
     return this.getSpriteId().replace(/\_{2}/g, '/');
   }
 
-  getSpriteId() {
+  getSpriteId(): string {
     return `${this.isPlayer() ? 'back__' : ''}${this.shiny ? 'shiny__' : ''}${this.species.genderDiffs && !this.gender ? 'female__' : ''}${this.species.speciesId}`;
   }
 
-  getSpriteKey() {
+  getSpriteKey(): string {
     return `pkmn__${this.getSpriteId()}`;
   }
 
-  getIconAtlasKey() {
+  getIconAtlasKey(): string {
     return `pokemon_icons_${this.species.generation}`;
   }
 
-  getIconId() {
+  getIconId(): string {
     return `${Utils.padInt(this.species.speciesId, 3)}`;
   }
 
-  getIconKey() {
+  getIconKey(): string {
     return `pkmn_icon__${this.getIconId()}`;
   }
 
-  getSprite() {
+  getSprite(): Phaser.GameObjects.Sprite {
     return this.getAt(0) as Phaser.GameObjects.Sprite;
   }
 
-  getTintSprite() {
+  getTintSprite(): Phaser.GameObjects.Sprite {
     return this.getAt(1) as Phaser.GameObjects.Sprite;
   }
 
@@ -303,7 +307,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   apply(source: Pokemon, battlerMove: PokemonMove, callback?: Function) {
     const battleScene = this.scene as BattleScene;
     let result: integer;
-    let sound: Phaser.Sound.BaseSound;
     let success = false;
     const move = battlerMove.getMove();
     const moveCategory = move.category;
@@ -390,7 +393,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.scene.sound.play(this.species.speciesId.toString());
   }
 
-  faintCry(callback) {
+  faintCry(callback: Function) {
     const key = this.species.speciesId.toString();
     let i = 0;
     let rate = 0.85;
@@ -519,7 +522,7 @@ export class EnemyPokemon extends Pokemon {
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer) {
     super(scene, -63, 86, species, level);
 
-    this.aiType = AiType.SMART;
+    this.aiType = AiType.SMART_RANDOM;
   }
 
   getNextMove(): PokemonMove {
@@ -530,6 +533,7 @@ export class EnemyPokemon extends Pokemon {
       switch (this.aiType) {
         case AiType.RANDOM:
           return movePool[Utils.randInt(movePool.length)];
+        case AiType.SMART_RANDOM:
         case AiType.SMART:
           const target = (this.scene as BattleScene).getPlayerPokemon();
           const moveScores = movePool.map(() => 0);
@@ -567,19 +571,23 @@ export class EnemyPokemon extends Pokemon {
               moveScores[m] = score;
             }
           }
+
+          console.log(moveScores);
+
           const sortedMovePool = movePool.slice(0);
           sortedMovePool.sort((a, b) => {
             const scoreA = moveScores[movePool.indexOf(a)];
             const scoreB = moveScores[movePool.indexOf(b)];
-            console.log(a, b, scoreA, scoreB)
             return scoreA < scoreB ? 1 : scoreA > scoreB ? -1 : 0;
           });
-          let randomBool: integer;
+          let randInt: integer;
           let r = 0;
-          while (r < sortedMovePool.length - 1 && (randomBool = Utils.randInt(2)))
-            r++;
+          if (this.aiType === AiType.SMART_RANDOM) {
+            while (r < sortedMovePool.length - 1 && (randInt = Utils.randInt(8)) >= 5)
+              r++;
+          }
           console.log(movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));
-          return sortedMovePool[r]
+          return sortedMovePool[r];
       }
     }
     return new PokemonMove(Moves.STRUGGLE, 0, 0);
@@ -598,8 +606,9 @@ export class EnemyPokemon extends Pokemon {
   }
 }
 
-enum AiType {
+export enum AiType {
   RANDOM,
+  SMART_RANDOM,
   SMART
 };
 

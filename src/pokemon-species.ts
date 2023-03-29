@@ -1,5 +1,5 @@
 import { GrowthRate } from './exp';
-import { PokemonSpeciesEvolutionCondition, pokemonEvolutions } from './pokemon-evolutions';
+import { pokemonEvolutions } from './pokemon-evolutions';
 import { Species } from './species';
 import { Type } from './type';
 import * as Utils from './utils';
@@ -69,7 +69,7 @@ export default class PokemonSpecies {
     return this.type1 === type || (this.type2 > -1 && this.type2 === type);
   }
 
-  getSpeciesForLevel(level: integer): Species {
+  getSpeciesForLevel(level: integer, allowEvolving?: boolean): Species {
     const prevolutionLevels = this.getPrevolutionLevels();
 
     if (prevolutionLevels.length) {
@@ -79,6 +79,9 @@ export default class PokemonSpecies {
           return prevolutionLevel[0];
       }
     }
+
+    if (!allowEvolving)
+      return this.speciesId;
 
     const evolutionLevels = this.getEvolutionLevels();
 

@@ -9,7 +9,7 @@ import { Mode } from "./ui";
 export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private overlayBg: Phaser.GameObjects.Rectangle;
   private modifierContainer: Phaser.GameObjects.Container;
-  private options: ModifierOption[];
+  public options: ModifierOption[];
 
   private cursorObj: Phaser.GameObjects.Image;
 
@@ -66,8 +66,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       onUpdate: t => {
         const value = t.getValue();
         const index = Math.floor(value * types.length);
-        if (index > i && index <= types.length)
-          this.options[i++].show(Math.floor((1 - value) * 1250) * 0.325);
+        if (index > i && index <= types.length) {
+          const option = this.options[i++];
+          option?.show(Math.floor((1 - value) * 1250) * 0.325);
+        }
       }
     });
 
@@ -225,6 +227,8 @@ class ModifierOption extends Phaser.GameObjects.Container {
       duration: 1250,
       ease: 'Bounce.Out',
       onUpdate: t => {
+        if (!this.scene)
+          return;
         const value = t.getValue();
         if (!bounce && value > lastValue) {
           this.scene.sound.play('pb_bounce_1', { volume: 1 / ++bounceCount });
@@ -236,6 +240,9 @@ class ModifierOption extends Phaser.GameObjects.Container {
     });
 
     this.scene.time.delayedCall(remainingDuration + 2000, () => {
+      if (!this.scene)
+        return;
+
       this.pb.setTexture('pb', `${this.getPbAtlasKey()}_open`);
       this.scene.sound.play('pb_rel');
       

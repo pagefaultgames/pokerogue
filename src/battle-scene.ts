@@ -3,13 +3,17 @@ import { ArenaType, Arena } from './arena';
 import UI from './ui/ui';
 import { BattlePhase, EncounterPhase, SummonPhase, CommandPhase } from './battle-phase';
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
-import PokemonSpecies, { default as Pokemon, allSpecies } from './pokemon-species';
+import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonModifierType, PokemonModifier } from './modifier';
-import { Stat } from './pokemon-stat';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonModifier } from './modifier';
 import { PokeballType } from './pokeball';
+import { Species } from './species';
+import { initAutoPlay } from './auto-play';
 
 export default class BattleScene extends Phaser.Scene {
+	private auto: boolean;
+	private autoSpeed: integer = 10;
+
 	private phaseQueue: Array<BattlePhase>;
 	private phaseQueuePrepend: Array<BattlePhase>;
 	private currentPhase: BattlePhase;
@@ -190,7 +194,7 @@ export default class BattleScene extends Phaser.Scene {
 			new Arena(this, ArenaType.ARENA_PINK, 'elite_4'),
 			new Arena(this, ArenaType.ARENA_ORANGE, 'elite_5')
 		];
-		const arena = arenas[Utils.randInt(15)];
+		const arena = arenas[0];//arenas[Utils.randInt(15)];
 
 		this.arena = arena;
 
@@ -218,17 +222,20 @@ export default class BattleScene extends Phaser.Scene {
 		this.modifiers = [];
 
 		this.modifierBar = new ModifierBar(this);
-    this.add.existing(this.modifierBar);
-    uiContainer.add(this.modifierBar);
+		this.add.existing(this.modifierBar);
+		uiContainer.add(this.modifierBar);
 
 		this.waveIndex = 1;
 
 		this.party = [];
 
+		let loadPokemonAssets = [];
+
 		for (let s = 0; s < 3; s++) {
-			const playerSpecies = this.randomSpecies();
+			const playerSpecies = getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP); //this.randomSpecies();
 			const playerPokemon = new PlayerPokemon(this, playerSpecies, 5);
 			playerPokemon.setVisible(false);
+			loadPokemonAssets.push(playerPokemon.loadAssets());
 
 			this.party.push(playerPokemon);
 		}
@@ -236,6 +243,7 @@ export default class BattleScene extends Phaser.Scene {
 		const enemySpecies = arena.randomSpecies(1);
 		console.log(enemySpecies.name);
 		const enemyPokemon = new EnemyPokemon(this, enemySpecies, this.getLevelForWave());
+		loadPokemonAssets.push(enemyPokemon.loadAssets());
 
 		this.add.existing(enemyPokemon);
 		this.enemyPokemon = enemyPokemon;
@@ -274,16 +282,22 @@ export default class BattleScene extends Phaser.Scene {
 
 		ui.setup();
 
-		this.phaseQueue.push(new EncounterPhase(this), new SummonPhase(this));
-
-		this.shiftPhase();
-
 		this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
 		this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
 		this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
 		this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 		this.actionKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 		this.cancelKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+
+		Promise.all(loadPokemonAssets).then(() => {
+			if (this.auto)
+				initAutoPlay.apply(this, [ this.autoSpeed ]);
+
+			this.phaseQueue.push(new EncounterPhase(this), new SummonPhase(this));
+
+			this.shiftPhase();
+		});
+		this.load.start();
 	}
 
 	update() {
@@ -313,16 +327,14 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	getLevelForWave() {
-		if (this.waveIndex === 1)
-			return 5;
-		let averageLevel = 5 + this.waveIndex * 0.5;
+		let averageLevel = 1 + this.waveIndex * 0.25;
 
 		if (this.waveIndex % 10 === 0)
-			return averageLevel + 5;
+			return Math.floor(averageLevel * 1.25);
 
 		const deviation = 10 / this.waveIndex;
 
-		return averageLevel + Math.round(Utils.randGauss(deviation));
+		return Math.max(Math.round(averageLevel + Utils.randGauss(deviation)), 1);
 	}
 
 	checkInput(): boolean {

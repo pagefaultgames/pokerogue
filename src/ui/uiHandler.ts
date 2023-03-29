@@ -5,7 +5,7 @@ export default abstract class UiHandler {
   protected scene: BattleScene;
   protected mode: integer;
   protected cursor: integer = 0;
-  protected active: boolean = false;
+  public active: boolean = false;
 
   constructor(scene: BattleScene, mode: Mode) {
     this.scene = scene;

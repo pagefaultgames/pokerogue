@@ -26,41 +26,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     };
     if (prompt) {
       const originalCallback = callback;
-      callback = () => {
-        const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
-        const textLinesCount = wrappedTextLines.length;
-        const lastTextLine = wrappedTextLines[wrappedTextLines.length - 1];
-        const lastLineTest = this.scene.add.text(0, 0, lastTextLine, { font: '96px emerald' });
-        lastLineTest.setScale(this.message.scale);
-        const lastLineWidth = lastLineTest.displayWidth;
-        lastLineTest.destroy();
-        if (prompt) {
-          if (this.prompt) {
-            this.prompt.setPosition(lastLineWidth + 2, (textLinesCount - 1) * 18 + 2);
-            this.prompt.play('prompt');
-          }
-          this.pendingPrompt = false;
-        }
-        this.awaitingActionInput = true;
-        this.onActionInput = () => {
-          if (this.prompt) {
-            this.prompt.anims.stop();
-            this.prompt.setVisible(false);
-          }
-          if (originalCallback) {
-            if (callbackDelay) {
-              this.textCallbackTimer = this.scene.time.delayedCall(callbackDelay, () => {
-                if (this.textCallbackTimer) {
-                  this.textCallbackTimer.destroy();
-                  this.textCallbackTimer = null;
-                }
-                originalCallback();
-              });
-            } else
-              originalCallback();
-          }
-        };
-      };
+      callback = () => this.showPrompt(originalCallback, callbackDelay);
     }
     if (delay) {
       this.clearText();
@@ -92,6 +58,40 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       if (callback)
         callback();
     }
+  }
+
+  showPrompt(callback: Function, callbackDelay: integer) {
+    const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
+    const textLinesCount = wrappedTextLines.length;
+    const lastTextLine = wrappedTextLines[wrappedTextLines.length - 1];
+    const lastLineTest = this.scene.add.text(0, 0, lastTextLine, { font: '96px emerald' });
+    lastLineTest.setScale(this.message.scale);
+    const lastLineWidth = lastLineTest.displayWidth;
+    lastLineTest.destroy();
+    if (this.prompt) {
+      this.prompt.setPosition(lastLineWidth + 2, (textLinesCount - 1) * 18 + 2);
+      this.prompt.play('prompt');
+    }
+    this.pendingPrompt = false;
+    this.awaitingActionInput = true;
+    this.onActionInput = () => {
+      if (this.prompt) {
+        this.prompt.anims.stop();
+        this.prompt.setVisible(false);
+      }
+      if (callback) {
+        if (callbackDelay) {
+          this.textCallbackTimer = this.scene.time.delayedCall(callbackDelay, () => {
+            if (this.textCallbackTimer) {
+              this.textCallbackTimer.destroy();
+              this.textCallbackTimer = null;
+            }
+            callback();
+          });
+        } else
+          callback();
+      }
+    };
   }
 
   clearText() {

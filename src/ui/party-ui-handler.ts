@@ -63,7 +63,6 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.partyMessageBox = partyMessageBox;
 
     const partyMessageText = addTextObject(this.scene, 8, 10, defaultMessage, TextStyle.WINDOW, { maxLines: 2 });
-    partyMessageText.setPositionRelative
     
     partyMessageText.setOrigin(0, 0);
     partyMessageBoxContainer.add(partyMessageText);
