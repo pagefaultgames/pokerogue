@@ -454,8 +454,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // Gen 1-4 formula
     // return ((this.pokemon.baseExp * this.level) / 7) * (1 / 1)
     // TODO: Update for exp share
-    const constantMultiplier = 4;
-    return Math.floor(((this.species.baseExp * this.level) / 5) * (1 / 1) * constantMultiplier * ((Math.round(Math.sqrt(2 * this.level + 10)) * Math.pow(2 * this.level + 10, 2)) / (Math.round(Math.sqrt(this.level + victorLevel + 10)) * Math.pow(this.level + victorLevel + 10, 2)))) + 1;
+    return Math.floor(((this.species.baseExp * this.level) / 5) * (1 / 1) * ((Math.round(Math.sqrt(2 * this.level + 10)) * Math.pow(2 * this.level + 10, 2)) / (Math.round(Math.sqrt(this.level + victorLevel + 10)) * Math.pow(this.level + victorLevel + 10, 2)))) + 1;
   }
 
   tint(color: number, alpha?: number, duration?: integer, ease?: string) {

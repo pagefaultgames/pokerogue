@@ -6,7 +6,7 @@ import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { interp } from "./temp_interpreter";
 import { Stat } from "./pokemon-stat";
-import { ExpBoosterModifier, getNewModifierType, PokemonBaseStatModifier, PokemonModifierType, regenerateModifierPoolThresholds } from "./modifier";
+import { ExpBoosterModifier, getNewModifierType, ModifierType, PokemonBaseStatModifier, PokemonModifierType, regenerateModifierPoolThresholds } from "./modifier";
 import PartyUiHandler from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getTintColor as getPokeballTintColor, PokeballType } from "./pokeball";
 import { pokemonLevelMoves } from "./pokemon-level-moves";
@@ -757,7 +757,9 @@ export class SelectModifierPhase extends BattlePhase {
     super.start();
 
     regenerateModifierPoolThresholds(this.scene.getParty());
-    const types = [ getNewModifierType(), getNewModifierType(), getNewModifierType() ];
+    const types: Array<ModifierType> = [];
+    for (let mt = 0; mt < 3; mt++)
+      types.push(getNewModifierType(this.scene.waveIndex));
 
     this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, (cursor: integer) => {
       if (cursor < 0) {

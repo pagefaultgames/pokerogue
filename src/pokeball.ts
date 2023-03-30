@@ -5,7 +5,8 @@ export enum PokeballType {
   POKEBALL,
   GREAT_BALL,
   ULTRA_BALL,
-  MASTER_BALL
+  MASTER_BALL,
+  LUXURY_BALL
 };
 
 export function getPokeballAtlasKey(type: PokeballType): string {
@@ -18,6 +19,8 @@ export function getPokeballAtlasKey(type: PokeballType): string {
       return 'ub';
     case PokeballType.MASTER_BALL:
       return 'mb';
+    case PokeballType.LUXURY_BALL:
+      return 'lb';
   }
 }
 
@@ -36,6 +39,9 @@ export function getPokeballName(type: PokeballType): string {
     case PokeballType.MASTER_BALL:
       ret = 'Master Ball';
       break;
+    case PokeballType.LUXURY_BALL:
+      ret = 'Luxury Ball';
+      break;
   }
   return toPokemonUpperCase(ret);
 }
@@ -50,6 +56,8 @@ export function getPokeballCatchMultiplier(type: PokeballType): number {
       return 2;
     case PokeballType.MASTER_BALL:
       return -1;
+    case PokeballType.LUXURY_BALL:
+      return 1;
   }
 }
 
@@ -63,6 +71,8 @@ export function getTintColor(type: PokeballType): number {
       return 0xe6cd31;
     case PokeballType.MASTER_BALL:
       return 0xa441bd;
+    case PokeballType.LUXURY_BALL:
+      return 0xffde6a;
   }
 }
 
