@@ -223,16 +223,19 @@ export abstract class ConsumablePokemonModifier extends PokemonModifier {
 
 export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
   private restorePercent: integer;
+  private fainted: boolean;
 
-  constructor(type: ModifierType, pokemonId: integer, restorePercent: integer, ) {
+  constructor(type: ModifierType, pokemonId: integer, restorePercent: integer, fainted?: boolean) {
     super(type, pokemonId);
 
     this.restorePercent = restorePercent;
+    this.fainted = !!fainted;
   }
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    pokemon.hp = Math.min(pokemon.hp + Math.max((this.restorePercent * 0.01) * pokemon.getMaxHp(), this.restorePercent), pokemon.getMaxHp());
+    if (!pokemon.hp === this.fainted)
+      pokemon.hp = Math.min(pokemon.hp + Math.max((this.restorePercent * 0.01) * pokemon.getMaxHp(), this.restorePercent), pokemon.getMaxHp());
 
     return true;
   }
@@ -294,6 +297,18 @@ export class ShinyRateBoosterModifier extends Modifier {
   }
 }
 
+export class ExtraModifierModifier extends Modifier {
+  constructor(type: ModifierType) {
+    super(type);
+  }
+
+  apply(args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value += this.stackCount;
+
+    return true;
+  }
+}
+
 export enum ModifierTier {
   COMMON,
   GREAT,
@@ -344,8 +359,9 @@ export abstract class PokemonModifierType extends ModifierType {
 export class PokemonHpRestoreModifierType extends PokemonModifierType {
   protected restorePercent: integer;
 
-  constructor(name: string, restorePercent: integer, iconImage?: string) {
-    super(name, `Restore ${restorePercent} HP or ${restorePercent}% HP for one POKéMON, whichever is higher`, (_type, args) => new PokemonHpRestoreModifier(this, args[0], this.restorePercent),
+  constructor(name: string, restorePercent: integer, newModifierFunc?: Function, iconImage?: string) {
+    super(name, `Restore ${restorePercent} HP or ${restorePercent}% HP for one POKéMON, whichever is higher`,
+      newModifierFunc || ((_type, args) => new PokemonHpRestoreModifier(this, args[0], this.restorePercent, false)),
     (pokemon: PlayerPokemon) => {
       if (pokemon.hp >= pokemon.getMaxHp())
         return PartyUiHandler.NoEffectMessage;
@@ -358,7 +374,7 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
 
 export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
   constructor(name: string, restorePercent: integer, iconImage?: string) {
-    super(name, restorePercent, iconImage);
+    super(name, restorePercent, (_type, args) => new PokemonHpRestoreModifier(this, args[0], this.restorePercent, true), iconImage);
 
     this.description = `Revive one POKéMON and restore ${restorePercent}% HP`;
     this.selectFilter = (pokemon: PlayerPokemon) => {
@@ -380,8 +396,14 @@ export class PokemonBaseStatBoosterModifierType extends PokemonModifierType {
 }
 
 class AllPokemonFullHpRestoreModifierType extends ModifierType {
+  constructor(name: string, description?: string, newModifierFunc?: Function, iconImage?: string) {
+    super(name, description || `Restore 100% HP for all POKéMON`, newModifierFunc || ((_type, _args) => new PokemonHpRestoreModifier(this, -1, 100, false)), iconImage);
+  }
+}
+
+class AllPokemonFullReviveModifierType extends AllPokemonFullHpRestoreModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name, `Restore 100% HP for all POKéMON`, (_type, _args) => new PokemonHpRestoreModifier(this, -1, 100), iconImage);
+    super(name, `Revives all fainted POKéMON, restoring 100% HP`, (_type, _args) => new PokemonHpRestoreModifier(this, -1, 100, true), iconImage);
   }
 }
 
@@ -445,10 +467,14 @@ const modifierPool = {
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new AddPokeballModifierType(PokeballType.MASTER_BALL, 1, 'mb'),
-    new WeightedModifierType(new ModifierType('SHINY CHARM', 'Dramatically increases the chance of a wild POkéMON being shiny', (type, _args) => new ShinyRateBoosterModifier(type)), 2)
+    new WeightedModifierType(new AllPokemonFullReviveModifierType('SACRED ASH'), (party: Array<PlayerPokemon>) => {
+      return party.filter(p => !p.hp).length >= Math.ceil(party.length / 2) ? 1 : 0;
+    }),
+    new WeightedModifierType(new ModifierType('SHINY CHARM', 'Dramatically increases the chance of a wild POKéMON being shiny', (type, _args) => new ShinyRateBoosterModifier(type)), 2)
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
   [ModifierTier.LUXURY]: [
-    new ExpBoosterModifierType('GOLDEN EGG', 100)
+    new ExpBoosterModifierType('GOLDEN EGG', 100),
+    new ModifierType(`GOLDEN ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra ITEM option at the end of every battle', (type, _args) => new ExtraModifierModifier(type), 'pb_gold')
   ].map(m => { m.setTier(ModifierTier.LUXURY); return m; }),
 };
 
@@ -483,7 +509,7 @@ export function regenerateModifierPoolThresholds(party: Array<PlayerPokemon>) {
   console.log(modifierPoolThresholds)
 }
 
-export function getNewModifierTypes(waveIndex: integer, count: integer): Array<ModifierType> {
+export function getModifierTypesForWave(waveIndex: integer, count: integer): Array<ModifierType> {
   if (waveIndex % 10 === 0)
     return modifierPool[ModifierTier.LUXURY];
   const ret = [];
