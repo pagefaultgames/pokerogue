@@ -239,17 +239,23 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
 }
 
 export class ExpBoosterModifier extends Modifier {
-  constructor(type: ModifierType) {
+  private boostMultiplier: integer;
+
+  constructor(type: ModifierType, boostPercent: integer) {
     super(type);
+
+    this.boostMultiplier = boostPercent * 0.01;
   }
 
   add(modifierBar: ModifierBar, modifiers: Modifier[]): boolean {
     for (let modifier of modifiers) {
       if (modifier instanceof ExpBoosterModifier) {
         const expModifier = modifier as ExpBoosterModifier;
-        expModifier.incrementStack();
-        modifierBar.updateModifier(expModifier, modifiers);
-        return true;
+        if (expModifier.boostMultiplier === this.boostMultiplier) {
+          expModifier.incrementStack();
+          modifierBar.updateModifier(expModifier, modifiers);
+          return true;
+        }
       }
     }
 
@@ -257,7 +263,7 @@ export class ExpBoosterModifier extends Modifier {
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = Math.floor((args[0] as Utils.IntegerHolder).value * (1 + (this.stackCount * 0.25)));
+    (args[0] as Utils.IntegerHolder).value = Math.floor((args[0] as Utils.IntegerHolder).value * (1 + (this.stackCount * (this.boostMultiplier))));
 
     return true;
   }
@@ -292,7 +298,8 @@ export enum ModifierTier {
   COMMON,
   GREAT,
   ULTRA,
-  MASTER
+  MASTER,
+  LUXURY
 };
 
 export class ModifierType {
@@ -378,6 +385,12 @@ class AllPokemonFullHpRestoreModifierType extends ModifierType {
   }
 }
 
+class ExpBoosterModifierType extends ModifierType {
+  constructor(name: string, boostPercent: integer, iconImage?: string) {
+    super(name, `Increases gain of EXP. Points by ${boostPercent}%`, () => new ExpBoosterModifier(this, boostPercent), iconImage);
+  }
+}
+
 class WeightedModifierType {
   public modifierType: ModifierType;
   public weight: integer | Function;
@@ -428,12 +441,15 @@ const modifierPool = {
       const thresholdPartyMemberCount = party.filter(p => p.getHpRatio() <= 0.5).length;
       return Math.ceil(thresholdPartyMemberCount / 3);
     }),
-    new ModifierType('LUCKY EGG', 'Increases gain of EXP. Points by 25%', (type, _args) => new ExpBoosterModifier(type))
+    new ExpBoosterModifierType('LUCKY EGG', 25)
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new AddPokeballModifierType(PokeballType.MASTER_BALL, 1, 'mb'),
     new WeightedModifierType(new ModifierType('SHINY CHARM', 'Dramatically increases the chance of a wild POkéMON being shiny', (type, _args) => new ShinyRateBoosterModifier(type)), 2)
-  ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
+  ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
+  [ModifierTier.LUXURY]: [
+    new ExpBoosterModifierType('GOLDEN EGG', 100)
+  ].map(m => { m.setTier(ModifierTier.LUXURY); return m; }),
 };
 
 let modifierPoolThresholds = {};
@@ -467,7 +483,16 @@ export function regenerateModifierPoolThresholds(party: Array<PlayerPokemon>) {
   console.log(modifierPoolThresholds)
 }
 
-export function getNewModifierType(): ModifierType {
+export function getNewModifierTypes(waveIndex: integer, count: integer): Array<ModifierType> {
+  if (waveIndex % 10 === 0)
+    return modifierPool[ModifierTier.LUXURY];
+  const ret = [];
+  for (let m = 0; m < count; m++)
+    ret.push(getNewModifierType());
+  return ret;
+}
+
+function getNewModifierType() {
   const tierValue = Utils.randInt(256);
   const tier = tierValue >= 52 ? ModifierTier.COMMON : tierValue >= 8 ? ModifierTier.GREAT : tierValue >= 1 ? ModifierTier.ULTRA : ModifierTier.MASTER;
   const thresholds = Object.keys(modifierPoolThresholds[tier]);

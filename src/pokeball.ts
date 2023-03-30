@@ -61,7 +61,7 @@ export function getPokeballCatchMultiplier(type: PokeballType): number {
   }
 }
 
-export function getTintColor(type: PokeballType): number {
+export function getPokeballTintColor(type: PokeballType): number {
   switch (type) {
     case PokeballType.POKEBALL:
       return 0xd52929;

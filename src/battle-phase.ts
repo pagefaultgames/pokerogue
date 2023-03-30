@@ -6,9 +6,9 @@ import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { interp } from "./temp_interpreter";
 import { Stat } from "./pokemon-stat";
-import { ExpBoosterModifier, getNewModifierType, ModifierType, PokemonBaseStatModifier, PokemonModifierType, regenerateModifierPoolThresholds } from "./modifier";
+import { ExpBoosterModifier, getNewModifierType, getNewModifierTypes as getModifierTypesForWave, ModifierType, PokemonBaseStatModifier, PokemonModifierType, regenerateModifierPoolThresholds } from "./modifier";
 import PartyUiHandler from "./ui/party-ui-handler";
-import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getTintColor as getPokeballTintColor, PokeballType } from "./pokeball";
+import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor as getPokeballTintColor, PokeballType } from "./pokeball";
 import { pokemonLevelMoves } from "./pokemon-level-moves";
 
 export class BattlePhase {
@@ -339,6 +339,8 @@ abstract class MovePhase extends BattlePhase {
   }
 
   start() {
+    super.start();
+
     if (!this.canMove()) {
       this.end();
       return;
@@ -381,6 +383,8 @@ abstract class MoveEffectPhase extends PokemonPhase {
   }
 
   start() {
+    super.start();
+
     this.getTargetPokemon().apply(this.getUserPokemon(), this.move, () => this.end());
     if (this.getTargetPokemon().hp <= 0) {
       this.scene.pushPhase(new FaintPhase(this.scene, !this.player));
@@ -757,9 +761,7 @@ export class SelectModifierPhase extends BattlePhase {
     super.start();
 
     regenerateModifierPoolThresholds(this.scene.getParty());
-    const types: Array<ModifierType> = [];
-    for (let mt = 0; mt < 3; mt++)
-      types.push(getNewModifierType(this.scene.waveIndex));
+    const types: Array<ModifierType> = getModifierTypesForWave(this.scene.waveIndex, 3);
 
     this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, (cursor: integer) => {
       if (cursor < 0) {

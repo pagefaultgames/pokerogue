@@ -77,7 +77,7 @@ export function initAutoPlay(speed: number) {
         }
 
         if (bestPartyMemberIndex === -1) {
-            let highestHpValue = 0;
+            let highestHpValue = -1;
             for (let p = 0; p < party.length; p++) {
                 const pokemon = party[p];
                 if (pokemon.hp > highestHpValue) {
@@ -135,10 +135,10 @@ export function initAutoPlay(speed: number) {
             console.log('Switching to ', Species[thisArg.getParty()[bestPartyMemberIndex].species.speciesId]);
             nextPartyMemberIndex = bestPartyMemberIndex;
             commandUiHandler.setCursor(2);
-            this.processInput(keyCodes.Z);
+            thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
         } else {
             commandUiHandler.setCursor(0);
-            this.processInput(keyCodes.Z);
+            thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
         }
     };
 
@@ -150,7 +150,7 @@ export function initAutoPlay(speed: number) {
         thisArg.time.delayedCall(20, () => {
             const nextMove = playerPokemon.getNextMove() as PokemonMove;
             fightUiHandler.setCursor(playerPokemon.moveset.indexOf(nextMove));
-            this.processInput(keyCodes.Z);
+            thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
         });
     };
 
@@ -174,7 +174,7 @@ export function initAutoPlay(speed: number) {
             if (bestPartyMemberIndex)
                 nextPartyMemberIndex = bestPartyMemberIndex;
             switchCheckUiHandler.setCursor(bestPartyMemberIndex ? 1 : 0);
-            this.processInput(keyCodes.Z);
+            thisArg.time.delayedCall(20, () =>  this.processInput(keyCodes.Z));
         });
     }
 
@@ -210,7 +210,7 @@ export function initAutoPlay(speed: number) {
                         return true;
                     }
                 } else if (criticalHpPartyMemberIndex > -1){
-                    nextPartyMemberIndex = faintedPartyMemberIndex;
+                    nextPartyMemberIndex = criticalHpPartyMemberIndex;
                     return true;
                 }
             }

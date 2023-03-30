@@ -1,4 +1,3 @@
-import { SwitchPhase, SwitchSummonPhase } from "../battle-phase";
 import BattleScene from "../battle-scene";
 import { ModifierTier, ModifierType } from "../modifier";
 import { getPokeballAtlasKey, PokeballType } from "../pokeball";
@@ -279,7 +278,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   getPbAtlasKey() {
-    return getPokeballAtlasKey(this.modifierType.tier as unknown as PokeballType);
+    return getPokeballAtlasKey(this.modifierType.tier as integer as PokeballType);
   }
 
   getTextTint(): integer {
@@ -292,6 +291,8 @@ class ModifierOption extends Phaser.GameObjects.Container {
         return 0xf8d038
       case ModifierTier.MASTER:
         return 0xe020c0;
+      case ModifierTier.LUXURY:
+        return 0xe64a18;
     }
   }
 }
