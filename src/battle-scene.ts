@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Biome, BiomeArena } from './biome';
 import UI from './ui/ui';
-import { BattlePhase, EncounterPhase, SummonPhase, CommandPhase } from './battle-phase';
+import { BattlePhase, EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase } from './battle-phase';
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
@@ -13,18 +13,21 @@ import { Battle } from './battle';
 
 export default class BattleScene extends Phaser.Scene {
 	private auto: boolean;
-	private autoSpeed: integer = 3;
+	private autoSpeed: integer = 10;
 
 	private phaseQueue: Array<BattlePhase>;
 	private phaseQueuePrepend: Array<BattlePhase>;
 	private currentPhase: BattlePhase;
-	private arena: BiomeArena;
 	public field: Phaser.GameObjects.Container;
 	public fieldUI: Phaser.GameObjects.Container;
 	public arenaBg: Phaser.GameObjects.Image;
+	public arenaBgTransition: Phaser.GameObjects.Image;
 	public arenaPlayer: Phaser.GameObjects.Image;
+	public arenaPlayerTransition: Phaser.GameObjects.Image;
 	public arenaEnemy: Phaser.GameObjects.Image;
-	public arenaEnemy2: Phaser.GameObjects.Image;
+	public arenaEnemyTransition: Phaser.GameObjects.Image;
+	public arenaNextEnemy: Phaser.GameObjects.Image;
+	public arena: BiomeArena;
 	public trainer: Phaser.GameObjects.Sprite;
 	public currentBattle: Battle;
 	public pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).map(t => [ t, 0 ]));
@@ -176,22 +179,24 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.field = field;
 
-		// Init arena
-		const arenas = Utils.getEnumValues(Biome).map(at => new BiomeArena(this, at, Biome[at].toLowerCase()));
-		const arena = arenas[Utils.randInt(11)];
+		this.newBiome();
 
-		this.arena = arena;
+		const biomeKey = this.arena.getBiomeKey();
+		this.arenaBg = this.add.sprite(0, 0, `${biomeKey}_bg`);
+		this.arenaBgTransition = this.add.sprite(0, 0, `${biomeKey}_bg`);
+		this.arenaPlayer = this.add.sprite(340, 20, `${biomeKey}_a`);
+		this.arenaPlayerTransition = this.add.sprite(40, 20, `${biomeKey}_a`);
+		this.arenaEnemy = this.add.sprite(-240, 13, `${biomeKey}_b`);
+		this.arenaNextEnemy = this.add.sprite(-240, 13, `${biomeKey}_b`);
 
-		this.arenaBg = this.add.image(0, 0, `${Biome[arena.biomeType].toLowerCase()}_bg`);
-		this.arenaPlayer = this.add.image(340, 20, `${Biome[arena.biomeType].toLowerCase()}_a`);
-		this.arenaEnemy = this.add.image(-240, 13, `${Biome[arena.biomeType].toLowerCase()}_b`);
-		this.arenaEnemy2 = this.add.image(-240, 13, `${Biome[arena.biomeType].toLowerCase()}_b`);
+		this.arenaBgTransition.setVisible(false);
+		this.arenaPlayerTransition.setVisible(false);
 
-		[this.arenaBg, this.arenaPlayer, this.arenaEnemy, this.arenaEnemy2].forEach(a => {
+		[this.arenaBg, this.arenaBgTransition, this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy].forEach(a => {
 			a.setOrigin(0, 0);
 			field.add(a);
 		});
-		//arena.playBgm();
+		this.arena.playBgm();
 
 		const fieldUI = this.add.container(0, this.game.canvas.height);
 		fieldUI.setScale(6);
@@ -222,19 +227,7 @@ export default class BattleScene extends Phaser.Scene {
 			this.party.push(playerPokemon);
 		}
 		
-		const enemySpecies = arena.randomSpecies(1);
-		console.log(enemySpecies.name);
-		const enemyPokemon = new EnemyPokemon(this, enemySpecies, this.getLevelForNextWave());
-		loadPokemonAssets.push(enemyPokemon.loadAssets());
-
-		this.add.existing(enemyPokemon);
-
-		this.newBattle(enemyPokemon);
-
-		field.add(enemyPokemon);
-		
 		console.log(this.getPlayerPokemon().species.name, this.getPlayerPokemon().species.speciesId, this.getPlayerPokemon().stats);
-		console.log(enemyPokemon.species.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
 
 		const trainerPbFrameNames = this.anims.generateFrameNames('trainer_m_pb', { zeroPad: 2, start: 1, end: 12 });
 		this.anims.create({
@@ -276,7 +269,7 @@ export default class BattleScene extends Phaser.Scene {
 			if (this.auto)
 				initAutoPlay.apply(this, [ this.autoSpeed ]);
 
-			this.phaseQueue.push(new EncounterPhase(this), new SummonPhase(this));
+			this.newBattle();
 
 			this.shiftPhase();
 		});
@@ -299,27 +292,36 @@ export default class BattleScene extends Phaser.Scene {
 		return this.currentBattle.enemyPokemon;
 	}
 
-	newBattle(enemyPokemon: EnemyPokemon): Battle {
-		this.currentBattle = new Battle((this.currentBattle?.waveIndex || 0) + 1, enemyPokemon);
+	newBattle(): Battle {
+		if (this.currentBattle) {
+			console.log(this.getPlayerPokemon(), this.getParty().map(p => p.name), this.getPlayerPokemon().id)
+
+			this.getEnemyPokemon().destroy();
+			if (this.currentBattle.waveIndex % 10)
+				this.unshiftPhase(new NextEncounterPhase(this));
+			else {
+				this.unshiftPhase(new SwitchBiomePhase(this));
+				this.unshiftPhase(new NewBiomeEncounterPhase(this));
+			}
+		} else {
+			this.pushPhase(new EncounterPhase(this));
+			this.pushPhase(new SummonPhase(this));
+		}
+
+		this.currentBattle = new Battle((this.currentBattle?.waveIndex || 0) + 1);
 		return this.currentBattle;
 	}
 
-	randomSpecies(fromArenaPool?: boolean): PokemonSpecies {
-		return fromArenaPool
-			? this.arena.randomSpecies(1)
-			: allSpecies[(Utils.randInt(allSpecies.length)) - 1];
+	newBiome(): BiomeArena {
+		const biome = Utils.randInt(20) as Biome;
+		this.arena = new BiomeArena(this, biome, Biome[biome].toLowerCase());
+		return this.arena;
 	}
 
-	getLevelForNextWave() {
-		const waveIndex = (this.currentBattle?.waveIndex || 0) + 1;
-		let averageLevel = 1 + waveIndex * 0.25;
-
-		if (waveIndex % 10 === 0)
-			return Math.floor(averageLevel * 1.25);
-
-		const deviation = 10 / waveIndex;
-
-		return Math.max(Math.round(averageLevel + Utils.randGauss(deviation)), 1);
+	randomSpecies(level: integer, fromArenaPool?: boolean): PokemonSpecies {
+		return fromArenaPool
+			? this.arena.randomSpecies(1, level)
+			: allSpecies[(Utils.randInt(allSpecies.length)) - 1];
 	}
 
 	checkInput(): boolean {
@@ -346,10 +348,8 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	playBgm(bgmName: string): void {
-		if (this.bgm) {
+		if (this.bgm && this.bgm.isPlaying)
 			this.bgm.stop();
-			this.bgm.destroy();
-		}
 		this.bgm = this.sound.add(bgmName, { loop: true });
 		this.bgm.play();
 	}

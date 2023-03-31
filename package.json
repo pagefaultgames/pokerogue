@@ -10,9 +10,11 @@
 	},
 	"devDependencies": {
 		"eslint": "^8.25.0",
+		"json-beautify": "^1.1.1",
 		"vite": "^3.1.0"
 	},
 	"dependencies": {
-		"phaser": "^3.55.2"
+		"phaser": "^3.55.2",
+		"phaser3-rex-plugins": "^1.1.84"
 	}
 }

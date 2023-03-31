@@ -1,21 +1,33 @@
 import { EnemyPokemon, PlayerPokemon } from "./pokemon";
+import * as Utils from "./utils";
 
 export class Battle {
     public waveIndex: integer;
+    public enemyLevel: integer;
     public enemyPokemon: EnemyPokemon;
     public playerParticipantIds: Set<integer> = new Set<integer>();
 
-    constructor(waveIndex: integer, enemyPokemon: EnemyPokemon) {
+    constructor(waveIndex: integer) {
         this.waveIndex = waveIndex;
-        this.enemyPokemon = enemyPokemon;
+        this.enemyLevel = this.getLevelForWave();
     }
 
-    addParticipant(playerPokemon: PlayerPokemon) {
-        console.log('add participant', playerPokemon.name)
+    private getLevelForWave(): number {
+        let averageLevel = 1 + this.waveIndex * 0.5;
+
+        if (!(this.waveIndex % 10))
+            return Math.floor(averageLevel * 1.25);
+
+        const deviation = 10 / this.waveIndex;
+
+        return Math.max(Math.round(averageLevel + Utils.randGauss(deviation)), 1);
+    }
+
+    addParticipant(playerPokemon: PlayerPokemon): void {
         this.playerParticipantIds.add(playerPokemon.id);
     }
 
-    removeFaintedParticipant(playerPokemon: PlayerPokemon) {
+    removeFaintedParticipant(playerPokemon: PlayerPokemon): void {
         this.playerParticipantIds.delete(playerPokemon.id);
     }
 }

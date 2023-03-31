@@ -35,19 +35,36 @@ export class EncounterPhase extends BattlePhase {
   start() {
     super.start();
 
+    const battle = this.scene.currentBattle;
+    const enemySpecies = this.scene.arena.randomSpecies(1, battle.enemyLevel);
+		battle.enemyPokemon = new EnemyPokemon(this.scene, enemySpecies, battle.enemyLevel);
     const enemyPokemon = this.scene.getEnemyPokemon();
-    enemyPokemon.tint(0, 0.5);
+
+    console.log(enemyPokemon.species.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
+
+    enemyPokemon.loadAssets().then(() => {
+      this.scene.field.add(enemyPokemon);
+      if (this.scene.getPlayerPokemon().visible)
+        this.scene.field.moveBelow(enemyPokemon, this.scene.getPlayerPokemon());
+      enemyPokemon.tint(0, 0.5);
+      this.doEncounter();
+    });
+    this.scene.load.start();
+  }
+
+  doEncounter() {
+    const enemyPokemon = this.scene.getEnemyPokemon();
     this.scene.tweens.add({
-			targets: [ this.scene.arenaEnemy, enemyPokemon, this.scene.arenaPlayer, this.scene.trainer ],
-			x: (_target, _key, value, targetIndex: integer) => targetIndex < 2 ? value + 300 : value - 300,
-			duration: 2000,
-			onComplete: () => {
+      targets: [ this.scene.arenaEnemy, enemyPokemon, this.scene.arenaPlayer, this.scene.trainer ],
+      x: (_target, _key, value, targetIndex: integer) => targetIndex < 2 ? value + 300 : value - 300,
+      duration: 2000,
+      onComplete: () => {
         enemyPokemon.untint(100, 'Sine.easeOut');
         enemyPokemon.cry();
         enemyPokemon.showInfo();
         this.scene.ui.showText(`A wild ${enemyPokemon.name} appeared!`, null, () => this.end(), 1500);
       }
-		});
+    });
   }
 
   end() {
@@ -60,38 +77,26 @@ export class EncounterPhase extends BattlePhase {
   }
 }
 
-export class NextEncounterPhase extends BattlePhase {
+export class NextEncounterPhase extends EncounterPhase {
   constructor(scene: BattleScene) {
     super(scene);
   }
 
-  start() {
-    super.start();
-
-    console.log(this.scene.getPlayerPokemon(), this.scene.getParty().map(p => p.name), this.scene.getPlayerPokemon().id)
-
-    this.scene.getEnemyPokemon().destroy();
-    const newEnemyPokemon = new EnemyPokemon(this.scene, this.scene.randomSpecies(true), this.scene.getLevelForNextWave());
-    newEnemyPokemon.loadAssets().then(() => {
-      this.scene.newBattle(newEnemyPokemon);
-      this.scene.field.add(newEnemyPokemon);
-      this.scene.field.moveBelow(newEnemyPokemon, this.scene.getPlayerPokemon());
-      newEnemyPokemon.tint(0, 0.5);
-      this.scene.tweens.add({
-        targets: [ this.scene.arenaEnemy, this.scene.arenaEnemy2, newEnemyPokemon ],
-        x: '+=300',
-        duration: 2000,
-        onComplete: () => {
-          this.scene.arenaEnemy.setX(this.scene.arenaEnemy2.x);
-          this.scene.arenaEnemy2.setX(this.scene.arenaEnemy2.x - 300);
-          newEnemyPokemon.untint(100, 'Sine.easeOut');
-          newEnemyPokemon.cry();
-          newEnemyPokemon.showInfo();
-          this.scene.ui.showText(`A wild ${newEnemyPokemon.name} appeared!`, null, () => this.end(), 1500);
-        }
-      });
+  doEncounter(): void {
+    const enemyPokemon = this.scene.getEnemyPokemon();
+    this.scene.tweens.add({
+      targets: [ this.scene.arenaEnemy, this.scene.arenaNextEnemy, enemyPokemon ],
+      x: '+=300',
+      duration: 2000,
+      onComplete: () => {
+        this.scene.arenaEnemy.setX(this.scene.arenaNextEnemy.x);
+        this.scene.arenaNextEnemy.setX(this.scene.arenaNextEnemy.x - 300);
+        enemyPokemon.untint(100, 'Sine.easeOut');
+        enemyPokemon.cry();
+        enemyPokemon.showInfo();
+        this.scene.ui.showText(`A wild ${enemyPokemon.name} appeared!`, null, () => this.end(), 1500);
+      }
     });
-    this.scene.load.start();
   }
 
   end() {
@@ -101,6 +106,81 @@ export class NextEncounterPhase extends BattlePhase {
     this.scene.unshiftPhase(new CheckSwitchPhase(this.scene));
 
     super.end();
+  }
+}
+
+export class NewBiomeEncounterPhase extends NextEncounterPhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  doEncounter(): void {
+    const enemyPokemon = this.scene.getEnemyPokemon();
+    this.scene.tweens.add({
+      targets: [ this.scene.arenaEnemy, enemyPokemon ],
+      x: (_target, _key, value, targetIndex: integer) => targetIndex < 2 ? value + 300 : value - 300,
+      duration: 2000,
+      onComplete: () => {
+        enemyPokemon.untint(100, 'Sine.easeOut');
+        enemyPokemon.cry();
+        enemyPokemon.showInfo();
+        this.scene.ui.showText(`A wild ${enemyPokemon.name} appeared!`, null, () => this.end(), 1500);
+      }
+    });
+  }
+}
+
+export class SwitchBiomePhase extends BattlePhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    super.start();
+
+    this.scene.arena.fadeOutBgm(2000);
+
+    this.scene.tweens.add({
+      targets: this.scene.arenaEnemy,
+      x: '+=300',
+      duration: 2000,
+      onComplete: () => {
+        this.scene.arenaEnemy.setX(this.scene.arenaEnemy.x - 600);
+
+        this.scene.newBiome();
+
+        const biomeKey = this.scene.arena.getBiomeKey();
+        const bgTexture = `${biomeKey}_bg`;
+        const playerTexture = `${biomeKey}_a`;
+        const enemyTexture = `${biomeKey}_b`;
+        this.scene.arenaBgTransition.setTexture(bgTexture)
+        this.scene.arenaBgTransition.setAlpha(0);
+        this.scene.arenaBgTransition.setVisible(true);
+        this.scene.arenaPlayerTransition.setTexture(playerTexture)
+        this.scene.arenaPlayerTransition.setAlpha(0);
+        this.scene.arenaPlayerTransition.setVisible(true);
+
+        this.scene.time.delayedCall(1000, () => this.scene.arena.playBgm());
+
+        this.scene.tweens.add({
+          targets: [ this.scene.arenaBgTransition, this.scene.arenaPlayerTransition ],
+          duration: 1000,
+          delay: 1000,
+          ease: 'Sine.easeInOut',
+          alpha: 1,
+          onComplete: () => {
+            this.scene.arenaBg.setTexture(bgTexture);
+            this.scene.arenaPlayer.setTexture(playerTexture);
+            this.scene.arenaEnemy.setTexture(enemyTexture);
+            this.scene.arenaNextEnemy.setTexture(enemyTexture);
+            this.scene.arenaBgTransition.setVisible(false);
+            this.scene.arenaPlayerTransition.setVisible(false);
+
+            this.end();
+          }
+        })
+      }
+    });
   }
 }
 
@@ -536,7 +616,7 @@ export class VictoryPhase extends PokemonPhase {
       }
     }
     this.scene.unshiftPhase(new SelectModifierPhase(this.scene));
-    this.scene.unshiftPhase(new NextEncounterPhase(this.scene));
+    this.scene.newBattle();
 
     this.end();
   }
@@ -587,7 +667,7 @@ export class ExpPhase extends PartyMemberPokemonPhase {
       pokemon.addExp(exp.value);
       newLevel = pokemon.level;
       if (newLevel > lastLevel)
-        this.scene.unshiftPhase(new LevelUpPhase(this.scene, newLevel));
+        this.scene.unshiftPhase(new LevelUpPhase(this.scene, this.partyMemberIndex, newLevel));
       pokemon.updateInfo(() => this.end());
     }, null, true);
   }
@@ -595,11 +675,11 @@ export class ExpPhase extends PartyMemberPokemonPhase {
 
 }
 
-export class LevelUpPhase extends PokemonPhase {
+export class LevelUpPhase extends PartyMemberPokemonPhase {
   private level: integer;
 
-  constructor(scene: BattleScene, level: integer) {
-    super(scene, true);
+  constructor(scene: BattleScene, partyMemberIndex: integer, level: integer) {
+    super(scene, partyMemberIndex);
 
     this.level = level;
   }
@@ -622,18 +702,18 @@ export class LevelUpPhase extends PokemonPhase {
           continue;
         else if (level > this.level)
           break;
-        this.scene.unshiftPhase(new LearnMovePhase(this.scene, lm[1]));
+        this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm[1]));
       }
     }
     this.scene.time.delayedCall(1500, () => this.scene.resumeBgm());
   }
 }
 
-export class LearnMovePhase extends PokemonPhase {
+export class LearnMovePhase extends PartyMemberPokemonPhase {
   private moveId: Move;
 
-  constructor(scene: BattleScene, moveId: Move) {
-    super(scene, true);
+  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Move) {
+    super(scene, partyMemberIndex);
 
     this.moveId = moveId;
   }
@@ -813,7 +893,7 @@ export class SelectModifierPhase extends BattlePhase {
     regenerateModifierPoolThresholds(this.scene.getParty());
     const modifierCount = new Utils.IntegerHolder(3);
     this.scene.applyModifiers(ExtraModifierModifier, modifierCount);
-    const types: Array<ModifierType> = getModifierTypesForWave(this.scene.waveIndex, modifierCount.value);
+    const types: Array<ModifierType> = getModifierTypesForWave(this.scene.currentBattle.waveIndex, modifierCount.value);
 
     this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, (cursor: integer) => {
       if (cursor < 0) {
@@ -828,7 +908,7 @@ export class SelectModifierPhase extends BattlePhase {
         this.scene.ui.setModeWithoutClear(Mode.PARTY, false, (slotIndex: integer) => {
           if (slotIndex < 6) {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT);
-            this.scene.addModifier(types[cursor].newModifier(this.scene.getParty()[slotIndex].id));
+            this.scene.addModifier(types[cursor].newModifier(this.scene.getParty()[slotIndex]));
             this.scene.ui.setMode(Mode.MESSAGE);
             super.end();
           } else

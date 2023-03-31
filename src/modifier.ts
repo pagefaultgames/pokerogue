@@ -172,7 +172,6 @@ export class PokemonBaseStatModifier extends PokemonModifier {
     for (let modifier of modifiers) {
       if (modifier instanceof PokemonBaseStatModifier) {
         const pokemonStatModifier = modifier as PokemonBaseStatModifier;
-        console.log(pokemonStatModifier.stat, this.stat, pokemonStatModifier.pokemonId === this.pokemonId && pokemonStatModifier.stat === this.stat)
         if (pokemonStatModifier.pokemonId === this.pokemonId && pokemonStatModifier.stat === this.stat) {
           pokemonStatModifier.incrementStack();
           modifierBar.updateModifier(pokemonStatModifier, modifiers);
