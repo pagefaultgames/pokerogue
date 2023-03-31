@@ -592,7 +592,6 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.GOLEM, Type.ROCK, Type.GROUND, [
-      [ Biome.MOUNTAIN, PoolTier.BOSS ],
       [ Biome.LAND, PoolTier.BOSS ]
     ]
   ],
@@ -835,13 +834,13 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.PINSIR, Type.BUG, -1, [
-      [ Biome.GRASS, PoolTier.SUPER_RARE ],
+      [ Biome.GRASS, PoolTier.RARE ],
       [ Biome.FOREST, PoolTier.UNCOMMON ],
       [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.TAUROS, Type.NORMAL, -1, [
-      [ Biome.GRASS, PoolTier.SUPER_RARE ],
+      [ Biome.GRASS, PoolTier.RARE ],
       [ Biome.MEADOW, PoolTier.UNCOMMON ],
       [ Biome.MEADOW, PoolTier.BOSS ]
     ]
@@ -948,7 +947,8 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.MEW, Type.PSYCHIC, -1, [
-      [ Biome.SPACE, PoolTier.BOSS_LEGENDARY ]
+      [ Biome.SPACE, PoolTier.ULTRA_RARE ]
+      [ Biome.SPACE, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.CHIKORITA, Type.GRASS, -1, [
@@ -1133,7 +1133,6 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.SUNFLORA, Type.GRASS, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
       [ Biome.GRASS, PoolTier.BOSS ]
     ]
   ],
@@ -1373,14 +1372,17 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.RAIKOU, Type.ELECTRIC, -1, [
+      [ Biome.POWER_PLANT, PoolTier.ULTRA_RARE ]
       [ Biome.POWER_PLANT, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.ENTEI, Type.FIRE, -1, [
+      [ Biome.VOLCANO, PoolTier.ULTRA_RARE ]
       [ Biome.VOLCANO, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.SUICUNE, Type.WATER, -1, [
+      [ Biome.WATER, PoolTier.ULTRA_RARE ]
       [ Biome.WATER, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
@@ -1395,7 +1397,6 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.TYRANITAR, Type.ROCK, Type.DARK, [
-      [ Biome.MOUNTAIN, PoolTier.BOSS_RARE ],
       [ Biome.WASTELAND, PoolTier.BOSS ]
     ]
   ],
@@ -1408,7 +1409,8 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.CELEBI, Type.PSYCHIC, Type.GRASS, [
-      [ Biome.FOREST, PoolTier.BOSS_LEGENDARY ]
+      [ Biome.FOREST, PoolTier.ULTRA_RARE ]
+      [ Biome.FOREST, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.TREECKO, Type.GRASS, -1, [
@@ -1447,7 +1449,7 @@ const pokemonBiomes = [
   ],
   [ Species.SWAMPERT, Type.WATER, Type.GROUND, [
       [ Biome.SWAMP, PoolTier.UNCOMMON ],
-      [ Biome.SWAMP, PoolTier.BOSS_RARE ]
+      [ Biome.SWAMP, PoolTier.BOSS ]
     ]
   ],
   [ Species.POOCHYENA, Type.DARK, -1, [
@@ -2018,23 +2020,28 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.REGIROCK, Type.ROCK, -1, [
+      [ Biome.DESERT, PoolTier.ULTRA_RARE ]
       [ Biome.DESERT, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.REGICE, Type.ICE, -1, [
+      [ Biome.ICE_CAVE, PoolTier.ULTRA_RARE ]
       [ Biome.ICE_CAVE, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.REGISTEEL, Type.STEEL, -1, [
+      [ Biome.MOUNTAIN, PoolTier.ULTRA_RARE ]
       [ Biome.MOUNTAIN, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.LATIAS, Type.DRAGON, Type.PSYCHIC, [
-      [ Biome.GRASS, PoolTier.ULTRA_RARE ]
+      [ Biome.MEADOW, PoolTier.ULTRA_RARE ],
+      [ Biome.MEADOW, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.LATIOS, Type.DRAGON, Type.PSYCHIC, [
-      [ Biome.GRASS, PoolTier.ULTRA_RARE ]
+      [ Biome.MEADOW, PoolTier.ULTRA_RARE ],
+      [ Biome.MEADOW, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.KYOGRE, Type.WATER, -1, [
@@ -2050,11 +2057,13 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.JIRACHI, Type.STEEL, Type.PSYCHIC, [
-      [ Biome.SPACE, PoolTier.BOSS_LEGENDARY ]
+      [ Biome.SPACE, PoolTier.ULTRA_RARE ],
+      [ Biome.SPACE, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.DEOXYS, Type.PSYCHIC, -1, [
-      [ Biome.SPACE, PoolTier.BOSS_LEGENDARY ]
+      [ Biome.SPACE, PoolTier.ULTRA_RARE ],
+      [ Biome.SPACE, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.TURTWIG, Type.GRASS, -1, [
@@ -2109,7 +2118,8 @@ const pokemonBiomes = [
   ],
   [ Species.STARAPTOR, Type.NORMAL, Type.FLYING, [
       [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.MOUNTAIN, PoolTier.COMMON ],
+      [ Biome.MOUNTAIN, PoolTier.BOSS ]
     ]
   ],
   [ Species.BIDOOF, Type.NORMAL, -1, [
@@ -2118,7 +2128,8 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.BIBAREL, Type.NORMAL, Type.WATER, [
-      [ Biome.GRASS, PoolTier.COMMON ]
+      [ Biome.GRASS, PoolTier.COMMON ],
+      [ Biome.GRASS, PoolTier.BOSS ]
     ]
   ],
   [ Species.KRICKETOT, Type.BUG, -1, [
@@ -2129,7 +2140,8 @@ const pokemonBiomes = [
   ],
   [ Species.KRICKETUNE, Type.BUG, -1, [
       [ Biome.GRASS, PoolTier.UNCOMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.COMMON ],
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.SHINX, Type.ELECTRIC, -1, [
@@ -2144,7 +2156,8 @@ const pokemonBiomes = [
   ],
   [ Species.LUXRAY, Type.ELECTRIC, -1, [
       [ Biome.GRASS, PoolTier.RARE ],
-      [ Biome.POWER_PLANT, PoolTier.COMMON ]
+      [ Biome.POWER_PLANT, PoolTier.COMMON ],
+      [ Biome.POWER_PLANT, PoolTier.BOSS ]
     ]
   ],
   [ Species.BUDEW, Type.GRASS, Type.POISON, [
@@ -2153,7 +2166,8 @@ const pokemonBiomes = [
   ],
   [ Species.ROSERADE, Type.GRASS, Type.POISON, [
       [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.UNCOMMON ]
+      [ Biome.FOREST, PoolTier.UNCOMMON ],
+      [ Biome.GRASS, PoolTier.BOSS ],
     ]
   ],
   [ Species.CRANIDOS, Type.ROCK, -1, [
@@ -2161,7 +2175,8 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.RAMPARDOS, Type.ROCK, -1, [
-      [ Biome.MOUNTAIN, PoolTier.SUPER_RARE ]
+      [ Biome.MOUNTAIN, PoolTier.SUPER_RARE ],
+      [ Biome.MOUNTAIN, PoolTier.BOSS_RARE ]
     ]
   ],
   [ Species.SHIELDON, Type.ROCK, Type.STEEL, [
@@ -2169,7 +2184,8 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.BASTIODON, Type.ROCK, Type.STEEL, [
-      [ Biome.MOUNTAIN, PoolTier.SUPER_RARE ]
+      [ Biome.MOUNTAIN, PoolTier.SUPER_RARE ],
+      [ Biome.MOUNTAIN, PoolTier.BOSS_RARE ]
     ]
   ],
   [ Species.BURMY, Type.BUG, -1, [
@@ -2177,11 +2193,13 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.WORMADAM, Type.BUG, Type.GRASS, [
-      [ Biome.FOREST, PoolTier.UNCOMMON ]
+      [ Biome.FOREST, PoolTier.UNCOMMON ],
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.MOTHIM, Type.BUG, Type.FLYING, [
-      [ Biome.FOREST, PoolTier.UNCOMMON ]
+      [ Biome.FOREST, PoolTier.UNCOMMON ],
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.COMBEE, Type.BUG, Type.FLYING, [
@@ -2192,7 +2210,8 @@ const pokemonBiomes = [
   ],
   [ Species.VESPIQUEN, Type.BUG, Type.FLYING, [
       [ Biome.GRASS, PoolTier.UNCOMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.COMMON ],
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.PACHIRISU, Type.ELECTRIC, -1, [
@@ -2205,7 +2224,8 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.FLOATZEL, Type.WATER, -1, [
-      [ Biome.WATER, PoolTier.COMMON ]
+      [ Biome.WATER, PoolTier.COMMON ],
+      [ Biome.WATER, PoolTier.BOSS ]
     ]
   ],
   [ Species.CHERUBI, Type.GRASS, -1, [
@@ -2217,7 +2237,8 @@ const pokemonBiomes = [
   [ Species.CHERRIM, Type.GRASS, -1, [
       [ Biome.PLAINS, PoolTier.UNCOMMON ],
       [ Biome.GRASS, PoolTier.UNCOMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.COMMON ],
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.SHELLOS, Type.WATER, -1, [
@@ -2227,11 +2248,12 @@ const pokemonBiomes = [
   ],
   [ Species.GASTRODON, Type.WATER, Type.GROUND, [
       [ Biome.SWAMP, PoolTier.COMMON ],
+      [ Biome.SWAMP, PoolTier.BOSS ],
       [ Biome.SEA, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.AMBIPOM, Type.NORMAL, -1, [
-      [ Biome.FOREST, PoolTier.UNCOMMON ]
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.DRIFLOON, Type.GHOST, Type.FLYING, [
@@ -2239,7 +2261,8 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.DRIFBLIM, Type.GHOST, Type.FLYING, [
-      [ Biome.GRAVEYARD, PoolTier.UNCOMMON ]
+      [ Biome.GRAVEYARD, PoolTier.UNCOMMON ],
+      [ Biome.GRAVEYARD, PoolTier.BOSS ]
     ]
   ],
   [ Species.BUNEARY, Type.NORMAL, -1, [
@@ -2247,16 +2270,16 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.LOPUNNY, Type.NORMAL, -1, [
-      [ Biome.GRASS, PoolTier.RARE ]
+      [ Biome.GRASS, PoolTier.RARE ],
+      [ Biome.GRASS, PoolTier.BOSS ]
     ]
   ],
   [ Species.MISMAGIUS, Type.GHOST, -1, [
-      [ Biome.GRAVEYARD, PoolTier.UNCOMMON ]
+      [ Biome.GRAVEYARD, PoolTier.BOSS ]
     ]
   ],
   [ Species.HONCHKROW, Type.DARK, Type.FLYING, [
-      [ Biome.MOUNTAIN, PoolTier.RARE ],
-      [ Biome.ABYSS, PoolTier.UNCOMMON ]
+      [ Biome.ABYSS, PoolTier.BOSS ]
     ]
   ],
   [ Species.GLAMEOW, Type.NORMAL, -1, [
@@ -2264,7 +2287,8 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.PURUGLY, Type.NORMAL, -1, [
-      [ Biome.GRASS, PoolTier.UNCOMMON ]
+      [ Biome.GRASS, PoolTier.UNCOMMON ],
+      [ Biome.GRASS, PoolTier.BOSS ]
     ]
   ],
   [ Species.CHINGLING, Type.PSYCHIC, -1, [
@@ -2277,7 +2301,8 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.SKUNTANK, Type.POISON, Type.DARK, [
-      [ Biome.FOREST, PoolTier.UNCOMMON ]
+      [ Biome.FOREST, PoolTier.UNCOMMON ],
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.BRONZOR, Type.STEEL, Type.PSYCHIC, [
@@ -2287,7 +2312,8 @@ const pokemonBiomes = [
   ],
   [ Species.BRONZONG, Type.STEEL, Type.PSYCHIC, [
       [ Biome.RUINS, PoolTier.UNCOMMON ],
-      [ Biome.SPACE, PoolTier.COMMON ]
+      [ Biome.SPACE, PoolTier.COMMON ],
+      [ Biome.SPACE, PoolTier.BOSS ]
     ]
   ],
   [ Species.BONSLY, Type.ROCK, -1, [
@@ -2308,7 +2334,8 @@ const pokemonBiomes = [
   ],
   [ Species.SPIRITOMB, Type.GHOST, Type.DARK, [
       [ Biome.GRAVEYARD, PoolTier.SUPER_RARE ],
-      [ Biome.ABYSS, PoolTier.RARE ]
+      [ Biome.ABYSS, PoolTier.RARE ],
+      [ Biome.ABYSS, PoolTier.BOSS ]
     ]
   ],
   [ Species.GIBLE, Type.DRAGON, Type.GROUND, [
@@ -2323,7 +2350,8 @@ const pokemonBiomes = [
   ],
   [ Species.GARCHOMP, Type.DRAGON, Type.GROUND, [
       [ Biome.MOUNTAIN, PoolTier.SUPER_RARE ],
-      [ Biome.WASTELAND, PoolTier.UNCOMMON ]
+      [ Biome.WASTELAND, PoolTier.UNCOMMON ],
+      [ Biome.WASTELAND, PoolTier.BOSS ]
     ]
   ],
   [ Species.MUNCHLAX, Type.NORMAL, -1, [
@@ -2335,7 +2363,8 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.LUCARIO, Type.FIGHTING, Type.STEEL, [
-      [ Biome.DOJO, PoolTier.RARE ]
+      [ Biome.DOJO, PoolTier.RARE ],
+      [ Biome.DOJO, PoolTier.BOSS ]
     ]
   ],
   [ Species.HIPPOPOTAS, Type.GROUND, -1, [
@@ -2343,17 +2372,19 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.HIPPOWDON, Type.GROUND, -1, [
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.DESERT, PoolTier.COMMON ],
+      [ Biome.DESERT, PoolTier.BOSS ]
     ]
   ],
   [ Species.SKORUPI, Type.POISON, Type.BUG, [
-      [ Biome.SWAMP, PoolTier.COMMON ],
+      [ Biome.SWAMP, PoolTier.UNCOMMON ],
       [ Biome.DESERT, PoolTier.COMMON ]
     ]
   ],
   [ Species.DRAPION, Type.POISON, Type.DARK, [
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.SWAMP, PoolTier.UNCOMMON ],
+      [ Biome.DESERT, PoolTier.COMMON ],
+      [ Biome.DESERT, PoolTier.BOSS ]
     ]
   ],
   [ Species.CROAGUNK, Type.POISON, Type.FIGHTING, [
@@ -2363,11 +2394,13 @@ const pokemonBiomes = [
   ],
   [ Species.TOXICROAK, Type.POISON, Type.FIGHTING, [
       [ Biome.SWAMP, PoolTier.UNCOMMON ],
-      [ Biome.DOJO, PoolTier.UNCOMMON ]
+      [ Biome.DOJO, PoolTier.UNCOMMON ],
+      [ Biome.DOJO, PoolTier.BOSS ]
     ]
   ],
   [ Species.CARNIVINE, Type.GRASS, -1, [
-      [ Biome.FOREST, PoolTier.RARE ]
+      [ Biome.FOREST, PoolTier.RARE ],
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.FINNEON, Type.WATER, -1, [
@@ -2375,7 +2408,8 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.LUMINEON, Type.WATER, -1, [
-      [ Biome.SEA, PoolTier.COMMON ]
+      [ Biome.SEA, PoolTier.COMMON ],
+      [ Biome.SEA, PoolTier.BOSS ]
     ]
   ],
   [ Species.MANTYKE, Type.WATER, Type.FLYING, [
@@ -2440,11 +2474,11 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.MAMOSWINE, Type.ICE, Type.GROUND, [
-      [ Biome.ICE_CAVE, PoolTier.UNCOMMON ]
+      [ Biome.ICE_CAVE, PoolTier.BOSS ]
     ]
   ],
   [ Species.PORYGON_Z, Type.NORMAL, -1, [
-      [ Biome.SPACE, PoolTier.SUPER_RARE ]
+      [ Biome.SPACE, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.GALLADE, Type.PSYCHIC, Type.FIGHTING, [
@@ -2466,18 +2500,22 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.ROTOM, Type.ELECTRIC, Type.GHOST, [
+      [ Biome.POWER_PLANT, PoolTier.ULTRA_RARE ]
       [ Biome.POWER_PLANT, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.UXIE, Type.PSYCHIC, -1, [
+      [ Biome.WATER, PoolTier.ULTRA_RARE ],
       [ Biome.WATER, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.MESPRIT, Type.PSYCHIC, -1, [
+      [ Biome.WATER, PoolTier.ULTRA_RARE ],
       [ Biome.WATER, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.AZELF, Type.PSYCHIC, -1, [
+      [ Biome.WATER, PoolTier.ULTRA_RARE ],
       [ Biome.WATER, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
@@ -2490,6 +2528,7 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.HEATRAN, Type.FIRE, Type.STEEL, [
+      [ Biome.VOLCANO, PoolTier.ULTRA_RARE ],
       [ Biome.VOLCANO, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
@@ -2502,23 +2541,28 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.CRESSELIA, Type.PSYCHIC, -1, [
+      [ Biome.SPACE, PoolTier.ULTRA_RARE ],
       [ Biome.SPACE, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.PHIONE, Type.WATER, -1, [
-      [ Biome.SEA, PoolTier.ULTRA_RARE ]
+      [ Biome.SEA, PoolTier.RARE ],
+      [ Biome.SEA, PoolTier.BOSS_RARE ]
     ]
   ],
   [ Species.MANAPHY, Type.WATER, -1, [
-      [ Biome.SEA, PoolTier.BOSS_LEGENDARY ]
+      [ Biome.SEA, PoolTier.ULTRA_RARE ],
+      [ Biome.SEA, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.DARKRAI, Type.DARK, -1, [
-      [ Biome.ABYSS, PoolTier.BOSS_LEGENDARY ]
+      [ Biome.ABYSS, PoolTier.ULTRA_RARE ],
+      [ Biome.ABYSS, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.SHAYMIN, Type.GRASS, -1, [
-      [ Biome.FOREST, PoolTier.BOSS_LEGENDARY ]
+      [ Biome.GRASS, PoolTier.ULTRA_RARE ],
+      [ Biome.GRASS, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.ARCEUS, Type.NORMAL, -1, [
@@ -2526,7 +2570,8 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.VICTINI, Type.PSYCHIC, Type.FIRE, [
-      [ Biome.RUINS, PoolTier.BOSS_LEGENDARY ]
+      [ Biome.RUINS, PoolTier.ULTRA_RARE ],
+      [ Biome.RUINS, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.SNIVY, Type.GRASS, -1, [
@@ -2534,47 +2579,38 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.SERVINE, Type.GRASS, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.RARE ]
     ]
   ],
   [ Species.SERPERIOR, Type.GRASS, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.RARE ],
+      [ Biome.FOREST, PoolTier.BOSS_RARE ]
     ]
   ],
   [ Species.TEPIG, Type.FIRE, -1, [
-      [ Biome.VOLCANO, PoolTier.COMMON ]
+      [ Biome.VOLCANO, PoolTier.RARE ]
     ]
   ],
   [ Species.PIGNITE, Type.FIRE, Type.FIGHTING, [
-      [ Biome.VOLCANO, PoolTier.COMMON ],
-      [ Biome.DOJO, PoolTier.COMMON ]
+      [ Biome.VOLCANO, PoolTier.RARE ]
     ]
   ],
   [ Species.EMBOAR, Type.FIRE, Type.FIGHTING, [
-      [ Biome.VOLCANO, PoolTier.COMMON ],
-      [ Biome.DOJO, PoolTier.COMMON ]
+      [ Biome.VOLCANO, PoolTier.RARE ],
+      [ Biome.VOLCANO, PoolTier.BOSS_RARE ]
     ]
   ],
   [ Species.OSHAWOTT, Type.WATER, -1, [
-      [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ]
+      [ Biome.WATER, PoolTier.COMMON ]
     ]
   ],
   [ Species.DEWOTT, Type.WATER, -1, [
-      [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ]
+      [ Biome.WATER, PoolTier.COMMON ]
     ]
   ],
   [ Species.SAMUROTT, Type.WATER, -1, [
       [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ]
+      [ Biome.WATER, PoolTier.BOSS_RARE ]
     ]
   ],
   [ Species.PATRAT, Type.NORMAL, -1, [
@@ -2583,7 +2619,8 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.WATCHOG, Type.NORMAL, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ]
+      [ Biome.GRASS, PoolTier.COMMON ],
+      [ Biome.GRASS, PoolTier.BOSS ]
     ]
   ],
   [ Species.LILLIPUP, Type.NORMAL, -1, [
@@ -2596,57 +2633,55 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.STOUTLAND, Type.NORMAL, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ]
+      [ Biome.GRASS, PoolTier.COMMON ],
+      [ Biome.GRASS, PoolTier.BOSS ]
     ]
   ],
   [ Species.PURRLOIN, Type.DARK, -1, [
+      [ Biome.PLAINS, PoolTier.COMMON ]
       [ Biome.ABYSS, PoolTier.COMMON ]
     ]
   ],
   [ Species.LIEPARD, Type.DARK, -1, [
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.PLAINS, PoolTier.COMMON ]
+      [ Biome.ABYSS, PoolTier.COMMON ],
+      [ Biome.ABYSS, PoolTier.BOSS ]
     ]
   ],
   [ Species.PANSAGE, Type.GRASS, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.SIMISAGE, Type.GRASS, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.UNCOMMON ],
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.PANSEAR, Type.FIRE, -1, [
-      [ Biome.VOLCANO, PoolTier.COMMON ]
+      [ Biome.VOLCANO, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.SIMISEAR, Type.FIRE, -1, [
-      [ Biome.VOLCANO, PoolTier.COMMON ]
+      [ Biome.VOLCANO, PoolTier.UNCOMMON ]
+      [ Biome.VOLCANO, PoolTier.BOSS ]
     ]
   ],
   [ Species.PANPOUR, Type.WATER, -1, [
-      [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ]
+      [ Biome.WATER, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.SIMIPOUR, Type.WATER, -1, [
-      [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ]
+      [ Biome.WATER, PoolTier.UNCOMMON ],
+      [ Biome.WATER, PoolTier.BOSS ]
     ]
   ],
   [ Species.MUNNA, Type.PSYCHIC, -1, [
-      [ Biome.RUINS, PoolTier.COMMON ],
       [ Biome.SPACE, PoolTier.COMMON ]
     ]
   ],
   [ Species.MUSHARNA, Type.PSYCHIC, -1, [
-      [ Biome.RUINS, PoolTier.COMMON ],
-      [ Biome.SPACE, PoolTier.COMMON ]
+      [ Biome.SPACE, PoolTier.COMMON ],
+      [ Biome.SPACE, PoolTier.BOSS ]
     ]
   ],
   [ Species.PIDOVE, Type.NORMAL, Type.FLYING, [
@@ -2662,65 +2697,56 @@ const pokemonBiomes = [
   ],
   [ Species.UNFEZANT, Type.NORMAL, Type.FLYING, [
       [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.MOUNTAIN, PoolTier.COMMON ],
+      [ Biome.MOUNTAIN, PoolTier.BOSS ]
     ]
   ],
   [ Species.BLITZLE, Type.ELECTRIC, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.POWER_PLANT, PoolTier.COMMON ]
+      [ Biome.GRASS, PoolTier.COMMON ]
     ]
   ],
   [ Species.ZEBSTRIKA, Type.ELECTRIC, -1, [
       [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.POWER_PLANT, PoolTier.COMMON ]
+      [ Biome.GRASS, PoolTier.BOSS ]
     ]
   ],
   [ Species.ROGGENROLA, Type.ROCK, -1, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.CAVE, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.MOUNTAIN, PoolTier.UNCOMMON ],
+      [ Biome.LAND, PoolTier.COMMON ],
+      [ Biome.CAVE, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.BOLDORE, Type.ROCK, -1, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.CAVE, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.MOUNTAIN, PoolTier.UNCOMMON ],
+      [ Biome.LAND, PoolTier.COMMON ],
+      [ Biome.CAVE, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.GIGALITH, Type.ROCK, -1, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.CAVE, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.CAVE, PoolTier.BOSS ]
     ]
   ],
   [ Species.WOOBAT, Type.PSYCHIC, Type.FLYING, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.RUINS, PoolTier.COMMON ],
-      [ Biome.SPACE, PoolTier.COMMON ]
+      [ Biome.CAVE, PoolTier.COMMON ]
     ]
   ],
   [ Species.SWOOBAT, Type.PSYCHIC, Type.FLYING, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.RUINS, PoolTier.COMMON ],
-      [ Biome.SPACE, PoolTier.COMMON ]
+      [ Biome.CAVE, PoolTier.COMMON ],
+      [ Biome.CAVE, PoolTier.BOSS ]
     ]
   ],
   [ Species.DRILBUR, Type.GROUND, -1, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.LAND, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.LAND, PoolTier.COMMON ]
     ]
   ],
   [ Species.EXCADRILL, Type.GROUND, Type.STEEL, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
       [ Biome.LAND, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.LAND, PoolTier.BOSS ]
     ]
   ],
   [ Species.AUDINO, Type.NORMAL, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ]
+      [ Biome.GRASS, PoolTier.ULTRA_RARE ],
+      [ Biome.GRASS, PoolTier.BOSS_RARE ]
     ]
   ],
   [ Species.TIMBURR, Type.FIGHTING, -1, [
@@ -2732,177 +2758,131 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.CONKELDURR, Type.FIGHTING, -1, [
-      [ Biome.DOJO, PoolTier.COMMON ]
+      [ Biome.DOJO, PoolTier.BOSS ]
     ]
   ],
   [ Species.TYMPOLE, Type.WATER, -1, [
-      [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ]
+      [ Biome.SWAMP, PoolTier.COMMON ]
     ]
   ],
   [ Species.PALPITOAD, Type.WATER, Type.GROUND, [
-      [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.LAND, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.SWAMP, PoolTier.COMMON ]
     ]
   ],
   [ Species.SEISMITOAD, Type.WATER, Type.GROUND, [
-      [ Biome.WATER, PoolTier.COMMON ],
       [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.LAND, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.SWAMP, PoolTier.BOSS ]
     ]
   ],
   [ Species.THROH, Type.FIGHTING, -1, [
-      [ Biome.DOJO, PoolTier.COMMON ]
+      [ Biome.DOJO, PoolTier.RARE ],
+      [ Biome.DOJO, PoolTier.BOSS ]
     ]
   ],
   [ Species.SAWK, Type.FIGHTING, -1, [
-      [ Biome.DOJO, PoolTier.COMMON ]
+      [ Biome.DOJO, PoolTier.RARE ],
+      [ Biome.DOJO, PoolTier.BOSS ]
     ]
   ],
   [ Species.SEWADDLE, Type.BUG, Type.GRASS, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.COMMON ]
     ]
   ],
   [ Species.SWADLOON, Type.BUG, Type.GRASS, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.COMMON ]
     ]
   ],
   [ Species.LEAVANNY, Type.BUG, Type.GRASS, [
-      [ Biome.GRASS, PoolTier.COMMON ],
       [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.VENIPEDE, Type.BUG, Type.POISON, [
       [ Biome.PLAINS, PoolTier.UNCOMMON ],
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.COMMON ]
     ]
   ],
   [ Species.WHIRLIPEDE, Type.BUG, Type.POISON, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.COMMON ]
     ]
   ],
   [ Species.SCOLIPEDE, Type.BUG, Type.POISON, [
-      [ Biome.GRASS, PoolTier.COMMON ],
       [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.COTTONEE, Type.GRASS, Type.FAIRY, [
       [ Biome.PLAINS, PoolTier.COMMON ],
       [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
       [ Biome.MEADOW, PoolTier.COMMON ]
     ]
   ],
   [ Species.WHIMSICOTT, Type.GRASS, Type.FAIRY, [
       [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.MEADOW, PoolTier.COMMON ]
+      [ Biome.MEADOW, PoolTier.COMMON ],
+      [ Biome.GRASS, PoolTier.BOSS ],
     ]
   ],
   [ Species.PETILIL, Type.GRASS, -1, [
-      [ Biome.PLAINS, PoolTier.COMMON ],
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.COMMON ]
     ]
   ],
   [ Species.LILLIGANT, Type.GRASS, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.BASCULIN, Type.WATER, -1, [
-      [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
       [ Biome.SEA, PoolTier.COMMON ]
     ]
   ],
   [ Species.SANDILE, Type.GROUND, Type.DARK, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.LAND, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ],
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.DESERT, PoolTier.COMMON ]
     ]
   ],
   [ Species.KROKOROK, Type.GROUND, Type.DARK, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.LAND, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ],
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.DESERT, PoolTier.COMMON ]
     ]
   ],
   [ Species.KROOKODILE, Type.GROUND, Type.DARK, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.LAND, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ],
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.DESERT, PoolTier.BOSS ]
     ]
   ],
   [ Species.DARUMAKA, Type.FIRE, -1, [
-      [ Biome.VOLCANO, PoolTier.COMMON ]
+      [ Biome.VOLCANO, PoolTier.RARE ]
     ]
   ],
   [ Species.DARMANITAN, Type.FIRE, -1, [
-      [ Biome.VOLCANO, PoolTier.COMMON ]
+      [ Biome.VOLCANO, PoolTier.RARE ]
     ]
   ],
   [ Species.MARACTUS, Type.GRASS, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.DESERT, PoolTier.COMMON ],
+      [ Biome.DESERT, PoolTier.BOSS ]
     ]
   ],
   [ Species.DWEBBLE, Type.BUG, Type.ROCK, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.CAVE, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.CAVE, PoolTier.COMMON ]
     ]
   ],
   [ Species.CRUSTLE, Type.BUG, Type.ROCK, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.CAVE, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.CAVE, PoolTier.COMMON ]
+      [ Biome.CAVE, PoolTier.BOSS ]
     ]
   ],
   [ Species.SCRAGGY, Type.DARK, Type.FIGHTING, [
-      [ Biome.DOJO, PoolTier.COMMON ],
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.DOJO, PoolTier.COMMON ]
     ]
   ],
   [ Species.SCRAFTY, Type.DARK, Type.FIGHTING, [
       [ Biome.DOJO, PoolTier.COMMON ],
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.DOJO, PoolTier.BOSS ]
     ]
   ],
   [ Species.SIGILYPH, Type.PSYCHIC, Type.FLYING, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.RUINS, PoolTier.COMMON ],
-      [ Biome.SPACE, PoolTier.COMMON ]
+      [ Biome.RUINS, PoolTier.UNCOMMON ],
+      [ Biome.RUINS, PoolTier.BOSS ],
+      [ Biome.SPACE, PoolTier.RARE ]
     ]
   ],
   [ Species.YAMASK, Type.GHOST, -1, [
@@ -2910,109 +2890,92 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.COFAGRIGUS, Type.GHOST, -1, [
-      [ Biome.GRAVEYARD, PoolTier.COMMON ]
+      [ Biome.GRAVEYARD, PoolTier.COMMON ],
+      [ Biome.GRAVEYARD, PoolTier.BOSS ]
     ]
   ],
   [ Species.TIRTOUGA, Type.WATER, Type.ROCK, [
       [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.CAVE, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.SEA, PoolTier.COMMON ]
     ]
   ],
   [ Species.CARRACOSTA, Type.WATER, Type.ROCK, [
       [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
       [ Biome.SEA, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.CAVE, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.SEA, PoolTier.BOSS ]
     ]
   ],
   [ Species.ARCHEN, Type.ROCK, Type.FLYING, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.CAVE, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.RUINS, PoolTier.ULTRA_RARE ]
     ]
   ],
   [ Species.ARCHEOPS, Type.ROCK, Type.FLYING, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.CAVE, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.RUINS, PoolTier.ULTRA_RARE ],
+      [ Biome.RUINS, PoolTier.BOSS_RARE ]
     ]
   ],
   [ Species.TRUBBISH, Type.POISON, -1, [
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.SWAMP, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.GARBODOR, Type.POISON, -1, [
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.SWAMP, PoolTier.UNCOMMON ],
+      [ Biome.SWAMP, PoolTier.BOSS ]
     ]
   ],
   [ Species.ZORUA, Type.DARK, -1, [
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.ABYSS, PoolTier.RARE ]
     ]
   ],
   [ Species.ZOROARK, Type.DARK, -1, [
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.ABYSS, PoolTier.RARE ],
+      [ Biome.ABYSS, PoolTier.BOSS ]
     ]
   ],
   [ Species.MINCCINO, Type.NORMAL, -1, [
-      [ Biome.PLAINS, PoolTier.COMMON ],
-      [ Biome.GRASS, PoolTier.COMMON ]
+      [ Biome.PLAINS, PoolTier.UNCOMMON ],
+      [ Biome.GRASS, PoolTier.COMMON ],
+      [ Biome.MEADOW, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.CINCCINO, Type.NORMAL, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ]
+      [ Biome.GRASS, PoolTier.BOSS ],
     ]
   ],
   [ Species.GOTHITA, Type.PSYCHIC, -1, [
-      [ Biome.RUINS, PoolTier.COMMON ],
-      [ Biome.SPACE, PoolTier.COMMON ]
+      [ Biome.RUINS, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.GOTHORITA, Type.PSYCHIC, -1, [
-      [ Biome.RUINS, PoolTier.COMMON ],
-      [ Biome.SPACE, PoolTier.COMMON ]
+      [ Biome.RUINS, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.GOTHITELLE, Type.PSYCHIC, -1, [
-      [ Biome.RUINS, PoolTier.COMMON ],
-      [ Biome.SPACE, PoolTier.COMMON ]
+     [ Biome.RUINS, PoolTier.UNCOMMON ],
+     [ Biome.RUINS, PoolTier.BOSS ]
     ]
   ],
   [ Species.SOLOSIS, Type.PSYCHIC, -1, [
-      [ Biome.RUINS, PoolTier.COMMON ],
-      [ Biome.SPACE, PoolTier.COMMON ]
+      [ Biome.SPACE, PoolTier.RARE ]
     ]
   ],
   [ Species.DUOSION, Type.PSYCHIC, -1, [
-      [ Biome.RUINS, PoolTier.COMMON ],
-      [ Biome.SPACE, PoolTier.COMMON ]
+      [ Biome.SPACE, PoolTier.RARE ]
     ]
   ],
   [ Species.REUNICLUS, Type.PSYCHIC, -1, [
-      [ Biome.RUINS, PoolTier.COMMON ],
-      [ Biome.SPACE, PoolTier.COMMON ]
+      [ Biome.SPACE, PoolTier.RARE ],
+      [ Biome.SPACE, PoolTier.BOSS ]
     ]
   ],
   [ Species.DUCKLETT, Type.WATER, Type.FLYING, [
       [ Biome.PLAINS, PoolTier.RARE ],
-      [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.WATER, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.SWANNA, Type.WATER, Type.FLYING, [
-      [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.WATER, PoolTier.UNCOMMON ],
+      [ Biome.WATER, PoolTier.BOSS ]
     ]
   ],
   [ Species.VANILLITE, Type.ICE, -1, [
@@ -3024,164 +2987,137 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.VANILLUXE, Type.ICE, -1, [
-      [ Biome.ICE_CAVE, PoolTier.COMMON ]
+      [ Biome.ICE_CAVE, PoolTier.COMMON ],
+      [ Biome.ICE_CAVE, PoolTier.BOSS ]
     ]
   ],
   [ Species.DEERLING, Type.NORMAL, Type.GRASS, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
-    ]
-  ],
-  [ Species.SAWSBUCK, Type.NORMAL, Type.GRASS, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
-    ]
-  ],
-  [ Species.EMOLGA, Type.ELECTRIC, Type.FLYING, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.POWER_PLANT, PoolTier.COMMON ]
-    ]
-  ],
-  [ Species.KARRABLAST, Type.BUG, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
       [ Biome.FOREST, PoolTier.COMMON ]
     ]
   ],
-  [ Species.ESCAVALIER, Type.BUG, Type.STEEL, [
-      [ Biome.GRASS, PoolTier.COMMON ],
+  [ Species.SAWSBUCK, Type.NORMAL, Type.GRASS, [
       [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.BOSS ]
+    ]
+  ],
+  [ Species.EMOLGA, Type.ELECTRIC, Type.FLYING, [
+      [ Biome.GRASS, PoolTier.RARE ]
+      [ Biome.POWER_PLANT, PoolTier.UNCOMMON ]
+    ]
+  ],
+  [ Species.KARRABLAST, Type.BUG, -1, [
+      [ Biome.FOREST, PoolTier.RARE ]
+    ]
+  ],
+  [ Species.ESCAVALIER, Type.BUG, Type.STEEL, [
+      [ Biome.FOREST, PoolTier.BOSS_RARE ]
     ]
   ],
   [ Species.FOONGUS, Type.GRASS, Type.POISON, [
-      [ Biome.PLAINS, PoolTier.COMMON ],
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.PLAINS, PoolTier.UNCOMMON ],
+      [ Biome.GRASS, PoolTier.UNCOMMON ],
+      [ Biome.FOREST, PoolTier.COMMON ]
     ]
   ],
   [ Species.AMOONGUSS, Type.GRASS, Type.POISON, [
-      [ Biome.GRASS, PoolTier.COMMON ],
+      [ Biome.PLAINS, PoolTier.UNCOMMON ],
+      [ Biome.GRASS, PoolTier.UNCOMMON ],
       [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.FRILLISH, Type.WATER, Type.GHOST, [
-      [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ],
-      [ Biome.GRAVEYARD, PoolTier.COMMON ]
-    ]
-  ],
-  [ Species.JELLICENT, Type.WATER, Type.GHOST, [
-      [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ],
-      [ Biome.GRAVEYARD, PoolTier.COMMON ]
-    ]
-  ],
-  [ Species.ALOMOMOLA, Type.WATER, -1, [
-      [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
       [ Biome.SEA, PoolTier.COMMON ]
     ]
   ],
+  [ Species.JELLICENT, Type.WATER, Type.GHOST, [
+      [ Biome.SEA, PoolTier.COMMON ],
+      [ Biome.SEA, PoolTier.BOSS ]
+    ]
+  ],
+  [ Species.ALOMOMOLA, Type.WATER, -1, [
+      [ Biome.SEA, PoolTier.RARE ],
+      [ Biome.SEA, PoolTier.BOSS ]
+    ]
+  ],
   [ Species.JOLTIK, Type.BUG, Type.ELECTRIC, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.POWER_PLANT, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.GALVANTULA, Type.BUG, Type.ELECTRIC, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.POWER_PLANT, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.UNCOMMON ],
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.FERROSEED, Type.GRASS, Type.STEEL, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.RARE ]
     ]
   ],
   [ Species.FERROTHORN, Type.GRASS, Type.STEEL, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.RARE ],
+      [ Biome.FOREST, PoolTier.BOSS_RARE ]
     ]
   ],
   [ Species.KLINK, Type.STEEL, -1, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.RUINS, PoolTier.COMMON ]
     ]
   ],
   [ Species.KLANG, Type.STEEL, -1, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.RUINS, PoolTier.COMMON ]
     ]
   ],
   [ Species.KLINKLANG, Type.STEEL, -1, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.RUINS, PoolTier.COMMON ],
+      [ Biome.RUINS, PoolTier.BOSS ]
     ]
   ],
   [ Species.TYNAMO, Type.ELECTRIC, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.POWER_PLANT, PoolTier.COMMON ]
+      [ Biome.SEA, PoolTier.RARE ]
     ]
   ],
   [ Species.EELEKTRIK, Type.ELECTRIC, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.POWER_PLANT, PoolTier.COMMON ]
+      [ Biome.SEA, PoolTier.RARE ]
     ]
   ],
   [ Species.EELEKTROSS, Type.ELECTRIC, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.POWER_PLANT, PoolTier.COMMON ]
+      [ Biome.SEA, PoolTier.BOSS_RARE ]
     ]
   ],
   [ Species.ELGYEM, Type.PSYCHIC, -1, [
-      [ Biome.RUINS, PoolTier.COMMON ],
+      [ Biome.RUINS, PoolTier.UNCOMMON ],
       [ Biome.SPACE, PoolTier.COMMON ]
     ]
   ],
   [ Species.BEHEEYEM, Type.PSYCHIC, -1, [
-      [ Biome.RUINS, PoolTier.COMMON ],
-      [ Biome.SPACE, PoolTier.COMMON ]
+      [ Biome.RUINS, PoolTier.UNCOMMON ],
+      [ Biome.SPACE, PoolTier.COMMON ],
+      [ Biome.SPACE, PoolTier.BOSS ]
     ]
   ],
   [ Species.LITWICK, Type.GHOST, Type.FIRE, [
-      [ Biome.VOLCANO, PoolTier.COMMON ],
-      [ Biome.GRAVEYARD, PoolTier.COMMON ]
+      [ Biome.GRAVEYARD, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.LAMPENT, Type.GHOST, Type.FIRE, [
-      [ Biome.VOLCANO, PoolTier.COMMON ],
-      [ Biome.GRAVEYARD, PoolTier.COMMON ]
+      [ Biome.GRAVEYARD, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.CHANDELURE, Type.GHOST, Type.FIRE, [
-      [ Biome.VOLCANO, PoolTier.COMMON ],
-      [ Biome.GRAVEYARD, PoolTier.COMMON ]
+      [ Biome.GRAVEYARD, PoolTier.BOSS ]
     ]
   ],
   [ Species.AXEW, Type.DRAGON, -1, [
-      [ Biome.WASTELAND, PoolTier.COMMON ]
+      [ Biome.MOUNTAIN, PoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.FRAXURE, Type.DRAGON, -1, [
-      [ Biome.WASTELAND, PoolTier.COMMON ]
+      [ Biome.MOUNTAIN, PoolTier.SUPER_RARE ],
+      [ Biome.WASTELAND, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.HAXORUS, Type.DRAGON, -1, [
-      [ Biome.WASTELAND, PoolTier.COMMON ]
+      [ Biome.WASTELAND, PoolTier.BOSS ]
     ]
   ],
   [ Species.CUBCHOO, Type.ICE, -1, [
@@ -3189,29 +3125,26 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.BEARTIC, Type.ICE, -1, [
-      [ Biome.ICE_CAVE, PoolTier.COMMON ]
+      [ Biome.ICE_CAVE, PoolTier.COMMON ],
+      [ Biome.ICE_CAVE, PoolTier.BOSS ]
     ]
   ],
   [ Species.CRYOGONAL, Type.ICE, -1, [
-      [ Biome.ICE_CAVE, PoolTier.COMMON ]
+      [ Biome.ICE_CAVE, PoolTier.RARE ],
+      [ Biome.ICE_CAVE, PoolTier.BOSS ]
     ]
   ],
   [ Species.SHELMET, Type.BUG, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.RARE ]
     ]
   ],
   [ Species.ACCELGOR, Type.BUG, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.BOSS_RARE ]
     ]
   ],
   [ Species.STUNFISK, Type.GROUND, Type.ELECTRIC, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.LAND, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ],
-      [ Biome.POWER_PLANT, PoolTier.COMMON ]
+      [ Biome.SWAMP, PoolTier.UNCOMMON ],
+      [ Biome.SWAMP, PoolTier.BOSS ]
     ]
   ],
   [ Species.MIENFOO, Type.FIGHTING, -1, [
@@ -3219,167 +3152,144 @@ const pokemonBiomes = [
     ]
   ],
   [ Species.MIENSHAO, Type.FIGHTING, -1, [
-      [ Biome.DOJO, PoolTier.COMMON ]
+      [ Biome.DOJO, PoolTier.COMMON ],
+      [ Biome.DOJO, PoolTier.BOSS ]
     ]
   ],
   [ Species.DRUDDIGON, Type.DRAGON, -1, [
-      [ Biome.WASTELAND, PoolTier.COMMON ]
+      [ Biome.WASTELAND, PoolTier.RARE ],
+      [ Biome.WASTELAND, PoolTier.BOSS ]
     ]
   ],
   [ Species.GOLETT, Type.GROUND, Type.GHOST, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.LAND, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ],
-      [ Biome.GRAVEYARD, PoolTier.COMMON ]
+      [ Biome.GRAVEYARD, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.GOLURK, Type.GROUND, Type.GHOST, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.LAND, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ],
-      [ Biome.GRAVEYARD, PoolTier.COMMON ]
+      [ Biome.GRAVEYARD, PoolTier.UNCOMMON ],
+      [ Biome.GRAVEYARD, PoolTier.BOSS ]
     ]
   ],
   [ Species.PAWNIARD, Type.DARK, Type.STEEL, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.ABYSS, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.BISHARP, Type.DARK, Type.STEEL, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.ABYSS, PoolTier.UNCOMMON ],
+      [ Biome.ABYSS, PoolTier.BOSS ]
     ]
   ],
   [ Species.BOUFFALANT, Type.NORMAL, -1, [
-      [ Biome.GRASS, PoolTier.COMMON ]
+      [ Biome.GRASS, PoolTier.RARE ],
+      [ Biome.MEADOW, PoolTier.UNCOMMON ],
+      [ Biome.MEADOW, PoolTier.BOSS ]
     ]
   ],
   [ Species.RUFFLET, Type.NORMAL, Type.FLYING, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.MOUNTAIN, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.BRAVIARY, Type.NORMAL, Type.FLYING, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.MOUNTAIN, PoolTier.UNCOMMON ],
+      [ Biome.MOUNTAIN, PoolTier.BOSS ]
     ]
   ],
   [ Species.VULLABY, Type.DARK, Type.FLYING, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.MOUNTAIN, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.MANDIBUZZ, Type.DARK, Type.FLYING, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.MOUNTAIN, PoolTier.UNCOMMON ],
+      [ Biome.MOUNTAIN, PoolTier.BOSS ]
     ]
   ],
   [ Species.HEATMOR, Type.FIRE, -1, [
-      [ Biome.VOLCANO, PoolTier.COMMON ]
+      [ Biome.VOLCANO, PoolTier.UNCOMMON ],
+      [ Biome.VOLCANO, PoolTier.BOSS ]
     ]
   ],
   [ Species.DURANT, Type.BUG, Type.STEEL, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.RARE ],
+      [ Biome.FOREST, PoolTier.BOSS ]
     ]
   ],
   [ Species.DEINO, Type.DARK, Type.DRAGON, [
-      [ Biome.WASTELAND, PoolTier.COMMON ],
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.WASTELAND, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.ZWEILOUS, Type.DARK, Type.DRAGON, [
-      [ Biome.WASTELAND, PoolTier.COMMON ],
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.WASTELAND, PoolTier.UNCOMMON ]
     ]
   ],
   [ Species.HYDREIGON, Type.DARK, Type.DRAGON, [
-      [ Biome.WASTELAND, PoolTier.COMMON ],
-      [ Biome.ABYSS, PoolTier.COMMON ]
+      [ Biome.WASTELAND, PoolTier.UNCOMMON ],
+      [ Biome.WASTELAND, PoolTier.BOSS ]
     ]
   ],
   [ Species.LARVESTA, Type.BUG, Type.FIRE, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.VOLCANO, PoolTier.COMMON ]
+      [ Biome.VOLCANO, PoolTier.SUPER_RARE ]
     ]
   ],
   [ Species.VOLCARONA, Type.BUG, Type.FIRE, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.VOLCANO, PoolTier.COMMON ]
+      [ Biome.VOLCANO, PoolTier.SUPER_RARE ],
+      [ Biome.VOLCANO, PoolTier.BOSS_RARE ]
     ]
   ],
   [ Species.COBALION, Type.STEEL, Type.FIGHTING, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.DOJO, PoolTier.COMMON ]
+      [ Biome.MOUNTAIN, PoolTier.ULTRA_RARE ],
+      [ Biome.MOUNTAIN, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.TERRAKION, Type.ROCK, Type.FIGHTING, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.CAVE, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ],
-      [ Biome.DOJO, PoolTier.COMMON ]
+      [ Biome.LAND, PoolTier.ULTRA_RARE ],
+      [ Biome.LAND, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.VIRIZION, Type.GRASS, Type.FIGHTING, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.DOJO, PoolTier.COMMON ]
+      [ Biome.FOREST, PoolTier.ULTRA_RARE ],
+      [ Biome.FOREST, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.TORNADUS, Type.FLYING, -1, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.MOUNTAIN, PoolTier.ULTRA_RARE ],
+      [ Biome.MOUNTAIN, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.THUNDURUS, Type.ELECTRIC, Type.FLYING, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.POWER_PLANT, PoolTier.COMMON ]
+      [ Biome.POWER_PLANT, PoolTier.ULTRA_RARE ],
+      [ Biome.POWER_PLANT, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.RESHIRAM, Type.DRAGON, Type.FIRE, [
-      [ Biome.VOLCANO, PoolTier.COMMON ],
-      [ Biome.WASTELAND, PoolTier.COMMON ]
+      [ Biome.VOLCANO, PoolTier.BOSS_LEGENDARY ]
     ]
   ],
   [ Species.ZEKROM, Type.DRAGON, Type.ELECTRIC, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.POWER_PLANT, PoolTier.COMMON ],
-      [ Biome.WASTELAND, PoolTier.COMMON ]
+      [ Biome.POWER_PLANT, PoolTier.BOSS_LEGENDARY ]
     ]
   ],
   [ Species.LANDORUS, Type.GROUND, Type.FLYING, [
-      [ Biome.MOUNTAIN, PoolTier.COMMON ],
-      [ Biome.LAND, PoolTier.COMMON ],
-      [ Biome.DESERT, PoolTier.COMMON ]
+      [ Biome.LAND, PoolTier.ULTRA_RARE ],
+      [ Biome.LAND, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.KYUREM, Type.DRAGON, Type.ICE, [
-      [ Biome.ICE_CAVE, PoolTier.COMMON ],
-      [ Biome.WASTELAND, PoolTier.COMMON ]
+      [ Biome.ICE_CAVE, PoolTier.BOSS_LEGENDARY ]
     ]
   ],
   [ Species.KELDEO, Type.WATER, Type.FIGHTING, [
-      [ Biome.WATER, PoolTier.COMMON ],
-      [ Biome.SWAMP, PoolTier.COMMON ],
-      [ Biome.SEA, PoolTier.COMMON ],
-      [ Biome.DOJO, PoolTier.COMMON ]
+      [ Biome.WATER, PoolTier.ULTRA_RARE ],
+      [ Biome.WATER, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.MELOETTA, Type.NORMAL, Type.PSYCHIC, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.RUINS, PoolTier.COMMON ],
-      [ Biome.SPACE, PoolTier.COMMON ]
+      [ Biome.MEADOW, PoolTier.ULTRA_RARE ],
+      [ Biome.MEADOW, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ],
   [ Species.GENESECT, Type.BUG, Type.STEEL, [
-      [ Biome.GRASS, PoolTier.COMMON ],
-      [ Biome.FOREST, PoolTier.COMMON ],
-      [ Biome.MOUNTAIN, PoolTier.COMMON ]
+      [ Biome.SPACE, PoolTier.ULTRA_RARE ],
+      [ Biome.SPACE, PoolTier.BOSS_ULTRA_RARE ]
     ]
   ]
 ];
