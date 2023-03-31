@@ -6,7 +6,7 @@ import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { interp } from "./temp_interpreter";
 import { Stat } from "./pokemon-stat";
-import { ExpBoosterModifier, ExtraModifierModifier, getModifierTypesForWave, ModifierType, PokemonModifierType, regenerateModifierPoolThresholds } from "./modifier";
+import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, getModifierTypesForWave, ModifierType, PokemonModifierType, regenerateModifierPoolThresholds } from "./modifier";
 import PartyUiHandler from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor as getPokeballTintColor, PokeballType } from "./pokeball";
 import { pokemonLevelMoves } from "./pokemon-level-moves";
@@ -68,14 +68,12 @@ export class NextEncounterPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.waveIndex++;
-
     console.log(this.scene.getPlayerPokemon(), this.scene.getParty().map(p => p.name), this.scene.getPlayerPokemon().id)
 
     this.scene.getEnemyPokemon().destroy();
-    const newEnemyPokemon = new EnemyPokemon(this.scene, this.scene.randomSpecies(true), this.scene.getLevelForWave());
+    const newEnemyPokemon = new EnemyPokemon(this.scene, this.scene.randomSpecies(true), this.scene.getLevelForNextWave());
     newEnemyPokemon.loadAssets().then(() => {
-      this.scene.setEnemyPokemon(newEnemyPokemon);
+      this.scene.newBattle(newEnemyPokemon);
       this.scene.field.add(newEnemyPokemon);
       this.scene.field.moveBelow(newEnemyPokemon, this.scene.getPlayerPokemon());
       newEnemyPokemon.tint(0, 0.5);
@@ -169,7 +167,10 @@ export class SummonPhase extends BattlePhase {
               onComplete: () => {
                 playerPokemon.cry();
                 playerPokemon.getSprite().clearTint();
-                this.scene.time.delayedCall(1000, () => this.end());
+                this.scene.time.delayedCall(1000, () => {
+                  this.scene.currentBattle.addParticipant(playerPokemon);
+                  this.end();
+                });
               }
             });
           }
@@ -245,7 +246,13 @@ export class CheckSwitchPhase extends BattlePhase {
     super.start();
 
     this.scene.ui.showText('Will you switch\nPOKéMON?', null, () => {
-      this.scene.ui.setMode(Mode.SWITCH_CHECK, () => this.end());
+      this.scene.ui.setMode(Mode.SWITCH_CHECK, () => {
+        console.log('handler', this.scene.ui.getHandler());
+        console.log(this.scene.ui.getHandler().getCursor())
+        if (this.scene.ui.getHandler().getCursor())
+          this.scene.currentBattle.addParticipant(this.scene.getPlayerPokemon());
+        this.end();
+      });
     });
   }
 }
@@ -318,6 +325,20 @@ export abstract class PokemonPhase extends BattlePhase {
 
   getPokemon() {
     return this.player ? this.scene.getPlayerPokemon() : this.scene.getEnemyPokemon();
+  }
+}
+
+export abstract class PartyMemberPokemonPhase extends PokemonPhase {
+  protected partyMemberIndex: integer;
+
+  constructor(scene: BattleScene, partyMemberIndex: integer) {
+    super(scene, true);
+
+    this.partyMemberIndex = partyMemberIndex;
+  }
+
+  getPokemon() {
+    return this.scene.getParty()[this.partyMemberIndex];
   }
 }
 
@@ -474,6 +495,8 @@ export class FaintPhase extends PokemonPhase {
         onComplete: () => {
           pokemon.setVisible(false);
           pokemon.y -= 150;
+          if (pokemon instanceof PlayerPokemon)
+            this.scene.currentBattle.removeFaintedParticipant(pokemon as PlayerPokemon);
           this.scene.field.remove(pokemon);
           this.end();
         }
@@ -490,8 +513,28 @@ export class VictoryPhase extends PokemonPhase {
   start() {
     super.start();
 
-    if (this.scene.getPlayerPokemon().level < 100)
-      this.scene.unshiftPhase(new ExpPhase(this.scene));
+    const participantIds = this.scene.currentBattle.playerParticipantIds;
+    const party = this.scene.getParty();
+    const expShareModifier = this.scene.getModifier(ExpShareModifier) as ExpShareModifier;
+    const expValue = this.scene.getEnemyPokemon().getExpValue(party[0]);
+    for (let pm = 0; pm < party.length; pm++) {
+      const pokemon = party[pm];
+      if (!pokemon.hp)
+        continue;
+      const pId = pokemon.id;
+      const participated = participantIds.has(pId);
+      if (!participated && !expShareModifier)
+        continue;
+      if (pokemon.level < 100) {
+        let expMultiplier = 0;
+        if (participated)
+          expMultiplier += (1 / participantIds.size);
+        if (expShareModifier)
+          expMultiplier += expShareModifier.stackCount * 0.1;
+        console.log(pokemon.species.name, expMultiplier)
+        this.scene.unshiftPhase(new ExpPhase(this.scene, pm, expValue * expMultiplier));
+      }
+    }
     this.scene.unshiftPhase(new SelectModifierPhase(this.scene));
     this.scene.unshiftPhase(new NextEncounterPhase(this.scene));
 
@@ -522,17 +565,22 @@ export class SwitchPhase extends BattlePhase {
   }
 }
 
-export class ExpPhase extends PokemonPhase {
-  constructor(scene: BattleScene) {
-    super(scene, true);
+export class ExpPhase extends PartyMemberPokemonPhase {
+  private expValue: number;
+
+  constructor(scene: BattleScene, partyMemberIndex: integer, expValue: number) {
+    super(scene, partyMemberIndex);
+
+    this.expValue = expValue;
   }
 
   start() {
     super.start();
 
     const pokemon = this.getPokemon();
-    let exp = new Utils.IntegerHolder(this.scene.getEnemyPokemon().getExpValue(pokemon.level));
+    let exp = new Utils.NumberHolder(this.expValue);
     this.scene.applyModifiers(ExpBoosterModifier, exp);
+    exp.value = Math.floor(exp.value);
     this.scene.ui.showText(`${pokemon.name} gained\n${exp.value} EXP. Points!`, null, () => {
       const lastLevel = pokemon.level;
       let newLevel: integer;
@@ -543,6 +591,8 @@ export class ExpPhase extends PokemonPhase {
       pokemon.updateInfo(() => this.end());
     }, null, true);
   }
+
+
 }
 
 export class LevelUpPhase extends PokemonPhase {

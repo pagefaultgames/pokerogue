@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { ArenaType, Arena } from './arena';
+import { Biome, BiomeArena } from './biome';
 import UI from './ui/ui';
 import { BattlePhase, EncounterPhase, SummonPhase, CommandPhase } from './battle-phase';
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
@@ -9,6 +9,7 @@ import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, P
 import { PokeballType } from './pokeball';
 import { Species } from './species';
 import { initAutoPlay } from './auto-play';
+import { Battle } from './battle';
 
 export default class BattleScene extends Phaser.Scene {
 	private auto: boolean;
@@ -17,7 +18,7 @@ export default class BattleScene extends Phaser.Scene {
 	private phaseQueue: Array<BattlePhase>;
 	private phaseQueuePrepend: Array<BattlePhase>;
 	private currentPhase: BattlePhase;
-	private arena: Arena;
+	private arena: BiomeArena;
 	public field: Phaser.GameObjects.Container;
 	public fieldUI: Phaser.GameObjects.Container;
 	public arenaBg: Phaser.GameObjects.Image;
@@ -25,12 +26,11 @@ export default class BattleScene extends Phaser.Scene {
 	public arenaEnemy: Phaser.GameObjects.Image;
 	public arenaEnemy2: Phaser.GameObjects.Image;
 	public trainer: Phaser.GameObjects.Sprite;
-	public waveIndex: integer;
+	public currentBattle: Battle;
 	public pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).map(t => [ t, 0 ]));
 	private party: PlayerPokemon[];
 	private modifierBar: ModifierBar;
 	private modifiers: Modifier[];
-	private enemyPokemon: EnemyPokemon;
 	public uiContainer: Phaser.GameObjects.Container;
 	public ui: UI;
 
@@ -117,8 +117,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('party_cancel', 'ui');
 
 		// Load arena images
-		Utils.getEnumValues(ArenaType).map(at => {
-			const atKey = ArenaType[at].toLowerCase();
+		Utils.getEnumValues(Biome).map(at => {
+			const atKey = Biome[at].toLowerCase();
 			this.loadImage(`${atKey}_bg`, 'arenas', `${atKey}_bg.png`);
 			this.loadImage(`${atKey}_a`, 'arenas', `${atKey}_a.png`);
 			this.loadImage(`${atKey}_b`, 'arenas', `${atKey}_b.png`);
@@ -177,15 +177,15 @@ export default class BattleScene extends Phaser.Scene {
 		this.field = field;
 
 		// Init arena
-		const arenas = Utils.getEnumValues(ArenaType).map(at => new Arena(this, at, ArenaType[at].toLowerCase()));
+		const arenas = Utils.getEnumValues(Biome).map(at => new BiomeArena(this, at, Biome[at].toLowerCase()));
 		const arena = arenas[Utils.randInt(11)];
 
 		this.arena = arena;
 
-		this.arenaBg = this.add.image(0, 0, `${ArenaType[arena.arenaType].toLowerCase()}_bg`);
-		this.arenaPlayer = this.add.image(340, 20, `${ArenaType[arena.arenaType].toLowerCase()}_a`);
-		this.arenaEnemy = this.add.image(-240, 13, `${ArenaType[arena.arenaType].toLowerCase()}_b`);
-		this.arenaEnemy2 = this.add.image(-240, 13, `${ArenaType[arena.arenaType].toLowerCase()}_b`);
+		this.arenaBg = this.add.image(0, 0, `${Biome[arena.biomeType].toLowerCase()}_bg`);
+		this.arenaPlayer = this.add.image(340, 20, `${Biome[arena.biomeType].toLowerCase()}_a`);
+		this.arenaEnemy = this.add.image(-240, 13, `${Biome[arena.biomeType].toLowerCase()}_b`);
+		this.arenaEnemy2 = this.add.image(-240, 13, `${Biome[arena.biomeType].toLowerCase()}_b`);
 
 		[this.arenaBg, this.arenaPlayer, this.arenaEnemy, this.arenaEnemy2].forEach(a => {
 			a.setOrigin(0, 0);
@@ -209,8 +209,6 @@ export default class BattleScene extends Phaser.Scene {
 		this.add.existing(this.modifierBar);
 		uiContainer.add(this.modifierBar);
 
-		this.waveIndex = 1;
-
 		this.party = [];
 
 		let loadPokemonAssets = [];
@@ -226,11 +224,12 @@ export default class BattleScene extends Phaser.Scene {
 		
 		const enemySpecies = arena.randomSpecies(1);
 		console.log(enemySpecies.name);
-		const enemyPokemon = new EnemyPokemon(this, enemySpecies, this.getLevelForWave());
+		const enemyPokemon = new EnemyPokemon(this, enemySpecies, this.getLevelForNextWave());
 		loadPokemonAssets.push(enemyPokemon.loadAssets());
 
 		this.add.existing(enemyPokemon);
-		this.enemyPokemon = enemyPokemon;
+
+		this.newBattle(enemyPokemon);
 
 		field.add(enemyPokemon);
 		
@@ -297,11 +296,12 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	getEnemyPokemon(): EnemyPokemon {
-		return this.enemyPokemon;
+		return this.currentBattle.enemyPokemon;
 	}
 
-	setEnemyPokemon(enemyPokemon: EnemyPokemon) {
-		this.enemyPokemon = enemyPokemon;
+	newBattle(enemyPokemon: EnemyPokemon): Battle {
+		this.currentBattle = new Battle((this.currentBattle?.waveIndex || 0) + 1, enemyPokemon);
+		return this.currentBattle;
 	}
 
 	randomSpecies(fromArenaPool?: boolean): PokemonSpecies {
@@ -310,13 +310,14 @@ export default class BattleScene extends Phaser.Scene {
 			: allSpecies[(Utils.randInt(allSpecies.length)) - 1];
 	}
 
-	getLevelForWave() {
-		let averageLevel = 1 + this.waveIndex * 0.25;
+	getLevelForNextWave() {
+		const waveIndex = (this.currentBattle?.waveIndex || 0) + 1;
+		let averageLevel = 1 + waveIndex * 0.25;
 
-		if (this.waveIndex % 10 === 0)
+		if (waveIndex % 10 === 0)
 			return Math.floor(averageLevel * 1.25);
 
-		const deviation = 10 / this.waveIndex;
+		const deviation = 10 / waveIndex;
 
 		return Math.max(Math.round(averageLevel + Utils.randGauss(deviation)), 1);
 	}
@@ -419,6 +420,10 @@ export default class BattleScene extends Phaser.Scene {
 				pokemon.updateInfo();
 			}
 		}
+	}
+
+	getModifier(modifierType: { new(...args: any[]): Modifier }): Modifier {
+		return this.modifiers.find(m => m instanceof modifierType);
 	}
 
 	applyModifiers(modifierType: { new(...args: any[]): Modifier }, ...args: any[]): void {

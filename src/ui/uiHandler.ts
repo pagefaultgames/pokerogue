@@ -24,6 +24,10 @@ export default abstract class UiHandler {
     return this.scene.ui;
   }
 
+  getCursor(): integer {
+    return this.cursor;
+  }
+
   setCursor(cursor: integer): boolean {
     const changed = this.cursor !== cursor;
     if (changed)

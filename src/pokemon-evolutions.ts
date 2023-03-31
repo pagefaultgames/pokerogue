@@ -345,7 +345,7 @@ export const pokemonEvolutions = {
     new SpeciesEvolution(Species.KIRLIA, 20, null, null)
   ],
   [Species.KIRLIA]: [
-    new SpeciesEvolution(Species.GARDEVOIR, 30, null, null),
+    new SpeciesEvolution(Species.GARDEVOIR, 30, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.gender, true)),
     new SpeciesEvolution(Species.GALLADE, 1, "Dawn Stone", new SpeciesEvolutionCondition((p: Pokemon) => p.gender, true), SpeciesWildEvolutionRate.SLOW)
   ],
   [Species.SURSKIT]: [

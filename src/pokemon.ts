@@ -9,7 +9,7 @@ import * as Utils from './utils';
 import { getTypeDamageMultiplier } from './type';
 import { getLevelTotalExp } from './exp';
 import { Stat } from './pokemon-stat';
-import { PokemonBaseStatModifier as PokemonBaseStatBoosterModifier, ShinyRateBoosterModifier } from './modifier';
+import { ExpShareModifier, PokemonBaseStatModifier as PokemonBaseStatBoosterModifier, ShinyRateBoosterModifier } from './modifier';
 import { PokeballType } from './pokeball';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
@@ -450,11 +450,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
-  getExpValue(victorLevel: integer): integer {
-    // Gen 1-4 formula
-    // return ((this.pokemon.baseExp * this.level) / 7) * (1 / 1)
-    // TODO: Update for exp share
-    return Math.floor(((this.species.baseExp * this.level) / 5) * (1 / 1) * ((Math.round(Math.sqrt(2 * this.level + 10)) * Math.pow(2 * this.level + 10, 2)) / (Math.round(Math.sqrt(this.level + victorLevel + 10)) * Math.pow(this.level + victorLevel + 10, 2)))) + 1;
+  getExpValue(victor: Pokemon): integer {
+    return ((this.species.baseExp * this.level) / 5) * ((Math.round(Math.sqrt(2 * this.level + 10)) * Math.pow(2 * this.level + 10, 2)) / (Math.round(Math.sqrt(this.level + victor.level + 10)) * Math.pow(this.level + victor.level + 10, 2))) + 1;
   }
 
   tint(color: number, alpha?: number, duration?: integer, ease?: string) {
