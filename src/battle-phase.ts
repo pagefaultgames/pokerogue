@@ -449,6 +449,7 @@ abstract class MovePhase extends BattlePhase {
     if (!this.move)
       console.log(this.pokemon.moveset);
     this.scene.ui.showText(`${this.pokemon.name} used\n${this.move.getName()}!`, null, () => this.end(), 500);
+    this.move.ppUsed++;
     if (this.move.getMove().category !== MOVE_CATEGORY.STATUS)
       this.scene.unshiftPhase(this.getEffectPhase());
   }
@@ -863,10 +864,13 @@ export class AttemptCapturePhase extends BattlePhase {
     this.scene.unshiftPhase(new VictoryPhase(this.scene));
     this.scene.ui.showText(`${pokemon.name} was caught!`, null, () => {
       pokemon.hideInfo();
-      pokemon.addToParty();
+      const newPokemon = pokemon.addToParty();
       this.scene.field.remove(pokemon, true);
-      this.removePb();
-      this.end();
+      newPokemon.loadAssets().then(() => {
+        this.removePb();
+        this.end();
+      });
+      this.scene.load.start();
     }, 0, true);
   }
 
@@ -893,7 +897,7 @@ export class SelectModifierPhase extends BattlePhase {
     regenerateModifierPoolThresholds(this.scene.getParty());
     const modifierCount = new Utils.IntegerHolder(3);
     this.scene.applyModifiers(ExtraModifierModifier, modifierCount);
-    const types: Array<ModifierType> = getModifierTypesForWave(this.scene.currentBattle.waveIndex, modifierCount.value);
+    const types: Array<ModifierType> = getModifierTypesForWave(this.scene.currentBattle.waveIndex - 1, modifierCount.value);
 
     this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, (cursor: integer) => {
       if (cursor < 0) {

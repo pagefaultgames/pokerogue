@@ -600,10 +600,16 @@ export class EnemyPokemon extends Pokemon {
 
   addToParty() {
     const party = (this.scene as BattleScene).getParty();
+    let ret: PlayerPokemon = null;
 
-    if (party.length < 6)
-      party.push(new PlayerPokemon(this.scene as BattleScene, this.species, this.level, this));
+    if (party.length < 6) {
+      const newPokemon = new PlayerPokemon(this.scene as BattleScene, this.species, this.level, this);
+      party.push(newPokemon);
+      ret = newPokemon;
+    }
     this.hp = 0;
+    
+    return ret;
   }
 }
 

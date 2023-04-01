@@ -88,7 +88,7 @@ export abstract class Modifier {
     if (this.stackCount <= 1)
       return null;
 
-    const text = addTextObject(scene, 16, 12, this.stackCount.toString(), TextStyle.PARTY, { fontSize: '66px', color: this.stackCount < this.getMaxStackCount() ? '#484848' : '#e64a18' });
+    const text = addTextObject(scene, 16, 12, this.stackCount.toString(), TextStyle.PARTY, { fontSize: '66px', color: this.stackCount < this.getMaxStackCount() ? '#f8f8f8' : '#e64a18' });
     text.setStroke('#424242', 16)
     text.setOrigin(1, 0);
 
@@ -424,7 +424,7 @@ class AllPokemonFullReviveModifierType extends AllPokemonFullHpRestoreModifierTy
   }
 }
 
-class ExpBoosterModifierType extends ModifierType {
+export class ExpBoosterModifierType extends ModifierType {
   constructor(name: string, boostPercent: integer, iconImage?: string) {
     super(name, `Increases gain of EXP. Points by ${boostPercent}%`, () => new ExpBoosterModifier(this, boostPercent), iconImage);
   }

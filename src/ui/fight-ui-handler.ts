@@ -1,13 +1,16 @@
 import { CommandPhase } from "../battle-phase";
 import BattleScene from "../battle-scene";
 import { addTextObject, TextStyle } from "../text";
+import { Type } from "../type";
 import { Command } from "./command-ui-handler";
-import BattleMessageUiHandler from "./battle-message-ui-handler";
-import UI, { Mode } from "./ui";
+import { Mode } from "./ui";
 import UiHandler from "./uiHandler";
+import * as Utils from "../utils";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
+  private typeIcon: Phaser.GameObjects.Sprite;
+  private ppText: Phaser.GameObjects.Text;
   private cursorObj: Phaser.GameObjects.Image;
 
   constructor(scene: BattleScene) {
@@ -17,10 +20,17 @@ export default class FightUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
     
-    const movesContainer = this.scene.add.container(18, -38.7);
-    ui.add(movesContainer);
+    this.movesContainer = this.scene.add.container(18, -38.7);
+    ui.add(this.movesContainer);
 
-    this.movesContainer = movesContainer;
+    this.typeIcon = this.scene.add.sprite((this.scene.game.canvas.width / 6) - 33, -31, 'types', 'unknown');
+    this.typeIcon.setVisible(false);
+    ui.add(this.typeIcon);
+
+    this.ppText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 18, -15.5, '    /    ', TextStyle.WINDOW);
+    this.ppText.setOrigin(1, 0.5);
+    this.ppText.setVisible(false);
+    ui.add(this.ppText);
   }
 
   show(args: any[]) {
@@ -29,6 +39,8 @@ export default class FightUiHandler extends UiHandler {
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.bg.setTexture('bg_fight');
     this.setCursor(this.cursor);
+    this.typeIcon.setVisible(true);
+    this.ppText.setVisible(true);
     this.displayMoves();
   }
 
@@ -80,6 +92,14 @@ export default class FightUiHandler extends UiHandler {
       ui.add(this.cursorObj);
     }
 
+    const pokemonMove = (this.scene as BattleScene).getPlayerPokemon().moveset[cursor];
+    this.typeIcon.setTexture('types', Type[pokemonMove.getMove().type].toLowerCase());
+
+    const maxPP = pokemonMove.getMove().pp + pokemonMove.ppUp;
+    const pp = maxPP - pokemonMove.ppUsed;
+
+    this.ppText.setText(`${Utils.padInt(pp, 2, '  ')}/${Utils.padInt(maxPP, 2, '  ')}`);
+
     this.cursorObj.setPosition(13 + (cursor % 2 === 1 ? 100 : 0), -31 + (cursor >= 2 ? 15 : 0));
 
     return ret;
@@ -98,6 +118,8 @@ export default class FightUiHandler extends UiHandler {
   clear() {
     super.clear();
     this.clearMoves();
+    this.typeIcon.setVisible(false);
+    this.ppText.setVisible(false);
     this.eraseCursor();
   }
 

@@ -5,7 +5,7 @@ import { BattlePhase, EncounterPhase, SummonPhase, CommandPhase, NextEncounterPh
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonModifier } from './modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonModifier, ExpBoosterModifier, ExpBoosterModifierType } from './modifier';
 import { PokeballType } from './pokeball';
 import { Species } from './species';
 import { initAutoPlay } from './auto-play';
@@ -138,6 +138,8 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.loadAtlas('pb', '');
 		this.loadAtlas('items', '');
+		this.loadAtlas('types', '');
+		this.loadAtlas('statuses', '');
 
 		for (let i = 0; i < 6; i++)
 			this.loadAtlas(`pokemon_icons_${i}`, 'ui');
@@ -351,7 +353,7 @@ export default class BattleScene extends Phaser.Scene {
 		if (this.bgm && this.bgm.isPlaying)
 			this.bgm.stop();
 		this.bgm = this.sound.add(bgmName, { loop: true });
-		this.bgm.play();
+		//this.bgm.play();
 	}
 
 	pauseBgm(): void {

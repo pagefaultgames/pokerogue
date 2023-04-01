@@ -1,0 +1,146 @@
+{
+	"textures": [
+		{
+			"image": "statuses.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 44,
+				"h": 30
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "burn",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 20,
+						"h": 8
+					}
+				},
+				{
+					"filename": "faint",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 1,
+						"y": 11,
+						"w": 20,
+						"h": 8
+					}
+				},
+				{
+					"filename": "freeze",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 1,
+						"y": 21,
+						"w": 20,
+						"h": 8
+					}
+				},
+				{
+					"filename": "paralysis",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 23,
+						"y": 1,
+						"w": 20,
+						"h": 8
+					}
+				},
+				{
+					"filename": "poison",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 23,
+						"y": 11,
+						"w": 20,
+						"h": 8
+					}
+				},
+				{
+					"filename": "sleep",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 23,
+						"y": 21,
+						"w": 20,
+						"h": 8
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:34eb38966145af4ef9cffbaaa8d07ea3:fba056f9a49345436b0820757c78f418:e6649238c018d3630e55681417c698ca$"
+	}
+}
