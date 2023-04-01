@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import BattleScene from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './battle-info';
 import { MessagePhase } from './battle-phase';
-import { default as Move, allMoves, MOVE_CATEGORY as MoveCategory, Moves } from './move';
+import { default as Move, allMoves, MoveCategory, Moves } from './move';
 import { pokemonLevelMoves } from './pokemon-level-moves';
 import { default as PokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
@@ -608,7 +608,7 @@ export class EnemyPokemon extends Pokemon {
       ret = newPokemon;
     }
     this.hp = 0;
-    
+
     return ret;
   }
 }

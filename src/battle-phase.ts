@@ -1,7 +1,7 @@
 import BattleScene from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, Moves as Move, MOVE_CATEGORY } from "./move";
+import { allMoves, Moves as Move, MoveCategory } from "./move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { interp } from "./temp_interpreter";
@@ -450,7 +450,7 @@ abstract class MovePhase extends BattlePhase {
       console.log(this.pokemon.moveset);
     this.scene.ui.showText(`${this.pokemon.name} used\n${this.move.getName()}!`, null, () => this.end(), 500);
     this.move.ppUsed++;
-    if (this.move.getMove().category !== MOVE_CATEGORY.STATUS)
+    if (this.move.getMove().category !== MoveCategory.STATUS)
       this.scene.unshiftPhase(this.getEffectPhase());
   }
 }
@@ -487,10 +487,31 @@ abstract class MoveEffectPhase extends PokemonPhase {
   start() {
     super.start();
 
-    this.getTargetPokemon().apply(this.getUserPokemon(), this.move, () => this.end());
-    if (this.getTargetPokemon().hp <= 0) {
-      this.scene.pushPhase(new FaintPhase(this.scene, !this.player));
+    if (this.hitCheck()) {
+      this.getTargetPokemon().apply(this.getUserPokemon(), this.move, () => this.end());
+      if (this.getTargetPokemon().hp <= 0) {
+        this.scene.pushPhase(new FaintPhase(this.scene, !this.player));
+      }
+    } else {
+      this.scene.unshiftPhase(new MessagePhase(this.scene, `${!this.player ? 'Foe ' : ''}${this.getPokemon().name}'s\nattack missed!`));
+      this.end();
     }
+  }
+
+  hitCheck(): boolean {
+    if (this.move.getMove().category !== MoveCategory.STATUS) {
+      const userAccuracyLevel = 0;
+      const targetEvasionLevel = 0;
+      const rand = Utils.randInt(100, 1);
+      let accuracyMultiplier = 1;
+      if (userAccuracyLevel !== targetEvasionLevel) {
+        accuracyMultiplier = userAccuracyLevel > targetEvasionLevel
+          ? (3 + Math.min(userAccuracyLevel - targetEvasionLevel, 6)) / 3
+          : 3 / (3 + Math.min(targetEvasionLevel - userAccuracyLevel, 6));
+      }
+      return rand <= this.move.getMove().accuracy * accuracyMultiplier;
+    }
+    return true;
   }
 
   abstract getUserPokemon(): Pokemon;
@@ -508,7 +529,7 @@ export class PlayerMoveEffectPhase extends MoveEffectPhase {
   }
 
   getTargetPokemon(): Pokemon {
-    if (this.move.getMove().category === MOVE_CATEGORY.STATUS)
+    if (this.move.getMove().category === MoveCategory.STATUS)
       return this.getUserPokemon();
     return this.scene.getEnemyPokemon();
   }
@@ -524,7 +545,7 @@ export class EnemyMoveEffectPhase extends MoveEffectPhase {
   }
 
   getTargetPokemon(): Pokemon {
-    if (this.move.getMove().category === MOVE_CATEGORY.STATUS)
+    if (this.move.getMove().category === MoveCategory.STATUS)
       return this.getUserPokemon();
     return this.scene.getPlayerPokemon();
   }
