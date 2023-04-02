@@ -1,6 +1,6 @@
 import * as ts from "typescript";
 import BattleScene from "./battle-scene";
-import Pokemon from "./pokemon";
+import Pokemon, { PlayerPokemon } from "./pokemon";
 
 var moveAnimsContent;
 let funcNames = [];
@@ -14,6 +14,18 @@ var gBattleAnimArgs = [ 0, 0, 0, 0, 0, 0, 0 ];
 var gSprites: Sprite[] = [];
 var gTasks: Function[] = [];
 var gAnimVisualTaskCount: integer = 0;
+
+const MAX_BATTLERS_COUNT = 4;
+const ANIM_PLAYER_LEFT = 4;
+const ANIM_PLAYER_RIGHT = 5;
+const ANIM_OPPONENT_LEFT  = 6;
+const ANIM_OPPONENT_RIGHT = 7;
+const ANIM_ATTACKER_FORCE = 8;
+
+const B_POSITION_PLAYER_LEFT = 0;
+const B_POSITION_OPPONENT_LEFT = 1;
+const B_POSITION_PLAYER_RIGHT = 2;
+const B_POSITION_OPPONENT_RIGHT = 3;
 
 class SpriteTemplate {
   public imageName: string;
@@ -236,12 +248,110 @@ function CreateVisualTask(taskFunc: Function, taskPriority: integer, args: any[]
     gAnimVisualTaskCount++;
 }
 
+function DestroyAnimVisualTask(taskId: integer)
+{
+    DestroyTask(taskId);
+    gAnimVisualTaskCount--;
+}
+
 function CreateTask(func: Function, priority: integer): integer
 {
     const taskId = gTasks.length;
     gTasks.push(func);
 
     return taskId;
+}
+
+function DestroyTask(taskId: integer) {
+    /*if (gTasks[taskId].isActive) {
+        gTasks[taskId].isActive = false;
+
+        if (gTasks[taskId].prev == HEAD_SENTINEL)
+        {
+            if (gTasks[taskId].next != TAIL_SENTINEL)
+                gTasks[gTasks[taskId].next].prev = HEAD_SENTINEL;
+        }
+        else
+        {
+            if (gTasks[taskId].next == TAIL_SENTINEL)
+            {
+                gTasks[gTasks[taskId].prev].next = TAIL_SENTINEL;
+            }
+            else
+            {
+                gTasks[gTasks[taskId].prev].next = gTasks[taskId].next;
+                gTasks[gTasks[taskId].next].prev = gTasks[taskId].prev;
+            }
+        }
+    }*/
+}
+
+function GetBattlerAtPosition(position: integer) {
+	switch (position) {
+		case ANIM_PLAYER_LEFT:
+			return B_POSITION_PLAYER_LEFT;
+		case ANIM_OPPONENT_LEFT:
+			return B_POSITION_OPPONENT_LEFT;
+	}
+}
+
+function AnimTask_ShakeMon2(taskId: integer)
+{
+    /*let spriteId;
+    let abort = false;
+    let battlerId;
+
+    if (gBattleAnimArgs[0] < MAX_BATTLERS_COUNT)
+    {
+        spriteId = GetAnimBattlerSpriteId(gBattleAnimArgs[0]);
+        if (spriteId == SPRITE_NONE)
+            abort = true;
+    }
+    else if (gBattleAnimArgs[0] != ANIM_ATTACKER_FORCE)
+    {
+        switch (gBattleAnimArgs[0])
+        {
+        case ANIM_PLAYER_LEFT:
+            battlerId = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+            break;
+        case ANIM_PLAYER_RIGHT:
+            battlerId = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+            break;
+        case ANIM_OPPONENT_LEFT:
+            battlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+            break;
+        case ANIM_OPPONENT_RIGHT:
+        default:
+            battlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+            break;
+        }
+
+        if (IsBattlerSpriteVisible(battlerId) == false)
+            abort = true;
+
+        spriteId = gBattlerSpriteIds[battlerId];
+    }
+    else
+    {
+        spriteId = gBattlerSpriteIds[gBattleAnimAttacker];
+    }
+
+    if (abort)
+    {
+        DestroyAnimVisualTask(taskId);
+        return;
+    }
+
+    gSprites[spriteId].x2 = gBattleAnimArgs[1];
+    gSprites[spriteId].y2 = gBattleAnimArgs[2];
+    gTasks[taskId].data[0] = spriteId;
+    gTasks[taskId].data[1] = gBattleAnimArgs[3];
+    gTasks[taskId].data[2] = gBattleAnimArgs[4];
+    gTasks[taskId].data[3] = gBattleAnimArgs[4];
+    gTasks[taskId].data[4] = gBattleAnimArgs[1];
+    gTasks[taskId].data[5] = gBattleAnimArgs[2];
+    gTasks[taskId].func = AnimTask_ShakeMon2_Step;
+    gTasks[taskId].func(taskId);*/
 }
 
 enum AnimTarget {
@@ -336,9 +446,9 @@ function SetCallbackToStoredInData6(sprite: Sprite)
   //sprite->callback = (void (*)(struct Sprite *))callback;
 }
 
-function GetBattlerSide(battler: Pokemon): BattleSide
+function GetBattlerSide(pokemon: Pokemon): BattleSide
 {
-    return battler.player ? BattleSide.PLAYER : BattleSide.ENEMY;
+    return pokemon instanceof PlayerPokemon ? BattleSide.PLAYER : BattleSide.ENEMY;
 }
 
 const multiPatterns = [ 
@@ -370,9 +480,9 @@ const linePatterns = [
       const animFuncName = template.slice(i + search.length, template.indexOf(',', i));
       console.log(imageName, animFuncName)
 
-      animTemplateContents += `const ${args[0]} = new SpriteTemplate('${imageName}', ${affineAnimName !== 'gDummySpriteAffineAnimTable' && false ? affineAnimName : 'null'}, ${animFuncName});\n`
-
       if (funcNames.indexOf(animFuncName) === -1) {
+				animTemplateContents += `const ${res[2]} = new SpriteTemplate('${imageName}', ${affineAnimName !== 'gDummySpriteAffineAnimTable' && false ? affineAnimName : 'null'}, ${animFuncName});\n`
+				
         search = `void ${animFuncName}(struct Sprite *sprite`;
         i = animTemplates.indexOf(search);
         if (i > -1) {
@@ -391,40 +501,18 @@ const linePatterns = [
   [ /([\t ]+)createvisualtask (.*?), (.*?)(?:, (.*?))?$/, res => {
     let ret = res[0];
     const args = res[4].split(', ');
-    /*
-    let search = `const struct SpriteTemplate ${args[0]}`;
-    let i = animTemplates.indexOf(search);
-    if (i > -1) {
-      const template = animTemplates.slice(i, animTemplates.indexOf('}', i) + 1);
-      search = `.tileTag = ANIM_TAG_`;
-      i = template.indexOf(search);
-      const imageName = template.slice(i + search.length, template.indexOf(',', i));
-      search = '.affineAnims = ';
-      i = template.indexOf(search);
-      const affineAnimName = template.slice(i + search.length, template.indexOf(',', i));
-      search = '.callback = ';
-      i = template.indexOf(search);
-      const animFuncName = template.slice(i + search.length, template.indexOf(',', i));
-      console.log(imageName, animFuncName)
-
-      animTemplateContents += `const ${args[0]} = new SpriteTemplate('${imageName}', ${affineAnimName !== 'gDummySpriteAffineAnimTable' && false ? affineAnimName : 'null'}, ${animFuncName});\n`
-
-      if (funcNames.indexOf(animFuncName) === -1) {
-        search = `void ${animFuncName}(struct Sprite *sprite`;
-        i = animTemplates.indexOf(search);
-        if (i > -1) {
-          funcNames.push(animFuncName);
-          processFunc(animFuncName, animTemplates.slice(i, /\}\n\n(?:\n|static void)/g.exec(animTemplates.slice(i)).index + i + 1));
-
-          return `${res[1]}CreateSprite(${args[0]}, AnimTarget.${res[3] === 'ANIM_TARGET' ? 'TARGET' : 'ATTACKER'}, ${res[4]}, [ ${res[5]} ]);`;
-
-        } else
-          console.log(animFuncName, 'not found');
-      } else
-        return `${res[1]}CreateSprite(${args[0]}, ${animFuncName}, AnimTarget.${res[3] === 'ANIM_TARGET' ? 'TARGET' : 'ATTACKER'}, ${res[4]}, [ ${res[5]} ]);`;
-    }
-    return `${res[1]}// ${ret}`;*/
-    return res[0];
+		
+		const taskFuncName = res[2];
+		if (funcNames.indexOf(taskFuncName) === -1) {
+			let search = `void ${taskFuncName}(u8 taskId`;
+			let i = animTemplates.indexOf(search);
+			if (i > -1) {
+				funcNames.push(taskFuncName);
+				processFunc(taskFuncName, animTemplates.slice(i, /\}\n\n(?:\n|(?:static )?void)/g.exec(animTemplates.slice(i)).index + i + 1));
+			} else
+				console.log(taskFuncName, 'not found');
+		}
+		return `${res[1]}CreateVisualTask(${taskFuncName}, ${res[3]}, [ ${res[4]} ]);`;
   } ],
   [ /([\t ]+)delay (\d+)/, res => {
     return `${res[1]}delay ${Math.round(16.6666666667 * parseInt(res[2]))}`;
