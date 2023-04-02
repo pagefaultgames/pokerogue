@@ -122,8 +122,8 @@ class AddPokeballModifier extends ConsumableModifier {
   }
 
   apply(args: any[]): boolean {
-    (args[0] as BattleScene).pokeballCounts[this.pokeballType] += this.count;
-    console.log((args[0] as BattleScene).pokeballCounts);
+    const pokeballCounts = (args[0] as BattleScene).pokeballCounts;
+    pokeballCounts[this.pokeballType] = Math.min(pokeballCounts[this.pokeballType] + this.count, 99);
 
     return true;
   }

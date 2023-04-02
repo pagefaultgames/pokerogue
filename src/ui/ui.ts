@@ -7,11 +7,13 @@ import FightUiHandler from './fight-ui-handler';
 import MessageUiHandler from './message-ui-handler';
 import SwitchCheckUiHandler from './switch-check-ui-handler';
 import ModifierSelectUiHandler from './modifier-select-ui-handler';
+import BallUiHandler from './ball-ui-handler';
 
 export enum Mode {
   MESSAGE = 0,
   COMMAND,
   FIGHT,
+  BALL,
   SWITCH_CHECK,
   MODIFIER_SELECT,
   PARTY
@@ -29,6 +31,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new BattleMessageUiHandler(scene),
       new CommandUiHandler(scene),
       new FightUiHandler(scene),
+      new BallUiHandler(scene),
       new SwitchCheckUiHandler(scene),
       new ModifierSelectUiHandler(scene),
       new PartyUiHandler(scene)

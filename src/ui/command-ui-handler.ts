@@ -61,7 +61,7 @@ export default class CommandUiHandler extends UiHandler {
             success = true;
             break;
           case 1:
-            (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.BALL, this.cursor);
+            ui.setModeWithoutClear(Mode.BALL);
             success = true;
             break;
           case 2:

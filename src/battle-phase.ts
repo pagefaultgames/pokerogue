@@ -360,8 +360,10 @@ export class CommandPhase extends BattlePhase {
         }
         break;
       case Command.BALL:
-        this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, PokeballType.POKEBALL));
-        success = true;
+        if (cursor < 4) {
+          this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, cursor as PokeballType));
+          success = true;
+        }
         break;
       case Command.POKEMON:
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, cursor, true));
@@ -761,6 +763,8 @@ export class AttemptCapturePhase extends BattlePhase {
 
   start() {
     super.start();
+
+    this.scene.pokeballCounts[this.pokeballType]--;
 
     const pokemon = this.scene.getEnemyPokemon();
     this.originalY = pokemon.y;

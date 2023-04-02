@@ -34,7 +34,7 @@ export default class SwitchCheckUiHandler extends AwaitableUiHandler {
     switchCheckText.setLineSpacing(12);
     switchCheckContainer.add(switchCheckText);
 
-    this.setCursor(0)
+    this.setCursor(0);
   }
 
   show(args: any[]) {

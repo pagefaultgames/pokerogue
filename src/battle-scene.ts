@@ -5,7 +5,7 @@ import { BattlePhase, EncounterPhase, SummonPhase, CommandPhase, NextEncounterPh
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonModifier, ExpBoosterModifier, ExpBoosterModifierType } from './modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonModifier} from './modifier';
 import { PokeballType } from './pokeball';
 import { Species } from './species';
 import { initAutoPlay } from './auto-play';
@@ -30,7 +30,7 @@ export default class BattleScene extends Phaser.Scene {
 	public arena: BiomeArena;
 	public trainer: Phaser.GameObjects.Sprite;
 	public currentBattle: Battle;
-	public pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).map(t => [ t, 0 ]));
+	public pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 	private party: PlayerPokemon[];
 	private modifierBar: ModifierBar;
 	private modifiers: Modifier[];
@@ -107,6 +107,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('overlay_hp', 'ui');
 		this.loadImage('overlay_exp', 'ui');
 		this.loadImage('level_up_stats', 'ui');
+		this.loadImage('ball_window', 'ui');
 		this.loadImage('boolean_window', 'ui');
 
 		this.loadImage('party_bg', 'ui');
@@ -271,6 +272,8 @@ export default class BattleScene extends Phaser.Scene {
 		Promise.all(loadPokemonAssets).then(() => {
 			if (this.auto)
 				initAutoPlay.apply(this, [ this.autoSpeed ]);
+			
+			this.pokeballCounts[PokeballType.POKEBALL] += 5;
 
 			this.newBattle();
 
