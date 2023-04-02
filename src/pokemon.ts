@@ -9,8 +9,9 @@ import * as Utils from './utils';
 import { getTypeDamageMultiplier } from './type';
 import { getLevelTotalExp } from './exp';
 import { Stat } from './pokemon-stat';
-import { ExpShareModifier, PokemonBaseStatModifier as PokemonBaseStatBoosterModifier, ShinyRateBoosterModifier } from './modifier';
+import { PokemonBaseStatModifier as PokemonBaseStatBoosterModifier, ShinyRateBoosterModifier } from './modifier';
 import { PokeballType } from './pokeball';
+import { Gender } from './gender';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -22,7 +23,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public level: integer;
   public exp: integer;
   public levelExp: integer;
-  public gender: integer;
+  public gender: Gender;
   public hp: integer;
   public stats: integer[];
   public ivs: integer[];
@@ -67,13 +68,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     //this.id = parseInt(Utils.decToBin(this.ivs[Stat.HP]) + Utils.decToBin(this.ivs[Stat.ATK]) + Utils.decToBin(this.ivs[Stat.DEF]) + Utils.decToBin(this.ivs[Stat.SPATK]) + Utils.decToBin(this.ivs[Stat.SPDEF]) + Utils.decToBin(this.ivs[Stat.SPD]) + this.id.toString(2).slice(30));
     
       if (this.species.malePercent === null)
-        this.gender = -1;
+        this.gender = Gender.GENDERLESS;
       else {
-        const genderChance = (this.id % 256) / 32;
+        const genderChance = (this.id % 256) * 0.390625;
         if (genderChance < this.species.malePercent)
-          this.gender = 0;
+          this.gender = Gender.MALE;
         else
-          this.gender = 1;
+          this.gender = Gender.FEMALE;
       }
 
       const rand1 = Utils.binToDec(Utils.decToBin(this.id).substring(0, 16));

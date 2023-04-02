@@ -10,7 +10,7 @@ export enum Stat {
 };
 
 export function getStatName(stat: Stat) {
-  let ret;
+  let ret: string;
   switch (stat) {
     case Stat.HP:
       ret = 'Max. HP';

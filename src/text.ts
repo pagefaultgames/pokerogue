@@ -1,12 +1,14 @@
 export enum TextStyle {
   MESSAGE,
   WINDOW,
+  BATTLE_INFO,
   PARTY
 };
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
   let styleOptions;
   let shadowColor;
+  let shadowSize = 6;
 
   switch (style) {
     case TextStyle.WINDOW:
@@ -31,6 +33,15 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
       };
       shadowColor = '#6b5a73';
       break;
+    case TextStyle.BATTLE_INFO:
+      styleOptions = {
+        fontFamily: 'emerald',
+        fontSize: '72px',
+        color: '#404040'
+      };
+      shadowColor = '#ded6b5';
+      shadowSize = 4;
+      break;
     case TextStyle.PARTY:
       styleOptions = {
         fontFamily: 'pkmnems',
@@ -49,7 +60,7 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
 
   const ret = scene.add.text(x, y, content, styleOptions);
   ret.setScale(0.1666666667);
-  ret.setShadow(6, 6, shadowColor);
+  ret.setShadow(shadowSize, shadowSize, shadowColor);
   ret.setLineSpacing(5);
 
   return ret;

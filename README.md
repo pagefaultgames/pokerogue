@@ -25,13 +25,13 @@
 - Battle info
   - Owned icon
   - Status effect indicator
-  - Gender icon
 - Evolution
   - Evolution screen
     - Background (ripped video?)
     - Particles
 - Modifiers
   - PP Up
+  - Ether/elixir
   - Type enhancers
   - Evolution items
   - Various mainline game items for various enhancements

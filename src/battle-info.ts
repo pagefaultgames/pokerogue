@@ -1,6 +1,8 @@
 import { default as Pokemon } from './pokemon';
 import { getLevelTotalExp, getLevelRelExp } from './exp';
 import * as Utils from './utils';
+import { addTextObject, TextStyle } from './text';
+import { getGenderSymbol, getGenderColor } from './gender';
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private player: boolean;
@@ -13,6 +15,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private lastName: string;
 
   private nameText: Phaser.GameObjects.Text;
+  private genderText: Phaser.GameObjects.Text;
   private levelContainer: Phaser.GameObjects.Container;
   private hpBar: Phaser.GameObjects.Image;
   private levelNumbersContainer: Phaser.GameObjects.Container;
@@ -37,41 +40,31 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     box.setOrigin(1, 0.5);
     this.add(box);
 
-    const nameText = this.scene.add.text(player ? -115 : -124, player ? -15.2 : -11.2, '', {
-      color: '#404040',
-      font: '72px emerald'
-    });
-    nameText.setShadow(4, 4, '#ded6b5');
-    nameText.setOrigin(0, 0);
-    nameText.setScale(0.1666666667);
-    this.add(nameText);
+    this.nameText = addTextObject(this.scene, player ? -115 : -124, player ? -15.2 : -11.2, '', TextStyle.BATTLE_INFO);
+    this.nameText.setOrigin(0, 0);
+    this.add(this.nameText);
 
-    this.nameText = nameText;
+    this.genderText = addTextObject(this.scene, 0, 0, '', TextStyle.BATTLE_INFO);
+    this.genderText.setOrigin(0, 0);
+    this.genderText.setPositionRelative(this.nameText, 0, 2);
+    this.add(this.genderText);
 
-    const levelContainer = this.scene.add.container(player ? -41 : -50, player ? -10 : -5);
-    this.add(levelContainer);
-
-    this.levelContainer = levelContainer;
+    this.levelContainer = this.scene.add.container(player ? -41 : -50, player ? -10 : -5);
+    this.add(this.levelContainer);
 
     const levelOverlay = this.scene.add.image(0, 0, 'overlay_lv');
-    levelContainer.add(levelOverlay);
+    this.levelContainer.add(levelOverlay);
 
-    const hpBar = this.scene.add.image(player ? -61 : -71, player ? -1 : 4.5, 'overlay_hp');
-    hpBar.setOrigin(0);
-    this.add(hpBar);
+    this.hpBar = this.scene.add.image(player ? -61 : -71, player ? -1 : 4.5, 'overlay_hp');
+    this.hpBar.setOrigin(0);
+    this.add(this.hpBar);
 
-    this.hpBar = hpBar;
-
-    const levelNumbersContainer = this.scene.add.container(9.5, 0);
-    levelContainer.add(levelNumbersContainer);
-
-    this.levelNumbersContainer = levelNumbersContainer;
+    this.levelNumbersContainer = this.scene.add.container(9.5, 0);
+    this.levelContainer.add(this.levelNumbersContainer);
 
     if (this.player) {
-      const hpNumbersContainer = this.scene.add.container(-15, 10);
-      this.add(hpNumbersContainer);
-
-      this.hpNumbersContainer = hpNumbersContainer;
+      this.hpNumbersContainer = this.scene.add.container(-15, 10);
+      this.add(this.hpNumbersContainer);
 
       const expBar = this.scene.add.image(-98, 18, 'overlay_exp');
       expBar.setOrigin(0);
@@ -84,7 +77,14 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
   initInfo(pokemon: Pokemon) {
     this.nameText.setText(pokemon.name);
-    this.lastName = pokemon.species.name;
+
+    const nameSizeTest = addTextObject(this.scene, 0, 0, pokemon.name, TextStyle.BATTLE_INFO);
+    const nameTextWidth = nameSizeTest.displayWidth;
+    nameSizeTest.destroy();
+
+    this.genderText.setText(getGenderSymbol(pokemon.gender));
+    this.genderText.setColor(getGenderColor(pokemon.gender));
+    this.genderText.setPositionRelative(this.nameText, nameTextWidth, 0);
 
     this.hpBar.setScale(pokemon.getHpRatio(), 1);
     if (this.player)
@@ -106,11 +106,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   updateInfo(pokemon: Pokemon, callback?: Function) {
     if (!this.scene)
       return;
-
-    if (this.lastName !== pokemon.species.name) {
-      this.nameText.setText(pokemon.name);
-      this.lastName = pokemon.species.name;
-    }
 
     const updatePokemonHp = () => {
       const duration = Utils.clampInt(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000);

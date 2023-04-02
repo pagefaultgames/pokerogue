@@ -103,6 +103,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('pbinfo_enemy', 'ui');
 		this.loadImage('overlay_lv', 'ui');
 		this.loadAtlas('numbers', 'ui');
+		this.loadAtlas('gender', 'ui');
 		this.loadAtlas('overlay_hp', 'ui');
 		this.loadImage('overlay_exp', 'ui');
 		this.loadImage('level_up_stats', 'ui');

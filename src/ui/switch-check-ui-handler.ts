@@ -61,7 +61,7 @@ export default class SwitchCheckUiHandler extends AwaitableUiHandler {
     if (keyCode === keyCodes.Z || keyCode === keyCodes.X) {
       success = true;
       if (keyCode === keyCodes.X)
-        this.cursor = 1;
+        this.setCursor(1);
       if (this.onActionInput) {
         if (!this.cursor)
           this.scene.unshiftPhase(new SwitchPhase(this.scene, false, true));
@@ -88,7 +88,6 @@ export default class SwitchCheckUiHandler extends AwaitableUiHandler {
   }
 
   setCursor(cursor: integer): boolean {
-    const ui = this.getUi();
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {

@@ -247,10 +247,7 @@ export class SummonPhase extends BattlePhase {
               onComplete: () => {
                 playerPokemon.cry();
                 playerPokemon.getSprite().clearTint();
-                this.scene.time.delayedCall(1000, () => {
-                  this.scene.currentBattle.addParticipant(playerPokemon);
-                  this.end();
-                });
+                this.scene.time.delayedCall(1000, () => this.end());
               }
             });
           }
@@ -326,13 +323,7 @@ export class CheckSwitchPhase extends BattlePhase {
     super.start();
 
     this.scene.ui.showText('Will you switch\nPOKéMON?', null, () => {
-      this.scene.ui.setMode(Mode.SWITCH_CHECK, () => {
-        console.log('handler', this.scene.ui.getHandler());
-        console.log(this.scene.ui.getHandler().getCursor())
-        if (this.scene.ui.getHandler().getCursor())
-          this.scene.currentBattle.addParticipant(this.scene.getPlayerPokemon());
-        this.end();
-      });
+      this.scene.ui.setMode(Mode.SWITCH_CHECK, () => this.end());
     });
   }
 }
@@ -348,6 +339,8 @@ export class CommandPhase extends BattlePhase {
     //interp(this.scene);
 
     this.scene.ui.setMode(Mode.COMMAND);
+    console.log('add participant', this.scene.getPlayerPokemon().name)
+    this.scene.currentBattle.addParticipant(this.scene.getPlayerPokemon());
   }
 
   handleCommand(command: Command, cursor: integer): boolean{

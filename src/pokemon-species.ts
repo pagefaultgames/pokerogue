@@ -18,8 +18,8 @@ export default class PokemonSpecies {
   public legendary: boolean;
   public mythical: boolean;
   public species: string;
-  public type1: integer;
-  public type2: integer;
+  public type1: Type;
+  public type2: Type;
   public height: number;
   public weight: number;
   public ability1: string;
