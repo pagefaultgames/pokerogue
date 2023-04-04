@@ -137,7 +137,8 @@ export const pokemonEvolutions = {
     new SpeciesEvolution(Species.RAPIDASH, 40, null, null)
   ],
   [Species.SLOWPOKE]: [
-    new SpeciesEvolution(Species.SLOWBRO, 37, null, null)
+    new SpeciesEvolution(Species.SLOWBRO, 37, null, null),
+    new SpeciesEvolution(Species.SLOWKING, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* King's rock*/), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MAGNEMITE]: [
     new SpeciesEvolution(Species.MAGNETON, 30, null, null)
@@ -836,9 +837,6 @@ export const pokemonEvolutions = {
   ],
   [Species.GRAVELER]: [
     new SpeciesEvolution(Species.GOLEM, 1, "Link Cable", null, SpeciesWildEvolutionDelay.VERY_LONG)
-  ],
-  [Species.SLOWPOKE]: [
-    new SpeciesEvolution(Species.SLOWKING, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* King's rock*/), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.HAUNTER]: [
     new SpeciesEvolution(Species.GENGAR, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true), SpeciesWildEvolutionDelay.VERY_LONG)
