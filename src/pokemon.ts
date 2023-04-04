@@ -13,6 +13,7 @@ import { PokemonBaseStatModifier as PokemonBaseStatBoosterModifier, ShinyRateBoo
 import { PokeballType } from './pokeball';
 import { Gender } from './gender';
 import { Anim, initAnim, loadMoveAnimAssets, moveAnims } from './battle-anims';
+import { StatusEffect } from './status-effect';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -29,7 +30,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public stats: integer[];
   public ivs: integer[];
   public moveset: PokemonMove[];
+  public status: StatusEffect;
   public winCount: integer;
+
+  public summonData: PokemonSummonData;
+  public battleSummonData: PokemonBattleSummonData;
+  public turnData: PokemonTurnData;
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
@@ -52,6 +58,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.stats = dataSource.stats;
       this.ivs = dataSource.ivs;
       this.moveset = dataSource.moveset;
+      this.status = dataSource.status;
       this.winCount = dataSource.winCount;
     } else {
       this.generateAndPopulateMoveset();
@@ -95,6 +102,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         console.log((E ^ F), shinyThreshold.value);
       /*else
         this.shiny = Utils.randInt(16) === 0;*/
+
+      this.status = StatusEffect.NONE;
 
       this.winCount = 0;
     }
@@ -476,6 +485,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
+  resetSummonData() {
+    this.summonData = new PokemonSummonData();
+    this.resetBattleSummonData();
+  }
+
+  resetBattleSummonData() {
+    this.battleSummonData = new PokemonBattleSummonData();
+  }
+
+  resetTurnData() {
+    this.turnData = new PokemonTurnData();
+  }
+
   getExpValue(victor: Pokemon): integer {
     return ((this.species.baseExp * this.level) / 5) * ((Math.round(Math.sqrt(2 * this.level + 10)) * Math.pow(2 * this.level + 10, 2)) / (Math.round(Math.sqrt(this.level + victor.level + 10)) * Math.pow(this.level + victor.level + 10, 2))) + 1;
   }
@@ -637,6 +659,19 @@ export class EnemyPokemon extends Pokemon {
 
     return ret;
   }
+}
+
+export class PokemonSummonData {
+  public confusionTurns: integer;
+}
+
+export class PokemonBattleSummonData {
+  public infatuated: boolean;
+}
+
+export class PokemonTurnData {
+  public flinched: boolean;
+  public hitsLeft: integer;
 }
 
 export enum AiType {

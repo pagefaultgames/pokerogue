@@ -342,7 +342,7 @@ export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLo
             scene.loadImage(bg, 'battle_anims');
         for (let s of sounds)
             scene.loadSe(s, 'battle_anims', s);
-        this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
+        scene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
         if (startLoad && !scene.load.isLoading()) 
             scene.load.start();
     });

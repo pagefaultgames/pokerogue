@@ -10,6 +10,7 @@ import PartyUiHandler from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor as getPokeballTintColor, PokeballType } from "./pokeball";
 import { pokemonLevelMoves } from "./pokemon-level-moves";
 import { MoveAnim, loadMoveAnimAssets } from "./battle-anims";
+import { StatusEffect } from "./status-effect";
 
 export class BattlePhase {
   protected scene: BattleScene;
@@ -246,6 +247,7 @@ export class SummonPhase extends BattlePhase {
               onComplete: () => {
                 playerPokemon.cry();
                 playerPokemon.getSprite().clearTint();
+                playerPokemon.resetSummonData();
                 this.scene.time.delayedCall(1000, () => this.end());
               }
             });
@@ -337,6 +339,9 @@ export class CommandPhase extends BattlePhase {
 
     this.scene.ui.setMode(Mode.COMMAND);
     this.scene.currentBattle.addParticipant(this.scene.getPlayerPokemon());
+
+    this.scene.getPlayerPokemon().resetTurnData();
+    this.scene.getEnemyPokemon().resetTurnData();
   }
 
   handleCommand(command: Command, cursor: integer): boolean{
@@ -441,6 +446,7 @@ abstract class MovePhase extends BattlePhase {
       console.log(this.pokemon.moveset);
     this.scene.ui.showText(`${this.pokemon.name} used\n${this.move.getName()}!`, null, () => {
       this.move.ppUsed++;
+
       if (this.move.getMove().category !== MoveCategory.STATUS) {
         if (this.hitCheck())
           this.scene.unshiftPhase(this.getEffectPhase());
@@ -507,8 +513,14 @@ abstract class MoveEffectPhase extends PokemonPhase {
 
     new MoveAnim(this.move.getMove().id as Moves, user, target).play(this.scene, () =>{
       this.getTargetPokemon().apply(this.getUserPokemon(), this.move, () => this.end());
-      if (this.getTargetPokemon().hp <= 0)
+      if (this.getUserPokemon().hp <= 0) {
+        this.scene.pushPhase(new FaintPhase(this.scene, this.player));
+        this.getTargetPokemon().resetBattleSummonData();
+      }
+      if (this.getTargetPokemon().hp <= 0) {
         this.scene.pushPhase(new FaintPhase(this.scene, !this.player));
+        this.getUserPokemon().resetBattleSummonData();
+      }
     });
   }
 
@@ -546,6 +558,24 @@ export class EnemyMoveEffectPhase extends MoveEffectPhase {
     /*if (this.move.getMove().category === MoveCategory.STATUS)
       return this.getUserPokemon();*/
     return this.scene.getPlayerPokemon();
+  }
+}
+
+export class ObtainStatusEffectPhase extends PokemonPhase {
+  private statusEffect: StatusEffect;
+
+  constructor(scene: BattleScene, player: boolean, statusEffect: StatusEffect) {
+    super(scene, player);
+  }
+
+  start() {
+    const pokemon = this.getPokemon();
+    if (pokemon.status === StatusEffect.NONE) {
+      pokemon.status = this.statusEffect;
+      // Show message and animation
+      this.end();
+    } else
+      this.end();
   }
 }
 

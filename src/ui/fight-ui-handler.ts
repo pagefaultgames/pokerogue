@@ -92,13 +92,22 @@ export default class FightUiHandler extends UiHandler {
       ui.add(this.cursorObj);
     }
 
-    const pokemonMove = (this.scene as BattleScene).getPlayerPokemon().moveset[cursor];
-    this.typeIcon.setTexture('types', Type[pokemonMove.getMove().type].toLowerCase());
+    const moveset = (this.scene as BattleScene).getPlayerPokemon().moveset;
 
-    const maxPP = pokemonMove.getMove().pp + pokemonMove.ppUp;
-    const pp = maxPP - pokemonMove.ppUsed;
+    const hasMove = cursor < moveset.length;
 
-    this.ppText.setText(`${Utils.padInt(pp, 2, '  ')}/${Utils.padInt(maxPP, 2, '  ')}`);
+    if (hasMove) {
+      const pokemonMove = moveset[cursor];
+      this.typeIcon.setTexture('types', Type[pokemonMove.getMove().type].toLowerCase());
+
+      const maxPP = pokemonMove.getMove().pp + pokemonMove.ppUp;
+      const pp = maxPP - pokemonMove.ppUsed;
+
+      this.ppText.setText(`${Utils.padInt(pp, 2, '  ')}/${Utils.padInt(maxPP, 2, '  ')}`);
+    }
+
+    this.typeIcon.setVisible(hasMove);
+    this.ppText.setVisible(hasMove);
 
     this.cursorObj.setPosition(13 + (cursor % 2 === 1 ? 100 : 0), -31 + (cursor >= 2 ? 15 : 0));
 
