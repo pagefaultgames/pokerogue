@@ -410,31 +410,44 @@ export default class BattleScene extends Phaser.Scene {
 		this.phaseQueue.push(new CommandPhase(this));
 	}
 
-	addModifier(modifier: Modifier): void {
-		if (modifier.add(this.modifierBar, this.modifiers))
-			this.sound.play('restore');
+	addModifier(modifier: Modifier): Promise<void> {
+		return new Promise(resolve => {
+			if (modifier.add(this.modifierBar, this.modifiers))
+				this.sound.play('restore');
 
-		if (modifier instanceof ConsumableModifier) {
-			const args = [ this ];
-			if (modifier.shouldApply(args))
-				modifier.apply(args);
-			return;
-		}
-
-		if (modifier instanceof PokemonModifier) {
-			for (let p in this.party) {
-				const pokemon = this.party[p];
-
-				if (modifier instanceof ConsumablePokemonModifier) {
-					const args = [ pokemon ];
-					if (modifier.shouldApply(args))
-						modifier.apply(args);
-				}
-
-				pokemon.calculateStats();
-				pokemon.updateInfo();
+			if (modifier instanceof ConsumableModifier) {
+				const args = [ this ];
+				if (modifier.shouldApply(args))
+					modifier.apply(args);
+				resolve();
+				return;
 			}
-		}
+
+			let pokemonToUpdate = 0;
+
+			if (modifier instanceof PokemonModifier) {
+				for (let p in this.party) {
+					const pokemon = this.party[p];
+
+					if (modifier instanceof ConsumablePokemonModifier) {
+						const args = [ pokemon ];
+						if (modifier.shouldApply(args))
+							modifier.apply(args);
+					}
+
+					pokemonToUpdate++;
+
+					pokemon.calculateStats();
+					pokemon.updateInfo(() => {
+						if (!(--pokemonToUpdate))
+							resolve();
+					});
+				}
+			}
+
+			if (!pokemonToUpdate)
+				resolve();
+		});
 	}
 
 	getModifier(modifierType: { new(...args: any[]): Modifier }): Modifier {

@@ -1,4 +1,6 @@
+import { LevelUpPhase } from "./battle-phase";
 import BattleScene from "./battle-scene";
+import { getLevelTotalExp } from "./exp";
 import { getPokeballName, PokeballType } from "./pokeball";
 import Pokemon, { PlayerPokemon } from "./pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
@@ -240,6 +242,24 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
   }
 }
 
+export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
+  constructor(type: ModifierType, pokemonId: integer) {
+    super(type, pokemonId);
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as PlayerPokemon;
+    pokemon.level++;
+    pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
+    pokemon.levelExp = 0;
+
+    const scene = pokemon.scene as BattleScene;
+    scene.unshiftPhase(new LevelUpPhase(scene, scene.getParty().indexOf(pokemon), pokemon.level));
+
+    return true;
+  }
+}
+
 export class ExpBoosterModifier extends Modifier {
   private boostMultiplier: integer;
 
@@ -376,22 +396,34 @@ export abstract class PokemonModifierType extends ModifierType {
 export class PokemonHpRestoreModifierType extends PokemonModifierType {
   protected restorePercent: integer;
 
-  constructor(name: string, restorePercent: integer, newModifierFunc?: Function, iconImage?: string) {
+  constructor(name: string, restorePercent: integer, newModifierFunc?: Function, selectFilter?: Function, iconImage?: string) {
     super(name, `Restore ${restorePercent} HP or ${restorePercent}% HP for one POKéMON, whichever is higher`,
       newModifierFunc || ((_type, args) => new PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePercent, false)),
-    (pokemon: PlayerPokemon) => {
-      if (pokemon.hp >= pokemon.getMaxHp())
+    selectFilter || ((pokemon: PlayerPokemon) => {
+      if (!pokemon.hp || pokemon.hp >= pokemon.getMaxHp())
         return PartyUiHandler.NoEffectMessage;
       return null;
-    }, iconImage);
+    }), iconImage);
 
     this.restorePercent = restorePercent;
   }
 }
 
+export class PokemonLevelIncrementModifierType extends PokemonModifierType {
+  constructor(name: string, iconImage?: string) {
+    super(name, `Increase a POKéMON\'s level by 1`, (type, args) => new PokemonLevelIncrementModifier(type, (args[0] as PlayerPokemon).id),
+      (_pokemon: PlayerPokemon) => null, iconImage);
+  }
+}
+
 export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
   constructor(name: string, restorePercent: integer, iconImage?: string) {
-    super(name, restorePercent, (_type, args) => new PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePercent, true), iconImage);
+    super(name, restorePercent, (_type, args) => new PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePercent, true),
+      ((pokemon: PlayerPokemon) => {
+        if (pokemon.hp)
+          return PartyUiHandler.NoEffectMessage;
+        return null;
+      }), iconImage);
 
     this.description = `Revive one POKéMON and restore ${restorePercent}% HP`;
     this.selectFilter = (pokemon: PlayerPokemon) => {
@@ -471,6 +503,7 @@ const modifierPool = {
       const thresholdPartyMemberCount = party.filter(p => p.getHpRatio() <= 0.6).length;
       return thresholdPartyMemberCount;
     }),
+    new PokemonLevelIncrementModifierType('RARE CANDY'),
     new PokemonBaseStatBoosterModifierType('HP-UP', Stat.HP),
     new PokemonBaseStatBoosterModifierType('PROTEIN', Stat.ATK),
     new PokemonBaseStatBoosterModifierType('IRON', Stat.DEF),

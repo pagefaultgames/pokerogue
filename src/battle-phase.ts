@@ -9,7 +9,7 @@ import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, getModifie
 import PartyUiHandler from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor as getPokeballTintColor, PokeballType } from "./pokeball";
 import { pokemonLevelMoves } from "./pokemon-level-moves";
-import { MoveAnim, loadMoveAnimAssets } from "./battle-anims";
+import { MoveAnim, initAnim, loadMoveAnimAssets } from "./battle-anims";
 import { StatusEffect } from "./status-effect";
 
 export class BattlePhase {
@@ -776,10 +776,12 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
 
     if (pokemon.moveset.length < 4) {
       pokemon.moveset.push(new PokemonMove(this.moveId, 0, 0));
-      loadMoveAnimAssets(this.scene, [ this.moveId ])
-        .then(() => {
-          this.scene.sound.play('level_up_fanfare');
-          this.scene.ui.showText(`${pokemon.name} learned\n${Utils.toPokemonUpperCase(move.name)}!`, null, () => this.end(), null, true);
+      initAnim(this.moveId).then(() => {
+        loadMoveAnimAssets(this.scene, [ this.moveId ], true)
+          .then(() => {
+            this.scene.sound.play('level_up_fanfare');
+            this.scene.ui.showText(`${pokemon.name} learned\n${Utils.toPokemonUpperCase(move.name)}!`, null, () => this.end(), null, true);
+          });
         });
     } else
       this.end();
@@ -965,16 +967,14 @@ export class SelectModifierPhase extends BattlePhase {
         this.scene.ui.setModeWithoutClear(Mode.PARTY, false, (slotIndex: integer) => {
           if (slotIndex < 6) {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT);
-            this.scene.addModifier(types[cursor].newModifier(this.scene.getParty()[slotIndex]));
+            this.scene.addModifier(types[cursor].newModifier(this.scene.getParty()[slotIndex])).then(() => super.end());
             this.scene.ui.setMode(Mode.MESSAGE);
-            super.end();
           } else
             this.scene.ui.setMode(Mode.MODIFIER_SELECT);
         }, pokemonModifierType.selectFilter);
       } else {
-        this.scene.addModifier(types[cursor].newModifier())
+        this.scene.addModifier(types[cursor].newModifier()).then(() => super.end());
         this.scene.ui.setMode(Mode.MESSAGE);
-        super.end();
       }
     });
   }

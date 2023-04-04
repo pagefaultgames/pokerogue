@@ -102,8 +102,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   updateInfo(pokemon: Pokemon, callback?: Function) {
-    if (!this.scene)
+    if (!this.scene) {
+      if (callback)
+        callback();
       return;
+    }
 
     const updatePokemonHp = () => {
       const duration = Utils.clampInt(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000);
@@ -158,8 +161,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     const relLevelExp = getLevelRelExp(this.lastLevel + 1, battler.species.growthRate);
     const levelExp = levelUp ? relLevelExp : battler.levelExp;
     let ratio = levelExp / relLevelExp;
-    let duration = ((levelExp - this.lastLevelExp) / relLevelExp) * 1650;
-    this.scene.sound.play('exp');
+    let duration = this.visible ? ((levelExp - this.lastLevelExp) / relLevelExp) * 1650 : 0;
+    if (duration)
+      this.scene.sound.play('exp');
     this.scene.tweens.add({
       targets: this.expBar,
       ease: 'Sine.easeIn',
@@ -179,7 +183,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         }
       },
       onComplete: () => {
-        this.scene.sound.stopByKey('exp');
+        if (duration)
+          this.scene.sound.stopByKey('exp');
         if (ratio === 1) {
           this.lastLevelExp = 0;
           this.lastLevel++;
