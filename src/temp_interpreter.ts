@@ -4,6 +4,7 @@ import Pokemon, { PlayerPokemon } from "./pokemon";
 
 var moveAnimsContent;
 let funcNames = [];
+let templateNames = [];
 let animFuncsContents = '';
 let animTemplateContents = '';
 
@@ -14,6 +15,7 @@ var gBattleAnimArgs = [ 0, 0, 0, 0, 0, 0, 0 ];
 var gSprites: Sprite[] = [];
 var gTasks: Function[] = [];
 var gAnimVisualTaskCount: integer = 0;
+var onAnimsComplete: Function;
 
 const MAX_BATTLERS_COUNT = 4;
 const ANIM_PLAYER_LEFT = 4;
@@ -40,6 +42,8 @@ class SpriteTemplate {
 }
 
 class Sprite {
+  public spriteObj: Phaser.GameObjects.Sprite;
+
   public template: SpriteTemplate;
   public callback: Function;
 
@@ -61,7 +65,9 @@ class Sprite {
 
   public subpriority: integer;
 
-  constructor() {
+  constructor(scene: BattleScene, x: integer, y: integer, image: string) {
+	this.spriteObj = scene.add.sprite(x, y, image, 0);
+	scene.field.add(this.spriteObj);
   }
 };
 
@@ -71,8 +77,7 @@ class Sprite {
   callback(sprite);
 }*/
 
-function CreateSprite(template: SpriteTemplate, target: AnimTarget, subpriorityOffset: integer, args: any[])
-{
+function CreateSprite(template: SpriteTemplate, target: AnimTarget, subpriorityOffset: integer, args: any[]) {
     /*s32 i;
     const struct SpriteTemplate *template;
     u8 argVar;
@@ -134,15 +139,16 @@ function CreateSprite(template: SpriteTemplate, target: AnimTarget, subpriorityO
     gAnimVisualTaskCount++;
 }
 
-function CreateNewSprite(index: integer, template: SpriteTemplate, x: integer, y: integer, subpriority: integer): integer {
-  const sprite = new Sprite();
+function CreateNewSprite(index: integer, template: SpriteTemplate, x: integer, y: integer, subpriority: integer): Sprite {
+  const sprite = new Sprite(scene, x, y, template.imageName.toLowerCase());
 
   sprite.subpriority = subpriority;
   sprite.template = template;
   sprite.callback = template.callback;
-  sprite.x = x;
-  sprite.y = y;
-  sprite.callback();
+
+  gSprites[index] = sprite;
+
+  return sprite;
 /*
     struct Sprite *sprite = &gSprites[index];
 
@@ -194,6 +200,33 @@ function CreateNewSprite(index: integer, template: SpriteTemplate, x: integer, y
 }
 
 function CreateSpriteAndAnimate(template: SpriteTemplate, x: integer, y: integer, subpriority: integer) {
+	const sprite = CreateNewSprite(gSprites.length, template, x, y, subpriority);
+
+	console.log(template.imageName.toLowerCase());
+
+	const animateSpriteFrame = (sprite: Sprite) => {
+		scene.time.delayedCall(16, () => {
+			sprite.callback(sprite);
+			if (!sprite.data[0]) {
+				const originalOnAnimsComplete = onAnimsComplete;
+				if (originalOnAnimsComplete) {
+				onAnimsComplete = null;
+				originalOnAnimsComplete();
+				}
+				return;
+			}
+			console.log(sprite.data)
+			sprite.spriteObj.setPosition(sprite.x, sprite.y);
+			animateSpriteFrame(sprite);
+		});
+	};
+
+	sprite.callback(sprite);
+	animateSpriteFrame(sprite);
+
+	return gSprites.length - 1;
+
+	//gSprites.push(gSprites.length);
     /*u8 i;
 
     for (i = 0; i < MAX_SPRITES; i++)
@@ -248,10 +281,31 @@ function CreateVisualTask(taskFunc: Function, taskPriority: integer, args: any[]
     gAnimVisualTaskCount++;
 }
 
+function DestroyAnimSprite(sprite: Sprite) {
+
+    //FreeSpriteOamMatrix(sprite);
+    DestroySprite(sprite);
+    gAnimVisualTaskCount--;
+}
+
 function DestroyAnimVisualTask(taskId: integer)
 {
     DestroyTask(taskId);
     gAnimVisualTaskCount--;
+}
+
+function DestroySprite(sprite:Sprite) {
+    /*if (sprite->inUse)
+    {
+        if (!sprite->usingSheet)
+        {
+            u16 i;
+            u16 tileEnd = (sprite->images->size / TILE_SIZE_4BPP) + sprite->oam.tileNum;
+            for (i = sprite->oam.tileNum; i < tileEnd; i++)
+                FREE_SPRITE_TILE(i);
+        }
+        ResetSprite(sprite);
+    }*/
 }
 
 function CreateTask(func: Function, priority: integer): integer
@@ -273,7 +327,7 @@ function DestroyTask(taskId: integer) {
         }
         else
         {
-            if (gTasks[taskId].next == TAIL_SENTINEL)
+            if (gdTasks[taskId].next == TAIL_SENTINEL)
             {
                 gTasks[gTasks[taskId].prev].next = TAIL_SENTINEL;
             }
@@ -372,18 +426,32 @@ enum BattleSide {
   ENEMY
 }
 
+/*function AnimateSprite(sprite: Sprite) {
+    sAnimFuncs[sprite.animBeginning](sprite);
+
+    if (!gAffineAnimsDisabled)
+        sAffineAnimFuncs[sprite->affineAnimBeginning](sprite);
+}*/
+
+function StartSpriteAffineAnim(sprite: Sprite, animNum: integer) {
+    /*u8 matrixNum = GetSpriteMatrixNum(sprite);
+    AffineAnimStateStartAnim(matrixNum, animNum);
+    sprite->affineAnimBeginning = TRUE;
+    sprite->affineAnimEnded = FALSE;*/
+}
+
 function GetBattlerSpriteCoord(target: Pokemon, coordType: BattlerCoord): integer {
-  console.log('TEST1');
+  console.log('TEST1', target.y, target.getSprite().height);
 
   switch (coordType) {
     case BattlerCoord.X:
     case BattlerCoord.X_2:
       return target.x;
     case BattlerCoord.Y:
-      return target.y;
+      return target.y - target.getSprite().height / 2;
     case BattlerCoord.Y_PIC_OFFSET:
     case BattlerCoord.Y_PIC_OFFSET_DEFAULT:
-      return target.y;
+      return target.y - target.getSprite().height / 2;
   }
 }
 
@@ -412,9 +480,9 @@ function GetBattlerSpriteCoord2(target: Pokemon, coordType: BattlerCoord): integ
     case BattlerCoord.X:
       return target.x;
     case BattlerCoord.Y:
-      return target.y;
+      return target.y - target.getSprite().height / 2;
     case BattlerCoord.Y_PIC_OFFSET:
-      return target.y;
+      return target.y - target.getSprite().height / 2;
   }
 }
 
@@ -446,6 +514,51 @@ function SetCallbackToStoredInData6(sprite: Sprite)
   //sprite->callback = (void (*)(struct Sprite *))callback;
 }
 
+function AnimTranslateLinear(sprite: Sprite): boolean
+{
+    let v1: integer;
+	let v2: integer;
+	let x: integer
+	let y: integer;
+
+    if (!sprite.data[0])
+        return true;
+
+    v1 = sprite.data[1];
+    v2 = sprite.data[2];
+    x = sprite.data[3];
+    y = sprite.data[4];
+    x += v1;
+    y += v2;
+
+	console.log('XY', x, y)
+
+    if (v1 & 1)
+        sprite.x2 = -(x >> 8);
+    else
+        sprite.x2 = x >> 8;
+
+    if (v2 & 1)
+        sprite.y2 = -(y >> 8);
+    else
+        sprite.y2 = y >> 8;
+
+    sprite.data[3] = x;
+    sprite.data[4] = y;
+    sprite.data[0]--;
+    return false;
+}
+
+function Sin(index: integer, amplitude: integer): integer
+{
+    return (amplitude * Math.sin(index * (Math.PI / 128))) >> 8;
+}
+
+function Cos(index: integer, amplitude: integer): integer
+{
+    return (amplitude * Math.cos(index * (Math.PI / 128))) >> 8;
+}
+
 function GetBattlerSide(pokemon: Pokemon): BattleSide
 {
     return pokemon instanceof PlayerPokemon ? BattleSide.PLAYER : BattleSide.ENEMY;
@@ -463,7 +576,6 @@ const linePatterns = [
   } ],
   [ /([\t ]+)createsprite (.*?), (.*?), (.*?)(?:, (.*?))?$/, res => {
     let ret = res[0];
-    const args = res[5].split(', ');
 
     let search = `const struct SpriteTemplate ${res[2]}`;
     let i = animTemplates.indexOf(search);
@@ -478,10 +590,14 @@ const linePatterns = [
       search = '.callback = ';
       i = template.indexOf(search);
       const animFuncName = template.slice(i + search.length, template.indexOf(',', i));
-      console.log(imageName, animFuncName)
+      console.log(imageName, animFuncName);
+
+	  if (templateNames.indexOf(res[2]) === -1) {
+	  	animTemplateContents += `const ${res[2]} = new SpriteTemplate('${imageName}', ${affineAnimName !== 'gDummySpriteAffineAnimTable' && false ? affineAnimName : 'null'}, ${animFuncName});\n`;
+		templateNames.push(res[2]);
+	  }
 
       if (funcNames.indexOf(animFuncName) === -1) {
-				animTemplateContents += `const ${res[2]} = new SpriteTemplate('${imageName}', ${affineAnimName !== 'gDummySpriteAffineAnimTable' && false ? affineAnimName : 'null'}, ${animFuncName});\n`
 				
         search = `void ${animFuncName}(struct Sprite *sprite`;
         i = animTemplates.indexOf(search);
@@ -517,6 +633,7 @@ const linePatterns = [
   [ /([\t ]+)delay (\d+)/, res => {
     return `${res[1]}delay ${Math.round(16.6666666667 * parseInt(res[2]))}`;
   } ],
+  [ /([\t ]+waitforvisualfinish)/, '$1' ],
   [ /splitbgprio.*?$/, '' ],
   [ /ANIM\_TARGET/g, 'AnimTarget.TARGET' ],
   [ /ANIM\_ATTACKER/g, 'AnimTarget.ATTACKER' ]
@@ -550,16 +667,19 @@ const funcLinePatterns = [
   [ /struct Sprite \*sprite/, 'sprite: Sprite' ],
   [ /&sprite/g, 'sprite' ],
   [ /^u8 ([A-Z][A-Za-z\_0-9]+)\((.*?)\)/, 'function $1($2): integer' ],
+  [ /^bool8 ([A-Z][A-Za-z\_0-9]+)\((.*?)\)/, 'function $1($2): boolean' ],
   [ /^(?:static )?void /, 'function ' ],
   [ /TRUE/g, 'true' ],
   [ /FALSE/g, 'false' ],
+  [ /ANIM_(ATTACKER|TARGET)/g, 'AnimTarget.$1' ],
   [ /BATTLER\_COORD\_/g, 'BattlerCoord.' ],
   [ /B\_SIDE\_PLAYER/g, 'BattleSide.PLAYER' ],
   [ /B\_SIDE\_OPPONENT/g, 'BattleSide.ENEMY' ],
   [ /abs\(/g, 'Math.abs(' ],
+  [ /\(integer\)/g, '' ],
   [ /^([\t ]+)\*([a-zA-Z\_]+) =/, '$1$2 =' ],
   [ /([\t ]+)([a-zA-Z\_]+) = (.*?);/, '$1$2 = $3;' ],
-  [ /^[\t ]+([^ ]+ =|return|if \() ([A-Z][a-zA-Z0-9\_]+)(?:\((.*?)\))?(\))?;$/, res => {
+  [ /^[\t ]+([^ ]+ =|return|if \() ?([A-Z][a-zA-Z0-9\_]+)(?:\((.*?)\))?(\))?;?$/, res => {
     const funcName = res[2];
     if (funcNames.indexOf(funcName) === -1) {
       const searchRes = new RegExp(`\n\n(?:static )?([^ ]+) ${funcName}\\((.*?)\\)\n\{`).exec(animTemplates);
@@ -656,8 +776,19 @@ export function interp(sceneIn) {
     console.log(contIndex)
     if (!contMatch)
       console.log(output.slice(delayMatch.index))
-    console.log(delayMatch)
     output = output.slice(0, delayMatch.index) + delayMatch[1] + `scene.time.delayedCall(${delayMatch[2]}, () => {` + output.slice(contIndex, contMatch.index + contIndex).replace(/\n/g, '\n\t') + '\n' + delayMatch[1] + '});' + output.slice(contMatch.index + contIndex);
+  }
+
+  const visualWaitPattern = /([\t ]+)waitforvisualfinish/;
+  let visualWaitMatch;
+  while ((visualWaitMatch = visualWaitPattern.exec(output))) {
+    const contIndex = visualWaitMatch.index + visualWaitMatch[1].length + 19;
+    const contMatch = /\n\}/.exec(output.slice(contIndex));
+    console.log(contIndex)
+    if (!contMatch)
+      console.log(output.slice(visualWaitMatch.index))
+    console.log(visualWaitMatch)
+    output = output.slice(0, visualWaitMatch.index) + visualWaitMatch[1] + `onAnimsComplete = () => {` + output.slice(contIndex, contMatch.index + contIndex).replace(/\n/g, '\n\t') + '\n' + visualWaitMatch[1] + '};' + output.slice(contMatch.index + contIndex);
   }
 
   output += '\ndoMoveAnim_WATER_GUN();\n\n';

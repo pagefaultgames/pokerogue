@@ -4,7 +4,6 @@
 
 - Title screen
 - Moves
-  - Animation handler with all animations
   - Move logic
   - Can't use when PP consumed
 - Abilities

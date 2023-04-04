@@ -12,7 +12,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private lastExp: integer;
   private lastLevelExp: integer;
   private lastLevel: integer;
-  private lastName: string;
 
   private nameText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
@@ -31,7 +30,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.lastExp = -1;
     this.lastLevelExp = -1;
     this.lastLevel = -1;
-    this.lastName = null;
 
     // Initially invisible and shown via Pokemon.showInfo
     this.setVisible(false);

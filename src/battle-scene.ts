@@ -10,6 +10,7 @@ import { PokeballType } from './pokeball';
 import { Species } from './species';
 import { initAutoPlay } from './auto-play';
 import { Battle } from './battle';
+import { populateAnims } from './battle-anims';
 
 export default class BattleScene extends Phaser.Scene {
 	private auto: boolean;
@@ -36,6 +37,8 @@ export default class BattleScene extends Phaser.Scene {
 	private modifiers: Modifier[];
 	public uiContainer: Phaser.GameObjects.Container;
 	public ui: UI;
+
+	//public spritePipeline: SpritePipeline;
 
 	private bgm: Phaser.Sound.BaseSound;
 	
@@ -72,6 +75,12 @@ export default class BattleScene extends Phaser.Scene {
 		this.load.atlas(key, `images/${folder}${filenameRoot}.png`, `images/${folder}/${filenameRoot}.json`)
 	}
 
+	loadSpritesheet(key: string, folder: string, size: integer, filename?: string) {
+		if (!filename)
+			filename = `${key}.png`;
+		this.load.spritesheet(key, `images/${folder}/${filename}`, { frameWidth: size, frameHeight: size });
+	}
+
 	loadSe(key: string, folder?: string, filenames?: string | string[]) {
 		if (!filenames)
 			filenames = `${key}.wav`;
@@ -103,7 +112,6 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('pbinfo_enemy', 'ui');
 		this.loadImage('overlay_lv', 'ui');
 		this.loadAtlas('numbers', 'ui');
-		this.loadAtlas('gender', 'ui');
 		this.loadAtlas('overlay_hp', 'ui');
 		this.loadImage('overlay_exp', 'ui');
 		this.loadImage('level_up_stats', 'ui');
@@ -168,15 +176,17 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('pb_catch');
 		this.loadSe('pb_lock');
 
-		this.loadSe('m_bubble');
-		this.loadSe('m_bubble3');
-		this.loadSe('m_crabhammer');
-
 		this.loadBgm('level_up_fanfare');
+
+		this.load.glsl('sprite', 'shaders/sprite.frag');
+
+		populateAnims();
 	}
 
 	create() {
 		this.load.setBaseURL();
+
+		//this.spritePipeline = (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.get('Sprite') as SpritePipeline;
 
 		const field = this.add.container(0, 0);
 		field.setScale(6);
@@ -279,7 +289,6 @@ export default class BattleScene extends Phaser.Scene {
 
 			this.shiftPhase();
 		});
-		this.load.start();
 	}
 
 	update() {

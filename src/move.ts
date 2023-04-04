@@ -7,9 +7,9 @@ export enum MoveCategory {
 };
 
 export default class Move {
-  public id: integer;
+  public id: Moves;
   public name: string;
-  public type: integer;
+  public type: Type;
   public category: integer;
   public power: integer;
   public accuracy: integer;

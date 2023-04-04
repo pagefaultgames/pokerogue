@@ -12,6 +12,7 @@ import { Stat } from './pokemon-stat';
 import { PokemonBaseStatModifier as PokemonBaseStatBoosterModifier, ShinyRateBoosterModifier } from './modifier';
 import { PokeballType } from './pokeball';
 import { Gender } from './gender';
+import { Anim, initAnim, loadMoveAnimAssets, moveAnims } from './battle-anims';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -98,6 +99,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.winCount = 0;
     }
 
+    //this.setPipeline((this.scene as BattleScene).spritePipeline);
+
     this.calculateStats();
 
     (scene as BattleScene).fieldUI.add(this.battleInfo);
@@ -112,11 +115,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     
     const sprite = getSprite();
     const tintSprite = getSprite();
+    const zoomSprite = getSprite();
 
     tintSprite.setVisible(false);
+    zoomSprite.setAlpha(0.5);
 
     this.add(sprite);
     this.add(tintSprite);
+    this.add(zoomSprite);
 
     if (this.shiny) {
       const shinySparkle = this.scene.add.sprite(0, 0, 'shiny');
@@ -140,24 +146,32 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   loadAssets(): Promise<void> {
     return new Promise(resolve => {
-      (this.scene as BattleScene).loadAtlas(this.getSpriteKey(), 'pokemon', this.getAtlasPath());
-      this.scene.load.audio(this.species.speciesId.toString(), `audio/cry/${this.species.speciesId}.mp3`);
-      this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-        const originalWarn = console.warn;
-        // Ignore warnings for missing frames, because there will be a lot
-        console.warn = () => {};
-        const frameNames = this.scene.anims.generateFrameNames(this.getSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 256 });
-        console.warn = originalWarn;
-        this.scene.anims.create({
-          key: this.getSpriteKey(),
-          frames: frameNames,
-          frameRate: 12,
-          repeat: -1
+      const moveIds = this.moveset.map(m => m.getMove().id);
+      Promise.allSettled(moveIds.map(m => initAnim(m)))
+        .then(() => {
+          loadMoveAnimAssets(this.scene as BattleScene, moveIds);
+          (this.scene as BattleScene).loadAtlas(this.getSpriteKey(), 'pokemon', this.getAtlasPath());
+          this.scene.load.audio(this.species.speciesId.toString(), `audio/cry/${this.species.speciesId}.mp3`);
+          this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+            const originalWarn = console.warn;
+            // Ignore warnings for missing frames, because there will be a lot
+            console.warn = () => {};
+            const frameNames = this.scene.anims.generateFrameNames(this.getSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 256 });
+            console.warn = originalWarn;
+            this.scene.anims.create({
+              key: this.getSpriteKey(),
+              frames: frameNames,
+              frameRate: 12,
+              repeat: -1
+            });
+            this.getSprite().play(this.getSpriteKey());
+            this.getTintSprite().play(this.getSpriteKey());
+            this.getZoomSprite().play(this.getSpriteKey());
+            resolve();
+          });
+          if (!this.scene.load.isLoading())
+            this.scene.load.start();
         });
-        this.getSprite().play(this.getSpriteKey());
-        this.getTintSprite().play(this.getSpriteKey());
-        resolve();
-      });
     });
   }
 
@@ -191,6 +205,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getTintSprite(): Phaser.GameObjects.Sprite {
     return this.getAt(1) as Phaser.GameObjects.Sprite;
+  }
+
+  getZoomSprite(): Phaser.GameObjects.Sprite {
+    return this.getAt(2) as Phaser.GameObjects.Sprite;
   }
 
   calculateStats() {
@@ -394,8 +412,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       callback();
   }
 
-  cry() {
-    this.scene.sound.play(this.species.speciesId.toString());
+  cry(soundConfig?: Phaser.Types.Sound.SoundConfig) {
+    this.scene.sound.play(this.species.speciesId.toString(), soundConfig);
   }
 
   faintCry(callback: Function) {
@@ -406,10 +424,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       rate: rate
     });
     const sprite = this.getSprite();
+    const tintSprite = this.getTintSprite();
+    const zoomSprite = this.getZoomSprite();
     const delay = Math.max(this.scene.sound.get(key).totalDuration * 50, 25);
     let frameProgress = 0;
     let frameThreshold: number;
     sprite.anims.pause();
+    tintSprite.anims.pause();
+    zoomSprite.anims.pause();
     let faintCryTimer = this.scene.time.addEvent({
       delay: delay,
       repeat: -1,
@@ -418,8 +440,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         frameThreshold = sprite.anims.msPerFrame / rate;
         frameProgress += delay;
         while (frameProgress > frameThreshold) {
-          if (sprite.anims.duration)
+          if (sprite.anims.duration) {
             sprite.anims.nextFrame();
+            tintSprite.anims.nextFrame();
+            zoomSprite.anims.nextFrame();
+          }
           frameProgress -= frameThreshold;
         }
         const crySound = this.scene.sound.get(key);
@@ -522,7 +547,7 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer) {
-    super(scene, -63, 86, species, level);
+    super(scene, -66, 84, species, level);
 
     this.aiType = AiType.SMART_RANDOM;
   }

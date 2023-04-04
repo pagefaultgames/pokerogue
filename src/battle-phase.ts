@@ -1,15 +1,15 @@
 import BattleScene from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, Moves as Move, MoveCategory } from "./move";
+import { allMoves, Moves as Move, MoveCategory, Moves } from "./move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
-import { interp } from "./temp_interpreter";
 import { Stat } from "./pokemon-stat";
 import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, getModifierTypesForWave, ModifierType, PokemonModifierType, regenerateModifierPoolThresholds } from "./modifier";
 import PartyUiHandler from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor as getPokeballTintColor, PokeballType } from "./pokeball";
 import { pokemonLevelMoves } from "./pokemon-level-moves";
+import { MoveAnim, loadMoveAnimAssets } from "./battle-anims";
 
 export class BattlePhase {
   protected scene: BattleScene;
@@ -49,7 +49,6 @@ export class EncounterPhase extends BattlePhase {
       enemyPokemon.tint(0, 0.5);
       this.doEncounter();
     });
-    this.scene.load.start();
   }
 
   doEncounter() {
@@ -257,7 +256,7 @@ export class SummonPhase extends BattlePhase {
   }
 
   end() {
-    if (this.scene.getEnemyPokemon().shiny)
+    if (this.scene.getPlayerPokemon().shiny)
       this.scene.unshiftPhase(new ShinySparklePhase(this.scene, true));
 
     super.end();
@@ -336,10 +335,7 @@ export class CommandPhase extends BattlePhase {
   start() {
     super.start();
 
-    //interp(this.scene);
-
     this.scene.ui.setMode(Mode.COMMAND);
-    console.log('add participant', this.scene.getPlayerPokemon().name)
     this.scene.currentBattle.addParticipant(this.scene.getPlayerPokemon());
   }
 
@@ -443,11 +439,35 @@ abstract class MovePhase extends BattlePhase {
     }
     if (!this.move)
       console.log(this.pokemon.moveset);
-    this.scene.ui.showText(`${this.pokemon.name} used\n${this.move.getName()}!`, null, () => this.end(), 500);
-    this.move.ppUsed++;
-    if (this.move.getMove().category !== MoveCategory.STATUS)
-      this.scene.unshiftPhase(this.getEffectPhase());
+    this.scene.ui.showText(`${this.pokemon.name} used\n${this.move.getName()}!`, null, () => {
+      this.move.ppUsed++;
+      if (this.move.getMove().category !== MoveCategory.STATUS) {
+        if (this.hitCheck())
+          this.scene.unshiftPhase(this.getEffectPhase());
+        else
+          this.scene.unshiftPhase(new MessagePhase(this.scene, `${this.pokemon instanceof EnemyPokemon ? 'Foe ' : ''}${this.pokemon.name}'s\nattack missed!`));
+      } else
+        this.scene.unshiftPhase(this.getEffectPhase());
+      this.end();
+    }, 500);
   }
+
+  hitCheck(): boolean {
+    if (this.move.getMove().category !== MoveCategory.STATUS) {
+      const userAccuracyLevel = 0;
+      const targetEvasionLevel = 0;
+      const rand = Utils.randInt(100, 1);
+      let accuracyMultiplier = 1;
+      if (userAccuracyLevel !== targetEvasionLevel) {
+        accuracyMultiplier = userAccuracyLevel > targetEvasionLevel
+          ? (3 + Math.min(userAccuracyLevel - targetEvasionLevel, 6)) / 3
+          : 3 / (3 + Math.min(targetEvasionLevel - userAccuracyLevel, 6));
+      }
+      return rand <= this.move.getMove().accuracy * accuracyMultiplier;
+    }
+    return true;
+  }
+
 }
 
 export class PlayerMovePhase extends MovePhase {
@@ -482,31 +502,14 @@ abstract class MoveEffectPhase extends PokemonPhase {
   start() {
     super.start();
 
-    if (this.hitCheck()) {
-      this.getTargetPokemon().apply(this.getUserPokemon(), this.move, () => this.end());
-      if (this.getTargetPokemon().hp <= 0) {
-        this.scene.pushPhase(new FaintPhase(this.scene, !this.player));
-      }
-    } else {
-      this.scene.unshiftPhase(new MessagePhase(this.scene, `${!this.player ? 'Foe ' : ''}${this.getPokemon().name}'s\nattack missed!`));
-      this.end();
-    }
-  }
+    const user = this.getUserPokemon();
+    const target = this.getTargetPokemon();
 
-  hitCheck(): boolean {
-    if (this.move.getMove().category !== MoveCategory.STATUS) {
-      const userAccuracyLevel = 0;
-      const targetEvasionLevel = 0;
-      const rand = Utils.randInt(100, 1);
-      let accuracyMultiplier = 1;
-      if (userAccuracyLevel !== targetEvasionLevel) {
-        accuracyMultiplier = userAccuracyLevel > targetEvasionLevel
-          ? (3 + Math.min(userAccuracyLevel - targetEvasionLevel, 6)) / 3
-          : 3 / (3 + Math.min(targetEvasionLevel - userAccuracyLevel, 6));
-      }
-      return rand <= this.move.getMove().accuracy * accuracyMultiplier;
-    }
-    return true;
+    new MoveAnim(this.move.getMove().id as Moves, user, target).play(this.scene, () =>{
+      this.getTargetPokemon().apply(this.getUserPokemon(), this.move, () => this.end());
+      if (this.getTargetPokemon().hp <= 0)
+        this.scene.pushPhase(new FaintPhase(this.scene, !this.player));
+    });
   }
 
   abstract getUserPokemon(): Pokemon;
@@ -524,8 +527,8 @@ export class PlayerMoveEffectPhase extends MoveEffectPhase {
   }
 
   getTargetPokemon(): Pokemon {
-    if (this.move.getMove().category === MoveCategory.STATUS)
-      return this.getUserPokemon();
+    /*if (this.move.getMove().category === MoveCategory.STATUS)
+      return this.getUserPokemon();*/
     return this.scene.getEnemyPokemon();
   }
 }
@@ -540,8 +543,8 @@ export class EnemyMoveEffectPhase extends MoveEffectPhase {
   }
 
   getTargetPokemon(): Pokemon {
-    if (this.move.getMove().category === MoveCategory.STATUS)
-      return this.getUserPokemon();
+    /*if (this.move.getMove().category === MoveCategory.STATUS)
+      return this.getUserPokemon();*/
     return this.scene.getPlayerPokemon();
   }
 }
@@ -743,8 +746,11 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
 
     if (pokemon.moveset.length < 4) {
       pokemon.moveset.push(new PokemonMove(this.moveId, 0, 0));
-      this.scene.sound.play('level_up_fanfare');
-      this.scene.ui.showText(`${pokemon.name} learned\n${Utils.toPokemonUpperCase(move.name)}!`, null, () => this.end(), null, true);
+      loadMoveAnimAssets(this.scene, [ this.moveId ])
+        .then(() => {
+          this.scene.sound.play('level_up_fanfare');
+          this.scene.ui.showText(`${pokemon.name} learned\n${Utils.toPokemonUpperCase(move.name)}!`, null, () => this.end(), null, true);
+        });
     } else
       this.end();
   }
@@ -827,7 +833,7 @@ export class AttemptCapturePhase extends BattlePhase {
                     this.pokeball.setAngle(value * 27.5 * directionMultiplier);
                   }
                 },
-                onRepeat: t => {
+                onRepeat: () => {
                   if (shakeCount++ < 3) {
                     if (Utils.randInt(65536) < y)
                       this.scene.sound.play('pb_move');
@@ -888,7 +894,6 @@ export class AttemptCapturePhase extends BattlePhase {
         this.removePb();
         this.end();
       });
-      this.scene.load.start();
     }, 0, true);
   }
 
