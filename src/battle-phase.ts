@@ -235,6 +235,7 @@ export class SummonPhase extends BattlePhase {
             this.scene.add.existing(playerPokemon);
             this.scene.field.add(playerPokemon);
             playerPokemon.showInfo();
+            playerPokemon.playAnim();
             playerPokemon.setVisible(true);
             playerPokemon.setScale(0.5);
             playerPokemon.tint(getPokeballTintColor(playerPokemon.pokeball));
@@ -968,12 +969,14 @@ export class SelectModifierPhase extends BattlePhase {
           if (slotIndex < 6) {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT);
             this.scene.addModifier(types[cursor].newModifier(this.scene.getParty()[slotIndex])).then(() => super.end());
+            this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.MESSAGE);
           } else
             this.scene.ui.setMode(Mode.MODIFIER_SELECT);
         }, pokemonModifierType.selectFilter);
       } else {
         this.scene.addModifier(types[cursor].newModifier()).then(() => super.end());
+        this.scene.ui.clearText();
         this.scene.ui.setMode(Mode.MESSAGE);
       }
     });

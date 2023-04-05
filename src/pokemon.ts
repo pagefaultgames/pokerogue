@@ -173,9 +173,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               frameRate: 12,
               repeat: -1
             });
-            this.getSprite().play(this.getSpriteKey());
-            this.getTintSprite().play(this.getSpriteKey());
-            this.getZoomSprite().play(this.getSpriteKey());
+            this.playAnim();
             resolve();
           });
           if (!this.scene.load.isLoading())
@@ -218,6 +216,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getZoomSprite(): Phaser.GameObjects.Sprite {
     return this.getAt(2) as Phaser.GameObjects.Sprite;
+  }
+
+  playAnim() {
+    this.getSprite().play(this.getSpriteKey());
+    this.getTintSprite().play(this.getSpriteKey());
+    this.getZoomSprite().play(this.getSpriteKey());
   }
 
   calculateStats() {

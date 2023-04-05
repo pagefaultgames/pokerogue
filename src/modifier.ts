@@ -242,6 +242,29 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
   }
 }
 
+export class PokemonPpRestoreModifier extends ConsumablePokemonModifier {
+  private restorePoints: integer;
+
+  constructor(type: ModifierType, pokemonId: integer, restorePoints: integer) {
+    super(type, pokemonId);
+
+    this.restorePoints = restorePoints;
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length > 1 && typeof(args[1]) === 'number';
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+    const moveIndex = args[1] as integer;
+    const move = pokemon.moveset[moveIndex];
+    move.ppUsed = this.restorePoints >= 0 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
+
+    return true;
+  }
+}
+
 export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
   constructor(type: ModifierType, pokemonId: integer) {
     super(type, pokemonId);
@@ -409,13 +432,6 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
   }
 }
 
-export class PokemonLevelIncrementModifierType extends PokemonModifierType {
-  constructor(name: string, iconImage?: string) {
-    super(name, `Increase a POKéMON\'s level by 1`, (type, args) => new PokemonLevelIncrementModifier(type, (args[0] as PlayerPokemon).id),
-      (_pokemon: PlayerPokemon) => null, iconImage);
-  }
-}
-
 export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
   constructor(name: string, restorePercent: integer, iconImage?: string) {
     super(name, restorePercent, (_type, args) => new PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePercent, true),
@@ -431,6 +447,26 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
         return PartyUiHandler.NoEffectMessage;
       return null;
     };
+  }
+}
+
+export class PokemonLevelIncrementModifierType extends PokemonModifierType {
+  constructor(name: string, iconImage?: string) {
+    super(name, `Increase a POKéMON\'s level by 1`, (_type, args) => new PokemonLevelIncrementModifier(this, (args[0] as PlayerPokemon).id),
+      (_pokemon: PlayerPokemon) => null, iconImage);
+  }
+}
+
+export class PokemonPpRestoreModifierType extends PokemonModifierType {
+  protected restorePoints: integer;
+
+  constructor(name: string, restorePoints: integer, iconImage?: string) {
+    super(name, `Restore ${restorePoints} PP for one POKéMON's move`, (_type, args) => new PokemonPpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints),
+      (pokemon: PlayerPokemon) => {
+      return null;
+    }, iconImage);
+
+    this.restorePoints = this.restorePoints;
   }
 }
 
