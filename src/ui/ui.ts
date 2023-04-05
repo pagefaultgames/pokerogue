@@ -8,6 +8,7 @@ import MessageUiHandler from './message-ui-handler';
 import SwitchCheckUiHandler from './switch-check-ui-handler';
 import ModifierSelectUiHandler from './modifier-select-ui-handler';
 import BallUiHandler from './ball-ui-handler';
+import SummaryUiHandler from './summary-ui-handler';
 
 export enum Mode {
   MESSAGE = 0,
@@ -16,7 +17,8 @@ export enum Mode {
   BALL,
   SWITCH_CHECK,
   MODIFIER_SELECT,
-  PARTY
+  PARTY,
+  SUMMARY
 };
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -34,7 +36,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new BallUiHandler(scene),
       new SwitchCheckUiHandler(scene),
       new ModifierSelectUiHandler(scene),
-      new PartyUiHandler(scene)
+      new PartyUiHandler(scene),
+      new SummaryUiHandler(scene)
     ];
   }
 

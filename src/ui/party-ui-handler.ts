@@ -15,6 +15,11 @@ export default class PartyUiHandler extends MessageUiHandler {
   private partyCancelButton: PartyCancelButton;
   private partyMessageBox: Phaser.GameObjects.Image;
 
+  private optionsMode: boolean;
+  private optionsCursor: integer;
+  private optionsContainer: Phaser.GameObjects.Container;
+  private optionsCursorObj: Phaser.GameObjects.Image;
+  
   private lastCursor: integer = 0;
   private isModal: boolean;
   private selectCallback: Function;
@@ -74,6 +79,9 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.partyCancelButton = partyCancelButton;
 
+    this.optionsContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -1);
+    partyContainer.add(this.optionsContainer);
+
     this.partySlots = [];
   }
 
@@ -112,88 +120,98 @@ export default class PartyUiHandler extends MessageUiHandler {
       return;
     }
 
-    if (keyCode === keyCodes.Z) {
-      if (this.cursor < 6) {
-        let filterResult: string = this.selectFilter(this.scene.getParty()[this.cursor]);
-        if (filterResult === null) {
+    let success = false;
+
+    if (this.optionsMode) {
+      if (keyCode === keyCodes.Z) {
+        if (!this.optionsCursor) {
+          let filterResult: string = this.selectFilter(this.scene.getParty()[this.cursor]);
+          if (filterResult === null) {
+            this.clearOptions();
+            if (this.selectCallback) {
+              const selectCallback = this.selectCallback;
+              this.selectCallback = null;
+              selectCallback(this.cursor);
+            } else if (this.cursor)
+              (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor);
+            return;
+          } else {
+            this.clearOptions();
+            this.partyMessageBox.setTexture('party_message_large');
+            this.message.y -= 15;
+            this.showText(filterResult as string, null, () => {
+              this.partyMessageBox.setTexture('party_message');
+              this.message.setText(defaultMessage);
+              this.message.y += 15;
+            }, null, true);
+          }
+        } else if (this.optionsCursor === 1) {
+          this.clearOptions();
+          ui.playSelect();
+          ui.setMode(Mode.SUMMARY);
+        } else
+          this.processInput(keyCodes.X);
+      } else if (keyCode === keyCodes.X) {
+        this.clearOptions();
+        ui.playSelect();
+      }
+      else {
+        switch (keyCode) {
+          case keyCodes.UP:
+            success = this.setCursor(this.optionsCursor ? this.optionsCursor - 1 : 2);
+            break;
+          case keyCodes.DOWN:
+            success = this.setCursor(this.optionsCursor < 2 ? this.optionsCursor + 1 : 0);
+            break;
+        }
+      }
+    } else {
+      if (keyCode === keyCodes.Z) {
+        if (this.cursor < 6) {
+          this.showOptions();
+          ui.playSelect();
+        } else if (this.isModal)
+          ui.playError();
+        else
+          this.processInput(keyCodes.X);
+        return;
+      } else if (keyCode === keyCodes.X) {
+        if (!this.isModal) {
           if (this.selectCallback) {
             const selectCallback = this.selectCallback;
             this.selectCallback = null;
-            selectCallback(this.cursor);
-            return;
-          } else if (this.cursor)
-            (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor);
-          else
-            this.processInput(keyCodes.X);
-        } else {
-          this.partyMessageBox.setTexture('party_message_large');
-          this.message.y -= 15;
-          this.showText(filterResult as string, null, () => {
-            this.partyMessageBox.setTexture('party_message');
-            this.message.text = defaultMessage;
-            this.message.y += 15;
-          }, null, true);
+            selectCallback(6);
+            ui.playSelect();
+          } else {
+            ui.setMode(Mode.COMMAND);
+            ui.playSelect();
+          }
         }
-      } else if (this.isModal)
-        ui.playError();
-      else
-        this.processInput(keyCodes.X);
-      return;
-    } else if (keyCode === keyCodes.X) {
-      if (!this.isModal) {
-        if (this.selectCallback) {
-          const selectCallback = this.selectCallback;
-          this.selectCallback = null;
-          selectCallback(6);
-          ui.playSelect();
-        } else {
-          ui.setMode(Mode.COMMAND);
-          ui.playSelect();
-        }
+        return;
       }
-      return;
-    }
 
-    const slotCount = this.partySlots.length;
-    let success = false;
+      const slotCount = this.partySlots.length;
 
-    switch (keyCode) {
-      case keyCodes.UP:
-        success = this.setCursor(this.cursor ? this.cursor < 6 ? this.cursor - 1 : slotCount - 1 : 6);
-        break;
-      case keyCodes.DOWN:
-        success = this.setCursor(this.cursor < 6 ? this.cursor < slotCount - 1 ? this.cursor + 1 : 6 : 0);
-        break;
-      case keyCodes.LEFT:
-        if (this.cursor && this.cursor < 6)
-          success = this.setCursor(0);
-        break;
-      case keyCodes.RIGHT:
-        if (!this.cursor)
-          success = this.setCursor(this.lastCursor < 6 ? this.lastCursor || 1 : 1);
-        break;
+      switch (keyCode) {
+        case keyCodes.UP:
+          success = this.setCursor(this.cursor ? this.cursor < 6 ? this.cursor - 1 : slotCount - 1 : 6);
+          break;
+        case keyCodes.DOWN:
+          success = this.setCursor(this.cursor < 6 ? this.cursor < slotCount - 1 ? this.cursor + 1 : 6 : 0);
+          break;
+        case keyCodes.LEFT:
+          if (this.cursor && this.cursor < 6)
+            success = this.setCursor(0);
+          break;
+        case keyCodes.RIGHT:
+          if (!this.cursor)
+            success = this.setCursor(this.lastCursor < 6 ? this.lastCursor || 1 : 1);
+          break;
+      }
     }
 
     if (success)
       ui.playSelect();
-  }
-
-  setCursor(cursor: integer): boolean {
-    const changed = this.cursor !== cursor;
-    if (changed) {
-      this.lastCursor = this.cursor;
-      this.cursor = cursor;
-      if (this.lastCursor < 6)
-        this.partySlots[this.lastCursor].deselect();
-      else if (this.lastCursor === 6)
-        this.partyCancelButton.deselect();
-      if (cursor < 6)
-        this.partySlots[cursor].select();
-      else if (cursor === 6)
-        this.partyCancelButton.select();
-    }
-
-    return changed;
   }
 
   populatePartySlots() {
@@ -213,6 +231,91 @@ export default class PartyUiHandler extends MessageUiHandler {
       if (this.cursor === slotIndex)
         partySlot.select();
     }
+  }
+  
+  setCursor(cursor: integer): boolean {
+    let changed: boolean;
+    
+    if (this.optionsMode) {
+      changed = this.optionsCursor !== cursor;
+      this.optionsCursor = cursor;
+      if (!this.optionsCursorObj) {
+        this.optionsCursorObj = this.scene.add.image(0, 0, 'cursor');
+        this.optionsCursorObj.setOrigin(0, 0);
+        this.optionsContainer.add(this.optionsCursorObj);
+      }
+      console.log(this.optionsCursor)
+      this.optionsCursorObj.setPosition(-86, -19 - (16 * (2 - this.optionsCursor)));
+    } else {
+      changed = this.cursor !== cursor;
+      if (changed) {
+        this.lastCursor = this.cursor;
+        this.cursor = cursor;
+        if (this.lastCursor < 6)
+          this.partySlots[this.lastCursor].deselect();
+        else if (this.lastCursor === 6)
+          this.partyCancelButton.deselect();
+        if (cursor < 6)
+          this.partySlots[cursor].select();
+        else if (cursor === 6)
+          this.partyCancelButton.select();
+      }
+    }
+
+    return changed;
+  }
+
+  showOptions() {
+    if (this.cursor === 6)
+      return;
+    
+    this.optionsMode = true;
+
+    this.partyMessageBox.setTexture('party_message_options');
+    this.message.setText('Do what with this Pokémon?');
+
+    const optionsBottom = this.scene.add.image(0, 0, 'party_options_bottom');
+    optionsBottom.setOrigin(1, 1);
+    this.optionsContainer.add(optionsBottom);
+
+    const options = [
+      this.isModal ? 'SEND OUT' : 'SHIFT',
+      'SUMMARY',
+      'CANCEL'
+    ];
+
+    for (let o = 0; o < options.length; o++) {
+      const yCoord = -6 - 16 * o;
+      const optionBg = this.scene.add.image(0, yCoord, 'party_options_center');
+      const optionText = addTextObject(this.scene, -79, yCoord - 16, options[options.length - (o + 1)], TextStyle.WINDOW);
+
+      optionBg.setOrigin(1, 1);
+      optionText.setOrigin(0, 0);
+
+      this.optionsContainer.add(optionBg);
+      this.optionsContainer.add(optionText);
+    }
+
+    const optionsTop = this.scene.add.image(0, -6 - 16 * options.length, 'party_options_top');
+    optionsTop.setOrigin(1, 1);
+    this.optionsContainer.add(optionsTop);
+
+    this.setCursor(0);
+  }
+
+  clearOptions() {
+    this.optionsMode = false;
+    this.optionsContainer.removeAll(true);
+    this.eraseOptionsCursor();
+
+    this.partyMessageBox.setTexture('party_message');
+    this.message.setText(defaultMessage);
+  }
+
+  eraseOptionsCursor() {
+    if (this.optionsCursorObj)
+      this.optionsCursorObj.destroy();
+    this.optionsCursorObj = null;
   }
 
   clear() {
