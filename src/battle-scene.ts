@@ -188,7 +188,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.loadBgm('level_up_fanfare');
 
-		this.load.glsl('sprite', 'shaders/sprite.frag');
+		//this.load.glsl('sprite', 'shaders/sprite.frag');
 
 		populateAnims();
 	}
