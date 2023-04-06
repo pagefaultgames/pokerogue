@@ -687,7 +687,7 @@ export class SwitchPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.SWITCH : PartyUiMode.FORCE_SWITCH, (slotIndex: integer) => {
+    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.SWITCH : PartyUiMode.FAINT_SWITCH, (slotIndex: integer) => {
       if (slotIndex && slotIndex < 6)
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, slotIndex, this.doReturn));
       this.scene.ui.setMode(Mode.MESSAGE);

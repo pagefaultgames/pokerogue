@@ -10,7 +10,8 @@ const defaultMessage = 'Choose a Pokémon.';
 
 export enum PartyUiMode {
   SWITCH,
-  FORCE_SWITCH,
+  FAINT_SWITCH,
+  POST_BATTLE_SWITCH,
   MODIFIER
 }
 
@@ -193,13 +194,13 @@ export default class PartyUiHandler extends MessageUiHandler {
         if (this.cursor < 6) {
           this.showOptions();
           ui.playSelect();
-        } else if (this.partyUiMode === PartyUiMode.FORCE_SWITCH)
+        } else if (this.partyUiMode === PartyUiMode.FAINT_SWITCH)
           ui.playError();
         else
           this.processInput(keyCodes.X);
         return;
       } else if (keyCode === keyCodes.X) {
-        if (this.partyUiMode !== PartyUiMode.FORCE_SWITCH) {
+        if (this.partyUiMode !== PartyUiMode.FAINT_SWITCH) {
           if (this.selectCallback) {
             const selectCallback = this.selectCallback;
             this.selectCallback = null;
@@ -305,8 +306,10 @@ export default class PartyUiHandler extends MessageUiHandler {
         if (this.cursor)
           this.options.push(PartyOption.SHIFT);
         break;
-      case PartyUiMode.FORCE_SWITCH:
-        this.options.push(PartyOption.SEND_OUT);
+      case PartyUiMode.FAINT_SWITCH:
+      case PartyUiMode.POST_BATTLE_SWITCH:
+        if (this.cursor)
+          this.options.push(PartyOption.SEND_OUT);
         break;
       case PartyUiMode.MODIFIER:
         this.options.push(PartyOption.APPLY);
