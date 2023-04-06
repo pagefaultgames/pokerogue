@@ -105,7 +105,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]) {
-    if (!args.length)
+    if (!args.length || this.active)
       return;
 
     super.show(args);
@@ -172,7 +172,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if (option === PartyOption.SUMMARY) {
           this.clearOptions();
           ui.playSelect();
-          ui.setMode(Mode.SUMMARY);
+          ui.setModeWithoutClear(Mode.SUMMARY);
         } else if (option === PartyOption.CANCEL)
           this.processInput(keyCodes.X);
       } else if (keyCode === keyCodes.X) {

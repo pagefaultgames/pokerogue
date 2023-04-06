@@ -134,6 +134,10 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('party_cancel', 'ui');
 
 		this.loadImage('summary_bg', 'ui');
+		this.loadImage('summary_overlay_shiny', 'ui');
+		this.loadImage('summary_profile', 'ui');
+		this.loadImage('summary_moves', 'ui');
+		this.loadImage('summary_moves_effect', 'ui');
 
 		// Load arena images
 		Utils.getEnumValues(Biome).map(at => {
