@@ -6,7 +6,7 @@ import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
 import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, getModifierTypesForWave, ModifierType, PokemonModifierType, regenerateModifierPoolThresholds } from "./modifier";
-import PartyUiHandler from "./ui/party-ui-handler";
+import PartyUiHandler, { PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor as getPokeballTintColor, PokeballType } from "./pokeball";
 import { pokemonLevelMoves } from "./pokemon-level-moves";
 import { MoveAnim, initAnim, loadMoveAnimAssets } from "./battle-anims";
@@ -687,7 +687,7 @@ export class SwitchPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.ui.setMode(Mode.PARTY, this.isModal, (slotIndex: integer) => {
+    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.SWITCH : PartyUiMode.FORCE_SWITCH, (slotIndex: integer) => {
       if (slotIndex && slotIndex < 6)
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, slotIndex, this.doReturn));
       this.scene.ui.setMode(Mode.MESSAGE);
@@ -965,7 +965,7 @@ export class SelectModifierPhase extends BattlePhase {
       const modifierType = types[cursor];
       if (modifierType instanceof PokemonModifierType) {
         const pokemonModifierType = modifierType as PokemonModifierType;
-        this.scene.ui.setModeWithoutClear(Mode.PARTY, false, (slotIndex: integer) => {
+        this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER, (slotIndex: integer) => {
           if (slotIndex < 6) {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT);
             this.scene.addModifier(types[cursor].newModifier(this.scene.getParty()[slotIndex])).then(() => super.end());

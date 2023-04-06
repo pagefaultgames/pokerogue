@@ -4,11 +4,27 @@ import { PlayerPokemon } from "../pokemon";
 import { addTextObject, TextStyle } from "../text";
 import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
-import UI, { Mode } from "./ui";
+import { Mode } from "./ui";
 
 const defaultMessage = 'Choose a Pokémon.';
 
+export enum PartyUiMode {
+  SWITCH,
+  FORCE_SWITCH,
+  MODIFIER
+}
+
+export enum PartyOption {
+  SHIFT,
+  SEND_OUT,
+  APPLY,
+  SUMMARY,
+  CANCEL
+}
+
 export default class PartyUiHandler extends MessageUiHandler {
+  private partyUiMode: PartyUiMode;
+
   private partyContainer: Phaser.GameObjects.Container;
   private partySlotsContainer: Phaser.GameObjects.Container;
   private partySlots: PartySlot[];
@@ -19,9 +35,9 @@ export default class PartyUiHandler extends MessageUiHandler {
   private optionsCursor: integer;
   private optionsContainer: Phaser.GameObjects.Container;
   private optionsCursorObj: Phaser.GameObjects.Image;
+  private options: integer[];
   
   private lastCursor: integer = 0;
-  private isModal: boolean;
   private selectCallback: Function;
   private selectFilter: Function;
 
@@ -82,17 +98,23 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.optionsContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -1);
     partyContainer.add(this.optionsContainer);
 
+    this.options = [];
+
     this.partySlots = [];
   }
 
   show(args: any[]) {
+    if (!args.length)
+      return;
+
     super.show(args);
+
+    this.partyUiMode = args[0] as PartyUiMode;
 
     this.partyContainer.setVisible(true);
     this.populatePartySlots();
     this.setCursor(this.cursor < 6 ? this.cursor : 0);
 
-    this.isModal = args.length && args[0];
     if (args.length > 1 && args[1] instanceof Function)
       this.selectCallback = args[1];
     this.selectFilter = args.length > 2 && args[2] instanceof Function
@@ -124,7 +146,8 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     if (this.optionsMode) {
       if (keyCode === keyCodes.Z) {
-        if (!this.optionsCursor) {
+        const option = this.options[this.optionsCursor];
+        if (option === PartyOption.SHIFT || option === PartyOption.SEND_OUT || option === PartyOption.APPLY) {
           let filterResult: string = this.selectFilter(this.scene.getParty()[this.cursor]);
           if (filterResult === null) {
             this.clearOptions();
@@ -145,11 +168,11 @@ export default class PartyUiHandler extends MessageUiHandler {
               this.message.y += 15;
             }, null, true);
           }
-        } else if (this.optionsCursor === 1) {
+        } else if (option === PartyOption.SUMMARY) {
           this.clearOptions();
           ui.playSelect();
           ui.setMode(Mode.SUMMARY);
-        } else
+        } else if (option === PartyOption.CANCEL)
           this.processInput(keyCodes.X);
       } else if (keyCode === keyCodes.X) {
         this.clearOptions();
@@ -158,10 +181,10 @@ export default class PartyUiHandler extends MessageUiHandler {
       else {
         switch (keyCode) {
           case keyCodes.UP:
-            success = this.setCursor(this.optionsCursor ? this.optionsCursor - 1 : 2);
+            success = this.setCursor(this.optionsCursor ? this.optionsCursor - 1 : this.options.length - 1);
             break;
           case keyCodes.DOWN:
-            success = this.setCursor(this.optionsCursor < 2 ? this.optionsCursor + 1 : 0);
+            success = this.setCursor(this.optionsCursor < this.options.length - 1 ? this.optionsCursor + 1 : 0);
             break;
         }
       }
@@ -170,13 +193,13 @@ export default class PartyUiHandler extends MessageUiHandler {
         if (this.cursor < 6) {
           this.showOptions();
           ui.playSelect();
-        } else if (this.isModal)
+        } else if (this.partyUiMode === PartyUiMode.FORCE_SWITCH)
           ui.playError();
         else
           this.processInput(keyCodes.X);
         return;
       } else if (keyCode === keyCodes.X) {
-        if (!this.isModal) {
+        if (this.partyUiMode !== PartyUiMode.FORCE_SWITCH) {
           if (this.selectCallback) {
             const selectCallback = this.selectCallback;
             this.selectCallback = null;
@@ -244,8 +267,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         this.optionsCursorObj.setOrigin(0, 0);
         this.optionsContainer.add(this.optionsCursorObj);
       }
-      console.log(this.optionsCursor)
-      this.optionsCursorObj.setPosition(-86, -19 - (16 * (2 - this.optionsCursor)));
+      this.optionsCursorObj.setPosition(-86, -19 - (16 * ((this.options.length - 1) - this.optionsCursor)));
     } else {
       changed = this.cursor !== cursor;
       if (changed) {
@@ -278,16 +300,25 @@ export default class PartyUiHandler extends MessageUiHandler {
     optionsBottom.setOrigin(1, 1);
     this.optionsContainer.add(optionsBottom);
 
-    const options = [
-      this.isModal ? 'SEND OUT' : 'SHIFT',
-      'SUMMARY',
-      'CANCEL'
-    ];
+    switch (this.partyUiMode) {
+      case PartyUiMode.SWITCH:
+        if (this.cursor)
+          this.options.push(PartyOption.SHIFT);
+        break;
+      case PartyUiMode.FORCE_SWITCH:
+        this.options.push(PartyOption.SEND_OUT);
+        break;
+      case PartyUiMode.MODIFIER:
+        this.options.push(PartyOption.APPLY);
+        break;
+    }
 
-    for (let o = 0; o < options.length; o++) {
+    this.options.push(PartyOption.SUMMARY, PartyOption.CANCEL);
+
+    for (let o = 0; o < this.options.length; o++) {
       const yCoord = -6 - 16 * o;
       const optionBg = this.scene.add.image(0, yCoord, 'party_options_center');
-      const optionText = addTextObject(this.scene, -79, yCoord - 16, options[options.length - (o + 1)], TextStyle.WINDOW);
+      const optionText = addTextObject(this.scene, -79, yCoord - 16, PartyOption[this.options[this.options.length - (o + 1)]].replace(/\_/g, ' '), TextStyle.WINDOW);
 
       optionBg.setOrigin(1, 1);
       optionText.setOrigin(0, 0);
@@ -296,7 +327,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.optionsContainer.add(optionText);
     }
 
-    const optionsTop = this.scene.add.image(0, -6 - 16 * options.length, 'party_options_top');
+    const optionsTop = this.scene.add.image(0, -6 - 16 * this.options.length, 'party_options_top');
     optionsTop.setOrigin(1, 1);
     this.optionsContainer.add(optionsTop);
 
@@ -305,6 +336,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   clearOptions() {
     this.optionsMode = false;
+    this.options.splice(0, this.options.length);
     this.optionsContainer.removeAll(true);
     this.eraseOptionsCursor();
 
