@@ -5,7 +5,7 @@ import CommandUiHandler from './command-ui-handler';
 import PartyUiHandler from './party-ui-handler';
 import FightUiHandler from './fight-ui-handler';
 import MessageUiHandler from './message-ui-handler';
-import SwitchCheckUiHandler from './switch-check-ui-handler';
+import ConfirmUiHandler from './confirm-ui-handler';
 import ModifierSelectUiHandler from './modifier-select-ui-handler';
 import BallUiHandler from './ball-ui-handler';
 import SummaryUiHandler from './summary-ui-handler';
@@ -15,15 +15,21 @@ export enum Mode {
   COMMAND,
   FIGHT,
   BALL,
-  SWITCH_CHECK,
+  CONFIRM,
   MODIFIER_SELECT,
   PARTY,
   SUMMARY
 };
 
+const transitionModes = [
+  Mode.PARTY,
+  Mode.SUMMARY
+];
+
 export default class UI extends Phaser.GameObjects.Container {
   private mode: Mode;
   private handlers: UiHandler[];
+  private overlay: Phaser.GameObjects.Rectangle;
 
   constructor(scene: BattleScene) {
     super(scene, 0, scene.game.canvas.height / 6);
@@ -34,7 +40,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new CommandUiHandler(scene),
       new FightUiHandler(scene),
       new BallUiHandler(scene),
-      new SwitchCheckUiHandler(scene),
+      new ConfirmUiHandler(scene),
       new ModifierSelectUiHandler(scene),
       new PartyUiHandler(scene),
       new SummaryUiHandler(scene)
@@ -45,6 +51,10 @@ export default class UI extends Phaser.GameObjects.Container {
     for (let handler of this.handlers) {
       handler.setup();
     }
+    this.overlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0);
+    this.overlay.setOrigin(0, 0);
+    (this.scene as BattleScene).uiContainer.add(this.overlay);
+    this.overlay.setVisible(false);
   }
 
   getHandler() {
@@ -91,18 +101,47 @@ export default class UI extends Phaser.GameObjects.Container {
     this.scene.sound.play('error');
   }
 
-  setMode(mode: Mode, ...args: any[]) {
-    if (this.mode === mode)
-      return;
-    this.getHandler().clear();
-    this.mode = mode;
-    this.getHandler().show(args);
+  private setModeInternal(mode: Mode, clear: boolean, args: any[]): Promise<void> {
+    return new Promise(resolve => {
+      if (this.mode === mode) {
+        resolve();
+        return;
+      }
+      const doSetMode = () => {
+        this.getHandler().clear();
+        this.mode = mode;
+        this.getHandler().show(args);
+        resolve();
+      };
+      if (transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1) {
+        this.overlay.setAlpha(0);
+        this.overlay.setVisible(true);
+        this.scene.tweens.add({
+          targets: this.overlay,
+          alpha: 1,
+          duration: 250,
+          onComplete: () => {
+            this.scene.time.delayedCall(250, () => {
+              doSetMode();
+              this.scene.tweens.add({
+                targets: this.overlay,
+                alpha: 0,
+                duration: 250,
+                onComplete: () => this.overlay.setVisible(false)
+              });
+            });
+          }
+        });
+      } else
+        doSetMode();
+    });
   }
 
-  setModeWithoutClear(mode: Mode, ...args: any[]) {
-    if (this.mode === mode)
-      return;
-    this.mode = mode;
-    this.getHandler().show(args);
+  setMode(mode: Mode, ...args: any[]): Promise<void> {
+    return this.setModeInternal(mode, true, args);
+  }
+
+  setModeWithoutClear(mode: Mode, ...args: any[]): Promise<void> {
+    return this.setModeInternal(mode, false, args);
   }
 }

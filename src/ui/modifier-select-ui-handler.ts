@@ -13,7 +13,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private cursorObj: Phaser.GameObjects.Image;
 
   constructor(scene: BattleScene) {
-    super(scene, Mode.SWITCH_CHECK);
+    super(scene, Mode.CONFIRM);
 
     this.options = [];
   }

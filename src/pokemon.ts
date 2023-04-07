@@ -716,6 +716,6 @@ export class PokemonMove {
   }
 
   getName(): string {
-    return this.getMove().name.toUpperCase();
+    return this.getMove().name;
   }
 }

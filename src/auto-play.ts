@@ -10,7 +10,7 @@ import FightUiHandler from "./ui/fight-ui-handler";
 import MessageUiHandler from "./ui/message-ui-handler";
 import ModifierSelectUiHandler from "./ui/modifier-select-ui-handler";
 import PartyUiHandler from "./ui/party-ui-handler";
-import SwitchCheckUiHandler from "./ui/switch-check-ui-handler";
+import ConfirmUiHandler from "./ui/confirm-ui-handler";
 import { Mode } from "./ui/ui";
 
 export function initAutoPlay(speed: number) {
@@ -56,7 +56,7 @@ export function initAutoPlay(speed: number) {
     const commandUiHandler = this.ui.handlers[Mode.COMMAND] as CommandUiHandler;
     const fightUiHandler = this.ui.handlers[Mode.FIGHT] as FightUiHandler;
     const partyUiHandler = this.ui.handlers[Mode.PARTY] as PartyUiHandler;
-    const switchCheckUiHandler = this.ui.handlers[Mode.SWITCH_CHECK] as SwitchCheckUiHandler;
+    const switchCheckUiHandler = this.ui.handlers[Mode.CONFIRM] as ConfirmUiHandler;
     const modifierSelectUiHandler = this.ui.handlers[Mode.MODIFIER_SELECT] as ModifierSelectUiHandler;
 
     const getBestPartyMemberIndex = () => {

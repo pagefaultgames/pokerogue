@@ -2,7 +2,9 @@ export enum TextStyle {
   MESSAGE,
   WINDOW,
   BATTLE_INFO,
-  PARTY
+  PARTY,
+  SUMMARY,
+  SUMMARY_RED
 };
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
@@ -52,6 +54,22 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
         }
       };
       shadowColor = '#707070';
+      break;
+    case TextStyle.SUMMARY:
+      styleOptions = {
+        fontFamily: 'emerald',
+        fontSize: '96px',
+        color: '#ffffff'
+      };
+      shadowColor = '#636363';
+      break;
+    case TextStyle.SUMMARY_RED:
+      styleOptions = {
+        fontFamily: 'emerald',
+        fontSize: '96px',
+        color: '#f4b4b0'
+      };
+      shadowColor = '#d06c6a';
       break;
   }
 

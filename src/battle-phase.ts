@@ -11,6 +11,7 @@ import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, 
 import { pokemonLevelMoves } from "./pokemon-level-moves";
 import { MoveAnim, initAnim, loadMoveAnimAssets } from "./battle-anims";
 import { StatusEffect } from "./status-effect";
+import { SummaryUiMode } from "./ui/summary-ui-handler";
 
 export class BattlePhase {
   protected scene: BattleScene;
@@ -325,7 +326,10 @@ export class CheckSwitchPhase extends BattlePhase {
     super.start();
 
     this.scene.ui.showText('Will you switch\nPOKéMON?', null, () => {
-      this.scene.ui.setMode(Mode.SWITCH_CHECK, () => this.end());
+      this.scene.ui.setMode(Mode.CONFIRM, () => {
+        this.scene.unshiftPhase(new SwitchPhase(this.scene, false, true));
+        this.end();
+      }, () => this.end());
     });
   }
 }
@@ -338,11 +342,12 @@ export class CommandPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.ui.setMode(Mode.COMMAND);
-    this.scene.currentBattle.addParticipant(this.scene.getPlayerPokemon());
+    this.scene.ui.setMode(Mode.COMMAND).then(() => {
+      this.scene.currentBattle.addParticipant(this.scene.getPlayerPokemon());
 
-    this.scene.getPlayerPokemon().resetTurnData();
-    this.scene.getEnemyPokemon().resetTurnData();
+      this.scene.getPlayerPokemon().resetTurnData();
+      this.scene.getEnemyPokemon().resetTurnData();
+    });
   }
 
   handleCommand(command: Command, cursor: integer): boolean{
@@ -775,8 +780,12 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
     const pokemon = this.getPokemon();
     const move = allMoves[this.moveId - 1];
 
-    if (pokemon.moveset.length < 4) {
-      pokemon.moveset.push(new PokemonMove(this.moveId, 0, 0));
+    const emptyMoveIndex = pokemon.moveset.length < 4
+      ? pokemon.moveset.length
+      : pokemon.moveset.findIndex(m => m === null);
+
+    if (emptyMoveIndex > -1) {
+      pokemon.moveset[emptyMoveIndex] = new PokemonMove(this.moveId, 0, 0);
       initAnim(this.moveId).then(() => {
         loadMoveAnimAssets(this.scene, [ this.moveId ], true)
           .then(() => {
@@ -784,8 +793,50 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
             this.scene.ui.showText(`${pokemon.name} learned\n${Utils.toPokemonUpperCase(move.name)}!`, null, () => this.end(), null, true);
           });
         });
-    } else
-      this.end();
+    } else {
+      this.scene.ui.setMode(Mode.MESSAGE);
+      this.scene.ui.showText(`${pokemon.name} wants to learn the\nmove ${move.name}.`, null, () => {
+        this.scene.ui.showText(`However, ${pokemon.name} already\nknows four moves.`, null, () => {
+          this.scene.ui.showText(`Should a move be deleted and\nreplaced with ${move.name}?`, null, () => {
+            const noHandler = () => {
+              this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+                this.scene.ui.showText(`Stop trying to teach\n${move.name}?`, null, () => {
+                  this.scene.ui.setMode(Mode.CONFIRM, () => {
+                    this.scene.ui.setMode(Mode.MESSAGE);
+                    this.scene.ui.showText(`${pokemon.name} did not learn the\nmove ${move.name}.`, null, () => this.end(), null, true);
+                  }, () => {
+                    this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
+                    this.end();
+                  });
+                });
+              });
+            };
+            this.scene.ui.setMode(Mode.CONFIRM, () => {
+              this.scene.ui.setMode(Mode.MESSAGE);
+              this.scene.ui.showText('Which move should be forgotten?', null, () => {
+                this.scene.ui.setMode(Mode.SUMMARY, this.getPokemon(), SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
+                  if (moveIndex === 4) {
+                    noHandler();
+                    return;
+                  }
+                  this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+                    this.scene.ui.showText('1, 2, and… … … Poof!', null, () => {
+                      this.scene.ui.showText(`${pokemon.name} forgot how to\nuse ${pokemon.moveset[moveIndex].getName()}.`, null, () => {
+                        this.scene.ui.showText('And…', null, () => {
+                          pokemon.moveset[moveIndex] = null;
+                          this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
+                          this.end();
+                        }, null, true);
+                      }, null, true);
+                    }, null, true);
+                  });
+                });
+              }, null, true);
+            }, noHandler);
+          });
+        }, null, true);
+      }, null, true);
+    }
   }
 }
 

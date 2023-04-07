@@ -172,7 +172,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if (option === PartyOption.SUMMARY) {
           this.clearOptions();
           ui.playSelect();
-          ui.setModeWithoutClear(Mode.SUMMARY);
+          ui.setModeWithoutClear(Mode.SUMMARY, this.scene.getParty()[this.cursor]);
         } else if (option === PartyOption.CANCEL)
           this.processInput(keyCodes.X);
       } else if (keyCode === keyCodes.X) {

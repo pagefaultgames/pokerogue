@@ -28,7 +28,7 @@ export default class Move {
 
   constructor(id: Moves, name: string, type: Type, category: MoveCategory, power: integer, accuracy: integer, pp: integer, tm: string, effect: string, chance: integer, generation: integer, ...attrs: MoveAttr[]) {
     this.id = id;
-    this.name = name;
+    this.name = name.toUpperCase();
     this.type = type;
     this.category = category;
     this.power = power;

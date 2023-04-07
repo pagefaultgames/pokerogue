@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Biome, BiomeArena } from './biome';
 import UI from './ui/ui';
-import { BattlePhase, EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase } from './battle-phase';
+import { BattlePhase, EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase, LearnMovePhase } from './battle-phase';
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
@@ -11,6 +11,7 @@ import { Species } from './species';
 import { initAutoPlay } from './auto-play';
 import { Battle } from './battle';
 import { populateAnims } from './battle-anims';
+import { Moves } from './move';
 
 export default class BattleScene extends Phaser.Scene {
 	private auto: boolean;
@@ -138,6 +139,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('summary_profile', 'ui');
 		this.loadImage('summary_moves', 'ui');
 		this.loadImage('summary_moves_effect', 'ui');
+		this.loadImage('summary_moves_overlay_row', 'ui');
+		this.loadAtlas('summary_moves_cursor', 'ui');
 
 		// Load arena images
 		Utils.getEnumValues(Biome).map(at => {
@@ -331,6 +334,9 @@ export default class BattleScene extends Phaser.Scene {
 		} else {
 			this.pushPhase(new EncounterPhase(this));
 			this.pushPhase(new SummonPhase(this));
+			this.pushPhase(new LearnMovePhase(this, 0, Moves.AERIAL_ACE));
+			this.pushPhase(new LearnMovePhase(this, 0, Moves.AERIAL_ACE));
+			this.pushPhase(new LearnMovePhase(this, 0, Moves.AERIAL_ACE));
 		}
 
 		this.currentBattle = new Battle((this.currentBattle?.waveIndex || 0) + 1);
