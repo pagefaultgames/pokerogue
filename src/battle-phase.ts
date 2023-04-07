@@ -391,8 +391,7 @@ export class CommandPhase extends BattlePhase {
   }
 
   end() {
-    super.end();
-    this.scene.ui.setMode(Mode.MESSAGE);
+    this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
   }
 }
 
@@ -695,8 +694,7 @@ export class SwitchPhase extends BattlePhase {
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.SWITCH : PartyUiMode.FAINT_SWITCH, (slotIndex: integer) => {
       if (slotIndex && slotIndex < 6)
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, slotIndex, this.doReturn));
-      this.scene.ui.setMode(Mode.MESSAGE);
-      super.end();
+      this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
     }, PartyUiHandler.FilterNonFainted);
   }
 }
@@ -779,6 +777,13 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
 
     const pokemon = this.getPokemon();
     const move = allMoves[this.moveId - 1];
+
+    const existingMoveIndex = pokemon.moveset.findIndex(m => m.moveId === move.id);
+
+    if (existingMoveIndex > -1) {
+      this.end();
+      return;
+    }
 
     const emptyMoveIndex = pokemon.moveset.length < 4
       ? pokemon.moveset.length

@@ -334,9 +334,6 @@ export default class BattleScene extends Phaser.Scene {
 		} else {
 			this.pushPhase(new EncounterPhase(this));
 			this.pushPhase(new SummonPhase(this));
-			this.pushPhase(new LearnMovePhase(this, 0, Moves.AERIAL_ACE));
-			this.pushPhase(new LearnMovePhase(this, 0, Moves.AERIAL_ACE));
-			this.pushPhase(new LearnMovePhase(this, 0, Moves.AERIAL_ACE));
 		}
 
 		this.currentBattle = new Battle((this.currentBattle?.waveIndex || 0) + 1);

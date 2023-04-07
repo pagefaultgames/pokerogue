@@ -170,9 +170,8 @@ export default class PartyUiHandler extends MessageUiHandler {
             }, null, true);
           }
         } else if (option === PartyOption.SUMMARY) {
-          this.clearOptions();
           ui.playSelect();
-          ui.setModeWithoutClear(Mode.SUMMARY, this.scene.getParty()[this.cursor]);
+          ui.setModeWithoutClear(Mode.SUMMARY, this.scene.getParty()[this.cursor]).then(() =>  this.clearOptions());
         } else if (option === PartyOption.CANCEL)
           this.processInput(keyCodes.X);
       } else if (keyCode === keyCodes.X) {

@@ -30,6 +30,8 @@ export default class UI extends Phaser.GameObjects.Container {
   private mode: Mode;
   private handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
+  
+  private transitioning: boolean;
 
   constructor(scene: BattleScene) {
     super(scene, 0, scene.game.canvas.height / 6);
@@ -47,7 +49,7 @@ export default class UI extends Phaser.GameObjects.Container {
     ];
   }
 
-  setup() {
+  setup(): void {
     for (let handler of this.handlers) {
       handler.setup();
     }
@@ -57,19 +59,22 @@ export default class UI extends Phaser.GameObjects.Container {
     this.overlay.setVisible(false);
   }
 
-  getHandler() {
+  getHandler(): UiHandler {
     return this.handlers[this.mode];
   }
 
-  getMessageHandler() {
+  getMessageHandler(): BattleMessageUiHandler {
     return this.handlers[Mode.MESSAGE] as BattleMessageUiHandler;
   }
 
-  processInput(keyCode: integer) {
+  processInput(keyCode: integer): void {
+    if (this.transitioning)
+      return;
+
     this.getHandler().processInput(keyCode);
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean) {
+  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean): void {
     const handler = this.getHandler();
     if (handler instanceof MessageUiHandler)
       (handler as MessageUiHandler).showText(text, delay, callback, callbackDelay, prompt);
@@ -77,7 +82,7 @@ export default class UI extends Phaser.GameObjects.Container {
       this.getMessageHandler().showText(text, delay, callback, callbackDelay, prompt);
   }
 
-  clearText() {
+  clearText(): void {
     const handler = this.getHandler();
     if (handler instanceof MessageUiHandler)
       (handler as MessageUiHandler).clearText();
@@ -93,11 +98,11 @@ export default class UI extends Phaser.GameObjects.Container {
     return changed;
   }
 
-  playSelect() {
+  playSelect(): void {
     this.scene.sound.play('select');
   }
 
-  playError() {
+  playError(): void {
     this.scene.sound.play('error');
   }
 
@@ -108,27 +113,32 @@ export default class UI extends Phaser.GameObjects.Container {
         return;
       }
       const doSetMode = () => {
-        this.getHandler().clear();
+        if (clear)
+          this.getHandler().clear();
         this.mode = mode;
         this.getHandler().show(args);
         resolve();
       };
       if (transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1) {
+        this.transitioning = true;
         this.overlay.setAlpha(0);
         this.overlay.setVisible(true);
         this.scene.tweens.add({
           targets: this.overlay,
           alpha: 1,
           duration: 250,
+          ease: 'Sine.easeOut',
           onComplete: () => {
-            this.scene.time.delayedCall(250, () => {
+            this.scene.time.delayedCall(100, () => {
               doSetMode();
               this.scene.tweens.add({
                 targets: this.overlay,
                 alpha: 0,
                 duration: 250,
+                ease: 'Sine.easeIn',
                 onComplete: () => this.overlay.setVisible(false)
               });
+              this.transitioning = false;
             });
           }
         });

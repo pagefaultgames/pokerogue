@@ -23,10 +23,14 @@ export default class SummaryUiHandler extends UiHandler {
   private summaryContainer: Phaser.GameObjects.Container;
   private summaryPageContainer: Phaser.GameObjects.Container;
   private movesContainer: Phaser.GameObjects.Container;
+  private moveDescriptionText: Phaser.GameObjects.Text;
   private moveCursorObj: Phaser.GameObjects.Sprite;
   private selectedMoveCursorObj: Phaser.GameObjects.Sprite;
+  private moveRowsContainer: Phaser.GameObjects.Container;
   private extraMoveRowContainer: Phaser.GameObjects.Container;
   private summaryPageTransitionContainer: Phaser.GameObjects.Container;
+
+  private moveCursorBlinkTimer: Phaser.Time.TimerEvent;
 
   private pokemon: PlayerPokemon;
   private newMove: Move;
@@ -111,11 +115,37 @@ export default class SummaryUiHandler extends UiHandler {
         if (this.moveCursor < this.pokemon.moveset.length) {
           if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
             this.moveSelectFunction(this.moveCursor);
-          else
-            this.selectedMoveIndex = this.moveCursor;
+          else {
+            if (this.selectedMoveIndex === -1)
+              this.selectedMoveIndex = this.moveCursor;
+            else {
+              if (this.selectedMoveIndex !== this.moveCursor) {
+                const tempMove = this.pokemon.moveset[this.selectedMoveIndex];
+                this.pokemon.moveset[this.selectedMoveIndex] = this.pokemon.moveset[this.moveCursor];
+                this.pokemon.moveset[this.moveCursor] = tempMove;
+                
+                const selectedMoveRow = this.moveRowsContainer.getAt(this.selectedMoveIndex) as Phaser.GameObjects.Container;
+                const switchMoveRow = this.moveRowsContainer.getAt(this.moveCursor) as Phaser.GameObjects.Container;
+
+                this.moveRowsContainer.moveTo(selectedMoveRow, this.moveCursor);
+                this.moveRowsContainer.moveTo(switchMoveRow, this.selectedMoveIndex);
+
+                selectedMoveRow.setY(this.moveCursor * 16);
+                switchMoveRow.setY(this.selectedMoveIndex * 16);
+              }
+
+              this.selectedMoveIndex = -1;
+              if (this.selectedMoveCursorObj) {
+                this.selectedMoveCursorObj.destroy();
+                this.selectedMoveCursorObj = null;
+              }
+            }
+          }
           success = true;
         } else if (this.moveCursor === 4)
           this.processInput(keyCodes.X);
+        else
+          ui.playError();
       } else if (keyCode === keyCodes.X) {
         this.hideMoveSelect();
         success = true;
@@ -165,13 +195,41 @@ export default class SummaryUiHandler extends UiHandler {
       if (changed) {
         this.moveCursor = cursor;
 
-        if (!this.moveCursorObj) {
-          this.moveCursorObj = this.scene.add.sprite(-2, 0, 'summary_moves_cursor', 'highlight');
-          this.moveCursorObj.setOrigin(0, 1);
-          this.movesContainer.add(this.moveCursorObj);
+        const selectedMove = this.getSelectedMove();
+
+        this.moveDescriptionText.setText(selectedMove?.effect || '');
+      }
+
+      if (!this.moveCursorObj) {
+        this.moveCursorObj = this.scene.add.sprite(-2, 0, 'summary_moves_cursor', 'highlight');
+        this.moveCursorObj.setOrigin(0, 1);
+        this.movesContainer.add(this.moveCursorObj);
+      }
+
+      this.moveCursorObj.setY(16 * this.moveCursor + 1);
+
+      if (this.moveCursorBlinkTimer)
+        this.moveCursorBlinkTimer.destroy();
+      this.moveCursorBlinkTimer = this.scene.time.addEvent({
+        loop: true,
+        delay: 600,
+        callback: () => {
+          this.moveCursorObj.setVisible(false);
+          this.scene.time.delayedCall(100, () => {
+            this.moveCursorObj.setVisible(true);
+          });
         }
-    
-        this.moveCursorObj.setY(16 * this.moveCursor + 1);
+      });
+
+      if (this.selectedMoveIndex > -1) {
+        if (!this.selectedMoveCursorObj) {
+          this.selectedMoveCursorObj = this.scene.add.sprite(-2, 0, 'summary_moves_cursor', 'select');
+          this.selectedMoveCursorObj.setOrigin(0, 1);
+          this.movesContainer.add(this.selectedMoveCursorObj);
+          this.movesContainer.moveBelow(this.selectedMoveCursorObj, this.moveCursorObj);
+        }
+
+        this.selectedMoveCursorObj.setY(16 * this.selectedMoveIndex + 1);
       }
     } else {
       changed = this.cursor !== cursor;
@@ -228,6 +286,7 @@ export default class SummaryUiHandler extends UiHandler {
         pageContainer.add(this.movesContainer);
 
         this.extraMoveRowContainer = this.scene.add.container(0, 64);
+        this.extraMoveRowContainer.setVisible(false);
         this.movesContainer.add(this.extraMoveRowContainer);
 
         const extraRowOverlay = this.scene.add.image(-2, 1, 'summary_moves_overlay_row');
@@ -239,25 +298,57 @@ export default class SummaryUiHandler extends UiHandler {
         extraRowText.setOrigin(0, 1);
         this.extraMoveRowContainer.add(extraRowText);
 
+        this.moveRowsContainer = this.scene.add.container(0, 0);
+        this.movesContainer.add(this.moveRowsContainer);
+
         for (let m = 0; m < 4; m++) {
           const move = m < this.pokemon.moveset.length ? this.pokemon.moveset[m] : null;
+          const moveRowContainer = this.scene.add.container(0, 16 * m);
+          this.moveRowsContainer.add(moveRowContainer);
 
           if (move) {
-            const typeIcon = this.scene.add.sprite(0, 16 * m, 'types', Type[move.getMove().type].toLowerCase());
+            const typeIcon = this.scene.add.sprite(0, 0, 'types', Type[move.getMove().type].toLowerCase());
             typeIcon.setOrigin(0, 1);
-            this.movesContainer.add(typeIcon);
+            moveRowContainer.add(typeIcon);
           }
 
-          const moveText = addTextObject(this.scene, 35, 16 * m, move ? move.getName() : '-', TextStyle.SUMMARY);
+          const moveText = addTextObject(this.scene, 35, 0, move ? move.getName() : '-', TextStyle.SUMMARY);
           moveText.setOrigin(0, 1);
-          this.movesContainer.add(moveText);
+          moveRowContainer.add(moveText);
         }
+
+        this.moveDescriptionText = addTextObject(this.scene, 2, 84, '', TextStyle.WINDOW, { wordWrap: { width: 900 } });
+        this.movesContainer.add(this.moveDescriptionText);
+
+        const maskRect = this.scene.make.graphics({});
+        maskRect.fillStyle(0xFFFFFF);
+        maskRect.beginPath();
+        maskRect.fillRect(2, 83, 149, 46);
+
+        const moveDescriptionTextMask = maskRect.createGeometryMask();
+
+        this.moveDescriptionText.setMask(moveDescriptionTextMask);
+
+        console.log(this.moveDescriptionText.displayHeight);
         break;
     }
   }
 
+  getSelectedMove(): Move {
+    if (this.cursor !== Page.MOVES)
+      return null;
+
+    if (this.moveCursor < 4 && this.moveCursor < this.pokemon.moveset.length)
+      return this.pokemon.moveset[this.moveCursor].getMove();
+    else if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE && this.moveCursor === 4)
+      return this.newMove;
+    return null;
+  }
+
   showMoveSelect() {
     this.moveSelect = true;
+    this.extraMoveRowContainer.setVisible(true);
+    this.selectedMoveIndex = -1;
     this.setCursor(0);
   }
 
@@ -268,6 +359,19 @@ export default class SummaryUiHandler extends UiHandler {
     }
 
     this.moveSelect = false;
+    this.extraMoveRowContainer.setVisible(false);
+    if (this.moveCursorBlinkTimer) {
+      this.moveCursorBlinkTimer.destroy();
+      this.moveCursorBlinkTimer = null;
+    }
+    if (this.moveCursorObj) {
+      this.moveCursorObj.destroy();
+      this.moveCursorObj = null;
+    }
+    if (this.selectedMoveCursorObj) {
+      this.selectedMoveCursorObj.destroy();
+      this.selectedMoveCursorObj = null;
+    }
   }
 
   clear() {
