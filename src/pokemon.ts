@@ -159,13 +159,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       Promise.allSettled(moveIds.map(m => initAnim(m)))
         .then(() => {
           loadMoveAnimAssets(this.scene as BattleScene, moveIds);
-          (this.scene as BattleScene).loadAtlas(this.getSpriteKey(), 'pokemon', this.getAtlasPath());
+          (this.scene as BattleScene).loadAtlas(this.getSpriteKey(), 'pokemon', this.getSpriteAtlasPath());
+          if (this.isPlayer())
+            (this.scene as BattleScene).loadAtlas(this.getBattleSpriteKey(), 'pokemon', this.getBattleSpriteAtlasPath());
           this.scene.load.audio(this.species.speciesId.toString(), `audio/cry/${this.species.speciesId}.mp3`);
           this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             const originalWarn = console.warn;
             // Ignore warnings for missing frames, because there will be a lot
             console.warn = () => {};
             const frameNames = this.scene.anims.generateFrameNames(this.getSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 256 });
+            const battleFrameNames = this.isPlayer()
+              ? this.scene.anims.generateFrameNames(this.getBattleSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 256 })
+              : null;
             console.warn = originalWarn;
             this.scene.anims.create({
               key: this.getSpriteKey(),
@@ -173,6 +178,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               frameRate: 12,
               repeat: -1
             });
+            if (this.isPlayer()) {
+              this.scene.anims.create({
+                key: this.getBattleSpriteKey(),
+                frames: battleFrameNames,
+                frameRate: 12,
+                repeat: -1
+              });
+            }
             this.playAnim();
             resolve();
           });
@@ -182,16 +195,28 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
-  getAtlasPath(): string {
+  getSpriteAtlasPath(): string {
     return this.getSpriteId().replace(/\_{2}/g, '/');
   }
 
+  getBattleSpriteAtlasPath(): string {
+    return this.getBattleSpriteId().replace(/\_{2}/g, '/');
+  }
+
   getSpriteId(): string {
-    return `${this.isPlayer() ? 'back__' : ''}${this.shiny ? 'shiny__' : ''}${this.species.genderDiffs && !this.gender ? 'female__' : ''}${this.species.speciesId}`;
+    return `${this.shiny ? 'shiny__' : ''}${this.species.genderDiffs && !this.gender ? 'female__' : ''}${this.species.speciesId}`;
+  }
+
+  getBattleSpriteId(): string {
+    return `${this.isPlayer() ? 'back__' : ''}${this.getSpriteId()}`;
   }
 
   getSpriteKey(): string {
     return `pkmn__${this.getSpriteId()}`;
+  }
+
+  getBattleSpriteKey(): string {
+    return `pkmn__${this.getBattleSpriteId()}`;
   }
 
   getIconAtlasKey(): string {
@@ -219,9 +244,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   playAnim() {
-    this.getSprite().play(this.getSpriteKey());
-    this.getTintSprite().play(this.getSpriteKey());
-    this.getZoomSprite().play(this.getSpriteKey());
+    this.getSprite().play(this.getBattleSpriteKey());
+    this.getTintSprite().play(this.getBattleSpriteKey());
+    this.getZoomSprite().play(this.getBattleSpriteKey());
   }
 
   calculateStats() {

@@ -21,6 +21,7 @@ export default class SummaryUiHandler extends UiHandler {
   private summaryUiMode: SummaryUiMode;
 
   private summaryContainer: Phaser.GameObjects.Container;
+  private pokemonSprite: Phaser.GameObjects.Sprite;
   private summaryPageContainer: Phaser.GameObjects.Container;
   private movesContainer: Phaser.GameObjects.Container;
   private moveDescriptionText: Phaser.GameObjects.Text;
@@ -30,6 +31,7 @@ export default class SummaryUiHandler extends UiHandler {
   private extraMoveRowContainer: Phaser.GameObjects.Container;
   private summaryPageTransitionContainer: Phaser.GameObjects.Container;
 
+  private moveDescriptionScrollTween: Phaser.Tweens.Tween;
   private moveCursorBlinkTimer: Phaser.Time.TimerEvent;
 
   private pokemon: PlayerPokemon;
@@ -55,6 +57,9 @@ export default class SummaryUiHandler extends UiHandler {
     const summaryBg = this.scene.add.image(0, 0, 'summary_bg');
     summaryBg.setOrigin(0, 1);
     this.summaryContainer.add(summaryBg);
+
+    this.pokemonSprite = this.scene.add.sprite(56, -106, `pkmn__sub`);
+    this.summaryContainer.add(this.pokemonSprite);
 
     const getSummaryPageBg = () => {
       const ret = this.scene.add.sprite(0, 0, this.getPageKey(0));
@@ -85,6 +90,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.summaryContainer.setVisible(true);
     this.cursor = -1;
 
+    this.pokemonSprite.play(this.pokemon.getSpriteKey());
     this.pokemon.cry();
 
     switch (this.summaryUiMode) {
@@ -116,9 +122,10 @@ export default class SummaryUiHandler extends UiHandler {
           if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
             this.moveSelectFunction(this.moveCursor);
           else {
-            if (this.selectedMoveIndex === -1)
+            if (this.selectedMoveIndex === -1) {
               this.selectedMoveIndex = this.moveCursor;
-            else {
+              this.setCursor(this.moveCursor);
+            } else {
               if (this.selectedMoveIndex !== this.moveCursor) {
                 const tempMove = this.pokemon.moveset[this.selectedMoveIndex];
                 this.pokemon.moveset[this.selectedMoveIndex] = this.pokemon.moveset[this.moveCursor];
@@ -198,6 +205,27 @@ export default class SummaryUiHandler extends UiHandler {
         const selectedMove = this.getSelectedMove();
 
         this.moveDescriptionText.setText(selectedMove?.effect || '');
+        const moveDescriptionLineCount = Math.floor(this.moveDescriptionText.displayHeight / 14.83);
+
+        if (this.moveDescriptionScrollTween) {
+          this.moveDescriptionScrollTween.remove();
+          this.moveDescriptionScrollTween = null;
+        }
+
+        if (moveDescriptionLineCount > 3) {
+          this.moveDescriptionText.setY(84);
+          this.moveDescriptionScrollTween = this.scene.tweens.add({
+            targets: this.moveDescriptionText,
+            delay: 2000,
+            loop: -1,
+            loopDelay: 2000,
+            duration: (moveDescriptionLineCount - 3) * 2000,
+            y: `-=${14.83 * (moveDescriptionLineCount - 3)}`,
+            onLoop: () => {
+              this.moveDescriptionText.setY(84);
+            }
+          });
+        }
       }
 
       if (!this.moveCursorObj) {
@@ -210,6 +238,7 @@ export default class SummaryUiHandler extends UiHandler {
 
       if (this.moveCursorBlinkTimer)
         this.moveCursorBlinkTimer.destroy();
+      this.moveCursorObj.setVisible(true);
       this.moveCursorBlinkTimer = this.scene.time.addEvent({
         loop: true,
         delay: 600,
@@ -321,15 +350,14 @@ export default class SummaryUiHandler extends UiHandler {
         this.movesContainer.add(this.moveDescriptionText);
 
         const maskRect = this.scene.make.graphics({});
+        maskRect.setScale(6);
         maskRect.fillStyle(0xFFFFFF);
         maskRect.beginPath();
-        maskRect.fillRect(2, 83, 149, 46);
+        maskRect.fillRect(112, 130, 150, 46);
 
         const moveDescriptionTextMask = maskRect.createGeometryMask();
 
         this.moveDescriptionText.setMask(moveDescriptionTextMask);
-
-        console.log(this.moveDescriptionText.displayHeight);
         break;
     }
   }
