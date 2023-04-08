@@ -1,10 +1,13 @@
-import { LevelUpPhase } from "./battle-phase";
+import { LearnMovePhase, LevelUpPhase } from "./battle-phase";
 import BattleScene from "./battle-scene";
 import { getLevelTotalExp } from "./exp";
+import { allMoves, Moves } from "./move";
 import { getPokeballName, PokeballType } from "./pokeball";
 import Pokemon, { PlayerPokemon } from "./pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
 import { addTextObject, TextStyle } from "./text";
+import { tmSpecies } from "./tms";
+import { Type } from "./type";
 import PartyUiHandler from "./ui/party-ui-handler";
 import * as Utils from "./utils";
 
@@ -141,6 +144,7 @@ export abstract class PokemonModifier extends Modifier {
   }
 
   shouldApply(args: any[]): boolean {
+    console.log(args[0]);
     return super.shouldApply(args) && args.length && args[0] instanceof Pokemon && (this.pokemonId === -1 || (args[0] as Pokemon).id === this.pokemonId);
   }
 
@@ -283,6 +287,21 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
   }
 }
 
+export class TmModifier extends ConsumablePokemonModifier {
+  constructor(type: TmModifierType, pokemonId: integer) {
+    super(type, pokemonId);
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as PlayerPokemon;
+
+    const scene = pokemon.scene as BattleScene;
+    scene.unshiftPhase(new LearnMovePhase(scene, scene.getParty().indexOf(pokemon), (this.type as TmModifierType).moveId));
+
+    return true;
+  }
+}
+
 export class ExpBoosterModifier extends Modifier {
   private boostMultiplier: integer;
 
@@ -387,7 +406,7 @@ export class ModifierType {
   constructor(name: string, description: string, newModifierFunc: Function, iconImage?: string) {
     this.name = name;
     this.description = description;
-    this.iconImage = iconImage || name.replace(/[ \-]/g, '_').toLowerCase();
+    this.iconImage = iconImage || name?.replace(/[ \-]/g, '_')?.toLowerCase();
     this.newModifierFunc = newModifierFunc;
   }
 
@@ -498,6 +517,36 @@ export class ExpBoosterModifierType extends ModifierType {
   }
 }
 
+export class TmModifierType extends PokemonModifierType {
+  public moveId: Moves;
+
+  constructor(moveId: Moves) {
+    super(`TM${Utils.padInt(Object.keys(tmSpecies).indexOf(moveId.toString()) + 1, 3)} - ${allMoves[moveId - 1].name}`, `Teach ${allMoves[moveId - 1].name} to a POKéMON`, (_type, args) => new TmModifier(this, (args[0] as PlayerPokemon).id),
+      (pokemon: PlayerPokemon) => {
+        if (pokemon.compatibleTms.indexOf(moveId) === -1 || pokemon.moveset.filter(m => m?.moveId === moveId).length)
+          return PartyUiHandler.NoEffectMessage;
+        return null;
+      }, `tm_${Type[allMoves[moveId - 1].type].toLowerCase()}`);
+
+    this.moveId = moveId;
+  }
+}
+
+class ModifierTypeGenerator extends ModifierType {
+  private genTypeFunc: Function;
+
+  constructor(genTypeFunc: Function) {
+    super(null, null, null, null);
+    this.genTypeFunc = genTypeFunc;
+  }
+
+  generateType(party: PlayerPokemon[]) {
+    const ret = this.genTypeFunc(party);
+    ret.setTier(this.tier);
+    return ret;
+  }
+}
+
 class WeightedModifierType {
   public modifierType: ModifierType;
   public weight: integer | Function;
@@ -515,30 +564,35 @@ class WeightedModifierType {
 const modifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(new AddPokeballModifierType(PokeballType.POKEBALL, 5, 'pb'), 2),
-    new WeightedModifierType(new PokemonHpRestoreModifierType('POTION', 20), (party: Array<PlayerPokemon>) => {
+    new WeightedModifierType(new PokemonHpRestoreModifierType('POTION', 20), (party: PlayerPokemon[]) => {
       const thresholdPartyMemberCount = party.filter(p => p.getHpRatio() <= 0.9).length;
-      console.log(thresholdPartyMemberCount, party.map(p => p.getHpRatio()));
       return thresholdPartyMemberCount;
     }),
-    new WeightedModifierType(new PokemonHpRestoreModifierType('SUPER POTION', 50), (party: Array<PlayerPokemon>) => {
+    new WeightedModifierType(new PokemonHpRestoreModifierType('SUPER POTION', 50), (party: PlayerPokemon[]) => {
       const thresholdPartyMemberCount = party.filter(p => p.getHpRatio() <= 0.75).length;
       return Math.ceil(thresholdPartyMemberCount / 3);
-    }),
+    })
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(new AddPokeballModifierType(PokeballType.GREAT_BALL, 5, 'gb'), 3),
-    new WeightedModifierType(new PokemonReviveModifierType('REVIVE', 50), (party: Array<PlayerPokemon>) => {
+    new WeightedModifierType(new PokemonReviveModifierType('REVIVE', 50), (party: PlayerPokemon[]) => {
       const faintedPartyMemberCount = party.filter(p => !p.hp).length;
       return faintedPartyMemberCount * 3;
     }),
-    new WeightedModifierType(new PokemonReviveModifierType('MAX REVIVE', 100), (party: Array<PlayerPokemon>) => {
+    new WeightedModifierType(new PokemonReviveModifierType('MAX REVIVE', 100), (party: PlayerPokemon[]) => {
       const faintedPartyMemberCount = party.filter(p => !p.hp).length;
       return faintedPartyMemberCount;
     }),
-    new WeightedModifierType(new PokemonHpRestoreModifierType('HYPER POTION', 80), (party: Array<PlayerPokemon>) => {
+    new WeightedModifierType(new PokemonHpRestoreModifierType('HYPER POTION', 80), (party: PlayerPokemon[]) => {
       const thresholdPartyMemberCount = party.filter(p => p.getHpRatio() <= 0.6).length;
       return thresholdPartyMemberCount;
     }),
+    new WeightedModifierType(new ModifierTypeGenerator((party: PlayerPokemon[]) => {
+      const partyMemberCompatibleTms = party.map(p => p.compatibleTms);
+      const uniqueCompatibleTms = partyMemberCompatibleTms.flat().filter((tm, i, array) => array.indexOf(tm) === i);
+      const randTmIndex = Utils.randInt(uniqueCompatibleTms.length);
+      return new TmModifierType(uniqueCompatibleTms[randTmIndex]);
+    }), 2),
     new PokemonLevelIncrementModifierType('RARE CANDY'),
     new PokemonBaseStatBoosterModifierType('HP-UP', Stat.HP),
     new PokemonBaseStatBoosterModifierType('PROTEIN', Stat.ATK),
@@ -549,11 +603,11 @@ const modifierPool = {
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
     new AddPokeballModifierType(PokeballType.ULTRA_BALL, 5, 'ub'),
-    new WeightedModifierType(new AllPokemonFullHpRestoreModifierType('MAX POTION'), (party: Array<PlayerPokemon>) => {
+    new WeightedModifierType(new AllPokemonFullHpRestoreModifierType('MAX POTION'), (party: PlayerPokemon[]) => {
       const thresholdPartyMemberCount = party.filter(p => p.getHpRatio() <= 0.5).length;
       return Math.ceil(thresholdPartyMemberCount / 3);
     }),
-    new WeightedModifierType(new AllPokemonFullReviveModifierType('SACRED ASH'), (party: Array<PlayerPokemon>) => {
+    new WeightedModifierType(new AllPokemonFullReviveModifierType('SACRED ASH'), (party: PlayerPokemon[]) => {
       return party.filter(p => !p.hp).length >= Math.ceil(party.length / 2) ? 1 : 0;
     }),
     new ExpBoosterModifierType('LUCKY EGG', 25),
@@ -572,7 +626,7 @@ const modifierPool = {
 let modifierPoolThresholds = {};
 let ignoredPoolIndexes = {};
 
-export function regenerateModifierPoolThresholds(party: Array<PlayerPokemon>) {
+export function regenerateModifierPoolThresholds(party: PlayerPokemon[]) {
   ignoredPoolIndexes = {};
   modifierPoolThresholds = Object.fromEntries(new Map(Object.keys(modifierPool).map(t => {
     ignoredPoolIndexes[t] = [];
@@ -600,16 +654,16 @@ export function regenerateModifierPoolThresholds(party: Array<PlayerPokemon>) {
   console.log(modifierPoolThresholds)
 }
 
-export function getModifierTypesForWave(waveIndex: integer, count: integer): Array<ModifierType> {
+export function getModifierTypesForWave(waveIndex: integer, count: integer, party: PlayerPokemon[]): Array<ModifierType> {
   if (waveIndex % 10 === 0)
     return modifierPool[ModifierTier.LUXURY];
   const ret = [];
   for (let m = 0; m < count; m++)
-    ret.push(getNewModifierType());
+    ret.push(getNewModifierType(party));
   return ret;
 }
 
-function getNewModifierType() {
+function getNewModifierType(party: PlayerPokemon[]) {
   const tierValue = Utils.randInt(256);
   const tier = tierValue >= 52 ? ModifierTier.COMMON : tierValue >= 8 ? ModifierTier.GREAT : tierValue >= 1 ? ModifierTier.ULTRA : ModifierTier.MASTER;
   const thresholds = Object.keys(modifierPoolThresholds[tier]);
@@ -626,6 +680,8 @@ function getNewModifierType() {
   console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier])
   let modifierType: ModifierType | WeightedModifierType = modifierPool[tier][index];
   if (modifierType instanceof WeightedModifierType)
-    return (modifierType as WeightedModifierType).modifierType;
+    modifierType = (modifierType as WeightedModifierType).modifierType;
+  if (modifierType instanceof ModifierTypeGenerator)
+    modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
   return modifierType;
 }

@@ -12,8 +12,9 @@ import { Stat } from './pokemon-stat';
 import { PokemonBaseStatModifier as PokemonBaseStatBoosterModifier, ShinyRateBoosterModifier } from './modifier';
 import { PokeballType } from './pokeball';
 import { Gender } from './gender';
-import { Anim, initAnim, loadMoveAnimAssets, moveAnims } from './battle-anims';
+import { initAnim, loadMoveAnimAssets } from './battle-anims';
 import { StatusEffect } from './status-effect';
+import { tmSpecies } from './tms';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -254,7 +255,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.stats = [ 0, 0, 0, 0, 0, 0 ];
     const baseStats = this.species.baseStats.slice(0);
     console.log(this.id);
-    (this.scene as BattleScene).applyModifiers(PokemonBaseStatBoosterModifier, this.id, baseStats);
+    (this.scene as BattleScene).applyModifiers(PokemonBaseStatBoosterModifier, this, baseStats);
     const stats = Utils.getEnumValues(Stat);
     for (let s of stats) {
       const isHp = s === Stat.HP;
@@ -573,17 +574,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 }
 
 export class PlayerPokemon extends Pokemon {
+  public compatibleTms: Moves[];
+
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, dataSource?: Pokemon) {
     super(scene, 106, 148, species, level, dataSource);
 
     this.generateIconAnim();
+    this.generateCompatibleTms();
   }
 
-  isPlayer() {
+  isPlayer(): boolean {
     return true;
   }
 
-  generateIconAnim() {
+  generateIconAnim(): void {
     const frameNames = this.scene.anims.generateFrameNames(this.getIconAtlasKey(), { prefix: `${this.getIconId()}_`, zeroPad: 2, suffix: '.png', start: 1, end: 34 });
     this.scene.anims.create({
       key: this.getIconKey(),
@@ -591,6 +595,26 @@ export class PlayerPokemon extends Pokemon {
       frameRate: 128,
       repeat: -1
     });
+  }
+
+  generateCompatibleTms(): void {
+    this.compatibleTms = [];
+
+    const tms = Object.keys(tmSpecies);
+    for (let tm of tms) {
+      const moveId = parseInt(tm) as Moves;
+      for (let p of tmSpecies[tm]) {
+        if (Array.isArray(p)) {
+          if (p[0] === this.species.speciesId) {
+            this.compatibleTms.push(moveId);
+            break;
+          }
+        } else if (p === this.species.speciesId) {
+          this.compatibleTms.push(moveId);
+          break;
+        }
+      }
+    }
   }
 }
 

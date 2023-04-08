@@ -684,14 +684,14 @@ export class SwitchPhase extends BattlePhase {
   constructor(scene: BattleScene, isModal: boolean, doReturn: boolean) {
     super(scene);
 
-    this.doReturn = doReturn;
     this.isModal = isModal;
+    this.doReturn = doReturn;
   }
 
   start() {
     super.start();
 
-    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.SWITCH : PartyUiMode.FAINT_SWITCH, (slotIndex: integer) => {
+    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.SWITCH, (slotIndex: integer) => {
       if (slotIndex && slotIndex < 6)
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, slotIndex, this.doReturn));
       this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
@@ -777,8 +777,9 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
 
     const pokemon = this.getPokemon();
     const move = allMoves[this.moveId - 1];
+    console.log(move, this.moveId);
 
-    const existingMoveIndex = pokemon.moveset.findIndex(m => m.moveId === move.id);
+    const existingMoveIndex = pokemon.moveset.findIndex(m => m?.moveId === move.id);
 
     if (existingMoveIndex > -1) {
       this.end();
@@ -794,53 +795,56 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
       initAnim(this.moveId).then(() => {
         loadMoveAnimAssets(this.scene, [ this.moveId ], true)
           .then(() => {
-            this.scene.sound.play('level_up_fanfare');
-            this.scene.ui.showText(`${pokemon.name} learned\n${Utils.toPokemonUpperCase(move.name)}!`, null, () => this.end(), null, true);
+            this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+              this.scene.sound.play('level_up_fanfare');
+              this.scene.ui.showText(`${pokemon.name} learned\n${Utils.toPokemonUpperCase(move.name)}!`, null, () => this.end(), null, true);
+            });
           });
         });
     } else {
-      this.scene.ui.setMode(Mode.MESSAGE);
-      this.scene.ui.showText(`${pokemon.name} wants to learn the\nmove ${move.name}.`, null, () => {
-        this.scene.ui.showText(`However, ${pokemon.name} already\nknows four moves.`, null, () => {
-          this.scene.ui.showText(`Should a move be deleted and\nreplaced with ${move.name}?`, null, () => {
-            const noHandler = () => {
-              this.scene.ui.setMode(Mode.MESSAGE).then(() => {
-                this.scene.ui.showText(`Stop trying to teach\n${move.name}?`, null, () => {
-                  this.scene.ui.setMode(Mode.CONFIRM, () => {
-                    this.scene.ui.setMode(Mode.MESSAGE);
-                    this.scene.ui.showText(`${pokemon.name} did not learn the\nmove ${move.name}.`, null, () => this.end(), null, true);
-                  }, () => {
-                    this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
-                    this.end();
+      this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+        this.scene.ui.showText(`${pokemon.name} wants to learn the\nmove ${move.name}.`, null, () => {
+          this.scene.ui.showText(`However, ${pokemon.name} already\nknows four moves.`, null, () => {
+            this.scene.ui.showText(`Should a move be deleted and\nreplaced with ${move.name}?`, null, () => {
+              const noHandler = () => {
+                this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+                  this.scene.ui.showText(`Stop trying to teach\n${move.name}?`, null, () => {
+                    this.scene.ui.setMode(Mode.CONFIRM, () => {
+                      this.scene.ui.setMode(Mode.MESSAGE);
+                      this.scene.ui.showText(`${pokemon.name} did not learn the\nmove ${move.name}.`, null, () => this.end(), null, true);
+                    }, () => {
+                      this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
+                      this.end();
+                    });
                   });
                 });
-              });
-            };
-            this.scene.ui.setMode(Mode.CONFIRM, () => {
-              this.scene.ui.setMode(Mode.MESSAGE);
-              this.scene.ui.showText('Which move should be forgotten?', null, () => {
-                this.scene.ui.setMode(Mode.SUMMARY, this.getPokemon(), SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
-                  if (moveIndex === 4) {
-                    noHandler();
-                    return;
-                  }
-                  this.scene.ui.setMode(Mode.MESSAGE).then(() => {
-                    this.scene.ui.showText('1, 2, and… … … Poof!', null, () => {
-                      this.scene.ui.showText(`${pokemon.name} forgot how to\nuse ${pokemon.moveset[moveIndex].getName()}.`, null, () => {
-                        this.scene.ui.showText('And…', null, () => {
-                          pokemon.moveset[moveIndex] = null;
-                          this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
-                          this.end();
+              };
+              this.scene.ui.setMode(Mode.CONFIRM, () => {
+                this.scene.ui.setMode(Mode.MESSAGE);
+                this.scene.ui.showText('Which move should be forgotten?', null, () => {
+                  this.scene.ui.setMode(Mode.SUMMARY, this.getPokemon(), SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
+                    if (moveIndex === 4) {
+                      noHandler();
+                      return;
+                    }
+                    this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+                      this.scene.ui.showText('1, 2, and… … … Poof!', null, () => {
+                        this.scene.ui.showText(`${pokemon.name} forgot how to\nuse ${pokemon.moveset[moveIndex].getName()}.`, null, () => {
+                          this.scene.ui.showText('And…', null, () => {
+                            pokemon.moveset[moveIndex] = null;
+                            this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
+                            this.end();
+                          }, null, true);
                         }, null, true);
                       }, null, true);
-                    }, null, true);
+                    });
                   });
-                });
-              }, null, true);
-            }, noHandler);
-          });
+                }, null, true);
+              }, noHandler);
+            });
+          }, null, true);
         }, null, true);
-      }, null, true);
+      });
     }
   }
 }
@@ -1006,10 +1010,11 @@ export class SelectModifierPhase extends BattlePhase {
   start() {
     super.start();
 
-    regenerateModifierPoolThresholds(this.scene.getParty());
+    const party = this.scene.getParty();
+    regenerateModifierPoolThresholds(party);
     const modifierCount = new Utils.IntegerHolder(3);
     this.scene.applyModifiers(ExtraModifierModifier, modifierCount);
-    const types: Array<ModifierType> = getModifierTypesForWave(this.scene.currentBattle.waveIndex - 1, modifierCount.value);
+    const types: Array<ModifierType> = getModifierTypesForWave(this.scene.currentBattle.waveIndex - 1, modifierCount.value, party);
 
     this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, (cursor: integer) => {
       if (cursor < 0) {
@@ -1024,7 +1029,7 @@ export class SelectModifierPhase extends BattlePhase {
         this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER, (slotIndex: integer) => {
           if (slotIndex < 6) {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT);
-            this.scene.addModifier(types[cursor].newModifier(this.scene.getParty()[slotIndex])).then(() => super.end());
+            this.scene.addModifier(types[cursor].newModifier(party[slotIndex])).then(() => super.end());
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.MESSAGE);
           } else

@@ -17,7 +17,6 @@ const expLevels = [
 ];
 
 export function getLevelTotalExp(level: integer, growthRate: integer) {
-  console.log(level, growthRate)
   return expLevels[growthRate][level - 1];
 };
 
