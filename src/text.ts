@@ -8,8 +8,8 @@ export enum TextStyle {
 };
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
-  let styleOptions;
-  let shadowColor;
+  let styleOptions: Phaser.Types.GameObjects.Text.TextStyle;
+  let shadowColor: string;
   let shadowSize = 6;
 
   switch (style) {
@@ -67,9 +67,9 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
       styleOptions = {
         fontFamily: 'emerald',
         fontSize: '96px',
-        color: '#f4b4b0'
+        color: '#f89890'
       };
-      shadowColor = '#d06c6a';
+      shadowColor = '#984038';
       break;
   }
 

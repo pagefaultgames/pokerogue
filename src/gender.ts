@@ -14,12 +14,12 @@ export function getGenderSymbol(gender: Gender) {
     return '';
 }
 
-export function getGenderColor(gender: Gender) {
+export function getGenderColor(gender: Gender, shadow?: boolean) {
     switch (gender) {
         case Gender.MALE:
-            return '#40c8f8';
+            return shadow ? '#006090' : '#40c8f8';
         case Gender.FEMALE:
-            return '#f89890';
+            return shadow ? '#984038' : '#f89890';
     }
     return '#ffffff';
 }

@@ -39,8 +39,6 @@ export default class FightUiHandler extends UiHandler {
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.bg.setTexture('bg_fight');
     this.setCursor(this.cursor);
-    this.typeIcon.setVisible(true);
-    this.ppText.setVisible(true);
     this.displayMoves();
   }
 

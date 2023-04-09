@@ -9,7 +9,7 @@ import CommandUiHandler from "./ui/command-ui-handler";
 import FightUiHandler from "./ui/fight-ui-handler";
 import MessageUiHandler from "./ui/message-ui-handler";
 import ModifierSelectUiHandler from "./ui/modifier-select-ui-handler";
-import PartyUiHandler from "./ui/party-ui-handler";
+import PartyUiHandler, { PartyUiMode } from "./ui/party-ui-handler";
 import ConfirmUiHandler from "./ui/confirm-ui-handler";
 import { Mode } from "./ui/ui";
 
@@ -129,17 +129,19 @@ export function initAutoPlay(speed: number) {
     const originalCommandUiHandlerShow = commandUiHandler.show;
     commandUiHandler.show = function (args: any[]) {
         originalCommandUiHandlerShow.apply(this, [ args ]);
-        const bestPartyMemberIndex = getBestPartyMemberIndex();
-        if (bestPartyMemberIndex) {
-            console.log(bestPartyMemberIndex, thisArg.getParty())
-            console.log('Switching to ', Species[thisArg.getParty()[bestPartyMemberIndex].species.speciesId]);
-            nextPartyMemberIndex = bestPartyMemberIndex;
-            commandUiHandler.setCursor(2);
-            thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
-        } else {
-            commandUiHandler.setCursor(0);
-            thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
-        }
+        thisArg.time.delayedCall(20, () => {
+            const bestPartyMemberIndex = getBestPartyMemberIndex();
+            if (bestPartyMemberIndex) {
+                console.log(bestPartyMemberIndex, thisArg.getParty())
+                console.log('Switching to ', Species[thisArg.getParty()[bestPartyMemberIndex].species.speciesId]);
+                nextPartyMemberIndex = bestPartyMemberIndex;
+                commandUiHandler.setCursor(2);
+                thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
+            } else {
+                commandUiHandler.setCursor(0);
+                thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
+            }
+        });
     };
 
     const originalFightUiHandlerShow = fightUiHandler.show;
@@ -162,7 +164,11 @@ export function initAutoPlay(speed: number) {
                 nextPartyMemberIndex = getBestPartyMemberIndex();
             partyUiHandler.setCursor(nextPartyMemberIndex);
             nextPartyMemberIndex = -1;
-            this.processInput(keyCodes.Z);
+            if (partyUiHandler.partyUiMode === PartyUiMode.MODIFIER || partyUiHandler.getCursor()) {
+                this.processInput(keyCodes.Z);
+                this.processInput(keyCodes.Z);
+            } else
+                this.processInput(keyCodes.X);
         });
     };
 
@@ -194,75 +200,77 @@ export function initAutoPlay(speed: number) {
         if (modifierSelectUiHandler.active)
             return;
 
-        originalModifierSelectUiHandlerShow.apply(this, [ args ]);
+        thisArg.time.delayedCall(20, () => {
+            originalModifierSelectUiHandlerShow.apply(this, [ args ]);
 
-        const party = thisArg.getParty();
-        const modifierTypes = modifierSelectUiHandler.options.map(o => o.modifierType);
-        const faintedPartyMemberIndex = party.findIndex(p => !p.hp);
-        const lowHpPartyMemberIndex = party.findIndex(p => p.getHpRatio() <= 0.5);
-        const criticalHpPartyMemberIndex = party.findIndex(p => p.getHpRatio() <= 0.25);
+            const party = thisArg.getParty();
+            const modifierTypes = modifierSelectUiHandler.options.map(o => o.modifierType);
+            const faintedPartyMemberIndex = party.findIndex(p => !p.hp);
+            const lowHpPartyMemberIndex = party.findIndex(p => p.getHpRatio() <= 0.5);
+            const criticalHpPartyMemberIndex = party.findIndex(p => p.getHpRatio() <= 0.25);
 
-        let optionIndex = tryGetBestModifier(modifierTypes, (modifierType: ModifierType) => {
-            if (modifierType instanceof PokemonHpRestoreModifierType) {
-                if (modifierType instanceof PokemonReviveModifierType) {
-                    if (faintedPartyMemberIndex > -1) {
-                        nextPartyMemberIndex = faintedPartyMemberIndex;
+            let optionIndex = tryGetBestModifier(modifierTypes, (modifierType: ModifierType) => {
+                if (modifierType instanceof PokemonHpRestoreModifierType) {
+                    if (modifierType instanceof PokemonReviveModifierType) {
+                        if (faintedPartyMemberIndex > -1) {
+                            nextPartyMemberIndex = faintedPartyMemberIndex;
+                            return true;
+                        }
+                    } else if (criticalHpPartyMemberIndex > -1){
+                        nextPartyMemberIndex = criticalHpPartyMemberIndex;
                         return true;
                     }
-                } else if (criticalHpPartyMemberIndex > -1){
-                    nextPartyMemberIndex = criticalHpPartyMemberIndex;
-                    return true;
-                }
-            }
-        });
-
-        if (optionIndex === -1) {
-            optionIndex = tryGetBestModifier(modifierTypes, (modifierType: ModifierType) => {
-                if (modifierType.tier >= ModifierTier.ULTRA) {
-                    nextPartyMemberIndex = 0;
-                    return true;
                 }
             });
-        }
 
-        if (optionIndex === -1) {
-            optionIndex = tryGetBestModifier(modifierTypes, (modifierType: ModifierType) => {
-                if (modifierType instanceof PokemonBaseStatBoosterModifierType) {
-                    nextPartyMemberIndex = 0;
-                    return true;
-                }
-            });
-        }
-
-        if (optionIndex === -1) {
-            optionIndex = tryGetBestModifier(modifierTypes, (modifierType: ModifierType) => {
-                if (lowHpPartyMemberIndex && modifierType instanceof PokemonHpRestoreModifierType && !(ModifierType instanceof PokemonReviveModifierType)) {
-                    nextPartyMemberIndex = lowHpPartyMemberIndex;
-                    return true;
-                }
-            });
-        }
-
-        if (optionIndex === -1)
-            optionIndex = 0;
-
-        const trySelectModifier = () => {
-            modifierSelectUiHandler.setCursor(optionIndex);
-            thisArg.time.delayedCall(20, () => {
-                modifierSelectUiHandler.processInput(keyCodes.Z);
-                thisArg.time.delayedCall(100, () => {
-                    console.log(modifierTypes[optionIndex]?.name);
-                    if (thisArg.getCurrentPhase() instanceof SelectModifierPhase) {
-                        if (optionIndex < modifierSelectUiHandler.options.length - 1) {
-                            optionIndex++;
-                            trySelectModifier();
-                        } else
-                            modifierSelectUiHandler.processInput(keyCodes.X);
+            if (optionIndex === -1) {
+                optionIndex = tryGetBestModifier(modifierTypes, (modifierType: ModifierType) => {
+                    if (modifierType.tier >= ModifierTier.ULTRA) {
+                        nextPartyMemberIndex = 0;
+                        return true;
                     }
                 });
-            });
-        };
+            }
 
-        thisArg.time.delayedCall(4000, () => trySelectModifier());
+            if (optionIndex === -1) {
+                optionIndex = tryGetBestModifier(modifierTypes, (modifierType: ModifierType) => {
+                    if (modifierType instanceof PokemonBaseStatBoosterModifierType) {
+                        nextPartyMemberIndex = 0;
+                        return true;
+                    }
+                });
+            }
+
+            if (optionIndex === -1) {
+                optionIndex = tryGetBestModifier(modifierTypes, (modifierType: ModifierType) => {
+                    if (lowHpPartyMemberIndex && modifierType instanceof PokemonHpRestoreModifierType && !(ModifierType instanceof PokemonReviveModifierType)) {
+                        nextPartyMemberIndex = lowHpPartyMemberIndex;
+                        return true;
+                    }
+                });
+            }
+
+            if (optionIndex === -1)
+                optionIndex = 0;
+
+            const trySelectModifier = () => {
+                modifierSelectUiHandler.setCursor(optionIndex);
+                thisArg.time.delayedCall(20, () => {
+                    modifierSelectUiHandler.processInput(keyCodes.Z);
+                    thisArg.time.delayedCall(250, () => {
+                        console.log(modifierTypes[optionIndex]?.name);
+                        if (thisArg.getCurrentPhase() instanceof SelectModifierPhase) {
+                            if (optionIndex < modifierSelectUiHandler.options.length - 1) {
+                                optionIndex++;
+                                trySelectModifier();
+                            } else
+                                modifierSelectUiHandler.processInput(keyCodes.X);
+                        }
+                    });
+                });
+            };
+
+            thisArg.time.delayedCall(4000, () => trySelectModifier());
+        });
     }
 }

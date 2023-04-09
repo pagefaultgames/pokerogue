@@ -11,11 +11,10 @@ import { Species } from './species';
 import { initAutoPlay } from './auto-play';
 import { Battle } from './battle';
 import { populateAnims } from './battle-anims';
-import { Moves } from './move';
 
 export default class BattleScene extends Phaser.Scene {
-	private auto: boolean;
-	private autoSpeed: integer = 10;
+	private auto: boolean = true;
+	private autoSpeed: integer = 1;
 
 	private phaseQueue: Array<BattlePhase>;
 	private phaseQueuePrepend: Array<BattlePhase>;
@@ -49,6 +48,7 @@ export default class BattleScene extends Phaser.Scene {
 	private rightKey: Phaser.Input.Keyboard.Key;
 	private actionKey: Phaser.Input.Keyboard.Key;
 	private cancelKey: Phaser.Input.Keyboard.Key;
+	private f2Key: Phaser.Input.Keyboard.Key;
 
 	private blockInput: boolean;
 
@@ -140,6 +140,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('summary_moves', 'ui');
 		this.loadImage('summary_moves_effect', 'ui');
 		this.loadImage('summary_moves_overlay_row', 'ui');
+		this.loadImage('summary_moves_overlay_pp', 'ui');
 		this.loadAtlas('summary_moves_cursor', 'ui');
 
 		// Load arena images
@@ -163,6 +164,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('items', '');
 		this.loadAtlas('types', '');
 		this.loadAtlas('statuses', '');
+		this.loadAtlas('categories', '');
 
 		for (let i = 0; i < 6; i++)
 			this.loadAtlas(`pokemon_icons_${i}`, 'ui');
@@ -291,6 +293,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 		this.actionKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 		this.cancelKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+		this.f2Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F2)
 
 		Promise.all(loadPokemonAssets).then(() => {
 			if (this.auto)

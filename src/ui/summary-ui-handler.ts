@@ -5,7 +5,9 @@ import * as Utils from "../utils";
 import { PlayerPokemon } from "../pokemon";
 import { Type } from "../type";
 import { TextStyle, addTextObject } from "../text";
-import Move from "../move";
+import Move, { MoveCategory } from "../move";
+import { getPokeballAtlasKey } from "../pokeball";
+import { getGenderColor, getGenderSymbol } from "../gender";
 
 enum Page {
   PROFILE,
@@ -21,7 +23,12 @@ export default class SummaryUiHandler extends UiHandler {
   private summaryUiMode: SummaryUiMode;
 
   private summaryContainer: Phaser.GameObjects.Container;
+  private numberText: Phaser.GameObjects.Text;
   private pokemonSprite: Phaser.GameObjects.Sprite;
+  private nameText: Phaser.GameObjects.Text;
+  private pokeball: Phaser.GameObjects.Sprite;
+  private levelText: Phaser.GameObjects.Text;
+  private genderText: Phaser.GameObjects.Text;
   private summaryPageContainer: Phaser.GameObjects.Container;
   private movesContainer: Phaser.GameObjects.Container;
   private moveDescriptionText: Phaser.GameObjects.Text;
@@ -29,6 +36,10 @@ export default class SummaryUiHandler extends UiHandler {
   private selectedMoveCursorObj: Phaser.GameObjects.Sprite;
   private moveRowsContainer: Phaser.GameObjects.Container;
   private extraMoveRowContainer: Phaser.GameObjects.Container;
+  private moveEffectContainer: Phaser.GameObjects.Container;
+  private movePowerText: Phaser.GameObjects.Text;
+  private moveAccuracyText: Phaser.GameObjects.Text;
+  private moveCategoryIcon: Phaser.GameObjects.Sprite;
   private summaryPageTransitionContainer: Phaser.GameObjects.Container;
 
   private moveDescriptionScrollTween: Phaser.Tweens.Tween;
@@ -38,6 +49,7 @@ export default class SummaryUiHandler extends UiHandler {
   private newMove: Move;
   private moveSelectFunction: Function;
   private transitioning: boolean;
+  private moveEffectsVisible: boolean;
 
   private moveSelect: boolean;
   private moveCursor: integer;
@@ -58,8 +70,47 @@ export default class SummaryUiHandler extends UiHandler {
     summaryBg.setOrigin(0, 1);
     this.summaryContainer.add(summaryBg);
 
+    this.numberText = addTextObject(this.scene, 17, -150, '000', TextStyle.SUMMARY);
+    this.numberText.setOrigin(0, 1);
+    this.summaryContainer.add(this.numberText);
+
     this.pokemonSprite = this.scene.add.sprite(56, -106, `pkmn__sub`);
     this.summaryContainer.add(this.pokemonSprite);
+
+    this.nameText = addTextObject(this.scene, 6, -39, '', TextStyle.SUMMARY);
+    this.nameText.setOrigin(0, 1);
+    this.summaryContainer.add(this.nameText);
+
+    this.pokeball = this.scene.add.sprite(6, -23, 'pb');
+    this.pokeball.setOrigin(0, 1);
+    this.summaryContainer.add(this.pokeball);
+
+    this.levelText = addTextObject(this.scene, 36, -22, '', TextStyle.SUMMARY);
+    this.levelText.setOrigin(0, 1);
+    this.summaryContainer.add(this.levelText);
+
+    this.genderText = addTextObject(this.scene, 96, -22, '', TextStyle.SUMMARY);
+    this.genderText.setOrigin(0, 1);
+    this.summaryContainer.add(this.genderText);
+
+    this.moveEffectContainer = this.scene.add.container(106, -62);
+    this.summaryContainer.add(this.moveEffectContainer);
+
+    const moveEffectBg = this.scene.add.image(0, 0, 'summary_moves_effect');
+    moveEffectBg.setOrigin(0, 0);
+    this.moveEffectContainer.add(moveEffectBg);
+
+    this.movePowerText = addTextObject(this.scene, 99, 27, '0', TextStyle.WINDOW);
+    this.movePowerText.setOrigin(1, 1);
+    this.moveEffectContainer.add(this.movePowerText);
+
+    this.moveAccuracyText = addTextObject(this.scene, 99, 43, '0', TextStyle.WINDOW);
+    this.moveAccuracyText.setOrigin(1, 1);
+    this.moveEffectContainer.add(this.moveAccuracyText);
+
+    this.moveCategoryIcon = this.scene.add.sprite(99, 57, 'categories');
+    this.moveCategoryIcon.setOrigin(1, 1);
+    this.moveEffectContainer.add(this.moveCategoryIcon);
 
     const getSummaryPageBg = () => {
       const ret = this.scene.add.sprite(0, 0, this.getPageKey(0));
@@ -90,17 +141,29 @@ export default class SummaryUiHandler extends UiHandler {
     this.summaryContainer.setVisible(true);
     this.cursor = -1;
 
+    this.numberText.setText(Utils.padInt(this.pokemon.species.speciesId, 3));
+
     this.pokemonSprite.play(this.pokemon.getSpriteKey());
     this.pokemon.cry();
 
+    this.nameText.setText(this.pokemon.name);
+    this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
+    this.levelText.setText(this.pokemon.level.toString());
+    this.genderText.setText(getGenderSymbol(this.pokemon.gender));
+    this.genderText.setColor(getGenderColor(this.pokemon.gender));
+    this.genderText.setShadowColor(getGenderColor(this.pokemon.gender, true));
+
     switch (this.summaryUiMode) {
       case SummaryUiMode.DEFAULT:
-        this.setCursor(Page.PROFILE);
+        const page = args.length < 2 ? Page.PROFILE : args[2] as Page;
+        this.hideMoveEffect(true);
+        this.setCursor(page);
         break;
       case SummaryUiMode.LEARN_MOVE:
         this.newMove = args[2] as Move;
         this.moveSelectFunction = args[3] as Function;
 
+        this.showMoveEffect(true);
         this.setCursor(Page.MOVES);
         this.showMoveSelect();
         break;
@@ -178,6 +241,17 @@ export default class SummaryUiHandler extends UiHandler {
       } else {
         const pages = Utils.getEnumValues(Page);
         switch (keyCode) {
+          case keyCodes.UP:
+          case keyCodes.DOWN:
+            const isDown = keyCode === keyCodes.DOWN;
+            const party = this.scene.getParty();
+            const partyMemberIndex = party.indexOf(this.pokemon);
+            if ((isDown && partyMemberIndex < party.length - 1) || (!isDown && partyMemberIndex)) {
+              const page = this.cursor;
+              this.clear();
+              this.show([ party[partyMemberIndex + (isDown ? 1 : -1)], this.summaryUiMode, page ]);
+            }
+            break;
           case keyCodes.LEFT:
             if (this.cursor)
               success = this.setCursor(this.cursor - 1);
@@ -203,6 +277,14 @@ export default class SummaryUiHandler extends UiHandler {
         this.moveCursor = cursor;
 
         const selectedMove = this.getSelectedMove();
+
+        if (selectedMove) {
+          this.movePowerText.setText(selectedMove.power >= 0 ? selectedMove.power.toString() : '---');
+          this.moveAccuracyText.setText(selectedMove.accuracy >= 0 ? selectedMove.accuracy.toString() : '---');
+          this.moveCategoryIcon.setFrame(MoveCategory[selectedMove.category].toLowerCase());
+          this.showMoveEffect();
+        } else
+          this.hideMoveEffect();
 
         this.moveDescriptionText.setText(selectedMove?.effect || '');
         const moveDescriptionLineCount = Math.floor(this.moveDescriptionText.displayHeight / 14.83);
@@ -245,6 +327,8 @@ export default class SummaryUiHandler extends UiHandler {
         callback: () => {
           this.moveCursorObj.setVisible(false);
           this.scene.time.delayedCall(100, () => {
+            if (!this.moveCursorObj)
+              return;
             this.moveCursorObj.setVisible(true);
           });
         }
@@ -378,6 +462,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.extraMoveRowContainer.setVisible(true);
     this.selectedMoveIndex = -1;
     this.setCursor(0);
+    this.showMoveEffect();
   }
 
   hideMoveSelect() {
@@ -400,6 +485,32 @@ export default class SummaryUiHandler extends UiHandler {
       this.selectedMoveCursorObj.destroy();
       this.selectedMoveCursorObj = null;
     }
+
+    this.hideMoveEffect();
+  }
+
+  showMoveEffect(instant?: boolean) {
+    if (this.moveEffectsVisible)
+      return;
+    this.moveEffectsVisible = true;
+    this.scene.tweens.add({
+      targets: this.moveEffectContainer,
+      x: 6,
+      duration: instant ? 0 : 250,
+      ease: 'Sine.easeOut'
+    });
+  }
+
+  hideMoveEffect(instant?: boolean) {
+    if (!this.moveEffectsVisible)
+      return;
+    this.moveEffectsVisible = false;
+    this.scene.tweens.add({
+      targets: this.moveEffectContainer,
+      x: 106,
+      duration: instant ? 0 : 250,
+      ease: 'Sine.easeIn'
+    });
   }
 
   clear() {
