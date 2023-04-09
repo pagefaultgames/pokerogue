@@ -1,3 +1,4 @@
+import BattleScene from './battle-scene';
 import { GrowthRate } from './exp';
 import { pokemonEvolutions } from './pokemon-evolutions';
 import { Species } from './species';
@@ -160,13 +161,78 @@ export default class PokemonSpecies {
             const subPrevolutionLevels = getPokemonSpecies(speciesId).getPrevolutionLevels();
             for (let spl of subPrevolutionLevels)
               prevolutionLevels.push(spl);
-            console.log(Species[speciesId])
           }
         }
       }
     }
 
     return prevolutionLevels;
+  }
+
+  getIconAtlasKey(): string {
+    return `pokemon_icons_${this.generation}`;
+  }
+
+  getIconId(): string {
+    let ret = `${Utils.padInt(this.speciesId, 3)}`;
+
+    switch (this.speciesId) {
+      case Species.UNOWN:
+        ret += 'a';
+        break;
+      case Species.BURMY:
+      case Species.WORMADAM:
+        ret += 'plant';
+        break;
+      case Species.SHELLOS:
+      case Species.GASTRODON:
+        ret += 'east';
+        break;
+      case Species.GIRATINA:
+        ret += 'altered';
+        break;
+      case Species.SHAYMIN:
+        ret += 'land';
+        break;
+      case Species.BASCULIN:
+        ret += 'redstriped';
+        break;
+      case Species.DEERLING:
+      case Species.SAWSBUCK:
+        ret += 'spring';
+        break;
+      case Species.FRILLISH:
+      case Species.JELLICENT:
+        ret += 'm';
+        break;
+      case Species.TORNADUS:
+      case Species.THUNDURUS:
+      case Species.LANDORUS:
+        ret += 'incarnate';
+        break;
+      case Species.KELDEO:
+        ret += 'ordinary';
+        break;
+      case Species.MELOETTA:
+        ret += 'aria';
+        break;
+    }
+
+    return ret;
+  }
+
+  getIconKey(): string {
+    return `pkmn_icon__${this.getIconId()}`;
+  }
+
+  generateIconAnim(scene: BattleScene): void {
+    const frameNames = scene.anims.generateFrameNames(this.getIconAtlasKey(), { prefix: `${this.getIconId()}_`, zeroPad: 2, suffix: '.png', start: 1, end: 34 });
+    scene.anims.create({
+      key: this.getIconKey(),
+      frames: frameNames,
+      frameRate: 128,
+      repeat: -1
+    });
   }
 }
 
@@ -718,7 +784,7 @@ export const allSpecies = [
     ]
   ],
   [ Species.ARCEUS, "Arceus", 4, 0, 0, 1, "Alpha Pokémon", Type.NORMAL, -1, 3.2, 320, "Multitype", null, null, 720, 120, 120, 120, 120, 120, 120, 3, 0, 324, GrowthRate.SLOW, "Undiscovered", null, null, 120, 0 ],
-  [ Species.VICTINI, "Victini", 5, 0, 0, 1, "Victory Pokémon", Type.PSYCHIC, Type.FIRE, 0.4, 4, "Victory Star", null, null, 600, 100, 100, 100, 100, 100, 100, 3, 100, 270, GrowthRate.SLOW, "Undiscovered", null, null, 120, 0 ],
+  [ Species.VICTINI, "Victini", 4, 0, 0, 1, "Victory Pokémon", Type.PSYCHIC, Type.FIRE, 0.4, 4, "Victory Star", null, null, 600, 100, 100, 100, 100, 100, 100, 3, 100, 270, GrowthRate.SLOW, "Undiscovered", null, null, 120, 0 ],
   [ Species.SNIVY, "Snivy", 5, 0, 0, 0, "Grass Snake Pokémon", Type.GRASS, -1, 0.6, 8.1, "Overgrow", null, "Contrary", 308, 45, 45, 55, 45, 55, 63, 45, 70, 62, GrowthRate.MEDIUM_SLOW, "Field", "Grass", 87.5, 20, 0 ],
   [ Species.SERVINE, "Servine", 5, 0, 0, 0, "Grass Snake Pokémon", Type.GRASS, -1, 0.8, 16, "Overgrow", null, "Contrary", 413, 60, 60, 75, 60, 75, 83, 45, 70, 145, GrowthRate.MEDIUM_SLOW, "Field", "Grass", 87.5, 20, 0 ],
   [ Species.SERPERIOR, "Serperior", 5, 0, 0, 0, "Regal Pokémon", Type.GRASS, -1, 3.3, 63, "Overgrow", null, "Contrary", 528, 75, 75, 95, 75, 95, 113, 45, 70, 238, GrowthRate.MEDIUM_SLOW, "Field", "Grass", 87.5, 20, 0 ],

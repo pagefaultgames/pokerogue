@@ -18,19 +18,13 @@ export class ModifierBar extends Phaser.GameObjects.Container {
     this.setScale(0.5);
   }
 
-  addModifier(modifier: Modifier) {
-    const icon = modifier.getIcon(this.scene as BattleScene);
-    this.add(icon);
-    this.setModifierIconPosition(icon);
-  }
+  updateModifiers(modifiers: PersistentModifier[]) {
+    this.removeAll(true);
 
-  updateModifier(modifier: Modifier, modifiers: Modifier[]) {
-    const index = modifiers.indexOf(modifier);
-    if (index > -1) {
-      this.getAt(index).destroy();
-      const newIcon = modifier.getIcon(this.scene as BattleScene);
-      this.addAt(newIcon, index);
-      this.setModifierIconPosition(newIcon);
+    for (let modifier of modifiers) {
+      const icon = modifier.getIcon(this.scene as BattleScene);
+      this.add(icon);
+      this.setModifierIconPosition(icon);
     }
   }
 
@@ -44,19 +38,13 @@ export class ModifierBar extends Phaser.GameObjects.Container {
 
 export abstract class Modifier {
   public type: ModifierType;
-  public stackCount: integer;
 
   constructor(type: ModifierType) {
     this.type = type;
-    this.stackCount = 1;
   }
 
-  add(modifierBar: ModifierBar, modifiers: Modifier[]): boolean {
-    modifiers.push(this);
-
-    modifierBar.addModifier(this);
-
-    return true;
+  match(_modifier: Modifier): boolean {
+    return false;
   }
 
   shouldApply(_args: any[]): boolean {
@@ -64,10 +52,47 @@ export abstract class Modifier {
   }
 
   abstract apply(args: any[]): boolean;
+}
 
-  incrementStack(): void {
-    if (this.stackCount < this.getMaxStackCount())
-      this.stackCount++;
+export abstract class PersistentModifier extends Modifier {
+  public stackCount: integer;
+  public virtualStackCount: integer;
+
+  constructor(type: ModifierType) {
+    super(type);
+    this.stackCount = 1;
+    this.virtualStackCount = 0;
+  }
+
+  add(modifiers: PersistentModifier[], virtual: boolean): boolean {
+    for (let modifier of modifiers) {
+      if (this.match(modifier)) {
+        modifier.incrementStack(virtual);
+        return true;
+      }
+    }
+
+    if (virtual) {
+      this.virtualStackCount += this.stackCount;
+      this.stackCount = 0;
+    }
+    modifiers.push(this);
+    return true;
+  }
+
+  abstract clone(): PersistentModifier;
+
+  incrementStack(virtual: boolean): void {
+    if (this.getStackCount() < this.getMaxStackCount()) {
+      if (!virtual)
+        this.stackCount++;
+      else
+        this.virtualStackCount++;
+    }
+  }
+
+  getStackCount(): integer {
+    return this.stackCount + this.virtualStackCount;
   }
 
   getMaxStackCount(): integer {
@@ -86,16 +111,34 @@ export abstract class Modifier {
     if (stackText)
       container.add(stackText);
 
+    const virtualStackText = this.getIconStackText(scene, true);
+    if (virtualStackText)
+      container.add(virtualStackText);
+
     return container;
   }
 
-  getIconStackText(scene: BattleScene): Phaser.GameObjects.Text {
-    if (this.stackCount <= 1)
+  getIconStackText(scene: BattleScene, virtual?: boolean): Phaser.GameObjects.Text {
+    if (this.getMaxStackCount() === 1 || (virtual && !this.virtualStackCount))
       return null;
 
-    const text = addTextObject(scene, 16, 12, this.stackCount.toString(), TextStyle.PARTY, { fontSize: '66px', color: this.stackCount < this.getMaxStackCount() ? '#f8f8f8' : '#e64a18' });
+    const isStackMax = this.getStackCount() >= this.getMaxStackCount();
+    const maxColor = '#f89890';
+    const maxStrokeColor = '#984038';
+
+    if (virtual) {
+      const virtualText = addTextObject(scene, 1 * 11 + 16, 12, `+${this.virtualStackCount.toString()}`, TextStyle.PARTY, { fontSize: '66px', color: !isStackMax ? '#40c8f8' : maxColor });
+      virtualText.setShadow(0, 0, null);
+      virtualText.setStroke(!isStackMax ? '#006090' : maxStrokeColor, 16)
+      virtualText.setOrigin(1, 0);
+
+      return virtualText;
+    }
+
+    const text = addTextObject(scene, 8, 12, this.stackCount.toString(), TextStyle.PARTY, { fontSize: '66px', color: !isStackMax ? '#f8f8f8' : maxColor });
+    text.setShadow(0, 0, null);
     text.setStroke('#424242', 16)
-    text.setOrigin(1, 0);
+    text.setOrigin(0, 0);
 
     return text;
   }
@@ -106,7 +149,7 @@ export abstract class ConsumableModifier extends Modifier {
     super(type);
   }
 
-  add(_modifierBar: ModifierBar, _modifiers: Modifier[]): boolean {
+  add(_modifiers: Modifier[]): boolean {
     return true;
   }
 
@@ -134,7 +177,7 @@ class AddPokeballModifier extends ConsumableModifier {
   }
 }
 
-export abstract class PokemonModifier extends Modifier {
+export abstract class PokemonHeldItemModifier extends PersistentModifier {
   public pokemonId: integer;
 
   constructor(type: ModifierType, pokemonId: integer) {
@@ -144,7 +187,6 @@ export abstract class PokemonModifier extends Modifier {
   }
 
   shouldApply(args: any[]): boolean {
-    console.log(args[0]);
     return super.shouldApply(args) && args.length && args[0] instanceof Pokemon && (this.pokemonId === -1 || (args[0] as Pokemon).id === this.pokemonId);
   }
 
@@ -152,8 +194,8 @@ export abstract class PokemonModifier extends Modifier {
     const container = scene.add.container(0, 0);
 
     const pokemon = this.getPokemon(scene);
-    const pokemonIcon = scene.add.sprite(0, 8, pokemon.getIconAtlasKey());
-    pokemonIcon.play(pokemon.getIconKey()).stop();
+    const pokemonIcon = scene.add.sprite(0, 8, pokemon.species.getIconAtlasKey());
+    pokemonIcon.play(pokemon.species.getIconKey()).stop();
     pokemonIcon.setOrigin(0, 0.5);
 
     container.add(pokemonIcon);
@@ -166,7 +208,7 @@ export abstract class PokemonModifier extends Modifier {
   }
 }
 
-export class PokemonBaseStatModifier extends PokemonModifier {
+export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
   protected stat: Stat;
 
   constructor(type: PokemonBaseStatBoosterModifierType, pokemonId: integer, stat: Stat) {
@@ -174,19 +216,16 @@ export class PokemonBaseStatModifier extends PokemonModifier {
     this.stat = stat;
   }
 
-  add(modifierBar: ModifierBar, modifiers: Modifier[]): boolean {
-    for (let modifier of modifiers) {
-      if (modifier instanceof PokemonBaseStatModifier) {
-        const pokemonStatModifier = modifier as PokemonBaseStatModifier;
-        if (pokemonStatModifier.pokemonId === this.pokemonId && pokemonStatModifier.stat === this.stat) {
-          pokemonStatModifier.incrementStack();
-          modifierBar.updateModifier(pokemonStatModifier, modifiers);
-          return true;
-        }
-      }
+  match(modifier: Modifier): boolean {
+    if (modifier instanceof PokemonBaseStatModifier) {
+      const pokemonStatModifier = modifier as PokemonBaseStatModifier;
+      return pokemonStatModifier.pokemonId === this.pokemonId && pokemonStatModifier.stat === this.stat;
     }
+    return false;
+  }
 
-    return super.add(modifierBar, modifiers);
+  clone(): PersistentModifier {
+    return new PokemonBaseStatModifier(this.type as PokemonBaseStatBoosterModifierType, this.pokemonId, this.stat);
   }
 
   shouldApply(args: any[]): boolean {
@@ -194,7 +233,7 @@ export class PokemonBaseStatModifier extends PokemonModifier {
   }
 
   apply(args: any[]): boolean {
-    args[1][this.stat] = Math.min(Math.floor(args[1][this.stat] * (1 + this.stackCount * 0.2)), 999999);
+    args[1][this.stat] = Math.min(Math.floor(args[1][this.stat] * (1 + this.getStackCount() * 0.2)), 999999);
 
     return true;
   }
@@ -202,7 +241,7 @@ export class PokemonBaseStatModifier extends PokemonModifier {
   getIcon(scene: BattleScene): Phaser.GameObjects.Container {
     const container = super.getIcon(scene);
 
-    const item = scene.add.sprite(16, 16, 'items');
+    const item = scene.add.sprite(16, this.virtualStackCount ? 8 : 16, 'items');
     item.setScale(0.5);
     item.setOrigin(0, 0.5);
     item.setTexture('items', this.type.iconImage);
@@ -212,35 +251,57 @@ export class PokemonBaseStatModifier extends PokemonModifier {
     if (stackText)
       container.add(stackText);
 
+    const virtualStackText = this.getIconStackText(scene, true);
+    if (virtualStackText)
+      container.add(virtualStackText);
+
     return container;
   }
 }
 
-export abstract class ConsumablePokemonModifier extends PokemonModifier {
+export abstract class ConsumablePokemonModifier extends ConsumableModifier {
+  public pokemonId: integer;
+
   constructor(type: ModifierType, pokemonId: integer) {
-    super(type, pokemonId);
+    super(type);
+
+    this.pokemonId = pokemonId;
   }
 
-  add(_modifierBar: ModifierBar, _modifiers: Modifier[]): boolean {
-    return true;
+  shouldApply(args: any[]): boolean {
+    return args.length && args[0] instanceof Pokemon && (this.pokemonId === -1 || (args[0] as Pokemon).id === this.pokemonId);
+  }
+
+  getPokemon(scene: BattleScene) {
+    return scene.getParty().find(p => p.id === this.pokemonId);
   }
 }
 
 export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
-  private restorePercent: integer;
+  private restorePoints: integer;
+  private percent: boolean;
   private fainted: boolean;
 
-  constructor(type: ModifierType, pokemonId: integer, restorePercent: integer, fainted?: boolean) {
+  constructor(type: ModifierType, pokemonId: integer, restorePoints: integer, percent: boolean, fainted?: boolean) {
     super(type, pokemonId);
 
-    this.restorePercent = restorePercent;
+    this.restorePoints = restorePoints;
+    this.percent = percent;
     this.fainted = !!fainted;
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && (this.fainted || (args.length > 1 && typeof(args[1]) === 'number'));
   }
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    if (!pokemon.hp === this.fainted)
-      pokemon.hp = Math.min(pokemon.hp + Math.max((this.restorePercent * 0.01) * pokemon.getMaxHp(), this.restorePercent), pokemon.getMaxHp());
+    if (!pokemon.hp === this.fainted) {
+      let restorePoints = this.restorePoints;
+      if (!this.fainted)
+        restorePoints = Math.floor(restorePoints * (args[1] as number));
+      pokemon.hp = Math.min(pokemon.hp + (this.percent ? (restorePoints * 0.01) * pokemon.getMaxHp() : restorePoints), pokemon.getMaxHp());
+    }
 
     return true;
   }
@@ -302,7 +363,79 @@ export class TmModifier extends ConsumablePokemonModifier {
   }
 }
 
-export class ExpBoosterModifier extends Modifier {
+export class PartyShareModifier extends PersistentModifier {
+  constructor(type: ModifierType) {
+    super(type);
+  }
+
+  match(modifier: Modifier) {
+    return modifier instanceof PartyShareModifier;
+  }
+
+  clone(): PartyShareModifier {
+    return new PartyShareModifier(this.type);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[0] instanceof BattleScene && args[1] instanceof Array<Modifier>;
+  }
+
+  apply(args: any[]): boolean {
+    const scene = args[0] as BattleScene;
+    const modifiers = args[1] as Modifier[];
+    const party = scene.getParty();
+    for (let modifier of modifiers) {
+      if (modifier instanceof PokemonHeldItemModifier) {
+        const heldItemModifier = modifier as PokemonHeldItemModifier;
+        const extraStacks = Math.floor(modifier.stackCount / Math.max(party.length - (this.getStackCount() - 1), 1));
+        for (let s = 0; s < extraStacks; s++) {
+          for (let p of party) {
+            if (p.id === heldItemModifier.pokemonId)
+              continue;
+            const newHeldItemModifier = heldItemModifier.clone() as PokemonHeldItemModifier;
+            newHeldItemModifier.pokemonId = p.id;
+            scene.addModifier(newHeldItemModifier, true);
+          }
+        }
+      }
+    }
+
+    return true;
+  }
+
+  getMaxStackCount(): number {
+    return 6;
+  }
+}
+
+export class HealingBoosterModifier extends PersistentModifier {
+  private multiplier: number;
+
+  constructor(type: ModifierType, multiplier: number) {
+    super(type);
+
+    this.multiplier = multiplier;
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof HealingBoosterModifier;
+  }
+
+  clone(): HealingBoosterModifier {
+    return new HealingBoosterModifier(this.type, this.multiplier);
+  }
+
+  apply(args: any[]): boolean {
+    const healingMultiplier = args[0] as Utils.IntegerHolder;
+    for (let s = 0; s < this.getStackCount(); s++)
+      healingMultiplier.value *= this.multiplier;
+    healingMultiplier.value = Math.floor(healingMultiplier.value);
+
+    return true;
+  }
+}
+
+export class ExpBoosterModifier extends PersistentModifier {
   private boostMultiplier: integer;
 
   constructor(type: ModifierType, boostPercent: integer) {
@@ -311,29 +444,26 @@ export class ExpBoosterModifier extends Modifier {
     this.boostMultiplier = boostPercent * 0.01;
   }
 
-  add(modifierBar: ModifierBar, modifiers: Modifier[]): boolean {
-    for (let modifier of modifiers) {
-      if (modifier instanceof ExpBoosterModifier) {
-        const expModifier = modifier as ExpBoosterModifier;
-        if (expModifier.boostMultiplier === this.boostMultiplier) {
-          expModifier.incrementStack();
-          modifierBar.updateModifier(expModifier, modifiers);
-          return true;
-        }
-      }
+  match(modifier: Modifier): boolean {
+    if (modifier instanceof ExpBoosterModifier) {
+      const expModifier = modifier as ExpBoosterModifier;
+      return expModifier.boostMultiplier === this.boostMultiplier;
     }
+    return false;
+  }
 
-    return super.add(modifierBar, modifiers);
+  clone(): ExpBoosterModifier {
+    return new ExpBoosterModifier(this.type, this.boostMultiplier * 100);
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (1 + (this.stackCount * (this.boostMultiplier))));
+    (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
 
     return true;
   }
 }
 
-export class ExpShareModifier extends Modifier {
+export class ExpShareModifier extends PersistentModifier {
   constructor(type: ModifierType) {
     super(type);
   }
@@ -342,31 +472,30 @@ export class ExpShareModifier extends Modifier {
     return true;
   }
 
+  clone(): ExpShareModifier {
+    return new ExpShareModifier(this.type);
+  }
+
   getMaxStackCount(): integer {
     return 5;
   }
 }
 
-export class ShinyRateBoosterModifier extends Modifier {
+export class ShinyRateBoosterModifier extends PersistentModifier {
   constructor(type: ModifierType) {
     super(type);
   }
 
-  add(modifierBar: ModifierBar, modifiers: Modifier[]): boolean {
-    for (let modifier of modifiers) {
-      if (modifier instanceof ShinyRateBoosterModifier) {
-        const shinyRateModifier = modifier as ShinyRateBoosterModifier;
-        shinyRateModifier.incrementStack();
-        modifierBar.updateModifier(shinyRateModifier, modifiers);
-        return true;
-      }
-    }
+  match(modifier: Modifier): boolean {
+    return modifier instanceof ShinyRateBoosterModifier;
+  }
 
-    return super.add(modifierBar, modifiers);
+  clone(): ShinyRateBoosterModifier {
+    return new ShinyRateBoosterModifier(this.type);
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = Math.pow((args[0] as Utils.IntegerHolder).value * 0.5, this.stackCount + 1);
+    (args[0] as Utils.IntegerHolder).value = Math.pow((args[0] as Utils.IntegerHolder).value * 0.5, this.getStackCount() + 1);
 
     return true;
   }
@@ -376,13 +505,17 @@ export class ShinyRateBoosterModifier extends Modifier {
   }
 }
 
-export class ExtraModifierModifier extends Modifier {
+export class ExtraModifierModifier extends PersistentModifier {
   constructor(type: ModifierType) {
     super(type);
   }
 
+  clone(): ExtraModifierModifier {
+    return new ExtraModifierModifier(this.type);
+  }
+
   apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value += this.stackCount;
+    (args[0] as Utils.IntegerHolder).value += this.getStackCount();
 
     return true;
   }
@@ -436,24 +569,26 @@ export abstract class PokemonModifierType extends ModifierType {
 }
 
 export class PokemonHpRestoreModifierType extends PokemonModifierType {
-  protected restorePercent: integer;
+  protected restorePoints: integer;
+  protected percent: boolean;
 
-  constructor(name: string, restorePercent: integer, newModifierFunc?: Function, selectFilter?: Function, iconImage?: string) {
-    super(name, `Restore ${restorePercent} HP or ${restorePercent}% HP for one POKéMON, whichever is higher`,
-      newModifierFunc || ((_type, args) => new PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePercent, false)),
+  constructor(name: string, restorePoints: integer, percent?: boolean, newModifierFunc?: Function, selectFilter?: Function, iconImage?: string) {
+    super(name, `Restore ${restorePoints}${percent ? '%' : ''} HP for one POKéMON`,
+      newModifierFunc || ((_type, args) => new PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, this.percent, false)),
     selectFilter || ((pokemon: PlayerPokemon) => {
       if (!pokemon.hp || pokemon.hp >= pokemon.getMaxHp())
         return PartyUiHandler.NoEffectMessage;
       return null;
     }), iconImage);
 
-    this.restorePercent = restorePercent;
+    this.restorePoints = restorePoints;
+    this.percent = !!percent;
   }
 }
 
 export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
   constructor(name: string, restorePercent: integer, iconImage?: string) {
-    super(name, restorePercent, (_type, args) => new PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePercent, true),
+    super(name, restorePercent, true, (_type, args) => new PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, true, true),
       ((pokemon: PlayerPokemon) => {
         if (pokemon.hp)
           return PartyUiHandler.NoEffectMessage;
@@ -583,7 +718,7 @@ const modifierPool = {
       const faintedPartyMemberCount = party.filter(p => !p.hp).length;
       return faintedPartyMemberCount;
     }),
-    new WeightedModifierType(new PokemonHpRestoreModifierType('HYPER POTION', 80), (party: PlayerPokemon[]) => {
+    new WeightedModifierType(new PokemonHpRestoreModifierType('HYPER POTION', 200), (party: PlayerPokemon[]) => {
       const thresholdPartyMemberCount = party.filter(p => p.getHpRatio() <= 0.6).length;
       return thresholdPartyMemberCount;
     }),
@@ -610,6 +745,9 @@ const modifierPool = {
     new WeightedModifierType(new AllPokemonFullReviveModifierType('SACRED ASH'), (party: PlayerPokemon[]) => {
       return party.filter(p => !p.hp).length >= Math.ceil(party.length / 2) ? 1 : 0;
     }),
+    new ModifierType('OVAL CHARM', 'For every X (no. of party members) items in a POKéMON\'s held item stack, give one to each other party member',
+      (type, _args) => new PartyShareModifier(type), 'oval_charm'),
+    new ModifierType('HEALING CHARM', 'Doubles the effectiveness of HP restoring items (excludes revives)', (type, _args) => new HealingBoosterModifier(type, 2), 'healing_charm'),
     new ExpBoosterModifierType('LUCKY EGG', 25),
     new ModifierType('EXP. SHARE', 'All POKéMON in your party gain an additional 10% of a battle\'s EXP. Points', (type, _args) => new ExpShareModifier(type), 'exp_share')
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),

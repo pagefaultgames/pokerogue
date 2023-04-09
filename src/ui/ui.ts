@@ -9,6 +9,7 @@ import ConfirmUiHandler from './confirm-ui-handler';
 import ModifierSelectUiHandler from './modifier-select-ui-handler';
 import BallUiHandler from './ball-ui-handler';
 import SummaryUiHandler from './summary-ui-handler';
+import StarterSelectUiHandler from './starter-select-ui-handler';
 
 export enum Mode {
   MESSAGE = 0,
@@ -18,12 +19,14 @@ export enum Mode {
   CONFIRM,
   MODIFIER_SELECT,
   PARTY,
-  SUMMARY
+  SUMMARY,
+  STARTER_SELECT,
 };
 
 const transitionModes = [
   Mode.PARTY,
-  Mode.SUMMARY
+  Mode.SUMMARY,
+  Mode.STARTER_SELECT,
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -45,7 +48,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new ConfirmUiHandler(scene),
       new ModifierSelectUiHandler(scene),
       new PartyUiHandler(scene),
-      new SummaryUiHandler(scene)
+      new SummaryUiHandler(scene),
+      new StarterSelectUiHandler(scene)
     ];
   }
 

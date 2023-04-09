@@ -158,6 +158,8 @@ export default class PartyUiHandler extends MessageUiHandler {
               selectCallback(this.cursor);
             } else if (this.cursor)
               (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor);
+            if (this.partyUiMode !== PartyUiMode.MODIFIER)
+              ui.playSelect();
             return;
           } else {
             this.clearOptions();
@@ -396,9 +398,9 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     this.add(slotPb);
 
-    const pokemonIcon = this.scene.add.sprite(slotPb.x, slotPb.y, this.pokemon.getIconAtlasKey());
+    const pokemonIcon = this.scene.add.sprite(slotPb.x, slotPb.y, this.pokemon.species.getIconAtlasKey());
     console.log(pokemonIcon)
-    pokemonIcon.play(this.pokemon.getIconKey());
+    pokemonIcon.play(this.pokemon.species.getIconKey());
     this.slotPokemonIcon = pokemonIcon;
 
     this.add(pokemonIcon);

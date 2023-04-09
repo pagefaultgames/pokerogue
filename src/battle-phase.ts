@@ -29,6 +29,18 @@ export class BattlePhase {
   }
 }
 
+export class SelectStarterPhase extends BattlePhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    super.start();
+
+    this.scene.ui.setMode(Mode.STARTER_SELECT);
+  }
+}
+
 export class EncounterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -722,7 +734,7 @@ export class ExpPhase extends PartyMemberPokemonPhase {
       newLevel = pokemon.level;
       if (newLevel > lastLevel)
         this.scene.unshiftPhase(new LevelUpPhase(this.scene, this.partyMemberIndex, newLevel));
-      pokemon.updateInfo(() => this.end());
+      pokemon.updateInfo().then(() => this.end());
     }, null, true);
   }
 
@@ -1016,7 +1028,7 @@ export class SelectModifierPhase extends BattlePhase {
     this.scene.applyModifiers(ExtraModifierModifier, modifierCount);
     const types: Array<ModifierType> = getModifierTypesForWave(this.scene.currentBattle.waveIndex - 1, modifierCount.value, party);
 
-    this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, (cursor: integer) => {
+    const modifierSelectCallback = (cursor: integer) => {
       if (cursor < 0) {
         this.scene.ui.setMode(Mode.MESSAGE);
         super.end();
@@ -1033,14 +1045,15 @@ export class SelectModifierPhase extends BattlePhase {
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.MESSAGE);
           } else
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT);
+            this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, modifierSelectCallback);
         }, pokemonModifierType.selectFilter);
       } else {
         this.scene.addModifier(types[cursor].newModifier()).then(() => super.end());
         this.scene.ui.clearText();
         this.scene.ui.setMode(Mode.MESSAGE);
       }
-    });
+    };
+    this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, modifierSelectCallback);
   }
 }
 

@@ -1,16 +1,17 @@
 import Phaser from 'phaser';
 import { Biome, BiomeArena } from './biome';
 import UI from './ui/ui';
-import { BattlePhase, EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase, LearnMovePhase } from './battle-phase';
+import { BattlePhase, EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase } from './battle-phase';
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonModifier} from './modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonBaseStatBoosterModifierType, PokemonBaseStatModifier } from './modifier';
 import { PokeballType } from './pokeball';
 import { Species } from './species';
 import { initAutoPlay } from './auto-play';
 import { Battle } from './battle';
 import { populateAnims } from './battle-anims';
+import { Stat } from './pokemon-stat';
 
 const enableAuto = true;
 
@@ -36,7 +37,7 @@ export default class BattleScene extends Phaser.Scene {
 	public pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 	private party: PlayerPokemon[];
 	private modifierBar: ModifierBar;
-	private modifiers: Modifier[];
+	private modifiers: PersistentModifier[];
 	public uiContainer: Phaser.GameObjects.Container;
 	public ui: UI;
 
@@ -301,6 +302,10 @@ export default class BattleScene extends Phaser.Scene {
 		this.plusKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.PLUS);
 		this.minusKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.MINUS);
 
+		for (let a = 0; a < 3; a++) {
+			this.addModifier(new PokemonBaseStatModifier(new PokemonBaseStatBoosterModifierType('HP-UP', Stat.HP), this.getParty()[0].id, Stat.HP));
+		}
+
 		Promise.all(loadPokemonAssets).then(() => {
 			if (enableAuto)
 				initAutoPlay.apply(this);
@@ -341,6 +346,7 @@ export default class BattleScene extends Phaser.Scene {
 				this.unshiftPhase(new NewBiomeEncounterPhase(this));
 			}
 		} else {
+			//this.pushPhase(new SelectStarterPhase(this));
 			this.pushPhase(new EncounterPhase(this));
 			this.pushPhase(new SummonPhase(this));
 		}
@@ -443,43 +449,71 @@ export default class BattleScene extends Phaser.Scene {
 		this.phaseQueue.push(new CommandPhase(this));
 	}
 
-	addModifier(modifier: Modifier): Promise<void> {
+	addModifier(modifier: Modifier, virtual?: boolean): Promise<void> {
 		return new Promise(resolve => {
-			if (modifier.add(this.modifierBar, this.modifiers))
+			if (modifier instanceof PersistentModifier) {
+				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual) && !virtual)
+					this.sound.play('restore');
+
+				if (!virtual)
+					this.updateModifiers().then(() => resolve());
+			} else if (modifier instanceof ConsumableModifier) {
 				this.sound.play('restore');
 
-			if (modifier instanceof ConsumableModifier) {
-				const args = [ this ];
-				if (modifier.shouldApply(args))
-					modifier.apply(args);
-				resolve();
-				return;
-			}
+				if (modifier instanceof ConsumablePokemonModifier) {
+					for (let p in this.party) {
+						const pokemon = this.party[p];
 
-			let pokemonToUpdate = 0;
-
-			if (modifier instanceof PokemonModifier) {
-				for (let p in this.party) {
-					const pokemon = this.party[p];
-
-					if (modifier instanceof ConsumablePokemonModifier) {
-						const args = [ pokemon ];
+						const args: any[] = [ pokemon ];
+						if (modifier instanceof PokemonHpRestoreModifier) {
+							const hpRestoreMultiplier = new Utils.IntegerHolder(1);
+							this.applyModifiers(HealingBoosterModifier, hpRestoreMultiplier);
+							args.push(hpRestoreMultiplier.value);
+						}
 						if (modifier.shouldApply(args))
 							modifier.apply(args);
 					}
-
-					pokemonToUpdate++;
-
-					pokemon.calculateStats();
-					pokemon.updateInfo(() => {
-						if (!(--pokemonToUpdate))
-							resolve();
-					});
+					
+					Promise.allSettled(this.party.map(p => p.updateInfo())).then(() => resolve());
+				} else {
+					const args = [ this ];
+					if (modifier.shouldApply(args))
+						modifier.apply(args);
+					
+					resolve();
 				}
 			}
+		});
+	}
 
-			if (!pokemonToUpdate)
+	updatePartyForModifiers(): Promise<void> {
+		return new Promise(resolve => {
+			Promise.allSettled(this.party.map(p => {
+				p.calculateStats();
+				return p.updateInfo();
+			})).then(() => resolve());
+		});
+	}
+
+	updateModifiers(): Promise<void> {
+		return new Promise(resolve => {
+			for (let modifier of this.modifiers) {
+				if (modifier instanceof PersistentModifier)
+					(modifier as PersistentModifier).virtualStackCount = 0;
+			}
+
+			this.applyModifiers(PartyShareModifier, this, this.modifiers);
+
+			const modifiers = this.modifiers.slice(0);
+			for (let modifier of modifiers) {
+				if (!modifier.getStackCount())
+					this.modifiers.splice(this.modifiers.indexOf(modifier), 1);
+			}
+
+			this.updatePartyForModifiers().then(() => {
+				this.modifierBar.updateModifiers(this.modifiers);
 				resolve();
+			});
 		});
 	}
 

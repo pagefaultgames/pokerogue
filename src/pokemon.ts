@@ -220,12 +220,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return `pkmn__${this.getBattleSpriteId()}`;
   }
 
-  getIconAtlasKey(): string {
-    return `pokemon_icons_${this.species.generation}`;
-  }
-
   getIconId(): string {
-    return `${Utils.padInt(this.species.speciesId, 3)}`;
+    // TODO: Add form special cases
+    return this.species.getIconId();
   }
 
   getIconKey(): string {
@@ -355,8 +352,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  updateInfo(callback?: Function) {
-    this.battleInfo.updateInfo(this, callback);
+  updateInfo(): Promise<void> {
+    return this.battleInfo.updateInfo(this);
   }
 
   addExp(exp: integer) {
@@ -434,7 +431,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           callback: () => {
             this.getSprite().setVisible(flashTimer.repeatCount % 2 === 0);
             if (!flashTimer.repeatCount) {
-              this.battleInfo.updateInfo(this, () => {
+              this.battleInfo.updateInfo(this).then(() => {
                 if (callback)
                   callback();
               });
@@ -442,7 +439,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         });
       } else {
-        this.battleInfo.updateInfo(this, () => {
+        this.battleInfo.updateInfo(this).then(() => {
           if (callback)
             callback();
         });
@@ -579,22 +576,12 @@ export class PlayerPokemon extends Pokemon {
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, dataSource?: Pokemon) {
     super(scene, 106, 148, species, level, dataSource);
 
-    this.generateIconAnim();
+    this.species.generateIconAnim(scene);
     this.generateCompatibleTms();
   }
 
   isPlayer(): boolean {
     return true;
-  }
-
-  generateIconAnim(): void {
-    const frameNames = this.scene.anims.generateFrameNames(this.getIconAtlasKey(), { prefix: `${this.getIconId()}_`, zeroPad: 2, suffix: '.png', start: 1, end: 34 });
-    this.scene.anims.create({
-      key: this.getIconKey(),
-      frames: frameNames,
-      frameRate: 128,
-      repeat: -1
-    });
   }
 
   generateCompatibleTms(): void {

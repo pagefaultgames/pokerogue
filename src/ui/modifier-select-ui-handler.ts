@@ -33,7 +33,15 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   }
 
   show(args: any[]) {
-    if (this.active || args.length !== 2 || !(args[0] instanceof Array) || !args[0].length || !(args[1] instanceof Function))
+    if (this.active) {
+      if (args.length === 2) {
+        this.awaitingActionInput = true;
+        this.onActionInput = args[1];
+      }
+      return;
+    }
+
+    if (args.length !== 2 || !(args[0] instanceof Array) || !args[0].length || !(args[1] instanceof Function))
       return;
 
     super.show(args);
@@ -92,6 +100,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       success = true;
       if (this.onActionInput) {
         const originalOnActionInput = this.onActionInput;
+        this.awaitingActionInput = false;
         this.onActionInput = null;
         originalOnActionInput(this.cursor);
       }
@@ -99,6 +108,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       success = true;
       if (this.onActionInput) {
         const originalOnActionInput = this.onActionInput;
+        this.awaitingActionInput = false;
         this.onActionInput = null;
         originalOnActionInput(-1);
       }
