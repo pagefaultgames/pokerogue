@@ -13,36 +13,43 @@ import PartyUiHandler, { PartyUiMode } from "./ui/party-ui-handler";
 import ConfirmUiHandler from "./ui/confirm-ui-handler";
 import { Mode } from "./ui/ui";
 
-export function initAutoPlay(speed: number) {
+export function initAutoPlay() {
     const thisArg = this as BattleScene;
 
     const originalDelayedCall = this.time.delayedCall;
     this.time.delayedCall = function (delay: number, callback: Function, args?: any[], callbackScope?: any) {
-        delay /= speed;
+        if (thisArg.auto)
+            delay /= thisArg.autoSpeed;
         originalDelayedCall.apply(this, [ delay, callback, args, callbackScope ]);
     };
     const originalAddEvent = this.time.addEvent;
     this.time.addEvent = function (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) {
-        if (config.delay)
-            config.delay = Math.ceil(config.delay / speed);
-        if (config.startAt)
-            config.startAt = Math.ceil(config.startAt / speed);
+        if (thisArg.auto) {
+            if (config.delay)
+                config.delay = Math.ceil(config.delay / thisArg.autoSpeed);
+            if (config.startAt)
+                config.startAt = Math.ceil(config.startAt / thisArg.autoSpeed);
+        }
         return originalAddEvent.apply(this, [ config ]);
     };
     const originalTweensAdd = this.tweens.add;
     this.tweens.add = function (config: Phaser.Types.Tweens.TweenBuilderConfig | object) {
-        if (config.duration)
-            config.duration = Math.ceil(config.duration / speed);
-        if (config.delay)
-            config.delay = Math.ceil(config.delay / speed);
+        if (thisArg.auto) {
+            if (config.duration)
+                config.duration = Math.ceil(config.duration / thisArg.autoSpeed);
+            if (config.delay)
+                config.delay = Math.ceil(config.delay / thisArg.autoSpeed);
+        }
         return originalTweensAdd.apply(this, [ config ]);
     };
     const originalAddCounter = this.tweens.addCounter;
     this.tweens.addCounter = function (config: Phaser.Types.Tweens.NumberTweenBuilderConfig) {
-        if (config.duration)
-            config.duration = Math.ceil(config.duration / speed);
-        if (config.delay)
-            config.delay = Math.ceil(config.delay / speed);
+        if (thisArg.auto) {
+            if (config.duration)
+                config.duration = Math.ceil(config.duration / thisArg.autoSpeed);
+            if (config.delay)
+                config.delay = Math.ceil(config.delay / thisArg.autoSpeed);
+        }
         return originalAddCounter.apply(this, [ config ]);
     };
 
@@ -68,12 +75,15 @@ export function initAutoPlay(speed: number) {
             const pokemon = party[p];
             if (pokemon.getHpRatio() <= 0.4)
                 continue;
-            const effectiveness = getMaxMoveEffectiveness(pokemon, enemyPokemon) / getMaxMoveEffectiveness(enemyPokemon, pokemon);
+            const effectiveness = enemyPokemon
+                ? getMaxMoveEffectiveness(pokemon, enemyPokemon) / getMaxMoveEffectiveness(enemyPokemon, pokemon)
+                : 1;
             if (effectiveness > bestPartyMemberEffectiveness) {
                 bestPartyMemberIndex = p;
                 bestPartyMemberEffectiveness = effectiveness;
             }
-            console.log(p, Species[pokemon.species.speciesId], '->', Species[enemyPokemon.species.speciesId], effectiveness);
+            if (enemyPokemon)
+                console.log(p, Species[pokemon.species.speciesId], '->', Species[enemyPokemon.species.speciesId], effectiveness);
         }
 
         if (bestPartyMemberIndex === -1) {
@@ -108,80 +118,93 @@ export function initAutoPlay(speed: number) {
 
     const originalMessageUiHandlerShowText = MessageUiHandler.prototype.showText;
     MessageUiHandler.prototype.showText = function (text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean) {
-        delay = 0;
-        callbackDelay = 0;
+        if (thisArg.auto) {
+            delay = 1;
+            callbackDelay = 0;
+        }
         originalMessageUiHandlerShowText.apply(this, [ text, delay, callback, callbackDelay, prompt ]);
     };
 
     const originalMessageUiHandlerShowPrompt = MessageUiHandler.prototype.showPrompt;
     MessageUiHandler.prototype.showPrompt = function (callback: Function, callbackDelay: integer) {
-        callbackDelay = 0;
+        if (thisArg.auto)
+            callbackDelay = 0;
         originalMessageUiHandlerShowPrompt.apply(this, [ callback, callbackDelay ]);
-        thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
+        if (thisArg.auto)
+            thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
     };
 
     const originalMessageUiHandlerPromptLevelUpStats = messageUiHandler.promptLevelUpStats;
     messageUiHandler.promptLevelUpStats = function (prevStats: integer[], showTotals: boolean, callback?: Function) {
         originalMessageUiHandlerPromptLevelUpStats.apply(this, [ prevStats, showTotals, callback ]);
-        this.processInput(keyCodes.Z);
+        if (thisArg.auto)
+            thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
     };
     
     const originalCommandUiHandlerShow = commandUiHandler.show;
     commandUiHandler.show = function (args: any[]) {
         originalCommandUiHandlerShow.apply(this, [ args ]);
-        thisArg.time.delayedCall(20, () => {
-            const bestPartyMemberIndex = getBestPartyMemberIndex();
-            if (bestPartyMemberIndex) {
-                console.log(bestPartyMemberIndex, thisArg.getParty())
-                console.log('Switching to ', Species[thisArg.getParty()[bestPartyMemberIndex].species.speciesId]);
-                nextPartyMemberIndex = bestPartyMemberIndex;
-                commandUiHandler.setCursor(2);
-                thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
-            } else {
-                commandUiHandler.setCursor(0);
-                thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
-            }
-        });
+        if (thisArg.auto) {
+            thisArg.time.delayedCall(20, () => {
+                const bestPartyMemberIndex = getBestPartyMemberIndex();
+                if (bestPartyMemberIndex) {
+                    console.log(bestPartyMemberIndex, thisArg.getParty())
+                    console.log('Switching to ', Species[thisArg.getParty()[bestPartyMemberIndex].species.speciesId]);
+                    nextPartyMemberIndex = bestPartyMemberIndex;
+                    commandUiHandler.setCursor(2);
+                    thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
+                } else {
+                    commandUiHandler.setCursor(0);
+                    thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
+                }
+            });
+        }
     };
 
     const originalFightUiHandlerShow = fightUiHandler.show;
     fightUiHandler.show = function (args: any[]) {
         originalFightUiHandlerShow.apply(this, [ args ]);
-        if (!playerPokemon.aiType)
-            playerPokemon.aiType = AiType.SMART;
-        thisArg.time.delayedCall(20, () => {
-            const nextMove = playerPokemon.getNextMove() as PokemonMove;
-            fightUiHandler.setCursor(playerPokemon.moveset.indexOf(nextMove));
-            thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
-        });
+        if (thisArg.auto) {
+            if (!playerPokemon.aiType)
+                playerPokemon.aiType = AiType.SMART;
+            thisArg.time.delayedCall(20, () => {
+                const nextMove = playerPokemon.getNextMove() as PokemonMove;
+                fightUiHandler.setCursor(playerPokemon.moveset.indexOf(nextMove));
+                thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
+            });
+        }
     };
 
     const originalPartyUiHandlerShow = partyUiHandler.show;
     partyUiHandler.show = function (args: any[]) {
         originalPartyUiHandlerShow.apply(this, [ args ]);
-        thisArg.time.delayedCall(20, () => {
-            if (nextPartyMemberIndex === -1)
-                nextPartyMemberIndex = getBestPartyMemberIndex();
-            partyUiHandler.setCursor(nextPartyMemberIndex);
-            nextPartyMemberIndex = -1;
-            if (partyUiHandler.partyUiMode === PartyUiMode.MODIFIER || partyUiHandler.getCursor()) {
-                this.processInput(keyCodes.Z);
-                this.processInput(keyCodes.Z);
-            } else
-                this.processInput(keyCodes.X);
-        });
+        if (thisArg.auto) {
+            thisArg.time.delayedCall(20, () => {
+                if (nextPartyMemberIndex === -1)
+                    nextPartyMemberIndex = getBestPartyMemberIndex();
+                partyUiHandler.setCursor(nextPartyMemberIndex);
+                nextPartyMemberIndex = -1;
+                if (partyUiHandler.partyUiMode === PartyUiMode.MODIFIER || partyUiHandler.getCursor()) {
+                    this.processInput(keyCodes.Z);
+                    thisArg.time.delayedCall(250, () => this.processInput(keyCodes.Z));
+                } else
+                    this.processInput(keyCodes.X);
+            });
+        }
     };
 
     const originalSwitchCheckUiHandlerShow = switchCheckUiHandler.show;
     switchCheckUiHandler.show = function (args: any[]) {
         originalSwitchCheckUiHandlerShow.apply(this, [ args ]);
-        const bestPartyMemberIndex = getBestPartyMemberIndex();
-        thisArg.time.delayedCall(20, () => {
-            if (bestPartyMemberIndex)
-                nextPartyMemberIndex = bestPartyMemberIndex;
-            switchCheckUiHandler.setCursor(bestPartyMemberIndex ? 1 : 0);
-            thisArg.time.delayedCall(20, () =>  this.processInput(keyCodes.Z));
-        });
+        if (thisArg.auto) {
+            const bestPartyMemberIndex = getBestPartyMemberIndex();
+            thisArg.time.delayedCall(20, () => {
+                if (bestPartyMemberIndex)
+                    nextPartyMemberIndex = bestPartyMemberIndex;
+                switchCheckUiHandler.setCursor(bestPartyMemberIndex ? 1 : 0);
+                thisArg.time.delayedCall(20, () =>  this.processInput(keyCodes.Z));
+            });
+        }
     }
 
     const tryGetBestModifier = (modifierTypes: Array<ModifierType>, predicate: Function) => {
@@ -197,6 +220,11 @@ export function initAutoPlay(speed: number) {
 
     const originalModifierSelectUiHandlerShow = modifierSelectUiHandler.show;
     modifierSelectUiHandler.show = function (args: any[]) {
+        if (!thisArg.auto) {
+            originalModifierSelectUiHandlerShow.apply(this, [ args ]);
+            return;
+        }
+
         if (modifierSelectUiHandler.active)
             return;
 
@@ -262,7 +290,7 @@ export function initAutoPlay(speed: number) {
                         if (thisArg.getCurrentPhase() instanceof SelectModifierPhase) {
                             if (optionIndex < modifierSelectUiHandler.options.length - 1) {
                                 optionIndex++;
-                                trySelectModifier();
+                                thisArg.time.delayedCall(250, () => trySelectModifier());
                             } else
                                 modifierSelectUiHandler.processInput(keyCodes.X);
                         }

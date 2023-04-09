@@ -1754,12 +1754,12 @@ const biomePools = {
       ]
     ],
     [ Species.SLUGMA, Type.FIRE, -1, [
-        [ Biome.MOUNTAIN, PoolTier.RARE ],
+        [ Biome.MOUNTAIN, PoolTier.UNCOMMON ],
         [ Biome.VOLCANO, PoolTier.COMMON ]
       ]
     ],
     [ Species.MAGCARGO, Type.FIRE, Type.ROCK, [
-        [ Biome.MOUNTAIN, PoolTier.RARE ],
+        [ Biome.MOUNTAIN, PoolTier.UNCOMMON ],
         [ Biome.VOLCANO, PoolTier.COMMON ],
         [ Biome.VOLCANO, PoolTier.BOSS ]
       ]
@@ -2511,8 +2511,8 @@ const biomePools = {
       ]
     ],
     [ Species.REGISTEEL, Type.STEEL, -1, [
-        [ Biome.MOUNTAIN, PoolTier.ULTRA_RARE ],
-        [ Biome.MOUNTAIN, PoolTier.BOSS_SUPER_RARE ]
+        [ Biome.CAVE, PoolTier.ULTRA_RARE ],
+        [ Biome.CAVE, PoolTier.BOSS_SUPER_RARE ]
       ]
     ],
     [ Species.LATIAS, Type.DRAGON, Type.PSYCHIC, [

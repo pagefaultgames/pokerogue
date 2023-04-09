@@ -21,7 +21,7 @@ export class BattlePhase {
   }
 
   start() {
-    console.log(`Start Phase ${this.constructor.name}`)
+    console.log(`%cStart Phase ${this.constructor.name}`, 'color:green;')
   }
 
   end() {

@@ -119,7 +119,7 @@ export default class UI extends Phaser.GameObjects.Container {
         this.getHandler().show(args);
         resolve();
       };
-      if (transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1) {
+      if ((transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1) && !(this.scene as BattleScene).auto) {
         this.transitioning = true;
         this.overlay.setAlpha(0);
         this.overlay.setVisible(true);

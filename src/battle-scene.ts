@@ -12,9 +12,11 @@ import { initAutoPlay } from './auto-play';
 import { Battle } from './battle';
 import { populateAnims } from './battle-anims';
 
+const enableAuto = true;
+
 export default class BattleScene extends Phaser.Scene {
-	private auto: boolean = true;
-	private autoSpeed: integer = 1;
+	public auto: boolean;
+	public autoSpeed: integer = 1;
 
 	private phaseQueue: Array<BattlePhase>;
 	private phaseQueuePrepend: Array<BattlePhase>;
@@ -49,6 +51,8 @@ export default class BattleScene extends Phaser.Scene {
 	private actionKey: Phaser.Input.Keyboard.Key;
 	private cancelKey: Phaser.Input.Keyboard.Key;
 	private f2Key: Phaser.Input.Keyboard.Key;
+	private plusKey: Phaser.Input.Keyboard.Key;
+	private minusKey: Phaser.Input.Keyboard.Key;
 
 	private blockInput: boolean;
 
@@ -293,11 +297,13 @@ export default class BattleScene extends Phaser.Scene {
 		this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 		this.actionKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
 		this.cancelKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
-		this.f2Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F2)
+		this.f2Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F2);
+		this.plusKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.PLUS);
+		this.minusKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.MINUS);
 
 		Promise.all(loadPokemonAssets).then(() => {
-			if (this.auto)
-				initAutoPlay.apply(this, [ this.autoSpeed ]);
+			if (enableAuto)
+				initAutoPlay.apply(this);
 			
 			this.pokeballCounts[PokeballType.POKEBALL] += 5;
 
@@ -344,7 +350,7 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	newBiome(): BiomeArena {
-		const biome = Utils.randInt(20) as Biome;
+		const biome = this.currentBattle ? Utils.randInt(20) as Biome : Biome.PLAINS;
 		this.arena = new BiomeArena(this, biome, Biome[biome].toLowerCase());
 		return this.arena;
 	}
@@ -370,7 +376,18 @@ export default class BattleScene extends Phaser.Scene {
 			this.ui.processInput(this.actionKey.keyCode);
 		else if (this.cancelKey.isDown)
 			this.ui.processInput(this.cancelKey.keyCode);
-		else
+		else if (enableAuto) {
+			if (this.f2Key.isDown)
+				this.auto = !this.auto;
+			else if (this.plusKey.isDown) {
+				if (this.autoSpeed < 20)
+					this.autoSpeed++;
+			} else if (this.minusKey.isDown) {
+				if (this.autoSpeed > 1)
+					this.autoSpeed--;
+			}
+			return;
+		} else
 			return;
 		this.blockInput = true;
 		this.time.delayedCall(250, () => {

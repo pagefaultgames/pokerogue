@@ -90,12 +90,18 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     if (keyCode === keyCodes.Z) {
       success = true;
-      if (this.onActionInput)
-        this.onActionInput(this.cursor);
+      if (this.onActionInput) {
+        const originalOnActionInput = this.onActionInput;
+        this.onActionInput = null;
+        originalOnActionInput(this.cursor);
+      }
     } else if (keyCode === keyCodes.X) {
       success = true;
-      if (this.onActionInput)
-        this.onActionInput(-1);
+      if (this.onActionInput) {
+        const originalOnActionInput = this.onActionInput;
+        this.onActionInput = null;
+        originalOnActionInput(-1);
+      }
     } else {
       switch (keyCode) {
         case keyCodes.LEFT:
