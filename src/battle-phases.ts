@@ -1011,12 +1011,16 @@ export class AttemptCapturePhase extends BattlePhase {
     this.scene.unshiftPhase(new VictoryPhase(this.scene));
     this.scene.ui.showText(`${pokemon.name} was caught!`, null, () => {
       pokemon.hideInfo();
-      const newPokemon = pokemon.addToParty();
-      this.scene.field.remove(pokemon, true);
-      newPokemon.loadAssets().then(() => {
+      const end = () => {
         this.removePb();
         this.end();
-      });
+      };
+      const newPokemon = pokemon.addToParty();
+      this.scene.field.remove(pokemon, true);
+      if (newPokemon)
+        newPokemon.loadAssets().then(end);
+      else
+        end();
     }, 0, true);
   }
 
