@@ -163,7 +163,7 @@ export default class BattleScene extends Phaser.Scene {
 		// Load pokemon-related images
 		this.loadImage(`pkmn__back__sub`, 'pokemon/back', 'sub.png');
 		this.loadImage(`pkmn__sub`, 'pokemon', 'sub.png');
-		this.loadAtlas('sparkle', 'effects');
+		this.loadAtlas('shiny', 'effects');
 		this.loadImage('evo_sparkle', 'effects');
 		this.load.video('evo_bg', 'images/effects/evo_bg.mp4', null, false, true);
 
