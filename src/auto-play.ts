@@ -73,7 +73,7 @@ export function initAutoPlay() {
         let bestPartyMemberEffectiveness = 0.5;
         for (let p = 0; p < party.length; p++) {
             const pokemon = party[p];
-            if (pokemon.getHpRatio() <= 0.4)
+            if (pokemon.getHpRatio() <= 0.2)
                 continue;
             const effectiveness = enemyPokemon
                 ? getMaxMoveEffectiveness(pokemon, enemyPokemon) / getMaxMoveEffectiveness(enemyPokemon, pokemon)

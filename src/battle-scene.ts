@@ -78,7 +78,7 @@ export default class BattleScene extends Phaser.Scene {
 			filenameRoot = key;
 		if (folder)
 			folder += '/';
-		this.load.atlas(key, `images/${folder}${filenameRoot}.png`, `images/${folder}/${filenameRoot}.json`)
+		this.load.atlas(key, `images/${folder}${filenameRoot}.png`, `images/${folder}/${filenameRoot}.json`);
 	}
 
 	loadSpritesheet(key: string, folder: string, size: integer, filename?: string) {

@@ -604,6 +604,8 @@ export enum Moves {
   FUSION_BOLT
 };
 
+type MoveAttrFunc = (scene: BattleScene, user: Pokemon, target: Pokemon, move: Move) => void;
+
 export abstract class MoveAttr {
   apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return true;
@@ -614,22 +616,39 @@ class HighCritAttr extends MoveAttr {
 
 }
 
-class MultiHitAttr extends MoveAttr {
-  constructor() {
+enum MultiHitType {
+  _2,
+  _2_TO_5,
+  _3_INCR
+}
+
+export class MultiHitAttr extends MoveAttr {
+  private multiHitType: MultiHitType;
+
+  constructor(multiHitType?: MultiHitType) {
     super();
+
+    this.multiHitType = multiHitType !== undefined ? multiHitType : MultiHitType._2_TO_5;
   }
 
   apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const rand = Utils.randInt(16);
     let hitTimes: integer;
-    if (rand >= 10)
-      hitTimes = 2;
-    else if (rand >= 4)
-      hitTimes = 3;
-    else if (rand >= 2)
-      hitTimes = 4;
-    else
-      hitTimes = 5;
+    switch (this.multiHitType) {
+      case MultiHitType._2_TO_5:
+        const rand = Utils.randInt(16);
+        if (rand >= 10)
+          hitTimes = 2;
+        else if (rand >= 4)
+          hitTimes = 3;
+        else if (rand >= 2)
+          hitTimes = 4;
+        else
+          hitTimes = 5;
+        break;
+      case MultiHitType._2:
+        hitTimes = 2;
+        break;
+    }
     (args[0] as Utils.IntegerHolder).value = hitTimes;
     return true;
   }
@@ -684,6 +703,21 @@ class FlinchAttr extends MoveAttr {
   }
 }
 
+class MissEffectAttr extends MoveAttr {
+  private missEffectFunc: MoveAttrFunc;
+
+  constructor(missEffectFunc: MoveAttrFunc) {
+    super();
+
+    this.missEffectFunc = missEffectFunc;
+  }
+
+  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    this.missEffectFunc(scene, user, target, move);
+    return true;
+  }
+}
+
 export function applyMoveAttrs(attrType: { new(...args: any[]): MoveAttr }, scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, ...args: any[]): void {
   const moveAttrs = move.attrs.filter(a => a instanceof attrType);
   for (let attr of moveAttrs) {
@@ -715,15 +749,15 @@ export const allMoves = [
   new Move(Moves.SLAM, "Slam", Type.NORMAL, MoveCategory.PHYSICAL, 80, 75, 20, -1, "", -1, 1),
   new Move(Moves.VINE_WHIP, "Vine Whip", Type.GRASS, MoveCategory.PHYSICAL, 45, 100, 25, -1, "", -1, 1),
   new Move(Moves.STOMP, "Stomp", Type.NORMAL, MoveCategory.PHYSICAL, 65, 100, 20, -1, "May cause flinching.", 30, 1),
-  new Move(Moves.DOUBLE_KICK, "Double Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 30, 100, 30, -1, "Hits twice in one turn.", -1, 1),
+  new Move(Moves.DOUBLE_KICK, "Double Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 30, 100, 30, -1, "Hits twice in one turn.", -1, 1, new MultiHitAttr(MultiHitType._2)),
   new Move(Moves.MEGA_KICK, "Mega Kick", Type.NORMAL, MoveCategory.PHYSICAL, 120, 75, 5, -1, "", -1, 1),
   new Move(Moves.JUMP_KICK, "Jump Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, -1, "If it misses, the user loses half their HP.", -1, 1),
   new Move(Moves.ROLLING_KICK, "Rolling Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 85, 15, -1, "May cause flinching.", 30, 1),
   new Move(Moves.SAND_ATTACK, "Sand Attack", Type.GROUND, MoveCategory.STATUS, -1, 100, 15, -1, "Lowers opponent's Accuracy.", -1, 1),
   new Move(Moves.HEADBUTT, "Headbutt", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 15, -1, "May cause flinching.", 30, 1),
   new Move(Moves.HORN_ATTACK, "Horn Attack", Type.NORMAL, MoveCategory.PHYSICAL, 65, 100, 25, -1, "", -1, 1),
-  new Move(Moves.FURY_ATTACK, "Fury Attack", Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, "Hits 2-5 times in one turn.", -1, 1),
-  new Move(Moves.HORN_DRILL, "Horn Drill", Type.NORMAL, MoveCategory.PHYSICAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 1),
+  new Move(Moves.FURY_ATTACK, "Fury Attack", Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, "Hits 2-5 times in one turn.", -1, 1, new MultiHitAttr()),
+  new Move(Moves.HORN_DRILL, "Horn Drill", Type.NORMAL, MoveCategory.PHYSICAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 1, new OneHitKOAttr()),
   new Move(Moves.TACKLE, "Tackle", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, "", -1, 1),
   new Move(Moves.BODY_SLAM, "Body Slam", Type.NORMAL, MoveCategory.PHYSICAL, 85, 100, 15, 66, "May paralyze opponent.", 30, 1),
   new Move(Moves.WRAP, "Wrap", Type.NORMAL, MoveCategory.PHYSICAL, 15, 90, 20, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 1),
@@ -732,8 +766,8 @@ export const allMoves = [
   new Move(Moves.DOUBLE_EDGE, "Double-Edge", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, "User receives recoil damage.", -1, 1),
   new Move(Moves.TAIL_WHIP, "Tail Whip", Type.NORMAL, MoveCategory.STATUS, -1, 100, 30, -1, "Lowers opponent's Defense.", -1, 1),
   new Move(Moves.POISON_STING, "Poison Sting", Type.POISON, MoveCategory.PHYSICAL, 15, 100, 35, -1, "May poison the opponent.", 30, 1),
-  new Move(Moves.TWINEEDLE, "Twineedle", Type.BUG, MoveCategory.PHYSICAL, 25, 100, 20, -1, "Hits twice in one turn. May poison opponent.", 20, 1),
-  new Move(Moves.PIN_MISSILE, "Pin Missile", Type.BUG, MoveCategory.PHYSICAL, 25, 95, 20, -1, "Hits 2-5 times in one turn.", -1, 1),
+  new Move(Moves.TWINEEDLE, "Twineedle", Type.BUG, MoveCategory.PHYSICAL, 25, 100, 20, -1, "Hits twice in one turn. May poison opponent.", 20, 1, new MultiHitAttr(MultiHitType._2)),
+  new Move(Moves.PIN_MISSILE, "Pin Missile", Type.BUG, MoveCategory.PHYSICAL, 25, 95, 20, -1, "Hits 2-5 times in one turn.", -1, 1,new MultiHitAttr()),
   new Move(Moves.LEER, "Leer", Type.NORMAL, MoveCategory.STATUS, -1, 100, 30, -1, "Lowers opponent's Defense.", 100, 1),
   new Move(Moves.BITE, "Bite", Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, -1, "May cause flinching.", 30, 1),
   new Move(Moves.GROWL, "Growl", Type.NORMAL, MoveCategory.STATUS, -1, 100, 40, -1, "Lowers opponent's Attack.", -1, 1),
@@ -822,7 +856,7 @@ export const allMoves = [
   new Move(Moves.CLAMP, "Clamp", Type.WATER, MoveCategory.PHYSICAL, 35, 85, 15, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 1),
   new Move(Moves.SWIFT, "Swift", Type.NORMAL, MoveCategory.SPECIAL, 60, 999, 20, 32, "Ignores Accuracy and Evasiveness.", -1, 1),
   new Move(Moves.SKULL_BASH, "Skull Bash", Type.NORMAL, MoveCategory.PHYSICAL, 130, 100, 10, -1, "Raises Defense on first turn, attacks on second.", 100, 1),
-  new Move(Moves.SPIKE_CANNON, "Spike Cannon", Type.NORMAL, MoveCategory.PHYSICAL, 20, 100, 15, -1, "Hits 2-5 times in one turn.", -1, 1),
+  new Move(Moves.SPIKE_CANNON, "Spike Cannon", Type.NORMAL, MoveCategory.PHYSICAL, 20, 100, 15, -1, "Hits 2-5 times in one turn.", -1, 1, new MultiHitAttr()),
   new Move(Moves.CONSTRICT, "Constrict", Type.NORMAL, MoveCategory.PHYSICAL, 10, 100, 35, -1, "May lower opponent's Speed by one stage.", 10, 1),
   new Move(Moves.AMNESIA, "Amnesia", Type.PSYCHIC, MoveCategory.STATUS, -1, -1, 20, 128, "Sharply raises user's Special Defense.", -1, 1),
   new Move(Moves.KINESIS, "Kinesis", Type.PSYCHIC, MoveCategory.STATUS, -1, 80, 15, -1, "Lowers opponent's Accuracy.", -1, 1),
@@ -831,7 +865,7 @@ export const allMoves = [
   new Move(Moves.GLARE, "Glare", Type.NORMAL, MoveCategory.STATUS, -1, 100, 30, -1, "Paralyzes opponent.", -1, 1),
   new Move(Moves.DREAM_EATER, "Dream Eater", Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 15, -1, "User recovers half the HP inflicted on a sleeping opponent.", -1, 1),
   new Move(Moves.POISON_GAS, "Poison Gas", Type.POISON, MoveCategory.STATUS, -1, 90, 40, -1, "Poisons opponent.", -1, 1),
-  new Move(Moves.BARRAGE, "Barrage", Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, "Hits 2-5 times in one turn.", -1, 1),
+  new Move(Moves.BARRAGE, "Barrage", Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, "Hits 2-5 times in one turn.", -1, 1, new MultiHitAttr()),
   new Move(Moves.LEECH_LIFE, "Leech Life", Type.BUG, MoveCategory.PHYSICAL, 80, 100, 10, 95, "User recovers half the HP inflicted on opponent.", -1, 1),
   new Move(Moves.LOVELY_KISS, "Lovely Kiss", Type.NORMAL, MoveCategory.STATUS, -1, 75, 10, -1, "Puts opponent to sleep.", -1, 1),
   new Move(Moves.SKY_ATTACK, "Sky Attack", Type.FLYING, MoveCategory.PHYSICAL, 140, 90, 5, -1, "Charges on first turn, attacks on second. May cause flinching. High critical hit ratio.", 30, 1),
@@ -845,8 +879,8 @@ export const allMoves = [
   new Move(Moves.ACID_ARMOR, "Acid Armor", Type.POISON, MoveCategory.STATUS, -1, -1, 20, -1, "Sharply raises user's Defense.", -1, 1),
   new Move(Moves.CRABHAMMER, "Crabhammer", Type.WATER, MoveCategory.PHYSICAL, 100, 90, 10, -1, "High critical hit ratio.", -1, 1),
   new Move(Moves.EXPLOSION, "Explosion", Type.NORMAL, MoveCategory.PHYSICAL, 250, 100, 5, -1, "User faints.", -1, 1),
-  new Move(Moves.FURY_SWIPES, "Fury Swipes", Type.NORMAL, MoveCategory.PHYSICAL, 18, 80, 15, -1, "Hits 2-5 times in one turn.", -1, 1),
-  new Move(Moves.BONEMERANG, "Bonemerang", Type.GROUND, MoveCategory.PHYSICAL, 50, 90, 10, -1, "Hits twice in one turn.", -1, 1),
+  new Move(Moves.FURY_SWIPES, "Fury Swipes", Type.NORMAL, MoveCategory.PHYSICAL, 18, 80, 15, -1, "Hits 2-5 times in one turn.", -1, 1, new MultiHitAttr()),
+  new Move(Moves.BONEMERANG, "Bonemerang", Type.GROUND, MoveCategory.PHYSICAL, 50, 90, 10, -1, "Hits twice in one turn.", -1, 1, new MultiHitAttr(MultiHitType._2)),
   new Move(Moves.REST, "Rest", Type.PSYCHIC, MoveCategory.STATUS, -1, -1, 5, 85, "User sleeps for 2 turns, but user is fully healed.", -1, 1),
   new Move(Moves.ROCK_SLIDE, "Rock Slide", Type.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 86, "May cause flinching.", 30, 1),
   new Move(Moves.HYPER_FANG, "Hyper Fang", Type.NORMAL, MoveCategory.PHYSICAL, 80, 90, 15, -1, "May cause flinching.", 10, 1),
@@ -858,7 +892,8 @@ export const allMoves = [
   new Move(Moves.SUBSTITUTE, "Substitute", Type.NORMAL, MoveCategory.STATUS, -1, -1, 10, 103, "Uses HP to creates a decoy that takes hits.", -1, 1),
   new Move(Moves.STRUGGLE, "Struggle", Type.NORMAL, MoveCategory.PHYSICAL, 50, -1, -1, -1, "Only usable when all PP are gone. Hurts the user.", -1, 1),
   new Move(Moves.SKETCH, "Sketch", Type.NORMAL, MoveCategory.STATUS, -1, -1, 1, -1, "Permanently copies the opponent's last move.", -1, 2),
-  new Move(Moves.TRIPLE_KICK, "Triple Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, "Hits thrice in one turn at increasing power.", -1, 2),
+  new Move(Moves.TRIPLE_KICK, "Triple Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, "Hits thrice in one turn at increasing power.", -1, 2,
+    new MultiHitAttr(MultiHitType._3_INCR), new MissEffectAttr((scene: BattleScene, user: Pokemon, target: Pokemon, move: Move) => user.turnData.hitsLeft = 0)),
   new Move(Moves.THIEF, "Thief", Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, 18, "Also steals opponent's held item.", -1, 2),
   new Move(Moves.SPIDER_WEB, "Spider Web", Type.BUG, MoveCategory.STATUS, -1, -1, 10, -1, "Opponent cannot escape/switch.", -1, 2),
   new Move(Moves.MIND_READER, "Mind Reader", Type.NORMAL, MoveCategory.STATUS, -1, -1, 5, -1, "User's next attack is guaranteed to hit.", -1, 2),
@@ -889,7 +924,7 @@ export const allMoves = [
   new Move(Moves.PERISH_SONG, "Perish Song", Type.NORMAL, MoveCategory.STATUS, -1, -1, 5, -1, "Any Pokémon in play when this attack is used faints in 3 turns.", -1, 2),
   new Move(Moves.ICY_WIND, "Icy Wind", Type.ICE, MoveCategory.SPECIAL, 55, 95, 15, 34, "Lowers opponent's Speed.", 100, 2),
   new Move(Moves.DETECT, "Detect", Type.FIGHTING, MoveCategory.STATUS, -1, -1, 5, -1, "Protects the user, but may fail if used consecutively.", -1, 2),
-  new Move(Moves.BONE_RUSH, "Bone Rush", Type.GROUND, MoveCategory.PHYSICAL, 25, 90, 10, -1, "Hits 2-5 times in one turn.", -1, 2),
+  new Move(Moves.BONE_RUSH, "Bone Rush", Type.GROUND, MoveCategory.PHYSICAL, 25, 90, 10, -1, "Hits 2-5 times in one turn.", -1, 2, new MultiHitAttr()),
   new Move(Moves.LOCK_ON, "Lock-On", Type.NORMAL, MoveCategory.STATUS, -1, -1, 5, -1, "User's next attack is guaranteed to hit.", -1, 2),
   new Move(Moves.OUTRAGE, "Outrage", Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 10, 156, "User attacks for 2-3 turns but then becomes confused.", -1, 2),
   new Move(Moves.SANDSTORM, "Sandstorm", Type.ROCK, MoveCategory.STATUS, -1, -1, 10, 51, "Creates a sandstorm for 5 turns.", -1, 2),
@@ -983,7 +1018,7 @@ export const allMoves = [
   new Move(Moves.SNATCH, "Snatch", Type.DARK, MoveCategory.STATUS, -1, -1, 10, -1, "Steals the effects of the opponent's next move.", -1, 3),
   new Move(Moves.SECRET_POWER, "Secret Power", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, "Effects of the attack vary with the location.", 30, 3),
   new Move(Moves.DIVE, "Dive", Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, "Dives underwater on first turn, attacks on second turn.", -1, 3),
-  new Move(Moves.ARM_THRUST, "Arm Thrust", Type.FIGHTING, MoveCategory.PHYSICAL, 15, 100, 20, -1, "Hits 2-5 times in one turn.", -1, 3),
+  new Move(Moves.ARM_THRUST, "Arm Thrust", Type.FIGHTING, MoveCategory.PHYSICAL, 15, 100, 20, -1, "Hits 2-5 times in one turn.", -1, 3, new MultiHitAttr()),
   new Move(Moves.CAMOUFLAGE, "Camouflage", Type.NORMAL, MoveCategory.STATUS, -1, -1, 20, -1, "Changes user's type according to the location.", -1, 3),
   new Move(Moves.TAIL_GLOW, "Tail Glow", Type.BUG, MoveCategory.STATUS, -1, -1, 20, -1, "Drastically raises user's Special Attack.", -1, 3),
   new Move(Moves.LUSTER_PURGE, "Luster Purge", Type.PSYCHIC, MoveCategory.SPECIAL, 70, 100, 5, -1, "May lower opponent's Special Defense.", 50, 3),
@@ -1022,9 +1057,9 @@ export const allMoves = [
   new Move(Moves.SAND_TOMB, "Sand Tomb", Type.GROUND, MoveCategory.PHYSICAL, 35, 85, 15, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 3),
   new Move(Moves.SHEER_COLD, "Sheer Cold", Type.ICE, MoveCategory.SPECIAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 3),
   new Move(Moves.MUDDY_WATER, "Muddy Water", Type.WATER, MoveCategory.SPECIAL, 90, 85, 10, -1, "May lower opponent's Accuracy.", 30, 3),
-  new Move(Moves.BULLET_SEED, "Bullet Seed", Type.GRASS, MoveCategory.PHYSICAL, 25, 100, 30, 56, "Hits 2-5 times in one turn.", -1, 3),
+  new Move(Moves.BULLET_SEED, "Bullet Seed", Type.GRASS, MoveCategory.PHYSICAL, 25, 100, 30, 56, "Hits 2-5 times in one turn.", -1, 3, new MultiHitAttr()),
   new Move(Moves.AERIAL_ACE, "Aerial Ace", Type.FLYING, MoveCategory.PHYSICAL, 60, 999, 20, 27, "Ignores Accuracy and Evasiveness.", -1, 3),
-  new Move(Moves.ICICLE_SPEAR, "Icicle Spear", Type.ICE, MoveCategory.PHYSICAL, 25, 100, 30, -1, "Hits 2-5 times in one turn.", -1, 3),
+  new Move(Moves.ICICLE_SPEAR, "Icicle Spear", Type.ICE, MoveCategory.PHYSICAL, 25, 100, 30, -1, "Hits 2-5 times in one turn.", -1, 3, new MultiHitAttr()),
   new Move(Moves.IRON_DEFENSE, "Iron Defense", Type.STEEL, MoveCategory.STATUS, -1, -1, 15, 104, "Sharply raises user's Defense.", -1, 3),
   new Move(Moves.BLOCK, "Block", Type.NORMAL, MoveCategory.STATUS, -1, -1, 5, -1, "Opponent cannot flee or switch.", -1, 3),
   new Move(Moves.HOWL, "Howl", Type.NORMAL, MoveCategory.STATUS, -1, -1, 40, -1, "Raises Attack of allies.", -1, 3),
@@ -1041,7 +1076,7 @@ export const allMoves = [
   new Move(Moves.CALM_MIND, "Calm Mind", Type.PSYCHIC, MoveCategory.STATUS, -1, -1, 20, 129, "Raises user's Special Attack and Special Defense.", -1, 3),
   new Move(Moves.LEAF_BLADE, "Leaf Blade", Type.GRASS, MoveCategory.PHYSICAL, 90, 100, 15, -1, "High critical hit ratio.", -1, 3),
   new Move(Moves.DRAGON_DANCE, "Dragon Dance", Type.DRAGON, MoveCategory.STATUS, -1, -1, 20, 100, "Raises user's Attack and Speed.", -1, 3),
-  new Move(Moves.ROCK_BLAST, "Rock Blast", Type.ROCK, MoveCategory.PHYSICAL, 25, 90, 10, 76, "Hits 2-5 times in one turn.", -1, 3),
+  new Move(Moves.ROCK_BLAST, "Rock Blast", Type.ROCK, MoveCategory.PHYSICAL, 25, 90, 10, 76, "Hits 2-5 times in one turn.", -1, 3, new MultiHitAttr()),
   new Move(Moves.SHOCK_WAVE, "Shock Wave", Type.ELECTRIC, MoveCategory.SPECIAL, 60, 999, 20, -1, "Ignores Accuracy and Evasiveness.", -1, 3),
   new Move(Moves.WATER_PULSE, "Water Pulse", Type.WATER, MoveCategory.SPECIAL, 60, 100, 20, 11, "May confuse opponent.", 20, 3),
   new Move(Moves.DOOM_DESIRE, "Doom Desire", Type.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, "Damage occurs 2 turns later.", -1, 3),
@@ -1149,7 +1184,7 @@ export const allMoves = [
   new Move(Moves.DEFEND_ORDER, "Defend Order", Type.BUG, MoveCategory.STATUS, -1, -1, 10, -1, "Raises user's Defense and Special Defense.", -1, 4),
   new Move(Moves.HEAL_ORDER, "Heal Order", Type.BUG, MoveCategory.STATUS, -1, -1, 10, -1, "User recovers half its max HP.", -1, 4),
   new Move(Moves.HEAD_SMASH, "Head Smash", Type.ROCK, MoveCategory.PHYSICAL, 150, 80, 5, -1, "User receives recoil damage.", -1, 4),
-  new Move(Moves.DOUBLE_HIT, "Double Hit", Type.NORMAL, MoveCategory.PHYSICAL, 35, 90, 10, -1, "Hits twice in one turn.", -1, 4),
+  new Move(Moves.DOUBLE_HIT, "Double Hit", Type.NORMAL, MoveCategory.PHYSICAL, 35, 90, 10, -1, "Hits twice in one turn.", -1, 4, new MultiHitAttr(MultiHitType._2)),
   new Move(Moves.ROAR_OF_TIME, "Roar of Time", Type.DRAGON, MoveCategory.SPECIAL, 150, 90, 5, -1, "User must recharge next turn.", -1, 4),
   new Move(Moves.SPACIAL_REND, "Spacial Rend", Type.DRAGON, MoveCategory.SPECIAL, 100, 95, 5, -1, "High critical hit ratio.", -1, 4),
   new Move(Moves.LUNAR_DANCE, "Lunar Dance", Type.PSYCHIC, MoveCategory.STATUS, -1, -1, 10, -1, "The user faints but the next Pokémon released is fully healed.", -1, 4),
@@ -1221,7 +1256,7 @@ export const allMoves = [
   new Move(Moves.ELECTROWEB, "Electroweb", Type.ELECTRIC, MoveCategory.SPECIAL, 55, 95, 15, -1, "Lowers opponent's Speed.", 100, 5),
   new Move(Moves.WILD_CHARGE, "Wild Charge", Type.ELECTRIC, MoveCategory.PHYSICAL, 90, 100, 15, 147, "User receives recoil damage.", -1, 5),
   new Move(Moves.DRILL_RUN, "Drill Run", Type.GROUND, MoveCategory.PHYSICAL, 80, 95, 10, 106, "High critical hit ratio.", -1, 5),
-  new Move(Moves.DUAL_CHOP, "Dual Chop", Type.DRAGON, MoveCategory.PHYSICAL, 40, 90, 15, -1, "Hits twice in one turn.", -1, 5),
+  new Move(Moves.DUAL_CHOP, "Dual Chop", Type.DRAGON, MoveCategory.PHYSICAL, 40, 90, 15, -1, "Hits twice in one turn.", -1, 5, new MultiHitAttr(MultiHitType._2)),
   new Move(Moves.HEART_STAMP, "Heart Stamp", Type.PSYCHIC, MoveCategory.PHYSICAL, 60, 100, 25, -1, "May cause flinching.", 30, 5),
   new Move(Moves.HORN_LEECH, "Horn Leech", Type.GRASS, MoveCategory.PHYSICAL, 75, 100, 10, -1, "User recovers half the HP inflicted on opponent.", -1, 5),
   new Move(Moves.SACRED_SWORD, "Sacred Sword", Type.FIGHTING, MoveCategory.PHYSICAL, 90, 100, 15, -1, "Ignores opponent's stat changes.", -1, 5),
@@ -1232,10 +1267,10 @@ export const allMoves = [
   new Move(Moves.COTTON_GUARD, "Cotton Guard", Type.GRASS, MoveCategory.STATUS, -1, -1, 10, -1, "Drastically raises user's Defense.", -1, 5),
   new Move(Moves.NIGHT_DAZE, "Night Daze", Type.DARK, MoveCategory.SPECIAL, 85, 95, 10, -1, "May lower opponent's Accuracy.", 40, 5),
   new Move(Moves.PSYSTRIKE, "Psystrike", Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 10, -1, "Inflicts damage based on the target's Defense, not Special Defense.", -1, 5),
-  new Move(Moves.TAIL_SLAP, "Tail Slap", Type.NORMAL, MoveCategory.PHYSICAL, 25, 85, 10, -1, "Hits 2-5 times in one turn.", -1, 5),
+  new Move(Moves.TAIL_SLAP, "Tail Slap", Type.NORMAL, MoveCategory.PHYSICAL, 25, 85, 10, -1, "Hits 2-5 times in one turn.", -1, 5, new MultiHitAttr()),
   new Move(Moves.HURRICANE, "Hurricane", Type.FLYING, MoveCategory.SPECIAL, 110, 70, 10, 160, "May confuse opponent.", 30, 5),
   new Move(Moves.HEAD_CHARGE, "Head Charge", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, "User receives recoil damage.", -1, 5),
-  new Move(Moves.GEAR_GRIND, "Gear Grind", Type.STEEL, MoveCategory.PHYSICAL, 50, 85, 15, -1, "Hits twice in one turn.", -1, 5),
+  new Move(Moves.GEAR_GRIND, "Gear Grind", Type.STEEL, MoveCategory.PHYSICAL, 50, 85, 15, -1, "Hits twice in one turn.", -1, 5, new MultiHitAttr(MultiHitType._2)),
   new Move(Moves.SEARING_SHOT, "Searing Shot", Type.FIRE, MoveCategory.SPECIAL, 100, 100, 5, -1, "May burn opponent.", 30, 5),
   new Move(Moves.TECHNO_BLAST, "Techno Blast", Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, "Type depends on the Drive being held.", -1, 5),
   new Move(Moves.RELIC_SONG, "Relic Song", Type.NORMAL, MoveCategory.SPECIAL, 75, 100, 10, -1, "May put the target to sleep.", 10, 5),
