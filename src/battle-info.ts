@@ -101,7 +101,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
   }
 
-  updateInfo(pokemon: Pokemon): Promise<void> {
+  updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
     return new Promise(resolve => {
       if (!this.scene) {
         resolve();
@@ -109,7 +109,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       }
 
       const updatePokemonHp = () => {
-        const duration = Utils.clampInt(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000);
+        const duration = !instant ? Utils.clampInt(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000) : 0;
         this.scene.tweens.add({
           targets: this.hpBar,
           ease: 'Sine.easeOut',
@@ -154,13 +154,13 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     });
   }
 
-  updatePokemonExp(battler: Pokemon): Promise<void> {
+  updatePokemonExp(battler: Pokemon, instant?: boolean): Promise<void> {
     return new Promise(resolve => {
       const levelUp = this.lastLevel < battler.level;
       const relLevelExp = getLevelRelExp(this.lastLevel + 1, battler.species.growthRate);
       const levelExp = levelUp ? relLevelExp : battler.levelExp;
       let ratio = levelExp / relLevelExp;
-      let duration = this.visible ? ((levelExp - this.lastLevelExp) / relLevelExp) * 1650 : 0;
+      let duration = this.visible && !instant ? ((levelExp - this.lastLevelExp) / relLevelExp) * 1650 : 0;
       if (duration)
         this.scene.sound.play('exp');
       this.scene.tweens.add({
@@ -191,7 +191,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
             this.setLevel(this.lastLevel);
             this.scene.time.delayedCall(500, () => {
               this.expBar.setScale(0, 1);
-              this.updateInfo(battler).then(() => resolve());
+              this.updateInfo(battler, instant).then(() => resolve());
             });
             return;
           } else {

@@ -36,7 +36,11 @@ export class SpeciesEvolutionCondition {
   }
 }
 
-export const pokemonEvolutions = {
+interface PokemonEvolutions {
+  [key: string]: SpeciesEvolution[]
+}
+
+export const pokemonEvolutions: PokemonEvolutions = {
   [Species.BULBASAUR]: [
     new SpeciesEvolution(Species.IVYSAUR, 16, null, null)
   ],

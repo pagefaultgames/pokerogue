@@ -4,7 +4,7 @@ import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './battle-info';
 import { MessagePhase } from './battle-phase';
 import { default as Move, allMoves, MoveCategory, Moves } from './move';
 import { pokemonLevelMoves } from './pokemon-level-moves';
-import { default as PokemonSpecies } from './pokemon-species';
+import { default as PokemonSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
 import { getTypeDamageMultiplier } from './type';
 import { getLevelTotalExp } from './exp';
@@ -15,6 +15,7 @@ import { Gender } from './gender';
 import { initAnim, loadMoveAnimAssets } from './battle-anims';
 import { StatusEffect } from './status-effect';
 import { tmSpecies } from './tms';
+import { pokemonEvolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './pokemon-evolutions';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -241,13 +242,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getAt(2) as Phaser.GameObjects.Sprite;
   }
 
-  playAnim() {
+  playAnim(): void{
     this.getSprite().play(this.getBattleSpriteKey());
     this.getTintSprite().play(this.getBattleSpriteKey());
     this.getZoomSprite().play(this.getBattleSpriteKey());
   }
 
-  calculateStats() {
+  calculateStats(): void {
     if (!this.stats)
       this.stats = [ 0, 0, 0, 0, 0, 0 ];
     const baseStats = this.species.baseStats.slice(0);
@@ -273,15 +274,42 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  getMaxHp() {
+  getMaxHp(): integer {
     return this.stats[Stat.HP];
   }
 
-  getHpRatio() {
+  getHpRatio(): number {
     return Math.floor((this.hp / this.getMaxHp()) * 100) / 100;
   }
 
-  generateAndPopulateMoveset() {
+  getEvolution(): SpeciesEvolution {
+    if (!pokemonEvolutions.hasOwnProperty(this.species.speciesId))
+      return null;
+
+    const evolutions = pokemonEvolutions[this.species.speciesId];
+    for (let e of evolutions) {
+      if (this.level >= e.level) {
+        // TODO: Remove string conditions
+        if (e.condition === null || typeof e.condition === 'string' || (e.condition as SpeciesEvolutionCondition).predicate(this))
+          return e;
+      }
+    }
+
+    return null;
+  }
+
+  evolve(evolution: SpeciesEvolution): Promise<void> {
+    return new Promise(resolve => {
+      console.log(evolution?.speciesId)
+      this.species = getPokemonSpecies(evolution.speciesId);
+      this.loadAssets().then(() => {
+        this.calculateStats();
+        this.updateInfo().then(() => resolve());
+      });
+    });
+  }
+
+  generateAndPopulateMoveset(): void {
     this.moveset = [];
     const movePool = [];
     const allLevelMoves = pokemonLevelMoves[this.species.speciesId];
@@ -352,8 +380,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  updateInfo(): Promise<void> {
-    return this.battleInfo.updateInfo(this);
+  updateInfo(instant?: boolean): Promise<void> {
+    return this.battleInfo.updateInfo(this, instant);
   }
 
   addExp(exp: integer) {
@@ -669,10 +697,9 @@ export class EnemyPokemon extends Pokemon {
             const scoreB = moveScores[movePool.indexOf(b)];
             return scoreA < scoreB ? 1 : scoreA > scoreB ? -1 : 0;
           });
-          let randInt: integer;
           let r = 0;
           if (this.aiType === AiType.SMART_RANDOM) {
-            while (r < sortedMovePool.length - 1 && (randInt = Utils.randInt(8)) >= 5)
+            while (r < sortedMovePool.length - 1 && Utils.randInt(8) >= 5)
               r++;
           }
           console.log(movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));

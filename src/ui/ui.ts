@@ -10,6 +10,7 @@ import ModifierSelectUiHandler from './modifier-select-ui-handler';
 import BallUiHandler from './ball-ui-handler';
 import SummaryUiHandler from './summary-ui-handler';
 import StarterSelectUiHandler from './starter-select-ui-handler';
+import EvolutionUiHandler from './evolution-ui-handler';
 
 export enum Mode {
   MESSAGE = 0,
@@ -20,7 +21,7 @@ export enum Mode {
   MODIFIER_SELECT,
   PARTY,
   SUMMARY,
-  STARTER_SELECT,
+  STARTER_SELECT
 };
 
 const transitionModes = [

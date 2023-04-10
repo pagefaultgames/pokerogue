@@ -1,17 +1,16 @@
 import Phaser from 'phaser';
 import { Biome, BiomeArena } from './biome';
 import UI from './ui/ui';
-import { BattlePhase, EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase } from './battle-phase';
+import { BattlePhase, EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase, EvolutionPhase } from './battle-phase';
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonBaseStatBoosterModifierType, PokemonBaseStatModifier } from './modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier } from './modifier';
 import { PokeballType } from './pokeball';
 import { Species } from './species';
 import { initAutoPlay } from './auto-play';
 import { Battle } from './battle';
 import { populateAnims } from './battle-anims';
-import { Stat } from './pokemon-stat';
 
 const enableAuto = true;
 
@@ -164,6 +163,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage(`pkmn__back__sub`, 'pokemon/back', 'sub.png');
 		this.loadImage(`pkmn__sub`, 'pokemon', 'sub.png');
 		this.loadAtlas('shiny', 'effects');
+		this.loadImage('evo_sparkle', 'effects');
+		this.load.video('evo_bg', 'images/effects/evo_bg.mp4', null, false, true);
 
 		this.loadAtlas('pb', '');
 		this.loadAtlas('items', '');
@@ -197,6 +198,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('pb_lock');
 
 		this.loadBgm('level_up_fanfare');
+		this.loadBgm('evolution');
+		this.loadBgm('evolution_fanfare');
 
 		//this.load.glsl('sprite', 'shaders/sprite.frag');
 
@@ -254,7 +257,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		for (let s = 0; s < 3; s++) {
 			const playerSpecies = getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP); //this.randomSpecies();
-			const playerPokemon = new PlayerPokemon(this, playerSpecies, 5);
+			const playerPokemon = new PlayerPokemon(this, playerSpecies, 16);
 			playerPokemon.setVisible(false);
 			loadPokemonAssets.push(playerPokemon.loadAssets());
 
@@ -302,10 +305,6 @@ export default class BattleScene extends Phaser.Scene {
 		this.plusKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.PLUS);
 		this.minusKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.MINUS);
 
-		for (let a = 0; a < 3; a++) {
-			this.addModifier(new PokemonBaseStatModifier(new PokemonBaseStatBoosterModifierType('HP-UP', Stat.HP), this.getParty()[0].id, Stat.HP));
-		}
-
 		Promise.all(loadPokemonAssets).then(() => {
 			if (enableAuto)
 				initAutoPlay.apply(this);
@@ -346,6 +345,7 @@ export default class BattleScene extends Phaser.Scene {
 				this.unshiftPhase(new NewBiomeEncounterPhase(this));
 			}
 		} else {
+			this.pushPhase(new EvolutionPhase(this, 0, this.getPlayerPokemon().getEvolution()));
 			//this.pushPhase(new SelectStarterPhase(this));
 			this.pushPhase(new EncounterPhase(this));
 			this.pushPhase(new SummonPhase(this));
@@ -356,7 +356,7 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	newBiome(): BiomeArena {
-		const biome = this.currentBattle ? Utils.randInt(20) as Biome : Biome.PLAINS;
+		const biome = this.currentBattle ? Utils.randInt(20) as Biome : Biome.LAKE;
 		this.arena = new BiomeArena(this, biome, Biome[biome].toLowerCase());
 		return this.arena;
 	}
