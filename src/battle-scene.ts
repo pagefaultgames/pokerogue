@@ -162,7 +162,7 @@ export default class BattleScene extends Phaser.Scene {
 		// Load pokemon-related images
 		this.loadImage(`pkmn__back__sub`, 'pokemon/back', 'sub.png');
 		this.loadImage(`pkmn__sub`, 'pokemon', 'sub.png');
-		this.loadAtlas('shiny', 'effects');
+		this.loadAtlas('sparkle', 'effects');
 		this.loadImage('evo_sparkle', 'effects');
 		this.load.video('evo_bg', 'images/effects/evo_bg.mp4', null, false, true);
 
@@ -184,8 +184,11 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('flee');
 		this.loadSe('exp');
 		this.loadSe('level_up');
-		this.loadSe('shiny');
+		this.loadSe('sparkle');
 		this.loadSe('restore');
+		this.loadSe('shine');
+		this.loadSe('charge');
+		this.loadSe('beam');
 		this.loadSe('error');
 
 		this.loadSe('pb');
@@ -257,7 +260,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		for (let s = 0; s < 3; s++) {
 			const playerSpecies = getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP); //this.randomSpecies();
-			const playerPokemon = new PlayerPokemon(this, playerSpecies, 16);
+			const playerPokemon = new PlayerPokemon(this, playerSpecies, 5);
 			playerPokemon.setVisible(false);
 			loadPokemonAssets.push(playerPokemon.loadAssets());
 
@@ -345,7 +348,6 @@ export default class BattleScene extends Phaser.Scene {
 				this.unshiftPhase(new NewBiomeEncounterPhase(this));
 			}
 		} else {
-			this.pushPhase(new EvolutionPhase(this, 0, this.getPlayerPokemon().getEvolution()));
 			//this.pushPhase(new SelectStarterPhase(this));
 			this.pushPhase(new EncounterPhase(this));
 			this.pushPhase(new SummonPhase(this));
@@ -356,7 +358,7 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	newBiome(): BiomeArena {
-		const biome = this.currentBattle ? Utils.randInt(20) as Biome : Biome.LAKE;
+		const biome = this.currentBattle ? Utils.randInt(20) as Biome : Biome.PLAINS;
 		this.arena = new BiomeArena(this, biome, Biome[biome].toLowerCase());
 		return this.arena;
 	}
@@ -401,7 +403,13 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	playBgm(bgmName: string): void {
+	playBgm(bgmName?: string): void {
+		if (!bgmName && this.bgm) {
+			this.bgm.play({
+				volume: 1
+			});
+			return;
+		}
 		if (this.bgm && this.bgm.isPlaying)
 			this.bgm.stop();
 		this.bgm = this.sound.add(bgmName, { loop: true });
@@ -416,6 +424,10 @@ export default class BattleScene extends Phaser.Scene {
 	resumeBgm(): void {
 		if (this.bgm && this.bgm.isPaused)
 			this.bgm.resume();
+	}
+
+	fadeOutBgm(destroy?: boolean): void {
+		this.arena.fadeOutBgm(500, destroy);
 	}
 
 	getCurrentPhase(): BattlePhase {

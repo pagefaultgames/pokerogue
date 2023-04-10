@@ -117,12 +117,13 @@ export function initAutoPlay() {
     let nextPartyMemberIndex = -1;
 
     const originalMessageUiHandlerShowText = MessageUiHandler.prototype.showText;
-    MessageUiHandler.prototype.showText = function (text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean) {
+    MessageUiHandler.prototype.showText = function (text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
         if (thisArg.auto) {
             delay = 1;
             callbackDelay = 0;
+            promptDelay = 0;
         }
-        originalMessageUiHandlerShowText.apply(this, [ text, delay, callback, callbackDelay, prompt ]);
+        originalMessageUiHandlerShowText.apply(this, [ text, delay, callback, callbackDelay, prompt, promptDelay ]);
     };
 
     const originalMessageUiHandlerShowPrompt = MessageUiHandler.prototype.showPrompt;

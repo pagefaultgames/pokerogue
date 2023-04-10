@@ -132,8 +132,11 @@ export class BiomeArena {
     this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => this.scene.playBgm(this.bgm));
   }
 
-  fadeOutBgm(duration: integer) {
-    SoundFade.fadeOut(this.scene, this.scene.sound.get(this.bgm), duration);
+  fadeOutBgm(duration: integer, destroy?: boolean) {
+    if (destroy === undefined)
+      destroy = true;
+    const bgm = this.scene.sound.get(this.bgm);
+    SoundFade.fadeOut(this.scene, bgm, duration, destroy);
   }
 }
 

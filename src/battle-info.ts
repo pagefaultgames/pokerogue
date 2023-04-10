@@ -6,6 +6,7 @@ import { getGenderSymbol, getGenderColor } from './gender';
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private player: boolean;
+  private lastName: string;
   private lastHp: integer;
   private lastMaxHp: integer;
   private lastHpFrame: string;
@@ -75,6 +76,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
   initInfo(pokemon: Pokemon) {
     this.nameText.setText(pokemon.name);
+    this.lastName = pokemon.name;
 
     const nameSizeTest = addTextObject(this.scene, 0, 0, pokemon.name, TextStyle.BATTLE_INFO);
     const nameTextWidth = nameSizeTest.displayWidth;
@@ -106,6 +108,17 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       if (!this.scene) {
         resolve();
         return;
+      }
+
+      if (this.lastName !== pokemon.species.name) {
+        this.nameText.setText(pokemon.name);
+        this.lastName = pokemon.name;
+
+        const nameSizeTest = addTextObject(this.scene, 0, 0, pokemon.name, TextStyle.BATTLE_INFO);
+        const nameTextWidth = nameSizeTest.displayWidth;
+        nameSizeTest.destroy();
+
+        this.genderText.setPositionRelative(this.nameText, nameTextWidth, 0);
       }
 
       const updatePokemonHp = () => {
@@ -205,7 +218,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   setLevel(level: integer) {
-    this.levelNumbersContainer.removeAll();
+    this.levelNumbersContainer.removeAll(true);
     const levelStr = level.toString();
     for (let i = 0; i < levelStr.length; i++)
       this.levelNumbersContainer.add(this.scene.add.image(i * 8, 0, 'numbers', levelStr[i]));
@@ -215,7 +228,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   setHpNumbers(hp: integer, maxHp: integer) {
     if (!this.player)
       return;
-    this.hpNumbersContainer.removeAll();
+    this.hpNumbersContainer.removeAll(true);
     const hpStr = hp.toString();
     const maxHpStr = maxHp.toString();
     let offset = 0;

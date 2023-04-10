@@ -10,7 +10,7 @@ import ModifierSelectUiHandler from './modifier-select-ui-handler';
 import BallUiHandler from './ball-ui-handler';
 import SummaryUiHandler from './summary-ui-handler';
 import StarterSelectUiHandler from './starter-select-ui-handler';
-import EvolutionUiHandler from './evolution-ui-handler';
+import EvolutionSceneHandler from './evolution-scene-handler';
 
 export enum Mode {
   MESSAGE = 0,
@@ -21,13 +21,19 @@ export enum Mode {
   MODIFIER_SELECT,
   PARTY,
   SUMMARY,
-  STARTER_SELECT
+  STARTER_SELECT,
+  EVOLUTION_SCENE
 };
 
 const transitionModes = [
   Mode.PARTY,
   Mode.SUMMARY,
   Mode.STARTER_SELECT,
+  Mode.EVOLUTION_SCENE
+];
+
+const noTransitionModes = [
+  Mode.CONFIRM
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -50,7 +56,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new ModifierSelectUiHandler(scene),
       new PartyUiHandler(scene),
       new SummaryUiHandler(scene),
-      new StarterSelectUiHandler(scene)
+      new StarterSelectUiHandler(scene),
+      new EvolutionSceneHandler(scene)
     ];
   }
 
@@ -79,12 +86,12 @@ export default class UI extends Phaser.GameObjects.Container {
     this.getHandler().processInput(keyCode);
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean): void {
+  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void {
     const handler = this.getHandler();
     if (handler instanceof MessageUiHandler)
-      (handler as MessageUiHandler).showText(text, delay, callback, callbackDelay, prompt);
+      (handler as MessageUiHandler).showText(text, delay, callback, callbackDelay, prompt, promptDelay);
     else
-      this.getMessageHandler().showText(text, delay, callback, callbackDelay, prompt);
+      this.getMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
   clearText(): void {
@@ -111,20 +118,23 @@ export default class UI extends Phaser.GameObjects.Container {
     this.scene.sound.play('error');
   }
 
-  private setModeInternal(mode: Mode, clear: boolean, args: any[]): Promise<void> {
+  private setModeInternal(mode: Mode, clear: boolean, forceTransition: boolean, args: any[]): Promise<void> {
     return new Promise(resolve => {
-      if (this.mode === mode) {
+      if (this.mode === mode && !forceTransition) {
         resolve();
         return;
       }
       const doSetMode = () => {
-        if (clear)
-          this.getHandler().clear();
-        this.mode = mode;
-        this.getHandler().show(args);
+        if (this.mode !== mode) {
+          if (clear)
+            this.getHandler().clear();
+          this.mode = mode;
+          this.getHandler().show(args);
+        }
         resolve();
       };
-      if ((transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1) && !(this.scene as BattleScene).auto) {
+      if ((transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1)
+        && (noTransitionModes.indexOf(this.mode) === -1 && noTransitionModes.indexOf(mode) === -1) && !(this.scene as BattleScene).auto) {
         this.transitioning = true;
         this.overlay.setAlpha(0);
         this.overlay.setVisible(true);
@@ -153,10 +163,14 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   setMode(mode: Mode, ...args: any[]): Promise<void> {
-    return this.setModeInternal(mode, true, args);
+    return this.setModeInternal(mode, true, false, args);
+  }
+
+  setModeForceTransition(mode: Mode, ...args: any[]): Promise<void> {
+    return this.setModeInternal(mode, true, true, args);
   }
 
   setModeWithoutClear(mode: Mode, ...args: any[]): Promise<void> {
-    return this.setModeInternal(mode, false, args);
+    return this.setModeInternal(mode, false, false, args);
   }
 }

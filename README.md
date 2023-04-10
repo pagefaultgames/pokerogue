@@ -3,6 +3,9 @@
 ## To do
 
 - Title screen
+- Starter select screen
+  - UI
+  - Get starters from save data caught Pokemon
 - Moves
   - Move logic
   - Can't use when PP consumed
@@ -15,7 +18,6 @@
 - EXP logic
   - Fix algorithm (currently inaccurate)
 - Pokemon summary screen
-  - Move learning when full
   - Move remembering (no cost?)
 - Capture logic
   - Critical capture
@@ -24,10 +26,6 @@
 - Battle info
   - Owned icon
   - Status effect indicator
-- Evolution
-  - Evolution screen
-    - Background (ripped video?)
-    - Particles
 - Modifiers
   - PP Up
   - Ether/elixir

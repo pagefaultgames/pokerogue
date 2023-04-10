@@ -342,7 +342,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
     pokemon.levelExp = 0;
 
     const scene = pokemon.scene as BattleScene;
-    scene.unshiftPhase(new LevelUpPhase(scene, scene.getParty().indexOf(pokemon), pokemon.level));
+    scene.unshiftPhase(new LevelUpPhase(scene, scene.getParty().indexOf(pokemon), pokemon.level - 1, pokemon.level));
 
     return true;
   }

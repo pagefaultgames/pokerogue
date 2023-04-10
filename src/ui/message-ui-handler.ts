@@ -16,9 +16,25 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     this.pendingPrompt = false;
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean) {
+  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
     if (delay === null || delay === undefined)
       delay = 20;
+    let delayMap = new Map<integer, integer>();
+    let soundMap = new Map<integer, string>();
+    const actionPattern = /@(d|s)\{(.*?)\}/;
+    let actionMatch: RegExpExecArray;
+    while ((actionMatch = actionPattern.exec(text))) {
+      switch (actionMatch[1]) {
+        case 'd':
+          delayMap.set(actionMatch.index, parseInt(actionMatch[2]));
+          break;
+        case 's':
+          soundMap.set(actionMatch.index, actionMatch[2]);
+          break;
+      }
+      
+      text = text.slice(0, actionMatch.index) + text.slice(actionMatch.index + actionMatch[2].length + 4);
+    }
     if (this.textTimer) {
       this.textTimer.remove();
       if (this.textCallbackTimer)
@@ -26,7 +42,13 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     };
     if (prompt) {
       const originalCallback = callback;
-      callback = () => this.showPrompt(originalCallback, callbackDelay);
+      callback = () => {
+        const showPrompt = () => this.showPrompt(originalCallback, callbackDelay);
+        if (promptDelay)
+          this.scene.time.delayedCall(promptDelay, showPrompt);
+        else
+          showPrompt();
+      };
     }
     if (delay) {
       this.clearText();
@@ -35,19 +57,38 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       this.textTimer = this.scene.time.addEvent({
         delay: delay,
         callback: () => {
-          this.message.setText(text.slice(0, text.length - this.textTimer.repeatCount));
-          if (callback && !this.textTimer.repeatCount) {
-            if (callbackDelay && !prompt) {
-              this.textCallbackTimer = this.scene.time.delayedCall(callbackDelay, () => {
-                if (this.textCallbackTimer) {
-                  this.textCallbackTimer.destroy();
-                  this.textCallbackTimer = null;
-                }
+          const charIndex = text.length - this.textTimer.repeatCount;
+          const charSound = soundMap.get(charIndex);
+          const charDelay = delayMap.get(charIndex);
+          this.message.setText(text.slice(0, charIndex));
+          const advance = () => {
+            if (charSound)
+              this.scene.sound.play(charSound);
+            if (callback && !this.textTimer.repeatCount) {
+              if (callbackDelay && !prompt) {
+                this.textCallbackTimer = this.scene.time.delayedCall(callbackDelay, () => {
+                  if (this.textCallbackTimer) {
+                    this.textCallbackTimer.destroy();
+                    this.textCallbackTimer = null;
+                  }
+                  callback();
+                });
+              } else
                 callback();
-              });
-            } else
-              callback();
-          }
+            }
+          };
+          if (charDelay) {
+            this.textTimer.paused = true;
+            this.scene.tweens.addCounter({
+              duration: charDelay,
+              useFrames: true,
+              onComplete: () => {
+                this.textTimer.paused = false;
+                advance();
+              }
+            });
+          } else
+            advance();
         },
         repeat: text.length
       });

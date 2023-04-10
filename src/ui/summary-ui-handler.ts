@@ -411,6 +411,12 @@ export default class SummaryUiHandler extends UiHandler {
         extraRowText.setOrigin(0, 1);
         this.extraMoveRowContainer.add(extraRowText);
 
+        if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
+          const newMoveTypeIcon = this.scene.add.sprite(0, 0, 'types', Type[this.newMove.type].toLowerCase());
+          newMoveTypeIcon.setOrigin(0, 1);
+          this.extraMoveRowContainer.add(newMoveTypeIcon);
+        }
+
         this.moveRowsContainer = this.scene.add.container(0, 0);
         this.movesContainer.add(this.moveRowsContainer);
 
@@ -518,7 +524,24 @@ export default class SummaryUiHandler extends UiHandler {
     this.pokemon = null;
     this.cursor = -1;
     this.newMove = null;
-    this.moveSelectFunction = null;
+    if (this.moveSelect) {
+      this.moveSelect = false;
+      this.moveSelectFunction = null;
+      this.extraMoveRowContainer.setVisible(false);
+      if (this.moveCursorBlinkTimer) {
+        this.moveCursorBlinkTimer.destroy();
+        this.moveCursorBlinkTimer = null;
+      }
+      if (this.moveCursorObj) {
+        this.moveCursorObj.destroy();
+        this.moveCursorObj = null;
+      }
+      if (this.selectedMoveCursorObj) {
+        this.selectedMoveCursorObj.destroy();
+        this.selectedMoveCursorObj = null;
+      }
+      this.hideMoveEffect(true);
+    }
     this.summaryContainer.setVisible(false);
     this.summaryPageContainer.setVisible(false);
   }

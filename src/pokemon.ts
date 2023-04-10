@@ -298,15 +298,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return null;
   }
 
-  evolve(evolution: SpeciesEvolution): Promise<void> {
-    return new Promise(resolve => {
-      console.log(evolution?.speciesId)
-      this.species = getPokemonSpecies(evolution.speciesId);
-      this.loadAssets().then(() => {
-        this.calculateStats();
-        this.updateInfo().then(() => resolve());
-      });
-    });
+  getLevelMoves(startingLevel?: integer): Moves[] {
+    const ret: Moves[] = [];
+    const levelMoves = pokemonLevelMoves[this.species.speciesId];
+    if (levelMoves) {
+      if (!startingLevel)
+        startingLevel = this.level;
+      for (let lm of levelMoves) {
+        const level = lm[0];
+        if (level < startingLevel)
+          continue;
+        else if (level > this.level)
+          break;
+        ret.push(lm[1]);
+      }
+    }
+
+    return ret;
   }
 
   generateAndPopulateMoveset(): void {
@@ -593,7 +601,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   sparkle(): void {
     if (this.shinySparkle) {
       this.shinySparkle.play('sparkle');
-      this.scene.sound.play('shiny');
+      this.scene.sound.play('sparkle');
     }
   }
 }
@@ -630,6 +638,20 @@ export class PlayerPokemon extends Pokemon {
         }
       }
     }
+  }
+
+  evolve(evolution: SpeciesEvolution): Promise<void> {
+    return new Promise(resolve => {
+      this.species = getPokemonSpecies(evolution.speciesId);
+      this.name = this.species.name.toUpperCase();
+      this.species.generateIconAnim(this.scene as BattleScene);
+      this.compatibleTms.splice(0, this.compatibleTms.length);
+      this.generateCompatibleTms();
+      this.loadAssets().then(() => {
+        this.calculateStats();
+        this.updateInfo().then(() => resolve());
+      });
+    });
   }
 }
 

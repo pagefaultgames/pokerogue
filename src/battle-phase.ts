@@ -1,19 +1,18 @@
 import BattleScene from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, Moves as Move, MoveCategory, Moves } from "./move";
+import { allMoves, MoveCategory, Moves } from "./move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
 import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, getModifierTypesForWave, ModifierType, PokemonModifierType, regenerateModifierPoolThresholds } from "./modifier";
 import PartyUiHandler, { PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor as getPokeballTintColor, PokeballType } from "./pokeball";
-import { pokemonLevelMoves } from "./pokemon-level-moves";
 import { MoveAnim, initAnim, loadMoveAnimAssets } from "./battle-anims";
 import { StatusEffect } from "./status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
-import { Species } from "./species";
-import { SpeciesEvolution } from "./pokemon-evolutions";
+import EvolutionSceneHandler from "./ui/evolution-scene-handler";
+import { EvolutionPhase } from "./evolution-phase";
 
 export class BattlePhase {
   protected scene: BattleScene;
@@ -63,7 +62,8 @@ export class EncounterPhase extends BattlePhase {
       if (this.scene.getPlayerPokemon().visible)
         this.scene.field.moveBelow(enemyPokemon, this.scene.getPlayerPokemon());
       enemyPokemon.tint(0, 0.5);
-      this.doEncounter();
+
+      this.scene.ui.setMode(Mode.MESSAGE).then(() => this.doEncounter());
     });
   }
 
@@ -735,7 +735,7 @@ export class ExpPhase extends PartyMemberPokemonPhase {
       pokemon.addExp(exp.value);
       newLevel = pokemon.level;
       if (newLevel > lastLevel)
-        this.scene.unshiftPhase(new LevelUpPhase(this.scene, this.partyMemberIndex, newLevel));
+        this.scene.unshiftPhase(new LevelUpPhase(this.scene, this.partyMemberIndex, lastLevel, newLevel));
       pokemon.updateInfo().then(() => this.end());
     }, null, true);
   }
@@ -744,11 +744,13 @@ export class ExpPhase extends PartyMemberPokemonPhase {
 }
 
 export class LevelUpPhase extends PartyMemberPokemonPhase {
+  private lastLevel: integer;
   private level: integer;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, level: integer) {
+  constructor(scene: BattleScene, partyMemberIndex: integer, lastLevel: integer, level: integer) {
     super(scene, partyMemberIndex);
 
+    this.lastLevel = lastLevel;
     this.level = level;
   }
 
@@ -762,25 +764,20 @@ export class LevelUpPhase extends PartyMemberPokemonPhase {
     this.scene.pauseBgm();
     this.scene.sound.play('level_up_fanfare');
     this.scene.ui.showText(`${this.getPokemon().name} grew to\nLV. ${this.level}!`, null, () => this.scene.ui.getMessageHandler().promptLevelUpStats(prevStats, false, () => this.end()), null, true);
-    const levelMoves = pokemonLevelMoves[pokemon.species.speciesId];
-    if (levelMoves) {
-      for (let lm of levelMoves) {
-        const level = lm[0];
-        if (level < this.level)
-          continue;
-        else if (level > this.level)
-          break;
-        this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm[1]));
-      }
-    }
+    const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
+    for (let lm of levelMoves)
+      this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm));
+    const evolution = pokemon.getEvolution();
+    if (evolution)
+      this.scene.unshiftPhase(new EvolutionPhase(this.scene, this.partyMemberIndex, evolution, this.lastLevel));
     this.scene.time.delayedCall(1500, () => this.scene.resumeBgm());
   }
 }
 
 export class LearnMovePhase extends PartyMemberPokemonPhase {
-  private moveId: Move;
+  private moveId: Moves;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Move) {
+  constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves) {
     super(scene, partyMemberIndex);
 
     this.moveId = moveId;
@@ -791,7 +788,6 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
 
     const pokemon = this.getPokemon();
     const move = allMoves[this.moveId - 1];
-    console.log(move, this.moveId);
 
     const existingMoveIndex = pokemon.moveset.findIndex(m => m?.moveId === move.id);
 
@@ -804,45 +800,52 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
       ? pokemon.moveset.length
       : pokemon.moveset.findIndex(m => m === null);
 
+    const messageMode = this.scene.ui.getHandler() instanceof EvolutionSceneHandler
+      ? Mode.EVOLUTION_SCENE
+      : Mode.MESSAGE;
+
     if (emptyMoveIndex > -1) {
       pokemon.moveset[emptyMoveIndex] = new PokemonMove(this.moveId, 0, 0);
       initAnim(this.moveId).then(() => {
         loadMoveAnimAssets(this.scene, [ this.moveId ], true)
           .then(() => {
-            this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+            this.scene.ui.setMode(messageMode).then(() => {
+              this.scene.pauseBgm();
               this.scene.sound.play('level_up_fanfare');
-              this.scene.ui.showText(`${pokemon.name} learned\n${Utils.toPokemonUpperCase(move.name)}!`, null, () => this.end(), null, true);
+              this.scene.ui.showText(`${pokemon.name} learned\n${Utils.toPokemonUpperCase(move.name)}!`, null, () => this.end(), messageMode === Mode.EVOLUTION_SCENE ? 1000 : null, true);
+              this.scene.time.delayedCall(1500, () => this.scene.resumeBgm());
             });
           });
         });
     } else {
-      this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+      this.scene.ui.setMode(messageMode).then(() => {
         this.scene.ui.showText(`${pokemon.name} wants to learn the\nmove ${move.name}.`, null, () => {
           this.scene.ui.showText(`However, ${pokemon.name} already\nknows four moves.`, null, () => {
             this.scene.ui.showText(`Should a move be deleted and\nreplaced with ${move.name}?`, null, () => {
               const noHandler = () => {
-                this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+                this.scene.ui.setMode(messageMode).then(() => {
                   this.scene.ui.showText(`Stop trying to teach\n${move.name}?`, null, () => {
-                    this.scene.ui.setMode(Mode.CONFIRM, () => {
-                      this.scene.ui.setMode(Mode.MESSAGE);
+                    this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
+                      this.scene.ui.setMode(messageMode);
                       this.scene.ui.showText(`${pokemon.name} did not learn the\nmove ${move.name}.`, null, () => this.end(), null, true);
                     }, () => {
+                      this.scene.ui.setMode(messageMode);
                       this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
                       this.end();
                     });
                   });
                 });
               };
-              this.scene.ui.setMode(Mode.CONFIRM, () => {
-                this.scene.ui.setMode(Mode.MESSAGE);
+              this.scene.ui.setModeWithoutClear(Mode.CONFIRM, () => {
+                this.scene.ui.setMode(messageMode);
                 this.scene.ui.showText('Which move should be forgotten?', null, () => {
-                  this.scene.ui.setMode(Mode.SUMMARY, this.getPokemon(), SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
+                  this.scene.ui.setModeWithoutClear(Mode.SUMMARY, this.getPokemon(), SummaryUiMode.LEARN_MOVE, move, (moveIndex: integer) => {
                     if (moveIndex === 4) {
                       noHandler();
                       return;
                     }
-                    this.scene.ui.setMode(Mode.MESSAGE).then(() => {
-                      this.scene.ui.showText('1, 2, and… … … Poof!', null, () => {
+                    this.scene.ui.setMode(messageMode).then(() => {
+                      this.scene.ui.showText('@d{32}1, @d{15}2, and@d{15}… @d{15}… @d{15}… @d{15}@s{pb_bounce_1}Poof!', null, () => {
                         this.scene.ui.showText(`${pokemon.name} forgot how to\nuse ${pokemon.moveset[moveIndex].getName()}.`, null, () => {
                           this.scene.ui.showText('And…', null, () => {
                             pokemon.moveset[moveIndex] = null;
@@ -1013,277 +1016,6 @@ export class AttemptCapturePhase extends BattlePhase {
       alpha: 0,
       onComplete: () => this.pokeball.destroy()
     });
-  }
-}
-
-export class EvolutionPhase extends BattlePhase {
-  private partyMemberIndex: integer;
-  private evolution: SpeciesEvolution;
-
-  private evolutionContainer: Phaser.GameObjects.Container;
-  private evolutionBaseBg: Phaser.GameObjects.Image;
-  private evolutionBg: Phaser.GameObjects.Video;
-  private evolutionBgOverlay: Phaser.GameObjects.Rectangle;
-  private pokemonSprite: Phaser.GameObjects.Sprite;
-  private pokemonTintSprite: Phaser.GameObjects.Sprite;
-  private pokemonEvoSprite: Phaser.GameObjects.Sprite;
-  private pokemonEvoTintSprite: Phaser.GameObjects.Sprite;
-
-  constructor(scene: BattleScene, partyMemberIndex: integer, evolution: SpeciesEvolution) {
-    super(scene);
-
-    this.partyMemberIndex = partyMemberIndex;
-    this.evolution = evolution;
-  }
-
-  start() {
-    super.start();
-
-    if (!this.evolution) {
-      this.end();
-      return;
-    }
-
-    this.scene.pauseBgm();
-
-    this.evolutionContainer = this.scene.add.container(0, 0);
-    this.scene.field.add(this.evolutionContainer);
-
-    this.evolutionBaseBg = this.scene.add.image(0, 0, 'plains_bg');
-    this.evolutionBaseBg.setOrigin(0, 0);
-    this.evolutionContainer.add(this.evolutionBaseBg);
-
-    this.evolutionBg = this.scene.add.video(0, 0, 'evo_bg').stop();
-    this.evolutionBg.setOrigin(0, 0);
-    this.evolutionBg.setScale(0.4359673025);
-    this.evolutionBg.setVisible(false);
-    this.evolutionContainer.add(this.evolutionBg);
-
-    this.evolutionBgOverlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0x262626);
-    this.evolutionBgOverlay.setOrigin(0, 0);
-    this.evolutionBgOverlay.setAlpha(0);
-    this.evolutionContainer.add(this.evolutionBgOverlay);
-
-    const getPokemonSprite = () => {
-      return this.scene.add.sprite(this.evolutionBaseBg.displayWidth / 2, this.evolutionBaseBg.displayHeight / 2, `pkmn__sub`);
-    };
-
-    this.evolutionContainer.add((this.pokemonSprite = getPokemonSprite()));
-    this.evolutionContainer.add((this.pokemonTintSprite = getPokemonSprite()));
-    this.evolutionContainer.add((this.pokemonEvoSprite = getPokemonSprite()));
-    this.evolutionContainer.add((this.pokemonEvoTintSprite = getPokemonSprite()));
-
-    this.pokemonTintSprite.setAlpha(0);
-    this.pokemonTintSprite.setTintFill(0xFFFFFF);
-    this.pokemonEvoSprite.setVisible(false);
-    this.pokemonEvoTintSprite.setVisible(false);
-    this.pokemonEvoTintSprite.setTintFill(0xFFFFFF);
-
-    const pokemon = this.scene.getParty()[this.partyMemberIndex];
-
-    this.pokemonSprite.play(pokemon.getSpriteKey());
-    this.pokemonTintSprite.play(pokemon.getSpriteKey());
-    this.pokemonEvoSprite.play(pokemon.getSpriteKey());
-    this.pokemonEvoTintSprite.play(pokemon.getSpriteKey());
-
-    this.scene.ui.showText(`What?\n${pokemon.name} is evolving!`, null, () => {
-      pokemon.cry();
-
-      pokemon.evolve(this.evolution).then(() => {
-        this.pokemonEvoSprite.play(pokemon.getSpriteKey());
-        this.pokemonEvoTintSprite.play(pokemon.getSpriteKey());
-      });
-
-      this.scene.time.delayedCall(1000, () => {
-        this.scene.tweens.add({
-          targets: this.evolutionBgOverlay,
-          alpha: 1,
-          delay: 500,
-          duration: 1500,
-          ease: 'Sine.easeOut',
-          onComplete: () => {
-            this.scene.time.delayedCall(1000, () => {
-              this.scene.tweens.add({
-                targets: this.evolutionBgOverlay,
-                alpha: 0,
-                duration: 250,
-                onComplete: () => this.evolutionBgOverlay.setVisible(false)
-              });
-              this.evolutionBg.setVisible(true);
-              this.evolutionBg.play();
-            });
-            this.doSpiralUpward();
-            this.scene.tweens.addCounter({
-              from: 0,
-              to: 1,
-              duration: 2000,
-              onUpdate: t => {
-                this.pokemonTintSprite.setAlpha(t.getValue());
-              },
-              onComplete: () => {
-                this.pokemonSprite.setVisible(false);
-                this.scene.time.delayedCall(1000, () => {
-                  this.doArcDownward();
-                  this.scene.time.delayedCall(1500, () => {
-                    this.pokemonEvoTintSprite.setScale(0.25);
-                    this.pokemonEvoTintSprite.setVisible(true);
-                    this.doCycle(1).then(() => {
-                      this.scene.sound.play('shiny');
-                      this.pokemonEvoSprite.setVisible(true);
-                    });
-                  });
-                });
-              }
-            })
-          }
-        });
-        //this.scene.sound.play('evolution');
-      });
-    }, 1000);
-  }
-
-  sin(index: integer, amplitude: integer) {
-    return amplitude * Math.sin(index * (Math.PI / 128));
-  }
-
-  cos(index: integer, amplitude: integer) {
-    return amplitude * Math.cos(index * (Math.PI / 128));
-  }
-
-  doSpiralUpward() {
-    let f = 0;
-      
-    this.scene.tweens.addCounter({
-      repeat: 64,
-      duration: 1,
-      useFrames: true,
-      onRepeat: () => {
-        if (f < 64) {
-          if (!(f & 7)) {
-            for (let i = 0; i < 4; i++)
-              this.doSpiralUpwardParticle((f & 120) * 2 + i * 64);
-          }
-          f++;
-        }
-      }
-    });
-  }
-
-  doArcDownward() {
-    let f = 0;
-      
-    this.scene.tweens.addCounter({
-      repeat: 96,
-      duration: 1,
-      useFrames: true,
-      onRepeat: () => {
-        if (f < 96) {
-          if (f < 6) {
-            for (let i = 0; i < 9; i++)
-              this.doArcDownParticle(i * 16);
-          }
-          f++;
-        }
-      }
-    });
-  }
-
-  doCycle(l: number): Promise<void> {
-    return new Promise(resolve => {
-      const isLastCycle = l === 15;
-      this.scene.tweens.add({
-        targets: this.pokemonTintSprite,
-        scale: 0.25,
-        ease: 'Cubic.easeInOut',
-        duration: 500 / l,
-        yoyo: !isLastCycle
-      });
-      this.scene.tweens.add({
-        targets: this.pokemonEvoTintSprite,
-        scale: 1,
-        ease: 'Cubic.easeInOut',
-        duration: 500 / l,
-        yoyo: !isLastCycle,
-        onComplete: () => {
-          if (l < 15)
-            this.doCycle(l + 0.5).then(() => resolve());
-          else {
-            this.pokemonTintSprite.setVisible(false);
-            resolve();
-          }
-        }
-      });
-    });
-  }
-
-  doSpiralUpwardParticle(trigIndex: integer) {
-    const initialX = (this.scene.game.canvas.width / 6) / 2;
-    const particle = this.scene.add.image(initialX, 0, 'evo_sparkle');
-    this.evolutionContainer.add(particle);
-
-    let f = 0;
-    let amp = 48;
-
-    const particleTimer = this.scene.tweens.addCounter({
-      repeat: -1,
-      duration: 1,
-      useFrames: true,
-      onRepeat: () => {
-        updateParticle();
-      }
-    });
-
-    const updateParticle = () => {
-      if (!f || particle.y > 8) {
-        particle.setPosition(initialX, 88 - (f * f) / 80);
-        particle.y += this.sin(trigIndex, amp) / 4;
-        particle.x += this.cos(trigIndex, amp);
-        particle.setScale(1 - (f / 80));
-        trigIndex += 4;
-        if (f & 1)
-          amp--;
-        f++;
-      } else {
-        particle.destroy();
-        particleTimer.remove();
-      }
-    };
-
-    updateParticle();
-  }
-
-  doArcDownParticle(trigIndex: integer) {
-    const initialX = (this.scene.game.canvas.width / 6) / 2;
-    const particle = this.scene.add.image(initialX, 0, 'evo_sparkle');
-    particle.setScale(0.5);
-    this.evolutionContainer.add(particle);
-
-    let f = 0;
-    let amp = 8;
-
-    const particleTimer = this.scene.tweens.addCounter({
-      repeat: -1,
-      duration: 1,
-      useFrames: true,
-      onRepeat: () => {
-        updateParticle();
-      }
-    });
-
-    const updateParticle = () => {
-      if (!f || particle.y < 88) {
-        particle.setPosition(initialX, 8 + (f * f) / 5);
-        particle.y += this.sin(trigIndex, amp) / 4;
-        particle.x += this.cos(trigIndex, amp);
-        amp = 8 + this.sin(f * 4, 40);
-        f++;
-      } else {
-        particle.destroy();
-        particleTimer.remove();
-      }
-    };
-
-    updateParticle();
   }
 }
 
