@@ -1,10 +1,11 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlePhase, LearnMovePhase } from "./battle-phase";
+import { BattlePhase } from "./battle-phase";
 import BattleScene from "./battle-scene";
 import { SpeciesEvolution } from "./pokemon-evolutions";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
+import { LearnMovePhase } from "./battle-phases";
 
 export class EvolutionPhase extends BattlePhase {
   private partyMemberIndex: integer;

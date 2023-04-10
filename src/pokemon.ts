@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import BattleScene from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './battle-info';
-import { MessagePhase } from './battle-phase';
 import { default as Move, allMoves, MoveCategory, Moves } from './move';
 import { pokemonLevelMoves } from './pokemon-level-moves';
 import { default as PokemonSpecies, getPokemonSpecies } from './pokemon-species';
@@ -16,6 +15,7 @@ import { initAnim, loadMoveAnimAssets } from './battle-anims';
 import { StatusEffect } from './status-effect';
 import { tmSpecies } from './tms';
 import { pokemonEvolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './pokemon-evolutions';
+import { MessagePhase } from './battle-phases';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;

@@ -1,4 +1,4 @@
-import { LearnMovePhase, LevelUpPhase } from "./battle-phase";
+import { LearnMovePhase, LevelUpPhase } from "./battle-phases";
 import BattleScene from "./battle-scene";
 import { getLevelTotalExp } from "./exp";
 import { allMoves, Moves } from "./move";

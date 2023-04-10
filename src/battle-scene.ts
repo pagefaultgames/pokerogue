@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Biome, BiomeArena } from './biome';
 import UI from './ui/ui';
-import { BattlePhase, EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase, EvolutionPhase } from './battle-phase';
+import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase } from './battle-phases';
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
@@ -11,6 +11,7 @@ import { Species } from './species';
 import { initAutoPlay } from './auto-play';
 import { Battle } from './battle';
 import { populateAnims } from './battle-anims';
+import { BattlePhase } from './battle-phase';
 
 const enableAuto = true;
 
@@ -18,8 +19,8 @@ export default class BattleScene extends Phaser.Scene {
 	public auto: boolean;
 	public autoSpeed: integer = 1;
 
-	private phaseQueue: Array<BattlePhase>;
-	private phaseQueuePrepend: Array<BattlePhase>;
+	private phaseQueue: BattlePhase[];
+	private phaseQueuePrepend: BattlePhase[];
 	private currentPhase: BattlePhase;
 	public field: Phaser.GameObjects.Container;
 	public fieldUI: Phaser.GameObjects.Container;

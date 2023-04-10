@@ -1,4 +1,3 @@
-import { CommandPhase } from "../battle-phase";
 import BattleScene from "../battle-scene";
 import { addTextObject, TextStyle } from "../text";
 import { toPokemonUpperCase } from "../utils";

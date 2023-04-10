@@ -1,4 +1,4 @@
-import { MessagePhase, ObtainStatusEffectPhase } from "./battle-phase";
+import { MessagePhase, ObtainStatusEffectPhase } from "./battle-phases";
 import BattleScene from "./battle-scene";
 import Pokemon, { PlayerPokemon } from "./pokemon";
 import { Stat } from "./pokemon-stat";
