@@ -563,7 +563,7 @@ export function populateAnims() {
         }
     }
 
-    for (let ma of moveAnims.keys()) {
+    /*for (let ma of moveAnims.keys()) {
         const data = moveAnims.get(ma);
         (async () => {
             await fs.writeFile(`./public/battle-anims/${Moves[ma].toLowerCase().replace(/\_/g, '-')}.json`, JSON.stringify(data, (k, v) => {
@@ -574,5 +574,5 @@ export function populateAnims() {
                 return v;
             }, '  '));
         })(); 
-    }
+    }*/
 }
