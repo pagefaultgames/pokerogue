@@ -163,6 +163,7 @@ export default class BattleScene extends Phaser.Scene {
 		// Load pokemon-related images
 		this.loadImage(`pkmn__back__sub`, 'pokemon/back', 'sub.png');
 		this.loadImage(`pkmn__sub`, 'pokemon', 'sub.png');
+		this.loadAtlas('battle_stats', 'effects');
 		this.loadAtlas('shiny', 'effects');
 		this.loadImage('evo_sparkle', 'effects');
 		this.load.video('evo_bg', 'images/effects/evo_bg.mp4', null, false, true);
@@ -181,6 +182,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('hit');
 		this.loadSe('hit_strong');
 		this.loadSe('hit_weak');
+		this.loadSe('stat_up');
+		this.loadSe('stat_down');
 		this.loadSe('faint');
 		this.loadSe('flee');
 		this.loadSe('exp');
@@ -240,11 +243,13 @@ export default class BattleScene extends Phaser.Scene {
 		this.arena.playBgm();
 
 		const fieldUI = this.add.container(0, this.game.canvas.height);
+		fieldUI.setDepth(1);
 		fieldUI.setScale(6);
 
 		this.fieldUI = fieldUI;
 
 		const uiContainer = this.add.container(0, 0);
+		uiContainer.setDepth(2);
 		uiContainer.setScale(6);
 
 		this.uiContainer = uiContainer;

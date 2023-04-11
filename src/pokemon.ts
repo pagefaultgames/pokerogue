@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import BattleScene from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './battle-info';
-import { default as Move, allMoves, MoveCategory, Moves } from './move';
+import { default as Move, allMoves, MoveCategory, Moves, StatChangeAttr, applyMoveAttrs, HighCritAttr } from './move';
 import { pokemonLevelMoves } from './pokemon-level-moves';
 import { default as PokemonSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
@@ -15,7 +15,8 @@ import { initAnim, loadMoveAnimAssets } from './battle-anims';
 import { StatusEffect } from './status-effect';
 import { tmSpecies } from './tms';
 import { pokemonEvolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './pokemon-evolutions';
-import { MessagePhase } from './battle-phases';
+import { MessagePhase, StatChangePhase } from './battle-phases';
+import { BattleStat } from './battle-stat';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -38,6 +39,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public summonData: PokemonSummonData;
   public battleSummonData: PokemonBattleSummonData;
   public turnData: PokemonTurnData;
+
+  public maskEnabled: boolean;
+  public maskSprite: Phaser.GameObjects.Sprite;
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
@@ -235,17 +239,26 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getTintSprite(): Phaser.GameObjects.Sprite {
-    return this.getAt(1) as Phaser.GameObjects.Sprite;
+    return !this.maskEnabled
+      ? this.getAt(1) as Phaser.GameObjects.Sprite
+      : this.maskSprite;
   }
 
   getZoomSprite(): Phaser.GameObjects.Sprite {
-    return this.getAt(2) as Phaser.GameObjects.Sprite;
+    return this.getAt(!this.maskEnabled ? 2 : 1) as Phaser.GameObjects.Sprite;
   }
 
   playAnim(): void{
     this.getSprite().play(this.getBattleSpriteKey());
     this.getTintSprite().play(this.getBattleSpriteKey());
     this.getZoomSprite().play(this.getBattleSpriteKey());
+  }
+
+  getBattleStat(stat: Stat) {
+    if (stat === Stat.HP)
+      return this.stats[Stat.HP];
+    const statLevel = this.summonData.battleStats[(stat + 1) as BattleStat];
+    return this.stats[stat] * (Math.max(2, 2 + statLevel) / Math.max(2, 2 - statLevel));
   }
 
   calculateStats(): void {
@@ -410,9 +423,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case MoveCategory.PHYSICAL:
       case MoveCategory.SPECIAL:
         const isPhysical = moveCategory === MoveCategory.PHYSICAL;
-        const isCritical = Utils.randInt(4) === 0;
-        const sourceAtk = source.stats[isPhysical ? Stat.ATK : Stat.SPATK];
-        const targetDef = this.stats[isPhysical ? Stat.DEF : Stat.SPDEF];
+        const critChance = new Utils.IntegerHolder(16);
+        applyMoveAttrs(HighCritAttr, this.scene as BattleScene, source, this, move, critChance);
+        const isCritical = Utils.randInt(critChance.value) === 0;
+        const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
+        const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
         const stabMultiplier = source.species.type1 === move.type || (source.species.type2 > -1 && source.species.type2 === move.type) ? 1.5 : 1;
         const typeMultiplier = getTypeDamageMultiplier(move.type, this.species.type1) * (this.species.type2 > -1 ? getTypeDamageMultiplier(move.type, this.species.type2) : 1);
         const criticalMultiplier = isCritical ? 2 : 1;
@@ -592,10 +607,35 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         alpha: 0,
         duration: duration,
         ease: ease || 'Linear',
-        onComplete: () => tintSprite.setVisible(false)
+        onComplete: () => {
+          tintSprite.setVisible(false);
+          tintSprite.setAlpha(1);
+        }
       });
-    } else
+    } else {
       tintSprite.setVisible(false);
+      tintSprite.setAlpha(1);
+    }
+  }
+
+  enableMask() {
+    if (!this.maskEnabled) {
+      this.maskSprite = this.getTintSprite();
+      this.maskSprite.setVisible(true);
+      this.maskSprite.setPosition(this.x * 6, this.y * 6);
+      this.maskSprite.setScale(6);
+      this.maskEnabled = true;
+    }
+  }
+
+  disableMask() {
+    if (this.maskEnabled) {
+      this.maskSprite.setVisible(false);
+      this.maskSprite.setPosition(0, 0);
+      this.maskSprite.setScale(1);
+      this.maskSprite = null;
+      this.maskEnabled = false;
+    }
   }
 
   sparkle(): void {
@@ -679,36 +719,44 @@ export class EnemyPokemon extends Pokemon {
           for (let m in movePool) {
             const pokemonMove = movePool[m];
             const move = pokemonMove.getMove();
-            let score = moveScores[m];
-            if (move.category === MoveCategory.STATUS) {
-              score++;
-            } else {
+            let moveScore = moveScores[m];
+            if (move.category === MoveCategory.STATUS)
+              moveScore++;
+            else {
               const effectiveness = getTypeDamageMultiplier(move.type, target.species.type1) * (target.species.type2 > -1 ? getTypeDamageMultiplier(move.type, target.species.type2) : 1);
-              let score = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
-              if (score) {
+              moveScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
+              if (moveScore) {
                 if (move.category === MoveCategory.PHYSICAL) {
-                  if (this.stats[Stat.ATK] > this.stats[Stat.SPATK]) {
-                    const statRatio = this.stats[Stat.SPATK] / this.stats[Stat.ATK];
+                  if (this.getBattleStat(Stat.ATK) > this.getBattleStat(Stat.SPATK)) {
+                    const statRatio = this.getBattleStat(Stat.SPATK) / this.getBattleStat(Stat.ATK);
                     if (statRatio <= 0.75)
-                      score *= 2;
+                      moveScore *= 2;
                     else if (statRatio <= 0.875)
-                      score *= 1.5;
+                      moveScore *= 1.5;
                   }
                 } else {
-                  if (this.stats[Stat.SPATK] > this.stats[Stat.ATK]) {
-                    const statRatio = this.stats[Stat.ATK] / this.stats[Stat.SPATK];
+                  if (this.getBattleStat(Stat.SPATK) > this.getBattleStat(Stat.ATK)) {
+                    const statRatio = this.getBattleStat(Stat.ATK) / this.getBattleStat(Stat.SPATK);
                     if (statRatio <= 0.75)
-                      score *= 2;
+                      moveScore *= 2;
                     else if (statRatio <= 0.875)
-                      score *= 1.5;
+                      moveScore *= 1.5;
                   }
                 }
 
-                score += Math.floor(move.power / 5);
+                moveScore += Math.floor(move.power / 5);
               }
-              // could make smarter by checking opponent def/spdef
-              moveScores[m] = score;
             }
+
+            const statChangeAttrs = move.getAttrs(StatChangeAttr) as StatChangeAttr[];
+
+            for (let sc of statChangeAttrs) {
+              moveScore += ((sc.levels >= 1) === sc.selfTarget ? -2 : 2) + sc.levels * (sc.selfTarget ? 4 : -4);
+              // TODO: Add awareness of current levels
+            }
+
+            // could make smarter by checking opponent def/spdef
+            moveScores[m] = moveScore;
           }
 
           console.log(moveScores);
@@ -751,6 +799,7 @@ export class EnemyPokemon extends Pokemon {
 }
 
 export class PokemonSummonData {
+  public battleStats: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
   public confusionTurns: integer;
 }
 

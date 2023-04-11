@@ -1,7 +1,7 @@
 import BattleScene from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, MoveCategory, Moves, MultiHitAttr } from "./move";
+import { allMoves, applyMoveAttrs, MissEffectAttr, MoveCategory, MoveHitEffectAttr, Moves, MultiHitAttr } from "./move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
@@ -14,6 +14,7 @@ import { SummaryUiMode } from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
+import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./battle-stat";
 
 export class SelectStarterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
@@ -39,6 +40,7 @@ export class EncounterPhase extends BattlePhase {
     const enemySpecies = this.scene.arena.randomSpecies(1, battle.enemyLevel);
 		battle.enemyPokemon = new EnemyPokemon(this.scene, enemySpecies, battle.enemyLevel);
     const enemyPokemon = this.scene.getEnemyPokemon();
+    enemyPokemon.resetSummonData();
 
     console.log(enemyPokemon.species.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
 
@@ -359,8 +361,9 @@ export class CommandPhase extends BattlePhase {
       case Command.FIGHT:
         if (playerPokemon.trySelectMove(cursor)) {
           const playerPhase = new PlayerMovePhase(this.scene, playerPokemon, playerPokemon.moveset[cursor]);
-          delayed = playerPokemon.stats[Stat.SPD] < enemyPokemon.stats[Stat.SPD]
-            || (playerPokemon.stats[Stat.SPD] === enemyPokemon.stats[Stat.SPD] && Utils.randInt(2) === 1)
+          const playerSpeed = playerPokemon.getBattleStat(Stat.SPD);
+          const enemySpeed = enemyPokemon.getBattleStat(Stat.SPD);
+          delayed = playerSpeed < enemySpeed || (playerSpeed === enemySpeed && Utils.randInt(2) === 1)
           this.scene.pushPhase(playerPhase);
           success = true;
         }
@@ -500,6 +503,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
 
     if (!this.hitCheck()) {
       this.scene.unshiftPhase(new MessagePhase(this.scene, `${!this.player ? 'Foe ' : ''}${user.name}'s\nattack missed!`));
+      applyMoveAttrs(MissEffectAttr, this.scene, user, target, this.move.getMove());
       this.end();
       return;
     }
@@ -507,6 +511,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
     new MoveAnim(this.move.getMove().id as Moves, user, target).play(this.scene, () => {
       this.getTargetPokemon().apply(this.getUserPokemon(), this.move, () => {
         ++user.turnData.hitCount;
+        applyMoveAttrs(MoveHitEffectAttr, this.scene, user, target, this.move.getMove());
         this.end();
       });
       if (this.getUserPokemon().hp <= 0) {
@@ -532,8 +537,8 @@ abstract class MoveEffectPhase extends PokemonPhase {
 
   hitCheck(): boolean {
     if (this.move.getMove().category !== MoveCategory.STATUS) {
-      const userAccuracyLevel = 0;
-      const targetEvasionLevel = 0;
+      const userAccuracyLevel = this.getUserPokemon().summonData.battleStats[BattleStat.ACC];
+      const targetEvasionLevel = this.getTargetPokemon().summonData.battleStats[BattleStat.EVA];
       const rand = Utils.randInt(100, 1);
       let accuracyMultiplier = 1;
       if (userAccuracyLevel !== targetEvasionLevel) {
@@ -590,6 +595,86 @@ export class EnemyMoveEffectPhase extends MoveEffectPhase {
 
   getNewHitPhase() {
     return new EnemyMoveEffectPhase(this.scene, this.move);
+  }
+}
+
+export class StatChangePhase extends PokemonPhase {
+  private stats: BattleStat[];
+  private levels: integer;
+
+  constructor(scene: BattleScene, player: boolean, stats: BattleStat[], levels: integer) {
+    super(scene, player);
+
+    this.stats = stats;
+    this.levels = levels;
+  }
+
+  start() {
+    const pokemon = this.getPokemon();
+    
+    const battleStats = this.getPokemon().summonData.battleStats;
+    const relLevels = this.stats.map(stat => (this.levels >= 1 ? Math.min(battleStats[stat] + this.levels, 6) : Math.max(battleStats[stat] + this.levels, -6)) - battleStats[stat]);
+
+    const end = () => {
+      const messages = this.getStatChangeMessages(relLevels);
+      for (let message of messages)
+        this.scene.unshiftPhase(new MessagePhase(this.scene, message));
+
+      for (let stat of this.stats)
+        pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + this.levels, 6), -6);
+      
+      console.log(pokemon.summonData.battleStats);
+      
+      this.end();
+    };
+
+    if (relLevels.filter(l => l).length) {
+      pokemon.enableMask();
+      const pokemonMaskSprite = pokemon.maskSprite;
+
+      const statSprite = this.scene.add.tileSprite((this.player ? 106 : 236) * 6, ((this.player ? 148 : 84) + (this.levels >= 1 ? 160 : 0)) * 6, 128, 288, 'battle_stats', this.stats.length > 1 ? 'mix' : BattleStat[this.stats[0]].toLowerCase());
+      statSprite.setAlpha(0);
+      statSprite.setScale(6);
+      statSprite.setOrigin(0.5, 1);
+
+      this.scene.sound.play(`stat_${this.levels >= 1 ? 'up' : 'down'}`);
+
+      statSprite.setMask(new Phaser.Display.Masks.BitmapMask(this.scene, pokemonMaskSprite));
+
+      this.scene.tweens.add({
+        targets: statSprite,
+        duration: 250,
+        alpha: 0.8375,
+        onComplete: () => {
+          this.scene.tweens.add({
+            targets: statSprite,
+            delay: 1000,
+            duration: 250,
+            alpha: 0
+          });
+        }
+      });
+      
+      this.scene.tweens.add({
+        targets: statSprite,
+        duration: 1500,
+        y: `${this.levels >= 1 ? '-' : '+'}=${160 * 6}`
+      });
+      
+      this.scene.time.delayedCall(1750, () => {
+        pokemon.disableMask();
+        end();
+      });
+    } else
+      end();
+  }
+
+  getStatChangeMessages(relLevels: integer[]): string[] {
+    const messages: string[] = [];
+    
+    for (let s = 0; s < this.stats.length; s++)
+      messages.push(`${this.player ? '' : 'Foe '}${this.getPokemon().name}'s ${getBattleStatName(this.stats[s])} ${getBattleStatLevelChangeDescription(Math.abs(relLevels[s]), this.levels >= 1)}!`);
+    return messages;
   }
 }
 
