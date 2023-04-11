@@ -1047,7 +1047,7 @@ export class AttemptCapturePhase extends BattlePhase {
                       this.scene.sound.play('pb_move');
                     else {
                       shakeCounter.stop();
-                      this.release(shakeCount);
+                      this.failCatch(shakeCount);
                     }
                   } else
                     this.scene.sound.play('pb_lock')
@@ -1065,7 +1065,7 @@ export class AttemptCapturePhase extends BattlePhase {
     });
   }
 
-  release(shakeCount: integer) {
+  failCatch(shakeCount: integer) {
     const pokemon = this.scene.getEnemyPokemon();
 
     this.scene.sound.play('pb_rel');
@@ -1091,7 +1091,6 @@ export class AttemptCapturePhase extends BattlePhase {
   }
 
   catch() {
-    console.log(this, 'catch')
     const pokemon = this.scene.getEnemyPokemon();
     this.scene.unshiftPhase(new VictoryPhase(this.scene));
     this.scene.ui.showText(`${pokemon.name} was caught!`, null, () => {
@@ -1100,12 +1099,37 @@ export class AttemptCapturePhase extends BattlePhase {
         this.removePb();
         this.end();
       };
-      const newPokemon = pokemon.addToParty();
-      this.scene.field.remove(pokemon, true);
-      if (newPokemon)
-        newPokemon.loadAssets().then(end);
-      else
-        end();
+      const addToParty = () => {
+        const newPokemon = pokemon.addToParty();
+        pokemon.hp = 0;
+        this.scene.field.remove(pokemon, true);
+        if (newPokemon)
+          newPokemon.loadAssets().then(end);
+        else
+          end();
+      };
+      if (this.scene.getParty().length === 6) {
+        const promptRelease = () => {
+          this.scene.ui.showText(`Your party is full.\nRelease a POKéMON to make room for ${pokemon.name}?`, null, () => {
+            this.scene.ui.setMode(Mode.CONFIRM, () => {
+              this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, (slotIndex: integer) => {
+                this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+                  if (slotIndex < 6) {
+                    this.scene.getParty().splice(slotIndex, 1);
+                    addToParty();
+                  } else
+                    promptRelease();
+                });
+              });
+            }, () => {
+              pokemon.hp = 0;
+              end();
+            });
+          });
+        };
+        promptRelease();
+      } else
+        addToParty();
     }, 0, true);
   }
 

@@ -5,6 +5,7 @@ import { addTextObject, TextStyle } from "../text";
 import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
+import * as Utils from "../utils";
 
 const defaultMessage = 'Choose a Pokémon.';
 
@@ -12,7 +13,8 @@ export enum PartyUiMode {
   SWITCH,
   FAINT_SWITCH,
   POST_BATTLE_SWITCH,
-  MODIFIER
+  MODIFIER,
+  RELEASE
 }
 
 export enum PartyOption {
@@ -20,6 +22,7 @@ export enum PartyOption {
   SEND_OUT,
   APPLY,
   SUMMARY,
+  RELEASE,
   CANCEL
 }
 
@@ -147,14 +150,23 @@ export default class PartyUiHandler extends MessageUiHandler {
     if (this.optionsMode) {
       if (button === Button.ACTION) {
         const option = this.options[this.optionsCursor];
-        if (option === PartyOption.SHIFT || option === PartyOption.SEND_OUT || option === PartyOption.APPLY) {
-          let filterResult: string = this.selectFilter(this.scene.getParty()[this.cursor]);
+        const pokemon = this.scene.getParty()[this.cursor];
+        if (option === PartyOption.SHIFT || option === PartyOption.SEND_OUT || option === PartyOption.APPLY || option === PartyOption.RELEASE) {
+          let filterResult: string = this.selectFilter(pokemon);
           if (filterResult === null) {
             this.clearOptions();
             if (this.selectCallback) {
               const selectCallback = this.selectCallback;
-              this.selectCallback = null;
-              selectCallback(this.cursor);
+              if (option === PartyOption.RELEASE) {
+                this.partyMessageBox.setTexture('party_message');
+                this.showText(this.getReleaseMessage(pokemon.name), null, () => {
+                  this.selectCallback = null;
+                  selectCallback(this.cursor);
+                }, null, true);
+              } else {
+                this.selectCallback = null;
+                selectCallback(this.cursor);
+              }
             } else if (this.cursor)
               (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor);
             if (this.partyUiMode !== PartyUiMode.MODIFIER)
@@ -172,7 +184,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
         } else if (option === PartyOption.SUMMARY) {
           ui.playSelect();
-          ui.setModeWithoutClear(Mode.SUMMARY, this.scene.getParty()[this.cursor]).then(() =>  this.clearOptions());
+          ui.setModeWithoutClear(Mode.SUMMARY, pokemon).then(() =>  this.clearOptions());
         } else if (option === PartyOption.CANCEL)
           this.processInput(Button.CANCEL);
       } else if (button === Button.CANCEL) {
@@ -314,6 +326,9 @@ export default class PartyUiHandler extends MessageUiHandler {
       case PartyUiMode.MODIFIER:
         this.options.push(PartyOption.APPLY);
         break;
+      case PartyUiMode.RELEASE:
+        this.options.push(PartyOption.RELEASE);
+        break;
     }
 
     this.options.push(PartyOption.SUMMARY, PartyOption.CANCEL);
@@ -335,6 +350,26 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.optionsContainer.add(optionsTop);
 
     this.setCursor(0);
+  }
+
+  getReleaseMessage(pokemonName: string): string {
+    const rand = Utils.randInt(128);
+    if (rand < 32)
+      return `Goodbye, ${pokemonName}!`;
+    else if (rand < 64)
+      return `Farewell, ${pokemonName}!`;
+    else if (rand < 96)
+      return `This is where we part, ${pokemonName}!`;
+    else if (rand < 108)
+      return `I'll miss you, ${pokemonName}!`;
+    else if (rand < 116)
+      return `I'll never forget you, ${pokemonName}!`;
+    else if (rand < 124)
+      return `Until we meet again, ${pokemonName}!`;
+    else if (rand < 127)
+      return `Sayonara, ${pokemonName}!`
+    else
+      return `Smell ya later, ${pokemonName}!`;
   }
 
   clearOptions() {

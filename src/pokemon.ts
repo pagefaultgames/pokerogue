@@ -792,7 +792,6 @@ export class EnemyPokemon extends Pokemon {
       party.push(newPokemon);
       ret = newPokemon;
     }
-    this.hp = 0;
 
     return ret;
   }
