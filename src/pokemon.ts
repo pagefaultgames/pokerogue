@@ -118,7 +118,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.calculateStats();
 
-    (scene as BattleScene).fieldUI.add(this.battleInfo);
+    (scene as BattleScene).fieldUI.addAt(this.battleInfo, 0);
     
     this.battleInfo.initInfo(this);
 

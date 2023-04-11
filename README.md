@@ -9,6 +9,7 @@
 - Moves
   - Move logic
   - Can't use when PP consumed
+  - Multi hit moves should still show 1 time(s) when hitting once
 - Abilities
   - Ability logic
   - Ability activation indicator (?)
