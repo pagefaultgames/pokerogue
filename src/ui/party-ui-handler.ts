@@ -1,6 +1,6 @@
 import { CommandPhase } from "../battle-phases";
 import BattleScene, { Button } from "../battle-scene";
-import { PlayerPokemon } from "../pokemon";
+import { PlayerPokemon, PokemonMove } from "../pokemon";
 import { addTextObject, TextStyle } from "../text";
 import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
@@ -14,6 +14,7 @@ export enum PartyUiMode {
   FAINT_SWITCH,
   POST_BATTLE_SWITCH,
   MODIFIER,
+  MOVE_MODIFIER,
   RELEASE
 }
 
@@ -23,8 +24,16 @@ export enum PartyOption {
   APPLY,
   SUMMARY,
   RELEASE,
+  MOVE_1,
+  MOVE_2,
+  MOVE_3,
+  MOVE_4,
   CANCEL
 }
+
+export type PartySelectCallback = (cursor: integer, option: PartyOption) => void;
+export type PokemonSelectFilter = (pokemon: PlayerPokemon) => string;
+export type PokemonMoveSelectFilter = (pokemonMove: PokemonMove) => string;
 
 export default class PartyUiHandler extends MessageUiHandler {
   private partyUiMode: PartyUiMode;
@@ -42,8 +51,9 @@ export default class PartyUiHandler extends MessageUiHandler {
   private options: integer[];
   
   private lastCursor: integer = 0;
-  private selectCallback: Function;
-  private selectFilter: Function;
+  private selectCallback: PartySelectCallback;
+  private selectFilter: PokemonSelectFilter;
+  private moveSelectFilter: PokemonMoveSelectFilter;
 
   private static FilterAll = (_pokemon: PlayerPokemon) => null;
 
@@ -52,6 +62,8 @@ export default class PartyUiHandler extends MessageUiHandler {
       return `${pokemon.name} has no energy\nleft to battle!`;
     return null;
   };
+
+  private static FilterAllMoves = (_pokemonMove: PokemonMove) => null;
 
   public static NoEffectMessage = 'It won\'t have any effect.';
 
@@ -122,8 +134,11 @@ export default class PartyUiHandler extends MessageUiHandler {
     if (args.length > 1 && args[1] instanceof Function)
       this.selectCallback = args[1];
     this.selectFilter = args.length > 2 && args[2] instanceof Function
-      ? args[2]
+      ? args[2] as PokemonSelectFilter
       : PartyUiHandler.FilterAll;
+    this.moveSelectFilter = args.length > 3 && args[3] instanceof Function
+      ? args[3] as PokemonMoveSelectFilter
+      : PartyUiHandler.FilterAllMoves;
   }
 
   processInput(button: Button) {
@@ -151,9 +166,11 @@ export default class PartyUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         const option = this.options[this.optionsCursor];
         const pokemon = this.scene.getParty()[this.cursor];
-        if (option === PartyOption.SHIFT || option === PartyOption.SEND_OUT || option === PartyOption.APPLY
-          || (this.partyUiMode === PartyUiMode.RELEASE && option === PartyOption.RELEASE)) {
+        if ((option !== PartyOption.SUMMARY && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
+          || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string = this.selectFilter(pokemon);
+          if (filterResult === null && this.partyUiMode === PartyUiMode.MOVE_MODIFIER)
+            filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]);
           if (filterResult === null) {
             this.clearOptions();
             if (this.selectCallback) {
@@ -162,11 +179,11 @@ export default class PartyUiHandler extends MessageUiHandler {
               else {
                 const selectCallback = this.selectCallback;
                 this.selectCallback = null;
-                selectCallback(this.cursor);
+                selectCallback(this.cursor, option);
               }
             } else if (this.cursor)
               (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor);
-            if (this.partyUiMode !== PartyUiMode.MODIFIER)
+            if (this.partyUiMode !== PartyUiMode.MODIFIER && this.partyUiMode !== PartyUiMode.MOVE_MODIFIER)
               ui.playSelect();
             return;
           } else {
@@ -228,7 +245,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           if (this.selectCallback) {
             const selectCallback = this.selectCallback;
             this.selectCallback = null;
-            selectCallback(6);
+            selectCallback(6, PartyOption.CANCEL);
             ui.playSelect();
           } else {
             ui.setMode(Mode.COMMAND);
@@ -325,35 +342,56 @@ export default class PartyUiHandler extends MessageUiHandler {
     optionsBottom.setOrigin(1, 1);
     this.optionsContainer.add(optionsBottom);
 
-    switch (this.partyUiMode) {
-      case PartyUiMode.SWITCH:
-        if (this.cursor)
-          this.options.push(PartyOption.SHIFT);
-        break;
-      case PartyUiMode.FAINT_SWITCH:
-      case PartyUiMode.POST_BATTLE_SWITCH:
-        if (this.cursor)
-          this.options.push(PartyOption.SEND_OUT);
-        break;
-      case PartyUiMode.MODIFIER:
-        this.options.push(PartyOption.APPLY);
-        break;
-      case PartyUiMode.RELEASE:
+    const pokemon = this.scene.getParty()[this.cursor];
+
+    if (this.partyUiMode !== PartyUiMode.MOVE_MODIFIER) {
+      switch (this.partyUiMode) {
+        case PartyUiMode.SWITCH:
+          if (this.cursor)
+            this.options.push(PartyOption.SHIFT);
+          break;
+        case PartyUiMode.FAINT_SWITCH:
+        case PartyUiMode.POST_BATTLE_SWITCH:
+          if (this.cursor)
+            this.options.push(PartyOption.SEND_OUT);
+          break;
+        case PartyUiMode.MODIFIER:
+          this.options.push(PartyOption.APPLY);
+          break;
+        case PartyUiMode.RELEASE:
+          this.options.push(PartyOption.RELEASE);
+          break;
+      }
+
+      this.options.push(PartyOption.SUMMARY);
+
+      if (this.partyUiMode === PartyUiMode.SWITCH)
         this.options.push(PartyOption.RELEASE);
-        break;
+    } else {
+      for (let m = 0; m < pokemon.moveset.length; m++)
+        this.options.push(PartyOption.MOVE_1 + m);
     }
-
-    this.options.push(PartyOption.SUMMARY);
-
-    if (this.partyUiMode === PartyUiMode.SWITCH)
-      this.options.push(PartyOption.RELEASE);
 
     this.options.push(PartyOption.CANCEL);
 
     for (let o = 0; o < this.options.length; o++) {
+      const option = this.options[this.options.length - (o + 1)];
+      let optionName: string;
+      switch (option) {
+        case PartyOption.MOVE_1:
+        case PartyOption.MOVE_2:
+        case PartyOption.MOVE_3:
+        case PartyOption.MOVE_4:
+          optionName = pokemon.moveset[option - PartyOption.MOVE_1].getName();
+          break;
+        default:
+          optionName = PartyOption[option].replace(/\_/g, ' ');
+          break;
+      }
+
       const yCoord = -6 - 16 * o;
       const optionBg = this.scene.add.image(0, yCoord, 'party_options_center');
-      const optionText = addTextObject(this.scene, -79, yCoord - 16, PartyOption[this.options[this.options.length - (o + 1)]].replace(/\_/g, ' '), TextStyle.WINDOW);
+      const optionText = addTextObject(this.scene, -79, yCoord - 16, optionName, TextStyle.WINDOW);
 
       optionBg.setOrigin(1, 1);
       optionText.setOrigin(0, 0);
@@ -380,7 +418,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       if (this.partyUiMode === PartyUiMode.RELEASE) {
         const selectCallback = this.selectCallback;
         this.selectCallback = null;
-        selectCallback(this.cursor);
+        selectCallback(this.cursor, PartyOption.RELEASE);
       } else
         this.message.setText(defaultMessage);
     }, null, true);

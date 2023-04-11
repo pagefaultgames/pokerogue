@@ -5,9 +5,9 @@ import { allMoves, applyMoveAttrs, MissEffectAttr, MoveCategory, MoveHitEffectAt
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
-import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, getModifierTypesForWave, ModifierType, PokemonModifierType, regenerateModifierPoolThresholds } from "./modifier";
-import PartyUiHandler, { PartyUiMode } from "./ui/party-ui-handler";
-import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor as getPokeballTintColor, PokeballType } from "./pokeball";
+import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, getModifierTypesForWave, ModifierType, PokemonModifierType, PokemonMoveModifierType, regenerateModifierPoolThresholds } from "./modifier";
+import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
+import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./pokeball";
 import { MoveAnim, initAnim, loadMoveAnimAssets } from "./battle-anims";
 import { StatusEffect } from "./status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
@@ -803,7 +803,7 @@ export class SwitchPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, (slotIndex: integer) => {
+    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, (slotIndex: integer, _option: PartyOption) => {
       if (slotIndex && slotIndex < 6)
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, slotIndex, this.doReturn));
       this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
@@ -1112,7 +1112,7 @@ export class AttemptCapturePhase extends BattlePhase {
         const promptRelease = () => {
           this.scene.ui.showText(`Your party is full.\nRelease a POKéMON to make room for ${pokemon.name}?`, null, () => {
             this.scene.ui.setMode(Mode.CONFIRM, () => {
-              this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, (slotIndex: integer) => {
+              this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, (slotIndex: integer, _option: PartyOption) => {
                 this.scene.ui.setMode(Mode.MESSAGE).then(() => {
                   if (slotIndex < 6)
                     addToParty();
@@ -1168,15 +1168,20 @@ export class SelectModifierPhase extends BattlePhase {
       const modifierType = types[cursor];
       if (modifierType instanceof PokemonModifierType) {
         const pokemonModifierType = modifierType as PokemonModifierType;
-        this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER, (slotIndex: integer) => {
+        const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
+        this.scene.ui.setModeWithoutClear(Mode.PARTY, !isMoveModifier ? PartyUiMode.MODIFIER : PartyUiMode.MOVE_MODIFIER, (slotIndex: integer, option: PartyOption) => {
           if (slotIndex < 6) {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT);
-            this.scene.addModifier(types[cursor].newModifier(party[slotIndex])).then(() => super.end());
+            const modifierType = types[cursor];
+            const modifier = !isMoveModifier
+              ? modifierType.newModifier(party[slotIndex])
+              : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
+            this.scene.addModifier(modifier).then(() => super.end());
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.MESSAGE);
           } else
             this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, modifierSelectCallback);
-        }, pokemonModifierType.selectFilter);
+        }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined);
       } else {
         this.scene.addModifier(types[cursor].newModifier()).then(() => super.end());
         this.scene.ui.clearText();

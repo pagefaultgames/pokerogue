@@ -5,7 +5,7 @@ import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBi
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier } from './modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ConsumablePokemonMoveModifier } from './modifier';
 import { PokeballType } from './pokeball';
 import { Species } from './species';
 import { initAutoPlay } from './auto-play';
@@ -520,6 +520,7 @@ export default class BattleScene extends Phaser.Scene {
 							this.applyModifiers(HealingBoosterModifier, hpRestoreMultiplier);
 							args.push(hpRestoreMultiplier.value);
 						}
+							
 						if (modifier.shouldApply(args))
 							modifier.apply(args);
 					}

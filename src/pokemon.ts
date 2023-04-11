@@ -291,6 +291,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.stats[Stat.HP];
   }
 
+  getInverseHp(): integer {
+    return this.getMaxHp() - this.hp;
+  }
+
   getHpRatio(): number {
     return Math.floor((this.hp / this.getMaxHp()) * 100) / 100;
   }
