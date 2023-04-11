@@ -654,7 +654,7 @@ export class StatChangePhase extends PokemonPhase {
           });
         }
       });
-      
+
       this.scene.tweens.add({
         targets: statSprite,
         duration: 1500,
@@ -803,7 +803,7 @@ export class SwitchPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.SWITCH, (slotIndex: integer) => {
+    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, (slotIndex: integer) => {
       if (slotIndex && slotIndex < 6)
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, slotIndex, this.doReturn));
       this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
@@ -1114,10 +1114,9 @@ export class AttemptCapturePhase extends BattlePhase {
             this.scene.ui.setMode(Mode.CONFIRM, () => {
               this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, (slotIndex: integer) => {
                 this.scene.ui.setMode(Mode.MESSAGE).then(() => {
-                  if (slotIndex < 6) {
-                    this.scene.getParty().splice(slotIndex, 1);
+                  if (slotIndex < 6)
                     addToParty();
-                  } else
+                  else
                     promptRelease();
                 });
               });

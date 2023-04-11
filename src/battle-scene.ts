@@ -5,7 +5,7 @@ import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBi
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier } from './modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier } from './modifier';
 import { PokeballType } from './pokeball';
 import { Species } from './species';
 import { initAutoPlay } from './auto-play';
@@ -536,14 +536,17 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	updatePartyForModifiers(): Promise<void> {
+	removePartyMemberModifiers(partyMemberIndex: integer): Promise<void> {
 		return new Promise(resolve => {
-			Promise.allSettled(this.party.map(p => {
-				p.calculateStats();
-				return p.updateInfo();
-			})).then(() => resolve());
+			const pokemonId = this.getParty()[partyMemberIndex].id;
+			const modifiersToRemove = this.modifiers.filter(m => (m instanceof PokemonHeldItemModifier) && (m as PokemonHeldItemModifier).pokemonId === pokemonId);
+			for (let m of modifiersToRemove)
+				this.modifiers.splice(this.modifiers.indexOf(m), 1);
+			this.updateModifiers().then(() => resolve());
 		});
 	}
+
+
 
 	updateModifiers(): Promise<void> {
 		return new Promise(resolve => {
@@ -564,6 +567,15 @@ export default class BattleScene extends Phaser.Scene {
 				this.modifierBar.updateModifiers(this.modifiers);
 				resolve();
 			});
+		});
+	}
+
+	updatePartyForModifiers(): Promise<void> {
+		return new Promise(resolve => {
+			Promise.allSettled(this.party.map(p => {
+				p.calculateStats();
+				return p.updateInfo();
+			})).then(() => resolve());
 		});
 	}
 

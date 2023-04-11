@@ -17,9 +17,9 @@ export enum Mode {
   COMMAND,
   FIGHT,
   BALL,
-  CONFIRM,
   MODIFIER_SELECT,
   PARTY,
+  CONFIRM,
   SUMMARY,
   STARTER_SELECT,
   EVOLUTION_SCENE
@@ -52,9 +52,9 @@ export default class UI extends Phaser.GameObjects.Container {
       new CommandUiHandler(scene),
       new FightUiHandler(scene),
       new BallUiHandler(scene),
-      new ConfirmUiHandler(scene),
       new ModifierSelectUiHandler(scene),
       new PartyUiHandler(scene),
+      new ConfirmUiHandler(scene),
       new SummaryUiHandler(scene),
       new StarterSelectUiHandler(scene),
       new EvolutionSceneHandler(scene)

@@ -151,19 +151,16 @@ export default class PartyUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         const option = this.options[this.optionsCursor];
         const pokemon = this.scene.getParty()[this.cursor];
-        if (option === PartyOption.SHIFT || option === PartyOption.SEND_OUT || option === PartyOption.APPLY || option === PartyOption.RELEASE) {
+        if (option === PartyOption.SHIFT || option === PartyOption.SEND_OUT || option === PartyOption.APPLY
+          || (this.partyUiMode === PartyUiMode.RELEASE && option === PartyOption.RELEASE)) {
           let filterResult: string = this.selectFilter(pokemon);
           if (filterResult === null) {
             this.clearOptions();
             if (this.selectCallback) {
-              const selectCallback = this.selectCallback;
-              if (option === PartyOption.RELEASE) {
-                this.partyMessageBox.setTexture('party_message');
-                this.showText(this.getReleaseMessage(pokemon.name), null, () => {
-                  this.selectCallback = null;
-                  selectCallback(this.cursor);
-                }, null, true);
-              } else {
+              if (option === PartyOption.RELEASE)
+                this.doRelease(this.cursor);
+              else {
+                const selectCallback = this.selectCallback;
                 this.selectCallback = null;
                 selectCallback(this.cursor);
               }
@@ -185,6 +182,21 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if (option === PartyOption.SUMMARY) {
           ui.playSelect();
           ui.setModeWithoutClear(Mode.SUMMARY, pokemon).then(() =>  this.clearOptions());
+        } else if (option === PartyOption.RELEASE) {
+          this.clearOptions();
+          ui.playSelect();
+          if (this.cursor) {
+            this.showText(`Do you really want to release ${pokemon.name}?`, null, () => {
+              ui.setModeWithoutClear(Mode.CONFIRM, () => {
+                ui.setMode(Mode.PARTY);
+                this.doRelease(this.cursor);
+              }, () => {
+                ui.setMode(Mode.PARTY);
+                this.message.setText(defaultMessage);
+              });
+            });
+          } else
+            this.showText('You can\'t release a POKéMON that\'s in battle!', null, () => this.message.setText(defaultMessage), null, true);
         } else if (option === PartyOption.CANCEL)
           this.processInput(Button.CANCEL);
       } else if (button === Button.CANCEL) {
@@ -331,7 +343,12 @@ export default class PartyUiHandler extends MessageUiHandler {
         break;
     }
 
-    this.options.push(PartyOption.SUMMARY, PartyOption.CANCEL);
+    this.options.push(PartyOption.SUMMARY);
+
+    if (this.partyUiMode === PartyUiMode.SWITCH)
+      this.options.push(PartyOption.RELEASE);
+
+    this.options.push(PartyOption.CANCEL);
 
     for (let o = 0; o < this.options.length; o++) {
       const yCoord = -6 - 16 * o;
@@ -352,13 +369,34 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.setCursor(0);
   }
 
+  doRelease(slotIndex: integer): void {
+    this.showText(this.getReleaseMessage(this.scene.getParty()[slotIndex].name), null, () => {
+      this.clearPartySlots();
+      this.scene.removePartyMemberModifiers(slotIndex);
+      this.scene.getParty().splice(slotIndex, 1);
+      this.populatePartySlots();
+      if (this.cursor >= this.scene.getParty().length)
+        this.setCursor(this.cursor - 1);
+      if (this.partyUiMode === PartyUiMode.RELEASE) {
+        const selectCallback = this.selectCallback;
+        this.selectCallback = null;
+        selectCallback(this.cursor);
+      } else
+        this.message.setText(defaultMessage);
+    }, null, true);
+  }
+
   getReleaseMessage(pokemonName: string): string {
     const rand = Utils.randInt(128);
-    if (rand < 32)
+    if (rand < 20)
       return `Goodbye, ${pokemonName}!`;
-    else if (rand < 64)
+    else if (rand < 40)
+      return `Byebye, ${pokemonName}!`;
+    else if (rand < 60)
       return `Farewell, ${pokemonName}!`;
-    else if (rand < 96)
+    else if (rand < 80)
+      return `So long, ${pokemonName}!`;
+    else if (rand < 100)
       return `This is where we part, ${pokemonName}!`;
     else if (rand < 108)
       return `I'll miss you, ${pokemonName}!`;
