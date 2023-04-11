@@ -3,10 +3,12 @@ import { getLevelTotalExp, getLevelRelExp } from './exp';
 import * as Utils from './utils';
 import { addTextObject, TextStyle } from './text';
 import { getGenderSymbol, getGenderColor } from './gender';
+import { StatusEffect } from './status-effect';
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private player: boolean;
   private lastName: string;
+  private lastStatus: StatusEffect;
   private lastHp: integer;
   private lastMaxHp: integer;
   private lastHpFrame: string;
@@ -16,6 +18,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
   private nameText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
+  private statusIndicator: Phaser.GameObjects.Sprite;
   private levelContainer: Phaser.GameObjects.Container;
   private hpBar: Phaser.GameObjects.Image;
   private levelNumbersContainer: Phaser.GameObjects.Container;
@@ -25,6 +28,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
     this.player = player;
+    this.lastName = null;
+    this.lastStatus = StatusEffect.NONE;
     this.lastHp = -1;
     this.lastMaxHp = -1;
     this.lastHpFrame = null;
@@ -47,6 +52,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.genderText.setOrigin(0, 0);
     this.genderText.setPositionRelative(this.nameText, 0, 2);
     this.add(this.genderText);
+
+    this.statusIndicator = this.scene.add.sprite(0, 0, 'statuses');
+    this.statusIndicator.setVisible(false);
+    this.statusIndicator.setOrigin(0, 0);
+    this.statusIndicator.setPositionRelative(this.nameText, 0, 11.5);
+    this.add(this.statusIndicator);
 
     this.levelContainer = this.scene.add.container(player ? -41 : -50, player ? -10 : -5);
     this.add(this.levelContainer);
@@ -119,6 +130,14 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         nameSizeTest.destroy();
 
         this.genderText.setPositionRelative(this.nameText, nameTextWidth, 0);
+      }
+
+      if (this.lastStatus !== (pokemon.status?.effect || StatusEffect.NONE)) {
+        this.lastStatus = pokemon.status?.effect || StatusEffect.NONE;
+
+        if (this.lastStatus !== StatusEffect.NONE)
+          this.statusIndicator.setFrame(StatusEffect[this.lastStatus].toLowerCase());
+        this.statusIndicator.setVisible(!!this.lastStatus);
       }
 
       const updatePokemonHp = () => {

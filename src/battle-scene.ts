@@ -10,7 +10,7 @@ import { PokeballType } from './pokeball';
 import { Species } from './species';
 import { initAutoPlay } from './auto-play';
 import { Battle } from './battle';
-import { populateAnims } from './battle-anims';
+import { initCommonAnims, loadCommonAnimAssets, populateAnims } from './battle-anims';
 import { BattlePhase } from './battle-phase';
 
 const enableAuto = true;
@@ -321,7 +321,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		ui.setup();
 
-		Promise.all(loadPokemonAssets).then(() => {
+		Promise.all([ Promise.all(loadPokemonAssets), initCommonAnims().then(() => loadCommonAnimAssets(this, true)) ]).then(() => {
 			if (enableAuto)
 				initAutoPlay.apply(this);
 			

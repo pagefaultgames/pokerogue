@@ -5,14 +5,14 @@ import { default as Move, allMoves, MoveCategory, Moves, StatChangeAttr, applyMo
 import { pokemonLevelMoves } from './pokemon-level-moves';
 import { default as PokemonSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
-import { getTypeDamageMultiplier } from './type';
+import { Type, getTypeDamageMultiplier } from './type';
 import { getLevelTotalExp } from './exp';
 import { Stat } from './pokemon-stat';
 import { PokemonBaseStatModifier as PokemonBaseStatBoosterModifier, ShinyRateBoosterModifier } from './modifier';
 import { PokeballType } from './pokeball';
 import { Gender } from './gender';
-import { initAnim, loadMoveAnimAssets } from './battle-anims';
-import { StatusEffect } from './status-effect';
+import { initMoveAnim, loadMoveAnimAssets } from './battle-anims';
+import { Status, StatusEffect } from './status-effect';
 import { tmSpecies } from './tms';
 import { pokemonEvolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './pokemon-evolutions';
 import { MessagePhase, StatChangePhase } from './battle-phases';
@@ -33,7 +33,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public stats: integer[];
   public ivs: integer[];
   public moveset: PokemonMove[];
-  public status: StatusEffect;
+  public status: Status;
   public winCount: integer;
 
   public summonData: PokemonSummonData;
@@ -109,8 +109,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       /*else
         this.shiny = Utils.randInt(16) === 0;*/
 
-      this.status = StatusEffect.NONE;
-
       this.winCount = 0;
     }
 
@@ -162,7 +160,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   loadAssets(): Promise<void> {
     return new Promise(resolve => {
       const moveIds = this.moveset.map(m => m.getMove().id);
-      Promise.allSettled(moveIds.map(m => initAnim(m)))
+      Promise.allSettled(moveIds.map(m => initMoveAnim(m)))
         .then(() => {
           loadMoveAnimAssets(this.scene as BattleScene, moveIds);
           (this.scene as BattleScene).loadAtlas(this.getSpriteKey(), 'pokemon', this.getSpriteAtlasPath());
@@ -258,7 +256,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (stat === Stat.HP)
       return this.stats[Stat.HP];
     const statLevel = this.summonData.battleStats[(stat + 1) as BattleStat];
-    return this.stats[stat] * (Math.max(2, 2 + statLevel) / Math.max(2, 2 - statLevel));
+    let ret = this.stats[stat] * (Math.max(2, 2 + statLevel) / Math.max(2, 2 - statLevel));
+    if (this.status && this.status.effect === StatusEffect.PARALYSIS)
+      ret >>= 2;
+    return ret;
   }
 
   calculateStats(): void {
@@ -436,6 +437,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const typeMultiplier = getTypeDamageMultiplier(move.type, this.species.type1) * (this.species.type2 > -1 ? getTypeDamageMultiplier(move.type, this.species.type2) : 1);
         const criticalMultiplier = isCritical ? 2 : 1;
         damage = Math.ceil(((((2 * source.level / 5 + 2) * move.power * sourceAtk / targetDef) / 50) + 2) * stabMultiplier * typeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
+        if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
+          damage = Math.floor(damage / 2);
         console.log('damage', damage, move.name, move.power, sourceAtk, targetDef);
         if (damage) {
           this.hp = Math.max(this.hp - damage, 0);
@@ -503,8 +506,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       callback();
   }
 
-  cry(soundConfig?: Phaser.Types.Sound.SoundConfig) {
+  cry(soundConfig?: Phaser.Types.Sound.SoundConfig): integer {
     this.scene.sound.play(this.species.speciesId.toString(), soundConfig);
+    return this.scene.sound.get(this.species.speciesId.toString()).totalDuration * 1000;
   }
 
   faintCry(callback: Function) {
@@ -555,7 +559,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     });
     // Failsafe
-    this.scene.time.delayedCall(5000, () => {
+    this.scene.time.delayedCall(3000, () => {
       if (!faintCryTimer || !this.scene)
         return;
       const crySound = this.scene.sound.get(key);
@@ -567,16 +571,42 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
-  resetSummonData() {
+  trySetStatus(effect: StatusEffect): boolean {
+    if (this.status)
+      return false;
+    switch (effect) {
+      case StatusEffect.POISON:
+      case StatusEffect.TOXIC:
+        if (this.species.isOfType(Type.POISON) || this.species.isOfType(Type.STEEL))
+          return false;
+        break;
+      case StatusEffect.FREEZE:
+        if (this.species.isOfType(Type.ICE))
+          return false;
+        break;
+      case StatusEffect.BURN:
+        if (this.species.isOfType(Type.FIRE))
+          return false;
+        break;
+    }
+    this.status = new Status(effect);
+    return true;
+  }
+
+  resetStatus(): void {
+    this.status = undefined;
+  }
+
+  resetSummonData(): void {
     this.summonData = new PokemonSummonData();
     this.resetBattleSummonData();
   }
 
-  resetBattleSummonData() {
+  resetBattleSummonData(): void {
     this.battleSummonData = new PokemonBattleSummonData();
   }
 
-  resetTurnData() {
+  resetTurnData(): void {
     this.turnData = new PokemonTurnData();
   }
 
@@ -815,6 +845,7 @@ export class PokemonTurnData {
   public flinched: boolean;
   public hitCount: integer;
   public hitsLeft: integer;
+  public hitsTotal: integer;
 }
 
 export enum AiType {
