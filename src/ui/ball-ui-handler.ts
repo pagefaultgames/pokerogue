@@ -1,5 +1,5 @@
-import { CommandPhase } from "../battle-phase";
-import BattleScene from "../battle-scene";
+import { CommandPhase } from "../battle-phases";
+import BattleScene, { Button } from "../battle-scene";
 import { getPokeballName, PokeballType } from "../pokeball";
 import { addTextObject, TextStyle } from "../text";
 import { Command } from "./command-ui-handler";
@@ -55,17 +55,16 @@ export default class BallUiHandler extends UiHandler {
     this.setCursor(this.cursor);
   }
 
-  processInput(keyCode: integer) {
-    const keyCodes = Phaser.Input.Keyboard.KeyCodes;
+  processInput(button: Button) {
     const ui = this.getUi();
 
     let success = false;
 
     const pokeballTypeCount = Object.keys(this.scene.pokeballCounts).length;
 
-    if (keyCode === keyCodes.Z || keyCode === keyCodes.X) {
+    if (button === Button.ACTION || button === Button.CANCEL) {
       success = true;
-      if (keyCode === keyCodes.Z && this.cursor < pokeballTypeCount) {
+      if (button === Button.ACTION && this.cursor < pokeballTypeCount) {
         if (this.scene.pokeballCounts[this.cursor]) {
           (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.BALL, this.cursor);
           this.scene.ui.setMode(Mode.COMMAND);
@@ -78,11 +77,11 @@ export default class BallUiHandler extends UiHandler {
         success = true;
       }
     } else {
-      switch (keyCode) {
-        case keyCodes.UP:
+      switch (button) {
+        case Button.UP:
           success = this.setCursor(this.cursor ? this.cursor - 1 : pokeballTypeCount);
           break;
-        case keyCodes.DOWN:
+        case Button.DOWN:
           success = this.setCursor(this.cursor < pokeballTypeCount ? this.cursor + 1 : 0);
           break;
       }

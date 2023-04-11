@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { Button } from "../battle-scene";
 import { addTextObject, TextStyle } from "../text";
 import UI, { Mode } from "./ui";
 import * as Utils from "../utils";
@@ -87,11 +87,10 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.message.setWordWrapWidth(1780);
   }
 
-  processInput(keyCode: integer) {
+  processInput(button: Button) {
     const ui = this.getUi();
-    const keyCodes = Phaser.Input.Keyboard.KeyCodes;
     if (this.awaitingActionInput) {
-      if (keyCode === keyCodes.X || keyCode === keyCodes.Z) {
+      if (button === Button.CANCEL || button === Button.ACTION) {
         if (this.onActionInput) {
           ui.playSelect();
           const originalOnActionInput = this.onActionInput;

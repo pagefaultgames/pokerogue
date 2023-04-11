@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { Button } from "../battle-scene";
 import { addTextObject, TextStyle } from "../text";
 import { Type } from "../type";
 import { Command } from "./command-ui-handler";
@@ -42,14 +42,13 @@ export default class FightUiHandler extends UiHandler {
     this.displayMoves();
   }
 
-  processInput(keyCode: integer) {
+  processInput(button: Button) {
     const ui = this.getUi();
-    const keyCodes = Phaser.Input.Keyboard.KeyCodes;
 
     let success = false;
 
-    if (keyCode === keyCodes.X || keyCode === keyCodes.Z) {
-      if (keyCode === keyCodes.Z) {
+    if (button === Button.CANCEL || button === Button.ACTION) {
+      if (button === Button.ACTION) {
         if (((this.scene as BattleScene).getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, this.cursor))
           success = true;
       } else {
@@ -57,20 +56,20 @@ export default class FightUiHandler extends UiHandler {
         success = true;
       }
     } else {
-      switch (keyCode) {
-        case keyCodes.UP:
+      switch (button) {
+        case Button.UP:
           if (this.cursor >= 2)
             success = this.setCursor(this.cursor - 2);
           break;
-        case keyCodes.DOWN:
+        case Button.DOWN:
           if (this.cursor < 2)
             success = this.setCursor(this.cursor + 2);
           break;
-        case keyCodes.LEFT:
+        case Button.LEFT:
           if (this.cursor % 2 === 1)
             success = this.setCursor(this.cursor - 1);
           break;
-        case keyCodes.RIGHT:
+        case Button.RIGHT:
           if (this.cursor % 2 === 0)
             success = this.setCursor(this.cursor + 1);
           break;

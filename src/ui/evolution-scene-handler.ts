@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { Button } from "../battle-scene";
 import { Mode } from "./ui";
 import UiHandler from "./uiHandler";
 
@@ -14,8 +14,8 @@ export default class EvolutionSceneHandler extends UiHandler {
       this.scene.fieldUI.add(this.evolutionContainer);
     }
   
-    processInput(keyCode: integer) {
-      this.scene.ui.getMessageHandler().processInput(keyCode);
+    processInput(button: Button) {
+      this.scene.ui.getMessageHandler().processInput(button);
     }
   
     setCursor(_cursor: integer): boolean {

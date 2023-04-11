@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { Button } from "../battle-scene";
 import { addTextObject, TextStyle } from "../text";
 import { toPokemonUpperCase } from "../utils";
 import { PartyUiMode } from "./party-ui-handler";
@@ -46,15 +46,14 @@ export default class CommandUiHandler extends UiHandler {
     this.setCursor(this.cursor);
   }
 
-  processInput(keyCode: integer) {
-    const keyCodes = Phaser.Input.Keyboard.KeyCodes;
+  processInput(button: Button) {
     const ui = this.getUi();
 
     let success = false;
 
-    if (keyCode === keyCodes.X || keyCode === keyCodes.Z) {
+    if (button === Button.CANCEL || button === Button.ACTION) {
       
-      if (keyCode === keyCodes.Z) {
+      if (button === Button.ACTION) {
         switch (this.cursor) {
           case 0:
             ui.setMode(Mode.FIGHT);
@@ -71,20 +70,20 @@ export default class CommandUiHandler extends UiHandler {
         }
       }
     } else {
-      switch (keyCode) {
-        case keyCodes.UP:
+      switch (button) {
+        case Button.UP:
           if (this.cursor >= 2)
             success = this.setCursor(this.cursor - 2);
           break;
-        case keyCodes.DOWN:
+        case Button.DOWN:
           if (this.cursor < 2)
             success = this.setCursor(this.cursor + 2);
           break;
-        case keyCodes.LEFT:
+        case Button.LEFT:
           if (this.cursor % 2 === 1)
             success = this.setCursor(this.cursor - 1);
           break;
-        case keyCodes.RIGHT:
+        case Button.RIGHT:
           if (this.cursor % 2 === 0)
             success = this.setCursor(this.cursor + 1);
           break;

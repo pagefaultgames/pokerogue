@@ -1,5 +1,5 @@
 import { SelectModifierPhase } from "./battle-phases";
-import BattleScene from "./battle-scene";
+import BattleScene, { Button } from "./battle-scene";
 import { ModifierTier, ModifierType, PokemonBaseStatBoosterModifierType, PokemonHpRestoreModifierType, PokemonReviveModifierType } from "./modifier";
 import Pokemon, { AiType, EnemyPokemon, PlayerPokemon, PokemonMove } from "./pokemon";
 import { Species } from "./species";
@@ -52,8 +52,6 @@ export function initAutoPlay() {
         }
         return originalAddCounter.apply(this, [ config ]);
     };
-
-    const keyCodes = Phaser.Input.Keyboard.KeyCodes;
 
     PlayerPokemon.prototype.getNextMove = EnemyPokemon.prototype.getNextMove;
 
@@ -132,14 +130,14 @@ export function initAutoPlay() {
             callbackDelay = 0;
         originalMessageUiHandlerShowPrompt.apply(this, [ callback, callbackDelay ]);
         if (thisArg.auto)
-            thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
+            thisArg.time.delayedCall(20, () => this.processInput(Button.ACTION));
     };
 
     const originalMessageUiHandlerPromptLevelUpStats = messageUiHandler.promptLevelUpStats;
     messageUiHandler.promptLevelUpStats = function (prevStats: integer[], showTotals: boolean, callback?: Function) {
         originalMessageUiHandlerPromptLevelUpStats.apply(this, [ prevStats, showTotals, callback ]);
         if (thisArg.auto)
-            thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
+            thisArg.time.delayedCall(20, () => this.processInput(Button.ACTION));
     };
     
     const originalCommandUiHandlerShow = commandUiHandler.show;
@@ -153,10 +151,10 @@ export function initAutoPlay() {
                     console.log('Switching to ', Species[thisArg.getParty()[bestPartyMemberIndex].species.speciesId]);
                     nextPartyMemberIndex = bestPartyMemberIndex;
                     commandUiHandler.setCursor(2);
-                    thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
+                    thisArg.time.delayedCall(20, () => this.processInput(Button.ACTION));
                 } else {
                     commandUiHandler.setCursor(0);
-                    thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
+                    thisArg.time.delayedCall(20, () => this.processInput(Button.ACTION));
                 }
             });
         }
@@ -171,7 +169,7 @@ export function initAutoPlay() {
             thisArg.time.delayedCall(20, () => {
                 const nextMove = playerPokemon.getNextMove() as PokemonMove;
                 fightUiHandler.setCursor(playerPokemon.moveset.indexOf(nextMove));
-                thisArg.time.delayedCall(20, () => this.processInput(keyCodes.Z));
+                thisArg.time.delayedCall(20, () => this.processInput(Button.ACTION));
             });
         }
     };
@@ -186,10 +184,10 @@ export function initAutoPlay() {
                 partyUiHandler.setCursor(nextPartyMemberIndex);
                 nextPartyMemberIndex = -1;
                 if (partyUiHandler.partyUiMode === PartyUiMode.MODIFIER || partyUiHandler.getCursor()) {
-                    this.processInput(keyCodes.Z);
-                    thisArg.time.delayedCall(250, () => this.processInput(keyCodes.Z));
+                    this.processInput(Button.ACTION);
+                    thisArg.time.delayedCall(250, () => this.processInput(Button.ACTION));
                 } else
-                    this.processInput(keyCodes.X);
+                    this.processInput(Button.CANCEL);
             });
         }
     };
@@ -203,7 +201,7 @@ export function initAutoPlay() {
                 if (bestPartyMemberIndex)
                     nextPartyMemberIndex = bestPartyMemberIndex;
                 switchCheckUiHandler.setCursor(bestPartyMemberIndex ? 1 : 0);
-                thisArg.time.delayedCall(20, () =>  this.processInput(keyCodes.Z));
+                thisArg.time.delayedCall(20, () =>  this.processInput(Button.ACTION));
             });
         }
     }
@@ -285,7 +283,7 @@ export function initAutoPlay() {
             const trySelectModifier = () => {
                 modifierSelectUiHandler.setCursor(optionIndex);
                 thisArg.time.delayedCall(20, () => {
-                    modifierSelectUiHandler.processInput(keyCodes.Z);
+                    modifierSelectUiHandler.processInput(Button.ACTION);
                     thisArg.time.delayedCall(250, () => {
                         console.log(modifierTypes[optionIndex]?.name);
                         if (thisArg.getCurrentPhase() instanceof SelectModifierPhase) {
@@ -293,7 +291,7 @@ export function initAutoPlay() {
                                 optionIndex++;
                                 thisArg.time.delayedCall(250, () => trySelectModifier());
                             } else
-                                modifierSelectUiHandler.processInput(keyCodes.X);
+                                modifierSelectUiHandler.processInput(Button.CANCEL);
                         }
                     });
                 });

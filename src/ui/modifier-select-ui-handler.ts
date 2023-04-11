@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { Button } from "../battle-scene";
 import { ModifierTier, ModifierType } from "../modifier";
 import { getPokeballAtlasKey, PokeballType } from "../pokeball";
 import { addTextObject, TextStyle } from "../text";
@@ -87,8 +87,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     });
   }
 
-  processInput(keyCode: integer) {
-    const keyCodes = Phaser.Input.Keyboard.KeyCodes;
+  processInput(button: Button) {
     const ui = this.getUi();
 
     if (!this.awaitingActionInput)
@@ -96,7 +95,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     let success = false;
 
-    if (keyCode === keyCodes.Z) {
+    if (button === Button.ACTION) {
       success = true;
       if (this.onActionInput) {
         const originalOnActionInput = this.onActionInput;
@@ -104,7 +103,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         this.onActionInput = null;
         originalOnActionInput(this.cursor);
       }
-    } else if (keyCode === keyCodes.X) {
+    } else if (button === Button.CANCEL) {
       success = true;
       if (this.onActionInput) {
         const originalOnActionInput = this.onActionInput;
@@ -113,12 +112,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         originalOnActionInput(-1);
       }
     } else {
-      switch (keyCode) {
-        case keyCodes.LEFT:
+      switch (button) {
+        case Button.LEFT:
           if (this.cursor)
             success = this.setCursor(this.cursor - 1);
           break;
-        case keyCodes.RIGHT:
+        case Button.RIGHT:
           if (this.cursor < this.options.length - 1)
             success = this.setCursor(this.cursor + 1);
           break;

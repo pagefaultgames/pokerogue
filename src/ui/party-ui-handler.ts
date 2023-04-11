@@ -1,5 +1,5 @@
 import { CommandPhase } from "../battle-phases";
-import BattleScene from "../battle-scene";
+import BattleScene, { Button } from "../battle-scene";
 import { PlayerPokemon } from "../pokemon";
 import { addTextObject, TextStyle } from "../text";
 import { Command } from "./command-ui-handler";
@@ -123,15 +123,14 @@ export default class PartyUiHandler extends MessageUiHandler {
       : PartyUiHandler.FilterAll;
   }
 
-  processInput(keyCode: integer) {
+  processInput(button: Button) {
     const ui = this.getUi();
-    const keyCodes = Phaser.Input.Keyboard.KeyCodes;
 
     if (this.pendingPrompt)
       return;
 
     if (this.awaitingActionInput) {
-      if (keyCode === keyCodes.Z || keyCode === keyCodes.X) {
+      if (button === Button.ACTION || button === Button.CANCEL) {
         if (this.onActionInput) {
           ui.playSelect();
           const originalOnActionInput = this.onActionInput;
@@ -146,7 +145,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     let success = false;
 
     if (this.optionsMode) {
-      if (keyCode === keyCodes.Z) {
+      if (button === Button.ACTION) {
         const option = this.options[this.optionsCursor];
         if (option === PartyOption.SHIFT || option === PartyOption.SEND_OUT || option === PartyOption.APPLY) {
           let filterResult: string = this.selectFilter(this.scene.getParty()[this.cursor]);
@@ -175,32 +174,32 @@ export default class PartyUiHandler extends MessageUiHandler {
           ui.playSelect();
           ui.setModeWithoutClear(Mode.SUMMARY, this.scene.getParty()[this.cursor]).then(() =>  this.clearOptions());
         } else if (option === PartyOption.CANCEL)
-          this.processInput(keyCodes.X);
-      } else if (keyCode === keyCodes.X) {
+          this.processInput(Button.CANCEL);
+      } else if (button === Button.CANCEL) {
         this.clearOptions();
         ui.playSelect();
       }
       else {
-        switch (keyCode) {
-          case keyCodes.UP:
+        switch (button) {
+          case Button.UP:
             success = this.setCursor(this.optionsCursor ? this.optionsCursor - 1 : this.options.length - 1);
             break;
-          case keyCodes.DOWN:
+          case Button.DOWN:
             success = this.setCursor(this.optionsCursor < this.options.length - 1 ? this.optionsCursor + 1 : 0);
             break;
         }
       }
     } else {
-      if (keyCode === keyCodes.Z) {
+      if (button === Button.ACTION) {
         if (this.cursor < 6) {
           this.showOptions();
           ui.playSelect();
         } else if (this.partyUiMode === PartyUiMode.FAINT_SWITCH)
           ui.playError();
         else
-          this.processInput(keyCodes.X);
+          this.processInput(Button.CANCEL);
         return;
-      } else if (keyCode === keyCodes.X) {
+      } else if (button === Button.CANCEL) {
         if (this.partyUiMode !== PartyUiMode.FAINT_SWITCH) {
           if (this.selectCallback) {
             const selectCallback = this.selectCallback;
@@ -217,18 +216,18 @@ export default class PartyUiHandler extends MessageUiHandler {
 
       const slotCount = this.partySlots.length;
 
-      switch (keyCode) {
-        case keyCodes.UP:
+      switch (button) {
+        case Button.UP:
           success = this.setCursor(this.cursor ? this.cursor < 6 ? this.cursor - 1 : slotCount - 1 : 6);
           break;
-        case keyCodes.DOWN:
+        case Button.DOWN:
           success = this.setCursor(this.cursor < 6 ? this.cursor < slotCount - 1 ? this.cursor + 1 : 6 : 0);
           break;
-        case keyCodes.LEFT:
+        case Button.LEFT:
           if (this.cursor && this.cursor < 6)
             success = this.setCursor(0);
           break;
-        case keyCodes.RIGHT:
+        case Button.RIGHT:
           if (!this.cursor)
             success = this.setCursor(this.lastCursor < 6 ? this.lastCursor || 1 : 1);
           break;

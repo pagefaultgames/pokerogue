@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { Button } from "../battle-scene";
 import { addTextObject, TextStyle } from "../text";
 import { Mode } from "./ui";
 import UiHandler from "./uiHandler";
@@ -51,27 +51,26 @@ export default class ConfirmUiHandler extends UiHandler {
     }
   }
 
-  processInput(keyCode: integer) {
-    const keyCodes = Phaser.Input.Keyboard.KeyCodes;
+  processInput(button: Button) {
     const ui = this.getUi();
 
     let success = false;
 
-    if (keyCode === keyCodes.Z || keyCode === keyCodes.X) {
+    if (button === Button.ACTION || button === Button.CANCEL) {
       success = true;
-      if (keyCode === keyCodes.X)
+      if (button === Button.CANCEL)
         this.setCursor(1);
       const handler = this.cursor ? this.noHander : this.yesHandler;
       handler();
       console.log(this.cursor ? this.noHander : this.yesHandler);
       this.clear();
     } else {
-      switch (keyCode) {
-        case keyCodes.UP:
+      switch (button) {
+        case Button.UP:
           if (this.cursor)
             success = this.setCursor(0);
           break;
-        case keyCodes.DOWN:
+        case Button.DOWN:
           if (!this.cursor)
             success = this.setCursor(1);
           break;

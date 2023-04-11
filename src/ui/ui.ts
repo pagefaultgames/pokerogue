@@ -1,4 +1,4 @@
-import { default as BattleScene } from '../battle-scene';
+import { Button, default as BattleScene } from '../battle-scene';
 import UiHandler from './uiHandler';
 import BattleMessageUiHandler from './battle-message-ui-handler';
 import CommandUiHandler from './command-ui-handler';
@@ -79,11 +79,11 @@ export default class UI extends Phaser.GameObjects.Container {
     return this.handlers[Mode.MESSAGE] as BattleMessageUiHandler;
   }
 
-  processInput(keyCode: integer): void {
+  processInput(button: Button): void {
     if (this.transitioning)
       return;
 
-    this.getHandler().processInput(keyCode);
+    this.getHandler().processInput(button);
   }
 
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void {

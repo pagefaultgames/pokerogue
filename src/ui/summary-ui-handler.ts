@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { Button } from "../battle-scene";
 import { Mode } from "./ui";
 import UiHandler from "./uiHandler";
 import * as Utils from "../utils";
@@ -170,17 +170,16 @@ export default class SummaryUiHandler extends UiHandler {
     }
   }
 
-  processInput(keyCode: integer) {
+  processInput(button: Button) {
     if (this.transitioning)
       return;
 
     const ui = this.getUi();
-    const keyCodes = Phaser.Input.Keyboard.KeyCodes;
 
     let success = false;
 
     if (this.moveSelect) {
-      if (keyCode === keyCodes.Z) {
+      if (button === Button.ACTION) {
         if (this.moveCursor < this.pokemon.moveset.length) {
           if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
             this.moveSelectFunction(this.moveCursor);
@@ -213,37 +212,37 @@ export default class SummaryUiHandler extends UiHandler {
           }
           success = true;
         } else if (this.moveCursor === 4)
-          this.processInput(keyCodes.X);
+          this.processInput(Button.CANCEL);
         else
           ui.playError();
-      } else if (keyCode === keyCodes.X) {
+      } else if (button === Button.CANCEL) {
         this.hideMoveSelect();
         success = true;
       } else {
-        switch (keyCode) {
-          case keyCodes.UP:
+        switch (button) {
+          case Button.UP:
             success = this.setCursor(this.moveCursor ? this.moveCursor - 1 : 4);
             break;
-          case keyCodes.DOWN:
+          case Button.DOWN:
             success = this.setCursor(this.moveCursor < 4 ? this.moveCursor + 1 : 0);
             break;
         }
       }
     } else {
-      if (keyCode === keyCodes.Z) {
+      if (button === Button.ACTION) {
         if (this.cursor === Page.MOVES) {
           this.showMoveSelect();
           success = true;
         }
-      } else if (keyCode === keyCodes.X) {
+      } else if (button === Button.CANCEL) {
         ui.setMode(Mode.PARTY);
         success = true;
       } else {
         const pages = Utils.getEnumValues(Page);
-        switch (keyCode) {
-          case keyCodes.UP:
-          case keyCodes.DOWN:
-            const isDown = keyCode === keyCodes.DOWN;
+        switch (button) {
+          case Button.UP:
+          case Button.DOWN:
+            const isDown = button === Button.DOWN;
             const party = this.scene.getParty();
             const partyMemberIndex = party.indexOf(this.pokemon);
             if ((isDown && partyMemberIndex < party.length - 1) || (!isDown && partyMemberIndex)) {
@@ -252,11 +251,11 @@ export default class SummaryUiHandler extends UiHandler {
               this.show([ party[partyMemberIndex + (isDown ? 1 : -1)], this.summaryUiMode, page ]);
             }
             break;
-          case keyCodes.LEFT:
+          case Button.LEFT:
             if (this.cursor)
               success = this.setCursor(this.cursor - 1);
             break;
-          case keyCodes.RIGHT:
+          case Button.RIGHT:
             if (this.cursor < pages.length - 1)
               success = this.setCursor(this.cursor + 1);
             break;

@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { Button } from "../battle-scene";
 import { allSpecies } from "../pokemon-species";
 import { Mode } from "./ui";
 import UiHandler from "./uiHandler";
@@ -41,14 +41,13 @@ export default class StarterSelectUiHandler extends UiHandler {
       this.setCursor(0);
     }
   
-    processInput(keyCode: integer) {
+    processInput(button: Button) {
       const ui = this.getUi();
-      const keyCodes = Phaser.Input.Keyboard.KeyCodes;
 
       let success = false;
   
-      if (keyCode === keyCodes.Z) {
-      } else if (keyCode === keyCodes.X) {
+      if (button === Button.ACTION) {
+      } else if (button === Button.CANCEL) {
       } else {
       }
     

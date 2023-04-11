@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { Button } from "../battle-scene";
 import UI, { Mode } from "./ui";
 
 export default abstract class UiHandler {
@@ -18,7 +18,7 @@ export default abstract class UiHandler {
     this.active = true;
   }
 
-  abstract processInput(keyCode: integer);
+  abstract processInput(button: Button);
 
   getUi() {
     return this.scene.ui;

@@ -15,6 +15,19 @@ import { BattlePhase } from './battle-phase';
 
 const enableAuto = true;
 
+export enum Button {
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT,
+	ACTION,
+	CANCEL,
+	RANDOM,
+	AUTO,
+	SPEED_UP,
+	SLOW_DOWN
+}
+
 export default class BattleScene extends Phaser.Scene {
 	public auto: boolean;
 	public autoSpeed: integer = 1;
@@ -45,15 +58,7 @@ export default class BattleScene extends Phaser.Scene {
 
 	private bgm: Phaser.Sound.BaseSound;
 	
-	private upKey: Phaser.Input.Keyboard.Key;
-	private downKey: Phaser.Input.Keyboard.Key;
-	private leftKey: Phaser.Input.Keyboard.Key;
-	private rightKey: Phaser.Input.Keyboard.Key;
-	private actionKey: Phaser.Input.Keyboard.Key;
-	private cancelKey: Phaser.Input.Keyboard.Key;
-	private f2Key: Phaser.Input.Keyboard.Key;
-	private plusKey: Phaser.Input.Keyboard.Key;
-	private minusKey: Phaser.Input.Keyboard.Key;
+	private buttonKeys: Phaser.Input.Keyboard.Key[][];
 
 	private blockInput: boolean;
 
@@ -214,10 +219,20 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	create() {
+		this.setupControls();
+
 		this.load.setBaseURL();
 
 		//this.spritePipeline = (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.get('Sprite') as SpritePipeline;
 
+		this.time.delayedCall(20, () => this.launchBattle());
+	}
+
+	update() {
+		this.checkInput();
+	}
+
+	launchBattle() {
 		const field = this.add.container(0, 0);
 		field.setScale(6);
 
@@ -264,8 +279,10 @@ export default class BattleScene extends Phaser.Scene {
 
 		let loadPokemonAssets = [];
 
+		const isRandom = this.isButtonPressed(Button.RANDOM); // For testing purposes
+
 		for (let s = 0; s < 3; s++) {
-			const playerSpecies = getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP); //this.randomSpecies();
+			const playerSpecies = !isRandom ? getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP) : this.randomSpecies(5);
 			const playerPokemon = new PlayerPokemon(this, playerSpecies, 5);
 			playerPokemon.setVisible(false);
 			loadPokemonAssets.push(playerPokemon.loadAssets());
@@ -304,16 +321,6 @@ export default class BattleScene extends Phaser.Scene {
 
 		ui.setup();
 
-		this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-		this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
-		this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-		this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-		this.actionKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
-		this.cancelKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
-		this.f2Key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F2);
-		this.plusKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.PLUS);
-		this.minusKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.MINUS);
-
 		Promise.all(loadPokemonAssets).then(() => {
 			if (enableAuto)
 				initAutoPlay.apply(this);
@@ -326,8 +333,29 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	update() {
-		this.checkInput();
+	setupControls() {
+		const keyCodes = Phaser.Input.Keyboard.KeyCodes;
+		const keyConfig = {
+			[Button.UP]: [keyCodes.UP, keyCodes.W],
+			[Button.DOWN]: [keyCodes.DOWN, keyCodes.S],
+			[Button.LEFT]: [keyCodes.LEFT, keyCodes.A],
+			[Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
+			[Button.ACTION]: [keyCodes.ENTER, keyCodes.SPACE, keyCodes.Z],
+			[Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.ESC, keyCodes.X],
+			[Button.RANDOM]: [keyCodes.R],
+			[Button.AUTO]: [keyCodes.F2],
+			[Button.SPEED_UP]: [keyCodes.PLUS],
+			[Button.SLOW_DOWN]: [keyCodes.MINUS]
+		};
+		this.buttonKeys = [];
+		for (let b of Utils.getEnumValues(Button)) {
+			const keys: Phaser.Input.Keyboard.Key[] = [];
+			if (keyConfig.hasOwnProperty(b)) {
+				for (let k of keyConfig[b])
+					keys.push(this.input.keyboard.addKey(k));
+			}
+			this.buttonKeys[b] = keys;
+		}
 	}
 
 	getParty(): PlayerPokemon[] {
@@ -372,31 +400,31 @@ export default class BattleScene extends Phaser.Scene {
 	randomSpecies(level: integer, fromArenaPool?: boolean): PokemonSpecies {
 		return fromArenaPool
 			? this.arena.randomSpecies(1, level)
-			: allSpecies[(Utils.randInt(allSpecies.length)) - 1];
+			: getPokemonSpecies(allSpecies[(Utils.randInt(allSpecies.length)) - 1].getSpeciesForLevel(level));
 	}
 
 	checkInput(): boolean {
 		if (this.blockInput)
 			return;
-		if (this.upKey.isDown)
-			this.ui.processInput(this.upKey.keyCode);
-		else if (this.downKey.isDown)
-			this.ui.processInput(this.downKey.keyCode);
-		else if (this.leftKey.isDown)
-			this.ui.processInput(this.leftKey.keyCode);
-		else if (this.rightKey.isDown)
-			this.ui.processInput(this.rightKey.keyCode);
-		else if (this.actionKey.isDown)
-			this.ui.processInput(this.actionKey.keyCode);
-		else if (this.cancelKey.isDown)
-			this.ui.processInput(this.cancelKey.keyCode);
+		if (this.isButtonPressed(Button.UP))
+			this.ui.processInput(Button.UP);
+		else if (this.isButtonPressed(Button.DOWN))
+			this.ui.processInput(Button.DOWN);
+		else if (this.isButtonPressed(Button.LEFT))
+			this.ui.processInput(Button.LEFT);
+		else if (this.isButtonPressed(Button.RIGHT))
+			this.ui.processInput(Button.RIGHT);
+		else if (this.isButtonPressed(Button.ACTION))
+			this.ui.processInput(Button.ACTION);
+		else if (this.isButtonPressed(Button.CANCEL))
+			this.ui.processInput(Button.CANCEL);
 		else if (enableAuto) {
-			if (this.f2Key.isDown)
+			if (this.isButtonPressed(Button.AUTO))
 				this.auto = !this.auto;
-			else if (this.plusKey.isDown) {
+			else if (this.isButtonPressed(Button.SPEED_UP)) {
 				if (this.autoSpeed < 20)
 					this.autoSpeed++;
-			} else if (this.minusKey.isDown) {
+			} else if (this.isButtonPressed(Button.SLOW_DOWN)) {
 				if (this.autoSpeed > 1)
 					this.autoSpeed--;
 			}
@@ -409,6 +437,10 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
+	isButtonPressed(button: Button): boolean {
+		return this.buttonKeys[button].filter(k => k.isDown).length >= 1;
+	}
+
 	playBgm(bgmName?: string): void {
 		if (!bgmName && this.bgm) {
 			this.bgm.play({
@@ -419,7 +451,7 @@ export default class BattleScene extends Phaser.Scene {
 		if (this.bgm && this.bgm.isPlaying)
 			this.bgm.stop();
 		this.bgm = this.sound.add(bgmName, { loop: true });
-		//this.bgm.play();
+		this.bgm.play();
 	}
 
 	pauseBgm(): void {
