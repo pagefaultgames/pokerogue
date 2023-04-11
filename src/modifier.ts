@@ -755,11 +755,11 @@ const modifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(new AddPokeballModifierType(PokeballType.POKEBALL, 5, 'pb'), 2),
     new WeightedModifierType(new PokemonHpRestoreModifierType('POTION', 20), (party: PlayerPokemon[]) => {
-      const thresholdPartyMemberCount = party.filter(p => p.getInverseHp() >= 10).length;
+      const thresholdPartyMemberCount = party.filter(p => p.getInverseHp() >= 10 || p.getHpRatio() <= 0.875).length;
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(new PokemonHpRestoreModifierType('SUPER POTION', 50), (party: PlayerPokemon[]) => {
-      const thresholdPartyMemberCount = party.filter(p => p.getInverseHp() >= 25).length;
+      const thresholdPartyMemberCount = party.filter(p => p.getInverseHp() >= 25 || p.getHpRatio() <= 0.75).length;
       return Math.ceil(thresholdPartyMemberCount / 3);
     }),
     new WeightedModifierType(new PokemonPpRestoreModifierType('ETHER', 10), (party: PlayerPokemon[]) => {
@@ -782,11 +782,11 @@ const modifierPool = {
       return faintedPartyMemberCount;
     }),
     new WeightedModifierType(new PokemonHpRestoreModifierType('HYPER POTION', 200), (party: PlayerPokemon[]) => {
-      const thresholdPartyMemberCount = party.filter(p => p.getInverseHp() >= 100).length;
+      const thresholdPartyMemberCount = party.filter(p => p.getInverseHp() >= 100 || p.getHpRatio() <= 0.625).length;
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(new PokemonHpRestoreModifierType('MAX POTION', 100, true), (party: PlayerPokemon[]) => {
-      const thresholdPartyMemberCount = party.filter(p => p.getInverseHp() >= 150).length;
+      const thresholdPartyMemberCount = party.filter(p => p.getInverseHp() >= 150 || p.getHpRatio() <= 0.5).length;
       return Math.ceil(thresholdPartyMemberCount / 3);
     }),
     new WeightedModifierType(new PokemonAllMovePpRestoreModifierType('ELIXIR', 10), (party: PlayerPokemon[]) => {
