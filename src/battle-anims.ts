@@ -3,7 +3,6 @@ import BattleScene from "./battle-scene";
 import { Moves } from "./move";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "./pokemon";
 import * as Utils from "./utils";
-import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
     USER,
@@ -16,6 +15,61 @@ enum AnimFocus {
     TARGET,
     USER_TARGET,
     SCREEN
+}
+
+export enum ChargeAnim {
+    FLY_CHARGING = 1000,
+    BOUNCE_CHARGING,
+    DIG_CHARGING,
+    DIVE_CHARGING,
+    SOLAR_BEAM_CHARGING,
+    SHADOW_FORCE_CHARGING,
+    SKULL_BASH_CHARGING,
+    FREEZE_SHOCK_CHARGING,
+    SKY_DROP_CHARGING,
+    SKY_ATTACK_CHARGING,
+    ICE_BURN_CHARGING,
+    DOOM_DESIRE_CHARGING,
+    RAZOR_WIND_CHARGING
+}
+
+export enum CommonAnim {
+    HEALTH_UP = 2000,
+    SLEEP,
+    POISON,
+    TOXIC,
+    BURN,
+    PARALYSIS,
+    FROZEN,
+    CONFUSION,
+    ATTRACT,
+    BIND,
+    WRAP,
+    CURSE_NO_GHOST,
+    LEECH_SEED,
+    FIRE_SPIN,
+    PROTECT,
+    COVET,
+    WHIRLPOOL,
+    BIDE,
+    SAND_TOMB,
+    QUICK_GUARD,
+    WIDE_GUARD,
+    CURSE,
+    MAGMA_STORM,
+    CLAMP,
+    SUNNY = 2100,
+    RAIN,
+    SANDSTORM,
+    HAIL,
+    WIND,
+    HEAVY_RAIN,
+    HARSH_SUN,
+    STRONG_WINDS,
+    MISTY_TERRAIN = 2110,
+    ELECTRIC_TERRAIN,
+    GRASSY_TERRAIN,
+    PSYCHIC_TERRAIN
 }
 
 export class Anim {
@@ -279,6 +333,8 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
 }
 
 export const moveAnims = new Map<Moves, Anim | [Anim, Anim]>();
+export const chargeAnims = new Map<ChargeAnim, Anim>();
+export const commonAnims = new Map<CommonAnim, Anim>();
 
 export function initAnim(move: Moves): Promise<void> {
     return new Promise(resolve => {
@@ -453,6 +509,13 @@ export class MoveAnim {
 
 export function populateAnims() {
     return;
+    const commonAnimNames = Utils.getEnumKeys(CommonAnim).map(k => k.toLowerCase());
+    const commonAnimMatchNames = commonAnimNames.map(k => k.replace(/\_/g, ''));
+    const commonAnimIds = Utils.getEnumValues(CommonAnim) as CommonAnim[];
+    const chargeAnimNames = Utils.getEnumKeys(ChargeAnim).map(k => k.toLowerCase());
+    const chargeAnimMatchNames = chargeAnimNames.map(k => k.replace(/\_/g, ' '));
+    const chargeAnimIds = Utils.getEnumValues(ChargeAnim) as ChargeAnim[];
+    const commonNamePattern = /name: (?:Common:)?(.*)/;
     const moveNameToId = {};
     for (let move of Utils.getEnumValues(Moves)) {
         const moveName = Moves[move].toUpperCase().replace(/\_/g, '');
@@ -463,15 +526,28 @@ export function populateAnims() {
         const fields = animsData[a].split('@').slice(1);
         
         let isOppMove: boolean;
-        if (!fields[1].startsWith('name: Move:') && !(isOppMove = fields[1].startsWith('name: OppMove:')))
-            continue;
+        let commonAnimId: CommonAnim;
+        let chargeAnimId: ChargeAnim;
+        if (!fields[1].startsWith('name: Move:') && !(isOppMove = fields[1].startsWith('name: OppMove:'))) {
+            const nameMatch = commonNamePattern.exec(fields[1]);
+            const name = nameMatch[1].toLowerCase();
+            if (commonAnimMatchNames.indexOf(name) > -1)
+                commonAnimId = commonAnimIds[commonAnimMatchNames.indexOf(name)];
+            else if (chargeAnimMatchNames.indexOf(name) > -1)
+                chargeAnimId = chargeAnimIds[chargeAnimMatchNames.indexOf(name)];
+        }
         const nameIndex = fields[1].indexOf(':', 5) + 1;
-        const moveName = fields[1].slice(nameIndex, fields[1].indexOf('\n', nameIndex));
-        if (!moveNameToId.hasOwnProperty(moveName))
+        const animName = fields[1].slice(nameIndex, fields[1].indexOf('\n', nameIndex));
+        if (!moveNameToId.hasOwnProperty(animName) && !commonAnimId && !chargeAnimId)
             continue;
         let anim = new Anim();
-        anim.id = moveNameToId[moveName];
-        moveAnims.set(moveNameToId[moveName], !isOppMove ? anim : [ moveAnims.get(moveNameToId[moveName]) as Anim, anim ]);
+        anim.id = commonAnimId || chargeAnimId || moveNameToId[animName];
+        if (commonAnimId)
+            commonAnims.set(commonAnimId, anim);
+        else if (chargeAnimId)
+            chargeAnims.set(chargeAnimId, anim);
+        else
+            moveAnims.set(moveNameToId[animName], !isOppMove ? anim : [ moveAnims.get(moveNameToId[animName]) as Anim, anim ]);
         for (let f = 0; f < fields.length; f++) {
             const field = fields[f];
             const fieldName = field.slice(0, field.indexOf(':'));
@@ -563,16 +639,32 @@ export function populateAnims() {
         }
     }
 
+    const animReplacer = (k, v) => {
+        if (v instanceof Map)
+            return Object.fromEntries(v);
+        if (v instanceof AnimTimedEvent)
+            v['eventType'] = v.getEventType();
+        return v;
+    }
+
     /*for (let ma of moveAnims.keys()) {
         const data = moveAnims.get(ma);
         (async () => {
-            await fs.writeFile(`./public/battle-anims/${Moves[ma].toLowerCase().replace(/\_/g, '-')}.json`, JSON.stringify(data, (k, v) => {
-                if (v instanceof Map)
-                    return Object.fromEntries(v);
-                if (v instanceof AnimTimedEvent)
-                    v['eventType'] = v.getEventType();
-                return v;
-            }, '  '));
-        })(); 
+            await fs.writeFile(`./public/battle-anims/${Moves[ma].toLowerCase().replace(/\_/g, '-')}.json`, JSON.stringify(data, animReplacer, '  '));
+        })();
+    }
+
+    for (let ca of chargeAnims.keys()) {
+        const data = chargeAnims.get(ca);
+        (async () => {
+            await fs.writeFile(`./public/battle-anims/${chargeAnimNames[chargeAnimIds.indexOf(ca)].replace(/\_/g, '-')}.json`, JSON.stringify(data, animReplacer, '  '));
+        })();
+    }
+
+    for (let cma of commonAnims.keys()) {
+        const data = commonAnims.get(cma);
+        (async () => {
+            await fs.writeFile(`./public/battle-anims/common-${commonAnimNames[commonAnimIds.indexOf(cma)].replace(/\_/g, '-')}.json`, JSON.stringify(data, animReplacer, '  '));
+        })();
     }*/
 }

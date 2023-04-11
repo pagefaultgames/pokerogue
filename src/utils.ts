@@ -54,7 +54,11 @@ export function decToBin(input: integer): string {
   return bin;
 }
 
-export function getEnumValues(enumType) {
+export function getEnumKeys(enumType): string[] {
+  return Object.values(enumType).filter(v => isNaN(parseInt(v.toString()))).map(v => v.toString());
+}
+
+export function getEnumValues(enumType): integer[] {
   return Object.values(enumType).filter(v => !isNaN(parseInt(v.toString()))).map(v => parseInt(v.toString()));
 }
 

@@ -581,7 +581,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getExpValue(victor: Pokemon): integer {
-    return ((this.species.baseExp * this.level) / 5) * ((Math.round(Math.sqrt(2 * this.level + 10)) * Math.pow(2 * this.level + 10, 2)) / (Math.round(Math.sqrt(this.level + victor.level + 10)) * Math.pow(this.level + victor.level + 10, 2))) + 1;
+    return ((this.species.baseExp * this.level) / 5) * ((Math.round(Math.sqrt(2 * this.level + 10))
+      * Math.pow(2 * this.level + 10, 2)) / (Math.round(Math.sqrt(this.level + victor.level + 10)) * Math.pow(this.level + victor.level + 10, 2))) + 1;
   }
 
   tint(color: number, alpha?: number, duration?: integer, ease?: string) {
