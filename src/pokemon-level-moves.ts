@@ -1,7 +1,11 @@
 import { Moves } from "./move";
 import { Species } from "./species";
 
-export const pokemonLevelMoves = {
+interface PokemonLevelMoves {
+  [key: string]: Array<Array<integer | Moves>>
+}
+
+export const pokemonLevelMoves: PokemonLevelMoves = {
   [Species.BULBASAUR]: [
     [ 1, Moves.TACKLE ],
     [ 3, Moves.GROWL ],

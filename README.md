@@ -4,7 +4,6 @@
 
 - Title screen
 - Starter select screen
-  - UI
   - Get starters from save data caught Pokemon
 - Moves
   - Move logic

@@ -16,7 +16,9 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./battle-stat";
 import { Biome, biomeLinks } from "./biome";
-import { ModifierType, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier-type";
+import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier-type";
+import PokemonSpecies from "./pokemon-species";
+import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
 export class SelectStarterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
@@ -26,7 +28,26 @@ export class SelectStarterPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.ui.setMode(Mode.STARTER_SELECT);
+    this.scene.sound.play('menu');
+
+    this.scene.ui.setMode(Mode.STARTER_SELECT, (starterSpecies: PokemonSpecies[]) => {
+      const party = this.scene.getParty();
+      const loadPokemonAssets: Promise<void>[] = [];
+      for (let species of starterSpecies) {
+        const starter = new PlayerPokemon(this.scene, species, 5);
+        starter.setVisible(false);
+        party.push(starter);
+        loadPokemonAssets.push(starter.loadAssets());
+      }
+      Promise.all(loadPokemonAssets).then(() => {
+        this.scene.ui.clearText();
+        this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+          SoundFade.fadeOut(this.scene.sound.get('menu'), 500, true);
+          this.scene.time.delayedCall(500, () => this.scene.arena.playBgm());
+          this.end();
+        });
+      });
+    });
   }
 }
 

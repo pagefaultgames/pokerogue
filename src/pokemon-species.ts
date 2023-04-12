@@ -131,7 +131,7 @@ export default class PokemonSpecies {
     if (pokemonEvolutions.hasOwnProperty(this.speciesId)) {
       for (let e of pokemonEvolutions[this.speciesId]) {
         const condition = e.condition;
-        if (!condition || !condition.applyToWild || condition.predicate(this)) {
+        if (!condition || typeof(condition) === 'string' || !condition.applyToWild || condition.predicate(this)) {
           const speciesId = e.speciesId;
           const level = e.level;
           evolutionLevels.push([ speciesId, level ]);
@@ -146,7 +146,7 @@ export default class PokemonSpecies {
     return evolutionLevels;
   }
 
-  getPrevolutionLevels() {
+  getPrevolutionLevels(ignoreConditions?: boolean) {
     const prevolutionLevels = [];
 
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
@@ -154,7 +154,7 @@ export default class PokemonSpecies {
       for (let e of pokemonEvolutions[p]) {
         if (e.speciesId === this.speciesId) {
           const condition = e.condition;
-          if (!condition || !condition.applyToWild || condition.predicate(this)) {
+          if (ignoreConditions || !condition || typeof(condition) === 'string' || !condition.applyToWild || condition.predicate(this)) {
             const speciesId = parseInt(p) as Species;
             let level = e.level;
             prevolutionLevels.push([ speciesId, level ]);
@@ -167,6 +167,18 @@ export default class PokemonSpecies {
     }
 
     return prevolutionLevels;
+  }
+
+  getSpriteAtlasPath(female: boolean, shiny?: boolean): string {
+    return this.getSpriteId(female, shiny).replace(/\_{2}/g, '/');
+  }
+
+  getSpriteId(female: boolean, shiny?: boolean): string {
+    return `${shiny ? 'shiny__' : ''}${this.genderDiffs && female ? 'female__' : ''}${this.speciesId}`;
+  }
+
+  getSpriteKey(female: boolean, shiny?: boolean): string {
+    return `pkmn__${this.getSpriteId(female, shiny)}`;
   }
 
   getIconAtlasKey(): string {
@@ -225,6 +237,32 @@ export default class PokemonSpecies {
     return `pkmn_icon__${this.getIconId()}`;
   }
 
+  loadAssets(scene: BattleScene, female: boolean, shiny?: boolean, startLoad?: boolean): Promise<void> {
+    return new Promise(resolve => {
+      scene.load.audio(this.speciesId.toString(), `audio/cry/${this.speciesId}.mp3`);
+      scene.loadAtlas(this.getSpriteKey(female, shiny), 'pokemon', this.getSpriteAtlasPath(female, shiny));
+      scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+        const originalWarn = console.warn;
+        // Ignore warnings for missing frames, because there will be a lot
+        console.warn = () => {};
+        const frameNames = scene.anims.generateFrameNames(this.getSpriteKey(female, shiny), { zeroPad: 4, suffix: ".png", start: 1, end: 256 });
+        console.warn = originalWarn;
+        scene.anims.create({
+          key: this.getSpriteKey(female, shiny),
+          frames: frameNames,
+          frameRate: 12,
+          repeat: -1
+        });
+        resolve();
+      });
+      if (startLoad) {
+        if (!scene.load.isLoading())
+          scene.load.start();
+      } else
+        resolve();
+    });
+  }
+
   generateIconAnim(scene: BattleScene): void {
     const frameNames = scene.anims.generateFrameNames(this.getIconAtlasKey(), { prefix: `${this.getIconId()}_`, zeroPad: 2, suffix: '.png', start: 1, end: 34 });
     scene.anims.create({
@@ -233,6 +271,11 @@ export default class PokemonSpecies {
       frameRate: 128,
       repeat: -1
     });
+  }
+
+  cry(scene: BattleScene, soundConfig?: Phaser.Types.Sound.SoundConfig): integer {
+    scene.sound.play(this.speciesId.toString(), soundConfig);
+    return scene.sound.get(this.speciesId.toString()).totalDuration * 1000;
   }
 }
 
@@ -750,14 +793,14 @@ export const allSpecies = [
   [ Species.PROBOPASS, "Probopass", 4, 0, 0, 0, "Compass Pokémon", Type.ROCK, Type.STEEL, 1.4, 340, "Sturdy", "Magnet Pull", "Sand Force", 525, 60, 55, 145, 75, 150, 40, 60, 70, 184, GrowthRate.MEDIUM_FAST, "Mineral", null, 50, 20, 0 ],
   [ Species.DUSKNOIR, "Dusknoir", 4, 0, 0, 0, "Gripper Pokémon", Type.GHOST, -1, 2.2, 106.6, "Pressure", null, "Frisk", 525, 45, 100, 135, 65, 135, 45, 45, 35, 236, GrowthRate.FAST, "Amorphous", null, 50, 25, 0 ],
   [ Species.FROSLASS, "Froslass", 4, 0, 0, 0, "Snow Land Pokémon", Type.ICE, Type.GHOST, 1.3, 26.6, "Snow Cloak", null, "Cursed Body", 480, 70, 80, 70, 80, 70, 110, 75, 70, 168, GrowthRate.MEDIUM_FAST, "Fairy", "Mineral", 0, 20, 0 ],
-  [ Species.ROTOM, "Rotom", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.GHOST, 0.3, 0.3, "Levitate", null, null, 440, 50, 50, 77, 95, 77, 91, 45, 70, 154, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 1,
+  [ Species.ROTOM, "Rotom", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.GHOST, 0.3, 0.3, "Levitate", null, null, 440, 50, 50, 77, 95, 77, 91, 45, 70, 154, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 0,
     [
-      [ "Normal", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.GHOST, 0.3, 0.3, "Levitate", null, null, 440, 50, 50, 77, 95, 77, 91, 45, 70, 154, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 1 ],
-      [ "Heat", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.FIRE, 0.3, 0.3, "Levitate", null, null, 520, 50, 65, 107, 105, 107, 86, 45, 70, 182, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 1 ],
-      [ "Wash", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.WATER, 0.3, 0.3, "Levitate", null, null, 520, 50, 65, 107, 105, 107, 86, 45, 70, 182, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 1 ],
-      [ "Frost", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.ICE, 0.3, 0.3, "Levitate", null, null, 520, 50, 65, 107, 105, 107, 86, 45, 70, 182, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 1 ],
-      [ "Fan", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.FLYING, 0.3, 0.3, "Levitate", null, null, 520, 50, 65, 107, 105, 107, 86, 45, 70, 182, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 1 ],
-      [ "Mow", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.GRASS, 0.3, 0.3, "Levitate", null, null, 520, 50, 65, 107, 105, 107, 86, 45, 70, 182, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 1 ]
+      [ "Normal", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.GHOST, 0.3, 0.3, "Levitate", null, null, 440, 50, 50, 77, 95, 77, 91, 45, 70, 154, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 0 ],
+      [ "Heat", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.FIRE, 0.3, 0.3, "Levitate", null, null, 520, 50, 65, 107, 105, 107, 86, 45, 70, 182, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 0 ],
+      [ "Wash", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.WATER, 0.3, 0.3, "Levitate", null, null, 520, 50, 65, 107, 105, 107, 86, 45, 70, 182, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 0 ],
+      [ "Frost", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.ICE, 0.3, 0.3, "Levitate", null, null, 520, 50, 65, 107, 105, 107, 86, 45, 70, 182, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 0 ],
+      [ "Fan", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.FLYING, 0.3, 0.3, "Levitate", null, null, 520, 50, 65, 107, 105, 107, 86, 45, 70, 182, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 0 ],
+      [ "Mow", 4, 0, 0, 0, "Plasma Pokémon", Type.ELECTRIC, Type.GRASS, 0.3, 0.3, "Levitate", null, null, 520, 50, 65, 107, 105, 107, 86, 45, 70, 182, GrowthRate.MEDIUM_FAST, "Amorphous", null, null, 20, 0 ]
     ]
   ],
   [ Species.UXIE, "Uxie", 4, 1, 0, 0, "Knowledge Pokémon", Type.PSYCHIC, -1, 0.3, 0.3, "Levitate", null, null, 580, 75, 75, 130, 75, 130, 95, 3, 140, 261, GrowthRate.SLOW, "Undiscovered", null, null, 80, 0 ],

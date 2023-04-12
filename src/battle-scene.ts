@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Biome, BiomeArena } from './biome';
 import UI from './ui/ui';
-import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase, SelectBiomePhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase, SelectBiomePhase, SelectStarterPhase } from './battle-phases';
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
@@ -23,6 +23,7 @@ export enum Button {
 	RIGHT,
 	ACTION,
 	CANCEL,
+	QUICK_START,
 	RANDOM,
 	AUTO,
 	SPEED_UP,
@@ -32,6 +33,7 @@ export enum Button {
 export default class BattleScene extends Phaser.Scene {
 	public auto: boolean;
 	public gameSpeed: integer = 1;
+	public quickStart: boolean;
 
 	private phaseQueue: BattlePhase[];
 	private phaseQueuePrepend: BattlePhase[];
@@ -157,6 +159,13 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('biome_select_window_2', 'ui');
 		this.loadImage('biome_select_window_3', 'ui');
 
+		this.loadImage('starter_select_bg', 'ui');
+		this.loadImage('starter_select_message', 'ui');
+		this.loadImage('starter_select_cursor', 'ui');
+		this.loadImage('starter_select_cursor_highlight', 'ui');
+		this.loadImage('starter_select_gen_cursor', 'ui');
+		this.loadImage('starter_select_gen_cursor_highlight', 'ui');
+
 		// Load arena images
 		Utils.getEnumValues(Biome).map(at => {
 			const atKey = Biome[at].toLowerCase();
@@ -215,6 +224,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('pb_catch');
 		this.loadSe('pb_lock');
 
+		this.loadBgm('menu');
 		this.loadBgm('level_up_fanfare');
 		this.loadBgm('evolution');
 		this.loadBgm('evolution_fanfare');
@@ -269,6 +279,7 @@ export default class BattleScene extends Phaser.Scene {
 		let loadPokemonAssets = [];
 
 		const isRandom = this.isButtonPressed(Button.RANDOM); // For testing purposes
+		this.quickStart = isRandom || this.isButtonPressed(Button.QUICK_START);
 
 		if (isRandom) {
 			const biomes = Utils.getEnumValues(Biome);
@@ -291,18 +302,17 @@ export default class BattleScene extends Phaser.Scene {
 			a.setOrigin(0, 0);
 			field.add(a);
 		});
-		this.arena.playBgm();
 
-		for (let s = 0; s < 3; s++) {
-			const playerSpecies = !isRandom ? getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP) : this.randomSpecies(5);
-			const playerPokemon = new PlayerPokemon(this, playerSpecies, 5);
-			playerPokemon.setVisible(false);
-			loadPokemonAssets.push(playerPokemon.loadAssets());
+		if (this.quickStart) {
+			for (let s = 0; s < 3; s++) {
+				const playerSpecies = !isRandom ? getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP) : this.randomSpecies(5);
+				const playerPokemon = new PlayerPokemon(this, playerSpecies, 5);
+				playerPokemon.setVisible(false);
+				loadPokemonAssets.push(playerPokemon.loadAssets());
 
-			this.party.push(playerPokemon);
+				this.party.push(playerPokemon);
+			}
 		}
-		
-		console.log(this.getPlayerPokemon().species.name, this.getPlayerPokemon().species.speciesId, this.getPlayerPokemon().stats);
 
 		const trainerPbFrameNames = this.anims.generateFrameNames('trainer_m_pb', { zeroPad: 2, start: 1, end: 12 });
 		this.anims.create({
@@ -354,6 +364,7 @@ export default class BattleScene extends Phaser.Scene {
 			[Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
 			[Button.ACTION]: [keyCodes.ENTER, keyCodes.SPACE, keyCodes.Z],
 			[Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.ESC, keyCodes.X],
+			[Button.QUICK_START]: [keyCodes.Q],
 			[Button.RANDOM]: [keyCodes.R],
 			[Button.AUTO]: [keyCodes.F2],
 			[Button.SPEED_UP]: [keyCodes.PLUS],
@@ -384,8 +395,6 @@ export default class BattleScene extends Phaser.Scene {
 
 	newBattle(): Battle {
 		if (this.currentBattle) {
-			console.log(this.getPlayerPokemon(), this.getParty().map(p => p.name), this.getPlayerPokemon().id)
-
 			this.getEnemyPokemon().destroy();
 			if (this.currentBattle.waveIndex % 10)
 				this.unshiftPhase(new NextEncounterPhase(this));
@@ -394,7 +403,11 @@ export default class BattleScene extends Phaser.Scene {
 				this.unshiftPhase(new NewBiomeEncounterPhase(this));
 			}
 		} else {
-			//this.pushPhase(new SelectStarterPhase(this));
+			if (!this.quickStart) {
+				this.arena.preloadBgm();
+				this.pushPhase(new SelectStarterPhase(this));
+			} else
+				this.arena.playBgm();
 			this.pushPhase(new EncounterPhase(this));
 			this.pushPhase(new SummonPhase(this));
 		}

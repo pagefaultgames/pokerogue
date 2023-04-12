@@ -429,9 +429,12 @@ function loadAnimAssets(scene: BattleScene, anims: Anim[], startLoad?: boolean):
             scene.loadImage(bg, 'battle_anims');
         for (let s of sounds)
             scene.loadSe(s, 'battle_anims', s);
-        scene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
-        if (startLoad && !scene.load.isLoading()) 
-            scene.load.start();
+        if (startLoad) {
+            scene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
+            if (!scene.load.isLoading()) 
+                scene.load.start();
+        } else
+            resolve();
     });
 }
 

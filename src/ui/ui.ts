@@ -20,11 +20,11 @@ export enum Mode {
   BALL,
   MODIFIER_SELECT,
   PARTY,
-  CONFIRM,
   SUMMARY,
   BIOME_SELECT,
   STARTER_SELECT,
-  EVOLUTION_SCENE
+  EVOLUTION_SCENE,
+  CONFIRM
 };
 
 const transitionModes = [
@@ -56,11 +56,11 @@ export default class UI extends Phaser.GameObjects.Container {
       new BallUiHandler(scene),
       new ModifierSelectUiHandler(scene),
       new PartyUiHandler(scene),
-      new ConfirmUiHandler(scene),
       new SummaryUiHandler(scene),
       new BiomeSelectUiHandler(scene),
       new StarterSelectUiHandler(scene),
-      new EvolutionSceneHandler(scene)
+      new EvolutionSceneHandler(scene),
+      new ConfirmUiHandler(scene)
     ];
   }
 

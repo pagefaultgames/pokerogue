@@ -187,12 +187,18 @@ export class BiomeArena {
     return Biome[this.biomeType].toLowerCase();
   }
 
-  playBgm() {
+  preloadBgm(): void {
     this.scene.loadBgm(this.bgm);
-    this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => this.scene.playBgm(this.bgm));
   }
 
-  fadeOutBgm(duration: integer, destroy?: boolean) {
+  playBgm(): void {
+    this.scene.loadBgm(this.bgm);
+    this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => this.scene.playBgm(this.bgm));
+    if (!this.scene.load.isLoading())
+      this.scene.load.start();
+  }
+
+  fadeOutBgm(duration: integer, destroy?: boolean): void {
     if (destroy === undefined)
       destroy = true;
     const bgm = this.scene.sound.get(this.bgm);

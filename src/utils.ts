@@ -62,6 +62,14 @@ export function getEnumValues(enumType): integer[] {
   return Object.values(enumType).filter(v => !isNaN(parseInt(v.toString()))).map(v => parseInt(v.toString()));
 }
 
+export class BooleanHolder {
+  public value: boolean;
+
+  constructor(value: boolean) {
+    this.value = value;
+  }
+}
+
 export class NumberHolder {
   public value: number;
 

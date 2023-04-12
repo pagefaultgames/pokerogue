@@ -770,6 +770,12 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.EXEGGCUTE]: [
     new SpeciesEvolution(Species.EXEGGUTOR, 1, "Leaf Stone", null, SpeciesWildEvolutionDelay.LONG)
   ],
+  [Species.TANGELA]: [
+    new SpeciesEvolution(Species.TANGROWTH, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Ancient power learned*/), SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.LICKITUNG]: [
+    new SpeciesEvolution(Species.LICKILICKY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Rollout learned*/), SpeciesWildEvolutionDelay.LONG)
+  ],
   [Species.STARYU]: [
     new SpeciesEvolution(Species.STARMIE, 1, "Water Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
@@ -785,8 +791,14 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.TOGETIC]: [
     new SpeciesEvolution(Species.TOGEKISS, 1, "Shiny Stone", null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
+  [Species.AIPOM]: [
+    new SpeciesEvolution(Species.AMBIPOM, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Double hit learned*/), SpeciesWildEvolutionDelay.LONG)
+  ],
   [Species.SUNKERN]: [
     new SpeciesEvolution(Species.SUNFLORA, 1, "Sun Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.YANMA]: [
+    new SpeciesEvolution(Species.YANMEGA, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Rollout learned*/), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.MURKROW]: [
     new SpeciesEvolution(Species.HONCHKROW, 1, "Dusk Stone", null, SpeciesWildEvolutionDelay.VERY_LONG)
@@ -794,17 +806,38 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.MISDREAVUS]: [
     new SpeciesEvolution(Species.MISMAGIUS, 1, "Dusk Stone", null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
+  [Species.GLIGAR]: [
+    new SpeciesEvolution(Species.GLISCOR, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Razor fang at night*/), SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.SNEASEL]: [
+    new SpeciesEvolution(Species.WEAVILE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Razor claw at night*/), SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.PILOSWINE]: [
+    new SpeciesEvolution(Species.MAMOSWINE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Ancient power learned*/), SpeciesWildEvolutionDelay.VERY_LONG)
+  ],
   [Species.LOMBRE]: [
     new SpeciesEvolution(Species.LUDICOLO, 1, "Water Stone", null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.NUZLEAF]: [
     new SpeciesEvolution(Species.SHIFTRY, 1, "Leaf Stone", null, SpeciesWildEvolutionDelay.LONG)
   ],
+  [Species.NOSEPASS]: [
+    new SpeciesEvolution(Species.PROBOPASS, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Magnetic field??*/), SpeciesWildEvolutionDelay.LONG)
+  ],
   [Species.SKITTY]: [
     new SpeciesEvolution(Species.DELCATTY, 1, "Moon Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.ROSELIA]: [
     new SpeciesEvolution(Species.ROSERADE, 1, "Shiny Stone", null, SpeciesWildEvolutionDelay.VERY_LONG)
+  ],
+  [Species.BONSLY]: [
+    new SpeciesEvolution(Species.SUDOWOODO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Mimic learned */), SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.MIME_JR]: [
+    new SpeciesEvolution(Species.MR_MIME, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Mimic learned */), SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.MANTYKE]: [
+    new SpeciesEvolution(Species.MANTINE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Remoraid in party */), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.PANSAGE]: [
     new SpeciesEvolution(Species.SIMISAGE, 1, "Leaf Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
@@ -904,10 +937,10 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CROBAT, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.CHANSEY]: [
-    new SpeciesEvolution(Species.BLISSEY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.BLISSEY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.MUNCHLAX]: [
-    new SpeciesEvolution(Species.SNORLAX, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.SNORLAX, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.TOGEPI]: [
     new SpeciesEvolution(Species.TOGETIC, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.SHORT)

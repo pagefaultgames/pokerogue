@@ -163,32 +163,24 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       Promise.allSettled(moveIds.map(m => initMoveAnim(m)))
         .then(() => {
           loadMoveAnimAssets(this.scene as BattleScene, moveIds);
-          (this.scene as BattleScene).loadAtlas(this.getSpriteKey(), 'pokemon', this.getSpriteAtlasPath());
+          this.species.loadAssets(this.scene as BattleScene, this.gender === Gender.FEMALE);
           if (this.isPlayer())
             (this.scene as BattleScene).loadAtlas(this.getBattleSpriteKey(), 'pokemon', this.getBattleSpriteAtlasPath());
-          this.scene.load.audio(this.species.speciesId.toString(), `audio/cry/${this.species.speciesId}.mp3`);
           this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-            const originalWarn = console.warn;
-            // Ignore warnings for missing frames, because there will be a lot
-            console.warn = () => {};
-            const frameNames = this.scene.anims.generateFrameNames(this.getSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 256 });
-            const battleFrameNames = this.isPlayer()
-              ? this.scene.anims.generateFrameNames(this.getBattleSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 256 })
-              : null;
-            console.warn = originalWarn;
-            this.scene.anims.create({
-              key: this.getSpriteKey(),
-              frames: frameNames,
-              frameRate: 12,
-              repeat: -1
-            });
             if (this.isPlayer()) {
-              this.scene.anims.create({
-                key: this.getBattleSpriteKey(),
-                frames: battleFrameNames,
-                frameRate: 12,
-                repeat: -1
-              });
+              const originalWarn = console.warn;
+              // Ignore warnings for missing frames, because there will be a lot
+              console.warn = () => {};
+              const battleFrameNames = this.scene.anims.generateFrameNames(this.getBattleSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 256 });
+              console.warn = originalWarn;
+              if (this.isPlayer()) {
+                this.scene.anims.create({
+                  key: this.getBattleSpriteKey(),
+                  frames: battleFrameNames,
+                  frameRate: 12,
+                  repeat: -1
+                });
+              }
             }
             this.playAnim();
             resolve();
@@ -208,7 +200,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getSpriteId(): string {
-    return `${this.shiny ? 'shiny__' : ''}${this.species.genderDiffs && !this.gender ? 'female__' : ''}${this.species.speciesId}`;
+    return this.species.getSpriteId(this.gender === Gender.FEMALE, this.shiny);
   }
 
   getBattleSpriteId(): string {
@@ -216,7 +208,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getSpriteKey(): string {
-    return `pkmn__${this.getSpriteId()}`;
+    return this.species.getSpriteKey(this.gender === Gender.FEMALE, this.shiny);
   }
 
   getBattleSpriteKey(): string {
@@ -507,8 +499,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   cry(soundConfig?: Phaser.Types.Sound.SoundConfig): integer {
-    this.scene.sound.play(this.species.speciesId.toString(), soundConfig);
-    return this.scene.sound.get(this.species.speciesId.toString()).totalDuration * 1000;
+    return this.species.cry(this.scene as BattleScene, soundConfig);
   }
 
   faintCry(callback: Function) {
