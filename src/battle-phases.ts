@@ -15,6 +15,7 @@ import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./battle-stat";
+import { Biome, biomeLinks } from "./biome";
 
 export class SelectStarterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
@@ -132,7 +133,7 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
   }
 }
 
-export class SwitchBiomePhase extends BattlePhase {
+export class SelectBiomePhase extends BattlePhase {
   constructor(scene: BattleScene) {
     super(scene);
   }
@@ -142,6 +143,35 @@ export class SwitchBiomePhase extends BattlePhase {
 
     this.scene.arena.fadeOutBgm(2000);
 
+    const currentBiome = this.scene.arena.biomeType;
+
+    const setNextBiome = (nextBiome: Biome) => {
+      this.scene.unshiftPhase(new SwitchBiomePhase(this.scene, nextBiome));
+      this.end();
+    };
+
+    if (Array.isArray(biomeLinks[currentBiome]))
+      this.scene.ui.setMode(Mode.BIOME_SELECT, currentBiome, (biomeIndex: integer) => {
+        this.scene.ui.setMode(Mode.MESSAGE);
+        setNextBiome((biomeLinks[currentBiome] as Biome[])[biomeIndex]);
+      });
+    else
+      setNextBiome(biomeLinks[currentBiome] as Biome)
+  }
+}
+
+export class SwitchBiomePhase extends BattlePhase {
+  private nextBiome: Biome;
+
+  constructor(scene: BattleScene, nextBiome: Biome) {
+    super(scene);
+
+    this.nextBiome = nextBiome;
+  }
+
+  start() {
+    super.start();
+
     this.scene.tweens.add({
       targets: this.scene.arenaEnemy,
       x: '+=300',
@@ -149,7 +179,7 @@ export class SwitchBiomePhase extends BattlePhase {
       onComplete: () => {
         this.scene.arenaEnemy.setX(this.scene.arenaEnemy.x - 600);
 
-        this.scene.newBiome();
+        this.scene.newBiome(this.nextBiome);
 
         const biomeKey = this.scene.arena.getBiomeKey();
         const bgTexture = `${biomeKey}_bg`;
@@ -380,6 +410,7 @@ export class CommandPhase extends BattlePhase {
         success = true;
         break;
     }
+
     if (success) {
       const enemyMove = enemyPokemon.getNextMove();
       const enemyPhase = new EnemyMovePhase(this.scene, enemyPokemon, enemyMove);

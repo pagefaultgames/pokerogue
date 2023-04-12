@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Biome, BiomeArena } from './biome';
 import UI from './ui/ui';
-import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase, SelectBiomePhase } from './battle-phases';
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
@@ -153,6 +153,9 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('summary_moves_overlay_pp', 'ui');
 		this.loadAtlas('summary_moves_cursor', 'ui');
 
+		this.loadImage('biome_select_window_2', 'ui');
+		this.loadImage('biome_select_window_3', 'ui');
+
 		// Load arena images
 		Utils.getEnumValues(Biome).map(at => {
 			const atKey = Biome[at].toLowerCase();
@@ -238,25 +241,6 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.field = field;
 
-		this.newBiome();
-
-		const biomeKey = this.arena.getBiomeKey();
-		this.arenaBg = this.add.sprite(0, 0, `${biomeKey}_bg`);
-		this.arenaBgTransition = this.add.sprite(0, 0, `${biomeKey}_bg`);
-		this.arenaPlayer = this.add.sprite(340, 20, `${biomeKey}_a`);
-		this.arenaPlayerTransition = this.add.sprite(40, 20, `${biomeKey}_a`);
-		this.arenaEnemy = this.add.sprite(-240, 13, `${biomeKey}_b`);
-		this.arenaNextEnemy = this.add.sprite(-240, 13, `${biomeKey}_b`);
-
-		this.arenaBgTransition.setVisible(false);
-		this.arenaPlayerTransition.setVisible(false);
-
-		[this.arenaBg, this.arenaBgTransition, this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy].forEach(a => {
-			a.setOrigin(0, 0);
-			field.add(a);
-		});
-		this.arena.playBgm();
-
 		const fieldUI = this.add.container(0, this.game.canvas.height);
 		fieldUI.setDepth(1);
 		fieldUI.setScale(6);
@@ -280,6 +264,29 @@ export default class BattleScene extends Phaser.Scene {
 		let loadPokemonAssets = [];
 
 		const isRandom = this.isButtonPressed(Button.RANDOM); // For testing purposes
+
+		if (isRandom) {
+			const biomes = Utils.getEnumValues(Biome);
+			this.newBiome(biomes[Utils.randInt(biomes.length)]);
+		} else
+			this.newBiome(Biome.PLAINS);
+
+		const biomeKey = this.arena.getBiomeKey();
+		this.arenaBg = this.add.sprite(0, 0, `${biomeKey}_bg`);
+		this.arenaBgTransition = this.add.sprite(0, 0, `${biomeKey}_bg`);
+		this.arenaPlayer = this.add.sprite(340, 20, `${biomeKey}_a`);
+		this.arenaPlayerTransition = this.add.sprite(40, 20, `${biomeKey}_a`);
+		this.arenaEnemy = this.add.sprite(-240, 13, `${biomeKey}_b`);
+		this.arenaNextEnemy = this.add.sprite(-240, 13, `${biomeKey}_b`);
+
+		this.arenaBgTransition.setVisible(false);
+		this.arenaPlayerTransition.setVisible(false);
+
+		[this.arenaBg, this.arenaBgTransition, this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy].forEach(a => {
+			a.setOrigin(0, 0);
+			field.add(a);
+		});
+		this.arena.playBgm();
 
 		for (let s = 0; s < 3; s++) {
 			const playerSpecies = !isRandom ? getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP) : this.randomSpecies(5);
@@ -378,7 +385,7 @@ export default class BattleScene extends Phaser.Scene {
 			if (this.currentBattle.waveIndex % 10)
 				this.unshiftPhase(new NextEncounterPhase(this));
 			else {
-				this.unshiftPhase(new SwitchBiomePhase(this));
+				this.unshiftPhase(new SelectBiomePhase(this));
 				this.unshiftPhase(new NewBiomeEncounterPhase(this));
 			}
 		} else {
@@ -391,8 +398,7 @@ export default class BattleScene extends Phaser.Scene {
 		return this.currentBattle;
 	}
 
-	newBiome(): BiomeArena {
-		const biome = this.currentBattle ? Utils.randInt(20) as Biome : Biome.PLAINS;
+	newBiome(biome: Biome): BiomeArena {
 		this.arena = new BiomeArena(this, biome, Biome[biome].toLowerCase());
 		return this.arena;
 	}

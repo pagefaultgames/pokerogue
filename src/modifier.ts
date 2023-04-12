@@ -766,7 +766,7 @@ const modifierPool = {
       const thresholdPartyMemberCount = party.filter(p => p.moveset.filter(m => m.ppUsed)).length;
       return thresholdPartyMemberCount;
     }),
-    new WeightedModifierType(new PokemonPpRestoreModifierType('MAX ETHER', 100), (party: PlayerPokemon[]) => {
+    new WeightedModifierType(new PokemonPpRestoreModifierType('MAX ETHER', -1), (party: PlayerPokemon[]) => {
       const thresholdPartyMemberCount = party.filter(p => p.moveset.filter(m => m.ppUsed > 10)).length;
       return Math.ceil(thresholdPartyMemberCount / 3);
     })
@@ -793,7 +793,7 @@ const modifierPool = {
       const thresholdPartyMemberCount = party.filter(p => p.moveset.filter(m => m.ppUsed)).length;
       return thresholdPartyMemberCount;
     }),
-    new WeightedModifierType(new PokemonAllMovePpRestoreModifierType('MAX ELIXIR', 100), (party: PlayerPokemon[]) => {
+    new WeightedModifierType(new PokemonAllMovePpRestoreModifierType('MAX ELIXIR', -1), (party: PlayerPokemon[]) => {
       const thresholdPartyMemberCount = party.filter(p => p.moveset.filter(m => m.ppUsed > 10)).length;
       return Math.ceil(thresholdPartyMemberCount / 3);
     }),
@@ -863,16 +863,13 @@ export function regenerateModifierPoolThresholds(party: PlayerPokemon[]) {
   console.log(modifierPoolThresholds)
 }
 
-export function getModifierTypesForWave(waveIndex: integer, count: integer, party: PlayerPokemon[]): Array<ModifierType> {
+export function getModifierTypesForWave(waveIndex: integer, count: integer, party: PlayerPokemon[]): ModifierType[] {
   if (waveIndex % 10 === 0)
     return modifierPool[ModifierTier.LUXURY];
-  const ret = [];
-  for (let m = 0; m < count; m++)
-    ret.push(getNewModifierType(party));
-  return ret;
+  return new Array(count).fill(0).map(() => getNewModifierType(party));
 }
 
-function getNewModifierType(party: PlayerPokemon[]) {
+function getNewModifierType(party: PlayerPokemon[]): ModifierType {
   const tierValue = Utils.randInt(256);
   const tier = tierValue >= 52 ? ModifierTier.COMMON : tierValue >= 8 ? ModifierTier.GREAT : tierValue >= 1 ? ModifierTier.ULTRA : ModifierTier.MASTER;
   const thresholds = Object.keys(modifierPoolThresholds[tier]);
@@ -892,5 +889,5 @@ function getNewModifierType(party: PlayerPokemon[]) {
     modifierType = (modifierType as WeightedModifierType).modifierType;
   if (modifierType instanceof ModifierTypeGenerator)
     modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
-  return modifierType;
+  return modifierType as ModifierType;
 }

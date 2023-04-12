@@ -11,6 +11,7 @@ import BallUiHandler from './ball-ui-handler';
 import SummaryUiHandler from './summary-ui-handler';
 import StarterSelectUiHandler from './starter-select-ui-handler';
 import EvolutionSceneHandler from './evolution-scene-handler';
+import BiomeSelectUiHandler from './biome-select-ui-handler';
 
 export enum Mode {
   MESSAGE = 0,
@@ -21,6 +22,7 @@ export enum Mode {
   PARTY,
   CONFIRM,
   SUMMARY,
+  BIOME_SELECT,
   STARTER_SELECT,
   EVOLUTION_SCENE
 };
@@ -56,6 +58,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new PartyUiHandler(scene),
       new ConfirmUiHandler(scene),
       new SummaryUiHandler(scene),
+      new BiomeSelectUiHandler(scene),
       new StarterSelectUiHandler(scene),
       new EvolutionSceneHandler(scene)
     ];

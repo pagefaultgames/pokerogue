@@ -8,7 +8,6 @@
   - Get starters from save data caught Pokemon
 - Moves
   - Move logic
-  - Can't use when PP consumed
 - Abilities
   - Ability logic
   - Ability activation indicator (?)
@@ -26,7 +25,6 @@
   - Status effect indicator
 - Modifiers
   - PP Up
-  - Ether/elixir
   - Type enhancers
   - Evolution items
   - Various mainline game items for various enhancements
@@ -38,6 +36,5 @@
 - Custom art
   - Battle bases and backgrounds
 - Game sequence
-  - Biome sequence (random?)
   - Endgame?
   - Endless mode?

@@ -1,7 +1,7 @@
 import BattleScene from "./battle-scene";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade.js";
 import { pokemonEvolutions, SpeciesEvolution } from "./pokemon-evolutions";
-import { default as PokemonSpecies, allSpecies, getPokemonSpecies } from "./pokemon-species";
+import { default as PokemonSpecies, getPokemonSpecies } from "./pokemon-species";
 import { Species } from "./species";
 import { Type } from './type';
 import * as Utils from './utils';
@@ -35,6 +35,54 @@ export enum Biome {
   SPACE
 };
 
+export function getBiomeName(biome: Biome) {
+  switch (biome) {
+    case Biome.PLAINS:
+      return 'STARTER PLAINS';
+    case Biome.GRASS:
+      return 'GRASSY FIELD';
+    case Biome.RUINS:
+      return 'ANCIENT RUINS';
+    case Biome.ABYSS:
+      return 'THE ABYSS';
+    case Biome.SPACE:
+      return 'STRATOSPHERE';
+    default:
+      return Biome[biome].replace(/\_/g, ' ');
+  }
+}
+
+interface BiomeLinks {
+  [key: integer]: Biome | Biome[]
+}
+
+export const biomeLinks: BiomeLinks = {
+  [Biome.PLAINS]: Biome.GRASS,
+  [Biome.GRASS]: [ Biome.TALL_GRASS, Biome.CITY, Biome.LAKE ],
+  [Biome.TALL_GRASS]: [ Biome.FOREST, Biome.CAVE ],
+  [Biome.CITY]: [ Biome.DOJO, Biome.POWER_PLANT ],
+  [Biome.FOREST]: Biome.MEADOW,
+  [Biome.SEA]: [ Biome.SEABED, Biome.ICE_CAVE ],
+  [Biome.SWAMP]: [ Biome.GRAVEYARD, Biome.TALL_GRASS ],
+  [Biome.BEACH]: Biome.SEA,
+  [Biome.LAKE]: [ Biome.BEACH, Biome.SWAMP ],
+  [Biome.SEABED]: Biome.CAVE,
+  [Biome.MOUNTAIN]: [ Biome.WASTELAND, Biome.VOLCANO ],
+  [Biome.LAND]: [ Biome.DESERT, Biome.MOUNTAIN ],
+  [Biome.CAVE]: [ Biome.LAND, Biome.BEACH ],
+  [Biome.DESERT]: Biome.RUINS,
+  [Biome.ICE_CAVE]: Biome.LAKE,
+  [Biome.MEADOW]: Biome.GRASS,
+  [Biome.POWER_PLANT]: Biome.GRASS,
+  [Biome.VOLCANO]: Biome.ICE_CAVE,
+  [Biome.GRAVEYARD]: Biome.ABYSS,
+  [Biome.DOJO]: Biome.GRASS,
+  [Biome.RUINS]: Biome.FOREST,
+  [Biome.WASTELAND]: Biome.LAND,
+  [Biome.ABYSS]: Biome.SPACE,
+  [Biome.SPACE]: Biome.RUINS
+};
+
 enum PoolTier {
   COMMON,
   UNCOMMON,
@@ -47,12 +95,24 @@ enum PoolTier {
   BOSS_ULTRA_RARE
 };
 
+interface SpeciesTree {
+  [key: integer]: Species[]
+}
+
+interface BiomeTierPools {
+  [key: integer]: Array<Species | SpeciesTree>
+}
+
+interface BiomePools {
+  [key: integer]: BiomeTierPools
+}
+
 export class BiomeArena {
   private scene: BattleScene;
   public biomeType: integer;
   private bgm: string;
 
-  private pokemonPool: PokemonSpecies[][];
+  private pokemonPool: BiomeTierPools;
 
   constructor(scene: BattleScene, biome: integer, bgm: string) {
     this.scene = scene;
@@ -140,7 +200,7 @@ export class BiomeArena {
   }
 }
 
-const biomePools = {
+const biomePools: BiomePools = {
   [Biome.PLAINS]: {
     [PoolTier.COMMON]: [
       { 1: [ Species.CATERPIE ], 7: [ Species.METAPOD ] },
@@ -3805,8 +3865,10 @@ const biomePools = {
       let treeIndex = -1;
       let arrayIndex = 0;
 
+      // Not sure why this works but let's just leave it alone until we need it again
+
       for (let t = 0; t < biomeTierPool.length; t++) {
-        const existingSpeciesIds = biomeTierPool[t] as Species[];
+        const existingSpeciesIds = biomeTierPool[t] as SpeciesTree;
         for (let es = 0; es < existingSpeciesIds.length; es++) {
           const existingSpeciesId = existingSpeciesIds[es];
           if (pokemonEvolutions.hasOwnProperty(existingSpeciesId) && (pokemonEvolutions[existingSpeciesId] as SpeciesEvolution[]).find(ese => ese.speciesId === speciesId)) {
