@@ -1,6 +1,6 @@
 import { SelectModifierPhase } from "./battle-phases";
 import BattleScene, { Button } from "./battle-scene";
-import { ModifierTier, ModifierType, PokemonBaseStatBoosterModifierType, PokemonHpRestoreModifierType, PokemonReviveModifierType } from "./modifier";
+import { ModifierTier, ModifierType, PokemonBaseStatBoosterModifierType, PokemonHpRestoreModifierType, PokemonReviveModifierType } from "./modifier-type";
 import Pokemon, { AiType, EnemyPokemon, PlayerPokemon, PokemonMove } from "./pokemon";
 import { Species } from "./species";
 import { getTypeDamageMultiplier } from "./type";

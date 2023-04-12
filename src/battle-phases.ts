@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, MissEffectAttr, MoveCategory, MoveHitEffectAt
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
-import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, getModifierTypesForWave, ModifierType, PokemonModifierType, PokemonMoveModifierType, regenerateModifierPoolThresholds } from "./modifier";
+import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier } from "./modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
@@ -16,6 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./battle-stat";
 import { Biome, biomeLinks } from "./biome";
+import { ModifierType, PokemonModifierType, PokemonMoveModifierType, getModifierTypesForWave, regenerateModifierPoolThresholds } from "./modifier-type";
 
 export class SelectStarterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
