@@ -1,6 +1,6 @@
 import { SelectModifierPhase } from "./battle-phases";
 import BattleScene, { Button } from "./battle-scene";
-import { ModifierTier, ModifierType, PokemonBaseStatBoosterModifierType, PokemonHpRestoreModifierType, PokemonReviveModifierType } from "./modifier-type";
+import { ModifierTier, ModifierType, ModifierTypeOption, PokemonBaseStatBoosterModifierType, PokemonHpRestoreModifierType, PokemonReviveModifierType } from "./modifier-type";
 import Pokemon, { AiType, EnemyPokemon, PlayerPokemon, PokemonMove } from "./pokemon";
 import { Species } from "./species";
 import { getTypeDamageMultiplier } from "./type";
@@ -169,10 +169,10 @@ export function initAutoPlay() {
         }
     }
 
-    const tryGetBestModifier = (modifierTypes: Array<ModifierType>, predicate: Function) => {
-        for (let mt = 0; mt < modifierTypes.length; mt++) {
-            const modifierType = modifierTypes[mt];
-            if (predicate(modifierType)) {
+    const tryGetBestModifier = (modifierTypeOptions: Array<ModifierTypeOption>, predicate: Function) => {
+        for (let mt = 0; mt < modifierTypeOptions.length; mt++) {
+            const modifierTypeOption = modifierTypeOptions[mt];
+            if (predicate(modifierTypeOption.type)) {
                 return mt;
             }
         }
@@ -194,12 +194,12 @@ export function initAutoPlay() {
             originalModifierSelectUiHandlerShow.apply(this, [ args ]);
 
             const party = thisArg.getParty();
-            const modifierTypes = modifierSelectUiHandler.options.map(o => o.modifierType);
+            const modifierTypeOptions = modifierSelectUiHandler.options.map(o => o.modifierTypeOption);
             const faintedPartyMemberIndex = party.findIndex(p => !p.hp);
             const lowHpPartyMemberIndex = party.findIndex(p => p.getHpRatio() <= 0.5);
             const criticalHpPartyMemberIndex = party.findIndex(p => p.getHpRatio() <= 0.25);
 
-            let optionIndex = tryGetBestModifier(modifierTypes, (modifierType: ModifierType) => {
+            let optionIndex = tryGetBestModifier(modifierTypeOptions, (modifierType: ModifierType) => {
                 if (modifierType instanceof PokemonHpRestoreModifierType) {
                     if (modifierType instanceof PokemonReviveModifierType) {
                         if (faintedPartyMemberIndex > -1) {
@@ -214,7 +214,7 @@ export function initAutoPlay() {
             });
 
             if (optionIndex === -1) {
-                optionIndex = tryGetBestModifier(modifierTypes, (modifierType: ModifierType) => {
+                optionIndex = tryGetBestModifier(modifierTypeOptions, (modifierType: ModifierType) => {
                     if (modifierType.tier >= ModifierTier.ULTRA) {
                         nextPartyMemberIndex = 0;
                         return true;
@@ -223,7 +223,7 @@ export function initAutoPlay() {
             }
 
             if (optionIndex === -1) {
-                optionIndex = tryGetBestModifier(modifierTypes, (modifierType: ModifierType) => {
+                optionIndex = tryGetBestModifier(modifierTypeOptions, (modifierType: ModifierType) => {
                     if (modifierType instanceof PokemonBaseStatBoosterModifierType) {
                         nextPartyMemberIndex = 0;
                         return true;
@@ -232,7 +232,7 @@ export function initAutoPlay() {
             }
 
             if (optionIndex === -1) {
-                optionIndex = tryGetBestModifier(modifierTypes, (modifierType: ModifierType) => {
+                optionIndex = tryGetBestModifier(modifierTypeOptions, (modifierType: ModifierType) => {
                     if (lowHpPartyMemberIndex && modifierType instanceof PokemonHpRestoreModifierType && !(ModifierType instanceof PokemonReviveModifierType)) {
                         nextPartyMemberIndex = lowHpPartyMemberIndex;
                         return true;
@@ -248,7 +248,7 @@ export function initAutoPlay() {
                 thisArg.time.delayedCall(20, () => {
                     modifierSelectUiHandler.processInput(Button.ACTION);
                     thisArg.time.delayedCall(250, () => {
-                        console.log(modifierTypes[optionIndex]?.name);
+                        console.log(modifierTypeOptions[optionIndex]?.type.name);
                         if (thisArg.getCurrentPhase() instanceof SelectModifierPhase) {
                             if (optionIndex < modifierSelectUiHandler.options.length - 1) {
                                 optionIndex++;

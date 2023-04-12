@@ -1,5 +1,5 @@
 import BattleScene, { Button } from "../battle-scene";
-import { ModifierTier, ModifierType } from "../modifier-type";
+import { ModifierTier, ModifierType, ModifierTypeOption } from "../modifier-type";
 import { getPokeballAtlasKey, PokeballType } from "../pokeball";
 import { addTextObject, TextStyle } from "../text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
@@ -48,15 +48,17 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.getUi().clearText();
 
-    const types = args[0] as ModifierType[];
-    for (let m = 0; m < types.length; m++) {
-      const sliceWidth = (this.scene.game.canvas.width / 6) / (types.length + 2);
-      const option = new ModifierOption(this.scene, sliceWidth * (m + 1) + (sliceWidth * 0.5), -this.scene.game.canvas.height / 12 - 24, types[m]);
+    const typeOptions = args[0] as ModifierTypeOption[];
+    for (let m = 0; m < typeOptions.length; m++) {
+      const sliceWidth = (this.scene.game.canvas.width / 6) / (typeOptions.length + 2);
+      const option = new ModifierOption(this.scene, sliceWidth * (m + 1) + (sliceWidth * 0.5), -this.scene.game.canvas.height / 12 - 24, typeOptions[m]);
       option.setScale(0.5);
       this.scene.add.existing(option);
       this.modifierContainer.add(option);
       this.options.push(option);
     }
+
+    const hasUpgrade = typeOptions.filter(to => to.upgraded).length;
 
     this.scene.tweens.add({
       targets: this.overlayBg,
@@ -72,15 +74,15 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       duration: 1250,
       onUpdate: t => {
         const value = t.getValue();
-        const index = Math.floor(value * types.length);
-        if (index > i && index <= types.length) {
+        const index = Math.floor(value * typeOptions.length);
+        if (index > i && index <= typeOptions.length) {
           const option = this.options[i++];
-          option?.show(Math.floor((1 - value) * 1250) * 0.325);
+          option?.show(Math.floor((1 - value) * 1250) * 0.325 + (hasUpgrade ? 2000 : 0));
         }
       }
     });
 
-    this.scene.time.delayedCall(4000, () => {
+    this.scene.time.delayedCall(4000 + (hasUpgrade ? 2000 : 0), () => {
       this.setCursor(0);
       this.awaitingActionInput = true;
       this.onActionInput = args[1];
@@ -140,7 +142,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const sliceWidth = (this.scene.game.canvas.width / 6) / (this.options.length + 2);
     this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, -this.scene.game.canvas.height / 12 - 20);
-    ui.showText(this.options[this.cursor].modifierType.description);
+    ui.showText(this.options[this.cursor].modifierTypeOption.type.description);
 
     return ret;
   }
@@ -179,25 +181,35 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 }
 
 class ModifierOption extends Phaser.GameObjects.Container {
-  public modifierType: ModifierType;
+  public modifierTypeOption: ModifierTypeOption;
   private pb: Phaser.GameObjects.Sprite;
+  private pbTint: Phaser.GameObjects.Sprite;
   private itemContainer: Phaser.GameObjects.Container;
   private item: Phaser.GameObjects.Sprite;
   private itemTint: Phaser.GameObjects.Sprite;
   private itemText: Phaser.GameObjects.Text;
 
-  constructor(scene: BattleScene, x: number, y: number, modifierType: ModifierType) {
+  constructor(scene: BattleScene, x: number, y: number, modifierTypeOption: ModifierTypeOption) {
     super(scene, x, y);
 
-    this.modifierType = modifierType;
+    this.modifierTypeOption = modifierTypeOption;
 
     this.setup();
   }
 
   setup() {
-    this.pb = this.scene.add.sprite(0, -150, 'pb', this.getPbAtlasKey());
-    this.pb.setScale(2);
+    const getPb = (): Phaser.GameObjects.Sprite => {
+      const pb = this.scene.add.sprite(0, -150, 'pb', this.getPbAtlasKey(true));
+      pb.setScale(2);
+      return pb;
+    };
+
+    this.pb = getPb();
     this.add(this.pb);
+
+    this.pbTint = getPb();
+    this.pbTint.setVisible(false);
+    this.add(this.pbTint);
 
     this.itemContainer = this.scene.add.container(0, 0);
     this.itemContainer.setScale(0.5);
@@ -205,7 +217,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.add(this.itemContainer);
 
     const getItem = () => {
-      const item = this.scene.add.sprite(0, 0, 'items', this.modifierType.iconImage);
+      const item = this.scene.add.sprite(0, 0, 'items', this.modifierTypeOption.type.iconImage);
       return item;
     };
 
@@ -216,7 +228,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.itemTint.setTintFill(Phaser.Display.Color.GetColor(255, 192, 255));
     this.itemContainer.add(this.itemTint);
 
-    this.itemText = addTextObject(this.scene, 0, 35, this.modifierType.name, TextStyle.PARTY, { align: 'center' });
+    this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type.name, TextStyle.PARTY, { align: 'center' });
     this.itemText.setOrigin(0.5, 0);
     this.itemText.setAlpha(0);
     this.itemText.setTint(this.getTextTint());
@@ -253,11 +265,39 @@ class ModifierOption extends Phaser.GameObjects.Container {
       }
     });
 
+    if (this.modifierTypeOption.upgraded) {
+      this.scene.time.delayedCall(remainingDuration, () => {
+        this.scene.sound.play('upgrade');
+        this.pbTint.setPosition(this.pb.x, this.pb.y);
+        this.pbTint.setTintFill(0xFFFFFF);
+        this.pbTint.setAlpha(0);
+        this.pbTint.setVisible(true);
+        this.scene.tweens.add({
+          targets: this.pbTint,
+          alpha: 1,
+          duration: 1000,
+          ease: 'Sine.easeIn',
+          onComplete: () => {
+            this.pb.setTexture('pb', this.getPbAtlasKey(false));
+            this.scene.tweens.add({
+              targets: this.pbTint,
+              alpha: 0,
+              duration: 1000,
+              ease: 'Sine.easeOut',
+              onComplete: () => {
+                this.pbTint.setVisible(false);
+              }
+            });
+          }
+        });
+      });
+    }
+
     this.scene.time.delayedCall(remainingDuration + 2000, () => {
       if (!this.scene)
         return;
 
-      this.pb.setTexture('pb', `${this.getPbAtlasKey()}_open`);
+      this.pb.setTexture('pb', `${this.getPbAtlasKey(false)}_open`);
       this.scene.sound.play('pb_rel');
       
       this.scene.tweens.add({
@@ -292,12 +332,12 @@ class ModifierOption extends Phaser.GameObjects.Container {
     })
   }
 
-  getPbAtlasKey() {
-    return getPokeballAtlasKey(this.modifierType.tier as integer as PokeballType);
+  getPbAtlasKey(beforeUpgrade: boolean) {
+    return getPokeballAtlasKey((this.modifierTypeOption.type.tier - (beforeUpgrade && this.modifierTypeOption.upgraded ? 1 : 0)) as integer as PokeballType);
   }
 
   getTextTint(): integer {
-    switch (this.modifierType.tier) {
+    switch (this.modifierTypeOption.type.tier) {
       case ModifierTier.COMMON:
         return 0xffffff
       case ModifierTier.GREAT:

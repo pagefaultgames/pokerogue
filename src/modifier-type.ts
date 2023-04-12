@@ -328,15 +328,16 @@ export function regenerateModifierPoolThresholds(party: PlayerPokemon[]) {
   console.log(modifierPoolThresholds)
 }
 
-export function getModifierTypesForWave(waveIndex: integer, count: integer, party: PlayerPokemon[]): ModifierType[] {
+export function getModifierTypeOptionsForWave(waveIndex: integer, count: integer, party: PlayerPokemon[]): ModifierTypeOption[] {
   if (waveIndex % 10 === 0)
-    return modifierPool[ModifierTier.LUXURY];
-  return new Array(count).fill(0).map(() => getNewModifierType(party));
+    return modifierPool[ModifierTier.LUXURY].map(m => new ModifierTypeOption(m, false));
+  return new Array(count).fill(0).map(() => getNewModifierTypeOption(party));
 }
 
-function getNewModifierType(party: PlayerPokemon[]): ModifierType {
+function getNewModifierTypeOption(party: PlayerPokemon[]): ModifierTypeOption {
   const tierValue = Utils.randInt(256);
-  const tier = tierValue >= 52 ? ModifierTier.COMMON : tierValue >= 8 ? ModifierTier.GREAT : tierValue >= 1 ? ModifierTier.ULTRA : ModifierTier.MASTER;
+  const upgrade = Utils.randInt(32) === 0;
+  const tier: ModifierTier = (tierValue >= 52 ? ModifierTier.COMMON : tierValue >= 8 ? ModifierTier.GREAT : tierValue >= 1 ? ModifierTier.ULTRA : ModifierTier.MASTER) + (upgrade ? 1 : 0);
   const thresholds = Object.keys(modifierPoolThresholds[tier]);
   const totalWeight = parseInt(thresholds[thresholds.length - 1]);
   const value = Utils.randInt(totalWeight);
@@ -354,5 +355,15 @@ function getNewModifierType(party: PlayerPokemon[]): ModifierType {
     modifierType = (modifierType as WeightedModifierType).modifierType;
   if (modifierType instanceof ModifierTypeGenerator)
     modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
-  return modifierType as ModifierType;
+  return new ModifierTypeOption(modifierType as ModifierType, upgrade);
+}
+
+export class ModifierTypeOption {
+  public type: ModifierType;
+  public upgraded: boolean;
+
+  constructor(type: ModifierType, upgraded: boolean) {
+    this.type = type;
+    this.upgraded = upgraded;
+  }
 }

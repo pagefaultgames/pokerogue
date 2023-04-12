@@ -16,7 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./battle-stat";
 import { Biome, biomeLinks } from "./biome";
-import { ModifierType, PokemonModifierType, PokemonMoveModifierType, getModifierTypesForWave, regenerateModifierPoolThresholds } from "./modifier-type";
+import { ModifierType, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier-type";
 
 export class SelectStarterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
@@ -1294,7 +1294,7 @@ export class SelectModifierPhase extends BattlePhase {
     regenerateModifierPoolThresholds(party);
     const modifierCount = new Utils.IntegerHolder(3);
     this.scene.applyModifiers(ExtraModifierModifier, modifierCount);
-    const types: Array<ModifierType> = getModifierTypesForWave(this.scene.currentBattle.waveIndex - 1, modifierCount.value, party);
+    const types: Array<ModifierTypeOption> = getModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex - 1, modifierCount.value, party);
 
     const modifierSelectCallback = (cursor: integer) => {
       if (cursor < 0) {
@@ -1312,8 +1312,8 @@ export class SelectModifierPhase extends BattlePhase {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT);
             const modifierType = types[cursor];
             const modifier = !isMoveModifier
-              ? modifierType.newModifier(party[slotIndex])
-              : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
+              ? modifierType.type.newModifier(party[slotIndex])
+              : modifierType.type.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
             this.scene.addModifier(modifier).then(() => super.end());
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.MESSAGE);
@@ -1321,7 +1321,7 @@ export class SelectModifierPhase extends BattlePhase {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, modifierSelectCallback);
         }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined);
       } else {
-        this.scene.addModifier(types[cursor].newModifier()).then(() => super.end());
+        this.scene.addModifier(types[cursor].type.newModifier()).then(() => super.end());
         this.scene.ui.clearText();
         this.scene.ui.setMode(Mode.MESSAGE);
       }

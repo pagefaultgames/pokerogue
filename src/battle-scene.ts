@@ -195,6 +195,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('stat_down');
 		this.loadSe('faint');
 		this.loadSe('flee');
+		this.loadSe('low_hp');
 		this.loadSe('exp');
 		this.loadSe('level_up');
 		this.loadSe('sparkle');
@@ -202,6 +203,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('shine');
 		this.loadSe('charge');
 		this.loadSe('beam');
+		this.loadSe('upgrade');
 		this.loadSe('error');
 
 		this.loadSe('pb');
