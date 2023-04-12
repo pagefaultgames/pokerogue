@@ -1294,7 +1294,7 @@ export class SelectModifierPhase extends BattlePhase {
     regenerateModifierPoolThresholds(party);
     const modifierCount = new Utils.IntegerHolder(3);
     this.scene.applyModifiers(ExtraModifierModifier, modifierCount);
-    const types: Array<ModifierTypeOption> = getModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex - 1, modifierCount.value, party);
+    const typeOptions: Array<ModifierTypeOption> = getModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex - 1, modifierCount.value, party);
 
     const modifierSelectCallback = (cursor: integer) => {
       if (cursor < 0) {
@@ -1303,30 +1303,30 @@ export class SelectModifierPhase extends BattlePhase {
         return;
       }
 
-      const modifierType = types[cursor];
+      const modifierType = typeOptions[cursor].type;
       if (modifierType instanceof PokemonModifierType) {
         const pokemonModifierType = modifierType as PokemonModifierType;
         const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
         this.scene.ui.setModeWithoutClear(Mode.PARTY, !isMoveModifier ? PartyUiMode.MODIFIER : PartyUiMode.MOVE_MODIFIER, (slotIndex: integer, option: PartyOption) => {
           if (slotIndex < 6) {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT);
-            const modifierType = types[cursor];
+            const modifierType = typeOptions[cursor].type;
             const modifier = !isMoveModifier
-              ? modifierType.type.newModifier(party[slotIndex])
-              : modifierType.type.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
+              ? modifierType.newModifier(party[slotIndex])
+              : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
             this.scene.addModifier(modifier).then(() => super.end());
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.MESSAGE);
           } else
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, modifierSelectCallback);
+            this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
         }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined);
       } else {
-        this.scene.addModifier(types[cursor].type.newModifier()).then(() => super.end());
+        this.scene.addModifier(typeOptions[cursor].type.newModifier()).then(() => super.end());
         this.scene.ui.clearText();
         this.scene.ui.setMode(Mode.MESSAGE);
       }
     };
-    this.scene.ui.setMode(Mode.MODIFIER_SELECT, types, modifierSelectCallback);
+    this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
   }
 }
 
