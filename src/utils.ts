@@ -69,10 +69,17 @@ export class NumberHolder {
     this.value = value;
   }
 }
+
 export class IntegerHolder {
   public value: integer;
 
   constructor(value: integer) {
     this.value = value;
+  }
+}
+
+export class FixedInt extends IntegerHolder {
+  constructor(value: integer) {
+    super(value);
   }
 }

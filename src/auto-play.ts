@@ -16,43 +16,6 @@ import { Mode } from "./ui/ui";
 export function initAutoPlay() {
     const thisArg = this as BattleScene;
 
-    const originalDelayedCall = this.time.delayedCall;
-    this.time.delayedCall = function (delay: number, callback: Function, args?: any[], callbackScope?: any) {
-        if (thisArg.auto)
-            delay /= thisArg.autoSpeed;
-        originalDelayedCall.apply(this, [ delay, callback, args, callbackScope ]);
-    };
-    const originalAddEvent = this.time.addEvent;
-    this.time.addEvent = function (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) {
-        if (thisArg.auto) {
-            if (config.delay)
-                config.delay = Math.ceil(config.delay / thisArg.autoSpeed);
-            if (config.startAt)
-                config.startAt = Math.ceil(config.startAt / thisArg.autoSpeed);
-        }
-        return originalAddEvent.apply(this, [ config ]);
-    };
-    const originalTweensAdd = this.tweens.add;
-    this.tweens.add = function (config: Phaser.Types.Tweens.TweenBuilderConfig | object) {
-        if (thisArg.auto) {
-            if (config.duration)
-                config.duration = Math.ceil(config.duration / thisArg.autoSpeed);
-            if (config.delay)
-                config.delay = Math.ceil(config.delay / thisArg.autoSpeed);
-        }
-        return originalTweensAdd.apply(this, [ config ]);
-    };
-    const originalAddCounter = this.tweens.addCounter;
-    this.tweens.addCounter = function (config: Phaser.Types.Tweens.NumberTweenBuilderConfig) {
-        if (thisArg.auto) {
-            if (config.duration)
-                config.duration = Math.ceil(config.duration / thisArg.autoSpeed);
-            if (config.delay)
-                config.delay = Math.ceil(config.delay / thisArg.autoSpeed);
-        }
-        return originalAddCounter.apply(this, [ config ]);
-    };
-
     PlayerPokemon.prototype.getNextMove = EnemyPokemon.prototype.getNextMove;
 
     const playerPokemon = this.getParty()[0] as PlayerPokemon;

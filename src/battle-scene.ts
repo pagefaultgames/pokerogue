@@ -12,6 +12,7 @@ import { initAutoPlay } from './auto-play';
 import { Battle } from './battle';
 import { initCommonAnims, loadCommonAnimAssets, populateAnims } from './battle-anims';
 import { BattlePhase } from './battle-phase';
+import { initGameSpeed } from './game-speed';
 
 const enableAuto = true;
 
@@ -30,7 +31,7 @@ export enum Button {
 
 export default class BattleScene extends Phaser.Scene {
 	public auto: boolean;
-	public autoSpeed: integer = 1;
+	public gameSpeed: integer = 1;
 
 	private phaseQueue: BattlePhase[];
 	private phaseQueuePrepend: BattlePhase[];
@@ -222,6 +223,8 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	create() {
+		initGameSpeed.apply(this);
+
 		this.setupControls();
 
 		this.load.setBaseURL();
@@ -424,23 +427,32 @@ export default class BattleScene extends Phaser.Scene {
 			this.ui.processInput(Button.ACTION);
 		else if (this.isButtonPressed(Button.CANCEL))
 			this.ui.processInput(Button.CANCEL);
-		else if (enableAuto) {
-			if (this.isButtonPressed(Button.AUTO))
-				this.auto = !this.auto;
-			else if (this.isButtonPressed(Button.SPEED_UP)) {
-				if (this.autoSpeed < 20)
-					this.autoSpeed++;
-			} else if (this.isButtonPressed(Button.SLOW_DOWN)) {
-				if (this.autoSpeed > 1)
-					this.autoSpeed--;
+		else if (this.isButtonPressed(Button.SPEED_UP)) {
+			if (!this.auto) {
+				if (this.gameSpeed < 2)
+					this.gameSpeed += 0.25;
+			} else if (this.gameSpeed < 20)
+				this.gameSpeed++;
+		} else if (this.isButtonPressed(Button.SLOW_DOWN)) {
+			if (this.gameSpeed > 1) {
+				if (!this.auto)
+					this.gameSpeed -= 0.25;
+				else
+					this.gameSpeed--;
 			}
-			return;
+		} else if (enableAuto) {
+			if (this.isButtonPressed(Button.AUTO)) {
+				this.auto = !this.auto;
+				if (this.auto)
+					this.gameSpeed = Math.floor(this.gameSpeed);
+				else if (this.gameSpeed > 2)
+					this.gameSpeed = 2;
+			} else
+				return;
 		} else
 			return;
 		this.blockInput = true;
-		this.time.delayedCall(250, () => {
-			this.blockInput = false;
-		});
+		this.time.delayedCall(new Utils.FixedInt(250) as unknown as integer, () => this.blockInput = false);
 	}
 
 	isButtonPressed(button: Button): boolean {
