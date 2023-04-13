@@ -28,7 +28,7 @@ export class SelectStarterPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.sound.play('menu');
+    this.scene.sound.play('menu', { loop: true });
 
     this.scene.ui.setMode(Mode.STARTER_SELECT, (starterSpecies: PokemonSpecies[]) => {
       const party = this.scene.getParty();
@@ -747,7 +747,7 @@ export class StatChangePhase extends PokemonPhase {
       pokemon.enableMask();
       const pokemonMaskSprite = pokemon.maskSprite;
 
-      const statSprite = this.scene.add.tileSprite((this.player ? 106 : 236) * 6, ((this.player ? 148 : 84) + (this.levels >= 1 ? 160 : 0)) * 6, 128, 288, 'battle_stats', this.stats.length > 1 ? 'mix' : BattleStat[this.stats[0]].toLowerCase());
+      const statSprite = this.scene.add.tileSprite((this.player ? 106 : 236) * 6, ((this.player ? 148 : 84) + (this.levels >= 1 ? 160 : 0)) * 6, 156, 316, 'battle_stats', this.stats.length > 1 ? 'mix' : BattleStat[this.stats[0]].toLowerCase());
       statSprite.setAlpha(0);
       statSprite.setScale(6);
       statSprite.setOrigin(0.5, 1);

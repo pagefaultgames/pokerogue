@@ -51,6 +51,8 @@ export default class FightUiHandler extends UiHandler {
       if (button === Button.ACTION) {
         if (((this.scene as BattleScene).getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, this.cursor))
           success = true;
+        else
+          ui.playError();
       } else {
         ui.setMode(Mode.COMMAND);
         success = true;

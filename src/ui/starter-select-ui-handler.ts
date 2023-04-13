@@ -56,9 +56,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonNumberText.setOrigin(0, 0);
       this.starterSelectContainer.add(this.pokemonNumberText);
 
-      this.pokemonSprite = this.scene.add.sprite(53, 63, `pkmn__sub`);
-      this.starterSelectContainer.add(this.pokemonSprite);
-
       this.pokemonNameText = addTextObject(this.scene, 6, 112, '', TextStyle.SUMMARY);
       this.pokemonNameText.setOrigin(0, 0);
       this.starterSelectContainer.add(this.pokemonNameText);
@@ -132,6 +129,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.starterSelectContainer.add(icon);
         return icon;
       });
+
+      this.pokemonSprite = this.scene.add.sprite(53, 63, `pkmn__sub`);
+      this.starterSelectContainer.add(this.pokemonSprite);
 
       this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
       this.starterSelectMessageBoxContainer.setVisible(false);
