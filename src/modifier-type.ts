@@ -228,11 +228,11 @@ const modifierPool = {
       return Math.ceil(thresholdPartyMemberCount / 3);
     }),
     new WeightedModifierType(new PokemonPpRestoreModifierType('ETHER', 10), (party: PlayerPokemon[]) => {
-      const thresholdPartyMemberCount = party.filter(p => p.moveset.filter(m => m.ppUsed >= 5)).length;
+      const thresholdPartyMemberCount = party.filter(p => p.moveset.filter(m => m.ppUsed >= 5).length).length;
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(new PokemonPpRestoreModifierType('MAX ETHER', -1), (party: PlayerPokemon[]) => {
-      const thresholdPartyMemberCount = party.filter(p => p.moveset.filter(m => m.ppUsed > 10)).length;
+      const thresholdPartyMemberCount = party.filter(p => p.moveset.filter(m => m.ppUsed > 10).length).length;
       return Math.ceil(thresholdPartyMemberCount / 3);
     })
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
@@ -255,11 +255,11 @@ const modifierPool = {
       return Math.ceil(thresholdPartyMemberCount / 3);
     }),
     new WeightedModifierType(new PokemonAllMovePpRestoreModifierType('ELIXIR', 10), (party: PlayerPokemon[]) => {
-      const thresholdPartyMemberCount = party.filter(p => p.moveset.filter(m => m.ppUsed >= 5)).length;
+      const thresholdPartyMemberCount = party.filter(p => p.moveset.filter(m => m.ppUsed >= 5).length).length;
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(new PokemonAllMovePpRestoreModifierType('MAX ELIXIR', -1), (party: PlayerPokemon[]) => {
-      const thresholdPartyMemberCount = party.filter(p => p.moveset.filter(m => m.ppUsed > 10)).length;
+      const thresholdPartyMemberCount = party.filter(p => p.moveset.filter(m => m.ppUsed > 10).length).length;
       return Math.ceil(thresholdPartyMemberCount / 3);
     }),
     new WeightedModifierType(new ModifierTypeGenerator((party: PlayerPokemon[]) => {
