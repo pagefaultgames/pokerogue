@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import BattleScene from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './battle-info';
-import { default as Move, allMoves, MoveCategory, Moves, StatChangeAttr, applyMoveAttrs, HighCritAttr } from './move';
+import { default as Move, allMoves, MoveCategory, Moves, StatChangeAttr, applyMoveAttrs, HighCritAttr, HitsTagAttr } from './move';
 import { pokemonLevelMoves } from './pokemon-level-moves';
 import { default as PokemonSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
@@ -17,6 +17,7 @@ import { tmSpecies } from './tms';
 import { pokemonEvolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './pokemon-evolutions';
 import { MessagePhase, StatChangePhase } from './battle-phases';
 import { BattleStat } from './battle-stat';
+import { BattleTag, BattleTagLapseType, BattleTagType } from './battle-tag';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -409,93 +410,138 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
   }
 
-  apply(source: Pokemon, battlerMove: PokemonMove, callback?: Function) {
-    const battleScene = this.scene as BattleScene;
-    let result: integer;
-    let success = false;
-    const move = battlerMove.getMove();
-    const moveCategory = move.category;
-    let damage = 0;
-    switch (moveCategory) {
-      case MoveCategory.PHYSICAL:
-      case MoveCategory.SPECIAL:
-        const isPhysical = moveCategory === MoveCategory.PHYSICAL;
-        const critChance = new Utils.IntegerHolder(16);
-        applyMoveAttrs(HighCritAttr, this.scene as BattleScene, source, this, move, critChance);
-        const isCritical = Utils.randInt(critChance.value) === 0;
-        const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
-        const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
-        const stabMultiplier = source.species.type1 === move.type || (source.species.type2 > -1 && source.species.type2 === move.type) ? 1.5 : 1;
-        const typeMultiplier = getTypeDamageMultiplier(move.type, this.species.type1) * (this.species.type2 > -1 ? getTypeDamageMultiplier(move.type, this.species.type2) : 1);
-        const criticalMultiplier = isCritical ? 2 : 1;
-        damage = Math.ceil(((((2 * source.level / 5 + 2) * move.power * sourceAtk / targetDef) / 50) + 2) * stabMultiplier * typeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
-        if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
-          damage = Math.floor(damage / 2);
-        console.log('damage', damage, move.name, move.power, sourceAtk, targetDef);
-        if (damage) {
-          this.hp = Math.max(this.hp - damage, 0);
-          if (isCritical)
-            battleScene.unshiftPhase(new MessagePhase(battleScene, 'A critical hit!'));
-        }
-        if (typeMultiplier >= 2)
-          result = MoveResult.SUPER_EFFECTIVE;
-        else if (typeMultiplier >= 1)
-          result = MoveResult.EFFECTIVE;
-        else if (typeMultiplier > 0)
-          result = MoveResult.NOT_VERY_EFFECTIVE;
-        else
-          result = MoveResult.NO_EFFECT;
-
-        switch (result) {
-          case MoveResult.EFFECTIVE:
-            this.scene.sound.play('hit');
-            success = true;
-            break;
-          case MoveResult.SUPER_EFFECTIVE:
-            this.scene.sound.play('hit_strong');
-            battleScene.unshiftPhase(new MessagePhase(battleScene, 'It\'s super effective!'));
-            success = true;
-            break;
-          case MoveResult.NOT_VERY_EFFECTIVE:
-            this.scene.sound.play('hit_weak');
-            battleScene.unshiftPhase(new MessagePhase(battleScene, 'It\'s not very effective!'))
-            success = true;
-            break;
-          case MoveResult.NO_EFFECT:
-            battleScene.unshiftPhase(new MessagePhase(battleScene, `It doesn\'t affect ${this.name}!`))
-            success = true;
-            break;
-          case MoveCategory.STATUS:
-            result = MoveResult.OTHER;
-            success = true;
-            break;
-        }
-    }
-
-    if (success) {
-      if (result <= MoveResult.NOT_VERY_EFFECTIVE) {
-        const flashTimer = this.scene.time.addEvent({
-          delay: 100,
-          repeat: 5,
-          startAt: 200,
-          callback: () => {
-            this.getSprite().setVisible(flashTimer.repeatCount % 2 === 0);
-            if (!flashTimer.repeatCount) {
-              this.battleInfo.updateInfo(this).then(() => {
-                if (callback)
-                  callback();
-              });
+  apply(source: Pokemon, battlerMove: PokemonMove): Promise<MoveResult> {
+    return new Promise(resolve => {
+      const battleScene = this.scene as BattleScene;
+      let result: MoveResult = MoveResult.STATUS;
+      let success = false;
+      const move = battlerMove.getMove();
+      const moveCategory = move.category;
+      let damage = 0;
+      switch (moveCategory) {
+        case MoveCategory.PHYSICAL:
+        case MoveCategory.SPECIAL:
+          const isPhysical = moveCategory === MoveCategory.PHYSICAL;
+          const critChance = new Utils.IntegerHolder(16);
+          applyMoveAttrs(HighCritAttr, this.scene as BattleScene, source, this, move, critChance);
+          const isCritical = Utils.randInt(critChance.value) === 0;
+          const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
+          const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
+          const stabMultiplier = source.species.type1 === move.type || (source.species.type2 > -1 && source.species.type2 === move.type) ? 1.5 : 1;
+          const typeMultiplier = getTypeDamageMultiplier(move.type, this.species.type1) * (this.species.type2 > -1 ? getTypeDamageMultiplier(move.type, this.species.type2) : 1);
+          const criticalMultiplier = isCritical ? 2 : 1;
+          damage = Math.ceil(((((2 * source.level / 5 + 2) * move.power * sourceAtk / targetDef) / 50) + 2) * stabMultiplier * typeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
+          if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
+            damage = Math.floor(damage / 2);
+          move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
+            if (this.getTag(hta.tagType)) {
+              console.log('ye');
+              damage *= 2;
             }
+          });
+          console.log('damage', damage, move.name, move.power, sourceAtk, targetDef);
+          if (damage) {
+            this.hp = Math.max(this.hp - damage, 0);
+            if (isCritical)
+              battleScene.unshiftPhase(new MessagePhase(battleScene, 'A critical hit!'));
           }
-        });
-      } else {
-        this.battleInfo.updateInfo(this).then(() => {
-          if (callback)
-            callback();
-        });
+          if (typeMultiplier >= 2)
+            result = MoveResult.SUPER_EFFECTIVE;
+          else if (typeMultiplier >= 1)
+            result = MoveResult.EFFECTIVE;
+          else if (typeMultiplier > 0)
+            result = MoveResult.NOT_VERY_EFFECTIVE;
+          else
+            result = MoveResult.NO_EFFECT;
+
+          switch (result) {
+            case MoveResult.EFFECTIVE:
+              this.scene.sound.play('hit');
+              success = true;
+              break;
+            case MoveResult.SUPER_EFFECTIVE:
+              this.scene.sound.play('hit_strong');
+              battleScene.unshiftPhase(new MessagePhase(battleScene, 'It\'s super effective!'));
+              success = true;
+              break;
+            case MoveResult.NOT_VERY_EFFECTIVE:
+              this.scene.sound.play('hit_weak');
+              battleScene.unshiftPhase(new MessagePhase(battleScene, 'It\'s not very effective!'))
+              success = true;
+              break;
+            case MoveResult.NO_EFFECT:
+              battleScene.unshiftPhase(new MessagePhase(battleScene, `It doesn\'t affect ${this.name}!`))
+              success = true;
+              break;
+          }
+          break;
+        case MoveCategory.STATUS:
+          result = MoveResult.STATUS;
+          success = true;
+          break;
       }
+
+      if (success) {
+        if (result <= MoveResult.NOT_VERY_EFFECTIVE) {
+          const flashTimer = this.scene.time.addEvent({
+            delay: 100,
+            repeat: 5,
+            startAt: 200,
+            callback: () => {
+              this.getSprite().setVisible(flashTimer.repeatCount % 2 === 0);
+              if (!flashTimer.repeatCount) {
+                this.battleInfo.updateInfo(this).then(() => resolve(result));
+              }
+            }
+          });
+        } else {
+          this.battleInfo.updateInfo(this).then(() => resolve(result));
+        }
+      } else
+        resolve(result);
+    });
+  }
+
+  addTag(tagType: BattleTagType, lapseType: BattleTagLapseType, turnCount?: integer): boolean {
+    if (this.getTag(tagType))
+      return false;
+
+    const newTag = new BattleTag(tagType, lapseType || BattleTagLapseType.FAINT, turnCount || 1);
+    this.summonData.tags.push(newTag);
+    if (newTag.isHidden())
+      this.setVisible(false);
+  }
+
+  getTag(tagFilter: BattleTagType | ((tag: BattleTag) => boolean)): BattleTag {
+    return typeof(tagFilter) === 'number'
+      ? this.summonData.tags.find(t => t.tagType === tagFilter)
+      : this.summonData.tags.find(t => tagFilter(t));
+  }
+
+  getTags(tagFilter: BattleTagType | ((tag: BattleTag) => boolean)): BattleTag[] {
+    return typeof(tagFilter) === 'number'
+      ? this.summonData.tags.filter(t => t.tagType === tagFilter)
+      : this.summonData.tags.filter(t => tagFilter(t));
+  }
+
+  lapseTags(lapseType: BattleTagLapseType) {
+    const tags = this.summonData.tags;
+    tags.filter(t => lapseType === BattleTagLapseType.FAINT || ((t.lapseType === lapseType) && !(--t.turnCount))).forEach(t => tags.splice(tags.indexOf(t), 1));
+    const visible = !this.getTag(t => t.isHidden());
+    if (visible && !this.visible) {
+      // Wait 2 frames before setting visible for battle animations that don't immediately show the sprite invisible
+      this.scene.tweens.addCounter({
+        duration: 2,
+        useFrames: true,
+        onComplete: () => this.setVisible(true)
+      });
     } else
-      callback();
+      this.setVisible(visible);
+  }
+
+  getLastXMoves(turnCount?: integer): TurnMove[] {
+    const moveHistory = this.summonData.moveHistory;
+    return moveHistory.slice(Math.max(moveHistory.length - (turnCount || 1), 0), moveHistory.length).reverse();
   }
 
   cry(soundConfig?: Phaser.Types.Sound.SoundConfig): integer {
@@ -731,6 +777,12 @@ export class EnemyPokemon extends Pokemon {
   }
 
   getNextMove(): PokemonMove {
+    const queuedMove = this.summonData.moveQueue.length
+      ? this.moveset.find(m => m.moveId === this.summonData.moveQueue[0].move)
+      : null;
+    if (queuedMove && (this.summonData.moveQueue[0].ignorePP || queuedMove.isUsable()))
+      return queuedMove;
+
     const movePool = this.moveset.filter(m => m.isUsable());
     if (movePool.length) {
       if (movePool.length === 1)
@@ -823,8 +875,22 @@ export class EnemyPokemon extends Pokemon {
   }
 }
 
+export interface TurnMove {
+  move: Moves;
+  result: MoveResult;
+}
+
+export interface QueuedMove {
+  move: Moves;
+  ignorePP?: boolean;
+}
+
 export class PokemonSummonData {
   public battleStats: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
+  public moveHistory: TurnMove[] = [];
+  public moveQueue: QueuedMove[] = [];
+  public tags: BattleTag[] = [];
+  public charging: boolean;
   public confusionTurns: integer;
 }
 
@@ -850,16 +916,19 @@ export enum MoveResult {
   SUPER_EFFECTIVE,
   NOT_VERY_EFFECTIVE,
   NO_EFFECT,
+  STATUS,
+  FAILED,
+  MISSED,
   OTHER
 };
 
 export class PokemonMove {
-  public moveId: integer;
+  public moveId: Moves;
   public ppUsed: integer;
   public ppUp: integer;
   public disableTurns: integer;
 
-  constructor(moveId: integer, ppUsed: integer, ppUp: integer) {
+  constructor(moveId: Moves, ppUsed: integer, ppUp: integer) {
     this.moveId = moveId;
     this.ppUsed = ppUsed;
     this.ppUp = ppUp;

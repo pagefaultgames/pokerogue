@@ -1,8 +1,9 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
 import BattleScene from "./battle-scene";
-import { Moves } from "./move";
+import { ChargeAttr, Moves, allMoves } from "./move";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "./pokemon";
 import * as Utils from "./utils";
+//import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
     USER,
@@ -337,7 +338,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
 }
 
 export const moveAnims = new Map<Moves, Anim | [Anim, Anim]>();
-export const chargeAnims = new Map<ChargeAnim, Anim>();
+export const chargeAnims = new Map<ChargeAnim, Anim | [Anim, Anim]>();
 export const commonAnims = new Map<CommonAnim, Anim>();
 
 export function initCommonAnims(): Promise<void> {
@@ -378,6 +379,39 @@ export function initMoveAnim(move: Moves): Promise<void> {
                         populateMoveAnim(move, ba[1]);
                     } else
                         populateMoveAnim(move, ba);
+                    const chargeAttr = allMoves[move - 1].getAttrs(ChargeAttr) as ChargeAttr[];
+                    if (chargeAttr.length)
+                        initMoveChargeAnim(chargeAttr[0].chargeAnim).then(() => resolve());
+                    else
+                        resolve();
+                });
+        }
+    });
+}
+
+export function initMoveChargeAnim(chargeAnim: ChargeAnim): Promise<void> {
+    return new Promise(resolve => {
+        if (chargeAnims.has(chargeAnim)) {
+            if (chargeAnims.get(chargeAnim) !== null)
+                resolve();
+            else {
+                let loadedCheckTimer = setInterval(() => {
+                    if (chargeAnims.get(chargeAnim) !== null) {
+                        clearInterval(loadedCheckTimer);
+                        resolve();
+                    }
+                }, 50);
+            }
+        } else {
+            chargeAnims.set(chargeAnim, null);
+            fetch(`./battle-anims/${ChargeAnim[chargeAnim].toLowerCase().replace(/\_/g, '-')}.json`)
+                .then(response => response.json())
+                .then(ca => {
+                    if (Array.isArray(ca)) {
+                        populateMoveChargeAnim(chargeAnim, ca[0]);
+                        populateMoveChargeAnim(chargeAnim, ca[1]);
+                    } else
+                        populateMoveChargeAnim(chargeAnim, ca);
                     resolve();
                 });
         }
@@ -393,6 +427,15 @@ function populateMoveAnim(move: Moves, animSource: any) {
     moveAnims.set(move, [ moveAnims.get(move) as Anim, moveAnim ]);
 }
 
+function populateMoveChargeAnim(chargeAnim: ChargeAnim, animSource: any) {
+    const moveChargeAnim = new Anim(animSource);
+    if (chargeAnims.get(chargeAnim) === null) {
+        chargeAnims.set(chargeAnim, moveChargeAnim);
+        return;
+    }
+    chargeAnims.set(chargeAnim, [ chargeAnims.get(chargeAnim) as Anim, moveChargeAnim ]);
+}
+
 export function loadCommonAnimAssets(scene: BattleScene, startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
         loadAnimAssets(scene, Array.from(commonAnims.values()), startLoad).then(() => resolve());
@@ -404,9 +447,16 @@ export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLo
         const moveAnimations = moveIds.map(m => {
             const anims = moveAnims.get(m);
             if (anims instanceof Anim)
-                return anims as Anim;
-            return anims[0] as Anim;
+                return anims;
+            return anims[0];
         });
+        for (let moveId of moveIds) {
+            const chargeAttr = allMoves[moveId - 1].getAttrs(ChargeAttr) as ChargeAttr[];
+            if (chargeAttr.length) {
+                const moveChargeAnims = chargeAnims.get(chargeAttr[0].chargeAnim);
+                moveAnimations.push(moveChargeAnims instanceof Anim ? moveChargeAnims : moveChargeAnims[0]);
+            }
+        }
         loadAnimAssets(scene, moveAnimations, startLoad).then(() => resolve());
     });
 }
@@ -457,14 +507,18 @@ export abstract class BattleAnim {
     abstract isReverseCoords(): boolean;
 
     play(scene: BattleScene, callback?: Function) {
+        const isOppAnim = this.isOppAnim();
+        const user = !isOppAnim ? this.user : this.target;
+        const target = !isOppAnim ? this.target : this.user;
+
         const anim = this.getAnim();
 
-        const userInitialX = this.user.x;
-        const userInitialY = this.user.y;
-        const userHalfHeight = this.user.getSprite().displayHeight / 2;
-        const targetInitialX = this.target.x;
-        const targetInitialY = this.target.y;
-        const targetHalfHeight = this.target.getSprite().displayHeight / 2;
+        const userInitialX = user.x;
+        const userInitialY = user.y;
+        const userHalfHeight = user.getSprite().displayHeight / 2;
+        const targetInitialX = target.x;
+        const targetInitialY = target.y;
+        const targetHalfHeight = target.getSprite().displayHeight / 2;
 
         const coordMultiplier = this.isReverseCoords() ? -1 : 1;
         
@@ -483,10 +537,10 @@ export abstract class BattleAnim {
                 for (let frame of spriteFrames) {
                     switch (frame.target) {
                         case AnimFrameTarget.USER:
-                            this.user.setPosition(userInitialX + frame.x * coordMultiplier, userInitialY + frame.y * coordMultiplier);
+                            user.setPosition(userInitialX + frame.x * coordMultiplier, userInitialY + frame.y * coordMultiplier);
                             break;
                         case AnimFrameTarget.TARGET:
-                            this.target.setPosition(targetInitialX + frame.x * coordMultiplier, targetInitialY + frame.y * coordMultiplier);
+                            target.setPosition(targetInitialX + frame.x * coordMultiplier, targetInitialY + frame.y * coordMultiplier);
                             break;
                         case AnimFrameTarget.GRAPHIC:
                             if (g === sprites.length) {
@@ -498,16 +552,13 @@ export abstract class BattleAnim {
                             moveSprite.setFrame(frame.graphicFrame);
                             const xProgress = Math.min(Math.max(frame.x, 0) / 128, 1);
                             const yOffset = ((userHalfHeight * (1 - xProgress)) + (targetHalfHeight * xProgress)) * -1;
-                            const isOppAnim = this.isOppAnim();
                             moveSprite.setPosition((!isOppAnim ? userInitialX : targetInitialX) + frame.x * coordMultiplier, (!isOppAnim ? userInitialY : targetInitialY) + yOffset + frame.y * coordMultiplier);
                             moveSprite.setAlpha(frame.opacity);
                             moveSprite.setAngle(-frame.angle * coordMultiplier);
                             break;
                     }
                     if (frame.target !== AnimFrameTarget.GRAPHIC) {
-                        const pokemon = frame.target === AnimFrameTarget.USER
-                            ? this.user
-                            : this.target;
+                        const pokemon = frame.target === AnimFrameTarget.USER ? user : target;
                         pokemon.setAlpha(frame.opacity);
                         pokemon.setAngle(-frame.angle * coordMultiplier);
                         const zoomScaleX = frame.zoomX / 100;
@@ -530,22 +581,26 @@ export abstract class BattleAnim {
                 r--;
             },
             onComplete: () => {
-                this.user.setPosition(userInitialX, userInitialY);
-                this.user.setAlpha(1);
-                this.user.setAngle(0);
-                this.target.setPosition(targetInitialX, targetInitialY);
-                this.target.setAlpha(1);
-                this.target.setAngle(0);
+                const cleanUpAndComplete = () => {
+                    user.setPosition(userInitialX, userInitialY);
+                    user.setAlpha(1);
+                    user.setAngle(0);
+                    target.setPosition(targetInitialX, targetInitialY);
+                    target.setAlpha(1);
+                    target.setAngle(0);
+                    if (callback)
+                        callback();
+                };
                 for (let ms of sprites)
                     ms.destroy();
-                if (r && callback) {
+                if (r) {
                     scene.tweens.addCounter({
                         duration: r,
                         useFrames: true,
-                        onComplete: () => callback()
+                        onComplete: () => cleanUpAndComplete()
                     });
-                } else if (callback)
-                    callback();
+                } else
+                    cleanUpAndComplete();
             }
         });
     }
@@ -597,6 +652,22 @@ export class MoveAnim extends BattleAnim {
     }
 }
 
+export class MoveChargeAnim extends MoveAnim {
+    private chargeAnim: ChargeAnim;
+    
+    constructor(chargeAnim: ChargeAnim, move: Moves, user: Pokemon, target: Pokemon) {
+        super(move, user, target);
+
+        this.chargeAnim = chargeAnim;
+    }
+
+    getAnim(): Anim {
+        return chargeAnims.get(this.chargeAnim) instanceof Anim
+            ? chargeAnims.get(this.chargeAnim) as Anim
+            : chargeAnims.get(this.chargeAnim)[this.user instanceof PlayerPokemon ? 0 : 1] as Anim;
+    }
+}
+
 export function populateAnims() {
     return;
     const commonAnimNames = Utils.getEnumKeys(CommonAnim).map(k => k.toLowerCase());
@@ -605,7 +676,7 @@ export function populateAnims() {
     const chargeAnimNames = Utils.getEnumKeys(ChargeAnim).map(k => k.toLowerCase());
     const chargeAnimMatchNames = chargeAnimNames.map(k => k.replace(/\_/g, ' '));
     const chargeAnimIds = Utils.getEnumValues(ChargeAnim) as ChargeAnim[];
-    const commonNamePattern = /name: (?:Common:)?(.*)/;
+    const commonNamePattern = /name: (?:Common:)?(Opp )?(.*)/;
     const moveNameToId = {};
     for (let move of Utils.getEnumValues(Moves)) {
         const moveName = Moves[move].toUpperCase().replace(/\_/g, '');
@@ -620,7 +691,7 @@ export function populateAnims() {
         let chargeAnimId: ChargeAnim;
         if (!fields[1].startsWith('name: Move:') && !(isOppMove = fields[1].startsWith('name: OppMove:'))) {
             const nameMatch = commonNamePattern.exec(fields[1]);
-            const name = nameMatch[1].toLowerCase();
+            const name = nameMatch[2].toLowerCase();
             if (commonAnimMatchNames.indexOf(name) > -1)
                 commonAnimId = commonAnimIds[commonAnimMatchNames.indexOf(name)];
             else if (chargeAnimMatchNames.indexOf(name) > -1)
@@ -635,7 +706,7 @@ export function populateAnims() {
         if (commonAnimId)
             commonAnims.set(commonAnimId, anim);
         else if (chargeAnimId)
-            chargeAnims.set(chargeAnimId, anim);
+            chargeAnims.set(chargeAnimId, !isOppMove ? anim : [ chargeAnims.get(chargeAnimId) as Anim, anim ]);
         else
             moveAnims.set(moveNameToId[animName], !isOppMove ? anim : [ moveAnims.get(moveNameToId[animName]) as Anim, anim ]);
         for (let f = 0; f < fields.length; f++) {

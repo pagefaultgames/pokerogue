@@ -1,14 +1,14 @@
 import BattleScene from "./battle-scene";
-import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove } from "./pokemon";
+import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, MissEffectAttr, MoveCategory, MoveHitEffectAttr, Moves, MultiHitAttr } from "./move";
+import { allMoves, applyMoveAttrs, ChargeAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr } from "./move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
 import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier } from "./modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./pokeball";
-import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
+import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveAnim, chargeAnims, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { StatusEffect, getStatusEffectActivationText, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
@@ -19,6 +19,7 @@ import { Biome, biomeLinks } from "./biome";
 import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier-type";
 import PokemonSpecies from "./pokemon-species";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import { BattleTagLapseType } from "./battle-tag";
 
 export class SelectStarterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
@@ -395,12 +396,17 @@ export class CommandPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.ui.setMode(Mode.COMMAND).then(() => {
-      this.scene.currentBattle.addParticipant(this.scene.getPlayerPokemon());
+    const playerPokemon = this.scene.getPlayerPokemon();
 
-      this.scene.getPlayerPokemon().resetTurnData();
-      this.scene.getEnemyPokemon().resetTurnData();
-    });
+    this.scene.currentBattle.addParticipant(playerPokemon);
+
+    playerPokemon.resetTurnData();
+    this.scene.getEnemyPokemon().resetTurnData();
+
+    if (playerPokemon.summonData.moveQueue.length)
+      this.handleCommand(Command.FIGHT, playerPokemon.moveset.findIndex(m => m.moveId === playerPokemon.summonData.moveQueue[0].move));
+    else
+      this.scene.ui.setMode(Mode.COMMAND);
   }
 
   handleCommand(command: Command, cursor: integer): boolean {
@@ -454,6 +460,8 @@ export class CommandPhase extends BattlePhase {
       for (let sef of statusEffectPhases)
         this.scene.pushPhase(sef);
 
+      this.scene.pushPhase(new TurnEndPhase(this.scene));
+
       this.end();
     }
 
@@ -462,6 +470,19 @@ export class CommandPhase extends BattlePhase {
 
   end() {
     this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
+  }
+}
+
+export class TurnEndPhase extends BattlePhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    this.scene.getPlayerPokemon().lapseTags(BattleTagLapseType.TURN_END);
+    this.scene.getEnemyPokemon().lapseTags(BattleTagLapseType.TURN_END);
+
+    this.end();
   }
 }
 
@@ -522,7 +543,8 @@ abstract class MovePhase extends BattlePhase {
       }
       if (!this.move)
         console.log(this.pokemon.moveset);
-      this.move.ppUsed++;
+      if (this.pokemon.summonData.moveQueue.length && !this.pokemon.summonData.moveQueue.shift().ignorePP)
+        this.move.ppUsed++;
       this.scene.unshiftPhase(new MessagePhase(this.scene, `${this.pokemon.name} used\n${this.move.getName()}!`, 500));
       this.scene.unshiftPhase(this.getEffectPhase());
       this.end();
@@ -608,35 +630,53 @@ abstract class MoveEffectPhase extends PokemonPhase {
     const user = this.getUserPokemon();
     const target = this.getTargetPokemon();
 
-    if (user.turnData.hitsLeft === undefined) {
-      const hitCount = new Utils.IntegerHolder(1);
-      applyMoveAttrs(MultiHitAttr, this.scene, user, target, this.move.getMove(), hitCount);
-      user.turnData.hitCount = 0;
-      user.turnData.hitsLeft = user.turnData.hitsTotal = hitCount.value;
-    }
+    const overridden = new Utils.BooleanHolder(false);
 
-    if (!this.hitCheck()) {
-      this.scene.unshiftPhase(new MessagePhase(this.scene, `${!this.player ? 'Foe ' : ''}${user.name}'s\nattack missed!`));
-      applyMoveAttrs(MissEffectAttr, this.scene, user, target, this.move.getMove());
-      this.end();
-      return;
-    }
+    applyMoveAttrs(OverrideMoveEffectAttr, this.scene, user, target, this.move.getMove(), overridden).then(() => {
 
-    new MoveAnim(this.move.getMove().id as Moves, user, target).play(this.scene, () => {
-      this.getTargetPokemon().apply(this.getUserPokemon(), this.move, () => {
-        ++user.turnData.hitCount;
-        if (this.getTargetPokemon().hp)
-          applyMoveAttrs(MoveHitEffectAttr, this.scene, user, target, this.move.getMove());
+      if (overridden.value) {
         this.end();
+        return;
+      }
+
+      user.lapseTags(BattleTagLapseType.MOVE);
+
+      if (user.turnData.hitsLeft === undefined) {
+        const hitCount = new Utils.IntegerHolder(1);
+        applyMoveAttrs(MultiHitAttr, this.scene, user, target, this.move.getMove(), hitCount);
+        user.turnData.hitCount = 0;
+        user.turnData.hitsLeft = user.turnData.hitsTotal = hitCount.value;
+      }
+
+      if (!this.hitCheck()) {
+        this.scene.unshiftPhase(new MessagePhase(this.scene, `${!this.player ? 'Foe ' : ''}${user.name}'s\nattack missed!`));
+        user.summonData.moveHistory.push({ move: this.move.moveId, result: MoveResult.MISSED });
+        applyMoveAttrs(MissEffectAttr, this.scene, user, target, this.move.getMove());
+        this.end();
+        return;
+      }
+      
+      new MoveAnim(this.move.getMove().id as Moves, user, target).play(this.scene, () => {
+        target.apply(user, this.move).then(result => {
+          ++user.turnData.hitCount;
+          user.summonData.moveHistory.push({ move: this.move.moveId, result: result });
+          if (user.hp <= 0) {
+            this.scene.pushPhase(new FaintPhase(this.scene, this.player));
+            target.resetBattleSummonData();
+          }
+          if (target.hp <= 0) {
+            this.scene.pushPhase(new FaintPhase(this.scene, !this.player));
+            this.getUserPokemon().resetBattleSummonData();
+          }
+          if (target.hp) {
+            applyMoveAttrs(MoveEffectAttr, this.scene, user, target, this.move.getMove());
+            // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
+            if (!this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
+              applyMoveAttrs(MoveHitEffectAttr, this.scene, user, target, this.move.getMove());
+          }
+          this.end();
+        });
       });
-      if (this.getUserPokemon().hp <= 0) {
-        this.scene.pushPhase(new FaintPhase(this.scene, this.player));
-        this.getTargetPokemon().resetBattleSummonData();
-      }
-      if (this.getTargetPokemon().hp <= 0) {
-        this.scene.pushPhase(new FaintPhase(this.scene, !this.player));
-        this.getUserPokemon().resetBattleSummonData();
-      }
     });
   }
 
@@ -644,13 +684,23 @@ abstract class MoveEffectPhase extends PokemonPhase {
     const user = this.getUserPokemon();
     if (--user.turnData.hitsLeft && this.getTargetPokemon().hp)
       this.scene.unshiftPhase(this.getNewHitPhase());
-    else if (user.turnData.hitsTotal > 1)
-      this.scene.unshiftPhase(new MessagePhase(this.scene, `Hit ${user.turnData.hitCount} time(s)!`));
+    else {
+      if (user.turnData.hitsTotal > 1)
+        this.scene.unshiftPhase(new MessagePhase(this.scene, `Hit ${user.turnData.hitCount} time(s)!`));
+    }
     
     super.end();
   }
 
   hitCheck(): boolean {
+    // Check if not self targeting for this
+
+    const hiddenTag = this.getTargetPokemon().getTag(t => t.isHidden());
+    if (hiddenTag) {
+      if (!this.move.getMove().getAttrs(HitsTagAttr).filter(hta => (hta as HitsTagAttr).tagType === hiddenTag.tagType).length)
+        return false;
+    }
+      
     if (this.move.getMove().category !== MoveCategory.STATUS) {
       const userAccuracyLevel = this.getUserPokemon().summonData.battleStats[BattleStat.ACC];
       const targetEvasionLevel = this.getTargetPokemon().summonData.battleStats[BattleStat.EVA];
@@ -890,6 +940,9 @@ export class FaintPhase extends PokemonPhase {
     }
       
     const pokemon = this.getPokemon();
+    
+    pokemon.lapseTags(BattleTagLapseType.FAINT);
+
     pokemon.faintCry(() => {
       pokemon.hideInfo();
       this.scene.sound.play('faint');
