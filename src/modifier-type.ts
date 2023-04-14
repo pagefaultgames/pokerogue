@@ -49,7 +49,7 @@ class AddPokeballModifierType extends ModifierType {
   }
 }
 
-export abstract class PokemonModifierType extends ModifierType {
+export class PokemonModifierType extends ModifierType {
   public selectFilter: PokemonSelectFilter;
 
   constructor(name: string, description: string, newModifierFunc: NewModifierFunc, selectFilter?: PokemonSelectFilter, iconImage?: string) {
@@ -283,7 +283,8 @@ const modifierPool = {
     }),
     new ModifierType('OVAL CHARM', 'For every X (no. of party members) items in a POKéMON\'s held item stack, give one to each other party member',
       (type, _args) => new Modifiers.PartyShareModifier(type), 'oval_charm'),
-    new ModifierType('HEALING CHARM', 'Doubles the effectiveness of HP restoring items (excludes revives)', (type, _args) => new Modifiers.HealingBoosterModifier(type, 2), 'healing_charm'),
+    new ModifierType('HEALING CHARM', 'Doubles the effectiveness of HP restoring moves and items (excludes revives)', (type, _args) => new Modifiers.HealingBoosterModifier(type, 2), 'healing_charm'),
+    new WeightedModifierType(new PokemonModifierType('SHELL BELL', 'Heals 1/8 of a POKéMON\'s damage dealt', (type, args) => new Modifiers.HitHealModifier(type, (args[0] as PlayerPokemon).id)), 8),
     new ExpBoosterModifierType('LUCKY EGG', 25),
     new ModifierType('EXP. SHARE', 'All POKéMON in your party gain an additional 10% of a battle\'s EXP. Points', (type, _args) => new Modifiers.ExpShareModifier(type), 'exp_share')
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),

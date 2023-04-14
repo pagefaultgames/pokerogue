@@ -442,6 +442,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           console.log('damage', damage, move.name, move.power, sourceAtk, targetDef);
           if (damage) {
             this.hp = Math.max(this.hp - damage, 0);
+            source.turnData.damageDealt += damage;
             if (isCritical)
               battleScene.unshiftPhase(new MessagePhase(battleScene, 'A critical hit!'));
           }
@@ -908,6 +909,7 @@ export class PokemonTurnData {
   public hitCount: integer;
   public hitsLeft: integer;
   public hitsTotal: integer;
+  public damageDealt: integer = 0;
 }
 
 export enum AiType {

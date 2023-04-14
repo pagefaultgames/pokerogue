@@ -1,5 +1,5 @@
 import * as ModifierTypes from './modifier-type';
-import { LearnMovePhase, LevelUpPhase } from "./battle-phases";
+import { CommonAnimPhase, LearnMovePhase, LevelUpPhase, MessagePhase, PokemonHealPhase } from "./battle-phases";
 import BattleScene from "./battle-scene";
 import { getLevelTotalExp } from "./exp";
 import { PokeballType } from "./pokeball";
@@ -7,6 +7,7 @@ import Pokemon, { PlayerPokemon } from "./pokemon";
 import { Stat } from "./pokemon-stat";
 import { addTextObject, TextStyle } from "./text";
 import * as Utils from "./utils";
+import { CommonAnim } from './battle-anims';
 
 type ModifierType = ModifierTypes.ModifierType;
 
@@ -199,6 +200,20 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
 
     container.add(pokemonIcon);
 
+    const item = scene.add.sprite(16, this.virtualStackCount ? 8 : 16, 'items');
+    item.setScale(0.5);
+    item.setOrigin(0, 0.5);
+    item.setTexture('items', this.type.iconImage);
+    container.add(item);
+
+    const stackText = this.getIconStackText(scene);
+    if (stackText)
+      container.add(stackText);
+
+    const virtualStackText = this.getIconStackText(scene, true);
+    if (virtualStackText)
+      container.add(virtualStackText);
+
     return container;
   }
 
@@ -236,25 +251,34 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
 
     return true;
   }
+}
 
-  getIcon(scene: BattleScene): Phaser.GameObjects.Container {
-    const container = super.getIcon(scene);
+export class HitHealModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: integer) {
+    super(type, pokemonId);
+  }
 
-    const item = scene.add.sprite(16, this.virtualStackCount ? 8 : 16, 'items');
-    item.setScale(0.5);
-    item.setOrigin(0, 0.5);
-    item.setTexture('items', this.type.iconImage);
-    container.add(item);
+  match(modifier: Modifier) {
+    return modifier instanceof HitHealModifier;
+  }
 
-    const stackText = this.getIconStackText(scene);
-    if (stackText)
-      container.add(stackText);
+  clone() {
+    return new HitHealModifier(this.type, this.pokemonId);
+  }
 
-    const virtualStackText = this.getIconStackText(scene, true);
-    if (virtualStackText)
-      container.add(virtualStackText);
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as PlayerPokemon;
 
-    return container;
+    if (pokemon.turnData.damageDealt && pokemon.getHpRatio() < 1) {
+      const scene = pokemon.scene as BattleScene;
+
+      const hpRestoreMultiplier = new Utils.IntegerHolder(1);
+      scene.applyModifiers(HealingBoosterModifier, hpRestoreMultiplier);
+      scene.unshiftPhase(new PokemonHealPhase(scene, true, Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount * hpRestoreMultiplier.value, 1)));
+      scene.unshiftPhase(new MessagePhase(scene, `${pokemon.name}'s ${this.type.name}\nrestored its HP a little!`));
+    }
+
+    return true;
   }
 }
 

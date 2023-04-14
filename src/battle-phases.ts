@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, ChargeAttr, HitsTagAttr, MissEffectAttr, Move
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
-import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier } from "./modifier";
+import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HitHealModifier } from "./modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./pokeball";
 import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveAnim, chargeAnims, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
@@ -535,6 +535,22 @@ export abstract class PartyMemberPokemonPhase extends PokemonPhase {
   }
 }
 
+export class CommonAnimPhase extends PokemonPhase {
+  private anim: CommonAnim;
+
+  constructor(scene: BattleScene, player: boolean, anim: CommonAnim) {
+    super(scene, player);
+
+    this.anim = anim;
+  }
+
+  start() {
+    new CommonBattleAnim(this.anim, this.getPokemon()).play(this.scene, () => {
+      this.end();
+    });
+  }
+}
+
 abstract class MovePhase extends BattlePhase {
   protected pokemon: Pokemon;
   protected move: PokemonMove;
@@ -710,6 +726,8 @@ abstract class MoveEffectPhase extends PokemonPhase {
     else {
       if (user.turnData.hitsTotal > 1)
         this.scene.unshiftPhase(new MessagePhase(this.scene, `Hit ${user.turnData.hitCount} time(s)!`));
+      if (this.player)
+        this.scene.applyModifiers(HitHealModifier, user);
     }
     
     super.end();
@@ -1232,6 +1250,23 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
         }, null, true);
       });
     }
+  }
+}
+
+export class PokemonHealPhase extends CommonAnimPhase {
+  private hpHealed: integer;
+
+  constructor(scene: BattleScene, player: boolean, hpHealed: integer) {
+    super(scene, player, CommonAnim.HEALTH_UP);
+
+    this.hpHealed = hpHealed;
+  }
+
+  end() {
+    const pokemon = this.getPokemon();
+
+    pokemon.hp = Math.min(pokemon.hp + this.hpHealed, pokemon.getMaxHp());
+    pokemon.updateInfo().then(() => super.end());
   }
 }
 
