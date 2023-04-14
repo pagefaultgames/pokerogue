@@ -1,4 +1,4 @@
-import { CommandPhase } from "../battle-phases";
+import { CommandPhase, SummonMissingPhase } from "../battle-phases";
 import BattleScene, { Button } from "../battle-scene";
 import { PlayerPokemon, PokemonMove } from "../pokemon";
 import { addTextObject, TextStyle } from "../text";
@@ -411,7 +411,8 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.showText(this.getReleaseMessage(this.scene.getParty()[slotIndex].name), null, () => {
       this.clearPartySlots();
       this.scene.removePartyMemberModifiers(slotIndex);
-      this.scene.getParty().splice(slotIndex, 1);
+      const releasedPokemon = this.scene.getParty().splice(slotIndex, 1)[0];
+      releasedPokemon.destroy();
       this.populatePartySlots();
       if (this.cursor >= this.scene.getParty().length)
         this.setCursor(this.cursor - 1);

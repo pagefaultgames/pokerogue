@@ -379,12 +379,29 @@ export class CheckSwitchPhase extends BattlePhase {
   start() {
     super.start();
 
+    if (this.scene.field.getAll().indexOf(this.scene.getPlayerPokemon()) === -1) {
+      this.scene.unshiftPhase(new SummonMissingPhase(this.scene));
+      super.end();
+      return;
+    }
+
     this.scene.ui.showText('Will you switch\nPOKéMON?', null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.unshiftPhase(new SwitchPhase(this.scene, false, true));
         this.end();
       }, () => this.end());
     });
+  }
+}
+
+export class SummonMissingPhase extends SummonPhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  preSummon(): void {
+    this.scene.ui.showText(`Go! ${this.scene.getPlayerPokemon().name}!`);
+    this.scene.time.delayedCall(250, () => this.summon());
   }
 }
 
@@ -1375,6 +1392,7 @@ export class AttemptCapturePhase extends BattlePhase {
                 });
               });
             }, () => {
+              this.scene.ui.setMode(Mode.MESSAGE);
               pokemon.hp = 0;
               end();
             });

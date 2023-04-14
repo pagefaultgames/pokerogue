@@ -15,7 +15,7 @@ import { initMoveAnim, loadMoveAnimAssets } from './battle-anims';
 import { Status, StatusEffect } from './status-effect';
 import { tmSpecies } from './tms';
 import { pokemonEvolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './pokemon-evolutions';
-import { MessagePhase, StatChangePhase } from './battle-phases';
+import { MessagePhase } from './battle-phases';
 import { BattleStat } from './battle-stat';
 import { BattleTag, BattleTagLapseType, BattleTagType } from './battle-tag';
 
@@ -715,6 +715,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.shinySparkle.play('sparkle');
       this.scene.sound.play('sparkle');
     }
+  }
+
+  destroy(): void {
+    this.battleInfo.destroy();
+    super.destroy();
   }
 }
 
