@@ -15,7 +15,7 @@ const config: Phaser.Types.Core.GameConfig = {
 	scene: [ BattleScene ]
 };
 
-const setPositionRelative = function(guideObject: any, x: number, y: number) {
+const setPositionRelative = function (guideObject: any, x: number, y: number) {
 	if (guideObject && guideObject.hasOwnProperty('width') && guideObject.hasOwnProperty('height')) {
 		const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
 		const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));

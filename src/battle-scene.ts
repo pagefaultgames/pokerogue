@@ -5,7 +5,7 @@ import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBi
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ConsumablePokemonMoveModifier } from './modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ConsumablePokemonMoveModifier, ModifierPredicate } from './modifier';
 import { PokeballType } from './pokeball';
 import { Species } from './species';
 import { initAutoPlay } from './auto-play';
@@ -279,7 +279,7 @@ export default class BattleScene extends Phaser.Scene {
 		let loadPokemonAssets = [];
 
 		const isRandom = this.isButtonPressed(Button.RANDOM); // For testing purposes
-		this.quickStart = isRandom || this.isButtonPressed(Button.QUICK_START);
+		this.quickStart = this.quickStart || isRandom || this.isButtonPressed(Button.QUICK_START);
 
 		if (isRandom) {
 			const biomes = Utils.getEnumValues(Biome);
@@ -615,6 +615,10 @@ export default class BattleScene extends Phaser.Scene {
 
 	getModifier(modifierType: { new(...args: any[]): Modifier }): Modifier {
 		return this.modifiers.find(m => m instanceof modifierType);
+	}
+
+	findModifier(modifierFilter: ModifierPredicate): Modifier {
+		return this.modifiers.find(m => (modifierFilter as ModifierPredicate)(m));
 	}
 
 	applyModifiers(modifierType: { new(...args: any[]): Modifier }, ...args: any[]): void {

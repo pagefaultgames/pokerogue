@@ -280,7 +280,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   populatePartySlots() {
-    const party = (this.scene as BattleScene).getParty();
+    const party = this.scene.getParty();
 
     if (this.cursor < 6 && this.cursor >= party.length)
       this.cursor = party.length - 1;
@@ -289,7 +289,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     for (let p in party) {
       const slotIndex = parseInt(p);
-      const partySlot = new PartySlot(this.scene as BattleScene, slotIndex, party[p]);
+      const partySlot = new PartySlot(this.scene, slotIndex, party[p]);
       this.scene.add.existing(partySlot);
       this.partySlotsContainer.add(partySlot);
       this.partySlots.push(partySlot);

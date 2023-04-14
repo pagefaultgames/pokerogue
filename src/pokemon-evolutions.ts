@@ -1,6 +1,13 @@
+import { Biome } from "./biome";
+import { AttackTypeBoosterModifier } from "./modifier";
+import { AttackTypeBoosterModifierType } from "./modifier-type";
+import { Moves } from "./move";
+import { PokeballType } from "./pokeball";
 import Pokemon from "./pokemon";
 import { Stat } from "./pokemon-stat";
 import { Species } from "./species";
+import { Type } from "./type";
+import * as Utils from "./utils";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
@@ -10,17 +17,32 @@ export enum SpeciesWildEvolutionDelay {
   VERY_LONG
 }
 
+export enum EvolutionItem {
+  NONE,
+  LINKING_CORD,
+  SUN_STONE,
+  MOON_STONE,
+  LEAF_STONE,
+  FIRE_STONE,
+  WATER_STONE,
+  THUNDER_STONE,
+  ICE_STONE,
+  DUSK_STONE,
+  DAWN_STONE,
+  SHINY_STONE
+}
+
 export class SpeciesEvolution {
   public speciesId: Species;
   public level: integer;
-  public item: string;
-  public condition: SpeciesEvolutionCondition | string;
+  public item: EvolutionItem;
+  public condition: SpeciesEvolutionCondition;
   public wildDelay: SpeciesWildEvolutionDelay;
 
-  constructor(speciesId: Species, level: integer, item: string, condition: SpeciesEvolutionCondition | string, wildDelay?: SpeciesWildEvolutionDelay) {
+  constructor(speciesId: Species, level: integer, item: EvolutionItem, condition: SpeciesEvolutionCondition, wildDelay?: SpeciesWildEvolutionDelay) {
     this.speciesId = speciesId;
     this.level = level;
-    this.item = item;
+    this.item = item || EvolutionItem.NONE;
     this.condition = condition;
     this.wildDelay = wildDelay || SpeciesWildEvolutionDelay.NONE;
   }
@@ -142,7 +164,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.SLOWPOKE]: [
     new SpeciesEvolution(Species.SLOWBRO, 37, null, null),
-    new SpeciesEvolution(Species.SLOWKING, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* King's rock*/), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.SLOWKING, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* King's rock*/), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MAGNEMITE]: [
     new SpeciesEvolution(Species.MAGNETON, 30, null, null)
@@ -324,8 +346,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.LINOONE, 20, null, null)
   ],
   [Species.WURMPLE]: [
-    new SpeciesEvolution(Species.SILCOON, 7, null, 'random based on personality'),
-    new SpeciesEvolution(Species.CASCOON, 7, null, 'random based on personality')
+    new SpeciesEvolution(Species.SILCOON, 7, null, new SpeciesEvolutionCondition((p: Pokemon) => Utils.randInt(2) === 0, true)), // TODO: Improve these conditions
+    new SpeciesEvolution(Species.CASCOON, 7, null, new SpeciesEvolutionCondition((p: Pokemon) => Utils.randInt(2) === 0, true))
   ],
   [Species.SILCOON]: [
     new SpeciesEvolution(Species.BEAUTIFLY, 10, null, null)
@@ -350,7 +372,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.KIRLIA]: [
     new SpeciesEvolution(Species.GARDEVOIR, 30, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.gender, true)),
-    new SpeciesEvolution(Species.GALLADE, 1, "Dawn Stone", new SpeciesEvolutionCondition((p: Pokemon) => p.gender, true), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.GALLADE, 1, EvolutionItem.DAWN_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.gender, true), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.SURSKIT]: [
     new SpeciesEvolution(Species.MASQUERAIN, 22, null, null)
@@ -366,7 +388,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.NINCADA]: [
     new SpeciesEvolution(Species.NINJASK, 20, null, null),
-    new SpeciesEvolution(Species.SHEDINJA, 20, null, 'empty spot in party, Pokéball in bag')
+    new SpeciesEvolution(Species.SHEDINJA, 20, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.getParty().length < 6 && p.scene.pokeballCounts[PokeballType.POKEBALL], true))
   ],
   [Species.WHISMUR]: [
     new SpeciesEvolution(Species.LOUDRED, 20, null, null)
@@ -439,7 +461,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.SNORUNT]: [
     new SpeciesEvolution(Species.GLALIE, 42, null, null),
-    new SpeciesEvolution(Species.FROSLASS, 1, "Dawn Stone", new SpeciesEvolutionCondition((p: Pokemon) => !p.gender, true), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.FROSLASS, 1, EvolutionItem.DAWN_STONE, new SpeciesEvolutionCondition((p: Pokemon) => !p.gender, true), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.SPHEAL]: [
     new SpeciesEvolution(Species.SEALEO, 32, null, null)
@@ -503,9 +525,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.BURMY]: [
     new SpeciesEvolution(Species.MOTHIM, 20, null, new SpeciesEvolutionCondition((p: Pokemon) => p.gender, true)),
-    new SpeciesEvolution(Species.WORMADAM, 20, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.gender/* && grass*/, true)),
-    new SpeciesEvolution(Species.WORMADAM, 20, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.gender/* && cave*/, true)),
-    new SpeciesEvolution(Species.WORMADAM, 20, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.gender/* && building*/, true))
+    new SpeciesEvolution(Species.WORMADAM, 20, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.gender && p.scene.arena.biomeType === Biome.FOREST, true)),
+    new SpeciesEvolution(Species.WORMADAM, 20, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.gender && p.scene.arena.biomeType === Biome.CAVE, true)),
+    new SpeciesEvolution(Species.WORMADAM, 20, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.gender && p.scene.arena.biomeType === Biome.CITY, true))
   ],
   [Species.COMBEE]: [
     new SpeciesEvolution(Species.VESPIQUEN, 21, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.gender, true))
@@ -730,199 +752,203 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.VOLCARONA, 59, null, null)
   ],
   [Species.PIKACHU]: [
-    new SpeciesEvolution(Species.RAICHU, 1, "Thunder Stone", null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.RAICHU, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.NIDORINA]: [
-    new SpeciesEvolution(Species.NIDOQUEEN, 1, "Moon Stone", null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.NIDOQUEEN, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.NIDORINO]: [
-    new SpeciesEvolution(Species.NIDOKING, 1, "Moon Stone", null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.NIDOKING, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.CLEFAIRY]: [
-    new SpeciesEvolution(Species.CLEFABLE, 1, "Moon Stone", null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.CLEFABLE, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.VULPIX]: [
-    new SpeciesEvolution(Species.NINETALES, 1, "Fire Stone", null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.NINETALES, 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.JIGGLYPUFF]: [
-    new SpeciesEvolution(Species.WIGGLYTUFF, 1, "Moon Stone", null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.WIGGLYTUFF, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.GLOOM]: [
-    new SpeciesEvolution(Species.VILEPLUME, 1, "Leaf Stone", null, SpeciesWildEvolutionDelay.LONG),
-    new SpeciesEvolution(Species.BELLOSSOM, 1, "Sun Stone", null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.VILEPLUME, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(Species.BELLOSSOM, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.GROWLITHE]: [
-    new SpeciesEvolution(Species.ARCANINE, 1, "Fire Stone", null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.ARCANINE, 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.POLIWHIRL]: [
-    new SpeciesEvolution(Species.POLIWRATH, 1, "Water Stone", null, SpeciesWildEvolutionDelay.LONG),
-    new SpeciesEvolution(Species.POLITOED, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* King's rock*/), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.POLIWRATH, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(Species.POLITOED, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* King's rock*/), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.WEEPINBELL]: [
-    new SpeciesEvolution(Species.VICTREEBEL, 1, "Leaf Stone", null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.VICTREEBEL, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.MAGNETON]: [
-    new SpeciesEvolution(Species.MAGNEZONE, 1, "Thunder Stone", null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.MAGNEZONE, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.SHELLDER]: [
-    new SpeciesEvolution(Species.CLOYSTER, 1, "Water Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.CLOYSTER, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.EXEGGCUTE]: [
-    new SpeciesEvolution(Species.EXEGGUTOR, 1, "Leaf Stone", null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.EXEGGUTOR, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.TANGELA]: [
-    new SpeciesEvolution(Species.TANGROWTH, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Ancient power learned*/), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.TANGROWTH, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.ANCIENT_POWER).length), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.LICKITUNG]: [
-    new SpeciesEvolution(Species.LICKILICKY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Rollout learned*/), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.LICKILICKY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.ROLLOUT).length), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.STARYU]: [
-    new SpeciesEvolution(Species.STARMIE, 1, "Water Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.STARMIE, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.EEVEE]: [
-    new SpeciesEvolution(Species.ESPEON, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 /* daytime */), SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.UMBREON, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 /* nighttime */), SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.VAPOREON, 1, "Water Stone", null, SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.JOLTEON, 1, "Thunder Stone", null, SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.FLAREON, 1, "Fire Stone", null, SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.LEAFEON, 1, "Leaf Stone", null, SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.GLACEON, 1, "Ice Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.ESPEON, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 && p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(Species.UMBREON, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 && !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(Species.VAPOREON, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(Species.JOLTEON, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(Species.FLAREON, 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(Species.LEAFEON, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(Species.GLACEON, 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.TOGETIC]: [
-    new SpeciesEvolution(Species.TOGEKISS, 1, "Shiny Stone", null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.TOGEKISS, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.AIPOM]: [
-    new SpeciesEvolution(Species.AMBIPOM, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Double hit learned*/), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.AMBIPOM, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.DOUBLE_HIT).length), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.SUNKERN]: [
-    new SpeciesEvolution(Species.SUNFLORA, 1, "Sun Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.SUNFLORA, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.YANMA]: [
-    new SpeciesEvolution(Species.YANMEGA, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Rollout learned*/), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.YANMEGA, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.ROLLOUT).length), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.MURKROW]: [
-    new SpeciesEvolution(Species.HONCHKROW, 1, "Dusk Stone", null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.HONCHKROW, 1, EvolutionItem.DUSK_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MISDREAVUS]: [
-    new SpeciesEvolution(Species.MISMAGIUS, 1, "Dusk Stone", null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.MISMAGIUS, 1, EvolutionItem.DUSK_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.GLIGAR]: [
-    new SpeciesEvolution(Species.GLISCOR, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Razor fang at night*/), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.GLISCOR, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.scene.arena.isDaytime() /* Razor fang at night*/), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.SNEASEL]: [
-    new SpeciesEvolution(Species.WEAVILE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Razor claw at night*/), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.WEAVILE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.scene.arena.isDaytime() /* Razor claw at night*/), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.PILOSWINE]: [
-    new SpeciesEvolution(Species.MAMOSWINE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Ancient power learned*/), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.MAMOSWINE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.ANCIENT_POWER).length), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.LOMBRE]: [
-    new SpeciesEvolution(Species.LUDICOLO, 1, "Water Stone", null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.LUDICOLO, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.NUZLEAF]: [
-    new SpeciesEvolution(Species.SHIFTRY, 1, "Leaf Stone", null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.SHIFTRY, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.NOSEPASS]: [
-    new SpeciesEvolution(Species.PROBOPASS, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Magnetic field??*/), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.PROBOPASS, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.SKITTY]: [
-    new SpeciesEvolution(Species.DELCATTY, 1, "Moon Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.DELCATTY, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.ROSELIA]: [
-    new SpeciesEvolution(Species.ROSERADE, 1, "Shiny Stone", null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.ROSERADE, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.BONSLY]: [
-    new SpeciesEvolution(Species.SUDOWOODO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Mimic learned */), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.SUDOWOODO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.MIMIC).length), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.MIME_JR]: [
-    new SpeciesEvolution(Species.MR_MIME, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Mimic learned */), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.MR_MIME, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.MIMIC).length), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.MANTYKE]: [
-    new SpeciesEvolution(Species.MANTINE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => true /* Remoraid in party */), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.MANTINE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.getParty().find(p => p.species.speciesId === Species.REMORAID)), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.PANSAGE]: [
-    new SpeciesEvolution(Species.SIMISAGE, 1, "Leaf Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.SIMISAGE, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.PANSEAR]: [
-    new SpeciesEvolution(Species.SIMISEAR, 1, "Fire Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.SIMISEAR, 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.PANPOUR]: [
-    new SpeciesEvolution(Species.SIMIPOUR, 1, "Water Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.SIMIPOUR, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.MUNNA]: [
-    new SpeciesEvolution(Species.MUSHARNA, 1, "Moon Stone", null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.MUSHARNA, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.COTTONEE]: [
-    new SpeciesEvolution(Species.WHIMSICOTT, 1, "Sun Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.WHIMSICOTT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.PETILIL]: [
-    new SpeciesEvolution(Species.LILLIGANT, 1, "Sun Stone", null, SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.LILLIGANT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.MINCCINO]: [
-    new SpeciesEvolution(Species.CINCCINO, 1, "Shiny Stone", null, SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(Species.CINCCINO, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.SHORT)
   ],
   [Species.EELEKTRIK]: [
-    new SpeciesEvolution(Species.EELEKTROSS, 1, "Thunder Stone", null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.EELEKTROSS, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.LAMPENT]: [
-    new SpeciesEvolution(Species.CHANDELURE, 1, "Dusk Stone", null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.CHANDELURE, 1, EvolutionItem.DUSK_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.KADABRA]: [
-    new SpeciesEvolution(Species.ALAKAZAM, 1, "Link Cable", null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.ALAKAZAM, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MACHOKE]: [
-    new SpeciesEvolution(Species.MACHAMP, 1, "Link Cable", null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.MACHAMP, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.GRAVELER]: [
-    new SpeciesEvolution(Species.GOLEM, 1, "Link Cable", null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.GOLEM, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.HAUNTER]: [
-    new SpeciesEvolution(Species.GENGAR, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.GENGAR, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.ONIX]: [
-    new SpeciesEvolution(Species.STEELIX, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* Metal coat*/ ), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.STEELIX, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(
+        (p: Pokemon) => p.scene.findModifier(m => m instanceof AttackTypeBoosterModifier && (m.type as AttackTypeBoosterModifierType).moveType === Type.STEEL)),
+        SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.RHYDON]: [
-    new SpeciesEvolution(Species.RHYPERIOR, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* Protector */), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.RHYPERIOR, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* Protector */), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.SEADRA]: [
-    new SpeciesEvolution(Species.KINGDRA, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* Dragon scale*/), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.KINGDRA, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* Dragon scale*/), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.SCYTHER]: [
-    new SpeciesEvolution(Species.SCIZOR, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* Metal coat*/), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.SCIZOR, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(
+      (p: Pokemon) => p.scene.findModifier(m => m instanceof AttackTypeBoosterModifier && (m.type as AttackTypeBoosterModifierType).moveType === Type.STEEL) ),
+      SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.ELECTABUZZ]: [
-    new SpeciesEvolution(Species.ELECTIVIRE, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* Electirizer*/), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.ELECTIVIRE, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* Electirizer*/), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MAGMAR]: [
-    new SpeciesEvolution(Species.MAGMORTAR, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* Magmarizer*/), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.MAGMORTAR, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* Magmarizer*/), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.PORYGON]: [
-    new SpeciesEvolution(Species.PORYGON2, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /*Upgrade*/), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.PORYGON2, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /*Upgrade*/), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.PORYGON2]: [
-    new SpeciesEvolution(Species.PORYGON_Z, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* Dubious disc*/), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.PORYGON_Z, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* Dubious disc*/), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.FEEBAS]: [
-    new SpeciesEvolution(Species.MILOTIC, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* Prism scale*/), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.MILOTIC, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* Prism scale*/), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.DUSCLOPS]: [
-    new SpeciesEvolution(Species.DUSKNOIR, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* Reaper cloth*/), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.DUSKNOIR, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* Reaper cloth*/), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.CLAMPERL]: [
-    new SpeciesEvolution(Species.HUNTAIL, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* Deep sea tooth*/), SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.GOREBYSS, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* Deep sea scale*/), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.HUNTAIL, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* Deep sea tooth*/), SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(Species.GOREBYSS, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* Deep sea scale*/), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.BOLDORE]: [
-    new SpeciesEvolution(Species.GIGALITH, 1, "Link Cable", null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.GIGALITH, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.GURDURR]: [
-    new SpeciesEvolution(Species.CONKELDURR, 1, "Link Cable", null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.CONKELDURR, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.KARRABLAST]: [
-    new SpeciesEvolution(Species.ESCAVALIER, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* Trade with shelmet??*/), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.ESCAVALIER, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.getParty().find(p => p.species.speciesId === Species.SHELMET)), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.SHELMET]: [
-    new SpeciesEvolution(Species.ACCELGOR, 1, "Link Cable", new SpeciesEvolutionCondition((p: Pokemon) => true /* Trade with karrablast??*/), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.ACCELGOR, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.getParty().find(p => p.species.speciesId === Species.KARRABLAST)), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.PICHU]: [
     new SpeciesEvolution(Species.PIKACHU, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.SHORT)
@@ -949,16 +975,16 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.MARILL, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.SHORT)
   ],
   [Species.BUDEW]: [
-    new SpeciesEvolution(Species.ROSELIA, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount > 10 /* daytime */), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(Species.ROSELIA, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount > 10 && p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.SHORT)
   ],
   [Species.CHINGLING]: [
-    new SpeciesEvolution(Species.CHIMECHO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 /* nighttime */), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.CHIMECHO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 && !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.BUNEARY]: [
     new SpeciesEvolution(Species.LOPUNNY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.RIOLU]: [
-    new SpeciesEvolution(Species.LUCARIO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 /* daytime */), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.LUCARIO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 && p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.WOOBAT]: [
     new SpeciesEvolution(Species.SWOOBAT, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.MEDIUM)

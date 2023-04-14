@@ -8,7 +8,7 @@ import * as Utils from './utils';
 import { Type, getTypeDamageMultiplier } from './type';
 import { getLevelTotalExp } from './exp';
 import { Stat } from './pokemon-stat';
-import { PokemonBaseStatModifier as PokemonBaseStatBoosterModifier, ShinyRateBoosterModifier } from './modifier';
+import { AttackTypeBoosterModifier, PokemonBaseStatModifier as PokemonBaseStatBoosterModifier, ShinyRateBoosterModifier } from './modifier';
 import { PokeballType } from './pokeball';
 import { Gender } from './gender';
 import { initMoveAnim, loadMoveAnimAssets } from './battle-anims';
@@ -18,6 +18,7 @@ import { pokemonEvolutions, SpeciesEvolution, SpeciesEvolutionCondition } from '
 import { MessagePhase } from './battle-phases';
 import { BattleStat } from './battle-stat';
 import { BattleTag, BattleTagLapseType, BattleTagType } from './battle-tag';
+import { Species } from './species';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -95,11 +96,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const rand1 = Utils.binToDec(Utils.decToBin(this.id).substring(0, 16));
       const rand2 = Utils.binToDec(Utils.decToBin(this.id).substring(16, 32));
 
-      const E = (this.scene as BattleScene).trainerId ^ (this.scene as BattleScene).secretId;
+      const E = this.scene.trainerId ^ this.scene.secretId;
       const F = rand1 ^ rand2;
 
       let shinyThreshold = new Utils.IntegerHolder(32);
-      (this.scene as BattleScene).applyModifiers(ShinyRateBoosterModifier, shinyThreshold);
+      this.scene.applyModifiers(ShinyRateBoosterModifier, shinyThreshold);
       console.log(shinyThreshold.value);
 
       this.shiny = (E ^ F) < shinyThreshold.value;
@@ -113,11 +114,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.winCount = 0;
     }
 
-    //this.setPipeline((this.scene as BattleScene).spritePipeline);
+    //this.setPipeline(this.scene).spritePipeline);
 
     this.calculateStats();
 
-    (scene as BattleScene).fieldUI.addAt(this.battleInfo, 0);
+    scene.fieldUI.addAt(this.battleInfo, 0);
     
     this.battleInfo.initInfo(this);
 
@@ -163,10 +164,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const moveIds = this.moveset.map(m => m.getMove().id);
       Promise.allSettled(moveIds.map(m => initMoveAnim(m)))
         .then(() => {
-          loadMoveAnimAssets(this.scene as BattleScene, moveIds);
-          this.species.loadAssets(this.scene as BattleScene, this.gender === Gender.FEMALE);
+          loadMoveAnimAssets(this.scene, moveIds);
+          this.species.loadAssets(this.scene, this.gender === Gender.FEMALE);
           if (this.isPlayer())
-            (this.scene as BattleScene).loadAtlas(this.getBattleSpriteKey(), 'pokemon', this.getBattleSpriteAtlasPath());
+            this.scene.loadAtlas(this.getBattleSpriteKey(), 'pokemon', this.getBattleSpriteAtlasPath());
           this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             if (this.isPlayer()) {
               const originalWarn = console.warn;
@@ -260,7 +261,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.stats = [ 0, 0, 0, 0, 0, 0 ];
     const baseStats = this.species.baseStats.slice(0);
     console.log(this.id);
-    (this.scene as BattleScene).applyModifiers(PokemonBaseStatBoosterModifier, this, baseStats);
+    this.scene.applyModifiers(PokemonBaseStatBoosterModifier, this, baseStats);
     const stats = Utils.getEnumValues(Stat);
     for (let s of stats) {
       const isHp = s === Stat.HP;
@@ -412,7 +413,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   apply(source: Pokemon, battlerMove: PokemonMove): Promise<MoveResult> {
     return new Promise(resolve => {
-      const battleScene = this.scene as BattleScene;
       let result: MoveResult = MoveResult.STATUS;
       let success = false;
       const move = battlerMove.getMove();
@@ -422,15 +422,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         case MoveCategory.PHYSICAL:
         case MoveCategory.SPECIAL:
           const isPhysical = moveCategory === MoveCategory.PHYSICAL;
+          const power = new Utils.NumberHolder(move.power);
+          this.scene.applyModifiers(AttackTypeBoosterModifier, source, power);
           const critChance = new Utils.IntegerHolder(16);
-          applyMoveAttrs(HighCritAttr, this.scene as BattleScene, source, this, move, critChance);
+          applyMoveAttrs(HighCritAttr, this.scene, source, this, move, critChance);
           const isCritical = Utils.randInt(critChance.value) === 0;
           const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
           const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
           const stabMultiplier = source.species.type1 === move.type || (source.species.type2 > -1 && source.species.type2 === move.type) ? 1.5 : 1;
           const typeMultiplier = getTypeDamageMultiplier(move.type, this.species.type1) * (this.species.type2 > -1 ? getTypeDamageMultiplier(move.type, this.species.type2) : 1);
           const criticalMultiplier = isCritical ? 2 : 1;
-          damage = Math.ceil(((((2 * source.level / 5 + 2) * move.power * sourceAtk / targetDef) / 50) + 2) * stabMultiplier * typeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
+          damage = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier * typeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
           if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
             damage = Math.floor(damage / 2);
           move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
@@ -444,7 +446,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.hp = Math.max(this.hp - damage, 0);
             source.turnData.damageDealt += damage;
             if (isCritical)
-              battleScene.unshiftPhase(new MessagePhase(battleScene, 'A critical hit!'));
+              this.scene.unshiftPhase(new MessagePhase(this.scene, 'A critical hit!'));
           }
           if (typeMultiplier >= 2)
             result = MoveResult.SUPER_EFFECTIVE;
@@ -462,16 +464,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               break;
             case MoveResult.SUPER_EFFECTIVE:
               this.scene.sound.play('hit_strong');
-              battleScene.unshiftPhase(new MessagePhase(battleScene, 'It\'s super effective!'));
+              this.scene.unshiftPhase(new MessagePhase(this.scene, 'It\'s super effective!'));
               success = true;
               break;
             case MoveResult.NOT_VERY_EFFECTIVE:
               this.scene.sound.play('hit_weak');
-              battleScene.unshiftPhase(new MessagePhase(battleScene, 'It\'s not very effective!'))
+              this.scene.unshiftPhase(new MessagePhase(this.scene, 'It\'s not very effective!'))
               success = true;
               break;
             case MoveResult.NO_EFFECT:
-              battleScene.unshiftPhase(new MessagePhase(battleScene, `It doesn\'t affect ${this.name}!`))
+              this.scene.unshiftPhase(new MessagePhase(this.scene, `It doesn\'t affect ${this.name}!`))
               success = true;
               break;
           }
@@ -546,7 +548,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   cry(soundConfig?: Phaser.Types.Sound.SoundConfig): integer {
-    return this.species.cry(this.scene as BattleScene, soundConfig);
+    return this.species.cry(this.scene, soundConfig);
   }
 
   faintCry(callback: Function) {
@@ -724,6 +726,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 }
 
+export default interface Pokemon {
+  scene: BattleScene
+}
+
 export class PlayerPokemon extends Pokemon {
   public compatibleTms: Moves[];
 
@@ -760,9 +766,10 @@ export class PlayerPokemon extends Pokemon {
 
   evolve(evolution: SpeciesEvolution): Promise<void> {
     return new Promise(resolve => {
+      this.handleSpecialEvolutions(evolution);
       this.species = getPokemonSpecies(evolution.speciesId);
       this.name = this.species.name.toUpperCase();
-      this.species.generateIconAnim(this.scene as BattleScene);
+      this.species.generateIconAnim(this.scene);
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
       this.loadAssets().then(() => {
@@ -770,6 +777,17 @@ export class PlayerPokemon extends Pokemon {
         this.updateInfo().then(() => resolve());
       });
     });
+  }
+
+  private handleSpecialEvolutions(evolution: SpeciesEvolution) {
+    if (this.species.speciesId === Species.NINCADA && evolution.speciesId === Species.NINJASK) {
+      const newEvolution = pokemonEvolutions[this.species.speciesId][1];
+      if (newEvolution.condition.predicate(this)) {
+        const newPokemon = new PlayerPokemon(this.scene, this.species, this.level);
+        this.scene.getParty().push(newPokemon);
+        newPokemon.evolve(newEvolution);
+      }
+    }
   }
 }
 
@@ -798,7 +816,7 @@ export class EnemyPokemon extends Pokemon {
           return movePool[Utils.randInt(movePool.length)];
         case AiType.SMART_RANDOM:
         case AiType.SMART:
-          const target = (this.scene as BattleScene).getPlayerPokemon();
+          const target = this.scene.getPlayerPokemon();
           const moveScores = movePool.map(() => 0);
           for (let m in movePool) {
             const pokemonMove = movePool[m];
@@ -868,11 +886,11 @@ export class EnemyPokemon extends Pokemon {
   }
 
   addToParty() {
-    const party = (this.scene as BattleScene).getParty();
+    const party = this.scene.getParty();
     let ret: PlayerPokemon = null;
 
     if (party.length < 6) {
-      const newPokemon = new PlayerPokemon(this.scene as BattleScene, this.species, this.level, this);
+      const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this);
       party.push(newPokemon);
       ret = newPokemon;
     }

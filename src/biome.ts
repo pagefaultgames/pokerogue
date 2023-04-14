@@ -187,6 +187,22 @@ export class BiomeArena {
     return Biome[this.biomeType].toLowerCase();
   }
 
+  isDaytime() {
+    switch (this.biomeType) {
+      case Biome.PLAINS:
+      case Biome.GRASS:
+      case Biome.SEA:
+      case Biome.BEACH:
+      case Biome.LAKE:
+      case Biome.MOUNTAIN:
+      case Biome.LAND:
+      case Biome.DESERT:
+      case Biome.MEADOW:
+      case Biome.DOJO:
+        return true;
+    }
+  }
+
   preloadBgm(): void {
     this.scene.loadBgm(this.bgm);
   }

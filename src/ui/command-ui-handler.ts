@@ -43,7 +43,7 @@ export default class CommandUiHandler extends UiHandler {
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.bg.setTexture('bg_command');
     messageHandler.message.setWordWrapWidth(1110);
-    messageHandler.showText(`What will\n${(this.scene as BattleScene).getPlayerPokemon().name} do?`, 0);
+    messageHandler.showText(`What will\n${this.scene.getPlayerPokemon().name} do?`, 0);
     this.setCursor(this.cursor);
   }
 

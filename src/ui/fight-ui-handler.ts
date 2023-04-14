@@ -49,7 +49,7 @@ export default class FightUiHandler extends UiHandler {
 
     if (button === Button.CANCEL || button === Button.ACTION) {
       if (button === Button.ACTION) {
-        if (((this.scene as BattleScene).getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, this.cursor))
+        if ((this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, this.cursor))
           success = true;
         else
           ui.playError();
@@ -91,7 +91,7 @@ export default class FightUiHandler extends UiHandler {
       ui.add(this.cursorObj);
     }
 
-    const moveset = (this.scene as BattleScene).getPlayerPokemon().moveset;
+    const moveset = this.scene.getPlayerPokemon().moveset;
 
     const hasMove = cursor < moveset.length;
 
@@ -114,7 +114,7 @@ export default class FightUiHandler extends UiHandler {
   }
 
   displayMoves() {
-    const moveset = (this.scene as BattleScene).getPlayerPokemon().moveset;
+    const moveset = this.scene.getPlayerPokemon().moveset;
     for (let m = 0; m < 4; m++) {
       const moveText = addTextObject(this.scene, m % 2 === 0 ? 0 : 100, m < 2 ? 0 : 16, '-', TextStyle.WINDOW);
       if (m < moveset.length)

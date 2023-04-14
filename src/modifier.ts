@@ -1,5 +1,5 @@
 import * as ModifierTypes from './modifier-type';
-import { CommonAnimPhase, LearnMovePhase, LevelUpPhase, MessagePhase, PokemonHealPhase } from "./battle-phases";
+import { LearnMovePhase, LevelUpPhase, MessagePhase, PokemonHealPhase } from "./battle-phases";
 import BattleScene from "./battle-scene";
 import { getLevelTotalExp } from "./exp";
 import { PokeballType } from "./pokeball";
@@ -7,9 +7,12 @@ import Pokemon, { PlayerPokemon } from "./pokemon";
 import { Stat } from "./pokemon-stat";
 import { addTextObject, TextStyle } from "./text";
 import * as Utils from "./utils";
-import { CommonAnim } from './battle-anims';
+import { Type } from './type';
+import { EvolutionPhase } from './evolution-phase';
+import { pokemonEvolutions } from './pokemon-evolutions';
 
 type ModifierType = ModifierTypes.ModifierType;
+export type ModifierPredicate = (modifier: Modifier) => boolean;
 
 export class ModifierBar extends Phaser.GameObjects.Container {
   constructor(scene: BattleScene) {
@@ -253,6 +256,36 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
+  private moveType: Type;
+  private boostMultiplier: number;
+
+  constructor(type: ModifierType, pokemonId: integer, moveType: Type, boostPercent: integer) {
+    super(type, pokemonId);
+
+    this.moveType = moveType;
+    this.boostMultiplier = boostPercent * 0.01;
+  }
+
+  match(modifier: Modifier) {
+    return modifier instanceof AttackTypeBoosterModifier;
+  }
+
+  clone() {
+    return new AttackTypeBoosterModifier(this.type, this.pokemonId, this.moveType, this.boostMultiplier * 100);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.NumberHolder;
+  }
+
+  apply(args: any[]): boolean {
+    (args[1] as Utils.NumberHolder).value = Math.floor((args[1] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
+
+    return true;
+  }
+}
+
 export class HitHealModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer) {
     super(type, pokemonId);
@@ -270,7 +303,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
     const pokemon = args[0] as PlayerPokemon;
 
     if (pokemon.turnData.damageDealt && pokemon.getHpRatio() < 1) {
-      const scene = pokemon.scene as BattleScene;
+      const scene = pokemon.scene;
 
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       scene.applyModifiers(HealingBoosterModifier, hpRestoreMultiplier);
@@ -388,8 +421,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
     pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
     pokemon.levelExp = 0;
 
-    const scene = pokemon.scene as BattleScene;
-    scene.unshiftPhase(new LevelUpPhase(scene, scene.getParty().indexOf(pokemon), pokemon.level - 1, pokemon.level));
+    pokemon.scene.unshiftPhase(new LevelUpPhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), pokemon.level - 1, pokemon.level));
 
     return true;
   }
@@ -403,10 +435,29 @@ export class TmModifier extends ConsumablePokemonModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as PlayerPokemon;
 
-    const scene = pokemon.scene as BattleScene;
-    scene.unshiftPhase(new LearnMovePhase(scene, scene.getParty().indexOf(pokemon), (this.type as ModifierTypes.TmModifierType).moveId));
+    pokemon.scene.unshiftPhase(new LearnMovePhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), (this.type as ModifierTypes.TmModifierType).moveId));
 
     return true;
+  }
+}
+
+export class EvolutionItemModifier extends ConsumablePokemonModifier {
+  constructor(type: ModifierTypes.EvolutionItemModifierType, pokemonId: integer) {
+    super(type, pokemonId);
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as PlayerPokemon;
+
+    const matchingEvolution = pokemonEvolutions[pokemon.species.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
+      && (!e.condition || e.condition.predicate(pokemon)));
+
+    if (matchingEvolution) {
+      pokemon.scene.unshiftPhase(new EvolutionPhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), matchingEvolution, pokemon.level - 1));
+      return true;
+    }
+
+    return false;
   }
 }
 
