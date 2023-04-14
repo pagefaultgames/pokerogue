@@ -437,6 +437,10 @@ export class CommandPhase extends BattlePhase {
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, cursor, true));
         success = true;
         break;
+      case Command.RUN:
+        //this.scene.unshiftPhase(new MoveAnimTestPhase(this.scene, [ Moves.SING, Moves.FISSURE, Moves.GROWL, Moves.AROMATHERAPY, Moves.PERISH_SONG ]));
+        //success = true;
+        break;
     }
 
     if (success) {
@@ -545,7 +549,7 @@ abstract class MovePhase extends BattlePhase {
         console.log(this.pokemon.moveset);
       if (this.pokemon.summonData.moveQueue.length && !this.pokemon.summonData.moveQueue.shift().ignorePP)
         this.move.ppUsed++;
-      this.scene.unshiftPhase(new MessagePhase(this.scene, `${this.pokemon.name} used\n${this.move.getName()}!`, 500));
+      this.scene.unshiftPhase(new MessagePhase(this.scene, `${this.pokemon instanceof EnemyPokemon ? 'Foe ' : ''}${this.pokemon.name} used\n${this.move.getName()}!`, 500));
       this.scene.unshiftPhase(this.getEffectPhase());
       this.end();
     };
@@ -632,6 +636,8 @@ abstract class MoveEffectPhase extends PokemonPhase {
 
     const overridden = new Utils.BooleanHolder(false);
 
+    console.log(this.move.getName());
+
     applyMoveAttrs(OverrideMoveEffectAttr, this.scene, user, target, this.move.getMove(), overridden).then(() => {
 
       if (overridden.value) {
@@ -682,7 +688,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
 
   end() {
     const user = this.getUserPokemon();
-    if (--user.turnData.hitsLeft && this.getTargetPokemon().hp)
+    if (--user.turnData.hitsLeft >= 1 && this.getTargetPokemon().hp)
       this.scene.unshiftPhase(this.getNewHitPhase());
     else {
       if (user.turnData.hitsTotal > 1)
@@ -760,6 +766,42 @@ export class EnemyMoveEffectPhase extends MoveEffectPhase {
 
   getNewHitPhase() {
     return new EnemyMoveEffectPhase(this.scene, this.move);
+  }
+}
+
+export class MoveAnimTestPhase extends BattlePhase {
+  private moveQueue: Moves[];
+
+  constructor(scene: BattleScene, moveQueue?: Moves[]) {
+    super(scene);
+
+    this.moveQueue = moveQueue || Utils.getEnumValues(Moves);
+  }
+
+  start() {
+    const moveQueue = this.moveQueue.slice(0);
+    this.playMoveAnim(moveQueue, true);
+  }
+
+  playMoveAnim(moveQueue: Moves[], player: boolean) {
+    const moveId = player ? moveQueue[0] : moveQueue.shift();
+    if (moveId === undefined) {
+      this.playMoveAnim(this.moveQueue.slice(0), true);
+      return;
+    }
+
+    initMoveAnim(moveId).then(() => {
+      loadMoveAnimAssets(this.scene, [ moveId ], true)
+        .then(() => {
+          new MoveAnim(moveId, player ? this.scene.getPlayerPokemon() : this.scene.getEnemyPokemon(),
+            player ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon()).play(this.scene, () => {
+            if (player)
+              this.playMoveAnim(moveQueue, false);
+            else
+              this.playMoveAnim(moveQueue, true);
+          });
+      });
+    });
   }
 }
 
@@ -940,7 +982,7 @@ export class FaintPhase extends PokemonPhase {
     }
       
     const pokemon = this.getPokemon();
-    
+
     pokemon.lapseTags(BattleTagLapseType.FAINT);
 
     pokemon.faintCry(() => {

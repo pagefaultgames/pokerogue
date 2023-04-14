@@ -1057,7 +1057,7 @@
     "2": [
       {
         "frameIndex": 2,
-        "resourceName": "PRSFX- Doom Desire1",
+        "resourceName": "PRSFX- Doom Desire1.wav",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

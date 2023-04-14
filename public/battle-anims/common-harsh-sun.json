@@ -2382,7 +2382,7 @@
       },
       {
         "frameIndex": 15,
-        "resourceName": "PRSFX- Sunny",
+        "resourceName": "PRSFX- Sunny.wav",
         "volume": 100,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

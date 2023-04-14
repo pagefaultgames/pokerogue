@@ -3397,7 +3397,7 @@
     "4": [
       {
         "frameIndex": 4,
-        "resourceName": "PRSFX- Freeze Shock1",
+        "resourceName": "PRSFX- Freeze Shock1.wav",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

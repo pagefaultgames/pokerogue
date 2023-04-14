@@ -18,6 +18,12 @@ enum AnimFocus {
     SCREEN
 }
 
+enum AnimBlendType {
+    NORMAL,
+    ADD,
+    SUBTRACT
+}
+
 export enum ChargeAnim {
     FLY_CHARGING = 1000,
     BOUNCE_CHARGING,
@@ -151,7 +157,7 @@ class AnimFrame {
     public angle: number;
     public mirror: boolean;
     public visible: boolean;
-    public blendType: integer;
+    public blendType: AnimBlendType;
     public target: AnimFrameTarget;
     public graphicFrame: integer;
     public opacity: integer;
@@ -162,7 +168,7 @@ class AnimFrame {
     public priority: integer;
     public focus: AnimFocus;
 
-    constructor(x: number, y: number, zoomX: number, zoomY: number, angle: number, mirror: boolean, visible: boolean, blendType: integer, pattern: integer,
+    constructor(x: number, y: number, zoomX: number, zoomY: number, angle: number, mirror: boolean, visible: boolean, blendType: AnimBlendType, pattern: integer,
         opacity: integer, colorR: integer, colorG: integer, colorB: integer, colorA: integer, toneR: integer, toneG: integer, toneB: integer, toneA: integer,
         flashR: integer, flashG: integer, flashB: integer, flashA: integer, locked: boolean, priority: integer, focus: AnimFocus) {
         this.x = x;
@@ -220,7 +226,7 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
     public pitch: number;
     
     constructor(frameIndex: integer, resourceName: string, source?: any) {
-        super(frameIndex, resourceName);
+        super(frameIndex, resourceName + (resourceName && resourceName.indexOf('.') === -1 ? '.ogg' : ''));
 
         if (source) {
             this.volume = source.volume;
@@ -232,7 +238,11 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
     execute(scene: BattleScene, battleAnim: BattleAnim): integer {
         const soundConfig = { rate: (this.pitch * 0.01), volume: (this.volume * 0.01) };
         if (this.resourceName) {
-            scene.sound.play(this.resourceName, soundConfig);
+            try {
+                scene.sound.play(this.resourceName, soundConfig);
+            } catch (err) {
+                console.error(err);
+            }
             return Math.ceil((scene.sound.get(this.resourceName).totalDuration * 1000) / 33.33);
         } else
             return Math.ceil(battleAnim.user.cry(soundConfig) / 33.33);
@@ -289,7 +299,7 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
     execute(scene: BattleScene, moveAnim: MoveAnim): integer {
         const tweenProps = {};
         if (this.bgX !== undefined)
-            tweenProps['x'] = (this.bgX * 0.5) - 256;
+            tweenProps['x'] = (this.bgX * 0.5);
         if (this.bgY !== undefined)
             tweenProps['y'] = (this.bgY * 0.5) - 284;
         if (this.opacity !== undefined)
@@ -297,7 +307,7 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
         if (Object.keys(tweenProps).length) {
             scene.tweens.add(Object.assign({
                 targets: moveAnim.bgSprite,
-                duration: this.duration * 2,
+                duration: this.duration * 3,
                 useFrames: true
             }, tweenProps))
         }
@@ -315,17 +325,19 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     }
 
     execute(scene: BattleScene, moveAnim: MoveAnim): integer {
-        moveAnim.bgSprite = scene.add.tileSprite(this.bgX - 256, this.bgY - 284, 768, 576, this.resourceName);
+        if (moveAnim.bgSprite)
+            moveAnim.bgSprite.destroy();
+        moveAnim.bgSprite = scene.add.tileSprite(this.bgX, this.bgY - 284, 768, 576, this.resourceName);
         moveAnim.bgSprite.setOrigin(0, 0);
         moveAnim.bgSprite.setScale(1.25);
         moveAnim.bgSprite.setAlpha(0);
         scene.field.add(moveAnim.bgSprite);
-        scene.field.moveBelow(moveAnim.bgSprite, scene.getEnemyPokemon());
+        scene.field.moveAbove(moveAnim.bgSprite, scene.arenaEnemy);
 
         scene.tweens.add({
             targets: moveAnim.bgSprite,
             alpha: 1,
-            duration: this.duration * 2,
+            duration: this.duration * 3,
             useFrames: true
         });
 
@@ -444,17 +456,14 @@ export function loadCommonAnimAssets(scene: BattleScene, startLoad?: boolean): P
 
 export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
-        const moveAnimations = moveIds.map(m => {
-            const anims = moveAnims.get(m);
-            if (anims instanceof Anim)
-                return anims;
-            return anims[0];
-        });
+        const moveAnimations = moveIds.map(m => moveAnims.get(m)).flat();
         for (let moveId of moveIds) {
             const chargeAttr = allMoves[moveId - 1].getAttrs(ChargeAttr) as ChargeAttr[];
             if (chargeAttr.length) {
                 const moveChargeAnims = chargeAnims.get(chargeAttr[0].chargeAnim);
                 moveAnimations.push(moveChargeAnims instanceof Anim ? moveChargeAnims : moveChargeAnims[0]);
+                if (Array.isArray(moveChargeAnims))
+                    moveAnimations.push(moveChargeAnims[1]);
             }
         }
         loadAnimAssets(scene, moveAnimations, startLoad).then(() => resolve());
@@ -488,6 +497,12 @@ function loadAnimAssets(scene: BattleScene, anims: Anim[], startLoad?: boolean):
     });
 }
 
+interface GraphicFrameData {
+    x: number,
+    y: number,
+    angle: number
+}
+
 export abstract class BattleAnim {
     public user: Pokemon;
     public target: Pokemon;
@@ -506,6 +521,52 @@ export abstract class BattleAnim {
 
     abstract isReverseCoords(): boolean;
 
+    getGraphicScale(): number {
+        return 1;
+    }
+
+    private getGraphicFrameData(scene: BattleScene, frames: AnimFrame[]): Map<integer, GraphicFrameData> {
+        const ret = new Map<integer, GraphicFrameData>();
+
+        const isOppAnim = this.isOppAnim();
+        const user = !isOppAnim ? this.user : this.target;
+        const target = !isOppAnim ? this.target : this.user;
+        const isReverseCoords = this.isReverseCoords();
+        const graphicScale = this.getGraphicScale();
+
+        const userInitialX = user.x;
+        const userInitialY = user.y;
+        const userHalfHeight = user.getSprite().displayHeight / 2;
+        const targetInitialX = target.x;
+        const targetInitialY = target.y;
+        const targetHalfHeight = target.getSprite().displayHeight / 2;
+
+        let g = 0;
+
+        for (let frame of frames) {
+            if (frame.target !== AnimFrameTarget.GRAPHIC)
+                continue;
+
+            const xProgress = frame.focus !== AnimFocus.SCREEN ? Math.min(Math.max(frame.x, 0) / 128, 1) : 0;
+            const initialX = targetInitialX;
+            const initialY = targetInitialY;
+            let xOffset = (!isReverseCoords ? (userInitialX - targetInitialX) : (targetInitialX - userInitialX));
+            let yOffset = (!isReverseCoords ? (userInitialY - targetInitialY) : (targetInitialY - userInitialY));
+            const ySpriteOffset = ((userHalfHeight * (1 - xProgress)) + (targetHalfHeight * xProgress)) * -1;
+            if (graphicScale > 1) {
+                xOffset -= ((scene.game.canvas.width / 6) * (graphicScale - 1)) / 2;
+                yOffset -= ((scene.game.canvas.height / 6) * (graphicScale - 1)) / 2;
+            }
+            const x = initialX + xOffset * (!isReverseCoords ? 1 : -1) + (frame.x * graphicScale) * (!isReverseCoords ? 1 : -1);
+            const y = ((initialY + yOffset * (!isReverseCoords || frame.focus === AnimFocus.USER || frame.focus === AnimFocus.SCREEN ? 1 : -1)
+                + (frame.y * graphicScale) * (!isReverseCoords || (frame.focus !== AnimFocus.USER_TARGET) ? 1 : -1) + ySpriteOffset));
+            const angle = -frame.angle * (!isReverseCoords ? 1 : -1);
+            ret.set(g++, { x: x, y: y, angle: angle });
+        }
+
+        return ret;
+    }
+
     play(scene: BattleScene, callback?: Function) {
         const isOppAnim = this.isOppAnim();
         const user = !isOppAnim ? this.user : this.target;
@@ -515,52 +576,110 @@ export abstract class BattleAnim {
 
         const userInitialX = user.x;
         const userInitialY = user.y;
-        const userHalfHeight = user.getSprite().displayHeight / 2;
         const targetInitialX = target.x;
         const targetInitialY = target.y;
-        const targetHalfHeight = target.getSprite().displayHeight / 2;
 
-        const coordMultiplier = this.isReverseCoords() ? -1 : 1;
+        const isReverseCoords = this.isReverseCoords();
         
         let r = anim.frames.length;
         let f = 0;
 
         const sprites: Phaser.GameObjects.Sprite[] = [];
+        const spritePriorities: integer[] = [];
 
         scene.tweens.addCounter({
             useFrames: true,
-            duration: 2,
+            duration: 3,
             repeat: anim.frames.length,
             onRepeat: () => {
                 const spriteFrames = anim.frames[f];
+                const frameData = this.getGraphicFrameData(scene, anim.frames[f]);
                 let g = 0;
                 for (let frame of spriteFrames) {
                     switch (frame.target) {
                         case AnimFrameTarget.USER:
-                            user.setPosition(userInitialX + frame.x * coordMultiplier, userInitialY + frame.y * coordMultiplier);
+                            user.setPosition(userInitialX + frame.x / (!isReverseCoords ? 2 : -2), userInitialY + frame.y / (!isOppAnim ? 2 : -2));
                             break;
                         case AnimFrameTarget.TARGET:
-                            target.setPosition(targetInitialX + frame.x * coordMultiplier, targetInitialY + frame.y * coordMultiplier);
+                            target.setPosition(targetInitialX + frame.x / (!isReverseCoords ? 2 : -2), targetInitialY + frame.y / (!isOppAnim ? 2 : -2));
                             break;
                         case AnimFrameTarget.GRAPHIC:
+                            let isNewSprite = false;
+
                             if (g === sprites.length) {
                                 const newSprite = scene.add.sprite(0, 0, anim.graphic, 1);
-                                scene.field.add(newSprite);
                                 sprites.push(newSprite);
+                                scene.field.add(newSprite);
+                                spritePriorities.push(1);
+                                isNewSprite = true;
                             }
-                            const moveSprite = sprites[g++];
+                            
+                            const graphicIndex = g++;
+                            const moveSprite = sprites[graphicIndex];
+                            if (spritePriorities[graphicIndex] !== frame.priority) {
+                                spritePriorities[graphicIndex] = frame.priority;
+                                const setSpritePriority = (priority: integer) => {
+                                    switch (priority) {
+                                        case 0:
+                                            scene.field.moveBelow(moveSprite, scene.getEnemyPokemon());
+                                            break;
+                                        case 1:
+                                            scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
+                                            break;
+                                        case 2:
+                                            switch (frame.focus) {
+                                                case AnimFocus.USER:
+                                                    if (this.bgSprite)
+                                                        scene.field.moveAbove(moveSprite, this.bgSprite);
+                                                    else
+                                                        scene.field.moveBelow(moveSprite, this.user);
+                                                    break;
+                                                case AnimFocus.TARGET:
+                                                    scene.field.moveBelow(moveSprite, this.target);
+                                                    break;
+                                                default:
+                                                    setSpritePriority(1);
+                                                    break;
+                                            }
+                                            break;
+                                        case 3:
+                                            switch (frame.focus) {
+                                                case AnimFocus.USER:
+                                                    scene.field.moveAbove(moveSprite, this.user);
+                                                    break;
+                                                case AnimFocus.TARGET:
+                                                    scene.field.moveAbove(moveSprite, this.target);
+                                                    break;
+                                                default:
+                                                    setSpritePriority(1);
+                                                    break;
+                                            }
+                                            break;
+                                        default:
+                                            setSpritePriority(1);
+                                    }
+                                };
+                                setSpritePriority(frame.priority);
+                            }
                             moveSprite.setFrame(frame.graphicFrame);
-                            const xProgress = Math.min(Math.max(frame.x, 0) / 128, 1);
-                            const yOffset = ((userHalfHeight * (1 - xProgress)) + (targetHalfHeight * xProgress)) * -1;
-                            moveSprite.setPosition((!isOppAnim ? userInitialX : targetInitialX) + frame.x * coordMultiplier, (!isOppAnim ? userInitialY : targetInitialY) + yOffset + frame.y * coordMultiplier);
-                            moveSprite.setAlpha(frame.opacity);
-                            moveSprite.setAngle(-frame.angle * coordMultiplier);
+                            //console.log(AnimFocus[frame.focus]);
+                            const graphicScale = this.getGraphicScale();
+                            
+                            moveSprite.setPosition(frameData.get(graphicIndex).x, frameData.get(graphicIndex).y);
+                            moveSprite.setAngle(frameData.get(graphicIndex).angle);
+                            const scaleX = graphicScale * (isReverseCoords === frame.mirror ? 1 : -1);
+                            const scaleY = graphicScale;
+                            moveSprite.setScale(scaleX, scaleY);
+
+                            moveSprite.setAlpha(frame.opacity / 255);
+                            moveSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
                             break;
                     }
                     if (frame.target !== AnimFrameTarget.GRAPHIC) {
                         const pokemon = frame.target === AnimFrameTarget.USER ? user : target;
-                        pokemon.setAlpha(frame.opacity);
-                        pokemon.setAngle(-frame.angle * coordMultiplier);
+                        pokemon.setScale(!frame.mirror ? 1 : -1)
+                        pokemon.setAlpha(frame.opacity / 255);
+                        pokemon.setAngle(-frame.angle * (!isReverseCoords ? 1 : -1));
                         const zoomScaleX = frame.zoomX / 100;
                         const zoomScaleY = frame.zoomY / 100;
                         const zoomSprite = pokemon.getZoomSprite();
@@ -574,6 +693,7 @@ export abstract class BattleAnim {
                 }
                 if (g < sprites.length) {
                     const removedSprites = sprites.splice(g, sprites.length - g);
+                    spritePriorities.splice(g, sprites.length - g);
                     for (let rs of removedSprites)
                         rs.destroy();
                 }
@@ -583,16 +703,22 @@ export abstract class BattleAnim {
             onComplete: () => {
                 const cleanUpAndComplete = () => {
                     user.setPosition(userInitialX, userInitialY);
+                    user.setScale(1);
                     user.setAlpha(1);
                     user.setAngle(0);
                     target.setPosition(targetInitialX, targetInitialY);
+                    target.setScale(1);
                     target.setAlpha(1);
                     target.setAngle(0);
+                    if (this.bgSprite)
+                        this.bgSprite.destroy();
                     if (callback)
                         callback();
                 };
-                for (let ms of sprites)
-                    ms.destroy();
+                for (let ms of sprites) {
+                    if (ms)
+                        ms.destroy();
+                }
                 if (r) {
                     scene.tweens.addCounter({
                         duration: r,
@@ -649,6 +775,15 @@ export class MoveAnim extends BattleAnim {
 
     isReverseCoords(): boolean {
         return this.user instanceof EnemyPokemon && !this.isOppAnim();
+    }
+
+    getGraphicScale(): number {
+        switch (this.move) {
+            case Moves.FISSURE:
+                return 1.25;
+        }
+        
+        return 1;
     }
 }
 

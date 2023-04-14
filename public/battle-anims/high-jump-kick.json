@@ -1400,7 +1400,7 @@
       "0": [
         {
           "frameIndex": 0,
-          "resourceName": "throw",
+          "resourceName": "throw.ogg",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -1409,7 +1409,7 @@
       "9": [
         {
           "frameIndex": 9,
-          "resourceName": "Blow4",
+          "resourceName": "Blow4.ogg",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -2820,7 +2820,7 @@
       "0": [
         {
           "frameIndex": 0,
-          "resourceName": "throw",
+          "resourceName": "throw.ogg",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -2829,7 +2829,7 @@
       "9": [
         {
           "frameIndex": 9,
-          "resourceName": "Blow3",
+          "resourceName": "Blow3.ogg",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"

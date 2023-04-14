@@ -3005,7 +3005,7 @@
         },
         {
           "frameIndex": 0,
-          "resourceName": "PRSFX- Fusion Bolt1",
+          "resourceName": "PRSFX- Fusion Bolt1.wav",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -3014,7 +3014,7 @@
       "19": [
         {
           "frameIndex": 19,
-          "resourceName": "PRSFX- Fusion Bolt2",
+          "resourceName": "PRSFX- Fusion Bolt2.wav",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -6030,7 +6030,7 @@
         },
         {
           "frameIndex": 0,
-          "resourceName": "PRSFX- Fusion Bolt1",
+          "resourceName": "PRSFX- Fusion Bolt1.wav",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -6039,7 +6039,7 @@
       "19": [
         {
           "frameIndex": 19,
-          "resourceName": "PRSFX- Fusion Bolt2",
+          "resourceName": "PRSFX- Fusion Bolt2.wav",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"

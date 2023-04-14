@@ -5699,7 +5699,7 @@
     "5": [
       {
         "frameIndex": 5,
-        "resourceName": "PRSFX- Psychic Terrain2",
+        "resourceName": "PRSFX- Psychic Terrain2.wav",
         "volume": 80,
         "pitch": 140,
         "eventType": "AnimTimedSoundEvent"
@@ -5708,7 +5708,7 @@
     "9": [
       {
         "frameIndex": 9,
-        "resourceName": "PRSFX- Psychic Terrain2",
+        "resourceName": "PRSFX- Psychic Terrain2.wav",
         "volume": 80,
         "pitch": 130,
         "eventType": "AnimTimedSoundEvent"
@@ -5717,7 +5717,7 @@
     "15": [
       {
         "frameIndex": 15,
-        "resourceName": "PRSFX- Psychic Terrain2",
+        "resourceName": "PRSFX- Psychic Terrain2.wav",
         "volume": 80,
         "pitch": 140,
         "eventType": "AnimTimedSoundEvent"
@@ -5726,7 +5726,7 @@
     "19": [
       {
         "frameIndex": 19,
-        "resourceName": "PRSFX- Psychic Terrain2",
+        "resourceName": "PRSFX- Psychic Terrain2.wav",
         "volume": 80,
         "pitch": 130,
         "eventType": "AnimTimedSoundEvent"
@@ -5735,7 +5735,7 @@
     "25": [
       {
         "frameIndex": 25,
-        "resourceName": "PRSFX- Psychic Terrain2",
+        "resourceName": "PRSFX- Psychic Terrain2.wav",
         "volume": 80,
         "pitch": 140,
         "eventType": "AnimTimedSoundEvent"
@@ -5744,7 +5744,7 @@
     "29": [
       {
         "frameIndex": 29,
-        "resourceName": "PRSFX- Psychic Terrain2",
+        "resourceName": "PRSFX- Psychic Terrain2.wav",
         "volume": 80,
         "pitch": 130,
         "eventType": "AnimTimedSoundEvent"
@@ -5753,7 +5753,7 @@
     "36": [
       {
         "frameIndex": 36,
-        "resourceName": "PRSFX- Psychic Terrain2",
+        "resourceName": "PRSFX- Psychic Terrain2.wav",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

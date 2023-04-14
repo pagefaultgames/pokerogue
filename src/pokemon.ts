@@ -928,10 +928,10 @@ export class PokemonMove {
   public ppUp: integer;
   public disableTurns: integer;
 
-  constructor(moveId: Moves, ppUsed: integer, ppUp: integer) {
+  constructor(moveId: Moves, ppUsed?: integer, ppUp?: integer) {
     this.moveId = moveId;
-    this.ppUsed = ppUsed;
-    this.ppUp = ppUp;
+    this.ppUsed = ppUsed || 0;
+    this.ppUp = ppUp || 0;
     this.disableTurns = 0;
   }
 

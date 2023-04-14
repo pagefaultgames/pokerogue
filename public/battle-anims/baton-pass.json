@@ -7168,7 +7168,7 @@
       "3": [
         {
           "frameIndex": 3,
-          "resourceName": "PRSFX- Baton Pass.wav",
+          "resourceName": "PRSFX- Baton Pass1.wav",
           "volume": 100,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -7177,7 +7177,7 @@
       "17": [
         {
           "frameIndex": 17,
-          "resourceName": "PRSFX- Baton Pass1.wav",
+          "resourceName": "PRSFX- Baton Pass2.wav",
           "volume": 100,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"

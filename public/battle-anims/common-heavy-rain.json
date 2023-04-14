@@ -13913,7 +13913,7 @@
     "0": [
       {
         "frameIndex": 0,
-        "resourceName": "PRSFX- Rain",
+        "resourceName": "PRSFX- Rain.wav",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -13922,7 +13922,7 @@
     "17": [
       {
         "frameIndex": 17,
-        "resourceName": "PRSFX- Rain",
+        "resourceName": "PRSFX- Rain.wav",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

@@ -1,3 +1,4 @@
+import { CommandPhase } from "../battle-phases";
 import BattleScene, { Button } from "../battle-scene";
 import { addTextObject, TextStyle } from "../text";
 import { toPokemonUpperCase } from "../utils";
@@ -65,6 +66,10 @@ export default class CommandUiHandler extends UiHandler {
             break;
           case 2:
             ui.setMode(Mode.PARTY, PartyUiMode.SWITCH);
+            success = true;
+            break;
+          case 3:
+            (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
             success = true;
             break;
         }
