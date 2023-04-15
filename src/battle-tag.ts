@@ -7,6 +7,7 @@ import * as Utils from "./utils";
 
 export enum BattleTagType {
   NONE,
+  FLINCHED,
   CONFUSED,
   FRENZY,
   FLYING,
@@ -39,7 +40,22 @@ export class BattleTag {
   onOverlap(pokemon: Pokemon): void { }
 
   lapse(pokemon: Pokemon): boolean {
-    return !!--this.turnCount;
+    return --this.turnCount > 0;
+  }
+}
+
+export class FlinchedTag extends BattleTag {
+  constructor() {
+    super(BattleTagType.FLINCHED, BattleTagLapseType.MOVE, 1);
+  }
+
+  lapse(pokemon: Pokemon): boolean {
+    super.lapse(pokemon);
+
+    (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
+    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' flinched!')));
+
+    return true;
   }
 }
 
@@ -118,6 +134,9 @@ export class HideSpriteTag extends BattleTag {
 
 export function getBattleTag(tagType: BattleTagType, turnCount: integer): BattleTag {
   switch (tagType) {
+    case BattleTagType.FLINCHED:
+      return new FlinchedTag();
+      break;
     case BattleTagType.CONFUSED:
       return new ConfusedTag(tagType, turnCount);
     case BattleTagType.FLYING:

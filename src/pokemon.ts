@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import BattleScene from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './battle-info';
-import { default as Move, allMoves, MoveCategory, Moves, StatChangeAttr, HighCritAttr, HitsTagAttr, applyMoveAttrs } from './move';
+import { default as Move, allMoves, MoveCategory, Moves, StatChangeAttr, HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr } from './move';
 import { pokemonLevelMoves } from './pokemon-level-moves';
 import { default as PokemonSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
@@ -412,7 +412,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   apply(source: Pokemon, battlerMove: PokemonMove): MoveResult {
-    let result: MoveResult = MoveResult.STATUS;
+    let result: MoveResult;
     let success = false;
     const move = battlerMove.getMove();
     const moveCategory = move.category;
@@ -422,6 +422,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case MoveCategory.SPECIAL:
         const isPhysical = moveCategory === MoveCategory.PHYSICAL;
         const power = new Utils.NumberHolder(move.power);
+        const typeMultiplier = getTypeDamageMultiplier(move.type, this.species.type1) * (this.species.type2 > -1 ? getTypeDamageMultiplier(move.type, this.species.type2) : 1);
         this.scene.applyModifiers(AttackTypeBoosterModifier, source, power);
         const critChance = new Utils.IntegerHolder(16);
         applyMoveAttrs(HighCritAttr, this.scene, source, this, move, critChance);
@@ -429,7 +430,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
         const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
         const stabMultiplier = source.species.type1 === move.type || (source.species.type2 > -1 && source.species.type2 === move.type) ? 1.5 : 1;
-        const typeMultiplier = getTypeDamageMultiplier(move.type, this.species.type1) * (this.species.type2 > -1 ? getTypeDamageMultiplier(move.type, this.species.type2) : 1);
         const criticalMultiplier = isCritical ? 2 : 1;
         damage = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier * typeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
         if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
@@ -438,18 +438,26 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (this.getTag(hta.tagType))
             damage *= 2;
         });
+
+        const fixedDamage = new Utils.IntegerHolder(0);
+        applyMoveAttrs(FixedDamageAttr, this.scene, source, this, move, fixedDamage);
+        if (damage && fixedDamage.value) {
+          damage = fixedDamage.value;
+          result = MoveResult.EFFECTIVE;
+        }
+
         console.log('damage', damage, move.name, move.power, sourceAtk, targetDef);
         
-        if (typeMultiplier >= 2)
-          result = MoveResult.SUPER_EFFECTIVE;
-        else if (typeMultiplier >= 1)
-          result = MoveResult.EFFECTIVE;
-        else if (typeMultiplier > 0)
-          result = MoveResult.NOT_VERY_EFFECTIVE;
-        else
-          result = MoveResult.NO_EFFECT;
-
-        
+        if (!result) {
+          if (typeMultiplier >= 2)
+            result = MoveResult.SUPER_EFFECTIVE;
+          else if (typeMultiplier >= 1)
+            result = MoveResult.EFFECTIVE;
+          else if (typeMultiplier > 0)
+            result = MoveResult.NOT_VERY_EFFECTIVE;
+          else
+            result = MoveResult.NO_EFFECT;
+        }
 
         if (damage) {
           this.hp = Math.max(this.hp - damage, 0);
@@ -493,7 +501,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    const newTag = getBattleTag(tagType, turnCount || 1);
+    const newTag = getBattleTag(tagType, turnCount || 0);
     this.summonData.tags.push(newTag);
     newTag.onAdd(this);
   }
@@ -529,7 +537,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   lapseTags(lapseType: BattleTagLapseType): void {
     const tags = this.summonData.tags;
-    tags.filter(t => lapseType === BattleTagLapseType.FAINT || ((t.lapseType === lapseType) && !(t.lapse(this)))).forEach(t => {
+    tags.filter(t => lapseType === BattleTagLapseType.FAINT || ((t.lapseType === lapseType) && !(t.lapse(this))) || (lapseType === BattleTagLapseType.TURN_END && t.turnCount < 1)).forEach(t => {
       t.onRemove(this);
       tags.splice(tags.indexOf(t), 1);
     });
@@ -910,7 +918,7 @@ export class PokemonSummonData {
 }
 
 export class PokemonBattleSummonData {
-  public infatuated: boolean;
+  public turnCount: integer = 1;
 }
 
 export class PokemonTurnData {
@@ -928,7 +936,7 @@ export enum AiType {
 };
 
 export enum MoveResult {
-  EFFECTIVE,
+  EFFECTIVE = 1,
   SUPER_EFFECTIVE,
   NOT_VERY_EFFECTIVE,
   NO_EFFECT,

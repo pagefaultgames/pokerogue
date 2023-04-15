@@ -1,7 +1,7 @@
 import BattleScene from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, ChargeAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr } from "./move";
+import { allMoves, applyMoveAttrs, ChargeAttr, ConditionalFailMoveAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr } from "./move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
@@ -440,12 +440,31 @@ export class CommandPhase extends BattlePhase {
     const playerSpeed = playerPokemon.getBattleStat(Stat.SPD);
     const enemySpeed = enemyPokemon.getBattleStat(Stat.SPD);
 
-    const isDelayed = () => playerSpeed < enemySpeed || (playerSpeed === enemySpeed && Utils.randInt(2) === 1);
+    let isDelayed = (command: Command, playerMove: PokemonMove, enemyMove: PokemonMove) => {
+      switch (command) {
+        case Command.FIGHT:
+          const playerMovePriority = playerMove.getMove().priority;
+          const enemyMovePriority = enemyMove.getMove().priority;
+          if (playerMovePriority !== enemyMovePriority)
+            return playerMovePriority < enemyMovePriority;
+          break;
+        case Command.BALL:
+        case Command.POKEMON:
+          return false;
+        case Command.RUN:
+          return true;
+      }
+      
+      return playerSpeed < enemySpeed || (playerSpeed === enemySpeed && Utils.randInt(2) === 1);
+    };
+
+    let playerMove: PokemonMove;
 
     switch (command) {
       case Command.FIGHT:
         if (playerPokemon.trySelectMove(cursor)) {
-          const playerPhase = new PlayerMovePhase(this.scene, playerPokemon, playerPokemon.moveset[cursor]);
+          playerMove = playerPokemon.moveset[cursor];
+          const playerPhase = new PlayerMovePhase(this.scene, playerPokemon, playerMove);
           this.scene.pushPhase(playerPhase);
           success = true;
         }
@@ -469,7 +488,7 @@ export class CommandPhase extends BattlePhase {
     if (success) {
       const enemyMove = enemyPokemon.getNextMove();
       const enemyPhase = new EnemyMovePhase(this.scene, enemyPokemon, enemyMove);
-      if (isDelayed())
+      if (isDelayed(command, playerMove, enemyMove))
         this.scene.unshiftPhase(enemyPhase);
       else
         this.scene.pushPhase(enemyPhase);
@@ -479,7 +498,7 @@ export class CommandPhase extends BattlePhase {
         statusEffectPhases.push(new PostTurnStatusEffectPhase(this.scene, true));
       if (enemyPokemon.status && enemyPokemon.status.isPostTurn()) {
         const enemyStatusEffectPhase = new PostTurnStatusEffectPhase(this.scene, false);
-        if (isDelayed())
+        if (isDelayed(command, playerMove, enemyMove))
           statusEffectPhases.unshift(enemyStatusEffectPhase);
         else
           statusEffectPhases.push(enemyStatusEffectPhase);
@@ -506,8 +525,14 @@ export class TurnEndPhase extends BattlePhase {
   }
 
   start() {
-    this.scene.getPlayerPokemon().lapseTags(BattleTagLapseType.TURN_END);
-    this.scene.getEnemyPokemon().lapseTags(BattleTagLapseType.TURN_END);
+    const playerPokemon = this.scene.getPlayerPokemon();
+    const enemyPokemon = this.scene.getEnemyPokemon();
+
+    playerPokemon.lapseTags(BattleTagLapseType.TURN_END);
+    enemyPokemon.lapseTags(BattleTagLapseType.TURN_END);
+
+    playerPokemon.battleSummonData.turnCount++;
+    enemyPokemon.battleSummonData.turnCount++;
 
     this.end();
   }
@@ -591,9 +616,17 @@ export abstract class MovePhase extends BattlePhase {
         return;
       }
       this.scene.unshiftPhase(new MessagePhase(this.scene, getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500));
-      this.scene.unshiftPhase(this.getEffectPhase());
       if (this.pokemon.summonData.moveQueue.length && !this.pokemon.summonData.moveQueue.shift().ignorePP)
         this.move.ppUsed++;
+      
+      const failed = new Utils.BooleanHolder(false);
+      applyMoveAttrs(ConditionalFailMoveAttr, this.scene, this.pokemon,
+      this.pokemon.isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon(), this.move.getMove(), failed);
+      if (failed.value)
+        this.scene.unshiftPhase(new MessagePhase(this.scene, 'But it failed!'));
+      else
+        this.scene.unshiftPhase(this.getEffectPhase());
+      
       this.end();
     };
 
