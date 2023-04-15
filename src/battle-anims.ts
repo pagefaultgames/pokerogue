@@ -332,7 +332,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
         moveAnim.bgSprite.setScale(1.25);
         moveAnim.bgSprite.setAlpha(0);
         scene.field.add(moveAnim.bgSprite);
-        scene.field.moveAbove(moveAnim.bgSprite, scene.arenaEnemy);
+        scene.field.moveBelow(moveAnim.bgSprite, scene.getEnemyPokemon());
 
         scene.tweens.add({
             targets: moveAnim.bgSprite,
@@ -766,15 +766,15 @@ export class MoveAnim extends BattleAnim {
     getAnim(): Anim {
         return moveAnims.get(this.move) instanceof Anim
             ? moveAnims.get(this.move) as Anim
-            : moveAnims.get(this.move)[this.user instanceof PlayerPokemon ? 0 : 1] as Anim;
+            : moveAnims.get(this.move)[this.user.isPlayer() ? 0 : 1] as Anim;
     }
 
     isOppAnim(): boolean {
-        return this.user instanceof EnemyPokemon && Array.isArray(moveAnims.get(this.move));
+        return !this.user.isPlayer() && Array.isArray(moveAnims.get(this.move));
     }
 
     isReverseCoords(): boolean {
-        return this.user instanceof EnemyPokemon && !this.isOppAnim();
+        return !this.user.isPlayer() && !this.isOppAnim();
     }
 
     getGraphicScale(): number {
@@ -799,7 +799,7 @@ export class MoveChargeAnim extends MoveAnim {
     getAnim(): Anim {
         return chargeAnims.get(this.chargeAnim) instanceof Anim
             ? chargeAnims.get(this.chargeAnim) as Anim
-            : chargeAnims.get(this.chargeAnim)[this.user instanceof PlayerPokemon ? 0 : 1] as Anim;
+            : chargeAnims.get(this.chargeAnim)[this.user.isPlayer() ? 0 : 1] as Anim;
     }
 }
 

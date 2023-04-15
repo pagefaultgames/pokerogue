@@ -498,8 +498,8 @@ export function getModifierTypeOptionsForWave(waveIndex: integer, count: integer
 function getNewModifierTypeOption(party: PlayerPokemon[], tier?: ModifierTier, upgrade?: boolean): ModifierTypeOption {
   const tierValue = Utils.randInt(256);
   if (tier === undefined) {
-    tier = (tierValue >= 52 ? ModifierTier.COMMON : tierValue >= 8 ? ModifierTier.GREAT : tierValue >= 1 ? ModifierTier.ULTRA : ModifierTier.MASTER) + (upgrade ? 1 : 0);
     upgrade = Utils.randInt(32) === 0;
+    tier = (tierValue >= 52 ? ModifierTier.COMMON : tierValue >= 8 ? ModifierTier.GREAT : tierValue >= 1 ? ModifierTier.ULTRA : ModifierTier.MASTER) + (upgrade ? 1 : 0);
   }
   const thresholds = Object.keys(modifierPoolThresholds[tier]);
   const totalWeight = parseInt(thresholds[thresholds.length - 1]);

@@ -1,5 +1,5 @@
 import BattleScene from "./battle-scene";
-import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult } from "./pokemon";
+import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult } from "./pokemon";
 import * as Utils from './utils';
 import { allMoves, applyMoveAttrs, ChargeAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr } from "./move";
 import { Mode } from './ui/ui';
@@ -8,7 +8,7 @@ import { Stat } from "./pokemon-stat";
 import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HitHealModifier } from "./modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./pokeball";
-import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveAnim, chargeAnims, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
+import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { StatusEffect, getStatusEffectActivationText, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
@@ -19,7 +19,8 @@ import { Biome, biomeLinks } from "./biome";
 import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier-type";
 import PokemonSpecies from "./pokemon-species";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattleTagLapseType } from "./battle-tag";
+import { BattleTagLapseType, BattleTagType, HideSpriteTag as HiddenTag } from "./battle-tag";
+import { getPokemonMessage } from "./messages";
 
 export class SelectStarterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
@@ -385,6 +386,11 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
+    if (this.scene.getPlayerPokemon().getTag(BattleTagType.FRENZY)) {
+      super.end();
+      return;
+    }
+
     this.scene.ui.showText('Will you switch\nPOKéMON?', null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.unshiftPhase(new SwitchPhase(this.scene, false, true));
@@ -551,7 +557,7 @@ export class CommonAnimPhase extends PokemonPhase {
   }
 }
 
-abstract class MovePhase extends BattlePhase {
+export abstract class MovePhase extends BattlePhase {
   protected pokemon: Pokemon;
   protected move: PokemonMove;
   protected cancelled: boolean;
@@ -570,20 +576,24 @@ abstract class MovePhase extends BattlePhase {
     return !!this.pokemon.hp;
   }
 
+  cancel(): void {
+    this.cancelled = true;
+  }
+
   start() {
     super.start();
+
+    this.pokemon.lapseTags(BattleTagLapseType.MOVE);
 
     const doMove = () => {
       if (this.cancelled) {
         this.end();
         return;
       }
-      if (!this.move)
-        console.log(this.pokemon.moveset);
+      this.scene.unshiftPhase(new MessagePhase(this.scene, getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500));
+      this.scene.unshiftPhase(this.getEffectPhase());
       if (this.pokemon.summonData.moveQueue.length && !this.pokemon.summonData.moveQueue.shift().ignorePP)
         this.move.ppUsed++;
-      this.scene.unshiftPhase(new MessagePhase(this.scene, `${this.pokemon instanceof EnemyPokemon ? 'Foe ' : ''}${this.pokemon.name} used\n${this.move.getName()}!`, 500));
-      this.scene.unshiftPhase(this.getEffectPhase());
       this.end();
     };
 
@@ -616,12 +626,13 @@ abstract class MovePhase extends BattlePhase {
       }
       if (activated) {
         this.scene.unshiftPhase(new MessagePhase(this.scene,
-          `${this.pokemon instanceof PlayerPokemon ? '' : 'Foe '}${this.pokemon.name}${getStatusEffectActivationText(this.pokemon.status.effect)}`));
-        new CommonBattleAnim(CommonAnim.POISON + (this.pokemon.status.effect - 1), this.pokemon).play(this.scene, () => doMove());
+          getPokemonMessage(this.pokemon, getStatusEffectActivationText(this.pokemon.status.effect))));
+        this.scene.unshiftPhase(new CommonAnimPhase(this.scene, this.pokemon.isPlayer(), CommonAnim.POISON + (this.pokemon.status.effect - 1)));
+        doMove();
       } else {
         if (healed) {
           this.scene.unshiftPhase(new MessagePhase(this.scene,
-            `${this.pokemon instanceof PlayerPokemon ? '' : 'Foe '}${this.pokemon.name}${getStatusEffectHealText(this.pokemon.status.effect)}`));
+            getPokemonMessage(this.pokemon, getStatusEffectHealText(this.pokemon.status.effect))));
           this.pokemon.resetStatus();
           this.pokemon.updateInfo(true);
         }
@@ -678,7 +689,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
         return;
       }
 
-      user.lapseTags(BattleTagLapseType.MOVE);
+      user.lapseTags(BattleTagLapseType.MOVE_EFFECT);
 
       if (user.turnData.hitsLeft === undefined) {
         const hitCount = new Utils.IntegerHolder(1);
@@ -688,7 +699,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
       }
 
       if (!this.hitCheck()) {
-        this.scene.unshiftPhase(new MessagePhase(this.scene, `${!this.player ? 'Foe ' : ''}${user.name}'s\nattack missed!`));
+        this.scene.unshiftPhase(new MessagePhase(this.scene, getPokemonMessage(user, '\'s\nattack missed!')));
         user.summonData.moveHistory.push({ move: this.move.moveId, result: MoveResult.MISSED });
         applyMoveAttrs(MissEffectAttr, this.scene, user, target, this.move.getMove());
         this.end();
@@ -696,25 +707,22 @@ abstract class MoveEffectPhase extends PokemonPhase {
       }
       
       new MoveAnim(this.move.getMove().id as Moves, user, target).play(this.scene, () => {
-        target.apply(user, this.move).then(result => {
-          ++user.turnData.hitCount;
-          user.summonData.moveHistory.push({ move: this.move.moveId, result: result });
-          if (user.hp <= 0) {
-            this.scene.pushPhase(new FaintPhase(this.scene, this.player));
-            target.resetBattleSummonData();
-          }
-          if (target.hp <= 0) {
-            this.scene.pushPhase(new FaintPhase(this.scene, !this.player));
-            this.getUserPokemon().resetBattleSummonData();
-          }
-          if (target.hp) {
-            applyMoveAttrs(MoveEffectAttr, this.scene, user, target, this.move.getMove());
-            // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
-            if (!this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
-              applyMoveAttrs(MoveHitEffectAttr, this.scene, user, target, this.move.getMove());
-          }
-          this.end();
-        });
+        const result = target.apply(user, this.move);
+        ++user.turnData.hitCount;
+        user.summonData.moveHistory.push({ move: this.move.moveId, result: result });
+        if (user.hp <= 0) {
+          this.scene.pushPhase(new FaintPhase(this.scene, this.player));
+          target.resetBattleSummonData();
+        }
+        if (target.hp <= 0) {
+          this.scene.pushPhase(new FaintPhase(this.scene, !this.player));
+          this.getUserPokemon().resetBattleSummonData();
+        }
+        applyMoveAttrs(MoveEffectAttr, this.scene, user, target, this.move.getMove());
+        // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
+        if (target.hp && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
+          applyMoveAttrs(MoveHitEffectAttr, this.scene, user, target, this.move.getMove());
+        this.end();
       });
     });
   }
@@ -736,7 +744,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
   hitCheck(): boolean {
     // Check if not self targeting for this
 
-    const hiddenTag = this.getTargetPokemon().getTag(t => t.isHidden());
+    const hiddenTag = this.getTargetPokemon().getTag(HiddenTag);
     if (hiddenTag) {
       if (!this.move.getMove().getAttrs(HitsTagAttr).filter(hta => (hta as HitsTagAttr).tagType === hiddenTag.tagType).length)
         return false;
@@ -847,7 +855,8 @@ export class StatChangePhase extends PokemonPhase {
   constructor(scene: BattleScene, player: boolean, stats: BattleStat[], levels: integer) {
     super(scene, player);
 
-    this.stats = stats;
+    const allStats = Utils.getEnumValues(BattleStat);
+    this.stats = stats.map(s => s !== BattleStat.RAND ? s : allStats[Utils.randInt(BattleStat.SPD + 1)]);
     this.levels = levels;
   }
 
@@ -915,7 +924,7 @@ export class StatChangePhase extends PokemonPhase {
     const messages: string[] = [];
     
     for (let s = 0; s < this.stats.length; s++)
-      messages.push(`${this.player ? '' : 'Foe '}${this.getPokemon().name}'s ${getBattleStatName(this.stats[s])} ${getBattleStatLevelChangeDescription(Math.abs(relLevels[s]), this.levels >= 1)}!`);
+      messages.push(getPokemonMessage(this.getPokemon(), `'s ${getBattleStatName(this.stats[s])} ${getBattleStatLevelChangeDescription(Math.abs(relLevels[s]), this.levels >= 1)}!`));
     return messages;
   }
 }
@@ -935,7 +944,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
       if (pokemon.trySetStatus(this.statusEffect)) {
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect - 1), pokemon).play(this.scene, () => {
-          this.scene.unshiftPhase(new MessagePhase(this.scene, `${this.player ? '' : 'Foe '}${pokemon.name}${getStatusEffectObtainText(this.statusEffect)}`));
+          this.scene.unshiftPhase(new MessagePhase(this.scene, getPokemonMessage(pokemon, getStatusEffectObtainText(this.statusEffect))));
           if (pokemon.status.isPostTurn())
             this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, this.player));
           this.end();
@@ -943,7 +952,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
         return;
       }
     } else if (pokemon.status.effect === this.statusEffect)
-      this.scene.unshiftPhase(new MessagePhase(this.scene, `${this.player ? '' : 'Foe '}${pokemon.name}${getStatusEffectOverlapText(this.statusEffect)}`));
+      this.scene.unshiftPhase(new MessagePhase(this.scene, getPokemonMessage(pokemon, getStatusEffectOverlapText(this.statusEffect))));
     this.end();
   }
 }
@@ -959,7 +968,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
       pokemon.status.incrementTurn();
       new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => {
         this.scene.unshiftPhase(new MessagePhase(this.scene,
-            `${pokemon instanceof PlayerPokemon ? '' : 'Foe '}${pokemon.name}${getStatusEffectActivationText(pokemon.status.effect)}`));
+            getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect))));
         switch (pokemon.status.effect) {
           case StatusEffect.POISON:
           case StatusEffect.BURN:
@@ -1000,6 +1009,44 @@ export class MessagePhase extends BattlePhase {
   }
 }
 
+export class DamagePhase extends PokemonPhase {
+  private damage: integer;
+  private damageResult: DamageResult;
+
+  constructor(scene: BattleScene, player: boolean, damageResult?: DamageResult) {
+    super(scene, player);
+
+    this.damageResult = damageResult || MoveResult.EFFECTIVE;
+  }
+
+  start() {
+    super.start();
+
+    switch (this.damageResult) {
+      case MoveResult.EFFECTIVE:
+        this.scene.sound.play('hit');
+        break;
+      case MoveResult.SUPER_EFFECTIVE:
+        this.scene.sound.play('hit_strong');
+        break;
+      case MoveResult.NOT_VERY_EFFECTIVE:
+        this.scene.sound.play('hit_weak');
+        break;
+    }
+
+    const flashTimer = this.scene.time.addEvent({
+      delay: 100,
+      repeat: 5,
+      startAt: 200,
+      callback: () => {
+        this.getPokemon().getSprite().setVisible(flashTimer.repeatCount % 2 === 0);
+        if (!flashTimer.repeatCount)
+          this.getPokemon().updateInfo().then(() => this.end());
+      }
+    });
+  }
+}
+
 export class FaintPhase extends PokemonPhase {
   constructor(scene: BattleScene, player: boolean) {
     super(scene, player);
@@ -1008,13 +1055,12 @@ export class FaintPhase extends PokemonPhase {
   start() {
     super.start();
 
-    if (this.player) {
-      this.scene.unshiftPhase(new MessagePhase(this.scene, `${this.getPokemon().name} fainted!`, null, true));
+    this.scene.unshiftPhase(new MessagePhase(this.scene, getPokemonMessage(this.getPokemon(), ' fainted!'), null, true));
+
+    if (this.player)
       this.scene.unshiftPhase(new SwitchPhase(this.scene, true, false));
-    } else {
-      this.scene.unshiftPhase(new MessagePhase(this.scene, `Foe ${this.getPokemon().name} fainted!`, null, true));
+    else
       this.scene.unshiftPhase(new VictoryPhase(this.scene));
-    }
       
     const pokemon = this.getPokemon();
 
@@ -1031,7 +1077,7 @@ export class FaintPhase extends PokemonPhase {
         onComplete: () => {
           pokemon.setVisible(false);
           pokemon.y -= 150;
-          if (pokemon instanceof PlayerPokemon)
+          if (pokemon.isPlayer())
             this.scene.currentBattle.removeFaintedParticipant(pokemon as PlayerPokemon);
           this.scene.field.remove(pokemon);
           this.end();
