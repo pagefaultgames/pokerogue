@@ -15,7 +15,7 @@ import { initMoveAnim, loadMoveAnimAssets } from './battle-anims';
 import { Status, StatusEffect } from './status-effect';
 import { tmSpecies } from './tms';
 import { pokemonEvolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './pokemon-evolutions';
-import { DamagePhase, MessagePhase } from './battle-phases';
+import { DamagePhase, FaintPhase, MessagePhase } from './battle-phases';
 import { BattleStat } from './battle-stat';
 import { BattleTag, BattleTagLapseType, BattleTagType, getBattleTag } from './battle-tag';
 import { Species } from './species';
@@ -476,7 +476,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         if (damage) {
-          this.hp = Math.max(this.hp - damage, 0);
+          this.damage(damage);
           source.turnData.damageDealt += damage;
           this.scene.unshiftPhase(new DamagePhase(this.scene, this.isPlayer(), result as DamageResult))
           if (isCritical)
@@ -508,6 +508,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     return result;
+  }
+
+  damage(damage: integer): void {
+    if (!this.hp)
+      return;
+
+    this.hp = Math.max(this.hp - damage, 0);
+    if (!this.hp) {
+      this.scene.pushPhase(new FaintPhase(this.scene, this.isPlayer()));
+      (this.isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon()).resetBattleSummonData();
+    }
   }
 
   addTag(tagType: BattleTagType, turnCount?: integer): boolean {
@@ -545,7 +556,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   lapseTag(tagType: BattleTagType): void {
     const tags = this.summonData.tags;
     const tag = tags.find(t => t.tagType === tagType);
-    if (tag && !(tag.lapse(this))) {
+    if (tag && !(tag.lapse(this, BattleTagLapseType.CUSTOM))) {
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
     }
@@ -553,7 +564,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   lapseTags(lapseType: BattleTagLapseType): void {
     const tags = this.summonData.tags;
-    tags.filter(t => lapseType === BattleTagLapseType.FAINT || ((t.lapseType === lapseType) && !(t.lapse(this))) || (lapseType === BattleTagLapseType.TURN_END && t.turnCount < 1)).forEach(t => {
+    tags.filter(t => lapseType === BattleTagLapseType.FAINT || ((t.lapseType === lapseType) && !(t.lapse(this, lapseType))) || (lapseType === BattleTagLapseType.TURN_END && t.turnCount < 1)).forEach(t => {
       t.onRemove(this);
       tags.splice(tags.indexOf(t), 1);
     });
@@ -651,7 +662,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   resetStatus(): void {
+    const lastStatus = this.status.effect;
     this.status = undefined;
+    if (lastStatus === StatusEffect.SLEEP) {
+      if (this.getTag(BattleTagType.NIGHTMARE))
+        this.lapseTag(BattleTagType.NIGHTMARE);
+    }
   }
 
   resetSummonData(): void {

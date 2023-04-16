@@ -1,7 +1,7 @@
 import BattleScene from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, ChargeAttr, ConditionalFailMoveAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr } from "./move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr } from "./move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
@@ -9,7 +9,7 @@ import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HitHealMod
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { StatusEffect, getStatusEffectActivationText, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./status-effect";
+import { Status, StatusEffect, getStatusEffectActivationText, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import { EvolutionPhase } from "./evolution-phase";
@@ -585,13 +585,16 @@ export class CommonAnimPhase extends PokemonPhase {
 export abstract class MovePhase extends BattlePhase {
   protected pokemon: Pokemon;
   protected move: PokemonMove;
+  protected followUp: boolean;
+  protected hasFollowUp: boolean;
   protected cancelled: boolean;
 
-  constructor(scene: BattleScene, pokemon: Pokemon, move: PokemonMove) {
+  constructor(scene: BattleScene, pokemon: Pokemon, move: PokemonMove, followUp?: boolean) {
     super(scene);
 
     this.pokemon = pokemon;
     this.move = move;
+    this.followUp = !!followUp;
     this.cancelled = false;
   }
 
@@ -608,19 +611,23 @@ export abstract class MovePhase extends BattlePhase {
   start() {
     super.start();
 
-    this.pokemon.lapseTags(BattleTagLapseType.MOVE);
+    const target = this.pokemon.isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon();
+
+    if (!this.followUp)
+      this.pokemon.lapseTags(BattleTagLapseType.MOVE);
 
     const doMove = () => {
       if (this.cancelled) {
         this.end();
         return;
       }
+
       this.scene.unshiftPhase(new MessagePhase(this.scene, getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500));
-      if (this.pokemon.summonData.moveQueue.length && !this.pokemon.summonData.moveQueue.shift().ignorePP)
+      if (!this.pokemon.summonData.moveQueue.length || !this.pokemon.summonData.moveQueue.shift().ignorePP)
         this.move.ppUsed++;
-      
+
       const failed = new Utils.BooleanHolder(false);
-      applyMoveAttrs(ConditionalFailMoveAttr, this.pokemon, this.pokemon.isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon(), this.move.getMove(), failed);
+      applyMoveAttrs(ConditionalMoveAttr, this.pokemon, target, this.move.getMove(), failed);
       if (failed.value)
         this.scene.unshiftPhase(new MessagePhase(this.scene, 'But it failed!'));
       else
@@ -634,10 +641,11 @@ export abstract class MovePhase extends BattlePhase {
       return;
     }
 
-    if (this.pokemon.status && !this.pokemon.status.isPostTurn()) {
+    if (!this.followUp && this.pokemon.status && !this.pokemon.status.isPostTurn()) {
       this.pokemon.status.incrementTurn();
       let activated = false;
       let healed = false;
+      
       switch (this.pokemon.status.effect) {
         case StatusEffect.PARALYSIS:
           if (Utils.randInt(4) === 0) {
@@ -646,8 +654,9 @@ export abstract class MovePhase extends BattlePhase {
           }
           break;
         case StatusEffect.SLEEP:
+          applyMoveAttrs(BypassSleepAttr, this.pokemon, target, this.move.getMove());
           healed = this.pokemon.status.turnCount === this.pokemon.status.cureTurn;
-          activated = !healed;
+          activated = !healed && !this.pokemon.getTag(BattleTagType.BYPASS_SLEEP);
           this.cancelled = activated;
           break;
         case StatusEffect.FREEZE:
@@ -673,11 +682,18 @@ export abstract class MovePhase extends BattlePhase {
     } else
       doMove();
   }
+
+  end() {
+    if (!this.followUp)
+      this.scene.unshiftPhase(new MoveEndPhase(this.scene, this.pokemon.isPlayer()));
+
+    super.end();
+  }
 }
 
 export class PlayerMovePhase extends MovePhase {
-  constructor(scene: BattleScene, pokemon: PlayerPokemon, move: PokemonMove) {
-    super(scene, pokemon, move);
+  constructor(scene: BattleScene, pokemon: PlayerPokemon, move: PokemonMove, followUp?: boolean) {
+    super(scene, pokemon, move, followUp);
   }
 
   getEffectPhase(): MoveEffectPhase {
@@ -686,8 +702,8 @@ export class PlayerMovePhase extends MovePhase {
 }
 
 export class EnemyMovePhase extends MovePhase {
-  constructor(scene: BattleScene, pokemon: EnemyPokemon, move: PokemonMove) {
-    super(scene, pokemon, move);
+  constructor(scene: BattleScene, pokemon: EnemyPokemon, move: PokemonMove, followUp?: boolean) {
+    super(scene, pokemon, move, followUp);
   }
 
   getEffectPhase(): MoveEffectPhase {
@@ -742,14 +758,6 @@ abstract class MoveEffectPhase extends PokemonPhase {
         const result = target.apply(user, this.move);
         ++user.turnData.hitCount;
         user.summonData.moveHistory.push({ move: this.move.moveId, result: result });
-        if (user.hp <= 0) {
-          this.scene.pushPhase(new FaintPhase(this.scene, this.player));
-          target.resetBattleSummonData();
-        }
-        if (target.hp <= 0) {
-          this.scene.pushPhase(new FaintPhase(this.scene, !this.player));
-          this.getUserPokemon().resetBattleSummonData();
-        }
         applyMoveAttrs(MoveEffectAttr, user, target, this.move.getMove());
         // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
         if (target.hp && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
@@ -841,6 +849,20 @@ export class EnemyMoveEffectPhase extends MoveEffectPhase {
 
   getNewHitPhase() {
     return new EnemyMoveEffectPhase(this.scene, this.move);
+  }
+}
+
+export class MoveEndPhase extends PokemonPhase {
+  constructor(scene: BattleScene, player: boolean) {
+    super(scene, player);
+  }
+
+  start() {
+    super.start();
+
+    this.getPokemon().lapseTags(BattleTagLapseType.AFTER_MOVE);
+
+    this.end();
   }
 }
 
@@ -963,17 +985,21 @@ export class StatChangePhase extends PokemonPhase {
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
   private statusEffect: StatusEffect;
+  private cureTurn: integer;
 
-  constructor(scene: BattleScene, player: boolean, statusEffect: StatusEffect) {
+  constructor(scene: BattleScene, player: boolean, statusEffect: StatusEffect, cureTurn?: integer) {
     super(scene, player);
 
     this.statusEffect = statusEffect;
+    this.cureTurn = cureTurn;
   }
 
   start() {
     const pokemon = this.getPokemon();
     if (!pokemon.status) {
       if (pokemon.trySetStatus(this.statusEffect)) {
+        if (this.cureTurn)
+          pokemon.status.cureTurn = this.cureTurn;
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect - 1), pokemon).play(this.scene, () => {
           this.scene.unshiftPhase(new MessagePhase(this.scene, getPokemonMessage(pokemon, getStatusEffectObtainText(this.statusEffect))));
@@ -1004,15 +1030,11 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
         switch (pokemon.status.effect) {
           case StatusEffect.POISON:
           case StatusEffect.BURN:
-            pokemon.hp = Math.max(pokemon.hp - Math.max(pokemon.getMaxHp() >> 3, 1), 0);
+            pokemon.damage(Math.max(pokemon.getMaxHp() >> 3, 1));
             break;
           case StatusEffect.TOXIC:
-            pokemon.hp = Math.max(pokemon.hp - Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1), 0);
+            pokemon.damage(Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1));
             break;
-        }
-        if (pokemon.hp <= 0) {
-          this.scene.pushPhase(new FaintPhase(this.scene, this.player));
-          (this.player ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon()).resetBattleSummonData();
         }
         pokemon.updateInfo().then(() => this.end());
       });
@@ -1109,6 +1131,7 @@ export class FaintPhase extends PokemonPhase {
         onComplete: () => {
           pokemon.setVisible(false);
           pokemon.y -= 150;
+          pokemon.trySetStatus(StatusEffect.FAINT);
           if (pokemon.isPlayer())
             this.scene.currentBattle.removeFaintedParticipant(pokemon as PlayerPokemon);
           this.scene.field.remove(pokemon);
@@ -1347,7 +1370,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
   }
 
   start() {
-    if (!this.skipAnim)
+    if (!this.skipAnim && this.getPokemon().getHpRatio() < 1)
       super.start();
     else
       this.end();

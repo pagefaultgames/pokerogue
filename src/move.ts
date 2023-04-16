@@ -1,6 +1,5 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { EnemyMovePhase, MessagePhase, ObtainStatusEffectPhase, PlayerMovePhase, PokemonHealPhase, StatChangePhase } from "./battle-phases";
-import BattleScene from "./battle-scene";
+import { EnemyMovePhase, MessagePhase, MovePhase, ObtainStatusEffectPhase, PlayerMovePhase, PokemonHealPhase, StatChangePhase } from "./battle-phases";
 import { BattleStat } from "./battle-stat";
 import Pokemon, { EnemyPokemon, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "./pokemon";
 import { BattleTagType } from "./battle-tag";
@@ -686,8 +685,18 @@ enum MultiHitType {
 }
 
 class HealAttr extends MoveEffectAttr {
+  private fullHeal: boolean;
+  private showAnim: boolean;
+
+  constructor(fullHeal?: boolean, showAnim?: boolean) {
+    super(true);
+
+    this.fullHeal = !!fullHeal;
+    this.showAnim = !!showAnim;
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.isPlayer(), Math.max(Math.floor(user.getMaxHp() / 2), 1), getPokemonMessage(user, ' regained\nhealth!'), true, true));
+    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.isPlayer(), Math.max(Math.floor(user.getMaxHp() / (this.fullHeal ? 1 : 2)), 1), getPokemonMessage(user, ' regained\nhealth!'), true, !this.showAnim));
     return true;
   }
 }
@@ -737,20 +746,39 @@ export class MultiHitAttr extends MoveAttr {
 
 class StatusEffectAttr extends MoveHitEffectAttr {
   public effect: StatusEffect;
+  public selfTarget: boolean;
+  public cureTurn: integer;
 
-  constructor(effect: StatusEffect) {
+  constructor(effect: StatusEffect, selfTarget?: boolean, cureTurn?: integer) {
     super();
+
     this.effect = effect;
+    this.selfTarget = !!selfTarget;
+    this.cureTurn = cureTurn;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const statusCheck = move.chance < 0 || move.chance === 100 || Utils.randInt(100) < move.chance;
     if (statusCheck) {
-      if (!target.status || (target.status.effect === this.effect && move.chance < 0)) {
-        user.scene.unshiftPhase(new ObtainStatusEffectPhase(user.scene, target.isPlayer(), this.effect));
+      const pokemon = this.selfTarget ? user : target;
+      if (!pokemon.status || (pokemon.status.effect === this.effect && move.chance < 0)) {
+        user.scene.unshiftPhase(new ObtainStatusEffectPhase(user.scene, pokemon.isPlayer(), this.effect, this.cureTurn));
         return true;
       }
     }
+    return false;
+  }
+}
+
+export class BypassSleepAttr extends MoveAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (user.status?.effect === StatusEffect.SLEEP) {
+      console.log('add bypass sleep');
+      user.addTag(BattleTagType.BYPASS_SLEEP, 1);
+      console.log(user.getTag(BattleTagType.BYPASS_SLEEP));
+      return true;
+    }
+
     return false;
   }
 }
@@ -826,7 +854,7 @@ export class StatChangeAttr extends MoveEffectAttr {
   }
 }
 
-export class ConditionalFailMoveAttr extends MoveAttr {
+export class ConditionalMoveAttr extends MoveAttr {
   private successFunc: MoveAttrFunc;
 
   constructor(successFunc: MoveAttrFunc) {
@@ -956,13 +984,28 @@ export function applyMoveAttrs(attrType: { new(...args: any[]): MoveAttr }, user
   });
 }
 
+class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const moves = user.moveset.filter(m => m.moveId !== move.id);
+    if (moves.length) {
+      const move = moves[Utils.randInt(moves.length)];
+      const moveIndex = user.moveset.findIndex(m => m.moveId === move.moveId);
+      user.summonData.moveQueue.push({ move: move.moveId });
+      user.scene.unshiftPhase(user.isPlayer() ? new PlayerMovePhase(user.scene, user as PlayerPokemon, user.moveset[moveIndex], true) : new EnemyMovePhase(user.scene, user as EnemyPokemon, user.moveset[moveIndex], true));
+      return true;
+    }
+
+    return false;
+  }
+}
+
 class RandomMoveAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       const moveIds = Utils.getEnumValues(Moves).filter(m => m !== move.id);
       const moveId = moveIds[Utils.randInt(moveIds.length)];
       user.summonData.moveQueue.push({ move: moveId, ignorePP: true });
-      user.scene.unshiftPhase(user.isPlayer() ? new PlayerMovePhase(user.scene, user as PlayerPokemon, new PokemonMove(moveId)) : new EnemyMovePhase(user.scene, user as EnemyPokemon, new PokemonMove(moveId)));
+      user.scene.unshiftPhase(user.isPlayer() ? new PlayerMovePhase(user.scene, user as PlayerPokemon, new PokemonMove(moveId), true) : new EnemyMovePhase(user.scene, user as EnemyPokemon, new PokemonMove(moveId), true));
       initMoveAnim(moveId).then(() => {
         loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
@@ -1123,7 +1166,8 @@ export const allMoves = [
         return true;
     })),
   new StatusMove(Moves.GLARE, "Glare", Type.NORMAL, 100, 30, -1, "Paralyzes opponent.", -1, 0, 1, new StatusEffectAttr(StatusEffect.PARALYSIS)),
-  new AttackMove(Moves.DREAM_EATER, "Dream Eater", Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 15, -1, "User recovers half the HP inflicted on a sleeping opponent.", -1, 0, 1, new HitHealAttr()),
+  new AttackMove(Moves.DREAM_EATER, "Dream Eater", Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 15, -1, "User recovers half the HP inflicted on a sleeping opponent.", -1, 0, 1,
+    new ConditionalMoveAttr((user: Pokemon, target: Pokemon, move: Move) => target.status?.effect === StatusEffect.SLEEP), new HitHealAttr()),
   new StatusMove(Moves.POISON_GAS, "Poison Gas", Type.POISON, 90, 40, -1, "Poisons opponent.", -1, 0, 1, new StatusEffectAttr(StatusEffect.POISON)),
   new AttackMove(Moves.BARRAGE, "Barrage", Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, "Hits 2-5 times in one turn.", -1, 0, 1, new MultiHitAttr()),
   new AttackMove(Moves.LEECH_LIFE, "Leech Life", Type.BUG, MoveCategory.PHYSICAL, 80, 100, 10, 95, "User recovers half the HP inflicted on opponent.", -1, 0, 1, new HitHealAttr()),
@@ -1142,7 +1186,8 @@ export const allMoves = [
   new AttackMove(Moves.EXPLOSION, "Explosion", Type.NORMAL, MoveCategory.PHYSICAL, 250, 100, 5, -1, "User faints.", -1, 0, 1),
   new AttackMove(Moves.FURY_SWIPES, "Fury Swipes", Type.NORMAL, MoveCategory.PHYSICAL, 18, 80, 15, -1, "Hits 2-5 times in one turn.", -1, 0, 1, new MultiHitAttr()),
   new AttackMove(Moves.BONEMERANG, "Bonemerang", Type.GROUND, MoveCategory.PHYSICAL, 50, 90, 10, -1, "Hits twice in one turn.", -1, 0, 1, new MultiHitAttr(MultiHitType._2)),
-  new StatusMove(Moves.REST, "Rest", Type.PSYCHIC, -1, 5, 85, "User sleeps for 2 turns, but user is fully healed.", -1, 0, 1),
+  new StatusMove(Moves.REST, "Rest", Type.PSYCHIC, -1, 5, 85, "User sleeps for 2 turns, but user is fully healed.", -1, 0, 1,
+    new ConditionalMoveAttr((user: Pokemon, target: Pokemon, move: Move) => user.status?.effect !== StatusEffect.SLEEP), new StatusEffectAttr(StatusEffect.SLEEP, true, 3), new HealAttr(true, true)),
   new AttackMove(Moves.ROCK_SLIDE, "Rock Slide", Type.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 86, "May cause flinching.", 30, 0, 1, new FlinchAttr()),
   new AttackMove(Moves.HYPER_FANG, "Hyper Fang", Type.NORMAL, MoveCategory.PHYSICAL, 80, 90, 15, -1, "May cause flinching.", 10, 0, 1, new FlinchAttr()),
   new StatusMove(Moves.SHARPEN, "Sharpen", Type.NORMAL, -1, 30, -1, "Raises user's Attack.", -1, 0, 1, new StatChangeAttr(BattleStat.ATK, 1, true)),
@@ -1161,9 +1206,11 @@ export const allMoves = [
   new AttackMove(Moves.THIEF, "Thief", Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, 18, "Also steals opponent's held item.", -1, 0, 2),
   new StatusMove(Moves.SPIDER_WEB, "Spider Web", Type.BUG, -1, 10, -1, "Opponent cannot escape/switch.", -1, 0, 2),
   new StatusMove(Moves.MIND_READER, "Mind Reader", Type.NORMAL, -1, 5, -1, "User's next attack is guaranteed to hit.", -1, 0, 2),
-  new StatusMove(Moves.NIGHTMARE, "Nightmare", Type.GHOST, 100, 15, -1, "The sleeping opponent loses 25% of its max HP each turn.", -1, 0, 2),
+  new StatusMove(Moves.NIGHTMARE, "Nightmare", Type.GHOST, 100, 15, -1, "The sleeping opponent loses 25% of its max HP each turn.", -1, 0, 2,
+    new ConditionalMoveAttr((user: Pokemon, target: Pokemon, move: Move) => target.status?.effect === StatusEffect.SLEEP), new AddTagAttr(BattleTagType.NIGHTMARE, 1)),
   new AttackMove(Moves.FLAME_WHEEL, "Flame Wheel", Type.FIRE, MoveCategory.PHYSICAL, 60, 100, 25, -1, "May burn opponent.", 10, 0, 2, new StatusEffectAttr(StatusEffect.BURN)),
-  new AttackMove(Moves.SNORE, "Snore", Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 15, -1, "Can only be used if asleep. May cause flinching.", 30, 0, 2, new FlinchAttr()), // TODO
+  new AttackMove(Moves.SNORE, "Snore", Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 15, -1, "Can only be used if asleep. May cause flinching.", 30, 0, 2,
+    new BypassSleepAttr(), new ConditionalMoveAttr((user: Pokemon, target: Pokemon, move: Move) => user.status?.effect === StatusEffect.SLEEP), new FlinchAttr()),
   new StatusMove(Moves.CURSE, "Curse", Type.GHOST, -1, 10, -1, "Ghosts lose 50% of max HP and curse the opponent; Non-Ghosts raise Attack, Defense and lower Speed.", -1, 0, 2),
   new AttackMove(Moves.FLAIL, "Flail", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, "The lower the user's HP, the higher the power.", -1, 0, 2),
   new StatusMove(Moves.CONVERSION_2, "Conversion 2", Type.NORMAL, -1, 30, -1, "User changes type to become resistant to opponent's last move.", -1, 0, 2),
@@ -1205,7 +1252,8 @@ export const allMoves = [
   new AttackMove(Moves.STEEL_WING, "Steel Wing", Type.STEEL, MoveCategory.PHYSICAL, 70, 90, 25, -1, "May raise user's Defense.", 10, 0, 2, new StatChangeAttr(BattleStat.DEF, 1, true)),
   new StatusMove(Moves.MEAN_LOOK, "Mean Look", Type.NORMAL, -1, 5, -1, "Opponent cannot flee or switch.", -1, 0, 2),
   new StatusMove(Moves.ATTRACT, "Attract", Type.NORMAL, 100, 15, -1, "If opponent is the opposite gender, it's less likely to attack.", -1, 0, 2),
-  new StatusMove(Moves.SLEEP_TALK, "Sleep Talk", Type.NORMAL, -1, 10, 70, "User performs one of its own moves while sleeping.", -1, 0, 2),
+  new StatusMove(Moves.SLEEP_TALK, "Sleep Talk", Type.NORMAL, -1, 10, 70, "User performs one of its own moves while sleeping.", -1, 0, 2,
+    new BypassSleepAttr(), new ConditionalMoveAttr((user: Pokemon, target: Pokemon, move: Move) => user.status?.effect === StatusEffect.SLEEP), new RandomMovesetMoveAttr()),
   new StatusMove(Moves.HEAL_BELL, "Heal Bell", Type.NORMAL, -1, 5, -1, "Heals the user's party's status conditions.", -1, 0, 2),
   new AttackMove(Moves.RETURN, "Return", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, "Power increases with higher Friendship.", -1, 0, 2),
   new AttackMove(Moves.PRESENT, "Present", Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, -1, "Either deals damage or heals.", -1, 0, 2),
@@ -1246,7 +1294,7 @@ export const allMoves = [
   new AttackMove(Moves.WHIRLPOOL, "Whirlpool", Type.WATER, MoveCategory.SPECIAL, 35, 85, 15, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 2),
   new AttackMove(Moves.BEAT_UP, "Beat Up", Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, "Each Pokémon in user's party attacks.", -1, 0, 2),
   new AttackMove(Moves.FAKE_OUT, "Fake Out", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 10, -1, "User attacks first, foe flinches. Only usable on first turn.", 100, 3, 3,
-    new ConditionalFailMoveAttr((user: Pokemon, target: Pokemon, move: Move) => user.battleSummonData.turnCount === 1), new FlinchAttr()),
+    new ConditionalMoveAttr((user: Pokemon, target: Pokemon, move: Move) => user.battleSummonData.turnCount === 1), new FlinchAttr()),
   new AttackMove(Moves.UPROAR, "Uproar", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, -1, "User attacks for 3 turns and prevents sleep.", -1, 0, 3), // TODO
   new StatusMove(Moves.STOCKPILE, "Stockpile", Type.NORMAL, -1, 20, -1, "Stores energy for use with Spit Up and Swallow.", -1, 0, 3),
   new AttackMove(Moves.SPIT_UP, "Spit Up", Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, "Power depends on how many times the user performed Stockpile.", -1, 0, 3),

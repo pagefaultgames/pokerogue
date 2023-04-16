@@ -7,7 +7,8 @@ export enum StatusEffect {
   PARALYSIS,
   SLEEP,
   FREEZE,
-  BURN
+  BURN,
+  FAINT
 }
 
 export class Status {

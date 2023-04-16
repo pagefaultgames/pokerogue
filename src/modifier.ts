@@ -356,6 +356,8 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
       let restorePoints = this.restorePoints;
       if (!this.fainted)
         restorePoints = Math.floor(restorePoints * (args[1] as number));
+      else
+        pokemon.resetStatus();
       pokemon.hp = Math.min(pokemon.hp + (this.percent ? (restorePoints * 0.01) * pokemon.getMaxHp() : restorePoints), pokemon.getMaxHp());
     }
 
