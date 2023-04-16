@@ -1,5 +1,5 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { EnemyMovePhase, MessagePhase, ObtainStatusEffectPhase, PlayerMovePhase, StatChangePhase } from "./battle-phases";
+import { EnemyMovePhase, MessagePhase, ObtainStatusEffectPhase, PlayerMovePhase, PokemonHealPhase, StatChangePhase } from "./battle-phases";
 import BattleScene from "./battle-scene";
 import { BattleStat } from "./battle-stat";
 import Pokemon, { EnemyPokemon, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "./pokemon";
@@ -625,10 +625,10 @@ export enum Moves {
   FUSION_BOLT
 };
 
-type MoveAttrFunc = (scene: BattleScene, user: Pokemon, target: Pokemon, move: Move) => boolean;
+type MoveAttrFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 
 export abstract class MoveAttr {
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
     return true;
   }
 }
@@ -642,12 +642,12 @@ export class MoveEffectAttr extends MoveAttr {
     this.selfTarget = !!selfTarget;
   }
 
-  canApply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
     return !!(this.selfTarget ? user.hp && !user.getTag(BattleTagType.FRENZY) : target.hp);
   }
 
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]) {
-    return this.canApply(scene, user, target, move, args);
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+    return this.canApply(user, target, move, args);
   }
 }
 
@@ -655,7 +655,7 @@ export class MoveHitEffectAttr extends MoveAttr {
 }
 
 export class HighCritAttr extends MoveAttr {
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const critChance = args[0] as Utils.IntegerHolder;
     critChance.value /= 2;
 
@@ -672,7 +672,7 @@ export class FixedDamageAttr extends MoveAttr {
     this.damage = damage;
   }
 
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     (args[0] as Utils.IntegerHolder).value = this.damage;
 
     return true;
@@ -685,6 +685,20 @@ enum MultiHitType {
   _3_INCR
 }
 
+class HealAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.isPlayer(), Math.max(Math.floor(user.getMaxHp() / 2), 1), getPokemonMessage(user, ' regained\nhealth!'), true, true));
+    return true;
+  }
+}
+
+class HitHealAttr extends MoveHitEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.isPlayer(), Math.max(Math.floor(user.turnData.damageDealt / 2), 1), getPokemonMessage(target, ` had its\nenergy drained!`), false, true));
+    return true;
+  }
+}
+
 export class MultiHitAttr extends MoveAttr {
   private multiHitType: MultiHitType;
 
@@ -694,7 +708,7 @@ export class MultiHitAttr extends MoveAttr {
     this.multiHitType = multiHitType !== undefined ? multiHitType : MultiHitType._2_TO_5;
   }
 
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let hitTimes: integer;
     switch (this.multiHitType) {
       case MultiHitType._2_TO_5:
@@ -729,11 +743,11 @@ class StatusEffectAttr extends MoveHitEffectAttr {
     this.effect = effect;
   }
 
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const statusCheck = move.chance < 0 || move.chance === 100 || Utils.randInt(100) < move.chance;
     if (statusCheck) {
       if (!target.status || (target.status.effect === this.effect && move.chance < 0)) {
-        scene.unshiftPhase(new ObtainStatusEffectPhase(scene, target.isPlayer(), this.effect));
+        user.scene.unshiftPhase(new ObtainStatusEffectPhase(user.scene, target.isPlayer(), this.effect));
         return true;
       }
     }
@@ -742,9 +756,9 @@ class StatusEffectAttr extends MoveHitEffectAttr {
 }
 
 class OneHitKOAttr extends MoveHitEffectAttr {
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     target.hp = 0;
-    scene.unshiftPhase(new MessagePhase(scene, 'It\'s a one-hit KO!'));
+    user.scene.unshiftPhase(new MessagePhase(user.scene, 'It\'s a one-hit KO!'));
     return true;
   }
 }
@@ -766,17 +780,17 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
     this.chargeEffect = !!chargeEffect;
   }
 
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       const lastMove = user.getLastXMoves(1) as TurnMove[];
       if (!lastMove.length || lastMove[0].move !== move.id || lastMove[0].result !== MoveResult.OTHER) {
         (args[0] as Utils.BooleanHolder).value = true;
-        new MoveChargeAnim(this.chargeAnim, move.id, user, target).play(scene, () => {
-          scene.unshiftPhase(new MessagePhase(scene, getPokemonMessage(user, ` ${this.chargeText}`)));
+        new MoveChargeAnim(this.chargeAnim, move.id, user, target).play(user.scene, () => {
+          user.scene.unshiftPhase(new MessagePhase(user.scene, getPokemonMessage(user, ` ${this.chargeText}`)));
           if (this.tagType)
             user.addTag(this.tagType, 1);
           if (this.chargeEffect)
-            applyMoveAttrs(MoveEffectAttr, scene, user, target, move);
+            applyMoveAttrs(MoveEffectAttr, user, target, move);
           user.summonData.moveHistory.push({ move: move.id, result: MoveResult.OTHER });
           user.summonData.moveQueue.push({ move: move.id, ignorePP: true });
           resolve(true);
@@ -799,12 +813,12 @@ export class StatChangeAttr extends MoveEffectAttr {
     this.levels = levels;
   }
 
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(scene, user, target, move, args))
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
       return false;
 
     if (move.chance < 0 || move.chance === 100 || Utils.randInt(100) < move.chance) {
-      scene.unshiftPhase(new StatChangePhase(scene, user.isPlayer() === this.selfTarget, this.stats, this.levels));
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.isPlayer() === this.selfTarget, this.stats, this.levels));
       return true;
     }
 
@@ -821,8 +835,8 @@ export class ConditionalFailMoveAttr extends MoveAttr {
     this.successFunc = successFunc;
   }
 
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!(args[0] as Utils.BooleanHolder).value && !this.successFunc(scene, user, target, move)) {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!(args[0] as Utils.BooleanHolder).value && !this.successFunc(user, target, move)) {
       (args[0] as Utils.BooleanHolder).value = true;
       return true;
     }
@@ -840,8 +854,8 @@ export class MissEffectAttr extends MoveAttr {
     this.missEffectFunc = missEffectFunc;
   }
 
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    this.missEffectFunc(scene, user, target, move);
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    this.missEffectFunc(user, target, move);
     return true;
   }
 }
@@ -851,12 +865,12 @@ export class FrenzyAttr extends MoveEffectAttr {
     super(true);
   }
 
-  canApply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
     return !!(this.selfTarget ? user.hp : target.hp);
   }
 
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(scene, user, target, move, args))
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
       return false;
 
     if (!user.summonData.moveQueue.length) {
@@ -865,7 +879,7 @@ export class FrenzyAttr extends MoveEffectAttr {
         new Array(turnCount).fill(null).map(() => user.summonData.moveQueue.push({ move: move.id, ignorePP: true }));
         user.addTag(BattleTagType.FRENZY, 1);
       } else {
-        applyMoveAttrs(AddTagAttr, scene, user, target, move, args);
+        applyMoveAttrs(AddTagAttr, user, target, move, args);
         user.lapseTag(BattleTagType.FRENZY);
       }
       return true;
@@ -875,7 +889,7 @@ export class FrenzyAttr extends MoveEffectAttr {
   }
 }
 
-const frenzyMissFunc = (scene: BattleScene, user: Pokemon, target: Pokemon, move: Move) => {
+const frenzyMissFunc = (user: Pokemon, target: Pokemon, move: Move) => {
   while (user.summonData.moveQueue.length && user.summonData.moveQueue[0].move === move.id)
     user.summonData.moveQueue.shift();
   user.lapseTag(BattleTagType.FRENZY)
@@ -892,8 +906,8 @@ export class AddTagAttr extends MoveEffectAttr {
     this.turnCount = turnCount;
   }
 
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(scene, user, target, move, args))
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
       return false;
 
     if (move.chance < 0 || move.chance === 100 || Utils.randInt(100) < move.chance) {
@@ -929,12 +943,12 @@ export class HitsTagAttr extends MoveAttr {
   }
 }
 
-export function applyMoveAttrs(attrType: { new(...args: any[]): MoveAttr }, scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, ...args: any[]): Promise<void> {
+export function applyMoveAttrs(attrType: { new(...args: any[]): MoveAttr }, user: Pokemon, target: Pokemon, move: Move, ...args: any[]): Promise<void> {
   return new Promise(resolve => {
     const attrPromises: Promise<boolean>[] = [];
     const moveAttrs = move.attrs.filter(a => a instanceof attrType);
     for (let attr of moveAttrs) {
-      const result = attr.apply(scene, user, target, move, args);
+      const result = attr.apply(user, target, move, args);
       if (result instanceof Promise<boolean>)
         attrPromises.push(result);
     }
@@ -943,14 +957,14 @@ export function applyMoveAttrs(attrType: { new(...args: any[]): MoveAttr }, scen
 }
 
 class RandomMoveAttr extends OverrideMoveEffectAttr {
-  apply(scene: BattleScene, user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       const moveIds = Utils.getEnumValues(Moves).filter(m => m !== move.id);
       const moveId = moveIds[Utils.randInt(moveIds.length)];
       user.summonData.moveQueue.push({ move: moveId, ignorePP: true });
-      scene.unshiftPhase(user.isPlayer() ? new PlayerMovePhase(scene, user as PlayerPokemon, new PokemonMove(moveId)) : new EnemyMovePhase(scene, user as EnemyPokemon, new PokemonMove(moveId)));
+      user.scene.unshiftPhase(user.isPlayer() ? new PlayerMovePhase(user.scene, user as PlayerPokemon, new PokemonMove(moveId)) : new EnemyMovePhase(user.scene, user as EnemyPokemon, new PokemonMove(moveId)));
       initMoveAnim(moveId).then(() => {
-        loadMoveAnimAssets(scene, [ moveId ], true)
+        loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
       });
     });
@@ -1032,12 +1046,12 @@ export const allMoves = [
   new AttackMove(Moves.COUNTER, "Counter", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, "When hit by a Physical Attack, user strikes back with 2x power.", -1, -5, 1),
   new AttackMove(Moves.SEISMIC_TOSS, "Seismic Toss", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, "Inflicts damage equal to user's level.", -1, 0, 1),
   new AttackMove(Moves.STRENGTH, "Strength", Type.NORMAL, MoveCategory.PHYSICAL, 80, 100, 15, -1, "", -1, 0, 1),
-  new AttackMove(Moves.ABSORB, "Absorb", Type.GRASS, MoveCategory.SPECIAL, 20, 100, 25, -1, "User recovers half the HP inflicted on opponent.", -1, 0, 1),
-  new AttackMove(Moves.MEGA_DRAIN, "Mega Drain", Type.GRASS, MoveCategory.SPECIAL, 40, 100, 15, -1, "User recovers half the HP inflicted on opponent.", -1, 0, 1),
+  new AttackMove(Moves.ABSORB, "Absorb", Type.GRASS, MoveCategory.SPECIAL, 20, 100, 25, -1, "User recovers half the HP inflicted on opponent.", -1, 0, 1, new HitHealAttr()),
+  new AttackMove(Moves.MEGA_DRAIN, "Mega Drain", Type.GRASS, MoveCategory.SPECIAL, 40, 100, 15, -1, "User recovers half the HP inflicted on opponent.", -1, 0, 1, new HitHealAttr()),
   new StatusMove(Moves.LEECH_SEED, "Leech Seed", Type.GRASS, 90, 10, -1, "Drains HP from opponent each turn.", -1, 0, 1),
   new StatusMove(Moves.GROWTH, "Growth", Type.NORMAL, -1, 20, -1, "Raises user's Attack and Special Attack.", -1, 0, 1,
     new StatChangeAttr([ BattleStat.ATK, BattleStat.SPATK ], 1, true)),
-  new AttackMove(Moves.RAZOR_LEAF, "Razor Leaf", Type.GRASS, MoveCategory.PHYSICAL, 55, 95, 25, -1, "High critical hit ratio.", -1, 0, 1),
+  new AttackMove(Moves.RAZOR_LEAF, "Razor Leaf", Type.GRASS, MoveCategory.PHYSICAL, 55, 95, 25, -1, "High critical hit ratio.", -1, 0, 1, new HighCritAttr()),
   new AttackMove(Moves.SOLAR_BEAM, "Solar Beam", Type.GRASS, MoveCategory.SPECIAL, 120, 100, 10, 168, "Charges on first turn, attacks on second.", -1, 0, 1,
     new ChargeAttr(ChargeAnim.SOLAR_BEAM_CHARGING, 'took\nin sunlight!')),
   new StatusMove(Moves.POISON_POWDER, "Poison Powder", Type.POISON, 75, 35, -1, "Poisons opponent.", -1, 0, 1, new StatusEffectAttr(StatusEffect.POISON)),
@@ -1071,7 +1085,7 @@ export const allMoves = [
   new StatusMove(Moves.MIMIC, "Mimic", Type.NORMAL, -1, 10, -1, "Copies the opponent's last move.", -1, 0, 1),
   new StatusMove(Moves.SCREECH, "Screech", Type.NORMAL, 85, 40, -1, "Sharply lowers opponent's Defense.", -1, 0, 1, new StatChangeAttr(BattleStat.DEF, -2)),
   new StatusMove(Moves.DOUBLE_TEAM, "Double Team", Type.NORMAL, -1, 15, -1, "Raises user's Evasiveness.", -1, 0, 1, new StatChangeAttr(BattleStat.EVA, 1, true)),
-  new StatusMove(Moves.RECOVER, "Recover", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 1),
+  new StatusMove(Moves.RECOVER, "Recover", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 1, new HealAttr()),
   new StatusMove(Moves.HARDEN, "Harden", Type.NORMAL, -1, 30, -1, "Raises user's Defense.", -1, 0, 1, new StatChangeAttr(BattleStat.DEF, 1, true)),
   new StatusMove(Moves.MINIMIZE, "Minimize", Type.NORMAL, -1, 10, -1, "Sharply raises user's Evasiveness.", -1, 0, 1, new StatChangeAttr(BattleStat.EVA, 1, true)),
   new StatusMove(Moves.SMOKESCREEN, "Smokescreen", Type.NORMAL, 100, 20, -1, "Lowers opponent's Accuracy.", -1, 0, 1, new StatChangeAttr(BattleStat.ACC, -1)),
@@ -1102,17 +1116,17 @@ export const allMoves = [
   new AttackMove(Moves.CONSTRICT, "Constrict", Type.NORMAL, MoveCategory.PHYSICAL, 10, 100, 35, -1, "May lower opponent's Speed by one stage.", 10, 0, 1, new StatChangeAttr(BattleStat.SPD, -1)),
   new StatusMove(Moves.AMNESIA, "Amnesia", Type.PSYCHIC, -1, 20, 128, "Sharply raises user's Special Defense.", -1, 0, 1, new StatChangeAttr(BattleStat.SPDEF, 2, true)),
   new StatusMove(Moves.KINESIS, "Kinesis", Type.PSYCHIC, 80, 15, -1, "Lowers opponent's Accuracy.", -1, 0, 1, new StatChangeAttr(BattleStat.ACC, -1)),
-  new StatusMove(Moves.SOFT_BOILED, "Soft-Boiled", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 1),
+  new StatusMove(Moves.SOFT_BOILED, "Soft-Boiled", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 1, new HealAttr()),
   new AttackMove(Moves.HIGH_JUMP_KICK, "High Jump Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 130, 90, 10, -1, "If it misses, the user loses half their HP.", -1, 0, 1,
-    new MissEffectAttr((scene: BattleScene, user: Pokemon, target: Pokemon, move: Move) => {
+    new MissEffectAttr((user: Pokemon, target: Pokemon, move: Move) => {
         user.hp = Math.floor(user.hp / 2);
         return true;
     })),
   new StatusMove(Moves.GLARE, "Glare", Type.NORMAL, 100, 30, -1, "Paralyzes opponent.", -1, 0, 1, new StatusEffectAttr(StatusEffect.PARALYSIS)),
-  new AttackMove(Moves.DREAM_EATER, "Dream Eater", Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 15, -1, "User recovers half the HP inflicted on a sleeping opponent.", -1, 0, 1),
+  new AttackMove(Moves.DREAM_EATER, "Dream Eater", Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 15, -1, "User recovers half the HP inflicted on a sleeping opponent.", -1, 0, 1, new HitHealAttr()),
   new StatusMove(Moves.POISON_GAS, "Poison Gas", Type.POISON, 90, 40, -1, "Poisons opponent.", -1, 0, 1, new StatusEffectAttr(StatusEffect.POISON)),
   new AttackMove(Moves.BARRAGE, "Barrage", Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, "Hits 2-5 times in one turn.", -1, 0, 1, new MultiHitAttr()),
-  new AttackMove(Moves.LEECH_LIFE, "Leech Life", Type.BUG, MoveCategory.PHYSICAL, 80, 100, 10, 95, "User recovers half the HP inflicted on opponent.", -1, 0, 1),
+  new AttackMove(Moves.LEECH_LIFE, "Leech Life", Type.BUG, MoveCategory.PHYSICAL, 80, 100, 10, 95, "User recovers half the HP inflicted on opponent.", -1, 0, 1, new HitHealAttr()),
   new StatusMove(Moves.LOVELY_KISS, "Lovely Kiss", Type.NORMAL, 75, 10, -1, "Puts opponent to sleep.", -1, 0, 1, new StatusEffectAttr(StatusEffect.SLEEP)),
   new AttackMove(Moves.SKY_ATTACK, "Sky Attack", Type.FLYING, MoveCategory.PHYSICAL, 140, 90, 5, -1, "Charges on first turn, attacks on second. May cause flinching. High critical hit ratio.", 30, 0, 1,
     new ChargeAttr(ChargeAnim.SKY_ATTACK_CHARGING, 'is glowing!'), new HighCritAttr(), new FlinchAttr()),
@@ -1140,7 +1154,7 @@ export const allMoves = [
   new AttackMove(Moves.STRUGGLE, "Struggle", Type.NORMAL, MoveCategory.PHYSICAL, 50, -1, -1, -1, "Only usable when all PP are gone. Hurts the user.", -1, 0, 1),
   new StatusMove(Moves.SKETCH, "Sketch", Type.NORMAL, -1, 1, -1, "Permanently copies the opponent's last move.", -1, 0, 2),
   new AttackMove(Moves.TRIPLE_KICK, "Triple Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, "Hits thrice in one turn at increasing power.", -1, 0, 2,
-    new MultiHitAttr(MultiHitType._3_INCR), new MissEffectAttr((scene: BattleScene, user: Pokemon, target: Pokemon, move: Move) => {
+    new MultiHitAttr(MultiHitType._3_INCR), new MissEffectAttr((user: Pokemon, target: Pokemon, move: Move) => {
       user.turnData.hitsLeft = 0;
       return true;
     })),
@@ -1179,13 +1193,13 @@ export const allMoves = [
   new AttackMove(Moves.OUTRAGE, "Outrage", Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 10, 156, "User attacks for 2-3 turns but then becomes confused.", -1, 0, 2,
     new FrenzyAttr(), frenzyMissFunc, new ConfuseAttr(true)), // TODO: Update to still confuse if last hit misses
   new StatusMove(Moves.SANDSTORM, "Sandstorm", Type.ROCK, -1, 10, 51, "Creates a sandstorm for 5 turns.", -1, 0, 2),
-  new AttackMove(Moves.GIGA_DRAIN, "Giga Drain", Type.GRASS, MoveCategory.SPECIAL, 75, 100, 10, 111, "User recovers half the HP inflicted on opponent.", -1, 4, 2),
+  new AttackMove(Moves.GIGA_DRAIN, "Giga Drain", Type.GRASS, MoveCategory.SPECIAL, 75, 100, 10, 111, "User recovers half the HP inflicted on opponent.", -1, 4, 2, new HitHealAttr()),
   new StatusMove(Moves.ENDURE, "Endure", Type.NORMAL, -1, 10, 47, "Always left with at least 1 HP, but may fail if used consecutively.", -1, 0, 2),
   new StatusMove(Moves.CHARM, "Charm", Type.FAIRY, 100, 20, 2, "Sharply lowers opponent's Attack.", -1, 0, 2, new StatChangeAttr(BattleStat.ATK, -2)),
   new AttackMove(Moves.ROLLOUT, "Rollout", Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, "Doubles in power each turn for 5 turns.", -1, 0, 2),
   new AttackMove(Moves.FALSE_SWIPE, "False Swipe", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 40, 57, "Always leaves opponent with at least 1 HP.", -1, 0, 2),
   new StatusMove(Moves.SWAGGER, "Swagger", Type.NORMAL, 85, 15, -1, "Confuses opponent, but sharply raises its Attack.", -1, 0, 2, new StatChangeAttr(BattleStat.ATK, 2), new ConfuseAttr()),
-  new StatusMove(Moves.MILK_DRINK, "Milk Drink", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 2),
+  new StatusMove(Moves.MILK_DRINK, "Milk Drink", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 2, new HealAttr()),
   new AttackMove(Moves.SPARK, "Spark", Type.ELECTRIC, MoveCategory.PHYSICAL, 65, 100, 20, -1, "May paralyze opponent.", 30, 0, 2, new StatusEffectAttr(StatusEffect.PARALYSIS)),
   new AttackMove(Moves.FURY_CUTTER, "Fury Cutter", Type.BUG, MoveCategory.PHYSICAL, 40, 95, 20, -1, "Power increases each turn.", -1, 0, 2),
   new AttackMove(Moves.STEEL_WING, "Steel Wing", Type.STEEL, MoveCategory.PHYSICAL, 70, 90, 25, -1, "May raise user's Defense.", 10, 0, 2, new StatChangeAttr(BattleStat.DEF, 1, true)),
@@ -1211,9 +1225,9 @@ export const allMoves = [
   new AttackMove(Moves.IRON_TAIL, "Iron Tail", Type.STEEL, MoveCategory.PHYSICAL, 100, 75, 15, -1, "May lower opponent's Defense.", 30, 0, 2, new StatChangeAttr(BattleStat.DEF, -1)),
   new AttackMove(Moves.METAL_CLAW, "Metal Claw", Type.STEEL, MoveCategory.PHYSICAL, 50, 95, 35, 31, "May raise user's Attack.", 10, 0, 2, new StatChangeAttr(BattleStat.ATK, 1, true)),
   new AttackMove(Moves.VITAL_THROW, "Vital Throw", Type.FIGHTING, MoveCategory.PHYSICAL, 70, 999, 10, -1, "User attacks last, but ignores Accuracy and Evasiveness.", -1, -1, 2),
-  new StatusMove(Moves.MORNING_SUN, "Morning Sun", Type.NORMAL, -1, 5, -1, "User recovers HP. Amount varies with the weather.", -1, 0, 2),
-  new StatusMove(Moves.SYNTHESIS, "Synthesis", Type.GRASS, -1, 5, -1, "User recovers HP. Amount varies with the weather.", -1, 0, 2),
-  new StatusMove(Moves.MOONLIGHT, "Moonlight", Type.FAIRY, -1, 5, -1, "User recovers HP. Amount varies with the weather.", -1, 0, 2),
+  new StatusMove(Moves.MORNING_SUN, "Morning Sun", Type.NORMAL, -1, 5, -1, "User recovers HP. Amount varies with the weather.", -1, 0, 2), // TODO
+  new StatusMove(Moves.SYNTHESIS, "Synthesis", Type.GRASS, -1, 5, -1, "User recovers HP. Amount varies with the weather.", -1, 0, 2), // TODO
+  new StatusMove(Moves.MOONLIGHT, "Moonlight", Type.FAIRY, -1, 5, -1, "User recovers HP. Amount varies with the weather.", -1, 0, 2), // TODO
   new AttackMove(Moves.HIDDEN_POWER, "Hidden Power", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, "Type and power depends on user's IVs.", -1, 0, 2),
   new AttackMove(Moves.CROSS_CHOP, "Cross Chop", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 80, 5, -1, "High critical hit ratio.", -1, 0, 2, new HighCritAttr()),
   new AttackMove(Moves.TWISTER, "Twister", Type.DRAGON, MoveCategory.SPECIAL, 40, 100, 20, -1, "May cause flinching. Hits Pokémon using Fly/Bounce with double power.", 20, 0, 2,
@@ -1232,7 +1246,7 @@ export const allMoves = [
   new AttackMove(Moves.WHIRLPOOL, "Whirlpool", Type.WATER, MoveCategory.SPECIAL, 35, 85, 15, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 2),
   new AttackMove(Moves.BEAT_UP, "Beat Up", Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, "Each Pokémon in user's party attacks.", -1, 0, 2),
   new AttackMove(Moves.FAKE_OUT, "Fake Out", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 10, -1, "User attacks first, foe flinches. Only usable on first turn.", 100, 3, 3,
-    new ConditionalFailMoveAttr((scene: BattleScene, user: Pokemon, target: Pokemon, move: Move) => user.battleSummonData.turnCount === 1), new FlinchAttr()),
+    new ConditionalFailMoveAttr((user: Pokemon, target: Pokemon, move: Move) => user.battleSummonData.turnCount === 1), new FlinchAttr()),
   new AttackMove(Moves.UPROAR, "Uproar", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, -1, "User attacks for 3 turns and prevents sleep.", -1, 0, 3), // TODO
   new StatusMove(Moves.STOCKPILE, "Stockpile", Type.NORMAL, -1, 20, -1, "Stores energy for use with Spit Up and Swallow.", -1, 0, 3),
   new AttackMove(Moves.SPIT_UP, "Spit Up", Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, "Power depends on how many times the user performed Stockpile.", -1, 0, 3),
@@ -1286,7 +1300,7 @@ export const allMoves = [
   new StatusMove(Moves.MUD_SPORT, "Mud Sport", Type.GROUND, -1, 15, -1, "Weakens the power of Electric-type moves.", -1, 0, 3),
   new AttackMove(Moves.ICE_BALL, "Ice Ball", Type.ICE, MoveCategory.PHYSICAL, 30, 90, 20, -1, "Doubles in power each turn for 5 turns.", -1, 0, 3),
   new AttackMove(Moves.NEEDLE_ARM, "Needle Arm", Type.GRASS, MoveCategory.PHYSICAL, 60, 100, 15, -1, "May cause flinching.", 30, 0, 3, new FlinchAttr()),
-  new StatusMove(Moves.SLACK_OFF, "Slack Off", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 3),
+  new StatusMove(Moves.SLACK_OFF, "Slack Off", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 3, new HitHealAttr()),
   new AttackMove(Moves.HYPER_VOICE, "Hyper Voice", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, 117, "", -1, 0, 3),
   new AttackMove(Moves.POISON_FANG, "Poison Fang", Type.POISON, MoveCategory.PHYSICAL, 50, 100, 15, -1, "May badly poison opponent.", 50, 0, 3, new StatusEffectAttr(StatusEffect.TOXIC)),
   new AttackMove(Moves.CRUSH_CLAW, "Crush Claw", Type.NORMAL, MoveCategory.PHYSICAL, 75, 95, 10, -1, "May lower opponent's Defense.", 50, 0, 3, new StatChangeAttr(BattleStat.DEF, -1)),
@@ -1347,7 +1361,7 @@ export const allMoves = [
   new AttackMove(Moves.DOOM_DESIRE, "Doom Desire", Type.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, "Damage occurs 2 turns later.", -1, 0, 3,
     new ChargeAttr(ChargeAnim.DOOM_DESIRE_CHARGING, 'chose\nDOOM DESIRE as its destiny!')),
   new AttackMove(Moves.PSYCHO_BOOST, "Psycho Boost", Type.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, "Sharply lowers user's Special Attack.", 100, 0, 3, new StatChangeAttr(BattleStat.SPATK, -2, true)),
-  new StatusMove(Moves.ROOST, "Roost", Type.FLYING, -1, 5, -1, "User recovers half of its max HP and loses the Flying type temporarily.", -1, 0, 4),
+  new StatusMove(Moves.ROOST, "Roost", Type.FLYING, -1, 5, -1, "User recovers half of its max HP and loses the Flying type temporarily.", -1, 0, 4, new HitHealAttr(), new AddTagAttr(BattleTagType.IGNORE_FLYING, 1, true)),
   new StatusMove(Moves.GRAVITY, "Gravity", Type.PSYCHIC, -1, 5, -1, "Prevents moves like Fly and Bounce and the Ability Levitate for 5 turns.", -1, 0, 4),
   new StatusMove(Moves.MIRACLE_EYE, "Miracle Eye", Type.PSYCHIC, -1, 40, -1, "Resets opponent's Evasiveness, removes Dark's Psychic immunity.", -1, 0, 4),
   new AttackMove(Moves.WAKE_UP_SLAP, "Wake-Up Slap", Type.FIGHTING, MoveCategory.PHYSICAL, 70, 100, 10, -1, "Power doubles if opponent is asleep, but wakes it up.", -1, 0, 4),
@@ -1393,7 +1407,7 @@ export const allMoves = [
   new StatusMove(Moves.ROCK_POLISH, "Rock Polish", Type.ROCK, -1, 20, -1, "Sharply raises user's Speed.", -1, 0, 4, new StatChangeAttr(BattleStat.SPD, 2, true)),
   new AttackMove(Moves.POISON_JAB, "Poison Jab", Type.POISON, MoveCategory.PHYSICAL, 80, 100, 20, 83, "May poison the opponent.", 30, 0, 4, new StatusEffectAttr(StatusEffect.POISON)),
   new AttackMove(Moves.DARK_PULSE, "Dark Pulse", Type.DARK, MoveCategory.SPECIAL, 80, 100, 15, 94, "May cause flinching.", 20, 0, 4, new FlinchAttr()),
-  new AttackMove(Moves.NIGHT_SLASH, "Night Slash", Type.DARK, MoveCategory.PHYSICAL, 70, 100, 15, -1, "High critical hit ratio.", -1, 0, 4),
+  new AttackMove(Moves.NIGHT_SLASH, "Night Slash", Type.DARK, MoveCategory.PHYSICAL, 70, 100, 15, -1, "High critical hit ratio.", -1, 0, 4, new HighCritAttr()),
   new AttackMove(Moves.AQUA_TAIL, "Aqua Tail", Type.WATER, MoveCategory.PHYSICAL, 90, 90, 10, -1, "", -1, 0, 4),
   new AttackMove(Moves.SEED_BOMB, "Seed Bomb", Type.GRASS, MoveCategory.PHYSICAL, 80, 100, 15, 71, "", -1, 0, 4),
   new AttackMove(Moves.AIR_SLASH, "Air Slash", Type.FLYING, MoveCategory.SPECIAL, 75, 95, 15, 65, "May cause flinching.", 30, 0, 4, new FlinchAttr()),
@@ -1402,7 +1416,7 @@ export const allMoves = [
   new AttackMove(Moves.DRAGON_PULSE, "Dragon Pulse", Type.DRAGON, MoveCategory.SPECIAL, 85, 100, 10, 115, "", -1, 0, 4),
   new AttackMove(Moves.DRAGON_RUSH, "Dragon Rush", Type.DRAGON, MoveCategory.PHYSICAL, 100, 75, 10, -1, "May cause flinching.", 20, 0, 4, new FlinchAttr()),
   new AttackMove(Moves.POWER_GEM, "Power Gem", Type.ROCK, MoveCategory.SPECIAL, 80, 100, 20, 101, "", -1, 0, 4),
-  new AttackMove(Moves.DRAIN_PUNCH, "Drain Punch", Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 10, 73, "User recovers half the HP inflicted on opponent.", -1, 0, 4),
+  new AttackMove(Moves.DRAIN_PUNCH, "Drain Punch", Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 10, 73, "User recovers half the HP inflicted on opponent.", -1, 0, 4, new HitHealAttr()),
   new AttackMove(Moves.VACUUM_WAVE, "Vacuum Wave", Type.FIGHTING, MoveCategory.SPECIAL, 40, 100, 30, -1, "User attacks first.", -1, 0, 4),
   new AttackMove(Moves.FOCUS_BLAST, "Focus Blast", Type.FIGHTING, MoveCategory.SPECIAL, 120, 70, 5, 158, "May lower opponent's Special Defense.", 10, 0, 4, new StatChangeAttr(BattleStat.SPDEF, -1)),
   new AttackMove(Moves.ENERGY_BALL, "Energy Ball", Type.GRASS, MoveCategory.SPECIAL, 90, 100, 10, 119, "May lower opponent's Special Defense.", 10, 0, 4, new StatChangeAttr(BattleStat.SPDEF, -1)),
@@ -1414,13 +1428,13 @@ export const allMoves = [
   new AttackMove(Moves.BULLET_PUNCH, "Bullet Punch", Type.STEEL, MoveCategory.PHYSICAL, 40, 100, 30, -1, "User attacks first.", -1, 1, 4),
   new AttackMove(Moves.AVALANCHE, "Avalanche", Type.ICE, MoveCategory.PHYSICAL, 60, 100, 10, 46, "Power doubles if user took damage first.", -1, -4, 4),
   new AttackMove(Moves.ICE_SHARD, "Ice Shard", Type.ICE, MoveCategory.PHYSICAL, 40, 100, 30, -1, "User attacks first.", -1, 1, 4),
-  new AttackMove(Moves.SHADOW_CLAW, "Shadow Claw", Type.GHOST, MoveCategory.PHYSICAL, 70, 100, 15, 61, "High critical hit ratio.", -1, 0, 4),
+  new AttackMove(Moves.SHADOW_CLAW, "Shadow Claw", Type.GHOST, MoveCategory.PHYSICAL, 70, 100, 15, 61, "High critical hit ratio.", -1, 0, 4, new HighCritAttr()),
   new AttackMove(Moves.THUNDER_FANG, "Thunder Fang", Type.ELECTRIC, MoveCategory.PHYSICAL, 65, 95, 15, 9, "May cause flinching and/or paralyze opponent.", 10, 0, 4, new FlinchAttr(), new StatusEffectAttr(StatusEffect.PARALYSIS)),
   new AttackMove(Moves.ICE_FANG, "Ice Fang", Type.ICE, MoveCategory.PHYSICAL, 65, 95, 15, 10, "May cause flinching and/or freeze opponent.", 10, 0, 4, new FlinchAttr(), new StatusEffectAttr(StatusEffect.FREEZE)),
   new AttackMove(Moves.FIRE_FANG, "Fire Fang", Type.FIRE, MoveCategory.PHYSICAL, 65, 95, 15, 8, "May cause flinching and/or burn opponent.", 10, 0, 4, new FlinchAttr(), new StatusEffectAttr(StatusEffect.BURN)),
   new AttackMove(Moves.SHADOW_SNEAK, "Shadow Sneak", Type.GHOST, MoveCategory.PHYSICAL, 40, 100, 30, -1, "User attacks first.", -1, 1, 4),
   new AttackMove(Moves.MUD_BOMB, "Mud Bomb", Type.GROUND, MoveCategory.SPECIAL, 65, 85, 10, -1, "May lower opponent's Accuracy.", 30, 0, 4, new StatChangeAttr(BattleStat.ACC, -1)),
-  new AttackMove(Moves.PSYCHO_CUT, "Psycho Cut", Type.PSYCHIC, MoveCategory.PHYSICAL, 70, 100, 20, -1, "High critical hit ratio.", -1, 0, 4),
+  new AttackMove(Moves.PSYCHO_CUT, "Psycho Cut", Type.PSYCHIC, MoveCategory.PHYSICAL, 70, 100, 20, -1, "High critical hit ratio.", -1, 0, 4, new HighCritAttr()),
   new AttackMove(Moves.ZEN_HEADBUTT, "Zen Headbutt", Type.PSYCHIC, MoveCategory.PHYSICAL, 80, 90, 15, 59, "May cause flinching.", 20, 0, 4, new FlinchAttr()),
   new AttackMove(Moves.MIRROR_SHOT, "Mirror Shot", Type.STEEL, MoveCategory.SPECIAL, 65, 85, 10, -1, "May lower opponent's Accuracy.", 30, 0, 4, new StatChangeAttr(BattleStat.ACC, -1)),
   new AttackMove(Moves.FLASH_CANNON, "Flash Cannon", Type.STEEL, MoveCategory.SPECIAL, 80, 100, 10, 93, "May lower opponent's Special Defense.", 10, 0, 4, new StatChangeAttr(BattleStat.SPDEF, -1)),
@@ -1448,10 +1462,10 @@ export const allMoves = [
   new AttackMove(Moves.CHARGE_BEAM, "Charge Beam", Type.ELECTRIC, MoveCategory.SPECIAL, 50, 90, 10, 23, "May raise user's Special Attack.", 70, 0, 4, new StatChangeAttr(BattleStat.SPATK, 1, true)),
   new AttackMove(Moves.WOOD_HAMMER, "Wood Hammer", Type.GRASS, MoveCategory.PHYSICAL, 120, 100, 15, -1, "User receives recoil damage.", -1, 0, 4),
   new AttackMove(Moves.AQUA_JET, "Aqua Jet", Type.WATER, MoveCategory.PHYSICAL, 40, 100, 20, -1, "User attacks first.", -1, 1, 4),
-  new AttackMove(Moves.ATTACK_ORDER, "Attack Order", Type.BUG, MoveCategory.PHYSICAL, 90, 100, 15, -1, "High critical hit ratio.", -1, 0, 4),
+  new AttackMove(Moves.ATTACK_ORDER, "Attack Order", Type.BUG, MoveCategory.PHYSICAL, 90, 100, 15, -1, "High critical hit ratio.", -1, 0, 4, new HighCritAttr()),
   new StatusMove(Moves.DEFEND_ORDER, "Defend Order", Type.BUG, -1, 10, -1, "Raises user's Defense and Special Defense.", -1, 0, 4,
     new StatChangeAttr([ BattleStat.DEF, BattleStat.SPDEF ], 1, true)),
-  new StatusMove(Moves.HEAL_ORDER, "Heal Order", Type.BUG, -1, 10, -1, "User recovers half its max HP.", -1, 0, 4),
+  new StatusMove(Moves.HEAL_ORDER, "Heal Order", Type.BUG, -1, 10, -1, "User recovers half its max HP.", -1, 0, 4, new HealAttr()),
   new AttackMove(Moves.HEAD_SMASH, "Head Smash", Type.ROCK, MoveCategory.PHYSICAL, 150, 80, 5, -1, "User receives recoil damage.", -1, 0, 4),
   new AttackMove(Moves.DOUBLE_HIT, "Double Hit", Type.NORMAL, MoveCategory.PHYSICAL, 35, 90, 10, -1, "Hits twice in one turn.", -1, 0, 4, new MultiHitAttr(MultiHitType._2)),
   new AttackMove(Moves.ROAR_OF_TIME, "Roar of Time", Type.DRAGON, MoveCategory.SPECIAL, 150, 90, 5, -1, "User must recharge next turn.", -1, 0, 4),
@@ -1533,10 +1547,10 @@ export const allMoves = [
     new StatChangeAttr([ BattleStat.ATK, BattleStat.SPATK ], 1, true)),
   new AttackMove(Moves.ELECTROWEB, "Electroweb", Type.ELECTRIC, MoveCategory.SPECIAL, 55, 95, 15, -1, "Lowers opponent's Speed.", 100, 0, 5, new StatChangeAttr(BattleStat.SPD, -1)),
   new AttackMove(Moves.WILD_CHARGE, "Wild Charge", Type.ELECTRIC, MoveCategory.PHYSICAL, 90, 100, 15, 147, "User receives recoil damage.", -1, 0, 5),
-  new AttackMove(Moves.DRILL_RUN, "Drill Run", Type.GROUND, MoveCategory.PHYSICAL, 80, 95, 10, 106, "High critical hit ratio.", -1, 0, 5),
+  new AttackMove(Moves.DRILL_RUN, "Drill Run", Type.GROUND, MoveCategory.PHYSICAL, 80, 95, 10, 106, "High critical hit ratio.", -1, 0, 5, new HighCritAttr()),
   new AttackMove(Moves.DUAL_CHOP, "Dual Chop", Type.DRAGON, MoveCategory.PHYSICAL, 40, 90, 15, -1, "Hits twice in one turn.", -1, 0, 5, new MultiHitAttr(MultiHitType._2)),
   new AttackMove(Moves.HEART_STAMP, "Heart Stamp", Type.PSYCHIC, MoveCategory.PHYSICAL, 60, 100, 25, -1, "May cause flinching.", 30, 0, 5, new FlinchAttr()),
-  new AttackMove(Moves.HORN_LEECH, "Horn Leech", Type.GRASS, MoveCategory.PHYSICAL, 75, 100, 10, -1, "User recovers half the HP inflicted on opponent.", -1, 0, 5),
+  new AttackMove(Moves.HORN_LEECH, "Horn Leech", Type.GRASS, MoveCategory.PHYSICAL, 75, 100, 10, -1, "User recovers half the HP inflicted on opponent.", -1, 0, 5, new HitHealAttr()),
   new AttackMove(Moves.SACRED_SWORD, "Sacred Sword", Type.FIGHTING, MoveCategory.PHYSICAL, 90, 100, 15, -1, "Ignores opponent's stat changes.", -1, 0, 5),
   new AttackMove(Moves.RAZOR_SHELL, "Razor Shell", Type.WATER, MoveCategory.PHYSICAL, 75, 95, 10, -1, "May lower opponent's Defense.", 50, 0, 5, new StatChangeAttr(BattleStat.DEF, -1)),
   new AttackMove(Moves.HEAT_CRASH, "Heat Crash", Type.FIRE, MoveCategory.PHYSICAL, -1, 100, 10, -1, "The heavier the user, the stronger the attack.", -1, 0, 5),

@@ -294,6 +294,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return Math.floor((this.hp / this.getMaxHp()) * 100) / 100;
   }
 
+  getTypes(): Type[] {
+    const speciesTypes = [ this.species.type1 ];
+    if (this.species.type2 > -1)
+      speciesTypes.push(this.species.type1);
+
+    if (this.getTag(BattleTagType.IGNORE_FLYING)) {
+      const flyingIndex = speciesTypes.indexOf(Type.FLYING);
+      if (flyingIndex > -1)
+        speciesTypes.splice(flyingIndex, 1);
+    }
+
+    if (!speciesTypes.length)
+      speciesTypes.push(Type.NORMAL);
+
+    return speciesTypes;
+  }
+
   getEvolution(): SpeciesEvolution {
     if (!pokemonEvolutions.hasOwnProperty(this.species.speciesId))
       return null;
@@ -424,7 +441,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const typeMultiplier = getTypeDamageMultiplier(move.type, this.species.type1) * (this.species.type2 > -1 ? getTypeDamageMultiplier(move.type, this.species.type2) : 1);
         this.scene.applyModifiers(AttackTypeBoosterModifier, source, power);
         const critChance = new Utils.IntegerHolder(16);
-        applyMoveAttrs(HighCritAttr, this.scene, source, this, move, critChance);
+        applyMoveAttrs(HighCritAttr, source, this, move, critChance);
         const isCritical = Utils.randInt(critChance.value) === 0;
         const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
         const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
@@ -439,7 +456,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         });
 
         const fixedDamage = new Utils.IntegerHolder(0);
-        applyMoveAttrs(FixedDamageAttr, this.scene, source, this, move, fixedDamage);
+        applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
         if (damage && fixedDamage.value) {
           damage = fixedDamage.value;
           result = MoveResult.EFFECTIVE;
@@ -825,7 +842,8 @@ export class EnemyPokemon extends Pokemon {
             if (move.category === MoveCategory.STATUS)
               moveScore++;
             else {
-              const effectiveness = getTypeDamageMultiplier(move.type, target.species.type1) * (target.species.type2 > -1 ? getTypeDamageMultiplier(move.type, target.species.type2) : 1);
+              const targetTypes = target.getTypes();
+              const effectiveness = getTypeDamageMultiplier(move.type, targetTypes[0]) * (targetTypes.length > 1 ? getTypeDamageMultiplier(move.type, targetTypes[1]) : 1);
               moveScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
               if (moveScore) {
                 if (move.category === MoveCategory.PHYSICAL) {

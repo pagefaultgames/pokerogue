@@ -11,7 +11,8 @@ export enum BattleTagType {
   CONFUSED,
   FRENZY,
   FLYING,
-  UNDERGROUND
+  UNDERGROUND,
+  IGNORE_FLYING
 }
 
 export enum BattleTagLapseType {
@@ -142,6 +143,8 @@ export function getBattleTag(tagType: BattleTagType, turnCount: integer): Battle
     case BattleTagType.FLYING:
     case BattleTagType.UNDERGROUND:
       return new HideSpriteTag(tagType, turnCount);
+    case BattleTagType.IGNORE_FLYING:
+      return new BattleTag(tagType, BattleTagLapseType.TURN_END, turnCount);
     default:
         return new BattleTag(tagType, BattleTagLapseType.CUSTOM, turnCount);
   }

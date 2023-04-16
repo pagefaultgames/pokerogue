@@ -620,8 +620,7 @@ export abstract class MovePhase extends BattlePhase {
         this.move.ppUsed++;
       
       const failed = new Utils.BooleanHolder(false);
-      applyMoveAttrs(ConditionalFailMoveAttr, this.scene, this.pokemon,
-      this.pokemon.isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon(), this.move.getMove(), failed);
+      applyMoveAttrs(ConditionalFailMoveAttr, this.pokemon, this.pokemon.isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon(), this.move.getMove(), failed);
       if (failed.value)
         this.scene.unshiftPhase(new MessagePhase(this.scene, 'But it failed!'));
       else
@@ -715,7 +714,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
 
     console.log(this.move.getName());
 
-    applyMoveAttrs(OverrideMoveEffectAttr, this.scene, user, target, this.move.getMove(), overridden).then(() => {
+    applyMoveAttrs(OverrideMoveEffectAttr, user, target, this.move.getMove(), overridden).then(() => {
 
       if (overridden.value) {
         this.end();
@@ -726,7 +725,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
 
       if (user.turnData.hitsLeft === undefined) {
         const hitCount = new Utils.IntegerHolder(1);
-        applyMoveAttrs(MultiHitAttr, this.scene, user, target, this.move.getMove(), hitCount);
+        applyMoveAttrs(MultiHitAttr, user, target, this.move.getMove(), hitCount);
         user.turnData.hitCount = 0;
         user.turnData.hitsLeft = user.turnData.hitsTotal = hitCount.value;
       }
@@ -734,7 +733,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
       if (!this.hitCheck()) {
         this.scene.unshiftPhase(new MessagePhase(this.scene, getPokemonMessage(user, '\'s\nattack missed!')));
         user.summonData.moveHistory.push({ move: this.move.moveId, result: MoveResult.MISSED });
-        applyMoveAttrs(MissEffectAttr, this.scene, user, target, this.move.getMove());
+        applyMoveAttrs(MissEffectAttr, user, target, this.move.getMove());
         this.end();
         return;
       }
@@ -751,10 +750,10 @@ abstract class MoveEffectPhase extends PokemonPhase {
           this.scene.pushPhase(new FaintPhase(this.scene, !this.player));
           this.getUserPokemon().resetBattleSummonData();
         }
-        applyMoveAttrs(MoveEffectAttr, this.scene, user, target, this.move.getMove());
+        applyMoveAttrs(MoveEffectAttr, user, target, this.move.getMove());
         // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
         if (target.hp && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
-          applyMoveAttrs(MoveHitEffectAttr, this.scene, user, target, this.move.getMove());
+          applyMoveAttrs(MoveHitEffectAttr, user, target, this.move.getMove());
         this.end();
       });
     });
@@ -1334,18 +1333,42 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
 
 export class PokemonHealPhase extends CommonAnimPhase {
   private hpHealed: integer;
+  private message: string;
+  private showFullHpMessage: boolean;
+  private skipAnim: boolean;
 
-  constructor(scene: BattleScene, player: boolean, hpHealed: integer) {
+  constructor(scene: BattleScene, player: boolean, hpHealed: integer, message: string, showFullHpMessage: boolean, skipAnim?: boolean) {
     super(scene, player, CommonAnim.HEALTH_UP);
 
     this.hpHealed = hpHealed;
+    this.message = message;
+    this.showFullHpMessage = showFullHpMessage;
+    this.skipAnim = !!skipAnim;
+  }
+
+  start() {
+    if (!this.skipAnim)
+      super.start();
+    else
+      this.end();
   }
 
   end() {
     const pokemon = this.getPokemon();
 
-    pokemon.hp = Math.min(pokemon.hp + this.hpHealed, pokemon.getMaxHp());
-    pokemon.updateInfo().then(() => super.end());
+    const fullHp = pokemon.getHpRatio() >= 1;
+
+    if (!fullHp) {
+      pokemon.hp = Math.min(pokemon.hp + this.hpHealed, pokemon.getMaxHp());
+      pokemon.updateInfo().then(() => super.end());
+    } else if (this.showFullHpMessage)
+      this.message = getPokemonMessage(pokemon, `'s\nHP is full!`);
+
+    if (this.message)
+      this.scene.unshiftPhase(new MessagePhase(this.scene, this.message));
+
+    if (fullHp)
+      super.end();
   }
 }
 

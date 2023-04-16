@@ -65,9 +65,10 @@ export function initAutoPlay() {
         let maxEffectiveness = 0.5;
         for (let m of attacker.moveset) {
             const moveType = m.getMove().type;
-            let effectiveness = getTypeDamageMultiplier(moveType, defender.species.type1);
-            if (defender.species.type2 > -1)
-                effectiveness *= getTypeDamageMultiplier(moveType, defender.species.type2);
+            const defenderTypes = defender.getTypes();
+            let effectiveness = getTypeDamageMultiplier(moveType, defenderTypes[0]);
+            if (defenderTypes.length > 1)
+                effectiveness *= getTypeDamageMultiplier(moveType, defenderTypes[1]);
             if (effectiveness > maxEffectiveness)
                 maxEffectiveness = effectiveness;
         }

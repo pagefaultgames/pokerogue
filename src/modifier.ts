@@ -10,6 +10,7 @@ import * as Utils from "./utils";
 import { Type } from './type';
 import { EvolutionPhase } from './evolution-phase';
 import { pokemonEvolutions } from './pokemon-evolutions';
+import { getPokemonMessage } from './messages';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -307,8 +308,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
 
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       scene.applyModifiers(HealingBoosterModifier, hpRestoreMultiplier);
-      scene.unshiftPhase(new PokemonHealPhase(scene, true, Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount * hpRestoreMultiplier.value, 1)));
-      scene.unshiftPhase(new MessagePhase(scene, `${pokemon.name}'s ${this.type.name}\nrestored its HP a little!`));
+      scene.unshiftPhase(new PokemonHealPhase(scene, true, Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount * hpRestoreMultiplier.value, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
     }
 
     return true;
