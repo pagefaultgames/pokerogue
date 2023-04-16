@@ -11,8 +11,6 @@
   - Ability logic
   - Ability activation indicator (?)
 - Natures
-- EXP logic
-  - Fix algorithm (currently inaccurate)
 - Pokemon summary screen
   - Move remembering (no cost?)
 - Capture logic
@@ -25,7 +23,6 @@
 - Modifiers
   - PP Up
   - Type enhancers
-  - Evolution items
   - Various mainline game items for various enhancements
   - Items that cause effects on hit (?)
   - Capture rate booster

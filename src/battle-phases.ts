@@ -1131,7 +1131,7 @@ export class VictoryPhase extends PokemonPhase {
     const participantIds = this.scene.currentBattle.playerParticipantIds;
     const party = this.scene.getParty();
     const expShareModifier = this.scene.getModifier(ExpShareModifier) as ExpShareModifier;
-    const expValue = this.scene.getEnemyPokemon().getExpValue(party[0]);
+    const expValue = this.scene.getEnemyPokemon().getExpValue();
     for (let pm = 0; pm < party.length; pm++) {
       const pokemon = party[pm];
       if (!pokemon.hp)
