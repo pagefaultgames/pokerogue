@@ -498,7 +498,9 @@ export function getModifierTypeOptionsForWave(waveIndex: integer, count: integer
 function getNewModifierTypeOption(party: PlayerPokemon[], tier?: ModifierTier, upgrade?: boolean): ModifierTypeOption {
   const tierValue = Utils.randInt(256);
   if (tier === undefined) {
-    upgrade = Utils.randInt(32) === 0;
+    const partyShinyCount = party.filter(p => p.shiny).length;
+    const upgradeOdds = Math.floor(32 / Math.max((partyShinyCount * 2), 1));
+    upgrade =  !Utils.randInt(upgradeOdds);
     tier = (tierValue >= 52 ? ModifierTier.COMMON : tierValue >= 8 ? ModifierTier.GREAT : tierValue >= 1 ? ModifierTier.ULTRA : ModifierTier.MASTER) + (upgrade ? 1 : 0);
   }
   const thresholds = Object.keys(modifierPoolThresholds[tier]);
