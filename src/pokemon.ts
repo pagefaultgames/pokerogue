@@ -300,9 +300,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const evolutions = pokemonEvolutions[this.species.speciesId];
     for (let e of evolutions) {
-      if (this.level >= e.level) {
-        // TODO: Remove string conditions
-        if (e.condition === null || typeof e.condition === 'string' || (e.condition as SpeciesEvolutionCondition).predicate(this))
+      if (!e.item && this.level >= e.level) {
+        if (e.condition === null || (e.condition as SpeciesEvolutionCondition).predicate(this))
           return e;
       }
     }
