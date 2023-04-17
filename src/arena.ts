@@ -1,0 +1,131 @@
+import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import BattleScene from "./battle-scene";
+import { Biome, BiomePoolTier, BiomeTierPools, biomePools } from "./biome";
+import * as Utils from "./utils";
+import PokemonSpecies, { getPokemonSpecies } from "./pokemon-species";
+import { Species } from "./species";
+import { Weather, WeatherType } from "./weather";
+
+export class Arena {
+  private scene: BattleScene;
+  public biomeType: Biome;
+  public weather: Weather;
+  private bgm: string;
+
+  private pokemonPool: BiomeTierPools;
+
+  constructor(scene: BattleScene, biome: Biome, bgm: string) {
+    this.scene = scene;
+    this.biomeType = biome;
+    this.bgm = bgm;
+    this.pokemonPool = biomePools[biome];
+  }
+
+  randomSpecies(waveIndex: integer, level: integer): PokemonSpecies {
+    const isBoss = waveIndex % 10 === 0 && this.pokemonPool[BiomePoolTier.BOSS].length;
+    const tierValue = Utils.randInt(!isBoss ? 512 : 64);
+    let tier = !isBoss
+      ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
+      : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
+    while (!this.pokemonPool[tier].length) {
+      console.log(`Downgraded rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
+      tier--;
+    }
+    const tierPool = this.pokemonPool[tier];
+    let ret: PokemonSpecies;
+    if (!tierPool.length)
+      ret = this.scene.randomSpecies(level);
+    else {
+      const entry = tierPool[Utils.randInt(tierPool.length)];
+      let species: Species;
+      if (typeof entry === 'number')
+        species = entry as Species;
+      else {
+        const levelThresholds = Object.keys(entry);
+        for (let l = levelThresholds.length - 1; l >= 0; l--) {
+          const levelThreshold = parseInt(levelThresholds[l]);
+          if (level >= levelThreshold) {
+            const speciesIds = entry[levelThreshold];
+            if (speciesIds.length > 1)
+              species = speciesIds[Utils.randInt(speciesIds.length)];
+            else
+              species = speciesIds[0];
+            break;
+          }
+        }
+      }
+      
+      ret = getPokemonSpecies(species);
+    }
+    const newSpeciesId = ret.getSpeciesForLevel(5);
+    if (newSpeciesId !== ret.speciesId) {
+      console.log('Replaced', Species[ret.speciesId], 'with', Species[newSpeciesId]);
+      ret = getPokemonSpecies(newSpeciesId);
+    }
+    return ret;
+  }
+
+  getBiomeKey(): string {
+    switch (this.biomeType) {
+      case Biome.TALL_GRASS:
+        return 'grass';
+      case Biome.CITY:
+        return 'dojo';
+      case Biome.LAKE:
+        return 'sea';
+      case Biome.BEACH:
+        return 'sea';
+      case Biome.ABYSS:
+        return 'wasteland';
+      case Biome.MEADOW:
+        return 'grass';
+      case Biome.VOLCANO:
+        return 'cave';
+      case Biome.POWER_PLANT:
+        return 'ruins';
+    }
+    return Biome[this.biomeType].toLowerCase();
+  }
+
+  setWeather(weather: WeatherType, turnCount?: integer): boolean {
+    if (this.weather?.weatherType === weather)
+      return false;
+
+    this.weather = new Weather(weather, turnCount || 0);
+    return true;
+  }
+
+  isDaytime(): boolean {
+    switch (this.biomeType) {
+      case Biome.PLAINS:
+      case Biome.GRASS:
+      case Biome.SEA:
+      case Biome.BEACH:
+      case Biome.LAKE:
+      case Biome.MOUNTAIN:
+      case Biome.LAND:
+      case Biome.DESERT:
+      case Biome.MEADOW:
+      case Biome.DOJO:
+        return true;
+    }
+  }
+
+  preloadBgm(): void {
+    this.scene.loadBgm(this.bgm);
+  }
+
+  playBgm(): void {
+    this.scene.loadBgm(this.bgm);
+    this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => this.scene.playBgm(this.bgm));
+    if (!this.scene.load.isLoading())
+      this.scene.load.start();
+  }
+
+  fadeOutBgm(duration: integer, destroy?: boolean): void {
+    if (destroy === undefined)
+      destroy = true;
+    const bgm = this.scene.sound.get(this.bgm);
+    SoundFade.fadeOut(this.scene, bgm, duration, destroy);
+  }
+}
