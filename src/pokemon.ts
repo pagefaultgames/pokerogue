@@ -166,7 +166,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       Promise.allSettled(moveIds.map(m => initMoveAnim(m)))
         .then(() => {
           loadMoveAnimAssets(this.scene, moveIds);
-          this.species.loadAssets(this.scene, this.gender === Gender.FEMALE);
+          this.species.loadAssets(this.scene, this.gender === Gender.FEMALE, this.shiny);
           if (this.isPlayer())
             this.scene.loadAtlas(this.getBattleSpriteKey(), 'pokemon', this.getBattleSpriteAtlasPath());
           this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
