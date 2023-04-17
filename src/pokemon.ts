@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import BattleScene from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './battle-info';
-import { default as Move, allMoves, MoveCategory, Moves, StatChangeAttr, HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr } from './move';
+import Move, { StatChangeAttr, HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, Moves, allMoves, MoveCategory } from "./move";
 import { pokemonLevelMoves } from './pokemon-level-moves';
 import { default as PokemonSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
@@ -19,6 +19,7 @@ import { DamagePhase, FaintPhase, MessagePhase } from './battle-phases';
 import { BattleStat } from './battle-stat';
 import { BattleTag, BattleTagLapseType, BattleTagType, getBattleTag } from './battle-tag';
 import { Species } from './species';
+import { WeatherType } from './weather';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -246,11 +247,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.getZoomSprite().play(this.getBattleSpriteKey());
   }
 
-  getBattleStat(stat: Stat) {
+  getBattleStat(stat: Stat): integer {
     if (stat === Stat.HP)
       return this.stats[Stat.HP];
-    const statLevel = this.summonData.battleStats[(stat + 1) as BattleStat];
+    const statLevel = this.summonData.battleStats[(stat - 1) as BattleStat];
     let ret = this.stats[stat] * (Math.max(2, 2 + statLevel) / Math.max(2, 2 - statLevel));
+    if (stat === Stat.SPDEF && this.scene.arena.weather?.weatherType === WeatherType.SANDSTORM)
+      ret *= 1.5;
     if (this.status && this.status.effect === StatusEffect.PARALYSIS)
       ret >>= 2;
     return ret;
@@ -429,7 +432,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   apply(source: Pokemon, battlerMove: PokemonMove): MoveResult {
     let result: MoveResult;
-    let success = false;
     const move = battlerMove.getMove();
     const moveCategory = move.category;
     let damage = 0;
@@ -439,6 +441,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const isPhysical = moveCategory === MoveCategory.PHYSICAL;
         const power = new Utils.NumberHolder(move.power);
         const typeMultiplier = getTypeDamageMultiplier(move.type, this.species.type1) * (this.species.type2 > -1 ? getTypeDamageMultiplier(move.type, this.species.type2) : 1);
+        const weatherTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(move.type);
+        applyMoveAttrs(VariablePowerAttr, source, this, move, power);
         this.scene.applyModifiers(AttackTypeBoosterModifier, source, power);
         const critChance = new Utils.IntegerHolder(16);
         applyMoveAttrs(HighCritAttr, source, this, move, critChance);
@@ -447,7 +451,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
         const stabMultiplier = source.species.type1 === move.type || (source.species.type2 > -1 && source.species.type2 === move.type) ? 1.5 : 1;
         const criticalMultiplier = isCritical ? 2 : 1;
-        damage = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier * typeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
+        damage = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier * typeMultiplier * weatherTypeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
         if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
           damage = Math.floor(damage / 2);
         move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
@@ -484,26 +488,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         switch (result) {
-          case MoveResult.EFFECTIVE:
-            success = true;
-            break;
           case MoveResult.SUPER_EFFECTIVE:
             this.scene.unshiftPhase(new MessagePhase(this.scene, 'It\'s super effective!'));
-            success = true;
             break;
           case MoveResult.NOT_VERY_EFFECTIVE:
-            this.scene.unshiftPhase(new MessagePhase(this.scene, 'It\'s not very effective!'))
-            success = true;
+            this.scene.unshiftPhase(new MessagePhase(this.scene, 'It\'s not very effective!'));
             break;
           case MoveResult.NO_EFFECT:
-            this.scene.unshiftPhase(new MessagePhase(this.scene, `It doesn\'t affect ${this.name}!`))
-            success = true;
+            this.scene.unshiftPhase(new MessagePhase(this.scene, `It doesn\'t affect ${this.name}!`));
             break;
         }
         break;
       case MoveCategory.STATUS:
         result = MoveResult.STATUS;
-        success = true;
         break;
     }
 

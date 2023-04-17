@@ -4,7 +4,11 @@ import { Biome, BiomePoolTier, BiomeTierPools, biomePools } from "./biome";
 import * as Utils from "./utils";
 import PokemonSpecies, { getPokemonSpecies } from "./pokemon-species";
 import { Species } from "./species";
-import { Weather, WeatherType } from "./weather";
+import { Weather, WeatherType, getWeatherClearMessage, getWeatherStartMessage } from "./weather";
+import { CommonAnimPhase, MessagePhase } from "./battle-phases";
+import { CommonAnim } from "./battle-anims";
+import { Type } from "./type";
+import Move from "./move";
 
 export class Arena {
   private scene: BattleScene;
@@ -87,12 +91,30 @@ export class Arena {
     return Biome[this.biomeType].toLowerCase();
   }
 
-  setWeather(weather: WeatherType, turnCount?: integer): boolean {
-    if (this.weather?.weatherType === weather)
+  trySetWeather(weather: WeatherType, viaMove: boolean): boolean {
+    if (this.weather?.weatherType === (weather || null))
       return false;
 
-    this.weather = new Weather(weather, turnCount || 0);
+    const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
+    this.weather = weather ? new Weather(weather, viaMove ? 5 : 0) : null;
+
+    if (this.weather) {
+      this.scene.unshiftPhase(new CommonAnimPhase(this.scene, true, CommonAnim.SUNNY + (weather - 1)));
+      this.scene.unshiftPhase(new MessagePhase(this.scene, getWeatherStartMessage(weather)));
+    } else
+      this.scene.unshiftPhase(new MessagePhase(this.scene, getWeatherClearMessage(oldWeatherType)));
+    
     return true;
+  }
+
+  getAttackTypeMultiplier(attackType: Type): number {
+    if (!this.weather)
+      return 1;
+    return this.weather.getAttackTypeMultiplier(attackType);
+  }
+
+  isMoveWeatherCancelled(move: Move) {
+    return this.weather && this.weather.isMoveWeatherCancelled(move);
   }
 
   isDaytime(): boolean {

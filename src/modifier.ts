@@ -1,16 +1,16 @@
 import * as ModifierTypes from './modifier-type';
-import { LearnMovePhase, LevelUpPhase, MessagePhase, PokemonHealPhase } from "./battle-phases";
+import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "./battle-phases";
 import BattleScene from "./battle-scene";
 import { getLevelTotalExp } from "./exp";
 import { PokeballType } from "./pokeball";
 import Pokemon, { PlayerPokemon } from "./pokemon";
 import { Stat } from "./pokemon-stat";
 import { addTextObject, TextStyle } from "./text";
-import * as Utils from "./utils";
 import { Type } from './type';
 import { EvolutionPhase } from './evolution-phase';
 import { pokemonEvolutions } from './pokemon-evolutions';
 import { getPokemonMessage } from './messages';
+import * as Utils from "./utils";
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;

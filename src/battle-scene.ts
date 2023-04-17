@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
-import { Biome, BiomeArena } from './biome';
+import { Biome } from './biome';
 import UI from './ui/ui';
-import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, SwitchBiomePhase, NewBiomeEncounterPhase, SelectBiomePhase, SelectStarterPhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, SelectStarterPhase } from './battle-phases';
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
@@ -13,6 +13,7 @@ import { Battle } from './battle';
 import { initCommonAnims, loadCommonAnimAssets, populateAnims } from './battle-anims';
 import { BattlePhase } from './battle-phase';
 import { initGameSpeed } from './game-speed';
+import { Arena } from './arena';
 
 const enableAuto = true;
 
@@ -47,7 +48,7 @@ export default class BattleScene extends Phaser.Scene {
 	public arenaEnemy: Phaser.GameObjects.Image;
 	public arenaEnemyTransition: Phaser.GameObjects.Image;
 	public arenaNextEnemy: Phaser.GameObjects.Image;
-	public arena: BiomeArena;
+	public arena: Arena;
 	public trainer: Phaser.GameObjects.Sprite;
 	public currentBattle: Battle;
 	public pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
@@ -283,9 +284,9 @@ export default class BattleScene extends Phaser.Scene {
 
 		if (isRandom) {
 			const biomes = Utils.getEnumValues(Biome);
-			this.newBiome(biomes[Utils.randInt(biomes.length)]);
+			this.newArena(biomes[Utils.randInt(biomes.length)]);
 		} else
-			this.newBiome(Biome.PLAINS);
+			this.newArena(Biome.PLAINS);
 
 		const biomeKey = this.arena.getBiomeKey();
 		this.arenaBg = this.add.sprite(0, 0, `${biomeKey}_bg`);
@@ -416,8 +417,8 @@ export default class BattleScene extends Phaser.Scene {
 		return this.currentBattle;
 	}
 
-	newBiome(biome: Biome): BiomeArena {
-		this.arena = new BiomeArena(this, biome, Biome[biome].toLowerCase());
+	newArena(biome: Biome): Arena {
+		this.arena = new Arena(this, biome, Biome[biome].toLowerCase());
 		return this.arena;
 	}
 

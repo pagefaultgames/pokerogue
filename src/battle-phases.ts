@@ -1,7 +1,6 @@
 import BattleScene from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult } from "./pokemon";
-import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr } from "./move";
+import { applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveHitEffectAttr, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr } from "./move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
@@ -9,7 +8,7 @@ import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HitHealMod
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { Status, StatusEffect, getStatusEffectActivationText, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./status-effect";
+import { StatusEffect, getStatusEffectActivationText, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import { EvolutionPhase } from "./evolution-phase";
@@ -21,6 +20,9 @@ import PokemonSpecies from "./pokemon-species";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattleTagLapseType, BattleTagType, HideSpriteTag as HiddenTag } from "./battle-tag";
 import { getPokemonMessage } from "./messages";
+import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage as getWeatherEffectMessage } from "./weather";
+import { Moves, allMoves } from "./move";
+import * as Utils from './utils';
 
 export class SelectStarterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
@@ -203,7 +205,8 @@ export class SwitchBiomePhase extends BattlePhase {
       onComplete: () => {
         this.scene.arenaEnemy.setX(this.scene.arenaEnemy.x - 600);
 
-        this.scene.newBiome(this.nextBiome);
+        this.scene.newArena(this.nextBiome)
+          .trySetWeather(getRandomWeatherType(this.nextBiome), false);
 
         const biomeKey = this.scene.arena.getBiomeKey();
         const bgTexture = `${biomeKey}_bg`;
@@ -393,9 +396,13 @@ export class CheckSwitchPhase extends BattlePhase {
 
     this.scene.ui.showText('Will you switch\nPOKéMON?', null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
+        this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.unshiftPhase(new SwitchPhase(this.scene, false, true));
         this.end();
-      }, () => this.end());
+      }, () => {
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.end();
+      });
     });
   }
 }
@@ -443,10 +450,12 @@ export class CommandPhase extends BattlePhase {
     let isDelayed = (command: Command, playerMove: PokemonMove, enemyMove: PokemonMove) => {
       switch (command) {
         case Command.FIGHT:
-          const playerMovePriority = playerMove.getMove().priority;
-          const enemyMovePriority = enemyMove.getMove().priority;
-          if (playerMovePriority !== enemyMovePriority)
-            return playerMovePriority < enemyMovePriority;
+          if (playerMove && enemyMove) {
+            const playerMovePriority = playerMove.getMove().priority;
+            const enemyMovePriority = enemyMove.getMove().priority;
+            if (playerMovePriority !== enemyMovePriority)
+              return playerMovePriority < enemyMovePriority;
+          }
           break;
         case Command.BALL:
         case Command.POKEMON:
@@ -486,6 +495,9 @@ export class CommandPhase extends BattlePhase {
     }
 
     if (success) {
+      if (this.scene.arena.weather)
+        this.scene.unshiftPhase(new WeatherEffectPhase(this.scene, this.scene.arena.weather, isDelayed(command, null, null)));
+
       const enemyMove = enemyPokemon.getNextMove();
       const enemyPhase = new EnemyMovePhase(this.scene, enemyPokemon, enemyMove);
       if (isDelayed(command, playerMove, enemyMove))
@@ -533,6 +545,9 @@ export class TurnEndPhase extends BattlePhase {
 
     playerPokemon.battleSummonData.turnCount++;
     enemyPokemon.battleSummonData.turnCount++;
+
+    if (this.scene.arena.weather && !this.scene.arena.weather.lapse())
+      this.scene.arena.trySetWeather(WeatherType.NONE, false);
 
     this.end();
   }
@@ -628,6 +643,8 @@ export abstract class MovePhase extends BattlePhase {
 
       const failed = new Utils.BooleanHolder(false);
       applyMoveAttrs(ConditionalMoveAttr, this.pokemon, target, this.move.getMove(), failed);
+      if (!failed.value && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
+        failed.value = true;
       if (failed.value)
         this.scene.unshiftPhase(new MessagePhase(this.scene, 'But it failed!'));
       else
@@ -789,6 +806,12 @@ abstract class MoveEffectPhase extends PokemonPhase {
       if (!this.move.getMove().getAttrs(HitsTagAttr).filter(hta => (hta as HitsTagAttr).tagType === hiddenTag.tagType).length)
         return false;
     }
+
+    const moveAccuracy = new Utils.NumberHolder(this.move.getMove().accuracy);
+    applyMoveAttrs(VariableAccuracyAttr, this.getUserPokemon(), this.getTargetPokemon(), this.move.getMove(), moveAccuracy);
+
+    if (moveAccuracy.value === -1)
+      return true;
       
     if (this.move.getMove().category !== MoveCategory.STATUS) {
       const userAccuracyLevel = this.getUserPokemon().summonData.battleStats[BattleStat.ACC];
@@ -800,8 +823,9 @@ abstract class MoveEffectPhase extends PokemonPhase {
           ? (3 + Math.min(userAccuracyLevel - targetEvasionLevel, 6)) / 3
           : 3 / (3 + Math.min(targetEvasionLevel - userAccuracyLevel, 6));
       }
-      return rand <= this.move.getMove().accuracy * accuracyMultiplier;
+      return rand <= moveAccuracy.value * accuracyMultiplier;
     }
+    
     return true;
   }
 
@@ -1043,6 +1067,43 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
   }
 }
 
+export class WeatherEffectPhase extends CommonAnimPhase {
+  private weather: Weather;
+  private playerDelayed: boolean;
+
+  constructor(scene: BattleScene, weather: Weather, playerDelayed: boolean) {
+    super(scene, true, CommonAnim.SUNNY + (weather.weatherType - 1));
+
+    this.weather = weather;
+    this.playerDelayed = playerDelayed;
+  }
+
+  start() {
+    if (this.weather.isDamaging()) {
+      const inflictDamage = (pokemon: Pokemon) => {
+        this.scene.unshiftPhase(new MessagePhase(this.scene, getWeatherDamageMessage(this.weather.weatherType, pokemon)));
+        pokemon.damage(Math.ceil(pokemon.getMaxHp() / 16));
+        this.scene.unshiftPhase(new DamagePhase(this.scene, pokemon.isPlayer()));
+      };
+
+      const playerPokemon = this.scene.getPlayerPokemon();
+      const enemyPokemon = this.scene.getEnemyPokemon();
+
+      const playerImmune = !!playerPokemon.getTypes().filter(t => this.weather.isTypeDamageImmune(t)).length;
+      const enemyImmune = !!playerPokemon.getTypes().filter(t => this.weather.isTypeDamageImmune(t)).length;
+
+      if (!this.playerDelayed && !playerImmune)
+        inflictDamage(playerPokemon);
+      if (!enemyImmune)
+        inflictDamage(enemyPokemon);
+      if (this.playerDelayed && !playerImmune)
+        inflictDamage(playerPokemon);
+    }
+
+    this.scene.ui.showText(getWeatherEffectMessage(this.weather.weatherType), null, () => super.start());
+  }
+}
+
 export class MessagePhase extends BattlePhase {
   private text: string;
   private callbackDelay: integer;
@@ -1059,7 +1120,10 @@ export class MessagePhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.ui.showText(this.text, null, () => this.end(), this.callbackDelay || (this.prompt ? 0 : 1500), this.prompt);
+    if (this.text)
+      this.scene.ui.showText(this.text, null, () => this.end(), this.callbackDelay || (this.prompt ? 0 : 1500), this.prompt);
+    else
+      this.end();
   }
 }
 

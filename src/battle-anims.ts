@@ -1,7 +1,7 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
 import BattleScene from "./battle-scene";
 import { ChargeAttr, Moves, allMoves } from "./move";
-import Pokemon, { EnemyPokemon, PlayerPokemon } from "./pokemon";
+import Pokemon from "./pokemon";
 import * as Utils from "./utils";
 //import fs from 'vite-plugin-fs/browser';
 
