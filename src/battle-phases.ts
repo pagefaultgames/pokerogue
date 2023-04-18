@@ -72,6 +72,8 @@ export class EncounterPhase extends BattlePhase {
     const enemyPokemon = this.scene.getEnemyPokemon();
     enemyPokemon.resetSummonData();
 
+    this.scene.gameData.setPokemonSeen(enemyPokemon);
+
     console.log(enemyPokemon.species.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
 
     enemyPokemon.loadAssets().then(() => {
@@ -1258,8 +1260,7 @@ export class LevelUpPhase extends PartyMemberPokemonPhase {
     const prevStats = pokemon.stats.slice(0);
     pokemon.calculateStats();
     pokemon.updateInfo();
-    this.scene.pauseBgm();
-    this.scene.sound.play('level_up_fanfare');
+    this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
     this.scene.ui.showText(`${this.getPokemon().name} grew to\nLV. ${this.level}!`, null, () => this.scene.ui.getMessageHandler().promptLevelUpStats(prevStats, false, () => this.end()), null, true);
     const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
     for (let lm of levelMoves)
@@ -1267,7 +1268,6 @@ export class LevelUpPhase extends PartyMemberPokemonPhase {
     const evolution = pokemon.getEvolution();
     if (evolution)
       this.scene.unshiftPhase(new EvolutionPhase(this.scene, this.partyMemberIndex, evolution, this.lastLevel));
-    this.scene.time.delayedCall(1500, () => this.scene.resumeBgm());
   }
 }
 
@@ -1307,10 +1307,8 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
         loadMoveAnimAssets(this.scene, [ this.moveId ], true)
           .then(() => {
             this.scene.ui.setMode(messageMode).then(() => {
-              this.scene.pauseBgm();
-              this.scene.sound.play('level_up_fanfare');
+              this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
               this.scene.ui.showText(`${pokemon.name} learned\n${Utils.toPokemonUpperCase(move.name)}!`, null, () => this.end(), messageMode === Mode.EVOLUTION_SCENE ? 1000 : null, true);
-              this.scene.time.delayedCall(1500, () => this.scene.resumeBgm());
             });
           });
         });
@@ -1548,28 +1546,30 @@ export class AttemptCapturePhase extends BattlePhase {
         else
           end();
       };
-      if (this.scene.getParty().length === 6) {
-        const promptRelease = () => {
-          this.scene.ui.showText(`Your party is full.\nRelease a POKéMON to make room for ${pokemon.name}?`, null, () => {
-            this.scene.ui.setMode(Mode.CONFIRM, () => {
-              this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, (slotIndex: integer, _option: PartyOption) => {
-                this.scene.ui.setMode(Mode.MESSAGE).then(() => {
-                  if (slotIndex < 6)
-                    addToParty();
-                  else
-                    promptRelease();
+      this.scene.gameData.setPokemonCaught(pokemon).then(() => {
+        if (this.scene.getParty().length === 6) {
+          const promptRelease = () => {
+            this.scene.ui.showText(`Your party is full.\nRelease a POKéMON to make room for ${pokemon.name}?`, null, () => {
+              this.scene.ui.setMode(Mode.CONFIRM, () => {
+                this.scene.ui.setMode(Mode.PARTY, PartyUiMode.RELEASE, (slotIndex: integer, _option: PartyOption) => {
+                  this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+                    if (slotIndex < 6)
+                      addToParty();
+                    else
+                      promptRelease();
+                  });
                 });
+              }, () => {
+                this.scene.ui.setMode(Mode.MESSAGE);
+                pokemon.hp = 0;
+                end();
               });
-            }, () => {
-              this.scene.ui.setMode(Mode.MESSAGE);
-              pokemon.hp = 0;
-              end();
             });
-          });
-        };
-        promptRelease();
-      } else
-        addToParty();
+          };
+          promptRelease();
+        } else
+          addToParty();
+      });
     }, 0, true);
   }
 

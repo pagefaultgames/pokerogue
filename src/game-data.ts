@@ -1,8 +1,15 @@
 import BattleScene from "./battle-scene";
 import { Gender } from "./gender";
+import Pokemon from "./pokemon";
 import PokemonSpecies, { allSpecies } from "./pokemon-species";
 import { Species } from "./species";
 import * as Utils from "./utils";
+
+interface SaveData {
+  trainerId: integer;
+  secretId: integer;
+  dexData: DexData;
+}
 
 export interface DexData {
   [key: integer]: DexData | DexEntry
@@ -13,7 +20,7 @@ export interface DexEntry {
   caught: boolean;
 }
 
-export interface StarterDexEntry {
+export interface DexEntryDetails {
   shiny: boolean;
   formIndex: integer;
   female: boolean;
@@ -28,7 +35,7 @@ export interface StarterDexUnlockTree {
   entry: DexEntry
 }
 
-export class SaveData {
+export class GameData {
   private scene: BattleScene;
 
   public trainerId: integer;
@@ -39,19 +46,38 @@ export class SaveData {
   constructor(scene: BattleScene) {
     this.scene = scene;
     this.trainerId = Utils.randInt(65536);
-    this.secretId = Utils.randInt(65536)
-    this.initDexData();
+    this.secretId = Utils.randInt(65536);
+    if (!this.load())
+      this.initDexData();
   }
 
-  save() {
+  private save(): boolean {
+    const data: SaveData = {
+      trainerId: this.trainerId,
+      secretId: this.secretId,
+      dexData: this.dexData
+    };
 
+    localStorage.setItem('data', btoa(JSON.stringify(data)));
+
+    return true;
   }
 
-  load() {
+  private load(): boolean {
+    if (!localStorage.getItem('data'))
+      return false;
 
+    const data = JSON.parse(atob(localStorage.getItem('data'))) as SaveData;
+    console.log(data);
+
+    this.trainerId = data.trainerId;
+    this.secretId = data.secretId;
+    this.dexData = data.dexData;
+
+    return true;
   }
 
-  initDexData() {
+  private initDexData() {
     const data: DexData = {};
 
     const initDexSubData = (dexData: DexData, count: integer): DexData[] => {
@@ -68,7 +94,7 @@ export class SaveData {
     const initDexEntries = (dexData: DexData, count: integer): DexEntry[] => {
       const ret: DexEntry[] = [];
       for (let i = 0; i < count; i++) {
-        const entry: DexEntry = { seen: true, caught: true };
+        const entry: DexEntry = { seen: false, caught: false };
         dexData[i] = entry;
         ret.push(entry);
       }
@@ -98,20 +124,46 @@ export class SaveData {
       let entry = data[ds][0][Gender.MALE] as DexEntry;
       entry.seen = true;
       entry.caught = true;
-
-      entry = data[ds][0][Gender.FEMALE] as DexEntry;
-      entry.seen = true;
-      entry.caught = true;
-
-      entry = data[ds][1][Gender.FEMALE] as DexEntry;
-      entry.seen = true;
-      entry.caught = true;
     }
+
+    data[Species.SHAYMIN][1][1].caught = true;
 
     this.dexData = data;
   }
 
-  getDexEntry(species: PokemonSpecies, shiny: boolean, formIndex: integer, female: boolean) : DexEntry {
+  setPokemonSeen(pokemon: Pokemon): void {
+    const dexEntry = this.getPokemonDexEntry(pokemon);
+    if (!dexEntry.seen) {
+      dexEntry.seen = true;
+      this.save();
+    }
+  }
+
+  setPokemonCaught(pokemon: Pokemon): Promise<void> {
+    return new Promise(resolve => {
+      const dexEntry = this.getPokemonDexEntry(pokemon);
+      if (!dexEntry.caught) {
+        const newCatch = !this.getDefaultDexEntry(pokemon.species);
+
+        dexEntry.caught = true;
+        this.save();
+
+        if (newCatch && !pokemon.species.getPrevolutionLevels(true).length) {
+          this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
+          this.scene.ui.showText(`${pokemon.name} has been\nadded as a starter!`, null, () => resolve(), null, true);
+          return;
+        }
+      }
+
+      resolve();
+    });
+  }
+
+  getPokemonDexEntry(pokemon: Pokemon) {
+    return this.getDexEntry(pokemon.species, pokemon.shiny, pokemon.formIndex, pokemon.gender === Gender.FEMALE);
+  }
+
+  getDexEntry(species: PokemonSpecies, shiny: boolean, formIndex: integer, female: boolean): DexEntry {
     const shinyIndex = !shiny ? 0 : 1;
     const genderIndex = !female ? 0 : 1;
     const data = this.dexData[species.speciesId];
@@ -124,7 +176,7 @@ export class SaveData {
     return data[shinyIndex] as DexEntry;
   }
 
-  getDefaultStarterDexEntry(species: PokemonSpecies, forceShiny?: boolean, forceFormIndex?: integer, forceFemale?: boolean): StarterDexEntry {
+  getDefaultDexEntry(species: PokemonSpecies, forceShiny?: boolean, forceFormIndex?: integer, forceFemale?: boolean): DexEntryDetails {
     const hasForms = !!species.forms?.length;
     let shiny = false;
     let formIndex = 0;
@@ -166,7 +218,7 @@ export class SaveData {
     traverseData(this.dexData[species.speciesId] as DexData, 0);
 
     if (entry) {
-      return { 
+      return {
         shiny: shiny,
         formIndex: formIndex,
         female: female,

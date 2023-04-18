@@ -103,7 +103,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const rand1 = Utils.binToDec(Utils.decToBin(this.id).substring(0, 16));
       const rand2 = Utils.binToDec(Utils.decToBin(this.id).substring(16, 32));
 
-      const E = this.scene.saveData.trainerId ^ this.scene.saveData.secretId;
+      const E = this.scene.gameData.trainerId ^ this.scene.gameData.secretId;
       const F = rand1 ^ rand2;
 
       if (this.shiny === undefined) {
@@ -777,7 +777,7 @@ export default interface Pokemon {
 export class PlayerPokemon extends Pokemon {
   public compatibleTms: Moves[];
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, formIndex: integer, gender: Gender, shiny: boolean, dataSource?: Pokemon) {
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, formIndex: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon) {
     super(scene, 106, 148, species, level, formIndex, gender, shiny, dataSource);
 
     this.getSpeciesForm().generateIconAnim(scene, this.gender === Gender.FEMALE, formIndex);
@@ -816,6 +816,8 @@ export class PlayerPokemon extends Pokemon {
       this.getSpeciesForm().generateIconAnim(this.scene, this.gender === Gender.FEMALE, this.formIndex);
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
+      this.scene.gameData.setPokemonSeen(this);
+      this.scene.gameData.setPokemonCaught(this);
       this.loadAssets().then(() => {
         this.calculateStats();
         this.updateInfo().then(() => resolve());

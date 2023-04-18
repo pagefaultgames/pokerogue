@@ -14,7 +14,7 @@ import { initCommonAnims, loadCommonAnimAssets, populateAnims } from './battle-a
 import { BattlePhase } from './battle-phase';
 import { initGameSpeed } from './game-speed';
 import { Arena } from './arena';
-import { SaveData } from './data';
+import { GameData } from './game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 
 const enableAuto = true;
@@ -41,7 +41,7 @@ export default class BattleScene extends Phaser.Scene {
 	public gameSpeed: integer = 1;
 	public quickStart: boolean;
 
-	public saveData: SaveData;
+	public gameData: GameData;
 
 	private phaseQueue: BattlePhase[];
 	private phaseQueuePrepend: BattlePhase[];
@@ -68,6 +68,7 @@ export default class BattleScene extends Phaser.Scene {
 	//public spritePipeline: SpritePipeline;
 
 	private bgm: Phaser.Sound.BaseSound;
+	private bgmResumeTimer: Phaser.Time.TimerEvent;
 	
 	private buttonKeys: Phaser.Input.Keyboard.Key[][];
 
@@ -76,7 +77,7 @@ export default class BattleScene extends Phaser.Scene {
 	constructor() {
 		super('battle');
 
-		this.saveData = new SaveData(this);
+		this.gameData = new GameData(this);
 		
 		this.phaseQueue = [];
 		this.phaseQueuePrepend = [];
@@ -135,6 +136,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('numbers', 'ui');
 		this.loadAtlas('overlay_hp', 'ui');
 		this.loadImage('overlay_exp', 'ui');
+		this.loadImage('icon_owned', 'ui');
 		this.loadImage('level_up_stats', 'ui');
 		this.loadImage('ball_window', 'ui');
 		this.loadImage('boolean_window', 'ui');
@@ -519,6 +521,18 @@ export default class BattleScene extends Phaser.Scene {
 
 	fadeOutBgm(destroy?: boolean): void {
 		this.arena.fadeOutBgm(500, destroy);
+	}
+
+	playSoundWithoutBgm(soundName: string, pauseDuration?: integer): void {
+		this.pauseBgm();
+		this.sound.play(soundName);
+		const sound = this.sound.get(soundName);
+		if (this.bgmResumeTimer)
+			this.bgmResumeTimer.destroy();
+		this.bgmResumeTimer = this.time.delayedCall((pauseDuration || (sound.totalDuration * 1000)), () => {
+			this.resumeBgm();
+			this.bgmResumeTimer = null;
+		});
 	}
 
 	getCurrentPhase(): BattlePhase {

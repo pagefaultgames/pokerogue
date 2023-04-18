@@ -5,7 +5,8 @@ import { TextStyle, addTextObject } from "../text";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import MessageUiHandler from "./message-ui-handler";
-import { StarterDexEntry, StarterDexUnlockTree } from "../data";
+import { DexEntryDetails, StarterDexUnlockTree } from "../game-data";
+import { Gender, getGenderColor, getGenderSymbol } from "../gender";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -22,6 +23,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private pokemonNumberText: Phaser.GameObjects.Text;
     private pokemonSprite: Phaser.GameObjects.Sprite;
     private pokemonNameText: Phaser.GameObjects.Text;
+    private pokemonGenderText: Phaser.GameObjects.Text;
     private instructionsText: Phaser.GameObjects.Text;
     private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
 
@@ -37,7 +39,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private starterGens: integer[] = [];
     private starterCursors: integer[] = [];
     private starterDetails: [boolean, integer, boolean][] = [];
-    private speciesStarterDexEntry: StarterDexEntry;
+    private speciesStarterDexEntry: DexEntryDetails;
     private speciesStarterDexTree: StarterDexUnlockTree;
     private canCycleShiny: boolean;
     private canCycleForm: boolean;
@@ -78,6 +80,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonNameText = addTextObject(this.scene, 6, 112, '', TextStyle.SUMMARY);
       this.pokemonNameText.setOrigin(0, 0);
       this.starterSelectContainer.add(this.pokemonNameText);
+
+      this.pokemonGenderText = addTextObject(this.scene, 96, 112, '', TextStyle.SUMMARY);
+      this.pokemonGenderText.setOrigin(0, 0);
+      this.starterSelectContainer.add(this.pokemonGenderText);
 
       const genText = addTextObject(this.scene, 115, 6, 'I\nII\nIII\nIV\nV', TextStyle.WINDOW);
       genText.setLineSpacing(16);
@@ -121,7 +127,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             continue;
           this.speciesLoaded.set(species.speciesId, false);
           this.genSpecies[g].push(species);
-          const dexEntry = this.scene.saveData.getDefaultStarterDexEntry(species);
+          const dexEntry = this.scene.gameData.getDefaultDexEntry(species);
           species.generateIconAnim(this.scene, dexEntry?.female, dexEntry?.formIndex);
           const x = (s % 9) * 18;
           const y = Math.floor(s / 9) * 18;
@@ -259,6 +265,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 });
               }
               success = true;
+              this.updateInstructions();
             } else
               ui.playError();
           }
@@ -266,6 +273,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (this.starterCursors.length) {
             this.popStarter();
             success = true;
+            this.updateInstructions();
           } else
             ui.playError();
         } else {
@@ -275,16 +283,24 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           switch (button) {
             case Button.CYCLE_SHINY:
               if (this.canCycleShiny) {
-                this.setSpeciesDetails(this.lastSpecies, !this.shinyCursor, this.formCursor, !!this.genderCursor);
+                this.setSpeciesDetails(this.lastSpecies, !this.shinyCursor, undefined, undefined);
+                if (this.shinyCursor)
+                  this.scene.sound.play('sparkle');
+                else
+                  success = true;
               }
               break;
             case Button.CYCLE_FORM:
-              if (this.canCycleForm)
-                this.setSpeciesDetails(this.lastSpecies, !!this.shinyCursor, (this.formCursor + 1) % this.lastSpecies.forms.length, !!this.genderCursor);
+              if (this.canCycleForm) {
+                this.setSpeciesDetails(this.lastSpecies, undefined, (this.formCursor + 1) % this.lastSpecies.forms.length, undefined);
+                success = true;
+              }
               break;
             case Button.CYCLE_GENDER:
-              if (this.canCycleGender)
-                this.setSpeciesDetails(this.lastSpecies, !!this.shinyCursor, this.formCursor, !this.genderCursor);
+              if (this.canCycleGender) {
+                this.setSpeciesDetails(this.lastSpecies, undefined, undefined, !this.genderCursor);
+                success = true;
+              }
               break;
             case Button.UP:
               if (row)
@@ -382,11 +398,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     setSpecies(species: PokemonSpecies) {
-      this.speciesStarterDexEntry = species ? this.scene.saveData.getDefaultStarterDexEntry(species) : null;
-      this.speciesStarterDexTree = this.speciesStarterDexEntry ? this.scene.saveData.getStarterDexUnlockTree(species) : null;
+      this.speciesStarterDexEntry = species ? this.scene.gameData.getDefaultDexEntry(species) : null;
+      this.speciesStarterDexTree = this.speciesStarterDexEntry ? this.scene.gameData.getStarterDexUnlockTree(species) : null;
 
       if (this.lastSpecies) {
-        const defaultStarterDexEntry = this.scene.saveData.getDefaultStarterDexEntry(this.lastSpecies);
+        const defaultStarterDexEntry = this.scene.gameData.getDefaultDexEntry(this.lastSpecies);
         const lastSpeciesIcon = (this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(this.genSpecies[this.lastSpecies.generation - 1].indexOf(this.lastSpecies)) as Phaser.GameObjects.Sprite);
         lastSpeciesIcon.play(this.lastSpecies.getIconKey(!!defaultStarterDexEntry?.female, defaultStarterDexEntry?.formIndex)).stop();
       }
@@ -416,26 +432,26 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.pokemonSprite.setVisible(false);
 
+      if (this.assetLoadCancelled) {
+        this.assetLoadCancelled.value = true;
+        this.assetLoadCancelled = null;
+      }
+
       if (species) {
-        const defaultDexEntry = this.scene.saveData.getDefaultStarterDexEntry(species, shiny, formIndex, female);
-        const dexEntry = this.scene.saveData.getDexEntry(species, !!this.shinyCursor, this.formCursor, !!this.genderCursor);
+        const defaultDexEntry = this.scene.gameData.getDefaultDexEntry(species, shiny, formIndex, female) || this.scene.gameData.getDefaultDexEntry(species);
+        const dexEntry = this.scene.gameData.getDexEntry(species, !!this.shinyCursor, this.formCursor, !!this.genderCursor);
 
         if (!dexEntry.caught) {
-          if (shiny === undefined)
+          if (shiny === undefined || (defaultDexEntry && shiny !== defaultDexEntry.shiny))
             shiny = defaultDexEntry.shiny;
-          if (formIndex === undefined)
-            formIndex = defaultDexEntry.formIndex;
-          if (female === undefined)
+          if (formIndex === undefined || (defaultDexEntry && formIndex !== defaultDexEntry.formIndex))
+            formIndex = defaultDexEntry.formIndex || 0;
+          if (female === undefined || (defaultDexEntry && female !== defaultDexEntry.female))
             female = defaultDexEntry.female;
         } else {
           shiny = !!this.shinyCursor;
           formIndex = this.formCursor;
           female = !!this.genderCursor;
-        }
-
-        if (this.assetLoadCancelled) {
-          this.assetLoadCancelled.value = true;
-          this.assetLoadCancelled = null;
         }
 
         if (this.speciesStarterDexTree) {
@@ -451,7 +467,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.pokemonSprite.setVisible(true);
           });
 
-          species.generateIconAnim(this.scene, this.speciesStarterDexEntry.female, this.speciesStarterDexEntry.formIndex);
+          species.generateIconAnim(this.scene, female, formIndex);
           (this.starterSelectGenIconContainers[this.genCursor].getAt(this.cursor) as Phaser.GameObjects.Sprite).play(species.getIconKey(female, formIndex));
 
           let count: integer;
@@ -484,9 +500,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           } else
             this.canCycleGender = false;
         }
-      } else {
-        
-      }
+
+        if (species.malePercent !== null) {
+          const gender = !female ? Gender.MALE : Gender.FEMALE;
+          this.pokemonGenderText.setText(getGenderSymbol(gender));
+          this.pokemonGenderText.setColor(getGenderColor(gender));
+          this.pokemonGenderText.setShadowColor(getGenderColor(gender, true));
+        } else
+          this.pokemonGenderText.setText('');
+      } else
+        this.pokemonGenderText.setText('');
 
       this.updateInstructions();
     }

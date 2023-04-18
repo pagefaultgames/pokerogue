@@ -4,6 +4,7 @@ import * as Utils from './utils';
 import { addTextObject, TextStyle } from './text';
 import { getGenderSymbol, getGenderColor } from './gender';
 import { StatusEffect } from './status-effect';
+import BattleScene from './battle-scene';
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private player: boolean;
@@ -18,6 +19,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
   private nameText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
+  private ownedIcon: Phaser.GameObjects.Image;
   private statusIndicator: Phaser.GameObjects.Sprite;
   private levelContainer: Phaser.GameObjects.Container;
   private hpBar: Phaser.GameObjects.Image;
@@ -52,6 +54,14 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.genderText.setOrigin(0, 0);
     this.genderText.setPositionRelative(this.nameText, 0, 2);
     this.add(this.genderText);
+
+    if (!this.player) {
+      this.ownedIcon = this.scene.add.image(0, 0, 'icon_owned');
+      this.ownedIcon.setVisible(false);
+      this.ownedIcon.setOrigin(0, 0);
+      this.ownedIcon.setPositionRelative(this.nameText, 0, 11.5);
+      this.add(this.ownedIcon);
+    }
 
     this.statusIndicator = this.scene.add.sprite(0, 0, 'statuses');
     this.statusIndicator.setVisible(false);
@@ -97,6 +107,13 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.genderText.setColor(getGenderColor(pokemon.gender));
     this.genderText.setPositionRelative(this.nameText, nameTextWidth, 0);
 
+    if (!this.player) {
+      const speciesOwned = !!pokemon.scene.gameData.getDefaultDexEntry(pokemon.species)?.entry?.caught;
+      this.ownedIcon.setVisible(speciesOwned);
+      if (!pokemon.scene.gameData.getPokemonDexEntry(pokemon).caught)
+        this.ownedIcon.setTint(0x808080);
+    }
+
     this.hpBar.setScale(pokemon.getHpRatio(), 1);
     if (this.player)
       this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
@@ -138,6 +155,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         if (this.lastStatus !== StatusEffect.NONE)
           this.statusIndicator.setFrame(StatusEffect[this.lastStatus].toLowerCase());
         this.statusIndicator.setVisible(!!this.lastStatus);
+        
+        if (!this.player && this.ownedIcon.visible)
+          this.ownedIcon.setAlpha(this.statusIndicator.visible ? 0 : 1);
       }
 
       const updatePokemonHp = () => {
