@@ -471,31 +471,38 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           (this.starterSelectGenIconContainers[this.genCursor].getAt(this.cursor) as Phaser.GameObjects.Sprite).play(species.getIconKey(female, formIndex));
 
           let count: integer;
-          const calcUnlockedCount = (tree: StarterDexUnlockTree, root?: boolean) => {
-            if (root)
+          let values: any[];
+          const calcUnlockedCount = (tree: StarterDexUnlockTree, prop: string, root?: boolean) => {
+            if (root) {
               count = 0;
+              values = [];
+            }
             if (!tree.entry) {
               for (let key of tree[tree.key].keys())
-                calcUnlockedCount(tree[tree.key].get(key));
-            } else if (tree.entry.caught)
-              count++;
+                calcUnlockedCount(tree[tree.key].get(key), prop);
+            } else if (tree.entry.caught) {
+              if (values.indexOf(tree[prop]) === -1) {
+                values.push(tree[prop]);
+                count++;
+              }
+            }
           };
 
           let tree = this.speciesStarterDexTree;
 
-          calcUnlockedCount(tree, true);
+          calcUnlockedCount(tree, 'shiny', true);
           this.canCycleShiny = count > 1;
           tree = (tree.shiny as Map<boolean, StarterDexUnlockTree>).get(!!this.shinyCursor);
 
           if (this.lastSpecies.forms?.length) {
-            calcUnlockedCount(tree, true);
+            calcUnlockedCount(tree, 'formIndex', true);
             this.canCycleForm = count > 1;
             tree = (tree.formIndex as Map<integer, StarterDexUnlockTree>).get(this.formCursor);
           } else
             this.canCycleForm = false;
 
           if (this.lastSpecies.malePercent !== null) {
-            calcUnlockedCount(tree, true);
+            calcUnlockedCount(tree, 'female', true);
             this.canCycleGender = count > 1;
           } else
             this.canCycleGender = false;
