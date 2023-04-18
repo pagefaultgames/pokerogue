@@ -563,13 +563,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.summonData.tags.filter(t => tagFilter(t));
   }
 
-  lapseTag(tagType: BattleTagType): void {
+  lapseTag(tagType: BattleTagType): boolean {
     const tags = this.summonData.tags;
     const tag = tags.find(t => t.tagType === tagType);
     if (tag && !(tag.lapse(this, BattleTagLapseType.CUSTOM))) {
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
     }
+    return !!tag;
   }
 
   lapseTags(lapseType: BattleTagLapseType): void {
@@ -582,7 +583,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getLastXMoves(turnCount?: integer): TurnMove[] {
     const moveHistory = this.summonData.moveHistory;
-    return moveHistory.slice(Math.max(moveHistory.length - (turnCount || 1), 0), moveHistory.length).reverse();
+    return moveHistory.slice(turnCount >= 0 ? Math.max(moveHistory.length - (turnCount || 1), 0) : 0, moveHistory.length).reverse();
   }
 
   cry(soundConfig?: Phaser.Types.Sound.SoundConfig): integer {
@@ -688,6 +689,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   resetBattleSummonData(): void {
     this.battleSummonData = new PokemonBattleSummonData();
+    if (this.getTag(BattleTagType.SEEDED))
+      this.lapseTag(BattleTagType.SEEDED);
   }
 
   resetTurnData(): void {
@@ -992,7 +995,7 @@ export enum MoveResult {
   OTHER
 };
 
-export type DamageResult = MoveResult.EFFECTIVE | MoveResult.SUPER_EFFECTIVE | MoveResult.NOT_VERY_EFFECTIVE;
+export type DamageResult = MoveResult.EFFECTIVE | MoveResult.SUPER_EFFECTIVE | MoveResult.NOT_VERY_EFFECTIVE | MoveResult.OTHER;
 
 export class PokemonMove {
   public moveId: Moves;

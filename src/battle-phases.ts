@@ -1,7 +1,7 @@
 import BattleScene from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr } from "./move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveFlags, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr } from "./move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
@@ -17,7 +17,6 @@ import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./battle-stat";
 import { Biome, biomeLinks } from "./biome";
 import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier-type";
-import PokemonSpecies from "./pokemon-species";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattleTagLapseType, BattleTagType, HideSpriteTag as HiddenTag } from "./battle-tag";
 import { getPokemonMessage } from "./messages";
@@ -487,8 +486,8 @@ export class CommandPhase extends BattlePhase {
         success = true;
         break;
       case Command.RUN:
-        //this.scene.unshiftPhase(new MoveAnimTestPhase(this.scene, [ Moves.SING, Moves.FISSURE, Moves.GROWL, Moves.AROMATHERAPY, Moves.PERISH_SONG ]));
-        //success = true;
+        this.scene.unshiftPhase(new MoveAnimTestPhase(this.scene, [ Moves.TELEPORT ]));
+        success = true;
         break;
     }
 
@@ -635,9 +634,10 @@ export abstract class MovePhase extends BattlePhase {
 
       const failed = new Utils.BooleanHolder(false);
       applyMoveAttrs(ConditionalMoveAttr, this.pokemon, target, this.move.getMove(), failed);
-      if (failed.value)
+      if (failed.value) {
+        this.pokemon.summonData.moveHistory.push({ move: this.move.moveId, result: MoveResult.FAILED });
         this.scene.unshiftPhase(new MessagePhase(this.scene, 'But it failed!'));
-      else
+      } else
         this.scene.unshiftPhase(this.getEffectPhase());
       
       this.end();
@@ -760,14 +760,16 @@ abstract class MoveEffectPhase extends PokemonPhase {
         this.end();
         return;
       }
+
+      const isProtected = !this.move.getMove().hasFlag(MoveFlags.IGNORE_PROTECT) && target.lapseTag(BattleTagType.PROTECTED);
       
       new MoveAnim(this.move.getMove().id as Moves, user, target).play(this.scene, () => {
-        const result = target.apply(user, this.move);
+        const result = !isProtected ? target.apply(user, this.move) : MoveResult.NO_EFFECT;
         ++user.turnData.hitCount;
         user.summonData.moveHistory.push({ move: this.move.moveId, result: result });
         applyMoveAttrs(MoveEffectAttr, user, target, this.move.getMove());
         // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
-        if (target.hp && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
+        if (!isProtected && target.hp && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
           applyMoveAttrs(MoveHitEffectAttr, user, target, this.move.getMove());
         this.end();
       });
@@ -789,7 +791,8 @@ abstract class MoveEffectPhase extends PokemonPhase {
   }
 
   hitCheck(): boolean {
-    // Check if not self targeting for this
+    if (this.move.getMove().selfTarget)
+      return true;
 
     const hiddenTag = this.getTargetPokemon().getTag(HiddenTag);
     if (hiddenTag) {
@@ -1075,7 +1078,6 @@ export class MessagePhase extends BattlePhase {
 }
 
 export class DamagePhase extends PokemonPhase {
-  private damage: integer;
   private damageResult: DamageResult;
 
   constructor(scene: BattleScene, player: boolean, damageResult?: DamageResult) {
@@ -1099,16 +1101,19 @@ export class DamagePhase extends PokemonPhase {
         break;
     }
 
-    const flashTimer = this.scene.time.addEvent({
-      delay: 100,
-      repeat: 5,
-      startAt: 200,
-      callback: () => {
-        this.getPokemon().getSprite().setVisible(flashTimer.repeatCount % 2 === 0);
-        if (!flashTimer.repeatCount)
-          this.getPokemon().updateInfo().then(() => this.end());
-      }
-    });
+    if (this.damageResult !== MoveResult.OTHER) {
+      const flashTimer = this.scene.time.addEvent({
+        delay: 100,
+        repeat: 5,
+        startAt: 200,
+        callback: () => {
+          this.getPokemon().getSprite().setVisible(flashTimer.repeatCount % 2 === 0);
+          if (!flashTimer.repeatCount)
+            this.getPokemon().updateInfo().then(() => this.end());
+        }
+      });
+    } else
+      this.getPokemon().updateInfo().then(() => this.end());
   }
 }
 

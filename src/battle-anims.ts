@@ -299,7 +299,7 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
     execute(scene: BattleScene, moveAnim: MoveAnim): integer {
         const tweenProps = {};
         if (this.bgX !== undefined)
-            tweenProps['x'] = (this.bgX * 0.5);
+            tweenProps['x'] = (this.bgX * 0.5) - 320;
         if (this.bgY !== undefined)
             tweenProps['y'] = (this.bgY * 0.5) - 284;
         if (this.opacity !== undefined)
@@ -327,7 +327,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     execute(scene: BattleScene, moveAnim: MoveAnim): integer {
         if (moveAnim.bgSprite)
             moveAnim.bgSprite.destroy();
-        moveAnim.bgSprite = scene.add.tileSprite(this.bgX, this.bgY - 284, 768, 576, this.resourceName);
+        moveAnim.bgSprite = scene.add.tileSprite(this.bgX - 320, this.bgY - 284, 896, 576, this.resourceName);
         moveAnim.bgSprite.setOrigin(0, 0);
         moveAnim.bgSprite.setScale(1.25);
         moveAnim.bgSprite.setAlpha(0);
@@ -604,14 +604,11 @@ export abstract class BattleAnim {
                             target.setPosition(targetInitialX + frame.x / (!isReverseCoords ? 2 : -2), targetInitialY + frame.y / (!isOppAnim ? 2 : -2));
                             break;
                         case AnimFrameTarget.GRAPHIC:
-                            let isNewSprite = false;
-
                             if (g === sprites.length) {
                                 const newSprite = scene.add.sprite(0, 0, anim.graphic, 1);
                                 sprites.push(newSprite);
                                 scene.field.add(newSprite);
                                 spritePriorities.push(1);
-                                isNewSprite = true;
                             }
                             
                             const graphicIndex = g++;
@@ -770,11 +767,18 @@ export class MoveAnim extends BattleAnim {
     }
 
     isOppAnim(): boolean {
-        return !this.user.isPlayer() && Array.isArray(moveAnims.get(this.move));
+        const ret = !this.user.isPlayer() && Array.isArray(moveAnims.get(this.move));
+
+        switch (this.move) {
+            case Moves.TELEPORT:
+                return !ret;
+        }
+
+        return ret;
     }
 
     isReverseCoords(): boolean {
-        return !this.user.isPlayer() && !this.isOppAnim();
+        return !this.user.isPlayer() === !this.isOppAnim();
     }
 
     getGraphicScale(): number {

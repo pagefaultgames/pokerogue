@@ -1,5 +1,5 @@
-import { CommonAnim } from "./battle-anims";
-import { CommonAnimPhase, DamagePhase, MessagePhase, MovePhase } from "./battle-phases";
+import { CommonAnim, CommonBattleAnim } from "./battle-anims";
+import { CommonAnimPhase, DamagePhase, MessagePhase, MovePhase, PokemonHealPhase } from "./battle-phases";
 import { getPokemonMessage } from "./messages";
 import Pokemon from "./pokemon";
 import { Stat } from "./pokemon-stat";
@@ -9,8 +9,10 @@ export enum BattleTagType {
   NONE,
   FLINCHED,
   CONFUSED,
+  SEEDED,
   NIGHTMARE,
   FRENZY,
+  PROTECTED,
   FLYING,
   UNDERGROUND,
   BYPASS_SLEEP,
@@ -50,7 +52,7 @@ export class BattleTag {
 
 export class FlinchedTag extends BattleTag {
   constructor() {
-    super(BattleTagType.FLINCHED, BattleTagLapseType.MOVE, 1);
+    super(BattleTagType.FLINCHED, BattleTagLapseType.MOVE, 0);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
@@ -115,6 +117,34 @@ export class ConfusedTag extends PseudoStatusTag {
   }
 }
 
+export class SeedTag extends PseudoStatusTag {
+  constructor() {
+    super(BattleTagType.SEEDED, BattleTagLapseType.AFTER_MOVE, 1);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+    
+    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' was seeded!')));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
+    console.trace(lapseType);
+    const ret = lapseType !== BattleTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+
+    if (ret) {
+      pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, !pokemon.isPlayer(), CommonAnim.LEECH_SEED));
+
+      const damage = Math.max(Math.floor(pokemon.getMaxHp() / 8), 1);
+      pokemon.hp = Math.max(pokemon.hp - damage, 0);
+      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.isPlayer()));
+      pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, !pokemon.isPlayer(), damage, getPokemonMessage(pokemon, '\'s health is\nsapped by LEECH SEED!'), false, true));
+    }
+    
+    return ret;
+  }
+}
+
 export class NightmareTag extends PseudoStatusTag {
   constructor() {
     super(BattleTagType.NIGHTMARE, BattleTagLapseType.AFTER_MOVE, 1);
@@ -123,21 +153,20 @@ export class NightmareTag extends PseudoStatusTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
     
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' began\nhaving a nightmare!')));
+    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' began\nhaving a NIGHTMARE!')));
   }
 
   onOverlap(pokemon: Pokemon): void {
     super.onOverlap(pokemon);
 
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' is\nalready locked in a nightmare!')));
+    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' is\nalready locked in a NIGHTMARE!')));
   }
 
   lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
-    console.trace(lapseType);
     const ret = lapseType !== BattleTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret) {
-      pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' is locked\nin a nightmare!')));
+      pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' is locked\nin a NIGHTMARE!')));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.isPlayer(), CommonAnim.CURSE)); // TODO: Update animation type
 
       const damage = Math.ceil(pokemon.getMaxHp() / 4);
@@ -146,6 +175,29 @@ export class NightmareTag extends PseudoStatusTag {
     }
     
     return ret;
+  }
+}
+
+export class ProtectedTag extends BattleTag {
+  constructor() {
+    super(BattleTagType.PROTECTED, BattleTagLapseType.CUSTOM, 0);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, '\nprotected itself!')));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
+    console.log(pokemon, BattleTagLapseType[lapseType]);
+    if (lapseType === BattleTagLapseType.CUSTOM) {
+      new CommonBattleAnim(CommonAnim.PROTECT, pokemon).play(pokemon.scene);
+      pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, '\nprotected itself!')));
+      return true;
+    }
+
+    return super.lapse(pokemon, lapseType);
   }
 }
 
@@ -174,11 +226,14 @@ export function getBattleTag(tagType: BattleTagType, turnCount: integer): Battle
   switch (tagType) {
     case BattleTagType.FLINCHED:
       return new FlinchedTag();
-      break;
     case BattleTagType.CONFUSED:
       return new ConfusedTag(turnCount);
+    case BattleTagType.SEEDED:
+      return new SeedTag();
     case BattleTagType.NIGHTMARE:
       return new NightmareTag();
+    case BattleTagType.PROTECTED:
+      return new ProtectedTag();
     case BattleTagType.FLYING:
     case BattleTagType.UNDERGROUND:
       return new HideSpriteTag(tagType, turnCount);
