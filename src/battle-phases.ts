@@ -486,8 +486,8 @@ export class CommandPhase extends BattlePhase {
         success = true;
         break;
       case Command.RUN:
-        this.scene.unshiftPhase(new MoveAnimTestPhase(this.scene, [ Moves.TELEPORT ]));
-        success = true;
+        //this.scene.unshiftPhase(new MoveAnimTestPhase(this.scene, [ Moves.TELEPORT ]));
+        //success = true;
         break;
     }
 
