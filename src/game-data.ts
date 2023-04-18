@@ -127,8 +127,6 @@ export class GameData {
       entry.caught = true;
     }
 
-    data[Species.SHAYMIN][1][1].caught = true;
-
     this.dexData = data;
   }
 
