@@ -417,19 +417,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  hideInfo() {
-    if (this.battleInfo.visible) {
-      this.scene.tweens.add({
-        targets: this.battleInfo,
-        x: this.isPlayer() ? '+=150' : '-=150',
-        duration: 500,
-        ease: 'Sine.easeIn',
-        onComplete: () => {
-          this.battleInfo.setVisible(false);
-          this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : -150));
-        }
-      });
-    }
+  hideInfo(): Promise<void> {
+    return new Promise(resolve => {
+      if (this.battleInfo.visible) {
+        this.scene.tweens.add({
+          targets: this.battleInfo,
+          x: this.isPlayer() ? '+=150' : '-=150',
+          duration: 500,
+          ease: 'Sine.easeIn',
+          onComplete: () => {
+            this.battleInfo.setVisible(false);
+            this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : -150));
+            resolve();
+          }
+        });
+      } else
+        resolve();
+    });
   }
 
   updateInfo(instant?: boolean): Promise<void> {
@@ -459,7 +463,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.scene.applyModifiers(AttackTypeBoosterModifier, source, power);
         const critChance = new Utils.IntegerHolder(16);
         applyMoveAttrs(HighCritAttr, source, this, move, critChance);
-        const isCritical = Utils.randInt(critChance.value) === 0;
+        let isCritical = Utils.randInt(critChance.value) === 0;
         const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
         const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
         const stabMultiplier = source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1;
@@ -476,6 +480,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
         if (damage && fixedDamage.value) {
           damage = fixedDamage.value;
+          isCritical = false;
           result = MoveResult.EFFECTIVE;
         }
 

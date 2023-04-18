@@ -1,5 +1,5 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { EnemyMovePhase, MessagePhase, ObtainStatusEffectPhase, PlayerMovePhase, PokemonHealPhase, StatChangePhase } from "./battle-phases";
+import { DamagePhase, EnemyMovePhase, MessagePhase, ObtainStatusEffectPhase, PlayerMovePhase, PokemonHealPhase, StatChangePhase } from "./battle-phases";
 import { BattleStat } from "./battle-stat";
 import { BattleTagType, ProtectedTag } from "./battle-tag";
 import { getPokemonMessage } from "./messages";
@@ -705,6 +705,56 @@ export class FixedDamageAttr extends MoveAttr {
 
     return true;
   }
+
+  getDamage(): integer {
+    return this.damage;
+  }
+}
+
+export class UserHpDamageAttr extends FixedDamageAttr {
+  constructor() {
+    super(0);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value = user.hp;
+
+    return true;
+  }
+}
+
+export class RecoilAttr extends MoveEffectAttr {
+  constructor() {
+    super(true);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    const recoilDamage = Math.max(Math.floor(user.turnData.damageDealt / 4), 1);
+    user.damage(recoilDamage);
+    user.scene.unshiftPhase(new DamagePhase(user.scene, user.isPlayer(), MoveResult.OTHER));
+    user.scene.unshiftPhase(new MessagePhase(user.scene, getPokemonMessage(user, ' is hit\nwith recoil!')));
+
+    return true;
+  }
+}
+
+export class SacrificialAttr extends MoveEffectAttr {
+  constructor() {
+    super(true);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    user.damage(user.getMaxHp());
+    user.scene.unshiftPhase(new DamagePhase(user.scene, user.isPlayer(), MoveResult.OTHER));
+
+    return true;
+  }
 }
 
 export enum MultiHitType {
@@ -1263,10 +1313,10 @@ export const allMoves = [
   new AttackMove(Moves.TACKLE, "Tackle", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, "", -1, 0, 1),
   new AttackMove(Moves.BODY_SLAM, "Body Slam", Type.NORMAL, MoveCategory.PHYSICAL, 85, 100, 15, 66, "May paralyze opponent.", 30, 0, 1, new StatusEffectAttr(StatusEffect.PARALYSIS)),
   new AttackMove(Moves.WRAP, "Wrap", Type.NORMAL, MoveCategory.PHYSICAL, 15, 90, 20, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 1),
-  new AttackMove(Moves.TAKE_DOWN, "Take Down", Type.NORMAL, MoveCategory.PHYSICAL, 90, 85, 20, 1, "User receives recoil damage.", -1, 0, 1),
+  new AttackMove(Moves.TAKE_DOWN, "Take Down", Type.NORMAL, MoveCategory.PHYSICAL, 90, 85, 20, 1, "User receives recoil damage.", -1, 0, 1, new RecoilAttr()),
   new AttackMove(Moves.THRASH, "Thrash", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, "User attacks for 2-3 turns but then becomes confused.", -1, 0, 1,
     new FrenzyAttr(), frenzyMissFunc, new ConfuseAttr(true)), // TODO: Update to still confuse if last hit misses
-  new AttackMove(Moves.DOUBLE_EDGE, "Double-Edge", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, "User receives recoil damage.", -1, 0, 1),
+  new AttackMove(Moves.DOUBLE_EDGE, "Double-Edge", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, "User receives recoil damage.", -1, 0, 1, new RecoilAttr()),
   new StatusMove(Moves.TAIL_WHIP, "Tail Whip", Type.NORMAL, 100, 30, -1, "Lowers opponent's Defense.", -1, 0, 1, new StatChangeAttr(BattleStat.DEF, -1)),
   new AttackMove(Moves.POISON_STING, "Poison Sting", Type.POISON, MoveCategory.PHYSICAL, 15, 100, 35, -1, "May poison the opponent.", 30, 0, 1, new StatusEffectAttr(StatusEffect.POISON)),
   new AttackMove(Moves.TWINEEDLE, "Twineedle", Type.BUG, MoveCategory.PHYSICAL, 25, 100, 20, -1, "Hits twice in one turn. May poison opponent.", 20, 0, 1, new MultiHitAttr(MultiHitType._2), new StatusEffectAttr(StatusEffect.POISON)),
@@ -1294,7 +1344,7 @@ export const allMoves = [
   new AttackMove(Moves.HYPER_BEAM, "Hyper Beam", Type.NORMAL, MoveCategory.SPECIAL, 150, 90, 5, 163, "User must recharge next turn.", -1, 0, 1),
   new AttackMove(Moves.PECK, "Peck", Type.FLYING, MoveCategory.PHYSICAL, 35, 100, 35, -1, "", -1, 0, 1),
   new AttackMove(Moves.DRILL_PECK, "Drill Peck", Type.FLYING, MoveCategory.PHYSICAL, 80, 100, 20, -1, "", -1, 0, 1),
-  new AttackMove(Moves.SUBMISSION, "Submission", Type.FIGHTING, MoveCategory.PHYSICAL, 80, 80, 20, -1, "User receives recoil damage.", -1, 0, 1),
+  new AttackMove(Moves.SUBMISSION, "Submission", Type.FIGHTING, MoveCategory.PHYSICAL, 80, 80, 20, -1, "User receives recoil damage.", -1, 0, 1, new RecoilAttr()),
   new AttackMove(Moves.LOW_KICK, "Low Kick", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, 12, "The heavier the opponent, the stronger the attack.", -1, 0, 1),
   new AttackMove(Moves.COUNTER, "Counter", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, "When hit by a Physical Attack, user strikes back with 2x power.", -1, -5, 1),
   new AttackMove(Moves.SEISMIC_TOSS, "Seismic Toss", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, "Inflicts damage equal to user's level.", -1, 0, 1),
@@ -1353,7 +1403,7 @@ export const allMoves = [
   new AttackMove(Moves.BIDE, "Bide", Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 10, -1, "User takes damage for two turns then strikes back double.", -1, 0, 1),
   new SelfStatusMove(Moves.METRONOME, "Metronome", Type.NORMAL, -1, 10, 80, "User performs almost any move in the game at random.", -1, 0, 1, new RandomMoveAttr()),
   new SelfStatusMove(Moves.MIRROR_MOVE, "Mirror Move", Type.FLYING, -1, 20, -1, "User performs the opponent's last move.", -1, 0, 1),
-  new AttackMove(Moves.SELF_DESTRUCT, "Self-Destruct", Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, "User faints.", -1, 0, 1),
+  new AttackMove(Moves.SELF_DESTRUCT, "Self-Destruct", Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, "User faints.", -1, 0, 1, new SacrificialAttr()),
   new AttackMove(Moves.EGG_BOMB, "Egg Bomb", Type.NORMAL, MoveCategory.PHYSICAL, 100, 75, 10, -1, "", -1, 0, 1),
   new AttackMove(Moves.LICK, "Lick", Type.GHOST, MoveCategory.PHYSICAL, 30, 100, 30, -1, "May paralyze opponent.", 30, 0, 1, new StatusEffectAttr(StatusEffect.PARALYSIS)),
   new AttackMove(Moves.SMOG, "Smog", Type.POISON, MoveCategory.SPECIAL, 30, 70, 20, -1, "May poison opponent.", 40, 0, 1, new StatusEffectAttr(StatusEffect.POISON)),
@@ -1393,7 +1443,7 @@ export const allMoves = [
   new SelfStatusMove(Moves.SPLASH, "Splash", Type.NORMAL, -1, 40, -1, "Doesn't do ANYTHING.", -1, 0, 1),
   new SelfStatusMove(Moves.ACID_ARMOR, "Acid Armor", Type.POISON, -1, 20, -1, "Sharply raises user's Defense.", -1, 0, 1, new StatChangeAttr(BattleStat.DEF, 2, true)),
   new AttackMove(Moves.CRABHAMMER, "Crabhammer", Type.WATER, MoveCategory.PHYSICAL, 100, 90, 10, -1, "High critical hit ratio.", -1, 0, 1, new HighCritAttr()),
-  new AttackMove(Moves.EXPLOSION, "Explosion", Type.NORMAL, MoveCategory.PHYSICAL, 250, 100, 5, -1, "User faints.", -1, 0, 1),
+  new AttackMove(Moves.EXPLOSION, "Explosion", Type.NORMAL, MoveCategory.PHYSICAL, 250, 100, 5, -1, "User faints.", -1, 0, 1, new SacrificialAttr()),
   new AttackMove(Moves.FURY_SWIPES, "Fury Swipes", Type.NORMAL, MoveCategory.PHYSICAL, 18, 80, 15, -1, "Hits 2-5 times in one turn.", -1, 0, 1, new MultiHitAttr()),
   new AttackMove(Moves.BONEMERANG, "Bonemerang", Type.GROUND, MoveCategory.PHYSICAL, 50, 90, 10, -1, "Hits twice in one turn.", -1, 0, 1, new MultiHitAttr(MultiHitType._2)),
   new SelfStatusMove(Moves.REST, "Rest", Type.PSYCHIC, -1, 5, 85, "User sleeps for 2 turns, but user is fully healed.", -1, 0, 1,
@@ -1517,7 +1567,7 @@ export const allMoves = [
   new StatusMove(Moves.FLATTER, "Flatter", Type.DARK, 100, 15, -1, "Confuses opponent, but raises its Special Attack.", -1, 0, 3, new StatChangeAttr(BattleStat.SPATK, 1), new ConfuseAttr()),
   new StatusMove(Moves.WILL_O_WISP, "Will-O-Wisp", Type.FIRE, 85, 15, 107, "Burns opponent.", -1, 0, 3, new StatusEffectAttr(StatusEffect.BURN)),
   new StatusMove(Moves.MEMENTO, "Memento", Type.DARK, 100, 10, -1, "User faints, sharply lowers opponent's Attack and Special Attack.", -1, 0, 3,
-    new StatChangeAttr([ BattleStat.ATK, BattleStat.SPATK ], -2)), // TODO
+    new SacrificialAttr(), new StatChangeAttr([ BattleStat.ATK, BattleStat.SPATK ], -2)), // TODO
   new AttackMove(Moves.FACADE, "Facade", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 25, "Power doubles if user is burned, poisoned, or paralyzed.", -1, 0, 3),
   new AttackMove(Moves.FOCUS_PUNCH, "Focus Punch", Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, "If the user is hit before attacking, it flinches instead.", -1, -3, 3),
   new AttackMove(Moves.SMELLING_SALTS, "Smelling Salts", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 10, -1, "Power doubles if opponent is paralyzed, but cures it.", -1, 0, 3),
@@ -1607,7 +1657,7 @@ export const allMoves = [
   new AttackMove(Moves.POISON_TAIL, "Poison Tail", Type.POISON, MoveCategory.PHYSICAL, 50, 100, 25, 26, "High critical hit ratio. May poison opponent.", 10, 0, 3, new HighCritAttr(), new StatusEffectAttr(StatusEffect.POISON)),
   new AttackMove(Moves.COVET, "Covet", Type.NORMAL, MoveCategory.PHYSICAL, 60, 100, 25, -1, "Opponent's item is stolen by the user.", -1, 0, 3),
   new AttackMove(Moves.VOLT_TACKLE, "Volt Tackle", Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 15, -1, "User receives recoil damage. May paralyze opponent.", 10, 0, 3,
-    new StatusEffectAttr(StatusEffect.PARALYSIS)), // TODO
+    new RecoilAttr(), new StatusEffectAttr(StatusEffect.PARALYSIS)),
   new AttackMove(Moves.MAGICAL_LEAF, "Magical Leaf", Type.GRASS, MoveCategory.SPECIAL, 60, 999, 20, 33, "Ignores Accuracy and Evasiveness.", -1, 0, 3),
   new SelfStatusMove(Moves.WATER_SPORT, "Water Sport", Type.WATER, -1, 15, -1, "Weakens the power of Fire-type moves.", -1, 0, 3),
   new SelfStatusMove(Moves.CALM_MIND, "Calm Mind", Type.PSYCHIC, -1, 20, 129, "Raises user's Special Attack and Special Defense.", -1, 0, 3,
@@ -1627,7 +1677,7 @@ export const allMoves = [
   new AttackMove(Moves.WAKE_UP_SLAP, "Wake-Up Slap", Type.FIGHTING, MoveCategory.PHYSICAL, 70, 100, 10, -1, "Power doubles if opponent is asleep, but wakes it up.", -1, 0, 4),
   new AttackMove(Moves.HAMMER_ARM, "Hammer Arm", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 90, 10, -1, "Lowers user's Speed.", 100, 0, 4, new StatChangeAttr(BattleStat.SPD, -1, true)),
   new AttackMove(Moves.GYRO_BALL, "Gyro Ball", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "The slower the user, the stronger the attack.", -1, 0, 4),
-  new SelfStatusMove(Moves.HEALING_WISH, "Healing Wish", Type.PSYCHIC, -1, 10, -1, "The user faints and the next Pokémon released is fully healed.", -1, 0, 4),
+  new SelfStatusMove(Moves.HEALING_WISH, "Healing Wish", Type.PSYCHIC, -1, 10, -1, "The user faints and the next Pokémon released is fully healed.", -1, 0, 4, new SacrificialAttr()), // TODO
   new AttackMove(Moves.BRINE, "Brine", Type.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, "Power doubles if opponent's HP is less than 50%.", -1, 0, 4),
   new AttackMove(Moves.NATURAL_GIFT, "Natural Gift", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, "Power and type depend on the user's held berry.", -1, 0, 4),
   new AttackMove(Moves.FEINT, "Feint", Type.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, "Only hits if opponent uses Protect or Detect in the same turn.", -1, 2, 4,
@@ -1662,7 +1712,8 @@ export const allMoves = [
   new StatusMove(Moves.HEART_SWAP, "Heart Swap", Type.PSYCHIC, -1, 10, -1, "Stat changes are swapped with the opponent.", -1, 0, 4),
   new SelfStatusMove(Moves.AQUA_RING, "Aqua Ring", Type.WATER, -1, 20, -1, "Restores a little HP each turn.", -1, 0, 4),
   new SelfStatusMove(Moves.MAGNET_RISE, "Magnet Rise", Type.ELECTRIC, -1, 10, -1, "User becomes immune to Ground-type moves for 5 turns.", -1, 0, 4),
-  new AttackMove(Moves.FLARE_BLITZ, "Flare Blitz", Type.FIRE, MoveCategory.PHYSICAL, 120, 100, 15, 165, "User receives recoil damage. May burn opponent.", 10, 0, 4, new StatusEffectAttr(StatusEffect.BURN)), // TODO
+  new AttackMove(Moves.FLARE_BLITZ, "Flare Blitz", Type.FIRE, MoveCategory.PHYSICAL, 120, 100, 15, 165, "User receives recoil damage. May burn opponent.", 10, 0, 4,
+    new RecoilAttr(), new StatusEffectAttr(StatusEffect.BURN)),
   new AttackMove(Moves.FORCE_PALM, "Force Palm", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, "May paralyze opponent.", 30, 0, 4, new StatusEffectAttr(StatusEffect.PARALYSIS)),
   new AttackMove(Moves.AURA_SPHERE, "Aura Sphere", Type.FIGHTING, MoveCategory.SPECIAL, 80, 999, 20, 112, "Ignores Accuracy and Evasiveness.", -1, 0, 4),
   new SelfStatusMove(Moves.ROCK_POLISH, "Rock Polish", Type.ROCK, -1, 20, -1, "Sharply raises user's Speed.", -1, 0, 4, new StatChangeAttr(BattleStat.SPD, 2, true)),
@@ -1681,7 +1732,7 @@ export const allMoves = [
   new AttackMove(Moves.VACUUM_WAVE, "Vacuum Wave", Type.FIGHTING, MoveCategory.SPECIAL, 40, 100, 30, -1, "User attacks first.", -1, 0, 4),
   new AttackMove(Moves.FOCUS_BLAST, "Focus Blast", Type.FIGHTING, MoveCategory.SPECIAL, 120, 70, 5, 158, "May lower opponent's Special Defense.", 10, 0, 4, new StatChangeAttr(BattleStat.SPDEF, -1)),
   new AttackMove(Moves.ENERGY_BALL, "Energy Ball", Type.GRASS, MoveCategory.SPECIAL, 90, 100, 10, 119, "May lower opponent's Special Defense.", 10, 0, 4, new StatChangeAttr(BattleStat.SPDEF, -1)),
-  new AttackMove(Moves.BRAVE_BIRD, "Brave Bird", Type.FLYING, MoveCategory.PHYSICAL, 120, 100, 15, 164, "User receives recoil damage.", -1, 0, 4),
+  new AttackMove(Moves.BRAVE_BIRD, "Brave Bird", Type.FLYING, MoveCategory.PHYSICAL, 120, 100, 15, 164, "User receives recoil damage.", -1, 0, 4, new RecoilAttr()),
   new AttackMove(Moves.EARTH_POWER, "Earth Power", Type.GROUND, MoveCategory.SPECIAL, 90, 100, 10, 133, "May lower opponent's Special Defense.", 10, 0, 4, new StatChangeAttr(BattleStat.SPDEF, -1)),
   new StatusMove(Moves.SWITCHEROO, "Switcheroo", Type.DARK, 100, 10, -1, "Swaps held items with the opponent.", -1, 0, 4),
   new AttackMove(Moves.GIGA_IMPACT, "Giga Impact", Type.NORMAL, MoveCategory.PHYSICAL, 150, 90, 5, 152, "User must recharge next turn.", -1, 0, 4),
@@ -1721,17 +1772,17 @@ export const allMoves = [
   new AttackMove(Moves.JUDGMENT, "Judgment", Type.NORMAL, MoveCategory.SPECIAL, 100, 100, 10, -1, "Type depends on the Arceus Plate being held.", -1, 0, 4),
   new AttackMove(Moves.BUG_BITE, "Bug Bite", Type.BUG, MoveCategory.PHYSICAL, 60, 100, 20, -1, "Receives the effect from the opponent's held berry.", -1, 0, 4),
   new AttackMove(Moves.CHARGE_BEAM, "Charge Beam", Type.ELECTRIC, MoveCategory.SPECIAL, 50, 90, 10, 23, "May raise user's Special Attack.", 70, 0, 4, new StatChangeAttr(BattleStat.SPATK, 1, true)),
-  new AttackMove(Moves.WOOD_HAMMER, "Wood Hammer", Type.GRASS, MoveCategory.PHYSICAL, 120, 100, 15, -1, "User receives recoil damage.", -1, 0, 4),
+  new AttackMove(Moves.WOOD_HAMMER, "Wood Hammer", Type.GRASS, MoveCategory.PHYSICAL, 120, 100, 15, -1, "User receives recoil damage.", -1, 0, 4, new RecoilAttr()),
   new AttackMove(Moves.AQUA_JET, "Aqua Jet", Type.WATER, MoveCategory.PHYSICAL, 40, 100, 20, -1, "User attacks first.", -1, 1, 4),
   new AttackMove(Moves.ATTACK_ORDER, "Attack Order", Type.BUG, MoveCategory.PHYSICAL, 90, 100, 15, -1, "High critical hit ratio.", -1, 0, 4, new HighCritAttr()),
   new SelfStatusMove(Moves.DEFEND_ORDER, "Defend Order", Type.BUG, -1, 10, -1, "Raises user's Defense and Special Defense.", -1, 0, 4,
     new StatChangeAttr([ BattleStat.DEF, BattleStat.SPDEF ], 1, true)),
   new SelfStatusMove(Moves.HEAL_ORDER, "Heal Order", Type.BUG, -1, 10, -1, "User recovers half its max HP.", -1, 0, 4, new HealAttr(0.5)),
-  new AttackMove(Moves.HEAD_SMASH, "Head Smash", Type.ROCK, MoveCategory.PHYSICAL, 150, 80, 5, -1, "User receives recoil damage.", -1, 0, 4),
+  new AttackMove(Moves.HEAD_SMASH, "Head Smash", Type.ROCK, MoveCategory.PHYSICAL, 150, 80, 5, -1, "User receives recoil damage.", -1, 0, 4, new RecoilAttr()),
   new AttackMove(Moves.DOUBLE_HIT, "Double Hit", Type.NORMAL, MoveCategory.PHYSICAL, 35, 90, 10, -1, "Hits twice in one turn.", -1, 0, 4, new MultiHitAttr(MultiHitType._2)),
   new AttackMove(Moves.ROAR_OF_TIME, "Roar of Time", Type.DRAGON, MoveCategory.SPECIAL, 150, 90, 5, -1, "User must recharge next turn.", -1, 0, 4),
   new AttackMove(Moves.SPACIAL_REND, "Spacial Rend", Type.DRAGON, MoveCategory.SPECIAL, 100, 95, 5, -1, "High critical hit ratio.", -1, 0, 4, new HighCritAttr()),
-  new SelfStatusMove(Moves.LUNAR_DANCE, "Lunar Dance", Type.PSYCHIC, -1, 10, -1, "The user faints but the next Pokémon released is fully healed.", -1, 0, 4),
+  new SelfStatusMove(Moves.LUNAR_DANCE, "Lunar Dance", Type.PSYCHIC, -1, 10, -1, "The user faints but the next Pokémon released is fully healed.", -1, 0, 4, new SacrificialAttr()), // TODO
   new AttackMove(Moves.CRUSH_GRIP, "Crush Grip", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "More powerful when opponent has higher HP.", -1, 0, 4),
   new AttackMove(Moves.MAGMA_STORM, "Magma Storm", Type.FIRE, MoveCategory.SPECIAL, 100, 75, 5, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 4),
   new StatusMove(Moves.DARK_VOID, "Dark Void", Type.DARK, 50, 10, -1, "Puts all adjacent opponents to sleep.", -1, 0, 4, new StatusEffectAttr(StatusEffect.SLEEP)),
@@ -1793,7 +1844,7 @@ export const allMoves = [
   new AttackMove(Moves.ACROBATICS, "Acrobatics", Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, 14, "Stronger when the user does not have a held item.", -1, 0, 5),
   new StatusMove(Moves.REFLECT_TYPE, "Reflect Type", Type.NORMAL, -1, 15, -1, "User becomes the target's type.", -1, 0, 5),
   new AttackMove(Moves.RETALIATE, "Retaliate", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 5, -1, "Inflicts double damage if a teammate fainted on the last turn.", -1, 0, 5),
-  new AttackMove(Moves.FINAL_GAMBIT, "Final Gambit", Type.FIGHTING, MoveCategory.SPECIAL, -1, 100, 5, -1, "Inflicts damage equal to the user's remaining HP. User faints.", -1, 0, 5),
+  new AttackMove(Moves.FINAL_GAMBIT, "Final Gambit", Type.FIGHTING, MoveCategory.SPECIAL, -1, 100, 5, -1, "Inflicts damage equal to the user's remaining HP. User faints.", -1, 0, 5, new UserHpDamageAttr(), new SacrificialAttr()),
   new StatusMove(Moves.BESTOW, "Bestow", Type.NORMAL, -1, 15, -1, "Gives the user's held item to the target.", -1, 0, 5).ignoreProtect(),
   new AttackMove(Moves.INFERNO, "Inferno", Type.FIRE, MoveCategory.SPECIAL, 100, 50, 5, -1, "Burns opponent.", 100, 0, 5, new StatusEffectAttr(StatusEffect.BURN)),
   new AttackMove(Moves.WATER_PLEDGE, "Water Pledge", Type.WATER, MoveCategory.SPECIAL, 80, 100, 10, 145, "Added effects appear if preceded by Fire Pledge or succeeded by Grass Pledge.", -1, 0, 5),
@@ -1807,7 +1858,7 @@ export const allMoves = [
   new SelfStatusMove(Moves.WORK_UP, "Work Up", Type.NORMAL, -1, 30, -1, "Raises user's Attack and Special Attack.", -1, 0, 5,
     new StatChangeAttr([ BattleStat.ATK, BattleStat.SPATK ], 1, true)),
   new AttackMove(Moves.ELECTROWEB, "Electroweb", Type.ELECTRIC, MoveCategory.SPECIAL, 55, 95, 15, -1, "Lowers opponent's Speed.", 100, 0, 5, new StatChangeAttr(BattleStat.SPD, -1)),
-  new AttackMove(Moves.WILD_CHARGE, "Wild Charge", Type.ELECTRIC, MoveCategory.PHYSICAL, 90, 100, 15, 147, "User receives recoil damage.", -1, 0, 5),
+  new AttackMove(Moves.WILD_CHARGE, "Wild Charge", Type.ELECTRIC, MoveCategory.PHYSICAL, 90, 100, 15, 147, "User receives recoil damage.", -1, 0, 5, new RecoilAttr()),
   new AttackMove(Moves.DRILL_RUN, "Drill Run", Type.GROUND, MoveCategory.PHYSICAL, 80, 95, 10, 106, "High critical hit ratio.", -1, 0, 5, new HighCritAttr()),
   new AttackMove(Moves.DUAL_CHOP, "Dual Chop", Type.DRAGON, MoveCategory.PHYSICAL, 40, 90, 15, -1, "Hits twice in one turn.", -1, 0, 5, new MultiHitAttr(MultiHitType._2)),
   new AttackMove(Moves.HEART_STAMP, "Heart Stamp", Type.PSYCHIC, MoveCategory.PHYSICAL, 60, 100, 25, -1, "May cause flinching.", 30, 0, 5, new FlinchAttr()),
@@ -1822,7 +1873,7 @@ export const allMoves = [
   new AttackMove(Moves.PSYSTRIKE, "Psystrike", Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 10, -1, "Inflicts damage based on the target's Defense, not Special Defense.", -1, 0, 5),
   new AttackMove(Moves.TAIL_SLAP, "Tail Slap", Type.NORMAL, MoveCategory.PHYSICAL, 25, 85, 10, -1, "Hits 2-5 times in one turn.", -1, 0, 5, new MultiHitAttr()),
   new AttackMove(Moves.HURRICANE, "Hurricane", Type.FLYING, MoveCategory.SPECIAL, 110, 70, 10, 160, "May confuse opponent.", 30, 0, 5, new ThunderAccuracyAttr(), new ConfuseAttr()),
-  new AttackMove(Moves.HEAD_CHARGE, "Head Charge", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, "User receives recoil damage.", -1, 0, 5),
+  new AttackMove(Moves.HEAD_CHARGE, "Head Charge", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, "User receives recoil damage.", -1, 0, 5, new RecoilAttr()),
   new AttackMove(Moves.GEAR_GRIND, "Gear Grind", Type.STEEL, MoveCategory.PHYSICAL, 50, 85, 15, -1, "Hits twice in one turn.", -1, 0, 5, new MultiHitAttr(MultiHitType._2)),
   new AttackMove(Moves.SEARING_SHOT, "Searing Shot", Type.FIRE, MoveCategory.SPECIAL, 100, 100, 5, -1, "May burn opponent.", 30, 0, 5, new StatusEffectAttr(StatusEffect.BURN)),
   new AttackMove(Moves.TECHNO_BLAST, "Techno Blast", Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, "Type depends on the Drive being held.", -1, 0, 5),

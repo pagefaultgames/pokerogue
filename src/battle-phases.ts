@@ -1188,7 +1188,7 @@ export class VictoryPhase extends PokemonPhase {
         this.scene.unshiftPhase(new ExpPhase(this.scene, pm, expValue * expMultiplier));
       }
     }
-    this.scene.unshiftPhase(new SelectModifierPhase(this.scene));
+    this.scene.pushPhase(new SelectModifierPhase(this.scene));
     this.scene.newBattle();
 
     this.end();
@@ -1537,7 +1537,6 @@ export class AttemptCapturePhase extends BattlePhase {
     const pokemon = this.scene.getEnemyPokemon();
     this.scene.unshiftPhase(new VictoryPhase(this.scene));
     this.scene.ui.showText(`${pokemon.name} was caught!`, null, () => {
-      pokemon.hideInfo();
       const end = () => {
         this.removePb();
         this.end();
@@ -1551,7 +1550,7 @@ export class AttemptCapturePhase extends BattlePhase {
         else
           end();
       };
-      this.scene.gameData.setPokemonCaught(pokemon).then(() => {
+      Promise.all([ pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon) ]).then(() => {
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
             this.scene.ui.showText(`Your party is full.\nRelease a POKéMON to make room for ${pokemon.name}?`, null, () => {

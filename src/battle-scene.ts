@@ -409,10 +409,10 @@ export default class BattleScene extends Phaser.Scene {
 		if (this.currentBattle) {
 			this.getEnemyPokemon().destroy();
 			if (this.currentBattle.waveIndex % 10)
-				this.unshiftPhase(new NextEncounterPhase(this));
+				this.pushPhase(new NextEncounterPhase(this));
 			else {
-				this.unshiftPhase(new SelectBiomePhase(this));
-				this.unshiftPhase(new NewBiomeEncounterPhase(this));
+				this.pushPhase(new SelectBiomePhase(this));
+				this.pushPhase(new NewBiomeEncounterPhase(this));
 			}
 		} else {
 			if (!this.quickStart) {
