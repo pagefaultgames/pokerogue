@@ -1,6 +1,7 @@
 import BattleScene from "./battle-scene";
 import { Gender } from "./gender";
 import Pokemon from "./pokemon";
+import { pokemonPrevolutions } from "./pokemon-evolutions";
 import PokemonSpecies, { allSpecies } from "./pokemon-species";
 import { Species } from "./species";
 import * as Utils from "./utils";
@@ -148,7 +149,7 @@ export class GameData {
         dexEntry.caught = true;
         this.save();
 
-        if (newCatch && !pokemon.species.getPrevolutionLevels(true).length) {
+        if (newCatch && !pokemonPrevolutions.hasOwnProperty(pokemon.species.speciesId)) {
           this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
           this.scene.ui.showText(`${pokemon.name} has been\nadded as a starter!`, null, () => resolve(), null, true);
           return;

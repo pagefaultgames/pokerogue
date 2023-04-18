@@ -534,11 +534,15 @@ export class TurnEndPhase extends BattlePhase {
     const playerPokemon = this.scene.getPlayerPokemon();
     const enemyPokemon = this.scene.getEnemyPokemon();
 
-    playerPokemon.lapseTags(BattleTagLapseType.TURN_END);
-    enemyPokemon.lapseTags(BattleTagLapseType.TURN_END);
+    if (playerPokemon) {
+      playerPokemon.lapseTags(BattleTagLapseType.TURN_END);
+      playerPokemon.battleSummonData.turnCount++;
+    }
 
-    playerPokemon.battleSummonData.turnCount++;
-    enemyPokemon.battleSummonData.turnCount++;
+    if (enemyPokemon) {
+      enemyPokemon.lapseTags(BattleTagLapseType.TURN_END);
+      enemyPokemon.battleSummonData.turnCount++;
+    }
 
     this.end();
   }
@@ -691,7 +695,7 @@ export abstract class MovePhase extends BattlePhase {
   }
 
   end() {
-    if (!this.followUp)
+    if (!this.followUp && this.canMove())
       this.scene.unshiftPhase(new MoveEndPhase(this.scene, this.pokemon.isPlayer()));
 
     super.end();

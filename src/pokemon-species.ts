@@ -1,6 +1,7 @@
 import { Abilities } from './abilities';
 import BattleScene from './battle-scene';
 import { GrowthRate } from './exp';
+import { EnemyPokemon } from './pokemon';
 import { pokemonEvolutions } from './pokemon-evolutions';
 import { Species } from './species';
 import { Type } from './type';
@@ -259,38 +260,32 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
 
     if (pokemonEvolutions.hasOwnProperty(this.speciesId)) {
       for (let e of pokemonEvolutions[this.speciesId]) {
-        const condition = e.condition;
-        if (!condition || typeof(condition) === 'string' || !condition.applyToWild || condition.predicate(this)) {
-          const speciesId = e.speciesId;
-          const level = e.level;
-          evolutionLevels.push([ speciesId, level ]);
-          //console.log(Species[speciesId], getPokemonSpecies(speciesId), getPokemonSpecies(speciesId).getEvolutionLevels());
-          const nextEvolutionLevels = getPokemonSpecies(speciesId).getEvolutionLevels();
-          for (let npl of nextEvolutionLevels)
-            evolutionLevels.push(npl);
-        }
+        const speciesId = e.speciesId;
+        const level = e.level;
+        evolutionLevels.push([ speciesId, level ]);
+        //console.log(Species[speciesId], getPokemonSpecies(speciesId), getPokemonSpecies(speciesId).getEvolutionLevels());
+        const nextEvolutionLevels = getPokemonSpecies(speciesId).getEvolutionLevels();
+        for (let npl of nextEvolutionLevels)
+          evolutionLevels.push(npl);
       }
     }
 
     return evolutionLevels;
   }
 
-  getPrevolutionLevels(ignoreConditions?: boolean) {
+  getPrevolutionLevels() {
     const prevolutionLevels = [];
 
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
     for (let p of allEvolvingPokemon) {
       for (let e of pokemonEvolutions[p]) {
         if (e.speciesId === this.speciesId) {
-          const condition = e.condition;
-          if (ignoreConditions || !condition || typeof(condition) === 'string' || !condition.applyToWild || condition.predicate(this)) {
-            const speciesId = parseInt(p) as Species;
-            let level = e.level;
-            prevolutionLevels.push([ speciesId, level ]);
-            const subPrevolutionLevels = getPokemonSpecies(speciesId).getPrevolutionLevels();
-            for (let spl of subPrevolutionLevels)
-              prevolutionLevels.push(spl);
-          }
+          const speciesId = parseInt(p) as Species;
+          let level = e.level;
+          prevolutionLevels.push([ speciesId, level ]);
+          const subPrevolutionLevels = getPokemonSpecies(speciesId).getPrevolutionLevels();
+          for (let spl of subPrevolutionLevels)
+            prevolutionLevels.push(spl);
         }
       }
     }

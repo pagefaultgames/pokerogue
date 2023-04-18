@@ -61,7 +61,7 @@ export class Arena {
       
       ret = getPokemonSpecies(species);
     }
-    const newSpeciesId = ret.getSpeciesForLevel(5);
+    const newSpeciesId = ret.getSpeciesForLevel(level);
     if (newSpeciesId !== ret.speciesId) {
       console.log('Replaced', Species[ret.speciesId], 'with', Species[newSpeciesId]);
       ret = getPokemonSpecies(newSpeciesId);

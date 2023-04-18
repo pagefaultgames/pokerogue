@@ -7,6 +7,7 @@ import * as Utils from "../utils";
 import MessageUiHandler from "./message-ui-handler";
 import { DexEntryDetails, StarterDexUnlockTree } from "../game-data";
 import { Gender, getGenderColor, getGenderSymbol } from "../gender";
+import { pokemonPrevolutions } from "../pokemon-evolutions";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -123,7 +124,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.genSpecies.push([]);
 
         for (let species of allSpecies) {
-          if (species.getPrevolutionLevels(true).length || species.generation !== g + 1)
+          if (pokemonPrevolutions.hasOwnProperty(species.speciesId) || species.generation !== g + 1)
             continue;
           this.speciesLoaded.set(species.speciesId, false);
           this.genSpecies[g].push(species);

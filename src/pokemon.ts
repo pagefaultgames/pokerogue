@@ -14,7 +14,7 @@ import { Gender } from './gender';
 import { initMoveAnim, loadMoveAnimAssets } from './battle-anims';
 import { Status, StatusEffect } from './status-effect';
 import { tmSpecies } from './tms';
-import { pokemonEvolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './pokemon-evolutions';
+import { pokemonEvolutions, pokemonPrevolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './pokemon-evolutions';
 import { DamagePhase, FaintPhase, MessagePhase } from './battle-phases';
 import { BattleStat } from './battle-stat';
 import { BattleTag, BattleTagLapseType, BattleTagType, getBattleTag } from './battle-tag';
@@ -850,6 +850,15 @@ export class EnemyPokemon extends Pokemon {
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer) {
     super(scene, -66, 84, species, level, scene.arena.getFormIndex(species));
+
+    let prevolution: Species;
+    let speciesId = species.speciesId;
+    while ((prevolution = pokemonPrevolutions[speciesId])) {
+      const evolution = pokemonEvolutions[prevolution].find(pe => pe.speciesId === speciesId);
+      if (evolution.condition?.enforceFunc)
+        evolution.condition.enforceFunc(this);
+      speciesId = prevolution;
+    }
 
     this.aiType = AiType.SMART_RANDOM;
   }
