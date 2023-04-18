@@ -14,6 +14,8 @@ import { initCommonAnims, loadCommonAnimAssets, populateAnims } from './battle-a
 import { BattlePhase } from './battle-phase';
 import { initGameSpeed } from './game-speed';
 import { Arena } from './arena';
+import { SaveData } from './data';
+import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 
 const enableAuto = true;
 
@@ -24,6 +26,9 @@ export enum Button {
 	RIGHT,
 	ACTION,
 	CANCEL,
+	CYCLE_SHINY,
+	CYCLE_FORM,
+	CYCLE_GENDER,
 	QUICK_START,
 	RANDOM,
 	AUTO,
@@ -35,6 +40,8 @@ export default class BattleScene extends Phaser.Scene {
 	public auto: boolean;
 	public gameSpeed: integer = 1;
 	public quickStart: boolean;
+
+	public saveData: SaveData;
 
 	private phaseQueue: BattlePhase[];
 	private phaseQueuePrepend: BattlePhase[];
@@ -66,12 +73,11 @@ export default class BattleScene extends Phaser.Scene {
 
 	private blockInput: boolean;
 
-	public trainerId: integer = Utils.randInt(65536);
-	public secretId: integer = Utils.randInt(65536);
-
 	constructor() {
 		super('battle');
 
+		this.saveData = new SaveData(this);
+		
 		this.phaseQueue = [];
 		this.phaseQueuePrepend = [];
 	}
@@ -307,7 +313,7 @@ export default class BattleScene extends Phaser.Scene {
 		if (this.quickStart) {
 			for (let s = 0; s < 3; s++) {
 				const playerSpecies = !isRandom ? getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP) : this.randomSpecies(5);
-				const playerPokemon = new PlayerPokemon(this, playerSpecies, 5);
+				const playerPokemon = new PlayerPokemon(this, playerSpecies, 5, 0);
 				playerPokemon.setVisible(false);
 				loadPokemonAssets.push(playerPokemon.loadAssets());
 
@@ -365,6 +371,9 @@ export default class BattleScene extends Phaser.Scene {
 			[Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
 			[Button.ACTION]: [keyCodes.ENTER, keyCodes.SPACE, keyCodes.Z],
 			[Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.ESC, keyCodes.X],
+			[Button.CYCLE_SHINY]: [keyCodes.R],
+			[Button.CYCLE_FORM]: [keyCodes.F],
+			[Button.CYCLE_GENDER]: [keyCodes.G],
 			[Button.QUICK_START]: [keyCodes.Q],
 			[Button.RANDOM]: [keyCodes.R],
 			[Button.AUTO]: [keyCodes.F2],
@@ -443,6 +452,16 @@ export default class BattleScene extends Phaser.Scene {
 			this.ui.processInput(Button.ACTION);
 		else if (this.isButtonPressed(Button.CANCEL))
 			this.ui.processInput(Button.CANCEL);
+		else if (this.ui?.getHandler() instanceof StarterSelectUiHandler) {
+			if (this.isButtonPressed(Button.CYCLE_SHINY))
+				this.ui.processInput(Button.CYCLE_SHINY);
+			else if (this.isButtonPressed(Button.CYCLE_FORM))
+				this.ui.processInput(Button.CYCLE_FORM);
+			else if (this.isButtonPressed(Button.CYCLE_GENDER))
+				this.ui.processInput(Button.CYCLE_GENDER);
+			else
+				return;
+		}
 		else if (this.isButtonPressed(Button.SPEED_UP)) {
 			if (!this.auto) {
 				if (this.gameSpeed < 2)
@@ -580,8 +599,6 @@ export default class BattleScene extends Phaser.Scene {
 			this.updateModifiers().then(() => resolve());
 		});
 	}
-
-
 
 	updateModifiers(): Promise<void> {
 		return new Promise(resolve => {

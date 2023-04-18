@@ -3,7 +3,7 @@ import BattleScene from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './battle-info';
 import Move, { StatChangeAttr, HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, Moves, allMoves, MoveCategory } from "./move";
 import { pokemonLevelMoves } from './pokemon-level-moves';
-import { default as PokemonSpecies, getPokemonSpecies } from './pokemon-species';
+import { default as PokemonSpecies, PokemonSpeciesForm, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
 import { Type, getTypeDamageMultiplier } from './type';
 import { getLevelTotalExp } from './exp';
@@ -25,6 +25,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
   public name: string;
   public species: PokemonSpecies;
+  public formIndex: integer;
   public shiny: boolean;
   public pokeball: PokeballType;
   protected battleInfo: BattleInfo;
@@ -48,7 +49,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, dataSource?: Pokemon) {
+  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon) {
     super(scene, x, y);
     this.name = Utils.toPokemonUpperCase(species.name);
     this.species = species;
@@ -56,13 +57,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       ? new PlayerBattleInfo(scene)
       : new EnemyBattleInfo(scene);
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
-    this.level = level;//Utils.randInt(player ? 100 : 30, player ? 41 : 1);
+    this.level = level;
+    this.formIndex = formIndex || 0;
+    if (gender !== undefined)
+      this.gender = gender;
+    if (shiny !== undefined)
+      this.shiny = shiny;
     this.exp = dataSource?.exp || getLevelTotalExp(this.level, species.growthRate);
     this.levelExp = dataSource?.levelExp || 0;
     if (dataSource) {
       this.id = dataSource.id;
-      this.shiny = dataSource.shiny;
-      this.gender = dataSource.gender;
       this.hp = dataSource.hp;
       this.stats = dataSource.stats;
       this.ivs = dataSource.ivs;
@@ -81,36 +85,40 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         Utils.binToDec(Utils.decToBin(this.id).substring(20, 25)),
         Utils.binToDec(Utils.decToBin(this.id).substring(25, 30))
       ];
-    //} else
-    //this.id = parseInt(Utils.decToBin(this.ivs[Stat.HP]) + Utils.decToBin(this.ivs[Stat.ATK]) + Utils.decToBin(this.ivs[Stat.DEF]) + Utils.decToBin(this.ivs[Stat.SPATK]) + Utils.decToBin(this.ivs[Stat.SPDEF]) + Utils.decToBin(this.ivs[Stat.SPD]) + this.id.toString(2).slice(30));
+      //} else
+      //this.id = parseInt(Utils.decToBin(this.ivs[Stat.HP]) + Utils.decToBin(this.ivs[Stat.ATK]) + Utils.decToBin(this.ivs[Stat.DEF]) + Utils.decToBin(this.ivs[Stat.SPATK]) + Utils.decToBin(this.ivs[Stat.SPDEF]) + Utils.decToBin(this.ivs[Stat.SPD]) + this.id.toString(2).slice(30));
     
-      if (this.species.malePercent === null)
-        this.gender = Gender.GENDERLESS;
-      else {
-        const genderChance = (this.id % 256) * 0.390625;
-        if (genderChance < this.species.malePercent)
-          this.gender = Gender.MALE;
-        else
-          this.gender = Gender.FEMALE;
+      if (this.gender === undefined) {
+        if (this.getSpeciesForm().malePercent === null)
+          this.gender = Gender.GENDERLESS;
+        else {
+          const genderChance = (this.id % 256) * 0.390625;
+          if (genderChance < this.getSpeciesForm().malePercent)
+            this.gender = Gender.MALE;
+          else
+            this.gender = Gender.FEMALE;
+        }
       }
 
       const rand1 = Utils.binToDec(Utils.decToBin(this.id).substring(0, 16));
       const rand2 = Utils.binToDec(Utils.decToBin(this.id).substring(16, 32));
 
-      const E = this.scene.trainerId ^ this.scene.secretId;
+      const E = this.scene.saveData.trainerId ^ this.scene.saveData.secretId;
       const F = rand1 ^ rand2;
 
-      let shinyThreshold = new Utils.IntegerHolder(32);
-      this.scene.applyModifiers(ShinyRateBoosterModifier, shinyThreshold);
-      console.log(shinyThreshold.value);
+      if (this.shiny === undefined) {
+        let shinyThreshold = new Utils.IntegerHolder(32);
+        this.scene.applyModifiers(ShinyRateBoosterModifier, shinyThreshold);
+        console.log(shinyThreshold.value);
 
-      this.shiny = (E ^ F) < shinyThreshold.value;
-      if ((E ^ F) < 32)
-        console.log('REAL SHINY!!');
-      if (this.shiny)
-        console.log((E ^ F), shinyThreshold.value);
-      /*else
-        this.shiny = Utils.randInt(16) === 0;*/
+        this.shiny = (E ^ F) < shinyThreshold.value;
+        if ((E ^ F) < 32)
+          console.log('REAL SHINY!!');
+        if (this.shiny)
+          console.log((E ^ F), shinyThreshold.value);
+        /*else
+          this.shiny = Utils.randInt(16) === 0;*/
+      }
 
       this.winCount = 0;
     }
@@ -166,7 +174,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       Promise.allSettled(moveIds.map(m => initMoveAnim(m)))
         .then(() => {
           loadMoveAnimAssets(this.scene, moveIds);
-          this.species.loadAssets(this.scene, this.gender === Gender.FEMALE, this.shiny);
+          this.getSpeciesForm().loadAssets(this.scene, this.gender === Gender.FEMALE, this.formIndex, this.shiny);
           if (this.isPlayer())
             this.scene.loadAtlas(this.getBattleSpriteKey(), 'pokemon', this.getBattleSpriteAtlasPath());
           this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
@@ -203,7 +211,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getSpriteId(): string {
-    return this.species.getSpriteId(this.gender === Gender.FEMALE, this.shiny);
+    return this.getSpeciesForm().getSpriteId(this.gender === Gender.FEMALE, this.formIndex, this.shiny);
   }
 
   getBattleSpriteId(): string {
@@ -211,7 +219,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getSpriteKey(): string {
-    return this.species.getSpriteKey(this.gender === Gender.FEMALE, this.shiny);
+    return this.getSpeciesForm().getSpriteKey(this.gender === Gender.FEMALE, this.formIndex, this.shiny);
   }
 
   getBattleSpriteKey(): string {
@@ -219,12 +227,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getIconId(): string {
-    // TODO: Add form special cases
-    return this.species.getIconId();
+    return this.getSpeciesForm().getIconId(this.gender === Gender.FEMALE, this.formIndex);
   }
 
   getIconKey(): string {
     return `pkmn_icon__${this.getIconId()}`;
+  }
+
+  getSpeciesForm(): PokemonSpeciesForm {
+    if (!this.species.forms?.length)
+      return this.species;
+    return this.species.forms[this.formIndex];
   }
 
   getSprite(): Phaser.GameObjects.Sprite {
@@ -262,8 +275,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   calculateStats(): void {
     if (!this.stats)
       this.stats = [ 0, 0, 0, 0, 0, 0 ];
-    const baseStats = this.species.baseStats.slice(0);
-    console.log(this.id);
+    const baseStats = this.getSpeciesForm().baseStats.slice(0);
     this.scene.applyModifiers(PokemonBaseStatBoosterModifier, this, baseStats);
     const stats = Utils.getEnumValues(Stat);
     for (let s of stats) {
@@ -298,9 +310,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getTypes(): Type[] {
-    const speciesTypes = [ this.species.type1 ];
-    if (this.species.type2 > -1)
-      speciesTypes.push(this.species.type1);
+    const speciesForm = this.getSpeciesForm();
+    const speciesTypes = [ speciesForm.type1 ];
+    if (speciesForm.type2 !== null)
+      speciesTypes.push(speciesForm.type1);
 
     if (this.getTag(BattleTagType.IGNORE_FLYING)) {
       const flyingIndex = speciesTypes.indexOf(Type.FLYING);
@@ -425,9 +438,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   addExp(exp: integer) {
     this.exp += exp;
-    while (this.exp >= getLevelTotalExp(this.level + 1, this.species.growthRate))
+    while (this.exp >= getLevelTotalExp(this.level + 1, this.getSpeciesForm().growthRate))
       this.level++;
-    this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
+    this.levelExp = this.exp - getLevelTotalExp(this.level, this.getSpeciesForm().growthRate);
   }
 
   apply(source: Pokemon, battlerMove: PokemonMove): MoveResult {
@@ -440,7 +453,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case MoveCategory.SPECIAL:
         const isPhysical = moveCategory === MoveCategory.PHYSICAL;
         const power = new Utils.NumberHolder(move.power);
-        const typeMultiplier = getTypeDamageMultiplier(move.type, this.species.type1) * (this.species.type2 > -1 ? getTypeDamageMultiplier(move.type, this.species.type2) : 1);
+        const typeMultiplier = getTypeDamageMultiplier(move.type, this.getSpeciesForm().type1) * (this.getSpeciesForm().type2 !== null ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type2) : 1);
         const weatherTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(move.type);
         applyMoveAttrs(VariablePowerAttr, source, this, move, power);
         this.scene.applyModifiers(AttackTypeBoosterModifier, source, power);
@@ -449,7 +462,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const isCritical = Utils.randInt(critChance.value) === 0;
         const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
         const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
-        const stabMultiplier = source.species.type1 === move.type || (source.species.type2 > -1 && source.species.type2 === move.type) ? 1.5 : 1;
+        const stabMultiplier = source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1;
         const criticalMultiplier = isCritical ? 2 : 1;
         damage = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier * typeMultiplier * weatherTypeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
         if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
@@ -573,7 +586,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   cry(soundConfig?: Phaser.Types.Sound.SoundConfig): integer {
-    return this.species.cry(this.scene, soundConfig);
+    return this.getSpeciesForm().cry(this.scene, soundConfig);
   }
 
   faintCry(callback: Function) {
@@ -639,18 +652,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   trySetStatus(effect: StatusEffect): boolean {
     if (this.status)
       return false;
+    const speciesForm = this.getSpeciesForm();
     switch (effect) {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
-        if (this.species.isOfType(Type.POISON) || this.species.isOfType(Type.STEEL))
+        if (speciesForm.isOfType(Type.POISON) || speciesForm.isOfType(Type.STEEL))
           return false;
         break;
       case StatusEffect.FREEZE:
-        if (this.species.isOfType(Type.ICE))
+        if (speciesForm.isOfType(Type.ICE))
           return false;
         break;
       case StatusEffect.BURN:
-        if (this.species.isOfType(Type.FIRE))
+        if (speciesForm.isOfType(Type.FIRE))
           return false;
         break;
     }
@@ -682,7 +696,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getExpValue(): integer {
     // Logic to factor in victor level has been removed for balancing purposes, so the player doesn't have to focus on EXP maxxing
-    return (this.species.baseExp * this.level) / 5 + 1;
+    return (this.getSpeciesForm().baseExp * this.level) / 5 + 1;
   }
 
   tint(color: number, alpha?: number, duration?: integer, ease?: string) {
@@ -763,10 +777,10 @@ export default interface Pokemon {
 export class PlayerPokemon extends Pokemon {
   public compatibleTms: Moves[];
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, dataSource?: Pokemon) {
-    super(scene, 106, 148, species, level, dataSource);
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, formIndex: integer, gender: Gender, shiny: boolean, dataSource?: Pokemon) {
+    super(scene, 106, 148, species, level, formIndex, gender, shiny, dataSource);
 
-    this.species.generateIconAnim(scene);
+    this.getSpeciesForm().generateIconAnim(scene, this.gender === Gender.FEMALE, formIndex);
     this.generateCompatibleTms();
   }
 
@@ -799,7 +813,7 @@ export class PlayerPokemon extends Pokemon {
       this.handleSpecialEvolutions(evolution);
       this.species = getPokemonSpecies(evolution.speciesId);
       this.name = this.species.name.toUpperCase();
-      this.species.generateIconAnim(this.scene);
+      this.getSpeciesForm().generateIconAnim(this.scene, this.gender === Gender.FEMALE, this.formIndex);
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
       this.loadAssets().then(() => {
@@ -813,7 +827,7 @@ export class PlayerPokemon extends Pokemon {
     if (this.species.speciesId === Species.NINCADA && evolution.speciesId === Species.NINJASK) {
       const newEvolution = pokemonEvolutions[this.species.speciesId][1];
       if (newEvolution.condition.predicate(this)) {
-        const newPokemon = new PlayerPokemon(this.scene, this.species, this.level);
+        const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.formIndex, this.gender, this.shiny);
         this.scene.getParty().push(newPokemon);
         newPokemon.evolve(newEvolution);
       }
@@ -825,7 +839,7 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer) {
-    super(scene, -66, 84, species, level);
+    super(scene, -66, 84, species, level, scene.arena.getFormIndex(species));
 
     this.aiType = AiType.SMART_RANDOM;
   }
@@ -921,7 +935,7 @@ export class EnemyPokemon extends Pokemon {
     let ret: PlayerPokemon = null;
 
     if (party.length < 6) {
-      const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this);
+      const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.formIndex, this.gender, this.shiny);
       party.push(newPokemon);
       ret = newPokemon;
     }

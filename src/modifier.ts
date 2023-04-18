@@ -199,7 +199,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
 
     const pokemon = this.getPokemon(scene);
     const pokemonIcon = scene.add.sprite(0, 8, pokemon.species.getIconAtlasKey());
-    pokemonIcon.play(pokemon.species.getIconKey()).stop();
+    pokemonIcon.play(pokemon.getIconKey()).stop();
     pokemonIcon.setOrigin(0, 0.5);
 
     container.add(pokemonIcon);

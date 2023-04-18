@@ -91,6 +91,12 @@ export class Arena {
     return Biome[this.biomeType].toLowerCase();
   }
 
+  getFormIndex(species: PokemonSpecies) {
+    if (!species.canChangeForm && species.forms?.length)
+      return Utils.randInt(species.forms.length); // TODO: Base on biome
+    return 0;
+  }
+
   trySetWeather(weather: WeatherType, viaMove: boolean): boolean {
     if (this.weather?.weatherType === (weather || null))
       return false;

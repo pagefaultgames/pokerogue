@@ -1,7 +1,7 @@
 export enum Gender {
     GENDERLESS = -1,
-    FEMALE,
-    MALE
+    MALE,
+    FEMALE
 }
 
 export function getGenderSymbol(gender: Gender) {
