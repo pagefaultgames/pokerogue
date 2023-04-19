@@ -22,6 +22,7 @@ import { BattleTagLapseType, BattleTagType, HideSpriteTag as HiddenTag } from ".
 import { getPokemonMessage } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./gender";
+import { getRandomWeatherType } from "./weather";
 
 export class SelectStarterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
@@ -151,6 +152,8 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
   }
 
   doEncounter(): void {
+    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena.biomeType), false);
+
     const enemyPokemon = this.scene.getEnemyPokemon();
     this.scene.tweens.add({
       targets: [ this.scene.arenaEnemy, enemyPokemon ],
@@ -1081,10 +1084,6 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
   }
 }
 
-export class WeatherPhase extends BattlePhase {
-
-}
-
 export class MessagePhase extends BattlePhase {
   private text: string;
   private callbackDelay: integer;
@@ -1296,7 +1295,7 @@ export class LevelUpPhase extends PartyMemberPokemonPhase {
     pokemon.calculateStats();
     pokemon.updateInfo();
     this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
-    this.scene.ui.showText(`${this.getPokemon().name} grew to\nLV. ${this.level}!`, null, () => this.scene.ui.getMessageHandler().promptLevelUpStats(prevStats, false, () => this.end()), null, true);
+    this.scene.ui.showText(`${this.getPokemon().name} grew to\nLV. ${this.level}!`, null, () => this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false, () => this.end()), null, true);
     const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
     for (let lm of levelMoves)
       this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm));

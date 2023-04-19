@@ -105,8 +105,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     super.clear();
   }
 
-  promptLevelUpStats(prevStats: integer[], showTotals: boolean, callback?: Function) {
-    const newStats = (this.scene as BattleScene).getPlayerPokemon().stats;
+  promptLevelUpStats(partyMemberIndex: integer, prevStats: integer[], showTotals: boolean, callback?: Function) {
+    const newStats = (this.scene as BattleScene).getParty()[partyMemberIndex].stats;
     let levelUpStatsValuesText = '';
     const stats = Utils.getEnumValues(Stat);
     for (let s of stats)
@@ -117,7 +117,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.awaitingActionInput = true;
     this.onActionInput = () => {
       if (!showTotals)
-        this.promptLevelUpStats(null, true, callback);
+        this.promptLevelUpStats(partyMemberIndex, null, true, callback);
       else {
         this.levelUpStatsContainer.setVisible(false);
         if (callback)

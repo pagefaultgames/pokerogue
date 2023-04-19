@@ -402,7 +402,7 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
         restorePoints = Math.floor(restorePoints * (args[1] as number));
       else
         pokemon.resetStatus();
-      pokemon.hp = Math.min(pokemon.hp + (this.percent ? (restorePoints * 0.01) * pokemon.getMaxHp() : restorePoints), pokemon.getMaxHp());
+      pokemon.hp = Math.min(pokemon.hp + Math.ceil((this.percent ? (restorePoints * 0.01) * pokemon.getMaxHp() : restorePoints)), pokemon.getMaxHp());
     }
 
     return true;
@@ -623,6 +623,10 @@ export class ExpBoosterModifier extends PersistentModifier {
 export class ExpShareModifier extends PersistentModifier {
   constructor(type: ModifierType) {
     super(type);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof ExpShareModifier;
   }
 
   apply(_args: any[]): boolean {

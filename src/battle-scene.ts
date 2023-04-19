@@ -438,7 +438,6 @@ export default class BattleScene extends Phaser.Scene {
 
 	newArena(biome: Biome): Arena {
 		this.arena = new Arena(this, biome, Biome[biome].toLowerCase());
-		this.arena.trySetWeather(getRandomWeatherType(this.arena.biomeType), false);
 		return this.arena;
 	}
 
@@ -482,7 +481,7 @@ export default class BattleScene extends Phaser.Scene {
 		}
 		else if (this.isButtonPressed(Button.SPEED_UP)) {
 			if (!this.auto) {
-				if (this.gameSpeed < 2)
+				if (this.gameSpeed < 2.5)
 					this.gameSpeed += 0.25;
 			} else if (this.gameSpeed < 20)
 				this.gameSpeed++;
@@ -498,8 +497,8 @@ export default class BattleScene extends Phaser.Scene {
 				this.auto = !this.auto;
 				if (this.auto)
 					this.gameSpeed = Math.floor(this.gameSpeed);
-				else if (this.gameSpeed > 2)
-					this.gameSpeed = 2;
+				else if (this.gameSpeed > 2.5)
+					this.gameSpeed = 2.5;
 			} else
 				return;
 		} else
