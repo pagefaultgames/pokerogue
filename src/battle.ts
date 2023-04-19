@@ -13,10 +13,10 @@ export class Battle {
     }
 
     private getLevelForWave(): number {
-        let averageLevel = 1 + this.waveIndex * 0.5;
+        let averageLevel = 1 + this.waveIndex / 2 + Math.pow(this.waveIndex / 25, 2);
 
         if (!(this.waveIndex % 10))
-            return Math.floor(averageLevel * 1.25);
+            return Math.floor(averageLevel * 1.2);
 
         const deviation = 10 / this.waveIndex;
 
