@@ -449,9 +449,17 @@ export class CommandPhase extends BattlePhase {
     playerPokemon.resetTurnData();
     this.scene.getEnemyPokemon().resetTurnData();
 
-    if (playerPokemon.summonData.moveQueue.length)
-      this.handleCommand(Command.FIGHT, playerPokemon.moveset.findIndex(m => m.moveId === playerPokemon.summonData.moveQueue[0].move));
-    else
+    while (playerPokemon.summonData.moveQueue.length && playerPokemon.summonData.moveQueue[0]
+      && !playerPokemon.moveset[playerPokemon.moveset.findIndex(m => m.moveId === playerPokemon.summonData.moveQueue[0].move)]
+        .isUsable(playerPokemon.summonData.moveQueue[0].ignorePP))
+      playerPokemon.summonData.moveQueue.shift();
+
+    if (playerPokemon.summonData.moveQueue.length) {
+      const queuedMove = playerPokemon.summonData.moveQueue[0];
+      const moveIndex = playerPokemon.moveset.findIndex(m => m.moveId === queuedMove.move);
+      if (playerPokemon.moveset[moveIndex].isUsable(queuedMove.ignorePP))
+        this.handleCommand(Command.FIGHT, moveIndex);
+    } else
       this.scene.ui.setMode(Mode.COMMAND);
   }
 
@@ -492,7 +500,12 @@ export class CommandPhase extends BattlePhase {
           const playerPhase = new PlayerMovePhase(this.scene, playerPokemon, playerMove);
           this.scene.pushPhase(playerPhase);
           success = true;
+        } else if (cursor < playerPokemon.moveset.length) {
+          const move = playerPokemon.moveset[cursor];
+          if (move.isDisabled())
+            this.scene.ui.showText(`${move.getName()} is disabled!`);
         }
+
         break;
       case Command.BALL:
         if (cursor < 4) {
@@ -557,16 +570,32 @@ export class TurnEndPhase extends BattlePhase {
 
     const playerPokemon = this.scene.getPlayerPokemon();
     const enemyPokemon = this.scene.getEnemyPokemon();
+    
+    const handlePokemon = (pokemon: Pokemon) => {
+      if (!pokemon)
+        return;
 
-    if (playerPokemon) {
-      playerPokemon.lapseTags(BattleTagLapseType.TURN_END);
-      playerPokemon.battleSummonData.turnCount++;
-    }
+      pokemon.lapseTags(BattleTagLapseType.TURN_END);
+      
+      const disabledMoves = pokemon.moveset.filter(m => m.isDisabled());
+      for (let dm of disabledMoves) {
+        if (!--dm.disableTurns)
+          this.scene.pushPhase(new MessagePhase(this.scene, `${dm.getName()} is disabled\nno more!`));
+      }
 
-    if (enemyPokemon) {
-      enemyPokemon.lapseTags(BattleTagLapseType.TURN_END);
-      enemyPokemon.battleSummonData.turnCount++;
-    }
+      pokemon.battleSummonData.turnCount++;
+    };
+
+    const playerSpeed = playerPokemon?.getBattleStat(Stat.SPD) || 0;
+    const enemySpeed = enemyPokemon?.getBattleStat(Stat.SPD) || 0;
+
+    const isDelayed = playerSpeed < enemySpeed || (playerSpeed === enemySpeed && Utils.randInt(2) === 1);
+
+    if (!isDelayed)
+      handlePokemon(playerPokemon);
+    handlePokemon(enemyPokemon);
+    if (isDelayed)
+      handlePokemon(playerPokemon);
 
     if (this.scene.arena.weather && !this.scene.arena.weather.lapse())
       this.scene.arena.trySetWeather(WeatherType.NONE, false);
@@ -655,7 +684,7 @@ export abstract class MovePhase extends BattlePhase {
   abstract getEffectPhase(): MoveEffectPhase;
 
   canMove(): boolean {
-    return !!this.pokemon.hp;
+    return !!this.pokemon.hp && this.move.isUsable();
   }
 
   cancel(): void {
@@ -664,6 +693,8 @@ export abstract class MovePhase extends BattlePhase {
 
   start() {
     super.start();
+
+    console.log(Moves[this.move.moveId]);
 
     const target = this.pokemon.isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon();
 
@@ -685,7 +716,7 @@ export abstract class MovePhase extends BattlePhase {
       if (!failed.value && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
         failed.value = true;
       if (failed.value) {
-        this.pokemon.summonData.moveHistory.push({ move: this.move.moveId, result: MoveResult.FAILED });
+        this.pokemon.summonData.moveHistory.push({ move: this.move.moveId, result: MoveResult.FAILED, virtual: this.move.virtual });
         this.scene.unshiftPhase(new MessagePhase(this.scene, 'But it failed!'));
       } else
         this.scene.unshiftPhase(this.getEffectPhase());
@@ -694,6 +725,8 @@ export abstract class MovePhase extends BattlePhase {
     };
 
     if (!this.canMove()) {
+      if (this.move.isDisabled())
+        this.scene.unshiftPhase(new MessagePhase(this.scene, `${this.move.getName()} is disabled!`));
       this.end();
       return;
     }
@@ -805,7 +838,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
 
       if (!this.hitCheck()) {
         this.scene.unshiftPhase(new MessagePhase(this.scene, getPokemonMessage(user, '\'s\nattack missed!')));
-        user.summonData.moveHistory.push({ move: this.move.moveId, result: MoveResult.MISSED });
+        user.summonData.moveHistory.push({ move: this.move.moveId, result: MoveResult.MISSED, virtual: this.move.virtual });
         applyMoveAttrs(MissEffectAttr, user, target, this.move.getMove());
         this.end();
         return;
@@ -816,7 +849,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
       new MoveAnim(this.move.getMove().id as Moves, user, target).play(this.scene, () => {
         const result = !isProtected ? target.apply(user, this.move) : MoveResult.NO_EFFECT;
         ++user.turnData.hitCount;
-        user.summonData.moveHistory.push({ move: this.move.moveId, result: result });
+        user.summonData.moveHistory.push({ move: this.move.moveId, result: result, virtual: this.move.virtual });
         applyMoveAttrs(MoveEffectAttr, user, target, this.move.getMove());
         // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
         if (!isProtected && target.hp && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)

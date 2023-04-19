@@ -1184,6 +1184,60 @@ export class MissEffectAttr extends MoveAttr {
   }
 }
 
+export class DisableMoveAttr extends MoveEffectAttr {
+  constructor() {
+    super(false);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    const moveQueue = target.getLastXMoves();
+    let turnMove: TurnMove;
+    while (moveQueue.length) {
+      turnMove = moveQueue.shift();
+      if (turnMove.virtual)
+        continue;
+      
+      const moveIndex = target.moveset.findIndex(m => m.moveId === turnMove.move);
+      if (moveIndex === -1)
+        return false;
+      
+      const disabledMove = target.moveset[moveIndex];
+      disabledMove.disableTurns = 4;
+
+      console.log(disabledMove);
+
+      user.scene.unshiftPhase(new MessagePhase(user.scene, getPokemonMessage(target, `'s ${disabledMove.getName()}\nwas disabled!`)))
+      
+      return true;
+    }
+    
+    return false;
+  }
+}
+
+export class DisableMoveConditionalMoveAttr extends ConditionalMoveAttr {
+  constructor() {
+    super((user: Pokemon, target: Pokemon, move: Move) => {
+      const moveQueue = target.getLastXMoves();
+      let turnMove: TurnMove;
+      while (moveQueue.length) {
+        turnMove = moveQueue.shift();
+        if (turnMove.virtual)
+          continue;
+        
+        const move = target.moveset.find(m => m.moveId === turnMove.move);
+        if (!move)
+          continue;
+
+        return !move.isDisabled();
+      }
+    });
+  }
+}
+
 export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
     super(true);
@@ -1302,16 +1356,12 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
 }
 
 export class RandomMoveAttr extends OverrideMoveEffectAttr {
-  constructor() {
-    super();
-  }
-
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       const moveIds = Utils.getEnumValues(Moves).filter(m => m !== move.id);
       const moveId = moveIds[Utils.randInt(moveIds.length)];
       user.summonData.moveQueue.push({ move: moveId, ignorePP: true });
-      user.scene.unshiftPhase(user.isPlayer() ? new PlayerMovePhase(user.scene, user as PlayerPokemon, new PokemonMove(moveId), true) : new EnemyMovePhase(user.scene, user as EnemyPokemon, new PokemonMove(moveId), true));
+      user.scene.unshiftPhase(user.isPlayer() ? new PlayerMovePhase(user.scene, user as PlayerPokemon, new PokemonMove(moveId, 0, 0, true), true) : new EnemyMovePhase(user.scene, user as EnemyPokemon, new PokemonMove(moveId, 0, 0, true), true));
       initMoveAnim(moveId).then(() => {
         loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
@@ -1374,7 +1424,7 @@ export const allMoves = [
   new StatusMove(Moves.SING, "Sing", Type.NORMAL, 55, 15, -1, "Puts opponent to sleep.", -1, 0, 1, new StatusEffectAttr(StatusEffect.SLEEP)),
   new StatusMove(Moves.SUPERSONIC, "Supersonic", Type.NORMAL, 55, 20, -1, "Confuses opponent.", -1, 0, 1, new ConfuseAttr()),
   new AttackMove(Moves.SONIC_BOOM, "Sonic Boom", Type.NORMAL, MoveCategory.SPECIAL, -1, 90, 20, -1, "Always inflicts 20 HP.", -1, 0, 1, new FixedDamageAttr(20)),
-  new StatusMove(Moves.DISABLE, "Disable", Type.NORMAL, 100, 20, -1, "Opponent can't use its last attack for a few turns.", -1, 0, 1),
+  new StatusMove(Moves.DISABLE, "Disable", Type.NORMAL, 100, 20, -1, "Opponent can't use its last attack for a few turns.", -1, 0, 1, new DisableMoveConditionalMoveAttr(), new DisableMoveAttr()),
   new AttackMove(Moves.ACID, "Acid", Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, -1, "May lower opponent's Special Defense.", 10, 0, 1, new StatChangeAttr(BattleStat.SPDEF, -1)),
   new AttackMove(Moves.EMBER, "Ember", Type.FIRE, MoveCategory.SPECIAL, 40, 100, 25, -1, "May burn opponent.", 10, 0, 1, new StatusEffectAttr(StatusEffect.BURN)),
   new AttackMove(Moves.FLAMETHROWER, "Flamethrower", Type.FIRE, MoveCategory.SPECIAL, 90, 100, 15, 125, "May burn opponent.", 10, 0, 1, new StatusEffectAttr(StatusEffect.BURN)),

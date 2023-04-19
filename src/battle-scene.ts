@@ -10,13 +10,14 @@ import { PokeballType } from './pokeball';
 import { Species } from './species';
 import { initAutoPlay } from './auto-play';
 import { Battle } from './battle';
-import { initCommonAnims, loadCommonAnimAssets, populateAnims } from './battle-anims';
+import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './battle-anims';
 import { BattlePhase } from './battle-phase';
 import { initGameSpeed } from './game-speed';
 import { Arena } from './arena';
 import { GameData } from './game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './text';
+import { Moves } from './move';
 
 const enableAuto = true;
 export const startingLevel = 5;
@@ -363,7 +364,11 @@ export default class BattleScene extends Phaser.Scene {
 
 		ui.setup();
 
-		Promise.all([ Promise.all(loadPokemonAssets), initCommonAnims().then(() => loadCommonAnimAssets(this, true)) ]).then(() => {
+		Promise.all([
+			Promise.all(loadPokemonAssets),
+			initCommonAnims().then(() => loadCommonAnimAssets(this, true)),
+			initMoveAnim(Moves.STRUGGLE).then(() => loadMoveAnimAssets(this, [ Moves.STRUGGLE ], true))
+		]).then(() => {
 			if (enableAuto)
 				initAutoPlay.apply(this);
 			

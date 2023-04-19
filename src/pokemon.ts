@@ -874,8 +874,14 @@ export class EnemyPokemon extends Pokemon {
     const queuedMove = this.summonData.moveQueue.length
       ? this.moveset.find(m => m.moveId === this.summonData.moveQueue[0].move)
       : null;
-    if (queuedMove && (this.summonData.moveQueue[0].ignorePP || queuedMove.isUsable()))
-      return queuedMove;
+    if (queuedMove) {
+      if (queuedMove.isUsable(this.summonData.moveQueue[0].ignorePP))
+        return queuedMove;
+      else {
+        this.summonData.moveQueue.shift();
+        return this.getNextMove();
+      }
+    }
 
     const movePool = this.moveset.filter(m => m.isUsable());
     if (movePool.length) {
@@ -949,6 +955,7 @@ export class EnemyPokemon extends Pokemon {
           return sortedMovePool[r];
       }
     }
+
     return new PokemonMove(Moves.STRUGGLE, 0, 0);
   }
 
@@ -973,6 +980,7 @@ export class EnemyPokemon extends Pokemon {
 export interface TurnMove {
   move: Moves;
   result: MoveResult;
+  virtual?: boolean;
 }
 
 export interface QueuedMove {
@@ -1022,19 +1030,25 @@ export class PokemonMove {
   public moveId: Moves;
   public ppUsed: integer;
   public ppUp: integer;
+  public virtual: boolean;
   public disableTurns: integer;
 
-  constructor(moveId: Moves, ppUsed?: integer, ppUp?: integer) {
+  constructor(moveId: Moves, ppUsed?: integer, ppUp?: integer, virtual?: boolean) {
     this.moveId = moveId;
     this.ppUsed = ppUsed || 0;
     this.ppUp = ppUp || 0;
+    this.virtual = !!virtual;
     this.disableTurns = 0;
   }
 
-  isUsable(): boolean {
-    if (this.disableTurns > 0)
+  isUsable(ignorePp?: boolean): boolean {
+    if (this.isDisabled())
       return false;
-    return this.ppUsed < this.getMove().pp + this.ppUp;
+    return ignorePp || this.ppUsed < this.getMove().pp + this.ppUp || this.getMove().pp === -1;
+  }
+
+  isDisabled(): boolean {
+    return !!this.disableTurns;
   }
 
   getMove(): Move {
