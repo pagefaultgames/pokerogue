@@ -98,8 +98,8 @@ export function initAutoPlay() {
     };
 
     const originalMessageUiHandlerPromptLevelUpStats = messageUiHandler.promptLevelUpStats;
-    messageUiHandler.promptLevelUpStats = function (prevStats: integer[], showTotals: boolean, callback?: Function) {
-        originalMessageUiHandlerPromptLevelUpStats.apply(this, [ prevStats, showTotals, callback ]);
+    messageUiHandler.promptLevelUpStats = function (partyMemberIndex: integer, prevStats: integer[], showTotals: boolean, callback?: Function) {
+        originalMessageUiHandlerPromptLevelUpStats.apply(this, [ partyMemberIndex, prevStats, showTotals, callback ]);
         if (thisArg.auto)
             thisArg.time.delayedCall(20, () => this.processInput(Button.ACTION));
     };
