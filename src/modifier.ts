@@ -624,6 +624,37 @@ export class ExpBoosterModifier extends PersistentModifier {
   }
 }
 
+export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
+  private boostMultiplier: integer;
+
+  constructor(type: ModifierTypes.PokemonExpBoosterModifierType, pokemonId: integer, boostPercent: integer) {
+    super(type, pokemonId);
+    this.boostMultiplier = boostPercent * 0.01;
+  }
+
+  match(modifier: Modifier): boolean {
+    if (modifier instanceof PokemonExpBoosterModifier) {
+      const pokemonExpModifier = modifier as PokemonExpBoosterModifier;
+      return pokemonExpModifier.pokemonId === this.pokemonId && pokemonExpModifier.boostMultiplier === this.boostMultiplier;
+    }
+    return false;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonExpBoosterModifier(this.type as ModifierTypes.PokemonExpBoosterModifierType, this.pokemonId, this.boostMultiplier * 100);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.NumberHolder;
+  }
+
+  apply(args: any[]): boolean {
+    (args[1] as Utils.NumberHolder).value = Math.floor((args[1] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
+
+    return true;
+  }
+}
+
 export class ExpShareModifier extends PersistentModifier {
   constructor(type: ModifierType) {
     super(type);

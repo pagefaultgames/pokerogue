@@ -1207,8 +1207,6 @@ export class DisableMoveAttr extends MoveEffectAttr {
       const disabledMove = target.moveset[moveIndex];
       disabledMove.disableTurns = 4;
 
-      console.log(disabledMove);
-
       user.scene.unshiftPhase(new MessagePhase(user.scene, getPokemonMessage(target, `'s ${disabledMove.getName()}\nwas disabled!`)))
       
       return true;
@@ -1770,7 +1768,7 @@ export const allMoves = [
   new AttackMove(Moves.SHOCK_WAVE, "Shock Wave", Type.ELECTRIC, MoveCategory.SPECIAL, 60, -1, 20, -1, "Ignores Accuracy and Evasiveness.", -1, 0, 3),
   new AttackMove(Moves.WATER_PULSE, "Water Pulse", Type.WATER, MoveCategory.SPECIAL, 60, 100, 20, 11, "May confuse opponent.", 20, 0, 3, new ConfuseAttr()),
   new AttackMove(Moves.DOOM_DESIRE, "Doom Desire", Type.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, "Damage occurs 2 turns later.", -1, 0, 3,
-    new ChargeAttr(ChargeAnim.DOOM_DESIRE_CHARGING, 'chose\nDOOM DESIRE as its destiny!')),
+    new ChargeAttr(ChargeAnim.DOOM_DESIRE_CHARGING, 'chose\nDOOM DESIRE as its destiny!')), // Fix this move to work properly
   new AttackMove(Moves.PSYCHO_BOOST, "Psycho Boost", Type.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, "Sharply lowers user's Special Attack.", 100, 0, 3, new StatChangeAttr(BattleStat.SPATK, -2, true)),
   new SelfStatusMove(Moves.ROOST, "Roost", Type.FLYING, -1, 5, -1, "User recovers half of its max HP and loses the Flying type temporarily.", -1, 0, 4, new HitHealAttr(), new AddTagAttr(BattleTagType.IGNORE_FLYING, true, 1)),
   new SelfStatusMove(Moves.GRAVITY, "Gravity", Type.PSYCHIC, -1, 5, -1, "Prevents moves like Fly and Bounce and the Ability Levitate for 5 turns.", -1, 0, 4),
@@ -1779,7 +1777,7 @@ export const allMoves = [
   new AttackMove(Moves.HAMMER_ARM, "Hammer Arm", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 90, 10, -1, "Lowers user's Speed.", 100, 0, 4, new StatChangeAttr(BattleStat.SPD, -1, true)),
   new AttackMove(Moves.GYRO_BALL, "Gyro Ball", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "The slower the user, the stronger the attack.", -1, 0, 4),
   new SelfStatusMove(Moves.HEALING_WISH, "Healing Wish", Type.PSYCHIC, -1, 10, -1, "The user faints and the next Pokémon released is fully healed.", -1, 0, 4, new SacrificialAttr()), // TODO
-  new AttackMove(Moves.BRINE, "Brine", Type.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, "Power doubles if opponent's HP is less than 50%.", -1, 0, 4),
+  new AttackMove(Moves.BRINE, "Brine", Type.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, "Power doubles if opponent's HP is less than 50%.", -1, 0, 4, new MovePowerMultiplierAttr((user: Pokemon, target: Pokemon, move: Move) => target.getHpRatio() < 0.5 ? 2 : 1)),
   new AttackMove(Moves.NATURAL_GIFT, "Natural Gift", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, "Power and type depend on the user's held berry.", -1, 0, 4),
   new AttackMove(Moves.FEINT, "Feint", Type.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, "Only hits if opponent uses Protect or Detect in the same turn.", -1, 2, 4,
     new ConditionalMoveAttr((user: Pokemon, target: Pokemon, move: Move) => !!target.getTag(BattleTagType.PROTECTED))).ignoreProtect(),

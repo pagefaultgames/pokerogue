@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveA
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
-import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HitHealModifier, TempBattleStatBoosterModifier } from "./modifier";
+import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HitHealModifier, PokemonExpBoosterModifier, TempBattleStatBoosterModifier } from "./modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
@@ -1307,8 +1307,9 @@ export class VictoryPhase extends PokemonPhase {
           expMultiplier += (1 / participantIds.size);
         if (expShareModifier)
           expMultiplier += expShareModifier.stackCount * 0.1;
-        console.log(pokemon.species.name, expMultiplier)
-        this.scene.unshiftPhase(new ExpPhase(this.scene, pm, expValue * expMultiplier));
+        const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
+        this.scene.applyModifiers(PokemonExpBoosterModifier, pokemon, pokemonExp);
+        this.scene.unshiftPhase(new ExpPhase(this.scene, pm, Math.floor(pokemonExp.value)));
       }
     }
     

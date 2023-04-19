@@ -285,7 +285,7 @@ export class PokemonBaseStatBoosterModifierType extends PokemonModifierType {
   private stat: Stat;
 
   constructor(name: string, stat: Stat, _iconImage?: string) {
-    super(name, `Increases one POKéMON's base ${getStatName(stat)} by 20%` , (_type, args) => new Modifiers.PokemonBaseStatModifier(this, (args[0] as PlayerPokemon).id, this.stat));
+    super(name, `Increases the holder's base ${getStatName(stat)} by 20%` , (_type, args) => new Modifiers.PokemonBaseStatModifier(this, (args[0] as PlayerPokemon).id, this.stat));
 
     this.stat = stat;
   }
@@ -306,6 +306,12 @@ class AllPokemonFullReviveModifierType extends AllPokemonFullHpRestoreModifierTy
 export class ExpBoosterModifierType extends ModifierType {
   constructor(name: string, boostPercent: integer, iconImage?: string) {
     super(name, `Increases gain of EXP. Points by ${boostPercent}%`, () => new Modifiers.ExpBoosterModifier(this, boostPercent), iconImage);
+  }
+}
+
+export class PokemonExpBoosterModifierType extends PokemonModifierType {
+  constructor(name: string, boostPercent: integer, iconImage?: string) {
+    super(name, `Increases the holder's gain of EXP. Points by ${boostPercent}%`, (_type, args) => new Modifiers.PokemonExpBoosterModifier(this, (args[0] as PlayerPokemon).id, boostPercent), iconImage);
   }
 }
 
@@ -518,6 +524,7 @@ const modifierPool = {
       return new TmModifierType(uniqueCompatibleTms[randTmIndex]);
     }), 4),
     new WeightedModifierType(new ModifierType('EXP. SHARE', 'All POKéMON in your party gain an additional 10% of a battle\'s EXP. Points', (type, _args) => new Modifiers.ExpShareModifier(type), 'exp_share'), 2),
+    new WeightedModifierType(new PokemonExpBoosterModifierType('LUCKY EGG', 50), 2),
     new WeightedModifierType(new ModifierTypeGenerator((party: PlayerPokemon[]) => {
       const randStat = Utils.randInt(6) as Stat;
       return new PokemonBaseStatBoosterModifierType(getBaseStatBoosterItemName(randStat), randStat);
@@ -531,14 +538,14 @@ const modifierPool = {
       (type, _args) => new Modifiers.PartyShareModifier(type), 'oval_charm'),
     new ModifierType('HEALING CHARM', 'Doubles the effectiveness of HP restoring moves and items (excludes revives)', (type, _args) => new Modifiers.HealingBoosterModifier(type, 2), 'healing_charm'),
     new WeightedModifierType(new PokemonModifierType('SHELL BELL', 'Heals 1/8 of a POKéMON\'s dealt damage', (type, args) => new Modifiers.HitHealModifier(type, (args[0] as PlayerPokemon).id)), 2),
-    new WeightedModifierType(new ExpBoosterModifierType('LUCKY EGG', 25), 4)
+    new WeightedModifierType(new ExpBoosterModifierType('EXP CHARM', 25), 4)
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new AddPokeballModifierType(PokeballType.MASTER_BALL, 1, 'mb'),
     new WeightedModifierType(new ModifierType('SHINY CHARM', 'Dramatically increases the chance of a wild POKéMON being shiny', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)), 2)
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
   [ModifierTier.LUXURY]: [
-    new ExpBoosterModifierType('GOLDEN EGG', 100),
+    new ExpBoosterModifierType('GOLDEN EXP CHARM', 100),
     new ModifierType(`GOLDEN ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle', (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold')
   ].map(m => { m.setTier(ModifierTier.LUXURY); return m; }),
 };
