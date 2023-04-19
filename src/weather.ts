@@ -61,6 +61,8 @@ export class Weather {
       case WeatherType.HAIL:
         return type === Type.ICE;
     }
+
+    return false;
   }
 
   getAttackTypeMultiplier(attackType: Type): number {

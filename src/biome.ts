@@ -1,5 +1,4 @@
 import { pokemonEvolutions, SpeciesEvolution } from "./pokemon-evolutions";
-import { allSpecies } from "./pokemon-species";
 import { Species } from "./species";
 import { Type } from './type';
 import * as Utils from './utils';
@@ -460,7 +459,7 @@ export const biomePools: BiomePools = {
     [BiomePoolTier.BOSS]: [ Species.PIDGEOT, Species.FEAROW, Species.SKARMORY, Species.SWELLOW, Species.AGGRON, Species.ALTARIA, Species.STARAPTOR, Species.UNFEZANT, Species.BRAVIARY, Species.MANDIBUZZ ],
     [BiomePoolTier.BOSS_RARE]: [ Species.BLAZIKEN, Species.RAMPARDOS, Species.BASTIODON ],
     [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.TORNADUS ],
-    [BiomePoolTier.BOSS_ULTRA_RARE]: [ Species.HO_OH, Species.RAYQUAZA ]
+    [BiomePoolTier.BOSS_ULTRA_RARE]: [ Species.HO_OH ]
   },
   [Biome.LAND]: {
     [BiomePoolTier.COMMON]: [
@@ -651,11 +650,11 @@ export const biomePools: BiomePools = {
   },
   [Biome.WASTELAND]: {
     [BiomePoolTier.COMMON]: [
-      { 1: [ Species.LARVITAR ], 30: [ Species.PUPITAR ] },
+      { 1: [ Species.LARVITAR ], 30: [ Species.PUPITAR ], 55: [ Species.TYRANITAR ] },
       { 1: [ Species.VIBRAVA ], 45: [ Species.FLYGON ] },
       { 1: [ Species.BAGON ], 30: [ Species.SHELGON ], 50: [ Species.SALAMENCE ] },
       { 1: [ Species.GIBLE ], 24: [ Species.GABITE ], 48: [ Species.GARCHOMP ] },
-      { 1: [ Species.AXEW ], 38: [ Species.FRAXURE ] }
+      { 1: [ Species.AXEW ], 38: [ Species.FRAXURE ], 48: [ Species.HAXORUS ] }
     ],
     [BiomePoolTier.UNCOMMON]: [ { 1: [ Species.SWABLU ], 35: [ Species.ALTARIA ] }, { 1: [ Species.DEINO ], 50: [ Species.ZWEILOUS ], 64: [ Species.HYDREIGON ] } ],
     [BiomePoolTier.RARE]: [ { 1: [ Species.DRATINI ], 30: [ Species.DRAGONAIR ], 55: [ Species.DRAGONITE ] } ],
@@ -664,7 +663,7 @@ export const biomePools: BiomePools = {
     [BiomePoolTier.BOSS]: [ Species.DRAGONITE, Species.TYRANITAR, Species.FLYGON, Species.SALAMENCE, Species.GARCHOMP, Species.HAXORUS ],
     [BiomePoolTier.BOSS_RARE]: [ Species.AERODACTYL, Species.DRUDDIGON ],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
-    [BiomePoolTier.BOSS_ULTRA_RARE]: [ Species.DIALGA ]
+    [BiomePoolTier.BOSS_ULTRA_RARE]: [ Species.RAYQUAZA, Species.DIALGA ]
   },
   [Biome.ABYSS]: {
     [BiomePoolTier.COMMON]: [ Species.MURKROW, { 1: [ Species.HOUNDOUR ], 24: [ Species.HOUNDOOM ] }, Species.SABLEYE, { 1: [ Species.PURRLOIN ], 20: [ Species.LIEPARD ] }, { 1: [ Species.PAWNIARD ], 52: [ Species.BISHARP ] } ],
@@ -1858,6 +1857,7 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.TYRANITAR, Type.ROCK, Type.DARK, [
+        [ Biome.WASTELAND, BiomePoolTier.COMMON ],
         [ Biome.WASTELAND, BiomePoolTier.BOSS ]
       ]
     ],
@@ -2500,7 +2500,7 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.RAYQUAZA, Type.DRAGON, Type.FLYING, [
-        [ Biome.MOUNTAIN, BiomePoolTier.BOSS_ULTRA_RARE ]
+        [ Biome.WASTELAND, BiomePoolTier.BOSS_ULTRA_RARE ]
       ]
     ],
     [ Species.JIRACHI, Type.STEEL, Type.PSYCHIC, [
@@ -3562,6 +3562,7 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.HAXORUS, Type.DRAGON, -1, [
+        [ Biome.WASTELAND, BiomePoolTier.COMMON ],
         [ Biome.WASTELAND, BiomePoolTier.BOSS ]
       ]
     ],

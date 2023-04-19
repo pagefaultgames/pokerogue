@@ -453,19 +453,6 @@ class WeightedModifierType {
   }
 }
 
-class WeightedModifierTypeGroup {
-  public modifierTypes: WeightedModifierType[];
-
-  constructor(...modifierTypes: WeightedModifierType[]) {
-    this.modifierTypes = modifierTypes;
-  }
-
-  setTier(tier: ModifierTier) {
-    for (let modifierType of this.modifierTypes)
-      modifierType.setTier(tier);
-  }
-}
-
 const modifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(new AddPokeballModifierType(PokeballType.POKEBALL, 5, 'pb'), 6),
@@ -552,7 +539,7 @@ const modifierPool = {
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
   [ModifierTier.LUXURY]: [
     new ExpBoosterModifierType('GOLDEN EGG', 100),
-    new ModifierType(`GOLDEN ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra ITEM option at the end of every battle', (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold')
+    new ModifierType(`GOLDEN ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle', (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold')
   ].map(m => { m.setTier(ModifierTier.LUXURY); return m; }),
 };
 

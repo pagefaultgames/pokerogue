@@ -28,13 +28,15 @@ export class ModifierBar extends Phaser.GameObjects.Container {
     for (let modifier of modifiers) {
       const icon = modifier.getIcon(this.scene as BattleScene);
       this.add(icon);
-      this.setModifierIconPosition(icon);
+      this.setModifierIconPosition(icon, modifiers.length);
     }
   }
 
-  setModifierIconPosition(icon: Phaser.GameObjects.Container) {
-    const x = (this.getIndex(icon) % 12) * 26;
-    const y = Math.floor((this.getIndex(icon) * 6) / (this.scene.game.canvas.width / 6)) * 20;
+  setModifierIconPosition(icon: Phaser.GameObjects.Container, modifierCount: integer) {
+    let rowIcons: integer = 12 + 6 * Math.max((Math.ceil(modifierCount / 12) - 2), 0);
+
+    const x = (this.getIndex(icon) % rowIcons) * 26 / (rowIcons / 12);
+    const y = Math.floor(this.getIndex(icon) / rowIcons) * 20;
 
     icon.setPosition(x, y);
   }
@@ -477,8 +479,10 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as PlayerPokemon;
     pokemon.level++;
-    pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
-    pokemon.levelExp = 0;
+    if (pokemon.level <= 100) {
+      pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
+      pokemon.levelExp = 0;
+    }
 
     pokemon.scene.unshiftPhase(new LevelUpPhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), pokemon.level - 1, pokemon.level));
 

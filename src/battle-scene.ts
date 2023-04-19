@@ -16,10 +16,12 @@ import { initGameSpeed } from './game-speed';
 import { Arena } from './arena';
 import { GameData } from './game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
-import { getRandomWeatherType } from './weather';
 import { TextStyle, addTextObject } from './text';
 
 const enableAuto = true;
+export const startingLevel = 5;
+export const startingWave = 1;
+export const startingBiome = Biome.PLAINS;
 
 export enum Button {
 	UP,
@@ -301,7 +303,7 @@ export default class BattleScene extends Phaser.Scene {
 			const biomes = Utils.getEnumValues(Biome);
 			this.newArena(biomes[Utils.randInt(biomes.length)]);
 		} else
-			this.newArena(Biome.PLAINS);
+			this.newArena(startingBiome);
 
 		const biomeKey = this.arena.getBiomeKey();
 		this.arenaBg = this.add.sprite(0, 0, `${biomeKey}_bg`);
@@ -321,8 +323,10 @@ export default class BattleScene extends Phaser.Scene {
 
 		if (this.quickStart) {
 			for (let s = 0; s < 3; s++) {
-				const playerSpecies = !isRandom ? getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP) : this.randomSpecies(5);
-				const playerPokemon = new PlayerPokemon(this, playerSpecies, 5, 0);
+				const playerSpecies = (!isRandom
+						? getPokemonSpecies((getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP)).getSpeciesForLevel(startingLevel, true))
+						: this.randomSpecies(startingWave, startingLevel));
+				const playerPokemon = new PlayerPokemon(this, playerSpecies, startingLevel, 0);
 				playerPokemon.setVisible(false);
 				loadPokemonAssets.push(playerPokemon.loadAssets());
 
@@ -431,7 +435,7 @@ export default class BattleScene extends Phaser.Scene {
 			this.pushPhase(new SummonPhase(this));
 		}
 
-		this.currentBattle = new Battle((this.currentBattle?.waveIndex || 0) + 1);
+		this.currentBattle = new Battle((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
 		
 		return this.currentBattle;
 	}
@@ -448,9 +452,9 @@ export default class BattleScene extends Phaser.Scene {
 		this.waveCountText.setShadowColor(!isBoss ? '#ded6b5' : '#984038');
 	}
 
-	randomSpecies(level: integer, fromArenaPool?: boolean): PokemonSpecies {
+	randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean): PokemonSpecies {
 		return fromArenaPool
-			? this.arena.randomSpecies(1, level)
+			? this.arena.randomSpecies(waveIndex, level)
 			: getPokemonSpecies(allSpecies[(Utils.randInt(allSpecies.length)) - 1].getSpeciesForLevel(level));
 	}
 
@@ -584,13 +588,14 @@ export default class BattleScene extends Phaser.Scene {
 	addModifier(modifier: Modifier, virtual?: boolean): Promise<void> {
 		return new Promise(resolve => {
 			if (modifier instanceof PersistentModifier) {
-				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual) && !virtual)
+				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual) && !virtual && !this.sound.get('restore'))
 					this.sound.play('restore');
 
 				if (!virtual)
 					this.updateModifiers().then(() => resolve());
 			} else if (modifier instanceof ConsumableModifier) {
-				this.sound.play('restore');
+				if (!this.sound.get('restore'))
+					this.sound.play('restore');
 
 				if (modifier instanceof ConsumablePokemonModifier) {
 					for (let p in this.party) {

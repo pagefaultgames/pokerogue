@@ -26,11 +26,12 @@ export class Arena {
   }
 
   randomSpecies(waveIndex: integer, level: integer): PokemonSpecies {
-    const isBoss = waveIndex % 10 === 0 && this.pokemonPool[BiomePoolTier.BOSS].length;
+    const isBoss = (waveIndex >= 100 || waveIndex % 10 === 0) && !!this.pokemonPool[BiomePoolTier.BOSS].length;
     const tierValue = Utils.randInt(!isBoss ? 512 : 64);
     let tier = !isBoss
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
       : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
+    console.log(BiomePoolTier[tier]);
     while (!this.pokemonPool[tier].length) {
       console.log(`Downgraded rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
       tier--;
@@ -38,7 +39,7 @@ export class Arena {
     const tierPool = this.pokemonPool[tier];
     let ret: PokemonSpecies;
     if (!tierPool.length)
-      ret = this.scene.randomSpecies(level);
+      ret = this.scene.randomSpecies(waveIndex, level);
     else {
       const entry = tierPool[Utils.randInt(tierPool.length)];
       let species: Species;
@@ -100,6 +101,8 @@ export class Arena {
   trySetWeather(weather: WeatherType, viaMove: boolean): boolean {
     if (this.weather?.weatherType === (weather || undefined))
       return false;
+
+    console.log('set weather', WeatherType[weather]);
 
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
     this.weather = weather ? new Weather(weather, viaMove ? 5 : 0) : null;

@@ -53,6 +53,9 @@ export class GameData {
   }
 
   private save(): boolean {
+    if (this.scene.quickStart)
+      return false;
+      
     const data: SaveData = {
       trainerId: this.trainerId,
       secretId: this.secretId,
