@@ -65,6 +65,8 @@ export class EncounterPhase extends BattlePhase {
   start() {
     super.start();
 
+    this.scene.updateWaveText();
+
     const battle = this.scene.currentBattle;
     const enemySpecies = this.scene.arena.randomSpecies(1, battle.enemyLevel);
 		battle.enemyPokemon = new EnemyPokemon(this.scene, enemySpecies, battle.enemyLevel);
@@ -617,7 +619,6 @@ export abstract class MovePhase extends BattlePhase {
   protected pokemon: Pokemon;
   protected move: PokemonMove;
   protected followUp: boolean;
-  protected hasFollowUp: boolean;
   protected cancelled: boolean;
 
   constructor(scene: BattleScene, pokemon: Pokemon, move: PokemonMove, followUp?: boolean) {
@@ -644,7 +645,7 @@ export abstract class MovePhase extends BattlePhase {
 
     const target = this.pokemon.isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon();
 
-    if (!this.followUp)
+    if (!this.followUp && this.canMove())
       this.pokemon.lapseTags(BattleTagLapseType.MOVE);
 
     const doMove = () => {
@@ -1059,7 +1060,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
 
   start() {
     const pokemon = this.getPokemon();
-    if (pokemon.hp && pokemon.status && pokemon.status.isPostTurn()) {
+    if (pokemon?.hp && pokemon.status && pokemon.status.isPostTurn()) {
       pokemon.status.incrementTurn();
       new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => {
         this.scene.unshiftPhase(new MessagePhase(this.scene,

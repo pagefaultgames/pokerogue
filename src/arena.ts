@@ -98,7 +98,7 @@ export class Arena {
   }
 
   trySetWeather(weather: WeatherType, viaMove: boolean): boolean {
-    if (this.weather?.weatherType === (weather || null))
+    if (this.weather?.weatherType === (weather || undefined))
       return false;
 
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;

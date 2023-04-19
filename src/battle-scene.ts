@@ -16,6 +16,8 @@ import { initGameSpeed } from './game-speed';
 import { Arena } from './arena';
 import { GameData } from './game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
+import { getRandomWeatherType } from './weather';
+import { TextStyle, addTextObject } from './text';
 
 const enableAuto = true;
 
@@ -60,6 +62,7 @@ export default class BattleScene extends Phaser.Scene {
 	public currentBattle: Battle;
 	public pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 	private party: PlayerPokemon[];
+	private waveCountText: Phaser.GameObjects.Text;
 	private modifierBar: ModifierBar;
 	private modifiers: PersistentModifier[];
 	public uiContainer: Phaser.GameObjects.Container;
@@ -283,6 +286,10 @@ export default class BattleScene extends Phaser.Scene {
 		this.add.existing(this.modifierBar);
 		uiContainer.add(this.modifierBar);
 
+		this.waveCountText = addTextObject(this, (this.game.canvas.width / 6) - 2, -(this.game.canvas.height / 6), '1', TextStyle.BATTLE_INFO);
+		this.waveCountText.setOrigin(1, 0);
+		this.fieldUI.add(this.waveCountText);
+
 		this.party = [];
 
 		let loadPokemonAssets = [];
@@ -425,12 +432,21 @@ export default class BattleScene extends Phaser.Scene {
 		}
 
 		this.currentBattle = new Battle((this.currentBattle?.waveIndex || 0) + 1);
+		
 		return this.currentBattle;
 	}
 
 	newArena(biome: Biome): Arena {
 		this.arena = new Arena(this, biome, Biome[biome].toLowerCase());
+		this.arena.trySetWeather(getRandomWeatherType(this.arena.biomeType), false);
 		return this.arena;
+	}
+
+	updateWaveText(): void {
+		const isBoss = !(this.currentBattle.waveIndex % 10);
+		this.waveCountText.setText(this.currentBattle.waveIndex.toString());
+		this.waveCountText.setColor(!isBoss ? '#404040' : '#f89890');
+		this.waveCountText.setShadowColor(!isBoss ? '#ded6b5' : '#984038');
 	}
 
 	randomSpecies(level: integer, fromArenaPool?: boolean): PokemonSpecies {

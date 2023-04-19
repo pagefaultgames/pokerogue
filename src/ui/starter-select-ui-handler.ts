@@ -162,7 +162,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonSprite = this.scene.add.sprite(53, 63, `pkmn__sub`);
       this.starterSelectContainer.add(this.pokemonSprite);
 
-      this.instructionsText = addTextObject(this.scene, 1, 132, '', TextStyle.PARTY);
+      this.instructionsText = addTextObject(this.scene, 1, 132, '', TextStyle.PARTY, { fontSize: '52px' });
       this.starterSelectContainer.add(this.instructionsText);
 
       this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
@@ -345,9 +345,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
        if (this.canCycleGender)
           instructionLines.push('G: Cycle Gender');
       }
-
-      if (instructionLines.length >= 4)
-        instructionLines[2] += `   ${instructionLines.splice(3, 1)[0]}`;
 
       this.instructionsText.setText(instructionLines.join('\n'));
     }
