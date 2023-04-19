@@ -105,6 +105,22 @@ export function getStatusEffectHealText(statusEffect: StatusEffect) {
   return '';
 }
 
+export function getStatusEffectDescriptor(statusEffect: StatusEffect) {
+  switch (statusEffect) {
+    case StatusEffect.POISON:
+    case StatusEffect.TOXIC:
+      return 'poisoning';
+    case StatusEffect.PARALYSIS:
+      return 'paralysis';
+    case StatusEffect.SLEEP:
+      return 'sleep';
+    case StatusEffect.FREEZE:
+      return 'freezing';
+    case StatusEffect.BURN:
+      return 'burn';
+  }
+}
+
 export function getStatusEffectCatchRateMultiplier(statusEffect: StatusEffect) {
   switch (statusEffect) {
     case StatusEffect.POISON:

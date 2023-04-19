@@ -1,8 +1,9 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, DamagePhase, MessagePhase, MovePhase, PokemonHealPhase } from "./battle-phases";
+import { CommonAnimPhase, DamagePhase, MessagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase } from "./battle-phases";
 import { getPokemonMessage } from "./messages";
 import Pokemon from "./pokemon";
 import { Stat } from "./pokemon-stat";
+import { StatusEffect } from "./status-effect";
 import * as Utils from "./utils";
 
 export enum BattleTagType {
@@ -12,9 +13,13 @@ export enum BattleTagType {
   SEEDED,
   NIGHTMARE,
   FRENZY,
+  INGRAIN,
+  AQUA_RING,
+  DROWSY,
   PROTECTED,
   FLYING,
   UNDERGROUND,
+  NO_CRIT,
   BYPASS_SLEEP,
   IGNORE_FLYING
 }
@@ -178,6 +183,70 @@ export class NightmareTag extends PseudoStatusTag {
   }
 }
 
+export class IngrainTag extends PseudoStatusTag {
+  constructor() {
+    super(BattleTagType.INGRAIN, BattleTagLapseType.TURN_END, 1);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+    
+    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' planted its roots!')));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
+    const ret = lapseType !== BattleTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+
+    if (ret)
+      pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.isPlayer(), Math.floor(pokemon.getMaxHp() / 16),
+        getPokemonMessage(pokemon, ` absorbed\nnutrients with its roots!`), true));
+    
+    return ret;
+  }
+}
+
+export class AquaRingTag extends PseudoStatusTag {
+  constructor() {
+    super(BattleTagType.AQUA_RING, BattleTagLapseType.TURN_END, 1);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+    
+    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' surrounded\nitself with a veil of water!')));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
+    const ret = lapseType !== BattleTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+
+    if (ret)
+      pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.isPlayer(), Math.floor(pokemon.getMaxHp() / 16), `AQUA RING restored\n${pokemon.name}\'s HP!`, true));
+    
+    return ret;
+  }
+}
+
+export class DrowsyTag extends BattleTag {
+  constructor() {
+    super(BattleTagType.DROWSY, BattleTagLapseType.TURN_END, 2);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' grew drowsy!')));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
+    if (!super.lapse(pokemon, lapseType)) {
+      pokemon.scene.unshiftPhase(new ObtainStatusEffectPhase(pokemon.scene, pokemon.isPlayer(), StatusEffect.SLEEP));
+      return false;
+    }
+
+    return true;
+  }
+}
+
 export class ProtectedTag extends BattleTag {
   constructor() {
     super(BattleTagType.PROTECTED, BattleTagLapseType.CUSTOM, 0);
@@ -232,11 +301,17 @@ export function getBattleTag(tagType: BattleTagType, turnCount: integer): Battle
       return new SeedTag();
     case BattleTagType.NIGHTMARE:
       return new NightmareTag();
+    case BattleTagType.AQUA_RING:
+      return new AquaRingTag();
+    case BattleTagType.DROWSY:
+      return new DrowsyTag();
     case BattleTagType.PROTECTED:
       return new ProtectedTag();
     case BattleTagType.FLYING:
     case BattleTagType.UNDERGROUND:
       return new HideSpriteTag(tagType, turnCount);
+    case BattleTagType.NO_CRIT:
+      return new BattleTag(tagType, BattleTagLapseType.AFTER_MOVE, turnCount);
     case BattleTagType.BYPASS_SLEEP:
       return new BattleTag(BattleTagType.BYPASS_SLEEP, BattleTagLapseType.TURN_END, turnCount);
     case BattleTagType.IGNORE_FLYING:

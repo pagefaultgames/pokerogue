@@ -470,7 +470,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (source.isPlayer())
           this.scene.applyModifiers(TempBattleStatBoosterModifier, TempBattleStat.CRIT, critLevel);
         const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
-        let isCritical = critChance === 1 || !Utils.randInt(critChance);
+        let isCritical = !source.getTag(BattleTagType.NO_CRIT) && (critChance === 1 || !Utils.randInt(critChance));
         const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
         const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
         const stabMultiplier = source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1;
