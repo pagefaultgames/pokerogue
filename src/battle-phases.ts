@@ -5,18 +5,18 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveA
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
-import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HitHealModifier } from "./modifier";
+import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HitHealModifier, TempBattleStatBoosterModifier } from "./modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { StatusEffect, getStatusEffectActivationText, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./status-effect";
+import { StatusEffect, getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./battle-stat";
 import { Biome, biomeLinks } from "./biome";
-import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier-type";
+import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TempBattleStat, getModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattleTagLapseType, BattleTagType, HideSpriteTag as HiddenTag } from "./battle-tag";
 import { getPokemonMessage } from "./messages";
@@ -103,6 +103,7 @@ export class EncounterPhase extends BattlePhase {
   end() {
     if (this.scene.getEnemyPokemon().shiny)
       this.scene.unshiftPhase(new ShinySparklePhase(this.scene, false));
+      
       // TODO: Remove
     //this.scene.unshiftPhase(new SelectModifierPhase(this.scene));
 
@@ -531,6 +532,8 @@ export class TurnEndPhase extends BattlePhase {
   }
 
   start() {
+    super.start();
+
     const playerPokemon = this.scene.getPlayerPokemon();
     const enemyPokemon = this.scene.getEnemyPokemon();
 
@@ -545,6 +548,24 @@ export class TurnEndPhase extends BattlePhase {
     }
 
     this.end();
+  }
+}
+
+export class BattleEndPhase extends BattlePhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    super.start();
+
+    const tempBattleStatBoosterModifiers = this.scene.getModifiers(TempBattleStatBoosterModifier) as TempBattleStatBoosterModifier[];
+    for (let m of tempBattleStatBoosterModifiers) {
+      if (!m.lapse())
+        this.scene.removeModifier(m);
+    }
+
+    this.scene.updateModifiers().then(() => this.end());
   }
 }
 
@@ -805,14 +826,16 @@ abstract class MoveEffectPhase extends PokemonPhase {
     }
       
     if (this.move.getMove().category !== MoveCategory.STATUS) {
-      const userAccuracyLevel = this.getUserPokemon().summonData.battleStats[BattleStat.ACC];
-      const targetEvasionLevel = this.getTargetPokemon().summonData.battleStats[BattleStat.EVA];
+      const userAccuracyLevel = new Utils.IntegerHolder(this.getUserPokemon().summonData.battleStats[BattleStat.ACC]);
+      const targetEvasionLevel = new Utils.IntegerHolder(this.getTargetPokemon().summonData.battleStats[BattleStat.EVA]);
+      if (this.getUserPokemon().isPlayer())
+        this.scene.applyModifiers(TempBattleStatBoosterModifier, TempBattleStat.ACC, userAccuracyLevel);
       const rand = Utils.randInt(100, 1);
       let accuracyMultiplier = 1;
-      if (userAccuracyLevel !== targetEvasionLevel) {
-        accuracyMultiplier = userAccuracyLevel > targetEvasionLevel
-          ? (3 + Math.min(userAccuracyLevel - targetEvasionLevel, 6)) / 3
-          : 3 / (3 + Math.min(targetEvasionLevel - userAccuracyLevel, 6));
+      if (userAccuracyLevel.value !== targetEvasionLevel.value) {
+        accuracyMultiplier = userAccuracyLevel.value > targetEvasionLevel.value
+          ? (3 + Math.min(userAccuracyLevel.value - targetEvasionLevel.value, 6)) / 3
+          : 3 / (3 + Math.min(targetEvasionLevel.value - userAccuracyLevel.value, 6));
       }
       return rand <= this.move.getMove().accuracy * accuracyMultiplier;
     }
@@ -1172,7 +1195,7 @@ export class VictoryPhase extends PokemonPhase {
 
     const participantIds = this.scene.currentBattle.playerParticipantIds;
     const party = this.scene.getParty();
-    const expShareModifier = this.scene.getModifier(ExpShareModifier) as ExpShareModifier;
+    const expShareModifier = this.scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
     const expValue = this.scene.getEnemyPokemon().getExpValue();
     for (let pm = 0; pm < party.length; pm++) {
       const pokemon = party[pm];
@@ -1192,6 +1215,8 @@ export class VictoryPhase extends PokemonPhase {
         this.scene.unshiftPhase(new ExpPhase(this.scene, pm, expValue * expMultiplier));
       }
     }
+    
+    this.scene.pushPhase(new BattleEndPhase(this.scene));
     this.scene.pushPhase(new SelectModifierPhase(this.scene));
     this.scene.newBattle();
 
@@ -1434,7 +1459,7 @@ export class AttemptCapturePhase extends BattlePhase {
     const _2h = 2 * pokemon.hp;
     const catchRate = pokemon.species.catchRate;
     const pokeballMultiplier = getPokeballCatchMultiplier(this.pokeballType);
-    const statusMultiplier = 1;
+    const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
     const x = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier);
     const y = Math.round(65536 / Math.sqrt(Math.sqrt(255 / x)));
 

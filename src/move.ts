@@ -1,7 +1,7 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { DamagePhase, EnemyMovePhase, MessagePhase, ObtainStatusEffectPhase, PlayerMovePhase, PokemonHealPhase, StatChangePhase } from "./battle-phases";
 import { BattleStat } from "./battle-stat";
-import { BattleTagType, ProtectedTag } from "./battle-tag";
+import { BattleTagType } from "./battle-tag";
 import { getPokemonMessage } from "./messages";
 import Pokemon, { EnemyPokemon, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "./pokemon";
 import { StatusEffect } from "./status-effect";
@@ -684,8 +684,7 @@ export class MoveHitEffectAttr extends MoveAttr {
 
 export class HighCritAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const critChance = args[0] as Utils.IntegerHolder;
-    critChance.value /= 2;
+    (args[0] as Utils.IntegerHolder).value++;
 
     return true;
   }

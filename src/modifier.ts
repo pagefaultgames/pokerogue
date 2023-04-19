@@ -131,7 +131,7 @@ export abstract class PersistentModifier extends Modifier {
     const maxStrokeColor = '#984038';
 
     if (virtual) {
-      const virtualText = addTextObject(scene, 1 * 11 + 16, 12, `+${this.virtualStackCount.toString()}`, TextStyle.PARTY, { fontSize: '66px', color: !isStackMax ? '#40c8f8' : maxColor });
+      const virtualText = addTextObject(scene, 27, 12, `+${this.virtualStackCount.toString()}`, TextStyle.PARTY, { fontSize: '66px', color: !isStackMax ? '#40c8f8' : maxColor });
       virtualText.setShadow(0, 0, null);
       virtualText.setStroke(!isStackMax ? '#006090' : maxStrokeColor, 16)
       virtualText.setOrigin(1, 0);
@@ -178,6 +178,50 @@ export class AddPokeballModifier extends ConsumableModifier {
     pokeballCounts[this.pokeballType] = Math.min(pokeballCounts[this.pokeballType] + this.count, 99);
 
     return true;
+  }
+}
+
+export class TempBattleStatBoosterModifier extends PersistentModifier {
+  private tempBattleStat: ModifierTypes.TempBattleStat;
+  private battlesLeft: integer;
+
+  constructor(type: ModifierTypes.TempBattleStatBoosterModifierType, tempBattleStat: ModifierTypes.TempBattleStat) {
+    super(type);
+
+    this.tempBattleStat = tempBattleStat;
+    this.battlesLeft = 5;
+  }
+
+  clone(): TempBattleStatBoosterModifier {
+    return new TempBattleStatBoosterModifier(this.type as ModifierTypes.TempBattleStatBoosterModifierType, this.tempBattleStat);
+  }
+
+  apply(args: any[]): boolean {
+    const tempBattleStat = args[0] as ModifierTypes.TempBattleStat;
+
+    if (tempBattleStat === this.tempBattleStat) {
+      const statLevel = args[1] as Utils.IntegerHolder;
+      statLevel.value = Math.min(statLevel.value + 1, 6);
+      return true;
+    }
+
+    return false;
+  }
+
+  lapse(): boolean {
+    return !!--this.battlesLeft;
+  }
+
+  getIcon(scene: BattleScene): Phaser.GameObjects.Container {
+    const container = super.getIcon(scene);
+
+    const battleCountText = addTextObject(scene, 27, 0, this.battlesLeft.toString(), TextStyle.PARTY, { fontSize: '66px', color: '#f89890' });
+    battleCountText.setShadow(0, 0, null);
+    battleCountText.setStroke('#984038', 16)
+    battleCountText.setOrigin(1, 0);
+    container.add(battleCountText);
+
+    return container;
   }
 }
 
@@ -387,7 +431,6 @@ export class PokemonPpRestoreModifier extends ConsumablePokemonMoveModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
     const move = pokemon.moveset[this.moveIndex];
-    console.log(move.ppUsed, this.restorePoints, this.restorePoints >= -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0);
     move.ppUsed = this.restorePoints >= -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
 
     return true;

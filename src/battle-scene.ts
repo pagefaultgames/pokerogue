@@ -645,8 +645,18 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	getModifier(modifierType: { new(...args: any[]): Modifier }): Modifier {
-		return this.modifiers.find(m => m instanceof modifierType);
+	removeModifier(modifier: PersistentModifier): boolean {
+		const modifierIndex = this.modifiers.indexOf(modifier);
+		if (modifierIndex > -1) {
+			this.modifiers.splice(modifierIndex, 1);
+			return true;
+		}
+
+		return false;
+	}
+
+	getModifiers(modifierType: { new(...args: any[]): Modifier }): Modifier[] {
+		return this.modifiers.filter(m => m instanceof modifierType);
 	}
 
 	findModifier(modifierFilter: ModifierPredicate): Modifier {

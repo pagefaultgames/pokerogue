@@ -8,7 +8,7 @@ import * as Utils from './utils';
 import { Type, getTypeDamageMultiplier } from './type';
 import { getLevelTotalExp } from './exp';
 import { Stat } from './pokemon-stat';
-import { AttackTypeBoosterModifier, PokemonBaseStatModifier as PokemonBaseStatBoosterModifier, ShinyRateBoosterModifier } from './modifier';
+import { AttackTypeBoosterModifier, PokemonBaseStatModifier as PokemonBaseStatBoosterModifier, ShinyRateBoosterModifier, TempBattleStatBoosterModifier } from './modifier';
 import { PokeballType } from './pokeball';
 import { Gender } from './gender';
 import { initMoveAnim, loadMoveAnimAssets } from './battle-anims';
@@ -20,6 +20,7 @@ import { BattleStat } from './battle-stat';
 import { BattleTag, BattleTagLapseType, BattleTagType, getBattleTag } from './battle-tag';
 import { Species } from './species';
 import { WeatherType } from './weather';
+import { TempBattleStat } from './modifier-type';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -263,8 +264,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getBattleStat(stat: Stat): integer {
     if (stat === Stat.HP)
       return this.stats[Stat.HP];
-    const statLevel = this.summonData.battleStats[(stat - 1) as BattleStat];
-    let ret = this.stats[stat] * (Math.max(2, 2 + statLevel) / Math.max(2, 2 - statLevel));
+    const battleStat = (stat - 1) as BattleStat;
+    const statLevel = new Utils.IntegerHolder(this.summonData.battleStats[battleStat]);
+    if (this.isPlayer())
+      this.scene.applyModifiers(TempBattleStatBoosterModifier, battleStat as integer as TempBattleStat, statLevel);
+    let ret = this.stats[stat] * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
     if (stat === Stat.SPDEF && this.scene.arena.weather?.weatherType === WeatherType.SANDSTORM)
       ret *= 1.5;
     if (this.status && this.status.effect === StatusEffect.PARALYSIS)
@@ -461,9 +465,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const weatherTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(move.type);
         applyMoveAttrs(VariablePowerAttr, source, this, move, power);
         this.scene.applyModifiers(AttackTypeBoosterModifier, source, power);
-        const critChance = new Utils.IntegerHolder(16);
-        applyMoveAttrs(HighCritAttr, source, this, move, critChance);
-        let isCritical = Utils.randInt(critChance.value) === 0;
+        const critLevel = new Utils.IntegerHolder(0);
+        applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
+        if (source.isPlayer())
+          this.scene.applyModifiers(TempBattleStatBoosterModifier, TempBattleStat.CRIT, critLevel);
+        const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
+        let isCritical = critChance === 1 || !Utils.randInt(critChance);
         const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
         const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
         const stabMultiplier = source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1;

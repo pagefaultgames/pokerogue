@@ -104,3 +104,18 @@ export function getStatusEffectHealText(statusEffect: StatusEffect) {
 
   return '';
 }
+
+export function getStatusEffectCatchRateMultiplier(statusEffect: StatusEffect) {
+  switch (statusEffect) {
+    case StatusEffect.POISON:
+    case StatusEffect.TOXIC:
+    case StatusEffect.PARALYSIS:
+    case StatusEffect.BURN:
+      return 1.5;
+    case StatusEffect.SLEEP:
+    case StatusEffect.FREEZE:
+      return 2.5;
+  }
+
+  return 1;
+}
