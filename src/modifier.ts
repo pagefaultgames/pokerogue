@@ -409,6 +409,20 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
   }
 }
 
+export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
+
+  constructor(type: ModifierType, pokemonId: integer) {
+    super(type, pokemonId);
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+    pokemon.resetStatus();
+
+    return true;
+  }
+}
+
 export abstract class ConsumablePokemonMoveModifier extends ConsumablePokemonModifier {
   public moveIndex: integer;
 

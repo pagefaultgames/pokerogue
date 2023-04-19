@@ -99,6 +99,18 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
   }
 }
 
+export class PokemonStatusHealModifierType extends PokemonModifierType {
+  constructor(name: string) {
+    super(name, `Heal any status ailment for one POKéMON`,
+      ((_type, args) => new Modifiers.PokemonStatusHealModifier(this, (args[0] as PlayerPokemon).id)),
+      ((pokemon: PlayerPokemon) => {
+        if (!pokemon.hp || !pokemon.status)
+          return PartyUiHandler.NoEffectMessage;
+        return null;
+      }));
+  }
+}
+
 export abstract class PokemonMoveModifierType extends PokemonModifierType {
   public moveSelectFilter: PokemonMoveSelectFilter;
 
@@ -481,6 +493,10 @@ const modifierPool = {
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(new AddPokeballModifierType(PokeballType.GREAT_BALL, 5, 'gb'), 12),
+    new WeightedModifierType(new PokemonStatusHealModifierType('FULL HEAL'), (party: PlayerPokemon[]) => {
+      const statusEffectPartyMemberCount = party.filter(p => p.hp && !!p.status).length;
+      return statusEffectPartyMemberCount * 8;
+    }),
     new WeightedModifierType(new PokemonReviveModifierType('REVIVE', 50), (party: PlayerPokemon[]) => {
       const faintedPartyMemberCount = party.filter(p => !p.hp).length;
       return faintedPartyMemberCount * 6;
