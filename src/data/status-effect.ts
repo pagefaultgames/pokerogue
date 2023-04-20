@@ -87,7 +87,7 @@ export function getStatusEffectOverlapText(statusEffect: StatusEffect): string {
   return '';
 }
 
-export function getStatusEffectHealText(statusEffect: StatusEffect) {
+export function getStatusEffectHealText(statusEffect: StatusEffect): string {
   switch (statusEffect) {
     case StatusEffect.POISON:
     case StatusEffect.TOXIC:
@@ -105,7 +105,7 @@ export function getStatusEffectHealText(statusEffect: StatusEffect) {
   return '';
 }
 
-export function getStatusEffectDescriptor(statusEffect: StatusEffect) {
+export function getStatusEffectDescriptor(statusEffect: StatusEffect): string {
   switch (statusEffect) {
     case StatusEffect.POISON:
     case StatusEffect.TOXIC:
@@ -121,7 +121,7 @@ export function getStatusEffectDescriptor(statusEffect: StatusEffect) {
   }
 }
 
-export function getStatusEffectCatchRateMultiplier(statusEffect: StatusEffect) {
+export function getStatusEffectCatchRateMultiplier(statusEffect: StatusEffect): number {
   switch (statusEffect) {
     case StatusEffect.POISON:
     case StatusEffect.TOXIC:

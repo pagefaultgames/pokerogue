@@ -44,7 +44,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
   switch (berryType) {
     case BerryType.SITRUS:
       return (pokemon: Pokemon) => {
-        pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, true, Math.floor(pokemon.getMaxHp() / 4), getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\nrestored its HP!`), true));
+        pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.isPlayer(), Math.floor(pokemon.getMaxHp() / 4), getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\nrestored its HP!`), true));
       };
     case BerryType.LUM:
       return (pokemon: Pokemon) => {

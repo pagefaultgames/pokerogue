@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveA
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HitHealModifier, PokemonExpBoosterModifier, TempBattleStatBoosterModifier } from "./modifier/modifier";
+import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HitHealModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, TempBattleStatBoosterModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -16,7 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { Biome, biomeLinks } from "./data/biome";
-import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattleTagLapseType, BattleTagType, HideSpriteTag as HiddenTag } from "./data/battle-tag";
 import { getPokemonMessage } from "./messages";
@@ -67,7 +67,7 @@ export class EncounterPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.updateWaveText();
+    this.scene.updateWaveCountText();
 
     const battle = this.scene.currentBattle;
     const enemySpecies = this.scene.arena.randomSpecies(battle.waveIndex, battle.enemyLevel);
@@ -85,6 +85,9 @@ export class EncounterPhase extends BattlePhase {
         this.scene.field.moveBelow(enemyPokemon, this.scene.getPlayerPokemon());
       enemyPokemon.tint(0, 0.5);
 
+      regenerateModifierPoolThresholds(this.scene.getEnemyParty(), false);
+      this.scene.generateEnemyModifiers();
+
       this.scene.ui.setMode(Mode.MESSAGE).then(() => this.doEncounter());
     });
   }
@@ -92,7 +95,7 @@ export class EncounterPhase extends BattlePhase {
   doEncounter() {
     if (startingWave > 10) {
       for (let m = 0; m < Math.floor(startingWave / 10); m++)
-        this.scene.addModifier(getModifierTypeOptionsForWave((m + 1) * 10, 1, this.scene.getParty())[0].type.newModifier());
+        this.scene.addModifier(getPlayerModifierTypeOptionsForWave((m + 1) * 10, 1, this.scene.getParty())[0].type.newModifier());
     }
 
     this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena.biomeType), false);
@@ -594,7 +597,7 @@ export class TurnEndPhase extends BattlePhase {
           this.scene.pushPhase(new MessagePhase(this.scene, `${dm.getName()} is disabled\nno more!`));
       }
 
-      const hasUsableBerry = pokemon.isPlayer() && !!this.scene.findModifier(m => m instanceof BerryModifier && m.shouldApply([ pokemon ]));
+      const hasUsableBerry = !!this.scene.findModifier(m => m instanceof BerryModifier && m.shouldApply([ pokemon ]), pokemon.isPlayer());
       if (hasUsableBerry)
         this.scene.pushPhase(new BerryPhase(this.scene, pokemon.isPlayer()));
 
@@ -626,6 +629,8 @@ export class BattleEndPhase extends BattlePhase {
 
   start() {
     super.start();
+
+    this.scene.clearEnemyModifiers();
 
     const tempBattleStatBoosterModifiers = this.scene.getModifiers(TempBattleStatBoosterModifier) as TempBattleStatBoosterModifier[];
     for (let m of tempBattleStatBoosterModifiers) {
@@ -675,7 +680,7 @@ export class CommonAnimPhase extends PokemonPhase {
   }
 
   start() {
-    new CommonBattleAnim(this.anim, this.getPokemon(), this.getPokemon().isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon()).play(this.scene, () => {
+    new CommonBattleAnim(this.anim, this.getPokemon(), this.player ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon()).play(this.scene, () => {
       this.end();
     });
   }
@@ -881,8 +886,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
     else {
       if (user.turnData.hitsTotal > 1)
         this.scene.unshiftPhase(new MessagePhase(this.scene, `Hit ${user.turnData.hitCount} time(s)!`));
-      if (this.player)
-        this.scene.applyModifiers(HitHealModifier, user);
+      this.scene.applyModifiers(HitHealModifier, this.player, user);
     }
     
     super.end();
@@ -907,8 +911,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
     if (this.move.getMove().category !== MoveCategory.STATUS) {
       const userAccuracyLevel = new Utils.IntegerHolder(this.getUserPokemon().summonData.battleStats[BattleStat.ACC]);
       const targetEvasionLevel = new Utils.IntegerHolder(this.getTargetPokemon().summonData.battleStats[BattleStat.EVA]);
-      if (this.getUserPokemon().isPlayer())
-        this.scene.applyModifiers(TempBattleStatBoosterModifier, TempBattleStat.ACC, userAccuracyLevel);
+      this.scene.applyModifiers(TempBattleStatBoosterModifier, this.player, TempBattleStat.ACC, userAccuracyLevel);
       const rand = Utils.randInt(100, 1);
       let accuracyMultiplier = 1;
       if (userAccuracyLevel.value !== targetEvasionLevel.value) {
@@ -1324,7 +1327,7 @@ export class VictoryPhase extends PokemonPhase {
       if (expShareModifier)
         expMultiplier += expShareModifier.stackCount * 0.1;
       const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
-      this.scene.applyModifiers(PokemonExpBoosterModifier, partyMember, pokemonExp);
+      this.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
       partyMemberExp.push(Math.floor(pokemonExp.value));
     }
 
@@ -1404,7 +1407,7 @@ export class ExpPhase extends PartyMemberPokemonPhase {
 
     const pokemon = this.getPokemon();
     let exp = new Utils.NumberHolder(this.expValue);
-    this.scene.applyModifiers(ExpBoosterModifier, exp);
+    this.scene.applyModifiers(ExpBoosterModifier, true, exp);
     exp.value = Math.floor(exp.value);
     this.scene.ui.showText(`${pokemon.name} gained\n${exp.value} EXP. Points!`, null, () => {
       const lastLevel = pokemon.level;
@@ -1549,18 +1552,16 @@ export class BerryPhase extends CommonAnimPhase {
   start() {
     let berryModifier: BerryModifier;
 
-    if (this.player) {
-      if ((berryModifier = this.scene.applyModifier(BerryModifier, this.getPokemon()) as BerryModifier)) {
-        if (berryModifier.consumed) {
-          if (!--berryModifier.stackCount)
-            this.scene.removeModifier(berryModifier);
-          else
-            berryModifier.consumed = false;
-          this.scene.updateModifiers();
-        }
-        super.start();
-        return;
+    if ((berryModifier = this.scene.applyModifier(BerryModifier, this.player, this.getPokemon()) as BerryModifier)) {
+      if (berryModifier.consumed) {
+        if (!--berryModifier.stackCount)
+          this.scene.removeModifier(berryModifier);
+        else
+          berryModifier.consumed = false;
+        this.scene.updateModifiers(this.player);
       }
+      super.start();
+      return;
     }
 
     this.end();
@@ -1596,8 +1597,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
     if (!fullHp) {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
-      if (this.player)
-        this.scene.applyModifiers(HealingBoosterModifier, hpRestoreMultiplier);
+      this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       pokemon.hp = Math.min(pokemon.hp + this.hpHealed * hpRestoreMultiplier.value, pokemon.getMaxHp());
       pokemon.updateInfo().then(() => super.end());
     } else if (this.showFullHpMessage)
@@ -1699,9 +1699,7 @@ export class AttemptCapturePhase extends BattlePhase {
                   } else
                     this.scene.sound.play('pb_lock')
                 },
-                onComplete: () => {
-                  this.catch();
-                }
+                onComplete: () => this.catch()
               });
             } : () => this.catch();
 
@@ -1747,12 +1745,16 @@ export class AttemptCapturePhase extends BattlePhase {
       };
       const addToParty = () => {
         const newPokemon = pokemon.addToParty();
-        pokemon.hp = 0;
-        this.scene.field.remove(pokemon, true);
-        if (newPokemon)
-          newPokemon.loadAssets().then(end);
-        else
-          end();
+        const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
+        Promise.all(modifiers.map(m => this.scene.addModifier(m))).then(() => {
+          pokemon.hp = 0;
+          this.scene.clearEnemyModifiers();
+          this.scene.field.remove(pokemon, true);
+          if (newPokemon)
+            newPokemon.loadAssets().then(end);
+          else
+            end();
+        });
       };
       Promise.all([ pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon) ]).then(() => {
         if (this.scene.getParty().length === 6) {
@@ -1804,8 +1806,8 @@ export class SelectModifierPhase extends BattlePhase {
     const party = this.scene.getParty();
     regenerateModifierPoolThresholds(party);
     const modifierCount = new Utils.IntegerHolder(3);
-    this.scene.applyModifiers(ExtraModifierModifier, modifierCount);
-    const typeOptions: Array<ModifierTypeOption> = getModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex - 1, modifierCount.value, party);
+    this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
+    const typeOptions: Array<ModifierTypeOption> = getPlayerModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex - 1, modifierCount.value, party);
 
     const modifierSelectCallback = (cursor: integer) => {
       if (cursor < 0) {
@@ -1825,14 +1827,14 @@ export class SelectModifierPhase extends BattlePhase {
             const modifier = !isMoveModifier
               ? modifierType.newModifier(party[slotIndex])
               : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
-            this.scene.addModifier(modifier).then(() => super.end());
+            this.scene.addModifier(modifier, true).then(() => super.end());
             this.scene.ui.clearText();
             this.scene.ui.setMode(Mode.MESSAGE);
           } else
             this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
         }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined);
       } else {
-        this.scene.addModifier(typeOptions[cursor].type.newModifier()).then(() => super.end());
+        this.scene.addModifier(typeOptions[cursor].type.newModifier(), true).then(() => super.end());
         this.scene.ui.clearText();
         this.scene.ui.setMode(Mode.MESSAGE);
       }

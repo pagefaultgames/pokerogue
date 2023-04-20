@@ -1,9 +1,9 @@
 import * as ModifierTypes from './modifier-type';
-import { CommonAnimPhase, LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../battle-phases";
+import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../battle-phases";
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { PokeballType } from "../data/pokeball";
-import Pokemon, { PlayerPokemon } from "../pokemon";
+import Pokemon, { EnemyPokemon, PlayerPokemon } from "../pokemon";
 import { Stat } from "../data/pokemon-stat";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from '../data/type';
@@ -13,15 +13,17 @@ import { getPokemonMessage } from '../messages';
 import * as Utils from "../utils";
 import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
-import { CommonAnim } from '../data/battle-anims';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
 export class ModifierBar extends Phaser.GameObjects.Container {
-  constructor(scene: BattleScene) {
-    super(scene, 1, 2);
+  private player: boolean;
 
+  constructor(scene: BattleScene, enemy?: boolean) {
+    super(scene, 1 + (enemy ? 302 : 0), 2);
+
+    this.player = !enemy;
     this.setScale(0.5);
   }
 
@@ -41,7 +43,7 @@ export class ModifierBar extends Phaser.GameObjects.Container {
     const x = (this.getIndex(icon) % rowIcons) * 26 / (rowIcons / 12);
     const y = Math.floor(this.getIndex(icon) / rowIcons) * 20;
 
-    icon.setPosition(x, y);
+    icon.setPosition(this.player ? x : -x, y);
   }
 }
 
@@ -272,7 +274,8 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   getPokemon(scene: BattleScene) {
-    return scene.getParty().find(p => p.id === this.pokemonId);
+    const findInParty = (party: Pokemon[]) => party.find(p => p.id === this.pokemonId);
+    return findInParty(scene.getParty()) || findInParty(scene.getEnemyParty());
   }
 }
 
@@ -351,7 +354,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
   }
 
   apply(args: any[]): boolean {
-    const pokemon = args[0] as PlayerPokemon;
+    const pokemon = args[0] as Pokemon;
 
     if (pokemon.turnData.damageDealt && pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
@@ -375,7 +378,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
   }
 
   match(modifier: Modifier) {
-    return modifier instanceof BerryModifier && (modifier as BerryModifier).berryType === this.berryType;
+    return modifier instanceof BerryModifier && (modifier as BerryModifier).berryType === this.berryType && modifier.pokemonId === this.pokemonId;
   }
 
   clone() {
@@ -390,7 +393,9 @@ export class BerryModifier extends PokemonHeldItemModifier {
     const pokemon = args[0] as Pokemon;
 
     const preserve = new Utils.BooleanHolder(false);
-    pokemon.scene.applyModifiers(PreserveBerryModifier, preserve);
+    pokemon.scene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), preserve);
+
+    console.log(pokemon.isPlayer());
 
     getBerryEffectFunc(this.berryType)(pokemon);
     if (!preserve.value)
@@ -439,7 +444,7 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
   }
 
   shouldApply(args: any[]): boolean {
-    return args.length && args[0] instanceof Pokemon && (this.pokemonId === -1 || (args[0] as Pokemon).id === this.pokemonId);
+    return args.length && args[0] instanceof PlayerPokemon && (this.pokemonId === -1 || (args[0] as PlayerPokemon).id === this.pokemonId);
   }
 
   getPokemon(scene: BattleScene) {
@@ -623,7 +628,7 @@ export class PartyShareModifier extends PersistentModifier {
               continue;
             const newHeldItemModifier = heldItemModifier.clone() as PokemonHeldItemModifier;
             newHeldItemModifier.pokemonId = p.id;
-            scene.addModifier(newHeldItemModifier, true);
+            scene.addModifier(newHeldItemModifier, false, true);
           }
         }
       }

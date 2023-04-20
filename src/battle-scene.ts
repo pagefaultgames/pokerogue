@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { Biome } from './data/biome';
 import UI from './ui/ui';
 import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, SelectStarterPhase, MessagePhase } from './battle-phases';
-import { PlayerPokemon, EnemyPokemon } from './pokemon';
+import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ConsumablePokemonMoveModifier, ModifierPredicate } from './modifier/modifier';
@@ -18,7 +18,7 @@ import { GameData } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from './data/move';
-import { getDefaultModifierTypeForTier } from './modifier/modifier-type';
+import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getPlayerModifierTypeOptionsForWave } from './modifier/modifier-type';
 
 const enableAuto = true;
 export const startingLevel = 5;
@@ -45,7 +45,7 @@ export enum Button {
 export default class BattleScene extends Phaser.Scene {
 	public auto: boolean;
 	public gameSpeed: integer = 1;
-	public quickStart: boolean;
+	public quickStart: boolean = true;
 
 	public gameData: GameData;
 
@@ -68,7 +68,9 @@ export default class BattleScene extends Phaser.Scene {
 	private party: PlayerPokemon[];
 	private waveCountText: Phaser.GameObjects.Text;
 	private modifierBar: ModifierBar;
+	private enemyModifierBar: ModifierBar;
 	private modifiers: PersistentModifier[];
+	private enemyModifiers: PokemonHeldItemModifier[];
 	public uiContainer: Phaser.GameObjects.Container;
 	public ui: UI;
 
@@ -285,13 +287,19 @@ export default class BattleScene extends Phaser.Scene {
 		this.uiContainer = uiContainer;
 
 		this.modifiers = [];
+		this.enemyModifiers = [];
 
 		this.modifierBar = new ModifierBar(this);
 		this.add.existing(this.modifierBar);
 		uiContainer.add(this.modifierBar);
 
-		this.waveCountText = addTextObject(this, (this.game.canvas.width / 6) - 2, -(this.game.canvas.height / 6), '1', TextStyle.BATTLE_INFO);
+		this.enemyModifierBar = new ModifierBar(this, true);
+		this.add.existing(this.enemyModifierBar);
+		uiContainer.add(this.enemyModifierBar);
+
+		this.waveCountText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, '1', TextStyle.BATTLE_INFO);
 		this.waveCountText.setOrigin(1, 0);
+		this.updateWaveCountPosition();
 		this.fieldUI.add(this.waveCountText);
 
 		this.party = [];
@@ -414,6 +422,10 @@ export default class BattleScene extends Phaser.Scene {
 		return this.party;
 	}
 
+	getEnemyParty(): EnemyPokemon[] {
+		return this.getEnemyPokemon() ? [ this.getEnemyPokemon() ] : [];
+	}
+
 	getPlayerPokemon(): PlayerPokemon {
 		return this.getParty()[0];
 	}
@@ -451,11 +463,15 @@ export default class BattleScene extends Phaser.Scene {
 		return this.arena;
 	}
 
-	updateWaveText(): void {
+	updateWaveCountText(): void {
 		const isBoss = !(this.currentBattle.waveIndex % 10);
 		this.waveCountText.setText(this.currentBattle.waveIndex.toString());
 		this.waveCountText.setColor(!isBoss ? '#404040' : '#f89890');
 		this.waveCountText.setShadowColor(!isBoss ? '#ded6b5' : '#984038');
+	}
+
+	updateWaveCountPosition(): void {
+		this.waveCountText.setY(-(this.game.canvas.height / 6) + (this.enemyModifiers.length ? 15 : 0));
 	}
 
 	randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean): PokemonSpecies {
@@ -591,16 +607,16 @@ export default class BattleScene extends Phaser.Scene {
 		this.phaseQueue.push(new CommandPhase(this));
 	}
 
-	addModifier(modifier: Modifier, virtual?: boolean): Promise<void> {
+	addModifier(modifier: Modifier, playSound?: boolean, virtual?: boolean): Promise<void> {
 		return new Promise(resolve => {
 			const soundName = modifier.type.soundName;
 			if (modifier instanceof PersistentModifier) {
 				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual)) {
-					if (!virtual && !this.sound.get(soundName))
+					if (playSound && !this.sound.get(soundName))
 						this.sound.play(soundName);
 				} else if (!virtual) {
 					const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
-					this.addModifier(defaultModifierType.newModifier()).then(() => resolve());
+					this.addModifier(defaultModifierType.newModifier(), playSound).then(() => resolve());
 					this.unshiftPhase(new MessagePhase(this, `The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, null, true));
 					return;
 				}
@@ -608,7 +624,7 @@ export default class BattleScene extends Phaser.Scene {
 				if (!virtual)
 					this.updateModifiers().then(() => resolve());
 			} else if (modifier instanceof ConsumableModifier) {
-				if (!this.sound.get(soundName))
+				if (playSound && !this.sound.get(soundName))
 					this.sound.play(soundName);
 
 				if (modifier instanceof ConsumablePokemonModifier) {
@@ -619,7 +635,7 @@ export default class BattleScene extends Phaser.Scene {
 						if (modifier instanceof PokemonHpRestoreModifier) {
 							if (!(modifier as PokemonHpRestoreModifier).fainted) {
 								const hpRestoreMultiplier = new Utils.IntegerHolder(1);
-								this.applyModifiers(HealingBoosterModifier, hpRestoreMultiplier);
+								this.applyModifiers(HealingBoosterModifier, true, hpRestoreMultiplier);
 								args.push(hpRestoreMultiplier.value);
 							} else
 								args.push(1);
@@ -651,68 +667,114 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	updateModifiers(): Promise<void> {
+	generateEnemyModifiers(): Promise<void> {
 		return new Promise(resolve => {
-			for (let modifier of this.modifiers) {
+			const waveIndex = this.currentBattle.waveIndex;
+			const chances = Math.ceil(waveIndex / 20);
+			const isBoss = waveIndex >= 100 || !(waveIndex % 10);
+			let count = 0;
+			for (let c = 0; c < chances; c++) {
+				if (!Utils.randInt(!isBoss ? 8 : 2))
+					count++;
+				if (count === 12)
+					break;
+			}
+			if (isBoss)
+				count = Math.max(count, Math.ceil(chances / 2));
+			getEnemyModifierTypesForWave(waveIndex, count, this.getEnemyParty()).map(mt => mt.newModifier(this.getEnemyPokemon()).add(this.enemyModifiers, false));
+
+			this.updateModifiers(false).then(() => resolve());
+		});
+	}
+
+	clearEnemyModifiers(): void {
+		this.enemyModifiers.splice(0, this.enemyModifiers.length);
+		this.updateModifiers(false).then(() => this.updateWaveCountPosition());
+	}
+
+	updateModifiers(player?: boolean): Promise<void> {
+		if (player === undefined)
+			player = true;
+		return new Promise(resolve => {
+			const modifiers = player ? this.modifiers : this.enemyModifiers;
+			for (let modifier of modifiers) {
 				if (modifier instanceof PersistentModifier)
 					(modifier as PersistentModifier).virtualStackCount = 0;
 			}
 
-			this.applyModifiers(PartyShareModifier, this, this.modifiers);
+			if (player)
+				this.applyModifiers(PartyShareModifier, true, this, modifiers);
 
-			const modifiers = this.modifiers.slice(0);
-			for (let modifier of modifiers) {
+			const modifiersClone = modifiers.slice(0);
+			for (let modifier of modifiersClone) {
 				if (!modifier.getStackCount())
-					this.modifiers.splice(this.modifiers.indexOf(modifier), 1);
+					modifiers.splice(modifiers.indexOf(modifier), 1);
 			}
 
-			this.updatePartyForModifiers().then(() => {
-				this.modifierBar.updateModifiers(this.modifiers);
+			this.updatePartyForModifiers(player ? this.getParty() : this.getEnemyParty()).then(() => {
+				(player ? this.modifierBar : this.enemyModifierBar).updateModifiers(modifiers);
+				if (!player)
+					this.updateWaveCountPosition();
 				resolve();
 			});
 		});
 	}
 
-	updatePartyForModifiers(): Promise<void> {
+	updatePartyForModifiers(party: Pokemon[]): Promise<void> {
 		return new Promise(resolve => {
-			Promise.allSettled(this.party.map(p => {
+			Promise.allSettled(party.map(p => {
 				p.calculateStats();
 				return p.updateInfo();
 			})).then(() => resolve());
 		});
 	}
 
-	removeModifier(modifier: PersistentModifier): boolean {
-		const modifierIndex = this.modifiers.indexOf(modifier);
+	removeModifier(modifier: PersistentModifier, enemy?: boolean): boolean {
+		const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
+		const modifierIndex = modifiers.indexOf(modifier);
 		if (modifierIndex > -1) {
-			this.modifiers.splice(modifierIndex, 1);
+			modifiers.splice(modifierIndex, 1);
 			return true;
 		}
 
 		return false;
 	}
 
-	getModifiers(modifierType: { new(...args: any[]): Modifier }): Modifier[] {
-		return this.modifiers.filter(m => m instanceof modifierType);
+	getModifiers(modifierType: { new(...args: any[]): Modifier }, player?: boolean): Modifier[] {
+		if (player === undefined)
+			player = true;
+		return (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType);
 	}
 
-	findModifier(modifierFilter: ModifierPredicate): Modifier {
-		return this.modifiers.find(m => (modifierFilter as ModifierPredicate)(m));
+	findModifiers(modifierFilter: ModifierPredicate, player?: boolean): Modifier[] {
+		if (player === undefined)
+			player = true;
+		return (player ? this.modifiers : this.enemyModifiers).filter(m => (modifierFilter as ModifierPredicate)(m));
 	}
 
-	applyModifiers(modifierType: { new(...args: any[]): Modifier }, ...args: any[]): void {
-		const modifiers = this.modifiers.filter(m => m instanceof modifierType && m.shouldApply(args));
+	findModifier(modifierFilter: ModifierPredicate, player?: boolean): Modifier {
+		if (player === undefined)
+			player = true;
+		return (player ? this.modifiers : this.enemyModifiers).find(m => (modifierFilter as ModifierPredicate)(m));
+	}
+
+	applyModifiers(modifierType: { new(...args: any[]): Modifier }, player?: boolean, ...args: any[]): void {
+		if (player === undefined)
+			player = true;
+		const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
 		for (let modifier of modifiers) {
 			if (modifier.apply(args))
-				console.log('Applied', modifier.type.name);
+				console.log('Applied', modifier.type.name, !player ? '(enemy)' : '');
 		}
 	}
 
-	applyModifier(modifierType: { new(...args: any[]): Modifier }, ...args: any[]): PersistentModifier {
-		const modifiers = this.modifiers.filter(m => m instanceof modifierType && m.shouldApply(args));
+	applyModifier(modifierType: { new(...args: any[]): Modifier }, player?: boolean, ...args: any[]): PersistentModifier {
+		if (player === undefined)
+			player = true;
+		const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
 		for (let modifier of modifiers) {
 			if (modifier.apply(args)) {
-				console.log('Applied', modifier.type.name);
+				console.log('Applied', modifier.type.name, !player ? '(enemy)' : '');
 				return modifier;
 			}
 		}

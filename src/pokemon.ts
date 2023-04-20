@@ -109,7 +109,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       if (this.shiny === undefined) {
         let shinyThreshold = new Utils.IntegerHolder(32);
-        this.scene.applyModifiers(ShinyRateBoosterModifier, shinyThreshold);
+        this.scene.applyModifiers(ShinyRateBoosterModifier, this.isPlayer(), shinyThreshold);
         console.log(shinyThreshold.value);
 
         this.shiny = (E ^ F) < shinyThreshold.value;
@@ -267,7 +267,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const battleStat = (stat - 1) as BattleStat;
     const statLevel = new Utils.IntegerHolder(this.summonData.battleStats[battleStat]);
     if (this.isPlayer())
-      this.scene.applyModifiers(TempBattleStatBoosterModifier, battleStat as integer as TempBattleStat, statLevel);
+      this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
     let ret = this.stats[stat] * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
     if (stat === Stat.SPDEF && this.scene.arena.weather?.weatherType === WeatherType.SANDSTORM)
       ret *= 1.5;
@@ -280,7 +280,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.stats)
       this.stats = [ 0, 0, 0, 0, 0, 0 ];
     const baseStats = this.getSpeciesForm().baseStats.slice(0);
-    this.scene.applyModifiers(PokemonBaseStatModifier, this, baseStats);
+    this.scene.applyModifiers(PokemonBaseStatModifier, this.isPlayer(), this, baseStats);
     const stats = Utils.getEnumValues(Stat);
     for (let s of stats) {
       const isHp = s === Stat.HP;
@@ -464,11 +464,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const typeMultiplier = getTypeDamageMultiplier(move.type, this.getSpeciesForm().type1) * (this.getSpeciesForm().type2 !== null ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type2) : 1);
         const weatherTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(move.type);
         applyMoveAttrs(VariablePowerAttr, source, this, move, power);
-        this.scene.applyModifiers(AttackTypeBoosterModifier, source, power);
+        this.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, power);
         const critLevel = new Utils.IntegerHolder(0);
         applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
-        if (source.isPlayer())
-          this.scene.applyModifiers(TempBattleStatBoosterModifier, TempBattleStat.CRIT, critLevel);
+        this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);
         const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
         let isCritical = !source.getTag(BattleTagType.NO_CRIT) && (critChance === 1 || !Utils.randInt(critChance));
         const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
@@ -968,7 +967,7 @@ export class EnemyPokemon extends Pokemon {
     let ret: PlayerPokemon = null;
 
     if (party.length < 6) {
-      const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.formIndex, this.gender, this.shiny);
+      const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.formIndex, this.gender, this.shiny, this);
       party.push(newPokemon);
       ret = newPokemon;
     }
