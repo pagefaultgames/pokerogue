@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveA
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./pokemon-stat";
-import { ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HitHealModifier, PokemonExpBoosterModifier, TempBattleStatBoosterModifier } from "./modifier";
+import { ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HitHealModifier, PokemonExpBoosterModifier, TempBattleStatBoosterModifier } from "./modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
@@ -502,8 +502,13 @@ export class CommandPhase extends BattlePhase {
           success = true;
         } else if (cursor < playerPokemon.moveset.length) {
           const move = playerPokemon.moveset[cursor];
-          if (move.isDisabled())
-            this.scene.ui.showText(`${move.getName()} is disabled!`);
+          if (move.isDisabled()) {
+            this.scene.ui.setMode(Mode.MESSAGE);
+            this.scene.ui.showText(`${move.getName()} is disabled!`, null, () => {
+              this.scene.ui.clearText();
+              this.scene.ui.setMode(Mode.FIGHT);
+            }, null, true);
+          }
         }
 
         break;
@@ -1292,24 +1297,56 @@ export class VictoryPhase extends PokemonPhase {
     const participantIds = this.scene.currentBattle.playerParticipantIds;
     const party = this.scene.getParty();
     const expShareModifier = this.scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
+    const expBalanceModifier = this.scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
     const expValue = this.scene.getEnemyPokemon().getExpValue();
-    for (let pm = 0; pm < party.length; pm++) {
-      const pokemon = party[pm];
-      if (!pokemon.hp)
-        continue;
-      const pId = pokemon.id;
+    const expPartyMembers = party.filter(p => p.hp && p.level < 100);
+    const partyMemberExp = [];
+    for (let partyMember of expPartyMembers) {
+      const pId = partyMember.id;
       const participated = participantIds.has(pId);
-      if (!participated && !expShareModifier)
+      if (!participated && !expShareModifier) {
+        partyMemberExp.push(0);
         continue;
-      if (pokemon.level < 100) {
-        let expMultiplier = 0;
-        if (participated)
-          expMultiplier += (1 / participantIds.size);
-        if (expShareModifier)
-          expMultiplier += expShareModifier.stackCount * 0.1;
-        const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
-        this.scene.applyModifiers(PokemonExpBoosterModifier, pokemon, pokemonExp);
-        this.scene.unshiftPhase(new ExpPhase(this.scene, pm, Math.floor(pokemonExp.value)));
+      }
+      let expMultiplier = 0;
+      if (participated)
+        expMultiplier += (1 / participantIds.size);
+      if (expShareModifier)
+        expMultiplier += expShareModifier.stackCount * 0.1;
+      const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
+      this.scene.applyModifiers(PokemonExpBoosterModifier, partyMember, pokemonExp);
+      partyMemberExp.push(Math.floor(pokemonExp.value));
+    }
+
+    if (expBalanceModifier) {
+      let totalLevel = 0;
+      let totalExp = 0;
+      expPartyMembers.forEach((expPartyMember, epm) => {
+        totalExp += partyMemberExp[epm];
+        totalLevel += expPartyMember.level;
+      });
+
+      const medianLevel = Math.floor(totalLevel / expPartyMembers.length);
+
+      const recipientExpPartyMemberIndexes = [];
+      expPartyMembers.forEach((expPartyMember, epm) => {
+        if (expPartyMember.level <= medianLevel)
+          recipientExpPartyMemberIndexes.push(epm);
+      });
+
+      const splitExp = Math.floor(totalExp / recipientExpPartyMemberIndexes.length);
+
+      expPartyMembers.forEach((_partyMember, pm) => {
+        partyMemberExp[pm] = recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0;
+      });
+    }
+
+    for (let pm = 0; pm < expPartyMembers.length; pm++) {
+      const exp = partyMemberExp[pm];
+
+      if (exp) {
+        const partyMemberIndex = party.indexOf(expPartyMembers[pm]);
+        this.scene.unshiftPhase(new ExpPhase(this.scene, partyMemberIndex, exp));
       }
     }
     

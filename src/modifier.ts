@@ -677,6 +677,28 @@ export class ExpShareModifier extends PersistentModifier {
   }
 }
 
+export class ExpBalanceModifier extends PersistentModifier {
+  constructor(type: ModifierType) {
+    super(type);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof ExpBalanceModifier;
+  }
+
+  apply(_args: any[]): boolean {
+    return true;
+  }
+
+  clone(): ExpBalanceModifier {
+    return new ExpBalanceModifier(this.type);
+  }
+
+  getMaxStackCount(): integer {
+    return 1;
+  }
+}
+
 export class ShinyRateBoosterModifier extends PersistentModifier {
   constructor(type: ModifierType) {
     super(type);

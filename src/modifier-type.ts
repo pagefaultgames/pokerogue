@@ -311,7 +311,8 @@ export class ExpBoosterModifierType extends ModifierType {
 
 export class PokemonExpBoosterModifierType extends PokemonModifierType {
   constructor(name: string, boostPercent: integer, iconImage?: string) {
-    super(name, `Increases the holder's gain of EXP. Points by ${boostPercent}%`, (_type, args) => new Modifiers.PokemonExpBoosterModifier(this, (args[0] as PlayerPokemon).id, boostPercent), iconImage);
+    super(name, `Increases the holder's gain of EXP. Points by ${boostPercent}%`, (_type, args) => new Modifiers.PokemonExpBoosterModifier(this, (args[0] as PlayerPokemon).id, boostPercent),
+      (_pokemon: PlayerPokemon) => null, iconImage);
   }
 }
 
@@ -524,7 +525,6 @@ const modifierPool = {
       return new TmModifierType(uniqueCompatibleTms[randTmIndex]);
     }), 4),
     new WeightedModifierType(new ModifierType('EXP. SHARE', 'All POKéMON in your party gain an additional 10% of a battle\'s EXP. Points', (type, _args) => new Modifiers.ExpShareModifier(type), 'exp_share'), 2),
-    new WeightedModifierType(new PokemonExpBoosterModifierType('LUCKY EGG', 50), 2),
     new WeightedModifierType(new ModifierTypeGenerator((party: PlayerPokemon[]) => {
       const randStat = Utils.randInt(6) as Stat;
       return new PokemonBaseStatBoosterModifierType(getBaseStatBoosterItemName(randStat), randStat);
@@ -538,7 +538,9 @@ const modifierPool = {
       (type, _args) => new Modifiers.PartyShareModifier(type), 'oval_charm'),
     new ModifierType('HEALING CHARM', 'Doubles the effectiveness of HP restoring moves and items (excludes revives)', (type, _args) => new Modifiers.HealingBoosterModifier(type, 2), 'healing_charm'),
     new WeightedModifierType(new PokemonModifierType('SHELL BELL', 'Heals 1/8 of a POKéMON\'s dealt damage', (type, args) => new Modifiers.HitHealModifier(type, (args[0] as PlayerPokemon).id)), 2),
-    new WeightedModifierType(new ExpBoosterModifierType('EXP CHARM', 25), 4)
+    new WeightedModifierType(new ExpBoosterModifierType('EXP CHARM', 25), 4),
+    new WeightedModifierType(new PokemonExpBoosterModifierType('LUCKY EGG', 50), 3),
+    new WeightedModifierType(new ModifierType('EXP. BALANCE', 'All EXP. Points received from battles is split among the lower leveled party members', (type, _args) => new Modifiers.ExpBalanceModifier(type), 'exp_balance'), 1)
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new AddPokeballModifierType(PokeballType.MASTER_BALL, 1, 'mb'),
@@ -580,7 +582,7 @@ export function regenerateModifierPoolThresholds(party: PlayerPokemon[]) {
   })));
 }
 
-export function getModifierTypeOptionsForWave(waveIndex: integer, count: integer, party: PlayerPokemon[]): ModifierTypeOption[] {
+export function getModifierTypeOptionsForWave(waveIndex: integer, count: integer, party: PlayerPokemon[], maxedTypes: ModifierType[]): ModifierTypeOption[] {
   if (waveIndex % 10 === 0)
     return modifierPool[ModifierTier.LUXURY].map(m => new ModifierTypeOption(m, false));
   const options: ModifierTypeOption[] = [];
