@@ -728,6 +728,10 @@ export class ExtraModifierModifier extends PersistentModifier {
     super(type);
   }
 
+  match(modifier: Modifier): boolean {
+    return modifier instanceof ExtraModifierModifier;
+  }
+
   clone(): ExtraModifierModifier {
     return new ExtraModifierModifier(this.type);
   }
