@@ -1,17 +1,17 @@
-import { SelectModifierPhase } from "./battle-phases";
-import BattleScene, { Button } from "./battle-scene";
-import { ModifierTier, ModifierType, ModifierTypeOption, PokemonBaseStatBoosterModifierType, PokemonHpRestoreModifierType, PokemonReviveModifierType } from "./modifier-type";
-import Pokemon, { AiType, EnemyPokemon, PlayerPokemon, PokemonMove } from "./pokemon";
-import { Species } from "./species";
-import { getTypeDamageMultiplier } from "./type";
-import BattleMessageUiHandler from "./ui/battle-message-ui-handler";
-import CommandUiHandler from "./ui/command-ui-handler";
-import FightUiHandler from "./ui/fight-ui-handler";
-import MessageUiHandler from "./ui/message-ui-handler";
-import ModifierSelectUiHandler from "./ui/modifier-select-ui-handler";
-import PartyUiHandler, { PartyUiMode } from "./ui/party-ui-handler";
-import ConfirmUiHandler from "./ui/confirm-ui-handler";
-import { Mode } from "./ui/ui";
+import { SelectModifierPhase } from "../battle-phases";
+import BattleScene, { Button } from "../battle-scene";
+import { ModifierTier, ModifierType, ModifierTypeOption, PokemonBaseStatBoosterModifierType, PokemonHpRestoreModifierType, PokemonReviveModifierType } from "../modifier/modifier-type";
+import Pokemon, { AiType, EnemyPokemon, PlayerPokemon, PokemonMove } from "../pokemon";
+import { Species } from "../data/species";
+import { getTypeDamageMultiplier } from "../data/type";
+import BattleMessageUiHandler from "../ui/battle-message-ui-handler";
+import CommandUiHandler from "../ui/command-ui-handler";
+import FightUiHandler from "../ui/fight-ui-handler";
+import MessageUiHandler from "../ui/message-ui-handler";
+import ModifierSelectUiHandler from "../ui/modifier-select-ui-handler";
+import PartyUiHandler, { PartyUiMode } from "../ui/party-ui-handler";
+import ConfirmUiHandler from "../ui/confirm-ui-handler";
+import { Mode } from "../ui/ui";
 
 export function initAutoPlay() {
     const thisArg = this as BattleScene;

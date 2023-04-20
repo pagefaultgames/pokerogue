@@ -1,6 +1,6 @@
 import { CommandPhase } from "../battle-phases";
 import BattleScene, { Button } from "../battle-scene";
-import { addTextObject, TextStyle } from "../text";
+import { addTextObject, TextStyle } from "./text";
 import { toPokemonUpperCase } from "../utils";
 import { PartyUiMode } from "./party-ui-handler";
 import UI, { Mode } from "./ui";

@@ -1,14 +1,14 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import BattleScene from "./battle-scene";
-import { Biome, BiomePoolTier, BiomeTierPools, biomePools } from "./biome";
+import { Biome, BiomePoolTier, BiomeTierPools, biomePools } from "./data/biome";
 import * as Utils from "./utils";
-import PokemonSpecies, { getPokemonSpecies } from "./pokemon-species";
-import { Species } from "./species";
-import { Weather, WeatherType, getWeatherClearMessage, getWeatherStartMessage } from "./weather";
+import PokemonSpecies, { getPokemonSpecies } from "./data/pokemon-species";
+import { Species } from "./data/species";
+import { Weather, WeatherType, getWeatherClearMessage, getWeatherStartMessage } from "./data/weather";
 import { CommonAnimPhase, MessagePhase } from "./battle-phases";
-import { CommonAnim } from "./battle-anims";
-import { Type } from "./type";
-import Move from "./move";
+import { CommonAnim } from "./data/battle-anims";
+import { Type } from "./data/type";
+import Move from "./data/move";
 
 export class Arena {
   private scene: BattleScene;

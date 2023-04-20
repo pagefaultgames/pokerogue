@@ -1,13 +1,13 @@
 import { Gender } from "./gender";
-import { AttackTypeBoosterModifier } from "./modifier";
-import { AttackTypeBoosterModifierType } from "./modifier-type";
+import { AttackTypeBoosterModifier } from "../modifier/modifier";
+import { AttackTypeBoosterModifierType } from "../modifier/modifier-type";
 import { Moves } from "./move";
 import { PokeballType } from "./pokeball";
-import Pokemon from "./pokemon";
+import Pokemon from "../pokemon";
 import { Stat } from "./pokemon-stat";
 import { Species } from "./species";
 import { Type } from "./type";
-import * as Utils from "./utils";
+import * as Utils from "../utils";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,

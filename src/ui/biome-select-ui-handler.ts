@@ -1,6 +1,6 @@
 import BattleScene, { Button } from "../battle-scene";
-import { Biome, biomeLinks, getBiomeName } from "../biome";
-import { addTextObject, TextStyle } from "../text";
+import { Biome, biomeLinks, getBiomeName } from "../data/biome";
+import { addTextObject, TextStyle } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./uiHandler";
 

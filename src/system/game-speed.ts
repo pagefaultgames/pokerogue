@@ -1,5 +1,5 @@
-import BattleScene from "./battle-scene";
-import * as Utils from "./utils";
+import BattleScene from "../battle-scene";
+import * as Utils from "../utils";
 
 export function initGameSpeed() {
   const thisArg = this as BattleScene;

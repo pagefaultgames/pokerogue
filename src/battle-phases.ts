@@ -1,28 +1,29 @@
 import BattleScene, { startingLevel, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveFlags, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr } from "./move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveFlags, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
-import { Stat } from "./pokemon-stat";
-import { ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HitHealModifier, PokemonExpBoosterModifier, TempBattleStatBoosterModifier } from "./modifier";
+import { Stat } from "./data/pokemon-stat";
+import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HitHealModifier, PokemonExpBoosterModifier, TempBattleStatBoosterModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
-import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./pokeball";
-import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { StatusEffect, getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./status-effect";
+import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
+import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
+import { StatusEffect, getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./data/status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
-import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./battle-stat";
-import { Biome, biomeLinks } from "./biome";
-import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TempBattleStat, getModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier-type";
+import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
+import { Biome, biomeLinks } from "./data/biome";
+import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattleTagLapseType, BattleTagType, HideSpriteTag as HiddenTag } from "./battle-tag";
+import { BattleTagLapseType, BattleTagType, HideSpriteTag as HiddenTag } from "./data/battle-tag";
 import { getPokemonMessage } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
-import { Gender } from "./gender";
-import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./weather";
+import { Gender } from "./data/gender";
+import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
+import { TempBattleStat } from "./data/temp-battle-stat";
 
 export class SelectStarterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
@@ -593,6 +594,10 @@ export class TurnEndPhase extends BattlePhase {
           this.scene.pushPhase(new MessagePhase(this.scene, `${dm.getName()} is disabled\nno more!`));
       }
 
+      const hasUsableBerry = pokemon.isPlayer() && !!this.scene.findModifier(m => m instanceof BerryModifier && m.shouldApply([ pokemon ]));
+      if (hasUsableBerry)
+        this.scene.pushPhase(new BerryPhase(this.scene, pokemon.isPlayer()));
+
       pokemon.battleSummonData.turnCount++;
     };
 
@@ -670,7 +675,7 @@ export class CommonAnimPhase extends PokemonPhase {
   }
 
   start() {
-    new CommonBattleAnim(this.anim, this.getPokemon()).play(this.scene, () => {
+    new CommonBattleAnim(this.anim, this.getPokemon(), this.getPokemon().isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon()).play(this.scene, () => {
       this.end();
     });
   }
@@ -775,7 +780,7 @@ export abstract class MovePhase extends BattlePhase {
           this.scene.unshiftPhase(new MessagePhase(this.scene,
             getPokemonMessage(this.pokemon, getStatusEffectHealText(this.pokemon.status.effect))));
           this.pokemon.resetStatus();
-          this.pokemon.updateInfo(true);
+          this.pokemon.updateInfo();
         }
         doMove();
       }
@@ -1536,6 +1541,32 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
   }
 }
 
+export class BerryPhase extends CommonAnimPhase {
+  constructor(scene: BattleScene, player: boolean) {
+    super(scene, player, CommonAnim.USE_ITEM);
+  }
+
+  start() {
+    let berryModifier: BerryModifier;
+
+    if (this.player) {
+      if ((berryModifier = this.scene.applyModifier(BerryModifier, this.getPokemon()) as BerryModifier)) {
+        if (berryModifier.consumed) {
+          if (!--berryModifier.stackCount)
+            this.scene.removeModifier(berryModifier);
+          else
+            berryModifier.consumed = false;
+          this.scene.updateModifiers();
+        }
+        super.start();
+        return;
+      }
+    }
+
+    this.end();
+  }
+}
+
 export class PokemonHealPhase extends CommonAnimPhase {
   private hpHealed: integer;
   private message: string;
@@ -1564,7 +1595,10 @@ export class PokemonHealPhase extends CommonAnimPhase {
     const fullHp = pokemon.getHpRatio() >= 1;
 
     if (!fullHp) {
-      pokemon.hp = Math.min(pokemon.hp + this.hpHealed, pokemon.getMaxHp());
+      const hpRestoreMultiplier = new Utils.IntegerHolder(1);
+      if (this.player)
+        this.scene.applyModifiers(HealingBoosterModifier, hpRestoreMultiplier);
+      pokemon.hp = Math.min(pokemon.hp + this.hpHealed * hpRestoreMultiplier.value, pokemon.getMaxHp());
       pokemon.updateInfo().then(() => super.end());
     } else if (this.showFullHpMessage)
       this.message = getPokemonMessage(pokemon, `'s\nHP is full!`);

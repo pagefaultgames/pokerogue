@@ -1,9 +1,9 @@
 import { Biome } from "./biome";
-import { getPokemonMessage } from "./messages";
-import Pokemon from "./pokemon";
+import { getPokemonMessage } from "../messages";
+import Pokemon from "../pokemon";
 import { Type } from "./type";
 import Move, { AttackMove } from "./move";
-import * as Utils from "./utils";
+import * as Utils from "../utils";
 
 export enum WeatherType {
   NONE,

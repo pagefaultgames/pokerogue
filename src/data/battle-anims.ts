@@ -1,8 +1,8 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
-import BattleScene from "./battle-scene";
+import BattleScene from "../battle-scene";
 import { ChargeAttr, Moves, allMoves } from "./move";
-import Pokemon from "./pokemon";
-import * as Utils from "./utils";
+import Pokemon from "../pokemon";
+import * as Utils from "../utils";
 //import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
@@ -41,8 +41,9 @@ export enum ChargeAnim {
 }
 
 export enum CommonAnim {
-    HEALTH_UP = 2000,
-    POISON,
+    USE_ITEM = 2000,
+    HEALTH_UP,
+    POISON = 2010,
     TOXIC,
     PARALYSIS,
     SLEEP,
@@ -79,7 +80,7 @@ export enum CommonAnim {
     PSYCHIC_TERRAIN
 }
 
-export class Anim {
+export class AnimConfig {
     public id: integer;
     public graphic: string;
     public frames: AnimFrame[][];
@@ -226,7 +227,7 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
     public pitch: number;
     
     constructor(frameIndex: integer, resourceName: string, source?: any) {
-        super(frameIndex, resourceName + (resourceName && resourceName.indexOf('.') === -1 ? '.ogg' : ''));
+        super(frameIndex, resourceName + (resourceName && resourceName.indexOf('.') === -1 ? resourceName.startsWith('PRSFX-') ? '.wav' : '.ogg' : ''));
 
         if (source) {
             this.volume = source.volume;
@@ -349,9 +350,9 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     }
 }
 
-export const moveAnims = new Map<Moves, Anim | [Anim, Anim]>();
-export const chargeAnims = new Map<ChargeAnim, Anim | [Anim, Anim]>();
-export const commonAnims = new Map<CommonAnim, Anim>();
+export const moveAnims = new Map<Moves, AnimConfig | [AnimConfig, AnimConfig]>();
+export const chargeAnims = new Map<ChargeAnim, AnimConfig | [AnimConfig, AnimConfig]>();
+export const commonAnims = new Map<CommonAnim, AnimConfig>();
 
 export function initCommonAnims(): Promise<void> {
     return new Promise(resolve => {
@@ -362,7 +363,7 @@ export function initCommonAnims(): Promise<void> {
             const commonAnimId = commonAnimIds[ca];
             commonAnimFetches.push(fetch(`./battle-anims/common-${commonAnimNames[ca].toLowerCase().replace(/\_/g, '-')}.json`)
                 .then(response => response.json())
-                .then(cas => commonAnims.set(commonAnimId, new Anim(cas))));
+                .then(cas => commonAnims.set(commonAnimId, new AnimConfig(cas))));
         }
         Promise.allSettled(commonAnimFetches).then(() => resolve());
     });
@@ -430,22 +431,22 @@ export function initMoveChargeAnim(chargeAnim: ChargeAnim): Promise<void> {
     });
 }
 
-function populateMoveAnim(move: Moves, animSource: any) {
-    const moveAnim = new Anim(animSource);
+function populateMoveAnim(move: Moves, animSource: any): void {
+    const moveAnim = new AnimConfig(animSource);
     if (moveAnims.get(move) === null) {
         moveAnims.set(move, moveAnim);
         return;
     }
-    moveAnims.set(move, [ moveAnims.get(move) as Anim, moveAnim ]);
+    moveAnims.set(move, [ moveAnims.get(move) as AnimConfig, moveAnim ]);
 }
 
 function populateMoveChargeAnim(chargeAnim: ChargeAnim, animSource: any) {
-    const moveChargeAnim = new Anim(animSource);
+    const moveChargeAnim = new AnimConfig(animSource);
     if (chargeAnims.get(chargeAnim) === null) {
         chargeAnims.set(chargeAnim, moveChargeAnim);
         return;
     }
-    chargeAnims.set(chargeAnim, [ chargeAnims.get(chargeAnim) as Anim, moveChargeAnim ]);
+    chargeAnims.set(chargeAnim, [ chargeAnims.get(chargeAnim) as AnimConfig, moveChargeAnim ]);
 }
 
 export function loadCommonAnimAssets(scene: BattleScene, startLoad?: boolean): Promise<void> {
@@ -456,12 +457,12 @@ export function loadCommonAnimAssets(scene: BattleScene, startLoad?: boolean): P
 
 export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
-        const moveAnimations = moveIds.map(m => moveAnims.get(m)).flat();
+        const moveAnimations = moveIds.map(m => moveAnims.get(m) as AnimConfig).flat();
         for (let moveId of moveIds) {
             const chargeAttr = allMoves[moveId - 1].getAttrs(ChargeAttr) as ChargeAttr[];
             if (chargeAttr.length) {
                 const moveChargeAnims = chargeAnims.get(chargeAttr[0].chargeAnim);
-                moveAnimations.push(moveChargeAnims instanceof Anim ? moveChargeAnims : moveChargeAnims[0]);
+                moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims[0]);
                 if (Array.isArray(moveChargeAnims))
                     moveAnimations.push(moveChargeAnims[1]);
             }
@@ -470,7 +471,7 @@ export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLo
     });
 }
 
-function loadAnimAssets(scene: BattleScene, anims: Anim[], startLoad?: boolean): Promise<void> {
+function loadAnimAssets(scene: BattleScene, anims: AnimConfig[], startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
         const backgrounds = new Set<string>();
         const sounds = new Set<string>();
@@ -515,7 +516,7 @@ export abstract class BattleAnim {
         this.sprites = [];
     }
 
-    abstract getAnim(): Anim;
+    abstract getAnim(): AnimConfig;
 
     abstract isOppAnim(): boolean;
 
@@ -738,7 +739,7 @@ export class CommonBattleAnim extends BattleAnim {
         this.commonAnim = commonAnim;
     }
 
-    getAnim(): Anim {
+    getAnim(): AnimConfig {
         return commonAnims.get(this.commonAnim);
     }
 
@@ -760,10 +761,10 @@ export class MoveAnim extends BattleAnim {
         this.move = move;
     }
 
-    getAnim(): Anim {
-        return moveAnims.get(this.move) instanceof Anim
-            ? moveAnims.get(this.move) as Anim
-            : moveAnims.get(this.move)[this.user.isPlayer() ? 0 : 1] as Anim;
+    getAnim(): AnimConfig {
+        return moveAnims.get(this.move) instanceof AnimConfig
+            ? moveAnims.get(this.move) as AnimConfig
+            : moveAnims.get(this.move)[this.user.isPlayer() ? 0 : 1] as AnimConfig;
     }
 
     isOppAnim(): boolean {
@@ -800,10 +801,10 @@ export class MoveChargeAnim extends MoveAnim {
         this.chargeAnim = chargeAnim;
     }
 
-    getAnim(): Anim {
-        return chargeAnims.get(this.chargeAnim) instanceof Anim
-            ? chargeAnims.get(this.chargeAnim) as Anim
-            : chargeAnims.get(this.chargeAnim)[this.user.isPlayer() ? 0 : 1] as Anim;
+    getAnim(): AnimConfig {
+        return chargeAnims.get(this.chargeAnim) instanceof AnimConfig
+            ? chargeAnims.get(this.chargeAnim) as AnimConfig
+            : chargeAnims.get(this.chargeAnim)[this.user.isPlayer() ? 0 : 1] as AnimConfig;
     }
 }
 
@@ -840,14 +841,15 @@ export function populateAnims() {
         const animName = fields[1].slice(nameIndex, fields[1].indexOf('\n', nameIndex));
         if (!moveNameToId.hasOwnProperty(animName) && !commonAnimId && !chargeAnimId)
             continue;
-        let anim = new Anim();
-        anim.id = commonAnimId || chargeAnimId || moveNameToId[animName];
+        let anim = commonAnimId || chargeAnimId ? new AnimConfig() : new AnimConfig();
+        if (anim instanceof AnimConfig)
+            (anim as AnimConfig).id = moveNameToId[animName];
         if (commonAnimId)
             commonAnims.set(commonAnimId, anim);
         else if (chargeAnimId)
-            chargeAnims.set(chargeAnimId, !isOppMove ? anim : [ chargeAnims.get(chargeAnimId) as Anim, anim ]);
+            chargeAnims.set(chargeAnimId, !isOppMove ? anim : [ chargeAnims.get(chargeAnimId) as AnimConfig, anim ]);
         else
-            moveAnims.set(moveNameToId[animName], !isOppMove ? anim : [ moveAnims.get(moveNameToId[animName]) as Anim, anim ]);
+            moveAnims.set(moveNameToId[animName], !isOppMove ? anim as AnimConfig : [ moveAnims.get(moveNameToId[animName]) as AnimConfig, anim as AnimConfig ]);
         for (let f = 0; f < fields.length; f++) {
             const field = fields[f];
             const fieldName = field.slice(0, field.indexOf(':'));
@@ -940,6 +942,8 @@ export function populateAnims() {
     }
 
     const animReplacer = (k, v) => {
+        if (k === 'id' && !v)
+            return undefined;
         if (v instanceof Map)
             return Object.fromEntries(v);
         if (v instanceof AnimTimedEvent)
@@ -950,21 +954,21 @@ export function populateAnims() {
     /*for (let ma of moveAnims.keys()) {
         const data = moveAnims.get(ma);
         (async () => {
-            await fs.writeFile(`./public/battle-anims/${Moves[ma].toLowerCase().replace(/\_/g, '-')}.json`, JSON.stringify(data, animReplacer, '  '));
+            await fs.writeFile(`../public/battle-anims/${Moves[ma].toLowerCase().replace(/\_/g, '-')}.json`, JSON.stringify(data, animReplacer, '  '));
         })();
     }
 
     for (let ca of chargeAnims.keys()) {
         const data = chargeAnims.get(ca);
         (async () => {
-            await fs.writeFile(`./public/battle-anims/${chargeAnimNames[chargeAnimIds.indexOf(ca)].replace(/\_/g, '-')}.json`, JSON.stringify(data, animReplacer, '  '));
+            await fs.writeFile(`../public/battle-anims/${chargeAnimNames[chargeAnimIds.indexOf(ca)].replace(/\_/g, '-')}.json`, JSON.stringify(data, animReplacer, '  '));
         })();
     }
 
     for (let cma of commonAnims.keys()) {
         const data = commonAnims.get(cma);
         (async () => {
-            await fs.writeFile(`./public/battle-anims/common-${commonAnimNames[commonAnimIds.indexOf(cma)].replace(/\_/g, '-')}.json`, JSON.stringify(data, animReplacer, '  '));
+            await fs.writeFile(`../public/battle-anims/common-${commonAnimNames[commonAnimIds.indexOf(cma)].replace(/\_/g, '-')}.json`, JSON.stringify(data, animReplacer, '  '));
         })();
     }*/
 }

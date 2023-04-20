@@ -1,26 +1,26 @@
 import Phaser from 'phaser';
 import BattleScene from './battle-scene';
-import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './battle-info';
-import Move, { StatChangeAttr, HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, Moves, allMoves, MoveCategory } from "./move";
-import { pokemonLevelMoves } from './pokemon-level-moves';
-import { default as PokemonSpecies, PokemonSpeciesForm, getPokemonSpecies } from './pokemon-species';
+import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './ui/battle-info';
+import Move, { StatChangeAttr, HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, Moves, allMoves, MoveCategory } from "./data/move";
+import { pokemonLevelMoves } from './data/pokemon-level-moves';
+import { default as PokemonSpecies, PokemonSpeciesForm, getPokemonSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Type, getTypeDamageMultiplier } from './type';
-import { getLevelTotalExp } from './exp';
-import { Stat } from './pokemon-stat';
-import { AttackTypeBoosterModifier, PokemonBaseStatModifier as PokemonBaseStatBoosterModifier, ShinyRateBoosterModifier, TempBattleStatBoosterModifier } from './modifier';
-import { PokeballType } from './pokeball';
-import { Gender } from './gender';
-import { initMoveAnim, loadMoveAnimAssets } from './battle-anims';
-import { Status, StatusEffect } from './status-effect';
-import { tmSpecies } from './tms';
-import { pokemonEvolutions, pokemonPrevolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './pokemon-evolutions';
+import { Type, getTypeDamageMultiplier } from './data/type';
+import { getLevelTotalExp } from './data/exp';
+import { Stat } from './data/pokemon-stat';
+import { AttackTypeBoosterModifier, PokemonBaseStatModifier, ShinyRateBoosterModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
+import { PokeballType } from './data/pokeball';
+import { Gender } from './data/gender';
+import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
+import { Status, StatusEffect } from './data/status-effect';
+import { tmSpecies } from './data/tms';
+import { pokemonEvolutions, pokemonPrevolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './data/pokemon-evolutions';
 import { DamagePhase, FaintPhase, MessagePhase } from './battle-phases';
-import { BattleStat } from './battle-stat';
-import { BattleTag, BattleTagLapseType, BattleTagType, getBattleTag } from './battle-tag';
-import { Species } from './species';
-import { WeatherType } from './weather';
-import { TempBattleStat } from './modifier-type';
+import { BattleStat } from './data/battle-stat';
+import { BattleTag, BattleTagLapseType, BattleTagType, getBattleTag } from './data/battle-tag';
+import { Species } from './data/species';
+import { WeatherType } from './data/weather';
+import { TempBattleStat } from './data/temp-battle-stat';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -280,7 +280,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.stats)
       this.stats = [ 0, 0, 0, 0, 0, 0 ];
     const baseStats = this.getSpeciesForm().baseStats.slice(0);
-    this.scene.applyModifiers(PokemonBaseStatBoosterModifier, this, baseStats);
+    this.scene.applyModifiers(PokemonBaseStatModifier, this, baseStats);
     const stats = Utils.getEnumValues(Stat);
     for (let s of stats) {
       const isHp = s === Stat.HP;

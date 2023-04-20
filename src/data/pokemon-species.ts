@@ -1,11 +1,10 @@
-import { Abilities } from './abilities';
-import BattleScene from './battle-scene';
+import { Abilities } from './ability';
+import BattleScene from '../battle-scene';
 import { GrowthRate } from './exp';
-import { EnemyPokemon } from './pokemon';
 import { pokemonEvolutions } from './pokemon-evolutions';
 import { Species } from './species';
 import { Type } from './type';
-import * as Utils from './utils';
+import * as Utils from '../utils';
 
 export function getPokemonSpecies(species: Species): PokemonSpecies {
   if (species >= Species.XERNEAS)

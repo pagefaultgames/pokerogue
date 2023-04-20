@@ -1,13 +1,13 @@
 import BattleScene, { Button } from "../battle-scene";
-import PokemonSpecies, { allSpecies } from "../pokemon-species";
-import { Species } from "../species";
-import { TextStyle, addTextObject } from "../text";
+import PokemonSpecies, { allSpecies } from "../data/pokemon-species";
+import { Species } from "../data/species";
+import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import MessageUiHandler from "./message-ui-handler";
-import { DexEntryDetails, StarterDexUnlockTree } from "../game-data";
-import { Gender, getGenderColor, getGenderSymbol } from "../gender";
-import { pokemonPrevolutions } from "../pokemon-evolutions";
+import { DexEntryDetails, StarterDexUnlockTree } from "../system/game-data";
+import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
+import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 

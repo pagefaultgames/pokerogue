@@ -1,10 +1,10 @@
-import { default as Pokemon } from './pokemon';
-import { getLevelTotalExp, getLevelRelExp } from './exp';
-import * as Utils from './utils';
+import { default as Pokemon } from '../pokemon';
+import { getLevelTotalExp, getLevelRelExp } from '../data/exp';
+import * as Utils from '../utils';
 import { addTextObject, TextStyle } from './text';
-import { getGenderSymbol, getGenderColor } from './gender';
-import { StatusEffect } from './status-effect';
-import BattleScene from './battle-scene';
+import { getGenderSymbol, getGenderColor } from '../data/gender';
+import { StatusEffect } from '../data/status-effect';
+import BattleScene from '../battle-scene';
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private player: boolean;

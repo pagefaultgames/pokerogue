@@ -1,16 +1,19 @@
 import * as ModifierTypes from './modifier-type';
-import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "./battle-phases";
-import BattleScene from "./battle-scene";
-import { getLevelTotalExp } from "./exp";
-import { PokeballType } from "./pokeball";
-import Pokemon, { PlayerPokemon } from "./pokemon";
-import { Stat } from "./pokemon-stat";
-import { addTextObject, TextStyle } from "./text";
-import { Type } from './type';
-import { EvolutionPhase } from './evolution-phase';
-import { pokemonEvolutions } from './pokemon-evolutions';
-import { getPokemonMessage } from './messages';
-import * as Utils from "./utils";
+import { CommonAnimPhase, LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../battle-phases";
+import BattleScene from "../battle-scene";
+import { getLevelTotalExp } from "../data/exp";
+import { PokeballType } from "../data/pokeball";
+import Pokemon, { PlayerPokemon } from "../pokemon";
+import { Stat } from "../data/pokemon-stat";
+import { addTextObject, TextStyle } from "../ui/text";
+import { Type } from '../data/type';
+import { EvolutionPhase } from '../evolution-phase';
+import { pokemonEvolutions } from '../data/pokemon-evolutions';
+import { getPokemonMessage } from '../messages';
+import * as Utils from "../utils";
+import { TempBattleStat } from '../data/temp-battle-stat';
+import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
+import { CommonAnim } from '../data/battle-anims';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -185,10 +188,10 @@ export class AddPokeballModifier extends ConsumableModifier {
 }
 
 export class TempBattleStatBoosterModifier extends PersistentModifier {
-  private tempBattleStat: ModifierTypes.TempBattleStat;
+  private tempBattleStat: TempBattleStat;
   private battlesLeft: integer;
 
-  constructor(type: ModifierTypes.TempBattleStatBoosterModifierType, tempBattleStat: ModifierTypes.TempBattleStat) {
+  constructor(type: ModifierTypes.TempBattleStatBoosterModifierType, tempBattleStat: TempBattleStat) {
     super(type);
 
     this.tempBattleStat = tempBattleStat;
@@ -200,7 +203,7 @@ export class TempBattleStatBoosterModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
-    const tempBattleStat = args[0] as ModifierTypes.TempBattleStat;
+    const tempBattleStat = args[0] as TempBattleStat;
 
     if (tempBattleStat === this.tempBattleStat) {
       const statLevel = args[1] as Utils.IntegerHolder;
@@ -353,12 +356,76 @@ export class HitHealModifier extends PokemonHeldItemModifier {
     if (pokemon.turnData.damageDealt && pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
 
-      const hpRestoreMultiplier = new Utils.IntegerHolder(1);
-      scene.applyModifiers(HealingBoosterModifier, hpRestoreMultiplier);
-      scene.unshiftPhase(new PokemonHealPhase(scene, true, Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount * hpRestoreMultiplier.value, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
+      scene.unshiftPhase(new PokemonHealPhase(scene, true, Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
     }
 
     return true;
+  }
+}
+
+export class BerryModifier extends PokemonHeldItemModifier {
+  public berryType: BerryType;
+  public consumed: boolean;
+
+  constructor(type: ModifierType, pokemonId: integer, berryType: BerryType) {
+    super(type, pokemonId);
+
+    this.berryType = berryType;
+    this.consumed = false;
+  }
+
+  match(modifier: Modifier) {
+    return modifier instanceof BerryModifier && (modifier as BerryModifier).berryType === this.berryType;
+  }
+
+  clone() {
+    return new BerryModifier(this.type, this.pokemonId, this.berryType);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return !this.consumed && super.shouldApply(args) && getBerryPredicate(this.berryType)(args[0] as Pokemon);
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+
+    const preserve = new Utils.BooleanHolder(false);
+    pokemon.scene.applyModifiers(PreserveBerryModifier, preserve);
+
+    getBerryEffectFunc(this.berryType)(pokemon);
+    if (!preserve.value)
+      this.consumed = true;
+
+    return true;
+  }
+}
+
+export class PreserveBerryModifier extends PersistentModifier {
+  constructor(type: ModifierType) {
+    super(type);
+  }
+
+  match(modifier: Modifier) {
+    return modifier instanceof PreserveBerryModifier;
+  }
+
+  clone() {
+    return new PreserveBerryModifier(this.type);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args[0] instanceof Utils.BooleanHolder;
+  }
+
+  apply(args: any[]): boolean {
+    if (!(args[0] as Utils.BooleanHolder).value)
+      (args[0] as Utils.BooleanHolder).value = this.getStackCount() === this.getMaxStackCount() || Utils.randInt(this.getMaxStackCount()) < this.getStackCount();
+
+    return true;
+  }
+
+  getMaxStackCount(): number {
+    return 4;
   }
 }
 
@@ -383,7 +450,7 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
 export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
   private restorePoints: integer;
   private percent: boolean;
-  private fainted: boolean;
+  public fainted: boolean;
 
   constructor(type: ModifierType, pokemonId: integer, restorePoints: integer, percent: boolean, fainted?: boolean) {
     super(type, pokemonId);

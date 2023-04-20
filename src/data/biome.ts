@@ -1,7 +1,7 @@
 import { pokemonEvolutions, SpeciesEvolution } from "./pokemon-evolutions";
 import { Species } from "./species";
 import { Type } from './type';
-import * as Utils from './utils';
+import * as Utils from '../utils';
 
 import beautify from 'json-beautify';
 

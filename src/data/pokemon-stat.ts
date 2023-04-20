@@ -1,4 +1,4 @@
-import { toPokemonUpperCase } from "./utils";
+import { toPokemonUpperCase } from "../utils";
 
 export enum Stat {
   HP = 0,

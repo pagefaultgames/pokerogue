@@ -3,11 +3,11 @@ import { Mode } from "./ui";
 import UiHandler from "./uiHandler";
 import * as Utils from "../utils";
 import { PlayerPokemon } from "../pokemon";
-import { Type } from "../type";
-import { TextStyle, addTextObject } from "../text";
-import Move, { MoveCategory } from "../move";
-import { getPokeballAtlasKey } from "../pokeball";
-import { getGenderColor, getGenderSymbol } from "../gender";
+import { Type } from "../data/type";
+import { TextStyle, addTextObject } from "./text";
+import Move, { MoveCategory } from "../data/move";
+import { getPokeballAtlasKey } from "../data/pokeball";
+import { getGenderColor, getGenderSymbol } from "../data/gender";
 
 enum Page {
   PROFILE,

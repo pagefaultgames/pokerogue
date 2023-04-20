@@ -1,10 +1,10 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, DamagePhase, MessagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase } from "./battle-phases";
-import { getPokemonMessage } from "./messages";
-import Pokemon from "./pokemon";
+import { CommonAnimPhase, DamagePhase, MessagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase } from "../battle-phases";
+import { getPokemonMessage } from "../messages";
+import Pokemon from "../pokemon";
 import { Stat } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
-import * as Utils from "./utils";
+import * as Utils from "../utils";
 
 export enum BattleTagType {
   NONE,
@@ -101,7 +101,7 @@ export class ConfusedTag extends PseudoStatusTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
-    const ret = super.lapse(pokemon, lapseType);
+    const ret = lapseType !== BattleTagLapseType.CUSTOM && super.lapse(pokemon, lapseType);
 
     if (ret) {
       pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' is\nconfused!')));

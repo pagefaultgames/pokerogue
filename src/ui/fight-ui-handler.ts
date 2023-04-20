@@ -1,6 +1,6 @@
 import BattleScene, { Button } from "../battle-scene";
-import { addTextObject, TextStyle } from "../text";
-import { Type } from "../type";
+import { addTextObject, TextStyle } from "./text";
+import { Type } from "../data/type";
 import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./uiHandler";

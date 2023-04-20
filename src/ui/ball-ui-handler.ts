@@ -1,7 +1,7 @@
 import { CommandPhase } from "../battle-phases";
 import BattleScene, { Button } from "../battle-scene";
-import { getPokeballName, PokeballType } from "../pokeball";
-import { addTextObject, TextStyle } from "../text";
+import { getPokeballName, PokeballType } from "../data/pokeball";
+import { addTextObject, TextStyle } from "./text";
 import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./uiHandler";

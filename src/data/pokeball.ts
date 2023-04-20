@@ -1,5 +1,5 @@
-import BattleScene from "./battle-scene";
-import { toPokemonUpperCase } from "./utils";
+import BattleScene from "../battle-scene";
+import { toPokemonUpperCase } from "../utils";
 
 export enum PokeballType {
   POKEBALL,

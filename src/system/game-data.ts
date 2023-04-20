@@ -1,10 +1,10 @@
-import BattleScene from "./battle-scene";
-import { Gender } from "./gender";
-import Pokemon from "./pokemon";
-import { pokemonPrevolutions } from "./pokemon-evolutions";
-import PokemonSpecies, { allSpecies } from "./pokemon-species";
-import { Species } from "./species";
-import * as Utils from "./utils";
+import BattleScene from "../battle-scene";
+import { Gender } from "../data/gender";
+import Pokemon from "../pokemon";
+import { pokemonPrevolutions } from "../data/pokemon-evolutions";
+import PokemonSpecies, { allSpecies } from "../data/pokemon-species";
+import { Species } from "../data/species";
+import * as Utils from "../utils";
 
 interface SaveData {
   trainerId: integer;

@@ -1,14 +1,16 @@
-import { BattleStat, getBattleStatName } from './battle-stat';
+import { BattleStat, getBattleStatName } from '../data/battle-stat';
 import * as Modifiers from './modifier';
-import { AttackMove, Moves, allMoves } from './move';
-import { PokeballType, getPokeballName } from './pokeball';
-import { PlayerPokemon, PokemonMove } from './pokemon';
-import { EvolutionItem, pokemonEvolutions } from './pokemon-evolutions';
-import { Stat, getStatName } from './pokemon-stat';
-import { tmSpecies } from './tms';
-import { Type } from './type';
-import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from './ui/party-ui-handler';
-import * as Utils from './utils';
+import { AttackMove, Moves, allMoves } from '../data/move';
+import { PokeballType, getPokeballName } from '../data/pokeball';
+import { PlayerPokemon, PokemonMove } from '../pokemon';
+import { EvolutionItem, pokemonEvolutions } from '../data/pokemon-evolutions';
+import { Stat, getStatName } from '../data/pokemon-stat';
+import { tmSpecies } from '../data/tms';
+import { Type } from '../data/type';
+import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from '../ui/party-ui-handler';
+import * as Utils from '../utils';
+import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
+import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
 
 type Modifier = Modifiers.Modifier;
 
@@ -59,10 +61,16 @@ class AddPokeballModifierType extends ModifierType {
 export class PokemonModifierType extends ModifierType {
   public selectFilter: PokemonSelectFilter;
 
-  constructor(name: string, description: string, newModifierFunc: NewModifierFunc, selectFilter?: PokemonSelectFilter, iconImage?: string, group?: string) {
-    super(name, description, newModifierFunc, iconImage, group);
+  constructor(name: string, description: string, newModifierFunc: NewModifierFunc, selectFilter?: PokemonSelectFilter, iconImage?: string, group?: string, soundName?: string) {
+    super(name, description, newModifierFunc, iconImage, group, soundName);
 
     this.selectFilter = selectFilter;
+  }
+}
+
+export class PokemonHeldItemModifierType extends PokemonModifierType {
+  constructor(name: string, description: string, newModifierFunc: NewModifierFunc, selectFilter?: PokemonSelectFilter, iconImage?: string, group?: string, soundName?: string) {
+    super(name, description, newModifierFunc, selectFilter, iconImage, group, soundName);
   }
 }
 
@@ -157,41 +165,6 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
   }
 }
 
-export enum TempBattleStat {
-  ATK,
-  DEF,
-  SPATK,
-  SPDEF,
-  SPD,
-  ACC,
-  CRIT
-}
-
-function getTempBattleStatName(tempBattleStat: TempBattleStat) {
-  if (tempBattleStat === TempBattleStat.CRIT)
-    return 'critical-hit ratio';
-  return getBattleStatName(tempBattleStat as integer as BattleStat);
-}
-
-function getTempBattleStatBoosterItemName(tempBattleStat: TempBattleStat) {
-  switch (tempBattleStat) {
-    case TempBattleStat.ATK:
-      return 'X Attack';
-    case TempBattleStat.DEF:
-      return 'X Defense';
-    case TempBattleStat.SPATK:
-      return 'X Sp. Atk';
-    case TempBattleStat.SPDEF:
-      return 'X Sp. Def';
-    case TempBattleStat.SPD:
-      return 'X Speed';
-    case TempBattleStat.ACC:
-      return 'X Accuracy';
-    case TempBattleStat.CRIT:
-      return 'Dire Hit';
-  }
-}
-
 export class TempBattleStatBoosterModifierType extends ModifierType {
   public tempBattleStat: TempBattleStat;
 
@@ -246,7 +219,7 @@ function getAttackTypeBoosterItemName(type: Type) {
   }
 }
 
-export class AttackTypeBoosterModifierType extends PokemonModifierType {
+export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType {
   public moveType: Type;
   public boostPercent: integer;
 
@@ -284,7 +257,7 @@ function getBaseStatBoosterItemName(stat: Stat) {
   }
 }
 
-export class PokemonBaseStatBoosterModifierType extends PokemonModifierType {
+export class PokemonBaseStatBoosterModifierType extends PokemonHeldItemModifierType {
   private stat: Stat;
 
   constructor(name: string, stat: Stat, _iconImage?: string) {
@@ -312,7 +285,7 @@ export class ExpBoosterModifierType extends ModifierType {
   }
 }
 
-export class PokemonExpBoosterModifierType extends PokemonModifierType {
+export class PokemonExpBoosterModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, boostPercent: integer, iconImage?: string) {
     super(name, `Increases the holder's gain of EXP. Points by ${boostPercent}%`, (_type, args) => new Modifiers.PokemonExpBoosterModifier(this, (args[0] as PlayerPokemon).id, boostPercent),
       (_pokemon: PlayerPokemon) => null, iconImage);
@@ -486,7 +459,14 @@ const modifierPool = {
     new WeightedModifierType(new ModifierTypeGenerator((party: PlayerPokemon[]) => {
       const randTempBattleStat = Utils.randInt(7) as TempBattleStat;
       return new TempBattleStatBoosterModifierType(randTempBattleStat);
-    }), 4)
+    }), 4),
+    new WeightedModifierType(new ModifierTypeGenerator((party: PlayerPokemon[]) => {
+      const berryTypes = Utils.getEnumValues(BerryType);
+      const randBerryType = berryTypes[Utils.randInt(berryTypes.length)];
+      return new PokemonHeldItemModifierType(getBerryName(randBerryType), getBerryEffectDescription(randBerryType),
+        (type, args) => new Modifiers.BerryModifier(type, (args[0] as PlayerPokemon).id, randBerryType),
+        () => null, null, 'berry');
+    }), 2)
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(new AddPokeballModifierType(PokeballType.GREAT_BALL, 5, 'gb'), 12),
@@ -524,6 +504,8 @@ const modifierPool = {
     new WeightedModifierType(new ModifierTypeGenerator((party: PlayerPokemon[]) => {
       const partyMemberCompatibleTms = party.map(p => p.compatibleTms);
       const uniqueCompatibleTms = partyMemberCompatibleTms.flat().filter((tm, i, array) => array.indexOf(tm) === i);
+      if (!uniqueCompatibleTms.length)
+        return null;
       const randTmIndex = Utils.randInt(uniqueCompatibleTms.length);
       return new TmModifierType(uniqueCompatibleTms[randTmIndex]);
     }), 4),
@@ -535,14 +517,16 @@ const modifierPool = {
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(new AddPokeballModifierType(PokeballType.ULTRA_BALL, 5, 'ub'), 8),
-    new WeightedModifierType(new EvolutionItemModifierTypeGenerator(), 5),
-    new WeightedModifierType(new AttackTypeBoosterModifierTypeGenerator(), 3),
+    new WeightedModifierType(new EvolutionItemModifierTypeGenerator(), 12),
+    new WeightedModifierType(new AttackTypeBoosterModifierTypeGenerator(), 5),
     new ModifierType('OVAL CHARM', 'For every X (no. of party members) items in a POKéMON\'s held item stack, give one to each other party member',
       (type, _args) => new Modifiers.PartyShareModifier(type), 'oval_charm'),
     new ModifierType('HEALING CHARM', 'Doubles the effectiveness of HP restoring moves and items (excludes revives)', (type, _args) => new Modifiers.HealingBoosterModifier(type, 2), 'healing_charm'),
-    new WeightedModifierType(new PokemonModifierType('SHELL BELL', 'Heals 1/8 of a POKéMON\'s dealt damage', (type, args) => new Modifiers.HitHealModifier(type, (args[0] as PlayerPokemon).id)), 2),
+    new WeightedModifierType(new PokemonHeldItemModifierType('SHELL BELL', 'Heals 1/8 of a POKéMON\'s dealt damage', (type, args) => new Modifiers.HitHealModifier(type, (args[0] as PlayerPokemon).id)), 2),
     new WeightedModifierType(new ExpBoosterModifierType('EXP CHARM', 25), 4),
     new WeightedModifierType(new PokemonExpBoosterModifierType('LUCKY EGG', 50), 3),
+    new WeightedModifierType(new ModifierType('BERRY POUCH', 'Adds a 25% chance that a used berry will not be consumed',
+      (type, _args) => new Modifiers.PreserveBerryModifier(type)), 3),
     new WeightedModifierType(new ModifierType('EXP. BALANCE', 'All EXP. Points received from battles is split among the lower leveled party members', (type, _args) => new Modifiers.ExpBalanceModifier(type), 'exp_balance'), 1)
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [

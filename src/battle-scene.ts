@@ -1,24 +1,24 @@
 import Phaser from 'phaser';
-import { Biome } from './biome';
+import { Biome } from './data/biome';
 import UI from './ui/ui';
 import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, SelectStarterPhase, MessagePhase } from './battle-phases';
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
-import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
+import PokemonSpecies, { allSpecies, getPokemonSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ConsumablePokemonMoveModifier, ModifierPredicate } from './modifier';
-import { PokeballType } from './pokeball';
-import { Species } from './species';
-import { initAutoPlay } from './auto-play';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ConsumablePokemonMoveModifier, ModifierPredicate } from './modifier/modifier';
+import { PokeballType } from './data/pokeball';
+import { Species } from './data/species';
+import { initAutoPlay } from './system/auto-play';
 import { Battle } from './battle';
-import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './battle-anims';
+import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
 import { BattlePhase } from './battle-phase';
-import { initGameSpeed } from './game-speed';
+import { initGameSpeed } from './system/game-speed';
 import { Arena } from './arena';
-import { GameData } from './game-data';
+import { GameData } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
-import { TextStyle, addTextObject } from './text';
-import { Moves } from './move';
-import { getDefaultModifierTypeForTier } from './modifier-type';
+import { TextStyle, addTextObject } from './ui/text';
+import { Moves } from './data/move';
+import { getDefaultModifierTypeForTier } from './modifier/modifier-type';
 
 const enableAuto = true;
 export const startingLevel = 5;
@@ -598,7 +598,7 @@ export default class BattleScene extends Phaser.Scene {
 				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual)) {
 					if (!virtual && !this.sound.get(soundName))
 						this.sound.play(soundName);
-				} if (!virtual) {
+				} else if (!virtual) {
 					const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
 					this.addModifier(defaultModifierType.newModifier()).then(() => resolve());
 					this.unshiftPhase(new MessagePhase(this, `The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, null, true));
@@ -617,9 +617,12 @@ export default class BattleScene extends Phaser.Scene {
 
 						const args: any[] = [ pokemon ];
 						if (modifier instanceof PokemonHpRestoreModifier) {
-							const hpRestoreMultiplier = new Utils.IntegerHolder(1);
-							this.applyModifiers(HealingBoosterModifier, hpRestoreMultiplier);
-							args.push(hpRestoreMultiplier.value);
+							if (!(modifier as PokemonHpRestoreModifier).fainted) {
+								const hpRestoreMultiplier = new Utils.IntegerHolder(1);
+								this.applyModifiers(HealingBoosterModifier, hpRestoreMultiplier);
+								args.push(hpRestoreMultiplier.value);
+							} else
+								args.push(1);
 						}
 							
 						if (modifier.shouldApply(args))
@@ -703,5 +706,17 @@ export default class BattleScene extends Phaser.Scene {
 			if (modifier.apply(args))
 				console.log('Applied', modifier.type.name);
 		}
+	}
+
+	applyModifier(modifierType: { new(...args: any[]): Modifier }, ...args: any[]): PersistentModifier {
+		const modifiers = this.modifiers.filter(m => m instanceof modifierType && m.shouldApply(args));
+		for (let modifier of modifiers) {
+			if (modifier.apply(args)) {
+				console.log('Applied', modifier.type.name);
+				return modifier;
+			}
+		}
+
+		return null;
 	}
 }

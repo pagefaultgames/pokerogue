@@ -1,7 +1,7 @@
 import BattleScene, { Button } from "../battle-scene";
-import { ModifierTier, ModifierType, ModifierTypeOption } from "../modifier-type";
-import { getPokeballAtlasKey, PokeballType } from "../pokeball";
-import { addTextObject, TextStyle } from "../text";
+import { ModifierTier, ModifierType, ModifierTypeOption } from "../modifier/modifier-type";
+import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
+import { addTextObject, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 
