@@ -25,7 +25,7 @@ export class Arena {
     this.pokemonPool = biomePools[biome];
   }
 
-  randomSpecies(waveIndex: integer, level: integer): PokemonSpecies {
+  randomSpecies(waveIndex: integer, level: integer, attempt?: integer): PokemonSpecies {
     const isBoss = (waveIndex >= 100 || waveIndex % 10 === 0) && !!this.pokemonPool[BiomePoolTier.BOSS].length;
     const tierValue = Utils.randInt(!isBoss ? 512 : 64);
     let tier = !isBoss
@@ -38,6 +38,7 @@ export class Arena {
     }
     const tierPool = this.pokemonPool[tier];
     let ret: PokemonSpecies;
+    let regen = false;
     if (!tierPool.length)
       ret = this.scene.randomSpecies(waveIndex, level);
     else {
@@ -61,7 +62,30 @@ export class Arena {
       }
       
       ret = getPokemonSpecies(species);
+
+      if (ret.legendary || ret.pseudoLegendary || ret.mythical) {
+        switch (true) {
+          case (ret.baseTotal >= 720):
+            regen = level < 90;
+            break;
+          case (ret.baseTotal >= 670):
+            regen = level < 70;
+            break;
+          case (ret.baseTotal >= 580):
+            regen = level < 50;
+            break;
+          default:
+            regen = level < 30;
+            break;
+        }
+      }
     }
+
+    if (regen && (attempt || 0) < 10) {
+      console.log('Incompatible level: regenerating...');
+      return this.randomSpecies(waveIndex, level, (attempt || 0) + 1);
+    }
+
     const newSpeciesId = ret.getSpeciesForLevel(level);
     if (newSpeciesId !== ret.speciesId) {
       console.log('Replaced', Species[ret.speciesId], 'with', Species[newSpeciesId]);
@@ -101,8 +125,6 @@ export class Arena {
   trySetWeather(weather: WeatherType, viaMove: boolean): boolean {
     if (this.weather?.weatherType === (weather || undefined))
       return false;
-
-    console.log('set weather', WeatherType[weather]);
 
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
     this.weather = weather ? new Weather(weather, viaMove ? 5 : 0) : null;

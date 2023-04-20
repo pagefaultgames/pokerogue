@@ -239,6 +239,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
           }
         },
         onComplete: () => {
+          if (!this.scene) {
+            resolve();
+            return;
+          }
           if (duration)
             this.scene.sound.stopByKey('exp');
           if (ratio === 1) {
@@ -270,7 +274,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   setHpNumbers(hp: integer, maxHp: integer) {
-    if (!this.player)
+    if (!this.player || !this.scene)
       return;
     this.hpNumbersContainer.removeAll(true);
     const hpStr = hp.toString();
