@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Biome } from './biome';
 import UI from './ui/ui';
-import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, SelectStarterPhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, SelectStarterPhase, MessagePhase } from './battle-phases';
 import { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './pokemon-species';
 import * as Utils from './utils';
@@ -18,6 +18,7 @@ import { GameData } from './game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './text';
 import { Moves } from './move';
+import { getDefaultModifierTypeForTier } from './modifier-type';
 
 const enableAuto = true;
 export const startingLevel = 5;
@@ -592,15 +593,23 @@ export default class BattleScene extends Phaser.Scene {
 
 	addModifier(modifier: Modifier, virtual?: boolean): Promise<void> {
 		return new Promise(resolve => {
+			const soundName = modifier.type.soundName;
 			if (modifier instanceof PersistentModifier) {
-				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual) && !virtual && !this.sound.get('restore'))
-					this.sound.play('restore');
+				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual)) {
+					if (!virtual && !this.sound.get(soundName))
+						this.sound.play(soundName);
+				} if (!virtual) {
+					const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
+					this.addModifier(defaultModifierType.newModifier()).then(() => resolve());
+					this.unshiftPhase(new MessagePhase(this, `The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, null, true));
+					return;
+				}
 
 				if (!virtual)
 					this.updateModifiers().then(() => resolve());
 			} else if (modifier instanceof ConsumableModifier) {
-				if (!this.sound.get('restore'))
-					this.sound.play('restore');
+				if (!this.sound.get(soundName))
+					this.sound.play(soundName);
 
 				if (modifier instanceof ConsumablePokemonModifier) {
 					for (let p in this.party) {

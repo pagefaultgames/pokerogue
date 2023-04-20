@@ -405,6 +405,11 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
+    if (!this.scene.getParty().slice(1).filter(p => p.hp).length) {
+      super.end();
+      return;
+    }
+
     if (this.scene.getPlayerPokemon().getTag(BattleTagType.FRENZY)) {
       super.end();
       return;

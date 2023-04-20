@@ -27,14 +27,16 @@ export class ModifierType {
   public description: string;
   public iconImage: string;
   public group: string;
+  public soundName: string;
   public tier: ModifierTier;
   private newModifierFunc: NewModifierFunc;
 
-  constructor(name: string, description: string, newModifierFunc: NewModifierFunc, iconImage?: string, group?: string,) {
+  constructor(name: string, description: string, newModifierFunc: NewModifierFunc, iconImage?: string, group?: string, soundName?: string) {
     this.name = name;
     this.description = description;
     this.iconImage = iconImage || name?.replace(/[ \-]/g, '_')?.toLowerCase();
     this.group = group || '';
+    this.soundName = soundName || 'restore';
     this.newModifierFunc = newModifierFunc;
   }
 
@@ -49,7 +51,8 @@ export class ModifierType {
 
 class AddPokeballModifierType extends ModifierType {
   constructor(pokeballType: PokeballType, count: integer, iconImage?: string) {
-    super(`${count}x ${getPokeballName(pokeballType)}`, `Receive ${getPokeballName(pokeballType)} x${count}`, (_type, _args) => new Modifiers.AddPokeballModifier(this, pokeballType, count), iconImage, 'pb');
+    super(`${count}x ${getPokeballName(pokeballType)}`, `Receive ${getPokeballName(pokeballType)} x${count}`,
+      (_type, _args) => new Modifiers.AddPokeballModifier(this, pokeballType, count), iconImage, 'pb', 'pb_bounce_1');
   }
 }
 
@@ -547,8 +550,8 @@ const modifierPool = {
     new WeightedModifierType(new ModifierType('SHINY CHARM', 'Dramatically increases the chance of a wild POKéMON being shiny', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)), 2)
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
   [ModifierTier.LUXURY]: [
-    new ExpBoosterModifierType('GOLDEN EXP CHARM', 100),
-    new ModifierType(`GOLDEN ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle', (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold')
+    new ModifierType(`GOLDEN ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle', (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold', null, 'pb_bounce_1'),
+    new ExpBoosterModifierType('GOLDEN EXP CHARM', 100)
   ].map(m => { m.setTier(ModifierTier.LUXURY); return m; }),
 };
 
@@ -582,7 +585,7 @@ export function regenerateModifierPoolThresholds(party: PlayerPokemon[]) {
   })));
 }
 
-export function getModifierTypeOptionsForWave(waveIndex: integer, count: integer, party: PlayerPokemon[], maxedTypes: ModifierType[]): ModifierTypeOption[] {
+export function getModifierTypeOptionsForWave(waveIndex: integer, count: integer, party: PlayerPokemon[]): ModifierTypeOption[] {
   if (waveIndex % 10 === 0)
     return modifierPool[ModifierTier.LUXURY].map(m => new ModifierTypeOption(m, false));
   const options: ModifierTypeOption[] = [];
@@ -629,6 +632,13 @@ function getNewModifierTypeOption(party: PlayerPokemon[], tier?: ModifierTier, u
   }
   console.log(modifierType);
   return new ModifierTypeOption(modifierType as ModifierType, upgrade);
+}
+
+export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {
+  let modifierType: ModifierType | WeightedModifierType = modifierPool[tier][0];
+  if (modifierType instanceof WeightedModifierType)
+    modifierType = (modifierType as WeightedModifierType).modifierType;
+  return modifierType;
 }
 
 export class ModifierTypeOption {

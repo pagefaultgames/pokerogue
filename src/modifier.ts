@@ -72,10 +72,8 @@ export abstract class PersistentModifier extends Modifier {
 
   add(modifiers: PersistentModifier[], virtual: boolean): boolean {
     for (let modifier of modifiers) {
-      if (this.match(modifier)) {
-        modifier.incrementStack(virtual);
-        return true;
-      }
+      if (this.match(modifier))
+        return modifier.incrementStack(virtual);
     }
 
     if (virtual) {
@@ -88,13 +86,16 @@ export abstract class PersistentModifier extends Modifier {
 
   abstract clone(): PersistentModifier;
 
-  incrementStack(virtual: boolean): void {
+  incrementStack(virtual: boolean): boolean {
     if (this.getStackCount() < this.getMaxStackCount()) {
       if (!virtual)
         this.stackCount++;
       else
         this.virtualStackCount++;
+      return true;
     }
+
+    return false;
   }
 
   getStackCount(): integer {
