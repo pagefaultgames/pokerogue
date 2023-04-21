@@ -62,7 +62,6 @@ export default class ConfirmUiHandler extends UiHandler {
         this.setCursor(1);
       const handler = this.cursor ? this.noHander : this.yesHandler;
       handler();
-      console.log(this.cursor ? this.noHander : this.yesHandler);
       this.clear();
     } else {
       switch (button) {

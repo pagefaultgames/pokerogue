@@ -281,7 +281,6 @@ export class ProtectedTag extends BattleTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
-    console.log(pokemon, BattleTagLapseType[lapseType]);
     if (lapseType === BattleTagLapseType.CUSTOM) {
       new CommonBattleAnim(CommonAnim.PROTECT, pokemon).play(pokemon.scene);
       pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, '\nprotected itself!')));

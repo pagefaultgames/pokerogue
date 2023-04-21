@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { Biome } from './data/biome';
-import UI from './ui/ui';
+import UI, { Mode } from './ui/ui';
 import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, SelectStarterPhase, MessagePhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './data/pokemon-species';
@@ -659,6 +659,34 @@ export default class BattleScene extends Phaser.Scene {
 					resolve();
 				}
 			}
+		});
+	}
+
+	tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, playSound: boolean): Promise<boolean> {
+		return new Promise(resolve => {
+			const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
+			newItemModifier.pokemonId = target.id;
+			const matchingModifier = target.scene.findModifier(m => m instanceof PokemonHeldItemModifier
+				&& (m as PokemonHeldItemModifier).matchType(itemModifier)) as PokemonHeldItemModifier;
+			let removeOld = true;
+			if (matchingModifier) {
+				const maxStackCount = matchingModifier.getMaxStackCount();
+				if (matchingModifier.stackCount >= maxStackCount) {
+					resolve(false);
+					return;
+				}
+				const newStackCount = matchingModifier.stackCount + itemModifier.stackCount;
+				if (newStackCount > maxStackCount) {
+					itemModifier.stackCount = newStackCount - maxStackCount;
+					newItemModifier.stackCount = maxStackCount;
+					removeOld = !itemModifier.stackCount;
+				}
+			}
+			if (!removeOld || this.removeModifier(itemModifier)) {
+				this.addModifier(newItemModifier, playSound).then(() => resolve(true));
+				return;
+			}
+			resolve(false);
 		});
 	}
 

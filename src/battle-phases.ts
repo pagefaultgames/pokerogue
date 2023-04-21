@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveA
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HitHealModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, TempBattleStatBoosterModifier, TurnHealModifier } from "./modifier/modifier";
+import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HeldItemTransferModifier, HitHealModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, TempBattleStatBoosterModifier, TurnHealModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -16,7 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { Biome, biomeLinks } from "./data/biome";
-import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getEnemyModifierTypesForWave, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattleTagLapseType, BattleTagType, HideSpriteTag as HiddenTag } from "./data/battle-tag";
 import { getPokemonMessage } from "./messages";
@@ -292,6 +292,8 @@ export class SummonPhase extends BattlePhase {
     this.scene.field.add(pokeball);
 
     const playerPokemon = this.scene.getPlayerPokemon();
+
+    this.scene.applyModifiers(HeldItemTransferModifier, true, this.scene);
 
     pokeball.setVisible(true);
     this.scene.tweens.add({
@@ -859,8 +861,6 @@ abstract class MoveEffectPhase extends PokemonPhase {
     const target = this.getTargetPokemon();
 
     const overridden = new Utils.BooleanHolder(false);
-
-    console.log(this.move.getName());
 
     applyMoveAttrs(OverrideMoveEffectAttr, user, target, this.move.getMove(), overridden).then(() => {
 
@@ -1843,30 +1843,16 @@ export class SelectModifierPhase extends BattlePhase {
           if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT);
             const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-                && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
+              && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
             const itemModifier = itemModifiers[itemIndex];
-            const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
-            newItemModifier.pokemonId = party[toSlotIndex].id;
-            const matchingModifier = party[toSlotIndex].scene.findModifier(m => m instanceof PokemonHeldItemModifier
-                && (m as PokemonHeldItemModifier).matchType(itemModifier)) as PokemonHeldItemModifier;
-            let removeOld = true;
-            if (matchingModifier) {
-              const newStackCount = matchingModifier.stackCount + itemModifier.stackCount;
-              const maxStackCount = matchingModifier.getMaxStackCount();
-              if (newStackCount > maxStackCount) {
-                itemModifier.stackCount = newStackCount - maxStackCount;
-                newItemModifier.stackCount = maxStackCount;
-                removeOld = !itemModifier.stackCount;
-              }
-            }
-            if (!removeOld || this.scene.removeModifier(itemModifier)) {
-              this.scene.addModifier(newItemModifier, true).then(() => super.end());
-              this.scene.ui.clearText();
-              this.scene.ui.setMode(Mode.MESSAGE);
-              return;
-            }
+            this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true).then(success => {
+              if (success) {
+                this.scene.ui.clearText();
+                this.scene.ui.setMode(Mode.MESSAGE);
+              } else
+                this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
+            });
           }
-          this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
         }, PartyUiHandler.FilterItemMaxStacks);
         return;
       }

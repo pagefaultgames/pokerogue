@@ -425,6 +425,12 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
+class HeldItemTransferModifierType extends ModifierType {
+  constructor(name: string, iconImage?: string, group?: string, soundName?: string) {
+    super(name, 'All held items in your party are transferred to a POKéMON on summon', (type, _args) => new Modifiers.HeldItemTransferModifier(type), iconImage, group, soundName);
+  }
+}
+
 class WeightedModifierType {
   public modifierType: ModifierType;
   public weight: integer | Function;
@@ -521,6 +527,8 @@ const modifierTypes = {
     (type, args) => new Modifiers.HitHealModifier(type, (args[0] as Pokemon).id)),
 
   SHINY_CHARM: new ModifierType('SHINY CHARM', 'Dramatically increases the chance of a wild POKéMON being shiny', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
+
+  MINI_BLACK_HOLE: new HeldItemTransferModifierType('MINI BLACK HOLE'),
   
   GOLDEN_POKEBALL: new ModifierType(`GOLDEN ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle',
     (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold', null, 'pb_bounce_1'),
@@ -600,8 +608,9 @@ const modifierPool = {
     modifierTypes.EXP_BALANCE
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
-    modifierTypes.MASTER_BALL,
-    new WeightedModifierType(modifierTypes.SHINY_CHARM, 2)
+    new WeightedModifierType(modifierTypes.MASTER_BALL, 3),
+    new WeightedModifierType(modifierTypes.SHINY_CHARM, 2),
+    modifierTypes.MINI_BLACK_HOLE
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
   [ModifierTier.LUXURY]: [
     modifierTypes.GOLDEN_EXP_CHARM,
@@ -690,8 +699,8 @@ export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer,
 function getNewModifierTypeOption(party: Pokemon[], player?: boolean, tier?: ModifierTier, upgrade?: boolean): ModifierTypeOption {
   if (player === undefined)
     player = true;
-  const tierValue = Utils.randInt(256);
   if (tier === undefined) {
+    const tierValue = Utils.randInt(256);
     if (player) {
       const partyShinyCount = party.filter(p => p.shiny).length;
       const upgradeOdds = Math.floor(32 / Math.max((partyShinyCount * 2), 1));

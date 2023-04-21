@@ -833,6 +833,40 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
   }
 }
 
+export class HeldItemTransferModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof HeldItemTransferModifier;
+  }
+
+  clone(): HeldItemTransferModifier {
+    return new HeldItemTransferModifier(this.type, this.stackCount);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length && args[0] instanceof BattleScene;
+  }
+
+  apply(args: any[]): boolean {
+    const scene = args[0] as BattleScene;
+    const targetPokemon = scene.getPlayerPokemon();
+
+    const itemModifiers = scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+      && (m as PokemonHeldItemModifier).pokemonId !== targetPokemon.id) as PokemonHeldItemModifier[];
+    for (let modifier of itemModifiers)
+      scene.tryTransferHeldItemModifier(modifier, targetPokemon, false);
+
+    return true;
+  }
+
+  getMaxStackCount(): integer {
+    return 1;
+  }
+}
+
 export class ExtraModifierModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);
