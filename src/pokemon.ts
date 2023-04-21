@@ -273,7 +273,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let ret = this.stats[stat] * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
     if (stat === Stat.SPDEF && this.scene.arena.weather?.weatherType === WeatherType.SANDSTORM)
       ret *= 1.5;
-    if (this.status && this.status.effect === StatusEffect.PARALYSIS)
+    if (stat === Stat.SPD && this.status && this.status.effect === StatusEffect.PARALYSIS)
       ret >>= 2;
     return ret;
   }

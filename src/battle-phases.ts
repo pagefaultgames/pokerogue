@@ -598,7 +598,7 @@ export class TurnEndPhase extends BattlePhase {
     const enemyPokemon = this.scene.getEnemyPokemon();
     
     const handlePokemon = (pokemon: Pokemon) => {
-      if (!pokemon)
+      if (!pokemon || !pokemon.hp)
         return;
 
       pokemon.lapseTags(BattleTagLapseType.TURN_END);
