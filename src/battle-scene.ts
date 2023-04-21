@@ -21,6 +21,7 @@ import { Moves } from './data/move';
 import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 
 const enableAuto = true;
+const quickStart = false;
 export const startingLevel = 5;
 export const startingWave = 1;
 export const startingBiome = Biome.PLAINS;
@@ -45,7 +46,7 @@ export enum Button {
 export default class BattleScene extends Phaser.Scene {
 	public auto: boolean;
 	public gameSpeed: integer = 1;
-	public quickStart: boolean;
+	public quickStart: boolean = quickStart;
 
 	public gameData: GameData;
 
@@ -160,9 +161,13 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('party_message', 'ui');
 		this.loadImage('party_message_large', 'ui');
 		this.loadImage('party_message_options', 'ui');
+		this.loadImage('party_message_options_wide', 'ui');
 		this.loadImage('party_options_top', 'ui');
 		this.loadImage('party_options_center', 'ui');
 		this.loadImage('party_options_bottom', 'ui');
+		this.loadImage('party_options_wide_top', 'ui');
+		this.loadImage('party_options_wide_center', 'ui');
+		this.loadImage('party_options_wide_bottom', 'ui');
 		this.loadAtlas('party_cancel', 'ui');
 
 		this.loadImage('summary_bg', 'ui');
@@ -174,8 +179,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('summary_moves_overlay_pp', 'ui');
 		this.loadAtlas('summary_moves_cursor', 'ui');
 
-		this.loadImage('biome_select_window_2', 'ui');
-		this.loadImage('biome_select_window_3', 'ui');
+		for (let o = 1; o <= 3; o++)
+			this.loadImage(`option_select_window_${o}`, 'ui');
 
 		this.loadImage('starter_select_bg', 'ui');
 		this.loadImage('starter_select_message', 'ui');

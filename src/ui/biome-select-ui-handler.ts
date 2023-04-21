@@ -25,7 +25,7 @@ export default class BiomeSelectUiHandler extends UiHandler {
     this.biomeSelectContainer.setVisible(false);
     ui.add(this.biomeSelectContainer);
 
-    this.biomeSelectBg = this.scene.add.image(0, 0, 'biome_select_window_2');
+    this.biomeSelectBg = this.scene.add.image(0, 0, 'option_select_window_2');
     this.biomeSelectBg.setOrigin(0, 1);
     this.biomeSelectContainer.add(this.biomeSelectBg);
 
@@ -42,7 +42,7 @@ export default class BiomeSelectUiHandler extends UiHandler {
         return;
 
       this.biomeChoices = biomeLinks[args[0]] as Biome[];
-      this.biomeSelectBg.setTexture(`biome_select_window_${this.biomeChoices.length}`)
+      this.biomeSelectBg.setTexture(`option_select_window_${this.biomeChoices.length}`)
       this.biomesText.setText(this.biomeChoices.map(b => getBiomeName(b)).join('\n'));
       this.biomesText.setPositionRelative(this.biomeSelectBg, 16, 9);
       this.biomeSelectHandler = args[1] as Function;

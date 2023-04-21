@@ -16,7 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { Biome, biomeLinks } from "./data/biome";
-import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getEnemyModifierTypesForWave, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattleTagLapseType, BattleTagType, HideSpriteTag as HiddenTag } from "./data/battle-tag";
 import { getPokemonMessage } from "./messages";
@@ -118,7 +118,7 @@ export class EncounterPhase extends BattlePhase {
     if (this.scene.getEnemyPokemon().shiny)
       this.scene.unshiftPhase(new ShinySparklePhase(this.scene, false));
       
-      // TODO: Remove
+    // TODO: Remove
     //this.scene.unshiftPhase(new SelectModifierPhase(this.scene));
 
     super.end();
@@ -1837,6 +1837,37 @@ export class SelectModifierPhase extends BattlePhase {
       if (cursor < 0) {
         this.scene.ui.setMode(Mode.MESSAGE);
         super.end();
+        return;
+      } else if (cursor >= typeOptions.length) {
+        this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, (fromSlotIndex: integer, itemIndex: integer, toSlotIndex: integer) => {
+          if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
+            this.scene.ui.setMode(Mode.MODIFIER_SELECT);
+            const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+                && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
+            const itemModifier = itemModifiers[itemIndex];
+            const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
+            newItemModifier.pokemonId = party[toSlotIndex].id;
+            const matchingModifier = party[toSlotIndex].scene.findModifier(m => m instanceof PokemonHeldItemModifier
+                && (m as PokemonHeldItemModifier).matchType(itemModifier)) as PokemonHeldItemModifier;
+            let removeOld = true;
+            if (matchingModifier) {
+              const newStackCount = matchingModifier.stackCount + itemModifier.stackCount;
+              const maxStackCount = matchingModifier.getMaxStackCount();
+              if (newStackCount > maxStackCount) {
+                itemModifier.stackCount = newStackCount - maxStackCount;
+                newItemModifier.stackCount = maxStackCount;
+                removeOld = !itemModifier.stackCount;
+              }
+            }
+            if (!removeOld || this.scene.removeModifier(itemModifier)) {
+              this.scene.addModifier(newItemModifier, true).then(() => super.end());
+              this.scene.ui.clearText();
+              this.scene.ui.setMode(Mode.MESSAGE);
+              return;
+            }
+          }
+          this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
+        }, PartyUiHandler.FilterItemMaxStacks);
         return;
       }
 

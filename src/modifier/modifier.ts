@@ -69,16 +69,16 @@ export abstract class PersistentModifier extends Modifier {
   public stackCount: integer;
   public virtualStackCount: integer;
 
-  constructor(type: ModifierType) {
+  constructor(type: ModifierType, stackCount: integer) {
     super(type);
-    this.stackCount = 1;
+    this.stackCount = stackCount === undefined ? 1 : stackCount;
     this.virtualStackCount = 0;
   }
 
   add(modifiers: PersistentModifier[], virtual: boolean): boolean {
     for (let modifier of modifiers) {
       if (this.match(modifier))
-        return modifier.incrementStack(virtual);
+        return modifier.incrementStack(modifier.stackCount, virtual);
     }
 
     if (virtual) {
@@ -91,12 +91,12 @@ export abstract class PersistentModifier extends Modifier {
 
   abstract clone(): PersistentModifier;
 
-  incrementStack(virtual: boolean): boolean {
-    if (this.getStackCount() < this.getMaxStackCount()) {
+  incrementStack(amount: integer, virtual: boolean): boolean {
+    if (this.getStackCount() + amount <= this.getMaxStackCount()) {
       if (!virtual)
-        this.stackCount++;
+        this.stackCount += amount;
       else
-        this.virtualStackCount++;
+        this.virtualStackCount += amount;
       return true;
     }
 
@@ -193,15 +193,15 @@ export class TempBattleStatBoosterModifier extends PersistentModifier {
   private tempBattleStat: TempBattleStat;
   private battlesLeft: integer;
 
-  constructor(type: ModifierTypes.TempBattleStatBoosterModifierType, tempBattleStat: TempBattleStat) {
-    super(type);
+  constructor(type: ModifierTypes.TempBattleStatBoosterModifierType, tempBattleStat: TempBattleStat, stackCount?: integer) {
+    super(type, stackCount);
 
     this.tempBattleStat = tempBattleStat;
     this.battlesLeft = 5;
   }
 
   clone(): TempBattleStatBoosterModifier {
-    return new TempBattleStatBoosterModifier(this.type as ModifierTypes.TempBattleStatBoosterModifierType, this.tempBattleStat);
+    return new TempBattleStatBoosterModifier(this.type as ModifierTypes.TempBattleStatBoosterModifierType, this.tempBattleStat, this.stackCount);
   }
 
   apply(args: any[]): boolean {
@@ -236,10 +236,16 @@ export class TempBattleStatBoosterModifier extends PersistentModifier {
 export abstract class PokemonHeldItemModifier extends PersistentModifier {
   public pokemonId: integer;
 
-  constructor(type: ModifierType, pokemonId: integer) {
-    super(type);
+  constructor(type: ModifierType, pokemonId: integer, stackCount: integer) {
+    super(type, stackCount);
 
     this.pokemonId = pokemonId;
+  }
+
+  abstract matchType(_modifier: Modifier): boolean;
+
+  match(modifier: Modifier) {
+    return this.matchType(modifier) && (modifier as PokemonHeldItemModifier).pokemonId === this.pokemonId;
   }
 
   shouldApply(args: any[]): boolean {
@@ -282,21 +288,19 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
 export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
   protected stat: Stat;
 
-  constructor(type: ModifierTypes.PokemonBaseStatBoosterModifierType, pokemonId: integer, stat: Stat) {
-    super(type, pokemonId);
+  constructor(type: ModifierTypes.PokemonBaseStatBoosterModifierType, pokemonId: integer, stat: Stat, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
     this.stat = stat;
   }
 
-  match(modifier: Modifier): boolean {
-    if (modifier instanceof PokemonBaseStatModifier) {
-      const pokemonStatModifier = modifier as PokemonBaseStatModifier;
-      return pokemonStatModifier.pokemonId === this.pokemonId && pokemonStatModifier.stat === this.stat;
-    }
+  matchType(modifier: Modifier): boolean {
+    if (modifier instanceof PokemonBaseStatModifier)
+      return (modifier as PokemonBaseStatModifier).stat === this.stat;
     return false;
   }
 
   clone(): PersistentModifier {
-    return new PokemonBaseStatModifier(this.type as ModifierTypes.PokemonBaseStatBoosterModifierType, this.pokemonId, this.stat);
+    return new PokemonBaseStatModifier(this.type as ModifierTypes.PokemonBaseStatBoosterModifierType, this.pokemonId, this.stat, this.stackCount);
   }
 
   shouldApply(args: any[]): boolean {
@@ -314,19 +318,22 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   private moveType: Type;
   private boostMultiplier: number;
 
-  constructor(type: ModifierType, pokemonId: integer, moveType: Type, boostPercent: integer) {
-    super(type, pokemonId);
+  constructor(type: ModifierType, pokemonId: integer, moveType: Type, boostPercent: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
 
     this.moveType = moveType;
     this.boostMultiplier = boostPercent * 0.01;
   }
 
-  match(modifier: Modifier) {
-    return modifier instanceof AttackTypeBoosterModifier;
+  matchType(modifier: Modifier) {
+    if (modifier instanceof AttackTypeBoosterModifier) {
+      const attackTypeBoosterModifier = modifier as AttackTypeBoosterModifier;
+      return attackTypeBoosterModifier.moveType === this.moveType && attackTypeBoosterModifier.boostMultiplier === this.boostMultiplier;
+    }
   }
 
   clone() {
-    return new AttackTypeBoosterModifier(this.type, this.pokemonId, this.moveType, this.boostMultiplier * 100);
+    return new AttackTypeBoosterModifier(this.type, this.pokemonId, this.moveType, this.boostMultiplier * 100, this.stackCount);
   }
 
   shouldApply(args: any[]): boolean {
@@ -341,16 +348,16 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
 }
 
 export class TurnHealModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: integer) {
-    super(type, pokemonId);
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
   }
 
-  match(modifier: Modifier) {
+  matchType(modifier: Modifier) {
     return modifier instanceof TurnHealModifier;
   }
 
   clone() {
-    return new TurnHealModifier(this.type, this.pokemonId);
+    return new TurnHealModifier(this.type, this.pokemonId, this.stackCount);
   }
 
   apply(args: any[]): boolean {
@@ -370,16 +377,16 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
 }
 
 export class HitHealModifier extends PokemonHeldItemModifier {
-  constructor(type: ModifierType, pokemonId: integer) {
-    super(type, pokemonId);
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
   }
 
-  match(modifier: Modifier) {
+  matchType(modifier: Modifier) {
     return modifier instanceof HitHealModifier;
   }
 
   clone() {
-    return new HitHealModifier(this.type, this.pokemonId);
+    return new HitHealModifier(this.type, this.pokemonId, this.stackCount);
   }
 
   apply(args: any[]): boolean {
@@ -402,19 +409,19 @@ export class BerryModifier extends PokemonHeldItemModifier {
   public berryType: BerryType;
   public consumed: boolean;
 
-  constructor(type: ModifierType, pokemonId: integer, berryType: BerryType) {
-    super(type, pokemonId);
+  constructor(type: ModifierType, pokemonId: integer, berryType: BerryType, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
 
     this.berryType = berryType;
     this.consumed = false;
   }
 
-  match(modifier: Modifier) {
-    return modifier instanceof BerryModifier && (modifier as BerryModifier).berryType === this.berryType && modifier.pokemonId === this.pokemonId;
+  matchType(modifier: Modifier) {
+    return modifier instanceof BerryModifier && (modifier as BerryModifier).berryType === this.berryType;
   }
 
   clone() {
-    return new BerryModifier(this.type, this.pokemonId, this.berryType);
+    return new BerryModifier(this.type, this.pokemonId, this.berryType, this.stackCount);
   }
 
   shouldApply(args: any[]): boolean {
@@ -436,8 +443,8 @@ export class BerryModifier extends PokemonHeldItemModifier {
 }
 
 export class PreserveBerryModifier extends PersistentModifier {
-  constructor(type: ModifierType) {
-    super(type);
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
   }
 
   match(modifier: Modifier) {
@@ -445,7 +452,7 @@ export class PreserveBerryModifier extends PersistentModifier {
   }
 
   clone() {
-    return new PreserveBerryModifier(this.type);
+    return new PreserveBerryModifier(this.type, this.stackCount);
   }
 
   shouldApply(args: any[]): boolean {
@@ -628,8 +635,8 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
 }
 
 export class PartyShareModifier extends PersistentModifier {
-  constructor(type: ModifierType) {
-    super(type);
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
   }
 
   match(modifier: Modifier) {
@@ -637,7 +644,7 @@ export class PartyShareModifier extends PersistentModifier {
   }
 
   clone(): PartyShareModifier {
-    return new PartyShareModifier(this.type);
+    return new PartyShareModifier(this.type, this.stackCount);
   }
 
   shouldApply(args: any[]): boolean {
@@ -675,8 +682,8 @@ export class PartyShareModifier extends PersistentModifier {
 export class HealingBoosterModifier extends PersistentModifier {
   private multiplier: number;
 
-  constructor(type: ModifierType, multiplier: number) {
-    super(type);
+  constructor(type: ModifierType, multiplier: number, stackCount?: integer) {
+    super(type, stackCount);
 
     this.multiplier = multiplier;
   }
@@ -686,7 +693,7 @@ export class HealingBoosterModifier extends PersistentModifier {
   }
 
   clone(): HealingBoosterModifier {
-    return new HealingBoosterModifier(this.type, this.multiplier);
+    return new HealingBoosterModifier(this.type, this.multiplier, this.stackCount);
   }
 
   apply(args: any[]): boolean {
@@ -702,8 +709,8 @@ export class HealingBoosterModifier extends PersistentModifier {
 export class ExpBoosterModifier extends PersistentModifier {
   private boostMultiplier: integer;
 
-  constructor(type: ModifierType, boostPercent: integer) {
-    super(type);
+  constructor(type: ModifierType, boostPercent: integer, stackCount?: integer) {
+    super(type, stackCount);
 
     this.boostMultiplier = boostPercent * 0.01;
   }
@@ -717,7 +724,7 @@ export class ExpBoosterModifier extends PersistentModifier {
   }
 
   clone(): ExpBoosterModifier {
-    return new ExpBoosterModifier(this.type, this.boostMultiplier * 100);
+    return new ExpBoosterModifier(this.type, this.boostMultiplier * 100, this.stackCount);
   }
 
   apply(args: any[]): boolean {
@@ -730,21 +737,21 @@ export class ExpBoosterModifier extends PersistentModifier {
 export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
   private boostMultiplier: integer;
 
-  constructor(type: ModifierTypes.PokemonExpBoosterModifierType, pokemonId: integer, boostPercent: integer) {
-    super(type, pokemonId);
+  constructor(type: ModifierTypes.PokemonExpBoosterModifierType, pokemonId: integer, boostPercent: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
     this.boostMultiplier = boostPercent * 0.01;
   }
 
-  match(modifier: Modifier): boolean {
+  matchType(modifier: Modifier): boolean {
     if (modifier instanceof PokemonExpBoosterModifier) {
       const pokemonExpModifier = modifier as PokemonExpBoosterModifier;
-      return pokemonExpModifier.pokemonId === this.pokemonId && pokemonExpModifier.boostMultiplier === this.boostMultiplier;
+      return pokemonExpModifier.boostMultiplier === this.boostMultiplier;
     }
     return false;
   }
 
   clone(): PersistentModifier {
-    return new PokemonExpBoosterModifier(this.type as ModifierTypes.PokemonExpBoosterModifierType, this.pokemonId, this.boostMultiplier * 100);
+    return new PokemonExpBoosterModifier(this.type as ModifierTypes.PokemonExpBoosterModifierType, this.pokemonId, this.boostMultiplier * 100, this.stackCount);
   }
 
   shouldApply(args: any[]): boolean {
@@ -759,8 +766,8 @@ export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
 }
 
 export class ExpShareModifier extends PersistentModifier {
-  constructor(type: ModifierType) {
-    super(type);
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
   }
 
   match(modifier: Modifier): boolean {
@@ -772,7 +779,7 @@ export class ExpShareModifier extends PersistentModifier {
   }
 
   clone(): ExpShareModifier {
-    return new ExpShareModifier(this.type);
+    return new ExpShareModifier(this.type, this.stackCount);
   }
 
   getMaxStackCount(): integer {
@@ -781,8 +788,8 @@ export class ExpShareModifier extends PersistentModifier {
 }
 
 export class ExpBalanceModifier extends PersistentModifier {
-  constructor(type: ModifierType) {
-    super(type);
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
   }
 
   match(modifier: Modifier): boolean {
@@ -794,7 +801,7 @@ export class ExpBalanceModifier extends PersistentModifier {
   }
 
   clone(): ExpBalanceModifier {
-    return new ExpBalanceModifier(this.type);
+    return new ExpBalanceModifier(this.type, this.stackCount);
   }
 
   getMaxStackCount(): integer {
@@ -803,8 +810,8 @@ export class ExpBalanceModifier extends PersistentModifier {
 }
 
 export class ShinyRateBoosterModifier extends PersistentModifier {
-  constructor(type: ModifierType) {
-    super(type);
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
   }
 
   match(modifier: Modifier): boolean {
@@ -812,7 +819,7 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
   }
 
   clone(): ShinyRateBoosterModifier {
-    return new ShinyRateBoosterModifier(this.type);
+    return new ShinyRateBoosterModifier(this.type, this.stackCount);
   }
 
   apply(args: any[]): boolean {
@@ -827,8 +834,8 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
 }
 
 export class ExtraModifierModifier extends PersistentModifier {
-  constructor(type: ModifierType) {
-    super(type);
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
   }
 
   match(modifier: Modifier): boolean {
@@ -836,7 +843,7 @@ export class ExtraModifierModifier extends PersistentModifier {
   }
 
   clone(): ExtraModifierModifier {
-    return new ExtraModifierModifier(this.type);
+    return new ExtraModifierModifier(this.type, this.stackCount);
   }
 
   apply(args: any[]): boolean {

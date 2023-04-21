@@ -1,13 +1,18 @@
 import BattleScene, { Button } from "../battle-scene";
-import { ModifierTier, ModifierType, ModifierTypeOption } from "../modifier/modifier-type";
+import { ModifierTier, ModifierTypeOption } from "../modifier/modifier-type";
 import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
 import { addTextObject, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
 
 export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private overlayBg: Phaser.GameObjects.Rectangle;
   private modifierContainer: Phaser.GameObjects.Container;
+  private transferButtonContainer: Phaser.GameObjects.Container;
+
+  private lastCursor: integer = 0;
+
   public options: ModifierOption[];
 
   private cursorObj: Phaser.GameObjects.Image;
@@ -30,6 +35,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     
     this.modifierContainer = this.scene.add.container(0, 0);
     ui.add(this.modifierContainer);
+
+    this.transferButtonContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -64);
+    this.transferButtonContainer.setVisible(false);
+    ui.add(this.transferButtonContainer);
+
+    const transferButtonText = addTextObject(this.scene, -4, -2, 'Transfer', TextStyle.PARTY);
+    transferButtonText.setOrigin(1, 0);
+    this.transferButtonContainer.add(transferButtonText);
   }
 
   show(args: any[]) {
@@ -47,6 +60,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     super.show(args);
 
     this.getUi().clearText();
+
+    const partyHasHeldItem = !!this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier).length;
+
+    this.transferButtonContainer.setVisible(false);
+    this.transferButtonContainer.setAlpha(0);
 
     const typeOptions = args[0] as ModifierTypeOption[];
     for (let m = 0; m < typeOptions.length; m++) {
@@ -83,6 +101,16 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     });
 
     this.scene.time.delayedCall(4000 + (hasUpgrade ? 2000 : 0), () => {
+      if (partyHasHeldItem) {
+        this.transferButtonContainer.setAlpha(0);
+        this.transferButtonContainer.setVisible(true);
+        this.scene.tweens.add({
+          targets: this.transferButtonContainer,
+          alpha: 1,
+          duration: 250
+        });
+      }
+
       this.setCursor(0);
       this.awaitingActionInput = true;
       this.onActionInput = args[1];
@@ -115,12 +143,20 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       }
     } else {
       switch (button) {
+        case Button.UP:
+          if (this.cursor === this.options.length)
+            success = this.setCursor(this.lastCursor);
+          break;
+        case Button.DOWN:
+          if (this.cursor < this.options.length && this.transferButtonContainer.visible)
+            success = this.setCursor(this.options.length);
+          break;
         case Button.LEFT:
           if (this.cursor)
             success = this.setCursor(this.cursor - 1);
           break;
         case Button.RIGHT:
-          if (this.cursor < this.options.length - 1)
+          if (this.cursor < this.options.length - (this.transferButtonContainer.visible ? 0 : 1))
             success = this.setCursor(this.cursor + 1);
           break;
       }
@@ -131,18 +167,29 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   }
 
   setCursor(cursor: integer): boolean {
+    const lastCursor = this.cursor;
+
     const ui = this.getUi();
     const ret = super.setCursor(cursor);
 
+    if (ret)
+      this.lastCursor = lastCursor;
+
     if (!this.cursorObj) {
       this.cursorObj = this.scene.add.image(0, 0, 'cursor');
-      this.cursorObj.setScale(2);
       this.modifierContainer.add(this.cursorObj);
     }
 
-    const sliceWidth = (this.scene.game.canvas.width / 6) / (this.options.length + 2);
-    this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, -this.scene.game.canvas.height / 12 - 20);
-    ui.showText(this.options[this.cursor].modifierTypeOption.type.description);
+    this.cursorObj.setScale(cursor < this.options.length ? 2 : 1);
+
+    if (cursor < this.options.length) {
+      const sliceWidth = (this.scene.game.canvas.width / 6) / (this.options.length + 2);
+      this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, -this.scene.game.canvas.height / 12 - 20);
+      ui.showText(this.options[this.cursor].modifierTypeOption.type.description);
+    } else {
+      this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 50, -60);
+      ui.showText('Transfer a held item from one POKéMON to another instead of selecting an item');
+    }
 
     return ret;
   }
@@ -165,12 +212,21 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       targets: this.options,
       scale: 0.01,
       duration: 250,
-      east: 'Elastic.easeIn',
+      ease: 'Elastic.easeIn',
       onComplete: () => {
         this.options.forEach(o => o.destroy());
         this.options.splice(0, this.options.length);
       }
     });
+    if (this.transferButtonContainer.visible) {
+      this.scene.tweens.add({
+        targets: this.transferButtonContainer,
+        alpha: 0,
+        duration: 250,
+        ease: 'Cubic.easeIn',
+        onComplete: () => this.transferButtonContainer.setVisible(false)
+      })
+    }
   }
 
   eraseCursor() {
