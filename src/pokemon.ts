@@ -149,6 +149,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.add(tintSprite);
     this.add(zoomSprite);
 
+    this.getSpeciesForm().generateIconAnim(scene, this.gender === Gender.FEMALE, formIndex);
+
     if (this.shiny) {
       const shinySparkle = this.scene.add.sprite(0, 0, 'shiny');
       shinySparkle.setVisible(false);
@@ -802,8 +804,7 @@ export class PlayerPokemon extends Pokemon {
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, formIndex: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon) {
     super(scene, 106, 148, species, level, formIndex, gender, shiny, dataSource);
-
-    this.getSpeciesForm().generateIconAnim(scene, this.gender === Gender.FEMALE, formIndex);
+    
     this.generateCompatibleTms();
   }
 
