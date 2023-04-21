@@ -99,7 +99,7 @@ export function getStatusEffectHealText(statusEffect: StatusEffect): string {
     case StatusEffect.FREEZE:
       return ' was\ndefrosted!';
     case StatusEffect.BURN:
-      return ' is hurt\nby its burn!';
+      return ' was\nhealed of its burn!';
   }
 
   return '';

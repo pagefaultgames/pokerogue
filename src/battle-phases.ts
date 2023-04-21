@@ -1339,7 +1339,9 @@ export class VictoryPhase extends PokemonPhase {
     for (let partyMember of expPartyMembers) {
       const pId = partyMember.id;
       const participated = participantIds.has(pId);
-      if (!participated && !expShareModifier) {
+      if (participated)
+        partyMember.winCount++;
+      else if (!expShareModifier) {
         partyMemberExp.push(0);
         continue;
       }

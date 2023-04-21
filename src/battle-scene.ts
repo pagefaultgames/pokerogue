@@ -670,17 +670,17 @@ export default class BattleScene extends Phaser.Scene {
 	generateEnemyModifiers(): Promise<void> {
 		return new Promise(resolve => {
 			const waveIndex = this.currentBattle.waveIndex;
-			const chances = Math.ceil(waveIndex / 20);
+			const chances = Math.ceil(waveIndex / 10);
 			const isBoss = waveIndex >= 100 || !(waveIndex % 10);
 			let count = 0;
 			for (let c = 0; c < chances; c++) {
-				if (!Utils.randInt(!isBoss ? 8 : 2))
+				if (!Utils.randInt(!isBoss ? 12 : 4))
 					count++;
 				if (count === 12)
 					break;
 			}
 			if (isBoss)
-				count = Math.max(count, Math.ceil(chances / 2));
+				count = Math.max(count, Math.floor(chances / 2));
 			getEnemyModifierTypesForWave(waveIndex, count, this.getEnemyParty()).map(mt => mt.newModifier(this.getEnemyPokemon()).add(this.enemyModifiers, false));
 
 			this.updateModifiers(false).then(() => resolve());

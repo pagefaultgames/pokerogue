@@ -498,7 +498,7 @@ const modifierTypes = {
 
   EXP_SHARE: new ModifierType('EXP. SHARE', 'All POKéMON in your party gain an additional 10% of a battle\'s EXP. Points',
     (type, _args) => new Modifiers.ExpShareModifier(type), 'exp_share'),
-  EXP_BALANCE: new ModifierType('EXP. BALANCE', 'All EXP. Points received from battles is split among the lower leveled party members',
+  EXP_BALANCE: new ModifierType('EXP. BALANCE', 'All EXP. Points received from battles are split between the lower leveled party members',
     (type, _args) => new Modifiers.ExpBalanceModifier(type), 'exp_balance'),
 
   EXP_CHARM: new ExpBoosterModifierType('EXP CHARM', 25),

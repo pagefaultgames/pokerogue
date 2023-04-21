@@ -157,7 +157,6 @@ export class SeedTag extends PseudoStatusTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
-    console.trace(lapseType);
     const ret = lapseType !== BattleTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret) {
