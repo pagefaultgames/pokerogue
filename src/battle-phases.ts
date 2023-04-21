@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveA
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HitHealModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, TempBattleStatBoosterModifier } from "./modifier/modifier";
+import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HitHealModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, TempBattleStatBoosterModifier, TurnHealModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -600,6 +600,8 @@ export class TurnEndPhase extends BattlePhase {
       const hasUsableBerry = !!this.scene.findModifier(m => m instanceof BerryModifier && m.shouldApply([ pokemon ]), pokemon.isPlayer());
       if (hasUsableBerry)
         this.scene.pushPhase(new BerryPhase(this.scene, pokemon.isPlayer()));
+
+      this.scene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
       pokemon.battleSummonData.turnCount++;
     };

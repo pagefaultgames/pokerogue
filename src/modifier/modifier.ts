@@ -340,6 +340,35 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class TurnHealModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: integer) {
+    super(type, pokemonId);
+  }
+
+  match(modifier: Modifier) {
+    return modifier instanceof TurnHealModifier;
+  }
+
+  clone() {
+    return new TurnHealModifier(this.type, this.pokemonId);
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+
+    if (pokemon.getHpRatio() < 1) {
+      const scene = pokemon.scene;
+      scene.unshiftPhase(new PokemonHealPhase(scene, true, Math.max(Math.floor(pokemon.getMaxHp() / 16) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
+    }
+
+    return true;
+  }
+
+  getMaxStackCount(): number {
+    return 16;
+  }
+}
+
 export class HitHealModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer) {
     super(type, pokemonId);
@@ -358,11 +387,14 @@ export class HitHealModifier extends PokemonHeldItemModifier {
 
     if (pokemon.turnData.damageDealt && pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
-
       scene.unshiftPhase(new PokemonHealPhase(scene, true, Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
     }
 
     return true;
+  }
+
+  getMaxStackCount(): number {
+    return 16;
   }
 }
 
@@ -394,8 +426,6 @@ export class BerryModifier extends PokemonHeldItemModifier {
 
     const preserve = new Utils.BooleanHolder(false);
     pokemon.scene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), preserve);
-
-    console.log(pokemon.isPlayer());
 
     getBerryEffectFunc(this.berryType)(pokemon);
     if (!preserve.value)

@@ -515,6 +515,8 @@ const modifierTypes = {
   BERRY_POUCH: new ModifierType('BERRY POUCH', 'Adds a 25% chance that a used berry will not be consumed',
     (type, _args) => new Modifiers.PreserveBerryModifier(type)),
 
+  LEFTOVERS: new PokemonHeldItemModifierType('LEFTOVERS', 'Heals 1/16 of a POKéMON\'s maximum HP every turn',
+    (type, args) => new Modifiers.TurnHealModifier(type, (args[0] as Pokemon).id)),
   SHELL_BELL: new PokemonHeldItemModifierType('SHELL BELL', 'Heals 1/8 of a POKéMON\'s dealt damage',
     (type, args) => new Modifiers.HitHealModifier(type, (args[0] as Pokemon).id)),
 
@@ -590,6 +592,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5),
     modifierTypes.OVAL_CHARM,
     modifierTypes.HEALING_CHARM,
+    new WeightedModifierType(modifierTypes.LEFTOVERS, 2),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 2),
     new WeightedModifierType(modifierTypes.EXP_CHARM, 4),
     new WeightedModifierType(modifierTypes.LUCKY_EGG, 3),
