@@ -45,7 +45,7 @@ export enum Button {
 export default class BattleScene extends Phaser.Scene {
 	public auto: boolean;
 	public gameSpeed: integer = 1;
-	public quickStart: boolean = true;
+	public quickStart: boolean;
 
 	public gameData: GameData;
 
