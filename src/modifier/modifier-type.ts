@@ -582,7 +582,7 @@ const modifierPool = {
       const thresholdPartyMemberCount = party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length;
       return Math.ceil(thresholdPartyMemberCount / 1.5);
     }),
-    new WeightedModifierType(modifierTypes.TEMP_STAT_BOOSTER, 4),
+    new WeightedModifierType(modifierTypes.TM, 4),
     new WeightedModifierType(modifierTypes.EXP_SHARE, 2),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 4)
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
