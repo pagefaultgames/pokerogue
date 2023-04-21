@@ -7,7 +7,7 @@ import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
 import { Moves } from "./move";
 
-export enum BattleTagType {
+export enum BattlerTagType {
   NONE,
   RECHARGING,
   FLINCHED,
@@ -26,7 +26,7 @@ export enum BattleTagType {
   IGNORE_FLYING
 }
 
-export enum BattleTagLapseType {
+export enum BattlerTagLapseType {
   FAINT,
   MOVE,
   AFTER_MOVE,
@@ -35,12 +35,12 @@ export enum BattleTagLapseType {
   CUSTOM
 }
 
-export class BattleTag {
-  public tagType: BattleTagType;
-  public lapseType: BattleTagLapseType;
+export class BattlerTag {
+  public tagType: BattlerTagType;
+  public lapseType: BattlerTagLapseType;
   public turnCount: integer;
 
-  constructor(tagType: BattleTagType, lapseType: BattleTagLapseType, turnCount: integer) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer) {
     this.tagType = tagType;
     this.lapseType = lapseType;
     this.turnCount = turnCount;
@@ -52,14 +52,14 @@ export class BattleTag {
 
   onOverlap(pokemon: Pokemon): void { }
 
-  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     return --this.turnCount > 0;
   }
 }
 
-export class RechargingTag extends BattleTag {
+export class RechargingTag extends BattlerTag {
   constructor() {
-    super(BattleTagType.RECHARGING, BattleTagLapseType.MOVE, 1);
+    super(BattlerTagType.RECHARGING, BattlerTagLapseType.MOVE, 1);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -68,66 +68,66 @@ export class RechargingTag extends BattleTag {
     pokemon.getMoveQueue().push({ move: Moves.NONE })
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     super.lapse(pokemon, lapseType);
 
     (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' must\nrecharge!')));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' must\nrecharge!'));
 
     return true;
   }
 }
 
-export class FlinchedTag extends BattleTag {
+export class FlinchedTag extends BattlerTag {
   constructor() {
-    super(BattleTagType.FLINCHED, BattleTagLapseType.MOVE, 0);
+    super(BattlerTagType.FLINCHED, BattlerTagLapseType.MOVE, 0);
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     super.lapse(pokemon, lapseType);
 
     (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' flinched!')));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' flinched!'));
 
     return true;
   }
 }
 
-export class PseudoStatusTag extends BattleTag {
-  constructor(tagType: BattleTagType, lapseType: BattleTagLapseType, turnCount: integer) {
+export class PseudoStatusTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer) {
     super(tagType, lapseType, turnCount);
   }
 }
 
 export class ConfusedTag extends PseudoStatusTag {
   constructor(turnCount: integer) {
-    super(BattleTagType.CONFUSED, BattleTagLapseType.MOVE, turnCount);
+    super(BattlerTagType.CONFUSED, BattlerTagLapseType.MOVE, turnCount);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
     
     pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.isPlayer(), CommonAnim.CONFUSION));
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' became\nconfused!')));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' became\nconfused!'));
   }
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
     
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' snapped\nout of confusion!')));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' snapped\nout of confusion!'));
   }
 
   onOverlap(pokemon: Pokemon): void {
     super.onOverlap(pokemon);
 
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' is\nalready confused!')));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nalready confused!'));
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
-    const ret = lapseType !== BattleTagLapseType.CUSTOM && super.lapse(pokemon, lapseType);
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = lapseType !== BattlerTagLapseType.CUSTOM && super.lapse(pokemon, lapseType);
 
     if (ret) {
-      pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' is\nconfused!')));
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nconfused!'));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.isPlayer(), CommonAnim.CONFUSION));
 
       if (Utils.randInt(2)) {
@@ -135,7 +135,7 @@ export class ConfusedTag extends PseudoStatusTag {
         const def = pokemon.getBattleStat(Stat.DEF);
         const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * ((Utils.randInt(15) + 85) / 100));
         pokemon.damage(damage);
-        pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, 'It hurt itself in its\nconfusion!'));
+        pokemon.scene.queueMessage('It hurt itself in its\nconfusion!');
         pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.isPlayer()));
         (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
       }
@@ -147,17 +147,17 @@ export class ConfusedTag extends PseudoStatusTag {
 
 export class SeedTag extends PseudoStatusTag {
   constructor() {
-    super(BattleTagType.SEEDED, BattleTagLapseType.AFTER_MOVE, 1);
+    super(BattlerTagType.SEEDED, BattlerTagLapseType.AFTER_MOVE, 1);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
     
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' was seeded!')));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' was seeded!'));
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
-    const ret = lapseType !== BattleTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret) {
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, !pokemon.isPlayer(), CommonAnim.LEECH_SEED));
@@ -174,26 +174,26 @@ export class SeedTag extends PseudoStatusTag {
 
 export class NightmareTag extends PseudoStatusTag {
   constructor() {
-    super(BattleTagType.NIGHTMARE, BattleTagLapseType.AFTER_MOVE, 1);
+    super(BattlerTagType.NIGHTMARE, BattlerTagLapseType.AFTER_MOVE, 1);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
     
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' began\nhaving a NIGHTMARE!')));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' began\nhaving a NIGHTMARE!'));
   }
 
   onOverlap(pokemon: Pokemon): void {
     super.onOverlap(pokemon);
 
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' is\nalready locked in a NIGHTMARE!')));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nalready locked in a NIGHTMARE!'));
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
-    const ret = lapseType !== BattleTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret) {
-      pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' is locked\nin a NIGHTMARE!')));
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is locked\nin a NIGHTMARE!'));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.isPlayer(), CommonAnim.CURSE)); // TODO: Update animation type
 
       const damage = Math.ceil(pokemon.getMaxHp() / 4);
@@ -207,17 +207,17 @@ export class NightmareTag extends PseudoStatusTag {
 
 export class IngrainTag extends PseudoStatusTag {
   constructor() {
-    super(BattleTagType.INGRAIN, BattleTagLapseType.TURN_END, 1);
+    super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
     
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' planted its roots!')));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' planted its roots!'));
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
-    const ret = lapseType !== BattleTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret)
       pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.isPlayer(), Math.floor(pokemon.getMaxHp() / 16),
@@ -229,17 +229,17 @@ export class IngrainTag extends PseudoStatusTag {
 
 export class AquaRingTag extends PseudoStatusTag {
   constructor() {
-    super(BattleTagType.AQUA_RING, BattleTagLapseType.TURN_END, 1);
+    super(BattlerTagType.AQUA_RING, BattlerTagLapseType.TURN_END, 1);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
     
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' surrounded\nitself with a veil of water!')));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' surrounded\nitself with a veil of water!'));
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
-    const ret = lapseType !== BattleTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret)
       pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.isPlayer(), Math.floor(pokemon.getMaxHp() / 16), `AQUA RING restored\n${pokemon.name}\'s HP!`, true));
@@ -248,18 +248,18 @@ export class AquaRingTag extends PseudoStatusTag {
   }
 }
 
-export class DrowsyTag extends BattleTag {
+export class DrowsyTag extends BattlerTag {
   constructor() {
-    super(BattleTagType.DROWSY, BattleTagLapseType.TURN_END, 2);
+    super(BattlerTagType.DROWSY, BattlerTagLapseType.TURN_END, 2);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' grew drowsy!')));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' grew drowsy!'));
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (!super.lapse(pokemon, lapseType)) {
       pokemon.scene.unshiftPhase(new ObtainStatusEffectPhase(pokemon.scene, pokemon.isPlayer(), StatusEffect.SLEEP));
       return false;
@@ -269,21 +269,21 @@ export class DrowsyTag extends BattleTag {
   }
 }
 
-export class ProtectedTag extends BattleTag {
+export class ProtectedTag extends BattlerTag {
   constructor() {
-    super(BattleTagType.PROTECTED, BattleTagLapseType.CUSTOM, 0);
+    super(BattlerTagType.PROTECTED, BattlerTagLapseType.CUSTOM, 0);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, '\nprotected itself!')));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\nprotected itself!'));
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
-    if (lapseType === BattleTagLapseType.CUSTOM) {
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
       new CommonBattleAnim(CommonAnim.PROTECT, pokemon).play(pokemon.scene);
-      pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, '\nprotected itself!')));
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\nprotected itself!'));
       return true;
     }
 
@@ -291,9 +291,9 @@ export class ProtectedTag extends BattleTag {
   }
 }
 
-export class HideSpriteTag extends BattleTag {
-  constructor(tagType: BattleTagType, turnCount: integer) {
-    super(tagType, BattleTagLapseType.MOVE_EFFECT, turnCount);
+export class HideSpriteTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, turnCount: integer) {
+    super(tagType, BattlerTagLapseType.MOVE_EFFECT, turnCount);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -312,34 +312,34 @@ export class HideSpriteTag extends BattleTag {
   }
 }
 
-export function getBattleTag(tagType: BattleTagType, turnCount: integer): BattleTag {
+export function getBattlerTag(tagType: BattlerTagType, turnCount: integer): BattlerTag {
   switch (tagType) {
-    case BattleTagType.RECHARGING:
+    case BattlerTagType.RECHARGING:
       return new RechargingTag();
-    case BattleTagType.FLINCHED:
+    case BattlerTagType.FLINCHED:
       return new FlinchedTag();
-    case BattleTagType.CONFUSED:
+    case BattlerTagType.CONFUSED:
       return new ConfusedTag(turnCount);
-    case BattleTagType.SEEDED:
+    case BattlerTagType.SEEDED:
       return new SeedTag();
-    case BattleTagType.NIGHTMARE:
+    case BattlerTagType.NIGHTMARE:
       return new NightmareTag();
-    case BattleTagType.AQUA_RING:
+    case BattlerTagType.AQUA_RING:
       return new AquaRingTag();
-    case BattleTagType.DROWSY:
+    case BattlerTagType.DROWSY:
       return new DrowsyTag();
-    case BattleTagType.PROTECTED:
+    case BattlerTagType.PROTECTED:
       return new ProtectedTag();
-    case BattleTagType.FLYING:
-    case BattleTagType.UNDERGROUND:
+    case BattlerTagType.FLYING:
+    case BattlerTagType.UNDERGROUND:
       return new HideSpriteTag(tagType, turnCount);
-    case BattleTagType.NO_CRIT:
-      return new BattleTag(tagType, BattleTagLapseType.AFTER_MOVE, turnCount);
-    case BattleTagType.BYPASS_SLEEP:
-      return new BattleTag(BattleTagType.BYPASS_SLEEP, BattleTagLapseType.TURN_END, turnCount);
-    case BattleTagType.IGNORE_FLYING:
-      return new BattleTag(tagType, BattleTagLapseType.TURN_END, turnCount);
+    case BattlerTagType.NO_CRIT:
+      return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount);
+    case BattlerTagType.BYPASS_SLEEP:
+      return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount);
+    case BattlerTagType.IGNORE_FLYING:
+      return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount);
     default:
-        return new BattleTag(tagType, BattleTagLapseType.CUSTOM, turnCount);
+        return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount);
   }
 }

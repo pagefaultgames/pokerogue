@@ -608,6 +608,10 @@ export default class BattleScene extends Phaser.Scene {
 		this.currentPhase.start();
 	}
 
+	queueMessage(message: string, callbackDelay?: integer, prompt?: boolean) {
+		this.unshiftPhase(new MessagePhase(this, message, callbackDelay, prompt));
+	}
+
 	populatePhaseQueue(): void {
 		this.phaseQueue.push(new CommandPhase(this));
 	}
@@ -622,7 +626,7 @@ export default class BattleScene extends Phaser.Scene {
 				} else if (!virtual) {
 					const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
 					this.addModifier(defaultModifierType.newModifier(), playSound).then(() => resolve());
-					this.unshiftPhase(new MessagePhase(this, `The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, null, true));
+					this.queueMessage(`The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, null, true);
 					return;
 				}
 

@@ -5,11 +5,13 @@ export class Battle {
     public waveIndex: integer;
     public enemyLevel: integer;
     public enemyPokemon: EnemyPokemon;
+    public turn: integer;
     public playerParticipantIds: Set<integer> = new Set<integer>();
 
     constructor(waveIndex: integer) {
         this.waveIndex = waveIndex;
         this.enemyLevel = this.getLevelForWave();
+        this.turn = 1;
     }
 
     private getLevelForWave(): number {
@@ -21,6 +23,10 @@ export class Battle {
         const deviation = 10 / this.waveIndex;
 
         return Math.max(Math.round(baseLevel + Math.abs(Utils.randGauss(deviation))), 1);
+    }
+
+    incrementTurn() {
+        this.turn++;
     }
 
     addParticipant(playerPokemon: PlayerPokemon): void {

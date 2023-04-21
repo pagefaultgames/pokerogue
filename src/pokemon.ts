@@ -17,10 +17,11 @@ import { tmSpecies } from './data/tms';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './data/pokemon-evolutions';
 import { DamagePhase, FaintPhase, MessagePhase } from './battle-phases';
 import { BattleStat } from './data/battle-stat';
-import { BattleTag, BattleTagLapseType, BattleTagType, getBattleTag } from './data/battle-tag';
+import { BattlerTag, BattlerTagLapseType, BattlerTagType, getBattlerTag } from './data/battler-tag';
 import { Species } from './data/species';
 import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
+import { ArenaTagType, WeakenTypeTag as WeakenMoveTypeTag } from './data/arena-tag';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -316,21 +317,28 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getTypes(): Type[] {
-    const speciesForm = this.getSpeciesForm();
-    const speciesTypes = [ speciesForm.type1 ];
-    if (speciesForm.type2 !== null)
-      speciesTypes.push(speciesForm.type1);
+    const types = [];
 
-    if (this.getTag(BattleTagType.IGNORE_FLYING)) {
-      const flyingIndex = speciesTypes.indexOf(Type.FLYING);
-      if (flyingIndex > -1)
-        speciesTypes.splice(flyingIndex, 1);
+    if (this.summonData.types)
+      this.summonData.types.forEach(t => types.push(t));
+    else {
+      const speciesForm = this.getSpeciesForm();
+      
+      types.push(speciesForm.type1);
+      if (speciesForm.type2 !== null)
+        types.push(speciesForm.type1);
     }
 
-    if (!speciesTypes.length)
-      speciesTypes.push(Type.NORMAL);
+    if (this.getTag(BattlerTagType.IGNORE_FLYING)) {
+      const flyingIndex = types.indexOf(Type.FLYING);
+      if (flyingIndex > -1)
+        types.splice(flyingIndex, 1);
+    }
 
-    return speciesTypes;
+    if (!types.length)
+      types.push(Type.NORMAL);
+
+    return types;
   }
 
   getEvolution(): SpeciesEvolution {
@@ -466,12 +474,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const typeMultiplier = getTypeDamageMultiplier(move.type, this.getSpeciesForm().type1) * (this.getSpeciesForm().type2 !== null ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type2) : 1);
         const weatherTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(move.type);
         applyMoveAttrs(VariablePowerAttr, source, this, move, power);
+        this.scene.arena.applyTags(WeakenMoveTypeTag, move.type, power);
         this.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, power);
         const critLevel = new Utils.IntegerHolder(0);
         applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
         this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);
         const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
-        let isCritical = !source.getTag(BattleTagType.NO_CRIT) && (critChance === 1 || !Utils.randInt(critChance));
+        let isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !Utils.randInt(critChance));
         const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
         const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
         const stabMultiplier = source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1;
@@ -510,18 +519,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           source.turnData.damageDealt += damage;
           this.scene.unshiftPhase(new DamagePhase(this.scene, this.isPlayer(), result as DamageResult))
           if (isCritical)
-            this.scene.unshiftPhase(new MessagePhase(this.scene, 'A critical hit!'));
+            this.scene.queueMessage('A critical hit!');
         }
 
         switch (result) {
           case MoveResult.SUPER_EFFECTIVE:
-            this.scene.unshiftPhase(new MessagePhase(this.scene, 'It\'s super effective!'));
+            this.scene.queueMessage('It\'s super effective!');
             break;
           case MoveResult.NOT_VERY_EFFECTIVE:
-            this.scene.unshiftPhase(new MessagePhase(this.scene, 'It\'s not very effective!'));
+            this.scene.queueMessage('It\'s not very effective!');
             break;
           case MoveResult.NO_EFFECT:
-            this.scene.unshiftPhase(new MessagePhase(this.scene, `It doesn\'t affect ${this.name}!`));
+            this.scene.queueMessage(`It doesn\'t affect ${this.name}!`);
             break;
         }
         break;
@@ -545,51 +554,53 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  addTag(tagType: BattleTagType, turnCount?: integer): boolean {
+  addTag(tagType: BattlerTagType, turnCount?: integer): boolean {
     const existingTag = this.getTag(tagType);
     if (existingTag) {
       existingTag.onOverlap(this);
       return false;
     }
 
-    const newTag = getBattleTag(tagType, turnCount || 0);
+    const newTag = getBattlerTag(tagType, turnCount || 0);
     this.summonData.tags.push(newTag);
     newTag.onAdd(this);
+
+    return true;
   }
 
-  getTag(tagType: BattleTagType | { new(...args: any[]): BattleTag }): BattleTag {
+  getTag(tagType: BattlerTagType | { new(...args: any[]): BattlerTag }): BattlerTag {
     return typeof(tagType) === 'number'
       ? this.summonData.tags.find(t => t.tagType === tagType)
       : this.summonData.tags.find(t => t instanceof tagType);
   }
 
-  findTag(tagFilter: ((tag: BattleTag) => boolean)) {
+  findTag(tagFilter: ((tag: BattlerTag) => boolean)) {
     return this.summonData.tags.find(t => tagFilter(t));
   }
 
-  getTags(tagType: BattleTagType | { new(...args: any[]): BattleTag }): BattleTag[] {
+  getTags(tagType: BattlerTagType | { new(...args: any[]): BattlerTag }): BattlerTag[] {
     return typeof(tagType) === 'number'
       ? this.summonData.tags.filter(t => t.tagType === tagType)
       : this.summonData.tags.filter(t => t instanceof tagType);
   }
 
-  findTags(tagFilter: ((tag: BattleTag) => boolean)) {
+  findTags(tagFilter: ((tag: BattlerTag) => boolean)) {
     return this.summonData.tags.filter(t => tagFilter(t));
   }
 
-  lapseTag(tagType: BattleTagType): boolean {
+  lapseTag(tagType: BattlerTagType): boolean {
     const tags = this.summonData.tags;
     const tag = tags.find(t => t.tagType === tagType);
-    if (tag && !(tag.lapse(this, BattleTagLapseType.CUSTOM))) {
+    if (tag && !(tag.lapse(this, BattlerTagLapseType.CUSTOM))) {
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
     }
     return !!tag;
   }
 
-  lapseTags(lapseType: BattleTagLapseType): void {
+  lapseTags(lapseType: BattlerTagLapseType): void {
     const tags = this.summonData.tags;
-    tags.filter(t => lapseType === BattleTagLapseType.FAINT || ((t.lapseType === lapseType) && !(t.lapse(this, lapseType))) || (lapseType === BattleTagLapseType.TURN_END && t.turnCount < 1)).forEach(t => {
+    tags.filter(t => lapseType === BattlerTagLapseType.FAINT || ((t.lapseType === lapseType) && !(t.lapse(this, lapseType))) || (lapseType === BattlerTagLapseType.TURN_END && t.turnCount < 1)).forEach(t => {
       t.onRemove(this);
       tags.splice(tags.indexOf(t), 1);
     });
@@ -699,8 +710,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const lastStatus = this.status.effect;
     this.status = undefined;
     if (lastStatus === StatusEffect.SLEEP) {
-      if (this.getTag(BattleTagType.NIGHTMARE))
-        this.lapseTag(BattleTagType.NIGHTMARE);
+      if (this.getTag(BattlerTagType.NIGHTMARE))
+        this.lapseTag(BattlerTagType.NIGHTMARE);
     }
   }
 
@@ -711,8 +722,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   resetBattleSummonData(): void {
     this.battleSummonData = new PokemonBattleSummonData();
-    if (this.getTag(BattleTagType.SEEDED))
-      this.lapseTag(BattleTagType.SEEDED);
+    if (this.getTag(BattlerTagType.SEEDED))
+      this.lapseTag(BattlerTagType.SEEDED);
   }
 
   resetTurnData(): void {
@@ -1001,7 +1012,8 @@ export class PokemonSummonData {
   public battleStats: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
   public moveHistory: TurnMove[] = [];
   public moveQueue: QueuedMove[] = [];
-  public tags: BattleTag[] = [];
+  public tags: BattlerTag[] = [];
+  public types: Type[];
 }
 
 export class PokemonBattleSummonData {

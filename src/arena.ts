@@ -9,11 +9,13 @@ import { CommonAnimPhase, MessagePhase } from "./battle-phases";
 import { CommonAnim } from "./data/battle-anims";
 import { Type } from "./data/type";
 import Move from "./data/move";
+import { ArenaTag, ArenaTagType, getArenaTag } from "./data/arena-tag";
 
 export class Arena {
-  private scene: BattleScene;
+  public scene: BattleScene;
   public biomeType: Biome;
   public weather: Weather;
+  public tags: ArenaTag[];
   private bgm: string;
 
   private pokemonPool: BiomeTierPools;
@@ -21,6 +23,7 @@ export class Arena {
   constructor(scene: BattleScene, biome: Biome, bgm: string) {
     this.scene = scene;
     this.biomeType = biome;
+    this.tags = [];
     this.bgm = bgm;
     this.pokemonPool = biomePools[biome];
   }
@@ -122,6 +125,52 @@ export class Arena {
     return 0;
   }
 
+  getTypeForBiome() {
+    switch (this.biomeType) {
+      case Biome.PLAINS:
+        return Type.NORMAL;
+      case Biome.GRASS:
+      case Biome.TALL_GRASS:
+      case Biome.FOREST:
+        return Type.GRASS;
+      case Biome.CITY:
+      case Biome.SWAMP:
+        return Type.POISON;
+      case Biome.SEA:
+      case Biome.BEACH:
+      case Biome.LAKE:
+      case Biome.SEABED:
+        return Type.WATER;
+      case Biome.MOUNTAIN:
+        return Type.FLYING;
+      case Biome.LAND:
+        return Type.GROUND;
+      case Biome.CAVE:
+      case Biome.DESERT:
+        return Type.ROCK;
+      case Biome.ICE_CAVE:
+        return Type.ICE;
+      case Biome.MEADOW:
+        return Type.FAIRY;
+      case Biome.POWER_PLANT:
+        return Type.ELECTRIC;
+      case Biome.VOLCANO:
+        return Type.FIRE;
+      case Biome.GRAVEYARD:
+        return Type.GHOST;
+      case Biome.DOJO:
+        return Type.FIGHTING;
+      case Biome.RUINS:
+        return Type.PSYCHIC;
+      case Biome.WASTELAND:
+        return Type.DRAGON;
+      case Biome.ABYSS:
+        return Type.DARK;
+      case Biome.SPACE:
+        return Type.STEEL;
+    }
+  }
+
   trySetWeather(weather: WeatherType, viaMove: boolean): boolean {
     if (this.weather?.weatherType === (weather || undefined))
       return false;
@@ -131,21 +180,21 @@ export class Arena {
 
     if (this.weather) {
       this.scene.unshiftPhase(new CommonAnimPhase(this.scene, true, CommonAnim.SUNNY + (weather - 1)));
-      this.scene.unshiftPhase(new MessagePhase(this.scene, getWeatherStartMessage(weather)));
+      this.scene.queueMessage(getWeatherStartMessage(weather));
     } else
-      this.scene.unshiftPhase(new MessagePhase(this.scene, getWeatherClearMessage(oldWeatherType)));
+      this.scene.queueMessage(getWeatherClearMessage(oldWeatherType));
     
     return true;
+  }
+
+  isMoveWeatherCancelled(move: Move) {
+    return this.weather && this.weather.isMoveWeatherCancelled(move);
   }
 
   getAttackTypeMultiplier(attackType: Type): number {
     if (!this.weather)
       return 1;
     return this.weather.getAttackTypeMultiplier(attackType);
-  }
-
-  isMoveWeatherCancelled(move: Move) {
-    return this.weather && this.weather.isMoveWeatherCancelled(move);
   }
 
   isDaytime(): boolean {
@@ -162,6 +211,41 @@ export class Arena {
       case Biome.DOJO:
         return true;
     }
+  }
+
+  applyTags(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, ...args: any[]): void {
+    const tags = typeof tagType === 'number'
+      ? this.tags.filter(t => t.tagType === tagType)
+      : this.tags.filter(t => t instanceof tagType);
+    tags.forEach(t => t.apply(args));
+	}
+
+  addTag(tagType: ArenaTagType, turnCount: integer): boolean {
+    const existingTag = this.getTag(tagType);
+    if (existingTag) {
+      existingTag.onOverlap(this);
+      return false;
+    }
+
+    const newTag = getArenaTag(tagType, turnCount || 0);
+    this.tags.push(newTag);
+    newTag.onAdd(this);
+
+    return true;
+  }
+
+  getTag(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }): ArenaTag {
+    return typeof(tagType) === 'number'
+      ? this.tags.find(t => t.tagType === tagType)
+      : this.tags.find(t => t instanceof tagType);
+  }
+
+  lapseTags(): void {
+    const tags = this.tags;
+    tags.filter(t => !(t.lapse(this))).forEach(t => {
+      t.onRemove(this);
+      tags.splice(tags.indexOf(t), 1);
+    });
   }
 
   preloadBgm(): void {

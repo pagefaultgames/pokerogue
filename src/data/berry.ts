@@ -1,7 +1,7 @@
 import { MessagePhase, PokemonHealPhase } from "../battle-phases";
 import { getPokemonMessage } from "../messages";
 import Pokemon from "../pokemon";
-import { BattleTagType } from "./battle-tag";
+import { BattlerTagType } from "./battler-tag";
 import { getStatusEffectHealText } from "./status-effect";
 
 export enum BerryType {
@@ -34,7 +34,7 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
     case BerryType.SITRUS:
       return (pokemon: Pokemon) => pokemon.getHpRatio() < 0.5;
     case BerryType.LUM:
-      return (pokemon: Pokemon) => !!pokemon.status || !!pokemon.getTag(BattleTagType.CONFUSED);
+      return (pokemon: Pokemon) => !!pokemon.status || !!pokemon.getTag(BattlerTagType.CONFUSED);
   }
 }
 
@@ -49,12 +49,11 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
     case BerryType.LUM:
       return (pokemon: Pokemon) => {
         if (pokemon.status) {
-          pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene,
-            getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect))));
+          pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
           pokemon.resetStatus();
           pokemon.updateInfo();
-        } else if (pokemon.getTag(BattleTagType.CONFUSED))
-          pokemon.lapseTag(BattleTagType.CONFUSED);
+        } else if (pokemon.getTag(BattlerTagType.CONFUSED))
+          pokemon.lapseTag(BattlerTagType.CONFUSED);
       };
   }
 }
