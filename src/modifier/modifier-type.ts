@@ -299,12 +299,12 @@ export class TmModifierType extends PokemonModifierType {
   public moveId: Moves;
 
   constructor(moveId: Moves) {
-    super(`TM${Utils.padInt(Object.keys(tmSpecies).indexOf(moveId.toString()) + 1, 3)} - ${allMoves[moveId - 1].name}`, `Teach ${allMoves[moveId - 1].name} to a POKéMON`, (_type, args) => new Modifiers.TmModifier(this, (args[0] as PlayerPokemon).id),
+    super(`TM${Utils.padInt(Object.keys(tmSpecies).indexOf(moveId.toString()) + 1, 3)} - ${allMoves[moveId].name}`, `Teach ${allMoves[moveId].name} to a POKéMON`, (_type, args) => new Modifiers.TmModifier(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (pokemon.compatibleTms.indexOf(moveId) === -1 || pokemon.moveset.filter(m => m?.moveId === moveId).length)
           return PartyUiHandler.NoEffectMessage;
         return null;
-      }, `tm_${Type[allMoves[moveId - 1].type].toLowerCase()}`, 'tm');
+      }, `tm_${Type[allMoves[moveId].type].toLowerCase()}`, 'tm');
 
     this.moveId = moveId;
   }

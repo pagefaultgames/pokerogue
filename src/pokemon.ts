@@ -382,21 +382,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const attackMovePool = movePool.filter(m => {
-      const move = allMoves[m - 1];
+      const move = allMoves[m];
       return move.category !== MoveCategory.STATUS;
     });
 
     if (attackMovePool.length) {
       const moveIndex = Utils.randInt(attackMovePool.length);
       this.moveset.push(new PokemonMove(attackMovePool[moveIndex], 0, 0));
-      console.log(allMoves[attackMovePool[moveIndex] - 1]);
+      console.log(allMoves[attackMovePool[moveIndex]]);
       movePool.splice(movePool.findIndex(m => m === attackMovePool[moveIndex]), 1);
     }
 
     while (movePool.length && this.moveset.length < 4) {
       const moveIndex = Utils.randInt(movePool.length);
       this.moveset.push(new PokemonMove(movePool[moveIndex], 0, 0));
-      console.log(allMoves[movePool[moveIndex] - 1]);
+      console.log(allMoves[movePool[moveIndex]]);
       movePool.splice(moveIndex, 1);
     }
   }
@@ -538,6 +538,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.hp = Math.max(this.hp - damage, 0);
     if (!this.hp) {
       this.scene.pushPhase(new FaintPhase(this.scene, this.isPlayer()));
+      this.resetSummonData();
       (this.isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon()).resetBattleSummonData();
     }
   }
@@ -592,9 +593,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
+  getMoveHistory(): TurnMove[] {
+    return this.summonData.moveHistory;
+  }
+
   getLastXMoves(turnCount?: integer): TurnMove[] {
-    const moveHistory = this.summonData.moveHistory;
+    const moveHistory = this.getMoveHistory();
     return moveHistory.slice(turnCount >= 0 ? Math.max(moveHistory.length - (turnCount || 1), 0) : 0, moveHistory.length).reverse();
+  }
+
+  getMoveQueue(): QueuedMove[] {
+    return this.summonData.moveQueue;
   }
 
   cry(soundConfig?: Phaser.Types.Sound.SoundConfig): integer {
@@ -870,14 +879,14 @@ export class EnemyPokemon extends Pokemon {
   }
 
   getNextMove(): PokemonMove {
-    const queuedMove = this.summonData.moveQueue.length
-      ? this.moveset.find(m => m.moveId === this.summonData.moveQueue[0].move)
+    const queuedMove = this.getMoveQueue().length
+      ? this.moveset.find(m => m.moveId === this.getMoveQueue()[0].move)
       : null;
     if (queuedMove) {
-      if (queuedMove.isUsable(this.summonData.moveQueue[0].ignorePP))
+      if (queuedMove.isUsable(this.getMoveQueue()[0].ignorePP))
         return queuedMove;
       else {
-        this.summonData.moveQueue.shift();
+        this.getMoveQueue().shift();
         return this.getNextMove();
       }
     }
@@ -1051,7 +1060,7 @@ export class PokemonMove {
   }
 
   getMove(): Move {
-    return allMoves[this.moveId - 1];
+    return allMoves[this.moveId];
   }
 
   getName(): string {

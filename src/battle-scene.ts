@@ -18,7 +18,7 @@ import { GameData } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from './data/move';
-import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getPlayerModifierTypeOptionsForWave } from './modifier/modifier-type';
+import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 
 const enableAuto = true;
 export const startingLevel = 5;

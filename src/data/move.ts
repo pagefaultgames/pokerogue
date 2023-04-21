@@ -91,7 +91,8 @@ export class SelfStatusMove extends Move {
 }
 
 export enum Moves {
-  POUND = 1,
+  NONE,
+  POUND,
   KARATE_CHOP,
   DOUBLE_SLAP,
   COMET_PUNCH,
@@ -979,8 +980,8 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
             user.addTag(this.tagType, 1);
           if (this.chargeEffect)
             applyMoveAttrs(MoveEffectAttr, user, target, move);
-          user.summonData.moveHistory.push({ move: move.id, result: MoveResult.OTHER });
-          user.summonData.moveQueue.push({ move: move.id, ignorePP: true });
+          user.getMoveHistory().push({ move: move.id, result: MoveResult.OTHER });
+          user.getMoveQueue().push({ move: move.id, ignorePP: true });
           resolve(true);
         });
       } else
@@ -1249,10 +1250,10 @@ export class FrenzyAttr extends MoveEffectAttr {
     if (!super.apply(user, target, move, args))
       return false;
 
-    if (!user.summonData.moveQueue.length) {
+    if (!user.getMoveQueue().length) {
       if (!user.getTag(BattleTagType.FRENZY)) {
         const turnCount = Utils.randInt(2) + 1;
-        new Array(turnCount).fill(null).map(() => user.summonData.moveQueue.push({ move: move.id, ignorePP: true }));
+        new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, ignorePP: true }));
         user.addTag(BattleTagType.FRENZY, 1);
       } else {
         applyMoveAttrs(AddTagAttr, user, target, move, args);
@@ -1266,8 +1267,8 @@ export class FrenzyAttr extends MoveEffectAttr {
 }
 
 export const frenzyMissFunc = (user: Pokemon, target: Pokemon, move: Move) => {
-  while (user.summonData.moveQueue.length && user.summonData.moveQueue[0].move === move.id)
-    user.summonData.moveQueue.shift();
+  while (user.getMoveQueue().length && user.getMoveQueue()[0].move === move.id)
+    user.getMoveQueue().shift();
   user.lapseTag(BattleTagType.FRENZY)
 };
 
@@ -1344,7 +1345,7 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
     if (moves.length) {
       const move = moves[Utils.randInt(moves.length)];
       const moveIndex = user.moveset.findIndex(m => m.moveId === move.moveId);
-      user.summonData.moveQueue.push({ move: move.moveId });
+      user.getMoveQueue().push({ move: move.moveId });
       user.scene.unshiftPhase(user.isPlayer() ? new PlayerMovePhase(user.scene, user as PlayerPokemon, user.moveset[moveIndex], true) : new EnemyMovePhase(user.scene, user as EnemyPokemon, user.moveset[moveIndex], true));
       return true;
     }
@@ -1356,9 +1357,9 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
 export class RandomMoveAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-      const moveIds = Utils.getEnumValues(Moves).filter(m => m !== move.id);
+      const moveIds = Utils.getEnumValues(Moves).filter(m => m && m !== move.id);
       const moveId = moveIds[Utils.randInt(moveIds.length)];
-      user.summonData.moveQueue.push({ move: moveId, ignorePP: true });
+      user.getMoveQueue().push({ move: moveId, ignorePP: true });
       user.scene.unshiftPhase(user.isPlayer() ? new PlayerMovePhase(user.scene, user as PlayerPokemon, new PokemonMove(moveId, 0, 0, true), true) : new EnemyMovePhase(user.scene, user as EnemyPokemon, new PokemonMove(moveId, 0, 0, true), true));
       initMoveAnim(moveId).then(() => {
         loadMoveAnimAssets(user.scene, [ moveId ], true)
@@ -1369,6 +1370,7 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
 }
 
 export const allMoves = [
+  new StatusMove(Moves.NONE, "-", Type.NORMAL, MoveCategory.STATUS, -1, -1, "", -1, 0, 1),
   new AttackMove(Moves.POUND, "Pound", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, "", -1, 0, 1),
   new AttackMove(Moves.KARATE_CHOP, "Karate Chop", Type.FIGHTING, MoveCategory.PHYSICAL, 50, 100, 25, -1, "High critical hit ratio.", -1, 0, 1, new HighCritAttr()),
   new AttackMove(Moves.DOUBLE_SLAP, "Double Slap", Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 10, -1, "Hits 2-5 times in one turn.", -1, 0, 1, new MultiHitAttr()),
@@ -1435,7 +1437,7 @@ export const allMoves = [
   new AttackMove(Moves.PSYBEAM, "Psybeam", Type.PSYCHIC, MoveCategory.SPECIAL, 65, 100, 20, 16, "May confuse opponent.", 10, 0, 1, new ConfuseAttr()),
   new AttackMove(Moves.BUBBLE_BEAM, "Bubble Beam", Type.WATER, MoveCategory.SPECIAL, 65, 100, 20, -1, "May lower opponent's Speed.", 10, 0, 1, new StatChangeAttr(BattleStat.SPD, -1)),
   new AttackMove(Moves.AURORA_BEAM, "Aurora Beam", Type.ICE, MoveCategory.SPECIAL, 65, 100, 20, -1, "May lower opponent's Attack.", 10, 0, 1, new StatChangeAttr(BattleStat.ATK, -1)),
-  new AttackMove(Moves.HYPER_BEAM, "Hyper Beam", Type.NORMAL, MoveCategory.SPECIAL, 150, 90, 5, 163, "User must recharge next turn.", -1, 0, 1),
+  new AttackMove(Moves.HYPER_BEAM, "Hyper Beam", Type.NORMAL, MoveCategory.SPECIAL, 150, 90, 5, 163, "User must recharge next turn.", -1, 0, 1, new AddTagAttr(BattleTagType.RECHARGING, true)),
   new AttackMove(Moves.PECK, "Peck", Type.FLYING, MoveCategory.PHYSICAL, 35, 100, 35, -1, "", -1, 0, 1),
   new AttackMove(Moves.DRILL_PECK, "Drill Peck", Type.FLYING, MoveCategory.PHYSICAL, 80, 100, 20, -1, "", -1, 0, 1),
   new AttackMove(Moves.SUBMISSION, "Submission", Type.FIGHTING, MoveCategory.PHYSICAL, 80, 80, 20, -1, "User receives recoil damage.", -1, 0, 1, new RecoilAttr()),
@@ -1713,8 +1715,8 @@ export const allMoves = [
   new AttackMove(Moves.HYPER_VOICE, "Hyper Voice", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, 117, "", -1, 0, 3),
   new AttackMove(Moves.POISON_FANG, "Poison Fang", Type.POISON, MoveCategory.PHYSICAL, 50, 100, 15, -1, "May badly poison opponent.", 50, 0, 3, new StatusEffectAttr(StatusEffect.TOXIC)),
   new AttackMove(Moves.CRUSH_CLAW, "Crush Claw", Type.NORMAL, MoveCategory.PHYSICAL, 75, 95, 10, -1, "May lower opponent's Defense.", 50, 0, 3, new StatChangeAttr(BattleStat.DEF, -1)),
-  new AttackMove(Moves.BLAST_BURN, "Blast Burn", Type.FIRE, MoveCategory.SPECIAL, 150, 90, 5, 153, "User must recharge next turn.", -1, 0, 3),
-  new AttackMove(Moves.HYDRO_CANNON, "Hydro Cannon", Type.WATER, MoveCategory.SPECIAL, 150, 90, 5, 154, "User must recharge next turn.", -1, 0, 3),
+  new AttackMove(Moves.BLAST_BURN, "Blast Burn", Type.FIRE, MoveCategory.SPECIAL, 150, 90, 5, 153, "User must recharge next turn.", -1, 0, 3, new AddTagAttr(BattleTagType.RECHARGING, true)),
+  new AttackMove(Moves.HYDRO_CANNON, "Hydro Cannon", Type.WATER, MoveCategory.SPECIAL, 150, 90, 5, 154, "User must recharge next turn.", -1, 0, 3, new AddTagAttr(BattleTagType.RECHARGING, true)),
   new AttackMove(Moves.METEOR_MASH, "Meteor Mash", Type.STEEL, MoveCategory.PHYSICAL, 90, 90, 10, -1, "May raise user's Attack.", 20, 0, 3, new StatChangeAttr(BattleStat.ATK, 1, true)),
   new AttackMove(Moves.ASTONISH, "Astonish", Type.GHOST, MoveCategory.PHYSICAL, 30, 100, 15, -1, "May cause flinching.", 30, 0, 3, new FlinchAttr()),
   new AttackMove(Moves.WEATHER_BALL, "Weather Ball", Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, "Move's power and type changes with the weather.", -1, 0, 3),
@@ -1747,7 +1749,7 @@ export const allMoves = [
   new StatusMove(Moves.BLOCK, "Block", Type.NORMAL, -1, 5, -1, "Opponent cannot flee or switch.", -1, 0, 3),
   new SelfStatusMove(Moves.HOWL, "Howl", Type.NORMAL, -1, 40, -1, "Raises Attack of allies.", -1, 0, 3, new StatChangeAttr(BattleStat.ATK, 1, true)), // TODO
   new AttackMove(Moves.DRAGON_CLAW, "Dragon Claw", Type.DRAGON, MoveCategory.PHYSICAL, 80, 100, 15, 78, "", -1, 0, 3),
-  new AttackMove(Moves.FRENZY_PLANT, "Frenzy Plant", Type.GRASS, MoveCategory.SPECIAL, 150, 90, 5, 155, "User must recharge next turn.", -1, 0, 3),
+  new AttackMove(Moves.FRENZY_PLANT, "Frenzy Plant", Type.GRASS, MoveCategory.SPECIAL, 150, 90, 5, 155, "User must recharge next turn.", -1, 0, 3, new AddTagAttr(BattleTagType.RECHARGING, true)),
   new SelfStatusMove(Moves.BULK_UP, "Bulk Up", Type.FIGHTING, -1, 20, 64, "Raises user's Attack and Defense.", -1, 0, 3,
     new StatChangeAttr([ BattleStat.ATK, BattleStat.DEF ], 1, true)),
   new AttackMove(Moves.BOUNCE, "Bounce", Type.FLYING, MoveCategory.PHYSICAL, 85, 85, 5, -1, "Springs up on first turn, attacks on second. May paralyze opponent.", 30, 0, 3,
@@ -1835,7 +1837,7 @@ export const allMoves = [
   new AttackMove(Moves.BRAVE_BIRD, "Brave Bird", Type.FLYING, MoveCategory.PHYSICAL, 120, 100, 15, 164, "User receives recoil damage.", -1, 0, 4, new RecoilAttr()),
   new AttackMove(Moves.EARTH_POWER, "Earth Power", Type.GROUND, MoveCategory.SPECIAL, 90, 100, 10, 133, "May lower opponent's Special Defense.", 10, 0, 4, new StatChangeAttr(BattleStat.SPDEF, -1)),
   new StatusMove(Moves.SWITCHEROO, "Switcheroo", Type.DARK, 100, 10, -1, "Swaps held items with the opponent.", -1, 0, 4),
-  new AttackMove(Moves.GIGA_IMPACT, "Giga Impact", Type.NORMAL, MoveCategory.PHYSICAL, 150, 90, 5, 152, "User must recharge next turn.", -1, 0, 4),
+  new AttackMove(Moves.GIGA_IMPACT, "Giga Impact", Type.NORMAL, MoveCategory.PHYSICAL, 150, 90, 5, 152, "User must recharge next turn.", -1, 0, 4, new AddTagAttr(BattleTagType.RECHARGING, true)),
   new SelfStatusMove(Moves.NASTY_PLOT, "Nasty Plot", Type.DARK, -1, 20, 140, "Sharply raises user's Special Attack.", -1, 0, 4, new StatChangeAttr(BattleStat.SPATK, 2, true)),
   new AttackMove(Moves.BULLET_PUNCH, "Bullet Punch", Type.STEEL, MoveCategory.PHYSICAL, 40, 100, 30, -1, "User attacks first.", -1, 1, 4),
   new AttackMove(Moves.AVALANCHE, "Avalanche", Type.ICE, MoveCategory.PHYSICAL, 60, 100, 10, 46, "Power doubles if user took damage first.", -1, -4, 4),
@@ -1858,7 +1860,7 @@ export const allMoves = [
   new AttackMove(Moves.LAVA_PLUME, "Lava Plume", Type.FIRE, MoveCategory.SPECIAL, 80, 100, 15, -1, "May burn opponent.", 30, 0, 4, new StatusEffectAttr(StatusEffect.BURN)),
   new AttackMove(Moves.LEAF_STORM, "Leaf Storm", Type.GRASS, MoveCategory.SPECIAL, 130, 90, 5, 159, "Sharply lowers user's Special Attack.", 100, 0, 4, new StatChangeAttr(BattleStat.SPATK, -2, true)),
   new AttackMove(Moves.POWER_WHIP, "Power Whip", Type.GRASS, MoveCategory.PHYSICAL, 120, 85, 10, -1, "", -1, 0, 4),
-  new AttackMove(Moves.ROCK_WRECKER, "Rock Wrecker", Type.ROCK, MoveCategory.PHYSICAL, 150, 90, 5, -1, "User must recharge next turn.", -1, 0, 4),
+  new AttackMove(Moves.ROCK_WRECKER, "Rock Wrecker", Type.ROCK, MoveCategory.PHYSICAL, 150, 90, 5, -1, "User must recharge next turn.", -1, 0, 4, new AddTagAttr(BattleTagType.RECHARGING, true)),
   new AttackMove(Moves.CROSS_POISON, "Cross Poison", Type.POISON, MoveCategory.PHYSICAL, 70, 100, 20, -1, "High critical hit ratio. May poison opponent.", 10, 0, 4,
     new HighCritAttr(), new StatusEffectAttr(StatusEffect.POISON)),
   new AttackMove(Moves.GUNK_SHOT, "Gunk Shot", Type.POISON, MoveCategory.PHYSICAL, 120, 80, 5, 102, "May poison opponent.", 30, 0, 4, new StatusEffectAttr(StatusEffect.POISON)),
@@ -1880,7 +1882,7 @@ export const allMoves = [
   new SelfStatusMove(Moves.HEAL_ORDER, "Heal Order", Type.BUG, -1, 10, -1, "User recovers half its max HP.", -1, 0, 4, new HealAttr(0.5)),
   new AttackMove(Moves.HEAD_SMASH, "Head Smash", Type.ROCK, MoveCategory.PHYSICAL, 150, 80, 5, -1, "User receives recoil damage.", -1, 0, 4, new RecoilAttr()),
   new AttackMove(Moves.DOUBLE_HIT, "Double Hit", Type.NORMAL, MoveCategory.PHYSICAL, 35, 90, 10, -1, "Hits twice in one turn.", -1, 0, 4, new MultiHitAttr(MultiHitType._2)),
-  new AttackMove(Moves.ROAR_OF_TIME, "Roar of Time", Type.DRAGON, MoveCategory.SPECIAL, 150, 90, 5, -1, "User must recharge next turn.", -1, 0, 4),
+  new AttackMove(Moves.ROAR_OF_TIME, "Roar of Time", Type.DRAGON, MoveCategory.SPECIAL, 150, 90, 5, -1, "User must recharge next turn.", -1, 0, 4, new AddTagAttr(BattleTagType.RECHARGING, true)),
   new AttackMove(Moves.SPACIAL_REND, "Spacial Rend", Type.DRAGON, MoveCategory.SPECIAL, 100, 95, 5, -1, "High critical hit ratio.", -1, 0, 4, new HighCritAttr()),
   new SelfStatusMove(Moves.LUNAR_DANCE, "Lunar Dance", Type.PSYCHIC, -1, 10, -1, "The user faints but the next Pokémon released is fully healed.", -1, 0, 4, new SacrificialAttr()), // TODO
   new AttackMove(Moves.CRUSH_GRIP, "Crush Grip", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "More powerful when opponent has higher HP.", -1, 0, 4),

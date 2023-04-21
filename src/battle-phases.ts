@@ -458,16 +458,22 @@ export class CommandPhase extends BattlePhase {
     playerPokemon.resetTurnData();
     this.scene.getEnemyPokemon().resetTurnData();
 
-    while (playerPokemon.summonData.moveQueue.length && playerPokemon.summonData.moveQueue[0]
-      && !playerPokemon.moveset[playerPokemon.moveset.findIndex(m => m.moveId === playerPokemon.summonData.moveQueue[0].move)]
-        .isUsable(playerPokemon.summonData.moveQueue[0].ignorePP))
-      playerPokemon.summonData.moveQueue.shift();
+    const moveQueue = playerPokemon.getMoveQueue();
 
-    if (playerPokemon.summonData.moveQueue.length) {
-      const queuedMove = playerPokemon.summonData.moveQueue[0];
-      const moveIndex = playerPokemon.moveset.findIndex(m => m.moveId === queuedMove.move);
-      if (playerPokemon.moveset[moveIndex].isUsable(queuedMove.ignorePP))
-        this.handleCommand(Command.FIGHT, moveIndex);
+    while (moveQueue.length && moveQueue[0]
+      && moveQueue[0].move && (playerPokemon.moveset.find(m => m.moveId === moveQueue[0].move)
+      || !playerPokemon.moveset[playerPokemon.moveset.findIndex(m => m.moveId === moveQueue[0].move)].isUsable(moveQueue[0].ignorePP)))
+        moveQueue.shift();
+
+    if (moveQueue.length) {
+      const queuedMove = moveQueue[0];
+      if (!queuedMove.move)
+        this.handleCommand(Command.FIGHT, -1);
+      else {
+        const moveIndex = playerPokemon.moveset.findIndex(m => m.moveId === queuedMove.move);
+        if (playerPokemon.moveset[moveIndex].isUsable(queuedMove.ignorePP))
+          this.handleCommand(Command.FIGHT, moveIndex);
+      }
     } else
       this.scene.ui.setMode(Mode.COMMAND);
   }
@@ -504,6 +510,12 @@ export class CommandPhase extends BattlePhase {
 
     switch (command) {
       case Command.FIGHT:
+        if (cursor == -1) {
+          this.scene.pushPhase(new PlayerMovePhase(this.scene, playerPokemon, new PokemonMove(Moves.NONE)));
+          success = true;
+          break;
+        }
+
         if (playerPokemon.trySelectMove(cursor)) {
           playerMove = playerPokemon.moveset[cursor];
           const playerPhase = new PlayerMovePhase(this.scene, playerPokemon, playerMove);
@@ -724,13 +736,21 @@ export abstract class MovePhase extends BattlePhase {
       this.pokemon.lapseTags(BattleTagLapseType.MOVE);
 
     const doMove = () => {
+      const moveQueue = this.pokemon.getMoveQueue();
+
+      if (moveQueue.length && moveQueue[0].move === Moves.NONE) {
+        moveQueue.shift();
+        this.cancel();
+      }
+
       if (this.cancelled) {
+        this.pokemon.getMoveHistory().push({ move: Moves.NONE, result: MoveResult.FAILED });
         this.end();
         return;
       }
 
       this.scene.unshiftPhase(new MessagePhase(this.scene, getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500));
-      if (!this.pokemon.summonData.moveQueue.length || !this.pokemon.summonData.moveQueue.shift().ignorePP)
+      if (!moveQueue.length || !moveQueue.shift().ignorePP)
         this.move.ppUsed++;
 
       const failed = new Utils.BooleanHolder(false);
@@ -738,7 +758,7 @@ export abstract class MovePhase extends BattlePhase {
       if (!failed.value && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
         failed.value = true;
       if (failed.value) {
-        this.pokemon.summonData.moveHistory.push({ move: this.move.moveId, result: MoveResult.FAILED, virtual: this.move.virtual });
+        this.pokemon.getMoveHistory().push({ move: this.move.moveId, result: MoveResult.FAILED, virtual: this.move.virtual });
         this.scene.unshiftPhase(new MessagePhase(this.scene, 'But it failed!'));
       } else
         this.scene.unshiftPhase(this.getEffectPhase());
@@ -860,7 +880,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
 
       if (!this.hitCheck()) {
         this.scene.unshiftPhase(new MessagePhase(this.scene, getPokemonMessage(user, '\'s\nattack missed!')));
-        user.summonData.moveHistory.push({ move: this.move.moveId, result: MoveResult.MISSED, virtual: this.move.virtual });
+        user.getMoveHistory().push({ move: this.move.moveId, result: MoveResult.MISSED, virtual: this.move.virtual });
         applyMoveAttrs(MissEffectAttr, user, target, this.move.getMove());
         this.end();
         return;
@@ -871,7 +891,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
       new MoveAnim(this.move.getMove().id as Moves, user, target).play(this.scene, () => {
         const result = !isProtected ? target.apply(user, this.move) : MoveResult.NO_EFFECT;
         ++user.turnData.hitCount;
-        user.summonData.moveHistory.push({ move: this.move.moveId, result: result, virtual: this.move.virtual });
+        user.getMoveHistory().push({ move: this.move.moveId, result: result, virtual: this.move.virtual });
         applyMoveAttrs(MoveEffectAttr, user, target, this.move.getMove());
         // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
         if (!isProtected && target.hp && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
@@ -993,7 +1013,7 @@ export class MoveAnimTestPhase extends BattlePhase {
   constructor(scene: BattleScene, moveQueue?: Moves[]) {
     super(scene);
 
-    this.moveQueue = moveQueue || Utils.getEnumValues(Moves);
+    this.moveQueue = moveQueue || Utils.getEnumValues(Moves).slice(1);
   }
 
   start() {
@@ -1469,7 +1489,7 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
     super.start();
 
     const pokemon = this.getPokemon();
-    const move = allMoves[this.moveId - 1];
+    const move = allMoves[this.moveId];
 
     const existingMoveIndex = pokemon.moveset.findIndex(m => m?.moveId === move.id);
 

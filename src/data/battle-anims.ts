@@ -392,7 +392,7 @@ export function initMoveAnim(move: Moves): Promise<void> {
                         populateMoveAnim(move, ba[1]);
                     } else
                         populateMoveAnim(move, ba);
-                    const chargeAttr = allMoves[move - 1].getAttrs(ChargeAttr) as ChargeAttr[];
+                    const chargeAttr = allMoves[move].getAttrs(ChargeAttr) as ChargeAttr[];
                     if (chargeAttr.length)
                         initMoveChargeAnim(chargeAttr[0].chargeAnim).then(() => resolve());
                     else
@@ -459,7 +459,7 @@ export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLo
     return new Promise(resolve => {
         const moveAnimations = moveIds.map(m => moveAnims.get(m) as AnimConfig).flat();
         for (let moveId of moveIds) {
-            const chargeAttr = allMoves[moveId - 1].getAttrs(ChargeAttr) as ChargeAttr[];
+            const chargeAttr = allMoves[moveId].getAttrs(ChargeAttr) as ChargeAttr[];
             if (chargeAttr.length) {
                 const moveChargeAnims = chargeAnims.get(chargeAttr[0].chargeAnim);
                 moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims[0]);
@@ -818,7 +818,7 @@ export function populateAnims() {
     const chargeAnimIds = Utils.getEnumValues(ChargeAnim) as ChargeAnim[];
     const commonNamePattern = /name: (?:Common:)?(Opp )?(.*)/;
     const moveNameToId = {};
-    for (let move of Utils.getEnumValues(Moves)) {
+    for (let move of Utils.getEnumValues(Moves).slice(1)) {
         const moveName = Moves[move].toUpperCase().replace(/\_/g, '');
         moveNameToId[moveName] = move;
     }

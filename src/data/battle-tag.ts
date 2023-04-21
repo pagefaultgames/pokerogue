@@ -5,9 +5,11 @@ import Pokemon from "../pokemon";
 import { Stat } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
+import { Moves } from "./move";
 
 export enum BattleTagType {
   NONE,
+  RECHARGING,
   FLINCHED,
   CONFUSED,
   SEEDED,
@@ -52,6 +54,27 @@ export class BattleTag {
 
   lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
     return --this.turnCount > 0;
+  }
+}
+
+export class RechargingTag extends BattleTag {
+  constructor() {
+    super(BattleTagType.RECHARGING, BattleTagLapseType.MOVE, 1);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.getMoveQueue().push({ move: Moves.NONE })
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattleTagLapseType): boolean {
+    super.lapse(pokemon, lapseType);
+
+    (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
+    pokemon.scene.unshiftPhase(new MessagePhase(pokemon.scene, getPokemonMessage(pokemon, ' must\nrecharge!')));
+
+    return true;
   }
 }
 
@@ -293,6 +316,8 @@ export class HideSpriteTag extends BattleTag {
 
 export function getBattleTag(tagType: BattleTagType, turnCount: integer): BattleTag {
   switch (tagType) {
+    case BattleTagType.RECHARGING:
+      return new RechargingTag();
     case BattleTagType.FLINCHED:
       return new FlinchedTag();
     case BattleTagType.CONFUSED:
