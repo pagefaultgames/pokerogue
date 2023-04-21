@@ -604,8 +604,8 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 2)
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
   [ModifierTier.LUXURY]: [
-    modifierTypes.GOLDEN_POKEBALL,
-    modifierTypes.GOLDEN_EXP_CHARM
+    modifierTypes.GOLDEN_EXP_CHARM,
+    modifierTypes.GOLDEN_POKEBALL
   ].map(m => { m.setTier(ModifierTier.LUXURY); return m; }),
 };
 
@@ -733,7 +733,7 @@ function getNewModifierTypeOption(party: Pokemon[], player?: boolean, tier?: Mod
 }
 
 export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {
-  let modifierType: ModifierType | WeightedModifierType = modifierPool[tier][0];
+  let modifierType: ModifierType | WeightedModifierType = modifierPool[tier][tier !== ModifierTier.LUXURY ? 0 : 1];
   if (modifierType instanceof WeightedModifierType)
     modifierType = (modifierType as WeightedModifierType).modifierType;
   return modifierType;
