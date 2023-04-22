@@ -536,5 +536,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       super.clear();
       this.cursor = -1;
       this.starterSelectContainer.setVisible(false);
+
+      while (this.starterCursors.length)
+        this.popStarter();
     }
   }  

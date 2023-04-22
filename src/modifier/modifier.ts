@@ -78,7 +78,7 @@ export abstract class PersistentModifier extends Modifier {
   add(modifiers: PersistentModifier[], virtual: boolean): boolean {
     for (let modifier of modifiers) {
       if (this.match(modifier))
-        return modifier.incrementStack(modifier.stackCount, virtual);
+        return modifier.incrementStack(this.stackCount, virtual);
     }
 
     if (virtual) {

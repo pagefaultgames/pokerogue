@@ -37,10 +37,13 @@ export enum Button {
 	CYCLE_FORM,
 	CYCLE_GENDER,
 	QUICK_START,
-	RANDOM,
 	AUTO,
 	SPEED_UP,
 	SLOW_DOWN
+}
+
+interface PokeballCounts {
+	[pb: string]: integer;
 }
 
 export default class BattleScene extends Phaser.Scene {
@@ -65,7 +68,7 @@ export default class BattleScene extends Phaser.Scene {
 	public arena: Arena;
 	public trainer: Phaser.GameObjects.Sprite;
 	public currentBattle: Battle;
-	public pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
+	public pokeballCounts: PokeballCounts;
 	private party: PlayerPokemon[];
 	private waveCountText: Phaser.GameObjects.Text;
 	private modifierBar: ModifierBar;
@@ -302,7 +305,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.add.existing(this.enemyModifierBar);
 		uiContainer.add(this.enemyModifierBar);
 
-		this.waveCountText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, '1', TextStyle.BATTLE_INFO);
+		this.waveCountText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
 		this.waveCountText.setOrigin(1, 0);
 		this.updateWaveCountPosition();
 		this.fieldUI.add(this.waveCountText);
@@ -311,22 +314,14 @@ export default class BattleScene extends Phaser.Scene {
 
 		let loadPokemonAssets = [];
 
-		const isRandom = this.isButtonPressed(Button.RANDOM); // For testing purposes
-		this.quickStart = this.quickStart || isRandom || this.isButtonPressed(Button.QUICK_START);
+		this.quickStart = this.quickStart || this.isButtonPressed(Button.QUICK_START);
 
-		if (isRandom) {
-			const biomes = Utils.getEnumValues(Biome);
-			this.newArena(biomes[Utils.randInt(biomes.length)]);
-		} else
-			this.newArena(startingBiome);
-
-		const biomeKey = this.arena.getBiomeKey();
-		this.arenaBg = this.add.sprite(0, 0, `${biomeKey}_bg`);
-		this.arenaBgTransition = this.add.sprite(0, 0, `${biomeKey}_bg`);
-		this.arenaPlayer = this.add.sprite(340, 20, `${biomeKey}_a`);
-		this.arenaPlayerTransition = this.add.sprite(40, 20, `${biomeKey}_a`);
-		this.arenaEnemy = this.add.sprite(-240, 13, `${biomeKey}_b`);
-		this.arenaNextEnemy = this.add.sprite(-240, 13, `${biomeKey}_b`);
+		this.arenaBg = this.add.sprite(0, 0, 'plains_bg');
+		this.arenaBgTransition = this.add.sprite(0, 0, `plains_bg`);
+		this.arenaPlayer = this.add.sprite(0, 0, `plains_a`);
+		this.arenaPlayerTransition = this.add.sprite(0, 0, `plains_a`);
+		this.arenaEnemy = this.add.sprite(0, 0, `plains_b`);
+		this.arenaNextEnemy = this.add.sprite(0, 0, `plains_b`);
 
 		this.arenaBgTransition.setVisible(false);
 		this.arenaPlayerTransition.setVisible(false);
@@ -338,9 +333,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		if (this.quickStart) {
 			for (let s = 0; s < 3; s++) {
-				const playerSpecies = (!isRandom
-						? getPokemonSpecies((getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP)).getSpeciesForLevel(startingLevel, true))
-						: this.randomSpecies(startingWave, startingLevel));
+				const playerSpecies = getPokemonSpecies((getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP)).getSpeciesForLevel(startingLevel, true));
 				const playerPokemon = new PlayerPokemon(this, playerSpecies, startingLevel, 0);
 				playerPokemon.setVisible(false);
 				loadPokemonAssets.push(playerPokemon.loadAssets());
@@ -356,7 +349,7 @@ export default class BattleScene extends Phaser.Scene {
 			frameRate: 16
 		});
 
-		const trainer = this.add.sprite(406, 132, 'trainer_m');
+		const trainer = this.add.sprite(0, 0, 'trainer_m');
 		trainer.setOrigin(0.5, 1);
 
 		field.add(trainer);
@@ -370,6 +363,8 @@ export default class BattleScene extends Phaser.Scene {
 			repeat: -1,
 			showOnStart: true
 		});
+
+		this.reset();
 
 		const ui = new UI(this);
 		this.uiContainer.add(ui);
@@ -407,7 +402,6 @@ export default class BattleScene extends Phaser.Scene {
 			[Button.CYCLE_FORM]: [keyCodes.F],
 			[Button.CYCLE_GENDER]: [keyCodes.G],
 			[Button.QUICK_START]: [keyCodes.Q],
-			[Button.RANDOM]: [keyCodes.R],
 			[Button.AUTO]: [keyCodes.F2],
 			[Button.SPEED_UP]: [keyCodes.PLUS],
 			[Button.SLOW_DOWN]: [keyCodes.MINUS]
@@ -436,7 +430,44 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	getEnemyPokemon(): EnemyPokemon {
-		return this.currentBattle.enemyPokemon;
+		return this.currentBattle?.enemyPokemon;
+	}
+
+	reset(): void {
+		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
+
+		this.modifiers = [];
+		this.enemyModifiers = [];
+		this.modifierBar.removeAll(true);
+		this.enemyModifierBar.removeAll(true);
+
+		for (let p of this.getParty())
+			p.destroy();
+		this.party = [];
+		for (let p of this.getEnemyParty())
+			p.destroy();
+			
+		this.currentBattle = null;
+		this.waveCountText.setText(startingWave.toString());
+
+		this.newArena(startingBiome);
+		const biomeKey = this.arena.getBiomeKey();
+
+		this.arenaBg.setTexture(`${biomeKey}_bg`);
+		this.arenaBgTransition.setTexture(`${biomeKey}_bg`);
+		this.arenaPlayer.setTexture(`${biomeKey}_a`);
+		this.arenaPlayerTransition.setTexture(`${biomeKey}_a`);
+		this.arenaEnemy.setTexture(`${biomeKey}_b`);
+		this.arenaNextEnemy.setTexture(`${biomeKey}_b`);
+
+		this.arenaBgTransition.setPosition(0, 0);
+		this.arenaPlayer.setPosition(340, 20);
+		this.arenaPlayerTransition.setPosition(40, 2);
+		this.arenaEnemy.setPosition(-240, 13);
+		this.arenaNextEnemy.setPosition(-240, 13);
+
+		this.trainer.setTexture('trainer_m');
+		this.trainer.setPosition(406, 132);
 	}
 
 	newBattle(): Battle {
@@ -565,8 +596,8 @@ export default class BattleScene extends Phaser.Scene {
 			this.bgm.resume();
 	}
 
-	fadeOutBgm(destroy?: boolean): void {
-		this.arena.fadeOutBgm(500, destroy);
+	fadeOutBgm(duration?: integer, destroy?: boolean): void {
+		this.arena.fadeOutBgm(duration || 500, destroy);
 	}
 
 	playSoundWithoutBgm(soundName: string, pauseDuration?: integer): void {

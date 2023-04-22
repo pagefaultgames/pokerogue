@@ -40,7 +40,7 @@ export class EvolutionPhase extends BattlePhase {
         return;
       }
 
-      this.scene.fadeOutBgm(false);
+      this.scene.fadeOutBgm(null, false);
 
       this.evolutionContainer = (this.scene.ui.getHandler() as EvolutionSceneHandler).evolutionContainer;
 

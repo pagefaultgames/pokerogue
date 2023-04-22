@@ -43,7 +43,7 @@ export default class UI extends Phaser.GameObjects.Container {
   private handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
   
-  private transitioning: boolean;
+  private overlayActive: boolean;
 
   constructor(scene: BattleScene) {
     super(scene, 0, scene.game.canvas.height / 6);
@@ -83,7 +83,7 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   processInput(button: Button): void {
-    if (this.transitioning)
+    if (this.overlayActive)
       return;
 
     this.getHandler().processInput(button);
@@ -121,6 +121,41 @@ export default class UI extends Phaser.GameObjects.Container {
     this.scene.sound.play('error');
   }
 
+  fadeOut(duration: integer): Promise<void> {
+    return new Promise(resolve => {
+      if (this.overlayActive) {
+        resolve();
+        return;
+      }
+      this.overlayActive = true;
+      this.overlay.setAlpha(0);
+      this.overlay.setVisible(true);
+      this.scene.tweens.add({
+        targets: this.overlay,
+        alpha: 1,
+        duration: duration,
+        ease: 'Sine.easeOut',
+        onComplete: () => resolve()
+      });
+    });
+  }
+
+  fadeIn(duration: integer): Promise<void> {
+    return new Promise(resolve => {
+      this.scene.tweens.add({
+        targets: this.overlay,
+        alpha: 0,
+        duration: duration,
+        ease: 'Sine.easeIn',
+        onComplete: () => {
+          this.overlay.setVisible(false);
+          resolve();
+        }
+      });
+      this.overlayActive = false;
+    });
+  }
+
   private setModeInternal(mode: Mode, clear: boolean, forceTransition: boolean, args: any[]): Promise<void> {
     return new Promise(resolve => {
       if (this.mode === mode && !forceTransition) {
@@ -138,28 +173,12 @@ export default class UI extends Phaser.GameObjects.Container {
       };
       if ((transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1)
         && (noTransitionModes.indexOf(this.mode) === -1 && noTransitionModes.indexOf(mode) === -1) && !(this.scene as BattleScene).auto) {
-        this.transitioning = true;
-        this.overlay.setAlpha(0);
-        this.overlay.setVisible(true);
-        this.scene.tweens.add({
-          targets: this.overlay,
-          alpha: 1,
-          duration: 250,
-          ease: 'Sine.easeOut',
-          onComplete: () => {
-            this.scene.time.delayedCall(100, () => {
-              doSetMode();
-              this.scene.tweens.add({
-                targets: this.overlay,
-                alpha: 0,
-                duration: 250,
-                ease: 'Sine.easeIn',
-                onComplete: () => this.overlay.setVisible(false)
-              });
-              this.transitioning = false;
-            });
-          }
-        });
+        this.fadeOut(250).then(() => {
+          this.scene.time.delayedCall(100, () => {
+            doSetMode();
+            this.fadeIn(250);
+          });
+        })
       } else
         doSetMode();
     });

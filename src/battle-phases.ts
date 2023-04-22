@@ -188,7 +188,7 @@ export class SelectBiomePhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.arena.fadeOutBgm(2000);
+    this.scene.arena.fadeOutBgm(2000, true);
 
     const currentBiome = this.scene.arena.biomeType;
 
@@ -1147,8 +1147,8 @@ export class WeatherEffectPhase extends CommonAnimPhase {
       const playerPokemon = this.scene.getPlayerPokemon();
       const enemyPokemon = this.scene.getEnemyPokemon();
 
-      const playerImmune = !!playerPokemon.getTypes().filter(t => this.weather.isTypeDamageImmune(t)).length;
-      const enemyImmune = !!enemyPokemon.getTypes().filter(t => this.weather.isTypeDamageImmune(t)).length;
+      const playerImmune = !playerPokemon || !!playerPokemon.getTypes().filter(t => this.weather.isTypeDamageImmune(t)).length;
+      const enemyImmune = !enemyPokemon || !!enemyPokemon.getTypes().filter(t => this.weather.isTypeDamageImmune(t)).length;
 
       if (!this.playerDelayed && !playerImmune)
         inflictDamage(playerPokemon);
@@ -1291,9 +1291,9 @@ export class FaintPhase extends PokemonPhase {
 
     this.scene.queueMessage(getPokemonMessage(this.getPokemon(), ' fainted!'), null, true);
 
-    if (this.player)
-      this.scene.unshiftPhase(new SwitchPhase(this.scene, true, false));
-    else
+    if (this.player) {
+      this.scene.unshiftPhase(this.scene.getParty().filter(p => p.hp).length ? new SwitchPhase(this.scene, true, false) : new GameOverPhase(this.scene));
+    } else
       this.scene.unshiftPhase(new VictoryPhase(this.scene));
       
     const pokemon = this.getPokemon();
@@ -1393,6 +1393,27 @@ export class VictoryPhase extends PokemonPhase {
     this.scene.newBattle();
 
     this.end();
+  }
+}
+
+export class GameOverPhase extends BattlePhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    super.start();
+
+    this.scene.time.delayedCall(1000, () => {
+      this.scene.fadeOutBgm(5000, true);
+      this.scene.ui.fadeOut(5000).then(() => {
+        this.scene.clearPhaseQueue();
+        this.scene.ui.clearText();
+        this.scene.reset();
+        this.scene.newBattle();
+        this.end();
+      });
+    });
   }
 }
 
