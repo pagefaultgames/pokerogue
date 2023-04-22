@@ -55,7 +55,7 @@ interface BiomeLinks {
 }
 
 export const biomeLinks: BiomeLinks = {
-  [Biome.TOWN]: Biome.GRASS,
+  [Biome.TOWN]: Biome.PLAINS,
   [Biome.PLAINS]: [ Biome.GRASS, Biome.CITY, Biome.LAKE ],
   [Biome.GRASS]: Biome.TALL_GRASS,
   [Biome.TALL_GRASS]: [ Biome.FOREST, Biome.CAVE ],
