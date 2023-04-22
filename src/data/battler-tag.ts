@@ -324,6 +324,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer): Batt
       return new SeedTag();
     case BattlerTagType.NIGHTMARE:
       return new NightmareTag();
+    case BattlerTagType.INGRAIN:
+      return new IngrainTag();
     case BattlerTagType.AQUA_RING:
       return new AquaRingTag();
     case BattlerTagType.DROWSY:
