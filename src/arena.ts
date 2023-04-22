@@ -99,6 +99,8 @@ export class Arena {
 
   getBiomeKey(): string {
     switch (this.biomeType) {
+      case Biome.TOWN:
+        return 'grass';
       case Biome.TALL_GRASS:
         return 'grass';
       case Biome.CITY:
@@ -127,6 +129,7 @@ export class Arena {
 
   getTypeForBiome() {
     switch (this.biomeType) {
+      case Biome.TOWN:
       case Biome.PLAINS:
         return Type.NORMAL;
       case Biome.GRASS:
@@ -199,6 +202,7 @@ export class Arena {
 
   isDaytime(): boolean {
     switch (this.biomeType) {
+      case Biome.TOWN:
       case Biome.PLAINS:
       case Biome.GRASS:
       case Biome.SEA:

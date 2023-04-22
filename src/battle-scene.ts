@@ -24,7 +24,7 @@ const enableAuto = true;
 const quickStart = false;
 export const startingLevel = 5;
 export const startingWave = 1;
-export const startingBiome = Biome.PLAINS;
+export const startingBiome = Biome.TOWN;
 
 export enum Button {
 	UP,
