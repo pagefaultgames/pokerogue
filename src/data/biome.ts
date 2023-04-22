@@ -174,6 +174,7 @@ export const biomePools: BiomePools = {
     ],
     [BiomePoolTier.UNCOMMON]: [
       { 1: [ Species.PIDGEY ], 18: [ Species.PIDGEOTTO ], 36: [ Species.PIDGEOT ] },
+      { 1: [ Species.SPEAROW ], 20: [ Species.FEAROW ] },
       Species.PIKACHU,
       { 1: [ Species.MANKEY ], 28: [ Species.PRIMEAPE ] },
       { 1: [ Species.DODUO ], 31: [ Species.DODRIO ] },
@@ -794,10 +795,12 @@ export const biomePools: BiomePools = {
     ],
     [ Species.SPEAROW, Type.NORMAL, Type.FLYING, [
         [ Biome.TOWN, BiomePoolTier.COMMON ],
+        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
         [ Biome.MOUNTAIN, BiomePoolTier.COMMON ]
       ]
     ],
     [ Species.FEAROW, Type.NORMAL, Type.FLYING, [
+        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
         [ Biome.MOUNTAIN, BiomePoolTier.COMMON ],
         [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
       ]
