@@ -1863,16 +1863,17 @@ export class SelectModifierPhase extends BattlePhase {
       } else if (cursor >= typeOptions.length) {
         this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, (fromSlotIndex: integer, itemIndex: integer, toSlotIndex: integer) => {
           if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT);
-            const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-              && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
-            const itemModifier = itemModifiers[itemIndex];
-            this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true).then(success => {
-              if (success) {
-                this.scene.ui.clearText();
-                this.scene.ui.setMode(Mode.MESSAGE);
-              } else
-                this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
+            this.scene.ui.setMode(Mode.MODIFIER_SELECT).then(() => {
+              const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+                && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
+              const itemModifier = itemModifiers[itemIndex];
+              this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true).then(success => {
+                if (success) {
+                  this.scene.ui.clearText();
+                  this.scene.ui.setMode(Mode.MESSAGE);
+                } else
+                  this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
+              });
             });
           } else
             this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
@@ -1886,14 +1887,15 @@ export class SelectModifierPhase extends BattlePhase {
         const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
         this.scene.ui.setModeWithoutClear(Mode.PARTY, !isMoveModifier ? PartyUiMode.MODIFIER : PartyUiMode.MOVE_MODIFIER, (slotIndex: integer, option: PartyOption) => {
           if (slotIndex < 6) {
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT);
-            const modifierType = typeOptions[cursor].type;
-            const modifier = !isMoveModifier
-              ? modifierType.newModifier(party[slotIndex])
-              : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
-            this.scene.addModifier(modifier, true).then(() => super.end());
-            this.scene.ui.clearText();
-            this.scene.ui.setMode(Mode.MESSAGE);
+            this.scene.ui.setMode(Mode.MODIFIER_SELECT).then(() => {
+              const modifierType = typeOptions[cursor].type;
+              const modifier = !isMoveModifier
+                ? modifierType.newModifier(party[slotIndex])
+                : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
+              this.scene.addModifier(modifier, true).then(() => super.end());
+              this.scene.ui.clearText();
+              this.scene.ui.setMode(Mode.MESSAGE);
+            });
           } else
             this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
         }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined);

@@ -14,7 +14,7 @@ import EvolutionSceneHandler from './evolution-scene-handler';
 import BiomeSelectUiHandler from './biome-select-ui-handler';
 
 export enum Mode {
-  MESSAGE = 0,
+  MESSAGE,
   COMMAND,
   FIGHT,
   BALL,

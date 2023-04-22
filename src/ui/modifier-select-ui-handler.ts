@@ -212,7 +212,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       targets: this.options,
       scale: 0.01,
       duration: 250,
-      ease: 'Elastic.easeIn',
+      ease: 'Cubic.easeIn',
       onComplete: () => {
         this.options.forEach(o => o.destroy());
         this.options.splice(0, this.options.length);
