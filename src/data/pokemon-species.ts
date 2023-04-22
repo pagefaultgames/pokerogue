@@ -1,7 +1,7 @@
 import { Abilities } from './ability';
 import BattleScene from '../battle-scene';
 import { GrowthRate } from './exp';
-import { pokemonEvolutions } from './pokemon-evolutions';
+import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from './pokemon-evolutions';
 import { Species } from './species';
 import { Type } from './type';
 import * as Utils from '../utils';
@@ -210,40 +210,41 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
       }
     }
 
-    if (!allowEvolving)
+    if (!allowEvolving || !pokemonEvolutions.hasOwnProperty(this.speciesId))
       return this.speciesId;
 
-    const evolutionLevels = this.getEvolutionLevels();
+    const evolutions = pokemonEvolutions[this.speciesId];
 
-    let speciesIds = [];
-    let speciesIdsLevel = 0;
+    const speciesIds: Species[] = [];
 
-    for (let el = evolutionLevels.length - 1; el >= 0; el--) {
-      const evolutionLevel = evolutionLevels[el];
-      if (level >= evolutionLevel[1]) {
-        if (!speciesIdsLevel) {
-          speciesIds = [];
-          speciesIdsLevel = evolutionLevel[1];
-        }
-        if (evolutionLevel[1] === speciesIdsLevel)
-          speciesIds.push(evolutionLevel[0]);
-        else
-          break;
+    const easeInFunc = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeIn');
+    const easeOutFunc = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeOut');
+
+    for (let ev of evolutions) {
+      if (ev.level > level)
+        continue;
+      
+      if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE) {
+        speciesIds.push(ev.speciesId);
+        continue;
       }
+
+      let preferredMinLevel = ev.wildDelay * 10;
+      let evolutionLevel = ev.level > 1 ? ev.level : 0;
+
+      if (!evolutionLevel && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
+        const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId).level;
+        if (prevolutionLevel > 1)
+          evolutionLevel = prevolutionLevel;
+      }
+
+      const evolutionChance = 0.65 * easeInFunc((Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel)) + 0.35 * easeOutFunc(Math.min(level - evolutionLevel, preferredMinLevel * 2.5) / (preferredMinLevel * 2.5));
+
+      if (Math.random() <= evolutionChance)
+        speciesIds.push(ev.speciesId);
     }
 
     if (speciesIds.length) {
-      const levelsAhead = level - speciesIdsLevel;
-      if (levelsAhead < 50) {
-        const evolutionChance = 0.35 + 0.65 * Phaser.Tweens.Builders.GetEaseFunction('Sine.easeOut')(levelsAhead / 50);
-        console.log(speciesIds.map(s => Species[s]), levelsAhead, 'levels ahead', `${evolutionChance * 100}% chance`);
-        if (Math.random() > evolutionChance) {
-          console.log('failed')
-          return this.speciesId;
-        } else
-          console.log('passed');
-      }
-
       return speciesIds.length === 1
         ? speciesIds[0]
         : speciesIds[Utils.randInt(speciesIds.length)];

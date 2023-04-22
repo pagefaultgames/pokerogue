@@ -5,7 +5,7 @@ import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, NewBiome
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ConsumablePokemonMoveModifier, ModifierPredicate } from './modifier/modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { Species } from './data/species';
 import { initAutoPlay } from './system/auto-play';
