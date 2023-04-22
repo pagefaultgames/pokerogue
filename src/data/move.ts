@@ -1418,6 +1418,26 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   }
 }
 
+export class LapseBattlerTagAttr extends MoveEffectAttr {
+  public tagTypes: BattlerTagType[];
+
+  constructor(tagTypes: BattlerTagType[], selfTarget?: boolean) {
+    super(selfTarget);
+
+    this.tagTypes = tagTypes;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    for (let tagType of this.tagTypes)
+      (this.selfTarget ? user : target).lapseTag(tagType);
+    
+    return true;
+  }
+}
+
 export class FlinchAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.FLINCHED, false);
@@ -1427,6 +1447,12 @@ export class FlinchAttr extends AddBattlerTagAttr {
 export class ConfuseAttr extends AddBattlerTagAttr {
   constructor(selfTarget?: boolean) {
     super(BattlerTagType.CONFUSED, selfTarget, Utils.randInt(4, 1));
+  }
+}
+
+export class TrapAttr extends AddBattlerTagAttr {
+  constructor(tagType: BattlerTagType) {
+    super(tagType, false, Utils.randInt(2, 5));
   }
 }
 
@@ -1656,7 +1682,7 @@ export const allMoves = [
   new StatusMove(Moves.WHIRLWIND, "Whirlwind (N)", Type.NORMAL, -1, 20, -1, "In battles, the opponent switches. In the wild, the Pokémon runs.", -1, -6, 1), // TODO
   new AttackMove(Moves.FLY, "Fly", Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, 97, "Flies up on first turn, attacks on second turn.", -1, 0, 1,
     new ChargeAttr(ChargeAnim.FLY_CHARGING, 'flew\nup high!', BattlerTagType.FLYING)),
-  new AttackMove(Moves.BIND, "Bind (N)", Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 1), // TODO
+  new AttackMove(Moves.BIND, "Bind", Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 1, new TrapAttr(BattlerTagType.BIND)),
   new AttackMove(Moves.SLAM, "Slam", Type.NORMAL, MoveCategory.PHYSICAL, 80, 75, 20, -1, "", -1, 0, 1),
   new AttackMove(Moves.VINE_WHIP, "Vine Whip", Type.GRASS, MoveCategory.PHYSICAL, 45, 100, 25, -1, "", -1, 0, 1),
   new AttackMove(Moves.STOMP, "Stomp", Type.NORMAL, MoveCategory.PHYSICAL, 65, 100, 20, -1, "May cause flinching.", 30, 0, 1, new FlinchAttr()),
@@ -1672,7 +1698,7 @@ export const allMoves = [
   new AttackMove(Moves.HORN_DRILL, "Horn Drill", Type.NORMAL, MoveCategory.PHYSICAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1, new OneHitKOAttr()),
   new AttackMove(Moves.TACKLE, "Tackle", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, "", -1, 0, 1),
   new AttackMove(Moves.BODY_SLAM, "Body Slam", Type.NORMAL, MoveCategory.PHYSICAL, 85, 100, 15, 66, "May paralyze opponent.", 30, 0, 1, new StatusEffectAttr(StatusEffect.PARALYSIS)),
-  new AttackMove(Moves.WRAP, "Wrap (N)", Type.NORMAL, MoveCategory.PHYSICAL, 15, 90, 20, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 1),
+  new AttackMove(Moves.WRAP, "Wrap", Type.NORMAL, MoveCategory.PHYSICAL, 15, 90, 20, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 1, new TrapAttr(BattlerTagType.WRAP)),
   new AttackMove(Moves.TAKE_DOWN, "Take Down", Type.NORMAL, MoveCategory.PHYSICAL, 90, 85, 20, 1, "User receives recoil damage.", -1, 0, 1, new RecoilAttr()),
   new AttackMove(Moves.THRASH, "Thrash", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, "User attacks for 2-3 turns but then becomes confused.", -1, 0, 1,
     new FrenzyAttr(), frenzyMissFunc, new ConfuseAttr(true)), // TODO: Update to still confuse if last hit misses
@@ -1724,7 +1750,7 @@ export const allMoves = [
     new FrenzyAttr(), frenzyMissFunc, new ConfuseAttr(true)), // TODO: Update to still confuse if last hit misses
   new StatusMove(Moves.STRING_SHOT, "String Shot", Type.BUG, 95, 40, -1, "Sharply lowers opponent's Speed.", -1, 0, 1, new StatChangeAttr(BattleStat.SPD, -2)),
   new AttackMove(Moves.DRAGON_RAGE, "Dragon Rage", Type.DRAGON, MoveCategory.SPECIAL, -1, 100, 10, -1, "Always inflicts 40 HP.", -1, 0, 1, new FixedDamageAttr(40)),
-  new AttackMove(Moves.FIRE_SPIN, "Fire Spin (N)", Type.FIRE, MoveCategory.SPECIAL, 35, 85, 15, 24, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 1),
+  new AttackMove(Moves.FIRE_SPIN, "Fire Spin", Type.FIRE, MoveCategory.SPECIAL, 35, 85, 15, 24, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 1, new TrapAttr(BattlerTagType.FIRE_SPIN)),
   new AttackMove(Moves.THUNDER_SHOCK, "Thunder Shock", Type.ELECTRIC, MoveCategory.SPECIAL, 40, 100, 30, -1, "May paralyze opponent.", 10, 0, 1, new StatusEffectAttr(StatusEffect.PARALYSIS)),
   new AttackMove(Moves.THUNDERBOLT, "Thunderbolt", Type.ELECTRIC, MoveCategory.SPECIAL, 90, 100, 15, 126, "May paralyze opponent.", 10, 0, 1, new StatusEffectAttr(StatusEffect.PARALYSIS)),
   new StatusMove(Moves.THUNDER_WAVE, "Thunder Wave", Type.ELECTRIC, 90, 20, 82, "Paralyzes opponent.", -1, 0, 1, new StatusEffectAttr(StatusEffect.PARALYSIS), new ThunderAccuracyAttr()),
@@ -1771,7 +1797,7 @@ export const allMoves = [
   new AttackMove(Moves.BONE_CLUB, "Bone Club", Type.GROUND, MoveCategory.PHYSICAL, 65, 85, 20, -1, "May cause flinching.", 10, 0, 1, new FlinchAttr()),
   new AttackMove(Moves.FIRE_BLAST, "Fire Blast", Type.FIRE, MoveCategory.SPECIAL, 110, 85, 5, 141, "May burn opponent.", 10, 0, 1, new StatusEffectAttr(StatusEffect.BURN)),
   new AttackMove(Moves.WATERFALL, "Waterfall", Type.WATER, MoveCategory.PHYSICAL, 80, 100, 15, 77, "May cause flinching.", 20, 0, 1, new FlinchAttr()),
-  new AttackMove(Moves.CLAMP, "Clamp (N)", Type.WATER, MoveCategory.PHYSICAL, 35, 85, 15, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 1),
+  new AttackMove(Moves.CLAMP, "Clamp", Type.WATER, MoveCategory.PHYSICAL, 35, 85, 15, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 1, new TrapAttr(BattlerTagType.CLAMP)),
   new AttackMove(Moves.SWIFT, "Swift", Type.NORMAL, MoveCategory.SPECIAL, 60, -1, 20, 32, "Ignores Accuracy and Evasiveness.", -1, 0, 1),
   new AttackMove(Moves.SKULL_BASH, "Skull Bash", Type.NORMAL, MoveCategory.PHYSICAL, 130, 100, 10, -1, "Raises Defense on first turn, attacks on second.", 100, 0, 1,
     new ChargeAttr(ChargeAnim.SKULL_BASH_CHARGING, 'lowered\nits head!', null, true), new StatChangeAttr(BattleStat.DEF, 1, true)),
@@ -1888,7 +1914,8 @@ export const allMoves = [
   new SelfStatusMove(Moves.BATON_PASS, "Baton Pass (N)", Type.NORMAL, -1, 40, 132, "User switches out and gives stat changes to the incoming Pokémon.", -1, 0, 2),
   new StatusMove(Moves.ENCORE, "Encore (N)", Type.NORMAL, 100, 5, 122, "Forces opponent to keep using its last move for 3 turns.", -1, 0, 2),
   new AttackMove(Moves.PURSUIT, "Pursuit (N)", Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, "Double power if the opponent is switching out.", -1, 0, 2),
-  new AttackMove(Moves.RAPID_SPIN, "Rapid Spin (P)", Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, -1, "Raises user's Speed and removes entry hazards and trap move effects.", 100, 0, 2, new StatChangeAttr(BattleStat.SPD, 1, true)), // TODO
+  new AttackMove(Moves.RAPID_SPIN, "Rapid Spin", Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, -1, "Raises user's Speed and removes entry hazards and trap move effects.", 100, 0, 2,
+    new StatChangeAttr(BattleStat.SPD, 1, true), new LapseBattlerTagAttr([ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM ], true)),
   new StatusMove(Moves.SWEET_SCENT, "Sweet Scent", Type.NORMAL, 100, 20, -1, "Lowers opponent's Evasiveness.", -1, 0, 2, new StatChangeAttr(BattleStat.EVA, -1)),
   new AttackMove(Moves.IRON_TAIL, "Iron Tail", Type.STEEL, MoveCategory.PHYSICAL, 100, 75, 15, -1, "May lower opponent's Defense.", 30, 0, 2, new StatChangeAttr(BattleStat.DEF, -1)),
   new AttackMove(Moves.METAL_CLAW, "Metal Claw", Type.STEEL, MoveCategory.PHYSICAL, 50, 95, 35, 31, "May raise user's Attack.", 10, 0, 2, new StatChangeAttr(BattleStat.ATK, 1, true)),
@@ -1911,7 +1938,7 @@ export const allMoves = [
   new AttackMove(Moves.SHADOW_BALL, "Shadow Ball", Type.GHOST, MoveCategory.SPECIAL, 80, 100, 15, 114, "May lower opponent's Special Defense.", 20, 0, 2, new StatChangeAttr(BattleStat.SPDEF, -1)),
   new AttackMove(Moves.FUTURE_SIGHT, "Future Sight (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, "Damage occurs 2 turns later.", -1, 0, 2),
   new AttackMove(Moves.ROCK_SMASH, "Rock Smash", Type.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 15, -1, "May lower opponent's Defense.", 50, 0, 2, new StatChangeAttr(BattleStat.DEF, -1)),
-  new AttackMove(Moves.WHIRLPOOL, "Whirlpool (N)", Type.WATER, MoveCategory.SPECIAL, 35, 85, 15, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 2),
+  new AttackMove(Moves.WHIRLPOOL, "Whirlpool", Type.WATER, MoveCategory.SPECIAL, 35, 85, 15, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 2, new TrapAttr(BattlerTagType.WHIRLPOOL)),
   new AttackMove(Moves.BEAT_UP, "Beat Up (N)", Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, "Each Pokémon in user's party attacks.", -1, 0, 2),
   new AttackMove(Moves.FAKE_OUT, "Fake Out", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 10, -1, "User attacks first, foe flinches. Only usable on first turn.", 100, 3, 3,
     new ConditionalMoveAttr((user: Pokemon, target: Pokemon, move: Move) => user.scene.currentBattle.turn === 1), new FlinchAttr()),
@@ -2001,7 +2028,7 @@ export const allMoves = [
   new AttackMove(Moves.SHADOW_PUNCH, "Shadow Punch", Type.GHOST, MoveCategory.PHYSICAL, 60, -1, 20, -1, "Ignores Accuracy and Evasiveness.", -1, 0, 3),
   new AttackMove(Moves.EXTRASENSORY, "Extrasensory", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 20, -1, "May cause flinching.", 10, 0, 3, new FlinchAttr()),
   new AttackMove(Moves.SKY_UPPERCUT, "Sky Uppercut", Type.FIGHTING, MoveCategory.PHYSICAL, 85, 90, 15, -1, "Hits the opponent, even during Fly.", -1, 0, 3, new HitsTagAttr(BattlerTagType.FLYING)),
-  new AttackMove(Moves.SAND_TOMB, "Sand Tomb (N)", Type.GROUND, MoveCategory.PHYSICAL, 35, 85, 15, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 3),
+  new AttackMove(Moves.SAND_TOMB, "Sand Tomb", Type.GROUND, MoveCategory.PHYSICAL, 35, 85, 15, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 3, new TrapAttr(BattlerTagType.SAND_TOMB)),
   new AttackMove(Moves.SHEER_COLD, "Sheer Cold", Type.ICE, MoveCategory.SPECIAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 3, new OneHitKOAttr()),
   new AttackMove(Moves.MUDDY_WATER, "Muddy Water", Type.WATER, MoveCategory.SPECIAL, 90, 85, 10, -1, "May lower opponent's Accuracy.", 30, 0, 3, new StatChangeAttr(BattleStat.ACC, -1)),
   new AttackMove(Moves.BULLET_SEED, "Bullet Seed", Type.GRASS, MoveCategory.PHYSICAL, 25, 100, 30, 56, "Hits 2-5 times in one turn.", -1, 0, 3, new MultiHitAttr()),
@@ -2148,7 +2175,7 @@ export const allMoves = [
   new AttackMove(Moves.SPACIAL_REND, "Spacial Rend", Type.DRAGON, MoveCategory.SPECIAL, 100, 95, 5, -1, "High critical hit ratio.", -1, 0, 4, new HighCritAttr()),
   new SelfStatusMove(Moves.LUNAR_DANCE, "Lunar Dance", Type.PSYCHIC, -1, 10, -1, "The user faints but the next Pokémon released is fully healed.", -1, 0, 4, new SacrificialAttr()), // TODO
   new AttackMove(Moves.CRUSH_GRIP, "Crush Grip (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "More powerful when opponent has higher HP.", -1, 0, 4),
-  new AttackMove(Moves.MAGMA_STORM, "Magma Storm (N)", Type.FIRE, MoveCategory.SPECIAL, 100, 75, 5, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 4),
+  new AttackMove(Moves.MAGMA_STORM, "Magma Storm", Type.FIRE, MoveCategory.SPECIAL, 100, 75, 5, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 4, new TrapAttr(BattlerTagType.MAGMA_STORM)),
   new StatusMove(Moves.DARK_VOID, "Dark Void", Type.DARK, 50, 10, -1, "Puts all adjacent opponents to sleep.", -1, 0, 4, new StatusEffectAttr(StatusEffect.SLEEP)),
   new AttackMove(Moves.SEED_FLARE, "Seed Flare", Type.GRASS, MoveCategory.SPECIAL, 120, 85, 5, -1, "May lower opponent's Special Defense.", 40, 0, 4, new StatChangeAttr(BattleStat.SPDEF, -1)),
   new AttackMove(Moves.OMINOUS_WIND, "Ominous Wind", Type.GHOST, MoveCategory.SPECIAL, 60, 100, 5, -1, "May raise all user's stats at once.", 10, 0, 4,

@@ -18,6 +18,13 @@ export enum BattlerTagType {
   INGRAIN,
   AQUA_RING,
   DROWSY,
+  BIND,
+  WRAP,
+  FIRE_SPIN,
+  WHIRLPOOL,
+  CLAMP,
+  SAND_TOMB,
+  MAGMA_STORM,
   PROTECTED,
   FLYING,
   UNDERGROUND,
@@ -269,6 +276,119 @@ export class DrowsyTag extends BattlerTag {
   }
 }
 
+export abstract class TrapTag extends BattlerTag {
+  private commonAnim: CommonAnim;
+
+  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: integer) {
+    super(tagType, BattlerTagLapseType.TURN_END, turnCount);
+
+    this.commonAnim = commonAnim;
+  }
+
+  getTrapName(): string {
+    return BattlerTagType[this.tagType].toUpperCase().replace(/\_/g, ' ');
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.queueMessage(this.getTrapMessage(pokemon));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = lapseType !== BattlerTagLapseType.CUSTOM && super.lapse(pokemon, lapseType);
+
+    if (ret) {
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is hurt\nby ${this.getTrapName()}!`));
+      pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.isPlayer(), this.commonAnim));
+
+      const damage = Math.ceil(pokemon.getMaxHp() / 16);
+      pokemon.damage(damage);
+      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.isPlayer()));
+    }
+
+    return ret;
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` was freed\nfrom ${this.getTrapName()}!`));
+  }
+
+  abstract getTrapMessage(pokemon: Pokemon): string;
+}
+
+export class BindTag extends TrapTag {
+  constructor(turnCount: integer) {
+    super(BattlerTagType.BIND, CommonAnim.BIND, turnCount);
+  }
+
+  getTrapMessage(pokemon: Pokemon): string {
+    return getPokemonMessage(pokemon, ` was squeezed\nby ${this.getTrapName}!`);
+  }
+}
+
+export class WrapTag extends TrapTag {
+  constructor(turnCount: integer) {
+    super(BattlerTagType.WRAP, CommonAnim.WRAP, turnCount);
+  }
+
+  getTrapMessage(pokemon: Pokemon): string {
+    return getPokemonMessage(pokemon, ' was WRAPPED!');
+  }
+}
+
+export class FireSpinTag extends TrapTag {
+  constructor(turnCount: integer) {
+    super(BattlerTagType.FIRE_SPIN, CommonAnim.FIRE_SPIN, turnCount);
+  }
+
+  getTrapMessage(pokemon: Pokemon): string {
+    return getPokemonMessage(pokemon, ' was trapped\nin the vortex!');
+  }
+}
+
+export class WhirlpoolTag extends TrapTag {
+  constructor(turnCount: integer) {
+    super(BattlerTagType.WHIRLPOOL, CommonAnim.WHIRLPOOL, turnCount);
+  }
+
+  getTrapMessage(pokemon: Pokemon): string {
+    return getPokemonMessage(pokemon, ' was trapped\nin the vortex!');
+  }
+}
+
+export class ClampTag extends TrapTag {
+  constructor(turnCount: integer) {
+    super(BattlerTagType.CLAMP, CommonAnim.CLAMP, turnCount);
+  }
+
+  getTrapMessage(pokemon: Pokemon): string {
+    return getPokemonMessage(pokemon, ' was CLAMPED!');
+  }
+}
+
+export class SandTombTag extends TrapTag {
+  constructor(turnCount: integer) {
+    super(BattlerTagType.SAND_TOMB, CommonAnim.SAND_TOMB, turnCount);
+  }
+
+  getTrapMessage(pokemon: Pokemon): string {
+    return getPokemonMessage(pokemon, ` was trapped\nby ${this.getTrapName()}!`);
+  }
+}
+
+export class MagmaStormTag extends TrapTag {
+  constructor(turnCount: integer) {
+    super(BattlerTagType.MAGMA_STORM, CommonAnim.MAGMA_STORM, turnCount);
+  }
+
+  getTrapMessage(pokemon: Pokemon): string {
+    return getPokemonMessage(pokemon, ` became trapped\nby swirling magma!`);
+  }
+}
+
 export class ProtectedTag extends BattlerTag {
   constructor() {
     super(BattlerTagType.PROTECTED, BattlerTagLapseType.CUSTOM, 0);
@@ -330,6 +450,20 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer): Batt
       return new AquaRingTag();
     case BattlerTagType.DROWSY:
       return new DrowsyTag();
+    case BattlerTagType.BIND:
+      return new BindTag(turnCount);
+    case BattlerTagType.WRAP:
+      return new WrapTag(turnCount);
+    case BattlerTagType.FIRE_SPIN:
+      return new FireSpinTag(turnCount);
+    case BattlerTagType.WHIRLPOOL:
+      return new WhirlpoolTag(turnCount);
+    case BattlerTagType.CLAMP:
+      return new ClampTag(turnCount);
+    case BattlerTagType.SAND_TOMB:
+      return new SandTombTag(turnCount);
+    case BattlerTagType.MAGMA_STORM:
+      return new MagmaStormTag(turnCount);
     case BattlerTagType.PROTECTED:
       return new ProtectedTag();
     case BattlerTagType.FLYING:
