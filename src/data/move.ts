@@ -724,6 +724,18 @@ export class UserHpDamageAttr extends FixedDamageAttr {
   }
 }
 
+export class TargetHalfHpDamageAttr extends FixedDamageAttr {
+  constructor() {
+    super(0);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value = Math.floor(target.hp / 2);
+
+    return true;
+  }
+}
+
 export class RecoilAttr extends MoveEffectAttr {
   constructor() {
     super(true);
@@ -1074,6 +1086,58 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
   }
 }
 
+export abstract class ConsecutiveUsePowerMultiplierAttr extends MovePowerMultiplierAttr {
+  constructor(limit: integer, resetOnFail: boolean, resetOnLimit?: boolean) {
+    super((user: Pokemon, target: Pokemon, move: Move): number => {
+      const moveHistory = user.getMoveHistory().reverse().slice(0);
+
+      let count = 0;
+      let turnMove: TurnMove;
+
+      while ((turnMove = moveHistory.shift())?.move === move.id && (!resetOnFail || turnMove.result < MoveResult.NO_EFFECT)) {
+        if (count < (limit - 1))
+          count++;
+        else if (resetOnLimit)
+          count = 0;
+        else
+          break;
+      }
+
+      return this.getMultiplier(count);
+    });
+  }
+
+  abstract getMultiplier(count: integer): number;
+}
+
+export class ConsecutiveUseDoublePowerAttr extends ConsecutiveUsePowerMultiplierAttr {
+  getMultiplier(count: number): number {
+    return Math.pow(2, count);
+  }
+}
+
+export class ConsecutiveUseMultiBasePowerAttr extends ConsecutiveUsePowerMultiplierAttr {
+  getMultiplier(count: number): number {
+    return (count + 1);
+  }
+}
+
+export class LevelPowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value = Math.min(user.level, 150);
+
+    return true;
+  }
+}
+
+export class RandomLevelPowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value = Math.min(user.level, 150) * Utils.randInt(100, 50);
+
+    return true;
+  }
+}
+
 export class WeightPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
@@ -1088,6 +1152,36 @@ export class WeightPowerAttr extends VariablePowerAttr {
     }
 
     power.value = (w + 1) * 20;
+
+    return true;
+  }
+}
+
+export class LowHpPowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0] as Utils.NumberHolder;
+    const hpRatio = user.getHpRatio();
+
+    switch (true) {
+      case (hpRatio < 0.6875):
+        power.value = 40;
+        break;
+      case (hpRatio < 0.3542):
+        power.value = 80;
+        break;
+      case (hpRatio < 0.2083):
+        power.value = 100;
+        break;
+      case (hpRatio < 0.1042):
+        power.value = 150;
+        break;
+      case (hpRatio < 0.0417):
+        power.value = 200;
+        break;
+      default:
+        power.value = 20;
+        break;
+    }
 
     return true;
   }
@@ -1613,7 +1707,7 @@ export const allMoves = [
   new AttackMove(Moves.SUBMISSION, "Submission", Type.FIGHTING, MoveCategory.PHYSICAL, 80, 80, 20, -1, "User receives recoil damage.", -1, 0, 1, new RecoilAttr()),
   new AttackMove(Moves.LOW_KICK, "Low Kick", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, 12, "The heavier the opponent, the stronger the attack.", -1, 0, 1, new WeightPowerAttr()),
   new AttackMove(Moves.COUNTER, "Counter (N)", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, "When hit by a Physical Attack, user strikes back with 2x power.", -1, -5, 1),
-  new AttackMove(Moves.SEISMIC_TOSS, "Seismic Toss (N)", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, "Inflicts damage equal to user's level.", -1, 0, 1),
+  new AttackMove(Moves.SEISMIC_TOSS, "Seismic Toss", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, "Inflicts damage equal to user's level (maximum 150).", -1, 0, 1, new LevelPowerAttr()),
   new AttackMove(Moves.STRENGTH, "Strength", Type.NORMAL, MoveCategory.PHYSICAL, 80, 100, 15, -1, "", -1, 0, 1),
   new AttackMove(Moves.ABSORB, "Absorb", Type.GRASS, MoveCategory.SPECIAL, 20, 100, 25, -1, "User recovers half the HP inflicted on opponent.", -1, 0, 1, new HitHealAttr()),
   new AttackMove(Moves.MEGA_DRAIN, "Mega Drain", Type.GRASS, MoveCategory.SPECIAL, 40, 100, 15, -1, "User recovers half the HP inflicted on opponent.", -1, 0, 1, new HitHealAttr()),
@@ -1650,7 +1744,7 @@ export const allMoves = [
   new AttackMove(Moves.QUICK_ATTACK, "Quick Attack", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 30, -1, "User attacks first.", -1, 1, 1),
   new AttackMove(Moves.RAGE, "Rage (N)", Type.NORMAL, MoveCategory.PHYSICAL, 20, 100, 20, -1, "Raises user's Attack when hit.", -1, 0, 1), // TODO
   new SelfStatusMove(Moves.TELEPORT, "Teleport (N)", Type.PSYCHIC, -1, 20, -1, "Allows user to flee wild battles.", -1, 0, 1),
-  new AttackMove(Moves.NIGHT_SHADE, "Night Shade (N)", Type.GHOST, MoveCategory.SPECIAL, -1, 100, 15, 42, "Inflicts damage equal to user's level.", -1, 0, 1),
+  new AttackMove(Moves.NIGHT_SHADE, "Night Shade", Type.GHOST, MoveCategory.SPECIAL, -1, 100, 15, 42, "Inflicts damage equal to user's level (maximum 150).", -1, 0, 1, new LevelPowerAttr()),
   new StatusMove(Moves.MIMIC, "Mimic", Type.NORMAL, -1, 10, -1, "Copies the opponent's last move.", -1, 0, 1, new ConditionalMoveAttr(targetMoveCopiableCondition), new CopyMoveAttr()),
   new StatusMove(Moves.SCREECH, "Screech", Type.NORMAL, 85, 40, -1, "Sharply lowers opponent's Defense.", -1, 0, 1, new StatChangeAttr(BattleStat.DEF, -2)),
   new SelfStatusMove(Moves.DOUBLE_TEAM, "Double Team", Type.NORMAL, -1, 15, -1, "Raises user's Evasiveness.", -1, 0, 1, new StatChangeAttr(BattleStat.EVA, 1, true)),
@@ -1702,7 +1796,7 @@ export const allMoves = [
   new AttackMove(Moves.DIZZY_PUNCH, "Dizzy Punch", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 10, -1, "May confuse opponent.", 20, 0, 1, new ConfuseAttr()),
   new StatusMove(Moves.SPORE, "Spore", Type.GRASS, 100, 15, -1, "Puts opponent to sleep.", -1, 0, 1, new StatusEffectAttr(StatusEffect.SLEEP)),
   new StatusMove(Moves.FLASH, "Flash", Type.NORMAL, 100, 20, -1, "Lowers opponent's Accuracy.", -1, 0, 1, new StatChangeAttr(BattleStat.ACC, -1)),
-  new AttackMove(Moves.PSYWAVE, "Psywave (N)", Type.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 15, -1, "Inflicts damage 50-150% of user's level.", -1, 0, 1),
+  new AttackMove(Moves.PSYWAVE, "Psywave", Type.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 15, -1, "Inflicts damage 50-150% of user's level (maximum 150).", -1, 0, 1, new RandomLevelPowerAttr()),
   new SelfStatusMove(Moves.SPLASH, "Splash", Type.NORMAL, -1, 40, -1, "Doesn't do ANYTHING.", -1, 0, 1),
   new SelfStatusMove(Moves.ACID_ARMOR, "Acid Armor", Type.POISON, -1, 20, -1, "Sharply raises user's Defense.", -1, 0, 1, new StatChangeAttr(BattleStat.DEF, 2, true)),
   new AttackMove(Moves.CRABHAMMER, "Crabhammer", Type.WATER, MoveCategory.PHYSICAL, 100, 90, 10, -1, "High critical hit ratio.", -1, 0, 1, new HighCritAttr()),
@@ -1716,7 +1810,7 @@ export const allMoves = [
   new SelfStatusMove(Moves.SHARPEN, "Sharpen", Type.NORMAL, -1, 30, -1, "Raises user's Attack.", -1, 0, 1, new StatChangeAttr(BattleStat.ATK, 1, true)),
   new SelfStatusMove(Moves.CONVERSION, "Conversion (N)", Type.NORMAL, -1, 30, -1, "Changes user's type to that of its first move.", -1, 0, 1),
   new AttackMove(Moves.TRI_ATTACK, "Tri Attack", Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, "May paralyze, burn or freeze opponent.", 20, 0, 1, new StatusEffectAttr(StatusEffect.PARALYSIS), new StatusEffectAttr(StatusEffect.BURN), new StatusEffectAttr(StatusEffect.FREEZE)), // TODO: Check if independent
-  new AttackMove(Moves.SUPER_FANG, "Super Fang (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 10, -1, "Always takes off half of the opponent's HP.", -1, 0, 1),
+  new AttackMove(Moves.SUPER_FANG, "Super Fang", Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 10, -1, "Always takes off half of the opponent's HP.", -1, 0, 1, new TargetHalfHpDamageAttr()),
   new AttackMove(Moves.SLASH, "Slash", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, "High critical hit ratio.", -1, 0, 1, new HighCritAttr()),
   new SelfStatusMove(Moves.SUBSTITUTE, "Substitute (N)", Type.NORMAL, -1, 10, 103, "Uses HP to creates a decoy that takes hits.", -1, 0, 1),
   new AttackMove(Moves.STRUGGLE, "Struggle", Type.NORMAL, MoveCategory.PHYSICAL, 50, -1, -1, -1, "Only usable when all PP are gone. Hurts the user.", -1, 0, 1),
@@ -1740,7 +1834,7 @@ export const allMoves = [
   new SelfStatusMove(Moves.CONVERSION_2, "Conversion 2 (N)", Type.NORMAL, -1, 30, -1, "User changes type to become resistant to opponent's last move.", -1, 0, 2),
   new AttackMove(Moves.AEROBLAST, "Aeroblast", Type.FLYING, MoveCategory.SPECIAL, 100, 95, 5, -1, "High critical hit ratio.", -1, 0, 2, new HighCritAttr()),
   new StatusMove(Moves.COTTON_SPORE, "Cotton Spore", Type.GRASS, 100, 40, -1, "Sharply lowers opponent's Speed.", -1, 0, 2, new StatChangeAttr(BattleStat.SPD, -2)),
-  new AttackMove(Moves.REVERSAL, "Reversal (N)", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 15, 134, "The lower the user's HP, the higher the power.", -1, 0, 2),
+  new AttackMove(Moves.REVERSAL, "Reversal", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 15, 134, "The lower the user's HP, the higher the power.", -1, 0, 2, new LowHpPowerAttr()),
   new StatusMove(Moves.SPITE, "Spite (N)", Type.GHOST, 100, 10, -1, "The opponent's last move loses 2-5 PP.", -1, 0, 2),
   new AttackMove(Moves.POWDER_SNOW, "Powder Snow", Type.ICE, MoveCategory.SPECIAL, 40, 100, 25, -1, "May freeze opponent.", 10, 0, 2, new StatusEffectAttr(StatusEffect.FREEZE)),
   new SelfStatusMove(Moves.PROTECT, "Protect", Type.NORMAL, -1, 10, 7, "Protects the user, but may fail if used consecutively.", -1, 4, 2,
@@ -1769,12 +1863,12 @@ export const allMoves = [
   new AttackMove(Moves.GIGA_DRAIN, "Giga Drain", Type.GRASS, MoveCategory.SPECIAL, 75, 100, 10, 111, "User recovers half the HP inflicted on opponent.", -1, 4, 2, new HitHealAttr()),
   new SelfStatusMove(Moves.ENDURE, "Endure (N)", Type.NORMAL, -1, 10, 47, "Always left with at least 1 HP, but may fail if used consecutively.", -1, 0, 2),
   new StatusMove(Moves.CHARM, "Charm", Type.FAIRY, 100, 20, 2, "Sharply lowers opponent's Attack.", -1, 0, 2, new StatChangeAttr(BattleStat.ATK, -2)),
-  new AttackMove(Moves.ROLLOUT, "Rollout (N)", Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, "Doubles in power each turn for 5 turns.", -1, 0, 2),
+  new AttackMove(Moves.ROLLOUT, "Rollout", Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, "Doubles in power each turn for 5 turns.", -1, 0, 2, new ConsecutiveUseDoublePowerAttr(5, true, true)),
   new AttackMove(Moves.FALSE_SWIPE, "False Swipe (N)", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 40, 57, "Always leaves opponent with at least 1 HP.", -1, 0, 2),
   new StatusMove(Moves.SWAGGER, "Swagger", Type.NORMAL, 85, 15, -1, "Confuses opponent, but sharply raises its Attack.", -1, 0, 2, new StatChangeAttr(BattleStat.ATK, 2), new ConfuseAttr()),
   new SelfStatusMove(Moves.MILK_DRINK, "Milk Drink", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 2, new HealAttr(0.5)),
   new AttackMove(Moves.SPARK, "Spark", Type.ELECTRIC, MoveCategory.PHYSICAL, 65, 100, 20, -1, "May paralyze opponent.", 30, 0, 2, new StatusEffectAttr(StatusEffect.PARALYSIS)),
-  new AttackMove(Moves.FURY_CUTTER, "Fury Cutter (N)", Type.BUG, MoveCategory.PHYSICAL, 40, 95, 20, -1, "Power increases each turn.", -1, 0, 2),
+  new AttackMove(Moves.FURY_CUTTER, "Fury Cutter", Type.BUG, MoveCategory.PHYSICAL, 40, 95, 20, -1, "Power increases each turn.", -1, 0, 2, new ConsecutiveUseDoublePowerAttr(3, true)),
   new AttackMove(Moves.STEEL_WING, "Steel Wing", Type.STEEL, MoveCategory.PHYSICAL, 70, 90, 25, -1, "May raise user's Defense.", 10, 0, 2, new StatChangeAttr(BattleStat.DEF, 1, true)),
   new StatusMove(Moves.MEAN_LOOK, "Mean Look (N)", Type.NORMAL, -1, 5, -1, "Opponent cannot flee or switch.", -1, 0, 2),
   new StatusMove(Moves.ATTRACT, "Attract (N)", Type.NORMAL, 100, 15, -1, "If opponent is the opposite gender, it's less likely to attack.", -1, 0, 2),
@@ -1877,7 +1971,7 @@ export const allMoves = [
   new StatusMove(Moves.TEETER_DANCE, "Teeter Dance", Type.NORMAL, 100, 20, -1, "Confuses all Pokémon.", -1, 0, 3, new ConfuseAttr(true), new ConfuseAttr()),
   new AttackMove(Moves.BLAZE_KICK, "Blaze Kick", Type.FIRE, MoveCategory.PHYSICAL, 85, 90, 10, -1, "High critical hit ratio. May burn opponent.", 10, 0, 3, new HighCritAttr(), new StatusEffectAttr(StatusEffect.BURN)),
   new SelfStatusMove(Moves.MUD_SPORT, "Mud Sport", Type.GROUND, -1, 15, -1, "Weakens the power of Electric-type moves.", -1, 0, 3, new AddArenaTagAttr(ArenaTagType.MUD_SPORT, 5)),
-  new AttackMove(Moves.ICE_BALL, "Ice Ball (N)", Type.ICE, MoveCategory.PHYSICAL, 30, 90, 20, -1, "Doubles in power each turn for 5 turns.", -1, 0, 3),
+  new AttackMove(Moves.ICE_BALL, "Ice Ball", Type.ICE, MoveCategory.PHYSICAL, 30, 90, 20, -1, "Doubles in power each turn for 5 turns.", -1, 0, 3, new ConsecutiveUseDoublePowerAttr(5, true, true)),
   new AttackMove(Moves.NEEDLE_ARM, "Needle Arm", Type.GRASS, MoveCategory.PHYSICAL, 60, 100, 15, -1, "May cause flinching.", 30, 0, 3, new FlinchAttr()),
   new SelfStatusMove(Moves.SLACK_OFF, "Slack Off", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 3, new HealAttr()),
   new AttackMove(Moves.HYPER_VOICE, "Hyper Voice", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, 117, "", -1, 0, 3),
@@ -2093,7 +2187,7 @@ export const allMoves = [
   new StatusMove(Moves.ENTRAINMENT, "Entrainment (N)", Type.NORMAL, 100, 15, -1, "Makes target's ability same as user's.", -1, 0, 5),
   new StatusMove(Moves.AFTER_YOU, "After You (N)", Type.NORMAL, -1, 15, -1, "Gives target priority in the next turn.", -1, 0, 5).ignoreProtect(),
   new AttackMove(Moves.ROUND, "Round", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, "Power increases if teammates use it in the same turn.", -1, 0, 5), // TODO
-  new AttackMove(Moves.ECHOED_VOICE, "Echoed Voice (N)", Type.NORMAL, MoveCategory.SPECIAL, 40, 100, 15, -1, "Power increases each turn.", -1, 0, 5),
+  new AttackMove(Moves.ECHOED_VOICE, "Echoed Voice", Type.NORMAL, MoveCategory.SPECIAL, 40, 100, 15, -1, "Power increases each turn.", -1, 0, 5, new ConsecutiveUseMultiBasePowerAttr(5, false)),
   new AttackMove(Moves.CHIP_AWAY, "Chip Away (N)", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, "Ignores opponent's stat changes.", -1, 0, 5),
   new AttackMove(Moves.CLEAR_SMOG, "Clear Smog (N)", Type.POISON, MoveCategory.SPECIAL, 50, -1, 15, -1, "Removes all of the target's stat changes.", -1, 0, 5),
   new AttackMove(Moves.STORED_POWER, "Stored Power (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 20, 100, 10, 41, "Power increases when user's stats have been raised.", -1, 0, 5),
