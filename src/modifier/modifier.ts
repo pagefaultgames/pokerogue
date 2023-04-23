@@ -884,4 +884,8 @@ export class ExtraModifierModifier extends PersistentModifier {
 
     return true;
   }
+
+  getMaxStackCount():  integer {
+    return 3;
+  }
 }
