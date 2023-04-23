@@ -657,7 +657,7 @@ export class PartyShareModifier extends PersistentModifier {
     for (let modifier of modifiers) {
       if (modifier instanceof PokemonHeldItemModifier) {
         const heldItemModifier = modifier as PokemonHeldItemModifier;
-        const extraStacks = Math.floor(modifier.stackCount / Math.max(party.length - (this.getStackCount() - 1), 1));
+        const extraStacks = Math.floor(modifier.stackCount / Math.max(party.length - (this.stackCount - 1), 1));
         for (let s = 0; s < extraStacks; s++) {
           for (let p of party) {
             if (p.id === heldItemModifier.pokemonId)

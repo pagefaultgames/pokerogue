@@ -762,7 +762,7 @@ export default class BattleScene extends Phaser.Scene {
 		return new Promise(resolve => {
 			const waveIndex = this.currentBattle.waveIndex;
 			const chances = Math.ceil(waveIndex / 10);
-			const isBoss = this.getEnemyPokemon().level >= 100 || !(waveIndex % 10);
+			const isBoss = !(waveIndex % 10);
 			let count = 0;
 			for (let c = 0; c < chances; c++) {
 				if (!Utils.randInt(!isBoss ? 12 : 4))

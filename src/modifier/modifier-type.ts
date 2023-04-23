@@ -600,7 +600,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 8),
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, 12),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5),
-    new WeightedModifierType(modifierTypes.OVAL_CHARM, 1),
+    //new WeightedModifierType(modifierTypes.OVAL_CHARM, 1),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 1),
     new WeightedModifierType(modifierTypes.LEFTOVERS, 2),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 2),
