@@ -272,13 +272,13 @@ export class PokemonBaseStatBoosterModifierType extends PokemonHeldItemModifierT
 
 class AllPokemonFullHpRestoreModifierType extends ModifierType {
   constructor(name: string, description?: string, newModifierFunc?: NewModifierFunc, iconImage?: string) {
-    super(name, description || `Restore 100% HP for all POKéMON`, newModifierFunc || ((_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 100, false)), iconImage);
+    super(name, description || `Restore 100% HP for all POKéMON`, newModifierFunc || ((_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 100, true)), iconImage);
   }
 }
 
 class AllPokemonFullReviveModifierType extends AllPokemonFullHpRestoreModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name, `Revives all fainted POKéMON, restoring 100% HP`, (_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 100, true), iconImage);
+    super(name, `Revives all fainted POKéMON, restoring 100% HP`, (_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 100, true, true), iconImage);
   }
 }
 

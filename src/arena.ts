@@ -5,7 +5,7 @@ import * as Utils from "./utils";
 import PokemonSpecies, { getPokemonSpecies } from "./data/pokemon-species";
 import { Species } from "./data/species";
 import { Weather, WeatherType, getWeatherClearMessage, getWeatherStartMessage } from "./data/weather";
-import { CommonAnimPhase, MessagePhase } from "./battle-phases";
+import { CommonAnimPhase } from "./battle-phases";
 import { CommonAnim } from "./data/battle-anims";
 import { Type } from "./data/type";
 import Move from "./data/move";

@@ -433,6 +433,11 @@ export default class BattleScene extends Phaser.Scene {
 		return this.currentBattle?.enemyPokemon;
 	}
 
+	getPokemonById(pokemonId: integer): Pokemon {
+		const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
+		return findInParty(this.getParty()) || findInParty(this.getEnemyParty());
+	}
+
 	reset(): void {
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 

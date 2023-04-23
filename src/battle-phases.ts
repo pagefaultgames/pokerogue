@@ -18,7 +18,7 @@ import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } fr
 import { Biome, biomeLinks } from "./data/biome";
 import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag } from "./data/battler-tag";
+import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, DamagingTrapTag, TrappedTag as TrapTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
@@ -370,6 +370,8 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const playerPokemon = this.scene.getPlayerPokemon();
 
+    this.scene.getEnemyPokemon()?.removeTagsBySourceId(playerPokemon.id);
+
     this.scene.ui.showText(`Come back, ${this.scene.getPlayerPokemon().name}!`);
     this.scene.sound.play('pb_rel');
     playerPokemon.hideInfo();
@@ -542,8 +544,14 @@ export class CommandPhase extends BattlePhase {
         }
         break;
       case Command.POKEMON:
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, cursor, true));
-        success = true;
+        const trapTag = playerPokemon.findTag(t => t instanceof TrapTag) as TrapTag;
+        if (!trapTag) {
+          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, cursor, true));
+          success = true;
+        } else
+          this.scene.ui.showText(`${this.scene.getPokemonById(trapTag.sourceId).name}'s ${trapTag.getMoveName()}\nprevents switching!`, null, () => {
+            this.scene.ui.showText(null, 0);
+          }, null, true);
         break;
       case Command.RUN:
         //this.scene.unshiftPhase(new MoveAnimTestPhase(this.scene, [ Moves.TELEPORT ]));
@@ -1299,6 +1307,10 @@ export class FaintPhase extends PokemonPhase {
     const pokemon = this.getPokemon();
 
     pokemon.lapseTags(BattlerTagLapseType.FAINT);
+    if (pokemon.isPlayer())
+      this.scene.getEnemyPokemon()?.removeTagsBySourceId(pokemon.id);
+    else
+      this.scene.getPlayerPokemon()?.removeTagsBySourceId(pokemon.id);
 
     pokemon.faintCry(() => {
       pokemon.hideInfo();
@@ -1793,6 +1805,7 @@ export class AttemptCapturePhase extends BattlePhase {
         const newPokemon = pokemon.addToParty();
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
         Promise.all(modifiers.map(m => this.scene.addModifier(m))).then(() => {
+          this.scene.getPlayerPokemon().removeTagsBySourceId(pokemon.id);
           pokemon.hp = 0;
           this.scene.clearEnemyModifiers();
           this.scene.field.remove(pokemon, true);

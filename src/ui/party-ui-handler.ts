@@ -218,13 +218,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             return;
           } else {
             this.clearOptions();
-            this.partyMessageBox.setTexture('party_message_large');
-            this.message.y -= 15;
-            this.showText(filterResult as string, null, () => {
-              this.partyMessageBox.setTexture('party_message');
-              this.message.setText(defaultMessage);
-              this.message.y += 15;
-            }, null, true);
+            this.showText(filterResult as string, null, () => this.showText(null, 0), null, true);
           }
         } else if (option === PartyOption.SUMMARY) {
           ui.playSelect();
@@ -239,11 +233,11 @@ export default class PartyUiHandler extends MessageUiHandler {
                 this.doRelease(this.cursor);
               }, () => {
                 ui.setMode(Mode.PARTY);
-                this.message.setText(defaultMessage);
+                this.showText(null, 0);
               });
             });
           } else
-            this.showText('You can\'t release a POKéMON that\'s in battle!', null, () => this.message.setText(defaultMessage), null, true);
+            this.showText('You can\'t release a POKéMON that\'s in battle!', null, () => this.showText(null, 0), null, true);
         } else if (option === PartyOption.CANCEL)
           this.processInput(Button.CANCEL);
       } else if (button === Button.CANCEL) {
@@ -363,6 +357,21 @@ export default class PartyUiHandler extends MessageUiHandler {
     return changed;
   }
 
+  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+    if (text === null)
+      text = defaultMessage;
+
+    if (text?.indexOf('\n') === -1) {
+      this.partyMessageBox.setTexture('party_message');
+      this.message.setY(10);
+    } else {
+      this.partyMessageBox.setTexture('party_message_large');
+      this.message.setY(-5);
+    }
+
+    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+  }
+
   showOptions() {
     if (this.cursor === 6)
       return;
@@ -385,7 +394,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         break;
     }
 
-    this.message.setText(optionsMessage);
+    this.showText(optionsMessage, 0);
 
     const optionsBottom = this.scene.add.image(0, 0, `party_options${wideOptions ? '_wide' : ''}_bottom`);
     optionsBottom.setOrigin(1, 1);
@@ -500,7 +509,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         this.selectCallback = null;
         selectCallback(this.cursor, PartyOption.RELEASE);
       } else
-        this.message.setText(defaultMessage);
+        this.showText(null, 0);
     }, null, true);
   }
 
@@ -535,7 +544,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.eraseOptionsCursor();
 
     this.partyMessageBox.setTexture('party_message');
-    this.message.setText(defaultMessage);
+    this.showText(null, 0);
   }
 
   eraseOptionsCursor() {

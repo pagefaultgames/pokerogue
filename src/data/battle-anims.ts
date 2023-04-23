@@ -619,7 +619,7 @@ export abstract class BattleAnim {
                                 const setSpritePriority = (priority: integer) => {
                                     switch (priority) {
                                         case 0:
-                                            scene.field.moveBelow(moveSprite, scene.getEnemyPokemon());
+                                            scene.field.moveBelow(moveSprite, scene.getEnemyPokemon() || scene.getPlayerPokemon());
                                             break;
                                         case 1:
                                             scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);

@@ -279,9 +279,8 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return container;
   }
 
-  getPokemon(scene: BattleScene) {
-    const findInParty = (party: Pokemon[]) => party.find(p => p.id === this.pokemonId);
-    return findInParty(scene.getParty()) || findInParty(scene.getEnemyParty());
+  getPokemon(scene: BattleScene): Pokemon {
+    return scene.getPokemonById(this.pokemonId);
   }
 }
 

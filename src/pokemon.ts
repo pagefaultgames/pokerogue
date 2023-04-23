@@ -21,7 +21,7 @@ import { BattlerTag, BattlerTagLapseType, BattlerTagType, getBattlerTag } from '
 import { Species } from './data/species';
 import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
-import { ArenaTagType, WeakenTypeTag as WeakenMoveTypeTag } from './data/arena-tag';
+import { WeakenTypeTag as WeakenMoveTypeTag } from './data/arena-tag';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -341,6 +341,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return types;
   }
 
+  isOfType(type: Type) {
+    return this.getTypes().indexOf(type) > -1;
+  }
+
   getEvolution(): SpeciesEvolution {
     if (!pokemonEvolutions.hasOwnProperty(this.species.speciesId))
       return null;
@@ -554,18 +558,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  addTag(tagType: BattlerTagType, turnCount?: integer): boolean {
+  addTag(tagType: BattlerTagType, turnCount?: integer, sourceId?: integer, sourceMove?: Moves): boolean {
     const existingTag = this.getTag(tagType);
     if (existingTag) {
       existingTag.onOverlap(this);
       return false;
     }
 
-    const newTag = getBattlerTag(tagType, turnCount || 0);
-    this.summonData.tags.push(newTag);
-    newTag.onAdd(this);
+    const newTag = getBattlerTag(tagType, turnCount || 0, sourceId, sourceMove);
 
-    return true;
+    if (newTag.canAdd(this)) {
+      this.summonData.tags.push(newTag);
+      newTag.onAdd(this);
+
+      return true;
+    }
+
+    return false;
   }
 
   getTag(tagType: BattlerTagType | { new(...args: any[]): BattlerTag }): BattlerTag {
@@ -601,6 +610,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   lapseTags(lapseType: BattlerTagLapseType): void {
     const tags = this.summonData.tags;
     tags.filter(t => lapseType === BattlerTagLapseType.FAINT || ((t.lapseType === lapseType) && !(t.lapse(this, lapseType))) || (lapseType === BattlerTagLapseType.TURN_END && t.turnCount < 1)).forEach(t => {
+      t.onRemove(this);
+      tags.splice(tags.indexOf(t), 1);
+    });
+  }
+
+  removeTagsBySourceId(sourceId: integer): void {
+    const tags = this.summonData.tags;
+    tags.filter(t => t.sourceId === sourceId).forEach(t => {
       t.onRemove(this);
       tags.splice(tags.indexOf(t), 1);
     });
@@ -686,19 +703,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   trySetStatus(effect: StatusEffect): boolean {
     if (this.status)
       return false;
-    const speciesForm = this.getSpeciesForm();
     switch (effect) {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
-        if (speciesForm.isOfType(Type.POISON) || speciesForm.isOfType(Type.STEEL))
+        if (this.isOfType(Type.POISON) || this.isOfType(Type.STEEL))
           return false;
         break;
       case StatusEffect.FREEZE:
-        if (speciesForm.isOfType(Type.ICE))
+        if (this.isOfType(Type.ICE))
           return false;
         break;
       case StatusEffect.BURN:
-        if (speciesForm.isOfType(Type.FIRE))
+        if (this.isOfType(Type.FIRE))
           return false;
         break;
     }

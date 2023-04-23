@@ -1410,7 +1410,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       return false;
 
     if (move.chance < 0 || move.chance === 100 || Utils.randInt(100) < move.chance) {
-      (this.selfTarget ? user : target).addTag(this.tagType, this.turnCount);
+      (this.selfTarget ? user : target).addTag(this.tagType, this.turnCount, user.id, move.id);
       return true;
     }
 
@@ -1738,7 +1738,7 @@ export const allMoves = [
   new AttackMove(Moves.ABSORB, "Absorb", Type.GRASS, MoveCategory.SPECIAL, 20, 100, 25, -1, "User recovers half the HP inflicted on opponent.", -1, 0, 1, new HitHealAttr()),
   new AttackMove(Moves.MEGA_DRAIN, "Mega Drain", Type.GRASS, MoveCategory.SPECIAL, 40, 100, 15, -1, "User recovers half the HP inflicted on opponent.", -1, 0, 1, new HitHealAttr()),
   new StatusMove(Moves.LEECH_SEED, "Leech Seed", Type.GRASS, 90, 10, -1, "Drains HP from opponent each turn.", -1, 0, 1,
-    new ConditionalMoveAttr((user: Pokemon, target: Pokemon, move: Move) => !target.getTag(BattlerTagType.SEEDED) && !target.species.isOfType(Type.GRASS)), new AddBattlerTagAttr(BattlerTagType.SEEDED)),
+    new ConditionalMoveAttr((user: Pokemon, target: Pokemon, move: Move) => !target.getTag(BattlerTagType.SEEDED) && !target.isOfType(Type.GRASS)), new AddBattlerTagAttr(BattlerTagType.SEEDED)),
   new SelfStatusMove(Moves.GROWTH, "Growth", Type.NORMAL, -1, 20, -1, "Raises user's Attack and Special Attack.", -1, 0, 1, new GrowthStatChangeAttr()),
   new AttackMove(Moves.RAZOR_LEAF, "Razor Leaf", Type.GRASS, MoveCategory.PHYSICAL, 55, 95, 25, -1, "High critical hit ratio.", -1, 0, 1, new HighCritAttr()),
   new AttackMove(Moves.SOLAR_BEAM, "Solar Beam", Type.GRASS, MoveCategory.SPECIAL, 120, 100, 10, 168, "Charges on first turn, attacks on second.", -1, 0, 1,
@@ -1896,7 +1896,8 @@ export const allMoves = [
   new AttackMove(Moves.SPARK, "Spark", Type.ELECTRIC, MoveCategory.PHYSICAL, 65, 100, 20, -1, "May paralyze opponent.", 30, 0, 2, new StatusEffectAttr(StatusEffect.PARALYSIS)),
   new AttackMove(Moves.FURY_CUTTER, "Fury Cutter", Type.BUG, MoveCategory.PHYSICAL, 40, 95, 20, -1, "Power increases each turn.", -1, 0, 2, new ConsecutiveUseDoublePowerAttr(3, true)),
   new AttackMove(Moves.STEEL_WING, "Steel Wing", Type.STEEL, MoveCategory.PHYSICAL, 70, 90, 25, -1, "May raise user's Defense.", 10, 0, 2, new StatChangeAttr(BattleStat.DEF, 1, true)),
-  new StatusMove(Moves.MEAN_LOOK, "Mean Look (N)", Type.NORMAL, -1, 5, -1, "Opponent cannot flee or switch.", -1, 0, 2),
+  new StatusMove(Moves.MEAN_LOOK, "Mean Look", Type.NORMAL, -1, 5, -1, "Opponent cannot flee or switch.", -1, 0, 2,
+    new ConditionalMoveAttr((user: Pokemon, target: Pokemon, move: Move) => !target.getTag(BattlerTagType.TRAPPED)), new AddBattlerTagAttr(BattlerTagType.TRAPPED, false, 1)),
   new StatusMove(Moves.ATTRACT, "Attract (N)", Type.NORMAL, 100, 15, -1, "If opponent is the opposite gender, it's less likely to attack.", -1, 0, 2),
   new SelfStatusMove(Moves.SLEEP_TALK, "Sleep Talk", Type.NORMAL, -1, 10, 70, "User performs one of its own moves while sleeping.", -1, 0, 2,
     new BypassSleepAttr(), new ConditionalMoveAttr((user: Pokemon, target: Pokemon, move: Move) => user.status?.effect === StatusEffect.SLEEP), new RandomMovesetMoveAttr()),
@@ -1967,7 +1968,7 @@ export const allMoves = [
   new SelfStatusMove(Moves.WISH, "Wish (N)", Type.NORMAL, -1, 10, -1, "The user recovers HP in the following turn.", -1, 0, 3),
   new SelfStatusMove(Moves.ASSIST, "Assist (N)", Type.NORMAL, -1, 20, -1, "User performs a move known by its allies at random.", -1, 0, 3),
   new SelfStatusMove(Moves.INGRAIN, "Ingrain", Type.GRASS, -1, 20, -1, "User restores HP each turn. User cannot escape/switch.", -1, 0, 3,
-    new NoTagOverlapConditionalAttr(BattlerTagType.INGRAIN, true), new AddBattlerTagAttr(BattlerTagType.INGRAIN, true)), // TODO
+    new NoTagOverlapConditionalAttr(BattlerTagType.INGRAIN, true), new AddBattlerTagAttr(BattlerTagType.INGRAIN, true)),
   new AttackMove(Moves.SUPERPOWER, "Superpower", Type.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, -1, "Lowers user's Attack and Defense.", 100, 0, 3,
     new StatChangeAttr([ BattleStat.ATK, BattleStat.DEF ], -1, true)),
   new SelfStatusMove(Moves.MAGIC_COAT, "Magic Coat (N)", Type.PSYCHIC, -1, 15, -1, "Reflects moves that cause status conditions back to the attacker.", -1, 4, 3),
@@ -2035,7 +2036,8 @@ export const allMoves = [
   new AttackMove(Moves.AERIAL_ACE, "Aerial Ace", Type.FLYING, MoveCategory.PHYSICAL, 60, -1, 20, 27, "Ignores Accuracy and Evasiveness.", -1, 0, 3),
   new AttackMove(Moves.ICICLE_SPEAR, "Icicle Spear", Type.ICE, MoveCategory.PHYSICAL, 25, 100, 30, -1, "Hits 2-5 times in one turn.", -1, 0, 3, new MultiHitAttr()),
   new SelfStatusMove(Moves.IRON_DEFENSE, "Iron Defense", Type.STEEL, -1, 15, 104, "Sharply raises user's Defense.", -1, 0, 3, new StatChangeAttr(BattleStat.DEF, 2, true)),
-  new StatusMove(Moves.BLOCK, "Block (N)", Type.NORMAL, -1, 5, -1, "Opponent cannot flee or switch.", -1, 0, 3),
+  new StatusMove(Moves.BLOCK, "Block", Type.NORMAL, -1, 5, -1, "Opponent cannot flee or switch.", -1, 0, 3,
+    new ConditionalMoveAttr((user: Pokemon, target: Pokemon, move: Move) => !target.getTag(BattlerTagType.TRAPPED)), new AddBattlerTagAttr(BattlerTagType.TRAPPED, false, 1)),
   new SelfStatusMove(Moves.HOWL, "Howl", Type.NORMAL, -1, 40, -1, "Raises Attack of allies.", -1, 0, 3, new StatChangeAttr(BattleStat.ATK, 1, true)), // TODO
   new AttackMove(Moves.DRAGON_CLAW, "Dragon Claw", Type.DRAGON, MoveCategory.PHYSICAL, 80, 100, 15, 78, "", -1, 0, 3),
   new AttackMove(Moves.FRENZY_PLANT, "Frenzy Plant", Type.GRASS, MoveCategory.SPECIAL, 150, 90, 5, 155, "User must recharge next turn.", -1, 0, 3, new AddBattlerTagAttr(BattlerTagType.RECHARGING, true)),
