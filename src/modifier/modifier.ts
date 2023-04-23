@@ -364,7 +364,7 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
 
     if (pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
-      scene.unshiftPhase(new PokemonHealPhase(scene, true, Math.max(Math.floor(pokemon.getMaxHp() / 16) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), Math.max(Math.floor(pokemon.getMaxHp() / 16) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
     }
 
     return true;
@@ -393,7 +393,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
 
     if (pokemon.turnData.damageDealt && pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
-      scene.unshiftPhase(new PokemonHealPhase(scene, true, Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
     }
 
     return true;
@@ -828,41 +828,46 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
   }
 
   getMaxStackCount(): integer {
-    return 5;
+    return 4;
   }
 }
 
-export class HeldItemTransferModifier extends PersistentModifier {
-  constructor(type: ModifierType, stackCount?: integer) {
-    super(type, stackCount);
+export class HeldItemTransferModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
   }
 
-  match(modifier: Modifier): boolean {
+  matchType(modifier: Modifier): boolean {
     return modifier instanceof HeldItemTransferModifier;
   }
 
   clone(): HeldItemTransferModifier {
-    return new HeldItemTransferModifier(this.type, this.stackCount);
-  }
-
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length && args[0] instanceof BattleScene;
+    return new HeldItemTransferModifier(this.type, this.pokemonId, this.stackCount);
   }
 
   apply(args: any[]): boolean {
-    const scene = args[0] as BattleScene;
-    const targetPokemon = scene.getPlayerPokemon();
+    const pokemon = args[0] as Pokemon;
+    const targetPokemon = pokemon.isPlayer() ? pokemon.scene.getEnemyPokemon() : pokemon.scene.getPlayerPokemon();
 
-    const itemModifiers = scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-      && (m as PokemonHeldItemModifier).pokemonId !== targetPokemon.id) as PokemonHeldItemModifier[];
-    for (let modifier of itemModifiers)
-      scene.tryTransferHeldItemModifier(modifier, targetPokemon, false);
+    const transferredModifierTypes: ModifierTypes.ModifierType[] = [];
+    const itemModifiers = pokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+        && (m as PokemonHeldItemModifier).pokemonId === targetPokemon.id, targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
+    
+    for (let i = 0; i < this.getStackCount(); i++) {
+      if (!itemModifiers.length)
+        break;
+      const randItemIndex = Utils.randInt(itemModifiers.length);
+      const randItem = itemModifiers[randItemIndex];
+      if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false, false)) {
+        transferredModifierTypes.push(randItem.type);
+        itemModifiers.splice(randItemIndex, 1);
+      }
+    }
 
-    return true;
-  }
+    for (let mt of transferredModifierTypes)
+      pokemon.scene.queueMessage(getPokemonMessage(targetPokemon, `'s ${mt.name} was absorbed\nby ${pokemon.name}'s MINI BLACK HOLE!`));
 
-  getMaxStackCount(): integer {
-    return 1;
+    return !!transferredModifierTypes.length;
   }
 }
 

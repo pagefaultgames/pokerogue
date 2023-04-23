@@ -425,17 +425,19 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
-class HeldItemTransferModifierType extends ModifierType {
+class HeldItemTransferModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, iconImage?: string, group?: string, soundName?: string) {
-    super(name, 'All held items in your party are transferred to a POKéMON on summon', (type, _args) => new Modifiers.HeldItemTransferModifier(type), iconImage, group, soundName);
+    super(name, 'Every turn, the holder acquires one held item from the foe POKéMON', (type, args) => new Modifiers.HeldItemTransferModifier(type, (args[0] as Pokemon).id), iconImage, group, soundName);
   }
 }
 
+type WeightedModifierTypeWeightFunc = (party: Pokemon[]) => integer;
+
 class WeightedModifierType {
   public modifierType: ModifierType;
-  public weight: integer | Function;
+  public weight: integer | WeightedModifierTypeWeightFunc;
 
-  constructor(modifierType: ModifierType, weight: integer | Function) {
+  constructor(modifierType: ModifierType, weight: integer | WeightedModifierTypeWeightFunc) {
     this.modifierType = modifierType;
     this.weight = weight;
   }
@@ -591,46 +593,48 @@ const modifierPool = {
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.TM, 2),
-    modifierTypes.EXP_SHARE,
+    new WeightedModifierType(modifierTypes.EXP_SHARE, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 1 : 0),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3)
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 8),
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, 12),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5),
-    modifierTypes.OVAL_CHARM,
-    modifierTypes.HEALING_CHARM,
+    new WeightedModifierType(modifierTypes.OVAL_CHARM, 1),
+    new WeightedModifierType(modifierTypes.HEALING_CHARM, 1),
     new WeightedModifierType(modifierTypes.LEFTOVERS, 2),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 2),
-    new WeightedModifierType(modifierTypes.EXP_CHARM, 4),
-    new WeightedModifierType(modifierTypes.LUCKY_EGG, 3),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 3),
-    modifierTypes.EXP_BALANCE
+    new WeightedModifierType(modifierTypes.EXP_CHARM, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 4 : 0),
+    new WeightedModifierType(modifierTypes.LUCKY_EGG, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 3 : 0),
+    new WeightedModifierType(modifierTypes.EXP_BALANCE, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 1 : 0)
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 3),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 2),
-    modifierTypes.MINI_BLACK_HOLE
+    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, 1)
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
   [ModifierTier.LUXURY]: [
-    modifierTypes.GOLDEN_EXP_CHARM,
-    modifierTypes.GOLDEN_POKEBALL
+    new WeightedModifierType(modifierTypes.GOLDEN_EXP_CHARM, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 1 : 0),
+      new WeightedModifierType(modifierTypes.GOLDEN_POKEBALL, 1)
   ].map(m => { m.setTier(ModifierTier.LUXURY); return m; }),
 };
 
 const enemyModifierPool = {
   [ModifierTier.COMMON]: [
-    modifierTypes.BERRY
+    new WeightedModifierType(modifierTypes.BERRY, 1)
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [
-    modifierTypes.BASE_STAT_BOOSTER
+    new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 1)
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(new AttackTypeBoosterModifierTypeGenerator(), 5),
     new WeightedModifierType(modifierTypes.LUCKY_EGG, 2),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
-    new WeightedModifierType(modifierTypes.SHELL_BELL, 1)
+    new WeightedModifierType(modifierTypes.LEFTOVERS, 4),
+    new WeightedModifierType(modifierTypes.SHELL_BELL, 4),
+    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, 1)
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
 };
 
@@ -649,20 +653,17 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], player?: bool
     ignoredIndexes[t] = [];
     const thresholds = new Map();
     let i = 0;
-    pool[t].reduce((total: integer, modifierType: ModifierType | WeightedModifierType) => {
-      if (modifierType instanceof WeightedModifierType) {
-        const weightedModifierType = modifierType as WeightedModifierType;
-        const weight = weightedModifierType.weight instanceof Function
-        ? (weightedModifierType.weight as Function)(party)
-        : weightedModifierType.weight as integer;
-        if (weight)
-          total += weight;
-        else {
-          ignoredIndexes[t].push(i++);
-          return total;
-        }
-      } else
-        total++;
+    pool[t].reduce((total: integer, modifierType: WeightedModifierType) => {
+      const weightedModifierType = modifierType as WeightedModifierType;
+      const weight = weightedModifierType.weight instanceof Function
+      ? (weightedModifierType.weight as Function)(party)
+      : weightedModifierType.weight as integer;
+      if (weight)
+        total += weight;
+      else {
+        ignoredIndexes[t].push(i++);
+        return total;
+      }
       thresholds.set(total, i++);
       return total;
     }, 0);
@@ -679,7 +680,7 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], player?: bool
 
 export function getPlayerModifierTypeOptionsForWave(waveIndex: integer, count: integer, party: PlayerPokemon[]): ModifierTypeOption[] {
   if (waveIndex % 10 === 0)
-    return modifierPool[ModifierTier.LUXURY].map(m => new ModifierTypeOption(m, false));
+    return modifierPool[ModifierTier.LUXURY].filter(m => !(m.weight instanceof Function) || m.weight(party)).map(m => new ModifierTypeOption(m.modifierType, false));
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
   new Array(count).fill(0).map(() => {
@@ -724,9 +725,7 @@ function getNewModifierTypeOption(party: Pokemon[], player?: boolean, tier?: Mod
   
   if (player)
     console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier])
-  let modifierType: ModifierType | WeightedModifierType = (player ? modifierPool : enemyModifierPool)[tier][index];
-  if (modifierType instanceof WeightedModifierType)
-    modifierType = (modifierType as WeightedModifierType).modifierType;
+  let modifierType: ModifierType = ((player ? modifierPool : enemyModifierPool)[tier][index]).modifierType;
   if (modifierType instanceof ModifierTypeGenerator) {
     modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
     if (modifierType === null) {

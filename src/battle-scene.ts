@@ -702,12 +702,20 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, playSound: boolean): Promise<boolean> {
+	addEnemyModifier(itemModifier: PokemonHeldItemModifier): Promise<void> {
+		return new Promise(resolve => {
+			itemModifier.add(this.enemyModifiers, false);
+			this.updateModifiers(false).then(() => resolve());
+		});
+	}
+
+	tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferStack: boolean, playSound: boolean): Promise<boolean> {
 		return new Promise(resolve => {
 			const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
+			const source = itemModifier.getPokemon(target.scene);
 			newItemModifier.pokemonId = target.id;
 			const matchingModifier = target.scene.findModifier(m => m instanceof PokemonHeldItemModifier
-				&& (m as PokemonHeldItemModifier).matchType(itemModifier)) as PokemonHeldItemModifier;
+				&& (m as PokemonHeldItemModifier).matchType(itemModifier), target.isPlayer()) as PokemonHeldItemModifier;
 			let removeOld = true;
 			if (matchingModifier) {
 				const maxStackCount = matchingModifier.getMaxStackCount();
@@ -715,15 +723,25 @@ export default class BattleScene extends Phaser.Scene {
 					resolve(false);
 					return;
 				}
-				const newStackCount = matchingModifier.stackCount + itemModifier.stackCount;
+				const newStackCount = matchingModifier.stackCount + (transferStack ? itemModifier.stackCount : 1);
 				if (newStackCount > maxStackCount) {
 					itemModifier.stackCount = newStackCount - maxStackCount;
 					newItemModifier.stackCount = maxStackCount;
 					removeOld = !itemModifier.stackCount;
 				}
-			}
-			if (!removeOld || this.removeModifier(itemModifier)) {
-				this.addModifier(newItemModifier, playSound).then(() => resolve(true));
+			} else if (!transferStack)
+				removeOld = !(--itemModifier.stackCount);
+			if (!removeOld || this.removeModifier(itemModifier, !source.isPlayer())) {
+				const addModifier = () => {
+					if (target.isPlayer())
+						this.addModifier(newItemModifier, playSound).then(() => resolve(true));
+					else
+						this.addEnemyModifier(newItemModifier).then(() => resolve(true));
+				};
+				if (source.isPlayer() !== target.isPlayer())
+					this.updateModifiers(source.isPlayer()).then(() => addModifier());
+				else
+					addModifier();
 				return;
 			}
 			resolve(false);

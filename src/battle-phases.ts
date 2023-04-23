@@ -18,7 +18,7 @@ import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } fr
 import { Biome, biomeLinks } from "./data/biome";
 import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, DamagingTrapTag, TrappedTag as TrapTag } from "./data/battler-tag";
+import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, TrappedTag as TrapTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
@@ -93,7 +93,7 @@ export class EncounterPhase extends BattlePhase {
   }
 
   doEncounter() {
-    if (startingWave > 10) {
+    if (startingWave > 10 && startingLevel < 100) {
       for (let m = 0; m < Math.floor(startingWave / 10); m++)
         this.scene.addModifier(getPlayerModifierTypeOptionsForWave((m + 1) * 10, 1, this.scene.getParty())[0].type.newModifier());
     }
@@ -292,8 +292,6 @@ export class SummonPhase extends BattlePhase {
     this.scene.field.add(pokeball);
 
     const playerPokemon = this.scene.getPlayerPokemon();
-
-    this.scene.applyModifiers(HeldItemTransferModifier, true, this.scene);
 
     pokeball.setVisible(true);
     this.scene.tweens.add({
@@ -627,6 +625,8 @@ export class TurnEndPhase extends BattlePhase {
 
       this.scene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
+      this.scene.applyModifiers(HeldItemTransferModifier, pokemon.isPlayer(), pokemon);
+
       pokemon.battleSummonData.turnCount++;
     };
 
@@ -902,11 +902,13 @@ abstract class MoveEffectPhase extends PokemonPhase {
         const result = !isProtected ? target.apply(user, this.move) : MoveResult.NO_EFFECT;
         ++user.turnData.hitCount;
         user.getMoveHistory().push({ move: this.move.moveId, result: result, virtual: this.move.virtual });
-        applyMoveAttrs(MoveEffectAttr, user, target, this.move.getMove());
-        // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
-        if (!isProtected && target.hp && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
-          applyMoveAttrs(MoveHitEffectAttr, user, target, this.move.getMove());
-        this.end();
+        if (result !== MoveResult.NO_EFFECT && result !== MoveResult.FAILED) {
+          applyMoveAttrs(MoveEffectAttr, user, target, this.move.getMove());
+          // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
+          if (!isProtected && target.hp && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
+            applyMoveAttrs(MoveHitEffectAttr, user, target, this.move.getMove());
+          this.end();
+        }
       });
     });
   }
@@ -1732,7 +1734,7 @@ export class AttemptCapturePhase extends BattlePhase {
             this.scene.sound.play('pb_catch');
             this.scene.time.delayedCall(17, () => this.pokeball.setTexture('pb', `${pokeballAtlasKey}`));
 
-            const doShake = this.pokeballType !== PokeballType.MASTER_BALL ? () => {
+            const doShake = pokeballMultiplier > -1 ? () => {
               let shakeCount = 0;
               const pbX = this.pokeball.x;
               const shakeCounter = this.scene.tweens.addCounter({
@@ -1885,10 +1887,11 @@ export class SelectModifierPhase extends BattlePhase {
               const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
                 && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
               const itemModifier = itemModifiers[itemIndex];
-              this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true).then(success => {
+              this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, true).then(success => {
                 if (success) {
                   this.scene.ui.clearText();
                   this.scene.ui.setMode(Mode.MESSAGE);
+                  super.end();
                 } else
                   this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
               });
@@ -1910,9 +1913,9 @@ export class SelectModifierPhase extends BattlePhase {
               const modifier = !isMoveModifier
                 ? modifierType.newModifier(party[slotIndex])
                 : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
-              this.scene.addModifier(modifier, true).then(() => super.end());
               this.scene.ui.clearText();
               this.scene.ui.setMode(Mode.MESSAGE);
+              this.scene.addModifier(modifier, true).then(() => super.end());
             });
           } else
             this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
