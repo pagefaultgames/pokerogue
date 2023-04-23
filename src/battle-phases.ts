@@ -42,7 +42,7 @@ export class SelectStarterPhase extends BattlePhase {
         const starterGender = starter.species.malePercent !== null
           ? !starter.female ? Gender.MALE : Gender.FEMALE
           : Gender.GENDERLESS;
-        const starterPokemon = new PlayerPokemon(this.scene, starter.species, startingLevel, starter.formIndex, starterGender, starter.shiny);
+        const starterPokemon = new PlayerPokemon(this.scene, starter.species, startingLevel, 0, starter.formIndex, starterGender, starter.shiny);
         starterPokemon.setVisible(false);
         party.push(starterPokemon);
         loadPokemonAssets.push(starterPokemon.loadAssets());
@@ -1642,7 +1642,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
   }
 
   start() {
-    if (!this.skipAnim && this.getPokemon().getHpRatio() < 1)
+    if (!this.skipAnim && this.getPokemon().hp && this.getPokemon().getHpRatio() < 1)
       super.start();
     else
       this.end();
@@ -1650,6 +1650,11 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
   end() {
     const pokemon = this.getPokemon();
+    
+    if (!this.getPokemon().hp) {
+      super.end();
+      return;
+    }
 
     const fullHp = pokemon.getHpRatio() >= 1;
 

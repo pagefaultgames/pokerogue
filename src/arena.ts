@@ -29,7 +29,7 @@ export class Arena {
   }
 
   randomSpecies(waveIndex: integer, level: integer, attempt?: integer): PokemonSpecies {
-    const isBoss = (waveIndex >= 100 || waveIndex % 10 === 0) && !!this.pokemonPool[BiomePoolTier.BOSS].length;
+    const isBoss = (level >= 100 || waveIndex % 10 === 0) && !!this.pokemonPool[BiomePoolTier.BOSS].length;
     const tierValue = Utils.randInt(!isBoss ? 512 : 64);
     let tier = !isBoss
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE

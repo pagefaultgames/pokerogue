@@ -630,7 +630,7 @@ const enemyModifierPool = {
     new WeightedModifierType(modifierTypes.LUCKY_EGG, 2),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
-    modifierTypes.SHELL_BELL
+    new WeightedModifierType(modifierTypes.SHELL_BELL, 1)
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
 };
 

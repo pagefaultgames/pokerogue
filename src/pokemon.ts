@@ -28,6 +28,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public name: string;
   public species: PokemonSpecies;
   public formIndex: integer;
+  public abilityIndex: integer;
   public shiny: boolean;
   public pokeball: PokeballType;
   protected battleInfo: BattleInfo;
@@ -51,7 +52,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon) {
+  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon) {
     super(scene, x, y);
     this.name = Utils.toPokemonUpperCase(species.name);
     this.species = species;
@@ -60,6 +61,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : new EnemyBattleInfo(scene);
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
+    this.abilityIndex = abilityIndex || (species.ability2 ? Utils.randInt(2) : 0);
     this.formIndex = formIndex || 0;
     if (gender !== undefined)
       this.gender = gender;
@@ -110,7 +112,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       if (this.shiny === undefined) {
         let shinyThreshold = new Utils.IntegerHolder(32);
-        this.scene.applyModifiers(ShinyRateBoosterModifier, this.isPlayer(), shinyThreshold);
+        this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
         console.log(shinyThreshold.value);
 
         this.shiny = (E ^ F) < shinyThreshold.value;
@@ -829,8 +831,8 @@ export default interface Pokemon {
 export class PlayerPokemon extends Pokemon {
   public compatibleTms: Moves[];
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, formIndex: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon) {
-    super(scene, 106, 148, species, level, formIndex, gender, shiny, dataSource);
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon) {
+    super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, dataSource);
     
     this.generateCompatibleTms();
   }
@@ -880,7 +882,7 @@ export class PlayerPokemon extends Pokemon {
     if (this.species.speciesId === Species.NINCADA && evolution.speciesId === Species.NINJASK) {
       const newEvolution = pokemonEvolutions[this.species.speciesId][1];
       if (newEvolution.condition.predicate(this)) {
-        const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.formIndex, this.gender, this.shiny);
+        const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny);
         this.scene.getParty().push(newPokemon);
         newPokemon.evolve(newEvolution);
       }
@@ -1004,7 +1006,7 @@ export class EnemyPokemon extends Pokemon {
     let ret: PlayerPokemon = null;
 
     if (party.length < 6) {
-      const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.formIndex, this.gender, this.shiny, this);
+      const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this);
       party.push(newPokemon);
       ret = newPokemon;
     }

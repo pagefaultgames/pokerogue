@@ -334,7 +334,7 @@ export default class BattleScene extends Phaser.Scene {
 		if (this.quickStart) {
 			for (let s = 0; s < 3; s++) {
 				const playerSpecies = getPokemonSpecies((getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP)).getSpeciesForLevel(startingLevel, true));
-				const playerPokemon = new PlayerPokemon(this, playerSpecies, startingLevel, 0);
+				const playerPokemon = new PlayerPokemon(this, playerSpecies, startingLevel, 0, 0);
 				playerPokemon.setVisible(false);
 				loadPokemonAssets.push(playerPokemon.loadAssets());
 
@@ -744,7 +744,7 @@ export default class BattleScene extends Phaser.Scene {
 		return new Promise(resolve => {
 			const waveIndex = this.currentBattle.waveIndex;
 			const chances = Math.ceil(waveIndex / 10);
-			const isBoss = waveIndex >= 100 || !(waveIndex % 10);
+			const isBoss = this.getEnemyPokemon().level >= 100 || !(waveIndex % 10);
 			let count = 0;
 			for (let c = 0; c < chances; c++) {
 				if (!Utils.randInt(!isBoss ? 12 : 4))
