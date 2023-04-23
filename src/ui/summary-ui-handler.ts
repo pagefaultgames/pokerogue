@@ -11,6 +11,8 @@ import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { getLevelTotalExp } from "../data/exp";
 import { BlendModes } from "phaser";
 import { Stat, getStatName } from "../data/pokemon-stat";
+import { abilities } from "../data/ability";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
 
 enum Page {
   PROFILE,
@@ -27,6 +29,7 @@ export default class SummaryUiHandler extends UiHandler {
   private summaryUiMode: SummaryUiMode;
 
   private summaryContainer: Phaser.GameObjects.Container;
+  private tabSprite: Phaser.GameObjects.Sprite;
   private numberText: Phaser.GameObjects.Text;
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private nameText: Phaser.GameObjects.Text;
@@ -73,6 +76,10 @@ export default class SummaryUiHandler extends UiHandler {
     const summaryBg = this.scene.add.image(0, 0, 'summary_bg');
     summaryBg.setOrigin(0, 1);
     this.summaryContainer.add(summaryBg);
+
+    this.tabSprite = this.scene.add.sprite(134, (-summaryBg.displayHeight) + 16, 'summary_tabs_1');
+    this.tabSprite.setOrigin(1, 1);
+    this.summaryContainer.add(this.tabSprite);
 
     this.numberText = addTextObject(this.scene, 17, -150, '000', TextStyle.SUMMARY);
     this.numberText.setOrigin(0, 1);
@@ -353,6 +360,8 @@ export default class SummaryUiHandler extends UiHandler {
         const forward = this.cursor < cursor;
         this.cursor = cursor;
 
+        this.tabSprite.setTexture(`summary_tabs_${this.cursor + 1}`);
+
         if (this.summaryPageContainer.visible) {
           this.transitioning = true;
           this.populatePageContainer(this.summaryPageTransitionContainer, forward ? cursor : cursor + 1);
@@ -399,6 +408,34 @@ export default class SummaryUiHandler extends UiHandler {
     pageBg.setTexture(this.getPageKey(page));
     
     switch (page) {
+      case Page.PROFILE:
+        const profileContainer = this.scene.add.container(0, -pageBg.height);
+        pageContainer.add(profileContainer);
+
+        const typeLabel = addTextObject(this.scene, 7, 28, 'TYPE/', TextStyle.WINDOW);
+        typeLabel.setOrigin(0, 0);
+        profileContainer.add(typeLabel);
+
+        const getTypeIcon = (index: integer, type: Type) => {
+          const typeIcon = this.scene.add.sprite(39 + 34 * index, 42, 'types', Type[type].toLowerCase());
+          typeIcon.setOrigin(0, 1);
+          return typeIcon;
+        };
+
+        profileContainer.add(getTypeIcon(0, this.pokemon.species.type1));
+        if (this.pokemon.species.type2)
+          profileContainer.add(getTypeIcon(1, this.pokemon.species.type2));
+
+        const ability = abilities[this.pokemon.species[`ability${!this.pokemon.abilityIndex ? '1' : '2'}`]];
+
+        const abilityNameText = addTextObject(this.scene, 7, 66, ability.name.toUpperCase(), TextStyle.SUMMARY);
+        abilityNameText.setOrigin(0, 1);
+        profileContainer.add(abilityNameText);
+
+        const abilityDescriptionText = addTextObject(this.scene, 7, 82, ability.description, TextStyle.WINDOW, { wordWrap: { width: 1212 } });
+        abilityDescriptionText.setOrigin(0, 1);
+        profileContainer.add(abilityDescriptionText);
+        break;
       case Page.STATS:
         const statsContainer = this.scene.add.container(0, -pageBg.height);
         pageContainer.add(statsContainer);
@@ -423,6 +460,16 @@ export default class SummaryUiHandler extends UiHandler {
           const statValue = addTextObject(this.scene, 120 + 88 * colIndex, 56 + 16 * rowIndex, statValueText, TextStyle.WINDOW);
           statValue.setOrigin(1, 0);
           statsContainer.add(statValue);
+        });
+
+        const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+          && (m as PokemonHeldItemModifier).pokemonId === this.pokemon.id, true) as PokemonHeldItemModifier[];
+        
+        itemModifiers.forEach((item, i) => {
+          const icon = item.getIcon(this.scene, true);
+
+          icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
+          statsContainer.add(icon);
         });
 
         const totalLvExp = getLevelTotalExp(this.pokemon.level, this.pokemon.species.growthRate);

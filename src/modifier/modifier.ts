@@ -3,7 +3,7 @@ import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../battle-phases
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { PokeballType } from "../data/pokeball";
-import Pokemon, { EnemyPokemon, PlayerPokemon } from "../pokemon";
+import Pokemon, { PlayerPokemon } from "../pokemon";
 import { Stat } from "../data/pokemon-stat";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from '../data/type';
@@ -111,7 +111,7 @@ export abstract class PersistentModifier extends Modifier {
     return 99;
   }
 
-  getIcon(scene: BattleScene): Phaser.GameObjects.Container {
+  getIcon(scene: BattleScene, forSummary?: boolean): Phaser.GameObjects.Container {
     const container = scene.add.container(0, 0);
 
     const item = scene.add.sprite(0, 12, 'items');
@@ -252,29 +252,32 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return super.shouldApply(args) && args.length && args[0] instanceof Pokemon && (this.pokemonId === -1 || (args[0] as Pokemon).id === this.pokemonId);
   }
 
-  getIcon(scene: BattleScene): Phaser.GameObjects.Container {
-    const container = scene.add.container(0, 0);
+  getIcon(scene: BattleScene, forSummary?: boolean): Phaser.GameObjects.Container {
+    const container = !forSummary ? scene.add.container(0, 0) : super.getIcon(scene);
 
-    const pokemon = this.getPokemon(scene);
-    const pokemonIcon = scene.add.sprite(0, 8, pokemon.species.getIconAtlasKey());
-    pokemonIcon.play(pokemon.getIconKey()).stop();
-    pokemonIcon.setOrigin(0, 0.5);
+    if (!forSummary) {
+      const pokemon = this.getPokemon(scene);
+      const pokemonIcon = scene.add.sprite(0, 8, pokemon.species.getIconAtlasKey());
+      pokemonIcon.play(pokemon.getIconKey()).stop();
+      pokemonIcon.setOrigin(0, 0.5);
 
-    container.add(pokemonIcon);
+      container.add(pokemonIcon);
 
-    const item = scene.add.sprite(16, this.virtualStackCount ? 8 : 16, 'items');
-    item.setScale(0.5);
-    item.setOrigin(0, 0.5);
-    item.setTexture('items', this.type.iconImage);
-    container.add(item);
+      const item = scene.add.sprite(16, this.virtualStackCount ? 8 : 16, 'items');
+      item.setScale(0.5);
+      item.setOrigin(0, 0.5);
+      item.setTexture('items', this.type.iconImage);
+      container.add(item);
 
-    const stackText = this.getIconStackText(scene);
-    if (stackText)
-      container.add(stackText);
+      const stackText = this.getIconStackText(scene);
+      if (stackText)
+        container.add(stackText);
 
-    const virtualStackText = this.getIconStackText(scene, true);
-    if (virtualStackText)
-      container.add(virtualStackText);
+      const virtualStackText = this.getIconStackText(scene, true);
+      if (virtualStackText)
+        container.add(virtualStackText);
+    } else
+      container.setScale(0.5);
 
     return container;
   }

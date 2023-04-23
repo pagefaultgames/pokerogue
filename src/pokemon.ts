@@ -22,6 +22,7 @@ import { Species } from './data/species';
 import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { WeakenTypeTag as WeakenMoveTypeTag } from './data/arena-tag';
+import { Biome } from './data/biome';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -829,11 +830,15 @@ export default interface Pokemon {
 }
 
 export class PlayerPokemon extends Pokemon {
+  public metBiome: Biome;
+  public metLevel: integer;
   public compatibleTms: Moves[];
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, dataSource);
     
+    this.metBiome = scene.arena.biomeType;
+    this.metLevel = level;
     this.generateCompatibleTms();
   }
 

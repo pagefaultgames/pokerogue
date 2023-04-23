@@ -183,6 +183,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('summary_moves_overlay_row', 'ui');
 		this.loadImage('summary_moves_overlay_pp', 'ui');
 		this.loadAtlas('summary_moves_cursor', 'ui');
+		for (let t = 1; t <= 3; t++)
+			this.loadImage(`summary_tabs_${t}`, 'ui');
 
 		for (let o = 1; o <= 3; o++)
 			this.loadImage(`option_select_window_${o}`, 'ui');
