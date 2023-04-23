@@ -4,7 +4,7 @@ import UiHandler from "./uiHandler";
 import * as Utils from "../utils";
 import { PlayerPokemon } from "../pokemon";
 import { Type } from "../data/type";
-import { TextStyle, addTextObject } from "./text";
+import { TextStyle, addTextObject, getTextColor } from "./text";
 import Move, { MoveCategory } from "../data/move";
 import { getPokeballAtlasKey } from "../data/pokeball";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
@@ -30,6 +30,7 @@ export default class SummaryUiHandler extends UiHandler {
 
   private summaryContainer: Phaser.GameObjects.Container;
   private tabSprite: Phaser.GameObjects.Sprite;
+  private shinyOverlay: Phaser.GameObjects.Image;
   private numberText: Phaser.GameObjects.Text;
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private nameText: Phaser.GameObjects.Text;
@@ -80,6 +81,10 @@ export default class SummaryUiHandler extends UiHandler {
     this.tabSprite = this.scene.add.sprite(134, (-summaryBg.displayHeight) + 16, 'summary_tabs_1');
     this.tabSprite.setOrigin(1, 1);
     this.summaryContainer.add(this.tabSprite);
+
+    this.shinyOverlay = this.scene.add.image(6, -54, 'summary_overlay_shiny');
+    this.shinyOverlay.setOrigin(0, 1);
+    this.summaryContainer.add(this.shinyOverlay);
 
     this.numberText = addTextObject(this.scene, 17, -150, '000', TextStyle.SUMMARY);
     this.numberText.setOrigin(0, 1);
@@ -152,7 +157,11 @@ export default class SummaryUiHandler extends UiHandler {
     this.summaryContainer.setVisible(true);
     this.cursor = -1;
 
+    this.shinyOverlay.setVisible(this.pokemon.shiny);
+
     this.numberText.setText(Utils.padInt(this.pokemon.species.speciesId, 3));
+    this.numberText.setColor(getTextColor(!this.pokemon.shiny ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
+    this.numberText.setShadowColor(getTextColor(!this.pokemon.shiny ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
 
     this.pokemonSprite.play(this.pokemon.getSpriteKey());
     this.pokemon.cry();
