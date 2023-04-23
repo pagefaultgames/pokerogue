@@ -4,7 +4,7 @@
 			"image": "summary_moves_cursor.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 156,
+				"w": 208,
 				"h": 32
 			},
 			"scale": 1,
@@ -14,19 +14,19 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 146,
+						"w": 208,
 						"h": 16
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 156,
+						"w": 208,
 						"h": 16
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 156,
+						"w": 208,
 						"h": 16
 					}
 				},
@@ -35,19 +35,19 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 156,
+						"w": 208,
 						"h": 16
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 156,
+						"w": 208,
 						"h": 16
 					},
 					"frame": {
 						"x": 0,
 						"y": 16,
-						"w": 156,
+						"w": 208,
 						"h": 16
 					}
 				}

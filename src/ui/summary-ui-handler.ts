@@ -322,10 +322,10 @@ export default class SummaryUiHandler extends UiHandler {
       this.moveCursorObj.setVisible(true);
       this.moveCursorBlinkTimer = this.scene.time.addEvent({
         loop: true,
-        delay: 600,
+        delay: new Utils.FixedInt(600) as unknown as integer,
         callback: () => {
           this.moveCursorObj.setVisible(false);
-          this.scene.time.delayedCall(100, () => {
+          this.scene.time.delayedCall(new Utils.FixedInt(100) as unknown as integer, () => {
             if (!this.moveCursorObj)
               return;
             this.moveCursorObj.setVisible(true);
@@ -414,6 +414,15 @@ export default class SummaryUiHandler extends UiHandler {
           const newMoveTypeIcon = this.scene.add.sprite(0, 0, 'types', Type[this.newMove.type].toLowerCase());
           newMoveTypeIcon.setOrigin(0, 1);
           this.extraMoveRowContainer.add(newMoveTypeIcon);
+
+          const ppOverlay = this.scene.add.image(163, -1, 'summary_moves_overlay_pp');
+          ppOverlay.setOrigin(0, 1);
+          this.extraMoveRowContainer.add(ppOverlay);
+
+          const pp = Utils.padInt(this.newMove.pp, 2, '  ');
+          const ppText = addTextObject(this.scene, 173, 1, `${pp}/${pp}`, TextStyle.WINDOW);
+          ppText.setOrigin(0, 1);
+          this.extraMoveRowContainer.add(ppText);
         }
 
         this.moveRowsContainer = this.scene.add.container(0, 0);
@@ -433,16 +442,31 @@ export default class SummaryUiHandler extends UiHandler {
           const moveText = addTextObject(this.scene, 35, 0, move ? move.getName() : '-', TextStyle.SUMMARY);
           moveText.setOrigin(0, 1);
           moveRowContainer.add(moveText);
+
+          const ppOverlay = this.scene.add.image(163, -1, 'summary_moves_overlay_pp');
+          ppOverlay.setOrigin(0, 1);
+          moveRowContainer.add(ppOverlay);
+
+          const ppText = addTextObject(this.scene, 173, 1, '--/--', TextStyle.WINDOW);
+          ppText.setOrigin(0, 1);
+
+          if (move) {
+            const maxPP = move.getMove().pp + move.ppUp;
+            const pp = maxPP - move.ppUsed;
+            ppText.setText(`${Utils.padInt(pp, 2, '  ')}/${Utils.padInt(maxPP, 2, '  ')}`);
+          }
+
+          moveRowContainer.add(ppText);
         }
 
-        this.moveDescriptionText = addTextObject(this.scene, 2, 84, '', TextStyle.WINDOW, { wordWrap: { width: 900 } });
+        this.moveDescriptionText = addTextObject(this.scene, 2, 84, '', TextStyle.WINDOW, { wordWrap: { width: 1212 } });
         this.movesContainer.add(this.moveDescriptionText);
 
         const maskRect = this.scene.make.graphics({});
         maskRect.setScale(6);
         maskRect.fillStyle(0xFFFFFF);
         maskRect.beginPath();
-        maskRect.fillRect(112, 130, 150, 46);
+        maskRect.fillRect(112, 130, 202, 46);
 
         const moveDescriptionTextMask = maskRect.createGeometryMask();
 
