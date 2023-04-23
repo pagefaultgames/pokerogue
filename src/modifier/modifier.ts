@@ -404,6 +404,30 @@ export class HitHealModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class LevelIncrementBoosterModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier) {
+    return modifier instanceof LevelIncrementBoosterModifier;
+  }
+
+  clone() {
+    return new LevelIncrementBoosterModifier(this.type, this.stackCount);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args[0] instanceof Utils.IntegerHolder;
+  }
+
+  apply(args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value += this.getStackCount();
+
+    return true;
+  }
+}
+
 export class BerryModifier extends PokemonHeldItemModifier {
   public berryType: BerryType;
   public consumed: boolean;
@@ -587,7 +611,10 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as PlayerPokemon;
-    pokemon.level++;
+    const levelCount = new Utils.IntegerHolder(1);
+    pokemon.scene.applyModifiers(LevelIncrementBoosterModifier, true, levelCount);
+
+    pokemon.level += levelCount.value;
     if (pokemon.level <= 100) {
       pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
       pokemon.levelExp = 0;
