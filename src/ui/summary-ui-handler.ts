@@ -8,9 +8,13 @@ import { TextStyle, addTextObject } from "./text";
 import Move, { MoveCategory } from "../data/move";
 import { getPokeballAtlasKey } from "../data/pokeball";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
+import { getLevelTotalExp } from "../data/exp";
+import { BlendModes } from "phaser";
+import { Stat, getStatName } from "../data/pokemon-stat";
 
 enum Page {
   PROFILE,
+  STATS,
   MOVES
 }
 
@@ -385,14 +389,75 @@ export default class SummaryUiHandler extends UiHandler {
       page = this.cursor;
 
     if (pageContainer.getAll().length > 1) {
-      if (this.movesContainer)
-        this.movesContainer.removeAll(true);
+      pageContainer.each((o: Phaser.GameObjects.GameObject) => {
+        if (o instanceof Phaser.GameObjects.Container)
+          o.removeAll(true);
+      });
       pageContainer.removeBetween(1, undefined, true);
     }
     const pageBg =  (pageContainer.getAt(0) as Phaser.GameObjects.Sprite);
     pageBg.setTexture(this.getPageKey(page));
     
     switch (page) {
+      case Page.STATS:
+        const statsContainer = this.scene.add.container(0, -pageBg.height);
+        pageContainer.add(statsContainer);
+
+        const stats = Utils.getEnumValues(Stat) as Stat[];
+
+        stats.forEach((stat, s) => {
+          const statName = stat !== Stat.HP
+            ? getStatName(stat)
+            : 'HP';
+          const rowIndex = s % 3;
+          const colIndex = Math.floor(s / 3);
+
+          const statLabel = addTextObject(this.scene, 27 + 115 * colIndex, 56 + 16 * rowIndex, statName, TextStyle.SUMMARY);
+          statLabel.setOrigin(0.5, 0);
+          statsContainer.add(statLabel);
+
+          const statValueText = stat !== Stat.HP
+            ? this.pokemon.stats[s].toString()
+            : `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`;
+
+          const statValue = addTextObject(this.scene, 120 + 88 * colIndex, 56 + 16 * rowIndex, statValueText, TextStyle.WINDOW);
+          statValue.setOrigin(1, 0);
+          statsContainer.add(statValue);
+        });
+
+        const totalLvExp = getLevelTotalExp(this.pokemon.level, this.pokemon.species.growthRate);
+        const expRatio = this.pokemon.level < 100 ? this.pokemon.levelExp / totalLvExp : 0;
+
+        const expLabel = addTextObject(this.scene, 6, 112, 'EXP. POINTS', TextStyle.SUMMARY);
+        expLabel.setOrigin(0, 0);
+        statsContainer.add(expLabel);
+
+        const nextLvExpLabel = addTextObject(this.scene, 6, 128, 'NEXT LV.', TextStyle.SUMMARY);
+        nextLvExpLabel.setOrigin(0, 0);
+        statsContainer.add(nextLvExpLabel);
+
+        const expText = addTextObject(this.scene, 208, 112, this.pokemon.exp.toString(), TextStyle.WINDOW);
+        expText.setOrigin(1, 0);
+        statsContainer.add(expText);
+
+        const nextLvExpText = addTextObject(this.scene, 208, 128, (totalLvExp - this.pokemon.levelExp).toString(), TextStyle.WINDOW);
+        nextLvExpText.setOrigin(1, 0);
+        statsContainer.add(nextLvExpText);
+
+        const expOverlay = this.scene.add.image(140, 145, 'summary_stats_overlay_exp');
+        expOverlay.setOrigin(0, 0);
+        statsContainer.add(expOverlay);
+
+        const expMaskRect = this.scene.make.graphics({});
+        expMaskRect.setScale(6);
+        expMaskRect.fillStyle(0xFFFFFF);
+        expMaskRect.beginPath();
+        expMaskRect.fillRect(140 + pageContainer.x, 145 + pageContainer.y + 21, Math.floor(expRatio * 64), 3);
+
+        const expMask = expMaskRect.createGeometryMask();
+
+        expOverlay.setMask(expMask);
+        break;
       case Page.MOVES:
         this.movesContainer = this.scene.add.container(5, -pageBg.height + 26);
         pageContainer.add(this.movesContainer);
@@ -462,13 +527,13 @@ export default class SummaryUiHandler extends UiHandler {
         this.moveDescriptionText = addTextObject(this.scene, 2, 84, '', TextStyle.WINDOW, { wordWrap: { width: 1212 } });
         this.movesContainer.add(this.moveDescriptionText);
 
-        const maskRect = this.scene.make.graphics({});
-        maskRect.setScale(6);
-        maskRect.fillStyle(0xFFFFFF);
-        maskRect.beginPath();
-        maskRect.fillRect(112, 130, 202, 46);
+        const moveDescriptionTextMaskRect = this.scene.make.graphics({});
+        moveDescriptionTextMaskRect.setScale(6);
+        moveDescriptionTextMaskRect.fillStyle(0xFFFFFF);
+        moveDescriptionTextMaskRect.beginPath();
+        moveDescriptionTextMaskRect.fillRect(112, 130, 202, 46);
 
-        const moveDescriptionTextMask = maskRect.createGeometryMask();
+        const moveDescriptionTextMask = moveDescriptionTextMaskRect.createGeometryMask();
 
         this.moveDescriptionText.setMask(moveDescriptionTextMask);
         break;
