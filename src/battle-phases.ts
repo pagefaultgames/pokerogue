@@ -1150,8 +1150,8 @@ export class WeatherEffectPhase extends CommonAnimPhase {
     if (this.weather.isDamaging()) {
       const inflictDamage = (pokemon: Pokemon) => {
         this.scene.queueMessage(getWeatherDamageMessage(this.weather.weatherType, pokemon));
-        pokemon.damage(Math.ceil(pokemon.getMaxHp() / 16));
         this.scene.unshiftPhase(new DamagePhase(this.scene, pokemon.isPlayer()));
+        pokemon.damage(Math.ceil(pokemon.getMaxHp() / 16));
       };
 
       const playerPokemon = this.scene.getPlayerPokemon();

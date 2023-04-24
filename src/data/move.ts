@@ -746,9 +746,9 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
 
     const recoilDamage = Math.max(Math.floor(user.turnData.damageDealt / 4), 1);
-    user.damage(recoilDamage);
     user.scene.unshiftPhase(new DamagePhase(user.scene, user.isPlayer(), MoveResult.OTHER));
     user.scene.queueMessage(getPokemonMessage(user, ' is hit\nwith recoil!'));
+    user.damage(recoilDamage);
 
     return true;
   }
@@ -763,8 +763,8 @@ export class SacrificialAttr extends MoveEffectAttr {
     if (!super.apply(user, target, move, args))
       return false;
 
-    user.damage(user.getMaxHp());
     user.scene.unshiftPhase(new DamagePhase(user.scene, user.isPlayer(), MoveResult.OTHER));
+    user.damage(user.getMaxHp());
 
     return true;
   }
@@ -959,7 +959,7 @@ export class ClearWeatherAttr extends MoveEffectAttr {
 
 export class OneHitKOAttr extends MoveHitEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    target.hp = 0;
+    target.damage(target.hp, true);
     user.scene.queueMessage('It\'s a one-hit KO!');
     return true;
   }

@@ -533,6 +533,9 @@ const modifierTypes = {
   BERRY_POUCH: () => new ModifierType('BERRY POUCH', 'Adds a 25% chance that a used berry will not be consumed',
     (type, _args) => new Modifiers.PreserveBerryModifier(type)),
 
+  FOCUS_BAND: () => new PokemonHeldItemModifierType('FOCUS BAND', 'Adds a 10% chance to survive with 1 HP after being damaged enough to faint',
+    (type, args) => new Modifiers.SurviveDamageModifier(type, (args[0] as Pokemon).id)),
+
   LEFTOVERS: () => new PokemonHeldItemModifierType('LEFTOVERS', 'Heals 1/16 of a POKéMON\'s maximum HP every turn',
     (type, args) => new Modifiers.TurnHealModifier(type, (args[0] as Pokemon).id)),
   SHELL_BELL: () => new PokemonHeldItemModifierType('SHELL BELL', 'Heals 1/8 of a POKéMON\'s dealt damage',
@@ -613,6 +616,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.CANDY_JAR, 3),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 1),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 1),
+    new WeightedModifierType(modifierTypes.FOCUS_BAND, 3),
     new WeightedModifierType(modifierTypes.LEFTOVERS, 2),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 2),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 3),
@@ -641,6 +645,7 @@ const enemyModifierPool = {
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5),
+    new WeightedModifierType(modifierTypes.FOCUS_BAND, 2),
     new WeightedModifierType(modifierTypes.LUCKY_EGG, 2),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [

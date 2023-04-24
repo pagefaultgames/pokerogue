@@ -8,7 +8,7 @@ import * as Utils from './utils';
 import { Type, getTypeDamageMultiplier } from './data/type';
 import { getLevelTotalExp } from './data/exp';
 import { Stat } from './data/pokemon-stat';
-import { AttackTypeBoosterModifier, PokemonBaseStatModifier, ShinyRateBoosterModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
+import { AttackTypeBoosterModifier, PokemonBaseStatModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { Gender } from './data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
@@ -522,11 +522,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
 
         if (damage) {
-          this.damage(damage);
-          source.turnData.damageDealt += damage;
-          this.scene.unshiftPhase(new DamagePhase(this.scene, this.isPlayer(), result as DamageResult))
+          this.scene.unshiftPhase(new DamagePhase(this.scene, this.isPlayer(), result as DamageResult));
           if (isCritical)
             this.scene.queueMessage('A critical hit!');
+          this.damage(damage);
+          source.turnData.damageDealt += damage;
         }
 
         switch (result) {
@@ -549,9 +549,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return result;
   }
 
-  damage(damage: integer): void {
+  damage(damage: integer, preventEndure?: boolean): void {
     if (!this.hp)
       return;
+
+    if (this.hp > 1 && this.hp - damage <= 0 && !preventEndure) {
+      const surviveDamage = new Utils.BooleanHolder(false);
+      this.scene.applyModifiers(SurviveDamageModifier, this.isPlayer(), this, surviveDamage);
+      if (surviveDamage.value)
+        damage = this.hp - 1;
+    }
 
     this.hp = Math.max(this.hp - damage, 0);
     if (!this.hp) {

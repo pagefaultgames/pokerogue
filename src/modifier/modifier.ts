@@ -349,6 +349,41 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class SurviveDamageModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier) {
+    return modifier instanceof SurviveDamageModifier;
+  }
+
+  clone() {
+    return new SurviveDamageModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.BooleanHolder;
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+    const surviveDamage = args[1] as Utils.BooleanHolder;
+
+    if (!surviveDamage.value && (this.getStackCount() === this.getMaxStackCount() || Utils.randInt(10) < this.getStackCount())) {
+      surviveDamage.value = true;
+
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` hung on\nusing its ${this.type.name}!`));
+    }
+
+    return true;
+  }
+
+  getMaxStackCount(): number {
+    return 5;
+  }
+}
+
 export class TurnHealModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -374,7 +409,7 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
   }
 
   getMaxStackCount(): number {
-    return 16;
+    return 4;
   }
 }
 
@@ -403,7 +438,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
   }
 
   getMaxStackCount(): number {
-    return 16;
+    return 4;
   }
 }
 
@@ -732,6 +767,10 @@ export class HealingBoosterModifier extends PersistentModifier {
     healingMultiplier.value = Math.floor(healingMultiplier.value);
 
     return true;
+  }
+
+  getMaxStackCount(): number {
+    return 4;
   }
 }
 
