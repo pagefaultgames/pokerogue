@@ -304,7 +304,7 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
         if (this.bgY !== undefined)
             tweenProps['y'] = (this.bgY * 0.5) - 284;
         if (this.opacity !== undefined)
-            tweenProps['alpha'] = this.opacity / 255;
+            tweenProps['alpha'] = (this.opacity || 0) / 255;
         if (Object.keys(tweenProps).length) {
             scene.tweens.add(Object.assign({
                 targets: moveAnim.bgSprite,
@@ -328,16 +328,17 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     execute(scene: BattleScene, moveAnim: MoveAnim): integer {
         if (moveAnim.bgSprite)
             moveAnim.bgSprite.destroy();
-        moveAnim.bgSprite = scene.add.tileSprite(this.bgX - 320, this.bgY - 284, 896, 576, this.resourceName);
+        moveAnim.bgSprite = this.resourceName
+            ? scene.add.tileSprite(this.bgX - 320, this.bgY - 284, 896, 576, this.resourceName)
+            : scene.add.rectangle(this.bgX - 320, this.bgY - 284, 896, 576, 0);
         moveAnim.bgSprite.setOrigin(0, 0);
         moveAnim.bgSprite.setScale(1.25);
-        moveAnim.bgSprite.setAlpha(0);
+        moveAnim.bgSprite.setAlpha(this.opacity / 255);
         scene.field.add(moveAnim.bgSprite);
         scene.field.moveBelow(moveAnim.bgSprite, scene.getEnemyPokemon() || scene.getPlayerPokemon());
 
         scene.tweens.add({
             targets: moveAnim.bgSprite,
-            alpha: 1,
             duration: this.duration * 3,
             useFrames: true
         });
@@ -508,7 +509,7 @@ export abstract class BattleAnim {
     public user: Pokemon;
     public target: Pokemon;
     public sprites: Phaser.GameObjects.Sprite[];
-    public bgSprite: Phaser.GameObjects.TileSprite;
+    public bgSprite: Phaser.GameObjects.TileSprite | Phaser.GameObjects.Rectangle;
 
     constructor(user: Pokemon, target: Pokemon) {
         this.user = user;
@@ -670,6 +671,7 @@ export abstract class BattleAnim {
                             moveSprite.setScale(scaleX, scaleY);
 
                             moveSprite.setAlpha(frame.opacity / 255);
+                            moveSprite.setVisible(frame.visible);
                             moveSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
                             break;
                     }
@@ -784,6 +786,7 @@ export class MoveAnim extends BattleAnim {
 
     getGraphicScale(): number {
         switch (this.move) {
+            case Moves.SEISMIC_TOSS:
             case Moves.FISSURE:
                 return 1.25;
         }
@@ -864,9 +867,9 @@ export function populateAnims() {
                         for (let tf = 0; tf < focusFramesData.length; tf++) {
                             const values = focusFramesData[tf].replace(/      \- /g, '').split('\n');
                             const targetFrame = new AnimFrame(parseFloat(values[0]), parseFloat(values[1]), parseFloat(values[2]), parseFloat(values[11]), parseFloat(values[3]),
-                                values[4] === '1', values[6] === '1', parseInt(values[5]), parseInt(values[7]), parseInt(values[8]), parseInt(values[12]), parseInt(values[13]),
+                                parseInt(values[4]) === 1, parseInt(values[6]) === 1, parseInt(values[5]), parseInt(values[7]), parseInt(values[8]), parseInt(values[12]), parseInt(values[13]),
                                 parseInt(values[14]), parseInt(values[15]), parseInt(values[16]), parseInt(values[17]), parseInt(values[18]), parseInt(values[19]),
-                                parseInt(values[21]), parseInt(values[22]), parseInt(values[23]), parseInt(values[24]), values[20] === '1', parseInt(values[25]), parseInt(values[26]) as AnimFocus);
+                                parseInt(values[21]), parseInt(values[22]), parseInt(values[23]), parseInt(values[24]), parseInt(values[20]) === 1, parseInt(values[25]), parseInt(values[26]) as AnimFocus);
                             anim.frames[fd].push(targetFrame);
                         }
                     }

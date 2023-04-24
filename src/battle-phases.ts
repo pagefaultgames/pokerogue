@@ -559,7 +559,7 @@ export class CommandPhase extends BattlePhase {
           }, null, true);
         break;
       case Command.RUN:
-        //this.scene.unshiftPhase(new MoveAnimTestPhase(this.scene, [ Moves.TELEPORT ]));
+        //this.scene.unshiftPhase(new MoveAnimTestPhase(this.scene, [ Moves.SEISMIC_TOSS ]));
         //success = true;
         break;
     }
