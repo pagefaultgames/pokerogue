@@ -907,8 +907,8 @@ abstract class MoveEffectPhase extends PokemonPhase {
           // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
           if (!isProtected && target.hp && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
             applyMoveAttrs(MoveHitEffectAttr, user, target, this.move.getMove());
-          this.end();
         }
+        this.end();
       });
     });
   }
