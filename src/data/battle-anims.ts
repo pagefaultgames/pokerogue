@@ -502,6 +502,8 @@ function loadAnimAssets(scene: BattleScene, anims: AnimConfig[], startLoad?: boo
 interface GraphicFrameData {
     x: number,
     y: number,
+    scaleX: number,
+    scaleY: number,
     angle: number
 }
 
@@ -534,7 +536,6 @@ export abstract class BattleAnim {
         const user = !isOppAnim ? this.user : this.target;
         const target = !isOppAnim ? this.target : this.user;
         const isReverseCoords = this.isReverseCoords();
-        const graphicScale = this.getGraphicScale();
 
         const userInitialX = user.x;
         const userInitialY = user.y;
@@ -549,21 +550,27 @@ export abstract class BattleAnim {
             if (frame.target !== AnimFrameTarget.GRAPHIC)
                 continue;
 
+            const isGlobal = isGlobalGraphic(this.getAnim().graphic, frame.graphicFrame);
             const xProgress = frame.focus !== AnimFocus.SCREEN ? Math.min(Math.max(frame.x, 0) / 128, 1) : 0;
             const initialX = targetInitialX;
             const initialY = targetInitialY;
             let xOffset = (!isReverseCoords ? (userInitialX - targetInitialX) : (targetInitialX - userInitialX));
             let yOffset = (!isReverseCoords ? (userInitialY - targetInitialY) : (targetInitialY - userInitialY));
             const ySpriteOffset = ((userHalfHeight * (1 - xProgress)) + (targetHalfHeight * xProgress)) * -1;
-            if (graphicScale > 1) {
-                xOffset -= ((scene.game.canvas.width / 6) * (graphicScale - 1)) / 2;
-                yOffset -= ((scene.game.canvas.height / 6) * (graphicScale - 1)) / 2;
+            const globalXOffset = !isGlobal ? 0 : -114;
+            const globalYOffset = 0;
+            if (isGlobal) {
+                xOffset -= ((scene.game.canvas.width / 6) * 0.25) / 2;
+                yOffset -= ((scene.game.canvas.height / 6) * 0.25) / 2;
             }
-            const x = initialX + xOffset * (!isReverseCoords ? 1 : -1) + (frame.x * graphicScale) * (!isReverseCoords ? 1 : -1);
+            const globalScale = !isGlobal ? 1 : 1.25;
+            const scaleX = globalScale * (frame.zoomX / 100) *(isReverseCoords === frame.mirror ? 1 : -1);
+            const scaleY = globalScale * (frame.zoomY / 100);
+            const x = (initialX + xOffset * (!isReverseCoords ? 1 : -1) + (frame.x * globalScale) * (!isReverseCoords ? 1 : -1));
             const y = ((initialY + yOffset * (!isReverseCoords || frame.focus === AnimFocus.USER || frame.focus === AnimFocus.SCREEN ? 1 : -1)
-                + (frame.y * graphicScale) * (!isReverseCoords || (frame.focus !== AnimFocus.USER_TARGET) ? 1 : -1) + ySpriteOffset));
+                + (frame.y * globalScale) * (!isReverseCoords || (frame.focus !== AnimFocus.USER_TARGET) ? 1 : -1) + ySpriteOffset));
             const angle = -frame.angle * (!isReverseCoords ? 1 : -1);
-            ret.set(g++, { x: x, y: y, angle: angle });
+            ret.set(g++, { x: x + globalXOffset, y: y + globalYOffset, scaleX: scaleX, scaleY: scaleY, angle: angle });
         }
 
         return ret;
@@ -662,13 +669,11 @@ export abstract class BattleAnim {
                             }
                             moveSprite.setFrame(frame.graphicFrame);
                             //console.log(AnimFocus[frame.focus]);
-                            const graphicScale = this.getGraphicScale();
                             
-                            moveSprite.setPosition(frameData.get(graphicIndex).x, frameData.get(graphicIndex).y);
-                            moveSprite.setAngle(frameData.get(graphicIndex).angle);
-                            const scaleX = graphicScale * (isReverseCoords === frame.mirror ? 1 : -1);
-                            const scaleY = graphicScale;
-                            moveSprite.setScale(scaleX, scaleY);
+                            const graphicFrameData = frameData.get(graphicIndex);
+                            moveSprite.setPosition(graphicFrameData.x, graphicFrameData.y);
+                            moveSprite.setAngle(graphicFrameData.angle);
+                            moveSprite.setScale(graphicFrameData.scaleX,  graphicFrameData.scaleY);
 
                             moveSprite.setAlpha(frame.opacity / 255);
                             moveSprite.setVisible(frame.visible);
@@ -783,16 +788,6 @@ export class MoveAnim extends BattleAnim {
     isReverseCoords(): boolean {
         return !this.user.isPlayer() === !this.isOppAnim();
     }
-
-    getGraphicScale(): number {
-        switch (this.move) {
-            case Moves.SEISMIC_TOSS:
-            case Moves.FISSURE:
-                return 1.25;
-        }
-        
-        return 1;
-    }
 }
 
 export class MoveChargeAnim extends MoveAnim {
@@ -809,6 +804,24 @@ export class MoveChargeAnim extends MoveAnim {
             ? chargeAnims.get(this.chargeAnim) as AnimConfig
             : chargeAnims.get(this.chargeAnim)[this.user.isPlayer() ? 0 : 1] as AnimConfig;
     }
+}
+
+function isGlobalGraphic(graphic: string, graphicFrame: integer): boolean {
+    switch (graphic) {
+        case 'PRAS- Fissure':
+            return true;
+        case 'PRAS- Seismic Toss':
+            switch (graphicFrame) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    return false;
+            }
+            return true;
+    }
+    
+    return false;
 }
 
 export function populateAnims() {
