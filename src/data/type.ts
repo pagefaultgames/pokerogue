@@ -19,7 +19,9 @@ export enum Type {
   FAIRY
 };
 
-export function getTypeDamageMultiplier(attackType: integer, defType: integer) {
+export type TypeDamageMultiplier = 0 | 0.25 | 0.5 | 1 | 2 | 4;
+
+export function getTypeDamageMultiplier(attackType: integer, defType: integer): TypeDamageMultiplier {
   switch (defType) {
     case Type.NORMAL:
       switch (attackType) {

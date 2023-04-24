@@ -1,7 +1,7 @@
 import BattleScene, { startingLevel, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, ConditionalMoveAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveFlags, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveFlags, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -24,6 +24,7 @@ import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
+import { ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
 
 export class SelectStarterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
@@ -117,6 +118,8 @@ export class EncounterPhase extends BattlePhase {
   end() {
     if (this.scene.getEnemyPokemon().shiny)
       this.scene.unshiftPhase(new ShinySparklePhase(this.scene, false));
+
+    this.scene.arena.applyTags(ArenaTrapTag, this.scene.getEnemyPokemon());
       
     // TODO: Remove
     //this.scene.unshiftPhase(new SelectModifierPhase(this.scene));
@@ -329,6 +332,7 @@ export class SummonPhase extends BattlePhase {
                 playerPokemon.getSprite().clearTint();
                 playerPokemon.resetSummonData();
                 this.scene.time.delayedCall(1000, () => this.end());
+                this.scene.arena.applyTags(ArenaTrapTag, playerPokemon);
               }
             });
           }
@@ -504,8 +508,11 @@ export class CommandPhase extends BattlePhase {
         case Command.RUN:
           return true;
       }
+
+      const speedDelayed = new Utils.BooleanHolder(playerSpeed < enemySpeed);
+      this.scene.arena.applyTags(TrickRoomTag, speedDelayed);
       
-      return playerSpeed < enemySpeed || (playerSpeed === enemySpeed && Utils.randInt(2) === 1);
+      return speedDelayed.value || (playerSpeed === enemySpeed && Utils.randInt(2) === 1);
     };
 
     let playerMove: PokemonMove;
@@ -633,7 +640,10 @@ export class TurnEndPhase extends BattlePhase {
     const playerSpeed = playerPokemon?.getBattleStat(Stat.SPD) || 0;
     const enemySpeed = enemyPokemon?.getBattleStat(Stat.SPD) || 0;
 
-    const isDelayed = playerSpeed < enemySpeed || (playerSpeed === enemySpeed && Utils.randInt(2) === 1);
+    const speedDelayed = new Utils.BooleanHolder(playerSpeed < enemySpeed);
+    this.scene.arena.applyTags(TrickRoomTag, speedDelayed);
+
+    const isDelayed = speedDelayed.value || (playerSpeed === enemySpeed && Utils.randInt(2) === 1);
 
     if (!isDelayed)
       handlePokemon(playerPokemon);
@@ -767,15 +777,15 @@ export abstract class MovePhase extends BattlePhase {
       if (!moveQueue.length || !moveQueue.shift().ignorePP)
         this.move.ppUsed++;
 
-      const failed = new Utils.BooleanHolder(false);
-      applyMoveAttrs(ConditionalMoveAttr, this.pokemon, target, this.move.getMove(), failed);
-      if (!failed.value && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
-        failed.value = true;
-      if (failed.value) {
+      let success = this.move.getMove().applyConditions(this.pokemon, target, this.move.getMove());
+      if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
+        success = false;
+      if (success)
+        this.scene.unshiftPhase(this.getEffectPhase());
+      else {
         this.pokemon.getMoveHistory().push({ move: this.move.moveId, result: MoveResult.FAILED, virtual: this.move.virtual });
         this.scene.queueMessage('But it failed!');
-      } else
-        this.scene.unshiftPhase(this.getEffectPhase());
+      }
       
       this.end();
     };
@@ -1175,12 +1185,14 @@ export class WeatherEffectPhase extends CommonAnimPhase {
 export class ObtainStatusEffectPhase extends PokemonPhase {
   private statusEffect: StatusEffect;
   private cureTurn: integer;
+  private sourceText: string;
 
-  constructor(scene: BattleScene, player: boolean, statusEffect: StatusEffect, cureTurn?: integer) {
+  constructor(scene: BattleScene, player: boolean, statusEffect: StatusEffect, cureTurn?: integer, sourceText?: string) {
     super(scene, player);
 
     this.statusEffect = statusEffect;
     this.cureTurn = cureTurn;
+    this.sourceText = sourceText;
   }
 
   start() {
@@ -1191,7 +1203,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
           pokemon.status.cureTurn = this.cureTurn;
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect - 1), pokemon).play(this.scene, () => {
-          this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectObtainText(this.statusEffect)));
+          this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectObtainText(this.statusEffect, this.sourceText)));
           if (pokemon.status.isPostTurn())
             this.scene.pushPhase(new PostTurnStatusEffectPhase(this.scene, this.player));
           this.end();

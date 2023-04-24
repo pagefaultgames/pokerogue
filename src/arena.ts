@@ -8,7 +8,7 @@ import { Weather, WeatherType, getWeatherClearMessage, getWeatherStartMessage } 
 import { CommonAnimPhase } from "./battle-phases";
 import { CommonAnim } from "./data/battle-anims";
 import { Type } from "./data/type";
-import Move from "./data/move";
+import Move, { Moves } from "./data/move";
 import { ArenaTag, ArenaTagType, getArenaTag } from "./data/arena-tag";
 
 export class Arena {
@@ -224,14 +224,14 @@ export class Arena {
     tags.forEach(t => t.apply(args));
 	}
 
-  addTag(tagType: ArenaTagType, turnCount: integer): boolean {
+  addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): boolean {
     const existingTag = this.getTag(tagType);
     if (existingTag) {
       existingTag.onOverlap(this);
       return false;
     }
 
-    const newTag = getArenaTag(tagType, turnCount || 0);
+    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId);
     this.tags.push(newTag);
     newTag.onAdd(this);
 

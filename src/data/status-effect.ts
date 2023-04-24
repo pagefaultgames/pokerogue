@@ -32,20 +32,21 @@ export class Status {
   }
 }
 
-export function getStatusEffectObtainText(statusEffect: StatusEffect): string {
+export function getStatusEffectObtainText(statusEffect: StatusEffect, sourceText?: string): string {
+  const sourceClause = sourceText ? ` ${statusEffect !== StatusEffect.SLEEP ? 'by' : 'from'} ${sourceText}` : '';
   switch (statusEffect) {
     case StatusEffect.POISON:
-      return '\nwas poisoned!';
+      return `\nwas poisoned${sourceClause}!`;
     case StatusEffect.TOXIC:
-      return '\nwas badly poisoned!';
+      return `\nwas badly poisoned${sourceClause}!`;
     case StatusEffect.PARALYSIS:
-      return ' is paralyzed!\nIt may be unable to move!';
+      return ` was paralyzed${sourceClause}!\nIt may be unable to move!`;
     case StatusEffect.SLEEP:
-      return '\nfell asleep!';
+      return `\nfell asleep${sourceClause}!`;
     case StatusEffect.FREEZE:
-      return '\nwas frozen solid!';
+      return `\nwas frozen solid${sourceClause}!`;
     case StatusEffect.BURN:
-      return '\nwas burned!';
+      return `\nwas burned${sourceClause}!`;
   }
 
   return '';

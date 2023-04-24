@@ -48,15 +48,15 @@ export class BattlerTag {
   public tagType: BattlerTagType;
   public lapseType: BattlerTagLapseType;
   public turnCount: integer;
-  public sourceId: integer;
   public sourceMove: Moves;
+  public sourceId?: integer;
 
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer, sourceId?: integer, sourceMove?: Moves) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer, sourceMove: Moves, sourceId?: integer) {
     this.tagType = tagType;
     this.lapseType = lapseType;
     this.turnCount = turnCount;
-    this.sourceId = sourceId;
     this.sourceMove = sourceMove;
+    this.sourceId = sourceId;
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -73,6 +73,10 @@ export class BattlerTag {
     return --this.turnCount > 0;
   }
 
+  isSourceLinked(): boolean {
+    return false;
+  }
+
   getMoveName(): string {
     return this.sourceMove
       ? allMoves[this.sourceMove].name
@@ -81,8 +85,8 @@ export class BattlerTag {
 }
 
 export class RechargingTag extends BattlerTag {
-  constructor() {
-    super(BattlerTagType.RECHARGING, BattlerTagLapseType.MOVE, 1);
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.RECHARGING, BattlerTagLapseType.MOVE, 1, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -102,8 +106,8 @@ export class RechargingTag extends BattlerTag {
 }
 
 export class TrappedTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer, sourceId: integer, sourceMove: Moves) {
-    super(tagType, lapseType, turnCount, sourceId, sourceMove);
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, turnCount: integer, sourceMove: Moves, sourceId: integer) {
+    super(tagType, lapseType, turnCount, sourceMove, sourceId);
   }
   
   canAdd(pokemon: Pokemon): boolean {
@@ -122,14 +126,18 @@ export class TrappedTag extends BattlerTag {
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` was freed\nfrom ${this.getMoveName()}!`));
   }
 
+  isSourceLinked(): boolean {
+    return true;
+  }
+
   getTrapMessage(pokemon: Pokemon): string {
     return getPokemonMessage(pokemon, ' can no\nlonger escape!');
   }
 }
 
 export class FlinchedTag extends BattlerTag {
-  constructor() {
-    super(BattlerTagType.FLINCHED, BattlerTagLapseType.MOVE, 0);
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.FLINCHED, BattlerTagLapseType.MOVE, 0, sourceMove);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -143,8 +151,8 @@ export class FlinchedTag extends BattlerTag {
 }
 
 export class ConfusedTag extends BattlerTag {
-  constructor(turnCount: integer) {
-    super(BattlerTagType.CONFUSED, BattlerTagLapseType.MOVE, turnCount);
+  constructor(turnCount: integer, sourceMove: Moves) {
+    super(BattlerTagType.CONFUSED, BattlerTagLapseType.MOVE, turnCount, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -190,7 +198,7 @@ export class ConfusedTag extends BattlerTag {
 
 export class SeedTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.SEEDED, BattlerTagLapseType.AFTER_MOVE, 1);
+    super(BattlerTagType.SEEDED, BattlerTagLapseType.AFTER_MOVE, 1, Moves.LEECH_SEED);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -217,7 +225,7 @@ export class SeedTag extends BattlerTag {
 
 export class NightmareTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.NIGHTMARE, BattlerTagLapseType.AFTER_MOVE, 1);
+    super(BattlerTagType.NIGHTMARE, BattlerTagLapseType.AFTER_MOVE, 1, Moves.NIGHTMARE);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -250,7 +258,7 @@ export class NightmareTag extends BattlerTag {
 
 export class IngrainTag extends TrappedTag {
   constructor(sourceId: integer) {
-    super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, sourceId, Moves.INGRAIN);
+    super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, Moves.INGRAIN, sourceId);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -270,7 +278,7 @@ export class IngrainTag extends TrappedTag {
 
 export class AquaRingTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.AQUA_RING, BattlerTagLapseType.TURN_END, 1, undefined, Moves.AQUA_RING);
+    super(BattlerTagType.AQUA_RING, BattlerTagLapseType.TURN_END, 1, Moves.AQUA_RING, undefined);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -291,7 +299,7 @@ export class AquaRingTag extends BattlerTag {
 
 export class DrowsyTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.DROWSY, BattlerTagLapseType.TURN_END, 2);
+    super(BattlerTagType.DROWSY, BattlerTagLapseType.TURN_END, 2, Moves.YAWN);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -313,8 +321,8 @@ export class DrowsyTag extends BattlerTag {
 export abstract class DamagingTrapTag extends TrappedTag {
   private commonAnim: CommonAnim;
 
-  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: integer, sourceId: integer, sourceMove: Moves) {
-    super(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceId, sourceMove);
+  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: integer, sourceMove: Moves, sourceId: integer) {
+    super(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove, sourceId);
 
     this.commonAnim = commonAnim;
   }
@@ -341,7 +349,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
 
 export class BindTag extends DamagingTrapTag {
   constructor(turnCount: integer, sourceId: integer) {
-    super(BattlerTagType.BIND, CommonAnim.BIND, turnCount, sourceId, Moves.BIND);
+    super(BattlerTagType.BIND, CommonAnim.BIND, turnCount, Moves.BIND, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -351,7 +359,7 @@ export class BindTag extends DamagingTrapTag {
 
 export class WrapTag extends DamagingTrapTag {
   constructor(turnCount: integer, sourceId: integer) {
-    super(BattlerTagType.WRAP, CommonAnim.WRAP, turnCount, sourceId, Moves.WRAP);
+    super(BattlerTagType.WRAP, CommonAnim.WRAP, turnCount, Moves.WRAP, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -360,8 +368,8 @@ export class WrapTag extends DamagingTrapTag {
 }
 
 export abstract class VortexTrapTag extends DamagingTrapTag {
-  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: integer, sourceId: integer, sourceMove: Moves) {
-    super(tagType, commonAnim, turnCount, sourceId, sourceMove);
+  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: integer, sourceMove: Moves, sourceId: integer) {
+    super(tagType, commonAnim, turnCount, sourceMove, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -371,19 +379,19 @@ export abstract class VortexTrapTag extends DamagingTrapTag {
 
 export class FireSpinTag extends VortexTrapTag {
   constructor(turnCount: integer, sourceId: integer) {
-    super(BattlerTagType.FIRE_SPIN, CommonAnim.FIRE_SPIN, turnCount, sourceId, Moves.FIRE_SPIN);
+    super(BattlerTagType.FIRE_SPIN, CommonAnim.FIRE_SPIN, turnCount, Moves.FIRE_SPIN, sourceId);
   }
 }
 
 export class WhirlpoolTag extends VortexTrapTag {
   constructor(turnCount: integer, sourceId: integer) {
-    super(BattlerTagType.WHIRLPOOL, CommonAnim.WHIRLPOOL, turnCount, sourceId, Moves.WHIRLPOOL);
+    super(BattlerTagType.WHIRLPOOL, CommonAnim.WHIRLPOOL, turnCount, Moves.WHIRLPOOL, sourceId);
   }
 }
 
 export class ClampTag extends DamagingTrapTag {
   constructor(turnCount: integer, sourceId: integer) {
-    super(BattlerTagType.CLAMP, CommonAnim.CLAMP, turnCount, sourceId, Moves.CLAMP);
+    super(BattlerTagType.CLAMP, CommonAnim.CLAMP, turnCount, Moves.CLAMP, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -393,7 +401,7 @@ export class ClampTag extends DamagingTrapTag {
 
 export class SandTombTag extends DamagingTrapTag {
   constructor(turnCount: integer, sourceId: integer) {
-    super(BattlerTagType.SAND_TOMB, CommonAnim.SAND_TOMB, turnCount, sourceId, Moves.SAND_TOMB);
+    super(BattlerTagType.SAND_TOMB, CommonAnim.SAND_TOMB, turnCount, Moves.SAND_TOMB, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -403,7 +411,7 @@ export class SandTombTag extends DamagingTrapTag {
 
 export class MagmaStormTag extends DamagingTrapTag {
   constructor(turnCount: integer, sourceId: integer) {
-    super(BattlerTagType.MAGMA_STORM, CommonAnim.MAGMA_STORM, turnCount, sourceId, Moves.MAGMA_STORM);
+    super(BattlerTagType.MAGMA_STORM, CommonAnim.MAGMA_STORM, turnCount, Moves.MAGMA_STORM, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -412,8 +420,8 @@ export class MagmaStormTag extends DamagingTrapTag {
 }
 
 export class ProtectedTag extends BattlerTag {
-  constructor() {
-    super(BattlerTagType.PROTECTED, BattlerTagLapseType.CUSTOM, 0);
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.PROTECTED, BattlerTagLapseType.CUSTOM, 0, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -434,8 +442,8 @@ export class ProtectedTag extends BattlerTag {
 }
 
 export class HideSpriteTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, turnCount: integer) {
-    super(tagType, BattlerTagLapseType.MOVE_EFFECT, turnCount);
+  constructor(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves) {
+    super(tagType, BattlerTagLapseType.MOVE_EFFECT, turnCount, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -454,14 +462,14 @@ export class HideSpriteTag extends BattlerTag {
   }
 }
 
-export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceId: integer, sourceMove: Moves): BattlerTag {
+export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
     case BattlerTagType.RECHARGING:
-      return new RechargingTag();
+      return new RechargingTag(sourceMove);
     case BattlerTagType.FLINCHED:
-      return new FlinchedTag();
+      return new FlinchedTag(sourceMove);
     case BattlerTagType.CONFUSED:
-      return new ConfusedTag(turnCount);
+      return new ConfusedTag(turnCount, sourceMove);
     case BattlerTagType.SEEDED:
       return new SeedTag();
     case BattlerTagType.NIGHTMARE:
@@ -473,7 +481,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.DROWSY:
       return new DrowsyTag();
     case BattlerTagType.TRAPPED:
-      return new TrappedTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceId, sourceMove);
+      return new TrappedTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
     case BattlerTagType.BIND:
       return new BindTag(turnCount, sourceId);
     case BattlerTagType.WRAP:
@@ -489,17 +497,17 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.MAGMA_STORM:
       return new MagmaStormTag(turnCount, sourceId);
     case BattlerTagType.PROTECTED:
-      return new ProtectedTag();
+      return new ProtectedTag(sourceMove);
     case BattlerTagType.FLYING:
     case BattlerTagType.UNDERGROUND:
-      return new HideSpriteTag(tagType, turnCount);
+      return new HideSpriteTag(tagType, turnCount, sourceMove);
     case BattlerTagType.NO_CRIT:
-      return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount);
+      return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
     case BattlerTagType.BYPASS_SLEEP:
-      return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount);
+      return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
     case BattlerTagType.IGNORE_FLYING:
-      return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount);
+      return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
     default:
-        return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount);
+        return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
   }
 }

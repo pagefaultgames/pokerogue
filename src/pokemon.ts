@@ -5,7 +5,7 @@ import Move, { StatChangeAttr, HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedD
 import { pokemonLevelMoves } from './data/pokemon-level-moves';
 import { default as PokemonSpecies, PokemonSpeciesForm, getPokemonSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Type, getTypeDamageMultiplier } from './data/type';
+import { Type, TypeDamageMultiplier, getTypeDamageMultiplier } from './data/type';
 import { getLevelTotalExp } from './data/exp';
 import { Stat } from './data/pokemon-stat';
 import { AttackTypeBoosterModifier, PokemonBaseStatModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
@@ -21,7 +21,7 @@ import { BattlerTag, BattlerTagLapseType, BattlerTagType, getBattlerTag } from '
 import { Species } from './data/species';
 import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
-import { WeakenTypeTag as WeakenMoveTypeTag } from './data/arena-tag';
+import { WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
@@ -348,6 +348,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getTypes().indexOf(type) > -1;
   }
 
+  getAttackMoveEffectiveness(moveType: Type): TypeDamageMultiplier {
+    const types = this.getTypes();
+    return getTypeDamageMultiplier(moveType, types[0]) * (types.length ? getTypeDamageMultiplier(moveType, types[1]) : 1) as TypeDamageMultiplier;
+  }
+
   getEvolution(): SpeciesEvolution {
     if (!pokemonEvolutions.hasOwnProperty(this.species.speciesId))
       return null;
@@ -568,14 +573,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  addTag(tagType: BattlerTagType, turnCount?: integer, sourceId?: integer, sourceMove?: Moves): boolean {
+  addTag(tagType: BattlerTagType, turnCount?: integer, sourceMove?: Moves, sourceId?: integer): boolean {
     const existingTag = this.getTag(tagType);
     if (existingTag) {
       existingTag.onOverlap(this);
       return false;
     }
 
-    const newTag = getBattlerTag(tagType, turnCount || 0, sourceId, sourceMove);
+    const newTag = getBattlerTag(tagType, turnCount || 0, sourceMove, sourceId);
 
     if (newTag.canAdd(this)) {
       this.summonData.tags.push(newTag);
@@ -951,8 +956,7 @@ export class EnemyPokemon extends Pokemon {
             if (move.category === MoveCategory.STATUS)
               moveScore++;
             else {
-              const targetTypes = target.getTypes();
-              const effectiveness = getTypeDamageMultiplier(move.type, targetTypes[0]) * (targetTypes.length > 1 ? getTypeDamageMultiplier(move.type, targetTypes[1]) : 1);
+              const effectiveness = this.getAttackMoveEffectiveness(move.type);
               moveScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
               if (moveScore) {
                 if (move.category === MoveCategory.PHYSICAL) {
