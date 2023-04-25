@@ -559,7 +559,7 @@ export class CommandPhase extends BattlePhase {
           }, null, true);
         break;
       case Command.RUN:
-        //this.scene.unshiftPhase(new MoveAnimTestPhase(this.scene, [ Moves.SEISMIC_TOSS ]));
+        //this.scene.unshiftPhase(new MoveAnimTestPhase(this.scene));
         //success = true;
         break;
     }
@@ -1048,7 +1048,8 @@ export class MoveAnimTestPhase extends BattlePhase {
     if (moveId === undefined) {
       this.playMoveAnim(this.moveQueue.slice(0), true);
       return;
-    }
+    } else if (player)
+      console.log(Moves[moveId]);
 
     initMoveAnim(moveId).then(() => {
       loadMoveAnimAssets(this.scene, [ moveId ], true)

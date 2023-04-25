@@ -4674,7 +4674,7 @@
         },
         {
           "frameIndex": 12,
-          "resourceName": "Overheat1.ogg",
+          "resourceName": "PRSFX- Overheat1.wav",
           "volume": 100,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -9398,7 +9398,7 @@
         },
         {
           "frameIndex": 12,
-          "resourceName": "Overheat1.ogg",
+          "resourceName": "PRSFX- Overheat1.wav",
           "volume": 100,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { Biome } from './data/biome';
-import UI, { Mode } from './ui/ui';
+import UI from './ui/ui';
 import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, SelectStarterPhase, MessagePhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from './data/pokemon-species';
@@ -384,8 +384,6 @@ export default class BattleScene extends Phaser.Scene {
 		]).then(() => {
 			if (enableAuto)
 				initAutoPlay.apply(this);
-			
-			this.pokeballCounts[PokeballType.POKEBALL] += 5;
 
 			this.newBattle();
 
@@ -444,6 +442,7 @@ export default class BattleScene extends Phaser.Scene {
 
 	reset(): void {
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
+		this.pokeballCounts[PokeballType.POKEBALL] += 5;
 
 		this.modifiers = [];
 		this.enemyModifiers = [];

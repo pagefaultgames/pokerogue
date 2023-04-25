@@ -136,8 +136,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           icon.setScale(0.5);
           icon.setOrigin(0, 0);
           icon.play(species.getIconKey(dexEntry?.female, dexEntry?.formIndex)).stop();
-          if (!dexEntry)
-            icon.setTintFill(0);
+          icon.setTintFill(0);
           this.starterSelectGenIconContainers[g].add(icon);
           s++;
         }
@@ -183,6 +182,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     show(args: any[]): void {
       if (args.length >= 1 && args[0] instanceof Function) {
         super.show(args);
+
+        for (let g = 0; g < this.genSpecies.length; g++) {
+          this.genSpecies[g].forEach((species, s) => {
+            const dexEntry = this.scene.gameData.getDefaultDexEntry(species);
+            const icon = this.starterSelectGenIconContainers[g].getAt(s) as Phaser.GameObjects.Sprite;
+            if (dexEntry)
+              icon.clearTint();
+          });
+        }
 
         this.starterSelectCallback = args[0] as StarterSelectCallback;
 

@@ -557,7 +557,7 @@ export abstract class BattleAnim {
             let xOffset = (!isReverseCoords ? (userInitialX - targetInitialX) : (targetInitialX - userInitialX));
             let yOffset = (!isReverseCoords ? (userInitialY - targetInitialY) : (targetInitialY - userInitialY));
             const ySpriteOffset = ((userHalfHeight * (1 - xProgress)) + (targetHalfHeight * xProgress)) * -1;
-            const globalXOffset = !isGlobal ? 0 : -114;
+            const globalXOffset = 0;//!isGlobal ? 0 : -114;
             const globalYOffset = 0;
             if (isGlobal) {
                 xOffset -= ((scene.game.canvas.width / 6) * 0.25) / 2;

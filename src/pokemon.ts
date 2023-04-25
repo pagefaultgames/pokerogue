@@ -296,7 +296,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         value = Math.min(value + this.level + 10, 99999);
         if (this.hp > value || this.hp === undefined)
           this.hp = value;
-        else {
+        else if (this.hp) {
           const lastMaxHp = this.getMaxHp();
           if (lastMaxHp && value > lastMaxHp)
             this.hp += value - lastMaxHp;
