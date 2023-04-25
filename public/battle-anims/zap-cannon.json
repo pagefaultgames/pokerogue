@@ -39,8 +39,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -381,418 +381,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 1,
-          "graphicFrame": 0,
-          "opacity": 255,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": true,
-          "priority": 1,
-          "focus": 3
-        },
-        {
-          "x": 26,
-          "y": 35,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 2,
-          "graphicFrame": 32,
-          "opacity": 100,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": false,
-          "priority": 1,
-          "focus": 3
-        },
-        {
-          "x": -27.5,
-          "y": 35.5,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 2,
-          "graphicFrame": 31,
-          "opacity": 100,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": false,
-          "priority": 1,
-          "focus": 3
-        },
-        {
-          "x": -27.5,
-          "y": -10,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 2,
-          "graphicFrame": 31,
-          "opacity": 255,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": false,
-          "priority": 1,
-          "focus": 3
-        },
-        {
-          "x": -27.5,
-          "y": 20,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 2,
-          "graphicFrame": 31,
-          "opacity": 255,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": false,
-          "priority": 1,
-          "focus": 3
-        },
-        {
-          "x": 26,
-          "y": -10,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 2,
-          "graphicFrame": 32,
-          "opacity": 255,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": false,
-          "priority": 1,
-          "focus": 3
-        },
-        {
-          "x": 26,
-          "y": 20,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 2,
-          "graphicFrame": 32,
-          "opacity": 255,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": false,
-          "priority": 1,
-          "focus": 3
-        },
-        {
-          "x": -27.5,
-          "y": -25,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 2,
-          "graphicFrame": 31,
-          "opacity": 100,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": false,
-          "priority": 1,
-          "focus": 3
-        },
-        {
-          "x": 26,
-          "y": -25,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 2,
-          "graphicFrame": 32,
-          "opacity": 100,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": false,
-          "priority": 1,
-          "focus": 3
-        },
-        {
-          "x": 26,
-          "y": 5,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 2,
-          "graphicFrame": 32,
-          "opacity": 100,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": false,
-          "priority": 1,
-          "focus": 3
-        },
-        {
-          "x": -27.5,
-          "y": 5,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 2,
-          "graphicFrame": 31,
-          "opacity": 100,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": false,
-          "priority": 1,
-          "focus": 3
-        }
-      ],
-      [
-        {
-          "x": 0,
-          "y": 0,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 0,
-          "graphicFrame": 0,
-          "opacity": 255,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            120,
-            120,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": true,
-          "priority": 1,
-          "focus": 3
-        },
-        {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -1201,8 +791,418 @@
           "focus": 3
         },
         {
+          "x": 128,
+          "y": -64,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 1,
+          "graphicFrame": 0,
+          "opacity": 255,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": true,
+          "priority": 1,
+          "focus": 3
+        },
+        {
+          "x": 26,
+          "y": 35,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 2,
+          "graphicFrame": 32,
+          "opacity": 100,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": false,
+          "priority": 1,
+          "focus": 3
+        },
+        {
+          "x": -27.5,
+          "y": 35.5,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 2,
+          "graphicFrame": 31,
+          "opacity": 100,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": false,
+          "priority": 1,
+          "focus": 3
+        },
+        {
+          "x": -27.5,
+          "y": -10,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 2,
+          "graphicFrame": 31,
+          "opacity": 255,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": false,
+          "priority": 1,
+          "focus": 3
+        },
+        {
+          "x": -27.5,
+          "y": 20,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 2,
+          "graphicFrame": 31,
+          "opacity": 255,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": false,
+          "priority": 1,
+          "focus": 3
+        },
+        {
+          "x": 26,
+          "y": -10,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 2,
+          "graphicFrame": 32,
+          "opacity": 255,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": false,
+          "priority": 1,
+          "focus": 3
+        },
+        {
+          "x": 26,
+          "y": 20,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 2,
+          "graphicFrame": 32,
+          "opacity": 255,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": false,
+          "priority": 1,
+          "focus": 3
+        },
+        {
+          "x": -27.5,
+          "y": -25,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 2,
+          "graphicFrame": 31,
+          "opacity": 100,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": false,
+          "priority": 1,
+          "focus": 3
+        },
+        {
+          "x": 26,
+          "y": -25,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 2,
+          "graphicFrame": 32,
+          "opacity": 100,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": false,
+          "priority": 1,
+          "focus": 3
+        },
+        {
+          "x": 26,
+          "y": 5,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 2,
+          "graphicFrame": 32,
+          "opacity": 100,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": false,
+          "priority": 1,
+          "focus": 3
+        },
+        {
+          "x": -27.5,
+          "y": 5,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 2,
+          "graphicFrame": 31,
+          "opacity": 100,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": false,
+          "priority": 1,
+          "focus": 3
+        }
+      ],
+      [
+        {
           "x": 0,
           "y": 0,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 0,
+          "graphicFrame": 0,
+          "opacity": 255,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            120,
+            120,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": true,
+          "priority": 1,
+          "focus": 3
+        },
+        {
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -1475,8 +1475,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -1613,8 +1613,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -1717,8 +1717,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -1821,8 +1821,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -1925,8 +1925,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -2029,8 +2029,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -2133,8 +2133,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -2237,8 +2237,8 @@
           "focus": 3
         },
         {
-          "x": -13,
-          "y": 0,
+          "x": 121.5,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -2341,8 +2341,8 @@
           "focus": 3
         },
         {
-          "x": 12,
-          "y": 0,
+          "x": 134,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -2411,8 +2411,8 @@
           "focus": 3
         },
         {
-          "x": -20,
-          "y": 0,
+          "x": 118,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -2481,8 +2481,8 @@
           "focus": 3
         },
         {
-          "x": 15,
-          "y": 0,
+          "x": 135.5,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -2551,8 +2551,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -2621,8 +2621,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -2691,8 +2691,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -2761,8 +2761,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -2831,8 +2831,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -2901,8 +2901,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -2971,8 +2971,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -3041,8 +3041,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -3111,8 +3111,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -3218,8 +3218,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -3560,8 +3560,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -3970,8 +3970,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -4380,8 +4380,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -4654,8 +4654,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -4792,8 +4792,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -4896,8 +4896,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -5000,8 +5000,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -5104,8 +5104,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -5208,8 +5208,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -5312,8 +5312,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -5382,7 +5382,7 @@
       ],
       [
         {
-          "x": 14,
+          "x": 7,
           "y": 0,
           "zoomX": 100,
           "zoomY": 100,
@@ -5416,8 +5416,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -5486,7 +5486,7 @@
       ],
       [
         {
-          "x": -14,
+          "x": -7,
           "y": 0,
           "zoomX": 100,
           "zoomY": 100,
@@ -5520,8 +5520,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -5556,7 +5556,7 @@
       ],
       [
         {
-          "x": 10,
+          "x": 5,
           "y": 0,
           "zoomX": 100,
           "zoomY": 100,
@@ -5590,8 +5590,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -5626,7 +5626,7 @@
       ],
       [
         {
-          "x": -14,
+          "x": -7,
           "y": 0,
           "zoomX": 100,
           "zoomY": 100,
@@ -5660,8 +5660,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -5696,7 +5696,7 @@
       ],
       [
         {
-          "x": 8,
+          "x": 4,
           "y": 0,
           "zoomX": 100,
           "zoomY": 100,
@@ -5730,8 +5730,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -5766,7 +5766,7 @@
       ],
       [
         {
-          "x": -2,
+          "x": -1,
           "y": 0,
           "zoomX": 100,
           "zoomY": 100,
@@ -5800,78 +5800,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 1,
-          "graphicFrame": 0,
-          "opacity": 255,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": true,
-          "priority": 1,
-          "focus": 3
-        }
-      ],
-      [
-        {
-          "x": 0,
-          "y": 0,
-          "zoomX": 100,
-          "zoomY": 100,
-          "angle": 0,
-          "mirror": false,
-          "visible": true,
-          "blendType": 0,
-          "target": 0,
-          "graphicFrame": 0,
-          "opacity": 255,
-          "color": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "tone": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "flash": [
-            0,
-            0,
-            0,
-            0
-          ],
-          "locked": true,
-          "priority": 1,
-          "focus": 3
-        },
-        {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -5940,8 +5870,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -6010,8 +5940,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -6080,8 +6010,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -6150,8 +6080,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -6220,8 +6150,8 @@
           "focus": 3
         },
         {
-          "x": 0,
-          "y": 0,
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,
@@ -6290,8 +6220,78 @@
           "focus": 3
         },
         {
+          "x": 128,
+          "y": -64,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 1,
+          "graphicFrame": 0,
+          "opacity": 255,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": true,
+          "priority": 1,
+          "focus": 3
+        }
+      ],
+      [
+        {
           "x": 0,
           "y": 0,
+          "zoomX": 100,
+          "zoomY": 100,
+          "angle": 0,
+          "mirror": false,
+          "visible": true,
+          "blendType": 0,
+          "target": 0,
+          "graphicFrame": 0,
+          "opacity": 255,
+          "color": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tone": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "flash": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "locked": true,
+          "priority": 1,
+          "focus": 3
+        },
+        {
+          "x": 128,
+          "y": -64,
           "zoomX": 100,
           "zoomY": 100,
           "angle": 0,

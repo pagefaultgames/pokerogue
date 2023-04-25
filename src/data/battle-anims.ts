@@ -12,8 +12,8 @@ export enum AnimFrameTarget {
 }
 
 enum AnimFocus {
-    USER = 1,
-    TARGET,
+    TARGET = 1,
+    USER,
     USER_TARGET,
     SCREEN
 }
@@ -172,8 +172,8 @@ class AnimFrame {
     constructor(x: number, y: number, zoomX: number, zoomY: number, angle: number, mirror: boolean, visible: boolean, blendType: AnimBlendType, pattern: integer,
         opacity: integer, colorR: integer, colorG: integer, colorB: integer, colorA: integer, toneR: integer, toneG: integer, toneB: integer, toneA: integer,
         flashR: integer, flashG: integer, flashB: integer, flashA: integer, locked: boolean, priority: integer, focus: AnimFocus) {
-        this.x = x;
-        this.y = y;
+        this.x = (x - 128) * 0.5;
+        this.y = (y - 224) * 0.5;
         this.zoomX = zoomX;
         this.zoomY = zoomY;
         this.angle = angle;
@@ -184,17 +184,10 @@ class AnimFrame {
         switch (pattern) {
             case -2:
                 target = AnimFrameTarget.TARGET;
-                this.x -= 384;
-                this.y -= 96;
                 break;
             case -1:
                 target = AnimFrameTarget.USER;
-                this.x -= 128;
-                this.y -= 224;
                 break;
-            default:
-                this.x = (this.x - 128) * 0.5;
-                this.y = (this.y - 224) * 0.5;
         }
         this.target = target;
         this.graphicFrame = pattern >= 0 ? pattern : 0;
@@ -507,11 +500,52 @@ interface GraphicFrameData {
     angle: number
 }
 
+const userFocusX = 106;
+const userFocusY = 148 - 32;
+const targetFocusX = 234;
+const targetFocusY = 84 - 32;
+
+function transformPoint(x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, x4: number, y4: number, px: number, py: number): [ x: number, y: number ] {
+    const yIntersect = yAxisIntersect(x1, y1, x2, y2, px, py);
+    return repositionY(x3, y3, x4, y4, yIntersect[0], yIntersect[1]);
+}
+
+function yAxisIntersect(x1: number, y1: number, x2: number, y2: number, px: number, py: number): [ x: number, y: number ] {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const x = dx === 0 ? 0 : (px - x1) / dx;
+    const y = dy === 0 ? 0 : (py - y1) / dy;
+    return [ x, y ];
+}
+
+function repositionY(x1: number, y1: number, x2: number, y2: number, tx: number, ty: number): [ x: number, y: number ]  {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const x = x1 + (tx * dx);
+    const y = y1 + (ty * dy);
+    return [ x, y ];
+}
+
+function isReversed(src1: number, src2: number, dst1: number, dst2: number) {
+    if (src1 === src2)
+        return false;
+    if (src1 < src2)
+        return dst1 > dst2;
+    return dst1 < dst2;
+}
+
+interface SpriteCache {
+    [key: integer]: Phaser.GameObjects.Sprite[]
+}
+
 export abstract class BattleAnim {
     public user: Pokemon;
     public target: Pokemon;
     public sprites: Phaser.GameObjects.Sprite[];
     public bgSprite: Phaser.GameObjects.TileSprite | Phaser.GameObjects.Rectangle;
+
+    private srcLine: number[];
+    private dstLine: number[];
 
     constructor(user: Pokemon, target: Pokemon) {
         this.user = user;
@@ -525,17 +559,16 @@ export abstract class BattleAnim {
 
     abstract isReverseCoords(): boolean;
 
-    getGraphicScale(): number {
-        return 1;
-    }
-
-    private getGraphicFrameData(scene: BattleScene, frames: AnimFrame[]): Map<integer, GraphicFrameData> {
-        const ret = new Map<integer, GraphicFrameData>();
+    private getGraphicFrameData(scene: BattleScene, frames: AnimFrame[]): Map<integer, Map<AnimFrameTarget, GraphicFrameData>> {
+        const ret: Map<integer, Map<AnimFrameTarget, GraphicFrameData>> = new Map([
+            [AnimFrameTarget.GRAPHIC, new Map<AnimFrameTarget, GraphicFrameData>() ],
+            [AnimFrameTarget.USER, new Map<AnimFrameTarget, GraphicFrameData>() ],
+            [AnimFrameTarget.TARGET, new Map<AnimFrameTarget, GraphicFrameData>() ]
+        ]);
 
         const isOppAnim = this.isOppAnim();
         const user = !isOppAnim ? this.user : this.target;
         const target = !isOppAnim ? this.target : this.user;
-        const isReverseCoords = this.isReverseCoords();
 
         const userInitialX = user.x;
         const userInitialY = user.y;
@@ -545,32 +578,41 @@ export abstract class BattleAnim {
         const targetHalfHeight = target.getSprite().displayHeight / 2;
 
         let g = 0;
+        let u = 0;
+        let t = 0;
 
         for (let frame of frames) {
-            if (frame.target !== AnimFrameTarget.GRAPHIC)
-                continue;
-
-            const isGlobal = isGlobalGraphic(this.getAnim().graphic, frame.graphicFrame);
-            const xProgress = frame.focus !== AnimFocus.SCREEN ? Math.min(Math.max(frame.x, 0) / 128, 1) : 0;
-            const initialX = targetInitialX;
-            const initialY = targetInitialY;
-            let xOffset = (!isReverseCoords ? (userInitialX - targetInitialX) : (targetInitialX - userInitialX));
-            let yOffset = (!isReverseCoords ? (userInitialY - targetInitialY) : (targetInitialY - userInitialY));
-            const ySpriteOffset = ((userHalfHeight * (1 - xProgress)) + (targetHalfHeight * xProgress)) * -1;
-            const globalXOffset = 0;//!isGlobal ? 0 : -114;
-            const globalYOffset = 0;
-            if (isGlobal) {
-                xOffset -= ((scene.game.canvas.width / 6) * 0.25) / 2;
-                yOffset -= ((scene.game.canvas.height / 6) * 0.25) / 2;
+            let x = frame.x + 106;
+            let y = frame.y + 116;
+            let scaleX = (frame.zoomX / 100) * (!frame.mirror ? 1 : -1);
+            let scaleY = (frame.zoomY / 100);
+            switch (frame.focus) {
+                case AnimFocus.TARGET:
+                    x += targetInitialX - targetFocusX;
+                    y += (targetInitialY - targetHalfHeight) - targetFocusY;
+                    break;
+                case AnimFocus.USER:
+                    x += userInitialX - userFocusX;
+                    y += (userInitialY - userHalfHeight) - userFocusY;
+                    break;
+                case AnimFocus.USER_TARGET:
+                    const point = transformPoint(this.srcLine[0], this.srcLine[1], this.srcLine[2], this.srcLine[3],
+                        this.dstLine[0], this.dstLine[1] - userHalfHeight, this.dstLine[2], this.dstLine[3] - targetHalfHeight, x, y);
+                    x = point[0];
+                    y = point[1];
+                    if (frame.target === AnimFrameTarget.GRAPHIC && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2]))
+                        scaleX = scaleX * -1;
+                    break;
             }
-            const globalScale = !isGlobal ? 1 : 1.25;
-            const scaleX = globalScale * (frame.zoomX / 100) *(isReverseCoords === frame.mirror ? 1 : -1);
-            const scaleY = globalScale * (frame.zoomY / 100);
-            const x = (initialX + xOffset * (!isReverseCoords ? 1 : -1) + (frame.x * globalScale) * (!isReverseCoords ? 1 : -1));
-            const y = ((initialY + yOffset * (!isReverseCoords || frame.focus === AnimFocus.USER || frame.focus === AnimFocus.SCREEN ? 1 : -1)
-                + (frame.y * globalScale) * (!isReverseCoords || (frame.focus !== AnimFocus.USER_TARGET) ? 1 : -1) + ySpriteOffset));
-            const angle = -frame.angle * (!isReverseCoords ? 1 : -1);
-            ret.set(g++, { x: x + globalXOffset, y: y + globalYOffset, scaleX: scaleX, scaleY: scaleY, angle: angle });
+                /*const xOffset = (!isReverseCoords ? (userInitialX - targetInitialX) : (targetInitialX - userInitialX));
+                const yOffset = (!isReverseCoords ? (userInitialY - targetInitialY) : (targetInitialY - userInitialY));
+                const ySpriteOffset = ((userHalfHeight * (1 - xProgress)) + (targetHalfHeight * xProgress)) * -1;
+                x = (initialX + xOffset * (!isReverseCoords ? 1 : -1) + frame.x * (!isReverseCoords ? 1 : -1));
+                y = ((initialY + yOffset * (!isReverseCoords || frame.focus === AnimFocus.USER || frame.focus === AnimFocus.SCREEN ? 1 : -1)
+                    + frame.y * (!isReverseCoords || (frame.focus !== AnimFocus.USER_TARGET) ? 1 : -1) + ySpriteOffset));*/
+            const angle = -frame.angle;
+            const key = frame.target === AnimFrameTarget.GRAPHIC ? g++ : frame.target === AnimFrameTarget.USER ? u++ : t++;
+            ret.get(frame.target).set(key, { x: x, y: y, scaleX: scaleX, scaleY: scaleY, angle: angle });
         }
 
         return ret;
@@ -581,6 +623,9 @@ export abstract class BattleAnim {
         const user = !isOppAnim ? this.user : this.target;
         const target = !isOppAnim ? this.target : this.user;
 
+        const userSprite = user.getSprite();
+        const targetSprite = target.getSprite();
+
         const anim = this.getAnim();
 
         const userInitialX = user.x;
@@ -588,12 +633,17 @@ export abstract class BattleAnim {
         const targetInitialX = target.x;
         const targetInitialY = target.y;
 
-        const isReverseCoords = this.isReverseCoords();
+        this.srcLine = [ userFocusX, userFocusY, targetFocusX, targetFocusY ];
+        this.dstLine = [ userInitialX, userInitialY, targetInitialX, targetInitialY ];
         
         let r = anim.frames.length;
         let f = 0;
 
-        const sprites: Phaser.GameObjects.Sprite[] = [];
+        const spriteCache: SpriteCache = {
+            [AnimFrameTarget.GRAPHIC]: [],
+            [AnimFrameTarget.USER]: [],
+            [AnimFrameTarget.TARGET]: []
+        };
         const spritePriorities: integer[] = [];
 
         scene.tweens.addCounter({
@@ -601,86 +651,109 @@ export abstract class BattleAnim {
             duration: 3,
             repeat: anim.frames.length,
             onRepeat: () => {
+                if (!f) {
+                    userSprite.setVisible(false);
+                    targetSprite.setVisible(false);
+                }
+
                 const spriteFrames = anim.frames[f];
                 const frameData = this.getGraphicFrameData(scene, anim.frames[f]);
+                let u = 0;
+                let t = 0;
                 let g = 0;
                 for (let frame of spriteFrames) {
-                    switch (frame.target) {
-                        case AnimFrameTarget.USER:
-                            user.setPosition(userInitialX + frame.x / (!isReverseCoords ? 2 : -2), userInitialY + frame.y / (!isOppAnim ? 2 : -2));
-                            break;
-                        case AnimFrameTarget.TARGET:
-                            target.setPosition(targetInitialX + frame.x / (!isReverseCoords ? 2 : -2), targetInitialY + frame.y / (!isOppAnim ? 2 : -2));
-                            break;
-                        case AnimFrameTarget.GRAPHIC:
-                            if (g === sprites.length) {
-                                const newSprite = scene.add.sprite(0, 0, anim.graphic, 1);
-                                sprites.push(newSprite);
-                                scene.field.add(newSprite);
-                                spritePriorities.push(1);
-                            }
-                            
-                            const graphicIndex = g++;
-                            const moveSprite = sprites[graphicIndex];
-                            if (spritePriorities[graphicIndex] !== frame.priority) {
-                                spritePriorities[graphicIndex] = frame.priority;
-                                const setSpritePriority = (priority: integer) => {
-                                    switch (priority) {
-                                        case 0:
-                                            scene.field.moveBelow(moveSprite, scene.getEnemyPokemon() || scene.getPlayerPokemon());
-                                            break;
-                                        case 1:
-                                            scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
-                                            break;
-                                        case 2:
-                                            switch (frame.focus) {
-                                                case AnimFocus.USER:
-                                                    if (this.bgSprite)
-                                                        scene.field.moveAbove(moveSprite, this.bgSprite);
-                                                    else
-                                                        scene.field.moveBelow(moveSprite, this.user);
-                                                    break;
-                                                case AnimFocus.TARGET:
-                                                    scene.field.moveBelow(moveSprite, this.target);
-                                                    break;
-                                                default:
-                                                    setSpritePriority(1);
-                                                    break;
-                                            }
-                                            break;
-                                        case 3:
-                                            switch (frame.focus) {
-                                                case AnimFocus.USER:
-                                                    scene.field.moveAbove(moveSprite, this.user);
-                                                    break;
-                                                case AnimFocus.TARGET:
-                                                    scene.field.moveAbove(moveSprite, this.target);
-                                                    break;
-                                                default:
-                                                    setSpritePriority(1);
-                                                    break;
-                                            }
-                                            break;
-                                        default:
-                                            setSpritePriority(1);
-                                    }
-                                };
-                                setSpritePriority(frame.priority);
-                            }
-                            moveSprite.setFrame(frame.graphicFrame);
-                            //console.log(AnimFocus[frame.focus]);
-                            
-                            const graphicFrameData = frameData.get(graphicIndex);
-                            moveSprite.setPosition(graphicFrameData.x, graphicFrameData.y);
-                            moveSprite.setAngle(graphicFrameData.angle);
-                            moveSprite.setScale(graphicFrameData.scaleX,  graphicFrameData.scaleY);
-
-                            moveSprite.setAlpha(frame.opacity / 255);
-                            moveSprite.setVisible(frame.visible);
-                            moveSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
-                            break;
-                    }
                     if (frame.target !== AnimFrameTarget.GRAPHIC) {
+                        const isUser = frame.target === AnimFrameTarget.USER;
+                        const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];
+                        if ((isUser ? u : t) === sprites.length) {
+                            const spriteSource = isUser ? userSprite : targetSprite;
+                            let sprite: Phaser.GameObjects.Sprite;
+                            sprite = scene.add.sprite(0, 0, spriteSource.texture, spriteSource.frame.name);
+                            spriteSource.on('animationupdate', (_anim, frame) => sprite.setFrame(frame.textureFrame));
+                            scene.field.add(sprite);
+                            sprites.push(sprite);
+                        }
+
+                        const spriteIndex = isUser ? u++ : t++;
+                        const pokemonSprite =  sprites[spriteIndex];
+                        const graphicFrameData = frameData.get(frame.target).get(spriteIndex);
+                        pokemonSprite.setPosition(graphicFrameData.x, graphicFrameData.y);
+                        
+                        pokemonSprite.setAngle(graphicFrameData.angle);
+                        pokemonSprite.setScale(graphicFrameData.scaleX,  graphicFrameData.scaleY);
+
+                        pokemonSprite.setAlpha(frame.opacity / 255);
+                        pokemonSprite.setVisible(frame.visible && (isUser ? user.visible : target.visible));
+                        pokemonSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
+                    } else {
+                        const sprites = spriteCache[AnimFrameTarget.GRAPHIC];
+                        if (g === sprites.length) {
+                            let newSprite: Phaser.GameObjects.Sprite = scene.add.sprite(0, 0, anim.graphic, 1);
+                            sprites.push(newSprite);
+                            scene.field.add(newSprite);
+                            spritePriorities.push(1);
+                        }
+                        
+                        const graphicIndex = g++;
+                        const moveSprite = sprites[graphicIndex];
+                        if (spritePriorities[graphicIndex] !== frame.priority) {
+                            spritePriorities[graphicIndex] = frame.priority;
+                            const setSpritePriority = (priority: integer) => {
+                                switch (priority) {
+                                    case 0:
+                                        scene.field.moveBelow(moveSprite, scene.getEnemyPokemon() || scene.getPlayerPokemon());
+                                        break;
+                                    case 1:
+                                        scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
+                                        break;
+                                    case 2:
+                                        switch (frame.focus) {
+                                            case AnimFocus.USER:
+                                                if (this.bgSprite)
+                                                    scene.field.moveAbove(moveSprite, this.bgSprite);
+                                                else
+                                                    scene.field.moveBelow(moveSprite, this.user);
+                                                break;
+                                            case AnimFocus.TARGET:
+                                                scene.field.moveBelow(moveSprite, this.target);
+                                                break;
+                                            default:
+                                                setSpritePriority(1);
+                                                break;
+                                        }
+                                        break;
+                                    case 3:
+                                        switch (frame.focus) {
+                                            case AnimFocus.USER:
+                                                scene.field.moveAbove(moveSprite, this.user);
+                                                break;
+                                            case AnimFocus.TARGET:
+                                                scene.field.moveAbove(moveSprite, this.target);
+                                                break;
+                                            default:
+                                                setSpritePriority(1);
+                                                break;
+                                        }
+                                        break;
+                                    default:
+                                        setSpritePriority(1);
+                                }
+                            };
+                            setSpritePriority(frame.priority);
+                        }
+                        moveSprite.setFrame(frame.graphicFrame);
+                        //console.log(AnimFocus[frame.focus]);
+                        
+                        const graphicFrameData = frameData.get(frame.target).get(graphicIndex);
+                        moveSprite.setPosition(graphicFrameData.x, graphicFrameData.y);
+                        moveSprite.setAngle(graphicFrameData.angle);
+                        moveSprite.setScale(graphicFrameData.scaleX,  graphicFrameData.scaleY);
+
+                        moveSprite.setAlpha(frame.opacity / 255);
+                        moveSprite.setVisible(frame.visible);
+                        moveSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
+                    }
+                    /*if (frame.target !== AnimFrameTarget.GRAPHIC && frame.locked) {
                         const pokemon = frame.target === AnimFrameTarget.USER ? user : target;
                         pokemon.setScale(!frame.mirror ? 1 : -1)
                         pokemon.setAlpha(frame.opacity / 255);
@@ -690,38 +763,47 @@ export abstract class BattleAnim {
                         const zoomSprite = pokemon.getZoomSprite();
                         zoomSprite.setY(zoomSprite.displayHeight * (zoomScaleY - 1) * 0.5);
                         zoomSprite.setScale(zoomScaleX, zoomScaleY);
-                    }
+                    }*/
                 }
                 if (anim.frameTimedEvents.has(f)) {
                     for (let event of anim.frameTimedEvents.get(f))
                         r = Math.max((anim.frames.length - f) + event.execute(scene, this), r);
                 }
-                if (g < sprites.length) {
-                    const removedSprites = sprites.splice(g, sprites.length - g);
-                    spritePriorities.splice(g, sprites.length - g);
-                    for (let rs of removedSprites)
-                        rs.destroy();
+                const targets = Utils.getEnumValues(AnimFrameTarget);
+                for (let i of targets) {
+                    const count = i === AnimFrameTarget.GRAPHIC ? g : i === AnimFrameTarget.USER ? u : t;
+                    if (count < spriteCache[i].length) {
+                        const removedSprites = spriteCache[i].splice(count, spriteCache[i].length - count);
+                        if (i === AnimFrameTarget.GRAPHIC)
+                            spritePriorities.splice(count, spriteCache[i].length - count);
+                        for (let rs of removedSprites) {
+                            if (rs !== userSprite && rs !== targetSprite)
+                                rs.destroy();
+                        }
+                    }
                 }
                 f++;
                 r--;
             },
             onComplete: () => {
+                userSprite.setVisible(true);
+                targetSprite.setVisible(true);
                 const cleanUpAndComplete = () => {
-                    user.setPosition(userInitialX, userInitialY);
-                    user.setScale(1);
-                    user.setAlpha(1);
-                    user.setAngle(0);
-                    target.setPosition(targetInitialX, targetInitialY);
-                    target.setScale(1);
-                    target.setAlpha(1);
-                    target.setAngle(0);
+                    userSprite.setPosition(0, 0);
+                    userSprite.setScale(1);
+                    userSprite.setAlpha(1);
+                    userSprite.setAngle(0);
+                    targetSprite.setPosition(0, 0);
+                    targetSprite.setScale(1);
+                    targetSprite.setAlpha(1);
+                    targetSprite.setAngle(0);
                     if (this.bgSprite)
                         this.bgSprite.destroy();
                     if (callback)
                         callback();
                 };
-                for (let ms of sprites) {
-                    if (ms)
+                for (let ms of Object.values(spriteCache).flat()) {
+                    if (ms && ms !== userSprite && ms !== targetSprite)
                         ms.destroy();
                 }
                 if (r) {
@@ -775,14 +857,7 @@ export class MoveAnim extends BattleAnim {
     }
 
     isOppAnim(): boolean {
-        const ret = !this.user.isPlayer() && Array.isArray(moveAnims.get(this.move));
-
-        switch (this.move) {
-            case Moves.TELEPORT:
-                return !ret;
-        }
-
-        return ret;
+        return !this.user.isPlayer() && Array.isArray(moveAnims.get(this.move));
     }
 
     isReverseCoords(): boolean {
@@ -806,24 +881,6 @@ export class MoveChargeAnim extends MoveAnim {
     }
 }
 
-function isGlobalGraphic(graphic: string, graphicFrame: integer): boolean {
-    switch (graphic) {
-        case 'PRAS- Fissure':
-            return true;
-        case 'PRAS- Seismic Toss':
-            switch (graphicFrame) {
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                    return false;
-            }
-            return true;
-    }
-    
-    return false;
-}
-
 export function populateAnims() {
     return;
     const commonAnimNames = Utils.getEnumKeys(CommonAnim).map(k => k.toLowerCase());
@@ -838,7 +895,7 @@ export function populateAnims() {
         const moveName = Moves[move].toUpperCase().replace(/\_/g, '');
         moveNameToId[moveName] = move;
     }
-    const animsData = [];//battleAnimRawData.split('!ruby/array:PBAnimation').slice(1);
+    const animsData = []; //battleAnimRawData.split('!ruby/array:PBAnimation').slice(1);
     for (let a = 0; a < animsData.length; a++) {
         const fields = animsData[a].split('@').slice(1);
         

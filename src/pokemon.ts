@@ -144,14 +144,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     
     const sprite = getSprite();
     const tintSprite = getSprite();
-    const zoomSprite = getSprite();
 
     tintSprite.setVisible(false);
-    zoomSprite.setAlpha(0.5);
 
     this.add(sprite);
     this.add(tintSprite);
-    this.add(zoomSprite);
 
     this.getSpeciesForm().generateIconAnim(scene, this.gender === Gender.FEMALE, formIndex);
 
@@ -257,14 +254,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : this.maskSprite;
   }
 
-  getZoomSprite(): Phaser.GameObjects.Sprite {
-    return this.getAt(!this.maskEnabled ? 2 : 1) as Phaser.GameObjects.Sprite;
-  }
-
   playAnim(): void{
     this.getSprite().play(this.getBattleSpriteKey());
     this.getTintSprite().play(this.getBattleSpriteKey());
-    this.getZoomSprite().play(this.getBattleSpriteKey());
   }
 
   getBattleStat(stat: Stat): integer {
@@ -671,13 +663,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
     const sprite = this.getSprite();
     const tintSprite = this.getTintSprite();
-    const zoomSprite = this.getZoomSprite();
     const delay = Math.max(this.scene.sound.get(key).totalDuration * 50, 25);
     let frameProgress = 0;
     let frameThreshold: number;
     sprite.anims.pause();
     tintSprite.anims.pause();
-    zoomSprite.anims.pause();
     let faintCryTimer = this.scene.time.addEvent({
       delay: delay,
       repeat: -1,
@@ -689,7 +679,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (sprite.anims.duration) {
             sprite.anims.nextFrame();
             tintSprite.anims.nextFrame();
-            zoomSprite.anims.nextFrame();
           }
           frameProgress -= frameThreshold;
         }
