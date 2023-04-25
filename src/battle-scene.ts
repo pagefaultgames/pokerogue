@@ -470,7 +470,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.arenaBgTransition.setPosition(0, 0);
 		this.arenaPlayer.setPosition(340, 20);
-		this.arenaPlayerTransition.setPosition(40, 2);
+		this.arenaPlayerTransition.setPosition(40, 20);
 		this.arenaEnemy.setPosition(-240, 13);
 		this.arenaNextEnemy.setPosition(-240, 13);
 

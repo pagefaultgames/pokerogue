@@ -9,6 +9,7 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagType, ArenaTrapTag } from "./arena-tag";
+import { FlinchChanceModifier } from "../modifier/modifier";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -1037,7 +1038,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
             user.addTag(this.tagType, 1, move.id, user.id);
           if (this.chargeEffect)
             applyMoveAttrs(MoveEffectAttr, user, target, move);
-          user.getMoveHistory().push({ move: move.id, result: MoveResult.OTHER });
+          user.pushMoveHistory({ move: move.id, result: MoveResult.OTHER });
           user.getMoveQueue().push({ move: move.id, ignorePP: true });
           resolve(true);
         });
@@ -1427,12 +1428,17 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     if (!super.apply(user, target, move, args))
       return false;
 
-    if (move.chance < 0 || move.chance === 100 || Utils.randInt(100) < move.chance) {
+    const chance = this.getTagChance(user, target, move);
+    if (chance < 0 || chance === 100 || Utils.randInt(100) < chance) {
       (this.selfTarget ? user : target).addTag(this.tagType, this.turnCount, move.id, user.id);
       return true;
     }
 
     return false;
+  }
+
+  getTagChance(user: Pokemon, target: Pokemon, move: Move): integer {
+    return move.chance;
   }
 
   getCondition(): MoveCondition {
@@ -1925,7 +1931,8 @@ export const allMoves = [
   new SelfStatusMove(Moves.LIGHT_SCREEN, "Light Screen (N)", Type.PSYCHIC, -1, 30, 75, "Halves damage from Special attacks for 5 turns.", -1, 0, 1),
   new SelfStatusMove(Moves.HAZE, "Haze (N)", Type.ICE, -1, 30, -1, "Resets all stat changes.", -1, 0, 1),
   new SelfStatusMove(Moves.REFLECT, "Reflect (N)", Type.PSYCHIC, -1, 20, 74, "Halves damage from Physical attacks for 5 turns.", -1, 0, 1),
-  new SelfStatusMove(Moves.FOCUS_ENERGY, "Focus Energy (N)", Type.NORMAL, -1, 30, -1, "Increases critical hit ratio.", -1, 0, 1),
+  new SelfStatusMove(Moves.FOCUS_ENERGY, "Focus Energy", Type.NORMAL, -1, 30, -1, "Increases critical hit ratio.", -1, 0, 1)
+    .attr(AddBattlerTagAttr, BattlerTagType.CRIT_BOOST, true, undefined, true),
   new AttackMove(Moves.BIDE, "Bide (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 10, -1, "User takes damage for two turns then strikes back double.", -1, 0, 1),
   new SelfStatusMove(Moves.METRONOME, "Metronome", Type.NORMAL, -1, 10, 80, "User performs almost any move in the game at random.", -1, 0, 1)
     .attr(RandomMoveAttr),

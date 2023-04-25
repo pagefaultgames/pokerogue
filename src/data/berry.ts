@@ -1,21 +1,26 @@
-import { MessagePhase, PokemonHealPhase } from "../battle-phases";
+import { PokemonHealPhase, StatChangePhase } from "../battle-phases";
 import { getPokemonMessage } from "../messages";
-import Pokemon from "../pokemon";
+import Pokemon, { MoveResult } from "../pokemon";
+import { getBattleStatName } from "./battle-stat";
+import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./battler-tag";
 import { getStatusEffectHealText } from "./status-effect";
 
 export enum BerryType {
   SITRUS,
-  LUM
+  LUM,
+  ENIGMA,
+  LIECHI,
+  GANLON,
+  SALAC,
+  PETAYA,
+  APICOT,
+  LANSAT,
+  STARF
 }
 
 export function getBerryName(berryType: BerryType) {
-  switch (berryType) {
-    case BerryType.SITRUS:
-      return 'SITRUS BERRY';
-    case BerryType.LUM:
-      return 'LUM BERRY';
-  }
+  return `${BerryType[berryType]} BERRY`;
 }
 
 export function getBerryEffectDescription(berryType: BerryType) {
@@ -24,6 +29,19 @@ export function getBerryEffectDescription(berryType: BerryType) {
       return 'Restores 25% HP if HP is below 50%';
     case BerryType.LUM:
       return 'Cures any non-volatile status condition and confusion';
+    case BerryType.ENIGMA:
+      return 'Restores 25% HP if hit by a super effective move';
+    case BerryType.LIECHI:
+    case BerryType.GANLON:
+    case BerryType.SALAC:
+    case BerryType.PETAYA:
+    case BerryType.APICOT:
+      const stat = (berryType - BerryType.LIECHI) as BattleStat;
+      return `Raises ${getBattleStatName(stat)} if HP is below 25%`;
+    case BerryType.LANSAT:
+      return 'Raises critical hit ratio if HP is below 25%';
+    case BerryType.STARF:
+      return 'Sharply raises a random stat if HP is below 25%';
   }
 }
 
@@ -35,6 +53,26 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
       return (pokemon: Pokemon) => pokemon.getHpRatio() < 0.5;
     case BerryType.LUM:
       return (pokemon: Pokemon) => !!pokemon.status || !!pokemon.getTag(BattlerTagType.CONFUSED);
+    case BerryType.ENIGMA:
+      return (pokemon: Pokemon) => {
+        const opponent = pokemon.isPlayer() ? pokemon.scene.getEnemyPokemon() : pokemon.scene.getPlayerPokemon();
+        const opponentLastMove = opponent ? opponent.getLastXMoves(1).find(() => true) : null; // TODO: Update so this works even if opponent has fainted
+        
+        return opponentLastMove && opponentLastMove.turn === pokemon.scene.currentBattle?.turn - 1 && opponentLastMove.result === MoveResult.SUPER_EFFECTIVE;
+      };
+    case BerryType.LIECHI:
+    case BerryType.GANLON:
+    case BerryType.SALAC:
+    case BerryType.PETAYA:
+    case BerryType.APICOT:
+      return (pokemon: Pokemon) => {
+        const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
+        return pokemon.getHpRatio() < 0.25 && pokemon.summonData.battleStats[battleStat] < 6;
+      };
+    case BerryType.LANSAT:
+      return (pokemon: Pokemon) => pokemon.getHpRatio() < 0.25 && !pokemon.getTag(BattlerTagType.CRIT_BOOST);
+    case BerryType.STARF:
+      return (pokemon: Pokemon) => pokemon.getHpRatio() < 0.25;
   }
 }
 
@@ -43,6 +81,7 @@ export type BerryEffectFunc = (pokemon: Pokemon) => void;
 export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
   switch (berryType) {
     case BerryType.SITRUS:
+     case BerryType.ENIGMA:
       return (pokemon: Pokemon) => {
         pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.isPlayer(), Math.floor(pokemon.getMaxHp() / 4), getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\nrestored its HP!`), true));
       };
@@ -55,5 +94,20 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         } else if (pokemon.getTag(BattlerTagType.CONFUSED))
           pokemon.lapseTag(BattlerTagType.CONFUSED);
       };
+    case BerryType.LIECHI:
+    case BerryType.GANLON:
+    case BerryType.SALAC:
+    case BerryType.PETAYA:
+    case BerryType.APICOT:
+      return (pokemon: Pokemon) => {
+        const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), [ battleStat ], 1));
+      };
+    case BerryType.LANSAT:
+      return (pokemon: Pokemon) => {
+        pokemon.addTag(BattlerTagType.CRIT_BOOST);
+      };
+    case BerryType.STARF:
+      return (pokemon: Pokemon) => pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), [ BattleStat.RAND ], 2));
   }
 }

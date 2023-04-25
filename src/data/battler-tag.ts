@@ -5,7 +5,7 @@ import Pokemon from "../pokemon";
 import { Stat } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
-import { Moves, allMoves } from "./move";
+import { LapseBattlerTagAttr, Moves, allMoves } from "./move";
 import { Type } from "./type";
 
 export enum BattlerTagType {
@@ -30,6 +30,7 @@ export enum BattlerTagType {
   PROTECTED,
   FLYING,
   UNDERGROUND,
+  CRIT_BOOST,
   NO_CRIT,
   BYPASS_SLEEP,
   IGNORE_FLYING
@@ -462,6 +463,28 @@ export class HideSpriteTag extends BattlerTag {
   }
 }
 
+export class CritBoostTag extends BattlerTag {
+  constructor(tagType: BattlerTagType, sourceMove: Moves) {
+    super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is getting\npumped!'));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' relaxed.'));
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
     case BattlerTagType.RECHARGING:
@@ -501,6 +524,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.FLYING:
     case BattlerTagType.UNDERGROUND:
       return new HideSpriteTag(tagType, turnCount, sourceMove);
+    case BattlerTagType.CRIT_BOOST:
+      return new CritBoostTag(tagType, sourceMove);
     case BattlerTagType.NO_CRIT:
       return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
     case BattlerTagType.BYPASS_SLEEP:

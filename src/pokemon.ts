@@ -491,6 +491,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const critLevel = new Utils.IntegerHolder(0);
         applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
         this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);
+        if (source.getTag(BattlerTagType.CRIT_BOOST))
+          critLevel.value += 2;
         const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
         let isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !Utils.randInt(critChance));
         const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
@@ -640,6 +642,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getMoveHistory(): TurnMove[] {
     return this.summonData.moveHistory;
+  }
+
+  pushMoveHistory(turnMove: TurnMove) {
+    turnMove.turn = this.scene.currentBattle?.turn;
+    this.getMoveHistory().push(turnMove);
   }
 
   getLastXMoves(turnCount?: integer): TurnMove[] {
@@ -1035,6 +1042,7 @@ export interface TurnMove {
   move: Moves;
   result: MoveResult;
   virtual?: boolean;
+  turn?: integer;
 }
 
 export interface QueuedMove {

@@ -35,7 +35,7 @@ export class ModifierType {
   constructor(name: string, description: string, newModifierFunc: NewModifierFunc, iconImage?: string, group?: string, soundName?: string) {
     this.name = name;
     this.description = description;
-    this.iconImage = iconImage || name?.replace(/[ \-]/g, '_')?.toLowerCase();
+    this.iconImage = iconImage || name?.replace(/[ \-]/g, '_')?.replace(/'/g, '')?.toLowerCase();
     this.group = group || '';
     this.soundName = soundName || 'restore';
     this.newModifierFunc = newModifierFunc;
@@ -497,7 +497,14 @@ const modifierTypes = {
 
   BERRY: () => new ModifierTypeGenerator((party: Pokemon[]) => {
     const berryTypes = Utils.getEnumValues(BerryType);
-    const randBerryType = berryTypes[Utils.randInt(berryTypes.length)];
+    let randBerryType;
+    let rand = Utils.randInt(10);
+    if (rand < 2)
+      randBerryType = BerryType.SITRUS;
+    else if (rand < 4)
+      randBerryType = BerryType.LUM;
+    else
+      randBerryType = berryTypes[Utils.randInt(berryTypes.length - 2) + 2];
     return new PokemonHeldItemModifierType(getBerryName(randBerryType), getBerryEffectDescription(randBerryType),
       (type, args) => new Modifiers.BerryModifier(type, (args[0] as Pokemon).id, randBerryType),
       null, 'berry');
@@ -521,6 +528,7 @@ const modifierTypes = {
   GOLDEN_EXP_CHARM: () => new ExpBoosterModifierType('GOLDEN EXP CHARM', 100),
 
   LUCKY_EGG: () => new PokemonExpBoosterModifierType('LUCKY EGG', 50),
+  GOLDEN_EGG: () => new PokemonExpBoosterModifierType('GOLDEN EGG', 200),
 
   HEALING_CHARM: () => new ModifierType('HEALING CHARM', 'Doubles the effectiveness of HP restoring moves and items (excludes revives)',
     (type, _args) => new Modifiers.HealingBoosterModifier(type, 2), 'healing_charm'),
@@ -535,6 +543,9 @@ const modifierTypes = {
 
   FOCUS_BAND: () => new PokemonHeldItemModifierType('FOCUS BAND', 'Adds a 10% chance to survive with 1 HP after being damaged enough to faint',
     (type, args) => new Modifiers.SurviveDamageModifier(type, (args[0] as Pokemon).id)),
+
+  KINGS_ROCK: () => new PokemonHeldItemModifierType('KING\'S ROCK', 'Adds a 10% chance an attack move will cause the opponent to flinch',
+    (type, args) => new Modifiers.FlinchChanceModifier(type, (args[0] as Pokemon).id)),
 
   LEFTOVERS: () => new PokemonHeldItemModifierType('LEFTOVERS', 'Heals 1/16 of a POKéMON\'s maximum HP every turn',
     (type, args) => new Modifiers.TurnHealModifier(type, (args[0] as Pokemon).id)),
@@ -570,7 +581,7 @@ const modifierPool = {
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.TEMP_STAT_BOOSTER, 4),
-    new WeightedModifierType(modifierTypes.BERRY, 2)
+    new WeightedModifierType(modifierTypes.BERRY, 20)
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.GREAT_BALL, 6),
@@ -617,6 +628,7 @@ const modifierPool = {
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 1),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 1),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 3),
+    new WeightedModifierType(modifierTypes.KINGS_ROCK, 2),
     new WeightedModifierType(modifierTypes.LEFTOVERS, 2),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 2),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 3),
@@ -644,13 +656,15 @@ const enemyModifierPool = {
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 1)
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 2),
-    new WeightedModifierType(modifierTypes.LUCKY_EGG, 2),
+    new WeightedModifierType(modifierTypes.LUCKY_EGG, 4),
+    new WeightedModifierType(modifierTypes.KINGS_ROCK, 1),
+    new WeightedModifierType(modifierTypes.LEFTOVERS, 1),
+    new WeightedModifierType(modifierTypes.SHELL_BELL, 1),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
-    new WeightedModifierType(modifierTypes.LEFTOVERS, 4),
-    new WeightedModifierType(modifierTypes.SHELL_BELL, 4),
+    new WeightedModifierType(modifierTypes.GOLDEN_EGG, 1),
     new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, 1)
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
 };

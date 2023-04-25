@@ -1,5 +1,5 @@
 import { Gender } from "./gender";
-import { AttackTypeBoosterModifier } from "../modifier/modifier";
+import { AttackTypeBoosterModifier, FlinchChanceModifier } from "../modifier/modifier";
 import { AttackTypeBoosterModifierType } from "../modifier/modifier-type";
 import { Moves } from "./move";
 import { PokeballType } from "./pokeball";
@@ -167,7 +167,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.SLOWPOKE]: [
     new SpeciesEvolution(Species.SLOWBRO, 37, null, null),
-    new SpeciesEvolution(Species.SLOWKING, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* King's rock*/), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.SLOWKING, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => !!p.scene.findModifier(m => (m instanceof FlinchChanceModifier) && (m as FlinchChanceModifier).pokemonId === p.id, true)), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MAGNEMITE]: [
     new SpeciesEvolution(Species.MAGNETON, 30, null, null)
@@ -779,7 +779,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.POLIWHIRL]: [
     new SpeciesEvolution(Species.POLIWRATH, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG),
-    new SpeciesEvolution(Species.POLITOED, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* King's rock*/), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.POLITOED, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => !!p.scene.findModifier(m => (m instanceof FlinchChanceModifier) && (m as FlinchChanceModifier).pokemonId === p.id, true)), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.WEEPINBELL]: [
     new SpeciesEvolution(Species.VICTREEBEL, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)

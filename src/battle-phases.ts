@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, HitsTagAttr, Mis
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, HealingBoosterModifier, HeldItemTransferModifier, HitHealModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, TempBattleStatBoosterModifier, TurnHealModifier } from "./modifier/modifier";
+import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HeldItemTransferModifier, HitHealModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, TempBattleStatBoosterModifier, TurnHealModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -768,7 +768,7 @@ export abstract class MovePhase extends BattlePhase {
       }
 
       if (this.cancelled) {
-        this.pokemon.getMoveHistory().push({ move: Moves.NONE, result: MoveResult.FAILED });
+        this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAILED });
         this.end();
         return;
       }
@@ -783,7 +783,7 @@ export abstract class MovePhase extends BattlePhase {
       if (success)
         this.scene.unshiftPhase(this.getEffectPhase());
       else {
-        this.pokemon.getMoveHistory().push({ move: this.move.moveId, result: MoveResult.FAILED, virtual: this.move.virtual });
+        this.pokemon.pushMoveHistory({ move: this.move.moveId, result: MoveResult.FAILED, virtual: this.move.virtual });
         this.scene.queueMessage('But it failed!');
       }
       
@@ -900,7 +900,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
 
       if (!this.hitCheck()) {
         this.scene.queueMessage(getPokemonMessage(user, '\'s\nattack missed!'));
-        user.getMoveHistory().push({ move: this.move.moveId, result: MoveResult.MISSED, virtual: this.move.virtual });
+        user.pushMoveHistory({ move: this.move.moveId, result: MoveResult.MISSED, virtual: this.move.virtual });
         applyMoveAttrs(MissEffectAttr, user, target, this.move.getMove());
         this.end();
         return;
@@ -911,9 +911,15 @@ abstract class MoveEffectPhase extends PokemonPhase {
       new MoveAnim(this.move.getMove().id as Moves, user, target).play(this.scene, () => {
         const result = !isProtected ? target.apply(user, this.move) : MoveResult.NO_EFFECT;
         ++user.turnData.hitCount;
-        user.getMoveHistory().push({ move: this.move.moveId, result: result, virtual: this.move.virtual });
+        user.pushMoveHistory({ move: this.move.moveId, result: result, virtual: this.move.virtual });
         if (result !== MoveResult.NO_EFFECT && result !== MoveResult.FAILED) {
           applyMoveAttrs(MoveEffectAttr, user, target, this.move.getMove());
+          if (result < MoveResult.NO_EFFECT) {
+            const flinched = new Utils.BooleanHolder(false);
+            user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
+            if (flinched.value)
+              target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
+          }
           // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
           if (!isProtected && target.hp && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
             applyMoveAttrs(MoveHitEffectAttr, user, target, this.move.getMove());

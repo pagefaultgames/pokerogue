@@ -370,7 +370,7 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
     const pokemon = args[0] as Pokemon;
     const surviveDamage = args[1] as Utils.BooleanHolder;
 
-    if (!surviveDamage.value && (this.getStackCount() === this.getMaxStackCount() || Utils.randInt(10) < this.getStackCount())) {
+    if (!surviveDamage.value && Utils.randInt(10) < this.getStackCount()) {
       surviveDamage.value = true;
 
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` hung on\nusing its ${this.type.name}!`));
@@ -381,6 +381,37 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
 
   getMaxStackCount(): number {
     return 5;
+  }
+}
+
+export class FlinchChanceModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier) {
+    return modifier instanceof FlinchChanceModifier;
+  }
+
+  clone() {
+    return new FlinchChanceModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.BooleanHolder;
+  }
+
+  apply(args: any[]): boolean {
+    const flinched = args[1] as Utils.BooleanHolder;
+
+    if (!flinched.value && Utils.randInt(10) < this.getStackCount())
+      flinched.value = true;
+
+    return true;
+  }
+
+  getMaxStackCount(): number {
+    return 3;
   }
 }
 
