@@ -234,6 +234,24 @@ export class TempBattleStatBoosterModifier extends PersistentModifier {
   }
 }
 
+export class MapModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+  
+  clone(): MapModifier {
+    return new MapModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    return true;
+  }
+
+  getMaxStackCount(): number {
+    return 1;
+  }
+}
+
 export abstract class PokemonHeldItemModifier extends PersistentModifier {
   public pokemonId: integer;
 

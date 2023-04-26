@@ -465,6 +465,8 @@ const modifierTypes = {
 
   EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(),
 
+  MAP: () => new ModifierType('MAP', 'Allows you to choose your destination at a crossroads', (type, _args) => new Modifiers.MapModifier(type)),
+
   POTION: () => new PokemonHpRestoreModifierType('POTION', 20),
   SUPER_POTION: () => new PokemonHpRestoreModifierType('SUPER POTION', 50),
   HYPER_POTION: () => new PokemonHpRestoreModifierType('HYPER POTION', 200),
@@ -581,7 +583,7 @@ const modifierPool = {
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.TEMP_STAT_BOOSTER, 4),
-    new WeightedModifierType(modifierTypes.BERRY, 20)
+    new WeightedModifierType(modifierTypes.BERRY, 2)
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.GREAT_BALL, 6),
@@ -615,6 +617,9 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.MAX_ELIXIR, (party: Pokemon[]) => {
       const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount;
+    }),
+    new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => {
+      return !party[0].scene.findModifier(m => m instanceof Modifiers.MapModifier) ? 1 : 0;
     }),
     new WeightedModifierType(modifierTypes.TM, 2),
     new WeightedModifierType(modifierTypes.EXP_SHARE, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 1 : 0),

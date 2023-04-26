@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, HitsTagAttr, Mis
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HeldItemTransferModifier, HitHealModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, TempBattleStatBoosterModifier, TurnHealModifier } from "./modifier/modifier";
+import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HeldItemTransferModifier, HitHealModifier, MapModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, TempBattleStatBoosterModifier, TurnHealModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -202,13 +202,17 @@ export class SelectBiomePhase extends BattlePhase {
 
     if (this.scene.currentBattle.waveIndex === this.scene.finalWave - 9)
       setNextBiome(Biome.END);
-    else if (Array.isArray(biomeLinks[currentBiome]))
-      this.scene.ui.setMode(Mode.BIOME_SELECT, currentBiome, (biomeIndex: integer) => {
-        this.scene.ui.setMode(Mode.MESSAGE);
-        setNextBiome((biomeLinks[currentBiome] as Biome[])[biomeIndex]);
-      });
-    else
-      setNextBiome(biomeLinks[currentBiome] as Biome)
+    else if (Array.isArray(biomeLinks[currentBiome])) {
+      const biomes = biomeLinks[currentBiome] as Biome[];
+      if (this.scene.findModifier(m => m instanceof MapModifier)) {
+        this.scene.ui.setMode(Mode.BIOME_SELECT, currentBiome, (biomeIndex: integer) => {
+          this.scene.ui.setMode(Mode.MESSAGE);
+          setNextBiome(biomes[biomeIndex]);
+        });
+      } else
+        setNextBiome(biomes[Utils.randInt(biomes.length)]);
+    } else
+      setNextBiome(biomeLinks[currentBiome] as Biome);
   }
 }
 
