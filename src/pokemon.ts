@@ -845,7 +845,7 @@ export class PlayerPokemon extends Pokemon {
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, dataSource);
     
-    this.metBiome = scene.arena.biomeType;
+    this.metBiome = scene.arena?.biomeType || Biome.TOWN;
     this.metLevel = level;
     this.generateCompatibleTms();
   }

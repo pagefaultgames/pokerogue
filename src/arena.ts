@@ -258,7 +258,7 @@ export class Arena {
 
   playBgm(): void {
     this.scene.loadBgm(this.bgm);
-    this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => this.scene.playBgm(this.bgm));
+    this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => this.scene.playBgm(this.bgm, this.getBgmLoopPoint()));
     if (!this.scene.load.isLoading())
       this.scene.load.start();
   }
@@ -268,5 +268,60 @@ export class Arena {
       destroy = true;
     const bgm = this.scene.sound.get(this.bgm);
     SoundFade.fadeOut(this.scene, bgm, duration, destroy);
+  }
+
+  getBgmLoopPoint(): number {
+    switch (this.biomeType) {
+      case Biome.TOWN:
+        return 7.288;
+      case Biome.PLAINS:
+        return 7.693;
+      case Biome.GRASS:
+        return 1.995;
+      case Biome.TALL_GRASS:
+        return 9.608;
+      case Biome.CITY:
+        return 1.221;
+      case Biome.FOREST:
+        return 4.294;
+      case Biome.SEA:
+        return 1.672;
+      case Biome.SWAMP:
+        return 4.461;
+      case Biome.BEACH:
+        return 3.462;
+      case Biome.LAKE:
+        return 5.350;
+      case Biome.SEABED:
+        return 2.629;
+      case Biome.MOUNTAIN:
+        return 4.018;
+      case Biome.LAND:
+        return 17.790;
+      case Biome.CAVE:
+        return 14.240;
+      case Biome.DESERT:
+        return 1.143;
+      case Biome.ICE_CAVE:
+        return 15.010;
+      case Biome.MEADOW:
+        return 3.891;
+      case Biome.POWER_PLANT:
+        return 2.810;
+      case Biome.VOLCANO:
+        return 5.116;
+      case Biome.GRAVEYARD:
+        return 3.232;
+      case Biome.DOJO:
+        return 6.205;
+      case Biome.RUINS:
+        return 2.270;
+      case Biome.WASTELAND:
+        return 6.336;
+      case Biome.ABYSS:
+        return 5.130;
+      case Biome.SPACE:
+        return 21.347;
+    }
   }
 }

@@ -581,7 +581,7 @@ export default class BattleScene extends Phaser.Scene {
 		return this.buttonKeys[button].filter(k => k.isDown).length >= 1;
 	}
 
-	playBgm(bgmName?: string): void {
+	playBgm(bgmName?: string, loopPoint?: number): void {
 		if (!bgmName && this.bgm) {
 			this.bgm.play({
 				volume: 1
@@ -592,6 +592,8 @@ export default class BattleScene extends Phaser.Scene {
 			this.bgm.stop();
 		this.bgm = this.sound.add(bgmName, { loop: true });
 		this.bgm.play();
+		if (loopPoint)
+			this.bgm.on('looped', () => this.bgm.play({ seek: loopPoint }));
 	}
 
 	pauseBgm(): void {
