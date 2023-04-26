@@ -55,6 +55,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon) {
     super(scene, x, y);
+
+    if (!species.isObtainable() && this.isPlayer())
+      throw `Cannot create a player Pokemon for species '${species.name}'`;
+
     this.name = Utils.toPokemonUpperCase(species.name);
     this.species = species;
     this.battleInfo = this.isPlayer()
@@ -121,12 +125,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           console.log('REAL SHINY!!');
         if (this.shiny)
           console.log((E ^ F), shinyThreshold.value);
-        /*else
-          this.shiny = Utils.randInt(16) === 0;*/
       }
 
       this.winCount = 0;
     }
+
+    if (!species.isObtainable())
+      this.shiny = false;
 
     //this.setPipeline(this.scene).spritePipeline);
 

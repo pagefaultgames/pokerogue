@@ -649,5 +649,6 @@ export enum Species {
   MELOETTA,
   GENESECT,
   XERNEAS = 716,
-  YVELTAL
+  YVELTAL,
+  ETERNATUS = 890
 };

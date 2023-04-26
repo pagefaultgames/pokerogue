@@ -37,7 +37,9 @@ export enum ChargeAnim {
     SKY_ATTACK_CHARGING,
     ICE_BURN_CHARGING,
     DOOM_DESIRE_CHARGING,
-    RAZOR_WIND_CHARGING
+    RAZOR_WIND_CHARGING,
+    PHANTOM_FORCE_CHARGING,
+    GEOMANCY_CHARGING
 }
 
 export enum CommonAnim {
@@ -604,12 +606,6 @@ export abstract class BattleAnim {
                         scaleX = scaleX * -1;
                     break;
             }
-                /*const xOffset = (!isReverseCoords ? (userInitialX - targetInitialX) : (targetInitialX - userInitialX));
-                const yOffset = (!isReverseCoords ? (userInitialY - targetInitialY) : (targetInitialY - userInitialY));
-                const ySpriteOffset = ((userHalfHeight * (1 - xProgress)) + (targetHalfHeight * xProgress)) * -1;
-                x = (initialX + xOffset * (!isReverseCoords ? 1 : -1) + frame.x * (!isReverseCoords ? 1 : -1));
-                y = ((initialY + yOffset * (!isReverseCoords || frame.focus === AnimFocus.USER || frame.focus === AnimFocus.SCREEN ? 1 : -1)
-                    + frame.y * (!isReverseCoords || (frame.focus !== AnimFocus.USER_TARGET) ? 1 : -1) + ySpriteOffset));*/
             const angle = -frame.angle;
             const key = frame.target === AnimFrameTarget.GRAPHIC ? g++ : frame.target === AnimFrameTarget.USER ? u++ : t++;
             ret.get(frame.target).set(key, { x: x, y: y, scaleX: scaleX, scaleY: scaleY, angle: angle });
@@ -753,17 +749,6 @@ export abstract class BattleAnim {
                         moveSprite.setVisible(frame.visible);
                         moveSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
                     }
-                    /*if (frame.target !== AnimFrameTarget.GRAPHIC && frame.locked) {
-                        const pokemon = frame.target === AnimFrameTarget.USER ? user : target;
-                        pokemon.setScale(!frame.mirror ? 1 : -1)
-                        pokemon.setAlpha(frame.opacity / 255);
-                        pokemon.setAngle(-frame.angle * (!isReverseCoords ? 1 : -1));
-                        const zoomScaleX = frame.zoomX / 100;
-                        const zoomScaleY = frame.zoomY / 100;
-                        const zoomSprite = pokemon.getZoomSprite();
-                        zoomSprite.setY(zoomSprite.displayHeight * (zoomScaleY - 1) * 0.5);
-                        zoomSprite.setScale(zoomScaleX, zoomScaleY);
-                    }*/
                 }
                 if (anim.frameTimedEvents.has(f)) {
                     for (let event of anim.frameTimedEvents.get(f))
@@ -895,7 +880,7 @@ export function populateAnims() {
         const moveName = Moves[move].toUpperCase().replace(/\_/g, '');
         moveNameToId[moveName] = move;
     }
-    const animsData = []; //battleAnimRawData.split('!ruby/array:PBAnimation').slice(1);
+    const animsData = [];//battleAnimRawData.split('!ruby/array:PBAnimation').slice(1);
     for (let a = 0; a < animsData.length; a++) {
         const fields = animsData[a].split('@').slice(1);
         

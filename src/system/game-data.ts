@@ -51,8 +51,8 @@ export class GameData {
     this.scene = scene;
     this.trainerId = Utils.randInt(65536);
     this.secretId = Utils.randInt(65536);
-    if (!this.load())
-      this.initDexData();
+    this.initDexData();
+    this.load();
   }
 
   private save(): boolean {
@@ -80,10 +80,11 @@ export class GameData {
 
     this.trainerId = data.trainerId;
     this.secretId = data.secretId;
-    this.dexData = data.dexData;
 
     if (data.timestamp === undefined)
       this.convertDexData(data.dexData);
+
+    this.dexData = Object.assign(this.dexData, data.dexData);
 
     return true;
   }

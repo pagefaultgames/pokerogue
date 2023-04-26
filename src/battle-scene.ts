@@ -223,7 +223,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('statuses', '');
 		this.loadAtlas('categories', '');
 
-		for (let i = 0; i < 6; i++)
+		for (let i = 0; i < 7; i++)
 			this.loadAtlas(`pokemon_icons_${i}`, 'ui');
 
 		this.loadSe('select');
@@ -521,6 +521,8 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean): PokemonSpecies {
+		if (waveIndex === 150)
+			return getPokemonSpecies(Species.ETERNATUS);
 		return fromArenaPool
 			? this.arena.randomSpecies(waveIndex, level)
 			: getPokemonSpecies(allSpecies[(Utils.randInt(allSpecies.length)) - 1].getSpeciesForLevel(level));

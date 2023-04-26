@@ -30,6 +30,7 @@ export enum BattlerTagType {
   PROTECTED,
   FLYING,
   UNDERGROUND,
+  HIDDEN,
   CRIT_BOOST,
   NO_CRIT,
   BYPASS_SLEEP,
@@ -523,6 +524,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new ProtectedTag(sourceMove);
     case BattlerTagType.FLYING:
     case BattlerTagType.UNDERGROUND:
+    case BattlerTagType.HIDDEN:
       return new HideSpriteTag(tagType, turnCount, sourceMove);
     case BattlerTagType.CRIT_BOOST:
       return new CritBoostTag(tagType, sourceMove);

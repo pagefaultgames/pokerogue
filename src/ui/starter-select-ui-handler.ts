@@ -138,6 +138,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.genSpecies.push([]);
 
         for (let species of allSpecies) {
+          if (species.generation > 5)
+            break;
           if (pokemonPrevolutions.hasOwnProperty(species.speciesId) || species.generation !== g + 1)
             continue;
           this.speciesLoaded.set(species.speciesId, false);

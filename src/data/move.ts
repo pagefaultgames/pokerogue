@@ -690,7 +690,12 @@ export enum Moves {
   ICICLE_CRASH,
   V_CREATE,
   FUSION_FLARE,
-  FUSION_BOLT
+  FUSION_BOLT,
+  MOONBLAST,
+  PHANTOM_FORCE,
+  GEOMANCY,
+  OBLIVION_WING,
+  DYNAMAX_CANNON
 }
 
 export abstract class MoveAttr {
@@ -864,8 +869,16 @@ export class WeatherHealAttr extends HealAttr {
 }
 
 export class HitHealAttr extends MoveHitEffectAttr {
+  private healRatio: number;
+
+  constructor(healRatio?: number) {
+    super();
+
+    this.healRatio = healRatio || 0.5;
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.isPlayer(), Math.max(Math.floor(user.turnData.damageDealt / 2), 1), getPokemonMessage(target, ` had its\nenergy drained!`), false, true));
+    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.isPlayer(), Math.max(Math.floor(user.turnData.damageDealt * this.healRatio), 1), getPokemonMessage(target, ` had its\nenergy drained!`), false, true));
     return true;
   }
 }
@@ -2553,7 +2566,7 @@ export const allMoves = [
   new AttackMove(Moves.OMINOUS_WIND, "Ominous Wind", Type.GHOST, MoveCategory.SPECIAL, 60, 100, 5, -1, "May raise all user's stats at once.", 10, 0, 4)
  .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true),
   new AttackMove(Moves.SHADOW_FORCE, "Shadow Force", Type.GHOST, MoveCategory.PHYSICAL, 120, 100, 5, -1, "Disappears on first turn, attacks on second. Can strike through Protect/Detect.", -1, 0, 4)
-    .attr(ChargeAttr, ChargeAnim.SHADOW_FORCE_CHARGING, 'vanished\ninstantly!')
+    .attr(ChargeAttr, ChargeAnim.SHADOW_FORCE_CHARGING, 'vanished\ninstantly!', BattlerTagType.HIDDEN)
     .ignoreProtect(),
   new SelfStatusMove(Moves.HONE_CLAWS, "Hone Claws", Type.DARK, -1, 15, -1, "Raises user's Attack and Accuracy.", -1, 0, 5)
     .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.ACC ], 1, true),
@@ -2703,5 +2716,17 @@ export const allMoves = [
   new AttackMove(Moves.V_CREATE, "V-create", Type.FIRE, MoveCategory.PHYSICAL, 180, 95, 5, -1, "Lowers user's Defense, Special Defense and Speed.", 100, 0, 5)
     .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF, BattleStat.SPD ], -1, true),
   new AttackMove(Moves.FUSION_FLARE, "Fusion Flare (N)", Type.FIRE, MoveCategory.SPECIAL, 100, 100, 5, -1, "Power increases if Fusion Bolt is used in the same turn.", -1, 0, 5),
-  new AttackMove(Moves.FUSION_BOLT, "Fusion Bolt (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 5, -1, "Power increases if Fusion Flare is used in the same turn.", -1, 0, 5)
+  new AttackMove(Moves.FUSION_BOLT, "Fusion Bolt (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 5, -1, "Power increases if Fusion Flare is used in the same turn.", -1, 0, 5),
+  new AttackMove(Moves.MOONBLAST, 'Moonblast', Type.FAIRY, MoveCategory.SPECIAL, 95, 100, 15, -1, "May lower opponent's Special Attack.", 30, 0, 6)
+    .attr(StatChangeAttr, BattleStat.SPATK, -1),
+  new AttackMove(Moves.PHANTOM_FORCE, "Phantom Force", Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, "Disappears on first turn, attacks on second. Can strike through Protect/Detect.", -1, 0, 6)
+    .attr(ChargeAttr, ChargeAnim.PHANTOM_FORCE_CHARGING, 'vanished\ninstantly!', BattlerTagType.HIDDEN)
+    .ignoreProtect(),
+  new SelfStatusMove(Moves.GEOMANCY, "Geomancy", Type.FAIRY, -1, 10, -1, "Charges on the first turn, sharply raises user's Special Attack, Special Defense and Speed on the second.", -1, 0, 6)
+    .attr(ChargeAttr, ChargeAnim.GEOMANCY_CHARGING, "is charging\nits power!")
+    .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 2, true),
+  new AttackMove(Moves.OBLIVION_WING, "Oblivion Wing", Type.FLYING, MoveCategory.SPECIAL, 80, 100, 10, -1, "User recovers 3/4 the HP inflicted on the opponent.", -1, 0, 6)
+    .attr(HitHealAttr, 0.75),
+  new AttackMove(Moves.DYNAMAX_CANNON, "Dynamax Cannon", Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 5, -1, "Power is doubled if the target is over level 150.", -1, 0, 8)
+    .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.level > 150 ? 2 : 1)
 ];

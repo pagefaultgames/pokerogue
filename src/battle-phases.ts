@@ -71,7 +71,7 @@ export class EncounterPhase extends BattlePhase {
     this.scene.updateWaveCountText();
 
     const battle = this.scene.currentBattle;
-    const enemySpecies = this.scene.arena.randomSpecies(battle.waveIndex, battle.enemyLevel);
+    const enemySpecies = this.scene.randomSpecies(battle.waveIndex, battle.enemyLevel, true);
 		battle.enemyPokemon = new EnemyPokemon(this.scene, enemySpecies, battle.enemyLevel);
     const enemyPokemon = this.scene.getEnemyPokemon();
     enemyPokemon.resetSummonData();
@@ -1773,7 +1773,10 @@ export class AttemptCapturePhase extends BattlePhase {
                   }
                 },
                 onRepeat: () => {
-                  if (shakeCount++ < 3) {
+                  if (!pokemon.species.isObtainable()) {
+                    shakeCounter.stop();
+                    this.failCatch(shakeCount);
+                  } else if (shakeCount++ < 3) {
                     if (Utils.randInt(65536) < y)
                       this.scene.sound.play('pb_move');
                     else {

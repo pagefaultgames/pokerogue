@@ -13,6 +13,7 @@ import { getPokemonMessage } from '../messages';
 import * as Utils from "../utils";
 import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
+import { Species } from '../data/species';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -258,7 +259,15 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     if (!forSummary) {
       const pokemon = this.getPokemon(scene);
       const pokemonIcon = scene.add.sprite(0, 8, pokemon.species.getIconAtlasKey());
-      pokemonIcon.play(pokemon.getIconKey()).stop();
+      if (pokemon.species.isObtainable())
+        pokemonIcon.play(pokemon.getIconKey()).stop();
+      else {
+        if (pokemon.species.speciesId === Species.ETERNATUS)
+          pokemonIcon.setScale(0.5, 0.5);
+        else
+         pokemonIcon.setPosition(-8, 0);
+        pokemonIcon.setFrame(pokemon.getIconId());
+      }
       pokemonIcon.setOrigin(0, 0.5);
 
       container.add(pokemonIcon);

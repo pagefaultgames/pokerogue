@@ -8,7 +8,7 @@ import * as Utils from '../utils';
 
 export function getPokemonSpecies(species: Species): PokemonSpecies {
   if (species >= Species.XERNEAS)
-    return allSpecies[Species.GENESECT + (species - Species.XERNEAS)];
+    return allSpecies.find(s => s.speciesId === species);
   return allSpecies[species - 1];
 }
 
@@ -71,6 +71,10 @@ export abstract class PokemonSpeciesForm {
     return !abilityIndex ? this.ability1 : abilityIndex === 1 && this.ability2 ? this.ability2 : this.abilityHidden
   }
 
+  isObtainable() {
+    return this.generation <= 5;
+  }
+
   getSpriteAtlasPath(female: boolean, formIndex?: integer, shiny?: boolean): string {
     return this.getSpriteId(female, formIndex, shiny).replace(/\_{2}/g, '/');
   }
@@ -90,7 +94,7 @@ export abstract class PokemonSpeciesForm {
   abstract getFormSpriteKey(formIndex?: integer): string;
 
   getIconAtlasKey(): string {
-    return `pokemon_icons_${this.generation}`;
+    return `pokemon_icons_${Math.min(this.generation, 6)}`;
   }
 
   getIconId(female: boolean, formIndex?: integer): string {
@@ -1079,5 +1083,6 @@ export const allSpecies = [
   ),
   new PokemonSpecies(Species.GENESECT, "Genesect", 5, false, false, true, "Paleozoic Pokémon", Type.BUG, Type.STEEL, 1.5, 82.5, Abilities.DOWNLOAD, Abilities.NONE, Abilities.NONE, 600, 71, 120, 95, 120, 95, 99, 3, 0, 270, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
   new PokemonSpecies(Species.XERNEAS, "Xerneas", 6, false, true, false, "Life Pokémon", Type.FAIRY, null, 3, 215, Abilities.FAIRY_AURA, Abilities.NONE, Abilities.NONE, 680, 126, 131, 95, 131, 98, 99, 45, 0, 306, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
-  new PokemonSpecies(Species.YVELTAL, "Yveltal", 6, false, true, false, "Destruction Pokémon", Type.DARK, Type.FLYING, 5.8, 203, Abilities.DARK_AURA, Abilities.NONE, Abilities.NONE, 680, 126, 131, 95, 131, 98, 99, 45, 0, 306, GrowthRate.SLOW, "Undiscovered", null, null, 120, false)
+  new PokemonSpecies(Species.YVELTAL, "Yveltal", 6, false, true, false, "Destruction Pokémon", Type.DARK, Type.FLYING, 5.8, 203, Abilities.DARK_AURA, Abilities.NONE, Abilities.NONE, 680, 126, 131, 95, 131, 98, 99, 45, 0, 306, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
+  new PokemonSpecies(Species.ETERNATUS, 'Eternatus', 8, false, true, false, 'Gigantic Pokemon', Type.POISON, Type.DRAGON, 20, 950, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 690, 140, 85, 95, 145, 95, 130, 255, 0, 345, GrowthRate.SLOW, "Undiscovered", null, null, 120, false, false)
 ];
