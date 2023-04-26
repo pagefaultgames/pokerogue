@@ -441,8 +441,8 @@ export default class SummaryUiHandler extends UiHandler {
         abilityNameText.setOrigin(0, 1);
         profileContainer.add(abilityNameText);
 
-        const abilityDescriptionText = addTextObject(this.scene, 7, 82, ability.description, TextStyle.WINDOW, { wordWrap: { width: 1212 } });
-        abilityDescriptionText.setOrigin(0, 1);
+        const abilityDescriptionText = addTextObject(this.scene, 7, 69, ability.description, TextStyle.WINDOW, { maxLines: 2, wordWrap: { width: 1212 } });
+        abilityDescriptionText.setOrigin(0, 0);
         profileContainer.add(abilityDescriptionText);
         break;
       case Page.STATS:

@@ -160,6 +160,14 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
           this.ownedIcon.setAlpha(this.statusIndicator.visible ? 0 : 1);
       }
 
+      const updateHpFrame = () => {
+        const hpFrame = this.hpBar.scaleX > 0.5 ? 'high' : this.hpBar.scaleX > 0.25 ? 'medium' : 'low';
+        if (hpFrame !== this.lastHpFrame) {
+          this.hpBar.setFrame(hpFrame);
+          this.lastHpFrame = hpFrame;
+        };
+      };
+
       const updatePokemonHp = () => {
         const duration = !instant ? Utils.clampInt(Math.abs((this.lastHp) - pokemon.hp) * 5, 250, 5000) : 0;
         this.scene.tweens.add({
@@ -174,13 +182,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
               this.lastHp = tweenHp;
             }
 
-            const hpFrame = this.hpBar.scaleX > 0.5 ? 'high' : this.hpBar.scaleX > 0.25 ? 'medium' : 'low';
-            if (hpFrame !== this.lastHpFrame) {
-              this.hpBar.setFrame(hpFrame);
-              this.lastHpFrame = hpFrame;
-            }
+            updateHpFrame();
           },
           onComplete: () => {
+            updateHpFrame();
             resolve();
           }
         });
@@ -225,19 +230,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         ease: 'Sine.easeIn',
         scaleX: ratio,
         duration: duration,
-        onUpdate: () => {
-          if (this.player && this.lastHp !== battler.hp) {
-            const tweenHp = Math.ceil(this.hpBar.scaleX * battler.getMaxHp());
-            this.setHpNumbers(tweenHp, battler.getMaxHp());
-            this.lastHp = tweenHp;
-          }
-
-          const hpFrame = this.hpBar.scaleX > 0.5 ? 'high' : this.hpBar.scaleX > 0.25 ? 'medium' : 'low';
-          if (hpFrame !== this.lastHpFrame) {
-            this.hpBar.setFrame(hpFrame);
-            this.lastHpFrame = hpFrame;
-          }
-        },
         onComplete: () => {
           if (!this.scene) {
             resolve();
