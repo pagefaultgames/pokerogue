@@ -18,10 +18,9 @@ export class Battle {
         let baseLevel = 1 + this.waveIndex / 2 + Math.pow(this.waveIndex / 25, 2);
 
         if (!(this.waveIndex % 10)) {
-            let bossMultiplier = 1.2;
-            if (this.waveIndex > 100)
-                bossMultiplier += 0.028 * Math.floor((this.waveIndex - 100) / 10);
-            return Math.floor(baseLevel * bossMultiplier);
+            if (this.waveIndex === 200)
+                return 200;
+            return Math.floor(baseLevel * 1.2);
         }
 
         const deviation = 10 / this.waveIndex;

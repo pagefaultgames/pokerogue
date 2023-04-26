@@ -51,6 +51,7 @@ export default class BattleScene extends Phaser.Scene {
 	public auto: boolean;
 	public gameSpeed: integer = 1;
 	public quickStart: boolean = quickStart;
+	public finalWave: integer = 200;
 
 	public gameData: GameData;
 
@@ -521,8 +522,6 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean): PokemonSpecies {
-		if (waveIndex === 150)
-			return getPokemonSpecies(Species.ETERNATUS);
 		return fromArenaPool
 			? this.arena.randomSpecies(waveIndex, level)
 			: getPokemonSpecies(allSpecies[(Utils.randInt(allSpecies.length)) - 1].getSpeciesForLevel(level));

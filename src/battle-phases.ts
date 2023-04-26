@@ -200,7 +200,9 @@ export class SelectBiomePhase extends BattlePhase {
       this.end();
     };
 
-    if (Array.isArray(biomeLinks[currentBiome]))
+    if (this.scene.currentBattle.waveIndex === this.scene.finalWave - 9)
+      setNextBiome(Biome.END);
+    else if (Array.isArray(biomeLinks[currentBiome]))
       this.scene.ui.setMode(Mode.BIOME_SELECT, currentBiome, (biomeIndex: integer) => {
         this.scene.ui.setMode(Mode.MESSAGE);
         setNextBiome((biomeLinks[currentBiome] as Biome[])[biomeIndex]);
@@ -1422,24 +1424,32 @@ export class VictoryPhase extends PokemonPhase {
     }
     
     this.scene.pushPhase(new BattleEndPhase(this.scene));
-    this.scene.pushPhase(new SelectModifierPhase(this.scene));
-    this.scene.newBattle();
+    if (this.scene.currentBattle.waveIndex < this.scene.finalWave) {
+      this.scene.pushPhase(new SelectModifierPhase(this.scene));
+      this.scene.newBattle();
+    } else
+      this.scene.pushPhase(new GameOverPhase(this.scene, true));
 
     this.end();
   }
 }
 
 export class GameOverPhase extends BattlePhase {
-  constructor(scene: BattleScene) {
+  private victory: boolean;
+
+  constructor(scene: BattleScene, victory?: boolean) {
     super(scene);
+
+    this.victory = !!victory;
   }
 
   start() {
     super.start();
 
     this.scene.time.delayedCall(1000, () => {
-      this.scene.fadeOutBgm(5000, true);
-      this.scene.ui.fadeOut(5000).then(() => {
+      const fadeDuration = this.victory ? 10000 : 5000;
+      this.scene.fadeOutBgm(fadeDuration, true);
+      this.scene.ui.fadeOut(fadeDuration).then(() => {
         this.scene.clearPhaseQueue();
         this.scene.ui.clearText();
         this.scene.reset();

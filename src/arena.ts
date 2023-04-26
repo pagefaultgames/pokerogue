@@ -117,6 +117,8 @@ export class Arena {
         return 'cave';
       case Biome.POWER_PLANT:
         return 'ruins';
+      case Biome.END:
+        return 'wasteland';
     }
     return Biome[this.biomeType].toLowerCase();
   }
@@ -164,12 +166,13 @@ export class Arena {
       case Biome.DOJO:
         return Type.FIGHTING;
       case Biome.RUINS:
+      case Biome.SPACE:
         return Type.PSYCHIC;
       case Biome.WASTELAND:
         return Type.DRAGON;
       case Biome.ABYSS:
         return Type.DARK;
-      case Biome.SPACE:
+      case Biome.END:
         return Type.STEEL;
     }
   }

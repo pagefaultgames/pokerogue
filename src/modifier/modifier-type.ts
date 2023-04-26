@@ -725,7 +725,10 @@ export function getPlayerModifierTypeOptionsForWave(waveIndex: integer, count: i
 }
 
 export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: EnemyPokemon[]): PokemonHeldItemModifierType[] {
-  return new Array(count).fill(0).map(() => getNewModifierTypeOption(party, false).type as PokemonHeldItemModifierType);
+  const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, false).type as PokemonHeldItemModifierType);
+  if (waveIndex === 200)
+    ret.push(modifierTypes.MINI_BLACK_HOLE());
+  return ret;
 }
 
 function getNewModifierTypeOption(party: Pokemon[], player?: boolean, tier?: ModifierTier, upgrade?: boolean): ModifierTypeOption {

@@ -2727,6 +2727,6 @@ export const allMoves = [
     .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 2, true),
   new AttackMove(Moves.OBLIVION_WING, "Oblivion Wing", Type.FLYING, MoveCategory.SPECIAL, 80, 100, 10, -1, "User recovers 3/4 the HP inflicted on the opponent.", -1, 0, 6)
     .attr(HitHealAttr, 0.75),
-  new AttackMove(Moves.DYNAMAX_CANNON, "Dynamax Cannon", Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 5, -1, "Power is doubled if the target is over level 150.", -1, 0, 8)
-    .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.level > 150 ? 2 : 1)
+  new AttackMove(Moves.DYNAMAX_CANNON, "Dynamax Cannon", Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 5, -1, "Power is doubled if the target is over level 200.", -1, 0, 8)
+    .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.level > 200 ? 2 : 1)
 ];
