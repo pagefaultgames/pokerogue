@@ -879,6 +879,9 @@ export class PlayerPokemon extends Pokemon {
       this.handleSpecialEvolutions(evolution);
       this.species = getPokemonSpecies(evolution.speciesId);
       this.name = this.species.name.toUpperCase();
+      const abilityCount = this.species.getAbilityCount();
+      if (this.abilityIndex >= abilityCount) // Shouldn't happen
+        this.abilityIndex = abilityCount - 1;
       this.getSpeciesForm().generateIconAnim(this.scene, this.gender === Gender.FEMALE, this.formIndex);
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();

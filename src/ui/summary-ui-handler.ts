@@ -435,7 +435,7 @@ export default class SummaryUiHandler extends UiHandler {
         if (this.pokemon.species.type2)
           profileContainer.add(getTypeIcon(1, this.pokemon.species.type2));
 
-        const ability = abilities[this.pokemon.species[`ability${!this.pokemon.abilityIndex ? '1' : '2'}`]];
+        const ability = abilities[this.pokemon.species.getAbility(this.pokemon.abilityIndex)];
 
         const abilityNameText = addTextObject(this.scene, 7, 66, ability.name.toUpperCase(), TextStyle.SUMMARY);
         abilityNameText.setOrigin(0, 1);

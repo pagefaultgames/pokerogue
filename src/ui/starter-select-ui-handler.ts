@@ -1,13 +1,14 @@
 import BattleScene, { Button } from "../battle-scene";
 import PokemonSpecies, { allSpecies } from "../data/pokemon-species";
 import { Species } from "../data/species";
-import { TextStyle, addTextObject } from "./text";
+import { TextStyle, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import MessageUiHandler from "./message-ui-handler";
 import { DexEntryDetails, StarterDexUnlockTree } from "../system/game-data";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { pokemonPrevolutions } from "../data/pokemon-evolutions";
+import { abilities } from "../data/ability";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -16,6 +17,7 @@ export interface Starter {
   shiny: boolean;
   formIndex: integer;
   female: boolean;
+  abilityIndex: integer;
 }
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
@@ -25,6 +27,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private pokemonSprite: Phaser.GameObjects.Sprite;
     private pokemonNameText: Phaser.GameObjects.Text;
     private pokemonGenderText: Phaser.GameObjects.Text;
+    private pokemonAbilityLabelText: Phaser.GameObjects.Text;
+    private pokemonAbilityText: Phaser.GameObjects.Text;
     private instructionsText: Phaser.GameObjects.Text;
     private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
 
@@ -32,6 +36,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private shinyCursor: integer = 0;
     private formCursor: integer = 0;
     private genderCursor: integer = 0;
+    private abilityCursor: integer = 0;
     private genCursor: integer = 0;
 
     private genSpecies: PokemonSpecies[][] = [];
@@ -39,12 +44,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
     private starterGens: integer[] = [];
     private starterCursors: integer[] = [];
-    private starterDetails: [boolean, integer, boolean][] = [];
+    private starterDetails: [boolean, integer, boolean, integer][] = [];
     private speciesStarterDexEntry: DexEntryDetails;
     private speciesStarterDexTree: StarterDexUnlockTree;
     private canCycleShiny: boolean;
     private canCycleForm: boolean;
     private canCycleGender: boolean;
+    private canCycleAbility: boolean;
 
     private assetLoadCancelled: Utils.BooleanHolder;
     private cursorObj: Phaser.GameObjects.Image;
@@ -85,6 +91,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonGenderText = addTextObject(this.scene, 96, 112, '', TextStyle.SUMMARY);
       this.pokemonGenderText.setOrigin(0, 0);
       this.starterSelectContainer.add(this.pokemonGenderText);
+
+      this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 126, 'ABILITY:', TextStyle.SUMMARY, { fontSize: '64px' });
+      this.pokemonAbilityLabelText.setOrigin(0, 0);
+      this.starterSelectContainer.add(this.pokemonAbilityLabelText);
+
+      this.pokemonAbilityText = addTextObject(this.scene, 38, 126, '', TextStyle.SUMMARY, { fontSize: '64px' });
+      this.pokemonAbilityText.setOrigin(0, 0);
+      this.starterSelectContainer.add(this.pokemonAbilityText);
 
       const genText = addTextObject(this.scene, 115, 6, 'I\nII\nIII\nIV\nV', TextStyle.WINDOW);
       genText.setLineSpacing(16);
@@ -161,7 +175,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonSprite = this.scene.add.sprite(53, 63, `pkmn__sub`);
       this.starterSelectContainer.add(this.pokemonSprite);
 
-      this.instructionsText = addTextObject(this.scene, 1, 132, '', TextStyle.PARTY, { fontSize: '52px' });
+      this.instructionsText = addTextObject(this.scene, 4, 140, '', TextStyle.PARTY, { fontSize: '42px' });
       this.starterSelectContainer.add(this.instructionsText);
 
       this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
@@ -248,7 +262,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               this.starterIcons[this.starterCursors.length].play(species.getIconKey(this.speciesStarterDexEntry?.female));
               this.starterGens.push(this.genCursor);
               this.starterCursors.push(this.cursor);
-              this.starterDetails.push([ !!this.shinyCursor, this.formCursor, !!this.genderCursor ]);
+              this.starterDetails.push([ !!this.shinyCursor, this.formCursor, !!this.genderCursor, this.abilityCursor ]);
               if (this.speciesLoaded.get(species.speciesId))
                 species.cry(this.scene);
               if (this.starterCursors.length === 3) {
@@ -263,7 +277,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                         species: thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]],
                         shiny: thisObj.starterDetails[i][0],
                         formIndex: thisObj.starterDetails[i][1],
-                        female: thisObj.starterDetails[i][2]
+                        female: thisObj.starterDetails[i][2],
+                        abilityIndex: thisObj.starterDetails[i][3]
                       };
                     }));
                   }, () => {
@@ -292,7 +307,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           switch (button) {
             case Button.CYCLE_SHINY:
               if (this.canCycleShiny) {
-                this.setSpeciesDetails(this.lastSpecies, !this.shinyCursor, undefined, undefined);
+                this.setSpeciesDetails(this.lastSpecies, !this.shinyCursor, undefined, undefined, undefined);
                 if (this.shinyCursor)
                   this.scene.sound.play('sparkle');
                 else
@@ -301,13 +316,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               break;
             case Button.CYCLE_FORM:
               if (this.canCycleForm) {
-                this.setSpeciesDetails(this.lastSpecies, undefined, (this.formCursor + 1) % this.lastSpecies.forms.length, undefined);
+                this.setSpeciesDetails(this.lastSpecies, undefined, (this.formCursor + 1) % this.lastSpecies.forms.length, undefined, undefined);
                 success = true;
               }
               break;
             case Button.CYCLE_GENDER:
               if (this.canCycleGender) {
-                this.setSpeciesDetails(this.lastSpecies, undefined, undefined, !this.genderCursor);
+                this.setSpeciesDetails(this.lastSpecies, undefined, undefined, !this.genderCursor, undefined);
+                success = true;
+              }
+              break;
+            case Button.CYCLE_ABILITY:
+              if (this.canCycleAbility) {
+                const abilityCount = this.lastSpecies.getAbilityCount();
+                this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, (this.abilityCursor + 1) % abilityCount);
                 success = true;
               }
               break;
@@ -341,18 +363,30 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       let instructionLines = [
         'Arrow Keys/WASD: Move'
       ];
+      let cycleInstructionLines = [];
       if (!this.genMode)
         instructionLines.push('A/Space/Enter: Select');
       if (this.starterCursors.length)
         instructionLines.push('X/Backspace/Esc: Undo');
       if (this.speciesStarterDexTree) {
         if (this.canCycleShiny)
-          instructionLines.push('R: Cycle Shiny');
-       if (this.canCycleForm)
-          instructionLines.push('F: Cycle Form');
-       if (this.canCycleGender)
-          instructionLines.push('G: Cycle Gender');
+          cycleInstructionLines.push('R: Cycle Shiny');
+        if (this.canCycleForm)
+          cycleInstructionLines.push('F: Cycle Form');
+        if (this.canCycleGender)
+          cycleInstructionLines.push('G: Cycle Gender');
+        if (this.canCycleAbility)
+          cycleInstructionLines.push('E: Cycle Ability');
       }
+
+      if (cycleInstructionLines.length > 2) {
+        cycleInstructionLines[0] += ' | ' + cycleInstructionLines.splice(1, 1);
+        if (cycleInstructionLines.length > 2)
+          cycleInstructionLines[1] += ' | ' + cycleInstructionLines.splice(2, 1);
+      }
+
+      for (let cil of cycleInstructionLines)
+        instructionLines.push(cil);
 
       this.instructionsText.setText(instructionLines.join('\n'));
     }
@@ -418,23 +452,25 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (species && this.speciesStarterDexEntry) {
         this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 3));
         this.pokemonNameText.setText(species.name.toUpperCase());
-
-        this.setSpeciesDetails(species, !!this.speciesStarterDexEntry?.shiny, this.speciesStarterDexEntry?.formIndex || 0, !!this.speciesStarterDexEntry?.female);
+        
+        this.setSpeciesDetails(species, !!this.speciesStarterDexEntry?.shiny, this.speciesStarterDexEntry?.formIndex, !!this.speciesStarterDexEntry?.female, this.speciesStarterDexEntry?.abilityIndex);
       } else {
         this.pokemonNumberText.setText(Utils.padInt(0, 3));
         this.pokemonNameText.setText(species ? '???' : '');
 
-        this.setSpeciesDetails(species, false, 0, false);
+        this.setSpeciesDetails(species, false, 0, false, 0);
       }
     }
 
-    setSpeciesDetails(species: PokemonSpecies, shiny: boolean, formIndex: integer, female: boolean): void {
+    setSpeciesDetails(species: PokemonSpecies, shiny: boolean, formIndex: integer, female: boolean, abilityIndex: integer): void {
       if (shiny !== undefined)
         this.shinyCursor = !shiny ? 0 : 1;
       if (formIndex !== undefined)
         this.formCursor = formIndex;
       if (female !== undefined)
         this.genderCursor = !female ? 0 : 1;
+      if (abilityIndex !== undefined)
+        this.abilityCursor = abilityIndex;
 
       this.pokemonSprite.setVisible(false);
 
@@ -444,8 +480,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       if (species) {
-        const defaultDexEntry = this.scene.gameData.getDefaultDexEntry(species, shiny, formIndex, female) || this.scene.gameData.getDefaultDexEntry(species);
-        const dexEntry = this.scene.gameData.getDexEntry(species, !!this.shinyCursor, this.formCursor, !!this.genderCursor);
+        const defaultDexEntry = this.scene.gameData.getDefaultDexEntry(species, shiny, formIndex, female, abilityIndex) || this.scene.gameData.getDefaultDexEntry(species);
+        const dexEntry = this.scene.gameData.getDexEntry(species, !!this.shinyCursor, this.formCursor, !!this.genderCursor, this.abilityCursor);
 
         if (!dexEntry.caught) {
           if (shiny === undefined || (defaultDexEntry && shiny !== defaultDexEntry.shiny))
@@ -454,10 +490,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             formIndex = defaultDexEntry.formIndex || 0;
           if (female === undefined || (defaultDexEntry && female !== defaultDexEntry.female))
             female = defaultDexEntry.female;
+          if (abilityIndex === undefined || (defaultDexEntry && abilityIndex !== defaultDexEntry.abilityIndex))
+            abilityIndex = defaultDexEntry.abilityIndex;
         } else {
           shiny = !!this.shinyCursor;
           formIndex = this.formCursor;
           female = !!this.genderCursor;
+          abilityIndex = this.abilityCursor;
         }
 
         if (this.speciesStarterDexTree) {
@@ -484,6 +523,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               values = [];
             }
             if (!tree.entry) {
+              if (!tree[tree.key])
+                console.log(tree, tree.key);
               for (let key of tree[tree.key].keys())
                 calcUnlockedCount(tree[tree.key].get(key), prop);
             } else if (tree.entry.caught) {
@@ -512,6 +553,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.canCycleGender = count > 1;
           } else
             this.canCycleGender = false;
+
+          if (this.lastSpecies.getAbilityCount() > 1) {
+            calcUnlockedCount(tree, 'abilityIndex', true);
+            this.canCycleAbility = count > 1;
+          } else
+            this.canCycleAbility = false;
         }
 
         if (species.malePercent !== null) {
@@ -521,8 +568,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonGenderText.setShadowColor(getGenderColor(gender, true));
         } else
           this.pokemonGenderText.setText('');
-      } else
+
+        const ability = this.lastSpecies.getAbility(abilityIndex);
+        this.pokemonAbilityText.setText(abilities[ability].name.toUpperCase());
+
+        const isHidden = ability === this.lastSpecies.abilityHidden;
+        this.pokemonAbilityText.setColor(getTextColor(!isHidden ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
+        this.pokemonAbilityText.setShadowColor(getTextColor(!isHidden ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
+      } else {
         this.pokemonGenderText.setText('');
+        this.pokemonAbilityText.setText('');
+      }
 
       this.updateInstructions();
     }

@@ -43,7 +43,7 @@ export class SelectStarterPhase extends BattlePhase {
         const starterGender = starter.species.malePercent !== null
           ? !starter.female ? Gender.MALE : Gender.FEMALE
           : Gender.GENDERLESS;
-        const starterPokemon = new PlayerPokemon(this.scene, starter.species, startingLevel, 0, starter.formIndex, starterGender, starter.shiny);
+        const starterPokemon = new PlayerPokemon(this.scene, starter.species, startingLevel, starter.abilityIndex, starter.formIndex, starterGender, starter.shiny);
         starterPokemon.setVisible(false);
         party.push(starterPokemon);
         loadPokemonAssets.push(starterPokemon.loadAssets());

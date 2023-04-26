@@ -43,8 +43,13 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
 
   shadowColor = getTextColor(style, true);
 
-  if (extraStyleOptions)
+  if (extraStyleOptions) {
+    if (extraStyleOptions.fontSize) {
+      const sizeRatio = parseInt(extraStyleOptions.fontSize.slice(0, -2)) / parseInt(styleOptions.fontSize.slice(0, -2));
+      shadowSize *= sizeRatio;
+    }
     styleOptions = Object.assign(styleOptions, extraStyleOptions);
+  }
 
   const ret = scene.add.text(x, y, content, styleOptions);
   ret.setScale(0.1666666667);

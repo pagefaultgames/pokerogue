@@ -59,8 +59,16 @@ export abstract class PokemonSpeciesForm {
       this.genderDiffs = genderDiffs;
   }
 
-  isOfType(type: integer) {
+  isOfType(type: integer): boolean {
     return this.type1 === type || (this.type2 !== null && this.type2 === type);
+  }
+
+  getAbilityCount(): integer {
+    return this.ability2 ? this.abilityHidden ? 3 : 2 : this.abilityHidden ? 2 : 1;
+  }
+
+  getAbility(abilityIndex: integer): Abilities {
+    return !abilityIndex ? this.ability1 : abilityIndex === 1 && this.ability2 ? this.ability2 : this.abilityHidden
   }
 
   getSpriteAtlasPath(female: boolean, formIndex?: integer, shiny?: boolean): string {
