@@ -812,7 +812,6 @@ export class RecoilAttr extends MoveEffectAttr {
 
     const cancelled = new Utils.BooleanHolder(false);
     applyAbAttrs(BlockRecoilDamageAttr, user, cancelled);
-    console.log('test?');
 
     if (cancelled.value)
       return false;

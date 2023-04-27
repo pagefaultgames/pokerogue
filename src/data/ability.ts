@@ -1,5 +1,5 @@
 import Pokemon, { PokemonMove } from "../pokemon";
-import { Type } from "./type";
+import { Type, getTypeDamageMultiplier } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../battle-phases";
@@ -51,7 +51,7 @@ export abstract class AbAttr {
     return false;
   }
 
-  getTriggerMessage(pokemon: Pokemon, ...args: any[]) {
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
     return null;
   }
 
@@ -149,6 +149,26 @@ class TypeImmunityAddBattlerTagAbAttr extends TypeImmunityAbAttr {
   }
 }
 
+export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
+  constructor(condition?: AbAttrCondition) {
+    super(null, condition);
+  }
+
+  applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (pokemon.getAttackMoveEffectiveness(move.getMove().type) < 2) {
+      cancelled.value = true;
+      (args[0] as Utils.NumberHolder).value = 0;
+      return true;
+    }
+
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
+    return getPokemonMessage(pokemon, ` avoided damage\nwith ${pokemon.getAbility().name}!`);
+  }
+}
+
 export class PreAttackAbAttr extends AbAttr {
   applyPreAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
     return false;
@@ -222,7 +242,7 @@ export class ProtectStatAttr extends PreStatChangeAbAttr {
     return false;
   }
 
-  getTriggerMessage(pokemon: Pokemon, ...args: any[]) {
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
     return getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nprevents lowering its ${this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : 'stats'}!`);
   }
 }
@@ -704,7 +724,8 @@ export function initAbilities() {
     new Ability(Abilities.WATER_VEIL, "Water Veil (N)", "Prevents the POKéMON from getting a burn.", 3),
     new Ability(Abilities.WHITE_SMOKE, "White Smoke", "Prevents other POKéMON from lowering its stats.", 3)
       .attr(ProtectStatAttr),
-    new Ability(Abilities.WONDER_GUARD, "Wonder Guard (N)", "Only supereffective moves will hit.", 3),
+    new Ability(Abilities.WONDER_GUARD, "Wonder Guard", "Only super effective moves will hit.", 3)
+      .attr(NonSuperEffectiveImmunityAbAttr),
     new Ability(Abilities.ADAPTABILITY, "Adaptability (N)", "Powers up moves of the same type.", 4),
     new Ability(Abilities.AFTERMATH, "Aftermath (N)", "Damages the attacker landing the finishing hit.", 4),
     new Ability(Abilities.ANGER_POINT, "Anger Point (N)", "Maxes ATTACK after taking a critical hit.", 4),

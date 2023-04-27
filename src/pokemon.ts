@@ -427,9 +427,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       console.log(allMoves[movePool[moveIndex]]);
       movePool.splice(moveIndex, 1);
     }
-
-    if (this.isPlayer())
-      this.moveset[1].moveId = Moves.TAKE_DOWN;
   }
 
   trySelectMove(moveIndex: integer): boolean {
@@ -499,8 +496,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               : 1);
         if (typeless)
           typeMultiplier.value = 1;
-        applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, this, battlerMove, power)
-        applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, battlerMove, cancelled, typeMultiplier);
+        applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, this, battlerMove, power);
+
+        if (!typeless)
+          applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, battlerMove, cancelled, typeMultiplier);
 
         if (cancelled.value)
           result = MoveResult.NO_EFFECT;
