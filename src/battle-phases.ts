@@ -25,6 +25,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
+import { ProtectStatAttr, applyPreStatChangeAbilityAttrs } from "./data/ability";
 
 export class SelectStarterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
@@ -1080,9 +1081,10 @@ export class MoveAnimTestPhase extends BattlePhase {
 
 export class StatChangePhase extends PokemonPhase {
   private stats: BattleStat[];
+  private selfTarget: boolean;
   private levels: integer;
 
-  constructor(scene: BattleScene, player: boolean, stats: BattleStat[], levels: integer) {
+  constructor(scene: BattleScene, player: boolean, selfTarget: boolean, stats: BattleStat[], levels: integer) {
     super(scene, player);
 
     const allStats = Utils.getEnumValues(BattleStat);
@@ -1092,19 +1094,26 @@ export class StatChangePhase extends PokemonPhase {
 
   start() {
     const pokemon = this.getPokemon();
-    
+
+    const filteredStats = this.stats.filter(stat => {
+      const cancelled = new Utils.BooleanHolder(false);
+
+      if (!this.selfTarget && this.levels < 0)
+        applyPreStatChangeAbilityAttrs(ProtectStatAttr, this.getPokemon(), stat, cancelled);
+      
+      return !cancelled.value;
+    });
+
     const battleStats = this.getPokemon().summonData.battleStats;
-    const relLevels = this.stats.map(stat => (this.levels >= 1 ? Math.min(battleStats[stat] + this.levels, 6) : Math.max(battleStats[stat] + this.levels, -6)) - battleStats[stat]);
+    const relLevels = filteredStats.map(stat => (this.levels >= 1 ? Math.min(battleStats[stat] + this.levels, 6) : Math.max(battleStats[stat] + this.levels, -6)) - battleStats[stat]);
 
     const end = () => {
-      const messages = this.getStatChangeMessages(relLevels);
+      const messages = this.getStatChangeMessages(filteredStats, relLevels);
       for (let message of messages)
         this.scene.queueMessage(message);
 
-      for (let stat of this.stats)
+      for (let stat of filteredStats)
         pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + this.levels, 6), -6);
-      
-      console.log(pokemon.summonData.battleStats);
       
       this.end();
     };
@@ -1113,7 +1122,7 @@ export class StatChangePhase extends PokemonPhase {
       pokemon.enableMask();
       const pokemonMaskSprite = pokemon.maskSprite;
 
-      const statSprite = this.scene.add.tileSprite((this.player ? 106 : 236) * 6, ((this.player ? 148 : 84) + (this.levels >= 1 ? 160 : 0)) * 6, 156, 316, 'battle_stats', this.stats.length > 1 ? 'mix' : BattleStat[this.stats[0]].toLowerCase());
+      const statSprite = this.scene.add.tileSprite((this.player ? 106 : 236) * 6, ((this.player ? 148 : 84) + (this.levels >= 1 ? 160 : 0)) * 6, 156, 316, 'battle_stats', filteredStats.length > 1 ? 'mix' : BattleStat[filteredStats[0]].toLowerCase());
       statSprite.setAlpha(0);
       statSprite.setScale(6);
       statSprite.setOrigin(0.5, 1);
@@ -1150,11 +1159,11 @@ export class StatChangePhase extends PokemonPhase {
       end();
   }
 
-  getStatChangeMessages(relLevels: integer[]): string[] {
+  getStatChangeMessages(stats: BattleStat[], relLevels: integer[]): string[] {
     const messages: string[] = [];
     
-    for (let s = 0; s < this.stats.length; s++)
-      messages.push(getPokemonMessage(this.getPokemon(), `'s ${getBattleStatName(this.stats[s])} ${getBattleStatLevelChangeDescription(Math.abs(relLevels[s]), this.levels >= 1)}!`));
+    for (let s = 0; s < stats.length; s++)
+      messages.push(getPokemonMessage(this.getPokemon(), `'s ${getBattleStatName(stats[s])} ${getBattleStatLevelChangeDescription(Math.abs(relLevels[s]), this.levels >= 1)}!`));
     return messages;
   }
 }

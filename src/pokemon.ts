@@ -23,6 +23,7 @@ import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
+import { Abilities, Ability, TypeImmunityAttr, abilities, applyPreDefendAbilityAttrs } from './data/ability';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -345,6 +346,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getTypes().indexOf(type) > -1;
   }
 
+  getAbility(): Ability {
+    return abilities[this.species.getAbility(this.abilityIndex)];
+  }
+
   getAttackMoveEffectiveness(moveType: Type): TypeDamageMultiplier {
     const types = this.getTypes();
     return getTypeDamageMultiplier(moveType, types[0]) * (types.length ? getTypeDamageMultiplier(moveType, types[1]) : 1) as TypeDamageMultiplier;
@@ -479,70 +484,77 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case MoveCategory.PHYSICAL:
       case MoveCategory.SPECIAL:
         const isPhysical = moveCategory === MoveCategory.PHYSICAL;
+        const cancelled = new Utils.BooleanHolder(false);
         const power = new Utils.NumberHolder(move.power);
-        const typeMultiplier = getTypeDamageMultiplier(move.type, this.getSpeciesForm().type1) * (this.getSpeciesForm().type2 !== null ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type2) : 1);
+        const typeMultiplier = new Utils.NumberHolder(getTypeDamageMultiplier(move.type, this.getSpeciesForm().type1) * (this.getSpeciesForm().type2 !== null ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type2) : 1));
         const weatherTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(move.type);
-        applyMoveAttrs(VariablePowerAttr, source, this, move, power);
-        this.scene.arena.applyTags(WeakenMoveTypeTag, move.type, power);
-        this.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, power);
-        const critLevel = new Utils.IntegerHolder(0);
-        applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
-        this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);
-        if (source.getTag(BattlerTagType.CRIT_BOOST))
-          critLevel.value += 2;
-        const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
-        let isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !Utils.randInt(critChance));
-        const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
-        const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
-        const stabMultiplier = source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1;
-        const criticalMultiplier = isCritical ? 2 : 1;
-        damage = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier * typeMultiplier * weatherTypeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
-        if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
-          damage = Math.floor(damage / 2);
-        move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
-          if (this.getTag(hta.tagType))
-            damage *= 2;
-        });
+        applyPreDefendAbilityAttrs(TypeImmunityAttr, this, source, battlerMove, cancelled, typeMultiplier);
 
-        const fixedDamage = new Utils.IntegerHolder(0);
-        applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
-        if (damage && fixedDamage.value) {
-          damage = fixedDamage.value;
-          isCritical = false;
-          result = MoveResult.EFFECTIVE;
-        }
+        if (cancelled.value)
+          result = MoveResult.NO_EFFECT;
+        else {
+          applyMoveAttrs(VariablePowerAttr, source, this, move, power);
+          this.scene.arena.applyTags(WeakenMoveTypeTag, move.type, power);
+          this.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, power);
+          const critLevel = new Utils.IntegerHolder(0);
+          applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
+          this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);
+          if (source.getTag(BattlerTagType.CRIT_BOOST))
+            critLevel.value += 2;
+          const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
+          let isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !Utils.randInt(critChance));
+          const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
+          const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
+          const stabMultiplier = source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1;
+          const criticalMultiplier = isCritical ? 2 : 1;
+          damage = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier * typeMultiplier.value * weatherTypeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
+          if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
+            damage = Math.floor(damage / 2);
+          move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
+            if (this.getTag(hta.tagType))
+              damage *= 2;
+          });
 
-        console.log('damage', damage, move.name, move.power, sourceAtk, targetDef);
-        
-        if (!result) {
-          if (typeMultiplier >= 2)
-            result = MoveResult.SUPER_EFFECTIVE;
-          else if (typeMultiplier >= 1)
+          const fixedDamage = new Utils.IntegerHolder(0);
+          applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
+          if (damage && fixedDamage.value) {
+            damage = fixedDamage.value;
+            isCritical = false;
             result = MoveResult.EFFECTIVE;
-          else if (typeMultiplier > 0)
-            result = MoveResult.NOT_VERY_EFFECTIVE;
-          else
-            result = MoveResult.NO_EFFECT;
-        }
+          }
 
-        if (damage) {
-          this.scene.unshiftPhase(new DamagePhase(this.scene, this.isPlayer(), result as DamageResult));
-          if (isCritical)
-            this.scene.queueMessage('A critical hit!');
-          this.damage(damage);
-          source.turnData.damageDealt += damage;
-        }
+          console.log('damage', damage, move.name, move.power, sourceAtk, targetDef);
+          
+          if (!result) {
+            if (typeMultiplier.value >= 2)
+              result = MoveResult.SUPER_EFFECTIVE;
+            else if (typeMultiplier.value >= 1)
+              result = MoveResult.EFFECTIVE;
+            else if (typeMultiplier.value > 0)
+              result = MoveResult.NOT_VERY_EFFECTIVE;
+            else
+              result = MoveResult.NO_EFFECT;
+          }
 
-        switch (result) {
-          case MoveResult.SUPER_EFFECTIVE:
-            this.scene.queueMessage('It\'s super effective!');
-            break;
-          case MoveResult.NOT_VERY_EFFECTIVE:
-            this.scene.queueMessage('It\'s not very effective!');
-            break;
-          case MoveResult.NO_EFFECT:
-            this.scene.queueMessage(`It doesn\'t affect ${this.name}!`);
-            break;
+          if (damage) {
+            this.scene.unshiftPhase(new DamagePhase(this.scene, this.isPlayer(), result as DamageResult));
+            if (isCritical)
+              this.scene.queueMessage('A critical hit!');
+            this.damage(damage);
+            source.turnData.damageDealt += damage;
+          }
+
+          switch (result) {
+            case MoveResult.SUPER_EFFECTIVE:
+              this.scene.queueMessage('It\'s super effective!');
+              break;
+            case MoveResult.NOT_VERY_EFFECTIVE:
+              this.scene.queueMessage('It\'s not very effective!');
+              break;
+            case MoveResult.NO_EFFECT:
+              this.scene.queueMessage(`It doesn\'t affect ${this.name}!`);
+              break;
+          }
         }
         break;
       case MoveCategory.STATUS:

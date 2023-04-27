@@ -94,6 +94,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 126, 'ABILITY:', TextStyle.SUMMARY, { fontSize: '64px' });
       this.pokemonAbilityLabelText.setOrigin(0, 0);
+      this.pokemonAbilityLabelText.setVisible(false);
       this.starterSelectContainer.add(this.pokemonAbilityLabelText);
 
       this.pokemonAbilityText = addTextObject(this.scene, 38, 126, '', TextStyle.SUMMARY, { fontSize: '64px' });
@@ -454,11 +455,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (species && this.speciesStarterDexEntry) {
         this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 3));
         this.pokemonNameText.setText(species.name.toUpperCase());
+        this.pokemonAbilityLabelText.setVisible(true);
         
         this.setSpeciesDetails(species, !!this.speciesStarterDexEntry?.shiny, this.speciesStarterDexEntry?.formIndex, !!this.speciesStarterDexEntry?.female, this.speciesStarterDexEntry?.abilityIndex);
       } else {
         this.pokemonNumberText.setText(Utils.padInt(0, 3));
         this.pokemonNameText.setText(species ? '???' : '');
+        this.pokemonAbilityLabelText.setVisible(false);
 
         this.setSpeciesDetails(species, false, 0, false, 0);
       }
@@ -563,7 +566,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.canCycleAbility = false;
         }
 
-        if (species.malePercent !== null) {
+        if (defaultDexEntry && species.malePercent !== null) {
           const gender = !female ? Gender.MALE : Gender.FEMALE;
           this.pokemonGenderText.setText(getGenderSymbol(gender));
           this.pokemonGenderText.setColor(getGenderColor(gender));
@@ -571,12 +574,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         } else
           this.pokemonGenderText.setText('');
 
-        const ability = this.lastSpecies.getAbility(abilityIndex);
-        this.pokemonAbilityText.setText(abilities[ability].name.toUpperCase());
+        if (defaultDexEntry) {
+          const ability = this.lastSpecies.getAbility(abilityIndex);
+          this.pokemonAbilityText.setText(abilities[ability].name.toUpperCase());
 
-        const isHidden = ability === this.lastSpecies.abilityHidden;
-        this.pokemonAbilityText.setColor(getTextColor(!isHidden ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
-        this.pokemonAbilityText.setShadowColor(getTextColor(!isHidden ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
+          const isHidden = ability === this.lastSpecies.abilityHidden;
+          this.pokemonAbilityText.setColor(getTextColor(!isHidden ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
+          this.pokemonAbilityText.setShadowColor(getTextColor(!isHidden ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
+        } else
+          this.pokemonAbilityText.setText('');
       } else {
         this.pokemonGenderText.setText('');
         this.pokemonAbilityText.setText('');

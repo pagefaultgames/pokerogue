@@ -101,13 +101,13 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
     case BerryType.APICOT:
       return (pokemon: Pokemon) => {
         const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
-        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), [ battleStat ], 1));
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), true, [ battleStat ], 1));
       };
     case BerryType.LANSAT:
       return (pokemon: Pokemon) => {
         pokemon.addTag(BattlerTagType.CRIT_BOOST);
       };
     case BerryType.STARF:
-      return (pokemon: Pokemon) => pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), [ BattleStat.RAND ], 2));
+      return (pokemon: Pokemon) => pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), true, [ BattleStat.RAND ], 2));
   }
 }

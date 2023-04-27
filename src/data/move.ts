@@ -9,7 +9,6 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagType, ArenaTrapTag } from "./arena-tag";
-import { FlinchChanceModifier } from "../modifier/modifier";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -1095,7 +1094,7 @@ export class StatChangeAttr extends MoveEffectAttr {
 
     if (move.chance < 0 || move.chance === 100 || Utils.randInt(100) < move.chance) {
       const levels = this.getLevels(user);
-      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.isPlayer() === this.selfTarget, this.stats, levels));
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.isPlayer() === this.selfTarget, this.selfTarget, this.stats, levels));
       return true;
     }
 

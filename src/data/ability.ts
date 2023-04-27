@@ -1,15 +1,129 @@
+import Pokemon, { PokemonMove } from "../pokemon";
+import { Type } from "./type";
+import * as Utils from "../utils";
+import { BattleStat } from "./battle-stat";
+import { StatChangePhase } from "../battle-phases";
+
 export class Ability {
   public id: Abilities;
   public name: string;
   public description: string;
   public generation: integer;
+  public attrs: AbilityAttr[];
 
   constructor(id: Abilities, name: string, description: string, generation: integer) {
     this.id = id;
     this.name = name;
     this.description = description;
     this.generation = generation;
+    this.attrs = [];
   }
+
+  getAttrs(attrType: { new(...args: any[]): AbilityAttr }): AbilityAttr[] {
+    return this.attrs.filter(a => a instanceof attrType);
+  }
+
+  attr<T extends new (...args: any[]) => AbilityAttr>(AttrType: T, ...args: ConstructorParameters<T>): Ability {
+    const attr = new AttrType(...args);
+    this.attrs.push(attr);
+
+    return this;
+  }
+}
+
+export abstract class AbilityAttr { }
+
+export class PreDefendAbilityAttr extends AbilityAttr {
+  applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class TypeImmunityAttr extends PreDefendAbilityAttr {
+  private immuneType: Type;
+
+  constructor(immuneType: Type) {
+    super();
+
+    this.immuneType = immuneType;
+  }
+
+  applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (move.getMove().type === this.immuneType) {
+      (args[0] as Utils.NumberHolder).value = 0;
+      return true;
+    }
+
+    return false;
+  }
+}
+
+class TypeImmunityStatChangeAttr extends TypeImmunityAttr {
+  private stat: BattleStat;
+  private levels: integer;
+
+  constructor(immuneType: Type, stat: BattleStat, levels: integer) {
+    super(immuneType);
+
+    this.stat = stat;
+    this.levels = levels;
+  }
+
+  applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const ret = super.applyPreDefend(pokemon, attacker, move, cancelled, args);
+
+    if (ret) {
+      cancelled.value = true;
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), true, [ this.stat ], this.levels));
+    }
+    
+    return ret;
+  }
+}
+
+export class PreStatChangeAbilityAttr extends AbilityAttr {
+  applyPreStatChange(pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class ProtectStatAttr extends PreStatChangeAbilityAttr {
+  private protectedStats: BattleStat[];
+
+  constructor(...stats: BattleStat[]) {
+    super();
+
+    this.protectedStats = stats;
+  }
+
+  applyPreStatChange(pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (!this.protectedStats.length || this.protectedStats.indexOf(stat) > -1) {
+      cancelled.value = true;
+      return true;
+    }
+    
+    return false;
+  }
+}
+
+export function applyPreDefendAbilityAttrs(attrType: { new(...args: any[]): PreDefendAbilityAttr },
+  pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, ...args: any[]): void {
+  const ability = pokemon.getAbility();
+  const attrs = ability.getAttrs(attrType) as PreDefendAbilityAttr[];
+  for (let attr of attrs) {
+    if (attr.applyPreDefend(pokemon, attacker, move, cancelled, args))
+      console.log('Applied', ability.name, attr);
+  }
+}
+
+export function applyPreStatChangeAbilityAttrs(attrType: { new(...args: any[]): PreStatChangeAbilityAttr },
+  pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, ...args: any[]) {
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as PreStatChangeAbilityAttr[];
+    for (let attr of attrs) {
+      if (attr.applyPreStatChange(pokemon, stat, cancelled, args))
+        console.log('Applied', ability.name, attr);
+    }
 }
 
 export enum Abilities {
@@ -193,7 +307,8 @@ export const abilities = [
   new Ability(Abilities.BATTLE_ARMOR, "Battle Armor (N)", "The POKéMON is protected against critical hits.", 3),
   new Ability(Abilities.BLAZE, "Blaze (N)", "Powers up FIRE-type moves in a pinch.", 3),
   new Ability(Abilities.CHLOROPHYLL, "Chlorophyll (N)", "Boosts the POKéMON's SPEED in sunshine.", 3),
-  new Ability(Abilities.CLEAR_BODY, "Clear Body (N)", "Prevents other POKéMON from lowering its stats.", 3),
+  new Ability(Abilities.CLEAR_BODY, "Clear Body", "Prevents other POKéMON from lowering its stats.", 3)
+    .attr(ProtectStatAttr),
   new Ability(Abilities.CLOUD_NINE, "Cloud Nine (N)", "Eliminates the effects of weather.", 3),
   new Ability(Abilities.COLOR_CHANGE, "Color Change (N)", "Changes the POKéMON's type to the foe's move.", 3),
   new Ability(Abilities.COMPOUND_EYES, "Compound Eyes (N)", "The POKéMON's accuracy is boosted.", 3),
@@ -209,15 +324,19 @@ export const abilities = [
   new Ability(Abilities.GUTS, "Guts (N)", "Boosts ATTACK if there is a status problem.", 3),
   new Ability(Abilities.HUGE_POWER, "Huge Power (N)", "Raises the POKéMON's ATTACK stat.", 3),
   new Ability(Abilities.HUSTLE, "Hustle (N)", "Boosts the ATTACK stat, but lowers accuracy.", 3),
-  new Ability(Abilities.HYPER_CUTTER, "Hyper Cutter (N)", "Prevents other POKéMON from lowering ATTACK stat.", 3),
+  new Ability(Abilities.HYPER_CUTTER, "Hyper Cutter", "Prevents other POKéMON from lowering ATTACK stat.", 3)
+    .attr(ProtectStatAttr, BattleStat.ATK),
   new Ability(Abilities.ILLUMINATE, "Illuminate (N)", "Raises the likelihood of meeting wild POKéMON.", 3),
   new Ability(Abilities.IMMUNITY, "Immunity (N)", "Prevents the POKéMON from getting poisoned.", 3),
   new Ability(Abilities.INNER_FOCUS, "Inner Focus (N)", "The POKéMON is protected from flinching.", 3),
   new Ability(Abilities.INSOMNIA, "Insomnia (N)", "Prevents the POKéMON from falling asleep.", 3),
   new Ability(Abilities.INTIMIDATE, "Intimidate (N)", "Lowers the foe's ATTACK stat.", 3),
-  new Ability(Abilities.KEEN_EYE, "Keen Eye (N)", "Prevents other POKéMON from lowering accuracy.", 3),
-  new Ability(Abilities.LEVITATE, "Levitate (N)", "Gives immunity to GROUND-type moves.", 3),
-  new Ability(Abilities.LIGHTNING_ROD, "Lightning Rod (N)", "Draws in all ELECTRIC-type moves to up SP. ATK.", 3),
+  new Ability(Abilities.KEEN_EYE, "Keen Eye", "Prevents other POKéMON from lowering accuracy.", 3)
+    .attr(ProtectStatAttr, BattleStat.ACC),
+  new Ability(Abilities.LEVITATE, "Levitate", "Gives immunity to GROUND-type moves.", 3)
+    .attr(TypeImmunityAttr, Type.FLYING),
+  new Ability(Abilities.LIGHTNING_ROD, "Lightning Rod", "Draws in all ELECTRIC-type moves to up SP. ATK.", 3)
+    .attr(TypeImmunityStatChangeAttr, Type.ELECTRIC, BattleStat.SPATK, 1),
   new Ability(Abilities.LIMBER, "Limber (N)", "The POKéMON is protected from paralysis.", 3),
   new Ability(Abilities.LIQUID_OOZE, "Liquid Ooze (N)", "Damages attackers using any draining move.", 3),
   new Ability(Abilities.MAGMA_ARMOR, "Magma Armor (N)", "Prevents the POKéMON from becoming frozen.", 3),
@@ -262,7 +381,8 @@ export const abilities = [
   new Ability(Abilities.VOLT_ABSORB, "Volt Absorb (N)", "Restores HP if hit by an ELECTRIC-type move.", 3),
   new Ability(Abilities.WATER_ABSORB, "Water Absorb (N)", "Restores HP if hit by a WATER-type move.", 3),
   new Ability(Abilities.WATER_VEIL, "Water Veil (N)", "Prevents the POKéMON from getting a burn.", 3),
-  new Ability(Abilities.WHITE_SMOKE, "White Smoke (N)", "Prevents other POKéMON from lowering its stats.", 3),
+  new Ability(Abilities.WHITE_SMOKE, "White Smoke", "Prevents other POKéMON from lowering its stats.", 3)
+    .attr(ProtectStatAttr),
   new Ability(Abilities.WONDER_GUARD, "Wonder Guard (N)", "Only supereffective moves will hit.", 3),
   new Ability(Abilities.ADAPTABILITY, "Adaptability (N)", "Powers up moves of the same type.", 4),
   new Ability(Abilities.AFTERMATH, "Aftermath (N)", "Damages the attacker landing the finishing hit.", 4),
@@ -304,7 +424,8 @@ export const abilities = [
   new Ability(Abilities.SOLID_ROCK, "Solid Rock (N)", "Reduces damage from super-effective attacks.", 4),
   new Ability(Abilities.STALL, "Stall (N)", "The POKéMON moves after all other POKéMON do.", 4),
   new Ability(Abilities.STEADFAST, "Steadfast (N)", "Raises SPEED each time the POKéMON flinches.", 4),
-  new Ability(Abilities.STORM_DRAIN, "Storm Drain (N)", "Draws in all WATER-type moves to up SP. ATK.", 4),
+  new Ability(Abilities.STORM_DRAIN, "Storm Drain", "Draws in all WATER-type moves to up SP. ATK.", 4)
+    .attr(TypeImmunityStatChangeAttr, Type.WATER, BattleStat.SPATK, 1),
   new Ability(Abilities.SUPER_LUCK, "Super Luck (N)", "Heightens the critical-hit ratios of moves.", 4),
   new Ability(Abilities.TANGLED_FEET, "Tangled Feet (N)", "Raises evasion if the POKéMON is confused.", 4),
   new Ability(Abilities.TECHNICIAN, "Technician (N)", "Powers up the POKéMON's weaker moves.", 4),
@@ -312,7 +433,8 @@ export const abilities = [
   new Ability(Abilities.UNAWARE, "Unaware (N)", "Ignores any stat changes in the POKéMON.", 4),
   new Ability(Abilities.UNBURDEN, "Unburden (N)", "Raises SPEED if a held item is used.", 4),
   new Ability(Abilities.ANALYTIC, "Analytic (N)", "Boosts move power when the POKéMON moves last.", 5),
-  new Ability(Abilities.BIG_PECKS, "Big Pecks (N)", "Protects the POKéMON from DEFENSE-lowering attacks.", 5),
+  new Ability(Abilities.BIG_PECKS, "Big Pecks", "Protects the POKéMON from DEFENSE-lowering attacks.", 5)
+    .attr(ProtectStatAttr, BattleStat.DEF),
   new Ability(Abilities.CONTRARY, "Contrary (N)", "Makes stat changes have an opposite effect.", 5),
   new Ability(Abilities.CURSED_BODY, "Cursed Body (N)", "May disable a move used on the POKéMON.", 5),
   new Ability(Abilities.DEFEATIST, "Defeatist (N)", "Lowers stats when HP drops below half.", 5),
