@@ -19,6 +19,7 @@ import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from './data/move';
 import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
+import AbilityBar from './ui/ability-bar';
 
 const enableAuto = true;
 const quickStart = false;
@@ -60,6 +61,7 @@ export default class BattleScene extends Phaser.Scene {
 	private currentPhase: BattlePhase;
 	public field: Phaser.GameObjects.Container;
 	public fieldUI: Phaser.GameObjects.Container;
+	public abilityBar: AbilityBar;
 	public arenaBg: Phaser.GameObjects.Image;
 	public arenaBgTransition: Phaser.GameObjects.Image;
 	public arenaPlayer: Phaser.GameObjects.Image;
@@ -153,6 +155,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('overlay_exp', 'ui');
 		this.loadImage('icon_owned', 'ui');
 		this.loadImage('level_up_stats', 'ui');
+		this.loadImage('ability_bar', 'ui');
 		this.loadImage('ball_window', 'ui');
 		this.loadImage('boolean_window', 'ui');
 
@@ -310,6 +313,10 @@ export default class BattleScene extends Phaser.Scene {
 		this.enemyModifierBar = new ModifierBar(this, true);
 		this.add.existing(this.enemyModifierBar);
 		uiContainer.add(this.enemyModifierBar);
+
+		this.abilityBar = new AbilityBar(this);
+		this.abilityBar.setup();
+		this.fieldUI.add(this.abilityBar);
 
 		this.waveCountText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
 		this.waveCountText.setOrigin(1, 0);

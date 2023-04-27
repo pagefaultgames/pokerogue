@@ -1,8 +1,9 @@
 import Pokemon, { PokemonMove } from "../pokemon";
 import { Type } from "./type";
 import * as Utils from "../utils";
-import { BattleStat } from "./battle-stat";
+import { BattleStat, getBattleStatName } from "./battle-stat";
 import { StatChangePhase } from "../battle-phases";
+import { getPokemonMessage } from "../messages";
 
 export class Ability {
   public id: Abilities;
@@ -13,7 +14,7 @@ export class Ability {
 
   constructor(id: Abilities, name: string, description: string, generation: integer) {
     this.id = id;
-    this.name = name;
+    this.name = name.toUpperCase();
     this.description = description;
     this.generation = generation;
     this.attrs = [];
@@ -31,7 +32,11 @@ export class Ability {
   }
 }
 
-export abstract class AbilityAttr { }
+export abstract class AbilityAttr {
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]) {
+    return null;
+  }
+}
 
 export class PreDefendAbilityAttr extends AbilityAttr {
   applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -88,21 +93,25 @@ export class PreStatChangeAbilityAttr extends AbilityAttr {
 }
 
 export class ProtectStatAttr extends PreStatChangeAbilityAttr {
-  private protectedStats: BattleStat[];
+  private protectedStat: BattleStat;
 
-  constructor(...stats: BattleStat[]) {
+  constructor(protectedStat?: BattleStat) {
     super();
 
-    this.protectedStats = stats;
+    this.protectedStat = protectedStat;
   }
 
   applyPreStatChange(pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (!this.protectedStats.length || this.protectedStats.indexOf(stat) > -1) {
+    if (this.protectedStat === undefined || stat === this.protectedStat) {
       cancelled.value = true;
       return true;
     }
     
     return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]) {
+    return getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nprevents lowering its ${this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : 'stats'}!`);
   }
 }
 
@@ -111,8 +120,12 @@ export function applyPreDefendAbilityAttrs(attrType: { new(...args: any[]): PreD
   const ability = pokemon.getAbility();
   const attrs = ability.getAttrs(attrType) as PreDefendAbilityAttr[];
   for (let attr of attrs) {
-    if (attr.applyPreDefend(pokemon, attacker, move, cancelled, args))
-      console.log('Applied', ability.name, attr);
+    if (attr.applyPreDefend(pokemon, attacker, move, cancelled, args)) {
+      pokemon.scene.abilityBar.showAbility(pokemon);
+      const message = attr.getTriggerMessage(pokemon, attacker, move);
+      if (message)
+        pokemon.scene.queueMessage(message);
+    }
   }
 }
 
@@ -121,8 +134,12 @@ export function applyPreStatChangeAbilityAttrs(attrType: { new(...args: any[]): 
     const ability = pokemon.getAbility();
     const attrs = ability.getAttrs(attrType) as PreStatChangeAbilityAttr[];
     for (let attr of attrs) {
-      if (attr.applyPreStatChange(pokemon, stat, cancelled, args))
-        console.log('Applied', ability.name, attr);
+      if (attr.applyPreStatChange(pokemon, stat, cancelled, args)) {
+        pokemon.scene.abilityBar.showAbility(pokemon);
+        const message = attr.getTriggerMessage(pokemon, stat);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      }
     }
 }
 

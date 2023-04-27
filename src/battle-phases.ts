@@ -1283,6 +1283,13 @@ export class MessagePhase extends BattlePhase {
 
     this.scene.ui.showText(this.text, null, () => this.end(), this.callbackDelay || (this.prompt ? 0 : 1500), this.prompt);
   }
+
+  end() {
+    if (this.scene.abilityBar.shown)
+      this.scene.abilityBar.hide();
+
+    super.end();
+  }
 }
 
 export class DamagePhase extends PokemonPhase {
