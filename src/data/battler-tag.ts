@@ -31,6 +31,7 @@ export enum BattlerTagType {
   FLYING,
   UNDERGROUND,
   HIDDEN,
+  FIRE_BOOST,
   CRIT_BOOST,
   NO_CRIT,
   BYPASS_SLEEP,
@@ -464,6 +465,20 @@ export class HideSpriteTag extends BattlerTag {
   }
 }
 
+export class TypeBoostTag extends BattlerTag {
+  public boostedType: Type;
+
+  constructor(tagType: BattlerTagType, sourceMove: Moves, boostedType: Type) {
+    super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
+
+    this.boostedType = boostedType;
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+  }
+}
+
 export class CritBoostTag extends BattlerTag {
   constructor(tagType: BattlerTagType, sourceMove: Moves) {
     super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
@@ -526,6 +541,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.UNDERGROUND:
     case BattlerTagType.HIDDEN:
       return new HideSpriteTag(tagType, turnCount, sourceMove);
+    case BattlerTagType.FIRE_BOOST:
+      return new TypeBoostTag(tagType, sourceMove, Type.FIRE);
     case BattlerTagType.CRIT_BOOST:
       return new CritBoostTag(tagType, sourceMove);
     case BattlerTagType.NO_CRIT:

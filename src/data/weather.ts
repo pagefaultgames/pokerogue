@@ -4,6 +4,8 @@ import Pokemon from "../pokemon";
 import { Type } from "./type";
 import Move, { AttackMove } from "./move";
 import * as Utils from "../utils";
+import BattleScene from "../battle-scene";
+import { SuppressWeatherEffectAbAttr, applyPreWeatherEffectAbAttrs } from "./ability";
 
 export enum WeatherType {
   NONE,
@@ -95,6 +97,21 @@ export class Weather {
     }
 
     return false;
+  }
+
+  isEffectSuppressed(scene: BattleScene): boolean {
+    const playerPokemon = scene.getPlayerPokemon();
+    const enemyPokemon = scene.getEnemyPokemon();
+
+    const cancelled = new Utils.BooleanHolder(false);
+
+    if (playerPokemon)
+      applyPreWeatherEffectAbAttrs(SuppressWeatherEffectAbAttr, playerPokemon, this, cancelled, true);
+
+    if (enemyPokemon)
+      applyPreWeatherEffectAbAttrs(SuppressWeatherEffectAbAttr, enemyPokemon, this, cancelled, true);
+
+    return cancelled.value;
   }
 }
 

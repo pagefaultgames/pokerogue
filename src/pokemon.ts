@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import BattleScene from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './ui/battle-info';
-import Move, { StatChangeAttr, HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, Moves, allMoves, MoveCategory } from "./data/move";
+import Move, { StatChangeAttr, HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, Moves, allMoves, MoveCategory, TypelessAttr } from "./data/move";
 import { pokemonLevelMoves } from './data/pokemon-level-moves';
 import { default as PokemonSpecies, PokemonSpeciesForm, getPokemonSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
@@ -17,13 +17,13 @@ import { tmSpecies } from './data/tms';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './data/pokemon-evolutions';
 import { DamagePhase, FaintPhase } from './battle-phases';
 import { BattleStat } from './data/battle-stat';
-import { BattlerTag, BattlerTagLapseType, BattlerTagType, getBattlerTag } from './data/battler-tag';
+import { BattlerTag, BattlerTagLapseType, BattlerTagType, TypeBoostTag, getBattlerTag } from './data/battler-tag';
 import { Species } from './data/species';
 import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
-import { Abilities, Ability, TypeImmunityAttr, abilities, applyPreDefendAbilityAttrs } from './data/ability';
+import { Abilities, Ability, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyPreAttackAbAttrs, applyPreDefendAbAttrs } from './data/ability';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -350,6 +350,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return abilities[this.species.getAbility(this.abilityIndex)];
   }
 
+  canApplyAbility(): boolean {
+    return !this.getAbility().conditions.find(condition => !condition(this));
+  }
+
   getAttackMoveEffectiveness(moveType: Type): TypeDamageMultiplier {
     const types = this.getTypes();
     return getTypeDamageMultiplier(moveType, types[0]) * (types.length ? getTypeDamageMultiplier(moveType, types[1]) : 1) as TypeDamageMultiplier;
@@ -423,6 +427,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       console.log(allMoves[movePool[moveIndex]]);
       movePool.splice(moveIndex, 1);
     }
+
+    if (this.isPlayer())
+      this.moveset[1].moveId = Moves.TAKE_DOWN;
   }
 
   trySelectMove(moveIndex: integer): boolean {
@@ -484,18 +491,28 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case MoveCategory.PHYSICAL:
       case MoveCategory.SPECIAL:
         const isPhysical = moveCategory === MoveCategory.PHYSICAL;
+        const typeless = move.getAttrs(TypelessAttr).length
         const cancelled = new Utils.BooleanHolder(false);
         const power = new Utils.NumberHolder(move.power);
-        const typeMultiplier = new Utils.NumberHolder(getTypeDamageMultiplier(move.type, this.getSpeciesForm().type1) * (this.getSpeciesForm().type2 !== null ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type2) : 1));
-        const weatherTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(move.type);
-        applyPreDefendAbilityAttrs(TypeImmunityAttr, this, source, battlerMove, cancelled, typeMultiplier);
+        const typeMultiplier = new Utils.NumberHolder(!typeless
+              ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type1) * (this.getSpeciesForm().type2 !== null ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type2) : 1)
+              : 1);
+        if (typeless)
+          typeMultiplier.value = 1;
+        applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, this, battlerMove, power)
+        applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, battlerMove, cancelled, typeMultiplier);
 
         if (cancelled.value)
           result = MoveResult.NO_EFFECT;
         else {
+          if (source.findTag(t => t instanceof TypeBoostTag && (t as TypeBoostTag).boostedType === move.type))
+            power.value *= 1.5;
+          const weatherTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(move.type);
           applyMoveAttrs(VariablePowerAttr, source, this, move, power);
-          this.scene.arena.applyTags(WeakenMoveTypeTag, move.type, power);
-          this.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, power);
+          if (!typeless) {
+            this.scene.arena.applyTags(WeakenMoveTypeTag, move.type, power);
+            this.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, power);
+          }
           const critLevel = new Utils.IntegerHolder(0);
           applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
           this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);

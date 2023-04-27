@@ -3,7 +3,7 @@ import { Biome } from './data/biome';
 import UI from './ui/ui';
 import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, SelectStarterPhase, MessagePhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
-import PokemonSpecies, { allSpecies, getPokemonSpecies } from './data/pokemon-species';
+import PokemonSpecies, { allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
@@ -17,9 +17,10 @@ import { Arena } from './arena';
 import { GameData } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
-import { Moves } from './data/move';
+import { Moves, initMoves } from './data/move';
 import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
+import { initAbilities } from './data/ability';
 
 const enableAuto = true;
 const quickStart = false;
@@ -58,6 +59,7 @@ export default class BattleScene extends Phaser.Scene {
 
 	private phaseQueue: BattlePhase[];
 	private phaseQueuePrepend: BattlePhase[];
+	private phaseQueuePrependSpliceIndex: integer;
 	private currentPhase: BattlePhase;
 	public field: Phaser.GameObjects.Container;
 	public fieldUI: Phaser.GameObjects.Container;
@@ -94,10 +96,15 @@ export default class BattleScene extends Phaser.Scene {
 	constructor() {
 		super('battle');
 
+		initSpecies();
+		initMoves();
+		initAbilities();
+
 		this.gameData = new GameData(this);
 		
 		this.phaseQueue = [];
 		this.phaseQueuePrepend = [];
+		this.phaseQueuePrependSpliceIndex = -1;
 	}
 
 	loadImage(key: string, folder: string, filename?: string) {
@@ -265,7 +272,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadBgm('evolution_fanfare');
 
 		//this.load.glsl('sprite', 'shaders/sprite.frag');
-
+		
 		populateAnims();
 	}
 
@@ -643,14 +650,27 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	unshiftPhase(phase: BattlePhase): void {
-		this.phaseQueuePrepend.push(phase);
+		if (this.phaseQueuePrependSpliceIndex === -1)
+			this.phaseQueuePrepend.push(phase);
+		else
+			this.phaseQueuePrepend.splice(this.phaseQueuePrependSpliceIndex, 0, phase);
 	}
 
 	clearPhaseQueue(): void {
 		this.phaseQueue.splice(0, this.phaseQueue.length);
 	}
 
+	setPhaseQueueSplice(): void {
+		this.phaseQueuePrependSpliceIndex = this.phaseQueuePrepend.length;
+	}
+
+	clearPhaseQueueSplice(): void {
+		this.phaseQueuePrependSpliceIndex = -1;
+	}
+
 	shiftPhase(): void {
+		if (this.phaseQueuePrependSpliceIndex > -1)
+			this.clearPhaseQueueSplice();
 		if (this.phaseQueuePrepend.length) {
 			while (this.phaseQueuePrepend.length)
 				this.phaseQueue.unshift(this.phaseQueuePrepend.pop());
