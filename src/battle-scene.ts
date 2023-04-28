@@ -1,11 +1,11 @@
 import Phaser from 'phaser';
 import { Biome } from './data/biome';
 import UI from './ui/ui';
-import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, SelectStarterPhase, MessagePhase, CheckLoadPhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PartyShareModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate } from './modifier/modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { Species } from './data/species';
 import { initAutoPlay } from './system/auto-play';
@@ -837,9 +837,6 @@ export default class BattleScene extends Phaser.Scene {
 				if (modifier instanceof PersistentModifier)
 					(modifier as PersistentModifier).virtualStackCount = 0;
 			}
-
-			if (player)
-				this.applyModifiers(PartyShareModifier, true, this, modifiers);
 
 			const modifiersClone = modifiers.slice(0);
 			for (let modifier of modifiersClone) {

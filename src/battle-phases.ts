@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, HitsTagAttr, Mis
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HeldItemTransferModifier, HitHealModifier, MapModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, TempBattleStatBoosterModifier, TurnHealModifier } from "./modifier/modifier";
+import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HeldItemTransferModifier, HitHealModifier, MapModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, TempBattleStatBoosterModifier, TurnHealModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -1484,6 +1484,7 @@ export class VictoryPhase extends PokemonPhase {
     const party = this.scene.getParty();
     const expShareModifier = this.scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
     const expBalanceModifier = this.scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
+    const multipleParticipantExpBonusModifier = this.scene.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
     const expValue = this.scene.getEnemyPokemon().getExpValue();
     const expPartyMembers = party.filter(p => p.hp && p.level < 100);
     const partyMemberExp = [];
@@ -1499,8 +1500,10 @@ export class VictoryPhase extends PokemonPhase {
       let expMultiplier = 0;
       if (participated)
         expMultiplier += (1 / participantIds.size);
+      if (participantIds.size > 1 && multipleParticipantExpBonusModifier)
+        expMultiplier += (multipleParticipantExpBonusModifier.getStackCount() * 0.1);
       if (expShareModifier)
-        expMultiplier += expShareModifier.stackCount * 0.1;
+        expMultiplier += expShareModifier.getStackCount() * 0.1;
       const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
       this.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
       partyMemberExp.push(Math.floor(pokemonExp.value));

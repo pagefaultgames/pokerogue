@@ -580,6 +580,9 @@ const modifierTypes = {
   EXP_BALANCE: () => new ModifierType('EXP. BALANCE', 'All EXP. Points received from battles are split between the lower leveled party members',
     (type, _args) => new Modifiers.ExpBalanceModifier(type), 'exp_balance'),
 
+  OVAL_CHARM: () => new ModifierType('OVAL CHARM', 'When multiple POKéMON participate in a battle, each gets an extra 10% of the total EXP',
+    (type, _args) => new Modifiers.MultipleParticipantExpBonusModifier(type), 'oval_charm'),
+
   EXP_CHARM: () => new ExpBoosterModifierType('EXP CHARM', 25),
   GOLDEN_EXP_CHARM: () => new ExpBoosterModifierType('GOLDEN EXP CHARM', 100),
 
@@ -588,10 +591,6 @@ const modifierTypes = {
 
   HEALING_CHARM: () => new ModifierType('HEALING CHARM', 'Doubles the effectiveness of HP restoring moves and items (excludes revives)',
     (type, _args) => new Modifiers.HealingBoosterModifier(type, 2), 'healing_charm'),
-
-  OVAL_CHARM: () => new ModifierType('OVAL CHARM', 'For every X (no. of party members) items in a POKéMON\'s held item stack, give one to each other party member',
-    (type, _args) => new Modifiers.PartyShareModifier(type), 'oval_charm'),
-
   CANDY_JAR: () => new ModifierType('CANDY JAR', 'Increases the number of levels added by RARE CANDY items by 1', (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type)),
 
   BERRY_POUCH: () => new ModifierType('BERRY POUCH', 'Adds a 25% chance that a used berry will not be consumed',
@@ -684,7 +683,6 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, 12),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 3),
-    //new WeightedModifierType(modifierTypes.OVAL_CHARM, 1),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 1),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 3),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 2),
@@ -692,8 +690,10 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.SHELL_BELL, 2),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 3),
     new WeightedModifierType(modifierTypes.EXP_CHARM, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 4 : 0),
+    new WeightedModifierType(modifierTypes.OVAL_CHARM, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 2 : 0),
     new WeightedModifierType(modifierTypes.LUCKY_EGG, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 3 : 0),
-    new WeightedModifierType(modifierTypes.EXP_BALANCE, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 1 : 0)
+    new WeightedModifierType(modifierTypes.EXP_BALANCE,
+      (party: Pokemon[]) => party.filter(p => p.level < 100).length && !party[0].scene.findModifier(m => m instanceof Modifiers.ExpBalanceModifier) ? 1 : 0)
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 3),

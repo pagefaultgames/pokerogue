@@ -780,48 +780,25 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
   }
 }
 
-export class PartyShareModifier extends PersistentModifier {
+export class MultipleParticipantExpBonusModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);
   }
 
-  match(modifier: Modifier) {
-    return modifier instanceof PartyShareModifier;
+  match(modifier: Modifier): boolean {
+    return modifier instanceof MultipleParticipantExpBonusModifier;
   }
 
-  clone(): PartyShareModifier {
-    return new PartyShareModifier(this.type, this.stackCount);
-  }
-
-  shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[0] instanceof BattleScene && args[1] instanceof Array<Modifier>;
-  }
-
-  apply(args: any[]): boolean {
-    const scene = args[0] as BattleScene;
-    const modifiers = args[1] as Modifier[];
-    const party = scene.getParty();
-    for (let modifier of modifiers) {
-      if (modifier instanceof PokemonHeldItemModifier) {
-        const heldItemModifier = modifier as PokemonHeldItemModifier;
-        const extraStacks = Math.floor(modifier.stackCount / Math.max(party.length - (this.stackCount - 1), 1));
-        for (let s = 0; s < extraStacks; s++) {
-          for (let p of party) {
-            if (p.id === heldItemModifier.pokemonId)
-              continue;
-            const newHeldItemModifier = heldItemModifier.clone() as PokemonHeldItemModifier;
-            newHeldItemModifier.pokemonId = p.id;
-            scene.addModifier(newHeldItemModifier, false, true);
-          }
-        }
-      }
-    }
-
+  apply(_args: any[]): boolean {
     return true;
   }
 
-  getMaxStackCount(): number {
-    return 6;
+  clone(): MultipleParticipantExpBonusModifier {
+    return new MultipleParticipantExpBonusModifier(this.type, this.stackCount);
+  }
+
+  getMaxStackCount(): integer {
+    return 5;
   }
 }
 
