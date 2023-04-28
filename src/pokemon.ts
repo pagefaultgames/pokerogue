@@ -23,7 +23,7 @@ import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
-import { Abilities, Ability, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyPreAttackAbAttrs, applyPreDefendAbAttrs } from './data/ability';
+import { Ability, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyPreAttackAbAttrs, applyPreDefendAbAttrs } from './data/ability';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -943,7 +943,7 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer) {
-    super(scene, -66, 84, species, level, scene.arena.getFormIndex(species));
+    super(scene, -66, 84, species, level, undefined, scene.arena.getFormIndex(species));
 
     let prevolution: Species;
     let speciesId = species.speciesId;
@@ -1141,6 +1141,10 @@ export class PokemonMove {
 
   getMove(): Move {
     return allMoves[this.moveId];
+  }
+
+  getPpRatio(): number {
+    return 1 - (this.ppUsed / (this.getMove().pp + this.ppUp));
   }
 
   getName(): string {

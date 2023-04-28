@@ -575,11 +575,11 @@ const modifierPool = {
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.ETHER, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => m.getPpRatio() <= 0.2).length).length, 3);
       return thresholdPartyMemberCount * 3;
     }),
     new WeightedModifierType(modifierTypes.MAX_ETHER, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => m.getPpRatio() <= 0.2).length).length, 3);
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.TEMP_STAT_BOOSTER, 4),
@@ -611,11 +611,11 @@ const modifierPool = {
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.ELIXIR, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => m.getPpRatio() <= 0.2).length).length, 3);
       return thresholdPartyMemberCount * 3;
     }),
     new WeightedModifierType(modifierTypes.MAX_ELIXIR, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => m.getPpRatio() <= 0.2).length).length, 3);
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => {
