@@ -972,6 +972,28 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
   }
 }
 
+export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof SwitchEffectTransferModifier;
+  }
+
+  clone(): SwitchEffectTransferModifier {
+    return new SwitchEffectTransferModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    return true;
+  }
+
+  getMaxStackCount(): integer {
+    return 1;
+  }
+}
+
 export class HeldItemTransferModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -1030,7 +1052,7 @@ export class ExtraModifierModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount():  integer {
+  getMaxStackCount(): integer {
     return 3;
   }
 }

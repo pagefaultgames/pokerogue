@@ -607,6 +607,9 @@ const modifierTypes = {
   SHELL_BELL: () => new PokemonHeldItemModifierType('SHELL BELL', 'Heals 1/8 of a POKéMON\'s dealt damage',
     (type, args) => new Modifiers.HitHealModifier(type, (args[0] as Pokemon).id)),
 
+  BATON: () => new PokemonHeldItemModifierType('BATON', 'Allows passing along effects when switching POKéMON, which also bypasses traps',
+    (type, args) => new Modifiers.SwitchEffectTransferModifier(type, (args[0] as Pokemon).id), 'stick'),
+
   SHINY_CHARM: () => new ModifierType('SHINY CHARM', 'Dramatically increases the chance of a wild POKéMON being shiny', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
 
   MINI_BLACK_HOLE: () => new HeldItemTransferModifierType('MINI BLACK HOLE'),
@@ -684,6 +687,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 3),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 1),
+    new WeightedModifierType(modifierTypes.BATON, 1),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 3),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 2),
     new WeightedModifierType(modifierTypes.LEFTOVERS, 2),

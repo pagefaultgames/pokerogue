@@ -201,8 +201,8 @@ export class ConfusedTag extends BattlerTag {
 }
 
 export class SeedTag extends BattlerTag {
-  constructor() {
-    super(BattlerTagType.SEEDED, BattlerTagLapseType.AFTER_MOVE, 1, Moves.LEECH_SEED);
+  constructor(sourceId: integer) {
+    super(BattlerTagType.SEEDED, BattlerTagLapseType.AFTER_MOVE, 1, Moves.LEECH_SEED, sourceId);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -517,7 +517,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.CONFUSED:
       return new ConfusedTag(turnCount, sourceMove);
     case BattlerTagType.SEEDED:
-      return new SeedTag();
+      return new SeedTag(sourceId);
     case BattlerTagType.NIGHTMARE:
       return new NightmareTag();
     case BattlerTagType.INGRAIN:

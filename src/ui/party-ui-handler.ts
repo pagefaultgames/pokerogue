@@ -6,7 +6,7 @@ import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
 
 const defaultMessage = 'Choose a Pokémon.';
 
@@ -22,8 +22,8 @@ export enum PartyUiMode {
 
 export enum PartyOption {
   CANCEL = -1,
-  SHIFT,
   SEND_OUT,
+  PASS_BATON,
   APPLY,
   TRANSFER,
   SUMMARY,
@@ -212,7 +212,7 @@ export default class PartyUiHandler extends MessageUiHandler {
                 selectCallback(this.cursor, option);
               }
             } else if (this.cursor)
-              (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor);
+              (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor, option === PartyOption.PASS_BATON);
             if (this.partyUiMode !== PartyUiMode.MODIFIER && this.partyUiMode !== PartyUiMode.MOVE_MODIFIER)
               ui.playSelect();
             return;
@@ -409,13 +409,14 @@ export default class PartyUiHandler extends MessageUiHandler {
     if (this.partyUiMode !== PartyUiMode.MOVE_MODIFIER && (this.transferMode || this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER)) {
       switch (this.partyUiMode) {
         case PartyUiMode.SWITCH:
-          if (this.cursor)
-            this.options.push(PartyOption.SHIFT);
-          break;
         case PartyUiMode.FAINT_SWITCH:
         case PartyUiMode.POST_BATTLE_SWITCH:
-          if (this.cursor)
+          if (this.cursor) {
             this.options.push(PartyOption.SEND_OUT);
+            if (this.partyUiMode !== PartyUiMode.FAINT_SWITCH
+                && this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === this.scene.getPlayerPokemon().id))
+              this.options.push(PartyOption.PASS_BATON);
+          }
           break;
         case PartyUiMode.MODIFIER:
           this.options.push(PartyOption.APPLY);

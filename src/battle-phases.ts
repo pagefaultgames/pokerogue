@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, HitsTagAttr, Mis
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HeldItemTransferModifier, HitHealModifier, MapModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, TempBattleStatBoosterModifier, TurnHealModifier } from "./modifier/modifier";
+import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HeldItemTransferModifier, HitHealModifier, MapModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -18,7 +18,7 @@ import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } fr
 import { Biome, biomeLinks } from "./data/biome";
 import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, IgnoreAccuracyTag, TrappedTag as TrapTag } from "./data/battler-tag";
+import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
@@ -420,12 +420,16 @@ export class SummonPhase extends BattlePhase {
 export class SwitchSummonPhase extends SummonPhase {
   private slotIndex: integer;
   private doReturn: boolean;
+  private batonPass: boolean;
 
-  constructor(scene: BattleScene, slotIndex: integer, doReturn: boolean) {
+  private lastPokemon: PlayerPokemon;
+
+  constructor(scene: BattleScene, slotIndex: integer, doReturn: boolean, batonPass: boolean) {
     super(scene);
 
     this.slotIndex = slotIndex;
     this.doReturn = doReturn;
+    this.batonPass = batonPass;
   }
 
   start() {
@@ -440,7 +444,8 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const playerPokemon = this.scene.getPlayerPokemon();
 
-    this.scene.getEnemyPokemon()?.removeTagsBySourceId(playerPokemon.id);
+    if (!this.batonPass)
+      this.scene.getEnemyPokemon()?.removeTagsBySourceId(playerPokemon.id);
 
     this.scene.ui.showText(`Come back, ${this.scene.getPlayerPokemon().name}!`);
     this.scene.sound.play('pb_rel');
@@ -462,10 +467,28 @@ export class SwitchSummonPhase extends SummonPhase {
   switchAndSummon() {
     const party = this.scene.getParty();
     const switchedPokemon = party[this.slotIndex];
-    party[this.slotIndex] = this.scene.getPlayerPokemon();
+    this.lastPokemon = this.scene.getPlayerPokemon();
+    if (this.batonPass) {
+      this.scene.getEnemyPokemon()?.transferTagsBySourceId(this.lastPokemon.id, switchedPokemon.id);
+      if (!this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedPokemon.id)) {
+        const batonPassModifier = this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
+          && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id) as SwitchEffectTransferModifier;
+        this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedPokemon, false, false);
+      }
+    }
+    party[this.slotIndex] = this.lastPokemon;
     party[0] = switchedPokemon;
     this.scene.ui.showText(`Go! ${switchedPokemon.name}!`);
     this.summon();
+  }
+
+  end() {
+    if (this.batonPass)
+      this.scene.getPlayerPokemon().transferSummon(this.lastPokemon);
+
+    this.lastPokemon.resetSummonData();
+
+    super.end();
   }
 }
 
@@ -581,7 +604,7 @@ export class CommandPhase extends FieldPhase {
       this.scene.ui.setMode(Mode.COMMAND);
   }
 
-  handleCommand(command: Command, cursor: integer): boolean {
+  handleCommand(command: Command, cursor: integer, ...args: any[]): boolean {
     const playerPokemon = this.scene.getPlayerPokemon();
     const enemyPokemon = this.scene.getEnemyPokemon();
     let success: boolean;
@@ -640,9 +663,10 @@ export class CommandPhase extends FieldPhase {
         }
         break;
       case Command.POKEMON:
-        const trapTag = playerPokemon.findTag(t => t instanceof TrapTag) as TrapTag;
-        if (!trapTag) {
-          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, cursor, true));
+        const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
+        const batonPass = args[0] as boolean;
+        if (batonPass || !trapTag) {
+          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, cursor, true, args[0] as boolean));
           success = true;
         } else
           this.scene.ui.showText(`${this.scene.getPokemonById(trapTag.sourceId).name}'s ${trapTag.getMoveName()}\nprevents switching!`, null, () => {
@@ -1594,9 +1618,9 @@ export class SwitchPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, (slotIndex: integer, _option: PartyOption) => {
+    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex && slotIndex < 6)
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, slotIndex, this.doReturn));
+        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
       this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
     }, PartyUiHandler.FilterNonFainted);
   }

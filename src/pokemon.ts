@@ -666,6 +666,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
+  transferTagsBySourceId(sourceId: integer, newSourceId: integer): void {
+    const tags = this.summonData.tags;
+    tags.filter(t => t.sourceId === sourceId).forEach(t => t.sourceId = newSourceId);
+  }
+
+  transferSummon(source: Pokemon): void {
+    const battleStats = Utils.getEnumValues(BattleStat);
+    for (let stat of battleStats)
+      this.summonData.battleStats[stat] = source.summonData.battleStats[stat];
+    for (let tag of source.summonData.tags)
+      this.summonData.tags.push(tag);
+  }
+
   getMoveHistory(): TurnMove[] {
     return this.battleSummonData.moveHistory;
   }
