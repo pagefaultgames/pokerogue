@@ -496,7 +496,10 @@ export default class SummaryUiHandler extends UiHandler {
         expText.setOrigin(1, 0);
         statsContainer.add(expText);
 
-        const nextLvExpText = addTextObject(this.scene, 208, 128, (totalLvExp - this.pokemon.levelExp).toString(), TextStyle.WINDOW);
+        const nextLvExp = this.pokemon.level < 100
+          ? getLevelTotalExp(this.pokemon.level + 1, this.pokemon.species.growthRate) - this.pokemon.levelExp
+          : 0;
+        const nextLvExpText = addTextObject(this.scene, 208, 128, nextLvExp.toString(), TextStyle.WINDOW);
         nextLvExpText.setOrigin(1, 0);
         statsContainer.add(nextLvExpText);
 
