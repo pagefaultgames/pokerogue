@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Biome } from './data/biome';
 import UI from './ui/ui';
-import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, SelectStarterPhase, MessagePhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, CommandPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, SelectStarterPhase, MessagePhase, CheckLoadPhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
@@ -45,7 +45,7 @@ export enum Button {
 	SLOW_DOWN
 }
 
-interface PokeballCounts {
+export interface PokeballCounts {
 	[pb: string]: integer;
 }
 
@@ -474,16 +474,9 @@ export default class BattleScene extends Phaser.Scene {
 			
 		this.currentBattle = null;
 		this.waveCountText.setText(startingWave.toString());
+		this.waveCountText.setVisible(false);
 
-		this.newArena(startingBiome);
-		const biomeKey = this.arena.getBiomeKey();
-
-		this.arenaBg.setTexture(`${biomeKey}_bg`);
-		this.arenaBgTransition.setTexture(`${biomeKey}_bg`);
-		this.arenaPlayer.setTexture(`${biomeKey}_a`);
-		this.arenaPlayerTransition.setTexture(`${biomeKey}_a`);
-		this.arenaEnemy.setTexture(`${biomeKey}_b`);
-		this.arenaNextEnemy.setTexture(`${biomeKey}_b`);
+		this.newArena(startingBiome, true);
 
 		this.arenaBgTransition.setPosition(0, 0);
 		this.arenaPlayer.setPosition(340, 20);
@@ -495,32 +488,46 @@ export default class BattleScene extends Phaser.Scene {
 		this.trainer.setPosition(406, 132);
 	}
 
-	newBattle(): Battle {
-		if (this.currentBattle) {
-			this.getEnemyPokemon().destroy();
-			if (this.currentBattle.waveIndex % 10)
-				this.pushPhase(new NextEncounterPhase(this));
-			else {
-				this.pushPhase(new SelectBiomePhase(this));
-				this.pushPhase(new NewBiomeEncounterPhase(this));
+	newBattle(waveIndex?: integer): Battle {
+		if (!waveIndex) {
+			if (this.currentBattle) {
+				this.getEnemyPokemon().destroy();
+				if (this.currentBattle.waveIndex % 10)
+					this.pushPhase(new NextEncounterPhase(this));
+				else {
+					this.pushPhase(new SelectBiomePhase(this));
+					this.pushPhase(new NewBiomeEncounterPhase(this));
+				}
+			} else {
+				if (!this.quickStart)
+					this.pushPhase(new CheckLoadPhase(this));
+				else {
+					this.arena.playBgm();
+					this.pushPhase(new EncounterPhase(this));
+					this.pushPhase(new SummonPhase(this));
+				}
 			}
-		} else {
-			if (!this.quickStart) {
-				this.arena.preloadBgm();
-				this.pushPhase(new SelectStarterPhase(this));
-			} else
-				this.arena.playBgm();
-			this.pushPhase(new EncounterPhase(this));
-			this.pushPhase(new SummonPhase(this));
 		}
 
-		this.currentBattle = new Battle((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
+		this.currentBattle = new Battle(waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1));
 		
 		return this.currentBattle;
 	}
 
-	newArena(biome: Biome): Arena {
+	newArena(biome: Biome, init?: boolean): Arena {
 		this.arena = new Arena(this, biome, Biome[biome].toLowerCase());
+
+		if (init) {
+			const biomeKey = this.arena.getBiomeKey();
+
+			this.arenaBg.setTexture(`${biomeKey}_bg`);
+			this.arenaBgTransition.setTexture(`${biomeKey}_bg`);
+			this.arenaPlayer.setTexture(`${biomeKey}_a`);
+			this.arenaPlayerTransition.setTexture(`${biomeKey}_a`);
+			this.arenaEnemy.setTexture(`${biomeKey}_b`);
+			this.arenaNextEnemy.setTexture(`${biomeKey}_b`);
+		}
+
 		return this.arena;
 	}
 
@@ -529,6 +536,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.waveCountText.setText(this.currentBattle.waveIndex.toString());
 		this.waveCountText.setColor(!isBoss ? '#404040' : '#f89890');
 		this.waveCountText.setShadowColor(!isBoss ? '#ded6b5' : '#984038');
+		this.waveCountText.setVisible(true);
 	}
 
 	updateWaveCountPosition(): void {
@@ -868,19 +876,19 @@ export default class BattleScene extends Phaser.Scene {
 		return false;
 	}
 
-	getModifiers(modifierType: { new(...args: any[]): Modifier }, player?: boolean): Modifier[] {
+	getModifiers(modifierType: { new(...args: any[]): Modifier }, player?: boolean): PersistentModifier[] {
 		if (player === undefined)
 			player = true;
 		return (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType);
 	}
 
-	findModifiers(modifierFilter: ModifierPredicate, player?: boolean): Modifier[] {
+	findModifiers(modifierFilter: ModifierPredicate, player?: boolean): PersistentModifier[] {
 		if (player === undefined)
 			player = true;
 		return (player ? this.modifiers : this.enemyModifiers).filter(m => (modifierFilter as ModifierPredicate)(m));
 	}
 
-	findModifier(modifierFilter: ModifierPredicate, player?: boolean): Modifier {
+	findModifier(modifierFilter: ModifierPredicate, player?: boolean): PersistentModifier {
 		if (player === undefined)
 			player = true;
 		return (player ? this.modifiers : this.enemyModifiers).find(m => (modifierFilter as ModifierPredicate)(m));

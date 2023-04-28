@@ -92,6 +92,10 @@ export abstract class PersistentModifier extends Modifier {
 
   abstract clone(): PersistentModifier;
 
+  getArgs(): any[] {
+    return [];
+  }
+
   incrementStack(amount: integer, virtual: boolean): boolean {
     if (this.getStackCount() + amount <= this.getMaxStackCount()) {
       if (!virtual)
@@ -194,15 +198,19 @@ export class TempBattleStatBoosterModifier extends PersistentModifier {
   private tempBattleStat: TempBattleStat;
   private battlesLeft: integer;
 
-  constructor(type: ModifierTypes.TempBattleStatBoosterModifierType, tempBattleStat: TempBattleStat, stackCount?: integer) {
+  constructor(type: ModifierTypes.TempBattleStatBoosterModifierType, tempBattleStat: TempBattleStat, battlesLeft?: integer, stackCount?: integer) {
     super(type, stackCount);
 
     this.tempBattleStat = tempBattleStat;
-    this.battlesLeft = 5;
+    this.battlesLeft = battlesLeft || 5;
   }
 
   clone(): TempBattleStatBoosterModifier {
     return new TempBattleStatBoosterModifier(this.type as ModifierTypes.TempBattleStatBoosterModifierType, this.tempBattleStat, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ this.tempBattleStat, this.battlesLeft ];
   }
 
   apply(args: any[]): boolean {
@@ -265,6 +273,10 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
 
   match(modifier: Modifier) {
     return this.matchType(modifier) && (modifier as PokemonHeldItemModifier).pokemonId === this.pokemonId;
+  }
+
+  getArgs(): any[] {
+    return [ this.pokemonId ];
   }
 
   shouldApply(args: any[]): boolean {
@@ -332,6 +344,10 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
     return new PokemonBaseStatModifier(this.type as ModifierTypes.PokemonBaseStatBoosterModifierType, this.pokemonId, this.stat, this.stackCount);
   }
 
+  getArgs(): any[] {
+    return super.getArgs().concat(this.stat);
+  }
+
   shouldApply(args: any[]): boolean {
     return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array<integer>;
   }
@@ -363,6 +379,10 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
 
   clone() {
     return new AttackTypeBoosterModifier(this.type, this.pokemonId, this.moveType, this.boostMultiplier * 100, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat([ this.moveType, this.boostMultiplier * 100 ]);
   }
 
   shouldApply(args: any[]): boolean {
@@ -541,6 +561,10 @@ export class BerryModifier extends PokemonHeldItemModifier {
 
   clone() {
     return new BerryModifier(this.type, this.pokemonId, this.berryType, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.berryType);
   }
 
   shouldApply(args: any[]): boolean {
@@ -818,6 +842,10 @@ export class HealingBoosterModifier extends PersistentModifier {
     return new HealingBoosterModifier(this.type, this.multiplier, this.stackCount);
   }
 
+  getArgs(): any[] {
+    return [ this.multiplier ];
+  }
+
   apply(args: any[]): boolean {
     const healingMultiplier = args[0] as Utils.IntegerHolder;
     for (let s = 0; s < this.getStackCount(); s++)
@@ -853,6 +881,10 @@ export class ExpBoosterModifier extends PersistentModifier {
     return new ExpBoosterModifier(this.type, this.boostMultiplier * 100, this.stackCount);
   }
 
+  getArgs(): any[] {
+    return [ this.boostMultiplier * 100 ];
+  }
+
   apply(args: any[]): boolean {
     (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
 
@@ -878,6 +910,10 @@ export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
 
   clone(): PersistentModifier {
     return new PokemonExpBoosterModifier(this.type as ModifierTypes.PokemonExpBoosterModifierType, this.pokemonId, this.boostMultiplier * 100, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.boostMultiplier * 100);
   }
 
   shouldApply(args: any[]): boolean {

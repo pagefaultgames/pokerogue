@@ -27,6 +27,56 @@ import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
 import { PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAttr, SuppressWeatherEffectAbAttr, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 
+export class CheckLoadPhase extends BattlePhase {
+  private loaded: boolean;
+
+  constructor(scene: BattleScene) {
+    super(scene);
+
+    this.loaded = false;
+  }
+
+  start(): void {
+    if (!this.scene.gameData.hasSession()) {
+      this.end();
+      return;
+    }
+
+    this.scene.ui.showText('You currently have a session in progress.\nWould you like to continue where you left off?', null, () => {
+      this.scene.ui.setMode(Mode.CONFIRM, () => {
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.gameData.loadSession(this.scene).then((success: boolean) => {
+          if (success) {
+            this.loaded = true;
+            this.scene.ui.showText('Session loaded successfully.', null, () => this.end());
+          } else
+            this.end();
+        }).catch(err => {
+          console.error(err);
+          this.scene.ui.showText('Your session data could not be loaded.\nIt may be corrupted. Please reload the page.', null);
+        });
+      }, () => {
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.ui.clearText();
+        this.end();
+      })
+    });
+  }
+
+  end(): void {
+    if (!this.loaded) {
+      this.scene.arena.preloadBgm();
+      this.scene.pushPhase(new SelectStarterPhase(this.scene));
+    } else
+      this.scene.arena.playBgm();
+
+    this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
+    this.scene.pushPhase(new SummonPhase(this.scene));
+
+    super.end();
+  }
+}
+
 export class SelectStarterPhase extends BattlePhase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -62,8 +112,12 @@ export class SelectStarterPhase extends BattlePhase {
 }
 
 export class EncounterPhase extends BattlePhase {
-  constructor(scene: BattleScene) {
+  private loaded: boolean;
+
+  constructor(scene: BattleScene, loaded?: boolean) {
     super(scene);
+
+    this.loaded = !!loaded;
   }
 
   start() {
@@ -73,7 +127,8 @@ export class EncounterPhase extends BattlePhase {
 
     const battle = this.scene.currentBattle;
     const enemySpecies = this.scene.randomSpecies(battle.waveIndex, battle.enemyLevel, true);
-		battle.enemyPokemon = new EnemyPokemon(this.scene, enemySpecies, battle.enemyLevel);
+    if (!this.loaded)
+		  battle.enemyPokemon = new EnemyPokemon(this.scene, enemySpecies, battle.enemyLevel);
     const enemyPokemon = this.scene.getEnemyPokemon();
     enemyPokemon.resetSummonData();
 
@@ -87,10 +142,16 @@ export class EncounterPhase extends BattlePhase {
         this.scene.field.moveBelow(enemyPokemon, this.scene.getPlayerPokemon());
       enemyPokemon.tint(0, 0.5);
 
-      regenerateModifierPoolThresholds(this.scene.getEnemyParty(), false);
-      this.scene.generateEnemyModifiers();
+      if (!this.loaded) {
+        regenerateModifierPoolThresholds(this.scene.getEnemyParty(), false);
+        this.scene.generateEnemyModifiers();
+      }
 
-      this.scene.ui.setMode(Mode.MESSAGE).then(() => this.doEncounter());
+      this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+        if (!this.loaded)
+          this.scene.gameData.saveSession(this.scene);
+        this.doEncounter();
+      });
     });
   }
 
@@ -989,7 +1050,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
       }
       return rand <= this.move.getMove().accuracy * accuracyMultiplier;
     }
-    
+
     return true;
   }
 
@@ -1499,6 +1560,8 @@ export class GameOverPhase extends BattlePhase {
 
   start() {
     super.start();
+
+    this.scene.gameData.clearSession();
 
     this.scene.time.delayedCall(1000, () => {
       const fadeDuration = this.victory ? 10000 : 5000;

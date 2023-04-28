@@ -1,11 +1,11 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, DamagePhase, MessagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase } from "../battle-phases";
+import { CommonAnimPhase, DamagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase } from "../battle-phases";
 import { getPokemonMessage } from "../messages";
 import Pokemon from "../pokemon";
 import { Stat } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
-import { LapseBattlerTagAttr, Moves, allMoves } from "./move";
+import { Moves, allMoves } from "./move";
 import { Type } from "./type";
 
 export enum BattlerTagType {
@@ -555,7 +555,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.NO_CRIT:
       return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
     case BattlerTagType.IGNORE_ACCURACY:
-      return new IgnoreAccuracyTag(turnCount, sourceMove);
+      return new IgnoreAccuracyTag(sourceMove);
     case BattlerTagType.BYPASS_SLEEP:
       return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
     case BattlerTagType.IGNORE_FLYING:

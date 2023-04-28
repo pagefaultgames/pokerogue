@@ -1,16 +1,34 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { PokeballCounts } from "../battle-scene";
 import { Gender } from "../data/gender";
-import Pokemon from "../pokemon";
+import Pokemon, { EnemyPokemon, PlayerPokemon } from "../pokemon";
 import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from "../data/pokemon-species";
 import { Species } from "../data/species";
 import * as Utils from "../utils";
+import PokemonData from "./pokemon-data";
+import { Weather } from "../data/weather";
+import PersistentModifierData from "./modifier-data";
+import { Biome } from "../data/biome";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { ArenaTag } from "../data/arena-tag";
+import ArenaData from "./arena-data";
 
-interface SaveData {
+interface SystemSaveData {
   trainerId: integer;
   secretId: integer;
   dexData: DexData;
-  timestamp: integer
+  timestamp: integer;
+}
+
+interface SessionSaveData {
+  party: PokemonData[];
+  enemyParty: PokemonData[];
+  modifiers: PersistentModifierData[];
+  enemyModifiers: PersistentModifierData[];
+  arena: ArenaData;
+  pokeballCounts: PokeballCounts;
+  waveIndex: integer;
+  timestamp: integer;
 }
 
 export interface DexData {
@@ -52,14 +70,14 @@ export class GameData {
     this.trainerId = Utils.randInt(65536);
     this.secretId = Utils.randInt(65536);
     this.initDexData();
-    this.load();
+    this.loadSystem();
   }
 
-  private save(): boolean {
+  private saveSystem(): boolean {
     if (this.scene.quickStart)
       return false;
       
-    const data: SaveData = {
+    const data: SystemSaveData = {
       trainerId: this.trainerId,
       secretId: this.secretId,
       dexData: this.dexData,
@@ -71,12 +89,12 @@ export class GameData {
     return true;
   }
 
-  private load(): boolean {
+  private loadSystem(): boolean {
     if (!localStorage.getItem('data'))
       return false;
 
-    const data = JSON.parse(atob(localStorage.getItem('data'))) as SaveData;
-    console.log(data);
+    const data = JSON.parse(atob(localStorage.getItem('data'))) as SystemSaveData;
+    console.debug(data);
 
     this.trainerId = data.trainerId;
     this.secretId = data.secretId;
@@ -89,7 +107,113 @@ export class GameData {
     return true;
   }
 
-  private initDexData() {
+  saveSession(scene: BattleScene): boolean {
+    const sessionData = {
+      party: scene.getParty().map(p => new PokemonData(p)),
+      enemyParty: scene.getEnemyParty().map(p => new PokemonData(p)),
+      modifiers: scene.findModifiers(m => true).map(m => new PersistentModifierData(m, true)),
+      enemyModifiers: scene.findModifiers(m => true, false).map(m => new PersistentModifierData(m, false)),
+      arena: new ArenaData(scene.arena),
+      pokeballCounts: scene.pokeballCounts,
+      waveIndex: scene.currentBattle.waveIndex,
+      timestamp: new Date().getTime()
+    } as SessionSaveData;
+
+    localStorage.setItem('sessionData', btoa(JSON.stringify(sessionData)));
+
+    console.debug('Session data saved');
+
+    return true;
+  }
+
+  hasSession() {
+    return !!localStorage.getItem('sessionData');
+  }
+
+  loadSession(scene: BattleScene): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      if (!this.hasSession())
+        return resolve(false);
+
+      try {
+        const sessionData = JSON.parse(atob(localStorage.getItem('sessionData')), (k: string, v: any) => {
+          if (k === 'party' || k === 'enemyParty') {
+            const ret: PokemonData[] = [];
+            for (let pd of v)
+              ret.push(new PokemonData(pd));
+            return ret;
+          }
+
+          if (k === 'modifiers' || k === 'enemyModifiers') {
+            const player = k === 'modifiers';
+            const ret: PersistentModifierData[] = [];
+            for (let md of v)
+              ret.push(new PersistentModifierData(md, player));
+            return ret;
+          }
+
+          if (k === 'arena')
+            return new ArenaData(v);
+
+          return v;
+        }) as SessionSaveData;
+
+        console.debug(sessionData);
+
+        const loadPokemonAssets: Promise<void>[] = [];
+
+        const party = scene.getParty();
+        party.splice(0, party.length);
+
+        for (let p of sessionData.party) {
+          const pokemon = p.toPokemon(scene) as PlayerPokemon;
+          pokemon.setVisible(false);
+          loadPokemonAssets.push(pokemon.loadAssets());
+          party.push(pokemon);
+        }
+        
+        const enemyPokemon = sessionData.enemyParty[0].toPokemon(scene) as EnemyPokemon;
+
+        Object.keys(scene.pokeballCounts).forEach((key: string) => {
+          scene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
+        });
+
+        scene.newArena(sessionData.arena.biome, true);
+        scene.newBattle(sessionData.waveIndex).enemyPokemon = enemyPokemon;
+
+        loadPokemonAssets.push(enemyPokemon.loadAssets());
+
+        scene.arena.weather = sessionData.arena.weather;
+        // TODO
+        //scene.arena.tags = sessionData.arena.tags;
+
+        const modifiersModule = await import('../modifier/modifier');
+
+        for (let modifierData of sessionData.modifiers) {
+          const modifier = modifierData.toModifier(scene, modifiersModule[modifierData.className]);
+          if (modifier)
+            scene.addModifier(modifier);
+        }
+
+        for (let enemyModifierData of sessionData.enemyModifiers) {
+          const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]) as PokemonHeldItemModifier;
+          if (modifier)
+            scene.addEnemyModifier(modifier);
+        }
+
+        Promise.all(loadPokemonAssets).then(() => resolve(true));
+      } catch (err) {
+        reject(err);
+        return;
+      }
+    });
+  }
+
+  clearSession(): void {
+    localStorage.removeItem('sessionData');
+  }
+
+  private initDexData(): void {
     const data: DexData = {};
 
     const initDexSubData = (dexData: DexData, count: integer): DexData[] => {
@@ -148,7 +272,7 @@ export class GameData {
     const dexEntry = this.getPokemonDexEntry(pokemon);
     if (!dexEntry.seen) {
       dexEntry.seen = true;
-      this.save();
+      this.saveSystem();
     }
   }
 
@@ -159,7 +283,7 @@ export class GameData {
         const newCatch = !this.getDefaultDexEntry(pokemon.species);
 
         dexEntry.caught = true;
-        this.save();
+        this.saveSystem();
 
         if (newCatch && !pokemonPrevolutions.hasOwnProperty(pokemon.species.speciesId)) {
           this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);

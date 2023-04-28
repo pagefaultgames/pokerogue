@@ -24,6 +24,7 @@ import { TempBattleStat } from './data/temp-battle-stat';
 import { WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
 import { Ability, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyPreAttackAbAttrs, applyPreDefendAbAttrs } from './data/ability';
+import PokemonData from './system/pokemon-data';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
@@ -54,7 +55,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon) {
+  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon | PokemonData) {
     super(scene, x, y);
 
     if (!species.isObtainable() && this.isPlayer())
@@ -666,7 +667,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getMoveHistory(): TurnMove[] {
-    return this.summonData.moveHistory;
+    return this.battleSummonData.moveHistory;
   }
 
   pushMoveHistory(turnMove: TurnMove) {
@@ -875,7 +876,7 @@ export class PlayerPokemon extends Pokemon {
   public metLevel: integer;
   public compatibleTms: Moves[];
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon) {
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, dataSource);
     
     this.metBiome = scene.arena?.biomeType || Biome.TOWN;
@@ -942,16 +943,19 @@ export class PlayerPokemon extends Pokemon {
 export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer) {
-    super(scene, -66, 84, species, level, undefined, scene.arena.getFormIndex(species));
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, dataSource?: PokemonData) {
+    super(scene, -66, 84, species, level, dataSource?.abilityIndex, dataSource ? dataSource.formIndex : scene.arena.getFormIndex(species),
+      dataSource?.gender, dataSource?.shiny, dataSource);
 
-    let prevolution: Species;
-    let speciesId = species.speciesId;
-    while ((prevolution = pokemonPrevolutions[speciesId])) {
-      const evolution = pokemonEvolutions[prevolution].find(pe => pe.speciesId === speciesId);
-      if (evolution.condition?.enforceFunc)
-        evolution.condition.enforceFunc(this);
-      speciesId = prevolution;
+    if (!dataSource) {
+      let prevolution: Species;
+      let speciesId = species.speciesId;
+      while ((prevolution = pokemonPrevolutions[speciesId])) {
+        const evolution = pokemonEvolutions[prevolution].find(pe => pe.speciesId === speciesId);
+        if (evolution.condition?.enforceFunc)
+          evolution.condition.enforceFunc(this);
+        speciesId = prevolution;
+      }
     }
 
     this.aiType = AiType.SMART_RANDOM;
@@ -1077,7 +1081,6 @@ export interface QueuedMove {
 
 export class PokemonSummonData {
   public battleStats: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
-  public moveHistory: TurnMove[] = [];
   public moveQueue: QueuedMove[] = [];
   public tags: BattlerTag[] = [];
   public types: Type[];
@@ -1085,6 +1088,7 @@ export class PokemonSummonData {
 
 export class PokemonBattleSummonData {
   public turnCount: integer = 1;
+  public moveHistory: TurnMove[] = [];
 }
 
 export class PokemonTurnData {

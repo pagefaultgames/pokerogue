@@ -24,6 +24,7 @@ export enum ModifierTier {
 type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier;
 
 export class ModifierType {
+  public id: string;
   public name: string;
   public description: string;
   public iconImage: string;
@@ -48,6 +49,30 @@ export class ModifierType {
   newModifier(...args: any[]): Modifier {
     return this.newModifierFunc(this, args);
   }
+}
+
+type ModifierTypeGeneratorFunc = (party: Pokemon[], pregenArgs?: any[]) => ModifierType;
+
+export class ModifierTypeGenerator extends ModifierType {
+  private genTypeFunc:  ModifierTypeGeneratorFunc;
+
+  constructor(genTypeFunc: ModifierTypeGeneratorFunc) {
+    super(null, null, null, null);
+    this.genTypeFunc = genTypeFunc;
+  }
+
+  generateType(party: Pokemon[], pregenArgs?: any[]) {
+    const ret = this.genTypeFunc(party, pregenArgs);
+    if (ret) {
+      ret.id = this.id;
+      ret.setTier(this.tier);
+    }
+    return ret;
+  }
+}
+
+export interface GeneratedPersistentModifierType {
+  getPregenArgs(): any[];
 }
 
 class AddPokeballModifierType extends ModifierType {
@@ -168,7 +193,7 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
   }
 }
 
-export class TempBattleStatBoosterModifierType extends ModifierType {
+export class TempBattleStatBoosterModifierType extends ModifierType implements GeneratedPersistentModifierType {
   public tempBattleStat: TempBattleStat;
 
   constructor(tempBattleStat: TempBattleStat) {
@@ -178,6 +203,26 @@ export class TempBattleStatBoosterModifierType extends ModifierType {
       getTempBattleStatBoosterItemName(tempBattleStat).replace(/\./g, '').replace(/[ ]/g, '_').toLowerCase());
 
     this.tempBattleStat = tempBattleStat;
+  }
+
+  getPregenArgs(): any[] {
+    return [ this.tempBattleStat ];
+  }
+}
+
+export class BerryModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
+  private berryType: BerryType;
+
+  constructor(berryType: BerryType) {
+    super(getBerryName(berryType), getBerryEffectDescription(berryType),
+      (type, args) => new Modifiers.BerryModifier(type, (args[0] as Pokemon).id, berryType),
+      null, 'berry');
+    
+    this.berryType = berryType;
+  }
+
+  getPregenArgs(): any[] {
+    return [ this.berryType ];
   }
 }
 
@@ -222,7 +267,7 @@ function getAttackTypeBoosterItemName(type: Type) {
   }
 }
 
-export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType {
+export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
   public moveType: Type;
   public boostPercent: integer;
 
@@ -233,6 +278,10 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType {
 
     this.moveType = moveType;
     this.boostPercent = boostPercent;
+  }
+
+  getPregenArgs(): any[] {
+    return [ this.moveType ];
   }
 }
 
@@ -266,13 +315,17 @@ function getBaseStatBoosterItemName(stat: Stat) {
   }
 }
 
-export class PokemonBaseStatBoosterModifierType extends PokemonHeldItemModifierType {
+export class PokemonBaseStatBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
   private stat: Stat;
 
   constructor(name: string, stat: Stat, _iconImage?: string) {
     super(name, `Increases the holder's base ${getStatName(stat)} by 20%`, (_type, args) => new Modifiers.PokemonBaseStatModifier(this, (args[0] as Pokemon).id, this.stat));
 
     this.stat = stat;
+  }
+
+  getPregenArgs(): any[] {
+    return [ this.stat ];
   }
 }
 
@@ -343,7 +396,7 @@ function getEvolutionItemName(evolutionItem: EvolutionItem) {
   }
 }
 
-export class EvolutionItemModifierType extends PokemonModifierType {
+export class EvolutionItemModifierType extends PokemonModifierType implements GeneratedPersistentModifierType {
   public evolutionItem: EvolutionItem;
 
   constructor(evolutionItem: EvolutionItem) {
@@ -358,27 +411,18 @@ export class EvolutionItemModifierType extends PokemonModifierType {
 
     this.evolutionItem = evolutionItem;
   }
-}
 
-class ModifierTypeGenerator extends ModifierType {
-  private genTypeFunc: Function;
-
-  constructor(genTypeFunc: Function) {
-    super(null, null, null, null);
-    this.genTypeFunc = genTypeFunc;
-  }
-
-  generateType(party: Pokemon[]) {
-    const ret = this.genTypeFunc(party);
-    if (ret)
-      ret.setTier(this.tier);
-    return ret;
+  getPregenArgs(): any[] {
+    return [ this.evolutionItem ];
   }
 }
 
 class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
-    super((party: Pokemon[]) => {
+    super((party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs)
+        return new AttackTypeBoosterModifierType(pregenArgs[0] as Type, 20);
+
       const attackMoveTypes = party.map(p => p.moveset.map(m => m.getMove()).filter(m => m instanceof AttackMove).map(m => m.type)).flat();
       const attackMoveTypeWeights = new Map<Type, integer>();
       let totalWeight = 0;
@@ -417,7 +461,10 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 
 class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
-    super((party: Pokemon[]) => {
+    super((party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs)
+        return new EvolutionItemModifierType(pregenArgs[0] as EvolutionItem);
+
       const evolutionItemPool = party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
         const evolutions = pokemonEvolutions[p.species.speciesId]
         return evolutions.filter(e => e.item !== EvolutionItem.NONE && (!e.condition || e.condition.predicate(p)));
@@ -446,6 +493,7 @@ class WeightedModifierType {
 
   constructor(modifierTypeFunc: ModifierTypeFunc, weight: integer | WeightedModifierTypeWeightFunc) {
     this.modifierType = modifierTypeFunc();
+    this.modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc);
     this.weight = weight;
   }
 
@@ -485,21 +533,29 @@ const modifierTypes = {
   ELIXIR: () => new PokemonAllMovePpRestoreModifierType('ELIXIR', 10),
   MAX_ELIXIR: () => new PokemonAllMovePpRestoreModifierType('MAX ELIXIR', -1),
 
-  TEMP_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[]) => {
+  TEMP_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    if (pregenArgs)
+      return new TempBattleStatBoosterModifierType(pregenArgs[0] as TempBattleStat);
     const randTempBattleStat = Utils.randInt(7) as TempBattleStat;
     return new TempBattleStatBoosterModifierType(randTempBattleStat);
   }),
 
-  BASE_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[]) => {
+  BASE_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    if (pregenArgs) {
+      const stat = pregenArgs[0] as Stat;
+      return new PokemonBaseStatBoosterModifierType(getBaseStatBoosterItemName(stat), stat);
+    }
     const randStat = Utils.randInt(6) as Stat;
     return new PokemonBaseStatBoosterModifierType(getBaseStatBoosterItemName(randStat), randStat);
   }),
 
   ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterModifierTypeGenerator(),
 
-  BERRY: () => new ModifierTypeGenerator((party: Pokemon[]) => {
+  BERRY: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    if (pregenArgs)
+      return new BerryModifierType(pregenArgs[0] as BerryType);
     const berryTypes = Utils.getEnumValues(BerryType);
-    let randBerryType;
+    let randBerryType: BerryType;
     let rand = Utils.randInt(10);
     if (rand < 2)
       randBerryType = BerryType.SITRUS;
@@ -507,9 +563,7 @@ const modifierTypes = {
       randBerryType = BerryType.LUM;
     else
       randBerryType = berryTypes[Utils.randInt(berryTypes.length - 2) + 2];
-    return new PokemonHeldItemModifierType(getBerryName(randBerryType), getBerryEffectDescription(randBerryType),
-      (type, args) => new Modifiers.BerryModifier(type, (args[0] as Pokemon).id, randBerryType),
-      null, 'berry');
+    return new BerryModifierType(randBerryType);
   }),
 
   TM: () => new ModifierTypeGenerator((party: Pokemon[]) => {
@@ -575,11 +629,11 @@ const modifierPool = {
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.ETHER, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => m.getPpRatio() <= 0.2).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount * 3;
     }),
     new WeightedModifierType(modifierTypes.MAX_ETHER, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => m.getPpRatio() <= 0.2).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.TEMP_STAT_BOOSTER, 4),
@@ -611,11 +665,11 @@ const modifierPool = {
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.ELIXIR, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => m.getPpRatio() <= 0.2).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount * 3;
     }),
     new WeightedModifierType(modifierTypes.MAX_ELIXIR, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => m.getPpRatio() <= 0.2).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => {
@@ -712,6 +766,10 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], player?: bool
     enemyModifierPoolThresholds = thresholds;
     enemyIgnoredPoolIndexes = ignoredIndexes;
   }
+}
+
+export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
+  return modifierTypes[id];
 }
 
 export function getPlayerModifierTypeOptionsForWave(waveIndex: integer, count: integer, party: PlayerPokemon[]): ModifierTypeOption[] {
