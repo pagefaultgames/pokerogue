@@ -18,7 +18,7 @@ import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } fr
 import { Biome, biomeLinks } from "./data/biome";
 import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, TrappedTag as TrapTag } from "./data/battler-tag";
+import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, IgnoreAccuracyTag, TrappedTag as TrapTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
@@ -967,6 +967,9 @@ abstract class MoveEffectPhase extends PokemonPhase {
         return false;
     }
 
+    if (this.getUserPokemon().getTag(BattlerTagType.IGNORE_ACCURACY))
+      return true;
+
     const moveAccuracy = new Utils.NumberHolder(this.move.getMove().accuracy);
     applyMoveAttrs(VariableAccuracyAttr, this.getUserPokemon(), this.getTargetPokemon(), this.move.getMove(), moveAccuracy);
 
@@ -986,6 +989,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
       }
       return rand <= this.move.getMove().accuracy * accuracyMultiplier;
     }
+    
     return true;
   }
 

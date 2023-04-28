@@ -34,6 +34,7 @@ export enum BattlerTagType {
   FIRE_BOOST,
   CRIT_BOOST,
   NO_CRIT,
+  IGNORE_ACCURACY,
   BYPASS_SLEEP,
   IGNORE_FLYING
 }
@@ -501,6 +502,12 @@ export class CritBoostTag extends BattlerTag {
   }
 }
 
+export class IgnoreAccuracyTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.IGNORE_ACCURACY, BattlerTagLapseType.TURN_END, 1, sourceMove);
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
     case BattlerTagType.RECHARGING:
@@ -547,6 +554,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new CritBoostTag(tagType, sourceMove);
     case BattlerTagType.NO_CRIT:
       return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
+    case BattlerTagType.IGNORE_ACCURACY:
+      return new IgnoreAccuracyTag(turnCount, sourceMove);
     case BattlerTagType.BYPASS_SLEEP:
       return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
     case BattlerTagType.IGNORE_FLYING:
