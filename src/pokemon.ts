@@ -402,6 +402,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       console.log(this.species.speciesId, 'ERROR')
       return;
     }
+
     for (let m = 0; m < allLevelMoves.length; m++) {
       const levelMove = allLevelMoves[m];
       if (this.level < levelMove[0])
@@ -974,6 +975,22 @@ export class EnemyPokemon extends Pokemon {
     this.aiType = AiType.SMART_RANDOM;
   }
 
+  generateAndPopulateMoveset(): void {
+    switch (true) {
+      case (this.species.speciesId === Species.ETERNATUS):
+        this.moveset = [
+          new PokemonMove(Moves.DYNAMAX_CANNON),
+          new PokemonMove(Moves.CROSS_POISON),
+          new PokemonMove(Moves.DRAGON_DANCE),
+          new PokemonMove(Moves.RECOVER)
+        ];
+      break;
+      default:
+        super.generateAndPopulateMoveset();
+        break;
+    }
+  }
+
   getNextMove(): PokemonMove {
     const queuedMove = this.getMoveQueue().length
       ? this.moveset.find(m => m.moveId === this.getMoveQueue()[0].move)
@@ -1116,7 +1133,7 @@ export enum AiType {
   RANDOM,
   SMART_RANDOM,
   SMART
-};
+}
 
 export enum MoveResult {
   EFFECTIVE = 1,
@@ -1127,7 +1144,7 @@ export enum MoveResult {
   FAILED,
   MISSED,
   OTHER
-};
+}
 
 export type DamageResult = MoveResult.EFFECTIVE | MoveResult.SUPER_EFFECTIVE | MoveResult.NOT_VERY_EFFECTIVE | MoveResult.OTHER;
 

@@ -1010,10 +1010,12 @@ export class HeldItemTransferModifier extends PokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
     const targetPokemon = pokemon.isPlayer() ? pokemon.scene.getEnemyPokemon() : pokemon.scene.getPlayerPokemon();
+    if (!targetPokemon)
+      return false;
 
     const transferredModifierTypes: ModifierTypes.ModifierType[] = [];
     const itemModifiers = pokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-        && (m as PokemonHeldItemModifier).pokemonId === targetPokemon.id, targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
+        && (m as PokemonHeldItemModifier).pokemonId === targetPokemon.id && !m.matchType(this), targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
     
     for (let i = 0; i < this.getStackCount(); i++) {
       if (!itemModifiers.length)

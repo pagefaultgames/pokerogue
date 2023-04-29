@@ -6,17 +6,16 @@ import PokemonSpecies, { allSpecies, getPokemonSpecies } from "../data/pokemon-s
 import { Species } from "../data/species";
 import * as Utils from "../utils";
 import PokemonData from "./pokemon-data";
-import { Weather } from "../data/weather";
 import PersistentModifierData from "./modifier-data";
-import { Biome } from "../data/biome";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
-import { ArenaTag } from "../data/arena-tag";
 import ArenaData from "./arena-data";
+import { Unlockables } from "./unlockables";
 
 interface SystemSaveData {
   trainerId: integer;
   secretId: integer;
   dexData: DexData;
+  unlocks: Unlocks;
   timestamp: integer;
 }
 
@@ -29,6 +28,10 @@ interface SessionSaveData {
   pokeballCounts: PokeballCounts;
   waveIndex: integer;
   timestamp: integer;
+}
+
+interface Unlocks {
+  [key: integer]: boolean;
 }
 
 export interface DexData {
@@ -65,15 +68,20 @@ export class GameData {
   
   public dexData: DexData;
 
+  public unlocks: Unlocks;
+
   constructor(scene: BattleScene) {
     this.scene = scene;
     this.trainerId = Utils.randInt(65536);
     this.secretId = Utils.randInt(65536);
+    this.unlocks = {
+      [Unlockables.MINI_BLACK_HOLE]: false
+    };
     this.initDexData();
     this.loadSystem();
   }
 
-  private saveSystem(): boolean {
+  public saveSystem(): boolean {
     if (this.scene.quickStart)
       return false;
       
@@ -81,6 +89,7 @@ export class GameData {
       trainerId: this.trainerId,
       secretId: this.secretId,
       dexData: this.dexData,
+      unlocks: this.unlocks,
       timestamp: new Date().getTime()
     };
 
@@ -98,6 +107,13 @@ export class GameData {
 
     this.trainerId = data.trainerId;
     this.secretId = data.secretId;
+
+    if (data.unlocks) {
+      for (let key of Object.keys(data.unlocks)) {
+        if (this.unlocks.hasOwnProperty(key))
+          this.unlocks[key] = data.unlocks[key];
+      }
+    }
 
     if (data.timestamp === undefined)
       this.convertDexData(data.dexData);

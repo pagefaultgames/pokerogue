@@ -26,6 +26,7 @@ import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, ge
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
 import { PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAttr, SuppressWeatherEffectAbAttr, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
+import { Unlockables, getUnlockableName } from "./system/unlockables";
 
 export class CheckLoadPhase extends BattlePhase {
   private loaded: boolean;
@@ -1599,6 +1600,39 @@ export class GameOverPhase extends BattlePhase {
         this.scene.reset();
         this.scene.newBattle();
         this.end();
+      });
+    });
+  }
+
+  end(): void {
+    if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE])
+      this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.MINI_BLACK_HOLE));
+
+    super.end();
+  }
+}
+
+export class UnlockPhase extends BattlePhase {
+  private unlockable: Unlockables;
+
+  constructor(scene: BattleScene, unlockable: Unlockables) {
+    super(scene);
+
+    this.unlockable = unlockable;
+  }
+
+  start(): void {
+    this.scene.time.delayedCall(2000, () => {
+      this.scene.gameData.unlocks[this.unlockable] = true;
+      this.scene.gameData.saveSystem();
+      this.scene.sound.play('level_up_fanfare');
+      this.scene.ui.setMode(Mode.MESSAGE);
+      this.scene.arenaBg.setVisible(false);
+      this.scene.ui.fadeIn(250).then(() => {
+        this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
+          this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
+          this.end();
+        }, null, true, 1500);
       });
     });
   }

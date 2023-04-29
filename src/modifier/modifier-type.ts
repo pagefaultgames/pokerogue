@@ -10,6 +10,7 @@ import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from '..
 import * as Utils from '../utils';
 import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
+import { Unlockables } from '../system/unlockables';
 
 type Modifier = Modifiers.Modifier;
 
@@ -702,7 +703,7 @@ const modifierPool = {
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 3),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 2),
-    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, 1)
+    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 1 : 0)
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
   [ModifierTier.LUXURY]: [
     new WeightedModifierType(modifierTypes.GOLDEN_EXP_CHARM, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 1 : 0),
