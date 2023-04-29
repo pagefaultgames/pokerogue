@@ -7,7 +7,7 @@ import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
 import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HeldItemTransferModifier, HitHealModifier, MapModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
-import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
+import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballName, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
 import { StatusEffect, getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./data/status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
@@ -658,7 +658,13 @@ export class CommandPhase extends FieldPhase {
 
         break;
       case Command.BALL:
-        if (cursor < 4) {
+        if (this.scene.arena.biomeType === Biome.END) {
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.showText(`A strange force\nprevents using ${getPokeballName(PokeballType.POKEBALL)}s.`, null, () => {
+            this.scene.ui.clearText();
+            this.scene.ui.setMode(Mode.COMMAND);
+          }, null, true);
+        } else if (cursor < 4) {
           this.scene.unshiftPhase(new AttemptCapturePhase(this.scene, cursor as PokeballType));
           success = true;
         }

@@ -28,7 +28,7 @@ export function getPokeballName(type: PokeballType): string {
   let ret: string;
   switch (type) {
     case PokeballType.POKEBALL:
-      ret = 'Poké ball';
+      ret = 'Poké Ball';
       break;
     case PokeballType.GREAT_BALL:
       ret = 'Great Ball';

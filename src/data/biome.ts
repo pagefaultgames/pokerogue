@@ -310,7 +310,7 @@ export const biomePools: BiomePools = {
       Species.SHELMET
     ],
     [BiomePoolTier.SUPER_RARE]: [ Species.CHATOT, Species.DURANT ],
-    [BiomePoolTier.ULTRA_RARE]: [ Species.CELEBI, Species.VIRIZION ],
+    [BiomePoolTier.ULTRA_RARE]: [ Species.CELEBI ],
     [BiomePoolTier.BOSS]: [
       Species.VENOMOTH,
       Species.VICTREEBEL,
@@ -340,7 +340,7 @@ export const biomePools: BiomePools = {
     ],
     [BiomePoolTier.BOSS_RARE]: [ Species.HERACROSS, Species.STANTLER, Species.SCEPTILE, Species.SLAKING, Species.LEAFEON, Species.ESCAVALIER, Species.FERROTHORN, Species.ACCELGOR, Species.DURANT ],
     [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.SCIZOR ],
-    [BiomePoolTier.BOSS_ULTRA_RARE]: [ Species.CELEBI, Species.VIRIZION ]
+    [BiomePoolTier.BOSS_ULTRA_RARE]: [ Species.CELEBI, Species.GENESECT ]
   },
   [Biome.SEA]: {
     [BiomePoolTier.COMMON]: [
@@ -508,11 +508,11 @@ export const biomePools: BiomePools = {
     [BiomePoolTier.UNCOMMON]: [ { 1: [ Species.GEODUDE ], 25: [ Species.GRAVELER ] }, { 1: [ Species.MAKUHITA ], 24: [ Species.HARIYAMA ] }, Species.NOSEPASS ],
     [BiomePoolTier.RARE]: [ Species.ONIX ],
     [BiomePoolTier.SUPER_RARE]: [ Species.SHUCKLE ],
-    [BiomePoolTier.ULTRA_RARE]: [ Species.REGISTEEL, Species.UXIE, Species.COBALION ],
+    [BiomePoolTier.ULTRA_RARE]: [ Species.REGISTEEL, Species.UXIE ],
     [BiomePoolTier.BOSS]: [ Species.PARASECT, Species.ONIX, Species.CROBAT, Species.URSARING, Species.EXPLOUD, Species.MAWILE, Species.PROBOPASS, Species.GIGALITH, Species.SWOOBAT ],
     [BiomePoolTier.BOSS_RARE]: [ Species.SHUCKLE ],
-    [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.REGISTEEL, Species.UXIE, Species.COBALION ],
-    [BiomePoolTier.BOSS_ULTRA_RARE]: []
+    [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.REGISTEEL, Species.UXIE ],
+    [BiomePoolTier.BOSS_ULTRA_RARE]: [ Species.MEWTWO ]
   },
   [Biome.DESERT]: {
     [BiomePoolTier.COMMON]: [
@@ -526,11 +526,11 @@ export const biomePools: BiomePools = {
     [BiomePoolTier.UNCOMMON]: [ { 1: [ Species.BALTOY ], 36: [ Species.CLAYDOL ] }, Species.MARACTUS ],
     [BiomePoolTier.RARE]: [ { 1: [ Species.VIBRAVA ], 45: [ Species.FLYGON ] }, { 1: [ Species.DARUMAKA ], 35: [ Species.DARMANITAN ] }, { 1: [ Species.YAMASK ], 34: [ Species.COFAGRIGUS ] } ],
     [BiomePoolTier.SUPER_RARE]: [ { 1: [ Species.LILEEP ], 40: [ Species.CRADILY ] }, { 1: [ Species.ANORITH ], 40: [ Species.ARMALDO ] } ],
-    [BiomePoolTier.ULTRA_RARE]: [ Species.REGIROCK, Species.TERRAKION ],
+    [BiomePoolTier.ULTRA_RARE]: [ Species.REGIROCK ],
     [BiomePoolTier.BOSS]: [ Species.SANDSLASH, Species.CACTURNE, Species.HIPPOWDON, Species.DRAPION, Species.KROOKODILE, Species.DARMANITAN, Species.MARACTUS ],
     [BiomePoolTier.BOSS_RARE]: [ Species.CRADILY, Species.ARMALDO ],
     [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.REGIROCK ],
-    [BiomePoolTier.BOSS_ULTRA_RARE]: [ Species.TERRAKION ]
+    [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.ICE_CAVE]: {
     [BiomePoolTier.COMMON]: [
@@ -640,10 +640,10 @@ export const biomePools: BiomePools = {
     [BiomePoolTier.UNCOMMON]: [ { 1: [ Species.CROAGUNK ], 37: [ Species.TOXICROAK ] }, { 1: [ Species.SCRAGGY ], 39: [ Species.SCRAFTY ] }, { 1: [ Species.MIENFOO ], 50: [ Species.MIENSHAO ] } ],
     [BiomePoolTier.RARE]: [ { 1: [ Species.TYROGUE ], 20: [ Species.HITMONLEE ] }, Species.HITMONCHAN, Species.LUCARIO, Species.THROH, Species.SAWK ],
     [BiomePoolTier.SUPER_RARE]: [ Species.HITMONTOP, Species.GALLADE ],
-    [BiomePoolTier.ULTRA_RARE]: [ Species.KELDEO ],
+    [BiomePoolTier.ULTRA_RARE]: [ Species.COBALION, Species.TERRAKION, Species.VIRIZION ],
     [BiomePoolTier.BOSS]: [ Species.PRIMEAPE, Species.MACHAMP, Species.HITMONLEE, Species.HITMONCHAN, Species.HARIYAMA, Species.MEDICHAM, Species.LUCARIO, Species.TOXICROAK, Species.CONKELDURR, Species.THROH, Species.SAWK, Species.SCRAFTY, Species.MIENSHAO ],
     [BiomePoolTier.BOSS_RARE]: [ Species.HITMONTOP, Species.GALLADE ],
-    [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.COBALION, Species.TERRAKION, Species.VIRIZION, Species.KELDEO ],
+    [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.COBALION, Species.TERRAKION, Species.VIRIZION ],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.RUINS]: {
@@ -701,13 +701,13 @@ export const biomePools: BiomePools = {
     [BiomePoolTier.BOSS]: [ Species.CLEFABLE, Species.LUNATONE, Species.SOLROCK, Species.CHIMECHO, Species.BRONZONG, Species.MUSHARNA, Species.REUNICLUS ],
     [BiomePoolTier.BOSS_RARE]: [ Species.METAGROSS, Species.PORYGON_Z ],
     [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.JIRACHI, Species.DEOXYS, Species.CRESSELIA ],
-    [BiomePoolTier.BOSS_ULTRA_RARE]: []
+    [BiomePoolTier.BOSS_ULTRA_RARE]: [ Species.RAYQUAZA ]
   },
   [Biome.END]: {
     [BiomePoolTier.COMMON]: [ Species.ARCANINE, Species.DRAGONITE, Species.TYRANITAR, Species.SALAMENCE, Species.GARCHOMP, Species.HYDREIGON, Species.VOLCARONA ],
     [BiomePoolTier.UNCOMMON]: [ Species.KINGDRA, Species.METAGROSS, Species.MAGNEZONE, Species.RHYPERIOR, Species.TANGROWTH, Species.ELECTIVIRE, Species.MAGMORTAR, Species.TOGEKISS, Species.MAMOSWINE ],
     [BiomePoolTier.RARE]: [ Species.BLISSEY, Species.PORYGON_Z ],
-    [BiomePoolTier.SUPER_RARE]: [ Species.GENESECT ],
+    [BiomePoolTier.SUPER_RARE]: [ Species.REGIGIGAS, Species.GENESECT ],
     [BiomePoolTier.ULTRA_RARE]: [ Species.MEWTWO, Species.RAYQUAZA, Species.ARCEUS ],
     [BiomePoolTier.BOSS]: [ Species.ETERNATUS ],
     [BiomePoolTier.BOSS_RARE]: [],
@@ -1435,6 +1435,7 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.MEWTWO, Type.PSYCHIC, -1, [
+        [ Biome.CAVE, BiomePoolTier.BOSS_ULTRA_RARE ],
         [ Biome.END, BiomePoolTier.ULTRA_RARE ]
       ]
     ],
@@ -2536,6 +2537,7 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.RAYQUAZA, Type.DRAGON, Type.FLYING, [
+        [ Biome.SPACE, BiomePoolTier.BOSS_ULTRA_RARE ],
         [ Biome.END, BiomePoolTier.ULTRA_RARE ]
       ]
     ],
@@ -3026,7 +3028,8 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.REGIGIGAS, Type.NORMAL, -1, [
-        [ Biome.RUINS, BiomePoolTier.BOSS_ULTRA_RARE ]
+        [ Biome.RUINS, BiomePoolTier.BOSS_ULTRA_RARE ],
+        [ Biome.END, BiomePoolTier.SUPER_RARE ]
       ]
     ],
     [ Species.GIRATINA, Type.GHOST, Type.DRAGON, [
@@ -3732,20 +3735,17 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.COBALION, Type.STEEL, Type.FIGHTING, [
-        [ Biome.CAVE, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.CAVE, BiomePoolTier.BOSS_SUPER_RARE ],
+        [ Biome.DOJO, BiomePoolTier.ULTRA_RARE ],
         [ Biome.DOJO, BiomePoolTier.BOSS_SUPER_RARE ]
       ]
     ],
     [ Species.TERRAKION, Type.ROCK, Type.FIGHTING, [
-        [ Biome.DESERT, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.DESERT, BiomePoolTier.BOSS_ULTRA_RARE ],
+        [ Biome.DOJO, BiomePoolTier.ULTRA_RARE ],
         [ Biome.DOJO, BiomePoolTier.BOSS_SUPER_RARE ]
       ]
     ],
     [ Species.VIRIZION, Type.GRASS, Type.FIGHTING, [
-        [ Biome.FOREST, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.FOREST, BiomePoolTier.BOSS_ULTRA_RARE ],
+        [ Biome.DOJO, BiomePoolTier.ULTRA_RARE ],
         [ Biome.DOJO, BiomePoolTier.BOSS_SUPER_RARE ]
       ]
     ],
@@ -3778,9 +3778,7 @@ export const biomePools: BiomePools = {
     ],
     [ Species.KELDEO, Type.WATER, Type.FIGHTING, [
         [ Biome.BEACH, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.BEACH, BiomePoolTier.BOSS_SUPER_RARE ],
-        [ Biome.DOJO, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.DOJO, BiomePoolTier.BOSS_SUPER_RARE ]
+        [ Biome.BEACH, BiomePoolTier.BOSS_SUPER_RARE ]
       ]
     ],
     [ Species.MELOETTA, Type.NORMAL, Type.PSYCHIC, [
@@ -3789,6 +3787,7 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.GENESECT, Type.BUG, Type.STEEL, [
+        [ Biome.FOREST, BiomePoolTier.BOSS_ULTRA_RARE ],
         [ Biome.END, BiomePoolTier.SUPER_RARE ]
       ]
     ],
