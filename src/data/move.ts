@@ -1227,7 +1227,7 @@ export class LevelPowerAttr extends VariablePowerAttr {
 
 export class RandomLevelPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.min(user.level, 150) * Utils.randInt(100, 50);
+    (args[0] as Utils.NumberHolder).value = Math.min(user.level, 150) * (Utils.randInt(100, 50) * 0.01);
 
     return true;
   }

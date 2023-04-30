@@ -479,10 +479,10 @@ export default class BattleScene extends Phaser.Scene {
 		this.newArena(startingBiome, true);
 
 		this.arenaBgTransition.setPosition(0, 0);
-		this.arenaPlayer.setPosition(340, 20);
-		this.arenaPlayerTransition.setPosition(40, 20);
-		this.arenaEnemy.setPosition(-240, 13);
-		this.arenaNextEnemy.setPosition(-240, 13);
+		this.arenaPlayer.setPosition(300, 0);
+		this.arenaPlayerTransition.setPosition(40, 0);
+		this.arenaEnemy.setPosition(-280, 0);
+		this.arenaNextEnemy.setPosition(-280, 0);
 
 		this.trainer.setTexture('trainer_m');
 		this.trainer.setPosition(406, 132);
