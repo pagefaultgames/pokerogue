@@ -749,6 +749,13 @@ export class MoveEffectAttr extends MoveAttr {
 }
 
 export class MoveHitEffectAttr extends MoveAttr {
+  public selfTarget: boolean;
+
+  constructor(selfTarget?: boolean) {
+    super();
+    
+    this.selfTarget = !!selfTarget;
+  }
 }
 
 export class HighCritAttr extends MoveAttr {
@@ -905,7 +912,7 @@ export class HitHealAttr extends MoveHitEffectAttr {
   private healRatio: number;
 
   constructor(healRatio?: number) {
-    super();
+    super(true);
 
     this.healRatio = healRatio || 0.5;
   }
@@ -954,14 +961,12 @@ export class MultiHitAttr extends MoveAttr {
 
 export class StatusEffectAttr extends MoveHitEffectAttr {
   public effect: StatusEffect;
-  public selfTarget: boolean;
   public cureTurn: integer;
 
   constructor(effect: StatusEffect, selfTarget?: boolean, cureTurn?: integer) {
-    super();
+    super(selfTarget);
 
     this.effect = effect;
-    this.selfTarget = !!selfTarget;
     this.cureTurn = cureTurn;
   }
 
@@ -1789,10 +1794,12 @@ export class SketchAttr extends MoveEffectAttr {
   }
 }
 
-export function applyMoveAttrs(attrType: { new(...args: any[]): MoveAttr }, user: Pokemon, target: Pokemon, move: Move, ...args: any[]): Promise<void> {
+export type MoveAttrFilter = (attr: MoveAttr) => boolean;
+
+function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<void> {
   return new Promise(resolve => {
     const attrPromises: Promise<boolean>[] = [];
-    const moveAttrs = move.attrs.filter(a => a instanceof attrType);
+    const moveAttrs = move.attrs.filter(a => attrFilter(a));
     for (let attr of moveAttrs) {
       const result = attr.apply(user, target, move, args);
       if (result instanceof Promise<boolean>)
@@ -1800,6 +1807,14 @@ export function applyMoveAttrs(attrType: { new(...args: any[]): MoveAttr }, user
     }
     Promise.allSettled(attrPromises).then(() => resolve());
   });
+}
+
+export function applyMoveAttrs(attrType: { new(...args: any[]): MoveAttr }, user: Pokemon, target: Pokemon, move: Move, ...args: any[]): Promise<void> {
+  return applyMoveAttrsInternal((attr: MoveAttr) => attr instanceof attrType, user, target, move, args);
+}
+
+export function applyFilteredMoveAttrs(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon, move: Move, ...args: any[]): Promise<void> {
+  return applyMoveAttrsInternal(attrFilter, user, target, move, args);
 }
 
 export const allMoves = [

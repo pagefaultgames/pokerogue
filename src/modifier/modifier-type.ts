@@ -804,7 +804,7 @@ function getNewModifierTypeOption(party: Pokemon[], player?: boolean, tier?: Mod
     player = true;
   if (tier === undefined) {
     const tierValue = Utils.randInt(256);
-    if (player) {
+    if (player && tierValue) {
       const partyShinyCount = party.filter(p => p.shiny).length;
       const upgradeOdds = Math.floor(32 / Math.max((partyShinyCount * 2), 1));
       upgrade = !Utils.randInt(upgradeOdds);

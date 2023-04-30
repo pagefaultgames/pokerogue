@@ -1,7 +1,7 @@
 import BattleScene, { startingLevel, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, HitsTagAttr, MissEffectAttr, MoveCategory, MoveEffectAttr, MoveFlags, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -588,7 +588,7 @@ export class CommandPhase extends FieldPhase {
     const moveQueue = playerPokemon.getMoveQueue();
 
     while (moveQueue.length && moveQueue[0]
-      && moveQueue[0].move && (playerPokemon.moveset.find(m => m.moveId === moveQueue[0].move)
+      && moveQueue[0].move && (!playerPokemon.moveset.find(m => m.moveId === moveQueue[0].move)
       || !playerPokemon.moveset[playerPokemon.moveset.findIndex(m => m.moveId === moveQueue[0].move)].isUsable(moveQueue[0].ignorePP)))
         moveQueue.shift();
 
@@ -659,9 +659,10 @@ export class CommandPhase extends FieldPhase {
         break;
       case Command.BALL:
         if (this.scene.arena.biomeType === Biome.END) {
+          this.scene.ui.setMode(Mode.COMMAND);
           this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.ui.showText(`A strange force\nprevents using ${getPokeballName(PokeballType.POKEBALL)}s.`, null, () => {
-            this.scene.ui.clearText();
+          this.scene.ui.showText(`A strange force\nprevents using POKé BALLS.`, null, () => {
+            this.scene.ui.showText(null, 0);
             this.scene.ui.setMode(Mode.COMMAND);
           }, null, true);
         } else if (cursor < 4) {
@@ -1028,8 +1029,8 @@ abstract class MoveEffectPhase extends PokemonPhase {
               target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
           }
           // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
-          if (!isProtected && target.hp && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
-            applyMoveAttrs(MoveHitEffectAttr, user, target, this.move.getMove());
+          if (!isProtected && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
+            applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveHitEffectAttr && (!!target.hp || (attr as MoveHitEffectAttr).selfTarget), user, target, this.move.getMove());
         }
         this.end();
       });

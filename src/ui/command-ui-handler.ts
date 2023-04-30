@@ -113,14 +113,14 @@ export default class CommandUiHandler extends UiHandler {
     return ret;
   }
 
-  clear() {
+  clear(): void {
     super.clear();
     this.commandsContainer.setVisible(false);
     this.getUi().getMessageHandler().clearText();
     this.eraseCursor();
   }
 
-  eraseCursor() {
+  eraseCursor(): void {
     if (this.cursorObj)
       this.cursorObj.destroy();
     this.cursorObj = null;
