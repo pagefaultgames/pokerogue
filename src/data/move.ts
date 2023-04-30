@@ -10,6 +10,7 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagType, ArenaTrapTag } from "./arena-tag";
 import { BlockRecoilDamageAttr, applyAbAttrs } from "./ability";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -979,6 +980,26 @@ export class StatusEffectAttr extends MoveHitEffectAttr {
         return true;
       }
     }
+    return false;
+  }
+}
+
+export class StealHeldItemAttr extends MoveHitEffectAttr {
+  constructor() {
+    super(false);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const heldItems = user.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+      && (m as PokemonHeldItemModifier).pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
+    if (heldItems.length) {
+      const stolenItem = heldItems[Utils.randInt(heldItems.length)];
+      user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false);
+      // Assumes the transfer was successful
+      user.scene.queueMessage(getPokemonMessage(user, ` stole\n${target.name}'s ${stolenItem.type.name}!`));
+      return true;
+    }
+
     return false;
   }
 }
@@ -2174,7 +2195,8 @@ export function initMoves() {
         user.turnData.hitsLeft = 0;
         return true;
       }),
-    new AttackMove(Moves.THIEF, "Thief (N)", Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, 18, "Also steals opponent's held item.", -1, 0, 2),
+    new AttackMove(Moves.THIEF, "Thief", Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, 18, "Steals a held item from the opponent.", -1, 0, 2)
+      .attr(StealHeldItemAttr),
     new StatusMove(Moves.SPIDER_WEB, "Spider Web", Type.BUG, -1, 10, -1, "Opponent cannot escape/switch.", -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, 1, true),
     new SelfStatusMove(Moves.MIND_READER, "Mind Reader", Type.NORMAL, -1, 5, -1, "User's next attack is guaranteed to hit.", -1, 0, 2)
