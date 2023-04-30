@@ -314,14 +314,15 @@ export class SwitchBiomePhase extends BattlePhase {
         this.scene.time.delayedCall(1000, () => this.scene.arena.playBgm());
 
         this.scene.tweens.add({
-          targets: [ this.scene.arenaBgTransition, this.scene.arenaPlayerTransition ],
+          targets: [ this.scene.arenaPlayer, this.scene.arenaBgTransition, this.scene.arenaPlayerTransition ],
           duration: 1000,
           delay: 1000,
           ease: 'Sine.easeInOut',
-          alpha: 1,
+          alpha: (target: any) => target === this.scene.arenaPlayer ? 0 : 1,
           onComplete: () => {
             this.scene.arenaBg.setTexture(bgTexture);
             this.scene.arenaPlayer.setTexture(playerTexture);
+            this.scene.arenaPlayer.setAlpha(1);
             this.scene.arenaEnemy.setTexture(enemyTexture);
             this.scene.arenaNextEnemy.setTexture(enemyTexture);
             this.scene.arenaBgTransition.setVisible(false);
@@ -329,7 +330,7 @@ export class SwitchBiomePhase extends BattlePhase {
 
             this.end();
           }
-        })
+        });
       }
     });
   }
