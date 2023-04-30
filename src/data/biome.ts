@@ -36,8 +36,6 @@ export enum Biome {
 
 export function getBiomeName(biome: Biome) {
   switch (biome) {
-    case Biome.TOWN:
-      return 'TOWN';
     case Biome.GRASS:
       return 'GRASSY FIELD';
     case Biome.RUINS:
