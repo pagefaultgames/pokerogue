@@ -1,7 +1,7 @@
 import BattleScene, { startingLevel, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -1024,7 +1024,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
 
       const isProtected = !this.move.getMove().hasFlag(MoveFlags.IGNORE_PROTECT) && target.lapseTag(BattlerTagType.PROTECTED);
       
-      new MoveAnim(this.move.getMove().id as Moves, user, target).play(this.scene, () => {
+      new MoveAnim(this.move.getMove().id as Moves, user).play(this.scene, () => {
         const result = !isProtected ? target.apply(user, this.move) : MoveResult.NO_EFFECT;
         ++user.turnData.hitCount;
         user.pushMoveHistory({ move: this.move.moveId, result: result, virtual: this.move.virtual });
@@ -1059,7 +1059,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
   }
 
   hitCheck(): boolean {
-    if (this.move.getMove().selfTarget)
+    if (this.move.getMove().moveTarget === MoveTarget.USER)
       return true;
 
     const hiddenTag = this.getTargetPokemon().getTag(HiddenTag);
@@ -1180,8 +1180,7 @@ export class MoveAnimTestPhase extends BattlePhase {
     initMoveAnim(moveId).then(() => {
       loadMoveAnimAssets(this.scene, [ moveId ], true)
         .then(() => {
-          new MoveAnim(moveId, player ? this.scene.getPlayerPokemon() : this.scene.getEnemyPokemon(),
-            player ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon()).play(this.scene, () => {
+          new MoveAnim(moveId, player ? this.scene.getPlayerPokemon() : this.scene.getEnemyPokemon()).play(this.scene, () => {
             if (player)
               this.playMoveAnim(moveQueue, false);
             else

@@ -1,6 +1,6 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
 import BattleScene from "../battle-scene";
-import { ChargeAttr, Moves, allMoves } from "./move";
+import { ChargeAttr, Moves, allMoves, getMoveTarget } from "./move";
 import Pokemon from "../pokemon";
 import * as Utils from "../utils";
 //import fs from 'vite-plugin-fs/browser';
@@ -658,6 +658,8 @@ export abstract class BattleAnim {
                 for (let frame of spriteFrames) {
                     if (frame.target !== AnimFrameTarget.GRAPHIC) {
                         const isUser = frame.target === AnimFrameTarget.USER;
+                        if (isUser && target === user)
+                            continue;
                         const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];
                         if ((isUser ? u : t) === sprites.length) {
                             const spriteSource = isUser ? userSprite : targetSprite;
@@ -829,8 +831,8 @@ export class CommonBattleAnim extends BattleAnim {
 export class MoveAnim extends BattleAnim {
     public move: Moves;
     
-    constructor(move: Moves, user: Pokemon, target: Pokemon) {
-        super(user, target);
+    constructor(move: Moves, user: Pokemon) {
+        super(user, getMoveTarget(user, move));
 
         this.move = move;
     }
@@ -849,8 +851,8 @@ export class MoveAnim extends BattleAnim {
 export class MoveChargeAnim extends MoveAnim {
     private chargeAnim: ChargeAnim;
     
-    constructor(chargeAnim: ChargeAnim, move: Moves, user: Pokemon, target: Pokemon) {
-        super(move, user, target);
+    constructor(chargeAnim: ChargeAnim, move: Moves, user: Pokemon) {
+        super(move, user);
 
         this.chargeAnim = chargeAnim;
     }
