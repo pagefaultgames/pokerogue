@@ -66,7 +66,7 @@ export class Arena {
       
       ret = getPokemonSpecies(species);
 
-      if (ret.legendary || ret.pseudoLegendary || ret.mythical) {
+      if (ret.legendary || ret.mythical) {
         switch (true) {
           case (ret.baseTotal >= 720):
             regen = level < 90;
@@ -113,6 +113,8 @@ export class Arena {
         return 'cave';
       case Biome.POWER_PLANT:
         return 'ruins';
+      case Biome.FACTORY:
+        return 'wasteland';
       case Biome.END:
         return 'wasteland';
     }
@@ -132,8 +134,9 @@ export class Arena {
         return Type.NORMAL;
       case Biome.GRASS:
       case Biome.TALL_GRASS:
-      case Biome.FOREST:
         return Type.GRASS;
+      case Biome.FOREST:
+        return Type.BUG;
       case Biome.CITY:
       case Biome.SWAMP:
         return Type.POISON;
@@ -161,15 +164,16 @@ export class Arena {
         return Type.GHOST;
       case Biome.DOJO:
         return Type.FIGHTING;
+      case Biome.FACTORY:
+        return Type.STEEL;
       case Biome.RUINS:
       case Biome.SPACE:
         return Type.PSYCHIC;
       case Biome.WASTELAND:
+      case Biome.END:
         return Type.DRAGON;
       case Biome.ABYSS:
         return Type.DARK;
-      case Biome.END:
-        return Type.STEEL;
     }
   }
 
@@ -314,6 +318,8 @@ export class Arena {
         return 3.232;
       case Biome.DOJO:
         return 6.205;
+      case Biome.FACTORY:
+        return 4.985;
       case Biome.RUINS:
         return 2.270;
       case Biome.WASTELAND:
