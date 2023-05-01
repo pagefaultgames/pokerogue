@@ -559,8 +559,6 @@ export abstract class BattleAnim {
 
     abstract isOppAnim(): boolean;
 
-    abstract isReverseCoords(): boolean;
-
     private getGraphicFrameData(scene: BattleScene, frames: AnimFrame[]): Map<integer, Map<AnimFrameTarget, GraphicFrameData>> {
         const ret: Map<integer, Map<AnimFrameTarget, GraphicFrameData>> = new Map([
             [AnimFrameTarget.GRAPHIC, new Map<AnimFrameTarget, GraphicFrameData>() ],
@@ -678,6 +676,8 @@ export abstract class BattleAnim {
                         pokemonSprite.setAngle(graphicFrameData.angle);
                         pokemonSprite.setScale(graphicFrameData.scaleX,  graphicFrameData.scaleY);
 
+                        pokemonSprite.setData('locked', frame.locked);
+
                         pokemonSprite.setAlpha(frame.opacity / 255);
                         pokemonSprite.setVisible(frame.visible && (isUser ? user.visible : target.visible));
                         pokemonSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
@@ -762,7 +762,7 @@ export abstract class BattleAnim {
                         if (i === AnimFrameTarget.GRAPHIC)
                             spritePriorities.splice(count, spriteCache[i].length - count);
                         for (let rs of removedSprites) {
-                            if (rs !== userSprite && rs !== targetSprite)
+                            if (!rs.getData('locked') as boolean)
                                 rs.destroy();
                         }
                     }
@@ -771,8 +771,6 @@ export abstract class BattleAnim {
                 r--;
             },
             onComplete: () => {
-                userSprite.setVisible(true);
-                targetSprite.setVisible(true);
                 const cleanUpAndComplete = () => {
                     userSprite.setPosition(0, 0);
                     userSprite.setScale(1);
@@ -782,13 +780,19 @@ export abstract class BattleAnim {
                     targetSprite.setScale(1);
                     targetSprite.setAlpha(1);
                     targetSprite.setAngle(0);
+                    userSprite.setVisible(true);
+                    targetSprite.setVisible(true);
+                    for (let ms of Object.values(spriteCache).flat()) {
+                        if (ms)
+                            ms.destroy();
+                    }
                     if (this.bgSprite)
                         this.bgSprite.destroy();
                     if (callback)
                         callback();
                 };
                 for (let ms of Object.values(spriteCache).flat()) {
-                    if (ms && ms !== userSprite && ms !== targetSprite)
+                    if (ms && !ms.getData('locked'))
                         ms.destroy();
                 }
                 if (r) {
@@ -820,10 +824,6 @@ export class CommonBattleAnim extends BattleAnim {
     isOppAnim(): boolean {
         return false;
     }
-
-    isReverseCoords(): boolean {
-        return false;
-    }
 }
 
 export class MoveAnim extends BattleAnim {
@@ -844,10 +844,6 @@ export class MoveAnim extends BattleAnim {
     isOppAnim(): boolean {
         return !this.user.isPlayer() && Array.isArray(moveAnims.get(this.move));
     }
-
-    isReverseCoords(): boolean {
-        return !this.user.isPlayer() === !this.isOppAnim();
-    }
 }
 
 export class MoveChargeAnim extends MoveAnim {
@@ -857,6 +853,10 @@ export class MoveChargeAnim extends MoveAnim {
         super(move, user, target);
 
         this.chargeAnim = chargeAnim;
+    }
+
+    isOppAnim(): boolean {
+        return !this.user.isPlayer() && Array.isArray(chargeAnims.get(this.chargeAnim));
     }
 
     getAnim(): AnimConfig {
@@ -892,8 +892,10 @@ export function populateAnims() {
             const name = nameMatch[2].toLowerCase();
             if (commonAnimMatchNames.indexOf(name) > -1)
                 commonAnimId = commonAnimIds[commonAnimMatchNames.indexOf(name)];
-            else if (chargeAnimMatchNames.indexOf(name) > -1)
+            else if (chargeAnimMatchNames.indexOf(name) > -1) {
+                isOppMove = fields[1].startsWith('name: Opp ');
                 chargeAnimId = chargeAnimIds[chargeAnimMatchNames.indexOf(name)];
+            }
         }
         const nameIndex = fields[1].indexOf(':', 5) + 1;
         const animName = fields[1].slice(nameIndex, fields[1].indexOf('\n', nameIndex));
