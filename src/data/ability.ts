@@ -247,6 +247,8 @@ export class ProtectStatAttr extends PreStatChangeAbAttr {
   }
 }
 
+export class ArenaTrapAbAttr extends AbAttr { }
+
 export class PreWeatherEffectAbAttr extends AbAttr {
   applyPreWeatherEffect(pokemon: Pokemon, weather: Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     return false;
@@ -636,7 +638,8 @@ export function initAbilities() {
   abilities.push(
     new Ability(Abilities.AIR_LOCK, "Air Lock", "Eliminates the effects of all weather.", 3)
       .attr(SuppressWeatherEffectAbAttr, true),
-    new Ability(Abilities.ARENA_TRAP, "Arena Trap (N)", "Prevents the foe from fleeing.", 3),
+    new Ability(Abilities.ARENA_TRAP, "Arena Trap", "Prevents the foe from fleeing.", 3)
+      .attr(ArenaTrapAbAttr),
     new Ability(Abilities.BATTLE_ARMOR, "Battle Armor (N)", "The POKéMON is protected against critical hits.", 3),
     new Ability(Abilities.BLAZE, "Blaze", "Powers up FIRE-type moves in a pinch.", 3)
       .attr(LowHpMoveTypePowerBoostAbAttr, Type.FIRE),

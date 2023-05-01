@@ -25,7 +25,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
-import { PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAttr, SuppressWeatherEffectAbAttr, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
+import { ArenaTrapAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAttr, SuppressWeatherEffectAbAttr, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 
 export class CheckLoadPhase extends BattlePhase {
@@ -596,11 +596,11 @@ export class CommandPhase extends FieldPhase {
     if (moveQueue.length) {
       const queuedMove = moveQueue[0];
       if (!queuedMove.move)
-        this.handleCommand(Command.FIGHT, -1);
+        this.handleCommand(Command.FIGHT, -1, false);
       else {
         const moveIndex = playerPokemon.moveset.findIndex(m => m.moveId === queuedMove.move);
-        if (playerPokemon.moveset[moveIndex].isUsable(queuedMove.ignorePP))
-          this.handleCommand(Command.FIGHT, moveIndex);
+        if (moveIndex > -1 && playerPokemon.moveset[moveIndex].isUsable(queuedMove.ignorePP))
+          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP);
       }
     } else
       this.scene.ui.setMode(Mode.COMMAND);
@@ -614,9 +614,9 @@ export class CommandPhase extends FieldPhase {
     let isDelayed = (command: Command, playerMove: PokemonMove, enemyMove: PokemonMove) => {
       switch (command) {
         case Command.FIGHT:
-          if (playerMove && enemyMove) {
-            const playerMovePriority = playerMove.getMove().priority;
-            const enemyMovePriority = enemyMove.getMove().priority;
+          if (playerMove || enemyMove) {
+            const playerMovePriority = playerMove?.getMove()?.priority || 0;
+            const enemyMovePriority = enemyMove?.getMove()?.priority || 0;
             if (playerMovePriority !== enemyMovePriority)
               return playerMovePriority < enemyMovePriority;
           }
@@ -641,9 +641,9 @@ export class CommandPhase extends FieldPhase {
           break;
         }
 
-        if (playerPokemon.trySelectMove(cursor)) {
+        if (playerPokemon.trySelectMove(cursor, args[0] as boolean)) {
           playerMove = playerPokemon.moveset[cursor];
-          const playerPhase = new PlayerMovePhase(this.scene, playerPokemon, playerMove);
+          const playerPhase = new PlayerMovePhase(this.scene, playerPokemon, playerMove, false, args[0] as boolean);
           this.scene.pushPhase(playerPhase);
           success = true;
         } else if (cursor < playerPokemon.moveset.length) {
@@ -673,12 +673,13 @@ export class CommandPhase extends FieldPhase {
         break;
       case Command.POKEMON:
         const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
+        const arenaTrapped = !!enemyPokemon.getAbility().getAttrs(ArenaTrapAbAttr).length;
         const batonPass = args[0] as boolean;
-        if (batonPass || !trapTag) {
+        if (batonPass || (!trapTag && !arenaTrapped)) {
           this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, cursor, true, args[0] as boolean));
           success = true;
         } else
-          this.scene.ui.showText(`${this.scene.getPokemonById(trapTag.sourceId).name}'s ${trapTag.getMoveName()}\nprevents switching!`, null, () => {
+          this.scene.ui.showText(`${this.scene.getPokemonById(trapTag.sourceId).name}'s ${trapTag?.getMoveName() || enemyPokemon.getAbility().name}\nprevents switching!`, null, () => {
             this.scene.ui.showText(null, 0);
           }, null, true);
         break;
@@ -692,19 +693,23 @@ export class CommandPhase extends FieldPhase {
       if (this.scene.arena.weather)
         this.scene.unshiftPhase(new WeatherEffectPhase(this.scene, this.scene.arena.weather));
 
-      const enemyMove = enemyPokemon.getNextMove();
-      const enemyPhase = new EnemyMovePhase(this.scene, enemyPokemon, enemyMove);
-      if (isDelayed(command, playerMove, enemyMove))
-        this.scene.unshiftPhase(enemyPhase);
-      else
-        this.scene.pushPhase(enemyPhase);
+      const enemyNextMove = enemyPokemon.getNextMove();
+      let enemyMove: PokemonMove;
+      if (enemyNextMove.move) {
+        enemyMove = enemyPokemon.moveset.find(m => m.moveId === enemyNextMove.move) || new PokemonMove(enemyNextMove.move, 0, 0);
+        const enemyPhase = new EnemyMovePhase(this.scene, enemyPokemon, enemyMove, false, enemyNextMove.ignorePP);
+        if (isDelayed(command, playerMove, enemyMove))
+          this.scene.unshiftPhase(enemyPhase);
+        else
+          this.scene.pushPhase(enemyPhase);
+      }
 
       const statusEffectPhases: PostTurnStatusEffectPhase[] = [];
       if (playerPokemon.status && playerPokemon.status.isPostTurn())
         statusEffectPhases.push(new PostTurnStatusEffectPhase(this.scene, true));
       if (enemyPokemon.status && enemyPokemon.status.isPostTurn()) {
         const enemyStatusEffectPhase = new PostTurnStatusEffectPhase(this.scene, false);
-        if (isDelayed(command, playerMove, enemyMove))
+        if (this.isPlayerDelayed())
           statusEffectPhases.unshift(enemyStatusEffectPhase);
         else
           statusEffectPhases.push(enemyStatusEffectPhase);
@@ -837,21 +842,23 @@ export abstract class MovePhase extends BattlePhase {
   protected pokemon: Pokemon;
   protected move: PokemonMove;
   protected followUp: boolean;
+  protected ignorePp: boolean;
   protected cancelled: boolean;
 
-  constructor(scene: BattleScene, pokemon: Pokemon, move: PokemonMove, followUp?: boolean) {
+  constructor(scene: BattleScene, pokemon: Pokemon, move: PokemonMove, followUp?: boolean, ignorePp?: boolean) {
     super(scene);
 
     this.pokemon = pokemon;
     this.move = move;
     this.followUp = !!followUp;
+    this.ignorePp = !!ignorePp;
     this.cancelled = false;
   }
 
   abstract getEffectPhase(): MoveEffectPhase;
 
   canMove(): boolean {
-    return !!this.pokemon.hp && this.move.isUsable();
+    return !!this.pokemon.hp && this.move.isUsable(this.ignorePp);
   }
 
   cancel(): void {
@@ -955,8 +962,8 @@ export abstract class MovePhase extends BattlePhase {
 }
 
 export class PlayerMovePhase extends MovePhase {
-  constructor(scene: BattleScene, pokemon: PlayerPokemon, move: PokemonMove, followUp?: boolean) {
-    super(scene, pokemon, move, followUp);
+  constructor(scene: BattleScene, pokemon: PlayerPokemon, move: PokemonMove, followUp?: boolean, ignorePp?: boolean) {
+    super(scene, pokemon, move, followUp, ignorePp);
   }
 
   getEffectPhase(): MoveEffectPhase {
@@ -965,8 +972,8 @@ export class PlayerMovePhase extends MovePhase {
 }
 
 export class EnemyMovePhase extends MovePhase {
-  constructor(scene: BattleScene, pokemon: EnemyPokemon, move: PokemonMove, followUp?: boolean) {
-    super(scene, pokemon, move, followUp);
+  constructor(scene: BattleScene, pokemon: EnemyPokemon, move: PokemonMove, followUp?: boolean, ignorePp?: boolean) {
+    super(scene, pokemon, move, followUp, ignorePp);
   }
 
   getEffectPhase(): MoveEffectPhase {

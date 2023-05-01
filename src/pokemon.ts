@@ -431,11 +431,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  trySelectMove(moveIndex: integer): boolean {
+  trySelectMove(moveIndex: integer, ignorePp?: boolean): boolean {
     const move = this.moveset.length > moveIndex
       ? this.moveset[moveIndex]
       : null;
-    return move?.isUsable();
+    return move?.isUsable(ignorePp);
   }
 
   showInfo() {
@@ -991,13 +991,13 @@ export class EnemyPokemon extends Pokemon {
     }
   }
 
-  getNextMove(): PokemonMove {
+  getNextMove(): QueuedMove {
     const queuedMove = this.getMoveQueue().length
       ? this.moveset.find(m => m.moveId === this.getMoveQueue()[0].move)
       : null;
     if (queuedMove) {
       if (queuedMove.isUsable(this.getMoveQueue()[0].ignorePP))
-        return queuedMove;
+        return { move: queuedMove.moveId, ignorePP: this.getMoveQueue()[0].ignorePP };
       else {
         this.getMoveQueue().shift();
         return this.getNextMove();
@@ -1007,10 +1007,10 @@ export class EnemyPokemon extends Pokemon {
     const movePool = this.moveset.filter(m => m.isUsable());
     if (movePool.length) {
       if (movePool.length === 1)
-        return movePool[0];
+        return { move: movePool[0].moveId };
       switch (this.aiType) {
         case AiType.RANDOM:
-          return movePool[Utils.randInt(movePool.length)];
+          return { move: movePool[Utils.randInt(movePool.length)].moveId };
         case AiType.SMART_RANDOM:
         case AiType.SMART:
           const target = this.scene.getPlayerPokemon();
@@ -1072,11 +1072,11 @@ export class EnemyPokemon extends Pokemon {
               r++;
           }
           console.log(movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));
-          return sortedMovePool[r];
+          return { move: sortedMovePool[r].moveId };
       }
     }
 
-    return new PokemonMove(Moves.STRUGGLE, 0, 0);
+    return { move: Moves.STRUGGLE };
   }
 
   isPlayer() {
