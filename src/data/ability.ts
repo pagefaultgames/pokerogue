@@ -222,6 +222,27 @@ export class RecoilMovePowerBoostAbAttr extends VariableMovePowerAbAttr {
   }
 }
 
+export class BattleStatMultiplierAbAttr extends AbAttr {
+  private battleStat: BattleStat;
+  private multiplier: number;
+
+  constructor(battleStat: BattleStat, multiplier: number) {
+    super();
+
+    this.battleStat = battleStat;
+    this.multiplier = multiplier;
+  }
+
+  applyBattleStat(pokemon: Pokemon, battleStat: BattleStat, statValue: Utils.NumberHolder, args: any[]) {
+    if (battleStat === this.battleStat) {
+      statValue.value *= this.multiplier;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class PreStatChangeAbAttr extends AbAttr {
   applyPreStatChange(pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     return false;
@@ -352,6 +373,28 @@ export function applyPreDefendAbAttrs(attrType: { new(...args: any[]): PreDefend
     if (attr.applyPreDefend(pokemon, attacker, move, cancelled, args)) {
       queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon, attacker, move);
+      if (message)
+        pokemon.scene.queueMessage(message);
+    }
+  }
+
+  pokemon.scene.clearPhaseQueueSplice();
+}
+
+export function applyBattleStatMultiplierAbAttrs(attrType: { new(...args: any[]): BattleStatMultiplierAbAttr },
+  pokemon: Pokemon, battleStat: BattleStat, statValue: Utils.NumberHolder, ...args: any[]) {
+  if (!pokemon.canApplyAbility())
+    return;
+
+  const ability = pokemon.getAbility();
+  const attrs = ability.getAttrs(attrType) as BattleStatMultiplierAbAttr[];
+  for (let attr of attrs) {
+    if (!canApplyAttr(pokemon, attr))
+      continue;
+    pokemon.scene.setPhaseQueueSplice();
+    if (attr.applyBattleStat(pokemon, battleStat, statValue, args)) {
+      queueShowAbility(pokemon);
+      const message = attr.getTriggerMessage(pokemon);
       if (message)
         pokemon.scene.queueMessage(message);
     }
