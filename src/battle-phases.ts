@@ -673,7 +673,7 @@ export class CommandPhase extends FieldPhase {
         break;
       case Command.POKEMON:
         const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
-        const arenaTrapped = !!enemyPokemon.getAbility().getAttrs(ArenaTrapAbAttr).length;
+        const arenaTrapped = !!enemyPokemon.getAbility().hasAttr(ArenaTrapAbAttr);
         const batonPass = args[0] as boolean;
         if (batonPass || (!trapTag && !arenaTrapped)) {
           this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, cursor, true, args[0] as boolean));

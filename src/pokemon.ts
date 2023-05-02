@@ -23,7 +23,7 @@ import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
-import { Ability, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyPreAttackAbAttrs, applyPreDefendAbAttrs } from './data/ability';
+import { Ability, BlockCritAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyPreAttackAbAttrs, applyPreDefendAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
@@ -490,7 +490,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case MoveCategory.PHYSICAL:
       case MoveCategory.SPECIAL:
         const isPhysical = moveCategory === MoveCategory.PHYSICAL;
-        const typeless = move.getAttrs(TypelessAttr).length
+        const typeless = !!move.getAttrs(TypelessAttr).length
         const cancelled = new Utils.BooleanHolder(false);
         const power = new Utils.NumberHolder(move.power);
         const typeMultiplier = new Utils.NumberHolder(!typeless
@@ -520,7 +520,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (source.getTag(BattlerTagType.CRIT_BOOST))
             critLevel.value += 2;
           const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
-          let isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !Utils.randInt(critChance));
+          let isCritical = !source.getTag(BattlerTagType.NO_CRIT) && !(this.getAbility().hasAttr(BlockCritAbAttr)) && (critChance === 1 || !Utils.randInt(critChance));
           const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
           const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
           const stabMultiplier = source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1;

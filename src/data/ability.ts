@@ -37,6 +37,10 @@ export class Ability {
     return this;
   }
 
+  hasAttr(attrType: { new(...args: any[]): AbAttr }): boolean {
+    return !!this.getAttrs(attrType).length;
+  }
+
   condition(condition: AbAttrCondition): Ability {
     this.conditions.push(condition);
 
@@ -246,6 +250,8 @@ export class ProtectStatAttr extends PreStatChangeAbAttr {
     return getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nprevents lowering its ${this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : 'stats'}!`);
   }
 }
+
+export class BlockCritAbAttr extends AbAttr { }
 
 export class ArenaTrapAbAttr extends AbAttr { }
 
@@ -640,7 +646,8 @@ export function initAbilities() {
       .attr(SuppressWeatherEffectAbAttr, true),
     new Ability(Abilities.ARENA_TRAP, "Arena Trap", "Prevents the foe from fleeing.", 3)
       .attr(ArenaTrapAbAttr),
-    new Ability(Abilities.BATTLE_ARMOR, "Battle Armor (N)", "The POKéMON is protected against critical hits.", 3),
+    new Ability(Abilities.BATTLE_ARMOR, "Battle Armor", "The POKéMON is protected against critical hits.", 3)
+      .attr(BlockCritAbAttr),
     new Ability(Abilities.BLAZE, "Blaze", "Powers up FIRE-type moves in a pinch.", 3)
       .attr(LowHpMoveTypePowerBoostAbAttr, Type.FIRE),
     new Ability(Abilities.CHLOROPHYLL, "Chlorophyll (N)", "Boosts the POKéMON's SPEED in sunshine.", 3),
@@ -703,7 +710,8 @@ export function initAbilities() {
     new Ability(Abilities.SERENE_GRACE, "Serene Grace (N)", "Boosts the likelihood of added effects appearing.", 3),
     new Ability(Abilities.SHADOW_TAG, "Shadow Tag (N)", "Prevents the foe from escaping.", 3),
     new Ability(Abilities.SHED_SKIN, "Shed Skin (N)", "The POKéMON may heal its own status problems.", 3),
-    new Ability(Abilities.SHELL_ARMOR, "Shell Armor (N)", "The POKéMON is protected against critical hits.", 3),
+    new Ability(Abilities.SHELL_ARMOR, "Shell Armor", "The POKéMON is protected against critical hits.", 3)
+      .attr(BlockCritAbAttr),
     new Ability(Abilities.SHIELD_DUST, "Shield Dust (N)", "Blocks the added effects of attacks taken.", 3),
     new Ability(Abilities.SOUNDPROOF, "Soundproof (N)", "Gives immunity to sound-based moves.", 3),
     new Ability(Abilities.SPEED_BOOST, "Speed Boost (N)", "Its SPEED stat is gradually boosted.", 3),
