@@ -23,7 +23,7 @@ import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
-import { Ability, BlockCritAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyPreAttackAbAttrs, applyPreDefendAbAttrs } from './data/ability';
+import { Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
@@ -273,7 +273,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const statLevel = new Utils.IntegerHolder(this.summonData.battleStats[battleStat]);
     if (this.isPlayer())
       this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
-    let ret = this.stats[stat] * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
+    const statValue = new Utils.NumberHolder(this.stats[stat]);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue);
+    let ret = statValue.value * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
     if (stat === Stat.SPDEF && this.scene.arena.weather?.weatherType === WeatherType.SANDSTORM)
       ret *= 1.5;
     if (stat === Stat.SPD && this.status && this.status.effect === StatusEffect.PARALYSIS)

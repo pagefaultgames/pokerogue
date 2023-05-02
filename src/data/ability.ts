@@ -1,13 +1,13 @@
-import Pokemon, { PokemonMove } from "../pokemon";
+import Pokemon, { MoveResult, PokemonMove } from "../pokemon";
 import { Type, getTypeDamageMultiplier } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../battle-phases";
+import { DamagePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../battle-phases";
 import { getPokemonMessage } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTagType } from "./battler-tag";
 import { StatusEffect } from "./status-effect";
-import { Moves, RecoilAttr } from "./move";
+import { Moves, RecoilAttr, WeatherHealAttr } from "./move";
 
 export class Ability {
   public id: Abilities;
@@ -82,6 +82,27 @@ export class PreDefendAbAttr extends AbAttr {
   }
 }
 
+export class TypeWeaknessAbAttr extends PreDefendAbAttr {
+  private weakType: Type;
+  private powerMultiplier: number;
+
+  constructor(weakType: Type, powerMultiplier: number) {
+    super();
+
+    this.weakType = weakType;
+    this.powerMultiplier = powerMultiplier;
+  }
+
+  applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (move.getMove().type === this.weakType) {
+      (args[0] as Utils.NumberHolder).value *= this.powerMultiplier;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class TypeImmunityAbAttr extends PreDefendAbAttr {
   private immuneType: Type;
   private condition: AbAttrCondition;
@@ -104,6 +125,24 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
 
   getCondition(): AbAttrCondition {
     return this.condition;
+  }
+}
+
+export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
+  constructor(immuneType: Type) {
+    super(immuneType);
+  }
+
+  applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const ret = super.applyPreDefend(pokemon, attacker, move, cancelled, args);
+
+    if (ret && pokemon.getHpRatio() < 1) {
+      const scene = pokemon.scene;
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), Math.max(Math.floor(pokemon.getMaxHp() / 4), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
+      return true;
+    }
+    
+    return false;
   }
 }
 
@@ -285,8 +324,17 @@ export class PreWeatherEffectAbAttr extends AbAttr {
 export class PreWeatherDamageAbAttr extends PreWeatherEffectAbAttr { }
 
 export class BlockWeatherDamageAttr extends PreWeatherDamageAbAttr {
+  private weatherTypes: WeatherType[];
+
+  constructor(...weatherTypes: WeatherType[]) {
+    super();
+
+    this.weatherTypes = weatherTypes;
+  }
+
   applyPreWeatherEffect(pokemon: Pokemon, weather: Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    cancelled.value = true;
+    if (!this.weatherTypes.length || this.weatherTypes.indexOf(weather?.weatherType) > -1)
+      cancelled.value = true;
 
     return true;
   }
@@ -311,14 +359,42 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
   }
 }
 
-export class PostWeatherLapseAbAttr extends AbAttr {
-  applyPostWeatherLapse(pokemon: Pokemon, weather: Weather, args: any[]): boolean {
+export class PostTurnAbAttr extends AbAttr {
+  applyPostTurn(pokemon: Pokemon, args: any[]) {
     return false;
   }
 }
 
-export class WeatherHealAbAttr extends PostWeatherLapseAbAttr {
-  private weatherTypes: WeatherType[];
+export class PostTurnSpeedBoostAbAttr extends PostTurnAbAttr {
+  applyPostTurn(pokemon: Pokemon, args: any[]): boolean {
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), true, [ BattleStat.SPD ], 1));
+    return true;
+  }
+}
+
+function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
+  return (pokemon: Pokemon) => {
+    if (pokemon.scene.arena.weather?.isEffectSuppressed(pokemon.scene))
+      return false;
+    const weatherType = pokemon.scene.arena.weather?.weatherType;
+    return weatherType && weatherTypes.indexOf(weatherType) > -1;
+  };
+}
+
+export class PostTurnHealAbAttr extends PostTurnAbAttr {
+  applyPostTurn(pokemon: Pokemon, args: any[]): boolean {
+    if (pokemon.getHpRatio() < 1) {
+      const scene = pokemon.scene;
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), Math.max(Math.floor(pokemon.getMaxHp() / 16), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
+      return true;
+    }
+
+    return false;
+  }
+}
+
+export class PostWeatherLapseAbAttr extends AbAttr {
+  protected weatherTypes: WeatherType[];
 
   constructor(...weatherTypes: WeatherType[]) {
     super();
@@ -327,9 +403,49 @@ export class WeatherHealAbAttr extends PostWeatherLapseAbAttr {
   }
 
   applyPostWeatherLapse(pokemon: Pokemon, weather: Weather, args: any[]): boolean {
-    if (this.weatherTypes.indexOf(weather.weatherType) > -1 && pokemon.getHpRatio() < 1) {
+    return false;
+  }
+
+  getCondition(): AbAttrCondition {
+    return getWeatherCondition(...this.weatherTypes);
+  }
+}
+
+export class PostWeatherLapseHealAbAttr extends PostWeatherLapseAbAttr {
+  private healFactor: integer;
+
+  constructor(healFactor: integer, ...weatherTypes: WeatherType[]) {
+    super(...weatherTypes);
+    
+    this.healFactor = healFactor;
+  }
+
+  applyPostWeatherLapse(pokemon: Pokemon, weather: Weather, args: any[]): boolean {
+    if (pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
-      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), Math.max(Math.floor(pokemon.getMaxHp() / 16), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), Math.max(Math.floor(pokemon.getMaxHp() / (16 / this.healFactor)), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
+      return true;
+    }
+
+    return false;
+  }
+}
+
+export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
+  private damageFactor: integer;
+
+  constructor(damageFactor: integer, ...weatherTypes: WeatherType[]) {
+    super(...weatherTypes);
+    
+    this.damageFactor = damageFactor;
+  }
+
+  applyPostWeatherLapse(pokemon: Pokemon, weather: Weather, args: any[]): boolean {
+    if (pokemon.getHpRatio() < 1) {
+      const scene = pokemon.scene;
+      scene.queueMessage(getPokemonMessage(pokemon, ` is hurt\nby its ${pokemon.getAbility()}!`));
+      scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.isPlayer(), MoveResult.OTHER));
+      pokemon.damage(Math.ceil(pokemon.getMaxHp() * (16 / this.damageFactor)));
       return true;
     }
 
@@ -393,10 +509,11 @@ export function applyBattleStatMultiplierAbAttrs(attrType: { new(...args: any[])
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.applyBattleStat(pokemon, battleStat, statValue, args)) {
-      queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon);
-      if (message)
+      if (message) {
+        queueShowAbility(pokemon);
         pokemon.scene.queueMessage(message);
+      }
     }
   }
 
@@ -465,6 +582,29 @@ export function applyPreWeatherEffectAbAttrs(attrType: { new(...args: any[]): Pr
         if (message)
           pokemon.scene.queueMessage(message);
       }
+    }
+  }
+
+  pokemon.scene.clearPhaseQueueSplice();
+}
+
+export function applyPostTurnAbAttrs(attrType: { new(...args: any[]): PostTurnAbAttr },
+  pokemon: Pokemon, ...args: any[]): void {
+  if (!pokemon.canApplyAbility())
+    return;
+
+  const ability = pokemon.getAbility();
+
+  const attrs = ability.getAttrs(attrType) as PostTurnAbAttr[];
+  for (let attr of attrs) {
+    if (!canApplyAttr(pokemon, attr))
+      continue;
+    pokemon.scene.setPhaseQueueSplice();
+    if (attr.applyPostTurn(pokemon, args)) {
+      queueShowAbility(pokemon);
+      const message = attr.getTriggerMessage(pokemon);
+      if (message)
+        pokemon.scene.queueMessage(message);
     }
   }
 
@@ -693,13 +833,16 @@ export function initAbilities() {
       .attr(BlockCritAbAttr),
     new Ability(Abilities.BLAZE, "Blaze", "Powers up FIRE-type moves in a pinch.", 3)
       .attr(LowHpMoveTypePowerBoostAbAttr, Type.FIRE),
-    new Ability(Abilities.CHLOROPHYLL, "Chlorophyll (N)", "Boosts the POKéMON's SPEED in sunshine.", 3),
+    new Ability(Abilities.CHLOROPHYLL, "Chlorophyll", "Boosts the POKéMON's SPEED in sunshine.", 3)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
+      .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)), // TODO: Show ability bar on weather change and summon
     new Ability(Abilities.CLEAR_BODY, "Clear Body", "Prevents other POKéMON from lowering its stats.", 3)
       .attr(ProtectStatAttr),
     new Ability(Abilities.CLOUD_NINE, "Cloud Nine", "Eliminates the effects of non-severe weather.", 3)
       .attr(SuppressWeatherEffectAbAttr),
     new Ability(Abilities.COLOR_CHANGE, "Color Change (N)", "Changes the POKéMON's type to the foe's move.", 3),
-    new Ability(Abilities.COMPOUND_EYES, "Compound Eyes (N)", "The POKéMON's accuracy is boosted.", 3),
+    new Ability(Abilities.COMPOUND_EYES, "Compound Eyes", "The POKéMON's accuracy is boosted.", 3)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3),
     new Ability(Abilities.CUTE_CHARM, "Cute Charm (N)", "Contact with the POKéMON may cause infatuation.", 3),
     new Ability(Abilities.DAMP, "Damp (N)", "Prevents the use of self-destructing moves.", 3),
     new Ability(Abilities.DRIZZLE, "Drizzle (N)", "The POKéMON makes it rain when it enters a battle.", 3),
@@ -743,21 +886,26 @@ export function initAbilities() {
     new Ability(Abilities.PRESSURE, "Pressure (N)", "The POKéMON raises the foe's PP usage.", 3),
     new Ability(Abilities.PURE_POWER, "Pure Power (N)", "Raises the POKéMON's ATTACK stat.", 3),
     new Ability(Abilities.RAIN_DISH, "Rain Dish", "The POKéMON gradually regains HP in rain.", 3)
-      .attr(WeatherHealAbAttr, WeatherType.RAIN, WeatherType.HEAVY_RAIN),
+      .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.RAIN, WeatherType.HEAVY_RAIN),
     new Ability(Abilities.ROCK_HEAD, "Rock Head", "Protects the POKéMON from recoil damage.", 3)
       .attr(BlockRecoilDamageAttr),
     new Ability(Abilities.ROUGH_SKIN, "Rough Skin (N)", "Inflicts damage to the attacker on contact.", 3),
     new Ability(Abilities.RUN_AWAY, "Run Away (N)", "Enables a sure getaway from wild POKéMON.", 3),
     new Ability(Abilities.SAND_STREAM, "Sand Stream (N)", "The POKéMON summons a sandstorm in battle.", 3),
-    new Ability(Abilities.SAND_VEIL, "Sand Veil (N)", "Boosts the POKéMON's evasion in a sandstorm.", 3),
+    new Ability(Abilities.SAND_VEIL, "Sand Veil", "Boosts the POKéMON's evasion in a sandstorm.", 3)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.EVA, 1.2)
+      .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
+      .condition(getWeatherCondition(WeatherType.SANDSTORM)),
     new Ability(Abilities.SERENE_GRACE, "Serene Grace (N)", "Boosts the likelihood of added effects appearing.", 3),
-    new Ability(Abilities.SHADOW_TAG, "Shadow Tag (N)", "Prevents the foe from escaping.", 3),
+    new Ability(Abilities.SHADOW_TAG, "Shadow Tag", "Prevents the foe from escaping.", 3)
+      .attr(ArenaTrapAbAttr),
     new Ability(Abilities.SHED_SKIN, "Shed Skin (N)", "The POKéMON may heal its own status problems.", 3),
     new Ability(Abilities.SHELL_ARMOR, "Shell Armor", "The POKéMON is protected against critical hits.", 3)
       .attr(BlockCritAbAttr),
     new Ability(Abilities.SHIELD_DUST, "Shield Dust (N)", "Blocks the added effects of attacks taken.", 3),
     new Ability(Abilities.SOUNDPROOF, "Soundproof (N)", "Gives immunity to sound-based moves.", 3),
-    new Ability(Abilities.SPEED_BOOST, "Speed Boost (N)", "Its SPEED stat is gradually boosted.", 3),
+    new Ability(Abilities.SPEED_BOOST, "Speed Boost", "Its SPEED stat is gradually boosted.", 3)
+      .attr(PostTurnSpeedBoostAbAttr),
     new Ability(Abilities.STATIC, "Static (N)", "Contact with the POKéMON may cause paralysis.", 3),
     new Ability(Abilities.STENCH, "Stench (N)", "The stench may cause the target to flinch.", 3),
     new Ability(Abilities.STICKY_HOLD, "Sticky Hold (N)", "Protects the POKéMON from item theft.", 3),
@@ -765,7 +913,9 @@ export function initAbilities() {
     new Ability(Abilities.SUCTION_CUPS, "Suction Cups (N)", "Negates all moves that force switching out.", 3),
     new Ability(Abilities.SWARM, "Swarm", "Powers up BUG-type moves in a pinch.", 3)
       .attr(LowHpMoveTypePowerBoostAbAttr, Type.BUG),
-    new Ability(Abilities.SWIFT_SWIM, "Swift Swim (N)", "Boosts the POKéMON's SPEED in rain.", 3),
+    new Ability(Abilities.SWIFT_SWIM, "Swift Swim", "Boosts the POKéMON's SPEED in rain.", 3)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
+      .condition(getWeatherCondition(WeatherType.RAIN, WeatherType.HEAVY_RAIN)), // TODO: Show ability bar on weather change and summon
     new Ability(Abilities.SYNCHRONIZE, "Synchronize (N)", "Passes a burn, poison, or paralysis to the foe.", 3),
     new Ability(Abilities.THICK_FAT, "Thick Fat (N)", "Ups resistance to Fire- and ICE-type moves.", 3),
     new Ability(Abilities.TORRENT, "Torrent", "Powers up WATER-type moves in a pinch.", 3)
@@ -773,8 +923,10 @@ export function initAbilities() {
     new Ability(Abilities.TRACE, "Trace (N)", "The POKéMON copies a foe's Ability.", 3),
     new Ability(Abilities.TRUANT, "Truant (N)", "POKéMON can't attack on consecutive turns.", 3),
     new Ability(Abilities.VITAL_SPIRIT, "Vital Spirit (N)", "Prevents the POKéMON from falling asleep.", 3),
-    new Ability(Abilities.VOLT_ABSORB, "Volt Absorb (N)", "Restores HP if hit by an ELECTRIC-type move.", 3),
-    new Ability(Abilities.WATER_ABSORB, "Water Absorb (N)", "Restores HP if hit by a WATER-type move.", 3),
+    new Ability(Abilities.VOLT_ABSORB, "Volt Absorb", "Restores HP if hit by an ELECTRIC-type move.", 3)
+      .attr(TypeImmunityHealAbAttr, Type.ELECTRIC),
+    new Ability(Abilities.WATER_ABSORB, "Water Absorb", "Restores HP if hit by a WATER-type move.", 3)
+      .attr(TypeImmunityHealAbAttr, Type.WATER),
     new Ability(Abilities.WATER_VEIL, "Water Veil (N)", "Prevents the POKéMON from getting a burn.", 3),
     new Ability(Abilities.WHITE_SMOKE, "White Smoke", "Prevents other POKéMON from lowering its stats.", 3)
       .attr(ProtectStatAttr),
@@ -786,7 +938,11 @@ export function initAbilities() {
     new Ability(Abilities.ANTICIPATION, "Anticipation (N)", "Senses a foe's dangerous moves.", 4),
     new Ability(Abilities.BAD_DREAMS, "Bad Dreams (N)", "Reduces a sleeping foe's HP.", 4),
     new Ability(Abilities.DOWNLOAD, "Download (N)", "Adjusts power according to a foe's defenses.", 4),
-    new Ability(Abilities.DRY_SKIN, "Dry Skin (N)", "Reduces HP if it is hot. Water restores HP.", 4),
+    new Ability(Abilities.DRY_SKIN, "Dry Skin", "Reduces HP if it is hot. Water restores HP.", 4) // TODO
+      .attr(PostWeatherLapseDamageAbAttr, 2, WeatherType.SUNNY, WeatherType.HARSH_SUN)
+      .attr(PostWeatherLapseHealAbAttr, 2, WeatherType.RAIN, WeatherType.HEAVY_RAIN)
+      .attr(TypeWeaknessAbAttr, Type.FIRE, 1.25)
+      .attr(TypeImmunityHealAbAttr, Type.WATER),
     new Ability(Abilities.FILTER, "Filter (N)", "Reduces damage from super-effective attacks.", 4),
     new Ability(Abilities.FLOWER_GIFT, "Flower Gift (N)", "Powers up party POKéMON when it is sunny.", 4),
     new Ability(Abilities.FOREWARN, "Forewarn (N)", "Determines what moves a foe has.", 4),
@@ -796,13 +952,14 @@ export function initAbilities() {
     new Ability(Abilities.HONEY_GATHER, "Honey Gather (N)", "The POKéMON may gather Honey from somewhere.", 4),
     new Ability(Abilities.HYDRATION, "Hydration (N)", "Heals status problems if it is raining.", 4),
     new Ability(Abilities.ICE_BODY, "Ice Body", "The POKéMON gradually regains HP in a hailstorm.", 4)
-      .attr(WeatherHealAbAttr, WeatherType.HAIL),
+      .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.HAIL),
     new Ability(Abilities.IRON_FIST, "Iron Fist (N)", "Boosts the power of punching moves.", 4),
     new Ability(Abilities.KLUTZ, "Klutz (N)", "The POKéMON can't use any held items.", 4),
     new Ability(Abilities.LEAF_GUARD, "Leaf Guard (N)", "Prevents problems with status in sunny weather.", 4),
     new Ability(Abilities.MAGIC_GUARD, "Magic Guard (N)", "Protects the POKéMON from indirect damage.", 4),
     new Ability(Abilities.MOLD_BREAKER, "Mold Breaker (N)", "Moves can be used regardless of Abilities.", 4),
-    new Ability(Abilities.MOTOR_DRIVE, "Motor Drive (N)", "Raises SPEED if hit by an ELECTRIC-type move.", 4),
+    new Ability(Abilities.MOTOR_DRIVE, "Motor Drive", "Raises SPEED if hit by an ELECTRIC-type move.", 4)
+      .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPD, 1),
     new Ability(Abilities.MULTITYPE, "Multitype (N)", "Changes type to match the held Plate.", 4),
     new Ability(Abilities.NO_GUARD, "No Guard (N)", "Ensures attacks by or against the POKéMON land.", 4),
     new Ability(Abilities.NORMALIZE, "Normalize (N)", "All the POKéMON's moves become the NORMAL type.", 4),
@@ -862,7 +1019,8 @@ export function initAbilities() {
     new Ability(Abilities.REGENERATOR, "Regenerator (N)", "Restores a little HP when withdrawn from battle.", 5),
     new Ability(Abilities.SAND_FORCE, "Sand Force (N)", "Boosts certain moves' power in a sandstorm.", 5),
     new Ability(Abilities.SAND_RUSH, "Sand Rush (N)", "Boosts the POKéMON's SPEED in a sandstorm.", 5),
-    new Ability(Abilities.SAP_SIPPER, "Sap Sipper (N)", "Boosts ATTACK when hit by a GRASS-type move.", 5),
+    new Ability(Abilities.SAP_SIPPER, "Sap Sipper", "Boosts ATTACK when hit by a GRASS-type move.", 5)
+      .attr(TypeImmunityStatChangeAbAttr, Type.GRASS, BattleStat.ATK, 1),
     new Ability(Abilities.SHEER_FORCE, "Sheer Force (N)", "Removes added effects to increase move damage.", 5),
     new Ability(Abilities.TELEPATHY, "Telepathy (N)", "Anticipates an ally's ATTACK and dodges it.", 5),
     new Ability(Abilities.TERAVOLT, "Teravolt (N)", "Moves can be used regardless of Abilities.", 5),

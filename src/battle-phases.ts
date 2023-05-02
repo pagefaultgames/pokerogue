@@ -25,7 +25,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
-import { ArenaTrapAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAttr, SuppressWeatherEffectAbAttr, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
+import { ArenaTrapAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAttr, SuppressWeatherEffectAbAttr, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 
 export class CheckLoadPhase extends BattlePhase {
@@ -757,6 +757,8 @@ export class TurnEndPhase extends FieldPhase {
         this.scene.pushPhase(new BerryPhase(this.scene, pokemon.isPlayer()));
 
       this.scene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
+
+      this.executeForBoth((pokemon: Pokemon) => applyPostTurnAbAttrs(PostTurnAbAttr, pokemon));
 
       this.scene.applyModifiers(HeldItemTransferModifier, pokemon.isPlayer(), pokemon);
 
