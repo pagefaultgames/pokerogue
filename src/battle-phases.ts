@@ -1013,7 +1013,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
         const hitCount = new Utils.IntegerHolder(1);
         applyMoveAttrs(MultiHitAttr, user, target, this.move.getMove(), hitCount);
         user.turnData.hitCount = 0;
-        user.turnData.hitsLeft = user.turnData.hitsTotal = hitCount.value;
+        user.turnData.hitsLeft = user.turnData.hitCount = hitCount.value;
       }
 
       if (!this.hitCheck()) {
@@ -1028,7 +1028,6 @@ abstract class MoveEffectPhase extends PokemonPhase {
       
       new MoveAnim(this.move.getMove().id as Moves, user).play(this.scene, () => {
         const result = !isProtected ? target.apply(user, this.move) : MoveResult.NO_EFFECT;
-        ++user.turnData.hitCount;
         user.pushMoveHistory({ move: this.move.moveId, result: result, virtual: this.move.virtual });
         if (result !== MoveResult.NO_EFFECT && result !== MoveResult.FAILED) {
           applyMoveAttrs(MoveEffectAttr, user, target, this.move.getMove());
@@ -1052,7 +1051,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
     if (--user.turnData.hitsLeft >= 1 && this.getTargetPokemon().hp)
       this.scene.unshiftPhase(this.getNewHitPhase());
     else {
-      if (user.turnData.hitsTotal > 1)
+      if (user.turnData.hitCount > 1)
         this.scene.queueMessage(`Hit ${user.turnData.hitCount} time(s)!`);
       this.scene.applyModifiers(HitHealModifier, this.player, user);
     }

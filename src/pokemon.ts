@@ -1127,7 +1127,6 @@ export class PokemonTurnData {
   public flinched: boolean;
   public hitCount: integer;
   public hitsLeft: integer;
-  public hitsTotal: integer;
   public damageDealt: integer = 0;
 }
 
