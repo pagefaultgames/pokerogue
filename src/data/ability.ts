@@ -341,7 +341,7 @@ export class BlockWeatherDamageAttr extends PreWeatherDamageAbAttr {
 }
 
 export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
-  private affectsImmutable: boolean;
+  public affectsImmutable: boolean;
 
   constructor(affectsImmutable?: boolean) {
     super();
@@ -565,7 +565,7 @@ export function applyPreStatChangeAbAttrs(attrType: { new(...args: any[]): PreSt
 }
 
 export function applyPreWeatherEffectAbAttrs(attrType: { new(...args: any[]): PreWeatherEffectAbAttr },
-  pokemon: Pokemon, weather: Weather, cancelled: Utils.BooleanHolder, silent?: boolean, ...args: any[]): void {
+  pokemon: Pokemon, weather: Weather, cancelled: Utils.BooleanHolder, ...args: any[]): void {
   if (!pokemon.canApplyAbility())
     return;
 
@@ -576,12 +576,10 @@ export function applyPreWeatherEffectAbAttrs(attrType: { new(...args: any[]): Pr
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.applyPreWeatherEffect(pokemon, weather, cancelled, args)) {
-      if (!silent) {
-        pokemon.scene.abilityBar.showAbility(pokemon);
-        const message = attr.getTriggerMessage(pokemon, weather);
-        if (message)
-          pokemon.scene.queueMessage(message);
-      }
+      pokemon.scene.abilityBar.showAbility(pokemon);
+      const message = attr.getTriggerMessage(pokemon, weather);
+      if (message)
+        pokemon.scene.queueMessage(message);
     }
   }
 
@@ -614,6 +612,9 @@ export function applyPostTurnAbAttrs(attrType: { new(...args: any[]): PostTurnAb
 export function applyPostWeatherLapseAbAttrs(attrType: { new(...args: any[]): PostWeatherLapseAbAttr },
   pokemon: Pokemon, weather: Weather, ...args: any[]): void {
   if (!pokemon.canApplyAbility())
+    return;
+
+  if (weather.isEffectSuppressed(pokemon.scene))
     return;
 
   const ability = pokemon.getAbility();

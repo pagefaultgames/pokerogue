@@ -103,15 +103,19 @@ export class Weather {
     const playerPokemon = scene.getPlayerPokemon();
     const enemyPokemon = scene.getEnemyPokemon();
 
-    const cancelled = new Utils.BooleanHolder(false);
+    if (playerPokemon) {
+      const suppressWeatherEffectAbAttr = playerPokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr).find(() => true) as SuppressWeatherEffectAbAttr;
+      if (suppressWeatherEffectAbAttr && (!this.isImmutable() || suppressWeatherEffectAbAttr.affectsImmutable))
+        return true;
+    }
 
-    if (playerPokemon)
-      applyPreWeatherEffectAbAttrs(SuppressWeatherEffectAbAttr, playerPokemon, this, cancelled, true);
+    if (enemyPokemon) {
+      const suppressWeatherEffectAbAttr = enemyPokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr).find(() => true) as SuppressWeatherEffectAbAttr;
+      if (suppressWeatherEffectAbAttr && (!this.isImmutable() || suppressWeatherEffectAbAttr.affectsImmutable))
+        return true;
+    }
 
-    if (enemyPokemon)
-      applyPreWeatherEffectAbAttrs(SuppressWeatherEffectAbAttr, enemyPokemon, this, cancelled, true);
-
-    return cancelled.value;
+    return false;
   }
 }
 
