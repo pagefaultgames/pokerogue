@@ -1908,7 +1908,7 @@ export function initMoves() {
     new AttackMove(Moves.GUILLOTINE, "Guillotine", Type.NORMAL, MoveCategory.PHYSICAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1)
       .attr(OneHitKOAttr),
     new AttackMove(Moves.RAZOR_WIND, "Razor Wind", Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, "Charges on first turn, attacks on second. High critical hit ratio.", -1, 0, 1)
-      .attr(ChargeAttr, ChargeAnim.RAZOR_WIND_CHARGING, 'whipped$$$up a whirlwind!')
+      .attr(ChargeAttr, ChargeAnim.RAZOR_WIND_CHARGING, 'whipped\nup a whirlwind!')
       .attr(HighCritAttr)
       .ignoresVirtual()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -1922,7 +1922,7 @@ export function initMoves() {
       .target(MoveTarget.OTHER),
     new StatusMove(Moves.WHIRLWIND, "Whirlwind (N)", Type.NORMAL, -1, 20, -1, "In battles, the opponent switches. In the wild, the Pokémon runs.", -1, -6, 1), // TODO
     new AttackMove(Moves.FLY, "Fly", Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, 97, "Flies up on first turn, attacks on second turn.", -1, 0, 1)
-      .attr(ChargeAttr, ChargeAnim.FLY_CHARGING, 'flew$$$up high!', BattlerTagType.FLYING)
+      .attr(ChargeAttr, ChargeAnim.FLY_CHARGING, 'flew\nup high!', BattlerTagType.FLYING)
       .ignoresVirtual(),
     new AttackMove(Moves.BIND, "Bind", Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 1)
       .attr(TrapAttr, BattlerTagType.BIND),
@@ -2167,7 +2167,7 @@ export function initMoves() {
     new AttackMove(Moves.SWIFT, "Swift", Type.NORMAL, MoveCategory.SPECIAL, 60, -1, 20, 32, "Ignores Accuracy and Evasiveness.", -1, 0, 1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.SKULL_BASH, "Skull Bash", Type.NORMAL, MoveCategory.PHYSICAL, 130, 100, 10, -1, "Raises Defense on first turn, attacks on second.", 100, 0, 1)
-      .attr(ChargeAttr, ChargeAnim.SKULL_BASH_CHARGING, 'lowered$$$its head!', null, true)
+      .attr(ChargeAttr, ChargeAnim.SKULL_BASH_CHARGING, 'lowered\nits head!', null, true)
       .attr(StatChangeAttr, BattleStat.DEF, 1, true)
       .ignoresVirtual(),
     new AttackMove(Moves.SPIKE_CANNON, "Spike Cannon", Type.NORMAL, MoveCategory.PHYSICAL, 20, 100, 15, -1, "Hits 2-5 times in one turn.", -1, 0, 1)
@@ -2508,7 +2508,7 @@ export function initMoves() {
     new AttackMove(Moves.SECRET_POWER, "Secret Power (N)", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, "Effects of the attack vary with the location.", 30, 0, 3)
       .makesContact(false),
     new AttackMove(Moves.DIVE, "Dive", Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, "Dives underwater on first turn, attacks on second turn.", -1, 0, 3)
-      .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, 'hid$$$underwater!')
+      .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, 'hid\nunderwater!')
       .ignoresVirtual(),
     new AttackMove(Moves.ARM_THRUST, "Arm Thrust", Type.FIGHTING, MoveCategory.PHYSICAL, 15, 100, 20, -1, "Hits 2-5 times in one turn.", -1, 0, 3)
       .attr(MultiHitAttr),
@@ -2647,7 +2647,7 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .target(MoveTarget.OTHER),
     new AttackMove(Moves.DOOM_DESIRE, "Doom Desire", Type.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, "Damage occurs 2 turns later.", -1, 0, 3)
-      .attr(ChargeAttr, ChargeAnim.DOOM_DESIRE_CHARGING, 'chose$$$DOOM DESIRE as its destiny!'), // Fix this move to work properly
+      .attr(ChargeAttr, ChargeAnim.DOOM_DESIRE_CHARGING, 'chose\nDOOM DESIRE as its destiny!'), // Fix this move to work properly
     new AttackMove(Moves.PSYCHO_BOOST, "Psycho Boost", Type.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, "Sharply lowers user's Special Attack.", 100, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
     new SelfStatusMove(Moves.ROOST, "Roost", Type.FLYING, -1, 5, -1, "User recovers half of its max HP and loses the Flying type temporarily.", -1, 0, 4)
@@ -2875,7 +2875,7 @@ export function initMoves() {
     new AttackMove(Moves.OMINOUS_WIND, "Ominous Wind", Type.GHOST, MoveCategory.SPECIAL, 60, 100, 5, -1, "May raise all user's stats at once.", 10, 0, 4)
   .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true),
     new AttackMove(Moves.SHADOW_FORCE, "Shadow Force", Type.GHOST, MoveCategory.PHYSICAL, 120, 100, 5, -1, "Disappears on first turn, attacks on second. Can strike through PROTECT/DETECT.", -1, 0, 4)
-      .attr(ChargeAttr, ChargeAnim.SHADOW_FORCE_CHARGING, 'vanished$$$instantly!', BattlerTagType.HIDDEN)
+      .attr(ChargeAttr, ChargeAnim.SHADOW_FORCE_CHARGING, 'vanished\ninstantly!', BattlerTagType.HIDDEN)
       .ignoresProtect()
       .ignoresVirtual(),
     new SelfStatusMove(Moves.HONE_CLAWS, "Hone Claws", Type.DARK, -1, 15, -1, "Raises user's Attack and Accuracy.", -1, 0, 5)
@@ -2944,7 +2944,7 @@ export function initMoves() {
     new AttackMove(Moves.HEX, "Hex", Type.GHOST, MoveCategory.SPECIAL, 65, 100, 10, 29, "Inflicts more damage if the target has a status condition.", -1, 0, 5)
       .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.status ? 2 : 1),
     new AttackMove(Moves.SKY_DROP, "Sky Drop", Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 10, -1, "Takes opponent into the air on first turn, drops them on second turn.", -1, 0, 5)
-      .attr(ChargeAttr, ChargeAnim.SKY_DROP_CHARGING, 'took {TARGET}$$$into the sky!', BattlerTagType.FLYING) // TODO: Add 2nd turn message
+      .attr(ChargeAttr, ChargeAnim.SKY_DROP_CHARGING, 'took {TARGET}\ninto the sky!', BattlerTagType.FLYING) // TODO: Add 2nd turn message
       .ignoresVirtual(), 
     new SelfStatusMove(Moves.SHIFT_GEAR, "Shift Gear", Type.STEEL, -1, 10, -1, "Raises user's Attack and sharply raises Speed.", -1, 0, 5)
       .attr(StatChangeAttr, BattleStat.ATK, 1, true)
@@ -3037,7 +3037,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .makesContact(false),
     new AttackMove(Moves.ICE_BURN, "Ice Burn", Type.ICE, MoveCategory.SPECIAL, 140, 90, 5, -1, "Charges on first turn, attacks on second. May burn opponent.", 30, 0, 5)
-      .attr(ChargeAttr, ChargeAnim.ICE_BURN_CHARGING, 'became cloaked$$$in freezing air!')
+      .attr(ChargeAttr, ChargeAnim.ICE_BURN_CHARGING, 'became cloaked\nin freezing air!')
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .ignoresVirtual(),
     new AttackMove(Moves.SNARL, "Snarl", Type.DARK, MoveCategory.SPECIAL, 55, 95, 15, 30, "Lowers opponent's Special Attack.", 100, 0, 5)
@@ -3054,11 +3054,11 @@ export function initMoves() {
     new AttackMove(Moves.MOONBLAST, "Moonblast", Type.FAIRY, MoveCategory.SPECIAL, 95, 100, 15, -1, "May lower opponent's Special Attack.", 30, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPATK, -1),
     new AttackMove(Moves.PHANTOM_FORCE, "Phantom Force", Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, "Disappears on first turn, attacks on second. Can strike through PROTECT/DETECT.", -1, 0, 6)
-      .attr(ChargeAttr, ChargeAnim.PHANTOM_FORCE_CHARGING, 'vanished$$$instantly!', BattlerTagType.HIDDEN)
+      .attr(ChargeAttr, ChargeAnim.PHANTOM_FORCE_CHARGING, 'vanished\ninstantly!', BattlerTagType.HIDDEN)
       .ignoresProtect()
       .ignoresVirtual(),
     new SelfStatusMove(Moves.GEOMANCY, "Geomancy", Type.FAIRY, -1, 10, -1, "Charges on the first turn, sharply raises user's Special Attack, Special Defense and Speed on the second.", -1, 0, 6)
-      .attr(ChargeAttr, ChargeAnim.GEOMANCY_CHARGING, "is charging$$$its power!")
+      .attr(ChargeAttr, ChargeAnim.GEOMANCY_CHARGING, "is charging\nits power!")
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 2, true)
       .ignoresVirtual(),
     new AttackMove(Moves.OBLIVION_WING, "Oblivion Wing", Type.FLYING, MoveCategory.SPECIAL, 80, 100, 10, -1, "User recovers 3/4 the HP inflicted on the opponent.", -1, 0, 6)
