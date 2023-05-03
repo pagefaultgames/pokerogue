@@ -343,8 +343,8 @@ export abstract class DamagingTrapTag extends TrappedTag {
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.isPlayer(), this.commonAnim));
 
       const damage = Math.ceil(pokemon.getMaxHp() / 16);
-      pokemon.damage(damage);
       pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.isPlayer()));
+      pokemon.damage(damage);
     }
 
     return ret;

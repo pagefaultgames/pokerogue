@@ -616,9 +616,6 @@ export function applyPostWeatherLapseAbAttrs(attrType: { new(...args: any[]): Po
   if (!pokemon.canApplyAbility())
     return;
 
-  if (weather.isEffectSuppressed(pokemon.scene))
-    return;
-
   const ability = pokemon.getAbility();
 
   const attrs = ability.getAttrs(attrType) as PostWeatherLapseAbAttr[];
