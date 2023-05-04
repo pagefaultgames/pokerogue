@@ -879,6 +879,13 @@ export abstract class MovePhase extends BattlePhase {
 
     console.log(Moves[this.move.moveId]);
 
+    if (!this.canMove()) {
+      if (this.move.isDisabled())
+        this.scene.queueMessage(`${this.move.getName()} is disabled!`);
+      this.end();
+      return;
+    }
+
     const target = this.pokemon.getOpponent();
 
     if (!this.followUp && this.canMove())
@@ -914,13 +921,6 @@ export abstract class MovePhase extends BattlePhase {
       
       this.end();
     };
-
-    if (!this.canMove()) {
-      if (this.move.isDisabled())
-        this.scene.queueMessage(`${this.move.getName()} is disabled!`);
-      this.end();
-      return;
-    }
 
     if (!this.followUp && this.pokemon.status && !this.pokemon.status.isPostTurn()) {
       this.pokemon.status.incrementTurn();
