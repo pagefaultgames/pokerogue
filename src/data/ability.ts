@@ -82,6 +82,18 @@ export class PreDefendAbAttr extends AbAttr {
   }
 }
 
+export class BlockItemTheftAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = true;;
+    
+    return true;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]) {
+    return getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nprevents item theft!`);
+  }
+}
+
 export class TypeWeaknessAbAttr extends PreDefendAbAttr {
   private weakType: Type;
   private powerMultiplier: number;
@@ -1128,7 +1140,8 @@ export function initAbilities() {
       .attr(TypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(BattlerTagType.IGNORE_FLYING)),
     new Ability(Abilities.LIGHTNING_ROD, "Lightning Rod", "Draws in all ELECTRIC-type moves to up SP. ATK.", 3)
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPATK, 1),
-    new Ability(Abilities.LIMBER, "Limber (N)", "The POKéMON is protected from paralysis.", 3),
+    new Ability(Abilities.LIMBER, "Limber", "The POKéMON is protected from paralysis.", 3)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS),
     new Ability(Abilities.LIQUID_OOZE, "Liquid Ooze (N)", "Damages attackers using any draining move.", 3),
     new Ability(Abilities.MAGMA_ARMOR, "Magma Armor", "Prevents the POKéMON from becoming frozen.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.FREEZE),
@@ -1146,7 +1159,8 @@ export function initAbilities() {
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED),
     new Ability(Abilities.PICKUP, "Pickup (N)", "The POKéMON may pick up items.", 3),
     new Ability(Abilities.PLUS, "Plus (N)", "Ups SP. ATK if another POKéMON has PLUS or MINUS.", 3),
-    new Ability(Abilities.POISON_POINT, "Poison Point (N)", "Contact with the POKéMON may poison the attacker.", 3),
+    new Ability(Abilities.POISON_POINT, "Poison Point", "Contact with the POKéMON may poison the attacker.", 3)
+      .attr(PostDefendContactApplyStatusEffectAbAttr, StatusEffect.POISON),
     new Ability(Abilities.PRESSURE, "Pressure (N)", "The POKéMON raises the foe's PP usage.", 3),
     new Ability(Abilities.PURE_POWER, "Pure Power (N)", "Raises the POKéMON's ATTACK stat.", 3),
     new Ability(Abilities.RAIN_DISH, "Rain Dish", "The POKéMON gradually regains HP in rain.", 3)
@@ -1171,9 +1185,11 @@ export function initAbilities() {
     new Ability(Abilities.SOUNDPROOF, "Soundproof (N)", "Gives immunity to sound-based moves.", 3),
     new Ability(Abilities.SPEED_BOOST, "Speed Boost", "Its SPEED stat is gradually boosted.", 3)
       .attr(PostTurnSpeedBoostAbAttr),
-    new Ability(Abilities.STATIC, "Static (N)", "Contact with the POKéMON may cause paralysis.", 3),
+    new Ability(Abilities.STATIC, "Static", "Contact with the POKéMON may cause paralysis.", 3)
+      .attr(PostDefendContactApplyStatusEffectAbAttr, StatusEffect.PARALYSIS),
     new Ability(Abilities.STENCH, "Stench (N)", "The stench may cause the target to flinch.", 3),
-    new Ability(Abilities.STICKY_HOLD, "Sticky Hold (N)", "Protects the POKéMON from item theft.", 3),
+    new Ability(Abilities.STICKY_HOLD, "Sticky Hold", "Protects the POKéMON from item theft.", 3)
+      .attr(BlockItemTheftAbAttr),
     new Ability(Abilities.STURDY, "Sturdy (N)", "It cannot be knocked out with one hit.", 3),
     new Ability(Abilities.SUCTION_CUPS, "Suction Cups (N)", "Negates all moves that force switching out.", 3),
     new Ability(Abilities.SWARM, "Swarm", "Powers up BUG-type moves in a pinch.", 3)
@@ -1243,7 +1259,9 @@ export function initAbilities() {
     new Ability(Abilities.SKILL_LINK, "Skill Link (N)", "Increases the frequency of multi-strike moves.", 4),
     new Ability(Abilities.SLOW_START, "Slow Start (N)", "Temporarily halves ATTACK and SPEED.", 4),
     new Ability(Abilities.SNIPER, "Sniper (N)", "Powers up moves if they become critical hits.", 4),
-    new Ability(Abilities.SNOW_CLOAK, "Snow Cloak (N)", "Raises evasion in a hailstorm.", 4),
+    new Ability(Abilities.SNOW_CLOAK, "Snow Cloak", "Raises evasion in a hailstorm.", 4)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.EVA, 1.2)
+      .attr(BlockWeatherDamageAttr, WeatherType.HAIL),
     new Ability(Abilities.SNOW_WARNING, "Snow Warning", "The POKéMON summons a hailstorm in battle.", 4)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HAIL),
     new Ability(Abilities.SOLAR_POWER, "Solar Power (N)", "In sunshine, SP. ATK is boosted but HP decreases.", 4),
@@ -1255,7 +1273,7 @@ export function initAbilities() {
     new Ability(Abilities.SUPER_LUCK, "Super Luck (N)", "Heightens the critical-hit ratios of moves.", 4),
     new Ability(Abilities.TANGLED_FEET, "Tangled Feet (N)", "Raises evasion if the POKéMON is confused.", 4),
     new Ability(Abilities.TECHNICIAN, "Technician (N)", "Powers up the POKéMON's weaker moves.", 4),
-    new Ability(Abilities.TINTED_LENS, "Tinted Lens (N)", "Powers up “not very effective” moves.", 4),
+    new Ability(Abilities.TINTED_LENS, "Tinted Lens (N)", "Powers up \"not very effective\" moves.", 4),
     new Ability(Abilities.UNAWARE, "Unaware (N)", "Ignores any stat changes in the POKéMON.", 4),
     new Ability(Abilities.UNBURDEN, "Unburden (N)", "Raises SPEED if a held item is used.", 4),
     new Ability(Abilities.ANALYTIC, "Analytic (N)", "Boosts move power when the POKéMON moves last.", 5),

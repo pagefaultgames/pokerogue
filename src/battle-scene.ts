@@ -20,7 +20,7 @@ import { TextStyle, addTextObject } from './ui/text';
 import { Moves, initMoves } from './data/move';
 import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
-import { initAbilities } from './data/ability';
+import { BlockItemTheftAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 
 const enableAuto = true;
 const quickStart = false;
@@ -756,8 +756,14 @@ export default class BattleScene extends Phaser.Scene {
 
 	tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferStack: boolean, playSound: boolean): Promise<boolean> {
 		return new Promise(resolve => {
-			const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
 			const source = itemModifier.getPokemon(target.scene);
+			const cancelled = new Utils.BooleanHolder(false);
+			applyAbAttrs(BlockItemTheftAbAttr, target, cancelled);
+			if (cancelled.value) {
+				resolve(false);
+				return;
+			}
+			const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
 			newItemModifier.pokemonId = target.id;
 			const matchingModifier = target.scene.findModifier(m => m instanceof PokemonHeldItemModifier
 				&& (m as PokemonHeldItemModifier).matchType(itemModifier), target.isPlayer()) as PokemonHeldItemModifier;
