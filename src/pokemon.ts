@@ -23,7 +23,7 @@ import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
-import { Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs } from './data/ability';
+import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {

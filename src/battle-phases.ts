@@ -25,7 +25,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
-import { ArenaTrapAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAttr, SuppressWeatherEffectAbAttr, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
+import { ArenaTrapAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAttr, SuppressWeatherEffectAbAttr, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 
 export class CheckLoadPhase extends BattlePhase {
@@ -183,6 +183,8 @@ export class EncounterPhase extends BattlePhase {
       this.scene.unshiftPhase(new ShinySparklePhase(this.scene, false));
 
     this.scene.arena.applyTags(ArenaTrapTag, this.scene.getEnemyPokemon());
+
+    applyPostSummonAbAttrs(PostSummonAbAttr, this.scene.getEnemyPokemon());
       
     // TODO: Remove
     //this.scene.unshiftPhase(new SelectModifierPhase(this.scene));
@@ -402,7 +404,6 @@ export class SummonPhase extends BattlePhase {
                 playerPokemon.getSprite().clearTint();
                 playerPokemon.resetSummonData();
                 this.scene.time.delayedCall(1000, () => this.end());
-                this.scene.arena.applyTags(ArenaTrapTag, playerPokemon);
               }
             });
           }
@@ -414,6 +415,10 @@ export class SummonPhase extends BattlePhase {
   end() {
     if (this.scene.getPlayerPokemon().shiny)
       this.scene.unshiftPhase(new ShinySparklePhase(this.scene, true));
+
+    this.scene.arena.applyTags(ArenaTrapTag, this.scene.getPlayerPokemon());
+
+    applyPostSummonAbAttrs(PostSummonAbAttr, this.scene.getPlayerPokemon());
 
     super.end();
   }
