@@ -55,7 +55,7 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
       return (pokemon: Pokemon) => !!pokemon.status || !!pokemon.getTag(BattlerTagType.CONFUSED);
     case BerryType.ENIGMA:
       return (pokemon: Pokemon) => {
-        const opponent = pokemon.isPlayer() ? pokemon.scene.getEnemyPokemon() : pokemon.scene.getPlayerPokemon();
+        const opponent = pokemon.getOpponent();
         const opponentLastMove = opponent ? opponent.getLastXMoves(1).find(() => true) : null; // TODO: Update so this works even if opponent has fainted
         
         return opponentLastMove && opponentLastMove.turn === pokemon.scene.currentBattle?.turn - 1 && opponentLastMove.result === MoveResult.SUPER_EFFECTIVE;

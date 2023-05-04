@@ -1009,7 +1009,7 @@ export class HeldItemTransferModifier extends PokemonHeldItemModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    const targetPokemon = pokemon.isPlayer() ? pokemon.scene.getEnemyPokemon() : pokemon.scene.getPlayerPokemon();
+    const targetPokemon = pokemon.getOpponent();
     if (!targetPokemon)
       return false;
 

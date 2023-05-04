@@ -11,6 +11,7 @@ import { WeatherType } from "./weather";
 import { ArenaTagType, ArenaTrapTag } from "./arena-tag";
 import { BlockRecoilDamageAttr, applyAbAttrs } from "./ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { Gender } from "./gender";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -1868,7 +1869,7 @@ export function applyFilteredMoveAttrs(attrFilter: MoveAttrFilter, user: Pokemon
 export function getMoveTarget(user: Pokemon, move: Moves): Pokemon {
   const moveTarget = allMoves[move].moveTarget;
 
-  const other = user.isPlayer() ? user.scene.getEnemyPokemon() : user.scene.getPlayerPokemon();
+  const other = user.getOpponent();
 
   switch (moveTarget) {
     case MoveTarget.USER:
@@ -2364,7 +2365,9 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, 1, true),
     new StatusMove(Moves.MEAN_LOOK, "Mean Look", Type.NORMAL, -1, 5, -1, "Opponent cannot flee or switch.", -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, 1, true),
-    new StatusMove(Moves.ATTRACT, "Attract (N)", Type.NORMAL, 100, 15, -1, "If opponent is the opposite gender, it's less likely to attack.", -1, 0, 2),
+    new StatusMove(Moves.ATTRACT, "Attract", Type.NORMAL, 100, 15, -1, "If opponent is the opposite gender, it's less likely to attack.", -1, 0, 2)
+      .attr(AddBattlerTagAttr, BattlerTagType.INFATUATED)
+      .condition((user: Pokemon, target: Pokemon, move: Move) => user.isOppositeGender(target)),
     new SelfStatusMove(Moves.SLEEP_TALK, "Sleep Talk", Type.NORMAL, -1, 10, 70, "User performs one of its own moves while sleeping.", -1, 0, 2)
       .attr(BypassSleepAttr)
       .attr(RandomMovesetMoveAttr)

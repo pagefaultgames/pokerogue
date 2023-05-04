@@ -23,7 +23,7 @@ import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
-import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs } from './data/ability';
+import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, PreApplyBattlerTagAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
@@ -483,6 +483,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.levelExp = this.exp - getLevelTotalExp(this.level, this.getSpeciesForm().growthRate);
   }
 
+  getOpponent(): Pokemon {
+    const ret = this.isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon();
+    if (ret.summonData)
+      return ret;
+    return null;
+  }
+
   apply(source: Pokemon, battlerMove: PokemonMove): MoveResult {
     let result: MoveResult;
     const move = battlerMove.getMove();
@@ -600,7 +607,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.hp) {
       this.scene.pushPhase(new FaintPhase(this.scene, this.isPlayer()));
       this.resetSummonData();
-      (this.isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon()).resetBattleSummonData();
+      this.getOpponent()?.resetBattleSummonData();
     }
   }
 
@@ -613,7 +620,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const newTag = getBattlerTag(tagType, turnCount || 0, sourceMove, sourceId);
 
-    if (newTag.canAdd(this)) {
+    const cancelled = new Utils.BooleanHolder(false);
+    applyPreApplyBattlerTagAbAttrs(PreApplyBattlerTagAbAttr, this, newTag, cancelled);
+
+    if (!cancelled.value && newTag.canAdd(this)) {
       this.summonData.tags.push(newTag);
       newTag.onAdd(this);
 
@@ -761,6 +771,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
+  isOppositeGender(pokemon: Pokemon): boolean {
+    return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
+  }
+
   trySetStatus(effect: StatusEffect): boolean {
     if (this.status)
       return false;
@@ -779,6 +793,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           return false;
         break;
     }
+
+    const cancelled = new Utils.BooleanHolder(false);
+    applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled);
+
+    if (cancelled.value)
+      return false;
+
     this.status = new Status(effect);
     return true;
   }

@@ -25,7 +25,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
-import { ArenaTrapAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAttr, SuppressWeatherEffectAbAttr, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
+import { CheckTrappedAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAttr, SuppressWeatherEffectAbAttr, applyCheckTrappedAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 
 export class CheckLoadPhase extends BattlePhase {
@@ -678,13 +678,15 @@ export class CommandPhase extends FieldPhase {
         break;
       case Command.POKEMON:
         const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
-        const arenaTrapped = !!enemyPokemon.getAbility().hasAttr(ArenaTrapAbAttr);
+        const trapped = new Utils.BooleanHolder(false);
         const batonPass = args[0] as boolean;
-        if (batonPass || (!trapTag && !arenaTrapped)) {
+        if (!batonPass)
+          applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trapped);
+        if (batonPass || (!trapTag && !trapped.value)) {
           this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, cursor, true, args[0] as boolean));
           success = true;
-        } else
-          this.scene.ui.showText(`${this.scene.getPokemonById(trapTag.sourceId).name}'s ${trapTag?.getMoveName() || enemyPokemon.getAbility().name}\nprevents switching!`, null, () => {
+        } else if (trapTag)
+          this.scene.ui.showText(`${this.scene.getPokemonById(trapTag.sourceId).name}'s ${trapTag.getMoveName()}\nprevents switching!`, null, () => {
             this.scene.ui.showText(null, 0);
           }, null, true);
         break;
@@ -877,7 +879,7 @@ export abstract class MovePhase extends BattlePhase {
 
     console.log(Moves[this.move.moveId]);
 
-    const target = this.pokemon.isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon();
+    const target = this.pokemon.getOpponent();
 
     if (!this.followUp && this.canMove())
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
@@ -1043,8 +1045,11 @@ abstract class MoveEffectPhase extends PokemonPhase {
               target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
           }
           // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
-          if (!isProtected && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length)
+          if (!isProtected && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length) {
             applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveHitEffectAttr && (!!target.hp || (attr as MoveHitEffectAttr).selfTarget), user, target, this.move.getMove());
+            if (target.hp)
+              applyPostDefendAbAttrs(PostDefendAbAttr, user, target, this.move, result);
+          }
         }
         this.end();
       });

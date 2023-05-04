@@ -1,13 +1,13 @@
 import Pokemon, { MoveResult, PokemonMove } from "../pokemon";
-import { Type, getTypeDamageMultiplier } from "./type";
+import { Type } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { DamagePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../battle-phases";
 import { getPokemonMessage } from "../messages";
 import { Weather, WeatherType } from "./weather";
-import { BattlerTagType } from "./battler-tag";
-import { StatusEffect } from "./status-effect";
-import { Moves, RecoilAttr, WeatherHealAttr } from "./move";
+import { BattlerTag, BattlerTagType, TrappedTag } from "./battler-tag";
+import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
+import { MoveFlags, Moves, RecoilAttr } from "./move";
 
 export class Ability {
   public id: Abilities;
@@ -212,6 +212,54 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
   }
 }
 
+export class PostDefendAbAttr extends AbAttr {
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, moveResult: MoveResult, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
+  private chance: integer;
+  private effects: StatusEffect[];
+
+  constructor(chance: integer, ...effects: StatusEffect[]) {
+    super();
+
+    this.chance = chance;
+    this.effects = effects;
+  }
+
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, moveResult: MoveResult, args: any[]): boolean {
+    if (move.getMove().hasFlag(MoveFlags.MAKES_CONTACT) && Utils.randInt(100) < this.chance) {
+      const effect = this.effects.length === 1 ? this.effects[0] : this.effects[Utils.randInt(this.effects.length)];
+      return attacker.trySetStatus(effect);
+    }
+
+    return false;
+  }
+}
+
+export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
+  private chance: integer;
+  private tagType: BattlerTagType;
+  private turnCount: integer;
+
+  constructor(chance: integer, tagType: BattlerTagType, turnCount?: integer) {
+    super();
+
+    this.tagType = tagType;
+    this.chance = chance;
+    this.turnCount = turnCount;
+  }
+
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, moveResult: MoveResult, args: any[]): boolean {
+    if (move.getMove().hasFlag(MoveFlags.MAKES_CONTACT) && Utils.randInt(100) < this.chance)
+      return attacker.addTag(this.tagType, this.turnCount, move.moveId, pokemon.id);
+
+    return false;
+  }
+}
+
 export class PreAttackAbAttr extends AbAttr {
   applyPreAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
     return false;
@@ -282,6 +330,29 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
   }
 }
 
+export class PostSummonAbAttr extends AbAttr {
+  applyPostSummon(pokemon: Pokemon, args: any[]) {
+    return false;
+  }
+}
+
+export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
+  private weatherType: WeatherType;
+
+  constructor(weatherType: WeatherType) {
+    super();
+
+    this.weatherType = weatherType;
+  }
+
+  applyPostSummon(pokemon: Pokemon, args: any[]): boolean {
+    if (!pokemon.scene.arena.weather?.isImmutable())
+      return pokemon.scene.arena.trySetWeather(this.weatherType, false);
+
+    return false;
+  }
+}
+
 export class PreStatChangeAbAttr extends AbAttr {
   applyPreStatChange(pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     return false;
@@ -311,9 +382,65 @@ export class ProtectStatAttr extends PreStatChangeAbAttr {
   }
 }
 
-export class BlockCritAbAttr extends AbAttr { }
+export class PreSetStatusAbAttr extends AbAttr {
+  applyPreSetStatus(pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    return false;
+  }
+}
 
-export class ArenaTrapAbAttr extends AbAttr { }
+export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
+  private immuneEffects: StatusEffect[];
+
+  constructor(...immuneEffects: StatusEffect[]) {
+    super();
+
+    this.immuneEffects = immuneEffects;
+  }
+
+  applyPreSetStatus(pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (!this.immuneEffects.length || this.immuneEffects.indexOf(effect) > -1) {
+      cancelled.value = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nprevents ${this.immuneEffects.length ? getStatusEffectDescriptor(args[0] as StatusEffect) : 'status problems'}!`);
+  }
+}
+
+export class PreApplyBattlerTagAbAttr extends AbAttr {
+  applyPreApplyBattlerTag(pokemon: Pokemon, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
+  private immuneTagType: BattlerTagType;
+
+  constructor(immuneTagType: BattlerTagType) {
+    super();
+
+    this.immuneTagType = immuneTagType;
+  }
+
+  applyPreApplyBattlerTag(pokemon: Pokemon, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (tag.tagType === this.immuneTagType) {
+      cancelled.value = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nprevents ${(args[0] as BattlerTag).getDescriptor()}!`);
+  }
+}
+
+export class BlockCritAbAttr extends AbAttr { }
 
 export class PreWeatherEffectAbAttr extends AbAttr {
   applyPreWeatherEffect(pokemon: Pokemon, weather: Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -453,6 +580,23 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
   }
 }
 
+export class CheckTrappedAbAttr extends AbAttr {
+  applyCheckTrapped(pokemon: Pokemon, trapped: Utils.BooleanHolder, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
+  applyCheckTrapped(pokemon: Pokemon, trapped: Utils.BooleanHolder, args: any[]): boolean {
+    trapped.value = true;
+    return true;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `\'s ${pokemon.getAbility().name}\nprevents switching!`);
+  }
+}
+
 export function applyAbAttrs(attrType: { new(...args: any[]): AbAttr }, pokemon: Pokemon, cancelled: Utils.BooleanHolder, ...args: any[]): void {
   if (!pokemon.canApplyAbility())
     return;
@@ -487,6 +631,28 @@ export function applyPreDefendAbAttrs(attrType: { new(...args: any[]): PreDefend
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.applyPreDefend(pokemon, attacker, move, cancelled, args)) {
+      queueShowAbility(pokemon);
+      const message = attr.getTriggerMessage(pokemon, attacker, move);
+      if (message)
+        pokemon.scene.queueMessage(message);
+    }
+  }
+
+  pokemon.scene.clearPhaseQueueSplice();
+}
+
+export function applyPostDefendAbAttrs(attrType: { new(...args: any[]): PostDefendAbAttr },
+  pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, moveResult: MoveResult, ...args: any[]): void {
+  if (!pokemon.canApplyAbility())
+    return;
+
+  const ability = pokemon.getAbility();
+  const attrs = ability.getAttrs(attrType) as PostDefendAbAttr[];
+  for (let attr of attrs) {
+    if (!canApplyAttr(pokemon, attr))
+      continue;
+    pokemon.scene.setPhaseQueueSplice();
+    if (attr.applyPostDefend(pokemon, attacker, move, moveResult, args)) {
       queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon, attacker, move);
       if (message)
@@ -542,6 +708,28 @@ export function applyPreAttackAbAttrs(attrType: { new(...args: any[]): PreAttack
   pokemon.scene.clearPhaseQueueSplice();
 }
 
+export function applyPostSummonAbAttrs(attrType: { new(...args: any[]): PostSummonAbAttr },
+  pokemon: Pokemon, ...args: any[]): void {
+  if (!pokemon.canApplyAbility())
+    return;
+
+  const ability = pokemon.getAbility();
+  const attrs = ability.getAttrs(attrType) as PostSummonAbAttr[];
+  for (let attr of attrs) {
+    if (!canApplyAttr(pokemon, attr))
+      continue;
+    pokemon.scene.setPhaseQueueSplice();
+    if (attr.applyPostSummon(pokemon, args)) {
+      queueShowAbility(pokemon);
+      const message = attr.getTriggerMessage(pokemon);
+      if (message)
+        pokemon.scene.queueMessage(message);
+    }
+  }
+
+  pokemon.scene.clearPhaseQueueSplice();
+}
+
 export function applyPreStatChangeAbAttrs(attrType: { new(...args: any[]): PreStatChangeAbAttr },
   pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, ...args: any[]): void {
   if (!pokemon.canApplyAbility())
@@ -556,6 +744,50 @@ export function applyPreStatChangeAbAttrs(attrType: { new(...args: any[]): PreSt
     if (attr.applyPreStatChange(pokemon, stat, cancelled, args)) {
       queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon, stat);
+      if (message)
+        pokemon.scene.queueMessage(message);
+    }
+  }
+
+  pokemon.scene.clearPhaseQueueSplice();
+}
+
+export function applyPreSetStatusAbAttrs(attrType: { new(...args: any[]): PreSetStatusAbAttr },
+  pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, ...args: any[]): void {
+  if (!pokemon.canApplyAbility())
+    return;
+
+  const ability = pokemon.getAbility();
+  const attrs = ability.getAttrs(attrType) as PreSetStatusAbAttr[];
+  for (let attr of attrs) {
+    if (!canApplyAttr(pokemon, attr))
+      continue;
+    pokemon.scene.setPhaseQueueSplice();
+    if (attr.applyPreSetStatus(pokemon, effect, cancelled, args)) {
+      queueShowAbility(pokemon);
+      const message = attr.getTriggerMessage(pokemon, effect);
+      if (message)
+        pokemon.scene.queueMessage(message);
+    }
+  }
+
+  pokemon.scene.clearPhaseQueueSplice();
+}
+
+export function applyPreApplyBattlerTagAbAttrs(attrType: { new(...args: any[]): PreApplyBattlerTagAbAttr },
+  pokemon: Pokemon, tag: BattlerTag, cancelled: Utils.BooleanHolder, ...args: any[]): void {
+  if (!pokemon.canApplyAbility())
+    return;
+
+  const ability = pokemon.getAbility();
+  const attrs = ability.getAttrs(attrType) as PreApplyBattlerTagAbAttr[];
+  for (let attr of attrs) {
+    if (!canApplyAttr(pokemon, attr))
+      continue;
+    pokemon.scene.setPhaseQueueSplice();
+    if (attr.applyPreApplyBattlerTag(pokemon, tag, cancelled, args)) {
+      queueShowAbility(pokemon);
+      const message = attr.getTriggerMessage(pokemon, tag);
       if (message)
         pokemon.scene.queueMessage(message);
     }
@@ -629,6 +861,28 @@ export function applyPostWeatherLapseAbAttrs(attrType: { new(...args: any[]): Po
       const message = attr.getTriggerMessage(pokemon, weather);
       if (message)
         pokemon.scene.queueMessage(message);
+    }
+  }
+
+  pokemon.scene.clearPhaseQueueSplice();
+}
+
+export function applyCheckTrappedAbAttrs(attrType: { new(...args: any[]): CheckTrappedAbAttr },
+  pokemon: Pokemon, trapped: Utils.BooleanHolder, ...args: any[]): void {
+  if (!pokemon.canApplyAbility())
+    return;
+
+  const ability = pokemon.getAbility();
+  const attrs = ability.getAttrs(attrType) as CheckTrappedAbAttr[];
+  for (let attr of attrs) {
+    if (!canApplyAttr(pokemon, attr))
+      continue;
+    pokemon.scene.setPhaseQueueSplice();
+    if (attr.applyCheckTrapped(pokemon, trapped, args)) {
+      // Don't show ability bar because this call is asynchronous
+      const message = attr.getTriggerMessage(pokemon);
+      if (message)
+        pokemon.scene.ui.showText(message, null, () => pokemon.scene.ui.showText(null, 0), null, true);
     }
   }
 
@@ -841,12 +1095,16 @@ export function initAbilities() {
     new Ability(Abilities.COLOR_CHANGE, "Color Change (N)", "Changes the POKéMON's type to the foe's move.", 3),
     new Ability(Abilities.COMPOUND_EYES, "Compound Eyes", "The POKéMON's accuracy is boosted.", 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3),
-    new Ability(Abilities.CUTE_CHARM, "Cute Charm (N)", "Contact with the POKéMON may cause infatuation.", 3),
+    new Ability(Abilities.CUTE_CHARM, "Cute Charm", "Contact with the POKéMON may cause infatuation.", 3)
+      .attr(PostDefendContactApplyTagChanceAbAttr, 30, BattlerTagType.INFATUATED),
     new Ability(Abilities.DAMP, "Damp (N)", "Prevents the use of self-destructing moves.", 3),
-    new Ability(Abilities.DRIZZLE, "Drizzle (N)", "The POKéMON makes it rain when it enters a battle.", 3),
-    new Ability(Abilities.DROUGHT, "Drought (N)", "Turns the sunlight harsh when the POKéMON enters a battle.", 3),
+    new Ability(Abilities.DRIZZLE, "Drizzle", "The POKéMON makes it rain when it enters a battle.", 3)
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN),
+    new Ability(Abilities.DROUGHT, "Drought", "Turns the sunlight harsh when the POKéMON enters a battle.", 3)
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY),
     new Ability(Abilities.EARLY_BIRD, "Early Bird (N)", "The POKéMON awakens quickly from sleep.", 3),
-    new Ability(Abilities.EFFECT_SPORE, "Effect Spore (N)", "Contact may poison or cause paralysis or sleep.", 3),
+    new Ability(Abilities.EFFECT_SPORE, "Effect Spore", "Contact may poison or cause paralysis or sleep.", 3)
+      .attr(PostDefendContactApplyStatusEffectAbAttr, 10, StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP),
     new Ability(Abilities.FLAME_BODY, "Flame Body (N)", "Contact with the POKéMON may burn the attacker.", 3),
     new Ability(Abilities.FLASH_FIRE, "Flash Fire", "It powers up FIRE-type moves if it's hit by one.", 3)
       .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, 1, BattlerTagType.FIRE_BOOST, (pokemon: Pokemon) => !pokemon.status || pokemon.status.effect !== StatusEffect.FREEZE),
@@ -857,9 +1115,12 @@ export function initAbilities() {
     new Ability(Abilities.HYPER_CUTTER, "Hyper Cutter", "Prevents other POKéMON from lowering ATTACK stat.", 3)
       .attr(ProtectStatAttr, BattleStat.ATK),
     new Ability(Abilities.ILLUMINATE, "Illuminate (N)", "Raises the likelihood of meeting wild POKéMON.", 3),
-    new Ability(Abilities.IMMUNITY, "Immunity (N)", "Prevents the POKéMON from getting poisoned.", 3),
+    new Ability(Abilities.IMMUNITY, "Immunity", "Prevents the POKéMON from getting poisoned.", 3)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON),
     new Ability(Abilities.INNER_FOCUS, "Inner Focus (N)", "The POKéMON is protected from flinching.", 3),
-    new Ability(Abilities.INSOMNIA, "Insomnia (N)", "Prevents the POKéMON from falling asleep.", 3),
+    new Ability(Abilities.INSOMNIA, "Insomnia", "Prevents the POKéMON from falling asleep.", 3)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY),
     new Ability(Abilities.INTIMIDATE, "Intimidate (N)", "Lowers the foe's ATTACK stat.", 3),
     new Ability(Abilities.KEEN_EYE, "Keen Eye", "Prevents other POKéMON from lowering accuracy.", 3)
       .attr(ProtectStatAttr, BattleStat.ACC),
@@ -869,15 +1130,20 @@ export function initAbilities() {
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPATK, 1),
     new Ability(Abilities.LIMBER, "Limber (N)", "The POKéMON is protected from paralysis.", 3),
     new Ability(Abilities.LIQUID_OOZE, "Liquid Ooze (N)", "Damages attackers using any draining move.", 3),
-    new Ability(Abilities.MAGMA_ARMOR, "Magma Armor (N)", "Prevents the POKéMON from becoming frozen.", 3),
-    new Ability(Abilities.MAGNET_PULL, "Magnet Pull (N)", "Prevents STEEL-type POKéMON from escaping.", 3),
+    new Ability(Abilities.MAGMA_ARMOR, "Magma Armor", "Prevents the POKéMON from becoming frozen.", 3)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.FREEZE),
+    new Ability(Abilities.MAGNET_PULL, "Magnet Pull", "Prevents STEEL-type POKéMON from escaping.", 3)
+      .attr(ArenaTrapAbAttr)
+      .condition((pokemon: Pokemon) => pokemon.getOpponent()?.isOfType(Type.STEEL)),
     new Ability(Abilities.MARVEL_SCALE, "Marvel Scale (N)", "Ups DEFENSE if there is a status problem.", 3),
     new Ability(Abilities.MINUS, "Minus (N)", "Ups SP. ATK if another POKéMON has PLUS or MINUS.", 3),
     new Ability(Abilities.NATURAL_CURE, "Natural Cure (N)", "All status problems heal when it switches out.", 3),
-    new Ability(Abilities.OBLIVIOUS, "Oblivious (N)", "Prevents it from becoming infatuated.", 3),
+    new Ability(Abilities.OBLIVIOUS, "Oblivious", "Prevents it from becoming infatuated.", 3)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.INFATUATED),
     new Ability(Abilities.OVERGROW, "Overgrow", "Powers up GRASS-type moves in a pinch.", 3)
       .attr(LowHpMoveTypePowerBoostAbAttr, Type.GRASS),
-    new Ability(Abilities.OWN_TEMPO, "Own Tempo (N)", "Prevents the POKéMON from becoming confused.", 3),
+    new Ability(Abilities.OWN_TEMPO, "Own Tempo", "Prevents the POKéMON from becoming confused.", 3)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED),
     new Ability(Abilities.PICKUP, "Pickup (N)", "The POKéMON may pick up items.", 3),
     new Ability(Abilities.PLUS, "Plus (N)", "Ups SP. ATK if another POKéMON has PLUS or MINUS.", 3),
     new Ability(Abilities.POISON_POINT, "Poison Point (N)", "Contact with the POKéMON may poison the attacker.", 3),
@@ -889,7 +1155,8 @@ export function initAbilities() {
       .attr(BlockRecoilDamageAttr),
     new Ability(Abilities.ROUGH_SKIN, "Rough Skin (N)", "Inflicts damage to the attacker on contact.", 3),
     new Ability(Abilities.RUN_AWAY, "Run Away (N)", "Enables a sure getaway from wild POKéMON.", 3),
-    new Ability(Abilities.SAND_STREAM, "Sand Stream (N)", "The POKéMON summons a sandstorm in battle.", 3),
+    new Ability(Abilities.SAND_STREAM, "Sand Stream", "The POKéMON summons a sandstorm in battle.", 3)
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.SANDSTORM),
     new Ability(Abilities.SAND_VEIL, "Sand Veil", "Boosts the POKéMON's evasion in a sandstorm.", 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.EVA, 1.2)
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
@@ -920,12 +1187,15 @@ export function initAbilities() {
       .attr(LowHpMoveTypePowerBoostAbAttr, Type.WATER),
     new Ability(Abilities.TRACE, "Trace (N)", "The POKéMON copies a foe's Ability.", 3),
     new Ability(Abilities.TRUANT, "Truant (N)", "POKéMON can't attack on consecutive turns.", 3),
-    new Ability(Abilities.VITAL_SPIRIT, "Vital Spirit (N)", "Prevents the POKéMON from falling asleep.", 3),
+    new Ability(Abilities.VITAL_SPIRIT, "Vital Spirit", "Prevents the POKéMON from falling asleep.", 3)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY),
     new Ability(Abilities.VOLT_ABSORB, "Volt Absorb", "Restores HP if hit by an ELECTRIC-type move.", 3)
       .attr(TypeImmunityHealAbAttr, Type.ELECTRIC),
     new Ability(Abilities.WATER_ABSORB, "Water Absorb", "Restores HP if hit by a WATER-type move.", 3)
       .attr(TypeImmunityHealAbAttr, Type.WATER),
-    new Ability(Abilities.WATER_VEIL, "Water Veil (N)", "Prevents the POKéMON from getting a burn.", 3),
+    new Ability(Abilities.WATER_VEIL, "Water Veil", "Prevents the POKéMON from getting a burn.", 3)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN),
     new Ability(Abilities.WHITE_SMOKE, "White Smoke", "Prevents other POKéMON from lowering its stats.", 3)
       .attr(ProtectStatAttr),
     new Ability(Abilities.WONDER_GUARD, "Wonder Guard", "Only super effective moves will hit.", 3)
@@ -953,7 +1223,9 @@ export function initAbilities() {
       .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.HAIL),
     new Ability(Abilities.IRON_FIST, "Iron Fist (N)", "Boosts the power of punching moves.", 4),
     new Ability(Abilities.KLUTZ, "Klutz (N)", "The POKéMON can't use any held items.", 4),
-    new Ability(Abilities.LEAF_GUARD, "Leaf Guard (N)", "Prevents problems with status in sunny weather.", 4),
+    new Ability(Abilities.LEAF_GUARD, "Leaf Guard", "Prevents problems with status in sunny weather.", 4)
+      .attr(StatusEffectImmunityAbAttr)
+      .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
     new Ability(Abilities.MAGIC_GUARD, "Magic Guard (N)", "Protects the POKéMON from indirect damage.", 4),
     new Ability(Abilities.MOLD_BREAKER, "Mold Breaker (N)", "Moves can be used regardless of Abilities.", 4),
     new Ability(Abilities.MOTOR_DRIVE, "Motor Drive", "Raises SPEED if hit by an ELECTRIC-type move.", 4)
@@ -972,7 +1244,8 @@ export function initAbilities() {
     new Ability(Abilities.SLOW_START, "Slow Start (N)", "Temporarily halves ATTACK and SPEED.", 4),
     new Ability(Abilities.SNIPER, "Sniper (N)", "Powers up moves if they become critical hits.", 4),
     new Ability(Abilities.SNOW_CLOAK, "Snow Cloak (N)", "Raises evasion in a hailstorm.", 4),
-    new Ability(Abilities.SNOW_WARNING, "Snow Warning (N)", "The POKéMON summons a hailstorm in battle.", 4),
+    new Ability(Abilities.SNOW_WARNING, "Snow Warning", "The POKéMON summons a hailstorm in battle.", 4)
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.HAIL),
     new Ability(Abilities.SOLAR_POWER, "Solar Power (N)", "In sunshine, SP. ATK is boosted but HP decreases.", 4),
     new Ability(Abilities.SOLID_ROCK, "Solid Rock (N)", "Reduces damage from super-effective attacks.", 4),
     new Ability(Abilities.STALL, "Stall (N)", "The POKéMON moves after all other POKéMON do.", 4),

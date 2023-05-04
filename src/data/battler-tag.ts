@@ -7,12 +7,14 @@ import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
 import { Moves, allMoves } from "./move";
 import { Type } from "./type";
+import { Gender } from "./gender";
 
 export enum BattlerTagType {
   NONE,
   RECHARGING,
   FLINCHED,
   CONFUSED,
+  INFATUATED,
   SEEDED,
   NIGHTMARE,
   FRENZY,
@@ -77,6 +79,10 @@ export class BattlerTag {
     return --this.turnCount > 0;
   }
 
+  getDescriptor(): string {
+    return '';
+  }
+
   isSourceLinked(): boolean {
     return false;
   }
@@ -130,6 +136,10 @@ export class TrappedTag extends BattlerTag {
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` was freed\nfrom ${this.getMoveName()}!`));
   }
 
+  getDescriptor(): string {
+    return 'trapping';
+  }
+
   isSourceLinked(): boolean {
     return true;
   }
@@ -151,6 +161,10 @@ export class FlinchedTag extends BattlerTag {
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' flinched!'));
 
     return true;
+  }
+
+  getDescriptor(): string {
+    return 'flinching';
   }
 }
 
@@ -198,6 +212,58 @@ export class ConfusedTag extends BattlerTag {
     
     return ret;
   }
+
+  getDescriptor(): string {
+    return 'confusion';
+  }
+}
+
+export class InfatuatedTag extends BattlerTag {
+  constructor(sourceMove: integer, sourceId: integer) {
+    super(BattlerTagType.INFATUATED, BattlerTagLapseType.MOVE, 1, sourceMove, sourceId);
+  }
+
+  canAdd(pokemon: Pokemon): boolean {
+    return pokemon.isOppositeGender(pokemon.scene.getPokemonById(this.sourceId));
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+    
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` fell in love\nwith ${pokemon.scene.getPokemonById(this.sourceId).name}!`));
+  }
+
+  onOverlap(pokemon: Pokemon): void {
+    super.onOverlap(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nalready in love!'));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+
+    if (ret) {
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is in love\nwith ${pokemon.scene.getPokemonById(this.sourceId).name}!`));
+      pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.isPlayer(), CommonAnim.ATTRACT));
+
+      if (Utils.randInt(2)) {
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nimmobilized by love!'));
+        (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
+      }
+    }
+    
+    return ret;
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' got over\nits infatuation.'));
+  }
+
+  getDescriptor(): string {
+    return 'infatuation';
+  }
 }
 
 export class SeedTag extends BattlerTag {
@@ -224,6 +290,10 @@ export class SeedTag extends BattlerTag {
     }
     
     return ret;
+  }
+
+  getDescriptor(): string {
+    return 'seeding';
   }
 }
 
@@ -258,6 +328,10 @@ export class NightmareTag extends BattlerTag {
     
     return ret;
   }
+
+  getDescriptor(): string {
+    return 'nightmares';
+  }
 }
 
 export class IngrainTag extends TrappedTag {
@@ -277,6 +351,10 @@ export class IngrainTag extends TrappedTag {
 
   getTrapMessage(pokemon: Pokemon): string {
     return getPokemonMessage(pokemon, ' planted its roots!');
+  }
+
+  getDescriptor(): string {
+    return 'roots';
   }
 }
 
@@ -320,6 +398,10 @@ export class DrowsyTag extends BattlerTag {
 
     return true;
   }
+
+  getDescriptor(): string {
+    return 'drowsiness';
+  }
 }
 
 export abstract class DamagingTrapTag extends TrappedTag {
@@ -357,7 +439,7 @@ export class BindTag extends DamagingTrapTag {
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, ` was squeezed by\n${pokemon.scene.getPokemonById(this.sourceId)}'s ${this.getMoveName()}!`);
+    return getPokemonMessage(pokemon, ` was squeezed by\n${pokemon.scene.getPokemonById(this.sourceId).name}'s ${this.getMoveName()}!`);
   }
 }
 
@@ -367,7 +449,7 @@ export class WrapTag extends DamagingTrapTag {
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, ` was WRAPPED\nby ${pokemon.scene.getPokemonById(this.sourceId)}!`);
+    return getPokemonMessage(pokemon, ` was WRAPPED\nby ${pokemon.scene.getPokemonById(this.sourceId).name}!`);
   }
 }
 
@@ -516,6 +598,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new FlinchedTag(sourceMove);
     case BattlerTagType.CONFUSED:
       return new ConfusedTag(turnCount, sourceMove);
+    case BattlerTagType.INFATUATED:
+      return new InfatuatedTag(sourceMove, sourceId);
     case BattlerTagType.SEEDED:
       return new SeedTag(sourceId);
     case BattlerTagType.NIGHTMARE:

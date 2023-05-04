@@ -134,7 +134,7 @@ class SpikesTag extends ArenaTrapTag {
     super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    const target = source.isPlayer() ? source.scene.getEnemyPokemon() : source.scene.getPlayerPokemon();
+    const target = source.getOpponent();
     arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${target.name}'s feet!`);
   }
 
@@ -161,7 +161,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
     super.onAdd(arena);
     
     const source = arena.scene.getPokemonById(this.sourceId);
-    const target = source.isPlayer() ? source.scene.getEnemyPokemon() : source.scene.getPlayerPokemon();
+    const target = source.getOpponent();
     arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${target.name}'s feet!`);
   }
 
@@ -187,7 +187,7 @@ class StealthRockTag extends ArenaTrapTag {
     super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    const target = source.isPlayer() ? source.scene.getEnemyPokemon() : source.scene.getPlayerPokemon();
+    const target = source.getOpponent();
     arena.scene.queueMessage(`Pointed stones float in the air\naround ${target.name}!`);
   }
 
