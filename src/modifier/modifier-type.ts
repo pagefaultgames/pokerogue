@@ -4,7 +4,7 @@ import { PokeballType, getPokeballName } from '../data/pokeball';
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from '../pokemon';
 import { EvolutionItem, pokemonEvolutions } from '../data/pokemon-evolutions';
 import { Stat, getStatName } from '../data/pokemon-stat';
-import { tmSpecies } from '../data/tms';
+import { tmPoolTiers, tmSpecies } from '../data/tms';
 import { Type } from '../data/type';
 import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from '../ui/party-ui-handler';
 import * as Utils from '../utils';
@@ -460,6 +460,19 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
+class TmModifierTypeGenerator extends ModifierTypeGenerator {
+  constructor(tier: ModifierTier) {
+    super((party: Pokemon[]) => {
+      const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms);
+      const tierUniqueCompatibleTms = partyMemberCompatibleTms.flat().filter(tm => tmPoolTiers[tm] === tier).filter((tm, i, array) => array.indexOf(tm) === i);
+      if (!tierUniqueCompatibleTms.length)
+        return null;
+      const randTmIndex = Utils.randInt(tierUniqueCompatibleTms.length);
+      return new TmModifierType(tierUniqueCompatibleTms[randTmIndex]);
+    });
+  }
+}
+
 class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
@@ -567,14 +580,9 @@ const modifierTypes = {
     return new BerryModifierType(randBerryType);
   }),
 
-  TM: () => new ModifierTypeGenerator((party: Pokemon[]) => {
-    const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms);
-    const uniqueCompatibleTms = partyMemberCompatibleTms.flat().filter((tm, i, array) => array.indexOf(tm) === i);
-    if (!uniqueCompatibleTms.length)
-      return null;
-    const randTmIndex = Utils.randInt(uniqueCompatibleTms.length);
-    return new TmModifierType(uniqueCompatibleTms[randTmIndex]);
-  }),
+  TM_COMMON: () => new TmModifierTypeGenerator(ModifierTier.COMMON),
+  TM_GREAT: () => new TmModifierTypeGenerator(ModifierTier.GREAT),
+  TM_ULTRA: () => new TmModifierTypeGenerator(ModifierTier.ULTRA),
 
   EXP_SHARE: () => new ModifierType('EXP. SHARE', 'All POKéMON in your party gain an additional 10% of a battle\'s EXP. Points',
     (type, _args) => new Modifiers.ExpShareModifier(type), 'exp_share'),
@@ -640,7 +648,8 @@ const modifierPool = {
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.TEMP_STAT_BOOSTER, 4),
-    new WeightedModifierType(modifierTypes.BERRY, 2)
+    new WeightedModifierType(modifierTypes.BERRY, 2),
+    new WeightedModifierType(modifierTypes.TM_COMMON, 1)
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.GREAT_BALL, 6),
@@ -678,14 +687,15 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => {
       return !party[0].scene.findModifier(m => m instanceof Modifiers.MapModifier) ? 1 : 0;
     }),
-    new WeightedModifierType(modifierTypes.TM, 2),
+    new WeightedModifierType(modifierTypes.TM_GREAT, 2),
     new WeightedModifierType(modifierTypes.EXP_SHARE, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 1 : 0),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3)
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 8),
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, 12),
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 4),
+    new WeightedModifierType(modifierTypes.TM_ULTRA, 5),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 3),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 1),
     new WeightedModifierType(modifierTypes.BATON, 1),
@@ -696,7 +706,6 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 3),
     new WeightedModifierType(modifierTypes.EXP_CHARM, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 4 : 0),
     new WeightedModifierType(modifierTypes.OVAL_CHARM, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 2 : 0),
-    new WeightedModifierType(modifierTypes.LUCKY_EGG, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 3 : 0),
     new WeightedModifierType(modifierTypes.EXP_BALANCE,
       (party: Pokemon[]) => party.filter(p => p.level < 100).length && !party[0].scene.findModifier(m => m instanceof Modifiers.ExpBalanceModifier) ? 1 : 0)
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
