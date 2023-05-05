@@ -227,39 +227,55 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
 
     const evolutions = pokemonEvolutions[this.speciesId];
 
-    const speciesIds: Species[] = [];
-
     const easeInFunc = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeIn');
     const easeOutFunc = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeOut');
+
+    const evolutionPool: Map<number, Species> = new Map();
+    let totalWeight = 0;
+    let noEvolutionChance = 1;
 
     for (let ev of evolutions) {
       if (ev.level > level)
         continue;
+
+      let evolutionChance: number;
       
-      if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE) {
-        speciesIds.push(ev.speciesId);
-        continue;
+      if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE)
+        evolutionChance = Math.min(0.5 + easeInFunc((level - ev.level) / 40) / 2, 1);
+      else {
+        let preferredMinLevel = ev.wildDelay * 10;
+        let evolutionLevel = ev.level > 1 ? ev.level : 0;
+
+        if (!evolutionLevel && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
+          const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId).level;
+          if (prevolutionLevel > 1)
+            evolutionLevel = prevolutionLevel;
+        }
+
+        evolutionChance = Math.min(0.65 * easeInFunc((Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel)) + 0.35 * easeOutFunc(Math.min(level - evolutionLevel, preferredMinLevel * 2.5) / (preferredMinLevel * 2.5)), 1);
       }
 
-      let preferredMinLevel = ev.wildDelay * 10;
-      let evolutionLevel = ev.level > 1 ? ev.level : 0;
+      if (evolutionChance > 0) {
+        totalWeight += evolutionChance;
 
-      if (!evolutionLevel && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
-        const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId).level;
-        if (prevolutionLevel > 1)
-          evolutionLevel = prevolutionLevel;
+        evolutionPool.set(totalWeight, ev.speciesId);
+        
+        if ((1 - evolutionChance) < noEvolutionChance)
+          noEvolutionChance = 1 - evolutionChance;
       }
-
-      const evolutionChance = 0.65 * easeInFunc((Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel)) + 0.35 * easeOutFunc(Math.min(level - evolutionLevel, preferredMinLevel * 2.5) / (preferredMinLevel * 2.5));
-
-      if (Math.random() <= evolutionChance)
-        speciesIds.push(ev.speciesId);
     }
 
-    if (speciesIds.length) {
-      return speciesIds.length === 1
-        ? speciesIds[0]
-        : speciesIds[Utils.randInt(speciesIds.length)];
+    if (noEvolutionChance === 1 || Math.random() < noEvolutionChance)
+      return this.speciesId;
+
+    if (evolutionPool.size === 1)
+      return evolutionPool.values()[0];
+
+    const randValue = Math.random() * totalWeight;
+
+    for (let weight of evolutionPool.keys()) {
+      if (randValue < weight)
+        return evolutionPool.get(weight);
     }
 
     return this.speciesId;
