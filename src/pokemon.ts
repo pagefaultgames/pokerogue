@@ -523,13 +523,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.arena.applyTags(WeakenMoveTypeTag, move.type, power);
             this.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, power);
           }
-          const critLevel = new Utils.IntegerHolder(0);
-          applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
-          this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);
-          if (source.getTag(BattlerTagType.CRIT_BOOST))
-            critLevel.value += 2;
-          const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
-          let isCritical = !source.getTag(BattlerTagType.NO_CRIT) && !(this.getAbility().hasAttr(BlockCritAbAttr)) && (critChance === 1 || !Utils.randInt(critChance));
+          let isCritical: boolean;
+          const critOnly = new Utils.BooleanHolder(false);
+          applyMoveAttrs(CritOnlyAttr, source, this, move, critOnly);
+          if (critOnly.value)
+            isCritical = true;
+          else {
+            const critLevel = new Utils.IntegerHolder(0);
+            applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
+            this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);
+            if (source.getTag(BattlerTagType.CRIT_BOOST))
+              critLevel.value += 2;
+            const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
+            isCritical = !source.getTag(BattlerTagType.NO_CRIT) && !(this.getAbility().hasAttr(BlockCritAbAttr)) && (critChance === 1 || !Utils.randInt(critChance));
+          }
           const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
           const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
           const stabMultiplier = source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1;

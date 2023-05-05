@@ -795,6 +795,14 @@ export class HighCritAttr extends MoveAttr {
   }
 }
 
+export class CritOnlyAttr extends MoveAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.BooleanHolder).value = true;
+
+    return true;
+  }
+}
+
 export class FixedDamageAttr extends MoveAttr {
   private damage: integer;
 
@@ -2712,7 +2720,8 @@ export function initMoves() {
     new StatusMove(Moves.POWER_SWAP, "Power Swap (N)", Type.PSYCHIC, -1, 10, -1, "User and opponent swap Attack and Special Attack.", -1, 0, 4),
     new StatusMove(Moves.GUARD_SWAP, "Guard Swap (N)", Type.PSYCHIC, -1, 10, -1, "User and opponent swap Defense and Special Defense.", -1, 0, 4),
     new AttackMove(Moves.PUNISHMENT, "Punishment (N)", Type.DARK, MoveCategory.PHYSICAL, -1, 100, 5, -1, "Power increases when opponent's stats have been raised.", -1, 0, 4),
-    new AttackMove(Moves.LAST_RESORT, "Last Resort (N)", Type.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, -1, "Can only be used after all other moves are used.", -1, 0, 4),
+    new AttackMove(Moves.LAST_RESORT, "Last Resort", Type.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, -1, "Can only be used after all other moves are used.", -1, 0, 4)
+      .condition((user: Pokemon, target: Pokemon, move: Move) => !user.moveset.filter(m => m.moveId !== move.id && m.getPpRatio() > 0).length),
     new StatusMove(Moves.WORRY_SEED, "Worry Seed (N)", Type.GRASS, 100, 10, -1, "Changes the opponent's Ability to Insomnia.", -1, 0, 4),
     new AttackMove(Moves.SUCKER_PUNCH, "Sucker Punch (N)", Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, -1, "User attacks first, but only works if opponent is readying an attack.", -1, 0, 4),
     new StatusMove(Moves.TOXIC_SPIKES, "Toxic Spikes", Type.POISON, -1, 20, 91, "Poisons opponents when they switch into battle.", -1, 0, 4)
@@ -2833,7 +2842,9 @@ export function initMoves() {
     new AttackMove(Moves.STONE_EDGE, "Stone Edge", Type.ROCK, MoveCategory.PHYSICAL, 100, 80, 5, 150, "High critical hit ratio.", -1, 0, 4)
       .attr(HighCritAttr)
       .makesContact(false),
-    new StatusMove(Moves.CAPTIVATE, "Captivate (N)", Type.NORMAL, 100, 20, -1, "Sharply lowers opponent's Special Attack if opposite gender.", -1, 0, 4), // TODO
+    new StatusMove(Moves.CAPTIVATE, "Captivate", Type.NORMAL, 100, 20, -1, "Sharply lowers opponent's Special Attack if opposite gender.", -1, 0, 4)
+      .attr(StatChangeAttr, BattleStat.SPATK, -2)
+      .condition((user: Pokemon, target: Pokemon, move: Move) => target.isOppositeGender(user)),
     new StatusMove(Moves.STEALTH_ROCK, "Stealth Rock", Type.ROCK, -1, 20, 116, "Damages opponent switching into battle.", -1, 0, 4)
       .attr(AddArenaTrapTagAttr, ArenaTagType.STEALTH_ROCK)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -2865,7 +2876,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
     new AttackMove(Moves.SPACIAL_REND, "Spacial Rend", Type.DRAGON, MoveCategory.SPECIAL, 100, 95, 5, -1, "High critical hit ratio.", -1, 0, 4)
       .attr(HighCritAttr),
-    new SelfStatusMove(Moves.LUNAR_DANCE, "Lunar Dance", Type.PSYCHIC, -1, 10, -1, "The user faints but the next Pokémon released is fully healed.", -1, 0, 4)
+    new SelfStatusMove(Moves.LUNAR_DANCE, "Lunar Dance (N)", Type.PSYCHIC, -1, 10, -1, "The user faints but the next Pokémon released is fully healed.", -1, 0, 4)
       .attr(SacrificialAttr), // TODO
     new AttackMove(Moves.CRUSH_GRIP, "Crush Grip (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "More powerful when opponent has higher HP.", -1, 0, 4),
     new AttackMove(Moves.MAGMA_STORM, "Magma Storm", Type.FIRE, MoveCategory.SPECIAL, 100, 75, 5, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 4)
@@ -2891,7 +2902,8 @@ export function initMoves() {
       .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.PSYSHOCK, "Psyshock (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, 54, "Inflicts damage based on the target's Defense, not Special Defense.", -1, 0, 5),
-    new AttackMove(Moves.VENOSHOCK, "Venoshock (N)", Type.POISON, MoveCategory.SPECIAL, 65, 100, 10, 45, "Inflicts double damage if the target is poisoned.", -1, 0, 5),
+    new AttackMove(Moves.VENOSHOCK, "Venoshock", Type.POISON, MoveCategory.SPECIAL, 65, 100, 10, 45, "Inflicts double damage if the target is poisoned.", -1, 0, 5)
+      .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.status && (target.status.effect === StatusEffect.POISON || target.status.effect === StatusEffect.TOXIC) ? 2 : 1),
     new SelfStatusMove(Moves.AUTOTOMIZE, "Autotomize", Type.STEEL, -1, 15, -1, "Reduces weight and sharply raises Speed.", -1, 0, 5)
       .attr(StatChangeAttr, BattleStat.SPD, 2, true), // TODO
     new SelfStatusMove(Moves.RAGE_POWDER, "Rage Powder (N)", Type.BUG, -1, 20, -1, "Forces attacks to hit user, not team-mates.", -1, 3, 5),
@@ -2899,9 +2911,11 @@ export function initMoves() {
     new StatusMove(Moves.MAGIC_ROOM, "Magic Room (N)", Type.PSYCHIC, -1, 10, -1, "Suppresses the effects of held items for five turns.", -1, -7, 5)
       .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES),
-    new AttackMove(Moves.SMACK_DOWN, "Smack Down (N)", Type.ROCK, MoveCategory.PHYSICAL, 50, 100, 15, -1, "Makes Flying-type Pokémon vulnerable to Ground moves.", 100, 0, 5) // TODO, logic with fly
+    new AttackMove(Moves.SMACK_DOWN, "Smack Down", Type.ROCK, MoveCategory.PHYSICAL, 50, 100, 15, -1, "Makes Flying-type Pokémon vulnerable to Ground moves.", 100, 0, 5) // TODO, logic with fly
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, 5)
       .makesContact(false),
-    new AttackMove(Moves.STORM_THROW, "Storm Throw (N)", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, "Always results in a critical hit.", 100, 0, 5), // TODO
+    new AttackMove(Moves.STORM_THROW, "Storm Throw", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, "Always results in a critical hit.", 100, 0, 5)
+      .attr(CritOnlyAttr),
     new AttackMove(Moves.FLAME_BURST, "Flame Burst", Type.FIRE, MoveCategory.SPECIAL, 70, 100, 15, -1, "May also injure nearby Pokémon.", -1, 0, 5), // TODO
     new AttackMove(Moves.SLUDGE_WAVE, "Sludge Wave", Type.POISON, MoveCategory.SPECIAL, 95, 100, 10, -1, "May poison opponent.", 10, 0, 5)
       .attr(StatusEffectAttr, StatusEffect.POISON),
@@ -2979,7 +2993,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new AttackMove(Moves.FROST_BREATH, "Frost Breath (N)", Type.ICE, MoveCategory.SPECIAL, 60, 90, 10, -1, "Always results in a critical hit.", 100, 0, 5), // TODO
+    new AttackMove(Moves.FROST_BREATH, "Frost Breath", Type.ICE, MoveCategory.SPECIAL, 60, 90, 10, -1, "Always results in a critical hit.", 100, 0, 5)
+      .attr(CritOnlyAttr),
     new AttackMove(Moves.DRAGON_TAIL, "Dragon Tail (N)", Type.DRAGON, MoveCategory.PHYSICAL, 60, 90, 10, 44, "In battles, the opponent switches. In the wild, the Pokémon runs.", -1, -6, 5),
     new SelfStatusMove(Moves.WORK_UP, "Work Up", Type.NORMAL, -1, 30, -1, "Raises user's Attack and Special Attack.", -1, 0, 5)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, true),
