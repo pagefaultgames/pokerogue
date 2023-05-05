@@ -492,9 +492,15 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
-class HeldItemTransferModifierType extends PokemonHeldItemModifierType {
+export class ContactHeldItemTransferChanceModifierType extends PokemonHeldItemModifierType {
+  constructor(name: string, chancePercent: integer, iconImage?: string, group?: string, soundName?: string) {
+    super(name, `On contact, there is a ${chancePercent}% chance the foe's held item will be stolen`, (type, args) => new Modifiers.ContactHeldItemTransferChanceModifier(type, (args[0] as Pokemon).id, chancePercent), iconImage, group, soundName);
+  }
+}
+
+export class TurnHeldItemTransferModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, iconImage?: string, group?: string, soundName?: string) {
-    super(name, 'Every turn, the holder acquires one held item from the foe POKéMON', (type, args) => new Modifiers.HeldItemTransferModifier(type, (args[0] as Pokemon).id), iconImage, group, soundName);
+    super(name, 'Every turn, the holder acquires one held item from the foe', (type, args) => new Modifiers.TurnHeldItemTransferModifier(type, (args[0] as Pokemon).id), iconImage, group, soundName);
   }
 }
 
@@ -598,6 +604,8 @@ const modifierTypes = {
   LUCKY_EGG: () => new PokemonExpBoosterModifierType('LUCKY EGG', 50),
   GOLDEN_EGG: () => new PokemonExpBoosterModifierType('GOLDEN EGG', 200),
 
+  GRIP_CLAW: () => new ContactHeldItemTransferChanceModifierType('GRIP CLAW', 10),
+
   HEALING_CHARM: () => new ModifierType('HEALING CHARM', 'Doubles the effectiveness of HP restoring moves and items (excludes revives)',
     (type, _args) => new Modifiers.HealingBoosterModifier(type, 2), 'healing_charm'),
   CANDY_JAR: () => new ModifierType('CANDY JAR', 'Increases the number of levels added by RARE CANDY items by 1', (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type)),
@@ -621,7 +629,7 @@ const modifierTypes = {
 
   SHINY_CHARM: () => new ModifierType('SHINY CHARM', 'Dramatically increases the chance of a wild POKéMON being shiny', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
 
-  MINI_BLACK_HOLE: () => new HeldItemTransferModifierType('MINI BLACK HOLE'),
+  MINI_BLACK_HOLE: () => new TurnHeldItemTransferModifierType('MINI BLACK HOLE'),
   
   GOLDEN_POKEBALL: () => new ModifierType(`GOLDEN ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle',
     (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold', null, 'pb_bounce_1'),
@@ -697,6 +705,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 5),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 3),
+    new WeightedModifierType(modifierTypes.GRIP_CLAW, 2),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 1),
     new WeightedModifierType(modifierTypes.BATON, 1),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 3),

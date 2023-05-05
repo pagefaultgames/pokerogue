@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HeldItemTransferModifier, HitHealModifier, MapModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HeldItemTransferModifier, HitHealModifier, MapModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballName, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -767,7 +767,7 @@ export class TurnEndPhase extends FieldPhase {
 
       this.executeForBoth((pokemon: Pokemon) => applyPostTurnAbAttrs(PostTurnAbAttr, pokemon));
 
-      this.scene.applyModifiers(HeldItemTransferModifier, pokemon.isPlayer(), pokemon);
+      this.scene.applyModifiers(TurnHeldItemTransferModifier, pokemon.isPlayer(), pokemon);
 
       pokemon.battleSummonData.turnCount++;
     };
@@ -1049,6 +1049,8 @@ abstract class MoveEffectPhase extends PokemonPhase {
             applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveHitEffectAttr && (!!target.hp || (attr as MoveHitEffectAttr).selfTarget), user, target, this.move.getMove());
             if (target.hp)
               applyPostDefendAbAttrs(PostDefendAbAttr, user, target, this.move, result);
+            if (this.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT))
+              this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user);
           }
         }
         this.end();

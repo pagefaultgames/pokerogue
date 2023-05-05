@@ -255,7 +255,7 @@ export class MapModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): number {
+  getmaxStackCount(): integer {
     return 1;
   }
 }
@@ -426,7 +426,7 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxStackCount(): number {
+  getmaxStackCount(): integer {
     return 5;
   }
 }
@@ -457,7 +457,7 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxStackCount(): number {
+  getmaxStackCount(): integer {
     return 3;
   }
 }
@@ -486,7 +486,7 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxStackCount(): number {
+  getmaxStackCount(): integer {
     return 4;
   }
 }
@@ -515,7 +515,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxStackCount(): number {
+  getmaxStackCount(): integer {
     return 4;
   }
 }
@@ -609,7 +609,7 @@ export class PreserveBerryModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): number {
+  getmaxStackCount(): integer {
     return 4;
   }
 }
@@ -832,7 +832,7 @@ export class HealingBoosterModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): number {
+  getmaxStackCount(): integer {
     return 4;
   }
 }
@@ -994,17 +994,9 @@ export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
   }
 }
 
-export class HeldItemTransferModifier extends PokemonHeldItemModifier {
+export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
-  }
-
-  matchType(modifier: Modifier): boolean {
-    return modifier instanceof HeldItemTransferModifier;
-  }
-
-  clone(): HeldItemTransferModifier {
-    return new HeldItemTransferModifier(this.type, this.pokemonId, this.stackCount);
   }
 
   apply(args: any[]): boolean {
@@ -1013,11 +1005,15 @@ export class HeldItemTransferModifier extends PokemonHeldItemModifier {
     if (!targetPokemon)
       return false;
 
+    const transferredItemCount = this.getTransferredItemCount();
+    if (!transferredItemCount)
+      return false;
+
     const transferredModifierTypes: ModifierTypes.ModifierType[] = [];
     const itemModifiers = pokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
         && (m as PokemonHeldItemModifier).pokemonId === targetPokemon.id && !m.matchType(this), targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
     
-    for (let i = 0; i < this.getStackCount(); i++) {
+    for (let i = 0; i < transferredItemCount; i++) {
       if (!itemModifiers.length)
         break;
       const randItemIndex = Utils.randInt(itemModifiers.length);
@@ -1029,9 +1025,73 @@ export class HeldItemTransferModifier extends PokemonHeldItemModifier {
     }
 
     for (let mt of transferredModifierTypes)
-      pokemon.scene.queueMessage(getPokemonMessage(targetPokemon, `'s ${mt.name} was absorbed\nby ${pokemon.name}'s MINI BLACK HOLE!`));
+      pokemon.scene.queueMessage(this.getTransferMessage(pokemon, targetPokemon, mt));
 
     return !!transferredModifierTypes.length;
+  }
+
+  abstract getTransferredItemCount(): integer
+
+  abstract getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string
+}
+
+export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof TurnHeldItemTransferModifier;
+  }
+
+  clone(): TurnHeldItemTransferModifier {
+    return new TurnHeldItemTransferModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  getTransferredItemCount(): integer {
+    return this.getStackCount();
+  }
+
+  getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string {
+    return getPokemonMessage(targetPokemon, `'s ${item.name} was absorbed\nby ${pokemon.name}'s ${this.type.name}!`);
+  }
+
+  getMaxStackCount(): integer {
+    return 3;
+  }
+}
+
+export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModifier {
+  private chance: number;
+
+  constructor(type: ModifierType, pokemonId: integer, chancePercent: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    this.chance = chancePercent / 100;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof ContactHeldItemTransferChanceModifier;
+  }
+
+  clone(): ContactHeldItemTransferChanceModifier {
+    return new ContactHeldItemTransferChanceModifier(this.type, this.pokemonId, this.chance * 100, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.chance * 100);
+  }
+
+  getTransferredItemCount(): integer {
+    return Math.random() < (this.chance * this.getStackCount()) ? 1 : 0;
+  }
+
+  getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string {
+    return getPokemonMessage(targetPokemon, `'s ${item.name} was snatched\nby ${pokemon.name}'s ${this.type.name}!`);
+  }
+
+  getmaxStackCount(): integer {
+    return 5;
   }
 }
 

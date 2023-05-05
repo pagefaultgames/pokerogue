@@ -671,7 +671,7 @@ export const biomePools: BiomePools = {
       { 1: [ Species.BALTOY ], 36: [ Species.CLAYDOL ] },
       { 1: [ Species.ELGYEM ], 42: [ Species.BEHEEYEM ] }
     ],
-    [BiomePoolTier.UNCOMMON]: [ { 1: [ Species.ABRA ], 16: [ Species.KADABRA ] }, { 1: [ Species.BRONZOR ], 33: [ Species.BRONZONG ] }, Species.SIGILYPH, { 1: [ Species.KLINK ], 38: [ Species.KLANG ], 49: [ Species.KLINKLANG ] } ],
+    [BiomePoolTier.UNCOMMON]: [ { 1: [ Species.ABRA ], 16: [ Species.KADABRA ] }, { 1: [ Species.BRONZOR ], 33: [ Species.BRONZONG ] }, Species.SIGILYPH ],
     [BiomePoolTier.RARE]: [ Species.MR_MIME, Species.WOBBUFFET, { 1: [ Species.GOTHITA ], 32: [ Species.GOTHORITA ], 41: [ Species.GOTHITELLE ] } ],
     [BiomePoolTier.SUPER_RARE]: [ Species.ESPEON, { 1: [ Species.ARCHEN ], 37: [ Species.ARCHEOPS ] } ],
     [BiomePoolTier.ULTRA_RARE]: [ Species.MEW, Species.VICTINI ],
@@ -3582,19 +3582,16 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.KLINK, Type.STEEL, -1, [
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
+        [ Biome.FACTORY, BiomePoolTier.COMMON ]
       ]
     ],
     [ Species.KLANG, Type.STEEL, -1, [
-        [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
+        [ Biome.FACTORY, BiomePoolTier.COMMON ]
       ]
     ],
     [ Species.KLINKLANG, Type.STEEL, -1, [
         [ Biome.FACTORY, BiomePoolTier.COMMON ],
-        [ Biome.FACTORY, BiomePoolTier.BOSS ],
-        [ Biome.RUINS, BiomePoolTier.UNCOMMON ]
+        [ Biome.FACTORY, BiomePoolTier.BOSS ]
       ]
     ],
     [ Species.TYNAMO, Type.ELECTRIC, -1, [

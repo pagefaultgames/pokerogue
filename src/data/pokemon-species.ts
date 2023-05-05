@@ -267,11 +267,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
 
     if (noEvolutionChance === 1 || Math.random() < noEvolutionChance)
       return this.speciesId;
-
-    if (evolutionPool.size === 1)
-      return evolutionPool.values()[0];
-
-    const randValue = Math.random() * totalWeight;
+      
+    const randValue = evolutionPool.size === 1 ? 0 : Math.random() * totalWeight;
 
     for (let weight of evolutionPool.keys()) {
       if (randValue < weight)
