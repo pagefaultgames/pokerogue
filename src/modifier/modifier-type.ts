@@ -185,7 +185,7 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
   constructor(name: string, restorePoints: integer, iconImage?: string) {
     super(name, `Restore ${restorePoints > -1 ? restorePoints : 'all'} PP for all of one POKéMON's moves`, (_type, args) => new Modifiers.PokemonAllMovePpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints),
       (pokemon: PlayerPokemon) => {
-        if (!pokemon.moveset.filter(m => m.ppUsed).length)
+        if (!pokemon.getMoveset().filter(m => m.ppUsed).length)
           return PartyUiHandler.NoEffectMessage;
         return null;
       }, iconImage, 'elixir');
@@ -361,7 +361,7 @@ export class TmModifierType extends PokemonModifierType {
   constructor(moveId: Moves) {
     super(`TM${Utils.padInt(Object.keys(tmSpecies).indexOf(moveId.toString()) + 1, 3)} - ${allMoves[moveId].name}`, `Teach ${allMoves[moveId].name} to a POKéMON`, (_type, args) => new Modifiers.TmModifier(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
-        if (pokemon.compatibleTms.indexOf(moveId) === -1 || pokemon.moveset.filter(m => m?.moveId === moveId).length)
+        if (pokemon.compatibleTms.indexOf(moveId) === -1 || pokemon.getMoveset().filter(m => m?.moveId === moveId).length)
           return PartyUiHandler.NoEffectMessage;
         return null;
       }, `tm_${Type[allMoves[moveId].type].toLowerCase()}`, 'tm');
@@ -424,7 +424,7 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       if (pregenArgs)
         return new AttackTypeBoosterModifierType(pregenArgs[0] as Type, 20);
 
-      const attackMoveTypes = party.map(p => p.moveset.map(m => m.getMove()).filter(m => m instanceof AttackMove).map(m => m.type)).flat();
+      const attackMoveTypes = party.map(p => p.getMoveset().map(m => m.getMove()).filter(m => m instanceof AttackMove).map(m => m.type)).flat();
       const attackMoveTypeWeights = new Map<Type, integer>();
       let totalWeight = 0;
       for (let t of attackMoveTypes) {
@@ -648,11 +648,11 @@ const modifierPool = {
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.ETHER, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount * 3;
     }),
     new WeightedModifierType(modifierTypes.MAX_ETHER, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.TEMP_STAT_BOOSTER, 4),
@@ -685,11 +685,11 @@ const modifierPool = {
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.ELIXIR, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount * 3;
     }),
     new WeightedModifierType(modifierTypes.MAX_ELIXIR, (party: Pokemon[]) => {
-      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.moveset.filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
+      const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => {

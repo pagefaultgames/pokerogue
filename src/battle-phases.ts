@@ -413,12 +413,16 @@ export class SummonPhase extends BattlePhase {
   }
 
   end() {
-    if (this.scene.getPlayerPokemon().shiny)
+    const pokemon = this.scene.getPlayerPokemon();
+
+    if (pokemon.shiny)
       this.scene.unshiftPhase(new ShinySparklePhase(this.scene, true));
 
-    this.scene.arena.applyTags(ArenaTrapTag, this.scene.getPlayerPokemon());
+    pokemon.resetTurnData();
 
-    applyPostSummonAbAttrs(PostSummonAbAttr, this.scene.getPlayerPokemon());
+    this.scene.arena.applyTags(ArenaTrapTag, pokemon);
+
+    applyPostSummonAbAttrs(PostSummonAbAttr, pokemon);
 
     super.end();
   }
@@ -594,8 +598,8 @@ export class CommandPhase extends FieldPhase {
     const moveQueue = playerPokemon.getMoveQueue();
 
     while (moveQueue.length && moveQueue[0]
-      && moveQueue[0].move && (!playerPokemon.moveset.find(m => m.moveId === moveQueue[0].move)
-      || !playerPokemon.moveset[playerPokemon.moveset.findIndex(m => m.moveId === moveQueue[0].move)].isUsable(moveQueue[0].ignorePP)))
+      && moveQueue[0].move && (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move)
+      || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(moveQueue[0].ignorePP)))
         moveQueue.shift();
 
     if (moveQueue.length) {
@@ -603,8 +607,8 @@ export class CommandPhase extends FieldPhase {
       if (!queuedMove.move)
         this.handleCommand(Command.FIGHT, -1, false);
       else {
-        const moveIndex = playerPokemon.moveset.findIndex(m => m.moveId === queuedMove.move);
-        if (moveIndex > -1 && playerPokemon.moveset[moveIndex].isUsable(queuedMove.ignorePP))
+        const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
+        if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(queuedMove.ignorePP))
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP);
       }
     } else
@@ -647,12 +651,12 @@ export class CommandPhase extends FieldPhase {
         }
 
         if (playerPokemon.trySelectMove(cursor, args[0] as boolean)) {
-          playerMove = playerPokemon.moveset[cursor];
+          playerMove = playerPokemon.getMoveset()[cursor];
           const playerPhase = new PlayerMovePhase(this.scene, playerPokemon, playerMove, false, args[0] as boolean);
           this.scene.pushPhase(playerPhase);
           success = true;
-        } else if (cursor < playerPokemon.moveset.length) {
-          const move = playerPokemon.moveset[cursor];
+        } else if (cursor < playerPokemon.getMoveset().length) {
+          const move = playerPokemon.getMoveset()[cursor];
           if (move.isDisabled()) {
             this.scene.ui.setMode(Mode.MESSAGE);
             this.scene.ui.showText(`${move.getName()} is disabled!`, null, () => {
@@ -703,7 +707,7 @@ export class CommandPhase extends FieldPhase {
       const enemyNextMove = enemyPokemon.getNextMove();
       let enemyMove: PokemonMove;
       if (enemyNextMove.move) {
-        enemyMove = enemyPokemon.moveset.find(m => m.moveId === enemyNextMove.move) || new PokemonMove(enemyNextMove.move, 0, 0);
+        enemyMove = enemyPokemon.getMoveset().find(m => m.moveId === enemyNextMove.move) || new PokemonMove(enemyNextMove.move, 0, 0);
         const enemyPhase = new EnemyMovePhase(this.scene, enemyPokemon, enemyMove, false, enemyNextMove.ignorePP);
         if (isDelayed(command, playerMove, enemyMove))
           this.scene.unshiftPhase(enemyPhase);
@@ -753,7 +757,7 @@ export class TurnEndPhase extends FieldPhase {
 
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
       
-      const disabledMoves = pokemon.moveset.filter(m => m.isDisabled());
+      const disabledMoves = pokemon.getMoveset().filter(m => m.isDisabled());
       for (let dm of disabledMoves) {
         if (!--dm.disableTurns)
           this.scene.pushPhase(new MessagePhase(this.scene, `${dm.getName()} is disabled\nno more!`));
@@ -1048,7 +1052,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
           if (!isProtected && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length) {
             applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveHitEffectAttr && (!!target.hp || (attr as MoveHitEffectAttr).selfTarget), user, target, this.move.getMove());
             if (target.hp)
-              applyPostDefendAbAttrs(PostDefendAbAttr, user, target, this.move, result);
+              applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, result);
             if (this.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT))
               this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user);
           }
@@ -1763,23 +1767,23 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
     const pokemon = this.getPokemon();
     const move = allMoves[this.moveId];
 
-    const existingMoveIndex = pokemon.moveset.findIndex(m => m?.moveId === move.id);
+    const existingMoveIndex = pokemon.getMoveset().findIndex(m => m?.moveId === move.id);
 
     if (existingMoveIndex > -1) {
       this.end();
       return;
     }
 
-    const emptyMoveIndex = pokemon.moveset.length < 4
-      ? pokemon.moveset.length
-      : pokemon.moveset.findIndex(m => m === null);
+    const emptyMoveIndex = pokemon.getMoveset().length < 4
+      ? pokemon.getMoveset().length
+      : pokemon.getMoveset().findIndex(m => m === null);
 
     const messageMode = this.scene.ui.getHandler() instanceof EvolutionSceneHandler
       ? Mode.EVOLUTION_SCENE
       : Mode.MESSAGE;
 
     if (emptyMoveIndex > -1) {
-      pokemon.moveset[emptyMoveIndex] = new PokemonMove(this.moveId, 0, 0);
+      pokemon.setMove(emptyMoveIndex, this.moveId);
       initMoveAnim(this.moveId).then(() => {
         loadMoveAnimAssets(this.scene, [ this.moveId ], true)
           .then(() => {
@@ -1820,7 +1824,7 @@ export class LearnMovePhase extends PartyMemberPokemonPhase {
                       this.scene.ui.showText('@d{32}1, @d{15}2, and@d{15}… @d{15}… @d{15}… @d{15}@s{pb_bounce_1}Poof!', null, () => {
                         this.scene.ui.showText(`${pokemon.name} forgot how to\nuse ${pokemon.moveset[moveIndex].getName()}.`, null, () => {
                           this.scene.ui.showText('And…', null, () => {
-                            pokemon.moveset[moveIndex] = null;
+                            pokemon.setMove(moveIndex, Moves.NONE);
                             this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, this.moveId));
                             this.end();
                           }, null, true);

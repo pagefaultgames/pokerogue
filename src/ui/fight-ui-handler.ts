@@ -91,7 +91,7 @@ export default class FightUiHandler extends UiHandler {
       ui.add(this.cursorObj);
     }
 
-    const moveset = this.scene.getPlayerPokemon().moveset;
+    const moveset = this.scene.getPlayerPokemon().getMoveset();
 
     const hasMove = cursor < moveset.length;
 
@@ -114,7 +114,7 @@ export default class FightUiHandler extends UiHandler {
   }
 
   displayMoves() {
-    const moveset = this.scene.getPlayerPokemon().moveset;
+    const moveset = this.scene.getPlayerPokemon().getMoveset();
     for (let m = 0; m < 4; m++) {
       const moveText = addTextObject(this.scene, m % 2 === 0 ? 0 : 100, m < 2 ? 0 : 16, '-', TextStyle.WINDOW);
       if (m < moveset.length)

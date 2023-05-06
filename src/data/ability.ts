@@ -7,7 +7,7 @@ import { getPokemonMessage } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag, BattlerTagType, TrappedTag } from "./battler-tag";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
-import { MoveFlags, Moves, RecoilAttr } from "./move";
+import { MoveFlags, Moves, RecoilAttr, allMoves } from "./move";
 
 export class Ability {
   public id: Abilities;
@@ -227,6 +227,25 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
 export class PostDefendAbAttr extends AbAttr {
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, moveResult: MoveResult, args: any[]): boolean {
     return false;
+  }
+}
+
+export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, moveResult: MoveResult, args: any[]): boolean {
+    if (moveResult < MoveResult.NO_EFFECT) {
+      const type = move.getMove().type;
+      const type2 = pokemon.species.type2;
+      if (type !== pokemon.getTypes()[0] && type !== type2) {
+        pokemon.summonData.types = [ type ].concat(type2 !== null ? [ type2 ] : []);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nmade it the ${Type[pokemon.getTypes()[0]]} type!`);
   }
 }
 
@@ -1104,7 +1123,8 @@ export function initAbilities() {
       .attr(ProtectStatAttr),
     new Ability(Abilities.CLOUD_NINE, "Cloud Nine", "Eliminates the effects of non-severe weather.", 3)
       .attr(SuppressWeatherEffectAbAttr),
-    new Ability(Abilities.COLOR_CHANGE, "Color Change (N)", "Changes the POKéMON's type to the foe's move.", 3),
+    new Ability(Abilities.COLOR_CHANGE, "Color Change", "Changes the POKéMON's type to the foe's move.", 3)
+      .attr(PostDefendTypeChangeAbAttr),
     new Ability(Abilities.COMPOUND_EYES, "Compound Eyes", "The POKéMON's accuracy is boosted.", 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3),
     new Ability(Abilities.CUTE_CHARM, "Cute Charm", "Contact with the POKéMON may cause infatuation.", 3)

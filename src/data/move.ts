@@ -3,7 +3,7 @@ import { DamagePhase, EnemyMovePhase, ObtainStatusEffectPhase, PlayerMovePhase, 
 import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./battler-tag";
 import { getPokemonMessage } from "../messages";
-import Pokemon, { EnemyPokemon, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../pokemon";
+import Pokemon, { AttackMoveResult, EnemyPokemon, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../pokemon";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
 import { Type } from "./type";
 import * as Utils from "../utils";
@@ -847,6 +847,29 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
   }
 }
 
+type MoveFilter = (move: Move) => boolean;
+
+export class CounterDamageAttr extends FixedDamageAttr {
+  private moveFilter: MoveFilter;
+
+  constructor(moveFilter: MoveFilter) {
+    super(0);
+
+    this.moveFilter = moveFilter;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const damage = user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).reduce((total: integer, ar: AttackMoveResult) => total + ar.damage, 0);
+    (args[0] as Utils.IntegerHolder).value = Math.max(damage * 2, 1);
+
+    return true;
+  }
+
+  getCondition(): MoveCondition {
+    return (user: Pokemon, target: Pokemon, move: Move) => !!user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).length;
+  }
+}
+
 export class RecoilAttr extends MoveEffectAttr {
   private useHp: boolean;
 
@@ -1460,11 +1483,11 @@ export class DisableMoveAttr extends MoveEffectAttr {
       if (turnMove.virtual)
         continue;
       
-      const moveIndex = target.moveset.findIndex(m => m.moveId === turnMove.move);
+      const moveIndex = target.getMoveset().findIndex(m => m.moveId === turnMove.move);
       if (moveIndex === -1)
         return false;
       
-      const disabledMove = target.moveset[moveIndex];
+      const disabledMove = target.getMoveset()[moveIndex];
       disabledMove.disableTurns = 4;
 
       user.scene.queueMessage(getPokemonMessage(target, `'s ${disabledMove.getName()}\nwas disabled!`));
@@ -1484,7 +1507,7 @@ export class DisableMoveAttr extends MoveEffectAttr {
         if (turnMove.virtual)
           continue;
         
-        const move = target.moveset.find(m => m.moveId === turnMove.move);
+        const move = target.getMoveset().find(m => m.moveId === turnMove.move);
         if (!move)
           continue;
 
@@ -1733,7 +1756,7 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const moveset = (!this.enemyMoveset ? user : target).moveset;
+    const moveset = (!this.enemyMoveset ? user : target).getMoveset();
     const moves = moveset.filter(m => !m.getMove().hasFlag(MoveFlags.IGNORE_VIRTUAL));
     if (moves.length) {
       const move = moves[Utils.randInt(moves.length)];
@@ -1805,6 +1828,32 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
   }
 }
 
+export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
+    if (!targetMoves.length)
+      return false;
+
+    const copiedMove = allMoves[targetMoves[0].move];
+
+    const thisMoveIndex = user.getMoveset().findIndex(m => m.moveId === move.id);
+
+    if (thisMoveIndex === -1)
+      return false;
+
+    user.summonData.moveset = user.getMoveset().slice(0);
+    user.summonData.moveset[thisMoveIndex] = new PokemonMove(copiedMove.id, 0, 0);
+
+    user.scene.queueMessage(getPokemonMessage(user, ` copied\n${copiedMove.name}!`));
+
+    return true;
+  }
+
+  getCondition(): MoveCondition {
+    return targetMoveCopiableCondition;
+  }
+}
+
 export class SketchAttr extends MoveEffectAttr {
   constructor() {
     super(true);
@@ -1820,12 +1869,12 @@ export class SketchAttr extends MoveEffectAttr {
 
     const sketchedMove = allMoves[targetMoves[0].move];
 
-    const sketchIndex = user.moveset.findIndex(m => m.moveId === move.id);
+    const sketchIndex = user.getMoveset().findIndex(m => m.moveId === move.id);
 
     if (sketchIndex === -1)
       return false;
 
-    user.moveset[sketchIndex] = new PokemonMove(sketchedMove.id, 0, 0);
+    user.setMove(sketchIndex, sketchedMove.id);
 
     user.scene.queueMessage(getPokemonMessage(user, ` sketched\n${sketchedMove.name}!`));
 
@@ -1843,7 +1892,7 @@ export class SketchAttr extends MoveEffectAttr {
     
         const sketchableMove = targetMoves[0];
     
-        if (user.moveset.find(m => m.moveId === sketchableMove.move))
+        if (user.getMoveset().find(m => m.moveId === sketchableMove.move))
           return false;
     
         return true;
@@ -2034,7 +2083,8 @@ export function initMoves() {
       .attr(RecoilAttr),
     new AttackMove(Moves.LOW_KICK, "Low Kick", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, 12, "The heavier the opponent, the stronger the attack.", -1, 0, 1)
       .attr(WeightPowerAttr),
-    new AttackMove(Moves.COUNTER, "Counter (N)", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, "When hit by a Physical Attack, user strikes back with 2x power.", -1, -5, 1)
+    new AttackMove(Moves.COUNTER, "Counter", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, "When hit by a Physical Attack, user strikes back with 2x power.", -1, -5, 1)
+      .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.PHYSICAL)
       .target(MoveTarget.ATTACKER),
     new AttackMove(Moves.SEISMIC_TOSS, "Seismic Toss", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, "Inflicts damage equal to user's level (maximum 150).", -1, 0, 1)
       .attr(LevelPowerAttr),
@@ -2114,7 +2164,7 @@ export function initMoves() {
     new AttackMove(Moves.NIGHT_SHADE, "Night Shade", Type.GHOST, MoveCategory.SPECIAL, -1, 100, 15, 42, "Inflicts damage equal to user's level (maximum 150).", -1, 0, 1)
       .attr(LevelPowerAttr),
     new StatusMove(Moves.MIMIC, "Mimic", Type.NORMAL, -1, 10, -1, "Copies the opponent's last move.", -1, 0, 1)
-      .attr(CopyMoveAttr)
+      .attr(MovesetCopyMoveAttr)
       .ignoresVirtual(),
     new StatusMove(Moves.SCREECH, "Screech", Type.NORMAL, 85, 40, -1, "Sharply lowers opponent's Defense.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, -2),
@@ -2150,7 +2200,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.METRONOME, "Metronome", Type.NORMAL, -1, 10, 80, "User performs almost any move in the game at random.", -1, 0, 1)
       .attr(RandomMoveAttr)
       .ignoresVirtual(),
-    new SelfStatusMove(Moves.MIRROR_MOVE, "Mirror Move (N)", Type.FLYING, -1, 20, -1, "User performs the opponent's last move.", -1, 0, 1)
+    new SelfStatusMove(Moves.MIRROR_MOVE, "Mirror Move", Type.FLYING, -1, 20, -1, "User performs the opponent's last move.", -1, 0, 1)
+      .attr(CopyMoveAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.SELF_DESTRUCT, "Self-Destruct", Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, "User faints.", -1, 0, 1)
       .attr(SacrificialAttr)
@@ -2434,7 +2485,8 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.CRUNCH, "Crunch", Type.DARK, MoveCategory.PHYSICAL, 80, 100, 15, 108, "May lower opponent's Defense.", 20, 0, 2)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
-    new AttackMove(Moves.MIRROR_COAT, "Mirror Coat (N)", Type.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 20, -1, "When hit by a Special Attack, user strikes back with 2x power.", -1, -5, 2)
+    new AttackMove(Moves.MIRROR_COAT, "Mirror Coat", Type.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 20, -1, "When hit by a Special Attack, user strikes back with 2x power.", -1, -5, 2)
+      .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.SPECIAL)
       .target(MoveTarget.ATTACKER),
     new SelfStatusMove(Moves.PSYCH_UP, "Psych Up (N)", Type.NORMAL, -1, 10, -1, "Copies the opponent's stat changes.", -1, 0, 2),
     new AttackMove(Moves.EXTREME_SPEED, "Extreme Speed", Type.NORMAL, MoveCategory.PHYSICAL, 80, 100, 5, -1, "User attacks first.", -1, 2, 2),
@@ -2721,7 +2773,7 @@ export function initMoves() {
     new StatusMove(Moves.GUARD_SWAP, "Guard Swap (N)", Type.PSYCHIC, -1, 10, -1, "User and opponent swap Defense and Special Defense.", -1, 0, 4),
     new AttackMove(Moves.PUNISHMENT, "Punishment (N)", Type.DARK, MoveCategory.PHYSICAL, -1, 100, 5, -1, "Power increases when opponent's stats have been raised.", -1, 0, 4),
     new AttackMove(Moves.LAST_RESORT, "Last Resort", Type.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, -1, "Can only be used after all other moves are used.", -1, 0, 4)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => !user.moveset.filter(m => m.moveId !== move.id && m.getPpRatio() > 0).length),
+      .condition((user: Pokemon, target: Pokemon, move: Move) => !user.getMoveset().filter(m => m.moveId !== move.id && m.getPpRatio() > 0).length),
     new StatusMove(Moves.WORRY_SEED, "Worry Seed (N)", Type.GRASS, 100, 10, -1, "Changes the opponent's Ability to Insomnia.", -1, 0, 4),
     new AttackMove(Moves.SUCKER_PUNCH, "Sucker Punch (N)", Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, -1, "User attacks first, but only works if opponent is readying an attack.", -1, 0, 4),
     new StatusMove(Moves.TOXIC_SPIKES, "Toxic Spikes", Type.POISON, -1, 20, 91, "Poisons opponents when they switch into battle.", -1, 0, 4)

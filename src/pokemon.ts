@@ -181,7 +181,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   loadAssets(): Promise<void> {
     return new Promise(resolve => {
-      const moveIds = this.moveset.map(m => m.getMove().id);
+      const moveIds = this.getMoveset().map(m => m.getMove().id);
       Promise.allSettled(moveIds.map(m => initMoveAnim(m)))
         .then(() => {
           loadMoveAnimAssets(this.scene, moveIds);
@@ -320,6 +320,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return Math.floor((this.hp / this.getMaxHp()) * 100) / 100;
   }
 
+  getMoveset(): PokemonMove[] {
+    if (this.summonData?.moveset)
+      return this.summonData.moveset;
+    return this.moveset;
+  }
+
   getTypes(): Type[] {
     const types = [];
 
@@ -395,6 +401,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     return ret;
   }
+  
+  setMove(moveIndex: integer, moveId: Moves): void {
+    const move = moveId ? new PokemonMove(moveId) : null;
+    this.moveset[moveId] = move;
+    if (this.summonData.moveset)
+      this.summonData.moveset[moveIndex] = move;
+  }
 
   generateAndPopulateMoveset(): void {
     this.moveset = [];
@@ -434,8 +447,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   trySelectMove(moveIndex: integer, ignorePp?: boolean): boolean {
-    const move = this.moveset.length > moveIndex
-      ? this.moveset[moveIndex]
+    const move = this.getMoveset().length > moveIndex
+      ? this.getMoveset()[moveIndex]
       : null;
     return move?.isUsable(ignorePp);
   }
@@ -576,6 +589,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               this.scene.queueMessage('A critical hit!');
             this.damage(damage);
             source.turnData.damageDealt += damage;
+            this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage, sourceId: source.id });
           }
 
           switch (result) {
@@ -1023,7 +1037,7 @@ export class EnemyPokemon extends Pokemon {
 
   getNextMove(): QueuedMove {
     const queuedMove = this.getMoveQueue().length
-      ? this.moveset.find(m => m.moveId === this.getMoveQueue()[0].move)
+      ? this.getMoveset().find(m => m.moveId === this.getMoveQueue()[0].move)
       : null;
     if (queuedMove) {
       if (queuedMove.isUsable(this.getMoveQueue()[0].ignorePP))
@@ -1034,7 +1048,7 @@ export class EnemyPokemon extends Pokemon {
       }
     }
 
-    const movePool = this.moveset.filter(m => m.isUsable());
+    const movePool = this.getMoveset().filter(m => m.isUsable());
     if (movePool.length) {
       if (movePool.length === 1)
         return { move: movePool[0].moveId };
@@ -1139,10 +1153,18 @@ export interface QueuedMove {
   ignorePP?: boolean;
 }
 
+export interface AttackMoveResult {
+  move: Moves;
+  result: DamageResult;
+  damage: integer;
+  sourceId: integer;
+}
+
 export class PokemonSummonData {
   public battleStats: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
   public moveQueue: QueuedMove[] = [];
   public tags: BattlerTag[] = [];
+  public moveset: PokemonMove[];
   public types: Type[];
 }
 
@@ -1156,6 +1178,7 @@ export class PokemonTurnData {
   public hitCount: integer;
   public hitsLeft: integer;
   public damageDealt: integer = 0;
+  public attacksReceived: AttackMoveResult[] = [];
 }
 
 export enum AiType {

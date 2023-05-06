@@ -699,7 +699,7 @@ export class PokemonPpRestoreModifier extends ConsumablePokemonMoveModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    const move = pokemon.moveset[this.moveIndex];
+    const move = pokemon.getMoveset()[this.moveIndex];
     move.ppUsed = this.restorePoints >= -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
 
     return true;
@@ -717,7 +717,7 @@ export class PokemonAllMovePpRestoreModifier extends ConsumablePokemonModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    for (let move of pokemon.moveset)
+    for (let move of pokemon.getMoveset())
       move.ppUsed = this.restorePoints >= -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
 
     return true;

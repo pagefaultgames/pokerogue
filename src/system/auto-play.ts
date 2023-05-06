@@ -63,7 +63,7 @@ export function initAutoPlay() {
 
     const getMaxMoveEffectiveness = (attacker: Pokemon, defender: Pokemon) => {
         let maxEffectiveness = 0.5;
-        for (let m of attacker.moveset) {
+        for (let m of attacker.getMoveset()) {
             const moveType = m.getMove().type;
             const effectiveness = defender.getAttackMoveEffectiveness(moveType);
             if (effectiveness > maxEffectiveness)
@@ -129,7 +129,7 @@ export function initAutoPlay() {
                 playerPokemon.aiType = AiType.SMART;
             thisArg.time.delayedCall(20, () => {
                 const nextMove = playerPokemon.getNextMove() as PokemonMove;
-                fightUiHandler.setCursor(playerPokemon.moveset.indexOf(nextMove));
+                fightUiHandler.setCursor(playerPokemon.getMoveset().indexOf(nextMove));
                 thisArg.time.delayedCall(20, () => this.processInput(Button.ACTION));
             });
         }

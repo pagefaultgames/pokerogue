@@ -65,6 +65,7 @@ export default class PokemonData {
         this.summonData.battleStats = source.summonData.battleStats;
         this.summonData.moveQueue = source.summonData.moveQueue;
         this.summonData.tags = []; // TODO
+        this.summonData.moveset = source.summonData.moveset;
         this.summonData.types = source.summonData.types;
       }
     }
