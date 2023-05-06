@@ -51,6 +51,12 @@ export class Ability {
 type AbAttrCondition = (pokemon: Pokemon) => boolean;
 
 export abstract class AbAttr {
+  public showAbility: boolean;
+
+  constructor(showAbility?: boolean) {
+    this.showAbility = showAbility === undefined || showAbility;
+  }
+  
   apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     return false;
   }
@@ -94,19 +100,19 @@ export class BlockItemTheftAbAttr extends AbAttr {
   }
 }
 
-export class TypeWeaknessAbAttr extends PreDefendAbAttr {
-  private weakType: Type;
+export class ReceivedTypeDamageMultiplierAbAttr extends PreDefendAbAttr {
+  private moveType: Type;
   private powerMultiplier: number;
 
-  constructor(weakType: Type, powerMultiplier: number) {
+  constructor(moveType: Type, powerMultiplier: number) {
     super();
 
-    this.weakType = weakType;
+    this.moveType = moveType;
     this.powerMultiplier = powerMultiplier;
   }
 
   applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (move.getMove().type === this.weakType) {
+    if (move.getMove().type === this.moveType) {
       (args[0] as Utils.NumberHolder).value *= this.powerMultiplier;
       return true;
     }
@@ -367,6 +373,50 @@ export class PostSummonAbAttr extends AbAttr {
   }
 }
 
+export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
+  private tagType: BattlerTagType;
+  private turnCount: integer;
+
+  constructor(tagType: BattlerTagType, turnCount: integer) {
+    super(false);
+
+    this.tagType = tagType;
+    this.turnCount = turnCount;
+  }
+
+  applyPostSummon(pokemon: Pokemon, args: any[]): boolean {
+    return pokemon.addTag(this.tagType, this.turnCount);
+  }
+}
+
+export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
+  private stats: BattleStat[];
+  private levels: integer;
+  private selfTarget: boolean;
+
+  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean) {
+    super();
+
+    this.stats = typeof(stats) === 'number'
+      ? [ stats as BattleStat ]
+      : stats as BattleStat[];
+    this.levels = levels;
+    this.selfTarget = !!selfTarget;
+  }
+
+  applyPostSummon(pokemon: Pokemon, args: any[]): boolean {
+    const statChangePhase = new StatChangePhase(pokemon.scene, pokemon.isPlayer() === this.selfTarget, this.selfTarget, this.stats, this.levels);
+
+    if (!this.selfTarget && !pokemon.getOpponent()?.summonData)
+      pokemon.scene.pushPhase(statChangePhase); // TODO: This causes the ability bar to be shown at the wrong time
+    else
+      pokemon.scene.unshiftPhase(statChangePhase);
+
+   
+    return true;
+  }
+}
+
 export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
   private weatherType: WeatherType;
 
@@ -390,7 +440,7 @@ export class PreStatChangeAbAttr extends AbAttr {
   }
 }
 
-export class ProtectStatAttr extends PreStatChangeAbAttr {
+export class ProtectStatAbAttr extends PreStatChangeAbAttr {
   private protectedStat: BattleStat;
 
   constructor(protectedStat?: BattleStat) {
@@ -640,7 +690,8 @@ export function applyAbAttrs(attrType: { new(...args: any[]): AbAttr }, pokemon:
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.apply(pokemon, cancelled, args)) {
-      queueShowAbility(pokemon);
+      if (attr.showAbility)
+        queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon);
       if (message)
         pokemon.scene.queueMessage(message);
@@ -662,7 +713,8 @@ export function applyPreDefendAbAttrs(attrType: { new(...args: any[]): PreDefend
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.applyPreDefend(pokemon, attacker, move, cancelled, args)) {
-      queueShowAbility(pokemon);
+      if (attr.showAbility)
+        queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon, attacker, move);
       if (message)
         pokemon.scene.queueMessage(message);
@@ -684,7 +736,8 @@ export function applyPostDefendAbAttrs(attrType: { new(...args: any[]): PostDefe
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.applyPostDefend(pokemon, attacker, move, moveResult, args)) {
-      queueShowAbility(pokemon);
+      if (attr.showAbility)
+        queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon, attacker, move);
       if (message)
         pokemon.scene.queueMessage(message);
@@ -708,7 +761,8 @@ export function applyBattleStatMultiplierAbAttrs(attrType: { new(...args: any[])
     if (attr.applyBattleStat(pokemon, battleStat, statValue, args)) {
       const message = attr.getTriggerMessage(pokemon);
       if (message) {
-        queueShowAbility(pokemon);
+        if (attr.showAbility)
+          queueShowAbility(pokemon);
         pokemon.scene.queueMessage(message);
       }
     }
@@ -729,7 +783,8 @@ export function applyPreAttackAbAttrs(attrType: { new(...args: any[]): PreAttack
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.applyPreAttack(pokemon, defender, move, args)) {
-      queueShowAbility(pokemon);
+      if (attr.showAbility)
+        queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon, defender, move);
       if (message)
         pokemon.scene.queueMessage(message);
@@ -751,7 +806,8 @@ export function applyPostSummonAbAttrs(attrType: { new(...args: any[]): PostSumm
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.applyPostSummon(pokemon, args)) {
-      queueShowAbility(pokemon);
+      if (attr.showAbility)
+        queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon);
       if (message)
         pokemon.scene.queueMessage(message);
@@ -773,7 +829,8 @@ export function applyPreStatChangeAbAttrs(attrType: { new(...args: any[]): PreSt
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.applyPreStatChange(pokemon, stat, cancelled, args)) {
-      queueShowAbility(pokemon);
+      if (attr.showAbility)
+        queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon, stat);
       if (message)
         pokemon.scene.queueMessage(message);
@@ -795,7 +852,8 @@ export function applyPreSetStatusAbAttrs(attrType: { new(...args: any[]): PreSet
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.applyPreSetStatus(pokemon, effect, cancelled, args)) {
-      queueShowAbility(pokemon);
+      if (attr.showAbility)
+        queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon, effect);
       if (message)
         pokemon.scene.queueMessage(message);
@@ -817,7 +875,8 @@ export function applyPreApplyBattlerTagAbAttrs(attrType: { new(...args: any[]): 
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.applyPreApplyBattlerTag(pokemon, tag, cancelled, args)) {
-      queueShowAbility(pokemon);
+      if (attr.showAbility)
+        queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon, tag);
       if (message)
         pokemon.scene.queueMessage(message);
@@ -862,7 +921,8 @@ export function applyPostTurnAbAttrs(attrType: { new(...args: any[]): PostTurnAb
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.applyPostTurn(pokemon, args)) {
-      queueShowAbility(pokemon);
+      if (attr.showAbility)
+        queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon);
       if (message)
         pokemon.scene.queueMessage(message);
@@ -888,7 +948,8 @@ export function applyPostWeatherLapseAbAttrs(attrType: { new(...args: any[]): Po
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.applyPostWeatherLapse(pokemon, weather, args)) {
-      queueShowAbility(pokemon);
+      if (attr.showAbility)
+        queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon, weather);
       if (message)
         pokemon.scene.queueMessage(message);
@@ -1120,7 +1181,7 @@ export function initAbilities() {
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)), // TODO: Show ability bar on weather change and summon
     new Ability(Abilities.CLEAR_BODY, "Clear Body", "Prevents other POKéMON from lowering its stats.", 3)
-      .attr(ProtectStatAttr),
+      .attr(ProtectStatAbAttr),
     new Ability(Abilities.CLOUD_NINE, "Cloud Nine", "Eliminates the effects of non-severe weather.", 3)
       .attr(SuppressWeatherEffectAbAttr),
     new Ability(Abilities.COLOR_CHANGE, "Color Change", "Changes the POKéMON's type to the foe's move.", 3)
@@ -1137,25 +1198,29 @@ export function initAbilities() {
     new Ability(Abilities.EARLY_BIRD, "Early Bird (N)", "The POKéMON awakens quickly from sleep.", 3),
     new Ability(Abilities.EFFECT_SPORE, "Effect Spore", "Contact may poison or cause paralysis or sleep.", 3)
       .attr(PostDefendContactApplyStatusEffectAbAttr, 10, StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP),
-    new Ability(Abilities.FLAME_BODY, "Flame Body (N)", "Contact with the POKéMON may burn the attacker.", 3),
+    new Ability(Abilities.FLAME_BODY, "Flame Body", "Contact with the POKéMON may burn the attacker.", 3)
+      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.BURN),
     new Ability(Abilities.FLASH_FIRE, "Flash Fire", "It powers up FIRE-type moves if it's hit by one.", 3)
       .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, 1, BattlerTagType.FIRE_BOOST, (pokemon: Pokemon) => !pokemon.status || pokemon.status.effect !== StatusEffect.FREEZE),
     new Ability(Abilities.FORECAST, "Forecast (N)", "Castform transforms with the weather.", 3),
     new Ability(Abilities.GUTS, "Guts (N)", "Boosts ATTACK if there is a status problem.", 3),
-    new Ability(Abilities.HUGE_POWER, "Huge Power (N)", "Raises the POKéMON's ATTACK stat.", 3),
+    new Ability(Abilities.HUGE_POWER, "Huge Power", "Raises the POKéMON's ATTACK stat.", 3)
+      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 1, true),
     new Ability(Abilities.HUSTLE, "Hustle (N)", "Boosts the ATTACK stat, but lowers accuracy.", 3),
     new Ability(Abilities.HYPER_CUTTER, "Hyper Cutter", "Prevents other POKéMON from lowering ATTACK stat.", 3)
-      .attr(ProtectStatAttr, BattleStat.ATK),
+      .attr(ProtectStatAbAttr, BattleStat.ATK),
     new Ability(Abilities.ILLUMINATE, "Illuminate (N)", "Raises the likelihood of meeting wild POKéMON.", 3),
     new Ability(Abilities.IMMUNITY, "Immunity", "Prevents the POKéMON from getting poisoned.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON),
-    new Ability(Abilities.INNER_FOCUS, "Inner Focus (N)", "The POKéMON is protected from flinching.", 3),
+    new Ability(Abilities.INNER_FOCUS, "Inner Focus", "The POKéMON is protected from flinching.", 3)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.FLINCHED),
     new Ability(Abilities.INSOMNIA, "Insomnia", "Prevents the POKéMON from falling asleep.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY),
-    new Ability(Abilities.INTIMIDATE, "Intimidate (N)", "Lowers the foe's ATTACK stat.", 3),
+    new Ability(Abilities.INTIMIDATE, "Intimidate", "Lowers the foe's ATTACK stat.", 3)
+      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, -1),
     new Ability(Abilities.KEEN_EYE, "Keen Eye", "Prevents other POKéMON from lowering accuracy.", 3)
-      .attr(ProtectStatAttr, BattleStat.ACC),
+      .attr(ProtectStatAbAttr, BattleStat.ACC),
     new Ability(Abilities.LEVITATE, "Levitate", "Gives immunity to GROUND-type moves.", 3)
       .attr(TypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(BattlerTagType.IGNORE_FLYING)),
     new Ability(Abilities.LIGHTNING_ROD, "Lightning Rod", "Draws in all ELECTRIC-type moves to up SP. ATK.", 3)
@@ -1182,7 +1247,8 @@ export function initAbilities() {
     new Ability(Abilities.POISON_POINT, "Poison Point", "Contact with the POKéMON may poison the attacker.", 3)
       .attr(PostDefendContactApplyStatusEffectAbAttr, StatusEffect.POISON),
     new Ability(Abilities.PRESSURE, "Pressure (N)", "The POKéMON raises the foe's PP usage.", 3),
-    new Ability(Abilities.PURE_POWER, "Pure Power (N)", "Raises the POKéMON's ATTACK stat.", 3),
+    new Ability(Abilities.PURE_POWER, "Pure Power", "Raises the POKéMON's ATTACK stat.", 3)
+      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 1, true),
     new Ability(Abilities.RAIN_DISH, "Rain Dish", "The POKéMON gradually regains HP in rain.", 3)
       .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.RAIN, WeatherType.HEAVY_RAIN),
     new Ability(Abilities.ROCK_HEAD, "Rock Head", "Protects the POKéMON from recoil damage.", 3)
@@ -1218,11 +1284,14 @@ export function initAbilities() {
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.RAIN, WeatherType.HEAVY_RAIN)), // TODO: Show ability bar on weather change and summon
     new Ability(Abilities.SYNCHRONIZE, "Synchronize (N)", "Passes a burn, poison, or paralysis to the foe.", 3),
-    new Ability(Abilities.THICK_FAT, "Thick Fat (N)", "Ups resistance to Fire- and ICE-type moves.", 3),
+    new Ability(Abilities.THICK_FAT, "Thick Fat", "Ups resistance to Fire- and ICE-type moves.", 3)
+      .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
+      .attr(ReceivedTypeDamageMultiplierAbAttr, Type.ICE, 0.5),
     new Ability(Abilities.TORRENT, "Torrent", "Powers up WATER-type moves in a pinch.", 3)
       .attr(LowHpMoveTypePowerBoostAbAttr, Type.WATER),
     new Ability(Abilities.TRACE, "Trace (N)", "The POKéMON copies a foe's Ability.", 3),
-    new Ability(Abilities.TRUANT, "Truant (N)", "POKéMON can't attack on consecutive turns.", 3),
+    new Ability(Abilities.TRUANT, "Truant", "POKéMON can't attack on consecutive turns.", 3)
+      .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.TRUANT, 1),
     new Ability(Abilities.VITAL_SPIRIT, "Vital Spirit", "Prevents the POKéMON from falling asleep.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY),
@@ -1233,7 +1302,7 @@ export function initAbilities() {
     new Ability(Abilities.WATER_VEIL, "Water Veil", "Prevents the POKéMON from getting a burn.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN),
     new Ability(Abilities.WHITE_SMOKE, "White Smoke", "Prevents other POKéMON from lowering its stats.", 3)
-      .attr(ProtectStatAttr),
+      .attr(ProtectStatAbAttr),
     new Ability(Abilities.WONDER_GUARD, "Wonder Guard", "Only super effective moves will hit.", 3)
       .attr(NonSuperEffectiveImmunityAbAttr),
     new Ability(Abilities.ADAPTABILITY, "Adaptability (N)", "Powers up moves of the same type.", 4),
@@ -1242,17 +1311,18 @@ export function initAbilities() {
     new Ability(Abilities.ANTICIPATION, "Anticipation (N)", "Senses a foe's dangerous moves.", 4),
     new Ability(Abilities.BAD_DREAMS, "Bad Dreams (N)", "Reduces a sleeping foe's HP.", 4),
     new Ability(Abilities.DOWNLOAD, "Download (N)", "Adjusts power according to a foe's defenses.", 4),
-    new Ability(Abilities.DRY_SKIN, "Dry Skin", "Reduces HP if it is hot. Water restores HP.", 4) // TODO
+    new Ability(Abilities.DRY_SKIN, "Dry Skin", "Reduces HP if it is hot. Water restores HP.", 4)
       .attr(PostWeatherLapseDamageAbAttr, 2, WeatherType.SUNNY, WeatherType.HARSH_SUN)
       .attr(PostWeatherLapseHealAbAttr, 2, WeatherType.RAIN, WeatherType.HEAVY_RAIN)
-      .attr(TypeWeaknessAbAttr, Type.FIRE, 1.25)
+      .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 1.25)
       .attr(TypeImmunityHealAbAttr, Type.WATER),
     new Ability(Abilities.FILTER, "Filter (N)", "Reduces damage from super-effective attacks.", 4),
     new Ability(Abilities.FLOWER_GIFT, "Flower Gift (N)", "Powers up party POKéMON when it is sunny.", 4),
     new Ability(Abilities.FOREWARN, "Forewarn (N)", "Determines what moves a foe has.", 4),
     new Ability(Abilities.FRISK, "Frisk (N)", "The POKéMON can check a foe's held item.", 4),
     new Ability(Abilities.GLUTTONY, "Gluttony (N)", "Encourages the early use of a held Berry.", 4),
-    new Ability(Abilities.HEATPROOF, "Heatproof (N)", "Weakens the power of FIRE-type moves.", 4),
+    new Ability(Abilities.HEATPROOF, "Heatproof", "Weakens the power of FIRE-type moves.", 4)
+      .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5),
     new Ability(Abilities.HONEY_GATHER, "Honey Gather (N)", "The POKéMON may gather Honey from somewhere.", 4),
     new Ability(Abilities.HYDRATION, "Hydration (N)", "Heals status problems if it is raining.", 4),
     new Ability(Abilities.ICE_BODY, "Ice Body", "The POKéMON gradually regains HP in a hailstorm.", 4)
@@ -1298,7 +1368,7 @@ export function initAbilities() {
     new Ability(Abilities.UNBURDEN, "Unburden (N)", "Raises SPEED if a held item is used.", 4),
     new Ability(Abilities.ANALYTIC, "Analytic (N)", "Boosts move power when the POKéMON moves last.", 5),
     new Ability(Abilities.BIG_PECKS, "Big Pecks", "Protects the POKéMON from DEFENSE-lowering attacks.", 5)
-      .attr(ProtectStatAttr, BattleStat.DEF),
+      .attr(ProtectStatAbAttr, BattleStat.DEF),
     new Ability(Abilities.CONTRARY, "Contrary (N)", "Makes stat changes have an opposite effect.", 5),
     new Ability(Abilities.CURSED_BODY, "Cursed Body (N)", "May disable a move used on the POKéMON.", 5),
     new Ability(Abilities.DEFEATIST, "Defeatist (N)", "Lowers stats when HP drops below half.", 5),
@@ -1322,7 +1392,8 @@ export function initAbilities() {
     new Ability(Abilities.OVERCOAT, "Overcoat", "Protects the POKéMON from weather damage.", 5)
       .attr(BlockWeatherDamageAttr),
     new Ability(Abilities.PICKPOCKET, "Pickpocket (N)", "Once per battle, steals an item when hit by another POKéMON.", 5),
-    new Ability(Abilities.POISON_TOUCH, "Poison Touch (N)", "May poison targets when a POKéMON makes contact.", 5),
+    new Ability(Abilities.POISON_TOUCH, "Poison Touch", "May poison targets when a POKéMON makes contact.", 5)
+      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON),
     new Ability(Abilities.PRANKSTER, "Prankster (N)", "Gives priority to a status move.", 5),
     new Ability(Abilities.RATTLED, "Rattled (N)", "BUG, GHOST or DARK type moves scare it and boost its SPEED.", 5),
     new Ability(Abilities.REGENERATOR, "Regenerator (N)", "Restores a little HP when withdrawn from battle.", 5),

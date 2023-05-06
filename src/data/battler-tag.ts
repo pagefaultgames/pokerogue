@@ -1,13 +1,13 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, DamagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase } from "../battle-phases";
+import { CommonAnimPhase, DamagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase, ShowAbilityPhase } from "../battle-phases";
 import { getPokemonMessage } from "../messages";
-import Pokemon from "../pokemon";
+import Pokemon, { MoveResult } from "../pokemon";
 import { Stat } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
 import { Moves, allMoves } from "./move";
 import { Type } from "./type";
-import { Gender } from "./gender";
+import { Abilities } from "./ability";
 
 export enum BattlerTagType {
   NONE,
@@ -30,6 +30,7 @@ export enum BattlerTagType {
   SAND_TOMB,
   MAGMA_STORM,
   PROTECTED,
+  TRUANT,
   FLYING,
   UNDERGROUND,
   HIDDEN,
@@ -527,6 +528,27 @@ export class ProtectedTag extends BattlerTag {
   }
 }
 
+export class TruantTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.TRUANT, BattlerTagLapseType.MOVE, 1, undefined);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (pokemon.getAbility().id !== Abilities.TRUANT)
+      return super.lapse(pokemon, lapseType);
+
+    const lastMove = pokemon.getLastXMoves().find(() => true);
+
+    if (lastMove && lastMove.move !== Moves.NONE) {
+      (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
+      pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.isPlayer()));
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nloafing around!'));
+    }
+
+    return true;
+  }
+}
+
 export class HideSpriteTag extends BattlerTag {
   constructor(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves) {
     super(tagType, BattlerTagLapseType.MOVE_EFFECT, turnCount, sourceMove);
@@ -628,6 +650,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new MagmaStormTag(turnCount, sourceId);
     case BattlerTagType.PROTECTED:
       return new ProtectedTag(sourceMove);
+    case BattlerTagType.TRUANT:
+      return new TruantTag();
     case BattlerTagType.FLYING:
     case BattlerTagType.UNDERGROUND:
     case BattlerTagType.HIDDEN:
