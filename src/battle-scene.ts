@@ -689,8 +689,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.currentPhase.start();
 	}
 
-	queueMessage(message: string, callbackDelay?: integer, prompt?: boolean) {
-		this.unshiftPhase(new MessagePhase(this, message, callbackDelay, prompt));
+	queueMessage(message: string, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+		this.unshiftPhase(new MessagePhase(this, message, callbackDelay, prompt, promptDelay));
 	}
 
 	populatePhaseQueue(): void {

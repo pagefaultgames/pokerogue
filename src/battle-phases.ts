@@ -206,6 +206,7 @@ export class NextEncounterPhase extends EncounterPhase {
       duration: 2000,
       onComplete: () => {
         this.scene.arenaEnemy.setX(this.scene.arenaNextEnemy.x);
+        this.scene.arenaEnemy.setAlpha(1);
         this.scene.arenaNextEnemy.setX(this.scene.arenaNextEnemy.x - 300);
         enemyPokemon.untint(100, 'Sine.easeOut');
         enemyPokemon.cry();
@@ -326,6 +327,7 @@ export class SwitchBiomePhase extends BattlePhase {
             this.scene.arenaPlayer.setTexture(playerTexture);
             this.scene.arenaPlayer.setAlpha(1);
             this.scene.arenaEnemy.setTexture(enemyTexture);
+            this.scene.arenaEnemy.setAlpha(1);
             this.scene.arenaNextEnemy.setTexture(enemyTexture);
             this.scene.arenaBgTransition.setVisible(false);
             this.scene.arenaPlayerTransition.setVisible(false);
@@ -632,9 +634,8 @@ export class CommandPhase extends FieldPhase {
           break;
         case Command.BALL:
         case Command.POKEMON:
-          return false;
         case Command.RUN:
-          return true;
+          return false;
       }
 
       return this.isPlayerDelayed();
@@ -695,6 +696,8 @@ export class CommandPhase extends FieldPhase {
           }, null, true);
         break;
       case Command.RUN:
+        this.scene.unshiftPhase(new AttemptRunPhase(this.scene));
+        success = true;
         //this.scene.unshiftPhase(new MoveAnimTestPhase(this.scene));
         //success = true;
         break;
@@ -1420,19 +1423,21 @@ export class MessagePhase extends BattlePhase {
   private text: string;
   private callbackDelay: integer;
   private prompt: boolean;
+  private promptDelay: integer;
 
-  constructor(scene: BattleScene, text: string, callbackDelay?: integer, prompt?: boolean) {
+  constructor(scene: BattleScene, text: string, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
     super(scene);
 
     this.text = text;
     this.callbackDelay = callbackDelay;
     this.prompt = prompt;
+    this.promptDelay = promptDelay;
   }
 
   start() {
     super.start();
 
-    this.scene.ui.showText(this.text, null, () => this.end(), this.callbackDelay || (this.prompt ? 0 : 1500), this.prompt);
+    this.scene.ui.showText(this.text, null, () => this.end(), this.callbackDelay || (this.prompt ? 0 : 1500), this.prompt, this.promptDelay);
   }
 
   end() {
@@ -2099,6 +2104,41 @@ export class AttemptCapturePhase extends BattlePhase {
       alpha: 0,
       onComplete: () => this.pokeball.destroy()
     });
+  }
+}
+
+export class AttemptRunPhase extends BattlePhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    super.start();
+
+    const playerPokemon = this.scene.getPlayerPokemon();
+    const enemyPokemon = this.scene.getEnemyPokemon();
+
+    const escapeChance = (((playerPokemon.stats[Stat.SPD] * 128) / enemyPokemon.stats[Stat.SPD]) + (30 * this.scene.currentBattle.escapeAttempts++)) % 256;
+
+    if (Utils.randInt(256) < escapeChance) {
+      this.scene.sound.play('flee');
+      this.scene.queueMessage('You got away safely!', null, true, 500);
+      
+      this.scene.tweens.add({
+        targets: [ this.scene.arenaEnemy, enemyPokemon ],
+        alpha: 0,
+        duration: 250,
+        ease: 'Sine.easeIn'
+      });
+
+      enemyPokemon.hp = 0;
+
+      this.scene.pushPhase(new BattleEndPhase(this.scene));
+      this.scene.newBattle();
+    } else
+      this.scene.queueMessage('You can\'t escape!', null, true);
+
+    this.end();
   }
 }
 

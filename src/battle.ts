@@ -7,6 +7,7 @@ export class Battle {
     public enemyPokemon: EnemyPokemon;
     public turn: integer;
     public playerParticipantIds: Set<integer> = new Set<integer>();
+    public escapeAttempts: integer = 0;
 
     constructor(waveIndex: integer) {
         this.waveIndex = waveIndex;
