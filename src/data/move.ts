@@ -1267,14 +1267,14 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
 }
 
 export abstract class ConsecutiveUsePowerMultiplierAttr extends MovePowerMultiplierAttr {
-  constructor(limit: integer, resetOnFail: boolean, resetOnLimit?: boolean) {
+  constructor(limit: integer, resetOnFail: boolean, resetOnLimit?: boolean, ...comboMoves: Moves[]) {
     super((user: Pokemon, target: Pokemon, move: Move): number => {
       const moveHistory = user.getMoveHistory().reverse().slice(0);
 
       let count = 0;
       let turnMove: TurnMove;
 
-      while ((turnMove = moveHistory.shift())?.move === move.id && (!resetOnFail || turnMove.result < MoveResult.NO_EFFECT)) {
+      while (((turnMove = moveHistory.shift())?.move === move.id || (comboMoves.length && comboMoves.indexOf(turnMove?.move) > -1)) && (!resetOnFail || turnMove.result < MoveResult.NO_EFFECT)) {
         if (count < (limit - 1))
           count++;
         else if (resetOnLimit)
@@ -2409,7 +2409,7 @@ export function initMoves() {
     new StatusMove(Moves.CHARM, "Charm", Type.FAIRY, 100, 20, 2, "Sharply lowers opponent's Attack.", -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.ATK, -2),
     new AttackMove(Moves.ROLLOUT, "Rollout", Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, "Doubles in power each turn for 5 turns.", -1, 0, 2)
-      .attr(ConsecutiveUseDoublePowerAttr, 5, true, true), // TODO: Defense Curl logic
+      .attr(ConsecutiveUseDoublePowerAttr, 5, true, true, Moves.DEFENSE_CURL),
     new AttackMove(Moves.FALSE_SWIPE, "False Swipe (N)", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 40, 57, "Always leaves opponent with at least 1 HP.", -1, 0, 2),
     new StatusMove(Moves.SWAGGER, "Swagger", Type.NORMAL, 85, 15, -1, "Confuses opponent, but sharply raises its Attack.", -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.ATK, 2)
@@ -2596,7 +2596,7 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.MUD_SPORT, 5)
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.ICE_BALL, "Ice Ball", Type.ICE, MoveCategory.PHYSICAL, 30, 90, 20, -1, "Doubles in power each turn for 5 turns.", -1, 0, 3)
-      .attr(ConsecutiveUseDoublePowerAttr, 5, true, true),
+      .attr(ConsecutiveUseDoublePowerAttr, 5, true, true, Moves.DEFENSE_CURL),
     new AttackMove(Moves.NEEDLE_ARM, "Needle Arm", Type.GRASS, MoveCategory.PHYSICAL, 60, 100, 15, -1, "May cause flinching.", 30, 0, 3)
       .attr(FlinchAttr),
     new SelfStatusMove(Moves.SLACK_OFF, "Slack Off", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 3)

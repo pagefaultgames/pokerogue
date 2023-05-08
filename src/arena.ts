@@ -99,11 +99,7 @@ export class Arena {
 
   getBiomeKey(): string {
     switch (this.biomeType) {
-      case Biome.CITY:
-        return 'dojo';
       case Biome.LAKE:
-        return 'sea';
-      case Biome.BEACH:
         return 'sea';
       case Biome.ABYSS:
         return 'wasteland';

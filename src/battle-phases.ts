@@ -682,24 +682,23 @@ export class CommandPhase extends FieldPhase {
         }
         break;
       case Command.POKEMON:
+      case Command.RUN:
+        const isSwitch = command === Command.POKEMON;
         const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
         const trapped = new Utils.BooleanHolder(false);
-        const batonPass = args[0] as boolean;
+        const batonPass = isSwitch && args[0] as boolean;
         if (!batonPass)
           applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trapped);
         if (batonPass || (!trapTag && !trapped.value)) {
-          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, cursor, true, args[0] as boolean));
+          if (isSwitch)
+            this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, cursor, true, args[0] as boolean));
+          else
+             this.scene.unshiftPhase(new AttemptRunPhase(this.scene));
           success = true;
         } else if (trapTag)
-          this.scene.ui.showText(`${this.scene.getPokemonById(trapTag.sourceId).name}'s ${trapTag.getMoveName()}\nprevents switching!`, null, () => {
+          this.scene.ui.showText(`${this.scene.getPokemonById(trapTag.sourceId).name}'s ${trapTag.getMoveName()}\nprevents ${isSwitch ? 'switching' : 'fleeing'}!`, null, () => {
             this.scene.ui.showText(null, 0);
           }, null, true);
-        break;
-      case Command.RUN:
-        this.scene.unshiftPhase(new AttemptRunPhase(this.scene));
-        success = true;
-        //this.scene.unshiftPhase(new MoveAnimTestPhase(this.scene));
-        //success = true;
         break;
     }
 
