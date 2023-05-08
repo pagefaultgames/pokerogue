@@ -21,7 +21,7 @@ import { BattlerTag, BattlerTagLapseType, BattlerTagType, TypeBoostTag, getBattl
 import { Species } from './data/species';
 import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
-import { WeakenMoveTypeTag } from './data/arena-tag';
+import { ArenaTagType, GravityTag, WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
 import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, PreApplyBattlerTagAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
@@ -339,7 +339,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         types.push(speciesForm.type1);
     }
 
-    if (this.getTag(BattlerTagType.IGNORE_FLYING)) {
+    if (this.getTag(BattlerTagType.IGNORE_FLYING) || this.scene.arena.getTag(ArenaTagType.GRAVITY)) {
       const flyingIndex = types.indexOf(Type.FLYING);
       if (flyingIndex > -1)
         types.splice(flyingIndex, 1);

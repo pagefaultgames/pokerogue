@@ -8,6 +8,7 @@ import { Weather, WeatherType } from "./weather";
 import { BattlerTag, BattlerTagType, TrappedTag } from "./battler-tag";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
 import { MoveFlags, Moves, RecoilAttr, allMoves } from "./move";
+import { ArenaTagType } from "./arena-tag";
 
 export class Ability {
   public id: Abilities;
@@ -240,9 +241,9 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, moveResult: MoveResult, args: any[]): boolean {
     if (moveResult < MoveResult.NO_EFFECT) {
       const type = move.getMove().type;
-      const type2 = pokemon.species.type2;
-      if (type !== pokemon.getTypes()[0] && type !== type2) {
-        pokemon.summonData.types = [ type ].concat(type2 !== null ? [ type2 ] : []);
+      const pokemonTypes = pokemon.getTypes();
+      if (pokemonTypes.length !== 1 || pokemonTypes[0] !== type) {
+        pokemon.summonData.types = [ type ];
         return true;
       }
     }
@@ -1222,7 +1223,7 @@ export function initAbilities() {
     new Ability(Abilities.KEEN_EYE, "Keen Eye", "Prevents other POKéMON from lowering accuracy.", 3)
       .attr(ProtectStatAbAttr, BattleStat.ACC),
     new Ability(Abilities.LEVITATE, "Levitate", "Gives immunity to GROUND-type moves.", 3)
-      .attr(TypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(BattlerTagType.IGNORE_FLYING)),
+      .attr(TypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(BattlerTagType.IGNORE_FLYING) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY)),
     new Ability(Abilities.LIGHTNING_ROD, "Lightning Rod", "Draws in all ELECTRIC-type moves to up SP. ATK.", 3)
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPATK, 1),
     new Ability(Abilities.LIMBER, "Limber", "The POKéMON is protected from paralysis.", 3)

@@ -626,6 +626,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.moveSelect = false;
     this.extraMoveRowContainer.setVisible(false);
+    this.moveDescriptionText.setText('');
     if (this.moveCursorBlinkTimer) {
       this.moveCursorBlinkTimer.destroy();
       this.moveCursorBlinkTimer = null;

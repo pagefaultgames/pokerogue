@@ -1,7 +1,7 @@
 import BattleScene, { startingLevel, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -24,7 +24,7 @@ import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
-import { ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
+import { ArenaTagType, ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
 import { CheckTrappedAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, SuppressWeatherEffectAbAttr, applyCheckTrappedAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 
@@ -1091,10 +1091,14 @@ abstract class MoveEffectPhase extends PokemonPhase {
       return true;
 
     const moveAccuracy = new Utils.NumberHolder(this.move.getMove().accuracy);
-    applyMoveAttrs(VariableAccuracyAttr, this.getUserPokemon(), this.getTargetPokemon(), this.move.getMove(), moveAccuracy);
 
     if (moveAccuracy.value === -1)
       return true;
+
+    applyMoveAttrs(VariableAccuracyAttr, this.getUserPokemon(), this.getTargetPokemon(), this.move.getMove(), moveAccuracy);
+
+    if (!this.move.getMove().getAttrs(OneHitKOAttr).length && this.scene.arena.getTag(ArenaTagType.GRAVITY))
+      moveAccuracy.value = Math.floor(moveAccuracy.value * 1.67);
       
     if (this.move.getMove().category !== MoveCategory.STATUS) {
       const userAccuracyLevel = new Utils.IntegerHolder(this.getUserPokemon().summonData.battleStats[BattleStat.ACC]);
@@ -1107,7 +1111,7 @@ abstract class MoveEffectPhase extends PokemonPhase {
           ? (3 + Math.min(userAccuracyLevel.value - targetEvasionLevel.value, 6)) / 3
           : 3 / (3 + Math.min(targetEvasionLevel.value - userAccuracyLevel.value, 6));
       }
-      return rand <= this.move.getMove().accuracy * accuracyMultiplier;
+      return rand <= moveAccuracy.value * accuracyMultiplier;
     }
 
     return true;

@@ -15,7 +15,8 @@ export enum ArenaTagType {
   SPIKES,
   TOXIC_SPIKES,
   STEALTH_ROCK,
-  TRICK_ROOM
+  TRICK_ROOM,
+  GRAVITY
 }
 
 export abstract class ArenaTag {
@@ -24,7 +25,7 @@ export abstract class ArenaTag {
   public sourceMove: Moves;
   public sourceId: integer;
 
-  constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer) {
+  constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId?: integer) {
     this.tagType = tagType;
     this.turnCount = turnCount;
     this.sourceMove = sourceMove;
@@ -81,6 +82,10 @@ class MudSportTag extends WeakenMoveTypeTag {
   onAdd(arena: Arena): void {
     arena.scene.queueMessage('Electricity\'s power was weakened!');
   }
+
+  onRemove(arena: Arena): void {
+    arena.scene.queueMessage('The effects of MUD SPORT\nhave faded.');
+  }
 }
 
 class WaterSportTag extends WeakenMoveTypeTag {
@@ -90,6 +95,10 @@ class WaterSportTag extends WeakenMoveTypeTag {
 
   onAdd(arena: Arena): void {
     arena.scene.queueMessage('Fire\'s power was weakened!');
+  }
+
+  onRemove(arena: Arena): void {
+    arena.scene.queueMessage('The effects of WATER SPORT\nhave faded.');
   }
 }
 
@@ -139,7 +148,7 @@ class SpikesTag extends ArenaTrapTag {
   }
 
   activateTrap(pokemon: Pokemon): boolean {
-    if ((!pokemon.isOfType(Type.FLYING) || pokemon.getTag(BattlerTagType.IGNORE_FLYING))) {
+    if ((!pokemon.isOfType(Type.FLYING) || pokemon.getTag(BattlerTagType.IGNORE_FLYING) || pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))) {
       const damageHpRatio = 1 / (10 - 2 * this.layers);
 
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is hurt\nby the spikes!'));
@@ -166,7 +175,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
   }
 
   activateTrap(pokemon: Pokemon): boolean {
-    if (!pokemon.status && (!pokemon.isOfType(Type.FLYING) || pokemon.getTag(BattlerTagType.IGNORE_FLYING))) {
+    if (!pokemon.status && (!pokemon.isOfType(Type.FLYING) || pokemon.getTag(BattlerTagType.IGNORE_FLYING) || pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))) {
       const toxic = this.layers > 1;
 
       pokemon.scene.unshiftPhase(new ObtainStatusEffectPhase(pokemon.scene, pokemon.isPlayer(),
@@ -241,6 +250,24 @@ export class TrickRoomTag extends ArenaTag {
   onAdd(arena: Arena): void {
     arena.scene.queueMessage(getPokemonMessage(arena.scene.getPokemonById(this.sourceId), ' twisted\nthe dimensions!'));
   }
+
+  onRemove(arena: Arena): void {
+    arena.scene.queueMessage('The twisted dimensions\nreturned to normal!');
+  }
+}
+
+export class GravityTag extends ArenaTag {
+  constructor(turnCount: integer) {
+    super(ArenaTagType.GRAVITY, turnCount, Moves.GRAVITY);
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage('Gravity intensified!');
+  }
+
+  onRemove(arena: Arena): void {
+    arena.scene.queueMessage('Gravity returned to normal!');
+  }
 }
 
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): ArenaTag {
@@ -257,5 +284,7 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
       return new StealthRockTag(sourceId);
     case ArenaTagType.TRICK_ROOM:
       return new TrickRoomTag(turnCount, sourceId);
+    case ArenaTagType.GRAVITY:
+      return new GravityTag(turnCount);
   }
 }
