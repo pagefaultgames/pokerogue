@@ -97,26 +97,6 @@ export class Arena {
     return ret;
   }
 
-  getBiomeKey(): string {
-    switch (this.biomeType) {
-      case Biome.LAKE:
-        return 'sea';
-      case Biome.ABYSS:
-        return 'wasteland';
-      case Biome.MEADOW:
-        return 'grass';
-      case Biome.VOLCANO:
-        return 'cave';
-      case Biome.POWER_PLANT:
-        return 'ruins';
-      case Biome.FACTORY:
-        return 'wasteland';
-      case Biome.END:
-        return 'wasteland';
-    }
-    return Biome[this.biomeType].toLowerCase();
-  }
-
   getFormIndex(species: PokemonSpecies) {
     if (!species.canChangeForm && species.forms?.length)
       return Utils.randInt(species.forms.length); // TODO: Base on biome
@@ -324,6 +304,82 @@ export class Arena {
         return 5.130;
       case Biome.SPACE:
         return 21.347;
+    }
+  }
+}
+
+export function getBiomeKey(biome: Biome): string {
+  switch (biome) {
+    case Biome.ABYSS:
+      return 'wasteland';
+    case Biome.MEADOW:
+      return 'grass';
+    case Biome.VOLCANO:
+      return 'cave';
+    case Biome.POWER_PLANT:
+      return 'ruins';
+    case Biome.FACTORY:
+      return 'wasteland';
+    case Biome.END:
+      return 'wasteland';
+  }
+  return Biome[biome].toLowerCase();
+}
+
+export function getBiomeHasProps(biomeType: Biome): boolean {
+  switch (biomeType) {
+    case Biome.LAKE:
+    case Biome.DESERT:
+      return true;
+  }
+
+  return false;
+}
+
+export class ArenaBase extends Phaser.GameObjects.Container {
+  public player: boolean;
+  public biome: Biome;
+  public propValue: integer;
+  public base: Phaser.GameObjects.Sprite;
+  public props: Phaser.GameObjects.Sprite[];
+
+  constructor(scene: BattleScene, player: boolean) {
+    super(scene, 0, 0);
+
+    this.player = player;
+    this.biome = Biome.PLAINS;
+
+    this.base = scene.add.sprite(0, 0, `plains_a`);
+    this.base.setOrigin(0, 0);
+
+    this.props = !player ?
+      new Array(3).fill(null).map(() => {
+        const ret = scene.add.sprite(0, 0, `plains_b`);
+        ret.setOrigin(0, 0);
+        ret.setVisible(false);
+        return ret;
+      }) : [];
+  }
+
+  setBiome(biome: Biome, propValue?: integer): void {
+    if (this.biome === biome)
+      return;
+
+    const hasProps = getBiomeHasProps(biome);
+    const biomeKey = getBiomeKey(biome);
+
+    this.base.setTexture(`${biomeKey}_${this.player ? 'a' : 'b'}`);
+    this.add(this.base);
+
+    if (!this.player) {
+      this.propValue = propValue === undefined
+        ? hasProps ? Utils.randInt(8) : 0
+        : propValue;
+      for (let p = 0; p < 3; p++) {
+        this.props[p].setTexture(`${biomeKey}_b${hasProps ? `_${p + 1}` : ''}`);
+        this.props[p].setVisible(hasProps && !!(this.propValue & (1 << p)));
+        this.add(this.props[p]);
+      }
     }
   }
 }

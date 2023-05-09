@@ -1,6 +1,6 @@
 import * as ModifierTypes from './modifier-type';
 import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../battle-phases";
-import BattleScene from "../battle-scene";
+import BattleScene, { maxExpLevel } from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { PokeballType } from "../data/pokeball";
 import Pokemon, { PlayerPokemon } from "../pokemon";
@@ -735,7 +735,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
     pokemon.scene.applyModifiers(LevelIncrementBoosterModifier, true, levelCount);
 
     pokemon.level += levelCount.value;
-    if (pokemon.level <= 100) {
+    if (pokemon.level <= maxExpLevel) {
       pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
       pokemon.levelExp = 0;
     }

@@ -4,7 +4,7 @@ import * as Utils from '../utils';
 import { addTextObject, TextStyle } from './text';
 import { getGenderSymbol, getGenderColor } from '../data/gender';
 import { StatusEffect } from '../data/status-effect';
-import BattleScene from '../battle-scene';
+import BattleScene, { maxExpLevel } from '../battle-scene';
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private player: boolean;
@@ -217,7 +217,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const relLevelExp = getLevelRelExp(this.lastLevel + 1, battler.species.growthRate);
       const levelExp = levelUp ? relLevelExp : battler.levelExp;
       let ratio = relLevelExp ? levelExp / relLevelExp : 0;
-      if (this.lastLevel >= 100) {
+      if (this.lastLevel >= maxExpLevel) {
         if (levelUp)
           ratio = 1;
         instant = true;

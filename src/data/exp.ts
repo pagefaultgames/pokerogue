@@ -16,10 +16,26 @@ const expLevels = [
   [ 0, 4, 13, 32, 65, 112, 178, 276, 393, 540, 745, 967, 1230, 1591, 1957, 2457, 3046, 3732, 4526, 5440, 6482, 7666, 9003, 10506, 12187, 14060, 16140, 18439, 20974, 23760, 26811, 30146, 33780, 37731, 42017, 46656, 50653, 55969, 60505, 66560, 71677, 78533, 84277, 91998, 98415, 107069, 114205, 123863, 131766, 142500, 151222, 163105, 172697, 185807, 196322, 210739, 222231, 238036, 250562, 267840, 281456, 300293, 315059, 335544, 351520, 373744, 390991, 415050, 433631, 459620, 479600, 507617, 529063, 559209, 582187, 614566, 639146, 673863, 700115, 737280, 765275, 804997, 834809, 877201, 908905, 954084, 987754, 1035837, 1071552, 1122660, 1160499, 1214753, 1254796, 1312322, 1354652, 1415577, 1460276, 1524731, 1571884, 1640000 ]
 ];
 
-export function getLevelTotalExp(level: integer, growthRate: integer) {
-  return expLevels[growthRate][level - 1];
+export function getLevelTotalExp(level: integer, growthRate: GrowthRate): number {
+  if (level < 100)
+    return expLevels[growthRate][level - 1];
+
+  switch (growthRate) {
+    case GrowthRate.ERRATIC:
+      return (Math.pow(level, 4) + (Math.pow(level, 3) * 2000)) / 3500;
+    case GrowthRate.FAST:
+      return Math.pow(level, 3) * 4 / 5;
+    case GrowthRate.MEDIUM_FAST:
+      return Math.pow(level, 3);
+    case GrowthRate.MEDIUM_SLOW:
+      return (Math.pow(level, 3) * 6 / 5) - (15 * Math.pow(level, 2)) + (100 * level) - 140;
+    case GrowthRate.SLOW:
+      return Math.pow(level, 3) * 5 / 4;
+    case GrowthRate.FLUCTUATING:
+      return (Math.pow(level, 3) + ((level / 2) + 32)) * 4 / (100 + level);
+  }
 };
 
-export function getLevelRelExp(level: integer, growthRate: integer) {
+export function getLevelRelExp(level: integer, growthRate: GrowthRate): number {
   return getLevelTotalExp(level, growthRate) - getLevelTotalExp(level - 1, growthRate);
 };

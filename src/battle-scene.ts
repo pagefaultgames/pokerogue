@@ -13,7 +13,7 @@ import { Battle } from './battle';
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
 import { BattlePhase } from './battle-phase';
 import { initGameSpeed } from './system/game-speed';
-import { Arena } from './arena';
+import { Arena, ArenaBase, getBiomeHasProps, getBiomeKey } from './arena';
 import { GameData } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
@@ -27,6 +27,8 @@ const quickStart = false;
 export const startingLevel = 5;
 export const startingWave = 1;
 export const startingBiome = Biome.TOWN;
+
+export const maxExpLevel = 10000;
 
 export enum Button {
 	UP,
@@ -64,13 +66,12 @@ export default class BattleScene extends Phaser.Scene {
 	public field: Phaser.GameObjects.Container;
 	public fieldUI: Phaser.GameObjects.Container;
 	public abilityBar: AbilityBar;
-	public arenaBg: Phaser.GameObjects.Image;
-	public arenaBgTransition: Phaser.GameObjects.Image;
-	public arenaPlayer: Phaser.GameObjects.Image;
-	public arenaPlayerTransition: Phaser.GameObjects.Image;
-	public arenaEnemy: Phaser.GameObjects.Image;
-	public arenaEnemyTransition: Phaser.GameObjects.Image;
-	public arenaNextEnemy: Phaser.GameObjects.Image;
+	public arenaBg: Phaser.GameObjects.Sprite;
+	public arenaBgTransition: Phaser.GameObjects.Sprite;
+	public arenaPlayer: ArenaBase;
+	public arenaPlayerTransition: ArenaBase;
+	public arenaEnemy: ArenaBase;
+	public arenaNextEnemy: ArenaBase;
 	public arena: Arena;
 	public trainer: Phaser.GameObjects.Sprite;
 	public currentBattle: Battle;
@@ -209,11 +210,15 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('starter_select_gen_cursor_highlight', 'ui');
 
 		// Load arena images
-		Utils.getEnumValues(Biome).map(at => {
-			const atKey = Biome[at].toLowerCase();
-			this.loadImage(`${atKey}_bg`, 'arenas', `${atKey}_bg.png`);
-			this.loadImage(`${atKey}_a`, 'arenas', `${atKey}_a.png`);
-			this.loadImage(`${atKey}_b`, 'arenas', `${atKey}_b.png`);
+		Utils.getEnumValues(Biome).map(bt => {
+			const btKey = Biome[bt].toLowerCase();
+			this.loadImage(`${btKey}_bg`, 'arenas');
+			this.loadImage(`${btKey}_a`, 'arenas');
+			this.loadImage(`${btKey}_b`, 'arenas');
+			if (getBiomeHasProps(bt)) {
+				for (let p = 1; p <= 3; p++)
+					this.loadImage(`${btKey}_b_${p}`, 'arenas')
+			}
 		});
 
 		// Load trainer images
@@ -338,16 +343,17 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.arenaBg = this.add.sprite(0, 0, 'plains_bg');
 		this.arenaBgTransition = this.add.sprite(0, 0, `plains_bg`);
-		this.arenaPlayer = this.add.sprite(0, 0, `plains_a`);
-		this.arenaPlayerTransition = this.add.sprite(0, 0, `plains_a`);
-		this.arenaEnemy = this.add.sprite(0, 0, `plains_b`);
-		this.arenaNextEnemy = this.add.sprite(0, 0, `plains_b`);
+		this.arenaPlayer = new ArenaBase(this, true);
+		this.arenaPlayerTransition = new ArenaBase(this, true);
+		this.arenaEnemy = new ArenaBase(this, false);
+		this.arenaNextEnemy = new ArenaBase(this, false);
 
 		this.arenaBgTransition.setVisible(false);
 		this.arenaPlayerTransition.setVisible(false);
 
-		[this.arenaBg, this.arenaBgTransition, this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy].forEach(a => {
-			a.setOrigin(0, 0);
+		[ this.arenaBg, this.arenaBgTransition, this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy ].forEach(a => {
+			if (a instanceof Phaser.GameObjects.Sprite)
+				a.setOrigin(0, 0);
 			field.add(a);
 		});
 
@@ -481,8 +487,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.arenaBgTransition.setPosition(0, 0);
 		this.arenaPlayer.setPosition(300, 0);
 		this.arenaPlayerTransition.setPosition(0, 0);
-		this.arenaEnemy.setPosition(-280, 0);
-		this.arenaNextEnemy.setPosition(-280, 0);
+		[ this.arenaEnemy, this.arenaNextEnemy ].forEach(a => a.setPosition(-280, 0));
 
 		this.trainer.setTexture('trainer_m');
 		this.trainer.setPosition(406, 132);
@@ -518,14 +523,14 @@ export default class BattleScene extends Phaser.Scene {
 		this.arena = new Arena(this, biome, Biome[biome].toLowerCase());
 
 		if (init) {
-			const biomeKey = this.arena.getBiomeKey();
+			const biomeKey = getBiomeKey(biome);
 
 			this.arenaBg.setTexture(`${biomeKey}_bg`);
 			this.arenaBgTransition.setTexture(`${biomeKey}_bg`);
-			this.arenaPlayer.setTexture(`${biomeKey}_a`);
-			this.arenaPlayerTransition.setTexture(`${biomeKey}_a`);
-			this.arenaEnemy.setTexture(`${biomeKey}_b`);
-			this.arenaNextEnemy.setTexture(`${biomeKey}_b`);
+			this.arenaPlayer.setBiome(biome);
+			this.arenaPlayerTransition.setBiome(biome);
+			this.arenaEnemy.setBiome(biome);
+			this.arenaNextEnemy.setBiome(biome);
 		}
 
 		return this.arena;

@@ -1,4 +1,4 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene, { Button, maxExpLevel } from "../battle-scene";
 import { Mode } from "./ui";
 import UiHandler from "./uiHandler";
 import * as Utils from "../utils";
@@ -482,7 +482,7 @@ export default class SummaryUiHandler extends UiHandler {
         });
 
         const totalLvExp = getLevelTotalExp(this.pokemon.level, this.pokemon.species.growthRate);
-        const expRatio = this.pokemon.level < 100 ? this.pokemon.levelExp / totalLvExp : 0;
+        const expRatio = this.pokemon.level < maxExpLevel ? this.pokemon.levelExp / totalLvExp : 0;
 
         const expLabel = addTextObject(this.scene, 6, 112, 'EXP. POINTS', TextStyle.SUMMARY);
         expLabel.setOrigin(0, 0);
@@ -496,7 +496,7 @@ export default class SummaryUiHandler extends UiHandler {
         expText.setOrigin(1, 0);
         statsContainer.add(expText);
 
-        const nextLvExp = this.pokemon.level < 100
+        const nextLvExp = this.pokemon.level < maxExpLevel
           ? getLevelTotalExp(this.pokemon.level + 1, this.pokemon.species.growthRate) - this.pokemon.levelExp
           : 0;
         const nextLvExpText = addTextObject(this.scene, 208, 128, nextLvExp.toString(), TextStyle.WINDOW);

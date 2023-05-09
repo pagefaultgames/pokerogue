@@ -11,6 +11,7 @@ import * as Utils from '../utils';
 import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
 import { Unlockables } from '../system/unlockables';
+import { maxExpLevel } from '../battle-scene';
 
 type Modifier = Modifiers.Modifier;
 
@@ -696,7 +697,7 @@ const modifierPool = {
       return !party[0].scene.findModifier(m => m instanceof Modifiers.MapModifier) ? 1 : 0;
     }),
     new WeightedModifierType(modifierTypes.TM_GREAT, 2),
-    new WeightedModifierType(modifierTypes.EXP_SHARE, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 1 : 0),
+    new WeightedModifierType(modifierTypes.EXP_SHARE, (party: Pokemon[]) => party.filter(p => p.level < maxExpLevel).length ? 1 : 0),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3)
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
@@ -713,10 +714,10 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.LEFTOVERS, 2),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 2),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 3),
-    new WeightedModifierType(modifierTypes.EXP_CHARM, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 4 : 0),
-    new WeightedModifierType(modifierTypes.OVAL_CHARM, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 2 : 0),
+    new WeightedModifierType(modifierTypes.EXP_CHARM, (party: Pokemon[]) => party.filter(p => p.level < maxExpLevel).length ? 4 : 0),
+    new WeightedModifierType(modifierTypes.OVAL_CHARM, (party: Pokemon[]) => party.filter(p => p.level < maxExpLevel).length ? 2 : 0),
     new WeightedModifierType(modifierTypes.EXP_BALANCE,
-      (party: Pokemon[]) => party.filter(p => p.level < 100).length && !party[0].scene.findModifier(m => m instanceof Modifiers.ExpBalanceModifier) ? 1 : 0)
+      (party: Pokemon[]) => party.filter(p => p.level < maxExpLevel).length && !party[0].scene.findModifier(m => m instanceof Modifiers.ExpBalanceModifier) ? 1 : 0)
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 3),
@@ -724,7 +725,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 1 : 0)
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
   [ModifierTier.LUXURY]: [
-    new WeightedModifierType(modifierTypes.GOLDEN_EXP_CHARM, (party: Pokemon[]) => party.filter(p => p.level < 100).length ? 1 : 0),
+    new WeightedModifierType(modifierTypes.GOLDEN_EXP_CHARM, (party: Pokemon[]) => party.filter(p => p.level < maxExpLevel).length ? 1 : 0),
     new WeightedModifierType(modifierTypes.GOLDEN_POKEBALL, 1),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 1)
   ].map(m => { m.setTier(ModifierTier.LUXURY); return m; }),

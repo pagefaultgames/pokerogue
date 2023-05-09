@@ -1,4 +1,4 @@
-import BattleScene, { startingLevel, startingWave } from "./battle-scene";
+import BattleScene, { maxExpLevel, startingLevel, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult } from "./pokemon";
 import * as Utils from './utils';
 import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr } from "./data/move";
@@ -27,6 +27,7 @@ import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagType, ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
 import { CheckTrappedAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, SuppressWeatherEffectAbAttr, applyCheckTrappedAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
+import { getBiomeKey } from "./arena";
 
 export class CheckLoadPhase extends BattlePhase {
   private loaded: boolean;
@@ -157,7 +158,7 @@ export class EncounterPhase extends BattlePhase {
   }
 
   doEncounter() {
-    if (startingWave > 10 && startingLevel < 100) {
+    if (startingWave > 10) {
       for (let m = 0; m < Math.floor(startingWave / 10); m++)
         this.scene.addModifier(getPlayerModifierTypeOptionsForWave((m + 1) * 10, 1, this.scene.getParty())[0].type.newModifier());
     }
@@ -303,14 +304,12 @@ export class SwitchBiomePhase extends BattlePhase {
 
         this.scene.newArena(this.nextBiome);
 
-        const biomeKey = this.scene.arena.getBiomeKey();
+        const biomeKey = getBiomeKey(this.nextBiome);
         const bgTexture = `${biomeKey}_bg`;
-        const playerTexture = `${biomeKey}_a`;
-        const enemyTexture = `${biomeKey}_b`;
         this.scene.arenaBgTransition.setTexture(bgTexture)
         this.scene.arenaBgTransition.setAlpha(0);
         this.scene.arenaBgTransition.setVisible(true);
-        this.scene.arenaPlayerTransition.setTexture(playerTexture)
+        this.scene.arenaPlayerTransition.setBiome(this.nextBiome);
         this.scene.arenaPlayerTransition.setAlpha(0);
         this.scene.arenaPlayerTransition.setVisible(true);
 
@@ -324,11 +323,11 @@ export class SwitchBiomePhase extends BattlePhase {
           alpha: (target: any) => target === this.scene.arenaPlayer ? 0 : 1,
           onComplete: () => {
             this.scene.arenaBg.setTexture(bgTexture);
-            this.scene.arenaPlayer.setTexture(playerTexture);
+            this.scene.arenaPlayer.setBiome(this.nextBiome);
             this.scene.arenaPlayer.setAlpha(1);
-            this.scene.arenaEnemy.setTexture(enemyTexture);
+            this.scene.arenaEnemy.setBiome(this.nextBiome);
             this.scene.arenaEnemy.setAlpha(1);
-            this.scene.arenaNextEnemy.setTexture(enemyTexture);
+            this.scene.arenaNextEnemy.setBiome(this.nextBiome);
             this.scene.arenaBgTransition.setVisible(false);
             this.scene.arenaPlayerTransition.setVisible(false);
 
@@ -1550,7 +1549,7 @@ export class VictoryPhase extends PokemonPhase {
     const expBalanceModifier = this.scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
     const multipleParticipantExpBonusModifier = this.scene.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
     const expValue = this.scene.getEnemyPokemon().getExpValue();
-    const expPartyMembers = party.filter(p => p.hp && p.level < 100);
+    const expPartyMembers = party.filter(p => p.hp && p.level < maxExpLevel);
     const partyMemberExp = [];
     for (let partyMember of expPartyMembers) {
       const pId = partyMember.id;
@@ -1753,10 +1752,10 @@ export class LevelUpPhase extends PartyMemberPokemonPhase {
       const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
       for (let lm of levelMoves)
         this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm));
-      const evolution = pokemon.getEvolution();
-      if (evolution)
-        this.scene.unshiftPhase(new EvolutionPhase(this.scene, this.partyMemberIndex, evolution, this.lastLevel));
     }
+    const evolution = pokemon.getEvolution();
+    if (evolution)
+      this.scene.unshiftPhase(new EvolutionPhase(this.scene, this.partyMemberIndex, evolution, this.lastLevel));
   }
 }
 
