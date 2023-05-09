@@ -27,6 +27,7 @@ type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier;
 
 export class ModifierType {
   public id: string;
+  public generatorId: string;
   public name: string;
   public description: string;
   public iconImage: string;
@@ -66,6 +67,7 @@ export class ModifierTypeGenerator extends ModifierType {
   generateType(party: Pokemon[], pregenArgs?: any[]) {
     const ret = this.genTypeFunc(party, pregenArgs);
     if (ret) {
+      ret.generatorId = ret.id;
       ret.id = this.id;
       ret.setTier(this.tier);
     }
@@ -693,11 +695,9 @@ const modifierPool = {
       const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount;
     }),
-    new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => {
-      return !party[0].scene.findModifier(m => m instanceof Modifiers.MapModifier) ? 1 : 0;
-    }),
+    new WeightedModifierType(modifierTypes.MAP, 1),
     new WeightedModifierType(modifierTypes.TM_GREAT, 2),
-    new WeightedModifierType(modifierTypes.EXP_SHARE, (party: Pokemon[]) => party.filter(p => p.level < maxExpLevel).length ? 1 : 0),
+    new WeightedModifierType(modifierTypes.EXP_SHARE, 1),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3)
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
@@ -714,10 +714,9 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.LEFTOVERS, 2),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 2),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 3),
-    new WeightedModifierType(modifierTypes.EXP_CHARM, (party: Pokemon[]) => party.filter(p => p.level < maxExpLevel).length ? 4 : 0),
-    new WeightedModifierType(modifierTypes.OVAL_CHARM, (party: Pokemon[]) => party.filter(p => p.level < maxExpLevel).length ? 2 : 0),
-    new WeightedModifierType(modifierTypes.EXP_BALANCE,
-      (party: Pokemon[]) => party.filter(p => p.level < maxExpLevel).length && !party[0].scene.findModifier(m => m instanceof Modifiers.ExpBalanceModifier) ? 1 : 0)
+    new WeightedModifierType(modifierTypes.EXP_CHARM, 4),
+    new WeightedModifierType(modifierTypes.OVAL_CHARM, 2),
+    new WeightedModifierType(modifierTypes.EXP_BALANCE, 1)
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 3),
@@ -725,7 +724,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 1 : 0)
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
   [ModifierTier.LUXURY]: [
-    new WeightedModifierType(modifierTypes.GOLDEN_EXP_CHARM, (party: Pokemon[]) => party.filter(p => p.level < maxExpLevel).length ? 1 : 0),
+    new WeightedModifierType(modifierTypes.GOLDEN_EXP_CHARM, 1),
     new WeightedModifierType(modifierTypes.GOLDEN_POKEBALL, 1),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 1)
   ].map(m => { m.setTier(ModifierTier.LUXURY); return m; }),
@@ -769,9 +768,12 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], player?: bool
     let i = 0;
     pool[t].reduce((total: integer, modifierType: WeightedModifierType) => {
       const weightedModifierType = modifierType as WeightedModifierType;
-      const weight = weightedModifierType.weight instanceof Function
-      ? (weightedModifierType.weight as Function)(party)
-      : weightedModifierType.weight as integer;
+      const existingModifier = party[0].scene.findModifier(m => (m.type.generatorId || m.type.id) === weightedModifierType.modifierType.id);
+      const weight = !existingModifier || existingModifier.stackCount < existingModifier.getMaxStackCount()
+        ? weightedModifierType.weight instanceof Function
+          ? (weightedModifierType.weight as Function)(party)
+          : weightedModifierType.weight as integer
+        : 0;
       if (weight)
         total += weight;
       else {

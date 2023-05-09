@@ -5,6 +5,7 @@ import { GeneratedPersistentModifierType, ModifierTypeGenerator, getModifierType
 export default class ModifierData {
   private player: boolean;
   private typeId: string;
+  private typeGeneratorId: string;
   private typePregenArgs: any[];
   private args: any[];
   private stackCount: integer;
@@ -15,6 +16,7 @@ export default class ModifierData {
     const sourceModifier = source instanceof PersistentModifier ? source as PersistentModifier : null;
     this.player = player;
     this.typeId = sourceModifier ? sourceModifier.type.id : source.typeId;
+    this.typeGeneratorId = sourceModifier ? sourceModifier.type.generatorId : source.typeGeneratorId;
     if (sourceModifier) {
       if ('getPregenArgs' in source.type)
         this.typePregenArgs = (source.type as GeneratedPersistentModifierType).getPregenArgs();
@@ -32,6 +34,7 @@ export default class ModifierData {
 
     let type = typeFunc();
     type.id = this.typeId;
+    type.generatorId = this.typeGeneratorId;
 
     if (type instanceof ModifierTypeGenerator)
       type = (type as ModifierTypeGenerator).generateType(this.player ? scene.getParty() : scene.getEnemyParty(), this.typePregenArgs);
