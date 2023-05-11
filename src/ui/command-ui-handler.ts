@@ -43,7 +43,7 @@ export default class CommandUiHandler extends UiHandler {
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.bg.setTexture('bg_command');
     messageHandler.message.setWordWrapWidth(1110);
-    messageHandler.showText(`What will\n${this.scene.getPlayerPokemon().name} do?`, 0);
+    messageHandler.showText(`What will\n${(this.scene.getCurrentPhase() as CommandPhase).getPokemon().name} do?`, 0);
     this.setCursor(this.cursor);
   }
 
@@ -65,7 +65,7 @@ export default class CommandUiHandler extends UiHandler {
             success = true;
             break;
           case 2:
-            ui.setMode(Mode.PARTY, PartyUiMode.SWITCH);
+            ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex());
             success = true;
             break;
           case 3:

@@ -157,7 +157,7 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
 
     if (ret && pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
-      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), Math.max(Math.floor(pokemon.getMaxHp() / 4), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), pokemon.getFieldIndex(), Math.max(Math.floor(pokemon.getMaxHp() / 4), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
       return true;
     }
     
@@ -181,7 +181,7 @@ class TypeImmunityStatChangeAbAttr extends TypeImmunityAbAttr {
 
     if (ret) {
       cancelled.value = true;
-      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), true, [ this.stat ], this.levels));
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), pokemon.getFieldIndex(), true, [ this.stat ], this.levels));
     }
     
     return ret;
@@ -406,9 +406,9 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
   }
 
   applyPostSummon(pokemon: Pokemon, args: any[]): boolean {
-    const statChangePhase = new StatChangePhase(pokemon.scene, pokemon.isPlayer() === this.selfTarget, this.selfTarget, this.stats, this.levels);
+    const statChangePhase = new StatChangePhase(pokemon.scene, pokemon.isPlayer() === this.selfTarget, pokemon.getFieldIndex(), this.selfTarget, this.stats, this.levels);
 
-    if (!this.selfTarget && !pokemon.getOpponent()?.summonData)
+    if (!this.selfTarget && !pokemon.getOpponent(0)?.summonData)
       pokemon.scene.pushPhase(statChangePhase); // TODO: This causes the ability bar to be shown at the wrong time
     else
       pokemon.scene.unshiftPhase(statChangePhase);
@@ -576,7 +576,7 @@ export class PostTurnAbAttr extends AbAttr {
 
 export class PostTurnSpeedBoostAbAttr extends PostTurnAbAttr {
   applyPostTurn(pokemon: Pokemon, args: any[]): boolean {
-    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), true, [ BattleStat.SPD ], 1));
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), pokemon.getFieldIndex(), true, [ BattleStat.SPD ], 1));
     return true;
   }
 }
@@ -594,7 +594,8 @@ export class PostTurnHealAbAttr extends PostTurnAbAttr {
   applyPostTurn(pokemon: Pokemon, args: any[]): boolean {
     if (pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
-      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), Math.max(Math.floor(pokemon.getMaxHp() / 16), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), pokemon.getFieldIndex(),
+        Math.max(Math.floor(pokemon.getMaxHp() / 16), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
       return true;
     }
 
@@ -632,7 +633,7 @@ export class PostWeatherLapseHealAbAttr extends PostWeatherLapseAbAttr {
   applyPostWeatherLapse(pokemon: Pokemon, weather: Weather, args: any[]): boolean {
     if (pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
-      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), Math.max(Math.floor(pokemon.getMaxHp() / (16 / this.healFactor)), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), pokemon.getFieldIndex(), Math.max(Math.floor(pokemon.getMaxHp() / (16 / this.healFactor)), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
       return true;
     }
 
@@ -988,7 +989,7 @@ function canApplyAttr(pokemon: Pokemon, attr: AbAttr): boolean {
 }
 
 function queueShowAbility(pokemon: Pokemon): void {
-  pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.isPlayer()));
+  pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.isPlayer(), pokemon.getFieldIndex()));
   pokemon.scene.clearPhaseQueueSplice();
 }
 
@@ -1232,8 +1233,8 @@ export function initAbilities() {
     new Ability(Abilities.MAGMA_ARMOR, "Magma Armor", "Prevents the POKéMON from becoming frozen.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.FREEZE),
     new Ability(Abilities.MAGNET_PULL, "Magnet Pull", "Prevents STEEL-type POKéMON from escaping.", 3)
-      .attr(ArenaTrapAbAttr)
-      .condition((pokemon: Pokemon) => pokemon.getOpponent()?.isOfType(Type.STEEL)),
+      /*.attr(ArenaTrapAbAttr)
+      .condition((pokemon: Pokemon) => pokemon.getOpponent()?.isOfType(Type.STEEL))*/, // TODO: Rework
     new Ability(Abilities.MARVEL_SCALE, "Marvel Scale (N)", "Ups DEFENSE if there is a status problem.", 3),
     new Ability(Abilities.MINUS, "Minus (N)", "Ups SP. ATK if another POKéMON has PLUS or MINUS.", 3),
     new Ability(Abilities.NATURAL_CURE, "Natural Cure (N)", "All status problems heal when it switches out.", 3),

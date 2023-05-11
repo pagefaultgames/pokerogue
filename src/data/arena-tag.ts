@@ -143,8 +143,7 @@ class SpikesTag extends ArenaTrapTag {
     super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    const target = source.getOpponent();
-    arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${target.name}'s feet!`);
+    arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${source.getOpponentDescriptor()}'s feet!`);
   }
 
   activateTrap(pokemon: Pokemon): boolean {
@@ -170,15 +169,14 @@ class ToxicSpikesTag extends ArenaTrapTag {
     super.onAdd(arena);
     
     const source = arena.scene.getPokemonById(this.sourceId);
-    const target = source.getOpponent();
-    arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${target.name}'s feet!`);
+    arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${source.getOpponentDescriptor()}'s feet!`);
   }
 
   activateTrap(pokemon: Pokemon): boolean {
     if (!pokemon.status && (!pokemon.isOfType(Type.FLYING) || pokemon.getTag(BattlerTagType.IGNORE_FLYING) || pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))) {
       const toxic = this.layers > 1;
 
-      pokemon.scene.unshiftPhase(new ObtainStatusEffectPhase(pokemon.scene, pokemon.isPlayer(),
+      pokemon.scene.unshiftPhase(new ObtainStatusEffectPhase(pokemon.scene, pokemon.isPlayer(), pokemon.getFieldIndex(),
         !toxic ? StatusEffect.POISON : StatusEffect.TOXIC, null, `the ${this.getMoveName()}`));
       return true;
     }
@@ -196,8 +194,7 @@ class StealthRockTag extends ArenaTrapTag {
     super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    const target = source.getOpponent();
-    arena.scene.queueMessage(`Pointed stones float in the air\naround ${target.name}!`);
+    arena.scene.queueMessage(`Pointed stones float in the air\naround ${source.getOpponentDescriptor()}!`);
   }
 
   activateTrap(pokemon: Pokemon): boolean {
@@ -242,8 +239,8 @@ export class TrickRoomTag extends ArenaTag {
   }
 
   apply(args: any[]): boolean {
-    const speedDelayed = args[0] as Utils.BooleanHolder;
-    speedDelayed.value = !speedDelayed.value;
+    const speedReversed = args[0] as Utils.BooleanHolder;
+    speedReversed.value = !speedReversed.value;
     return true;
   }
 

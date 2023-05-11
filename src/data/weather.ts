@@ -100,17 +100,10 @@ export class Weather {
   }
 
   isEffectSuppressed(scene: BattleScene): boolean {
-    const playerPokemon = scene.getPlayerPokemon();
-    const enemyPokemon = scene.getEnemyPokemon();
+    const field = scene.getField().filter(p => p);
 
-    if (playerPokemon) {
-      const suppressWeatherEffectAbAttr = playerPokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr).find(() => true) as SuppressWeatherEffectAbAttr;
-      if (suppressWeatherEffectAbAttr && (!this.isImmutable() || suppressWeatherEffectAbAttr.affectsImmutable))
-        return true;
-    }
-
-    if (enemyPokemon) {
-      const suppressWeatherEffectAbAttr = enemyPokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr).find(() => true) as SuppressWeatherEffectAbAttr;
+    for (let pokemon of field) {
+      const suppressWeatherEffectAbAttr = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr).find(() => true) as SuppressWeatherEffectAbAttr;
       if (suppressWeatherEffectAbAttr && (!this.isImmutable() || suppressWeatherEffectAbAttr.affectsImmutable))
         return true;
     }

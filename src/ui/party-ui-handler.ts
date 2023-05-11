@@ -42,6 +42,7 @@ export type PokemonMoveSelectFilter = (pokemonMove: PokemonMove) => string;
 
 export default class PartyUiHandler extends MessageUiHandler {
   private partyUiMode: PartyUiMode;
+  private fieldIndex: integer;
 
   private partyContainer: Phaser.GameObjects.Container;
   private partySlotsContainer: Phaser.GameObjects.Container;
@@ -143,17 +144,19 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.partyUiMode = args[0] as PartyUiMode;
 
+    this.fieldIndex = args.length > 1 ? args[1] as integer : -1;
+
     this.partyContainer.setVisible(true);
     this.populatePartySlots();
     this.setCursor(this.cursor < 6 ? this.cursor : 0);
 
-    if (args.length > 1 && args[1] instanceof Function)
-      this.selectCallback = args[1];
-    this.selectFilter = args.length > 2 && args[2] instanceof Function
-      ? args[2] as PokemonSelectFilter
+    if (args.length > 2 && args[2] instanceof Function)
+      this.selectCallback = args[2];
+    this.selectFilter = args.length > 3 && args[3] instanceof Function
+      ? args[3] as PokemonSelectFilter
       : PartyUiHandler.FilterAll;
-    this.moveSelectFilter = args.length > 3 && args[3] instanceof Function
-      ? args[3] as PokemonMoveSelectFilter
+    this.moveSelectFilter = args.length > 4 && args[4] instanceof Function
+      ? args[4] as PokemonMoveSelectFilter
       : PartyUiHandler.FilterAllMoves;
   }
 
@@ -414,7 +417,8 @@ export default class PartyUiHandler extends MessageUiHandler {
           if (this.cursor) {
             this.options.push(PartyOption.SEND_OUT);
             if (this.partyUiMode !== PartyUiMode.FAINT_SWITCH
-                && this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === this.scene.getPlayerPokemon().id))
+                && this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
+                  && (m as SwitchEffectTransferModifier).pokemonId === this.scene.getPlayerField()[this.fieldIndex].id))
               this.options.push(PartyOption.PASS_BATON);
           }
           break;

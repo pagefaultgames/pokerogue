@@ -936,7 +936,8 @@ export class HealAttr extends MoveEffectAttr {
   }
 
   addHealPhase(user: Pokemon, healRatio: number) {
-    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.isPlayer(), Math.max(Math.floor(user.getMaxHp() * healRatio), 1), getPokemonMessage(user, ' regained\nhealth!'), true, !this.showAnim));
+    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.isPlayer(), user.getFieldIndex(),
+      Math.max(Math.floor(user.getMaxHp() * healRatio), 1), getPokemonMessage(user, ' regained\nhealth!'), true, !this.showAnim));
   }
 }
 
@@ -977,7 +978,8 @@ export class HitHealAttr extends MoveHitEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.isPlayer(), Math.max(Math.floor(user.turnData.damageDealt * this.healRatio), 1), getPokemonMessage(target, ` had its\nenergy drained!`), false, true));
+    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.isPlayer(), user.getFieldIndex(),
+      Math.max(Math.floor(user.turnData.damageDealt * this.healRatio), 1), getPokemonMessage(target, ` had its\nenergy drained!`), false, true));
     return true;
   }
 }
@@ -1214,7 +1216,7 @@ export class StatChangeAttr extends MoveEffectAttr {
 
     if (move.chance < 0 || move.chance === 100 || Utils.randInt(100) < move.chance) {
       const levels = this.getLevels(user);
-      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.isPlayer() === this.selfTarget, this.selfTarget, this.stats, levels));
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.isPlayer() === this.selfTarget, user.getFieldIndex(), this.selfTarget, this.stats, levels));
       return true;
     }
 
@@ -1770,8 +1772,8 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
       const moveIndex = moveset.findIndex(m => m.moveId === move.moveId);
       user.getMoveQueue().push({ move: move.moveId, ignorePP: this.enemyMoveset });
       user.scene.unshiftPhase(user.isPlayer()
-        ? new PlayerMovePhase(user.scene, user as PlayerPokemon, moveset[moveIndex], true)
-        : new EnemyMovePhase(user.scene, user as EnemyPokemon, moveset[moveIndex], true));
+        ? new PlayerMovePhase(user.scene, user as PlayerPokemon, target.getFieldIndex(), moveset[moveIndex], true)
+        : new EnemyMovePhase(user.scene, user as EnemyPokemon, target.getFieldIndex(), moveset[moveIndex], true));
       return true;
     }
 
@@ -1786,8 +1788,8 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
       const moveId = moveIds[Utils.randInt(moveIds.length)];
       user.getMoveQueue().push({ move: moveId, ignorePP: true });
       user.scene.unshiftPhase(user.isPlayer()
-        ? new PlayerMovePhase(user.scene, user as PlayerPokemon, new PokemonMove(moveId, 0, 0, true), true)
-        : new EnemyMovePhase(user.scene, user as EnemyPokemon, new PokemonMove(moveId, 0, 0, true), true));
+        ? new PlayerMovePhase(user.scene, user as PlayerPokemon, target.getFieldIndex(), new PokemonMove(moveId, 0, 0, true), true)
+        : new EnemyMovePhase(user.scene, user as EnemyPokemon, target.getFieldIndex(), new PokemonMove(moveId, 0, 0, true), true));
       initMoveAnim(moveId).then(() => {
         loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
@@ -1824,8 +1826,8 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
 
     user.getMoveQueue().push({ move: copiedMove.move, ignorePP: true });
     user.scene.unshiftPhase(user.isPlayer()
-      ? new PlayerMovePhase(user.scene, user as PlayerPokemon, new PokemonMove(copiedMove.move, 0, 0, true), true)
-      : new EnemyMovePhase(user.scene, user as EnemyPokemon, new PokemonMove(copiedMove.move, 0, 0, true), true));
+      ? new PlayerMovePhase(user.scene, user as PlayerPokemon, target.getFieldIndex(), new PokemonMove(copiedMove.move, 0, 0, true), true)
+      : new EnemyMovePhase(user.scene, user as EnemyPokemon, target.getFieldIndex(), new PokemonMove(copiedMove.move, 0, 0, true), true));
 
     return true;
   }
@@ -1932,10 +1934,10 @@ export function applyFilteredMoveAttrs(attrFilter: MoveAttrFilter, user: Pokemon
   return applyMoveAttrsInternal(attrFilter, user, target, move, args);
 }
 
-export function getMoveTarget(user: Pokemon, move: Moves): Pokemon {
+export function getMoveTarget(user: Pokemon, targetIndex: integer, move: Moves): Pokemon {
   const moveTarget = allMoves[move].moveTarget;
 
-  const other = user.getOpponent();
+  const other = user.getOpponent(targetIndex);
 
   switch (moveTarget) {
     case MoveTarget.USER:

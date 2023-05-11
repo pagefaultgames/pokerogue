@@ -831,8 +831,8 @@ export class CommonBattleAnim extends BattleAnim {
 export class MoveAnim extends BattleAnim {
     public move: Moves;
     
-    constructor(move: Moves, user: Pokemon) {
-        super(user, getMoveTarget(user, move));
+    constructor(move: Moves, user: Pokemon, targetIndex: integer) {
+        super(user, getMoveTarget(user, targetIndex, move));
 
         this.move = move;
     }
@@ -852,7 +852,7 @@ export class MoveChargeAnim extends MoveAnim {
     private chargeAnim: ChargeAnim;
     
     constructor(chargeAnim: ChargeAnim, move: Moves, user: Pokemon) {
-        super(move, user);
+        super(move, user, 0);
 
         this.chargeAnim = chargeAnim;
     }

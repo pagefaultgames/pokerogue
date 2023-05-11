@@ -179,6 +179,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract isPlayer(): boolean;
 
+  abstract getFieldIndex(): integer;
+
   loadAssets(): Promise<void> {
     return new Promise(resolve => {
       const moveIds = this.getMoveset().map(m => m.getMove().id);
@@ -496,11 +498,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.levelExp = this.exp - getLevelTotalExp(this.level, this.getSpeciesForm().growthRate);
   }
 
-  getOpponent(): Pokemon {
-    const ret = this.isPlayer() ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon();
+  getOpponent(targetIndex: integer): Pokemon {
+    const ret = this.getOpponents()[targetIndex];
     if (ret.summonData)
       return ret;
     return null;
+  }
+
+  getOpponents(): Pokemon[] {
+    return this.isPlayer() ? this.scene.getEnemyField() : this.scene.getPlayerField();
+  }
+
+  getOpponentDescriptor(): string {
+    const opponents = this.getOpponents();
+    if (opponents.length === 1)
+      return opponents[0].name;
+    return this.isPlayer() ? 'the opposing team' : 'your team';
   }
 
   apply(source: Pokemon, battlerMove: PokemonMove): MoveResult {
@@ -626,9 +639,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.hp = Math.max(this.hp - damage, 0);
     if (!this.hp) {
-      this.scene.pushPhase(new FaintPhase(this.scene, this.isPlayer()));
+      this.scene.pushPhase(new FaintPhase(this.scene, this.isPlayer(), this.getFieldIndex()));
       this.resetSummonData();
-      this.getOpponent()?.resetBattleSummonData();
     }
   }
 
@@ -946,6 +958,10 @@ export class PlayerPokemon extends Pokemon {
     return true;
   }
 
+  getFieldIndex(): integer {
+    return this.scene.getPlayerField().indexOf(this);
+  }
+
   generateCompatibleTms(): void {
     this.compatibleTms = [];
 
@@ -1125,6 +1141,10 @@ export class EnemyPokemon extends Pokemon {
 
   isPlayer() {
     return false;
+  }
+
+  getFieldIndex(): integer {
+    return this.scene.getEnemyField().indexOf(this);
   }
 
   addToParty() {

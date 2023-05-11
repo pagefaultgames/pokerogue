@@ -161,7 +161,7 @@ export class Arena {
     this.weather = weather ? new Weather(weather, viaMove ? 5 : 0) : null;
 
     if (this.weather) {
-      this.scene.unshiftPhase(new CommonAnimPhase(this.scene, true, CommonAnim.SUNNY + (weather - 1)));
+      this.scene.unshiftPhase(new CommonAnimPhase(this.scene, true, 0, 0, CommonAnim.SUNNY + (weather - 1)));
       this.scene.queueMessage(getWeatherStartMessage(weather));
     } else
       this.scene.queueMessage(getWeatherClearMessage(oldWeatherType));
