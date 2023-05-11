@@ -266,7 +266,7 @@ export function getRandomWeatherType(biome: Biome): WeatherType {
         { weatherType: WeatherType.STRONG_WINDS, weight: 1 }
       ];
       break;
-    case Biome.LAND:
+    case Biome.BADLANDS:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
         { weatherType: WeatherType.SUNNY, weight: 3 },

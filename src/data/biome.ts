@@ -18,7 +18,7 @@ export enum Biome {
   LAKE,
   SEABED,
   MOUNTAIN,
-  LAND,
+  BADLANDS,
   CAVE,
   DESERT,
   ICE_CAVE,
@@ -69,8 +69,8 @@ export const biomeLinks: BiomeLinks = {
   [Biome.LAKE]: [ Biome.BEACH, Biome.SWAMP ],
   [Biome.SEABED]: Biome.CAVE,
   [Biome.MOUNTAIN]: [ Biome.WASTELAND, Biome.VOLCANO ],
-  [Biome.LAND]: [ Biome.DESERT, Biome.MOUNTAIN ],
-  [Biome.CAVE]: [ Biome.LAND, Biome.BEACH ],
+  [Biome.BADLANDS]: [ Biome.DESERT, Biome.MOUNTAIN ],
+  [Biome.CAVE]: [ Biome.BADLANDS, Biome.BEACH ],
   [Biome.DESERT]: Biome.RUINS,
   [Biome.ICE_CAVE]: Biome.LAKE,
   [Biome.MEADOW]: Biome.PLAINS,
@@ -80,7 +80,7 @@ export const biomeLinks: BiomeLinks = {
   [Biome.DOJO]: Biome.PLAINS,
   [Biome.FACTORY]: Biome.PLAINS,
   [Biome.RUINS]: Biome.FOREST,
-  [Biome.WASTELAND]: Biome.LAND,
+  [Biome.WASTELAND]: Biome.BADLANDS,
   [Biome.ABYSS]: Biome.SPACE,
   [Biome.SPACE]: Biome.RUINS
 };
@@ -476,7 +476,7 @@ export const biomePools: BiomePools = {
     [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.TORNADUS ],
     [BiomePoolTier.BOSS_ULTRA_RARE]: [ Species.HO_OH ]
   },
-  [Biome.LAND]: {
+  [Biome.BADLANDS]: {
     [BiomePoolTier.COMMON]: [
       { 1: [ Species.DIGLETT ], 26: [ Species.DUGTRIO ] },
       { 1: [ Species.GEODUDE ], 25: [ Species.GRAVELER ] },
@@ -857,12 +857,12 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.SANDSHREW, Type.GROUND, -1, [
-        [ Biome.LAND, BiomePoolTier.UNCOMMON ],
+        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
         [ Biome.DESERT, BiomePoolTier.COMMON ]
       ]
     ],
     [ Species.SANDSLASH, Type.GROUND, -1, [
-        [ Biome.LAND, BiomePoolTier.UNCOMMON ],
+        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
         [ Biome.DESERT, BiomePoolTier.COMMON ],
         [ Biome.DESERT, BiomePoolTier.BOSS ]
       ]
@@ -968,12 +968,12 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.DIGLETT, Type.GROUND, -1, [
-        [ Biome.LAND, BiomePoolTier.COMMON ]
+        [ Biome.BADLANDS, BiomePoolTier.COMMON ]
       ]
     ],
     [ Species.DUGTRIO, Type.GROUND, -1, [
-        [ Biome.LAND, BiomePoolTier.COMMON ],
-        [ Biome.LAND, BiomePoolTier.BOSS ]
+        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
+        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
       ]
     ],
     [ Species.MEOWTH, Type.NORMAL, -1, [
@@ -1089,18 +1089,18 @@ export const biomePools: BiomePools = {
     ],
     [ Species.GEODUDE, Type.ROCK, Type.GROUND, [
         [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAND, BiomePoolTier.COMMON ],
+        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
         [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
       ]
     ],
     [ Species.GRAVELER, Type.ROCK, Type.GROUND, [
         [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAND, BiomePoolTier.COMMON ],
+        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
         [ Biome.CAVE, BiomePoolTier.UNCOMMON ]
       ]
     ],
     [ Species.GOLEM, Type.ROCK, Type.GROUND, [
-        [ Biome.LAND, BiomePoolTier.BOSS ]
+        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
       ]
     ],
     [ Species.PONYTA, Type.FIRE, -1, [
@@ -1189,7 +1189,7 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.ONIX, Type.ROCK, Type.GROUND, [
-        [ Biome.LAND, BiomePoolTier.RARE ],
+        [ Biome.BADLANDS, BiomePoolTier.RARE ],
         [ Biome.CAVE, BiomePoolTier.RARE ],
         [ Biome.CAVE, BiomePoolTier.BOSS ]
       ]
@@ -1232,14 +1232,14 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.CUBONE, Type.GROUND, -1, [
-        [ Biome.LAND, BiomePoolTier.COMMON ],
+        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
         [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ]
       ]
     ],
     [ Species.MAROWAK, Type.GROUND, -1, [
-        [ Biome.LAND, BiomePoolTier.COMMON ],
+        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
         [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAND, BiomePoolTier.BOSS ]
+        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
       ]
     ],
     [ Species.HITMONLEE, Type.FIGHTING, -1, [
@@ -1267,12 +1267,12 @@ export const biomePools: BiomePools = {
     ],
     [ Species.RHYHORN, Type.GROUND, Type.ROCK, [
         [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAND, BiomePoolTier.COMMON ]
+        [ Biome.BADLANDS, BiomePoolTier.COMMON ]
       ]
     ],
     [ Species.RHYDON, Type.GROUND, Type.ROCK, [
         [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAND, BiomePoolTier.COMMON ]
+        [ Biome.BADLANDS, BiomePoolTier.COMMON ]
       ]
     ],
     [ Species.CHANSEY, Type.NORMAL, -1, [
@@ -1722,11 +1722,11 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.GLIGAR, Type.GROUND, Type.FLYING, [
-        [ Biome.LAND, BiomePoolTier.RARE ]
+        [ Biome.BADLANDS, BiomePoolTier.RARE ]
       ]
     ],
     [ Species.STEELIX, Type.STEEL, Type.GROUND, [
-        [ Biome.LAND, BiomePoolTier.BOSS_RARE ]
+        [ Biome.BADLANDS, BiomePoolTier.BOSS_RARE ]
       ]
     ],
     [ Species.SNUBBULL, Type.FAIRY, -1, [
@@ -1835,12 +1835,12 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.PHANPY, Type.GROUND, -1, [
-        [ Biome.LAND, BiomePoolTier.COMMON ]
+        [ Biome.BADLANDS, BiomePoolTier.COMMON ]
       ]
     ],
     [ Species.DONPHAN, Type.GROUND, -1, [
-        [ Biome.LAND, BiomePoolTier.COMMON ],
-        [ Biome.LAND, BiomePoolTier.BOSS ]
+        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
+        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
       ]
     ],
     [ Species.PORYGON2, Type.NORMAL, -1, [
@@ -2263,12 +2263,12 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.NUMEL, Type.FIRE, Type.GROUND, [
-        [ Biome.LAND, BiomePoolTier.UNCOMMON ],
+        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
         [ Biome.VOLCANO, BiomePoolTier.COMMON ]
       ]
     ],
     [ Species.CAMERUPT, Type.FIRE, Type.GROUND, [
-        [ Biome.LAND, BiomePoolTier.UNCOMMON ],
+        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
         [ Biome.VOLCANO, BiomePoolTier.COMMON ],
         [ Biome.VOLCANO, BiomePoolTier.BOSS ]
       ]
@@ -2558,7 +2558,7 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.GROUDON, Type.GROUND, -1, [
-        [ Biome.LAND, BiomePoolTier.BOSS_ULTRA_RARE ]
+        [ Biome.BADLANDS, BiomePoolTier.BOSS_ULTRA_RARE ]
       ]
     ],
     [ Species.RAYQUAZA, Type.DRAGON, Type.FLYING, [
@@ -2953,7 +2953,7 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.RHYPERIOR, Type.GROUND, Type.ROCK, [
-        [ Biome.LAND, BiomePoolTier.BOSS ],
+        [ Biome.BADLANDS, BiomePoolTier.BOSS ],
         [ Biome.END, BiomePoolTier.UNCOMMON ]
       ]
     ],
@@ -2990,7 +2990,7 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.GLISCOR, Type.GROUND, Type.FLYING, [
-        [ Biome.LAND, BiomePoolTier.BOSS ]
+        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
       ]
     ],
     [ Species.MAMOSWINE, Type.ICE, Type.GROUND, [
@@ -3235,13 +3235,13 @@ export const biomePools: BiomePools = {
     ],
     [ Species.ROGGENROLA, Type.ROCK, -1, [
         [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAND, BiomePoolTier.UNCOMMON ],
+        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
         [ Biome.CAVE, BiomePoolTier.COMMON ]
       ]
     ],
     [ Species.BOLDORE, Type.ROCK, -1, [
         [ Biome.MOUNTAIN, BiomePoolTier.UNCOMMON ],
-        [ Biome.LAND, BiomePoolTier.UNCOMMON ],
+        [ Biome.BADLANDS, BiomePoolTier.UNCOMMON ],
         [ Biome.CAVE, BiomePoolTier.COMMON ]
       ]
     ],
@@ -3259,12 +3259,12 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.DRILBUR, Type.GROUND, -1, [
-        [ Biome.LAND, BiomePoolTier.COMMON ]
+        [ Biome.BADLANDS, BiomePoolTier.COMMON ]
       ]
     ],
     [ Species.EXCADRILL, Type.GROUND, Type.STEEL, [
-        [ Biome.LAND, BiomePoolTier.COMMON ],
-        [ Biome.LAND, BiomePoolTier.BOSS ]
+        [ Biome.BADLANDS, BiomePoolTier.COMMON ],
+        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
       ]
     ],
     [ Species.AUDINO, Type.NORMAL, -1, [
@@ -3798,8 +3798,8 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.LANDORUS, Type.GROUND, Type.FLYING, [
-        [ Biome.LAND, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.LAND, BiomePoolTier.BOSS_SUPER_RARE ]
+        [ Biome.BADLANDS, BiomePoolTier.ULTRA_RARE ],
+        [ Biome.BADLANDS, BiomePoolTier.BOSS_SUPER_RARE ]
       ]
     ],
     [ Species.KYUREM, Type.DRAGON, Type.ICE, [

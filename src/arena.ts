@@ -123,7 +123,7 @@ export class Arena {
         return Type.WATER;
       case Biome.MOUNTAIN:
         return Type.FLYING;
-      case Biome.LAND:
+      case Biome.BADLANDS:
         return Type.GROUND;
       case Biome.CAVE:
       case Biome.DESERT:
@@ -189,7 +189,7 @@ export class Arena {
       case Biome.BEACH:
       case Biome.LAKE:
       case Biome.MOUNTAIN:
-      case Biome.LAND:
+      case Biome.BADLANDS:
       case Biome.DESERT:
       case Biome.MEADOW:
       case Biome.DOJO:
@@ -276,7 +276,7 @@ export class Arena {
         return 2.629;
       case Biome.MOUNTAIN:
         return 4.018;
-      case Biome.LAND:
+      case Biome.BADLANDS:
         return 17.790;
       case Biome.CAVE:
         return 14.240;
@@ -329,6 +329,7 @@ export function getBiomeKey(biome: Biome): string {
 export function getBiomeHasProps(biomeType: Biome): boolean {
   switch (biomeType) {
     case Biome.LAKE:
+    case Biome.BADLANDS:
     case Biome.DESERT:
       return true;
   }
