@@ -328,8 +328,11 @@ export function getBiomeKey(biome: Biome): string {
 
 export function getBiomeHasProps(biomeType: Biome): boolean {
   switch (biomeType) {
+    case Biome.BEACH:
     case Biome.LAKE:
+    case Biome.SEABED:
     case Biome.BADLANDS:
+    case Biome.CAVE:
     case Biome.DESERT:
       return true;
   }
@@ -376,11 +379,11 @@ export class ArenaBase extends Phaser.GameObjects.Container {
       this.propValue = propValue === undefined
         ? hasProps ? Utils.randInt(8) : 0
         : propValue;
-      for (let p = 0; p < 3; p++) {
-        this.props[p].setTexture(`${biomeKey}_b${hasProps ? `_${p + 1}` : ''}`);
-        this.props[p].setVisible(hasProps && !!(this.propValue & (1 << p)));
-        this.add(this.props[p]);
-      }
+      this.props.forEach((prop, p) => {
+        prop.setTexture(`${biomeKey}_b${hasProps ? `_${p + 1}` : ''}`);
+        prop.setVisible(hasProps && !!(this.propValue & (1 << p)));
+        this.add(prop);
+      });
     }
   }
 }
