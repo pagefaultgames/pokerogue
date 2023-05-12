@@ -654,7 +654,7 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
     if (pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
       scene.queueMessage(getPokemonMessage(pokemon, ` is hurt\nby its ${pokemon.getAbility()}!`));
-      scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.isPlayer(), MoveResult.OTHER));
+      scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.isPlayer(), pokemon.getFieldIndex(), MoveResult.OTHER));
       pokemon.damage(Math.ceil(pokemon.getMaxHp() * (16 / this.damageFactor)));
       return true;
     }

@@ -127,8 +127,8 @@ export class GameData {
     const sessionData = {
       party: scene.getParty().map(p => new PokemonData(p)),
       enemyField: scene.getEnemyField().map(p => new PokemonData(p)),
-      modifiers: scene.findModifiers(m => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: scene.findModifiers(m => true, false).map(m => new PersistentModifierData(m, false)),
+      modifiers: scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
+      enemyModifiers: scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
       arena: new ArenaData(scene.arena),
       pokeballCounts: scene.pokeballCounts,
       waveIndex: scene.currentBattle.waveIndex,
@@ -153,7 +153,7 @@ export class GameData {
 
       try {
         const sessionData = JSON.parse(atob(localStorage.getItem('sessionData')), (k: string, v: any) => {
-          if (k === 'party' || k === 'enemyParty') {
+          if (k === 'party' || k === 'enemyField') {
             const ret: PokemonData[] = [];
             for (let pd of v)
               ret.push(new PokemonData(pd));

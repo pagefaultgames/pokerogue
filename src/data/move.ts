@@ -889,7 +889,7 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
 
     const recoilDamage = Math.max(Math.floor((!this.useHp ? user.turnData.damageDealt : user.getMaxHp()) / 4), 1);
-    user.scene.unshiftPhase(new DamagePhase(user.scene, user.isPlayer(), MoveResult.OTHER));
+    user.scene.unshiftPhase(new DamagePhase(user.scene, user.isPlayer(), user.getFieldIndex(), MoveResult.OTHER));
     user.scene.queueMessage(getPokemonMessage(user, ' is hit\nwith recoil!'));
     user.damage(recoilDamage);
 
@@ -906,7 +906,7 @@ export class SacrificialAttr extends MoveEffectAttr {
     if (!super.apply(user, target, move, args))
       return false;
 
-    user.scene.unshiftPhase(new DamagePhase(user.scene, user.isPlayer(), MoveResult.OTHER));
+    user.scene.unshiftPhase(new DamagePhase(user.scene, user.isPlayer(), user.getFieldIndex(), MoveResult.OTHER));
     user.damage(user.getMaxHp());
 
     return true;

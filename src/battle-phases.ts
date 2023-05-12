@@ -1,5 +1,5 @@
 import BattleScene, { maxExpLevel, startingLevel, startingWave } from "./battle-scene";
-import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult } from "./pokemon";
+import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition } from "./pokemon";
 import * as Utils from './utils';
 import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, MoveHitEffectAttr, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr } from "./data/move";
 import { Mode } from './ui/ui';
@@ -213,11 +213,8 @@ export class EncounterPhase extends BattlePhase {
         if (this.scene.getPlayerPokemon().visible)
           this.scene.field.moveBelow(enemyPokemon, this.scene.getPlayerPokemon());
         enemyPokemon.tint(0, 0.5);
-        if (battle.enemyField.length > 1) {
-          enemyPokemon.x += 32 * (e ? 1 : -1);
-          if (!e)
-            enemyPokemon.y += 8 * (e ? 1 : -1);
-        }
+        if (battle.enemyField.length > 1)
+          enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);
       });
 
       if (!this.loaded) {
@@ -469,14 +466,10 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     const playerPokemon = this.getPokemon();
 
     if (this.fieldIndex === 1) {
-      this.scene.tweens.add({
-        targets: this.scene.getPlayerField(),
-        ease: 'Sine.easeOut',
-        duration: 250,
-        x: (_target, _key, value: number, fieldIndex: integer) => value + 32 * (fieldIndex ? 1 : -1),
-        y: (_target, _key, value: number, fieldIndex: integer) => value + 8 * (fieldIndex ? 1 : -1)
-      });
-    }
+      this.scene.getPlayerField()[0].setFieldPosition(FieldPosition.LEFT, 250);
+      playerPokemon.setFieldPosition(FieldPosition.RIGHT, 0);
+    } else
+      playerPokemon.setFieldPosition(!this.scene.currentBattle.double ? FieldPosition.CENTER : FieldPosition.LEFT);
 
     pokeball.setVisible(true);
     this.scene.tweens.add({
@@ -744,7 +737,7 @@ export class CommandPhase extends FieldPhase {
 
         if (cursor === -1 || playerPokemon.trySelectMove(cursor, args[0] as boolean)) {
           this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.FIGHT, cursor: cursor,
-            move: cursor > -1 ? { move: playerPokemon.moveset[cursor].moveId } : null, args: args }; // TODO: Struggle logic
+            move: cursor > -1 ? { move: playerPokemon.moveset[cursor].moveId } : null, targetIndex: targetIndex, args: args }; // TODO: Struggle logic
           success = true;
         } else if (cursor < playerPokemon.getMoveset().length) {
           const move = playerPokemon.getMoveset()[cursor];
@@ -871,8 +864,6 @@ export class TurnStartPhase extends FieldPhase {
 
       const pokemon = field[o];
       const turnCommand = this.scene.currentBattle.turnCommands[o];
-
-      console.log(pokemon, field, o);
 
       switch (turnCommand.command) {
         case Command.FIGHT:

@@ -26,6 +26,12 @@ import { Biome } from './data/biome';
 import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, PreApplyBattlerTagAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 
+export enum FieldPosition {
+  CENTER,
+  LEFT,
+  RIGHT
+}
+
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
   public name: string;
@@ -49,6 +55,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public summonData: PokemonSummonData;
   public battleSummonData: PokemonBattleSummonData;
   public turnData: PokemonTurnData;
+
+  public fieldPosition: FieldPosition;
 
   public maskEnabled: boolean;
   public maskSprite: Phaser.GameObjects.Sprite;
@@ -138,6 +146,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     //this.setPipeline(this.scene).spritePipeline);
 
     this.calculateStats();
+
+    this.fieldPosition = FieldPosition.CENTER;
 
     scene.fieldUI.addAt(this.battleInfo, 0);
     
@@ -263,9 +273,52 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : this.maskSprite;
   }
 
-  playAnim(): void{
+  playAnim(): void {
     this.getSprite().play(this.getBattleSpriteKey());
     this.getTintSprite().play(this.getBattleSpriteKey());
+  }
+
+  getFieldPositionOffset(): [ number, number ] {
+    switch (this.fieldPosition) {
+      case FieldPosition.CENTER:
+        return [ 0, 0 ];
+      case FieldPosition.LEFT:
+        return [ -32, -8 ];
+      case FieldPosition.RIGHT:
+        return [ 32, 0 ];
+    }
+  }
+
+  setFieldPosition(fieldPosition: FieldPosition, duration?: integer): Promise<void> {
+    return new Promise(resolve => {
+      if (fieldPosition === this.fieldPosition) {
+        resolve();
+        return;
+      }
+
+      const initialOffset = this.getFieldPositionOffset();
+
+      this.fieldPosition = fieldPosition;
+
+      const newOffset = this.getFieldPositionOffset();
+
+      let relX = newOffset[0] - initialOffset[0];
+      let relY = newOffset[1] - initialOffset[1];
+
+      if (duration) {
+        this.scene.tweens.add({
+          targets: this,
+          x: (_target, _key, value: number) => value + relX,
+          y: (_target, _key, value: number) => value + relY,
+          duration: duration,
+          ease: 'Sine.easeOut',
+          onComplete: () => resolve()
+        });
+      } else {
+        this.x += relX;
+        this.y += relY;
+      }
+    });
   }
 
   getBattleStat(stat: Stat): integer {
@@ -597,7 +650,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
 
           if (damage) {
-            this.scene.unshiftPhase(new DamagePhase(this.scene, this.isPlayer(), result as DamageResult));
+            this.scene.unshiftPhase(new DamagePhase(this.scene, this.isPlayer(), this.getFieldIndex(), result as DamageResult));
             if (isCritical)
               this.scene.queueMessage('A critical hit!');
             this.damage(damage);
