@@ -480,7 +480,8 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
 
     if (pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
-      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), Math.max(Math.floor(pokemon.getMaxHp() / 16) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), pokemon.getFieldIndex(),
+        Math.max(Math.floor(pokemon.getMaxHp() / 16) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
     }
 
     return true;
@@ -509,7 +510,8 @@ export class HitHealModifier extends PokemonHeldItemModifier {
 
     if (pokemon.turnData.damageDealt && pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
-      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), pokemon.getFieldIndex(),
+        Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
     }
 
     return true;
@@ -1001,7 +1003,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    const targetPokemon = pokemon.getOpponent();
+    const targetPokemon = pokemon.getOpponent(args.length > 1 ? args[1] as integer : !pokemon.scene.currentBattle.double ? 0 : Utils.randInt(2));
     if (!targetPokemon)
       return false;
 
