@@ -4,10 +4,12 @@ import * as Utils from '../utils';
 import { addTextObject, TextStyle } from './text';
 import { getGenderSymbol, getGenderColor } from '../data/gender';
 import { StatusEffect } from '../data/status-effect';
-import BattleScene, { maxExpLevel } from '../battle-scene';
+import { maxExpLevel } from '../battle-scene';
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private player: boolean;
+  private mini: boolean;
+  private offset: boolean;
   private lastName: string;
   private lastStatus: StatusEffect;
   private lastHp: integer;
@@ -17,9 +19,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private lastLevelExp: integer;
   private lastLevel: integer;
 
+  private box: Phaser.GameObjects.Sprite;
   private nameText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
-  private ownedIcon: Phaser.GameObjects.Image;
+  private ownedIcon: Phaser.GameObjects.Sprite;
   private statusIndicator: Phaser.GameObjects.Sprite;
   private levelContainer: Phaser.GameObjects.Container;
   private hpBar: Phaser.GameObjects.Image;
@@ -30,6 +33,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
     this.player = player;
+    this.mini = !player;
+    this.offset = false;
     this.lastName = null;
     this.lastStatus = StatusEffect.NONE;
     this.lastHp = -1;
@@ -42,9 +47,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     // Initially invisible and shown via Pokemon.showInfo
     this.setVisible(false);
 
-    const box = this.scene.add.image(0, 0, `pbinfo_${player ? 'player' : 'enemy'}`);
-    box.setOrigin(1, 0.5);
-    this.add(box);
+    this.box = this.scene.add.sprite(0, 0, this.getTextureName());
+    this.box.setOrigin(1, 0.5);
+    this.add(this.box);
 
     this.nameText = addTextObject(this.scene, player ? -115 : -124, player ? -15.2 : -11.2, '', TextStyle.BATTLE_INFO);
     this.nameText.setOrigin(0, 0);
@@ -56,7 +61,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.add(this.genderText);
 
     if (!this.player) {
-      this.ownedIcon = this.scene.add.image(0, 0, 'icon_owned');
+      this.ownedIcon = this.scene.add.sprite(0, 0, 'icon_owned');
       this.ownedIcon.setVisible(false);
       this.ownedIcon.setOrigin(0, 0);
       this.ownedIcon.setPositionRelative(this.nameText, 0, 11.5);
@@ -129,6 +134,36 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.lastExp = pokemon.exp;
       this.lastLevelExp = pokemon.levelExp;
     }
+  }
+
+  getTextureName(): string {
+    return `pbinfo_${this.player ? 'player' : 'enemy'}${this.mini ? '_mini' : ''}`;
+  }
+
+  setMini(mini: boolean): void {
+    if (this.mini === mini)
+      return;
+
+    this.mini = mini;
+
+    this.box.setTexture(this.getTextureName());
+
+    if (this.player) {
+      this.y -= 12 * (mini ? 1 : -1);
+    }
+
+    const toggledElements = [ this.hpNumbersContainer, this.expBar ];
+    toggledElements.forEach(el => el.setVisible(!mini));
+  }
+  
+  setOffset(offset: boolean): void {
+    if (this.offset === offset)
+      return;
+    
+    this.offset = offset;
+
+    this.x += 10 * (offset === this.player ? 1 : -1);
+    this.y += 27 * (offset ? 1 : -1);
   }
 
   updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
@@ -290,4 +325,6 @@ export class EnemyBattleInfo extends BattleInfo {
   constructor(scene: Phaser.Scene) {
     super(scene, 140, -141, false);
   }
+
+  setMini(mini: boolean): void { } // Always mini
 }

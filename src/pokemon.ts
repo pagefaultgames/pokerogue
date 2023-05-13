@@ -149,7 +149,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.fieldPosition = FieldPosition.CENTER;
 
-    scene.fieldUI.addAt(this.battleInfo, 0);
+    scene.fieldUI.add(this.battleInfo);
     
     this.battleInfo.initInfo(this);
 
@@ -299,6 +299,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const initialOffset = this.getFieldPositionOffset();
 
       this.fieldPosition = fieldPosition;
+
+      this.battleInfo.setMini(fieldPosition !== FieldPosition.CENTER);
+      this.battleInfo.setOffset(fieldPosition === FieldPosition.RIGHT);
 
       const newOffset = this.getFieldPositionOffset();
 

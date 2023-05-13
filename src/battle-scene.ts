@@ -156,7 +156,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('prompt', 'ui');
 		this.loadImage('cursor', 'ui');
 		this.loadImage('pbinfo_player', 'ui');
-		this.loadImage('pbinfo_enemy', 'ui');
+		this.loadImage('pbinfo_player_mini', 'ui');
+		this.loadImage('pbinfo_enemy_mini', 'ui');
 		this.loadImage('overlay_lv', 'ui');
 		this.loadAtlas('numbers', 'ui');
 		this.loadAtlas('overlay_hp', 'ui');

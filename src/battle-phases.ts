@@ -210,8 +210,9 @@ export class EncounterPhase extends BattlePhase {
     Promise.all(loadEnemyAssets).then(() => {
       battle.enemyField.forEach((enemyPokemon, e) => {
         this.scene.field.add(enemyPokemon);
-        if (this.scene.getPlayerPokemon().visible)
-          this.scene.field.moveBelow(enemyPokemon, this.scene.getPlayerPokemon());
+        const playerPokemon = this.scene.getPlayerPokemon();
+        if (playerPokemon.visible)
+          this.scene.field.moveBelow(enemyPokemon, playerPokemon);
         enemyPokemon.tint(0, 0.5);
         if (battle.enemyField.length > 1)
           enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);
