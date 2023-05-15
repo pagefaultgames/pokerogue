@@ -334,6 +334,7 @@ export function getBiomeHasProps(biomeType: Biome): boolean {
     case Biome.BADLANDS:
     case Biome.CAVE:
     case Biome.DESERT:
+    case Biome.ICE_CAVE:
       return true;
   }
 
