@@ -1,8 +1,9 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
 import BattleScene from "../battle-scene";
-import { ChargeAttr, Moves, allMoves, getMoveTarget } from "./move";
+import { ChargeAttr, Moves, allMoves } from "./move";
 import Pokemon from "../pokemon";
 import * as Utils from "../utils";
+import { BattleTarget } from "../battle";
 //import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
@@ -831,8 +832,8 @@ export class CommonBattleAnim extends BattleAnim {
 export class MoveAnim extends BattleAnim {
     public move: Moves;
     
-    constructor(move: Moves, user: Pokemon, targetIndex: integer) {
-        super(user, getMoveTarget(user, targetIndex, move));
+    constructor(move: Moves, user: Pokemon, target: BattleTarget) {
+        super(user, user.scene.getField()[target]);
 
         this.move = move;
     }

@@ -9,11 +9,11 @@ export enum BattleTarget {
     ENEMY_2
 }
 
-interface TurnCommand {
+export interface TurnCommand {
     command: Command;
     cursor?: integer;
     move?: QueuedMove;
-    targetIndex?: integer;
+    targets?: BattleTarget[];
     args?: any[];
 };
 

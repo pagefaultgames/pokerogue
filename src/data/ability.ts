@@ -1,4 +1,4 @@
-import Pokemon, { MoveResult, PokemonMove } from "../pokemon";
+import Pokemon, { HitResult, MoveResult, PokemonMove } from "../pokemon";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
@@ -232,14 +232,14 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
 }
 
 export class PostDefendAbAttr extends AbAttr {
-  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, moveResult: MoveResult, args: any[]): boolean {
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     return false;
   }
 }
 
 export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
-  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, moveResult: MoveResult, args: any[]): boolean {
-    if (moveResult < MoveResult.NO_EFFECT) {
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (hitResult < HitResult.NO_EFFECT) {
       const type = move.getMove().type;
       const pokemonTypes = pokemon.getTypes();
       if (pokemonTypes.length !== 1 || pokemonTypes[0] !== type) {
@@ -267,7 +267,7 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
     this.effects = effects;
   }
 
-  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, moveResult: MoveResult, args: any[]): boolean {
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().hasFlag(MoveFlags.MAKES_CONTACT) && Utils.randInt(100) < this.chance) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[Utils.randInt(this.effects.length)];
       return attacker.trySetStatus(effect);
@@ -290,7 +290,7 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
     this.turnCount = turnCount;
   }
 
-  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, moveResult: MoveResult, args: any[]): boolean {
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().hasFlag(MoveFlags.MAKES_CONTACT) && Utils.randInt(100) < this.chance)
       return attacker.addTag(this.tagType, this.turnCount, move.moveId, pokemon.id);
 
@@ -654,7 +654,7 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
     if (pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
       scene.queueMessage(getPokemonMessage(pokemon, ` is hurt\nby its ${pokemon.getAbility()}!`));
-      scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.isPlayer(), pokemon.getFieldIndex(), MoveResult.OTHER));
+      scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.isPlayer(), pokemon.getFieldIndex(), HitResult.OTHER));
       pokemon.damage(Math.ceil(pokemon.getMaxHp() * (16 / this.damageFactor)));
       return true;
     }
@@ -727,7 +727,7 @@ export function applyPreDefendAbAttrs(attrType: { new(...args: any[]): PreDefend
 }
 
 export function applyPostDefendAbAttrs(attrType: { new(...args: any[]): PostDefendAbAttr },
-  pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, moveResult: MoveResult, ...args: any[]): void {
+  pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, ...args: any[]): void {
   if (!pokemon.canApplyAbility())
     return;
 
@@ -737,7 +737,7 @@ export function applyPostDefendAbAttrs(attrType: { new(...args: any[]): PostDefe
     if (!canApplyAttr(pokemon, attr))
       continue;
     pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyPostDefend(pokemon, attacker, move, moveResult, args)) {
+    if (attr.applyPostDefend(pokemon, attacker, move, hitResult, args)) {
       if (attr.showAbility)
         queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon, attacker, move);

@@ -1,6 +1,6 @@
 import { PokemonHealPhase, StatChangePhase } from "../battle-phases";
 import { getPokemonMessage } from "../messages";
-import Pokemon, { MoveResult } from "../pokemon";
+import Pokemon, { HitResult, MoveResult } from "../pokemon";
 import { getBattleStatName } from "./battle-stat";
 import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./battler-tag";
@@ -54,7 +54,7 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
     case BerryType.LUM:
       return (pokemon: Pokemon) => !!pokemon.status || !!pokemon.getTag(BattlerTagType.CONFUSED);
     case BerryType.ENIGMA:
-      return (pokemon: Pokemon) => !!pokemon.turnData.attacksReceived.filter(a => a.result === MoveResult.SUPER_EFFECTIVE).length;
+      return (pokemon: Pokemon) => !!pokemon.turnData.attacksReceived.filter(a => a.result === HitResult.SUPER_EFFECTIVE).length;
     case BerryType.LIECHI:
     case BerryType.GANLON:
     case BerryType.SALAC:

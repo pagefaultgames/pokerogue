@@ -25,6 +25,7 @@ import { ArenaTagType, WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
 import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, PreApplyBattlerTagAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
+import { BattleTarget } from './battle';
 
 export enum FieldPosition {
   CENTER,
@@ -190,6 +191,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   abstract isPlayer(): boolean;
 
   abstract getFieldIndex(): integer;
+
+  abstract getBattleTarget(): BattleTarget;
 
   loadAssets(): Promise<void> {
     return new Promise(resolve => {
@@ -572,8 +575,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.isPlayer() ? 'the opposing team' : 'your team';
   }
 
-  apply(source: Pokemon, battlerMove: PokemonMove): MoveResult {
-    let result: MoveResult;
+  getAlly(): Pokemon {
+    return (this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.getFieldIndex() ? 0 : 1];
+  }
+
+  apply(source: Pokemon, battlerMove: PokemonMove): HitResult {
+    let result: HitResult;
     const move = battlerMove.getMove();
     const moveCategory = move.category;
     let damage = 0;
@@ -595,7 +602,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, battlerMove, cancelled, typeMultiplier);
 
         if (cancelled.value)
-          result = MoveResult.NO_EFFECT;
+          result = HitResult.NO_EFFECT;
         else {
           if (source.findTag(t => t instanceof TypeBoostTag && (t as TypeBoostTag).boostedType === move.type))
             power.value *= 1.5;
@@ -636,20 +643,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (damage && fixedDamage.value) {
             damage = fixedDamage.value;
             isCritical = false;
-            result = MoveResult.EFFECTIVE;
+            result = HitResult.EFFECTIVE;
           }
 
           console.log('damage', damage, move.name, move.power, sourceAtk, targetDef);
           
           if (!result) {
             if (typeMultiplier.value >= 2)
-              result = MoveResult.SUPER_EFFECTIVE;
+              result = HitResult.SUPER_EFFECTIVE;
             else if (typeMultiplier.value >= 1)
-              result = MoveResult.EFFECTIVE;
+              result = HitResult.EFFECTIVE;
             else if (typeMultiplier.value > 0)
-              result = MoveResult.NOT_VERY_EFFECTIVE;
+              result = HitResult.NOT_VERY_EFFECTIVE;
             else
-              result = MoveResult.NO_EFFECT;
+              result = HitResult.NO_EFFECT;
           }
 
           if (damage) {
@@ -662,20 +669,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
 
           switch (result) {
-            case MoveResult.SUPER_EFFECTIVE:
+            case HitResult.SUPER_EFFECTIVE:
               this.scene.queueMessage('It\'s super effective!');
               break;
-            case MoveResult.NOT_VERY_EFFECTIVE:
+            case HitResult.NOT_VERY_EFFECTIVE:
               this.scene.queueMessage('It\'s not very effective!');
               break;
-            case MoveResult.NO_EFFECT:
+            case HitResult.NO_EFFECT:
               this.scene.queueMessage(`It doesn\'t affect ${this.name}!`);
               break;
           }
         }
         break;
       case MoveCategory.STATUS:
-        result = MoveResult.STATUS;
+        result = HitResult.STATUS;
         break;
     }
 
@@ -1018,6 +1025,10 @@ export class PlayerPokemon extends Pokemon {
     return this.scene.getPlayerField().indexOf(this);
   }
 
+  getBattleTarget(): BattleTarget {
+    return this.getFieldIndex();
+  }
+
   generateCompatibleTms(): void {
     this.compatibleTms = [];
 
@@ -1203,6 +1214,10 @@ export class EnemyPokemon extends Pokemon {
     return this.scene.getEnemyField().indexOf(this);
   }
 
+  getBattleTarget(): BattleTarget {
+    return BattleTarget.ENEMY + this.getFieldIndex();
+  }
+
   addToParty() {
     const party = this.scene.getParty();
     let ret: PlayerPokemon = null;
@@ -1219,6 +1234,7 @@ export class EnemyPokemon extends Pokemon {
 
 export interface TurnMove {
   move: Moves;
+  targets?: BattleTarget[];
   result: MoveResult;
   virtual?: boolean;
   turn?: integer;
@@ -1264,17 +1280,25 @@ export enum AiType {
 }
 
 export enum MoveResult {
+  PENDING,
+  SUCCESS,
+  FAIL,
+  MISS,
+  OTHER
+}
+
+export enum HitResult {
   EFFECTIVE = 1,
   SUPER_EFFECTIVE,
   NOT_VERY_EFFECTIVE,
   NO_EFFECT,
   STATUS,
-  FAILED,
-  MISSED,
+  FAIL,
+  MISS,
   OTHER
 }
 
-export type DamageResult = MoveResult.EFFECTIVE | MoveResult.SUPER_EFFECTIVE | MoveResult.NOT_VERY_EFFECTIVE | MoveResult.OTHER;
+export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.OTHER;
 
 export class PokemonMove {
   public moveId: Moves;

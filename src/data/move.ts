@@ -1,9 +1,9 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { DamagePhase, EnemyMovePhase, ObtainStatusEffectPhase, PlayerMovePhase, PokemonHealPhase, StatChangePhase } from "../battle-phases";
+import { DamagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase, StatChangePhase } from "../battle-phases";
 import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./battler-tag";
 import { getPokemonMessage } from "../messages";
-import Pokemon, { AttackMoveResult, EnemyPokemon, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../pokemon";
+import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../pokemon";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
 import { Type } from "./type";
 import * as Utils from "../utils";
@@ -11,6 +11,7 @@ import { WeatherType } from "./weather";
 import { ArenaTagType, ArenaTrapTag } from "./arena-tag";
 import { BlockRecoilDamageAttr, applyAbAttrs } from "./ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { BattleTarget } from "../battle";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -24,14 +25,13 @@ export enum MoveTarget {
   ALL_OTHERS,
   NEAR_OTHER,
   ALL_NEAR_OTHERS,
-  ENEMY,
   NEAR_ENEMY,
   ALL_NEAR_ENEMIES,
   RANDOM_NEAR_ENEMY,
   ALL_ENEMIES,
   ATTACKER,
-  ALLY,
   NEAR_ALLY,
+  ALLY,
   USER_OR_NEAR_ALLY,
   USER_AND_ALLIES,
   ALL,
@@ -47,6 +47,7 @@ export enum MoveFlags {
 }
 
 type MoveCondition = (user: Pokemon, target: Pokemon, move: Move) => boolean;
+type UserMoveCondition = (user: Pokemon, move: Move) => boolean;
 
 export default class Move {
   public id: Moves;
@@ -889,7 +890,7 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
 
     const recoilDamage = Math.max(Math.floor((!this.useHp ? user.turnData.damageDealt : user.getMaxHp()) / 4), 1);
-    user.scene.unshiftPhase(new DamagePhase(user.scene, user.isPlayer(), user.getFieldIndex(), MoveResult.OTHER));
+    user.scene.unshiftPhase(new DamagePhase(user.scene, user.isPlayer(), user.getFieldIndex(), HitResult.OTHER));
     user.scene.queueMessage(getPokemonMessage(user, ' is hit\nwith recoil!'));
     user.damage(recoilDamage);
 
@@ -906,7 +907,7 @@ export class SacrificialAttr extends MoveEffectAttr {
     if (!super.apply(user, target, move, args))
       return false;
 
-    user.scene.unshiftPhase(new DamagePhase(user.scene, user.isPlayer(), user.getFieldIndex(), MoveResult.OTHER));
+    user.scene.unshiftPhase(new DamagePhase(user.scene, user.isPlayer(), user.getFieldIndex(), HitResult.OTHER));
     user.damage(user.getMaxHp());
 
     return true;
@@ -1172,7 +1173,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
             user.addTag(this.tagType, 1, move.id, user.id);
           if (this.chargeEffect)
             applyMoveAttrs(MoveEffectAttr, user, target, move);
-          user.pushMoveHistory({ move: move.id, result: MoveResult.OTHER });
+          user.pushMoveHistory({ move: move.id, targets: [ target.getBattleTarget() ], result: MoveResult.OTHER });
           user.getMoveQueue().push({ move: move.id, ignorePP: true });
           resolve(true);
         });
@@ -1275,7 +1276,7 @@ export abstract class ConsecutiveUsePowerMultiplierAttr extends MovePowerMultipl
       let count = 0;
       let turnMove: TurnMove;
 
-      while (((turnMove = moveHistory.shift())?.move === move.id || (comboMoves.length && comboMoves.indexOf(turnMove?.move) > -1)) && (!resetOnFail || turnMove.result < MoveResult.NO_EFFECT)) {
+      while (((turnMove = moveHistory.shift())?.move === move.id || (comboMoves.length && comboMoves.indexOf(turnMove?.move) > -1)) && (!resetOnFail || turnMove.result === MoveResult.SUCCESS)) {
         if (count < (limit - 1))
           count++;
         else if (resetOnLimit)
@@ -1460,16 +1461,16 @@ export class BlizzardAccuracyAttr extends VariableAccuracyAttr {
 }
 
 export class MissEffectAttr extends MoveAttr {
-  private missEffectFunc: MoveCondition;
+  private missEffectFunc: UserMoveCondition;
 
-  constructor(missEffectFunc: MoveCondition) {
+  constructor(missEffectFunc: UserMoveCondition) {
     super();
 
     this.missEffectFunc = missEffectFunc;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    this.missEffectFunc(user, target, move);
+    this.missEffectFunc(user, move);
     return true;
   }
 }
@@ -1555,7 +1556,7 @@ export class FrenzyAttr extends MoveEffectAttr {
   }
 }
 
-export const frenzyMissFunc: MoveCondition = (user: Pokemon, target: Pokemon, move: Move) => {
+export const frenzyMissFunc: UserMoveCondition = (user: Pokemon, move: Move) => {
   while (user.getMoveQueue().length && user.getMoveQueue()[0].move === move.id)
     user.getMoveQueue().shift();
   user.lapseTag(BattlerTagType.FRENZY);
@@ -1648,7 +1649,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
       let timesUsed = 0;
       const moveHistory = user.getLastXMoves(-1);
       let turnMove: TurnMove;
-      while (moveHistory.length && (turnMove = moveHistory.shift()).move === move.id && turnMove.result === MoveResult.STATUS)
+      while (moveHistory.length && (turnMove = moveHistory.shift()).move === move.id && turnMove.result === MoveResult.SUCCESS)
         timesUsed++;
       if (timesUsed)
         return !Utils.randInt(Math.pow(2, timesUsed));
@@ -1771,9 +1772,11 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
       const move = moves[Utils.randInt(moves.length)];
       const moveIndex = moveset.findIndex(m => m.moveId === move.moveId);
       user.getMoveQueue().push({ move: move.moveId, ignorePP: this.enemyMoveset });
-      user.scene.unshiftPhase(user.isPlayer()
-        ? new PlayerMovePhase(user.scene, user as PlayerPokemon, target.getFieldIndex(), moveset[moveIndex], true)
-        : new EnemyMovePhase(user.scene, user as EnemyPokemon, target.getFieldIndex(), moveset[moveIndex], true));
+      const moveTargets = getMoveTargets(user, move.moveId);
+      if (!moveTargets.targets.length)
+        return false;
+      const targets = moveTargets.multiple ? moveTargets.targets : [ moveTargets.targets[Utils.randInt(moveTargets.targets.length)] ];
+      user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, moveset[moveIndex], true));
       return true;
     }
 
@@ -1787,9 +1790,13 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
       const moveIds = Utils.getEnumValues(Moves).filter(m => !allMoves[m].hasFlag(MoveFlags.IGNORE_VIRTUAL));
       const moveId = moveIds[Utils.randInt(moveIds.length)];
       user.getMoveQueue().push({ move: moveId, ignorePP: true });
-      user.scene.unshiftPhase(user.isPlayer()
-        ? new PlayerMovePhase(user.scene, user as PlayerPokemon, target.getFieldIndex(), new PokemonMove(moveId, 0, 0, true), true)
-        : new EnemyMovePhase(user.scene, user as EnemyPokemon, target.getFieldIndex(), new PokemonMove(moveId, 0, 0, true), true));
+      const moveTargets = getMoveTargets(user, moveId);
+      if (!moveTargets.targets.length) {
+        resolve(false);
+        return;
+      }
+      const targets = moveTargets.multiple ? moveTargets.targets : [ moveTargets.targets[Utils.randInt(moveTargets.targets.length)] ];
+      user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(moveId, 0, 0, true), true));
       initMoveAnim(moveId).then(() => {
         loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
@@ -1825,9 +1832,14 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
     const copiedMove = targetMoves[0];
 
     user.getMoveQueue().push({ move: copiedMove.move, ignorePP: true });
-    user.scene.unshiftPhase(user.isPlayer()
-      ? new PlayerMovePhase(user.scene, user as PlayerPokemon, target.getFieldIndex(), new PokemonMove(copiedMove.move, 0, 0, true), true)
-      : new EnemyMovePhase(user.scene, user as EnemyPokemon, target.getFieldIndex(), new PokemonMove(copiedMove.move, 0, 0, true), true));
+
+    const moveTargets = getMoveTargets(user, copiedMove.move);
+    if (!moveTargets.targets.length)
+      return false;
+
+    const targets = moveTargets.multiple ? moveTargets.targets : [ moveTargets.targets[Utils.randInt(moveTargets.targets.length)] ];
+
+    user.scene.unshiftPhase(new MovePhase(user.scene, user as PlayerPokemon, targets, new PokemonMove(copiedMove.move, 0, 0, true), true));
 
     return true;
   }
@@ -1934,20 +1946,64 @@ export function applyFilteredMoveAttrs(attrFilter: MoveAttrFilter, user: Pokemon
   return applyMoveAttrsInternal(attrFilter, user, target, move, args);
 }
 
-export function getMoveTarget(user: Pokemon, targetIndex: integer, move: Moves): Pokemon {
-  const moveTarget = allMoves[move].moveTarget;
+export type MoveTargetSet = {
+  targets: BattleTarget[];
+  multiple: boolean;
+}
 
-  const other = user.getOpponent(targetIndex);
+export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
+  const moveTarget = move ? allMoves[move].moveTarget : MoveTarget.NEAR_ENEMY;
+  const opponents = user.getOpponents();
+  
+  let set: BattleTarget[];
+  let multiple = false;
 
   switch (moveTarget) {
     case MoveTarget.USER:
+      set = [ user.getBattleTarget() ];
+      break;
+    case MoveTarget.OTHER:
+      set = user.getLastXMoves().find(() => true)?.targets || [];
+      break;
+    case MoveTarget.NEAR_OTHER:
+    case MoveTarget.ALL_NEAR_OTHERS:
+    case MoveTarget.ALL_OTHERS:
+      set = (opponents.concat([ user.getAlly() ])).map(p => p?.getBattleTarget());
+      multiple = moveTarget !== MoveTarget.NEAR_OTHER;
+      break;
+    case MoveTarget.NEAR_ENEMY:
+    case MoveTarget.ALL_NEAR_ENEMIES:
+    case MoveTarget.ALL_ENEMIES:
+    case MoveTarget.ENEMY_SIDE:
+      set = opponents.map(p => p.getBattleTarget());
+      multiple = moveTarget !== MoveTarget.NEAR_ENEMY;
+      break;
+    case MoveTarget.RANDOM_NEAR_ENEMY:
+      set = [ opponents[Utils.randInt(opponents.length)].getBattleTarget() ];
+      break;
+    case MoveTarget.ATTACKER:
+      set = [ user.scene.getPokemonById(user.turnData.attacksReceived[0].sourceId).getBattleTarget() ];
+      break;
+    case MoveTarget.NEAR_ALLY:
+    case MoveTarget.ALLY:
+      set = [ user.getAlly()?.getBattleTarget() ];
+      break;
     case MoveTarget.USER_OR_NEAR_ALLY:
     case MoveTarget.USER_AND_ALLIES:
     case MoveTarget.USER_SIDE:
-      return user;
-    default:
-      return other;
+      set = [ user, user.getAlly() ].map(p => p?.getBattleTarget());
+      multiple = moveTarget !== MoveTarget.USER_OR_NEAR_ALLY;
+      break;
+    case MoveTarget.ALL:
+    case MoveTarget.BOTH_SIDES:
+      set = [ user, user.getAlly() ].concat(user.getOpponents()).map(p => p?.getBattleTarget());
+      multiple = true;
+      break;
   }
+
+  console.log(set, multiple, MoveTarget[moveTarget]);
+
+  return { targets: set.filter(t => t !== undefined), multiple };
 }
 
 export const allMoves = [
@@ -2004,7 +2060,7 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.MEGA_KICK, "Mega Kick", Type.NORMAL, MoveCategory.PHYSICAL, 120, 75, 5, -1, "", -1, 0, 1),
     new AttackMove(Moves.JUMP_KICK, "Jump Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, -1, "If it misses, the user loses half their HP.", -1, 0, 1)
-      .attr(MissEffectAttr, (user: Pokemon, target: Pokemon, move: Move) => { user.damage(Math.floor(user.getMaxHp() / 2)); return true; })
+      .attr(MissEffectAttr, (user: Pokemon, move: Move) => { user.damage(Math.floor(user.getMaxHp() / 2)); return true; })
       .condition(failOnGravityCondition),
     new AttackMove(Moves.ROLLING_KICK, "Rolling Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 85, 15, -1, "May cause flinching.", 30, 0, 1)
       .attr(FlinchAttr),
@@ -2072,13 +2128,15 @@ export function initMoves() {
       .target(MoveTarget.USER_SIDE),
     new AttackMove(Moves.WATER_GUN, "Water Gun", Type.WATER, MoveCategory.SPECIAL, 40, 100, 25, -1, "", -1, 0, 1),
     new AttackMove(Moves.HYDRO_PUMP, "Hydro Pump", Type.WATER, MoveCategory.SPECIAL, 110, 80, 5, 142, "", -1, 0, 1),
-    new AttackMove(Moves.SURF, "Surf", Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, 123, "Hits all adjacent Pokémon.", -1, 0, 1), // TODO
+    new AttackMove(Moves.SURF, "Surf", Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, 123, "Hits all adjacent Pokémon.", -1, 0, 1)
+      .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.ICE_BEAM, "Ice Beam", Type.ICE, MoveCategory.SPECIAL, 90, 100, 10, 135, "May freeze opponent.", 10, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.BLIZZARD, "Blizzard", Type.ICE, MoveCategory.SPECIAL, 110, 70, 5, 143, "May freeze opponent.", 10, 0, 1)
       .attr(BlizzardAccuracyAttr)
-      .attr(StatusEffectAttr, StatusEffect.FREEZE), // TODO: 30% chance to hit protect/detect in hail
+      .attr(StatusEffectAttr, StatusEffect.FREEZE) // TODO: 30% chance to hit protect/detect in hail
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.PSYBEAM, "Psybeam", Type.PSYCHIC, MoveCategory.SPECIAL, 65, 100, 20, 16, "May confuse opponent.", 10, 0, 1)
       .attr(ConfuseAttr)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -2255,7 +2313,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.SOFT_BOILED, "Soft-Boiled", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 1)
       .attr(HealAttr, 0.5),
     new AttackMove(Moves.HIGH_JUMP_KICK, "High Jump Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 130, 90, 10, -1, "If it misses, the user loses half their HP.", -1, 0, 1)
-      .attr(MissEffectAttr, (user: Pokemon, target: Pokemon, move: Move) => { user.damage(Math.floor(user.getMaxHp() / 2)); return true; })
+      .attr(MissEffectAttr, (user: Pokemon, move: Move) => { user.damage(Math.floor(user.getMaxHp() / 2)); return true; })
       .condition(failOnGravityCondition),
     new StatusMove(Moves.GLARE, "Glare", Type.NORMAL, 100, 30, -1, "Paralyzes opponent.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
@@ -2339,7 +2397,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.TRIPLE_KICK, "Triple Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, "Hits thrice in one turn at increasing power.", -1, 0, 2)
       .attr(MultiHitAttr, MultiHitType._3_INCR)
-      .attr(MissEffectAttr, (user: Pokemon, target: Pokemon, move: Move) => {
+      .attr(MissEffectAttr, (user: Pokemon, move: Move) => {
         user.turnData.hitsLeft = 0;
         return true;
       }),

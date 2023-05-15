@@ -25,6 +25,8 @@ export function padInt(value: integer, length: integer, padWith?: string): strin
 export function randInt(range: integer, min?: integer): integer {
   if (!min)
     min = 0;
+  if (range === 1)
+    return min;
   return Math.floor(Math.random() * range) + min;
 }
 

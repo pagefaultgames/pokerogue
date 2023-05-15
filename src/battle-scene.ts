@@ -847,7 +847,7 @@ export default class BattleScene extends Phaser.Scene {
 				count = Math.max(count, Math.floor(chances / 2));
 			const enemyField = this.getEnemyField();
 			getEnemyModifierTypesForWave(waveIndex, count, this.getEnemyField())
-				.map(mt => mt.newModifier(enemyField[enemyField.length === 1 ? 0 : Utils.randInt(enemyField.length)]).add(this.enemyModifiers, false));
+				.map(mt => mt.newModifier(enemyField[Utils.randInt(enemyField.length)]).add(this.enemyModifiers, false));
 
 			this.updateModifiers(false).then(() => resolve());
 		});
