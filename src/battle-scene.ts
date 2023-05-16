@@ -169,6 +169,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('boolean_window', 'ui');
 
 		this.loadImage('party_bg', 'ui');
+		this.loadImage('party_bg_double', 'ui');
 		this.loadAtlas('party_slot_main', 'ui');
 		this.loadAtlas('party_slot', 'ui');
 		this.loadImage('party_slot_overlay_lv', 'ui');

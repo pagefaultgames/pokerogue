@@ -601,7 +601,7 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
     party[this.slotIndex] = this.lastPokemon;
-    party[0] = switchedPokemon;
+    party[this.fieldIndex] = switchedPokemon;
     this.scene.ui.showText(`Go! ${switchedPokemon.name}!`);
     this.summon();
   }
@@ -852,7 +852,6 @@ export class SelectTargetPhase extends PokemonPhase {
         this.scene.unshiftPhase(new CommandPhase(this.scene, this.fieldIndex));
       } else
         this.scene.currentBattle.turnCommands[this.fieldIndex].targets = [ cursor ];
-      console.log(cursor, this.fieldIndex, this.scene.currentBattle.turnCommands[this.fieldIndex].targets)
       this.end();
     });
   }
@@ -1231,15 +1230,17 @@ class MoveEffectPhase extends PokemonPhase {
           const hitResult = !isProtected ? target.apply(user, this.move) : HitResult.NO_EFFECT;
           
           if (hitResult !== HitResult.NO_EFFECT && hitResult !== HitResult.FAIL) {
-            applyMoveAttrs(MoveEffectAttr, user, target, this.move.getMove());
+            const chargeEffect = !!this.move.getMove().getAttrs(ChargeAttr).find(ca => (ca as ChargeAttr).chargeEffect);
+            // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
+            if (!chargeEffect)
+              applyMoveAttrs(MoveEffectAttr, user, target, this.move.getMove());
             if (hitResult < HitResult.NO_EFFECT) {
               const flinched = new Utils.BooleanHolder(false);
               user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
               if (flinched.value)
                 target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
             }
-            // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
-            if (!isProtected && !this.move.getMove().getAttrs(ChargeAttr).filter(ca => (ca as ChargeAttr).chargeEffect).length) {
+            if (!isProtected && !chargeEffect) {
               applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveHitEffectAttr && (!!target.hp || (attr as MoveHitEffectAttr).selfTarget), user, target, this.move.getMove());
               if (target.hp)
                 applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult);
@@ -1854,7 +1855,7 @@ export class SwitchPhase extends BattlePhase {
     super.start();
 
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, this.fieldIndex, (slotIndex: integer, option: PartyOption) => {
-      if (slotIndex && slotIndex < 6)
+      if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6)
         this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
       this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
     }, PartyUiHandler.FilterNonFainted);

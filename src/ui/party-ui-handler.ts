@@ -44,6 +44,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private partyUiMode: PartyUiMode;
   private fieldIndex: integer;
 
+  private partyBg: Phaser.GameObjects.Image;
   private partyContainer: Phaser.GameObjects.Container;
   private partySlotsContainer: Phaser.GameObjects.Container;
   private partySlots: PartySlot[];
@@ -97,10 +98,10 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.partyContainer = partyContainer;
 
-    const partyBg = this.scene.add.image(0, 0, 'party_bg');
-    partyContainer.add(partyBg);
+    this.partyBg = this.scene.add.image(0, 0, 'party_bg');
+    partyContainer.add(this.partyBg);
 
-    partyBg.setOrigin(0, 1);
+    this.partyBg.setOrigin(0, 1);
 
     const partySlotsContainer = this.scene.add.container(0, 0);
     partyContainer.add(partySlotsContainer);
@@ -147,6 +148,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.fieldIndex = args.length > 1 ? args[1] as integer : -1;
 
     this.partyContainer.setVisible(true);
+    this.partyBg.setTexture(`party_bg${this.scene.currentBattle.double ? '_double' : ''}`);
     this.populatePartySlots();
     this.setCursor(this.cursor < 6 ? this.cursor : 0);
 
@@ -229,7 +231,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if (option === PartyOption.RELEASE) {
           this.clearOptions();
           ui.playSelect();
-          if (this.cursor) {
+          if (this.cursor >= this.scene.currentBattle.getBattlerCount()) {
             this.showText(`Do you really want to release ${pokemon.name}?`, null, () => {
               ui.setModeWithoutClear(Mode.CONFIRM, () => {
                 ui.setMode(Mode.PARTY);
@@ -295,12 +297,13 @@ export default class PartyUiHandler extends MessageUiHandler {
           success = this.setCursor(this.cursor < 6 ? this.cursor < slotCount - 1 ? this.cursor + 1 : 6 : 0);
           break;
         case Button.LEFT:
-          if (this.cursor && this.cursor < 6)
+          if (this.cursor >= this.scene.currentBattle.getBattlerCount() && this.cursor < 6)
             success = this.setCursor(0);
           break;
         case Button.RIGHT:
-          if (!this.cursor)
-            success = this.setCursor(this.lastCursor < 6 ? this.lastCursor || 1 : 1);
+          const battlerCount = this.scene.currentBattle.getBattlerCount();
+          if (this.cursor < battlerCount)
+            success = this.setCursor(this.lastCursor < 6 ? this.lastCursor || battlerCount : battlerCount);
           break;
       }
     }
@@ -414,7 +417,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         case PartyUiMode.SWITCH:
         case PartyUiMode.FAINT_SWITCH:
         case PartyUiMode.POST_BATTLE_SWITCH:
-          if (this.cursor) {
+          if (this.cursor >= this.scene.currentBattle.getBattlerCount()) {
             this.options.push(PartyOption.SEND_OUT);
             if (this.partyUiMode !== PartyUiMode.FAINT_SWITCH
                 && this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
@@ -582,7 +585,9 @@ class PartySlot extends Phaser.GameObjects.Container {
   private slotHpOverlay: Phaser.GameObjects.Sprite;
 
   constructor(scene: BattleScene, slotIndex: integer, pokemon: PlayerPokemon) {
-    super(scene, slotIndex ? 230.5 : 64, slotIndex ? -184 + 28 * slotIndex : -124);
+    super(scene, slotIndex >= scene.currentBattle.getBattlerCount() ? 230.5 : 64,
+      slotIndex >= scene.currentBattle.getBattlerCount() ? -184 + (scene.currentBattle.double ? -38 : 0)
+      + (28 + (scene.currentBattle.double ? 6 : 0)) * slotIndex : -124 + (scene.currentBattle.double ? -8 : 0) + slotIndex * 64);
 
     this.slotIndex = slotIndex;
     this.pokemon = pokemon;
@@ -591,14 +596,16 @@ class PartySlot extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    const slotKey = `party_slot${this.slotIndex ? '' : '_main'}`;
+    const battlerCount = (this.scene as BattleScene).currentBattle.getBattlerCount();
+
+    const slotKey = `party_slot${this.slotIndex >= battlerCount ? '' : '_main'}`;
 
     const slotBg = this.scene.add.sprite(0, 0, slotKey, `${slotKey}${this.pokemon.hp ? '' : '_fnt'}`);
     this.slotBg = slotBg;
 
     this.add(slotBg);
 
-    const slotPb = this.scene.add.sprite(this.slotIndex ? -85.5 : -51, this.slotIndex ? 0 : -20.5, 'party_pb');
+    const slotPb = this.scene.add.sprite(this.slotIndex >= battlerCount ? -85.5 : -51, this.slotIndex >= battlerCount ? 0 : -20.5, 'party_pb');
     this.slotPb = slotPb;
 
     this.add(slotPb);
@@ -613,7 +620,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.add(slotInfoContainer);
 
     const slotName = addTextObject(this.scene, 0, 0, this.pokemon.name, TextStyle.PARTY);
-    slotName.setPositionRelative(slotBg, this.slotIndex ? 21 : 24, this.slotIndex ? 3 : 10);
+    slotName.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 21 : 24, this.slotIndex >= battlerCount ? 3 : 10);
     slotName.setOrigin(0, 0);
 
     const slotLevelLabel = this.scene.add.image(0, 0, 'party_slot_overlay_lv');
@@ -625,7 +632,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     slotLevelText.setOrigin(0, 0.25);
 
     const slotHpBar = this.scene.add.image(0, 0, 'party_slot_hp_bar');
-    slotHpBar.setPositionRelative(slotBg, this.slotIndex ? 72 : 8, this.slotIndex ? 7 : 31);
+    slotHpBar.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 72 : 8, this.slotIndex >= battlerCount ? 7 : 31);
     slotHpBar.setOrigin(0, 0);
 
     const hpRatio = this.pokemon.getHpRatio();
@@ -673,8 +680,9 @@ class PartySlot extends Phaser.GameObjects.Container {
   }
 
   private updateSlotTexture(): void {
-    this.slotBg.setTexture(`party_slot${this.slotIndex ? '' : '_main'}`,
-      `party_slot${this.slotIndex ? '' : '_main'}${this.transfer ? '_swap' : this.pokemon.hp ? '' : '_fnt'}${this.selected ? '_sel' : ''}`);
+    const battlerCount = (this.scene as BattleScene).currentBattle.getBattlerCount();
+    this.slotBg.setTexture(`party_slot${this.slotIndex >= battlerCount ? '' : '_main'}`,
+      `party_slot${this.slotIndex >= battlerCount ? '' : '_main'}${this.transfer ? '_swap' : this.pokemon.hp ? '' : '_fnt'}${this.selected ? '_sel' : ''}`);
   }
 }
 

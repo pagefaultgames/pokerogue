@@ -55,7 +55,11 @@ export default class Battle {
         return Math.max(Math.round(baseLevel + Math.abs(Utils.randGauss(deviation))), 1);
     }
 
-    incrementTurn() {
+    getBattlerCount(): integer {
+        return this.double ? 2 : 1;
+    }
+
+    incrementTurn(): void {
         this.turn++;
         this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattleTarget).map(bt => [ bt, null ]));
     }

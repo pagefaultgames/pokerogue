@@ -11,7 +11,6 @@ import * as Utils from '../utils';
 import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
 import { Unlockables } from '../system/unlockables';
-import { maxExpLevel } from '../battle-scene';
 
 type Modifier = Modifiers.Modifier;
 

@@ -17,6 +17,8 @@ export default class TargetSelectUiHandler extends UiHandler {
 
   constructor(scene: BattleScene) {
     super(scene, Mode.TARGET_SELECT);
+
+    this.cursor = -1;
   }
 
   setup(): void { }
@@ -35,8 +37,6 @@ export default class TargetSelectUiHandler extends UiHandler {
 
     if (!this.targets.length)
       return;
-
-    console.log(this.targets);
 
     this.setCursor(this.targets.indexOf(this.cursor) > -1 ? this.cursor : this.targets[0]);
   }
