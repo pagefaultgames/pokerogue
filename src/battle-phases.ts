@@ -140,7 +140,7 @@ export abstract class FieldPhase extends BattlePhase {
   }
 
   executeForAll(func: PokemonFunc): void {
-    const field = this.scene.getField().filter(p => p);
+    const field = this.scene.getField().filter(p => p?.hp);
     field.forEach(pokemon => func(pokemon));
   }
 }
@@ -1312,7 +1312,7 @@ class MoveEffectPhase extends PokemonPhase {
   }
 
   getTargets(): Pokemon[] {
-    return this.scene.getField().filter(p => this.targets.indexOf(p.getBattleTarget()) > -1);
+    return this.scene.getField().filter(p => p?.hp && this.targets.indexOf(p.getBattleTarget()) > -1);
   }
 
   getTarget(): Pokemon {
@@ -2099,9 +2099,15 @@ export class AttemptCapturePhase extends PokemonPhase {
   start() {
     super.start();
 
+    const pokemon = this.getPokemon();
+
+    if (!pokemon?.hp) {
+      this.end();
+      return;
+    }
+
     this.scene.pokeballCounts[this.pokeballType]--;
 
-    const pokemon = this.getPokemon();
     this.originalY = pokemon.y;
 
     const _3m = 3 * pokemon.getMaxHp();
@@ -2111,6 +2117,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
     const x = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier);
     const y = Math.round(65536 / Math.sqrt(Math.sqrt(255 / x)));
+    const fpOffset = pokemon.getFieldPositionOffset();
 
     const pokeballAtlasKey = getPokeballAtlasKey(this.pokeballType);
     this.pokeball = this.scene.add.sprite(16, 80, 'pb', pokeballAtlasKey);
@@ -2123,8 +2130,8 @@ export class AttemptCapturePhase extends PokemonPhase {
     });
     this.scene.tweens.add({
       targets: this.pokeball,
-      x: { value: 236, ease: 'Linear' },
-      y: { value: 16, ease: 'Cubic.easeOut' },
+      x: { value: 236 + fpOffset[0], ease: 'Linear' },
+      y: { value: 16 + fpOffset[1], ease: 'Cubic.easeOut' },
       duration: 500,
       onComplete: () => {
         this.pokeball.setTexture('pb', `${pokeballAtlasKey}_opening`);

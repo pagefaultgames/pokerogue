@@ -449,7 +449,7 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	getPlayerPokemon(): PlayerPokemon {
-		return this.getParty()[0];
+		return this.getPlayerField().find(() => true);
 	}
 
 	getPlayerField(): PlayerPokemon[] {
@@ -458,7 +458,7 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	getEnemyPokemon(): EnemyPokemon {
-		return this.currentBattle?.enemyField[0];
+		return this.currentBattle?.enemyField.find(() => true);
 	}
 
 	getEnemyField(): EnemyPokemon[] {

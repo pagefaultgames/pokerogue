@@ -421,7 +421,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   canApplyAbility(): boolean {
-    return !this.getAbility().conditions.find(condition => !condition(this));
+    return this.hp && !this.getAbility().conditions.find(condition => !condition(this));
   }
 
   getAttackMoveEffectiveness(moveType: Type): TypeDamageMultiplier {
