@@ -151,7 +151,7 @@ class SpikesTag extends ArenaTrapTag {
       const damageHpRatio = 1 / (10 - 2 * this.layers);
 
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is hurt\nby the spikes!'));
-      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.isPlayer(), pokemon.getFieldIndex(), HitResult.OTHER));
+      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), HitResult.OTHER));
       pokemon.damage(Math.ceil(pokemon.getMaxHp() * damageHpRatio));
       return true;
     }
@@ -176,7 +176,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
     if (!pokemon.status && (!pokemon.isOfType(Type.FLYING) || pokemon.getTag(BattlerTagType.IGNORE_FLYING) || pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))) {
       const toxic = this.layers > 1;
 
-      pokemon.scene.unshiftPhase(new ObtainStatusEffectPhase(pokemon.scene, pokemon.isPlayer(), pokemon.getFieldIndex(),
+      pokemon.scene.unshiftPhase(new ObtainStatusEffectPhase(pokemon.scene, pokemon.getBattlerIndex(),
         !toxic ? StatusEffect.POISON : StatusEffect.TOXIC, null, `the ${this.getMoveName()}`));
       return true;
     }
@@ -225,7 +225,7 @@ class StealthRockTag extends ArenaTrapTag {
 
     if (damageHpRatio) {
       pokemon.scene.queueMessage(`Pointed stones dug into\n${pokemon.name}!`);
-      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.isPlayer(), pokemon.getFieldIndex(), HitResult.OTHER));
+      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), HitResult.OTHER));
       pokemon.damage(Math.ceil(pokemon.getMaxHp() * damageHpRatio));
     }
 

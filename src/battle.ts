@@ -2,7 +2,7 @@ import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 
-export enum BattleTarget {
+export enum BattlerIndex {
     PLAYER,
     PLAYER_2,
     ENEMY,
@@ -13,7 +13,7 @@ export interface TurnCommand {
     command: Command;
     cursor?: integer;
     move?: QueuedMove;
-    targets?: BattleTarget[];
+    targets?: BattlerIndex[];
     args?: any[];
 };
 
@@ -61,7 +61,7 @@ export default class Battle {
 
     incrementTurn(): void {
         this.turn++;
-        this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattleTarget).map(bt => [ bt, null ]));
+        this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [ bt, null ]));
     }
 
     addParticipant(playerPokemon: PlayerPokemon): void {

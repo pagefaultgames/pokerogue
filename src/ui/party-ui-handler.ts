@@ -69,7 +69,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private static FilterAll = (_pokemon: PlayerPokemon) => null;
 
   public static FilterNonFainted = (pokemon: PlayerPokemon) => {
-    if (!pokemon.hp)
+    if (pokemon.isFainted())
       return `${pokemon.name} has no energy\nleft to battle!`;
     return null;
   };

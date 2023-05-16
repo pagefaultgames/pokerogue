@@ -480,7 +480,7 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
 
     if (pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
-      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), pokemon.getFieldIndex(),
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
         Math.max(Math.floor(pokemon.getMaxHp() / 16) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
     }
 
@@ -510,7 +510,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
 
     if (pokemon.turnData.damageDealt && pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
-      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.isPlayer(), pokemon.getFieldIndex(),
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
         Math.max(Math.floor(pokemon.turnData.damageDealt / 8) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
     }
 

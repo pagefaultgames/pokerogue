@@ -1,4 +1,4 @@
-import { BattleTarget } from "../battle";
+import { BattlerIndex } from "../battle";
 import BattleScene, { Button } from "../battle-scene";
 import { Moves, getMoveTargets } from "../data/move";
 import { Mode } from "./ui";
@@ -12,7 +12,7 @@ export default class TargetSelectUiHandler extends UiHandler {
   private move: Moves;
   private targetSelectCallback: TargetSelectCallback;
 
-  private targets: BattleTarget[];
+  private targets: BattlerIndex[];
   private targetFlashTween: Phaser.Tweens.Tween;
 
   constructor(scene: BattleScene) {
@@ -52,12 +52,12 @@ export default class TargetSelectUiHandler extends UiHandler {
     } else {
       switch (button) {
         case Button.UP:
-          if (this.cursor < BattleTarget.ENEMY && this.targets.find(t => t >= BattleTarget.ENEMY))
-            success = this.setCursor(this.targets.find(t => t >= BattleTarget.ENEMY));
+          if (this.cursor < BattlerIndex.ENEMY && this.targets.find(t => t >= BattlerIndex.ENEMY))
+            success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY));
           break;
         case Button.DOWN:
-          if (this.cursor >= BattleTarget.ENEMY && this.targets.find(t => t < BattleTarget.ENEMY))
-            success = this.setCursor(this.targets.find(t => t < BattleTarget.ENEMY));
+          if (this.cursor >= BattlerIndex.ENEMY && this.targets.find(t => t < BattlerIndex.ENEMY))
+            success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY));
           break;
         case Button.LEFT:
           if (this.cursor % 2 && this.targets.find(t => t === this.cursor - 1))

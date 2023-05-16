@@ -193,7 +193,7 @@ export function initAutoPlay() {
 
             const party = thisArg.getParty();
             const modifierTypeOptions = modifierSelectUiHandler.options.map(o => o.modifierTypeOption);
-            const faintedPartyMemberIndex = party.findIndex(p => !p.hp);
+            const faintedPartyMemberIndex = party.findIndex(p => p.isFainted());
             const lowHpPartyMemberIndex = party.findIndex(p => p.getHpRatio() <= 0.5);
             const criticalHpPartyMemberIndex = party.findIndex(p => p.getHpRatio() <= 0.25);
 
