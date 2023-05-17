@@ -44,7 +44,7 @@ export class EvolutionPhase extends BattlePhase {
 
       this.evolutionContainer = (this.scene.ui.getHandler() as EvolutionSceneHandler).evolutionContainer;
 
-      this.evolutionBaseBg = this.scene.add.image(0, 0, 'plains_bg');
+      this.evolutionBaseBg = this.scene.add.image(0, 0, 'default_bg');
       this.evolutionBaseBg.setOrigin(0, 0);
       this.evolutionContainer.add(this.evolutionBaseBg);
 

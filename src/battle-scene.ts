@@ -211,6 +211,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('starter_select_gen_cursor', 'ui');
 		this.loadImage('starter_select_gen_cursor_highlight', 'ui');
 
+		this.loadImage('default_bg', 'arenas');
+
 		// Load arena images
 		Utils.getEnumValues(Biome).map(bt => {
 			const btKey = Biome[bt].toLowerCase();
