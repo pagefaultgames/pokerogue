@@ -474,7 +474,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   setMove(moveIndex: integer, moveId: Moves): void {
     const move = moveId ? new PokemonMove(moveId) : null;
     this.moveset[moveIndex] = move;
-    if (this.summonData.moveset)
+    if (this.summonData?.moveset)
       this.summonData.moveset[moveIndex] = move;
   }
 

@@ -75,7 +75,7 @@ export class CheckLoadPhase extends BattlePhase {
 
     this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
     this.scene.pushPhase(new SummonPhase(this.scene, 0));
-    if (this.scene.currentBattle.double)
+    if (this.scene.currentBattle.double && this.scene.getParty().filter(p => !p.isFainted()).length > 1)
       this.scene.pushPhase(new SummonPhase(this.scene, 1));
 
     super.end();
@@ -320,10 +320,6 @@ export class NextEncounterPhase extends EncounterPhase {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
     });
 
-    this.scene.unshiftPhase(new CheckSwitchPhase(this.scene, 0));
-    if (this.scene.currentBattle.double)
-      this.scene.unshiftPhase(new CheckSwitchPhase(this.scene, 1));
-
     super.end();
   }
 }
@@ -475,34 +471,35 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     const playerPokemon = this.getPokemon();
 
-    if (this.fieldIndex === 1) {
-      this.scene.getPlayerField()[0].setFieldPosition(FieldPosition.LEFT, 250);
+    if (this.fieldIndex === 1)
       playerPokemon.setFieldPosition(FieldPosition.RIGHT, 0);
-    } else
+    else
       playerPokemon.setFieldPosition(!this.scene.currentBattle.double ? FieldPosition.CENTER : FieldPosition.LEFT);
 
-    const xOffset = playerPokemon.getFieldPositionOffset()[0];
+    const fpOffset = playerPokemon.getFieldPositionOffset();
+
+    console.log(fpOffset);
 
     pokeball.setVisible(true);
 
     this.scene.tweens.add({
       targets: pokeball,
       duration: 650,
-      x: 100 + xOffset
+      x: 100 + fpOffset[0]
     });
 
     this.scene.tweens.add({
       targets: pokeball,
       duration: 150,
       ease: 'Cubic.easeOut',
-      y: 70,
+      y: 70 + fpOffset[1],
       onComplete: () => {
         this.scene.tweens.add({
           targets: pokeball,
           duration: 500,
           ease: 'Cubic.easeIn',
           angle: 1440,
-          y: 132,
+          y: 132 + fpOffset[1],
           onComplete: () => {
             this.scene.sound.play('pb_rel');
             pokeball.destroy();
@@ -565,10 +562,6 @@ export class SwitchSummonPhase extends SummonPhase {
     this.batonPass = batonPass;
   }
 
-  start() {
-    super.start();
-  }
-
   preSummon(): void {
     if (!this.doReturn) {
       this.switchAndSummon();
@@ -619,9 +612,45 @@ export class SwitchSummonPhase extends SummonPhase {
     if (this.batonPass)
       this.getPokemon().transferSummon(this.lastPokemon);
 
-    this.lastPokemon.resetSummonData();
+    this.lastPokemon?.resetSummonData();
 
     super.end();
+  }
+}
+
+export class ReturnPhase extends SwitchSummonPhase {
+  constructor(scene: BattleScene, fieldIndex: integer) {
+    super(scene, fieldIndex, -1, true, false);
+  }
+
+  switchAndSummon(): void {
+    this.end();
+  }
+
+  summon(): void { }
+}
+
+export class ToggleDoublePositionPhase extends BattlePhase {
+  private double: boolean;
+
+  constructor(scene: BattleScene, double: boolean) {
+    super(scene);
+
+    this.double = double;
+  }
+
+  start() {
+    super.start();
+
+    const playerPokemon = this.scene.getPlayerPokemon();
+    playerPokemon.setFieldPosition(this.double ? FieldPosition.LEFT : FieldPosition.CENTER, 500).then(() => {
+      if (!this.double && playerPokemon.getFieldIndex() === 1) {
+        const party = this.scene.getParty();
+        party[1] = party[0];
+        party[0] = playerPokemon;
+      }
+      this.end();
+    });
   }
 }
 
@@ -788,8 +817,13 @@ export class CommandPhase extends FieldPhase {
             this.scene.ui.setMode(Mode.COMMAND);
           }, null, true);
         } else if (cursor < 4) {
+          const targets = this.scene.getEnemyField().filter(p => p.isActive()).map(p => p.getBattlerIndex());
           this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.BALL, cursor: cursor };
-          this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex))
+          this.scene.currentBattle.turnPokeballCounts[cursor as PokeballType]--;
+          if (targets.length > 1)
+            this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
+          else
+            this.scene.currentBattle.turnCommands[this.fieldIndex].targets = targets;
           success = true;
         }
         break;
@@ -859,14 +893,17 @@ export class SelectTargetPhase extends PokemonPhase {
   start() {
     super.start();
 
-    const move = this.scene.currentBattle.turnCommands[this.fieldIndex].move?.move;
+    const turnCommand = this.scene.currentBattle.turnCommands[this.fieldIndex];
+    const move = turnCommand.move?.move;
     this.scene.ui.setMode(Mode.TARGET_SELECT, this.fieldIndex, move, (cursor: integer) => {
       this.scene.ui.setMode(Mode.MESSAGE);
       if (cursor === -1) {
+        if (turnCommand.command === Command.BALL)
+          this.scene.currentBattle.turnPokeballCounts[turnCommand.cursor]++;
         this.scene.currentBattle.turnCommands[this.fieldIndex] = null;
         this.scene.unshiftPhase(new CommandPhase(this.scene, this.fieldIndex));
       } else
-        this.scene.currentBattle.turnCommands[this.fieldIndex].targets = [ cursor ];
+        turnCommand.targets = [ cursor ];
       this.end();
     });
   }
@@ -965,7 +1002,7 @@ export class TurnEndPhase extends FieldPhase {
   start() {
     super.start();
 
-    this.scene.currentBattle.incrementTurn();
+    this.scene.currentBattle.incrementTurn(this.scene);
     
     const handlePokemon = (pokemon: Pokemon) => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
@@ -1001,10 +1038,6 @@ export class TurnEndPhase extends FieldPhase {
 }
 
 export class BattleEndPhase extends BattlePhase {
-  constructor(scene: BattleScene) {
-    super(scene);
-  }
-
   start() {
     super.start();
 
@@ -1022,6 +1055,16 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     this.scene.updateModifiers().then(() => this.end());
+  }
+}
+
+export class NewBattlePhase extends BattlePhase {
+  start() {
+    super.start();
+
+    this.scene.newBattle();
+
+    this.end();
   }
 }
 
@@ -1331,7 +1374,7 @@ class MoveEffectPhase extends PokemonPhase {
   }
 
   getTargets(): Pokemon[] {
-    return this.scene.getField().filter(p => this.targets.indexOf(p.getBattlerIndex()) > -1);
+    return this.scene.getField().filter(p => p?.isActive() && this.targets.indexOf(p.getBattlerIndex()) > -1);
   }
 
   getTarget(): Pokemon {
@@ -1789,7 +1832,7 @@ export class VictoryPhase extends PokemonPhase {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       if (this.scene.currentBattle.waveIndex < this.scene.finalWave) {
         this.scene.pushPhase(new SelectModifierPhase(this.scene));
-        this.scene.newBattle();
+        this.scene.pushPhase(new NewBattlePhase(this.scene));
       } else
         this.scene.pushPhase(new GameOverPhase(this.scene, true));
     }
@@ -2330,7 +2373,7 @@ export class AttemptRunPhase extends PokemonPhase {
       enemyField.forEach(enemyPokemon => enemyPokemon.hp = 0);
 
       this.scene.pushPhase(new BattleEndPhase(this.scene));
-      this.scene.newBattle();
+      this.scene.pushPhase(new NewBattlePhase(this.scene));
     } else
       this.scene.queueMessage('You can\'t escape!', null, true);
 
@@ -2350,7 +2393,7 @@ export class SelectModifierPhase extends BattlePhase {
     regenerateModifierPoolThresholds(party);
     const modifierCount = new Utils.IntegerHolder(3);
     this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
-    const typeOptions: Array<ModifierTypeOption> = getPlayerModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex - 1, modifierCount.value, party);
+    const typeOptions: Array<ModifierTypeOption> = getPlayerModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, modifierCount.value, party);
 
     const modifierSelectCallback = (cursor: integer) => {
       if (cursor < 0) {

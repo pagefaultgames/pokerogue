@@ -120,10 +120,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
 
     this.hpBar.setScale(pokemon.getHpRatio(), 1);
+    this.lastHpFrame = this.hpBar.scaleX > 0.5 ? 'high' : this.hpBar.scaleX > 0.25 ? 'medium' : 'low';
+    this.hpBar.setFrame(this.lastHpFrame);
     if (this.player)
       this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
     this.lastHp = pokemon.hp;
-    this.lastHpFrame = this.hpBar.scaleX > 0.5 ? 'high' : this.hpBar.scaleX > 0.25 ? 'medium' : 'low';
     this.lastMaxHp = pokemon.getMaxHp();
 
     this.setLevel(pokemon.level);

@@ -1,3 +1,4 @@
+import BattleScene, { PokeballCounts } from "./battle-scene";
 import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
@@ -28,6 +29,7 @@ export default class Battle {
     public double: boolean;
     public turn: integer;
     public turnCommands: TurnCommands;
+    public turnPokeballCounts: PokeballCounts;
     public playerParticipantIds: Set<integer> = new Set<integer>();
     public escapeAttempts: integer = 0;
 
@@ -37,8 +39,6 @@ export default class Battle {
         this.enemyField = [];
         this.double = double;
         this.turn = 0;
-        
-        this.incrementTurn();
     }
 
     private getLevelForWave(): number {
@@ -59,9 +59,10 @@ export default class Battle {
         return this.double ? 2 : 1;
     }
 
-    incrementTurn(): void {
+    incrementTurn(scene: BattleScene): void {
         this.turn++;
         this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [ bt, null ]));
+        this.turnPokeballCounts = Object.assign({}, scene.pokeballCounts);
     }
 
     addParticipant(playerPokemon: PlayerPokemon): void {

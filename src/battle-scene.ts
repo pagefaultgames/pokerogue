@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import { Biome } from './data/biome';
 import UI from './ui/ui';
-import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase } from './battle-phases';
-import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
+import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, ToggleDoublePositionPhase, CheckSwitchPhase } from './battle-phases';
+import Pokemon, { PlayerPokemon, EnemyPokemon, FieldPosition } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate } from './modifier/modifier';
@@ -510,10 +510,21 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	newBattle(waveIndex?: integer, double?: boolean): Battle {
+		double = (waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1)) % 2 === 0;
+
+		const isDouble = double === undefined || double;
+
+		console.log(this.currentBattle?.waveIndex);
+
+		const lastBattle = this.currentBattle;
+
+		this.currentBattle = new Battle(waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1), isDouble);
+		this.currentBattle.incrementTurn(this);
+
 		if (!waveIndex) {
-			if (this.currentBattle) {
+			if (lastBattle) {
 				this.getEnemyField().forEach(enemyPokemon => enemyPokemon.destroy());
-				if (this.currentBattle.waveIndex % 10)
+				if (lastBattle.waveIndex % 10)
 					this.pushPhase(new NextEncounterPhase(this));
 				else {
 					this.pushPhase(new SelectBiomePhase(this));
@@ -526,13 +537,28 @@ export default class BattleScene extends Phaser.Scene {
 					this.arena.playBgm();
 					this.pushPhase(new EncounterPhase(this));
 					this.pushPhase(new SummonPhase(this, 0));
-					if (double === undefined || double)
-						this.pushPhase(new SummonPhase(this, 1));
 				}
 			}
-		}
 
-		this.currentBattle = new Battle(waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1), double === undefined || double);
+			if ((lastBattle?.double || false) !== isDouble) {
+				const availablePartyMemberCount = this.getParty().filter(p => !p.isFainted()).length;
+				if (isDouble) {
+					this.pushPhase(new ToggleDoublePositionPhase(this, true));
+					if (availablePartyMemberCount > 1)
+						this.pushPhase(new SummonPhase(this, 1));
+				} else {
+					if (availablePartyMemberCount > 1)
+						this.pushPhase(new ReturnPhase(this, 1));
+					this.pushPhase(new ToggleDoublePositionPhase(this, false));
+				}
+			}
+
+			if (lastBattle) {
+				this.pushPhase(new CheckSwitchPhase(this, 0));
+				if (lastBattle.double && isDouble)
+					this.pushPhase(new CheckSwitchPhase(this, 1));
+			}
+		}
 		
 		return this.currentBattle;
 	}
@@ -875,7 +901,7 @@ export default class BattleScene extends Phaser.Scene {
 					modifiers.splice(modifiers.indexOf(modifier), 1);
 			}
 
-			this.updatePartyForModifiers(player ? this.getParty() : this.getEnemyField()).then(() => {
+			this.updatePartyForModifiers(player ? this.getParty() : this.getEnemyField().filter(p => p.isActive())).then(() => {
 				(player ? this.modifierBar : this.enemyModifierBar).updateModifiers(modifiers);
 				if (!player)
 					this.updateWaveCountPosition();

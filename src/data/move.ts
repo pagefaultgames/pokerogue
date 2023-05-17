@@ -2130,7 +2130,7 @@ export type MoveTargetSet = {
 }
 
 export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
-  const moveTarget = move ? allMoves[move].moveTarget : move === undefined ? undefined : MoveTarget.NEAR_ENEMY;
+  const moveTarget = move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
   const opponents = user.getOpponents();
   
   let set: BattlerIndex[] = [];
