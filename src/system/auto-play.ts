@@ -24,7 +24,7 @@ export function initAutoPlay() {
     const commandUiHandler = this.ui.handlers[Mode.COMMAND] as CommandUiHandler;
     const fightUiHandler = this.ui.handlers[Mode.FIGHT] as FightUiHandler;
     const partyUiHandler = this.ui.handlers[Mode.PARTY] as PartyUiHandler;
-    const switchCheckUiHandler = this.ui.handlers[Mode.CONFIRM] as ConfirmUiHandler;
+    const confirmUiHandler = this.ui.handlers[Mode.CONFIRM] as ConfirmUiHandler;
     const modifierSelectUiHandler = this.ui.handlers[Mode.MODIFIER_SELECT] as ModifierSelectUiHandler;
 
     const getBestPartyMemberIndex = () => {
@@ -153,15 +153,15 @@ export function initAutoPlay() {
         }
     };
 
-    const originalSwitchCheckUiHandlerShow = switchCheckUiHandler.show;
-    switchCheckUiHandler.show = function (args: any[]) {
+    const originalSwitchCheckUiHandlerShow = confirmUiHandler.show;
+    confirmUiHandler.show = function (args: any[]) {
         originalSwitchCheckUiHandlerShow.apply(this, [ args ]);
         if (thisArg.auto) {
             const bestPartyMemberIndex = getBestPartyMemberIndex();
             thisArg.time.delayedCall(20, () => {
                 if (bestPartyMemberIndex)
                     nextPartyMemberIndex = bestPartyMemberIndex;
-                switchCheckUiHandler.setCursor(bestPartyMemberIndex ? 1 : 0);
+                confirmUiHandler.setCursor(bestPartyMemberIndex ? 1 : 0);
                 thisArg.time.delayedCall(20, () =>  this.processInput(Button.ACTION));
             });
         }
@@ -193,7 +193,7 @@ export function initAutoPlay() {
 
             const party = thisArg.getParty();
             const modifierTypeOptions = modifierSelectUiHandler.options.map(o => o.modifierTypeOption);
-            const faintedPartyMemberIndex = party.findIndex(p => !p.hp);
+            const faintedPartyMemberIndex = party.findIndex(p => p.isFainted());
             const lowHpPartyMemberIndex = party.findIndex(p => p.getHpRatio() <= 0.5);
             const criticalHpPartyMemberIndex = party.findIndex(p => p.getHpRatio() <= 0.25);
 

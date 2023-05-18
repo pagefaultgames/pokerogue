@@ -37,7 +37,7 @@ export default class ModifierData {
     type.generatorId = this.typeGeneratorId;
 
     if (type instanceof ModifierTypeGenerator)
-      type = (type as ModifierTypeGenerator).generateType(this.player ? scene.getParty() : scene.getEnemyParty(), this.typePregenArgs);
+      type = (type as ModifierTypeGenerator).generateType(this.player ? scene.getParty() : scene.getEnemyField(), this.typePregenArgs);
 
     const ret = Reflect.construct(constructor, ([ type ] as any[]).concat(this.args).concat(this.stackCount)) as PersistentModifier
 

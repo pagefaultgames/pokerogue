@@ -13,6 +13,12 @@ export default class EvolutionSceneHandler extends UiHandler {
       this.evolutionContainer = this.scene.add.container(0, -this.scene.game.canvas.height / 6);
       this.scene.fieldUI.add(this.evolutionContainer);
     }
+
+    show(_args: any[]): void {
+      super.show(_args);
+
+      this.scene.fieldUI.bringToTop(this.evolutionContainer);
+    }
   
     processInput(button: Button) {
       this.scene.ui.getMessageHandler().processInput(button);

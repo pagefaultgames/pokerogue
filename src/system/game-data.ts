@@ -21,7 +21,7 @@ interface SystemSaveData {
 
 interface SessionSaveData {
   party: PokemonData[];
-  enemyParty: PokemonData[];
+  enemyField: PokemonData[];
   modifiers: PersistentModifierData[];
   enemyModifiers: PersistentModifierData[];
   arena: ArenaData;
@@ -126,9 +126,9 @@ export class GameData {
   saveSession(scene: BattleScene): boolean {
     const sessionData = {
       party: scene.getParty().map(p => new PokemonData(p)),
-      enemyParty: scene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: scene.findModifiers(m => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: scene.findModifiers(m => true, false).map(m => new PersistentModifierData(m, false)),
+      enemyField: scene.getEnemyField().map(p => new PokemonData(p)),
+      modifiers: scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
+      enemyModifiers: scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
       arena: new ArenaData(scene.arena),
       pokeballCounts: scene.pokeballCounts,
       waveIndex: scene.currentBattle.waveIndex,
@@ -153,7 +153,7 @@ export class GameData {
 
       try {
         const sessionData = JSON.parse(atob(localStorage.getItem('sessionData')), (k: string, v: any) => {
-          if (k === 'party' || k === 'enemyParty') {
+          if (k === 'party' || k === 'enemyField') {
             const ret: PokemonData[] = [];
             for (let pd of v)
               ret.push(new PokemonData(pd));
@@ -187,17 +187,20 @@ export class GameData {
           loadPokemonAssets.push(pokemon.loadAssets());
           party.push(pokemon);
         }
-        
-        const enemyPokemon = sessionData.enemyParty[0].toPokemon(scene) as EnemyPokemon;
 
         Object.keys(scene.pokeballCounts).forEach((key: string) => {
           scene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
         });
 
-        scene.newArena(sessionData.arena.biome, true);
-        scene.newBattle(sessionData.waveIndex).enemyPokemon = enemyPokemon;
+        scene.newArena(sessionData.arena.biome, sessionData.enemyField.length > 1);
+        const battle = scene.newBattle(sessionData.waveIndex, sessionData.enemyField.length > 1);
 
-        loadPokemonAssets.push(enemyPokemon.loadAssets());
+        sessionData.enemyField.forEach((enemyData, e) => {
+          const enemyPokemon = enemyData.toPokemon(scene) as EnemyPokemon;
+          battle.enemyField[e] = enemyPokemon;
+
+          loadPokemonAssets.push(enemyPokemon.loadAssets());
+        });
 
         scene.arena.weather = sessionData.arena.weather;
         // TODO

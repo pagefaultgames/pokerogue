@@ -1,6 +1,6 @@
 import { PokemonHealPhase, StatChangePhase } from "../battle-phases";
 import { getPokemonMessage } from "../messages";
-import Pokemon, { MoveResult } from "../pokemon";
+import Pokemon, { HitResult, MoveResult } from "../pokemon";
 import { getBattleStatName } from "./battle-stat";
 import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./battler-tag";
@@ -54,12 +54,7 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
     case BerryType.LUM:
       return (pokemon: Pokemon) => !!pokemon.status || !!pokemon.getTag(BattlerTagType.CONFUSED);
     case BerryType.ENIGMA:
-      return (pokemon: Pokemon) => {
-        const opponent = pokemon.getOpponent();
-        const opponentLastMove = opponent ? opponent.getLastXMoves(1).find(() => true) : null; // TODO: Update so this works even if opponent has fainted
-        
-        return opponentLastMove && opponentLastMove.turn === pokemon.scene.currentBattle?.turn - 1 && opponentLastMove.result === MoveResult.SUPER_EFFECTIVE;
-      };
+      return (pokemon: Pokemon) => !!pokemon.turnData.attacksReceived.filter(a => a.result === HitResult.SUPER_EFFECTIVE).length;
     case BerryType.LIECHI:
     case BerryType.GANLON:
     case BerryType.SALAC:
@@ -83,7 +78,8 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
     case BerryType.SITRUS:
      case BerryType.ENIGMA:
       return (pokemon: Pokemon) => {
-        pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.isPlayer(), Math.floor(pokemon.getMaxHp() / 4), getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\nrestored its HP!`), true));
+        pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
+          Math.floor(pokemon.getMaxHp() / 4), getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\nrestored its HP!`), true));
       };
     case BerryType.LUM:
       return (pokemon: Pokemon) => {
@@ -101,13 +97,13 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
     case BerryType.APICOT:
       return (pokemon: Pokemon) => {
         const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
-        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), true, [ battleStat ], 1));
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ battleStat ], 1));
       };
     case BerryType.LANSAT:
       return (pokemon: Pokemon) => {
         pokemon.addTag(BattlerTagType.CRIT_BOOST);
       };
     case BerryType.STARF:
-      return (pokemon: Pokemon) => pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.isPlayer(), true, [ BattleStat.RAND ], 2));
+      return (pokemon: Pokemon) => pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ BattleStat.RAND ], 2));
   }
 }

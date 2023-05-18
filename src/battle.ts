@@ -1,18 +1,44 @@
-import { EnemyPokemon, PlayerPokemon } from "./pokemon";
+import BattleScene, { PokeballCounts } from "./battle-scene";
+import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./pokemon";
+import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 
-export class Battle {
+export enum BattlerIndex {
+    PLAYER,
+    PLAYER_2,
+    ENEMY,
+    ENEMY_2
+}
+
+export interface TurnCommand {
+    command: Command;
+    cursor?: integer;
+    move?: QueuedMove;
+    targets?: BattlerIndex[];
+    args?: any[];
+};
+
+interface TurnCommands {
+    [key: integer]: TurnCommand
+}
+
+export default class Battle {
     public waveIndex: integer;
-    public enemyLevel: integer;
-    public enemyPokemon: EnemyPokemon;
+    public enemyLevels: integer[];
+    public enemyField: EnemyPokemon[];
+    public double: boolean;
     public turn: integer;
+    public turnCommands: TurnCommands;
+    public turnPokeballCounts: PokeballCounts;
     public playerParticipantIds: Set<integer> = new Set<integer>();
     public escapeAttempts: integer = 0;
 
-    constructor(waveIndex: integer) {
+    constructor(waveIndex: integer, double: boolean) {
         this.waveIndex = waveIndex;
-        this.enemyLevel = this.getLevelForWave();
-        this.turn = 1;
+        this.enemyLevels = new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave());
+        this.enemyField = [];
+        this.double = double;
+        this.turn = 0;
     }
 
     private getLevelForWave(): number {
@@ -29,8 +55,14 @@ export class Battle {
         return Math.max(Math.round(baseLevel + Math.abs(Utils.randGauss(deviation))), 1);
     }
 
-    incrementTurn() {
+    getBattlerCount(): integer {
+        return this.double ? 2 : 1;
+    }
+
+    incrementTurn(scene: BattleScene): void {
         this.turn++;
+        this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [ bt, null ]));
+        this.turnPokeballCounts = Object.assign({}, scene.pokeballCounts);
     }
 
     addParticipant(playerPokemon: PlayerPokemon): void {

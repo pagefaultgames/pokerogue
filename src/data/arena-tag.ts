@@ -3,7 +3,7 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { Moves, allMoves } from "./move";
 import { getPokemonMessage } from "../messages";
-import Pokemon, { DamageResult, MoveResult } from "../pokemon";
+import Pokemon, { DamageResult, HitResult, MoveResult } from "../pokemon";
 import { DamagePhase, ObtainStatusEffectPhase } from "../battle-phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerTagType } from "./battler-tag";
@@ -143,8 +143,7 @@ class SpikesTag extends ArenaTrapTag {
     super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    const target = source.getOpponent();
-    arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${target.name}'s feet!`);
+    arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${source.getOpponentDescriptor()}'s feet!`);
   }
 
   activateTrap(pokemon: Pokemon): boolean {
@@ -152,7 +151,7 @@ class SpikesTag extends ArenaTrapTag {
       const damageHpRatio = 1 / (10 - 2 * this.layers);
 
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is hurt\nby the spikes!'));
-      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.isPlayer(), MoveResult.OTHER));
+      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), HitResult.OTHER));
       pokemon.damage(Math.ceil(pokemon.getMaxHp() * damageHpRatio));
       return true;
     }
@@ -170,15 +169,14 @@ class ToxicSpikesTag extends ArenaTrapTag {
     super.onAdd(arena);
     
     const source = arena.scene.getPokemonById(this.sourceId);
-    const target = source.getOpponent();
-    arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${target.name}'s feet!`);
+    arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${source.getOpponentDescriptor()}'s feet!`);
   }
 
   activateTrap(pokemon: Pokemon): boolean {
     if (!pokemon.status && (!pokemon.isOfType(Type.FLYING) || pokemon.getTag(BattlerTagType.IGNORE_FLYING) || pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))) {
       const toxic = this.layers > 1;
 
-      pokemon.scene.unshiftPhase(new ObtainStatusEffectPhase(pokemon.scene, pokemon.isPlayer(),
+      pokemon.scene.unshiftPhase(new ObtainStatusEffectPhase(pokemon.scene, pokemon.getBattlerIndex(),
         !toxic ? StatusEffect.POISON : StatusEffect.TOXIC, null, `the ${this.getMoveName()}`));
       return true;
     }
@@ -196,8 +194,7 @@ class StealthRockTag extends ArenaTrapTag {
     super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    const target = source.getOpponent();
-    arena.scene.queueMessage(`Pointed stones float in the air\naround ${target.name}!`);
+    arena.scene.queueMessage(`Pointed stones float in the air\naround ${source.getOpponentDescriptor()}!`);
   }
 
   activateTrap(pokemon: Pokemon): boolean {
@@ -228,7 +225,7 @@ class StealthRockTag extends ArenaTrapTag {
 
     if (damageHpRatio) {
       pokemon.scene.queueMessage(`Pointed stones dug into\n${pokemon.name}!`);
-      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.isPlayer(), MoveResult.OTHER));
+      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), HitResult.OTHER));
       pokemon.damage(Math.ceil(pokemon.getMaxHp() * damageHpRatio));
     }
 
@@ -242,8 +239,8 @@ export class TrickRoomTag extends ArenaTag {
   }
 
   apply(args: any[]): boolean {
-    const speedDelayed = args[0] as Utils.BooleanHolder;
-    speedDelayed.value = !speedDelayed.value;
+    const speedReversed = args[0] as Utils.BooleanHolder;
+    speedReversed.value = !speedReversed.value;
     return true;
   }
 

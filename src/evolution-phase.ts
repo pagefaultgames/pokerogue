@@ -44,7 +44,7 @@ export class EvolutionPhase extends BattlePhase {
 
       this.evolutionContainer = (this.scene.ui.getHandler() as EvolutionSceneHandler).evolutionContainer;
 
-      this.evolutionBaseBg = this.scene.add.image(0, 0, 'plains_bg');
+      this.evolutionBaseBg = this.scene.add.image(0, 0, 'default_bg');
       this.evolutionBaseBg.setOrigin(0, 0);
       this.evolutionContainer.add(this.evolutionBaseBg);
 
@@ -97,7 +97,8 @@ export class EvolutionPhase extends BattlePhase {
 
         const levelMoves = pokemon.getLevelMoves(this.lastLevel + 1);
         for (let lm of levelMoves)
-          this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm));        
+          this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm));  
+        this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
 
         this.scene.time.delayedCall(1000, () => {
           const evolutionBgm = this.scene.sound.add('evolution');
@@ -442,5 +443,13 @@ export class EvolutionPhase extends BattlePhase {
     };
 
     updateParticle();
+  }
+}
+
+export class EndEvolutionPhase extends BattlePhase {
+  start() {
+    super.start();
+
+    this.scene.ui.setModeForceTransition(Mode.MESSAGE).then(() => this.end());
   }
 }

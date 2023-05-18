@@ -4,6 +4,7 @@ import { TextStyle, addTextObject } from "./text";
 
 const hiddenX = -91;
 const shownX = 10;
+const baseY = -116;
 
 export default class AbilityBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.Image;
@@ -15,7 +16,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor(scene: BattleScene) {
-    super(scene, hiddenX, (-scene.game.canvas.height / 6) + 64);
+    super(scene, hiddenX, baseY);
   }
 
   setup(): void {
@@ -43,9 +44,12 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
     if (this.shown)
       return;
 
+    (this.scene as BattleScene).fieldUI.bringToTop(this);
+
     if (this.tween)
       this.tween.stop();
 
+    this.y = baseY + ((this.scene as BattleScene).currentBattle.double ? 14 : 0);
     this.tween = this.scene.tweens.add({
       targets: this,
       x: shownX,

@@ -11,7 +11,6 @@ import * as Utils from '../utils';
 import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
 import { Unlockables } from '../system/unlockables';
-import { maxExpLevel } from '../battle-scene';
 
 type Modifier = Modifiers.Modifier;
 
@@ -128,7 +127,7 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
   constructor(name: string, restorePercent: integer, iconImage?: string) {
     super(name, restorePercent, true, (_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, true, true),
       ((pokemon: PlayerPokemon) => {
-        if (pokemon.hp)
+        if (!pokemon.isFainted())
           return PartyUiHandler.NoEffectMessage;
         return null;
       }), iconImage, 'revive');
@@ -669,15 +668,15 @@ const modifierPool = {
       return statusEffectPartyMemberCount * 6;
     }),
     new WeightedModifierType(modifierTypes.REVIVE, (party: Pokemon[]) => {
-      const faintedPartyMemberCount = Math.min(party.filter(p => !p.hp).length, 3);
+      const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
       return faintedPartyMemberCount * 9;
     }),
     new WeightedModifierType(modifierTypes.MAX_REVIVE, (party: Pokemon[]) => {
-      const faintedPartyMemberCount = Math.min(party.filter(p => !p.hp).length, 3);
+      const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
       return faintedPartyMemberCount * 3;
     }),
     new WeightedModifierType(modifierTypes.SACRED_ASH, (party: Pokemon[]) => {
-      return party.filter(p => !p.hp).length >= Math.ceil(party.length / 2) ? 1 : 0;
+      return party.filter(p => p.isFainted()).length >= Math.ceil(party.length / 2) ? 1 : 0;
     }),
     new WeightedModifierType(modifierTypes.HYPER_POTION, (party: Pokemon[]) => {
       const thresholdPartyMemberCount = Math.min(party.filter(p => p.getInverseHp() >= 100 || p.getHpRatio() <= 0.625).length, 3);
