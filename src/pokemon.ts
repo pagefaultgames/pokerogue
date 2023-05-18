@@ -188,8 +188,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  isFainted(): boolean {
-    return !this.hp;
+  isFainted(checkStatus?: boolean): boolean {
+    return !this.hp && (!checkStatus || this.status?.effect === StatusEffect.FAINT);
   }
 
   isActive(): boolean {

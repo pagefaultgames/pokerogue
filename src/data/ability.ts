@@ -83,6 +83,18 @@ export class BlockRecoilDamageAttr extends AbAttr {
   }
 }
 
+export class DoubleBattleChanceAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const doubleChance = (args[0] as Utils.IntegerHolder);
+    doubleChance.value = Math.max(doubleChance.value / 2, 1);
+    return true;
+  }
+}
+
 export class PreDefendAbAttr extends AbAttr {
   applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     return false;
@@ -155,9 +167,10 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
   applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     const ret = super.applyPreDefend(pokemon, attacker, move, cancelled, args);
 
-    if (ret && pokemon.getHpRatio() < 1) {
-      const scene = pokemon.scene;
-      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(), Math.max(Math.floor(pokemon.getMaxHp() / 4), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
+    if (ret) {
+      if (pokemon.getHpRatio() < 1)
+        pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
+          Math.max(Math.floor(pokemon.getMaxHp() / 4), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
       return true;
     }
     
@@ -695,7 +708,6 @@ export function applyAbAttrs(attrType: { new(...args: any[]): AbAttr }, pokemon:
 
   const ability = pokemon.getAbility();
   const attrs = ability.getAttrs(attrType) as AbAttr[];
-  console.log(attrs, ability);
   for (let attr of attrs) {
     if (!canApplyAttr(pokemon, attr))
       continue;
@@ -1220,7 +1232,8 @@ export function initAbilities() {
     new Ability(Abilities.HUSTLE, "Hustle (N)", "Boosts the ATTACK stat, but lowers accuracy.", 3),
     new Ability(Abilities.HYPER_CUTTER, "Hyper Cutter", "Prevents other POKéMON from lowering ATTACK stat.", 3)
       .attr(ProtectStatAbAttr, BattleStat.ATK),
-    new Ability(Abilities.ILLUMINATE, "Illuminate (N)", "Raises the likelihood of meeting wild POKéMON.", 3),
+    new Ability(Abilities.ILLUMINATE, "Illuminate", "Raises the likelihood of an encounter being a double battle.", 3)
+      .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.IMMUNITY, "Immunity", "Prevents the POKéMON from getting poisoned.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON),
     new Ability(Abilities.INNER_FOCUS, "Inner Focus", "The POKéMON is protected from flinching.", 3)

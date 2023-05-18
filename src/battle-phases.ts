@@ -9,7 +9,7 @@ import { BerryModifier, ContactHeldItemTransferChanceModifier, ExpBalanceModifie
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballName, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
-import { StatusEffect, getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./data/status-effect";
+import { Status, StatusEffect, getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./data/status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import { EvolutionPhase } from "./evolution-phase";
@@ -656,11 +656,13 @@ export class ToggleDoublePositionPhase extends BattlePhase {
 
 export class CheckSwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
+  protected useName: boolean;
 
-  constructor(scene: BattleScene, fieldIndex: integer) {
+  constructor(scene: BattleScene, fieldIndex: integer, useName: boolean) {
     super(scene);
 
     this.fieldIndex = fieldIndex;
+    this.useName = useName;
   }
 
   start() {
@@ -684,7 +686,7 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
-    this.scene.ui.showText('Will you switch\nPOKéMON?', null, () => {
+    this.scene.ui.showText(`Will you switch\n${this.useName ? pokemon.name : 'POKéMON'}?`, null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, false, true));
@@ -1828,7 +1830,7 @@ export class VictoryPhase extends PokemonPhase {
       }
     }
 
-    if (!this.scene.currentBattle.enemyField.filter(p => p.isActive()).length) {
+    if (!this.scene.getEnemyField().filter(p => !p?.isFainted(true)).length) {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       if (this.scene.currentBattle.waveIndex < this.scene.finalWave) {
         this.scene.pushPhase(new SelectModifierPhase(this.scene));

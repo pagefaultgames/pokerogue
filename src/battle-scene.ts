@@ -19,7 +19,7 @@ import { TextStyle, addTextObject } from './ui/text';
 import { Moves, initMoves } from './data/move';
 import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
-import { BlockItemTheftAbAttr, applyAbAttrs, initAbilities } from './data/ability';
+import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import Battle from './battle';
 
 const enableAuto = true;
@@ -512,15 +512,19 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	newBattle(waveIndex?: integer, double?: boolean): Battle {
-		double = (waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1)) % 2 === 0;
+		let newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
+		let newDouble: boolean;
 
-		const isDouble = double === undefined || double;
-
-		console.log(this.currentBattle?.waveIndex);
+		if (double === undefined) {
+			const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
+			this.getPlayerField().forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
+			newDouble = !Utils.randInt(doubleChance.value);
+		} else
+			newDouble = double;
 
 		const lastBattle = this.currentBattle;
 
-		this.currentBattle = new Battle(waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1), isDouble);
+		this.currentBattle = new Battle(newWaveIndex, newDouble);
 		this.currentBattle.incrementTurn(this);
 
 		if (!waveIndex) {
@@ -542,9 +546,9 @@ export default class BattleScene extends Phaser.Scene {
 				}
 			}
 
-			if ((lastBattle?.double || false) !== isDouble) {
+			if ((lastBattle?.double || false) !== newDouble) {
 				const availablePartyMemberCount = this.getParty().filter(p => !p.isFainted()).length;
-				if (isDouble) {
+				if (newDouble) {
 					this.pushPhase(new ToggleDoublePositionPhase(this, true));
 					if (availablePartyMemberCount > 1)
 						this.pushPhase(new SummonPhase(this, 1));
@@ -556,9 +560,9 @@ export default class BattleScene extends Phaser.Scene {
 			}
 
 			if (lastBattle) {
-				this.pushPhase(new CheckSwitchPhase(this, 0));
-				if (lastBattle.double && isDouble)
-					this.pushPhase(new CheckSwitchPhase(this, 1));
+				this.pushPhase(new CheckSwitchPhase(this, 0, newDouble));
+				if (newDouble)
+					this.pushPhase(new CheckSwitchPhase(this, 1, newDouble));
 			}
 		}
 		
