@@ -192,7 +192,7 @@ export class GameData {
           scene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
         });
 
-        scene.newArena(sessionData.arena.biome, sessionData.enemyField.length > 1);
+        scene.newArena(sessionData.arena.biome, true);
         const battle = scene.newBattle(sessionData.waveIndex, sessionData.enemyField.length > 1);
 
         sessionData.enemyField.forEach((enemyData, e) => {

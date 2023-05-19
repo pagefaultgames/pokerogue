@@ -2299,6 +2299,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         Promise.all(modifiers.map(m => this.scene.addModifier(m))).then(() => {
           this.scene.getPlayerField().forEach(playerPokemon => playerPokemon.removeTagsBySourceId(pokemon.id));
           pokemon.hp = 0;
+          pokemon.trySetStatus(StatusEffect.FAINT);
           this.scene.clearEnemyModifiers();
           this.scene.field.remove(pokemon, true);
           if (newPokemon)
