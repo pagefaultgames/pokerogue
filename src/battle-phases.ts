@@ -1077,15 +1077,12 @@ export class CommonAnimPhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex, targetIndex: BattlerIndex, anim: CommonAnim) {
     super(scene, battlerIndex);
 
-    if (targetIndex === undefined)
-      targetIndex = this.battlerIndex;
-
     this.anim = anim;
     this.targetIndex = targetIndex;
   }
 
   start() {
-    new CommonBattleAnim(this.anim, this.getPokemon(), (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField())[this.targetIndex]).play(this.scene, () => {
+    new CommonBattleAnim(this.anim, this.getPokemon(), this.targetIndex !== undefined ? (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField())[this.targetIndex] : this.getPokemon()).play(this.scene, () => {
       this.end();
     });
   }
