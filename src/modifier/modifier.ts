@@ -255,7 +255,7 @@ export class MapModifier extends PersistentModifier {
     return true;
   }
 
-  getmaxStackCount(): integer {
+  getMaxStackCount(): integer {
     return 1;
   }
 }
@@ -426,7 +426,7 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getmaxStackCount(): integer {
+  getMaxStackCount(): integer {
     return 5;
   }
 }
@@ -1003,9 +1003,12 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    const targetPokemon = pokemon.getOpponent(args.length > 1 ? args[1] as integer : !pokemon.scene.currentBattle.double ? 0 : Utils.randInt(2));
-    if (!targetPokemon)
+    const opponents = pokemon.getOpponents();
+
+    if (!opponents.length)
       return false;
+
+    const targetPokemon = opponents[Utils.randInt(opponents.length)];
 
     const transferredItemCount = this.getTransferredItemCount();
     if (!transferredItemCount)
