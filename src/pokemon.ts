@@ -1212,6 +1212,9 @@ export class EnemyPokemon extends Pokemon {
 
     // TODO: Add some randomness
 
+    if (!sortedBenefitScores.length)
+      return [];
+
     return [ sortedBenefitScores[0][0] ];
   }
 

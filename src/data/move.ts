@@ -2158,7 +2158,9 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
       set = [ opponents[Utils.randInt(opponents.length)].getBattlerIndex() ];
       break;
     case MoveTarget.ATTACKER:
-      set = [ user.scene.getPokemonById(user.turnData.attacksReceived[0].sourceId).getBattlerIndex() ];
+        set = user.turnData.attacksReceived.length
+          ? [ user.scene.getPokemonById(user.turnData.attacksReceived[0].sourceId).getBattlerIndex() ]
+          : [];
       break;
     case MoveTarget.NEAR_ALLY:
     case MoveTarget.ALLY:
@@ -3278,7 +3280,7 @@ export function initMoves() {
     new AttackMove(Moves.CIRCLE_THROW, "Circle Throw (N)", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 90, 10, -1, "In battles, the opponent switches. In the wild, the Pokémon runs.", -1, -6, 5),
     new AttackMove(Moves.INCINERATE, "Incinerate (N)", Type.FIRE, MoveCategory.SPECIAL, 60, 100, 15, -1, "Destroys the target's held berry.", -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new StatusMove(Moves.QUASH, "Quash", Type.DARK, 100, 15, -1, "Makes the target act last this turn.", -1, 0, 5),
+    new StatusMove(Moves.QUASH, "Quash (N)", Type.DARK, 100, 15, -1, "Makes the target act last this turn.", -1, 0, 5),
     new AttackMove(Moves.ACROBATICS, "Acrobatics (N)", Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, 14, "Stronger when the user does not have a held item.", -1, 0, 5)
       .target(MoveTarget.OTHER),
     new StatusMove(Moves.REFLECT_TYPE, "Reflect Type", Type.NORMAL, -1, 15, -1, "User becomes the target's type.", -1, 0, 5)
