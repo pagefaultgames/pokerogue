@@ -23,7 +23,7 @@ import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { ArenaTagType, WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
-import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, PreApplyBattlerTagAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
+import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 import { BattlerIndex } from './battle';
 
@@ -364,6 +364,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       let value = Math.floor(((2 * baseStat + this.ivs[s] + (0 / 4)) * this.level) * 0.01);
       if (isHp) {
         value = Math.min(value + this.level + 10, 99999);
+        if (this.getAbility().hasAttr(NonSuperEffectiveImmunityAbAttr))
+          value = 1;
         if (this.hp > value || this.hp === undefined)
           this.hp = value;
         else if (this.hp) {
