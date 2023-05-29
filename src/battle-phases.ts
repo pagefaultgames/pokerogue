@@ -1319,7 +1319,7 @@ class MoveEffectPhase extends PokemonPhase {
 
   end() {
     const user = this.getUserPokemon();
-    if (--user.turnData.hitsLeft >= 1 && !this.getTarget().isFainted())
+    if (--user.turnData.hitsLeft >= 1 && this.getTarget())
       this.scene.unshiftPhase(this.getNewHitPhase());
     else {
       if (user.turnData.hitCount > 1)
