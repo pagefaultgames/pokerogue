@@ -1729,7 +1729,7 @@ export class FaintPhase extends PokemonPhase {
       else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount())
         this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
     } else
-      this.scene.unshiftPhase(new VictoryPhase(this.scene, this.fieldIndex));
+      this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
       
     const pokemon = this.getPokemon();
 
@@ -1759,8 +1759,8 @@ export class FaintPhase extends PokemonPhase {
 }
 
 export class VictoryPhase extends PokemonPhase {
-  constructor(scene: BattleScene, targetIndex: integer) {
-    super(scene, targetIndex);
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
+    super(scene, battlerIndex);
   }
 
   start() {
@@ -2284,7 +2284,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
   catch() {
     const pokemon = this.getPokemon() as EnemyPokemon;
-    this.scene.unshiftPhase(new VictoryPhase(this.scene, this.fieldIndex));
+    this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
     this.scene.ui.showText(`${pokemon.name} was caught!`, null, () => {
       const end = () => {
         this.removePb();
