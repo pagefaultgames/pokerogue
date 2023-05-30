@@ -331,6 +331,7 @@ export function getBiomeHasProps(biomeType: Biome): boolean {
     case Biome.BEACH:
     case Biome.LAKE:
     case Biome.SEABED:
+    case Biome.MOUNTAIN:
     case Biome.BADLANDS:
     case Biome.CAVE:
     case Biome.DESERT:
