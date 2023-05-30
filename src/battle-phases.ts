@@ -335,7 +335,7 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
       targets: [ this.scene.arenaEnemy, enemyField ].flat(),
-      x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 2 ? value + 300 : value - 300,
+      x: '+=300',
       duration: 2000,
       onComplete: () => {
         enemyField.forEach(enemyPokemon => {
