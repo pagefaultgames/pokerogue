@@ -312,10 +312,6 @@ export function getBiomeKey(biome: Biome): string {
   switch (biome) {
     case Biome.ABYSS:
       return 'wasteland';
-    case Biome.MEADOW:
-      return 'grass';
-    case Biome.VOLCANO:
-      return 'cave';
     case Biome.POWER_PLANT:
       return 'ruins';
     case Biome.FACTORY:
@@ -336,6 +332,9 @@ export function getBiomeHasProps(biomeType: Biome): boolean {
     case Biome.CAVE:
     case Biome.DESERT:
     case Biome.ICE_CAVE:
+    case Biome.MEADOW:
+    case Biome.VOLCANO:
+    case Biome.GRAVEYARD:
     case Biome.WASTELAND:
       return true;
   }
