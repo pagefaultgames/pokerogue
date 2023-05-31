@@ -1021,7 +1021,7 @@ export class TurnEndPhase extends FieldPhase {
 
       this.scene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
-      this.executeForAll((pokemon: Pokemon) => applyPostTurnAbAttrs(PostTurnAbAttr, pokemon));
+      applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
 
       this.scene.applyModifiers(TurnHeldItemTransferModifier, pokemon.isPlayer(), pokemon);
 
