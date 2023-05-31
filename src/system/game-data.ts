@@ -10,6 +10,7 @@ import PersistentModifierData from "./modifier-data";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import ArenaData from "./arena-data";
 import { Unlockables } from "./unlockables";
+import { GameMode } from "../game-mode";
 
 interface SystemSaveData {
   trainerId: integer;
@@ -20,6 +21,7 @@ interface SystemSaveData {
 }
 
 interface SessionSaveData {
+  gameMode: GameMode;
   party: PokemonData[];
   enemyField: PokemonData[];
   modifiers: PersistentModifierData[];
@@ -75,6 +77,7 @@ export class GameData {
     this.trainerId = Utils.randInt(65536);
     this.secretId = Utils.randInt(65536);
     this.unlocks = {
+      [Unlockables.ENDLESS_MODE]: false,
       [Unlockables.MINI_BLACK_HOLE]: false
     };
     this.initDexData();
@@ -125,6 +128,7 @@ export class GameData {
 
   saveSession(scene: BattleScene): boolean {
     const sessionData = {
+      gameMode: scene.gameMode,
       party: scene.getParty().map(p => new PokemonData(p)),
       enemyField: scene.getEnemyField().map(p => new PokemonData(p)),
       modifiers: scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
@@ -175,6 +179,8 @@ export class GameData {
         }) as SessionSaveData;
 
         console.debug(sessionData);
+
+        scene.gameMode = sessionData.gameMode || GameMode.CLASSIC;
 
         const loadPokemonAssets: Promise<void>[] = [];
 

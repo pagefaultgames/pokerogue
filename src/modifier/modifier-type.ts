@@ -11,6 +11,7 @@ import * as Utils from '../utils';
 import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
 import { Unlockables } from '../system/unlockables';
+import { GameMode } from '../game-mode';
 
 type Modifier = Modifiers.Modifier;
 
@@ -694,7 +695,7 @@ const modifierPool = {
       const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount;
     }),
-    new WeightedModifierType(modifierTypes.MAP, 1),
+    new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => party[0].scene.gameMode === GameMode.CLASSIC ? 1 : 0),
     new WeightedModifierType(modifierTypes.TM_GREAT, 2),
     new WeightedModifierType(modifierTypes.EXP_SHARE, 1),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3)
@@ -745,8 +746,7 @@ const enemyModifierPool = {
     new WeightedModifierType(modifierTypes.SHELL_BELL, 1),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
-    new WeightedModifierType(modifierTypes.GOLDEN_EGG, 1),
-    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, 1)
+    new WeightedModifierType(modifierTypes.GOLDEN_EGG, 1)
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
 };
 

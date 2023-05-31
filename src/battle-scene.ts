@@ -21,6 +21,7 @@ import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './m
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import Battle from './battle';
+import { GameMode } from './game-mode';
 
 const enableAuto = true;
 const quickStart = false;
@@ -73,6 +74,7 @@ export default class BattleScene extends Phaser.Scene {
 	public arenaEnemy: ArenaBase;
 	public arenaNextEnemy: ArenaBase;
 	public arena: Arena;
+	public gameMode: GameMode;
 	public trainer: Phaser.GameObjects.Sprite;
 	public currentBattle: Battle;
 	public pokeballCounts: PokeballCounts;
@@ -167,6 +169,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('ability_bar', 'ui');
 		this.loadImage('ball_window', 'ui');
 		this.loadImage('boolean_window', 'ui');
+		this.loadImage('game_mode_select_window', 'ui');
 
 		this.loadImage('party_bg', 'ui');
 		this.loadImage('party_bg_double', 'ui');
@@ -530,7 +533,7 @@ export default class BattleScene extends Phaser.Scene {
 		if (!waveIndex) {
 			if (lastBattle) {
 				this.getEnemyField().forEach(enemyPokemon => enemyPokemon.destroy());
-				if (lastBattle.waveIndex % 10)
+				if (this.gameMode === GameMode.CLASSIC && lastBattle.waveIndex % 10)
 					this.pushPhase(new NextEncounterPhase(this));
 				else {
 					this.pushPhase(new SelectBiomePhase(this));

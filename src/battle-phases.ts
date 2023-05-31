@@ -29,6 +29,7 @@ import { CheckTrappedAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr,
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./arena";
 import { BattlerIndex, TurnCommand } from "./battle";
+import { GameMode } from "./game-mode";
 
 export class CheckLoadPhase extends BattlePhase {
   private loaded: boolean;
@@ -369,9 +370,16 @@ export class SelectBiomePhase extends BattlePhase {
       this.end();
     };
 
-    if (this.scene.currentBattle.waveIndex === this.scene.finalWave - 9)
+    if (this.scene.gameMode === GameMode.CLASSIC && this.scene.currentBattle.waveIndex === this.scene.finalWave - 9)
       setNextBiome(Biome.END);
-    else if (Array.isArray(biomeLinks[currentBiome])) {
+    else if (this.scene.gameMode === GameMode.ENDLESS) {
+      if (this.scene.currentBattle.waveIndex % 50 === 0)
+        setNextBiome(Biome.END);
+      else {
+        const allBiomes = Utils.getEnumValues(Biome);
+        setNextBiome(allBiomes[Utils.randInt(allBiomes.length - 2, 1)]);
+      }
+    } else if (Array.isArray(biomeLinks[currentBiome])) {
       const biomes = biomeLinks[currentBiome] as Biome[];
       if (this.scene.findModifier(m => m instanceof MapModifier)) {
         this.scene.ui.setMode(Mode.BIOME_SELECT, currentBiome, (biomeIndex: integer) => {
@@ -1841,7 +1849,7 @@ export class VictoryPhase extends PokemonPhase {
 
     if (!this.scene.getEnemyField().filter(p => !p?.isFainted(true)).length) {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
-      if (this.scene.currentBattle.waveIndex < this.scene.finalWave) {
+      if (this.scene.gameMode === GameMode.ENDLESS || this.scene.currentBattle.waveIndex < this.scene.finalWave) {
         this.scene.pushPhase(new SelectModifierPhase(this.scene));
         this.scene.pushPhase(new NewBattlePhase(this.scene));
       } else
@@ -1880,6 +1888,8 @@ export class GameOverPhase extends BattlePhase {
   }
 
   end(): void {
+    if (!this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE])
+      this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.ENDLESS_MODE));
     if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE])
       this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.MINI_BLACK_HOLE));
 
@@ -2417,7 +2427,7 @@ export class SelectModifierPhase extends BattlePhase {
           if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT).then(() => {
               const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-                && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
+                && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
               const itemModifier = itemModifiers[itemIndex];
               this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, true).then(success => {
                 if (success) {

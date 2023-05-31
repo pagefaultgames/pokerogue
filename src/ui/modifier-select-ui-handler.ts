@@ -61,7 +61,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.getUi().clearText();
 
-    const partyHasHeldItem = !!this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier).length;
+    const partyHasHeldItem = !!this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true)).length;
 
     this.transferButtonContainer.setVisible(false);
     this.transferButtonContainer.setAlpha(0);

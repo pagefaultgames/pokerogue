@@ -9,6 +9,8 @@ import { DexEntryDetails, StarterDexUnlockTree } from "../system/game-data";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 import { abilities } from "../data/ability";
+import { GameMode } from "../game-mode";
+import { Unlockables } from "../system/unlockables";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -269,26 +271,37 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               if (this.speciesLoaded.get(species.speciesId))
                 species.cry(this.scene);
               if (this.starterCursors.length === 3) {
+                const cancel = () => {
+                  ui.setMode(Mode.STARTER_SELECT);
+                  this.popStarter();
+                  this.clearText();
+                };
                 ui.showText('Begin with these POKéMON?', null, () => {
                   ui.setModeWithoutClear(Mode.CONFIRM, () => {
-                    ui.setMode(Mode.STARTER_SELECT);
-                    const thisObj = this;
-                    const originalStarterSelectCallback = this.starterSelectCallback;
-                    this.starterSelectCallback = null;
-                    originalStarterSelectCallback(new Array(3).fill(0).map(function (_, i) {
-                      return {
-                        species: thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]],
-                        shiny: thisObj.starterDetails[i][0],
-                        formIndex: thisObj.starterDetails[i][1],
-                        female: thisObj.starterDetails[i][2],
-                        abilityIndex: thisObj.starterDetails[i][3]
-                      };
-                    }));
-                  }, () => {
-                    ui.setMode(Mode.STARTER_SELECT);
-                    this.popStarter();
-                    this.clearText();
-                  });
+                    const startRun = (gameMode: GameMode) => {
+                      this.scene.gameMode = gameMode;
+                      ui.setMode(Mode.STARTER_SELECT);
+                      const thisObj = this;
+                      const originalStarterSelectCallback = this.starterSelectCallback;
+                      this.starterSelectCallback = null;
+                      originalStarterSelectCallback(new Array(3).fill(0).map(function (_, i) {
+                        return {
+                          species: thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]],
+                          shiny: thisObj.starterDetails[i][0],
+                          formIndex: thisObj.starterDetails[i][1],
+                          female: thisObj.starterDetails[i][2],
+                          abilityIndex: thisObj.starterDetails[i][3]
+                        };
+                      }));
+                    };
+                    if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
+                      ui.setMode(Mode.STARTER_SELECT);
+                      ui.showText('Select a game mode.', null, () => {
+                        ui.setModeWithoutClear(Mode.GAME_MODE_SELECT, () => startRun(GameMode.CLASSIC), () => startRun(GameMode.ENDLESS), cancel);
+                      });
+                    } else
+                      startRun(GameMode.CLASSIC);
+                  }, cancel);
                 });
               }
               success = true;

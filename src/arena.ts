@@ -10,6 +10,7 @@ import { CommonAnim } from "./data/battle-anims";
 import { Type } from "./data/type";
 import Move, { Moves } from "./data/move";
 import { ArenaTag, ArenaTagType, getArenaTag } from "./data/arena-tag";
+import { GameMode } from "./game-mode";
 
 export class Arena {
   public scene: BattleScene;
@@ -29,7 +30,8 @@ export class Arena {
   }
 
   randomSpecies(waveIndex: integer, level: integer, attempt?: integer): PokemonSpecies {
-    const isBoss = waveIndex % 10 === 0 && !!this.pokemonPool[BiomePoolTier.BOSS].length;
+    const isBoss = waveIndex % 10 === 0 && !!this.pokemonPool[BiomePoolTier.BOSS].length
+      && (this.biomeType !== Biome.END || this.scene.gameMode !== GameMode.ENDLESS || waveIndex % 250 === 0);
     const tierValue = Utils.randInt(!isBoss ? 512 : 64);
     let tier = !isBoss
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE

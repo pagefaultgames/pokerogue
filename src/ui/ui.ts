@@ -13,6 +13,7 @@ import StarterSelectUiHandler from './starter-select-ui-handler';
 import EvolutionSceneHandler from './evolution-scene-handler';
 import BiomeSelectUiHandler from './biome-select-ui-handler';
 import TargetSelectUiHandler from './target-select-ui-handler';
+import GameModeSelectUiHandler from './game-mode-select-ui-handler';
 
 export enum Mode {
   MESSAGE,
@@ -26,7 +27,8 @@ export enum Mode {
   BIOME_SELECT,
   STARTER_SELECT,
   EVOLUTION_SCENE,
-  CONFIRM
+  CONFIRM,
+  GAME_MODE_SELECT
 };
 
 const transitionModes = [
@@ -37,7 +39,8 @@ const transitionModes = [
 ];
 
 const noTransitionModes = [
-  Mode.CONFIRM
+  Mode.CONFIRM,
+  Mode.GAME_MODE_SELECT
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -63,7 +66,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new BiomeSelectUiHandler(scene),
       new StarterSelectUiHandler(scene),
       new EvolutionSceneHandler(scene),
-      new ConfirmUiHandler(scene)
+      new ConfirmUiHandler(scene),
+      new GameModeSelectUiHandler(scene)
     ];
   }
 

@@ -283,6 +283,10 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return super.shouldApply(args) && args.length && args[0] instanceof Pokemon && (this.pokemonId === -1 || (args[0] as Pokemon).id === this.pokemonId);
   }
 
+  getTransferrable(withinParty: boolean) {
+    return true;
+  }
+
   getIcon(scene: BattleScene, forSummary?: boolean): Phaser.GameObjects.Container {
     const container = !forSummary ? scene.add.container(0, 0) : super.getIcon(scene);
 
@@ -356,6 +360,10 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
     args[1][this.stat] = Math.min(Math.floor(args[1][this.stat] * (1 + this.getStackCount() * 0.2)), 999999);
 
     return true;
+  }
+
+  getTransferrable(_withinParty: boolean): boolean {
+    return false;
   }
 }
 
@@ -1014,9 +1022,11 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
     if (!transferredItemCount)
       return false;
 
+    const withinParty = pokemon.isPlayer() === targetPokemon.isPlayer();
+
     const transferredModifierTypes: ModifierTypes.ModifierType[] = [];
     const itemModifiers = pokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-        && (m as PokemonHeldItemModifier).pokemonId === targetPokemon.id && !m.matchType(this), targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
+        && (m as PokemonHeldItemModifier).pokemonId === targetPokemon.id && m.getTransferrable(withinParty), targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
     
     for (let i = 0; i < transferredItemCount; i++) {
       if (!itemModifiers.length)
@@ -1051,6 +1061,10 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
 
   clone(): TurnHeldItemTransferModifier {
     return new TurnHeldItemTransferModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  getTransferrable(withinParty: boolean) {
+    return withinParty;
   }
 
   getTransferredItemCount(): integer {
