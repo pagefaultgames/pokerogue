@@ -52,19 +52,19 @@ export default class TargetSelectUiHandler extends UiHandler {
     } else {
       switch (button) {
         case Button.UP:
-          if (this.cursor < BattlerIndex.ENEMY && this.targets.find(t => t >= BattlerIndex.ENEMY))
+          if (this.cursor < BattlerIndex.ENEMY && this.targets.findIndex(t => t >= BattlerIndex.ENEMY) > -1)
             success = this.setCursor(this.targets.find(t => t >= BattlerIndex.ENEMY));
           break;
         case Button.DOWN:
-          if (this.cursor >= BattlerIndex.ENEMY && this.targets.find(t => t < BattlerIndex.ENEMY))
+          if (this.cursor >= BattlerIndex.ENEMY && this.targets.findIndex(t => t < BattlerIndex.ENEMY) > -1)
             success = this.setCursor(this.targets.find(t => t < BattlerIndex.ENEMY));
           break;
         case Button.LEFT:
-          if (this.cursor % 2 && this.targets.find(t => t === this.cursor - 1))
+          if (this.cursor % 2 && this.targets.findIndex(t => t === this.cursor - 1) > -1)
             success = this.setCursor(this.cursor - 1);
           break;
         case Button.RIGHT:
-          if (!(this.cursor % 2) && this.targets.find(t => t === this.cursor + 1))
+          if (!(this.cursor % 2) && this.targets.findIndex(t => t === this.cursor + 1) > -1)
             success = this.setCursor(this.cursor + 1);
           break;
       }

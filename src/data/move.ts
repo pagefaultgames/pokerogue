@@ -1012,13 +1012,13 @@ export class HealAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    this.addHealPhase(user, this.healRatio);
+    this.addHealPhase(this.selfTarget ? user : target, this.healRatio);
     return true;
   }
 
-  addHealPhase(user: Pokemon, healRatio: number) {
-    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
-      Math.max(Math.floor(user.getMaxHp() * healRatio), 1), getPokemonMessage(user, ' regained\nhealth!'), true, !this.showAnim));
+  addHealPhase(target: Pokemon, healRatio: number) {
+    target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
+      Math.max(Math.floor(target.getMaxHp() * healRatio), 1), getPokemonMessage(target, ' regained\nhealth!'), true, !this.showAnim));
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {

@@ -570,7 +570,7 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   preSummon(): void {
-    if (!this.doReturn || !this.scene.getParty()[this.slotIndex]) {
+    if (!this.doReturn || (this.slotIndex !== -1 && !this.scene.getParty()[this.slotIndex])) {
       this.switchAndSummon();
       return;
     }
