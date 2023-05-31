@@ -2,7 +2,7 @@ import { CommandPhase } from "../battle-phases";
 import BattleScene, { Button } from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import { toPokemonUpperCase } from "../utils";
-import { PartyUiMode } from "./party-ui-handler";
+import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
 import UI, { Mode } from "./ui";
 import UiHandler from "./uiHandler";
 
@@ -65,7 +65,7 @@ export default class CommandUiHandler extends UiHandler {
             success = true;
             break;
           case 2:
-            ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex());
+            ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
             success = true;
             break;
           case 3:

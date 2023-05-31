@@ -453,6 +453,15 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   }
 
   preSummon(): void {
+    const partyMember = this.getPokemon();
+    if (partyMember.isFainted()) {
+      const party = this.scene.getParty();
+      const nonFaintedIndex = party.slice(this.partyMemberIndex).findIndex(p => !p.isFainted()) + this.partyMemberIndex;
+      const nonFaintedPartyMember = party[nonFaintedIndex];
+      party[nonFaintedIndex] = partyMember;
+      party[this.partyMemberIndex] = nonFaintedPartyMember;
+    }
+
     this.scene.ui.showText(`Go! ${this.getPokemon().name}!`);
     this.scene.trainer.play('trainer_m_pb');
     this.scene.tweens.add({
@@ -477,8 +486,6 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       playerPokemon.setFieldPosition(!this.scene.currentBattle.double ? FieldPosition.CENTER : FieldPosition.LEFT);
 
     const fpOffset = playerPokemon.getFieldPositionOffset();
-
-    console.log(fpOffset);
 
     pokeball.setVisible(true);
 
@@ -563,7 +570,7 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   preSummon(): void {
-    if (!this.doReturn) {
+    if (!this.doReturn || !this.scene.getParty()[this.slotIndex]) {
       this.switchAndSummon();
       return;
     }
@@ -594,7 +601,7 @@ export class SwitchSummonPhase extends SummonPhase {
     const party = this.scene.getParty();
     const switchedPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
-    if (this.batonPass) {
+    if (this.batonPass && switchedPokemon) {
       this.scene.getEnemyField().forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedPokemon.id));
       if (!this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedPokemon.id)) {
         const batonPassModifier = this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
@@ -602,15 +609,20 @@ export class SwitchSummonPhase extends SummonPhase {
         this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedPokemon, false, false);
       }
     }
-    party[this.slotIndex] = this.lastPokemon;
-    party[this.fieldIndex] = switchedPokemon;
-    this.scene.ui.showText(`Go! ${switchedPokemon.name}!`);
-    this.summon();
+    if (switchedPokemon) {
+      party[this.slotIndex] = this.lastPokemon;
+      party[this.fieldIndex] = switchedPokemon;
+      this.scene.ui.showText(`Go! ${switchedPokemon.name}!`);
+      this.summon();
+    } else
+      this.end();
   }
 
   end() {
-    if (this.batonPass)
-      this.getPokemon().transferSummon(this.lastPokemon);
+    const pokemon = this.getPokemon();
+
+    if (this.batonPass && pokemon)
+      pokemon.transferSummon(this.lastPokemon);
 
     this.lastPokemon?.resetSummonData();
 
