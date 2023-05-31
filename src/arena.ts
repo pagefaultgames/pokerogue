@@ -353,7 +353,6 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     super(scene, 0, 0);
 
     this.player = player;
-    this.biome = Biome.PLAINS;
 
     this.base = scene.add.sprite(0, 0, `plains_a`);
     this.base.setOrigin(0, 0);
