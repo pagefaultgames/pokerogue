@@ -5,7 +5,7 @@ import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate } from './modifier/modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { Species } from './data/species';
 import { initAutoPlay } from './system/auto-play';
@@ -520,6 +520,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		if (double === undefined) {
 			const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
+			this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
 			this.getPlayerField().forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
 			newDouble = !Utils.randInt(doubleChance.value);
 		} else

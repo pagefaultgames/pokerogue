@@ -194,35 +194,13 @@ export class AddPokeballModifier extends ConsumableModifier {
   }
 }
 
-export class TempBattleStatBoosterModifier extends PersistentModifier {
-  private tempBattleStat: TempBattleStat;
-  private battlesLeft: integer;
+export abstract class LapsingPersistentModifier extends PersistentModifier {
+  protected battlesLeft: integer;
 
-  constructor(type: ModifierTypes.TempBattleStatBoosterModifierType, tempBattleStat: TempBattleStat, battlesLeft?: integer, stackCount?: integer) {
+  constructor(type: ModifierTypes.ModifierType, battlesLeft?: integer, stackCount?: integer) {
     super(type, stackCount);
 
-    this.tempBattleStat = tempBattleStat;
-    this.battlesLeft = battlesLeft || 5;
-  }
-
-  clone(): TempBattleStatBoosterModifier {
-    return new TempBattleStatBoosterModifier(this.type as ModifierTypes.TempBattleStatBoosterModifierType, this.tempBattleStat, this.stackCount);
-  }
-
-  getArgs(): any[] {
-    return [ this.tempBattleStat, this.battlesLeft ];
-  }
-
-  apply(args: any[]): boolean {
-    const tempBattleStat = args[0] as TempBattleStat;
-
-    if (tempBattleStat === this.tempBattleStat) {
-      const statLevel = args[1] as Utils.IntegerHolder;
-      statLevel.value = Math.min(statLevel.value + 1, 6);
-      return true;
-    }
-
-    return false;
+    this.battlesLeft = battlesLeft;
   }
 
   lapse(): boolean {
@@ -239,6 +217,57 @@ export class TempBattleStatBoosterModifier extends PersistentModifier {
     container.add(battleCountText);
 
     return container;
+  }
+}
+
+export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier {
+  constructor(type: ModifierTypes.DoubleBattleChanceBoosterModifierType, battlesLeft: integer, stackCount?: integer) {
+    super(type, battlesLeft, stackCount);
+  }
+
+  clone(): TempBattleStatBoosterModifier {
+    return new TempBattleStatBoosterModifier(this.type as ModifierTypes.TempBattleStatBoosterModifierType, this.battlesLeft, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ this.battlesLeft ];
+  }
+
+  apply(args: any[]): boolean {
+    const doubleBattleChance = args[0] as Utils.NumberHolder;
+    doubleBattleChance.value = Math.ceil(doubleBattleChance.value / 2);
+
+    return true;
+  }
+}
+
+export class TempBattleStatBoosterModifier extends LapsingPersistentModifier {
+  private tempBattleStat: TempBattleStat;
+
+  constructor(type: ModifierTypes.TempBattleStatBoosterModifierType, tempBattleStat: TempBattleStat, battlesLeft?: integer, stackCount?: integer) {
+    super(type, battlesLeft || 5, stackCount);
+
+    this.tempBattleStat = tempBattleStat;
+  }
+
+  clone(): TempBattleStatBoosterModifier {
+    return new TempBattleStatBoosterModifier(this.type as ModifierTypes.TempBattleStatBoosterModifierType, this.tempBattleStat, this.battlesLeft, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ this.tempBattleStat, this.battlesLeft ];
+  }
+
+  apply(args: any[]): boolean {
+    const tempBattleStat = args[0] as TempBattleStat;
+
+    if (tempBattleStat === this.tempBattleStat) {
+      const statLevel = args[1] as Utils.IntegerHolder;
+      statLevel.value = Math.min(statLevel.value + 1, 6);
+      return true;
+    }
+
+    return false;
   }
 }
 

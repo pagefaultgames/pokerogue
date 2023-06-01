@@ -197,6 +197,17 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
   }
 }
 
+export class DoubleBattleChanceBoosterModifierType extends ModifierType {
+  public battleCount: integer;
+
+  constructor(name: string, battleCount: integer) {
+    super(name, `Doubles the chance of an encounter being a double battle for ${battleCount} battles`, (_type, _args) => new Modifiers.DoubleBattleChanceBoosterModifier(this, this.battleCount),
+      null, 'lure');
+
+    this.battleCount = battleCount;
+  }
+}
+
 export class TempBattleStatBoosterModifierType extends ModifierType implements GeneratedPersistentModifierType {
   public tempBattleStat: TempBattleStat;
 
@@ -556,6 +567,10 @@ const modifierTypes = {
   ELIXIR: () => new PokemonAllMovePpRestoreModifierType('ELIXIR', 10),
   MAX_ELIXIR: () => new PokemonAllMovePpRestoreModifierType('MAX ELIXIR', -1),
 
+  LURE: () => new DoubleBattleChanceBoosterModifierType('LURE', 5),
+  SUPER_LURE: () => new DoubleBattleChanceBoosterModifierType('SUPER LURE', 10),
+  MAX_LURE: () => new DoubleBattleChanceBoosterModifierType('LURE', 25),
+
   TEMP_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs)
       return new TempBattleStatBoosterModifierType(pregenArgs[0] as TempBattleStat);
@@ -658,6 +673,7 @@ const modifierPool = {
       const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount;
     }),
+    new WeightedModifierType(modifierTypes.LURE, 2),
     new WeightedModifierType(modifierTypes.TEMP_STAT_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.BERRY, 2),
     new WeightedModifierType(modifierTypes.TM_COMMON, 1)
@@ -695,6 +711,7 @@ const modifierPool = {
       const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount;
     }),
+    new WeightedModifierType(modifierTypes.SUPER_LURE, 4),
     new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => party[0].scene.gameMode === GameMode.CLASSIC ? 1 : 0),
     new WeightedModifierType(modifierTypes.TM_GREAT, 2),
     new WeightedModifierType(modifierTypes.EXP_SHARE, 1),
@@ -703,6 +720,7 @@ const modifierPool = {
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 8),
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, 12),
+    new WeightedModifierType(modifierTypes.MAX_LURE, 4),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 5),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 3),
