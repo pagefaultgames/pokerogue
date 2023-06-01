@@ -1224,7 +1224,7 @@ export function initAbilities() {
     new Ability(Abilities.FLAME_BODY, "Flame Body", "Contact with the POKéMON may burn the attacker.", 3)
       .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.BURN),
     new Ability(Abilities.FLASH_FIRE, "Flash Fire", "It powers up FIRE-type moves if it's hit by one.", 3)
-      .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, 1, BattlerTagType.FIRE_BOOST, (pokemon: Pokemon) => !pokemon.status || pokemon.status.effect !== StatusEffect.FREEZE),
+      .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, BattlerTagType.FIRE_BOOST, 1, (pokemon: Pokemon) => !pokemon.status || pokemon.status.effect !== StatusEffect.FREEZE),
     new Ability(Abilities.FORECAST, "Forecast (N)", "Castform transforms with the weather.", 3),
     new Ability(Abilities.GUTS, "Guts (N)", "Boosts ATTACK if there is a status problem.", 3),
     new Ability(Abilities.HUGE_POWER, "Huge Power", "Raises the POKéMON's ATTACK stat.", 3)

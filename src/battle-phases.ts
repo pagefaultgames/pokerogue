@@ -738,25 +738,16 @@ export class TurnInitPhase extends FieldPhase {
   start() {
     super.start();
 
-    this.scene.getPlayerField().forEach(playerPokemon => {
-      if (playerPokemon.isActive())
-        this.scene.currentBattle.addParticipant(playerPokemon);
+    this.scene.getField().forEach((pokemon, i) => {
+      if (pokemon?.isActive()) {
+        if (pokemon.isPlayer())
+          this.scene.currentBattle.addParticipant(pokemon as PlayerPokemon);
 
-      playerPokemon.resetTurnData();
+        pokemon.resetTurnData();
+
+        this.scene.pushPhase(pokemon.isPlayer() ? new CommandPhase(this.scene, i) : new EnemyCommandPhase(this.scene, i - BattlerIndex.ENEMY));
+      }
     });
-
-    this.scene.getEnemyField().forEach(enemyPokemon => {
-      if (enemyPokemon.isActive())
-        enemyPokemon.resetTurnData()
-    });
-
-    const order = this.getOrder();
-    for (let o of order) {
-      if (o < BattlerIndex.ENEMY)
-        this.scene.pushPhase(new CommandPhase(this.scene, o));
-      else
-        this.scene.pushPhase(new EnemyCommandPhase(this.scene, o - BattlerIndex.ENEMY));
-    }
 
     this.scene.pushPhase(new TurnStartPhase(this.scene));
 
@@ -2392,7 +2383,10 @@ export class AttemptRunPhase extends PokemonPhase {
         ease: 'Sine.easeIn'
       });
 
-      enemyField.forEach(enemyPokemon => enemyPokemon.hp = 0);
+      enemyField.forEach(enemyPokemon => {
+        enemyPokemon.hideInfo();
+        enemyPokemon.hp = 0;
+      });
 
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       this.scene.pushPhase(new NewBattlePhase(this.scene));

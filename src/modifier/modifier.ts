@@ -225,6 +225,12 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
     super(type, battlesLeft, stackCount);
   }
 
+  match(modifier: Modifier): boolean {
+    if (modifier instanceof DoubleBattleChanceBoosterModifier)
+      return (modifier as DoubleBattleChanceBoosterModifier).battlesLeft === this.battlesLeft;
+    return false;
+  }
+
   clone(): TempBattleStatBoosterModifier {
     return new TempBattleStatBoosterModifier(this.type as ModifierTypes.TempBattleStatBoosterModifierType, this.battlesLeft, this.stackCount);
   }
@@ -248,6 +254,13 @@ export class TempBattleStatBoosterModifier extends LapsingPersistentModifier {
     super(type, battlesLeft || 5, stackCount);
 
     this.tempBattleStat = tempBattleStat;
+  }
+
+  match(modifier: Modifier): boolean {
+    if (modifier instanceof TempBattleStatBoosterModifier)
+      return (modifier as TempBattleStatBoosterModifier).tempBattleStat === this.tempBattleStat
+        && (modifier as TempBattleStatBoosterModifier).battlesLeft === this.battlesLeft;
+    return false;
   }
 
   clone(): TempBattleStatBoosterModifier {
