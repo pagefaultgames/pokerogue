@@ -22,6 +22,7 @@ import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import Battle from './battle';
 import { GameMode } from './game-mode';
+import SpritePipeline from './pipelines/sprite';
 
 const enableAuto = true;
 const quickStart = false;
@@ -87,7 +88,7 @@ export default class BattleScene extends Phaser.Scene {
 	public uiContainer: Phaser.GameObjects.Container;
 	public ui: UI;
 
-	//public spritePipeline: SpritePipeline;
+	public spritePipeline: SpritePipeline;
 
 	private bgm: Phaser.Sound.BaseSound;
 	private bgmResumeTimer: Phaser.Time.TimerEvent;
@@ -295,7 +296,8 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.load.setBaseURL();
 
-		//this.spritePipeline = (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.get('Sprite') as SpritePipeline;
+		this.spritePipeline = new SpritePipeline(this.game);
+		(this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add('Sprite', this.spritePipeline);
 
 		this.time.delayedCall(20, () => this.launchBattle());
 	}

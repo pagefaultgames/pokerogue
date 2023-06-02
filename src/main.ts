@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import BattleScene from './battle-scene';
-//import SpritePipeline from './pipelines/sprite';
+import SpritePipeline from './pipelines/sprite';
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.WEBGL,
@@ -11,7 +11,6 @@ const config: Phaser.Types.Core.GameConfig = {
 		mode: Phaser.Scale.FIT
 	},
 	pixelArt: true,
-	//pipeline: { 'Sprite': SpritePipeline },
 	scene: [ BattleScene ]
 };
 

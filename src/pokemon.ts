@@ -26,6 +26,7 @@ import { Biome } from './data/biome';
 import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 import { BattlerIndex } from './battle';
+import SpritePipeline from './pipelines/sprite';
 
 export enum FieldPosition {
   CENTER,
@@ -144,8 +145,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!species.isObtainable())
       this.shiny = false;
 
-    //this.setPipeline(this.scene).spritePipeline);
-
     this.calculateStats();
 
     this.fieldPosition = FieldPosition.CENTER;
@@ -157,6 +156,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const getSprite = () => {
       const ret = this.scene.add.sprite(0, 0, `pkmn__${this.isPlayer() ? 'back__' : ''}sub`);
       ret.setOrigin(0.5, 1);
+      ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ] });
       return ret;
     };
     

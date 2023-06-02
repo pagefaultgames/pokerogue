@@ -666,6 +666,7 @@ export abstract class BattleAnim {
                             const spriteSource = isUser ? userSprite : targetSprite;
                             let sprite: Phaser.GameObjects.Sprite;
                             sprite = scene.add.sprite(0, 0, spriteSource.texture, spriteSource.frame.name);
+                            sprite.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ] });
                             spriteSource.on('animationupdate', (_anim, frame) => sprite.setFrame(frame.textureFrame));
                             scene.field.add(sprite);
                             sprites.push(sprite);
@@ -682,6 +683,7 @@ export abstract class BattleAnim {
                         pokemonSprite.setData('locked', frame.locked);
 
                         pokemonSprite.setAlpha(frame.opacity / 255);
+                        pokemonSprite.pipelineData['tone'] = frame.tone;
                         pokemonSprite.setVisible(frame.visible && (isUser ? user.visible : target.visible));
                         pokemonSprite.setBlendMode(frame.blendType === AnimBlendType.NORMAL ? Phaser.BlendModes.NORMAL : frame.blendType === AnimBlendType.ADD ? Phaser.BlendModes.ADD : Phaser.BlendModes.DIFFERENCE);
                     } else {
@@ -778,10 +780,12 @@ export abstract class BattleAnim {
                     userSprite.setPosition(0, 0);
                     userSprite.setScale(1);
                     userSprite.setAlpha(1);
+                    userSprite.pipelineData['tone'] = [ 0.0, 0.0, 0.0, 0.0 ];
                     userSprite.setAngle(0);
                     targetSprite.setPosition(0, 0);
                     targetSprite.setScale(1);
                     targetSprite.setAlpha(1);
+                    targetSprite.pipelineData['tone'] = [ 0.0, 0.0, 0.0, 0.0 ];
                     targetSprite.setAngle(0);
                     userSprite.setVisible(true);
                     targetSprite.setVisible(true);
