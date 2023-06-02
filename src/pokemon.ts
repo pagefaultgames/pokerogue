@@ -192,8 +192,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.hp && (!checkStatus || this.status?.effect === StatusEffect.FAINT);
   }
 
-  isActive(): boolean {
-    return !this.isFainted() && !!this.scene;
+  isActive(onField?: boolean): boolean {
+    return !this.isFainted() && !!this.scene && (!onField || this.scene.field.getIndex(this) > -1);
   }
 
   abstract isPlayer(): boolean;
@@ -1196,7 +1196,7 @@ export class EnemyPokemon extends Pokemon {
 
   getNextTargets(moveId: Moves): BattlerIndex[] {
     const moveTargets = getMoveTargets(this, moveId);
-    const targets = this.scene.getField().filter(p => p?.isActive() && moveTargets.targets.indexOf(p.getBattlerIndex()) > -1);
+    const targets = this.scene.getField().filter(p => p?.isActive(true) && moveTargets.targets.indexOf(p.getBattlerIndex()) > -1);
     if (moveTargets.multiple)
       return targets.map(p => p.getBattlerIndex());
 
