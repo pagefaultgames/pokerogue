@@ -569,7 +569,7 @@ const modifierTypes = {
 
   LURE: () => new DoubleBattleChanceBoosterModifierType('LURE', 5),
   SUPER_LURE: () => new DoubleBattleChanceBoosterModifierType('SUPER LURE', 10),
-  MAX_LURE: () => new DoubleBattleChanceBoosterModifierType('LURE', 25),
+  MAX_LURE: () => new DoubleBattleChanceBoosterModifierType('MAX LURE', 25),
 
   TEMP_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs)
