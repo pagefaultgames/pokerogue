@@ -1877,10 +1877,12 @@ export class GameOverPhase extends BattlePhase {
   }
 
   end(): void {
-    if (!this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE])
-      this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.ENDLESS_MODE));
-    if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE])
-      this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.MINI_BLACK_HOLE));
+    if (this.victory) {
+      if (!this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE])
+        this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.ENDLESS_MODE));
+      if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE])
+        this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.MINI_BLACK_HOLE));
+    }
 
     super.end();
   }

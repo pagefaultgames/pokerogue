@@ -854,7 +854,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           frameProgress -= frameThreshold;
         }
         const crySound = this.scene.sound.get(key);
-        if (crySound) {
+        if (crySound && !crySound.pendingRemove) {
           rate *= 0.99;
           crySound.play({
             rate: rate,

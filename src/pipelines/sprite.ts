@@ -179,7 +179,7 @@ export default class SpritePipeline extends Phaser.Renderer.WebGL.Pipelines.Mult
             const baseY = (sprite.parentContainer instanceof Pokemon
                 ? sprite.parentContainer.y
                 : sprite.y + sprite.height / 2) * 6;
-            const bottomPadding = Math.ceil(sprite.height * 6 * 0.05);
+            const bottomPadding = Math.ceil(sprite.height * 0.05) * 6;
             const yDelta = (baseY - y1) / 6;
             y2 = y1 = baseY + bottomPadding;
             const pixelHeight = (v1 - v0) / sprite.frame.height;
