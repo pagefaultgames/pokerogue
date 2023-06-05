@@ -204,8 +204,7 @@ export class EvolutionPhase extends BattlePhase {
       
     this.scene.tweens.addCounter({
       repeat: 64,
-      duration: 1,
-      useFrames: true,
+      duration: Utils.getFrameMs(1),
       onRepeat: () => {
         if (f < 64) {
           if (!(f & 7)) {
@@ -223,8 +222,7 @@ export class EvolutionPhase extends BattlePhase {
       
     this.scene.tweens.addCounter({
       repeat: 96,
-      duration: 1,
-      useFrames: true,
+      duration: Utils.getFrameMs(1),
       onRepeat: () => {
         if (f < 96) {
           if (f < 6) {
@@ -270,8 +268,7 @@ export class EvolutionPhase extends BattlePhase {
       
     this.scene.tweens.addCounter({
       repeat: 48,
-      duration: 1,
-      useFrames: true,
+      duration: Utils.getFrameMs(1),
       onRepeat: () => {
         if (!f) {
           for (let i = 0; i < 16; i++)
@@ -290,8 +287,7 @@ export class EvolutionPhase extends BattlePhase {
       
     this.scene.tweens.addCounter({
       repeat: 48,
-      duration: 1,
-      useFrames: true,
+      duration: Utils.getFrameMs(1),
       onRepeat: () => {
         if (!f) {
           for (let i = 0; i < 8; i++)
@@ -313,8 +309,7 @@ export class EvolutionPhase extends BattlePhase {
 
     const particleTimer = this.scene.tweens.addCounter({
       repeat: -1,
-      duration: 1,
-      useFrames: true,
+      duration: Utils.getFrameMs(1),
       onRepeat: () => {
         updateParticle();
       }
@@ -350,8 +345,7 @@ export class EvolutionPhase extends BattlePhase {
 
     const particleTimer = this.scene.tweens.addCounter({
       repeat: -1,
-      duration: 1,
-      useFrames: true,
+      duration: Utils.getFrameMs(1),
       onRepeat: () => {
         updateParticle();
       }
@@ -383,8 +377,7 @@ export class EvolutionPhase extends BattlePhase {
 
     const particleTimer = this.scene.tweens.addCounter({
       repeat: -1,
-      duration: 1,
-      useFrames: true,
+      duration: Utils.getFrameMs(1),
       onRepeat: () => {
         updateParticle();
       }
@@ -419,8 +412,7 @@ export class EvolutionPhase extends BattlePhase {
 
     const particleTimer = this.scene.tweens.addCounter({
       repeat: -1,
-      duration: 1,
-      useFrames: true,
+      duration: Utils.getFrameMs(1),
       onRepeat: () => {
         updateParticle();
       }

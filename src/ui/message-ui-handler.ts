@@ -1,6 +1,7 @@
 import BattleScene from "../battle-scene";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
+import * as Utils from "../utils";
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent;
@@ -80,8 +81,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           if (charDelay) {
             this.textTimer.paused = true;
             this.scene.tweens.addCounter({
-              duration: charDelay,
-              useFrames: true,
+              duration: Utils.getFrameMs(charDelay),
               onComplete: () => {
                 this.textTimer.paused = false;
                 advance();

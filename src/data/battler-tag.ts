@@ -565,8 +565,7 @@ export class HideSpriteTag extends BattlerTag {
   onRemove(pokemon: Pokemon): void {
     // Wait 2 frames before setting visible for battle animations that don't immediately show the sprite invisible
     pokemon.scene.tweens.addCounter({
-      duration: 2,
-      useFrames: true,
+      duration: Utils.getFrameMs(2),
       onComplete: () => pokemon.setVisible(true)
     });
   }

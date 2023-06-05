@@ -239,7 +239,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('battle_stats', 'effects');
 		this.loadAtlas('shiny', 'effects');
 		this.loadImage('evo_sparkle', 'effects');
-		this.load.video('evo_bg', 'images/effects/evo_bg.mp4', null, false, true);
+		this.load.video('evo_bg', 'images/effects/evo_bg.mp4', true);
 
 		this.loadAtlas('pb', '');
 		this.loadAtlas('items', '');
@@ -283,8 +283,6 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadBgm('level_up_fanfare');
 		this.loadBgm('evolution');
 		this.loadBgm('evolution_fanfare');
-
-		//this.load.glsl('sprite', 'shaders/sprite.frag');
 		
 		populateAnims();
 	}

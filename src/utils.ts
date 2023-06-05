@@ -30,6 +30,10 @@ export function randInt(range: integer, min?: integer): integer {
   return Math.floor(Math.random() * range) + min;
 }
 
+export function getFrameMs(frameCount: integer): integer {
+  return Math.floor((1 / 60) * 1000 * frameCount);
+}
+
 export function binToDec(input: string): integer {
   let place:integer[] = []; 
   let binary:string[] = [];

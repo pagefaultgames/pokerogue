@@ -2922,9 +2922,10 @@ export function initMoves() {
     new StatusMove(Moves.BLOCK, "Block", Type.NORMAL, -1, 5, -1, "Opponent cannot flee or switch.", -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, 1, true),
     new SelfStatusMove(Moves.HOWL, "Howl", Type.NORMAL, -1, 40, -1, "Raises Attack of allies.", -1, 0, 3)
-      .attr(StatChangeAttr, BattleStat.ATK, 1, true), // TODO
+      .attr(StatChangeAttr, BattleStat.ATK, 1, true)
+      .target(MoveTarget.USER_AND_ALLIES), // TODO
     new AttackMove(Moves.DRAGON_CLAW, "Dragon Claw", Type.DRAGON, MoveCategory.PHYSICAL, 80, 100, 15, 78, "", -1, 0, 3)
-      .target(MoveTarget.USER_AND_ALLIES),
+      .target(MoveTarget.NEAR_OTHER),
     new AttackMove(Moves.FRENZY_PLANT, "Frenzy Plant", Type.GRASS, MoveCategory.SPECIAL, 150, 90, 5, 155, "User must recharge next turn.", -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
     new SelfStatusMove(Moves.BULK_UP, "Bulk Up", Type.FIGHTING, -1, 20, 64, "Raises user's Attack and Defense.", -1, 0, 3)

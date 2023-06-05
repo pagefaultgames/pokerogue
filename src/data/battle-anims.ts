@@ -304,8 +304,7 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
         if (Object.keys(tweenProps).length) {
             scene.tweens.add(Object.assign({
                 targets: moveAnim.bgSprite,
-                duration: this.duration * 3,
-                useFrames: true
+                duration: Utils.getFrameMs(this.duration * 3)
             }, tweenProps))
         }
         return this.duration * 2;
@@ -331,12 +330,11 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
         moveAnim.bgSprite.setScale(1.25);
         moveAnim.bgSprite.setAlpha(this.opacity / 255);
         scene.field.add(moveAnim.bgSprite);
-        scene.field.moveBelow(moveAnim.bgSprite, scene.getEnemyPokemon() || scene.getPlayerPokemon());
+        scene.field.moveBelow(moveAnim.bgSprite as Phaser.GameObjects.GameObject, scene.getEnemyPokemon() || scene.getPlayerPokemon());
 
         scene.tweens.add({
             targets: moveAnim.bgSprite,
-            duration: this.duration * 3,
-            useFrames: true
+            duration: Utils.getFrameMs(this.duration * 3)
         });
 
         return this.duration * 2;
@@ -642,8 +640,7 @@ export abstract class BattleAnim {
         const spritePriorities: integer[] = [];
 
         scene.tweens.addCounter({
-            useFrames: true,
-            duration: 3,
+            duration: Utils.getFrameMs(3),
             repeat: anim.frames.length,
             onRepeat: () => {
                 if (!f) {
@@ -666,7 +663,7 @@ export abstract class BattleAnim {
                             const spriteSource = isUser ? userSprite : targetSprite;
                             let sprite: Phaser.GameObjects.Sprite;
                             sprite = scene.add.sprite(0, 0, spriteSource.texture, spriteSource.frame.name);
-                            sprite.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ] });
+                            sprite.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: true });
                             spriteSource.on('animationupdate', (_anim, frame) => sprite.setFrame(frame.textureFrame));
                             scene.field.add(sprite);
                             sprites.push(sprite);
@@ -702,7 +699,7 @@ export abstract class BattleAnim {
                             const setSpritePriority = (priority: integer) => {
                                 switch (priority) {
                                     case 0:
-                                        scene.field.moveBelow(moveSprite, scene.getEnemyPokemon() || scene.getPlayerPokemon());
+                                        scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, scene.getEnemyPokemon() || scene.getPlayerPokemon());
                                         break;
                                     case 1:
                                         scene.field.moveTo(moveSprite, scene.field.getAll().length - 1);
@@ -711,12 +708,12 @@ export abstract class BattleAnim {
                                         switch (frame.focus) {
                                             case AnimFocus.USER:
                                                 if (this.bgSprite)
-                                                    scene.field.moveAbove(moveSprite, this.bgSprite);
+                                                    scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.bgSprite);
                                                 else
-                                                    scene.field.moveBelow(moveSprite, this.user);
+                                                    scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.user);
                                                 break;
                                             case AnimFocus.TARGET:
-                                                scene.field.moveBelow(moveSprite, this.target);
+                                                scene.field.moveBelow(moveSprite as Phaser.GameObjects.GameObject, this.target);
                                                 break;
                                             default:
                                                 setSpritePriority(1);
@@ -726,10 +723,10 @@ export abstract class BattleAnim {
                                     case 3:
                                         switch (frame.focus) {
                                             case AnimFocus.USER:
-                                                scene.field.moveAbove(moveSprite, this.user);
+                                                scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.user);
                                                 break;
                                             case AnimFocus.TARGET:
-                                                scene.field.moveAbove(moveSprite, this.target);
+                                                scene.field.moveAbove(moveSprite as Phaser.GameObjects.GameObject, this.target);
                                                 break;
                                             default:
                                                 setSpritePriority(1);
@@ -804,8 +801,7 @@ export abstract class BattleAnim {
                 }
                 if (r) {
                     scene.tweens.addCounter({
-                        duration: r,
-                        useFrames: true,
+                        duration: Utils.getFrameMs(r),
                         onComplete: () => cleanUpAndComplete()
                     });
                 } else
