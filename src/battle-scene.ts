@@ -668,13 +668,13 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	playBgm(bgmName?: string, loopPoint?: number): void {
-		if (!bgmName && this.bgm) {
+		if (!bgmName && this.bgm && !this.bgm.pendingRemove) {
 			this.bgm.play({
 				volume: 1
 			});
 			return;
 		}
-		if (this.bgm && this.bgm.isPlaying)
+		if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying)
 			this.bgm.stop();
 		this.bgm = this.sound.add(bgmName, { loop: true });
 		this.bgm.play();

@@ -222,7 +222,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.field.add(enemyPokemon);
         const playerPokemon = this.scene.getPlayerPokemon();
         if (playerPokemon.visible)
-          this.scene.field.moveBelow(enemyPokemon, playerPokemon);
+          this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
         enemyPokemon.tint(0, 0.5);
         if (battle.enemyField.length > 1)
           enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);
@@ -2128,18 +2128,20 @@ export class PokemonHealPhase extends CommonAnimPhase {
   private message: string;
   private showFullHpMessage: boolean;
   private skipAnim: boolean;
+  private revive: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, hpHealed: integer, message: string, showFullHpMessage: boolean, skipAnim?: boolean) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, hpHealed: integer, message: string, showFullHpMessage: boolean, skipAnim?: boolean, revive?: boolean) {
     super(scene, battlerIndex, undefined, CommonAnim.HEALTH_UP);
 
     this.hpHealed = hpHealed;
     this.message = message;
     this.showFullHpMessage = showFullHpMessage;
     this.skipAnim = !!skipAnim;
+    this.revive = !!revive;
   }
 
   start() {
-    if (!this.skipAnim && this.getPokemon().hp && this.getPokemon().getHpRatio() < 1)
+    if (!this.skipAnim && (this.revive || this.getPokemon().hp) && this.getPokemon().getHpRatio() < 1)
       super.start();
     else
       this.end();
@@ -2148,7 +2150,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
   end() {
     const pokemon = this.getPokemon();
     
-    if (!this.getPokemon().isActive(true)) {
+    if (!pokemon.isOnField() || (!this.revive && !pokemon.isActive())) {
       super.end();
       return;
     }
@@ -2157,7 +2159,8 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
     if (!fullHp) {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
-      this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
+      if (!this.revive)
+        this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       pokemon.hp = Math.min(pokemon.hp + this.hpHealed * hpRestoreMultiplier.value, pokemon.getMaxHp());
       pokemon.updateInfo().then(() => super.end());
     } else if (this.showFullHpMessage)
@@ -2212,7 +2215,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     this.scene.sound.play('pb_throw');
     this.scene.time.delayedCall(300, () => {
-      this.scene.field.moveBelow(this.pokeball, pokemon);
+      this.scene.field.moveBelow(this.pokeball as Phaser.GameObjects.GameObject, pokemon);
     });
     this.scene.tweens.add({
       targets: this.pokeball,

@@ -682,7 +682,8 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
 
-    pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(), Math.max(Math.floor(pokemon.getMaxHp() / 2)), getPokemonMessage(pokemon, ` was revived\nby its ${this.type.name}!`), false));
+    pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
+      Math.max(Math.floor(pokemon.getMaxHp() / 2), 1),getPokemonMessage(pokemon, ` was revived\nby its ${this.type.name}!`), false, false, true));
 
     return true;
   }
