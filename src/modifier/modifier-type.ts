@@ -561,6 +561,9 @@ const modifierTypes = {
 
   SACRED_ASH: () => new AllPokemonFullReviveModifierType('SACRED ASH'),
 
+  REVIVER_SEED: () => new PokemonHeldItemModifierType('REVIVER SEED', 'Revives the holder for 1/2 HP upon fainting',
+    (type, args) => new Modifiers.PokemonInstantReviveModifier(type, (args[0] as Pokemon).id)),
+
   ETHER: () => new PokemonPpRestoreModifierType('ETHER', 10),
   MAX_ETHER: () => new PokemonPpRestoreModifierType('MAX ETHER', -1),
 
@@ -723,6 +726,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.MAX_LURE, 4),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 5),
+    new WeightedModifierType(modifierTypes.REVIVER_SEED, 3),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 3),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 2),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 1),

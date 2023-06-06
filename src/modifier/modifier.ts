@@ -666,6 +666,32 @@ export class PreserveBerryModifier extends PersistentModifier {
   }
 }
 
+export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier) {
+    return modifier instanceof PokemonInstantReviveModifier;
+  }
+
+  clone() {
+    return new PokemonInstantReviveModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+
+    pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(), Math.max(Math.floor(pokemon.getMaxHp() / 2)), getPokemonMessage(pokemon, ` was revived\nby its ${this.type.name}!`), false));
+
+    return true;
+  }
+
+  getMaxStackCount(): integer {
+    return 10;
+  }
+}
+
 export abstract class ConsumablePokemonModifier extends ConsumableModifier {
   public pokemonId: integer;
 

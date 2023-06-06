@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballName, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -1729,7 +1729,19 @@ export class FaintPhase extends PokemonPhase {
   start() {
     super.start();
 
-    this.scene.queueMessage(getPokemonMessage(this.getPokemon(), ' fainted!'), null, true);
+    const pokemon = this.getPokemon();
+
+    const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.player, this.getPokemon()) as PokemonInstantReviveModifier;
+
+    if (instantReviveModifier) {
+      if (!--instantReviveModifier.stackCount)
+        this.scene.removeModifier(instantReviveModifier);
+      this.scene.updateModifiers(this.player);
+      this.end();
+      return;
+    }
+
+    this.scene.queueMessage(getPokemonMessage(pokemon, ' fainted!'), null, true);
 
     if (this.player) {
       const nonFaintedPartyMemberCount = this.scene.getParty().filter(p => !p.isFainted()).length;
@@ -1739,8 +1751,6 @@ export class FaintPhase extends PokemonPhase {
         this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
     } else
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
-      
-    const pokemon = this.getPokemon();
 
     pokemon.lapseTags(BattlerTagLapseType.FAINT);
     this.scene.getField().filter(p => p && p !== pokemon).forEach(p => p.removeTagsBySourceId(pokemon.id));
