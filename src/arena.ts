@@ -334,6 +334,7 @@ export function getBiomeHasProps(biomeType: Biome): boolean {
     case Biome.VOLCANO:
     case Biome.GRAVEYARD:
     case Biome.FACTORY:
+    case Biome.RUINS:
     case Biome.WASTELAND:
     case Biome.ABYSS:
       return true;
