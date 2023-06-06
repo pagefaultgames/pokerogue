@@ -312,8 +312,6 @@ export class Arena {
 
 export function getBiomeKey(biome: Biome): string {
   switch (biome) {
-    case Biome.ABYSS:
-      return 'wasteland';
     case Biome.POWER_PLANT:
       return 'ruins';
     case Biome.END:
@@ -337,6 +335,7 @@ export function getBiomeHasProps(biomeType: Biome): boolean {
     case Biome.GRAVEYARD:
     case Biome.FACTORY:
     case Biome.WASTELAND:
+    case Biome.ABYSS:
       return true;
   }
 
