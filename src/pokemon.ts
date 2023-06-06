@@ -157,7 +157,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const ret = this.scene.add.sprite(0, 0, `pkmn__${this.isPlayer() ? 'back__' : ''}sub`);
       ret.setOrigin(0.5, 1);
       ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow });
-      ret.preFX.add
       return ret;
     };
     

@@ -16,8 +16,8 @@ varying vec2 outPosition;
 varying float outTintEffect;
 varying vec4 outTint;
 
-uniform bool hasShadow;
-uniform bool yCenter;
+uniform int hasShadow;
+uniform int yCenter;
 uniform float vCutoff;
 uniform vec2 relPosition;
 uniform vec2 size;
@@ -55,13 +55,13 @@ void main()
     /* Apply tone */
     color.rgb += tone.rgb * (color.a / 255.0);
 
-    if (hasShadow) {
+    if (hasShadow == 1) {
         float width = size.x - (yOffset / 2.0);
 
         float spriteX = ((floor(outPosition.x / 6.0) - relPosition.x) / width) + 0.5;
         float spriteY = ((floor(outPosition.y / 6.0) - relPosition.y) / size.y);
 
-        if (yCenter) {
+        if (yCenter == 1) {
             spriteY += 0.5;
         } else {
             spriteY += 1.0;
@@ -133,8 +133,8 @@ export default class SpritePipeline extends Phaser.Renderer.WebGL.Pipelines.Mult
     }
 
     onPreRender(): void {
-        this.setBoolean('hasShadow', false);
-        this.setBoolean('yCenter', false);
+        this.set1i('hasShadow', 0);
+        this.set1i('yCenter', 0);
         this.set2f('relPosition', 0, 0);
         this.set2f('size', 0, 0);
         this.set1f('yOffset', 0);
@@ -154,8 +154,8 @@ export default class SpritePipeline extends Phaser.Renderer.WebGL.Pipelines.Mult
             ? [ sprite.parentContainer.x, sprite.parentContainer.y ]
             : [ sprite.x, sprite.y ];
         position[0] += -(sprite.width - sprite.frame.width) / 2 + sprite.frame.x;
-        this.setBoolean('hasShadow', hasShadow);
-        this.setBoolean('yCenter', sprite.originY === 0.5);
+        this.set1i('hasShadow', hasShadow ? 1 : 0);
+        this.set1i('yCenter', sprite.originY === 0.5 ? 1 : 0);
         this.set2f('relPosition', position[0], position[1]);
         this.set2f('size', sprite.frame.width, sprite.height);
         this.set1f('yOffset', sprite.height - sprite.frame.height);
