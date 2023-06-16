@@ -8,11 +8,11 @@ export default class GameModeSelectUiHandler extends OptionSelectUiHandler {
     super(scene, Mode.GAME_MODE_SELECT);
   }
 
-  getWindowName(): string {
-    return 'game_mode_select_window';
+  getWindowWidth(): integer {
+    return 64;
   }
 
-  getWindowWidth(): integer {
+  getWindowHeight(): number {
     return 64;
   }
 

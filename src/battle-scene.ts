@@ -158,6 +158,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('bg_fight', 'ui');
 		this.loadAtlas('prompt', 'ui');
 		this.loadImage('cursor', 'ui');
+		this.loadImage('window', 'ui');
 		this.loadImage('pbinfo_player', 'ui');
 		this.loadImage('pbinfo_player_mini', 'ui');
 		this.loadImage('pbinfo_enemy_mini', 'ui');
@@ -166,11 +167,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('overlay_hp', 'ui');
 		this.loadImage('overlay_exp', 'ui');
 		this.loadImage('icon_owned', 'ui');
-		this.loadImage('level_up_stats', 'ui');
 		this.loadImage('ability_bar', 'ui');
-		this.loadImage('ball_window', 'ui');
-		this.loadImage('boolean_window', 'ui');
-		this.loadImage('game_mode_select_window', 'ui');
 
 		this.loadImage('party_bg', 'ui');
 		this.loadImage('party_bg_double', 'ui');

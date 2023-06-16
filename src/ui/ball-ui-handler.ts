@@ -8,7 +8,7 @@ import UiHandler from "./uiHandler";
 
 export default class BallUiHandler extends UiHandler {
   private pokeballSelectContainer: Phaser.GameObjects.Container;
-  private pokeballSelectBg: Phaser.GameObjects.Image;
+  private pokeballSelectBg: Phaser.GameObjects.NineSlice;
   private countsText: Phaser.GameObjects.Text;
 
   private cursorObj: Phaser.GameObjects.Image;
@@ -24,7 +24,7 @@ export default class BallUiHandler extends UiHandler {
     this.pokeballSelectContainer.setVisible(false);
     ui.add(this.pokeballSelectContainer);
 
-    this.pokeballSelectBg = this.scene.add.image(0, 0, 'ball_window');
+    this.pokeballSelectBg = this.scene.add.nineslice(0, 0, 'window', null, 114, 96, 6, 6, 6, 6);
     this.pokeballSelectBg.setOrigin(0, 1);
     this.pokeballSelectContainer.add(this.pokeballSelectBg);
 

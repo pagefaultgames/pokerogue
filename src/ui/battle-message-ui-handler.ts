@@ -54,7 +54,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
     this.levelUpStatsContainer = levelUpStatsContainer;
 
-    const levelUpStatsBg = this.scene.add.image((this.scene.game.canvas.width / 6), -100, 'level_up_stats');
+    const levelUpStatsBg = this.scene.add.nineslice((this.scene.game.canvas.width / 6), -100, 'window', null, 118, 100, 6, 6, 6, 6);
     levelUpStatsBg.setOrigin(1, 0);
     levelUpStatsContainer.add(levelUpStatsBg);
 
@@ -75,6 +75,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
     const levelUpStatsValuesContent = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 7, -94, '', TextStyle.WINDOW, { maxLines: 6 });
     levelUpStatsValuesContent.setOrigin(1, 0);
+    levelUpStatsValuesContent.setAlign('right');
     levelUpStatsContainer.add(levelUpStatsValuesContent);
 
     this.levelUpStatsValuesContent = levelUpStatsValuesContent;

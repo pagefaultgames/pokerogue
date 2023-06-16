@@ -15,7 +15,7 @@ const config: Phaser.Types.Core.GameConfig = {
 };
 
 const setPositionRelative = function (guideObject: any, x: number, y: number) {
-	if (guideObject && guideObject.hasOwnProperty('width') && guideObject.hasOwnProperty('height')) {
+	if (guideObject && guideObject instanceof Phaser.GameObjects.GameObject) {
 		const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
 		const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
 		this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
@@ -27,6 +27,7 @@ const setPositionRelative = function (guideObject: any, x: number, y: number) {
 
 Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
 
 document.fonts.load('16px emerald').then(() => document.fonts.load('10px pkmnems'));

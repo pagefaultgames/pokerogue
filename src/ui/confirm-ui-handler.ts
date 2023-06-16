@@ -1,6 +1,5 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene from "../battle-scene";
 import OptionSelectUiHandler from "./option-select-ui-handler";
-import { addTextObject, TextStyle } from "./text";
 import { Mode } from "./ui";
 
 export default class ConfirmUiHandler extends OptionSelectUiHandler {
@@ -11,11 +10,11 @@ export default class ConfirmUiHandler extends OptionSelectUiHandler {
     super(scene, Mode.CONFIRM);
   }
 
-  getWindowName(): string {
-    return 'boolean_window';
+  getWindowWidth(): integer {
+    return 48;
   }
 
-  getWindowWidth(): integer {
+  getWindowHeight(): integer {
     return 48;
   }
 

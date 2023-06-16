@@ -7,7 +7,7 @@ export default abstract class OptionSelectUiHandler extends UiHandler {
   protected handlers: Function[];
 
   protected optionSelectContainer: Phaser.GameObjects.Container;
-  protected optionSelectBg: Phaser.GameObjects.Image;
+  protected optionSelectBg: Phaser.GameObjects.NineSlice;
 
   private cursorObj: Phaser.GameObjects.Image;
 
@@ -15,9 +15,9 @@ export default abstract class OptionSelectUiHandler extends UiHandler {
     super(scene, mode);
   }
 
-  abstract getWindowName(): string;
-
   abstract getWindowWidth(): integer;
+
+  abstract getWindowHeight(): integer;
 
   abstract getOptions(): string[];
 
@@ -28,7 +28,7 @@ export default abstract class OptionSelectUiHandler extends UiHandler {
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
 
-    this.optionSelectBg = this.scene.add.image(0, 0, this.getWindowName());
+    this.optionSelectBg = this.scene.add.nineslice(0, 0, 'window', null, this.getWindowWidth(), this.getWindowHeight(), 6, 6, 6, 6);
     this.optionSelectBg.setOrigin(0, 1);
     this.optionSelectContainer.add(this.optionSelectBg);
 
