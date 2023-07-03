@@ -2316,15 +2316,18 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.removePb();
         this.end();
       };
+      const removePokemon = () => {
+        this.scene.getPlayerField().forEach(playerPokemon => playerPokemon.removeTagsBySourceId(pokemon.id));
+        pokemon.hp = 0;
+        pokemon.trySetStatus(StatusEffect.FAINT);
+        this.scene.clearEnemyModifiers();
+        this.scene.field.remove(pokemon, true);
+      };
       const addToParty = () => {
         const newPokemon = pokemon.addToParty();
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
         Promise.all(modifiers.map(m => this.scene.addModifier(m))).then(() => {
-          this.scene.getPlayerField().forEach(playerPokemon => playerPokemon.removeTagsBySourceId(pokemon.id));
-          pokemon.hp = 0;
-          pokemon.trySetStatus(StatusEffect.FAINT);
-          this.scene.clearEnemyModifiers();
-          this.scene.field.remove(pokemon, true);
+          removePokemon();
           if (newPokemon)
             newPokemon.loadAssets().then(end);
           else
@@ -2345,9 +2348,10 @@ export class AttemptCapturePhase extends PokemonPhase {
                   });
                 });
               }, () => {
-                this.scene.ui.setMode(Mode.MESSAGE);
-                pokemon.hp = 0;
-                end();
+                this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+                  removePokemon();
+                  end();
+                });
               });
             });
           };
