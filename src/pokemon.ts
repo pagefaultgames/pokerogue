@@ -598,18 +598,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const move = battlerMove.getMove();
     const moveCategory = move.category;
     let damage = 0;
+
+    const cancelled = new Utils.BooleanHolder(false);
+    const typeless = !!move.getAttrs(TypelessAttr).length
+    const typeMultiplier = new Utils.NumberHolder(!typeless && moveCategory !== MoveCategory.STATUS
+      ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type1) * (this.getSpeciesForm().type2 !== null ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type2) : 1)
+      : 1);
+    if (typeless)
+      typeMultiplier.value = 1;
+
     switch (moveCategory) {
       case MoveCategory.PHYSICAL:
       case MoveCategory.SPECIAL:
         const isPhysical = moveCategory === MoveCategory.PHYSICAL;
-        const typeless = !!move.getAttrs(TypelessAttr).length
-        const cancelled = new Utils.BooleanHolder(false);
         const power = new Utils.NumberHolder(move.power);
-        const typeMultiplier = new Utils.NumberHolder(!typeless
-              ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type1) * (this.getSpeciesForm().type2 !== null ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type2) : 1)
-              : 1);
-        if (typeless)
-          typeMultiplier.value = 1;
         applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, this, battlerMove, power);
 
         if (!typeless)
@@ -700,7 +702,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         break;
       case MoveCategory.STATUS:
-        result = HitResult.STATUS;
+        if (!typeless)
+          applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, battlerMove, cancelled, typeMultiplier);
+        result = cancelled.value || !typeMultiplier.value ? HitResult.NO_EFFECT : HitResult.STATUS;
         break;
     }
 
