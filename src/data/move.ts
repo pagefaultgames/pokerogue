@@ -2648,10 +2648,11 @@ export function initMoves() {
     new AttackMove(Moves.OUTRAGE, "Outrage", Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 10, 156, "User attacks for 2-3 turns but then becomes confused.", -1, 0, 2)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(ConfuseAttr, true), // TODO: Update to still confuse if last hit misses
+      .attr(ConfuseAttr, true) // TODO: Update to still confuse if last hit misses
+      .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(Moves.SANDSTORM, "Sandstorm", Type.ROCK, -1, 10, 51, "Creates a sandstorm for 5 turns.", -1, 0, 2)
       .attr(WeatherChangeAttr, WeatherType.SANDSTORM)
-      .target(MoveTarget.RANDOM_NEAR_ENEMY),
+      .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.GIGA_DRAIN, "Giga Drain", Type.GRASS, MoveCategory.SPECIAL, 75, 100, 10, 111, "User recovers half the HP inflicted on opponent.", -1, 4, 2)
       .attr(HitHealAttr),
     new SelfStatusMove(Moves.ENDURE, "Endure (N)", Type.NORMAL, -1, 10, 47, "Always left with at least 1 HP, but may fail if used consecutively.", -1, 0, 2),
@@ -2967,7 +2968,7 @@ export function initMoves() {
     new AttackMove(Moves.PSYCHO_BOOST, "Psycho Boost", Type.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, "Sharply lowers user's Special Attack.", 100, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
     new SelfStatusMove(Moves.ROOST, "Roost", Type.FLYING, -1, 5, -1, "User recovers half of its max HP and loses the FLYING type temporarily.", -1, 0, 4)
-      .attr(HitHealAttr)
+      .attr(HealAttr)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, true, 1),
     new SelfStatusMove(Moves.GRAVITY, "Gravity", Type.PSYCHIC, -1, 5, -1, "Prevents moves like FLY and BOUNCE and the Ability LEVITATE for 5 turns.", -1, 0, 4)
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)

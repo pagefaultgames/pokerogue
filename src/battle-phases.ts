@@ -7,7 +7,7 @@ import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
 import { BerryModifier, ContactHeldItemTransferChanceModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
-import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballName, getPokeballTintColor, PokeballType } from "./data/pokeball";
+import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
 import { StatusEffect, getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./data/status-effect";
 import { SummaryUiMode } from "./ui/summary-ui-handler";
@@ -78,6 +78,7 @@ export class CheckLoadPhase extends BattlePhase {
     this.scene.pushPhase(new SummonPhase(this.scene, 0));
     if (this.scene.currentBattle.double && this.scene.getParty().filter(p => !p.isFainted()).length > 1)
       this.scene.pushPhase(new SummonPhase(this.scene, 1));
+    this.scene.getEnemyField().map(p => this.scene.pushPhase(new PostSummonPhase(this.scene, p.getBattlerIndex())));
 
     super.end();
   }
@@ -277,8 +278,6 @@ export class EncounterPhase extends BattlePhase {
     });
 
     enemyField.forEach(enemyPokemon => this.scene.arena.applyTags(ArenaTrapTag, enemyPokemon));
-
-    enemyField.forEach(enemyPokemon => applyPostSummonAbAttrs(PostSummonAbAttr, enemyPokemon));
       
     // TODO: Remove
     //this.scene.unshiftPhase(new SelectModifierPhase(this.scene));
@@ -350,6 +349,23 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
         this.scene.ui.showText(text, null, () => this.end(), 1500);
       }
     });
+  }
+}
+
+export class PostSummonPhase extends PokemonPhase {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
+    super(scene, battlerIndex);
+  }
+
+  start() {
+    super.start();
+
+    const pokemon = this.getPokemon();
+
+    this.scene.arena.applyTags(ArenaTrapTag, pokemon);
+    applyPostSummonAbAttrs(PostSummonAbAttr, pokemon);
+
+    this.end();
   }
 }
 
@@ -544,6 +560,10 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     });
   }
 
+  queuePostSummon() {
+    this.scene.pushPhase(new PostSummonPhase(this.scene, this.getPokemon().getBattlerIndex()));
+  }
+
   end() {
     const pokemon = this.getPokemon();
 
@@ -552,9 +572,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     pokemon.resetTurnData();
 
-    this.scene.arena.applyTags(ArenaTrapTag, pokemon);
-
-    applyPostSummonAbAttrs(PostSummonAbAttr, pokemon);
+    this.queuePostSummon();
 
     super.end();
   }
@@ -622,6 +640,10 @@ export class SwitchSummonPhase extends SummonPhase {
       this.summon();
     } else
       this.end();
+  }
+
+  queuePostSummon() {
+    this.scene.unshiftPhase(new PostSummonPhase(this.scene, this.getPokemon().getBattlerIndex()));
   }
 
   end() {
