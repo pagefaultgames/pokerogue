@@ -249,12 +249,11 @@ export const biomePools: BiomePools = {
       { 1: [ Species.RATTATA ], 20: [ Species.RATICATE ] },
       Species.GRIMER,
       { 1: [ Species.KOFFING ], 35: [ Species.WEEZING ] },
-      { 1: [ Species.STUNKY ], 34: [ Species.SKUNTANK ] },
       { 1: [ Species.PATRAT ], 20: [ Species.WATCHOG ] },
       { 1: [ Species.LILLIPUP ], 16: [ Species.HERDIER ], 32: [ Species.STOUTLAND ] },
       { 1: [ Species.TRUBBISH ], 36: [ Species.GARBODOR ] }
     ],
-    [BiomePoolTier.UNCOMMON]: [ { 1: [ Species.BURMY ], 20: [ Species.WORMADAM ] } ],
+    [BiomePoolTier.UNCOMMON]: [ { 1: [ Species.BURMY ], 20: [ Species.WORMADAM ] }, { 1: [ Species.STUNKY ], 34: [ Species.SKUNTANK ] } ],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [ Species.EEVEE, Species.SMEARGLE ],
     [BiomePoolTier.ULTRA_RARE]: [ Species.DITTO, Species.CASTFORM ],
@@ -2808,11 +2807,11 @@ export const biomePools: BiomePools = {
       ]
     ],
     [ Species.STUNKY, Type.POISON, Type.DARK, [
-        [ Biome.CITY, BiomePoolTier.COMMON ]
+        [ Biome.CITY, BiomePoolTier.UNCOMMON ]
       ]
     ],
     [ Species.SKUNTANK, Type.POISON, Type.DARK, [
-        [ Biome.CITY, BiomePoolTier.COMMON ],
+        [ Biome.CITY, BiomePoolTier.UNCOMMON ],
         [ Biome.CITY, BiomePoolTier.BOSS ]
       ]
     ],

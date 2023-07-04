@@ -928,9 +928,6 @@ export class TurnStartPhase extends FieldPhase {
   start() {
     super.start();
 
-    if (this.scene.arena.weather)
-      this.scene.unshiftPhase(new WeatherEffectPhase(this.scene, this.scene.arena.weather));
-
     const field = this.scene.getField();
     const order = this.getOrder();
 
@@ -993,6 +990,9 @@ export class TurnStartPhase extends FieldPhase {
           break;
       }
     }
+
+    if (this.scene.arena.weather)
+      this.scene.pushPhase(new WeatherEffectPhase(this.scene, this.scene.arena.weather));
 
     for (let o of order) {
       if (field[o].status && field[o].status.isPostTurn())
