@@ -515,7 +515,7 @@ export default class BattleScene extends Phaser.Scene {
 		let newDouble: boolean;
 
 		if (double === undefined) {
-			const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
+			const doubleChance = newWaveIndex > 1 && new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
 			this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
 			this.getPlayerField().forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
 			newDouble = !Utils.randInt(doubleChance.value);
@@ -549,9 +549,10 @@ export default class BattleScene extends Phaser.Scene {
 			if ((lastBattle?.double || false) !== newDouble) {
 				const availablePartyMemberCount = this.getParty().filter(p => !p.isFainted()).length;
 				if (newDouble) {
-					this.pushPhase(new ToggleDoublePositionPhase(this, true));
-					if (availablePartyMemberCount > 1)
+					if (availablePartyMemberCount > 1) {
+						this.pushPhase(new ToggleDoublePositionPhase(this, true));
 						this.pushPhase(new SummonPhase(this, 1));
+					}
 				} else {
 					if (availablePartyMemberCount > 1)
 						this.pushPhase(new ReturnPhase(this, 1));
@@ -564,8 +565,6 @@ export default class BattleScene extends Phaser.Scene {
 				if (newDouble)
 					this.pushPhase(new CheckSwitchPhase(this, 1, newDouble));
 			}
-
-			this.getField().filter(p => p?.isActive(true)).map(p => this.pushPhase(new PostSummonPhase(this, p.getBattlerIndex())));
 		}
 		
 		return this.currentBattle;

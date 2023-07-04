@@ -78,7 +78,6 @@ export class CheckLoadPhase extends BattlePhase {
     this.scene.pushPhase(new SummonPhase(this.scene, 0));
     if (this.scene.currentBattle.double && this.scene.getParty().filter(p => !p.isFainted()).length > 1)
       this.scene.pushPhase(new SummonPhase(this.scene, 1));
-    this.scene.getEnemyField().map(p => this.scene.pushPhase(new PostSummonPhase(this.scene, p.getBattlerIndex())));
 
     super.end();
   }
@@ -277,7 +276,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
     });
 
-    enemyField.forEach(enemyPokemon => this.scene.arena.applyTags(ArenaTrapTag, enemyPokemon));
+    enemyField.map(p => this.scene.pushPhase(new PostSummonPhase(this.scene, p.getBattlerIndex())));
       
     // TODO: Remove
     //this.scene.unshiftPhase(new SelectModifierPhase(this.scene));
@@ -1779,7 +1778,7 @@ export class FaintPhase extends PokemonPhase {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
 
     pokemon.lapseTags(BattlerTagLapseType.FAINT);
-    this.scene.getField().filter(p => p && p !== pokemon).forEach(p => p.removeTagsBySourceId(pokemon.id));
+    this.scene.getField().filter(p => p !== pokemon && p?.isActive(true)).forEach(p => p.removeTagsBySourceId(pokemon.id));
 
     pokemon.faintCry(() => {
       pokemon.hideInfo();
