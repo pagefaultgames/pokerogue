@@ -361,17 +361,6 @@ export default class BattleScene extends Phaser.Scene {
 			field.add(a);
 		});
 
-		if (this.quickStart) {
-			for (let s = 0; s < 3; s++) {
-				const playerSpecies = getPokemonSpecies((getPokemonSpecies(s === 0 ? Species.TORCHIC : s === 1 ? Species.TREECKO : Species.MUDKIP)).getSpeciesForLevel(startingLevel, true));
-				const playerPokemon = new PlayerPokemon(this, playerSpecies, startingLevel, 0, 0);
-				playerPokemon.setVisible(false);
-				loadPokemonAssets.push(playerPokemon.loadAssets());
-
-				this.party.push(playerPokemon);
-			}
-		}
-
 		const trainerPbFrameNames = this.anims.generateFrameNames('trainer_m_pb', { zeroPad: 2, start: 1, end: 12 });
 		this.anims.create({
 			key: 'trainer_m_pb',
@@ -395,6 +384,17 @@ export default class BattleScene extends Phaser.Scene {
 		});
 
 		this.reset();
+
+		if (this.quickStart) {
+			for (let s = 0; s < 3; s++) {
+				const playerSpecies = this.randomSpecies(startingWave, startingLevel, false);
+				const playerPokemon = new PlayerPokemon(this, playerSpecies, startingLevel, 0, 0);
+				playerPokemon.setVisible(false);
+				this.party.push(playerPokemon);
+
+				loadPokemonAssets.push(playerPokemon.loadAssets());
+			}
+		}
 
 		const ui = new UI(this);
 		this.uiContainer.add(ui);

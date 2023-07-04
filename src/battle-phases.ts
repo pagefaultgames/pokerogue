@@ -1749,6 +1749,8 @@ export class FaintPhase extends PokemonPhase {
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
       else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount())
         this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
+      else if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double)
+        this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, false));
     } else
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
 
