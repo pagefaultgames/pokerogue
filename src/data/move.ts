@@ -2752,7 +2752,7 @@ export function initMoves() {
       .makesContact(false),
     new AttackMove(Moves.FAKE_OUT, "Fake Out", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 10, -1, "User attacks first, foe flinches. Only usable on first turn.", 100, 3, 3)
       .attr(FlinchAttr)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => user.scene.currentBattle.turn === 1),
+      .condition((user: Pokemon, target: Pokemon, move: Move) => !user.getMoveHistory().length),
     new AttackMove(Moves.UPROAR, "Uproar (N)", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, -1, "User attacks for 3 turns and prevents sleep.", -1, 0, 3)
       .ignoresVirtual()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
