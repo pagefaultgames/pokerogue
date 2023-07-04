@@ -1347,7 +1347,7 @@ class MoveEffectPhase extends PokemonPhase {
     if (hiddenTag && !this.move.getMove().getAttrs(HitsTagAttr).filter(hta => (hta as HitsTagAttr).tagType === hiddenTag.tagType).length)
       return false;
 
-    if (this.getUserPokemon().getTag(BattlerTagType.IGNORE_ACCURACY))
+    if (this.getUserPokemon().getTag(BattlerTagType.IGNORE_ACCURACY) && (this.getUserPokemon().getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) > -1)
       return true;
 
     const moveAccuracy = new Utils.NumberHolder(this.move.getMove().accuracy);

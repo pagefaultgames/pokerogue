@@ -1278,7 +1278,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-      const lastMove = user.getLastXMoves(1) as TurnMove[];
+      const lastMove = user.getLastXMoves() as TurnMove[];
       if (!lastMove.length || lastMove[0].move !== move.id || lastMove[0].result !== MoveResult.OTHER) {
         (args[0] as Utils.BooleanHolder).value = true;
         new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, () => {
