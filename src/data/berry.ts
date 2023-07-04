@@ -12,9 +12,9 @@ export enum BerryType {
   ENIGMA,
   LIECHI,
   GANLON,
-  SALAC,
   PETAYA,
   APICOT,
+  SALAC,
   LANSAT,
   STARF
 }
@@ -33,9 +33,9 @@ export function getBerryEffectDescription(berryType: BerryType) {
       return 'Restores 25% HP if hit by a super effective move';
     case BerryType.LIECHI:
     case BerryType.GANLON:
-    case BerryType.SALAC:
     case BerryType.PETAYA:
     case BerryType.APICOT:
+    case BerryType.SALAC:
       const stat = (berryType - BerryType.LIECHI) as BattleStat;
       return `Raises ${getBattleStatName(stat)} if HP is below 25%`;
     case BerryType.LANSAT:
@@ -57,9 +57,9 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
       return (pokemon: Pokemon) => !!pokemon.turnData.attacksReceived.filter(a => a.result === HitResult.SUPER_EFFECTIVE).length;
     case BerryType.LIECHI:
     case BerryType.GANLON:
-    case BerryType.SALAC:
     case BerryType.PETAYA:
     case BerryType.APICOT:
+     case BerryType.SALAC:
       return (pokemon: Pokemon) => {
         const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
         return pokemon.getHpRatio() < 0.25 && pokemon.summonData.battleStats[battleStat] < 6;
@@ -92,9 +92,9 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       };
     case BerryType.LIECHI:
     case BerryType.GANLON:
-    case BerryType.SALAC:
     case BerryType.PETAYA:
     case BerryType.APICOT:
+    case BerryType.SALAC:
       return (pokemon: Pokemon) => {
         const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
         pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ battleStat ], 1));
