@@ -668,6 +668,8 @@ export class ReturnPhase extends SwitchSummonPhase {
   }
 
   summon(): void { }
+
+  queuePostSummon() { }
 }
 
 export class ToggleDoublePositionPhase extends BattlePhase {
