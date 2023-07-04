@@ -2182,7 +2182,7 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
   return { targets: set.filter(t => t !== undefined), multiple };
 }
 
-export const allMoves = [
+export const allMoves: Move[] = [
   new StatusMove(Moves.NONE, "-", Type.NORMAL, MoveCategory.STATUS, -1, -1, "", -1, 0, 1),
 ];
 

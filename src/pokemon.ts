@@ -411,7 +411,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       
       types.push(speciesForm.type1);
       if (speciesForm.type2 !== null)
-        types.push(speciesForm.type1);
+        types.push(speciesForm.type2);
     }
 
     if (this.getTag(BattlerTagType.IGNORE_FLYING) || this.scene.arena.getTag(ArenaTagType.GRAVITY)) {
@@ -440,7 +440,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getAttackMoveEffectiveness(moveType: Type): TypeDamageMultiplier {
     const types = this.getTypes();
-    return getTypeDamageMultiplier(moveType, types[0]) * (types.length ? getTypeDamageMultiplier(moveType, types[1]) : 1) as TypeDamageMultiplier;
+    return getTypeDamageMultiplier(moveType, types[0]) * (types.length > 1 ? getTypeDamageMultiplier(moveType, types[1]) : 1) as TypeDamageMultiplier;
   }
 
   getEvolution(): SpeciesEvolution {
@@ -1206,7 +1206,7 @@ export class EnemyPokemon extends Pokemon {
 
     const move = allMoves[moveId];
 
-    let benefitScores = targets
+    const benefitScores = targets
       .map(p => [ p.getBattlerIndex(), move.getTargetBenefitScore(this, p, move) * (p.isPlayer() === this.isPlayer() ? 1 : -1) ]);
 
     const sortedBenefitScores = benefitScores.slice(0);
@@ -1216,12 +1216,42 @@ export class EnemyPokemon extends Pokemon {
       return scoreA < scoreB ? 1 : scoreA > scoreB ? -1 : 0;
     });
 
-    // TODO: Add some randomness
-
     if (!sortedBenefitScores.length)
       return [];
 
-    return [ sortedBenefitScores[0][0] ];
+    let targetWeights = sortedBenefitScores.map(s => s[1]);
+    const lowestWeight = targetWeights[targetWeights.length - 1];
+
+    if (lowestWeight < 1) {
+      for (let w = 0; w < targetWeights.length; w++)
+        targetWeights[w] += Math.abs(lowestWeight - 1);
+    }
+
+    const benefitCutoffIndex = targetWeights.findIndex(s => s < targetWeights[0] / 2);
+    if (benefitCutoffIndex > -1)
+      targetWeights = targetWeights.slice(0, benefitCutoffIndex);
+
+    const thresholds: integer[] = [];
+    let totalWeight: integer;
+    targetWeights.reduce((total: integer, w: integer) => {
+      total += w;
+      thresholds.push(total);
+      totalWeight = total;
+      return total;
+    }, 0);
+
+    const randValue = Utils.randInt(totalWeight);
+    let targetIndex: integer;
+
+    thresholds.every((t, i) => {
+      if (randValue >= t)
+        return true;
+
+      targetIndex = i;
+      return false;
+    });
+
+    return [ sortedBenefitScores[targetIndex][0] ];
   }
 
   isPlayer() {
