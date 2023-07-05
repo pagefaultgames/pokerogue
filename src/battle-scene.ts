@@ -514,13 +514,13 @@ export default class BattleScene extends Phaser.Scene {
 		let newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
 		let newDouble: boolean;
 
-		if (double === undefined) {
-			const doubleChance = newWaveIndex > 1 && new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
+		if (double === undefined && newWaveIndex > 1) {
+			const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
 			this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
 			this.getPlayerField().forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
 			newDouble = !Utils.randInt(doubleChance.value);
 		} else
-			newDouble = double;
+			newDouble = !!double;
 
 		const lastBattle = this.currentBattle;
 
