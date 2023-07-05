@@ -1366,10 +1366,10 @@ class MoveEffectPhase extends PokemonPhase {
 
     const moveAccuracy = new Utils.NumberHolder(this.move.getMove().accuracy);
 
+    applyMoveAttrs(VariableAccuracyAttr, this.getUserPokemon(), target, this.move.getMove(), moveAccuracy);
+
     if (moveAccuracy.value === -1)
       return true;
-
-    applyMoveAttrs(VariableAccuracyAttr, this.getUserPokemon(), target, this.move.getMove(), moveAccuracy);
 
     if (!this.move.getMove().getAttrs(OneHitKOAttr).length && this.scene.arena.getTag(ArenaTagType.GRAVITY))
       moveAccuracy.value = Math.floor(moveAccuracy.value * 1.67);
