@@ -885,12 +885,12 @@ export class FixedDamageAttr extends MoveAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = this.damage;
+    (args[0] as Utils.IntegerHolder).value = this.getDamage(user, target, move);
 
     return true;
   }
 
-  getDamage(): integer {
+  getDamage(user: Pokemon, target: Pokemon, move: Move): integer {
     return this.damage;
   }
 }
@@ -939,6 +939,26 @@ export class CounterDamageAttr extends FixedDamageAttr {
 
   getCondition(): MoveCondition {
     return (user: Pokemon, target: Pokemon, move: Move) => !!user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).length;
+  }
+}
+
+export class LevelDamageAttr extends FixedDamageAttr {
+  constructor() {
+    super(0);
+  }
+
+  getDamage(user: Pokemon, target: Pokemon, move: Move): number {
+    return user.level;
+  }
+}
+
+export class RandomLevelDamageAttr extends FixedDamageAttr {
+  constructor() {
+    super(0);
+  }
+
+  getDamage(user: Pokemon, target: Pokemon, move: Move): number {
+    return user.level * (Utils.randInt(100, 50) * 0.01);
   }
 }
 
@@ -1421,22 +1441,6 @@ export class ConsecutiveUseDoublePowerAttr extends ConsecutiveUsePowerMultiplier
 export class ConsecutiveUseMultiBasePowerAttr extends ConsecutiveUsePowerMultiplierAttr {
   getMultiplier(count: number): number {
     return (count + 1);
-  }
-}
-
-export class LevelPowerAttr extends VariablePowerAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.min(user.level, 150);
-
-    return true;
-  }
-}
-
-export class RandomLevelPowerAttr extends VariablePowerAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.min(user.level, 150) * (Utils.randInt(100, 50) * 0.01);
-
-    return true;
   }
 }
 
@@ -2333,8 +2337,8 @@ export function initMoves() {
     new AttackMove(Moves.COUNTER, "Counter", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, "When hit by a Physical Attack, user strikes back with 2x power.", -1, -5, 1)
       .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.PHYSICAL)
       .target(MoveTarget.ATTACKER),
-    new AttackMove(Moves.SEISMIC_TOSS, "Seismic Toss", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, "Inflicts damage equal to user's level (maximum 150).", -1, 0, 1)
-      .attr(LevelPowerAttr),
+    new AttackMove(Moves.SEISMIC_TOSS, "Seismic Toss", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, "Inflicts damage equal to user's level.", -1, 0, 1)
+      .attr(LevelDamageAttr),
     new AttackMove(Moves.STRENGTH, "Strength", Type.NORMAL, MoveCategory.PHYSICAL, 80, 100, 15, -1, "", -1, 0, 1),
     new AttackMove(Moves.ABSORB, "Absorb", Type.GRASS, MoveCategory.SPECIAL, 20, 100, 25, -1, "User recovers half the HP inflicted on opponent.", -1, 0, 1)
       .attr(HitHealAttr),
@@ -2408,8 +2412,8 @@ export function initMoves() {
     new AttackMove(Moves.QUICK_ATTACK, "Quick Attack", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 30, -1, "User attacks first.", -1, 1, 1),
     new AttackMove(Moves.RAGE, "Rage (N)", Type.NORMAL, MoveCategory.PHYSICAL, 20, 100, 20, -1, "Raises user's Attack when hit.", -1, 0, 1), // TODO
     new SelfStatusMove(Moves.TELEPORT, "Teleport (N)", Type.PSYCHIC, -1, 20, -1, "Allows user to flee wild battles.", -1, 0, 1),
-    new AttackMove(Moves.NIGHT_SHADE, "Night Shade", Type.GHOST, MoveCategory.SPECIAL, -1, 100, 15, 42, "Inflicts damage equal to user's level (maximum 150).", -1, 0, 1)
-      .attr(LevelPowerAttr),
+    new AttackMove(Moves.NIGHT_SHADE, "Night Shade", Type.GHOST, MoveCategory.SPECIAL, -1, 100, 15, 42, "Inflicts damage equal to user's level.", -1, 0, 1)
+      .attr(LevelDamageAttr),
     new StatusMove(Moves.MIMIC, "Mimic", Type.NORMAL, -1, 10, -1, "Copies the opponent's last move.", -1, 0, 1)
       .attr(MovesetCopyMoveAttr)
       .ignoresVirtual(),
@@ -2523,8 +2527,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.SLEEP),
     new StatusMove(Moves.FLASH, "Flash", Type.NORMAL, 100, 20, -1, "Lowers opponent's Accuracy.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
-    new AttackMove(Moves.PSYWAVE, "Psywave", Type.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 15, -1, "Inflicts damage 50-150% of user's level (maximum 150).", -1, 0, 1)
-      .attr(RandomLevelPowerAttr),
+    new AttackMove(Moves.PSYWAVE, "Psywave", Type.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 15, -1, "Inflicts damage 50-150% of user's level.", -1, 0, 1)
+      .attr(RandomLevelDamageAttr),
     new SelfStatusMove(Moves.SPLASH, "Splash", Type.NORMAL, -1, 40, -1, "Doesn't do ANYTHING.", -1, 0, 1)
       .condition(failOnGravityCondition),
     new SelfStatusMove(Moves.ACID_ARMOR, "Acid Armor", Type.POISON, -1, 20, -1, "Sharply raises user's Defense.", -1, 0, 1)
