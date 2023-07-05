@@ -550,11 +550,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     });
   }
 
-  queuePostSummon() {
-    this.scene.pushPhase(new PostSummonPhase(this.scene, this.getPokemon().getBattlerIndex()));
-  }
-
-  end() {
+  onEnd(): void {
     const pokemon = this.getPokemon();
 
     if (pokemon.shiny)
@@ -563,6 +559,14 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     pokemon.resetTurnData();
 
     this.queuePostSummon();
+  }
+
+  queuePostSummon(): void {
+    this.scene.pushPhase(new PostSummonPhase(this.scene, this.getPokemon().getBattlerIndex()));
+  }
+
+  end() {
+    this.onEnd();
 
     super.end();
   }
@@ -632,19 +636,19 @@ export class SwitchSummonPhase extends SummonPhase {
       this.end();
   }
 
-  queuePostSummon() {
-    this.scene.unshiftPhase(new PostSummonPhase(this.scene, this.getPokemon().getBattlerIndex()));
-  }
+  onEnd(): void {
+    super.onEnd();
 
-  end() {
     const pokemon = this.getPokemon();
 
     if (this.batonPass && pokemon)
       pokemon.transferSummon(this.lastPokemon);
 
     this.lastPokemon?.resetSummonData();
+  }
 
-    super.end();
+  queuePostSummon(): void {
+    this.scene.unshiftPhase(new PostSummonPhase(this.scene, this.getPokemon().getBattlerIndex()));
   }
 }
 
@@ -659,7 +663,12 @@ export class ReturnPhase extends SwitchSummonPhase {
 
   summon(): void { }
 
-  queuePostSummon() { }
+  onEnd(): void {
+    const pokemon = this.getPokemon();
+
+    pokemon.resetTurnData();
+    pokemon.resetSummonData();
+  }
 }
 
 export class ToggleDoublePositionPhase extends BattlePhase {
