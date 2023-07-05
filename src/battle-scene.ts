@@ -167,6 +167,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('overlay_exp', 'ui');
 		this.loadImage('icon_owned', 'ui');
 		this.loadImage('ability_bar', 'ui');
+		this.loadImage('shiny', 'ui');
 
 		this.loadImage('party_bg', 'ui');
 		this.loadImage('party_bg_double', 'ui');

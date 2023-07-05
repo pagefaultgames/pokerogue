@@ -8,6 +8,8 @@ import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
 import { Moves } from "../data/move";
+import { getGenderColor, getGenderSymbol } from "../data/gender";
+import { StatusEffect } from "../data/status-effect";
 
 const defaultMessage = 'Choose a Pokémon.';
 
@@ -590,9 +592,6 @@ class PartySlot extends Phaser.GameObjects.Container {
 
   private slotBg: Phaser.GameObjects.Image;
   private slotPb: Phaser.GameObjects.Sprite;
-  private slotPokemonIcon: Phaser.GameObjects.Sprite;
-  private slotHpOverlay: Phaser.GameObjects.Sprite;
-  private slotTmLabel: Phaser.GameObjects.Text;
 
   constructor(scene: BattleScene, slotIndex: integer, pokemon: PlayerPokemon, partyUiMode: PartyUiMode, tmMoveId: Moves) {
     super(scene, slotIndex >= scene.currentBattle.getBattlerCount() ? 230.5 : 64,
@@ -622,7 +621,6 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     const pokemonIcon = this.scene.add.sprite(slotPb.x, slotPb.y, this.pokemon.species.getIconAtlasKey());
     pokemonIcon.play(this.pokemon.getIconKey());
-    this.slotPokemonIcon = pokemonIcon;
 
     this.add(pokemonIcon);
 
@@ -630,7 +628,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.add(slotInfoContainer);
 
     const slotName = addTextObject(this.scene, 0, 0, this.pokemon.name, TextStyle.PARTY);
-    slotName.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 21 : 24, this.slotIndex >= battlerCount ? 3 : 10);
+    slotName.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 21 : 24, this.slotIndex >= battlerCount ? 2 : 10);
     slotName.setOrigin(0, 0);
 
     const slotLevelLabel = this.scene.add.image(0, 0, 'party_slot_overlay_lv');
@@ -643,9 +641,38 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     slotInfoContainer.add([ slotName, slotLevelLabel, slotLevelText ]);
 
+    const genderSymbol = getGenderSymbol(this.pokemon.gender);
+
+    if (genderSymbol) {
+      const slotGenderText = addTextObject(this.scene, 0, 0, genderSymbol, TextStyle.PARTY);
+      slotGenderText.setColor(getGenderColor(this.pokemon.gender));
+      slotGenderText.setShadowColor(getGenderColor(this.pokemon.gender, true));
+      slotGenderText.setPositionRelative(slotName, this.slotIndex >= battlerCount ? 44 : 76, 3);
+      slotGenderText.setOrigin(0, 0.25);
+
+      slotInfoContainer.add(slotGenderText);
+    }
+
+    if (this.pokemon.status) {
+      const statusIndicator = this.scene.add.sprite(0, 0, 'statuses');
+      statusIndicator.setFrame(StatusEffect[this.pokemon.status?.effect || StatusEffect.POISON].toLowerCase());
+      statusIndicator.setOrigin(0, 0);
+      statusIndicator.setPositionRelative(slotLevelLabel, this.slotIndex >= battlerCount ? 43 : 55, 0);
+
+      slotInfoContainer.add(statusIndicator);
+    }
+
+    if (this.pokemon.shiny) {
+      const shinyStar = this.scene.add.image(0, 0, 'shiny');
+      shinyStar.setOrigin(0, 0);
+      shinyStar.setPositionRelative(slotLevelLabel, this.slotIndex >= battlerCount ? 35 : 67, this.slotIndex >= battlerCount ? -1 : -18);
+
+      slotInfoContainer.add(shinyStar);
+    }
+
     if (partyUiMode !== PartyUiMode.TM_MODIFIER) {
       const slotHpBar = this.scene.add.image(0, 0, 'party_slot_hp_bar');
-      slotHpBar.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 72 : 8, this.slotIndex >= battlerCount ? 7 : 31);
+      slotHpBar.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 72 : 8, this.slotIndex >= battlerCount ? 6 : 31);
       slotHpBar.setOrigin(0, 0);
 
       const hpRatio = this.pokemon.getHpRatio();
@@ -660,8 +687,6 @@ class PartySlot extends Phaser.GameObjects.Container {
       slotHpText.setOrigin(1, 0);
 
       slotInfoContainer.add([ slotHpBar, slotHpOverlay, slotHpText ]);
-
-      this.slotHpOverlay = slotHpOverlay;
     } else {
       let slotTmText: string;
       switch (true) {
@@ -675,11 +700,12 @@ class PartySlot extends Phaser.GameObjects.Container {
           slotTmText = 'ABLE';
           break;
       }
-      this.slotTmLabel = addTextObject(this.scene, 0, 0, slotTmText, TextStyle.MESSAGE);
-      this.slotTmLabel.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 82 : 32, this.slotIndex >= battlerCount ? 16 : 46);
-      this.slotTmLabel.setOrigin(0, 1);
 
-      slotInfoContainer.add(this.slotTmLabel);
+      const slotTmLabel = addTextObject(this.scene, 0, 0, slotTmText, TextStyle.MESSAGE);
+      slotTmLabel.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 94 : 32, this.slotIndex >= battlerCount ? 16 : 46);
+      slotTmLabel.setOrigin(0, 1);
+
+      slotInfoContainer.add(slotTmLabel);
     }
   }
 
