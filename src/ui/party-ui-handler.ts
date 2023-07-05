@@ -663,7 +663,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     }
 
     if (this.pokemon.shiny) {
-      const shinyStar = this.scene.add.image(0, 0, 'shiny');
+      const shinyStar = this.scene.add.image(0, 0, 'shiny_star');
       shinyStar.setOrigin(0, 0);
       shinyStar.setPositionRelative(slotLevelLabel, this.slotIndex >= battlerCount ? 35 : 67, this.slotIndex >= battlerCount ? -1 : -18);
 

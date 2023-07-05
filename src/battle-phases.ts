@@ -312,15 +312,6 @@ export class NextEncounterPhase extends EncounterPhase {
       }
     });
   }
-
-  end() {
-    this.scene.getEnemyField().forEach((enemyPokemon, e) => {
-      if (enemyPokemon.shiny)
-        this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
-    });
-
-    super.end();
-  }
 }
 
 export class NewBiomeEncounterPhase extends NextEncounterPhase {
@@ -2342,7 +2333,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.end();
       };
       const removePokemon = () => {
-        this.scene.getPlayerField().forEach(playerPokemon => playerPokemon.removeTagsBySourceId(pokemon.id));
+        this.scene.getPlayerField().filter(p => p.isActive()).forEach(playerPokemon => playerPokemon.removeTagsBySourceId(pokemon.id));
         pokemon.hp = 0;
         pokemon.trySetStatus(StatusEffect.FAINT);
         this.scene.clearEnemyModifiers();
