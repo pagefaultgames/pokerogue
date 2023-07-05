@@ -898,6 +898,11 @@ export default class BattleScene extends Phaser.Scene {
 			player = true;
 		return new Promise(resolve => {
 			const modifiers = player ? this.modifiers : this.enemyModifiers as PersistentModifier[];
+			for (let m = 0; m < modifiers.length; m++) {
+				const modifier = modifiers[m];
+				if (modifier instanceof PokemonHeldItemModifier && !this.getPokemonById((modifier as PokemonHeldItemModifier).pokemonId))
+					modifiers.splice(m--, 1);
+			}
 			for (let modifier of modifiers) {
 				if (modifier instanceof PersistentModifier)
 					(modifier as PersistentModifier).virtualStackCount = 0;
