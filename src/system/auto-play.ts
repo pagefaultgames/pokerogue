@@ -144,7 +144,7 @@ export function initAutoPlay() {
                     nextPartyMemberIndex = getBestPartyMemberIndex();
                 partyUiHandler.setCursor(nextPartyMemberIndex);
                 nextPartyMemberIndex = -1;
-                if (partyUiHandler.partyUiMode === PartyUiMode.MODIFIER || partyUiHandler.getCursor()) {
+                if ((partyUiHandler.partyUiMode === PartyUiMode.MODIFIER || partyUiHandler.partyUiMode === PartyUiMode.TM_MODIFIER) || partyUiHandler.getCursor()) {
                     this.processInput(Button.ACTION);
                     thisArg.time.delayedCall(250, () => this.processInput(Button.ACTION));
                 } else

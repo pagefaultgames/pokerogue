@@ -16,7 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { Biome, biomeLinks } from "./data/biome";
-import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
@@ -2484,7 +2484,13 @@ export class SelectModifierPhase extends BattlePhase {
       if (modifierType instanceof PokemonModifierType) {
         const pokemonModifierType = modifierType as PokemonModifierType;
         const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
-        this.scene.ui.setModeWithoutClear(Mode.PARTY, !isMoveModifier ? PartyUiMode.MODIFIER : PartyUiMode.MOVE_MODIFIER, -1, (slotIndex: integer, option: PartyOption) => {
+        const isTmModifier = modifierType instanceof TmModifierType;
+        const partyUiMode = isMoveModifier ? PartyUiMode.MOVE_MODIFIER
+          : isTmModifier ? PartyUiMode.TM_MODIFIER : PartyUiMode.MODIFIER;
+        const tmMoveId = isTmModifier
+          ? (modifierType as TmModifierType).moveId
+          : undefined;
+        this.scene.ui.setModeWithoutClear(Mode.PARTY, partyUiMode, -1, (slotIndex: integer, option: PartyOption) => {
           if (slotIndex < 6) {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT).then(() => {
               const modifierType = typeOptions[cursor].type;
@@ -2497,7 +2503,7 @@ export class SelectModifierPhase extends BattlePhase {
             });
           } else
             this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
-        }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined);
+        }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId);
       } else {
         this.scene.addModifier(typeOptions[cursor].type.newModifier(), true).then(() => super.end());
         this.scene.ui.clearText();
