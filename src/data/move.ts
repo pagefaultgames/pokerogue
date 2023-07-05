@@ -2837,8 +2837,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, -1),
     new StatusMove(Moves.FEATHER_DANCE, "Feather Dance", Type.FLYING, 100, 15, -1, "Sharply lowers opponent's Attack.", -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.ATK, -2),
-    new StatusMove(Moves.TEETER_DANCE, "Teeter Dance", Type.NORMAL, 100, 20, -1, "Confuses all Pokémon.", -1, 0, 3)
-      .attr(ConfuseAttr, true)
+    new StatusMove(Moves.TEETER_DANCE, "Teeter Dance", Type.NORMAL, 100, 20, -1, "Confuses all other nearby Pokémon.", -1, 0, 3)
       .attr(ConfuseAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.BLAZE_KICK, "Blaze Kick", Type.FIRE, MoveCategory.PHYSICAL, 85, 90, 10, -1, "High critical hit ratio. May burn opponent.", 10, 0, 3)

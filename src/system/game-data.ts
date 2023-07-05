@@ -302,22 +302,31 @@ export class GameData {
   }
 
   setPokemonCaught(pokemon: Pokemon): Promise<void> {
-    return new Promise(resolve => {
-      const dexEntry = this.getPokemonDexEntry(pokemon);
+    return this.setPokemonSpeciesCaught(pokemon, pokemon.species);
+  }
+
+  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies): Promise<void> {
+    return new Promise<void>((resolve) => {
+      const dexEntry = this.getDexEntry(species, pokemon.shiny, pokemon.formIndex, pokemon.gender === Gender.FEMALE, pokemon.abilityIndex);
+      const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
       if (!dexEntry.caught) {
-        const newCatch = !this.getDefaultDexEntry(pokemon.species);
+        const newCatch = !this.getDefaultDexEntry(species);
 
         dexEntry.caught = true;
         this.saveSystem();
 
-        if (newCatch && !pokemonPrevolutions.hasOwnProperty(pokemon.species.speciesId)) {
+        if (newCatch && !hasPrevolution) {
           this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
-          this.scene.ui.showText(`${pokemon.name} has been\nadded as a starter!`, null, () => resolve(), null, true);
+          this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => resolve(), null, true);
           return;
         }
       }
 
-      resolve();
+      if (hasPrevolution) {
+        const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
+        this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies)).then(() => resolve());
+      } else
+        resolve();
     });
   }
 
