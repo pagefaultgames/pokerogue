@@ -627,7 +627,7 @@ const modifierTypes = {
 
   GRIP_CLAW: () => new ContactHeldItemTransferChanceModifierType('GRIP CLAW', 10),
 
-  HEALING_CHARM: () => new ModifierType('HEALING CHARM', 'Doubles the effectiveness of HP restoring moves and items (excludes revives)',
+  HEALING_CHARM: () => new ModifierType('HEALING CHARM', 'Increases the effectiveness of HP restoring moves and items by 100% (excludes revives)',
     (type, _args) => new Modifiers.HealingBoosterModifier(type, 2), 'healing_charm'),
   CANDY_JAR: () => new ModifierType('CANDY JAR', 'Increases the number of levels added by RARE CANDY items by 1', (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type)),
 

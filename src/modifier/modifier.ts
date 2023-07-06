@@ -507,7 +507,7 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getmaxStackCount(): integer {
+  getMaxStackCount(): integer {
     return 3;
   }
 }
@@ -537,7 +537,7 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getmaxStackCount(): integer {
+  getMaxStackCount(): integer {
     return 4;
   }
 }
@@ -567,7 +567,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getmaxStackCount(): integer {
+  getMaxStackCount(): integer {
     return 4;
   }
 }
@@ -661,7 +661,7 @@ export class PreserveBerryModifier extends PersistentModifier {
     return true;
   }
 
-  getmaxStackCount(): integer {
+  getMaxStackCount(): integer {
     return 4;
   }
 }
@@ -904,15 +904,13 @@ export class HealingBoosterModifier extends PersistentModifier {
 
   apply(args: any[]): boolean {
     const healingMultiplier = args[0] as Utils.IntegerHolder;
-    for (let s = 0; s < this.getStackCount(); s++)
-      healingMultiplier.value *= this.multiplier;
-    healingMultiplier.value = Math.floor(healingMultiplier.value);
+    healingMultiplier.value = Math.floor(healingMultiplier.value * (this.multiplier + (this.getStackCount() - 1)));
 
     return true;
   }
 
-  getmaxStackCount(): integer {
-    return 4;
+  getMaxStackCount(): integer {
+    return 3;
   }
 }
 
@@ -945,6 +943,10 @@ export class ExpBoosterModifier extends PersistentModifier {
     (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
 
     return true;
+  }
+
+  getStackCount(): integer {
+    return this.boostMultiplier < 1 ? super.getStackCount() : 10;
   }
 }
 
@@ -1178,7 +1180,7 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
     return getPokemonMessage(targetPokemon, `'s ${item.name} was snatched\nby ${pokemon.name}'s ${this.type.name}!`);
   }
 
-  getmaxStackCount(): integer {
+  getMaxStackCount(): integer {
     return 5;
   }
 }
