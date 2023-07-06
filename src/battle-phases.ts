@@ -1324,23 +1324,26 @@ class MoveEffectPhase extends PokemonPhase {
           
           const hitResult = !isProtected ? target.apply(user, this.move) : HitResult.NO_EFFECT;
           
-          if (hitResult !== HitResult.NO_EFFECT && hitResult !== HitResult.FAIL) {
+          if (hitResult !== HitResult.FAIL) {
             const chargeEffect = !!this.move.getMove().getAttrs(ChargeAttr).find(ca => (ca as ChargeAttr).chargeEffect);
             // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
             if (!chargeEffect)
-              applyMoveAttrs(MoveEffectAttr, user, target, this.move.getMove());
-            if (hitResult < HitResult.NO_EFFECT) {
-              const flinched = new Utils.BooleanHolder(false);
-              user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
-              if (flinched.value)
-                target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
-            }
-            if (!isProtected && !chargeEffect) {
-              applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveHitEffectAttr && (!!target.hp || (attr as MoveHitEffectAttr).selfTarget), user, target, this.move.getMove());
-              if (!target.isFainted())
-                applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult);
-              if (this.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT))
-                this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target.getFieldIndex());
+              applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).selfTarget, user, target, this.move.getMove());
+            if (hitResult !== HitResult.NO_EFFECT) {
+              applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && !(attr as MoveEffectAttr).selfTarget, user, target, this.move.getMove());
+              if (hitResult < HitResult.NO_EFFECT) {
+                const flinched = new Utils.BooleanHolder(false);
+                user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
+                if (flinched.value)
+                  target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
+              }
+              if (!isProtected && !chargeEffect) {
+                applyMoveAttrs(MoveHitEffectAttr, user, target, this.move.getMove());
+                if (!target.isFainted())
+                  applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult);
+                if (this.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT))
+                  this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target.getFieldIndex());
+              }
             }
           }
         }
@@ -1773,7 +1776,7 @@ export class FaintPhase extends PokemonPhase {
       else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount())
         this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
       else if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double)
-        this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, false));
+        this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
     } else
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
 

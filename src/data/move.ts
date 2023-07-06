@@ -849,6 +849,15 @@ export class MoveHitEffectAttr extends MoveAttr {
     
     this.selfTarget = !!selfTarget;
   }
+
+  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+    return !!(this.selfTarget ? user.hp : target.hp)
+      && (this.selfTarget || !target.getTag(BattlerTagType.PROTECTED) || move.hasFlag(MoveFlags.IGNORE_PROTECT));
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+    return this.canApply(user, target, move, args);
+  }
 }
 
 export class HighCritAttr extends MoveAttr {
@@ -1333,7 +1342,7 @@ export class SolarBeamChargeAttr extends ChargeAttr {
   }
 }
 
-export class StatChangeAttr extends MoveEffectAttr {
+export class StatChangeAttr extends MoveHitEffectAttr {
   public stats: BattleStat[];
   public levels: integer;
 
@@ -1651,7 +1660,7 @@ export class DisableMoveAttr extends MoveEffectAttr {
   }
 }
 
-export class FrenzyAttr extends MoveEffectAttr {
+export class FrenzyAttr extends MoveHitEffectAttr {
   constructor() {
     super(true);
   }
