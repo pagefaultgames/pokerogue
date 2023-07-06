@@ -683,9 +683,9 @@ export class ToggleDoublePositionPhase extends BattlePhase {
   start() {
     super.start();
 
-    const playerPokemon = this.scene.getPlayerPokemon();
+    const playerPokemon = this.scene.getPlayerField().find(p => p.isActive(true));
     playerPokemon.setFieldPosition(this.double ? FieldPosition.LEFT : FieldPosition.CENTER, 500).then(() => {
-      if (!this.double && playerPokemon.getFieldIndex() === 1) {
+      if (playerPokemon.getFieldIndex() === 1) {
         const party = this.scene.getParty();
         party[1] = party[0];
         party[0] = playerPokemon;
