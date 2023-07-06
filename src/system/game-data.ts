@@ -317,7 +317,7 @@ export class GameData {
 
         if (newCatch && !hasPrevolution) {
           this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
-          this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => resolve(), null, true);
+          this.scene.ui.showText(`${species.name.toUpperCase()} has been\nadded as a starter!`, null, () => resolve(), null, true);
           return;
         }
       }
