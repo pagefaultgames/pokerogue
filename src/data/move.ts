@@ -3,7 +3,7 @@ import { DamagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase, Stat
 import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./battler-tag";
 import { getPokemonMessage } from "../messages";
-import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../pokemon";
+import Pokemon, { AttackMoveResult, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../pokemon";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
 import { Type } from "./type";
 import * as Utils from "../utils";
@@ -822,36 +822,25 @@ export abstract class MoveAttr {
   }
 }
 
+export enum MoveEffectTrigger {
+  PRE_APPLY,
+  POST_APPLY,
+  HIT
+}
+
 export class MoveEffectAttr extends MoveAttr {
   public selfTarget: boolean;
+  public trigger: MoveEffectTrigger;
 
-  constructor(selfTarget?: boolean) {
+  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger) {
     super();
 
     this.selfTarget = !!selfTarget;
+    this.trigger = trigger !== undefined ? trigger : MoveEffectTrigger.POST_APPLY;
   }
 
   canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
     return !!(this.selfTarget ? user.hp && !user.getTag(BattlerTagType.FRENZY) : target.hp)
-      && (this.selfTarget || !target.getTag(BattlerTagType.PROTECTED) || move.hasFlag(MoveFlags.IGNORE_PROTECT));
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
-    return this.canApply(user, target, move, args);
-  }
-}
-
-export class MoveHitEffectAttr extends MoveAttr {
-  public selfTarget: boolean;
-
-  constructor(selfTarget?: boolean) {
-    super();
-    
-    this.selfTarget = !!selfTarget;
-  }
-
-  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
-    return !!(this.selfTarget ? user.hp : target.hp)
       && (this.selfTarget || !target.getTag(BattlerTagType.PROTECTED) || move.hasFlag(MoveFlags.IGNORE_PROTECT));
   }
 
@@ -1005,7 +994,7 @@ export class RecoilAttr extends MoveEffectAttr {
 
 export class SacrificialAttr extends MoveEffectAttr {
   constructor() {
-    super(true);
+    super(true, MoveEffectTrigger.PRE_APPLY);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -1082,11 +1071,11 @@ export class WeatherHealAttr extends HealAttr {
   }
 }
 
-export class HitHealAttr extends MoveHitEffectAttr {
+export class HitHealAttr extends MoveEffectAttr {
   private healRatio: number;
 
   constructor(healRatio?: number) {
-    super(true);
+    super(true, MoveEffectTrigger.HIT);
 
     this.healRatio = healRatio || 0.5;
   }
@@ -1142,12 +1131,12 @@ export class MultiHitAttr extends MoveAttr {
   }
 }
 
-export class StatusEffectAttr extends MoveHitEffectAttr {
+export class StatusEffectAttr extends MoveEffectAttr {
   public effect: StatusEffect;
   public cureTurn: integer;
 
   constructor(effect: StatusEffect, selfTarget?: boolean, cureTurn?: integer) {
-    super(selfTarget);
+    super(selfTarget, MoveEffectTrigger.HIT);
 
     this.effect = effect;
     this.cureTurn = cureTurn;
@@ -1170,9 +1159,9 @@ export class StatusEffectAttr extends MoveHitEffectAttr {
   }
 }
 
-export class StealHeldItemAttr extends MoveHitEffectAttr {
+export class StealHeldItemAttr extends MoveEffectAttr {
   constructor() {
-    super(false);
+    super(false, MoveEffectTrigger.HIT);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -1280,7 +1269,11 @@ export class ClearWeatherAttr extends MoveEffectAttr {
   }
 }
 
-export class OneHitKOAttr extends MoveHitEffectAttr {
+export class OneHitKOAttr extends MoveEffectAttr {
+  constructor() {
+    super(false, MoveEffectTrigger.HIT);
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     target.damage(target.hp, true);
     user.scene.queueMessage('It\'s a one-hit KO!');
@@ -1342,12 +1335,12 @@ export class SolarBeamChargeAttr extends ChargeAttr {
   }
 }
 
-export class StatChangeAttr extends MoveHitEffectAttr {
+export class StatChangeAttr extends MoveEffectAttr {
   public stats: BattleStat[];
   public levels: integer;
 
   constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean) {
-    super(selfTarget);
+    super(selfTarget, MoveEffectTrigger.HIT);
     this.stats = typeof(stats) === 'number'
       ? [ stats as BattleStat ]
       : stats as BattleStat[];
@@ -1660,9 +1653,9 @@ export class DisableMoveAttr extends MoveEffectAttr {
   }
 }
 
-export class FrenzyAttr extends MoveHitEffectAttr {
+export class FrenzyAttr extends MoveEffectAttr {
   constructor() {
-    super(true);
+    super(true, MoveEffectTrigger.HIT);
   }
 
   canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
