@@ -647,7 +647,10 @@ class PartySlot extends Phaser.GameObjects.Container {
       const slotGenderText = addTextObject(this.scene, 0, 0, genderSymbol, TextStyle.PARTY);
       slotGenderText.setColor(getGenderColor(this.pokemon.gender));
       slotGenderText.setShadowColor(getGenderColor(this.pokemon.gender, true));
-      slotGenderText.setPositionRelative(slotName, this.slotIndex >= battlerCount ? 44 : 76, 3);
+      if (this.slotIndex >= battlerCount)
+        slotGenderText.setPositionRelative(slotLevelLabel, 36, 0);
+      else
+        slotGenderText.setPositionRelative(slotName, 76, 3);
       slotGenderText.setOrigin(0, 0.25);
 
       slotInfoContainer.add(slotGenderText);
@@ -655,7 +658,7 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     if (this.pokemon.status) {
       const statusIndicator = this.scene.add.sprite(0, 0, 'statuses');
-      statusIndicator.setFrame(StatusEffect[this.pokemon.status?.effect || StatusEffect.POISON].toLowerCase());
+      statusIndicator.setFrame(StatusEffect[this.pokemon.status?.effect].toLowerCase());
       statusIndicator.setOrigin(0, 0);
       statusIndicator.setPositionRelative(slotLevelLabel, this.slotIndex >= battlerCount ? 43 : 55, 0);
 
@@ -665,7 +668,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     if (this.pokemon.shiny) {
       const shinyStar = this.scene.add.image(0, 0, 'shiny_star');
       shinyStar.setOrigin(0, 0);
-      shinyStar.setPositionRelative(slotLevelLabel, this.slotIndex >= battlerCount ? 35 : 67, this.slotIndex >= battlerCount ? -1 : -18);
+      shinyStar.setPositionRelative(slotName, -8, 2);
 
       slotInfoContainer.add(shinyStar);
     }
