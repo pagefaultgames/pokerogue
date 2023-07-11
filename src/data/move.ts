@@ -2265,10 +2265,10 @@ export function initMoves() {
     new AttackMove(Moves.THRASH, "Thrash", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, "User attacks for 2-3 turns but then becomes confused.", -1, 0, 1)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(ConfuseAttr, true), // TODO: Update to still confuse if last hit misses
-    new AttackMove(Moves.DOUBLE_EDGE, "Double-Edge", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, "User receives recoil damage.", -1, 0, 1)
-      .attr(RecoilAttr)
+      .attr(ConfuseAttr, true) // TODO: Update to still confuse if last hit misses
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
+    new AttackMove(Moves.DOUBLE_EDGE, "Double-Edge", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, "User receives recoil damage.", -1, 0, 1)
+      .attr(RecoilAttr),
     new StatusMove(Moves.TAIL_WHIP, "Tail Whip", Type.NORMAL, 100, 30, -1, "Lowers opponent's Defense.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -2320,8 +2320,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.FREEZE) // TODO: 30% chance to hit protect/detect in hail
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.PSYBEAM, "Psybeam", Type.PSYCHIC, MoveCategory.SPECIAL, 65, 100, 20, 16, "May confuse opponent.", 10, 0, 1)
-      .attr(ConfuseAttr)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .attr(ConfuseAttr),
     new AttackMove(Moves.BUBBLE_BEAM, "Bubble Beam", Type.WATER, MoveCategory.SPECIAL, 65, 100, 20, -1, "May lower opponent's Speed.", 10, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPD, -1),
     new AttackMove(Moves.AURORA_BEAM, "Aurora Beam", Type.ICE, MoveCategory.SPECIAL, 65, 100, 20, -1, "May lower opponent's Attack.", 10, 0, 1)
@@ -2732,10 +2731,11 @@ export function initMoves() {
       .attr(HighCritAttr),
     new AttackMove(Moves.TWISTER, "Twister", Type.DRAGON, MoveCategory.SPECIAL, 40, 100, 20, -1, "May cause flinching. Hits Pokémon using FLY/BOUNCE with double power.", 20, 0, 2)
       .attr(HitsTagAttr, BattlerTagType.FLYING, true)
-      .attr(FlinchAttr), // TODO
+      .attr(FlinchAttr)
+      .target(MoveTarget.ALL_NEAR_ENEMIES), // TODO
     new SelfStatusMove(Moves.RAIN_DANCE, "Rain Dance", Type.WATER, -1, 5, 50, "Makes it rain for 5 turns.", -1, 0, 2)
       .attr(WeatherChangeAttr, WeatherType.RAIN)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.BOTH_SIDES),
     new SelfStatusMove(Moves.SUNNY_DAY, "Sunny Day", Type.FIRE, -1, 5, 49, "Makes it sunny for 5 turns.", -1, 0, 2)
       .attr(WeatherChangeAttr, WeatherType.SUNNY)
       .target(MoveTarget.BOTH_SIDES),
@@ -2794,9 +2794,9 @@ export function initMoves() {
     new SelfStatusMove(Moves.CHARGE, "Charge (P)", Type.ELECTRIC, -1, 20, -1, "Raises user's Special Defense and next Electric move's power increases.", -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, 1, true), // TODO
     new StatusMove(Moves.TAUNT, "Taunt (N)", Type.DARK, 100, 20, 87, "Opponent can only use moves that attack.", -1, 0, 3),
-    new SelfStatusMove(Moves.HELPING_HAND, "Helping Hand (N)", Type.NORMAL, -1, 20, 130, "In Double Battles, boosts the power of the partner's move.", -1, 5, 3), // TODO
-    new StatusMove(Moves.TRICK, "Trick (N)", Type.PSYCHIC, 100, 10, 109, "Swaps held items with the opponent.", -1, 0, 3)
-      .target(MoveTarget.NEAR_ALLY),
+    new SelfStatusMove(Moves.HELPING_HAND, "Helping Hand (N)", Type.NORMAL, -1, 20, 130, "In Double Battles, boosts the power of the partner's move.", -1, 5, 3)
+      .target(MoveTarget.NEAR_ALLY), // TODO
+    new StatusMove(Moves.TRICK, "Trick (N)", Type.PSYCHIC, 100, 10, 109, "Swaps held items with the opponent.", -1, 0, 3),
     new SelfStatusMove(Moves.ROLE_PLAY, "Role Play (N)", Type.PSYCHIC, -1, 10, -1, "User copies the opponent's Ability.", -1, 0, 3),
     new SelfStatusMove(Moves.WISH, "Wish (N)", Type.NORMAL, -1, 10, -1, "The user recovers HP in the following turn.", -1, 0, 3),
     new SelfStatusMove(Moves.ASSIST, "Assist", Type.NORMAL, -1, 20, -1, "User performs a move known by its allies at random.", -1, 0, 3)
@@ -2930,8 +2930,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.HOWL, "Howl", Type.NORMAL, -1, 40, -1, "Raises Attack of allies.", -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.ATK, 1, true)
       .target(MoveTarget.USER_AND_ALLIES), // TODO
-    new AttackMove(Moves.DRAGON_CLAW, "Dragon Claw", Type.DRAGON, MoveCategory.PHYSICAL, 80, 100, 15, 78, "", -1, 0, 3)
-      .target(MoveTarget.NEAR_OTHER),
+    new AttackMove(Moves.DRAGON_CLAW, "Dragon Claw", Type.DRAGON, MoveCategory.PHYSICAL, 80, 100, 15, 78, "", -1, 0, 3),
     new AttackMove(Moves.FRENZY_PLANT, "Frenzy Plant", Type.GRASS, MoveCategory.SPECIAL, 150, 90, 5, 155, "User must recharge next turn.", -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
     new SelfStatusMove(Moves.BULK_UP, "Bulk Up", Type.FIGHTING, -1, 20, 64, "Raises user's Attack and Defense.", -1, 0, 3)
@@ -3265,10 +3264,10 @@ export function initMoves() {
     new SelfStatusMove(Moves.QUICK_GUARD, "Quick Guard (N)", Type.FIGHTING, -1, 15, -1, "Protects the user's team from high-priority moves.", -1, 3, 5)
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ALLY_SWITCH, "Ally Switch (N)", Type.PSYCHIC, -1, 15, -1, "User switches with opposite teammate.", -1, 0, 5)
-      .ignoresProtect(), // TODO
+      .ignoresProtect()
+      .target(MoveTarget.USER), // TODO
     new AttackMove(Moves.SCALD, "Scald", Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, "May burn opponent.", 30, 1, 5)
-      .attr(StatusEffectAttr, StatusEffect.BURN)
-      .target(MoveTarget.USER),
+      .attr(StatusEffectAttr, StatusEffect.BURN),
     new SelfStatusMove(Moves.SHELL_SMASH, "Shell Smash", Type.NORMAL, -1, 15, -1, "Sharply raises user's Attack, Special Attack and Speed but lowers Defense and Special Defense.", -1, 0, 5)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 2, true)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true),

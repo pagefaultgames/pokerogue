@@ -34,6 +34,9 @@ export enum FieldPosition {
   RIGHT
 }
 
+const ABILITY_OVERRIDE = Abilities.NONE;
+const MOVE_OVERRIDE = Moves.NONE;
+
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
   public name: string;
@@ -431,6 +434,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getAbility(): Ability {
+    if (ABILITY_OVERRIDE && this.isPlayer())
+      return abilities[ABILITY_OVERRIDE];
     return abilities[this.species.getAbility(this.abilityIndex)];
   }
 
@@ -519,6 +524,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       console.log(allMoves[movePool[moveIndex]]);
       movePool.splice(moveIndex, 1);
     }
+
+    if (MOVE_OVERRIDE && this.isPlayer())
+      this.moveset[0] = new PokemonMove(MOVE_OVERRIDE);
   }
 
   trySelectMove(moveIndex: integer, ignorePp?: boolean): boolean {
