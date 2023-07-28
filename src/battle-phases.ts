@@ -1392,21 +1392,17 @@ class MoveEffectPhase extends PokemonPhase {
     if (!this.move.getMove().getAttrs(OneHitKOAttr).length && this.scene.arena.getTag(ArenaTagType.GRAVITY))
       moveAccuracy.value = Math.floor(moveAccuracy.value * 1.67);
       
-    if (this.move.getMove().category !== MoveCategory.STATUS) {
-      const userAccuracyLevel = new Utils.IntegerHolder(this.getUserPokemon().summonData.battleStats[BattleStat.ACC]);
-      const targetEvasionLevel = new Utils.IntegerHolder(target.summonData.battleStats[BattleStat.EVA]);
-      this.scene.applyModifiers(TempBattleStatBoosterModifier, this.player, TempBattleStat.ACC, userAccuracyLevel);
-      const rand = Utils.randInt(100, 1);
-      let accuracyMultiplier = 1;
-      if (userAccuracyLevel.value !== targetEvasionLevel.value) {
-        accuracyMultiplier = userAccuracyLevel.value > targetEvasionLevel.value
-          ? (3 + Math.min(userAccuracyLevel.value - targetEvasionLevel.value, 6)) / 3
-          : 3 / (3 + Math.min(targetEvasionLevel.value - userAccuracyLevel.value, 6));
-      }
-      return rand <= moveAccuracy.value * accuracyMultiplier;
+    const userAccuracyLevel = new Utils.IntegerHolder(this.getUserPokemon().summonData.battleStats[BattleStat.ACC]);
+    const targetEvasionLevel = new Utils.IntegerHolder(target.summonData.battleStats[BattleStat.EVA]);
+    this.scene.applyModifiers(TempBattleStatBoosterModifier, this.player, TempBattleStat.ACC, userAccuracyLevel);
+    const rand = Utils.randInt(100, 1);
+    let accuracyMultiplier = 1;
+    if (userAccuracyLevel.value !== targetEvasionLevel.value) {
+      accuracyMultiplier = userAccuracyLevel.value > targetEvasionLevel.value
+        ? (3 + Math.min(userAccuracyLevel.value - targetEvasionLevel.value, 6)) / 3
+        : 3 / (3 + Math.min(targetEvasionLevel.value - userAccuracyLevel.value, 6));
     }
-
-    return true;
+    return rand <= moveAccuracy.value * accuracyMultiplier;
   }
 
   getUserPokemon(): Pokemon {

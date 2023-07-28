@@ -1651,6 +1651,10 @@ export class DisableMoveAttr extends MoveEffectAttr {
       }
     };
   }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    return -5;
+  }
 }
 
 export class FrenzyAttr extends MoveEffectAttr {
