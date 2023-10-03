@@ -3236,7 +3236,7 @@ export function initMoves() {
       .makesContact(false),
     new AttackMove(Moves.STORM_THROW, "Storm Throw", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, "Always results in a critical hit.", 100, 0, 5)
       .attr(CritOnlyAttr),
-    new AttackMove(Moves.FLAME_BURST, "Flame Burst", Type.FIRE, MoveCategory.SPECIAL, 70, 100, 15, -1, "May also injure nearby Pokémon.", -1, 0, 5), // TODO
+    new AttackMove(Moves.FLAME_BURST, "Flame Burst (P)", Type.FIRE, MoveCategory.SPECIAL, 70, 100, 15, -1, "May also injure nearby Pokémon.", -1, 0, 5), // TODO
     new AttackMove(Moves.SLUDGE_WAVE, "Sludge Wave", Type.POISON, MoveCategory.SPECIAL, 95, 100, 10, -1, "May poison opponent.", 10, 0, 5)
       .attr(StatusEffectAttr, StatusEffect.POISON),
     new SelfStatusMove(Moves.QUIVER_DANCE, "Quiver Dance", Type.BUG, -1, 20, -1, "Raises user's Special Attack, Special Defense and Speed.", -1, 0, 5)

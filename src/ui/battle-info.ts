@@ -4,7 +4,7 @@ import * as Utils from '../utils';
 import { addTextObject, TextStyle } from './text';
 import { getGenderSymbol, getGenderColor } from '../data/gender';
 import { StatusEffect } from '../data/status-effect';
-import { maxExpLevel } from '../battle-scene';
+import BattleScene from '../battle-scene';
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private player: boolean;
@@ -18,6 +18,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private lastExp: integer;
   private lastLevelExp: integer;
   private lastLevel: integer;
+  private lastLevelCapped: boolean;
 
   private box: Phaser.GameObjects.Sprite;
   private nameText: Phaser.GameObjects.Text;
@@ -233,9 +234,16 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.lastMaxHp = pokemon.getMaxHp();
       };
 
-      if (this.player && (this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level)) {
-        const originalResolve = resolve;
-        resolve = () => this.updatePokemonExp(pokemon).then(() => originalResolve());
+      if (this.player) {
+        const isLevelCapped = pokemon.level >= (this.scene as BattleScene).getMaxExpLevel();
+
+        if ((this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level)) {
+          const originalResolve = resolve;
+          resolve = () => this.updatePokemonExp(pokemon).then(() => originalResolve());
+        } else if (isLevelCapped !== this.lastLevelCapped)
+          this.setLevel(pokemon.level);
+
+        this.lastLevelCapped = isLevelCapped;
       }
 
       if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
@@ -256,11 +264,14 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const relLevelExp = getLevelRelExp(this.lastLevel + 1, battler.species.growthRate);
       const levelExp = levelUp ? relLevelExp : battler.levelExp;
       let ratio = relLevelExp ? levelExp / relLevelExp : 0;
-      if (this.lastLevel >= maxExpLevel) {
+      if (this.lastLevel >= (this.scene as BattleScene).getMaxExpLevel()) {
         if (levelUp)
           ratio = 1;
+        else
+          ratio = 0;
         instant = true;
       }
+      console.log(ratio);
       let duration = this.visible && !instant ? ((levelExp - this.lastLevelExp) / relLevelExp) * 1650 : 0;
       if (duration)
         this.scene.sound.play('exp');
@@ -297,10 +308,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   setLevel(level: integer) {
+    const isCapped = level >= (this.scene as BattleScene).getMaxExpLevel();
     this.levelNumbersContainer.removeAll(true);
     const levelStr = level.toString();
     for (let i = 0; i < levelStr.length; i++)
-      this.levelNumbersContainer.add(this.scene.add.image(i * 8, 0, 'numbers', levelStr[i]));
+      this.levelNumbersContainer.add(this.scene.add.image(i * 8, 0, `numbers${isCapped ? '_red' : ''}`, levelStr[i]));
     this.levelContainer.setX((this.player ? -41 : -50) - 8 * Math.max(levelStr.length - 3, 0));
   }
 

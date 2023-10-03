@@ -3,6 +3,7 @@ export enum TextStyle {
   WINDOW,
   BATTLE_INFO,
   PARTY,
+  PARTY_RED,
   SUMMARY,
   SUMMARY_RED,
   SUMMARY_GOLD
@@ -36,6 +37,7 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
       shadowSize = 4;
       break;
     case TextStyle.PARTY:
+    case TextStyle.PARTY_RED:
       styleOptions.fontFamily = 'pkmnems';
       styleOptions.fontSize = '66px';
       break;
@@ -69,6 +71,8 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean) {
       return !shadow ? '#404040' : '#ded6b5';
     case TextStyle.PARTY:
       return !shadow ? '#f8f8f8' : '#707070';
+    case TextStyle.PARTY_RED:
+      return !shadow ? '#f89890' : '#984038';
     case TextStyle.SUMMARY:
       return !shadow ? '#ffffff' : '#636363';
     case TextStyle.SUMMARY_RED:

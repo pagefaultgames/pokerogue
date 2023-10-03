@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Biome } from './data/biome';
 import UI from './ui/ui';
-import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, ToggleDoublePositionPhase, CheckSwitchPhase, PostSummonPhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, ToggleDoublePositionPhase, CheckSwitchPhase, PostSummonPhase, LevelCapPhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
@@ -28,8 +28,6 @@ const quickStart = false;
 export const startingLevel = 5;
 export const startingWave = 1;
 export const startingBiome = Biome.TOWN;
-
-export const maxExpLevel = 10000;
 
 export enum Button {
 	UP,
@@ -163,6 +161,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('pbinfo_enemy_mini', 'ui');
 		this.loadImage('overlay_lv', 'ui');
 		this.loadAtlas('numbers', 'ui');
+		this.loadAtlas('numbers_red', 'ui');
 		this.loadAtlas('overlay_hp', 'ui');
 		this.loadImage('overlay_exp', 'ui');
 		this.loadImage('icon_owned', 'ui');
@@ -525,6 +524,8 @@ export default class BattleScene extends Phaser.Scene {
 
 		const lastBattle = this.currentBattle;
 
+		const maxExpLevel = this.getMaxExpLevel();
+
 		this.currentBattle = new Battle(newWaveIndex, newDouble);
 		this.currentBattle.incrementTurn(this);
 
@@ -536,6 +537,10 @@ export default class BattleScene extends Phaser.Scene {
 				else {
 					this.pushPhase(new SelectBiomePhase(this));
 					this.pushPhase(new NewBiomeEncounterPhase(this));
+
+					const newMaxExpLevel = this.getMaxExpLevel();
+					if (newMaxExpLevel > maxExpLevel)
+						this.pushPhase(new LevelCapPhase(this));
 				}
 			} else {
 				if (!this.quickStart)
@@ -598,6 +603,12 @@ export default class BattleScene extends Phaser.Scene {
 
 	updateWaveCountPosition(): void {
 		this.waveCountText.setY(-(this.game.canvas.height / 6) + (this.enemyModifiers.length ? 15 : 0));
+	}
+
+	getMaxExpLevel(): integer {
+		const lastWaveIndex = Math.ceil((this.currentBattle?.waveIndex || 1) / 10) * 10;
+		const baseLevel = (1 + lastWaveIndex / 2 + Math.pow(lastWaveIndex / 25, 2)) * 1.2;
+		return Math.min(Math.ceil(baseLevel / 2) * 2 + 2, 10000);
 	}
 
 	randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean): PokemonSpecies {

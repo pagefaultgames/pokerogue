@@ -1,4 +1,4 @@
-import BattleScene, { maxExpLevel, startingLevel, startingWave } from "./battle-scene";
+import BattleScene, { startingLevel, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult } from "./pokemon";
 import * as Utils from './utils';
 import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger } from "./data/move";
@@ -78,6 +78,11 @@ export class CheckLoadPhase extends BattlePhase {
     this.scene.pushPhase(new SummonPhase(this.scene, 0));
     if (this.scene.currentBattle.double && this.scene.getParty().filter(p => !p.isFainted()).length > 1)
       this.scene.pushPhase(new SummonPhase(this.scene, 1));
+    if (this.scene.currentBattle.waveIndex > 1) {
+      this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
+      if (this.scene.currentBattle.double)
+        this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+    }
 
     super.end();
   }
@@ -748,6 +753,22 @@ export class SummonMissingPhase extends SummonPhase {
   preSummon(): void {
     this.scene.ui.showText(`Go! ${this.getPokemon().name}!`);
     this.scene.time.delayedCall(250, () => this.summon());
+  }
+}
+
+export class LevelCapPhase extends FieldPhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start(): void {
+    super.start();
+
+    this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+      this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
+      this.scene.ui.showText(`The level cap\nhas increased to ${this.scene.getMaxExpLevel()}!`, null, () => this.end(), null, true);
+      this.executeForAll(pokemon => pokemon.updateInfo(true));
+    });
   }
 }
 
@@ -1821,7 +1842,7 @@ export class VictoryPhase extends PokemonPhase {
     const expBalanceModifier = this.scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
     const multipleParticipantExpBonusModifier = this.scene.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
     const expValue = this.getPokemon().getExpValue();
-    const expPartyMembers = party.filter(p => p.hp && p.level < maxExpLevel);
+    const expPartyMembers = party.filter(p => p.hp && p.level < this.scene.getMaxExpLevel());
     const partyMemberExp = [];
     for (let partyMember of expPartyMembers) {
       const pId = partyMember.id;

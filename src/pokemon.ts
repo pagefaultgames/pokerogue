@@ -26,7 +26,6 @@ import { Biome } from './data/biome';
 import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 import { BattlerIndex } from './battle';
-import SpritePipeline from './pipelines/sprite';
 
 export enum FieldPosition {
   CENTER,
@@ -573,9 +572,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   addExp(exp: integer) {
+    const maxExpLevel = this.scene.getMaxExpLevel();
+    const initialExp = this.exp;
     this.exp += exp;
-    while (this.exp >= getLevelTotalExp(this.level + 1, this.getSpeciesForm().growthRate))
+    while (this.level < maxExpLevel && this.exp >= getLevelTotalExp(this.level + 1, this.getSpeciesForm().growthRate))
       this.level++;
+    if (this.level >= maxExpLevel) {
+      console.log(initialExp, this.exp, getLevelTotalExp(this.level, this.getSpeciesForm().growthRate));
+      this.exp = Math.max(getLevelTotalExp(this.level, this.getSpeciesForm().growthRate), initialExp);
+    }
     this.levelExp = this.exp - getLevelTotalExp(this.level, this.getSpeciesForm().growthRate);
   }
 
@@ -654,17 +659,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
           const stabMultiplier = source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1;
           const criticalMultiplier = isCritical ? 2 : 1;
-          damage = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier * typeMultiplier.value * weatherTypeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
-          if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
-            damage = Math.floor(damage / 2);
-          move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
-            if (this.getTag(hta.tagType))
-              damage *= 2;
-          });
+          const isTypeImmune = (typeMultiplier.value * weatherTypeMultiplier) === 0;
+
+          if (!isTypeImmune) {
+            damage = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier * typeMultiplier.value * weatherTypeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
+            if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
+              damage = Math.floor(damage / 2);
+            move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
+              if (this.getTag(hta.tagType))
+                damage *= 2;
+            });
+          }
 
           const fixedDamage = new Utils.IntegerHolder(0);
           applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
-          if (damage && fixedDamage.value) {
+          if (!isTypeImmune && fixedDamage.value) {
             damage = fixedDamage.value;
             isCritical = false;
             result = HitResult.EFFECTIVE;

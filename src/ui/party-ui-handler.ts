@@ -635,7 +635,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     slotLevelLabel.setPositionRelative(slotName, 8, 12);
     slotLevelLabel.setOrigin(0, 0);
 
-    const slotLevelText = addTextObject(this.scene, 0, 0, this.pokemon.level.toString(), TextStyle.PARTY);
+    const slotLevelText = addTextObject(this.scene, 0, 0, this.pokemon.level.toString(), this.pokemon.level < (this.scene as BattleScene).getMaxExpLevel() ? TextStyle.PARTY : TextStyle.PARTY_RED);
     slotLevelText.setPositionRelative(slotLevelLabel, 9, 0);
     slotLevelText.setOrigin(0, 0.25);
 
