@@ -22,6 +22,7 @@ import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, applyAbAttrs, initAbili
 import Battle from './battle';
 import { GameMode } from './game-mode';
 import SpritePipeline from './pipelines/sprite';
+import PartyExpBar from './ui/party-exp-bar';
 
 const enableAuto = true;
 const quickStart = false;
@@ -65,6 +66,7 @@ export default class BattleScene extends Phaser.Scene {
 	public field: Phaser.GameObjects.Container;
 	public fieldUI: Phaser.GameObjects.Container;
 	public abilityBar: AbilityBar;
+	public partyExpBar: PartyExpBar;
 	public arenaBg: Phaser.GameObjects.Sprite;
 	public arenaBgTransition: Phaser.GameObjects.Sprite;
 	public arenaPlayer: ArenaBase;
@@ -166,6 +168,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('overlay_exp', 'ui');
 		this.loadImage('icon_owned', 'ui');
 		this.loadImage('ability_bar', 'ui');
+		this.loadImage('party_exp_bar', 'ui');
 		this.loadImage('shiny_star', 'ui', 'shiny.png');
 
 		this.loadImage('party_bg', 'ui');
@@ -333,9 +336,13 @@ export default class BattleScene extends Phaser.Scene {
 		this.abilityBar.setup();
 		this.fieldUI.add(this.abilityBar);
 
+		this.partyExpBar = new PartyExpBar(this);
+		this.partyExpBar.setup();
+		this.fieldUI.add(this.partyExpBar);
+
 		this.waveCountText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
 		this.waveCountText.setOrigin(1, 0);
-		this.updateWaveCountPosition();
+		this.updateUIPositions();
 		this.fieldUI.add(this.waveCountText);
 
 		this.party = [];
@@ -601,8 +608,9 @@ export default class BattleScene extends Phaser.Scene {
 		this.waveCountText.setVisible(true);
 	}
 
-	updateWaveCountPosition(): void {
+	updateUIPositions(): void {
 		this.waveCountText.setY(-(this.game.canvas.height / 6) + (this.enemyModifiers.length ? 15 : 0));
+		this.partyExpBar.setY(this.waveCountText.y + 15);
 	}
 
 	getMaxExpLevel(): integer {
@@ -901,7 +909,7 @@ export default class BattleScene extends Phaser.Scene {
 
 	clearEnemyModifiers(): void {
 		this.enemyModifiers.splice(0, this.enemyModifiers.length);
-		this.updateModifiers(false).then(() => this.updateWaveCountPosition());
+		this.updateModifiers(false).then(() => this.updateUIPositions());
 	}
 
 	updateModifiers(player?: boolean): Promise<void> {
@@ -928,7 +936,7 @@ export default class BattleScene extends Phaser.Scene {
 			this.updatePartyForModifiers(player ? this.getParty() : this.getEnemyField().filter(p => p.isActive())).then(() => {
 				(player ? this.modifierBar : this.enemyModifierBar).updateModifiers(modifiers);
 				if (!player)
-					this.updateWaveCountPosition();
+					this.updateUIPositions();
 				resolve();
 			});
 		});

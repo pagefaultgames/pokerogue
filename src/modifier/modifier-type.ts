@@ -683,6 +683,7 @@ const modifierPool = {
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.GREAT_BALL, 6),
+    new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, 1),
     new WeightedModifierType(modifierTypes.FULL_HEAL, (party: Pokemon[]) => {
       const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status).length, 3);
       return statusEffectPartyMemberCount * 6;
@@ -722,7 +723,6 @@ const modifierPool = {
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 8),
-    new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, 12),
     new WeightedModifierType(modifierTypes.MAX_LURE, 4),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 5),

@@ -769,22 +769,30 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getTag(tagType: BattlerTagType | { new(...args: any[]): BattlerTag }): BattlerTag {
+    if (!this.summonData)
+      return null;
     return typeof(tagType) === 'number'
       ? this.summonData.tags.find(t => t.tagType === tagType)
       : this.summonData.tags.find(t => t instanceof tagType);
   }
 
   findTag(tagFilter: ((tag: BattlerTag) => boolean)) {
+    if (!this.summonData)
+      return null;
     return this.summonData.tags.find(t => tagFilter(t));
   }
 
   getTags(tagType: BattlerTagType | { new(...args: any[]): BattlerTag }): BattlerTag[] {
+    if (!this.summonData)
+      return [];
     return typeof(tagType) === 'number'
       ? this.summonData.tags.filter(t => t.tagType === tagType)
       : this.summonData.tags.filter(t => t instanceof tagType);
   }
 
-  findTags(tagFilter: ((tag: BattlerTag) => boolean)) {
+  findTags(tagFilter: ((tag: BattlerTag) => boolean)): BattlerTag[] {
+    if (!this.summonData)
+      return [];
     return this.summonData.tags.filter(t => tagFilter(t));
   }
 
@@ -935,6 +943,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (cancelled.value)
       return false;
 
+    if (effect === StatusEffect.SLEEP)
+      this.setFrameRate(4);
+
     this.status = new Status(effect);
     return true;
   }
@@ -943,6 +954,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const lastStatus = this.status.effect;
     this.status = undefined;
     if (lastStatus === StatusEffect.SLEEP) {
+      this.setFrameRate(12);
       if (this.getTag(BattlerTagType.NIGHTMARE))
         this.lapseTag(BattlerTagType.NIGHTMARE);
     }
@@ -966,6 +978,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getExpValue(): integer {
     // Logic to factor in victor level has been removed for balancing purposes, so the player doesn't have to focus on EXP maxxing
     return (this.getSpeciesForm().baseExp * this.level) / 5 + 1;
+  }
+
+  setFrameRate(frameRate: integer) {
+    this.scene.anims.get(this.getBattleSpriteKey()).frameRate = frameRate;
+    this.getSprite().play(this.getBattleSpriteKey());
+    this.getTintSprite().play(this.getBattleSpriteKey());
   }
 
   tint(color: number, alpha?: number, duration?: integer, ease?: string) {

@@ -1893,7 +1893,7 @@ export class VictoryPhase extends PokemonPhase {
 
       if (exp) {
         const partyMemberIndex = party.indexOf(expPartyMembers[pm]);
-        this.scene.unshiftPhase(new ExpPhase(this.scene, partyMemberIndex, exp));
+        this.scene.unshiftPhase(expPartyMembers[pm].isOnField() ? new ExpPhase(this.scene, partyMemberIndex, exp) : new ShowPartyExpBarPhase(this.scene, partyMemberIndex, exp));
       }
     }
 
@@ -2025,8 +2025,53 @@ export class ExpPhase extends PartyMemberPokemonPhase {
       pokemon.updateInfo().then(() => this.end());
     }, null, true);
   }
+}
 
+export class ShowPartyExpBarPhase extends PartyMemberPokemonPhase {
+  private expValue: number;
 
+  constructor(scene: BattleScene, partyMemberIndex: integer, expValue: number) {
+    super(scene, partyMemberIndex);
+
+    this.expValue = expValue;
+  }
+
+  start() {
+    super.start();
+
+    const pokemon = this.getPokemon();
+    let exp = new Utils.NumberHolder(this.expValue);
+    this.scene.applyModifiers(ExpBoosterModifier, true, exp);
+    exp.value = Math.floor(exp.value);
+
+    const lastLevel = pokemon.level;
+    let newLevel: integer;
+    pokemon.addExp(exp.value);
+    newLevel = pokemon.level;
+    if (newLevel > lastLevel)
+      this.scene.unshiftPhase(new LevelUpPhase(this.scene, this.partyMemberIndex, lastLevel, newLevel));
+    this.scene.unshiftPhase(new HidePartyExpBarPhase(this.scene));
+    pokemon.updateInfo();
+
+    this.scene.partyExpBar.showPokemonExp(pokemon, exp.value).then(() => {
+      if (newLevel > lastLevel)
+        this.end();
+      else
+        setTimeout(() => this.end(), 500);
+    });
+  }
+}
+
+export class HidePartyExpBarPhase extends BattlePhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    super.start();
+
+    this.scene.partyExpBar.hide().then(() => this.end());
+  }
 }
 
 export class LevelUpPhase extends PartyMemberPokemonPhase {

@@ -21,7 +21,7 @@ export class Status {
     this.turnCount = turnCount === undefined ? 0 : turnCount;
     if (cureTurn === undefined) {
       if (effect === StatusEffect.SLEEP)
-        this.cureTurn = Utils.randInt(3, 1);
+        this.cureTurn = Utils.randInt(3, 2);
     } else
       this.cureTurn = cureTurn;
   }

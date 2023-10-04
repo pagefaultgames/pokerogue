@@ -203,7 +203,7 @@ export class ConfusedTag extends BattlerTag {
       if (Utils.randInt(2)) {
         const atk = pokemon.getBattleStat(Stat.ATK);
         const def = pokemon.getBattleStat(Stat.DEF);
-        const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * ((Utils.randInt(15) + 85) / 100));
+        const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (Utils.randInt(15, 85) / 100));
         pokemon.scene.queueMessage('It hurt itself in its\nconfusion!');
         pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex()));
         pokemon.damage(damage);

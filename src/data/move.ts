@@ -956,7 +956,7 @@ export class RandomLevelDamageAttr extends FixedDamageAttr {
   }
 
   getDamage(user: Pokemon, target: Pokemon, move: Move): number {
-    return user.level * (Utils.randInt(100, 50) * 0.01);
+    return user.level * (Utils.randIntRange(50, 150) * 0.01);
   }
 }
 
@@ -1672,7 +1672,7 @@ export class FrenzyAttr extends MoveEffectAttr {
 
     if (!user.getMoveQueue().length) {
       if (!user.getTag(BattlerTagType.FRENZY)) {
-        const turnCount = Utils.randInt(2) + 1;
+        const turnCount = Utils.randIntRange(3, 4);
         new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
         user.addTag(BattlerTagType.FRENZY, 1, move.id, user.id);
       } else {
@@ -1801,13 +1801,13 @@ export class FlinchAttr extends AddBattlerTagAttr {
 
 export class ConfuseAttr extends AddBattlerTagAttr {
   constructor(selfTarget?: boolean) {
-    super(BattlerTagType.CONFUSED, selfTarget, Utils.randInt(4, 1));
+    super(BattlerTagType.CONFUSED, selfTarget, Utils.randIntRange(1, 4));
   }
 }
 
 export class TrapAttr extends AddBattlerTagAttr {
   constructor(tagType: BattlerTagType) {
-    super(tagType, false, Utils.randInt(2, 5));
+    super(tagType, false, Utils.randIntRange(2, 5) + 1);
   }
 }
 

@@ -271,7 +271,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
           ratio = 0;
         instant = true;
       }
-      console.log(ratio);
       let duration = this.visible && !instant ? ((levelExp - this.lastLevelExp) / relLevelExp) * 1650 : 0;
       if (duration)
         this.scene.sound.play('exp');
