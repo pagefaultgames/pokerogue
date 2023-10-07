@@ -28,7 +28,7 @@ import { ArenaTagType, ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
 import { CheckTrappedAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, SuppressWeatherEffectAbAttr, applyCheckTrappedAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./arena";
-import { BattlerIndex, TurnCommand } from "./battle";
+import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { GameMode } from "./game-mode";
 
 export class CheckLoadPhase extends BattlePhase {
@@ -74,13 +74,15 @@ export class CheckLoadPhase extends BattlePhase {
     } else
       this.scene.arena.playBgm();
 
+    const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted()).length;
+
     this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
     this.scene.pushPhase(new SummonPhase(this.scene, 0));
-    if (this.scene.currentBattle.double && this.scene.getParty().filter(p => !p.isFainted()).length > 1)
+    if (this.scene.currentBattle.double && availablePartyMembers > 1)
       this.scene.pushPhase(new SummonPhase(this.scene, 1));
     if (this.scene.currentBattle.waveIndex > 1) {
       this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
-      if (this.scene.currentBattle.double)
+      if (this.scene.currentBattle.double && availablePartyMembers > 1)
         this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
     }
 
@@ -175,18 +177,44 @@ export abstract class PokemonPhase extends FieldPhase {
 export abstract class PartyMemberPokemonPhase extends FieldPhase {
   protected partyMemberIndex: integer;
   protected fieldIndex: integer;
+  protected player: boolean;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer) {
+  constructor(scene: BattleScene, partyMemberIndex: integer, player: boolean) {
     super(scene);
 
     this.partyMemberIndex = partyMemberIndex;
     this.fieldIndex = partyMemberIndex < this.scene.currentBattle.getBattlerCount()
       ? partyMemberIndex
       : -1;
+    this.player = player;
   }
 
-  getPokemon() {
-    return this.scene.getParty()[this.partyMemberIndex];
+  getParty(): Pokemon[] {
+    return this.player ? this.scene.getParty() : this.scene.getEnemyParty();
+  }
+
+  getPokemon(): Pokemon {
+    return this.getParty()[this.partyMemberIndex];
+  }
+}
+
+export abstract class PlayerPartyMemberPokemonPhase extends PartyMemberPokemonPhase {
+  constructor(scene: BattleScene, partyMemberIndex: integer) {
+    super(scene, partyMemberIndex, true);
+  }
+
+  getPlayerPokemon(): PlayerPokemon {
+    return super.getPokemon() as PlayerPokemon;
+  }
+}
+
+export abstract class EnemyPartyMemberPokemonPhase extends PartyMemberPokemonPhase {
+  constructor(scene: BattleScene, partyMemberIndex: integer) {
+    super(scene, partyMemberIndex, false);
+  }
+
+  getEnemyPokemon(): EnemyPokemon {
+    return super.getPokemon() as EnemyPokemon;
   }
 }
 
@@ -211,26 +239,38 @@ export class EncounterPhase extends BattlePhase {
     battle.enemyLevels.forEach((level, e) => {
       const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
       if (!this.loaded)
-        battle.enemyField[e] = new EnemyPokemon(this.scene, enemySpecies, level);
-      const enemyPokemon = this.scene.getEnemyField()[e];
-      enemyPokemon.resetSummonData();
-  
-      this.scene.gameData.setPokemonSeen(enemyPokemon);
+        battle.enemyParty[e] = new EnemyPokemon(this.scene, enemySpecies, level);
+      const enemyPokemon = this.scene.getEnemyParty()[e];
+      if (e < (battle.double ? 2 : 1)) {
+        enemyPokemon.setX(-66 + enemyPokemon.getFieldPositionOffset()[0]);
+        enemyPokemon.resetSummonData();
+        this.scene.gameData.setPokemonSeen(enemyPokemon);
+      }
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
   
       console.log(enemyPokemon.species.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
     });
 
+    if (battle.battleType === BattleType.TRAINER)
+      loadEnemyAssets.push(battle.trainer.loadAssets());
+
     Promise.all(loadEnemyAssets).then(() => {
-      battle.enemyField.forEach((enemyPokemon, e) => {
-        this.scene.field.add(enemyPokemon);
-        const playerPokemon = this.scene.getPlayerPokemon();
-        if (playerPokemon.visible)
-          this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
-        enemyPokemon.tint(0, 0.5);
-        if (battle.enemyField.length > 1)
-          enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);
+      battle.enemyParty.forEach((enemyPokemon, e) => {
+        if (e < (battle.double ? 2 : 1)) {
+          if (battle.battleType === BattleType.WILD) {
+            this.scene.field.add(enemyPokemon);
+            const playerPokemon = this.scene.getPlayerPokemon();
+            if (playerPokemon.visible)
+              this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
+            enemyPokemon.tint(0, 0.5);
+          } else if (battle.battleType === BattleType.TRAINER) {
+            enemyPokemon.setVisible(false);
+            this.scene.currentBattle.trainer.tint(0, 0.5);
+          }
+          if (battle.double)
+            enemyPokemon.setFieldPosition(e ? FieldPosition.RIGHT : FieldPosition.LEFT);
+        }
       });
 
       if (!this.loaded) {
@@ -256,21 +296,45 @@ export class EncounterPhase extends BattlePhase {
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
-      targets: [ this.scene.arenaEnemy, enemyField, this.scene.arenaPlayer, this.scene.trainer ].flat(),
-      x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 1 + (enemyField.length) ? value + 300 : value - 300,
+      targets: [ this.scene.arenaEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.arenaPlayer, this.scene.trainer ].flat(),
+      x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 2 + (enemyField.length) ? value + 300 : value - 300,
       duration: 2000,
-      onComplete: () => {
-        enemyField.forEach(enemyPokemon => {
-          enemyPokemon.untint(100, 'Sine.easeOut');
-          enemyPokemon.cry();
-          enemyPokemon.showInfo();
-        });
-        const text = enemyField.length === 1
-          ? `A wild ${enemyField[0].name} appeared!`
-          : `A wild ${enemyField[0].name}\nand ${enemyField[1].name} appeared!`;
-        this.scene.ui.showText(text, null, () => this.end(), 1500);
-      }
+      onComplete: () => this.doEncounterCommon()
     });
+  }
+
+  doEncounterCommon() {
+    const enemyField = this.scene.getEnemyField();
+
+    if (this.scene.currentBattle.battleType === BattleType.WILD) {
+      enemyField.forEach(enemyPokemon => {
+        enemyPokemon.untint(100, 'Sine.easeOut');
+        enemyPokemon.cry();
+        enemyPokemon.showInfo();
+      });
+      let text = enemyField.length === 1
+        ? `A wild ${enemyField[0].name} appeared!`
+        : `A wild ${enemyField[0].name}\nand ${enemyField[1].name} appeared!`;
+      this.scene.ui.showText(text, null, () => this.end(), 1500);
+    } else if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
+      this.scene.currentBattle.trainer.untint(100, 'Sine.easeOut');
+      this.scene.currentBattle.trainer.playAnim();
+      const text = `${this.scene.currentBattle.trainer.getName()}\nwould like to battle!`;
+      this.scene.ui.showText(text, null, () => {
+        this.scene.tweens.add({
+          targets: this.scene.currentBattle.trainer,
+          x: '+=16',
+          y: '-=16',
+          alpha: 0,
+          ease: 'Sine.easeInOut',
+          duration: 750
+        });
+        this.scene.unshiftPhase(new SummonPhase(this.scene, 0, false));
+        if (this.scene.currentBattle.double)
+          this.scene.unshiftPhase(new SummonPhase(this.scene, 1, false));
+        this.end();
+      }, 1500);
+    }
   }
 
   end() {
@@ -298,22 +362,15 @@ export class NextEncounterPhase extends EncounterPhase {
   doEncounter(): void {
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
-      targets: [ this.scene.arenaEnemy, this.scene.arenaNextEnemy, enemyField ].flat(),
+      targets: [ this.scene.arenaEnemy, this.scene.arenaNextEnemy, this.scene.currentBattle.trainer, enemyField ].flat(),
       x: '+=300',
       duration: 2000,
       onComplete: () => {
         this.scene.arenaEnemy.setX(this.scene.arenaNextEnemy.x);
         this.scene.arenaEnemy.setAlpha(1);
         this.scene.arenaNextEnemy.setX(this.scene.arenaNextEnemy.x - 300);
-        enemyField.forEach(enemyPokemon => {
-          enemyPokemon.untint(100, 'Sine.easeOut');
-          enemyPokemon.cry();
-          enemyPokemon.showInfo();
-        });
-        const text = enemyField.length === 1
-          ? `A wild ${enemyField[0].name} appeared!`
-          : `A wild ${enemyField[0].name}\nand ${enemyField[1].name} appeared!`;
-        this.scene.ui.showText(text, null, () => this.end(), 1500);
+        
+        this.doEncounterCommon();
       }
     });
   }
@@ -332,17 +389,7 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
       targets: [ this.scene.arenaEnemy, enemyField ].flat(),
       x: '+=300',
       duration: 2000,
-      onComplete: () => {
-        enemyField.forEach(enemyPokemon => {
-          enemyPokemon.untint(100, 'Sine.easeOut');
-          enemyPokemon.cry();
-          enemyPokemon.showInfo();
-        });
-        const text = enemyField.length === 1
-          ? `A wild ${enemyField[0].name} appeared!`
-          : `A wild ${enemyField[0].name}\nand ${enemyField[1].name} appeared!`;
-        this.scene.ui.showText(text, null, () => this.end(), 1500);
-      }
+      onComplete: () => this.doEncounterCommon()
     });
   }
 }
@@ -461,8 +508,8 @@ export class SwitchBiomePhase extends BattlePhase {
 }
 
 export class SummonPhase extends PartyMemberPokemonPhase {
-  constructor(scene: BattleScene, fieldIndex: integer) {
-    super(scene, fieldIndex);
+  constructor(scene: BattleScene, fieldIndex: integer, player?: boolean) {
+    super(scene, fieldIndex, player !== undefined ? player : true);
   }
 
   start() {
@@ -474,78 +521,89 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   preSummon(): void {
     const partyMember = this.getPokemon();
     if (partyMember.isFainted()) {
-      const party = this.scene.getParty();
+      const party = this.getParty();
       const nonFaintedIndex = party.slice(this.partyMemberIndex).findIndex(p => !p.isFainted()) + this.partyMemberIndex;
       const nonFaintedPartyMember = party[nonFaintedIndex];
       party[nonFaintedIndex] = partyMember;
       party[this.partyMemberIndex] = nonFaintedPartyMember;
     }
 
-    this.scene.ui.showText(`Go! ${this.getPokemon().name}!`);
-    this.scene.trainer.play('trainer_m_pb');
-    this.scene.tweens.add({
-      targets: this.scene.trainer,
-      x: -36,
-      duration: 1000
-    });
-    this.scene.time.delayedCall(750, () => this.summon());
+    if (this.player) {
+      this.scene.ui.showText(`Go! ${this.getPokemon().name}!`);
+      if (this.player) 
+      this.scene.trainer.play('trainer_m_pb');
+      this.scene.tweens.add({
+        targets: this.scene.trainer,
+        x: -36,
+        duration: 1000
+      });
+      this.scene.time.delayedCall(750, () => this.summon());
+    } else
+      this.scene.ui.showText(`${this.scene.currentBattle.trainer.getName()} sent out\n${this.getPokemon().name}!`, null, () => this.summon());
   }
 
   summon(): void {
-    const pokeball = this.scene.add.sprite(36, 80, 'pb', 'pb');
+    const pokeball = this.scene.add.sprite(this.player ? 36 : 248, this.player ? 80 : 44, 'pb', 'pb');
     pokeball.setVisible(false);
     pokeball.setOrigin(0.5, 0.625);
     this.scene.field.add(pokeball);
 
-    const playerPokemon = this.getPokemon();
+    const pokemon = this.getPokemon();
 
     if (this.fieldIndex === 1)
-      playerPokemon.setFieldPosition(FieldPosition.RIGHT, 0);
-    else
-      playerPokemon.setFieldPosition(!this.scene.currentBattle.double ? FieldPosition.CENTER : FieldPosition.LEFT);
+      pokemon.setFieldPosition(FieldPosition.RIGHT, 0);
+    else {
+      const availablePartyMembers = this.getParty().filter(p => !p.isFainted()).length;
+      pokemon.setFieldPosition(!this.scene.currentBattle.double || availablePartyMembers === 1 ? FieldPosition.CENTER : FieldPosition.LEFT);
+    }
 
-    const fpOffset = playerPokemon.getFieldPositionOffset();
+    const fpOffset = pokemon.getFieldPositionOffset();
 
     pokeball.setVisible(true);
 
     this.scene.tweens.add({
       targets: pokeball,
       duration: 650,
-      x: 100 + fpOffset[0]
+      x: (this.player ? 100 : 236) + fpOffset[0]
     });
 
     this.scene.tweens.add({
       targets: pokeball,
       duration: 150,
       ease: 'Cubic.easeOut',
-      y: 70 + fpOffset[1],
+      y: (this.player ? 70 : 34) + fpOffset[1],
       onComplete: () => {
         this.scene.tweens.add({
           targets: pokeball,
           duration: 500,
           ease: 'Cubic.easeIn',
           angle: 1440,
-          y: 132 + fpOffset[1],
+          y: (this.player ? 132 : 86) + fpOffset[1],
           onComplete: () => {
             this.scene.sound.play('pb_rel');
             pokeball.destroy();
-            this.scene.add.existing(playerPokemon);
-            this.scene.field.add(playerPokemon);
-            playerPokemon.showInfo();
-            playerPokemon.playAnim();
-            playerPokemon.setVisible(true);
-            playerPokemon.setScale(0.5);
-            playerPokemon.tint(getPokeballTintColor(playerPokemon.pokeball));
-            playerPokemon.untint(250, 'Sine.easeIn');
+            this.scene.add.existing(pokemon);
+            this.scene.field.add(pokemon);
+            if (!this.player) {
+              const playerPokemon = this.scene.getPlayerPokemon() as Pokemon;
+              if (playerPokemon.visible)
+                this.scene.field.moveBelow(pokemon, playerPokemon);
+            }
+            pokemon.showInfo();
+            pokemon.playAnim();
+            pokemon.setVisible(true);
+            pokemon.setScale(0.5);
+            pokemon.tint(getPokeballTintColor(pokemon.pokeball));
+            pokemon.untint(250, 'Sine.easeIn');
             this.scene.tweens.add({
-              targets: playerPokemon,
+              targets: pokemon,
               duration: 250,
               ease: 'Sine.easeIn',
               scale: 1,
               onComplete: () => {
-                playerPokemon.cry();
-                playerPokemon.getSprite().clearTint();
-                playerPokemon.resetSummonData();
+                pokemon.cry();
+                pokemon.getSprite().clearTint();
+                pokemon.resetSummonData();
                 this.scene.time.delayedCall(1000, () => this.end());
               }
             });
@@ -582,10 +640,10 @@ export class SwitchSummonPhase extends SummonPhase {
   private doReturn: boolean;
   private batonPass: boolean;
 
-  private lastPokemon: PlayerPokemon;
+  private lastPokemon: Pokemon;
 
-  constructor(scene: BattleScene, fieldIndex: integer, slotIndex: integer, doReturn: boolean, batonPass: boolean) {
-    super(scene, fieldIndex);
+  constructor(scene: BattleScene, fieldIndex: integer, slotIndex: integer, doReturn: boolean, batonPass: boolean, player?: boolean) {
+    super(scene, fieldIndex, player !== undefined ? player : true);
 
     this.slotIndex = slotIndex;
     this.doReturn = doReturn;
@@ -598,30 +656,30 @@ export class SwitchSummonPhase extends SummonPhase {
       return;
     }
 
-    const playerPokemon = this.getPokemon();
+    const pokemon = this.getPokemon();
 
     if (!this.batonPass)
-      this.scene.getEnemyField().forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(playerPokemon.id));
+      this.scene.getEnemyField().forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
 
-    this.scene.ui.showText(`Come back, ${playerPokemon.name}!`);
+    this.scene.ui.showText(this.player ? `Come back, ${pokemon.name}!` : `${this.scene.currentBattle.trainer.getName()}\nwithdrew ${pokemon.name}!`);
     this.scene.sound.play('pb_rel');
-    playerPokemon.hideInfo();
-    playerPokemon.tint(getPokeballTintColor(playerPokemon.pokeball), 1, 250, 'Sine.easeIn');
+    pokemon.hideInfo();
+    pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, 'Sine.easeIn');
     this.scene.tweens.add({
-      targets: playerPokemon,
+      targets: pokemon,
       duration: 250,
       ease: 'Sine.easeIn',
       scale: 0.5,
       onComplete: () => {
-        playerPokemon.setVisible(false);
-        this.scene.field.remove(playerPokemon);
+        pokemon.setVisible(false);
+        this.scene.field.remove(pokemon);
         this.scene.time.delayedCall(750, () => this.switchAndSummon());
       }
     });
   }
 
   switchAndSummon() {
-    const party = this.scene.getParty();
+    const party = this.getParty();
     const switchedPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
     if (this.batonPass && switchedPokemon) {
@@ -635,7 +693,7 @@ export class SwitchSummonPhase extends SummonPhase {
     if (switchedPokemon) {
       party[this.slotIndex] = this.lastPokemon;
       party[this.fieldIndex] = switchedPokemon;
-      this.scene.ui.showText(`Go! ${switchedPokemon.name}!`);
+      this.scene.ui.showText(this.player ? `Go! ${switchedPokemon.name}!` : `${this.scene.currentBattle.trainer.getName()} sent out\n${this.getPokemon().name}!`);
       this.summon();
     } else
       this.end();
@@ -1800,8 +1858,14 @@ export class FaintPhase extends PokemonPhase {
         this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
       else if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double)
         this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
-    } else
+    } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
+      if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
+        const nonFaintedPartyMemberCount = this.scene.getParty().filter(p => !p.isFainted()).length;
+        if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount())
+          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, this.scene.currentBattle.trainer.getNextSummonIndex(), false, false, false));
+      }
+    }
 
     pokemon.lapseTags(BattlerTagLapseType.FAINT);
     this.scene.getField().filter(p => p !== pokemon && p?.isActive(true)).forEach(p => p.removeTagsBySourceId(pokemon.id));
@@ -1897,7 +1961,7 @@ export class VictoryPhase extends PokemonPhase {
       }
     }
 
-    if (!this.scene.getEnemyField().filter(p => !p?.isFainted(true)).length) {
+    if (!this.scene.getEnemyParty().filter(p => !p?.isFainted(true)).length) {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       if (this.scene.gameMode === GameMode.ENDLESS || this.scene.currentBattle.waveIndex < this.scene.finalWave) {
         this.scene.pushPhase(new SelectModifierPhase(this.scene));
@@ -1999,7 +2063,7 @@ export class SwitchPhase extends BattlePhase {
   }
 }
 
-export class ExpPhase extends PartyMemberPokemonPhase {
+export class ExpPhase extends PlayerPartyMemberPokemonPhase {
   private expValue: number;
 
   constructor(scene: BattleScene, partyMemberIndex: integer, expValue: number) {
@@ -2027,7 +2091,7 @@ export class ExpPhase extends PartyMemberPokemonPhase {
   }
 }
 
-export class ShowPartyExpBarPhase extends PartyMemberPokemonPhase {
+export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
   private expValue: number;
 
   constructor(scene: BattleScene, partyMemberIndex: integer, expValue: number) {
@@ -2074,7 +2138,7 @@ export class HidePartyExpBarPhase extends BattlePhase {
   }
 }
 
-export class LevelUpPhase extends PartyMemberPokemonPhase {
+export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
   private lastLevel: integer;
   private level: integer;
 
@@ -2105,7 +2169,7 @@ export class LevelUpPhase extends PartyMemberPokemonPhase {
   }
 }
 
-export class LearnMovePhase extends PartyMemberPokemonPhase {
+export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private moveId: Moves;
 
   constructor(scene: BattleScene, partyMemberIndex: integer, moveId: Moves) {

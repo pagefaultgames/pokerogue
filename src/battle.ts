@@ -2,6 +2,12 @@ import BattleScene, { PokeballCounts } from "./battle-scene";
 import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
+import Trainer from "./trainer";
+
+export enum BattleType {
+    WILD,
+    TRAINER
+}
 
 export enum BattlerIndex {
     PLAYER,
@@ -24,8 +30,10 @@ interface TurnCommands {
 
 export default class Battle {
     public waveIndex: integer;
+    public battleType: BattleType;
+    public trainer: Trainer;
     public enemyLevels: integer[];
-    public enemyField: EnemyPokemon[];
+    public enemyParty: EnemyPokemon[];
     public double: boolean;
     public turn: integer;
     public turnCommands: TurnCommands;
@@ -33,15 +41,17 @@ export default class Battle {
     public playerParticipantIds: Set<integer> = new Set<integer>();
     public escapeAttempts: integer = 0;
 
-    constructor(waveIndex: integer, double: boolean) {
+    constructor(waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean) {
         this.waveIndex = waveIndex;
-        this.enemyLevels = new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave());
-        this.enemyField = [];
+        this.battleType = battleType;
+        this.trainer = trainer;
+        this.enemyLevels = new Array(battleType !== BattleType.TRAINER ? double ? 2 : 1 : trainer.config.genPartySize()).fill(null).map(() => this.getLevelForWave());
+        this.enemyParty = [];
         this.double = double;
         this.turn = 0;
     }
 
-    private getLevelForWave(): number {
+    private getLevelForWave(): integer {
         let baseLevel = 1 + this.waveIndex / 2 + Math.pow(this.waveIndex / 25, 2);
 
         if (!(this.waveIndex % 10)) {

@@ -11,6 +11,9 @@ import { PokemonHeldItemModifier } from "../modifier/modifier";
 import ArenaData from "./arena-data";
 import { Unlockables } from "./unlockables";
 import { GameMode } from "../game-mode";
+import { BattleType } from "../battle";
+import TrainerData from "./trainer-data";
+import { trainerConfigs } from "../data/trainer-type";
 
 interface SystemSaveData {
   trainerId: integer;
@@ -23,12 +26,15 @@ interface SystemSaveData {
 interface SessionSaveData {
   gameMode: GameMode;
   party: PokemonData[];
+  enemyParty: PokemonData[];
   enemyField: PokemonData[];
   modifiers: PersistentModifierData[];
   enemyModifiers: PersistentModifierData[];
   arena: ArenaData;
   pokeballCounts: PokeballCounts;
   waveIndex: integer;
+  battleType: BattleType;
+  trainer: TrainerData;
   timestamp: integer;
 }
 
@@ -130,12 +136,14 @@ export class GameData {
     const sessionData = {
       gameMode: scene.gameMode,
       party: scene.getParty().map(p => new PokemonData(p)),
-      enemyField: scene.getEnemyField().map(p => new PokemonData(p)),
+      enemyParty: scene.getEnemyParty().map(p => new PokemonData(p)),
       modifiers: scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
       enemyModifiers: scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
       arena: new ArenaData(scene.arena),
       pokeballCounts: scene.pokeballCounts,
       waveIndex: scene.currentBattle.waveIndex,
+      battleType: scene.currentBattle.battleType,
+      trainer: scene.currentBattle.battleType == BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
       timestamp: new Date().getTime()
     } as SessionSaveData;
 
@@ -157,12 +165,15 @@ export class GameData {
 
       try {
         const sessionData = JSON.parse(atob(localStorage.getItem('sessionData')), (k: string, v: any) => {
-          if (k === 'party' || k === 'enemyField') {
+          if (k === 'party' || k === 'enemyParty' || k === 'enemyField') {
             const ret: PokemonData[] = [];
             for (let pd of v)
               ret.push(new PokemonData(pd));
             return ret;
           }
+
+          if (k === 'trainer')
+            return v ? new TrainerData(v) : null;
 
           if (k === 'modifiers' || k === 'enemyModifiers') {
             const player = k === 'modifiers';
@@ -198,12 +209,18 @@ export class GameData {
           scene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
         });
 
-        scene.newArena(sessionData.arena.biome, true);
-        const battle = scene.newBattle(sessionData.waveIndex, sessionData.enemyField.length > 1);
+        // TODO: Remove this
+        if (sessionData.enemyField)
+          sessionData.enemyParty = sessionData.enemyField;
 
-        sessionData.enemyField.forEach((enemyData, e) => {
+        scene.newArena(sessionData.arena.biome, true);
+
+        const battleType = sessionData.battleType || 0;
+        const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfigs[sessionData.trainer.trainerType].isDouble : sessionData.enemyParty.length > 1);
+
+        sessionData.enemyParty.forEach((enemyData, e) => {
           const enemyPokemon = enemyData.toPokemon(scene) as EnemyPokemon;
-          battle.enemyField[e] = enemyPokemon;
+          battle.enemyParty[e] = enemyPokemon;
 
           loadPokemonAssets.push(enemyPokemon.loadAssets());
         });

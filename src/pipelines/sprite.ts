@@ -1,5 +1,5 @@
-import BattleScene from "../battle-scene";
 import Pokemon from "../pokemon";
+import Trainer from "../trainer";
 
 const spriteFragShader = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -150,7 +150,7 @@ export default class SpritePipeline extends Phaser.Renderer.WebGL.Pipelines.Mult
         const tone = data['tone'] as number[];
         const hasShadow = data['hasShadow'] as boolean;
 
-        const position = sprite.parentContainer instanceof Pokemon
+        const position = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer
             ? [ sprite.parentContainer.x, sprite.parentContainer.y ]
             : [ sprite.x, sprite.y ];
         position[0] += -(sprite.width - sprite.frame.width) / 2 + sprite.frame.x;
@@ -176,7 +176,7 @@ export default class SpritePipeline extends Phaser.Renderer.WebGL.Pipelines.Mult
 
         const hasShadow = sprite.pipelineData['hasShadow'] as boolean;
         if (hasShadow) {
-            const baseY = (sprite.parentContainer instanceof Pokemon
+            const baseY = (sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer
                 ? sprite.parentContainer.y
                 : sprite.y + sprite.height / 2) * 6;
             const bottomPadding = Math.ceil(sprite.height * 0.05) * 6;

@@ -406,7 +406,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getTypes(): Type[] {
     const types = [];
 
-    if (this.summonData.types)
+    if (this.summonData?.types)
       this.summonData.types.forEach(t => types.push(t));
     else {
       const speciesForm = this.getSpeciesForm();
@@ -445,6 +445,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getAttackMoveEffectiveness(moveType: Type): TypeDamageMultiplier {
     const types = this.getTypes();
     return getTypeDamageMultiplier(moveType, types[0]) * (types.length > 1 ? getTypeDamageMultiplier(moveType, types[1]) : 1) as TypeDamageMultiplier;
+  }
+
+  getMatchupScore(pokemon: Pokemon): number {
+    const types = this.getTypes();
+    const enemyTypes = pokemon.getTypes();
+    let atkScore = pokemon.getAttackMoveEffectiveness(types[0]);
+    let defScore = 1 / this.getAttackMoveEffectiveness(enemyTypes[0]);
+    if (types.length > 1)
+      atkScore *= pokemon.getAttackMoveEffectiveness(types[1]);
+    if (enemyTypes.length > 1)
+      defScore *= (1 / this.getAttackMoveEffectiveness(enemyTypes[1]));
+    return (atkScore + defScore) * (this.getHpRatio() + (1 - pokemon.getHpRatio()));
   }
 
   getEvolution(): SpeciesEvolution {
@@ -1142,7 +1154,7 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, dataSource?: PokemonData) {
-    super(scene, -66, 84, species, level, dataSource?.abilityIndex, dataSource ? dataSource.formIndex : scene.arena.getFormIndex(species),
+    super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource ? dataSource.formIndex : scene.arena.getFormIndex(species),
       dataSource?.gender, dataSource?.shiny, dataSource);
 
     if (!dataSource) {

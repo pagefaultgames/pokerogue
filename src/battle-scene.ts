@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Biome } from './data/biome';
 import UI from './ui/ui';
-import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, ToggleDoublePositionPhase, CheckSwitchPhase, PostSummonPhase, LevelCapPhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, ToggleDoublePositionPhase, CheckSwitchPhase, LevelCapPhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
@@ -19,10 +19,13 @@ import { Moves, initMoves } from './data/move';
 import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, applyAbAttrs, initAbilities } from './data/ability';
-import Battle from './battle';
+import Battle, { BattleType } from './battle';
 import { GameMode } from './game-mode';
 import SpritePipeline from './pipelines/sprite';
 import PartyExpBar from './ui/party-exp-bar';
+import { TrainerType, trainerConfigs } from './data/trainer-type';
+import Trainer from './trainer';
+import TrainerData from './system/trainer-data';
 
 const enableAuto = true;
 const quickStart = false;
@@ -231,6 +234,13 @@ export default class BattleScene extends Phaser.Scene {
 		// Load trainer images
 		this.loadImage('trainer_m', 'trainer');
 		this.loadAtlas('trainer_m_pb', 'trainer');
+
+		Utils.getEnumValues(TrainerType).map(tt => {
+			const config = trainerConfigs[tt];
+			this.loadAtlas(config.getKey(), 'trainer');
+			if (config.isDouble)
+				this.loadAtlas(config.getKey(true), 'trainer');
+		});
 
 		// Load pokemon-related images
 		this.loadImage(`pkmn__back__sub`, 'pokemon/back', 'sub.png');
@@ -465,12 +475,17 @@ export default class BattleScene extends Phaser.Scene {
 		return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
 	}
 
+	getEnemyParty(): EnemyPokemon[] {
+		return this.currentBattle?.enemyParty || [];
+	}
+
 	getEnemyPokemon(): EnemyPokemon {
 		return this.getEnemyField().find(p => p.isActive());
 	}
 
 	getEnemyField(): EnemyPokemon[] {
-		return this.currentBattle?.enemyField || [];
+		const party = this.getEnemyParty();
+		return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
 	}
 
 	getField(): Pokemon[] {
@@ -517,15 +532,32 @@ export default class BattleScene extends Phaser.Scene {
 		this.trainer.setPosition(406, 132);
 	}
 
-	newBattle(waveIndex?: integer, double?: boolean): Battle {
+	newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {
 		let newWaveIndex = waveIndex || ((this.currentBattle?.waveIndex || (startingWave - 1)) + 1);
 		let newDouble: boolean;
+		let newBattleType: BattleType;
+		let newTrainer: Trainer;
+
+		if (battleType === undefined)
+			newBattleType = BattleType.WILD;
+		else
+			newBattleType = battleType;
+
+		if (newBattleType === BattleType.TRAINER) {
+			newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, TrainerType.SWIMMER, !!Utils.randInt(2));
+			this.field.add(newTrainer);
+		}
 
 		if (double === undefined && newWaveIndex > 1) {
-			const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
-			this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
-			this.getPlayerField().forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
-			newDouble = !Utils.randInt(doubleChance.value);
+			if (newBattleType === BattleType.WILD) {
+				const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
+				this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
+				this.getPlayerField().forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
+				newDouble = !Utils.randInt(doubleChance.value);
+			} else if (newBattleType === BattleType.TRAINER) {
+				console.log(newTrainer, newTrainer.config);
+				newDouble = newTrainer.config.isDouble;
+			}
 		} else
 			newDouble = !!double;
 
@@ -533,7 +565,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		const maxExpLevel = this.getMaxExpLevel();
 
-		this.currentBattle = new Battle(newWaveIndex, newDouble);
+		this.currentBattle = new Battle(newWaveIndex, newBattleType, newTrainer, newDouble);
 		this.currentBattle.incrementTurn(this);
 
 		if (!waveIndex) {
@@ -558,6 +590,8 @@ export default class BattleScene extends Phaser.Scene {
 					this.pushPhase(new SummonPhase(this, 0));
 				}
 			}
+
+			console.log(lastBattle, newDouble)
 
 			if ((lastBattle?.double || false) !== newDouble) {
 				const availablePartyMemberCount = this.getParty().filter(p => !p.isFainted()).length;
