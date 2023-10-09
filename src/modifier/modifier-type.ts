@@ -108,11 +108,11 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
 
 export class PokemonHpRestoreModifierType extends PokemonModifierType {
   protected restorePoints: integer;
-  protected percent: boolean;
+  protected restorePercent: integer;
 
-  constructor(name: string, restorePoints: integer, percent?: boolean, newModifierFunc?: NewModifierFunc, selectFilter?: PokemonSelectFilter, iconImage?: string, group?: string) {
-    super(name, `Restore ${restorePoints}${percent ? '%' : ''} HP for one POKéMON`,
-      newModifierFunc || ((_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, this.percent, false)),
+  constructor(name: string, restorePoints: integer, restorePercent: integer, newModifierFunc?: NewModifierFunc, selectFilter?: PokemonSelectFilter, iconImage?: string, group?: string) {
+    super(name, restorePoints ? `Restore ${restorePoints} HP or ${restorePercent}% HP for one POKéMON, whichever is higher` : `Restore ${restorePercent}% HP for one POKéMON`,
+      newModifierFunc || ((_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, this.restorePercent, false)),
     selectFilter || ((pokemon: PlayerPokemon) => {
       if (!pokemon.hp || pokemon.hp >= pokemon.getMaxHp())
         return PartyUiHandler.NoEffectMessage;
@@ -120,13 +120,13 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
     }), iconImage, group || 'potion');
 
     this.restorePoints = restorePoints;
-    this.percent = !!percent;
+    this.restorePercent = restorePercent;
   }
 }
 
 export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
   constructor(name: string, restorePercent: integer, iconImage?: string) {
-    super(name, restorePercent, true, (_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, true, true),
+    super(name, 0, 100, (_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, 0, this.restorePercent, true),
       ((pokemon: PlayerPokemon) => {
         if (!pokemon.isFainted())
           return PartyUiHandler.NoEffectMessage;
@@ -346,13 +346,13 @@ export class PokemonBaseStatBoosterModifierType extends PokemonHeldItemModifierT
 
 class AllPokemonFullHpRestoreModifierType extends ModifierType {
   constructor(name: string, description?: string, newModifierFunc?: NewModifierFunc, iconImage?: string) {
-    super(name, description || `Restore 100% HP for all POKéMON`, newModifierFunc || ((_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 100, true)), iconImage);
+    super(name, description || `Restore 100% HP for all POKéMON`, newModifierFunc || ((_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100)), iconImage);
   }
 }
 
 class AllPokemonFullReviveModifierType extends AllPokemonFullHpRestoreModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name, `Revives all fainted POKéMON, restoring 100% HP`, (_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 100, true, true), iconImage);
+    super(name, `Revives all fainted POKéMON, restoring 100% HP`, (_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100, true), iconImage);
   }
 }
 
@@ -549,10 +549,10 @@ const modifierTypes = {
 
   MAP: () => new ModifierType('MAP', 'Allows you to choose your destination at a crossroads', (type, _args) => new Modifiers.MapModifier(type)),
 
-  POTION: () => new PokemonHpRestoreModifierType('POTION', 20),
-  SUPER_POTION: () => new PokemonHpRestoreModifierType('SUPER POTION', 50),
-  HYPER_POTION: () => new PokemonHpRestoreModifierType('HYPER POTION', 200),
-  MAX_POTION: () => new PokemonHpRestoreModifierType('MAX POTION', 100, true),
+  POTION: () => new PokemonHpRestoreModifierType('POTION', 20, 10),
+  SUPER_POTION: () => new PokemonHpRestoreModifierType('SUPER POTION', 50, 25),
+  HYPER_POTION: () => new PokemonHpRestoreModifierType('HYPER POTION', 200, 50),
+  MAX_POTION: () => new PokemonHpRestoreModifierType('MAX POTION', 100, 100),
   
   REVIVE: () => new PokemonReviveModifierType('REVIVE', 50),
   MAX_REVIVE: () => new PokemonReviveModifierType('MAX REVIVE', 100),
@@ -620,7 +620,7 @@ const modifierTypes = {
     (type, _args) => new Modifiers.MultipleParticipantExpBonusModifier(type), 'oval_charm'),
 
   EXP_CHARM: () => new ExpBoosterModifierType('EXP CHARM', 25),
-  GOLDEN_EXP_CHARM: () => new ExpBoosterModifierType('GOLDEN EXP CHARM', 100),
+  GOLDEN_EXP_CHARM: () => new ExpBoosterModifierType('GOLDEN EXP CHARM', 50),
 
   LUCKY_EGG: () => new PokemonExpBoosterModifierType('LUCKY EGG', 50),
   GOLDEN_EGG: () => new PokemonExpBoosterModifierType('GOLDEN EGG', 200),

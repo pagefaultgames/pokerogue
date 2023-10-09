@@ -984,6 +984,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.BUNEARY]: [
     new SpeciesEvolution(Species.LOPUNNY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.MEDIUM)
   ],
+  [Species.HAPPINY]: [
+    new SpeciesEvolution(Species.CHANSEY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.SHORT)
+  ],
   [Species.RIOLU]: [
     new SpeciesEvolution(Species.LUCARIO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 && p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
   ],

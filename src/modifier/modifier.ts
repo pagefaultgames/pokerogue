@@ -713,14 +713,14 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
 
 export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
   private restorePoints: integer;
-  private percent: boolean;
+  private restorePercent: integer;
   public fainted: boolean;
 
-  constructor(type: ModifierType, pokemonId: integer, restorePoints: integer, percent: boolean, fainted?: boolean) {
+  constructor(type: ModifierType, pokemonId: integer, restorePoints: integer, restorePercent: integer, fainted?: boolean) {
     super(type, pokemonId);
 
     this.restorePoints = restorePoints;
-    this.percent = percent;
+    this.restorePercent = restorePercent;
     this.fainted = !!fainted;
   }
 
@@ -736,7 +736,7 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
         restorePoints = Math.floor(restorePoints * (args[1] as number));
       else
         pokemon.resetStatus();
-      pokemon.hp = Math.min(pokemon.hp + Math.ceil((this.percent ? (restorePoints * 0.01) * pokemon.getMaxHp() : restorePoints)), pokemon.getMaxHp());
+      pokemon.hp = Math.min(pokemon.hp + Math.ceil(Math.max(Math.floor((this.restorePercent * 0.01) * pokemon.getMaxHp()), restorePoints)), pokemon.getMaxHp());
     }
 
     return true;
