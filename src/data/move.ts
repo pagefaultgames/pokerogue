@@ -1990,6 +1990,46 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
   }
 }
 
+const lastMoveCopiableCondition = (user: Pokemon, target: Pokemon, move: Move) => {
+  const copiableMove = user.scene.currentBattle.lastMove;
+
+  if (!copiableMove)
+    return false;
+
+  if (allMoves[copiableMove].getAttrs(ChargeAttr).length)
+    return false;
+
+  // TODO: Add last turn of Bide
+
+  return true;
+};
+
+export class CopyMoveAttr extends OverrideMoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const lastMove = user.scene.currentBattle.lastMove;
+
+    const moveTargets = getMoveTargets(user, lastMove);
+    if (!moveTargets.targets.length)
+      return false;
+
+    const targets = moveTargets.multiple || moveTargets.targets.length === 1
+      ? moveTargets.targets
+      : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
+        ? [ target.getBattlerIndex() ]
+        : [ moveTargets.targets[Utils.randInt(moveTargets.targets.length)] ];
+    user.getMoveQueue().push({ move: lastMove, targets: targets, ignorePP: true });
+
+    user.scene.unshiftPhase(new MovePhase(user.scene, user as PlayerPokemon, targets, new PokemonMove(lastMove, 0, 0, true), true));
+
+    return true;
+  }
+
+  getCondition(): MoveCondition {
+    return lastMoveCopiableCondition;
+  }
+}
+
+// TODO: Review this
 const targetMoveCopiableCondition = (user: Pokemon, target: Pokemon, move: Move) => {
   const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
     if (!targetMoves.length)
@@ -2000,42 +2040,13 @@ const targetMoveCopiableCondition = (user: Pokemon, target: Pokemon, move: Move)
     if (!copiableMove.move)
       return false;
 
-    if (allMoves[copiableMove.move].getAttrs(ChargeAttr) && copiableMove.result === MoveResult.OTHER)
+    if (allMoves[copiableMove.move].getAttrs(ChargeAttr).length && copiableMove.result === MoveResult.OTHER)
       return false;
 
     // TODO: Add last turn of Bide
 
     return true;
 };
-
-export class CopyMoveAttr extends OverrideMoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
-    if (!targetMoves.length)
-      return false;
-
-    const copiedMove = targetMoves[0];
-
-    const moveTargets = getMoveTargets(user, copiedMove.move);
-    if (!moveTargets.targets.length)
-      return false;
-
-    const targets = moveTargets.multiple || moveTargets.targets.length === 1
-      ? moveTargets.targets
-      : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
-        ? [ target.getBattlerIndex() ]
-        : [ moveTargets.targets[Utils.randInt(moveTargets.targets.length)] ];
-    user.getMoveQueue().push({ move: copiedMove.move, targets: targets, ignorePP: true });
-
-    user.scene.unshiftPhase(new MovePhase(user.scene, user as PlayerPokemon, targets, new PokemonMove(copiedMove.move, 0, 0, true), true));
-
-    return true;
-  }
-
-  getCondition(): MoveCondition {
-    return targetMoveCopiableCondition;
-  }
-}
 
 export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {

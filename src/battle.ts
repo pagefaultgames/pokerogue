@@ -3,6 +3,9 @@ import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 import Trainer from "./trainer";
+import { Species } from "./data/species";
+import { Moves } from "./data/move";
+import { TrainerType } from "./data/trainer-type";
 
 export enum BattleType {
     WILD,
@@ -40,6 +43,7 @@ export default class Battle {
     public turnPokeballCounts: PokeballCounts;
     public playerParticipantIds: Set<integer> = new Set<integer>();
     public escapeAttempts: integer = 0;
+    public lastMove: Moves;
 
     constructor(waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean) {
         this.waveIndex = waveIndex;
@@ -81,5 +85,27 @@ export default class Battle {
 
     removeFaintedParticipant(playerPokemon: PlayerPokemon): void {
         this.playerParticipantIds.delete(playerPokemon.id);
+    }
+
+    getBgmOverride(): string {
+        const battlers = this.enemyParty.slice(0, this.getBattlerCount());
+        for (let pokemon of battlers) {
+            if (this.battleType === BattleType.TRAINER) {
+                if (this.trainer.config.trainerType === TrainerType.RIVAL)
+                    return 'battle_rival';
+                return 'battle_trainer';
+            }
+            if (pokemon.species.speciesId === Species.ETERNATUS)
+                return 'battle_final';
+            if (pokemon.species.legendary) {
+                if (pokemon.species.speciesId === Species.RESHIRAM || pokemon.species.speciesId === Species.ZEKROM)
+                    return 'battle_legendary_rz';
+                if (pokemon.species.speciesId === Species.KYUREM)
+                    return 'battle_legendary_z';
+                return 'battle_legendary';
+            }
+        }
+
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import BattleScene from "./battle-scene";
-import { Biome, BiomePoolTier, BiomeTierPools, biomePools } from "./data/biome";
+import { Biome, BiomePoolTier, BiomeTierPokemonPools, biomePokemonPools } from "./data/biome";
 import * as Utils from "./utils";
 import PokemonSpecies, { getPokemonSpecies } from "./data/pokemon-species";
 import { Species } from "./data/species";
@@ -17,16 +17,16 @@ export class Arena {
   public biomeType: Biome;
   public weather: Weather;
   public tags: ArenaTag[];
-  private bgm: string;
+  public bgm: string;
 
-  private pokemonPool: BiomeTierPools;
+  private pokemonPool: BiomeTierPokemonPools;
 
   constructor(scene: BattleScene, biome: Biome, bgm: string) {
     this.scene = scene;
     this.biomeType = biome;
     this.tags = [];
     this.bgm = bgm;
-    this.pokemonPool = biomePools[biome];
+    this.pokemonPool = biomePokemonPools[biome];
   }
 
   randomSpecies(waveIndex: integer, level: integer, attempt?: integer): PokemonSpecies {
@@ -236,20 +236,6 @@ export class Arena {
 
   preloadBgm(): void {
     this.scene.loadBgm(this.bgm);
-  }
-
-  playBgm(): void {
-    this.scene.loadBgm(this.bgm);
-    this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => this.scene.playBgm(this.bgm, this.getBgmLoopPoint()));
-    if (!this.scene.load.isLoading())
-      this.scene.load.start();
-  }
-
-  fadeOutBgm(duration: integer, destroy?: boolean): void {
-    if (destroy === undefined)
-      destroy = true;
-    const bgm = this.scene.sound.get(this.bgm);
-    SoundFade.fadeOut(this.scene, bgm, duration, destroy);
   }
 
   getBgmLoopPoint(): number {

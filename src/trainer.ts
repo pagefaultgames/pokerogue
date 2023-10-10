@@ -1,5 +1,6 @@
 import BattleScene from "./battle-scene";
-import { TrainerConfig, TrainerType, trainerConfigs } from "./data/trainer-type";
+import PokemonSpecies, { getPokemonSpecies } from "./data/pokemon-species";
+import { TrainerConfig, TrainerPartyType, TrainerType, trainerConfigs } from "./data/trainer-type";
 import * as Utils from "./utils";
 
 export default class Trainer extends Phaser.GameObjects.Container {
@@ -32,7 +33,22 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   getName(): string {
-    return this.config.getName();
+    return this.config.getName(this.female);
+  }
+
+  genPartyMemberSpecies(level: integer, attempt?: integer): PokemonSpecies {
+    const battle = this.scene.currentBattle;
+
+    if (this.config.partyType === TrainerPartyType.REPEATED && battle.enemyParty.length)
+      return getPokemonSpecies(battle.enemyParty[0].species.getSpeciesForLevel(level));
+    const ret = getPokemonSpecies(this.scene.randomSpecies(battle.waveIndex, level, this.config.speciesFilter, true).getSpeciesForLevel(level));
+    if (this.config.partyType === TrainerPartyType.BALANCED) {
+      const partyTypes = this.scene.getEnemyParty().map(p => p.getTypes()).flat();
+      if ((attempt || 0) < 10 && (partyTypes.indexOf(ret.type1) > -1 || (ret.type2 !== null && partyTypes.indexOf(ret.type2) > -1)))
+        return this.genPartyMemberSpecies(level, (attempt || 0) + 1);
+    }
+
+    return ret;
   }
 
   getNextSummonIndex(): integer {

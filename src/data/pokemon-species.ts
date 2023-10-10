@@ -5,12 +5,15 @@ import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } fro
 import { Species } from './species';
 import { Type } from './type';
 import * as Utils from '../utils';
+import { TrainerType, trainerConfigs } from './trainer-type';
 
 export function getPokemonSpecies(species: Species): PokemonSpecies {
   if (species >= Species.XERNEAS)
     return allSpecies.find(s => s.speciesId === species);
   return allSpecies[species - 1];
 }
+
+export type PokemonSpeciesFilter = (species: PokemonSpecies) => boolean;
 
 export abstract class PokemonSpeciesForm {
   public speciesId: Species;
@@ -272,7 +275,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
 
     for (let weight of evolutionPool.keys()) {
       if (randValue < weight)
-        return evolutionPool.get(weight);
+        return getPokemonSpecies(evolutionPool.get(weight)).getSpeciesForLevel(level, true);
     }
 
     return this.speciesId;
@@ -344,7 +347,7 @@ class PokemonForm extends PokemonSpeciesForm {
   }
 }
 
-export const allSpecies = [];
+export const allSpecies: PokemonSpecies[] = [];
 
 export function initSpecies() {
   allSpecies.push(
@@ -1103,3 +1106,16 @@ export function initSpecies() {
     new PokemonSpecies(Species.ETERNATUS, 'Eternatus', 8, false, true, false, 'Gigantic Pokemon', Type.POISON, Type.DRAGON, 20, 950, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 690, 140, 85, 95, 145, 95, 130, 255, 0, 345, GrowthRate.SLOW, "Undiscovered", null, null, 120, false, false)
   );
 }
+
+// TODO: Remove
+/*{
+  setTimeout(() => {
+    for (let tc of Object.keys(trainerConfigs)) {
+      console.log(TrainerType[tc], !trainerConfigs[tc].speciesFilter ? 'all' : [...new Set(allSpecies.slice(0, -1).filter(trainerConfigs[tc].speciesFilter).map(s => {
+        while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
+				  s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
+        return s;
+      }))].map(s => s.name));
+    }
+  }, 1000);
+}*/

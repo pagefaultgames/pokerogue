@@ -1,7 +1,7 @@
 import BattleScene, { startingLevel, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -72,7 +72,7 @@ export class CheckLoadPhase extends BattlePhase {
       this.scene.arena.preloadBgm();
       this.scene.pushPhase(new SelectStarterPhase(this.scene));
     } else
-      this.scene.arena.playBgm();
+      this.scene.playBgm();
 
     const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted()).length;
 
@@ -116,7 +116,7 @@ export class SelectStarterPhase extends BattlePhase {
         this.scene.ui.clearText();
         this.scene.ui.setMode(Mode.MESSAGE).then(() => {
           SoundFade.fadeOut(this.scene.sound.get('menu'), 500, true);
-          this.scene.time.delayedCall(500, () => this.scene.arena.playBgm());
+          this.scene.time.delayedCall(500, () => this.scene.playBgm());
           this.end();
         });
       });
@@ -237,7 +237,9 @@ export class EncounterPhase extends BattlePhase {
     const battle = this.scene.currentBattle;
 
     battle.enemyLevels.forEach((level, e) => {
-      const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
+      const enemySpecies = battle.battleType === BattleType.TRAINER
+        ? this.scene.currentBattle.trainer.genPartyMemberSpecies(level)
+        : this.scene.randomSpecies(battle.waveIndex, level, null, true);
       if (!this.loaded)
         battle.enemyParty[e] = new EnemyPokemon(this.scene, enemySpecies, level);
       const enemyPokemon = this.scene.getEnemyParty()[e];
@@ -287,6 +289,8 @@ export class EncounterPhase extends BattlePhase {
   }
 
   doEncounter() {
+    this.scene.playBgm(undefined, true);
+
     if (startingWave > 10) {
       for (let m = 0; m < Math.min(Math.floor(startingWave / 10), 99); m++)
         this.scene.addModifier(getPlayerModifierTypeOptionsForWave((m + 1) * 10, 1, this.scene.getParty())[0].type.newModifier());
@@ -360,6 +364,8 @@ export class NextEncounterPhase extends EncounterPhase {
   }
 
   doEncounter(): void {
+    this.scene.playBgm(undefined, true);
+
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
       targets: [ this.scene.arenaEnemy, this.scene.arenaNextEnemy, this.scene.currentBattle.trainer, enemyField ].flat(),
@@ -419,7 +425,7 @@ export class SelectBiomePhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.arena.fadeOutBgm(2000, true);
+    this.scene.fadeOutBgm(2000, true);
 
     const currentBiome = this.scene.arena.biomeType;
 
@@ -481,7 +487,7 @@ export class SwitchBiomePhase extends BattlePhase {
         this.scene.arenaPlayerTransition.setAlpha(0);
         this.scene.arenaPlayerTransition.setVisible(true);
 
-        this.scene.time.delayedCall(1000, () => this.scene.arena.playBgm());
+        this.scene.time.delayedCall(1000, () => this.scene.playBgm());
 
         this.scene.tweens.add({
           targets: [ this.scene.arenaPlayer, this.scene.arenaBgTransition, this.scene.arenaPlayerTransition ],
@@ -1271,6 +1277,9 @@ export class MovePhase extends BattlePhase {
       if (!moveQueue.length || !moveQueue.shift().ignorePP)
         this.move.ppUsed++;
 
+      if (!allMoves[this.move.moveId].getAttrs(CopyMoveAttr).length)
+        this.scene.currentBattle.lastMove = this.move.moveId;
+
       // Assume conditions affecting targets only apply to moves with a single target
       let success = this.move.getMove().applyConditions(this.pokemon, targets[0], this.move.getMove());
       if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
@@ -1400,11 +1409,11 @@ class MoveEffectPhase extends PokemonPhase {
           const isProtected = !this.move.getMove().hasFlag(MoveFlags.IGNORE_PROTECT) && target.lapseTag(BattlerTagType.PROTECTED);
 
           moveHistoryEntry.result = MoveResult.SUCCESS;
+          
+          const hitResult = !isProtected ? target.apply(user, this.move) : HitResult.NO_EFFECT;
 
           applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.PRE_APPLY,
             user, target, this.move.getMove());
-          
-          const hitResult = !isProtected ? target.apply(user, this.move) : HitResult.NO_EFFECT;
           
           if (hitResult !== HitResult.FAIL) {
             const chargeEffect = !!this.move.getMove().getAttrs(ChargeAttr).find(ca => (ca as ChargeAttr).chargeEffect);

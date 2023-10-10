@@ -3,7 +3,7 @@ import { Biome } from './data/biome';
 import UI from './ui/ui';
 import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, ToggleDoublePositionPhase, CheckSwitchPhase, LevelCapPhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
-import PokemonSpecies, { allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
+import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
@@ -26,6 +26,8 @@ import PartyExpBar from './ui/party-exp-bar';
 import { TrainerType, trainerConfigs } from './data/trainer-type';
 import Trainer from './trainer';
 import TrainerData from './system/trainer-data';
+import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
+import { pokemonPrevolutions } from './data/pokemon-evolutions';
 
 const enableAuto = true;
 const quickStart = false;
@@ -289,9 +291,10 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('pb_lock');
 
 		this.loadBgm('menu');
-		this.loadBgm('level_up_fanfare');
-		this.loadBgm('evolution');
-		this.loadBgm('evolution_fanfare');
+
+		this.loadBgm('level_up_fanfare', 'bw/level_up_fanfare.mp3');
+		this.loadBgm('evolution', 'bw/evolution.mp3');
+		this.loadBgm('evolution_fanfare', 'bw/evolution_fanfare.mp3');
 		
 		populateAnims();
 	}
@@ -403,7 +406,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		if (this.quickStart) {
 			for (let s = 0; s < 3; s++) {
-				const playerSpecies = this.randomSpecies(startingWave, startingLevel, false);
+				const playerSpecies = this.randomSpecies(startingWave, startingLevel, null, false);
 				const playerPokemon = new PlayerPokemon(this, playerSpecies, startingLevel, 0, 0);
 				playerPokemon.setVisible(false);
 				this.party.push(playerPokemon);
@@ -554,10 +557,8 @@ export default class BattleScene extends Phaser.Scene {
 				this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
 				this.getPlayerField().forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
 				newDouble = !Utils.randInt(doubleChance.value);
-			} else if (newBattleType === BattleType.TRAINER) {
-				console.log(newTrainer, newTrainer.config);
+			} else if (newBattleType === BattleType.TRAINER)
 				newDouble = newTrainer.config.isDouble;
-			}
 		} else
 			newDouble = !!double;
 
@@ -585,13 +586,10 @@ export default class BattleScene extends Phaser.Scene {
 				if (!this.quickStart)
 					this.pushPhase(new CheckLoadPhase(this));
 				else {
-					this.arena.playBgm();
 					this.pushPhase(new EncounterPhase(this));
 					this.pushPhase(new SummonPhase(this, 0));
 				}
 			}
-
-			console.log(lastBattle, newDouble)
 
 			if ((lastBattle?.double || false) !== newDouble) {
 				const availablePartyMemberCount = this.getParty().filter(p => !p.isFainted()).length;
@@ -653,10 +651,15 @@ export default class BattleScene extends Phaser.Scene {
 		return Math.min(Math.ceil(baseLevel / 2) * 2 + 2, 10000);
 	}
 
-	randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean): PokemonSpecies {
-		return fromArenaPool
-			? this.arena.randomSpecies(waveIndex, level)
-			: getPokemonSpecies(allSpecies[(Utils.randInt(allSpecies.length)) - 1].getSpeciesForLevel(level));
+	randomSpecies(waveIndex: integer, level: integer, speciesFilter?: PokemonSpeciesFilter, fromArenaPool?: boolean): PokemonSpecies {
+		if (fromArenaPool)
+			return this.arena.randomSpecies(waveIndex, level);
+		const filteredSpecies = speciesFilter ? [...new Set(allSpecies.slice(0, -1).filter(speciesFilter).map(s => {
+			while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
+				s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
+			return s;
+		}))] : allSpecies.slice(0, -1);
+		return getPokemonSpecies(filteredSpecies[Utils.randInt(filteredSpecies.length)].getSpeciesForLevel(level, true));
 	}
 
 	checkInput(): boolean {
@@ -718,19 +721,53 @@ export default class BattleScene extends Phaser.Scene {
 		return this.buttonKeys[button].filter(k => k.isDown).length >= 1;
 	}
 
-	playBgm(bgmName?: string, loopPoint?: number): void {
-		if (!bgmName && this.bgm && !this.bgm.pendingRemove) {
-			this.bgm.play({
-				volume: 1
-			});
+	playBgm(bgmName?: string, fadeOut?: boolean): void {
+		if (bgmName === undefined)
+			bgmName = this.currentBattle.getBgmOverride() || this.arena.bgm;
+		if (this.bgm && bgmName === this.bgm.key) {
+			if (!this.bgm.isPlaying || this.bgm.pendingRemove) {
+				this.bgm.play({
+					volume: 1
+				});
+			}
 			return;
 		}
-		if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying)
-			this.bgm.stop();
-		this.bgm = this.sound.add(bgmName, { loop: true });
-		this.bgm.play();
-		if (loopPoint)
-			this.bgm.on('looped', () => this.bgm.play({ seek: loopPoint }));
+		if (fadeOut && !this.bgm)
+			fadeOut = false;
+		this.loadBgm(bgmName);
+		let loopPoint = 0;
+		loopPoint = bgmName === this.arena.bgm
+			? this.arena.getBgmLoopPoint()
+			: this.getBgmLoopPoint(bgmName);
+		let loaded = false;
+		const playNewBgm = () => {
+			if (bgmName === null && this.bgm && !this.bgm.pendingRemove) {
+				this.bgm.play({
+					volume: 1
+				});
+				return;
+			}
+			if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying)
+				this.bgm.stop();
+			this.bgm = this.sound.add(bgmName, { loop: true });
+			this.bgm.play();
+			if (loopPoint)
+				this.bgm.on('looped', () => this.bgm.play({ seek: loopPoint }));
+		};
+		this.load.once(Phaser.Loader.Events.COMPLETE, () => {
+			loaded = true;
+			if (!fadeOut || !this.bgm.isPlaying)
+				playNewBgm();
+		});
+		if (fadeOut) {
+			this.fadeOutBgm(500, true);
+			this.time.delayedCall(750, () => {
+				if (loaded && (!this.bgm.isPlaying || this.bgm.pendingRemove))
+					playNewBgm();
+			});
+		}
+		if (!this.load.isLoading())
+			this.load.start();
 	}
 
 	pauseBgm(): void {
@@ -744,7 +781,14 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	fadeOutBgm(duration?: integer, destroy?: boolean): void {
-		this.arena.fadeOutBgm(duration || 500, destroy);
+		if (!this.bgm)
+			return;
+		if (!duration)
+			duration = 500;
+		if (destroy === undefined)
+      destroy = true;
+    const bgm = this.sound.get(this.bgm.key);
+    SoundFade.fadeOut(this, bgm, duration, destroy);
 	}
 
 	playSoundWithoutBgm(soundName: string, pauseDuration?: integer): void {
@@ -757,6 +801,39 @@ export default class BattleScene extends Phaser.Scene {
 			this.resumeBgm();
 			this.bgmResumeTimer = null;
 		});
+	}
+
+	getBgmLoopPoint(bgmName: string): number {
+		switch (bgmName) {
+			case 'battle_cynthia':
+				return 12.235;
+			case 'battle_elite':
+				return 17.730;
+			case 'battle_final':
+				return 16.453;
+			case 'battle_gym':
+				return 19.145;
+			case 'battle_legendary':
+				return 13.855;
+			case 'battle_legendary_k':
+				return 18.314;
+			case 'battle_legendary_rz':
+				return 18.329;
+			case 'battle_rival':
+				return 13.689;
+			case 'battle_rival_2':
+				return 17.714;
+			case 'battle_rival_3':
+				return 17.586;
+			case 'battle_trainer':
+				return 13.686;
+			case 'battle_wild':
+				return 12.703;
+			case 'battle_wild_strong':
+				return 13.940;
+		}
+
+		return 0;
 	}
 
 	getCurrentPhase(): BattlePhase {

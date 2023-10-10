@@ -1,5 +1,11 @@
 import BattleScene from "../battle-scene";
 import * as Utils from "../utils";
+import { Moves } from "./move";
+import { pokemonLevelMoves } from "./pokemon-level-moves";
+import { PokemonSpeciesFilter } from "./pokemon-species";
+import { Species } from "./species";
+import { tmSpecies } from "./tms";
+import { Type } from "./type";
 
 export enum TrainerType {
   ACE_TRAINER = 1,
@@ -7,10 +13,9 @@ export enum TrainerType {
   BACKERS,
   BACKPACKER,
   BAKER,
-  BATTLE_GIRL,
   BEAUTY,
   BIKER,
-  BLACKBELT,
+  BLACK_BELT,
   BREEDER,
   CLERK,
   CYCLIST,
@@ -18,7 +23,6 @@ export enum TrainerType {
   DEPOT_AGENT,
   DOCTOR,
   FISHERMAN,
-  GENTLEMAN,
   GUITARIST,
   HARLEQUIN,
   HIKER,
@@ -26,8 +30,6 @@ export enum TrainerType {
   HOOPSTER,
   INFIELDER,
   JANITOR,
-  LADY,
-  LASS,
   LINEBACKER,
   MAID,
   MUSICIAN,
@@ -40,12 +42,12 @@ export enum TrainerType {
   PRESCHOOLER,
   PSYCHIC,
   RANGER,
-  RICH_BOY,
+  RICH,
+  RICH_KID,
   ROUGHNECK,
   SCIENTIST,
   SMASHER,
   SNOW_WORKER,
-  SOCIALITE,
   STRIKER,
   STUDENT,
   SWIMMER,
@@ -54,16 +56,45 @@ export enum TrainerType {
   WAITER,
   WORKER,
   YOUNGSTER,
+  RIVAL,
   CYNTHIA
+}
+
+export enum TrainerPartyType {
+  DEFAULT,
+  BALANCED,
+  REPEATED
+}
+
+export enum TrainerPoolTier {
+  COMMON,
+  UNCOMMON,
+  RARE,
+  SUPER_RARE,
+  ULTRA_RARE
+};
+
+export interface TrainerTierPools {
+  [key: integer]: Species[]
 }
 
 export class TrainerConfig {
   public trainerType: TrainerType;
+  public name: string;
+  public nameFemale: string;
   public hasGenders: boolean = false;
   public isDouble: boolean = false;
+  public partyType: TrainerPartyType = TrainerPartyType.DEFAULT;
+  public encounterBgm: string;
+  public femaleEncounterBgm: string;
+  public speciesPools: TrainerTierPools;
+  public speciesFilter: PokemonSpeciesFilter;
 
-  constructor(trainerType: TrainerType) {
+  constructor(trainerType: TrainerType, allowLegendaries?: boolean) {
     this.trainerType = trainerType;
+    this.name = Utils.toPokemonUpperCase(TrainerType[this.trainerType].toString().replace(/\_/g, ' '));
+    this.encounterBgm = this.name.toLowerCase();
+    this.speciesFilter = species => allowLegendaries || (!species.legendary && !species.pseudoLegendary && !species.mythical);
   }
 
   public getKey(female?: boolean): string {
@@ -73,8 +104,16 @@ export class TrainerConfig {
     return ret;
   }
 
-  public setHasGenders(): TrainerConfig {
+  public setName(name: string): TrainerConfig {
+    this.name = name;
+    return this;
+  }
+
+  public setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig {
     this.hasGenders = true;
+    this.nameFemale = nameFemale;
+    if (femaleEncounterBgm)
+      this.femaleEncounterBgm = typeof femaleEncounterBgm === 'number' ? TrainerType[femaleEncounterBgm].toString().replace(/\_/g, ' ').toLowerCase() : femaleEncounterBgm;
     return this;
   }
 
@@ -83,8 +122,39 @@ export class TrainerConfig {
     return this;
   }
 
-  public getName(): string {
-    return Utils.toPokemonUpperCase(TrainerType[this.trainerType].toString().replace(/\_/g, ' '));
+  public setEncounterBgm(encounterBgm: TrainerType | string): TrainerConfig {
+    this.encounterBgm = typeof encounterBgm === 'number' ? TrainerType[encounterBgm].toString().replace(/\_/g, ' ').toLowerCase() : encounterBgm;
+    return this;
+  }
+
+  public setPartyType(partyType: TrainerPartyType): TrainerConfig {
+    this.partyType = partyType;
+    return this;
+  }
+
+  public setSpeciesPools(speciesPools: TrainerTierPools | Species[]): TrainerConfig {
+    this.speciesPools = (Array.isArray(speciesPools) ? speciesPools : { [TrainerPoolTier.COMMON]: speciesPools }) as unknown as TrainerTierPools;
+    return this;
+  }
+
+  public setSpeciesFilter(speciesFilter: PokemonSpeciesFilter, allowLegendaries?: boolean): TrainerConfig {
+    const baseFilter = this.speciesFilter;
+    this.speciesFilter = allowLegendaries ? speciesFilter : species => speciesFilter(species) && baseFilter(species);
+    return this;
+  }
+
+  public getName(female?: boolean): string {
+    let ret = this.name;
+    
+    if (this.hasGenders) {
+      if (this.nameFemale) {
+        if (female)
+          return this.nameFemale;
+      } else
+        ret += !female ? '♂' : '♀';
+    }
+
+    return ret;
   }
 
   public genPartySize(): integer {
@@ -122,58 +192,65 @@ interface TrainerConfigs {
   [key: integer]: TrainerConfig
 }
 
-export const trainerConfigs: TrainerConfigs  = {
-  [TrainerType.ACE_TRAINER]: new TrainerConfig(++t).setHasGenders(),
-  [TrainerType.ARTIST]: new TrainerConfig(++t),
-  [TrainerType.BACKERS]: new TrainerConfig(++t).setHasGenders().setDouble(),
-  [TrainerType.BACKPACKER]: new TrainerConfig(++t).setHasGenders(),
-  [TrainerType.BAKER]: new TrainerConfig(++t),
-  [TrainerType.BATTLE_GIRL]: new TrainerConfig(++t),
-  [TrainerType.BEAUTY]: new TrainerConfig(++t),
-  [TrainerType.BIKER]: new TrainerConfig(++t),
-  [TrainerType.BLACKBELT]: new TrainerConfig(++t),
-  [TrainerType.BREEDER]: new TrainerConfig(++t).setHasGenders().setDouble(),
+export const trainerConfigs: TrainerConfigs = {
+  [TrainerType.ACE_TRAINER]: new TrainerConfig(++t).setHasGenders().setPartyType(TrainerPartyType.BALANCED),
+  [TrainerType.ARTIST]: new TrainerConfig(++t).setEncounterBgm(TrainerType.RICH).setSpeciesPools([ Species.SMEARGLE ]),
+  [TrainerType.BACKERS]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.CYCLIST).setDouble(),
+  [TrainerType.BACKPACKER]: new TrainerConfig(++t).setHasGenders().setSpeciesFilter(s => s.isOfType(Type.FLYING) || s.isOfType(Type.ROCK)),
+  [TrainerType.BAKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK).setSpeciesFilter(s => s.isOfType(Type.GRASS) || s.isOfType(Type.FIRE)),
+  [TrainerType.BEAUTY]: new TrainerConfig(++t).setEncounterBgm(TrainerType.PARASOL_LADY),
+  [TrainerType.BIKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.ROUGHNECK).setSpeciesFilter(s => s.isOfType(Type.POISON)),
+  [TrainerType.BLACK_BELT]: new TrainerConfig(++t).setHasGenders('Battle Girl', TrainerType.PSYCHIC).setEncounterBgm(TrainerType.ROUGHNECK).setSpeciesFilter(s => s.isOfType(Type.FIGHTING)),
+  [TrainerType.BREEDER]: new TrainerConfig(++t).setHasGenders().setDouble().setEncounterBgm(TrainerType.POKEFAN),
   [TrainerType.CLERK]: new TrainerConfig(++t).setHasGenders(),
-  [TrainerType.CYCLIST]: new TrainerConfig(++t).setHasGenders(),
-  [TrainerType.DANCER]: new TrainerConfig(++t),
-  [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t),
-  [TrainerType.DOCTOR]: new TrainerConfig(++t),
-  [TrainerType.FISHERMAN]: new TrainerConfig(++t),
-  [TrainerType.GENTLEMAN]: new TrainerConfig(++t),
-  [TrainerType.GUITARIST]: new TrainerConfig(++t),
-  [TrainerType.HARLEQUIN]: new TrainerConfig(++t),
-  [TrainerType.HIKER]: new TrainerConfig(++t),
-  [TrainerType.HOOLIGANS]: new TrainerConfig(++t).setDouble(),
-  [TrainerType.HOOPSTER]: new TrainerConfig(++t),
-  [TrainerType.INFIELDER]: new TrainerConfig(++t),
-  [TrainerType.JANITOR]: new TrainerConfig(++t),
-  [TrainerType.LADY]: new TrainerConfig(++t),
-  [TrainerType.LASS]: new TrainerConfig(++t),
-  [TrainerType.LINEBACKER]: new TrainerConfig(++t),
-  [TrainerType.MAID]: new TrainerConfig(++t),
-  [TrainerType.MUSICIAN]: new TrainerConfig(++t),
-  [TrainerType.NURSE]: new TrainerConfig(++t),
-  [TrainerType.NURSERY_AIDE]: new TrainerConfig(++t),
-  [TrainerType.OFFICER]: new TrainerConfig(++t),
-  [TrainerType.PARASOL_LADY]: new TrainerConfig(++t),
-  [TrainerType.PILOT]: new TrainerConfig(++t),
+  [TrainerType.CYCLIST]: new TrainerConfig(++t).setHasGenders().setSpeciesFilter(s => !!pokemonLevelMoves[s.speciesId].find(plm => plm[1] === Moves.QUICK_ATTACK)),
+  [TrainerType.DANCER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CYCLIST),
+  [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK),
+  [TrainerType.DOCTOR]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK),
+  [TrainerType.FISHERMAN]: new TrainerConfig(++t).setEncounterBgm(TrainerType.BACKPACKER).setSpeciesPools({
+    [TrainerPoolTier.COMMON]: [ Species.TENTACOOL, Species.MAGIKARP, Species.GOLDEEN, Species.STARYU, Species.REMORAID ],
+    [TrainerPoolTier.UNCOMMON]: [ Species.POLIWAG, Species.SHELLDER, Species.KRABBY, Species.HORSEA, Species.CARVANHA, Species.BARBOACH, Species.CORPHISH, Species.FINNEON, Species.TYMPOLE, Species.BASCULIN, Species.FRILLISH ],
+    [TrainerPoolTier.RARE]: [ Species.CHINCHOU, Species.CORSOLA, Species.WAILMER, Species.CLAMPERL, Species.LUVDISC, Species.MANTYKE, Species.ALOMOMOLA ],
+    [TrainerPoolTier.SUPER_RARE]: [ Species.LAPRAS, Species.FEEBAS, Species.RELICANTH ]
+  }),
+  [TrainerType.GUITARIST]: new TrainerConfig(++t).setEncounterBgm(TrainerType.ROUGHNECK).setSpeciesFilter(s => s.isOfType(Type.ELECTRIC)),
+  [TrainerType.HARLEQUIN]: new TrainerConfig(++t).setEncounterBgm(TrainerType.PSYCHIC).setSpeciesFilter(s => tmSpecies[Moves.TRICK_ROOM].indexOf(s.speciesId) > -1),
+  [TrainerType.HIKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.BACKPACKER).setSpeciesFilter(s => s.isOfType(Type.GROUND) || s.isOfType(Type.ROCK)),
+  [TrainerType.HOOLIGANS]: new TrainerConfig(++t).setDouble().setEncounterBgm(TrainerType.ROUGHNECK).setSpeciesFilter(s => s.isOfType(Type.POISON) || s.isOfType(Type.DARK)),
+  [TrainerType.HOOPSTER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CYCLIST),
+  [TrainerType.INFIELDER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CYCLIST),
+  [TrainerType.JANITOR]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK),
+  [TrainerType.LINEBACKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CYCLIST),
+  [TrainerType.MAID]: new TrainerConfig(++t).setEncounterBgm(TrainerType.RICH).setSpeciesFilter(s => s.eggType1 === 'Field' || s.eggType2 === 'Field'),
+  [TrainerType.MUSICIAN]: new TrainerConfig(++t).setEncounterBgm(TrainerType.ROUGHNECK).setSpeciesFilter(s => !!pokemonLevelMoves[s.speciesId].find(plm => plm[1] === Moves.SING)),
+  [TrainerType.NURSE]: new TrainerConfig(++t).setEncounterBgm('lass').setSpeciesFilter(s => !!pokemonLevelMoves[s.speciesId].find(plm => plm[1] === Moves.CHARM) || !!pokemonLevelMoves[s.speciesId].find(plm => plm[1] === Moves.HEAL_PULSE)),
+  [TrainerType.NURSERY_AIDE]: new TrainerConfig(++t).setEncounterBgm('lass'),
+  [TrainerType.OFFICER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK).setSpeciesPools([ Species.VULPIX, Species.GROWLITHE, Species.SNUBBULL, Species.HOUNDOUR, Species.POOCHYENA, Species.ELECTRIKE, Species.LILLIPUP ]),
+  [TrainerType.PARASOL_LADY]: new TrainerConfig(++t).setSpeciesFilter(s => s.isOfType(Type.WATER)),
+  [TrainerType.PILOT]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK).setSpeciesFilter(s => tmSpecies[Moves.FLY].indexOf(s.speciesId) > -1),
   [TrainerType.POKEFAN]: new TrainerConfig(++t).setHasGenders(),
-  [TrainerType.PRESCHOOLER]: new TrainerConfig(++t).setHasGenders(),
+  [TrainerType.PRESCHOOLER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.YOUNGSTER).setHasGenders(undefined, 'lass'),
   [TrainerType.PSYCHIC]: new TrainerConfig(++t).setHasGenders(),
-  [TrainerType.RANGER]: new TrainerConfig(++t).setHasGenders(),
-  [TrainerType.RICH_BOY]: new TrainerConfig(++t),
-  [TrainerType.ROUGHNECK]: new TrainerConfig(++t),
-  [TrainerType.SCIENTIST]: new TrainerConfig(++t).setHasGenders(),
-  [TrainerType.SMASHER]: new TrainerConfig(++t),
-  [TrainerType.SNOW_WORKER]: new TrainerConfig(++t),
-  [TrainerType.SOCIALITE]: new TrainerConfig(++t),
-  [TrainerType.STRIKER]: new TrainerConfig(++t),
+  [TrainerType.RANGER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.BACKPACKER).setHasGenders(),
+  [TrainerType.RICH]: new TrainerConfig(++t).setName('Gentleman').setHasGenders().setSpeciesFilter(s => s.eggType1 === 'Field' || s.eggType2 === 'Field'),
+  [TrainerType.RICH_KID]: new TrainerConfig(++t).setName('Rich Boy').setHasGenders('Lady').setEncounterBgm(TrainerType.RICH),
+  [TrainerType.ROUGHNECK]: new TrainerConfig(++t).setSpeciesFilter(s => s.isOfType(Type.DARK)),
+  [TrainerType.SCIENTIST]: new TrainerConfig(++t).setHasGenders().setSpeciesPools({
+    [TrainerPoolTier.COMMON]: [ Species.MAGNEMITE, Species.GRIMER, Species.DROWZEE, Species.VOLTORB, Species.KOFFING ],
+    [TrainerPoolTier.UNCOMMON]: [ Species.KLINK ],
+    [TrainerPoolTier.RARE ]: [ Species.ABRA, Species.PORYGON ],
+    [TrainerPoolTier.SUPER_RARE ]: [ Species.OMANYTE, Species.KABUTO, Species.AERODACTYL, Species.LILEEP, Species.ANORITH, Species.CRANIDOS, Species.SHIELDON, Species.TIRTOUGA, Species.ARCHEN ]
+  }),
+  [TrainerType.SMASHER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CYCLIST),
+  [TrainerType.SNOW_WORKER]: new TrainerConfig(++t).setName('Worker').setEncounterBgm(TrainerType.CLERK).setSpeciesFilter(s => s.isOfType(Type.ICE) || s.isOfType(Type.STEEL)),
+  [TrainerType.STRIKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CYCLIST),
   [TrainerType.STUDENT]: new TrainerConfig(++t).setHasGenders(),
-  [TrainerType.SWIMMER]: new TrainerConfig(++t).setHasGenders(),
+  [TrainerType.SWIMMER]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.PARASOL_LADY).setSpeciesFilter(s => s.isOfType(Type.WATER)),
   [TrainerType.TWINS]: new TrainerConfig(++t).setDouble(),
-  [TrainerType.VETERAN]: new TrainerConfig(++t).setHasGenders(),
-  [TrainerType.WAITER]: new TrainerConfig(++t).setHasGenders(),
-  [TrainerType.WORKER]: new TrainerConfig(++t),
-  [TrainerType.YOUNGSTER]: new TrainerConfig(++t),
+  [TrainerType.VETERAN]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.RICH),
+  [TrainerType.WAITER]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.CLERK),
+  [TrainerType.WORKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK).setSpeciesFilter(s => s.isOfType(Type.ROCK) || s.isOfType(Type.STEEL)),
+  [TrainerType.YOUNGSTER]: new TrainerConfig(++t).setHasGenders('Lass', 'lass').setEncounterBgm(TrainerType.YOUNGSTER),
+  [TrainerType.RIVAL]: new TrainerConfig(++t).setHasGenders(),
   [TrainerType.CYNTHIA]: new TrainerConfig(++t),
 }
