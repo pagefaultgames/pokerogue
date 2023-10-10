@@ -292,6 +292,10 @@ export class Arena {
         return 5.130;
       case Biome.SPACE:
         return 21.347;
+      case Biome.CONSTRUCTION_SITE:
+        return 1.222;
+      case Biome.JUNGLE:
+        return 2.477;
     }
   }
 }
@@ -300,6 +304,10 @@ export function getBiomeKey(biome: Biome): string {
   switch (biome) {
     case Biome.POWER_PLANT:
       return 'ruins';
+    case Biome.CONSTRUCTION_SITE:
+      return 'city';
+    case Biome.JUNGLE:
+      return 'tall_grass';
     case Biome.END:
       return 'wasteland';
   }
