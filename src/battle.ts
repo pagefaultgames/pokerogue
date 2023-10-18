@@ -5,7 +5,7 @@ import * as Utils from "./utils";
 import Trainer from "./trainer";
 import { Species } from "./data/species";
 import { Moves } from "./data/move";
-import { TrainerType } from "./data/trainer-type";
+import { TrainerConfig, TrainerType } from "./data/trainer-type";
 
 export enum BattleType {
     WILD,
@@ -38,6 +38,7 @@ export default class Battle {
     public enemyLevels: integer[];
     public enemyParty: EnemyPokemon[];
     public double: boolean;
+    public started: boolean;
     public turn: integer;
     public turnCommands: TurnCommands;
     public turnPokeballCounts: PokeballCounts;
@@ -49,10 +50,13 @@ export default class Battle {
         this.waveIndex = waveIndex;
         this.battleType = battleType;
         this.trainer = trainer;
-        this.enemyLevels = new Array(battleType !== BattleType.TRAINER ? double ? 2 : 1 : trainer.config.genPartySize()).fill(null).map(() => this.getLevelForWave());
+        this.enemyLevels = battleType !== BattleType.TRAINER
+            ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
+            : trainer.getPartyLevels(this.waveIndex);
         this.enemyParty = [];
         this.double = double;
         this.turn = 0;
+        this.started = false;
     }
 
     private getLevelForWave(): integer {
@@ -89,23 +93,85 @@ export default class Battle {
 
     getBgmOverride(): string {
         const battlers = this.enemyParty.slice(0, this.getBattlerCount());
+        if (this.battleType === BattleType.TRAINER) {
+            if (!this.started && this.trainer.config.encounterMessages.length)
+                return `encounter_${this.trainer.getEncounterBgm()}`;
+            return this.trainer.getBattleBgm();
+        }
         for (let pokemon of battlers) {
-            if (this.battleType === BattleType.TRAINER) {
-                if (this.trainer.config.trainerType === TrainerType.RIVAL)
-                    return 'battle_rival';
-                return 'battle_trainer';
-            }
             if (pokemon.species.speciesId === Species.ETERNATUS)
                 return 'battle_final';
-            if (pokemon.species.legendary) {
-                if (pokemon.species.speciesId === Species.RESHIRAM || pokemon.species.speciesId === Species.ZEKROM)
-                    return 'battle_legendary_rz';
+            if (pokemon.species.legendary || pokemon.species.pseudoLegendary || pokemon.species.mythical) {
                 if (pokemon.species.speciesId === Species.KYUREM)
                     return 'battle_legendary_z';
+                if (pokemon.species.legendary)
+                    return 'battle_legendary_rz';
                 return 'battle_legendary';
             }
         }
 
+        if (this.waveIndex <= 3)
+            return 'battle_wild';
+
         return null;
     }
+}
+
+export class FixedBattle extends Battle {
+    constructor(scene: BattleScene, waveIndex: integer, config: FixedBattleConfig) {
+        super(waveIndex, config.battleType, config.battleType === BattleType.TRAINER ? config.getTrainer(scene) : null, config.double);
+        if (config.getEnemyParty)
+            this.enemyParty = config.getEnemyParty(scene);
+    }
+}
+
+type GetTrainerFunc = (scene: BattleScene) => Trainer;
+type GetEnemyPartyFunc = (scene: BattleScene) => EnemyPokemon[];
+
+export class FixedBattleConfig {
+    public battleType: BattleType;
+    public double: boolean;
+    public getTrainer: GetTrainerFunc;
+    public getEnemyParty: GetEnemyPartyFunc;
+
+    setBattleType(battleType: BattleType): FixedBattleConfig {
+        this.battleType = battleType;
+        return this;
+    }
+
+    setDouble(double: boolean): FixedBattleConfig {
+        this.double = double;
+        return this;
+    }
+
+    setGetTrainerFunc(getTrainerFunc: GetTrainerFunc): FixedBattleConfig {
+        this.getTrainer = getTrainerFunc;
+        return this;
+    }
+
+    setGetEnemyPartyFunc(getEnemyPartyFunc: GetEnemyPartyFunc): FixedBattleConfig {
+        this.getEnemyParty = getEnemyPartyFunc;
+        return this;
+    }
+}
+
+interface FixedBattleConfigs {
+    [key: integer]: FixedBattleConfig
+}
+
+export const fixedBattles: FixedBattleConfigs = {
+    [4]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, !!Utils.randInt(2))),
+    [5]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL, true)),
+    [25]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_2, true)),
+    [55]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_3, true)),
+    [95]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_4, true)),
+    [145]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_5, true)),
+    [199]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_6, true))
 }

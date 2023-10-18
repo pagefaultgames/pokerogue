@@ -1,5 +1,32 @@
-export function toPokemonUpperCase(input: string): string {
-  return input.replace(/([a-z]+)/g, s => s.toUpperCase());
+export function toReadableString(str: string): string {
+  return str.replace(/\_/g, ' ').split(' ').map(s => `${s.slice(0, 1)}${s.slice(1).toLowerCase()}`).join(' ');
+}
+
+export function randomString(length: integer) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters[randomIndex];
+  }
+  
+  return result;
+}
+
+export function shiftCharCodes(str: string, shiftCount: integer) {
+  if (!shiftCount)
+    shiftCount = 0;
+  
+  let newStr = '';
+
+  for (let i = 0; i < str.length; i++) {
+      let charCode = str.charCodeAt(i);
+      let newCharCode = charCode + shiftCount;
+      newStr += String.fromCharCode(newCharCode);
+  }
+
+  return newStr;
 }
 
 export function clampInt(value: integer, min: integer, max: integer): integer {
@@ -28,6 +55,14 @@ export function randInt(range: integer, min?: integer): integer {
   if (range === 1)
     return min;
   return Math.floor(Math.random() * range) + min;
+}
+
+export function randSeedInt(range: integer, min?: integer): integer {
+  if (!min)
+    min = 0;
+  if (range === 1)
+    return min;
+  return Phaser.Math.RND.integerInRange(min, (range - 1) + min);
 }
 
 export function randIntRange(min: integer, max: integer): integer {

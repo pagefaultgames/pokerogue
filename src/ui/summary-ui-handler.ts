@@ -109,11 +109,18 @@ export default class SummaryUiHandler extends UiHandler {
     this.summaryContainer.add(this.genderText);
 
     this.moveEffectContainer = this.scene.add.container(106, -62);
+
     this.summaryContainer.add(this.moveEffectContainer);
 
     const moveEffectBg = this.scene.add.image(0, 0, 'summary_moves_effect');
     moveEffectBg.setOrigin(0, 0);
     this.moveEffectContainer.add(moveEffectBg);
+
+    const moveEffectLabels = addTextObject(this.scene, 8, 12, 'Power\nAccuracy\nCategory', TextStyle.SUMMARY);
+    moveEffectLabels.setLineSpacing(9);
+    moveEffectLabels.setOrigin(0, 0);
+
+    this.moveEffectContainer.add(moveEffectLabels);
 
     this.movePowerText = addTextObject(this.scene, 99, 27, '0', TextStyle.WINDOW);
     this.movePowerText.setOrigin(1, 1);
@@ -420,7 +427,7 @@ export default class SummaryUiHandler extends UiHandler {
         const profileContainer = this.scene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
 
-        const typeLabel = addTextObject(this.scene, 7, 28, 'TYPE/', TextStyle.WINDOW);
+        const typeLabel = addTextObject(this.scene, 7, 28, 'Type/', TextStyle.WINDOW);
         typeLabel.setOrigin(0, 0);
         profileContainer.add(typeLabel);
 
@@ -483,11 +490,11 @@ export default class SummaryUiHandler extends UiHandler {
         const totalLvExp = getLevelTotalExp(this.pokemon.level, this.pokemon.species.growthRate);
         const expRatio = this.pokemon.level < this.scene.getMaxExpLevel() ? this.pokemon.levelExp / totalLvExp : 0;
 
-        const expLabel = addTextObject(this.scene, 6, 112, 'EXP. POINTS', TextStyle.SUMMARY);
+        const expLabel = addTextObject(this.scene, 6, 112, 'EXP. Points', TextStyle.SUMMARY);
         expLabel.setOrigin(0, 0);
         statsContainer.add(expLabel);
 
-        const nextLvExpLabel = addTextObject(this.scene, 6, 128, 'NEXT LV.', TextStyle.SUMMARY);
+        const nextLvExpLabel = addTextObject(this.scene, 6, 128, 'Next Lv.', TextStyle.SUMMARY);
         nextLvExpLabel.setOrigin(0, 0);
         statsContainer.add(nextLvExpLabel);
 
@@ -528,7 +535,7 @@ export default class SummaryUiHandler extends UiHandler {
         extraRowOverlay.setOrigin(0, 1);
         this.extraMoveRowContainer.add(extraRowOverlay);
 
-        const extraRowText = addTextObject(this.scene, 35, 0, this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? this.newMove.name : 'CANCEL',
+        const extraRowText = addTextObject(this.scene, 35, 0, this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? this.newMove.name : 'Cancel',
           this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? TextStyle.SUMMARY_RED : TextStyle.SUMMARY);
         extraRowText.setOrigin(0, 1);
         this.extraMoveRowContainer.add(extraRowText);

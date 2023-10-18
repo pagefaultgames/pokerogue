@@ -1,5 +1,3 @@
-import { toPokemonUpperCase } from "../utils";
-
 export enum Stat {
   HP = 0,
   ATK,
@@ -31,5 +29,5 @@ export function getStatName(stat: Stat) {
       ret = 'Speed';
       break;
   }
-  return toPokemonUpperCase(ret);
+  return ret;
 }

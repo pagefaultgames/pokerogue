@@ -8,6 +8,6 @@ export function getUnlockableName(unlockable: Unlockables) {
     case Unlockables.ENDLESS_MODE:
       return 'Endless Mode';
     case Unlockables.MINI_BLACK_HOLE:
-      return 'MINI BLACK HOLE';
+      return 'Mini Black Hole';
   }
 }

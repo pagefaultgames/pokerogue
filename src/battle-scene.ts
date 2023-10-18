@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Biome } from './data/biome';
 import UI from './ui/ui';
-import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, ToggleDoublePositionPhase, CheckSwitchPhase, LevelCapPhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, ToggleDoublePositionPhase, CheckSwitchPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase, PartyHealPhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
@@ -19,7 +19,7 @@ import { Moves, initMoves } from './data/move';
 import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, applyAbAttrs, initAbilities } from './data/ability';
-import Battle, { BattleType } from './battle';
+import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';
 import { GameMode } from './game-mode';
 import SpritePipeline from './pipelines/sprite';
 import PartyExpBar from './ui/party-exp-bar';
@@ -28,6 +28,7 @@ import Trainer from './trainer';
 import TrainerData from './system/trainer-data';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
 import { pokemonPrevolutions } from './data/pokemon-evolutions';
+import PokeballTray from './ui/pokeball-tray';
 
 const enableAuto = true;
 const quickStart = false;
@@ -70,6 +71,8 @@ export default class BattleScene extends Phaser.Scene {
 	private currentPhase: BattlePhase;
 	public field: Phaser.GameObjects.Container;
 	public fieldUI: Phaser.GameObjects.Container;
+	public pbTray: PokeballTray;
+	public pbTrayEnemy: PokeballTray;
 	public abilityBar: AbilityBar;
 	public partyExpBar: PartyExpBar;
 	public arenaBg: Phaser.GameObjects.Sprite;
@@ -81,6 +84,7 @@ export default class BattleScene extends Phaser.Scene {
 	public arena: Arena;
 	public gameMode: GameMode;
 	public trainer: Phaser.GameObjects.Sprite;
+	public lastEnemyTrainer: Trainer;
 	public currentBattle: Battle;
 	public pokeballCounts: PokeballCounts;
 	private party: PlayerPokemon[];
@@ -91,6 +95,9 @@ export default class BattleScene extends Phaser.Scene {
 	private enemyModifiers: PokemonHeldItemModifier[];
 	public uiContainer: Phaser.GameObjects.Container;
 	public ui: UI;
+
+	public seed: string;
+	public waveSeed: string;
 
 	public spritePipeline: SpritePipeline;
 
@@ -163,6 +170,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('prompt', 'ui');
 		this.loadImage('cursor', 'ui');
 		this.loadImage('window', 'ui');
+		this.loadImage('namebox', 'ui');
 		this.loadImage('pbinfo_player', 'ui');
 		this.loadImage('pbinfo_player_mini', 'ui');
 		this.loadImage('pbinfo_enemy_mini', 'ui');
@@ -175,6 +183,10 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('ability_bar', 'ui');
 		this.loadImage('party_exp_bar', 'ui');
 		this.loadImage('shiny_star', 'ui', 'shiny.png');
+
+		this.loadImage('pb_tray_overlay_player', 'ui');
+		this.loadImage('pb_tray_overlay_enemy', 'ui');
+		this.loadAtlas('pb_tray_ball', 'ui');
 
 		this.loadImage('party_bg', 'ui');
 		this.loadImage('party_bg_double', 'ui');
@@ -281,7 +293,6 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('upgrade');
 		this.loadSe('error');
 
-		this.loadSe('pb');
 		this.loadSe('pb_rel');
 		this.loadSe('pb_throw');
 		this.loadSe('pb_bounce_1');
@@ -290,9 +301,15 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('pb_catch');
 		this.loadSe('pb_lock');
 
+		this.loadSe('pb_tray_enter');
+		this.loadSe('pb_tray_ball');
+		this.loadSe('pb_tray_empty');
+
 		this.loadBgm('menu');
 
 		this.loadBgm('level_up_fanfare', 'bw/level_up_fanfare.mp3');
+		this.loadBgm('heal', 'bw/heal.mp3');
+		this.loadBgm('victory', 'bw/victory.mp3');
 		this.loadBgm('evolution', 'bw/evolution.mp3');
 		this.loadBgm('evolution_fanfare', 'bw/evolution_fanfare.mp3');
 		
@@ -300,6 +317,9 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	create() {
+		this.seed = this.game.config.seed[0];
+		console.log('Seed:', this.seed);
+
 		initGameSpeed.apply(this);
 
 		this.setupControls();
@@ -344,6 +364,15 @@ export default class BattleScene extends Phaser.Scene {
 		this.enemyModifierBar = new ModifierBar(this, true);
 		this.add.existing(this.enemyModifierBar);
 		uiContainer.add(this.enemyModifierBar);
+
+		this.pbTray = new PokeballTray(this, true);
+		this.pbTray.setup();
+
+		this.pbTrayEnemy = new PokeballTray(this, false);
+		this.pbTrayEnemy.setup();
+
+		this.fieldUI.add(this.pbTray);
+		this.fieldUI.add(this.pbTrayEnemy);
 
 		this.abilityBar = new AbilityBar(this);
 		this.abilityBar.setup();
@@ -541,38 +570,65 @@ export default class BattleScene extends Phaser.Scene {
 		let newBattleType: BattleType;
 		let newTrainer: Trainer;
 
-		if (battleType === undefined)
-			newBattleType = BattleType.WILD;
-		else
-			newBattleType = battleType;
+		let battleConfig: FixedBattleConfig = null;
 
-		if (newBattleType === BattleType.TRAINER) {
-			newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, TrainerType.SWIMMER, !!Utils.randInt(2));
-			this.field.add(newTrainer);
+		this.resetSeed(newWaveIndex);
+		
+		if (fixedBattles.hasOwnProperty(newWaveIndex)) {
+			battleConfig = fixedBattles[newWaveIndex];
+			newDouble = battleConfig.double;
+			newBattleType = battleConfig.battleType;
+			newTrainer = battleConfig.getTrainer(this);
+			if (newTrainer)
+				this.field.add(newTrainer);
+		} else {
+			if (battleType === undefined) {
+				const trainerChance = this.arena.getTrainerChance();
+				newBattleType = trainerChance && !Utils.randSeedInt(trainerChance) ? BattleType.TRAINER : BattleType.WILD;
+			} else
+				newBattleType = battleType;
+
+			if (newBattleType === BattleType.TRAINER) {
+				newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, this.arena.randomTrainerType(newWaveIndex), !!Utils.randSeedInt(2));
+				this.field.add(newTrainer);
+			}
 		}
+
+		const playerField = this.getPlayerField();
 
 		if (double === undefined && newWaveIndex > 1) {
 			if (newBattleType === BattleType.WILD) {
 				const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
 				this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
-				this.getPlayerField().forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
-				newDouble = !Utils.randInt(doubleChance.value);
+				playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
+				newDouble = !Utils.randSeedInt(doubleChance.value);
 			} else if (newBattleType === BattleType.TRAINER)
 				newDouble = newTrainer.config.isDouble;
-		} else
+		} else if (!battleConfig)
 			newDouble = !!double;
 
 		const lastBattle = this.currentBattle;
 
 		const maxExpLevel = this.getMaxExpLevel();
 
+		this.lastEnemyTrainer = lastBattle?.trainer ?? null;
+
 		this.currentBattle = new Battle(newWaveIndex, newBattleType, newTrainer, newDouble);
 		this.currentBattle.incrementTurn(this);
 
+		//this.pushPhase(new TestMessagePhase(this, trainerConfigs[TrainerType.RIVAL].encounterMessages[0]))
+
 		if (!waveIndex) {
+			const isNewBiome = !lastBattle || !(lastBattle.waveIndex % 10);
+			const showTrainer = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER;
+			const availablePartyMemberCount = this.getParty().filter(p => !p.isFainted()).length;
 			if (lastBattle) {
 				this.getEnemyField().forEach(enemyPokemon => enemyPokemon.destroy());
-				if (this.gameMode === GameMode.CLASSIC && lastBattle.waveIndex % 10)
+				if (showTrainer) {
+					playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
+					this.unshiftPhase(new ShowTrainerPhase(this));
+				}
+				if (this.gameMode === GameMode.CLASSIC && !isNewBiome)
 					this.pushPhase(new NextEncounterPhase(this));
 				else {
 					this.pushPhase(new SelectBiomePhase(this));
@@ -581,6 +637,11 @@ export default class BattleScene extends Phaser.Scene {
 					const newMaxExpLevel = this.getMaxExpLevel();
 					if (newMaxExpLevel > maxExpLevel)
 						this.pushPhase(new LevelCapPhase(this));
+				}
+				if (showTrainer) {
+					this.pushPhase(new SummonPhase(this, 0));
+					if (this.currentBattle.double && availablePartyMemberCount > 1)
+						this.pushPhase(new SummonPhase(this, 1));
 				}
 			} else {
 				if (!this.quickStart)
@@ -591,8 +652,7 @@ export default class BattleScene extends Phaser.Scene {
 				}
 			}
 
-			if ((lastBattle?.double || false) !== newDouble) {
-				const availablePartyMemberCount = this.getParty().filter(p => !p.isFainted()).length;
+			if (!showTrainer && (lastBattle?.double || false) !== newDouble) {
 				if (newDouble) {
 					if (availablePartyMemberCount > 1) {
 						this.pushPhase(new ToggleDoublePositionPhase(this, true));
@@ -605,7 +665,7 @@ export default class BattleScene extends Phaser.Scene {
 				}
 			}
 
-			if (lastBattle) {
+			if (lastBattle && this.currentBattle.battleType !== BattleType.TRAINER) {
 				this.pushPhase(new CheckSwitchPhase(this, 0, newDouble));
 				if (newDouble)
 					this.pushPhase(new CheckSwitchPhase(this, 1, newDouble));
@@ -630,6 +690,20 @@ export default class BattleScene extends Phaser.Scene {
 		}
 
 		return this.arena;
+	}
+
+	resetSeed(waveIndex?: integer): void {
+		this.waveSeed = Utils.shiftCharCodes(this.seed, waveIndex || this.currentBattle.waveIndex);
+		Phaser.Math.RND.sow([ this.waveSeed ]);
+	}
+
+	executeWithSeedOffset(func: Function, offset: integer): void {
+		if (!func)
+			return;
+		const state = Phaser.Math.RND.state();
+		Phaser.Math.RND.sow([ Utils.shiftCharCodes(this.seed, offset) ]);
+		func();
+		Phaser.Math.RND.state(state);
 	}
 
 	updateWaveCountText(): void {
@@ -659,7 +733,7 @@ export default class BattleScene extends Phaser.Scene {
 				s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
 			return s;
 		}))] : allSpecies.slice(0, -1);
-		return getPokemonSpecies(filteredSpecies[Utils.randInt(filteredSpecies.length)].getSpeciesForLevel(level, true));
+		return getPokemonSpecies(filteredSpecies[Utils.randSeedInt(filteredSpecies.length)].getSpeciesForLevel(level, true));
 	}
 
 	checkInput(): boolean {
@@ -721,11 +795,15 @@ export default class BattleScene extends Phaser.Scene {
 		return this.buttonKeys[button].filter(k => k.isDown).length >= 1;
 	}
 
+	isBgmPlaying(): boolean {
+		return this.bgm && this.bgm.isPlaying;
+	}
+
 	playBgm(bgmName?: string, fadeOut?: boolean): void {
 		if (bgmName === undefined)
 			bgmName = this.currentBattle.getBgmOverride() || this.arena.bgm;
 		if (this.bgm && bgmName === this.bgm.key) {
-			if (!this.bgm.isPlaying || this.bgm.pendingRemove) {
+			if (!this.bgm.isPlaying) {
 				this.bgm.play({
 					volume: 1
 				});
@@ -771,7 +849,7 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	pauseBgm(): void {
-		if (this.bgm)
+		if (this.bgm && this.bgm.isPlaying)
 			this.bgm.pause();
 	}
 

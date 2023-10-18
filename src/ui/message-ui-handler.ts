@@ -18,6 +18,14 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   }
 
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+    this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
+  }
+
+  showDialogue(text: string, name: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+    this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
+  }
+
+  private showTextInternal(text: string, delay: integer, callback: Function, callbackDelay: integer, prompt: boolean, promptDelay: integer) {
     if (delay === null || delay === undefined)
       delay = 20;
     let delayMap = new Map<integer, integer>();

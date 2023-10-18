@@ -41,17 +41,17 @@ export enum Biome {
 export function getBiomeName(biome: Biome) {
   switch (biome) {
     case Biome.GRASS:
-      return 'GRASSY FIELD';
+      return 'Grassy Field';
     case Biome.RUINS:
-      return 'ANCIENT RUINS';
+      return 'Ancient Ruins';
     case Biome.ABYSS:
-      return 'THE ABYSS';
+      return 'The Abyss';
     case Biome.SPACE:
-      return 'STRATOSPHERE';
+      return 'Stratosphere';
     case Biome.END:
-      return 'FINAL DESTINATION';
+      return 'Final Destination';
     default:
-      return Biome[biome].replace(/\_/g, ' ');
+      return Utils.toReadableString(Biome[biome]);
   }
 }
 

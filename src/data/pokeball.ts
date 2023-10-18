@@ -1,5 +1,4 @@
 import BattleScene from "../battle-scene";
-import { toPokemonUpperCase } from "../utils";
 
 export enum PokeballType {
   POKEBALL,
@@ -43,7 +42,7 @@ export function getPokeballName(type: PokeballType): string {
       ret = 'Luxury Ball';
       break;
   }
-  return toPokemonUpperCase(ret);
+  return ret;
 }
 
 export function getPokeballCatchMultiplier(type: PokeballType): number {

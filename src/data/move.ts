@@ -70,7 +70,7 @@ export default class Move {
 
   constructor(id: Moves, name: string, type: Type, category: MoveCategory, defaultMoveTarget: MoveTarget, power: integer, accuracy: integer, pp: integer, tm: integer, effect: string, chance: integer, priority: integer, generation: integer) {
     this.id = id;
-    this.name = name.toUpperCase();
+    this.name = name;
     this.type = type;
     this.category = category;
     this.moveTarget = defaultMoveTarget;
@@ -1926,7 +1926,7 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
 
     user.summonData.types = [ biomeType ];
 
-    user.scene.queueMessage(getPokemonMessage(user, ` transformed\ninto the ${Type[biomeType].toUpperCase()} type!`));
+    user.scene.queueMessage(getPokemonMessage(user, ` transformed\ninto the ${Utils.toReadableString(Type[biomeType])} type!`));
 
     return true;
   }
@@ -2237,7 +2237,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.SWORDS_DANCE, "Swords Dance", Type.NORMAL, -1, 20, 88, "Sharply raises user's Attack.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.ATK, 2, true),
     new AttackMove(Moves.CUT, "Cut", Type.NORMAL, MoveCategory.PHYSICAL, 50, 95, 30, -1, "", -1, 0, 1),
-    new AttackMove(Moves.GUST, "Gust", Type.FLYING, MoveCategory.SPECIAL, 40, 100, 35, -1, "Hits Pokémon using FLY/BOUNCE/SKY DROP with double power.", -1, 0, 1)
+    new AttackMove(Moves.GUST, "Gust", Type.FLYING, MoveCategory.SPECIAL, 40, 100, 35, -1, "Hits Pokémon using Fly/Bounce/Sky Drop with double power.", -1, 0, 1)
       .attr(HitsTagAttr, BattlerTagType.FLYING, true)
       .target(MoveTarget.OTHER),
     new AttackMove(Moves.WING_ATTACK, "Wing Attack", Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 35, -1, "", -1, 0, 1)
@@ -2649,7 +2649,7 @@ export function initMoves() {
       .target(MoveTarget.ENEMY_SIDE),
     new AttackMove(Moves.ZAP_CANNON, "Zap Cannon", Type.ELECTRIC, MoveCategory.SPECIAL, 120, 50, 5, -1, "Paralyzes opponent.", 100, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
-    new StatusMove(Moves.FORESIGHT, "Foresight (N)", Type.NORMAL, -1, 40, -1, "Resets opponent's Evasiveness, and allows Normal- and Fighting-type attacks to hit Ghosts.", -1, 0, 2), // TODO
+    new StatusMove(Moves.FORESIGHT, "Foresight (N)", Type.NORMAL, -1, 40, -1, "Resets opponent's Evasiveness, and allows Normal-type and Fighting-type attacks to hit Ghosts.", -1, 0, 2), // TODO
     new StatusMove(Moves.DESTINY_BOND, "Destiny Bond (N)", Type.GHOST, -1, 5, -1, "If the user faints, the opponent also faints.", -1, 0, 2)
       .ignoresProtect(),
     new StatusMove(Moves.PERISH_SONG, "Perish Song (N)", Type.NORMAL, -1, 5, -1, "Any Pokémon in play when this attack is used faints in 3 turns.", -1, 0, 2)
@@ -2744,7 +2744,7 @@ export function initMoves() {
     new AttackMove(Moves.HIDDEN_POWER, "Hidden Power (N)", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, "Type and power depends on user's IVs.", -1, 0, 2),
     new AttackMove(Moves.CROSS_CHOP, "Cross Chop", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 80, 5, -1, "High critical hit ratio.", -1, 0, 2)
       .attr(HighCritAttr),
-    new AttackMove(Moves.TWISTER, "Twister", Type.DRAGON, MoveCategory.SPECIAL, 40, 100, 20, -1, "May cause flinching. Hits Pokémon using FLY/BOUNCE with double power.", 20, 0, 2)
+    new AttackMove(Moves.TWISTER, "Twister", Type.DRAGON, MoveCategory.SPECIAL, 40, 100, 20, -1, "May cause flinching. Hits Pokémon using Fly/Bounce/Sky Drop with double power.", 20, 0, 2)
       .attr(HitsTagAttr, BattlerTagType.FLYING, true)
       .attr(FlinchAttr)
       .target(MoveTarget.ALL_NEAR_ENEMIES), // TODO
@@ -2989,7 +2989,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.ROOST, "Roost", Type.FLYING, -1, 5, -1, "User recovers half of its max HP and loses the FLYING type temporarily.", -1, 0, 4)
       .attr(HealAttr)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, true, 1),
-    new SelfStatusMove(Moves.GRAVITY, "Gravity", Type.PSYCHIC, -1, 5, -1, "Prevents moves like FLY and BOUNCE and the Ability LEVITATE for 5 turns.", -1, 0, 4)
+    new SelfStatusMove(Moves.GRAVITY, "Gravity", Type.PSYCHIC, -1, 5, -1, "Prevents moves like Fly and Bounce and the Ability Levitate for 5 turns.", -1, 0, 4)
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.MIRACLE_EYE, "Miracle Eye (N)", Type.PSYCHIC, -1, 40, -1, "Resets opponent's Evasiveness, removes DARK's PSYCHIC immunity.", -1, 0, 4),
@@ -3005,7 +3005,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.getHpRatio() < 0.5 ? 2 : 1),
     new AttackMove(Moves.NATURAL_GIFT, "Natural Gift (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, "Power and type depend on the user's held berry.", -1, 0, 4)
       .makesContact(false),
-    new AttackMove(Moves.FEINT, "Feint", Type.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, "Only hits if opponent uses PROTECT or DETECT in the same turn.", -1, 2, 4)
+    new AttackMove(Moves.FEINT, "Feint", Type.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, "Only hits if opponent uses Protect or Detect in the same turn.", -1, 2, 4)
       .condition((user: Pokemon, target: Pokemon, move: Move) => !!target.getTag(BattlerTagType.PROTECTED))
       .makesContact(false)
       .ignoresProtect(),
@@ -3050,7 +3050,7 @@ export function initMoves() {
     new AttackMove(Moves.PUNISHMENT, "Punishment (N)", Type.DARK, MoveCategory.PHYSICAL, -1, 100, 5, -1, "Power increases when opponent's stats have been raised.", -1, 0, 4),
     new AttackMove(Moves.LAST_RESORT, "Last Resort", Type.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, -1, "Can only be used after all other moves are used.", -1, 0, 4)
       .condition((user: Pokemon, target: Pokemon, move: Move) => !user.getMoveset().filter(m => m.moveId !== move.id && m.getPpRatio() > 0).length),
-    new StatusMove(Moves.WORRY_SEED, "Worry Seed (N)", Type.GRASS, 100, 10, -1, "Changes the opponent's Ability to INSOMNIA.", -1, 0, 4),
+    new StatusMove(Moves.WORRY_SEED, "Worry Seed (N)", Type.GRASS, 100, 10, -1, "Changes the opponent's Ability to Insomnia.", -1, 0, 4),
     new AttackMove(Moves.SUCKER_PUNCH, "Sucker Punch (N)", Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, -1, "User attacks first, but only works if opponent is readying an attack.", -1, 0, 4),
     new StatusMove(Moves.TOXIC_SPIKES, "Toxic Spikes", Type.POISON, -1, 20, 91, "Poisons opponents when they switch into battle.", -1, 0, 4)
       .attr(AddArenaTrapTagAttr, ArenaTagType.TOXIC_SPIKES)

@@ -1,6 +1,5 @@
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import BattleScene from "./battle-scene";
-import { Biome, BiomePoolTier, BiomeTierPokemonPools, biomePokemonPools } from "./data/biome";
+import { Biome, BiomePoolTier, BiomeTierPokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "./data/biome";
 import * as Utils from "./utils";
 import PokemonSpecies, { getPokemonSpecies } from "./data/pokemon-species";
 import { Species } from "./data/species";
@@ -11,6 +10,7 @@ import { Type } from "./data/type";
 import Move, { Moves } from "./data/move";
 import { ArenaTag, ArenaTagType, getArenaTag } from "./data/arena-tag";
 import { GameMode } from "./game-mode";
+import { TrainerType } from "./data/trainer-type";
 
 export class Arena {
   public scene: BattleScene;
@@ -20,6 +20,7 @@ export class Arena {
   public bgm: string;
 
   private pokemonPool: BiomeTierPokemonPools;
+  private trainerPool: BiomeTierTrainerPools;
 
   constructor(scene: BattleScene, biome: Biome, bgm: string) {
     this.scene = scene;
@@ -27,12 +28,13 @@ export class Arena {
     this.tags = [];
     this.bgm = bgm;
     this.pokemonPool = biomePokemonPools[biome];
+    this.trainerPool = biomeTrainerPools[biome];
   }
 
   randomSpecies(waveIndex: integer, level: integer, attempt?: integer): PokemonSpecies {
     const isBoss = waveIndex % 10 === 0 && !!this.pokemonPool[BiomePoolTier.BOSS].length
       && (this.biomeType !== Biome.END || this.scene.gameMode !== GameMode.ENDLESS || waveIndex % 250 === 0);
-    const tierValue = Utils.randInt(!isBoss ? 512 : 64);
+    const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
     let tier = !isBoss
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
       : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
@@ -47,7 +49,7 @@ export class Arena {
     if (!tierPool.length)
       ret = this.scene.randomSpecies(waveIndex, level);
     else {
-      const entry = tierPool[Utils.randInt(tierPool.length)];
+      const entry = tierPool[Utils.randSeedInt(tierPool.length)];
       let species: Species;
       if (typeof entry === 'number')
         species = entry as Species;
@@ -58,7 +60,7 @@ export class Arena {
           if (level >= levelThreshold) {
             const speciesIds = entry[levelThreshold];
             if (speciesIds.length > 1)
-              species = speciesIds[Utils.randInt(speciesIds.length)];
+              species = speciesIds[Utils.randSeedInt(speciesIds.length)];
             else
               species = speciesIds[0];
             break;
@@ -99,9 +101,25 @@ export class Arena {
     return ret;
   }
 
+  randomTrainerType(waveIndex: integer): TrainerType {
+    const isBoss = waveIndex % 10 === 0 && !!this.trainerPool[BiomePoolTier.BOSS].length
+      && (this.biomeType !== Biome.END || this.scene.gameMode !== GameMode.ENDLESS || waveIndex % 250 === 0);
+    const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
+    let tier = !isBoss
+      ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
+      : tierValue >= 20 ? BiomePoolTier.BOSS : tierValue >= 6 ? BiomePoolTier.BOSS_RARE : tierValue >= 1 ? BiomePoolTier.BOSS_SUPER_RARE : BiomePoolTier.BOSS_ULTRA_RARE;
+    console.log(BiomePoolTier[tier]);
+    while (tier && !this.trainerPool[tier].length) {
+      console.log(`Downgraded trainer rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
+      tier--;
+    }
+    const tierPool = this.trainerPool[tier] || [];
+    return !tierPool.length ? TrainerType.BREEDER : tierPool[Utils.randSeedInt(tierPool.length)];
+  }
+
   getFormIndex(species: PokemonSpecies) {
     if (!species.canChangeForm && species.forms?.length)
-      return Utils.randInt(species.forms.length); // TODO: Base on biome
+      return Utils.randSeedInt(species.forms.length); // TODO: Base on biome
     return 0;
   }
 
@@ -182,6 +200,45 @@ export class Arena {
     return this.weather.getAttackTypeMultiplier(attackType);
   }
 
+  getTrainerChance(): integer {
+    switch (this.biomeType) {
+      case Biome.CITY:
+      case Biome.BEACH:
+      case Biome.DOJO:
+      case Biome.CONSTRUCTION_SITE:
+        return 4;
+      case Biome.PLAINS:
+      case Biome.GRASS:
+      case Biome.LAKE:
+      case Biome.CAVE:
+        return 6;
+      case Biome.TALL_GRASS:
+      case Biome.FOREST:
+      case Biome.SEA:
+      case Biome.SWAMP:
+      case Biome.MOUNTAIN:
+      case Biome.BADLANDS:
+      case Biome.DESERT:
+      case Biome.MEADOW:
+      case Biome.POWER_PLANT:
+      case Biome.GRAVEYARD:
+      case Biome.FACTORY:
+        return 8;
+      case Biome.ICE_CAVE:
+      case Biome.VOLCANO:
+      case Biome.RUINS:
+      case Biome.WASTELAND:
+      case Biome.JUNGLE:
+        return 12;
+      case Biome.SEABED:
+      case Biome.ABYSS:
+      case Biome.SPACE:
+        return 16;
+      default:
+        return 0;
+    }
+  }
+
   isDaytime(): boolean {
     switch (this.biomeType) {
       case Biome.TOWN:
@@ -195,6 +252,7 @@ export class Arena {
       case Biome.DESERT:
       case Biome.MEADOW:
       case Biome.DOJO:
+      case Biome.CONSTRUCTION_SITE:
         return true;
     }
   }
@@ -349,12 +407,12 @@ export class ArenaBase extends Phaser.GameObjects.Container {
 
     this.player = player;
 
-    this.base = scene.add.sprite(0, 0, `plains_a`);
+    this.base = scene.add.sprite(0, 0, 'plains_a');
     this.base.setOrigin(0, 0);
 
     this.props = !player ?
       new Array(3).fill(null).map(() => {
-        const ret = scene.add.sprite(0, 0, `plains_b`);
+        const ret = scene.add.sprite(0, 0, 'plains_b');
         ret.setOrigin(0, 0);
         ret.setVisible(false);
         return ret;
@@ -372,14 +430,16 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     this.add(this.base);
 
     if (!this.player) {
-      this.propValue = propValue === undefined
-        ? hasProps ? Utils.randInt(8) : 0
-        : propValue;
-      this.props.forEach((prop, p) => {
-        prop.setTexture(`${biomeKey}_b${hasProps ? `_${p + 1}` : ''}`);
-        prop.setVisible(hasProps && !!(this.propValue & (1 << p)));
-        this.add(prop);
-      });
+      (this.scene as BattleScene).executeWithSeedOffset(() => {
+        this.propValue = propValue === undefined
+          ? hasProps ? Utils.randSeedInt(8) : 0
+          : propValue;
+        this.props.forEach((prop, p) => {
+          prop.setTexture(`${biomeKey}_b${hasProps ? `_${p + 1}` : ''}`);
+          prop.setVisible(hasProps && !!(this.propValue & (1 << p)));
+          this.add(prop);
+        });
+      }, (this.scene as BattleScene).currentBattle?.waveIndex || 0);
     }
   }
 }

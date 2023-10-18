@@ -73,7 +73,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!species.isObtainable() && this.isPlayer())
       throw `Cannot create a player Pokemon for species '${species.name}'`;
 
-    this.name = Utils.toPokemonUpperCase(species.name);
+    this.name = species.name;
     this.species = species;
     this.battleInfo = this.isPlayer()
       ? new PlayerBattleInfo(scene)
@@ -709,6 +709,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (isCritical)
               this.scene.queueMessage('A critical hit!');
             this.scene.setPhaseQueueSplice();
+            damage = Math.min(damage, this.hp);
             this.damage(damage);
             source.turnData.damageDealt += damage;
             this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage, sourceId: source.id });
@@ -963,7 +964,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   resetStatus(): void {
-    const lastStatus = this.status.effect;
+    const lastStatus = this.status?.effect;
     this.status = undefined;
     if (lastStatus === StatusEffect.SLEEP) {
       this.setFrameRate(12);
@@ -1122,7 +1123,7 @@ export class PlayerPokemon extends Pokemon {
     return new Promise(resolve => {
       this.handleSpecialEvolutions(evolution);
       this.species = getPokemonSpecies(evolution.speciesId);
-      this.name = this.species.name.toUpperCase();
+      this.name = this.species.name;
       const abilityCount = this.species.getAbilityCount();
       if (this.abilityIndex >= abilityCount) // Shouldn't happen
         this.abilityIndex = abilityCount - 1;

@@ -94,7 +94,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonGenderText.setOrigin(0, 0);
       this.starterSelectContainer.add(this.pokemonGenderText);
 
-      this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 126, 'ABILITY:', TextStyle.SUMMARY, { fontSize: '64px' });
+      this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 126, 'Ability:', TextStyle.SUMMARY, { fontSize: '64px' });
       this.pokemonAbilityLabelText.setOrigin(0, 0);
       this.pokemonAbilityLabelText.setVisible(false);
       this.starterSelectContainer.add(this.pokemonAbilityLabelText);
@@ -276,7 +276,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   this.popStarter();
                   this.clearText();
                 };
-                ui.showText('Begin with these POKéMON?', null, () => {
+                ui.showText('Begin with these Pokémon?', null, () => {
                   ui.setModeWithoutClear(Mode.CONFIRM, () => {
                     const startRun = (gameMode: GameMode) => {
                       this.scene.gameMode = gameMode;
@@ -467,7 +467,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       if (species && this.speciesStarterDexEntry) {
         this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 3));
-        this.pokemonNameText.setText(species.name.toUpperCase());
+        this.pokemonNameText.setText(species.name);
         this.pokemonAbilityLabelText.setVisible(true);
         
         this.setSpeciesDetails(species, !!this.speciesStarterDexEntry?.shiny, this.speciesStarterDexEntry?.formIndex, !!this.speciesStarterDexEntry?.female, this.speciesStarterDexEntry?.abilityIndex);

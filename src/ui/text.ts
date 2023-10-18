@@ -26,7 +26,6 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
     case TextStyle.SUMMARY:
     case TextStyle.SUMMARY_RED:
     case TextStyle.SUMMARY_GOLD:
-      styleOptions.padding = undefined;
     case TextStyle.WINDOW:
     case TextStyle.MESSAGE:
       styleOptions.fontSize = '96px';

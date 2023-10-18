@@ -12,19 +12,19 @@ export enum BattleStat {
 export function getBattleStatName(stat: BattleStat) {
   switch (stat) {
     case BattleStat.ATK:
-      return 'ATTACK';
+      return 'Attack';
     case BattleStat.DEF:
-      return 'DEFENSE';
+      return 'Defense';
     case BattleStat.SPATK:
-      return 'SP. ATK';
+      return 'Sp. Atk';
     case BattleStat.SPDEF:
-      return 'SP. DEF';
+      return 'Sp. Def';
     case BattleStat.SPD:
-      return 'SPEED';
+      return 'Speed';
     case BattleStat.ACC:
-      return 'accuracy';
+      return 'Accuracy';
     case BattleStat.EVA:
-      return 'evasiveness';
+      return 'Evasiveness';
     default:
       return '???';
   }

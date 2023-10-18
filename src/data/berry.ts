@@ -1,10 +1,11 @@
 import { PokemonHealPhase, StatChangePhase } from "../battle-phases";
 import { getPokemonMessage } from "../messages";
-import Pokemon, { HitResult, MoveResult } from "../pokemon";
+import Pokemon, { HitResult } from "../pokemon";
 import { getBattleStatName } from "./battle-stat";
 import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./battler-tag";
 import { getStatusEffectHealText } from "./status-effect";
+import * as Utils from "../utils";
 
 export enum BerryType {
   SITRUS,
@@ -20,7 +21,7 @@ export enum BerryType {
 }
 
 export function getBerryName(berryType: BerryType) {
-  return `${BerryType[berryType]} BERRY`;
+  return `${Utils.toReadableString(BerryType[berryType])} Berry`;
 }
 
 export function getBerryEffectDescription(berryType: BerryType) {

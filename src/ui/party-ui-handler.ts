@@ -249,7 +249,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               });
             });
           } else
-            this.showText('You can\'t release a POKéMON that\'s in battle!', null, () => this.showText(null, 0), null, true);
+            this.showText('You can\'t release a Pokémon that\'s in battle!', null, () => this.showText(null, 0), null, true);
         } else if (option === PartyOption.CANCEL)
           this.processInput(Button.CANCEL);
       } else if (button === Button.CANCEL) {
@@ -473,7 +473,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             optionName = pokemon.moveset[option - PartyOption.MOVE_1].getName();
             break;
           default:
-            optionName = PartyOption[option].replace(/\_/g, ' ');
+            optionName = Utils.toReadableString(PartyOption[option]);
             break;
         }
       } else {
@@ -694,13 +694,13 @@ class PartySlot extends Phaser.GameObjects.Container {
       let slotTmText: string;
       switch (true) {
         case (this.pokemon.compatibleTms.indexOf(tmMoveId) === -1):
-          slotTmText = 'NOT ABLE';
+          slotTmText = 'Not Able';
           break;
         case (this.pokemon.getMoveset().filter(m => m?.moveId === tmMoveId).length > 0):
-          slotTmText = 'LEARNED';
+          slotTmText = 'Learned';
           break;
         default:
-          slotTmText = 'ABLE';
+          slotTmText = 'Able';
           break;
       }
 
@@ -770,7 +770,7 @@ class PartyCancelButton extends Phaser.GameObjects.Container {
 
     this.partyCancelPb = partyCancelPb;
 
-    const partyCancelText = addTextObject(this.scene, -7, -6, 'CANCEL', TextStyle.PARTY);
+    const partyCancelText = addTextObject(this.scene, -7, -6, 'Cancel', TextStyle.PARTY);
     this.add(partyCancelText);
   }
 

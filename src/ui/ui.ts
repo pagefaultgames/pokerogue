@@ -104,6 +104,14 @@ export default class UI extends Phaser.GameObjects.Container {
       this.getMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
+  showDialogue(text: string, name: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void {
+    const handler = this.getHandler();
+    if (handler instanceof MessageUiHandler)
+      (handler as MessageUiHandler).showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
+    else
+      this.getMessageHandler().showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
+  }
+
   clearText(): void {
     const handler = this.getHandler();
     if (handler instanceof MessageUiHandler)

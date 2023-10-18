@@ -1,7 +1,6 @@
 import { CommandPhase } from "../battle-phases";
 import BattleScene, { Button } from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
-import { toPokemonUpperCase } from "../utils";
 import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
 import UI, { Mode } from "./ui";
 import UiHandler from "./uiHandler";
@@ -23,7 +22,7 @@ export default class CommandUiHandler extends UiHandler {
 
   setup() {
     const ui = this.getUi();
-    const commands = [ 'Fight', 'Ball', 'Pokémon', 'Run' ].map(s => toPokemonUpperCase(s));
+    const commands = [ 'Fight', 'Ball', 'Pokémon', 'Run' ];
 
     this.commandsContainer = this.scene.add.container(216, -38.7);
     this.commandsContainer.setVisible(false);

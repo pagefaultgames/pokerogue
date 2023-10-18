@@ -316,7 +316,7 @@ export function getRandomWeatherType(biome: Biome): WeatherType {
     let totalWeight = 0;
     weatherPool.forEach(w => totalWeight += w.weight);
 
-    const rand = Utils.randInt(totalWeight);
+    const rand = Utils.randSeedInt(totalWeight);
     let w = 0;
     for (let weather of weatherPool) {
       w += weather.weight;

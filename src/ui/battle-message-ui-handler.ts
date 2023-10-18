@@ -9,14 +9,16 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsContainer: Phaser.GameObjects.Container;
   private levelUpStatsIncrContent: Phaser.GameObjects.Text;
   private levelUpStatsValuesContent: Phaser.GameObjects.Text;
+  private nameText: Phaser.GameObjects.Text;
 
   public bg: Phaser.GameObjects.Image;
+  public nameBoxContainer: Phaser.GameObjects.Container;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.MESSAGE);
   }
 
-  setup() {
+  setup(): void {
     const ui = this.getUi();
 
     this.textTimer = null;
@@ -40,6 +42,18 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     messageContainer.add(message);
 
     this.message = message;
+
+    this.nameBoxContainer = this.scene.add.container(0, -16);
+    this.nameBoxContainer.setVisible(false);
+
+    const nameBox = this.scene.add.nineslice(0, 0, 'namebox', null, 72, 16, 8, 8, 5, 5);
+    nameBox.setOrigin(0, 0);
+
+    this.nameText = addTextObject(this.scene, 8, 0, 'Rival', TextStyle.MESSAGE, { maxLines: 1 });
+
+    this.nameBoxContainer.add(nameBox);
+    this.nameBoxContainer.add(this.nameText);
+    messageContainer.add(this.nameBoxContainer);
 
     const prompt = this.scene.add.sprite(0, 0, 'prompt');
     prompt.setVisible(false);
@@ -81,14 +95,14 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.levelUpStatsValuesContent = levelUpStatsValuesContent;
   }
 
-  show(args: any[]) {
+  show(args: any[]): void {
     super.show(args);
 
     this.bg.setTexture('bg');
     this.message.setWordWrapWidth(1780);
   }
 
-  processInput(button: Button) {
+  processInput(button: Button): void {
     const ui = this.getUi();
     if (this.awaitingActionInput) {
       if (button === Button.CANCEL || button === Button.ACTION) {
@@ -102,11 +116,21 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     }
   }
 
-  clear() {
+  clear(): void {
     super.clear();
   }
 
-  promptLevelUpStats(partyMemberIndex: integer, prevStats: integer[], showTotals: boolean, callback?: Function) {
+  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+    this.hideNameText();
+    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+  }
+
+  showDialogue(text: string, name: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
+    this.showNameText(name);
+    super.showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
+  }
+
+  promptLevelUpStats(partyMemberIndex: integer, prevStats: integer[], showTotals: boolean, callback?: Function): void {
     const newStats = (this.scene as BattleScene).getParty()[partyMemberIndex].stats;
     let levelUpStatsValuesText = '';
     const stats = Utils.getEnumValues(Stat);
@@ -125,5 +149,14 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
           callback();
       }
     };
+  }
+
+  showNameText(name: string): void {
+    this.nameBoxContainer.setVisible(true);
+    this.nameText.setText(name);
+  }
+
+  hideNameText(): void {
+    this.nameBoxContainer.setVisible(false);
   }
 }

@@ -24,6 +24,7 @@ interface SystemSaveData {
 }
 
 interface SessionSaveData {
+  seed: string;
   gameMode: GameMode;
   party: PokemonData[];
   enemyParty: PokemonData[];
@@ -134,6 +135,7 @@ export class GameData {
 
   saveSession(scene: BattleScene): boolean {
     const sessionData = {
+      seed: scene.seed,
       gameMode: scene.gameMode,
       party: scene.getParty().map(p => new PokemonData(p)),
       enemyParty: scene.getEnemyParty().map(p => new PokemonData(p)),
@@ -191,6 +193,9 @@ export class GameData {
 
         console.debug(sessionData);
 
+        scene.seed = sessionData.seed || this.scene.game.config.seed[0];
+        scene.resetSeed();
+
         scene.gameMode = sessionData.gameMode || GameMode.CLASSIC;
 
         const loadPokemonAssets: Promise<void>[] = [];
@@ -213,10 +218,10 @@ export class GameData {
         if (sessionData.enemyField)
           sessionData.enemyParty = sessionData.enemyField;
 
-        scene.newArena(sessionData.arena.biome, true);
-
         const battleType = sessionData.battleType || 0;
         const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfigs[sessionData.trainer.trainerType].isDouble : sessionData.enemyParty.length > 1);
+
+        scene.newArena(sessionData.arena.biome, true);
 
         sessionData.enemyParty.forEach((enemyData, e) => {
           const enemyPokemon = enemyData.toPokemon(scene) as EnemyPokemon;
@@ -334,7 +339,7 @@ export class GameData {
 
         if (newCatch && !hasPrevolution) {
           this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
-          this.scene.ui.showText(`${species.name.toUpperCase()} has been\nadded as a starter!`, null, () => resolve(), null, true);
+          this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => resolve(), null, true);
           return;
         }
       }

@@ -902,7 +902,7 @@ export function initSpecies() {
       new PokemonForm("Origin Forme", "origin", Type.GHOST, Type.DRAGON, 6.9, 650, Abilities.LEVITATE, Abilities.NONE, Abilities.NONE, 680, 150, 120, 100, 120, 100, 90, 3, 0, 306, GrowthRate.SLOW, "Undiscovered", null, null, 120, false)
     ),
     new PokemonSpecies(Species.CRESSELIA, "Cresselia", 4, true, false, false, "Lunar Pokémon", Type.PSYCHIC, null, 1.5, 85.6, Abilities.LEVITATE, Abilities.NONE, Abilities.NONE, 600, 120, 70, 120, 75, 130, 85, 3, 100, 270, GrowthRate.SLOW, "Undiscovered", null, 0, 120, false),
-    new PokemonSpecies(Species.PHIONE, "Phione", 4, false, false, true, "Sea Drifter Pokémon", Type.WATER, null, 0.4, 3.1, Abilities.HYDRATION, Abilities.NONE, Abilities.NONE, 480, 80, 80, 80, 80, 80, 80, 30, 70, 216, GrowthRate.SLOW, "Fairy", "Water 1", null, 40, false),
+    new PokemonSpecies(Species.PHIONE, "Phione", 4, false, false, false, "Sea Drifter Pokémon", Type.WATER, null, 0.4, 3.1, Abilities.HYDRATION, Abilities.NONE, Abilities.NONE, 480, 80, 80, 80, 80, 80, 80, 30, 70, 216, GrowthRate.SLOW, "Fairy", "Water 1", null, 40, false),
     new PokemonSpecies(Species.MANAPHY, "Manaphy", 4, false, false, true, "Seafaring Pokémon", Type.WATER, null, 0.3, 1.4, Abilities.HYDRATION, Abilities.NONE, Abilities.NONE, 600, 100, 100, 100, 100, 100, 100, 3, 70, 270, GrowthRate.SLOW, "Fairy", "Water 1", null, 10, false),
     new PokemonSpecies(Species.DARKRAI, "Darkrai", 4, false, false, true, "Pitch-Black Pokémon", Type.DARK, null, 1.5, 50.5, Abilities.BAD_DREAMS, Abilities.NONE, Abilities.NONE, 600, 70, 90, 90, 135, 90, 125, 3, 0, 270, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
     new PokemonSpecies(Species.SHAYMIN, "Shaymin", 4, false, false, true, "Gratitude Pokémon", Type.GRASS, null, 0.2, 2.1, Abilities.NATURAL_CURE, Abilities.NONE, Abilities.NONE, 600, 100, 100, 100, 100, 100, 100, 45, 100, 270, GrowthRate.MEDIUM_SLOW, "Undiscovered", null, null, 120, false, true,
@@ -1117,5 +1117,12 @@ export function initSpecies() {
         return s;
       }))].map(s => s.name));
     }
+
+    const speciesFilter = (species: PokemonSpecies) => !species.legendary && !species.pseudoLegendary && !species.mythical && species.baseTotal >= 540;
+    console.log(!speciesFilter ? 'all' : [...new Set(allSpecies.slice(0, -1).filter(speciesFilter).map(s => {
+      while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
+        s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
+      return s;
+    }))].map(s => s.name));
   }, 1000);
 }*/

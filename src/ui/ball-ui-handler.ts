@@ -32,7 +32,7 @@ export default class BallUiHandler extends UiHandler {
 
     for (let pb = 0; pb < Object.keys(this.scene.pokeballCounts).length; pb++)
       optionsTextContent += `${getPokeballName(pb)}\n`;
-    optionsTextContent += 'CANCEL';
+    optionsTextContent += 'Cancel';
     const optionsText = addTextObject(this.scene, 0, 0, optionsTextContent, TextStyle.WINDOW, { align: 'right', maxLines: 6 });
     optionsText.setOrigin(0, 0);
     optionsText.setPositionRelative(this.pokeballSelectBg, 42, 9);
