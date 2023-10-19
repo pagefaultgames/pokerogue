@@ -124,6 +124,7 @@ export abstract class PokemonSpeciesForm {
       case Species.MELOETTA:
         ret += this.getFormSpriteKey(formIndex).replace(/-/g, '');
         break;
+      case Species.UNFEZANT:
       case Species.FRILLISH:
       case Species.JELLICENT:
         ret += !female ? 'm' : 'f';

@@ -973,7 +973,7 @@ export class CommandPhase extends FieldPhase {
             this.scene.ui.setMode(Mode.MESSAGE);
             this.scene.ui.showText(`${move.getName()} is disabled!`, null, () => {
               this.scene.ui.clearText();
-              this.scene.ui.setMode(Mode.FIGHT);
+              this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
             }, null, true);
           }
         }
@@ -1042,6 +1042,21 @@ export class CommandPhase extends FieldPhase {
       this.end();
 
     return success;
+  }
+
+  cancel() {
+    if (this.fieldIndex) {
+      const lastCommand = this.scene.currentBattle.turnCommands[0];
+      if (lastCommand.command === Command.BALL)
+        this.scene.currentBattle.turnPokeballCounts[lastCommand.cursor]++;
+      this.scene.unshiftPhase(new CommandPhase(this.scene, 0));
+      this.scene.unshiftPhase(new CommandPhase(this.scene, 1));
+      this.end();
+    }
+  }
+
+  getFieldIndex(): integer {
+    return this.fieldIndex;
   }
 
   getPokemon(): PlayerPokemon {

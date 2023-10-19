@@ -2,7 +2,7 @@ import { CommandPhase } from "../battle-phases";
 import BattleScene, { Button } from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
-import UI, { Mode } from "./ui";
+import { Mode } from "./ui";
 import UiHandler from "./uiHandler";
 
 export enum Command {
@@ -56,7 +56,7 @@ export default class CommandUiHandler extends UiHandler {
       if (button === Button.ACTION) {
         switch (this.cursor) {
           case 0:
-            ui.setMode(Mode.FIGHT);
+            ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
             success = true;
             break;
           case 1:
@@ -72,7 +72,8 @@ export default class CommandUiHandler extends UiHandler {
             success = true;
             break;
         }
-      }
+      } else
+        (this.scene.getCurrentPhase() as CommandPhase).cancel();
     } else {
       switch (button) {
         case Button.UP:
