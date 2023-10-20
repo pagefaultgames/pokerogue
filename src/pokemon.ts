@@ -435,7 +435,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getAbility(): Ability {
     if (ABILITY_OVERRIDE && this.isPlayer())
       return abilities[ABILITY_OVERRIDE];
-    return abilities[this.species.getAbility(this.abilityIndex)];
+    return abilities[this.getSpeciesForm().getAbility(this.abilityIndex)];
   }
 
   canApplyAbility(): boolean {
@@ -1124,7 +1124,7 @@ export class PlayerPokemon extends Pokemon {
       this.handleSpecialEvolutions(evolution);
       this.species = getPokemonSpecies(evolution.speciesId);
       this.name = this.species.name;
-      const abilityCount = this.species.getAbilityCount();
+      const abilityCount = this.getSpeciesForm().getAbilityCount();
       if (this.abilityIndex >= abilityCount) // Shouldn't happen
         this.abilityIndex = abilityCount - 1;
       this.getSpeciesForm().generateIconAnim(this.scene, this.gender === Gender.FEMALE, this.formIndex);

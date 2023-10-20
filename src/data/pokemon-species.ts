@@ -139,9 +139,17 @@ export abstract class PokemonSpeciesForm {
     return `pkmn_icon__${this.getIconId(female, formIndex)}`;
   }
 
+  getCryKey(formIndex?: integer): string {
+    let ret = this.speciesId.toString();
+    const forms = getPokemonSpecies(this.speciesId).forms;
+    if (forms.length && forms[formIndex || 0].formKey === 'mega')
+      ret += '-mega';
+    return ret;
+  }
+
   loadAssets(scene: BattleScene, female: boolean, formIndex?: integer, shiny?: boolean, startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
-      scene.load.audio(this.speciesId.toString(), `audio/cry/${this.speciesId}.mp3`);
+      scene.load.audio(this.speciesId.toString(), `audio/cry/${this.getCryKey(formIndex)}.mp3`);
       scene.loadAtlas(this.getSpriteKey(female, formIndex, shiny), 'pokemon', this.getSpriteAtlasPath(female, formIndex, shiny));
       scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
@@ -769,7 +777,10 @@ export function initSpecies() {
     new PokemonSpecies(Species.LATIOS, "Latios", 3, true, false, false, "Eon Pokémon", Type.DRAGON, Type.PSYCHIC, 2, 60, Abilities.LEVITATE, Abilities.NONE, Abilities.NONE, 600, 80, 90, 80, 130, 110, 110, 3, 90, 270, GrowthRate.SLOW, "Undiscovered", null, 100, 120, false),
     new PokemonSpecies(Species.KYOGRE, "Kyogre", 3, false, true, false, "Sea Basin Pokémon", Type.WATER, null, 4.5, 352, Abilities.DRIZZLE, Abilities.NONE, Abilities.NONE, 670, 100, 100, 90, 150, 140, 90, 3, 0, 302, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
     new PokemonSpecies(Species.GROUDON, "Groudon", 3, false, true, false, "Continent Pokémon", Type.GROUND, null, 3.5, 950, Abilities.DROUGHT, Abilities.NONE, Abilities.NONE, 670, 100, 150, 140, 100, 90, 90, 3, 0, 302, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
-    new PokemonSpecies(Species.RAYQUAZA, "Rayquaza", 3, false, true, false, "Sky High Pokémon", Type.DRAGON, Type.FLYING, 7, 206.5, Abilities.AIR_LOCK, Abilities.NONE, Abilities.NONE, 680, 105, 150, 90, 150, 90, 95, 45, 0, 306, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
+    new PokemonSpecies(Species.RAYQUAZA, "Rayquaza", 3, false, true, false, "Sky High Pokémon", Type.DRAGON, Type.FLYING, 7, 206.5, Abilities.AIR_LOCK, Abilities.NONE, Abilities.NONE, 680, 105, 150, 90, 150, 90, 95, 45, 0, 306, GrowthRate.SLOW, "Undiscovered", null, null, 120, false, false,
+      new PokemonForm("Normal", "", Type.DRAGON, Type.FLYING, 7, 206.5, Abilities.AIR_LOCK, Abilities.NONE, Abilities.NONE, 680, 105, 150, 90, 150, 90, 95, 45, 0, 306, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
+      new PokemonForm("Mega", "mega", Type.DRAGON, Type.FLYING, 7, 206.5, Abilities.DELTA_STREAM, Abilities.NONE, Abilities.NONE, 780, 105, 180, 100, 180, 100, 115, 45, 0, 306, GrowthRate.SLOW, "Undiscovered", null, null, 120, false)
+    ),
     new PokemonSpecies(Species.JIRACHI, "Jirachi", 3, false, false, true, "Wish Pokémon", Type.STEEL, Type.PSYCHIC, 0.3, 1.1, Abilities.SERENE_GRACE, Abilities.NONE, Abilities.NONE, 600, 100, 100, 100, 100, 100, 100, 3, 100, 270, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
     new PokemonSpecies(Species.DEOXYS, "Deoxys", 3, false, false, true, "DNA Pokémon", Type.PSYCHIC, null, 1.7, 60.8, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 600, 50, 150, 50, 150, 50, 150, 3, 0, 270, GrowthRate.SLOW, "Undiscovered", null, null, 120, false, true,
       new PokemonForm("Normal Forme", "normal", Type.PSYCHIC, null, 1.7, 60.8, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 600, 50, 150, 50, 150, 50, 150, 3, 0, 270, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),

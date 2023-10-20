@@ -1184,6 +1184,7 @@ export enum Abilities {
   DARK_AURA,
   FAIRY_AURA,
   PROTEAN,
+  DELTA_STREAM,
   SLUSH_RUSH,
   NEUTRALIZING_GAS
 }
@@ -1439,6 +1440,8 @@ export function initAbilities() {
     new Ability(Abilities.DARK_AURA, "Dark Aura (N)", "Raises power of DARK type moves for all Pokémon in battle.", 6),
     new Ability(Abilities.FAIRY_AURA, "Fairy Aura (N)", "Raises power of FAIRY type moves for all Pokémon in battle.", 6),
     new Ability(Abilities.PROTEAN, "Protean (N)", "Changes the Pokémon's type to its last used move.", 6),
+    new Ability(Abilities.DELTA_STREAM, "Delta Stream", "The Pokémon creates strong winds when it enters a battle.", 6)
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS),
     new Ability(Abilities.SLUSH_RUSH, "Slush Rush (N)", "Boosts the Pokémon's Speed stat in a hailstorm.", 7),
     new Ability(Abilities.NEUTRALIZING_GAS, "Neutralizing Gas (N)", "Neutralizes abilities of all Pokémon in battle.", 8)
   );
