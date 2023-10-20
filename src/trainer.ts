@@ -146,7 +146,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       const tierValue = Utils.randSeedInt(512);
       let tier = tierValue >= 156 ? TrainerPoolTier.COMMON : tierValue >= 32 ? TrainerPoolTier.UNCOMMON : tierValue >= 6 ? TrainerPoolTier.RARE : tierValue >= 1 ? TrainerPoolTier.SUPER_RARE : TrainerPoolTier.ULTRA_RARE
       console.log(TrainerPoolTier[tier]);
-      while (!this.config.speciesPools[tier].length) {
+      while (!this.config.speciesPools.hasOwnProperty(tier) || !this.config.speciesPools[tier].length) {
         console.log(`Downgraded trainer Pokemon rarity tier from ${TrainerPoolTier[tier]} to ${TrainerPoolTier[tier - 1]}`);
         tier--;
       }
