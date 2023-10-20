@@ -236,11 +236,15 @@ export const trainerPartyTemplates = {
   THREE_WEAK_SAME: new TrainerPartyTemplate(3, TrainerPartyMemberStrength.WEAK, true),
   THREE_AVG: new TrainerPartyTemplate(3, TrainerPartyMemberStrength.AVERAGE),
   THREE_AVG_SAME: new TrainerPartyTemplate(3, TrainerPartyMemberStrength.AVERAGE, true),
+  THREE_WEAK_BALANCED: new TrainerPartyTemplate(3, TrainerPartyMemberStrength.WEAK, false, true),
   FOUR_WEAKER: new TrainerPartyTemplate(4, TrainerPartyMemberStrength.WEAKER),
   FOUR_WEAKER_SAME: new TrainerPartyTemplate(4, TrainerPartyMemberStrength.WEAKER, true),
   FOUR_WEAK: new TrainerPartyTemplate(4, TrainerPartyMemberStrength.WEAK),
-  FOUR_WEAK_SAME: new TrainerPartyTemplate(4, TrainerPartyMemberStrength.WEAK),
-  FIVE_WEAK: new TrainerPartyTemplate(5, TrainerPartyMemberStrength.WEAK, true),
+  FOUR_WEAK_SAME: new TrainerPartyTemplate(4, TrainerPartyMemberStrength.WEAK, true),
+  FOUR_WEAK_BALANCED: new TrainerPartyTemplate(4, TrainerPartyMemberStrength.WEAK, false, true),
+  FIVE_WEAKER: new TrainerPartyTemplate(5, TrainerPartyMemberStrength.WEAKER),
+  FIVE_WEAK: new TrainerPartyTemplate(5, TrainerPartyMemberStrength.WEAK),
+  FIVE_WEAK_BALANCED: new TrainerPartyTemplate(5, TrainerPartyMemberStrength.WEAK, false, true),
   SIX_WEAK_SAME: new TrainerPartyTemplate(6, TrainerPartyMemberStrength.WEAKER, true),
   SIX_WEAKER: new TrainerPartyTemplate(6, TrainerPartyMemberStrength.WEAKER),
   SIX_WEAKER_SAME: new TrainerPartyTemplate(6, TrainerPartyMemberStrength.WEAKER, true),
@@ -492,15 +496,12 @@ interface TrainerConfigs {
   [key: integer]: TrainerConfig
 }
 
+function getWavePartyTemplate(scene: BattleScene, ...templates: TrainerPartyTemplate[]) {
+  return templates[Math.min(Math.max(Math.ceil((scene.currentBattle.waveIndex - 10) / 20) - 1, 0), templates.length - 1)];
+}
+
 function getGymLeaderPartyTemplate(scene: BattleScene) {
-  const waveIndex = scene.currentBattle.waveIndex;
-  if (waveIndex <= 30)
-    return trainerPartyTemplates.GYM_LEADER_1;
-  if (waveIndex <= 50)
-    return trainerPartyTemplates.GYM_LEADER_2;
-  if (waveIndex <= 70)
-    return trainerPartyTemplates.GYM_LEADER_3;
-  return trainerPartyTemplates.GYM_LEADER_4;
+  return getWavePartyTemplate(scene, trainerPartyTemplates.GYM_LEADER_1, trainerPartyTemplates.GYM_LEADER_2, trainerPartyTemplates.GYM_LEADER_3, trainerPartyTemplates.GYM_LEADER_4);
 }
 
 function getRandomPartyMemberFunc(speciesPool: Species[], postProcess?: (enemyPokemon: EnemyPokemon) => void): PartyMemberFunc {
@@ -525,7 +526,8 @@ function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilt
 }
 
 export const trainerConfigs: TrainerConfigs = {
-  [TrainerType.ACE_TRAINER]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.ACE_TRAINER).setPartyTemplates(trainerPartyTemplates.SIX_WEAK_BALANCED),
+  [TrainerType.ACE_TRAINER]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.ACE_TRAINER)
+    .setPartyTemplateFunc(scene => getWavePartyTemplate(scene, trainerPartyTemplates.THREE_WEAK_BALANCED, trainerPartyTemplates.FOUR_WEAK_BALANCED, trainerPartyTemplates.FIVE_WEAK_BALANCED, trainerPartyTemplates.SIX_WEAK_BALANCED)),
   [TrainerType.ARTIST]: new TrainerConfig(++t).setEncounterBgm(TrainerType.RICH).setPartyTemplates(trainerPartyTemplates.ONE_STRONG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.THREE_AVG).setSpeciesPools([ Species.SMEARGLE ]),
   [TrainerType.BACKERS]: new TrainerConfig(++t).setHasGenders().setDouble().setEncounterBgm(TrainerType.CYCLIST),
   [TrainerType.BACKPACKER]: new TrainerConfig(++t).setHasGenders().setSpeciesFilter(s => s.isOfType(Type.FLYING) || s.isOfType(Type.ROCK)).setEncounterBgm(TrainerType.BACKPACKER),
@@ -533,7 +535,8 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.BEAUTY]: new TrainerConfig(++t).setEncounterBgm(TrainerType.PARASOL_LADY),
   [TrainerType.BIKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.ROUGHNECK).setSpeciesFilter(s => s.isOfType(Type.POISON)),
   [TrainerType.BLACK_BELT]: new TrainerConfig(++t).setHasGenders('Battle Girl', TrainerType.PSYCHIC).setEncounterBgm(TrainerType.ROUGHNECK).setSpeciesFilter(s => s.isOfType(Type.FIGHTING)),
-  [TrainerType.BREEDER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.POKEFAN).setHasGenders().setDouble().setPartyTemplates(trainerPartyTemplates.SIX_WEAKER),
+  [TrainerType.BREEDER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.POKEFAN).setHasGenders().setDouble()
+    .setPartyTemplateFunc(scene => getWavePartyTemplate(scene, trainerPartyTemplates.FOUR_WEAKER, trainerPartyTemplates.FIVE_WEAKER, trainerPartyTemplates.SIX_WEAKER)),
   [TrainerType.CLERK]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.CLERK),
   [TrainerType.CYCLIST]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.CYCLIST).setSpeciesFilter(s => !!pokemonLevelMoves[s.speciesId].find(plm => plm[1] === Moves.QUICK_ATTACK)),
   [TrainerType.DANCER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CYCLIST),
