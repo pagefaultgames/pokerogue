@@ -256,9 +256,9 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
         evolutionChance = Math.min(0.5 + easeInFunc((level - ev.level) / 40) / 2, 1);
       else {
         let preferredMinLevel = ev.wildDelay * 10;
-        let evolutionLevel = ev.level > 1 ? ev.level : 0;
+        let evolutionLevel = ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2);
 
-        if (!evolutionLevel && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
+        if (ev.level <= 1 && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
           const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId).level;
           if (prevolutionLevel > 1)
             evolutionLevel = prevolutionLevel;
