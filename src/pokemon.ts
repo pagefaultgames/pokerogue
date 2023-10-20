@@ -25,7 +25,7 @@ import { ArenaTagType, WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
 import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
-import { BattlerIndex } from './battle';
+import { BattleType, BattlerIndex } from './battle';
 
 export enum FieldPosition {
   CENTER,
@@ -990,7 +990,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getExpValue(): integer {
     // Logic to factor in victor level has been removed for balancing purposes, so the player doesn't have to focus on EXP maxxing
-    return (this.getSpeciesForm().baseExp * this.level) / 5 + 1;
+    let ret = ((this.getSpeciesForm().baseExp * this.level) / 5 + 1);
+    if (this.scene.currentBattle.battleType === BattleType.TRAINER)
+      ret = Math.floor(ret * 1.5);
+    return ret;
   }
 
   setFrameRate(frameRate: integer) {
