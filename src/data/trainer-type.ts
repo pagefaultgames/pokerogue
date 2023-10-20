@@ -587,7 +587,10 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.VETERAN]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.RICH),
   [TrainerType.WAITER]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.CLERK),
   [TrainerType.WORKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK).setSpeciesFilter(s => s.isOfType(Type.ROCK) || s.isOfType(Type.STEEL)),
-  [TrainerType.YOUNGSTER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.YOUNGSTER).setHasGenders('Lass', 'lass').setPartyTemplates(trainerPartyTemplates.TWO_WEAKER).setEncounterMessages([
+  [TrainerType.YOUNGSTER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.YOUNGSTER).setHasGenders('Lass', 'lass').setPartyTemplates(trainerPartyTemplates.TWO_WEAKER)
+    .setSpeciesPools(
+      [ Species.CATERPIE, Species.WEEDLE, Species.RATTATA, Species.SENTRET, Species.POOCHYENA, Species.ZIGZAGOON, Species.WURMPLE, Species.BIDOOF, Species.PATRAT, Species.LILLIPUP ]
+    ).setEncounterMessages([
     `Hey, wanna battle?`,
     `Are you a new trainer too?`,
     `Hey, I haven't seen you before. Let's battle!`
