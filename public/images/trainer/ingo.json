@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "subway_boss.png",
+			"image": "ingo.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 315,

@@ -61,7 +61,7 @@ export default class FightUiHandler extends UiHandler {
         else
           ui.playError();
       } else {
-        ui.setMode(Mode.COMMAND);
+        ui.setMode(Mode.COMMAND, this.fieldIndex);
         success = true;
       }
     } else {

@@ -5,6 +5,7 @@ import * as Utils from '../utils';
 
 import beautify from 'json-beautify';
 import { TrainerType } from "./trainer-type";
+import { allSpecies } from "./pokemon-species";
 
 export enum Biome {
   TOWN,
@@ -776,7 +777,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.NORMAN, TrainerType.CHEREN, TrainerType.LENORA ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -787,7 +788,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.ERIKA, TrainerType.GARDENIA ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -798,7 +799,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.ERIKA, TrainerType.GARDENIA ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -820,7 +821,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.BUGSY, TrainerType.BURGH ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -831,7 +832,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.JUAN, TrainerType.CRASHER_WAKE, TrainerType.MARLON ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -842,7 +843,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.JANINE, TrainerType.ROXIE ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -853,7 +854,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.MISTY ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -864,7 +865,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.MISTY ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -875,7 +876,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.JUAN, TrainerType.CRASHER_WAKE, TrainerType.MARLON ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -886,7 +887,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.FALKNER, TrainerType.WINONA, TrainerType.SKYLA ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -897,7 +898,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.GIOVANNI ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -908,7 +909,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.BROCK, TrainerType.ROXANNE, TrainerType.ROARK ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -919,7 +920,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.CLAY ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -930,7 +931,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.PRYCE, TrainerType.CANDICE, TrainerType.BRYCEN ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -941,7 +942,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.WHITNEY ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -952,7 +953,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.LT_SURGE, TrainerType.WATTSON, TrainerType.VOLKNER, TrainerType.ELESA ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -963,7 +964,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.BLAINE, TrainerType.FLANNERY ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -974,7 +975,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.FANTINA ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -985,7 +986,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.CHUCK, TrainerType.BRAWLY ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -996,7 +997,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.JASMINE, TrainerType.BYRON ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -1007,7 +1008,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.SABRINA, TrainerType.TATE, TrainerType.LIZA ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -1018,7 +1019,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.CLAIR, TrainerType.DRAYDEN ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -1029,7 +1030,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.MORTY ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -1040,7 +1041,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.SABRINA ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -1051,7 +1052,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.CHUCK ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -1062,7 +1063,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.ERIKA, TrainerType.GARDENIA ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -4362,9 +4363,201 @@ export const biomeTrainerPools: BiomeTrainerPools = {
         [ Biome.TOWN, BiomePoolTier.COMMON ]
       ]
     ],
-    [ TrainerType.RIVAL, [] ],
-    [ TrainerType.CYNTHIA, [] ]
-  ]
+    [ TrainerType.BROCK, [
+        [ Biome.CAVE, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.MISTY, [
+        [ Biome.LAKE, BiomePoolTier.BOSS ],
+        [ Biome.BEACH, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.LT_SURGE, [
+        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.ERIKA, [
+        [ Biome.GRASS, BiomePoolTier.BOSS ],
+        [ Biome.TALL_GRASS, BiomePoolTier.BOSS ],
+        [ Biome.JUNGLE, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.JANINE, [
+      [ Biome.SWAMP, BiomePoolTier.BOSS ]
+    ]
+    ],
+    [ TrainerType.SABRINA, [
+        [ Biome.RUINS, BiomePoolTier.BOSS ],
+        [ Biome.SPACE, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.GIOVANNI, [
+        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.BLAINE, [
+        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.FALKNER, [
+        [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.BUGSY, [
+        [ Biome.FOREST, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.WHITNEY, [
+        [ Biome.MEADOW, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.MORTY, [
+        [ Biome.ABYSS, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.CHUCK, [
+        [ Biome.DOJO, BiomePoolTier.BOSS ],
+        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.JASMINE, [
+        [ Biome.FACTORY, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.PRYCE, [
+        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.CLAIR, [
+        [ Biome.WASTELAND, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.ROXANNE, [
+        [ Biome.CAVE, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.BRAWLY, [
+        [ Biome.DOJO, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.WATTSON, [
+        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.FLANNERY, [
+        [ Biome.VOLCANO, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.NORMAN, [
+        [ Biome.PLAINS, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.WINONA, [
+        [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.TATE, [
+        [ Biome.RUINS, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.LIZA, [
+        [ Biome.RUINS, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.JUAN, [
+        [ Biome.SEA, BiomePoolTier.BOSS ],
+        [ Biome.SEABED, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.ROARK, [
+        [ Biome.CAVE, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.GARDENIA, [
+        [ Biome.GRASS, BiomePoolTier.BOSS ],
+        [ Biome.TALL_GRASS, BiomePoolTier.BOSS ],
+        [ Biome.JUNGLE, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.CRASHER_WAKE, [
+        [ Biome.SEA, BiomePoolTier.BOSS ],
+        [ Biome.SEABED, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.FANTINA, [
+        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.BYRON, [
+        [ Biome.FACTORY, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.CANDICE, [
+        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.VOLKNER, [
+        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.CILAN, [] ],
+    [ TrainerType.CHILI, [] ],
+    [ TrainerType.CRESS, [] ],
+    [ TrainerType.CHEREN, [
+        [ Biome.PLAINS, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.LENORA, [
+        [ Biome.PLAINS, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.ROXIE, [
+        [ Biome.SWAMP, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.BURGH, [
+        [ Biome.FOREST, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.ELESA, [
+        [ Biome.POWER_PLANT, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.CLAY, [
+        [ Biome.DESERT, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.SKYLA, [
+        [ Biome.MOUNTAIN, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.BRYCEN, [
+        [ Biome.ICE_CAVE, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.DRAYDEN, [
+        [ Biome.WASTELAND, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.MARLON, [
+        [ Biome.SEA, BiomePoolTier.BOSS ],
+        [ Biome.SEABED, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.SHAUNTAL, [] ],
+    [ TrainerType.MARSHAL, [] ],
+    [ TrainerType.GRIMSLEY, [] ],
+    [ TrainerType.CAITLIN, [] ],
+    [ TrainerType.BLUE, [] ],
+    [ TrainerType.RED, [] ],
+    [ TrainerType.LANCE, [] ],
+    [ TrainerType.STEVEN, [] ],
+    [ TrainerType.WALLACE, [] ],
+    [ TrainerType.CYNTHIA, [] ],
+    [ TrainerType.ALDER, [] ],
+    [ TrainerType.IRIS, [] ],
+    [ TrainerType.RIVAL, [] ]
+  ];
 
   for (let biome of Utils.getEnumValues(Biome)) {
     biomePokemonPools[biome] = {};
@@ -4530,7 +4723,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
           }
         }
         if (poolTier > -1)
-          pokemonBiomes[pokemon.speciesId - 1][3].push([ Biome[b], BiomePoolTier[BiomePoolTier] ]);
+          pokemonBiomes[pokemon.speciesId - 1][3].push([ Biome[b], BiomePoolTier[poolTier] ]);
       } else if (biomePoolPredicates[b](pokemon)) {
         pokemonBiomes[pokemon.speciesId - 1][3].push([ Biome[b], BiomePoolTier[BiomePoolTier.COMMON] ]);
       }

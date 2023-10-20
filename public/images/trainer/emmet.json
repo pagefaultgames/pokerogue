@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "subway_boss_2.png",
+			"image": "emmet.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 315,

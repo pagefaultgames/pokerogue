@@ -16,6 +16,9 @@ export default class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
   private cursorObj: Phaser.GameObjects.Image;
 
+  protected fieldIndex: integer = 0;
+  protected cursor2: integer = 0;
+
   constructor(scene: BattleScene) {
     super(scene, Mode.COMMAND);
   }
@@ -37,13 +40,15 @@ export default class CommandUiHandler extends UiHandler {
   show(args: any[]) {
     super.show(args);
 
+    this.fieldIndex = args.length ? args[0] as integer : 0;
+
     this.commandsContainer.setVisible(true);
 
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.bg.setTexture('bg_command');
     messageHandler.message.setWordWrapWidth(1110);
     messageHandler.showText(`What will\n${(this.scene.getCurrentPhase() as CommandPhase).getPokemon().name} do?`, 0);
-    this.setCursor(this.cursor);
+    this.setCursor(this.getCursor());
   }
 
   processInput(button: Button) {
@@ -51,10 +56,12 @@ export default class CommandUiHandler extends UiHandler {
 
     let success = false;
 
+    const cursor = this.getCursor();
+
     if (button === Button.CANCEL || button === Button.ACTION) {
       
       if (button === Button.ACTION) {
-        switch (this.cursor) {
+        switch (cursor) {
           case 0:
             ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
             success = true;
@@ -77,20 +84,20 @@ export default class CommandUiHandler extends UiHandler {
     } else {
       switch (button) {
         case Button.UP:
-          if (this.cursor >= 2)
-            success = this.setCursor(this.cursor - 2);
+          if (cursor >= 2)
+            success = this.setCursor(cursor - 2);
           break;
         case Button.DOWN:
-          if (this.cursor < 2)
-            success = this.setCursor(this.cursor + 2);
+          if (cursor < 2)
+            success = this.setCursor(cursor + 2);
           break;
         case Button.LEFT:
-          if (this.cursor % 2 === 1)
-            success = this.setCursor(this.cursor - 1);
+          if (cursor % 2 === 1)
+            success = this.setCursor(cursor - 1);
           break;
         case Button.RIGHT:
-          if (this.cursor % 2 === 0)
-            success = this.setCursor(this.cursor + 1);
+          if (cursor % 2 === 0)
+            success = this.setCursor(cursor + 1);
           break;
       }
     }
@@ -99,9 +106,20 @@ export default class CommandUiHandler extends UiHandler {
       ui.playSelect();
   }
 
+  getCursor(): integer {
+    return !this.fieldIndex ? this.cursor : this.cursor2;
+  }
+
   setCursor(cursor: integer): boolean {
     const ui = this.getUi();
-    const ret = super.setCursor(cursor);
+
+    const changed = this.getCursor() !== cursor;
+    if (changed) {
+      if (!this.fieldIndex)
+        this.cursor = cursor;
+      else
+        this.cursor2 = cursor;
+    }
 
     if (!this.cursorObj) {
       this.cursorObj = this.scene.add.image(0, 0, 'cursor');
@@ -110,7 +128,7 @@ export default class CommandUiHandler extends UiHandler {
 
     this.cursorObj.setPosition(211 + (cursor % 2 === 1 ? 56 : 0), -31 + (cursor >= 2 ? 16 : 0));
 
-    return ret;
+    return changed;
   }
 
   clear(): void {

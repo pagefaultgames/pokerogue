@@ -94,7 +94,7 @@ export default class Battle {
     getBgmOverride(): string {
         const battlers = this.enemyParty.slice(0, this.getBattlerCount());
         if (this.battleType === BattleType.TRAINER) {
-            if (!this.started && this.trainer.config.encounterMessages.length)
+            if (!this.started && this.trainer.config.encounterBgm && this.trainer.config.encounterMessages.length)
                 return `encounter_${this.trainer.getEncounterBgm()}`;
             return this.trainer.getBattleBgm();
         }
@@ -110,7 +110,7 @@ export default class Battle {
             }
         }
 
-        if (this.waveIndex <= 3)
+        if (this.waveIndex <= 4)
             return 'battle_wild';
 
         return null;
@@ -161,7 +161,7 @@ interface FixedBattleConfigs {
 
 export const fixedBattles: FixedBattleConfigs = {
     [5]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, !!Utils.randInt(2))),
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, !!Utils.randSeedInt(2))),
     [8]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL, true)),
     [25]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
@@ -172,6 +172,16 @@ export const fixedBattles: FixedBattleConfigs = {
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_4, true)),
     [145]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_5, true)),
+    [186]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.SHAUNTAL)),
+    [187]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.MARSHAL)),
+    [188]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.GRIMSLEY)),
+    [189]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.CAITLIN)),
+    [190]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, Phaser.Math.RND.pick([ TrainerType.BLUE, TrainerType.RED, TrainerType.LANCE, TrainerType.STEVEN, TrainerType.WALLACE, TrainerType.CYNTHIA, TrainerType.IRIS, TrainerType.ALDER, TrainerType.CYNTHIA ]))),
     [199]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_6, true))
 }

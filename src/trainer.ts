@@ -50,6 +50,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   getPartyTemplate(): TrainerPartyTemplate {
+    if (this.config.partyTemplateFunc)
+      return this.config.partyTemplateFunc(this.scene);
     return this.config.partyTemplates[this.partyTemplateIndex];
   }
 
@@ -102,12 +104,18 @@ export default class Trainer extends Phaser.GameObjects.Container {
     let ret: EnemyPokemon;
 
     this.scene.executeWithSeedOffset(() => {
+      const template = this.getPartyTemplate();
+
+      const isLastIndex = index === template.size - 1;
+
       if (this.config.partyMemberFuncs.hasOwnProperty(index)) {
         ret = this.config.partyMemberFuncs[index](this.scene, level);
         return;
       }
-
-      const template = this.getPartyTemplate();
+      if (isLastIndex && this.config.partyMemberFuncs.hasOwnProperty(-1)) {
+        ret = this.config.partyMemberFuncs[-1](this.scene, level);
+        return;
+      }
 
       let offset = 0;
 
@@ -187,14 +195,15 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   initSprite(): void {
-    this.getSprite().setTexture(this.getKey());
-    this.getTintSprite().setTexture(this.getKey());
+    this.getSprite().setTexture(this.getKey()).setFrame(0);
+    this.getTintSprite().setTexture(this.getKey()).setFrame(0);
   }
 
   playAnim(): void {
     const trainerAnimConfig = {
       key: this.getKey(),
-      repeat: 0
+      repeat: 0,
+      startFrame: 0
     };
     this.getSprite().play(trainerAnimConfig);
     this.getTintSprite().play(trainerAnimConfig);

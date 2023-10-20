@@ -287,7 +287,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             selectCallback(6, PartyOption.CANCEL);
             ui.playSelect();
           } else {
-            ui.setMode(Mode.COMMAND);
+            ui.setMode(Mode.COMMAND, this.fieldIndex);
             ui.playSelect();
           }
         }

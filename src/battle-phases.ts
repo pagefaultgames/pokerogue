@@ -16,7 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { Biome, biomeLinks } from "./data/biome";
-import { ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { ModifierType, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
@@ -943,10 +943,10 @@ export class CommandPhase extends FieldPhase {
         if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(queuedMove.ignorePP)) {
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, { targets: queuedMove.targets, multiple: queuedMove.targets.length > 1 });
         } else
-          this.scene.ui.setMode(Mode.COMMAND);
+          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
       }
     } else
-      this.scene.ui.setMode(Mode.COMMAND);
+      this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
   }
 
   handleCommand(command: Command, cursor: integer, ...args: any[]): boolean {
@@ -981,18 +981,18 @@ export class CommandPhase extends FieldPhase {
         break;
       case Command.BALL:
         if (this.scene.arena.biomeType === Biome.END) {
-          this.scene.ui.setMode(Mode.COMMAND);
+          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           this.scene.ui.setMode(Mode.MESSAGE);
           this.scene.ui.showText(`A strange force\nprevents using Poké Balls.`, null, () => {
             this.scene.ui.showText(null, 0);
-            this.scene.ui.setMode(Mode.COMMAND);
+            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           }, null, true);
         } else if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
-          this.scene.ui.setMode(Mode.COMMAND);
+          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           this.scene.ui.setMode(Mode.MESSAGE);
           this.scene.ui.showText(`You can't catch\nanother trainer's Pokémon!`, null, () => {
             this.scene.ui.showText(null, 0);
-            this.scene.ui.setMode(Mode.COMMAND);
+            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           }, null, true);
         } else if (cursor < 4) {
           const targets = this.scene.getEnemyField().filter(p => p.isActive(true)).map(p => p.getBattlerIndex());
@@ -1009,11 +1009,11 @@ export class CommandPhase extends FieldPhase {
       case Command.RUN:
         const isSwitch = command === Command.POKEMON;
         if (!isSwitch && this.scene.currentBattle.battleType === BattleType.TRAINER) {
-          this.scene.ui.setMode(Mode.COMMAND);
+          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           this.scene.ui.setMode(Mode.MESSAGE);
           this.scene.ui.showText(`You can't run\nfrom a trainer battle!`, null, () => {
             this.scene.ui.showText(null, 0);
-            this.scene.ui.setMode(Mode.COMMAND);
+            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           }, null, true);
         } else {
           const trapTag = playerPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
@@ -1027,11 +1027,11 @@ export class CommandPhase extends FieldPhase {
               : { command: Command.RUN };
             success = true;
           } else if (trapTag) {
-            this.scene.ui.setMode(Mode.COMMAND);
+            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
             this.scene.ui.setMode(Mode.MESSAGE);
             this.scene.ui.showText(`${this.scene.getPokemonById(trapTag.sourceId).name}'s ${trapTag.getMoveName()}\nprevents ${isSwitch ? 'switching' : 'fleeing'}!`, null, () => {
               this.scene.ui.showText(null, 0);
-              this.scene.ui.setMode(Mode.COMMAND);
+              this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
             }, null, true);
           }
         }
@@ -2086,14 +2086,18 @@ export class TrainerVictoryPhase extends BattlePhase {
   }
 
   start() {
-    this.scene.playBgm('victory');
+    this.scene.playBgm(this.scene.currentBattle.trainer.config.victoryBgm);
+
+    const modifierRewardFuncs = this.scene.currentBattle.trainer.config.modifierRewardFuncs;
+    for (let modifierRewardFunc of modifierRewardFuncs)
+      this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, modifierRewardFunc()));
 
     this.scene.ui.showText(`You defeated\n${this.scene.currentBattle.trainer.getName()}!`, null, () => {
-      const defeatMessages = this.scene.currentBattle.trainer.config.defeatMessages;
+      const defeatMessages = this.scene.currentBattle.trainer.config.victoryMessages;
       let showMessageAndEnd = () => this.end();//this.scene.ui.showText(`You got ₽0\nfor winning!`, null, () => this.end(), null, true);
       if (defeatMessages.length) {
         let message: string;
-        this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(this.scene.currentBattle.trainer.config.defeatMessages), this.scene.currentBattle.waveIndex);
+        this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(this.scene.currentBattle.trainer.config.victoryMessages), this.scene.currentBattle.waveIndex);
         const messagePages = message.split(/\$/g).map(m => m.trim());
       
         for (let p = messagePages.length - 1; p >= 0; p--) {
@@ -2112,6 +2116,24 @@ export class TrainerVictoryPhase extends BattlePhase {
       ease: 'Sine.easeInOut',
       duration: 750
     });
+  }
+}
+
+export class ModifierRewardPhase extends BattlePhase {
+  private modifierType: ModifierType;
+
+  constructor(scene: BattleScene, modifierType: ModifierType) {
+    super(scene);
+
+    this.modifierType = modifierType;
+  }
+
+  start() {
+    super.start();
+
+    const newModifier = this.modifierType.newModifier();
+
+    this.scene.addModifier(newModifier, true).then(() => this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => this.end(), null, true));
   }
 }
 
@@ -2813,6 +2835,7 @@ export class PartyHealPhase extends BattlePhase {
         pokemon.resetStatus();
         for (let move of pokemon.moveset)
           move.ppUsed = 0;
+        pokemon.updateInfo(true);
       }
       const healSong = this.scene.sound.add('heal');
       healSong.play();

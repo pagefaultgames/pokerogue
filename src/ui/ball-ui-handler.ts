@@ -63,18 +63,19 @@ export default class BallUiHandler extends UiHandler {
     const pokeballTypeCount = Object.keys(this.scene.currentBattle.turnPokeballCounts).length;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
+      const commandPhase = this.scene.getCurrentPhase() as CommandPhase;
       success = true;
       if (button === Button.ACTION && this.cursor < pokeballTypeCount) {
         if (this.scene.currentBattle.turnPokeballCounts[this.cursor]) {
-          if ((this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.BALL, this.cursor)) {
-            this.scene.ui.setMode(Mode.COMMAND);
+          if (commandPhase.handleCommand(Command.BALL, this.cursor)) {
+            this.scene.ui.setMode(Mode.COMMAND, commandPhase.getFieldIndex());
             this.scene.ui.setMode(Mode.MESSAGE);
             success = true;
           }
         } else
           ui.playError();
       } else {
-        ui.setMode(Mode.COMMAND);
+        ui.setMode(Mode.COMMAND, commandPhase.getFieldIndex());
         success = true;
       }
     } else {

@@ -309,7 +309,9 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.loadBgm('level_up_fanfare', 'bw/level_up_fanfare.mp3');
 		this.loadBgm('heal', 'bw/heal.mp3');
-		this.loadBgm('victory', 'bw/victory.mp3');
+		this.loadBgm('victory_trainer', 'bw/victory_trainer.mp3');
+		this.loadBgm('victory_gym', 'bw/victory_gym.mp3');
+		this.loadBgm('victory_champion', 'bw/victory_champion.mp3');
 		this.loadBgm('evolution', 'bw/evolution.mp3');
 		this.loadBgm('evolution_fanfare', 'bw/evolution_fanfare.mp3');
 		
@@ -578,13 +580,17 @@ export default class BattleScene extends Phaser.Scene {
 			battleConfig = fixedBattles[newWaveIndex];
 			newDouble = battleConfig.double;
 			newBattleType = battleConfig.battleType;
-			newTrainer = battleConfig.getTrainer(this);
+			this.executeWithSeedOffset(() => newTrainer = battleConfig.getTrainer(this), newWaveIndex);
 			if (newTrainer)
 				this.field.add(newTrainer);
 		} else {
 			if (battleType === undefined) {
-				const trainerChance = this.arena.getTrainerChance();
-				newBattleType = trainerChance && !Utils.randSeedInt(trainerChance) ? BattleType.TRAINER : BattleType.WILD;
+				if (newWaveIndex > 10 && newWaveIndex % 20 === 10)
+					newBattleType = BattleType.TRAINER;
+				else {
+					const trainerChance = this.arena.getTrainerChance();
+					newBattleType = trainerChance && !Utils.randSeedInt(trainerChance) ? BattleType.TRAINER : BattleType.WILD;
+				}
 			} else
 				newBattleType = battleType;
 
@@ -883,6 +889,8 @@ export default class BattleScene extends Phaser.Scene {
 
 	getBgmLoopPoint(bgmName: string): number {
 		switch (bgmName) {
+			case 'battle_champion':
+				return 27.653;
 			case 'battle_cynthia':
 				return 12.235;
 			case 'battle_elite':
