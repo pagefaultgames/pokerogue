@@ -1,11 +1,9 @@
 import Phaser from 'phaser';
 import BattleScene from './battle-scene';
-import * as Utils from './utils';
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.WEBGL,
 	parent: 'app',
-	seed: [ Utils.randomString(16) ],
 	scale: {
 		width: 1920,
 		height: 1080,

@@ -317,9 +317,6 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	create() {
-		this.seed = this.game.config.seed[0];
-		console.log('Seed:', this.seed);
-
 		initGameSpeed.apply(this);
 
 		this.setupControls();
@@ -535,6 +532,9 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	reset(): void {
+		this.seed = Utils.randomString(16);
+		console.log('Seed:', this.seed);
+
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 		this.pokeballCounts[PokeballType.POKEBALL] += 5;
 
