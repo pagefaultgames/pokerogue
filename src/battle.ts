@@ -160,9 +160,9 @@ interface FixedBattleConfigs {
 }
 
 export const fixedBattles: FixedBattleConfigs = {
-    [4]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, !!Utils.randInt(2))),
     [5]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, !!Utils.randInt(2))),
+    [8]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL, true)),
     [25]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_2, true)),
