@@ -990,10 +990,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getExpValue(): integer {
     // Logic to factor in victor level has been removed for balancing purposes, so the player doesn't have to focus on EXP maxxing
-    let ret = ((this.getSpeciesForm().baseExp * this.level) / 5 + 1);
-    if (this.scene.currentBattle.battleType === BattleType.TRAINER)
-      ret = Math.floor(ret * 1.5);
-    return ret;
+    return ((this.getSpeciesForm().baseExp * this.level) / 5 + 1);
   }
 
   setFrameRate(frameRate: integer) {

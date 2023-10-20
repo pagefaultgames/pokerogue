@@ -2007,9 +2007,11 @@ export class VictoryPhase extends PokemonPhase {
     const expShareModifier = this.scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
     const expBalanceModifier = this.scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
     const multipleParticipantExpBonusModifier = this.scene.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
-    const expValue = this.getPokemon().getExpValue();
     const expPartyMembers = party.filter(p => p.hp && p.level < this.scene.getMaxExpLevel());
     const partyMemberExp = [];
+    let expValue = this.getPokemon().getExpValue();
+    if (this.scene.currentBattle.battleType === BattleType.TRAINER)
+      expValue = Math.floor(expValue * 1.5);
     for (let partyMember of expPartyMembers) {
       const pId = partyMember.id;
       const participated = participantIds.has(pId);
