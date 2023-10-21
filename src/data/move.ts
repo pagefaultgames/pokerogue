@@ -917,6 +917,27 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
   }
 }
 
+export class MatchHpAttr extends FixedDamageAttr {
+  constructor() {
+    super(0);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean { 
+    (args[0] as Utils.IntegerHolder).value = target.hp - user.hp;
+
+    return true;
+  } 
+  
+  getCondition(): MoveCondition {
+    return (user: Pokemon, target: Pokemon, move: Move) => user.hp <= target.hp;
+  }
+  
+  // TODO
+  /*getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    return 0;
+  }*/
+}
+
 type MoveFilter = (move: Move) => boolean;
 
 export class CounterDamageAttr extends FixedDamageAttr {
@@ -2829,7 +2850,8 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, undefined, true)
       .condition((user: Pokemon, target: Pokemon, move: Move) => !target.status),
     new AttackMove(Moves.KNOCK_OFF, "Knock Off (N)", Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, "Removes opponent's held item for the rest of the battle.", -1, 0, 3),
-    new AttackMove(Moves.ENDEAVOR, "Endeavor (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "Reduces opponent's HP to same as user's.", -1, 0, 3),
+    new AttackMove(Moves.ENDEAVOR, "Endeavor", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "Reduces opponent's HP to same as user's.", -1, 0, 3)
+      .attr(MatchHpAttr),
     new AttackMove(Moves.ERUPTION, "Eruption", Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, -1, "Stronger when the user's HP is higher.", -1, 0, 3)
       .attr(HpPowerAttr)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
