@@ -72,7 +72,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           this.message.setText(text.slice(0, charIndex));
           const advance = () => {
             if (charSound)
-              this.scene.sound.play(charSound);
+              this.scene.playSound(charSound);
             if (callback && !this.textTimer.repeatCount) {
               if (callbackDelay && !prompt) {
                 this.textCallbackTimer = this.scene.time.delayedCall(callbackDelay, () => {

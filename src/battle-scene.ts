@@ -59,10 +59,11 @@ export interface PokeballCounts {
 
 export default class BattleScene extends Phaser.Scene {
 	public auto: boolean;
+	public gameVolume: number = 0.5;
 	public gameSpeed: integer = 1;
 	public quickStart: boolean = quickStart;
 	public finalWave: integer = 200;
-
+	
 	public gameData: GameData;
 
 	private phaseQueue: BattlePhase[];
@@ -811,7 +812,7 @@ export default class BattleScene extends Phaser.Scene {
 		if (this.bgm && bgmName === this.bgm.key) {
 			if (!this.bgm.isPlaying) {
 				this.bgm.play({
-					volume: 1
+					volume: this.gameVolume
 				});
 			}
 			return;
@@ -827,14 +828,16 @@ export default class BattleScene extends Phaser.Scene {
 		const playNewBgm = () => {
 			if (bgmName === null && this.bgm && !this.bgm.pendingRemove) {
 				this.bgm.play({
-					volume: 1
+					volume: this.gameVolume
 				});
 				return;
 			}
 			if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying)
 				this.bgm.stop();
 			this.bgm = this.sound.add(bgmName, { loop: true });
-			this.bgm.play();
+			this.bgm.play({
+				volume: this.gameVolume
+			});
 			if (loopPoint)
 				this.bgm.on('looped', () => this.bgm.play({ seek: loopPoint }));
 		};
@@ -875,9 +878,20 @@ export default class BattleScene extends Phaser.Scene {
     SoundFade.fadeOut(this, bgm, duration, destroy);
 	}
 
+	playSound(soundName: string, config?: object) {
+		if (config) {
+			if (config.hasOwnProperty('volume'))
+				config['volume'] *= this.gameVolume;
+			else
+				config['volume'] = this.gameVolume;
+		} else
+			config = { volume: this.gameVolume };
+		this.sound.play(soundName, config);
+	}
+
 	playSoundWithoutBgm(soundName: string, pauseDuration?: integer): void {
 		this.pauseBgm();
-		this.sound.play(soundName);
+		this.playSound(soundName);
 		const sound = this.sound.get(soundName);
 		if (this.bgmResumeTimer)
 			this.bgmResumeTimer.destroy();
@@ -976,7 +990,7 @@ export default class BattleScene extends Phaser.Scene {
 			if (modifier instanceof PersistentModifier) {
 				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual)) {
 					if (playSound && !this.sound.get(soundName))
-						this.sound.play(soundName);
+						this.playSound(soundName);
 				} else if (!virtual) {
 					const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
 					this.addModifier(defaultModifierType.newModifier(), playSound).then(() => resolve());
@@ -988,7 +1002,7 @@ export default class BattleScene extends Phaser.Scene {
 					this.updateModifiers().then(() => resolve());
 			} else if (modifier instanceof ConsumableModifier) {
 				if (playSound && !this.sound.get(soundName))
-					this.sound.play(soundName);
+					this.playSound(soundName);
 
 				if (modifier instanceof ConsumablePokemonModifier) {
 					for (let p in this.party) {

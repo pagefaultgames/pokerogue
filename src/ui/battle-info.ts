@@ -273,7 +273,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       }
       let duration = this.visible && !instant ? ((levelExp - this.lastLevelExp) / relLevelExp) * 1650 : 0;
       if (duration)
-        this.scene.sound.play('exp');
+        (this.scene as BattleScene).playSound('exp');
       this.scene.tweens.add({
         targets: this.expBar,
         ease: 'Sine.easeIn',
@@ -289,7 +289,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
           if (ratio === 1) {
             this.lastLevelExp = 0;
             this.lastLevel++;
-            this.scene.sound.play('level_up');
+            (this.scene as BattleScene).playSound('level_up');
             this.setLevel(this.lastLevel);
             this.scene.time.delayedCall(500, () => {
               this.expBar.setScale(0, 1);

@@ -98,7 +98,7 @@ export class SelectStarterPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.sound.play('menu', { loop: true });
+    this.scene.playSound('menu', { loop: true });
 
     this.scene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
       const party = this.scene.getParty();
@@ -619,7 +619,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
           angle: 1440,
           y: (this.player ? 132 : 86) + fpOffset[1],
           onComplete: () => {
-            this.scene.sound.play('pb_rel');
+            this.scene.playSound('pb_rel');
             pokeball.destroy();
             this.scene.add.existing(pokemon);
             this.scene.field.add(pokemon);
@@ -701,7 +701,7 @@ export class SwitchSummonPhase extends SummonPhase {
       this.scene.getEnemyField().forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
 
     this.scene.ui.showText(this.player ? `Come back, ${pokemon.name}!` : `${this.scene.currentBattle.trainer.getName()}\nwithdrew ${pokemon.name}!`);
-    this.scene.sound.play('pb_rel');
+    this.scene.playSound('pb_rel');
     pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, 'Sine.easeIn');
     this.scene.tweens.add({
@@ -1708,7 +1708,7 @@ export class StatChangePhase extends PokemonPhase {
       statSprite.setScale(6);
       statSprite.setOrigin(0.5, 1);
 
-      this.scene.sound.play(`stat_${this.levels >= 1 ? 'up' : 'down'}`);
+      this.scene.playSound(`stat_${this.levels >= 1 ? 'up' : 'down'}`);
 
       statSprite.setMask(new Phaser.Display.Masks.BitmapMask(this.scene, pokemonMaskSprite));
 
@@ -1904,13 +1904,13 @@ export class DamagePhase extends PokemonPhase {
 
     switch (this.damageResult) {
       case HitResult.EFFECTIVE:
-        this.scene.sound.play('hit');
+        this.scene.playSound('hit');
         break;
       case HitResult.SUPER_EFFECTIVE:
-        this.scene.sound.play('hit_strong');
+        this.scene.playSound('hit_strong');
         break;
       case HitResult.NOT_VERY_EFFECTIVE:
-        this.scene.sound.play('hit_weak');
+        this.scene.playSound('hit_weak');
         break;
     }
 
@@ -1974,7 +1974,7 @@ export class FaintPhase extends PokemonPhase {
 
     pokemon.faintCry(() => {
       pokemon.hideInfo();
-      this.scene.sound.play('faint');
+      this.scene.playSound('faint');
       this.scene.tweens.add({
         targets: pokemon,
         duration: 500,
@@ -2189,7 +2189,7 @@ export class UnlockPhase extends BattlePhase {
     this.scene.time.delayedCall(2000, () => {
       this.scene.gameData.unlocks[this.unlockable] = true;
       this.scene.gameData.saveSystem();
-      this.scene.sound.play('level_up_fanfare');
+      this.scene.playSound('level_up_fanfare');
       this.scene.ui.setMode(Mode.MESSAGE);
       this.scene.arenaBg.setVisible(false);
       this.scene.ui.fadeIn(250).then(() => {
@@ -2536,7 +2536,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     this.pokeball.setOrigin(0.5, 0.625);
     this.scene.field.add(this.pokeball);
 
-    this.scene.sound.play('pb_throw');
+    this.scene.playSound('pb_throw');
     this.scene.time.delayedCall(300, () => {
       this.scene.field.moveBelow(this.pokeball as Phaser.GameObjects.GameObject, pokemon);
     });
@@ -2548,7 +2548,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       onComplete: () => {
         this.pokeball.setTexture('pb', `${pokeballAtlasKey}_opening`);
         this.scene.time.delayedCall(17, () => this.pokeball.setTexture('pb', `${pokeballAtlasKey}_open`));
-        this.scene.sound.play('pb_rel');
+        this.scene.playSound('pb_rel');
         pokemon.tint(getPokeballTintColor(this.pokeballType));
         this.scene.tweens.add({
           targets: pokemon,
@@ -2559,7 +2559,7 @@ export class AttemptCapturePhase extends PokemonPhase {
           onComplete: () => {
             this.pokeball.setTexture('pb', `${pokeballAtlasKey}_opening`);
             pokemon.setVisible(false);
-            this.scene.sound.play('pb_catch');
+            this.scene.playSound('pb_catch');
             this.scene.time.delayedCall(17, () => this.pokeball.setTexture('pb', `${pokeballAtlasKey}`));
 
             const doShake = pokeballMultiplier > -1 ? () => {
@@ -2587,13 +2587,13 @@ export class AttemptCapturePhase extends PokemonPhase {
                     this.failCatch(shakeCount);
                   } else if (shakeCount++ < 3) {
                     if (Utils.randInt(65536) < y)
-                      this.scene.sound.play('pb_move');
+                      this.scene.playSound('pb_move');
                     else {
                       shakeCounter.stop();
                       this.failCatch(shakeCount);
                     }
                   } else
-                    this.scene.sound.play('pb_lock')
+                    this.scene.playSound('pb_lock')
                 },
                 onComplete: () => this.catch()
               });
@@ -2609,7 +2609,7 @@ export class AttemptCapturePhase extends PokemonPhase {
   failCatch(shakeCount: integer) {
     const pokemon = this.getPokemon();
 
-    this.scene.sound.play('pb_rel');
+    this.scene.playSound('pb_rel');
     pokemon.setY(this.originalY);
     pokemon.cry();
     pokemon.tint(getPokeballTintColor(this.pokeballType));
@@ -2713,7 +2713,7 @@ export class AttemptRunPhase extends PokemonPhase {
     const escapeChance = (((playerPokemon.stats[Stat.SPD] * 128) / enemySpeed) + (30 * this.scene.currentBattle.escapeAttempts++)) % 256;
 
     if (Utils.randInt(256) < escapeChance) {
-      this.scene.sound.play('flee');
+      this.scene.playSound('flee');
       this.scene.queueMessage('You got away safely!', null, true, 500);
       
       this.scene.tweens.add({
@@ -2838,7 +2838,7 @@ export class PartyHealPhase extends BattlePhase {
         pokemon.updateInfo(true);
       }
       const healSong = this.scene.sound.add('heal');
-      healSong.play();
+      healSong.play({ volume: this.scene.gameVolume });
       this.scene.time.delayedCall(healSong.totalDuration * 1000, () => {
         healSong.destroy();
         if (this.resumeBgm && bgmPlaying)

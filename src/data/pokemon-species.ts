@@ -184,7 +184,7 @@ export abstract class PokemonSpeciesForm {
   }
 
   cry(scene: BattleScene, soundConfig?: Phaser.Types.Sound.SoundConfig): integer {
-    scene.sound.play(this.speciesId.toString(), soundConfig);
+    scene.playSound(this.speciesId.toString(), soundConfig);
     return scene.sound.get(this.speciesId.toString()).totalDuration * 1000;
   }
 }

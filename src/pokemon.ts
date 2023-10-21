@@ -874,9 +874,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const key = this.species.speciesId.toString();
     let i = 0;
     let rate = 0.85;
-    this.scene.sound.play(key, {
-      rate: rate
-    });
+    this.scene.playSound(key, { rate: rate });
     const sprite = this.getSprite();
     const tintSprite = this.getTintSprite();
     const delay = Math.max(this.scene.sound.get(key).totalDuration * 50, 25);
@@ -903,7 +901,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           rate *= 0.99;
           crySound.play({
             rate: rate,
-            seek: (i * delay * 0.001) * rate
+            seek: (i * delay * 0.001) * rate,
+            volume: this.scene.gameVolume
           });
         }
         else {
@@ -1060,7 +1059,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   sparkle(): void {
     if (this.shinySparkle) {
       this.shinySparkle.play('sparkle');
-      this.scene.sound.play('sparkle');
+      this.scene.playSound('sparkle');
     }
   }
 

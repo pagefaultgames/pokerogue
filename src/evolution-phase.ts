@@ -102,7 +102,7 @@ export class EvolutionPhase extends BattlePhase {
 
         this.scene.time.delayedCall(1000, () => {
           const evolutionBgm = this.scene.sound.add('evolution');
-          evolutionBgm.play();
+          evolutionBgm.play({ volume: this.scene.gameVolume });
           this.scene.tweens.add({
             targets: this.evolutionBgOverlay,
             alpha: 1,
@@ -119,7 +119,7 @@ export class EvolutionPhase extends BattlePhase {
                 this.evolutionBg.setVisible(true);
                 this.evolutionBg.play();
               });
-              this.scene.sound.play('charge');
+              this.scene.playSound('charge');
               this.doSpiralUpward();
               this.scene.tweens.addCounter({
                 from: 0,
@@ -131,17 +131,17 @@ export class EvolutionPhase extends BattlePhase {
                 onComplete: () => {
                   this.pokemonSprite.setVisible(false);
                   this.scene.time.delayedCall(1100, () => {
-                    this.scene.sound.play('beam');
+                    this.scene.playSound('beam');
                     this.doArcDownward();
                     this.scene.time.delayedCall(1500, () => {
                       this.pokemonEvoTintSprite.setScale(0.25);
                       this.pokemonEvoTintSprite.setVisible(true);
                       this.doCycle(1).then(() => {
-                        this.scene.sound.play('sparkle');
+                        this.scene.playSound('sparkle');
                         this.pokemonEvoSprite.setVisible(true);
                         this.doCircleInward();
                         this.scene.time.delayedCall(900, () => {
-                          this.scene.sound.play('shine');
+                          this.scene.playSound('shine');
                           this.doSpray();
                           this.scene.tweens.add({
                             targets: this.evolutionOverlay,
@@ -167,7 +167,7 @@ export class EvolutionPhase extends BattlePhase {
                                       this.scene.time.delayedCall(250, () => {
                                         pokemon.cry();
                                         this.scene.time.delayedCall(1250, () => {
-                                          this.scene.sound.play('evolution_fanfare');
+                                          this.scene.playSound('evolution_fanfare');
                                           this.scene.ui.showText(`Congratulations! Your ${preName}\nevolved into ${pokemon.name}!`, null, () => this.end(), null, true, 3000);
                                           this.scene.time.delayedCall(new Utils.FixedInt(4250) as unknown as integer, () => this.scene.playBgm());
                                         });

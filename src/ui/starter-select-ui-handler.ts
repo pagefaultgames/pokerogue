@@ -325,7 +325,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               if (this.canCycleShiny) {
                 this.setSpeciesDetails(this.lastSpecies, !this.shinyCursor, undefined, undefined, undefined);
                 if (this.shinyCursor)
-                  this.scene.sound.play('sparkle');
+                  this.scene.playSound('sparkle');
                 else
                   success = true;
               }
