@@ -478,7 +478,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(tier: ModifierTier) {
     super((party: Pokemon[]) => {
       const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms);
-      const tierUniqueCompatibleTms = partyMemberCompatibleTms.flat().filter(tm => tmPoolTiers[tm] === tier).filter((tm, i, array) => array.indexOf(tm) === i);
+      const tierUniqueCompatibleTms = partyMemberCompatibleTms.flat().filter(tm => tmPoolTiers[tm] === tier).filter(tm => !allMoves[tm].name.endsWith(' (N)')).filter((tm, i, array) => array.indexOf(tm) === i);
       if (!tierUniqueCompatibleTms.length)
         return null;
       const randTmIndex = Utils.randSeedInt(tierUniqueCompatibleTms.length);
