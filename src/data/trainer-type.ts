@@ -525,6 +525,14 @@ function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilt
   };
 }
 
+function getModifierRewardFunc(modifierTypeFunc: () => ModifierType): () => ModifierType {
+  return () => {
+    const modifierType = modifierTypeFunc();
+    modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc);
+    return modifierType;
+  };
+}
+
 export const trainerConfigs: TrainerConfigs = {
   [TrainerType.ACE_TRAINER]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.ACE_TRAINER)
     .setPartyTemplateFunc(scene => getWavePartyTemplate(scene, trainerPartyTemplates.THREE_WEAK_BALANCED, trainerPartyTemplates.FOUR_WEAK_BALANCED, trainerPartyTemplates.FIVE_WEAK_BALANCED, trainerPartyTemplates.SIX_WEAK_BALANCED)),
@@ -678,7 +686,7 @@ export const trainerConfigs: TrainerConfigs = {
     $Just kidding! I lost fair and square, and now I know you'll do fine out there.
     $By the way, the professor wanted me to give you some items. Hopefully they're helpful!
     $Do your best like always! I believe in you!`
-  ]).setModifierRewardFuncs(() => modifierTypes.EXP_CHARM(), () => modifierTypes.EXP_SHARE()).setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.CHIKORITA, Species.CYNDAQUIL, Species.TOTODILE, Species.TREECKO, Species.TORCHIC, Species.MUDKIP, Species.TURTWIG, Species.CHIMCHAR, Species.PIPLUP, Species.SNIVY, Species.TEPIG, Species.OSHAWOTT ]))
+  ]).setModifierRewardFuncs(getModifierRewardFunc(modifierTypes.EXP_CHARM()), getModifierRewardFunc(modifierTypes.EXP_SHARE())).setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.CHIKORITA, Species.CYNDAQUIL, Species.TOTODILE, Species.TREECKO, Species.TORCHIC, Species.MUDKIP, Species.TURTWIG, Species.CHIMCHAR, Species.PIPLUP, Species.SNIVY, Species.TEPIG, Species.OSHAWOTT ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEY, Species.HOOTHOOT, Species.TAILLOW, Species.STARLY, Species.PIDOVE ])),
   [TrainerType.RIVAL_2]: new TrainerConfig(++t).setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival').setPartyTemplates(trainerPartyTemplates.RIVAL_2).setEncounterMessages([
     `Oh, fancy meeting you here. Looks like you're still undefeated. Right on!
