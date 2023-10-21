@@ -588,10 +588,11 @@ export default class BattleScene extends Phaser.Scene {
 			if (battleType === undefined) {
 				if (newWaveIndex > 10 && newWaveIndex % 20 === 10)
 					newBattleType = BattleType.TRAINER;
-				else {
+				else if (newWaveIndex % 10 !== 1) {
 					const trainerChance = this.arena.getTrainerChance();
 					newBattleType = trainerChance && !Utils.randSeedInt(trainerChance) ? BattleType.TRAINER : BattleType.WILD;
-				}
+				} else
+					newBattleType = BattleType.WILD;
 			} else
 				newBattleType = battleType;
 
