@@ -657,7 +657,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.BURGH]: new TrainerConfig(++t).initForGymLeader(Species.SEWADDLE, Type.BUG),
   [TrainerType.ELESA]: new TrainerConfig(++t).initForGymLeader(Species.EMOLGA, Type.ELECTRIC),
   [TrainerType.CLAY]: new TrainerConfig(++t).initForGymLeader(Species.DRILBUR, Type.GROUND),
-  [TrainerType.SKYLA]: new TrainerConfig(++t).initForGymLeader(Species.DUCKLETT, Type.WATER),
+  [TrainerType.SKYLA]: new TrainerConfig(++t).initForGymLeader(Species.DUCKLETT, Type.FLYING),
   [TrainerType.BRYCEN]: new TrainerConfig(++t).initForGymLeader(Species.CRYOGONAL, Type.ICE),
   [TrainerType.DRAYDEN]: new TrainerConfig(++t).initForGymLeader(Species.DRUDDIGON, Type.DRAGON),
   [TrainerType.MARLON]: new TrainerConfig(++t).initForGymLeader(Species.WAILMER, Type.WATER),
