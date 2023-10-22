@@ -760,12 +760,15 @@ export abstract class BattleAnim {
                 for (let i of targets) {
                     const count = i === AnimFrameTarget.GRAPHIC ? g : i === AnimFrameTarget.USER ? u : t;
                     if (count < spriteCache[i].length) {
-                        const removedSprites = spriteCache[i].splice(count, spriteCache[i].length - count);
-                        if (i === AnimFrameTarget.GRAPHIC)
-                            spritePriorities.splice(count, spriteCache[i].length - count);
-                        for (let rs of removedSprites) {
-                            if (!rs.getData('locked') as boolean)
+                        const spritesToRemove = spriteCache[i].slice(count, spriteCache[i].length);
+                        for (let rs of spritesToRemove) {
+                            if (!rs.getData('locked') as boolean) {
+                                const spriteCacheIndex = spriteCache[i].indexOf(rs);
+                                spriteCache[i].splice(spriteCacheIndex, 1);
+                                if (i === AnimFrameTarget.GRAPHIC)
+                                    spritePriorities.splice(spriteCacheIndex, 1);
                                 rs.destroy();
+                            }
                         }
                     }
                 }
