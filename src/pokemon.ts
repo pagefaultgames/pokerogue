@@ -760,9 +760,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   heal(amount: integer): void {
-    if (this.isFainted())
-      return;
-
     this.hp = Math.min(this.hp + amount, this.getMaxHp());
   }
 
