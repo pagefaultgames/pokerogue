@@ -35,6 +35,7 @@ const quickStart = false;
 export const startingLevel = 5;
 export const startingWave = 1;
 export const startingBiome = Biome.TOWN;
+export const startingMoney = 1000;
 
 export enum Button {
 	UP,
@@ -88,8 +89,10 @@ export default class BattleScene extends Phaser.Scene {
 	public lastEnemyTrainer: Trainer;
 	public currentBattle: Battle;
 	public pokeballCounts: PokeballCounts;
+	public money: integer;
 	private party: PlayerPokemon[];
 	private waveCountText: Phaser.GameObjects.Text;
+	private moneyText: Phaser.GameObjects.Text;
 	private modifierBar: ModifierBar;
 	private enemyModifierBar: ModifierBar;
 	private modifiers: PersistentModifier[];
@@ -384,8 +387,13 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.waveCountText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
 		this.waveCountText.setOrigin(1, 0);
-		this.updateUIPositions();
 		this.fieldUI.add(this.waveCountText);
+
+		this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.MONEY);
+		this.moneyText.setOrigin(1, 0);
+		this.fieldUI.add(this.moneyText);
+
+		this.updateUIPositions();
 
 		this.party = [];
 
@@ -538,6 +546,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.seed = Utils.randomString(16);
 		console.log('Seed:', this.seed);
 
+		this.money = startingMoney;
+
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 		this.pokeballCounts[PokeballType.POKEBALL] += 5;
 
@@ -555,6 +565,9 @@ export default class BattleScene extends Phaser.Scene {
 		this.currentBattle = null;
 		this.waveCountText.setText(startingWave.toString());
 		this.waveCountText.setVisible(false);
+
+		this.updateMoneyText();
+		this.moneyText.setVisible(false);
 
 		this.newArena(startingBiome, true);
 
@@ -722,9 +735,15 @@ export default class BattleScene extends Phaser.Scene {
 		this.waveCountText.setVisible(true);
 	}
 
+	updateMoneyText(): void {
+		this.moneyText.setText(`₽${this.money.toLocaleString('en-US')}`);
+		this.moneyText.setVisible(true);
+	}
+
 	updateUIPositions(): void {
 		this.waveCountText.setY(-(this.game.canvas.height / 6) + (this.enemyModifiers.length ? 15 : 0));
-		this.partyExpBar.setY(this.waveCountText.y + 15);
+		this.moneyText.setY(this.waveCountText.y + 10);
+		this.partyExpBar.setY(this.moneyText.y + 15);
 	}
 
 	getMaxExpLevel(): integer {

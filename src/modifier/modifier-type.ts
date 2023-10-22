@@ -518,7 +518,7 @@ export class TurnHeldItemTransferModifierType extends PokemonHeldItemModifierTyp
   }
 }
 
-type ModifierTypeFunc = () => ModifierType;
+export type ModifierTypeFunc = () => ModifierType;
 type WeightedModifierTypeWeightFunc = (party: Pokemon[]) => integer;
 
 class WeightedModifierType {

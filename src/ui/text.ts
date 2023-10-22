@@ -6,7 +6,8 @@ export enum TextStyle {
   PARTY_RED,
   SUMMARY,
   SUMMARY_RED,
-  SUMMARY_GOLD
+  SUMMARY_GOLD,
+  MONEY
 };
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
@@ -31,8 +32,8 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
       styleOptions.fontSize = '96px';
       break;
     case TextStyle.BATTLE_INFO:
+    case TextStyle.MONEY:
       styleOptions.fontSize = '72px';
-      styleOptions.padding = undefined;
       shadowSize = 4;
       break;
     case TextStyle.PARTY:
@@ -77,6 +78,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean) {
     case TextStyle.SUMMARY_RED:
       return !shadow ? '#f89890' : '#984038';
     case TextStyle.SUMMARY_GOLD:
+    case TextStyle.MONEY:
       return !shadow ? '#e8e8a8' : '#a0a060'
   }
 }

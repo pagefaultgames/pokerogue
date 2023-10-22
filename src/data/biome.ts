@@ -4702,7 +4702,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     console.log(beautify(trainerOutput, null, 2, 120).replace(/(      |      (?:\{ "\d+": \[ )?|    "(?:.*?)": \[ |, (?:(?:\{ )?"\d+": \[ )?)"(.*?)"/g, '$1TrainerType.$2').replace(/"(\d+)": /g, '$1: ').replace(/(    )"(.*?)"/g, '$1[BiomePoolTier.$2]').replace(/(  )"(.*?)"/g, '$1[Biome.$2]'));
   }
 
-  outputPools();
+  //outputPools();
 
   /*for (let pokemon of allSpecies) {
     if (pokemon.speciesId >= Species.XERNEAS)

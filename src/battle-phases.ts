@@ -231,6 +231,7 @@ export class EncounterPhase extends BattlePhase {
     super.start();
 
     this.scene.updateWaveCountText();
+    this.scene.updateMoneyText();
 
     const loadEnemyAssets = [];
 
