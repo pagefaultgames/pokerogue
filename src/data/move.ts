@@ -844,8 +844,8 @@ export class MoveEffectAttr extends MoveAttr {
       && (this.selfTarget || !target.getTag(BattlerTagType.PROTECTED) || move.hasFlag(MoveFlags.IGNORE_PROTECT));
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
-    return this.canApply(user, target, move, args);
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    return this.canApply(user, target, move, args); 
   }
 }
 
@@ -1404,6 +1404,32 @@ export class GrowthStatChangeAttr extends StatChangeAttr {
         return this.levels + 1;
     }
     return this.levels;
+  }
+}
+
+export class HpSplitAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise(resolve => {
+      if (!super.apply(user, target, move, args))
+        return resolve(false);
+
+      const infoUpdates = [];
+  
+      const hpValue = Math.floor((target.hp + user.hp) / 2);
+      if (user.hp < hpValue) 
+        user.heal(hpValue - user.hp);
+      else if (user.hp > hpValue)
+        user.damage(user.hp - hpValue);
+      infoUpdates.push(user.updateInfo());
+
+      if (target.hp < hpValue) 
+        target.heal(hpValue - target.hp);
+      else if (target.hp > hpValue)
+        target.damage(target.hp - hpValue);
+      infoUpdates.push(target.updateInfo());
+
+      return Promise.all(infoUpdates).then(() => resolve(true));
+    });
   }
 }
 
@@ -2730,7 +2756,8 @@ export function initMoves() {
     new AttackMove(Moves.FRUSTRATION, "Frustration (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, "Power decreases with higher Friendship.", -1, 0, 2),
     new SelfStatusMove(Moves.SAFEGUARD, "Safeguard (N)", Type.NORMAL, -1, 25, -1, "The user's party is protected from status conditions.", -1, 0, 2)
       .target(MoveTarget.USER_SIDE),
-    new StatusMove(Moves.PAIN_SPLIT, "Pain Split (N)", Type.NORMAL, -1, 20, -1, "The user's and opponent's HP becomes the average of both.", -1, 0, 2),
+    new StatusMove(Moves.PAIN_SPLIT, "Pain Split", Type.NORMAL, -1, 20, -1, "The user's and opponent's HP becomes the average of both.", -1, 0, 2)
+      .attr(HpSplitAttr),
     new AttackMove(Moves.SACRED_FIRE, "Sacred Fire", Type.FIRE, MoveCategory.PHYSICAL, 100, 95, 5, -1, "May burn opponent.", 50, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .makesContact(false),
