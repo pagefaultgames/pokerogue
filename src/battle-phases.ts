@@ -1968,7 +1968,7 @@ export class FaintPhase extends PokemonPhase {
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
       if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
-        const nonFaintedPartyMemberCount = this.scene.getParty().filter(p => !p.isFainted()).length;
+        const nonFaintedPartyMemberCount = this.scene.getEnemyParty().filter(p => !p.isFainted()).length;
         if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount())
           this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, this.scene.currentBattle.trainer.getNextSummonIndex(), false, false, false));
       }
