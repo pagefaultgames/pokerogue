@@ -617,8 +617,8 @@ export const modifierTypes = {
   TM_GREAT: () => new TmModifierTypeGenerator(ModifierTier.GREAT),
   TM_ULTRA: () => new TmModifierTypeGenerator(ModifierTier.ULTRA),
 
-  EXP_SHARE: () => new ModifierType('EXP. All', 'Non-participants gain 20% of a single participant\'s EXP. Points',
-    (type, _args) => new Modifiers.ExpShareModifier(type)),
+  EXP_SHARE: () => new ModifierType('EXP. All', 'Non-participants receive 20% of a single participant\'s EXP. Points',
+    (type, _args) => new Modifiers.ExpShareModifier(type), 'exp_share'),
   EXP_BALANCE: () => new ModifierType('EXP. Balance', 'All EXP. Points received from battles are split between the lower leveled party members',
     (type, _args) => new Modifiers.ExpBalanceModifier(type)),
 
