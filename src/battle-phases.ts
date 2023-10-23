@@ -401,6 +401,8 @@ export class NextEncounterPhase extends EncounterPhase {
         this.scene.arenaEnemy.setX(this.scene.arenaNextEnemy.x);
         this.scene.arenaEnemy.setAlpha(1);
         this.scene.arenaNextEnemy.setX(this.scene.arenaNextEnemy.x - 300);
+        if (this.scene.lastEnemyTrainer)
+          this.scene.lastEnemyTrainer.destroy();
         
         this.doEncounterCommon();
       }
@@ -521,7 +523,7 @@ export class SwitchBiomePhase extends BattlePhase {
         this.scene.time.delayedCall(1000, () => this.scene.playBgm());
 
         this.scene.tweens.add({
-          targets: [ this.scene.arenaPlayer, this.scene.arenaBgTransition, this.scene.arenaPlayerTransition ],
+          targets: [ this.scene.arenaPlayer, this.scene.arenaBgTransition, this.scene.arenaPlayerTransition, this.scene.lastEnemyTrainer ],
           duration: 1000,
           delay: 1000,
           ease: 'Sine.easeInOut',
@@ -535,6 +537,8 @@ export class SwitchBiomePhase extends BattlePhase {
             this.scene.arenaNextEnemy.setBiome(this.nextBiome);
             this.scene.arenaBgTransition.setVisible(false);
             this.scene.arenaPlayerTransition.setVisible(false);
+            if (this.scene.lastEnemyTrainer)
+              this.scene.lastEnemyTrainer.destroy();
 
             this.end();
           }
