@@ -867,11 +867,11 @@ export default class BattleScene extends Phaser.Scene {
 				playNewBgm();
 		});
 		if (fadeOut) {
-			this.fadeOutBgm(500, true);
-			this.time.delayedCall(750, () => {
+			const onBgmFaded = () => {
 				if (loaded && (!this.bgm.isPlaying || this.bgm.pendingRemove))
 					playNewBgm();
-			});
+			};
+			this.time.delayedCall(this.fadeOutBgm(500, true) ? 750 : 250, onBgmFaded);
 		}
 		if (!this.load.isLoading())
 			this.load.start();
@@ -887,7 +887,7 @@ export default class BattleScene extends Phaser.Scene {
 			this.bgm.resume();
 	}
 
-	fadeOutBgm(duration?: integer, destroy?: boolean): void {
+	fadeOutBgm(duration?: integer, destroy?: boolean): boolean {
 		if (!this.bgm)
 			return;
 		if (!duration)
@@ -895,7 +895,12 @@ export default class BattleScene extends Phaser.Scene {
 		if (destroy === undefined)
       destroy = true;
     const bgm = this.sound.get(this.bgm.key);
-    SoundFade.fadeOut(this, bgm, duration, destroy);
+		if (bgm) {
+			SoundFade.fadeOut(this, bgm, duration, destroy);
+			return true;
+		}
+
+		return false;
 	}
 
 	playSound(soundName: string, config?: object) {

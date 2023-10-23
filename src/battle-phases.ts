@@ -453,13 +453,13 @@ export class SelectBiomePhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.fadeOutBgm(2000, true);
-
     const currentBiome = this.scene.arena.biomeType;
 
     const setNextBiome = (nextBiome: Biome) => {
       if (this.scene.gameMode === GameMode.CLASSIC)
         this.scene.unshiftPhase(new PartyHealPhase(this.scene, false));
+      else
+        this.scene.fadeOutBgm(2000, true);
       this.scene.unshiftPhase(new SwitchBiomePhase(this.scene, nextBiome));
       this.end();
     };
