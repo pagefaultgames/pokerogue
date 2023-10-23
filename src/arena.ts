@@ -102,7 +102,7 @@ export class Arena {
   }
 
   randomTrainerType(waveIndex: integer): TrainerType {
-    const isBoss = waveIndex > 10 && waveIndex % 20 === 10 && !!this.trainerPool[BiomePoolTier.BOSS].length
+    const isBoss = waveIndex > 20 && !(waveIndex % 30) && !!this.trainerPool[BiomePoolTier.BOSS].length
       && (this.biomeType !== Biome.END || this.scene.gameMode !== GameMode.ENDLESS || waveIndex % 250 === 0);
     const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
     let tier = !isBoss
