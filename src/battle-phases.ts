@@ -2030,12 +2030,12 @@ export class VictoryPhase extends PokemonPhase {
         continue;
       }
       let expMultiplier = 0;
-      if (participated)
+      if (participated) {
         expMultiplier += (1 / participantIds.size);
-      if (participantIds.size > 1 && multipleParticipantExpBonusModifier)
-        expMultiplier += (multipleParticipantExpBonusModifier.getStackCount() * 0.1);
-      if (expShareModifier)
-        expMultiplier += expShareModifier.getStackCount() * 0.1;
+        if (participantIds.size > 1 && multipleParticipantExpBonusModifier)
+          expMultiplier += multipleParticipantExpBonusModifier.getStackCount() * 0.2;
+      } else if (expShareModifier)
+        expMultiplier += (expShareModifier.getStackCount() * 0.2) / participantIds.size;
       const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
       this.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
       partyMemberExp.push(Math.floor(pokemonExp.value));

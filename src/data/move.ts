@@ -2375,8 +2375,7 @@ export function initMoves() {
     new AttackMove(Moves.SURF, "Surf", Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, 123, "Hits all adjacent Pokémon.", -1, 0, 1)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.ICE_BEAM, "Ice Beam", Type.ICE, MoveCategory.SPECIAL, 90, 100, 10, 135, "May freeze opponent.", 10, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.FREEZE)
-      .target(MoveTarget.ALL_NEAR_OTHERS),
+      .attr(StatusEffectAttr, StatusEffect.FREEZE),
     new AttackMove(Moves.BLIZZARD, "Blizzard", Type.ICE, MoveCategory.SPECIAL, 110, 70, 5, 143, "May freeze opponent.", 10, 0, 1)
       .attr(BlizzardAccuracyAttr)
       .attr(StatusEffectAttr, StatusEffect.FREEZE) // TODO: 30% chance to hit protect/detect in hail
