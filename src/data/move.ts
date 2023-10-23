@@ -2177,7 +2177,7 @@ function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, targe
     const moveAttrs = move.attrs.filter(a => attrFilter(a));
     for (let attr of moveAttrs) {
       const result = attr.apply(user, target, move, args);
-      if (result instanceof Promise<boolean>)
+      if (result instanceof Promise)
         attrPromises.push(result);
     }
     Promise.allSettled(attrPromises).then(() => resolve());

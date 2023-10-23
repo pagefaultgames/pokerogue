@@ -16,7 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { Biome, biomeLinks } from "./data/biome";
-import { ModifierType, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { ModifierPoolType, ModifierType, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
@@ -266,6 +266,7 @@ export class EncounterPhase extends BattlePhase {
         if (e < (battle.double ? 2 : 1)) {
           if (battle.battleType === BattleType.WILD) {
             this.scene.field.add(enemyPokemon);
+            battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
             const playerPokemon = this.scene.getPlayerPokemon();
             if (playerPokemon.visible)
               this.scene.field.moveBelow(enemyPokemon as Pokemon, playerPokemon);
@@ -280,7 +281,7 @@ export class EncounterPhase extends BattlePhase {
       });
 
       if (!this.loaded) {
-        regenerateModifierPoolThresholds(this.scene.getEnemyField(), false);
+        regenerateModifierPoolThresholds(this.scene.getEnemyField(), battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD);
         this.scene.generateEnemyModifiers();
       }
 
@@ -632,6 +633,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               const playerPokemon = this.scene.getPlayerPokemon() as Pokemon;
               if (playerPokemon.visible)
                 this.scene.field.moveBelow(pokemon, playerPokemon);
+              this.scene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
+              this.scene.updateModifiers(false);
             }
             pokemon.showInfo();
             pokemon.playAnim();
@@ -2753,7 +2756,7 @@ export class SelectModifierPhase extends BattlePhase {
     this.scene.resetSeed();
 
     const party = this.scene.getParty();
-    regenerateModifierPoolThresholds(party);
+    regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER);
     const modifierCount = new Utils.IntegerHolder(3);
     this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
     const typeOptions: Array<ModifierTypeOption> = getPlayerModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, modifierCount.value, party);

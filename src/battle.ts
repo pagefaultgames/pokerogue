@@ -37,6 +37,7 @@ export default class Battle {
     public trainer: Trainer;
     public enemyLevels: integer[];
     public enemyParty: EnemyPokemon[];
+    public seenEnemyPartyMemberIds: Set<integer>;
     public double: boolean;
     public started: boolean;
     public turn: integer;
@@ -54,6 +55,7 @@ export default class Battle {
             ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
             : trainer.getPartyLevels(this.waveIndex);
         this.enemyParty = [];
+        this.seenEnemyPartyMemberIds = new Set<integer>();
         this.double = double;
         this.turn = 0;
         this.started = false;

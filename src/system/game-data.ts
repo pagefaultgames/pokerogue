@@ -226,6 +226,8 @@ export class GameData {
         sessionData.enemyParty.forEach((enemyData, e) => {
           const enemyPokemon = enemyData.toPokemon(scene) as EnemyPokemon;
           battle.enemyParty[e] = enemyPokemon;
+          if (battleType === BattleType.WILD)
+            battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
 
           loadPokemonAssets.push(enemyPokemon.loadAssets());
         });

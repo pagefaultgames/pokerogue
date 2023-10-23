@@ -334,10 +334,13 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
 
     if (!forSummary) {
       const pokemon = this.getPokemon(scene);
-      const pokemonIcon = scene.add.sprite(0, 8, pokemon.species.getIconAtlasKey());
-      if (pokemon.species.isObtainable())
-        pokemonIcon.play(pokemon.getIconKey()).stop();
-      else {
+      const isIconShown = pokemon instanceof PlayerPokemon || scene.currentBattle.seenEnemyPartyMemberIds.has(pokemon.id);
+      const iconAtlasKey = isIconShown ? pokemon.species.getIconAtlasKey() : 'pokemon_icons_0';
+      const pokemonIcon = scene.add.sprite(0, 8, iconAtlasKey);
+      if (pokemon.species.isObtainable()) {
+        const iconKey = isIconShown ? pokemon.getIconKey() : 'pkmn_icon__000';
+        pokemonIcon.play(iconKey).stop();
+      } else {
         if (pokemon.species.speciesId === Species.ETERNATUS)
           pokemonIcon.setScale(0.5, 0.5);
         else
@@ -395,7 +398,7 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
   }
 
   shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array<integer>;
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Array;
   }
 
   apply(args: any[]): boolean {

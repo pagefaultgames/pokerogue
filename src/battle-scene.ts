@@ -16,7 +16,7 @@ import { GameData } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
 import { Moves, initMoves } from './data/move';
-import { getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';
@@ -1128,7 +1128,10 @@ export default class BattleScene extends Phaser.Scene {
 			const isBoss = !(waveIndex % 10);
 			let count = 0;
 			for (let c = 0; c < chances; c++) {
-				if (!Utils.randInt(!isBoss ? 12 : 4))
+				let modifierChance = !isBoss ? 16 : 6;
+				if (this.currentBattle.battleType === BattleType.TRAINER)
+					modifierChance /= 2;
+				if (!Utils.randSeedInt(modifierChance))
 					count++;
 				if (count === 12)
 					break;
@@ -1136,7 +1139,7 @@ export default class BattleScene extends Phaser.Scene {
 			if (isBoss)
 				count = Math.max(count, Math.floor(chances / 2));
 			const enemyField = this.getEnemyField();
-			getEnemyModifierTypesForWave(waveIndex, count, this.getEnemyField())
+			getEnemyModifierTypesForWave(waveIndex, count, this.getEnemyField(), this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD)
 				.map(mt => mt.newModifier(enemyField[Utils.randInt(enemyField.length)]).add(this.enemyModifiers, false));
 
 			this.updateModifiers(false).then(() => resolve());
