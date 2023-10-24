@@ -1186,7 +1186,7 @@ export class StealHeldItemAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const heldItems = this.getTargetHeldItems(target);
+    const heldItems = this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
     if (heldItems.length) {
       const stolenItem = heldItems[Utils.randInt(heldItems.length)];
       user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false);
@@ -3035,7 +3035,7 @@ export function initMoves() {
     new AttackMove(Moves.PSYCHO_BOOST, "Psycho Boost", Type.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, "Sharply lowers user's Special Attack.", 100, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
     new SelfStatusMove(Moves.ROOST, "Roost", Type.FLYING, -1, 5, -1, "User recovers half of its max HP and loses the FLYING type temporarily.", -1, 0, 4)
-      .attr(HealAttr)
+      .attr(HealAttr, 0.5)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, true, 1),
     new SelfStatusMove(Moves.GRAVITY, "Gravity", Type.PSYCHIC, -1, 5, -1, "Prevents moves like Fly and Bounce and the Ability Levitate for 5 turns.", -1, 0, 4)
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
