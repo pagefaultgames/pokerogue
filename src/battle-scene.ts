@@ -539,12 +539,14 @@ export default class BattleScene extends Phaser.Scene {
 
 	getPokemonById(pokemonId: integer): Pokemon {
 		const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
-		return findInParty(this.getParty()) || findInParty(this.getEnemyField());
+		return findInParty(this.getParty()) || findInParty(this.getEnemyParty());
 	}
 
 	reset(): void {
 		this.seed = Utils.randomString(16);
 		console.log('Seed:', this.seed);
+
+		this.gameMode = GameMode.CLASSIC;
 
 		this.money = startingMoney;
 
@@ -559,7 +561,7 @@ export default class BattleScene extends Phaser.Scene {
 		for (let p of this.getParty())
 			p.destroy();
 		this.party = [];
-		for (let p of this.getEnemyField())
+		for (let p of this.getEnemyParty())
 			p.destroy();
 			
 		this.currentBattle = null;
@@ -590,7 +592,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.resetSeed(newWaveIndex);
 		
-		if (fixedBattles.hasOwnProperty(newWaveIndex)) {
+		if (fixedBattles.hasOwnProperty(newWaveIndex) && this.gameMode === GameMode.CLASSIC) {
 			battleConfig = fixedBattles[newWaveIndex];
 			newDouble = battleConfig.double;
 			newBattleType = battleConfig.battleType;
@@ -598,7 +600,9 @@ export default class BattleScene extends Phaser.Scene {
 			if (newTrainer)
 				this.field.add(newTrainer);
 		} else {
-			if (battleType === undefined) {
+			if (this.gameMode === GameMode.ENDLESS)
+				newBattleType = BattleType.WILD;
+			else if (battleType === undefined) {
 				if (newWaveIndex > 20 && !(newWaveIndex % 30))
 					newBattleType = BattleType.TRAINER;
 				else if (newWaveIndex % 10 !== 1 && newWaveIndex % 10) {
@@ -644,7 +648,7 @@ export default class BattleScene extends Phaser.Scene {
 			const showTrainer = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER;
 			const availablePartyMemberCount = this.getParty().filter(p => !p.isFainted()).length;
 			if (lastBattle) {
-				this.getEnemyField().forEach(enemyPokemon => enemyPokemon.destroy());
+				this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
 				if (showTrainer) {
 					playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 					this.unshiftPhase(new ShowTrainerPhase(this));
@@ -741,7 +745,7 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	updateUIPositions(): void {
-		this.waveCountText.setY(-(this.game.canvas.height / 6) + (this.enemyModifiers.length ? 15 : 0));
+		this.waveCountText.setY(-(this.game.canvas.height / 6) + (this.enemyModifiers.filter(m => m.isIconVisible(this)).length ? 15 : 0));
 		this.moneyText.setY(this.waveCountText.y + 10);
 		this.partyExpBar.setY(this.moneyText.y + 15);
 	}
@@ -1125,22 +1129,30 @@ export default class BattleScene extends Phaser.Scene {
 		return new Promise(resolve => {
 			const waveIndex = this.currentBattle.waveIndex;
 			const chances = Math.ceil(waveIndex / 10);
-			const isBoss = !(waveIndex % 10);
-			let count = 0;
-			for (let c = 0; c < chances; c++) {
-				let modifierChance = !isBoss ? 16 : 6;
+			const isBoss = !(waveIndex % 10) || (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer.config.isBoss);
+			
+			let modifierChance: integer;
+			if (this.gameMode === GameMode.CLASSIC)
+				modifierChance = !isBoss ? 18 : 6;
+			else
+				modifierChance = !isBoss ? 12 : 4;
+
+			this.getEnemyParty().forEach((enemyPokemon: EnemyPokemon, i: integer) => {
+				let pokemonModifierChance = modifierChance;
 				if (this.currentBattle.battleType === BattleType.TRAINER)
-					modifierChance /= 2;
-				if (!Utils.randSeedInt(modifierChance))
-					count++;
-				if (count === 12)
-					break;
-			}
-			if (isBoss)
-				count = Math.max(count, Math.floor(chances / 2));
-			const enemyField = this.getEnemyField();
-			getEnemyModifierTypesForWave(waveIndex, count, this.getEnemyField(), this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD)
-				.map(mt => mt.newModifier(enemyField[Utils.randInt(enemyField.length)]).add(this.enemyModifiers, false));
+					pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i));
+				let count = 0;
+				for (let c = 0; c < chances; c++) {
+					if (!Utils.randSeedInt(modifierChance))
+						count++;
+					if (count === 12)
+						break;
+				}
+				if (isBoss)
+					count = Math.max(count, Math.floor(chances / 2));
+				getEnemyModifierTypesForWave(waveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD)
+					.map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false));
+			});
 
 			this.updateModifiers(false).then(() => resolve());
 		});
@@ -1172,7 +1184,7 @@ export default class BattleScene extends Phaser.Scene {
 					modifiers.splice(modifiers.indexOf(modifier), 1);
 			}
 
-			this.updatePartyForModifiers(player ? this.getParty() : this.getEnemyField().filter(p => p.isActive())).then(() => {
+			this.updatePartyForModifiers(player ? this.getParty() : this.getEnemyParty()).then(() => {
 				(player ? this.modifierBar : this.enemyModifierBar).updateModifiers(modifiers);
 				if (!player)
 					this.updateUIPositions();

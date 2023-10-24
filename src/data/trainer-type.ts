@@ -280,7 +280,8 @@ export class TrainerConfig {
   public nameFemale: string;
   public hasGenders: boolean = false;
   public isDouble: boolean = false;
-  public staticParty: boolean = false;
+  public isBoss: boolean = false;
+  public hasStaticParty: boolean = false;
   public battleBgm: string;
   public encounterBgm: string;
   public femaleEncounterBgm: string;
@@ -349,8 +350,13 @@ export class TrainerConfig {
     return this;
   }
 
+  setBoss(): TrainerConfig {
+    this.isBoss = true;
+    return this;
+  }
+
   setStaticParty(): TrainerConfig {
-    this.staticParty = true;
+    this.hasStaticParty = true;
     return this;
   }
 
@@ -428,6 +434,7 @@ export class TrainerConfig {
     this.setPartyMemberFunc(-1, getRandomPartyMemberFunc([ signatureSpecies ]));
     if (specialtyType !== undefined)
       this.setSpeciesFilter(p => p.isOfType(specialtyType));
+    this.setBoss();
     this.setStaticParty();
     this.setBattleBgm('battle_gym');
     this.setVictoryBgm('victory_gym');
@@ -441,6 +448,7 @@ export class TrainerConfig {
       this.setSpeciesFilter(p => p.isOfType(specialtyType) && p.baseTotal >= 450);
     else
       this.setSpeciesFilter(p => p.baseTotal >= 450);
+    this.setBoss();
     this.setStaticParty();
     this.setBattleBgm('battle_elite');
     this.setVictoryBgm('victory_gym');
@@ -451,6 +459,7 @@ export class TrainerConfig {
     this.setPartyTemplates(trainerPartyTemplates.CHAMPION);
     this.setPartyMemberFunc(-1, getRandomPartyMemberFunc([ signatureSpecies ]));
     this.setSpeciesFilter(p => p.baseTotal >= 470);
+    this.setBoss();
     this.setStaticParty();
     this.setBattleBgm('battle_champion');
     this.setVictoryBgm('victory_champion');
@@ -707,7 +716,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT ]))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450))
     .setSpeciesFilter(species => species.baseTotal >= 540),
-  [TrainerType.RIVAL_4]: new TrainerConfig(++t).setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival_2').setPartyTemplates(trainerPartyTemplates.RIVAL_4).setEncounterMessages([
+  [TrainerType.RIVAL_4]: new TrainerConfig(++t).setBoss().setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival_2').setPartyTemplates(trainerPartyTemplates.RIVAL_4).setEncounterMessages([
     `It's me! You didn't forget about me again did you?
     $You made it really far! I'm proud of you.\nBut it looks like it's the end of your journey.
     $You've awoken something in me I never knew was there.\nIt seems like all I do now is train.
@@ -721,13 +730,13 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT ]))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450))
     .setSpeciesFilter(species => species.baseTotal >= 540),
-  [TrainerType.RIVAL_5]: new TrainerConfig(++t).setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival_3').setPartyTemplates(trainerPartyTemplates.RIVAL_5).setEncounterMessages([ `…` ]).setVictoryMessages([ '…' ])
+  [TrainerType.RIVAL_5]: new TrainerConfig(++t).setBoss().setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival_3').setPartyTemplates(trainerPartyTemplates.RIVAL_5).setEncounterMessages([ `…` ]).setVictoryMessages([ '…' ])
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT ]))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450))
     .setSpeciesFilter(species => species.baseTotal >= 540)
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RAYQUAZA ])),
-  [TrainerType.RIVAL_6]: new TrainerConfig(++t).setStaticParty().setEncounterBgm('final').setBattleBgm('battle_rival_3').setPartyTemplates(trainerPartyTemplates.RIVAL_6)
+  [TrainerType.RIVAL_6]: new TrainerConfig(++t).setBoss().setStaticParty().setEncounterBgm('final').setBattleBgm('battle_rival_3').setPartyTemplates(trainerPartyTemplates.RIVAL_6)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT ]))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450))

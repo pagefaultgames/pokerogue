@@ -256,7 +256,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
       let evolutionChance: number;
       
       if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE)
-        evolutionChance = Math.min(0.5 + easeInFunc((level - ev.level) / 40) / 2, 1);
+        evolutionChance = Math.min(0.5 + easeInFunc(Math.min(level - ev.level, 40) / 40) / 2, 1);
       else {
         let preferredMinLevel = ev.wildDelay * 10;
         let evolutionLevel = ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2);

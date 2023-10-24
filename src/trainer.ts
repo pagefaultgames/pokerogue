@@ -132,7 +132,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
         : this.genNewPartyMemberSpecies(level);
       
       ret = new EnemyPokemon(this.scene, species, level);
-    }, this.config.staticParty ? this.config.getDerivedType() + ((index + 1) << 8) : this.scene.currentBattle.waveIndex + (this.config.getDerivedType() << 10) + ((index + 1) << 8));
+    }, this.config.hasStaticParty ? this.config.getDerivedType() + ((index + 1) << 8) : this.scene.currentBattle.waveIndex + (this.config.getDerivedType() << 10) + ((index + 1) << 8));
 
     return ret;
   }
@@ -188,6 +188,21 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     const maxScorePartyMemberIndexes = partyMemberScores.filter(pms => pms[1] === sortedPartyMemberScores[0][1]).map(pms => pms[0]);
     return maxScorePartyMemberIndexes[Utils.randSeedInt(maxScorePartyMemberIndexes.length)];
+  }
+  
+  getPartyMemberModifierChanceMultiplier(index: integer): number {
+    switch (this.getPartyTemplate().getStrength(index)) {
+      case TrainerPartyMemberStrength.WEAKER:
+        return 0.75;
+      case TrainerPartyMemberStrength.WEAK:
+        return 0.675;
+      case TrainerPartyMemberStrength.AVERAGE:
+        return 0.5625;
+      case TrainerPartyMemberStrength.STRONG:
+        return 0.45;
+      case TrainerPartyMemberStrength.STRONGER:
+        return 0.375;
+    }
   }
 
   loadAssets(): Promise<void> {

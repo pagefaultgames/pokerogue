@@ -31,10 +31,14 @@ export class ModifierBar extends Phaser.GameObjects.Container {
   updateModifiers(modifiers: PersistentModifier[]) {
     this.removeAll(true);
 
-    for (let modifier of modifiers) {
+    const visibleIconModifiers = modifiers.filter(m => m.isIconVisible(this.scene as BattleScene));
+
+    for (let modifier of visibleIconModifiers) {
+      if (!modifier.isIconVisible(this.scene as BattleScene))
+        continue;
       const icon = modifier.getIcon(this.scene as BattleScene);
       this.add(icon);
-      this.setModifierIconPosition(icon, modifiers.length);
+      this.setModifierIconPosition(icon, visibleIconModifiers.length);
     }
   }
 
@@ -114,6 +118,10 @@ export abstract class PersistentModifier extends Modifier {
 
   getMaxStackCount(): integer {
     return 99;
+  }
+
+  isIconVisible(scene: BattleScene): boolean {
+    return true;
   }
 
   getIcon(scene: BattleScene, forSummary?: boolean): Phaser.GameObjects.Container {
@@ -327,6 +335,11 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
 
   getTransferrable(withinParty: boolean) {
     return true;
+  }
+
+  isIconVisible(scene: BattleScene): boolean {
+    const pokemon = this.getPokemon(scene);
+    return pokemon instanceof PlayerPokemon || this.getPokemon(scene).isOnField();
   }
 
   getIcon(scene: BattleScene, forSummary?: boolean): Phaser.GameObjects.Container {
