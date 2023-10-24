@@ -330,7 +330,9 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
         moveAnim.bgSprite.setScale(1.25);
         moveAnim.bgSprite.setAlpha(this.opacity / 255);
         scene.field.add(moveAnim.bgSprite);
-        scene.field.moveBelow(moveAnim.bgSprite as Phaser.GameObjects.GameObject, scene.getEnemyPokemon() || scene.getPlayerPokemon());
+        const fieldPokemon = scene.getEnemyPokemon() || scene.getPlayerPokemon();
+        if (fieldPokemon?.isOnField())
+            scene.field.moveBelow(moveAnim.bgSprite as Phaser.GameObjects.GameObject, fieldPokemon);
 
         scene.tweens.add({
             targets: moveAnim.bgSprite,
