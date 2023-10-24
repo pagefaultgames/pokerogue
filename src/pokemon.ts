@@ -8,7 +8,7 @@ import * as Utils from './utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier } from './data/type';
 import { getLevelTotalExp } from './data/exp';
 import { Stat } from './data/pokemon-stat';
-import { AttackTypeBoosterModifier, PokemonBaseStatModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
+import { AttackTypeBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { Gender } from './data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
@@ -1153,6 +1153,13 @@ export class PlayerPokemon extends Pokemon {
         const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny);
         this.scene.getParty().push(newPokemon);
         newPokemon.evolve(newEvolution);
+        const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+          && (m as PokemonHeldItemModifier).pokemonId === this.id, true) as PokemonHeldItemModifier[];
+        modifiers.forEach(m => {
+          const clonedModifier = m.clone() as PokemonHeldItemModifier;
+          clonedModifier.pokemonId = newPokemon.id;
+          this.scene.addModifier(clonedModifier);
+        });
       }
     }
   }
