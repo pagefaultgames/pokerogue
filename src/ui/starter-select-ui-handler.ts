@@ -151,7 +151,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           species.generateIconAnim(this.scene, dexEntry?.female, dexEntry?.formIndex);
           const x = (s % 9) * 18;
           const y = Math.floor(s / 9) * 18;
-          const icon = this.scene.add.sprite(x, y, species.getIconAtlasKey());
+          const icon = this.scene.add.sprite(x, y, species.getIconAtlasKey(dexEntry?.formIndex));
           icon.setScale(0.5);
           icon.setOrigin(0, 0);
           icon.play(species.getIconKey(dexEntry?.female, dexEntry?.formIndex)).stop();

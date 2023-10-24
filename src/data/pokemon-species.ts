@@ -75,7 +75,7 @@ export abstract class PokemonSpeciesForm {
   }
 
   isObtainable() {
-    return this.generation <= 5;
+    return this.generation <= 5 && this.getFormSpriteKey(this.formIndex) !== 'mega';
   }
 
   getSpriteAtlasPath(female: boolean, formIndex?: integer, shiny?: boolean): string {
@@ -96,7 +96,9 @@ export abstract class PokemonSpeciesForm {
 
   abstract getFormSpriteKey(formIndex?: integer): string;
 
-  getIconAtlasKey(): string {
+  getIconAtlasKey(formIndex?: integer): string {
+    if (this.getFormSpriteKey(formIndex) === 'mega')
+      return 'pokemon_icons_6';
     return `pokemon_icons_${Math.min(this.generation, 6)}`;
   }
 
@@ -108,6 +110,7 @@ export abstract class PokemonSpeciesForm {
     
     switch (this.speciesId) {
       case Species.UNOWN:
+      case Species.RAYQUAZA:
       case Species.BURMY:
       case Species.WORMADAM:
       case Species.SHELLOS:
@@ -122,6 +125,7 @@ export abstract class PokemonSpeciesForm {
       case Species.LANDORUS:
       case Species.KELDEO:
       case Species.MELOETTA:
+      case Species.ETERNATUS:
         ret += this.getFormSpriteKey(formIndex).replace(/-/g, '');
         break;
       case Species.UNFEZANT:
@@ -129,7 +133,6 @@ export abstract class PokemonSpeciesForm {
       case Species.JELLICENT:
         ret += !female ? 'm' : 'f';
         break;
-      
     }
 
     return ret;
@@ -177,7 +180,10 @@ export abstract class PokemonSpeciesForm {
   }
 
   generateIconAnim(scene: BattleScene, female: boolean, formIndex: integer): void {
-    const frameNames = scene.anims.generateFrameNames(this.getIconAtlasKey(), { prefix: `${this.getIconId(female, formIndex)}_`, zeroPad: 2, suffix: '.png', start: 1, end: 34 });
+    const atlasKey = this.getIconAtlasKey(formIndex);
+    if (atlasKey === 'pokemon_icons_6')
+      return;
+    const frameNames = scene.anims.generateFrameNames(atlasKey, { prefix: `${this.getIconId(female, formIndex)}_`, zeroPad: 2, suffix: '.png', start: 1, end: 34 });
     scene.anims.create({
       key: this.getIconKey(female, formIndex),
       frames: frameNames,

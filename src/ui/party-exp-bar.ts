@@ -39,7 +39,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
       if (this.shown)
         return resolve();
 
-      this.pokemonIcon.setTexture(pokemon.species.getIconAtlasKey());
+      this.pokemonIcon.setTexture(pokemon.getIconAtlasKey());
       this.pokemonIcon.play(pokemon.getIconKey()).stop();
       this.expText.setText(`+${expValue.toString()}`);
 

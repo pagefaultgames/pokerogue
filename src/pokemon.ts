@@ -266,6 +266,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return `pkmn__${this.getBattleSpriteId()}`;
   }
 
+  getIconAtlasKey(): string {
+    return this.getSpeciesForm().getIconAtlasKey(this.formIndex);
+  }
+
   getIconId(): string {
     return this.getSpeciesForm().getIconId(this.gender === Gender.FEMALE, this.formIndex);
   }
