@@ -860,8 +860,11 @@ export function getPlayerModifierTypeOptionsForWave(waveIndex: integer, count: i
 
 export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: EnemyPokemon[], poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER): PokemonHeldItemModifierType[] {
   const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType).type as PokemonHeldItemModifierType);
-  if (waveIndex === 200)
-    ret.push(modifierTypes.MINI_BLACK_HOLE());
+  if (waveIndex === 200) {
+    const miniBlackHole = modifierTypes.MINI_BLACK_HOLE();
+    miniBlackHole.id = 'MINI_BLACK_HOLE';
+    ret.push(miniBlackHole);
+  }
   return ret;
 }
 
