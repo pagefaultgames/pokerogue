@@ -184,6 +184,6 @@ export const fixedBattles: FixedBattleConfigs = {
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.CAITLIN)),
     [190]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, Phaser.Math.RND.pick([ TrainerType.BLUE, TrainerType.RED, TrainerType.LANCE, TrainerType.STEVEN, TrainerType.WALLACE, TrainerType.CYNTHIA, TrainerType.IRIS, TrainerType.ALDER, TrainerType.CYNTHIA ]))),
-    [199]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+    [195]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_6, true))
 }

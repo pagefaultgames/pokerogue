@@ -142,8 +142,11 @@ export abstract class PokemonSpeciesForm {
   getCryKey(formIndex?: integer): string {
     let ret = this.speciesId.toString();
     const forms = getPokemonSpecies(this.speciesId).forms;
-    if (forms.length && forms[formIndex || 0].formKey === 'mega')
-      ret += '-mega';
+    if (forms.length) {
+      const formKey = forms[formIndex || 0].formKey;
+      if (formKey === 'mega' || formKey === 'eternamax')
+        ret += `-${formKey}`;
+    }
     return ret;
   }
 
@@ -1115,7 +1118,9 @@ export function initSpecies() {
     new PokemonSpecies(Species.GENESECT, "Genesect", 5, false, false, true, "Paleozoic Pokémon", Type.BUG, Type.STEEL, 1.5, 82.5, Abilities.DOWNLOAD, Abilities.NONE, Abilities.NONE, 600, 71, 120, 95, 120, 95, 99, 3, 0, 270, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
     new PokemonSpecies(Species.XERNEAS, "Xerneas", 6, false, true, false, "Life Pokémon", Type.FAIRY, null, 3, 215, Abilities.FAIRY_AURA, Abilities.NONE, Abilities.NONE, 680, 126, 131, 95, 131, 98, 99, 45, 0, 306, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
     new PokemonSpecies(Species.YVELTAL, "Yveltal", 6, false, true, false, "Destruction Pokémon", Type.DARK, Type.FLYING, 5.8, 203, Abilities.DARK_AURA, Abilities.NONE, Abilities.NONE, 680, 126, 131, 95, 131, 98, 99, 45, 0, 306, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
-    new PokemonSpecies(Species.ETERNATUS, 'Eternatus', 8, false, true, false, 'Gigantic Pokemon', Type.POISON, Type.DRAGON, 20, 950, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 690, 140, 85, 95, 145, 95, 130, 255, 0, 345, GrowthRate.SLOW, "Undiscovered", null, null, 120, false, false)
+    new PokemonSpecies(Species.ETERNATUS, "Eternatus", 8, false, true, false, "Gigantic Pokemon", Type.POISON, Type.DRAGON, 20, 950, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 690, 140, 85, 95, 145, 95, 130, 255, 0, 345, GrowthRate.SLOW, "Undiscovered", null, null, 120, false, false, 
+      new PokemonForm("Normal", "", Type.POISON, Type.DRAGON, 20, 950, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 690, 140, 85, 95, 145, 95, 130, 255, 0, 345, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
+      new PokemonForm("Eternamax", "eternamax", Type.POISON, Type.DRAGON, 100, 950, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 1125, 255, 115, 250, 125, 250, 130, 255, 0, 345, GrowthRate.SLOW, "Undiscovered", null, null, 120, false))
   );
 }
 

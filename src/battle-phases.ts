@@ -30,6 +30,7 @@ import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { GameMode } from "./game-mode";
+import { Species } from "./data/species";
 
 export class CheckLoadPhase extends BattlePhase {
   private loaded: boolean;
@@ -252,6 +253,9 @@ export class EncounterPhase extends BattlePhase {
         enemyPokemon.resetSummonData();
         this.scene.gameData.setPokemonSeen(enemyPokemon);
       }
+
+      if (this.scene.gameMode === GameMode.CLASSIC && battle.waveIndex === 200 && enemyPokemon.species.speciesId === Species.ETERNATUS)
+        enemyPokemon.formIndex = 1;
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
   
