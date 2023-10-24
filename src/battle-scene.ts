@@ -1090,20 +1090,23 @@ export default class BattleScene extends Phaser.Scene {
 					resolve(false);
 					return;
 				}
-				const newStackCount = matchingModifier.stackCount + (transferStack ? itemModifier.stackCount : 1);
-				if (newStackCount > maxStackCount) {
-					itemModifier.stackCount = newStackCount - maxStackCount;
-					newItemModifier.stackCount = maxStackCount;
-					removeOld = !itemModifier.stackCount;
-				}
-			} else if (!transferStack)
+				const countTaken = transferStack ? Math.min(itemModifier.stackCount, maxStackCount - matchingModifier.stackCount) : 1;
+				itemModifier.stackCount -= countTaken;
+				newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
+				removeOld = !itemModifier.stackCount;
+			} else if (!transferStack) {
+				newItemModifier.stackCount = 1;
 				removeOld = !(--itemModifier.stackCount);
+			}
 			if (!removeOld || this.removeModifier(itemModifier, !source.isPlayer())) {
 				const addModifier = () => {
-					if (target.isPlayer())
-						this.addModifier(newItemModifier, playSound).then(() => resolve(true));
-					else
-						this.addEnemyModifier(newItemModifier).then(() => resolve(true));
+					if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
+						if (target.isPlayer())
+							this.addModifier(newItemModifier, playSound).then(() => resolve(true));
+						else
+							this.addEnemyModifier(newItemModifier).then(() => resolve(true));
+					} else
+						resolve(false);
 				};
 				if (source.isPlayer() !== target.isPlayer())
 					this.updateModifiers(source.isPlayer()).then(() => addModifier());

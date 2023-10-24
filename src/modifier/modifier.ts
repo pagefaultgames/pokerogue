@@ -14,6 +14,7 @@ import * as Utils from "../utils";
 import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
 import { Species } from '../data/species';
+import { BattleType } from '../battle';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -339,7 +340,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
 
   isIconVisible(scene: BattleScene): boolean {
     const pokemon = this.getPokemon(scene);
-    return pokemon instanceof PlayerPokemon || this.getPokemon(scene).isOnField();
+    return pokemon instanceof PlayerPokemon || (scene.currentBattle.battleType === BattleType.WILD || this.getPokemon(scene).isOnField());
   }
 
   getIcon(scene: BattleScene, forSummary?: boolean): Phaser.GameObjects.Container {
