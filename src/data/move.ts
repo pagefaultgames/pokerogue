@@ -1671,7 +1671,8 @@ export class DisableMoveAttr extends MoveEffectAttr {
         return false;
       
       const disabledMove = target.getMoveset()[moveIndex];
-      disabledMove.disableTurns = 4;
+      target.summonData.disabledMove = disabledMove.moveId;
+      target.summonData.disabledTurns = 4;
 
       user.scene.queueMessage(getPokemonMessage(target, `'s ${disabledMove.getName()}\nwas disabled!`));
       
@@ -1683,6 +1684,9 @@ export class DisableMoveAttr extends MoveEffectAttr {
   
   getCondition(): MoveCondition {
     return (user: Pokemon, target: Pokemon, move: Move) => {
+      if (target.summonData.disabledMove)
+        return false;
+
       const moveQueue = target.getLastXMoves();
       let turnMove: TurnMove;
       while (moveQueue.length) {
@@ -1694,7 +1698,7 @@ export class DisableMoveAttr extends MoveEffectAttr {
         if (!move)
           continue;
 
-        return !move.isDisabled();
+        return true;
       }
     };
   }

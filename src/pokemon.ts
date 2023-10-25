@@ -25,7 +25,7 @@ import { ArenaTagType, WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
 import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
-import { BattleType, BattlerIndex } from './battle';
+import { BattlerIndex } from './battle';
 
 export enum FieldPosition {
   CENTER,
@@ -548,7 +548,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const move = this.getMoveset().length > moveIndex
       ? this.getMoveset()[moveIndex]
       : null;
-    return move?.isUsable(ignorePp);
+    return move?.isUsable(this, ignorePp);
   }
 
   showInfo() {
@@ -1207,7 +1207,7 @@ export class EnemyPokemon extends Pokemon {
       ? this.getMoveset().find(m => m.moveId === this.getMoveQueue()[0].move)
       : null;
     if (queuedMove) {
-      if (queuedMove.isUsable(this.getMoveQueue()[0].ignorePP))
+      if (queuedMove.isUsable(this, this.getMoveQueue()[0].ignorePP))
         return { move: queuedMove.moveId, targets: this.getMoveQueue()[0].targets, ignorePP: this.getMoveQueue()[0].ignorePP };
       else {
         this.getMoveQueue().shift();
@@ -1215,7 +1215,7 @@ export class EnemyPokemon extends Pokemon {
       }
     }
 
-    const movePool = this.getMoveset().filter(m => m.isUsable());
+    const movePool = this.getMoveset().filter(m => m.isUsable(this));
     if (movePool.length) {
       if (movePool.length === 1)
         return { move: movePool[0].moveId, targets: this.getNextTargets(movePool[0].moveId) };
@@ -1370,6 +1370,8 @@ export interface AttackMoveResult {
 export class PokemonSummonData {
   public battleStats: integer[] = [ 0, 0, 0, 0, 0, 0, 0 ];
   public moveQueue: QueuedMove[] = [];
+  public disabledMove: Moves = Moves.NONE;
+  public disabledTurns: integer = 0;
   public tags: BattlerTag[] = [];
   public moveset: PokemonMove[];
   public types: Type[];
@@ -1420,24 +1422,18 @@ export class PokemonMove {
   public ppUsed: integer;
   public ppUp: integer;
   public virtual: boolean;
-  public disableTurns: integer;
 
   constructor(moveId: Moves, ppUsed?: integer, ppUp?: integer, virtual?: boolean) {
     this.moveId = moveId;
     this.ppUsed = ppUsed || 0;
     this.ppUp = ppUp || 0;
     this.virtual = !!virtual;
-    this.disableTurns = 0;
   }
 
-  isUsable(ignorePp?: boolean): boolean {
-    if (this.isDisabled())
+  isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
+    if (pokemon.summonData?.disabledMove === this.moveId)
       return false;
     return ignorePp || this.ppUsed < this.getMove().pp + this.ppUp || this.getMove().pp === -1;
-  }
-
-  isDisabled(): boolean {
-    return !!this.disableTurns;
   }
 
   getMove(): Move {

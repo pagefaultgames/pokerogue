@@ -940,7 +940,7 @@ export class CommandPhase extends FieldPhase {
 
     while (moveQueue.length && moveQueue[0]
       && moveQueue[0].move && (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move)
-      || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(moveQueue[0].ignorePP)))
+      || !playerPokemon.getMoveset()[playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(playerPokemon, moveQueue[0].ignorePP)))
         moveQueue.shift();
 
     if (moveQueue.length) {
@@ -949,7 +949,7 @@ export class CommandPhase extends FieldPhase {
         this.handleCommand(Command.FIGHT, -1, false);
       else {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
-        if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(queuedMove.ignorePP)) {
+        if (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP)) {
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, { targets: queuedMove.targets, multiple: queuedMove.targets.length > 1 });
         } else
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
@@ -978,7 +978,7 @@ export class CommandPhase extends FieldPhase {
           success = true;
         } else if (cursor < playerPokemon.getMoveset().length) {
           const move = playerPokemon.getMoveset()[cursor];
-          if (move.isDisabled()) {
+          if (playerPokemon.summonData.disabledMove === move.moveId) {
             this.scene.ui.setMode(Mode.MESSAGE);
             this.scene.ui.showText(`${move.getName()} is disabled!`, null, () => {
               this.scene.ui.clearText();
@@ -1222,10 +1222,9 @@ export class TurnEndPhase extends FieldPhase {
     const handlePokemon = (pokemon: Pokemon) => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
       
-      const disabledMoves = pokemon.getMoveset().filter(m => m.isDisabled());
-      for (let dm of disabledMoves) {
-        if (!--dm.disableTurns)
-          this.scene.pushPhase(new MessagePhase(this.scene, `${dm.getName()} is disabled\nno more!`));
+      if (pokemon.summonData.disabledMove && !--pokemon.summonData.disabledTurns) {
+        pokemon.summonData.disabledMove = Moves.NONE;
+        this.scene.pushPhase(new MessagePhase(this.scene, `${allMoves[pokemon.summonData.disabledMove].name} is disabled\nno more!`));
       }
 
       const hasUsableBerry = !!this.scene.findModifier(m => m instanceof BerryModifier && m.shouldApply([ pokemon ]), pokemon.isPlayer());
@@ -1321,7 +1320,7 @@ export class MovePhase extends BattlePhase {
   }
 
   canMove(): boolean {
-    return this.pokemon.isActive(true) && this.move.isUsable(this.ignorePp) && !!this.targets.length;
+    return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon, this.ignorePp) && !!this.targets.length;
   }
 
   cancel(): void {
@@ -1334,7 +1333,7 @@ export class MovePhase extends BattlePhase {
     console.log(Moves[this.move.moveId]);
 
     if (!this.canMove()) {
-      if (this.move.isDisabled())
+      if (this.pokemon.summonData.disabledMove === this.move.moveId)
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
       this.end();
       return;
