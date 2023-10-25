@@ -253,7 +253,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokerusGens.push(species.generation - 1);
           this.pokerusCursors.push(pokerusCursor);
           this.pokerusCursorObjs[c].setPosition(148 + 18 * (pokerusCursor % 9), 10 + 18 * Math.floor(pokerusCursor / 9));
-          console.log(species.name);
         }
       }, 0, date.getTime().toString());
 

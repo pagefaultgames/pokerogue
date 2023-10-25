@@ -810,7 +810,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [ TrainerType.ARTIST ],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [],
+    [BiomePoolTier.BOSS]: [ TrainerType.WHITNEY ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -4408,6 +4408,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ TrainerType.WHITNEY, [
+        [ Biome.CITY, BiomePoolTier.BOSS ],
         [ Biome.MEADOW, BiomePoolTier.BOSS ]
       ]
     ],
