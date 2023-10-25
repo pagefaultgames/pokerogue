@@ -1082,7 +1082,7 @@ export default class BattleScene extends Phaser.Scene {
 			const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
 			newItemModifier.pokemonId = target.id;
 			const matchingModifier = target.scene.findModifier(m => m instanceof PokemonHeldItemModifier
-				&& (m as PokemonHeldItemModifier).matchType(itemModifier), target.isPlayer()) as PokemonHeldItemModifier;
+				&& (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
 			let removeOld = true;
 			if (matchingModifier) {
 				const maxStackCount = matchingModifier.getMaxStackCount();

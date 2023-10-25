@@ -153,8 +153,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.fieldIndex = args.length > 1 ? args[1] as integer : -1;
 
-    if (args.length > 2 && args[2] instanceof Function)
-      this.selectCallback = args[2];
+    this.selectCallback = args.length > 2 && args[2] instanceof Function ? args[2] : undefined;
     this.selectFilter = args.length > 3 && args[3] instanceof Function
       ? args[3] as PokemonSelectFilter
       : PartyUiHandler.FilterAll;
