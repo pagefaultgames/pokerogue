@@ -11,6 +11,7 @@ import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 import { abilities } from "../data/ability";
 import { GameMode } from "../game-mode";
 import { Unlockables } from "../system/unlockables";
+import { GrowthRate, getGrowthRateColor } from "../data/exp";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -28,6 +29,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private pokemonNumberText: Phaser.GameObjects.Text;
     private pokemonSprite: Phaser.GameObjects.Sprite;
     private pokemonNameText: Phaser.GameObjects.Text;
+    private pokemonGrowthRateLabelText: Phaser.GameObjects.Text;
+    private pokemonGrowthRateText: Phaser.GameObjects.Text;
     private pokemonGenderText: Phaser.GameObjects.Text;
     private pokemonAbilityLabelText: Phaser.GameObjects.Text;
     private pokemonAbilityText: Phaser.GameObjects.Text;
@@ -89,6 +92,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonNameText = addTextObject(this.scene, 6, 112, '', TextStyle.SUMMARY);
       this.pokemonNameText.setOrigin(0, 0);
       this.starterSelectContainer.add(this.pokemonNameText);
+
+      this.pokemonGrowthRateLabelText = addTextObject(this.scene, 8, 103, 'Growth Rate:', TextStyle.SUMMARY, { fontSize: '48px' });
+      this.pokemonGrowthRateLabelText.setOrigin(0, 0);
+      this.pokemonGrowthRateLabelText.setVisible(false);
+      this.starterSelectContainer.add(this.pokemonGrowthRateLabelText);
+
+      this.pokemonGrowthRateText = addTextObject(this.scene, 44, 103, '', TextStyle.SUMMARY_RED, { fontSize: '48px' });
+      this.pokemonGrowthRateText.setOrigin(0, 0);
+      this.starterSelectContainer.add(this.pokemonGrowthRateText);
 
       this.pokemonGenderText = addTextObject(this.scene, 96, 112, '', TextStyle.SUMMARY);
       this.pokemonGenderText.setOrigin(0, 0);
@@ -468,12 +480,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (species && this.speciesStarterDexEntry) {
         this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 3));
         this.pokemonNameText.setText(species.name);
+        this.pokemonGrowthRateText.setText(Utils.toReadableString(GrowthRate[species.growthRate]));
+        this.pokemonGrowthRateText.setColor(getGrowthRateColor(species.growthRate));
+        this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
+        this.pokemonGrowthRateLabelText.setVisible(true);
         this.pokemonAbilityLabelText.setVisible(true);
         
         this.setSpeciesDetails(species, !!this.speciesStarterDexEntry?.shiny, this.speciesStarterDexEntry?.formIndex, !!this.speciesStarterDexEntry?.female, this.speciesStarterDexEntry?.abilityIndex);
       } else {
         this.pokemonNumberText.setText(Utils.padInt(0, 3));
         this.pokemonNameText.setText(species ? '???' : '');
+        this.pokemonGrowthRateText.setText('');
+        this.pokemonGrowthRateLabelText.setVisible(false);
         this.pokemonAbilityLabelText.setVisible(false);
 
         this.setSpeciesDetails(species, false, 0, false, 0);

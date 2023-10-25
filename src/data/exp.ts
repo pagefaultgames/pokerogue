@@ -51,8 +51,25 @@ export function getLevelTotalExp(level: integer, growthRate: GrowthRate): intege
     return Math.floor(ret * 0.325 + getLevelTotalExp(level, GrowthRate.MEDIUM_FAST) * 0.675);
 
   return Math.floor(ret);
-};
+}
 
 export function getLevelRelExp(level: integer, growthRate: GrowthRate): number {
   return getLevelTotalExp(level, growthRate) - getLevelTotalExp(level - 1, growthRate);
-};
+}
+
+export function getGrowthRateColor(growthRate: GrowthRate, shadow?: boolean) {
+  switch (growthRate) {
+    case GrowthRate.ERRATIC:
+      return !shadow ? '#f85888' : '#906060';
+    case GrowthRate.FAST:
+      return !shadow ? '#f8d030' : '#b8a038';
+    case GrowthRate.MEDIUM_FAST:
+      return !shadow ? '#78c850' : '#588040';
+    case GrowthRate.MEDIUM_SLOW:
+      return !shadow ? '#6890f0' : '#807870';
+    case GrowthRate.SLOW:
+      return !shadow ? '#f08030' : '#c03028';
+    case GrowthRate.FLUCTUATING:
+      return !shadow ? '#a040a0' : '#483850';
+  }
+}
