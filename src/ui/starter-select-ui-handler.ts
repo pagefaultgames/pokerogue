@@ -1,5 +1,5 @@
 import BattleScene, { Button } from "../battle-scene";
-import PokemonSpecies, { allSpecies } from "../data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpecies } from "../data/pokemon-species";
 import { Species } from "../data/species";
 import { TextStyle, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
@@ -21,6 +21,7 @@ export interface Starter {
   formIndex: integer;
   female: boolean;
   abilityIndex: integer;
+  pokerus: boolean;
 }
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
@@ -49,6 +50,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
     private starterGens: integer[] = [];
     private starterCursors: integer[] = [];
+    private pokerusGens: integer[] = [];
+    private pokerusCursors: integer[] = [];
     private starterDetails: [boolean, integer, boolean, integer][] = [];
     private speciesStarterDexEntry: DexEntryDetails;
     private speciesStarterDexTree: StarterDexUnlockTree;
@@ -60,6 +63,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private assetLoadCancelled: Utils.BooleanHolder;
     private cursorObj: Phaser.GameObjects.Image;
     private starterCursorObjs: Phaser.GameObjects.Image[];
+    private pokerusCursorObjs: Phaser.GameObjects.Image[];
     private starterIcons: Phaser.GameObjects.Sprite[];
     private genCursorObj: Phaser.GameObjects.Image;
     private genCursorHighlightObj: Phaser.GameObjects.Image;
@@ -127,6 +131,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         return container;
       });
 
+      this.pokerusCursorObjs = new Array(3).fill(null).map(() => {
+        const cursorObj = this.scene.add.image(0, 0, 'starter_select_cursor_pokerus');
+        cursorObj.setVisible(false);
+        cursorObj.setOrigin(0, 0);
+        this.starterSelectContainer.add(cursorObj);
+        return cursorObj;
+      });
+
       this.starterCursorObjs = new Array(3).fill(null).map(() => {
         const cursorObj = this.scene.add.image(0, 0, 'starter_select_cursor_highlight');
         cursorObj.setVisible(false);
@@ -147,6 +159,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.genCursorObj.setVisible(false);
       this.genCursorObj.setOrigin(0, 0);
       this.starterSelectContainer.add(this.genCursorObj);
+
+      const starterSpecies: Species[] = [];
       
       for (let g = 0; g < this.starterSelectGenIconContainers.length; g++) {
         let s = 0;
@@ -157,6 +171,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             break;
           if (pokemonPrevolutions.hasOwnProperty(species.speciesId) || species.generation !== g + 1)
             continue;
+          starterSpecies.push(species.speciesId);
           this.speciesLoaded.set(species.speciesId, false);
           this.genSpecies[g].push(species);
           const dexEntry = this.scene.gameData.getDefaultDexEntry(species);
@@ -206,6 +221,41 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.message = addTextObject(this.scene, 8, -8, '', TextStyle.WINDOW, { maxLines: 1 });
       this.message.setOrigin(0, 1);
       this.starterSelectMessageBoxContainer.add(this.message);
+
+      const date = new Date();
+      date.setUTCHours(0, 0, 0, 0);
+
+      this.scene.executeWithSeedOffset(() => {
+        for (let c = 0; c < 3; c++) {
+          let randomSpeciesId: Species;
+          let species: PokemonSpecies;
+          let pokerusCursor: integer;
+
+          const generateSpecies = () => {
+            randomSpeciesId = Phaser.Math.RND.pick(starterSpecies);
+            species = getPokemonSpecies(randomSpeciesId);
+            pokerusCursor = this.genSpecies[species.generation - 1].indexOf(species);
+          };
+          
+          let dupe = false;
+
+          do {
+            generateSpecies();
+
+            for (let pc = 0; pc < c; pc++) {
+              if (this.pokerusGens[pc] === species.generation -1 && this.pokerusCursors[pc] === pokerusCursor) {
+                dupe = true;
+                break;
+              }
+            }
+          } while (dupe);
+
+          this.pokerusGens.push(species.generation - 1);
+          this.pokerusCursors.push(pokerusCursor);
+          this.pokerusCursorObjs[c].setPosition(148 + 18 * (pokerusCursor % 9), 10 + 18 * Math.floor(pokerusCursor / 9));
+          console.log(species.name);
+        }
+      }, 0, date.getTime().toString());
 
       this.updateInstructions();
     }
@@ -297,12 +347,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                       const originalStarterSelectCallback = this.starterSelectCallback;
                       this.starterSelectCallback = null;
                       originalStarterSelectCallback(new Array(3).fill(0).map(function (_, i) {
+                        const starterSpecies = thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]];
                         return {
-                          species: thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]],
+                          species: starterSpecies,
                           shiny: thisObj.starterDetails[i][0],
                           formIndex: thisObj.starterDetails[i][1],
                           female: thisObj.starterDetails[i][2],
-                          abilityIndex: thisObj.starterDetails[i][3]
+                          abilityIndex: thisObj.starterDetails[i][3],
+                          pokerus: !![ 0, 1, 2 ].filter(n => thisObj.pokerusGens[n] === starterSpecies.generation - 1 && thisObj.pokerusCursors[n] === thisObj.genSpecies[starterSpecies.generation - 1].indexOf(starterSpecies)).length
                         };
                       }));
                     };
@@ -435,6 +487,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         for (let s = 0; s < this.starterCursorObjs.length; s++)
           this.starterCursorObjs[s].setVisible(this.starterGens[s] === cursor);
+        for (let s = 0; s < this.pokerusCursorObjs.length; s++)
+          this.pokerusCursorObjs[s].setVisible(this.pokerusGens[s] === cursor);
       } else {
         changed = super.setCursor(cursor);
 

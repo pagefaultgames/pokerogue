@@ -4,34 +4,34 @@
 			"image": "statuses.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 20,
-				"h": 56
+				"w": 22,
+				"h": 64
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "burn",
+					"filename": "pokerus",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 20,
+						"w": 22,
 						"h": 8
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 20,
+						"w": 22,
 						"h": 8
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 20,
+						"w": 22,
 						"h": 8
 					}
 				},
 				{
-					"filename": "faint",
+					"filename": "burn",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -52,7 +52,7 @@
 					}
 				},
 				{
-					"filename": "freeze",
+					"filename": "faint",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -73,7 +73,7 @@
 					}
 				},
 				{
-					"filename": "paralysis",
+					"filename": "freeze",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -94,7 +94,7 @@
 					}
 				},
 				{
-					"filename": "poison",
+					"filename": "paralysis",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -115,7 +115,7 @@
 					}
 				},
 				{
-					"filename": "sleep",
+					"filename": "poison",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -136,7 +136,7 @@
 					}
 				},
 				{
-					"filename": "toxic",
+					"filename": "sleep",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -155,6 +155,27 @@
 						"w": 20,
 						"h": 8
 					}
+				},
+				{
+					"filename": "toxic",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 20,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 20,
+						"h": 8
+					},
+					"frame": {
+						"x": 0,
+						"y": 56,
+						"w": 20,
+						"h": 8
+					}
 				}
 			]
 		}
@@ -162,6 +183,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:b1f59475db34388a7177fe541f95d9e8:47a06b96ac24cc4249538472b2604202:e6649238c018d3630e55681417c698ca$"
+		"smartupdate": "$TexturePacker:SmartUpdate:37686e85605d17b806f22d43081c1139:70535ffee63ba61b3397d8470c2c8982:e6649238c018d3630e55681417c698ca$"
 	}
 }

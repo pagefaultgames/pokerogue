@@ -16,7 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { Biome, biomeLinks } from "./data/biome";
-import { ModifierPoolType, ModifierType, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getPlayerModifierTypeOptionsForWave, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
@@ -109,6 +109,8 @@ export class SelectStarterPhase extends BattlePhase {
           ? !starter.female ? Gender.MALE : Gender.FEMALE
           : Gender.GENDERLESS;
         const starterPokemon = new PlayerPokemon(this.scene, starter.species, startingLevel, starter.abilityIndex, starter.formIndex, starterGender, starter.shiny);
+        if (starter.pokerus)
+          starterPokemon.pokerus = true;
         starterPokemon.setVisible(false);
         party.push(starterPokemon);
         loadPokemonAssets.push(starterPokemon.loadAssets());
@@ -2036,6 +2038,8 @@ export class VictoryPhase extends PokemonPhase {
           expMultiplier += multipleParticipantExpBonusModifier.getStackCount() * 0.2;
       } else if (expShareModifier)
         expMultiplier += (expShareModifier.getStackCount() * 0.2) / participantIds.size;
+      if (partyMember.pokerus)
+        expMultiplier *= 1.5;
       const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
       this.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
       partyMemberExp.push(Math.floor(pokemonExp.value));
@@ -2078,7 +2082,10 @@ export class VictoryPhase extends PokemonPhase {
       if (this.scene.currentBattle.battleType === BattleType.TRAINER)
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));
       if (this.scene.gameMode === GameMode.ENDLESS || this.scene.currentBattle.waveIndex < this.scene.finalWave) {
-        this.scene.pushPhase(new SelectModifierPhase(this.scene));
+        if (this.scene.currentBattle.waveIndex > 30 || this.scene.currentBattle.waveIndex % 10)
+          this.scene.pushPhase(new SelectModifierPhase(this.scene));
+        else
+          this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_EXP_CHARM))
         this.scene.pushPhase(new NewBattlePhase(this.scene));
       } else
         this.scene.pushPhase(new GameOverPhase(this.scene, true));
@@ -2098,7 +2105,7 @@ export class TrainerVictoryPhase extends BattlePhase {
 
     const modifierRewardFuncs = this.scene.currentBattle.trainer.config.modifierRewardFuncs;
     for (let modifierRewardFunc of modifierRewardFuncs)
-      this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, modifierRewardFunc()));
+      this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, modifierRewardFunc));
 
     this.scene.ui.showText(`You defeated\n${this.scene.currentBattle.trainer.getName()}!`, null, () => {
       const defeatMessages = this.scene.currentBattle.trainer.config.victoryMessages;
@@ -2130,10 +2137,12 @@ export class TrainerVictoryPhase extends BattlePhase {
 export class ModifierRewardPhase extends BattlePhase {
   private modifierType: ModifierType;
 
-  constructor(scene: BattleScene, modifierType: ModifierType) {
+  constructor(scene: BattleScene, modifierTypeFunc: ModifierTypeFunc) {
     super(scene);
 
-    this.modifierType = modifierType;
+    this.modifierType = modifierTypeFunc();
+    if (!this.modifierType.id)
+      this.modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc);
   }
 
   start() {

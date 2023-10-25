@@ -286,7 +286,7 @@ export class TrainerConfig {
   public encounterBgm: string;
   public femaleEncounterBgm: string;
   public victoryBgm: string;
-  public modifierRewardFuncs: (() => ModifierType)[] = [];
+  public modifierRewardFuncs: ModifierTypeFunc[] = [];
   public partyTemplates: TrainerPartyTemplate[];
   public partyTemplateFunc: PartyTemplateFunc;
   public partyMemberFuncs: PartyMemberFuncs = {};

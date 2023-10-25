@@ -24,6 +24,7 @@ export default class PokemonData {
   public moveset: PokemonMove[];
   public status: Status;
   public winCount: integer;
+  public pokerus: boolean;
 
   public summonData: PokemonSummonData;
 
@@ -44,6 +45,7 @@ export default class PokemonData {
     this.stats = source.stats;
     this.ivs = source.ivs;
     this.winCount = source.winCount;
+    this.pokerus = !!source.pokerus;
 
     if (sourcePokemon) {
       this.moveset = sourcePokemon.moveset;
@@ -51,11 +53,7 @@ export default class PokemonData {
       if (this.player)
         this.summonData = sourcePokemon.summonData;
     } else {
-      this.moveset = source.moveset.map((m: any) => {
-        const move = new PokemonMove(m.moveId, m.ppUsed, m.ppUp);
-        move.disableTurns = m.disableTurns;
-        return move;
-      });
+      this.moveset = source.moveset.map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
       this.status = source.status
         ? new Status(source.status.effect, source.status.turnCount, source.status.cureTurn)
         : undefined;

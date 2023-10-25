@@ -215,6 +215,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('summary_bg', 'ui');
 		this.loadImage('summary_overlay_shiny', 'ui');
 		this.loadImage('summary_profile', 'ui');
+		this.loadImage('summary_status', 'ui');
 		this.loadImage('summary_stats', 'ui');
 		this.loadImage('summary_stats_overlay_exp', 'ui');
 		this.loadImage('summary_moves', 'ui');
@@ -232,6 +233,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('starter_select_message', 'ui');
 		this.loadImage('starter_select_cursor', 'ui');
 		this.loadImage('starter_select_cursor_highlight', 'ui');
+		this.loadImage('starter_select_cursor_pokerus', 'ui');
 		this.loadImage('starter_select_gen_cursor', 'ui');
 		this.loadImage('starter_select_gen_cursor_highlight', 'ui');
 
@@ -649,6 +651,7 @@ export default class BattleScene extends Phaser.Scene {
 			const availablePartyMemberCount = this.getParty().filter(p => !p.isFainted()).length;
 			if (lastBattle) {
 				this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
+				this.trySpreadPokerus();
 				if (showTrainer) {
 					playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 					this.unshiftPhase(new ShowTrainerPhase(this));
@@ -717,16 +720,43 @@ export default class BattleScene extends Phaser.Scene {
 		return this.arena;
 	}
 
+	trySpreadPokerus(): void {
+		const party = this.getParty();
+		const infectedIndexes: integer[] = [];
+		party.forEach((pokemon, p) => {
+			if (!pokemon.pokerus || infectedIndexes.indexOf(p) > -1)
+				return;
+			
+			this.executeWithSeedOffset(() => {
+				if (p) {
+					const partyMember = party[p - 1];
+					if (!partyMember.pokerus && !Utils.randSeedInt(10)) {
+						partyMember.pokerus = true;
+						infectedIndexes.push(p - 1);
+					}
+				}
+
+				if (p < party.length - 1) {
+					const partyMember = party[p + 1];
+					if (!partyMember.pokerus && !Utils.randSeedInt(10)) {
+						partyMember.pokerus = true;
+						infectedIndexes.push(p + 1);
+					}
+				}
+			}, this.currentBattle.waveIndex + (p << 8));
+		});
+	}
+
 	resetSeed(waveIndex?: integer): void {
 		this.waveSeed = Utils.shiftCharCodes(this.seed, waveIndex || this.currentBattle.waveIndex);
 		Phaser.Math.RND.sow([ this.waveSeed ]);
 	}
 
-	executeWithSeedOffset(func: Function, offset: integer): void {
+	executeWithSeedOffset(func: Function, offset: integer, seedOverride?: string): void {
 		if (!func)
 			return;
 		const state = Phaser.Math.RND.state();
-		Phaser.Math.RND.sow([ Utils.shiftCharCodes(this.seed, offset) ]);
+		Phaser.Math.RND.sow([ Utils.shiftCharCodes(seedOverride || this.seed, offset) ]);
 		func();
 		Phaser.Math.RND.state(state);
 	}

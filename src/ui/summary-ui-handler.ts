@@ -12,6 +12,7 @@ import { getLevelTotalExp } from "../data/exp";
 import { Stat, getStatName } from "../data/pokemon-stat";
 import { abilities } from "../data/ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { StatusEffect } from "../data/status-effect";
 
 enum Page {
   PROFILE,
@@ -36,6 +37,8 @@ export default class SummaryUiHandler extends UiHandler {
   private pokeball: Phaser.GameObjects.Sprite;
   private levelText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
+  private statusContainer: Phaser.GameObjects.Container;
+  private status: Phaser.GameObjects.Image;
   private summaryPageContainer: Phaser.GameObjects.Container;
   private movesContainer: Phaser.GameObjects.Container;
   private moveDescriptionText: Phaser.GameObjects.Text;
@@ -56,6 +59,7 @@ export default class SummaryUiHandler extends UiHandler {
   private newMove: Move;
   private moveSelectFunction: Function;
   private transitioning: boolean;
+  private statusVisible: boolean;
   private moveEffectsVisible: boolean;
 
   private moveSelect: boolean;
@@ -81,11 +85,15 @@ export default class SummaryUiHandler extends UiHandler {
     this.tabSprite.setOrigin(1, 1);
     this.summaryContainer.add(this.tabSprite);
 
+    const summaryLabel = addTextObject(this.scene, 4, -165, 'Pokémon Info', TextStyle.SUMMARY);
+    summaryLabel.setOrigin(0, 1);
+    this.summaryContainer.add(summaryLabel);
+
     this.shinyOverlay = this.scene.add.image(6, -54, 'summary_overlay_shiny');
     this.shinyOverlay.setOrigin(0, 1);
     this.summaryContainer.add(this.shinyOverlay);
 
-    this.numberText = addTextObject(this.scene, 17, -150, '000', TextStyle.SUMMARY);
+    this.numberText = addTextObject(this.scene, 17, -149, '000', TextStyle.SUMMARY);
     this.numberText.setOrigin(0, 1);
     this.summaryContainer.add(this.numberText);
 
@@ -107,6 +115,25 @@ export default class SummaryUiHandler extends UiHandler {
     this.genderText = addTextObject(this.scene, 96, -22, '', TextStyle.SUMMARY);
     this.genderText.setOrigin(0, 1);
     this.summaryContainer.add(this.genderText);
+
+    this.statusContainer = this.scene.add.container(-106, -16);
+
+    const statusBg = this.scene.add.image(0, 0, 'summary_status');
+    statusBg.setOrigin(0, 0);
+
+    this.statusContainer.add(statusBg);
+    
+    const statusLabel = addTextObject(this.scene, 3, 0, 'Status', TextStyle.SUMMARY);
+    statusLabel.setOrigin(0, 0);
+
+    this.statusContainer.add(statusLabel);
+
+    this.status = this.scene.add.sprite(91, 4, 'statuses');
+    this.status.setOrigin(0.5, 0);
+
+    this.statusContainer.add(this.status);
+
+    this.summaryContainer.add(this.statusContainer);
 
     this.moveEffectContainer = this.scene.add.container(106, -62);
 
@@ -194,6 +221,14 @@ export default class SummaryUiHandler extends UiHandler {
         this.showMoveSelect();
         break;
     }
+
+    const fromSummary = args.length >= 2;
+
+    if (this.pokemon.status || this.pokemon.pokerus) {
+      this.showStatus(!fromSummary);
+      this.status.setFrame(this.pokemon.status ? StatusEffect[this.pokemon.status.effect].toLowerCase() : 'pokerus');
+    } else
+      this.hideStatus(!fromSummary);
   }
 
   processInput(button: Button) {
@@ -603,6 +638,30 @@ export default class SummaryUiHandler extends UiHandler {
         this.moveDescriptionText.setMask(moveDescriptionTextMask);
         break;
     }
+  }
+
+  showStatus(instant?: boolean) {
+    if (this.statusVisible)
+      return;
+    this.statusVisible = true;
+    this.scene.tweens.add({
+      targets: this.statusContainer,
+      x: 0,
+      duration: instant ? 0 : 250,
+      ease: 'Sine.easeOut'
+    });
+  }
+
+  hideStatus(instant?: boolean) {
+    if (!this.statusVisible)
+      return;
+    this.statusVisible = false;
+    this.scene.tweens.add({
+      targets: this.statusContainer,
+      x: -106,
+      duration: instant ? 0 : 250,
+      ease: 'Sine.easeIn'
+    });
   }
 
   getSelectedMove(): Move {

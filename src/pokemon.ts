@@ -55,6 +55,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public moveset: PokemonMove[];
   public status: Status;
   public winCount: integer;
+  public pokerus: boolean;
 
   public summonData: PokemonSummonData;
   public battleSummonData: PokemonBattleSummonData;
@@ -96,6 +97,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.moveset = dataSource.moveset;
       this.status = dataSource.status;
       this.winCount = dataSource.winCount;
+      this.pokerus = !!dataSource.pokerus;
     } else {
       this.generateAndPopulateMoveset();
 
@@ -142,6 +144,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
 
       this.winCount = 0;
+      this.pokerus = false;
     }
 
     if (!species.isObtainable())
