@@ -6,7 +6,7 @@ import * as Utils from "../utils";
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent;
   protected textCallbackTimer: Phaser.Time.TimerEvent;
-  protected pendingPrompt: boolean;
+  public pendingPrompt: boolean;
 
   public message: Phaser.GameObjects.Text;
   public prompt: Phaser.GameObjects.Sprite;

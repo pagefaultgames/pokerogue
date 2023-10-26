@@ -101,8 +101,8 @@ export class EvolutionPhase extends BattlePhase {
         this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
 
         this.scene.time.delayedCall(1000, () => {
-          const evolutionBgm = this.scene.sound.add('evolution');
-          evolutionBgm.play({ volume: this.scene.gameVolume });
+          const evolutionBgm = this.scene.playSoundWithoutBgm('evolution');
+          evolutionBgm.play({ volume: this.scene.masterVolume });
           this.scene.tweens.add({
             targets: this.evolutionBgOverlay,
             alpha: 1,
@@ -167,7 +167,7 @@ export class EvolutionPhase extends BattlePhase {
                                       this.scene.time.delayedCall(250, () => {
                                         pokemon.cry();
                                         this.scene.time.delayedCall(1250, () => {
-                                          this.scene.playSound('evolution_fanfare');
+                                          this.scene.playSoundWithoutBgm('evolution_fanfare');
                                           this.scene.ui.showText(`Congratulations! Your ${preName}\nevolved into ${pokemon.name}!`, null, () => this.end(), null, true, 3000);
                                           this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
                                         });

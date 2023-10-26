@@ -99,7 +99,7 @@ export class SelectStarterPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.playSound('menu', { loop: true });
+    this.scene.playBgm('menu');
 
     this.scene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
       const party = this.scene.getParty();
@@ -2209,7 +2209,7 @@ export class UnlockPhase extends BattlePhase {
     this.scene.time.delayedCall(2000, () => {
       this.scene.gameData.unlocks[this.unlockable] = true;
       this.scene.gameData.saveSystem();
-      this.scene.playSound('level_up_fanfare');
+      this.scene.playSoundWithoutBgm('level_up_fanfare');
       this.scene.ui.setMode(Mode.MESSAGE);
       this.scene.arenaBg.setVisible(false);
       this.scene.ui.fadeIn(250).then(() => {
@@ -2857,8 +2857,7 @@ export class PartyHealPhase extends BattlePhase {
           move.ppUsed = 0;
         pokemon.updateInfo(true);
       }
-      const healSong = this.scene.sound.add('heal');
-      healSong.play({ volume: this.scene.gameVolume });
+      const healSong = this.scene.playSoundWithoutBgm('heal');
       this.scene.time.delayedCall(healSong.totalDuration * 1000, () => {
         healSong.destroy();
         if (this.resumeBgm && bgmPlaying)

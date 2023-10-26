@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { Biome } from './data/biome';
-import UI from './ui/ui';
+import UI, { Mode } from './ui/ui';
 import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, ToggleDoublePositionPhase, CheckSwitchPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
@@ -29,6 +29,9 @@ import TrainerData from './system/trainer-data';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
 import { pokemonPrevolutions } from './data/pokemon-evolutions';
 import PokeballTray from './ui/pokeball-tray';
+import { Setting, settingOptions } from './system/settings';
+import SettingsUiHandler from './ui/settings-ui-handler';
+import MessageUiHandler from './ui/message-ui-handler';
 
 const enableAuto = true;
 const quickStart = false;
@@ -44,6 +47,7 @@ export enum Button {
 	RIGHT,
 	ACTION,
 	CANCEL,
+	MENU,
 	CYCLE_SHINY,
 	CYCLE_FORM,
 	CYCLE_GENDER,
@@ -58,9 +62,13 @@ export interface PokeballCounts {
 	[pb: string]: integer;
 }
 
+export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
+
 export default class BattleScene extends Phaser.Scene {
 	public auto: boolean;
-	public gameVolume: number = 0.5;
+	public masterVolume: number = 0.5;
+	public bgmVolume: number = 1;
+	public seVolume: number = 1;
 	public gameSpeed: integer = 1;
 	public quickStart: boolean = quickStart;
 	public finalWave: integer = 200;
@@ -105,8 +113,9 @@ export default class BattleScene extends Phaser.Scene {
 
 	public spritePipeline: SpritePipeline;
 
-	private bgm: Phaser.Sound.BaseSound;
+	private bgm: AnySound;
 	private bgmResumeTimer: Phaser.Time.TimerEvent;
+	private bgmCache: Set<string> = new Set();
 	
 	private buttonKeys: Phaser.Input.Keyboard.Key[][];
 
@@ -484,7 +493,8 @@ export default class BattleScene extends Phaser.Scene {
 			[Button.LEFT]: [keyCodes.LEFT, keyCodes.A],
 			[Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
 			[Button.ACTION]: [keyCodes.ENTER, keyCodes.SPACE, keyCodes.Z],
-			[Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.ESC, keyCodes.X],
+			[Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
+			[Button.MENU]: [keyCodes.ESC, keyCodes.M],
 			[Button.CYCLE_SHINY]: [keyCodes.R],
 			[Button.CYCLE_FORM]: [keyCodes.F],
 			[Button.CYCLE_GENDER]: [keyCodes.G],
@@ -813,6 +823,32 @@ export default class BattleScene extends Phaser.Scene {
 			this.ui.processInput(Button.ACTION);
 		else if (this.isButtonPressed(Button.CANCEL))
 			this.ui.processInput(Button.CANCEL);
+		else if (this.isButtonPressed(Button.MENU)) {
+			switch (this.ui.getMode()) {
+				case Mode.MESSAGE:
+					if (!(this.ui.getHandler() as MessageUiHandler).pendingPrompt)
+						return;
+				case Mode.COMMAND:
+				case Mode.FIGHT:
+				case Mode.BALL:
+				case Mode.TARGET_SELECT:
+				case Mode.PARTY:
+				case Mode.SUMMARY:
+				case Mode.BIOME_SELECT:
+				case Mode.STARTER_SELECT:
+				case Mode.CONFIRM:
+				case Mode.GAME_MODE_SELECT:
+					this.ui.setModeWithoutClear(Mode.SETTINGS);
+					this.playSound('menu_open');
+					break;
+				case Mode.SETTINGS:
+					this.ui.revertMode();
+					this.playSound('select');
+					break;
+				default:
+					return;
+			}
+		}
 		else if (this.ui?.getHandler() instanceof StarterSelectUiHandler) {
 			if (this.isButtonPressed(Button.CYCLE_SHINY))
 				this.ui.processInput(Button.CYCLE_SHINY);
@@ -826,25 +862,24 @@ export default class BattleScene extends Phaser.Scene {
 				return;
 		}
 		else if (this.isButtonPressed(Button.SPEED_UP)) {
-			if (!this.auto) {
-				if (this.gameSpeed < 2.5)
-					this.gameSpeed += 0.25;
-			} else if (this.gameSpeed < 20)
-				this.gameSpeed++;
+			if (this.gameSpeed < 5) {
+				this.gameData.saveSetting(Setting.Game_Speed, settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) + 1);
+				if (this.ui.getMode() === Mode.SETTINGS)
+					(this.ui.getHandler() as SettingsUiHandler).show([]);
+			}
 		} else if (this.isButtonPressed(Button.SLOW_DOWN)) {
 			if (this.gameSpeed > 1) {
-				if (!this.auto)
-					this.gameSpeed -= 0.25;
-				else
-					this.gameSpeed--;
+				this.gameData.saveSetting(Setting.Game_Speed, Math.max(settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) - 1, 0));
+				if (this.ui.getMode() === Mode.SETTINGS)
+					(this.ui.getHandler() as SettingsUiHandler).show([]);
 			}
 		} else if (enableAuto) {
 			if (this.isButtonPressed(Button.AUTO)) {
 				this.auto = !this.auto;
 				if (this.auto)
 					this.gameSpeed = Math.floor(this.gameSpeed);
-				else if (this.gameSpeed > 2.5)
-					this.gameSpeed = 2.5;
+				else if (this.gameSpeed > 5)
+					this.gameSpeed = 5;
 			} else
 				return;
 		} else
@@ -867,13 +902,14 @@ export default class BattleScene extends Phaser.Scene {
 		if (this.bgm && bgmName === this.bgm.key) {
 			if (!this.bgm.isPlaying) {
 				this.bgm.play({
-					volume: this.gameVolume
+					volume: this.masterVolume * this.bgmVolume
 				});
 			}
 			return;
 		}
 		if (fadeOut && !this.bgm)
 			fadeOut = false;
+		this.bgmCache.add(bgmName);
 		this.loadBgm(bgmName);
 		let loopPoint = 0;
 		loopPoint = bgmName === this.arena.bgm
@@ -883,7 +919,7 @@ export default class BattleScene extends Phaser.Scene {
 		const playNewBgm = () => {
 			if (bgmName === null && this.bgm && !this.bgm.pendingRemove) {
 				this.bgm.play({
-					volume: this.gameVolume
+					volume: this.masterVolume * this.bgmVolume
 				});
 				return;
 			}
@@ -891,7 +927,7 @@ export default class BattleScene extends Phaser.Scene {
 				this.bgm.stop();
 			this.bgm = this.sound.add(bgmName, { loop: true });
 			this.bgm.play({
-				volume: this.gameVolume
+				volume: this.masterVolume * this.bgmVolume
 			});
 			if (loopPoint)
 				this.bgm.on('looped', () => this.bgm.play({ seek: loopPoint }));
@@ -912,14 +948,27 @@ export default class BattleScene extends Phaser.Scene {
 			this.load.start();
 	}
 
-	pauseBgm(): void {
-		if (this.bgm && this.bgm.isPlaying)
+	pauseBgm(): boolean {
+		if (this.bgm && this.bgm.isPlaying) {
 			this.bgm.pause();
+			return true;
+		}
+		return false;
 	}
 
-	resumeBgm(): void {
-		if (this.bgm && this.bgm.isPaused)
+	resumeBgm(): boolean {
+		if (this.bgm && this.bgm.isPaused) {
 			this.bgm.resume();
+			return true;
+		}
+		return false;
+	}
+
+	updateSoundVolume(): void {
+		if (this.sound) {
+			for (let sound of this.sound.getAllPlaying())
+				(sound as AnySound).setVolume(this.masterVolume * (this.bgmCache.has(sound.key) ? this.bgmVolume : this.seVolume));
+		}
 	}
 
 	fadeOutBgm(duration?: integer, destroy?: boolean): boolean {
@@ -938,27 +987,32 @@ export default class BattleScene extends Phaser.Scene {
 		return false;
 	}
 
-	playSound(soundName: string, config?: object) {
+	playSound(soundName: string, config?: object): AnySound {
 		if (config) {
 			if (config.hasOwnProperty('volume'))
-				config['volume'] *= this.gameVolume;
+				config['volume'] *= this.masterVolume * this.seVolume;
 			else
-				config['volume'] = this.gameVolume;
+				config['volume'] = this.masterVolume * this.seVolume;
 		} else
-			config = { volume: this.gameVolume };
+			config = { volume: this.masterVolume * this.seVolume };
 		this.sound.play(soundName, config);
+		return this.sound.get(soundName) as AnySound;
 	}
 
-	playSoundWithoutBgm(soundName: string, pauseDuration?: integer): void {
-		this.pauseBgm();
+	playSoundWithoutBgm(soundName: string, pauseDuration?: integer): AnySound {
+		this.bgmCache.add(soundName);
+		const resumeBgm = this.pauseBgm();
 		this.playSound(soundName);
-		const sound = this.sound.get(soundName);
+		const sound = this.sound.get(soundName) as AnySound;
 		if (this.bgmResumeTimer)
 			this.bgmResumeTimer.destroy();
-		this.bgmResumeTimer = this.time.delayedCall((pauseDuration || Utils.fixedInt(sound.totalDuration * 1000)), () => {
-			this.resumeBgm();
-			this.bgmResumeTimer = null;
-		});
+		if (resumeBgm) {
+			this.bgmResumeTimer = this.time.delayedCall((pauseDuration || Utils.fixedInt(sound.totalDuration * 1000)), () => {
+				this.resumeBgm();
+				this.bgmResumeTimer = null;
+			});
+		}
+		return sound;
 	}
 
 	getBgmLoopPoint(bgmName: string): number {

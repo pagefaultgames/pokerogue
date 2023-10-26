@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import BattleScene from './battle-scene';
+import BattleScene, { AnySound } from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './ui/battle-info';
 import Move, { StatChangeAttr, HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, Moves, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, AttackMove, AddBattlerTagAttr } from "./data/move";
 import { pokemonLevelMoves } from './data/pokemon-level-moves';
@@ -885,7 +885,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const key = this.species.speciesId.toString();
     let i = 0;
     let rate = 0.85;
-    this.scene.playSound(key, { rate: rate });
+    const crySound = this.scene.playSound(key, { rate: rate }) as AnySound;
     const sprite = this.getSprite();
     const tintSprite = this.getTintSprite();
     const delay = Math.max(this.scene.sound.get(key).totalDuration * 50, 25);
@@ -894,7 +894,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     sprite.anims.pause();
     tintSprite.anims.pause();
     let faintCryTimer = this.scene.time.addEvent({
-      delay: delay,
+      delay: Utils.fixedInt(delay),
       repeat: -1,
       callback: () => {
         ++i;
@@ -907,14 +907,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
           frameProgress -= frameThreshold;
         }
-        const crySound = this.scene.sound.get(key);
         if (crySound && !crySound.pendingRemove) {
           rate *= 0.99;
-          crySound.play({
-            rate: rate,
-            seek: (i * delay * 0.001) * rate,
-            volume: this.scene.gameVolume
-          });
+          crySound.setRate(rate);
         }
         else {
           faintCryTimer.destroy();
@@ -925,10 +920,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     });
     // Failsafe
-    this.scene.time.delayedCall(3000, () => {
+    this.scene.time.delayedCall(Utils.fixedInt(3000), () => {
       if (!faintCryTimer || !this.scene)
         return;
-      const crySound = this.scene.sound.get(key);
       if (crySound?.isPlaying)
         crySound.stop();
       faintCryTimer.destroy();

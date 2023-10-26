@@ -14,6 +14,7 @@ import EvolutionSceneHandler from './evolution-scene-handler';
 import BiomeSelectUiHandler from './biome-select-ui-handler';
 import TargetSelectUiHandler from './target-select-ui-handler';
 import GameModeSelectUiHandler from './game-mode-select-ui-handler';
+import SettingsUiHandler from './settings-ui-handler';
 
 export enum Mode {
   MESSAGE,
@@ -28,7 +29,8 @@ export enum Mode {
   STARTER_SELECT,
   EVOLUTION_SCENE,
   CONFIRM,
-  GAME_MODE_SELECT
+  GAME_MODE_SELECT,
+  SETTINGS
 };
 
 const transitionModes = [
@@ -40,11 +42,13 @@ const transitionModes = [
 
 const noTransitionModes = [
   Mode.CONFIRM,
-  Mode.GAME_MODE_SELECT
+  Mode.GAME_MODE_SELECT,
+  Mode.SETTINGS
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
   private mode: Mode;
+  private lastMode: Mode;
   private handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
   
@@ -67,7 +71,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new StarterSelectUiHandler(scene),
       new EvolutionSceneHandler(scene),
       new ConfirmUiHandler(scene),
-      new GameModeSelectUiHandler(scene)
+      new GameModeSelectUiHandler(scene),
+      new SettingsUiHandler(scene)
     ];
   }
 
@@ -181,6 +186,7 @@ export default class UI extends Phaser.GameObjects.Container {
         if (this.mode !== mode) {
           if (clear)
             this.getHandler().clear();
+          this.lastMode = this.mode && !clear ? this.mode : undefined;
           this.mode = mode;
           this.getHandler().show(args);
         }
@@ -199,6 +205,10 @@ export default class UI extends Phaser.GameObjects.Container {
     });
   }
 
+  getMode(): Mode {
+    return this.mode;
+  }
+
   setMode(mode: Mode, ...args: any[]): Promise<void> {
     return this.setModeInternal(mode, true, false, args);
   }
@@ -209,5 +219,14 @@ export default class UI extends Phaser.GameObjects.Container {
 
   setModeWithoutClear(mode: Mode, ...args: any[]): Promise<void> {
     return this.setModeInternal(mode, false, false, args);
+  }
+
+  revertMode(): void {
+    if (!this.lastMode)
+      return;
+    
+    this.getHandler().clear();
+    this.mode = this.lastMode;
+    this.lastMode = undefined;
   }
 }

@@ -7,7 +7,9 @@ export enum TextStyle {
   SUMMARY,
   SUMMARY_RED,
   SUMMARY_GOLD,
-  MONEY
+  MONEY,
+  SETTINGS_LABEL,
+  SETTINGS_SELECTED
 };
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
@@ -29,6 +31,8 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.WINDOW:
     case TextStyle.MESSAGE:
+    case TextStyle.SETTINGS_LABEL:
+    case TextStyle.SETTINGS_SELECTED:
       styleOptions.fontSize = '96px';
       break;
     case TextStyle.BATTLE_INFO:
@@ -80,5 +84,9 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean) {
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.MONEY:
       return !shadow ? '#e8e8a8' : '#a0a060'
+    case TextStyle.SETTINGS_LABEL:
+      return !shadow ? '#f8b050' : '#c07800';
+    case TextStyle.SETTINGS_SELECTED:
+      return !shadow ? '#f88880' : '#f83018';
   }
 }

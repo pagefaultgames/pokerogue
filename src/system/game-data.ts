@@ -14,6 +14,7 @@ import { GameMode } from "../game-mode";
 import { BattleType } from "../battle";
 import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-type";
+import { Setting, setSetting, settingDefaults } from "./settings";
 
 interface SystemSaveData {
   trainerId: integer;
@@ -81,8 +82,9 @@ export class GameData {
 
   constructor(scene: BattleScene) {
     this.scene = scene;
-    this.trainerId = Utils.randInt(65536);
-    this.secretId = Utils.randInt(65536);
+    this.loadSettings();
+    this.trainerId = Utils.randSeedInt(65536);
+    this.secretId = Utils.randSeedInt(65536);
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
       [Unlockables.MINI_BLACK_HOLE]: false
@@ -109,7 +111,7 @@ export class GameData {
   }
 
   private loadSystem(): boolean {
-    if (!localStorage.getItem('data'))
+    if (!localStorage.hasOwnProperty('data'))
       return false;
 
     const data = JSON.parse(atob(localStorage.getItem('data'))) as SystemSaveData;
@@ -131,6 +133,33 @@ export class GameData {
     this.dexData = Object.assign(this.dexData, data.dexData);
 
     return true;
+  }
+
+  public saveSetting(setting: Setting, valueIndex: integer): boolean {
+    let settings: object = {};
+    if (localStorage.hasOwnProperty('settings'))
+      settings = JSON.parse(localStorage.getItem('settings'));
+
+    setSetting(this.scene, setting as Setting, valueIndex);
+
+    Object.keys(settingDefaults).forEach(s => {
+      if (s === setting)
+        settings[s] = valueIndex;
+    });
+
+    localStorage.setItem('settings', JSON.stringify(settings));
+
+    return true;
+  }
+
+  private loadSettings(): boolean {
+    if (!localStorage.hasOwnProperty('settings'))
+      return false;
+
+    const settings = JSON.parse(localStorage.getItem('settings'));
+
+    for (let setting of Object.keys(settings))
+      setSetting(this.scene, setting as Setting, settings[setting]);
   }
 
   saveSession(scene: BattleScene): boolean {
