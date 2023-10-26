@@ -102,7 +102,6 @@ export class EvolutionPhase extends BattlePhase {
 
         this.scene.time.delayedCall(1000, () => {
           const evolutionBgm = this.scene.playSoundWithoutBgm('evolution');
-          evolutionBgm.play({ volume: this.scene.masterVolume });
           this.scene.tweens.add({
             targets: this.evolutionBgOverlay,
             alpha: 1,
