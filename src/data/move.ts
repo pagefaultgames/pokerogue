@@ -3144,7 +3144,7 @@ export function initMoves() {
     new AttackMove(Moves.POWER_GEM, "Power Gem", Type.ROCK, MoveCategory.SPECIAL, 80, 100, 20, 101, "", -1, 0, 4),
     new AttackMove(Moves.DRAIN_PUNCH, "Drain Punch", Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 10, 73, "User recovers half the HP inflicted on opponent.", -1, 0, 4)
       .attr(HitHealAttr),
-    new AttackMove(Moves.VACUUM_WAVE, "Vacuum Wave", Type.FIGHTING, MoveCategory.SPECIAL, 40, 100, 30, -1, "User attacks first.", -1, 0, 4),
+    new AttackMove(Moves.VACUUM_WAVE, "Vacuum Wave", Type.FIGHTING, MoveCategory.SPECIAL, 40, 100, 30, -1, "User attacks first.", -1, 1, 4),
     new AttackMove(Moves.FOCUS_BLAST, "Focus Blast", Type.FIGHTING, MoveCategory.SPECIAL, 120, 70, 5, 158, "May lower opponent's Special Defense.", 10, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1),
     new AttackMove(Moves.ENERGY_BALL, "Energy Ball", Type.GRASS, MoveCategory.SPECIAL, 90, 100, 10, 119, "May lower opponent's Special Defense.", 10, 0, 4)

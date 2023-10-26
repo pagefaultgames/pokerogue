@@ -463,7 +463,7 @@ export class SelectBiomePhase extends BattlePhase {
     const currentBiome = this.scene.arena.biomeType;
 
     const setNextBiome = (nextBiome: Biome) => {
-      if (!(this.scene.currentBattle.waveIndex % 10))
+      if (this.scene.currentBattle.waveIndex % 10 === 1)
         this.scene.unshiftPhase(new PartyHealPhase(this.scene, false));
       this.scene.unshiftPhase(new SwitchBiomePhase(this.scene, nextBiome));
       this.end();
