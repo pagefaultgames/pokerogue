@@ -136,3 +136,7 @@ export class FixedInt extends IntegerHolder {
     super(value);
   }
 }
+
+export function fixedInt(value: integer): integer {
+  return new FixedInt(value) as unknown as integer;
+}

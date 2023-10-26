@@ -383,10 +383,10 @@ export default class SummaryUiHandler extends UiHandler {
       this.moveCursorObj.setVisible(true);
       this.moveCursorBlinkTimer = this.scene.time.addEvent({
         loop: true,
-        delay: new Utils.FixedInt(600) as unknown as integer,
+        delay: Utils.fixedInt(600),
         callback: () => {
           this.moveCursorObj.setVisible(false);
-          this.scene.time.delayedCall(new Utils.FixedInt(100) as unknown as integer, () => {
+          this.scene.time.delayedCall(Utils.fixedInt(100), () => {
             if (!this.moveCursorObj)
               return;
             this.moveCursorObj.setVisible(true);

@@ -314,6 +314,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadBgm('menu');
 
 		this.loadBgm('level_up_fanfare', 'bw/level_up_fanfare.mp3');
+		this.loadBgm('item_fanfare', 'bw/item_fanfare.mp3');
 		this.loadBgm('heal', 'bw/heal.mp3');
 		this.loadBgm('victory_trainer', 'bw/victory_trainer.mp3');
 		this.loadBgm('victory_gym', 'bw/victory_gym.mp3');
@@ -849,7 +850,7 @@ export default class BattleScene extends Phaser.Scene {
 		} else
 			return;
 		this.blockInput = true;
-		this.time.delayedCall(new Utils.FixedInt(250) as unknown as integer, () => this.blockInput = false);
+		this.time.delayedCall(Utils.fixedInt(250), () => this.blockInput = false);
 	}
 
 	isButtonPressed(button: Button): boolean {
@@ -954,7 +955,7 @@ export default class BattleScene extends Phaser.Scene {
 		const sound = this.sound.get(soundName);
 		if (this.bgmResumeTimer)
 			this.bgmResumeTimer.destroy();
-		this.bgmResumeTimer = this.time.delayedCall((pauseDuration || (sound.totalDuration * 1000)), () => {
+		this.bgmResumeTimer = this.time.delayedCall((pauseDuration || Utils.fixedInt(sound.totalDuration * 1000)), () => {
 			this.resumeBgm();
 			this.bgmResumeTimer = null;
 		});

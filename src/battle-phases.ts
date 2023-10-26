@@ -2150,7 +2150,10 @@ export class ModifierRewardPhase extends BattlePhase {
 
     const newModifier = this.modifierType.newModifier();
 
-    this.scene.addModifier(newModifier, true).then(() => this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => this.end(), null, true));
+    this.scene.addModifier(newModifier).then(() => {
+      this.scene.playSoundWithoutBgm('item_fanfare');
+      this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => this.end(), null, true);
+    });
   }
 }
 

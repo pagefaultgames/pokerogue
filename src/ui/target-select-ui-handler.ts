@@ -92,7 +92,7 @@ export default class TargetSelectUiHandler extends UiHandler {
       targets: [ target ],
       alpha: 0,
       loop: -1,
-      duration: new Utils.FixedInt(250) as unknown as integer,
+      duration: Utils.fixedInt(250),
       ease: 'Sine.easeIn',
       yoyo: true,
       onUpdate: t => {

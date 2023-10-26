@@ -169,7 +169,7 @@ export class EvolutionPhase extends BattlePhase {
                                         this.scene.time.delayedCall(1250, () => {
                                           this.scene.playSound('evolution_fanfare');
                                           this.scene.ui.showText(`Congratulations! Your ${preName}\nevolved into ${pokemon.name}!`, null, () => this.end(), null, true, 3000);
-                                          this.scene.time.delayedCall(new Utils.FixedInt(4250) as unknown as integer, () => this.scene.playBgm());
+                                          this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
                                         });
                                       });
                                     }
