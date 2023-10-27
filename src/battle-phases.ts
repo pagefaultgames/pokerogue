@@ -968,10 +968,12 @@ export class CommandPhase extends FieldPhase {
 
     switch (command) {
       case Command.FIGHT:
-        if (cursor === -1 || playerPokemon.trySelectMove(cursor, args[0] as boolean)) {
+        let useStruggle = false;
+        if (cursor === -1 || playerPokemon.trySelectMove(cursor, args[0] as boolean) || (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)) {
+          const moveId = !useStruggle ? playerPokemon.moveset[cursor].moveId : Moves.STRUGGLE;
           const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor,
-            move: cursor > -1 ? { move: playerPokemon.moveset[cursor].moveId, targets: [] } : null, args: args }; // TODO: Struggle logic
-          const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, cursor > -1 ? playerPokemon.moveset[cursor].moveId : Moves.NONE) : args[2];
+            move: cursor > -1 ? { move: moveId, targets: [] } : null, args: args };
+          const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, cursor > -1 ? moveId : Moves.NONE) : args[2];
           console.log(moveTargets, playerPokemon.name);
           if (moveTargets.targets.length <= 1 || moveTargets.multiple)
             turnCommand.move.targets = moveTargets.targets;
@@ -989,7 +991,6 @@ export class CommandPhase extends FieldPhase {
             }, null, true);
           }
         }
-
         break;
       case Command.BALL:
         if (this.scene.arena.biomeType === Biome.END) {
