@@ -1140,7 +1140,7 @@ export class SelectTargetPhase extends PokemonPhase {
         this.scene.unshiftPhase(new CommandPhase(this.scene, this.fieldIndex));
       } else
         turnCommand.targets = [ cursor ];
-      if (this.scene.currentBattle.turnCommands[this.fieldIndex].command === Command.BALL && this.fieldIndex)
+      if (turnCommand.command === Command.BALL && this.fieldIndex)
         this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
       this.end();
     });
