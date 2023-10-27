@@ -40,6 +40,13 @@ export function randGauss(value: number): number {
   return rand / value;
 }
 
+export function randSeedGauss(value: number): number { 
+  let rand = 0;
+  for(var i = value; i > 0; i--)
+      rand += Phaser.Math.RND.realInRange(0, 1);
+  return rand / value;
+}
+
 export function padInt(value: integer, length: integer, padWith?: string): string {
   if (!padWith)
     padWith = '0';
