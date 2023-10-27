@@ -103,13 +103,22 @@ export class PreDefendAbAttr extends AbAttr {
 
 export class BlockItemTheftAbAttr extends AbAttr {
   apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    cancelled.value = true;;
+    cancelled.value = true;
     
     return true;
   }
 
   getTriggerMessage(pokemon: Pokemon, ...args: any[]) {
     return getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nprevents item theft!`);
+  }
+}
+
+export class StabBoostAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if ((args[0] as Utils.IntegerHolder).value > 1)
+      (args[0] as Utils.IntegerHolder).value += 0.5;
+    
+    return true;
   }
 }
 
@@ -1330,7 +1339,8 @@ export function initAbilities() {
       .attr(ProtectStatAbAttr),
     new Ability(Abilities.WONDER_GUARD, "Wonder Guard", "Only super effective moves will hit.", 3)
       .attr(NonSuperEffectiveImmunityAbAttr),
-    new Ability(Abilities.ADAPTABILITY, "Adaptability (N)", "Powers up moves of the same type.", 4),
+    new Ability(Abilities.ADAPTABILITY, "Adaptability", "Powers up moves of the same type.", 4)
+      .attr(StabBoostAbAttr),
     new Ability(Abilities.AFTERMATH, "Aftermath (N)", "Damages the attacker landing the finishing hit.", 4),
     new Ability(Abilities.ANGER_POINT, "Anger Point (N)", "Maxes Attack after taking a critical hit.", 4),
     new Ability(Abilities.ANTICIPATION, "Anticipation (N)", "Senses a foe's dangerous moves.", 4),
