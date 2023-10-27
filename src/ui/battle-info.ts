@@ -311,7 +311,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.levelNumbersContainer.removeAll(true);
     const levelStr = level.toString();
     for (let i = 0; i < levelStr.length; i++)
-      this.levelNumbersContainer.add(this.scene.add.image(i * 8, 0, `numbers${isCapped ? '_red' : ''}`, levelStr[i]));
+      this.levelNumbersContainer.add(this.scene.add.image(i * 8, 0, `numbers${isCapped && this.player ? '_red' : ''}`, levelStr[i]));
     this.levelContainer.setX((this.player ? -41 : -50) - 8 * Math.max(levelStr.length - 3, 0));
   }
 
