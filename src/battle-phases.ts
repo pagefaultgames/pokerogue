@@ -1005,7 +1005,7 @@ export class CommandPhase extends FieldPhase {
         if (this.scene.arena.biomeType === Biome.END) {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.ui.showText(`A strange force\nprevents using Poké Balls.`, null, () => {
+          this.scene.ui.showText(`An unseen force\nprevents using Poké Balls.`, null, () => {
             this.scene.ui.showText(null, 0);
             this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           }, null, true);
@@ -1041,7 +1041,14 @@ export class CommandPhase extends FieldPhase {
       case Command.POKEMON:
       case Command.RUN:
         const isSwitch = command === Command.POKEMON;
-        if (!isSwitch && this.scene.currentBattle.battleType === BattleType.TRAINER) {
+        if (!isSwitch && this.scene.arena.biomeType === Biome.END) {
+          this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.showText(`An unseen force\nprevents escape.`, null, () => {
+            this.scene.ui.showText(null, 0);
+            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+          }, null, true);
+        } else if (!isSwitch && this.scene.currentBattle.battleType === BattleType.TRAINER) {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           this.scene.ui.setMode(Mode.MESSAGE);
           this.scene.ui.showText(`You can't run\nfrom a trainer battle!`, null, () => {
