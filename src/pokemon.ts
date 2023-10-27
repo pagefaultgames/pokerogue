@@ -23,7 +23,7 @@ import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { ArenaTagType, WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
-import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
+import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 import { BattlerIndex } from './battle';
 
@@ -721,7 +721,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             damage = Math.min(damage, this.hp);
             this.damage(damage);
             source.turnData.damageDealt += damage;
-            this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage, sourceId: source.id });
+            this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage, critical: isCritical, sourceId: source.id });
           }
 
           switch (result) {
@@ -1363,6 +1363,7 @@ export interface AttackMoveResult {
   move: Moves;
   result: DamageResult;
   damage: integer;
+  critical: boolean;
   sourceId: integer;
 }
 

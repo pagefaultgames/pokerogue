@@ -320,6 +320,28 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
   }
 }
 
+export class PostDefendCritStatChangeAbAttr extends PostDefendAbAttr {
+  private stat: BattleStat;
+  private levels: integer;
+
+  constructor(stat: BattleStat, levels: integer) {
+    super(true);
+
+    this.stat = stat;
+    this.levels = levels;
+  }
+
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ this.stat ], this.levels));
+    
+    return true;
+  }
+
+  getCondition(): AbAttrCondition {
+    return (pokemon: Pokemon) => pokemon.turnData.attacksReceived.length && pokemon.turnData.attacksReceived[pokemon.turnData.attacksReceived.length - 1].critical;
+  }
+}
+
 export class PreAttackAbAttr extends AbAttr {
   applyPreAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
     return false;
@@ -1342,7 +1364,8 @@ export function initAbilities() {
     new Ability(Abilities.ADAPTABILITY, "Adaptability", "Powers up moves of the same type.", 4)
       .attr(StabBoostAbAttr),
     new Ability(Abilities.AFTERMATH, "Aftermath (N)", "Damages the attacker landing the finishing hit.", 4),
-    new Ability(Abilities.ANGER_POINT, "Anger Point (N)", "Maxes Attack after taking a critical hit.", 4),
+    new Ability(Abilities.ANGER_POINT, "Anger Point", "Maxes Attack after taking a critical hit.", 4)
+      .attr(PostDefendCritStatChangeAbAttr, BattleStat.ATK, 6),
     new Ability(Abilities.ANTICIPATION, "Anticipation (N)", "Senses a foe's dangerous moves.", 4),
     new Ability(Abilities.BAD_DREAMS, "Bad Dreams (N)", "Reduces a sleeping foe's HP.", 4),
     new Ability(Abilities.DOWNLOAD, "Download (N)", "Adjusts power according to a foe's defenses.", 4),
