@@ -937,6 +937,15 @@ export class CommandPhase extends FieldPhase {
   start() {
     super.start();
 
+    if (this.fieldIndex) {
+      const allyCommand = this.scene.currentBattle.turnCommands[this.fieldIndex - 1];
+      if (allyCommand.command === Command.BALL || allyCommand.command === Command.RUN)
+        this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: allyCommand.command, skip: true };
+    }
+
+    if (this.scene.currentBattle.turnCommands[this.fieldIndex]?.skip)
+      return this.end();
+
     const playerPokemon = this.scene.getPlayerField()[this.fieldIndex];
 
     const moveQueue = playerPokemon.getMoveQueue();
@@ -1007,15 +1016,26 @@ export class CommandPhase extends FieldPhase {
             this.scene.ui.showText(null, 0);
             this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           }, null, true);
-        } else if (cursor < 4) {
+        } else {
           const targets = this.scene.getEnemyField().filter(p => p.isActive(true)).map(p => p.getBattlerIndex());
-          this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.BALL, cursor: cursor };
-          this.scene.currentBattle.turnPokeballCounts[cursor as PokeballType]--;
-          if (targets.length > 1)
-            this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
-          else
-            this.scene.currentBattle.turnCommands[this.fieldIndex].targets = targets;
-          success = true;
+          if (targets.length > 1) {
+            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+            this.scene.ui.setMode(Mode.MESSAGE);
+            this.scene.ui.showText(`You can only throw a Poké Ball\nwhen there is one Pokémon remaining!`, null, () => {
+              this.scene.ui.showText(null, 0);
+              this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+            }, null, true);
+          } else if (cursor < 4) {
+            this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.BALL, cursor: cursor };
+            if (targets.length > 1)
+              this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
+            else {
+              this.scene.currentBattle.turnCommands[this.fieldIndex].targets = targets;
+              if (this.fieldIndex)
+                this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
+            }
+            success = true;
+          }
         }
         break;
       case Command.POKEMON:
@@ -1039,6 +1059,8 @@ export class CommandPhase extends FieldPhase {
               ? { command: Command.POKEMON, cursor: cursor, args: args }
               : { command: Command.RUN };
             success = true;
+            if (this.fieldIndex)
+              this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
           } else if (trapTag) {
             this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
             this.scene.ui.setMode(Mode.MESSAGE);
@@ -1059,9 +1081,6 @@ export class CommandPhase extends FieldPhase {
 
   cancel() {
     if (this.fieldIndex) {
-      const lastCommand = this.scene.currentBattle.turnCommands[0];
-      if (lastCommand.command === Command.BALL)
-        this.scene.currentBattle.turnPokeballCounts[lastCommand.cursor]++;
       this.scene.unshiftPhase(new CommandPhase(this.scene, 0));
       this.scene.unshiftPhase(new CommandPhase(this.scene, 1));
       this.end();
@@ -1117,12 +1136,12 @@ export class SelectTargetPhase extends PokemonPhase {
     this.scene.ui.setMode(Mode.TARGET_SELECT, this.fieldIndex, move, (cursor: integer) => {
       this.scene.ui.setMode(Mode.MESSAGE);
       if (cursor === -1) {
-        if (turnCommand.command === Command.BALL)
-          this.scene.currentBattle.turnPokeballCounts[turnCommand.cursor]++;
         this.scene.currentBattle.turnCommands[this.fieldIndex] = null;
         this.scene.unshiftPhase(new CommandPhase(this.scene, this.fieldIndex));
       } else
         turnCommand.targets = [ cursor ];
+      if (this.scene.currentBattle.turnCommands[this.fieldIndex].command === Command.BALL && this.fieldIndex)
+        this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
       this.end();
     });
   }
@@ -1168,6 +1187,9 @@ export class TurnStartPhase extends FieldPhase {
 
       const pokemon = field[o];
       const turnCommand = this.scene.currentBattle.turnCommands[o];
+
+      if (turnCommand.skip)
+        continue;
 
       switch (turnCommand.command) {
         case Command.FIGHT:

@@ -24,6 +24,7 @@ export interface TurnCommand {
     cursor?: integer;
     move?: QueuedMove;
     targets?: BattlerIndex[];
+    skip?: boolean;
     args?: any[];
 };
 
@@ -42,7 +43,6 @@ export default class Battle {
     public started: boolean;
     public turn: integer;
     public turnCommands: TurnCommands;
-    public turnPokeballCounts: PokeballCounts;
     public playerParticipantIds: Set<integer> = new Set<integer>();
     public escapeAttempts: integer = 0;
     public lastMove: Moves;
@@ -94,7 +94,6 @@ export default class Battle {
     incrementTurn(scene: BattleScene): void {
         this.turn++;
         this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [ bt, null ]));
-        this.turnPokeballCounts = Object.assign({}, scene.pokeballCounts);
     }
 
     addParticipant(playerPokemon: PlayerPokemon): void {
