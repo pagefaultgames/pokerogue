@@ -1260,7 +1260,7 @@ export function initAbilities() {
     new Ability(Abilities.FORECAST, "Forecast (N)", "Castform transforms with the weather.", 3),
     new Ability(Abilities.GUTS, "Guts (N)", "Boosts Attack if there is a status problem.", 3),
     new Ability(Abilities.HUGE_POWER, "Huge Power", "Raises the Pokémon's Attack stat.", 3)
-      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 1, true),
+      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 2, true),
     new Ability(Abilities.HUSTLE, "Hustle (N)", "Boosts the Attack stat, but lowers Accuracy.", 3),
     new Ability(Abilities.HYPER_CUTTER, "Hyper Cutter", "Prevents other Pokémon from lowering Attack stat.", 3)
       .attr(ProtectStatAbAttr, BattleStat.ATK),
@@ -1304,7 +1304,7 @@ export function initAbilities() {
       .attr(PostDefendContactApplyStatusEffectAbAttr, StatusEffect.POISON),
     new Ability(Abilities.PRESSURE, "Pressure (N)", "The Pokémon raises the foe's PP usage.", 3),
     new Ability(Abilities.PURE_POWER, "Pure Power", "Raises the Pokémon's Attack stat.", 3)
-      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 1, true),
+      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 2, true),
     new Ability(Abilities.RAIN_DISH, "Rain Dish", "The Pokémon gradually regains HP in rain.", 3)
       .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.RAIN, WeatherType.HEAVY_RAIN),
     new Ability(Abilities.ROCK_HEAD, "Rock Head", "Protects the Pokémon from recoil damage.", 3)
