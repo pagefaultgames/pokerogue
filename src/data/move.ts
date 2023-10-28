@@ -1155,18 +1155,22 @@ export class MultiHitAttr extends MoveAttr {
 export class StatusEffectAttr extends MoveEffectAttr {
   public effect: StatusEffect;
   public cureTurn: integer;
+  public overrideStatus: boolean;
 
-  constructor(effect: StatusEffect, selfTarget?: boolean, cureTurn?: integer) {
+  constructor(effect: StatusEffect, selfTarget?: boolean, cureTurn?: integer, overrideStatus?: boolean) {
     super(selfTarget, MoveEffectTrigger.HIT);
 
     this.effect = effect;
     this.cureTurn = cureTurn;
+    this.overrideStatus = !!overrideStatus;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const statusCheck = move.chance < 0 || move.chance === 100 || Utils.randInt(100) < move.chance;
     if (statusCheck) {
       const pokemon = this.selfTarget ? user : target;
+      if (pokemon.status)
+        pokemon.resetStatus();
       if (!pokemon.status || (pokemon.status.effect === this.effect && move.chance < 0)) {
         user.scene.unshiftPhase(new ObtainStatusEffectPhase(user.scene, pokemon.getBattlerIndex(), this.effect, this.cureTurn));
         return true;
@@ -2632,7 +2636,7 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false),
     new SelfStatusMove(Moves.REST, "Rest", Type.PSYCHIC, -1, 5, 85, "User sleeps for 2 turns, but user is fully healed.", -1, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3)
+      .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
       .condition((user: Pokemon, target: Pokemon, move: Move) => user.status?.effect !== StatusEffect.SLEEP),
     new AttackMove(Moves.ROCK_SLIDE, "Rock Slide", Type.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 86, "May cause flinching.", 30, 0, 1)
