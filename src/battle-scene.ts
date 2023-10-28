@@ -791,7 +791,9 @@ export default class BattleScene extends Phaser.Scene {
 		this.partyExpBar.setY(this.moneyText.y + 15);
 	}
 
-	getMaxExpLevel(): integer {
+	getMaxExpLevel(ignoreLevelCap?: boolean): integer {
+		if (ignoreLevelCap)
+			return 10000;
 		const lastWaveIndex = Math.ceil((this.currentBattle?.waveIndex || 1) / 10) * 10;
 		const baseLevel = (1 + lastWaveIndex / 2 + Math.pow(lastWaveIndex / 25, 2)) * 1.2;
 		return Math.min(Math.ceil(baseLevel / 2) * 2 + 2, 10000);
