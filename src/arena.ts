@@ -119,7 +119,18 @@ export class Arena {
 
   getFormIndex(species: PokemonSpecies) {
     if (!species.canChangeForm && species.forms?.length)
-      return Utils.randSeedInt(species.forms.length); // TODO: Base on biome
+      return Utils.randSeedInt(species.forms.length);
+    switch (species.speciesId) {
+      case Species.BURMY:
+      case Species.WORMADAM:
+        switch (this.biomeType) {
+          case Biome.BEACH:
+            return 1;
+          case Biome.CITY:
+            return 2;
+        }
+        break;
+    }
     return 0;
   }
 

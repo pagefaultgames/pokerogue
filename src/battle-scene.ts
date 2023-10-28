@@ -1233,12 +1233,10 @@ export default class BattleScene extends Phaser.Scene {
 				for (let c = 0; c < chances; c++) {
 					if (!Utils.randSeedInt(modifierChance))
 						count++;
-					if (count === 12)
-						break;
 				}
 				if (isBoss)
 					count = Math.max(count, Math.floor(chances / 2));
-				getEnemyModifierTypesForWave(waveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD)
+				getEnemyModifierTypesForWave(waveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, this.gameMode)
 					.map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false));
 			});
 
