@@ -274,7 +274,7 @@ export class GameData {
         }
 
         for (let enemyModifierData of sessionData.enemyModifiers) {
-          const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]) as PokemonHeldItemModifier;
+          const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
           if (modifier)
             scene.addEnemyModifier(modifier);
         }

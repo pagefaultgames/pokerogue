@@ -660,6 +660,9 @@ export const modifierTypes = {
   
   GOLDEN_POKEBALL: () => new ModifierType(`Golden ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle',
     (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold', null, 'pb_bounce_1'),
+
+  ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Booster', 'Increases damage by 20%', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type), 'wl_item_drop'),
+  ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Damage Reducer', 'Reduces incoming damage by 10%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type), 'wl_guard_spec')
 };
 
 const modifierPool = {
@@ -797,6 +800,13 @@ const trainerModifierPool = {
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
 };
 
+export function getModifierType(modifierTypeFunc: ModifierTypeFunc): ModifierType {
+  const modifierType = modifierTypeFunc();
+  if (!modifierType.id)
+    modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc);
+  return modifierType;
+}
+
 let modifierPoolThresholds = {};
 let ignoredPoolIndexes = {};
 
@@ -860,11 +870,8 @@ export function getPlayerModifierTypeOptionsForWave(waveIndex: integer, count: i
 
 export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: EnemyPokemon[], poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER, gameMode: GameMode): PokemonHeldItemModifierType[] {
   const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType).type as PokemonHeldItemModifierType);
-  if ((gameMode === GameMode.CLASSIC && waveIndex === 200) || !(waveIndex % 1000)) {
-    const miniBlackHole = modifierTypes.MINI_BLACK_HOLE();
-    miniBlackHole.id = 'MINI_BLACK_HOLE';
-    ret.push(miniBlackHole);
-  }
+  if ((gameMode === GameMode.CLASSIC && waveIndex === 200) || !(waveIndex % 1000))
+    ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemModifierType);
   return ret;
 }
 

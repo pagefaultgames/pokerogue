@@ -16,7 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { Biome, biomeLinks } from "./data/biome";
-import { ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
@@ -1293,7 +1293,7 @@ export class BattleEndPhase extends BattlePhase {
         pokemon.resetBattleSummonData();
     }
 
-    this.scene.clearEnemyModifiers();
+    this.scene.clearEnemyHeldItemModifiers();
 
     const lapsingModifiers = this.scene.findModifiers(m => m instanceof LapsingPersistentModifier) as LapsingPersistentModifier[];
     for (let m of lapsingModifiers) {
@@ -2171,9 +2171,7 @@ export class ModifierRewardPhase extends BattlePhase {
   constructor(scene: BattleScene, modifierTypeFunc: ModifierTypeFunc) {
     super(scene);
 
-    this.modifierType = modifierTypeFunc();
-    if (!this.modifierType.id)
-      this.modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc);
+    this.modifierType = getModifierType(modifierTypeFunc);
   }
 
   start() {
@@ -2694,7 +2692,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.scene.getPlayerField().filter(p => p.isActive()).forEach(playerPokemon => playerPokemon.removeTagsBySourceId(pokemon.id));
         pokemon.hp = 0;
         pokemon.trySetStatus(StatusEffect.FAINT);
-        this.scene.clearEnemyModifiers();
+        this.scene.clearEnemyHeldItemModifiers();
         this.scene.field.remove(pokemon, true);
       };
       const addToParty = () => {

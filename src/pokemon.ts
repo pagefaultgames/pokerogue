@@ -8,7 +8,7 @@ import * as Utils from './utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier } from './data/type';
 import { getLevelTotalExp } from './data/exp';
 import { Stat } from './data/pokemon-stat';
-import { AttackTypeBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
+import { AttackTypeBoosterModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { Gender } from './data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
@@ -636,7 +636,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let result: HitResult;
     const move = battlerMove.getMove();
     const moveCategory = move.category;
-    let damage = 0;
+    let damage = new Utils.NumberHolder(0);
 
     const cancelled = new Utils.BooleanHolder(false);
     const typeless = !!move.getAttrs(TypelessAttr).length
@@ -690,19 +690,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           applyAbAttrs(StabBoostAbAttr, source, null, stabMultiplier);
 
           if (!isTypeImmune) {
-            damage = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * weatherTypeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
+            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * weatherTypeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
             if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
-              damage = Math.floor(damage / 2);
+              damage.value = Math.floor(damage.value / 2);
             move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
               if (this.getTag(hta.tagType))
-                damage *= 2;
+                damage.value *= 2;
             });
           }
 
           const fixedDamage = new Utils.IntegerHolder(0);
           applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
           if (!isTypeImmune && fixedDamage.value) {
-            damage = fixedDamage.value;
+            damage.value = fixedDamage.value;
             isCritical = false;
             result = HitResult.EFFECTIVE;
           }
@@ -720,15 +720,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               result = HitResult.NO_EFFECT;
           }
 
+          if (!source.isPlayer())
+             this.scene.applyModifiers(EnemyDamageBoosterModifier, false, damage);
+
+          if (!this.isPlayer())
+             this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage);
+
           if (damage) {
             this.scene.unshiftPhase(new DamagePhase(this.scene, this.getBattlerIndex(), result as DamageResult));
             if (isCritical)
               this.scene.queueMessage('A critical hit!');
             this.scene.setPhaseQueueSplice();
-            damage = Math.min(damage, this.hp);
-            this.damage(damage);
-            source.turnData.damageDealt += damage;
-            this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage, critical: isCritical, sourceId: source.id });
+            damage.value = Math.min(damage.value, this.hp);
+            this.damage(damage.value);
+            source.turnData.damageDealt += damage.value;
+            this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id });
           }
 
           switch (result) {

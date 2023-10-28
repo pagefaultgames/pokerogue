@@ -2,7 +2,7 @@ import Pokemon, { HitResult, PokemonMove } from "../pokemon";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { DamagePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../battle-phases";
+import { DamagePhase, ObtainStatusEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../battle-phases";
 import { getPokemonMessage } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag, BattlerTagType } from "./battler-tag";
@@ -290,9 +290,9 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   }
 
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (move.getMove().hasFlag(MoveFlags.MAKES_CONTACT) && Utils.randInt(100) < this.chance) {
+    if (move.getMove().hasFlag(MoveFlags.MAKES_CONTACT) && Utils.randInt(100) < this.chance && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[Utils.randInt(this.effects.length)];
-      return attacker.trySetStatus(effect);
+      pokemon.scene.unshiftPhase(new ObtainStatusEffectPhase(pokemon.scene, attacker.getBattlerIndex(), effect));
     }
 
     return false;
