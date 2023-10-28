@@ -978,7 +978,7 @@ export class RandomLevelDamageAttr extends FixedDamageAttr {
   }
 
   getDamage(user: Pokemon, target: Pokemon, move: Move): number {
-    return user.level * (Utils.randIntRange(50, 150) * 0.01);
+    return Math.max(Math.floor(user.level * (Utils.randIntRange(50, 150) * 0.01)), 1);
   }
 }
 
