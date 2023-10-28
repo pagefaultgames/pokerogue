@@ -1061,7 +1061,7 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = Math.floor(Math.pow((args[0] as Utils.IntegerHolder).value * 0.5, Math.sqrt(this.getStackCount()) + 1));
+    (args[0] as Utils.IntegerHolder).value *= Math.pow(2, 5 - this.getStackCount());
 
     return true;
   }
