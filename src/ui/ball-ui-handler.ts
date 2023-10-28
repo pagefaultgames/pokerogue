@@ -60,13 +60,13 @@ export default class BallUiHandler extends UiHandler {
 
     let success = false;
 
-    const pokeballTypeCount = Object.keys(this.scene.currentBattle.turnPokeballCounts).length;
+    const pokeballTypeCount = Object.keys(this.scene.pokeballCounts).length;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
       const commandPhase = this.scene.getCurrentPhase() as CommandPhase;
       success = true;
       if (button === Button.ACTION && this.cursor < pokeballTypeCount) {
-        if (this.scene.currentBattle.turnPokeballCounts[this.cursor]) {
+        if (this.scene.pokeballCounts[this.cursor]) {
           if (commandPhase.handleCommand(Command.BALL, this.cursor)) {
             this.scene.ui.setMode(Mode.COMMAND, commandPhase.getFieldIndex());
             this.scene.ui.setMode(Mode.MESSAGE);
@@ -94,7 +94,7 @@ export default class BallUiHandler extends UiHandler {
   }
 
   updateCounts() {
-    this.countsText.setText(Object.values(this.scene.currentBattle.turnPokeballCounts).map(c => `x${c}`).join('\n'));
+    this.countsText.setText(Object.values(this.scene.pokeballCounts).map(c => `x${c}`).join('\n'));
   }
 
   setCursor(cursor: integer): boolean {

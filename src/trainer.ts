@@ -131,7 +131,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
         ? getPokemonSpecies(battle.enemyParty[offset].species.getSpeciesForLevel(level))
         : this.genNewPartyMemberSpecies(level);
       
-      ret = new EnemyPokemon(this.scene, species, level);
+      ret = new EnemyPokemon(this.scene, species, level, true);
     }, this.config.hasStaticParty ? this.config.getDerivedType() + ((index + 1) << 8) : this.scene.currentBattle.waveIndex + (this.config.getDerivedType() << 10) + ((index + 1) << 8));
 
     return ret;
@@ -151,7 +151,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
         tier--;
       }
       const tierPool = this.config.speciesPools[tier];
-      ret = getPokemonSpecies(getPokemonSpecies(Phaser.Math.RND.pick(tierPool)).getSpeciesForLevel(level));
+      ret = getPokemonSpecies(getPokemonSpecies(Phaser.Math.RND.pick(tierPool)).getSpeciesForLevel(level, true));
     } else
       ret = getPokemonSpecies(this.scene.randomSpecies(battle.waveIndex, level, this.config.speciesFilter).getSpeciesForLevel(level));
 

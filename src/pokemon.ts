@@ -8,7 +8,7 @@ import * as Utils from './utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier } from './data/type';
 import { getLevelTotalExp } from './data/exp';
 import { Stat } from './data/pokemon-stat';
-import { AttackTypeBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
+import { AttackTypeBoosterModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { Gender } from './data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
@@ -125,23 +125,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       }
 
-      const rand1 = Utils.binToDec(Utils.decToBin(this.id).substring(0, 16));
-      const rand2 = Utils.binToDec(Utils.decToBin(this.id).substring(16, 32));
-
-      const E = this.scene.gameData.trainerId ^ this.scene.gameData.secretId;
-      const F = rand1 ^ rand2;
-
-      if (this.shiny === undefined) {
-        let shinyThreshold = new Utils.IntegerHolder(32);
-        this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
-        console.log(shinyThreshold.value);
-
-        this.shiny = (E ^ F) < shinyThreshold.value;
-        if ((E ^ F) < 32)
-          console.log('REAL SHINY!!');
-        if (this.shiny)
-          console.log((E ^ F), shinyThreshold.value);
-      }
+      if (this.shiny === undefined)
+        this.trySetShiny();
 
       this.winCount = 0;
       this.pokerus = false;
@@ -206,6 +191,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   abstract isPlayer(): boolean;
+
+  abstract hasTrainer(): boolean;
 
   abstract getFieldIndex(): integer;
 
@@ -507,6 +494,26 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.summonData.moveset[moveIndex] = move;
   }
 
+  trySetShiny(): boolean {
+    const rand1 = Utils.binToDec(Utils.decToBin(this.id).substring(0, 16));
+    const rand2 = Utils.binToDec(Utils.decToBin(this.id).substring(16, 32));
+
+    const E = this.scene.gameData.trainerId ^ this.scene.gameData.secretId;
+    const F = rand1 ^ rand2;
+
+    let shinyThreshold = new Utils.IntegerHolder(32);
+    if (!this.hasTrainer()) {
+      this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+      console.log(shinyThreshold.value);
+    }
+
+    this.shiny = (E ^ F) < shinyThreshold.value;
+    if ((E ^ F) < 32)
+      console.log('REAL SHINY!!');
+
+    return this.shiny;
+  }
+
   generateAndPopulateMoveset(): void {
     this.moveset = [];
     const movePool = [];
@@ -629,7 +636,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let result: HitResult;
     const move = battlerMove.getMove();
     const moveCategory = move.category;
-    let damage = 0;
+    let damage = new Utils.NumberHolder(0);
 
     const cancelled = new Utils.BooleanHolder(false);
     const typeless = !!move.getAttrs(TypelessAttr).length
@@ -683,19 +690,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           applyAbAttrs(StabBoostAbAttr, source, null, stabMultiplier);
 
           if (!isTypeImmune) {
-            damage = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * weatherTypeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
+            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * weatherTypeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
             if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
-              damage = Math.floor(damage / 2);
+              damage.value = Math.floor(damage.value / 2);
             move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
               if (this.getTag(hta.tagType))
-                damage *= 2;
+                damage.value *= 2;
             });
           }
 
           const fixedDamage = new Utils.IntegerHolder(0);
           applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
           if (!isTypeImmune && fixedDamage.value) {
-            damage = fixedDamage.value;
+            damage.value = fixedDamage.value;
             isCritical = false;
             result = HitResult.EFFECTIVE;
           }
@@ -713,15 +720,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               result = HitResult.NO_EFFECT;
           }
 
+          if (!source.isPlayer())
+             this.scene.applyModifiers(EnemyDamageBoosterModifier, false, damage);
+
+          if (!this.isPlayer())
+             this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage);
+
           if (damage) {
             this.scene.unshiftPhase(new DamagePhase(this.scene, this.getBattlerIndex(), result as DamageResult));
             if (isCritical)
               this.scene.queueMessage('A critical hit!');
             this.scene.setPhaseQueueSplice();
-            damage = Math.min(damage, this.hp);
-            this.damage(damage);
-            source.turnData.damageDealt += damage;
-            this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage, critical: isCritical, sourceId: source.id });
+            damage.value = Math.min(damage.value, this.hp);
+            this.damage(damage.value);
+            source.turnData.damageDealt += damage.value;
+            this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id });
           }
 
           switch (result) {
@@ -1097,6 +1110,10 @@ export class PlayerPokemon extends Pokemon {
     return true;
   }
 
+  hasTrainer(): boolean {
+    return true;
+  }
+
   getFieldIndex(): integer {
     return this.scene.getPlayerField().indexOf(this);
   }
@@ -1165,11 +1182,14 @@ export class PlayerPokemon extends Pokemon {
 }
 
 export class EnemyPokemon extends Pokemon {
+  public trainer: boolean;
   public aiType: AiType;
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, dataSource?: PokemonData) {
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainer: boolean, dataSource?: PokemonData) {
     super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource ? dataSource.formIndex : scene.arena.getFormIndex(species),
       dataSource?.gender, dataSource?.shiny, dataSource);
+
+    this.trainer = trainer;
 
     if (!dataSource) {
       let prevolution: Species;
@@ -1321,6 +1341,10 @@ export class EnemyPokemon extends Pokemon {
 
   isPlayer() {
     return false;
+  }
+
+  hasTrainer(): boolean {
+    return this.trainer;
   }
 
   getFieldIndex(): integer {

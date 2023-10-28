@@ -1,5 +1,5 @@
 import * as ModifierTypes from './modifier-type';
-import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../battle-phases";
+import { LearnMovePhase, LevelUpPhase, ObtainStatusEffectPhase, PokemonHealPhase } from "../battle-phases";
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { PokeballType } from "../data/pokeball";
@@ -15,6 +15,7 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
 import { Species } from '../data/species';
 import { BattleType } from '../battle';
+import { StatusEffect } from '../data/status-effect';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -671,13 +672,13 @@ export class PreserveBerryModifier extends PersistentModifier {
 
   apply(args: any[]): boolean {
     if (!(args[0] as Utils.BooleanHolder).value)
-      (args[0] as Utils.BooleanHolder).value = this.getStackCount() === this.getMaxStackCount() || Utils.randInt(this.getMaxStackCount()) < this.getStackCount();
+      (args[0] as Utils.BooleanHolder).value = Utils.randInt(this.getMaxStackCount()) < this.getStackCount();
 
     return true;
   }
 
   getMaxStackCount(): integer {
-    return 4;
+    return 3;
   }
 }
 
@@ -1223,5 +1224,89 @@ export class ExtraModifierModifier extends PersistentModifier {
 
   getMaxStackCount(): integer {
     return 3;
+  }
+}
+
+export abstract class EnemyPersistentModifer extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+}
+
+export class EnemyDamageBoosterModifier extends EnemyPersistentModifer {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof EnemyDamageBoosterModifier;
+  }
+
+  clone(): EnemyDamageBoosterModifier {
+    return new EnemyDamageBoosterModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (1 + 0.2 * this.getStackCount()));
+
+    return true;
+  }
+
+  getMaxStackCount(): number {
+    return 5;
+  }
+}
+
+export class EnemyDamageReducerModifier extends EnemyPersistentModifer {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof EnemyDamageReducerModifier;
+  }
+
+  clone(): EnemyDamageReducerModifier {
+    return new EnemyDamageReducerModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (1 - 0.2 * this.getStackCount()));
+
+    return true;
+  }
+
+  getMaxStackCount(): number {
+    return 5;
+  }
+}
+
+export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifer {
+  public effect: StatusEffect;
+
+  constructor(type: ModifierType, effect: StatusEffect, stackCount?: integer) {
+    super(type, stackCount);
+
+    this.effect = effect;
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof EnemyAttackStatusEffectChanceModifier && modifier.effect === this.effect;
+  }
+
+  clone(): EnemyDamageReducerModifier {
+    return new EnemyAttackStatusEffectChanceModifier(this.type, this.effect, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    const target = (args[0] as Pokemon);
+    if (Utils.randInt(10) < this.getStackCount())
+      target.scene.unshiftPhase(new ObtainStatusEffectPhase(target.scene, target.getBattlerIndex(), this.effect));
+
+    return true;
+  }
+
+  getMaxStackCount(): number {
+    return 5;
   }
 }

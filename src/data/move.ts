@@ -13,6 +13,7 @@ import { BlockRecoilDamageAttr, applyAbAttrs } from "./ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
+import { Species } from "./species";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -977,7 +978,7 @@ export class RandomLevelDamageAttr extends FixedDamageAttr {
   }
 
   getDamage(user: Pokemon, target: Pokemon, move: Move): number {
-    return user.level * (Utils.randIntRange(50, 150) * 0.01);
+    return Math.max(Math.floor(user.level * (Utils.randIntRange(50, 150) * 0.01)), 1);
   }
 }
 
@@ -1155,18 +1156,22 @@ export class MultiHitAttr extends MoveAttr {
 export class StatusEffectAttr extends MoveEffectAttr {
   public effect: StatusEffect;
   public cureTurn: integer;
+  public overrideStatus: boolean;
 
-  constructor(effect: StatusEffect, selfTarget?: boolean, cureTurn?: integer) {
+  constructor(effect: StatusEffect, selfTarget?: boolean, cureTurn?: integer, overrideStatus?: boolean) {
     super(selfTarget, MoveEffectTrigger.HIT);
 
     this.effect = effect;
     this.cureTurn = cureTurn;
+    this.overrideStatus = !!overrideStatus;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const statusCheck = move.chance < 0 || move.chance === 100 || Utils.randInt(100) < move.chance;
     if (statusCheck) {
       const pokemon = this.selfTarget ? user : target;
+      if (pokemon.status)
+        pokemon.resetStatus();
       if (!pokemon.status || (pokemon.status.effect === this.effect && move.chance < 0)) {
         user.scene.unshiftPhase(new ObtainStatusEffectPhase(user.scene, pokemon.getBattlerIndex(), this.effect, this.cureTurn));
         return true;
@@ -1296,6 +1301,8 @@ export class OneHitKOAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (target.species.speciesId === Species.ETERNATUS && target.formIndex === 1)
+      return false;
     target.damage(target.hp, true);
     user.scene.queueMessage('It\'s a one-hit KO!');
     return true;
@@ -2299,7 +2306,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.SCRATCH, "Scratch", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, "", -1, 0, 1),
     new AttackMove(Moves.VISE_GRIP, "Vise Grip", Type.NORMAL, MoveCategory.PHYSICAL, 55, 100, 30, -1, "", -1, 0, 1),
-    new AttackMove(Moves.GUILLOTINE, "Guillotine", Type.NORMAL, MoveCategory.PHYSICAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1)
+    new AttackMove(Moves.GUILLOTINE, "Guillotine", Type.NORMAL, MoveCategory.PHYSICAL, 250, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1)
       .attr(OneHitKOAttr),
     new AttackMove(Moves.RAZOR_WIND, "Razor Wind", Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, "Charges on first turn, attacks on second. High critical hit ratio.", -1, 0, 1)
       .attr(ChargeAttr, ChargeAnim.RAZOR_WIND_CHARGING, 'whipped\nup a whirlwind!')
@@ -2340,7 +2347,7 @@ export function initMoves() {
     new AttackMove(Moves.HORN_ATTACK, "Horn Attack", Type.NORMAL, MoveCategory.PHYSICAL, 65, 100, 25, -1, "", -1, 0, 1),
     new AttackMove(Moves.FURY_ATTACK, "Fury Attack", Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, "Hits 2-5 times in one turn.", -1, 0, 1)
       .attr(MultiHitAttr),
-    new AttackMove(Moves.HORN_DRILL, "Horn Drill", Type.NORMAL, MoveCategory.PHYSICAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1)
+    new AttackMove(Moves.HORN_DRILL, "Horn Drill", Type.NORMAL, MoveCategory.PHYSICAL, 250, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1)
       .attr(OneHitKOAttr),
     new AttackMove(Moves.TACKLE, "Tackle", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, "", -1, 0, 1),
     new AttackMove(Moves.BODY_SLAM, "Body Slam", Type.NORMAL, MoveCategory.PHYSICAL, 85, 100, 15, 66, "May paralyze opponent.", 30, 0, 1)
@@ -2478,7 +2485,7 @@ export function initMoves() {
       .attr(HitsTagAttr, BattlerTagType.UNDERGROUND, true)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new AttackMove(Moves.FISSURE, "Fissure", Type.GROUND, MoveCategory.PHYSICAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1)
+    new AttackMove(Moves.FISSURE, "Fissure", Type.GROUND, MoveCategory.PHYSICAL, 250, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1)
       .attr(OneHitKOAttr)
       .makesContact(false),
     new AttackMove(Moves.DIG, "Dig", Type.GROUND, MoveCategory.PHYSICAL, 80, 100, 10, 55, "Digs underground on first turn, attacks on second. Can also escape from caves.", -1, 0, 1)
@@ -2632,7 +2639,7 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false),
     new SelfStatusMove(Moves.REST, "Rest", Type.PSYCHIC, -1, 5, 85, "User sleeps for 2 turns, but user is fully healed.", -1, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3)
+      .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
       .condition((user: Pokemon, target: Pokemon, move: Move) => user.status?.effect !== StatusEffect.SLEEP),
     new AttackMove(Moves.ROCK_SLIDE, "Rock Slide", Type.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 86, "May cause flinching.", 30, 0, 1)
@@ -2744,9 +2751,9 @@ export function initMoves() {
     new StatusMove(Moves.SANDSTORM, "Sandstorm", Type.ROCK, -1, 10, 51, "Creates a sandstorm for 5 turns.", -1, 0, 2)
       .attr(WeatherChangeAttr, WeatherType.SANDSTORM)
       .target(MoveTarget.BOTH_SIDES),
-    new AttackMove(Moves.GIGA_DRAIN, "Giga Drain", Type.GRASS, MoveCategory.SPECIAL, 75, 100, 10, 111, "User recovers half the HP inflicted on opponent.", -1, 4, 2)
+    new AttackMove(Moves.GIGA_DRAIN, "Giga Drain", Type.GRASS, MoveCategory.SPECIAL, 75, 100, 10, 111, "User recovers half the HP inflicted on opponent.", -1, 0, 2)
       .attr(HitHealAttr),
-    new SelfStatusMove(Moves.ENDURE, "Endure (N)", Type.NORMAL, -1, 10, 47, "Always left with at least 1 HP, but may fail if used consecutively.", -1, 0, 2),
+    new SelfStatusMove(Moves.ENDURE, "Endure (N)", Type.NORMAL, -1, 10, 47, "Always left with at least 1 HP, but may fail if used consecutively.", -1, 4, 2),
     new StatusMove(Moves.CHARM, "Charm", Type.FAIRY, 100, 20, 2, "Sharply lowers opponent's Attack.", -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.ATK, -2),
     new AttackMove(Moves.ROLLOUT, "Rollout", Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, "Doubles in power each turn for 5 turns.", -1, 0, 2)
@@ -2919,7 +2926,7 @@ export function initMoves() {
     new AttackMove(Moves.SECRET_POWER, "Secret Power (N)", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, "Effects of the attack vary with the location.", 30, 0, 3)
       .makesContact(false),
     new AttackMove(Moves.DIVE, "Dive", Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, -1, "Dives underwater on first turn, attacks on second turn.", -1, 0, 3)
-      .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, 'hid\nunderwater!')
+      .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, 'hid\nunderwater!', BattlerTagType.UNDERGROUND)
       .ignoresVirtual(),
     new AttackMove(Moves.ARM_THRUST, "Arm Thrust", Type.FIGHTING, MoveCategory.PHYSICAL, 15, 100, 20, -1, "Hits 2-5 times in one turn.", -1, 0, 3)
       .attr(MultiHitAttr),
@@ -3000,7 +3007,7 @@ export function initMoves() {
     new AttackMove(Moves.SAND_TOMB, "Sand Tomb", Type.GROUND, MoveCategory.PHYSICAL, 35, 85, 15, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 3)
       .attr(TrapAttr, BattlerTagType.SAND_TOMB)
       .makesContact(false),
-    new AttackMove(Moves.SHEER_COLD, "Sheer Cold", Type.ICE, MoveCategory.SPECIAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 3)
+    new AttackMove(Moves.SHEER_COLD, "Sheer Cold", Type.ICE, MoveCategory.SPECIAL, 250, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 3)
       .attr(OneHitKOAttr),
     new AttackMove(Moves.MUDDY_WATER, "Muddy Water", Type.WATER, MoveCategory.SPECIAL, 90, 85, 10, -1, "May lower opponent's Accuracy.", 30, 0, 3)
       .attr(StatChangeAttr, BattleStat.ACC, -1)

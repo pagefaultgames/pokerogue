@@ -521,7 +521,7 @@ function getGymLeaderPartyTemplate(scene: BattleScene) {
 function getRandomPartyMemberFunc(speciesPool: Species[], postProcess?: (enemyPokemon: EnemyPokemon) => void): PartyMemberFunc {
   return (scene: BattleScene, level: integer) => {
     const species = getPokemonSpecies(Phaser.Math.RND.pick(speciesPool)).getSpeciesForLevel(level, true);
-    const ret = new EnemyPokemon(scene, getPokemonSpecies(species), level);
+    const ret = new EnemyPokemon(scene, getPokemonSpecies(species), level, true);
     if (postProcess)
       postProcess(ret);
     return ret;
@@ -532,7 +532,7 @@ function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilt
   const originalSpeciesFilter = speciesFilter;
   speciesFilter = (species: PokemonSpecies) => allowLegendaries || (!species.legendary && !species.pseudoLegendary && !species.mythical) && originalSpeciesFilter(species);
   return (scene: BattleScene, level: integer) => {
-    const ret = new EnemyPokemon(scene, scene.randomSpecies(scene.currentBattle.waveIndex, level, speciesFilter), level);
+    const ret = new EnemyPokemon(scene, scene.randomSpecies(scene.currentBattle.waveIndex, level, speciesFilter), level, true);
     if (postProcess)
       postProcess(ret);
     return ret;
@@ -735,7 +735,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT ]))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450))
     .setSpeciesFilter(species => species.baseTotal >= 540)
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RAYQUAZA ])),
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RAYQUAZA ], p => p.formIndex = 0)),
   [TrainerType.RIVAL_6]: new TrainerConfig(++t).setBoss().setStaticParty().setEncounterBgm('final').setBattleBgm('battle_rival_3').setPartyTemplates(trainerPartyTemplates.RIVAL_6)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT ]))

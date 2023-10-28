@@ -253,7 +253,7 @@ export class GameData {
         scene.newArena(sessionData.arena.biome, true);
 
         sessionData.enemyParty.forEach((enemyData, e) => {
-          const enemyPokemon = enemyData.toPokemon(scene) as EnemyPokemon;
+          const enemyPokemon = enemyData.toPokemon(scene, battleType) as EnemyPokemon;
           battle.enemyParty[e] = enemyPokemon;
           if (battleType === BattleType.WILD)
             battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
@@ -274,7 +274,7 @@ export class GameData {
         }
 
         for (let enemyModifierData of sessionData.enemyModifiers) {
-          const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]) as PokemonHeldItemModifier;
+          const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
           if (modifier)
             scene.addEnemyModifier(modifier);
         }

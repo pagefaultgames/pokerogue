@@ -16,7 +16,7 @@ import { GameData } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
 import { Moves, initMoves } from './data/move';
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getModifierType, modifierTypes } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';
@@ -104,7 +104,7 @@ export default class BattleScene extends Phaser.Scene {
 	private modifierBar: ModifierBar;
 	private enemyModifierBar: ModifierBar;
 	private modifiers: PersistentModifier[];
-	private enemyModifiers: PokemonHeldItemModifier[];
+	private enemyModifiers: PersistentModifier[];
 	public uiContainer: Phaser.GameObjects.Container;
 	public ui: UI;
 
@@ -1148,7 +1148,7 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	addEnemyModifier(itemModifier: PokemonHeldItemModifier): Promise<void> {
+	addEnemyModifier(itemModifier: PersistentModifier): Promise<void> {
 		return new Promise(resolve => {
 			itemModifier.add(this.enemyModifiers, false);
 			this.updateModifiers(false).then(() => resolve());
@@ -1206,7 +1206,7 @@ export default class BattleScene extends Phaser.Scene {
 	removePartyMemberModifiers(partyMemberIndex: integer): Promise<void> {
 		return new Promise(resolve => {
 			const pokemonId = this.getParty()[partyMemberIndex].id;
-			const modifiersToRemove = this.modifiers.filter(m => (m instanceof PokemonHeldItemModifier) && (m as PokemonHeldItemModifier).pokemonId === pokemonId);
+			const modifiersToRemove = this.modifiers.filter(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === pokemonId);
 			for (let m of modifiersToRemove)
 				this.modifiers.splice(this.modifiers.indexOf(m), 1);
 			this.updateModifiers().then(() => resolve());
@@ -1233,12 +1233,10 @@ export default class BattleScene extends Phaser.Scene {
 				for (let c = 0; c < chances; c++) {
 					if (!Utils.randSeedInt(modifierChance))
 						count++;
-					if (count === 12)
-						break;
 				}
 				if (isBoss)
 					count = Math.max(count, Math.floor(chances / 2));
-				getEnemyModifierTypesForWave(waveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD)
+				getEnemyModifierTypesForWave(waveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, this.gameMode)
 					.map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false));
 			});
 
@@ -1246,8 +1244,17 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	clearEnemyModifiers(): void {
-		this.enemyModifiers.splice(0, this.enemyModifiers.length);
+	generateEnemyBuffModifier(): void{
+		const enemyBuffModifierTypes = [ modifierTypes.ENEMY_DAMAGE_BOOSTER, modifierTypes.ENEMY_DAMAGE_REDUCTION ];
+		this.executeWithSeedOffset(() => {
+			(getModifierType(Phaser.Math.RND.pick(enemyBuffModifierTypes)).newModifier() as PersistentModifier).add(this.enemyModifiers, false);
+		}, Math.floor(this.currentBattle.waveIndex / 50));
+	}
+
+	clearEnemyHeldItemModifiers(): void {
+		const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier);
+		for (let m of modifiersToRemove)
+			this.enemyModifiers.splice(this.enemyModifiers.indexOf(m), 1);
 		this.updateModifiers(false).then(() => this.updateUIPositions());
 	}
 
