@@ -671,13 +671,13 @@ export class PreserveBerryModifier extends PersistentModifier {
 
   apply(args: any[]): boolean {
     if (!(args[0] as Utils.BooleanHolder).value)
-      (args[0] as Utils.BooleanHolder).value = this.getStackCount() === this.getMaxStackCount() || Utils.randInt(this.getMaxStackCount()) < this.getStackCount();
+      (args[0] as Utils.BooleanHolder).value = Utils.randInt(this.getMaxStackCount()) < this.getStackCount();
 
     return true;
   }
 
   getMaxStackCount(): integer {
-    return 4;
+    return 3;
   }
 }
 

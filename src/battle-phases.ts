@@ -256,7 +256,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.gameData.setPokemonSeen(enemyPokemon);
       }
 
-      if (this.scene.gameMode === GameMode.CLASSIC && battle.waveIndex === 200 && enemyPokemon.species.speciesId === Species.ETERNATUS)
+      if (this.scene.gameMode === GameMode.CLASSIC && (battle.waveIndex === 200 || !(battle.waveIndex % 250)) && enemyPokemon.species.speciesId === Species.ETERNATUS)
         enemyPokemon.formIndex = 1;
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
