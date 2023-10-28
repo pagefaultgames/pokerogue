@@ -216,15 +216,13 @@ export function getRandomWeatherType(biome: Biome): WeatherType {
     case Biome.FOREST:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 5 },
-        { weatherType: WeatherType.HEAVY_RAIN, weight: 2 }
+        { weatherType: WeatherType.RAIN, weight: 5 }
       ];
       break;
     case Biome.SEA:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 3 },
-        { weatherType: WeatherType.RAIN, weight: 7 },
-        { weatherType: WeatherType.HEAVY_RAIN, weight: 5 }
+        { weatherType: WeatherType.RAIN, weight: 12 }
       ];
       break;
     case Biome.SWAMP:
@@ -245,13 +243,12 @@ export function getRandomWeatherType(biome: Biome): WeatherType {
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 10 },
         { weatherType: WeatherType.RAIN, weight: 5 },
-        { weatherType: WeatherType.FOG, weight: 3 },
-        { weatherType: WeatherType.HEAVY_RAIN, weight: 2 }
+        { weatherType: WeatherType.FOG, weight: 3 }
       ];
       break;
     case Biome.SEABED:
       weatherPool = [
-        { weatherType: WeatherType.HEAVY_RAIN, weight: 1 }
+        { weatherType: WeatherType.RAIN, weight: 1 }
       ];
       break;
     case Biome.MOUNTAIN:
@@ -262,15 +259,14 @@ export function getRandomWeatherType(biome: Biome): WeatherType {
     case Biome.BADLANDS:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.SUNNY, weight: 3 },
-        { weatherType: WeatherType.SANDSTORM, weight: 2 },
-        { weatherType: WeatherType.HARSH_SUN, weight: 5 }
+        { weatherType: WeatherType.SUNNY, weight: 5 },
+        { weatherType: WeatherType.SANDSTORM, weight: 2 }
       ];
       break;
     case Biome.DESERT:
       weatherPool = [
-        { weatherType: WeatherType.SANDSTORM, weight: 1 },
-        { weatherType: WeatherType.HARSH_SUN, weight: 1 }
+        { weatherType: WeatherType.SANDSTORM, weight: 2 },
+        { weatherType: WeatherType.SUNNY, weight: 1 }
       ];
       break;
     case Biome.ICE_CAVE:
@@ -284,7 +280,7 @@ export function getRandomWeatherType(biome: Biome): WeatherType {
       ];
     case Biome.VOLCANO:
       weatherPool = [
-        { weatherType: WeatherType.HARSH_SUN, weight: 1 }
+        { weatherType: WeatherType.SUNNY, weight: 1 }
       ];
       break;
     case Biome.GRAVEYARD:
