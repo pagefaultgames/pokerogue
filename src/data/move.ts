@@ -13,6 +13,7 @@ import { BlockRecoilDamageAttr, applyAbAttrs } from "./ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
+import { Species } from "./species";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -1300,6 +1301,8 @@ export class OneHitKOAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (target.species.speciesId === Species.ETERNATUS && target.formIndex === 1)
+      return false;
     target.damage(target.hp, true);
     user.scene.queueMessage('It\'s a one-hit KO!');
     return true;
@@ -2303,7 +2306,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.SCRATCH, "Scratch", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, "", -1, 0, 1),
     new AttackMove(Moves.VISE_GRIP, "Vise Grip", Type.NORMAL, MoveCategory.PHYSICAL, 55, 100, 30, -1, "", -1, 0, 1),
-    new AttackMove(Moves.GUILLOTINE, "Guillotine", Type.NORMAL, MoveCategory.PHYSICAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1)
+    new AttackMove(Moves.GUILLOTINE, "Guillotine", Type.NORMAL, MoveCategory.PHYSICAL, 250, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1)
       .attr(OneHitKOAttr),
     new AttackMove(Moves.RAZOR_WIND, "Razor Wind", Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, "Charges on first turn, attacks on second. High critical hit ratio.", -1, 0, 1)
       .attr(ChargeAttr, ChargeAnim.RAZOR_WIND_CHARGING, 'whipped\nup a whirlwind!')
@@ -2344,7 +2347,7 @@ export function initMoves() {
     new AttackMove(Moves.HORN_ATTACK, "Horn Attack", Type.NORMAL, MoveCategory.PHYSICAL, 65, 100, 25, -1, "", -1, 0, 1),
     new AttackMove(Moves.FURY_ATTACK, "Fury Attack", Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, "Hits 2-5 times in one turn.", -1, 0, 1)
       .attr(MultiHitAttr),
-    new AttackMove(Moves.HORN_DRILL, "Horn Drill", Type.NORMAL, MoveCategory.PHYSICAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1)
+    new AttackMove(Moves.HORN_DRILL, "Horn Drill", Type.NORMAL, MoveCategory.PHYSICAL, 250, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1)
       .attr(OneHitKOAttr),
     new AttackMove(Moves.TACKLE, "Tackle", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, "", -1, 0, 1),
     new AttackMove(Moves.BODY_SLAM, "Body Slam", Type.NORMAL, MoveCategory.PHYSICAL, 85, 100, 15, 66, "May paralyze opponent.", 30, 0, 1)
@@ -2482,7 +2485,7 @@ export function initMoves() {
       .attr(HitsTagAttr, BattlerTagType.UNDERGROUND, true)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new AttackMove(Moves.FISSURE, "Fissure", Type.GROUND, MoveCategory.PHYSICAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1)
+    new AttackMove(Moves.FISSURE, "Fissure", Type.GROUND, MoveCategory.PHYSICAL, 250, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 1)
       .attr(OneHitKOAttr)
       .makesContact(false),
     new AttackMove(Moves.DIG, "Dig", Type.GROUND, MoveCategory.PHYSICAL, 80, 100, 10, 55, "Digs underground on first turn, attacks on second. Can also escape from caves.", -1, 0, 1)
@@ -3004,7 +3007,7 @@ export function initMoves() {
     new AttackMove(Moves.SAND_TOMB, "Sand Tomb", Type.GROUND, MoveCategory.PHYSICAL, 35, 85, 15, -1, "Traps opponent, damaging them for 4-5 turns.", 100, 0, 3)
       .attr(TrapAttr, BattlerTagType.SAND_TOMB)
       .makesContact(false),
-    new AttackMove(Moves.SHEER_COLD, "Sheer Cold", Type.ICE, MoveCategory.SPECIAL, -1, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 3)
+    new AttackMove(Moves.SHEER_COLD, "Sheer Cold", Type.ICE, MoveCategory.SPECIAL, 250, 30, 5, -1, "One-Hit-KO, if it hits.", -1, 0, 3)
       .attr(OneHitKOAttr),
     new AttackMove(Moves.MUDDY_WATER, "Muddy Water", Type.WATER, MoveCategory.SPECIAL, 90, 85, 10, -1, "May lower opponent's Accuracy.", 30, 0, 3)
       .attr(StatChangeAttr, BattleStat.ACC, -1)
