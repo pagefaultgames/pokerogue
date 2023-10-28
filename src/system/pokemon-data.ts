@@ -1,3 +1,4 @@
+import { BattleType } from "../battle";
 import BattleScene from "../battle-scene";
 import { Gender } from "../data/gender";
 import { PokeballType } from "../data/pokeball";
@@ -69,10 +70,10 @@ export default class PokemonData {
     }
   }
 
-  toPokemon(scene: BattleScene): Pokemon {
+  toPokemon(scene: BattleScene, battleType?: BattleType): Pokemon {
     const species = getPokemonSpecies(this.species);
     if (this.player)
       return new PlayerPokemon(scene, species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this);
-    return new EnemyPokemon(scene, species, this.level, this);
+    return new EnemyPokemon(scene, species, this.level, battleType === BattleType.TRAINER, this);
   }
 }

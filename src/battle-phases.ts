@@ -246,7 +246,7 @@ export class EncounterPhase extends BattlePhase {
           battle.enemyParty[e] = battle.trainer.genPartyMember(e);
         else {
           const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, null, true);
-          battle.enemyParty[e] = new EnemyPokemon(this.scene, enemySpecies, level);
+          battle.enemyParty[e] = new EnemyPokemon(this.scene, enemySpecies, level, false);
         }
       }
       const enemyPokemon = this.scene.getEnemyParty()[e];

@@ -125,23 +125,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       }
 
-      const rand1 = Utils.binToDec(Utils.decToBin(this.id).substring(0, 16));
-      const rand2 = Utils.binToDec(Utils.decToBin(this.id).substring(16, 32));
-
-      const E = this.scene.gameData.trainerId ^ this.scene.gameData.secretId;
-      const F = rand1 ^ rand2;
-
-      if (this.shiny === undefined) {
-        let shinyThreshold = new Utils.IntegerHolder(32);
-        this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
-        console.log(shinyThreshold.value);
-
-        this.shiny = (E ^ F) < shinyThreshold.value;
-        if ((E ^ F) < 32)
-          console.log('REAL SHINY!!');
-        if (this.shiny)
-          console.log((E ^ F), shinyThreshold.value);
-      }
+      if (this.shiny === undefined)
+        this.trySetShiny();
 
       this.winCount = 0;
       this.pokerus = false;
@@ -206,6 +191,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   abstract isPlayer(): boolean;
+
+  abstract hasTrainer(): boolean;
 
   abstract getFieldIndex(): integer;
 
@@ -505,6 +492,26 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.moveset[moveIndex] = move;
     if (this.summonData?.moveset)
       this.summonData.moveset[moveIndex] = move;
+  }
+
+  trySetShiny(): boolean {
+    const rand1 = Utils.binToDec(Utils.decToBin(this.id).substring(0, 16));
+    const rand2 = Utils.binToDec(Utils.decToBin(this.id).substring(16, 32));
+
+    const E = this.scene.gameData.trainerId ^ this.scene.gameData.secretId;
+    const F = rand1 ^ rand2;
+
+    let shinyThreshold = new Utils.IntegerHolder(32);
+    if (!this.hasTrainer()) {
+      this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+      console.log(shinyThreshold.value);
+    }
+
+    this.shiny = (E ^ F) < shinyThreshold.value;
+    if ((E ^ F) < 32)
+      console.log('REAL SHINY!!');
+
+    return this.shiny;
   }
 
   generateAndPopulateMoveset(): void {
@@ -1097,6 +1104,10 @@ export class PlayerPokemon extends Pokemon {
     return true;
   }
 
+  hasTrainer(): boolean {
+    return true;
+  }
+
   getFieldIndex(): integer {
     return this.scene.getPlayerField().indexOf(this);
   }
@@ -1165,11 +1176,14 @@ export class PlayerPokemon extends Pokemon {
 }
 
 export class EnemyPokemon extends Pokemon {
+  public trainer: boolean;
   public aiType: AiType;
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, dataSource?: PokemonData) {
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainer: boolean, dataSource?: PokemonData) {
     super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource ? dataSource.formIndex : scene.arena.getFormIndex(species),
       dataSource?.gender, dataSource?.shiny, dataSource);
+
+    this.trainer = trainer;
 
     if (!dataSource) {
       let prevolution: Species;
@@ -1321,6 +1335,10 @@ export class EnemyPokemon extends Pokemon {
 
   isPlayer() {
     return false;
+  }
+
+  hasTrainer(): boolean {
+    return this.trainer;
   }
 
   getFieldIndex(): integer {

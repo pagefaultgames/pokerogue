@@ -131,7 +131,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
         ? getPokemonSpecies(battle.enemyParty[offset].species.getSpeciesForLevel(level))
         : this.genNewPartyMemberSpecies(level);
       
-      ret = new EnemyPokemon(this.scene, species, level);
+      ret = new EnemyPokemon(this.scene, species, level, true);
     }, this.config.hasStaticParty ? this.config.getDerivedType() + ((index + 1) << 8) : this.scene.currentBattle.waveIndex + (this.config.getDerivedType() << 10) + ((index + 1) << 8));
 
     return ret;

@@ -521,7 +521,7 @@ function getGymLeaderPartyTemplate(scene: BattleScene) {
 function getRandomPartyMemberFunc(speciesPool: Species[], postProcess?: (enemyPokemon: EnemyPokemon) => void): PartyMemberFunc {
   return (scene: BattleScene, level: integer) => {
     const species = getPokemonSpecies(Phaser.Math.RND.pick(speciesPool)).getSpeciesForLevel(level, true);
-    const ret = new EnemyPokemon(scene, getPokemonSpecies(species), level);
+    const ret = new EnemyPokemon(scene, getPokemonSpecies(species), level, true);
     if (postProcess)
       postProcess(ret);
     return ret;
@@ -532,7 +532,7 @@ function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilt
   const originalSpeciesFilter = speciesFilter;
   speciesFilter = (species: PokemonSpecies) => allowLegendaries || (!species.legendary && !species.pseudoLegendary && !species.mythical) && originalSpeciesFilter(species);
   return (scene: BattleScene, level: integer) => {
-    const ret = new EnemyPokemon(scene, scene.randomSpecies(scene.currentBattle.waveIndex, level, speciesFilter), level);
+    const ret = new EnemyPokemon(scene, scene.randomSpecies(scene.currentBattle.waveIndex, level, speciesFilter), level, true);
     if (postProcess)
       postProcess(ret);
     return ret;
