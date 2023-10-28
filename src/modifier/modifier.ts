@@ -1067,7 +1067,7 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
   }
 
   getMaxStackCount(): integer {
-    return 5;
+    return 4;
   }
 }
 

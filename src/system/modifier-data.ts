@@ -39,7 +39,10 @@ export default class ModifierData {
     if (type instanceof ModifierTypeGenerator)
       type = (type as ModifierTypeGenerator).generateType(this.player ? scene.getParty() : scene.getEnemyField(), this.typePregenArgs);
 
-    const ret = Reflect.construct(constructor, ([ type ] as any[]).concat(this.args).concat(this.stackCount)) as PersistentModifier
+    const ret = Reflect.construct(constructor, ([ type ] as any[]).concat(this.args).concat(this.stackCount)) as PersistentModifier;
+
+    if (ret.stackCount > ret.getMaxStackCount())
+      ret.stackCount = ret.getMaxStackCount();
 
     return ret;
   }
