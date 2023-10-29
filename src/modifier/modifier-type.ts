@@ -12,6 +12,7 @@ import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName
 import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
 import { Unlockables } from '../system/unlockables';
 import { GameMode } from '../game-mode';
+import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
 
 type Modifier = Modifiers.Modifier;
 
@@ -26,7 +27,8 @@ export enum ModifierTier {
 export enum ModifierPoolType {
   PLAYER,
   WILD,
-  TRAINER
+  TRAINER,
+  ENEMY_BUFF
 }
 
 type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier;
@@ -524,6 +526,18 @@ export class TurnHeldItemTransferModifierType extends PokemonHeldItemModifierTyp
   }
 }
 
+export class EnemyAttackStatusEffectChanceModifierType extends ModifierType {
+  constructor(name: string, chancePercent: integer, effect: StatusEffect, iconImage?: string) {
+    super(name, `Adds a ${chancePercent}% chance on hit to inflict ${getStatusEffectDescriptor(effect)}`, (type, args) => new Modifiers.EnemyAttackStatusEffectChanceModifier(type, effect, chancePercent), iconImage, 'enemy_status_chance')
+  }
+}
+
+export class EnemyInstantReviveChanceModifierType extends ModifierType {
+  constructor(name: string, chancePercent: integer, fullHeal: boolean, iconImage?: string) {
+    super(name, `Adds a ${chancePercent}% chance of reviving with ${fullHeal ? '100' : '50'}% HP`, (type, _args) => new Modifiers.EnemyInstantReviveChanceModifier(type, fullHeal, chancePercent), iconImage, 'enemy_revive');
+  }
+}
+
 export type ModifierTypeFunc = () => ModifierType;
 type WeightedModifierTypeWeightFunc = (party: Pokemon[]) => integer;
 
@@ -662,7 +676,14 @@ export const modifierTypes = {
     (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold', null, 'pb_bounce_1'),
 
   ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Booster', 'Increases damage by 20%', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type), 'wl_item_drop'),
-  ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Damage Reducer', 'Reduces incoming damage by 10%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type), 'wl_guard_spec')
+  ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Damage Reducer', 'Reduces incoming damage by 10%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type), 'wl_guard_spec'),
+  ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Poison Hit', 10, StatusEffect.POISON, 'wl_antidote'),
+  ENEMY_ATTACK_PARALYZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Paralyze Hit', 10, StatusEffect.PARALYSIS, 'wl_paralyze_heal'),
+  ENEMY_ATTACK_SLEEP_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Sleep Hit', 10, StatusEffect.SLEEP, 'wl_awakening'),
+  ENEMY_ATTACK_FREEZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Freeze Hit', 10, StatusEffect.FREEZE, 'wl_ice_heal'),
+  ENEMY_ATTACK_BURN_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Burn Hit', 10, StatusEffect.BURN, 'wl_burn_heal'),
+  ENEMY_INSTANT_REVIVE_CHANCE: () => new EnemyInstantReviveChanceModifierType('Reviver', 5, false, 'wl_revive'),
+  ENEMY_INSTANT_MAX_REVIVE_CHANCE: () => new EnemyInstantReviveChanceModifierType('Reviver', 2, true, 'wl_max_revive'),
 };
 
 const modifierPool = {
@@ -800,6 +821,23 @@ const trainerModifierPool = {
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
 };
 
+const enemyBuffModifierPool = {
+  [ModifierTier.COMMON]: [
+    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 8),
+    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 8),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_POISON_CHANCE, 3),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_PARALYZE_CHANCE, 3),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_SLEEP_CHANCE, 3),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_FREEZE_CHANCE, 3),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_BURN_CHANCE, 3),
+    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_REVIVE_CHANCE, 8),
+    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_MAX_REVIVE_CHANCE, 8)
+  ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
+  [ModifierTier.GREAT]: [ ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
+  [ModifierTier.ULTRA]: [ ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
+  [ModifierTier.MASTER]: [ ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
+};
+
 export function getModifierType(modifierTypeFunc: ModifierTypeFunc): ModifierType {
   const modifierType = modifierTypeFunc();
   if (!modifierType.id)
@@ -813,9 +851,12 @@ let ignoredPoolIndexes = {};
 let enemyModifierPoolThresholds = {};
 let enemyIgnoredPoolIndexes = {};
 
+let enemyBuffModifierPoolThresholds = {};
+let enemyBuffIgnoredPoolIndexes = {};
+
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType) {
   const player = !poolType;
-  const pool = player ? modifierPool : poolType === ModifierPoolType.WILD ? wildModifierPool : trainerModifierPool;
+  const pool = player ? modifierPool : poolType === ModifierPoolType.WILD ? wildModifierPool : poolType === ModifierPoolType.TRAINER ? trainerModifierPool : enemyBuffModifierPool;
   const ignoredIndexes = {};
   const thresholds = Object.fromEntries(new Map(Object.keys(pool).map(t => {
     ignoredIndexes[t] = [];
@@ -843,9 +884,12 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
   if (player) {
     modifierPoolThresholds = thresholds;
     ignoredPoolIndexes = ignoredIndexes;
-  } else {
+  } else if (poolType !== ModifierPoolType.ENEMY_BUFF) {
     enemyModifierPoolThresholds = thresholds;
     enemyIgnoredPoolIndexes = ignoredIndexes;
+  } else {
+    enemyBuffModifierPoolThresholds = thresholds;
+    enemyBuffIgnoredPoolIndexes = ignoredIndexes;
   }
 }
 
@@ -868,6 +912,19 @@ export function getPlayerModifierTypeOptionsForWave(waveIndex: integer, count: i
   return options;
 }
 
+export function getEnemyBuffModifierTypeOptionsForWave(count: integer): ModifierTypeOption[] {
+  const options: ModifierTypeOption[] = [];
+  const retryCount = Math.min(count * 5, 50);
+  new Array(count).fill(0).map(() => {
+    let candidate = getNewModifierTypeOption(null, ModifierPoolType.ENEMY_BUFF, ModifierTier.COMMON);
+    let r = 0;
+    while (options.length && ++r < retryCount && options.filter(o => o.type.name === candidate.type.name || o.type.group === candidate.type.group).length)
+      candidate = getNewModifierTypeOption(null, ModifierPoolType.ENEMY_BUFF, candidate.type.tier);
+    options.push(candidate);
+  });
+  return options;
+}
+
 export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: EnemyPokemon[], poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER, gameMode: GameMode): PokemonHeldItemModifierType[] {
   const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType).type as PokemonHeldItemModifierType);
   if ((gameMode === GameMode.CLASSIC && waveIndex === 200) || !(waveIndex % 1000))
@@ -877,6 +934,7 @@ export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer,
 
 function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgrade?: boolean): ModifierTypeOption {
   const player = !poolType;
+  const pool = player ? modifierPool : poolType === ModifierPoolType.WILD ? wildModifierPool : poolType === ModifierPoolType.TRAINER ? trainerModifierPool : enemyBuffModifierPool;
   if (tier === undefined) {
     const tierValue = Utils.randSeedInt(256);
     if (player && tierValue) {
@@ -886,23 +944,26 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     } else
       upgrade = false;
     tier = (tierValue >= 52 ? ModifierTier.COMMON : tierValue >= 8 ? ModifierTier.GREAT : tierValue >= 1 ? ModifierTier.ULTRA : ModifierTier.MASTER) + (upgrade ? 1 : 0);
+    while (tier && !modifierPool[tier].length)
+      tier--;
   }
   
-  const thresholds = Object.keys((player ? modifierPoolThresholds : enemyModifierPoolThresholds)[tier]);
-  const totalWeight = parseInt(thresholds[thresholds.length - 1]);
+  const thresholds = player ? modifierPoolThresholds : pool !== enemyBuffModifierPool ? enemyModifierPoolThresholds : enemyBuffModifierPoolThresholds;
+  const tierThresholds = Object.keys(thresholds[tier]);
+  const totalWeight = parseInt(tierThresholds[tierThresholds.length - 1]);
   const value = Utils.randSeedInt(totalWeight);
   let index: integer;
-  for (let t of thresholds) {
+  for (let t of tierThresholds) {
     let threshold = parseInt(t);
     if (value < threshold) {
-      index = (player ? modifierPoolThresholds : enemyModifierPoolThresholds)[tier][threshold];
+      index = thresholds[tier][threshold];
       break;
     }
   }
   
   if (player)
     console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier])
-  let modifierType: ModifierType = ((player ? modifierPool : poolType === ModifierPoolType.WILD ? wildModifierPool : trainerModifierPool)[tier][index]).modifierType;
+  let modifierType: ModifierType = (pool[tier][index]).modifierType;
   if (modifierType instanceof ModifierTypeGenerator) {
     modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
     if (modifierType === null) {

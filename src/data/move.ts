@@ -2635,7 +2635,8 @@ export function initMoves() {
       .ignoresVirtual()
       .target(MoveTarget.OTHER),
     new StatusMove(Moves.TRANSFORM, "Transform", Type.NORMAL, -1, 10, -1, "User takes on the form and attacks of the opponent.", -1, 0, 1)
-      .attr(TransformAttr),
+      .attr(TransformAttr)
+      .ignoresProtect(),
     new AttackMove(Moves.BUBBLE, "Bubble", Type.WATER, MoveCategory.SPECIAL, 40, 100, 30, -1, "May lower opponent's Speed.", 10, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),

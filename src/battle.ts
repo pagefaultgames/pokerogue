@@ -63,28 +63,18 @@ export default class Battle {
 
     private getLevelForWave(): integer {
         let baseLevel = 1 + this.waveIndex / 2 + Math.pow(this.waveIndex / 25, 2);
-        let bossMultiplier = this.waveIndex <= 250 ? 1.2 : Math.pow(1.2, this.waveIndex / 250);
+        const bossMultiplier = 1.2;
 
         if (!(this.waveIndex % 10)) {
             const ret = Math.floor(baseLevel * bossMultiplier);
             if (this.waveIndex === 200 || !(this.waveIndex % 250))
                 return Math.ceil(ret / 25) * 25;
-            return ret;
+            return ret + Math.round(Phaser.Math.RND.realInRange(-1, 1) * Math.floor(this.waveIndex / 10));
         }
 
         const deviation = 10 / this.waveIndex;
 
-        const randLevel = Math.max(Math.round(baseLevel + Math.abs(Utils.randSeedGauss(deviation))), 1);
-
-        if (this.waveIndex <= 250)
-            return randLevel;
-
-        const waveRatio = Math.min(this.waveIndex - 250 / 250, 1);
-
-        const easeInFunc = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeIn');
-        const easeOutFunc = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeOut');
-
-        return Math.ceil(easeInFunc(waveRatio) * Math.floor(baseLevel * bossMultiplier) + easeOutFunc(1 - waveRatio) * randLevel);
+        return Math.max(Math.round(baseLevel + Math.abs(Utils.randSeedGauss(deviation))), 1);
     }
 
     getBattlerCount(): integer {

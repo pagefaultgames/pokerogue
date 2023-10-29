@@ -116,7 +116,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     }
   }
 
-  clear(): void {
+  clear() {
     super.clear();
   }
 

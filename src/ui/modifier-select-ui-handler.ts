@@ -12,6 +12,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private transferButtonContainer: Phaser.GameObjects.Container;
 
   private lastCursor: integer = 0;
+  private player: boolean;
 
   public options: ModifierOption[];
 
@@ -47,26 +48,28 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   show(args: any[]) {
     if (this.active) {
-      if (args.length === 2) {
+      if (args.length === 3) {
         this.awaitingActionInput = true;
-        this.onActionInput = args[1];
+        this.onActionInput = args[2];
       }
       return;
     }
 
-    if (args.length !== 2 || !(args[0] instanceof Array) || !args[0].length || !(args[1] instanceof Function))
+    if (args.length !== 3 || !(args[1] instanceof Array) || !args[1].length || !(args[2] instanceof Function))
       return;
 
     super.show(args);
 
     this.getUi().clearText();
 
-    const partyHasHeldItem = !!this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true)).length;
+    this.player = args[0];
+
+    const partyHasHeldItem = this.player && !!this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true)).length;
 
     this.transferButtonContainer.setVisible(false);
     this.transferButtonContainer.setAlpha(0);
 
-    const typeOptions = args[0] as ModifierTypeOption[];
+    const typeOptions = args[1] as ModifierTypeOption[];
     for (let m = 0; m < typeOptions.length; m++) {
       const sliceWidth = (this.scene.game.canvas.width / 6) / (typeOptions.length + 2);
       const option = new ModifierOption(this.scene, sliceWidth * (m + 1) + (sliceWidth * 0.5), -this.scene.game.canvas.height / 12 - 24, typeOptions[m]);
@@ -113,7 +116,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
       this.setCursor(0);
       this.awaitingActionInput = true;
-      this.onActionInput = args[1];
+      this.onActionInput = args[2];
     });
   }
 
@@ -134,12 +137,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         originalOnActionInput(this.cursor);
       }
     } else if (button === Button.CANCEL) {
-      success = true;
-      if (this.onActionInput) {
-        const originalOnActionInput = this.onActionInput;
-        this.awaitingActionInput = false;
-        this.onActionInput = null;
-        originalOnActionInput(-1);
+      if (this.player) {
+        success = true;
+        if (this.onActionInput) {
+          const originalOnActionInput = this.onActionInput;
+          this.awaitingActionInput = false;
+          this.onActionInput = null;
+          originalOnActionInput(-1);
+        }
       }
     } else {
       switch (button) {

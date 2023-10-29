@@ -1231,6 +1231,10 @@ export abstract class EnemyPersistentModifer extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);
   }
+
+  getMaxStackCount(): number {
+    return 5;
+  }
 }
 
 export class EnemyDamageBoosterModifier extends EnemyPersistentModifer {
@@ -1250,10 +1254,6 @@ export class EnemyDamageBoosterModifier extends EnemyPersistentModifer {
     (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (1 + 0.2 * this.getStackCount()));
 
     return true;
-  }
-
-  getMaxStackCount(): number {
-    return 5;
   }
 }
 
@@ -1275,19 +1275,17 @@ export class EnemyDamageReducerModifier extends EnemyPersistentModifer {
 
     return true;
   }
-
-  getMaxStackCount(): number {
-    return 5;
-  }
 }
 
 export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifer {
   public effect: StatusEffect;
+  private chance: number;
 
-  constructor(type: ModifierType, effect: StatusEffect, stackCount?: integer) {
+  constructor(type: ModifierType, effect: StatusEffect, chancePercent: integer, stackCount?: integer) {
     super(type, stackCount);
 
     this.effect = effect;
+    this.chance = chancePercent / 100;
   }
 
   match(modifier: Modifier): boolean {
@@ -1300,13 +1298,45 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModife
 
   apply(args: any[]): boolean {
     const target = (args[0] as Pokemon);
-    if (Utils.randInt(10) < this.getStackCount())
+    if (Utils.randIntRange(0, 1) < this.chance * this.getStackCount()) {
       target.scene.unshiftPhase(new ObtainStatusEffectPhase(target.scene, target.getBattlerIndex(), this.effect));
+      return true;
+    }
 
-    return true;
+    return false;
+  }
+}
+
+export class EnemyInstantReviveChanceModifier extends EnemyPersistentModifer {
+  public fullHeal: boolean;
+  private chance: number;
+
+  constructor(type: ModifierType, healFull: boolean, chancePercent: integer, stackCount?: integer) {
+    super(type, stackCount);
+
+    this.fullHeal = healFull;
+    this.chance = chancePercent / 100;
   }
 
-  getMaxStackCount(): number {
-    return 5;
+  matchType(modifier: Modifier) {
+    return modifier instanceof EnemyInstantReviveChanceModifier && modifier.fullHeal === this.fullHeal;
+  }
+
+  clone() {
+    return new EnemyInstantReviveChanceModifier(this.type, this.fullHeal, this.chance, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    if (Utils.randIntRange(0, 1) >= this.chance * this.getStackCount())
+      return false;
+
+    const pokemon = args[0] as Pokemon;
+
+    pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
+      Math.max(Math.floor(pokemon.getMaxHp() / (this.fullHeal ? 1 : 2)), 1), getPokemonMessage(pokemon, ` was revived\nby its ${this.type.name}!`), false, false, true));
+
+    pokemon.resetStatus();
+
+    return true;
   }
 }

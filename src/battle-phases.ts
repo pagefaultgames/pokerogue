@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, MultipleParticipantExpBonusModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyInstantReviveChanceModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -16,7 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { Biome, biomeLinks } from "./data/biome";
-import { ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getEnemyBuffModifierTypeOptionsForWave, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
@@ -1561,8 +1561,11 @@ class MoveEffectPhase extends PokemonPhase {
               if (!isProtected && !chargeEffect) {
                 applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT,
                   user, target, this.move.getMove());
-                if (!target.isFainted())
+                if (!target.isFainted()) {
                   applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult);
+                  if (!user.isPlayer())
+                    user.scene.applyModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
+                }
                 if (this.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT))
                   this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target.getFieldIndex());
               }
@@ -1987,8 +1990,15 @@ export class FaintPhase extends PokemonPhase {
       if (!--instantReviveModifier.stackCount)
         this.scene.removeModifier(instantReviveModifier);
       this.scene.updateModifiers(this.player);
-      this.end();
-      return;
+      return this.end();
+    }
+
+    if (!pokemon.isPlayer()) {
+      const enemyInstantReviveModifiers = this.scene.findModifiers(m => m instanceof EnemyInstantReviveChanceModifier);
+      for (let modifier of enemyInstantReviveModifiers) {
+        if (modifier.shouldApply([ pokemon ]) && modifier.apply([ pokemon ]))
+          return this.end();
+      }
     }
 
     this.scene.queueMessage(getPokemonMessage(pokemon, ' fainted!'), null, true);
@@ -2113,9 +2123,11 @@ export class VictoryPhase extends PokemonPhase {
       if (this.scene.currentBattle.battleType === BattleType.TRAINER)
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));
       if (this.scene.gameMode === GameMode.ENDLESS || this.scene.currentBattle.waveIndex < this.scene.finalWave) {
-        if (this.scene.currentBattle.waveIndex > 30 || this.scene.currentBattle.waveIndex % 10)
+        if (this.scene.currentBattle.waveIndex > 30 || this.scene.currentBattle.waveIndex % 10) {
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
-        else
+          if (this.scene.gameMode === GameMode.ENDLESS && !(this.scene.currentBattle.waveIndex % 50))
+            this.scene.pushPhase(new SelectEnemyBuffModifierPhase(this.scene));
+        } else
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_EXP_CHARM))
         this.scene.pushPhase(new NewBattlePhase(this.scene));
       } else
@@ -2794,13 +2806,13 @@ export class SelectModifierPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.resetSeed();
+    this.updateSeed();
 
     const party = this.scene.getParty();
-    regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER);
+    regenerateModifierPoolThresholds(party, this.getPoolType());
     const modifierCount = new Utils.IntegerHolder(3);
     this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
-    const typeOptions: Array<ModifierTypeOption> = getPlayerModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, modifierCount.value, party);
+    const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value);
 
     const modifierSelectCallback = (cursor: integer) => {
       if (cursor < 0) {
@@ -2810,7 +2822,7 @@ export class SelectModifierPhase extends BattlePhase {
       } else if (cursor >= typeOptions.length) {
         this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, toSlotIndex: integer) => {
           if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT).then(() => {
+            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
               const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
                 && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
               const itemModifier = itemModifiers[itemIndex];
@@ -2820,11 +2832,11 @@ export class SelectModifierPhase extends BattlePhase {
                   this.scene.ui.setMode(Mode.MESSAGE);
                   super.end();
                 } else
-                  this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
+                  this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback);
               });
             });
           } else
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
+            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback);
         }, PartyUiHandler.FilterItemMaxStacks);
         return;
       }
@@ -2841,7 +2853,7 @@ export class SelectModifierPhase extends BattlePhase {
           : undefined;
         this.scene.ui.setModeWithoutClear(Mode.PARTY, partyUiMode, -1, (slotIndex: integer, option: PartyOption) => {
           if (slotIndex < 6) {
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT).then(() => {
+            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
               const modifierType = typeOptions[cursor].type;
               const modifier = !isMoveModifier
                 ? modifierType.newModifier(party[slotIndex])
@@ -2851,15 +2863,63 @@ export class SelectModifierPhase extends BattlePhase {
               this.scene.addModifier(modifier, true).then(() => super.end());
             });
           } else
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
+            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, );
         }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId);
       } else {
-        this.scene.addModifier(typeOptions[cursor].type.newModifier(), true).then(() => super.end());
+        this.addModifier(typeOptions[cursor].type.newModifier()).then(() => super.end());
         this.scene.ui.clearText();
         this.scene.ui.setMode(Mode.MESSAGE);
       }
     };
-    this.scene.ui.setMode(Mode.MODIFIER_SELECT, typeOptions, modifierSelectCallback);
+    this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback);
+  }
+
+  updateSeed(): void {
+    this.scene.resetSeed();
+  }
+
+  isPlayer(): boolean {
+    return true;
+  }
+  
+  getPoolType(): ModifierPoolType {
+    return ModifierPoolType.PLAYER;
+  }
+
+  getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
+    return getPlayerModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, modifierCount, this.scene.getParty());
+  }
+
+  addModifier(modifier: Modifier): Promise<void> {
+    return this.scene.addModifier(modifier, true);
+  }
+}
+
+export class SelectEnemyBuffModifierPhase extends SelectModifierPhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    this.scene.time.delayedCall(500, () => super.start());
+  }
+
+  updateSeed(): void { }
+
+  isPlayer(): boolean {
+    return false;
+  }
+
+  getPoolType(): ModifierPoolType {
+    return ModifierPoolType.ENEMY_BUFF;
+  }
+
+  getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
+    return getEnemyBuffModifierTypeOptionsForWave(modifierCount);
+  }
+
+  addModifier(modifier: Modifier): Promise<void> {
+    return this.scene.addEnemyModifier(modifier as PersistentModifier);
   }
 }
 
