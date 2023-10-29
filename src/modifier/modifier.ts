@@ -15,7 +15,7 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
 import { Species } from '../data/species';
 import { BattleType } from '../battle';
-import { StatusEffect } from '../data/status-effect';
+import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -487,9 +487,10 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
       surviveDamage.value = true;
 
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` hung on\nusing its ${this.type.name}!`));
+      return true;
     }
 
-    return true;
+    return false;
   }
 
   getMaxStackCount(): integer {
@@ -517,10 +518,12 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const flinched = args[1] as Utils.BooleanHolder;
 
-    if (!flinched.value && Utils.randInt(10) < this.getStackCount())
+    if (!flinched.value && Utils.randInt(10) < this.getStackCount()) {
       flinched.value = true;
+      return true;
+    }
 
-    return true;
+    return false;
   }
 
   getMaxStackCount(): integer {
@@ -548,9 +551,10 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
         Math.max(Math.floor(pokemon.getMaxHp() / 16) * this.stackCount, 1), getPokemonMessage(pokemon, `'s ${this.type.name}\nrestored its HP a little!`), true));
+      return true;
     }
 
-    return true;
+    return false;
   }
 
   getMaxStackCount(): integer {
@@ -762,7 +766,6 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
 }
 
 export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
-
   constructor(type: ModifierType, pokemonId: integer) {
     super(type, pokemonId);
   }
@@ -1233,47 +1236,86 @@ export abstract class EnemyPersistentModifer extends PersistentModifier {
   }
 
   getMaxStackCount(): number {
-    return 5;
+    return 1;
   }
 }
 
 export class EnemyDamageBoosterModifier extends EnemyPersistentModifer {
-  constructor(type: ModifierType, stackCount?: integer) {
+  private damageMultiplier: number;
+
+  constructor(type: ModifierType, boostPercent: integer, stackCount?: integer) {
     super(type, stackCount);
+
+    this.damageMultiplier = 1 + (boostPercent * 0.01);
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyDamageBoosterModifier;
+    return modifier instanceof EnemyDamageBoosterModifier && modifier.damageMultiplier === this.damageMultiplier;
   }
 
   clone(): EnemyDamageBoosterModifier {
-    return new EnemyDamageBoosterModifier(this.type, this.stackCount);
+    return new EnemyDamageBoosterModifier(this.type, (this.damageMultiplier - 1) * 100, this.stackCount);
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (1 + 0.2 * this.getStackCount()));
+    (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (this.damageMultiplier * this.getStackCount()));
 
     return true;
   }
 }
 
 export class EnemyDamageReducerModifier extends EnemyPersistentModifer {
-  constructor(type: ModifierType, stackCount?: integer) {
+  private damageMultiplier: number;
+
+  constructor(type: ModifierType, reductionPercent: integer, stackCount?: integer) {
     super(type, stackCount);
+
+    this.damageMultiplier = 1 - (reductionPercent * 0.01);
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyDamageReducerModifier;
+    return modifier instanceof EnemyDamageReducerModifier && modifier.damageMultiplier === this.damageMultiplier;
   }
 
   clone(): EnemyDamageReducerModifier {
-    return new EnemyDamageReducerModifier(this.type, this.stackCount);
+    return new EnemyDamageReducerModifier(this.type, (1 - this.damageMultiplier) * 100, this.stackCount);
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (1 - 0.2 * this.getStackCount()));
+    (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (this.damageMultiplier * this.getStackCount()));
 
     return true;
+  }
+}
+
+export class EnemyTurnHealModifier extends EnemyPersistentModifer {
+  private healPercent: integer;
+
+  constructor(type: ModifierType, healPercent: integer, stackCount?: integer) {
+    super(type, stackCount);
+
+    this.healPercent = healPercent;
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof EnemyTurnHealModifier && modifier.healPercent === this.healPercent;
+  }
+
+  clone(): EnemyTurnHealModifier {
+    return new EnemyTurnHealModifier(this.type, this.healPercent, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+
+    if (pokemon.getHpRatio() < 1) {
+      const scene = pokemon.scene;
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
+        Math.max(Math.floor(pokemon.getMaxHp() / (100 / this.healPercent)) * this.stackCount, 1), getPokemonMessage(pokemon, `\nrestored some HP!`), true));
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -1289,17 +1331,47 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModife
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyAttackStatusEffectChanceModifier && modifier.effect === this.effect;
+    return modifier instanceof EnemyAttackStatusEffectChanceModifier && modifier.effect === this.effect && modifier.chance === this.chance;
   }
 
-  clone(): EnemyDamageReducerModifier {
-    return new EnemyAttackStatusEffectChanceModifier(this.type, this.effect, this.stackCount);
+  clone(): EnemyAttackStatusEffectChanceModifier {
+    return new EnemyAttackStatusEffectChanceModifier(this.type, this.effect, this.chance * 100, this.stackCount);
   }
 
   apply(args: any[]): boolean {
     const target = (args[0] as Pokemon);
     if (Utils.randIntRange(0, 1) < this.chance * this.getStackCount()) {
       target.scene.unshiftPhase(new ObtainStatusEffectPhase(target.scene, target.getBattlerIndex(), this.effect));
+      return true;
+    }
+
+    return false;
+  }
+}
+
+export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifer {
+  private chance: number;
+
+  constructor(type: ModifierType, chancePercent: integer, stackCount?: integer) {
+    super(type, stackCount);
+
+    this.chance = chancePercent / 100;
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof EnemyStatusEffectHealChanceModifier && modifier.chance === this.chance;
+  }
+
+  clone(): EnemyStatusEffectHealChanceModifier {
+    return new EnemyStatusEffectHealChanceModifier(this.type, this.chance * 100, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    const target = (args[0] as Pokemon);
+    if (target.status && Utils.randIntRange(0, 1) < this.chance * this.getStackCount()) {
+      target.scene.queueMessage(getPokemonMessage(target, ` was cured of its\n${getStatusEffectDescriptor(target.status.effect)}!`));
+      target.resetStatus();
+      target.updateInfo();
       return true;
     }
 
@@ -1319,11 +1391,11 @@ export class EnemyInstantReviveChanceModifier extends EnemyPersistentModifer {
   }
 
   matchType(modifier: Modifier) {
-    return modifier instanceof EnemyInstantReviveChanceModifier && modifier.fullHeal === this.fullHeal;
+    return modifier instanceof EnemyInstantReviveChanceModifier && modifier.fullHeal === this.fullHeal && modifier.chance === this.chance;
   }
 
   clone() {
-    return new EnemyInstantReviveChanceModifier(this.type, this.fullHeal, this.chance, this.stackCount);
+    return new EnemyInstantReviveChanceModifier(this.type, this.fullHeal, this.chance * 100, this.stackCount);
   }
 
   apply(args: any[]): boolean {

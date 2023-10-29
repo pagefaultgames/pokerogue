@@ -528,7 +528,7 @@ export class TurnHeldItemTransferModifierType extends PokemonHeldItemModifierTyp
 
 export class EnemyAttackStatusEffectChanceModifierType extends ModifierType {
   constructor(name: string, chancePercent: integer, effect: StatusEffect, iconImage?: string) {
-    super(name, `Adds a ${chancePercent}% chance on hit to inflict ${getStatusEffectDescriptor(effect)}`, (type, args) => new Modifiers.EnemyAttackStatusEffectChanceModifier(type, effect, chancePercent), iconImage, 'enemy_status_chance')
+    super(name, `Adds a ${chancePercent}% chance to inflict ${getStatusEffectDescriptor(effect)} with attack moves`, (type, args) => new Modifiers.EnemyAttackStatusEffectChanceModifier(type, effect, chancePercent), iconImage, 'enemy_status_chance')
   }
 }
 
@@ -675,15 +675,17 @@ export const modifierTypes = {
   GOLDEN_POKEBALL: () => new ModifierType(`Golden ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle',
     (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold', null, 'pb_bounce_1'),
 
-  ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Booster', 'Increases damage by 20%', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type), 'wl_item_drop'),
-  ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Damage Reducer', 'Reduces incoming damage by 10%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type), 'wl_guard_spec'),
-  ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Poison Hit', 10, StatusEffect.POISON, 'wl_antidote'),
-  ENEMY_ATTACK_PARALYZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Paralyze Hit', 10, StatusEffect.PARALYSIS, 'wl_paralyze_heal'),
-  ENEMY_ATTACK_SLEEP_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Sleep Hit', 10, StatusEffect.SLEEP, 'wl_awakening'),
-  ENEMY_ATTACK_FREEZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Freeze Hit', 10, StatusEffect.FREEZE, 'wl_ice_heal'),
-  ENEMY_ATTACK_BURN_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Burn Hit', 10, StatusEffect.BURN, 'wl_burn_heal'),
-  ENEMY_INSTANT_REVIVE_CHANCE: () => new EnemyInstantReviveChanceModifierType('Reviver', 5, false, 'wl_revive'),
-  ENEMY_INSTANT_MAX_REVIVE_CHANCE: () => new EnemyInstantReviveChanceModifierType('Reviver', 2, true, 'wl_max_revive'),
+  ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Token', 'Increases damage by 20%', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 20), 'wl_item_drop'),
+  ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Protection Token', 'Reduces incoming damage by 10%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 10), 'wl_guard_spec'),
+  ENEMY_HEAL: () => new ModifierType('Recovery Token', 'Heals 10% of max HP every turn', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 10), 'wl_potion'),
+  ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Poison Token', 10, StatusEffect.POISON, 'wl_antidote'),
+  ENEMY_ATTACK_PARALYZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Paralyze Token', 10, StatusEffect.PARALYSIS, 'wl_paralyze_heal'),
+  ENEMY_ATTACK_SLEEP_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Sleep Token', 10, StatusEffect.SLEEP, 'wl_awakening'),
+  ENEMY_ATTACK_FREEZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Freeze Token', 10, StatusEffect.FREEZE, 'wl_ice_heal'),
+  ENEMY_ATTACK_BURN_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Burn Token', 10, StatusEffect.BURN, 'wl_burn_heal'),
+  ENEMY_STATUS_EFFECT_HEAL_CHANCE: () => new ModifierType('Full Heal Token', 'Adds a 10% chance every turn to heal a status condition', (type, _args) => new Modifiers.EnemyStatusEffectHealChanceModifier(type, 10), 'wl_full_heal'),
+  ENEMY_INSTANT_REVIVE_CHANCE: () => new EnemyInstantReviveChanceModifierType('Revive Token', 5, false, 'wl_revive'),
+  ENEMY_INSTANT_MAX_REVIVE_CHANCE: () => new EnemyInstantReviveChanceModifierType('Max Revive Token', 2, true, 'wl_max_revive'),
 };
 
 const modifierPool = {
@@ -823,15 +825,17 @@ const trainerModifierPool = {
 
 const enemyBuffModifierPool = {
   [ModifierTier.COMMON]: [
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 8),
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 8),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_POISON_CHANCE, 3),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_PARALYZE_CHANCE, 3),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_SLEEP_CHANCE, 3),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_FREEZE_CHANCE, 3),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_BURN_CHANCE, 3),
-    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_REVIVE_CHANCE, 8),
-    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_MAX_REVIVE_CHANCE, 8)
+    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 5),
+    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 5),
+    new WeightedModifierType(modifierTypes.ENEMY_HEAL, 5),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_POISON_CHANCE, 1),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_PARALYZE_CHANCE, 1),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_SLEEP_CHANCE, 1),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_FREEZE_CHANCE, 1),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_BURN_CHANCE, 1),
+    new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 5),
+    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_REVIVE_CHANCE, 5),
+    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_MAX_REVIVE_CHANCE, 3)
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [ ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [ ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),

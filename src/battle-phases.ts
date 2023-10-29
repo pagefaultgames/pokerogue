@@ -1,11 +1,11 @@
 import BattleScene, { startingLevel, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyInstantReviveChanceModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyInstantReviveChanceModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -1266,6 +1266,11 @@ export class TurnEndPhase extends FieldPhase {
 
       this.scene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
+      if (!pokemon.isPlayer()) {
+        this.scene.applyModifiers(EnemyTurnHealModifier, false, pokemon);
+        this.scene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
+      }
+
       applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
 
       this.scene.applyModifiers(TurnHeldItemTransferModifier, pokemon.isPlayer(), pokemon);
@@ -1563,7 +1568,7 @@ class MoveEffectPhase extends PokemonPhase {
                   user, target, this.move.getMove());
                 if (!target.isFainted()) {
                   applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult);
-                  if (!user.isPlayer())
+                  if (!user.isPlayer() && this.move instanceof AttackMove)
                     user.scene.applyModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
                 }
                 if (this.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT))
