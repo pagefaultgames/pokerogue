@@ -1248,13 +1248,6 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	generateEnemyBuffModifier(): void{
-		const enemyBuffModifierTypes = [ modifierTypes.ENEMY_DAMAGE_BOOSTER, modifierTypes.ENEMY_DAMAGE_REDUCTION ];
-		this.executeWithSeedOffset(() => {
-			(getModifierType(Phaser.Math.RND.pick(enemyBuffModifierTypes)).newModifier() as PersistentModifier).add(this.enemyModifiers, false);
-		}, Math.floor(this.currentBattle.waveIndex / 50));
-	}
-
 	clearEnemyHeldItemModifiers(): void {
 		const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PokemonHeldItemModifier);
 		for (let m of modifiersToRemove)

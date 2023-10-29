@@ -2811,7 +2811,8 @@ export class SelectModifierPhase extends BattlePhase {
     const party = this.scene.getParty();
     regenerateModifierPoolThresholds(party, this.getPoolType());
     const modifierCount = new Utils.IntegerHolder(3);
-    this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
+    if (this.isPlayer())
+      this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
     const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value);
 
     const modifierSelectCallback = (cursor: integer) => {
