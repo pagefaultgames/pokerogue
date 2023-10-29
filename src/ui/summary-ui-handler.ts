@@ -196,15 +196,15 @@ export default class SummaryUiHandler extends UiHandler {
     this.numberText.setColor(getTextColor(!this.pokemon.shiny ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
     this.numberText.setShadowColor(getTextColor(!this.pokemon.shiny ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
 
-    this.pokemonSprite.play(this.pokemon.getSpriteKey());
+    this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
     this.pokemon.cry();
 
     this.nameText.setText(this.pokemon.name);
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
     this.levelText.setText(this.pokemon.level.toString());
-    this.genderText.setText(getGenderSymbol(this.pokemon.gender));
-    this.genderText.setColor(getGenderColor(this.pokemon.gender));
-    this.genderText.setShadowColor(getGenderColor(this.pokemon.gender, true));
+    this.genderText.setText(getGenderSymbol(this.pokemon.getGender(true)));
+    this.genderText.setColor(getGenderColor(this.pokemon.getGender(true)));
+    this.genderText.setShadowColor(getGenderColor(this.pokemon.getGender(true), true));
 
     switch (this.summaryUiMode) {
       case SummaryUiMode.DEFAULT:

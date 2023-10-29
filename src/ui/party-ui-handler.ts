@@ -618,8 +618,8 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     this.add(slotPb);
 
-    const pokemonIcon = this.scene.add.sprite(slotPb.x, slotPb.y, this.pokemon.getIconAtlasKey());
-    pokemonIcon.play(this.pokemon.getIconKey());
+    const pokemonIcon = this.scene.add.sprite(slotPb.x, slotPb.y, this.pokemon.getIconAtlasKey(true));
+    pokemonIcon.play(this.pokemon.getIconKey(true));
 
     this.add(pokemonIcon);
 
@@ -640,12 +640,12 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     slotInfoContainer.add([ slotName, slotLevelLabel, slotLevelText ]);
 
-    const genderSymbol = getGenderSymbol(this.pokemon.gender);
+    const genderSymbol = getGenderSymbol(this.pokemon.getGender(true));
 
     if (genderSymbol) {
       const slotGenderText = addTextObject(this.scene, 0, 0, genderSymbol, TextStyle.PARTY);
-      slotGenderText.setColor(getGenderColor(this.pokemon.gender));
-      slotGenderText.setShadowColor(getGenderColor(this.pokemon.gender, true));
+      slotGenderText.setColor(getGenderColor(this.pokemon.getGender(true)));
+      slotGenderText.setShadowColor(getGenderColor(this.pokemon.getGender(true), true));
       if (this.slotIndex >= battlerCount)
         slotGenderText.setPositionRelative(slotLevelLabel, 36, 0);
       else

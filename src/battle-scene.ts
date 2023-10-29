@@ -320,6 +320,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('pb_tray_ball');
 		this.loadSe('pb_tray_empty');
 
+		this.loadSe('PRSFX- Transform', 'battle_anims');
+
 		this.loadBgm('menu');
 
 		this.loadBgm('level_up_fanfare', 'bw/level_up_fanfare.mp3');

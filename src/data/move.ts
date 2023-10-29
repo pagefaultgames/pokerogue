@@ -2199,6 +2199,29 @@ export class SketchAttr extends MoveEffectAttr {
   }
 }
 
+export class TransformAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise(resolve => {
+      if (!super.apply(user, target, move, args))
+        return resolve(false);
+
+      user.summonData.speciesForm = target.getSpeciesForm();
+      user.summonData.gender = target.getGender();
+      user.summonData.stats = [ user.stats[Stat.HP] ].concat(target.stats.slice(1));
+      user.summonData.battleStats = target.summonData.battleStats.slice(0);
+      user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
+      user.summonData.types = target.getTypes();
+
+      user.scene.queueMessage(getPokemonMessage(user, ` transformed\ninto ${target.name}!`));
+      
+      user.loadAssets().then(() => {
+        user.playAnim();
+        resolve(true);
+      });
+    });
+  }
+}
+
 const failOnGravityCondition = (user: Pokemon, target: Pokemon, move: Move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
 
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
@@ -2611,7 +2634,8 @@ export function initMoves() {
       .makesContact(false)
       .ignoresVirtual()
       .target(MoveTarget.OTHER),
-    new SelfStatusMove(Moves.TRANSFORM, "Transform (N)", Type.NORMAL, -1, 10, -1, "User takes on the form and attacks of the opponent.", -1, 0, 1),
+    new StatusMove(Moves.TRANSFORM, "Transform", Type.NORMAL, -1, 10, -1, "User takes on the form and attacks of the opponent.", -1, 0, 1)
+      .attr(TransformAttr),
     new AttackMove(Moves.BUBBLE, "Bubble", Type.WATER, MoveCategory.SPECIAL, 40, 100, 30, -1, "May lower opponent's Speed.", 10, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),

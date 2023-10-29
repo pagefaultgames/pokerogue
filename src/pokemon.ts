@@ -158,7 +158,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.add(sprite);
     this.add(tintSprite);
 
-    this.getSpeciesForm().generateIconAnim(scene, this.gender === Gender.FEMALE, formIndex);
+    this.getSpeciesForm().generateIconAnim(scene, this.getGender() === Gender.FEMALE, formIndex);
 
     if (this.shiny) {
       const shinySparkle = this.scene.add.sprite(0, 0, 'shiny');
@@ -204,7 +204,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       Promise.allSettled(moveIds.map(m => initMoveAnim(m)))
         .then(() => {
           loadMoveAnimAssets(this.scene, moveIds);
-          this.getSpeciesForm().loadAssets(this.scene, this.gender === Gender.FEMALE, this.formIndex, this.shiny);
+          this.getSpeciesForm().loadAssets(this.scene, this.getGender() === Gender.FEMALE, this.formIndex, this.shiny);
           if (this.isPlayer())
             this.scene.loadAtlas(this.getBattleSpriteKey(), 'pokemon', this.getBattleSpriteAtlasPath());
           this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
@@ -232,43 +232,45 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
-  getSpriteAtlasPath(): string {
-    return this.getSpriteId().replace(/\_{2}/g, '/');
+  getSpriteAtlasPath(ignoreOverride?: boolean): string {
+    return this.getSpriteId(ignoreOverride).replace(/\_{2}/g, '/');
   }
 
-  getBattleSpriteAtlasPath(): string {
-    return this.getBattleSpriteId().replace(/\_{2}/g, '/');
+  getBattleSpriteAtlasPath(ignoreOverride?: boolean): string {
+    return this.getBattleSpriteId(ignoreOverride).replace(/\_{2}/g, '/');
   }
 
-  getSpriteId(): string {
-    return this.getSpeciesForm().getSpriteId(this.gender === Gender.FEMALE, this.formIndex, this.shiny);
+  getSpriteId(ignoreOverride?: boolean): string {
+    return this.getSpeciesForm(ignoreOverride).getSpriteId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.shiny);
   }
 
-  getBattleSpriteId(): string {
-    return `${this.isPlayer() ? 'back__' : ''}${this.getSpriteId()}`;
+  getBattleSpriteId(ignoreOverride?: boolean): string {
+    return `${this.isPlayer() ? 'back__' : ''}${this.getSpriteId(ignoreOverride)}`;
   }
 
-  getSpriteKey(): string {
-    return this.getSpeciesForm().getSpriteKey(this.gender === Gender.FEMALE, this.formIndex, this.shiny);
+  getSpriteKey(ignoreOverride?: boolean): string {
+    return this.getSpeciesForm(ignoreOverride).getSpriteKey(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.shiny);
   }
 
-  getBattleSpriteKey(): string {
-    return `pkmn__${this.getBattleSpriteId()}`;
+  getBattleSpriteKey(ignoreOverride?: boolean): string {
+    return `pkmn__${this.getBattleSpriteId(ignoreOverride)}`;
   }
 
-  getIconAtlasKey(): string {
-    return this.getSpeciesForm().getIconAtlasKey(this.formIndex);
+  getIconAtlasKey(ignoreOverride?: boolean): string {
+    return this.getSpeciesForm(ignoreOverride).getIconAtlasKey(this.formIndex);
   }
 
-  getIconId(): string {
-    return this.getSpeciesForm().getIconId(this.gender === Gender.FEMALE, this.formIndex);
+  getIconId(ignoreOverride?: boolean): string {
+    return this.getSpeciesForm(ignoreOverride).getIconId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex);
   }
 
-  getIconKey(): string {
-    return `pkmn_icon__${this.getIconId()}`;
+  getIconKey(ignoreOverride?: boolean): string {
+    return `pkmn_icon__${this.getIconId(ignoreOverride)}`;
   }
 
-  getSpeciesForm(): PokemonSpeciesForm {
+  getSpeciesForm(ignoreOverride?: boolean): PokemonSpeciesForm {
+    if (!ignoreOverride && this.summonData?.speciesForm)
+      return this.summonData.speciesForm;
     if (!this.species.forms?.length)
       return this.species;
     return this.species.forms[this.formIndex];
@@ -335,14 +337,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
+  getStat(stat: Stat): integer {
+    return this.stats[stat];
+  }
+
   getBattleStat(stat: Stat): integer {
     if (stat === Stat.HP)
-      return this.stats[Stat.HP];
+      return this.getStat(Stat.HP);
     const battleStat = (stat - 1) as BattleStat;
     const statLevel = new Utils.IntegerHolder(this.summonData.battleStats[battleStat]);
     if (this.isPlayer())
       this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
-    const statValue = new Utils.NumberHolder(this.stats[stat]);
+    const statValue = new Utils.NumberHolder(this.getStat(stat));
     applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue);
     let ret = statValue.value * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
     if (stat === Stat.SPDEF && this.scene.arena.weather?.weatherType === WeatherType.SANDSTORM)
@@ -380,7 +386,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getMaxHp(): integer {
-    return this.stats[Stat.HP];
+    return this.getStat(Stat.HP);
   }
 
   getInverseHp(): integer {
@@ -391,16 +397,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return Math.floor((this.hp / this.getMaxHp()) * 100) / 100;
   }
 
-  getMoveset(): PokemonMove[] {
-    if (this.summonData?.moveset)
+  getGender(ignoreOverride?: boolean): Gender {
+    if (!ignoreOverride && this.summonData?.gender !== undefined)
+      return this.summonData.gender;
+    return this.gender;
+  }
+
+  getMoveset(ignoreOverride?: boolean): PokemonMove[] {
+    if (!ignoreOverride && this.summonData?.moveset)
       return this.summonData.moveset;
     return this.moveset;
   }
 
-  getTypes(): Type[] {
+  getTypes(ignoreOverride?: boolean): Type[] {
     const types = [];
 
-    if (this.summonData?.types)
+    if (!ignoreOverride && this.summonData?.types)
       this.summonData.types.forEach(t => types.push(t));
     else {
       const speciesForm = this.getSpeciesForm();
@@ -1397,6 +1409,10 @@ export class PokemonSummonData {
   public disabledMove: Moves = Moves.NONE;
   public disabledTurns: integer = 0;
   public tags: BattlerTag[] = [];
+
+  public speciesForm: PokemonSpeciesForm;
+  public gender: Gender;
+  public stats: integer[];
   public moveset: PokemonMove[];
   public types: Type[];
 }

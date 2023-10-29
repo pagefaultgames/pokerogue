@@ -979,7 +979,7 @@ export class CommandPhase extends FieldPhase {
       case Command.FIGHT:
         let useStruggle = false;
         if (cursor === -1 || playerPokemon.trySelectMove(cursor, args[0] as boolean) || (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)) {
-          const moveId = !useStruggle ? playerPokemon.moveset[cursor].moveId : Moves.STRUGGLE;
+          const moveId = !useStruggle ? playerPokemon.getMoveset()[cursor].moveId : Moves.STRUGGLE;
           const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor,
             move: cursor > -1 ? { move: moveId, targets: [] } : null, args: args };
           const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, cursor > -1 ? moveId : Moves.NONE) : args[2];
@@ -2757,9 +2757,9 @@ export class AttemptRunPhase extends PokemonPhase {
     const playerPokemon = this.getPokemon();
     const enemyField = this.scene.getEnemyField();
 
-    const enemySpeed = enemyField.reduce((total: integer, enemyPokemon: Pokemon) => total + enemyPokemon.stats[Stat.SPD], 0) / enemyField.length;
+    const enemySpeed = enemyField.reduce((total: integer, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD), 0) / enemyField.length;
 
-    const escapeChance = (((playerPokemon.stats[Stat.SPD] * 128) / enemySpeed) + (30 * this.scene.currentBattle.escapeAttempts++)) % 256;
+    const escapeChance = (((playerPokemon.getStat(Stat.SPD) * 128) / enemySpeed) + (30 * this.scene.currentBattle.escapeAttempts++)) % 256;
 
     if (Utils.randInt(256) < escapeChance) {
       this.scene.playSound('flee');

@@ -9,6 +9,7 @@ import { BattlerTag, BattlerTagType } from "./battler-tag";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
 import { MoveFlags, Moves, RecoilAttr } from "./move";
 import { ArenaTagType } from "./arena-tag";
+import { Stat } from "./pokemon-stat";
 
 export class Ability {
   public id: Abilities;
@@ -484,6 +485,35 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
       return pokemon.scene.arena.trySetWeather(this.weatherType, false);
 
     return false;
+  }
+}
+
+export class PostSummonTransformAbAttr extends PostSummonAbAttr {
+  constructor() {
+    super(true);
+  }
+
+  applyPostSummon(pokemon: Pokemon, args: any[]): boolean {
+    const targets = pokemon.getOpponents();
+    let target: Pokemon;
+    if (targets.length > 1)
+      pokemon.scene.executeWithSeedOffset(() => target = Phaser.Math.RND.pick(targets), pokemon.scene.currentBattle.waveIndex);
+    else
+      target = targets[0];
+
+    pokemon.summonData.speciesForm = target.getSpeciesForm();
+    pokemon.summonData.gender = target.getGender();
+    pokemon.summonData.stats = [ pokemon.stats[Stat.HP] ].concat(target.stats.slice(1));
+    pokemon.summonData.battleStats = target.summonData.battleStats.slice(0);
+    pokemon.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
+    pokemon.summonData.types = target.getTypes();
+    
+    pokemon.scene.playSound('PRSFX- Transform');
+    pokemon.loadAssets().then(() => pokemon.playAnim());
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` transformed\ninto ${target.name}!`));
+
+    return true;
   }
 }
 
@@ -1437,7 +1467,8 @@ export function initAbilities() {
     new Ability(Abilities.HEALER, "Healer (N)", "May heal an ally's status conditions.", 5),
     new Ability(Abilities.HEAVY_METAL, "Heavy Metal (N)", "Doubles the Pokémon's weight.", 5),
     new Ability(Abilities.ILLUSION, "Illusion (N)", "Enters battle disguised as the last Pokémon in the party.", 5),
-    new Ability(Abilities.IMPOSTER, "Imposter (N)", "It transforms itself into the Pokémon it is facing.", 5),
+    new Ability(Abilities.IMPOSTER, "Imposter", "It transforms itself into the Pokémon it is facing.", 5)
+      .attr(PostSummonTransformAbAttr),
     new Ability(Abilities.INFILTRATOR, "Infiltrator (N)", "Passes through the foe's barrier and strikes.", 5),
     new Ability(Abilities.IRON_BARBS, "Iron Barbs (N)", "Inflicts damage to the Pokémon on contact.", 5),
     new Ability(Abilities.JUSTIFIED, "Justified (N)", "Raises Attack when hit by a Dark-type move.", 5),
