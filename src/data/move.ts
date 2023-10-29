@@ -1880,7 +1880,7 @@ export class FlinchAttr extends AddBattlerTagAttr {
 
 export class ConfuseAttr extends AddBattlerTagAttr {
   constructor(selfTarget?: boolean) {
-    super(BattlerTagType.CONFUSED, selfTarget, Utils.randIntRange(1, 4));
+    super(BattlerTagType.CONFUSED, selfTarget, Utils.randIntRange(1, 4) + 1);
   }
 }
 
