@@ -1236,7 +1236,7 @@ export abstract class EnemyPersistentModifer extends PersistentModifier {
   }
 
   getMaxStackCount(): number {
-    return 1;
+    return 5;
   }
 }
 
