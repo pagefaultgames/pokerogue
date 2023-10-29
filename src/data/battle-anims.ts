@@ -618,6 +618,12 @@ export abstract class BattleAnim {
         const user = !isOppAnim ? this.user : this.target;
         const target = !isOppAnim ? this.target : this.user;
 
+        if (!target.isOnField()) {
+            if (callback)
+                callback();
+            return;
+        }
+
         const userSprite = user.getSprite();
         const targetSprite = target.getSprite();
 
