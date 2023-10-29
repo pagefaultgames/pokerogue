@@ -1061,13 +1061,13 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value *= Math.pow(2, 5 - this.getStackCount());
+    (args[0] as Utils.IntegerHolder).value /= Math.pow(2, -3 - this.getStackCount());
 
     return true;
   }
 
   getMaxStackCount(): integer {
-    return 5;
+    return 4;
   }
 }
 
