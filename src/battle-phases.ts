@@ -1066,7 +1066,7 @@ export class CommandPhase extends FieldPhase {
               ? { command: Command.POKEMON, cursor: cursor, args: args }
               : { command: Command.RUN };
             success = true;
-            if (this.fieldIndex)
+            if (!isSwitch && this.fieldIndex)
               this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
           } else if (trapTag) {
             this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
