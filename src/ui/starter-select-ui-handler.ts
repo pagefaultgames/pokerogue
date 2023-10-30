@@ -67,6 +67,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private starterIcons: Phaser.GameObjects.Sprite[];
     private genCursorObj: Phaser.GameObjects.Image;
     private genCursorHighlightObj: Phaser.GameObjects.Image;
+    private shinyIcons: Phaser.GameObjects.Image[];
 
     private starterSelectCallback: StarterSelectCallback;
   
@@ -202,6 +203,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         icon.play('pkmn_icon__000');
         this.starterSelectContainer.add(icon);
         return icon;
+      });
+
+      this.shinyIcons = new Array(81).fill(null).map((_, i) => {
+        const x = (i % 9) * 18;
+        const y = Math.floor(i / 9) * 18;
+        const ret = this.scene.add.image(x + 161, y + 11, 'shiny_star');
+        ret.setOrigin(0, 0);
+        ret.setScale(0.5);
+        ret.setVisible(false);
+        this.starterSelectContainer.add(ret);
+        return ret;
       });
 
       this.pokemonSprite = this.scene.add.sprite(53, 63, `pkmn__sub`);
@@ -488,6 +500,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.starterCursorObjs[s].setVisible(this.starterGens[s] === cursor);
         for (let s = 0; s < this.pokerusCursorObjs.length; s++)
           this.pokerusCursorObjs[s].setVisible(this.pokerusGens[s] === cursor);
+
+        const genLimit = this.genSpecies[this.genCursor].length;
+        for (let s = 0; s < 81; s++) {
+          this.shinyIcons[s].setVisible(s < genLimit && !!this.scene.gameData.getDefaultDexEntry(this.genSpecies[this.genCursor][s], true));
+        }
       } else {
         changed = super.setCursor(cursor);
 
