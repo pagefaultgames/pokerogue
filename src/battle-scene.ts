@@ -637,7 +637,7 @@ export default class BattleScene extends Phaser.Scene {
 		const playerField = this.getPlayerField();
 
 		if (double === undefined && newWaveIndex > 1) {
-			if (newBattleType === BattleType.WILD) {
+			if (newBattleType === BattleType.WILD && (this.gameMode === GameMode.CLASSIC ? newWaveIndex !== 200 : newWaveIndex % 250)) {
 				const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
 				this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
 				playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
