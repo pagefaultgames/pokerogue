@@ -419,6 +419,22 @@ export class PostSummonAbAttr extends AbAttr {
   }
 }
 
+export class PostSummonMessageAbAttr extends PostSummonAbAttr {
+  private messageFunc: (pokemon: Pokemon) => string;
+
+  constructor(messageFunc: (pokemon: Pokemon) => string) {
+    super(true);
+
+    this.messageFunc = messageFunc;
+  }
+
+  applyPostSummon(pokemon: Pokemon, args: any[]): boolean {
+    pokemon.scene.queueMessage(this.messageFunc(pokemon));
+
+    return true;
+  }
+}
+
 export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
   private tagType: BattlerTagType;
   private turnCount: integer;
@@ -1332,7 +1348,8 @@ export function initAbilities() {
     new Ability(Abilities.PLUS, "Plus (N)", "Ups Sp. Atk if another Pokémon has PLUS or MINUS.", 3),
     new Ability(Abilities.POISON_POINT, "Poison Point", "Contact with the Pokémon may poison the attacker.", 3)
       .attr(PostDefendContactApplyStatusEffectAbAttr, StatusEffect.POISON),
-    new Ability(Abilities.PRESSURE, "Pressure (N)", "The Pokémon raises the foe's PP usage.", 3),
+    new Ability(Abilities.PRESSURE, "Pressure", "The Pokémon raises the foe's PP usage.", 3)
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, 'is\nexerting its Pressure!')),
     new Ability(Abilities.PURE_POWER, "Pure Power", "Raises the Pokémon's Attack stat.", 3)
       .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 2, true),
     new Ability(Abilities.RAIN_DISH, "Rain Dish", "The Pokémon gradually regains HP in rain.", 3)

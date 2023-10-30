@@ -25,7 +25,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagType, ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
-import { CheckTrappedAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, SuppressWeatherEffectAbAttr, applyCheckTrappedAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
+import { Abilities, CheckTrappedAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, SuppressWeatherEffectAbAttr, applyCheckTrappedAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -1407,8 +1407,15 @@ export class MovePhase extends BattlePhase {
       }
 
       this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
-      if (!moveQueue.length || !moveQueue.shift().ignorePP)
+      if (!moveQueue.length || !moveQueue.shift().ignorePP) {
         this.move.ppUsed++;
+        for (let opponent of this.pokemon.getOpponents()) {
+          if (this.move.ppUsed === this.move.getMove().pp)
+            break;
+          if (opponent.getAbility().id === Abilities.PRESSURE)
+            this.move.ppUsed++;
+        }
+      }
 
       if (!allMoves[this.move.moveId].getAttrs(CopyMoveAttr).length)
         this.scene.currentBattle.lastMove = this.move.moveId;
