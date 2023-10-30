@@ -117,9 +117,7 @@ export class Arena {
     return !tierPool.length ? TrainerType.BREEDER : tierPool[Utils.randSeedInt(tierPool.length)];
   }
 
-  getFormIndex(species: PokemonSpecies) {
-    if (!species.canChangeForm && species.forms?.length)
-      return Utils.randSeedInt(species.forms.length);
+  getSpeciesFormIndex(species: PokemonSpecies): integer {
     switch (species.speciesId) {
       case Species.BURMY:
       case Species.WORMADAM:
@@ -131,6 +129,7 @@ export class Arena {
         }
         break;
     }
+
     return 0;
   }
 

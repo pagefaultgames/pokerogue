@@ -1205,7 +1205,7 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainer: boolean, dataSource?: PokemonData) {
-    super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource ? dataSource.formIndex : scene.arena.getFormIndex(species),
+    super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource ? dataSource.formIndex : scene.getSpeciesFormIndex(species),
       dataSource?.gender, dataSource?.shiny, dataSource);
 
     this.trainer = trainer;

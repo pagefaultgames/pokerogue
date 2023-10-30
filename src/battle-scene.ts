@@ -32,6 +32,7 @@ import PokeballTray from './ui/pokeball-tray';
 import { Setting, settingOptions } from './system/settings';
 import SettingsUiHandler from './ui/settings-ui-handler';
 import MessageUiHandler from './ui/message-ui-handler';
+import { Species } from './data/species';
 
 const enableAuto = true;
 const quickStart = false;
@@ -733,6 +734,20 @@ export default class BattleScene extends Phaser.Scene {
 		return this.arena;
 	}
 
+	getSpeciesFormIndex(species: PokemonSpecies): integer {
+		if (!species.forms?.length)
+			return 0;
+
+		switch (species.speciesId) {
+			case Species.UNOWN:
+			case Species.DEERLING:
+			case Species.SAWSBUCK:
+				return Utils.randSeedInt(species.forms.length);
+		}
+
+		return this.arena.getSpeciesFormIndex(species);
+	}
+
 	trySpreadPokerus(): void {
 		const party = this.getParty();
 		const infectedIndexes: integer[] = [];
@@ -953,7 +968,7 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	pauseBgm(): boolean {
-		if (this.bgm && this.bgm.isPlaying) {
+		if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying) {
 			this.bgm.pause();
 			return true;
 		}
@@ -961,7 +976,7 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	resumeBgm(): boolean {
-		if (this.bgm && this.bgm.isPaused) {
+		if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPaused) {
 			this.bgm.resume();
 			return true;
 		}
