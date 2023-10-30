@@ -8,7 +8,7 @@ import * as Utils from './utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier } from './data/type';
 import { getLevelTotalExp } from './data/exp';
 import { Stat } from './data/pokemon-stat';
-import { AttackTypeBoosterModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
+import { AttackTypeBoosterModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { Gender } from './data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
@@ -74,6 +74,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!species.isObtainable() && this.isPlayer())
       throw `Cannot create a player Pokemon for species '${species.name}'`;
 
+    const hiddenAbilityChance = new Utils.IntegerHolder(256);
+    if (!this.hasTrainer())
+      this.scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+
+    const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value);
+    const randAbilityIndex = Utils.randSeedInt(2);
+
     this.name = species.name;
     this.species = species;
     this.battleInfo = this.isPlayer()
@@ -81,7 +88,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : new EnemyBattleInfo(scene);
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
-    this.abilityIndex = abilityIndex || (species.ability2 ? Utils.randInt(2) : 0);
+    this.abilityIndex = abilityIndex || (species.abilityHidden && hasHiddenAbility ? species.abilityHidden : species.ability2 ? randAbilityIndex : 0);
     this.formIndex = formIndex || 0;
     if (gender !== undefined)
       this.gender = gender;
@@ -110,8 +117,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         Utils.binToDec(Utils.decToBin(this.id).substring(20, 25)),
         Utils.binToDec(Utils.decToBin(this.id).substring(25, 30))
       ];
-      //} else
-      //this.id = parseInt(Utils.decToBin(this.ivs[Stat.HP]) + Utils.decToBin(this.ivs[Stat.ATK]) + Utils.decToBin(this.ivs[Stat.DEF]) + Utils.decToBin(this.ivs[Stat.SPATK]) + Utils.decToBin(this.ivs[Stat.SPDEF]) + Utils.decToBin(this.ivs[Stat.SPD]) + this.id.toString(2).slice(30));
     
       if (this.gender === undefined) {
         if (this.getSpeciesForm().malePercent === null)
@@ -549,14 +554,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
 
     if (attackMovePool.length) {
-      const moveIndex = Utils.randInt(attackMovePool.length);
+      const moveIndex = Utils.randSeedInt(attackMovePool.length);
       this.moveset.push(new PokemonMove(attackMovePool[moveIndex], 0, 0));
       console.log(allMoves[attackMovePool[moveIndex]]);
       movePool.splice(movePool.findIndex(m => m === attackMovePool[moveIndex]), 1);
     }
 
     while (movePool.length && this.moveset.length < 4) {
-      const moveIndex = Utils.randInt(movePool.length);
+      const moveIndex = Utils.randSeedInt(movePool.length);
       this.moveset.push(new PokemonMove(movePool[moveIndex], 0, 0));
       console.log(allMoves[movePool[moveIndex]]);
       movePool.splice(moveIndex, 1);

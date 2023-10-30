@@ -1050,6 +1050,30 @@ export class ExpBalanceModifier extends PersistentModifier {
   }
 }
 
+export class HiddenAbilityRateBoosterModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof HiddenAbilityRateBoosterModifier;
+  }
+
+  clone(): HiddenAbilityRateBoosterModifier {
+    return new HiddenAbilityRateBoosterModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value *= Math.pow(2, -1 - this.getStackCount());
+
+    return true;
+  }
+
+  getMaxStackCount(): integer {
+    return 4;
+  }
+}
+
 export class ShinyRateBoosterModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);

@@ -669,6 +669,7 @@ export const modifierTypes = {
     (type, args) => new Modifiers.SwitchEffectTransferModifier(type, (args[0] as Pokemon).id), 'stick'),
 
   SHINY_CHARM: () => new ModifierType('Shiny Charm', 'Dramatically increases the chance of a wild Pokémon being shiny', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
+  ABILITY_CHARM: () => new ModifierType('Ability Charm', 'Dramatically increases the chance of a wild Pokémon having a hidden ability', (type, _args) => new Modifiers.HiddenAbilityRateBoosterModifier(type)),
 
   MINI_BLACK_HOLE: () => new TurnHeldItemTransferModifierType('Mini Black Hole'),
   
@@ -770,6 +771,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 3),
     new WeightedModifierType(modifierTypes.EXP_CHARM, 4),
     new WeightedModifierType(modifierTypes.OVAL_CHARM, 2),
+    new WeightedModifierType(modifierTypes.ABILITY_CHARM, 2),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 1),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
