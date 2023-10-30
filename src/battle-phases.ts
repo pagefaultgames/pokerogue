@@ -1528,6 +1528,8 @@ class MoveEffectPhase extends PokemonPhase {
 
       const targetHitChecks = Object.fromEntries(targets.map(p => [ p.getBattlerIndex(), this.hitCheck(p) ]));
       if (targets.length === 1 && !targetHitChecks[this.targets[0]]) {
+        user.turnData.hitCount = 1;
+        user.turnData.hitsLeft = 1;
         this.scene.queueMessage(getPokemonMessage(user, '\'s\nattack missed!'));
         moveHistoryEntry.result = MoveResult.MISS;
         applyMoveAttrs(MissEffectAttr, user, null, this.move.getMove());
@@ -1539,6 +1541,8 @@ class MoveEffectPhase extends PokemonPhase {
       new MoveAnim(this.move.getMove().id as Moves, user, this.getTarget()?.getBattlerIndex()).play(this.scene, () => {
         for (let target of targets) {
           if (!targetHitChecks[target.getBattlerIndex()]) {
+            user.turnData.hitCount = 1;
+            user.turnData.hitsLeft = 1;
             this.scene.queueMessage(getPokemonMessage(user, '\'s\nattack missed!'));
             if (moveHistoryEntry.result === MoveResult.PENDING)
               moveHistoryEntry.result = MoveResult.MISS;
@@ -1591,10 +1595,10 @@ class MoveEffectPhase extends PokemonPhase {
 
   end() {
     const user = this.getUserPokemon();
-    if (--user.turnData.hitsLeft >= 1 && this.getTarget())
+    if (--user.turnData.hitsLeft >= 1 && this.getTarget()?.isActive())
       this.scene.unshiftPhase(this.getNewHitPhase());
     else {
-      if (user.turnData.hitCount > 1)
+      if (user.turnData.hitCount - user.turnData.hitsLeft > 1)
         this.scene.queueMessage(`Hit ${user.turnData.hitCount} time(s)!`);
       this.scene.applyModifiers(HitHealModifier, this.player, user);
     }
@@ -1604,6 +1608,10 @@ class MoveEffectPhase extends PokemonPhase {
 
   hitCheck(target: Pokemon): boolean {
     if (this.move.getMove().moveTarget === MoveTarget.USER)
+      return true;
+
+    // Hit check only calculated on first hit for multi-hit moves
+    if (this.getUserPokemon().turnData.hitsLeft < this.getUserPokemon().turnData.hitCount)
       return true;
 
     const hiddenTag = target.getTag(HiddenTag);

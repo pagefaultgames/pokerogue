@@ -754,16 +754,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id });
           }
 
-          switch (result) {
-            case HitResult.SUPER_EFFECTIVE:
-              this.scene.queueMessage('It\'s super effective!');
-              break;
-            case HitResult.NOT_VERY_EFFECTIVE:
-              this.scene.queueMessage('It\'s not very effective!');
-              break;
-            case HitResult.NO_EFFECT:
-              this.scene.queueMessage(`It doesn\'t affect ${this.name}!`);
-              break;
+          if (source.turnData.hitsLeft === 1) {
+            switch (result) {
+              case HitResult.SUPER_EFFECTIVE:
+                this.scene.queueMessage('It\'s super effective!');
+                break;
+              case HitResult.NOT_VERY_EFFECTIVE:
+                this.scene.queueMessage('It\'s not very effective!');
+                break;
+              case HitResult.NO_EFFECT:
+                this.scene.queueMessage(`It doesn\'t affect ${this.name}!`);
+                break;
+            }
           }
 
           if (damage)

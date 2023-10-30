@@ -534,7 +534,7 @@ export class EnemyAttackStatusEffectChanceModifierType extends ModifierType {
 
 export class EnemyInstantReviveChanceModifierType extends ModifierType {
   constructor(name: string, chancePercent: integer, fullHeal: boolean, iconImage?: string) {
-    super(name, `Adds a ${chancePercent}% chance of reviving with ${fullHeal ? '100' : '50'}% HP`, (type, _args) => new Modifiers.EnemyInstantReviveChanceModifier(type, fullHeal, chancePercent), iconImage, 'enemy_revive');
+    super(name, `Adds a ${chancePercent}% chance of reviving with ${fullHeal ? 100 : 50}% HP`, (type, _args) => new Modifiers.EnemyInstantReviveChanceModifier(type, fullHeal, chancePercent), iconImage, 'enemy_revive');
   }
 }
 

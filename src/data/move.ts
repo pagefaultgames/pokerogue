@@ -2694,10 +2694,10 @@ export function initMoves() {
     new SelfStatusMove(Moves.SKETCH, "Sketch", Type.NORMAL, -1, 1, -1, "Permanently copies the opponent's last move.", -1, 0, 2)
       .attr(SketchAttr)
       .ignoresVirtual(),
-    new AttackMove(Moves.TRIPLE_KICK, "Triple Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, "Hits thrice in one turn at increasing power.", -1, 0, 2)
+    new AttackMove(Moves.TRIPLE_KICK, "Triple Kick (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, "Hits thrice in one turn at increasing power.", -1, 0, 2)
       .attr(MultiHitAttr, MultiHitType._3_INCR)
       .attr(MissEffectAttr, (user: Pokemon, move: Move) => {
-        user.turnData.hitsLeft = 0;
+        user.turnData.hitsLeft = 1;
         return true;
       }),
     new AttackMove(Moves.THIEF, "Thief", Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, 18, "Steals a held item from the opponent.", -1, 0, 2)
