@@ -88,7 +88,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : new EnemyBattleInfo(scene);
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
-    this.abilityIndex = abilityIndex || (species.abilityHidden && hasHiddenAbility ? species.abilityHidden : species.ability2 ? randAbilityIndex : 0);
+    this.abilityIndex = abilityIndex || (species.abilityHidden && hasHiddenAbility ? species.ability2 ? 2 : 1 : species.ability2 ? randAbilityIndex : 0);
     this.formIndex = formIndex || 0;
     if (gender !== undefined)
       this.gender = gender;
