@@ -2021,7 +2021,7 @@ export class FaintPhase extends PokemonPhase {
     }
 
     if (!pokemon.isPlayer()) {
-      const enemyInstantReviveModifiers = this.scene.findModifiers(m => m instanceof EnemyInstantReviveChanceModifier);
+      const enemyInstantReviveModifiers = this.scene.findModifiers(m => m instanceof EnemyInstantReviveChanceModifier, false);
       for (let modifier of enemyInstantReviveModifiers) {
         if (modifier.shouldApply([ pokemon ]) && modifier.apply([ pokemon ]))
           return this.end();
