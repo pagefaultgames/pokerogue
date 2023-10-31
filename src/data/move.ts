@@ -1,5 +1,5 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { DamagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase, StatChangePhase } from "../battle-phases";
+import { BattleEndPhase, DamagePhase, MovePhase, NewBattlePhase, ObtainStatusEffectPhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../battle-phases";
 import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./battler-tag";
 import { getPokemonMessage } from "../messages";
@@ -45,7 +45,10 @@ export enum MoveTarget {
 export enum MoveFlags {
   MAKES_CONTACT = 1,
   IGNORE_PROTECT = 2,
-  IGNORE_VIRTUAL = 4
+  IGNORE_VIRTUAL = 4,
+  SOUND_BASED = 8,
+  HIDE_USER = 16,
+  HIDE_TARGET = 32
 }
 
 type MoveCondition = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -151,6 +154,21 @@ export default class Move {
 
   ignoresVirtual(ignoresVirtual?: boolean): Move {
     this.setFlag(MoveFlags.IGNORE_VIRTUAL, ignoresVirtual);
+    return this;
+  }
+
+  soundBased(soundBased?: boolean): Move {
+    this.setFlag(MoveFlags.SOUND_BASED, soundBased);
+    return this;
+  }
+
+  hidesUser(hidesUser?: boolean): Move {
+    this.setFlag(MoveFlags.HIDE_USER, hidesUser);
+    return this;
+  }
+
+  hidesTarget(hidesTarget?: boolean): Move {
+    this.setFlag(MoveFlags.HIDE_TARGET, hidesTarget);
     return this;
   }
 
@@ -1975,6 +1993,56 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   }
 }
 
+export class ForceSwitchOutAttr extends MoveEffectAttr {
+  private user: boolean;
+  private batonPass: boolean;
+
+  constructor(user?: boolean, batonPass?: boolean) {
+    super(false, MoveEffectTrigger.HIT);
+
+    this.user = !!user;
+    this.batonPass = !!batonPass;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise(resolve => {
+      const switchOutTarget = this.user ? user : target;
+      if (switchOutTarget instanceof PlayerPokemon) {
+        (switchOutTarget as PlayerPokemon).switchOut(this.batonPass).then(() => resolve(true));
+        return;
+      } else if (user.scene.currentBattle.battleType) {
+        if ((switchOutTarget instanceof PlayerPokemon ? user.scene.getParty() : user.scene.getEnemyParty()).filter(p => !p.isFainted()).length > 1) {
+          switchOutTarget.resetTurnData();
+          switchOutTarget.resetSummonData();
+          switchOutTarget.hideInfo();
+          switchOutTarget.setVisible(false);
+
+          user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex(), false, this.batonPass, false));
+        } else
+          return resolve(false);
+      } else {
+        switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
+        switchOutTarget.hp = 0;
+
+        user.scene.queueMessage(getPokemonMessage(switchOutTarget, ' fled!'), null, true, 500);
+
+        if (!switchOutTarget.getAlly()?.isActive(true)) {
+          user.scene.clearEnemyHeldItemModifiers();
+
+          user.scene.pushPhase(new BattleEndPhase(user.scene));
+          user.scene.pushPhase(new NewBattlePhase(user.scene));
+        }
+      }
+
+      resolve(true);
+    });
+  }
+
+  getCondition(): MoveCondition {
+    return (user: Pokemon, target: Pokemon, move: Move) => !user.scene.currentBattle.battleType || ((this.user ? user : target) instanceof PlayerPokemon ? user.scene.getParty() : user.scene.getEnemyParty()).filter(p => !p.isFainted()).length === 1;
+  }
+}
+
 export class CopyTypeAttr extends MoveEffectAttr {
   constructor() {
     super(true);
@@ -2256,53 +2324,53 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
   const moveTarget = move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
   const opponents = user.getOpponents();
   
-  let set: BattlerIndex[] = [];
+  let set: Pokemon[] = [];
   let multiple = false;
 
   switch (moveTarget) {
     case MoveTarget.USER:
-      set = [ user.getBattlerIndex() ];
+      set = [ user];
       break;
     case MoveTarget.NEAR_OTHER:
     case MoveTarget.OTHER:
     case MoveTarget.ALL_NEAR_OTHERS:
     case MoveTarget.ALL_OTHERS:
-      set = (opponents.concat([ user.getAlly() ])).map(p => p?.getBattlerIndex());
+      set = (opponents.concat([ user.getAlly() ]));
       multiple = moveTarget === MoveTarget.ALL_NEAR_OTHERS || moveTarget === MoveTarget.ALL_OTHERS
       break;
     case MoveTarget.NEAR_ENEMY:
     case MoveTarget.ALL_NEAR_ENEMIES:
     case MoveTarget.ALL_ENEMIES:
     case MoveTarget.ENEMY_SIDE:
-      set = opponents.map(p => p.getBattlerIndex());
+      set = opponents;
       multiple = moveTarget !== MoveTarget.NEAR_ENEMY;
       break;
     case MoveTarget.RANDOM_NEAR_ENEMY:
-      set = [ opponents[Utils.randInt(opponents.length)].getBattlerIndex() ];
+      set = [ opponents[Utils.randInt(opponents.length)] ];
       break;
     case MoveTarget.ATTACKER:
         set = user.turnData.attacksReceived.length
-          ? [ user.scene.getPokemonById(user.turnData.attacksReceived[0].sourceId).getBattlerIndex() ]
+          ? [ user.scene.getPokemonById(user.turnData.attacksReceived[0].sourceId) ]
           : [];
       break;
     case MoveTarget.NEAR_ALLY:
     case MoveTarget.ALLY:
-      set = [ user.getAlly()?.getBattlerIndex() ];
+      set = [ user.getAlly() ];
       break;
     case MoveTarget.USER_OR_NEAR_ALLY:
     case MoveTarget.USER_AND_ALLIES:
     case MoveTarget.USER_SIDE:
-      set = [ user, user.getAlly() ].map(p => p?.getBattlerIndex());
+      set = [ user, user.getAlly() ];
       multiple = moveTarget !== MoveTarget.USER_OR_NEAR_ALLY;
       break;
     case MoveTarget.ALL:
     case MoveTarget.BOTH_SIDES:
-      set = [ user, user.getAlly() ].concat(user.getOpponents()).map(p => p?.getBattlerIndex());
+      set = [ user, user.getAlly() ].concat(user.getOpponents());
       multiple = true;
       break;
   }
 
-  return { targets: set.filter(t => t !== undefined), multiple };
+  return { targets: set.filter(p => p?.isActive(true)).map(p => p.getBattlerIndex()).filter(t => t !== undefined), multiple };
 }
 
 export const allMoves: Move[] = [
@@ -2344,7 +2412,9 @@ export function initMoves() {
       .target(MoveTarget.OTHER),
     new AttackMove(Moves.WING_ATTACK, "Wing Attack", Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 35, -1, "", -1, 0, 1)
       .target(MoveTarget.OTHER),
-    new StatusMove(Moves.WHIRLWIND, "Whirlwind (N)", Type.NORMAL, -1, 20, -1, "In battles, the opponent switches. In the wild, the Pokémon runs.", -1, -6, 1), // TODO
+    new StatusMove(Moves.WHIRLWIND, "Whirlwind", Type.NORMAL, -1, 20, -1, "In battles, the opponent switches. In the wild, the Pokémon runs.", -1, -6, 1)
+      .attr(ForceSwitchOutAttr)
+      .hidesTarget(),
     new AttackMove(Moves.FLY, "Fly", Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, 97, "Flies up on first turn, attacks on second turn.", -1, 0, 1)
       .attr(ChargeAttr, ChargeAnim.FLY_CHARGING, 'flew\nup high!', BattlerTagType.FLYING)
       .condition(failOnGravityCondition)
@@ -2406,12 +2476,18 @@ export function initMoves() {
       .attr(FlinchAttr),
     new StatusMove(Moves.GROWL, "Growl", Type.NORMAL, 100, 40, -1, "Lowers opponent's Attack.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new StatusMove(Moves.ROAR, "Roar (N)", Type.NORMAL, -1, 20, -1, "In battles, the opponent switches. In the wild, the Pokémon runs.", -1, -6, 1),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .soundBased(),
+    new StatusMove(Moves.ROAR, "Roar", Type.NORMAL, -1, 20, -1, "In battles, the opponent switches. In the wild, the Pokémon runs.", -1, -6, 1)
+      .attr(ForceSwitchOutAttr)
+      .soundBased()
+      .hidesTarget(),
     new StatusMove(Moves.SING, "Sing", Type.NORMAL, 55, 15, -1, "Puts opponent to sleep.", -1, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.SLEEP),
+      .attr(StatusEffectAttr, StatusEffect.SLEEP)
+      .soundBased(),
     new StatusMove(Moves.SUPERSONIC, "Supersonic", Type.NORMAL, 55, 20, -1, "Confuses opponent.", -1, 0, 1)
-      .attr(ConfuseAttr),
+      .attr(ConfuseAttr)
+      .soundBased(),
     new AttackMove(Moves.SONIC_BOOM, "Sonic Boom", Type.NORMAL, MoveCategory.SPECIAL, -1, 90, 20, -1, "Always inflicts 20 HP.", -1, 0, 1)
       .attr(FixedDamageAttr, 20),
     new StatusMove(Moves.DISABLE, "Disable", Type.NORMAL, 100, 20, -1, "Opponent can't use its last attack for a few turns.", -1, 0, 1)
@@ -2528,14 +2604,17 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, 2, true),
     new AttackMove(Moves.QUICK_ATTACK, "Quick Attack", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 30, -1, "User attacks first.", -1, 1, 1),
     new AttackMove(Moves.RAGE, "Rage (N)", Type.NORMAL, MoveCategory.PHYSICAL, 20, 100, 20, -1, "Raises user's Attack when hit.", -1, 0, 1), // TODO
-    new SelfStatusMove(Moves.TELEPORT, "Teleport (N)", Type.PSYCHIC, -1, 20, -1, "Allows user to flee wild battles.", -1, 0, 1),
+    new SelfStatusMove(Moves.TELEPORT, "Teleport", Type.PSYCHIC, -1, 20, -1, "Allows user to flee wild battles.", -1, -6, 1)
+      .attr(ForceSwitchOutAttr, true)
+      .hidesUser(),
     new AttackMove(Moves.NIGHT_SHADE, "Night Shade", Type.GHOST, MoveCategory.SPECIAL, -1, 100, 15, 42, "Inflicts damage equal to user's level.", -1, 0, 1)
       .attr(LevelDamageAttr),
     new StatusMove(Moves.MIMIC, "Mimic", Type.NORMAL, -1, 10, -1, "Copies the opponent's last move.", -1, 0, 1)
       .attr(MovesetCopyMoveAttr)
       .ignoresVirtual(),
     new StatusMove(Moves.SCREECH, "Screech", Type.NORMAL, 85, 40, -1, "Sharply lowers opponent's Defense.", -1, 0, 1)
-      .attr(StatChangeAttr, BattleStat.DEF, -2),
+      .attr(StatChangeAttr, BattleStat.DEF, -2)
+      .soundBased(),
     new SelfStatusMove(Moves.DOUBLE_TEAM, "Double Team", Type.NORMAL, -1, 15, -1, "Raises user's Evasiveness.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.EVA, 1, true),
     new SelfStatusMove(Moves.RECOVER, "Recover", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 1)
@@ -2714,7 +2793,8 @@ export function initMoves() {
     new AttackMove(Moves.SNORE, "Snore", Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 15, -1, "Can only be used if asleep. May cause flinching.", 30, 0, 2)
       .attr(BypassSleepAttr)
       .attr(FlinchAttr)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => user.status?.effect === StatusEffect.SLEEP),
+      .condition((user: Pokemon, target: Pokemon, move: Move) => user.status?.effect === StatusEffect.SLEEP)
+      .soundBased(),
     new StatusMove(Moves.CURSE, "Curse (N)", Type.GHOST, -1, 10, -1, "Ghosts lose 50% of max HP and curse the opponent; Non-Ghosts raise Attack, Defense and lower Speed.", -1, 0, 2)
       .target(MoveTarget.USER),
     new AttackMove(Moves.FLAIL, "Flail", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, "The lower the user's HP, the higher the power.", -1, 0, 2)
@@ -2757,7 +2837,8 @@ export function initMoves() {
       .ignoresProtect(),
     new StatusMove(Moves.PERISH_SONG, "Perish Song (N)", Type.NORMAL, -1, 5, -1, "Any Pokémon in play when this attack is used faints in 3 turns.", -1, 0, 2)
       .ignoresProtect()
-      .target(MoveTarget.ALL),
+      .target(MoveTarget.ALL)
+      .soundBased(),
     new AttackMove(Moves.ICY_WIND, "Icy Wind", Type.ICE, MoveCategory.SPECIAL, 55, 95, 15, 34, "Lowers opponent's Speed.", 100, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -2805,7 +2886,8 @@ export function initMoves() {
       .attr(RandomMovesetMoveAttr)
       .condition((user: Pokemon, target: Pokemon, move: Move) => user.status?.effect === StatusEffect.SLEEP),
     new SelfStatusMove(Moves.HEAL_BELL, "Heal Bell (N)", Type.NORMAL, -1, 5, -1, "Heals the user's party's status conditions.", -1, 0, 2)
-      .target(MoveTarget.USER_AND_ALLIES),
+      .target(MoveTarget.USER_AND_ALLIES)
+      .soundBased(),
     new AttackMove(Moves.RETURN, "Return", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, "Power increases with higher Friendship.", -1, 0, 2)
       .attr(WinCountPowerMoveAttr),
     new AttackMove(Moves.PRESENT, "Present (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, -1, "Either deals damage or heals.", -1, 0, 2)
@@ -2827,7 +2909,9 @@ export function initMoves() {
     new AttackMove(Moves.MEGAHORN, "Megahorn", Type.BUG, MoveCategory.PHYSICAL, 120, 85, 10, -1, "", -1, 0, 2),
     new AttackMove(Moves.DRAGON_BREATH, "Dragon Breath", Type.DRAGON, MoveCategory.SPECIAL, 60, 100, 20, -1, "May paralyze opponent.", 30, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
-    new SelfStatusMove(Moves.BATON_PASS, "Baton Pass (N)", Type.NORMAL, -1, 40, 132, "User switches out and gives stat changes to the incoming Pokémon.", -1, 0, 2),
+    new SelfStatusMove(Moves.BATON_PASS, "Baton Pass", Type.NORMAL, -1, 40, 132, "User switches out and gives stat changes to the incoming Pokémon.", -1, 0, 2)
+      .attr(ForceSwitchOutAttr, true, true)
+      .hidesUser(),
     new StatusMove(Moves.ENCORE, "Encore (N)", Type.NORMAL, 100, 5, 122, "Forces opponent to keep using its last move for 3 turns.", -1, 0, 2),
     new AttackMove(Moves.PURSUIT, "Pursuit (N)", Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, "Double power if the opponent is switching out.", -1, 0, 2),
     new AttackMove(Moves.RAPID_SPIN, "Rapid Spin", Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, -1, "Raises user's Speed and removes entry hazards and trap move effects.", 100, 0, 2)
@@ -2883,7 +2967,8 @@ export function initMoves() {
       .condition((user: Pokemon, target: Pokemon, move: Move) => !user.getMoveHistory().length),
     new AttackMove(Moves.UPROAR, "Uproar (N)", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, -1, "User attacks for 3 turns and prevents sleep.", -1, 0, 3)
       .ignoresVirtual()
-      .target(MoveTarget.RANDOM_NEAR_ENEMY),
+      .target(MoveTarget.RANDOM_NEAR_ENEMY)
+      .soundBased(),
     new SelfStatusMove(Moves.STOCKPILE, "Stockpile (N)", Type.NORMAL, -1, 20, -1, "Stores energy for use with Spit Up and Swallow.", -1, 0, 3),
     new AttackMove(Moves.SPIT_UP, "Spit Up (N)", Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, "Power depends on how many times the user performed Stockpile.", -1, 0, 3),
     new SelfStatusMove(Moves.SWALLOW, "Swallow (N)", Type.NORMAL, -1, 10, -1, "The more times the user has performed Stockpile, the more HP is recovered.", -1, 0, 3),
@@ -2981,7 +3066,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.SLACK_OFF, "Slack Off", Type.NORMAL, -1, 5, -1, "User recovers half its max HP.", -1, 0, 3)
       .attr(HealAttr),
     new AttackMove(Moves.HYPER_VOICE, "Hyper Voice", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, 117, "", -1, 0, 3)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .soundBased(),
     new AttackMove(Moves.POISON_FANG, "Poison Fang", Type.POISON, MoveCategory.PHYSICAL, 50, 100, 15, -1, "May badly poison opponent.", 50, 0, 3)
       .attr(StatusEffectAttr, StatusEffect.TOXIC),
     new AttackMove(Moves.CRUSH_CLAW, "Crush Claw", Type.NORMAL, MoveCategory.PHYSICAL, 75, 95, 10, -1, "May lower opponent's Defense.", 50, 0, 3)
@@ -3011,9 +3097,11 @@ export function initMoves() {
     new AttackMove(Moves.SILVER_WIND, "Silver Wind", Type.BUG, MoveCategory.SPECIAL, 60, 100, 5, -1, "May raise all stats of user at once.", 10, 0, 3)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true),
     new StatusMove(Moves.METAL_SOUND, "Metal Sound", Type.STEEL, 85, 40, -1, "Sharply lowers opponent's Special Defense.", -1, 0, 3)
-      .attr(StatChangeAttr, BattleStat.SPDEF, -2),
+      .attr(StatChangeAttr, BattleStat.SPDEF, -2)
+      .soundBased(),
     new StatusMove(Moves.GRASS_WHISTLE, "Grass Whistle", Type.GRASS, 55, 15, -1, "Puts opponent to sleep.", -1, 0, 3)
-      .attr(StatusEffectAttr, StatusEffect.SLEEP),
+      .attr(StatusEffectAttr, StatusEffect.SLEEP)
+      .soundBased(),
     new StatusMove(Moves.TICKLE, "Tickle", Type.NORMAL, 100, 20, -1, "Lowers opponent's Attack and Defense.", -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
@@ -3051,7 +3139,8 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, 1, true),
     new SelfStatusMove(Moves.HOWL, "Howl", Type.NORMAL, -1, 40, -1, "Raises Attack of allies.", -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.ATK, 1, true)
-      .target(MoveTarget.USER_AND_ALLIES), // TODO
+      .target(MoveTarget.USER_AND_ALLIES)
+      .soundBased(), // TODO
     new AttackMove(Moves.DRAGON_CLAW, "Dragon Claw", Type.DRAGON, MoveCategory.PHYSICAL, 80, 100, 15, 78, "", -1, 0, 3),
     new AttackMove(Moves.FRENZY_PLANT, "Frenzy Plant", Type.GRASS, MoveCategory.SPECIAL, 150, 90, 5, 155, "User must recharge next turn.", -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
@@ -3191,7 +3280,8 @@ export function initMoves() {
       .target(MoveTarget.OTHER),
     new AttackMove(Moves.X_SCISSOR, "X-Scissor", Type.BUG, MoveCategory.PHYSICAL, 80, 100, 15, 105, "", -1, 0, 4),
     new AttackMove(Moves.BUG_BUZZ, "Bug Buzz", Type.BUG, MoveCategory.SPECIAL, 90, 100, 10, 162, "May lower opponent's Special Defense.", 10, 0, 4)
-      .attr(StatChangeAttr, BattleStat.SPDEF, -1),
+      .attr(StatChangeAttr, BattleStat.SPDEF, -1)
+      .soundBased(),
     new AttackMove(Moves.DRAGON_PULSE, "Dragon Pulse", Type.DRAGON, MoveCategory.SPECIAL, 85, 100, 10, 115, "", -1, 0, 4)
       .target(MoveTarget.OTHER),
     new AttackMove(Moves.DRAGON_RUSH, "Dragon Rush", Type.DRAGON, MoveCategory.PHYSICAL, 100, 75, 10, -1, "May cause flinching.", 20, 0, 4)
@@ -3289,7 +3379,8 @@ export function initMoves() {
       .makesContact(),
     new AttackMove(Moves.CHATTER, "Chatter", Type.FLYING, MoveCategory.SPECIAL, 65, 100, 20, -1, "Confuses opponent.", 100, 0, 4)
       .attr(ConfuseAttr)
-      .target(MoveTarget.OTHER),
+      .target(MoveTarget.OTHER)
+      .soundBased(),
     new AttackMove(Moves.JUDGMENT, "Judgment (N)", Type.NORMAL, MoveCategory.SPECIAL, 100, 100, 10, -1, "Type depends on the Arceus Plate being held.", -1, 0, 4),
     new AttackMove(Moves.BUG_BITE, "Bug Bite (N)", Type.BUG, MoveCategory.PHYSICAL, 60, 100, 20, -1, "Receives the effect from the opponent's held berry.", -1, 0, 4),
     new AttackMove(Moves.CHARGE_BEAM, "Charge Beam", Type.ELECTRIC, MoveCategory.SPECIAL, 50, 90, 10, 23, "May raise user's Special Attack.", 70, 0, 4)
@@ -3377,9 +3468,11 @@ export function initMoves() {
     new StatusMove(Moves.ENTRAINMENT, "Entrainment (N)", Type.NORMAL, 100, 15, -1, "Makes target's ability same as user's.", -1, 0, 5),
     new StatusMove(Moves.AFTER_YOU, "After You (N)", Type.NORMAL, -1, 15, -1, "Gives target priority in the next turn.", -1, 0, 5)
       .ignoresProtect(),
-    new AttackMove(Moves.ROUND, "Round", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, "Power increases if teammates use it in the same turn.", -1, 0, 5), // TODO
+    new AttackMove(Moves.ROUND, "Round", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, "Power increases if teammates use it in the same turn.", -1, 0, 5)
+      .soundBased(), // TODO
     new AttackMove(Moves.ECHOED_VOICE, "Echoed Voice", Type.NORMAL, MoveCategory.SPECIAL, 40, 100, 15, -1, "Power increases each turn.", -1, 0, 5)
-      .attr(ConsecutiveUseMultiBasePowerAttr, 5, false),
+      .attr(ConsecutiveUseMultiBasePowerAttr, 5, false)
+      .soundBased(),
     new AttackMove(Moves.CHIP_AWAY, "Chip Away (N)", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, "Ignores opponent's stat changes.", -1, 0, 5),
     new AttackMove(Moves.CLEAR_SMOG, "Clear Smog (N)", Type.POISON, MoveCategory.SPECIAL, 50, -1, 15, -1, "Removes all of the target's stat changes.", -1, 0, 5),
     new AttackMove(Moves.STORED_POWER, "Stored Power (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 20, 100, 10, 41, "Power increases when user's stats have been raised.", -1, 0, 5),
@@ -3405,7 +3498,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.SHIFT_GEAR, "Shift Gear", Type.STEEL, -1, 10, -1, "Raises user's Attack and sharply raises Speed.", -1, 0, 5)
       .attr(StatChangeAttr, BattleStat.ATK, 1, true)
       .attr(StatChangeAttr, BattleStat.SPD, 2, true),
-    new AttackMove(Moves.CIRCLE_THROW, "Circle Throw (N)", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 90, 10, -1, "In battles, the opponent switches. In the wild, the Pokémon runs.", -1, -6, 5),
+    new AttackMove(Moves.CIRCLE_THROW, "Circle Throw", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 90, 10, -1, "In battles, the opponent switches. In the wild, the Pokémon runs.", -1, -6, 5)
+      .attr(ForceSwitchOutAttr),
     new AttackMove(Moves.INCINERATE, "Incinerate (N)", Type.FIRE, MoveCategory.SPECIAL, 60, 100, 15, -1, "Destroys the target's held berry.", -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.QUASH, "Quash (N)", Type.DARK, 100, 15, -1, "Makes the target act last this turn.", -1, 0, 5),
@@ -3434,7 +3528,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.FROST_BREATH, "Frost Breath", Type.ICE, MoveCategory.SPECIAL, 60, 90, 10, -1, "Always results in a critical hit.", 100, 0, 5)
       .attr(CritOnlyAttr),
-    new AttackMove(Moves.DRAGON_TAIL, "Dragon Tail (N)", Type.DRAGON, MoveCategory.PHYSICAL, 60, 90, 10, 44, "In battles, the opponent switches. In the wild, the Pokémon runs.", -1, -6, 5),
+    new AttackMove(Moves.DRAGON_TAIL, "Dragon Tail", Type.DRAGON, MoveCategory.PHYSICAL, 60, 90, 10, 44, "In battles, the opponent switches. In the wild, the Pokémon runs.", -1, -6, 5)
+      .attr(ForceSwitchOutAttr),
     new SelfStatusMove(Moves.WORK_UP, "Work Up", Type.NORMAL, -1, 30, -1, "Raises user's Attack and Special Attack.", -1, 0, 5)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, true),
     new AttackMove(Moves.ELECTROWEB, "Electroweb", Type.ELECTRIC, MoveCategory.SPECIAL, 55, 95, 15, -1, "Lowers opponent's Speed.", 100, 0, 5)
@@ -3479,7 +3574,8 @@ export function initMoves() {
     new AttackMove(Moves.TECHNO_BLAST, "Techno Blast (N)", Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, "Type depends on the Drive being held.", -1, 0, 5),
     new AttackMove(Moves.RELIC_SONG, "Relic Song", Type.NORMAL, MoveCategory.SPECIAL, 75, 100, 10, -1, "May put the target to sleep.", 10, 0, 5)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .soundBased(),
     new AttackMove(Moves.SECRET_SWORD, "Secret Sword (N)", Type.FIGHTING, MoveCategory.SPECIAL, 85, 100, 10, -1, "Inflicts damage based on the target's Defense, not Special Defense.", -1, 0, 5),
     new AttackMove(Moves.GLACIATE, "Glaciate", Type.ICE, MoveCategory.SPECIAL, 65, 95, 10, -1, "Lowers opponent's Speed.", 100, 0, 5)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
@@ -3499,7 +3595,8 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.SNARL, "Snarl", Type.DARK, MoveCategory.SPECIAL, 55, 95, 15, 30, "Lowers opponent's Special Attack.", 100, 0, 5)
       .attr(StatChangeAttr, BattleStat.SPATK, -1)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .soundBased(),
     new AttackMove(Moves.ICICLE_CRASH, "Icicle Crash", Type.ICE, MoveCategory.PHYSICAL, 85, 90, 10, -1, "May cause flinching.", 30, 0, 5)
       .attr(FlinchAttr)
       .makesContact(false),

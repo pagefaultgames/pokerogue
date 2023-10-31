@@ -1,6 +1,6 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
 import BattleScene from "../battle-scene";
-import { ChargeAttr, Moves, allMoves } from "./move";
+import { ChargeAttr, MoveFlags, Moves, allMoves } from "./move";
 import Pokemon from "../pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
@@ -560,6 +560,14 @@ export abstract class BattleAnim {
 
     abstract isOppAnim(): boolean;
 
+    protected isHideUser(): boolean {
+        return false;
+    }
+
+    protected isHideTarget(): boolean {
+        return false;
+    }
+
     private getGraphicFrameData(scene: BattleScene, frames: AnimFrame[]): Map<integer, Map<AnimFrameTarget, GraphicFrameData>> {
         const ret: Map<integer, Map<AnimFrameTarget, GraphicFrameData>> = new Map([
             [AnimFrameTarget.GRAPHIC, new Map<AnimFrameTarget, GraphicFrameData>() ],
@@ -795,8 +803,10 @@ export abstract class BattleAnim {
                     targetSprite.setAlpha(1);
                     targetSprite.pipelineData['tone'] = [ 0.0, 0.0, 0.0, 0.0 ];
                     targetSprite.setAngle(0);
-                    userSprite.setVisible(true);
-                    targetSprite.setVisible(true);
+                    if (!this.isHideUser())
+                        userSprite.setVisible(true);
+                    if (!this.isHideTarget() && (targetSprite !== userSprite || !this.isHideUser()))
+                        targetSprite.setVisible(true);
                     for (let ms of Object.values(spriteCache).flat()) {
                         if (ms)
                             ms.destroy();
@@ -857,6 +867,14 @@ export class MoveAnim extends BattleAnim {
 
     isOppAnim(): boolean {
         return !this.user.isPlayer() && Array.isArray(moveAnims.get(this.move));
+    }
+
+    protected isHideUser(): boolean {
+        return allMoves[this.move].hasFlag(MoveFlags.HIDE_USER);
+    }
+
+    protected isHideTarget(): boolean {
+        return allMoves[this.move].hasFlag(MoveFlags.HIDE_TARGET);
     }
 }
 

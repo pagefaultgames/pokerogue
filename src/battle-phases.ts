@@ -643,6 +643,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
             pokemon.showInfo();
             pokemon.playAnim();
             pokemon.setVisible(true);
+            pokemon.getSprite().setVisible(true);
             pokemon.setScale(0.5);
             pokemon.tint(getPokeballTintColor(pokemon.pokeball));
             pokemon.untint(250, 'Sine.easeIn');
@@ -738,7 +739,8 @@ export class SwitchSummonPhase extends SummonPhase {
       if (!this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedPokemon.id)) {
         const batonPassModifier = this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
           && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id) as SwitchEffectTransferModifier;
-        this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedPokemon, false, false);
+        if (batonPassModifier)
+          this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedPokemon, false, false);
       }
     }
     if (switchedPokemon) {
@@ -1537,6 +1539,8 @@ class MoveEffectPhase extends PokemonPhase {
         return;
       }
 
+      const applyAttrs: Promise<void>[] = [];
+
       // Move animation only needs one target
       new MoveAnim(this.move.getMove().id as Moves, user, this.getTarget()?.getBattlerIndex()).play(this.scene, () => {
         for (let target of targets) {
@@ -1556,39 +1560,42 @@ class MoveEffectPhase extends PokemonPhase {
           
           const hitResult = !isProtected ? target.apply(user, this.move) : HitResult.NO_EFFECT;
 
-          applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.PRE_APPLY,
-            user, target, this.move.getMove());
-          
-          if (hitResult !== HitResult.FAIL) {
-            const chargeEffect = !!this.move.getMove().getAttrs(ChargeAttr).find(ca => (ca as ChargeAttr).chargeEffect);
-            // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
-            if (!chargeEffect)
-              applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_APPLY
-                && (attr as MoveEffectAttr).selfTarget, user, target, this.move.getMove());
-            if (hitResult !== HitResult.NO_EFFECT) {
-              applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_APPLY
-                && !(attr as MoveEffectAttr).selfTarget, user, target, this.move.getMove());
-              if (hitResult < HitResult.NO_EFFECT) {
-                const flinched = new Utils.BooleanHolder(false);
-                user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
-                if (flinched.value)
-                  target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
+          applyAttrs.push(new Promise(resolve => {
+            applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.PRE_APPLY,
+              user, target, this.move.getMove()).then(() => {
+              if (hitResult !== HitResult.FAIL) {
+                const chargeEffect = !!this.move.getMove().getAttrs(ChargeAttr).find(ca => (ca as ChargeAttr).chargeEffect);
+                // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
+                Utils.executeIf(!chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_APPLY
+                  && (attr as MoveEffectAttr).selfTarget, user, target, this.move.getMove())).then(() => {
+                  if (hitResult !== HitResult.NO_EFFECT) {
+                    applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_APPLY
+                      && !(attr as MoveEffectAttr).selfTarget, user, target, this.move.getMove()).then(() => {
+                      if (hitResult < HitResult.NO_EFFECT) {
+                        const flinched = new Utils.BooleanHolder(false);
+                        user.scene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
+                        if (flinched.value)
+                          target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
+                      }
+                      Utils.executeIf(!isProtected && !chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT,
+                        user, target, this.move.getMove()).then(() => {
+                          if (!target.isFainted()) {
+                            applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult);
+                            if (!user.isPlayer() && this.move instanceof AttackMove)
+                              user.scene.applyModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
+                          }
+                          if (this.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT))
+                            this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target.getFieldIndex());
+                        })
+                      ).then(() => resolve());
+                    });
+                  }
+                });
               }
-              if (!isProtected && !chargeEffect) {
-                applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT,
-                  user, target, this.move.getMove());
-                if (!target.isFainted()) {
-                  applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult);
-                  if (!user.isPlayer() && this.move instanceof AttackMove)
-                    user.scene.applyModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
-                }
-                if (this.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT))
-                  this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target.getFieldIndex());
-              }
-            }
-          }
+            });
+          }));
         }
-        this.end();
+        Promise.allSettled(applyAttrs).then(() => this.end());
       });
     });
   }
@@ -2801,13 +2808,16 @@ export class AttemptRunPhase extends PokemonPhase {
         targets: [ this.scene.arenaEnemy, enemyField ].flat(),
         alpha: 0,
         duration: 250,
-        ease: 'Sine.easeIn'
+        ease: 'Sine.easeIn',
+        onComplete: () => enemyField.forEach(enemyPokemon => enemyPokemon.destroy())
       });
 
       enemyField.forEach(enemyPokemon => {
-        enemyPokemon.hideInfo();
+        enemyPokemon.hideInfo().then(() => enemyPokemon.destroy());
         enemyPokemon.hp = 0;
       });
+
+      this.scene.clearEnemyHeldItemModifiers();
 
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       this.scene.pushPhase(new NewBattlePhase(this.scene));

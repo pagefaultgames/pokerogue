@@ -15,7 +15,7 @@ import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
 import { Status, StatusEffect } from './data/status-effect';
 import { tmSpecies } from './data/tms';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './data/pokemon-evolutions';
-import { DamagePhase, FaintPhase } from './battle-phases';
+import { DamagePhase, FaintPhase, SwitchSummonPhase } from './battle-phases';
 import { BattleStat } from './data/battle-stat';
 import { BattlerTag, BattlerTagLapseType, BattlerTagType, TypeBoostTag, getBattlerTag } from './data/battler-tag';
 import { Species } from './data/species';
@@ -26,6 +26,8 @@ import { Biome } from './data/biome';
 import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 import { BattlerIndex } from './battle';
+import { Mode } from './ui/ui';
+import PartyUiHandler, { PartyOption, PartyUiMode } from './ui/party-ui-handler';
 
 export enum FieldPosition {
   CENTER,
@@ -184,6 +186,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   isOnField(): boolean {
+    if (!this.scene)
+      return false;
     return this.scene.field.getIndex(this) > -1;
   }
 
@@ -192,6 +196,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   isActive(onField?: boolean): boolean {
+    if (!this.scene)
+      return false;
     return !this.isFainted() && !!this.scene && (!onField || this.isOnField());
   }
 
@@ -1159,6 +1165,21 @@ export class PlayerPokemon extends Pokemon {
         }
       }
     }
+  }
+
+  switchOut(batonPass: boolean): Promise<void> {
+    return new Promise(resolve => {
+      this.resetTurnData();
+      this.resetSummonData();
+      this.hideInfo();
+      this.setVisible(false);
+      
+      this.scene.ui.setMode(Mode.PARTY, PartyUiMode.FAINT_SWITCH, this.getFieldIndex(), (slotIndex: integer, option: PartyOption) => {
+        if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6)
+          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, this.getFieldIndex(), slotIndex, false, batonPass));
+        this.scene.ui.setMode(Mode.MESSAGE).then(() => resolve());
+      }, PartyUiHandler.FilterNonFainted);
+    });
   }
 
   evolve(evolution: SpeciesEvolution): Promise<void> {

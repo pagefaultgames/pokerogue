@@ -114,6 +114,10 @@ export function getEnumValues(enumType): integer[] {
   return Object.values(enumType).filter(v => !isNaN(parseInt(v.toString()))).map(v => parseInt(v.toString()));
 }
 
+export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T> {
+  return condition ? promiseFunc() : new Promise<T>(resolve => resolve(null));
+}
+
 export class BooleanHolder {
   public value: boolean;
 
