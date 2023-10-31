@@ -1260,7 +1260,7 @@ export abstract class EnemyPersistentModifer extends PersistentModifier {
   }
 
   getMaxStackCount(): number {
-    return 5;
+    return this.type.tier ? 1 : 5;
   }
 }
 
@@ -1270,7 +1270,7 @@ export class EnemyDamageBoosterModifier extends EnemyPersistentModifer {
   constructor(type: ModifierType, boostPercent: integer, stackCount?: integer) {
     super(type, stackCount);
 
-    this.damageMultiplier = 1 + (boostPercent * 0.01);
+    this.damageMultiplier = 1 + ((boostPercent || 20) * 0.01);
   }
 
   match(modifier: Modifier): boolean {
@@ -1279,6 +1279,10 @@ export class EnemyDamageBoosterModifier extends EnemyPersistentModifer {
 
   clone(): EnemyDamageBoosterModifier {
     return new EnemyDamageBoosterModifier(this.type, (this.damageMultiplier - 1) * 100, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ (this.damageMultiplier - 1) * 100 ];
   }
 
   apply(args: any[]): boolean {
@@ -1294,7 +1298,7 @@ export class EnemyDamageReducerModifier extends EnemyPersistentModifer {
   constructor(type: ModifierType, reductionPercent: integer, stackCount?: integer) {
     super(type, stackCount);
 
-    this.damageMultiplier = 1 - (reductionPercent * 0.01);
+    this.damageMultiplier = 1 - ((reductionPercent || 10) * 0.01);
   }
 
   match(modifier: Modifier): boolean {
@@ -1303,6 +1307,10 @@ export class EnemyDamageReducerModifier extends EnemyPersistentModifer {
 
   clone(): EnemyDamageReducerModifier {
     return new EnemyDamageReducerModifier(this.type, (1 - this.damageMultiplier) * 100, this.stackCount);
+  }
+
+   getArgs(): any[] {
+    return [ (1 - this.damageMultiplier) * 100 ];
   }
 
   apply(args: any[]): boolean {
@@ -1318,7 +1326,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifer {
   constructor(type: ModifierType, healPercent: integer, stackCount?: integer) {
     super(type, stackCount);
 
-    this.healPercent = healPercent;
+    this.healPercent = healPercent || 10;
   }
 
   match(modifier: Modifier): boolean {
@@ -1327,6 +1335,10 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifer {
 
   clone(): EnemyTurnHealModifier {
     return new EnemyTurnHealModifier(this.type, this.healPercent, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ this.healPercent ];
   }
 
   apply(args: any[]): boolean {
@@ -1351,7 +1363,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModife
     super(type, stackCount);
 
     this.effect = effect;
-    this.chance = chancePercent / 100;
+    this.chance = (chancePercent || 10) / 100;
   }
 
   match(modifier: Modifier): boolean {
@@ -1362,9 +1374,13 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModife
     return new EnemyAttackStatusEffectChanceModifier(this.type, this.effect, this.chance * 100, this.stackCount);
   }
 
+  getArgs(): any[] {
+    return [ this.effect, this.chance * 100 ];
+  }
+
   apply(args: any[]): boolean {
     const target = (args[0] as Pokemon);
-    if (Utils.randIntRange(0, 1) < this.chance * this.getStackCount()) {
+    if (Math.random() < this.chance * this.getStackCount()) {
       target.scene.unshiftPhase(new ObtainStatusEffectPhase(target.scene, target.getBattlerIndex(), this.effect));
       return true;
     }
@@ -1379,7 +1395,7 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifer 
   constructor(type: ModifierType, chancePercent: integer, stackCount?: integer) {
     super(type, stackCount);
 
-    this.chance = chancePercent / 100;
+    this.chance = (chancePercent || 10) / 100;
   }
 
   match(modifier: Modifier): boolean {
@@ -1390,9 +1406,13 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifer 
     return new EnemyStatusEffectHealChanceModifier(this.type, this.chance * 100, this.stackCount);
   }
 
+  getArgs(): any[] {
+    return [ this.chance * 100 ];
+  }
+
   apply(args: any[]): boolean {
     const target = (args[0] as Pokemon);
-    if (target.status && Utils.randIntRange(0, 1) < this.chance * this.getStackCount()) {
+    if (target.status && Math.random() < this.chance * this.getStackCount()) {
       target.scene.queueMessage(getPokemonMessage(target, ` was cured of its\n${getStatusEffectDescriptor(target.status.effect)}!`));
       target.resetStatus();
       target.updateInfo();
@@ -1411,7 +1431,7 @@ export class EnemyInstantReviveChanceModifier extends EnemyPersistentModifer {
     super(type, stackCount);
 
     this.fullHeal = healFull;
-    this.chance = chancePercent / 100;
+    this.chance = (chancePercent || healFull ? 2 : 5) / 100;
   }
 
   match(modifier: Modifier) {
@@ -1422,8 +1442,12 @@ export class EnemyInstantReviveChanceModifier extends EnemyPersistentModifer {
     return new EnemyInstantReviveChanceModifier(this.type, this.fullHeal, this.chance * 100, this.stackCount);
   }
 
+  getArgs(): any[] {
+    return [ this.fullHeal, this.chance * 100 ];
+  }
+
   apply(args: any[]): boolean {
-    if (Utils.randIntRange(0, 1) >= this.chance * this.getStackCount())
+    if (Math.random() >= this.chance * this.getStackCount())
       return false;
 
     const pokemon = args[0] as Pokemon;

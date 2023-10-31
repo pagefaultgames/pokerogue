@@ -1589,9 +1589,11 @@ class MoveEffectPhase extends PokemonPhase {
                         })
                       ).then(() => resolve());
                     });
-                  }
+                  } else
+                    resolve();
                 });
-              }
+              } else
+                resolve();
             });
           }));
         }
