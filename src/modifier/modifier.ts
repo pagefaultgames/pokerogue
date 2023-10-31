@@ -1414,7 +1414,7 @@ export class EnemyInstantReviveChanceModifier extends EnemyPersistentModifer {
     this.chance = chancePercent / 100;
   }
 
-  matchType(modifier: Modifier) {
+  match(modifier: Modifier) {
     return modifier instanceof EnemyInstantReviveChanceModifier && modifier.fullHeal === this.fullHeal && modifier.chance === this.chance;
   }
 
