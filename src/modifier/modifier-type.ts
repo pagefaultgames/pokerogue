@@ -679,6 +679,7 @@ export const modifierTypes = {
   ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Token', 'Increases damage by 20%', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 20), 'wl_item_drop'),
   ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Protection Token', 'Reduces incoming damage by 10%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 10), 'wl_guard_spec'),
   ENEMY_HEAL: () => new ModifierType('Recovery Token', 'Heals 10% of max HP every turn', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 10), 'wl_potion'),
+  ENEMY_SUPER_HEAL: () => new ModifierType('Recovery Token', 'Heals 25% of max HP every turn', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 25), 'wl_super_potion'),
   ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Poison Token', 10, StatusEffect.POISON, 'wl_antidote'),
   ENEMY_ATTACK_PARALYZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Paralyze Token', 10, StatusEffect.PARALYSIS, 'wl_paralyze_heal'),
   ENEMY_ATTACK_SLEEP_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Sleep Token', 10, StatusEffect.SLEEP, 'wl_awakening'),
@@ -871,7 +872,7 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
     pool[t].reduce((total: integer, modifierType: WeightedModifierType) => {
       const weightedModifierType = modifierType as WeightedModifierType;
       const existingModifiers = party[0].scene.findModifiers(m => (m.type.generatorId || m.type.id) === weightedModifierType.modifierType.id, player);
-      const weight = !existingModifiers.length || existingModifiers.filter(m => m.stackCount < m.getMaxStackCount())
+      const weight = !existingModifiers.length || existingModifiers.filter(m => m.stackCount < m.getMaxStackCount()).length
         ? weightedModifierType.weight instanceof Function
           ? (weightedModifierType.weight as Function)(party)
           : weightedModifierType.weight as integer
