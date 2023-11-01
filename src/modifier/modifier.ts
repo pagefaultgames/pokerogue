@@ -14,20 +14,35 @@ import * as Utils from "../utils";
 import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
 import { Species } from '../data/species';
-import { BattleType } from '../battle';
 import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
+const iconOverflowIndex = 24;
+
 export class ModifierBar extends Phaser.GameObjects.Container {
   private player: boolean;
+  private modifierCache: PersistentModifier[];
 
   constructor(scene: BattleScene, enemy?: boolean) {
     super(scene, 1 + (enemy ? 302 : 0), 2);
 
     this.player = !enemy;
     this.setScale(0.5);
+
+    this.setInteractive(new Phaser.Geom.Rectangle(enemy ? -320 : 0, 0, 320, 48), Phaser.Geom.Rectangle.Contains);
+
+    const thisArg = this;
+
+    this.on('pointerover', function () {
+      if (this.modifierCache && this.modifierCache.length > iconOverflowIndex)
+        thisArg.updateModifierOverflowVisibility(true);
+    });
+    this.on('pointerout', function () {
+      if (this.modifierCache && this.modifierCache.length > iconOverflowIndex)
+        thisArg.updateModifierOverflowVisibility(false);
+    });
   }
 
   updateModifiers(modifiers: PersistentModifier[]) {
@@ -35,17 +50,31 @@ export class ModifierBar extends Phaser.GameObjects.Container {
 
     const visibleIconModifiers = modifiers.filter(m => m.isIconVisible(this.scene as BattleScene));
 
-    for (let modifier of visibleIconModifiers) {
-      if (!modifier.isIconVisible(this.scene as BattleScene))
-        continue;
+    visibleIconModifiers.sort((a: Modifier, b: Modifier) => {
+      const aId = a instanceof PokemonHeldItemModifier ? a.pokemonId : 4294967295;
+      const bId = b instanceof PokemonHeldItemModifier ? b.pokemonId : 4294967295;
+
+      return aId < bId ? 1 : aId > bId ? -1 : 0;
+    });
+
+    visibleIconModifiers.forEach((modifier: PersistentModifier, i: integer) => {
       const icon = modifier.getIcon(this.scene as BattleScene);
+      if (i >= iconOverflowIndex)
+        icon.setVisible(false);
       this.add(icon);
       this.setModifierIconPosition(icon, visibleIconModifiers.length);
-    }
+    });
+
+    this.modifierCache = modifiers;
+  }
+
+  updateModifierOverflowVisibility(ignoreLimit: boolean) {
+    for (let modifier of this.getAll().map(m => m as Phaser.GameObjects.Container).slice(iconOverflowIndex))
+      modifier.setVisible(ignoreLimit);
   }
 
   setModifierIconPosition(icon: Phaser.GameObjects.Container, modifierCount: integer) {
-    let rowIcons: integer = 12 + 6 * Math.max((Math.ceil(modifierCount / 12) - 2), 0);
+    let rowIcons: integer = 12 + 6 * Math.max((Math.ceil(Math.min(modifierCount, 24) / 12) - 2), 0);
 
     const x = (this.getIndex(icon) % rowIcons) * 26 / (rowIcons / 12);
     const y = Math.floor(this.getIndex(icon) / rowIcons) * 20;
@@ -340,8 +369,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   isIconVisible(scene: BattleScene): boolean {
-    const pokemon = this.getPokemon(scene);
-    return pokemon instanceof PlayerPokemon || (scene.currentBattle.battleType === BattleType.WILD || this.getPokemon(scene).isOnField());
+    return this.getPokemon(scene).isOnField();
   }
 
   getIcon(scene: BattleScene, forSummary?: boolean): Phaser.GameObjects.Container {

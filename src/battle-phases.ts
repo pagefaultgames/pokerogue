@@ -304,7 +304,8 @@ export class EncounterPhase extends BattlePhase {
 
     if (startingWave > 10) {
       for (let m = 0; m < Math.min(Math.floor(startingWave / 10), 99); m++)
-        this.scene.addModifier(getPlayerModifierTypeOptionsForWave((m + 1) * 10, 1, this.scene.getParty())[0].type.newModifier());
+        this.scene.addModifier(getPlayerModifierTypeOptionsForWave((m + 1) * 10, 1, this.scene.getParty())[0].type.newModifier(), true);
+      this.scene.updateModifiers(true);
     }
 
     this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena.biomeType), false);
@@ -638,8 +639,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               if (playerPokemon?.visible)
                 this.scene.field.moveBelow(pokemon, playerPokemon);
               this.scene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
-              this.scene.updateModifiers(false);
             }
+            this.scene.updateModifiers(this.player);
             pokemon.showInfo();
             pokemon.playAnim();
             pokemon.setVisible(true);
@@ -2739,7 +2740,8 @@ export class AttemptCapturePhase extends PokemonPhase {
       const addToParty = () => {
         const newPokemon = pokemon.addToParty();
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
-        Promise.all(modifiers.map(m => this.scene.addModifier(m))).then(() => {
+        Promise.all(modifiers.map(m => this.scene.addModifier(m, true))).then(() => {
+          this.scene.updateModifiers(true);
           removePokemon();
           if (newPokemon)
             newPokemon.loadAssets().then(end);
@@ -2893,7 +2895,7 @@ export class SelectModifierPhase extends BattlePhase {
                 : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
               this.scene.ui.clearText();
               this.scene.ui.setMode(Mode.MESSAGE);
-              this.scene.addModifier(modifier, true).then(() => super.end());
+              this.scene.addModifier(modifier, false, true).then(() => super.end());
             });
           } else
             this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, );
@@ -2924,7 +2926,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   addModifier(modifier: Modifier): Promise<void> {
-    return this.scene.addModifier(modifier, true);
+    return this.scene.addModifier(modifier, false, true);
   }
 }
 

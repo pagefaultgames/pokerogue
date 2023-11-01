@@ -1117,7 +1117,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.phaseQueue.push(new TurnInitPhase(this));
 	}
 
-	addModifier(modifier: Modifier, playSound?: boolean, virtual?: boolean): Promise<void> {
+	addModifier(modifier: Modifier, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean): Promise<void> {
 		return new Promise(resolve => {
 			const soundName = modifier.type.soundName;
 			if (modifier instanceof PersistentModifier) {
@@ -1126,12 +1126,12 @@ export default class BattleScene extends Phaser.Scene {
 						this.playSound(soundName);
 				} else if (!virtual) {
 					const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
-					this.addModifier(defaultModifierType.newModifier(), playSound).then(() => resolve());
+					this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound).then(() => resolve());
 					this.queueMessage(`The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, null, true);
 					return;
 				}
 
-				if (!virtual)
+				if (!ignoreUpdate && !virtual)
 					this.updateModifiers().then(() => resolve());
 			} else if (modifier instanceof ConsumableModifier) {
 				if (playSound && !this.sound.get(soundName))
@@ -1167,10 +1167,13 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	addEnemyModifier(itemModifier: PersistentModifier): Promise<void> {
+	addEnemyModifier(itemModifier: PersistentModifier, ignoreUpdate?: boolean): Promise<void> {
 		return new Promise(resolve => {
 			itemModifier.add(this.enemyModifiers, false);
-			this.updateModifiers(false).then(() => resolve());
+			if (!ignoreUpdate)
+				this.updateModifiers(false).then(() => resolve());
+			else
+				resolve();
 		});
 	}
 
@@ -1206,7 +1209,7 @@ export default class BattleScene extends Phaser.Scene {
 				const addModifier = () => {
 					if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
 						if (target.isPlayer())
-							this.addModifier(newItemModifier, playSound).then(() => resolve(true));
+							this.addModifier(newItemModifier, false, playSound).then(() => resolve(true));
 						else
 							this.addEnemyModifier(newItemModifier).then(() => resolve(true));
 					} else

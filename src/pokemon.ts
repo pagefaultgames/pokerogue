@@ -1214,8 +1214,9 @@ export class PlayerPokemon extends Pokemon {
         modifiers.forEach(m => {
           const clonedModifier = m.clone() as PokemonHeldItemModifier;
           clonedModifier.pokemonId = newPokemon.id;
-          this.scene.addModifier(clonedModifier);
+          this.scene.addModifier(clonedModifier, true);
         });
+        this.scene.updateModifiers(true);
       }
     }
   }

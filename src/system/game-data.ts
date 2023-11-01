@@ -270,14 +270,18 @@ export class GameData {
         for (let modifierData of sessionData.modifiers) {
           const modifier = modifierData.toModifier(scene, modifiersModule[modifierData.className]);
           if (modifier)
-            scene.addModifier(modifier);
+            scene.addModifier(modifier, true);
         }
+
+        scene.updateModifiers(true);
 
         for (let enemyModifierData of sessionData.enemyModifiers) {
           const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
           if (modifier)
-            scene.addEnemyModifier(modifier);
+            scene.addEnemyModifier(modifier, true);
         }
+
+        scene.updateModifiers(false);
 
         Promise.all(loadPokemonAssets).then(() => resolve(true));
       } catch (err) {
