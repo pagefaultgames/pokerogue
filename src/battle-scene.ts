@@ -1126,13 +1126,12 @@ export default class BattleScene extends Phaser.Scene {
 						this.playSound(soundName);
 				} else if (!virtual) {
 					const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
-					this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound).then(() => resolve());
 					this.queueMessage(`The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, null, true);
-					return;
+					return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound).then(() => resolve());
 				}
 
 				if (!ignoreUpdate && !virtual)
-					this.updateModifiers().then(() => resolve());
+					return this.updateModifiers().then(() => resolve());
 			} else if (modifier instanceof ConsumableModifier) {
 				if (playSound && !this.sound.get(soundName))
 					this.playSound(soundName);
@@ -1155,15 +1154,15 @@ export default class BattleScene extends Phaser.Scene {
 							modifier.apply(args);
 					}
 					
-					Promise.allSettled(this.party.map(p => p.updateInfo())).then(() => resolve());
+					return Promise.allSettled(this.party.map(p => p.updateInfo())).then(() => resolve());
 				} else {
 					const args = [ this ];
 					if (modifier.shouldApply(args))
 						modifier.apply(args);
-					
-					resolve();
 				}
 			}
+
+			resolve();
 		});
 	}
 
