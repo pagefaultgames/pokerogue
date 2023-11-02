@@ -352,6 +352,7 @@ export default class BattleScene extends Phaser.Scene {
 
 	update() {
 		this.checkInput();
+		this.ui.update();
 	}
 
 	launchBattle() {

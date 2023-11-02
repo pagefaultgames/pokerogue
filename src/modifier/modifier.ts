@@ -5,7 +5,7 @@ import { getLevelTotalExp } from "../data/exp";
 import { PokeballType } from "../data/pokeball";
 import Pokemon, { PlayerPokemon } from "../pokemon";
 import { Stat } from "../data/pokemon-stat";
-import { addTextObject, TextStyle } from "../ui/text";
+import { addTextObject, getModifierTierTextTint, TextStyle } from "../ui/text";
 import { Type } from '../data/type';
 import { EvolutionPhase } from '../evolution-phase';
 import { pokemonEvolutions } from '../data/pokemon-evolutions';
@@ -30,19 +30,6 @@ export class ModifierBar extends Phaser.GameObjects.Container {
 
     this.player = !enemy;
     this.setScale(0.5);
-
-    this.setInteractive(new Phaser.Geom.Rectangle(enemy ? -320 : 0, 0, 320, 48), Phaser.Geom.Rectangle.Contains);
-
-    const thisArg = this;
-
-    this.on('pointerover', function () {
-      if (this.modifierCache && this.modifierCache.length > iconOverflowIndex)
-        thisArg.updateModifierOverflowVisibility(true);
-    });
-    this.on('pointerout', function () {
-      if (this.modifierCache && this.modifierCache.length > iconOverflowIndex)
-        thisArg.updateModifierOverflowVisibility(false);
-    });
   }
 
   updateModifiers(modifiers: PersistentModifier[]) {
@@ -57,12 +44,25 @@ export class ModifierBar extends Phaser.GameObjects.Container {
       return aId < bId ? 1 : aId > bId ? -1 : 0;
     });
 
+    const thisArg = this;
+
     visibleIconModifiers.forEach((modifier: PersistentModifier, i: integer) => {
       const icon = modifier.getIcon(this.scene as BattleScene);
       if (i >= iconOverflowIndex)
         icon.setVisible(false);
       this.add(icon);
       this.setModifierIconPosition(icon, visibleIconModifiers.length);
+      icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
+      icon.on('pointerover', () => {
+        (this.scene as BattleScene).ui.showTooltip(modifier.type.name, modifier.type.description);
+        if (this.modifierCache && this.modifierCache.length > iconOverflowIndex)
+          thisArg.updateModifierOverflowVisibility(true);
+      });
+      icon.on('pointerout', () => {
+        (this.scene as BattleScene).ui.hideTooltip();
+        if (this.modifierCache && this.modifierCache.length > iconOverflowIndex)
+          thisArg.updateModifierOverflowVisibility(false);
+      });
     });
 
     this.modifierCache = modifiers;

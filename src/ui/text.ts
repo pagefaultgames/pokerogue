@@ -9,7 +9,9 @@ export enum TextStyle {
   SUMMARY_GOLD,
   MONEY,
   SETTINGS_LABEL,
-  SETTINGS_SELECTED
+  SETTINGS_SELECTED,
+  TOOLTIP_TITLE,
+  TOOLTIP_CONTENT
 };
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
@@ -37,13 +39,18 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
       break;
     case TextStyle.BATTLE_INFO:
     case TextStyle.MONEY:
+    case TextStyle.TOOLTIP_TITLE:
       styleOptions.fontSize = '72px';
-      shadowSize = 4;
+      shadowSize = 4.5;
       break;
     case TextStyle.PARTY:
     case TextStyle.PARTY_RED:
       styleOptions.fontFamily = 'pkmnems';
       styleOptions.fontSize = '66px';
+      break;
+    case TextStyle.TOOLTIP_CONTENT:
+      styleOptions.fontSize = '64px';
+      shadowSize = 4;
       break;
   }
 
@@ -70,6 +77,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean) {
     case TextStyle.MESSAGE:
       return !shadow ? '#f8f8f8' : '#6b5a73';
     case TextStyle.WINDOW:
+    case TextStyle.TOOLTIP_CONTENT:
       return !shadow ? '#484848' : '#d0d0c8';
     case TextStyle.BATTLE_INFO:
       return !shadow ? '#404040' : '#ded6b5';
@@ -80,6 +88,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean) {
     case TextStyle.SUMMARY:
       return !shadow ? '#ffffff' : '#636363';
     case TextStyle.SUMMARY_RED:
+    case TextStyle.TOOLTIP_TITLE:
       return !shadow ? '#f89890' : '#984038';
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.MONEY:
@@ -88,5 +97,21 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean) {
       return !shadow ? '#f8b050' : '#c07800';
     case TextStyle.SETTINGS_SELECTED:
       return !shadow ? '#f88880' : '#f83018';
+  }
+}
+
+export function getModifierTierTextTint(tier: integer): integer {
+  console.log(tier);
+  switch (tier) {
+    case 0: // ModifierTier.COMMON:
+      return 0xffffff;
+    case 1: // ModifierTier.GREAT:
+      return 0x3890f8;
+    case 2: // ModifierTier.ULTRA:
+      return 0xf8d038
+    case 3: // ModifierTier.MASTER:
+      return 0xe020c0;
+    case 4: // ModifierTier.LUXURY:
+      return 0xe64a18;
   }
 }

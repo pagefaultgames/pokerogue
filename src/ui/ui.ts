@@ -15,6 +15,8 @@ import BiomeSelectUiHandler from './biome-select-ui-handler';
 import TargetSelectUiHandler from './target-select-ui-handler';
 import GameModeSelectUiHandler from './game-mode-select-ui-handler';
 import SettingsUiHandler from './settings-ui-handler';
+import { TextStyle, addTextObject, getTextColor } from './text';
+import { getPokeballTintColor } from '../data/pokeball';
 
 export enum Mode {
   MESSAGE,
@@ -51,6 +53,11 @@ export default class UI extends Phaser.GameObjects.Container {
   private lastMode: Mode;
   private handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
+
+  private tooltipContainer: Phaser.GameObjects.Container;
+  private tooltipBg: Phaser.GameObjects.NineSlice;
+  private tooltipTitle: Phaser.GameObjects.Text;
+  private tooltipContent: Phaser.GameObjects.Text;
   
   private overlayActive: boolean;
 
@@ -77,13 +84,33 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    for (let handler of this.handlers) {
+    for (let handler of this.handlers)
       handler.setup();
-    }
     this.overlay = this.scene.add.rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0);
     this.overlay.setOrigin(0, 0);
     (this.scene as BattleScene).uiContainer.add(this.overlay);
     this.overlay.setVisible(false);
+    this.setupTooltip();
+  }
+
+  private setupTooltip() {
+    this.tooltipContainer = this.scene.add.container(0, 0);
+    this.tooltipContainer.setVisible(false);
+
+    this.tooltipBg = this.scene.add.nineslice(0, 0, 'window', null, 128, 31, 6, 6, 6, 6);
+    this.tooltipBg.setOrigin(0, 0);
+
+    this.tooltipTitle = addTextObject(this.scene, 64, 4, '', TextStyle.TOOLTIP_TITLE);
+    this.tooltipTitle.setOrigin(0.5, 0);
+
+    this.tooltipContent = addTextObject(this.scene, 6, 16, '', TextStyle.TOOLTIP_CONTENT);
+    this.tooltipContent.setWordWrapWidth(696)
+
+    this.tooltipContainer.add(this.tooltipBg);
+    this.tooltipContainer.add(this.tooltipTitle);
+    this.tooltipContainer.add(this.tooltipContent);
+
+    (this.scene as BattleScene).uiContainer.add(this.tooltipContainer);
   }
 
   getHandler(): UiHandler {
@@ -115,6 +142,30 @@ export default class UI extends Phaser.GameObjects.Container {
       (handler as MessageUiHandler).showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
     else
       this.getMessageHandler().showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
+  }
+
+  showTooltip(title: string, content: string, overlap?: boolean): void {
+    this.tooltipContainer.setVisible(true);
+    this.tooltipTitle.setText(title);
+    const wrappedContent = this.tooltipContent.runWordWrap(content);
+    this.tooltipContent.setText(wrappedContent);
+    this.tooltipBg.height = 31 + 10.5 * (wrappedContent.split('\n').length - 1);
+    if (overlap)
+       (this.scene as BattleScene).uiContainer.moveAbove(this.tooltipContainer, this);
+    else
+       (this.scene as BattleScene).uiContainer.moveBelow(this.tooltipContainer, this);
+  }
+
+  hideTooltip(): void {
+    this.tooltipContainer.setVisible(false);
+    this.tooltipTitle.clearTint();
+  }
+
+  update(): void {
+    if (this.tooltipContainer.visible) {
+      const reverse = this.scene.game.input.mousePointer.x >= this.scene.game.canvas.width - this.tooltipBg.width * 6 - 12;
+      this.tooltipContainer.setPosition(!reverse ? this.scene.game.input.mousePointer.x / 6 + 2 : this.scene.game.input.mousePointer.x / 6 - this.tooltipBg.width - 2, this.scene.game.input.mousePointer.y / 6 + 2);
+    }
   }
 
   clearText(): void {

@@ -25,6 +25,8 @@ export default class SettingsUiHandler extends UiHandler {
     
     this.settingsContainer = this.scene.add.container(1, -(this.scene.game.canvas.height / 6) + 1);
 
+    this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
+
     const headerBg = this.scene.add.nineslice(0, 0, 'window', null, (this.scene.game.canvas.width / 6) - 2, 24, 6, 6, 6, 6);
     headerBg.setOrigin(0, 0);
 
@@ -94,6 +96,8 @@ export default class SettingsUiHandler extends UiHandler {
     this.setCursor(0);
 
     this.getUi().moveTo(this.settingsContainer, this.getUi().length - 1);
+
+    this.getUi().hideTooltip();
   }
 
   processInput(button: Button) {

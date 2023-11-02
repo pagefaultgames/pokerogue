@@ -1,7 +1,7 @@
 import BattleScene, { Button } from "../battle-scene";
 import { ModifierTier, ModifierTypeOption } from "../modifier/modifier-type";
 import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
-import { addTextObject, TextStyle } from "./text";
+import { addTextObject, getModifierTierTextTint, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -292,7 +292,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type.name, TextStyle.PARTY, { align: 'center' });
     this.itemText.setOrigin(0.5, 0);
     this.itemText.setAlpha(0);
-    this.itemText.setTint(this.getTextTint());
+    this.itemText.setTint(getModifierTierTextTint(this.modifierTypeOption.type.tier));
     this.add(this.itemText);
   }
 
@@ -395,20 +395,5 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
   getPbAtlasKey(beforeUpgrade: boolean) {
     return getPokeballAtlasKey((this.modifierTypeOption.type.tier - (beforeUpgrade && this.modifierTypeOption.upgraded ? 1 : 0)) as integer as PokeballType);
-  }
-
-  getTextTint(): integer {
-    switch (this.modifierTypeOption.type.tier) {
-      case ModifierTier.COMMON:
-        return 0xffffff
-      case ModifierTier.GREAT:
-        return 0x3890f8;
-      case ModifierTier.ULTRA:
-        return 0xf8d038
-      case ModifierTier.MASTER:
-        return 0xe020c0;
-      case ModifierTier.LUXURY:
-        return 0xe64a18;
-    }
   }
 }

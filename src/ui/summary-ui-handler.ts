@@ -412,6 +412,8 @@ export default class SummaryUiHandler extends UiHandler {
 
         this.tabSprite.setTexture(`summary_tabs_${this.cursor + 1}`);
 
+        this.getUi().hideTooltip();
+
         if (this.summaryPageContainer.visible) {
           this.transitioning = true;
           this.populatePageContainer(this.summaryPageTransitionContainer, forward ? cursor : cursor + 1);
@@ -520,6 +522,10 @@ export default class SummaryUiHandler extends UiHandler {
 
           icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
           statsContainer.add(icon);
+          
+          icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
+          icon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(item.type.name, item.type.description, true));
+          icon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
         });
 
         const totalLvExp = getLevelTotalExp(this.pokemon.level, this.pokemon.species.growthRate);
