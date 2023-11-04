@@ -271,7 +271,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
           ratio = 0;
         instant = true;
       }
-      let duration = this.visible && !instant ? ((levelExp - this.lastLevelExp) / relLevelExp) * 1650 : 0;
+      const durationMultiplier = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeIn')(1 - (Math.max(this.lastLevel - 100, 0) / 150));
+      let duration = this.visible && !instant ? (((levelExp - this.lastLevelExp) / relLevelExp) * 1650) * durationMultiplier : 0;
       if (duration)
         (this.scene as BattleScene).playSound('exp');
       this.scene.tweens.add({

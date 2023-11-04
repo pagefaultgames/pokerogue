@@ -21,6 +21,7 @@ export enum PartyUiMode {
   MOVE_MODIFIER,
   TM_MODIFIER,
   MODIFIER_TRANSFER,
+  SPLICE,
   RELEASE
 }
 
@@ -31,6 +32,7 @@ export enum PartyOption {
   APPLY,
   TEACH,
   TRANSFER,
+  SPLICE,
   SUMMARY,
   RELEASE,
   MOVE_1,
@@ -41,6 +43,7 @@ export enum PartyOption {
 
 export type PartySelectCallback = (cursor: integer, option: PartyOption) => void;
 export type PartyModifierTransferSelectCallback = (fromCursor: integer, index: integer, toCursor?: integer) => void;
+export type PartyModifierSpliceSelectCallback = (fromCursor: integer, toCursor?: integer) => void;
 export type PokemonSelectFilter = (pokemon: PlayerPokemon) => string;
 export type PokemonModifierTransferSelectFilter = (pokemon: PlayerPokemon, modifier: PokemonHeldItemModifier) => string;
 export type PokemonMoveSelectFilter = (pokemonMove: PokemonMove) => string;
@@ -200,9 +203,9 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string;
-          if (option !== PartyOption.TRANSFER) {
+          if (option !== PartyOption.TRANSFER && option !== PartyOption.SPLICE) {
             filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
-            if (filterResult === null && this.partyUiMode === PartyUiMode.MOVE_MODIFIER)
+            if (option === PartyOption.TRANSFER && filterResult === null && this.partyUiMode === PartyUiMode.MOVE_MODIFIER)
               filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]);
           } else {
             const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
@@ -210,11 +213,19 @@ export default class PartyUiHandler extends MessageUiHandler {
             filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(pokemon, itemModifiers[this.transferOptionCursor]);
           }
           if (filterResult === null) {
-            this.clearOptions();
+            if (this.partyUiMode !== PartyUiMode.SPLICE)
+              this.clearOptions();
             if (this.selectCallback) {
               if (option === PartyOption.TRANSFER) {
                 (this.selectCallback as PartyModifierTransferSelectCallback)(this.transferCursor, this.transferOptionCursor, this.cursor);
                 this.clearTransfer();
+              } else if (this.partyUiMode === PartyUiMode.SPLICE) {
+                if (option === PartyOption.SPLICE) {
+                  (this.selectCallback as PartyModifierSpliceSelectCallback)(this.transferCursor, this.cursor);
+                  this.clearTransfer();
+                } else
+                  this.startTransfer();
+                this.clearOptions();
               } else if (option === PartyOption.RELEASE)
                 this.doRelease(this.cursor);
               else {
@@ -276,7 +287,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.processInput(Button.CANCEL);
         return;
       } else if (button === Button.CANCEL) {
-        if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && this.transferMode) {
+        if ((this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.SPLICE) && this.transferMode) {
           this.clearTransfer();
           ui.playSelect();
         } else if (this.partyUiMode !== PartyUiMode.FAINT_SWITCH) {
@@ -404,6 +415,10 @@ export default class PartyUiHandler extends MessageUiHandler {
         if (!this.transferMode)
           optionsMessage = 'Select a held item to transfer.';
         break;
+      case PartyUiMode.SPLICE:
+        if (!this.transferMode)
+          optionsMessage = 'Select another Pokémon to splice.';
+        break;
     }
 
     this.showText(optionsMessage, 0);
@@ -440,6 +455,13 @@ export default class PartyUiHandler extends MessageUiHandler {
           break;
         case PartyUiMode.MODIFIER_TRANSFER:
           this.options.push(PartyOption.TRANSFER);
+          break;
+        case PartyUiMode.SPLICE:
+          if (this.transferMode) {
+            if (this.cursor !== this.transferCursor)
+              this.options.push(PartyOption.SPLICE);
+          } else
+            this.options.push(PartyOption.APPLY);
           break;
         case PartyUiMode.RELEASE:
           this.options.push(PartyOption.RELEASE);

@@ -908,6 +908,38 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
   }
 }
 
+export class FusePokemonModifier extends ConsumablePokemonModifier {
+  public fusePokemonId: integer;
+
+  constructor(type: ModifierType, pokemonId: integer, fusePokemonId: integer) {
+    super(type, pokemonId);
+
+    this.fusePokemonId = fusePokemonId;
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args[1] instanceof PlayerPokemon && this.fusePokemonId === (args[1] as PlayerPokemon).id;
+  }
+
+  apply(args: any[]): boolean {
+    (args[0] as PlayerPokemon).fuse(args[1] as PlayerPokemon);
+
+    return true;
+  }
+}
+
+export class UnfusePokemonModifier extends ConsumablePokemonModifier {
+  constructor(type: ModifierType, pokemonId: integer) {
+    super(type, pokemonId);
+  }
+
+  apply(args: any[]): boolean {
+    (args[0] as PlayerPokemon).unfuse();
+
+    return true;
+  }
+}
+
 export class MultipleParticipantExpBonusModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);

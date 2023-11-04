@@ -2023,6 +2023,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       } else {
         switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
         switchOutTarget.hp = 0;
+        switchOutTarget.trySetStatus(StatusEffect.FAINT);
 
         user.scene.queueMessage(getPokemonMessage(switchOutTarget, ' fled!'), null, true, 500);
 

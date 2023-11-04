@@ -1,11 +1,21 @@
 import { Moves } from "./move";
 import { Species } from "./species";
 
-interface PokemonLevelMoves {
-  [key: string]: Array<Array<integer | Moves>>
+export type LevelMoves = (integer | Moves)[][];
+
+interface PokemonSpeciesLevelMoves {
+  [key: string]: LevelMoves
 }
 
-export const pokemonLevelMoves: PokemonLevelMoves = {
+interface PokemonFormLevelMoves {
+  [key: integer]: LevelMoves
+}
+
+interface PokemonSpeciesFormLevelMoves {
+  [key: string]: PokemonFormLevelMoves
+}
+
+export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.BULBASAUR]: [
     [ 1, Moves.TACKLE ],
     [ 3, Moves.GROWL ],
@@ -10966,3 +10976,42 @@ export const pokemonLevelMoves: PokemonLevelMoves = {
     [ 88, Moves.OUTRAGE ]
   ]
 };
+
+export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
+  [Species.KYUREM]: {
+    1: [
+      [ 1, Moves.DRAGON_RAGE ],
+      [ 1, Moves.ICY_WIND ],
+      [ 8, Moves.IMPRISON ],
+      [ 15, Moves.ANCIENT_POWER ],
+      [ 22, Moves.ICE_BEAM ],
+      [ 29, Moves.DRAGON_BREATH ],
+      [ 36, Moves.SLASH ],
+      [ 43, Moves.SCARY_FACE ],
+      [ 50, Moves.ICE_BURN ],
+      [ 57, Moves.DRAGON_PULSE ],
+      [ 64, Moves.IMPRISON ],
+      [ 71, Moves.ENDEAVOR ],
+      [ 78, Moves.BLIZZARD ],
+      [ 85, Moves.OUTRAGE ],
+      [ 92, Moves.HYPER_VOICE ]
+    ],
+    2: [
+      [ 1, Moves.DRAGON_RAGE ],
+      [ 1, Moves.ICY_WIND ],
+      [ 8, Moves.IMPRISON ],
+      [ 15, Moves.ANCIENT_POWER ],
+      [ 22, Moves.ICE_BEAM ],
+      [ 29, Moves.DRAGON_BREATH ],
+      [ 36, Moves.SLASH ],
+      [ 43, Moves.SCARY_FACE ],
+      [ 50, Moves.FREEZE_SHOCK ],
+      [ 57, Moves.DRAGON_PULSE ],
+      [ 64, Moves.IMPRISON ],
+      [ 71, Moves.ENDEAVOR ],
+      [ 78, Moves.BLIZZARD ],
+      [ 85, Moves.OUTRAGE ],
+      [ 92, Moves.HYPER_VOICE ]
+    ]
+  }
+}

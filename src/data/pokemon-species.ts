@@ -1,11 +1,12 @@
 import { Abilities } from './ability';
-import BattleScene from '../battle-scene';
+import BattleScene, { AnySound } from '../battle-scene';
 import { GrowthRate } from './exp';
 import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from './pokemon-evolutions';
 import { Species } from './species';
 import { Type } from './type';
 import * as Utils from '../utils';
 import { TrainerType, trainerConfigs } from './trainer-type';
+import { LevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from './pokemon-level-moves';
 
 export function getPokemonSpecies(species: Species): PokemonSpecies {
   if (species >= Species.XERNEAS)
@@ -72,6 +73,12 @@ export abstract class PokemonSpeciesForm {
 
   getAbility(abilityIndex: integer): Abilities {
     return !abilityIndex ? this.ability1 : abilityIndex === 1 && this.ability2 ? this.ability2 : this.abilityHidden
+  }
+
+  getLevelMoves(): LevelMoves {
+    if (pokemonSpeciesFormLevelMoves.hasOwnProperty(this.speciesId) && pokemonSpeciesFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex))
+      return pokemonSpeciesFormLevelMoves[this.speciesId][this.formIndex];
+    return pokemonSpeciesLevelMoves[this.speciesId];
   }
 
   isObtainable() {
@@ -147,15 +154,21 @@ export abstract class PokemonSpeciesForm {
     const forms = getPokemonSpecies(this.speciesId).forms;
     if (forms.length) {
       const formKey = forms[formIndex || 0].formKey;
-      if (formKey === 'mega' || formKey === 'eternamax')
-        ret += `-${formKey}`;
+      switch (formKey) {
+        case 'mega':
+        case 'white':
+        case 'black':
+        case 'eternamax':
+          ret += `-${formKey}`;
+          break;
+      }
     }
     return ret;
   }
 
   loadAssets(scene: BattleScene, female: boolean, formIndex?: integer, shiny?: boolean, startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
-      scene.load.audio(this.speciesId.toString(), `audio/cry/${this.getCryKey(formIndex)}.mp3`);
+      scene.load.audio(this.getCryKey(formIndex), `audio/cry/${this.getCryKey(formIndex)}.mp3`);
       scene.loadAtlas(this.getSpriteKey(female, formIndex, shiny), 'pokemon', this.getSpriteAtlasPath(female, formIndex, shiny));
       scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
@@ -192,9 +205,13 @@ export abstract class PokemonSpeciesForm {
     });
   }
 
-  cry(scene: BattleScene, soundConfig?: Phaser.Types.Sound.SoundConfig): integer {
-    scene.playSound(this.speciesId.toString(), soundConfig);
-    return scene.sound.get(this.speciesId.toString()).totalDuration * 1000;
+  cry(scene: BattleScene, soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound {
+    const cryKey = this.getCryKey(this.formIndex);
+    let cry = scene.sound.get(cryKey) as AnySound;
+    cry = scene.playSound(cry || cryKey, soundConfig);
+    if (ignorePlay)
+      cry.stop();
+    return cry;
   }
 }
 
@@ -1132,8 +1149,8 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.KYUREM, "Kyurem", 5, false, true, false, "Boundary Pokémon", Type.DRAGON, Type.ICE, 3, 325, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 660, 125, 130, 90, 130, 90, 95, 3, 0, 297, GrowthRate.SLOW, "Undiscovered", null, null, 120, false, true,
       new PokemonForm("Normal", "", Type.DRAGON, Type.ICE, 3, 325, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 660, 125, 130, 90, 130, 90, 95, 3, 0, 297, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
-      new PokemonForm("Black", "black", Type.DRAGON, Type.ICE, 3.3, 325, Abilities.TERAVOLT, Abilities.NONE, Abilities.NONE, 700, 125, 170, 100, 120, 90, 95, 3, 0, 315, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
-      new PokemonForm("White", "white", Type.DRAGON, Type.ICE, 3.6, 325, Abilities.TURBOBLAZE, Abilities.NONE, Abilities.NONE, 700, 125, 120, 90, 170, 100, 95, 3, 0, 315, GrowthRate.SLOW, "Undiscovered", null, null, 120, false)
+      new PokemonForm("White", "white", Type.DRAGON, Type.ICE, 3.6, 325, Abilities.TURBOBLAZE, Abilities.NONE, Abilities.NONE, 700, 125, 120, 90, 170, 100, 95, 3, 0, 315, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
+      new PokemonForm("Black", "black", Type.DRAGON, Type.ICE, 3.3, 325, Abilities.TERAVOLT, Abilities.NONE, Abilities.NONE, 700, 125, 170, 100, 120, 90, 95, 3, 0, 315, GrowthRate.SLOW, "Undiscovered", null, null, 120, false)
     ),
     new PokemonSpecies(Species.KELDEO, "Keldeo", 5, false, false, true, "Colt Pokémon", Type.WATER, Type.FIGHTING, 1.4, 48.5, Abilities.JUSTIFIED, Abilities.NONE, Abilities.NONE, 580, 91, 72, 90, 129, 90, 108, 3, 35, 261, GrowthRate.SLOW, "Undiscovered", null, null, 80, false, true,
       new PokemonForm("Ordinary Forme", "ordinary", Type.WATER, Type.FIGHTING, 1.4, 48.5, Abilities.JUSTIFIED, Abilities.NONE, Abilities.NONE, 580, 91, 72, 90, 129, 90, 108, 3, 35, 261, GrowthRate.SLOW, "Undiscovered", null, null, 80, false),

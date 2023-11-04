@@ -242,7 +242,7 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
             }
             return Math.ceil((scene.sound.get(this.resourceName).totalDuration * 1000) / 33.33);
         } else
-            return Math.ceil(battleAnim.user.cry(soundConfig) / 33.33);
+            return Math.ceil((battleAnim.user.cry(soundConfig).totalDuration * 1000) / 33.33);
     }
 
     getEventType(): string {

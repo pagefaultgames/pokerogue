@@ -4,7 +4,6 @@ import { EnemyPokemon } from "../pokemon";
 import * as Utils from "../utils";
 import { Moves } from "./move";
 import { pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
-import { pokemonLevelMoves } from "./pokemon-level-moves";
 import PokemonSpecies, { PokemonSpeciesFilter, getPokemonSpecies } from "./pokemon-species";
 import { Species } from "./species";
 import { tmSpecies } from "./tms";
@@ -552,7 +551,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.BREEDER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.POKEFAN).setHasGenders().setDouble()
     .setPartyTemplateFunc(scene => getWavePartyTemplate(scene, trainerPartyTemplates.FOUR_WEAKER, trainerPartyTemplates.FIVE_WEAKER, trainerPartyTemplates.SIX_WEAKER)),
   [TrainerType.CLERK]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.CLERK),
-  [TrainerType.CYCLIST]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.CYCLIST).setSpeciesFilter(s => !!pokemonLevelMoves[s.speciesId].find(plm => plm[1] === Moves.QUICK_ATTACK)),
+  [TrainerType.CYCLIST]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.CYCLIST).setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.QUICK_ATTACK)),
   [TrainerType.DANCER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CYCLIST),
   [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK),
   [TrainerType.DOCTOR]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK),
@@ -575,8 +574,8 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.JANITOR]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK),
   [TrainerType.LINEBACKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CYCLIST),
   [TrainerType.MAID]: new TrainerConfig(++t).setEncounterBgm(TrainerType.RICH).setSpeciesFilter(s => s.eggType1 === 'Field' || s.eggType2 === 'Field'),
-  [TrainerType.MUSICIAN]: new TrainerConfig(++t).setEncounterBgm(TrainerType.ROUGHNECK).setSpeciesFilter(s => !!pokemonLevelMoves[s.speciesId].find(plm => plm[1] === Moves.SING)),
-  [TrainerType.NURSE]: new TrainerConfig(++t).setEncounterBgm('lass').setSpeciesFilter(s => !!pokemonLevelMoves[s.speciesId].find(plm => plm[1] === Moves.CHARM) || !!pokemonLevelMoves[s.speciesId].find(plm => plm[1] === Moves.HEAL_PULSE)),
+  [TrainerType.MUSICIAN]: new TrainerConfig(++t).setEncounterBgm(TrainerType.ROUGHNECK).setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.SING)),
+  [TrainerType.NURSE]: new TrainerConfig(++t).setEncounterBgm('lass').setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.CHARM) || !!s.getLevelMoves().find(plm => plm[1] === Moves.HEAL_PULSE)),
   [TrainerType.NURSERY_AIDE]: new TrainerConfig(++t).setEncounterBgm('lass'),
   [TrainerType.OFFICER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK).setSpeciesPools([ Species.VULPIX, Species.GROWLITHE, Species.SNUBBULL, Species.HOUNDOUR, Species.POOCHYENA, Species.ELECTRIKE, Species.LILLIPUP ]),
   [TrainerType.PARASOL_LADY]: new TrainerConfig(++t).setEncounterBgm(TrainerType.PARASOL_LADY).setSpeciesFilter(s => s.isOfType(Type.WATER)),

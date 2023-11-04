@@ -5,7 +5,7 @@ import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier } from './modifier/modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { initAutoPlay } from './system/auto-play';
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
@@ -352,7 +352,7 @@ export default class BattleScene extends Phaser.Scene {
 
 	update() {
 		this.checkInput();
-		this.ui.update();
+		this.ui?.update();
 	}
 
 	launchBattle() {
@@ -1007,7 +1007,7 @@ export default class BattleScene extends Phaser.Scene {
 		return false;
 	}
 
-	playSound(soundName: string, config?: object): AnySound {
+	playSound(sound: string | AnySound, config?: object): AnySound {
 		if (config) {
 			if (config.hasOwnProperty('volume'))
 				config['volume'] *= this.masterVolume * this.seVolume;
@@ -1015,8 +1015,13 @@ export default class BattleScene extends Phaser.Scene {
 				config['volume'] = this.masterVolume * this.seVolume;
 		} else
 			config = { volume: this.masterVolume * this.seVolume };
-		this.sound.play(soundName, config);
-		return this.sound.get(soundName) as AnySound;
+		if (typeof sound === 'string') {
+			this.sound.play(sound, config);
+			return this.sound.get(sound) as AnySound;
+		} else {
+			sound.play(config);
+			return sound;
+		}
 	}
 
 	playSoundWithoutBgm(soundName: string, pauseDuration?: integer): AnySound {
@@ -1149,7 +1154,8 @@ export default class BattleScene extends Phaser.Scene {
 								args.push(hpRestoreMultiplier.value);
 							} else
 								args.push(1);
-						}
+						} else if (modifier instanceof FusePokemonModifier)
+							args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
 							
 						if (modifier.shouldApply(args))
 							modifier.apply(args);

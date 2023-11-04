@@ -440,6 +440,28 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
   }
 }
 
+export class FusePokemonModifierType extends PokemonModifierType {
+  constructor(name: string, iconImage?: string) {
+    super(name, 'Combines two Pokémon, giving the first Pokémon the ability of the second', (_type, args) => new Modifiers.FusePokemonModifier(this, (args[0] as PlayerPokemon).id, (args[1] as PlayerPokemon).id),
+      (pokemon: PlayerPokemon) => {
+        if (pokemon.isFusion())
+          return PartyUiHandler.NoEffectMessage;
+        return null;
+      }, iconImage);
+  }
+}
+
+export class UnfusePokemonModifierType extends PokemonModifierType {
+  constructor(name: string, iconImage?: string) {
+    super(name, 'Removes the fusion aspects of a spliced Pokémon, but the second Pokémon is lost', (_type, args) => new Modifiers.UnfusePokemonModifier(this, (args[0] as PlayerPokemon).id),
+      (pokemon: PlayerPokemon) => {
+        if (!pokemon.isFusion())
+          return PartyUiHandler.NoEffectMessage;
+        return null;
+      }, iconImage);
+  }
+}
+
 class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
@@ -671,6 +693,9 @@ export const modifierTypes = {
   SHINY_CHARM: () => new ModifierType('Shiny Charm', 'Dramatically increases the chance of a wild Pokémon being shiny', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
   ABILITY_CHARM: () => new ModifierType('Ability Charm', 'Dramatically increases the chance of a wild Pokémon having a hidden ability', (type, _args) => new Modifiers.HiddenAbilityRateBoosterModifier(type)),
 
+  DNA_SPLICERS: () => new FusePokemonModifierType('DNA Splicers'),
+  REVERSE_DNA_SPLICERS: () => new UnfusePokemonModifierType('Reverse DNA Splicers', 'dna_splicers'),
+
   MINI_BLACK_HOLE: () => new TurnHeldItemTransferModifierType('Mini Black Hole'),
   
   GOLDEN_POKEBALL: () => new ModifierType(`Golden ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle',
@@ -713,7 +738,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.LURE, 2),
     new WeightedModifierType(modifierTypes.TEMP_STAT_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.BERRY, 2),
-    new WeightedModifierType(modifierTypes.TM_COMMON, 1)
+    new WeightedModifierType(modifierTypes.TM_COMMON, 1),
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.GREAT_BALL, 6),
@@ -774,11 +799,13 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.OVAL_CHARM, 2),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, 2),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 1),
+    new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party.filter(p => p.fusionSpecies).length > 1 ? 3 : 0),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 3),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 2),
-    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 1 : 0)
+    new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party.filter(p => !p.fusionSpecies).length > 1 ? 1 : 0),
+    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 1 : 0),
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
   [ModifierTier.LUXURY]: [
     new WeightedModifierType(modifierTypes.GOLDEN_EXP_CHARM, 1),

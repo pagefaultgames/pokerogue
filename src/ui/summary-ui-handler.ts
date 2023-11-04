@@ -100,19 +100,19 @@ export default class SummaryUiHandler extends UiHandler {
     this.pokemonSprite = this.scene.add.sprite(56, -106, `pkmn__sub`);
     this.summaryContainer.add(this.pokemonSprite);
 
-    this.nameText = addTextObject(this.scene, 6, -39, '', TextStyle.SUMMARY);
-    this.nameText.setOrigin(0, 1);
+    this.nameText = addTextObject(this.scene, 6, -54, '', TextStyle.SUMMARY);
+    this.nameText.setOrigin(0, 0);
     this.summaryContainer.add(this.nameText);
 
-    this.pokeball = this.scene.add.sprite(6, -23, 'pb');
+    this.pokeball = this.scene.add.sprite(6, -19, 'pb');
     this.pokeball.setOrigin(0, 1);
     this.summaryContainer.add(this.pokeball);
 
-    this.levelText = addTextObject(this.scene, 36, -22, '', TextStyle.SUMMARY);
+    this.levelText = addTextObject(this.scene, 36, -18, '', TextStyle.SUMMARY);
     this.levelText.setOrigin(0, 1);
     this.summaryContainer.add(this.levelText);
 
-    this.genderText = addTextObject(this.scene, 96, -22, '', TextStyle.SUMMARY);
+    this.genderText = addTextObject(this.scene, 96, -18, '', TextStyle.SUMMARY);
     this.genderText.setOrigin(0, 1);
     this.summaryContainer.add(this.genderText);
 
@@ -199,7 +199,17 @@ export default class SummaryUiHandler extends UiHandler {
     this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
     this.pokemon.cry();
 
-    this.nameText.setText(this.pokemon.name);
+    let nameLabel = this.pokemon.name;
+    if (this.pokemon.fusionSpecies)
+      nameLabel += `/\n    ${this.pokemon.fusionSpecies.name}`;
+
+    this.nameText.setText(nameLabel);
+
+    this.nameText.setFontSize(`${!this.pokemon.fusionSpecies ? '96px' : '72px'}`);
+    const nameShadowSize = !this.pokemon.fusionSpecies ? 6 : 4.5;
+    this.nameText.setShadowOffset(nameShadowSize, nameShadowSize);
+    this.nameText.setLineSpacing(!this.pokemon.fusionSpecies ? 5 : 0);
+
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
     this.levelText.setText(this.pokemon.level.toString());
     this.genderText.setText(getGenderSymbol(this.pokemon.getGender(true)));
@@ -478,7 +488,7 @@ export default class SummaryUiHandler extends UiHandler {
         if (this.pokemon.species.type2)
           profileContainer.add(getTypeIcon(1, this.pokemon.species.type2));
 
-        const ability = abilities[this.pokemon.species.getAbility(this.pokemon.abilityIndex)];
+        const ability = this.pokemon.getAbility();
 
         const abilityNameText = addTextObject(this.scene, 7, 66, ability.name, TextStyle.SUMMARY);
         abilityNameText.setOrigin(0, 1);

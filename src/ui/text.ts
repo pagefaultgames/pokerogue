@@ -101,7 +101,6 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean) {
 }
 
 export function getModifierTierTextTint(tier: integer): integer {
-  console.log(tier);
   switch (tier) {
     case 0: // ModifierTier.COMMON:
       return 0xffffff;

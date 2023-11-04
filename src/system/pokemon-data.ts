@@ -27,6 +27,12 @@ export default class PokemonData {
   public winCount: integer;
   public pokerus: boolean;
 
+  public fusionSpecies: Species;
+  public fusionFormIndex: integer;
+  public fusionAbilityIndex: integer;
+  public fusionShiny: boolean;
+  public fusionGender: Gender;
+
   public summonData: PokemonSummonData;
 
   constructor(source: Pokemon | any) {
@@ -47,6 +53,12 @@ export default class PokemonData {
     this.ivs = source.ivs;
     this.winCount = source.winCount;
     this.pokerus = !!source.pokerus;
+
+    this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
+    this.fusionFormIndex = source.fusionFormIndex;
+    this.fusionAbilityIndex = source.fusionAbilityIndex;
+    this.fusionShiny = source.fusionShiny;
+    this.fusionGender = source.fusionGender;
 
     if (sourcePokemon) {
       this.moveset = sourcePokemon.moveset;

@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyInstantReviveChanceModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyInstantReviveChanceModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -16,7 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { Biome, biomeLinks } from "./data/biome";
-import { ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getEnemyBuffModifierTypeOptionsForWave, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getEnemyBuffModifierTypeOptionsForWave, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
@@ -118,7 +118,7 @@ export class SelectStarterPhase extends BattlePhase {
       Promise.all(loadPokemonAssets).then(() => {
         this.scene.ui.clearText();
         this.scene.ui.setMode(Mode.MESSAGE).then(() => {
-          SoundFade.fadeOut(this.scene.sound.get('menu'), 500, true);
+          SoundFade.fadeOut(this.scene, this.scene.sound.get('menu'), 500, true);
           this.scene.time.delayedCall(500, () => this.scene.playBgm());
           this.end();
         });
@@ -2819,6 +2819,7 @@ export class AttemptRunPhase extends PokemonPhase {
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.hideInfo().then(() => enemyPokemon.destroy());
         enemyPokemon.hp = 0;
+        enemyPokemon.trySetStatus(StatusEffect.FAINT);
       });
 
       this.scene.clearEnemyHeldItemModifiers();
@@ -2878,28 +2879,42 @@ export class SelectModifierPhase extends BattlePhase {
 
       const modifierType = typeOptions[cursor].type;
       if (modifierType instanceof PokemonModifierType) {
-        const pokemonModifierType = modifierType as PokemonModifierType;
-        const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
-        const isTmModifier = modifierType instanceof TmModifierType;
-        const partyUiMode = isMoveModifier ? PartyUiMode.MOVE_MODIFIER
-          : isTmModifier ? PartyUiMode.TM_MODIFIER : PartyUiMode.MODIFIER;
-        const tmMoveId = isTmModifier
-          ? (modifierType as TmModifierType).moveId
-          : undefined;
-        this.scene.ui.setModeWithoutClear(Mode.PARTY, partyUiMode, -1, (slotIndex: integer, option: PartyOption) => {
-          if (slotIndex < 6) {
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
-              const modifierType = typeOptions[cursor].type;
-              const modifier = !isMoveModifier
-                ? modifierType.newModifier(party[slotIndex])
-                : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
-              this.scene.ui.clearText();
-              this.scene.ui.setMode(Mode.MESSAGE);
-              this.scene.addModifier(modifier, false, true).then(() => super.end());
-            });
-          } else
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, );
-        }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId);
+        if (modifierType instanceof FusePokemonModifierType) {
+          this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.SPLICE, -1, (fromSlotIndex: integer, spliceSlotIndex: integer) => {
+            if (spliceSlotIndex !== undefined && fromSlotIndex < 6 && spliceSlotIndex < 6 && fromSlotIndex !== spliceSlotIndex) {
+              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+                const modifier = modifierType.newModifier(party[fromSlotIndex], party[spliceSlotIndex]);
+                this.scene.ui.clearText();
+                this.scene.ui.setMode(Mode.MESSAGE);
+                this.scene.addModifier(modifier, false, true).then(() => super.end());
+              });
+            } else
+              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback);
+          }, modifierType.selectFilter);
+        } else {
+          const pokemonModifierType = modifierType as PokemonModifierType;
+          const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
+          const isTmModifier = modifierType instanceof TmModifierType;
+          const partyUiMode = isMoveModifier ? PartyUiMode.MOVE_MODIFIER
+            : isTmModifier ? PartyUiMode.TM_MODIFIER : PartyUiMode.MODIFIER;
+          const tmMoveId = isTmModifier
+            ? (modifierType as TmModifierType).moveId
+            : undefined;
+          this.scene.ui.setModeWithoutClear(Mode.PARTY, partyUiMode, -1, (slotIndex: integer, option: PartyOption) => {
+            if (slotIndex < 6) {
+              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+                const modifierType = typeOptions[cursor].type;
+                const modifier = !isMoveModifier
+                  ? modifierType.newModifier(party[slotIndex])
+                  : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
+                this.scene.ui.clearText();
+                this.scene.ui.setMode(Mode.MESSAGE);
+                this.scene.addModifier(modifier, false, true).then(() => super.end());
+              });
+            } else
+              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, );
+          }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId);
+        }
       } else {
         this.addModifier(typeOptions[cursor].type.newModifier()).then(() => super.end());
         this.scene.ui.clearText();
