@@ -24,6 +24,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private nameText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
   private ownedIcon: Phaser.GameObjects.Sprite;
+  private splicedIcon: Phaser.GameObjects.Sprite;
   private statusIndicator: Phaser.GameObjects.Sprite;
   private levelContainer: Phaser.GameObjects.Container;
   private hpBar: Phaser.GameObjects.Image;
@@ -69,6 +70,13 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.add(this.ownedIcon);
     }
 
+    this.splicedIcon = this.scene.add.sprite(0, 0, 'icon_spliced');
+    this.splicedIcon.setVisible(false);
+    this.splicedIcon.setOrigin(0, 0);
+    this.splicedIcon.setPositionRelative(this.nameText, 0, 2);
+    this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 5, 7), Phaser.Geom.Rectangle.Contains);
+    this.add(this.splicedIcon);
+
     this.statusIndicator = this.scene.add.sprite(0, 0, 'statuses');
     this.statusIndicator.setVisible(false);
     this.statusIndicator.setOrigin(0, 0);
@@ -112,6 +120,13 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.genderText.setText(getGenderSymbol(pokemon.gender));
     this.genderText.setColor(getGenderColor(pokemon.gender));
     this.genderText.setPositionRelative(this.nameText, nameTextWidth, 0);
+
+    this.splicedIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1, 1);
+    this.splicedIcon.setVisible(!!pokemon.fusionSpecies);
+    if (this.splicedIcon.visible) {
+      this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `Spliced with ${pokemon.fusionSpecies.name}`));
+      this.splicedIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
+    }
 
     if (!this.player) {
       const speciesOwned = !!pokemon.scene.gameData.getDefaultDexEntry(pokemon.species)?.entry?.caught;

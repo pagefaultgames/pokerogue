@@ -472,7 +472,7 @@ export class SelectBiomePhase extends BattlePhase {
 
     if (this.scene.gameMode === GameMode.CLASSIC && this.scene.currentBattle.waveIndex === this.scene.finalWave - 9)
       setNextBiome(Biome.END);
-    else if (this.scene.gameMode === GameMode.ENDLESS) {
+    else if (this.scene.gameMode !== GameMode.CLASSIC) {
       if (this.scene.currentBattle.waveIndex % 50 === 0)
         setNextBiome(Biome.END);
       else {
@@ -2152,10 +2152,10 @@ export class VictoryPhase extends PokemonPhase {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       if (this.scene.currentBattle.battleType === BattleType.TRAINER)
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));
-      if (this.scene.gameMode === GameMode.ENDLESS || this.scene.currentBattle.waveIndex < this.scene.finalWave) {
+      if (this.scene.gameMode !== GameMode.CLASSIC || this.scene.currentBattle.waveIndex < this.scene.finalWave) {
         if (this.scene.currentBattle.waveIndex > 30 || this.scene.currentBattle.waveIndex % 10) {
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
-          if (this.scene.gameMode === GameMode.ENDLESS && !(this.scene.currentBattle.waveIndex % 50))
+          if (this.scene.gameMode !== GameMode.CLASSIC && !(this.scene.currentBattle.waveIndex % 50))
             this.scene.pushPhase(new SelectEnemyBuffModifierPhase(this.scene));
         } else
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_EXP_CHARM))
@@ -2259,6 +2259,8 @@ export class GameOverPhase extends BattlePhase {
     if (this.victory) {
       if (!this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE])
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.ENDLESS_MODE));
+      if (this.scene.getParty().filter(p => p.fusionSpecies).length && !this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE])
+        this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.SPLICED_ENDLESS_MODE));
       if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE])
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.MINI_BLACK_HOLE));
     }

@@ -28,6 +28,7 @@ import { BattlerIndex } from './battle';
 import { Mode } from './ui/ui';
 import PartyUiHandler, { PartyOption, PartyUiMode } from './ui/party-ui-handler';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
+import { GameMode } from './game-mode';
 
 export enum FieldPosition {
   CENTER,
@@ -148,6 +149,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       this.winCount = 0;
       this.pokerus = false;
+
+      if (scene.gameMode === GameMode.SPLICED_ENDLESS) {
+        this.fusionSpecies = scene.randomSpecies(scene.currentBattle?.waveIndex || 0, level, this.species.getCompatibleFusionSpeciesFilter(), false);
+        this.fusionAbilityIndex = (this.fusionSpecies.abilityHidden && hasHiddenAbility ? this.fusionSpecies.ability2 ? 2 : 1 : this.fusionSpecies.ability2 ? randAbilityIndex : 0);
+        this.fusionFormIndex = scene.getSpeciesFormIndex(this.fusionSpecies);
+        this.fusionShiny = this.shiny;
+        
+        if (this.getFusionSpeciesForm().malePercent === null)
+          this.fusionGender = Gender.GENDERLESS;
+        else {
+          const genderChance = (this.id % 256) * 0.390625;
+          if (genderChance < this.getFusionSpeciesForm().malePercent)
+            this.fusionGender = Gender.MALE;
+          else
+            this.fusionGender = Gender.FEMALE;
+        }
+      }
     }
 
     if (!species.isObtainable())

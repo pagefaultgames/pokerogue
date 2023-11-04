@@ -8,6 +8,7 @@ export default abstract class OptionSelectUiHandler extends UiHandler {
 
   protected optionSelectContainer: Phaser.GameObjects.Container;
   protected optionSelectBg: Phaser.GameObjects.NineSlice;
+  protected optionSelectText: Phaser.GameObjects.Text;
 
   private cursorObj: Phaser.GameObjects.Image;
 
@@ -24,22 +25,31 @@ export default abstract class OptionSelectUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
     
-    this.optionSelectContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - (this.getWindowWidth() + 1), -(this.getWindowWidth() + 1));
+    this.optionSelectContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -48);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
 
     this.optionSelectBg = this.scene.add.nineslice(0, 0, 'window', null, this.getWindowWidth(), this.getWindowHeight(), 6, 6, 6, 6);
-    this.optionSelectBg.setOrigin(0, 1);
+    this.optionSelectBg.setOrigin(1, 1);
     this.optionSelectContainer.add(this.optionSelectBg);
 
+    this.setupOptions();
+    this.setCursor(0);
+  }
+
+  protected setupOptions() {
     const options = this.getOptions();
 
-    const optionSelectText = addTextObject(this.scene, 0, 0, options.join('\n'), TextStyle.WINDOW, { maxLines: options.length });
-    optionSelectText.setPositionRelative(this.optionSelectBg, 16, 9);
-    optionSelectText.setLineSpacing(12);
-    this.optionSelectContainer.add(optionSelectText);
+    if (this.optionSelectText)
+      this.optionSelectText.destroy();
 
-    this.setCursor(0);
+    this.optionSelectText = addTextObject(this.scene, 0, 0, options.join('\n'), TextStyle.WINDOW, { maxLines: options.length });
+    this.optionSelectText.setPositionRelative(this.optionSelectBg, 16, 9);
+    this.optionSelectText.setLineSpacing(12);
+    this.optionSelectContainer.add(this.optionSelectText);
+
+    this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
+    this.optionSelectBg.height = this.getWindowHeight();
   }
 
   show(args: any[]) {

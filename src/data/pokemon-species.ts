@@ -356,6 +356,21 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
     return prevolutionLevels;
   }
 
+  getCompatibleFusionSpeciesFilter(): PokemonSpeciesFilter {
+    const hasEvolution = pokemonEvolutions.hasOwnProperty(this.speciesId);
+    const hasPrevolution = pokemonPrevolutions.hasOwnProperty(this.speciesId);
+    const pseudoLegendary = this.pseudoLegendary;
+    const legendary = this.legendary;
+    const mythical = this.mythical;
+    return species => {
+      return pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
+        && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution
+        && species.pseudoLegendary === pseudoLegendary
+        && species.legendary === legendary
+        && species.mythical === mythical;
+    };
+  }
+
   getFormSpriteKey(formIndex?: integer) {
     return this.forms?.length
       ? this.forms[formIndex || 0].formKey

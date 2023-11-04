@@ -197,6 +197,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('ability_bar', 'ui');
 		this.loadImage('party_exp_bar', 'ui');
 		this.loadImage('shiny_star', 'ui', 'shiny.png');
+		this.loadImage('icon_spliced', 'ui');
 
 		this.loadImage('pb_tray_overlay_player', 'ui');
 		this.loadImage('pb_tray_overlay_enemy', 'ui');
@@ -617,7 +618,7 @@ export default class BattleScene extends Phaser.Scene {
 			if (newTrainer)
 				this.field.add(newTrainer);
 		} else {
-			if (this.gameMode === GameMode.ENDLESS)
+			if (this.gameMode !== GameMode.CLASSIC)
 				newBattleType = BattleType.WILD;
 			else if (battleType === undefined) {
 				if (newWaveIndex > 20 && !(newWaveIndex % 30))
@@ -918,7 +919,7 @@ export default class BattleScene extends Phaser.Scene {
 
 	playBgm(bgmName?: string, fadeOut?: boolean): void {
 		if (bgmName === undefined)
-			bgmName = this.currentBattle.getBgmOverride() || this.arena.bgm;
+			bgmName = this.currentBattle.getBgmOverride(this) || this.arena.bgm;
 		if (this.bgm && bgmName === this.bgm.key) {
 			if (!this.bgm.isPlaying) {
 				this.bgm.play({

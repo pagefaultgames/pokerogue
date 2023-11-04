@@ -371,9 +371,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     };
                     if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
                       ui.setMode(Mode.STARTER_SELECT);
-                      ui.showText('Select a game mode.', null, () => {
-                        ui.setModeWithoutClear(Mode.GAME_MODE_SELECT, () => startRun(GameMode.CLASSIC), () => startRun(GameMode.ENDLESS), cancel);
-                      });
+                      ui.showText('Select a game mode.', null, () => ui.setModeWithoutClear(Mode.GAME_MODE_SELECT, startRun, cancel));
                     } else
                       startRun(GameMode.CLASSIC);
                   }, cancel);

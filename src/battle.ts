@@ -1,11 +1,12 @@
-import BattleScene, { PokeballCounts } from "./battle-scene";
+import BattleScene from "./battle-scene";
 import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 import Trainer from "./trainer";
 import { Species } from "./data/species";
 import { Moves } from "./data/move";
-import { TrainerConfig, TrainerType } from "./data/trainer-type";
+import { TrainerType } from "./data/trainer-type";
+import { GameMode } from "./game-mode";
 
 export enum BattleType {
     WILD,
@@ -94,7 +95,7 @@ export default class Battle {
         this.playerParticipantIds.delete(playerPokemon.id);
     }
 
-    getBgmOverride(): string {
+    getBgmOverride(scene: BattleScene): string {
         const battlers = this.enemyParty.slice(0, this.getBattlerCount());
         if (this.battleType === BattleType.TRAINER) {
             if (!this.started && this.trainer.config.encounterBgm && this.trainer.config.encounterMessages.length)
@@ -113,7 +114,7 @@ export default class Battle {
             }
         }
 
-        if (this.waveIndex <= 4)
+        if (scene.gameMode === GameMode.CLASSIC && this.waveIndex <= 4)
             return 'battle_wild';
 
         return null;

@@ -87,7 +87,8 @@ export class GameData {
     this.secretId = Utils.randSeedInt(65536);
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
-      [Unlockables.MINI_BLACK_HOLE]: false
+      [Unlockables.MINI_BLACK_HOLE]: false,
+      [Unlockables.SPLICED_ENDLESS_MODE]: false
     };
     this.initDexData();
     this.loadSystem();
