@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyInstantReviveChanceModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyInstantReviveChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -16,7 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { Biome, biomeLinks } from "./data/biome";
-import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getEnemyBuffModifierTypeOptionsForWave, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { FusePokemonModifierType, ModifierPoolType, ModifierTier, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
@@ -473,7 +473,7 @@ export class SelectBiomePhase extends BattlePhase {
     if (this.scene.gameMode === GameMode.CLASSIC && this.scene.currentBattle.waveIndex === this.scene.finalWave - 9)
       setNextBiome(Biome.END);
     else if (this.scene.gameMode !== GameMode.CLASSIC) {
-      if (this.scene.currentBattle.waveIndex % 50 === 0)
+      if (!(this.scene.currentBattle.waveIndex % 50))
         setNextBiome(Biome.END);
       else {
         const allBiomes = Utils.getEnumValues(Biome);
@@ -2155,8 +2155,8 @@ export class VictoryPhase extends PokemonPhase {
       if (this.scene.gameMode !== GameMode.CLASSIC || this.scene.currentBattle.waveIndex < this.scene.finalWave) {
         if (this.scene.currentBattle.waveIndex > 30 || this.scene.currentBattle.waveIndex % 10) {
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
-          if (this.scene.gameMode !== GameMode.CLASSIC && !(this.scene.currentBattle.waveIndex % 50))
-            this.scene.pushPhase(new SelectEnemyBuffModifierPhase(this.scene));
+          if (this.scene.gameMode !== GameMode.CLASSIC  && !(this.scene.currentBattle.waveIndex % 50))
+            this.scene.pushPhase(new AddEnemyBuffModifierPhase(this.scene));
         } else
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_EXP_CHARM))
         this.scene.pushPhase(new NewBattlePhase(this.scene));
@@ -2947,31 +2947,19 @@ export class SelectModifierPhase extends BattlePhase {
   }
 }
 
-export class SelectEnemyBuffModifierPhase extends SelectModifierPhase {
+export class AddEnemyBuffModifierPhase extends BattlePhase {
   constructor(scene: BattleScene) {
     super(scene);
   }
 
   start() {
-    this.scene.time.delayedCall(500, () => super.start());
-  }
+    super.start();
 
-  updateSeed(): void { }
+    const waveIndex = this.scene.currentBattle.waveIndex;
+    const tier = !(waveIndex % 1000) ? ModifierTier.ULTRA : !(waveIndex % 250) ? ModifierTier.GREAT : ModifierTier.COMMON;
 
-  isPlayer(): boolean {
-    return false;
-  }
-
-  getPoolType(): ModifierPoolType {
-    return ModifierPoolType.ENEMY_BUFF;
-  }
-
-  getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
-    return getEnemyBuffModifierTypeOptionsForWave(modifierCount);
-  }
-
-  addModifier(modifier: Modifier): Promise<void> {
-    return this.scene.addEnemyModifier(modifier as PersistentModifier);
+    regenerateModifierPoolThresholds(this.scene.getEnemyParty(), ModifierPoolType.ENEMY_BUFF);
+    this.scene.addEnemyModifier(getEnemyBuffModifierForWave(tier, this.scene.findModifiers(m => m instanceof EnemyPersistentModifier, false))).then(() => this.end());
   }
 }
 

@@ -457,7 +457,7 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   private moveType: Type;
   private boostMultiplier: number;
 
-  constructor(type: ModifierType, pokemonId: integer, moveType: Type, boostPercent: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: integer, moveType: Type, boostPercent: number, stackCount?: integer) {
     super(type, pokemonId, stackCount);
 
     this.moveType = moveType;
@@ -763,10 +763,10 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
 
 export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
   private restorePoints: integer;
-  private restorePercent: integer;
+  private restorePercent: number;
   public fainted: boolean;
 
-  constructor(type: ModifierType, pokemonId: integer, restorePoints: integer, restorePercent: integer, fainted?: boolean) {
+  constructor(type: ModifierType, pokemonId: integer, restorePoints: integer, restorePercent: number, fainted?: boolean) {
     super(type, pokemonId);
 
     this.restorePoints = restorePoints;
@@ -998,7 +998,7 @@ export class HealingBoosterModifier extends PersistentModifier {
 export class ExpBoosterModifier extends PersistentModifier {
   private boostMultiplier: integer;
 
-  constructor(type: ModifierType, boostPercent: integer, stackCount?: integer) {
+  constructor(type: ModifierType, boostPercent: number, stackCount?: integer) {
     super(type, stackCount);
 
     this.boostMultiplier = boostPercent * 0.01;
@@ -1034,7 +1034,7 @@ export class ExpBoosterModifier extends PersistentModifier {
 export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
   private boostMultiplier: integer;
 
-  constructor(type: ModifierTypes.PokemonExpBoosterModifierType, pokemonId: integer, boostPercent: integer, stackCount?: integer) {
+  constructor(type: ModifierTypes.PokemonExpBoosterModifierType, pokemonId: integer, boostPercent: number, stackCount?: integer) {
     super(type, pokemonId, stackCount);
     this.boostMultiplier = boostPercent * 0.01;
   }
@@ -1259,7 +1259,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
 export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModifier {
   private chance: number;
 
-  constructor(type: ModifierType, pokemonId: integer, chancePercent: integer, stackCount?: integer) {
+  constructor(type: ModifierType, pokemonId: integer, chancePercent: number, stackCount?: integer) {
     super(type, pokemonId, stackCount);
 
     this.chance = chancePercent / 100;
@@ -1314,23 +1314,39 @@ export class ExtraModifierModifier extends PersistentModifier {
   }
 }
 
-export abstract class EnemyPersistentModifer extends PersistentModifier {
+export abstract class EnemyPersistentModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);
   }
 
-  getMaxStackCount(): number {
+  getMaxStackCount(): integer {
     return this.type.tier ? 1 : 5;
   }
 }
 
-export class EnemyDamageBoosterModifier extends EnemyPersistentModifer {
-  private damageMultiplier: number;
+abstract class EnemyDamageMultiplierModifier extends EnemyPersistentModifier {
+  protected damageMultiplier: number;
 
-  constructor(type: ModifierType, boostPercent: integer, stackCount?: integer) {
+  constructor(type: ModifierType, damageMultiplier: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.damageMultiplier = 1 + ((boostPercent || 20) * 0.01);
+    this.damageMultiplier = damageMultiplier;
+  }
+
+  apply(args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * Math.pow(this.damageMultiplier, this.getStackCount()));
+
+    return true;
+  }
+
+  getMaxStackCount(): integer {
+    return 99;
+  }
+}
+
+export class EnemyDamageBoosterModifier extends EnemyDamageMultiplierModifier {
+  constructor(type: ModifierType, boostPercent: number, stackCount?: integer) {
+    super(type, 1 + ((boostPercent || 20) * 0.01), stackCount);
   }
 
   match(modifier: Modifier): boolean {
@@ -1344,21 +1360,11 @@ export class EnemyDamageBoosterModifier extends EnemyPersistentModifer {
   getArgs(): any[] {
     return [ (this.damageMultiplier - 1) * 100 ];
   }
-
-  apply(args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (this.damageMultiplier * this.getStackCount()));
-
-    return true;
-  }
 }
 
-export class EnemyDamageReducerModifier extends EnemyPersistentModifer {
-  private damageMultiplier: number;
-
-  constructor(type: ModifierType, reductionPercent: integer, stackCount?: integer) {
-    super(type, stackCount);
-
-    this.damageMultiplier = 1 - ((reductionPercent || 10) * 0.01);
+export class EnemyDamageReducerModifier extends EnemyDamageMultiplierModifier {
+  constructor(type: ModifierType, reductionPercent: number, stackCount?: integer) {
+    super(type, 1 - ((reductionPercent || 10) * 0.01), stackCount);
   }
 
   match(modifier: Modifier): boolean {
@@ -1372,18 +1378,12 @@ export class EnemyDamageReducerModifier extends EnemyPersistentModifer {
    getArgs(): any[] {
     return [ (1 - this.damageMultiplier) * 100 ];
   }
-
-  apply(args: any[]): boolean {
-    (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (this.damageMultiplier * this.getStackCount()));
-
-    return true;
-  }
 }
 
-export class EnemyTurnHealModifier extends EnemyPersistentModifer {
-  private healPercent: integer;
+export class EnemyTurnHealModifier extends EnemyPersistentModifier {
+  private healPercent: number;
 
-  constructor(type: ModifierType, healPercent: integer, stackCount?: integer) {
+  constructor(type: ModifierType, healPercent: number, stackCount?: integer) {
     super(type, stackCount);
 
     this.healPercent = healPercent || 10;
@@ -1413,13 +1413,17 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifer {
 
     return false;
   }
+
+  getMaxStackCount(): integer {
+    return 20;
+  }
 }
 
-export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifer {
+export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifier {
   public effect: StatusEffect;
   private chance: number;
 
-  constructor(type: ModifierType, effect: StatusEffect, chancePercent: integer, stackCount?: integer) {
+  constructor(type: ModifierType, effect: StatusEffect, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
     this.effect = effect;
@@ -1449,10 +1453,10 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModife
   }
 }
 
-export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifer {
+export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier {
   private chance: number;
 
-  constructor(type: ModifierType, chancePercent: integer, stackCount?: integer) {
+  constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
     this.chance = (chancePercent || 10) / 100;
@@ -1483,11 +1487,11 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifer 
   }
 }
 
-export class EnemyInstantReviveChanceModifier extends EnemyPersistentModifer {
+export class EnemyInstantReviveChanceModifier extends EnemyPersistentModifier {
   public fullHeal: boolean;
   private chance: number;
 
-  constructor(type: ModifierType, healFull: boolean, chancePercent: integer, stackCount?: integer) {
+  constructor(type: ModifierType, healFull: boolean, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
     this.fullHeal = healFull;
@@ -1518,5 +1522,9 @@ export class EnemyInstantReviveChanceModifier extends EnemyPersistentModifer {
     pokemon.resetStatus();
 
     return true;
+  }
+
+  getMaxStackCount(): integer {
+    return 10;
   }
 }
