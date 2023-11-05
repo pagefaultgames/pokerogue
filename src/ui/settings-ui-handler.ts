@@ -39,13 +39,14 @@ export default class SettingsUiHandler extends UiHandler {
 
     this.optionsContainer = this.scene.add.container(0, 0);
 
+    const settingLabels = [];
     this.optionValueLabels = [];
 
     Object.keys(Setting).forEach((setting, s) => {
-      const settingLabel = addTextObject(this.scene, 8, 28 + s * 16, setting.replace(/\_/g, ' '), TextStyle.SETTINGS_LABEL);
-      settingLabel.setOrigin(0, 0);
+      settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, setting.replace(/\_/g, ' '), TextStyle.SETTINGS_LABEL);
+      settingLabels[s].setOrigin(0, 0);
 
-      this.optionsContainer.add(settingLabel);
+      this.optionsContainer.add(settingLabels[s]);
 
       this.optionValueLabels.push(settingOptions[Setting[setting]].map((option, o) => {
         const valueLabel = addTextObject(this.scene, 0, 0, option, settingDefaults[Setting[setting]] === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
@@ -58,13 +59,15 @@ export default class SettingsUiHandler extends UiHandler {
 
       const totalWidth = this.optionValueLabels[s].map(o => o.width).reduce((total, width) => total += width, 0);
 
-      const totalSpace = 220 - totalWidth / 6;
+      const labelWidth =  Math.max(78, settingLabels[s].displayWidth + 8);
+
+      const totalSpace = (300 - labelWidth) - totalWidth / 6;
       const optionSpacing = Math.floor(totalSpace / (this.optionValueLabels[s].length - 1));
 
       let xOffset = 0;
 
       for (let value of this.optionValueLabels[s]) {
-        value.setPositionRelative(settingLabel, 82 + xOffset, 0);
+        value.setPositionRelative(settingLabels[s], labelWidth + xOffset, 0);
         xOffset += value.width / 6 + optionSpacing;
       }
     });

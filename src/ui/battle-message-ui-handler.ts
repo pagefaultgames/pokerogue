@@ -131,6 +131,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   }
 
   promptLevelUpStats(partyMemberIndex: integer, prevStats: integer[], showTotals: boolean, callback?: Function): void {
+    if (!this.scene.showLevelUpStats)
+      return callback();
     const newStats = (this.scene as BattleScene).getParty()[partyMemberIndex].stats;
     let levelUpStatsValuesText = '';
     const stats = Utils.getEnumValues(Stat);

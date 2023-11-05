@@ -71,6 +71,7 @@ export default class BattleScene extends Phaser.Scene {
 	public bgmVolume: number = 1;
 	public seVolume: number = 1;
 	public gameSpeed: integer = 1;
+	public showLevelUpStats: boolean = true;
 	public quickStart: boolean = quickStart;
 	public finalWave: integer = 200;
 	
