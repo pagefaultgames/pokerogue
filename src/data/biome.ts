@@ -898,7 +898,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [ TrainerType.GIOVANNI ],
+    [BiomePoolTier.BOSS]: [ TrainerType.CLAY ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -975,7 +975,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [ TrainerType.FANTINA ],
+    [BiomePoolTier.BOSS]: [ TrainerType.MORTY, TrainerType.FANTINA ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -1030,7 +1030,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [ TrainerType.MORTY ],
+    [BiomePoolTier.BOSS]: [ TrainerType.GIOVANNI ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -4392,7 +4392,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ TrainerType.GIOVANNI, [
-        [ Biome.BADLANDS, BiomePoolTier.BOSS ]
+        [ Biome.ABYSS, BiomePoolTier.BOSS ]
       ]
     ],
     [ TrainerType.BLAINE, [
@@ -4413,7 +4413,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ TrainerType.MORTY, [
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
+        [ Biome.GRAVEYARD, BiomePoolTier.BOSS ]
       ]
     ],
     [ TrainerType.CHUCK, [
@@ -4525,6 +4525,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ TrainerType.CLAY, [
+        [ Biome.BADLANDS, BiomePoolTier.BOSS ],
         [ Biome.DESERT, BiomePoolTier.BOSS ]
       ]
     ],
