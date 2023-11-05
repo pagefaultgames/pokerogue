@@ -711,8 +711,9 @@ export default class BattleScene extends Phaser.Scene {
 			}
 
 			if (lastBattle && this.currentBattle.battleType !== BattleType.TRAINER) {
+				const availablePartyMembers = this.getParty().filter(p => !p.isFainted()).length;
 				this.pushPhase(new CheckSwitchPhase(this, 0, newDouble));
-				if (newDouble)
+				if (newDouble && availablePartyMembers > 1)
 					this.pushPhase(new CheckSwitchPhase(this, 1, newDouble));
 			}
 		}
