@@ -22,7 +22,7 @@ import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { ArenaTagType, WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
-import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
+import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, IgnoreOpponentStatChangesAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 import { BattlerIndex } from './battle';
 import { Mode } from './ui/ui';
@@ -392,11 +392,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.stats[stat];
   }
 
-  getBattleStat(stat: Stat): integer {
+  getBattleStat(stat: Stat, opponent?: Pokemon): integer {
     if (stat === Stat.HP)
       return this.getStat(Stat.HP);
     const battleStat = (stat - 1) as BattleStat;
     const statLevel = new Utils.IntegerHolder(this.summonData.battleStats[battleStat]);
+    if (opponent)
+      applyAbAttrs(IgnoreOpponentStatChangesAbAttr, opponent, null, statLevel);
     if (this.isPlayer())
       this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
     const statValue = new Utils.NumberHolder(this.getStat(stat));
@@ -755,8 +757,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
             isCritical = !source.getTag(BattlerTagType.NO_CRIT) && !(this.getAbility().hasAttr(BlockCritAbAttr)) && (critChance === 1 || !Utils.randInt(critChance));
           }
-          const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK);
-          const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF);
+          const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this);
+          const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source);
           const stabMultiplier = new Utils.IntegerHolder(source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1);
           const criticalMultiplier = isCritical ? 2 : 1;
           const isTypeImmune = (typeMultiplier.value * weatherTypeMultiplier) === 0;

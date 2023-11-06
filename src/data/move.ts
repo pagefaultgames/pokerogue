@@ -214,16 +214,16 @@ export class AttackMove extends Move {
     attackScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
     if (attackScore) {
       if (this.category === MoveCategory.PHYSICAL) {
-        if (user.getBattleStat(Stat.ATK) > user.getBattleStat(Stat.SPATK)) {
-          const statRatio = user.getBattleStat(Stat.SPATK) / user.getBattleStat(Stat.ATK);
+        if (user.getBattleStat(Stat.ATK, target) > user.getBattleStat(Stat.SPATK, target)) {
+          const statRatio = user.getBattleStat(Stat.SPATK, target) / user.getBattleStat(Stat.ATK, target);
           if (statRatio <= 0.75)
             attackScore *= 2;
           else if (statRatio <= 0.875)
             attackScore *= 1.5;
         }
       } else {
-        if (user.getBattleStat(Stat.SPATK) > user.getBattleStat(Stat.ATK)) {
-          const statRatio = user.getBattleStat(Stat.ATK) / user.getBattleStat(Stat.SPATK);
+        if (user.getBattleStat(Stat.SPATK, target) > user.getBattleStat(Stat.ATK, target)) {
+          const statRatio = user.getBattleStat(Stat.ATK, target) / user.getBattleStat(Stat.SPATK, target);
           if (statRatio <= 0.75)
             attackScore *= 2;
           else if (statRatio <= 0.875)

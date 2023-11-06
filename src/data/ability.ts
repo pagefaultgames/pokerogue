@@ -413,6 +413,18 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
   }
 }
 
+export class IgnoreOpponentStatChangesAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]) {
+    (args[0] as Utils.IntegerHolder).value = 0;
+
+    return true;
+  }
+}
+
 export class PostSummonAbAttr extends AbAttr {
   applyPostSummon(pokemon: Pokemon, args: any[]) {
     return false;
@@ -1486,7 +1498,8 @@ export function initAbilities() {
     new Ability(Abilities.TANGLED_FEET, "Tangled Feet (N)", "Raises Evasiveness if the Pokémon is confused.", 4),
     new Ability(Abilities.TECHNICIAN, "Technician (N)", "Powers up the Pokémon's weaker moves.", 4),
     new Ability(Abilities.TINTED_LENS, "Tinted Lens (N)", "Powers up \"not very effective\" moves.", 4),
-    new Ability(Abilities.UNAWARE, "Unaware (N)", "Ignores any stat changes in the Pokémon.", 4),
+    new Ability(Abilities.UNAWARE, "Unaware", "Ignores any stat changes in the Pokémon.", 4)
+      .attr(IgnoreOpponentStatChangesAbAttr),
     new Ability(Abilities.UNBURDEN, "Unburden (N)", "Raises Speed if a held item is used.", 4),
     new Ability(Abilities.ANALYTIC, "Analytic (N)", "Boosts move power when the Pokémon moves last.", 5),
     new Ability(Abilities.BIG_PECKS, "Big Pecks", "Protects the Pokémon from Defense-lowering attacks.", 5)

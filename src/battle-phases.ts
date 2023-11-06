@@ -25,7 +25,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagType, ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
-import { Abilities, CheckTrappedAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
+import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -1644,6 +1644,8 @@ class MoveEffectPhase extends PokemonPhase {
       
     const userAccuracyLevel = new Utils.IntegerHolder(this.getUserPokemon().summonData.battleStats[BattleStat.ACC]);
     const targetEvasionLevel = new Utils.IntegerHolder(target.summonData.battleStats[BattleStat.EVA]);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, target, null, userAccuracyLevel);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, this.getUserPokemon(), null, targetEvasionLevel);
     this.scene.applyModifiers(TempBattleStatBoosterModifier, this.player, TempBattleStat.ACC, userAccuracyLevel);
     const rand = Utils.randInt(100, 1);
     let accuracyMultiplier = 1;
