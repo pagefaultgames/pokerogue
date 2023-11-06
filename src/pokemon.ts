@@ -39,6 +39,9 @@ export enum FieldPosition {
 const ABILITY_OVERRIDE = Abilities.NONE;
 const MOVE_OVERRIDE = Moves.NONE;
 
+const OPP_ABILITY_OVERRIDE = Abilities.NONE;
+const OPP_MOVE_OVERRIDE = Moves.NONE;
+
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
   public name: string;
@@ -494,6 +497,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getAbility(): Ability {
     if (ABILITY_OVERRIDE && this.isPlayer())
       return abilities[ABILITY_OVERRIDE];
+    if (OPP_ABILITY_OVERRIDE && !this.isPlayer())
+      return abilities[OPP_ABILITY_OVERRIDE];
     if (this.fusionSpecies)
       return abilities[this.getFusionSpeciesForm().getAbility(this.fusionAbilityIndex)];
     return abilities[this.getSpeciesForm().getAbility(this.abilityIndex)];
@@ -619,6 +624,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (MOVE_OVERRIDE && this.isPlayer())
       this.moveset[0] = new PokemonMove(MOVE_OVERRIDE);
+    else if (OPP_MOVE_OVERRIDE && !this.isPlayer())
+      this.moveset[0] = new PokemonMove(OPP_MOVE_OVERRIDE);
   }
 
   trySelectMove(moveIndex: integer, ignorePp?: boolean): boolean {

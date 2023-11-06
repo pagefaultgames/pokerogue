@@ -383,7 +383,8 @@ export class EncounterPhase extends BattlePhase {
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
     });
 
-    enemyField.map(p => this.scene.pushPhase(new PostSummonPhase(this.scene, p.getBattlerIndex())));
+    if (this.scene.currentBattle.battleType !== BattleType.TRAINER)
+      enemyField.map(p => this.scene.pushPhase(new PostSummonPhase(this.scene, p.getBattlerIndex())));
       
     // TODO: Remove
     //this.scene.unshiftPhase(new SelectModifierPhase(this.scene));
