@@ -762,6 +762,22 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
   }
 }
 
+export class StatChangeMultiplierAbAttr extends AbAttr {
+  private multiplier: integer;
+
+  constructor(multiplier: integer) {
+    super(true);
+
+    this.multiplier = multiplier;
+  }
+
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value *= this.multiplier;
+
+    return true;
+  }
+}
+
 export class CheckTrappedAbAttr extends AbAttr {
   applyCheckTrapped(pokemon: Pokemon, trapped: Utils.BooleanHolder, args: any[]): boolean {
     return false;
@@ -1450,7 +1466,8 @@ export function initAbilities() {
       .attr(RecoilMovePowerBoostAbAttr),
     new Ability(Abilities.RIVALRY, "Rivalry (N)", "Deals more damage to a Pokémon of same gender.", 4),
     new Ability(Abilities.SCRAPPY, "Scrappy (N)", "Enables moves to hit Ghost-type Pokémon.", 4),
-    new Ability(Abilities.SIMPLE, "Simple (N)", "Doubles all stat changes.", 4),
+    new Ability(Abilities.SIMPLE, "Simple", "Doubles all stat changes.", 4)
+      .attr(StatChangeMultiplierAbAttr, 2),
     new Ability(Abilities.SKILL_LINK, "Skill Link (N)", "Increases the frequency of multi-strike moves.", 4),
     new Ability(Abilities.SLOW_START, "Slow Start (N)", "Temporarily halves Attack and Speed.", 4),
     new Ability(Abilities.SNIPER, "Sniper (N)", "Powers up moves if they become critical hits.", 4),
@@ -1474,7 +1491,8 @@ export function initAbilities() {
     new Ability(Abilities.ANALYTIC, "Analytic (N)", "Boosts move power when the Pokémon moves last.", 5),
     new Ability(Abilities.BIG_PECKS, "Big Pecks", "Protects the Pokémon from Defense-lowering attacks.", 5)
       .attr(ProtectStatAbAttr, BattleStat.DEF),
-    new Ability(Abilities.CONTRARY, "Contrary (N)", "Makes stat changes have an opposite effect.", 5),
+    new Ability(Abilities.CONTRARY, "Contrary", "Makes stat changes have an opposite effect.", 5)
+      .attr(StatChangeMultiplierAbAttr, -1),
     new Ability(Abilities.CURSED_BODY, "Cursed Body (N)", "May disable a move used on the Pokémon.", 5),
     new Ability(Abilities.DEFEATIST, "Defeatist (N)", "Lowers stats when HP drops below half.", 5),
     new Ability(Abilities.DEFIANT, "Defiant (N)", "Sharply raises Attack when the Pokémon's stats are lowered.", 5),

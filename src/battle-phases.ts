@@ -25,7 +25,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagType, ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
-import { Abilities, CheckTrappedAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, SuppressWeatherEffectAbAttr, applyCheckTrappedAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
+import { Abilities, CheckTrappedAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -1759,16 +1759,19 @@ export class StatChangePhase extends PokemonPhase {
       return !cancelled.value;
     });
 
+    const levels = new Utils.IntegerHolder(this.levels);
+    applyAbAttrs(StatChangeMultiplierAbAttr, pokemon, null, levels);
+
     const battleStats = this.getPokemon().summonData.battleStats;
-    const relLevels = filteredStats.map(stat => (this.levels >= 1 ? Math.min(battleStats[stat] + this.levels, 6) : Math.max(battleStats[stat] + this.levels, -6)) - battleStats[stat]);
+    const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats[stat] + levels.value, 6) : Math.max(battleStats[stat] + levels.value, -6)) - battleStats[stat]);
 
     const end = () => {
-      const messages = this.getStatChangeMessages(filteredStats, relLevels);
+      const messages = this.getStatChangeMessages(filteredStats, levels.value, relLevels);
       for (let message of messages)
         this.scene.queueMessage(message);
 
       for (let stat of filteredStats)
-        pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + this.levels, 6), -6);
+        pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
       
       this.end();
     };
@@ -1777,12 +1780,12 @@ export class StatChangePhase extends PokemonPhase {
       pokemon.enableMask();
       const pokemonMaskSprite = pokemon.maskSprite;
 
-      const statSprite = this.scene.add.tileSprite((this.player ? 106 : 236) * 6, ((this.player ? 148 : 84) + (this.levels >= 1 ? 160 : 0)) * 6, 156, 316, 'battle_stats', filteredStats.length > 1 ? 'mix' : BattleStat[filteredStats[0]].toLowerCase());
+      const statSprite = this.scene.add.tileSprite((this.player ? 106 : 236) * 6, ((this.player ? 148 : 84) + (levels.value >= 1 ? 160 : 0)) * 6, 156, 316, 'battle_stats', filteredStats.length > 1 ? 'mix' : BattleStat[filteredStats[0]].toLowerCase());
       statSprite.setAlpha(0);
       statSprite.setScale(6);
       statSprite.setOrigin(0.5, 1);
 
-      this.scene.playSound(`stat_${this.levels >= 1 ? 'up' : 'down'}`);
+      this.scene.playSound(`stat_${levels.value >= 1 ? 'up' : 'down'}`);
 
       statSprite.setMask(new Phaser.Display.Masks.BitmapMask(this.scene, pokemonMaskSprite));
 
@@ -1803,7 +1806,7 @@ export class StatChangePhase extends PokemonPhase {
       this.scene.tweens.add({
         targets: statSprite,
         duration: 1500,
-        y: `${this.levels >= 1 ? '-' : '+'}=${160 * 6}`
+        y: `${levels.value >= 1 ? '-' : '+'}=${160 * 6}`
       });
       
       this.scene.time.delayedCall(1750, () => {
@@ -1814,11 +1817,11 @@ export class StatChangePhase extends PokemonPhase {
       end();
   }
 
-  getStatChangeMessages(stats: BattleStat[], relLevels: integer[]): string[] {
+  getStatChangeMessages(stats: BattleStat[], levels: integer, relLevels: integer[]): string[] {
     const messages: string[] = [];
     
     for (let s = 0; s < stats.length; s++)
-      messages.push(getPokemonMessage(this.getPokemon(), `'s ${getBattleStatName(stats[s])} ${getBattleStatLevelChangeDescription(Math.abs(relLevels[s]), this.levels >= 1)}!`));
+      messages.push(getPokemonMessage(this.getPokemon(), `'s ${getBattleStatName(stats[s])} ${getBattleStatLevelChangeDescription(Math.abs(relLevels[s]), levels >= 1)}!`));
     return messages;
   }
 }
