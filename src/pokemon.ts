@@ -461,6 +461,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender;
   }
 
+  isShiny(): boolean {
+    return this.shiny || (this.fusionSpecies && this.fusionShiny);
+  }
+
   getMoveset(ignoreOverride?: boolean): PokemonMove[] {
     if (!ignoreOverride && this.summonData?.moveset)
       return this.summonData.moveset;

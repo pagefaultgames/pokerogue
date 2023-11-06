@@ -379,7 +379,7 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = this.scene.getEnemyField();
 
     enemyField.forEach((enemyPokemon, e) => {
-      if (enemyPokemon.shiny)
+      if (enemyPokemon.isShiny())
         this.scene.unshiftPhase(new ShinySparklePhase(this.scene, BattlerIndex.ENEMY + e));
     });
 
@@ -670,7 +670,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   onEnd(): void {
     const pokemon = this.getPokemon();
 
-    if (pokemon.shiny)
+    if (pokemon.isShiny())
       this.scene.unshiftPhase(new ShinySparklePhase(this.scene, pokemon.getBattlerIndex()));
 
     pokemon.resetTurnData();

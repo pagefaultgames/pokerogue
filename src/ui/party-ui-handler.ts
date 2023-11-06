@@ -686,7 +686,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       slotInfoContainer.add(statusIndicator);
     }
 
-    if (this.pokemon.shiny) {
+    if (this.pokemon.isShiny()) {
       const shinyStar = this.scene.add.image(0, 0, 'shiny_star');
       shinyStar.setOrigin(0, 0);
       shinyStar.setPositionRelative(slotName, -8, 2);

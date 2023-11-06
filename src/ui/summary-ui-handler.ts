@@ -190,11 +190,11 @@ export default class SummaryUiHandler extends UiHandler {
     this.summaryContainer.setVisible(true);
     this.cursor = -1;
 
-    this.shinyOverlay.setVisible(this.pokemon.shiny);
+    this.shinyOverlay.setVisible(this.pokemon.isShiny());
 
     this.numberText.setText(Utils.padInt(this.pokemon.species.speciesId, 3));
-    this.numberText.setColor(getTextColor(!this.pokemon.shiny ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
-    this.numberText.setShadowColor(getTextColor(!this.pokemon.shiny ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
+    this.numberText.setColor(getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
+    this.numberText.setShadowColor(getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
 
     this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
     this.pokemon.cry();

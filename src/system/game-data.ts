@@ -365,7 +365,7 @@ export class GameData {
 
   setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies): Promise<void> {
     return new Promise<void>((resolve) => {
-      const dexEntry = this.getDexEntry(species, pokemon.shiny, pokemon.formIndex, pokemon.gender === Gender.FEMALE, pokemon.abilityIndex);
+      const dexEntry = this.getDexEntry(species, pokemon.isShiny(), pokemon.formIndex, pokemon.gender === Gender.FEMALE, pokemon.abilityIndex);
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
       if (!dexEntry.caught) {
         const newCatch = !this.getDefaultDexEntry(species);
@@ -389,7 +389,7 @@ export class GameData {
   }
 
   getPokemonDexEntry(pokemon: Pokemon) {
-    return this.getDexEntry(pokemon.species, pokemon.shiny, pokemon.formIndex, pokemon.gender === Gender.FEMALE, pokemon.abilityIndex);
+    return this.getDexEntry(pokemon.species, pokemon.isShiny(), pokemon.formIndex, pokemon.gender === Gender.FEMALE, pokemon.abilityIndex);
   }
 
   getDexEntry(species: PokemonSpecies, shiny: boolean, formIndex: integer, female: boolean, abilityIndex: integer): DexEntry {
