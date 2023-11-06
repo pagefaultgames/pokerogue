@@ -986,7 +986,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.fusionSpecies)
       return this.fusionFaintCry(callback);
 
-    const key = this.getSpeciesForm().getCryKey();
+    const key = this.getSpeciesForm().getCryKey(this.formIndex);
     let i = 0;
     let rate = 0.85;
     const cry = this.scene.playSound(key, { rate: rate }) as AnySound;
