@@ -216,12 +216,6 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('party_message_large', 'ui');
 		this.loadImage('party_message_options', 'ui');
 		this.loadImage('party_message_options_wide', 'ui');
-		this.loadImage('party_options_top', 'ui');
-		this.loadImage('party_options_center', 'ui');
-		this.loadImage('party_options_bottom', 'ui');
-		this.loadImage('party_options_wide_top', 'ui');
-		this.loadImage('party_options_wide_center', 'ui');
-		this.loadImage('party_options_wide_bottom', 'ui');
 		this.loadAtlas('party_cancel', 'ui');
 
 		this.loadImage('summary_bg', 'ui');

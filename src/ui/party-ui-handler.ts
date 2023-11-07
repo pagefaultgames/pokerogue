@@ -35,7 +35,9 @@ export enum PartyOption {
   SPLICE,
   SUMMARY,
   RELEASE,
-  MOVE_1,
+  SCROLL_UP = 1000,
+  SCROLL_DOWN = 1001,
+  MOVE_1 = 2000,
   MOVE_2,
   MOVE_3,
   MOVE_4
@@ -60,7 +62,10 @@ export default class PartyUiHandler extends MessageUiHandler {
   private partyMessageBox: Phaser.GameObjects.Image;
 
   private optionsMode: boolean;
-  private optionsCursor: integer;
+  private optionsScroll: boolean;
+  private optionsCursor: integer = 0;
+  private optionsScrollCursor: integer = 0;
+  private optionsScrollTotal: integer = 0;
   private optionsContainer: Phaser.GameObjects.Container;
   private optionsCursorObj: Phaser.GameObjects.Image;
   private options: integer[];
@@ -208,8 +213,9 @@ export default class PartyUiHandler extends MessageUiHandler {
             if (option === PartyOption.TRANSFER && filterResult === null && this.partyUiMode === PartyUiMode.MOVE_MODIFIER)
               filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]);
           } else {
+            const transferPokemon = this.scene.getParty()[this.transferCursor];
             const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-                && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === pokemon.id) as PokemonHeldItemModifier[];
+                && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === transferPokemon.id) as PokemonHeldItemModifier[];
             filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(pokemon, itemModifiers[this.transferOptionCursor]);
           }
           if (filterResult === null) {
@@ -353,7 +359,32 @@ export default class PartyUiHandler extends MessageUiHandler {
     
     if (this.optionsMode) {
       changed = this.optionsCursor !== cursor;
-      this.optionsCursor = cursor;
+      let isScroll = false;
+      if (changed && this.optionsScroll) {
+        if (Math.abs(cursor - this.optionsCursor) === this.options.length - 1) {
+          this.optionsScrollCursor = cursor ? this.optionsScrollTotal - 8 : 0;
+          this.updateOptions();
+        } else {
+          const isDown = cursor &&  cursor > this.optionsCursor;
+          if (isDown) {
+            if (this.options[cursor] === PartyOption.SCROLL_DOWN) {
+              isScroll = true;
+              this.optionsScrollCursor++;
+            }
+          } else {
+            if (!cursor && this.optionsScrollCursor) {
+              isScroll = true;
+              this.optionsScrollCursor--;
+            }
+          }
+          if (isScroll && this.optionsScrollCursor === 1)
+            this.optionsScrollCursor += isDown ? 1 : -1;
+        }
+      }
+      if (isScroll) {
+        this.updateOptions();
+       } else
+        this.optionsCursor = cursor;
       if (!this.optionsCursorObj) {
         this.optionsCursorObj = this.scene.add.image(0, 0, 'cursor');
         this.optionsCursorObj.setOrigin(0, 0);
@@ -423,9 +454,13 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.showText(optionsMessage, 0);
 
-    const optionsBottom = this.scene.add.image(0, 0, `party_options${wideOptions ? '_wide' : ''}_bottom`);
-    optionsBottom.setOrigin(1, 1);
-    this.optionsContainer.add(optionsBottom);
+    this.updateOptions();
+
+    this.setCursor(0);
+  }
+
+  updateOptions(): void {
+    const wideOptions = this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER;
 
     const pokemon = this.scene.getParty()[this.cursor];
 
@@ -433,6 +468,12 @@ export default class PartyUiHandler extends MessageUiHandler {
       ? this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
         && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === pokemon.id) as PokemonHeldItemModifier[]
       : null;
+
+    if (this.options.length) {
+      this.options.splice(0, this.options.length);
+      this.optionsContainer.removeAll(true);
+      this.eraseOptionsCursor();
+    }
 
     if (this.partyUiMode !== PartyUiMode.MOVE_MODIFIER && (this.transferMode || this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER)) {
       switch (this.partyUiMode) {
@@ -480,9 +521,32 @@ export default class PartyUiHandler extends MessageUiHandler {
         this.options.push(im);
     }
 
+    this.optionsScrollTotal = this.options.length;
+    let optionStartIndex = this.optionsScrollCursor;
+    let optionEndIndex = Math.min(this.optionsScrollTotal, optionStartIndex + (!optionStartIndex || this.optionsScrollCursor + 8 >= this.optionsScrollTotal ? 8 : 7));
+
+    this.optionsScroll = this.optionsScrollTotal > 9;
+
+    if (this.optionsScroll) {
+      this.options.splice(optionEndIndex, this.optionsScrollTotal);
+      this.options.splice(0, optionStartIndex);
+      if (optionStartIndex)
+        this.options.unshift(PartyOption.SCROLL_UP);
+      if (optionEndIndex < this.optionsScrollTotal)
+        this.options.push(PartyOption.SCROLL_DOWN);
+    }
+
     this.options.push(PartyOption.CANCEL);
 
-    for (let o = 0; o < this.options.length; o++) {
+    const optionBg = this.scene.add.nineslice(0, 0, 'window', null, wideOptions ? 144 : 94, 16 * this.options.length + 13, 6, 6, 6, 6);
+    optionBg.setOrigin(1, 1);
+
+    this.optionsContainer.add(optionBg);
+
+    optionStartIndex = 0;
+    optionEndIndex = this.options.length;
+
+    for (let o = optionStartIndex; o < optionEndIndex; o++) {
       const option = this.options[this.options.length - (o + 1)];
       let optionName: string;
       if (this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER || this.transferMode || option === PartyOption.CANCEL) {
@@ -497,7 +561,11 @@ export default class PartyUiHandler extends MessageUiHandler {
             optionName = Utils.toReadableString(PartyOption[option]);
             break;
         }
-      } else {
+      } else if (option === PartyOption.SCROLL_UP)
+        optionName = '↑';
+      else if (option === PartyOption.SCROLL_DOWN)
+        optionName = '↓';
+      else {
         const itemModifier = itemModifiers[option];
         optionName = itemModifier.type.name;
         if (itemModifier.stackCount > 1)
@@ -505,27 +573,17 @@ export default class PartyUiHandler extends MessageUiHandler {
       }
 
       const yCoord = -6 - 16 * o;
-      const optionBg = this.scene.add.image(0, yCoord, `party_options${wideOptions ? '_wide' : ''}_center`);
       const optionText = addTextObject(this.scene, -79 - (wideOptions ? 50 : 0), yCoord - 16, optionName, TextStyle.WINDOW);
-
-      optionBg.setOrigin(1, 1);
       optionText.setOrigin(0, 0);
 
-      this.optionsContainer.add(optionBg);
       this.optionsContainer.add(optionText);
     }
-
-    const optionsTop = this.scene.add.image(0, -6 - 16 * this.options.length, `party_options${wideOptions ? '_wide' : ''}_top`);
-    optionsTop.setOrigin(1, 1);
-    this.optionsContainer.add(optionsTop);
-
-    this.setCursor(0);
   }
 
   startTransfer(): void {
     this.transferMode = true;
     this.transferCursor = this.cursor;
-    this.transferOptionCursor = this.optionsCursor;
+    this.transferOptionCursor = this.optionsCursor + this.optionsScrollCursor + (this.options[0] === PartyOption.SCROLL_UP ? -1 : 0);
 
     this.partySlots[this.transferCursor].setTransfer(true);
   }
@@ -579,6 +637,9 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   clearOptions() {
     this.optionsMode = false;
+    this.optionsScroll = false;
+    this.optionsScrollCursor = 0;
+    this.optionsScrollTotal = 0;
     this.options.splice(0, this.options.length);
     this.optionsContainer.removeAll(true);
     this.eraseOptionsCursor();

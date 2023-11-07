@@ -703,7 +703,7 @@ export const modifierTypes = {
 
   ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Token', 'Increases damage by 20%', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 20), 'wl_item_drop'),
   ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Protection Token', 'Reduces incoming damage by 10%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 10), 'wl_guard_spec'),
-  //ENEMY_SUPER_EFFECT_BOOSTER: () => new ModifierType('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new Modifiers.EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_super_potion'),
+  //ENEMY_SUPER_EFFECT_BOOSTER: () => new ModifierType('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new Modifiers.EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_custom_super_effective'),
   ENEMY_HEAL: () => new ModifierType('Recovery Token', 'Heals 5% of max HP every turn', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 10), 'wl_potion'),
   ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Poison Token', 10, StatusEffect.POISON, 'wl_antidote'),
   ENEMY_ATTACK_PARALYZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Paralyze Token', 10, StatusEffect.PARALYSIS, 'wl_paralyze_heal'),
@@ -964,7 +964,7 @@ export function getPlayerModifierTypeOptionsForWave(waveIndex: integer, count: i
 
 export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: Modifiers.PersistentModifier[]): Modifiers.EnemyPersistentModifier {
   const tierStackCount = tier === ModifierTier.ULTRA ? 10 : tier === ModifierTier.GREAT ? 5 : 1;
-  const retryCount = 35;
+  const retryCount = 50;
   let candidate = getNewModifierTypeOption(null, ModifierPoolType.ENEMY_BUFF, tier);
   let r = 0;
   let matchingModifier: Modifiers.PersistentModifier;
@@ -990,7 +990,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
   if (tier === undefined) {
     const tierValue = Utils.randSeedInt(256);
     if (player && tierValue) {
-      const partyShinyCount = party.filter(p => p.shiny).length;
+      const partyShinyCount = party.filter(p => p.isShiny()).length;
       const upgradeOdds = Math.floor(32 / Math.max((partyShinyCount * 2), 1));
       upgrade = !Utils.randSeedInt(upgradeOdds);
     } else
