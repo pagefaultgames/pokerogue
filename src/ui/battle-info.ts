@@ -131,7 +131,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     if (!this.player) {
       const speciesOwned = !!pokemon.scene.gameData.getDefaultDexEntry(pokemon.species)?.entry?.caught;
       this.ownedIcon.setVisible(speciesOwned);
-      if (!pokemon.scene.gameData.getPokemonDexEntry(pokemon).caught)
+      if (!pokemon.scene.gameData.getPokemonDexEntry(pokemon)?.caught)
         this.ownedIcon.setTint(0x808080);
     }
 

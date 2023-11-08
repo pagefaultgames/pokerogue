@@ -397,11 +397,18 @@ export class GameData {
     const genderIndex = !female ? 0 : 1;
     const data = this.dexData[species.speciesId];
     if (species.forms?.length) {
-      try {
+      const getEntry = () => {
         if (species.malePercent !== null)
           return data[shinyIndex][formIndex][genderIndex][abilityIndex];
         return data[shinyIndex][formIndex][abilityIndex];
-      } catch (err) {
+      };
+      let entry: DexEntry;
+      try {
+        entry = getEntry();
+      } catch (err) { }
+      if (entry)
+        return entry;
+      else {
         console.warn(`Form data not found for dex entry for ${species.name}: Restructuring dex entry`);
         for (let s = 0; s < 2; s++) {
           const oldData = Object.assign({}, data[s]);
@@ -411,9 +418,7 @@ export class GameData {
         }
         this.saveSystem();
       }
-      if (species.malePercent !== null)
-        return data[shinyIndex][formIndex][genderIndex][abilityIndex];
-      return data[shinyIndex][formIndex][abilityIndex];
+      return getEntry();
     } else if (species.malePercent !== null)
       return data[shinyIndex][genderIndex][abilityIndex];
     return data[shinyIndex][abilityIndex] as DexEntry;
