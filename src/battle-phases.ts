@@ -16,7 +16,7 @@ import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { Biome, biomeLinks } from "./data/biome";
-import { FusePokemonModifierType, ModifierPoolType, ModifierTier, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, TmModifierType, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { FusePokemonModifierType, ModifierPoolType, ModifierTier, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, RememberMoveModifierType, TmModifierType, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
@@ -2923,8 +2923,11 @@ export class SelectModifierPhase extends BattlePhase {
           const pokemonModifierType = modifierType as PokemonModifierType;
           const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
           const isTmModifier = modifierType instanceof TmModifierType;
+          const isRememberMoveModifier = modifierType instanceof RememberMoveModifierType;
           const partyUiMode = isMoveModifier ? PartyUiMode.MOVE_MODIFIER
-            : isTmModifier ? PartyUiMode.TM_MODIFIER : PartyUiMode.MODIFIER;
+            : isTmModifier ? PartyUiMode.TM_MODIFIER
+            : isRememberMoveModifier ? PartyUiMode.REMEMBER_MOVE_MODIFIER
+            : PartyUiMode.MODIFIER;
           const tmMoveId = isTmModifier
             ? (modifierType as TmModifierType).moveId
             : undefined;
@@ -2933,7 +2936,9 @@ export class SelectModifierPhase extends BattlePhase {
               this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
                 const modifierType = typeOptions[cursor].type;
                 const modifier = !isMoveModifier
-                  ? modifierType.newModifier(party[slotIndex])
+                  ? !isRememberMoveModifier
+                    ? modifierType.newModifier(party[slotIndex])
+                  : modifierType.newModifier(party[slotIndex], option as integer)
                   : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
                 this.scene.ui.clearText();
                 this.scene.ui.setMode(Mode.MESSAGE);

@@ -888,6 +888,24 @@ export class TmModifier extends ConsumablePokemonModifier {
   }
 }
 
+export class RememberMoveModifier extends ConsumablePokemonModifier {
+  public levelMoveIndex: integer;
+
+  constructor(type: ModifierTypes.ModifierType, pokemonId: integer, levelMoveIndex: integer) {
+    super(type, pokemonId);
+
+    this.levelMoveIndex = levelMoveIndex;
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as PlayerPokemon;
+
+    pokemon.scene.unshiftPhase(new LearnMovePhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), pokemon.getLearnableLevelMoves()[this.levelMoveIndex]));
+
+    return true;
+  }
+}
+
 export class EvolutionItemModifier extends ConsumablePokemonModifier {
   constructor(type: ModifierTypes.EvolutionItemModifierType, pokemonId: integer) {
     super(type, pokemonId);

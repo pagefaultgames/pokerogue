@@ -6,7 +6,7 @@ import { EvolutionItem, pokemonEvolutions } from '../data/pokemon-evolutions';
 import { Stat, getStatName } from '../data/pokemon-stat';
 import { tmPoolTiers, tmSpecies } from '../data/tms';
 import { Type } from '../data/type';
-import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from '../ui/party-ui-handler';
+import PartyUiHandler, { PokemonMoveSelectFilter, PokemonRememberMoveSelectFilter, PokemonSelectFilter } from '../ui/party-ui-handler';
 import * as Utils from '../utils';
 import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
@@ -202,6 +202,17 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
       }, iconImage, 'elixir');
 
     this.restorePoints = this.restorePoints;
+  }
+}
+
+export class RememberMoveModifierType extends PokemonModifierType {
+  constructor(name: string, description: string, iconImage?: string, group?: string) {
+    super(name, description, (type, args) => new Modifiers.RememberMoveModifier(type, (args[0] as PlayerPokemon).id, (args[1] as integer)),
+      (pokemon: PlayerPokemon) => {
+        if (!pokemon.getLearnableLevelMoves().length)
+          return PartyUiHandler.NoEffectMessage;
+        return null;
+      }, iconImage, group);
   }
 }
 
@@ -653,6 +664,8 @@ export const modifierTypes = {
   TM_GREAT: () => new TmModifierTypeGenerator(ModifierTier.GREAT),
   TM_ULTRA: () => new TmModifierTypeGenerator(ModifierTier.ULTRA),
 
+  MEMORY_MUSHROOM: () => new RememberMoveModifierType('Memory Mushroom', 'Recall one Pokémon\'s forgotten move', 'big_mushroom'),
+
   EXP_SHARE: () => new ModifierType('EXP. All', 'Non-participants receive 20% of a single participant\'s EXP. Points',
     (type, _args) => new Modifiers.ExpShareModifier(type), 'exp_share'),
   EXP_BALANCE: () => new ModifierType('EXP. Balance', 'All EXP. Points received from battles are split between the lower leveled party members',
@@ -786,6 +799,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.MAX_LURE, 4),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 5),
+    new WeightedModifierType(modifierTypes.MEMORY_MUSHROOM, (party: Pokemon[]) => party.filter(p => p.getLearnableLevelMoves().length).length ? 4 : 0),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 3),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 3),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 2),

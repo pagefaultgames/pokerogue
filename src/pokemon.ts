@@ -29,6 +29,7 @@ import { Mode } from './ui/ui';
 import PartyUiHandler, { PartyOption, PartyUiMode } from './ui/party-ui-handler';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
 import { GameMode } from './game-mode';
+import { pokemonFormLevelMoves } from './data/pokemon-level-moves';
 
 export enum FieldPosition {
   CENTER,
@@ -471,6 +472,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.moveset;
   }
 
+  getLearnableLevelMoves(): Moves[] {
+    return this.getLevelMoves(1).filter(lm => !this.moveset.filter(m => m.moveId === lm).length);
+  }
+
   getTypes(ignoreOverride?: boolean): Type[] {
     const types = [];
 
@@ -548,7 +553,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getLevelMoves(startingLevel?: integer): Moves[] {
     const ret: Moves[] = [];
-    const levelMoves = this.getSpeciesForm().getLevelMoves();;
+    const levelMoves = this.getSpeciesForm().getLevelMoves();
     if (levelMoves) {
       if (!startingLevel)
         startingLevel = this.level;

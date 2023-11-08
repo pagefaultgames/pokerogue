@@ -7,7 +7,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
-import { Moves } from "../data/move";
+import { Moves, allMoves } from "../data/move";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
 
@@ -20,6 +20,7 @@ export enum PartyUiMode {
   MODIFIER,
   MOVE_MODIFIER,
   TM_MODIFIER,
+  REMEMBER_MOVE_MODIFIER,
   MODIFIER_TRANSFER,
   SPLICE,
   RELEASE
@@ -205,6 +206,16 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.startTransfer();
           this.clearOptions();
           ui.playSelect();
+        } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER && option !== PartyOption.CANCEL) {
+          let filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
+          if (filterResult === null) {
+            this.selectCallback(this.cursor, option);
+            this.clearOptions();
+          } else {
+            this.clearOptions();
+            this.showText(filterResult as string, null, () => this.showText(null, 0), null, true);
+          }
+          ui.playSelect();
         } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string;
@@ -271,8 +282,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       } else if (button === Button.CANCEL) {
         this.clearOptions();
         ui.playSelect();
-      }
-      else {
+      } else {
         switch (button) {
           case Button.UP:
             success = this.setCursor(this.optionsCursor ? this.optionsCursor - 1 : this.options.length - 1);
@@ -464,6 +474,10 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     const pokemon = this.scene.getParty()[this.cursor];
 
+    const learnableLevelMoves = this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER
+        ? pokemon.getLearnableLevelMoves()
+        : null;
+
     const itemModifiers = this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER
       ? this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
         && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === pokemon.id) as PokemonHeldItemModifier[]
@@ -475,7 +489,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.eraseOptionsCursor();
     }
 
-    if (this.partyUiMode !== PartyUiMode.MOVE_MODIFIER && (this.transferMode || this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER)) {
+    if (this.partyUiMode !== PartyUiMode.MOVE_MODIFIER && this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_MODIFIER && (this.transferMode || this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER)) {
       switch (this.partyUiMode) {
         case PartyUiMode.SWITCH:
         case PartyUiMode.FAINT_SWITCH:
@@ -516,6 +530,10 @@ export default class PartyUiHandler extends MessageUiHandler {
     } else if (this.partyUiMode === PartyUiMode.MOVE_MODIFIER) {
       for (let m = 0; m < pokemon.moveset.length; m++)
         this.options.push(PartyOption.MOVE_1 + m);
+    } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
+      const learnableMoves = pokemon.getLearnableLevelMoves();
+      for (let m = 0; m < learnableMoves.length; m++)
+        this.options.push(m);
     } else {
       for (let im = 0; im < itemModifiers.length; im++)
         this.options.push(im);
@@ -549,7 +567,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     for (let o = optionStartIndex; o < optionEndIndex; o++) {
       const option = this.options[this.options.length - (o + 1)];
       let optionName: string;
-      if (this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER || this.transferMode || option === PartyOption.CANCEL) {
+      if ((this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_MODIFIER && (this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER || this.transferMode)) || option === PartyOption.CANCEL) {
         switch (option) {
           case PartyOption.MOVE_1:
           case PartyOption.MOVE_2:
@@ -565,7 +583,10 @@ export default class PartyUiHandler extends MessageUiHandler {
         optionName = '↑';
       else if (option === PartyOption.SCROLL_DOWN)
         optionName = '↓';
-      else {
+      else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
+        const move = learnableLevelMoves[option];
+        optionName = allMoves[move].name;
+      } else {
         const itemModifier = itemModifiers[option];
         optionName = itemModifier.type.name;
         if (itemModifier.stackCount > 1)
@@ -583,7 +604,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   startTransfer(): void {
     this.transferMode = true;
     this.transferCursor = this.cursor;
-    this.transferOptionCursor = this.optionsCursor + this.optionsScrollCursor + (this.options[0] === PartyOption.SCROLL_UP ? -1 : 0);
+    this.transferOptionCursor = this.getOptionsCursorWithScroll();
 
     this.partySlots[this.transferCursor].setTransfer(true);
   }
@@ -633,6 +654,10 @@ export default class PartyUiHandler extends MessageUiHandler {
       return `Sayonara, ${pokemonName}!`
     else
       return `Smell ya later, ${pokemonName}!`;
+  }
+
+  getOptionsCursorWithScroll(): integer {
+    return this.optionsCursor + this.optionsScrollCursor + (this.options && this.options[0] === PartyOption.SCROLL_UP ? -1 : 0);
   }
 
   clearOptions() {
