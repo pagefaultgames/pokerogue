@@ -2011,8 +2011,12 @@ export class DamagePhase extends PokemonPhase {
 }
 
 export class FaintPhase extends PokemonPhase {
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
+  private preventEndure: boolean;
+
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, preventEndure?: boolean) {
     super(scene, battlerIndex);
+
+    this.preventEndure = preventEndure;
   }
 
   start() {
@@ -2020,20 +2024,22 @@ export class FaintPhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
 
-    const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.player, this.getPokemon()) as PokemonInstantReviveModifier;
+    if (!this.preventEndure) {
+      const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.player, this.getPokemon()) as PokemonInstantReviveModifier;
 
-    if (instantReviveModifier) {
-      if (!--instantReviveModifier.stackCount)
-        this.scene.removeModifier(instantReviveModifier);
-      this.scene.updateModifiers(this.player);
-      return this.end();
-    }
+      if (instantReviveModifier) {
+        if (!--instantReviveModifier.stackCount)
+          this.scene.removeModifier(instantReviveModifier);
+        this.scene.updateModifiers(this.player);
+        return this.end();
+      }
 
-    if (!pokemon.isPlayer()) {
-      const enemyInstantReviveModifiers = this.scene.findModifiers(m => m instanceof EnemyInstantReviveChanceModifier, false);
-      for (let modifier of enemyInstantReviveModifiers) {
-        if (modifier.shouldApply([ pokemon ]) && modifier.apply([ pokemon ]))
-          return this.end();
+      if (!pokemon.isPlayer()) {
+        const enemyInstantReviveModifiers = this.scene.findModifiers(m => m instanceof EnemyInstantReviveChanceModifier, false);
+        for (let modifier of enemyInstantReviveModifiers) {
+          if (modifier.shouldApply([ pokemon ]) && modifier.apply([ pokemon ]))
+            return this.end();
+        }
       }
     }
 
