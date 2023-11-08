@@ -111,6 +111,8 @@ export class SelectStarterPhase extends BattlePhase {
         const starterPokemon = new PlayerPokemon(this.scene, starter.species, startingLevel, starter.abilityIndex, starter.formIndex, starterGender, starter.shiny);
         if (starter.pokerus)
           starterPokemon.pokerus = true;
+        if (this.scene.gameMode === GameMode.SPLICED_ENDLESS)
+          starterPokemon.generateFusionSpecies(true);
         starterPokemon.setVisible(false);
         party.push(starterPokemon);
         loadPokemonAssets.push(starterPokemon.loadAssets());
@@ -245,7 +247,7 @@ export class EncounterPhase extends BattlePhase {
         if (battle.battleType === BattleType.TRAINER)
           battle.enemyParty[e] = battle.trainer.genPartyMember(e);
         else {
-          const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, null, true);
+          const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
           battle.enemyParty[e] = new EnemyPokemon(this.scene, enemySpecies, level, false);
         }
       }

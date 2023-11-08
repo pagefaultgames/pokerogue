@@ -456,7 +456,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		if (this.quickStart) {
 			for (let s = 0; s < 3; s++) {
-				const playerSpecies = this.randomSpecies(startingWave, startingLevel, null, false);
+				const playerSpecies = this.randomSpecies(startingWave, startingLevel);
 				const playerPokemon = new PlayerPokemon(this, playerSpecies, startingLevel, 0, 0);
 				playerPokemon.setVisible(false);
 				this.party.push(playerPokemon);
@@ -815,15 +815,20 @@ export default class BattleScene extends Phaser.Scene {
 		return Math.min(Math.ceil(baseLevel / 2) * 2 + 2, 10000);
 	}
 
-	randomSpecies(waveIndex: integer, level: integer, speciesFilter?: PokemonSpeciesFilter, fromArenaPool?: boolean): PokemonSpecies {
+	randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean, speciesFilter?: PokemonSpeciesFilter, filterAllEvolutions?: boolean): PokemonSpecies {
 		if (fromArenaPool)
 			return this.arena.randomSpecies(waveIndex, level);
 		const filteredSpecies = speciesFilter ? [...new Set(allSpecies.slice(0, -1).filter(speciesFilter).map(s => {
-			while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
-				s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
+			if (!filterAllEvolutions) {
+				while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
+					s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
+			}
 			return s;
 		}))] : allSpecies.slice(0, -1);
-		return getPokemonSpecies(filteredSpecies[Utils.randSeedInt(filteredSpecies.length)].getSpeciesForLevel(level, true));
+		let ret = filteredSpecies[Utils.randSeedInt(filteredSpecies.length)];
+		if (!filterAllEvolutions)
+			ret = getPokemonSpecies(ret.getSpeciesForLevel(level, true));
+		return ret;
 	}
 
 	checkInput(): boolean {

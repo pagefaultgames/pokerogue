@@ -154,22 +154,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.winCount = 0;
       this.pokerus = false;
 
-      if (scene.gameMode === GameMode.SPLICED_ENDLESS) {
-        this.fusionSpecies = scene.randomSpecies(scene.currentBattle?.waveIndex || 0, level, this.species.getCompatibleFusionSpeciesFilter(), false);
-        this.fusionAbilityIndex = (this.fusionSpecies.abilityHidden && hasHiddenAbility ? this.fusionSpecies.ability2 ? 2 : 1 : this.fusionSpecies.ability2 ? randAbilityIndex : 0);
-        this.fusionFormIndex = scene.getSpeciesFormIndex(this.fusionSpecies);
-        this.fusionShiny = this.shiny;
-        
-        if (this.getFusionSpeciesForm().malePercent === null)
-          this.fusionGender = Gender.GENDERLESS;
-        else {
-          const genderChance = (this.id % 256) * 0.390625;
-          if (genderChance < this.getFusionSpeciesForm().malePercent)
-            this.fusionGender = Gender.MALE;
-          else
-            this.fusionGender = Gender.FEMALE;
-        }
-      }
+      if (scene.gameMode === GameMode.SPLICED_ENDLESS)
+        this.generateFusionSpecies();
     }
 
     if (!species.isObtainable())
@@ -595,6 +581,39 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       console.log('REAL SHINY!!');
 
     return this.shiny;
+  }
+
+  generateFusionSpecies(forStarter?: boolean): void {
+    const hiddenAbilityChance = new Utils.IntegerHolder(256);
+    if (!this.hasTrainer())
+      this.scene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+
+    const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value);
+    const randAbilityIndex = Utils.randSeedInt(2);
+
+    const filter = !forStarter ? this.species.getCompatibleFusionSpeciesFilter()
+    : species => {
+      return pokemonEvolutions.hasOwnProperty(species.speciesId)
+      && !pokemonPrevolutions.hasOwnProperty(species.speciesId)
+      && !species.pseudoLegendary
+      && !species.legendary
+      && !species.mythical
+    };
+   
+    this.fusionSpecies = this.scene.randomSpecies(this.scene.currentBattle?.waveIndex || 0, this.level, false, filter, true);
+    this.fusionAbilityIndex = (this.fusionSpecies.abilityHidden && hasHiddenAbility ? this.fusionSpecies.ability2 ? 2 : 1 : this.fusionSpecies.ability2 ? randAbilityIndex : 0);
+    this.fusionFormIndex = this.scene.getSpeciesFormIndex(this.fusionSpecies);
+    this.fusionShiny = this.shiny;
+    
+    if (this.getFusionSpeciesForm().malePercent === null)
+      this.fusionGender = Gender.GENDERLESS;
+    else {
+      const genderChance = (this.id % 256) * 0.390625;
+      if (genderChance < this.getFusionSpeciesForm().malePercent)
+        this.fusionGender = Gender.MALE;
+      else
+        this.fusionGender = Gender.FEMALE;
+    }
   }
 
   generateAndPopulateMoveset(): void {
