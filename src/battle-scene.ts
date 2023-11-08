@@ -33,6 +33,7 @@ import { Setting, settingOptions } from './system/settings';
 import SettingsUiHandler from './ui/settings-ui-handler';
 import MessageUiHandler from './ui/message-ui-handler';
 import { Species } from './data/species';
+import InvertPostFX from './pipelines/invert';
 
 const enableAuto = true;
 const quickStart = false;
@@ -1070,6 +1071,13 @@ export default class BattleScene extends Phaser.Scene {
 		}
 
 		return 0;
+	}
+
+	toggleInvert(invert: boolean): void {
+		if (invert)
+			this.cameras.main.setPostPipeline(InvertPostFX);
+		else
+			this.cameras.main.removePostPipeline('InvertPostFX');
 	}
 
 	getCurrentPhase(): BattlePhase {

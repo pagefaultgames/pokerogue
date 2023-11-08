@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import BattleScene, { AnySound } from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './ui/battle-info';
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, Moves, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, AttackMove, AddBattlerTagAttr } from "./data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, Moves, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, AttackMove, AddBattlerTagAttr, OneHitKOAttr } from "./data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, getPokemonSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier } from './data/type';
@@ -790,14 +790,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           console.log('damage', damage, move.name, move.power, sourceAtk, targetDef);
           
           if (!result) {
-            if (typeMultiplier.value >= 2)
-              result = HitResult.SUPER_EFFECTIVE;
-            else if (typeMultiplier.value >= 1)
-              result = HitResult.EFFECTIVE;
-            else if (typeMultiplier.value > 0)
-              result = HitResult.NOT_VERY_EFFECTIVE;
-            else
+            if (!typeMultiplier.value)
               result = HitResult.NO_EFFECT;
+            else {
+              const oneHitKo = new Utils.BooleanHolder(false);
+              applyMoveAttrs(OneHitKOAttr, source, this, move, oneHitKo);
+              if (oneHitKo.value) {
+                result = HitResult.ONE_HIT_KO;
+                isCritical = false;
+                damage.value = this.hp;
+              } else if (typeMultiplier.value >= 2)
+                result = HitResult.SUPER_EFFECTIVE;
+              else if (typeMultiplier.value >= 1)
+                result = HitResult.EFFECTIVE;
+              else
+                result = HitResult.NOT_VERY_EFFECTIVE;
+            }
           }
 
           if (!source.isPlayer())
@@ -827,6 +835,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                 break;
               case HitResult.NO_EFFECT:
                 this.scene.queueMessage(`It doesn\'t affect ${this.name}!`);
+                break;
+              case HitResult.ONE_HIT_KO:  
+                this.scene.queueMessage('It\'s a one-hit KO!');
                 break;
             }
           }
@@ -1692,13 +1703,14 @@ export enum HitResult {
   SUPER_EFFECTIVE,
   NOT_VERY_EFFECTIVE,
   NO_EFFECT,
+  ONE_HIT_KO,
   STATUS,
   FAIL,
   MISS,
   OTHER
 }
 
-export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.OTHER;
+export type DamageResult = HitResult.EFFECTIVE | HitResult.SUPER_EFFECTIVE | HitResult.NOT_VERY_EFFECTIVE | HitResult.ONE_HIT_KO | HitResult.OTHER;
 
 export class PokemonMove {
   public moveId: Moves;

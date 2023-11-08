@@ -1313,16 +1313,13 @@ export class ClearWeatherAttr extends MoveEffectAttr {
   }
 }
 
-export class OneHitKOAttr extends MoveEffectAttr {
-  constructor() {
-    super(false, MoveEffectTrigger.HIT);
-  }
-
+export class OneHitKOAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (target.species.speciesId === Species.ETERNATUS && target.formIndex === 1)
       return false;
-    target.damage(target.hp, true);
-    user.scene.queueMessage('It\'s a one-hit KO!');
+
+    (args[0] as Utils.BooleanHolder).value = true;
+    
     return true;
   }
 }

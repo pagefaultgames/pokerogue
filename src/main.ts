@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import BattleScene from './battle-scene';
+import InvertPostFX from './pipelines/invert';
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.WEBGL,
@@ -10,6 +11,7 @@ const config: Phaser.Types.Core.GameConfig = {
 		mode: Phaser.Scale.FIT
 	},
 	pixelArt: true,
+	pipeline: [ InvertPostFX ] as unknown as Phaser.Types.Core.PipelineConfig,
 	scene: [ BattleScene ]
 };
 

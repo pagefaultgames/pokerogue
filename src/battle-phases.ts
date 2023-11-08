@@ -1982,11 +1982,25 @@ export class DamagePhase extends PokemonPhase {
   start() {
     super.start();
 
+    if (this.damageResult === HitResult.ONE_HIT_KO) {
+      this.scene.toggleInvert(true);
+      this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
+        this.scene.toggleInvert(false);
+        this.applyDamage();
+      });
+      return;
+    }
+
+    this.applyDamage();
+  }
+
+  applyDamage() {
     switch (this.damageResult) {
       case HitResult.EFFECTIVE:
         this.scene.playSound('hit');
         break;
       case HitResult.SUPER_EFFECTIVE:
+      case HitResult.ONE_HIT_KO:
         this.scene.playSound('hit_strong');
         break;
       case HitResult.NOT_VERY_EFFECTIVE:
