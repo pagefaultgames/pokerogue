@@ -29,7 +29,7 @@ import { Mode } from './ui/ui';
 import PartyUiHandler, { PartyOption, PartyUiMode } from './ui/party-ui-handler';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
 import { GameMode } from './game-mode';
-import { pokemonFormLevelMoves } from './data/pokemon-level-moves';
+import { LevelMoves, pokemonFormLevelMoves } from './data/pokemon-level-moves';
 
 export enum FieldPosition {
   CENTER,
@@ -539,10 +539,27 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getLevelMoves(startingLevel?: integer): Moves[] {
     const ret: Moves[] = [];
-    const levelMoves = this.getSpeciesForm().getLevelMoves();
-    if (levelMoves) {
-      if (!startingLevel)
+    let levelMoves = this.getSpeciesForm().getLevelMoves();
+    if (!startingLevel)
         startingLevel = this.level;
+    if (this.fusionSpecies) {
+      const fusionLevelMoves = this.getFusionSpeciesForm().getLevelMoves();
+      const newLevelMoves: LevelMoves = [];
+      for (let l = startingLevel; l <= this.level; l++) {
+        while (levelMoves.length && levelMoves[0][0] === l) {
+          const levelMove = levelMoves.shift();
+          if (!newLevelMoves.find(lm => lm[1] === levelMove[1]))
+            newLevelMoves.push(levelMove);
+        }
+        while (fusionLevelMoves.length && fusionLevelMoves[0][0] === l) {
+          const fusionLevelMove = fusionLevelMoves.shift();
+          if (!newLevelMoves.find(lm => lm[1] === fusionLevelMove[1]))
+            newLevelMoves.push(fusionLevelMove);
+        }
+      }
+      levelMoves = newLevelMoves;
+    }
+    if (levelMoves) {
       for (let lm of levelMoves) {
         const level = lm[0];
         if (level < startingLevel)
@@ -1160,7 +1177,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // Failsafe
     this.scene.time.delayedCall(Utils.fixedInt(3000), () => {
-      console.log(faintCryTimer)
       if (!faintCryTimer || !this.scene)
         return;
       if (cry?.isPlaying)
@@ -1357,11 +1373,11 @@ export class PlayerPokemon extends Pokemon {
       const moveId = parseInt(tm) as Moves;
       for (let p of tmSpecies[tm]) {
         if (Array.isArray(p)) {
-          if (p[0] === this.species.speciesId) {
+          if (p[0] === this.species.speciesId || (this.fusionSpecies && p[0] === this.fusionSpecies.speciesId)) {
             this.compatibleTms.push(moveId);
             break;
           }
-        } else if (p === this.species.speciesId) {
+        } else if (p === this.species.speciesId || (this.fusionSpecies && p === this.fusionSpecies.speciesId)) {
           this.compatibleTms.push(moveId);
           break;
         }
@@ -1440,6 +1456,7 @@ export class PlayerPokemon extends Pokemon {
       }
 
       this.calculateStats();
+      this.generateCompatibleTms();
       this.updateInfo(true).then(() => {
         const fusedPartyMemberIndex = this.scene.getParty().indexOf(pokemon);
         const fusedPartyMemberHeldModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
@@ -1466,6 +1483,7 @@ export class PlayerPokemon extends Pokemon {
       this.fusionGender = 0;
 
       this.calculateStats();
+      this.generateCompatibleTms();
       this.updateInfo(true).then(() => resolve());
     });
   }

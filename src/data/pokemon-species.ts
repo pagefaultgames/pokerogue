@@ -77,8 +77,8 @@ export abstract class PokemonSpeciesForm {
 
   getLevelMoves(): LevelMoves {
     if (pokemonSpeciesFormLevelMoves.hasOwnProperty(this.speciesId) && pokemonSpeciesFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex))
-      return pokemonSpeciesFormLevelMoves[this.speciesId][this.formIndex];
-    return pokemonSpeciesLevelMoves[this.speciesId];
+      return pokemonSpeciesFormLevelMoves[this.speciesId][this.formIndex].slice(0);
+    return pokemonSpeciesLevelMoves[this.speciesId].slice(0);
   }
 
   isObtainable() {

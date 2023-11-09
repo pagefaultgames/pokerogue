@@ -3476,10 +3476,10 @@ export function initMoves() {
     new AttackMove(Moves.STORED_POWER, "Stored Power (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 20, 100, 10, 41, "Power increases when user's stats have been raised.", -1, 0, 5),
     new SelfStatusMove(Moves.QUICK_GUARD, "Quick Guard (N)", Type.FIGHTING, -1, 15, -1, "Protects the user's team from high-priority moves.", -1, 3, 5)
       .target(MoveTarget.USER_SIDE),
-    new StatusMove(Moves.ALLY_SWITCH, "Ally Switch (N)", Type.PSYCHIC, -1, 15, -1, "User switches with opposite teammate.", -1, 0, 5)
+    new StatusMove(Moves.ALLY_SWITCH, "Ally Switch (N)", Type.PSYCHIC, -1, 15, -1, "User switches with opposite teammate.", -1, 2, 5)
       .ignoresProtect()
       .target(MoveTarget.USER), // TODO
-    new AttackMove(Moves.SCALD, "Scald", Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, "May burn opponent.", 30, 1, 5)
+    new AttackMove(Moves.SCALD, "Scald", Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, "May burn opponent.", 30, 0, 5)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new SelfStatusMove(Moves.SHELL_SMASH, "Shell Smash", Type.NORMAL, -1, 15, -1, "Sharply raises user's Attack, Special Attack and Speed but lowers Defense and Special Defense.", -1, 0, 5)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 2, true)

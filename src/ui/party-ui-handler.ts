@@ -566,6 +566,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     for (let o = optionStartIndex; o < optionEndIndex; o++) {
       const option = this.options[this.options.length - (o + 1)];
+      let altText = false;
       let optionName: string;
       if ((this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_MODIFIER && (this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER || this.transferMode)) || option === PartyOption.CANCEL) {
         switch (option) {
@@ -586,6 +587,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
         const move = learnableLevelMoves[option];
         optionName = allMoves[move].name;
+        altText = !!pokemon.getSpeciesForm().getLevelMoves().find(plm => plm[1] === move);
       } else {
         const itemModifier = itemModifiers[option];
         optionName = itemModifier.type.name;
@@ -595,6 +597,10 @@ export default class PartyUiHandler extends MessageUiHandler {
 
       const yCoord = -6 - 16 * o;
       const optionText = addTextObject(this.scene, -79 - (wideOptions ? 50 : 0), yCoord - 16, optionName, TextStyle.WINDOW);
+      if (altText) {
+        optionText.setColor('#40c8f8');
+        optionText.setShadowColor('#006090')
+      }
       optionText.setOrigin(0, 0);
 
       this.optionsContainer.add(optionText);
