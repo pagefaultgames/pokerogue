@@ -153,7 +153,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       const tierPool = this.config.speciesPools[tier];
       ret = getPokemonSpecies(getPokemonSpecies(Phaser.Math.RND.pick(tierPool)).getSpeciesForLevel(level, true));
     } else
-      ret = getPokemonSpecies(this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter).getSpeciesForLevel(level));
+      ret = getPokemonSpecies(this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter).getSpeciesForLevel(level, true));
 
     if (template.isBalanced(battle.enemyParty.length)) {
       const partyMemberTypes = battle.enemyParty.map(p => p.getTypes()).flat();

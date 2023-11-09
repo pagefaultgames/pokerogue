@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { startingWave } from "../battle-scene";
 import { ModifierType, ModifierTypeFunc, modifierTypes } from "../modifier/modifier-type";
 import { EnemyPokemon } from "../pokemon";
 import * as Utils from "../utils";
@@ -510,7 +510,7 @@ interface TrainerConfigs {
 }
 
 function getWavePartyTemplate(scene: BattleScene, ...templates: TrainerPartyTemplate[]) {
-  return templates[Math.min(Math.max(Math.ceil((scene.currentBattle.waveIndex - 10) / 20) - 1, 0), templates.length - 1)];
+  return templates[Math.min(Math.max(Math.ceil(((scene.currentBattle?.waveIndex || startingWave) - 10) / 20) - 1, 0), templates.length - 1)];
 }
 
 function getGymLeaderPartyTemplate(scene: BattleScene) {
