@@ -587,7 +587,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
         const move = learnableLevelMoves[option];
         optionName = allMoves[move].name;
-        altText = !!pokemon.getSpeciesForm().getLevelMoves().find(plm => plm[1] === move);
+        altText = !pokemon.getSpeciesForm().getLevelMoves().find(plm => plm[1] === move);
       } else {
         const itemModifier = itemModifiers[option];
         optionName = itemModifier.type.name;
