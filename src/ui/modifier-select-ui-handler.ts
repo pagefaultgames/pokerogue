@@ -255,23 +255,22 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       onComplete: () => options.forEach(o => o.destroy())
     });
     
-    if (this.transferButtonContainer.visible) {
-      this.scene.tweens.add({
-        targets: [ this.rerollButtonContainer, this.transferButtonContainer ],
-        alpha: 0,
-        duration: 250,
-        ease: 'Cubic.easeIn',
-        onComplete: () => {
-          if (!this.options.length) {
-            this.rerollButtonContainer.setVisible(false);
-            this.transferButtonContainer.setVisible(false);
-          } else {
-            this.rerollButtonContainer.setAlpha(1);
-            this.transferButtonContainer.setAlpha(1);
+    [ this.rerollButtonContainer, this.transferButtonContainer ].forEach(container => {
+      if (container.visible) {
+        this.scene.tweens.add({
+          targets: container,
+          alpha: 0,
+          duration: 250,
+          ease: 'Cubic.easeIn',
+          onComplete: () => {
+            if (!this.options.length)
+              container.setVisible(false);
+            else
+              container.setAlpha(1);
           }
-        }
-      })
-    }
+        });
+      }
+    });
   }
 
   eraseCursor() {

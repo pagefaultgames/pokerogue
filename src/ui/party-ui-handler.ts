@@ -221,7 +221,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           let filterResult: string;
           if (option !== PartyOption.TRANSFER && option !== PartyOption.SPLICE) {
             filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
-            if (option === PartyOption.TRANSFER && filterResult === null && this.partyUiMode === PartyUiMode.MOVE_MODIFIER)
+            if (filterResult === null && this.partyUiMode === PartyUiMode.MOVE_MODIFIER)
               filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]);
           } else {
             const transferPokemon = this.scene.getParty()[this.transferCursor];

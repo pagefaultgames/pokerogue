@@ -1088,8 +1088,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (cry && !cry.pendingRemove) {
           rate *= 0.99;
           cry.setRate(rate);
-        }
-        else {
+        } else {
           faintCryTimer.destroy();
           faintCryTimer = null;
           if (callback)

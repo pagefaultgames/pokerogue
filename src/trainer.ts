@@ -13,7 +13,12 @@ export default class Trainer extends Phaser.GameObjects.Container {
     super(scene, -72, 80);
     this.config = trainerConfigs[trainerType];
     this.female = female;
-    this.partyTemplateIndex = Math.min(partyTemplateIndex !== undefined ? partyTemplateIndex : Phaser.Math.RND.weightedPick(this.config.partyTemplates.map((_, i) => i)), this.config.partyTemplates.length - 1);
+    this.partyTemplateIndex = Math.min(partyTemplateIndex !== undefined ? partyTemplateIndex : Phaser.Math.RND.weightedPick(this.config.partyTemplates.map((_, i) => i)), 
+      this.config.partyTemplates.length - 1);
+      
+    // TODO: Remove when Phaser weightedPick bug is fixed
+    if (isNaN(this.partyTemplateIndex))
+      this.partyTemplateIndex = this.config.partyTemplates.length - 1;
 
     console.log(Object.keys(trainerPartyTemplates)[Object.values(trainerPartyTemplates).indexOf(this.getPartyTemplate())]);
 
