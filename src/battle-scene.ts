@@ -106,6 +106,7 @@ export default class BattleScene extends Phaser.Scene {
 	private moneyText: Phaser.GameObjects.Text;
 	private modifierBar: ModifierBar;
 	private enemyModifierBar: ModifierBar;
+	private fieldOverlay: Phaser.GameObjects.Rectangle;
 	private modifiers: PersistentModifier[];
 	private enemyModifiers: PersistentModifier[];
 	public uiContainer: Phaser.GameObjects.Container;
@@ -304,6 +305,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('charge');
 		this.loadSe('beam');
 		this.loadSe('upgrade');
+		this.loadSe('buy');
 		this.loadSe('error');
 
 		this.loadSe('pb_rel');
@@ -369,6 +371,13 @@ export default class BattleScene extends Phaser.Scene {
 		uiContainer.setScale(6);
 
 		this.uiContainer = uiContainer;
+
+		const overlayWidth = this.game.canvas.width / 6;
+		const overlayHeight = (this.game.canvas.height / 6) - 48;
+		this.fieldOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x424242);
+		this.fieldOverlay.setOrigin(0, 0);
+		this.fieldOverlay.setAlpha(0);
+		this.fieldUI.add(this.fieldOverlay);
 
 		this.modifiers = [];
 		this.enemyModifiers = [];
@@ -786,6 +795,30 @@ export default class BattleScene extends Phaser.Scene {
 		Phaser.Math.RND.sow([ Utils.shiftCharCodes(seedOverride || this.seed, offset) ]);
 		func();
 		Phaser.Math.RND.state(state);
+	}
+
+	showFieldOverlay(duration: integer): Promise<void> {
+		return new Promise(resolve => {
+			this.tweens.add({
+				targets: this.fieldOverlay,
+				alpha: 0.5,
+				ease: 'Sine.easeOut',
+				duration: duration,
+				onComplete: () => resolve()
+			});
+		});
+	}
+
+	hideFieldOverlay(duration: integer): Promise<void> {
+		return new Promise(resolve => {
+			this.tweens.add({
+				targets: this.fieldOverlay,
+				alpha: 0,
+				duration: duration,
+				ease: 'Cubic.easeIn',
+				onComplete: () => resolve()
+			});
+		});
 	}
 
 	updateWaveCountText(): void {

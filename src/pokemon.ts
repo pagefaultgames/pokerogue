@@ -165,7 +165,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.fieldPosition = FieldPosition.CENTER;
 
-    scene.fieldUI.add(this.battleInfo);
+    scene.fieldUI.addAt(this.battleInfo, 0);
     
     this.battleInfo.initInfo(this);
 
@@ -684,6 +684,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   showInfo() {
     if (!this.battleInfo.visible) {
+      const otherBattleInfo = this.scene.fieldUI.getAll().slice(0, 4).filter(ui => ui instanceof BattleInfo && ((ui as BattleInfo) instanceof PlayerBattleInfo) === this.isPlayer()).find(() => true);
+      if (!otherBattleInfo || !this.getFieldIndex())
+        this.scene.fieldUI.sendToBack(this.battleInfo);
+      else
+        this.scene.fieldUI.moveAbove(this.battleInfo, otherBattleInfo);
       this.battleInfo.setX(this.battleInfo.x + (this.isPlayer() ? 150 : -150));
       this.battleInfo.setVisible(true);
       this.scene.tweens.add({

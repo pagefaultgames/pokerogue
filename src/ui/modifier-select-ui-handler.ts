@@ -1,15 +1,16 @@
 import BattleScene, { Button } from "../battle-scene";
-import { ModifierTier, ModifierTypeOption } from "../modifier/modifier-type";
+import { ModifierTypeOption } from "../modifier/modifier-type";
 import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
-import { addTextObject, getModifierTierTextTint, TextStyle } from "./text";
+import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 
 export default class ModifierSelectUiHandler extends AwaitableUiHandler {
-  private overlayBg: Phaser.GameObjects.Rectangle;
   private modifierContainer: Phaser.GameObjects.Container;
+  private rerollButtonContainer: Phaser.GameObjects.Container;
   private transferButtonContainer: Phaser.GameObjects.Container;
+  private rerollCostText: Phaser.GameObjects.Text;
 
   private lastCursor: integer = 0;
   private player: boolean;
@@ -26,13 +27,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
   setup() {
     const ui = this.getUi();
-
-    const overlayWidth = this.scene.game.canvas.width / 6;
-    const overlayHeight = (this.scene.game.canvas.height / 6) - 48;
-    this.overlayBg = this.scene.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x424242);
-    this.overlayBg.setOrigin(0, 0);
-    this.overlayBg.setAlpha(0);
-    ui.add(this.overlayBg);
     
     this.modifierContainer = this.scene.add.container(0, 0);
     ui.add(this.modifierContainer);
@@ -44,18 +38,31 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const transferButtonText = addTextObject(this.scene, -4, -2, 'Transfer', TextStyle.PARTY);
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
+
+    this.rerollButtonContainer = this.scene.add.container(16, -64);
+    this.rerollButtonContainer.setVisible(false);
+    ui.add(this.rerollButtonContainer);
+
+    const rerollButtonText = addTextObject(this.scene, -4, -2, 'Reroll', TextStyle.PARTY);
+    rerollButtonText.setOrigin(0, 0);
+    this.rerollButtonContainer.add(rerollButtonText);
+
+    this.rerollCostText = addTextObject(this.scene, 0, 0, '', TextStyle.MONEY);
+    this.rerollCostText.setOrigin(0, 0);
+    this.rerollCostText.setPositionRelative(rerollButtonText, rerollButtonText.displayWidth + 5, 1);
+    this.rerollButtonContainer.add(this.rerollCostText);
   }
 
   show(args: any[]) {
     if (this.active) {
-      if (args.length === 3) {
+      if (args.length >= 3) {
         this.awaitingActionInput = true;
         this.onActionInput = args[2];
       }
       return;
     }
 
-    if (args.length !== 3 || !(args[1] instanceof Array) || !args[1].length || !(args[2] instanceof Function))
+    if (args.length !== 4 || !(args[1] instanceof Array) || !args[1].length || !(args[2] instanceof Function))
       return;
 
     super.show(args);
@@ -69,6 +76,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.transferButtonContainer.setVisible(false);
     this.transferButtonContainer.setAlpha(0);
 
+    this.rerollButtonContainer.setVisible(false);
+    this.rerollButtonContainer.setAlpha(0);
+
+    this.updateRerollCostText(args[3] as integer);
+
     const typeOptions = args[1] as ModifierTypeOption[];
     for (let m = 0; m < typeOptions.length; m++) {
       const sliceWidth = (this.scene.game.canvas.width / 6) / (typeOptions.length + 2);
@@ -81,12 +93,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     const hasUpgrade = typeOptions.filter(to => to.upgraded).length;
 
-    this.scene.tweens.add({
-      targets: this.overlayBg,
-      alpha: 0.5,
-      ease: 'Sine.easeOut',
-      duration: 750
-    });
+    this.scene.showFieldOverlay(750);
 
     let i = 0;
     
@@ -114,6 +121,16 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         });
       }
 
+      if (this.scene.currentBattle.waveIndex % 10) {
+        this.rerollButtonContainer.setAlpha(0);
+        this.rerollButtonContainer.setVisible(true);
+        this.scene.tweens.add({
+          targets: this.rerollButtonContainer,
+          alpha: 1,
+          duration: 250
+        });
+      }
+
       this.setCursor(0);
       this.awaitingActionInput = true;
       this.onActionInput = args[2];
@@ -134,7 +151,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         const originalOnActionInput = this.onActionInput;
         this.awaitingActionInput = false;
         this.onActionInput = null;
-        originalOnActionInput(this.cursor);
+        if (!originalOnActionInput(this.cursor)) {
+          this.awaitingActionInput = true;
+          this.onActionInput = originalOnActionInput;
+        }
       }
     } else if (button === Button.CANCEL) {
       if (this.player) {
@@ -149,20 +169,24 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     } else {
       switch (button) {
         case Button.UP:
-          if (this.cursor === this.options.length)
-            success = this.setCursor(this.lastCursor);
+          if (this.cursor >= this.options.length)
+            success = this.setCursor(this.lastCursor < this.options.length ? this.lastCursor : this.cursor - this.options.length ? this.options.length - 1 : 0);
           break;
         case Button.DOWN:
-          if (this.cursor < this.options.length && this.transferButtonContainer.visible)
-            success = this.setCursor(this.options.length);
+          if (this.cursor < this.options.length && (this.rerollButtonContainer.visible || this.transferButtonContainer.visible)) {
+            const isLeftOption = this.cursor <= Math.floor(this.options.length / 2);
+            success = this.setCursor(this.options.length + (this.rerollButtonContainer.visible && (isLeftOption || !this.transferButtonContainer.visible) ? 0 : 1));
+          }
           break;
         case Button.LEFT:
-          if (this.cursor)
-            success = this.setCursor(this.cursor - 1);
+          if ((this.cursor || this.rerollButtonContainer.visible) && this.cursor !== this.options.length)
+            success = this.setCursor(this.cursor ? this.cursor - 1 : this.options.length);
           break;
         case Button.RIGHT:
-          if (this.cursor < this.options.length - (this.transferButtonContainer.visible ? 0 : 1))
+          if (this.cursor < this.options.length - 1)
             success = this.setCursor(this.cursor + 1);
+          else if (this.cursor === this.options.length && this.transferButtonContainer.visible)
+            success = this.setCursor(this.options.length + 1);
           break;
       }
     }
@@ -191,12 +215,23 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       const sliceWidth = (this.scene.game.canvas.width / 6) / (this.options.length + 2);
       this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, -this.scene.game.canvas.height / 12 - 20);
       ui.showText(this.options[this.cursor].modifierTypeOption.type.description);
+    } else if (cursor === this.options.length) {
+      this.cursorObj.setPosition(6, -60);
+      ui.showText('Spend money to reroll your item options');
     } else {
       this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 50, -60);
       ui.showText('Transfer a held item from one Pokémon to another instead of selecting an item');
     }
 
     return ret;
+  }
+
+  updateRerollCostText(rerollCost: integer): void {
+    const canReroll = this.scene.money >= rerollCost;
+
+    this.rerollCostText.setText(`₽${rerollCost.toLocaleString('en-US')}`);
+    this.rerollCostText.setColor(getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
+    this.rerollCostText.setShadowColor(getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED, true));
   }
 
   clear() {
@@ -207,29 +242,34 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.getUi().clearText();
     this.eraseCursor();
 
+    this.scene.hideFieldOverlay(250);
+
+    const options = this.options.slice(0);
+    this.options.splice(0, this.options.length);
+  
     this.scene.tweens.add({
-      targets: this.overlayBg,
-      alpha: 0,
-      duration: 250,
-      ease: 'Cubic.easeIn'
-    });
-    this.scene.tweens.add({
-      targets: this.options,
+      targets: options,
       scale: 0.01,
       duration: 250,
       ease: 'Cubic.easeIn',
-      onComplete: () => {
-        this.options.forEach(o => o.destroy());
-        this.options.splice(0, this.options.length);
-      }
+      onComplete: () => options.forEach(o => o.destroy())
     });
+    
     if (this.transferButtonContainer.visible) {
       this.scene.tweens.add({
-        targets: this.transferButtonContainer,
+        targets: [ this.rerollButtonContainer, this.transferButtonContainer ],
         alpha: 0,
         duration: 250,
         ease: 'Cubic.easeIn',
-        onComplete: () => this.transferButtonContainer.setVisible(false)
+        onComplete: () => {
+          if (!this.options.length) {
+            this.rerollButtonContainer.setVisible(false);
+            this.transferButtonContainer.setVisible(false);
+          } else {
+            this.rerollButtonContainer.setAlpha(1);
+            this.transferButtonContainer.setAlpha(1);
+          }
+        }
       })
     }
   }

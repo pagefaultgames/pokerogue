@@ -34,6 +34,7 @@ interface SessionSaveData {
   enemyModifiers: PersistentModifierData[];
   arena: ArenaData;
   pokeballCounts: PokeballCounts;
+  money: integer;
   waveIndex: integer;
   battleType: BattleType;
   trainer: TrainerData;
@@ -173,6 +174,7 @@ export class GameData {
       enemyModifiers: scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
       arena: new ArenaData(scene.arena),
       pokeballCounts: scene.pokeballCounts,
+      money: scene.money,
       waveIndex: scene.currentBattle.waveIndex,
       battleType: scene.currentBattle.battleType,
       trainer: scene.currentBattle.battleType == BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
@@ -243,6 +245,9 @@ export class GameData {
         Object.keys(scene.pokeballCounts).forEach((key: string) => {
           scene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
         });
+
+        scene.money = sessionData.money || 0;
+        scene.updateMoneyText();
 
         // TODO: Remove this
         if (sessionData.enemyField)

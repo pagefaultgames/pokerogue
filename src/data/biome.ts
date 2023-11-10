@@ -65,7 +65,7 @@ export const biomeLinks: BiomeLinks = {
   [Biome.PLAINS]: [ Biome.GRASS, Biome.CITY, Biome.LAKE ],
   [Biome.GRASS]: Biome.TALL_GRASS,
   [Biome.TALL_GRASS]: [ Biome.FOREST, Biome.CAVE ],
-  [Biome.CITY]: [ Biome.CONSTRUCTION_SITE ],
+  [Biome.CITY]: Biome.CONSTRUCTION_SITE,
   [Biome.FOREST]: [ Biome.JUNGLE, Biome.MEADOW ],
   [Biome.SEA]: [ Biome.SEABED, Biome.ICE_CAVE ],
   [Biome.SWAMP]: [ Biome.GRAVEYARD, Biome.TALL_GRASS ],

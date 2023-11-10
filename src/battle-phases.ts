@@ -2204,13 +2204,15 @@ export class TrainerVictoryPhase extends BattlePhase {
   start() {
     this.scene.playBgm(this.scene.currentBattle.trainer.config.victoryBgm);
 
+    this.scene.unshiftPhase(new MoneyRewardPhase(this.scene, this.scene.currentBattle.trainer.config.moneyMultiplier));
+
     const modifierRewardFuncs = this.scene.currentBattle.trainer.config.modifierRewardFuncs;
     for (let modifierRewardFunc of modifierRewardFuncs)
       this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, modifierRewardFunc));
 
     this.scene.ui.showText(`You defeated\n${this.scene.currentBattle.trainer.getName()}!`, null, () => {
       const defeatMessages = this.scene.currentBattle.trainer.config.victoryMessages;
-      let showMessageAndEnd = () => this.end();//this.scene.ui.showText(`You got ₽0\nfor winning!`, null, () => this.end(), null, true);
+      let showMessageAndEnd = () => this.end();
       if (defeatMessages.length) {
         let message: string;
         this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(this.scene.currentBattle.trainer.config.victoryMessages), this.scene.currentBattle.waveIndex);
@@ -2232,6 +2234,28 @@ export class TrainerVictoryPhase extends BattlePhase {
       ease: 'Sine.easeInOut',
       duration: 750
     });
+  }
+}
+
+export class MoneyRewardPhase extends BattlePhase {
+  private moneyMultiplier: number;
+
+  constructor(scene: BattleScene, moneyMultiplier: number) {
+    super(scene);
+
+    this.moneyMultiplier = moneyMultiplier;
+  }
+
+  start() {
+    const waveIndex = this.scene.currentBattle.waveIndex;
+    const waveSetIndex = Math.ceil(waveIndex / 10) - 1;
+    const moneyValue = Math.pow((waveSetIndex + 1 + (0.75 + (((waveIndex - 1) % 10) + 1) / 10)) * 100, 1 + 0.005 * waveSetIndex) * this.moneyMultiplier;
+    const moneyAmount = Math.floor(moneyValue / 10) * 10;
+
+    this.scene.money += moneyAmount;
+    this.scene.updateMoneyText();
+
+    this.scene.ui.showText(`You got ₽${moneyAmount.toLocaleString('en-US')}\nfor winning!`, null, () => this.end(), null, true);
   }
 }
 
@@ -2864,14 +2888,19 @@ export class AttemptRunPhase extends PokemonPhase {
 }
 
 export class SelectModifierPhase extends BattlePhase {
-  constructor(scene: BattleScene) {
+  private rerollCount: integer;
+
+  constructor(scene: BattleScene, rerollCount: integer = 0) {
     super(scene);
+
+    this.rerollCount = rerollCount;
   }
 
   start() {
     super.start();
 
-    this.updateSeed();
+    if (!this.rerollCount)
+      this.updateSeed();
 
     const party = this.scene.getParty();
     regenerateModifierPoolThresholds(party, this.getPoolType());
@@ -2884,8 +2913,22 @@ export class SelectModifierPhase extends BattlePhase {
       if (cursor < 0) {
         this.scene.ui.setMode(Mode.MESSAGE);
         super.end();
-        return;
-      } else if (cursor >= typeOptions.length) {
+        return true;
+      } else if (cursor === typeOptions.length) {
+        const rerollCost = this.getRerollCost();
+        if (this.scene.money < rerollCost) {
+          this.scene.ui.playError();
+          return false;
+        } else {
+          this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1));
+          this.scene.ui.clearText();
+          this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
+          this.scene.money -= rerollCost;
+          this.scene.updateMoneyText();
+          this.scene.playSound('buy');
+        }
+        return true;
+      } else if (cursor === typeOptions.length + 1) {
         this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, toSlotIndex: integer) => {
           if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
             this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
@@ -2898,13 +2941,13 @@ export class SelectModifierPhase extends BattlePhase {
                   this.scene.ui.setMode(Mode.MESSAGE);
                   super.end();
                 } else
-                  this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback);
+                  this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost());
               });
             });
           } else
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback);
+            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost());
         }, PartyUiHandler.FilterItemMaxStacks);
-        return;
+        return true;
       }
 
       const modifierType = typeOptions[cursor].type;
@@ -2919,7 +2962,7 @@ export class SelectModifierPhase extends BattlePhase {
                 this.scene.addModifier(modifier, false, true).then(() => super.end());
               });
             } else
-              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback);
+              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost());
           }, modifierType.selectFilter);
         } else {
           const pokemonModifierType = modifierType as PokemonModifierType;
@@ -2947,7 +2990,7 @@ export class SelectModifierPhase extends BattlePhase {
                 this.scene.addModifier(modifier, false, true).then(() => super.end());
               });
             } else
-              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, );
+              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost());
           }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId);
         }
       } else {
@@ -2955,8 +2998,10 @@ export class SelectModifierPhase extends BattlePhase {
         this.scene.ui.clearText();
         this.scene.ui.setMode(Mode.MESSAGE);
       }
+
+      return true;
     };
-    this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback);
+    this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost());
   }
 
   updateSeed(): void {
@@ -2965,6 +3010,10 @@ export class SelectModifierPhase extends BattlePhase {
 
   isPlayer(): boolean {
     return true;
+  }
+
+  getRerollCost(): integer {
+    return Math.ceil(this.scene.currentBattle.waveIndex / 10) * 250 * Math.pow(2, this.rerollCount);
   }
   
   getPoolType(): ModifierPoolType {
