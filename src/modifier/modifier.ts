@@ -1355,7 +1355,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
   }
 }
 
-export class AttackHeldItemTransferChanceModifier extends HeldItemTransferModifier {
+export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModifier {
   private chance: number;
 
   constructor(type: ModifierType, pokemonId: integer, chancePercent: number, stackCount?: integer) {
@@ -1365,11 +1365,11 @@ export class AttackHeldItemTransferChanceModifier extends HeldItemTransferModifi
   }
 
   matchType(modifier: Modifier): boolean {
-    return modifier instanceof AttackHeldItemTransferChanceModifier;
+    return modifier instanceof ContactHeldItemTransferChanceModifier;
   }
 
-  clone(): AttackHeldItemTransferChanceModifier {
-    return new AttackHeldItemTransferChanceModifier(this.type, this.pokemonId, this.chance * 100, this.stackCount);
+  clone(): ContactHeldItemTransferChanceModifier {
+    return new ContactHeldItemTransferChanceModifier(this.type, this.pokemonId, this.chance * 100, this.stackCount);
   }
 
   getArgs(): any[] {

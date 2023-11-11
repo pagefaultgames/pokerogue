@@ -549,7 +549,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
 
 export class ContactHeldItemTransferChanceModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, chancePercent: integer, iconImage?: string, group?: string, soundName?: string) {
-    super(name, `Upon attacking, there is a ${chancePercent}% chance the foe's held item will be stolen`, (type, args) => new Modifiers.AttackHeldItemTransferChanceModifier(type, (args[0] as Pokemon).id, chancePercent), iconImage, group, soundName);
+    super(name, `Upon attacking, there is a ${chancePercent}% chance the foe's held item will be stolen`, (type, args) => new Modifiers.ContactHeldItemTransferChanceModifier(type, (args[0] as Pokemon).id, chancePercent), iconImage, group, soundName);
   }
 }
 
