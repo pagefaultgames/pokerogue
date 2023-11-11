@@ -464,7 +464,7 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
     this.boostMultiplier = boostPercent * 0.01;
   }
 
-  matchType(modifier: Modifier) {
+  matchType(modifier: Modifier): boolean {
     if (modifier instanceof AttackTypeBoosterModifier) {
       const attackTypeBoosterModifier = modifier as AttackTypeBoosterModifier;
       return attackTypeBoosterModifier.moveType === this.moveType && attackTypeBoosterModifier.boostMultiplier === this.boostMultiplier;
@@ -495,7 +495,7 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
     super(type, pokemonId, stackCount);
   }
 
-  matchType(modifier: Modifier) {
+  matchType(modifier: Modifier): boolean {
     return modifier instanceof SurviveDamageModifier;
   }
 
@@ -1093,12 +1093,12 @@ export class ExpShareModifier extends PersistentModifier {
     return modifier instanceof ExpShareModifier;
   }
 
-  apply(_args: any[]): boolean {
-    return true;
-  }
-
   clone(): ExpShareModifier {
     return new ExpShareModifier(this.type, this.stackCount);
+  }
+
+  apply(_args: any[]): boolean {
+    return true;
   }
 
   getMaxStackCount(): integer {
@@ -1115,16 +1115,97 @@ export class ExpBalanceModifier extends PersistentModifier {
     return modifier instanceof ExpBalanceModifier;
   }
 
-  apply(_args: any[]): boolean {
-    return true;
-  }
-
   clone(): ExpBalanceModifier {
     return new ExpBalanceModifier(this.type, this.stackCount);
   }
 
+  apply(_args: any[]): boolean {
+    return true;
+  }
+
   getMaxStackCount(): integer {
     return 1;
+  }
+}
+
+export class MoneyMultiplierModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof MoneyMultiplierModifier;
+  }
+
+  clone(): MoneyMultiplierModifier {
+    return new MoneyMultiplierModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value += Math.floor((args[0] as Utils.IntegerHolder).value * 0.2 * this.getStackCount());
+
+    return true;
+  }
+
+  getMaxStackCount(): integer {
+    return 5;
+  }
+}
+
+export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof DamageMoneyRewardModifier;
+  }
+
+  clone(): DamageMoneyRewardModifier {
+    return new DamageMoneyRewardModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    const scene = (args[0] as Pokemon).scene;
+    const moneyAmount = new Utils.IntegerHolder(Math.floor((args[1] as Utils.IntegerHolder).value * (0.2 * this.getStackCount())));
+    scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+    scene.money += moneyAmount.value;
+    scene.updateMoneyText();
+
+    return true;
+  }
+
+  getMaxStackCount(): integer {
+    return 5;
+  }
+}
+
+export class MoneyInterestModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof MoneyInterestModifier;
+  }
+
+  apply(args: any[]): boolean {
+    const scene = args[0] as BattleScene;
+    const interestAmount = Math.floor(scene.money * 0.2 * this.getStackCount());
+    scene.money += interestAmount;
+    scene.updateMoneyText();
+
+    scene.queueMessage(`You received interest of ₽${interestAmount.toLocaleString('en-US')}\nfrom the ${this.type.name}!`, null, true);
+
+    return true;
+  }
+
+  clone(): MoneyInterestModifier {
+    return new MoneyInterestModifier(this.type, this.stackCount);
+  }
+
+  getMaxStackCount(): integer {
+    return 5;
   }
 }
 
@@ -1274,7 +1355,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
   }
 }
 
-export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModifier {
+export class AttackHeldItemTransferChanceModifier extends HeldItemTransferModifier {
   private chance: number;
 
   constructor(type: ModifierType, pokemonId: integer, chancePercent: number, stackCount?: integer) {
@@ -1284,11 +1365,11 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
   }
 
   matchType(modifier: Modifier): boolean {
-    return modifier instanceof ContactHeldItemTransferChanceModifier;
+    return modifier instanceof AttackHeldItemTransferChanceModifier;
   }
 
-  clone(): ContactHeldItemTransferChanceModifier {
-    return new ContactHeldItemTransferChanceModifier(this.type, this.pokemonId, this.chance * 100, this.stackCount);
+  clone(): AttackHeldItemTransferChanceModifier {
+    return new AttackHeldItemTransferChanceModifier(this.type, this.pokemonId, this.chance * 100, this.stackCount);
   }
 
   getArgs(): any[] {

@@ -7,7 +7,7 @@ import * as Utils from './utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier } from './data/type';
 import { getLevelTotalExp } from './data/exp';
 import { Stat } from './data/pokemon-stat';
-import { AttackTypeBoosterModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
+import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { Gender } from './data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
@@ -29,7 +29,7 @@ import { Mode } from './ui/ui';
 import PartyUiHandler, { PartyOption, PartyUiMode } from './ui/party-ui-handler';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
 import { GameMode } from './game-mode';
-import { LevelMoves, pokemonFormLevelMoves } from './data/pokemon-level-moves';
+import { LevelMoves } from './data/pokemon-level-moves';
 
 export enum FieldPosition {
   CENTER,
@@ -869,6 +869,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.damage(damage.value);
             source.turnData.damageDealt += damage.value;
             this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id });
+            if (source.isPlayer() && !this.isPlayer())
+              this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage)
           }
 
           if (source.turnData.hitsLeft === 1) {
