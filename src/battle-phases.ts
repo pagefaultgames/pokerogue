@@ -2803,6 +2803,9 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     if (pokemon.species.mythical)
       this.scene.validateAchv(achvs.CATCH_MYTHICAL);
+
+    if (pokemon.ivs.filter(iv => iv === 31).length === 6)
+      this.scene.validateAchv(achvs.PERFECT_IVS);
       
     this.scene.ui.showText(`${pokemon.name} was caught!`, null, () => {
       const end = () => {
@@ -2819,6 +2822,8 @@ export class AttemptCapturePhase extends PokemonPhase {
       const addToParty = () => {
         const newPokemon = pokemon.addToParty();
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
+        if (this.scene.getParty().filter(p => p.isShiny()).length === 6)
+          this.scene.validateAchv(achvs.SHINY_PARTY);
         Promise.all(modifiers.map(m => this.scene.addModifier(m, true))).then(() => {
           this.scene.updateModifiers(true);
           removePokemon();

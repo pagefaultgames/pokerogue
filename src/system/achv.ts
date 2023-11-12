@@ -42,9 +42,9 @@ export class Achv {
   }
 
   getTier(): AchvTier {
-    if (this.score >= 250)
-      return AchvTier.MASTER;
     if (this.score >= 100)
+      return AchvTier.MASTER;
+    if (this.score >= 50)
       return AchvTier.ULTRA;
     if (this.score >= 25)
       return AchvTier.GREAT;
@@ -101,27 +101,29 @@ export class ModifierAchv extends Achv {
 export const achvs = {
   _10K_MONEY: new MoneyAchv('Money Haver', 10000, 'nugget', 10),
   _100K_MONEY: new MoneyAchv('Rich', 100000, 'big_nugget', 25).setSecret(true),
-  _1M_MONEY: new MoneyAchv('Millionaire', 1000000, 'relic_gold', 100).setSecret(true),
-  _10M_MONEY: new MoneyAchv('One Percenter', 10000000, 'coin_case', 250).setSecret(true),
+  _1M_MONEY: new MoneyAchv('Millionaire', 1000000, 'relic_gold', 50).setSecret(true),
+  _10M_MONEY: new MoneyAchv('One Percenter', 10000000, 'coin_case', 100).setSecret(true),
   _250_DMG: new DamageAchv('Hard Hitter', 1000, 'lucky_punch', 10),
   _1000_DMG: new DamageAchv('Harder Hitter', 1000, 'lucky_punch_great', 25).setSecret(true),
-  _2500_DMG: new DamageAchv('That\'s a Lotta Damage!', 2500, 'lucky_punch_ultra', 100).setSecret(true),
-  _10000_DMG: new DamageAchv('One Punch Man', 10000, 'lucky_punch_master', 250).setSecret(true),
+  _2500_DMG: new DamageAchv('That\'s a Lotta Damage!', 2500, 'lucky_punch_ultra', 50).setSecret(true),
+  _10000_DMG: new DamageAchv('One Punch Man', 10000, 'lucky_punch_master', 100).setSecret(true),
   _250_HEAL: new HealAchv('Novice Healer', 250, 'potion', 10),
   _1000_HEAL: new HealAchv('Big Healer', 1000, 'super_potion', 25).setSecret(true),
-  _2500_HEAL: new HealAchv('Cleric', 2500, 'hyper_potion', 100).setSecret(true),
-  _10000_HEAL: new HealAchv('Recovery Master', 10000, 'max_potion', 250).setSecret(true),
-  LV_100: new LevelAchv('But Wait, There\'s More!', 50, 'rare_candy', 50).setSecret(),
-  LV_250: new LevelAchv('Elite', 250, 'rarer_candy', 150).setSecret(true),
-  LV_1000: new LevelAchv('To Go Even Further Beyond', 250, 'candy_jar', 400).setSecret(true),
-  TRANSFER_MAX_BATTLE_STAT: new Achv('Teamwork', 'Baton pass to another party member with at least one stat maxed out', 'stick', 40),
-  SPLICE: new Achv('Infinite Fusion', 'Splice two Pokémon together with DNA Splicers', 'dna_splicers', 25),
-  MINI_BLACK_HOLE: new ModifierAchv('A Hole Lot of Items', 'Acquire a Mini Black Hole', 'mini_black_hole', 40, modifier => modifier instanceof TurnHeldItemTransferModifier).setSecret(),
-  CATCH_LEGENDARY: new Achv('Legendary', 'Catch a legendary Pokémon', 'mb', 100).setSecret(),
-  CATCH_MYTHICAL: new Achv('Mythical', 'Catch a mythical Pokémon', 'strange_ball', 100).setSecret(),
-  SEE_SHINY: new Achv('Shiny', 'Find a shiny Pokémon in the wild', 'pb_gold', 150).setSecret(),
-  HIDDEN_ABILITY: new Achv('Hidden Potential', 'Catch a Pokémon with a hidden ability', 'ability_charm', 150).setSecret(),
-  CLASSIC_VICTORY: new Achv('Undefeated', 'Beat the game in classic mode', 'relic_crown', 250)
+  _2500_HEAL: new HealAchv('Cleric', 2500, 'hyper_potion', 500).setSecret(true),
+  _10000_HEAL: new HealAchv('Recovery Master', 10000, 'max_potion', 100).setSecret(true),
+  LV_100: new LevelAchv('But Wait, There\'s More!', 50, 'rare_candy', 25).setSecret(),
+  LV_250: new LevelAchv('Elite', 250, 'rarer_candy', 50).setSecret(true),
+  LV_1000: new LevelAchv('To Go Even Further Beyond', 100, 'candy_jar', 400).setSecret(true),
+  TRANSFER_MAX_BATTLE_STAT: new Achv('Teamwork', 'Baton pass to another party member with at least one stat maxed out', 'stick', 20),
+  SPLICE: new Achv('Infinite Fusion', 'Splice two Pokémon together with DNA Splicers', 'dna_splicers', 10),
+  MINI_BLACK_HOLE: new ModifierAchv('A Hole Lot of Items', 'Acquire a Mini Black Hole', 'mini_black_hole', 25, modifier => modifier instanceof TurnHeldItemTransferModifier).setSecret(),
+  CATCH_LEGENDARY: new Achv('Legendary', 'Catch a legendary Pokémon', 'mb', 50).setSecret(),
+  CATCH_MYTHICAL: new Achv('Mythical', 'Catch a mythical Pokémon', 'strange_ball', 50).setSecret(),
+  SEE_SHINY: new Achv('Shiny', 'Find a shiny Pokémon in the wild', 'pb_gold', 75),
+  SHINY_PARTY: new Achv('That\'s Dedication', 'Have a full party of shiny Pokémon', 'shiny_charm', 100).setSecret(true),
+  HIDDEN_ABILITY: new Achv('Hidden Potential', 'Catch a Pokémon with a hidden ability', 'ability_charm', 75),
+  PERFECT_IVS: new Achv('Certificate of Authenticity', 'Catch a Pokémon with perfect IVs', 'blunder_policy', 100),
+  CLASSIC_VICTORY: new Achv('Undefeated', 'Beat the game in classic mode', 'relic_crown', 150)
 };
 
 {
