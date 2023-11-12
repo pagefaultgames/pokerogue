@@ -53,11 +53,6 @@ const noTransitionModes = [
   Mode.SETTINGS
 ];
 
-const menuModes = [
-  Mode.MENU,
-  Mode.SETTINGS
-];
-
 export default class UI extends Phaser.GameObjects.Container {
   private mode: Mode;
   private modeChain: Mode[];

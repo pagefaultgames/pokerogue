@@ -904,7 +904,9 @@ export default class BattleScene extends Phaser.Scene {
 				case Mode.GAME_MODE_SELECT:
 					this.ui.setOverlayMode(Mode.MENU);
 					break;
+				case Mode.MENU:
 				case Mode.SETTINGS:
+				case Mode.ACHIEVEMENTS:
 					this.ui.revertMode();
 					this.playSound('select');
 					break;
