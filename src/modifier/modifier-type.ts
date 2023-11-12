@@ -710,6 +710,8 @@ export const modifierTypes = {
   SHINY_CHARM: () => new ModifierType('Shiny Charm', 'Dramatically increases the chance of a wild Pokémon being shiny', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
   ABILITY_CHARM: () => new ModifierType('Ability Charm', 'Dramatically increases the chance of a wild Pokémon having a hidden ability', (type, _args) => new Modifiers.HiddenAbilityRateBoosterModifier(type)),
 
+  IV_SCANNER: () => new ModifierType('IV Scanner', 'Allows scanning the IVs of wild Pokémon', (type, _args) => new Modifiers.IvScannerModifier(type), 'scanner'),
+
   DNA_SPLICERS: () => new FusePokemonModifierType('DNA Splicers'),
   REVERSE_DNA_SPLICERS: () => new UnfusePokemonModifierType('Reverse DNA Splicers', 'dna_splicers'),
 
@@ -819,6 +821,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.EXP_CHARM, 4),
     new WeightedModifierType(modifierTypes.OVAL_CHARM, 2),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, 2),
+    new WeightedModifierType(modifierTypes.IV_SCANNER, 2),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 1),
     new WeightedModifierType(modifierTypes.COIN_CASE, 1),
     new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 3 : 0),

@@ -271,8 +271,8 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
     return false;
   }
 
-  clone(): TempBattleStatBoosterModifier {
-    return new TempBattleStatBoosterModifier(this.type as ModifierTypes.TempBattleStatBoosterModifierType, this.battlesLeft, this.stackCount);
+  clone(): DoubleBattleChanceBoosterModifier {
+    return new DoubleBattleChanceBoosterModifier(this.type as ModifierTypes.DoubleBattleChanceBoosterModifierType, this.battlesLeft, this.stackCount);
   }
 
   getArgs(): any[] {
@@ -1385,6 +1385,28 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
 
   getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string {
     return getPokemonMessage(targetPokemon, `'s ${item.name} was snatched\nby ${pokemon.name}'s ${this.type.name}!`);
+  }
+
+  getMaxStackCount(): integer {
+    return 5;
+  }
+}
+
+export class IvScannerModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+
+  match(modifier: Modifier): boolean {
+    return modifier instanceof IvScannerModifier;
+  }
+
+  clone(): IvScannerModifier {
+    return new IvScannerModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    return true;
   }
 
   getMaxStackCount(): integer {

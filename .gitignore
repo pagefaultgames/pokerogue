@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 public/images/trainer/convert/*
+src/data/battle-anim-raw-data.ts
+src/data/battle-anim-data.ts

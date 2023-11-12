@@ -76,7 +76,8 @@ export default class MenuUiHandler extends UiHandler {
       }
     } else if (button === Button.CANCEL) {
       success = true;
-      this.scene.ui.revertMode();
+      if (!this.scene.ui.revertMode())
+        ui.setMode(Mode.MESSAGE);
     } else {
       switch (button) {
         case Button.UP:

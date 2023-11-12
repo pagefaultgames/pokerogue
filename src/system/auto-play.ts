@@ -95,10 +95,12 @@ export function initAutoPlay() {
     };
 
     const originalMessageUiHandlerPromptLevelUpStats = messageUiHandler.promptLevelUpStats;
-    messageUiHandler.promptLevelUpStats = function (partyMemberIndex: integer, prevStats: integer[], showTotals: boolean, callback?: Function) {
-        originalMessageUiHandlerPromptLevelUpStats.apply(this, [ partyMemberIndex, prevStats, showTotals, callback ]);
-        if (thisArg.auto)
-            thisArg.time.delayedCall(20, () => this.processInput(Button.ACTION));
+    messageUiHandler.promptLevelUpStats = function (partyMemberIndex: integer, prevStats: integer[], showTotals: boolean): Promise<void> {
+        return new Promise(resolve => {
+            originalMessageUiHandlerPromptLevelUpStats.apply(this, [ partyMemberIndex, prevStats, showTotals ]).then(() => resolve());
+            if (thisArg.auto)
+                thisArg.time.delayedCall(20, () => this.processInput(Button.ACTION));
+        });
     };
     
     const originalCommandUiHandlerShow = commandUiHandler.show;

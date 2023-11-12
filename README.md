@@ -23,6 +23,8 @@
   - Valuable items for money
 - Trainers
   - Finish party pools
+  - Add dialogue
+  - Add reward for gym leader victories
 - Encounters
   - Add extremely rare chance of Arceus available anywhere with type change
 - Balancing

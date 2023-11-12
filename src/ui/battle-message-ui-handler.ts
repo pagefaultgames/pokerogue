@@ -68,11 +68,11 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
     this.levelUpStatsContainer = levelUpStatsContainer;
 
-    const levelUpStatsBg = this.scene.add.nineslice((this.scene.game.canvas.width / 6), -100, 'window', null, 118, 100, 6, 6, 6, 6);
+    const levelUpStatsBg = this.scene.add.nineslice((this.scene.game.canvas.width / 6), -100, 'window', null, 128, 100, 6, 6, 6, 6);
     levelUpStatsBg.setOrigin(1, 0);
     levelUpStatsContainer.add(levelUpStatsBg);
 
-    const levelUpStatsLabelsContent = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 111, -94, '', TextStyle.WINDOW, { maxLines: 6 });
+    const levelUpStatsLabelsContent = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 121, -94, '', TextStyle.WINDOW, { maxLines: 6 });
     let levelUpStatsLabelText = '';
 
     const stats = Utils.getEnumValues(Stat);
@@ -131,27 +131,71 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     super.showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  promptLevelUpStats(partyMemberIndex: integer, prevStats: integer[], showTotals: boolean, callback?: Function): void {
-    if (!this.scene.showLevelUpStats)
-      return callback();
-    const newStats = (this.scene as BattleScene).getParty()[partyMemberIndex].stats;
-    let levelUpStatsValuesText = '';
-    const stats = Utils.getEnumValues(Stat);
-    for (let s of stats)
-      levelUpStatsValuesText += `${showTotals ? newStats[s] : newStats[s] - prevStats[s]}\n`;
-    this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
-    this.levelUpStatsIncrContent.setVisible(!showTotals);
-    this.levelUpStatsContainer.setVisible(true);
-    this.awaitingActionInput = true;
-    this.onActionInput = () => {
-      if (!showTotals)
-        this.promptLevelUpStats(partyMemberIndex, null, true, callback);
-      else {
-        this.levelUpStatsContainer.setVisible(false);
-        if (callback)
-          callback();
-      }
-    };
+  promptLevelUpStats(partyMemberIndex: integer, prevStats: integer[], showTotals: boolean): Promise<void> {
+    return new Promise(resolve => {
+      if (!this.scene.showLevelUpStats)
+        return resolve();
+      const newStats = (this.scene as BattleScene).getParty()[partyMemberIndex].stats;
+      let levelUpStatsValuesText = '';
+      const stats = Utils.getEnumValues(Stat);
+      for (let s of stats)
+        levelUpStatsValuesText += `${showTotals ? newStats[s] : newStats[s] - prevStats[s]}\n`;
+      this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
+      this.levelUpStatsIncrContent.setVisible(!showTotals);
+      this.levelUpStatsContainer.setVisible(true);
+      this.awaitingActionInput = true;
+      this.onActionInput = () => {
+        if (!showTotals)
+          return this.promptLevelUpStats(partyMemberIndex, null, true).then(() => resolve());
+        else {
+          this.levelUpStatsContainer.setVisible(false);
+          resolve();
+        }
+      };
+    });
+  }
+
+  promptIvs(pokemonId: integer, ivs: integer[], shownIvsCount: integer): Promise<void> {
+    return new Promise(resolve => {
+      this.scene.executeWithSeedOffset(() => {
+        let levelUpStatsValuesText = '';
+        const stats = Utils.getEnumValues(Stat);
+        let shownStats: Stat[] = [];
+        if (shownIvsCount < 6) {
+          let statsPool = stats.slice(0);
+          for (let i = 0; i < shownIvsCount; i++) {
+            const shownStat = Phaser.Math.RND.pick(statsPool);
+            shownStats.push(shownStat);
+            statsPool.splice(statsPool.indexOf(shownStat), 1);
+          }
+        } else
+          shownStats = stats;
+        for (let s of stats)
+          levelUpStatsValuesText += `${shownStats.indexOf(s) > -1 ? this.getIvDescriptor(ivs[s]) : '???'}\n`;
+        this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
+        this.levelUpStatsIncrContent.setVisible(false);
+        this.levelUpStatsContainer.setVisible(true);
+        this.awaitingActionInput = true;
+        this.onActionInput = () => {
+          this.levelUpStatsContainer.setVisible(false);
+          resolve();
+        };
+      }, pokemonId);
+    });
+  }
+
+  getIvDescriptor(value: integer): string {
+    if (value > 30)
+      return 'Perfect';
+    if (value === 30)
+      return 'Fantastic';
+    if (value > 20)
+      return 'Very Good';
+    if (value > 10)
+      return 'Pretty Good';
+    if (value)
+      return 'Decent';
+    return 'No Good';
   }
 
   showNameText(name: string): void {
