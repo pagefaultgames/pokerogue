@@ -177,23 +177,22 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.setCursor(this.cursor < 6 ? this.cursor : 0);
   }
 
-  processInput(button: Button) {
+  processInput(button: Button): boolean {
     const ui = this.getUi();
 
     if (this.pendingPrompt)
-      return;
+      return false;
 
     if (this.awaitingActionInput) {
-      if (button === Button.ACTION || button === Button.CANCEL) {
-        if (this.onActionInput) {
-          ui.playSelect();
-          const originalOnActionInput = this.onActionInput;
-          this.onActionInput = null;
-          originalOnActionInput();
-          this.awaitingActionInput = false;
-        }
+      if ((button === Button.ACTION || button === Button.CANCEL) && this.onActionInput) {
+        ui.playSelect();
+        const originalOnActionInput = this.onActionInput;
+        this.onActionInput = null;
+        originalOnActionInput();
+        this.awaitingActionInput = false;
+        return true;
       }
-      return;
+      return false;
     }
 
     let success = false;
@@ -206,6 +205,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.startTransfer();
           this.clearOptions();
           ui.playSelect();
+          return true;
         } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER && option !== PartyOption.CANCEL) {
           let filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
           if (filterResult === null) {
@@ -216,6 +216,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             this.showText(filterResult as string, null, () => this.showText(null, 0), null, true);
           }
           ui.playSelect();
+          return true;
         } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string;
@@ -254,7 +255,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor, option === PartyOption.PASS_BATON);
             if (this.partyUiMode !== PartyUiMode.MODIFIER && this.partyUiMode !== PartyUiMode.TM_MODIFIER && this.partyUiMode !== PartyUiMode.MOVE_MODIFIER)
               ui.playSelect();
-            return;
+            return true;
           } else {
             this.clearOptions();
             this.showText(filterResult as string, null, () => this.showText(null, 0), null, true);
@@ -262,6 +263,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if (option === PartyOption.SUMMARY) {
           ui.playSelect();
           ui.setModeWithoutClear(Mode.SUMMARY, pokemon).then(() =>  this.clearOptions());
+          return true;
         } else if (option === PartyOption.RELEASE) {
           this.clearOptions();
           ui.playSelect();
@@ -277,11 +279,13 @@ export default class PartyUiHandler extends MessageUiHandler {
             });
           } else
             this.showText('You can\'t release a Pokémon that\'s in battle!', null, () => this.showText(null, 0), null, true);
+          return true;
         } else if (option === PartyOption.CANCEL)
-          this.processInput(Button.CANCEL);
+          return this.processInput(Button.CANCEL);
       } else if (button === Button.CANCEL) {
         this.clearOptions();
         ui.playSelect();
+        return true;
       } else {
         switch (button) {
           case Button.UP:
@@ -300,8 +304,8 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if (this.partyUiMode === PartyUiMode.FAINT_SWITCH)
           ui.playError();
         else
-          this.processInput(Button.CANCEL);
-        return;
+          return this.processInput(Button.CANCEL);
+        return true;
       } else if (button === Button.CANCEL) {
         if ((this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.SPLICE) && this.transferMode) {
           this.clearTransfer();
@@ -317,7 +321,8 @@ export default class PartyUiHandler extends MessageUiHandler {
             ui.playSelect();
           }
         }
-        return;
+        
+        return true;
       }
 
       const slotCount = this.partySlots.length;
@@ -343,6 +348,8 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     if (success)
       ui.playSelect();
+
+    return success;
   }
 
   populatePartySlots() {

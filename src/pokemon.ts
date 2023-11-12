@@ -30,6 +30,7 @@ import PartyUiHandler, { PartyOption, PartyUiMode } from './ui/party-ui-handler'
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
 import { GameMode } from './game-mode';
 import { LevelMoves } from './data/pokemon-level-moves';
+import { DamageAchv, achvs } from './system/achv';
 
 export enum FieldPosition {
   CENTER,
@@ -867,6 +868,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.setPhaseQueueSplice();
             damage.value = Math.min(damage.value, this.hp);
             this.damage(damage.value);
+            if (source.isPlayer())
+              this.scene.validateAchvs(DamageAchv, damage);
             source.turnData.damageDealt += damage.value;
             this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id });
             if (source.isPlayer() && !this.isPlayer())
@@ -1013,6 +1016,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.summonData.battleStats[stat] = source.summonData.battleStats[stat];
     for (let tag of source.summonData.tags)
       this.summonData.tags.push(tag);
+    if (battleStats.filter(bs => bs === 6).length)
+      this.scene.validateAchv(achvs.TRANSFER_MAX_BATTLE_STAT);
   }
 
   getMoveHistory(): TurnMove[] {

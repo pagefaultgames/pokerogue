@@ -137,11 +137,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     });
   }
 
-  processInput(button: Button) {
+  processInput(button: Button): boolean {
     const ui = this.getUi();
 
     if (!this.awaitingActionInput)
-      return;
+      return false;
 
     let success = false;
 
@@ -193,6 +193,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     if (success)
       ui.playSelect();
+
+    return success;
   }
 
   setCursor(cursor: integer): boolean {

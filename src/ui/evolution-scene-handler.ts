@@ -20,8 +20,8 @@ export default class EvolutionSceneHandler extends UiHandler {
       this.scene.fieldUI.bringToTop(this.evolutionContainer);
     }
   
-    processInput(button: Button) {
-      this.scene.ui.getMessageHandler().processInput(button);
+    processInput(button: Button): boolean {
+      return this.scene.ui.getMessageHandler().processInput(button);
     }
   
     setCursor(_cursor: integer): boolean {

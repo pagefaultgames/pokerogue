@@ -42,7 +42,7 @@ export default class GameModeSelectUiHandler extends OptionSelectUiHandler {
     }
   }
 
-  processInput(button: Button) {
+  processInput(button: Button): boolean {
     const ui = this.getUi();
 
     const options = this.getOptions();
@@ -59,5 +59,7 @@ export default class GameModeSelectUiHandler extends OptionSelectUiHandler {
       ui.playSelect();
     } else
       return super.processInput(button);
+      
+    return true;
   }
 }

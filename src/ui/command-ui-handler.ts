@@ -51,7 +51,7 @@ export default class CommandUiHandler extends UiHandler {
     this.setCursor(this.getCursor());
   }
 
-  processInput(button: Button) {
+  processInput(button: Button): boolean {
     const ui = this.getUi();
 
     let success = false;
@@ -104,6 +104,8 @@ export default class CommandUiHandler extends UiHandler {
 
     if (success)
       ui.playSelect();
+
+    return success;
   }
 
   getCursor(): integer {

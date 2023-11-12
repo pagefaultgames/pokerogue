@@ -134,11 +134,9 @@ export class NumberHolder {
   }
 }
 
-export class IntegerHolder {
-  public value: integer;
-
+export class IntegerHolder extends NumberHolder {
   constructor(value: integer) {
-    this.value = value;
+    super(value);
   }
 }
 

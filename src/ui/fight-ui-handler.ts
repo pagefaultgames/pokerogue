@@ -47,7 +47,7 @@ export default class FightUiHandler extends UiHandler {
     this.displayMoves();
   }
 
-  processInput(button: Button) {
+  processInput(button: Button): boolean {
     const ui = this.getUi();
 
     let success = false;
@@ -87,6 +87,8 @@ export default class FightUiHandler extends UiHandler {
 
     if (success)
       ui.playSelect();
+
+    return success;
   }
 
   getCursor(): integer {

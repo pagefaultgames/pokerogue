@@ -91,9 +91,7 @@ export default class SettingsUiHandler extends UiHandler {
     
     const settings: object = localStorage.hasOwnProperty('settings') ? JSON.parse(localStorage.getItem('settings')) : {};
 
-    Object.keys(settingDefaults).forEach((setting, s) => {
-      this.setOptionCursor(s, settings.hasOwnProperty(setting) ? settings[setting] : settingDefaults[setting]);
-    });
+    Object.keys(settingDefaults).forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting) ? settings[setting] : settingDefaults[setting]));
 
     this.settingsContainer.setVisible(true);
     this.setCursor(0);
@@ -103,7 +101,7 @@ export default class SettingsUiHandler extends UiHandler {
     this.getUi().hideTooltip();
   }
 
-  processInput(button: Button) {
+  processInput(button: Button): boolean {
     const ui = this.getUi();
 
     let success = false;
@@ -134,6 +132,8 @@ export default class SettingsUiHandler extends UiHandler {
 
     if (success)
       ui.playSelect();
+
+    return success;
   }
 
   setCursor(cursor: integer): boolean {

@@ -7,7 +7,6 @@ import { Species } from "../data/species";
 import * as Utils from "../utils";
 import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
 import ArenaData from "./arena-data";
 import { Unlockables } from "./unlockables";
 import { GameMode } from "../game-mode";
@@ -15,12 +14,14 @@ import { BattleType } from "../battle";
 import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-type";
 import { Setting, setSetting, settingDefaults } from "./settings";
+import { achvs } from "./achv";
 
 interface SystemSaveData {
   trainerId: integer;
   secretId: integer;
   dexData: DexData;
   unlocks: Unlocks;
+  achvUnlocks: AchvUnlocks;
   timestamp: integer;
 }
 
@@ -43,6 +44,10 @@ interface SessionSaveData {
 
 interface Unlocks {
   [key: integer]: boolean;
+}
+
+interface AchvUnlocks {
+  [key: string]: integer
 }
 
 export interface DexData {
@@ -81,6 +86,8 @@ export class GameData {
 
   public unlocks: Unlocks;
 
+  public achvUnlocks: AchvUnlocks;
+
   constructor(scene: BattleScene) {
     this.scene = scene;
     this.loadSettings();
@@ -91,6 +98,7 @@ export class GameData {
       [Unlockables.MINI_BLACK_HOLE]: false,
       [Unlockables.SPLICED_ENDLESS_MODE]: false
     };
+    this.achvUnlocks = {};
     this.initDexData();
     this.loadSystem();
   }
@@ -98,12 +106,15 @@ export class GameData {
   public saveSystem(): boolean {
     if (this.scene.quickStart)
       return false;
+
+    console.log(this.achvUnlocks, "wah")
       
     const data: SystemSaveData = {
       trainerId: this.trainerId,
       secretId: this.secretId,
       dexData: this.dexData,
       unlocks: this.unlocks,
+      achvUnlocks: this.achvUnlocks,
       timestamp: new Date().getTime()
     };
 
@@ -126,6 +137,13 @@ export class GameData {
       for (let key of Object.keys(data.unlocks)) {
         if (this.unlocks.hasOwnProperty(key))
           this.unlocks[key] = data.unlocks[key];
+      }
+    }
+
+    if (data.achvUnlocks) {
+      for (let a of Object.keys(data.achvUnlocks)) {
+        if (achvs.hasOwnProperty(a))
+          this.achvUnlocks[a] = data.achvUnlocks[a];
       }
     }
 

@@ -15,8 +15,10 @@ import BiomeSelectUiHandler from './biome-select-ui-handler';
 import TargetSelectUiHandler from './target-select-ui-handler';
 import GameModeSelectUiHandler from './game-mode-select-ui-handler';
 import SettingsUiHandler from './settings-ui-handler';
-import { TextStyle, addTextObject, getTextColor } from './text';
-import { getPokeballTintColor } from '../data/pokeball';
+import { TextStyle, addTextObject } from './text';
+import AchvBar from './achv-bar';
+import MenuUiHandler from './menu-ui-handler';
+import AchvsUiHandler from './achvs-ui-handler';
 
 export enum Mode {
   MESSAGE,
@@ -32,7 +34,9 @@ export enum Mode {
   EVOLUTION_SCENE,
   CONFIRM,
   GAME_MODE_SELECT,
-  SETTINGS
+  MENU,
+  SETTINGS,
+  ACHIEVEMENTS
 };
 
 const transitionModes = [
@@ -45,14 +49,21 @@ const transitionModes = [
 const noTransitionModes = [
   Mode.CONFIRM,
   Mode.GAME_MODE_SELECT,
+  Mode.MENU,
+  Mode.SETTINGS
+];
+
+const menuModes = [
+  Mode.MENU,
   Mode.SETTINGS
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
   private mode: Mode;
-  private lastMode: Mode;
+  private modeChain: Mode[];
   private handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
+  public achvBar: AchvBar;
 
   private tooltipContainer: Phaser.GameObjects.Container;
   private tooltipBg: Phaser.GameObjects.NineSlice;
@@ -65,6 +76,7 @@ export default class UI extends Phaser.GameObjects.Container {
     super(scene, 0, scene.game.canvas.height / 6);
 
     this.mode = Mode.MESSAGE;
+    this.modeChain = [];
     this.handlers = [
       new BattleMessageUiHandler(scene),
       new CommandUiHandler(scene),
@@ -79,7 +91,9 @@ export default class UI extends Phaser.GameObjects.Container {
       new EvolutionSceneHandler(scene),
       new ConfirmUiHandler(scene),
       new GameModeSelectUiHandler(scene),
-      new SettingsUiHandler(scene)
+      new MenuUiHandler(scene),
+      new SettingsUiHandler(scene),
+      new AchvsUiHandler(scene)
     ];
   }
 
@@ -91,6 +105,10 @@ export default class UI extends Phaser.GameObjects.Container {
     (this.scene as BattleScene).uiContainer.add(this.overlay);
     this.overlay.setVisible(false);
     this.setupTooltip();
+
+    this.achvBar = new AchvBar(this.scene as BattleScene);
+		this.achvBar.setup();
+    (this.scene as BattleScene).uiContainer.add(this.achvBar);
   }
 
   private setupTooltip() {
@@ -121,11 +139,11 @@ export default class UI extends Phaser.GameObjects.Container {
     return this.handlers[Mode.MESSAGE] as BattleMessageUiHandler;
   }
 
-  processInput(button: Button): void {
+  processInput(button: Button): boolean {
     if (this.overlayActive)
-      return;
+      return false;
 
-    this.getHandler().processInput(button);
+    return this.getHandler().processInput(button);
   }
 
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void {
@@ -229,7 +247,7 @@ export default class UI extends Phaser.GameObjects.Container {
     });
   }
 
-  private setModeInternal(mode: Mode, clear: boolean, forceTransition: boolean, args: any[]): Promise<void> {
+  private setModeInternal(mode: Mode, clear: boolean, forceTransition: boolean, chainMode: boolean, args: any[]): Promise<void> {
     return new Promise(resolve => {
       if (this.mode === mode && !forceTransition) {
         resolve();
@@ -239,7 +257,8 @@ export default class UI extends Phaser.GameObjects.Container {
         if (this.mode !== mode) {
           if (clear)
             this.getHandler().clear();
-          this.lastMode = this.mode && !clear ? this.mode : undefined;
+          if (chainMode && this.mode && !clear)
+            this.modeChain.push(this.mode);
           this.mode = mode;
           this.getHandler().show(args);
         }
@@ -263,23 +282,26 @@ export default class UI extends Phaser.GameObjects.Container {
   }
 
   setMode(mode: Mode, ...args: any[]): Promise<void> {
-    return this.setModeInternal(mode, true, false, args);
+    return this.setModeInternal(mode, true, false, false, args);
   }
 
   setModeForceTransition(mode: Mode, ...args: any[]): Promise<void> {
-    return this.setModeInternal(mode, true, true, args);
+    return this.setModeInternal(mode, true, true, false, args);
   }
 
   setModeWithoutClear(mode: Mode, ...args: any[]): Promise<void> {
-    return this.setModeInternal(mode, false, false, args);
+    return this.setModeInternal(mode, false, false, false, args);
+  }
+
+  setOverlayMode(mode: Mode, ...args: any[]): Promise<void> {
+    return this.setModeInternal(mode, false, false, true, args);
   }
 
   revertMode(): void {
-    if (!this.lastMode)
+    if (!this.modeChain.length)
       return;
     
     this.getHandler().clear();
-    this.mode = this.lastMode;
-    this.lastMode = undefined;
+    this.mode = this.modeChain.pop();
   }
 }

@@ -65,7 +65,7 @@ export default abstract class OptionSelectUiHandler extends UiHandler {
     }
   }
 
-  processInput(button: Button) {
+  processInput(button: Button): boolean {
     const ui = this.getUi();
 
     let success = false;
@@ -94,6 +94,8 @@ export default abstract class OptionSelectUiHandler extends UiHandler {
 
     if (success)
       ui.playSelect();
+
+    return success;
   }
 
   setCursor(cursor: integer): boolean {

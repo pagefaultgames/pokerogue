@@ -18,7 +18,7 @@ export default abstract class UiHandler {
     this.active = true;
   }
 
-  abstract processInput(button: Button): void;
+  abstract processInput(button: Button): boolean;
 
   getUi() {
     return this.scene.ui;

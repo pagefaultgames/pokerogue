@@ -101,7 +101,7 @@ export default class Move {
     return this.attrs.filter(a => a instanceof attrType);
   }
 
-  attr<T extends new (...args: any[]) => MoveAttr>(AttrType: T, ...args: ConstructorParameters<T>): Move {
+  attr<T extends new (...args: any[]) => MoveAttr>(AttrType: T, ...args: ConstructorParameters<T>): this {
     const attr = new AttrType(...args);
     this.attrs.push(attr);
     const attrCondition = attr.getCondition();
@@ -111,7 +111,7 @@ export default class Move {
     return this;
   }
 
-  addAttr(attr: MoveAttr): Move {
+  addAttr(attr: MoveAttr): this {
     this.attrs.push(attr);
     const attrCondition = attr.getCondition();
     if (attrCondition)
@@ -120,7 +120,7 @@ export default class Move {
     return this;
   }
 
-  target(moveTarget: MoveTarget): Move {
+  target(moveTarget: MoveTarget): this {
     this.moveTarget = moveTarget;
     return this;
   }
@@ -129,7 +129,7 @@ export default class Move {
     return !!(this.flags & flag);
   }
 
-  condition(condition: MoveCondition): Move {
+  condition(condition: MoveCondition): this {
     this.conditions.push(condition);
 
     return this;
@@ -142,32 +142,32 @@ export default class Move {
       this.flags ^= flag;
   }
 
-  makesContact(makesContact?: boolean): Move {
+  makesContact(makesContact?: boolean): this {
     this.setFlag(MoveFlags.MAKES_CONTACT, makesContact);
     return this;
   }
 
-  ignoresProtect(ignoresProtect?: boolean): Move {
+  ignoresProtect(ignoresProtect?: boolean): this {
     this.setFlag(MoveFlags.IGNORE_PROTECT, ignoresProtect);
     return this;
   }
 
-  ignoresVirtual(ignoresVirtual?: boolean): Move {
+  ignoresVirtual(ignoresVirtual?: boolean): this {
     this.setFlag(MoveFlags.IGNORE_VIRTUAL, ignoresVirtual);
     return this;
   }
 
-  soundBased(soundBased?: boolean): Move {
+  soundBased(soundBased?: boolean): this {
     this.setFlag(MoveFlags.SOUND_BASED, soundBased);
     return this;
   }
 
-  hidesUser(hidesUser?: boolean): Move {
+  hidesUser(hidesUser?: boolean): this {
     this.setFlag(MoveFlags.HIDE_USER, hidesUser);
     return this;
   }
 
-  hidesTarget(hidesTarget?: boolean): Move {
+  hidesTarget(hidesTarget?: boolean): this {
     this.setFlag(MoveFlags.HIDE_TARGET, hidesTarget);
     return this;
   }

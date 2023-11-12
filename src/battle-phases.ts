@@ -31,6 +31,7 @@ import { getBiomeKey } from "./arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { GameMode } from "./game-mode";
 import { Species } from "./data/species";
+import { HealAchv, LevelAchv, MoneyAchv, achvs } from "./system/achv";
 
 export class CheckLoadPhase extends BattlePhase {
   private loaded: boolean;
@@ -329,6 +330,8 @@ export class EncounterPhase extends BattlePhase {
         enemyPokemon.untint(100, 'Sine.easeOut');
         enemyPokemon.cry();
         enemyPokemon.showInfo();
+        if (enemyPokemon.isShiny())
+          this.scene.validateAchv(achvs.SEE_SHINY);
       });
       let text = enemyField.length === 1
         ? `A wild ${enemyField[0].name} appeared!`
@@ -2259,6 +2262,8 @@ export class MoneyRewardPhase extends BattlePhase {
     this.scene.money += moneyAmount.value;
     this.scene.updateMoneyText();
 
+    this.scene.validateAchvs(MoneyAchv);
+
     this.scene.ui.showText(`You got ₽${moneyAmount.value.toLocaleString('en-US')}\nfor winning!`, null, () => this.end(), null, true);
   }
 }
@@ -2299,6 +2304,8 @@ export class GameOverPhase extends BattlePhase {
     this.scene.gameData.clearSession();
 
     this.scene.time.delayedCall(1000, () => {
+      if (this.victory)
+        this.scene.validateAchv(achvs.CLASSIC_VICTORY);
       const fadeDuration = this.victory ? 10000 : 5000;
       this.scene.fadeOutBgm(fadeDuration, true);
       this.scene.ui.fadeOut(fadeDuration).then(() => {
@@ -2463,6 +2470,8 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
 
   start() {
     super.start();
+
+    this.scene.validateAchvs(LevelAchv, new Utils.IntegerHolder(this.level));
 
     const pokemon = this.getPokemon();
     const prevStats = pokemon.stats.slice(0);
@@ -2633,7 +2642,9 @@ export class PokemonHealPhase extends CommonAnimPhase {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       if (!this.revive)
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
-      pokemon.heal(this.hpHealed * hpRestoreMultiplier.value);
+      const healAmount = new Utils.NumberHolder(this.hpHealed * hpRestoreMultiplier.value);
+      pokemon.heal(healAmount.value);
+      this.scene.validateAchvs(HealAchv, healAmount)
       pokemon.updateInfo().then(() => super.end());
     } else if (this.showFullHpMessage)
       this.message = getPokemonMessage(pokemon, `'s\nHP is full!`);
@@ -2783,6 +2794,16 @@ export class AttemptCapturePhase extends PokemonPhase {
   catch() {
     const pokemon = this.getPokemon() as EnemyPokemon;
     this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
+
+    if (pokemon.getAbility().id === (!pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm()).abilityHidden)
+      this.scene.validateAchv(achvs.HIDDEN_ABILITY);
+
+    if (pokemon.species.pseudoLegendary || pokemon.species.legendary)
+      this.scene.validateAchv(achvs.CATCH_LEGENDARY);
+
+    if (pokemon.species.mythical)
+      this.scene.validateAchv(achvs.CATCH_MYTHICAL);
+      
     this.scene.ui.showText(`${pokemon.name} was caught!`, null, () => {
       const end = () => {
         this.removePb();

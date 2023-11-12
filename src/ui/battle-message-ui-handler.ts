@@ -102,7 +102,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.message.setWordWrapWidth(1780);
   }
 
-  processInput(button: Button): void {
+  processInput(button: Button): boolean {
     const ui = this.getUi();
     if (this.awaitingActionInput) {
       if (button === Button.CANCEL || button === Button.ACTION) {
@@ -111,6 +111,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
           const originalOnActionInput = this.onActionInput;
           this.onActionInput = null;
           originalOnActionInput();
+          return true;
         }
       }
     }

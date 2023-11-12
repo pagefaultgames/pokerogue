@@ -15,6 +15,7 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
 import { Species } from '../data/species';
 import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
+import { MoneyAchv } from '../system/achv';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -1171,6 +1172,7 @@ export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
     scene.money += moneyAmount.value;
     scene.updateMoneyText();
+    scene.validateAchvs(MoneyAchv);
 
     return true;
   }
@@ -1194,6 +1196,7 @@ export class MoneyInterestModifier extends PersistentModifier {
     const interestAmount = Math.floor(scene.money * 0.2 * this.getStackCount());
     scene.money += interestAmount;
     scene.updateMoneyText();
+    scene.validateAchvs(MoneyAchv);
 
     scene.queueMessage(`You received interest of ₽${interestAmount.toLocaleString('en-US')}\nfrom the ${this.type.name}!`, null, true);
 

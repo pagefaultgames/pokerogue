@@ -16,7 +16,7 @@ import { GameData } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
 import { Moves, initMoves } from './data/move';
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getModifierType, modifierTypes } from './modifier/modifier-type';
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';
@@ -34,6 +34,7 @@ import SettingsUiHandler from './ui/settings-ui-handler';
 import MessageUiHandler from './ui/message-ui-handler';
 import { Species } from './data/species';
 import InvertPostFX from './pipelines/invert';
+import { Achv, achvs } from './system/achv';
 
 const enableAuto = true;
 const quickStart = false;
@@ -199,6 +200,10 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('icon_owned', 'ui');
 		this.loadImage('ability_bar', 'ui');
 		this.loadImage('party_exp_bar', 'ui');
+		this.loadImage('achv_bar', 'ui');
+		this.loadImage('achv_bar_2', 'ui');
+		this.loadImage('achv_bar_3', 'ui');
+		this.loadImage('achv_bar_4', 'ui');
 		this.loadImage('shiny_star', 'ui', 'shiny.png');
 		this.loadImage('icon_spliced', 'ui');
 
@@ -306,6 +311,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('beam');
 		this.loadSe('upgrade');
 		this.loadSe('buy');
+		this.loadSe('achv');
 		this.loadSe('error');
 
 		this.loadSe('pb_rel');
@@ -838,6 +844,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.waveCountText.setY(-(this.game.canvas.height / 6) + (this.enemyModifiers.filter(m => m.isIconVisible(this)).length ? 15 : 0));
 		this.moneyText.setY(this.waveCountText.y + 10);
 		this.partyExpBar.setY(this.moneyText.y + 15);
+		this.ui?.achvBar.setY((this.game.canvas.height / 6 + this.moneyText.y + 15));
 	}
 
 	getMaxExpLevel(ignoreLevelCap?: boolean): integer {
@@ -867,18 +874,19 @@ export default class BattleScene extends Phaser.Scene {
 	checkInput(): boolean {
 		if (this.blockInput)
 			return;
+		let inputSuccess = false;
 		if (this.isButtonPressed(Button.UP))
-			this.ui.processInput(Button.UP);
+			inputSuccess = this.ui.processInput(Button.UP);
 		else if (this.isButtonPressed(Button.DOWN))
-			this.ui.processInput(Button.DOWN);
+			inputSuccess = this.ui.processInput(Button.DOWN);
 		else if (this.isButtonPressed(Button.LEFT))
-			this.ui.processInput(Button.LEFT);
+			inputSuccess = this.ui.processInput(Button.LEFT);
 		else if (this.isButtonPressed(Button.RIGHT))
-			this.ui.processInput(Button.RIGHT);
+			inputSuccess = this.ui.processInput(Button.RIGHT);
 		else if (this.isButtonPressed(Button.ACTION))
-			this.ui.processInput(Button.ACTION);
+			inputSuccess = this.ui.processInput(Button.ACTION);
 		else if (this.isButtonPressed(Button.CANCEL))
-			this.ui.processInput(Button.CANCEL);
+			inputSuccess = this.ui.processInput(Button.CANCEL);
 		else if (this.isButtonPressed(Button.MENU)) {
 			switch (this.ui.getMode()) {
 				case Mode.MESSAGE:
@@ -894,8 +902,7 @@ export default class BattleScene extends Phaser.Scene {
 				case Mode.STARTER_SELECT:
 				case Mode.CONFIRM:
 				case Mode.GAME_MODE_SELECT:
-					this.ui.setModeWithoutClear(Mode.SETTINGS);
-					this.playSound('menu_open');
+					this.ui.setOverlayMode(Mode.MENU);
 					break;
 				case Mode.SETTINGS:
 					this.ui.revertMode();
@@ -904,16 +911,15 @@ export default class BattleScene extends Phaser.Scene {
 				default:
 					return;
 			}
-		}
-		else if (this.ui?.getHandler() instanceof StarterSelectUiHandler) {
+		} else if (this.ui?.getHandler() instanceof StarterSelectUiHandler) {
 			if (this.isButtonPressed(Button.CYCLE_SHINY))
-				this.ui.processInput(Button.CYCLE_SHINY);
+				inputSuccess = this.ui.processInput(Button.CYCLE_SHINY);
 			else if (this.isButtonPressed(Button.CYCLE_FORM))
-				this.ui.processInput(Button.CYCLE_FORM);
+				inputSuccess = this.ui.processInput(Button.CYCLE_FORM);
 			else if (this.isButtonPressed(Button.CYCLE_GENDER))
-				this.ui.processInput(Button.CYCLE_GENDER);
+				inputSuccess = this.ui.processInput(Button.CYCLE_GENDER);
 			else if (this.isButtonPressed(Button.CYCLE_ABILITY))
-				this.ui.processInput(Button.CYCLE_ABILITY);
+				inputSuccess = this.ui.processInput(Button.CYCLE_ABILITY);
 			else
 				return;
 		}
@@ -1412,5 +1418,29 @@ export default class BattleScene extends Phaser.Scene {
 		}
 
 		return null;
+	}
+
+	validateAchvs(achvType: { new(...args: any[]): Achv }, ...args: any[]): void {
+		const filteredAchvs = Object.values(achvs).filter(a => a instanceof achvType);
+		let newAchv = false;
+		for (let achv of filteredAchvs) {
+			if (this.validateAchv(achv, args, false))
+				newAchv = true;
+		}
+
+		if (newAchv)
+			this.gameData.saveSystem();
+	}
+
+	validateAchv(achv: Achv, args?: any[], save: boolean = true): boolean {
+		if (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) && achv.validate(this, args)) {
+			this.gameData.achvUnlocks[achv.id] = new Date().getTime();
+			this.ui.achvBar.showAchv(achv);
+			if (save)
+				this.gameData.saveSystem();
+			return true;
+		}
+
+		return false;
 	}
 }

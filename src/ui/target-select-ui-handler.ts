@@ -41,7 +41,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     this.setCursor(this.targets.indexOf(this.cursor) > -1 ? this.cursor : this.targets[0]);
   }
 
-  processInput(button: Button) {
+  processInput(button: Button): boolean {
     const ui = this.getUi();
 
     let success = false;
@@ -72,6 +72,8 @@ export default class TargetSelectUiHandler extends UiHandler {
 
     if (success)
       ui.playSelect();
+
+    return success;
   }
 
   setCursor(cursor: integer): boolean {

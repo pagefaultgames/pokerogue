@@ -301,10 +301,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterSelectMessageBoxContainer.setVisible(true);
     }
   
-    processInput(button: Button): void {
+    processInput(button: Button): boolean {
       const ui = this.getUi();
 
       let success = false;
+      let error = false;
   
       if (this.genMode) {
         switch (button) {
@@ -323,7 +324,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       } else {
         if (button === Button.ACTION) {
           if (!this.speciesStarterDexEntry)
-            ui.playError();
+            error = true;
           else if (this.starterCursors.length < 3) {
             let isDupe = false;
             for (let s = 0; s < this.starterCursors.length; s++) {
@@ -380,7 +381,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               success = true;
               this.updateInstructions();
             } else
-              ui.playError();
+              error = true;
           }
         } else if (button === Button.CANCEL) {
           if (this.starterCursors.length) {
@@ -388,7 +389,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             success = true;
             this.updateInstructions();
           } else
-            ui.playError();
+            error = true;
         } else {
           const genStarters = this.starterSelectGenIconContainers[this.genCursor].getAll().length;
           const rows = Math.ceil(genStarters / 9);
@@ -446,6 +447,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     
       if (success)
         ui.playSelect();
+      else if (error)
+        ui.playError();
+
+      return success || error;
     }
     
     updateInstructions(): void {

@@ -55,7 +55,7 @@ export default class BallUiHandler extends UiHandler {
     this.setCursor(this.cursor);
   }
 
-  processInput(button: Button) {
+  processInput(button: Button): boolean {
     const ui = this.getUi();
 
     let success = false;
@@ -91,6 +91,8 @@ export default class BallUiHandler extends UiHandler {
 
     if (success)
       ui.playSelect();
+
+    return success;
   }
 
   updateCounts() {

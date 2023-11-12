@@ -241,13 +241,14 @@ export default class SummaryUiHandler extends UiHandler {
       this.hideStatus(!fromSummary);
   }
 
-  processInput(button: Button) {
+  processInput(button: Button): boolean {
     if (this.transitioning)
-      return;
+      return false;
 
     const ui = this.getUi();
 
     let success = false;
+    let error = false;
 
     if (this.moveSelect) {
       if (button === Button.ACTION) {
@@ -283,9 +284,9 @@ export default class SummaryUiHandler extends UiHandler {
           }
           success = true;
         } else if (this.moveCursor === 4)
-          this.processInput(Button.CANCEL);
+          return this.processInput(Button.CANCEL);
         else
-          ui.playError();
+          error = true;
       } else if (button === Button.CANCEL) {
         this.hideMoveSelect();
         success = true;
@@ -336,6 +337,10 @@ export default class SummaryUiHandler extends UiHandler {
 
     if (success)
       ui.playSelect();
+    else if (error)
+      ui.playError();
+
+    return success || error;
   }
 
   setCursor(cursor: integer): boolean {

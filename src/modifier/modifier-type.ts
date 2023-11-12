@@ -6,7 +6,7 @@ import { EvolutionItem, pokemonEvolutions } from '../data/pokemon-evolutions';
 import { Stat, getStatName } from '../data/pokemon-stat';
 import { tmPoolTiers, tmSpecies } from '../data/tms';
 import { Type } from '../data/type';
-import PartyUiHandler, { PokemonMoveSelectFilter, PokemonRememberMoveSelectFilter, PokemonSelectFilter } from '../ui/party-ui-handler';
+import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from '../ui/party-ui-handler';
 import * as Utils from '../utils';
 import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
