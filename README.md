@@ -3,29 +3,35 @@
 ## To do
 
 - Title screen
-- Starter select screen
-  - Get starters from save data caught Pokemon
+- Add carry-over starter mechanic
 - Moves
-  - Move logic
+  - Complete move logic
 - Abilities
-  - Ability logic
-  - Ability activation indicator (?)
+  - Complete ability logic
 - Natures
 - Pokemon summary screen
-  - Move remembering (no cost?)
+  - Complete summary UI adding missing labels
+  - Add IV screen
 - Capture logic
   - Critical capture
 - Save data
-  - Pokedex
+  - Update dex format to share attributes
 - Modifiers
   - PP Up
   - Various mainline game items for various enhancements
-  - Items that cause effects on hit (?)
-  - Capture rate booster
+  - IV scanner
+  - Valuable items for money
+- Trainers
+  - Finish party pools
+- Encounters
+  - Add extremely rare chance of Arceus available anywhere with type change
 - Balancing
   - Biome pools
-- Custom art
-  - Battle bases and backgrounds
-- Game sequence
-  - Endgame?
-  - Endless mode?
+- Battle animations
+  - Fix broken battle animations (mostly ones with backgrounds)
+  - Add common animations for modifier effects
+- Achievements
+  - Add more achievements
+- Modes
+  - Add random mode
+  - Add Nuzlocke mode
