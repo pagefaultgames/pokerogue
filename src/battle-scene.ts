@@ -973,13 +973,13 @@ export default class BattleScene extends Phaser.Scene {
 			: this.getBgmLoopPoint(bgmName);
 		let loaded = false;
 		const playNewBgm = () => {
-			if (bgmName === null && this.bgm) {
+			if (bgmName === null && this.bgm && !this.bgm.pendingRemove) {
 				this.bgm.play({
 					volume: this.masterVolume * this.bgmVolume
 				});
 				return;
 			}
-			if (this.bgm && this.bgm.isPlaying)
+			if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying)
 				this.bgm.stop();
 			this.bgm = this.sound.add(bgmName, { loop: true });
 			this.bgm.play({
@@ -995,7 +995,7 @@ export default class BattleScene extends Phaser.Scene {
 		});
 		if (fadeOut) {
 			const onBgmFaded = () => {
-				if (loaded && !this.bgm.isPlaying)
+				if (loaded && (!this.bgm.isPlaying || this.bgm.pendingRemove))
 					playNewBgm();
 			};
 			this.time.delayedCall(this.fadeOutBgm(500, true) ? 750 : 250, onBgmFaded);
@@ -1005,7 +1005,7 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	pauseBgm(): boolean {
-		if (this.bgm && this.bgm.isPlaying) {
+		if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying) {
 			this.bgm.pause();
 			return true;
 		}
@@ -1013,7 +1013,7 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	resumeBgm(): boolean {
-		if (this.bgm && this.bgm.isPaused) {
+		if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPaused) {
 			this.bgm.resume();
 			return true;
 		}
