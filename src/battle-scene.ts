@@ -34,7 +34,7 @@ import SettingsUiHandler from './ui/settings-ui-handler';
 import MessageUiHandler from './ui/message-ui-handler';
 import { Species } from './data/species';
 import InvertPostFX from './pipelines/invert';
-import { Achv, achvs } from './system/achv';
+import { Achv, ModifierAchv, achvs } from './system/achv';
 
 const enableAuto = true;
 const quickStart = false;
@@ -1177,6 +1177,7 @@ export default class BattleScene extends Phaser.Scene {
 	addModifier(modifier: Modifier, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean): Promise<void> {
 		return new Promise(resolve => {
 			const soundName = modifier.type.soundName;
+			this.validateAchvs(ModifierAchv, modifier);
 			if (modifier instanceof PersistentModifier) {
 				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual)) {
 					if (playSound && !this.sound.get(soundName))

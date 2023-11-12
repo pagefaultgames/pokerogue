@@ -112,7 +112,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     Object.values(achvs).forEach((achv: Achv, i: integer) => {
       const icon = this.achvIcons[i];
       const unlocked = achvUnlocks.hasOwnProperty(achv.id);
-      const hidden = achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
+      const hidden = !unlocked && achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
       const tinted = !hidden && !unlocked;
 
       icon.setFrame(!hidden ? achv.iconImage : 'unknown');
@@ -133,7 +133,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
   protected showAchv(achv: Achv) {
     const achvUnlocks = this.scene.gameData.achvUnlocks;
     const unlocked = achvUnlocks.hasOwnProperty(achv.id);
-    const hidden = achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
+    const hidden = !unlocked && achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
 
     this.titleText.setText(unlocked ? achv.name : '???');
     this.showText(!hidden ? achv.description : '');
@@ -160,11 +160,11 @@ export default class AchvsUiHandler extends MessageUiHandler {
             success = this.setCursor(this.cursor + 17);
           break;
         case Button.LEFT:
-          if (this.cursor % 17)
+          if (this.cursor)
             success = this.setCursor(this.cursor - 1);
           break;
         case Button.RIGHT:
-          if (this.cursor % 17 < 16 && this.cursor < Object.keys(achvs).length - 1)
+          if (this.cursor < Object.keys(achvs).length - 1)
             success = this.setCursor(this.cursor + 1);
           break;
       }

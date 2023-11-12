@@ -1466,6 +1466,8 @@ export class PlayerPokemon extends Pokemon {
         this.fusionGender = pokemon.gender;
       }
 
+      this.scene.validateAchv(achvs.SPLICE);
+
       this.calculateStats();
       this.generateCompatibleTms();
       this.updateInfo(true).then(() => {

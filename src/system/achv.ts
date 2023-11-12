@@ -1,5 +1,7 @@
+import { Modifier } from "typescript";
 import BattleScene from "../battle-scene";
 import * as Utils from "../utils";
+import { TurnHeldItemTransferModifier } from "../modifier/modifier";
 
 export enum AchvTier {
   COMMON,
@@ -90,6 +92,12 @@ export class LevelAchv extends Achv {
   }
 }
 
+export class ModifierAchv extends Achv {
+  constructor(name: string, description: string, iconImage: string, score: integer, modifierFunc: (modifier: Modifier) => boolean) {
+    super(name, description, iconImage, score, (_scene: BattleScene, args: any[]) => modifierFunc((args[0] as Modifier)));
+  }
+}
+
 export const achvs = {
   _10K_MONEY: new MoneyAchv('Money Haver', 10000, 'nugget', 10),
   _100K_MONEY: new MoneyAchv('Rich', 100000, 'big_nugget', 25).setSecret(true),
@@ -106,7 +114,9 @@ export const achvs = {
   LV_100: new LevelAchv('But Wait, There\'s More!', 50, 'rare_candy', 50).setSecret(),
   LV_250: new LevelAchv('Elite', 250, 'rarer_candy', 150).setSecret(true),
   LV_1000: new LevelAchv('To Go Even Further Beyond', 250, 'candy_jar', 400).setSecret(true),
-  TRANSFER_MAX_BATTLE_STAT: new Achv('Teamwork', 'Baton pass to another party member with at least one stat maxed out', 'stick', 25),
+  TRANSFER_MAX_BATTLE_STAT: new Achv('Teamwork', 'Baton pass to another party member with at least one stat maxed out', 'stick', 40),
+  SPLICE: new Achv('Infinite Fusion', 'Splice two Pokémon together with DNA Splicers', 'dna_splicers', 25),
+  MINI_BLACK_HOLE: new ModifierAchv('A Hole Lot of Items', 'Acquire a Mini Black Hole', 'mini_black_hole', 40, modifier => modifier instanceof TurnHeldItemTransferModifier).setSecret(),
   CATCH_LEGENDARY: new Achv('Legendary', 'Catch a legendary Pokémon', 'mb', 100).setSecret(),
   CATCH_MYTHICAL: new Achv('Mythical', 'Catch a mythical Pokémon', 'strange_ball', 100).setSecret(),
   SEE_SHINY: new Achv('Shiny', 'Find a shiny Pokémon in the wild', 'pb_gold', 150).setSecret(),
