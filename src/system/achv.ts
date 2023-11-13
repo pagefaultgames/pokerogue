@@ -113,7 +113,7 @@ export const achvs = {
   _10000_HEAL: new HealAchv('Recovery Master', 10000, 'max_potion', 100).setSecret(true),
   LV_100: new LevelAchv('But Wait, There\'s More!', 50, 'rare_candy', 25).setSecret(),
   LV_250: new LevelAchv('Elite', 250, 'rarer_candy', 50).setSecret(true),
-  LV_1000: new LevelAchv('To Go Even Further Beyond', 100, 'candy_jar', 400).setSecret(true),
+  LV_1000: new LevelAchv('To Go Even Further Beyond', 1000, 'candy_jar', 100).setSecret(true),
   TRANSFER_MAX_BATTLE_STAT: new Achv('Teamwork', 'Baton pass to another party member with at least one stat maxed out', 'stick', 20),
   SPLICE: new Achv('Infinite Fusion', 'Splice two Pokémon together with DNA Splicers', 'dna_splicers', 10),
   MINI_BLACK_HOLE: new ModifierAchv('A Hole Lot of Items', 'Acquire a Mini Black Hole', 'mini_black_hole', 25, modifier => modifier instanceof TurnHeldItemTransferModifier).setSecret(),
