@@ -356,7 +356,7 @@ export class GameData {
 
   setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true): void {
     const dexEntry = this.dexData[pokemon.species.speciesId];
-    dexEntry.seenAttr |= pokemon.getDexAttrs();
+    dexEntry.seenAttr |= pokemon.getDexAttr();
     if (incrementCount)
       dexEntry.seenCount++;
   }
@@ -369,7 +369,7 @@ export class GameData {
     return new Promise<void>((resolve) => {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
-      dexEntry.caughtAttr |= pokemon.getDexAttrs();
+      dexEntry.caughtAttr |= pokemon.getDexAttr();
       if (incrementCount)
         dexEntry.seenCount++;
 

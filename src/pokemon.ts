@@ -222,7 +222,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.isFainted() && !!this.scene && (!onField || this.isOnField());
   }
 
-  getDexAttrs(): bigint {
+  getDexAttr(): bigint {
     let ret = 0n;
     ret |= this.gender !== Gender.FEMALE ? DexAttr.MALE : DexAttr.FEMALE;
     ret |= !this.shiny ? DexAttr.NON_SHINY : DexAttr.SHINY;
