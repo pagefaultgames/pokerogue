@@ -106,10 +106,12 @@ export class SelectStarterPhase extends BattlePhase {
       const party = this.scene.getParty();
       const loadPokemonAssets: Promise<void>[] = [];
       for (let starter of starters) {
+        const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
         const starterGender = starter.species.malePercent !== null
-          ? !starter.female ? Gender.MALE : Gender.FEMALE
+          ? !starterProps.female ? Gender.MALE : Gender.FEMALE
           : Gender.GENDERLESS;
-        const starterPokemon = new PlayerPokemon(this.scene, starter.species, startingLevel, starter.abilityIndex, starter.formIndex, starterGender, starter.shiny);
+        const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
+        const starterPokemon = new PlayerPokemon(this.scene, starter.species, startingLevel, starterProps.abilityIndex, starterProps.formIndex, starterGender, starterProps.shiny, starterIvs);
         if (starter.pokerus)
           starterPokemon.pokerus = true;
         if (this.scene.gameMode === GameMode.SPLICED_ENDLESS)
@@ -256,7 +258,8 @@ export class EncounterPhase extends BattlePhase {
       if (e < (battle.double ? 2 : 1)) {
         enemyPokemon.setX(-66 + enemyPokemon.getFieldPositionOffset()[0]);
         enemyPokemon.resetSummonData();
-        this.scene.gameData.setPokemonSeen(enemyPokemon);
+        if (!this.loaded)
+          this.scene.gameData.setPokemonSeen(enemyPokemon);
       }
 
       if (this.scene.gameMode === GameMode.CLASSIC && (battle.waveIndex === 200 || !(battle.waveIndex % 250)) && enemyPokemon.species.speciesId === Species.ETERNATUS)
@@ -295,8 +298,10 @@ export class EncounterPhase extends BattlePhase {
       }
 
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
-        if (!this.loaded)
+        if (!this.loaded) {
           this.scene.gameData.saveSession(this.scene);
+          this.scene.gameData.saveSystem();
+        }
         this.doEncounter();
       });
     });
@@ -2810,6 +2815,13 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     if (pokemon.ivs.filter(iv => iv === 31).length === 6)
       this.scene.validateAchv(achvs.PERFECT_IVS);
+
+    const dexEntry = this.scene.gameData.dexData[pokemon.species.speciesId];
+    const dexIvs = dexEntry.ivs;
+    for (let i = 0; i < dexIvs.length; i++) {
+      if (dexIvs[i] < pokemon.ivs[i])
+        dexIvs[i] = pokemon.ivs[i];
+    }
       
     this.scene.ui.showText(`${pokemon.name} was caught!`, null, () => {
       const end = () => {

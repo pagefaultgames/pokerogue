@@ -81,8 +81,8 @@ export function getFrameMs(frameCount: integer): integer {
 }
 
 export function binToDec(input: string): integer {
-  let place:integer[] = []; 
-  let binary:string[] = [];
+  let place: integer[] = []; 
+  let binary: string[] = [];
   
   let decimalNum = 0;
   

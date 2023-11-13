@@ -1,5 +1,4 @@
 import BattleScene, { PokeballCounts } from "../battle-scene";
-import { Gender } from "../data/gender";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../pokemon";
 import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies } from "../data/pokemon-species";
@@ -51,29 +50,33 @@ interface AchvUnlocks {
 }
 
 export interface DexData {
-  [key: integer]: DexData | DexEntry
+  [key: integer]: DexEntry
 }
 
 export interface DexEntry {
-  seen: boolean;
-  caught: boolean;
+  seenAttr: bigint;
+  caughtAttr: bigint;
+  seenCount: integer;
+  caughtCount: integer;
+  ivs: integer[];
 }
 
-export interface DexEntryDetails {
+export const DexAttr = {
+  NON_SHINY: 1n,
+  SHINY: 2n,
+  MALE: 4n,
+  FEMALE: 8n,
+  ABILITY_1: 16n,
+  ABILITY_2: 32n,
+  ABILITY_HIDDEN: 64n,
+  DEFAULT_FORM: 128n
+}
+
+export interface DexAttrProps {
   shiny: boolean;
-  formIndex: integer;
   female: boolean;
   abilityIndex: integer;
-  entry: DexEntry;
-}
-
-export interface StarterDexUnlockTree {
-  shiny: boolean | Map<boolean, StarterDexUnlockTree>
-  formIndex: integer | Map<integer, StarterDexUnlockTree>
-  female: boolean | Map<boolean, StarterDexUnlockTree>
-  abilityIndex: integer | Map<integer, StarterDexUnlockTree>
-  key: string,
-  entry: DexEntry
+  formIndex: integer;
 }
 
 export class GameData {
@@ -106,8 +109,6 @@ export class GameData {
   public saveSystem(): boolean {
     if (this.scene.quickStart)
       return false;
-
-    console.log(this.achvUnlocks, "wah")
       
     const data: SystemSaveData = {
       trainerId: this.trainerId,
@@ -118,7 +119,10 @@ export class GameData {
       timestamp: new Date().getTime()
     };
 
-    localStorage.setItem('data', btoa(JSON.stringify(data)));
+    localStorage.setItem('data_bak', localStorage.getItem('data'));
+
+    const maxIntAttrValue = Math.pow(2, 31);
+    localStorage.setItem('data', btoa(JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v)));
 
     return true;
   }
@@ -127,7 +131,8 @@ export class GameData {
     if (!localStorage.hasOwnProperty('data'))
       return false;
 
-    const data = JSON.parse(atob(localStorage.getItem('data'))) as SystemSaveData;
+    const data = JSON.parse(atob(localStorage.getItem('data')), (k: string, v: any) => k.endsWith('Attr') ? BigInt(v) : v) as SystemSaveData;
+
     console.debug(data);
 
     this.trainerId = data.trainerId;
@@ -147,10 +152,10 @@ export class GameData {
       }
     }
 
-    if (data.timestamp === undefined)
-      this.convertDexData(data.dexData);
-
-    this.dexData = Object.assign(this.dexData, data.dexData);
+    if (data.dexData[1].hasOwnProperty(0))
+      this.migrateLegacyDexData(this.dexData, data.dexData);
+    else
+      this.dexData = Object.assign(this.dexData, data.dexData);
 
     return true;
   }
@@ -322,39 +327,10 @@ export class GameData {
   private initDexData(): void {
     const data: DexData = {};
 
-    const initDexSubData = (dexData: DexData, count: integer): DexData[] => {
-      const ret: DexData[] = [];
-      for (let i = 0; i < count; i++) {
-        const newData: DexData = {};
-        dexData[i] = newData;
-        ret.push(newData);
-      }
-
-      return ret;
-    };
-
-    const initDexEntries = (dexData: DexData, count: integer): DexEntry[] => {
-      const ret: DexEntry[] = [];
-      for (let i = 0; i < count; i++) {
-        const entry: DexEntry = { seen: false, caught: false };
-        dexData[i] = entry;
-        ret.push(entry);
-      }
-
-      return ret;
-    };
-
     for (let species of allSpecies) {
-      data[species.speciesId] = {};
-      const abilityCount = species.getAbilityCount();
-      if (species.forms?.length)
-        initDexSubData(data[species.speciesId] as DexData, 2).map(sd => species.malePercent !== null
-          ? initDexSubData(sd, species.forms.length).map(fd => initDexSubData(fd, 2).map(gd => initDexEntries(gd, abilityCount)))
-          : initDexSubData(sd, species.forms.length).map(fd => initDexEntries(fd, abilityCount)));
-      else if (species.malePercent !== null)
-        initDexSubData(data[species.speciesId] as DexData, 2).map(sd => initDexSubData(sd, 2).map(gd => initDexEntries(gd, abilityCount)));
-      else
-        initDexSubData(data[species.speciesId] as DexData, 2).map(sd => initDexEntries(sd, abilityCount))
+      data[species.speciesId] = {
+        seenAttr: 0n, caughtAttr: 0n, seenCount: 0, caughtCount: 0, ivs: [ 0, 0, 0, 0, 0, 0 ]
+      };
     }
 
     const defaultStarters: Species[] = [
@@ -365,255 +341,196 @@ export class GameData {
       Species.SNIVY, Species.TEPIG, Species.OSHAWOTT
     ];
 
+    const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.ABILITY_1 | DexAttr.DEFAULT_FORM;
+
     for (let ds of defaultStarters) {
-      let entry = data[ds][0][Gender.MALE][0] as DexEntry;
-      entry.seen = true;
-      entry.caught = true;
+      let entry = data[ds] as DexEntry;
+      entry.seenAttr = defaultStarterAttr;
+      entry.caughtAttr = defaultStarterAttr;
+      for (let i in entry.ivs)
+        entry.ivs[i] = 10;
     }
 
     this.dexData = data;
   }
 
-  setPokemonSeen(pokemon: Pokemon): void {
-    const dexEntry = this.getPokemonDexEntry(pokemon);
-    if (!dexEntry.seen) {
-      dexEntry.seen = true;
-      this.saveSystem();
-    }
+  setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true): void {
+    const dexEntry = this.dexData[pokemon.species.speciesId];
+    dexEntry.seenAttr |= pokemon.getDexAttrs();
+    if (incrementCount)
+      dexEntry.seenCount++;
   }
 
-  setPokemonCaught(pokemon: Pokemon): Promise<void> {
-    return this.setPokemonSpeciesCaught(pokemon, pokemon.species);
+  setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true): Promise<void> {
+    return this.setPokemonSpeciesCaught(pokemon, pokemon.species, incrementCount);
   }
 
-  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies): Promise<void> {
+  setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount?: boolean): Promise<void> {
     return new Promise<void>((resolve) => {
-      const dexEntry = this.getDexEntry(species, pokemon.isShiny(), pokemon.formIndex, pokemon.gender === Gender.FEMALE, pokemon.abilityIndex);
+      const dexEntry = this.dexData[species.speciesId];
+      const caughtAttr = dexEntry.caughtAttr;
+      dexEntry.caughtAttr |= pokemon.getDexAttrs();
+      if (incrementCount)
+        dexEntry.seenCount++;
+
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
-      if (!dexEntry.caught) {
-        const newCatch = !this.getDefaultDexEntry(species);
+      const newCatch = !caughtAttr;
 
-        dexEntry.caught = true;
-        this.saveSystem();
-
-        if (newCatch && !hasPrevolution) {
-          this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
-          this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => resolve(), null, true);
-          return;
-        }
+      if (newCatch && !hasPrevolution) {
+        this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
+        this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => resolve(), null, true);
+        return;
       }
 
       if (hasPrevolution) {
         const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
-        this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies)).then(() => resolve());
+        return this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies)).then(() => resolve());
       } else
         resolve();
     });
   }
 
-  getPokemonDexEntry(pokemon: Pokemon) {
-    return this.getDexEntry(pokemon.species, pokemon.isShiny(), pokemon.formIndex, pokemon.gender === Gender.FEMALE, pokemon.abilityIndex);
+  getSpeciesDefaultDexAttr(species: PokemonSpecies): bigint {
+    let ret = 0n;
+    const dexEntry = this.dexData[species.speciesId];
+    const attr = dexEntry.caughtAttr;
+    ret |= attr & DexAttr.NON_SHINY || !(attr & DexAttr.SHINY) ? DexAttr.NON_SHINY : DexAttr.SHINY;
+    ret |= attr & DexAttr.MALE || !(attr & DexAttr.FEMALE) ? DexAttr.MALE : DexAttr.FEMALE;
+    ret |= attr & DexAttr.ABILITY_1 || (!(attr & DexAttr.ABILITY_2) && !(attr & DexAttr.ABILITY_HIDDEN)) ? DexAttr.ABILITY_1 : attr & DexAttr.ABILITY_2 ? DexAttr.ABILITY_2 : DexAttr.ABILITY_HIDDEN;
+    ret |= this.getFormAttr(this.getFormIndex(attr));
+    return ret;
   }
 
-  getDexEntry(species: PokemonSpecies, shiny: boolean, formIndex: integer, female: boolean, abilityIndex: integer): DexEntry {
-    const shinyIndex = !shiny ? 0 : 1;
-    const genderIndex = !female ? 0 : 1;
-    const data = this.dexData[species.speciesId];
-    if (species.forms?.length) {
-      const getEntry = () => {
-        if (species.malePercent !== null)
-          return data[shinyIndex][formIndex][genderIndex][abilityIndex];
-        return data[shinyIndex][formIndex][abilityIndex];
-      };
-      let entry: DexEntry;
-      try {
-        entry = getEntry();
-      } catch (err) { }
-      if (entry)
-        return entry;
-      else {
-        console.warn(`Form data not found for dex entry for ${species.name}: Restructuring dex entry`);
-        for (let s = 0; s < 2; s++) {
-          const oldData = Object.assign({}, data[s]);
-          data[s] = {};
-          for (let f = 0; f < species.forms.length; f++)
-            data[s][f] = oldData;
-        }
-        this.saveSystem();
-      }
-      return getEntry();
-    } else if (species.malePercent !== null)
-      return data[shinyIndex][genderIndex][abilityIndex];
-    return data[shinyIndex][abilityIndex] as DexEntry;
-  }
+  getSpeciesDexAttrProps(species: PokemonSpecies, dexAttr: bigint): DexAttrProps {
+    const shiny = !(dexAttr & DexAttr.NON_SHINY);
+    const female = !(dexAttr & DexAttr.MALE);
+    const abilityIndex = dexAttr & DexAttr.ABILITY_1 ? 0 : !species.ability2 || dexAttr & DexAttr.ABILITY_2 ? 1 : 2;
+    const formIndex = this.getFormIndex(dexAttr);
 
-  getDefaultDexEntry(species: PokemonSpecies, forceShiny?: boolean, forceFormIndex?: integer, forceFemale?: boolean, forceAbilityIndex?: integer): DexEntryDetails {
-    const hasForms = !!species.forms?.length;
-    const hasGender = species.malePercent !== null;
-    let shiny = false;
-    let formIndex = 0;
-    let female = false;
-    let abilityIndex = 0;
-    let entry = null;
-
-    const traverseData = (data: DexData, level: integer) => {
-      const keys = Object.keys(data);
-      if ((!hasForms && level === 1) || (!hasGender && level === 2)) {
-        traverseData(data, level + 1);
-        return;
-      }
-      keys.forEach((key: string, k: integer) => {
-        if (entry)
-          return;
-
-        switch (level) {
-          case 0:
-            shiny = !!k;
-            if (forceShiny !== undefined && shiny !== forceShiny)
-              return;
-            break;
-          case 1:
-            formIndex = k;
-            if (forceFormIndex !== undefined && formIndex !== forceFormIndex)
-              return;
-            break;
-          case 2:
-            female = !!k;
-            if (forceFemale !== undefined && female !== forceFemale)
-              return
-            break;
-          case 3:
-            abilityIndex = k;
-            if (forceAbilityIndex !== undefined && abilityIndex !== forceAbilityIndex)
-              return;
-            break;
-        }
-
-        if ('caught' in data[key]) {
-          if (data[key].caught)
-            entry = data[key] as DexEntry;
-        } else
-          traverseData(data[key] as DexData, level + 1);
-      });
+    return {
+      shiny,
+      female,
+      abilityIndex,
+      formIndex
     };
+  }
 
-    traverseData(this.dexData[species.speciesId] as DexData, 0);
+  getFormIndex(attr: bigint): integer {
+    if (!attr || attr < DexAttr.DEFAULT_FORM)
+      return 0;
+    let f = 0;
+    while (!(attr & this.getFormAttr(f)))
+      f++;
+    return f;
+  }
 
-    if (entry) {
-      return {
-        shiny: shiny,
-        formIndex: formIndex,
-        female: female,
-        abilityIndex: abilityIndex,
-        entry: entry
-      };
+  getFormAttr(formIndex: integer): bigint {
+    return BigInt(Math.pow(2, 7 + formIndex));
+  }
+
+  // TODO: Remove
+  migrateLegacyDexData(dexData: DexData, legacyDexData: object): DexData {
+    const newDexData: DexData = {};
+
+    for (let s of Object.keys(legacyDexData)) {
+      const species = getPokemonSpecies(parseInt(s));
+      const newEntry = dexData[parseInt(s)];
+      let seenAttr = 0n;
+      let caughtAttr = 0n;
+      Object.keys(legacyDexData[s]).forEach(shinyIndex => {
+        const shinyData = legacyDexData[s][shinyIndex];
+        if (species.forms?.length) {
+          Object.keys(shinyData).forEach(formIndex => {
+            const formData = shinyData[formIndex];
+            if (species.malePercent !== null) {
+              Object.keys(formData).forEach(genderIndex => {
+                const genderData = formData[genderIndex];
+                Object.keys(genderData).forEach(abilityIndex => {
+                  const entry = genderData[abilityIndex];
+                  if (entry.seen) {
+                    seenAttr |= !parseInt(shinyIndex) ? DexAttr.NON_SHINY : DexAttr.SHINY;
+                    seenAttr |= !parseInt(genderIndex) ? DexAttr.MALE : DexAttr.FEMALE;
+                    seenAttr |= parseInt(abilityIndex) === 0 ? DexAttr.ABILITY_1 : parseInt(abilityIndex) === 1 && species.ability2 ? DexAttr.ABILITY_2 : DexAttr.ABILITY_HIDDEN;
+                    seenAttr |= this.getFormAttr(parseInt(formIndex));
+                  }
+                  if (entry.caught) {
+                    if (!caughtAttr)
+                      newEntry.ivs = [ 10, 10, 10, 10, 10, 10 ];
+                    caughtAttr |= !parseInt(shinyIndex) ? DexAttr.NON_SHINY : DexAttr.SHINY;
+                    caughtAttr |= !parseInt(genderIndex) ? DexAttr.MALE : DexAttr.FEMALE;
+                    caughtAttr |= parseInt(abilityIndex) === 0 ? DexAttr.ABILITY_1 : parseInt(abilityIndex) === 1 && species.ability2 ? DexAttr.ABILITY_2 : DexAttr.ABILITY_HIDDEN;
+                    caughtAttr |= this.getFormAttr(parseInt(formIndex));
+                  }
+                });
+              });
+            } else {
+              Object.keys(formData).forEach(abilityIndex => {
+                const entry = formData[abilityIndex];
+                if (entry.seen) {
+                  seenAttr |= !parseInt(shinyIndex) ? DexAttr.NON_SHINY : DexAttr.SHINY;
+                  seenAttr |= DexAttr.MALE;
+                  seenAttr |= parseInt(abilityIndex) === 0 ? DexAttr.ABILITY_1 : parseInt(abilityIndex) === 1 && species.ability2 ? DexAttr.ABILITY_2 : DexAttr.ABILITY_HIDDEN;
+                  seenAttr |= this.getFormAttr(parseInt(formIndex));
+                }
+                if (entry.caught) {
+                  if (!caughtAttr)
+                    newEntry.ivs = [ 10, 10, 10, 10, 10, 10 ];
+                  caughtAttr |= !parseInt(shinyIndex) ? DexAttr.NON_SHINY : DexAttr.SHINY;
+                  caughtAttr |= DexAttr.MALE;
+                  caughtAttr |= parseInt(abilityIndex) === 0 ? DexAttr.ABILITY_1 : parseInt(abilityIndex) === 1 && species.ability2 ? DexAttr.ABILITY_2 : DexAttr.ABILITY_HIDDEN;
+                  caughtAttr |= this.getFormAttr(parseInt(formIndex));
+                }
+              });
+            }
+          });
+        } else {
+          if (species.malePercent !== null) {
+            Object.keys(shinyData).forEach(genderIndex => {
+              const genderData = shinyData[genderIndex];
+              Object.keys(genderData).forEach(abilityIndex => {
+                const entry = genderData[abilityIndex];
+                if (entry.seen) {
+                  seenAttr |= !parseInt(shinyIndex) ? DexAttr.NON_SHINY : DexAttr.SHINY;
+                  seenAttr |= !parseInt(genderIndex) ? DexAttr.MALE : DexAttr.FEMALE;
+                  seenAttr |= parseInt(abilityIndex) === 0 ? DexAttr.ABILITY_1 : parseInt(abilityIndex) === 1 && species.ability2 ? DexAttr.ABILITY_2 : DexAttr.ABILITY_HIDDEN;
+                  seenAttr |= DexAttr.DEFAULT_FORM;
+                }
+                if (entry.caught) {
+                  if (!caughtAttr)
+                    newEntry.ivs = [ 10, 10, 10, 10, 10, 10 ];
+                  caughtAttr |= !parseInt(shinyIndex) ? DexAttr.NON_SHINY : DexAttr.SHINY;
+                  caughtAttr |= !parseInt(genderIndex) ? DexAttr.MALE : DexAttr.FEMALE;
+                  caughtAttr |= parseInt(abilityIndex) === 0 ? DexAttr.ABILITY_1 : parseInt(abilityIndex) === 1 && species.ability2 ? DexAttr.ABILITY_2 : DexAttr.ABILITY_HIDDEN;
+                  caughtAttr |= DexAttr.DEFAULT_FORM;
+                }
+              });
+            });
+          } else {
+            Object.keys(shinyData).forEach(abilityIndex => {
+              const entry = shinyData[abilityIndex];
+              if (entry.seen) {
+                seenAttr |= !parseInt(shinyIndex) ? DexAttr.NON_SHINY : DexAttr.SHINY;
+                seenAttr |= DexAttr.MALE;
+                seenAttr |= parseInt(abilityIndex) === 0 ? DexAttr.ABILITY_1 : parseInt(abilityIndex) === 1 && species.ability2 ? DexAttr.ABILITY_2 : DexAttr.ABILITY_HIDDEN;
+                seenAttr |= DexAttr.DEFAULT_FORM;
+              }
+              if (entry.caught) {
+                if (!caughtAttr)
+                  newEntry.ivs = [ 10, 10, 10, 10, 10, 10 ];
+                caughtAttr |= !parseInt(shinyIndex) ? DexAttr.NON_SHINY : DexAttr.SHINY;
+                caughtAttr |= DexAttr.MALE;
+                caughtAttr |= parseInt(abilityIndex) === 0 ? DexAttr.ABILITY_1 : parseInt(abilityIndex) === 1 && species.ability2 ? DexAttr.ABILITY_2 : DexAttr.ABILITY_HIDDEN;
+                caughtAttr |= DexAttr.DEFAULT_FORM;
+              }
+            });
+          }
+        }
+      });
+
+      newEntry.seenAttr = seenAttr;
+      newEntry.caughtAttr = caughtAttr;
     }
 
-    return null;
-  }
-
-  getStarterDexUnlockTree(species: PokemonSpecies): StarterDexUnlockTree {
-    const hasForms = !!species.forms?.length;
-    const hasGender = species.malePercent !== null;
-
-    const getTreeOrValueMap = (key: string, parent?: StarterDexUnlockTree): (Map<any, any>) => {
-      switch (key) {
-        case 'shiny':
-          const shinyMap = new Map<boolean, StarterDexUnlockTree>();
-          for (let s = 0; s < 2; s++) {
-            const props = { shiny: !!s };
-            shinyMap.set(!!s, {
-              shiny: !!s,
-              formIndex: hasForms ? getTreeOrValueMap('formIndex', props as StarterDexUnlockTree) : null,
-              female: !hasForms && hasGender ? getTreeOrValueMap('female', props as StarterDexUnlockTree) : null,
-              abilityIndex: !hasForms && !hasGender ? getTreeOrValueMap('abilityIndex', props as StarterDexUnlockTree) : null,
-              key: hasForms ? 'formIndex' : hasGender ? 'female' : 'abilityIndex',
-              entry: null,
-            });
-          }
-          return shinyMap;
-        case 'formIndex':
-          const formMap = new Map<integer, StarterDexUnlockTree>();
-          for (let f = 0; f < species.forms.length; f++) {
-            const props = { shiny: parent.shiny, formIndex: f };
-            formMap.set(f, {
-              shiny: parent.shiny,
-              formIndex: f,
-              female: hasGender ? getTreeOrValueMap('female', props as StarterDexUnlockTree) : null,
-              abilityIndex: !hasGender ? getTreeOrValueMap('abilityIndex', props as StarterDexUnlockTree) : null,
-              key: hasGender ? 'female' : 'abilityIndex',
-              entry: null
-            });
-          }
-          return formMap;
-        case 'female':
-          const genderMap = new Map<boolean, StarterDexUnlockTree>();
-          for (let g = 0; g < 2; g++) {
-            const props = { shiny: parent.shiny, formIndex: parent.formIndex, female: !!g };
-            genderMap.set(!!g, {
-              shiny: parent.shiny,
-              formIndex: parent.formIndex,
-              female: !!g,
-              abilityIndex: getTreeOrValueMap('abilityIndex', props as StarterDexUnlockTree),
-              key: 'abilityIndex',
-              entry: null
-            });
-          }
-          return genderMap;
-        case 'abilityIndex':
-          const abilityMap = new Map<integer, StarterDexUnlockTree>();
-          const abilityCount = species.getAbilityCount();
-          for (let a = 0; a < abilityCount; a++) {
-            abilityMap.set(a, {
-              shiny: parent.shiny,
-              formIndex: parent.formIndex,
-              female: parent.female,
-              abilityIndex: a,
-              key: 'entry',
-              entry: hasForms
-                ? hasGender
-                  ? this.dexData[species.speciesId][!parent.shiny ? 0 : 1][parent.formIndex as integer][!parent.female ? 0 : 1][a]
-                  : this.dexData[species.speciesId][!parent.shiny ? 0 : 1][parent.formIndex as integer][a]
-                : hasGender
-                  ? this.dexData[species.speciesId][!parent.shiny ? 0 : 1][!parent.female ? 0 : 1][a]
-                  : this.dexData[species.speciesId][!parent.shiny ? 0 : 1][a]
-            });
-          }
-          return abilityMap;
-      }
-    };
-
-    const root = {
-      shiny: getTreeOrValueMap('shiny'),
-      formIndex: null,
-      female: null,
-      abilityIndex: null,
-      key: 'shiny',
-      entry: null
-    };
-
-    return root;
-  }
-
-  convertDexData(dexData: DexData): void {
-    const traverseData = (speciesId: Species, data: DexData) => {
-      const keys = Object.keys(data);
-      keys.forEach((key: string, k: integer) => {
-        if ('caught' in data[key]) {
-          const abilityCount = getPokemonSpecies(speciesId).getAbilityCount();
-          data[key] = {
-            0: data[key]
-          };
-          for (let a = 1; a < abilityCount; a++)
-            data[key][a] = { seen: false, caught: false };
-        } else
-          traverseData(speciesId, data[key]);
-      });
-    }
-
-    Object.keys(dexData).forEach((species: string, s: integer) => {
-      const speciesId = parseInt(species);
-      traverseData(speciesId, dexData[species]);
-    });
+    return newDexData;
   }
 }

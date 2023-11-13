@@ -31,6 +31,7 @@ import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
 import { GameMode } from './game-mode';
 import { LevelMoves } from './data/pokemon-level-moves';
 import { DamageAchv, achvs } from './system/achv';
+import { DexAttr } from './system/game-data';
 
 export enum FieldPosition {
   CENTER,
@@ -82,7 +83,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon | PokemonData) {
+  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, ivs?: integer[], dataSource?: Pokemon | PokemonData) {
     super(scene, x, y);
 
     if (!species.isObtainable() && this.isPlayer())
@@ -127,8 +128,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     } else {
       this.generateAndPopulateMoveset();
 
-      this.id = Utils.randInt(4294967295);
-      this.ivs = [
+      this.id = Utils.randSeedInt(4294967295);
+      this.ivs = ivs || [
         Utils.binToDec(Utils.decToBin(this.id).substring(0, 5)),
         Utils.binToDec(Utils.decToBin(this.id).substring(5, 10)),
         Utils.binToDec(Utils.decToBin(this.id).substring(10, 15)),
@@ -219,6 +220,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.scene)
       return false;
     return !this.isFainted() && !!this.scene && (!onField || this.isOnField());
+  }
+
+  getDexAttrs(): bigint {
+    let ret = 0n;
+    ret |= this.gender !== Gender.FEMALE ? DexAttr.MALE : DexAttr.FEMALE;
+    ret |= !this.shiny ? DexAttr.NON_SHINY : DexAttr.SHINY;
+    ret |= !this.abilityIndex ? DexAttr.ABILITY_1 : this.species.ability2 && this.abilityIndex === 1 ? DexAttr.ABILITY_2 : DexAttr.ABILITY_HIDDEN;
+    ret |= this.scene.gameData.getFormAttr(this.formIndex);
+    return ret;
   }
 
   abstract isPlayer(): boolean;
@@ -413,7 +423,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     for (let s of stats) {
       const isHp = s === Stat.HP;
       let baseStat = baseStats[s];
-      let value = Math.floor(((2 * baseStat + this.ivs[s] + (0 / 4)) * this.level) * 0.01);
+      let value = Math.floor(((2 * baseStat + this.ivs[s]) * this.level) * 0.01);
       if (isHp) {
         value = Math.min(value + this.level + 10, 99999);
         if (this.getAbility().hasAttr(NonSuperEffectiveImmunityAbAttr))
@@ -1352,8 +1362,8 @@ export class PlayerPokemon extends Pokemon {
   public metLevel: integer;
   public compatibleTms: Moves[];
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, dataSource?: Pokemon | PokemonData) {
-    super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, dataSource);
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, ivs?: integer[], dataSource?: Pokemon | PokemonData) {
+    super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, ivs, dataSource);
     
     this.metBiome = scene.arena?.biomeType || Biome.TOWN;
     this.metLevel = level;
@@ -1422,8 +1432,8 @@ export class PlayerPokemon extends Pokemon {
       this.getSpeciesForm().generateIconAnim(this.scene, this.gender === Gender.FEMALE, this.formIndex);
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
-      this.scene.gameData.setPokemonSeen(this);
-      this.scene.gameData.setPokemonCaught(this);
+      this.scene.gameData.setPokemonSeen(this, false);
+      this.scene.gameData.setPokemonCaught(this, false);
       this.loadAssets().then(() => {
         this.calculateStats();
         this.updateInfo().then(() => resolve());
@@ -1508,7 +1518,7 @@ export class EnemyPokemon extends Pokemon {
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainer: boolean, dataSource?: PokemonData) {
     super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource ? dataSource.formIndex : scene.getSpeciesFormIndex(species),
-      dataSource?.gender, dataSource?.shiny, dataSource);
+      dataSource?.gender, dataSource?.shiny, null, dataSource);
 
     this.trainer = trainer;
 
@@ -1681,7 +1691,7 @@ export class EnemyPokemon extends Pokemon {
     let ret: PlayerPokemon = null;
 
     if (party.length < 6) {
-      const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this);
+      const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, null, this);
       party.push(newPokemon);
       ret = newPokemon;
     }

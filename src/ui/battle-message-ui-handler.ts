@@ -186,7 +186,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
   getIvDescriptor(value: integer): string {
     if (value > 30)
-      return 'Perfect';
+      return 'Best';
     if (value === 30)
       return 'Fantastic';
     if (value > 20)

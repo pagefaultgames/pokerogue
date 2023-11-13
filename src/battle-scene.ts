@@ -1426,21 +1426,14 @@ export default class BattleScene extends Phaser.Scene {
 	validateAchvs(achvType: { new(...args: any[]): Achv }, ...args: any[]): void {
 		const filteredAchvs = Object.values(achvs).filter(a => a instanceof achvType);
 		let newAchv = false;
-		for (let achv of filteredAchvs) {
-			if (this.validateAchv(achv, args, false))
-				newAchv = true;
-		}
-
-		if (newAchv)
-			this.gameData.saveSystem();
+		for (let achv of filteredAchvs)
+			this.validateAchv(achv, args);
 	}
 
-	validateAchv(achv: Achv, args?: any[], save: boolean = true): boolean {
+	validateAchv(achv: Achv, args?: any[]): boolean {
 		if (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) && achv.validate(this, args)) {
 			this.gameData.achvUnlocks[achv.id] = new Date().getTime();
 			this.ui.achvBar.showAchv(achv);
-			if (save)
-				this.gameData.saveSystem();
 			return true;
 		}
 

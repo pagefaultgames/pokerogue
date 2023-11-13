@@ -3,7 +3,6 @@ import BattleScene, { Button } from "../battle-scene";
 import { ModifierTier, ModifierType, ModifierTypeOption, PokemonBaseStatBoosterModifierType, PokemonHpRestoreModifierType, PokemonReviveModifierType } from "../modifier/modifier-type";
 import Pokemon, { AiType, EnemyPokemon, PlayerPokemon, PokemonMove } from "../pokemon";
 import { Species } from "../data/species";
-import { getTypeDamageMultiplier } from "../data/type";
 import BattleMessageUiHandler from "../ui/battle-message-ui-handler";
 import CommandUiHandler from "../ui/command-ui-handler";
 import FightUiHandler from "../ui/fight-ui-handler";
