@@ -1,10 +1,10 @@
 import BattleScene, { Button } from "../battle-scene";
 import { GameMode, gameModeNames } from "../game-mode";
 import { Unlockables } from "../system/unlockables";
-import OptionSelectUiHandler from "./option-select-ui-handler";
+import AbstractOptionSelectUiHandler from "./abstact-option-select-ui-handler";
 import { Mode } from "./ui";
 
-export default class GameModeSelectUiHandler extends OptionSelectUiHandler {
+export default class GameModeSelectUiHandler extends AbstractOptionSelectUiHandler {
 
   constructor(scene: BattleScene) {
     super(scene, Mode.GAME_MODE_SELECT);
@@ -59,7 +59,7 @@ export default class GameModeSelectUiHandler extends OptionSelectUiHandler {
       ui.playSelect();
     } else
       return super.processInput(button);
-      
+
     return true;
   }
 }

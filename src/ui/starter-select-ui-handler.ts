@@ -3,7 +3,6 @@ import PokemonSpecies, { allSpecies, getPokemonSpecies } from "../data/pokemon-s
 import { Species } from "../data/species";
 import { TextStyle, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
-import * as Utils from "../utils";
 import MessageUiHandler from "./message-ui-handler";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { pokemonPrevolutions } from "../data/pokemon-evolutions";
@@ -12,6 +11,8 @@ import { GameMode } from "../game-mode";
 import { Unlockables } from "../system/unlockables";
 import { GrowthRate, getGrowthRateColor } from "../data/exp";
 import { DexAttr, DexEntry } from "../system/game-data";
+import * as Utils from "../utils";
+import { Stat, getStatName } from "../data/pokemon-stat";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -20,6 +21,10 @@ export interface Starter {
   dexAttr: bigint;
   pokerus: boolean;
 }
+
+const ivChartSize = 24;
+const ivChartStatCoordMultipliers = [ [ 0, 1 ], [ 0.825, 0.5 ], [ 0.825, -0.5 ], [ 0, -1 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ] ];
+const defaultIvChartData = new Array(12).fill(null).map(() => 0);
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
     private starterSelectContainer: Phaser.GameObjects.Container;
@@ -34,8 +39,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private pokemonAbilityText: Phaser.GameObjects.Text;
     private instructionsText: Phaser.GameObjects.Text;
     private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
+    private statsContainer: Phaser.GameObjects.Container;
+    private ivChart: Phaser.GameObjects.Polygon;
+    private ivStatValueTexts: Phaser.GameObjects.Text[];
 
     private genMode: boolean;
+    private statsMode: boolean;
+    private statsIvsCache: integer[];
     private dexAttrCursor: bigint = 0n;
     private genCursor: integer = 0;
 
@@ -262,6 +272,49 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       }, 0, date.getTime().toString());
 
+      this.statsContainer = this.scene.add.container(6, 16);
+
+      const ivChartBgData = new Array(6).fill(null).map((_, i: integer) => [ ivChartSize * ivChartStatCoordMultipliers[i][0], ivChartSize * ivChartStatCoordMultipliers[i][1] ] ).flat();
+
+      const ivChartBg = this.scene.add.polygon(48, 44, ivChartBgData, 0xd8e0f0, 0.625);
+      ivChartBg.setOrigin(0, 0);
+
+      const ivChartBorder = this.scene.add.polygon(ivChartBg.x, ivChartBg.y, ivChartBgData)
+        .setStrokeStyle(1, 0x484050);
+      ivChartBorder.setOrigin(0, 0);
+
+      const ivChartBgLines = [ [ 0, -1, 0, 1 ], [ -0.825, -0.5, 0.825, 0.5 ], [ 0.825, -0.5, -0.825, 0.5 ] ].map(coords => {
+        const line = new Phaser.GameObjects.Line(this.scene, ivChartBg.x, ivChartBg.y, ivChartSize * coords[0], ivChartSize * coords[1], ivChartSize * coords[2], ivChartSize * coords[3], 0xffffff)
+          .setLineWidth(0.5);
+        line.setOrigin(0, 0);
+        return line;
+      });
+
+      this.ivChart = this.scene.add.polygon(ivChartBg.x, ivChartBg.y, defaultIvChartData, 0x98d8a0, 0.75);
+      this.ivChart.setOrigin(0, 0);
+
+      this.statsContainer.add(ivChartBg);
+      ivChartBgLines.map(l => this.statsContainer.add(l));
+      this.statsContainer.add(this.ivChart);
+      this.statsContainer.add(ivChartBorder);
+
+      this.ivStatValueTexts = [];
+
+      new Array(6).fill(null).map((_, i: integer) => {
+        const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4, getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
+        statLabel.setOrigin(0.5);
+
+        this.ivStatValueTexts[i] = addTextObject(this.scene, statLabel.x, statLabel.y + 8, '0', TextStyle.TOOLTIP_CONTENT);
+        this.ivStatValueTexts[i].setOrigin(0.5)
+
+        this.statsContainer.add(statLabel);
+        this.statsContainer.add(this.ivStatValueTexts[i]);
+      });
+
+      this.statsContainer.setVisible(false);
+
+      this.starterSelectContainer.add(this.statsContainer);
+
       this.updateInstructions();
     }
   
@@ -320,69 +373,78 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (!this.speciesStarterDexEntry?.caughtAttr)
             error = true;
           else if (this.starterCursors.length < 3) {
-            let isDupe = false;
-            for (let s = 0; s < this.starterCursors.length; s++) {
-              if (this.starterGens[s] === this.genCursor && this.starterCursors[s] === this.cursor) {
-                isDupe = true;
-                break;
+            ui.setModeWithoutClear(Mode.OPTION_SELECT, 'Add to Party', () => {
+              ui.setMode(Mode.STARTER_SELECT);
+              let isDupe = false;
+              for (let s = 0; s < this.starterCursors.length; s++) {
+                if (this.starterGens[s] === this.genCursor && this.starterCursors[s] === this.cursor) {
+                  isDupe = true;
+                  break;
+                }
               }
-            }
-            if (!isDupe) {
-              const cursorObj = this.starterCursorObjs[this.starterCursors.length];
-              cursorObj.setVisible(true);
-              cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
-              const species = this.genSpecies[this.genCursor][this.cursor];
-              const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species);
-              const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-              this.starterIcons[this.starterCursors.length].play(species.getIconKey(defaultProps.female, defaultProps.formIndex));
-              this.starterGens.push(this.genCursor);
-              this.starterCursors.push(this.cursor);
-              this.starterAttr.push(this.dexAttrCursor);
-              if (this.speciesLoaded.get(species.speciesId))
-                species.cry(this.scene);
-              if (this.starterCursors.length === 3) {
-                const cancel = () => {
-                  ui.setMode(Mode.STARTER_SELECT);
-                  this.popStarter();
-                  this.clearText();
-                };
-                ui.showText('Begin with these Pokémon?', null, () => {
-                  ui.setModeWithoutClear(Mode.CONFIRM, () => {
-                    const startRun = (gameMode: GameMode) => {
-                      this.scene.gameMode = gameMode;
-                      ui.setMode(Mode.STARTER_SELECT);
-                      const thisObj = this;
-                      const originalStarterSelectCallback = this.starterSelectCallback;
-                      this.starterSelectCallback = null;
-                      originalStarterSelectCallback(new Array(3).fill(0).map(function (_, i) {
-                        const starterSpecies = thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]];
-                        return {
-                          species: starterSpecies,
-                          dexAttr: thisObj.starterAttr[i],
-                          pokerus: !![ 0, 1, 2 ].filter(n => thisObj.pokerusGens[n] === starterSpecies.generation - 1 && thisObj.pokerusCursors[n] === thisObj.genSpecies[starterSpecies.generation - 1].indexOf(starterSpecies)).length
-                        };
-                      }));
-                    };
-                    if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
-                      ui.setMode(Mode.STARTER_SELECT);
-                      ui.showText('Select a game mode.', null, () => ui.setModeWithoutClear(Mode.GAME_MODE_SELECT, startRun, cancel));
-                    } else
-                      startRun(GameMode.CLASSIC);
-                  }, cancel);
-                });
-              }
-              success = true;
-              this.updateInstructions();
-            } else
-              error = true;
+              if (!isDupe) {
+                const cursorObj = this.starterCursorObjs[this.starterCursors.length];
+                cursorObj.setVisible(true);
+                cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
+                const species = this.genSpecies[this.genCursor][this.cursor];
+                const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species);
+                const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+                this.starterIcons[this.starterCursors.length].play(species.getIconKey(defaultProps.female, defaultProps.formIndex));
+                this.starterGens.push(this.genCursor);
+                this.starterCursors.push(this.cursor);
+                this.starterAttr.push(this.dexAttrCursor);
+                if (this.speciesLoaded.get(species.speciesId))
+                  species.cry(this.scene);
+                if (this.starterCursors.length === 3) {
+                  const cancel = () => {
+                    ui.setMode(Mode.STARTER_SELECT);
+                    this.popStarter();
+                    this.clearText();
+                  };
+                  ui.showText('Begin with these Pokémon?', null, () => {
+                    ui.setModeWithoutClear(Mode.CONFIRM, () => {
+                      const startRun = (gameMode: GameMode) => {
+                        this.scene.gameMode = gameMode;
+                        ui.setMode(Mode.STARTER_SELECT);
+                        const thisObj = this;
+                        const originalStarterSelectCallback = this.starterSelectCallback;
+                        this.starterSelectCallback = null;
+                        originalStarterSelectCallback(new Array(3).fill(0).map(function (_, i) {
+                          const starterSpecies = thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]];
+                          return {
+                            species: starterSpecies,
+                            dexAttr: thisObj.starterAttr[i],
+                            pokerus: !![ 0, 1, 2 ].filter(n => thisObj.pokerusGens[n] === starterSpecies.generation - 1 && thisObj.pokerusCursors[n] === thisObj.genSpecies[starterSpecies.generation - 1].indexOf(starterSpecies)).length
+                          };
+                        }));
+                      };
+                      if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
+                        ui.setMode(Mode.STARTER_SELECT);
+                        ui.showText('Select a game mode.', null, () => ui.setModeWithoutClear(Mode.GAME_MODE_SELECT, startRun, cancel));
+                      } else
+                        startRun(GameMode.CLASSIC);
+                    }, cancel);
+                  });
+                }
+                this.updateInstructions();
+                ui.playSelect();
+              } else
+                ui.playError();
+            }, 'Toggle IVs', () => {
+              this.toggleStatsMode();
+              ui.setMode(Mode.STARTER_SELECT);
+            });
+            success = true;
           }
         } else if (button === Button.CANCEL) {
-          if (this.starterCursors.length) {
+          if (this.statsMode) {
+            this.toggleStatsMode(false);
+            success = true;
+          } else if (this.starterCursors.length) {
             this.popStarter();
             success = true;
             this.updateInstructions();
-          } else
-            error = true;
+          }
         } else {
           const genStarters = this.starterSelectGenIconContainers[this.genCursor].getAll().length;
           const rows = Math.ceil(genStarters / 9);
@@ -556,6 +618,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.speciesStarterDexEntry = species ? this.scene.gameData.dexData[species.speciesId] : null;
       this.dexAttrCursor = species ? this.scene.gameData.getSpeciesDefaultDexAttr(species) : 0n;
 
+      if (this.statsMode) {
+        if (this.speciesStarterDexEntry?.caughtAttr) {
+          this.statsContainer.setVisible(true);
+          this.showStats();
+        } else {
+          this.statsContainer.setVisible(false);
+          this.ivChart.setTo((this.statsIvsCache = defaultIvChartData));
+        }
+      }
+
       if (this.lastSpecies) {
         const dexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(this.lastSpecies);
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr);
@@ -631,7 +703,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.assetLoadCancelled = null;
             this.speciesLoaded.set(species.speciesId, true);
             this.pokemonSprite.play(species.getSpriteKey(female, formIndex, shiny));
-            this.pokemonSprite.setVisible(true);
+            this.pokemonSprite.setVisible(!this.statsMode);
           });
 
           species.generateIconAnim(this.scene, female, formIndex);
@@ -676,6 +748,47 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterIcons[this.starterCursors.length].play('pkmn_icon__000');
     }
 
+    toggleStatsMode(on?: boolean): void {
+      if (on === undefined)
+        on = !this.statsMode;
+      if (on) {
+        this.showStats();
+        this.statsMode = true;
+        this.pokemonSprite.setVisible(false);
+      } else {
+        this.statsMode = false;
+        this.statsContainer.setVisible(false);
+        this.pokemonSprite.setVisible(!!this.speciesStarterDexEntry?.caughtAttr);
+        this.ivChart.setTo((this.statsIvsCache = defaultIvChartData));
+      }
+    }
+    
+    showStats(): void {
+      if (!this.speciesStarterDexEntry)
+        return;
+
+      this.statsContainer.setVisible(true);
+
+      const ivs = this.speciesStarterDexEntry.ivs;
+      const ivChartData = new Array(6).fill(null).map((_, i) => [ (ivs[i] / 31) * ivChartSize * ivChartStatCoordMultipliers[i][0], (ivs[i] / 31) * ivChartSize * ivChartStatCoordMultipliers[i][1] ] ).flat();
+      const lastIvChartData = this.statsIvsCache || defaultIvChartData;
+      this.statsIvsCache = ivChartData.slice(0);
+      
+      this.ivStatValueTexts.map((t: Phaser.GameObjects.Text, i: integer) => t.setText(ivs[i].toString()));
+
+      this.scene.tweens.addCounter({
+        from: 0,
+        to: 1,
+        duration: 1000,
+        ease: 'Cubic.easeOut',
+        onUpdate: (tween: Phaser.Tweens.Tween) => {
+          const progress = tween.getValue();
+          const interpolatedData = ivChartData.map((v: number, i: integer) => v * progress + (lastIvChartData[i] * (1 - progress)));
+          this.ivChart.setTo(interpolatedData);
+        }
+      });
+    }
+
     clearText() {
       this.starterSelectMessageBoxContainer.setVisible(false);
       super.clearText();
@@ -688,5 +801,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       while (this.starterCursors.length)
         this.popStarter();
+
+      if (this.statsMode)
+        this.toggleStatsMode(false);
     }
   }  

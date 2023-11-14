@@ -19,6 +19,7 @@ import { TextStyle, addTextObject } from './text';
 import AchvBar from './achv-bar';
 import MenuUiHandler from './menu-ui-handler';
 import AchvsUiHandler from './achvs-ui-handler';
+import OptionSelectUiHandler from './option-select-ui-handler';
 
 export enum Mode {
   MESSAGE,
@@ -33,6 +34,7 @@ export enum Mode {
   STARTER_SELECT,
   EVOLUTION_SCENE,
   CONFIRM,
+  OPTION_SELECT,
   GAME_MODE_SELECT,
   MENU,
   SETTINGS,
@@ -48,6 +50,7 @@ const transitionModes = [
 
 const noTransitionModes = [
   Mode.CONFIRM,
+  Mode.OPTION_SELECT,
   Mode.GAME_MODE_SELECT,
   Mode.MENU,
   Mode.SETTINGS
@@ -85,6 +88,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new StarterSelectUiHandler(scene),
       new EvolutionSceneHandler(scene),
       new ConfirmUiHandler(scene),
+      new OptionSelectUiHandler(scene),
       new GameModeSelectUiHandler(scene),
       new MenuUiHandler(scene),
       new SettingsUiHandler(scene),

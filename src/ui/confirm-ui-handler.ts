@@ -1,8 +1,8 @@
 import BattleScene from "../battle-scene";
-import OptionSelectUiHandler from "./option-select-ui-handler";
+import AbstractOptionSelectUiHandler from "./abstact-option-select-ui-handler";
 import { Mode } from "./ui";
 
-export default class ConfirmUiHandler extends OptionSelectUiHandler {
+export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
   private switchCheck: boolean;
   private switchCheckCursor: integer;
 
