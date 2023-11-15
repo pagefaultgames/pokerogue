@@ -1411,10 +1411,16 @@ export class MovePhase extends BattlePhase {
       return false;
     });
 
-    if (!this.followUp && this.canMove())
-      this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
-
     const doMove = () => {
+      if (!this.followUp && this.canMove()) {
+        this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
+        if (this.cancelled) {
+          this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
+          this.end();
+          return;
+        }
+      }
+
       const moveQueue = this.pokemon.getMoveQueue();
 
       if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {
@@ -2082,15 +2088,15 @@ export class FaintPhase extends PokemonPhase {
       if (!nonFaintedPartyMemberCount)
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
       else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount())
-        this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
+        this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
       else if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double)
         this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
       if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
-        const nonFaintedPartyMemberCount = this.scene.getEnemyParty().filter(p => !p.isFainted()).length;
-        if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount())
-          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, this.scene.currentBattle.trainer.getNextSummonIndex(), false, false, false));
+        const hasReservePartyMember = !!this.scene.getEnemyParty().filter(p => p.isActive() && !p.isOnField()).length;
+        if (hasReservePartyMember)
+          this.scene.pushPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, this.scene.currentBattle.trainer.getNextSummonIndex(), false, false, false));
       }
     }
 

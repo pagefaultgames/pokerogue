@@ -2450,7 +2450,6 @@ export function initMoves() {
     new AttackMove(Moves.THRASH, "Thrash", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, "User attacks for 2-3 turns but then becomes confused.", -1, 0, 1)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(ConfuseAttr, true) // TODO: Update to still confuse if last hit misses
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(Moves.DOUBLE_EDGE, "Double-Edge", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, "User receives recoil damage.", -1, 0, 1)
       .attr(RecoilAttr),
@@ -2557,7 +2556,6 @@ export function initMoves() {
     new AttackMove(Moves.PETAL_DANCE, "Petal Dance", Type.GRASS, MoveCategory.SPECIAL, 120, 100, 10, -1, "User attacks for 2-3 turns but then becomes confused.", -1, 0, 1)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(ConfuseAttr, true) // TODO: Update to still confuse if last hit misses
       .makesContact()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(Moves.STRING_SHOT, "String Shot", Type.BUG, 95, 40, -1, "Sharply lowers opponent's Speed.", -1, 0, 1)
@@ -2850,7 +2848,6 @@ export function initMoves() {
     new AttackMove(Moves.OUTRAGE, "Outrage", Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 10, 156, "User attacks for 2-3 turns but then becomes confused.", -1, 0, 2)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(ConfuseAttr, true) // TODO: Update to still confuse if last hit misses
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(Moves.SANDSTORM, "Sandstorm", Type.ROCK, -1, 10, 51, "Creates a sandstorm for 5 turns.", -1, 0, 2)
       .attr(WeatherChangeAttr, WeatherType.SANDSTORM)
@@ -2910,7 +2907,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.BATON_PASS, "Baton Pass", Type.NORMAL, -1, 40, 132, "User switches out and gives stat changes to the incoming Pokémon.", -1, 0, 2)
       .attr(ForceSwitchOutAttr, true, true)
       .hidesUser(),
-    new StatusMove(Moves.ENCORE, "Encore (N)", Type.NORMAL, 100, 5, 122, "Forces opponent to keep using its last move for 3 turns.", -1, 0, 2),
+    new StatusMove(Moves.ENCORE, "Encore (N)", Type.NORMAL, 100, 5, 122, "Forces opponent to keep using its last move for 3 turns.", -1, 0, 2)
+      .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, undefined, true),
     new AttackMove(Moves.PURSUIT, "Pursuit (N)", Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, "Double power if the opponent is switching out.", -1, 0, 2),
     new AttackMove(Moves.RAPID_SPIN, "Rapid Spin", Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, -1, "Raises user's Speed and removes entry hazards and trap move effects.", 100, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
@@ -3466,7 +3464,7 @@ export function initMoves() {
     new StatusMove(Moves.ENTRAINMENT, "Entrainment (N)", Type.NORMAL, 100, 15, -1, "Makes target's ability same as user's.", -1, 0, 5),
     new StatusMove(Moves.AFTER_YOU, "After You (N)", Type.NORMAL, -1, 15, -1, "Gives target priority in the next turn.", -1, 0, 5)
       .ignoresProtect(),
-    new AttackMove(Moves.ROUND, "Round", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, "Power increases if teammates use it in the same turn.", -1, 0, 5)
+    new AttackMove(Moves.ROUND, "Round (P)", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, "Power increases if teammates use it in the same turn.", -1, 0, 5)
       .soundBased(), // TODO
     new AttackMove(Moves.ECHOED_VOICE, "Echoed Voice", Type.NORMAL, MoveCategory.SPECIAL, 40, 100, 15, -1, "Power increases each turn.", -1, 0, 5)
       .attr(ConsecutiveUseMultiBasePowerAttr, 5, false)
@@ -3570,7 +3568,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.TECHNO_BLAST, "Techno Blast (N)", Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, "Type depends on the Drive being held.", -1, 0, 5),
-    new AttackMove(Moves.RELIC_SONG, "Relic Song", Type.NORMAL, MoveCategory.SPECIAL, 75, 100, 10, -1, "May put the target to sleep.", 10, 0, 5)
+    new AttackMove(Moves.RELIC_SONG, "Relic Song (P)", Type.NORMAL, MoveCategory.SPECIAL, 75, 100, 10, -1, "May put the target to sleep.", 10, 0, 5)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .soundBased(),

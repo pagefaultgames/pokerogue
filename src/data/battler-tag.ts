@@ -18,6 +18,7 @@ export enum BattlerTagType {
   SEEDED,
   NIGHTMARE,
   FRENZY,
+  ENCORE,
   INGRAIN,
   AQUA_RING,
   DROWSY,
@@ -336,6 +337,18 @@ export class NightmareTag extends BattlerTag {
   }
 }
 
+export class FrenzyTag extends BattlerTag {
+  constructor(sourceMove: Moves, sourceId: integer) {
+    super(BattlerTagType.FRENZY, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.addTag(BattlerTagType.CONFUSED, Utils.randIntRange(1, 4) + 1);
+  }
+}
+
 export class IngrainTag extends TrappedTag {
   constructor(sourceId: integer) {
     super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, Moves.INGRAIN, sourceId);
@@ -627,6 +640,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new SeedTag(sourceId);
     case BattlerTagType.NIGHTMARE:
       return new NightmareTag();
+    case BattlerTagType.FRENZY:
+      return new FrenzyTag(sourceMove, sourceId);
     case BattlerTagType.INGRAIN:
       return new IngrainTag(sourceId);
     case BattlerTagType.AQUA_RING:
