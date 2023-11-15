@@ -32,6 +32,8 @@ import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { GameMode } from "./game-mode";
 import { Species } from "./data/species";
 import { HealAchv, LevelAchv, MoneyAchv, achvs } from "./system/achv";
+import { DexEntry } from "./system/game-data";
+import { pokemonPrevolutions } from "./data/pokemon-evolutions";
 
 export class CheckLoadPhase extends BattlePhase {
   private loaded: boolean;
@@ -2320,6 +2322,7 @@ export class GameOverPhase extends BattlePhase {
       this.scene.ui.fadeOut(fadeDuration).then(() => {
         this.scene.clearPhaseQueue();
         this.scene.ui.clearText();
+        this.handleUnlocks(this.scene.getParty());
         this.scene.reset();
         this.scene.newBattle();
         this.end();
@@ -2327,7 +2330,7 @@ export class GameOverPhase extends BattlePhase {
     });
   }
 
-  end(): void {
+  handleUnlocks(party: PlayerPokemon[]): void {
     if (this.victory) {
       if (!this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE])
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.ENDLESS_MODE));
@@ -2336,8 +2339,6 @@ export class GameOverPhase extends BattlePhase {
       if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE])
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.MINI_BLACK_HOLE));
     }
-
-    super.end();
   }
 }
 
@@ -2816,12 +2817,16 @@ export class AttemptCapturePhase extends PokemonPhase {
     if (pokemon.ivs.filter(iv => iv === 31).length === 6)
       this.scene.validateAchv(achvs.PERFECT_IVS);
 
-    const dexEntry = this.scene.gameData.dexData[pokemon.species.speciesId];
-    const dexIvs = dexEntry.ivs;
-    for (let i = 0; i < dexIvs.length; i++) {
-      if (dexIvs[i] < pokemon.ivs[i])
-        dexIvs[i] = pokemon.ivs[i];
-    }
+    let dexEntry: DexEntry;
+    let speciesId = pokemon.species.speciesId;
+    do {
+      dexEntry = this.scene.gameData.dexData[speciesId];
+      const dexIvs = dexEntry.ivs;
+      for (let i = 0; i < dexIvs.length; i++) {
+        if (dexIvs[i] < pokemon.ivs[i])
+          dexIvs[i] = pokemon.ivs[i];
+      }
+    } while (pokemonPrevolutions.hasOwnProperty(speciesId) && (speciesId = pokemonPrevolutions[speciesId]));
       
     this.scene.ui.showText(`${pokemon.name} was caught!`, null, () => {
       const end = () => {
