@@ -18,7 +18,7 @@ import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } fr
 import { Biome, biomeLinks } from "./data/biome";
 import { FusePokemonModifierType, ModifierPoolType, ModifierTier, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, RememberMoveModifierType, TmModifierType, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, BattlerTagType, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
+import { BattlerTagLapseType, BattlerTagType, EncoreTag, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
 import { getPokemonMessage } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
@@ -1002,8 +1002,7 @@ export class CommandPhase extends FieldPhase {
         let useStruggle = false;
         if (cursor === -1 || playerPokemon.trySelectMove(cursor, args[0] as boolean) || (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)) {
           const moveId = !useStruggle ? playerPokemon.getMoveset()[cursor].moveId : Moves.STRUGGLE;
-          const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor,
-            move: cursor > -1 ? { move: moveId, targets: [] } : null, args: args };
+          const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: cursor > -1 ? { move: moveId, targets: [] } : null, args: args };
           const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, cursor > -1 ? moveId : Moves.NONE) : args[2];
           console.log(moveTargets, playerPokemon.name);
           if (moveTargets.targets.length <= 1 || moveTargets.multiple)
@@ -1114,6 +1113,24 @@ export class CommandPhase extends FieldPhase {
       this.scene.unshiftPhase(new CommandPhase(this.scene, 1));
       this.end();
     }
+  }
+
+  checkFightOverride(): boolean {
+    const pokemon = this.getPokemon();
+
+    const encoreTag = pokemon.getTag(EncoreTag) as EncoreTag;
+
+    if (!encoreTag)
+      return false;
+
+    const moveIndex = pokemon.getMoveset().findIndex(m => m.moveId === encoreTag.moveId);
+
+    if (moveIndex === -1 || !pokemon.getMoveset()[moveIndex].isUsable(pokemon))
+      return false;
+
+    this.handleCommand(Command.FIGHT, moveIndex, false);
+
+    return true;
   }
 
   getFieldIndex(): integer {

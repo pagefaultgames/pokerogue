@@ -16,7 +16,7 @@ import { tmSpecies } from './data/tms';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './data/pokemon-evolutions';
 import { DamagePhase, FaintPhase, SwitchSummonPhase } from './battle-phases';
 import { BattleStat } from './data/battle-stat';
-import { BattlerTag, BattlerTagLapseType, BattlerTagType, TypeBoostTag, getBattlerTag } from './data/battler-tag';
+import { BattlerTag, BattlerTagLapseType, BattlerTagType, EncoreTag, TypeBoostTag, getBattlerTag } from './data/battler-tag';
 import { Species } from './data/species';
 import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
@@ -1569,6 +1569,12 @@ export class EnemyPokemon extends Pokemon {
     if (movePool.length) {
       if (movePool.length === 1)
         return { move: movePool[0].moveId, targets: this.getNextTargets(movePool[0].moveId) };
+      const encoreTag = this.getTag(EncoreTag) as EncoreTag;
+      if (encoreTag) {
+        const encoreMove = movePool.find(m => m.moveId === encoreTag.moveId);
+        if (encoreMove)
+          return { move: encoreMove.moveId, targets: this.getNextTargets(encoreMove.moveId) };
+      }
       switch (this.aiType) {
         case AiType.RANDOM:
           const moveId = movePool[Utils.randInt(movePool.length)].moveId;

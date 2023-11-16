@@ -5,7 +5,7 @@ import Pokemon, { MoveResult } from "../pokemon";
 import { Stat } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
-import { Moves, allMoves } from "./move";
+import { ChargeAttr, Moves, allMoves } from "./move";
 import { Type } from "./type";
 import { Abilities } from "./ability";
 
@@ -289,7 +289,7 @@ export class SeedTag extends BattlerTag {
       const damage = Math.max(Math.floor(pokemon.getMaxHp() / 8), 1);
       pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex()));
       pokemon.damage(damage);
-      pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, source.getBattlerIndex(), damage, getPokemonMessage(pokemon, '\'s health is\nsapped by LEECH SEED!'), false, true));
+      pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, source.getBattlerIndex(), damage, getPokemonMessage(pokemon, '\'s health is\nsapped by Leech Seed!'), false, true));
     }
     
     return ret;
@@ -308,20 +308,20 @@ export class NightmareTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
     
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' began\nhaving a NIGHTMARE!'));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' began\nhaving a Nightmare!'));
   }
 
   onOverlap(pokemon: Pokemon): void {
     super.onOverlap(pokemon);
 
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nalready locked in a NIGHTMARE!'));
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nalready locked in a Nightmare!'));
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is locked\nin a NIGHTMARE!'));
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is locked\nin a Nightmare!'));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.CURSE)); // TODO: Update animation type
 
       const damage = Math.ceil(pokemon.getMaxHp() / 4);
@@ -346,6 +346,59 @@ export class FrenzyTag extends BattlerTag {
     super.onRemove(pokemon);
 
     pokemon.addTag(BattlerTagType.CONFUSED, Utils.randIntRange(1, 4) + 1);
+  }
+}
+
+export class EncoreTag extends BattlerTag {
+  public moveId: Moves;
+
+  constructor(sourceMove: Moves, sourceId: integer) {
+    super(BattlerTagType.ENCORE, BattlerTagLapseType.AFTER_MOVE, 3, sourceMove, sourceId);
+  }
+
+  canAdd(pokemon: Pokemon): boolean {
+    const lastMoves = pokemon.getLastXMoves(1);
+    if (!lastMoves.length)
+      return false;
+  
+    const repeatableMove = lastMoves[0];
+
+    if (!repeatableMove.move || repeatableMove.virtual)
+      return false;
+
+    switch (repeatableMove.move) {
+      case Moves.MIMIC:
+      case Moves.MIRROR_MOVE:
+      case Moves.TRANSFORM:
+      case Moves.STRUGGLE:
+      case Moves.SKETCH:
+      case Moves.SLEEP_TALK:
+      case Moves.ENCORE:
+        return false;
+    }
+  
+    if (allMoves[repeatableMove.move].getAttrs(ChargeAttr).length && repeatableMove.result === MoveResult.OTHER)
+      return false;
+
+    this.moveId = repeatableMove.move;
+
+    return true;
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' got\nan Encore!'));
+
+    const turnCommand =  pokemon.scene.currentBattle.turnCommands[pokemon.getFieldIndex()];
+    if (turnCommand)
+      turnCommand.move = { move: this.moveId, targets: pokemon.getLastXMoves(1)[0].targets };
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\'s Encore\nended!'));
   }
 }
 
@@ -465,7 +518,7 @@ export class WrapTag extends DamagingTrapTag {
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon, ` was WRAPPED\nby ${pokemon.scene.getPokemonById(this.sourceId).name}!`);
+    return getPokemonMessage(pokemon, ` was Wrapped\nby ${pokemon.scene.getPokemonById(this.sourceId).name}!`);
   }
 }
 
@@ -497,7 +550,7 @@ export class ClampTag extends DamagingTrapTag {
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return getPokemonMessage(pokemon.scene.getPokemonById(this.sourceId), ` CLAMPED\n${pokemon.name}!`);
+    return getPokemonMessage(pokemon.scene.getPokemonById(this.sourceId), ` Clamped\n${pokemon.name}!`);
   }
 }
 
@@ -642,6 +695,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new NightmareTag();
     case BattlerTagType.FRENZY:
       return new FrenzyTag(sourceMove, sourceId);
+    case BattlerTagType.ENCORE:
+      return new EncoreTag(sourceMove, sourceId);
     case BattlerTagType.INGRAIN:
       return new IngrainTag(sourceId);
     case BattlerTagType.AQUA_RING:

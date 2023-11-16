@@ -1,7 +1,7 @@
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, DamagePhase, MovePhase, NewBattlePhase, ObtainStatusEffectPhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../battle-phases";
 import { BattleStat } from "./battle-stat";
-import { BattlerTagType } from "./battler-tag";
+import { BattlerTagType, EncoreTag } from "./battler-tag";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { AttackMoveResult, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../pokemon";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
@@ -2177,16 +2177,16 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
 // TODO: Review this
 const targetMoveCopiableCondition = (user: Pokemon, target: Pokemon, move: Move) => {
   const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
-    if (!targetMoves.length)
-      return false;
+  if (!targetMoves.length)
+    return false;
 
-    const copiableMove = targetMoves[0];
+  const copiableMove = targetMoves[0];
 
-    if (!copiableMove.move)
-      return false;
+  if (!copiableMove.move)
+    return false;
 
-    if (allMoves[copiableMove.move].getAttrs(ChargeAttr).length && copiableMove.result === MoveResult.OTHER)
-      return false;
+  if (allMoves[copiableMove.move].getAttrs(ChargeAttr).length && copiableMove.result === MoveResult.OTHER)
+    return false;
 
     // TODO: Add last turn of Bide
 
@@ -2252,15 +2252,15 @@ export class SketchAttr extends MoveEffectAttr {
         return false;
     
       const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
-        if (!targetMoves.length)
-          return false;
-    
-        const sketchableMove = targetMoves[0];
-    
-        if (user.getMoveset().find(m => m.moveId === sketchableMove.move))
-          return false;
-    
-        return true;
+      if (!targetMoves.length)
+        return false;
+  
+      const sketchableMove = targetMoves[0];
+  
+      if (user.getMoveset().find(m => m.moveId === sketchableMove.move))
+        return false;
+  
+      return true;
     };
   }
 }
@@ -2907,8 +2907,9 @@ export function initMoves() {
     new SelfStatusMove(Moves.BATON_PASS, "Baton Pass", Type.NORMAL, -1, 40, 132, "User switches out and gives stat changes to the incoming Pokémon.", -1, 0, 2)
       .attr(ForceSwitchOutAttr, true, true)
       .hidesUser(),
-    new StatusMove(Moves.ENCORE, "Encore (N)", Type.NORMAL, 100, 5, 122, "Forces opponent to keep using its last move for 3 turns.", -1, 0, 2)
-      .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, undefined, true),
+    new StatusMove(Moves.ENCORE, "Encore", Type.NORMAL, 100, 5, 122, "Forces opponent to keep using its last move for 3 turns.", -1, 0, 2)
+      .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, undefined, true)
+      .condition((user: Pokemon, target: Pokemon, move: Move) => new EncoreTag(move.id, user.id).canAdd(target)),
     new AttackMove(Moves.PURSUIT, "Pursuit (N)", Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, "Double power if the opponent is switching out.", -1, 0, 2),
     new AttackMove(Moves.RAPID_SPIN, "Rapid Spin", Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, -1, "Raises user's Speed and removes entry hazards and trap move effects.", 100, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
