@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import BattleScene from './battle-scene';
+import LoadingScene from './loading-scene';
 import InvertPostFX from './pipelines/invert';
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -12,7 +13,7 @@ const config: Phaser.Types.Core.GameConfig = {
 	},
 	pixelArt: true,
 	pipeline: [ InvertPostFX ] as unknown as Phaser.Types.Core.PipelineConfig,
-	scene: [ BattleScene ]
+	scene: [ LoadingScene, BattleScene ]
 };
 
 const setPositionRelative = function (guideObject: any, x: number, y: number) {
