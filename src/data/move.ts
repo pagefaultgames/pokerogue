@@ -1188,8 +1188,12 @@ export class StatusEffectAttr extends MoveEffectAttr {
     const statusCheck = move.chance < 0 || move.chance === 100 || Utils.randInt(100) < move.chance;
     if (statusCheck) {
       const pokemon = this.selfTarget ? user : target;
-      if (pokemon.status)
-        pokemon.resetStatus();
+      if (pokemon.status) {
+        if (this.overrideStatus)
+          pokemon.resetStatus();
+        else
+          return false;
+      }
       if (!pokemon.status || (pokemon.status.effect === this.effect && move.chance < 0)) {
         user.scene.unshiftPhase(new ObtainStatusEffectPhase(user.scene, pokemon.getBattlerIndex(), this.effect, this.cureTurn));
         return true;
