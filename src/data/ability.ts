@@ -123,6 +123,29 @@ export class StabBoostAbAttr extends AbAttr {
   }
 }
 
+export class LowerHpWeakerAbAttr extends AbAttr {
+  private hpLeft: integer;
+
+  constructor(hpLeft: integer) {
+    super(true)
+
+    this.hpLeft = hpLeft;
+  }
+  
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const hpRatio = pokemon.getHpRatio();
+
+    if (hpRatio <= this.hpLeft) {
+      args[0] *= 55.5
+      args[1] *= 55.5
+      args[2] *= 55.5
+      args[3] *= 55.5
+    }
+
+    return true;
+  }
+}
+
 export class ReceivedTypeDamageMultiplierAbAttr extends PreDefendAbAttr {
   private moveType: Type;
   private powerMultiplier: number;
@@ -1507,7 +1530,8 @@ export function initAbilities() {
     new Ability(Abilities.CONTRARY, "Contrary", "Makes stat changes have an opposite effect.", 5)
       .attr(StatChangeMultiplierAbAttr, -1),
     new Ability(Abilities.CURSED_BODY, "Cursed Body (N)", "May disable a move used on the Pokémon.", 5),
-    new Ability(Abilities.DEFEATIST, "Defeatist (N)", "Lowers stats when HP drops below half.", 5),
+    new Ability(Abilities.DEFEATIST, "Defeatist", "Lowers stats when HP drops below half.", 5)
+      .attr(LowerHpWeakerAbAttr, 0.5),
     new Ability(Abilities.DEFIANT, "Defiant (N)", "Sharply raises Attack when the Pokémon's stats are lowered.", 5),
     new Ability(Abilities.FLARE_BOOST, "Flare Boost (N)", "Powers up special attacks when burned.", 5),
     new Ability(Abilities.FRIEND_GUARD, "Friend Guard (N)", "Reduces damage done to allies.", 5),

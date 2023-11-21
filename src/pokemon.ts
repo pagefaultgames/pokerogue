@@ -39,7 +39,7 @@ export enum FieldPosition {
   RIGHT
 }
 
-const ABILITY_OVERRIDE = Abilities.NONE;
+const ABILITY_OVERRIDE = Abilities.DEFEATIST;
 const MOVE_OVERRIDE = Moves.NONE;
 
 const OPP_ABILITY_OVERRIDE = Abilities.NONE;
