@@ -387,10 +387,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getStat(stat: Stat): integer {
-    let ret = this.stats[stat];
-    if (this.scene.gameMode === GameMode.SPLICED_ENDLESS && !this.fusionSpecies)
-      ret = Math.ceil(ret / 2);
-    return ret;
+    return this.stats[stat];
   }
 
   getBattleStat(stat: Stat, opponent?: Pokemon): integer {
@@ -420,6 +417,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const fusionBaseStats = this.getFusionSpeciesForm().baseStats;
       for (let s = 0; s < this.stats.length; s++)
         baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
+    } else if (this.scene.gameMode === GameMode.SPLICED_ENDLESS) {
+      for (let s = 0; s < this.stats.length; s++)
+        baseStats[s] = Math.ceil(baseStats[s] / 2);
     }
     this.scene.applyModifiers(PokemonBaseStatModifier, this.isPlayer(), this, baseStats);
     const stats = Utils.getEnumValues(Stat);
