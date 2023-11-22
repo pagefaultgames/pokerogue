@@ -387,7 +387,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getStat(stat: Stat): integer {
-    return this.stats[stat];
+    let ret = this.stats[stat];
+    if (this.scene.gameMode === GameMode.SPLICED_ENDLESS && !this.fusionSpecies)
+      ret = Math.ceil(ret / 2);
+    return ret;
   }
 
   getBattleStat(stat: Stat, opponent?: Pokemon): integer {
