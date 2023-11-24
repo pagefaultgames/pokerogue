@@ -35,8 +35,6 @@ import { HealAchv, LevelAchv, MoneyAchv, achvs } from "./system/achv";
 import { DexEntry } from "./system/game-data";
 import { pokemonPrevolutions } from "./data/pokemon-evolutions";
 
-const WEATHER_OVERRIDE = WeatherType.NONE
-
 export class CheckLoadPhase extends BattlePhase {
   private loaded: boolean;
 
@@ -320,11 +318,7 @@ export class EncounterPhase extends BattlePhase {
       this.scene.updateModifiers(true);
     }
 
-    if(WEATHER_OVERRIDE){
-      this.scene.arena.trySetWeather(WEATHER_OVERRIDE, false);
-    } else {
-      this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena.biomeType), false);
-    }
+    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena.biomeType), false);
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({

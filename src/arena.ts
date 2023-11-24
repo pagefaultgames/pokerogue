@@ -12,6 +12,8 @@ import { ArenaTag, ArenaTagType, getArenaTag } from "./data/arena-tag";
 import { GameMode } from "./game-mode";
 import { TrainerType } from "./data/trainer-type";
 
+const WEATHER_OVERRIDE = WeatherType.RAIN
+
 export class Arena {
   public scene: BattleScene;
   public biomeType: Biome;
@@ -183,13 +185,26 @@ export class Arena {
     }
   }
 
+  trySetWeatherOverride(weather: WeatherType): boolean {
+    this.weather = new Weather(weather, 0);
+    this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
+    this.scene.queueMessage(getWeatherStartMessage(weather));
+    return true
+  }
+
   trySetWeather(weather: WeatherType, viaMove: boolean): boolean {
+    // override hook for debugging
+    if (WEATHER_OVERRIDE) {
+      return this.trySetWeatherOverride(WEATHER_OVERRIDE);
+    }
+    
     if (this.weather?.weatherType === (weather || undefined))
       return false;
 
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
-    this.weather = weather ? new Weather(weather, viaMove ? 5 : 0) : null;
 
+    this.weather = weather ? new Weather(weather, viaMove ? 5 : 0) : null;
+    
     if (this.weather) {
       this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
       this.scene.queueMessage(getWeatherStartMessage(weather));
