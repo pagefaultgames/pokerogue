@@ -103,7 +103,7 @@ export const achvs = {
   _100K_MONEY: new MoneyAchv('Rich', 100000, 'big_nugget', 25).setSecret(true),
   _1M_MONEY: new MoneyAchv('Millionaire', 1000000, 'relic_gold', 50).setSecret(true),
   _10M_MONEY: new MoneyAchv('One Percenter', 10000000, 'coin_case', 100).setSecret(true),
-  _250_DMG: new DamageAchv('Hard Hitter', 1000, 'lucky_punch', 10),
+  _250_DMG: new DamageAchv('Hard Hitter', 250, 'lucky_punch', 10),
   _1000_DMG: new DamageAchv('Harder Hitter', 1000, 'lucky_punch_great', 25).setSecret(true),
   _2500_DMG: new DamageAchv('That\'s a Lotta Damage!', 2500, 'lucky_punch_ultra', 50).setSecret(true),
   _10000_DMG: new DamageAchv('One Punch Man', 10000, 'lucky_punch_master', 100).setSecret(true),
