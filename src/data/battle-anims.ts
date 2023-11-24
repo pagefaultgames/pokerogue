@@ -681,6 +681,7 @@ export abstract class BattleAnim {
                             let sprite: Phaser.GameObjects.Sprite;
                             sprite = scene.add.sprite(0, 0, spriteSource.texture, spriteSource.frame.name);
                             sprite.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: true });
+                            [ 'spriteColors', 'fusionSpriteColors' ].map(k => sprite.pipelineData[k] = (isUser ? user : target).getSprite().pipelineData[k]);
                             spriteSource.on('animationupdate', (_anim, frame) => sprite.setFrame(frame.textureFrame));
                             scene.field.add(sprite);
                             sprites.push(sprite);

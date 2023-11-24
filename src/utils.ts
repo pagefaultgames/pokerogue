@@ -149,3 +149,26 @@ export class FixedInt extends IntegerHolder {
 export function fixedInt(value: integer): integer {
   return new FixedInt(value) as unknown as integer;
 }
+
+export function rgbToHsv(r: integer, g: integer, b: integer) {
+  let v = Math.max(r, g, b);
+  let c = v - Math.min(r, g, b);
+  let h = c && ((v === r) ? (g - b) / c : ((v === g) ? 2 + (b - r) / c : 4 + (r - g) / c)); 
+  return [ 60 * (h < 0 ? h + 6 : h), v && c / v, v];
+}
+
+/**
+ * Compare color difference in RGB
+ * @param {Array} rgb1 First RGB color in array
+ * @param {Array} rgb2 Second RGB color in array
+ */
+export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
+  const [ r1, g1, b1 ] = rgb1;
+  const [ r2, g2, b2 ] = rgb2;
+  const drp2 = Math.pow(r1 - r2, 2);
+  const dgp2 = Math.pow(g1 - g2, 2);
+  const dbp2 = Math.pow(b1 - b2, 2);
+  const t = (r1 + r2) / 2;
+
+  return Math.ceil(Math.sqrt(2 * drp2 + 4 * dgp2 + 3 * dbp2 + t * (drp2 - dbp2) / 256));
+}

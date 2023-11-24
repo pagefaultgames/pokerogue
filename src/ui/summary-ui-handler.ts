@@ -98,6 +98,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.summaryContainer.add(this.numberText);
 
     this.pokemonSprite = this.scene.add.sprite(56, -106, `pkmn__sub`);
+    this.pokemonSprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false });
     this.summaryContainer.add(this.pokemonSprite);
 
     this.nameText = addTextObject(this.scene, 6, -54, '', TextStyle.SUMMARY);
@@ -197,6 +198,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.numberText.setShadowColor(getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
 
     this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
+    [ 'spriteColors', 'fusionSpriteColors' ].map(k => this.pokemonSprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k]);
     this.pokemon.cry();
 
     let nameLabel = this.pokemon.name;

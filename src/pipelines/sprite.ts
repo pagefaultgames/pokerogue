@@ -23,6 +23,8 @@ uniform vec2 relPosition;
 uniform vec2 size;
 uniform float yOffset;
 uniform vec4 tone;
+uniform ivec4 spriteColors[32];
+uniform ivec4 fusionSpriteColors[32];
 
 const vec3 lumaF = vec3(.299, .587, .114);
 
@@ -37,13 +39,24 @@ void main()
     //  Multiply texture tint
     vec4 color = texture * texel;
 
-    if (outTintEffect == 1.0)
-    {
+    for (int i = 0; i < 32; i++) {
+        if (spriteColors[i][3] == 0)
+            break;
+        if (texture.a > 0.0 && int(texture.r * 255.0) == spriteColors[i].r && int(texture.g * 255.0) == spriteColors[i].g && int(texture.b * 255.0) == spriteColors[i].b) {
+            vec3 fusionColor = vec3(float(fusionSpriteColors[i].r) / 255.0, float(fusionSpriteColors[i].g) / 255.0, float(fusionSpriteColors[i].b) / 255.0);
+            vec3 bg = vec3(float(spriteColors[i].r) / 255.0, float(spriteColors[i].g) / 255.0, float(spriteColors[i].b) / 255.0);
+            float gray = (bg.r + bg.g + bg.b) / 3.0;
+            bg = vec3(gray, gray, gray);
+            vec3 fg = fusionColor;
+            color.rgb = mix(1.0 - 2.0 * (1.0 - bg) * (1.0 - fg), 2.0 * bg * fg, step(bg, vec3(0.5)));
+            break;
+        }
+    }
+
+    if (outTintEffect == 1.0) {
         //  Solid color + texture alpha
         color.rgb = mix(texture.rgb, outTint.bgr * outTint.a, texture.a);
-    }
-    else if (outTintEffect == 2.0)
-    {
+    } else if (outTintEffect == 2.0) {
         //  Solid color, no texture
         color = texel;
     }
@@ -138,7 +151,7 @@ export default class SpritePipeline extends Phaser.Renderer.WebGL.Pipelines.Mult
         this.set2f('relPosition', 0, 0);
         this.set2f('size', 0, 0);
         this.set1f('yOffset', 0);
-        this.set4f('tone', this._tone[0], this._tone[1], this._tone[2], this._tone[3]);
+        this.set4fv('tone', this._tone);
     }
 
     onBind(gameObject: Phaser.GameObjects.GameObject): void {
@@ -149,6 +162,8 @@ export default class SpritePipeline extends Phaser.Renderer.WebGL.Pipelines.Mult
         const data = sprite.pipelineData;
         const tone = data['tone'] as number[];
         const hasShadow = data['hasShadow'] as boolean;
+        let spriteColors = data['spriteColors'] || [] as number[][];
+        const fusionSpriteColors = data['fusionSpriteColors'] || [] as number[][];
 
         const position = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer
             ? [ sprite.parentContainer.x, sprite.parentContainer.y ]
@@ -159,7 +174,17 @@ export default class SpritePipeline extends Phaser.Renderer.WebGL.Pipelines.Mult
         this.set2f('relPosition', position[0], position[1]);
         this.set2f('size', sprite.frame.width, sprite.height);
         this.set1f('yOffset', sprite.height - sprite.frame.height);
-        this.set4f('tone', tone[0], tone[1], tone[2], tone[3]);
+        this.set4fv('tone', tone);
+        const emptyColors = [ 0, 0, 0, 0 ];
+        const flatSpriteColors: integer[] = [];
+        const flatFusionSpriteColors: integer[] = [];
+        for (let c = 0; c < 32; c++) {
+          flatSpriteColors.splice(flatSpriteColors.length, 0, c < spriteColors.length ? spriteColors[c] : emptyColors);
+          flatFusionSpriteColors.splice(flatFusionSpriteColors.length, 0, c < fusionSpriteColors.length ? fusionSpriteColors[c] : emptyColors);
+        }
+
+        this.set4iv(`spriteColors`, flatSpriteColors.flat());
+        this.set4iv(`fusionSpriteColors`, flatFusionSpriteColors.flat());
     }
 
     onBatch(gameObject: Phaser.GameObjects.GameObject): void {

@@ -16,6 +16,7 @@
 		"vite-plugin-fs": "^1.0.0-beta.6"
 	},
 	"dependencies": {
+		"@material/material-color-utilities": "^0.2.7",
 		"phaser": "^3.70.0",
 		"phaser3-rex-plugins": "^1.1.84"
 	}

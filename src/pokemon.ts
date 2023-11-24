@@ -32,6 +32,7 @@ import { GameMode } from './game-mode';
 import { LevelMoves } from './data/pokemon-level-moves';
 import { DamageAchv, achvs } from './system/achv';
 import { DexAttr } from './system/game-data';
+import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from '@material/material-color-utilities';
 
 export enum FieldPosition {
   CENTER,
@@ -247,7 +248,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           loadMoveAnimAssets(this.scene, moveIds);
           this.getSpeciesForm().loadAssets(this.scene, this.getGender() === Gender.FEMALE, this.formIndex, this.shiny);
           if (this.fusionSpecies)
-            this.getFusionSpeciesForm().loadAssets(this.scene, this.getGender() === Gender.FEMALE, this.fusionFormIndex, this.shiny);
+            this.getFusionSpeciesForm().loadAssets(this.scene, this.fusionGender === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny);
           if (this.isPlayer())
             this.scene.loadAtlas(this.getBattleSpriteKey(), 'pokemon', this.getBattleSpriteAtlasPath());
           this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
@@ -267,6 +268,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               }
             }
             this.playAnim();
+            if (this.fusionSpecies)
+              this.updateFusionPalette();
             resolve();
           });
           if (!this.scene.load.isLoading())
@@ -1350,6 +1353,181 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
+  updateFusionPalette(): void {
+    if (!this.fusionSpecies) {
+      [ this.getSprite(), this.getTintSprite() ].map(s => {
+        s.pipelineData['spriteColors'] = [];
+        s.pipelineData['fusionSpriteColors'] = [];
+      });
+      return;
+    }
+
+    const sourceTexture = this.scene.textures.get(this.getSpeciesForm().getSpriteKey(this.gender === Gender.FEMALE, this.formIndex, this.shiny));
+    const fusionTexture = this.scene.textures.get(this.getFusionSpeciesForm().getSpriteKey(this.fusionGender === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny));
+
+    const [ sourceFrame, fusionFrame ] = [ sourceTexture, fusionTexture ].map(texture => texture.frames[texture.firstFrame]);
+    const [ sourceImage, fusionImage ] = [ sourceTexture, fusionTexture ].map(i => i.getSourceImage() as HTMLImageElement);
+
+    const canvas = document.createElement('canvas');
+    const fusionCanvas = document.createElement('canvas');
+
+    const spriteColors: integer[][] = [];
+    const pixelData: Uint8ClampedArray[] = [];
+
+    [ canvas, fusionCanvas ].forEach((canv: HTMLCanvasElement, c: integer) => {
+      const context = canv.getContext('2d');
+      const frame = !c ? sourceFrame : fusionFrame;
+      canv.width = frame.width;
+      canv.height = frame.height;
+      context.drawImage(!c ? sourceImage : fusionImage, frame.cutX, frame.cutY, frame.width, frame.height, 0, 0, frame.width, frame.height);
+      const imageData = context.getImageData(frame.cutX, frame.cutY, frame.width, frame.height);
+      pixelData.push(imageData.data);
+    });
+
+    for (let i = 0; i < pixelData[0].length; i += 4) {
+      if (pixelData[0][i + 3]) {
+        const pixel = pixelData[0].slice(i, i + 4);
+        const [ r, g, b, a ] = pixel; 
+        if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b))
+          spriteColors.push([ r, g, b, a ]);
+      }
+    }
+
+    const fusionSpriteColors = JSON.parse(JSON.stringify(spriteColors));
+
+    const pixelColors = [];
+    for (let i = 0; i < pixelData[0].length; i += 4) {
+      const total = pixelData[0].slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
+      if (!total)
+        continue;
+      pixelColors.push(argbFromRgba({ r: pixelData[0][i], g: pixelData[0][i + 1], b: pixelData[0][i + 2], a: pixelData[0][i + 3] }));
+    }
+
+    const fusionPixelColors = [];
+    for (let i = 0; i < pixelData[1].length; i += 4) {
+      const total = pixelData[1].slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
+      if (!total)
+        continue;
+      fusionPixelColors.push(argbFromRgba({ r: pixelData[1][i], g: pixelData[1][i + 1], b: pixelData[1][i + 2], a: pixelData[1][i + 3] }));
+    }
+    
+    let paletteColors: Map<number, number>;
+    let fusionPaletteColors: Map<number, number>;
+
+    const originalRandom = Math.random;
+    Math.random = () => Phaser.Math.RND.realInRange(0, 1);
+    
+    this.scene.executeWithSeedOffset(() => {
+      paletteColors = QuantizerCelebi.quantize(pixelColors, 4);
+      fusionPaletteColors = QuantizerCelebi.quantize(fusionPixelColors, 4);
+    }, 0, 'This result should not vary');
+
+    Math.random = originalRandom;
+
+    const [ palette, fusionPalette ] = [ paletteColors, fusionPaletteColors ]
+      .map(paletteColors => {
+        let keys = Array.from(paletteColors.keys()).sort((a: integer, b: integer) => paletteColors.get(a) < paletteColors.get(b) ? 1 : -1);
+        let rgbaColors: Map<number, integer[]>;
+        let hsvColors: Map<number, number[]>;
+        
+        const mappedColors = new Map<integer, integer[]>();
+
+        do {
+          mappedColors.clear();
+
+          rgbaColors = keys.reduce((map: Map<number, integer[]>, k: number) => { map.set(k, Object.values(rgbaFromArgb(k))); return map; }, new Map<number, integer[]>());
+          hsvColors = Array.from(rgbaColors.keys()).reduce((map: Map<number, number[]>, k: number) => {
+            const rgb = rgbaColors.get(k).slice(0, 3);
+            map.set(k, Utils.rgbToHsv(rgb[0], rgb[1], rgb[2]));
+            return map;
+          }, new Map<number, number[]>());
+
+          for (let c = keys.length - 1; c >= 0; c--) {
+            const hsv = hsvColors.get(keys[c]);
+            for (let c2 = 0; c2 < c; c2++) {
+              const hsv2 = hsvColors.get(keys[c2]);
+              const diff = Math.abs(hsv[0] - hsv2[0]);
+							if (diff < 30 || diff >= 330) {
+                if (mappedColors.has(keys[c]))
+                  mappedColors.get(keys[c]).push(keys[c2]);
+                else
+                  mappedColors.set(keys[c], [ keys[c2] ]);
+                break;
+              }
+            }
+          }
+
+          mappedColors.forEach((values: integer[], key: integer) => {
+            const keyColor = rgbaColors.get(key);
+            const valueColors = values.map(v => rgbaColors.get(v));
+            let color = keyColor.slice(0);
+            let count = paletteColors.get(key);
+            for (let value of values) {
+              const valueCount = paletteColors.get(value);
+              if (!valueCount)
+                continue;
+              count += valueCount;
+            }
+
+            for (let c = 0; c < 3; c++) {
+              color[c] *= (paletteColors.get(key) / count);
+              values.forEach((value: integer, i: integer) => {
+                if (paletteColors.has(value)) {
+                  const valueCount = paletteColors.get(value);
+                  color[c] += valueColors[i][c] * (valueCount / count);
+                }
+              });
+              color[c] = Math.round(color[c]);
+            }
+
+            paletteColors.delete(key);
+            for (let value of values) {
+              paletteColors.delete(value);
+              if (mappedColors.has(value))
+                mappedColors.delete(value);
+            }
+
+            paletteColors.set(argbFromRgba({ r: color[0], g: color[1], b: color[2], a: color[3] }), count);
+          });
+
+          keys = Array.from(paletteColors.keys()).sort((a: integer, b: integer) => paletteColors.get(a) < paletteColors.get(b) ? 1 : -1);
+        } while (mappedColors.size);
+
+        return keys.map(c => Object.values(rgbaFromArgb(c)))
+      }
+    );
+
+    const paletteDeltas: number[][] = [];
+
+    spriteColors.forEach((sc: integer[], i: integer) => {
+      paletteDeltas.push([]);
+      for (let p = 0; p < palette.length; p++)
+        paletteDeltas[i].push(Utils.deltaRgb(sc, palette[p]));
+    });
+
+    const easeFunc = Phaser.Tweens.Builders.GetEaseFunction('Cubic.easeIn');
+
+    for (let sc = 0; sc < spriteColors.length; sc++) {
+      const delta = Math.min(...paletteDeltas[sc]);
+      const paletteIndex = Math.min(paletteDeltas[sc].findIndex(pd => pd === delta), fusionPalette.length - 1);
+      if (delta < 255) {
+        const ratio = easeFunc(delta / 255);
+        let color = [ 0, 0, 0, fusionSpriteColors[sc][3] ];
+        for (let c = 0; c < 3; c++)
+          color[c] = Math.round((fusionSpriteColors[sc][c] * ratio) + (fusionPalette[paletteIndex][c] * (1 - ratio)));
+          fusionSpriteColors[sc] = color;
+      }
+    }
+
+    [ this.getSprite(), this.getTintSprite() ].map(s => {
+      s.pipelineData['spriteColors'] = spriteColors;
+      s.pipelineData['fusionSpriteColors'] = fusionSpriteColors;
+    });
+
+    canvas.remove();
+    fusionCanvas.remove();
+  }
+
   destroy(): void {
     this.battleInfo.destroy();
     super.destroy();
@@ -1494,6 +1672,7 @@ export class PlayerPokemon extends Pokemon {
           this.scene.removePartyMemberModifiers(fusedPartyMemberIndex);
           this.scene.getParty().splice(fusedPartyMemberIndex, 1)[0];
           pokemon.destroy();
+          this.updateFusionPalette();
           resolve();
         });
       });
@@ -1511,6 +1690,7 @@ export class PlayerPokemon extends Pokemon {
       this.calculateStats();
       this.generateCompatibleTms();
       this.updateInfo(true).then(() => resolve());
+      this.updateFusionPalette();
     });
   }
 }
