@@ -6,7 +6,8 @@ import * as Utils from "../utils";
 
 export enum MenuOptions {
   SETTINGS,
-  ACHIEVEMENTS
+  ACHIEVEMENTS,
+  FULLSCREEN,
 }
 
 export default class MenuUiHandler extends UiHandler {
@@ -71,6 +72,11 @@ export default class MenuUiHandler extends UiHandler {
           break;
         case MenuOptions.ACHIEVEMENTS:
           this.scene.ui.setOverlayMode(Mode.ACHIEVEMENTS);
+          success = true;
+          break;
+        case MenuOptions.FULLSCREEN:
+          this.scene.scale.startFullscreen();
+          this.scene.ui.setOverlayMode(Mode.FULLSCREEN);
           success = true;
           break;
       }

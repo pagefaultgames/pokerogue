@@ -38,7 +38,8 @@ export enum Mode {
   GAME_MODE_SELECT,
   MENU,
   SETTINGS,
-  ACHIEVEMENTS
+  ACHIEVEMENTS,
+  FULLSCREEN
 };
 
 const transitionModes = [
@@ -53,7 +54,8 @@ const noTransitionModes = [
   Mode.OPTION_SELECT,
   Mode.GAME_MODE_SELECT,
   Mode.MENU,
-  Mode.SETTINGS
+  Mode.SETTINGS,
+  Mode.FULLSCREEN
 ];
 
 export default class UI extends Phaser.GameObjects.Container {

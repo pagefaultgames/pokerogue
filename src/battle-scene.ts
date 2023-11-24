@@ -58,7 +58,8 @@ export enum Button {
 	QUICK_START,
 	AUTO,
 	SPEED_UP,
-	SLOW_DOWN
+	SLOW_DOWN,
+	FULLSCREEN
 }
 
 export interface PokeballCounts {
@@ -910,6 +911,7 @@ export default class BattleScene extends Phaser.Scene {
 					this.ui.revertMode();
 					this.playSound('select');
 					break;
+				case Mode.FULLSCREEN:
 				default:
 					return;
 			}
