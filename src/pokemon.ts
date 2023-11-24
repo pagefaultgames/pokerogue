@@ -247,10 +247,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         .then(() => {
           loadMoveAnimAssets(this.scene, moveIds);
           this.getSpeciesForm().loadAssets(this.scene, this.getGender() === Gender.FEMALE, this.formIndex, this.shiny);
-          if (this.fusionSpecies)
+          if (this.isPlayer() || this.fusionSpecies)
+            this.scene.loadAtlas(this.getBattleSpriteKey(true), 'pokemon', this.getBattleSpriteAtlasPath(true));
+          if (this.fusionSpecies) {
             this.getFusionSpeciesForm().loadAssets(this.scene, this.fusionGender === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny);
-          if (this.isPlayer())
-            this.scene.loadAtlas(this.getBattleSpriteKey(), 'pokemon', this.getBattleSpriteAtlasPath());
+            this.scene.loadAtlas(this.getFusionBattleSpriteKey(true), 'pokemon', this.getFusionBattleSpriteAtlasPath(true));
+          }
           this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             if (this.isPlayer()) {
               const originalWarn = console.warn;
@@ -258,14 +260,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               console.warn = () => {};
               const battleFrameNames = this.scene.anims.generateFrameNames(this.getBattleSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 256 });
               console.warn = originalWarn;
-              if (this.isPlayer()) {
-                this.scene.anims.create({
-                  key: this.getBattleSpriteKey(),
-                  frames: battleFrameNames,
-                  frameRate: 12,
-                  repeat: -1
-                });
-              }
+              this.scene.anims.create({
+                key: this.getBattleSpriteKey(),
+                frames: battleFrameNames,
+                frameRate: 12,
+                repeat: -1
+              });
             }
             this.playAnim();
             if (this.fusionSpecies)
@@ -282,24 +282,44 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getSpriteId(ignoreOverride).replace(/\_{2}/g, '/');
   }
 
-  getBattleSpriteAtlasPath(ignoreOverride?: boolean): string {
-    return this.getBattleSpriteId(ignoreOverride).replace(/\_{2}/g, '/');
+  getBattleSpriteAtlasPath(back?: boolean, ignoreOverride?: boolean): string {
+    return this.getBattleSpriteId(back, ignoreOverride).replace(/\_{2}/g, '/');
   }
 
   getSpriteId(ignoreOverride?: boolean): string {
     return this.getSpeciesForm(ignoreOverride).getSpriteId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.shiny);
   }
 
-  getBattleSpriteId(ignoreOverride?: boolean): string {
-    return `${this.isPlayer() ? 'back__' : ''}${this.getSpriteId(ignoreOverride)}`;
+  getBattleSpriteId(back?: boolean, ignoreOverride?: boolean): string {
+    if (back === undefined)
+      back = this.isPlayer();
+    return `${back ? 'back__' : ''}${this.getSpriteId(ignoreOverride)}`;
   }
 
   getSpriteKey(ignoreOverride?: boolean): string {
     return this.getSpeciesForm(ignoreOverride).getSpriteKey(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.shiny);
   }
 
-  getBattleSpriteKey(ignoreOverride?: boolean): string {
-    return `pkmn__${this.getBattleSpriteId(ignoreOverride)}`;
+  getBattleSpriteKey(back?: boolean, ignoreOverride?: boolean): string {
+    return `pkmn__${this.getBattleSpriteId(back, ignoreOverride)}`;
+  }
+
+  getFusionSpriteId(): string {
+    return this.getFusionSpeciesForm().getSpriteId(this.fusionGender === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny);
+  }
+
+  getFusionBattleSpriteId(back?: boolean): string {
+    if (back === undefined)
+      back = this.isPlayer();
+    return `${back ? 'back__' : ''}${this.getFusionSpriteId()}`;
+  }
+
+  getFusionBattleSpriteKey(back?: boolean): string {
+    return `pkmn__${this.getFusionBattleSpriteId(back)}`;
+  }
+
+  getFusionBattleSpriteAtlasPath(back?: boolean): string {
+    return this.getFusionBattleSpriteId(back).replace(/\_{2}/g, '/');
   }
 
   getIconAtlasKey(ignoreOverride?: boolean): string {
@@ -1368,52 +1388,62 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const sourceTexture = this.scene.textures.get(this.getSpeciesForm().getSpriteKey(this.gender === Gender.FEMALE, this.formIndex, this.shiny));
+    const sourceBackTexture = this.scene.textures.get(this.getSpeciesForm().getSpriteKey(this.gender === Gender.FEMALE, this.formIndex, this.shiny).replace('pkmn__', 'pkmn__back__'));
     const fusionTexture = this.scene.textures.get(this.getFusionSpeciesForm().getSpriteKey(this.fusionGender === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny));
+    const fusionBackTexture = this.scene.textures.get(this.getFusionSpeciesForm().getSpriteKey(this.fusionGender === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny).replace('pkmn__', 'pkmn__back__'));
 
-    const [ sourceFrame, fusionFrame ] = [ sourceTexture, fusionTexture ].map(texture => texture.frames[texture.firstFrame]);
-    const [ sourceImage, fusionImage ] = [ sourceTexture, fusionTexture ].map(i => i.getSourceImage() as HTMLImageElement);
+    const [ sourceFrame, sourceBackFrame, fusionFrame, fusionBackFrame ] = [ sourceTexture, sourceBackTexture, fusionTexture, fusionBackTexture ].map(texture => texture.frames[texture.firstFrame]);
+    const [ sourceImage, sourceBackImage, fusionImage, fusionBackImage ] = [ sourceTexture, sourceBackTexture, fusionTexture, fusionBackTexture ].map(i => i.getSourceImage() as HTMLImageElement);
 
     const canvas = document.createElement('canvas');
+		const backCanvas = document.createElement('canvas');
     const fusionCanvas = document.createElement('canvas');
+		const fusionBackCanvas = document.createElement('canvas');
 
     const spriteColors: integer[][] = [];
     const pixelData: Uint8ClampedArray[] = [];
 
-    [ canvas, fusionCanvas ].forEach((canv: HTMLCanvasElement, c: integer) => {
+    [ canvas, backCanvas, fusionCanvas, fusionBackCanvas ].forEach((canv: HTMLCanvasElement, c: integer) => {
       const context = canv.getContext('2d');
-      const frame = !c ? sourceFrame : fusionFrame;
+      const frame = [ sourceFrame, sourceBackFrame, fusionFrame, fusionBackFrame ][c];
       canv.width = frame.width;
       canv.height = frame.height;
-      context.drawImage(!c ? sourceImage : fusionImage, frame.cutX, frame.cutY, frame.width, frame.height, 0, 0, frame.width, frame.height);
+      context.drawImage([ sourceImage, sourceBackImage, fusionImage, fusionBackImage ][c], frame.cutX, frame.cutY, frame.width, frame.height, 0, 0, frame.width, frame.height);
       const imageData = context.getImageData(frame.cutX, frame.cutY, frame.width, frame.height);
       pixelData.push(imageData.data);
     });
 
-    for (let i = 0; i < pixelData[0].length; i += 4) {
-      if (pixelData[0][i + 3]) {
-        const pixel = pixelData[0].slice(i, i + 4);
-        const [ r, g, b, a ] = pixel; 
-        if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b))
-          spriteColors.push([ r, g, b, a ]);
+    for (let f = 0; f < 2; f++) {
+      for (let i = 0; i < pixelData[f].length; i += 4) {
+        if (pixelData[f][i + 3]) {
+          const pixel = pixelData[f].slice(i, i + 4);
+          const [ r, g, b, a ] = pixel; 
+          if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b))
+            spriteColors.push([ r, g, b, a ]);
+        }
       }
     }
 
     const fusionSpriteColors = JSON.parse(JSON.stringify(spriteColors));
 
     const pixelColors = [];
-    for (let i = 0; i < pixelData[0].length; i += 4) {
-      const total = pixelData[0].slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
-      if (!total)
-        continue;
-      pixelColors.push(argbFromRgba({ r: pixelData[0][i], g: pixelData[0][i + 1], b: pixelData[0][i + 2], a: pixelData[0][i + 3] }));
+    for (let f = 0; f < 2; f++) {
+      for (let i = 0; i < pixelData[f].length; i += 4) {
+        const total = pixelData[f].slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
+        if (!total)
+          continue;
+        pixelColors.push(argbFromRgba({ r: pixelData[f][i], g: pixelData[f][i + 1], b: pixelData[f][i + 2], a: pixelData[f][i + 3] }));
+      }
     }
 
     const fusionPixelColors = [];
-    for (let i = 0; i < pixelData[1].length; i += 4) {
-      const total = pixelData[1].slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
-      if (!total)
-        continue;
-      fusionPixelColors.push(argbFromRgba({ r: pixelData[1][i], g: pixelData[1][i + 1], b: pixelData[1][i + 2], a: pixelData[1][i + 3] }));
+    for (let f = 0; f < 2; f++) {
+      for (let i = 0; i < pixelData[2 + f].length; i += 4) {
+        const total = pixelData[2 + f].slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
+        if (!total)
+          continue;
+        fusionPixelColors.push(argbFromRgba({ r: pixelData[2 + f][i], g: pixelData[2 + f][i + 1], b: pixelData[2 + f][i + 2], a: pixelData[2 + f][i + 3] }));
+      }
     }
     
     let paletteColors: Map<number, number>;
@@ -1452,7 +1482,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             for (let c2 = 0; c2 < c; c2++) {
               const hsv2 = hsvColors.get(keys[c2]);
               const diff = Math.abs(hsv[0] - hsv2[0]);
-							if (diff < 30 || diff >= 330) {
+              if (diff < 30 || diff >= 330) {
                 if (mappedColors.has(keys[c]))
                   mappedColors.get(keys[c]).push(keys[c2]);
                 else
