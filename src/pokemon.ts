@@ -636,6 +636,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       && !species.pseudoLegendary
       && !species.legendary
       && !species.mythical
+      && species.speciesId !== this.species.speciesId
     };
    
     this.fusionSpecies = this.scene.randomSpecies(this.scene.currentBattle?.waveIndex || 0, this.level, false, filter, true);
