@@ -1554,7 +1554,11 @@ export function initAbilities() {
     new Ability(Abilities.PROTEAN, "Protean (N)", "Changes the Pokémon's type to its last used move.", 6),
     new Ability(Abilities.DELTA_STREAM, "Delta Stream", "The Pokémon creates strong winds when it enters a battle.", 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS),
-    new Ability(Abilities.SLUSH_RUSH, "Slush Rush (N)", "Boosts the Pokémon's Speed stat in a hailstorm.", 7),
+    new Ability(Abilities.SLUSH_RUSH, "Slush Rush", "Boosts the Pokémon's Speed stat in a hailstorm.", 7)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
+      .condition(getWeatherCondition(WeatherType.HAIL)),
+      // TODO: No WeatherType.Snow yet
+      // TODO: Show ability bar on weather change and summon
     new Ability(Abilities.NEUTRALIZING_GAS, "Neutralizing Gas (N)", "Neutralizes abilities of all Pokémon in battle.", 8)
   );
 }
