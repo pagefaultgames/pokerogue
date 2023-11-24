@@ -2157,61 +2157,64 @@ export class VictoryPhase extends PokemonPhase {
     const multipleParticipantExpBonusModifier = this.scene.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
     const expPartyMembers = party.filter(p => p.hp && p.level < this.scene.getMaxExpLevel());
     const partyMemberExp = [];
-    let expValue = this.getPokemon().getExpValue();
-    if (this.scene.currentBattle.battleType === BattleType.TRAINER)
-      expValue = Math.floor(expValue * 1.5);
-    for (let partyMember of expPartyMembers) {
-      const pId = partyMember.id;
-      const participated = participantIds.has(pId);
-      if (participated)
-        partyMember.winCount++;
-      else if (!expShareModifier) {
-        partyMemberExp.push(0);
-        continue;
+
+    if (participantIds.size) {
+      let expValue = this.getPokemon().getExpValue();
+      if (this.scene.currentBattle.battleType === BattleType.TRAINER)
+        expValue = Math.floor(expValue * 1.5);
+      for (let partyMember of expPartyMembers) {
+        const pId = partyMember.id;
+        const participated = participantIds.has(pId);
+        if (participated)
+          partyMember.winCount++;
+        else if (!expShareModifier) {
+          partyMemberExp.push(0);
+          continue;
+        }
+        let expMultiplier = 0;
+        if (participated) {
+          expMultiplier += (1 / participantIds.size);
+          if (participantIds.size > 1 && multipleParticipantExpBonusModifier)
+            expMultiplier += multipleParticipantExpBonusModifier.getStackCount() * 0.2;
+        } else if (expShareModifier)
+          expMultiplier += (expShareModifier.getStackCount() * 0.2) / participantIds.size;
+        if (partyMember.pokerus)
+          expMultiplier *= 1.5;
+        const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
+        this.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
+        partyMemberExp.push(Math.floor(pokemonExp.value));
       }
-      let expMultiplier = 0;
-      if (participated) {
-        expMultiplier += (1 / participantIds.size);
-        if (participantIds.size > 1 && multipleParticipantExpBonusModifier)
-          expMultiplier += multipleParticipantExpBonusModifier.getStackCount() * 0.2;
-      } else if (expShareModifier)
-        expMultiplier += (expShareModifier.getStackCount() * 0.2) / participantIds.size;
-      if (partyMember.pokerus)
-        expMultiplier *= 1.5;
-      const pokemonExp = new Utils.NumberHolder(expValue * expMultiplier);
-      this.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
-      partyMemberExp.push(Math.floor(pokemonExp.value));
-    }
 
-    if (expBalanceModifier) {
-      let totalLevel = 0;
-      let totalExp = 0;
-      expPartyMembers.forEach((expPartyMember, epm) => {
-        totalExp += partyMemberExp[epm];
-        totalLevel += expPartyMember.level;
-      });
+      if (expBalanceModifier) {
+        let totalLevel = 0;
+        let totalExp = 0;
+        expPartyMembers.forEach((expPartyMember, epm) => {
+          totalExp += partyMemberExp[epm];
+          totalLevel += expPartyMember.level;
+        });
 
-      const medianLevel = Math.floor(totalLevel / expPartyMembers.length);
+        const medianLevel = Math.floor(totalLevel / expPartyMembers.length);
 
-      const recipientExpPartyMemberIndexes = [];
-      expPartyMembers.forEach((expPartyMember, epm) => {
-        if (expPartyMember.level <= medianLevel)
-          recipientExpPartyMemberIndexes.push(epm);
-      });
+        const recipientExpPartyMemberIndexes = [];
+        expPartyMembers.forEach((expPartyMember, epm) => {
+          if (expPartyMember.level <= medianLevel)
+            recipientExpPartyMemberIndexes.push(epm);
+        });
 
-      const splitExp = Math.floor(totalExp / recipientExpPartyMemberIndexes.length);
+        const splitExp = Math.floor(totalExp / recipientExpPartyMemberIndexes.length);
 
-      expPartyMembers.forEach((_partyMember, pm) => {
-        partyMemberExp[pm] = recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0;
-      });
-    }
+        expPartyMembers.forEach((_partyMember, pm) => {
+          partyMemberExp[pm] = recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0;
+        });
+      }
 
-    for (let pm = 0; pm < expPartyMembers.length; pm++) {
-      const exp = partyMemberExp[pm];
+      for (let pm = 0; pm < expPartyMembers.length; pm++) {
+        const exp = partyMemberExp[pm];
 
-      if (exp) {
-        const partyMemberIndex = party.indexOf(expPartyMembers[pm]);
-        this.scene.unshiftPhase(expPartyMembers[pm].isOnField() ? new ExpPhase(this.scene, partyMemberIndex, exp) : new ShowPartyExpBarPhase(this.scene, partyMemberIndex, exp));
+        if (exp) {
+          const partyMemberIndex = party.indexOf(expPartyMembers[pm]);
+          this.scene.unshiftPhase(expPartyMembers[pm].isOnField() ? new ExpPhase(this.scene, partyMemberIndex, exp) : new ShowPartyExpBarPhase(this.scene, partyMemberIndex, exp));
+        }
       }
     }
 
