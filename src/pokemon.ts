@@ -247,10 +247,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         .then(() => {
           loadMoveAnimAssets(this.scene, moveIds);
           this.getSpeciesForm().loadAssets(this.scene, this.getGender() === Gender.FEMALE, this.formIndex, this.shiny);
-          if (this.isPlayer() || this.fusionSpecies)
+          if (this.isPlayer() || this.getFusionSpeciesForm())
             this.scene.loadAtlas(this.getBattleSpriteKey(true), 'pokemon', this.getBattleSpriteAtlasPath(true));
-          if (this.fusionSpecies) {
-            this.getFusionSpeciesForm().loadAssets(this.scene, this.fusionGender === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny);
+          if (this.getFusionSpeciesForm()) {
+            this.getFusionSpeciesForm().loadAssets(this.scene, this.getFusionGender() === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny);
             this.scene.loadAtlas(this.getFusionBattleSpriteKey(true), 'pokemon', this.getFusionBattleSpriteAtlasPath(true));
           }
           this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
@@ -268,8 +268,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               });
             }
             this.playAnim();
-            if (this.fusionSpecies)
-              this.updateFusionPalette();
+            this.updateFusionPalette();
+            if (this.summonData?.speciesForm)
+              this.updateFusionPalette(true);
             resolve();
           });
           if (!this.scene.load.isLoading())
@@ -304,22 +305,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return `pkmn__${this.getBattleSpriteId(back, ignoreOverride)}`;
   }
 
-  getFusionSpriteId(): string {
-    return this.getFusionSpeciesForm().getSpriteId(this.fusionGender === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny);
+  getFusionSpriteId(ignoreOverride?: boolean): string {
+    return this.getFusionSpeciesForm(ignoreOverride).getSpriteId(this.getFusionGender(ignoreOverride) === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny);
   }
 
-  getFusionBattleSpriteId(back?: boolean): string {
+  getFusionBattleSpriteId(back?: boolean, ignoreOverride?: boolean): string {
     if (back === undefined)
       back = this.isPlayer();
-    return `${back ? 'back__' : ''}${this.getFusionSpriteId()}`;
+    return `${back ? 'back__' : ''}${this.getFusionSpriteId(ignoreOverride)}`;
   }
 
-  getFusionBattleSpriteKey(back?: boolean): string {
-    return `pkmn__${this.getFusionBattleSpriteId(back)}`;
+  getFusionBattleSpriteKey(back?: boolean, ignoreOverride?: boolean): string {
+    return `pkmn__${this.getFusionBattleSpriteId(back, ignoreOverride)}`;
   }
 
-  getFusionBattleSpriteAtlasPath(back?: boolean): string {
-    return this.getFusionBattleSpriteId(back).replace(/\_{2}/g, '/');
+  getFusionBattleSpriteAtlasPath(back?: boolean, ignoreOverride?: boolean): string {
+    return this.getFusionBattleSpriteId(back, ignoreOverride).replace(/\_{2}/g, '/');
   }
 
   getIconAtlasKey(ignoreOverride?: boolean): string {
@@ -342,10 +343,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.species.forms[this.formIndex];
   }
 
-  getFusionSpeciesForm(): PokemonSpeciesForm {
-    if (!this.fusionSpecies.forms?.length || this.fusionFormIndex >= this.fusionSpecies.forms.length)
+  getFusionSpeciesForm(ignoreOverride?: boolean): PokemonSpeciesForm {
+    if (!ignoreOverride && this.summonData?.speciesForm)
+      return this.summonData.fusionSpeciesForm;
+    if (!this.fusionSpecies?.forms?.length || this.fusionFormIndex >= this.fusionSpecies?.forms.length)
       return this.fusionSpecies;
-    return this.fusionSpecies.forms[this.fusionFormIndex];
+    return this.fusionSpecies?.forms[this.fusionFormIndex];
   }
 
   getSprite(): Phaser.GameObjects.Sprite {
@@ -483,6 +486,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!ignoreOverride && this.summonData?.gender !== undefined)
       return this.summonData.gender;
     return this.gender;
+  }
+
+  getFusionGender(ignoreOverride?: boolean): Gender {
+    if (!ignoreOverride && this.summonData?.fusionGender !== undefined)
+      return this.summonData.fusionGender;
+    return this.fusionGender;
   }
 
   isShiny(): boolean {
@@ -1288,6 +1297,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   resetSummonData(): void {
+    if (this.summonData?.speciesForm) {
+      this.summonData.speciesForm = null;
+      this.updateFusionPalette();
+    }
     this.summonData = new PokemonSummonData();
     this.resetBattleSummonData();
   }
@@ -1378,19 +1391,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  updateFusionPalette(): void {
-    if (!this.fusionSpecies) {
+  updateFusionPalette(ignoreOveride?: boolean): void {
+    if (!this.getFusionSpeciesForm(ignoreOveride)) {
       [ this.getSprite(), this.getTintSprite() ].map(s => {
-        s.pipelineData['spriteColors'] = [];
-        s.pipelineData['fusionSpriteColors'] = [];
+        s.pipelineData[`spriteColors${ignoreOveride && this.summonData?.speciesForm ? 'Base' : ''}`] = [];
+        s.pipelineData[`fusionSpriteColors${ignoreOveride && this.summonData?.speciesForm ? 'Base' : ''}`] = [];
       });
       return;
     }
 
-    const sourceTexture = this.scene.textures.get(this.getSpeciesForm().getSpriteKey(this.gender === Gender.FEMALE, this.formIndex, this.shiny));
-    const sourceBackTexture = this.scene.textures.get(this.getSpeciesForm().getSpriteKey(this.gender === Gender.FEMALE, this.formIndex, this.shiny).replace('pkmn__', 'pkmn__back__'));
-    const fusionTexture = this.scene.textures.get(this.getFusionSpeciesForm().getSpriteKey(this.fusionGender === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny));
-    const fusionBackTexture = this.scene.textures.get(this.getFusionSpeciesForm().getSpriteKey(this.fusionGender === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny).replace('pkmn__', 'pkmn__back__'));
+    const speciesForm = this.getSpeciesForm(ignoreOveride);
+    const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOveride);
+
+    const sourceTexture = this.scene.textures.get(speciesForm.getSpriteKey(this.getGender(ignoreOveride) === Gender.FEMALE, speciesForm.formIndex, this.shiny));
+    const sourceBackTexture = this.scene.textures.get(speciesForm.getSpriteKey(this.getGender(ignoreOveride) === Gender.FEMALE, speciesForm.formIndex, this.shiny).replace('pkmn__', 'pkmn__back__'));
+    const fusionTexture = this.scene.textures.get(fusionSpeciesForm.getSpriteKey(this.getFusionGender(ignoreOveride) === Gender.FEMALE, fusionSpeciesForm.formIndex, this.fusionShiny));
+    const fusionBackTexture = this.scene.textures.get(fusionSpeciesForm.getSpriteKey(this.getFusionGender(ignoreOveride) === Gender.FEMALE, fusionSpeciesForm.formIndex, this.fusionShiny).replace('pkmn__', 'pkmn__back__'));
 
     const [ sourceFrame, sourceBackFrame, fusionFrame, fusionBackFrame ] = [ sourceTexture, sourceBackTexture, fusionTexture, fusionBackTexture ].map(texture => texture.frames[texture.firstFrame]);
     const [ sourceImage, sourceBackImage, fusionImage, fusionBackImage ] = [ sourceTexture, sourceBackTexture, fusionTexture, fusionBackTexture ].map(i => i.getSourceImage() as HTMLImageElement);
@@ -1555,8 +1571,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     [ this.getSprite(), this.getTintSprite() ].map(s => {
-      s.pipelineData['spriteColors'] = spriteColors;
-      s.pipelineData['fusionSpriteColors'] = fusionSpriteColors;
+      s.pipelineData[`spriteColors${ignoreOveride && this.summonData?.speciesForm ? 'Base' : ''}`] = spriteColors;
+      s.pipelineData[`fusionSpriteColors${ignoreOveride && this.summonData?.speciesForm ? 'Base' : ''}`] = fusionSpriteColors;
     });
 
     canvas.remove();
@@ -1954,7 +1970,9 @@ export class PokemonSummonData {
   public tags: BattlerTag[] = [];
 
   public speciesForm: PokemonSpeciesForm;
+  public fusionSpeciesForm: PokemonSpeciesForm;
   public gender: Gender;
+  public fusionGender: Gender;
   public stats: integer[];
   public moveset: PokemonMove[];
   public types: Type[];

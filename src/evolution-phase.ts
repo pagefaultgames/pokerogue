@@ -81,9 +81,13 @@ export class EvolutionPhase extends BattlePhase {
       const preName = pokemon.name;
 
       [ this.pokemonSprite, this.pokemonTintSprite, this.pokemonEvoSprite, this.pokemonEvoTintSprite ].map(sprite => {
-        sprite.play(pokemon.getSpriteKey());
+        sprite.play(pokemon.getSpriteKey(true));
         sprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false });
-        [ 'spriteColors', 'fusionSpriteColors' ].map(k => sprite.pipelineData[k] = pokemon.getSprite().pipelineData[k]);
+        [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
+          if (pokemon.summonData?.speciesForm)
+            k += 'Base';
+          sprite.pipelineData[k] = pokemon.getSprite().pipelineData[k];
+        });
       });
 
       this.scene.ui.showText(`What?\n${preName} is evolving!`, null, () => {
@@ -91,8 +95,12 @@ export class EvolutionPhase extends BattlePhase {
 
         pokemon.evolve(this.evolution).then(() => {
           [ this.pokemonEvoSprite, this.pokemonEvoTintSprite ].map(sprite => {
-            sprite.play(pokemon.getSpriteKey());
-            [ 'spriteColors', 'fusionSpriteColors' ].map(k => sprite.pipelineData[k] = pokemon.getSprite().pipelineData[k]);
+            sprite.play(pokemon.getSpriteKey(true));
+            [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
+              if (pokemon.summonData?.speciesForm)
+                k += 'Base';
+              sprite.pipelineData[k] = pokemon.getSprite().pipelineData[k];
+            });
           });
         });
 

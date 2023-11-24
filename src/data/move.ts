@@ -2276,14 +2276,16 @@ export class TransformAttr extends MoveEffectAttr {
         return resolve(false);
 
       user.summonData.speciesForm = target.getSpeciesForm();
+      user.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
       user.summonData.gender = target.getGender();
+      user.summonData.fusionGender = target.getFusionGender();
       user.summonData.stats = [ user.stats[Stat.HP] ].concat(target.stats.slice(1));
       user.summonData.battleStats = target.summonData.battleStats.slice(0);
       user.summonData.moveset = target.getMoveset().map(m => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
       user.summonData.types = target.getTypes();
 
       user.scene.queueMessage(getPokemonMessage(user, ` transformed\ninto ${target.name}!`));
-      
+
       user.loadAssets().then(() => {
         user.playAnim();
         resolve(true);

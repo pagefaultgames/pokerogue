@@ -162,8 +162,9 @@ export default class SpritePipeline extends Phaser.Renderer.WebGL.Pipelines.Mult
         const data = sprite.pipelineData;
         const tone = data['tone'] as number[];
         const hasShadow = data['hasShadow'] as boolean;
-        let spriteColors = data['spriteColors'] || [] as number[][];
-        const fusionSpriteColors = data['fusionSpriteColors'] || [] as number[][];
+        const ignoreOverride = data['ignoreOverride'] as boolean;
+        const spriteColors = (ignoreOverride && data['spriteColorsBase']) || data['spriteColors'] || [] as number[][];
+        const fusionSpriteColors = (ignoreOverride && data['fusionSpriteColorsBase']) || data['fusionSpriteColors'] || [] as number[][];
 
         const position = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer
             ? [ sprite.parentContainer.x, sprite.parentContainer.y ]
