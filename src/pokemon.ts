@@ -505,7 +505,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getLearnableLevelMoves(): Moves[] {
-    return this.getLevelMoves(1).filter(lm => !this.moveset.filter(m => m.moveId === lm).length);
+    return this.getLevelMoves(1).filter(lm => !this.moveset.filter(m => m.moveId === lm).length).filter((move: Moves, i: integer, array: Moves[]) => array.indexOf(move) === i);
   }
 
   getTypes(ignoreOverride?: boolean): Type[] {
