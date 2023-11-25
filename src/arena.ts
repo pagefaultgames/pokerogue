@@ -12,7 +12,7 @@ import { ArenaTag, ArenaTagType, getArenaTag } from "./data/arena-tag";
 import { GameMode } from "./game-mode";
 import { TrainerType } from "./data/trainer-type";
 
-const WEATHER_OVERRIDE = WeatherType.RAIN
+const WEATHER_OVERRIDE = WeatherType.NONE;
 
 export class Arena {
   public scene: BattleScene;
