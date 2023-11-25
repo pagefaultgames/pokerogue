@@ -799,7 +799,8 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.EXP_SHARE, 1),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 1),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
-    new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode === GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 4 : 0),
+    new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode === GameMode.SPLICED_ENDLESS && party.filter(p => !p.fusionSpecies).length > 1 ? 4 : 0),
+    new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode === GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 6 : 0),
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 8),
@@ -825,7 +826,6 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 1),
     new WeightedModifierType(modifierTypes.COIN_CASE, 1),
     new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 3 : 0),
-    new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode === GameMode.SPLICED_ENDLESS && party.filter(p => !p.fusionSpecies).length > 1 ? 6 : 0),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 3),
