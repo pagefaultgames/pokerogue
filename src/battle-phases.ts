@@ -839,14 +839,17 @@ export class ToggleDoublePositionPhase extends BattlePhase {
     super.start();
 
     const playerPokemon = this.scene.getPlayerField().find(p => p.isActive(true));
-    playerPokemon.setFieldPosition(this.double ? FieldPosition.LEFT : FieldPosition.CENTER, 500).then(() => {
-      if (playerPokemon.getFieldIndex() === 1) {
-        const party = this.scene.getParty();
-        party[1] = party[0];
-        party[0] = playerPokemon;
-      }
+    if (playerPokemon) {
+      playerPokemon.setFieldPosition(FieldPosition.CENTER, 500).then(() => {
+        if (playerPokemon.getFieldIndex() === 1) {
+          const party = this.scene.getParty();
+          party[1] = party[0];
+          party[0] = playerPokemon;
+        }
+        this.end();
+      });
+    } else
       this.end();
-    });
   }
 }
 
@@ -2410,9 +2413,12 @@ export class SwitchPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, this.fieldIndex, (slotIndex: integer, option: PartyOption) => {
+    // Override field index to 0 in case of double battle where 2/3 remaining party members fainted at once
+    const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => !p.isFainted()).length > 1 ? this.fieldIndex : 0;
+
+    this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6)
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
+        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
       this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
     }, PartyUiHandler.FilterNonFainted);
   }
