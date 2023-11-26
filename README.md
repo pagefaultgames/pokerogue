@@ -1,4 +1,4 @@
-# pokemon-rogue-battle
+# PokéRogue
 
 ## To do
 
