@@ -841,7 +841,8 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	updateUIPositions(): void {
-		this.waveCountText.setY(-(this.game.canvas.height / 6) + (this.enemyModifiers.filter(m => m.isIconVisible(this)).length ? 15 : 0));
+		const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible(this)).length;
+		this.waveCountText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
 		this.moneyText.setY(this.waveCountText.y + 10);
 		this.partyExpBar.setY(this.moneyText.y + 15);
 		this.ui?.achvBar.setY((this.game.canvas.height / 6 + this.moneyText.y + 15));
