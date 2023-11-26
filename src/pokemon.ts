@@ -860,7 +860,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
           const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this);
           const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source);
-          const stabMultiplier = new Utils.IntegerHolder(source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1);
+          const stabMultiplier = new Utils.NumberHolder(source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1);
           const criticalMultiplier = isCritical ? 2 : 1;
           const isTypeImmune = (typeMultiplier.value * weatherTypeMultiplier) === 0;
 

@@ -34,11 +34,6 @@ void main()
 
     %forloop%
 
-    vec4 texel = vec4(outTint.bgr * outTint.a, outTint.a);
-
-    //  Multiply texture tint
-    vec4 color = texture * texel;
-
     for (int i = 0; i < 32; i++) {
         if (spriteColors[i][3] == 0)
             break;
@@ -48,10 +43,15 @@ void main()
             float gray = (bg.r + bg.g + bg.b) / 3.0;
             bg = vec3(gray, gray, gray);
             vec3 fg = fusionColor;
-            color.rgb = mix(1.0 - 2.0 * (1.0 - bg) * (1.0 - fg), 2.0 * bg * fg, step(bg, vec3(0.5)));
+            texture.rgb = mix(1.0 - 2.0 * (1.0 - bg) * (1.0 - fg), 2.0 * bg * fg, step(bg, vec3(0.5)));
             break;
         }
     }
+
+    vec4 texel = vec4(outTint.bgr * outTint.a, outTint.a);
+
+    //  Multiply texture tint
+    vec4 color = texture * texel;
 
     if (outTintEffect == 1.0) {
         //  Solid color + texture alpha
