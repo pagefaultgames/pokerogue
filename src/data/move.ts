@@ -2356,10 +2356,7 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
       set = [ opponents[Utils.randInt(opponents.length)] ];
       break;
     case MoveTarget.ATTACKER:
-        set = user.turnData.attacksReceived.length
-          ? [ user.scene.getPokemonById(user.turnData.attacksReceived[0].sourceId) ]
-          : [];
-      break;
+        return { targets: [ -1 as BattlerIndex ], multiple: false };
     case MoveTarget.NEAR_ALLY:
     case MoveTarget.ALLY:
       set = [ user.getAlly() ];

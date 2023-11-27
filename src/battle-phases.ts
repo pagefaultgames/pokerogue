@@ -1422,7 +1422,18 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    console.log(this.targets);
+    if (this.targets.length === 1 && this.targets[0] === BattlerIndex.ATTACKER) {
+      if (this.pokemon.turnData.attacksReceived.length) {
+        const attacker = this.pokemon.turnData.attacksReceived.length ? this.pokemon.scene.getPokemonById(this.pokemon.turnData.attacksReceived[0].sourceId) : null;
+        if (attacker?.isActive(true))
+          this.targets[0] = attacker.getBattlerIndex();
+      }
+      if (this.targets[0] === BattlerIndex.ATTACKER) {
+        this.cancel();
+        this.showMoveText();
+        this.showFailedText();
+      }
+    }
 
     const targets = this.scene.getField().filter(p => {
       if (p?.isActive(true) && this.targets.indexOf(p.getBattlerIndex()) > -1) {
@@ -1446,6 +1457,7 @@ export class MovePhase extends BattlePhase {
 
       const moveQueue = this.pokemon.getMoveQueue();
 
+      this.showMoveText();
       if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {
         moveQueue.shift();
         this.cancel();
@@ -1457,7 +1469,6 @@ export class MovePhase extends BattlePhase {
         return;
       }
 
-      this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
       if (!moveQueue.length || !moveQueue.shift().ignorePP) {
         this.move.ppUsed++;
         for (let opponent of this.pokemon.getOpponents()) {
@@ -1479,7 +1490,7 @@ export class MovePhase extends BattlePhase {
         this.scene.unshiftPhase(this.getEffectPhase());
       else {
         this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
-        this.scene.queueMessage('But it failed!');
+        this.showFailedText();
       }
       
       this.end();
@@ -1527,6 +1538,14 @@ export class MovePhase extends BattlePhase {
 
   getEffectPhase(): MoveEffectPhase {
     return new MoveEffectPhase(this.scene, this.pokemon.getBattlerIndex(), this.targets, this.move);
+  }
+
+  showMoveText(): void {
+    this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
+  }
+
+  showFailedText(): void {
+    this.scene.queueMessage('But it failed!');
   }
 
   end() {
