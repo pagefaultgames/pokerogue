@@ -1007,9 +1007,11 @@ export class CommandPhase extends FieldPhase {
       case Command.FIGHT:
         let useStruggle = false;
         if (cursor === -1 || playerPokemon.trySelectMove(cursor, args[0] as boolean) || (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)) {
-          const moveId = !useStruggle ? playerPokemon.getMoveset()[cursor].moveId : Moves.STRUGGLE;
-          const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: cursor > -1 ? { move: moveId, targets: [] } : null, args: args };
-          const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, cursor > -1 ? moveId : Moves.NONE) : args[2];
+          const moveId = !useStruggle ? cursor > -1 ? playerPokemon.getMoveset()[cursor].moveId : Moves.NONE : Moves.STRUGGLE;
+          const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [] }, args: args };
+          const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
+          if (!moveId)
+            turnCommand.targets = [ this.fieldIndex ];
           console.log(moveTargets, playerPokemon.name);
           if (moveTargets.targets.length <= 1 || moveTargets.multiple)
             turnCommand.move.targets = moveTargets.targets;
@@ -1416,7 +1418,7 @@ export class MovePhase extends BattlePhase {
     console.log(Moves[this.move.moveId]);
 
     if (!this.canMove()) {
-      if (this.pokemon.summonData.disabledMove === this.move.moveId)
+      if (this.move.moveId && this.pokemon.summonData.disabledMove === this.move.moveId)
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
       this.end();
       return;
@@ -1457,7 +1459,9 @@ export class MovePhase extends BattlePhase {
 
       const moveQueue = this.pokemon.getMoveQueue();
 
-      this.showMoveText();
+      if (this.move.moveId)
+        this.showMoveText();
+      
       if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {
         moveQueue.shift();
         this.cancel();

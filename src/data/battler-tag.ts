@@ -110,7 +110,6 @@ export class RechargingTag extends BattlerTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     super.lapse(pokemon, lapseType);
 
-    (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' must\nrecharge!'));
 
     return true;

@@ -2378,7 +2378,7 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
 }
 
 export const allMoves: Move[] = [
-  new StatusMove(Moves.NONE, "-", Type.NORMAL, MoveCategory.STATUS, -1, -1, "", -1, 0, 1),
+  new SelfStatusMove(Moves.NONE, "-", Type.NORMAL, MoveCategory.STATUS, -1, -1, "", -1, 0, 1),
 ];
 
 export function initMoves() {

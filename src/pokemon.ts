@@ -2033,7 +2033,7 @@ export class PokemonMove {
   }
 
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
-    if (pokemon.summonData?.disabledMove === this.moveId)
+    if (this.moveId && pokemon.summonData?.disabledMove === this.moveId)
       return false;
     return ignorePp || this.ppUsed < this.getMove().pp + this.ppUp || this.getMove().pp === -1;
   }
