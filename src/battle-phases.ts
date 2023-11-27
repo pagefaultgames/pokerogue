@@ -2852,9 +2852,6 @@ export class AttemptCapturePhase extends PokemonPhase {
     if (pokemon.species.mythical)
       this.scene.validateAchv(achvs.CATCH_MYTHICAL);
 
-    if (pokemon.ivs.filter(iv => iv === 31).length === 6)
-      this.scene.validateAchv(achvs.PERFECT_IVS);
-
     let dexEntry: DexEntry;
     let speciesId = pokemon.species.speciesId;
     do {
@@ -2864,6 +2861,8 @@ export class AttemptCapturePhase extends PokemonPhase {
         if (dexIvs[i] < pokemon.ivs[i])
           dexIvs[i] = pokemon.ivs[i];
       }
+      if (dexIvs.filter(iv => iv === 31).length === 6)
+        this.scene.validateAchv(achvs.PERFECT_IVS);
     } while (pokemonPrevolutions.hasOwnProperty(speciesId) && (speciesId = pokemonPrevolutions[speciesId]));
       
     this.scene.ui.showText(`${pokemon.name} was caught!`, null, () => {
