@@ -528,7 +528,7 @@ export class SwitchBiomePhase extends BattlePhase {
       return this.end();
 
     this.scene.tweens.add({
-      targets: this.scene.arenaEnemy,
+      targets: [ this.scene.arenaEnemy, this.scene.lastEnemyTrainer ],
       x: '+=300',
       duration: 2000,
       onComplete: () => {
@@ -548,7 +548,7 @@ export class SwitchBiomePhase extends BattlePhase {
         this.scene.time.delayedCall(1000, () => this.scene.playBgm());
 
         this.scene.tweens.add({
-          targets: [ this.scene.arenaPlayer, this.scene.arenaBgTransition, this.scene.arenaPlayerTransition, this.scene.lastEnemyTrainer ],
+          targets: [ this.scene.arenaPlayer, this.scene.arenaBgTransition, this.scene.arenaPlayerTransition ],
           duration: 1000,
           delay: 1000,
           ease: 'Sine.easeInOut',
@@ -723,6 +723,9 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   preSummon(): void {
+    if (!this.player && this.slotIndex === -1)
+      this.slotIndex = this.scene.currentBattle.trainer.getNextSummonIndex();
+
     if (!this.doReturn || (this.slotIndex !== -1 && !this.scene.getParty()[this.slotIndex])) {
       this.switchAndSummon();
       return;
@@ -1797,6 +1800,9 @@ export class StatChangePhase extends PokemonPhase {
   start() {
     const pokemon = this.getPokemon();
 
+    if (pokemon.isFainted())
+      return this.end();
+
     const filteredStats = this.stats.filter(stat => {
       const cancelled = new Utils.BooleanHolder(false);
 
@@ -2116,7 +2122,7 @@ export class FaintPhase extends PokemonPhase {
       if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
         const hasReservePartyMember = !!this.scene.getEnemyParty().filter(p => p.isActive() && !p.isOnField()).length;
         if (hasReservePartyMember)
-          this.scene.pushPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, this.scene.currentBattle.trainer.getNextSummonIndex(), false, false, false));
+          this.scene.pushPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, -1, false, false, false));
       }
     }
 

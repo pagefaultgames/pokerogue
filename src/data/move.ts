@@ -1020,6 +1020,9 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
 
     const recoilDamage = Math.max(Math.floor((!this.useHp ? user.turnData.damageDealt : user.getMaxHp()) / 4), 1);
+    if (!recoilDamage)
+      return false;
+
     user.scene.unshiftPhase(new DamagePhase(user.scene, user.getBattlerIndex(), HitResult.OTHER));
     user.scene.queueMessage(getPokemonMessage(user, ' is hit\nwith recoil!'));
     user.damage(recoilDamage);
