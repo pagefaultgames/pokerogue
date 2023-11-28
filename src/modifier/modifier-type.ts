@@ -675,7 +675,7 @@ export const modifierTypes = {
     (type, _args) => new Modifiers.MultipleParticipantExpBonusModifier(type)),
 
   EXP_CHARM: () => new ExpBoosterModifierType('EXP. Charm', 25),
-  HIGH_EXP_CHARM: () => new ExpBoosterModifierType('High EXP. Charm', 60),
+  SUPER_EXP_CHARM: () => new ExpBoosterModifierType('Super EXP. Charm', 60),
   GOLDEN_EXP_CHARM: () => new ExpBoosterModifierType('Golden EXP. Charm', 100),
 
   LUCKY_EGG: () => new PokemonExpBoosterModifierType('Lucky Egg', 50),
@@ -822,7 +822,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.LEFTOVERS, 2),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 2),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 3),
-    new WeightedModifierType(modifierTypes.HIGH_EXP_CHARM, 3),
+    new WeightedModifierType(modifierTypes.SUPER_EXP_CHARM, 3),
     new WeightedModifierType(modifierTypes.OVAL_CHARM, 2),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, 2),
     new WeightedModifierType(modifierTypes.IV_SCANNER, 2),

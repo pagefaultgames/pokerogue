@@ -52,7 +52,7 @@
 					}
 				},
 				{
-					"filename": "high_exp_charm",
+					"filename": "super_exp_charm",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -3858,6 +3858,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:8daf36e1a2615b1c92e34954931b867d:beeac19ffd37f26e8458442aa05b2b5a:110e074689c9edd2c54833ce2e4d9270$"
+		"smartupdate": "$TexturePacker:SmartUpdate:7d150b6bd288db2e8dfa1530000690ee:53987dc1b2426cb0757237d04d6925a3:110e074689c9edd2c54833ce2e4d9270$"
 	}
 }
