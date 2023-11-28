@@ -40,7 +40,7 @@ export enum FieldPosition {
   RIGHT
 }
 
-const ABILITY_OVERRIDE = Abilities.SOLAR_POWER;
+const ABILITY_OVERRIDE = Abilities.NONE;
 const MOVE_OVERRIDE = Moves.NONE;
 
 const OPP_ABILITY_OVERRIDE = Abilities.NONE;
