@@ -7,12 +7,30 @@ interface TmSpecies {
 }
 
 export const reverseCompatibleTms: Moves[] = [
+    Moves.TAKE_DOWN,
     Moves.DOUBLE_EDGE,
+    Moves.TOXIC,
+    Moves.RAGE,
+    Moves.MIMIC,
+    Moves.DOUBLE_TEAM,
+    Moves.BIDE,
     Moves.REST,
+    Moves.SUBSTITUTE,
+    Moves.SNORE,
+    Moves.CURSE,
+    Moves.PROTECT,
     Moves.ENDURE,
+    Moves.SWAGGER,
     Moves.ATTRACT,
+    Moves.SLEEP_TALK,
+    Moves.RETURN,
+    Moves.FRUSTRATION,
+    Moves.HIDDEN_POWER,
     Moves.FACADE,
-    Moves.CAPTIVATE
+    Moves.SECRET_POWER,
+    Moves.NATURAL_GIFT,
+    Moves.CAPTIVATE,
+    Moves.ROUND
 ];
 
 export const tmSpecies: TmSpecies = {
