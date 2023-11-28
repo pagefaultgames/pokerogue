@@ -675,7 +675,7 @@ export const modifierTypes = {
     (type, _args) => new Modifiers.MultipleParticipantExpBonusModifier(type)),
 
   EXP_CHARM: () => new ExpBoosterModifierType('EXP. Charm', 25),
-  GOLDEN_EXP_CHARM: () => new ExpBoosterModifierType('Golden EXP. Charm', 75),
+  GOLDEN_EXP_CHARM: () => new ExpBoosterModifierType('Golden EXP. Charm', 100),
 
   LUCKY_EGG: () => new PokemonExpBoosterModifierType('Lucky Egg', 50),
   GOLDEN_EGG: () => new PokemonExpBoosterModifierType('Golden Egg', 150),
