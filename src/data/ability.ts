@@ -1494,7 +1494,7 @@ export function initAbilities() {
     new Ability(Abilities.SNOW_WARNING, "Snow Warning", "The Pokémon summons a hailstorm in battle.", 4)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HAIL),
     new Ability(Abilities.SOLAR_POWER, "Solar Power", "In sunshine, Sp. Atk is boosted but HP decreases.", 4)
-      .attr(PostWeatherLapseDamageAbAttr, 80, WeatherType.SUNNY, WeatherType.HARSH_SUN)
+      .attr(PostWeatherLapseDamageAbAttr, 2, WeatherType.SUNNY, WeatherType.HARSH_SUN)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 1.5)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
     new Ability(Abilities.SOLID_ROCK, "Solid Rock (N)", "Reduces damage from super-effective attacks.", 4),
