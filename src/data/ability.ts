@@ -1338,7 +1338,9 @@ export function initAbilities() {
     new Ability(Abilities.GUTS, "Guts (N)", "Boosts Attack if there is a status problem.", 3),
     new Ability(Abilities.HUGE_POWER, "Huge Power", "Raises the Pokémon's Attack stat.", 3)
       .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 2, true),
-    new Ability(Abilities.HUSTLE, "Hustle (N)", "Boosts the Attack stat, but lowers Accuracy.", 3),
+    new Ability(Abilities.HUSTLE, "Hustle", "Boosts the Attack stat, but lowers Accuracy.", 3)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 0.8),
     new Ability(Abilities.HYPER_CUTTER, "Hyper Cutter", "Prevents other Pokémon from lowering Attack stat.", 3)
       .attr(ProtectStatAbAttr, BattleStat.ATK),
     new Ability(Abilities.ILLUMINATE, "Illuminate", "Raises the likelihood of an encounter being a double battle.", 3)
