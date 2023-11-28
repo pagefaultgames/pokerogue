@@ -1542,6 +1542,7 @@ export function initAbilities() {
     new Ability(Abilities.SAND_FORCE, "Sand Force (N)", "Boosts certain moves' power in a sandstorm.", 5),
     new Ability(Abilities.SAND_RUSH, "Sand Rush", "Boosts the Pokémon's Speed in a sandstorm.", 5)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
+      .condition(getWeatherCondition(WeatherType.SANDSTORM))
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM),
     new Ability(Abilities.SAP_SIPPER, "Sap Sipper", "Boosts Attack when hit by a Grass-type move.", 5)
       .attr(TypeImmunityStatChangeAbAttr, Type.GRASS, BattleStat.ATK, 1),
