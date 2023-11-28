@@ -1540,7 +1540,10 @@ export function initAbilities() {
     new Ability(Abilities.RATTLED, "Rattled (N)", "BUG, GHOST or DARK type moves scare it and boost its Speed.", 5),
     new Ability(Abilities.REGENERATOR, "Regenerator (N)", "Restores a little HP when withdrawn from battle.", 5),
     new Ability(Abilities.SAND_FORCE, "Sand Force (N)", "Boosts certain moves' power in a sandstorm.", 5),
-    new Ability(Abilities.SAND_RUSH, "Sand Rush (N)", "Boosts the Pokémon's Speed in a sandstorm.", 5),
+    new Ability(Abilities.SAND_RUSH, "Sand Rush", "Boosts the Pokémon's Speed in a sandstorm.", 5)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
+      .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
+      .condition(getWeatherCondition(WeatherType.SANDSTORM)),
     new Ability(Abilities.SAP_SIPPER, "Sap Sipper", "Boosts Attack when hit by a Grass-type move.", 5)
       .attr(TypeImmunityStatChangeAbAttr, Type.GRASS, BattleStat.ATK, 1),
     new Ability(Abilities.SHEER_FORCE, "Sheer Force (N)", "Removes added effects to increase move damage.", 5),
