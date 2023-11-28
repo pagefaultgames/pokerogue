@@ -675,6 +675,7 @@ export const modifierTypes = {
     (type, _args) => new Modifiers.MultipleParticipantExpBonusModifier(type)),
 
   EXP_CHARM: () => new ExpBoosterModifierType('EXP. Charm', 25),
+  HIGH_EXP_CHARM: () => new ExpBoosterModifierType('High EXP. Charm', 60),
   GOLDEN_EXP_CHARM: () => new ExpBoosterModifierType('Golden EXP. Charm', 100),
 
   LUCKY_EGG: () => new PokemonExpBoosterModifierType('Lucky Egg', 50),
@@ -798,6 +799,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.TM_GREAT, 2),
     new WeightedModifierType(modifierTypes.EXP_SHARE, 1),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 1),
+    new WeightedModifierType(modifierTypes.EXP_CHARM, 2),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode === GameMode.SPLICED_ENDLESS && party.filter(p => !p.fusionSpecies).length > 1 ? 4 : 0),
     new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode === GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 6 : 0),
@@ -810,6 +812,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.MEMORY_MUSHROOM, (party: Pokemon[]) => party.filter(p => p.getLearnableLevelMoves().length).length ? 4 : 0),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 3),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 3),
+    new WeightedModifierType(modifierTypes.RARER_CANDY, 3),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 2),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 2),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 1),
@@ -819,7 +822,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.LEFTOVERS, 2),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 2),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 3),
-    new WeightedModifierType(modifierTypes.EXP_CHARM, 4),
+    new WeightedModifierType(modifierTypes.HIGH_EXP_CHARM, 3),
     new WeightedModifierType(modifierTypes.OVAL_CHARM, 2),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, 2),
     new WeightedModifierType(modifierTypes.IV_SCANNER, 2),
@@ -829,6 +832,7 @@ const modifierPool = {
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 3),
+    new WeightedModifierType(modifierTypes.GOLDEN_EXP_CHARM, 2),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 2),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => !p.fusionSpecies).length > 1 ? 1 : 0),
     new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 1 : 0),
