@@ -2015,15 +2015,12 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         (switchOutTarget as PlayerPokemon).switchOut(this.batonPass).then(() => resolve(true));
         return;
       } else if (user.scene.currentBattle.battleType) {
-        if ((switchOutTarget instanceof PlayerPokemon ? user.scene.getParty() : user.scene.getEnemyParty()).filter(p => !p.isFainted()).length > 1) {
-          switchOutTarget.resetTurnData();
-          switchOutTarget.resetSummonData();
-          switchOutTarget.hideInfo();
-          switchOutTarget.setVisible(false);
+        switchOutTarget.resetTurnData();
+        switchOutTarget.resetSummonData();
+        switchOutTarget.hideInfo();
+        switchOutTarget.setVisible(false);
 
-          user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex(), false, this.batonPass, false));
-        } else
-          return resolve(false);
+        user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex(), false, this.batonPass, false));
       } else {
         switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
         switchOutTarget.hp = 0;
@@ -2044,7 +2041,21 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveCondition {
-    return (user: Pokemon, target: Pokemon, move: Move) => !user.scene.currentBattle.battleType || ((this.user ? user : target) instanceof PlayerPokemon ? user.scene.getParty() : user.scene.getEnemyParty()).filter(p => !p.isFainted()).length === 1;
+    return (user: Pokemon, target: Pokemon, move: Move) => {
+      const switchOutTarget = (this.user ? user : target);
+      const player = switchOutTarget instanceof PlayerPokemon;
+
+      if (!player && !user.scene.currentBattle.battleType) {
+        if (this.batonPass)
+          return false;
+        // Don't allow wild opponents to flee on the boss stage since it can ruin a run early on
+        if (!(user.scene.currentBattle.waveIndex % 10))
+          return false;
+      }
+
+      const party = player ? user.scene.getParty() : user.scene.getEnemyParty();
+      return (!player && !user.scene.currentBattle.battleType) || party.filter(p => !p.isFainted()).length > user.scene.currentBattle.getBattlerCount();
+    };
   }
 }
 
