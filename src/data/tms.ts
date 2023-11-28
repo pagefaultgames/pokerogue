@@ -6,6 +6,15 @@ interface TmSpecies {
     [key: integer]: Array<Species | Array<Species | string>>
 }
 
+export const reverseCompatibleTms: Moves[] = [
+    Moves.DOUBLE_EDGE,
+    Moves.REST,
+    Moves.ENDURE,
+    Moves.ATTRACT,
+    Moves.FACADE,
+    Moves.CAPTIVATE
+];
+
 export const tmSpecies: TmSpecies = {
     [Moves.MEGA_PUNCH]: [
         Species.CHARMANDER,

@@ -12,7 +12,7 @@ import { PokeballType } from './data/pokeball';
 import { Gender } from './data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
 import { Status, StatusEffect } from './data/status-effect';
-import { tmSpecies } from './data/tms';
+import { reverseCompatibleTms, tmSpecies } from './data/tms';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './data/pokemon-evolutions';
 import { DamagePhase, FaintPhase, SwitchSummonPhase } from './battle-phases';
 import { BattleStat } from './data/battle-stat';
@@ -1624,17 +1624,22 @@ export class PlayerPokemon extends Pokemon {
     const tms = Object.keys(tmSpecies);
     for (let tm of tms) {
       const moveId = parseInt(tm) as Moves;
+      let compatible = false;
       for (let p of tmSpecies[tm]) {
         if (Array.isArray(p)) {
           if (p[0] === this.species.speciesId || (this.fusionSpecies && p[0] === this.fusionSpecies.speciesId)) {
-            this.compatibleTms.push(moveId);
+            compatible = true;
             break;
           }
         } else if (p === this.species.speciesId || (this.fusionSpecies && p === this.fusionSpecies.speciesId)) {
-          this.compatibleTms.push(moveId);
+          compatible = true;
           break;
         }
       }
+      if (reverseCompatibleTms.indexOf(moveId) > -1)
+        compatible = !compatible;
+      if (compatible)
+        this.compatibleTms.push(moveId);
     }
   }
 
