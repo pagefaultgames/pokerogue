@@ -2258,7 +2258,7 @@ export class VictoryPhase extends PokemonPhase {
         if (this.scene.currentBattle.waveIndex % 10)
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
         else {
-          this.scene.pushPhase(new ModifierRewardPhase(this.scene, this.scene.currentBattle.waveIndex % 30 ? modifierTypes.EXP_CHARM : modifierTypes.GOLDEN_EXP_CHARM));
+          this.scene.pushPhase(new ModifierRewardPhase(this.scene, (this.scene.currentBattle.waveIndex + (this.scene.gameMode !== GameMode.CLASSIC ? 20 : 0)) % 30 ? modifierTypes.EXP_CHARM : modifierTypes.GOLDEN_EXP_CHARM));
           if (this.scene.currentBattle.waveIndex <= 150 && !(this.scene.currentBattle.waveIndex % 50))
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_POKEBALL));
           if (this.scene.gameMode !== GameMode.CLASSIC  && !(this.scene.currentBattle.waveIndex % 50))
