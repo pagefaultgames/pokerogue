@@ -384,11 +384,8 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
       if (pokemon.getSpeciesForm().generation <= 5) {
         const iconKey = isIconShown ? pokemon.getIconKey() : 'pkmn_icon__000';
         pokemonIcon.play(iconKey).stop();
-      } else {
-        if (pokemon.species.speciesId === Species.ETERNATUS)
-          pokemonIcon.setScale(0.5, 0.5);
+      } else
         pokemonIcon.setFrame(pokemon.getIconId());
-      }
       pokemonIcon.setOrigin(0, 0.5);
 
       container.add(pokemonIcon);

@@ -4,53 +4,11 @@
 			"image": "pokemon_icons_6.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 192,
-				"h": 58
+				"w": 109,
+				"h": 62
 			},
 			"scale": 1,
 			"frames": [
-				{
-					"filename": "890eternamax",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 67,
-						"h": 56
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 67,
-						"h": 56
-					},
-					"frame": {
-						"x": 0,
-						"y": 0,
-						"w": 67,
-						"h": 56
-					}
-				},
-				{
-					"filename": "890",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 56,
-						"h": 42
-					},
-					"spriteSourceSize": {
-						"x": 1,
-						"y": 0,
-						"w": 55,
-						"h": 42
-					},
-					"frame": {
-						"x": 67,
-						"y": 0,
-						"w": 55,
-						"h": 42
-					}
-				},
 				{
 					"filename": "716",
 					"rotated": false,
@@ -66,8 +24,8 @@
 						"h": 31
 					},
 					"frame": {
-						"x": 122,
-						"y": 0,
+						"x": 1,
+						"y": 1,
 						"w": 31,
 						"h": 31
 					}
@@ -87,10 +45,52 @@
 						"h": 27
 					},
 					"frame": {
-						"x": 122,
-						"y": 31,
+						"x": 1,
+						"y": 34,
 						"w": 38,
 						"h": 27
+					}
+				},
+				{
+					"filename": "890eternamax",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 38,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 38,
+						"h": 30
+					},
+					"frame": {
+						"x": 34,
+						"y": 1,
+						"w": 38,
+						"h": 30
+					}
+				},
+				{
+					"filename": "890",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 33,
+						"h": 28
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 33,
+						"h": 28
+					},
+					"frame": {
+						"x": 41,
+						"y": 33,
+						"w": 33,
+						"h": 28
 					}
 				},
 				{
@@ -108,8 +108,8 @@
 						"h": 30
 					},
 					"frame": {
-						"x": 160,
-						"y": 0,
+						"x": 74,
+						"y": 1,
 						"w": 32,
 						"h": 30
 					}
@@ -129,8 +129,8 @@
 						"h": 28
 					},
 					"frame": {
-						"x": 160,
-						"y": 30,
+						"x": 76,
+						"y": 33,
 						"w": 32,
 						"h": 28
 					}
@@ -141,6 +141,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:56c494a24236874eac973adb00bb5fd9:06e134328126c54e98e3c55aa35c82b0:6a6cc46d6db7bee1b3e18054101832f5$"
+		"smartupdate": "$TexturePacker:SmartUpdate:c06b7621c68cbf5898042db33f0e26b6:72170fc6edbf589a4b81617a8b4ac580:96737d38f2029744a75c1ee001bc1929$"
 	}
 }
