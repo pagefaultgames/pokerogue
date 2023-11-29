@@ -74,6 +74,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public fusionGender: Gender;
 
   public summonData: PokemonSummonData;
+  public battleData: PokemonBattleData;
   public battleSummonData: PokemonBattleSummonData;
   public turnData: PokemonTurnData;
 
@@ -921,6 +922,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (source.isPlayer())
               this.scene.validateAchvs(DamageAchv, damage);
             source.turnData.damageDealt += damage.value;
+            this.battleData.hitCount++;
             this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id });
             if (source.isPlayer() && !this.isPlayer())
               this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage)
@@ -1302,7 +1304,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.updateFusionPalette();
     }
     this.summonData = new PokemonSummonData();
+    if (!this.battleData)
+      this.resetBattleData();
     this.resetBattleSummonData();
+  }
+
+  resetBattleData(): void {
+    this.battleData = new PokemonBattleData();
   }
 
   resetBattleSummonData(): void {
@@ -1981,6 +1989,10 @@ export class PokemonSummonData {
   public stats: integer[];
   public moveset: PokemonMove[];
   public types: Type[];
+}
+
+export class PokemonBattleData {
+  public hitCount: integer = 0;
 }
 
 export class PokemonBattleSummonData {

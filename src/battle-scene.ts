@@ -682,6 +682,10 @@ export default class BattleScene extends Phaser.Scene {
 				if (showTrainer) {
 					playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 					this.unshiftPhase(new ShowTrainerPhase(this));
+					for (let pokemon of this.getParty()) {
+						if (pokemon)
+							pokemon.resetBattleData();
+					}
 				}
 				if (this.gameMode === GameMode.CLASSIC && !isNewBiome)
 					this.pushPhase(new NextEncounterPhase(this));

@@ -886,10 +886,11 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 9, Moves.FURY_SWIPES ],
     [ 13, Moves.KARATE_CHOP ],
     [ 17, Moves.SEISMIC_TOSS ],
+    [ 19, Moves.SWAGGER ],
     [ 21, Moves.SCREECH ],
     [ 25, Moves.ASSURANCE ],
     [ 28, Moves.RAGE ],
-    [ 35, Moves.SWAGGER ],
+    [ 35, Moves.RAGE_FIST ],
     [ 41, Moves.CROSS_CHOP ],
     [ 47, Moves.THRASH ],
     [ 53, Moves.PUNISHMENT ],
@@ -10974,7 +10975,28 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 72, Moves.RECOVER ],
     [ 80, Moves.HYPER_BEAM ],
     [ 88, Moves.OUTRAGE ]
-  ]
+  ],
+  [Species.ANNIHILAPE]: [
+    [ 1, Moves.LEER ],
+    [ 1, Moves.FOCUS_ENERGY ],
+    [ 1, Moves.LOW_KICK ],
+    [ 1, Moves.SCRATCH ],
+    [ 1, Moves.FLING ],
+    [ 9, Moves.FURY_SWIPES ],
+    [ 13, Moves.KARATE_CHOP ],
+    [ 17, Moves.SEISMIC_TOSS ],
+    [ 19, Moves.SWAGGER ],
+    [ 21, Moves.SCREECH ],
+    [ 25, Moves.ASSURANCE ],
+    [ 28, Moves.RAGE ],
+    [ 35, Moves.RAGE_FIST ],
+    [ 41, Moves.CROSS_CHOP ],
+    [ 47, Moves.THRASH ],
+    [ 53, Moves.PUNISHMENT ],
+    [ 59, Moves.CLOSE_COMBAT ],
+    [ 63, Moves.FINAL_GAMBIT ],
+    [ 68, Moves.OUTRAGE ]
+  ],
 };
 
 export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {

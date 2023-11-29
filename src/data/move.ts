@@ -820,7 +820,8 @@ export enum Moves {
   PHANTOM_FORCE,
   GEOMANCY,
   OBLIVION_WING,
-  DYNAMAX_CANNON
+  DYNAMAX_CANNON,
+  RAGE_FIST
 }
 
 export abstract class MoveAttr {
@@ -1618,7 +1619,7 @@ export class SolarBeamPowerAttr extends VariablePowerAttr {
   }
 }
 
-export class WinCountPowerMoveAttr extends VariablePowerAttr {
+export class WinCountPowerAttr extends VariablePowerAttr {
   private invert: boolean;
 
   constructor(invert?: boolean) {
@@ -1634,6 +1635,14 @@ export class WinCountPowerMoveAttr extends VariablePowerAttr {
       const winCount = Math.min(user.winCount, 100);
       power.value = Math.max(!this.invert ? winCount : 100 - winCount, 1);
     }
+
+    return true;
+  }
+}
+
+export class HitCountPowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value += Math.min(user.battleData.hitCount, 6) * 50;
 
     return true;
   }
@@ -2901,11 +2910,11 @@ export function initMoves() {
       .target(MoveTarget.USER_AND_ALLIES)
       .soundBased(),
     new AttackMove(Moves.RETURN, "Return", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, "Power increases with higher Friendship.", -1, 0, 2)
-      .attr(WinCountPowerMoveAttr),
+      .attr(WinCountPowerAttr),
     new AttackMove(Moves.PRESENT, "Present (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, -1, "Either deals damage or heals.", -1, 0, 2)
       .makesContact(false),
     new AttackMove(Moves.FRUSTRATION, "Frustration", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, "Power decreases with higher Friendship.", -1, 0, 2)
-      .attr(WinCountPowerMoveAttr, true),
+      .attr(WinCountPowerAttr, true),
     new SelfStatusMove(Moves.SAFEGUARD, "Safeguard (N)", Type.NORMAL, -1, 25, -1, "The user's party is protected from status conditions.", -1, 0, 2)
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.PAIN_SPLIT, "Pain Split", Type.NORMAL, -1, 20, -1, "The user's and opponent's HP becomes the average of both.", -1, 0, 2)
@@ -3634,6 +3643,8 @@ export function initMoves() {
       .target(MoveTarget.OTHER),
     new AttackMove(Moves.DYNAMAX_CANNON, "Dynamax Cannon", Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 5, -1, "Power is doubled if the target is over level 200.", -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.level > 200 ? 2 : 1)
-      .ignoresVirtual()
+      .ignoresVirtual(),
+    new AttackMove(Moves.RAGE_FIST, "Rage Fist", Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, "The more times the user has been hit by attacks, the greater the move's power.", -1, 0, 9)
+      .attr(HitCountPowerAttr)
   );
 }

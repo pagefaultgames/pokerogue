@@ -1,4 +1,4 @@
-import { Abilities } from './ability';
+import { Abilities, Ability } from './ability';
 import BattleScene, { AnySound } from '../battle-scene';
 import { GrowthRate } from './exp';
 import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from './pokemon-evolutions';
@@ -82,7 +82,7 @@ export abstract class PokemonSpeciesForm {
   }
 
   isObtainable() {
-    return this.generation <= 5 && this.getFormSpriteKey(this.formIndex) !== 'mega';
+    return (this.generation <= 5 || pokemonPrevolutions.hasOwnProperty(this.speciesId)) && this.getFormSpriteKey(this.formIndex) !== 'mega';
   }
 
   getSpriteAtlasPath(female: boolean, formIndex?: integer, shiny?: boolean): string {
@@ -1186,9 +1186,10 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.XERNEAS, "Xerneas", 6, false, true, false, "Life Pokémon", Type.FAIRY, null, 3, 215, Abilities.FAIRY_AURA, Abilities.NONE, Abilities.NONE, 680, 126, 131, 95, 131, 98, 99, 45, 0, 306, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
     new PokemonSpecies(Species.YVELTAL, "Yveltal", 6, false, true, false, "Destruction Pokémon", Type.DARK, Type.FLYING, 5.8, 203, Abilities.DARK_AURA, Abilities.NONE, Abilities.NONE, 680, 126, 131, 95, 131, 98, 99, 45, 0, 306, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
-    new PokemonSpecies(Species.ETERNATUS, "Eternatus", 8, false, true, false, "Gigantic Pokemon", Type.POISON, Type.DRAGON, 20, 950, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 690, 140, 85, 95, 145, 95, 130, 255, 0, 345, GrowthRate.SLOW, "Undiscovered", null, null, 120, false, false, 
+    new PokemonSpecies(Species.ETERNATUS, "Eternatus", 8, false, true, false, "Gigantic Pokémon", Type.POISON, Type.DRAGON, 20, 950, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 690, 140, 85, 95, 145, 95, 130, 255, 0, 345, GrowthRate.SLOW, "Undiscovered", null, null, 120, false, false, 
       new PokemonForm("Normal", "", Type.POISON, Type.DRAGON, 20, 950, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 690, 140, 85, 95, 145, 95, 130, 255, 0, 345, GrowthRate.SLOW, "Undiscovered", null, null, 120, false),
-      new PokemonForm("Eternamax", "eternamax", Type.POISON, Type.DRAGON, 100, 950, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 1125, 255, 115, 250, 125, 250, 130, 255, 0, 345, GrowthRate.SLOW, "Undiscovered", null, null, 120, false))
+      new PokemonForm("Eternamax", "eternamax", Type.POISON, Type.DRAGON, 100, 950, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 1125, 255, 115, 250, 125, 250, 130, 255, 0, 345, GrowthRate.SLOW, "Undiscovered", null, null, 120, false)),
+    new PokemonSpecies(Species.ANNIHILAPE, "Annihilape", 9, false, false, false, "Rage Monkey Pokémon", Type.FIGHTING, Type.GHOST, 1.2, 56, Abilities.VITAL_SPIRIT, Abilities.INNER_FOCUS, Abilities.DEFIANT, 535, 110, 115, 80, 50, 90, 90, 45, 50, 268, GrowthRate.MEDIUM_FAST, "Field", null, 50, 20, false)
   );
 }
 

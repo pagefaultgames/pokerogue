@@ -207,6 +207,7 @@ export class ConfusedTag extends BattlerTag {
         pokemon.scene.queueMessage('It hurt itself in its\nconfusion!');
         pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex()));
         pokemon.damage(damage);
+        pokemon.battleData.hitCount++;
         (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
       }
     }

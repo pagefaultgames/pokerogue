@@ -34,6 +34,7 @@ import { Species } from "./data/species";
 import { HealAchv, LevelAchv, MoneyAchv, achvs } from "./system/achv";
 import { DexEntry } from "./system/game-data";
 import { pokemonPrevolutions } from "./data/pokemon-evolutions";
+import { getPokemonSpecies } from "./data/pokemon-species";
 
 export class CheckLoadPhase extends BattlePhase {
   private loaded: boolean;
@@ -312,10 +313,15 @@ export class EncounterPhase extends BattlePhase {
   doEncounter() {
     this.scene.playBgm(undefined, true);
 
-    if (startingWave > 10) {
+    /*if (startingWave > 10) {
       for (let m = 0; m < Math.min(Math.floor(startingWave / 10), 99); m++)
         this.scene.addModifier(getPlayerModifierTypeOptionsForWave((m + 1) * 10, 1, this.scene.getParty())[0].type.newModifier(), true);
       this.scene.updateModifiers(true);
+    }*/
+
+    for (let pokemon of this.scene.getParty()) {
+      if (pokemon)
+        pokemon.resetBattleData();
     }
 
     this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena.biomeType), false);
@@ -441,6 +447,11 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
   }
 
   doEncounter(): void {
+    for (let pokemon of this.scene.getParty()) {
+      if (pokemon)
+        pokemon.resetBattleData();
+    }
+
     this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena.biomeType), false);
 
     const enemyField = this.scene.getEnemyField();

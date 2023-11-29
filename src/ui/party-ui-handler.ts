@@ -740,7 +740,12 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.add(slotPb);
 
     const pokemonIcon = this.scene.add.sprite(slotPb.x, slotPb.y, this.pokemon.getIconAtlasKey(true));
-    pokemonIcon.play(this.pokemon.getIconKey(true));
+    if (this.pokemon.getSpeciesForm().generation <= 5)
+      pokemonIcon.play(this.pokemon.getIconKey(true));
+    else {
+      pokemonIcon.setFrame(this.pokemon.getIconId());
+      pokemonIcon.setScale(0.75);
+    }
 
     this.add(pokemonIcon);
 
