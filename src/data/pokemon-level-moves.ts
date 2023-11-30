@@ -1598,7 +1598,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.KRABBY]: [
     [ 1, Moves.MUD_SPORT ],
     [ 1, Moves.BUBBLE ],
-    [ 5, Moves.VISE_GRIP ],
+    [ 5, Moves.VICE_GRIP ],
     [ 9, Moves.LEER ],
     [ 11, Moves.HARDEN ],
     [ 15, Moves.BUBBLE_BEAM ],
@@ -1616,9 +1616,9 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 1, Moves.MUD_SPORT ],
     [ 1, Moves.LEER ],
     [ 1, Moves.WIDE_GUARD ],
-    [ 1, Moves.VISE_GRIP ],
+    [ 1, Moves.VICE_GRIP ],
     [ 1, Moves.BUBBLE ],
-    [ 5, Moves.VISE_GRIP ],
+    [ 5, Moves.VICE_GRIP ],
     [ 9, Moves.LEER ],
     [ 11, Moves.HARDEN ],
     [ 15, Moves.BUBBLE_BEAM ],
@@ -2106,7 +2106,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.PINSIR]: [
     [ 1, Moves.FOCUS_ENERGY ],
-    [ 1, Moves.VISE_GRIP ],
+    [ 1, Moves.VICE_GRIP ],
     [ 4, Moves.BIND ],
     [ 8, Moves.SEISMIC_TOSS ],
     [ 11, Moves.HARDEN ],
@@ -4988,7 +4988,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 6, Moves.FAKE_TEARS ],
     [ 11, Moves.BITE ],
     [ 16, Moves.SWEET_SCENT ],
-    [ 21, Moves.VISE_GRIP ],
+    [ 21, Moves.VICE_GRIP ],
     [ 26, Moves.FEINT_ATTACK ],
     [ 31, Moves.BATON_PASS ],
     [ 36, Moves.CRUNCH ],
@@ -5688,7 +5688,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.CORPHISH]: [
     [ 1, Moves.BUBBLE ],
     [ 7, Moves.HARDEN ],
-    [ 10, Moves.VISE_GRIP ],
+    [ 10, Moves.VICE_GRIP ],
     [ 13, Moves.LEER ],
     [ 20, Moves.BUBBLE_BEAM ],
     [ 23, Moves.PROTECT ],
@@ -5703,10 +5703,10 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.CRAWDAUNT]: [
     [ 1, Moves.LEER ],
     [ 1, Moves.HARDEN ],
-    [ 1, Moves.VISE_GRIP ],
+    [ 1, Moves.VICE_GRIP ],
     [ 1, Moves.BUBBLE ],
     [ 7, Moves.HARDEN ],
-    [ 10, Moves.VISE_GRIP ],
+    [ 10, Moves.VICE_GRIP ],
     [ 13, Moves.LEER ],
     [ 20, Moves.BUBBLE_BEAM ],
     [ 23, Moves.PROTECT ],
@@ -10005,7 +10005,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 67, Moves.EXPLOSION ]
   ],
   [Species.KLINK]: [
-    [ 1, Moves.VISE_GRIP ],
+    [ 1, Moves.VICE_GRIP ],
     [ 6, Moves.CHARGE ],
     [ 11, Moves.THUNDER_SHOCK ],
     [ 16, Moves.GEAR_GRIND ],
@@ -10023,7 +10023,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.KLANG]: [
     [ 1, Moves.CHARGE ],
-    [ 1, Moves.VISE_GRIP ],
+    [ 1, Moves.VICE_GRIP ],
     [ 1, Moves.GEAR_GRIND ],
     [ 1, Moves.THUNDER_SHOCK ],
     [ 6, Moves.CHARGE ],
@@ -10043,7 +10043,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.KLINKLANG]: [
     [ 1, Moves.CHARGE ],
-    [ 1, Moves.VISE_GRIP ],
+    [ 1, Moves.VICE_GRIP ],
     [ 1, Moves.GEAR_GRIND ],
     [ 1, Moves.THUNDER_SHOCK ],
     [ 6, Moves.CHARGE ],
@@ -10601,7 +10601,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.DURANT]: [
     [ 1, Moves.SAND_ATTACK ],
-    [ 1, Moves.VISE_GRIP ],
+    [ 1, Moves.VICE_GRIP ],
     [ 6, Moves.FURY_CUTTER ],
     [ 11, Moves.BITE ],
     [ 16, Moves.AGILITY ],
