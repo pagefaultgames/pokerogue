@@ -1190,7 +1190,7 @@ export class MoneyInterestModifier extends PersistentModifier {
 
   apply(args: any[]): boolean {
     const scene = args[0] as BattleScene;
-    const interestAmount = Math.floor(scene.money * 0.2 * this.getStackCount());
+    const interestAmount = Math.floor(scene.money * 0.1 * this.getStackCount());
     scene.money += interestAmount;
     scene.updateMoneyText();
     scene.validateAchvs(MoneyAchv);
