@@ -3856,9 +3856,6 @@ export function initMoves() {
       .attr(ChargeAttr, ChargeAnim.SKY_DROP_CHARGING, 'took {TARGET}\ninto the sky!', BattlerTagType.FLYING) // TODO: Add 2nd turn message
       .condition(failOnGravityCondition)
       .ignoresVirtual(), 
-    new SelfStatusMove(Moves.SHIFT_GEAR, "Shift Gear", Type.STEEL, -1, 10, -1, "Raises user's Attack and sharply raises Speed.", -1, 0, 5)
-      .attr(StatChangeAttr, BattleStat.ATK, 1, true)
-      .attr(StatChangeAttr, BattleStat.SPD, 2, true),
     new SelfStatusMove(Moves.SHIFT_GEAR, "Shift Gear", Type.STEEL, -1, 10, -1, "The user rotates its gears, raising its Attack stat and sharply raising its Speed stat.", -1, 0, 5)
       .attr(StatChangeAttr, BattleStat.ATK, 1, true)
       .attr(StatChangeAttr, BattleStat.SPD, 2, true),
@@ -3993,7 +3990,7 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.PARABOLIC_CHARGE, "Parabolic Charge (N)", Type.ELECTRIC, MoveCategory.SPECIAL, 65, 100, 20, -1, "The user attacks everything around it. The user's HP is restored by half the damage taken by those hit.", -1, 0, 6)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new StatusMove(Moves.FORESTS_CURSE, "Forest’s Curse (N)", Type.GRASS, 100, 20, -1, "The user puts a forest curse on the target. The target is now Grass type as well.", -1, 0, 6),
+    new StatusMove(Moves.FORESTS_CURSE, "Forest's Curse (N)", Type.GRASS, 100, 20, -1, "The user puts a forest curse on the target. The target is now Grass type as well.", -1, 0, 6),
     new AttackMove(Moves.PETAL_BLIZZARD, "Petal Blizzard (N)", Type.GRASS, MoveCategory.PHYSICAL, 90, 100, 15, -1, "The user stirs up a violent petal blizzard and attacks everything around it.", -1, 0, 6)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.FREEZE_DRY, "Freeze-Dry (N)", Type.ICE, MoveCategory.SPECIAL, 70, 100, 20, -1, "The user rapidly cools the target. This may also leave the target frozen. This move is super effective on Water types.", 10, 0, 6),
@@ -4019,7 +4016,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new StatusMove(Moves.FAIRY_LOCK, "Fairy Lock (N)", Type.FAIRY, -1, 10, -1, "By locking down the battlefield, the user keeps all Pokémon from fleeing during the next turn.", -1, 0, 6)
       .target(MoveTarget.BOTH_SIDES),
-    new SelfStatusMove(Moves.KINGS_SHIELD, "King’s Shield (N)", Type.STEEL, -1, 10, -1, "The user takes a defensive stance while it protects itself from damage. It also lowers the Attack stat of any attacker that makes direct contact.", -1, 4, 6),
+    new SelfStatusMove(Moves.KINGS_SHIELD, "King's Shield (N)", Type.STEEL, -1, 10, -1, "The user takes a defensive stance while it protects itself from damage. It also lowers the Attack stat of any attacker that makes direct contact.", -1, 4, 6),
     new StatusMove(Moves.PLAY_NICE, "Play Nice (N)", Type.NORMAL, -1, 20, -1, "The user and the target become friends, and the target loses its will to fight. This lowers the target's Attack stat.", 100, 0, 6),
     new StatusMove(Moves.CONFIDE, "Confide (N)", Type.NORMAL, -1, 20, -1, "The user tells the target a secret, and the target loses its ability to concentrate. This lowers the target's Sp. Atk stat.", 100, 0, 6),
     new AttackMove(Moves.DIAMOND_STORM, "Diamond Storm (N)", Type.ROCK, MoveCategory.PHYSICAL, 100, 95, 5, -1, "The user whips up a storm of diamonds to damage opposing Pokémon. This may also sharply raise the user's Defense stat.", 50, 0, 6)
@@ -4050,18 +4047,22 @@ export function initMoves() {
     new SelfStatusMove(Moves.CELEBRATE, "Celebrate (N)", Type.NORMAL, -1, 40, -1, "The Pokémon congratulates you on your special day!", -1, 0, 6),
     new StatusMove(Moves.HOLD_HANDS, "Hold Hands (N)", Type.NORMAL, -1, 40, -1, "The user and an ally hold hands. This makes them very happy.", -1, 0, 6)
       .target(MoveTarget.NEAR_ALLY),
-    new StatusMove(Moves.BABY_DOLL_EYES, "Baby-Doll Eyes (N)", Type.FAIRY, 100, 30, -1, "The user stares at the target with its baby-doll eyes, which lowers the target's Attack stat. This move always goes first.", -1, 1, 6),
-    new AttackMove(Moves.NUZZLE, "Nuzzle (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 20, 100, 20, -1, "The user attacks by nuzzling its electrified cheeks against the target. This also leaves the target with paralysis.", 100, 0, 6),
+    new StatusMove(Moves.BABY_DOLL_EYES, "Baby-Doll Eyes", Type.FAIRY, 100, 30, -1, "The user stares at the target with its baby-doll eyes, which lowers the target's Attack stat. This move always goes first.", -1, 1, 6)
+      .attr(StatChangeAttr, BattleStat.ATK, -1),
+    new AttackMove(Moves.NUZZLE, "Nuzzle (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 20, 100, 20, -1, "The user attacks by nuzzling its electrified cheeks against the target. This also leaves the target with paralysis.", 100, 0, 6)
+      .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.HOLD_BACK, "Hold Back (N)", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 40, -1, "The user holds back when it attacks, and the target is left with at least 1 HP.", -1, 0, 6),
     new AttackMove(Moves.INFESTATION, "Infestation (N)", Type.BUG, MoveCategory.SPECIAL, 20, 100, 20, -1, "The target is infested and attacked for four to five turns. The target can't flee during this time.", 100, 0, 6),
     new AttackMove(Moves.POWER_UP_PUNCH, "Power-Up Punch (N)", Type.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 20, -1, "Striking opponents over and over makes the user's fists harder. Hitting a target raises the Attack stat.", 100, 0, 6),
-    new AttackMove(Moves.OBLIVION_WING, "Oblivion Wing (N)", Type.FLYING, MoveCategory.SPECIAL, 80, 100, 10, -1, "The user absorbs its target's HP. The user's HP is restored by over half of the damage taken by the target.", -1, 0, 6)
+    new AttackMove(Moves.OBLIVION_WING, "Oblivion Wing", Type.FLYING, MoveCategory.SPECIAL, 80, 100, 10, -1, "The user absorbs its target's HP. The user's HP is restored by over half of the damage taken by the target.", -1, 0, 6)
       .attr(HitHealAttr, 0.75),
-    new AttackMove(Moves.THOUSAND_ARROWS, "Thousand Arrows (N)", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, "This move also hits opposing Pokémon that are in the air. Those Pokémon are knocked down to the ground.", 100, 0, 6)
+    new AttackMove(Moves.THOUSAND_ARROWS, "Thousand Arrows", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, "This move also hits opposing Pokémon that are in the air. Those Pokémon are knocked down to the ground.", 100, 0, 6)
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(Moves.THOUSAND_WAVES, "Thousand Waves (N)", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, "The user attacks with a wave that crawls along the ground. Those it hits can't flee from battle.", -1, 0, 6)
+    new AttackMove(Moves.THOUSAND_WAVES, "Thousand Waves", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, "The user attacks with a wave that crawls along the ground. Those it hits can't flee from battle.", -1, 0, 6)
+      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, 1, true)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(Moves.LANDS_WRATH, "Land’s Wrath (N)", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, "The user gathers the energy of the land and focuses that power on opposing Pokémon to damage them.", -1, 0, 6)
+    new AttackMove(Moves.LANDS_WRATH, "Land's Wrath (N)", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, "The user gathers the energy of the land and focuses that power on opposing Pokémon to damage them.", -1, 0, 6)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.LIGHT_OF_RUIN, "Light of Ruin (N)", Type.FAIRY, MoveCategory.SPECIAL, 140, 90, 5, -1, "Drawing power from the Eternal Flower, the user fires a powerful beam of light. This also damages the user quite a lot.", -1, 0, 6),
     new AttackMove(Moves.ORIGIN_PULSE, "Origin Pulse (N)", Type.WATER, MoveCategory.SPECIAL, 110, 85, 10, -1, "The user attacks opposing Pokémon with countless beams of light that glow a deep and brilliant blue.", -1, 0, 6)
@@ -4116,11 +4117,15 @@ export function initMoves() {
     new AttackMove(Moves.DARKEST_LARIAT, "Darkest Lariat (N)", Type.DARK, MoveCategory.PHYSICAL, 85, 100, 10, -1, "The user swings both arms and hits the target. The target's stat changes don't affect this attack's damage.", -1, 0, 7),
     new AttackMove(Moves.SPARKLING_ARIA, "Sparkling Aria (N)", Type.WATER, MoveCategory.SPECIAL, 90, 100, 10, -1, "The user bursts into song, emitting many bubbles. Any Pokémon suffering from a burn will be healed by the touch of these bubbles.", -1, 0, 7)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new AttackMove(Moves.ICE_HAMMER, "Ice Hammer (N)", Type.ICE, MoveCategory.PHYSICAL, 100, 90, 10, -1, "The user swings and hits with its strong, heavy fist. It lowers the user's Speed, however.", 100, 0, 7),
-    new StatusMove(Moves.FLORAL_HEALING, "Floral Healing (N)", Type.FAIRY, -1, 10, -1, "The user restores the target's HP by up to half of its max HP. It restores more HP when the terrain is grass.", -1, 0, 7),
-    new AttackMove(Moves.HIGH_HORSEPOWER, "High Horsepower (N)", Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, "The user fiercely attacks the target using its entire body.", -1, 0, 7),
-    new StatusMove(Moves.STRENGTH_SAP, "Strength Sap (N)", Type.GRASS, 100, 10, -1, "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat.", 100, 0, 7),
-    new AttackMove(Moves.SOLAR_BLADE, "Solar Blade (N)", Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, -1, "In this two-turn attack, the user gathers light and fills a blade with the light's energy, attacking the target on the next turn.", -1, 0, 7),
+    new AttackMove(Moves.ICE_HAMMER, "Ice Hammer", Type.ICE, MoveCategory.PHYSICAL, 100, 90, 10, -1, "The user swings and hits with its strong, heavy fist. It lowers the user's Speed, however.", 100, 0, 7)
+      .attr(StatChangeAttr, BattleStat.SPD, -1, true),
+    new StatusMove(Moves.FLORAL_HEALING, "Floral Healing (P)", Type.FAIRY, -1, 10, -1, "The user restores the target's HP by up to half of its max HP. It restores more HP when the terrain is grass.", -1, 0, 7)
+      .attr(HealAttr, 0.5, true, false),
+    new AttackMove(Moves.HIGH_HORSEPOWER, "High Horsepower", Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, "The user fiercely attacks the target using its entire body.", -1, 0, 7),
+    new StatusMove(Moves.STRENGTH_SAP, "Strength Sap (P)", Type.GRASS, 100, 10, -1, "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat.", 100, 0, 7)
+      .attr(StatChangeAttr, BattleStat.ATK, -1),
+    new AttackMove(Moves.SOLAR_BLADE, "Solar Blade (N)", Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, -1, "In this two-turn attack, the user gathers light and fills a blade with the light's energy, attacking the target on the next turn.", -1, 0, 7)
+      .attr(ChargeAttr, ChargeAnim.SOLAR_BLADE_CHARGING, 'is glowing!'),
     new AttackMove(Moves.LEAFAGE, "Leafage (N)", Type.GRASS, MoveCategory.PHYSICAL, 40, 100, 40, -1, "The user attacks by pelting the target with leaves.", -1, 0, 7),
     new StatusMove(Moves.SPOTLIGHT, "Spotlight (N)", Type.NORMAL, -1, 15, -1, "The user shines a spotlight on the target so that only the target will be attacked during the turn.", -1, 3, 7),
     new StatusMove(Moves.TOXIC_THREAD, "Toxic Thread (N)", Type.POISON, 100, 20, -1, "The user shoots poisonous threads to poison the target and lower the target's Speed stat.", 100, 0, 7),
@@ -4175,7 +4180,7 @@ export function initMoves() {
     new AttackMove(Moves.MOONGEIST_BEAM, "Moongeist Beam (N)", Type.GHOST, MoveCategory.SPECIAL, 100, 100, 5, -1, "The user emits a sinister ray to attack the target. This move can be used on the target regardless of its Abilities.", -1, 0, 7),
     new StatusMove(Moves.TEARFUL_LOOK, "Tearful Look (N)", Type.NORMAL, -1, 20, -1, "The user gets teary eyed to make the target lose its combative spirit. This lowers the target's Attack and Sp. Atk stats.", 100, 0, 7),
     new AttackMove(Moves.ZING_ZAP, "Zing Zap (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 80, 100, 10, -1, "A strong electric blast crashes down on the target, giving it an electric shock. This may also make the target flinch.", 30, 0, 7),
-    new AttackMove(Moves.NATURES_MADNESS, "Nature’s Madness (N)", Type.FAIRY, MoveCategory.SPECIAL, -1, 90, 10, -1, "The user hits the target with the force of nature. It halves the target's HP.", -1, 0, 7),
+    new AttackMove(Moves.NATURES_MADNESS, "Nature's Madness (N)", Type.FAIRY, MoveCategory.SPECIAL, -1, 90, 10, -1, "The user hits the target with the force of nature. It halves the target's HP.", -1, 0, 7),
     new AttackMove(Moves.MULTI_ATTACK, "Multi-Attack (N)", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, "Cloaking itself in high energy, the user slams into the target. The memory held determines the move's type.", -1, 0, 7),
     // Unused
     new AttackMove(Moves.TEN_MILLION_VOLT_THUNDERBOLT, "10,000,000 Volt Thunderbolt (N)", Type.ELECTRIC, MoveCategory.SPECIAL, 195, -1, 1, -1, "The user, Pikachu wearing a cap, powers up a jolt of electricity using its Z-Power and unleashes it. Critical hits land more easily.", -1, 0, 7),
@@ -4187,7 +4192,7 @@ export function initMoves() {
     new AttackMove(Moves.LIGHT_THAT_BURNS_THE_SKY, "Light That Burns the Sky (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 200, -1, 1, -1, "", -1, 0, 7),
     new AttackMove(Moves.SEARING_SUNRAZE_SMASH, "Searing Sunraze Smash (N)", Type.STEEL, MoveCategory.PHYSICAL, 200, -1, 1, -1, "", -1, 0, 7),
     new AttackMove(Moves.MENACING_MOONRAZE_MAELSTROM, "Menacing Moonraze Maelstrom (N)", Type.GHOST, MoveCategory.SPECIAL, 200, -1, 1, -1, "", -1, 0, 7),
-    new AttackMove(Moves.LETS_SNUGGLE_FOREVER, "Let’s Snuggle Forever (N)", Type.FAIRY, MoveCategory.PHYSICAL, 190, -1, 1, -1, "", -1, 0, 7),
+    new AttackMove(Moves.LETS_SNUGGLE_FOREVER, "Let's Snuggle Forever (N)", Type.FAIRY, MoveCategory.PHYSICAL, 190, -1, 1, -1, "", -1, 0, 7),
     new AttackMove(Moves.SPLINTERED_STORMSHARDS, "Splintered Stormshards (N)", Type.ROCK, MoveCategory.PHYSICAL, 190, -1, 1, -1, "", -1, 0, 7),
     new AttackMove(Moves.CLANGOROUS_SOULBLAZE, "Clangorous Soulblaze (N)", Type.DRAGON, MoveCategory.SPECIAL, 185, -1, 1, -1, "", 100, 0, 7)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
