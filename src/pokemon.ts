@@ -835,9 +835,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let damage = new Utils.NumberHolder(0);
 
     const cancelled = new Utils.BooleanHolder(false);
-    const typeless = !!move.getAttrs(TypelessAttr).length
+    const typeless = !!move.getAttrs(TypelessAttr).length;
+    const types = this.getTypes();
     const typeMultiplier = new Utils.NumberHolder(!typeless && moveCategory !== MoveCategory.STATUS
-      ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type1) * (this.getSpeciesForm().type2 !== null ? getTypeDamageMultiplier(move.type, this.getSpeciesForm().type2) : 1)
+      ? getTypeDamageMultiplier(move.type, types[0]) * (types.length > 1 ? getTypeDamageMultiplier(move.type, types[1]) : 1)
       : 1);
     if (typeless)
       typeMultiplier.value = 1;
@@ -879,7 +880,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
           const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this);
           const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source);
-          const stabMultiplier = new Utils.NumberHolder(source.species.type1 === move.type || (source.species.type2 !== null && source.species.type2 === move.type) ? 1.5 : 1);
+          const sourceTypes = source.getTypes();
+          const stabMultiplier = new Utils.NumberHolder(sourceTypes[0] === move.type || (sourceTypes.length > 1 && sourceTypes[1] === move.type) ? 1.5 : 1);
           const criticalMultiplier = isCritical ? 2 : 1;
           const isTypeImmune = (typeMultiplier.value * weatherTypeMultiplier) === 0;
 
