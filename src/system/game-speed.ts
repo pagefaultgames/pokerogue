@@ -23,11 +23,17 @@ export function initGameSpeed() {
     return originalAddEvent.apply(this, [ config ]);
   };
   const originalTweensAdd = this.tweens.add;
-  this.tweens.add = function (config: Phaser.Types.Tweens.TweenBuilderConfig | object) {
+  this.tweens.add = function (config: Phaser.Types.Tweens.TweenBuilderConfig | Phaser.Types.Tweens.TweenChainBuilderConfig | Phaser.Tweens.Tween | Phaser.Tweens.TweenChain) {
     if (config.duration)
       config.duration = transformValue(config.duration);
     if (config.delay)
       config.delay = transformValue(config.delay);
+    if (config.repeatDelay)
+      config.repeatDelay = transformValue(config.repeatDelay);
+    if (config.loopDelay)
+      config.loopDelay = transformValue(config.loopDelay);
+    if (config.hold)
+      config.hold = transformValue(config.hold);
     return originalTweensAdd.apply(this, [ config ]);
   };
   const originalAddCounter = this.tweens.addCounter;
@@ -36,6 +42,12 @@ export function initGameSpeed() {
       config.duration = transformValue(config.duration);
     if (config.delay)
       config.delay = transformValue(config.delay);
+    if (config.repeatDelay)
+      config.repeatDelay = transformValue(config.repeatDelay);
+    if (config.loopDelay)
+      config.loopDelay = transformValue(config.loopDelay);
+    if (config.hold)
+      config.hold = transformValue(config.hold);
     return originalAddCounter.apply(this, [ config ]);
   };
   

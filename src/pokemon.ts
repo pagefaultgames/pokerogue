@@ -518,7 +518,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const speciesForm = this.getSpeciesForm();
       
       types.push(speciesForm.type1);
-      if (speciesForm.type2 !== null)
+
+      const fusionSpeciesForm = this.getFusionSpeciesForm();
+      if (fusionSpeciesForm) {
+        if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== speciesForm.type1)
+          types.push(fusionSpeciesForm.type2);
+        else if (fusionSpeciesForm.type1 !== speciesForm.type1)
+          types.push(fusionSpeciesForm.type1);
+      }
+
+      if (types.length === 1 && speciesForm.type2 !== null)
         types.push(speciesForm.type2);
     }
 

@@ -380,14 +380,11 @@ export default class SummaryUiHandler extends UiHandler {
           this.moveDescriptionText.setY(84);
           this.moveDescriptionScrollTween = this.scene.tweens.add({
             targets: this.moveDescriptionText,
-            delay: 2000,
+            delay: Utils.fixedInt(2000),
             loop: -1,
-            loopDelay: 2000,
-            duration: (moveDescriptionLineCount - 3) * 2000,
-            y: `-=${14.83 * (moveDescriptionLineCount - 3)}`,
-            onLoop: () => {
-              this.moveDescriptionText.setY(84);
-            }
+            hold: Utils.fixedInt(2000),
+            duration: Utils.fixedInt((moveDescriptionLineCount - 3) * 2000),
+            y: `-=${14.83 * (moveDescriptionLineCount - 3)}`
           });
         }
       }
@@ -496,9 +493,10 @@ export default class SummaryUiHandler extends UiHandler {
           return typeIcon;
         };
 
-        profileContainer.add(getTypeIcon(0, this.pokemon.species.type1));
-        if (this.pokemon.species.type2)
-          profileContainer.add(getTypeIcon(1, this.pokemon.species.type2));
+        const types = this.pokemon.getTypes(true);
+        profileContainer.add(getTypeIcon(0, types[0]));
+        if (types.length > 1)
+          profileContainer.add(getTypeIcon(1, types[1]));
 
         const ability = this.pokemon.getAbility();
 

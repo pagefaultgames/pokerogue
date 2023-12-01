@@ -453,7 +453,7 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
 
 export class FusePokemonModifierType extends PokemonModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name, 'Combines two Pokémon, giving the first Pokémon the ability of the second', (_type, args) => new Modifiers.FusePokemonModifier(this, (args[0] as PlayerPokemon).id, (args[1] as PlayerPokemon).id),
+    super(name, 'Combines two Pokémon (transfers ability, splits base stats and types, shares move pool)', (_type, args) => new Modifiers.FusePokemonModifier(this, (args[0] as PlayerPokemon).id, (args[1] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (pokemon.isFusion())
           return PartyUiHandler.NoEffectMessage;
