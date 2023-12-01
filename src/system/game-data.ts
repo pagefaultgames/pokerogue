@@ -1,7 +1,7 @@
 import BattleScene, { PokeballCounts } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../pokemon";
 import { pokemonPrevolutions } from "../data/pokemon-evolutions";
-import PokemonSpecies, { allSpecies, getPokemonSpecies } from "../data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, speciesStarters } from "../data/pokemon-species";
 import { Species } from "../data/species";
 import * as Utils from "../utils";
 import PokemonData from "./pokemon-data";
@@ -376,17 +376,19 @@ export class GameData {
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
       const newCatch = !caughtAttr;
 
-      if (newCatch && !hasPrevolution) {
-        this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
-        this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => resolve(), null, true);
-        return;
-      }
+      const checkPrevolution = () => {
+        if (hasPrevolution) {
+          const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
+          return this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies)).then(() => resolve());
+        } else
+          resolve();
+      };
 
-      if (hasPrevolution) {
-        const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
-        return this.setPokemonSpeciesCaught(pokemon, getPokemonSpecies(prevolutionSpecies)).then(() => resolve());
+      if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
+        this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
+        this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => checkPrevolution(), null, true);
       } else
-        resolve();
+        checkPrevolution();
     });
   }
 

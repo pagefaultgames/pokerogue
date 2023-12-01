@@ -1,11 +1,10 @@
 import BattleScene, { Button } from "../battle-scene";
-import PokemonSpecies, { allSpecies, getPokemonSpecies } from "../data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, speciesStarters as speciesStarterValues } from "../data/pokemon-species";
 import { Species } from "../data/species";
 import { TextStyle, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
 import MessageUiHandler from "./message-ui-handler";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
-import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 import { abilities } from "../data/ability";
 import { GameMode } from "../game-mode";
 import { Unlockables } from "../system/unlockables";
@@ -62,6 +61,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private canCycleForm: boolean;
     private canCycleGender: boolean;
     private canCycleAbility: boolean;
+    private value: integer = 0;
 
     private assetLoadCancelled: Utils.BooleanHolder;
     private cursorObj: Phaser.GameObjects.Image;
@@ -70,6 +70,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private starterIcons: Phaser.GameObjects.Sprite[];
     private genCursorObj: Phaser.GameObjects.Image;
     private genCursorHighlightObj: Phaser.GameObjects.Image;
+    private valueLimitLabel: Phaser.GameObjects.Text;
+    private startCursorObj: Phaser.GameObjects.NineSlice;
+    private starterValueLabels: Phaser.GameObjects.Text[];
     private shinyIcons: Phaser.GameObjects.Image[];
 
     private starterSelectCallback: StarterSelectCallback;
@@ -163,6 +166,19 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.genCursorObj.setVisible(false);
       this.genCursorObj.setOrigin(0, 0);
       this.starterSelectContainer.add(this.genCursorObj);
+      
+      this.valueLimitLabel = addTextObject(this.scene, 124, 150, '0/10', TextStyle.TOOLTIP_CONTENT);
+      this.valueLimitLabel.setOrigin(0.5, 0);
+      this.starterSelectContainer.add(this.valueLimitLabel);
+
+      const startLabel = addTextObject(this.scene, 124, 162, 'Start', TextStyle.TOOLTIP_CONTENT);
+      startLabel.setOrigin(0.5, 0);
+      this.starterSelectContainer.add(startLabel);
+
+      this.startCursorObj = this.scene.add.nineslice(111, 160, 'starter_select_cursor', null, 26, 15, 1, 1, 1, 1);
+      this.startCursorObj.setVisible(false);
+      this.startCursorObj.setOrigin(0, 0);
+      this.starterSelectContainer.add(this.startCursorObj);
 
       const starterSpecies: Species[] = [];
       
@@ -173,7 +189,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         for (let species of allSpecies) {
           if (species.generation > 5)
             break;
-          if (pokemonPrevolutions.hasOwnProperty(species.speciesId) || species.generation !== g + 1)
+          if (!speciesStarterValues.hasOwnProperty(species.speciesId) || species.generation !== g + 1)
             continue;
           starterSpecies.push(species.speciesId);
           this.speciesLoaded.set(species.speciesId, false);
@@ -207,6 +223,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         icon.play('pkmn_icon__000');
         this.starterSelectContainer.add(icon);
         return icon;
+      });
+
+      this.starterValueLabels = new Array(81).fill(null).map((_, i) => {
+        const x = (i % 9) * 18;
+        const y = Math.floor(i / 9) * 18;
+        const ret = addTextObject(this.scene, x + 150, y + 11, '0', TextStyle.WINDOW, { fontSize: '32px' });
+        ret.setShadowOffset(2, 2);
+        ret.setOrigin(0, 0);
+        ret.setVisible(false);
+        this.starterSelectContainer.add(ret);
+        return ret;
       });
 
       this.shinyIcons = new Array(81).fill(null).map((_, i) => {
@@ -354,7 +381,26 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       let success = false;
       let error = false;
   
-      if (this.genMode) {
+      if (this.startCursorObj.visible) {
+        switch (button) {
+          case Button.ACTION:
+            if (this.tryStart())
+              success = true;
+            else
+              error = true;
+            break;
+          case Button.UP:
+            this.startCursorObj.setVisible(false);
+            this.setGenMode(true);
+            success = true;
+            break;
+          case Button.RIGHT:
+            this.startCursorObj.setVisible(false);
+            this.setGenMode(false);
+            success = true;
+            break;
+        }
+      } else if (this.genMode) {
         switch (button) {
           case Button.UP:
             if (this.genCursor)
@@ -363,6 +409,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           case Button.DOWN:
             if (this.genCursor < 4)
               success = this.setCursor(this.genCursor + 1);
+            else {
+              this.startCursorObj.setVisible(true);
+              this.setGenMode(true);
+              success = true;
+            }
             break;
           case Button.RIGHT:
             success = this.setGenMode(false);
@@ -382,11 +433,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   break;
                 }
               }
-              if (!isDupe) {
+              const species = this.genSpecies[this.genCursor][this.cursor];
+              if (!isDupe && this.tryUpdateValue(speciesStarterValues[species.speciesId])) {
                 const cursorObj = this.starterCursorObjs[this.starterCursors.length];
                 cursorObj.setVisible(true);
                 cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
-                const species = this.genSpecies[this.genCursor][this.cursor];
                 const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species);
                 const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
                 this.starterIcons[this.starterCursors.length].play(species.getIconKey(defaultProps.female, defaultProps.formIndex));
@@ -395,37 +446,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 this.starterAttr.push(this.dexAttrCursor);
                 if (this.speciesLoaded.get(species.speciesId))
                   species.cry(this.scene);
-                if (this.starterCursors.length === 3) {
-                  const cancel = () => {
-                    ui.setMode(Mode.STARTER_SELECT);
-                    this.popStarter();
-                    this.clearText();
-                  };
-                  ui.showText('Begin with these Pokémon?', null, () => {
-                    ui.setModeWithoutClear(Mode.CONFIRM, () => {
-                      const startRun = (gameMode: GameMode) => {
-                        this.scene.gameMode = gameMode;
-                        ui.setMode(Mode.STARTER_SELECT);
-                        const thisObj = this;
-                        const originalStarterSelectCallback = this.starterSelectCallback;
-                        this.starterSelectCallback = null;
-                        originalStarterSelectCallback(new Array(3).fill(0).map(function (_, i) {
-                          const starterSpecies = thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]];
-                          return {
-                            species: starterSpecies,
-                            dexAttr: thisObj.starterAttr[i],
-                            pokerus: !![ 0, 1, 2 ].filter(n => thisObj.pokerusGens[n] === starterSpecies.generation - 1 && thisObj.pokerusCursors[n] === thisObj.genSpecies[starterSpecies.generation - 1].indexOf(starterSpecies)).length
-                          };
-                        }));
-                      };
-                      if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
-                        ui.setMode(Mode.STARTER_SELECT);
-                        ui.showText('Select a game mode.', null, () => ui.setModeWithoutClear(Mode.GAME_MODE_SELECT, startRun, cancel));
-                      } else
-                        startRun(GameMode.CLASSIC);
-                    }, cancel);
-                  });
-                }
+                if (this.starterCursors.length === 3)
+                  this.tryStart();
                 this.updateInstructions();
                 ui.playSelect();
               } else
@@ -511,8 +533,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             case Button.LEFT:
               if (this.cursor % 9)
                 success = this.setCursor(this.cursor - 1);
-              else
+              else {
+                if (row >= Math.min(5, rows - 1))
+                  this.startCursorObj.setVisible(true);
                 success = this.setGenMode(true);
+              }
               break;
             case Button.RIGHT:
               if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9))
@@ -582,8 +607,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokerusCursorObjs[s].setVisible(this.pokerusGens[s] === cursor);
 
         const genLimit = this.genSpecies[this.genCursor].length;
-        for (let s = 0; s < 81; s++)
-          this.shinyIcons[s].setVisible(s < genLimit && !!(this.scene.gameData.dexData[this.genSpecies[this.genCursor][s].speciesId].caughtAttr & DexAttr.SHINY));
+        for (let s = 0; s < 81; s++) {
+          const slotVisible = s < genLimit && !!(this.scene.gameData.dexData[this.genSpecies[this.genCursor][s].speciesId].caughtAttr);
+          this.starterValueLabels[s].setText(slotVisible ? speciesStarterValues[this.genSpecies[this.genCursor][s].speciesId] : 0);
+          this.starterValueLabels[s].setVisible(slotVisible);
+          this.shinyIcons[s].setVisible(slotVisible && !!(this.scene.gameData.dexData[this.genSpecies[this.genCursor][s].speciesId].caughtAttr & DexAttr.SHINY));
+        }
       } else {
         changed = super.setCursor(cursor);
 
@@ -598,11 +627,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     setGenMode(genMode: boolean): boolean {
+      this.genCursorObj.setVisible(genMode && !this.startCursorObj.visible);
+      this.cursorObj.setVisible(!genMode && !this.startCursorObj.visible);
+      
       if (genMode !== this.genMode) {
         this.genMode = genMode;
-
-        this.genCursorObj.setVisible(genMode);
-        this.cursorObj.setVisible(!genMode);
 
         this.setCursor(genMode ? this.genCursor : this.cursor);
         if (genMode)
@@ -746,6 +775,62 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterAttr.pop();
       this.starterCursorObjs[this.starterCursors.length].setVisible(false);
       this.starterIcons[this.starterCursors.length].play('pkmn_icon__000');
+      this.tryUpdateValue();
+    }
+
+    tryUpdateValue(add?: integer): boolean {
+      const value = this.starterGens.reduce((total: integer, gen: integer, i: integer) => total += speciesStarterValues[this.genSpecies[gen][this.starterCursors[i]].speciesId], 0);
+      const newValue = value + (add || 0);
+      const overLimit = newValue > 10;
+      this.valueLimitLabel.setText(`${newValue}/10`);
+      this.valueLimitLabel.setColor(getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_RED));
+      this.valueLimitLabel.setShadowColor(getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_RED, true));
+      if (overLimit) {
+        this.scene.time.delayedCall(Utils.fixedInt(500), () => this.tryUpdateValue());
+        return false;
+      }
+      this.value = newValue;
+      return true;
+    }
+
+    tryStart(): boolean {
+      if (!this.starterGens.length)
+        return false;
+
+      const ui = this.getUi();
+
+      const cancel = () => {
+        ui.setMode(Mode.STARTER_SELECT);
+        this.popStarter();
+        this.clearText();
+      };
+
+      ui.showText('Begin with these Pokémon?', null, () => {
+        ui.setModeWithoutClear(Mode.CONFIRM, () => {
+          const startRun = (gameMode: GameMode) => {
+            this.scene.gameMode = gameMode;
+            ui.setMode(Mode.STARTER_SELECT);
+            const thisObj = this;
+            const originalStarterSelectCallback = this.starterSelectCallback;
+            this.starterSelectCallback = null;
+            originalStarterSelectCallback(new Array(this.starterGens.length).fill(0).map(function (_, i) {
+              const starterSpecies = thisObj.genSpecies[thisObj.starterGens[i]][thisObj.starterCursors[i]];
+              return {
+                species: starterSpecies,
+                dexAttr: thisObj.starterAttr[i],
+                pokerus: !![ 0, 1, 2 ].filter(n => thisObj.pokerusGens[n] === starterSpecies.generation - 1 && thisObj.pokerusCursors[n] === thisObj.genSpecies[starterSpecies.generation - 1].indexOf(starterSpecies)).length
+              };
+            }));
+          };
+          if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
+            ui.setMode(Mode.STARTER_SELECT);
+            ui.showText('Select a game mode.', null, () => ui.setModeWithoutClear(Mode.GAME_MODE_SELECT, startRun, cancel));
+          } else
+            startRun(GameMode.CLASSIC);
+        }, cancel);
+      });
+
+      return true;
     }
 
     toggleStatsMode(on?: boolean): void {

@@ -10,7 +10,6 @@ import { getPokeballAtlasKey } from "../data/pokeball";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat, getStatName } from "../data/pokemon-stat";
-import { abilities } from "../data/ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { StatusEffect } from "../data/status-effect";
 
@@ -206,16 +205,7 @@ export default class SummaryUiHandler extends UiHandler {
     });
     this.pokemon.cry();
 
-    let nameLabel = this.pokemon.name;
-    if (this.pokemon.fusionSpecies)
-      nameLabel += `/\n    ${this.pokemon.fusionSpecies.name}`;
-
-    this.nameText.setText(nameLabel);
-
-    this.nameText.setFontSize(`${!this.pokemon.fusionSpecies ? '96px' : '72px'}`);
-    const nameShadowSize = !this.pokemon.fusionSpecies ? 6 : 4.5;
-    this.nameText.setShadowOffset(nameShadowSize, nameShadowSize);
-    this.nameText.setLineSpacing(!this.pokemon.fusionSpecies ? 5 : 0);
+    this.nameText.setText(this.pokemon.name);
 
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
     this.levelText.setText(this.pokemon.level.toString());

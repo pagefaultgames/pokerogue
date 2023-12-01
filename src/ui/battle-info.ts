@@ -194,7 +194,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         return;
       }
 
-      if (this.lastName !== pokemon.species.name) {
+      if (this.lastName !== pokemon.name) {
         this.nameText.setText(pokemon.name);
         this.lastName = pokemon.name;
 

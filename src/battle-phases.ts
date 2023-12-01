@@ -270,7 +270,7 @@ export class EncounterPhase extends BattlePhase {
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
   
-      console.log(enemyPokemon.species.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
+      console.log(enemyPokemon.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
     });
 
     if (battle.battleType === BattleType.TRAINER)

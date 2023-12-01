@@ -340,7 +340,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           break;
         case Button.RIGHT:
           const battlerCount = this.scene.currentBattle.getBattlerCount();
-          if (this.cursor < battlerCount)
+          if (slotCount && this.cursor < battlerCount)
             success = this.setCursor(this.lastCursor < 6 ? this.lastCursor || battlerCount : battlerCount);
           break;
       }

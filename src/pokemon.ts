@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import BattleScene, { AnySound } from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './ui/battle-info';
 import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, Moves, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, AttackMove, AddBattlerTagAttr, OneHitKOAttr } from "./data/move";
-import { default as PokemonSpecies, PokemonSpeciesForm, getPokemonSpecies } from './data/pokemon-species';
+import { default as PokemonSpecies, PokemonSpeciesForm, getFusedSpeciesName, getPokemonSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier } from './data/type';
 import { getLevelTotalExp } from './data/exp';
@@ -98,7 +98,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const hasHiddenAbility = !Utils.randSeedInt(hiddenAbilityChance.value);
     const randAbilityIndex = Utils.randSeedInt(2);
 
-    this.name = species.name;
     this.species = species;
     this.battleInfo = this.isPlayer()
       ? new PlayerBattleInfo(scene)
@@ -161,6 +160,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (scene.gameMode === GameMode.SPLICED_ENDLESS)
         this.generateFusionSpecies();
     }
+
+    this.generateName();
 
     if (!species.isObtainable())
       this.shiny = false;
@@ -231,6 +232,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     ret |= !this.abilityIndex ? DexAttr.ABILITY_1 : this.species.ability2 && this.abilityIndex === 1 ? DexAttr.ABILITY_2 : DexAttr.ABILITY_HIDDEN;
     ret |= this.scene.gameData.getFormAttr(this.formIndex);
     return ret;
+  }
+
+  generateName(): void {
+    if (!this.fusionSpecies) {
+      this.name = this.species.name;
+      return;
+    }
+    this.name = getFusedSpeciesName(this.species.name, this.fusionSpecies.name);
   }
 
   abstract isPlayer(): boolean;
@@ -1679,7 +1688,7 @@ export class PlayerPokemon extends Pokemon {
     return new Promise(resolve => {
       this.handleSpecialEvolutions(evolution);
       this.species = getPokemonSpecies(evolution.speciesId);
-      this.name = this.species.name;
+      this.generateName();
       const abilityCount = this.getSpeciesForm().getAbilityCount();
       if (this.abilityIndex >= abilityCount) // Shouldn't happen
         this.abilityIndex = abilityCount - 1;
@@ -1732,6 +1741,7 @@ export class PlayerPokemon extends Pokemon {
 
       this.scene.validateAchv(achvs.SPLICE);
 
+      this.generateName();
       this.calculateStats();
       this.generateCompatibleTms();
       this.updateInfo(true).then(() => {
@@ -1760,6 +1770,7 @@ export class PlayerPokemon extends Pokemon {
       this.fusionShiny = false;
       this.fusionGender = 0;
 
+      this.generateName();
       this.calculateStats();
       this.generateCompatibleTms();
       this.updateInfo(true).then(() => resolve());
