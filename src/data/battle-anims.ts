@@ -30,6 +30,7 @@ export enum ChargeAnim {
     FLY_CHARGING = 1000,
     BOUNCE_CHARGING,
     DIG_CHARGING,
+    FUTURE_SIGHT_CHARGING,
     DIVE_CHARGING,
     SOLAR_BEAM_CHARGING,
     SHADOW_FORCE_CHARGING,
@@ -41,7 +42,10 @@ export enum ChargeAnim {
     DOOM_DESIRE_CHARGING,
     RAZOR_WIND_CHARGING,
     PHANTOM_FORCE_CHARGING,
-    GEOMANCY_CHARGING
+    GEOMANCY_CHARGING,
+    SHADOW_BLADE_CHARGING,
+    SOLAR_BLADE_CHARGING,
+    BEAK_BLAST_CHARGING
 }
 
 export enum CommonAnim {
@@ -182,8 +186,8 @@ class AnimFrame {
     constructor(x: number, y: number, zoomX: number, zoomY: number, angle: number, mirror: boolean, visible: boolean, blendType: AnimBlendType, pattern: integer,
         opacity: integer, colorR: integer, colorG: integer, colorB: integer, colorA: integer, toneR: integer, toneG: integer, toneB: integer, toneA: integer,
         flashR: integer, flashG: integer, flashB: integer, flashA: integer, locked: boolean, priority: integer, focus: AnimFocus, init?: boolean) {
-        this.x = !init ? (x - 128) * 0.5 : x;
-        this.y = !init ? (y - 224) * 0.5 : y;
+        this.x = !init ? ((x || 0) - 128) * 0.5 : x;
+        this.y = !init ? ((y || 0) - 224) * 0.5 : y;
         if (zoomX)
             this.zoomX = zoomX;
         else if (init)

@@ -3546,7 +3546,7 @@ export function initMoves() {
     new AttackMove(Moves.SHOCK_WAVE, "Shock Wave", Type.ELECTRIC, MoveCategory.SPECIAL, 60, -1, 20, -1, "The user strikes the target with a quick jolt of electricity. This attack never misses.", -1, 0, 3),
     new AttackMove(Moves.WATER_PULSE, "Water Pulse", Type.WATER, MoveCategory.SPECIAL, 60, 100, 20, 11, "The user attacks the target with a pulsing blast of water. This may also confuse the target.", 20, 0, 3)
       .attr(ConfuseAttr),
-    new AttackMove(Moves.DOOM_DESIRE, "Doom Desire", Type.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, "Two turns after this move is used, a concentrated bundle of light blasts the target.", -1, 0, 3)
+    new AttackMove(Moves.DOOM_DESIRE, "Doom Desire (N)", Type.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, "Two turns after this move is used, a concentrated bundle of light blasts the target.", -1, 0, 3)
       .attr(ChargeAttr, ChargeAnim.DOOM_DESIRE_CHARGING, 'chose\nDOOM DESIRE as its destiny!'),
     new AttackMove(Moves.PSYCHO_BOOST, "Psycho Boost", Type.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, "The user attacks the target at full power. The attack's recoil harshly lowers the user's Sp. Atk stat.", 100, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
@@ -4125,10 +4125,12 @@ export function initMoves() {
     new StatusMove(Moves.STRENGTH_SAP, "Strength Sap (P)", Type.GRASS, 100, 10, -1, "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat.", 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new AttackMove(Moves.SOLAR_BLADE, "Solar Blade (N)", Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, -1, "In this two-turn attack, the user gathers light and fills a blade with the light's energy, attacking the target on the next turn.", -1, 0, 7)
-      .attr(ChargeAttr, ChargeAnim.SOLAR_BLADE_CHARGING, 'is glowing!'),
+      .attr(ChargeAttr, ChargeAnim.SOLAR_BLADE_CHARGING, "is glowing!"),
     new AttackMove(Moves.LEAFAGE, "Leafage (N)", Type.GRASS, MoveCategory.PHYSICAL, 40, 100, 40, -1, "The user attacks by pelting the target with leaves.", -1, 0, 7),
     new StatusMove(Moves.SPOTLIGHT, "Spotlight (N)", Type.NORMAL, -1, 15, -1, "The user shines a spotlight on the target so that only the target will be attacked during the turn.", -1, 3, 7),
-    new StatusMove(Moves.TOXIC_THREAD, "Toxic Thread (N)", Type.POISON, 100, 20, -1, "The user shoots poisonous threads to poison the target and lower the target's Speed stat.", 100, 0, 7),
+    new StatusMove(Moves.TOXIC_THREAD, "Toxic Thread", Type.POISON, 100, 20, -1, "The user shoots poisonous threads to poison the target and lower the target's Speed stat.", 100, 0, 7)
+      .attr(StatusEffectAttr, StatusEffect.POISON)
+      .attr(StatChangeAttr, BattleStat.SPD, -1),
     new SelfStatusMove(Moves.LASER_FOCUS, "Laser Focus (N)", Type.NORMAL, -1, 30, -1, "The user concentrates intensely. The attack on the next turn always results in a critical hit.", -1, 0, 7),
     new StatusMove(Moves.GEAR_UP, "Gear Up (N)", Type.STEEL, -1, 20, -1, "The user engages its gears to raise the Attack and Sp. Atk stats of ally Pokémon with the Plus or Minus Ability.", -1, 0, 7)
       .target(MoveTarget.USER_AND_ALLIES),
@@ -4149,7 +4151,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.TROP_KICK, "Trop Kick (N)", Type.GRASS, MoveCategory.PHYSICAL, 70, 100, 15, -1, "The user lands an intense kick of tropical origins on the target. This also lowers the target's Attack stat.", 100, 0, 7),
     new StatusMove(Moves.INSTRUCT, "Instruct (N)", Type.PSYCHIC, -1, 15, -1, "The user instructs the target to use the target's last move again.", -1, 0, 7),
-    new AttackMove(Moves.BEAK_BLAST, "Beak Blast (N)", Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, "The user first heats up its beak, and then it attacks the target. Making direct contact with the Pokémon while it's heating up its beak results in a burn.", -1, -3, 7),
+    new AttackMove(Moves.BEAK_BLAST, "Beak Blast", Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, "The user first heats up its beak, and then it attacks the target. Making direct contact with the Pokémon while it's heating up its beak results in a burn.", -1, -3, 7)
+      .attr(ChargeAttr, ChargeAnim.BEAK_BLAST_CHARGING, "started\nheating up its beak!"),
     new AttackMove(Moves.CLANGING_SCALES, "Clanging Scales (N)", Type.DRAGON, MoveCategory.SPECIAL, 110, 100, 5, -1, "The user rubs the scales on its entire body and makes a huge noise to attack opposing Pokémon. The user's Defense stat goes down after the attack.", 100, 0, 7)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.DRAGON_HAMMER, "Dragon Hammer (N)", Type.DRAGON, MoveCategory.PHYSICAL, 90, 100, 15, -1, "The user uses its body like a hammer to attack the target and inflict damage.", -1, 0, 7),
