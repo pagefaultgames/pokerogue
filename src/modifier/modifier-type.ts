@@ -678,8 +678,8 @@ export const modifierTypes = {
   SUPER_EXP_CHARM: () => new ExpBoosterModifierType('Super EXP. Charm', 60),
   GOLDEN_EXP_CHARM: () => new ExpBoosterModifierType('Golden EXP. Charm', 100),
 
-  LUCKY_EGG: () => new PokemonExpBoosterModifierType('Lucky Egg', 50),
-  GOLDEN_EGG: () => new PokemonExpBoosterModifierType('Golden Egg', 150),
+  LUCKY_EGG: () => new PokemonExpBoosterModifierType('Lucky Egg', 40),
+  GOLDEN_EGG: () => new PokemonExpBoosterModifierType('Golden Egg', 100),
 
   AMULET_COIN: () => new ModifierType('Amulet Coin', 'Increases money rewards by 20%', (type, _args) => new Modifiers.MoneyMultiplierModifier(type)),
   GOLDEN_PUNCH: () => new PokemonHeldItemModifierType('Golden Punch', 'Grants 20% of damage inflicted as money', (type, args) => new Modifiers.DamageMoneyRewardModifier(type, (args[0] as Pokemon).id)),
@@ -832,7 +832,6 @@ const modifierPool = {
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 3),
-    new WeightedModifierType(modifierTypes.GOLDEN_EXP_CHARM, 2),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 2),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => !p.fusionSpecies).length > 1 ? 1 : 0),
     new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 1 : 0),
