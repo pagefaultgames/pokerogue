@@ -34,7 +34,6 @@ import { Species } from "./data/species";
 import { HealAchv, LevelAchv, MoneyAchv, achvs } from "./system/achv";
 import { DexEntry } from "./system/game-data";
 import { pokemonPrevolutions } from "./data/pokemon-evolutions";
-import { getPokemonSpecies } from "./data/pokemon-species";
 
 export class CheckLoadPhase extends BattlePhase {
   private loaded: boolean;
@@ -79,16 +78,19 @@ export class CheckLoadPhase extends BattlePhase {
     } else
       this.scene.playBgm();
 
-    const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted()).length;
-
     this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
-    this.scene.pushPhase(new SummonPhase(this.scene, 0));
-    if (this.scene.currentBattle.double && availablePartyMembers > 1)
-      this.scene.pushPhase(new SummonPhase(this.scene, 1));
-    if (this.scene.currentBattle.waveIndex > 1 && this.scene.currentBattle.battleType !== BattleType.TRAINER) {
-      this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
+
+    if (this.loaded) {
+      const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted()).length;
+
+      this.scene.pushPhase(new SummonPhase(this.scene, 0));
       if (this.scene.currentBattle.double && availablePartyMembers > 1)
-        this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+        this.scene.pushPhase(new SummonPhase(this.scene, 1));
+      if (this.scene.currentBattle.waveIndex > 1 && this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+        this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
+        if (this.scene.currentBattle.double && availablePartyMembers > 1)
+          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+      }
     }
 
     super.end();
@@ -370,8 +372,9 @@ export class EncounterPhase extends BattlePhase {
             ease: 'Sine.easeInOut',
             duration: 750
           });
+          const availablePartyMembers = this.scene.getEnemyParty().filter(p => !p.isFainted()).length;
           this.scene.unshiftPhase(new SummonPhase(this.scene, 0, false));
-          if (this.scene.currentBattle.double)
+          if (this.scene.currentBattle.double && availablePartyMembers > 1)
             this.scene.unshiftPhase(new SummonPhase(this.scene, 1, false));
           this.end();
         }, 1500, true);
@@ -406,6 +409,31 @@ export class EncounterPhase extends BattlePhase {
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier)
         enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount(), 6))));
+    }
+
+    if (!this.loaded) {
+      const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted());
+
+      if (!availablePartyMembers[0].isOnField())
+        this.scene.pushPhase(new SummonPhase(this.scene, 0));
+
+      if (this.scene.currentBattle.double) {
+        if (availablePartyMembers.length > 1) {
+          this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, true));
+          if (!availablePartyMembers[1].isOnField())
+            this.scene.pushPhase(new SummonPhase(this.scene, 1));
+        }
+      } else {
+        if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField())
+          this.scene.pushPhase(new ReturnPhase(this.scene, 1));
+        this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, false));
+      }
+     
+      if (this.scene.currentBattle.waveIndex > startingWave && this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+        this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
+        if (this.scene.currentBattle.double && availablePartyMembers.length > 1)
+          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+      }
     }
       
     // TODO: Remove

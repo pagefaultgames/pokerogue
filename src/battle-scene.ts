@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Biome } from './data/biome';
 import UI, { Mode } from './ui/ui';
-import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, ToggleDoublePositionPhase, CheckSwitchPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
@@ -675,7 +675,6 @@ export default class BattleScene extends Phaser.Scene {
 		if (!waveIndex) {
 			const isNewBiome = !lastBattle || !(lastBattle.waveIndex % 10);
 			const showTrainer = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER;
-			const availablePartyMemberCount = this.getParty().filter(p => !p.isFainted()).length;
 			if (lastBattle) {
 				this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
 				this.trySpreadPokerus();
@@ -697,39 +696,10 @@ export default class BattleScene extends Phaser.Scene {
 					if (newMaxExpLevel > maxExpLevel)
 						this.pushPhase(new LevelCapPhase(this));
 				}
-				if (showTrainer) {
-					this.pushPhase(new SummonPhase(this, 0));
-					if (this.currentBattle.double && availablePartyMemberCount > 1)
-						this.pushPhase(new SummonPhase(this, 1));
-				}
-			} else {
-				if (!this.quickStart)
-					this.pushPhase(new CheckLoadPhase(this));
-				else {
-					this.pushPhase(new EncounterPhase(this));
-					this.pushPhase(new SummonPhase(this, 0));
-				}
-			}
-
-			if (!showTrainer && (lastBattle?.double || false) !== newDouble) {
-				if (newDouble) {
-					if (availablePartyMemberCount > 1) {
-						this.pushPhase(new ToggleDoublePositionPhase(this, true));
-						this.pushPhase(new SummonPhase(this, 1));
-					}
-				} else {
-					if (availablePartyMemberCount > 1)
-						this.pushPhase(new ReturnPhase(this, 1));
-					this.pushPhase(new ToggleDoublePositionPhase(this, false));
-				}
-			}
-
-			if (lastBattle && this.currentBattle.battleType !== BattleType.TRAINER) {
-				const availablePartyMembers = this.getParty().filter(p => !p.isFainted()).length;
-				this.pushPhase(new CheckSwitchPhase(this, 0, newDouble));
-				if (newDouble && availablePartyMembers > 1)
-					this.pushPhase(new CheckSwitchPhase(this, 1, newDouble));
-			}
+			} else if (!this.quickStart)
+				this.pushPhase(new CheckLoadPhase(this));
+			else
+				this.pushPhase(new EncounterPhase(this));
 		}
 		
 		return this.currentBattle;
