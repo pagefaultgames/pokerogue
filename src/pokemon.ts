@@ -701,6 +701,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       else
         this.fusionGender = Gender.FEMALE;
     }
+
+    this.generateName();
   }
 
   generateAndPopulateMoveset(): void {
