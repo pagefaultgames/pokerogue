@@ -25,6 +25,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private genderText: Phaser.GameObjects.Text;
   private ownedIcon: Phaser.GameObjects.Sprite;
   private splicedIcon: Phaser.GameObjects.Sprite;
+  private shinyIcon: Phaser.GameObjects.Sprite;
   private statusIndicator: Phaser.GameObjects.Sprite;
   private levelContainer: Phaser.GameObjects.Container;
   private hpBar: Phaser.GameObjects.Image;
@@ -89,6 +90,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     const levelOverlay = this.scene.add.image(0, 0, 'overlay_lv');
     this.levelContainer.add(levelOverlay);
 
+    this.shinyIcon = this.scene.add.sprite(0, 0, 'shiny_star');
+    this.shinyIcon.setVisible(false);
+    this.shinyIcon.setOrigin(0, 0);
+    this.shinyIcon.setPositionRelative(this.levelContainer, -12, -5);
+    this.add(this.shinyIcon);
+
     this.hpBar = this.scene.add.image(player ? -61 : -71, player ? -1 : 4.5, 'overlay_hp');
     this.hpBar.setOrigin(0);
     this.add(this.hpBar);
@@ -124,7 +131,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.splicedIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1, 1);
     this.splicedIcon.setVisible(!!pokemon.fusionSpecies);
     if (this.splicedIcon.visible) {
-      this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `Spliced with ${pokemon.fusionSpecies.name}`));
+      this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${pokemon.species.name}/${pokemon.fusionSpecies.name}`));
       this.splicedIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
     }
 
@@ -270,6 +277,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.lastLevel = pokemon.level;
       }
 
+      this.shinyIcon.setVisible(pokemon.isShiny());
+
       resolve();
     });
   }
@@ -330,6 +339,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     for (let i = 0; i < levelStr.length; i++)
       this.levelNumbersContainer.add(this.scene.add.image(i * 8, 0, `numbers${isCapped && this.player ? '_red' : ''}`, levelStr[i]));
     this.levelContainer.setX((this.player ? -41 : -50) - 8 * Math.max(levelStr.length - 3, 0));
+    this.shinyIcon.setPositionRelative(this.levelContainer, -12, -5);
   }
 
   setHpNumbers(hp: integer, maxHp: integer) {

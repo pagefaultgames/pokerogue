@@ -45,6 +45,8 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
   if (splitNameA.length > 1)
     fragA = `${splitNameA.slice(0, splitNameA.length - 1).join(' ')} ${fragA}`;
 
+  fragB = `${fragB.slice(0, 1).toLowerCase()}${fragB.slice(1)}`;
+
   return `${fragA}${fragB}`;
 }
 
