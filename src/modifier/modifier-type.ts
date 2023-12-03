@@ -687,8 +687,8 @@ export const modifierTypes = {
 
   GRIP_CLAW: () => new ContactHeldItemTransferChanceModifierType('Grip Claw', 10),
 
-  HEALING_CHARM: () => new ModifierType('Healing Charm', 'Increases the effectiveness of HP restoring moves and items by 100% (excludes revives)',
-    (type, _args) => new Modifiers.HealingBoosterModifier(type, 2), 'healing_charm'),
+  HEALING_CHARM: () => new ModifierType('Healing Charm', 'Increases the effectiveness of HP restoring moves and items by 25% (excludes revives)',
+    (type, _args) => new Modifiers.HealingBoosterModifier(type, 1.25), 'healing_charm'),
   CANDY_JAR: () => new ModifierType('Candy Jar', 'Increases the number of levels added by RARE CANDY items by 1', (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type)),
 
   BERRY_POUCH: () => new ModifierType('Berry Pouch', 'Adds a 25% chance that a used berry will not be consumed',
@@ -1017,7 +1017,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
   if (tier === undefined) {
     const tierValue = Utils.randSeedInt(256);
     if (player && tierValue) {
-      const partyShinyCount = party.filter(p => p.isShiny()).length;
+      const partyShinyCount = party.filter(p => p.isShiny() && !p.isFainted()).length;
       const upgradeOdds = Math.floor(32 / Math.max((partyShinyCount * 2), 1));
       upgrade = !Utils.randSeedInt(upgradeOdds);
     } else
