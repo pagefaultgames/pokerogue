@@ -180,6 +180,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     const offsetElements = [ this.nameText, this.genderText, this.statusIndicator, this.levelContainer ];
     offsetElements.forEach(el => el.y += 1.5 * (mini ? -1 : 1));
 
+    this.shinyIcon.setPositionRelative(this.levelContainer, -12, -5);
+
     const toggledElements = [ this.hpNumbersContainer, this.expBar ];
     toggledElements.forEach(el => el.setVisible(!mini));
   }
