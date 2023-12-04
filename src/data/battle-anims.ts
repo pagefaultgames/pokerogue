@@ -1,6 +1,6 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
 import BattleScene from "../battle-scene";
-import { AttackMove, ChargeAttr, MoveFlags, Moves, SelfStatusMove, allMoves } from "./move";
+import { AttackMove, ChargeAttr, DelayedAttackAttr, MoveFlags, Moves, SelfStatusMove, allMoves } from "./move";
 import Pokemon from "../pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
@@ -433,6 +433,9 @@ export function initMoveAnim(move: Moves): Promise<void> {
             else {
                 let loadedCheckTimer = setInterval(() => {
                     if (moveAnims.get(move) !== null) {
+                        const chargeAttr = allMoves[move].getAttrs(ChargeAttr).find(() => true) as ChargeAttr || allMoves[move].getAttrs(DelayedAttackAttr).find(() => true) as DelayedAttackAttr;
+                        if (chargeAttr && chargeAnims.get(chargeAttr.chargeAnim) === null)
+                            return;
                         clearInterval(loadedCheckTimer);
                         resolve();
                     }
@@ -460,9 +463,9 @@ export function initMoveAnim(move: Moves): Promise<void> {
                             populateMoveAnim(move, ba[1]);
                         } else
                             populateMoveAnim(move, ba);
-                        const chargeAttr = allMoves[move].getAttrs(ChargeAttr) as ChargeAttr[];
-                        if (chargeAttr.length)
-                            initMoveChargeAnim(chargeAttr[0].chargeAnim).then(() => resolve());
+                        const chargeAttr = allMoves[move].getAttrs(ChargeAttr).find(() => true) as ChargeAttr || allMoves[move].getAttrs(DelayedAttackAttr).find(() => true) as DelayedAttackAttr;
+                        if (chargeAttr)
+                            initMoveChargeAnim(chargeAttr.chargeAnim).then(() => resolve());
                         else
                             resolve();
                     });
@@ -529,9 +532,9 @@ export function loadMoveAnimAssets(scene: BattleScene, moveIds: Moves[], startLo
     return new Promise(resolve => {
         const moveAnimations = moveIds.map(m => moveAnims.get(m) as AnimConfig).flat();
         for (let moveId of moveIds) {
-            const chargeAttr = allMoves[moveId].getAttrs(ChargeAttr) as ChargeAttr[];
-            if (chargeAttr.length) {
-                const moveChargeAnims = chargeAnims.get(chargeAttr[0].chargeAnim);
+            const chargeAttr = allMoves[moveId].getAttrs(ChargeAttr).find(() => true) as ChargeAttr || allMoves[moveId].getAttrs(DelayedAttackAttr).find(() => true) as DelayedAttackAttr;
+            if (chargeAttr) {
+                const moveChargeAnims = chargeAnims.get(chargeAttr.chargeAnim);
                 moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims[0]);
                 if (Array.isArray(moveChargeAnims))
                     moveAnimations.push(moveChargeAnims[1]);

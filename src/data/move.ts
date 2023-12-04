@@ -1675,7 +1675,13 @@ export class OneHitKOAttr extends MoveAttr {
   }
 }
 
-export class OverrideMoveEffectAttr extends MoveAttr { }
+export class OverrideMoveEffectAttr extends MoveAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    //const overridden = args[0] as Utils.BooleanHolder;
+    //const virtual = arg[1] as boolean;
+    return true;
+  }
+}
 
 export class ChargeAttr extends OverrideMoveEffectAttr {
   public chargeAnim: ChargeAnim;
@@ -1725,6 +1731,36 @@ export class SolarBeamChargeAttr extends ChargeAttr {
         resolve(false);
       else
         super.apply(user, target, move, args).then(result => resolve(result));
+    });
+  }
+}
+
+export class DelayedAttackAttr extends OverrideMoveEffectAttr {
+  public tagType: ArenaTagType;
+  public chargeAnim: ChargeAnim;
+  private chargeText: string;
+
+  constructor(tagType: ArenaTagType, chargeAnim: ChargeAnim, chargeText: string) {
+    super();
+
+    this.tagType = tagType;
+    this.chargeAnim = chargeAnim;
+    this.chargeText = chargeText;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise(resolve => {
+      if (args.length < 2 || !args[1]) {
+        new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, () => {
+          (args[0] as Utils.BooleanHolder).value = true;
+          user.scene.queueMessage(getPokemonMessage(user, ` ${this.chargeText.replace('{TARGET}', target.name)}`));
+          user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
+          user.scene.arena.addTag(this.tagType, 3, move.id, user.id, target.getBattlerIndex());
+
+          resolve(true);
+        });
+      } else
+        user.scene.ui.showText(getPokemonMessage(user.scene.getPokemonById(target.id), ` took\nthe ${move.name} attack!`), null, () => resolve(true));
     });
   }
 }
@@ -3326,7 +3362,8 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true),
     new AttackMove(Moves.SHADOW_BALL, "Shadow Ball", Type.GHOST, MoveCategory.SPECIAL, 80, 100, 15, 114, "The user hurls a shadowy blob at the target. This may also lower the target's Sp. Def stat.", 20, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1),
-    new AttackMove(Moves.FUTURE_SIGHT, "Future Sight (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, "Two turns after this move is used, a hunk of psychic energy attacks the target.", -1, 0, 2),
+    new AttackMove(Moves.FUTURE_SIGHT, "Future Sight", Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, "Two turns after this move is used, a hunk of psychic energy attacks the target.", -1, 0, 2)
+      .attr(DelayedAttackAttr, ArenaTagType.FUTURE_SIGHT, ChargeAnim.FUTURE_SIGHT_CHARGING, 'foresaw\nan attack!'),
     new AttackMove(Moves.ROCK_SMASH, "Rock Smash", Type.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 15, -1, "The user attacks with a punch. This may also lower the target's Defense stat.", 50, 0, 2)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
     new AttackMove(Moves.WHIRLPOOL, "Whirlpool", Type.WATER, MoveCategory.SPECIAL, 35, 85, 15, -1, "The user traps the target in a violent swirling whirlpool for four to five turns.", 100, 0, 2)
@@ -3546,8 +3583,8 @@ export function initMoves() {
     new AttackMove(Moves.SHOCK_WAVE, "Shock Wave", Type.ELECTRIC, MoveCategory.SPECIAL, 60, -1, 20, -1, "The user strikes the target with a quick jolt of electricity. This attack never misses.", -1, 0, 3),
     new AttackMove(Moves.WATER_PULSE, "Water Pulse", Type.WATER, MoveCategory.SPECIAL, 60, 100, 20, 11, "The user attacks the target with a pulsing blast of water. This may also confuse the target.", 20, 0, 3)
       .attr(ConfuseAttr),
-    new AttackMove(Moves.DOOM_DESIRE, "Doom Desire (N)", Type.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, "Two turns after this move is used, a concentrated bundle of light blasts the target.", -1, 0, 3)
-      .attr(ChargeAttr, ChargeAnim.DOOM_DESIRE_CHARGING, 'chose\nDOOM DESIRE as its destiny!'),
+    new AttackMove(Moves.DOOM_DESIRE, "Doom Desire", Type.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, "Two turns after this move is used, a concentrated bundle of light blasts the target.", -1, 0, 3)
+      .attr(DelayedAttackAttr, ArenaTagType.DOOM_DESIRE, ChargeAnim.DOOM_DESIRE_CHARGING, 'chose\nDOOM DESIRE as its destiny!'),
     new AttackMove(Moves.PSYCHO_BOOST, "Psycho Boost", Type.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, "The user attacks the target at full power. The attack's recoil harshly lowers the user's Sp. Atk stat.", 100, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
     new SelfStatusMove(Moves.ROOST, "Roost", Type.FLYING, -1, 10, -1, "The user lands and rests its body. This move restores the user's HP by up to half of its max HP.", -1, 0, 4)

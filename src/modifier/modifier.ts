@@ -1007,7 +1007,7 @@ export class HealingBoosterModifier extends PersistentModifier {
   }
 
   getMaxStackCount(): integer {
-    return 3;
+    return 4;
   }
 }
 

@@ -11,6 +11,7 @@ import Move, { Moves } from "./data/move";
 import { ArenaTag, ArenaTagType, getArenaTag } from "./data/arena-tag";
 import { GameMode } from "./game-mode";
 import { TrainerType } from "./data/trainer-type";
+import { BattlerIndex } from "./battle";
 
 const WEATHER_OVERRIDE = WeatherType.NONE;
 
@@ -289,14 +290,14 @@ export class Arena {
     tags.forEach(t => t.apply(args));
 	}
 
-  addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): boolean {
+  addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex): boolean {
     const existingTag = this.getTag(tagType);
     if (existingTag) {
       existingTag.onOverlap(this);
       return false;
     }
 
-    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId);
+    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex);
     this.tags.push(newTag);
     newTag.onAdd(this);
 

@@ -1,7 +1,7 @@
 import BattleScene, { startingLevel, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -167,11 +167,11 @@ export abstract class FieldPhase extends BattlePhase {
 }
 
 export abstract class PokemonPhase extends FieldPhase {
-  protected battlerIndex: BattlerIndex;
+  protected battlerIndex: BattlerIndex | integer;
   protected player: boolean;
   protected fieldIndex: integer;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex | integer) {
     super(scene);
 
     if (battlerIndex === undefined)
@@ -183,6 +183,8 @@ export abstract class PokemonPhase extends FieldPhase {
   }
 
   getPokemon() {
+    if (this.battlerIndex > BattlerIndex.ENEMY_2)
+      return this.scene.getPokemonById(this.battlerIndex);
     return this.scene.getField()[this.battlerIndex];
   }
 }
@@ -1599,7 +1601,7 @@ export class MovePhase extends BattlePhase {
   }
 }
 
-class MoveEffectPhase extends PokemonPhase {
+export class MoveEffectPhase extends PokemonPhase {
   protected move: PokemonMove;
   protected targets: BattlerIndex[];
   
@@ -1619,13 +1621,13 @@ class MoveEffectPhase extends PokemonPhase {
     const overridden = new Utils.BooleanHolder(false);
 
     // Assume single target for override
-    applyMoveAttrs(OverrideMoveEffectAttr, user, this.getTarget(), this.move.getMove(), overridden).then(() => {
+    applyMoveAttrs(OverrideMoveEffectAttr, user, this.getTarget(), this.move.getMove(), overridden, this.move.virtual).then(() => {
 
       if (overridden.value) {
         this.end();
         return;
       }
-
+      
       user.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
 
       if (user.turnData.hitsLeft === undefined) {
@@ -1767,6 +1769,8 @@ class MoveEffectPhase extends PokemonPhase {
   }
 
   getUserPokemon(): Pokemon {
+    if (this.battlerIndex > BattlerIndex.ENEMY_2)
+      return this.scene.getPokemonById(this.battlerIndex);
     return (this.player ? this.scene.getPlayerField() : this.scene.getEnemyField())[this.fieldIndex];
   }
 

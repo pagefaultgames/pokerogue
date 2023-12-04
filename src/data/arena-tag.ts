@@ -3,10 +3,11 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { Moves, allMoves } from "./move";
 import { getPokemonMessage } from "../messages";
-import Pokemon, { DamageResult, HitResult, MoveResult } from "../pokemon";
-import { DamagePhase, ObtainStatusEffectPhase } from "../battle-phases";
+import Pokemon, { HitResult, PokemonMove } from "../pokemon";
+import { DamagePhase, MoveEffectPhase, ObtainStatusEffectPhase } from "../battle-phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerTagType } from "./battler-tag";
+import { BattlerIndex } from "../battle";
 
 export enum ArenaTagType {
   NONE,
@@ -14,6 +15,8 @@ export enum ArenaTagType {
   WATER_SPORT,
   SPIKES,
   TOXIC_SPIKES,
+  FUTURE_SIGHT,
+  DOOM_DESIRE,
   STEALTH_ROCK,
   TRICK_ROOM,
   GRAVITY
@@ -32,7 +35,7 @@ export abstract class ArenaTag {
     this.sourceId = sourceId;
   }
 
-  apply(args: any[]): boolean { 
+  apply(args: any[]): boolean {
     return true;
   }
 
@@ -185,6 +188,27 @@ class ToxicSpikesTag extends ArenaTrapTag {
   }
 }
 
+class DelayedAttackTag extends ArenaTag {
+  public targetIndex: BattlerIndex;
+
+  constructor(tagType: ArenaTagType, sourceMove: Moves, sourceId: integer, targetIndex: BattlerIndex) {
+    super(tagType, 3, sourceMove, sourceId);
+
+    this.targetIndex = targetIndex;
+  }
+
+  lapse(arena: Arena): boolean {
+    const ret = super.lapse(arena);
+
+    if (!ret)
+      arena.scene.unshiftPhase(new MoveEffectPhase(arena.scene, this.sourceId, [ this.targetIndex ], new PokemonMove(this.sourceMove, 0, 0, true)));
+
+    return ret;
+  }
+
+  onRemove(arena: Arena): void { }
+}
+
 class StealthRockTag extends ArenaTrapTag {
   constructor(sourceId: integer) {
     super(ArenaTagType.STEALTH_ROCK, Moves.STEALTH_ROCK, sourceId, 1);
@@ -267,7 +291,7 @@ export class GravityTag extends ArenaTag {
   }
 }
 
-export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): ArenaTag {
+export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex): ArenaTag {
   switch (tagType) {
     case ArenaTagType.MUD_SPORT:
       return new MudSportTag(turnCount, sourceId);
@@ -277,6 +301,9 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
       return new SpikesTag(sourceId);
     case ArenaTagType.TOXIC_SPIKES:
       return new ToxicSpikesTag(sourceId);
+    case ArenaTagType.FUTURE_SIGHT:
+    case ArenaTagType.DOOM_DESIRE:
+      return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex);
     case ArenaTagType.STEALTH_ROCK:
       return new StealthRockTag(sourceId);
     case ArenaTagType.TRICK_ROOM:
