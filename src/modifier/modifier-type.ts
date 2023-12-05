@@ -1058,7 +1058,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
 }
 
 export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {
-  let modifierType: ModifierType | WeightedModifierType = modifierPool[tier][tier !== ModifierTier.LUXURY ? 0 : 2];
+  let modifierType: ModifierType | WeightedModifierType = modifierPool[tier || ModifierTier.COMMON][tier !== ModifierTier.LUXURY ? 0 : 2];
   if (modifierType instanceof WeightedModifierType)
     modifierType = (modifierType as WeightedModifierType).modifierType;
   return modifierType;
