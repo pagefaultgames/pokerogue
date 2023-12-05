@@ -3202,7 +3202,7 @@ export function initMoves() {
       .attr(FlinchAttr)
       .condition((user: Pokemon, target: Pokemon, move: Move) => user.status?.effect === StatusEffect.SLEEP)
       .soundBased(),
-    new StatusMove(Moves.CURSE, "Curse (N)", Type.GHOST, -1, 10, -1, "A move that works differently for the Ghost type than for all other types.", -1, 0, 2)
+    new StatusMove(Moves.CURSE, "Curse (N)", Type.UNKNOWN, -1, 10, -1, "A move that works differently for the Ghost type than for all other types.", -1, 0, 2)
       .target(MoveTarget.USER),
     new AttackMove(Moves.FLAIL, "Flail", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, "The user flails about aimlessly to attack. The less HP the user has, the greater the move's power.", -1, 0, 2)
       .attr(LowHpPowerAttr),

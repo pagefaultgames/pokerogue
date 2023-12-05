@@ -5,7 +5,7 @@ import { TextStyle, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
 import MessageUiHandler from "./message-ui-handler";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
-import { abilities } from "../data/ability";
+import { allAbilities } from "../data/ability";
 import { GameMode } from "../game-mode";
 import { Unlockables } from "../system/unlockables";
 import { GrowthRate, getGrowthRateColor } from "../data/exp";
@@ -754,7 +754,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         if (dexEntry.caughtAttr) {
           const ability = this.lastSpecies.getAbility(abilityIndex);
-          this.pokemonAbilityText.setText(abilities[ability].name);
+          this.pokemonAbilityText.setText(allAbilities[ability].name);
 
           const isHidden = ability === this.lastSpecies.abilityHidden;
           this.pokemonAbilityText.setColor(getTextColor(!isHidden ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));

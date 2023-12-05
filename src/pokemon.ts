@@ -22,7 +22,7 @@ import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { ArenaTagType, WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
-import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, IgnoreOpponentStatChangesAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, abilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
+import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, IgnoreOpponentStatChangesAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 import { BattlerIndex } from './battle';
 import { Mode } from './ui/ui';
@@ -140,11 +140,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       ];
     
       if (this.gender === undefined) {
-        if (this.getSpeciesForm().malePercent === null)
+        if (this.species.malePercent === null)
           this.gender = Gender.GENDERLESS;
         else {
           const genderChance = (this.id % 256) * 0.390625;
-          if (genderChance < this.getSpeciesForm().malePercent)
+          if (genderChance < this.species.malePercent)
             this.gender = Gender.MALE;
           else
             this.gender = Gender.FEMALE;
@@ -559,12 +559,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getAbility(): Ability {
     if (ABILITY_OVERRIDE && this.isPlayer())
-      return abilities[ABILITY_OVERRIDE];
+      return allAbilities[ABILITY_OVERRIDE];
     if (OPP_ABILITY_OVERRIDE && !this.isPlayer())
-      return abilities[OPP_ABILITY_OVERRIDE];
+      return allAbilities[OPP_ABILITY_OVERRIDE];
     if (this.fusionSpecies)
-      return abilities[this.getFusionSpeciesForm().getAbility(this.fusionAbilityIndex)];
-    return abilities[this.getSpeciesForm().getAbility(this.abilityIndex)];
+      return allAbilities[this.getFusionSpeciesForm().getAbility(this.fusionAbilityIndex)];
+    let abilityId = this.getSpeciesForm().getAbility(this.abilityIndex);
+    if (abilityId === Abilities.NONE)
+      abilityId = this.species.ability1;
+    return allAbilities[abilityId];
   }
 
   canApplyAbility(): boolean {
@@ -693,11 +696,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.fusionFormIndex = this.scene.getSpeciesFormIndex(this.fusionSpecies);
     this.fusionShiny = this.shiny;
     
-    if (this.getFusionSpeciesForm().malePercent === null)
+    if (this.fusionSpecies.malePercent === null)
       this.fusionGender = Gender.GENDERLESS;
     else {
       const genderChance = (this.id % 256) * 0.390625;
-      if (genderChance < this.getFusionSpeciesForm().malePercent)
+      if (genderChance < this.fusionSpecies.malePercent)
         this.fusionGender = Gender.MALE;
       else
         this.fusionGender = Gender.FEMALE;
@@ -800,13 +803,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const maxExpLevel = this.scene.getMaxExpLevel();
     const initialExp = this.exp;
     this.exp += exp;
-    while (this.level < maxExpLevel && this.exp >= getLevelTotalExp(this.level + 1, this.getSpeciesForm().growthRate))
+    while (this.level < maxExpLevel && this.exp >= getLevelTotalExp(this.level + 1, this.species.growthRate))
       this.level++;
     if (this.level >= maxExpLevel) {
-      console.log(initialExp, this.exp, getLevelTotalExp(this.level, this.getSpeciesForm().growthRate));
-      this.exp = Math.max(getLevelTotalExp(this.level, this.getSpeciesForm().growthRate), initialExp);
+      console.log(initialExp, this.exp, getLevelTotalExp(this.level, this.species.growthRate));
+      this.exp = Math.max(getLevelTotalExp(this.level, this.species.growthRate), initialExp);
     }
-    this.levelExp = this.exp - getLevelTotalExp(this.level, this.getSpeciesForm().growthRate);
+    this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
   }
 
   getOpponent(targetIndex: integer): Pokemon {

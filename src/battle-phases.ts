@@ -1634,7 +1634,6 @@ export class MoveEffectPhase extends PokemonPhase {
         const hitCount = new Utils.IntegerHolder(1);
         // Assume single target for multi hit
         applyMoveAttrs(MultiHitAttr, user, this.getTarget(), this.move.getMove(), hitCount);
-        user.turnData.hitCount = 0;
         user.turnData.hitsLeft = user.turnData.hitCount = hitCount.value;
       }
 
@@ -1642,12 +1641,18 @@ export class MoveEffectPhase extends PokemonPhase {
       user.pushMoveHistory(moveHistoryEntry);
 
       const targetHitChecks = Object.fromEntries(targets.map(p => [ p.getBattlerIndex(), this.hitCheck(p) ]));
-      if (targets.length === 1 && !targetHitChecks[this.targets[0]]) {
+      const activeTargets = targets.map(t => t.isActive(true));
+      if (targets.length === 1 && !targetHitChecks[this.targets[0]] || !activeTargets.length) {
         user.turnData.hitCount = 1;
         user.turnData.hitsLeft = 1;
-        this.scene.queueMessage(getPokemonMessage(user, '\'s\nattack missed!'));
-        moveHistoryEntry.result = MoveResult.MISS;
-        applyMoveAttrs(MissEffectAttr, user, null, this.move.getMove());
+        if (activeTargets.length) {
+          this.scene.queueMessage(getPokemonMessage(user, '\'s\nattack missed!'));
+          moveHistoryEntry.result = MoveResult.MISS;
+          applyMoveAttrs(MissEffectAttr, user, null, this.move.getMove());
+        } else {
+          this.scene.queueMessage('But it failed!');
+          moveHistoryEntry.result = MoveResult.FAIL;
+        }
         this.end();
         return;
       }
@@ -1720,7 +1725,7 @@ export class MoveEffectPhase extends PokemonPhase {
     if (--user.turnData.hitsLeft >= 1 && this.getTarget()?.isActive())
       this.scene.unshiftPhase(this.getNewHitPhase());
     else {
-      if (user.turnData.hitCount - user.turnData.hitsLeft > 1)
+      if (user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0) > 1)
         this.scene.queueMessage(`Hit ${user.turnData.hitCount} time(s)!`);
       this.scene.applyModifiers(HitHealModifier, this.player, user);
     }
@@ -2914,7 +2919,9 @@ export class AttemptCapturePhase extends PokemonPhase {
     const pokemon = this.getPokemon() as EnemyPokemon;
     this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
 
-    if (pokemon.getAbility().id === (!pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm()).abilityHidden)
+    const speciesForm = pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
+
+    if (speciesForm.abilityHidden && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1)
       this.scene.validateAchv(achvs.HIDDEN_ABILITY);
 
     if (pokemon.species.pseudoLegendary || pokemon.species.legendary)
