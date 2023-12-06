@@ -2919,7 +2919,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     const pokemon = this.getPokemon() as EnemyPokemon;
     this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
 
-    const speciesForm = pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
+    const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
     if (speciesForm.abilityHidden && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1)
       this.scene.validateAchv(achvs.HIDDEN_ABILITY);

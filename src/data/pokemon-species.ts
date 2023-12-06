@@ -97,7 +97,7 @@ export abstract class PokemonSpeciesForm {
   }
 
   getAbility(abilityIndex: integer): Abilities {
-    return !abilityIndex ? this.ability1 : abilityIndex === 1 && this.ability2 ? this.ability2 : this.abilityHidden
+    return !abilityIndex ? this.ability1 : abilityIndex === 1 && this.ability2 ? this.ability2 : this.abilityHidden;
   }
 
   getLevelMoves(): LevelMoves {
