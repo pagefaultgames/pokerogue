@@ -175,15 +175,52 @@ export abstract class PokemonSpeciesForm {
   }
 
   getCryKey(formIndex?: integer): string {
-    let ret = this.speciesId.toString();
-    const forms = getPokemonSpecies(this.speciesId).forms;
+    let speciesId = this.speciesId;
+    if (this.speciesId > 2000) {
+      switch (this.speciesId) {
+        case Species.GALAR_SLOWPOKE:
+          break;
+        default:
+          speciesId = speciesId % 2000;
+          break;
+      }
+    }
+    let ret = speciesId.toString();
+    const forms = getPokemonSpecies(speciesId).forms;
     if (forms.length) {
       const formKey = forms[formIndex || 0].formKey;
       switch (formKey) {
         case 'mega':
+        case 'mega-x':
+        case 'mega-y':
         case 'white':
         case 'black':
+        case 'therian':
+        case 'sky':
+        case 'gorging':
+        case 'gulping':
+        case 'no-ice':
+        case 'hangry':
+        case 'crowned':
         case 'eternamax':
+        case 'four':
+        case 'droopy':
+        case 'stretchy':
+        case 'roaming':
+        case 'eternal':
+        case 'complete':
+        case '10':
+        case 'super':
+        case 'unbound':
+        case 'pau':
+        case 'pompom':
+        case 'sensu':
+        case 'dusk':
+        case 'midnight':
+        case 'school':
+        case 'dawnwings':
+        case 'duskmane':
+        case 'ultra':
           ret += `-${formKey}`;
           break;
       }
@@ -193,7 +230,7 @@ export abstract class PokemonSpeciesForm {
 
   loadAssets(scene: BattleScene, female: boolean, formIndex?: integer, shiny?: boolean, startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
-      scene.load.audio(this.getCryKey(formIndex), `audio/cry/${this.getCryKey(formIndex)}.mp3`);
+      scene.load.audio(this.getCryKey(formIndex), `audio/cry/${this.getCryKey(formIndex)}.ogg`);
       scene.loadAtlas(this.getSpriteKey(female, formIndex, shiny), 'pokemon', this.getSpriteAtlasPath(female, formIndex, shiny));
       scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
@@ -1159,7 +1196,7 @@ export function initSpecies() {
       new PokemonForm("Dragon", "dragon", Type.DRAGON, null, 3.2, 320, Abilities.MULTITYPE, Abilities.NONE, Abilities.NONE, 720, 120, 120, 120, 120, 120, 120, 3, 0, 324),
       new PokemonForm("Dark", "dark", Type.DARK, null, 3.2, 320, Abilities.MULTITYPE, Abilities.NONE, Abilities.NONE, 720, 120, 120, 120, 120, 120, 120, 3, 0, 324),
       new PokemonForm("Fairy", "fairy", Type.FAIRY, null, 3.2, 320, Abilities.MULTITYPE, Abilities.NONE, Abilities.NONE, 720, 120, 120, 120, 120, 120, 120, 3, 0, 324),
-      //new PokemonForm("???", "typeless", Type.TYPELESS, null, 3.2, 320, Abilities.MULTITYPE, Abilities.NONE, Abilities.NONE, 720, 120, 120, 120, 120, 120, 120, 3, 0, 324)
+      //new PokemonForm("???", "typeless", Type.UNKNOWN, null, 3.2, 320, Abilities.MULTITYPE, Abilities.NONE, Abilities.NONE, 720, 120, 120, 120, 120, 120, 120, 3, 0, 324),
     ),
     new PokemonSpecies(Species.VICTINI, "Victini", 4, false, false, true, "Victory Pokémon", Type.PSYCHIC, Type.FIRE, 0.4, 4, Abilities.VICTORY_STAR, Abilities.NONE, Abilities.NONE, 600, 100, 100, 100, 100, 100, 100, 3, 100, 300, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.SNIVY, "Snivy", 5, false, false, false, "Grass Snake Pokémon", Type.GRASS, null, 0.6, 8.1, Abilities.OVERGROW, Abilities.NONE, Abilities.CONTRARY, 308, 45, 45, 55, 45, 55, 63, 45, 70, 62, GrowthRate.MEDIUM_SLOW, 87.5, false),
@@ -1223,7 +1260,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.BASCULIN, "Basculin", 5, false, false, false, "Hostile Pokémon", Type.WATER, null, 1, 18, Abilities.RECKLESS, Abilities.ADAPTABILITY, Abilities.MOLD_BREAKER, 460, 70, 92, 65, 80, 55, 98, 25, 50, 161, GrowthRate.MEDIUM_FAST, 50, false, false,
       new PokemonForm("Red-Striped Form", "red-striped", Type.WATER, null, 1, 18, Abilities.RECKLESS, Abilities.ADAPTABILITY, Abilities.MOLD_BREAKER, 460, 70, 92, 65, 80, 55, 98, 25, 50, 161),
       new PokemonForm("Blue-Striped Form", "blue-striped", Type.WATER, null, 1, 18, Abilities.ROCK_HEAD, Abilities.ADAPTABILITY, Abilities.MOLD_BREAKER, 460, 70, 92, 65, 80, 55, 98, 25, 50, 161),
-      //new PokemonForm("White-Striped Form", "white-striped", Type.WATER, null, 1, 18, Abilities.RATTLED, Abilities.ADAPTABILITY, Abilities.MOLD_BREAKER, 460, 70, 92, 65, 80, 55, 98, 25, 50, 161),
+      new PokemonForm("White-Striped Form", "white-striped", Type.WATER, null, 1, 18, Abilities.RATTLED, Abilities.ADAPTABILITY, Abilities.MOLD_BREAKER, 460, 70, 92, 65, 80, 55, 98, 25, 50, 161),
     ),
     new PokemonSpecies(Species.SANDILE, "Sandile", 5, false, false, false, "Desert Croc Pokémon", Type.GROUND, Type.DARK, 0.7, 15.2, Abilities.INTIMIDATE, Abilities.MOXIE, Abilities.ANGER_POINT, 292, 50, 72, 35, 35, 35, 65, 180, 50, 58, GrowthRate.MEDIUM_SLOW, 50, false),
     new PokemonSpecies(Species.KROKOROK, "Krokorok", 5, false, false, false, "Desert Croc Pokémon", Type.GROUND, Type.DARK, 1, 33.4, Abilities.INTIMIDATE, Abilities.MOXIE, Abilities.ANGER_POINT, 351, 60, 82, 45, 45, 45, 74, 90, 50, 123, GrowthRate.MEDIUM_SLOW, 50, false),
@@ -1755,7 +1792,7 @@ export function initSpecies() {
     //new PokemonSpecies(Species.TOXEL, "Toxel", 8, false, false, false, "Baby Pokémon", Type.ELECTRIC, Type.POISON, 0.4, 11, Abilities.RATTLED, Abilities.STATIC, Abilities.KLUTZ, 242, 40, 38, 35, 54, 35, 40, 75, 50, 48, GrowthRate.MEDIUM_SLOW, 50, false),
     /*new PokemonSpecies(Species.TOXTRICITY, "Toxtricity", 8, false, false, false, "Punk Pokémon", Type.ELECTRIC, Type.POISON, 1.6, 40, Abilities.PUNK_ROCK, Abilities.PLUS, Abilities.TECHNICIAN, 502, 75, 98, 70, 114, 70, 75, 45, 50, 176, GrowthRate.MEDIUM_SLOW, 50, false, false,
       new PokemonForm("Amped Form", "amped", Type.ELECTRIC, Type.POISON, 1.6, 40, Abilities.PUNK_ROCK, Abilities.PLUS, Abilities.TECHNICIAN, 502, 75, 98, 70, 114, 70, 75, 45, 50, 176),
-      new PokemonForm("Low-Key Form", "low-key", Type.ELECTRIC, Type.POISON, 1.6, 40, Abilities.PUNK_ROCK, Abilities.MINUS, Abilities.TECHNICIAN, 502, 75, 98, 70, 114, 70, 75, 45, 50, 176),
+      new PokemonForm("Low-Key Form", "lowkey", Type.ELECTRIC, Type.POISON, 1.6, 40, Abilities.PUNK_ROCK, Abilities.MINUS, Abilities.TECHNICIAN, 502, 75, 98, 70, 114, 70, 75, 45, 50, 176),
     ),*/
     //new PokemonSpecies(Species.SIZZLIPEDE, "Sizzlipede", 8, false, false, false, "Radiator Pokémon", Type.FIRE, Type.BUG, 0.7, 1, Abilities.FLASH_FIRE, Abilities.WHITE_SMOKE, Abilities.FLAME_BODY, 305, 50, 65, 45, 50, 50, 45, 190, 50, 61, GrowthRate.MEDIUM_FAST, 50, false),
     //new PokemonSpecies(Species.CENTISKORCH, "Centiskorch", 8, false, false, false, "Radiator Pokémon", Type.FIRE, Type.BUG, 3, 120, Abilities.FLASH_FIRE, Abilities.WHITE_SMOKE, Abilities.FLAME_BODY, 525, 100, 115, 65, 90, 90, 65, 75, 50, 184, GrowthRate.MEDIUM_FAST, 50, false),
@@ -1889,8 +1926,8 @@ export function initSpecies() {
     //new PokemonSpecies(Species.PAWMOT, "Pawmot", 9, false, false, false, "Hands-On Pokémon", Type.ELECTRIC, Type.FIGHTING, 0.9, 41, Abilities.VOLT_ABSORB, Abilities.NATURAL_CURE, Abilities.IRON_FIST, 490, 70, 115, 70, 70, 60, 105, 45, 50, null, GrowthRate.MEDIUM_FAST, 50, false),
     //new PokemonSpecies(Species.TANDEMAUS, "Tandemaus", 9, false, false, false, "Couple Pokémon", Type.NORMAL, null, 0.3, 1.8, Abilities.RUN_AWAY, Abilities.PICKUP, Abilities.OWN_TEMPO, 305, 50, 50, 45, 40, 45, 75, 150, 50, null, GrowthRate.FAST, null, false),
     /*new PokemonSpecies(Species.MAUSHOLD, "Maushold", 9, false, false, false, "Family Pokémon", Type.NORMAL, null, 0.3, 2.3, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, null, GrowthRate.FAST, null, false, false,
-      new PokemonForm("Family of Four", "family-of-four", Type.NORMAL, null, 0.3, 2.3, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, null),
-      new PokemonForm("Family of Three", "family-of-three", Type.NORMAL, null, 0.3, 2.8, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, null),
+      new PokemonForm("Family of Four", "four", Type.NORMAL, null, 0.3, 2.3, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, null),
+      new PokemonForm("Family of Three", "three", Type.NORMAL, null, 0.3, 2.8, Abilities.FRIEND_GUARD, Abilities.CHEEK_POUCH, Abilities.TECHNICIAN, 470, 74, 75, 70, 65, 75, 111, 75, 50, null),
     ),*/
     //new PokemonSpecies(Species.FIDOUGH, "Fidough", 9, false, false, false, "Puppy Pokémon", Type.FAIRY, null, 0.3, 10.9, Abilities.OWN_TEMPO, Abilities.NONE, Abilities.KLUTZ, 312, 37, 55, 70, 30, 55, 65, 190, 50, null, GrowthRate.MEDIUM_SLOW, 50, false),
     //new PokemonSpecies(Species.DACHSBUN, "Dachsbun", 9, false, false, false, "Dog Pokémon", Type.FAIRY, null, 0.5, 14.9, Abilities.WELL_BAKED_BODY, Abilities.NONE, Abilities.AROMA_VEIL, 477, 57, 80, 115, 50, 80, 95, 90, 50, null, GrowthRate.MEDIUM_SLOW, 50, false),
