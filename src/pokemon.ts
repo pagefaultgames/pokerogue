@@ -614,9 +614,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.fusionSpecies) {
       const fusionLevelMoves = this.getFusionSpeciesForm().getLevelMoves();
       const newLevelMoves: LevelMoves = [];
-      while (levelMoves[0][0] < startingLevel)
+      while (levelMoves.length && levelMoves[0][0] < startingLevel)
         levelMoves.shift();
-      while (fusionLevelMoves[0][0] < startingLevel)
+      while (fusionLevelMoves.length && fusionLevelMoves[0][0] < startingLevel)
         fusionLevelMoves.shift();
       for (let l = startingLevel; l <= this.level; l++) {
         while (levelMoves.length && levelMoves[0][0] === l) {
