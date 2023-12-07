@@ -60,6 +60,10 @@ interface BiomeLinks {
   [key: integer]: Biome | Biome[]
 }
 
+interface BiomeDepths {
+  [key: integer]: integer
+}
+
 export const biomeLinks: BiomeLinks = {
   [Biome.TOWN]: Biome.PLAINS,
   [Biome.PLAINS]: [ Biome.GRASS, Biome.CITY, Biome.LAKE ],
@@ -90,6 +94,8 @@ export const biomeLinks: BiomeLinks = {
   [Biome.CONSTRUCTION_SITE]: [ Biome.DOJO, Biome.POWER_PLANT ],
   [Biome.JUNGLE]: Biome.SWAMP
 };
+
+export const biomeDepths: BiomeDepths = {}
 
 export enum BiomePoolTier {
   COMMON,
@@ -4560,6 +4566,23 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [ TrainerType.IRIS, [] ],
     [ TrainerType.RIVAL, [] ]
   ];
+
+  biomeDepths[Biome.TOWN] = 0;
+
+  const traverseBiome = (biome: Biome, depth: integer) => {
+    const linkedBiomes: Biome[] = Array.isArray(biomeLinks[biome])
+      ? biomeLinks[biome] as Biome[]
+      : [ biomeLinks[biome] as Biome ];
+    for (let linkedBiome of linkedBiomes) {
+      if (!biomeDepths.hasOwnProperty(linkedBiome) || depth < biomeDepths[linkedBiome]) {
+        biomeDepths[linkedBiome] = depth + 1;
+        traverseBiome(linkedBiome, depth + 1);
+      }
+    }
+  };
+
+  traverseBiome(Biome.TOWN, 0);
+  biomeDepths[Biome.END] = Object.values(biomeDepths).reduce((max: integer, value: integer) => Math.max(max, value), 0) + 1;
 
   for (let biome of Utils.getEnumValues(Biome)) {
     biomePokemonPools[biome] = {};

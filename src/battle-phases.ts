@@ -15,7 +15,7 @@ import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
-import { Biome, biomeLinks } from "./data/biome";
+import { Biome, biomeDepths, biomeLinks } from "./data/biome";
 import { FusePokemonModifierType, ModifierPoolType, ModifierTier, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, RememberMoveModifierType, TmModifierType, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, BattlerTagType, EncoreTag, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
@@ -532,14 +532,9 @@ export class SelectBiomePhase extends BattlePhase {
 
     if (this.scene.gameMode === GameMode.CLASSIC && this.scene.currentBattle.waveIndex === this.scene.finalWave - 9)
       setNextBiome(Biome.END);
-    else if (this.scene.gameMode !== GameMode.CLASSIC) {
-      if (!(this.scene.currentBattle.waveIndex % 50))
-        setNextBiome(Biome.END);
-      else {
-        const allBiomes = Utils.getEnumValues(Biome);
-        setNextBiome(allBiomes[Utils.randSeedInt(allBiomes.length - 2, 1)]);
-      }
-    } else if (Array.isArray(biomeLinks[currentBiome])) {
+    else if (this.scene.gameMode !== GameMode.CLASSIC)
+      setNextBiome(this.generateNextBiome());
+    else if (Array.isArray(biomeLinks[currentBiome])) {
       const biomes = biomeLinks[currentBiome] as Biome[];
       if (this.scene.findModifier(m => m instanceof MapModifier)) {
         this.scene.ui.setMode(Mode.BIOME_SELECT, currentBiome, (biomeIndex: integer) => {
@@ -550,6 +545,33 @@ export class SelectBiomePhase extends BattlePhase {
         setNextBiome(biomes[Utils.randSeedInt(biomes.length)]);
     } else
       setNextBiome(biomeLinks[currentBiome] as Biome);
+  }
+
+  generateNextBiome(): Biome {
+    if (!(this.scene.currentBattle.waveIndex % 50))
+      return Biome.END;
+    else {
+      const relWave = this.scene.currentBattle.waveIndex % 250;
+      const biomes = Utils.getEnumValues(Biome).slice(1, -1);
+      const maxDepth = biomeDepths[Biome.END] - 2;
+      const depthWeights = new Array(maxDepth + 1).fill(null)
+        .map((_, i: integer) => ((1 - Math.min(Math.abs((i / (maxDepth - 1)) - (relWave / 250)) + 0.25, 1)) / 0.75) * 250);
+      const biomeThresholds: integer[] = [];
+      let totalWeight = 0;
+      for (let biome of biomes) {
+        totalWeight += depthWeights[biomeDepths[biome] - 1];
+        biomeThresholds.push(totalWeight);
+      }
+
+      const randInt = Utils.randSeedInt(totalWeight);
+
+      for (let biome of biomes) {
+        if (randInt < biomeThresholds[biome])
+          return biome;
+      }
+
+      return biomes[Utils.randSeedInt(biomes.length)];
+    }
   }
 }
 
