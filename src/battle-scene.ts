@@ -289,7 +289,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('statuses', '');
 		this.loadAtlas('categories', '');
 
-		for (let i = 0; i < 7; i++)
+		for (let i = 0; i < 10; i++)
 			this.loadAtlas(`pokemon_icons_${i}`, 'ui');
 
 		this.loadSe('select');

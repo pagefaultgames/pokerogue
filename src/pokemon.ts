@@ -189,8 +189,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.add(sprite);
     this.add(tintSprite);
 
-    this.getSpeciesForm().generateIconAnim(scene, this.getGender() === Gender.FEMALE, formIndex);
-
     if (this.shiny) {
       const shinySparkle = this.scene.add.sprite(0, 0, 'shiny');
       shinySparkle.setVisible(false);
@@ -339,11 +337,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getIconId(ignoreOverride?: boolean): string {
-    return this.getSpeciesForm(ignoreOverride).getIconId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex);
-  }
-
-  getIconKey(ignoreOverride?: boolean): string {
-    return `pkmn_icon__${this.getIconId(ignoreOverride)}`;
+    return this.getSpeciesForm(ignoreOverride).getIconId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.isShiny());
   }
 
   getSpeciesForm(ignoreOverride?: boolean): PokemonSpeciesForm {
@@ -1195,7 +1189,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   private fusionFaintCry(callback: Function): void {
-    const key = this.getSpeciesForm().getCryKey();
+    const key = this.getSpeciesForm().getCryKey(this.formIndex);
     let i = 0;
     let rate = 0.85;
     let cry = this.scene.playSound(key, { rate: rate }) as AnySound;
@@ -1700,7 +1694,6 @@ export class PlayerPokemon extends Pokemon {
       const abilityCount = this.getSpeciesForm().getAbilityCount();
       if (this.abilityIndex >= abilityCount) // Shouldn't happen
         this.abilityIndex = abilityCount - 1;
-      this.getSpeciesForm().generateIconAnim(this.scene, this.gender === Gender.FEMALE, this.formIndex);
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
       this.scene.gameData.setPokemonSeen(this, false);

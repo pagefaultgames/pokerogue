@@ -12,6 +12,7 @@ import { GrowthRate, getGrowthRateColor } from "../data/exp";
 import { DexAttr, DexEntry } from "../system/game-data";
 import * as Utils from "../utils";
 import { Stat, getStatName } from "../data/pokemon-stat";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -75,6 +76,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private starterValueLabels: Phaser.GameObjects.Text[];
     private shinyIcons: Phaser.GameObjects.Image[];
 
+    private iconAnimHandler: PokemonIconAnimHandler;
+
     private starterSelectCallback: StarterSelectCallback;
   
     constructor(scene: BattleScene) {
@@ -95,6 +98,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const starterSelectBg = this.scene.add.image(1, 1, 'starter_select_bg');
       starterSelectBg.setOrigin(0, 0);
       this.starterSelectContainer.add(starterSelectBg);
+
+      this.iconAnimHandler = new PokemonIconAnimHandler();
+      this.iconAnimHandler.setup(this.scene);
 
       this.pokemonNumberText = addTextObject(this.scene, 17, 1, '000', TextStyle.SUMMARY);
       this.pokemonNumberText.setOrigin(0, 0);
@@ -196,32 +202,26 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.genSpecies[g].push(species);
           const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species);
           const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-          species.generateIconAnim(this.scene, defaultProps.female, defaultProps.formIndex);
           const x = (s % 9) * 18;
           const y = Math.floor(s / 9) * 18;
-          const icon = this.scene.add.sprite(x, y, species.getIconAtlasKey(defaultProps.formIndex));
+          const icon = this.scene.add.sprite(x - 2, y + 2, species.getIconAtlasKey(defaultProps.formIndex));
           icon.setScale(0.5);
           icon.setOrigin(0, 0);
-          icon.play(species.getIconKey(defaultProps.female, defaultProps.formIndex)).stop();
+          icon.setFrame(species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny));
           icon.setTintFill(0);
           this.starterSelectGenIconContainers[g].add(icon);
+          this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
           s++;
         }
       }
 
-      this.scene.anims.create({
-        key: 'pkmn_icon__000',
-        frames: this.scene.anims.generateFrameNames('pokemon_icons_0', { prefix: `000_`, zeroPad: 2, suffix: '.png', start: 1, end: 34 }),
-        frameRate: 128,
-        repeat: -1
-      });
-
       this.starterIcons = new Array(3).fill(null).map((_, i) => {
-        const icon = this.scene.add.sprite(115, 95 + 16 * i, 'pokemon_icons_0');
+        const icon = this.scene.add.sprite(113, 97 + 16 * i, 'pokemon_icons_0');
         icon.setScale(0.5);
         icon.setOrigin(0, 0);
-        icon.play('pkmn_icon__000');
+        icon.setFrame('unknown');
         this.starterSelectContainer.add(icon);
+        this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.PASSIVE);
         return icon;
       });
 
@@ -438,9 +438,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 const cursorObj = this.starterCursorObjs[this.starterCursors.length];
                 cursorObj.setVisible(true);
                 cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
-                const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species);
-                const defaultProps = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-                this.starterIcons[this.starterCursors.length].play(species.getIconKey(defaultProps.female, defaultProps.formIndex));
+                const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
+                this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex));
+                this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny));
                 this.starterGens.push(this.genCursor);
                 this.starterCursors.push(this.cursor);
                 this.starterAttr.push(this.dexAttrCursor);
@@ -661,7 +661,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const dexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(this.lastSpecies);
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr);
         const lastSpeciesIcon = (this.starterSelectGenIconContainers[this.lastSpecies.generation - 1].getAt(this.genSpecies[this.lastSpecies.generation - 1].indexOf(this.lastSpecies)) as Phaser.GameObjects.Sprite);
-        lastSpeciesIcon.play(this.lastSpecies.getIconKey(props.female, props.formIndex)).stop();
+        lastSpeciesIcon.setFrame(this.lastSpecies.getIconId(props.female, props.formIndex, props.shiny));
+        this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
       }
 
       this.lastSpecies = species;
@@ -674,6 +675,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
         this.pokemonGrowthRateLabelText.setVisible(true);
         this.pokemonAbilityLabelText.setVisible(true);
+        this.iconAnimHandler.addOrUpdate(this.starterSelectGenIconContainers[species.generation - 1].getAt(this.genSpecies[species.generation - 1].indexOf(species)) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.PASSIVE);
 
         const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species);
         const props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
@@ -735,8 +737,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.pokemonSprite.setVisible(!this.statsMode);
           });
 
-          species.generateIconAnim(this.scene, female, formIndex);
-          (this.starterSelectGenIconContainers[this.genCursor].getAt(this.cursor) as Phaser.GameObjects.Sprite).play(species.getIconKey(female, formIndex));
+          (this.starterSelectGenIconContainers[this.genCursor].getAt(this.cursor) as Phaser.GameObjects.Sprite).setFrame(species.getIconId(female, formIndex, shiny));
 
           this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
           this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
@@ -774,7 +775,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.starterCursors.pop();
       this.starterAttr.pop();
       this.starterCursorObjs[this.starterCursors.length].setVisible(false);
-      this.starterIcons[this.starterCursors.length].play('pkmn_icon__000');
+      this.starterIcons[this.starterCursors.length].setTexture('pokemon_icons_0');
+      this.starterIcons[this.starterCursors.length].setFrame('unknown');
       this.tryUpdateValue();
     }
 

@@ -10,6 +10,7 @@ import { PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifi
 import { Moves, allMoves } from "../data/move";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 
 const defaultMessage = 'Choose a Pokémon.';
 
@@ -81,6 +82,8 @@ export default class PartyUiHandler extends MessageUiHandler {
   private moveSelectFilter: PokemonMoveSelectFilter;
   private tmMoveId: Moves;
 
+  private iconAnimHandler: PokemonIconAnimHandler;
+
   private static FilterAll = (_pokemon: PlayerPokemon) => null;
 
   public static FilterNonFainted = (pokemon: PlayerPokemon) => {
@@ -146,6 +149,9 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.optionsContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -1);
     partyContainer.add(this.optionsContainer);
+
+    this.iconAnimHandler = new PokemonIconAnimHandler();
+    this.iconAnimHandler.setup(this.scene);
 
     this.options = [];
 
@@ -362,7 +368,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     for (let p in party) {
       const slotIndex = parseInt(p);
-      const partySlot = new PartySlot(this.scene, slotIndex, party[p], this.partyUiMode, this.tmMoveId);
+      const partySlot = new PartySlot(this.scene, slotIndex, party[p], this.iconAnimHandler, this.partyUiMode, this.tmMoveId);
       this.scene.add.existing(partySlot);
       this.partySlotsContainer.add(partySlot);
       this.partySlots.push(partySlot);
@@ -713,13 +719,17 @@ class PartySlot extends Phaser.GameObjects.Container {
   private slotBg: Phaser.GameObjects.Image;
   private slotPb: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, slotIndex: integer, pokemon: PlayerPokemon, partyUiMode: PartyUiMode, tmMoveId: Moves) {
+  private pokemonIcon: Phaser.GameObjects.Sprite;
+  private iconAnimHandler: PokemonIconAnimHandler;
+
+  constructor(scene: BattleScene, slotIndex: integer, pokemon: PlayerPokemon, iconAnimHandler: PokemonIconAnimHandler, partyUiMode: PartyUiMode, tmMoveId: Moves) {
     super(scene, slotIndex >= scene.currentBattle.getBattlerCount() ? 230.5 : 64,
       slotIndex >= scene.currentBattle.getBattlerCount() ? -184 + (scene.currentBattle.double ? -38 : 0)
       + (28 + (scene.currentBattle.double ? 6 : 0)) * slotIndex : -124 + (scene.currentBattle.double ? -8 : 0) + slotIndex * 64);
 
     this.slotIndex = slotIndex;
     this.pokemon = pokemon;
+    this.iconAnimHandler = iconAnimHandler;
     
     this.setup(partyUiMode, tmMoveId);
   }
@@ -739,15 +749,12 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     this.add(slotPb);
 
-    const pokemonIcon = this.scene.add.sprite(slotPb.x, slotPb.y, this.pokemon.getIconAtlasKey(true));
-    if (this.pokemon.getSpeciesForm().generation <= 5)
-      pokemonIcon.play(this.pokemon.getIconKey(true));
-    else {
-      pokemonIcon.setFrame(this.pokemon.getIconId());
-      pokemonIcon.setScale(0.75);
-    }
+    this.pokemonIcon = this.scene.add.sprite(slotPb.x, slotPb.y, this.pokemon.getIconAtlasKey(true));
+    this.pokemonIcon.setFrame(this.pokemon.getIconId());
 
-    this.add(pokemonIcon);
+    this.add(this.pokemonIcon);
+
+    this.iconAnimHandler.addOrUpdate(this.pokemonIcon, PokemonIconAnimMode.PASSIVE);
 
     const slotInfoContainer = this.scene.add.container(0, 0);
     this.add(slotInfoContainer);
@@ -842,6 +849,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       return;
 
     this.selected = true;
+    this.iconAnimHandler.addOrUpdate(this.pokemonIcon, PokemonIconAnimMode.ACTIVE);
 
     this.updateSlotTexture();
     this.slotPb.setFrame('party_pb_sel');
@@ -852,6 +860,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       return;
 
     this.selected = false;
+    this.iconAnimHandler.addOrUpdate(this.pokemonIcon, PokemonIconAnimMode.PASSIVE);
 
     this.updateSlotTexture();
     this.slotPb.setFrame('party_pb');
