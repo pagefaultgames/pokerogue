@@ -313,7 +313,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
       }
     }
 
-    if (!allowEvolving || !pokemonEvolutions.hasOwnProperty(this.speciesId))
+    if (!allowEvolving || !pokemonEvolutions.hasOwnProperty(this.speciesId) || pokemonEvolutions[this.speciesId].filter(e => !e.evoFormKey || e.evoFormKey.indexOf(SpeciesFormKey.MEGA) === -1))
       return this.speciesId;
 
     const evolutions = pokemonEvolutions[this.speciesId];
