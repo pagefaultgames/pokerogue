@@ -126,7 +126,7 @@ export class ArenaTrapTag extends ArenaTag {
 
   apply(args: any[]): boolean { 
     const pokemon = args[0] as Pokemon;
-    if (this.sourceId === pokemon.id || pokemon.scene.getPokemonById(this.sourceId).isPlayer() === pokemon.isPlayer())
+    if (this.sourceId === pokemon.id || !!(pokemon.scene.getPokemonById(this.sourceId)?.isPlayer()) === pokemon.isPlayer())
       return false;
 
     return this.activateTrap(pokemon);

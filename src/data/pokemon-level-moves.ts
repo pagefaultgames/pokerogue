@@ -6376,6 +6376,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.RAYQUAZA]: [
     [ 1, Moves.TWISTER ],
+    [ 1, Moves.DRAGON_ASCENT ],
     [ 5, Moves.SCARY_FACE ],
     [ 15, Moves.CRUNCH ],
     [ 20, Moves.HYPER_VOICE ],

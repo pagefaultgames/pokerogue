@@ -131,7 +131,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.splicedIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1, 1);
     this.splicedIcon.setVisible(!!pokemon.fusionSpecies);
     if (this.splicedIcon.visible) {
-      this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${pokemon.species.name}/${pokemon.fusionSpecies.name}`));
+      this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${pokemon.species.getName(pokemon.formIndex)}/${pokemon.fusionSpecies.getName(pokemon.fusionFormIndex)}`));
       this.splicedIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
     }
 

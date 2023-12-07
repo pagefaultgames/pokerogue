@@ -89,7 +89,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     super(scene, x, y);
 
     if (!species.isObtainable() && this.isPlayer())
-      throw `Cannot create a player Pokemon for species '${species.name}'`;
+      throw `Cannot create a player Pokemon for species '${species.getName(formIndex)}'`;
 
     const hiddenAbilityChance = new Utils.IntegerHolder(256);
     if (!this.hasTrainer())
@@ -234,10 +234,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   generateName(): void {
     if (!this.fusionSpecies) {
-      this.name = this.species.name;
+      this.name = this.species.getName(this.formIndex);
       return;
     }
-    this.name = getFusedSpeciesName(this.species.name, this.fusionSpecies.name);
+    this.name = getFusedSpeciesName(this.species.getName(this.formIndex), this.fusionSpecies.getName(this.fusionFormIndex));
     this.updateInfo(true);
   }
 
@@ -286,6 +286,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.load.start();
         });
     });
+  }
+
+  getFormKey(): string {
+    if (!this.species.forms.length || this.species.forms.length <= this.formIndex)
+      return '';
+    return this.species.forms[this.formIndex].formKey;
+  }
+
+  getFusionFormKey(): string {
+    if (!this.fusionSpecies)
+      return null;
+    if (!this.fusionSpecies.forms.length || this.fusionSpecies.forms.length <= this.fusionFormIndex)
+      return '';
+    return this.fusionSpecies.forms[this.fusionFormIndex].formKey;
   }
 
   getSpriteAtlasPath(ignoreOverride?: boolean): string {
@@ -1690,6 +1704,7 @@ export class PlayerPokemon extends Pokemon {
     return new Promise(resolve => {
       this.handleSpecialEvolutions(evolution);
       this.species = getPokemonSpecies(evolution.speciesId);
+      this.formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0);
       this.generateName();
       const abilityCount = this.getSpeciesForm().getAbilityCount();
       if (this.abilityIndex >= abilityCount) // Shouldn't happen
@@ -1794,7 +1809,7 @@ export class EnemyPokemon extends Pokemon {
       let prevolution: Species;
       let speciesId = species.speciesId;
       while ((prevolution = pokemonPrevolutions[speciesId])) {
-        const evolution = pokemonEvolutions[prevolution].find(pe => pe.speciesId === speciesId);
+        const evolution = pokemonEvolutions[prevolution].find(pe => pe.speciesId === speciesId && (!pe.evoFormKey || pe.evoFormKey === this.getFormKey()));
         if (evolution.condition?.enforceFunc)
           evolution.condition.enforceFunc(this);
         speciesId = prevolution;

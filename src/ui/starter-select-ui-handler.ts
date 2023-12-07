@@ -1,5 +1,5 @@
 import BattleScene, { Button } from "../battle-scene";
-import PokemonSpecies, { allSpecies, getPokemonSpecies, speciesStarters as speciesStarterValues } from "../data/pokemon-species";
+import PokemonSpecies, { SpeciesFormKey, allSpecies, getPokemonSpecies, speciesStarters as speciesStarterValues } from "../data/pokemon-species";
 import { Species } from "../data/species";
 import { TextStyle, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
@@ -742,7 +742,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
           this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);
           this.canCycleAbility = [ dexEntry.caughtAttr & DexAttr.ABILITY_1, dexEntry.caughtAttr & DexAttr.ABILITY_2, dexEntry.caughtAttr & DexAttr.ABILITY_HIDDEN ].filter(a => a).length > 1;
-          this.canCycleForm = species.forms.map((_, f) => dexEntry.caughtAttr & this.scene.gameData.getFormAttr(f)).filter(a => a).length > 1;
+          this.canCycleForm = species.forms.filter(f => !f.formKey || f.formKey.indexOf(SpeciesFormKey.MEGA) === -1)
+            .map((_, f) => dexEntry.caughtAttr & this.scene.gameData.getFormAttr(f)).filter(a => a).length > 1;
         }
 
         if (dexEntry.caughtAttr && species.malePercent !== null) {

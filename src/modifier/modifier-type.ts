@@ -13,6 +13,7 @@ import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berr
 import { Unlockables } from '../system/unlockables';
 import { GameMode } from '../game-mode';
 import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
+import { SpeciesFormKey } from '../data/pokemon-species';
 
 type Modifier = Modifiers.Modifier;
 
@@ -403,45 +404,18 @@ export class TmModifierType extends PokemonModifierType {
   }
 }
 
-function getEvolutionItemName(evolutionItem: EvolutionItem) {
-  switch (evolutionItem) {
-    case EvolutionItem.LINKING_CORD:
-      return 'Linking Cord';
-    case EvolutionItem.SUN_STONE:
-      return 'Sun Stone';
-    case EvolutionItem.MOON_STONE:
-      return 'Moon Stone';
-    case EvolutionItem.LEAF_STONE:
-      return 'Leaf Stone';
-    case EvolutionItem.FIRE_STONE:
-      return 'Fire Stone';
-    case EvolutionItem.WATER_STONE:
-      return 'Water Stone';
-    case EvolutionItem.THUNDER_STONE:
-      return 'Thunder Stone';
-    case EvolutionItem.ICE_STONE:
-      return 'Ice Stone';
-    case EvolutionItem.DUSK_STONE:
-      return 'Dusk Stone';
-    case EvolutionItem.DAWN_STONE:
-      return 'Dawn Stone';
-    case EvolutionItem.SHINY_STONE:
-      return 'Shiny Stone';
-  }
-}
-
 export class EvolutionItemModifierType extends PokemonModifierType implements GeneratedPersistentModifierType {
   public evolutionItem: EvolutionItem;
 
   constructor(evolutionItem: EvolutionItem) {
-    super(getEvolutionItemName(evolutionItem), `Causes certain Pokémon to evolve`, (_type, args) => new Modifiers.EvolutionItemModifier(this, (args[0] as PlayerPokemon).id),
+    super(Utils.toReadableString(EvolutionItem[evolutionItem]), `Causes certain Pokémon to evolve`, (_type, args) => new Modifiers.EvolutionItemModifier(this, (args[0] as PlayerPokemon).id),
     (pokemon: PlayerPokemon) => {
       if (pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) && pokemonEvolutions[pokemon.species.speciesId].filter(e => e.item === this.evolutionItem
         && (!e.condition || e.condition.predicate(pokemon))).length)
         return null;
 
       return PartyUiHandler.NoEffectMessage;
-    }, getEvolutionItemName(evolutionItem).replace(/[ \-]/g, '_').toLowerCase());
+    }, EvolutionItem[evolutionItem].toLowerCase());
 
     this.evolutionItem = evolutionItem;
   }
@@ -529,15 +503,15 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
 }
 
 class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
-  constructor() {
+  constructor(mega: boolean) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs)
         return new EvolutionItemModifierType(pregenArgs[0] as EvolutionItem);
 
       const evolutionItemPool = party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
-        const evolutions = pokemonEvolutions[p.species.speciesId]
-        return evolutions.filter(e => e.item !== EvolutionItem.NONE && (!e.condition || e.condition.predicate(p)));
-      }).flat().flatMap(e => e.item);
+        const evolutions = pokemonEvolutions[p.species.speciesId];
+        return evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || '') === p.getFormKey()) && (!e.condition || e.condition.predicate(p)));
+      }).flat().filter(e => (e.item >= 100) === mega).flatMap(e => e.item);
 
       if (!evolutionItemPool.length)
         return null;
@@ -598,7 +572,10 @@ export const modifierTypes = {
   RARE_CANDY: () => new PokemonLevelIncrementModifierType('Rare Candy'),
   RARER_CANDY: () => new AllPokemonLevelIncrementModifierType('Rarer Candy'),
 
-  EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(),
+  EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(false),
+  MEGA_EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(true),
+
+  MEGA_BRACELET: () => new ModifierType('Mega Bracelet', 'Allows access to mega stones', (type, _args) => new Modifiers.MegaEvolutionAccessModifier(type)),
 
   MAP: () => new ModifierType('Map', 'Allows you to choose your destination at a crossroads', (type, _args) => new Modifiers.MapModifier(type)),
 
@@ -828,11 +805,13 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.IV_SCANNER, 2),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 1),
     new WeightedModifierType(modifierTypes.COIN_CASE, 1),
+    new WeightedModifierType(modifierTypes.MEGA_EVOLUTION_ITEM, (party: Pokemon[]) => party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length && !party.filter(p => p.getFormKey().indexOf(SpeciesFormKey.MEGA) > -1).length ? 1 : 0),
     new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 3 : 0),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 3),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 2),
+    new WeightedModifierType(modifierTypes.MEGA_BRACELET, 1),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => !p.fusionSpecies).length > 1 ? 1 : 0),
     new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 1 : 0),
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),

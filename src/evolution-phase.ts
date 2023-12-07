@@ -6,6 +6,8 @@ import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
 import { LearnMovePhase } from "./battle-phases";
+import { SpeciesFormKey } from "./data/pokemon-species";
+import { achvs } from "./system/achv";
 
 export class EvolutionPhase extends BattlePhase {
   private partyMemberIndex: integer;
@@ -35,10 +37,8 @@ export class EvolutionPhase extends BattlePhase {
 
     this.scene.ui.setModeForceTransition(Mode.EVOLUTION_SCENE).then(() => {
 
-      if (!this.evolution) {
-        this.end();
-        return;
-      }
+      if (!this.evolution)
+        return this.end();
 
       this.scene.fadeOutBgm(null, false);
 
@@ -176,6 +176,8 @@ export class EvolutionPhase extends BattlePhase {
                                         pokemon.cry();
                                         this.scene.time.delayedCall(1250, () => {
                                           this.scene.playSoundWithoutBgm('evolution_fanfare');
+                                          if (this.evolution.evoFormKey && this.evolution.evoFormKey.indexOf(SpeciesFormKey.MEGA) > -1)
+                                            this.scene.validateAchv(achvs.MEGA_EVOLVE);
                                           this.scene.ui.showText(`Congratulations! Your ${preName}\nevolved into ${pokemon.name}!`, null, () => this.end(), null, true, 3000);
                                           this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
                                         });

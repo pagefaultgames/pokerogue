@@ -45,10 +45,8 @@ export class CheckLoadPhase extends BattlePhase {
   }
 
   start(): void {
-    if (!this.scene.gameData.hasSession()) {
-      this.end();
-      return;
-    }
+    if (!this.scene.gameData.hasSession())
+      return this.end();
 
     this.scene.ui.showText('You currently have a session in progress.\nWould you like to continue where you left off?', null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
@@ -1483,8 +1481,7 @@ export class MovePhase extends BattlePhase {
     if (!this.canMove()) {
       if (this.move.moveId && this.pokemon.summonData.disabledMove === this.move.moveId)
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
-      this.end();
-      return;
+      return this.end();
     }
 
     if (this.targets.length === 1 && this.targets[0] === BattlerIndex.ATTACKER) {
@@ -1515,8 +1512,7 @@ export class MovePhase extends BattlePhase {
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
         if (this.cancelled) {
           this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
-          this.end();
-          return;
+          return this.end();
         }
       }
 
@@ -1532,8 +1528,7 @@ export class MovePhase extends BattlePhase {
 
       if (this.cancelled) {
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
-        this.end();
-        return;
+        return this.end();
       }
 
       if (!moveQueue.length || !moveQueue.shift().ignorePP) {
@@ -1640,15 +1635,16 @@ export class MoveEffectPhase extends PokemonPhase {
     const user = this.getUserPokemon();
     const targets = this.getTargets();
 
+    if (!user)
+      return this.end();
+
     const overridden = new Utils.BooleanHolder(false);
 
     // Assume single target for override
     applyMoveAttrs(OverrideMoveEffectAttr, user, this.getTarget(), this.move.getMove(), overridden, this.move.virtual).then(() => {
 
-      if (overridden.value) {
-        this.end();
-        return;
-      }
+      if (overridden.value)
+        return this.end();
       
       user.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
 
@@ -1675,8 +1671,7 @@ export class MoveEffectPhase extends PokemonPhase {
           this.scene.queueMessage('But it failed!');
           moveHistoryEntry.result = MoveResult.FAIL;
         }
-        this.end();
-        return;
+        return this.end();
       }
 
       const applyAttrs: Promise<void>[] = [];
@@ -2653,10 +2648,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
 
     const existingMoveIndex = pokemon.getMoveset().findIndex(m => m?.moveId === move.id);
 
-    if (existingMoveIndex > -1) {
-      this.end();
-      return;
-    }
+    if (existingMoveIndex > -1)
+      return this.end();
 
     const emptyMoveIndex = pokemon.getMoveset().length < 4
       ? pokemon.getMoveset().length
@@ -2819,10 +2812,8 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
 
-    if (!pokemon?.hp) {
-      this.end();
-      return;
-    }
+    if (!pokemon?.hp)
+      return this.end();
 
     this.scene.pokeballCounts[this.pokeballType]--;
 

@@ -5,7 +5,7 @@ import { getLevelTotalExp } from "../data/exp";
 import { PokeballType } from "../data/pokeball";
 import Pokemon, { PlayerPokemon } from "../pokemon";
 import { Stat } from "../data/pokemon-stat";
-import { addTextObject, getModifierTierTextTint, TextStyle } from "../ui/text";
+import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from '../data/type';
 import { EvolutionPhase } from '../evolution-phase';
 import { pokemonEvolutions } from '../data/pokemon-evolutions';
@@ -13,7 +13,6 @@ import { getPokemonMessage } from '../messages';
 import * as Utils from "../utils";
 import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
-import { Species } from '../data/species';
 import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
 import { MoneyAchv } from '../system/achv';
 
@@ -331,6 +330,24 @@ export class MapModifier extends PersistentModifier {
   
   clone(): MapModifier {
     return new MapModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    return true;
+  }
+
+  getMaxStackCount(): integer {
+    return 1;
+  }
+}
+
+export class MegaEvolutionAccessModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+  
+  clone(): MegaEvolutionAccessModifier {
+    return new MegaEvolutionAccessModifier(this.type, this.stackCount);
   }
 
   apply(args: any[]): boolean {
@@ -909,6 +926,7 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
     const pokemon = args[0] as PlayerPokemon;
 
     const matchingEvolution = pokemonEvolutions[pokemon.species.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
+      && (e.evoFormKey === null || (e.preFormKey || '') === pokemon.getFormKey())
       && (!e.condition || e.condition.predicate(pokemon)));
 
     if (matchingEvolution) {
