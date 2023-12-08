@@ -575,7 +575,7 @@ export const modifierTypes = {
   EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(false),
   MEGA_EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(true),
 
-  MEGA_BRACELET: () => new ModifierType('Mega Bracelet', 'Allows access to mega stones', (type, _args) => new Modifiers.MegaEvolutionAccessModifier(type)),
+  MEGA_BRACELET: () => new ModifierType('Mega Bracelet', 'Mega stones become available', (type, _args) => new Modifiers.MegaEvolutionAccessModifier(type)),
 
   MAP: () => new ModifierType('Map', 'Allows you to choose your destination at a crossroads', (type, _args) => new Modifiers.MapModifier(type)),
 

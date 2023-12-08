@@ -1,4 +1,5 @@
 import BattleScene from "./battle-scene";
+import { pokemonPrevolutions } from "./data/pokemon-evolutions";
 import PokemonSpecies, { getPokemonSpecies } from "./data/pokemon-species";
 import { TrainerConfig, TrainerPartyCompoundTemplate, TrainerPartyMemberStrength, TrainerPartyTemplate, TrainerPoolTier, TrainerType, trainerConfigs, trainerPartyTemplates } from "./data/trainer-type";
 import { EnemyPokemon } from "./pokemon";
@@ -146,7 +147,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const battle = this.scene.currentBattle;
     const template = this.getPartyTemplate();
 
-    let ret: PokemonSpecies;
+    let species: PokemonSpecies;
     if (this.config.speciesPools) {
       const tierValue = Utils.randSeedInt(512);
       let tier = tierValue >= 156 ? TrainerPoolTier.COMMON : tierValue >= 32 ? TrainerPoolTier.UNCOMMON : tierValue >= 6 ? TrainerPoolTier.RARE : tierValue >= 1 ? TrainerPoolTier.SUPER_RARE : TrainerPoolTier.ULTRA_RARE
@@ -156,14 +157,26 @@ export default class Trainer extends Phaser.GameObjects.Container {
         tier--;
       }
       const tierPool = this.config.speciesPools[tier];
-      ret = getPokemonSpecies(getPokemonSpecies(Phaser.Math.RND.pick(tierPool)).getSpeciesForLevel(level, true));
+      species = getPokemonSpecies(Phaser.Math.RND.pick(tierPool));
     } else
-      ret = getPokemonSpecies(this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter).getSpeciesForLevel(level, true));
+      species = this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
 
-    if (template.isBalanced(battle.enemyParty.length)) {
+    let ret = getPokemonSpecies(species.getSpeciesForLevel(level, true));
+    let retry = false;
+
+    console.log(ret.getName());
+
+    if (pokemonPrevolutions.hasOwnProperty(species.speciesId) && ret.speciesId !== species.speciesId)
+      retry = true;
+    else if (template.isBalanced(battle.enemyParty.length)) {
       const partyMemberTypes = battle.enemyParty.map(p => p.getTypes()).flat();
-      if ((attempt || 0) < 10 && (partyMemberTypes.indexOf(ret.type1) > -1 || (ret.type2 !== null && partyMemberTypes.indexOf(ret.type2) > -1)))
-        ret = this.genNewPartyMemberSpecies(level, (attempt || 0) + 1);
+      if (partyMemberTypes.indexOf(ret.type1) > -1 || (ret.type2 !== null && partyMemberTypes.indexOf(ret.type2) > -1))
+        retry = true;
+    }
+
+    if (retry && (attempt || 0) < 10) {
+      console.log('Rerolling party member...')
+      ret = this.genNewPartyMemberSpecies(level, (attempt || 0) + 1);
     }
 
     return ret;
