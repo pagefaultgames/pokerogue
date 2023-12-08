@@ -22,6 +22,7 @@ export interface Starter {
   pokerus: boolean;
 }
 
+const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI' ];
 const ivChartSize = 24;
 const ivChartStatCoordMultipliers = [ [ 0, 1 ], [ 0.825, 0.5 ], [ 0.825, -0.5 ], [ 0, -1 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ] ];
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
@@ -37,6 +38,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private pokemonGenderText: Phaser.GameObjects.Text;
     private pokemonAbilityLabelText: Phaser.GameObjects.Text;
     private pokemonAbilityText: Phaser.GameObjects.Text;
+    private genOptionsText: Phaser.GameObjects.Text;
     private instructionsText: Phaser.GameObjects.Text;
     private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
     private statsContainer: Phaser.GameObjects.Container;
@@ -48,6 +50,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private statsIvsCache: integer[];
     private dexAttrCursor: bigint = 0n;
     private genCursor: integer = 0;
+    private genScrollCursor: integer = 0;
 
     private genSpecies: PokemonSpecies[][] = [];
     private lastSpecies: PokemonSpecies;
@@ -132,11 +135,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonAbilityText.setOrigin(0, 0);
       this.starterSelectContainer.add(this.pokemonAbilityText);
 
-      const genText = addTextObject(this.scene, 115, 6, 'I\nII\nIII\nIV\nV', TextStyle.WINDOW);
-      genText.setLineSpacing(16);
-      this.starterSelectContainer.add(genText);
+      this.genOptionsText = addTextObject(this.scene, 115, 6, '', TextStyle.WINDOW);
+      this.genOptionsText.setLineSpacing(16);
+      this.starterSelectContainer.add(this.genOptionsText);
 
-      this.starterSelectGenIconContainers = new Array(5).fill(null).map((_, i) => {
+      this.updateGenOptions();
+
+      this.starterSelectGenIconContainers = new Array(gens.length).fill(null).map((_, i) => {
         const container = this.scene.add.container(149, 9);
         if (i)
           container.setVisible(false);
@@ -193,7 +198,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.genSpecies.push([]);
 
         for (let species of allSpecies) {
-          if (species.generation > 5)
+          if (species.generation > gens.length)
             break;
           if (!speciesStarterValues.hasOwnProperty(species.speciesId) || species.generation !== g + 1)
             continue;
@@ -428,12 +433,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               ui.setMode(Mode.STARTER_SELECT);
               let isDupe = false;
               for (let s = 0; s < this.starterCursors.length; s++) {
-                if (this.starterGens[s] === this.genCursor && this.starterCursors[s] === this.cursor) {
+                if (this.starterGens[s] === this.getGenCursorWithScroll() && this.starterCursors[s] === this.cursor) {
                   isDupe = true;
                   break;
                 }
               }
-              const species = this.genSpecies[this.genCursor][this.cursor];
+              const species = this.genSpecies[this.getGenCursorWithScroll()][this.cursor];
               if (!isDupe && this.tryUpdateValue(speciesStarterValues[species.speciesId])) {
                 const cursorObj = this.starterCursorObjs[this.starterCursors.length];
                 cursorObj.setVisible(true);
@@ -441,7 +446,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
                 this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex));
                 this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny));
-                this.starterGens.push(this.genCursor);
+                this.starterGens.push(this.getGenCursorWithScroll());
                 this.starterCursors.push(this.cursor);
                 this.starterAttr.push(this.dexAttrCursor);
                 if (this.speciesLoaded.get(species.speciesId))
@@ -468,7 +473,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.updateInstructions();
           }
         } else {
-          const genStarters = this.starterSelectGenIconContainers[this.genCursor].getAll().length;
+          const genStarters = this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAll().length;
           const rows = Math.ceil(genStarters / 9);
           const row = Math.floor(this.cursor / 9);
           const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
@@ -593,37 +598,69 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (this.genMode) {
         changed = this.genCursor !== cursor;
 
-        if (this.genCursor !== undefined)
-          this.starterSelectGenIconContainers[this.genCursor].setVisible(false);
+        let genCursorWithScroll = this.getGenCursorWithScroll();
+
+        if (!cursor && this.genScrollCursor) {
+          this.genScrollCursor--;
+          cursor++;
+          this.updateGenOptions();
+        } else if (cursor === 4 && this.genScrollCursor < gens.length - 5) {
+          this.genScrollCursor++;
+          cursor--;
+          this.updateGenOptions();
+        }
+
+        if (genCursorWithScroll !== undefined)
+          this.starterSelectGenIconContainers[genCursorWithScroll].setVisible(false);
         this.cursor = 0;
         this.genCursor = cursor;
+        genCursorWithScroll = this.getGenCursorWithScroll();
         this.genCursorObj.setY(5 + 17 * this.genCursor);
         this.genCursorHighlightObj.setY(this.genCursorObj.y);
-        this.starterSelectGenIconContainers[this.genCursor].setVisible(true);
+        this.starterSelectGenIconContainers[genCursorWithScroll].setVisible(true);
 
         for (let s = 0; s < this.starterCursorObjs.length; s++)
-          this.starterCursorObjs[s].setVisible(this.starterGens[s] === cursor);
+          this.starterCursorObjs[s].setVisible(this.starterGens[s] === genCursorWithScroll);
         for (let s = 0; s < this.pokerusCursorObjs.length; s++)
-          this.pokerusCursorObjs[s].setVisible(this.pokerusGens[s] === cursor);
+          this.pokerusCursorObjs[s].setVisible(this.pokerusGens[s] === genCursorWithScroll);
 
-        const genLimit = this.genSpecies[this.genCursor].length;
+        const genLimit = this.genSpecies[genCursorWithScroll].length;
         for (let s = 0; s < 81; s++) {
-          const slotVisible = s < genLimit && !!(this.scene.gameData.dexData[this.genSpecies[this.genCursor][s].speciesId].caughtAttr);
-          this.starterValueLabels[s].setText(slotVisible ? speciesStarterValues[this.genSpecies[this.genCursor][s].speciesId] : 0);
+          const slotVisible = s < genLimit && !!(this.scene.gameData.dexData[this.genSpecies[genCursorWithScroll][s].speciesId].caughtAttr);
+          this.starterValueLabels[s].setText(slotVisible ? speciesStarterValues[this.genSpecies[genCursorWithScroll][s].speciesId] : 0);
           this.starterValueLabels[s].setVisible(slotVisible);
-          this.shinyIcons[s].setVisible(slotVisible && !!(this.scene.gameData.dexData[this.genSpecies[this.genCursor][s].speciesId].caughtAttr & DexAttr.SHINY));
+          this.shinyIcons[s].setVisible(slotVisible && !!(this.scene.gameData.dexData[this.genSpecies[genCursorWithScroll][s].speciesId].caughtAttr & DexAttr.SHINY));
         }
       } else {
         changed = super.setCursor(cursor);
 
         this.cursorObj.setPosition(148 + 18 * (cursor % 9), 10 + 18 * Math.floor(cursor / 9));
 
-        this.setSpecies(this.genSpecies[this.genCursor][cursor]);
+        this.setSpecies(this.genSpecies[this.getGenCursorWithScroll()][cursor]);
 
         this.updateInstructions();
       }
   
       return changed;
+    }
+
+    getGenCursorWithScroll(): integer {
+      return this.genCursor !== undefined
+        ? this.genCursor + this.genScrollCursor
+        : undefined;
+    }
+
+    updateGenOptions(): void {
+      let text = '';
+      for (let g = this.genScrollCursor; g <= this.genScrollCursor + 4; g++) {
+        let optionText = gens[g];
+        if (g === this.genScrollCursor && this.genScrollCursor)
+          optionText = '↑';
+        else if (g === this.genScrollCursor + 4 && this.genScrollCursor < gens.length - 5)
+          optionText = '↓'
+        text += `${text ? '\n' : ''}${optionText}`;
+      }
+      this.genOptionsText.setText(text);
     }
 
     setGenMode(genMode: boolean): boolean {
@@ -737,7 +774,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.pokemonSprite.setVisible(!this.statsMode);
           });
 
-          (this.starterSelectGenIconContainers[this.genCursor].getAt(this.cursor) as Phaser.GameObjects.Sprite).setFrame(species.getIconId(female, formIndex, shiny));
+          (this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAt(this.cursor) as Phaser.GameObjects.Sprite).setFrame(species.getIconId(female, formIndex, shiny));
 
           this.canCycleShiny = !!(dexEntry.caughtAttr & DexAttr.NON_SHINY && dexEntry.caughtAttr & DexAttr.SHINY);
           this.canCycleGender = !!(dexEntry.caughtAttr & DexAttr.MALE && dexEntry.caughtAttr & DexAttr.FEMALE);

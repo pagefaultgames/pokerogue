@@ -338,7 +338,11 @@ export class GameData {
       Species.CHIKORITA, Species.CYNDAQUIL, Species.TOTODILE,
       Species.TREECKO, Species.TORCHIC, Species.MUDKIP,
       Species.TURTWIG, Species.CHIMCHAR, Species.PIPLUP,
-      Species.SNIVY, Species.TEPIG, Species.OSHAWOTT
+      Species.SNIVY, Species.TEPIG, Species.OSHAWOTT,
+      Species.CHESPIN, Species.FENNEKIN, Species.FROAKIE,
+      Species.ROWLET, Species.LITTEN, Species.POPPLIO,
+      Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE,
+      Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY
     ];
 
     const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.ABILITY_1 | DexAttr.DEFAULT_FORM;

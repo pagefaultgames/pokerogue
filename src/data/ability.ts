@@ -1683,7 +1683,7 @@ export function initAbilities() {
     new Ability(Abilities.FOREWARN, "Forewarn (N)", "When it enters a battle, the Pokémon can tell one of\nthe moves an opposing Pokémon has.", 4),
     new Ability(Abilities.UNAWARE, "Unaware", "When attacking, the Pokémon ignores the target\nPokémon's stat changes.", 4)
       .attr(IgnoreOpponentStatChangesAbAttr),
-    new Ability(Abilities.TINTED_LENS, "Tinted Lens (N)", "The Pokémon can use “not very effective” moves\nto deal regular damage.", 4),
+    new Ability(Abilities.TINTED_LENS, "Tinted Lens (N)", "The Pokémon can use \"not very effective\" moves\nto deal regular damage.", 4),
     new Ability(Abilities.FILTER, "Filter (N)", "Reduces the power of supereffective attacks taken.", 4),
     new Ability(Abilities.SLOW_START, "Slow Start (N)", "For five turns, the Pokémon's Attack and Speed\nstats are halved.", 4),
     new Ability(Abilities.SCRAPPY, "Scrappy (N)", "The Pokémon can hit Ghost-type Pokémon with\nNormal- and Fighting-type moves.", 4),
@@ -1774,9 +1774,11 @@ export function initAbilities() {
     new Ability(Abilities.PARENTAL_BOND, "Parental Bond (N)", "Parent and child each attacks.", 6),
     new Ability(Abilities.DARK_AURA, "Dark Aura (N)", "Powers up each Pokémon's Dark-type moves.", 6),
     new Ability(Abilities.FAIRY_AURA, "Fairy Aura (N)", "Powers up each Pokémon's Fairy-type moves.", 6),
-    new Ability(Abilities.AURA_BREAK, "Aura Break (N)", "The effects of “Aura” Abilities are reversed\nto lower the power of affected moves.", 6),
-    new Ability(Abilities.PRIMORDIAL_SEA, "Primordial Sea (N)", "The Pokémon changes the weather to nullify\nFire-type attacks.", 6),
-    new Ability(Abilities.DESOLATE_LAND, "Desolate Land (N)", "The Pokémon changes the weather to nullify\nWater-type attacks.", 6),
+    new Ability(Abilities.AURA_BREAK, "Aura Break (N)", "The effects of \"Aura\" Abilities are reversed\nto lower the power of affected moves.", 6),
+    new Ability(Abilities.PRIMORDIAL_SEA, "Primordial Sea", "The Pokémon changes the weather to nullify\nFire-type attacks.", 6)
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN),
+    new Ability(Abilities.DESOLATE_LAND, "Desolate Land", "The Pokémon changes the weather to nullify\nWater-type attacks.", 6)
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN),
     new Ability(Abilities.DELTA_STREAM, "Delta Stream", "The Pokémon changes the weather to eliminate all\nof the Flying type's weaknesses.", 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS),
     new Ability(Abilities.STAMINA, "Stamina (N)", "Boosts the Defense stat when hit by an attack.", 7),

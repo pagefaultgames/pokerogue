@@ -131,6 +131,10 @@ export class Arena {
             return 2;
         }
         break;
+      case Species.SCATTERBUG:
+      case Species.SPEWPA:
+      case Species.VIVILLON:
+        return 0;
     }
 
     return 0;

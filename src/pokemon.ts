@@ -1704,7 +1704,8 @@ export class PlayerPokemon extends Pokemon {
     return new Promise(resolve => {
       this.handleSpecialEvolutions(evolution);
       this.species = getPokemonSpecies(evolution.speciesId);
-      this.formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0);
+      if (evolution.preFormKey !== null)
+        this.formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0);
       this.generateName();
       const abilityCount = this.getSpeciesForm().getAbilityCount();
       if (this.abilityIndex >= abilityCount) // Shouldn't happen
