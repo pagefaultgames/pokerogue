@@ -879,7 +879,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CLAWITZER, 37, null, null)
   ],
   [Species.TYRUNT]: [
-    new SpeciesEvolution(Species.TYRANTRUM, 39, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.TYRANTRUM, 39, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.AMAURA]: [
     new SpeciesEvolution(Species.AURORUS, 39, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
