@@ -870,7 +870,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.MALAMAR, 30, null, null)
   ],
   [Species.BINACLE]: [
-    new SpeciesEvolution(Species.MALAMAR, 39, null, null)
+    new SpeciesEvolution(Species.BARBARACLE, 39, null, null)
   ],
   [Species.SKRELP]: [
     new SpeciesEvolution(Species.DRAGALGE, 48, null, null)
