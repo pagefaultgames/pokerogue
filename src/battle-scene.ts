@@ -636,7 +636,27 @@ export default class BattleScene extends Phaser.Scene {
 					newBattleType = BattleType.TRAINER;
 				else if (newWaveIndex % 10 !== 1 && newWaveIndex % 10) {
 					const trainerChance = this.arena.getTrainerChance();
-					newBattleType = trainerChance && !Utils.randSeedInt(trainerChance) ? BattleType.TRAINER : BattleType.WILD;
+					let allowTrainerBattle = true;
+					if (trainerChance && this.gameMode === GameMode.CLASSIC) {
+						const waveBase = Math.floor(newWaveIndex / 10) * 10;
+						for (let w = Math.max(newWaveIndex - 3, waveBase + 2); w <= Math.min(newWaveIndex + 3, waveBase + 9); w++) {
+							if (w === newWaveIndex)
+								continue;
+							if (((w > 20 && !(w % 30)) || fixedBattles.hasOwnProperty(w))) {
+								allowTrainerBattle = false;
+								break;
+							} else if (w < newWaveIndex) {
+								this.executeWithSeedOffset(() => {
+									const waveTrainerChance = this.arena.getTrainerChance();
+									if (!Utils.randSeedInt(waveTrainerChance))
+										allowTrainerBattle = false;
+								}, w);
+								if (!allowTrainerBattle)
+									break;
+							}
+						}
+					}
+					newBattleType = allowTrainerBattle && trainerChance && !Utils.randSeedInt(trainerChance) ? BattleType.TRAINER : BattleType.WILD;
 				} else
 					newBattleType = BattleType.WILD;
 			} else

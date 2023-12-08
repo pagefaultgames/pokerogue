@@ -1,5 +1,5 @@
 import BattleScene, { startingWave } from "../battle-scene";
-import { ModifierType, ModifierTypeFunc, modifierTypes } from "../modifier/modifier-type";
+import { ModifierTypeFunc, modifierTypes } from "../modifier/modifier-type";
 import { EnemyPokemon } from "../pokemon";
 import * as Utils from "../utils";
 import { Moves } from "./move";
