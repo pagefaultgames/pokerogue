@@ -1739,12 +1739,14 @@ export class MoveEffectPhase extends PokemonPhase {
 
   end() {
     const user = this.getUserPokemon();
-    if (--user.turnData.hitsLeft >= 1 && this.getTarget()?.isActive())
-      this.scene.unshiftPhase(this.getNewHitPhase());
-    else {
-      if (user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0) > 1)
-        this.scene.queueMessage(`Hit ${user.turnData.hitCount} time(s)!`);
-      this.scene.applyModifiers(HitHealModifier, this.player, user);
+    if (user) {
+      if (--user.turnData.hitsLeft >= 1 && this.getTarget()?.isActive())
+        this.scene.unshiftPhase(this.getNewHitPhase());
+      else {
+        if (user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0) > 1)
+          this.scene.queueMessage(`Hit ${user.turnData.hitCount} time(s)!`);
+        this.scene.applyModifiers(HitHealModifier, this.player, user);
+      }
     }
     
     super.end();
