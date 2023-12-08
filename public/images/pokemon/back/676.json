@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "676_1sb.png",
+			"image": "676.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 62,
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:c9407a4580cd8dc7718cc4c6af76836d:bd484e46c9799ee50c2259ba186713c1:40e67cdea1677938075c94bcc766dcd9$"
+		"smartupdate": "$TexturePacker:SmartUpdate:badacec3b3abfaa76c721ea2107066b8:dea33248d6a9173ac5a57bcb5be6b7e9:cca1c4f30d720332af93db0a5b2db8ec$"
 	}
 }

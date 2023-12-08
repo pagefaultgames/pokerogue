@@ -57,7 +57,6 @@ export default class PokemonIconAnimHandler {
           : 0;
         const yDelta = this.getModeYDelta(mode);
         i.y += yDelta + lastYDelta;
-        console.log(yDelta - lastYDelta)
       }
       this.icons.set(i, mode);
     }

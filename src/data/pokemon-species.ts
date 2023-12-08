@@ -2108,13 +2108,6 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.PALDEA_WOOPER, "Wooper", 9, false, false, false, "Water Fish Pokémon", Type.POISON, Type.GROUND, 0.4, 11, Abilities.POISON_POINT, Abilities.WATER_ABSORB, Abilities.UNAWARE, 210, 55, 45, 45, 25, 25, 15, 255, 50, null, GrowthRate.MEDIUM_FAST, 50, true),
   );
-
-  var s = '';
-
-  for (let species of allSpecies.filter(s => s.generation >= 6 && !pokemonPrevolutions.hasOwnProperty(s.speciesId))) {
-    s += `  [Species.${Species[species.speciesId]}]: 3,\n`
-  }
-  console.log(s)
 }
 
 export const speciesStarters = {
