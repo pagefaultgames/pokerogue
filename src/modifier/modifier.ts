@@ -462,6 +462,10 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
   getTransferrable(_withinParty: boolean): boolean {
     return false;
   }
+
+  getMaxStackCount(): integer {
+    return 10;
+  }
 }
 
 export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
@@ -750,7 +754,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
   }
 
   getMaxStackCount(): integer {
-    return 10;
+    return 1;
   }
 }
 
