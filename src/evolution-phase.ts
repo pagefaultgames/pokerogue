@@ -104,7 +104,7 @@ export class EvolutionPhase extends BattlePhase {
           });
         });
 
-        const levelMoves = pokemon.getLevelMoves(this.lastLevel + 1);
+        const levelMoves = pokemon.getLevelMoves(this.lastLevel + 1, true);
         for (let lm of levelMoves)
           this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm));  
         this.scene.unshiftPhase(new EndEvolutionPhase(this.scene));
