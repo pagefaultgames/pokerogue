@@ -21,7 +21,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
     this.add(this.bg);
 
-    this.pokemonIcon = this.scene.add.sprite(3, 7, 'pokemon_icons_0');
+    this.pokemonIcon = this.scene.add.sprite(1, 9, 'pokemon_icons_0');
     this.pokemonIcon.setOrigin(0, 0.5);
     this.pokemonIcon.setScale(0.5);
     this.add(this.pokemonIcon);
