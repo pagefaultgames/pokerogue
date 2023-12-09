@@ -2458,7 +2458,7 @@ export const speciesStarters = {
   [Species.PANCHAM]: 3,
   [Species.FURFROU]: 4,
   [Species.ESPURR]: 3,
-  [Species.HONEDGE]: 3,
+  [Species.HONEDGE]: 4,
   [Species.SPRITZEE]: 3,
   [Species.SWIRLIX]: 3,
   [Species.INKAY]: 3,

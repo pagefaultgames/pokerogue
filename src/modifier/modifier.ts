@@ -111,10 +111,10 @@ export abstract class PersistentModifier extends Modifier {
     this.virtualStackCount = 0;
   }
 
-  add(modifiers: PersistentModifier[], virtual: boolean): boolean {
+  add(modifiers: PersistentModifier[], virtual: boolean, scene: BattleScene): boolean {
     for (let modifier of modifiers) {
       if (this.match(modifier))
-        return modifier.incrementStack(this.stackCount, virtual);
+        return modifier.incrementStack(scene, this.stackCount, virtual);
     }
 
     if (virtual) {
@@ -131,8 +131,8 @@ export abstract class PersistentModifier extends Modifier {
     return [];
   }
 
-  incrementStack(amount: integer, virtual: boolean): boolean {
-    if (this.getStackCount() + amount <= this.getMaxStackCount()) {
+  incrementStack(scene: BattleScene, amount: integer, virtual: boolean): boolean {
+    if (this.getStackCount() + amount <= this.getMaxStackCount(scene)) {
       if (!virtual)
         this.stackCount += amount;
       else
@@ -147,9 +147,7 @@ export abstract class PersistentModifier extends Modifier {
     return this.stackCount + this.virtualStackCount;
   }
 
-  getMaxStackCount(): integer {
-    return 99;
-  }
+  abstract getMaxStackCount(scene: BattleScene, forThreshold?: boolean): integer
 
   isIconVisible(scene: BattleScene): boolean {
     return true;
@@ -175,10 +173,10 @@ export abstract class PersistentModifier extends Modifier {
   }
 
   getIconStackText(scene: BattleScene, virtual?: boolean): Phaser.GameObjects.Text {
-    if (this.getMaxStackCount() === 1 || (virtual && !this.virtualStackCount))
+    if (this.getMaxStackCount(scene) === 1 || (virtual && !this.virtualStackCount))
       return null;
 
-    const isStackMax = this.getStackCount() >= this.getMaxStackCount();
+    const isStackMax = this.getStackCount() >= this.getMaxStackCount(scene);
     const maxColor = '#f89890';
     const maxStrokeColor = '#984038';
 
@@ -256,6 +254,10 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
     container.add(battleCountText);
 
     return container;
+  }
+
+  getMaxStackCount(scene: BattleScene, forThreshold?: boolean): number {
+    return 99;
   }
 }
 
@@ -336,7 +338,7 @@ export class MapModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 1;
   }
 }
@@ -354,7 +356,7 @@ export class MegaEvolutionAccessModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 1;
   }
 }
@@ -425,6 +427,15 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   getPokemon(scene: BattleScene): Pokemon {
     return scene.getPokemonById(this.pokemonId);
   }
+
+  getMaxStackCount(scene: BattleScene, forThreshold?: boolean): integer {
+    const pokemon = this.getPokemon(scene);
+    if (pokemon.isPlayer() && forThreshold)
+      return scene.getParty().map(p => this.getMaxHeldItemCount(p)).reduce((stackCount: integer, maxStackCount: integer) => Math.max(stackCount, maxStackCount), 0);
+    return this.getMaxHeldItemCount(pokemon);
+  }
+
+  abstract getMaxHeldItemCount(pokemon: Pokemon): integer
 }
 
 export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
@@ -454,7 +465,7 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
   }
 
   apply(args: any[]): boolean {
-    args[1][this.stat] = Math.min(Math.floor(args[1][this.stat] * (1 + this.getStackCount() * 0.2)), 999999);
+    args[1][this.stat] = Math.min(Math.floor(args[1][this.stat] * (1 + this.getStackCount() * 0.1)), 999999);
 
     return true;
   }
@@ -463,8 +474,8 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
     return false;
   }
 
-  getMaxStackCount(): integer {
-    return 10;
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return pokemon.ivs[this.stat];
   }
 }
 
@@ -503,6 +514,10 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
 
     return true;
   }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 10;
+  }
 }
 
 export class SurviveDamageModifier extends PokemonHeldItemModifier {
@@ -536,7 +551,7 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
     return false;
   }
 
-  getMaxStackCount(): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 5;
   }
 }
@@ -569,7 +584,7 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
     return false;
   }
 
-  getMaxStackCount(): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 3;
   }
 }
@@ -600,7 +615,7 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
     return false;
   }
 
-  getMaxStackCount(): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 4;
   }
 }
@@ -630,7 +645,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 4;
   }
 }
@@ -656,6 +671,10 @@ export class LevelIncrementBoosterModifier extends PersistentModifier {
     (args[0] as Utils.IntegerHolder).value += this.getStackCount();
 
     return true;
+  }
+
+  getMaxStackCount(scene: BattleScene, forThreshold?: boolean): number {
+    return 99;
   }
 }
 
@@ -698,6 +717,10 @@ export class BerryModifier extends PokemonHeldItemModifier {
 
     return true;
   }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 10;
+  }
 }
 
 export class PreserveBerryModifier extends PersistentModifier {
@@ -719,12 +742,12 @@ export class PreserveBerryModifier extends PersistentModifier {
 
   apply(args: any[]): boolean {
     if (!(args[0] as Utils.BooleanHolder).value)
-      (args[0] as Utils.BooleanHolder).value = Utils.randInt(this.getMaxStackCount()) < this.getStackCount();
+      (args[0] as Utils.BooleanHolder).value = Utils.randInt(this.getMaxStackCount(null)) < this.getStackCount();
 
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 3;
   }
 }
@@ -753,7 +776,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 1;
   }
 }
@@ -991,7 +1014,7 @@ export class MultipleParticipantExpBonusModifier extends PersistentModifier {
     return new MultipleParticipantExpBonusModifier(this.type, this.stackCount);
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 5;
   }
 }
@@ -1024,7 +1047,7 @@ export class HealingBoosterModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 4;
   }
 }
@@ -1063,6 +1086,10 @@ export class ExpBoosterModifier extends PersistentModifier {
   getStackCount(): integer {
     return this.boostMultiplier < 1 ? super.getStackCount() : 10;
   }
+
+  getMaxStackCount(scene: BattleScene, forThreshold?: boolean): integer {
+    return 99;
+  }
 }
 
 export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
@@ -1098,6 +1125,10 @@ export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
 
     return true;
   }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 99;
+  }
 }
 
 export class ExpShareModifier extends PersistentModifier {
@@ -1117,7 +1148,7 @@ export class ExpShareModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 5;
   }
 }
@@ -1139,7 +1170,7 @@ export class ExpBalanceModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 1;
   }
 }
@@ -1163,7 +1194,7 @@ export class MoneyMultiplierModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 5;
   }
 }
@@ -1192,7 +1223,7 @@ export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 5;
   }
 }
@@ -1222,7 +1253,7 @@ export class MoneyInterestModifier extends PersistentModifier {
     return new MoneyInterestModifier(this.type, this.stackCount);
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 5;
   }
 }
@@ -1246,7 +1277,7 @@ export class HiddenAbilityRateBoosterModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 4;
   }
 }
@@ -1270,7 +1301,7 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 4;
   }
 }
@@ -1292,7 +1323,7 @@ export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 1;
   }
 }
@@ -1368,7 +1399,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
     return getPokemonMessage(targetPokemon, `'s ${item.name} was absorbed\nby ${pokemon.name}'s ${this.type.name}!`);
   }
 
-  getMaxStackCount(): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 3;
   }
 }
@@ -1402,7 +1433,7 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
     return getPokemonMessage(targetPokemon, `'s ${item.name} was snatched\nby ${pokemon.name}'s ${this.type.name}!`);
   }
 
-  getMaxStackCount(): integer {
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 5;
   }
 }
@@ -1424,7 +1455,7 @@ export class IvScannerModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 5;
   }
 }
@@ -1448,7 +1479,7 @@ export class ExtraModifierModifier extends PersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 3;
   }
 }
@@ -1458,7 +1489,7 @@ export abstract class EnemyPersistentModifier extends PersistentModifier {
     super(type, stackCount);
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return this.type.tier ? 1 : 5;
   }
 }
@@ -1478,7 +1509,7 @@ abstract class EnemyDamageMultiplierModifier extends EnemyPersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 99;
   }
 }
@@ -1553,7 +1584,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
     return false;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 20;
   }
 }
@@ -1663,7 +1694,7 @@ export class EnemyInstantReviveChanceModifier extends EnemyPersistentModifier {
     return true;
   }
 
-  getMaxStackCount(): integer {
+  getMaxStackCount(scene: BattleScene): integer {
     return 10;
   }
 }

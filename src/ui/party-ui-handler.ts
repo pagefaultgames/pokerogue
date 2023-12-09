@@ -96,7 +96,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static FilterItemMaxStacks = (pokemon: PlayerPokemon, modifier: PokemonHeldItemModifier) => {
     const matchingModifier = pokemon.scene.findModifier(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).matchType(modifier)) as PokemonHeldItemModifier;
-    if (matchingModifier && matchingModifier.stackCount === matchingModifier.getMaxStackCount())
+    if (matchingModifier && matchingModifier.stackCount === matchingModifier.getMaxStackCount(pokemon.scene))
       return `${pokemon.name} has too many\nof this item!`;
     return null;
   };

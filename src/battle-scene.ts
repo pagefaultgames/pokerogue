@@ -1174,7 +1174,7 @@ export default class BattleScene extends Phaser.Scene {
 			const soundName = modifier.type.soundName;
 			this.validateAchvs(ModifierAchv, modifier);
 			if (modifier instanceof PersistentModifier) {
-				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual)) {
+				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual, this)) {
 					if (playSound && !this.sound.get(soundName))
 						this.playSound(soundName);
 				} else if (!virtual) {
@@ -1222,7 +1222,7 @@ export default class BattleScene extends Phaser.Scene {
 
 	addEnemyModifier(itemModifier: PersistentModifier, ignoreUpdate?: boolean): Promise<void> {
 		return new Promise(resolve => {
-			itemModifier.add(this.enemyModifiers, false);
+			itemModifier.add(this.enemyModifiers, false, this);
 			if (!ignoreUpdate)
 				this.updateModifiers(false).then(() => resolve());
 			else
@@ -1245,7 +1245,7 @@ export default class BattleScene extends Phaser.Scene {
 				&& (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
 			let removeOld = true;
 			if (matchingModifier) {
-				const maxStackCount = matchingModifier.getMaxStackCount();
+				const maxStackCount = matchingModifier.getMaxStackCount(source.scene);
 				if (matchingModifier.stackCount >= maxStackCount) {
 					resolve(false);
 					return;
@@ -1312,7 +1312,7 @@ export default class BattleScene extends Phaser.Scene {
 				if (isBoss)
 					count = Math.max(count, Math.floor(chances / 2));
 				getEnemyModifierTypesForWave(waveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, this.gameMode)
-					.map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false));
+					.map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
 			});
 
 			this.updateModifiers(false).then(() => resolve());

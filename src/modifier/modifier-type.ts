@@ -14,6 +14,7 @@ import { Unlockables } from '../system/unlockables';
 import { GameMode } from '../game-mode';
 import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
 import { SpeciesFormKey } from '../data/pokemon-species';
+import BattleScene from '../battle-scene';
 
 type Modifier = Modifiers.Modifier;
 
@@ -107,7 +108,13 @@ export class PokemonModifierType extends ModifierType {
 
 export class PokemonHeldItemModifierType extends PokemonModifierType {
   constructor(name: string, description: string, newModifierFunc: NewModifierFunc, iconImage?: string, group?: string, soundName?: string) {
-    super(name, description, newModifierFunc, undefined, iconImage, group, soundName);
+    super(name, description, newModifierFunc, (pokemon: PlayerPokemon) => {
+      const dummyModifier = this.newModifier(pokemon);
+      const matchingModifier = pokemon.scene.findModifier(m => m instanceof Modifiers.PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(dummyModifier)) as Modifiers.PokemonHeldItemModifier;
+      if (matchingModifier && matchingModifier.stackCount === matchingModifier.getMaxStackCount(pokemon.scene))
+        return `${pokemon.name} has too many\nof this item!`;
+      return null;
+    }, iconImage, group, soundName);
   }
 
   newModifier(...args: any[]): Modifiers.PokemonHeldItemModifier {
@@ -354,7 +361,7 @@ export class PokemonBaseStatBoosterModifierType extends PokemonHeldItemModifierT
   private stat: Stat;
 
   constructor(name: string, stat: Stat, _iconImage?: string) {
-    super(name, `Increases the holder's base ${getStatName(stat)} by 20%`, (_type, args) => new Modifiers.PokemonBaseStatModifier(this, (args[0] as Pokemon).id, this.stat));
+    super(name, `Increases the holder's base ${getStatName(stat)} by 10%. The higher your IVs, the higher the stack limit.`, (_type, args) => new Modifiers.PokemonBaseStatModifier(this, (args[0] as Pokemon).id, this.stat));
 
     this.stat = stat;
   }
@@ -921,7 +928,7 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
     pool[t].reduce((total: integer, modifierType: WeightedModifierType) => {
       const weightedModifierType = modifierType as WeightedModifierType;
       const existingModifiers = party[0].scene.findModifiers(m => (m.type.generatorId || m.type.id) === weightedModifierType.modifierType.id, player);
-      const weight = !existingModifiers.length || existingModifiers.filter(m => m.stackCount < m.getMaxStackCount()).length
+      const weight = !existingModifiers.length || existingModifiers.filter(m => m.stackCount < m.getMaxStackCount(party[0].scene, true)).length
         ? weightedModifierType.weight instanceof Function
           ? (weightedModifierType.weight as Function)(party)
           : weightedModifierType.weight as integer
@@ -968,13 +975,13 @@ export function getPlayerModifierTypeOptionsForWave(waveIndex: integer, count: i
   return options;
 }
 
-export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: Modifiers.PersistentModifier[]): Modifiers.EnemyPersistentModifier {
+export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: Modifiers.PersistentModifier[], scene: BattleScene): Modifiers.EnemyPersistentModifier {
   const tierStackCount = tier === ModifierTier.ULTRA ? 10 : tier === ModifierTier.GREAT ? 5 : 1;
   const retryCount = 50;
   let candidate = getNewModifierTypeOption(null, ModifierPoolType.ENEMY_BUFF, tier);
   let r = 0;
   let matchingModifier: Modifiers.PersistentModifier;
-  while (++r < retryCount && (matchingModifier = enemyModifiers.find(m => m.type.id === candidate.type.id)) && matchingModifier.getMaxStackCount() < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1))
+  while (++r < retryCount && (matchingModifier = enemyModifiers.find(m => m.type.id === candidate.type.id)) && matchingModifier.getMaxStackCount(scene) < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1))
     candidate = getNewModifierTypeOption(null, ModifierPoolType.ENEMY_BUFF, tier);
 
   const modifier = candidate.type.newModifier() as Modifiers.EnemyPersistentModifier;
