@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import BattleScene, { AnySound } from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './ui/battle-info';
 import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, Moves, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, AttackMove, AddBattlerTagAttr, OneHitKOAttr } from "./data/move";
-import { default as PokemonSpecies, PokemonSpeciesForm, getFusedSpeciesName, getPokemonSpecies } from './data/pokemon-species';
+import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier } from './data/type';
 import { getLevelTotalExp } from './data/exp';
@@ -691,7 +691,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const filter = !forStarter ? this.species.getCompatibleFusionSpeciesFilter()
     : species => {
-      return pokemonEvolutions.hasOwnProperty(species.speciesId)
+      return (pokemonEvolutions.hasOwnProperty(species.speciesId) && pokemonEvolutions[species.speciesId].find(e => !e.evoFormKey || e.evoFormKey.indexOf(SpeciesFormKey.MEGA) === -1))
       && !pokemonPrevolutions.hasOwnProperty(species.speciesId)
       && !species.pseudoLegendary
       && !species.legendary
