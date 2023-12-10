@@ -2,7 +2,7 @@ import { default as Pokemon } from '../pokemon';
 import { getLevelTotalExp, getLevelRelExp } from '../data/exp';
 import * as Utils from '../utils';
 import { addTextObject, TextStyle } from './text';
-import { getGenderSymbol, getGenderColor } from '../data/gender';
+import { getGenderSymbol, getGenderColor, Gender } from '../data/gender';
 import { StatusEffect } from '../data/status-effect';
 import BattleScene from '../battle-scene';
 
@@ -117,12 +117,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   initInfo(pokemon: Pokemon) {
-    this.nameText.setText(pokemon.name);
-    this.lastName = pokemon.name;
-
-    const nameSizeTest = addTextObject(this.scene, 0, 0, pokemon.name, TextStyle.BATTLE_INFO);
-    const nameTextWidth = nameSizeTest.displayWidth;
-    nameSizeTest.destroy();
+    this.updateNameText(pokemon);
+    const nameTextWidth = this.nameText.displayWidth;
 
     this.genderText.setText(getGenderSymbol(pokemon.gender));
     this.genderText.setColor(getGenderColor(pokemon.gender));
@@ -204,14 +200,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       }
 
       if (this.lastName !== pokemon.name) {
-        this.nameText.setText(pokemon.name);
-        this.lastName = pokemon.name;
-
-        const nameSizeTest = addTextObject(this.scene, 0, 0, pokemon.name, TextStyle.BATTLE_INFO);
-        const nameTextWidth = nameSizeTest.displayWidth;
-        nameSizeTest.destroy();
-
+        this.updateNameText(pokemon);
+        const nameTextWidth = this.nameText.displayWidth;
         this.genderText.setPositionRelative(this.nameText, nameTextWidth, 0);
+        this.splicedIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1, 1);
       }
 
       if (this.lastStatus !== (pokemon.status?.effect || StatusEffect.NONE)) {
@@ -285,11 +277,30 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     });
   }
 
-  updatePokemonExp(battler: Pokemon, instant?: boolean): Promise<void> {
+  updateNameText(pokemon: Pokemon): void {
+    let displayName = pokemon.name;
+    let nameTextWidth: number;
+
+    let nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.BATTLE_INFO);
+    nameTextWidth = nameSizeTest.displayWidth;
+
+    while (nameTextWidth > 60 - ((pokemon.gender !== Gender.GENDERLESS ? 6 : 0) + (pokemon.fusionSpecies ? 6 : 0) + (pokemon.isShiny() ? 8 : 0) + (Math.min(pokemon.level.toString().length, 3) - 3) * 8)) {
+      displayName = `${displayName.slice(0, displayName.endsWith('.') ? -2 : -1).trimEnd()}.`;
+      nameSizeTest.setText(displayName);
+      nameTextWidth = nameSizeTest.displayWidth;
+    }
+
+    nameSizeTest.destroy();
+
+    this.nameText.setText(displayName);
+    this.lastName = pokemon.name;
+  }
+
+  updatePokemonExp(pokemon: Pokemon, instant?: boolean): Promise<void> {
     return new Promise(resolve => {
-      const levelUp = this.lastLevel < battler.level;
-      const relLevelExp = getLevelRelExp(this.lastLevel + 1, battler.species.growthRate);
-      const levelExp = levelUp ? relLevelExp : battler.levelExp;
+      const levelUp = this.lastLevel < pokemon.level;
+      const relLevelExp = getLevelRelExp(this.lastLevel + 1, pokemon.species.growthRate);
+      const levelExp = levelUp ? relLevelExp : pokemon.levelExp;
       let ratio = relLevelExp ? levelExp / relLevelExp : 0;
       if (this.lastLevel >= (this.scene as BattleScene).getMaxExpLevel(true)) {
         if (levelUp)
@@ -321,12 +332,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
             this.setLevel(this.lastLevel);
             this.scene.time.delayedCall(500, () => {
               this.expBar.setScale(0, 1);
-              this.updateInfo(battler, instant).then(() => resolve());
+              this.updateInfo(pokemon, instant).then(() => resolve());
             });
             return;
           } else {
-            this.lastExp = battler.exp;
-            this.lastLevelExp = battler.levelExp;
+            this.lastExp = pokemon.exp;
+            this.lastLevelExp = pokemon.levelExp;
           }
           resolve();
         }

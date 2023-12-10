@@ -759,7 +759,21 @@ class PartySlot extends Phaser.GameObjects.Container {
     const slotInfoContainer = this.scene.add.container(0, 0);
     this.add(slotInfoContainer);
 
-    const slotName = addTextObject(this.scene, 0, 0, this.pokemon.name, TextStyle.PARTY);
+    let displayName = this.pokemon.name;
+    let nameTextWidth: number;
+
+    let nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.PARTY);
+    nameTextWidth = nameSizeTest.displayWidth;
+
+    while (nameTextWidth > (this.slotIndex ? 52 : 80)) {
+      displayName = `${displayName.slice(0, displayName.endsWith('.') ? -2 : -1).trimEnd()}.`;
+      nameSizeTest.setText(displayName);
+      nameTextWidth = nameSizeTest.displayWidth;
+    }
+
+    nameSizeTest.destroy();
+
+    const slotName = addTextObject(this.scene, 0, 0, displayName, TextStyle.PARTY);
     slotName.setPositionRelative(slotBg, this.slotIndex >= battlerCount ? 21 : 24, this.slotIndex >= battlerCount ? 2 : 10);
     slotName.setOrigin(0, 0);
 

@@ -51,7 +51,6 @@ export default class PokemonIconAnimHandler {
       if (this.icons.has(i) && this.icons.get(i) === mode)
         continue;
       if (this.toggled) {
-        console.log(i.frame)
         const lastYDelta = this.icons.has(i)
           ? this.icons.get(i)
           : 0;
