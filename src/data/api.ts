@@ -2,11 +2,12 @@ import { MainClient, NamedAPIResource } from 'pokenode-ts';
 import { MoveTarget, Moves, allMoves } from './move';
 import * as Utils from '../utils';
 import fs from 'vite-plugin-fs/browser';
-import { tmSpecies } from './tms';
-import PokemonSpecies, { PokemonForm } from './pokemon-species';
+import PokemonSpecies, { PokemonForm, SpeciesFormKey, allSpecies } from './pokemon-species';
 import { GrowthRate } from './exp';
 import { Type } from './type';
 import { Abilities, allAbilities } from './ability';
+import { Species } from './species';
+import { pokemonFormLevelMoves } from './pokemon-level-moves';
 
 const targetMap = {
   'specific-move': MoveTarget.ATTACKER,
@@ -81,7 +82,7 @@ interface SpeciesFormLevelMoves {
 }
 
 interface TmSpecies {
-  [key: string]: string[]
+  [key: string]: Array<string | string[]>
 }
 
 export async function printPokemon() {
@@ -116,6 +117,9 @@ export async function printPokemon() {
         continue;
       
       const matchingSpecies = pokemonSpeciesList[parseInt(dexIdMatch[1]) - 1];
+
+      if (!matchingSpecies)
+        continue;
 
       const speciesKey = (matchingSpecies as any).key as string;
 
@@ -175,8 +179,21 @@ export async function printPokemon() {
             const moveName = moveData.move.name.toUpperCase().replace(/\_/g, '').replace(/\-/g, '_');
             const moveId = Math.max(Utils.getEnumKeys(Moves).indexOf(moveName), 0);
 
-            if (verData.move_learn_method.name === 'level-up')
-              speciesFormLevelMoves[speciesKey][pokemonForm.formIndex].push([ verData.level_learned_at, moveId ]);
+            switch (verData.move_learn_method.name) {
+              case 'level-up':
+                speciesFormLevelMoves[speciesKey][pokemonForm.formIndex].push([ verData.level_learned_at, moveId ]);
+                break;
+              case 'machine':
+              case 'tutor':
+                if (!moveTmSpecies.hasOwnProperty(moveId))
+                  moveTmSpecies[moveId] = [];
+                const speciesIndex = moveTmSpecies[moveId].findIndex(s => s[0] === speciesKey);
+                if (speciesIndex === -1)
+                  moveTmSpecies[moveId].push([ speciesKey, formName ]);
+                else
+                  (moveTmSpecies[moveId][speciesIndex] as string[]).push(formName);
+                break;
+            }
           });
 
           if (JSON.stringify(speciesLevelMoves[speciesKey]) === JSON.stringify(speciesFormLevelMoves[speciesKey][pokemonForm.formIndex])) {
@@ -194,6 +211,8 @@ export async function printPokemon() {
     const species = await api.pokemon.getPokemonSpeciesByName(pokemon.species.name);
 
     let speciesKey = species.name.toUpperCase().replace(/\-/g, '_');
+
+    const matchingExistingSpecies = allSpecies.find(s => Species[s.speciesId] === speciesKey);
 
     let dexId = species.id;
 
@@ -235,20 +254,6 @@ export async function printPokemon() {
 
     pokemonSpeciesList.push(pokemonSpecies);
 
-    for (let f of pokemon.forms) {
-      const form = await api.pokemon.getPokemonFormByName(f.name);
-
-      const [ formType1, formType2 ] = [ types.indexOf(form.types.find(t => t.slot === 1).type.name), types.indexOf(form.types.find(t => t.slot === 2)?.type.name) ];
-      const pokemonForm = new PokemonForm(form.form_names.find(fn => fn.language.name === 'en')?.name || form.form_name, form.form_name, formType1 as Type, formType2 > -1 ? formType2 as Type : null,
-        pokemonSpecies.height, pokemonSpecies.weight, pokemonSpecies.ability1, pokemonSpecies.ability2, pokemonSpecies.abilityHidden, baseTotal, baseStats[0], baseStats[1], baseStats[2], baseStats[3], baseStats[4], baseStats[5],
-        pokemonSpecies.catchRate, pokemonSpecies.baseFriendship, pokemonSpecies.baseExp, pokemonSpecies.genderDiffs);
-      pokemonForm.speciesId = pokemonSpecies.speciesId;
-      pokemonForm.formIndex = pokemonSpecies.forms.length;
-      pokemonForm.generation = pokemonSpecies.generation;
-
-      pokemonSpecies.forms.push(pokemonForm);
-    }
-
     let moveVer: string;
 
     speciesLevelMoves[speciesKey] = [];
@@ -260,6 +265,8 @@ export async function printPokemon() {
       }
     }
 
+    const speciesTmMoves: integer[] = [];
+
     if (moveVer) {
       pokemon.moves.forEach(moveData => {
         const verData = moveData.version_group_details.find(v => v.version_group.name === moveVer);
@@ -269,16 +276,57 @@ export async function printPokemon() {
         const moveName = moveData.move.name.toUpperCase().replace(/\_/g, '').replace(/\-/g, '_');
         const moveId = Math.max(Utils.getEnumKeys(Moves).indexOf(moveName), 0);
 
-        if (verData.move_learn_method.name === 'level-up')
-          speciesLevelMoves[speciesKey].push([ verData.level_learned_at, moveId ]);
-
-        if (tmSpecies.hasOwnProperty(moveId)) {
-          if (!moveTmSpecies.hasOwnProperty(moveName))
-            moveTmSpecies[moveName] = [];
-          if (moveId > 0 && moveTmSpecies[moveName].indexOf(speciesKey) === -1)
-            moveTmSpecies[moveName].push(speciesKey);
+        switch (verData.move_learn_method.name) {
+          case 'level-up':
+            speciesLevelMoves[speciesKey].push([ verData.level_learned_at, moveId ]);
+            break;
+          case 'machine':
+          case 'tutor':
+            if (moveId > 0) {
+              if (!moveTmSpecies.hasOwnProperty(moveId))
+                moveTmSpecies[moveId] = [];
+              if (moveTmSpecies[moveId].indexOf(speciesKey) === -1)
+                moveTmSpecies[moveId].push(speciesKey);
+              speciesTmMoves.push(moveId);
+            }
+            break;
         }
       });
+    }
+
+    for (let f of pokemon.forms) {
+      const form = await api.pokemon.getPokemonFormByName(f.name);
+      const formIndex = pokemonSpecies.forms.length;
+
+      const matchingForm = matchingExistingSpecies && matchingExistingSpecies.forms.length > formIndex
+        ? matchingExistingSpecies.forms.find(f2 => f2.formKey === form.form_name || f2.formName === form.form_name) || matchingExistingSpecies.forms[formIndex]
+        : null;
+      const formName = matchingForm
+        ? matchingForm.formName
+        : form.form_names.find(fn => fn.language.name === 'en')?.name || form.form_name;
+      const formKey = matchingForm
+        ? matchingForm.formKey
+        : form.form_name;
+
+      const [ formType1, formType2 ] = [ types.indexOf(form.types.find(t => t.slot === 1).type.name), types.indexOf(form.types.find(t => t.slot === 2)?.type.name) ];
+      const pokemonForm = new PokemonForm(formName, formKey, formType1 as Type, formType2 > -1 ? formType2 as Type : null,
+        pokemonSpecies.height, pokemonSpecies.weight, pokemonSpecies.ability1, pokemonSpecies.ability2, pokemonSpecies.abilityHidden, baseTotal, baseStats[0], baseStats[1], baseStats[2], baseStats[3], baseStats[4], baseStats[5],
+        pokemonSpecies.catchRate, pokemonSpecies.baseFriendship, pokemonSpecies.baseExp, pokemonSpecies.genderDiffs);
+      pokemonForm.speciesId = pokemonSpecies.speciesId;
+      pokemonForm.formIndex = formIndex;
+      pokemonForm.generation = pokemonSpecies.generation;
+
+      if (!pokemonForm.formIndex && speciesTmMoves.length) {
+        for (let moveId of speciesTmMoves) {
+          const speciesIndex = moveTmSpecies[moveId].findIndex(s => s === speciesKey);
+          moveTmSpecies[moveId][speciesIndex] = [
+            speciesKey,
+            formKey
+          ];
+        }
+      }
+
+      pokemonSpecies.forms.push(pokemonForm);
     }
 
     console.log(pokemonSpecies.name, pokemonSpecies);
@@ -338,6 +386,27 @@ export async function printPokemon() {
     speciesFormLevelMovesStr += `  },\n`;
   }
 
+  for (let moveId of Object.keys(moveTmSpecies)) {
+    tmSpeciesStr += `  [Moves.${Moves[parseInt(moveId)]}]: [\n`;
+    for (let species of moveTmSpecies[moveId]) {
+      if (typeof species === 'string')
+        tmSpeciesStr += `    Species.${species},\n`;
+      else {
+        const matchingExistingSpecies = allSpecies.find(s => Species[s.speciesId] === species[0]);
+        const forms = (species as string[]).slice(1);
+        if (matchingExistingSpecies && (!pokemonFormLevelMoves.hasOwnProperty(matchingExistingSpecies.speciesId) || matchingExistingSpecies.forms.length <= 1 || (matchingExistingSpecies.forms.length === 2 && matchingExistingSpecies.forms[1].formKey.indexOf(SpeciesFormKey.MEGA) > -1) || matchingExistingSpecies.forms.length === forms.length))
+          tmSpeciesStr += `    Species.${species[0]},\n`;
+        else {
+          tmSpeciesStr += `    [\n      Species.${species[0]},\n`;
+          for (let form of forms)
+            tmSpeciesStr += `      '${form}',\n`;
+          tmSpeciesStr += `    ],\n`;
+        }
+      }
+    }
+    tmSpeciesStr += `  ],\n`;
+  }
+
   enumStr += `\n};`;
   pokemonSpeciesStr += `  );`;
   speciesLevelMovesStr += `\n};`;
@@ -349,6 +418,8 @@ export async function printPokemon() {
   console.log(speciesLevelMovesStr);
   console.log(speciesFormLevelMovesStr);
   console.log(tmSpeciesStr);
+
+  console.log(moveTmSpecies)
 }
 
 export async function printAbilities() {

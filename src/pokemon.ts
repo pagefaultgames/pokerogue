@@ -1671,7 +1671,7 @@ export class PlayerPokemon extends Pokemon {
       let compatible = false;
       for (let p of tmSpecies[tm]) {
         if (Array.isArray(p)) {
-          if (p[0] === this.species.speciesId || (this.fusionSpecies && p[0] === this.fusionSpecies.speciesId)) {
+          if (p[0] === this.species.speciesId || (this.fusionSpecies && p[0] === this.fusionSpecies.speciesId) && p.slice(1).indexOf(this.species.forms[this.formIndex]) > -1) {
             compatible = true;
             break;
           }
