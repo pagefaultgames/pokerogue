@@ -9,7 +9,7 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagType, ArenaTrapTag } from "./arena-tag";
-import { BlockRecoilDamageAttr, applyAbAttrs } from "./ability";
+import { Abilities, BlockRecoilDamageAttr, applyAbAttrs } from "./ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
@@ -1288,7 +1288,7 @@ export class MatchHpAttr extends FixedDamageAttr {
   } 
   
   getCondition(): MoveCondition {
-    return (user: Pokemon, target: Pokemon, move: Move) => user.hp <= target.hp;
+    return (user, target, move) => user.hp <= target.hp;
   }
   
   // TODO
@@ -1316,7 +1316,7 @@ export class CounterDamageAttr extends FixedDamageAttr {
   }
 
   getCondition(): MoveCondition {
-    return (user: Pokemon, target: Pokemon, move: Move) => !!user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).length;
+    return (user, target, move) => !!user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).length;
   }
 }
 
@@ -1664,7 +1664,7 @@ export class WeatherChangeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveCondition {
-    return (user: Pokemon, target: Pokemon, move: Move) => !user.scene.arena.weather || (user.scene.arena.weather.weatherType !== this.weatherType && !user.scene.arena.weather.isImmutable());
+    return (user, target, move) => !user.scene.arena.weather || (user.scene.arena.weather.weatherType !== this.weatherType && !user.scene.arena.weather.isImmutable());
   }
 }
 
@@ -1696,7 +1696,7 @@ export class OneHitKOAttr extends MoveAttr {
   }
 
   getCondition(): MoveCondition {
-    return (user: Pokemon, target: Pokemon, move: Move) => user.level >= target.level;
+    return (user, target, move) => user.level >= target.level;
   }
 }
 
@@ -1793,17 +1793,19 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 export class StatChangeAttr extends MoveEffectAttr {
   public stats: BattleStat[];
   public levels: integer;
+  private condition: MoveCondition;
 
-  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean) {
+  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveCondition) {
     super(selfTarget, MoveEffectTrigger.HIT);
     this.stats = typeof(stats) === 'number'
       ? [ stats as BattleStat ]
       : stats as BattleStat[];
     this.levels = levels;
+    this.condition = condition || null;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args))
+    if (!super.apply(user, target, move, args) || (this.condition && !this.condition(user, target, move)))
       return false;
 
     if (move.chance < 0 || move.chance === 100 || Utils.randInt(100) < move.chance) {
@@ -2154,7 +2156,7 @@ export class DisableMoveAttr extends MoveEffectAttr {
   }
   
   getCondition(): MoveCondition {
-    return (user: Pokemon, target: Pokemon, move: Move) => {
+    return (user, target, move) => {
       if (target.summonData.disabledMove)
         return false;
 
@@ -2248,7 +2250,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 
   getCondition(): MoveCondition {
     return this.failOnOverlap
-      ? (user: Pokemon, target: Pokemon, move: Move) => !(this.selfTarget ? user : target).getTag(this.tagType)
+      ? (user, target, move) => !(this.selfTarget ? user : target).getTag(this.tagType)
       : null;
   }
 
@@ -2339,7 +2341,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
   }
 
   getCondition(): MoveCondition {
-    return ((user: Pokemon, target: Pokemon, move: Move): boolean => {
+    return ((user, target, move): boolean => {
       let timesUsed = 0;
       const moveHistory = user.getLastXMoves(-1);
       let turnMove: TurnMove;
@@ -2409,7 +2411,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 
 export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   getCondition(): MoveCondition {
-    return (user: Pokemon, target: Pokemon, move: Move) => {
+    return (user, target, move) => {
       if (!user.scene.arena.getTag(this.tagType))
         return true;
       const tag = user.scene.arena.getTag(this.tagType) as ArenaTrapTag;
@@ -2462,7 +2464,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveCondition {
-    return (user: Pokemon, target: Pokemon, move: Move) => {
+    return (user, target, move) => {
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
 
@@ -2574,7 +2576,7 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
   }
 }
 
-const lastMoveCopiableCondition = (user: Pokemon, target: Pokemon, move: Move) => {
+const lastMoveCopiableCondition: MoveCondition = (user, target, move) => {
   const copiableMove = user.scene.currentBattle.lastMove;
 
   if (!copiableMove)
@@ -2614,7 +2616,7 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
 }
 
 // TODO: Review this
-const targetMoveCopiableCondition = (user: Pokemon, target: Pokemon, move: Move) => {
+const targetMoveCopiableCondition: MoveCondition = (user, target, move) => {
   const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
   if (!targetMoves.length)
     return false;
@@ -2686,7 +2688,7 @@ export class SketchAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveCondition {
-    return (user: Pokemon, target: Pokemon, move: Move) => {
+    return (user, target, move) => {
       if (!targetMoveCopiableCondition(user, target, move))
         return false;
     
@@ -2729,7 +2731,7 @@ export class TransformAttr extends MoveEffectAttr {
   }
 }
 
-const failOnGravityCondition = (user: Pokemon, target: Pokemon, move: Move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
+const failOnGravityCondition: MoveCondition = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
 
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
@@ -2972,7 +2974,7 @@ export function initMoves() {
       .attr(HitHealAttr),
     new StatusMove(Moves.LEECH_SEED, "Leech Seed", Type.GRASS, 90, 10, -1, "A seed is planted on the target. It steals some HP from the target every turn.", -1, 0, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.SEEDED)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => !target.getTag(BattlerTagType.SEEDED) && !target.isOfType(Type.GRASS)),
+      .condition((user, target, move) => !target.getTag(BattlerTagType.SEEDED) && !target.isOfType(Type.GRASS)),
     new SelfStatusMove(Moves.GROWTH, "Growth", Type.NORMAL, -1, 20, -1, "The user's body grows all at once, raising the Attack and Sp. Atk stats.", -1, 0, 1)
       .attr(GrowthStatChangeAttr),
     new AttackMove(Moves.RAZOR_LEAF, "Razor Leaf", Type.GRASS, MoveCategory.PHYSICAL, 55, 95, 25, -1, "Sharp-edged leaves are launched to slash at opposing Pokémon. Critical hits land more easily.", -1, 0, 1)
@@ -3128,7 +3130,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.DREAM_EATER, "Dream Eater", Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 15, -1, "The user eats the dreams of a sleeping target. The user's HP is restored by half the damage taken by the target.", -1, 0, 1)
       .attr(HitHealAttr)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => target.status?.effect === StatusEffect.SLEEP),
+      .condition((user, target, move) => target.status?.effect === StatusEffect.SLEEP),
     new StatusMove(Moves.POISON_GAS, "Poison Gas", Type.POISON, 90, 40, -1, "A cloud of poison gas is sprayed in the face of opposing Pokémon, poisoning those it hits.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -3177,7 +3179,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.REST, "Rest", Type.PSYCHIC, -1, 10, 85, "The user goes to sleep for two turns. This fully restores the user's HP and heals any status conditions.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => user.status?.effect !== StatusEffect.SLEEP),
+      .condition((user, target, move) => user.status?.effect !== StatusEffect.SLEEP),
     new AttackMove(Moves.ROCK_SLIDE, "Rock Slide", Type.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 86, "Large boulders are hurled at opposing Pokémon to inflict damage. This may also make the opposing Pokémon flinch.", 30, 0, 1)
       .attr(FlinchAttr)
       .makesContact(false)
@@ -3219,13 +3221,13 @@ export function initMoves() {
       .attr(IgnoreAccuracyAttr),
     new StatusMove(Moves.NIGHTMARE, "Nightmare", Type.GHOST, 100, 15, -1, "A sleeping target sees a nightmare that inflicts some damage every turn.", -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.NIGHTMARE)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => target.status?.effect === StatusEffect.SLEEP),
+      .condition((user, target, move) => target.status?.effect === StatusEffect.SLEEP),
     new AttackMove(Moves.FLAME_WHEEL, "Flame Wheel", Type.FIRE, MoveCategory.PHYSICAL, 60, 100, 25, -1, "The user cloaks itself in fire and charges at the target. This may also leave the target with a burn.", 10, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(Moves.SNORE, "Snore", Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 15, -1, "This attack can be used only if the user is asleep. The harsh noise may also make the target flinch.", 30, 0, 2)
       .attr(BypassSleepAttr)
       .attr(FlinchAttr)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => user.status?.effect === StatusEffect.SLEEP)
+      .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
       .soundBased(),
     new StatusMove(Moves.CURSE, "Curse (N)", Type.UNKNOWN, -1, 10, -1, "A move that works differently for the Ghost type than for all other types.", -1, 0, 2)
       .target(MoveTarget.USER),
@@ -3310,11 +3312,11 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, 1, true),
     new StatusMove(Moves.ATTRACT, "Attract", Type.NORMAL, 100, 15, -1, "If it is the opposite gender of the user, the target becomes infatuated and less likely to attack.", -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.INFATUATED)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => user.isOppositeGender(target)),
+      .condition((user, target, move) => user.isOppositeGender(target)),
     new SelfStatusMove(Moves.SLEEP_TALK, "Sleep Talk", Type.NORMAL, -1, 10, 70, "While it is asleep, the user randomly uses one of the moves it knows.", -1, 0, 2)
       .attr(BypassSleepAttr)
       .attr(RandomMovesetMoveAttr)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => user.status?.effect === StatusEffect.SLEEP),
+      .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP),
     new StatusMove(Moves.HEAL_BELL, "Heal Bell (N)", Type.NORMAL, -1, 5, -1, "The user makes a soothing bell chime to heal the status conditions of all the party Pokémon.", -1, 0, 2)
       .soundBased()
       .target(MoveTarget.USER_AND_ALLIES),
@@ -3344,7 +3346,7 @@ export function initMoves() {
       .hidesUser(),
     new StatusMove(Moves.ENCORE, "Encore", Type.NORMAL, 100, 5, 122, "The user compels the target to keep using the move it encored for three turns.", -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, undefined, true)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => new EncoreTag(move.id, user.id).canAdd(target)),
+      .condition((user, target, move) => new EncoreTag(move.id, user.id).canAdd(target)),
     new AttackMove(Moves.PURSUIT, "Pursuit (N)", Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, "The power of this attack move is doubled if it's used on a target that's switching out of battle.", -1, 0, 2),
     new AttackMove(Moves.RAPID_SPIN, "Rapid Spin", Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, -1, "A spin attack that can also eliminate such moves as Bind, Wrap, and Leech Seed. This also raises the user's Speed stat.", 100, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
@@ -3397,7 +3399,7 @@ export function initMoves() {
       .makesContact(false),
     new AttackMove(Moves.FAKE_OUT, "Fake Out", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 10, -1, "This attack hits first and makes the target flinch. It only works the first turn each time the user enters battle.", 100, 3, 3)
       .attr(FlinchAttr)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => !user.getMoveHistory().length),
+      .condition((user, target, move) => !user.getMoveHistory().length),
     new AttackMove(Moves.UPROAR, "Uproar (N)", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, -1, "The user attacks in an uproar for three turns. During that time, no Pokémon can fall asleep.", -1, 0, 3)
       .ignoresVirtual()
       .soundBased()
@@ -3421,12 +3423,12 @@ export function initMoves() {
       .attr(SacrificialAttr)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -2),
     new AttackMove(Moves.FACADE, "Facade", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 25, "This attack move doubles its power if the user is poisoned, burned, or paralyzed.", -1, 0, 3)
-      .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => user.status
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.status
         && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1),
     new AttackMove(Moves.FOCUS_PUNCH, "Focus Punch (N)", Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, "The user focuses its mind before launching a punch. This move fails if the user is hit before it is used.", -1, -3, 3)
       .ignoresVirtual(),
     new AttackMove(Moves.SMELLING_SALTS, "Smelling Salts", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 10, -1, "This attack's power is doubled when used on a target with paralysis. This also cures the target's paralysis, however.", -1, 0, 3)
-      .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1)
       .attr(HealStatusEffectAttr, false, StatusEffect.PARALYSIS),
     new SelfStatusMove(Moves.FOLLOW_ME, "Follow Me (N)", Type.NORMAL, -1, 20, -1, "The user draws attention to itself, making all targets take aim only at the user.", -1, 2, 3),
     new StatusMove(Moves.NATURE_POWER, "Nature Power (N)", Type.NORMAL, -1, 20, -1, "This attack makes use of nature's power. Its effects vary depending on the user's environment.", -1, 0, 3),
@@ -3451,7 +3453,7 @@ export function initMoves() {
     new AttackMove(Moves.BRICK_BREAK, "Brick Break (N)", Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, 58, "The user attacks with a swift chop. It can also break barriers, such as Light Screen and Reflect.", -1, 0, 3),
     new StatusMove(Moves.YAWN, "Yawn", Type.NORMAL, -1, 10, -1, "The user lets loose a huge yawn that lulls the target into falling asleep on the next turn.", -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, undefined, true)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => !target.status),
+      .condition((user, target, move) => !target.status),
     new AttackMove(Moves.KNOCK_OFF, "Knock Off (N)", Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, "The user slaps down the target's held item, and that item can't be used in that battle. The move does more damage if the target has a held item.", -1, 0, 3),
     new AttackMove(Moves.ENDEAVOR, "Endeavor", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "This attack move cuts down the target's HP to equal the user's HP.", -1, 0, 3)
       .attr(MatchHpAttr),
@@ -3462,7 +3464,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.IMPRISON, "Imprison (N)", Type.PSYCHIC, -1, 10, 92, "If opposing Pokémon know any move also known by the user, they are prevented from using it.", -1, 0, 3),
     new SelfStatusMove(Moves.REFRESH, "Refresh", Type.NORMAL, -1, 20, -1, "The user rests to cure itself of poisoning, a burn, or paralysis.", -1, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => user.status && (user.status.effect === StatusEffect.PARALYSIS || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.BURN)),
+      .condition((user, target, move) => user.status && (user.status.effect === StatusEffect.PARALYSIS || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.BURN)),
     new SelfStatusMove(Moves.GRUDGE, "Grudge (N)", Type.GHOST, -1, 5, -1, "If the user faints, the user's grudge fully depletes the PP of the opponent's move that knocked it out.", -1, 0, 3),
     new SelfStatusMove(Moves.SNATCH, "Snatch (N)", Type.DARK, -1, 10, -1, "The user steals the effects of any attempts to use a healing or stat-changing move.", -1, 4, 3),
     new AttackMove(Moves.SECRET_POWER, "Secret Power (N)", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, "The additional effects of this attack depend upon where it was used.", 30, 0, 3)
@@ -3620,7 +3622,7 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.MIRACLE_EYE, "Miracle Eye (N)", Type.PSYCHIC, -1, 40, -1, "Enables a Dark-type target to be hit by Psychic-type attacks. This also enables an evasive target to be hit.", -1, 0, 4),
     new AttackMove(Moves.WAKE_UP_SLAP, "Wake-Up Slap", Type.FIGHTING, MoveCategory.PHYSICAL, 70, 100, 10, -1, "This attack inflicts big damage on a sleeping target. This also wakes the target up, however.", -1, 0, 4)
-      .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.status?.effect === StatusEffect.SLEEP ? 2 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.SLEEP ? 2 : 1)
       .attr(HealStatusEffectAttr, false, StatusEffect.SLEEP),
     new AttackMove(Moves.HAMMER_ARM, "Hammer Arm", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 90, 10, -1, "The user swings and hits with its strong, heavy fist. It lowers the user's Speed, however.", 100, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPD, -1, true),
@@ -3628,11 +3630,11 @@ export function initMoves() {
     new SelfStatusMove(Moves.HEALING_WISH, "Healing Wish", Type.PSYCHIC, -1, 10, -1, "The user faints. In return, the Pokémon taking its place will have its HP restored and status conditions cured.", -1, 0, 4)
       .attr(SacrificialAttr),
     new AttackMove(Moves.BRINE, "Brine", Type.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, "If the target's HP is half or less, this attack will hit with double the power.", -1, 0, 4)
-      .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.getHpRatio() < 0.5 ? 2 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHpRatio() < 0.5 ? 2 : 1),
     new AttackMove(Moves.NATURAL_GIFT, "Natural Gift (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, "The user draws power to attack by using its held Berry. The Berry determines the move's type and power.", -1, 0, 4)
       .makesContact(false),
     new AttackMove(Moves.FEINT, "Feint", Type.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, "This attack hits a target using a move such as Protect or Detect. This also lifts the effects of those moves.", -1, 2, 4)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => !!target.getTag(BattlerTagType.PROTECTED))
+      .condition((user, target, move) => !!target.getTag(BattlerTagType.PROTECTED))
       .makesContact(false)
       .ignoresProtect(),
     new AttackMove(Moves.PLUCK, "Pluck (N)", Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 20, -1, "The user pecks the target. If the target is holding a Berry, the user eats it and gains its effect.", -1, 0, 4),
@@ -3674,7 +3676,7 @@ export function initMoves() {
     new StatusMove(Moves.GUARD_SWAP, "Guard Swap (N)", Type.PSYCHIC, -1, 10, -1, "The user employs its psychic power to switch changes to its Defense and Sp. Def stats with the target.", -1, 0, 4),
     new AttackMove(Moves.PUNISHMENT, "Punishment (N)", Type.DARK, MoveCategory.PHYSICAL, -1, 100, 5, -1, "The more the target has powered up with stat changes, the greater the move's power.", -1, 0, 4),
     new AttackMove(Moves.LAST_RESORT, "Last Resort", Type.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, -1, "This move can be used only after the user has used all the other moves it knows in the battle.", -1, 0, 4)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => !user.getMoveset().filter(m => m.moveId !== move.id && m.getPpRatio() > 0).length),
+      .condition((user, target, move) => !user.getMoveset().filter(m => m.moveId !== move.id && m.getPpRatio() > 0).length),
     new StatusMove(Moves.WORRY_SEED, "Worry Seed (N)", Type.GRASS, 100, 10, -1, "A seed that causes worry is planted on the target. It prevents sleep by making the target's Ability Insomnia.", -1, 0, 4),
     new AttackMove(Moves.SUCKER_PUNCH, "Sucker Punch (N)", Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, -1, "This move enables the user to attack first. This move fails if the target is not readying an attack.", -1, 1, 4),
     new StatusMove(Moves.TOXIC_SPIKES, "Toxic Spikes", Type.POISON, -1, 20, 91, "The user lays a trap of poison spikes at the feet of the opposing team. The spikes will poison opposing Pokémon that switch into battle.", -1, 0, 4)
@@ -3794,7 +3796,7 @@ export function initMoves() {
       .makesContact(false),
     new StatusMove(Moves.CAPTIVATE, "Captivate", Type.NORMAL, 100, 20, -1, "If any opposing Pokémon is the opposite gender of the user, it is charmed, which harshly lowers its Sp. Atk stat.", -1, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPATK, -2)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => target.isOppositeGender(user))
+      .condition((user, target, move) => target.isOppositeGender(user))
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.STEALTH_ROCK, "Stealth Rock", Type.ROCK, -1, 20, 116, "The user lays a trap of levitating stones around the opposing team. The trap hurts opposing Pokémon that switch into battle.", -1, 0, 4)
       .attr(AddArenaTrapTagAttr, ArenaTagType.STEALTH_ROCK)
@@ -3855,7 +3857,7 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.PSYSHOCK, "Psyshock (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, 54, "The user materializes an odd psychic wave to attack the target. This attack does physical damage.", -1, 0, 5),
     new AttackMove(Moves.VENOSHOCK, "Venoshock", Type.POISON, MoveCategory.SPECIAL, 65, 100, 10, 45, "The user drenches the target in a special poisonous liquid. This move's power is doubled if the target is poisoned.", -1, 0, 5)
-      .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.status && (target.status.effect === StatusEffect.POISON || target.status.effect === StatusEffect.TOXIC) ? 2 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.status && (target.status.effect === StatusEffect.POISON || target.status.effect === StatusEffect.TOXIC) ? 2 : 1),
     new SelfStatusMove(Moves.AUTOTOMIZE, "Autotomize (P)", Type.STEEL, -1, 15, -1, "The user sheds part of its body to make itself lighter and sharply raise its Speed stat.", -1, 0, 5)
       .attr(StatChangeAttr, BattleStat.SPD, 2, true),
     new SelfStatusMove(Moves.RAGE_POWDER, "Rage Powder (N)", Type.BUG, -1, 20, -1, "The user scatters a cloud of irritating powder to draw attention to itself. Opposing Pokémon aim only at the user.", -1, 2, 5),
@@ -3913,7 +3915,7 @@ export function initMoves() {
     new StatusMove(Moves.HEAL_PULSE, "Heal Pulse", Type.PSYCHIC, -1, 10, -1, "The user emits a healing pulse that restores the target's HP by up to half of its max HP.", -1, 0, 5)
       .attr(HealAttr, 0.5, false, false),
     new AttackMove(Moves.HEX, "Hex", Type.GHOST, MoveCategory.SPECIAL, 65, 100, 10, 29, "This relentless attack does massive damage to a target affected by status conditions.", -1, 0, 5)
-      .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.status ? 2 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.status ? 2 : 1),
     new AttackMove(Moves.SKY_DROP, "Sky Drop", Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 10, -1, "The user takes the target into the sky, then drops it during the next turn. The target cannot attack while in the sky.", -1, 0, 5)
       .attr(ChargeAttr, ChargeAnim.SKY_DROP_CHARGING, 'took {TARGET}\ninto the sky!', BattlerTagType.FLYING) // TODO: Add 2nd turn message
       .condition(failOnGravityCondition)
@@ -4034,7 +4036,7 @@ export function initMoves() {
       .attr(HitHealAttr, 0.75)
       .target(MoveTarget.USER_SIDE),
     new AttackMove(Moves.BELCH, "Belch", Type.POISON, MoveCategory.SPECIAL, 120, 90, 10, -1, "The user lets out a damaging belch at the target. The user must eat a held Berry to use this move.", -1, 0, 6)
-      .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.level > 200 ? 2 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.level > 200 ? 2 : 1)
       .ignoresVirtual(),
     new StatusMove(Moves.ROTOTILLER, "Rototiller", Type.GROUND, -1, 10, -1, "Tilling the soil, the user makes it easier for plants to grow. This raises the Attack and Sp. Atk stats of Grass-type Pokémon.", 100, 0, 6)
       .attr(HitCountPowerAttr)
@@ -4107,7 +4109,8 @@ export function initMoves() {
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.EERIE_IMPULSE, "Eerie Impulse", Type.ELECTRIC, 100, 15, -1, "The user's body generates an eerie impulse. Exposing the target to it harshly lowers the target's Sp. Atk stat.", -1, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPATK, -2),
-    new StatusMove(Moves.VENOM_DRENCH, "Venom Drench (N)", Type.POISON, 100, 20, -1, "Opposing Pokémon are drenched in an odd poisonous liquid. This lowers the Attack, Sp. Atk, and Speed stats of a poisoned target.", 100, 0, 6)
+    new StatusMove(Moves.VENOM_DRENCH, "Venom Drench", Type.POISON, 100, 20, -1, "Opposing Pokémon are drenched in an odd poisonous liquid. This lowers the Attack, Sp. Atk, and Speed stats of a poisoned target.", 100, 0, 6)
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], -1, false, (user, target, move) => target.status?.effect === StatusEffect.POISON)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.POWDER, "Powder (N)", Type.BUG, 100, 20, -1, "The user covers the target in a combustible powder. If the target uses a Fire-type move, the powder explodes and damages the target.", -1, 1, 6),
     new SelfStatusMove(Moves.GEOMANCY, "Geomancy", Type.FAIRY, -1, 10, -1, "The user absorbs energy and sharply raises its Sp. Atk, Sp. Def, and Speed stats on the next turn.", -1, 0, 6)
@@ -4196,7 +4199,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.SHORE_UP, "Shore Up", Type.GROUND, -1, 10, -1, "The user regains up to half of its max HP. It restores more HP in a sandstorm.", -1, 0, 7)
       .attr(SandHealAttr),
     new AttackMove(Moves.FIRST_IMPRESSION, "First Impression", Type.BUG, MoveCategory.PHYSICAL, 90, 100, 10, -1, "Although this move has great power, it only works the first turn each time the user enters battle.", -1, 2, 7)
-      .condition((user: Pokemon, target: Pokemon, move: Move) => !user.getMoveHistory().length),
+      .condition((user, target, move) => !user.getMoveHistory().length),
     new SelfStatusMove(Moves.BANEFUL_BUNKER, "Baneful Bunker (N)", Type.POISON, -1, 10, -1, "In addition to protecting the user from attacks, this move also poisons any attacker that makes direct contact.", -1, 4, 7),
     new AttackMove(Moves.SPIRIT_SHACKLE, "Spirit Shackle (N)", Type.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, -1, "The user attacks while simultaneously stitching the target's shadow to the ground to prevent the target from escaping.", -1, 0, 7),
     new AttackMove(Moves.DARKEST_LARIAT, "Darkest Lariat (N)", Type.DARK, MoveCategory.PHYSICAL, 85, 100, 10, -1, "The user swings both arms and hits the target. The target's stat changes don't affect this attack's damage.", -1, 0, 7),
@@ -4209,22 +4212,25 @@ export function initMoves() {
     new AttackMove(Moves.HIGH_HORSEPOWER, "High Horsepower", Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, "The user fiercely attacks the target using its entire body.", -1, 0, 7),
     new StatusMove(Moves.STRENGTH_SAP, "Strength Sap (P)", Type.GRASS, 100, 10, -1, "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat.", 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
-    new AttackMove(Moves.SOLAR_BLADE, "Solar Blade (N)", Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, -1, "In this two-turn attack, the user gathers light and fills a blade with the light's energy, attacking the target on the next turn.", -1, 0, 7)
+    new AttackMove(Moves.SOLAR_BLADE, "Solar Blade", Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, -1, "In this two-turn attack, the user gathers light and fills a blade with the light's energy, attacking the target on the next turn.", -1, 0, 7)
       .attr(ChargeAttr, ChargeAnim.SOLAR_BLADE_CHARGING, "is glowing!"),
-    new AttackMove(Moves.LEAFAGE, "Leafage (N)", Type.GRASS, MoveCategory.PHYSICAL, 40, 100, 40, -1, "The user attacks by pelting the target with leaves.", -1, 0, 7),
+    new AttackMove(Moves.LEAFAGE, "Leafage", Type.GRASS, MoveCategory.PHYSICAL, 40, 100, 40, -1, "The user attacks by pelting the target with leaves.", -1, 0, 7),
     new StatusMove(Moves.SPOTLIGHT, "Spotlight (N)", Type.NORMAL, -1, 15, -1, "The user shines a spotlight on the target so that only the target will be attacked during the turn.", -1, 3, 7),
     new StatusMove(Moves.TOXIC_THREAD, "Toxic Thread", Type.POISON, 100, 20, -1, "The user shoots poisonous threads to poison the target and lower the target's Speed stat.", 100, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .attr(StatChangeAttr, BattleStat.SPD, -1),
     new SelfStatusMove(Moves.LASER_FOCUS, "Laser Focus (N)", Type.NORMAL, -1, 30, -1, "The user concentrates intensely. The attack on the next turn always results in a critical hit.", -1, 0, 7),
-    new StatusMove(Moves.GEAR_UP, "Gear Up (N)", Type.STEEL, -1, 20, -1, "The user engages its gears to raise the Attack and Sp. Atk stats of ally Pokémon with the Plus or Minus Ability.", -1, 0, 7)
-      .target(MoveTarget.USER_AND_ALLIES),
+    new StatusMove(Moves.GEAR_UP, "Gear Up", Type.STEEL, -1, 20, -1, "The user engages its gears to raise the Attack and Sp. Atk stats of ally Pokémon with the Plus or Minus Ability.", -1, 0, 7)
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, false, (user, target, move) => [ Abilities.PLUS, Abilities.MINUS ].indexOf(target.getAbility().id) > -1)
+      .target(MoveTarget.USER_AND_ALLIES)
+      .condition((user, target, move) => !![ user, user.getAlly() ].find(p => p && [ Abilities.PLUS, Abilities.MINUS ].indexOf(p.getAbility().id) > -1)),
     new AttackMove(Moves.THROAT_CHOP, "Throat Chop (N)", Type.DARK, MoveCategory.PHYSICAL, 80, 100, 15, -1, "The user attacks the target's throat, and the resultant suffering prevents the target from using moves that emit sound for two turns.", 100, 0, 7),
     new AttackMove(Moves.POLLEN_PUFF, "Pollen Puff (N)", Type.BUG, MoveCategory.SPECIAL, 90, 100, 15, -1, "The user attacks the enemy with a pollen puff that explodes. If the target is an ally, it gives the ally a pollen puff that restores its HP instead.", -1, 0, 7),
     new AttackMove(Moves.ANCHOR_SHOT, "Anchor Shot (N)", Type.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, -1, "The user entangles the target with its anchor chain while attacking. The target becomes unable to flee.", -1, 0, 7),
     new StatusMove(Moves.PSYCHIC_TERRAIN, "Psychic Terrain (N)", Type.PSYCHIC, -1, 10, -1, "This protects Pokémon on the ground from priority moves and powers up Psychic-type moves for five turns.", -1, 0, 7)
       .target(MoveTarget.BOTH_SIDES),
-    new AttackMove(Moves.LUNGE, "Lunge (N)", Type.BUG, MoveCategory.PHYSICAL, 80, 100, 15, -1, "The user makes a lunge at the target, attacking with full force. This also lowers the target's Attack stat.", 100, 0, 7),
+    new AttackMove(Moves.LUNGE, "Lunge", Type.BUG, MoveCategory.PHYSICAL, 80, 100, 15, -1, "The user makes a lunge at the target, attacking with full force. This also lowers the target's Attack stat.", 100, 0, 7)
+      .attr(StatChangeAttr, BattleStat.ATK, -1),
     new AttackMove(Moves.FIRE_LASH, "Fire Lash (N)", Type.FIRE, MoveCategory.PHYSICAL, 80, 100, 15, -1, "The user strikes the target with a burning lash. This also lowers the target's Defense stat.", 100, 0, 7),
     new AttackMove(Moves.POWER_TRIP, "Power Trip (N)", Type.DARK, MoveCategory.PHYSICAL, 20, 100, 10, -1, "The user boasts its strength and attacks the target. The more the user's stats are raised, the greater the move's power.", -1, 0, 7),
     new AttackMove(Moves.BURN_UP, "Burn Up (N)", Type.FIRE, MoveCategory.SPECIAL, 130, 100, 5, -1, "To inflict massive damage, the user burns itself out. After using this move, the user will no longer be Fire type.", -1, 0, 7),
@@ -4238,10 +4244,11 @@ export function initMoves() {
     new StatusMove(Moves.INSTRUCT, "Instruct (N)", Type.PSYCHIC, -1, 15, -1, "The user instructs the target to use the target's last move again.", -1, 0, 7),
     new AttackMove(Moves.BEAK_BLAST, "Beak Blast", Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, "The user first heats up its beak, and then it attacks the target. Making direct contact with the Pokémon while it's heating up its beak results in a burn.", -1, -3, 7)
       .attr(ChargeAttr, ChargeAnim.BEAK_BLAST_CHARGING, "started\nheating up its beak!"),
-    new AttackMove(Moves.CLANGING_SCALES, "Clanging Scales (N)", Type.DRAGON, MoveCategory.SPECIAL, 110, 100, 5, -1, "The user rubs the scales on its entire body and makes a huge noise to attack opposing Pokémon. The user's Defense stat goes down after the attack.", 100, 0, 7)
+    new AttackMove(Moves.CLANGING_SCALES, "Clanging Scales", Type.DRAGON, MoveCategory.SPECIAL, 110, 100, 5, -1, "The user rubs the scales on its entire body and makes a huge noise to attack opposing Pokémon. The user's Defense stat goes down after the attack.", 100, 0, 7)
+      .attr(StatChangeAttr, BattleStat.DEF, -1, true)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(Moves.DRAGON_HAMMER, "Dragon Hammer (N)", Type.DRAGON, MoveCategory.PHYSICAL, 90, 100, 15, -1, "The user uses its body like a hammer to attack the target and inflict damage.", -1, 0, 7),
-    new AttackMove(Moves.BRUTAL_SWING, "Brutal Swing (N)", Type.DARK, MoveCategory.PHYSICAL, 60, 100, 20, -1, "The user swings its body around violently to inflict damage on everything in its vicinity.", -1, 0, 7)
+    new AttackMove(Moves.DRAGON_HAMMER, "Dragon Hammer", Type.DRAGON, MoveCategory.PHYSICAL, 90, 100, 15, -1, "The user uses its body like a hammer to attack the target and inflict damage.", -1, 0, 7),
+    new AttackMove(Moves.BRUTAL_SWING, "Brutal Swing", Type.DARK, MoveCategory.PHYSICAL, 60, 100, 20, -1, "The user swings its body around violently to inflict damage on everything in its vicinity.", -1, 0, 7)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new StatusMove(Moves.AURORA_VEIL, "Aurora Veil (N)", Type.ICE, -1, 20, -1, "This move reduces damage from physical and special moves for five turns. This can be used only in a hailstorm.", -1, 0, 7)
       .target(MoveTarget.USER_SIDE),
@@ -4302,7 +4309,7 @@ export function initMoves() {
     new AttackMove(Moves.DOUBLE_IRON_BASH, "Double Iron Bash (N)", Type.STEEL, MoveCategory.PHYSICAL, 60, 100, 5, -1, "The user rotates, centering the hex nut in its chest, and then strikes with its arms twice in a row. This may also make the target flinch.", 30, 0, 7),
     new SelfStatusMove(Moves.MAX_GUARD, "Max Guard (N)", Type.NORMAL, -1, 10, -1, "This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession.", -1, 4, 8),
     new AttackMove(Moves.DYNAMAX_CANNON, "Dynamax Cannon", Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 5, -1, "The user unleashes a strong beam from its core. This move deals twice the damage if the target is over level 200.", -1, 0, 8)
-      .attr(MovePowerMultiplierAttr, (user: Pokemon, target: Pokemon, move: Move) => target.level > 200 ? 2 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.level > 200 ? 2 : 1)
       .ignoresVirtual(),
     new AttackMove(Moves.SNIPE_SHOT, "Snipe Shot (N)", Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, "The user ignores the effects of opposing Pokémon's moves and Abilities that draw in moves, allowing this move to hit the chosen target.", -1, 0, 8),
     new AttackMove(Moves.JAW_LOCK, "Jaw Lock (N)", Type.DARK, MoveCategory.PHYSICAL, 80, 100, 10, -1, "This move prevents the user and the target from switching out until either of them faints. The effect goes away if either of the Pokémon leaves the field.", -1, 0, 8),
