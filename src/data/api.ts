@@ -8,6 +8,7 @@ import { Type } from './type';
 import { Abilities, allAbilities } from './ability';
 import { Species } from './species';
 import { pokemonFormLevelMoves } from './pokemon-level-moves';
+import { tmSpecies } from './tms';
 
 const targetMap = {
   'specific-move': MoveTarget.ATTACKER,
@@ -87,6 +88,8 @@ interface TmSpecies {
 
 export async function printPokemon() {
   const api = new MainClient();
+
+  const useExistingTmList = true;
 
   let enumStr = `export enum Species {\n`;
   let pokemonSpeciesStr = `\tallSpecies.push(\n`;
@@ -172,19 +175,18 @@ export async function printPokemon() {
 
         if (moveVer) {
           pokemon.moves.forEach(moveData => {
-            const verData = moveData.version_group_details.find(v => v.version_group.name === moveVer);
-            if (!verData)
-              return;
+            moveData.version_group_details.filter(v => versions.indexOf(v.version_group.name) > -1).forEach(verData => {
+              const isMoveVer = verData.version_group.name === moveVer;
 
-            const moveName = moveData.move.name.toUpperCase().replace(/\_/g, '').replace(/\-/g, '_');
-            const moveId = Math.max(Utils.getEnumKeys(Moves).indexOf(moveName), 0);
+              const moveName = moveData.move.name.toUpperCase().replace(/\_/g, '').replace(/\-/g, '_');
+              const moveId = Math.max(Utils.getEnumKeys(Moves).indexOf(moveName), 0);
 
-            switch (verData.move_learn_method.name) {
-              case 'level-up':
-                speciesFormLevelMoves[speciesKey][pokemonForm.formIndex].push([ verData.level_learned_at, moveId ]);
-                break;
-              case 'machine':
-              case 'tutor':
+              const learnMethod = verData.move_learn_method.name;
+
+              if (isMoveVer && learnMethod === 'level-up')
+                  speciesFormLevelMoves[speciesKey][pokemonForm.formIndex].push([ verData.level_learned_at, moveId ]);
+
+              if ([ 'machine', 'tutor' ].indexOf(learnMethod) > -1 || (useExistingTmList && tmSpecies.hasOwnProperty(moveId as Moves) && learnMethod === 'level-up')) {
                 if (!moveTmSpecies.hasOwnProperty(moveId))
                   moveTmSpecies[moveId] = [];
                 const speciesIndex = moveTmSpecies[moveId].findIndex(s => s[0] === speciesKey);
@@ -192,8 +194,8 @@ export async function printPokemon() {
                   moveTmSpecies[moveId].push([ speciesKey, formName ]);
                 else
                   (moveTmSpecies[moveId][speciesIndex] as string[]).push(formName);
-                break;
-            }
+              }
+            });
           });
 
           if (JSON.stringify(speciesLevelMoves[speciesKey]) === JSON.stringify(speciesFormLevelMoves[speciesKey][pokemonForm.formIndex])) {
@@ -557,4 +559,99 @@ export async function printMoves() {
 
   console.log(enumStr);
   console.log(moveStr);
+}
+
+export async function printTmSpecies() {
+  const moveTmSpecies: TmSpecies = {};
+
+  const api = new MainClient();
+
+  const moveIds = Object.keys(tmSpecies).map(k => parseInt(k) as Moves);
+  
+  for (let moveId of moveIds) {
+    const move = await api.move.getMoveById(moveId);
+
+    moveTmSpecies[moveId] = [];
+
+    for (let species of move.learned_by_pokemon) {
+      const dexIdMatch = /\/(\d+)\//.exec(species.url);
+      if (!dexIdMatch)
+        continue;
+
+      let dexId = parseInt(dexIdMatch[1]);
+
+      let matchingSpecies: PokemonSpecies;
+      let formKey = '';
+
+      console.log(species.name);
+
+      if (dexId < 10000)
+        matchingSpecies = allSpecies[dexId - 1];
+      else {
+        const pokemon = await api.pokemon.getPokemonById(dexId);
+
+        const speciesDexIdMatch = /\/(\d+)\//.exec(pokemon.species.url);
+        if (!speciesDexIdMatch)
+          continue;
+
+        const speciesDexId = parseInt(speciesDexIdMatch[1]);
+
+        const speciesKey = Species[allSpecies[speciesDexId - 1].speciesId];
+
+        formKey = species.name.slice(speciesKey.length + 1);
+
+        const regionKey = regionalForms.find(r => formKey.indexOf(r) > -1);
+
+        if (regionKey) {
+          formKey = formKey.slice(regionKey.length + 1);
+          matchingSpecies = allSpecies.find(s => Species[s.speciesId] === `${regionKey.toUpperCase()}_${speciesKey}`);
+        } else
+          matchingSpecies = allSpecies[speciesDexId - 1];
+      }
+
+      if (!matchingSpecies) {
+        console.log('NO MATCH', species.name);
+        continue;
+      }
+  
+      const speciesKey = Species[matchingSpecies.speciesId];
+      
+      const matchingIndex = moveTmSpecies[moveId].findIndex(s => Array.isArray(s) ? s[0] === speciesKey : s === speciesKey);
+
+      if (matchingIndex === -1)
+        moveTmSpecies[moveId].push(!formKey ? speciesKey : [ speciesKey, formKey ]);
+      else {
+        if (!Array.isArray(moveTmSpecies[moveId][matchingIndex]))
+          moveTmSpecies[moveId][matchingIndex] = [ moveTmSpecies[moveId][matchingIndex] as string, '' ];
+        (moveTmSpecies[moveId][matchingIndex] as string[]).push(formKey);
+      }
+    }
+  }
+
+  let tmSpeciesStr = `export const tmSpecies: TmSpecies = {\n`;
+
+  for (let moveId of Object.keys(moveTmSpecies)) {
+    tmSpeciesStr += `  [Moves.${Moves[parseInt(moveId)]}]: [\n`;
+    for (let species of moveTmSpecies[moveId]) {
+      if (typeof species === 'string')
+        tmSpeciesStr += `    Species.${species},\n`;
+      else {
+        const matchingExistingSpecies = allSpecies.find(s => Species[s.speciesId] === species[0]);
+        const forms = (species as string[]).slice(1);
+        if (matchingExistingSpecies && (!pokemonFormLevelMoves.hasOwnProperty(matchingExistingSpecies.speciesId) || matchingExistingSpecies.forms.length <= 1 || (matchingExistingSpecies.forms.length === 2 && matchingExistingSpecies.forms[1].formKey.indexOf(SpeciesFormKey.MEGA) > -1) || matchingExistingSpecies.forms.length === forms.length))
+          tmSpeciesStr += `    Species.${species[0]},\n`;
+        else {
+          tmSpeciesStr += `    [\n      Species.${species[0]},\n`;
+          for (let form of forms)
+            tmSpeciesStr += `      '${form}',\n`;
+          tmSpeciesStr += `    ],\n`;
+        }
+      }
+    }
+    tmSpeciesStr += `  ],\n`;
+  }
+
+  tmSpeciesStr += `\n};`;
+
+  console.log(tmSpeciesStr);
 }
