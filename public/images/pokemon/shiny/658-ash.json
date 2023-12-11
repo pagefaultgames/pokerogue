@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "658-battle-bond.png",
+			"image": "658-ash.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 73,
-				"h": 73
+				"w": 79,
+				"h": 79
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 73,
-						"h": 69
+						"w": 79,
+						"h": 74
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 73,
-						"h": 69
+						"w": 79,
+						"h": 74
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 73,
-						"h": 69
+						"w": 79,
+						"h": 74
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:4f38801bb3afeda5faff04bdcf6a666f:0c78ce2715e7510bf55da0a92b42661c:bfbf521a5c7bd80bcd95a96d9789c0dd$"
+		"smartupdate": "$TexturePacker:SmartUpdate:3dd081ba5490f090a73de8423aac2f6b:f088fafaea755476f2abf488e7340cab:bfbf521a5c7bd80bcd95a96d9789c0dd$"
 	}
 }

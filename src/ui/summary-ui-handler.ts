@@ -51,7 +51,7 @@ export default class SummaryUiHandler extends UiHandler {
   private moveCategoryIcon: Phaser.GameObjects.Sprite;
   private summaryPageTransitionContainer: Phaser.GameObjects.Container;
 
-  private moveDescriptionScrollTween: Phaser.Tweens.Tween;
+  private descriptionScrollTween: Phaser.Tweens.Tween;
   private moveCursorBlinkTimer: Phaser.Time.TimerEvent;
 
   private pokemon: PlayerPokemon;
@@ -361,14 +361,14 @@ export default class SummaryUiHandler extends UiHandler {
         this.moveDescriptionText.setText(selectedMove?.effect || '');
         const moveDescriptionLineCount = Math.floor(this.moveDescriptionText.displayHeight / 14.83);
 
-        if (this.moveDescriptionScrollTween) {
-          this.moveDescriptionScrollTween.remove();
-          this.moveDescriptionScrollTween = null;
+        if (this.descriptionScrollTween) {
+          this.descriptionScrollTween.remove();
+          this.descriptionScrollTween = null;
         }
 
         if (moveDescriptionLineCount > 3) {
           this.moveDescriptionText.setY(84);
-          this.moveDescriptionScrollTween = this.scene.tweens.add({
+          this.descriptionScrollTween = this.scene.tweens.add({
             targets: this.moveDescriptionText,
             delay: Utils.fixedInt(2000),
             loop: -1,
@@ -467,6 +467,11 @@ export default class SummaryUiHandler extends UiHandler {
     }
     const pageBg =  (pageContainer.getAt(0) as Phaser.GameObjects.Sprite);
     pageBg.setTexture(this.getPageKey(page));
+
+    if (this.descriptionScrollTween) {
+      this.descriptionScrollTween.remove();
+      this.descriptionScrollTween = null;
+    }
     
     switch (page) {
       case Page.PROFILE:
@@ -494,9 +499,33 @@ export default class SummaryUiHandler extends UiHandler {
         abilityNameText.setOrigin(0, 1);
         profileContainer.add(abilityNameText);
 
-        const abilityDescriptionText = addTextObject(this.scene, 7, 69, ability.description, TextStyle.WINDOW, { maxLines: 2, wordWrap: { width: 1212 } });
+        const abilityDescriptionText = addTextObject(this.scene, 7, 69, ability.description, TextStyle.WINDOW, { wordWrap: { width: 1224 } });
         abilityDescriptionText.setOrigin(0, 0);
         profileContainer.add(abilityDescriptionText);
+
+        const abilityDescriptionTextMaskRect = this.scene.make.graphics({});
+        abilityDescriptionTextMaskRect.setScale(6);
+        abilityDescriptionTextMaskRect.fillStyle(0xFFFFFF);
+        abilityDescriptionTextMaskRect.beginPath();
+        abilityDescriptionTextMaskRect.fillRect(110, 90.5, 206, 31);
+
+        const abilityDescriptionTextMask = abilityDescriptionTextMaskRect.createGeometryMask();
+
+        abilityDescriptionText.setMask(abilityDescriptionTextMask);
+
+        const abilityDescriptionLineCount = Math.floor(abilityDescriptionText.displayHeight / 14.83);
+
+        if (abilityDescriptionLineCount > 2) {
+          abilityDescriptionText.setY(69);
+          this.descriptionScrollTween = this.scene.tweens.add({
+            targets: abilityDescriptionText,
+            delay: Utils.fixedInt(2000),
+            loop: -1,
+            hold: Utils.fixedInt(2000),
+            duration: Utils.fixedInt((abilityDescriptionLineCount - 2) * 2000),
+            y: `-=${14.83 * (abilityDescriptionLineCount - 2)}`
+          });
+        }
         break;
       case Page.STATS:
         const statsContainer = this.scene.add.container(0, -pageBg.height);

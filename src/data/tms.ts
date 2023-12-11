@@ -5757,10 +5757,7 @@ export const tmSpecies: TmSpecies = {
     Species.SALAMENCE,
     Species.ALOLA_RATTATA,
     Species.ALOLA_RATICATE,
-    [
     Species.GRENINJA,
-    'battle-bond',
-    ],
     Species.GALAR_SLOWBRO,
     Species.HISUI_SNEASEL,
   ],
@@ -15281,10 +15278,7 @@ export const tmSpecies: TmSpecies = {
     Species.SALAMENCE,
     Species.ALOLA_RATTATA,
     Species.ALOLA_RATICATE,
-    [
     Species.GRENINJA,
-    'battle-bond',
-    ],
   ],
   [Moves.STEEL_WING]: [
     Species.PIDGEOTTO,
@@ -15697,10 +15691,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_RATICATE,
     Species.ALOLA_EXEGGUTOR,
     Species.ALOLA_MAROWAK,
-    [
     Species.GRENINJA,
-    'battle-bond',
-    ],
     Species.GALAR_PONYTA,
     Species.GALAR_RAPIDASH,
     Species.GALAR_FARFETCHD,
@@ -16884,10 +16875,7 @@ export const tmSpecies: TmSpecies = {
     Species.SALAMENCE,
     Species.ALOLA_RATTATA,
     Species.ALOLA_RATICATE,
-    [
     Species.GRENINJA,
-    'battle-bond',
-    ],
   ],
   [Moves.FRUSTRATION]: [
     Species.BEEDRILL,
@@ -17014,10 +17002,7 @@ export const tmSpecies: TmSpecies = {
     Species.SALAMENCE,
     Species.ALOLA_RATTATA,
     Species.ALOLA_RATICATE,
-    [
     Species.GRENINJA,
-    'battle-bond',
-    ],
   ],
   [Moves.SAFEGUARD]: [
     Species.BULBASAUR,
@@ -17678,10 +17663,7 @@ export const tmSpecies: TmSpecies = {
     Species.SALAMENCE,
     Species.ALOLA_RATTATA,
     Species.ALOLA_RATICATE,
-    [
     Species.GRENINJA,
-    'battle-bond',
-    ],
   ],
   [Moves.RAIN_DANCE]: [
     Species.BUTTERFREE,
@@ -24454,10 +24436,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_SANDSLASH,
     Species.ALOLA_MEOWTH,
     Species.ALOLA_PERSIAN,
-    [
     Species.GRENINJA,
-    'battle-bond',
-    ],
     Species.GALAR_MEOWTH,
     Species.GALAR_ZAPDOS,
     Species.GALAR_MOLTRES,
@@ -32022,11 +32001,7 @@ export const tmSpecies: TmSpecies = {
     Species.TORNADUS,
     Species.THUNDURUS,
     Species.CHESNAUGHT,
-    [
     Species.GRENINJA,
-    '',
-    'battle-bond',
-    ],
     Species.VOLCANION,
     Species.DECIDUEYE,
     Species.PIKIPEK,
@@ -33034,10 +33009,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_RATICATE,
     Species.ALOLA_EXEGGUTOR,
     Species.ALOLA_MAROWAK,
-    [
     Species.GRENINJA,
-    'battle-bond',
-    ],
     Species.GALAR_PONYTA,
     Species.GALAR_RAPIDASH,
     Species.GALAR_FARFETCHD,
@@ -33097,10 +33069,7 @@ export const tmSpecies: TmSpecies = {
     Species.SLOWBRO,
     Species.RAYQUAZA,
     Species.CAMERUPT,
-    [
     Species.GRENINJA,
-    'battle-bond',
-    ],
   ],
   [Moves.STORED_POWER]: [
     Species.NINETALES,
@@ -33394,10 +33363,7 @@ export const tmSpecies: TmSpecies = {
     Species.POLTCHAGEIST,
     Species.SINISTCHA,
     Species.KYOGRE,
-    [
     Species.GRENINJA,
-    'battle-bond',
-    ],
     Species.GALAR_CORSOLA,
     Species.GALAR_STUNFISK,
     Species.CRAMORANT,
@@ -33577,11 +33543,7 @@ export const tmSpecies: TmSpecies = {
     Species.THUNDURUS,
     Species.FROAKIE,
     Species.FROGADIER,
-    [
     Species.GRENINJA,
-    '',
-    'battle-bond',
-    ],
     Species.VIVILLON,
     Species.LITLEO,
     Species.PYROAR,
@@ -34415,10 +34377,7 @@ export const tmSpecies: TmSpecies = {
     Species.HERACROSS,
     Species.MEDICHAM,
     Species.GALLADE,
-    [
     Species.GRENINJA,
-    'battle-bond',
-    ],
     Species.GALAR_FARFETCHD,
     Species.GALAR_ZIGZAGOON,
     Species.GALAR_LINOONE,
@@ -35377,10 +35336,7 @@ export const tmSpecies: TmSpecies = {
     Species.SALAMENCE,
     Species.ALOLA_RATTATA,
     Species.ALOLA_RATICATE,
-    [
     Species.GRENINJA,
-    'battle-bond',
-    ],
   ],
   [Moves.MYSTICAL_FIRE]: [
     Species.PONYTA,
@@ -36234,10 +36190,7 @@ export const tmSpecies: TmSpecies = {
     Species.SALAMENCE,
     Species.ALOLA_EXEGGUTOR,
     Species.ALOLA_MAROWAK,
-    [
     Species.GRENINJA,
-    'battle-bond',
-    ],
     [
     Species.ETERNATUS,
     'eternamax',
