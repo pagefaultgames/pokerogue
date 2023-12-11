@@ -9,7 +9,7 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagType, ArenaTrapTag } from "./arena-tag";
-import { Abilities, BlockRecoilDamageAttr, applyAbAttrs } from "./ability";
+import { Abilities, BlockRecoilDamageAttr, IgnoreContactAbAttr, applyAbAttrs } from "./ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
@@ -170,6 +170,17 @@ export default class Move {
   hidesTarget(hidesTarget?: boolean): this {
     this.setFlag(MoveFlags.HIDE_TARGET, hidesTarget);
     return this;
+  }
+
+  checkFlag(flag: MoveFlags, user: Pokemon, target: Pokemon): boolean {
+    switch (flag) {
+      case MoveFlags.MAKES_CONTACT:
+        if (user.getAbility().hasAttr(IgnoreContactAbAttr))
+          return false;
+        break;
+    }
+
+    return !!(this.flags & flag);
   }
 
   applyConditions(user: Pokemon, target: Pokemon, move: Move): boolean {
@@ -1933,7 +1944,7 @@ export class WeightPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
 
-    const targetWeight = target.species.weight;
+    const targetWeight = target.getWeight();
     const weightThresholds = [ 10, 25, 50, 100, 200 ];
 
     let w = 0;

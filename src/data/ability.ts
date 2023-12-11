@@ -291,7 +291,7 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   }
 
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (move.getMove().hasFlag(MoveFlags.MAKES_CONTACT) && Utils.randInt(100) < this.chance && !pokemon.status) {
+    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && Utils.randInt(100) < this.chance && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[Utils.randInt(this.effects.length)];
       pokemon.scene.unshiftPhase(new ObtainStatusEffectPhase(pokemon.scene, attacker.getBattlerIndex(), effect));
     }
@@ -314,7 +314,7 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
   }
 
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (move.getMove().hasFlag(MoveFlags.MAKES_CONTACT) && Utils.randInt(100) < this.chance)
+    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && Utils.randInt(100) < this.chance)
       return attacker.addTag(this.tagType, this.turnCount, move.moveId, pokemon.id);
 
     return false;
@@ -637,6 +637,8 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
 
 export class BlockCritAbAttr extends AbAttr { }
 
+export class IgnoreContactAbAttr extends AbAttr { }
+
 export class PreWeatherEffectAbAttr extends AbAttr {
   applyPreWeatherEffect(pokemon: Pokemon, weather: Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     return false;
@@ -681,19 +683,6 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
   }
 }
 
-export class PostTurnAbAttr extends AbAttr {
-  applyPostTurn(pokemon: Pokemon, args: any[]) {
-    return false;
-  }
-}
-
-export class PostTurnSpeedBoostAbAttr extends PostTurnAbAttr {
-  applyPostTurn(pokemon: Pokemon, args: any[]): boolean {
-    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ BattleStat.SPD ], 1));
-    return true;
-  }
-}
-
 function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
   return (pokemon: Pokemon) => {
     if (pokemon.scene.arena.weather?.isEffectSuppressed(pokemon.scene))
@@ -701,19 +690,6 @@ function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
     const weatherType = pokemon.scene.arena.weather?.weatherType;
     return weatherType && weatherTypes.indexOf(weatherType) > -1;
   };
-}
-
-export class PostTurnHealAbAttr extends PostTurnAbAttr {
-  applyPostTurn(pokemon: Pokemon, args: any[]): boolean {
-    if (pokemon.getHpRatio() < 1) {
-      const scene = pokemon.scene;
-      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-        Math.max(Math.floor(pokemon.getMaxHp() / 16), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
-      return true;
-    }
-
-    return false;
-  }
 }
 
 export class PostWeatherLapseAbAttr extends AbAttr {
@@ -777,6 +753,32 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
   }
 }
 
+export class PostTurnAbAttr extends AbAttr {
+  applyPostTurn(pokemon: Pokemon, args: any[]) {
+    return false;
+  }
+}
+
+export class PostTurnSpeedBoostAbAttr extends PostTurnAbAttr {
+  applyPostTurn(pokemon: Pokemon, args: any[]): boolean {
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ BattleStat.SPD ], 1));
+    return true;
+  }
+}
+
+export class PostTurnHealAbAttr extends PostTurnAbAttr {
+  applyPostTurn(pokemon: Pokemon, args: any[]): boolean {
+    if (pokemon.getHpRatio() < 1) {
+      const scene = pokemon.scene;
+      scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
+        Math.max(Math.floor(pokemon.getMaxHp() / 16), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class StatChangeMultiplierAbAttr extends AbAttr {
   private multiplier: integer;
 
@@ -807,6 +809,22 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
 
   getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
     return getPokemonMessage(pokemon, `\'s ${pokemon.getAbility().name}\nprevents switching!`);
+  }
+}
+
+export class WeightMultiplierAbAttr extends AbAttr {
+  private multiplier: integer;
+
+  constructor(multiplier: integer) {
+    super(true);
+
+    this.multiplier = multiplier;
+  }
+
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value *= this.multiplier;
+
+    return true;
   }
 }
 
@@ -1712,8 +1730,10 @@ export function initAbilities() {
     new Ability(Abilities.HEALER, "Healer (N)", "Sometimes heals an ally's status condition.", 5),
     new Ability(Abilities.FRIEND_GUARD, "Friend Guard (N)", "Reduces damage done to allies.", 5),
     new Ability(Abilities.WEAK_ARMOR, "Weak Armor (N)", "Physical attacks to the Pokémon lower its Defense\nstat but sharply raise its Speed stat.", 5),
-    new Ability(Abilities.HEAVY_METAL, "Heavy Metal (N)", "Doubles the Pokémon's weight.", 5),
-    new Ability(Abilities.LIGHT_METAL, "Light Metal (N)", "Halves the Pokémon's weight.", 5),
+    new Ability(Abilities.HEAVY_METAL, "Heavy Metal", "Doubles the Pokémon's weight.", 5)
+      .attr(WeightMultiplierAbAttr, 2),
+    new Ability(Abilities.LIGHT_METAL, "Light Metal", "Halves the Pokémon's weight.", 5)
+      .attr(WeightMultiplierAbAttr, 0.5),
     new Ability(Abilities.MULTISCALE, "Multiscale (N)", "Reduces the amount of damage the Pokémon takes\nwhile its HP is full.", 5),
     new Ability(Abilities.TOXIC_BOOST, "Toxic Boost (N)", "Powers up physical attacks when the Pokémon\nis poisoned.", 5),
     new Ability(Abilities.FLARE_BOOST, "Flare Boost (N)", "Powers up special attacks when the Pokémon\nis burned.", 5),
@@ -1794,7 +1814,8 @@ export function initAbilities() {
     new Ability(Abilities.SLUSH_RUSH, "Slush Rush (N)", "Boosts the Pokémon's Speed stat in a hailstorm.", 7)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.HAIL)),
-    new Ability(Abilities.LONG_REACH, "Long Reach (N)", "The Pokémon uses its moves without making contact\nwith the target.", 7),
+    new Ability(Abilities.LONG_REACH, "Long Reach", "The Pokémon uses its moves without making contact\nwith the target.", 7)
+      .attr(IgnoreContactAbAttr),
     new Ability(Abilities.LIQUID_VOICE, "Liquid Voice (N)", "All sound-based moves become Water-type moves.", 7),
     new Ability(Abilities.TRIAGE, "Triage (N)", "Gives priority to a healing move.", 7),
     new Ability(Abilities.GALVANIZE, "Galvanize (N)", "Normal-type moves become Electric-type moves.\nThe power of those moves is boosted a little.", 7),

@@ -22,7 +22,7 @@ import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { ArenaTagType, WeakenMoveTypeTag } from './data/arena-tag';
 import { Biome } from './data/biome';
-import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, IgnoreOpponentStatChangesAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
+import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, IgnoreOpponentStatChangesAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 import { BattlerIndex } from './battle';
 import { Mode } from './ui/ui';
@@ -580,6 +580,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   canApplyAbility(): boolean {
     return this.hp && !this.getAbility().conditions.find(condition => !condition(this));
+  }
+
+  getWeight(): number {
+    const weight = new Utils.NumberHolder(this.species.weight);
+    // This will trigger the ability overlay so only call this function when necessary
+    applyAbAttrs(WeightMultiplierAbAttr, this, null, weight);
+    return weight.value;
   }
 
   getAttackMoveEffectiveness(moveType: Type): TypeDamageMultiplier {

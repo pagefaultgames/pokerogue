@@ -2785,7 +2785,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       const healAmount = new Utils.NumberHolder(this.hpHealed * hpRestoreMultiplier.value);
       pokemon.heal(healAmount.value);
-      this.scene.validateAchvs(HealAchv, healAmount)
+      this.scene.validateAchvs(HealAchv, healAmount);
       pokemon.updateInfo().then(() => super.end());
     } else if (this.showFullHpMessage)
       this.message = getPokemonMessage(pokemon, `'s\nHP is full!`);
