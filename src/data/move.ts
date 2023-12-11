@@ -1413,7 +1413,7 @@ export enum MultiHitType {
   _2_TO_5,
   _3,
   _3_INCR,
-  _10
+  _1_TO_10
 }
 
 export class HealAttr extends MoveEffectAttr {
@@ -1541,8 +1541,28 @@ export class MultiHitAttr extends MoveAttr {
         hitTimes = 3;
         // TODO: Add power increase for every hit
         break;
-      case MultiHitType._10:
-        hitTimes = 10;
+      case MultiHitType._1_TO_10:
+        const rand10 = Utils.randInt(90);
+        if (rand10 >= 81)
+          hitTimes = 1;
+        else if (rand10 >= 73)
+          hitTimes = 2;
+        else if (rand10 >= 66)
+          hitTimes = 3;
+        else if (rand10 >= 60)
+          hitTimes = 4;
+        else if (rand10 >= 54)
+          hitTimes = 5;
+        else if (rand10 >= 49)
+          hitTimes = 6;
+        else if (rand10 >= 44)
+          hitTimes = 7;
+        else if (rand10 >= 40)
+          hitTimes = 8;
+        else if (rand10 >= 36)
+          hitTimes = 9;
+        else
+          hitTimes = 10;
         break;
     }
     (args[0] as Utils.IntegerHolder).value = hitTimes;
@@ -4289,7 +4309,7 @@ export function initMoves() {
     new AttackMove(Moves.ACCELEROCK, "Accelerock", Type.ROCK, MoveCategory.PHYSICAL, 40, 100, 20, -1, "The user smashes into the target at high speed. This move always goes first.", -1, 1, 7),
     new AttackMove(Moves.LIQUIDATION, "Liquidation", Type.WATER, MoveCategory.PHYSICAL, 85, 100, 10, -1, "The user slams into the target using a full-force blast of water. This may also lower the target's Defense stat.", 20, 0, 7)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
-    new AttackMove(Moves.PRISMATIC_LASER, "Prismatic Laser (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 160, 100, 10, -1, "The user shoots powerful lasers using the power of a prism. The user can't move on the next turn.", -1, 0, 7)
+    new AttackMove(Moves.PRISMATIC_LASER, "Prismatic Laser", Type.PSYCHIC, MoveCategory.SPECIAL, 160, 100, 10, -1, "The user shoots powerful lasers using the power of a prism. The user can't move on the next turn.", -1, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
     new AttackMove(Moves.SPECTRAL_THIEF, "Spectral Thief (N)", Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, "The user hides in the target's shadow, steals the target's stat boosts, and then attacks.", -1, 0, 7),
     new AttackMove(Moves.SUNSTEEL_STRIKE, "Sunsteel Strike (N)", Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, "The user slams into the target with the force of a meteor. This move can be used on the target regardless of its Abilities.", -1, 0, 7),
@@ -4564,7 +4584,7 @@ export function initMoves() {
     new AttackMove(Moves.SPIN_OUT, "Spin Out", Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, "The user spins furiously by straining its legs, inflicting damage on the target. This also harshly lowers the user's Speed stat.", 100, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPD, -2, true),
     new AttackMove(Moves.POPULATION_BOMB, "Population Bomb (P)", Type.NORMAL, MoveCategory.PHYSICAL, 20, 90, 10, -1, "The user's fellows gather in droves to perform a combo attack that hits the target one to ten times in a row.", -1, 0, 9)
-      .attr(MultiHitAttr, MultiHitType._10),
+      .attr(MultiHitAttr, MultiHitType._1_TO_10),
     new AttackMove(Moves.ICE_SPINNER, "Ice Spinner (N)", Type.ICE, MoveCategory.PHYSICAL, 80, 100, 15, -1, "The user covers its feet in thin ice and twirls around, slamming into the target. This move's spinning motion also destroys the terrain.", -1, 0, 9),
     new AttackMove(Moves.GLAIVE_RUSH, "Glaive Rush (N)", Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 5, -1, "The user throws its entire body into a reckless charge. After this move is used, attacks on the user cannot miss and will inflict double damage until the user's next turn.", -1, 0, 9),
     new StatusMove(Moves.REVIVAL_BLESSING, "Revival Blessing (N)", Type.NORMAL, -1, 1, -1, "The user bestows a loving blessing, reviving a party Pokémon that has fainted and restoring half that Pokémon's max HP.", -1, 0, 9),
