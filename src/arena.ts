@@ -135,6 +135,16 @@ export class Arena {
       case Species.SPEWPA:
       case Species.VIVILLON:
         return 0;
+      case Species.LYCANROC:
+        switch (this.biomeType) {
+          case Biome.CAVE:
+          case Biome.ICE_CAVE:
+          case Biome.FAIRY_CAVE:
+            return 2;
+          default:
+            if (!this.isDaytime())
+              return 1;
+        }
     }
 
     return 0;
@@ -169,6 +179,7 @@ export class Arena {
         return Type.ICE;
       case Biome.MEADOW:
       case Biome.FAIRY_CAVE:
+      case Biome.ISLAND:
         return Type.FAIRY;
       case Biome.POWER_PLANT:
         return Type.ELECTRIC;
@@ -287,7 +298,7 @@ export class Arena {
       case Biome.MEADOW:
       case Biome.DOJO:
       case Biome.CONSTRUCTION_SITE:
-      case Biome.FAIRY_CAVE:
+      case Biome.ISLAND:
         return true;
     }
   }
@@ -393,6 +404,10 @@ export class Arena {
         return 4.542;
       case Biome.TEMPLE:
         return 2.547;
+      case Biome.ISLAND:
+        return 2.751;
+      case Biome.LABORATORY:
+        return 0.797;
     }
   }
 }
@@ -408,6 +423,10 @@ export function getBiomeKey(biome: Biome): string {
       return 'tall_grass';
     case Biome.FAIRY_CAVE:
       return 'cave';
+    case Biome.ISLAND:
+      return 'beach';
+    case Biome.LABORATORY:
+      return 'factory';
     case Biome.END:
       return 'wasteland';
   }

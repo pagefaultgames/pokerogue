@@ -750,6 +750,7 @@ export default class BattleScene extends Phaser.Scene {
 			case Species.UNOWN:
 			case Species.DEERLING:
 			case Species.SAWSBUCK:
+			case Species.ORICORIO:
 				return Utils.randSeedInt(species.forms.length);
 		}
 
@@ -853,13 +854,13 @@ export default class BattleScene extends Phaser.Scene {
 	randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean, speciesFilter?: PokemonSpeciesFilter, filterAllEvolutions?: boolean): PokemonSpecies {
 		if (fromArenaPool)
 			return this.arena.randomSpecies(waveIndex, level);
-		const filteredSpecies = speciesFilter ? [...new Set(allSpecies.filter(s => s.generation <= 6).filter(speciesFilter).map(s => {
+		const filteredSpecies = speciesFilter ? [...new Set(allSpecies.filter(s => s.generation <= 7).filter(speciesFilter).map(s => {
 			if (!filterAllEvolutions) {
 				while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
 					s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
 			}
 			return s;
-		}))] : allSpecies.filter(s => s.generation <= 6);
+		}))] : allSpecies.filter(s => s.generation <= 7);
 		let ret = filteredSpecies[Utils.randSeedInt(filteredSpecies.length)];
 		if (!filterAllEvolutions)
 			ret = getPokemonSpecies(ret.getSpeciesForLevel(level, true));

@@ -534,8 +534,13 @@ export class SelectBiomePhase extends BattlePhase {
     else if (this.scene.gameMode !== GameMode.CLASSIC)
       setNextBiome(this.generateNextBiome());
     else if (Array.isArray(biomeLinks[currentBiome])) {
-      const biomes = biomeLinks[currentBiome] as Biome[];
-      if (this.scene.findModifier(m => m instanceof MapModifier)) {
+      let biomes: Biome[];
+      this.scene.executeWithSeedOffset(() => {
+        biomes = (biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
+          .filter(b => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
+          .map(b => !Array.isArray(b) ? b : b[0]);
+      }, this.scene.currentBattle.waveIndex);
+      if (biomes.length > 1 && this.scene.findModifier(m => m instanceof MapModifier)) {
         this.scene.ui.setMode(Mode.BIOME_SELECT, currentBiome, (biomeIndex: integer) => {
           this.scene.ui.setMode(Mode.MESSAGE);
           setNextBiome(biomes[biomeIndex]);
@@ -551,14 +556,14 @@ export class SelectBiomePhase extends BattlePhase {
       return Biome.END;
     else {
       const relWave = this.scene.currentBattle.waveIndex % 250;
-      const biomes = Utils.getEnumValues(Biome).slice(1, -1);
-      const maxDepth = biomeDepths[Biome.END] - 2;
+      const biomes = Utils.getEnumValues(Biome).slice(1, Utils.getEnumValues(Biome).filter(b => b >= 40).length * -1);
+      const maxDepth = biomeDepths[Biome.END][0] - 2;
       const depthWeights = new Array(maxDepth + 1).fill(null)
         .map((_, i: integer) => ((1 - Math.min(Math.abs((i / (maxDepth - 1)) - (relWave / 250)) + 0.25, 1)) / 0.75) * 250);
       const biomeThresholds: integer[] = [];
       let totalWeight = 0;
       for (let biome of biomes) {
-        totalWeight += depthWeights[biomeDepths[biome] - 1];
+        totalWeight += Math.ceil(depthWeights[biomeDepths[biome][0] - 1] / biomeDepths[biome][1]);
         biomeThresholds.push(totalWeight);
       }
 

@@ -22,7 +22,7 @@ export interface Starter {
   pokerus: boolean;
 }
 
-const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI' ];
+const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII' ];
 const ivChartSize = 24;
 const ivChartStatCoordMultipliers = [ [ 0, 1 ], [ 0.825, 0.5 ], [ 0.825, -0.5 ], [ 0, -1 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ] ];
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
@@ -198,8 +198,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.genSpecies.push([]);
 
         for (let species of allSpecies) {
-          if (species.generation > gens.length)
-            break;
           if (!speciesStarterValues.hasOwnProperty(species.speciesId) || species.generation !== g + 1)
             continue;
           starterSpecies.push(species.speciesId);

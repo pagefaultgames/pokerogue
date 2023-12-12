@@ -3,6 +3,7 @@ import { Biome, biomeLinks, getBiomeName } from "../data/biome";
 import { addTextObject, TextStyle } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./uiHandler";
+import * as Utils from "../utils";
 
 export default class BiomeSelectUiHandler extends UiHandler {
   private biomeSelectContainer: Phaser.GameObjects.Container;
@@ -38,10 +39,17 @@ export default class BiomeSelectUiHandler extends UiHandler {
     if (args.length >= 2 && typeof(args[0]) === 'number' && args[1] instanceof Function) {
       super.show(args);
 
-      if (!Array.isArray(biomeLinks[args[0]]))
+      this.scene.executeWithSeedOffset(() => {
+        this.biomeChoices = (!Array.isArray(biomeLinks[args[0]])
+          ? [ biomeLinks[args[0]] as Biome ]
+          : biomeLinks[args[0]] as (Biome | [Biome, integer])[])
+          .filter((b, i) => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
+          .map(b => Array.isArray(b) ? b[0] : b);
+      }, this.scene.currentBattle.waveIndex);
+
+      if (this.biomeChoices.length <= 1)
         return;
 
-      this.biomeChoices = biomeLinks[args[0]] as Biome[];
       this.biomeSelectBg.setTexture(`option_select_window_${this.biomeChoices.length}`)
       this.biomesText.setText(this.biomeChoices.map(b => getBiomeName(b)).join('\n'));
       this.biomesText.setPositionRelative(this.biomeSelectBg, 16, 9);

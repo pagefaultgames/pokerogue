@@ -7,6 +7,8 @@ import { Type } from './type';
 import { LevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from './pokemon-level-moves';
 
 export function getPokemonSpecies(species: Species): PokemonSpecies {
+  if (species >= 2000)
+    return allSpecies.find(s => s.speciesId === species);
   return allSpecies[species - 1];
 }
 
@@ -104,7 +106,7 @@ export abstract class PokemonSpeciesForm {
   }
 
   isObtainable() {
-    return (this.generation <= 6 || pokemonPrevolutions.hasOwnProperty(this.speciesId));
+    return (this.generation <= 7 || pokemonPrevolutions.hasOwnProperty(this.speciesId));
   }
 
   getSpriteAtlasPath(female: boolean, formIndex?: integer, shiny?: boolean): string {
@@ -324,7 +326,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
     let noEvolutionChance = 1;
 
     for (let ev of evolutions) {
-      if (ev.level > level)
+      if (ev.level > level || ev.wildDelay === SpeciesWildEvolutionDelay.NEVER)
         continue;
 
       let evolutionChance: number;
@@ -2045,9 +2047,9 @@ export function initSpecies() {
       new PokemonForm("Hearthflame Mask", "hearthflame-mask", Type.GRASS, Type.FIRE, 1.2, 39.8, Abilities.MOLD_BREAKER, Abilities.NONE, Abilities.NONE, 550, 80, 120, 84, 60, 96, 110, 5, 0, null),
       new PokemonForm("Cornerstone Mask", "cornerstone-mask", Type.GRASS, Type.ROCK, 1.2, 39.8, Abilities.STURDY, Abilities.NONE, Abilities.NONE, 550, 80, 120, 84, 60, 96, 110, 5, 0, null),
     ),
-    new PokemonSpecies(Species.ALOLA_RATTATA, "Rattata", 7, false, false, false, "Mouse Pokémon", Type.DARK, null, 0.3, 3.8, Abilities.GLUTTONY, Abilities.HUSTLE, Abilities.THICK_FAT, 253, 30, 56, 35, 25, 35, 72, 255, 70, 51, GrowthRate.MEDIUM_FAST, 50, true),
-    new PokemonSpecies(Species.ALOLA_RATICATE, "Raticate", 7, false, false, false, "Mouse Pokémon", Type.DARK, null, 0.7, 25.5, Abilities.GLUTTONY, Abilities.HUSTLE, Abilities.THICK_FAT, 413, 75, 71, 70, 40, 80, 77, 127, 70, 145, GrowthRate.MEDIUM_FAST, 50, true),
-    new PokemonSpecies(Species.ALOLA_RAICHU, "Raichu", 7, false, false, false, "Mouse Pokémon", Type.ELECTRIC, Type.PSYCHIC, 0.7, 21, Abilities.SURGE_SURFER, Abilities.NONE, Abilities.NONE, 485, 60, 85, 50, 95, 85, 110, 75, 50, 243, GrowthRate.MEDIUM_FAST, 50, true),
+    new PokemonSpecies(Species.ALOLA_RATTATA, "Rattata", 7, false, false, false, "Mouse Pokémon", Type.DARK, null, 0.3, 3.8, Abilities.GLUTTONY, Abilities.HUSTLE, Abilities.THICK_FAT, 253, 30, 56, 35, 25, 35, 72, 255, 70, 51, GrowthRate.MEDIUM_FAST, 50, false),
+    new PokemonSpecies(Species.ALOLA_RATICATE, "Raticate", 7, false, false, false, "Mouse Pokémon", Type.DARK, null, 0.7, 25.5, Abilities.GLUTTONY, Abilities.HUSTLE, Abilities.THICK_FAT, 413, 75, 71, 70, 40, 80, 77, 127, 70, 145, GrowthRate.MEDIUM_FAST, 50, false),
+    new PokemonSpecies(Species.ALOLA_RAICHU, "Raichu", 7, false, false, false, "Mouse Pokémon", Type.ELECTRIC, Type.PSYCHIC, 0.7, 21, Abilities.SURGE_SURFER, Abilities.NONE, Abilities.NONE, 485, 60, 85, 50, 95, 85, 110, 75, 50, 243, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.ALOLA_SANDSHREW, "Sandshrew", 7, false, false, false, "Mouse Pokémon", Type.ICE, Type.STEEL, 0.7, 40, Abilities.SNOW_CLOAK, Abilities.NONE, Abilities.SLUSH_RUSH, 300, 50, 75, 90, 10, 35, 40, 255, 50, 60, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.ALOLA_SANDSLASH, "Sandslash", 7, false, false, false, "Mouse Pokémon", Type.ICE, Type.STEEL, 1.2, 55, Abilities.SNOW_CLOAK, Abilities.NONE, Abilities.SLUSH_RUSH, 450, 75, 100, 120, 25, 65, 65, 90, 50, 158, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.ALOLA_VULPIX, "Vulpix", 7, false, false, false, "Fox Pokémon", Type.ICE, null, 0.6, 9.9, Abilities.SNOW_CLOAK, Abilities.NONE, Abilities.SNOW_WARNING, 299, 38, 41, 40, 50, 65, 65, 190, 50, 60, GrowthRate.MEDIUM_FAST, 25, false),
@@ -2406,7 +2408,7 @@ export const speciesStarters = {
   [Species.DUCKLETT]: 3,
   [Species.VANILLITE]: 3,
   [Species.DEERLING]: 3,
-  [Species.EMOLGA]: 4,
+  [Species.EMOLGA]: 3,
   [Species.KARRABLAST]: 3,
   [Species.FOONGUS]: 3,
   [Species.FRILLISH]: 3,
@@ -2469,7 +2471,7 @@ export const speciesStarters = {
   [Species.TYRUNT]: 3,
   [Species.AMAURA]: 3,
   [Species.HAWLUCHA]: 4,
-  [Species.DEDENNE]: 3,
+  [Species.DEDENNE]: 4,
   [Species.CARBINK]: 4,
   [Species.GOOMY]: 4,
   [Species.KLEFKI]: 4,
@@ -2484,6 +2486,69 @@ export const speciesStarters = {
   [Species.HOOPA]: 7,
   [Species.VOLCANION]: 7,
 
+  [Species.ROWLET]: 3,
+  [Species.LITTEN]: 3,
+  [Species.POPPLIO]: 3,
+  [Species.PIKIPEK]: 3,
+  [Species.YUNGOOS]: 2,
+  [Species.GRUBBIN]: 2,
+  [Species.CRABRAWLER]: 4,
+  [Species.ORICORIO]: 3,
+  [Species.CUTIEFLY]: 3,
+  [Species.ROCKRUFF]: 3,
+  [Species.WISHIWASHI]: 3,
+  [Species.MAREANIE]: 3,
+  [Species.MUDBRAY]: 3,
+  [Species.DEWPIDER]: 3,
+  [Species.FOMANTIS]: 3,
+  [Species.MORELULL]: 3,
+  [Species.SALANDIT]: 3,
+  [Species.STUFFUL]: 3,
+  [Species.BOUNSWEET]: 3,
+  [Species.COMFEY]: 4,
+  [Species.ORANGURU]: 5,
+  [Species.PASSIMIAN]: 5,
+  [Species.WIMPOD]: 3,
+  [Species.SANDYGAST]: 3,
+  [Species.PYUKUMUKU]: 3,
+  [Species.TYPE_NULL]: 5,
+  [Species.MINIOR]: 5,
+  [Species.KOMALA]: 5,
+  [Species.TURTONATOR]: 5,
+  [Species.TOGEDEMARU]: 4,
+  [Species.MIMIKYU]: 5,
+  [Species.BRUXISH]: 5,
+  [Species.DRAMPA]: 5,
+  [Species.DHELMISE]: 5,
+  [Species.JANGMO_O]: 4,
+  [Species.TAPU_KOKO]: 6,
+  [Species.TAPU_LELE]: 6,
+  [Species.TAPU_BULU]: 6,
+  [Species.TAPU_FINI]: 6,
+  [Species.COSMOG]: 7,
+  [Species.NIHILEGO]: 7,
+  [Species.BUZZWOLE]: 7,
+  [Species.PHEROMOSA]: 7,
+  [Species.XURKITREE]: 7,
+  [Species.CELESTEELA]: 7,
+  [Species.KARTANA]: 7,
+  [Species.GUZZLORD]: 7,
+  [Species.NECROZMA]: 8,
+  [Species.MAGEARNA]: 7,
+  [Species.MARSHADOW]: 7,
+  [Species.POIPOLE]: 7,
+  [Species.STAKATAKA]: 7,
+  [Species.BLACEPHALON]: 7,
+  [Species.ZERAORA]: 7,
+  [Species.MELTAN]: 6,
+  [Species.ALOLA_RATTATA]: 2,
+  [Species.ALOLA_SANDSHREW]: 4,
+  [Species.ALOLA_VULPIX]: 4,
+  [Species.ALOLA_DIGLETT]: 3,
+  [Species.ALOLA_MEOWTH]: 4,
+  [Species.ALOLA_GEODUDE]: 3,
+  [Species.ALOLA_GRIMER]: 3,
+
   [Species.ETERNATUS]: 10,
 };
 
@@ -2491,7 +2556,7 @@ export const speciesStarters = {
 {
   //setTimeout(() => {
     /*for (let tc of Object.keys(trainerConfigs)) {
-      console.log(TrainerType[tc], !trainerConfigs[tc].speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 6).filter(trainerConfigs[tc].speciesFilter).map(s => {
+      console.log(TrainerType[tc], !trainerConfigs[tc].speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 7).filter(trainerConfigs[tc].speciesFilter).map(s => {
         while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
 				  s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
         return s;
@@ -2499,7 +2564,7 @@ export const speciesStarters = {
     }
 
     const speciesFilter = (species: PokemonSpecies) => !species.legendary && !species.pseudoLegendary && !species.mythical && species.baseTotal >= 540;
-    console.log(!speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 6).filter(speciesFilter).map(s => {
+    console.log(!speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 7).filter(speciesFilter).map(s => {
       while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
         s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
       return s;
