@@ -167,7 +167,7 @@ export async function printPokemon() {
         speciesFormLevelMoves[speciesKey][pokemonForm.formIndex] = [];
 
         for (let version of versions) {
-          if (pokemon.moves.find(m => m.version_group_details.find(v => v.version_group.name === version))) {
+          if (pokemon.moves.find(m => m.version_group_details.find(v => v.version_group.name === version && v.move_learn_method.name === 'level-up'))) {
             moveVer = version;
             break;
           }
@@ -261,7 +261,7 @@ export async function printPokemon() {
     speciesLevelMoves[speciesKey] = [];
 
     for (let version of versions) {
-      if (pokemon.moves.find(m => m.version_group_details.find(v => v.version_group.name === version))) {
+      if (pokemon.moves.find(m => m.version_group_details.find(v => v.version_group.name === version && v.move_learn_method.name === 'level-up'))) {
         moveVer = version;
         break;
       }

@@ -518,9 +518,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getMoveset(ignoreOverride?: boolean): PokemonMove[] {
-    if (!ignoreOverride && this.summonData?.moveset)
-      return this.summonData.moveset;
-    return this.moveset;
+    const ret = !ignoreOverride && this.summonData?.moveset
+      ? this.summonData.moveset
+      : this.moveset;
+
+    if (MOVE_OVERRIDE && this.isPlayer())
+      this.moveset[0] = new PokemonMove(MOVE_OVERRIDE);
+    else if (OPP_MOVE_OVERRIDE && !this.isPlayer())
+      this.moveset[0] = new PokemonMove(OPP_MOVE_OVERRIDE);
+
+    return ret;
   }
 
   getLearnableLevelMoves(): Moves[] {
@@ -761,11 +768,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       console.log(allMoves[movePool[moveIndex]]);
       movePool.splice(moveIndex, 1);
     }
-
-    if (MOVE_OVERRIDE && this.isPlayer())
-      this.moveset[0] = new PokemonMove(MOVE_OVERRIDE);
-    else if (OPP_MOVE_OVERRIDE && !this.isPlayer())
-      this.moveset[0] = new PokemonMove(OPP_MOVE_OVERRIDE);
   }
 
   trySelectMove(moveIndex: integer, ignorePp?: boolean): boolean {

@@ -779,16 +779,16 @@ export const trainerConfigs: TrainerConfigs = {
   ]),
   [TrainerType.FLANNERY]: new TrainerConfig(++t).initForGymLeader(Species.TORKOAL, Type.FIRE)
     .setEncounterMessages([
-		`Nice to meet you! Wait, no...\nI will crush you!`,
-		`I've only been a leader for a little while,\nbut I'll smoke you!`,
-		`It's time to demonstrate the moves my grandfather has taught me!\nLet's battle!`
+		`Nice to meet you! Wait, no…\nI will crush you!`,
+		`I've only been a leader for a little while, but I'll smoke you!`,
+		`It's time to demonstrate the moves my grandfather has taught me! Let's battle!`
   ]).setVictoryMessages([
-		`You remind me of my grandfather...\nNo wonder I lost.`,
+		`You remind me of my grandfather…\nNo wonder I lost.`,
 		`Am I trying too hard?\nI should relax, can't get too heated.`,
 		`Losing isn't going to smother me out.\nTime to reignite training!`
   ]).setDefeatMessages([
-		`I hope I've made my grandfather proud...\nLet's battle again some time.`,
-		`I...I can't believe I won!\nDoing things my way worked!`,
+		`I hope I've made my grandfather proud…\nLet's battle again some time.`,
+		`I…I can't believe I won!\nDoing things my way worked!`,
 		`Let's exchange burning hot moves again soon!`
   ]),
   [TrainerType.NORMAN]: new TrainerConfig(++t).initForGymLeader(Species.SLAKOTH, Type.NORMAL)
@@ -797,8 +797,8 @@ export const trainerConfigs: TrainerConfigs = {
 		`I'll do everything in my power as a Gym Leader to win.\nLet's go!`,
 		`You better give this your all.\nIt's time to battle!`
   ]).setVictoryMessages([
-		`I lost to you...?\nRules are rules, though.`,
-		`Was moving from Olivine a mistake...?`,
+		`I lost to you…?\nRules are rules, though.`,
+		`Was moving from Olivine a mistake…?`,
 		`I can't believe it.\nThat was a great match.`
   ]).setDefeatMessages([
 		`We both tried our best.\nI hope we can battle again soon.`,
@@ -807,57 +807,57 @@ export const trainerConfigs: TrainerConfigs = {
   ]),
   [TrainerType.WINONA]: new TrainerConfig(++t).initForGymLeader(Species.SWABLU, Type.FLYING)
     .setEncounterMessages([
-		`I've been soaring the skies looking for prey...\nAnd you're my target!`,
-		`No matter how our battle is, My Flying Pokèmon and I will triumph with grace.\nLet's battle!`,
+		`I've been soaring the skies looking for prey…\nAnd you're my target!`,
+		`No matter how our battle is, my Flying Pokémon and I will triumph with grace. Let's battle!`,
 		`I hope you aren't scared of heights.\nLet's ascend!`
   ]).setVictoryMessages([
 		`You're the first Trainer I've seen with more grace than I.\nExcellently played.`,
-		`Oh, my Flying Pokèmon have plummeted!\nVery well.`,
-		`Though I may have fallen, my Pokèmon will continue to fly!`
+		`Oh, my Flying Pokémon have plummeted!\nVery well.`,
+		`Though I may have fallen, my Pokémon will continue to fly!`
   ]).setDefeatMessages([
-		`My Flying Pokèmon and I will forever dance elegantly!`,
+		`My Flying Pokémon and I will forever dance elegantly!`,
 		`I hope you enjoyed our show.\nOur graceful dance is finished.`,
 		`Won't you come see our elegant choreography again?`
   ]),
   [TrainerType.TATE]: new TrainerConfig(++t).initForGymLeader(Species.SOLROCK, Type.PSYCHIC)
     .setEncounterMessages([
-		`Hehehe...\nWere you surprised to see me without my sister?`,
-		`I can see what you're thinking...\nYou want to battle!`,
-		`How can you defeat someone...\nWho knows your every move?`
+		`Hehehe…\nWere you surprised to see me without my sister?`,
+		`I can see what you're thinking…\nYou want to battle!`,
+		`How can you defeat someone…\nWho knows your every move?`
   ]).setVictoryMessages([
-		`It can't be helped...\nI miss Liza...`,
-		`Your bond with your Pokèmon was stronger than mine.`,
+		`It can't be helped…\nI miss Liza…`,
+		`Your bond with your Pokémon was stronger than mine.`,
 		`If I were with Liza, we would have won.\nWe can finish each other's thoughts!`
   ]).setDefeatMessages([
-		`My Pokèmon and I are superior!`,
+		`My Pokémon and I are superior!`,
 		`If you can't even defeat me, you'll never be able to defeat Liza either.`,
-		`It's all thanks to my strict training with Liza.\nI can make myself one with Pokèmon.`
+		`It's all thanks to my strict training with Liza.\nI can make myself one with Pokémon.`
   ]),
   [TrainerType.LIZA]: new TrainerConfig(++t).initForGymLeader(Species.LUNATONE, Type.PSYCHIC)
     .setEncounterMessages([
-		`Fufufu...\nWere you surprised to see me without my brother?`,
-		`I can determine what you desire...\nYou want to battle, don't you?`,
-		`How can you defeat someone...\nWho's one with their Pokèmon?`
+		`Fufufu…\nWere you surprised to see me without my brother?`,
+		`I can determine what you desire…\nYou want to battle, don't you?`,
+		`How can you defeat someone…\nWho's one with their Pokémon?`
   ]).setVictoryMessages([
-		`It can't be helped...\nI miss Tate...`,
-		`Your bond with your Pokèmon...\nIt's stronger than mine.`,
+		`It can't be helped…\nI miss Tate…`,
+		`Your bond with your Pokémon…\nIt's stronger than mine.`,
 		`If I were with Tate, we would have won.\nWe can finish each other's sentences!`
   ]).setDefeatMessages([
-		`My Pokèmon and I are victorious.`,
+		`My Pokémon and I are victorious.`,
 		`If you can't even defeat me, you'll never be able to defeat Tate either.`,
-		`It's all thanks to my strict training with Tate.\nI can synchronize myself with my Pokèmon.`
+		`It's all thanks to my strict training with Tate.\nI can synchronize myself with my Pokémon.`
   ]),
   [TrainerType.JUAN]: new TrainerConfig(++t).initForGymLeader(Species.HORSEA, Type.WATER)
     .setEncounterMessages([
 		`Now's not the time to act coy.\nLet's battle!`,
-		`Ahahaha, You'll be witness to my artistry with Water Pokèmon!`,
+		`Ahahaha, You'll be witness to my artistry with Water Pokémon!`,
 		`A typhoon approaches!\nWill you be able to test me?`
   ]).setVictoryMessages([
 		`You may be a genius who can take on Wallace!`,
 		`I focused on elegance while you trained.\nIt's only natural that you defeated me.`,
 		`Ahahaha!\nVery well, You have won this time.`
   ]).setDefeatMessages([
-		`My Pokèmon and I have sculpted an illusion of Water and come out victorious.`,
+		`My Pokémon and I have sculpted an illusion of Water and come out victorious.`,
 		`Ahahaha, I have won, and you have lost.`,
 		`Shall I loan you my outfit? It may help you battle!\nAhahaha, I jest!`
   ]),

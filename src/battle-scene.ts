@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Biome } from './data/biome';
 import UI, { Mode } from './ui/ui';
-import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase, TrainerMessageTestPhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
@@ -690,7 +690,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.currentBattle = new Battle(newWaveIndex, newBattleType, newTrainer, newDouble);
 		this.currentBattle.incrementTurn(this);
 
-		//this.pushPhase(new TestMessagePhase(this, trainerConfigs[TrainerType.RIVAL].encounterMessages[0]))
+		//this.pushPhase(new TrainerMessageTestPhase(this));
 
 		if (!waveIndex) {
 			const isNewBiome = !lastBattle || !(lastBattle.waveIndex % 10);

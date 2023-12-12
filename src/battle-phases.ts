@@ -1,5 +1,5 @@
 import BattleScene, { startingLevel, startingWave } from "./battle-scene";
-import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult } from "./pokemon";
+import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./pokemon";
 import * as Utils from './utils';
 import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr } from "./data/move";
 import { Mode } from './ui/ui';
@@ -34,6 +34,7 @@ import { Species } from "./data/species";
 import { HealAchv, LevelAchv, MoneyAchv, achvs } from "./system/achv";
 import { DexEntry } from "./system/game-data";
 import { pokemonPrevolutions } from "./data/pokemon-evolutions";
+import { trainerConfigs } from "./data/trainer-type";
 
 export class CheckLoadPhase extends BattlePhase {
   private loaded: boolean;
@@ -1603,6 +1604,12 @@ export class MovePhase extends BattlePhase {
   }
 
   showMoveText(): void {
+    if (this.move.getMove().getAttrs(ChargeAttr).length) {
+      const lastMove = this.pokemon.getLastXMoves() as TurnMove[];
+      if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER)
+        return;
+    }
+    
     this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
   }
 
@@ -3303,6 +3310,32 @@ export class ScanIvsPhase extends PokemonPhase {
         this.end();
       });
     });
+  }
+}
+
+export class TrainerMessageTestPhase extends BattlePhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    super.start();
+
+    let testMessages: string[] = [];
+    
+    for (let t of Object.keys(trainerConfigs)) {
+      const config = trainerConfigs[parseInt(t)];
+      [ config.encounterMessages, config.femaleEncounterMessages, config.victoryMessages, config.femaleVictoryMessages, config.defeatMessages, config.femaleDefeatMessages ]
+        .map(messages => {
+          if (messages?.length)
+            testMessages.push(...messages);
+        });
+    }
+
+    for (let message of testMessages)
+      this.scene.pushPhase(new TestMessagePhase(this.scene, message));
+
+    this.end();
   }
 }
 
