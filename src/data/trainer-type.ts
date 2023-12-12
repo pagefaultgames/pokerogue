@@ -729,7 +729,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.GIOVANNI]: new TrainerConfig(++t).initForGymLeader(Species.SANDILE, Type.DARK),
   [TrainerType.FALKNER]: new TrainerConfig(++t).initForGymLeader(Species.PIDGEY, Type.FLYING),
   [TrainerType.BUGSY]: new TrainerConfig(++t).initForGymLeader(Species.SCYTHER, Type.BUG),
-  [TrainerType.WHITNEY]: new TrainerConfig(++t).initForGymLeader(Species.MILTANK, Type.NORMAL),
+  [TrainerType.WHITNEY]: new TrainerConfig(++t).initForGymLeader(Species.MILTANK, Type.FAIRY),
   [TrainerType.MORTY]: new TrainerConfig(++t).initForGymLeader(Species.GASTLY, Type.GHOST),
   [TrainerType.CHUCK]: new TrainerConfig(++t).initForGymLeader(Species.POLIWRATH, Type.FIGHTING),
   [TrainerType.JASMINE]: new TrainerConfig(++t).initForGymLeader(Species.STEELIX, Type.STEEL),

@@ -168,6 +168,7 @@ export class Arena {
       case Biome.ICE_CAVE:
         return Type.ICE;
       case Biome.MEADOW:
+      case Biome.FAIRY_CAVE:
         return Type.FAIRY;
       case Biome.POWER_PLANT:
         return Type.ELECTRIC;
@@ -259,6 +260,7 @@ export class Arena {
       case Biome.RUINS:
       case Biome.WASTELAND:
       case Biome.JUNGLE:
+      case Biome.FAIRY_CAVE:
         return 12;
       case Biome.SEABED:
       case Biome.ABYSS:
@@ -283,6 +285,7 @@ export class Arena {
       case Biome.MEADOW:
       case Biome.DOJO:
       case Biome.CONSTRUCTION_SITE:
+      case Biome.FAIRY_CAVE:
         return true;
     }
   }
@@ -384,6 +387,8 @@ export class Arena {
         return 1.222;
       case Biome.JUNGLE:
         return 2.477;
+      case Biome.FAIRY_CAVE:
+        return 4.542;
     }
   }
 }
@@ -396,6 +401,8 @@ export function getBiomeKey(biome: Biome): string {
       return 'city';
     case Biome.JUNGLE:
       return 'tall_grass';
+    case Biome.FAIRY_CAVE:
+      return 'cave';
     case Biome.END:
       return 'wasteland';
   }
