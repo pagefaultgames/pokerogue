@@ -735,15 +735,132 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.JASMINE]: new TrainerConfig(++t).initForGymLeader(Species.STEELIX, Type.STEEL),
   [TrainerType.PRYCE]: new TrainerConfig(++t).initForGymLeader(Species.SWINUB, Type.ICE),
   [TrainerType.CLAIR]: new TrainerConfig(++t).initForGymLeader(Species.DRATINI, Type.DRAGON),
-  [TrainerType.ROXANNE]: new TrainerConfig(++t).initForGymLeader(Species.NOSEPASS, Type.ROCK),
-  [TrainerType.BRAWLY]: new TrainerConfig(++t).initForGymLeader(Species.MAKUHITA, Type.FIGHTING),
-  [TrainerType.WATTSON]: new TrainerConfig(++t).initForGymLeader(Species.ELECTRIKE, Type.ELECTRIC),
-  [TrainerType.FLANNERY]: new TrainerConfig(++t).initForGymLeader(Species.TORKOAL, Type.FIRE),
-  [TrainerType.NORMAN]: new TrainerConfig(++t).initForGymLeader(Species.SLAKOTH, Type.NORMAL),
-  [TrainerType.WINONA]: new TrainerConfig(++t).initForGymLeader(Species.SWABLU, Type.FLYING),
-  [TrainerType.TATE]: new TrainerConfig(++t).initForGymLeader(Species.SOLROCK, Type.PSYCHIC),
-  [TrainerType.LIZA]: new TrainerConfig(++t).initForGymLeader(Species.LUNATONE, Type.PSYCHIC),
-  [TrainerType.JUAN]: new TrainerConfig(++t).initForGymLeader(Species.HORSEA, Type.WATER),
+  [TrainerType.ROXANNE]: new TrainerConfig(++t).initForGymLeader(Species.NOSEPASS, Type.ROCK)
+	.setEncounterMessages([
+		`Would you kindly demonstrate how you battle?`,
+		`You can learn many things by battling many trainers.`,
+		`Oh, you caught me strategizing.\nWould you like to battle?`
+  ]).setVictoryMessages([
+		`Oh, I appear to have lost.\nI understand.`,
+		`It seems that I still have so much more to learn when it comes to battle.`,
+		`I'll take what I learned here today to heart.`
+  ]).setDefeatMessages([
+		`I have learned many things from our battle.\nI hope you have too.`,
+		`I look forward to battling you again.\nI hope you'll use what you've learned here.`,
+		`I won due to everything I have learned.`
+  ]),
+  [TrainerType.BRAWLY]: new TrainerConfig(++t).initForGymLeader(Species.MAKUHITA, Type.FIGHTING)
+    .setEncounterMessages([
+		`Oh man, a challenger!\nLet's see what you can do!`,
+		`You seem like a big splash.\nLet's battle!`,
+		`Time to create a storm!\nLet's go!`
+  ]).setVictoryMessages([
+		`Oh woah, you've washed me out!`,
+		`You surfed my wave and crashed me down!`,
+		`I feel like I'm lost in Granite Cave!`
+  ]).setDefeatMessages([
+		`Haha, I surfed the big wave!\nChallenge me again sometime.`,
+		`Surf with me again some time!`,
+		`Just like the tides come in and out, I hope you return to challenge me again.`
+  ]),
+  [TrainerType.WATTSON]: new TrainerConfig(++t).initForGymLeader(Species.ELECTRIKE, Type.ELECTRIC)
+    .setEncounterMessages([
+		`Time to get shocked!\nWahahahaha!`,
+		`I'll make sparks fly!\nWahahahaha!`,
+		`I hope you brought Paralyz Heal!\nWahahahaha!`
+  ]).setVictoryMessages([
+		`Seems like I'm out of charge!\nWahahahaha!`,
+		`You've completely grounded me!\nWahahahaha!`,
+		`Thanks for the thrill!\nWahahahaha!`
+  ]).setDefeatMessages([
+		`Recharge your batteries and challenge me again sometime!\nWahahahaha!`,
+		`I hope you found our battle electrifying!\nWahahahaha!`,
+		`Aren't you shocked I won?\nWahahahaha!`
+  ]),
+  [TrainerType.FLANNERY]: new TrainerConfig(++t).initForGymLeader(Species.TORKOAL, Type.FIRE)
+    .setEncounterMessages([
+		`Nice to meet you! Wait, no...\nI will crush you!`,
+		`I've only been a leader for a little while,\nbut I'll smoke you!`,
+		`It's time to demonstrate the moves my grandfather has taught me!\nLet's battle!`
+  ]).setVictoryMessages([
+		`You remind me of my grandfather...\nNo wonder I lost.`,
+		`Am I trying too hard?\nI should relax, can't get too heated.`,
+		`Losing isn't going to smother me out.\nTime to reignite training!`
+  ]).setDefeatMessages([
+		`I hope I've made my grandfather proud...\nLet's battle again some time.`,
+		`I...I can't believe I won!\nDoing things my way worked!`,
+		`Let's exchange burning hot moves again soon!`
+  ]),
+  [TrainerType.NORMAN]: new TrainerConfig(++t).initForGymLeader(Species.SLAKOTH, Type.NORMAL)
+    .setEncounterMessages([
+		`I'm surprised you managed to get here.\nLet's battle.`,
+		`I'll do everything in my power as a Gym Leader to win.\nLet's go!`,
+		`You better give this your all.\nIt's time to battle!`
+  ]).setVictoryMessages([
+		`I lost to you...?\nRules are rules, though.`,
+		`Was moving from Olivine a mistake...?`,
+		`I can't believe it.\nThat was a great match.`
+  ]).setDefeatMessages([
+		`We both tried our best.\nI hope we can battle again soon.`,
+		`You should try challenging my kid instead.\nYou might learn something!`,
+		`Thank you for the excellent battle.\nBetter luck next time.`
+  ]),
+  [TrainerType.WINONA]: new TrainerConfig(++t).initForGymLeader(Species.SWABLU, Type.FLYING)
+    .setEncounterMessages([
+		`I've been soaring the skies looking for prey...\nAnd you're my target!`,
+		`No matter how our battle is, My Flying Pokèmon and I will triumph with grace.\nLet's battle!`,
+		`I hope you aren't scared of heights.\nLet's ascend!`
+  ]).setVictoryMessages([
+		`You're the first Trainer I've seen with more grace than I.\nExcellently played.`,
+		`Oh, my Flying Pokèmon have plummeted!\nVery well.`,
+		`Though I may have fallen, my Pokèmon will continue to fly!`
+  ]).setDefeatMessages([
+		`My Flying Pokèmon and I will forever dance elegantly!`,
+		`I hope you enjoyed our show.\nOur graceful dance is finished.`,
+		`Won't you come see our elegant choreography again?`
+  ]),
+  [TrainerType.TATE]: new TrainerConfig(++t).initForGymLeader(Species.SOLROCK, Type.PSYCHIC)
+    .setEncounterMessages([
+		`Hehehe...\nWere you surprised to see me without my sister?`,
+		`I can see what you're thinking...\nYou want to battle!`,
+		`How can you defeat someone...\nWho knows your every move?`
+  ]).setVictoryMessages([
+		`It can't be helped...\nI miss Liza...`,
+		`Your bond with your Pokèmon was stronger than mine.`,
+		`If I were with Liza, we would have won.\nWe can finish each other's thoughts!`
+  ]).setDefeatMessages([
+		`My Pokèmon and I are superior!`,
+		`If you can't even defeat me, you'll never be able to defeat Liza either.`,
+		`It's all thanks to my strict training with Liza.\nI can make myself one with Pokèmon.`
+  ]),
+  [TrainerType.LIZA]: new TrainerConfig(++t).initForGymLeader(Species.LUNATONE, Type.PSYCHIC)
+    .setEncounterMessages([
+		`Fufufu...\nWere you surprised to see me without my brother?`,
+		`I can determine what you desire...\nYou want to battle, don't you?`,
+		`How can you defeat someone...\nWho's one with their Pokèmon?`
+  ]).setVictoryMessages([
+		`It can't be helped...\nI miss Tate...`,
+		`Your bond with your Pokèmon...\nIt's stronger than mine.`,
+		`If I were with Tate, we would have won.\nWe can finish each other's sentences!`
+  ]).setDefeatMessages([
+		`My Pokèmon and I are victorious.`,
+		`If you can't even defeat me, you'll never be able to defeat Tate either.`,
+		`It's all thanks to my strict training with Tate.\nI can synchronize myself with my Pokèmon.`
+  ]),
+  [TrainerType.JUAN]: new TrainerConfig(++t).initForGymLeader(Species.HORSEA, Type.WATER)
+    .setEncounterMessages([
+		`Now's not the time to act coy.\nLet's battle!`,
+		`Ahahaha, You'll be witness to my artistry with Water Pokèmon!`,
+		`A typhoon approaches!\nWill you be able to test me?`
+  ]).setVictoryMessages([
+		`You may be a genius who can take on Wallace!`,
+		`I focused on elegance while you trained.\nIt's only natural that you defeated me.`,
+		`Ahahaha!\nVery well, You have won this time.`
+  ]).setDefeatMessages([
+		`My Pokèmon and I have sculpted an illusion of Water and come out victorious.`,
+		`Ahahaha, I have won, and you have lost.`,
+		`Shall I loan you my outfit? It may help you battle!\nAhahaha, I jest!`
+  ]),
   [TrainerType.ROARK]: new TrainerConfig(++t).initForGymLeader(Species.CRANIDOS, Type.ROCK),
   [TrainerType.GARDENIA]: new TrainerConfig(++t).initForGymLeader(Species.ROSELIA, Type.GRASS),
   [TrainerType.MAYLENE]: new TrainerConfig(++t).initForGymLeader(Species.LUCARIO, Type.FIGHTING),
