@@ -93,9 +93,9 @@ export const biomeLinks: BiomeLinks = {
   [Biome.ABYSS]: Biome.SPACE,
   [Biome.SPACE]: Biome.RUINS,
   [Biome.CONSTRUCTION_SITE]: [ Biome.DOJO, Biome.POWER_PLANT ],
-  [Biome.JUNGLE]: Biome.SWAMP,
+  [Biome.JUNGLE]: Biome.TEMPLE,
   [Biome.FAIRY_CAVE]: Biome.ICE_CAVE,
-  [Biome.TEMPLE]: Biome.CAVE
+  [Biome.TEMPLE]: Biome.SWAMP
 };
 
 export const biomeDepths: BiomeDepths = {}
