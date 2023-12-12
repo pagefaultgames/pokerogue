@@ -45,7 +45,8 @@ export enum ChargeAnim {
     GEOMANCY_CHARGING,
     SHADOW_BLADE_CHARGING,
     SOLAR_BLADE_CHARGING,
-    BEAK_BLAST_CHARGING
+    BEAK_BLAST_CHARGING,
+    METEOR_BEAM_CHARGING
 }
 
 export enum CommonAnim {

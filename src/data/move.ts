@@ -4138,7 +4138,8 @@ export function initMoves() {
     new AttackMove(Moves.WATER_SHURIKEN, "Water Shuriken", Type.WATER, MoveCategory.SPECIAL, 15, 100, 20, -1, "The user hits the target with throwing stars two to five times in a row. This move always goes first.", -1, 1, 6),
     new AttackMove(Moves.MYSTICAL_FIRE, "Mystical Fire", Type.FIRE, MoveCategory.SPECIAL, 75, 100, 10, -1, "The user attacks by breathing a special, hot fire. This also lowers the target's Sp. Atk stat.", 100, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPATK, -1),
-    new SelfStatusMove(Moves.SPIKY_SHIELD, "Spiky Shield (N)", Type.GRASS, -1, 10, -1, "In addition to protecting the user from attacks, this move also damages any attacker that makes direct contact.", -1, 4, 6),
+    new SelfStatusMove(Moves.SPIKY_SHIELD, "Spiky Shield (P)", Type.GRASS, -1, 10, -1, "In addition to protecting the user from attacks, this move also damages any attacker that makes direct contact.", -1, 4, 6)
+      .attr(ProtectAttr),
     new StatusMove(Moves.AROMATIC_MIST, "Aromatic Mist", Type.FAIRY, -1, 20, -1, "The user raises the Sp. Def stat of an ally Pokémon by using a mysterious aroma.", -1, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPDEF, 1)
       .target(MoveTarget.NEAR_ALLY),
@@ -4229,8 +4230,8 @@ export function initMoves() {
     new AttackMove(Moves.BLACK_HOLE_ECLIPSE__SPECIAL, "Black Hole Eclipse (N)", Type.DARK, MoveCategory.SPECIAL, -1, -1, 1, -1, "Dummy Data", -1, 0, 7),
     new AttackMove(Moves.TWINKLE_TACKLE__PHYSICAL, "Twinkle Tackle (N)", Type.FAIRY, MoveCategory.PHYSICAL, -1, -1, 1, -1, "The user creates a very charming space using its Z-Power and totally toys with the target. The power varies, depending on the original move.", -1, 0, 7),
     new AttackMove(Moves.TWINKLE_TACKLE__SPECIAL, "Twinkle Tackle (N)", Type.FAIRY, MoveCategory.SPECIAL, -1, -1, 1, -1, "Dummy Data", -1, 0, 7),
-    /* End Unused */
     new AttackMove(Moves.CATASTROPIKA, "Catastropika (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 210, -1, 1, -1, "The user, Pikachu, surrounds itself with the maximum amount of electricity using its Z-Power and pounces on its target with full force.", -1, 0, 7),
+    /* End Unused */
     new SelfStatusMove(Moves.SHORE_UP, "Shore Up", Type.GROUND, -1, 10, -1, "The user regains up to half of its max HP. It restores more HP in a sandstorm.", -1, 0, 7)
       .attr(SandHealAttr),
     new AttackMove(Moves.FIRST_IMPRESSION, "First Impression", Type.BUG, MoveCategory.PHYSICAL, 90, 100, 10, -1, "Although this move has great power, it only works the first turn each time the user enters battle.", -1, 2, 7)
@@ -4289,6 +4290,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new StatusMove(Moves.AURORA_VEIL, "Aurora Veil (N)", Type.ICE, -1, 20, -1, "This move reduces damage from physical and special moves for five turns. This can be used only in a hailstorm.", -1, 0, 7)
       .target(MoveTarget.USER_SIDE),
+    /* Unused */
     new AttackMove(Moves.SINISTER_ARROW_RAID, "Sinister Arrow Raid (N)", Type.GHOST, MoveCategory.PHYSICAL, 180, -1, 1, -1, "The user, Decidueye, creates countless arrows using its Z-Power and shoots the target with full force.", -1, 0, 7),
     new AttackMove(Moves.MALICIOUS_MOONSAULT, "Malicious Moonsault (N)", Type.DARK, MoveCategory.PHYSICAL, 180, -1, 1, -1, "The user, Incineroar, strengthens its body using its Z-Power and crashes into the target with full force.", -1, 0, 7),
     new AttackMove(Moves.OCEANIC_OPERETTA, "Oceanic Operetta (N)", Type.WATER, MoveCategory.SPECIAL, 195, -1, 1, -1, "The user, Primarina, summons a massive amount of  water using its Z-Power and attacks the target with  full force.", -1, 0, 7),
@@ -4298,6 +4300,7 @@ export function initMoves() {
     new AttackMove(Moves.PULVERIZING_PANCAKE, "Pulverizing Pancake (N)", Type.NORMAL, MoveCategory.PHYSICAL, 210, -1, 1, -1, "Z-Power brings out the true capabilities of the user, Snorlax. The Pokémon moves its enormous body energetically and attacks the target with full force.", -1, 0, 7),
     new SelfStatusMove(Moves.EXTREME_EVOBOOST, "Extreme Evoboost (N)", Type.NORMAL, -1, 1, -1, "After obtaining Z-Power, the user, Eevee, gets energy from its evolved friends and boosts its stats sharply.", 100, 0, 7),
     new AttackMove(Moves.GENESIS_SUPERNOVA, "Genesis Supernova (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 185, -1, 1, -1, "After obtaining Z-Power, the user, Mew, attacks the target with full force. The terrain will be charged with psychic energy.", -1, 0, 7),
+    /* End Unused */
     new AttackMove(Moves.SHELL_TRAP, "Shell Trap (N)", Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, -1, "The user sets a shell trap. If the user is hit by a physical move, the trap will explode and inflict damage on opposing Pokémon.", -1, -3, 7)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.FLEUR_CANNON, "Fleur Cannon", Type.FAIRY, MoveCategory.SPECIAL, 130, 90, 5, -1, "The user unleashes a strong beam. The attack's recoil harshly lowers the user's Sp. Atk stat.", 100, 0, 7)
@@ -4322,8 +4325,9 @@ export function initMoves() {
     new AttackMove(Moves.NATURES_MADNESS, "Nature's Madness", Type.FAIRY, MoveCategory.SPECIAL, -1, 90, 10, -1, "The user hits the target with the force of nature. It halves the target's HP.", -1, 0, 7)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.MULTI_ATTACK, "Multi-Attack (N)", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, "Cloaking itself in high energy, the user slams into the target. The memory held determines the move's type.", -1, 0, 7),
-    // Unused
+    /* Unused */
     new AttackMove(Moves.TEN_MILLION_VOLT_THUNDERBOLT, "10,000,000 Volt Thunderbolt (N)", Type.ELECTRIC, MoveCategory.SPECIAL, 195, -1, 1, -1, "The user, Pikachu wearing a cap, powers up a jolt of electricity using its Z-Power and unleashes it. Critical hits land more easily.", -1, 0, 7),
+    /* End Unused */
     new AttackMove(Moves.MIND_BLOWN, "Mind Blown (N)", Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, -1, "The user attacks everything around it by causing its own head to explode. This also damages the user.", -1, 0, 7)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.PLASMA_FISTS, "Plasma Fists (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 15, -1, "The user attacks with electrically charged fists. This move changes Normal-type moves to Electric-type moves.", -1, 0, 7),
@@ -4367,10 +4371,12 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, 1, true),
     new StatusMove(Moves.TAR_SHOT, "Tar Shot (N)", Type.ROCK, 100, 15, -1, "The user pours sticky tar over the target, lowering the target's Speed stat. The target becomes weaker to Fire-type moves.", 100, 0, 8),
     new StatusMove(Moves.MAGIC_POWDER, "Magic Powder (N)", Type.PSYCHIC, 100, 20, -1, "The user scatters a cloud of magic powder that changes the target to Psychic type.", -1, 0, 8),
-    new AttackMove(Moves.DRAGON_DARTS, "Dragon Darts (N)", Type.DRAGON, MoveCategory.PHYSICAL, 50, 100, 10, -1, "The user attacks twice using Dreepy. If there are two targets, this move hits each target once.", -1, 0, 8),
+    new AttackMove(Moves.DRAGON_DARTS, "Dragon Darts (P)", Type.DRAGON, MoveCategory.PHYSICAL, 50, 100, 10, -1, "The user attacks twice using Dreepy. If there are two targets, this move hits each target once.", -1, 0, 8)
+      .attr(MultiHitAttr, MultiHitType._2),
     new StatusMove(Moves.TEATIME, "Teatime (N)", Type.NORMAL, -1, 10, -1, "The user has teatime with all the Pokémon in the battle. Each Pokémon eats its held Berry.", -1, 0, 8)
       .target(MoveTarget.ALL),
-    new StatusMove(Moves.OCTOLOCK, "Octolock (N)", Type.FIGHTING, 100, 15, -1, "The user locks the target in and prevents it from fleeing. This move also lowers the target's Defense and Sp. Def every turn.", -1, 0, 8),
+    new StatusMove(Moves.OCTOLOCK, "Octolock (P)", Type.FIGHTING, 100, 15, -1, "The user locks the target in and prevents it from fleeing. This move also lowers the target's Defense and Sp. Def every turn.", -1, 0, 8)
+      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, 1, true),
     new AttackMove(Moves.BOLT_BEAK, "Bolt Beak (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 85, 100, 10, -1, "The user stabs the target with its electrified beak. If the user attacks before the target, the power of this move is doubled.", -1, 0, 8),
     new AttackMove(Moves.FISHIOUS_REND, "Fishious Rend (N)", Type.WATER, MoveCategory.PHYSICAL, 85, 100, 10, -1, "The user rends the target with its hard gills. If the user attacks before the target, the power of this move is doubled.", -1, 0, 8),
     new StatusMove(Moves.COURT_CHANGE, "Court Change (N)", Type.NORMAL, 100, 10, -1, "With its mysterious power, the user swaps the effects on either side of the field.", -1, 0, 8)
@@ -4452,8 +4458,14 @@ export function initMoves() {
     new AttackMove(Moves.STEEL_BEAM, "Steel Beam (N)", Type.STEEL, MoveCategory.SPECIAL, 140, 95, 5, -1, "The user fires a beam of steel that it collected from its entire body. This also damages the user.", -1, 0, 8),
     new AttackMove(Moves.EXPANDING_FORCE, "Expanding Force (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, "The user attacks the target with its psychic power. This move's power goes up and damages all opposing Pokémon on Psychic Terrain.", -1, 0, 8),
     new AttackMove(Moves.STEEL_ROLLER, "Steel Roller (N)", Type.STEEL, MoveCategory.PHYSICAL, 130, 100, 5, -1, "The user attacks while destroying the terrain. This move fails when the ground hasn't turned into a terrain.", -1, 0, 8),
-    new AttackMove(Moves.SCALE_SHOT, "Scale Shot (N)", Type.DRAGON, MoveCategory.PHYSICAL, 25, 90, 20, -1, "The user attacks by shooting scales two to five times in a row. This move boosts the user's Speed stat but lowers its Defense stat.", -1, 0, 8),
-    new AttackMove(Moves.METEOR_BEAM, "Meteor Beam (N)", Type.ROCK, MoveCategory.SPECIAL, 120, 90, 10, -1, "In this two-turn attack, the user gathers space power and boosts its Sp. Atk stat, then attacks the target on the next turn.", 100, 0, 8),
+    new AttackMove(Moves.SCALE_SHOT, "Scale Shot (P)", Type.DRAGON, MoveCategory.PHYSICAL, 25, 90, 20, -1, "The user attacks by shooting scales two to five times in a row. This move boosts the user's Speed stat but lowers its Defense stat.", 100, 0, 8)
+      //.attr(StatChangeAttr, BattleStat.SPD, 1, true) // TODO: Have boosts only apply at end of move, not after every hit
+      //.attr(StatChangeAttr, BattleStat.DEF, -1, true)
+      .attr(MultiHitAttr),
+    new AttackMove(Moves.METEOR_BEAM, "Meteor Beam", Type.ROCK, MoveCategory.SPECIAL, 120, 90, 10, -1, "In this two-turn attack, the user gathers space power and boosts its Sp. Atk stat, then attacks the target on the next turn.", 100, 0, 8)
+      .attr(ChargeAttr, ChargeAnim.METEOR_BEAM_CHARGING, 'is overflowing\nwith space power!', null, true)
+      .attr(StatChangeAttr, BattleStat.SPATK, 1, true)
+      .ignoresVirtual(),
     new AttackMove(Moves.SHELL_SIDE_ARM, "Shell Side Arm (N)", Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, -1, "This move inflicts physical or special damage, whichever will be more effective. This may also poison the target.", 20, 0, 8),
     new AttackMove(Moves.MISTY_EXPLOSION, "Misty Explosion (N)", Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, -1, "The user attacks everything around it and faints upon using this move. This move's power is increased on Misty Terrain.", -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_OTHERS),
