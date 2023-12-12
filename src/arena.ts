@@ -175,6 +175,7 @@ export class Arena {
       case Biome.VOLCANO:
         return Type.FIRE;
       case Biome.GRAVEYARD:
+      case Biome.TEMPLE:
         return Type.GHOST;
       case Biome.DOJO:
         return Type.FIGHTING;
@@ -265,6 +266,7 @@ export class Arena {
       case Biome.SEABED:
       case Biome.ABYSS:
       case Biome.SPACE:
+      case Biome.TEMPLE:
         return 16;
       default:
         return 0;
@@ -389,6 +391,8 @@ export class Arena {
         return 2.477;
       case Biome.FAIRY_CAVE:
         return 4.542;
+      case Biome.TEMPLE:
+        return 2.547;
     }
   }
 }
@@ -396,6 +400,7 @@ export class Arena {
 export function getBiomeKey(biome: Biome): string {
   switch (biome) {
     case Biome.POWER_PLANT:
+    case Biome.TEMPLE:
       return 'ruins';
     case Biome.CONSTRUCTION_SITE:
       return 'city';
