@@ -3914,6 +3914,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 16, Moves.SAND_ATTACK ],
     [ 21, Moves.TAKE_DOWN ],
     [ 23, Moves.CONFUSE_RAY ],
+    [ 25, Moves.PSYSHIELD_BASH ],
     [ 27, Moves.CALM_MIND ],
     [ 32, Moves.ROLE_PLAY ],
     [ 37, Moves.ZEN_HEADBUTT ],
