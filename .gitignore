@@ -26,5 +26,7 @@ dist-ssr
 public/images/trainer/convert/*
 public/images/pokemon/input/*.png
 public/images/pokemon/input/output/*
+public/images/pokemon/icons/input/*.png
+public/images/pokemon/icons/input/output/*
 src/data/battle-anim-raw-data*.ts
 src/data/battle-anim-data.ts

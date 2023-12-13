@@ -4,217 +4,91 @@
 			"image": "pokemon_icons_9.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 125,
-				"h": 55
+				"w": 49,
+				"h": 56
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "995",
+					"filename": "983",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 27,
-						"h": 29
+						"w": 40,
+						"h": 30
 					},
 					"spriteSourceSize": {
-						"x": 0,
+						"x": 8,
 						"y": 0,
-						"w": 27,
-						"h": 29
+						"w": 25,
+						"h": 30
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 27,
-						"h": 29
-					}
-				},
-				{
-					"filename": "992",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 30,
-						"h": 26
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 30,
-						"h": 26
-					},
-					"frame": {
-						"x": 0,
-						"y": 29,
-						"w": 30,
-						"h": 26
-					}
-				},
-				{
-					"filename": "994",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 27,
-						"h": 28
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 27,
-						"h": 28
-					},
-					"frame": {
-						"x": 27,
-						"y": 0,
-						"w": 27,
-						"h": 28
+						"w": 25,
+						"h": 30
 					}
 				},
 				{
 					"filename": "979",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 27,
-						"h": 26
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 27,
-						"h": 26
-					},
-					"frame": {
-						"x": 30,
-						"y": 28,
-						"w": 27,
-						"h": 26
-					}
-				},
-				{
-					"filename": "990",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 28,
-						"h": 23
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 28,
-						"h": 23
-					},
-					"frame": {
-						"x": 54,
-						"y": 0,
-						"w": 28,
-						"h": 23
-					}
-				},
-				{
-					"filename": "983",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 25,
+						"w": 40,
 						"h": 30
 					},
 					"spriteSourceSize": {
+						"x": 7,
+						"y": 2,
+						"w": 27,
+						"h": 26
+					},
+					"frame": {
 						"x": 0,
+						"y": 30,
+						"w": 27,
+						"h": 26
+					}
+				},
+				{
+					"filename": "981",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 9,
 						"y": 0,
-						"w": 25,
+						"w": 23,
 						"h": 30
 					},
 					"frame": {
-						"x": 57,
-						"y": 23,
-						"w": 25,
+						"x": 25,
+						"y": 0,
+						"w": 23,
 						"h": 30
-					}
-				},
-				{
-					"filename": "1000",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 22,
-						"h": 27
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 22,
-						"h": 27
-					},
-					"frame": {
-						"x": 82,
-						"y": 0,
-						"w": 22,
-						"h": 27
-					}
-				},
-				{
-					"filename": "999",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 21,
-						"h": 26
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 21,
-						"h": 26
-					},
-					"frame": {
-						"x": 104,
-						"y": 0,
-						"w": 21,
-						"h": 26
-					}
-				},
-				{
-					"filename": "991",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 20,
-						"h": 24
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 20,
-						"h": 24
-					},
-					"frame": {
-						"x": 104,
-						"y": 26,
-						"w": 20,
-						"h": 24
 					}
 				},
 				{
 					"filename": "982",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
-						"w": 22,
-						"h": 26
+						"w": 40,
+						"h": 30
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
+						"x": 10,
+						"y": 2,
 						"w": 22,
 						"h": 26
 					},
 					"frame": {
-						"x": 82,
-						"y": 27,
+						"x": 27,
+						"y": 30,
 						"w": 22,
 						"h": 26
 					}
@@ -225,6 +99,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:932a84f26939406d80e93dbbcbcf3a1d:7919b1eb8327c7226f2a0a151b9396b3:6fb417eff82c0971c86b4818772ba292$"
+		"smartupdate": "$TexturePacker:SmartUpdate:530d6ef513484a2e5cfd0ff11360d1f5:ff2a95bada30df4583d9da688aee7395:6fb417eff82c0971c86b4818772ba292$"
 	}
 }

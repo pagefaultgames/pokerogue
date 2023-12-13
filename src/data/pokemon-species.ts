@@ -150,9 +150,20 @@ export abstract class PokemonSpeciesForm {
         break;
     }
 
-    const formSpriteKey = this.getFormSpriteKey(formIndex);
-    if (formSpriteKey)
-      ret += `-${formSpriteKey}`;
+    let formSpriteKey = this.getFormSpriteKey(formIndex);
+    if (formSpriteKey) {
+      switch (this.speciesId) {
+        case Species.DUDUNSPARCE:
+          break;
+        case Species.ZACIAN:
+        case Species.ZAMAZENTA:
+          if (formSpriteKey.startsWith('behemoth'))
+            formSpriteKey = 'crowned';
+        default:
+          ret += `-${formSpriteKey}`;
+          break;
+      }
+    }
 
     return ret;
   }
@@ -1515,7 +1526,7 @@ export function initSpecies() {
       new PokemonForm("Pharaoh Trim", "pharaoh", Type.NORMAL, null, 1.2, 28, Abilities.FUR_COAT, Abilities.NONE, Abilities.NONE, 472, 75, 80, 60, 65, 90, 102, 160, 70, 165, false, ""),
     ),
     new PokemonSpecies(Species.ESPURR, "Espurr", 6, false, false, false, "Restraint Pokémon", Type.PSYCHIC, null, 0.3, 3.5, Abilities.KEEN_EYE, Abilities.INFILTRATOR, Abilities.OWN_TEMPO, 355, 62, 48, 54, 63, 60, 68, 190, 50, 71, GrowthRate.MEDIUM_FAST, 50, false),
-    new PokemonSpecies(Species.MEOWSTIC, "Meowstic", 6, false, false, false, "Constraint Pokémon", Type.PSYCHIC, null, 0.6, 8.5, Abilities.KEEN_EYE, Abilities.INFILTRATOR, Abilities.PRANKSTER, 466, 74, 48, 76, 83, 81, 104, 75, 50, 163, GrowthRate.MEDIUM_FAST, 50, true, false,
+    new PokemonSpecies(Species.MEOWSTIC, "Meowstic", 6, false, false, false, "Constraint Pokémon", Type.PSYCHIC, null, 0.6, 8.5, Abilities.KEEN_EYE, Abilities.INFILTRATOR, Abilities.PRANKSTER, 466, 74, 48, 76, 83, 81, 104, 75, 50, 163, GrowthRate.MEDIUM_FAST, 50, false, false,
       new PokemonForm("Male", "male", Type.PSYCHIC, null, 0.6, 8.5, Abilities.KEEN_EYE, Abilities.INFILTRATOR, Abilities.PRANKSTER, 466, 74, 48, 76, 83, 81, 104, 75, 50, 163, false, ""),
       new PokemonForm("Female", "female", Type.PSYCHIC, null, 0.6, 8.5, Abilities.KEEN_EYE, Abilities.INFILTRATOR, Abilities.COMPETITIVE, 466, 74, 48, 76, 83, 81, 104, 75, 50, 163, false),
     ),
@@ -1782,7 +1793,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.BARRASKEWDA, "Barraskewda", 8, false, false, false, "Skewer Pokémon", Type.WATER, null, 1.3, 30, Abilities.SWIFT_SWIM, Abilities.NONE, Abilities.PROPELLER_TAIL, 490, 61, 123, 60, 60, 50, 136, 60, 50, 172, GrowthRate.SLOW, 50, false),
     new PokemonSpecies(Species.TOXEL, "Toxel", 8, false, false, false, "Baby Pokémon", Type.ELECTRIC, Type.POISON, 0.4, 11, Abilities.RATTLED, Abilities.STATIC, Abilities.KLUTZ, 242, 40, 38, 35, 54, 35, 40, 75, 50, 48, GrowthRate.MEDIUM_SLOW, 50, false),
     new PokemonSpecies(Species.TOXTRICITY, "Toxtricity", 8, false, false, false, "Punk Pokémon", Type.ELECTRIC, Type.POISON, 1.6, 40, Abilities.PUNK_ROCK, Abilities.PLUS, Abilities.TECHNICIAN, 502, 75, 98, 70, 114, 70, 75, 45, 50, 176, GrowthRate.MEDIUM_SLOW, 50, false, false,
-      new PokemonForm("Amped Form", "amped", Type.ELECTRIC, Type.POISON, 1.6, 40, Abilities.PUNK_ROCK, Abilities.PLUS, Abilities.TECHNICIAN, 502, 75, 98, 70, 114, 70, 75, 45, 50, 176),
+      new PokemonForm("Amped Form", "amped", Type.ELECTRIC, Type.POISON, 1.6, 40, Abilities.PUNK_ROCK, Abilities.PLUS, Abilities.TECHNICIAN, 502, 75, 98, 70, 114, 70, 75, 45, 50, 176, false, ""),
       new PokemonForm("Low-Key Form", "lowkey", Type.ELECTRIC, Type.POISON, 1.6, 40, Abilities.PUNK_ROCK, Abilities.MINUS, Abilities.TECHNICIAN, 502, 75, 98, 70, 114, 70, 75, 45, 50, 176),
     ),
     new PokemonSpecies(Species.SIZZLIPEDE, "Sizzlipede", 8, false, false, false, "Radiator Pokémon", Type.FIRE, Type.BUG, 0.7, 1, Abilities.FLASH_FIRE, Abilities.WHITE_SMOKE, Abilities.FLAME_BODY, 305, 50, 65, 45, 50, 50, 45, 190, 50, 61, GrowthRate.MEDIUM_FAST, 50, false),
@@ -1791,11 +1802,11 @@ export function initSpecies() {
     new PokemonSpecies(Species.GRAPPLOCT, "Grapploct", 8, false, false, false, "Jujitsu Pokémon", Type.FIGHTING, null, 1.6, 39, Abilities.LIMBER, Abilities.NONE, Abilities.TECHNICIAN, 480, 80, 118, 90, 70, 80, 42, 45, 50, 168, GrowthRate.MEDIUM_SLOW, 50, false),
     new PokemonSpecies(Species.SINISTEA, "Sinistea", 8, false, false, false, "Black Tea Pokémon", Type.GHOST, null, 0.1, 0.2, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, GrowthRate.MEDIUM_FAST, null, false, false,
       new PokemonForm("Phony Form", "phony", Type.GHOST, null, 0.1, 0.2, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62),
-      new PokemonForm("Antique Form", "antique", Type.GHOST, null, 0.1, 0.2, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62),
+      new PokemonForm("Antique Form", "antique", Type.GHOST, null, 0.1, 0.2, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, ""),
     ),
     new PokemonSpecies(Species.POLTEAGEIST, "Polteageist", 8, false, false, false, "Black Tea Pokémon", Type.GHOST, null, 0.2, 0.4, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 508, 60, 65, 65, 134, 114, 70, 60, 50, 178, GrowthRate.MEDIUM_FAST, null, false, false,
       new PokemonForm("Phony Form", "phony", Type.GHOST, null, 0.2, 0.4, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 508, 60, 65, 65, 134, 114, 70, 60, 50, 178),
-      new PokemonForm("Antique Form", "antique", Type.GHOST, null, 0.2, 0.4, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 508, 60, 65, 65, 134, 114, 70, 60, 50, 178),
+      new PokemonForm("Antique Form", "antique", Type.GHOST, null, 0.2, 0.4, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 508, 60, 65, 65, 134, 114, 70, 60, 50, 178, false, ""),
     ),
     new PokemonSpecies(Species.HATENNA, "Hatenna", 8, false, false, false, "Calm Pokémon", Type.PSYCHIC, null, 0.4, 3.4, Abilities.HEALER, Abilities.ANTICIPATION, Abilities.MAGIC_BOUNCE, 265, 42, 30, 45, 56, 53, 39, 235, 50, 53, GrowthRate.SLOW, 0, false),
     new PokemonSpecies(Species.HATTREM, "Hattrem", 8, false, false, false, "Serene Pokémon", Type.PSYCHIC, null, 0.6, 4.8, Abilities.HEALER, Abilities.ANTICIPATION, Abilities.MAGIC_BOUNCE, 370, 57, 40, 65, 86, 73, 49, 120, 50, 130, GrowthRate.SLOW, 0, false),
@@ -1811,15 +1822,15 @@ export function initSpecies() {
     new PokemonSpecies(Species.RUNERIGUS, "Runerigus", 8, false, false, false, "Grudge Pokémon", Type.GROUND, Type.GHOST, 1.6, 66.6, Abilities.WANDERING_SPIRIT, Abilities.NONE, Abilities.NONE, 483, 58, 95, 145, 50, 105, 30, 90, 50, 169, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.MILCERY, "Milcery", 8, false, false, false, "Cream Pokémon", Type.FAIRY, null, 0.2, 0.3, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 270, 45, 40, 40, 50, 61, 34, 200, 50, 54, GrowthRate.MEDIUM_FAST, 0, false),
     new PokemonSpecies(Species.ALCREMIE, "Alcremie", 8, false, false, false, "Cream Pokémon", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173, GrowthRate.MEDIUM_FAST, 0, false, false,
-      new PokemonForm("Vanilla Cream", "vanilla-cream", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173),
-      new PokemonForm("Ruby Cream", "ruby-cream", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173),
-      new PokemonForm("Matcha Cream", "matcha-cream", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173),
-      new PokemonForm("Mint Cream", "mint-cream", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173),
-      new PokemonForm("Lemon Cream", "lemon-cream", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173),
-      new PokemonForm("Salted Cream", "salted-cream", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173),
-      new PokemonForm("Ruby Swirl", "ruby-swirl", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173),
-      new PokemonForm("Caramel Swirl", "caramel-swirl", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173),
-      new PokemonForm("Rainbow Swirl", "rainbow-swirl", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173),
+      new PokemonForm("Vanilla Cream", "vanilla-cream", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173, false, ""),
+      new PokemonForm("Ruby Cream", "ruby-cream", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173, false, ""),
+      new PokemonForm("Matcha Cream", "matcha-cream", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173, false, ""),
+      new PokemonForm("Mint Cream", "mint-cream", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173, false, ""),
+      new PokemonForm("Lemon Cream", "lemon-cream", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173, false, ""),
+      new PokemonForm("Salted Cream", "salted-cream", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173, false, ""),
+      new PokemonForm("Ruby Swirl", "ruby-swirl", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173, false, ""),
+      new PokemonForm("Caramel Swirl", "caramel-swirl", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173, false, ""),
+      new PokemonForm("Rainbow Swirl", "rainbow-swirl", Type.FAIRY, null, 0.3, 0.5, Abilities.SWEET_VEIL, Abilities.NONE, Abilities.AROMA_VEIL, 495, 65, 60, 75, 110, 121, 64, 100, 50, 173, false, ""),
     ),
     new PokemonSpecies(Species.FALINKS, "Falinks", 8, false, false, false, "Formation Pokémon", Type.FIGHTING, null, 3, 62, Abilities.BATTLE_ARMOR, Abilities.NONE, Abilities.DEFIANT, 470, 65, 100, 100, 70, 60, 75, 45, 50, 165, GrowthRate.MEDIUM_FAST, null, false),
     new PokemonSpecies(Species.PINCURCHIN, "Pincurchin", 8, false, false, false, "Sea Urchin Pokémon", Type.ELECTRIC, null, 0.3, 1, Abilities.LIGHTNING_ROD, Abilities.NONE, Abilities.ELECTRIC_SURGE, 435, 48, 101, 95, 91, 85, 15, 75, 50, 152, GrowthRate.MEDIUM_FAST, 50, false),
@@ -1827,7 +1838,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.FROSMOTH, "Frosmoth", 8, false, false, false, "Frost Moth Pokémon", Type.ICE, Type.BUG, 1.3, 42, Abilities.SHIELD_DUST, Abilities.NONE, Abilities.ICE_SCALES, 475, 70, 65, 60, 125, 90, 65, 75, 50, 166, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.STONJOURNER, "Stonjourner", 8, false, false, false, "Big Rock Pokémon", Type.ROCK, null, 2.5, 520, Abilities.POWER_SPOT, Abilities.NONE, Abilities.NONE, 470, 100, 125, 135, 20, 20, 70, 60, 50, 165, GrowthRate.SLOW, 50, false),
     new PokemonSpecies(Species.EISCUE, "Eiscue", 8, false, false, false, "Penguin Pokémon", Type.ICE, null, 1.4, 89, Abilities.ICE_FACE, Abilities.NONE, Abilities.NONE, 470, 75, 80, 110, 65, 90, 50, 60, 50, 165, GrowthRate.SLOW, 50, false, false,
-      new PokemonForm("Ice Face", "ice-face", Type.ICE, null, 1.4, 89, Abilities.ICE_FACE, Abilities.NONE, Abilities.NONE, 470, 75, 80, 110, 65, 90, 50, 60, 50, 165, false, ""),
+      new PokemonForm("Ice Face", "", Type.ICE, null, 1.4, 89, Abilities.ICE_FACE, Abilities.NONE, Abilities.NONE, 470, 75, 80, 110, 65, 90, 50, 60, 50, 165),
       new PokemonForm("No Ice", "no-ice", Type.ICE, null, 1.4, 89, Abilities.ICE_FACE, Abilities.NONE, Abilities.NONE, 470, 75, 80, 70, 65, 50, 130, 60, 50, 165),
     ),
     new PokemonSpecies(Species.INDEEDEE, "Indeedee", 8, false, false, false, "Emotion Pokémon", Type.PSYCHIC, null, 0.9, 28, Abilities.INNER_FOCUS, Abilities.SYNCHRONIZE, Abilities.PSYCHIC_SURGE, 475, 60, 65, 55, 105, 95, 95, 30, 140, 166, GrowthRate.FAST, 50, false, false,
@@ -1884,7 +1895,7 @@ export function initSpecies() {
       new PokemonForm("Normal", "", Type.GROUND, Type.NORMAL, 2.4, 290, Abilities.GUTS, Abilities.BULLETPROOF, Abilities.UNNERVE, 550, 130, 140, 105, 45, 80, 50, 75, null, null),
       new PokemonForm("Blood Moon", "bloodmoon", Type.GROUND, Type.NORMAL, 2.4, 290, Abilities.MINDS_EYE, Abilities.NONE, Abilities.NONE, 555, 113, 70, 120, 135, 65, 52, 75, null, null),
     ),
-    new PokemonSpecies(Species.BASCULEGION, "Basculegion", 8, false, false, false, "Big Fish Pokémon", Type.WATER, Type.GHOST, 3, 110, Abilities.SWIFT_SWIM, Abilities.ADAPTABILITY, Abilities.MOLD_BREAKER, 530, 120, 112, 65, 80, 75, 78, 135, null, null, GrowthRate.MEDIUM_FAST, 50, true, true,
+    new PokemonSpecies(Species.BASCULEGION, "Basculegion", 8, false, false, false, "Big Fish Pokémon", Type.WATER, Type.GHOST, 3, 110, Abilities.SWIFT_SWIM, Abilities.ADAPTABILITY, Abilities.MOLD_BREAKER, 530, 120, 112, 65, 80, 75, 78, 135, null, null, GrowthRate.MEDIUM_FAST, 50, false, false,
       new PokemonForm("Male", "male", Type.WATER, Type.GHOST, 3, 110, Abilities.SWIFT_SWIM, Abilities.ADAPTABILITY, Abilities.MOLD_BREAKER, 530, 120, 112, 65, 80, 75, 78, 135, null, null, false, ""),
       new PokemonForm("Female", "female", Type.WATER, Type.GHOST, 3, 110, Abilities.SWIFT_SWIM, Abilities.ADAPTABILITY, Abilities.MOLD_BREAKER, 530, 120, 92, 65, 100, 75, 78, 135, null, null),
     ),
