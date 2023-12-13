@@ -258,7 +258,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.ELECTRODE, 30, null, null)
   ],
   [Species.CUBONE]: [
-    new SpeciesEvolution(Species.ALOLA_EXEGGUTOR, 28, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.ISLAND), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.ALOLA_MAROWAK, 28, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.ISLAND), SpeciesWildEvolutionDelay.NEVER),
     new SpeciesEvolution(Species.MAROWAK, 28, null, null)
   ],
   [Species.TYROGUE]: [
@@ -267,7 +267,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.HITMONTOP, 20, null, new SpeciesEvolutionCondition((p: Pokemon) => p.stats[Stat.ATK] === p.stats[Stat.DEF]))
   ],
   [Species.KOFFING]: [
-    new SpeciesEvolution(Species.WEEZING, 35, null, null)
+    new SpeciesEvolution(Species.WEEZING, 35, null, null),
+    new SpeciesEvolution(Species.GALAR_WEEZING, 35, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.CITY))
   ],
   [Species.RHYHORN]: [
     new SpeciesEvolution(Species.RHYDON, 42, null, null)
@@ -312,7 +313,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.QUILAVA, 14, null, null)
   ],
   [Species.QUILAVA]: [
-    new SpeciesEvolution(Species.TYPHLOSION, 36, null, null)
+    new SpeciesEvolution(Species.TYPHLOSION, 36, null, null),
+    new SpeciesEvolution(Species.HISUI_TYPHLOSION, 36, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.NEVER)
   ],
   [Species.TOTODILE]: [
     new SpeciesEvolution(Species.CROCONAW, 18, null, null)
@@ -656,7 +658,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.DEWOTT, 17, null, null)
   ],
   [Species.DEWOTT]: [
-    new SpeciesEvolution(Species.SAMUROTT, 36, null, null)
+    new SpeciesEvolution(Species.SAMUROTT, 36, null, null),
+    new SpeciesEvolution(Species.HISUI_SAMUROTT, 36, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.NEVER)
   ],
   [Species.PATRAT]: [
     new SpeciesEvolution(Species.WATCHOG, 20, null, null)
@@ -802,8 +805,12 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.PAWNIARD]: [
     new SpeciesEvolution(Species.BISHARP, 52, null, null)
   ],
+  [Species.BISHARP]: [
+    new SpeciesEvolution(Species.KINGAMBIT, 64, null, null)
+  ],
   [Species.RUFFLET]: [
-    new SpeciesEvolution(Species.BRAVIARY, 54, null, null)
+    new SpeciesEvolution(Species.BRAVIARY, 54, null, null),
+    new SpeciesEvolution(Species.HISUI_BRAVIARY, 54, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.VULLABY]: [
     new SpeciesEvolution(Species.MANDIBUZZ, 54, null, null)
@@ -888,13 +895,16 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.AURORUS, 39, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.GOOMY]: [
-    new SpeciesEvolution(Species.SLIGGOO, 40, null, null)
+    new SpeciesEvolution(Species.SLIGGOO, 40, null, null),
+    new SpeciesEvolution(Species.HISUI_SLIGGOO, 40, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.SLIGGOO]: [
-    new SpeciesEvolution(Species.GOODRA, 50, null, new SpeciesEvolutionCondition((p: Pokemon) => [ WeatherType.RAIN, WeatherType.HEAVY_RAIN ].indexOf(p.scene.arena.weather?.weatherType || WeatherType.NONE) > -1), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.GOODRA, 50, null, new SpeciesEvolutionCondition((p: Pokemon) => [ WeatherType.RAIN, WeatherType.HEAVY_RAIN ].indexOf(p.scene.arena.weather?.weatherType || WeatherType.NONE) > -1), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(Species.HISUI_GOODRA, 54, null, new SpeciesEvolutionCondition((p: Pokemon) => [ WeatherType.RAIN, WeatherType.HEAVY_RAIN ].indexOf(p.scene.arena.weather?.weatherType || WeatherType.NONE) > -1 && p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.BERGMITE]: [
-    new SpeciesEvolution(Species.AVALUGG, 37, null, null)
+    new SpeciesEvolution(Species.AVALUGG, 37, null, null),
+    new SpeciesEvolution(Species.HISUI_AVALUGG, 37, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.NOIBAT]: [
     new SpeciesEvolution(Species.NOIVERN, 48, null, null)
@@ -903,7 +913,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.DARTRIX, 17, null, null)
   ],
   [Species.DARTRIX]: [
-    new SpeciesEvolution(Species.DECIDUEYE, 36, null, null)
+    new SpeciesEvolution(Species.DECIDUEYE, 36, null, null),
+    new SpeciesEvolution(Species.HISUI_DECIDUEYE, 36, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.NEVER)
   ],
   [Species.LITTEN]: [
     new SpeciesEvolution(Species.TORRACAT, 17, null, null)
@@ -990,6 +1001,227 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.ALOLA_GRIMER]: [
     new SpeciesEvolution(Species.ALOLA_MUK, 38, null, null)
   ],
+  [Species.GROOKEY]: [
+    new SpeciesEvolution(Species.THWACKEY, 16, null, null)
+  ],
+  [Species.THWACKEY]: [
+    new SpeciesEvolution(Species.RILLABOOM, 35, null, null)
+  ],
+  [Species.SCORBUNNY]: [
+    new SpeciesEvolution(Species.RABOOT, 16, null, null)
+  ],
+  [Species.RABOOT]: [
+    new SpeciesEvolution(Species.CINDERACE, 35, null, null)
+  ],
+  [Species.SOBBLE]: [
+    new SpeciesEvolution(Species.DRIZZILE, 16, null, null)
+  ],
+  [Species.DRIZZILE]: [
+    new SpeciesEvolution(Species.INTELEON, 35, null, null)
+  ],
+  [Species.SKWOVET]: [
+    new SpeciesEvolution(Species.GREEDENT, 24, null, null)
+  ],
+  [Species.ROOKIDEE]: [
+    new SpeciesEvolution(Species.CORVISQUIRE, 18, null, null)
+  ],
+  [Species.CORVISQUIRE]: [
+    new SpeciesEvolution(Species.CORVIKNIGHT, 38, null, null)
+  ],
+  [Species.BLIPBUG]: [
+    new SpeciesEvolution(Species.DOTTLER, 10, null, null)
+  ],
+  [Species.DOTTLER]: [
+    new SpeciesEvolution(Species.ORBEETLE, 30, null, null)
+  ],
+  [Species.NICKIT]: [
+    new SpeciesEvolution(Species.THIEVUL, 18, null, null)
+  ],
+  [Species.GOSSIFLEUR]: [
+    new SpeciesEvolution(Species.ELDEGOSS, 20, null, null)
+  ],
+  [Species.WOOLOO]: [
+    new SpeciesEvolution(Species.DUBWOOL, 24, null, null)
+  ],
+  [Species.CHEWTLE]: [
+    new SpeciesEvolution(Species.DREDNAW, 22, null, null)
+  ],
+  [Species.YAMPER]: [
+    new SpeciesEvolution(Species.BOLTUND, 25, null, null)
+  ],
+  [Species.ROLYCOLY]: [
+    new SpeciesEvolution(Species.CARKOL, 18, null, null)
+  ],
+  [Species.CARKOL]: [
+    new SpeciesEvolution(Species.COALOSSAL, 34, null, null)
+  ],
+  [Species.SILICOBRA]: [
+    new SpeciesEvolution(Species.SANDACONDA, 36, null, null)
+  ],
+  [Species.ARROKUDA]: [
+    new SpeciesEvolution(Species.BARRASKEWDA, 26, null, null)
+  ],
+  [Species.TOXEL]: [
+    new SpeciesEvolution(Species.TOXTRICITY, 30, null, null)
+  ],
+  [Species.SIZZLIPEDE]: [
+    new SpeciesEvolution(Species.CENTISKORCH, 28, null, null)
+  ],
+  [Species.HATENNA]: [
+    new SpeciesEvolution(Species.HATTREM, 32, null, null)
+  ],
+  [Species.HATTREM]: [
+    new SpeciesEvolution(Species.HATTERENE, 42, null, null)
+  ],
+  [Species.IMPIDIMP]: [
+    new SpeciesEvolution(Species.MORGREM, 32, null, null)
+  ],
+  [Species.MORGREM]: [
+    new SpeciesEvolution(Species.GRIMMSNARL, 42, null, null)
+  ],
+  [Species.CUFANT]: [
+    new SpeciesEvolution(Species.COPPERAJAH, 34, null, null)
+  ],
+  [Species.DREEPY]: [
+    new SpeciesEvolution(Species.DRAKLOAK, 50, null, null)
+  ],
+  [Species.DRAKLOAK]: [
+    new SpeciesEvolution(Species.DRAGAPULT, 60, null, null)
+  ],
+  [Species.GALAR_MEOWTH]: [
+    new SpeciesEvolution(Species.PERRSERKER, 28, null, null)
+  ],
+  [Species.GALAR_PONYTA]: [
+    new SpeciesEvolution(Species.GALAR_RAPIDASH, 40, null, null)
+  ],
+  [Species.GALAR_FARFETCHD]: [
+    new SpeciesEvolution(Species.SIRFETCHD, 30, null, null)
+  ],
+  [Species.GALAR_SLOWPOKE]: [
+    new SpeciesEvolution(Species.GALAR_SLOWBRO, 37, null, null),
+    new SpeciesEvolution(Species.GALAR_SLOWKING, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
+  ],
+  [Species.GALAR_MR_MIME]: [
+    new SpeciesEvolution(Species.MR_RIME, 42, null, null)
+  ],
+  [Species.GALAR_CORSOLA]: [
+    new SpeciesEvolution(Species.CURSOLA, 38, null, null)
+  ],
+  [Species.GALAR_ZIGZAGOON]: [
+    new SpeciesEvolution(Species.GALAR_LINOONE, 20, null, null)
+  ],
+  [Species.GALAR_LINOONE]: [
+    new SpeciesEvolution(Species.OBSTAGOON, 35, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.GALAR_YAMASK]: [
+    new SpeciesEvolution(Species.RUNERIGUS, 34, null, null)
+  ],
+  [Species.HISUI_ZORUA]: [
+    new SpeciesEvolution(Species.HISUI_ZOROARK, 30, null, null)
+  ],
+  [Species.SPRIGATITO]: [
+    new SpeciesEvolution(Species.FLORAGATO, 16, null, null)
+  ],
+  [Species.FLORAGATO]: [
+    new SpeciesEvolution(Species.MEOWSCARADA, 36, null, null)
+  ],
+  [Species.FUECOCO]: [
+    new SpeciesEvolution(Species.CROCALOR, 16, null, null)
+  ],
+  [Species.CROCALOR]: [
+    new SpeciesEvolution(Species.SKELEDIRGE, 36, null, null)
+  ],
+  [Species.QUAXLY]: [
+    new SpeciesEvolution(Species.QUAXWELL, 16, null, null)
+  ],
+  [Species.QUAXWELL]: [
+    new SpeciesEvolution(Species.QUAQUAVAL, 36, null, null)
+  ],
+  [Species.LECHONK]: [
+    new SpeciesFormEvolution(Species.OINKOLOGNE, '', '', 18, null, new SpeciesEvolutionCondition((p: Pokemon) => p.gender === Gender.MALE, (p: Pokemon) => p.gender = Gender.MALE)),
+    new SpeciesFormEvolution(Species.OINKOLOGNE, '', 'female', 18, null, new SpeciesEvolutionCondition((p: Pokemon) => p.gender === Gender.FEMALE, (p: Pokemon) => p.gender = Gender.FEMALE))
+  ],
+  [Species.TAROUNTULA]: [
+    new SpeciesEvolution(Species.SPIDOPS, 15, null, null)
+  ],
+  [Species.NYMBLE]: [
+    new SpeciesEvolution(Species.LOKIX, 24, null, null)
+  ],
+  [Species.PAWMI]: [
+    new SpeciesEvolution(Species.PAWMO, 18, null, null)
+  ],
+  [Species.PAWMO]: [
+    new SpeciesEvolution(Species.PAWMOT, 32, null, null)
+  ],
+  [Species.TANDEMAUS]: [
+    new SpeciesEvolution(Species.MAUSHOLD, 25, null, null)
+  ],
+  [Species.FIDOUGH]: [
+    new SpeciesEvolution(Species.DACHSBUN, 26, null, null)
+  ],
+  [Species.SMOLIV]: [
+    new SpeciesEvolution(Species.DOLLIV, 25, null, null)
+  ],
+  [Species.DOLLIV]: [
+    new SpeciesEvolution(Species.ARBOLIVA, 35, null, null)
+  ],
+  [Species.NACLI]: [
+    new SpeciesEvolution(Species.NACLSTACK, 24, null, null)
+  ],
+  [Species.NACLSTACK]: [
+    new SpeciesEvolution(Species.GARGANACL, 38, null, null)
+  ],
+  [Species.WATTREL]: [
+    new SpeciesEvolution(Species.KILOWATTREL, 25, null, null)
+  ],
+  [Species.MASCHIFF]: [
+    new SpeciesEvolution(Species.MABOSSTIFF, 30, null, null)
+  ],
+  [Species.SHROODLE]: [
+    new SpeciesEvolution(Species.GRAFAIAI, 28, null, null)
+  ],
+  [Species.BRAMBLIN]: [
+    new SpeciesEvolution(Species.BRAMBLEGHAST, 30, null, null)
+  ],
+  [Species.TOEDSCOOL]: [
+    new SpeciesEvolution(Species.TOEDSCRUEL, 30, null, null)
+  ],
+  [Species.RELLOR]: [
+    new SpeciesEvolution(Species.RABSCA, 29, null, null)
+  ],
+  [Species.FLITTLE]: [
+    new SpeciesEvolution(Species.ESPATHRA, 35, null, null)
+  ],
+  [Species.TINKATINK]: [
+    new SpeciesEvolution(Species.TINKATUFF, 24, null, null)
+  ],
+  [Species.TINKATUFF]: [
+    new SpeciesEvolution(Species.TINKATON, 38, null, null)
+  ],
+  [Species.WIGLETT]: [
+    new SpeciesEvolution(Species.WUGTRIO, 26, null, null)
+  ],
+  [Species.FINIZEN]: [
+    new SpeciesEvolution(Species.PALAFIN, 38, null, null)
+  ],
+  [Species.VAROOM]: [
+    new SpeciesEvolution(Species.REVAVROOM, 40, null, null)
+  ],
+  [Species.GLIMMET]: [
+    new SpeciesEvolution(Species.GLIMMORA, 35, null, null)
+  ],
+  [Species.GREAVARD]: [
+    new SpeciesEvolution(Species.HOUNDSTONE, 30, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.FRIGIBAX]: [
+    new SpeciesEvolution(Species.ARCTIBAX, 35, null, null)
+  ],
+  [Species.ARCTIBAX]: [
+    new SpeciesEvolution(Species.BAXCALIBUR, 54, null, null)
+  ],
+  [Species.PALDEA_WOOPER]: [
+    new SpeciesEvolution(Species.CLODSIRE, 20, null, null)
+  ],
   [Species.PIKACHU]: [
     new SpeciesEvolution(Species.ALOLA_RAICHU, 1, EvolutionItem.THUNDER_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.ISLAND), SpeciesWildEvolutionDelay.NEVER),
     new SpeciesEvolution(Species.RAICHU, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1070,14 +1302,26 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.MISDREAVUS]: [
     new SpeciesEvolution(Species.MISMAGIUS, 1, EvolutionItem.DUSK_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
+  [Species.GIRAFARIG]: [
+    new SpeciesEvolution(Species.FARIGIRAF, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.TWIN_BEAM).length > 0), SpeciesWildEvolutionDelay.VERY_LONG)
+  ],
+  [Species.DUNSPARCE]: [
+    new SpeciesEvolution(Species.DUDUNSPARCE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.HYPER_DRILL).length > 0), SpeciesWildEvolutionDelay.VERY_LONG)
+  ],
   [Species.GLIGAR]: [
     new SpeciesEvolution(Species.GLISCOR, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.scene.arena.isDaytime() /* Razor fang at night*/), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.SNEASEL]: [
     new SpeciesEvolution(Species.WEAVILE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => !p.scene.arena.isDaytime() /* Razor claw at night*/), SpeciesWildEvolutionDelay.LONG)
   ],
+  [Species.URSARING]: [
+    new SpeciesEvolution(Species.URSALUNA, 1, EvolutionItem.MOON_STONE, new SpeciesEvolutionCondition((p: Pokemon) => !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.VERY_LONG) //Ursaring does not evolve into Bloodmoon Ursaluna
+  ],
   [Species.PILOSWINE]: [
     new SpeciesEvolution(Species.MAMOSWINE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.ANCIENT_POWER).length > 0), SpeciesWildEvolutionDelay.VERY_LONG)
+  ],
+  [Species.STANTLER]: [
+    new SpeciesEvolution(Species.WYRDEER, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.PSYSHIELD_BASH).length > 0), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.LOMBRE]: [
     new SpeciesEvolution(Species.LUDICOLO, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1098,7 +1342,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.SUDOWOODO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.MIMIC).length > 0), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.MIME_JR]: [
-    new SpeciesEvolution(Species.MR_MIME, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.MIMIC).length > 0), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.MR_MIME, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.MIMIC).length > 0), SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(Species.GALAR_MR_MIME, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.MIMIC).length > 0 && p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.MANTYKE]: [
     new SpeciesEvolution(Species.MANTINE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => !!p.scene.getParty().find(p => p.species.speciesId === Species.REMORAID)), SpeciesWildEvolutionDelay.MEDIUM)
@@ -1119,7 +1364,12 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.WHIMSICOTT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.PETILIL]: [
-    new SpeciesEvolution(Species.LILLIGANT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.LILLIGANT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(Species.HISUI_LILLIGANT, 1, EvolutionItem.SUN_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.LONG),
+  ],
+  [Species.BASCULIN]: [
+    new SpeciesFormEvolution(Species.BASCULEGION, 'white-striped', 'male', 25, null, new SpeciesEvolutionCondition((p: Pokemon) => p.gender === Gender.MALE, (p: Pokemon) => p.gender = Gender.MALE)),
+    new SpeciesFormEvolution(Species.BASCULEGION, 'white-striped', 'female', 25, null, new SpeciesEvolutionCondition((p: Pokemon) => p.gender === Gender.FEMALE, (p: Pokemon) => p.gender = Gender.FEMALE))
   ],
   [Species.MINCCINO]: [
     new SpeciesEvolution(Species.CINCCINO, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.SHORT)
@@ -1162,6 +1412,52 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.ALOLA_VULPIX]: [
     new SpeciesEvolution(Species.ALOLA_NINETALES, 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
+  [Species.APPLIN]: [
+    new SpeciesEvolution(Species.FLAPPLE, 1, EvolutionItem.LEAF_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(Species.APPLETUN, 1, EvolutionItem.LEAF_STONE, new SpeciesEvolutionCondition((p: Pokemon) => !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(Species.DIPPLIN, 1, EvolutionItem.LEAF_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.ISLAND), SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.CLOBBOPUS]: [
+    new SpeciesEvolution(Species.GRAPPLOCT, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.TAUNT).length > 0), SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.SINISTEA]: [
+    new SpeciesEvolution(Species.POLTEAGEIST, 1, EvolutionItem.DUSK_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.KUBFU]: [
+    new SpeciesFormEvolution(Species.URSHIFU, '', 'single-strike', 1, EvolutionItem.DUSK_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.ABYSS), null),
+    new SpeciesFormEvolution(Species.URSHIFU, '', 'rapid-strike', 1, EvolutionItem.WATER_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.SEA), null)
+  ],
+  [Species.GALAR_DARUMAKA]: [
+    new SpeciesEvolution(Species.GALAR_DARMANITAN, 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.HISUI_GROWLITHE]: [
+    new SpeciesEvolution(Species.HISUI_ARCANINE, 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.HISUI_VOLTORB]: [
+    new SpeciesEvolution(Species.HISUI_ELECTRODE, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.HISUI_QWILFISH]: [
+    new SpeciesEvolution(Species.OVERQWIL, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.BARB_BARRAGE).length > 0), SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.HISUI_SNEASEL]: [
+    new SpeciesEvolution(Species.SNEASLER, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.isDaytime() /* Razor claw at day*/), SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.CHARCADET]: [
+    new SpeciesEvolution(Species.ARMAROUGE, 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(Species.CERULEDGE, 1, EvolutionItem.DUSK_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.TADBULB]: [
+    new SpeciesEvolution(Species.BELLIBOLT, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.CAPSAKID]: [
+    new SpeciesEvolution(Species.SCOVILLAIN, 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.CETODDLE]: [
+    new SpeciesEvolution(Species.CETITAN, 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.POLTCHAGEIST]: [
+    new SpeciesEvolution(Species.SINISTCHA, 1, EvolutionItem.DUSK_STONE, null, SpeciesWildEvolutionDelay.LONG)
+  ],
   [Species.KADABRA]: [
     new SpeciesEvolution(Species.ALAKAZAM, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
@@ -1188,7 +1484,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.SCYTHER]: [
     new SpeciesEvolution(Species.SCIZOR, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(
       (p: Pokemon) => !!p.scene.findModifier(m => m instanceof AttackTypeBoosterModifier && (m.type as AttackTypeBoosterModifierType).moveType === Type.STEEL) ),
-      SpeciesWildEvolutionDelay.VERY_LONG)
+      SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesEvolution(Species.KLEAVOR, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.ELECTABUZZ]: [
     new SpeciesEvolution(Species.ELECTIVIRE, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition((p: Pokemon) => true /* Electirizer*/), SpeciesWildEvolutionDelay.VERY_LONG)
@@ -1292,6 +1589,15 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.ALOLA_MEOWTH]: [
     new SpeciesEvolution(Species.ALOLA_PERSIAN, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.LONG)
+  ],
+  [Species.MILCERY]: [
+    new SpeciesEvolution(Species.ALCREMIE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.SNOM]: [
+    new SpeciesEvolution(Species.FROSMOTH, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 && !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
+  ],
+  [Species.GIMMIGHOUL]: [
+    new SpeciesEvolution(Species.GHOLDENGO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 50), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.VENUSAUR]: [
     new SpeciesFormEvolution(Species.VENUSAUR, '', SpeciesFormKey.MEGA, 1, EvolutionItem.VENUSAURITE, null, SpeciesWildEvolutionDelay.MEGA)
