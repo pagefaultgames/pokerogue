@@ -67,7 +67,8 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
   const ret = scene.add.text(x, y, content, styleOptions);
   ret.setScale(0.1666666667);
   ret.setShadow(shadowSize, shadowSize, shadowColor);
-  ret.setLineSpacing(5);
+  if (!styleOptions.lineSpacing)
+    ret.setLineSpacing(5);
 
   return ret;
 }

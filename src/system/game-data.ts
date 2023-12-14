@@ -21,6 +21,7 @@ interface SystemSaveData {
   dexData: DexData;
   unlocks: Unlocks;
   achvUnlocks: AchvUnlocks;
+  gameVersion: string;
   timestamp: integer;
 }
 
@@ -38,6 +39,7 @@ interface SessionSaveData {
   waveIndex: integer;
   battleType: BattleType;
   trainer: TrainerData;
+  gameVersion: string;
   timestamp: integer;
 }
 
@@ -116,6 +118,7 @@ export class GameData {
       dexData: this.dexData,
       unlocks: this.unlocks,
       achvUnlocks: this.achvUnlocks,
+      gameVersion: this.scene.game.config.gameVersion,
       timestamp: new Date().getTime()
     };
 
@@ -134,6 +137,12 @@ export class GameData {
     const data = JSON.parse(atob(localStorage.getItem('data')), (k: string, v: any) => k.endsWith('Attr') ? BigInt(v) : v) as SystemSaveData;
 
     console.debug(data);
+
+    /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
+    
+    if (versions[0] !== versions[1]) {
+      const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
+    }*/
 
     this.trainerId = data.trainerId;
     this.secretId = data.secretId;
@@ -201,6 +210,7 @@ export class GameData {
       waveIndex: scene.currentBattle.waveIndex,
       battleType: scene.currentBattle.battleType,
       trainer: scene.currentBattle.battleType == BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
+      gameVersion: scene.game.config.gameVersion,
       timestamp: new Date().getTime()
     } as SessionSaveData;
 
@@ -222,6 +232,12 @@ export class GameData {
 
       try {
         const sessionData = JSON.parse(atob(localStorage.getItem('sessionData')), (k: string, v: any) => {
+          /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
+    
+          if (versions[0] !== versions[1]) {
+            const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
+          }*/
+
           if (k === 'party' || k === 'enemyParty' || k === 'enemyField') {
             const ret: PokemonData[] = [];
             for (let pd of v)
@@ -248,7 +264,7 @@ export class GameData {
 
         console.debug(sessionData);
 
-        scene.seed = sessionData.seed || this.scene.game.config.seed[0];
+        scene.seed = sessionData.seed || scene.game.config.seed[0];
         scene.resetSeed();
 
         scene.gameMode = sessionData.gameMode || GameMode.CLASSIC;

@@ -267,7 +267,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.HITMONTOP, 20, null, new SpeciesEvolutionCondition((p: Pokemon) => p.stats[Stat.ATK] === p.stats[Stat.DEF]))
   ],
   [Species.KOFFING]: [
-    new SpeciesEvolution(Species.GALAR_WEEZING, 35, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.CITY), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.GALAR_WEEZING, 35, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.METROPOLIS), SpeciesWildEvolutionDelay.NEVER),
     new SpeciesEvolution(Species.WEEZING, 35, null, null)
   ],
   [Species.RHYHORN]: [

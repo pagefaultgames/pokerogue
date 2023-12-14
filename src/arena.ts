@@ -127,7 +127,7 @@ export class Arena {
         switch (this.biomeType) {
           case Biome.BEACH:
             return 1;
-          case Biome.CITY:
+          case Biome.SLUM:
             return 2;
         }
         break;
@@ -145,6 +145,14 @@ export class Arena {
             if (!this.isDaytime())
               return 1;
         }
+      case Species.CALYREX:
+        switch (this.biomeType) {
+          case Biome.SNOWY_FOREST:
+            return 1;
+          case Biome.GRAVEYARD:
+            return 2;
+        }
+        break;
     }
 
     return 0;
@@ -154,13 +162,14 @@ export class Arena {
     switch (this.biomeType) {
       case Biome.TOWN:
       case Biome.PLAINS:
+      case Biome.METROPOLIS:
         return Type.NORMAL;
       case Biome.GRASS:
       case Biome.TALL_GRASS:
         return Type.GRASS;
       case Biome.FOREST:
         return Type.BUG;
-      case Biome.CITY:
+      case Biome.SLUM:
       case Biome.SWAMP:
         return Type.POISON;
       case Biome.SEA:
@@ -176,6 +185,7 @@ export class Arena {
       case Biome.DESERT:
         return Type.ROCK;
       case Biome.ICE_CAVE:
+      case Biome.SNOWY_FOREST:
         return Type.ICE;
       case Biome.MEADOW:
       case Biome.FAIRY_CAVE:
@@ -245,7 +255,9 @@ export class Arena {
 
   getTrainerChance(): integer {
     switch (this.biomeType) {
-      case Biome.CITY:
+      case Biome.METROPOLIS:
+        return 2;
+      case Biome.SLUM:
       case Biome.BEACH:
       case Biome.DOJO:
       case Biome.CONSTRUCTION_SITE:
@@ -266,6 +278,7 @@ export class Arena {
       case Biome.POWER_PLANT:
       case Biome.GRAVEYARD:
       case Biome.FACTORY:
+      case Biome.SNOWY_FOREST:
         return 8;
       case Biome.ICE_CAVE:
       case Biome.VOLCANO:
@@ -289,6 +302,7 @@ export class Arena {
       case Biome.TOWN:
       case Biome.PLAINS:
       case Biome.GRASS:
+      case Biome.METROPOLIS:
       case Biome.SEA:
       case Biome.BEACH:
       case Biome.LAKE:
@@ -299,6 +313,7 @@ export class Arena {
       case Biome.DOJO:
       case Biome.CONSTRUCTION_SITE:
       case Biome.ISLAND:
+      case Biome.SNOWY_FOREST:
         return true;
     }
   }
@@ -352,8 +367,8 @@ export class Arena {
         return 1.995;
       case Biome.TALL_GRASS:
         return 9.608;
-      case Biome.CITY:
-        return 1.221;
+      case Biome.METROPOLIS:
+        return 4.867;
       case Biome.FOREST:
         return 4.294;
       case Biome.SEA:
@@ -408,6 +423,10 @@ export class Arena {
         return 2.751;
       case Biome.LABORATORY:
         return 0.797;
+      case Biome.SLUM:
+        return 1.221;
+      case Biome.SNOWY_FOREST:
+        return 3.047;
     }
   }
 }
@@ -417,8 +436,9 @@ export function getBiomeKey(biome: Biome): string {
     case Biome.POWER_PLANT:
     case Biome.TEMPLE:
       return 'ruins';
+    case Biome.METROPOLIS:
     case Biome.CONSTRUCTION_SITE:
-      return 'city';
+      return 'slum';
     case Biome.JUNGLE:
       return 'tall_grass';
     case Biome.FAIRY_CAVE:
@@ -427,6 +447,8 @@ export function getBiomeKey(biome: Biome): string {
       return 'beach';
     case Biome.LABORATORY:
       return 'factory';
+    case Biome.SNOWY_FOREST:
+      return 'ice_cave';
     case Biome.END:
       return 'wasteland';
   }

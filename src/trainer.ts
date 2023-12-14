@@ -12,7 +12,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
   constructor(scene: BattleScene, trainerType: TrainerType, female?: boolean, partyTemplateIndex?: integer) {
     super(scene, -72, 80);
-    this.config = trainerConfigs[trainerType];
+    this.config = trainerConfigs.hasOwnProperty(trainerType)
+      ? trainerConfigs[trainerType]
+      : trainerConfigs[TrainerType.ACE_TRAINER];
     this.female = female;
     this.partyTemplateIndex = Math.min(partyTemplateIndex !== undefined ? partyTemplateIndex : Phaser.Math.RND.weightedPick(this.config.partyTemplates.map((_, i) => i)), 
       this.config.partyTemplates.length - 1);

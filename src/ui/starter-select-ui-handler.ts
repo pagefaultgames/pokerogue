@@ -22,7 +22,7 @@ export interface Starter {
   pokerus: boolean;
 }
 
-const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII' ];
+const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII' ];
 const ivChartSize = 24;
 const ivChartStatCoordMultipliers = [ [ 0, 1 ], [ 0.825, 0.5 ], [ 0.825, -0.5 ], [ 0, -1 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ] ];
 const defaultIvChartData = new Array(12).fill(null).map(() => 0);
@@ -135,8 +135,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonAbilityText.setOrigin(0, 0);
       this.starterSelectContainer.add(this.pokemonAbilityText);
 
-      this.genOptionsText = addTextObject(this.scene, 115, 6, '', TextStyle.WINDOW);
-      this.genOptionsText.setLineSpacing(16);
+      this.genOptionsText = addTextObject(this.scene, 124, 7, '', TextStyle.WINDOW, { fontSize: 72, lineSpacing: 39, align: 'center' });
+      this.genOptionsText.setShadowOffset(4.5, 4.5);
+      this.genOptionsText.setOrigin(0.5, 0);
       this.starterSelectContainer.add(this.genOptionsText);
 
       this.updateGenOptions();

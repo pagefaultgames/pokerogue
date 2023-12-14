@@ -10,7 +10,8 @@ import { tmSpecies } from "./tms";
 import { Type } from "./type";
 
 export enum TrainerType {
-  ACE_TRAINER = 1,
+  UNKNOWN,
+  ACE_TRAINER,
   ARTIST,
   BACKERS,
   BACKPACKER,
@@ -59,7 +60,7 @@ export enum TrainerType {
   WORKER,
   YOUNGSTER,
 
-  BROCK,
+  BROCK = 200,
   MISTY,
   LT_SURGE,
   ERIKA,
@@ -106,12 +107,12 @@ export enum TrainerType {
   DRAYDEN,
   MARLON,
 
-  SHAUNTAL,
+  SHAUNTAL = 300,
   MARSHAL,
   GRIMSLEY,
   CAITLIN,
 
-  BLUE,
+  BLUE = 325,
   RED,
   LANCE,
   STEVEN,
@@ -120,7 +121,7 @@ export enum TrainerType {
   ALDER,
   IRIS,
 
-  RIVAL,
+  RIVAL = 350,
   RIVAL_2,
   RIVAL_3,
   RIVAL_4,
@@ -134,7 +135,7 @@ export enum TrainerPoolTier {
   RARE,
   SUPER_RARE,
   ULTRA_RARE
-};
+}
 
 export interface TrainerTierPools {
   [key: integer]: Species[]
@@ -560,6 +561,7 @@ function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilt
 }
 
 export const trainerConfigs: TrainerConfigs = {
+  [TrainerType.UNKNOWN]: new TrainerConfig(0).setHasGenders(),
   [TrainerType.ACE_TRAINER]: new TrainerConfig(++t).setHasGenders().setMoneyMultiplier(2.25).setEncounterBgm(TrainerType.ACE_TRAINER)
     .setPartyTemplateFunc(scene => getWavePartyTemplate(scene, trainerPartyTemplates.THREE_WEAK_BALANCED, trainerPartyTemplates.FOUR_WEAK_BALANCED, trainerPartyTemplates.FIVE_WEAK_BALANCED, trainerPartyTemplates.SIX_WEAK_BALANCED)),
   [TrainerType.ARTIST]: new TrainerConfig(++t).setEncounterBgm(TrainerType.RICH).setPartyTemplates(trainerPartyTemplates.ONE_STRONG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.THREE_AVG)
@@ -568,10 +570,10 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.BACKPACKER]: new TrainerConfig(++t).setHasGenders().setSpeciesFilter(s => s.isOfType(Type.FLYING) || s.isOfType(Type.ROCK)).setEncounterBgm(TrainerType.BACKPACKER)
     .setPartyTemplates(trainerPartyTemplates.ONE_STRONG, trainerPartyTemplates.ONE_WEAK_ONE_STRONG, trainerPartyTemplates.ONE_AVG_ONE_STRONG)
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.RHYHORN, Species.AIPOM, Species.MAKUHITA, Species.MAWILE, Species.NUMEL, Species.LILLIPUP, Species.SANDILE, /* Species.WOOLOO */ ],
+      [TrainerPoolTier.COMMON]: [ Species.RHYHORN, Species.AIPOM, Species.MAKUHITA, Species.MAWILE, Species.NUMEL, Species.LILLIPUP, Species.SANDILE, Species.WOOLOO ],
       [TrainerPoolTier.UNCOMMON]: [ Species.GIRAFARIG, Species.ZANGOOSE, Species.SEVIPER, Species.CUBCHOO, Species.PANCHAM, Species.SKIDDO, Species.MUDBRAY ],
-      [TrainerPoolTier.RARE]: [ Species.TAUROS, Species.STANTLER, Species.DARUMAKA, Species.BOUFFALANT, Species.DEERLING, /*Species.IMPIDIMP, */ ], 
-      [TrainerPoolTier.SUPER_RARE]: [ /* Species.GALAR_DARUMAKA */ /* Species.TEDDIURSA */ ]
+      [TrainerPoolTier.RARE]: [ Species.TAUROS, Species.STANTLER, Species.DARUMAKA, Species.BOUFFALANT, Species.DEERLING, Species.IMPIDIMP ], 
+      [TrainerPoolTier.SUPER_RARE]: [ Species.GALAR_DARUMAKA, Species.TEDDIURSA ]
     }),
   [TrainerType.BAKER]: new TrainerConfig(++t).setEncounterBgm(TrainerType.CLERK).setMoneyMultiplier(1.35).setSpeciesFilter(s => s.isOfType(Type.GRASS) || s.isOfType(Type.FIRE)),
   [TrainerType.BEAUTY]: new TrainerConfig(++t).setMoneyMultiplier(1.55).setEncounterBgm(TrainerType.PARASOL_LADY),
@@ -597,10 +599,10 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.CYCLIST]: new TrainerConfig(++t).setMoneyMultiplier(1.3).setHasGenders().setEncounterBgm(TrainerType.CYCLIST).setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.QUICK_ATTACK))
     .setPartyTemplates(trainerPartyTemplates.TWO_WEAK, trainerPartyTemplates.ONE_AVG)
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.PICHU, Species.STARLY, Species.TAILLOW, /* Species.BOLTUND */ ],
+      [TrainerPoolTier.COMMON]: [ Species.PICHU, Species.STARLY, Species.TAILLOW, Species.BOLTUND ],
       [TrainerPoolTier.UNCOMMON]: [  Species.DODUO, Species.ELECTRIKE, Species.BLITZLE, /* Species.WATTREL */],
       [TrainerPoolTier.RARE]: [ Species.YANMA, Species.NINJASK, Species.WHIRLIPEDE, Species.EMOLGA ],
-      [TrainerPoolTier.SUPER_RARE]: [ Species.ACCELGOR, /* Species.DREEPY */ ]
+      [TrainerPoolTier.SUPER_RARE]: [ Species.ACCELGOR, Species.DREEPY ]
     }),
   [TrainerType.DANCER]: new TrainerConfig(++t).setMoneyMultiplier(1.55).setEncounterBgm(TrainerType.CYCLIST)
     .setPartyTemplates(trainerPartyTemplates.TWO_WEAK, trainerPartyTemplates.ONE_AVG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.TWO_WEAK_SAME_TWO_WEAK_SAME)
@@ -615,7 +617,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.FISHERMAN]: new TrainerConfig(++t).setMoneyMultiplier(1.25).setEncounterBgm(TrainerType.BACKPACKER)
     .setPartyTemplates(trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG, trainerPartyTemplates.ONE_AVG, trainerPartyTemplates.THREE_WEAK_SAME, trainerPartyTemplates.ONE_STRONG, trainerPartyTemplates.SIX_WEAKER)
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.TENTACOOL, Species.MAGIKARP, Species.GOLDEEN, Species.STARYU, Species.REMORAID, Species.SKRELP, Species.CLAUNCHER, /* Species.ARROKUDA */ ],
+      [TrainerPoolTier.COMMON]: [ Species.TENTACOOL, Species.MAGIKARP, Species.GOLDEEN, Species.STARYU, Species.REMORAID, Species.SKRELP, Species.CLAUNCHER, Species.ARROKUDA ],
       [TrainerPoolTier.UNCOMMON]: [ Species.POLIWAG, Species.SHELLDER, Species.KRABBY, Species.HORSEA, Species.CARVANHA, Species.BARBOACH, Species.CORPHISH, Species.FINNEON, Species.TYMPOLE, Species.BASCULIN, Species.FRILLISH, Species.INKAY ],
       [TrainerPoolTier.RARE]: [ Species.CHINCHOU, Species.CORSOLA, Species.WAILMER, Species.BARBOACH, Species.CLAMPERL, Species.LUVDISC, Species.MANTYKE, Species.ALOMOMOLA, /* Species.TATSUGIRI */ /* Species.VELUZA */ ],
       [TrainerPoolTier.SUPER_RARE]: [ Species.LAPRAS, Species.FEEBAS, Species.RELICANTH, /* Species.DONDOZO */ ]
@@ -627,7 +629,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [ Species.SANDSHREW, Species.DIGLETT, Species.GEODUDE, Species.MACHOP, Species.ARON, Species.ROGGENROLA, Species.DRILBUR, /* Species.NACLI */ ],
       [TrainerPoolTier.UNCOMMON]: [ Species.ZUBAT, Species.RHYHORN, Species.ONIX, Species.CUBONE, Species.WOOBAT, Species.SWINUB, Species.NOSEPASS, Species.HIPPOPOTAS, Species.DWEBBLE, /* Species.KLAWF */ /* Species.TOEDSCOOL */ ],
-      [TrainerPoolTier.RARE]: [ Species.TORKOAL, Species.TRAPINCH, Species.BARBOACH, Species.GOLETT, Species.ALOLA_DIGLETT, Species.ALOLA_GEODUDE, /* Species.GALAR_STUNFISK */ /* Species.PALDEA_WOOPER */ ],
+      [TrainerPoolTier.RARE]: [ Species.TORKOAL, Species.TRAPINCH, Species.BARBOACH, Species.GOLETT, Species.ALOLA_DIGLETT, Species.ALOLA_GEODUDE, Species.GALAR_STUNFISK /* Species.PALDEA_WOOPER */ ],
       [TrainerPoolTier.SUPER_RARE]: [ Species.MAGBY, Species.LARVITAR ]
     }),
   [TrainerType.HOOLIGANS]: new TrainerConfig(++t).setDouble().setEncounterBgm(TrainerType.ROUGHNECK).setSpeciesFilter(s => s.isOfType(Type.POISON) || s.isOfType(Type.DARK)),
@@ -642,7 +644,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.OFFICER]: new TrainerConfig(++t).setMoneyMultiplier(1.55).setEncounterBgm(TrainerType.CLERK)
     .setPartyTemplates(trainerPartyTemplates.ONE_AVG, trainerPartyTemplates.ONE_STRONG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG, )
     .setSpeciesPools({ 
-      [TrainerPoolTier.COMMON]: [ Species.VULPIX, Species.GROWLITHE, Species.SNUBBULL, Species.POOCHYENA, Species.ELECTRIKE, Species.LILLIPUP, /* Species.YAMPER */ /* , Species.FIDOUGH */ ],
+      [TrainerPoolTier.COMMON]: [ Species.VULPIX, Species.GROWLITHE, Species.SNUBBULL, Species.POOCHYENA, Species.ELECTRIKE, Species.LILLIPUP, Species.YAMPER /* , Species.FIDOUGH */ ],
       [TrainerPoolTier.UNCOMMON]: [ Species.HOUNDOUR, Species.ROCKRUFF /*, Species.MASCHIFF */ ],
       [TrainerPoolTier.RARE]: [ Species.JOLTEON, Species.RIOLU ],
       [TrainerPoolTier.SUPER_RARE]: [],
@@ -655,23 +657,23 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.PRESCHOOLER]: new TrainerConfig(++t).setMoneyMultiplier(0.2).setEncounterBgm(TrainerType.YOUNGSTER).setHasGenders(undefined, 'lass')
     .setPartyTemplates(trainerPartyTemplates.THREE_WEAK, trainerPartyTemplates.FOUR_WEAKER, trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG, trainerPartyTemplates.FIVE_WEAKER)
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.CATERPIE, Species.PICHU, Species.SANDSHREW, Species.LEDYBA, Species.BUDEW, Species.BURMY, /* Species.WOOLOO, Species.PAWMI, Species.SMOLIV, */ ],
-      [TrainerPoolTier.UNCOMMON]: [ Species.EEVEE, Species.CLEFFA, Species.IGGLYBUFF, Species.SWINUB, Species.WOOPER, Species.DRIFLOON, /* Species.DEDENNE, Species.STUFFUL,  */ ],
+      [TrainerPoolTier.COMMON]: [ Species.CATERPIE, Species.PICHU, Species.SANDSHREW, Species.LEDYBA, Species.BUDEW, Species.BURMY, Species.WOOLOO, /* Species.PAWMI, Species.SMOLIV, */ ],
+      [TrainerPoolTier.UNCOMMON]: [ Species.EEVEE, Species.CLEFFA, Species.IGGLYBUFF, Species.SWINUB, Species.WOOPER, Species.DRIFLOON, Species.DEDENNE, Species.STUFFUL ],
       [TrainerPoolTier.RARE]: [ Species.RALTS, Species.RIOLU, Species.JOLTIK /* Species.TANDEMAUS, */ ],
       [TrainerPoolTier.SUPER_RARE]: [  Species.DARUMAKA, /* Species.TINKATINK, */],
     }),
   [TrainerType.PSYCHIC]: new TrainerConfig(++t).setHasGenders().setMoneyMultiplier(1.4).setEncounterBgm(TrainerType.PSYCHIC)
     .setPartyTemplates(trainerPartyTemplates.TWO_WEAK, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG, trainerPartyTemplates.TWO_WEAK_SAME_TWO_WEAK_SAME, trainerPartyTemplates.ONE_STRONGER)
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.ABRA, Species.DROWZEE, Species.RALTS, Species.SPOINK, Species.GOTHITA, Species.SOLOSIS, Species.BLIPBUG, Species.ESPURR, /* Species.HATTENA */  ],
+      [TrainerPoolTier.COMMON]: [ Species.ABRA, Species.DROWZEE, Species.RALTS, Species.SPOINK, Species.GOTHITA, Species.SOLOSIS, Species.BLIPBUG, Species.ESPURR, Species.HATENNA ],
       [TrainerPoolTier.UNCOMMON]: [ Species.MIME_JR, Species.EXEGGCUTE, Species.MEDITITE, Species.NATU, Species.EXEGGCUTE, Species.WOOBAT, Species.INKAY, Species.ORANGURU ],
       [TrainerPoolTier.RARE]: [ Species.ELGYEM, Species.SIGILYPH, Species.BALTOY, Species.GIRAFARIG, Species.MEOWSTIC ],
-      [TrainerPoolTier.SUPER_RARE]: [ Species.BELDUM, Species.ESPEON /* Species.WYRDEER, */ ],
+      [TrainerPoolTier.SUPER_RARE]: [ Species.BELDUM, Species.ESPEON, Species.WYRDEER ],
     }),
   [TrainerType.RANGER]: new TrainerConfig(++t).setMoneyMultiplier(1.4).setEncounterBgm(TrainerType.BACKPACKER).setHasGenders()
     .setSpeciesPools({
-      [TrainerPoolTier.COMMON]: [ Species.PICHU, Species.GROWLITHE, Species.PONYTA, Species.ZIGZAGOON, Species.SEEDOT, Species.BIDOOF, Species.RIOLU, Species.SEWADDLE, Species.SKIDDO, /* Species.SALANDIT */ /* Species.YAMPER */ ],
-      [TrainerPoolTier.UNCOMMON]: [ Species.AZURILL, Species.TAUROS, Species.MAREEP, Species.FARFETCHD, Species.TEDDIURSA, Species.SHROOMISH, Species.ELECTRIKE, Species.BUDEW, Species.BUIZEL, /* Species.MUDBRAY, */ /* Species.STUFFUL */ ],
+      [TrainerPoolTier.COMMON]: [ Species.PICHU, Species.GROWLITHE, Species.PONYTA, Species.ZIGZAGOON, Species.SEEDOT, Species.BIDOOF, Species.RIOLU, Species.SEWADDLE, Species.SKIDDO, Species.SALANDIT, Species.YAMPER ],
+      [TrainerPoolTier.UNCOMMON]: [ Species.AZURILL, Species.TAUROS, Species.MAREEP, Species.FARFETCHD, Species.TEDDIURSA, Species.SHROOMISH, Species.ELECTRIKE, Species.BUDEW, Species.BUIZEL, Species.MUDBRAY, Species.STUFFUL ],
       [TrainerPoolTier.RARE]: [ Species.EEVEE, Species.SCYTHER, Species.KANGASKHAN, Species.RALTS, Species.MUNCHLAX, Species.ZORUA, /* Species.PALDEA_TAUROS */ /* Species.TINKATINK */ /* Species.CYCLIZAR */ /* Species.FLAMIGO */ ],
       [TrainerPoolTier.SUPER_RARE]: [ Species.LARVESTA ],
     }),
@@ -682,9 +684,9 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [ Species.MAGNEMITE, Species.GRIMER, Species.DROWZEE, Species.VOLTORB, Species.KOFFING ],
       [TrainerPoolTier.UNCOMMON]: [ Species.BALTOY, Species.BRONZOR, Species.FERROSEED, Species.KLINK, Species.CHARJABUG, Species.BLIPBUG, Species.HELIOPTILE ],
-      [TrainerPoolTier.RARE ]: [ Species.ABRA, Species.DITTO, Species.PORYGON, Species.ELEKID, Species.SOLOSIS, /* Species.GALAR_WEEZING */ ],
-      [TrainerPoolTier.SUPER_RARE ]: [ Species.OMANYTE, Species.KABUTO, Species.AERODACTYL, Species.LILEEP, Species.ANORITH, Species.CRANIDOS, Species.SHIELDON, Species.TIRTOUGA, Species.ARCHEN, /* Species.ARCTOVISH, Species.ARCTOZOLT, Species.DRACOVISH, Species.DRACOZOLT */ ],
-      [TrainerPoolTier.ULTRA_RARE]: [ Species.ROTOM, /* Species.MELTAN */ ]
+      [TrainerPoolTier.RARE ]: [ Species.ABRA, Species.DITTO, Species.PORYGON, Species.ELEKID, Species.SOLOSIS, Species.GALAR_WEEZING ],
+      [TrainerPoolTier.SUPER_RARE ]: [ Species.OMANYTE, Species.KABUTO, Species.AERODACTYL, Species.LILEEP, Species.ANORITH, Species.CRANIDOS, Species.SHIELDON, Species.TIRTOUGA, Species.ARCHEN, Species.ARCTOVISH, Species.ARCTOZOLT, Species.DRACOVISH, Species.DRACOZOLT ],
+      [TrainerPoolTier.ULTRA_RARE]: [ Species.ROTOM, Species.MELTAN ]
     }),
   [TrainerType.SMASHER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
   [TrainerType.SNOW_WORKER]: new TrainerConfig(++t).setName('Worker').setMoneyMultiplier(1.7).setEncounterBgm(TrainerType.CLERK).setSpeciesFilter(s => s.isOfType(Type.ICE) || s.isOfType(Type.STEEL)),
@@ -719,7 +721,8 @@ export const trainerConfigs: TrainerConfigs = {
     `I didn't think you'd beat me that bad…`,
     `I hope we get to have a rematch some day.`
   ]),
-  [TrainerType.BROCK]: new TrainerConfig(++t).initForGymLeader(Species.GEODUDE, Type.ROCK),
+
+  [TrainerType.BROCK]: new TrainerConfig((t = TrainerType.BROCK)).initForGymLeader(Species.GEODUDE, Type.ROCK),
   [TrainerType.MISTY]: new TrainerConfig(++t).initForGymLeader(Species.STARYU, Type.WATER),
   [TrainerType.LT_SURGE]: new TrainerConfig(++t).initForGymLeader(Species.ELECTABUZZ, Type.ELECTRIC),
   [TrainerType.ERIKA]: new TrainerConfig(++t).initForGymLeader(Species.TANGELA, Type.GRASS),
@@ -882,11 +885,13 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.BRYCEN]: new TrainerConfig(++t).initForGymLeader(Species.CRYOGONAL, Type.ICE),
   [TrainerType.DRAYDEN]: new TrainerConfig(++t).initForGymLeader(Species.DRUDDIGON, Type.DRAGON),
   [TrainerType.MARLON]: new TrainerConfig(++t).initForGymLeader(Species.WAILMER, Type.WATER),
-  [TrainerType.SHAUNTAL]: new TrainerConfig(++t).initForEliteFour(Species.LITWICK, Type.GHOST),
+  
+  [TrainerType.SHAUNTAL]: new TrainerConfig((t = TrainerType.SHAUNTAL)).initForEliteFour(Species.LITWICK, Type.GHOST),
   [TrainerType.MARSHAL]: new TrainerConfig(++t).initForEliteFour(Species.TIMBURR, Type.FIGHTING),
   [TrainerType.GRIMSLEY]: new TrainerConfig(++t).initForEliteFour(Species.PAWNIARD, Type.DARK),
   [TrainerType.CAITLIN]: new TrainerConfig(++t).initForEliteFour(Species.GOTHITA, Type.PSYCHIC),
-  [TrainerType.BLUE]: new TrainerConfig(++t).initForChampion(Species.GYARADOS),
+
+  [TrainerType.BLUE]: new TrainerConfig((t = TrainerType.BLUE)).initForChampion(Species.GYARADOS),
   [TrainerType.RED]: new TrainerConfig(++t).initForChampion(Species.CHARIZARD),
   [TrainerType.LANCE]: new TrainerConfig(++t).initForChampion(Species.DRAGONITE),
   [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion(Species.BELDUM),
@@ -894,7 +899,8 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion(Species.GARCHOMP).setBattleBgm('battle_cynthia'),
   [TrainerType.ALDER]: new TrainerConfig(++t).initForChampion(Species.VOLCARONA),
   [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion(Species.AXEW),
-  [TrainerType.RIVAL]: new TrainerConfig(++t).setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival').setPartyTemplates(trainerPartyTemplates.RIVAL).setEncounterMessages([
+
+  [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL)).setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival').setPartyTemplates(trainerPartyTemplates.RIVAL).setEncounterMessages([
     `There you are! I've been looking everywhere for you!\nDid you forget to say goodbye to your best friend?
     $So you're finally pursuing your dream, huh?\nI knew you'd do it one day…
     $Anyway, I'll forgive you for forgetting me, but on one condition. You have to battle me!

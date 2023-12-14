@@ -106,7 +106,7 @@ export abstract class PokemonSpeciesForm {
   }
 
   isObtainable() {
-    return (this.generation <= 7 || pokemonPrevolutions.hasOwnProperty(this.speciesId));
+    return (this.generation <= 8 || pokemonPrevolutions.hasOwnProperty(this.speciesId));
   }
 
   getSpriteAtlasPath(female: boolean, formIndex?: integer, shiny?: boolean): string {
@@ -1801,11 +1801,11 @@ export function initSpecies() {
     new PokemonSpecies(Species.CLOBBOPUS, "Clobbopus", 8, false, false, false, "Tantrum Pokémon", Type.FIGHTING, null, 0.6, 4, Abilities.LIMBER, Abilities.NONE, Abilities.TECHNICIAN, 310, 50, 68, 60, 50, 50, 32, 180, 50, 62, GrowthRate.MEDIUM_SLOW, 50, false),
     new PokemonSpecies(Species.GRAPPLOCT, "Grapploct", 8, false, false, false, "Jujitsu Pokémon", Type.FIGHTING, null, 1.6, 39, Abilities.LIMBER, Abilities.NONE, Abilities.TECHNICIAN, 480, 80, 118, 90, 70, 80, 42, 45, 50, 168, GrowthRate.MEDIUM_SLOW, 50, false),
     new PokemonSpecies(Species.SINISTEA, "Sinistea", 8, false, false, false, "Black Tea Pokémon", Type.GHOST, null, 0.1, 0.2, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, GrowthRate.MEDIUM_FAST, null, false, false,
-      new PokemonForm("Phony Form", "phony", Type.GHOST, null, 0.1, 0.2, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62),
+      new PokemonForm("Phony Form", "phony", Type.GHOST, null, 0.1, 0.2, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, ""),
       new PokemonForm("Antique Form", "antique", Type.GHOST, null, 0.1, 0.2, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, ""),
     ),
     new PokemonSpecies(Species.POLTEAGEIST, "Polteageist", 8, false, false, false, "Black Tea Pokémon", Type.GHOST, null, 0.2, 0.4, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 508, 60, 65, 65, 134, 114, 70, 60, 50, 178, GrowthRate.MEDIUM_FAST, null, false, false,
-      new PokemonForm("Phony Form", "phony", Type.GHOST, null, 0.2, 0.4, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 508, 60, 65, 65, 134, 114, 70, 60, 50, 178),
+      new PokemonForm("Phony Form", "phony", Type.GHOST, null, 0.2, 0.4, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 508, 60, 65, 65, 134, 114, 70, 60, 50, 178, false, ""),
       new PokemonForm("Antique Form", "antique", Type.GHOST, null, 0.2, 0.4, Abilities.WEAK_ARMOR, Abilities.NONE, Abilities.CURSED_BODY, 508, 60, 65, 65, 134, 114, 70, 60, 50, 178, false, ""),
     ),
     new PokemonSpecies(Species.HATENNA, "Hatenna", 8, false, false, false, "Calm Pokémon", Type.PSYCHIC, null, 0.4, 3.4, Abilities.HEALER, Abilities.ANTICIPATION, Abilities.MAGIC_BOUNCE, 265, 42, 30, 45, 56, 53, 39, 235, 50, 53, GrowthRate.SLOW, 0, false),
@@ -2701,7 +2701,7 @@ export const speciesStarters = {
 {
   //setTimeout(() => {
     /*for (let tc of Object.keys(trainerConfigs)) {
-      console.log(TrainerType[tc], !trainerConfigs[tc].speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 7).filter(trainerConfigs[tc].speciesFilter).map(s => {
+      console.log(TrainerType[tc], !trainerConfigs[tc].speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 8).filter(trainerConfigs[tc].speciesFilter).map(s => {
         while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
 				  s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
         return s;
@@ -2709,7 +2709,7 @@ export const speciesStarters = {
     }
 
     const speciesFilter = (species: PokemonSpecies) => !species.legendary && !species.pseudoLegendary && !species.mythical && species.baseTotal >= 540;
-    console.log(!speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 7).filter(speciesFilter).map(s => {
+    console.log(!speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 8).filter(speciesFilter).map(s => {
       while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
         s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
       return s;

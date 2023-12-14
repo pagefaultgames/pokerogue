@@ -132,8 +132,6 @@ export default class BattleScene extends Phaser.Scene {
 		initSpecies();
 		initMoves();
 		initAbilities();
-
-		this.gameData = new GameData(this);
 		
 		this.phaseQueue = [];
 		this.phaseQueuePrepend = [];
@@ -344,6 +342,8 @@ export default class BattleScene extends Phaser.Scene {
 
 	create() {
 		initGameSpeed.apply(this);
+
+		this.gameData = new GameData(this);
 
 		this.setupControls();
 
@@ -854,13 +854,13 @@ export default class BattleScene extends Phaser.Scene {
 	randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean, speciesFilter?: PokemonSpeciesFilter, filterAllEvolutions?: boolean): PokemonSpecies {
 		if (fromArenaPool)
 			return this.arena.randomSpecies(waveIndex, level);
-		const filteredSpecies = speciesFilter ? [...new Set(allSpecies.filter(s => s.generation <= 7).filter(speciesFilter).map(s => {
+		const filteredSpecies = speciesFilter ? [...new Set(allSpecies.filter(s => s.generation <= 8).filter(speciesFilter).map(s => {
 			if (!filterAllEvolutions) {
 				while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
 					s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
 			}
 			return s;
-		}))] : allSpecies.filter(s => s.generation <= 7);
+		}))] : allSpecies.filter(s => s.generation <= 8);
 		let ret = filteredSpecies[Utils.randSeedInt(filteredSpecies.length)];
 		if (!filterAllEvolutions)
 			ret = getPokemonSpecies(ret.getSpeciesForLevel(level, true));
