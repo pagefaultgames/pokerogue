@@ -2478,7 +2478,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   getCondition(): MoveCondition {
     return (user, target, move) => {
-      if (!user.scene.arena.getTag(this.tagType))
+      if (move.category !== MoveCategory.STATUS || !user.scene.arena.getTag(this.tagType))
         return true;
       const tag = user.scene.arena.getTag(this.tagType) as ArenaTrapTag;
       return tag.layers < tag.maxLayers;
