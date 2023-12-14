@@ -1172,6 +1172,21 @@ export enum Moves {
   MATCHA_GOTCHA,
   SYRUP_BOMB,
   IVY_CUDGEL,
+  ELECTRO_SHOT,
+  TERA_STARSTORM,
+  FICKLE_BEAM,
+  BURNING_BULWARK,
+  THUNDERCLAP,
+  MIGHTY_CLEAVE,
+  TACHYON_CUTTER,
+  HARD_PRESS,
+  DRAGON_CHEER,
+  ALLURING_VOICE,
+  TEMPER_FLAME,
+  SUPERCELL_SLAM,
+  PSYCHIC_NOISE,
+  UPPER_HAND,
+  MALIGNANT_CHAIN,
 };
 
 export abstract class MoveAttr {
@@ -1788,6 +1803,22 @@ export class SolarBeamChargeAttr extends ChargeAttr {
     return new Promise(resolve => {
       const weatherType = user.scene.arena.weather?.weatherType;
       if (!user.scene.arena.weather?.isEffectSuppressed(user.scene) && (weatherType === WeatherType.SUNNY || weatherType === WeatherType.HARSH_SUN))
+        resolve(false);
+      else
+        super.apply(user, target, move, args).then(result => resolve(result));
+    });
+  }
+}
+
+export class ElectroShotChargeAttr extends ChargeAttr {
+  constructor() {
+    super(ChargeAnim.ELECTRO_SHOT_CHARGING, 'absorbed electricity!', null, true);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise(resolve => {
+      const weatherType = user.scene.arena.weather?.weatherType;
+      if (!user.scene.arena.weather?.isEffectSuppressed(user.scene) && (weatherType === WeatherType.RAIN || weatherType === WeatherType.HEAVY_RAIN))
         resolve(false);
       else
         super.apply(user, target, move, args).then(result => resolve(result));
@@ -4679,6 +4710,30 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.SYRUP_BOMB, "Syrup Bomb (N)", Type.GRASS, MoveCategory.SPECIAL, 60, 85, 10, -1, "The user sets off an explosion of sticky candy syrup, which coats the target and causes the target's Speed stat to drop each turn for three turns.", -1, 0, 9),
     new AttackMove(Moves.IVY_CUDGEL, "Ivy Cudgel (P)", Type.GRASS, MoveCategory.PHYSICAL, 100, 100, 10, -1, "The user strikes with an ivy-wrapped cudgel. This move's type changes depending on the mask worn by the user, and it has a heightened chance of landing a critical hit.", -1, 0, 9)
-      .attr(HighCritAttr)
+      .attr(HighCritAttr),
+    new AttackMove(Moves.ELECTRO_SHOT, "Electro Shot", Type.ELECTRIC, MoveCategory.SPECIAL, 130, 100, 10, -1, "The user gathers electricity on the first turn, boosting its Sp. Atk stat, then fires a high-voltage shot on the next turn. The shot will be fired immediately in rain.", 100, 0, 9)
+      .attr(ElectroShotChargeAttr)
+      .attr(StatChangeAttr, BattleStat.SPATK, 1, true)
+      .ignoresVirtual(),
+    new AttackMove(Moves.TERA_STARSTORM, "Tera Starstorm (N)", Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, "With the power of its crystals, the user bombards and eliminates the target. When used by Terapagos in its Stellar Form, this move damages all opposing Pokémon.", -1, 0, 9),
+    new AttackMove(Moves.FICKLE_BEAM, "Fickle Beam (N)", Type.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, -1, "The user shoots a beam of light to inflict damage. Sometimes all the user's heads shoot beams in unison, doubling the move's power.", -1, 0, 9),
+    new StatusMove(Moves.BURNING_BULWARK, "Burning Bulwark (P)", Type.FIRE, -1, 10, -1, "The user's intensely hot fur protects it from attacks and also burns any attacker that makes direct contact with it.", 100, 4, 9)
+      .attr(ProtectAttr),
+    new AttackMove(Moves.THUNDERCLAP, "Thunderclap (N)", Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 5, -1, "This move enables the user to attack first with a jolt of electricity. This move fails if the target is not readying an attack.", -1, 1, 9),
+    new AttackMove(Moves.MIGHTY_CLEAVE, "Mighty Cleave", Type.ROCK, MoveCategory.PHYSICAL, 95, 100, 5, -1, "The user wields the light that has accumulated atop its head to cleave the target. This move hits even if the target protects itself.", -1, 0, 9)
+      .ignoresProtect(),
+    new AttackMove(Moves.TACHYON_CUTTER, "Tachyon Cutter", Type.STEEL, MoveCategory.SPECIAL, 50, -1, 10, -1, "The user attacks by launching particle blades at the target twice in a row. This attack never misses.", -1, 0, 9)
+      .attr(MultiHitAttr, MultiHitType._2),
+    new AttackMove(Moves.HARD_PRESS, "Hard Press", Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, "The target is crushed with an arm, a claw, or the like to inflict damage. The more HP the target has left, the greater the move's power.", -1, 0, 9)
+      .attr(OpponentHighHpPowerAttr),
+    new StatusMove(Moves.DRAGON_CHEER, "Dragon Cheer (N)", Type.DRAGON, -1, 15, -1, "The user raises its allies' morale with a draconic cry so that their future attacks have a heightened chance of landing critical hits. This rouses Dragon types more.", 100, 0, 9),
+    new AttackMove(Moves.ALLURING_VOICE, "Alluring Voice (N)", Type.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, -1, "The user attacks the target using its angelic voice. This also confuses the target if its stats have been boosted during the turn.", -1, 0, 9),
+    new AttackMove(Moves.TEMPER_FLAME, "Temper Flame (N)", Type.FIRE, MoveCategory.PHYSICAL, 75, 100, 10, -1, "Spurred by desperation, the user attacks the target. This move's power is doubled if the user's previous move failed.", -1, 0, 9),
+    new AttackMove(Moves.SUPERCELL_SLAM, "Supercell Slam", Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 95, 15, -1, "The user electrifies its body and drops onto the target to inflict damage. If this move misses, the user takes damage instead.", -1, 0, 9)
+      .attr(MissEffectAttr, (user: Pokemon, move: Move) => { user.damage(Math.floor(user.getMaxHp() / 2)); return true; }),
+    new AttackMove(Moves.PSYCHIC_NOISE, "Psychic Noise (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 75, 100, 10, -1, "The user attacks the target with unpleasant sound waves. For two turns, the target is prevented from recovering HP through moves, Abilities, or held items.", -1, 0, 9),
+    new AttackMove(Moves.UPPER_HAND, "Upper Hand (N)", Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, -1, "The user reacts to the target's movement and strikes with the heel of its palm, making the target flinch. This move fails if the target is not readying a priority move.", -1, 0, 9),
+    new AttackMove(Moves.MALIGNANT_CHAIN, "Malignant Chain", Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, -1, "The user pours toxins into the target by wrapping them in a toxic, corrosive chain. This may also leave the target badly poisoned.", 50, 0, 9)
+      .attr(StatusEffectAttr, StatusEffect.TOXIC)
   );
 }
