@@ -1745,6 +1745,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.AUDINO]: [
     new SpeciesFormEvolution(Species.AUDINO, '', SpeciesFormKey.MEGA, 1, EvolutionItem.AUDINITE, null, SpeciesWildEvolutionDelay.MEGA)
+  ],
+  [Species.DIANCIE]: [
+    new SpeciesFormEvolution(Species.DIANCIE, '', SpeciesFormKey.MEGA, 1, EvolutionItem.DIANCITE, null, SpeciesWildEvolutionDelay.MEGA)
   ]
 };
 
