@@ -441,21 +441,14 @@ export class Arena {
 export function getBiomeKey(biome: Biome): string {
   switch (biome) {
     case Biome.POWER_PLANT:
-    case Biome.TEMPLE:
       return 'ruins';
     case Biome.METROPOLIS:
     case Biome.CONSTRUCTION_SITE:
       return 'slum';
     case Biome.JUNGLE:
       return 'tall_grass';
-    case Biome.FAIRY_CAVE:
-      return 'cave';
     case Biome.ISLAND:
       return 'beach';
-    case Biome.LABORATORY:
-      return 'factory';
-    case Biome.SNOWY_FOREST:
-      return 'ice_cave';
     case Biome.END:
       return 'wasteland';
   }
@@ -479,6 +472,9 @@ export function getBiomeHasProps(biomeType: Biome): boolean {
     case Biome.RUINS:
     case Biome.WASTELAND:
     case Biome.ABYSS:
+    case Biome.FAIRY_CAVE:
+    case Biome.TEMPLE:
+    case Biome.LABORATORY:
       return true;
   }
 
