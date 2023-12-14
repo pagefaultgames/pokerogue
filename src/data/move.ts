@@ -3656,7 +3656,8 @@ export function initMoves() {
     new AttackMove(Moves.POISON_TAIL, "Poison Tail", Type.POISON, MoveCategory.PHYSICAL, 50, 100, 25, 26, "The user hits the target with its tail. This may also poison the target. Critical hits land more easily.", 10, 0, 3)
       .attr(HighCritAttr)
       .attr(StatusEffectAttr, StatusEffect.POISON),
-    new AttackMove(Moves.COVET, "Covet (N)", Type.NORMAL, MoveCategory.PHYSICAL, 60, 100, 25, -1, "The user endearingly approaches the target, then steals the target's held item.", -1, 0, 3),
+    new AttackMove(Moves.COVET, "Covet", Type.NORMAL, MoveCategory.PHYSICAL, 60, 100, 25, -1, "The user endearingly approaches the target, then steals the target's held item.", -1, 0, 3)
+      .attr(StealHeldItemAttr),
     new AttackMove(Moves.VOLT_TACKLE, "Volt Tackle", Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 15, -1, "The user electrifies itself and charges the target. This also damages the user quite a lot. This attack may leave the target with paralysis.", 10, 0, 3)
       .attr(RecoilAttr)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
