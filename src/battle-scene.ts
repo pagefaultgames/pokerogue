@@ -694,11 +694,12 @@ export default class BattleScene extends Phaser.Scene {
 
 		if (!waveIndex) {
 			const isNewBiome = !lastBattle || !(lastBattle.waveIndex % 10);
-			const showTrainer = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER;
+			const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER;
 			if (lastBattle) {
 				this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
 				this.trySpreadPokerus();
-				if (showTrainer) {
+				if (resetArenaState) {
+					this.arena.removeAllTags();
 					playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 					this.unshiftPhase(new ShowTrainerPhase(this));
 					for (let pokemon of this.getParty()) {

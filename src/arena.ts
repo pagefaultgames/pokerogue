@@ -353,6 +353,13 @@ export class Arena {
     });
   }
 
+  removeAllTags(): void {
+    for (let t of this.tags) {
+      t.onRemove(this);
+      this.tags.splice(this.tags.indexOf(t), 1);
+    }
+  }
+
   preloadBgm(): void {
     this.scene.loadBgm(this.bgm);
   }
