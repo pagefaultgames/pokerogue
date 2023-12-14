@@ -65,6 +65,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public moveset: PokemonMove[];
   public status: Status;
   public winCount: integer;
+  public pauseEvolutions: boolean;
   public pokerus: boolean;
 
   public fusionSpecies: PokemonSpecies;
@@ -120,6 +121,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.moveset = dataSource.moveset;
       this.status = dataSource.status;
       this.winCount = dataSource.winCount;
+      this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
       this.fusionSpecies = dataSource.fusionSpecies instanceof PokemonSpecies ? dataSource.fusionSpecies : getPokemonSpecies(dataSource.fusionSpecies);
       this.fusionFormIndex = dataSource.fusionFormIndex;
@@ -1716,14 +1718,18 @@ export class PlayerPokemon extends Pokemon {
     });
   }
   
-  getPossibleEvolution(evolution: SpeciesEvolution): Pokemon {
-    const species = getPokemonSpecies(evolution.speciesId);
-    const formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0);
-    return new PlayerPokemon(this.scene, species, this.level, this.abilityIndex, formIndex, this.gender, this.shiny, this.ivs, this);
+  getPossibleEvolution(evolution: SpeciesEvolution): Promise<Pokemon> {
+    return new Promise(resolve => {
+      const species = getPokemonSpecies(evolution.speciesId);
+      const formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0);
+      const ret = new PlayerPokemon(this.scene, species, this.level, this.abilityIndex, formIndex, this.gender, this.shiny, this.ivs, this);
+      ret.loadAssets().then(() => resolve(ret));
+    });
   }
 
   evolve(evolution: SpeciesEvolution): Promise<void> {
     return new Promise(resolve => {
+      this.pauseEvolutions = false;
       this.handleSpecialEvolutions(evolution);
       this.species = getPokemonSpecies(evolution.speciesId);
       if (evolution.preFormKey !== null)

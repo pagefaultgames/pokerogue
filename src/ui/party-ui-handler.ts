@@ -11,6 +11,7 @@ import { Moves, allMoves } from "../data/move";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
+import { pokemonEvolutions } from "../data/pokemon-evolutions";
 
 const defaultMessage = 'Choose a Pokémon.';
 
@@ -36,6 +37,7 @@ export enum PartyOption {
   TRANSFER,
   SPLICE,
   SUMMARY,
+  UNPAUSE_EVO,
   RELEASE,
   SCROLL_UP = 1000,
   SCROLL_DOWN = 1001,
@@ -223,7 +225,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
           ui.playSelect();
           return true;
-        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
+        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVO && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string;
           if (option !== PartyOption.TRANSFER && option !== PartyOption.SPLICE) {
@@ -270,6 +272,11 @@ export default class PartyUiHandler extends MessageUiHandler {
           ui.playSelect();
           ui.setModeWithoutClear(Mode.SUMMARY, pokemon).then(() =>  this.clearOptions());
           return true;
+        } else if (option === PartyOption.UNPAUSE_EVO) {
+          this.clearOptions();
+          ui.playSelect();
+          pokemon.pauseEvolutions = false;
+          this.showText(`Evolutions have been unpaused for ${pokemon.name}.`, null, () => this.showText(null, 0), null, true);
         } else if (option === PartyOption.RELEASE) {
           this.clearOptions();
           ui.playSelect();
@@ -538,6 +545,9 @@ export default class PartyUiHandler extends MessageUiHandler {
 
       this.options.push(PartyOption.SUMMARY);
 
+      if (pokemon.pauseEvolutions && pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId))
+        this.options.push(PartyOption.UNPAUSE_EVO);
+
       if (this.partyUiMode === PartyUiMode.SWITCH)
         this.options.push(PartyOption.RELEASE);
     } else if (this.partyUiMode === PartyUiMode.MOVE_MODIFIER) {
@@ -588,6 +598,9 @@ export default class PartyUiHandler extends MessageUiHandler {
           case PartyOption.MOVE_3:
           case PartyOption.MOVE_4:
             optionName = pokemon.moveset[option - PartyOption.MOVE_1].getName();
+            break;
+          case PartyOption.UNPAUSE_EVO:
+            optionName = 'Unpause Evo.';
             break;
           default:
             optionName = Utils.toReadableString(PartyOption[option]);

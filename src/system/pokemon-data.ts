@@ -25,6 +25,7 @@ export default class PokemonData {
   public moveset: PokemonMove[];
   public status: Status;
   public winCount: integer;
+  public pauseEvolutions: boolean;
   public pokerus: boolean;
 
   public fusionSpecies: Species;
@@ -52,6 +53,7 @@ export default class PokemonData {
     this.stats = source.stats;
     this.ivs = source.ivs;
     this.winCount = source.winCount;
+    this.pauseEvolutions = !!source.pauseEvolutions;
     this.pokerus = !!source.pokerus;
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;

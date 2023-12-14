@@ -2642,9 +2642,11 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
       for (let lm of levelMoves)
         this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm));
     }
-    const evolution = pokemon.getEvolution();
-    if (evolution)
-      this.scene.unshiftPhase(new EvolutionPhase(this.scene, this.partyMemberIndex, evolution, this.lastLevel));
+    if (!pokemon.pauseEvolutions) {
+      const evolution = pokemon.getEvolution();
+      if (evolution)
+        this.scene.unshiftPhase(new EvolutionPhase(this.scene, this.partyMemberIndex, evolution, this.lastLevel));
+    }
   }
 }
 
