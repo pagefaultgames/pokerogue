@@ -356,6 +356,26 @@ export class VariableMovePowerAbAttr extends PreAttackAbAttr {
   }
 }
 
+export class MoveTypePowerBoostAbAttr extends VariableMovePowerAbAttr {
+  private boostedType: Type;
+
+  constructor(boostedType: Type) {
+    super(false);
+
+    this.boostedType = boostedType;
+  }
+
+  applyPreAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+    if (move.getMove().type === this.boostedType) {
+      (args[0] as Utils.NumberHolder).value *= 1.5;
+
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class LowHpMoveTypePowerBoostAbAttr extends VariableMovePowerAbAttr {
   private boostedType: Type;
 
@@ -1753,7 +1773,8 @@ export function initAbilities() {
     new Ability(Abilities.SHIELDS_DOWN, "Shields Down (N)", "When its HP becomes half or less, the Pokémon's shell breaks and it becomes aggressive.", 7),
     new Ability(Abilities.STAKEOUT, "Stakeout (N)", "Doubles the damage dealt to the target's replacement if the target switches out.", 7),
     new Ability(Abilities.WATER_BUBBLE, "Water Bubble (N)", "Lowers the power of Fire-type moves done to the Pokémon and prevents the Pokémon from getting a burn.", 7),
-    new Ability(Abilities.STEELWORKER, "Steelworker (N)", "Powers up Steel-type moves.", 7),
+    new Ability(Abilities.STEELWORKER, "Steelworker", "Powers up Steel-type moves.", 7)
+      .attr(MoveTypePowerBoostAbAttr, Type.STEEL),
     new Ability(Abilities.BERSERK, "Berserk (N)", "Boosts the Pokémon's Sp. Atk stat when it takes a hit that causes its HP to become half or less.", 7),
     new Ability(Abilities.SLUSH_RUSH, "Slush Rush (N)", "Boosts the Pokémon's Speed stat in a hailstorm.", 7)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
@@ -1818,8 +1839,10 @@ export function initAbilities() {
     new Ability(Abilities.QUICK_DRAW, "Quick Draw (N)", "Enables the Pokémon to move first occasionally.", 8),
     new Ability(Abilities.UNSEEN_FIST, "Unseen Fist (N)", "If the Pokémon uses moves that make direct contact, it can attack the target even if the target protects itself.", 8),
     new Ability(Abilities.CURIOUS_MEDICINE, "Curious Medicine (N)", "When the Pokémon enters a battle, it scatters medicine from its shell, which removes all stat changes from allies.", 8),
-    new Ability(Abilities.TRANSISTOR, "Transistor (N)", "Powers up Electric-type moves.", 8),
-    new Ability(Abilities.DRAGONS_MAW, "Dragon's Maw (N)", "Powers up Dragon-type moves.", 8),
+    new Ability(Abilities.TRANSISTOR, "Transistor", "Powers up Electric-type moves.", 8)
+      .attr(MoveTypePowerBoostAbAttr, Type.ELECTRIC),
+    new Ability(Abilities.DRAGONS_MAW, "Dragon's Maw", "Powers up Dragon-type moves.", 8)
+      .attr(MoveTypePowerBoostAbAttr, Type.DRAGON),
     new Ability(Abilities.CHILLING_NEIGH, "Chilling Neigh (N)", "When the Pokémon knocks out a target, it utters a chilling neigh, which boosts its Attack stat.", 8),
     new Ability(Abilities.GRIM_NEIGH, "Grim Neigh (N)", "When the Pokémon knocks out a target, it utters a terrifying neigh, which boosts its Sp. Atk stat.", 8),
     new Ability(Abilities.AS_ONE_GLASTRIER, "As One (N)", "This Ability combines the effects of both Calyrex's Unnerve Ability and Glastrier's Chilling Neigh Ability.", 8),
@@ -1829,10 +1852,12 @@ export function initAbilities() {
     new Ability(Abilities.THERMAL_EXCHANGE, "Thermal Exchange (N)", "Boosts the Attack stat when the Pokémon is hit by a Fire-type move. The Pokémon also cannot be burned.", 9),
     new Ability(Abilities.ANGER_SHELL, "Anger Shell (N)", "When an attack causes its HP to drop to half or less, the Pokémon gets angry. This lowers its Defense and Sp. Def stats but boosts its Attack, Sp. Atk, and Speed stats.", 9),
     new Ability(Abilities.PURIFYING_SALT, "Purifying Salt (N)", "The Pokémon's pure salt protects it from status conditions and halves the damage taken from Ghost-type moves.", 9),
-    new Ability(Abilities.WELL_BAKED_BODY, "Well-Baked Body (N)", "The Pokémon takes no damage when hit by Fire-type moves. Instead, its Defense stat is sharply boosted.", 9),
+    new Ability(Abilities.WELL_BAKED_BODY, "Well-Baked Body", "The Pokémon takes no damage when hit by Fire-type moves. Instead, its Defense stat is sharply boosted.", 9)
+      .attr(TypeImmunityStatChangeAbAttr, Type.FIRE, BattleStat.DEF, 2),
     new Ability(Abilities.WIND_RIDER, "Wind Rider (N)", "Boosts the Pokémon's Attack stat if Tailwind takes effect or if the Pokémon is hit by a wind move. The Pokémon also takes no damage from wind moves.", 9),
     new Ability(Abilities.GUARD_DOG, "Guard Dog (N)", "Boosts the Pokémon's Attack stat if intimidated. Moves and items that would force the Pokémon to switch out also fail to work.", 9),
-    new Ability(Abilities.ROCKY_PAYLOAD, "Rocky Payload (N)", "Powers up Rock-type moves.", 9),
+    new Ability(Abilities.ROCKY_PAYLOAD, "Rocky Payload", "Powers up Rock-type moves.", 9)
+      .attr(MoveTypePowerBoostAbAttr, Type.ROCK),
     new Ability(Abilities.WIND_POWER, "Wind Power (N)", "The Pokémon becomes charged when it is hit by a wind move, boosting the power of the next Electric-type move the Pokémon uses.", 9),
     new Ability(Abilities.ZERO_TO_HERO, "Zero to Hero (N)", "The Pokémon transforms into its Hero Form when it switches out.", 9),
     new Ability(Abilities.COMMANDER, "Commander (N)", "When the Pokémon enters a battle, it goes inside the mouth of an ally Dondozo if one is on the field. The Pokémon then issues commands from there.", 9),
