@@ -1165,11 +1165,14 @@ export class CommandPhase extends FieldPhase {
             if (!isSwitch && this.fieldIndex)
               this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
           } else if (trapTag) {
-            this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
-            this.scene.ui.setMode(Mode.MESSAGE);
+            if (!isSwitch) {
+              this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+              this.scene.ui.setMode(Mode.MESSAGE);
+            }
             this.scene.ui.showText(`${this.scene.getPokemonById(trapTag.sourceId).name}'s ${trapTag.getMoveName()}\nprevents ${isSwitch ? 'switching' : 'fleeing'}!`, null, () => {
               this.scene.ui.showText(null, 0);
-              this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+              if (!isSwitch)
+                this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
             }, null, true);
           }
         }

@@ -1715,6 +1715,12 @@ export class PlayerPokemon extends Pokemon {
       }, PartyUiHandler.FilterNonFainted);
     });
   }
+  
+  getPossibleEvolution(evolution: SpeciesEvolution): Pokemon {
+    const species = getPokemonSpecies(evolution.speciesId);
+    const formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0);
+    return new PlayerPokemon(this.scene, species, this.level, this.abilityIndex, formIndex, this.gender, this.shiny, this.ivs, this);
+  }
 
   evolve(evolution: SpeciesEvolution): Promise<void> {
     return new Promise(resolve => {
