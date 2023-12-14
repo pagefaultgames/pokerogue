@@ -634,12 +634,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!startingLevel)
         startingLevel = this.level;
     if (this.fusionSpecies) {
+      const evolutionLevelMoves = levelMoves.slice(0, Math.max(levelMoves.findIndex(lm => !!lm[0]), 0));
       const fusionLevelMoves = this.getFusionSpeciesForm().getLevelMoves();
       const newLevelMoves: LevelMoves = [];
       while (levelMoves.length && levelMoves[0][0] < startingLevel)
         levelMoves.shift();
       while (fusionLevelMoves.length && fusionLevelMoves[0][0] < startingLevel)
         fusionLevelMoves.shift();
+      if (includeEvolutionMoves) {
+        for (let elm of evolutionLevelMoves.reverse())
+          levelMoves.unshift(elm);
+      }
       for (let l = includeEvolutionMoves ? 0 : startingLevel; l <= this.level; l++) {
         if (l === 1 && startingLevel > 1)
           l = startingLevel;
@@ -659,7 +664,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (levelMoves) {
       for (let lm of levelMoves) {
         const level = lm[0];
-        if (level < startingLevel)
+        if ((!includeEvolutionMoves || level) && level < startingLevel)
           continue;
         else if (level > this.level)
           break;
