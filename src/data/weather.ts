@@ -234,9 +234,9 @@ export function getRandomWeatherType(biome: Biome): WeatherType {
       break;
     case Biome.BEACH:
       weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 5 },
-        { weatherType: WeatherType.SUNNY, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 2 }
+        { weatherType: WeatherType.NONE, weight: 8 },
+        { weatherType: WeatherType.SUNNY, weight: 5 },
+        { weatherType: WeatherType.RAIN, weight: 3 }
       ];
       break;
     case Biome.LAKE:
