@@ -71,9 +71,8 @@ export class EggHatchPhase extends BattlePhase {
       this.scene.fieldUI.add(this.eggHatchOverlay);
 
       const pokemon = this.generatePokemon();
-      const preName = pokemon.name;
 
-      console.log(preName, pokemon);
+      console.log(pokemon.name, pokemon);
 
       this.pokemonSprite.setVisible(false);
 
@@ -112,15 +111,23 @@ export class EggHatchPhase extends BattlePhase {
                       this.eggContainer.setVisible(false);
                       this.pokemonSprite.play(pokemon.getSpriteKey(true));
                       this.pokemonSprite.setVisible(true);
-                      this.scene.time.delayedCall(Utils.fixedInt(1000), () => pokemon.cry());
+                      this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
+                        pokemon.cry();
+                        this.scene.time.delayedCall(Utils.fixedInt(1250), () => {
+                          this.scene.playSoundWithoutBgm('evolution_fanfare');
+                          
+                          this.scene.ui.showText(`${pokemon.name} hatched from the egg!`, null, () => {
+                            this.scene.ui.showText(null, 0);
+                            this.end();
+                          }, null, true, 3000);
+                          this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
+                        });
+                      });
                       this.scene.tweens.add({
                         duration: Utils.fixedInt(3000),
                         targets: this.eggHatchOverlay,
                         alpha: 0,
-                        ease: 'Cubic.easeOut',
-                        onComplete: () => {
-                          this.scene.time.delayedCall(1000, () => this.end());
-                        }
+                        ease: 'Cubic.easeOut'
                       });
                     });
                   });

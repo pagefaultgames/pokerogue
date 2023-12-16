@@ -1853,12 +1853,19 @@ export class EnemyPokemon extends Pokemon {
   generateAndPopulateMoveset(): void {
     switch (true) {
       case (this.species.speciesId === Species.ETERNATUS):
-        this.moveset = [
-          new PokemonMove(Moves.DYNAMAX_CANNON),
-          new PokemonMove(Moves.CROSS_POISON),
-          new PokemonMove(Moves.DRAGON_DANCE),
-          new PokemonMove(Moves.RECOVER)
-        ];
+        this.moveset = this.formIndex
+          ? [
+            new PokemonMove(Moves.DYNAMAX_CANNON),
+            new PokemonMove(Moves.SLUDGE_BOMB),
+            new PokemonMove(Moves.FLAMETHROWER),
+            new PokemonMove(Moves.RECOVER)
+          ]
+          : [
+            new PokemonMove(Moves.ETERNABEAM),
+            new PokemonMove(Moves.CROSS_POISON),
+            new PokemonMove(Moves.DRAGON_DANCE),
+            new PokemonMove(Moves.RECOVER)
+          ];
       break;
       default:
         super.generateAndPopulateMoveset();
