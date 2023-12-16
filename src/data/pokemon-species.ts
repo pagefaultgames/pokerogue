@@ -1017,7 +1017,7 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.JIRACHI, "Jirachi", 3, false, false, true, "Wish Pokémon", Type.STEEL, Type.PSYCHIC, 0.3, 1.1, Abilities.SERENE_GRACE, Abilities.NONE, Abilities.NONE, 600, 100, 100, 100, 100, 100, 100, 3, 100, 300, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.DEOXYS, "Deoxys", 3, false, false, true, "DNA Pokémon", Type.PSYCHIC, null, 1.7, 60.8, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 600, 50, 150, 50, 150, 50, 150, 3, 0, 270, GrowthRate.SLOW, null, false, true,
-      new PokemonForm("Normal Forme", "normal", Type.PSYCHIC, null, 1.7, 60.8, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 600, 50, 150, 50, 150, 50, 150, 3, 0, 270, ""),
+      new PokemonForm("Normal Forme", "normal", Type.PSYCHIC, null, 1.7, 60.8, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 600, 50, 150, 50, 150, 50, 150, 3, 0, 270, false, ""),
       new PokemonForm("Attack Forme", "attack", Type.PSYCHIC, null, 1.7, 60.8, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 600, 50, 180, 20, 180, 20, 150, 3, 0, 270),
       new PokemonForm("Defense Forme", "defense", Type.PSYCHIC, null, 1.7, 60.8, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 600, 50, 70, 160, 70, 160, 90, 3, 0, 270),
       new PokemonForm("Speed Forme", "speed", Type.PSYCHIC, null, 1.7, 60.8, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 600, 50, 95, 90, 95, 90, 180, 3, 0, 270),
