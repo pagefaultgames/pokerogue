@@ -11,8 +11,8 @@ import { Unlockables } from "../system/unlockables";
 import { GrowthRate, getGrowthRateColor } from "../data/exp";
 import { DexAttr, DexEntry } from "../system/game-data";
 import * as Utils from "../utils";
-import { Stat, getStatName } from "../data/pokemon-stat";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
+import { StatsContainer } from "./stats-container";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -23,9 +23,6 @@ export interface Starter {
 }
 
 const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII' ];
-const ivChartSize = 24;
-const ivChartStatCoordMultipliers = [ [ 0, 1 ], [ 0.825, 0.5 ], [ 0.825, -0.5 ], [ 0, -1 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ] ];
-const defaultIvChartData = new Array(12).fill(null).map(() => 0);
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
     private starterSelectContainer: Phaser.GameObjects.Container;
@@ -41,13 +38,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     private genOptionsText: Phaser.GameObjects.Text;
     private instructionsText: Phaser.GameObjects.Text;
     private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
-    private statsContainer: Phaser.GameObjects.Container;
-    private ivChart: Phaser.GameObjects.Polygon;
-    private ivStatValueTexts: Phaser.GameObjects.Text[];
+    private statsContainer: StatsContainer;
 
     private genMode: boolean;
     private statsMode: boolean;
-    private statsIvsCache: integer[];
     private dexAttrCursor: bigint = 0n;
     private genCursor: integer = 0;
     private genScrollCursor: integer = 0;
@@ -303,44 +297,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       }, 0, date.getTime().toString());
 
-      this.statsContainer = this.scene.add.container(6, 16);
+      this.statsContainer = new StatsContainer(this.scene, 6, 16);
 
-      const ivChartBgData = new Array(6).fill(null).map((_, i: integer) => [ ivChartSize * ivChartStatCoordMultipliers[i][0], ivChartSize * ivChartStatCoordMultipliers[i][1] ] ).flat();
-
-      const ivChartBg = this.scene.add.polygon(48, 44, ivChartBgData, 0xd8e0f0, 0.625);
-      ivChartBg.setOrigin(0, 0);
-
-      const ivChartBorder = this.scene.add.polygon(ivChartBg.x, ivChartBg.y, ivChartBgData)
-        .setStrokeStyle(1, 0x484050);
-      ivChartBorder.setOrigin(0, 0);
-
-      const ivChartBgLines = [ [ 0, -1, 0, 1 ], [ -0.825, -0.5, 0.825, 0.5 ], [ 0.825, -0.5, -0.825, 0.5 ] ].map(coords => {
-        const line = new Phaser.GameObjects.Line(this.scene, ivChartBg.x, ivChartBg.y, ivChartSize * coords[0], ivChartSize * coords[1], ivChartSize * coords[2], ivChartSize * coords[3], 0xffffff)
-          .setLineWidth(0.5);
-        line.setOrigin(0, 0);
-        return line;
-      });
-
-      this.ivChart = this.scene.add.polygon(ivChartBg.x, ivChartBg.y, defaultIvChartData, 0x98d8a0, 0.75);
-      this.ivChart.setOrigin(0, 0);
-
-      this.statsContainer.add(ivChartBg);
-      ivChartBgLines.map(l => this.statsContainer.add(l));
-      this.statsContainer.add(this.ivChart);
-      this.statsContainer.add(ivChartBorder);
-
-      this.ivStatValueTexts = [];
-
-      new Array(6).fill(null).map((_, i: integer) => {
-        const statLabel = addTextObject(this.scene, ivChartBg.x + (ivChartSize) * ivChartStatCoordMultipliers[i][0] * 1.325, ivChartBg.y + (ivChartSize) * ivChartStatCoordMultipliers[i][1] * 1.325 - 4, getStatName(i as Stat), TextStyle.TOOLTIP_CONTENT);
-        statLabel.setOrigin(0.5);
-
-        this.ivStatValueTexts[i] = addTextObject(this.scene, statLabel.x, statLabel.y + 8, '0', TextStyle.TOOLTIP_CONTENT);
-        this.ivStatValueTexts[i].setOrigin(0.5)
-
-        this.statsContainer.add(statLabel);
-        this.statsContainer.add(this.ivStatValueTexts[i]);
-      });
+      this.scene.add.existing(this.statsContainer);
 
       this.statsContainer.setVisible(false);
 
@@ -689,7 +648,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.showStats();
         } else {
           this.statsContainer.setVisible(false);
-          this.ivChart.setTo((this.statsIvsCache = defaultIvChartData));
+          this.statsContainer.updateIvs(null);
         }
       }
 
@@ -883,7 +842,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.statsMode = false;
         this.statsContainer.setVisible(false);
         this.pokemonSprite.setVisible(!!this.speciesStarterDexEntry?.caughtAttr);
-        this.ivChart.setTo((this.statsIvsCache = defaultIvChartData));
+        this.statsContainer.updateIvs(null);
       }
     }
     
@@ -893,24 +852,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.statsContainer.setVisible(true);
 
-      const ivs = this.speciesStarterDexEntry.ivs;
-      const ivChartData = new Array(6).fill(null).map((_, i) => [ (ivs[i] / 31) * ivChartSize * ivChartStatCoordMultipliers[i][0], (ivs[i] / 31) * ivChartSize * ivChartStatCoordMultipliers[i][1] ] ).flat();
-      const lastIvChartData = this.statsIvsCache || defaultIvChartData;
-      this.statsIvsCache = ivChartData.slice(0);
-      
-      this.ivStatValueTexts.map((t: Phaser.GameObjects.Text, i: integer) => t.setText(ivs[i].toString()));
-
-      this.scene.tweens.addCounter({
-        from: 0,
-        to: 1,
-        duration: 1000,
-        ease: 'Cubic.easeOut',
-        onUpdate: (tween: Phaser.Tweens.Tween) => {
-          const progress = tween.getValue();
-          const interpolatedData = ivChartData.map((v: number, i: integer) => v * progress + (lastIvChartData[i] * (1 - progress)));
-          this.ivChart.setTo(interpolatedData);
-        }
-      });
+      this.statsContainer.updateIvs(this.speciesStarterDexEntry.ivs);
     }
 
     clearText() {
