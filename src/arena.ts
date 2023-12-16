@@ -449,8 +449,6 @@ export function getBiomeKey(biome: Biome): string {
       return 'tall_grass';
     case Biome.ISLAND:
       return 'beach';
-    case Biome.END:
-      return 'wasteland';
   }
   return Biome[biome].toLowerCase();
 }
@@ -475,6 +473,7 @@ export function getBiomeHasProps(biomeType: Biome): boolean {
     case Biome.FAIRY_CAVE:
     case Biome.TEMPLE:
     case Biome.LABORATORY:
+    case Biome.END:
       return true;
   }
 
@@ -511,8 +510,21 @@ export class ArenaBase extends Phaser.GameObjects.Container {
 
     const hasProps = getBiomeHasProps(biome);
     const biomeKey = getBiomeKey(biome);
+    const baseKey = `${biomeKey}_${this.player ? 'a' : 'b'}`;
 
-    this.base.setTexture(`${biomeKey}_${this.player ? 'a' : 'b'}`);
+    this.base.setTexture(baseKey);
+
+    if (this.base.texture.frameTotal > 1) {
+      const baseFrameNames = this.scene.anims.generateFrameNames(baseKey, { zeroPad: 4, suffix: ".png", start: 1, end: this.base.texture.frameTotal - 1 });
+      this.scene.anims.create({
+        key: baseKey,
+        frames: baseFrameNames,
+        frameRate: 12,
+        repeat: -1
+      });
+      this.base.play(baseKey);
+    }
+
     this.add(this.base);
 
     if (!this.player) {
@@ -521,7 +533,20 @@ export class ArenaBase extends Phaser.GameObjects.Container {
           ? hasProps ? Utils.randSeedInt(8) : 0
           : propValue;
         this.props.forEach((prop, p) => {
-          prop.setTexture(`${biomeKey}_b${hasProps ? `_${p + 1}` : ''}`);
+          const propKey = `${biomeKey}_b${hasProps ? `_${p + 1}` : ''}`;
+          prop.setTexture(propKey);
+
+          if (hasProps && prop.texture.frameTotal > 1) {
+            const propFrameNames = this.scene.anims.generateFrameNames(propKey, { zeroPad: 4, suffix: ".png", start: 1, end: prop.texture.frameTotal - 1 });
+            this.scene.anims.create({
+              key: propKey,
+              frames: propFrameNames,
+              frameRate: 12,
+              repeat: -1
+            });
+            prop.play(propKey);
+          }
+
           prop.setVisible(hasProps && !!(this.propValue & (1 << p)));
           this.add(prop);
         });

@@ -7,8 +7,6 @@ export default class EvolutionSceneHandler extends UiHandler {
     public canCancel: boolean;
     public cancelled: boolean;
 
-    private cleanupFunc: Function;
-
     constructor(scene: BattleScene) {
       super(scene, Mode.EVOLUTION_SCENE);
     }

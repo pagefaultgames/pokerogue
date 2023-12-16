@@ -20,6 +20,7 @@ import AchvBar from './achv-bar';
 import MenuUiHandler from './menu-ui-handler';
 import AchvsUiHandler from './achvs-ui-handler';
 import OptionSelectUiHandler from './option-select-ui-handler';
+import EggHatchSceneHandler from './egg-hatch-scene-handler';
 
 export enum Mode {
   MESSAGE,
@@ -33,6 +34,7 @@ export enum Mode {
   BIOME_SELECT,
   STARTER_SELECT,
   EVOLUTION_SCENE,
+  EGG_HATCH_SCENE,
   CONFIRM,
   OPTION_SELECT,
   GAME_MODE_SELECT,
@@ -45,7 +47,8 @@ const transitionModes = [
   Mode.PARTY,
   Mode.SUMMARY,
   Mode.STARTER_SELECT,
-  Mode.EVOLUTION_SCENE
+  Mode.EVOLUTION_SCENE,
+  Mode.EGG_HATCH_SCENE
 ];
 
 const noTransitionModes = [
@@ -87,6 +90,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new BiomeSelectUiHandler(scene),
       new StarterSelectUiHandler(scene),
       new EvolutionSceneHandler(scene),
+      new EggHatchSceneHandler(scene),
       new ConfirmUiHandler(scene),
       new OptionSelectUiHandler(scene),
       new GameModeSelectUiHandler(scene),

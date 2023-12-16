@@ -1561,7 +1561,7 @@ export function initAbilities() {
     new Ability(Abilities.SAND_STREAM, "Sand Stream", "The Pokémon summons a sandstorm when it enters a battle.", 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SANDSTORM),
     new Ability(Abilities.PRESSURE, "Pressure", "By putting pressure on the opposing Pokémon, it raises their PP usage.", 3)
-      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, 'is exerting its Pressure!')),
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is exerting its Pressure!')),
     new Ability(Abilities.THICK_FAT, "Thick Fat", "The Pokémon is protected by a layer of thick fat, which halves the damage taken from Fire- and Ice-type moves.", 3)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.ICE, 0.5),

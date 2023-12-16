@@ -2534,7 +2534,7 @@ export const speciesStarters = {
   [Species.WIMPOD]: 3,
   [Species.SANDYGAST]: 3,
   [Species.PYUKUMUKU]: 3,
-  [Species.TYPE_NULL]: 5,
+  [Species.TYPE_NULL]: 6,
   [Species.MINIOR]: 5,
   [Species.KOMALA]: 5,
   [Species.TURTONATOR]: 5,

@@ -253,12 +253,27 @@ export default class BattleScene extends Phaser.Scene {
 		// Load arena images
 		Utils.getEnumValues(Biome).map(bt => {
 			const btKey = Biome[bt].toLowerCase();
+			const isBaseAnimated = btKey === 'end';
+			const baseAKey = `${btKey}_a`;
+			const baseBKey = `${btKey}_b`;
 			this.loadImage(`${btKey}_bg`, 'arenas');
-			this.loadImage(`${btKey}_a`, 'arenas');
-			this.loadImage(`${btKey}_b`, 'arenas');
+			if (!isBaseAnimated)
+				this.loadImage(baseAKey, 'arenas');
+			else
+				this.loadAtlas(baseAKey, 'arenas');
+			if (!isBaseAnimated)
+				this.loadImage(baseBKey, 'arenas');
+			else
+				this.loadAtlas(baseBKey, 'arenas');
 			if (getBiomeHasProps(bt)) {
-				for (let p = 1; p <= 3; p++)
-					this.loadImage(`${btKey}_b_${p}`, 'arenas')
+				for (let p = 1; p <= 3; p++) {
+					const isPropAnimated = p === 3 && btKey === 'end';
+					const propKey = `${btKey}_b_${p}`;
+					if (!isPropAnimated)
+						this.loadImage(propKey, 'arenas');
+					else
+						this.loadAtlas(propKey, 'arenas');
+				}
 			}
 		});
 
@@ -286,6 +301,10 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('types', '');
 		this.loadAtlas('statuses', '');
 		this.loadAtlas('categories', '');
+		this.loadAtlas('egg', '');
+		this.loadAtlas('egg_crack', '');
+		this.loadAtlas('egg_shard', '');
+		this.loadAtlas('egg_lightrays', '');
 
 		for (let i = 0; i < 10; i++)
 			this.loadAtlas(`pokemon_icons_${i}`, 'ui');
@@ -323,6 +342,9 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadSe('pb_tray_enter');
 		this.loadSe('pb_tray_ball');
 		this.loadSe('pb_tray_empty');
+
+		this.loadSe('egg_crack');
+		this.loadSe('egg_hatch');
 
 		this.loadSe('PRSFX- Transform', 'battle_anims');
 
@@ -691,6 +713,9 @@ export default class BattleScene extends Phaser.Scene {
 		this.currentBattle.incrementTurn(this);
 
 		//this.pushPhase(new TrainerMessageTestPhase(this));
+
+		//for (let t = 0; t < 4; t++)
+			//this.pushPhase(new EggHatchPhase(this, new Egg(2423432 + EGG_SEED * t, GachaType.LEGENDARY, new Date().getTime())));
 
 		if (!waveIndex) {
 			const isNewBiome = !lastBattle || !(lastBattle.waveIndex % 10);

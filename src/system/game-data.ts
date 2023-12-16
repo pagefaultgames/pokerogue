@@ -14,6 +14,8 @@ import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-type";
 import { Setting, setSetting, settingDefaults } from "./settings";
 import { achvs } from "./achv";
+import EggData from "./egg-data";
+import { Egg } from "../data/egg";
 
 interface SystemSaveData {
   trainerId: integer;
@@ -21,6 +23,7 @@ interface SystemSaveData {
   dexData: DexData;
   unlocks: Unlocks;
   achvUnlocks: AchvUnlocks;
+  eggs: EggData[];
   gameVersion: string;
   timestamp: integer;
 }
@@ -93,6 +96,8 @@ export class GameData {
 
   public achvUnlocks: AchvUnlocks;
 
+  public eggs: Egg[];
+
   constructor(scene: BattleScene) {
     this.scene = scene;
     this.loadSettings();
@@ -104,6 +109,7 @@ export class GameData {
       [Unlockables.SPLICED_ENDLESS_MODE]: false
     };
     this.achvUnlocks = {};
+    this.eggs = [];
     this.initDexData();
     this.loadSystem();
   }
@@ -118,6 +124,7 @@ export class GameData {
       dexData: this.dexData,
       unlocks: this.unlocks,
       achvUnlocks: this.achvUnlocks,
+      eggs: this.eggs.map(e => new EggData(e)),
       gameVersion: this.scene.game.config.gameVersion,
       timestamp: new Date().getTime()
     };
@@ -158,8 +165,12 @@ export class GameData {
       for (let a of Object.keys(data.achvUnlocks)) {
         if (achvs.hasOwnProperty(a))
           this.achvUnlocks[a] = data.achvUnlocks[a];
-      }
+      } 
     }
+
+    this.eggs = data.eggs
+      ? data.eggs.map(e => e.toEgg())
+      : [];
 
     if (data.dexData[1].hasOwnProperty(0))
       this.migrateLegacyDexData(this.dexData, data.dexData);
