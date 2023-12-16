@@ -97,24 +97,24 @@ export class EggHatchPhase extends BattlePhase {
                   this.eggCrackSprite.setFrame('3');
                   this.scene.time.delayedCall(125, () => this.eggCrackSprite.setFrame('4'));
                   this.doEggShake(8, 2).then(() => {
-                    SoundFade.fadeOut(this.scene, evolutionBgm, 100);
+                    SoundFade.fadeOut(this.scene, evolutionBgm, Utils.fixedInt(100));
                     for (let e = 0; e < 5; e++)
-                      this.scene.time.delayedCall(375 * e, () => this.scene.playSound('egg_hatch', { volume: 1 - (e * 0.2) }));
+                      this.scene.time.delayedCall(Utils.fixedInt(375 * e), () => this.scene.playSound('egg_hatch', { volume: 1 - (e * 0.2) }));
                     this.eggLightraysOverlay.setVisible(true);
                     this.eggLightraysOverlay.play('egg_lightrays');
                     this.scene.tweens.add({
-                      duration: 125,
+                      duration: Utils.fixedInt(125),
                       targets: this.eggHatchOverlay,
                       alpha: 1,
                       ease: 'Cubic.easeIn'
                     });
-                    this.scene.time.delayedCall(1500, () => {
+                    this.scene.time.delayedCall(Utils.fixedInt(1500), () => {
                       this.eggContainer.setVisible(false);
                       this.pokemonSprite.play(pokemon.getSpriteKey(true));
                       this.pokemonSprite.setVisible(true);
-                      this.scene.time.delayedCall(1000, () => pokemon.cry());
+                      this.scene.time.delayedCall(Utils.fixedInt(1000), () => pokemon.cry());
                       this.scene.tweens.add({
-                        duration: 3000,
+                        duration: Utils.fixedInt(3000),
                         targets: this.eggHatchOverlay,
                         alpha: 0,
                         ease: 'Cubic.easeOut',
