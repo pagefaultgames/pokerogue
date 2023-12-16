@@ -65,6 +65,9 @@ export class ModifierBar extends Phaser.GameObjects.Container {
       });
     });
 
+    for (let icon of this.getAll())
+      this.sendToBack(icon);
+
     this.modifierCache = modifiers;
   }
 
