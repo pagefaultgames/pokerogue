@@ -1433,11 +1433,11 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.SINISTEA]: [
     new SpeciesEvolution(Species.POLTEAGEIST, 1, EvolutionItem.DUSK_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
-//[Species.DURALUDON]: [
-//  new SpeciesEvolution(Species.ARCHALUDON, 1, EvolutionItem.DUSK_STONE, new SpeciesEvolutionCondition(
-//    (p: Pokemon) => !!p.scene.findModifier(m => m instanceof AttackTypeBoosterModifier && (m.type as AttackTypeBoosterModifierType).moveType === Type.STEEL) ),
-//    SpeciesWildEvolutionDelay.VERY_LONG)
-//],
+  [Species.DURALUDON]: [
+    new SpeciesEvolution(Species.ARCHALUDON, 1, EvolutionItem.DUSK_STONE, new SpeciesEvolutionCondition(
+      (p: Pokemon) => !!p.scene.findModifier(m => m instanceof AttackTypeBoosterModifier && (m.type as AttackTypeBoosterModifierType).moveType === Type.STEEL) ),
+      SpeciesWildEvolutionDelay.VERY_LONG)
+  ],
   [Species.KUBFU]: [
     new SpeciesFormEvolution(Species.URSHIFU, '', 'single-strike', 1, EvolutionItem.DUSK_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.ABYSS), null),
     new SpeciesFormEvolution(Species.URSHIFU, '', 'rapid-strike', 1, EvolutionItem.WATER_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.SEA), null)
@@ -1473,9 +1473,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.POLTCHAGEIST]: [
     new SpeciesEvolution(Species.SINISTCHA, 1, EvolutionItem.DUSK_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
-//[Species.DIPPLIN]: [
-//  new SpeciesEvolution(Species.HYDRAPPLE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.DRAGON_CHEER).length > 0), SpeciesWildEvolutionDelay.VERY_LONG)
-//],
+  [Species.DIPPLIN]: [
+    new SpeciesEvolution(Species.HYDRAPPLE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.DRAGON_CHEER).length > 0), SpeciesWildEvolutionDelay.VERY_LONG)
+  ],
   [Species.KADABRA]: [
     new SpeciesEvolution(Species.ALAKAZAM, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
