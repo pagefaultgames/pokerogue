@@ -1230,7 +1230,7 @@ export enum Moves {
   HARD_PRESS,
   DRAGON_CHEER,
   ALLURING_VOICE,
-  TEMPER_FLAME,
+  TEMPER_FLARE,
   SUPERCELL_SLAM,
   PSYCHIC_NOISE,
   UPPER_HAND,
@@ -4943,12 +4943,15 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.HARD_PRESS, "Hard Press", Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, "The target is crushed with an arm, a claw, or the like to inflict damage. The more HP the target has left, the greater the move's power.", -1, 0, 9)
       .attr(OpponentHighHpPowerAttr),
-    new StatusMove(Moves.DRAGON_CHEER, "Dragon Cheer (N)", Type.DRAGON, -1, 15, -1, "The user raises its allies' morale with a draconic cry so that their future attacks have a heightened chance of landing critical hits. This rouses Dragon types more.", 100, 0, 9),
+    new StatusMove(Moves.DRAGON_CHEER, "Dragon Cheer (P)", Type.DRAGON, -1, 15, -1, "The user raises its allies' morale with a draconic cry so that their future attacks have a heightened chance of landing critical hits. This rouses Dragon types more.", 100, 0, 9)
+      .attr(AddBattlerTagAttr, BattlerTagType.CRIT_BOOST, false, undefined, true)
+      .target(MoveTarget.NEAR_ALLY),
     new AttackMove(Moves.ALLURING_VOICE, "Alluring Voice (N)", Type.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, -1, "The user attacks the target using its angelic voice. This also confuses the target if its stats have been boosted during the turn.", -1, 0, 9),
-    new AttackMove(Moves.TEMPER_FLAME, "Temper Flame (N)", Type.FIRE, MoveCategory.PHYSICAL, 75, 100, 10, -1, "Spurred by desperation, the user attacks the target. This move's power is doubled if the user's previous move failed.", -1, 0, 9),
+    new AttackMove(Moves.TEMPER_FLARE, "Temper Flare (N)", Type.FIRE, MoveCategory.PHYSICAL, 75, 100, 10, -1, "Spurred by desperation, the user attacks the target. This move's power is doubled if the user's previous move failed.", -1, 0, 9),
     new AttackMove(Moves.SUPERCELL_SLAM, "Supercell Slam", Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 95, 15, -1, "The user electrifies its body and drops onto the target to inflict damage. If this move misses, the user takes damage instead.", -1, 0, 9)
       .attr(MissEffectAttr, (user: Pokemon, move: Move) => { user.damage(Math.floor(user.getMaxHp() / 2)); return true; }),
-    new AttackMove(Moves.PSYCHIC_NOISE, "Psychic Noise (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 75, 100, 10, -1, "The user attacks the target with unpleasant sound waves. For two turns, the target is prevented from recovering HP through moves, Abilities, or held items.", -1, 0, 9),
+    new AttackMove(Moves.PSYCHIC_NOISE, "Psychic Noise (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 75, 100, 10, -1, "The user attacks the target with unpleasant sound waves. For two turns, the target is prevented from recovering HP through moves, Abilities, or held items.", -1, 0, 9)
+      .soundBased(),
     new AttackMove(Moves.UPPER_HAND, "Upper Hand (N)", Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, -1, "The user reacts to the target's movement and strikes with the heel of its palm, making the target flinch. This move fails if the target is not readying a priority move.", -1, 0, 9),
     new AttackMove(Moves.MALIGNANT_CHAIN, "Malignant Chain", Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, -1, "The user pours toxins into the target by wrapping them in a toxic, corrosive chain. This may also leave the target badly poisoned.", 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
