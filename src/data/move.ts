@@ -1785,7 +1785,7 @@ export class ClearWeatherAttr extends MoveEffectAttr {
 
 export class OneHitKOAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (target.species.speciesId === Species.ETERNATUS && target.formIndex === 1)
+    if (target.isBossImmune())
       return false;
 
     (args[0] as Utils.BooleanHolder).value = true;
@@ -2382,6 +2382,8 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
         return -5;
       case BattlerTagType.FRENZY:
         return -2;
+      case BattlerTagType.ENCORE:
+        return -2;
       case BattlerTagType.INGRAIN:
         return 3;
       case BattlerTagType.AQUA_RING:
@@ -2398,7 +2400,9 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.MAGMA_STORM:
         return -3;
       case BattlerTagType.PROTECTED:
-        return 10;
+        return 5;
+      case BattlerTagType.PERISH_SONG:
+        return -8;
       case BattlerTagType.FLYING:
         return 5;
       case BattlerTagType.CRIT_BOOST:
@@ -2480,6 +2484,25 @@ export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
     user.scene.queueMessage(getPokemonMessage(user, ` took aim\nat ${target.name}!`));
 
     return true;
+  }
+}
+
+export class FaintCountdownAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.PERISH_SONG, false, 4, true);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    user.scene.queueMessage(getPokemonMessage(target, `\nwill faint in ${this.turnCount - 1} turns.`));
+
+    return true;
+  }
+
+  getCondition(): MoveCondition {
+    return (user, target, move) => super.getCondition()(user, target, move) && !target.isBossImmune();
   }
 }
 
@@ -3412,7 +3435,8 @@ export function initMoves() {
     new StatusMove(Moves.FORESIGHT, "Foresight (N)", Type.NORMAL, -1, 40, -1, "Enables a Ghost-type target to be hit by Normal- and Fighting-type attacks. This also enables an evasive target to be hit.", -1, 0, 2),
     new SelfStatusMove(Moves.DESTINY_BOND, "Destiny Bond (N)", Type.GHOST, -1, 5, -1, "After using this move, if the user faints, the Pokémon that landed the knockout hit also faints. Its chance of failing rises if it is used in succession.", -1, 0, 2)
       .ignoresProtect(),
-    new StatusMove(Moves.PERISH_SONG, "Perish Song (N)", Type.NORMAL, -1, 5, -1, "Any Pokémon that hears this song faints in three turns, unless it switches out of battle.", -1, 0, 2)
+    new StatusMove(Moves.PERISH_SONG, "Perish Song", Type.NORMAL, -1, 5, -1, "Any Pokémon that hears this song faints in three turns, unless it switches out of battle.", -1, 0, 2)
+      .attr(FaintCountdownAttr)
       .ignoresProtect()
       .soundBased()
       .target(MoveTarget.ALL),

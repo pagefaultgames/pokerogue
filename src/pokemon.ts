@@ -1035,6 +1035,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.hp = Math.min(this.hp + amount, this.getMaxHp());
   }
 
+  isBossImmune(): boolean {
+    return this.species.speciesId === Species.ETERNATUS && this.formIndex === 1;
+  }
+
   addTag(tagType: BattlerTagType, turnCount?: integer, sourceMove?: Moves, sourceId?: integer): boolean {
     const existingTag = this.getTag(tagType);
     if (existingTag) {

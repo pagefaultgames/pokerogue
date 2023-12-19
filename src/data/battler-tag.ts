@@ -1,7 +1,7 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import { CommonAnimPhase, DamagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase, ShowAbilityPhase } from "../battle-phases";
 import { getPokemonMessage } from "../messages";
-import Pokemon, { MoveResult } from "../pokemon";
+import Pokemon, { MoveResult, HitResult } from "../pokemon";
 import { Stat } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
@@ -31,6 +31,7 @@ export enum BattlerTagType {
   SAND_TOMB,
   MAGMA_STORM,
   PROTECTED,
+  PERISH_SONG,
   TRUANT,
   FLYING,
   UNDERGROUND,
@@ -596,6 +597,25 @@ export class ProtectedTag extends BattlerTag {
   }
 }
 
+export class PerishSongTag extends BattlerTag {
+  constructor(turnCount: integer) {
+    super(BattlerTagType.PERISH_SONG, BattlerTagLapseType.TURN_END, turnCount, Moves.PERISH_SONG);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = super.lapse(pokemon, lapseType);
+
+    if (ret)
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, `\'s perish count fell to ${this.turnCount}.`));
+    else {
+      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), HitResult.ONE_HIT_KO));
+      pokemon.damage(pokemon.hp);
+    }
+
+    return ret;
+  }
+}
+
 export class TruantTag extends BattlerTag {
   constructor() {
     super(BattlerTagType.TRUANT, BattlerTagLapseType.MOVE, 1, undefined);
@@ -721,6 +741,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new MagmaStormTag(turnCount, sourceId);
     case BattlerTagType.PROTECTED:
       return new ProtectedTag(sourceMove);
+    case BattlerTagType.PERISH_SONG:
+      return new PerishSongTag(turnCount);
     case BattlerTagType.TRUANT:
       return new TruantTag();
     case BattlerTagType.FLYING:
