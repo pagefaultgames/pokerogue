@@ -227,7 +227,7 @@ export const biomePokemonPools: BiomePokemonPools = {
     [BiomePoolTier.SUPER_RARE]: [ Species.FARFETCHD, Species.LICKITUNG, Species.CHANSEY, Species.EEVEE, Species.SNORLAX, Species.DUNSPARCE ],
     [BiomePoolTier.ULTRA_RARE]: [ Species.DITTO, Species.LATIAS, Species.LATIOS ],
     [BiomePoolTier.BOSS]: [ Species.PERSIAN, Species.DODRIO, Species.FURRET, Species.MIGHTYENA, Species.LINOONE, Species.BIBAREL, Species.LOPUNNY, Species.GUMSHOOS, Species.GREEDENT ],
-    [BiomePoolTier.BOSS_RARE]: [ Species.FARFETCHD, Species.SNORLAX, Species.LICKILICKY, Species.LYCANROC ],
+    [BiomePoolTier.BOSS_RARE]: [ Species.FARFETCHD, Species.SNORLAX, Species.LICKILICKY, Species.LYCANROC, Species.DUDUNSPARCE ],
     [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.LATIAS, Species.LATIOS ],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
@@ -263,7 +263,7 @@ export const biomePokemonPools: BiomePokemonPools = {
     [BiomePoolTier.SUPER_RARE]: [ Species.SCYTHER, Species.SHEDINJA ],
     [BiomePoolTier.ULTRA_RARE]: [],
     [BiomePoolTier.BOSS]: [ Species.NIDOQUEEN, Species.NIDOKING, Species.VILEPLUME, Species.NINJASK, Species.ZANGOOSE, Species.KECLEON, Species.KRICKETUNE, Species.LURANTIS, Species.TSAREENA ],
-    [BiomePoolTier.BOSS_RARE]: [ Species.PINSIR, Species.MEGANIUM, Species.BELLOSSOM, Species.GIRAFARIG ],
+    [BiomePoolTier.BOSS_RARE]: [ Species.PINSIR, Species.MEGANIUM, Species.BELLOSSOM, Species.FARIGIRAF ],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
@@ -635,11 +635,11 @@ export const biomePokemonPools: BiomePokemonPools = {
       { 1: [ Species.GLAMEOW ], 38: [ Species.PURUGLY ] },
       Species.BOUFFALANT
     ],
-    [BiomePoolTier.RARE]: [ Species.TAUROS, Species.EEVEE, Species.MILTANK, Species.VOLBEAT, Species.ILLUMISE, Species.SPINDA, Species.APPLIN ],
+    [BiomePoolTier.RARE]: [ Species.TAUROS, Species.EEVEE, Species.MILTANK, Species.VOLBEAT, Species.ILLUMISE, Species.SPINDA, Species.APPLIN, Species.DIPPLIN ],
     [BiomePoolTier.SUPER_RARE]: [ Species.CHANSEY, Species.SYLVEON ],
     [BiomePoolTier.ULTRA_RARE]: [ Species.MELOETTA ],
     [BiomePoolTier.BOSS]: [ Species.TAUROS, Species.LEDIAN, Species.GRANBULL, Species.MILTANK, Species.GARDEVOIR, Species.DELCATTY, Species.ROSERADE, Species.PURUGLY, Species.ZEBSTRIKA, Species.CINCCINO, Species.BOUFFALANT, Species.FLORGES, Species.DUBWOOL ],
-    [BiomePoolTier.BOSS_RARE]: [ Species.BLISSEY, Species.SYLVEON, Species.FLAPPLE, Species.APPLETUN ],
+    [BiomePoolTier.BOSS_RARE]: [ Species.BLISSEY, Species.SYLVEON, Species.FLAPPLE, Species.APPLETUN, Species.HYDRAPPLE ],
     [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.MELOETTA, Species.HISUI_LILLIGANT ],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
@@ -725,7 +725,7 @@ export const biomePokemonPools: BiomePokemonPools = {
     [BiomePoolTier.RARE]: [ Species.HITMONLEE, Species.HITMONCHAN, Species.LUCARIO, Species.THROH, Species.SAWK ],
     [BiomePoolTier.SUPER_RARE]: [ Species.HITMONTOP, Species.GALLADE, Species.GALAR_FARFETCHD ],
     [BiomePoolTier.ULTRA_RARE]: [ Species.TERRAKION, Species.KUBFU, Species.GALAR_ZAPDOS ],
-    [BiomePoolTier.BOSS]: [ Species.PRIMEAPE, Species.HITMONLEE, Species.HITMONCHAN, Species.HARIYAMA, Species.MEDICHAM, Species.LUCARIO, Species.TOXICROAK, Species.THROH, Species.SAWK, Species.SCRAFTY, Species.MIENSHAO, Species.BEWEAR, Species.GRAPPLOCT ],
+    [BiomePoolTier.BOSS]: [ Species.HITMONLEE, Species.HITMONCHAN, Species.HARIYAMA, Species.MEDICHAM, Species.LUCARIO, Species.TOXICROAK, Species.THROH, Species.SAWK, Species.SCRAFTY, Species.MIENSHAO, Species.BEWEAR, Species.GRAPPLOCT, Species.ANNIHILAPE ],
     [BiomePoolTier.BOSS_RARE]: [ Species.HITMONTOP, Species.GALLADE ],
     [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.TERRAKION, Species.SIRFETCHD, Species.URSHIFU, Species.HISUI_DECIDUEYE ],
     [BiomePoolTier.BOSS_ULTRA_RARE]: [ Species.ZAMAZENTA, Species.GALAR_ZAPDOS ]
@@ -798,7 +798,7 @@ export const biomePokemonPools: BiomePokemonPools = {
     [BiomePoolTier.RARE]: [ Species.ABSOL, Species.SPIRITOMB, { 1: [ Species.ZORUA ], 30: [ Species.ZOROARK ] }, { 1: [ Species.DEINO ], 50: [ Species.ZWEILOUS ], 64: [ Species.HYDREIGON ] } ],
     [BiomePoolTier.SUPER_RARE]: [ Species.UMBREON ],
     [BiomePoolTier.ULTRA_RARE]: [ Species.DARKRAI, Species.GUZZLORD, Species.GALAR_MOLTRES ],
-    [BiomePoolTier.BOSS]: [ Species.HOUNDOOM, Species.SABLEYE, Species.ABSOL, Species.HONCHKROW, Species.SPIRITOMB, Species.LIEPARD, Species.ZOROARK, Species.BISHARP, Species.HYDREIGON, Species.THIEVUL, Species.GRIMMSNARL ],
+    [BiomePoolTier.BOSS]: [ Species.HOUNDOOM, Species.SABLEYE, Species.ABSOL, Species.HONCHKROW, Species.SPIRITOMB, Species.LIEPARD, Species.ZOROARK, Species.HYDREIGON, Species.THIEVUL, Species.GRIMMSNARL, Species.KINGAMBIT ],
     [BiomePoolTier.BOSS_RARE]: [ Species.UMBREON ],
     [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.DARKRAI, Species.GUZZLORD ],
     [BiomePoolTier.BOSS_ULTRA_RARE]: [ Species.PALKIA, Species.YVELTAL, Species.GALAR_MOLTRES ]
@@ -831,7 +831,7 @@ export const biomePokemonPools: BiomePokemonPools = {
     [BiomePoolTier.SUPER_RARE]: [ Species.DITTO, Species.HITMONTOP, { 1: [ Species.GALAR_MEOWTH ], 28: [ Species.PERRSERKER ] } ],
     [BiomePoolTier.ULTRA_RARE]: [ Species.COBALION ],
     [BiomePoolTier.BOSS]: [ Species.MACHAMP, Species.CONKELDURR ],
-    [BiomePoolTier.BOSS_RARE]: [],
+    [BiomePoolTier.BOSS_RARE]: [ Species.ARCHALUDON ],
     [BiomePoolTier.BOSS_SUPER_RARE]: [ Species.COBALION, Species.PERRSERKER ],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
@@ -1716,8 +1716,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ],
     [ Species.PRIMEAPE, Type.FIGHTING, -1, [
         [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
-        [ Biome.DOJO, BiomePoolTier.COMMON ],
-        [ Biome.DOJO, BiomePoolTier.BOSS ]
+        [ Biome.DOJO, BiomePoolTier.COMMON ]
       ]
     ],
     [ Species.GROWLITHE, Type.FIRE, -1, [
@@ -2439,8 +2438,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.GIRAFARIG, Type.NORMAL, Type.PSYCHIC, [
-        [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
-        [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE ]
+        [ Biome.TALL_GRASS, BiomePoolTier.RARE ]
       ]
     ],
     [ Species.PINECO, Type.BUG, -1, [
@@ -4445,8 +4443,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.BISHARP, Type.DARK, Type.STEEL, [
-        [ Biome.ABYSS, BiomePoolTier.COMMON ],
-        [ Biome.ABYSS, BiomePoolTier.BOSS ]
+        [ Biome.ABYSS, BiomePoolTier.COMMON ]
       ]
     ],
     [ Species.BOUFFALANT, Type.NORMAL, -1, [
@@ -5946,18 +5943,27 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.ANNIHILAPE, Type.FIGHTING, Type.GHOST, [
+        [ Biome.PLAINS, BiomePoolTier.UNCOMMON ],
+        [ Biome.DOJO, BiomePoolTier.COMMON ],
+        [ Biome.DOJO, BiomePoolTier.BOSS ]
       ]
     ],
     [ Species.CLODSIRE, Type.POISON, Type.GROUND, [
       ]
     ],
     [ Species.FARIGIRAF, Type.NORMAL, Type.PSYCHIC, [
+        [ Biome.TALL_GRASS, BiomePoolTier.RARE ],
+        [ Biome.TALL_GRASS, BiomePoolTier.BOSS_RARE ]
       ]
     ],
     [ Species.DUDUNSPARCE, Type.NORMAL, -1, [
+        [ Biome.PLAINS, BiomePoolTier.SUPER_RARE ],
+        [ Biome.PLAINS, BiomePoolTier.BOSS_RARE ]
       ]
     ],
     [ Species.KINGAMBIT, Type.DARK, Type.STEEL, [
+        [ Biome.ABYSS, BiomePoolTier.COMMON ],
+        [ Biome.ABYSS, BiomePoolTier.BOSS ]
       ]
     ],
     [ Species.GREAT_TUSK, Type.GROUND, Type.FIGHTING, [
@@ -6042,6 +6048,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.DIPPLIN, Type.GRASS, Type.DRAGON, [
+        [ Biome.MEADOW, BiomePoolTier.RARE ]
       ]
     ],
     [ Species.POLTCHAGEIST, Type.GRASS, Type.GHOST, [
@@ -6060,6 +6067,32 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.OGERPON, Type.GRASS, -1, [
+      ]
+    ],
+    [ Species.ARCHALUDON, Type.STEEL, Type.DRAGON, [
+        [ Biome.CONSTRUCTION_SITE, BiomePoolTier.BOSS_RARE ]
+      ]
+    ],
+    [ Species.HYDRAPPLE, Type.GRASS, Type.DRAGON, [
+        [ Biome.MEADOW, BiomePoolTier.BOSS_RARE ]
+      ]
+    ],
+    [ Species.GOUGING_FIRE, Type.FIRE, Type.DRAGON, [
+      ]
+    ],
+    [ Species.RAGING_BOLT, Type.ELECTRIC, Type.DRAGON, [
+      ]
+    ],
+    [ Species.IRON_BOULDER, Type.ROCK, Type.PSYCHIC, [
+      ]
+    ],
+    [ Species.IRON_CROWN, Type.STEEL, Type.PSYCHIC, [
+      ]
+    ],
+    [ Species.TERAPAGOS, Type.NORMAL, -1, [
+      ]
+    ],
+    [ Species.PECHARUNT, Type.POISON, Type.GHOST, [
       ]
     ],
     [ Species.ALOLA_RATTATA, Type.DARK, -1, [
