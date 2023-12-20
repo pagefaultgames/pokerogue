@@ -6,7 +6,8 @@ import { Achv, achvs } from "./achv";
 export enum VoucherType {
   REGULAR,
   PLUS,
-  PREMIUM
+  PREMIUM,
+  GOLDEN
 }
 
 export class Voucher {
@@ -37,10 +38,12 @@ export class Voucher {
   getTier(): ModifierTier {
     switch (this.voucherType) {
       case VoucherType.REGULAR:
-        return ModifierTier.GREAT;
+        return ModifierTier.COMMON;
       case VoucherType.PLUS:
-        return ModifierTier.ULTRA;
+        return ModifierTier.GREAT;
       case VoucherType.PREMIUM:
+        return ModifierTier.ULTRA;
+      case VoucherType.GOLDEN:
         return ModifierTier.MASTER;
     }
   }
@@ -54,6 +57,8 @@ export function getVoucherTypeName(voucherType: VoucherType): string {
       return 'Egg Voucher Plus';
     case VoucherType.PREMIUM:
       return 'Egg Voucher Premium';
+    case VoucherType.GOLDEN:
+      return 'Egg Voucher Gold';
   }
 }
 
@@ -65,6 +70,8 @@ export function getVoucherTypeIcon(voucherType: VoucherType): string {
       return 'pair_of_tickets';
     case VoucherType.PREMIUM:
       return 'mystic_ticket';
+    case VoucherType.GOLDEN:
+      return 'golden_mystic_ticket';
   }
 }
 
@@ -81,10 +88,12 @@ const voucherAchvs: Achv[] = [ achvs.CLASSIC_VICTORY ];
   (function() {
     for (let achv of voucherAchvs) {
       const voucherType = achv.score >= 150
-        ? VoucherType.PREMIUM
-        : achv.score >= 75
-          ? VoucherType.PLUS
-          : VoucherType.REGULAR;
+        ? VoucherType.GOLDEN
+        : achv.score >= 100
+          ? VoucherType.PREMIUM
+          : achv.score >= 75
+            ? VoucherType.PLUS
+            : VoucherType.REGULAR;
       vouchers[achv.id] = new Voucher(voucherType, achv.description);
     }
 
@@ -93,8 +102,8 @@ const voucherAchvs: Achv[] = [ achvs.CLASSIC_VICTORY ];
 
     for (let trainerType of bossTrainerTypes) {
       const voucherType = trainerConfigs[trainerType].moneyMultiplier < 10
-        ? VoucherType.REGULAR
-        : VoucherType.PLUS;
+        ? VoucherType.PLUS
+        : VoucherType.PREMIUM;
       const key = TrainerType[trainerType];
       vouchers[key] = new Voucher(voucherType, `Defeat ${trainerConfigs[trainerType].name}`);
     }

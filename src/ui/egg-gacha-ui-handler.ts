@@ -5,7 +5,7 @@ import MessageUiHandler from "./message-ui-handler";
 import * as Utils from "../utils";
 import { ModifierTier } from "../modifier/modifier-type";
 import { EGG_SEED, Egg, GachaType, getEggTierDefaultHatchWaves, getEggDescriptor, getLegendaryGachaSpeciesForTimestamp, getTypeGachaTypeForTimestamp } from "../data/egg";
-import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
+import { Voucher, VoucherType, getVoucherTypeIcon } from "../system/voucher";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { Type } from "../data/type";
 
@@ -144,18 +144,18 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaOptionsContainer = this.scene.add.container((this.scene.game.canvas.width / 6), 148);
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
-    this.eggGachaOptionSelectBg = this.scene.add.nineslice(0, 0, 'window', null, 96, 96, 6, 6, 6, 6);
+    this.eggGachaOptionSelectBg = this.scene.add.nineslice(0, 0, 'window', null, 96, 112, 6, 6, 6, 6);
     this.eggGachaOptionSelectBg.setOrigin(1, 1);
     this.eggGachaOptionsContainer.add(this.eggGachaOptionSelectBg);
 
-    const optionText = addTextObject(this.scene, 0, 0, '    x1    1 Pull\n    x10  10 Pulls\n    x1     5 Pulls\n    x1    10 Pulls\nCancel', TextStyle.WINDOW, { maxLines: 5 });
+    const optionText = addTextObject(this.scene, 0, 0, '    x1    1 Pull\n    x10  10 Pulls\n    x1     5 Pulls\n    x1    10 Pulls\n    x1    25 Pulls\nCancel', TextStyle.WINDOW);
     optionText.setLineSpacing(12);
     this.eggGachaOptionsContainer.add(optionText);
 
     optionText.setPositionRelative(this.eggGachaOptionSelectBg, 16, 9);
 
-    new Array(4).fill(null).map((_, i) => {
-      const voucherType = i < 2 ? VoucherType.REGULAR : i === 2 ? VoucherType.PLUS : VoucherType.PREMIUM;
+    new Array(5).fill(null).map((_, i) => {
+      const voucherType = i < 2 ? VoucherType.REGULAR : i === 2 ? VoucherType.PLUS : i === 3 ? VoucherType.PREMIUM : VoucherType.GOLDEN;
       const icon = this.scene.add.sprite(0, 0, 'items', getVoucherTypeIcon(voucherType));
       icon.setScale(0.5);
       icon.setPositionRelative(this.eggGachaOptionSelectBg, 20, 17 + i * 16);
@@ -253,9 +253,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         const tierValue = Utils.randInt(256);
         return tierValue >= 52 ? ModifierTier.COMMON : tierValue >= 8 ? ModifierTier.GREAT : tierValue >= 1 ? ModifierTier.ULTRA : ModifierTier.MASTER;
       });
-      /*if (pullCount >= 100 && !tiers.filter(t => t >= ModifierTier.ULTRA).length)
-        tiers[Utils.randInt(tiers.length)] = ModifierTier.ULTRA;*/
-      if (pullCount >= 10 && !tiers.filter(t => t >= ModifierTier.GREAT).length)
+      if (pullCount >= 25 && !tiers.filter(t => t >= ModifierTier.ULTRA).length)
+        tiers[Utils.randInt(tiers.length)] = ModifierTier.ULTRA;
+      else if (pullCount >= 10 && !tiers.filter(t => t >= ModifierTier.GREAT).length)
         tiers[Utils.randInt(tiers.length)] = ModifierTier.GREAT;
 
       const timestamp = new Date().getTime();
@@ -355,18 +355,21 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.transitioning = false;
     this.eggGachaSummaryContainer.setVisible(true);
 
+    const eggScale = eggs.length < 20 ? 1 : 0.5;
+
     this.scene.tweens.add({
       targets: this.eggGachaOverlay,
       alpha: 0.5,
       ease: 'Sine.easeOut',
       duration: 750,
       onComplete: () => {
-        const rows = Math.ceil(eggs.length / 5);
-        const cols = Math.min(eggs.length, 5);
+        const rowItems = 5;
+        const rows = Math.ceil(eggs.length / rowItems);
+        const cols = Math.min(eggs.length, rowItems);
         const height = this.eggGachaOverlay.displayHeight - this.eggGachaMessageBox.displayHeight;
         const eggContainers = eggs.map((egg, t) => {
-          const col = t % 5;
-          const row = Math.floor(t / 5);
+          const col = t % rowItems;
+          const row = Math.floor(t / rowItems);
           const sliceWidth = this.eggGachaOverlay.displayWidth / (cols + 2);
           const sliceHeight = height / (rows + 2);
           const yOffset = (sliceHeight / 2 * (row / Math.max(rows - 1, 1))) + sliceHeight / 4;
@@ -381,7 +384,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
           eggText.setTint(getModifierTierTextTint(!egg.isManaphyEgg() ? egg.tier : ModifierTier.ULTRA));
           ret.add(eggText);
 
-          this.eggGachaSummaryContainer.add(ret);
+          this.eggGachaSummaryContainer.addAt(ret, 0);
           return ret;
         });
 
@@ -390,7 +393,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
             targets: eggContainer,
             delay: this.getDelayValue(e * 100),
             duration: this.getDelayValue(350),
-            scale: 1,
+            scale: eggScale,
             ease: 'Sine.easeOut'
           });
         });
@@ -520,6 +523,19 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                 }
                 break;
               case 4:
+                if (!this.scene.gameData.voucherCounts[VoucherType.GOLDEN]) {
+                  error = true;
+                  this.showError('You don\'t have enough vouchers!');
+                } else if (this.scene.gameData.eggs.length < 75) {
+                  this.consumeVouchers(VoucherType.GOLDEN, 1);
+                  this.pull(25);
+                  success = true;
+                } else {
+                  error = true;
+                  this.showError('You have too many eggs!');
+                }
+                break;
+              case 5:
                 ui.revertMode();
                 success = true;
                 break;
