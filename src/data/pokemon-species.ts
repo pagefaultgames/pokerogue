@@ -2276,7 +2276,7 @@ export const speciesStarters = {
   [Species.SHROOMISH]: 3,
   [Species.SLAKOTH]: 4,
   [Species.NINCADA]: 4,
-  [Species.WHISMUR]: 2,
+  [Species.WHISMUR]: 3,
   [Species.MAKUHITA]: 3,
   [Species.AZURILL]: 3,
   [Species.NOSEPASS]: 3,
