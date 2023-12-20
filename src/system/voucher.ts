@@ -79,6 +79,15 @@ const voucherAchvs: Achv[] = [ achvs.CLASSIC_VICTORY ];
 
 {
   (function() {
+    for (let achv of voucherAchvs) {
+      const voucherType = achv.score >= 150
+        ? VoucherType.PREMIUM
+        : achv.score >= 75
+          ? VoucherType.PLUS
+          : VoucherType.REGULAR;
+      vouchers[achv.id] = new Voucher(voucherType, achv.description);
+    }
+
     const bossTrainerTypes = Object.keys(trainerConfigs)
       .filter(tt => trainerConfigs[tt].isBoss && trainerConfigs[tt].getDerivedType() !== TrainerType.RIVAL);
 
@@ -88,15 +97,6 @@ const voucherAchvs: Achv[] = [ achvs.CLASSIC_VICTORY ];
         : VoucherType.PLUS;
       const key = TrainerType[trainerType];
       vouchers[key] = new Voucher(voucherType, `Defeat ${trainerConfigs[trainerType].name}`);
-    }
-
-    for (let achv of voucherAchvs) {
-      const voucherType = achv.score >= 150
-        ? VoucherType.PREMIUM
-        : achv.score >= 100
-          ? VoucherType.PLUS
-          : VoucherType.REGULAR;
-      vouchers[achv.id] = new Voucher(voucherType, achv.description);
     }
 
     const voucherKeys = Object.keys(vouchers);
