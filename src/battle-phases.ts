@@ -2378,15 +2378,17 @@ export class TrainerVictoryPhase extends BattlePhase {
   start() {
     this.scene.playBgm(this.scene.currentBattle.trainer.config.victoryBgm);
 
-    const trainerType = this.scene.currentBattle.trainer.config.trainerType;
-    if (vouchers.hasOwnProperty(TrainerType[trainerType]))
-      this.scene.validateVoucher(vouchers[TrainerType[trainerType]]);
-
     this.scene.unshiftPhase(new MoneyRewardPhase(this.scene, this.scene.currentBattle.trainer.config.moneyMultiplier));
 
     const modifierRewardFuncs = this.scene.currentBattle.trainer.config.modifierRewardFuncs;
     for (let modifierRewardFunc of modifierRewardFuncs)
       this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, modifierRewardFunc));
+
+    const trainerType = this.scene.currentBattle.trainer.config.trainerType;
+    if (vouchers.hasOwnProperty(TrainerType[trainerType])) {
+      if (!this.scene.validateVoucher(vouchers[TrainerType[trainerType]]) && this.scene.currentBattle.trainer.config.isBoss)
+        this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.VOUCHER));
+    }
 
     this.scene.ui.showText(`You defeated\n${this.scene.currentBattle.trainer.getName()}!`, null, () => {
       const defeatMessages = this.scene.currentBattle.trainer.config.victoryMessages;
