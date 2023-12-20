@@ -730,7 +730,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.currentBattle.incrementTurn(this);
 
 		//this.pushPhase(new TrainerMessageTestPhase(this));
-		
+
 		if (!waveIndex) {
 			const isNewBiome = !lastBattle || !(lastBattle.waveIndex % 10);
 			const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER;
@@ -782,7 +782,7 @@ export default class BattleScene extends Phaser.Scene {
 		return this.arena;
 	}
 
-	getSpeciesFormIndex(species: PokemonSpecies): integer {
+	getSpeciesFormIndex(species: PokemonSpecies, ignoreArena?: boolean): integer {
 		if (!species.forms?.length)
 			return 0;
 
@@ -794,7 +794,9 @@ export default class BattleScene extends Phaser.Scene {
 				return Utils.randSeedInt(species.forms.length);
 		}
 
-		return this.arena.getSpeciesFormIndex(species);
+		return !ignoreArena
+			? this.arena.getSpeciesFormIndex(species)
+			: 0;
 	}
 
 	trySpreadPokerus(): void {

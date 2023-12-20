@@ -659,8 +659,8 @@ export default class PartyUiHandler extends MessageUiHandler {
         const selectCallback = this.selectCallback;
         this.selectCallback = null;
         selectCallback(this.cursor, PartyOption.RELEASE);
-      } else
-        this.showText(null, 0);
+      }
+      this.showText(null, 0);
     }, null, true);
   }
 
