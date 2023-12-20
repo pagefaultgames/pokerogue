@@ -16,6 +16,7 @@ import { Setting, setSetting, settingDefaults } from "./settings";
 import { achvs } from "./achv";
 import EggData from "./egg-data";
 import { Egg } from "../data/egg";
+import { VoucherType, vouchers } from "./voucher";
 
 interface SystemSaveData {
   trainerId: integer;
@@ -23,6 +24,8 @@ interface SystemSaveData {
   dexData: DexData;
   unlocks: Unlocks;
   achvUnlocks: AchvUnlocks;
+  voucherUnlocks: VoucherUnlocks;
+  voucherCounts: VoucherCounts;
   eggs: EggData[];
   gameVersion: string;
   timestamp: integer;
@@ -52,6 +55,14 @@ interface Unlocks {
 
 interface AchvUnlocks {
   [key: string]: integer
+}
+
+interface VoucherUnlocks {
+  [key: string]: integer
+}
+
+export interface VoucherCounts {
+	[type: string]: integer;
 }
 
 export interface DexData {
@@ -96,6 +107,8 @@ export class GameData {
 
   public achvUnlocks: AchvUnlocks;
 
+  public voucherUnlocks: VoucherUnlocks;
+  public voucherCounts: VoucherCounts;
   public eggs: Egg[];
 
   constructor(scene: BattleScene) {
@@ -109,6 +122,12 @@ export class GameData {
       [Unlockables.SPLICED_ENDLESS_MODE]: false
     };
     this.achvUnlocks = {};
+    this.voucherUnlocks = {};
+    this.voucherCounts = {
+      [VoucherType.REGULAR]: 0,
+      [VoucherType.PLUS]: 0,
+      [VoucherType.PREMIUM]: 0
+    };
     this.eggs = [];
     this.initDexData();
     this.loadSystem();
@@ -124,6 +143,8 @@ export class GameData {
       dexData: this.dexData,
       unlocks: this.unlocks,
       achvUnlocks: this.achvUnlocks,
+      voucherUnlocks: this.voucherUnlocks,
+      voucherCounts: this.voucherCounts,
       eggs: this.eggs.map(e => new EggData(e)),
       gameVersion: this.scene.game.config.gameVersion,
       timestamp: new Date().getTime()
@@ -141,7 +162,16 @@ export class GameData {
     if (!localStorage.hasOwnProperty('data'))
       return false;
 
-    const data = JSON.parse(atob(localStorage.getItem('data')), (k: string, v: any) => k.endsWith('Attr') ? BigInt(v) : v) as SystemSaveData;
+    const data = JSON.parse(atob(localStorage.getItem('data')), (k: string, v: any) => {
+      if (k === 'eggs') {
+        const ret: EggData[] = [];
+        for (let e of v)
+          ret.push(new EggData(e));
+        return ret;
+      }
+
+      return k.endsWith('Attr') ? BigInt(v) : v;
+    }) as SystemSaveData;
 
     console.debug(data);
 
@@ -166,6 +196,20 @@ export class GameData {
         if (achvs.hasOwnProperty(a))
           this.achvUnlocks[a] = data.achvUnlocks[a];
       } 
+    }
+
+    if (data.voucherUnlocks) {
+      for (let v of Object.keys(data.voucherUnlocks)) {
+        if (vouchers.hasOwnProperty(v))
+          this.voucherUnlocks[v] = data.voucherUnlocks[v];
+      }
+    }
+
+    if (data.voucherCounts) {
+      Utils.getEnumKeys(VoucherType).forEach(key => {
+        const index = VoucherType[key];
+        this.voucherCounts[index] = data.voucherCounts[index] || 0;
+      });
     }
 
     this.eggs = data.eggs
@@ -421,6 +465,20 @@ export class GameData {
       } else
         checkPrevolution();
     });
+  }
+
+  updateSpeciesDexIvs(speciesId: Species, ivs: integer[]): void {
+    let dexEntry: DexEntry;
+    do {
+      dexEntry = this.scene.gameData.dexData[speciesId];
+      const dexIvs = dexEntry.ivs;
+      for (let i = 0; i < dexIvs.length; i++) {
+        if (dexIvs[i] < ivs[i])
+          dexIvs[i] = ivs[i];
+      }
+      if (dexIvs.filter(iv => iv === 31).length === 6)
+        this.scene.validateAchv(achvs.PERFECT_IVS);
+    } while (pokemonPrevolutions.hasOwnProperty(speciesId) && (speciesId = pokemonPrevolutions[speciesId]));
   }
 
   getSpeciesDefaultDexAttr(species: PokemonSpecies): bigint {

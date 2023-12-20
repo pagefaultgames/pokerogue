@@ -271,7 +271,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               const originalWarn = console.warn;
               // Ignore warnings for missing frames, because there will be a lot
               console.warn = () => {};
-              const battleFrameNames = this.scene.anims.generateFrameNames(this.getBattleSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 256 });
+              const battleFrameNames = this.scene.anims.generateFrameNames(this.getBattleSpriteKey(), { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
               console.warn = originalWarn;
               this.scene.anims.create({
                 key: this.getBattleSpriteKey(),
@@ -686,7 +686,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.summonData.moveset[moveIndex] = move;
   }
 
-  trySetShiny(): boolean {
+  trySetShiny(thresholdOverride?: integer): boolean {
     const rand1 = Utils.binToDec(Utils.decToBin(this.id).substring(0, 16));
     const rand2 = Utils.binToDec(Utils.decToBin(this.id).substring(16, 32));
 
@@ -694,10 +694,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const F = rand1 ^ rand2;
 
     let shinyThreshold = new Utils.IntegerHolder(32);
-    if (!this.hasTrainer()) {
-      this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
-      console.log(shinyThreshold.value);
-    }
+    if (thresholdOverride === undefined) {
+      if (!this.hasTrainer()) {
+        this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+        console.log(shinyThreshold.value, 'SHINY THRESHOLD');
+      }
+    } else
+      shinyThreshold.value = thresholdOverride;
 
     this.shiny = (E ^ F) < shinyThreshold.value;
     if ((E ^ F) < 32)
@@ -1836,11 +1839,13 @@ export class EnemyPokemon extends Pokemon {
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainer: boolean, dataSource?: PokemonData) {
     super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource ? dataSource.formIndex : scene.getSpeciesFormIndex(species),
-      dataSource?.gender, dataSource?.shiny, null, dataSource);
+      dataSource?.gender, dataSource ? dataSource.shiny : false, null, dataSource);
 
     this.trainer = trainer;
 
     if (!dataSource) {
+      this.trySetShiny();
+
       let prevolution: Species;
       let speciesId = species.speciesId;
       while ((prevolution = pokemonPrevolutions[speciesId])) {

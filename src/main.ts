@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import BattleScene from './battle-scene';
 import InvertPostFX from './pipelines/invert';
 import { version } from '../package.json';
+import BBCodeTextPlugin from 'phaser3-rex-plugins/plugins/bbcodetext-plugin';
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.WEBGL,
@@ -10,6 +11,13 @@ const config: Phaser.Types.Core.GameConfig = {
 		width: 1920,
 		height: 1080,
 		mode: Phaser.Scale.FIT
+	},
+	plugins: {
+		global: [{
+			key: 'rexBBCodeTextPlugin',
+			plugin: BBCodeTextPlugin,
+			start: true
+		}]
 	},
 	pixelArt: true,
 	pipeline: [ InvertPostFX ] as unknown as Phaser.Types.Core.PipelineConfig,

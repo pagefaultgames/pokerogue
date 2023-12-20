@@ -76,6 +76,13 @@ export function randIntRange(min: integer, max: integer): integer {
   return randInt(max - min, min);
 }
 
+export function getSunday(date: Date): Date {
+  const day = date.getDay(),
+  diff = date.getDate() - day;
+  const newDate = new Date(date.setDate(diff));
+  return new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+}
+
 export function getFrameMs(frameCount: integer): integer {
   return Math.floor((1 / 60) * 1000 * frameCount);
 }

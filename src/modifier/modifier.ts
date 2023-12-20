@@ -15,6 +15,7 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
 import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
 import { MoneyAchv } from '../system/achv';
+import { VoucherType } from '../system/voucher';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -229,6 +230,25 @@ export class AddPokeballModifier extends ConsumableModifier {
   apply(args: any[]): boolean {
     const pokeballCounts = (args[0] as BattleScene).pokeballCounts;
     pokeballCounts[this.pokeballType] = Math.min(pokeballCounts[this.pokeballType] + this.count, 99);
+
+    return true;
+  }
+}
+
+export class AddVoucherModifier extends ConsumableModifier {
+  private voucherType: VoucherType;
+  private count: integer;
+
+  constructor(type: ModifierType, voucherType: VoucherType, count: integer) {
+    super(type);
+
+    this.voucherType = voucherType;
+    this.count = count;
+  }
+
+  apply(args: any[]): boolean {
+    const voucherCounts = (args[0] as BattleScene).gameData.voucherCounts;
+    voucherCounts[this.voucherType] += this.count;
 
     return true;
   }
@@ -1299,7 +1319,7 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value /= Math.pow(2, -3 - this.getStackCount());
+    (args[0] as Utils.IntegerHolder).value *= Math.pow(2, 2 + this.getStackCount());
 
     return true;
   }

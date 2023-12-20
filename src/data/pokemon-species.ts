@@ -230,7 +230,7 @@ export abstract class PokemonSpeciesForm {
         const originalWarn = console.warn;
         // Ignore warnings for missing frames, because there will be a lot
         console.warn = () => {};
-        const frameNames = scene.anims.generateFrameNames(this.getSpriteKey(female, formIndex, shiny), { zeroPad: 4, suffix: ".png", start: 1, end: 256 });
+        const frameNames = scene.anims.generateFrameNames(this.getSpriteKey(female, formIndex, shiny), { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
         console.warn = originalWarn;
         scene.anims.create({
           key: this.getSpriteKey(female, formIndex, shiny),

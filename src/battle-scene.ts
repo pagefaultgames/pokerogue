@@ -35,6 +35,8 @@ import MessageUiHandler from './ui/message-ui-handler';
 import { Species } from './data/species';
 import InvertPostFX from './pipelines/invert';
 import { Achv, ModifierAchv, achvs } from './system/achv';
+import { GachaType } from './data/egg';
+import { Voucher, vouchers } from './system/voucher';
 
 const enableAuto = true;
 const quickStart = false;
@@ -301,10 +303,22 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('types', '');
 		this.loadAtlas('statuses', '');
 		this.loadAtlas('categories', '');
-		this.loadAtlas('egg', '');
-		this.loadAtlas('egg_crack', '');
-		this.loadAtlas('egg_shard', '');
-		this.loadAtlas('egg_lightrays', '');
+		
+		this.loadAtlas('egg', 'egg');
+		this.loadAtlas('egg_crack', 'egg');
+		this.loadAtlas('egg_icons', 'egg');
+		this.loadAtlas('egg_shard', 'egg');
+		this.loadAtlas('egg_lightrays', 'egg');
+		Utils.getEnumKeys(GachaType).forEach(gt => {
+			const key = gt.toLowerCase();
+			this.loadImage(`gacha_${key}`, 'egg');
+			this.loadAtlas(`gacha_underlay_${key}`, 'egg');
+		});
+		this.loadImage('gacha_glass', 'egg');
+		this.loadAtlas('gacha_hatch', 'egg');
+		this.loadImage('gacha_knob', 'egg');
+
+		this.loadImage('egg_list_bg', 'ui');
 
 		for (let i = 0; i < 10; i++)
 			this.loadAtlas(`pokemon_icons_${i}`, 'ui');
@@ -345,6 +359,9 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.loadSe('egg_crack');
 		this.loadSe('egg_hatch');
+		this.loadSe('gacha_dial');
+		this.loadSe('gacha_running');
+		this.loadSe('gacha_dispense');
 
 		this.loadSe('PRSFX- Transform', 'battle_anims');
 
@@ -713,10 +730,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.currentBattle.incrementTurn(this);
 
 		//this.pushPhase(new TrainerMessageTestPhase(this));
-
-		//for (let t = 0; t < 4; t++)
-			//this.pushPhase(new EggHatchPhase(this, new Egg(2423432 + EGG_SEED * t, GachaType.LEGENDARY, new Date().getTime())));
-
+		
 		if (!waveIndex) {
 			const isNewBiome = !lastBattle || !(lastBattle.waveIndex % 10);
 			const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER;
@@ -1447,7 +1461,6 @@ export default class BattleScene extends Phaser.Scene {
 
 	validateAchvs(achvType: { new(...args: any[]): Achv }, ...args: any[]): void {
 		const filteredAchvs = Object.values(achvs).filter(a => a instanceof achvType);
-		let newAchv = false;
 		for (let achv of filteredAchvs)
 			this.validateAchv(achv, args);
 	}
@@ -1456,6 +1469,19 @@ export default class BattleScene extends Phaser.Scene {
 		if (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) && achv.validate(this, args)) {
 			this.gameData.achvUnlocks[achv.id] = new Date().getTime();
 			this.ui.achvBar.showAchv(achv);
+			if (vouchers.hasOwnProperty(achv.id))
+				this.validateVoucher(vouchers[achv.id]);
+			return true;
+		}
+
+		return false;
+	}
+
+	validateVoucher(voucher: Voucher, args?: any[]): boolean {
+		if (!this.gameData.voucherUnlocks.hasOwnProperty(voucher.id) && voucher.validate(this, args)) {
+			this.gameData.voucherUnlocks[voucher.id] = new Date().getTime();
+			this.ui.achvBar.showAchv(voucher);
+			this.gameData.voucherCounts[voucher.voucherType]++;
 			return true;
 		}
 

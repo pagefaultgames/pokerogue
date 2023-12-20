@@ -1,5 +1,6 @@
 import BattleScene from "../battle-scene";
 import { Achv } from "../system/achv";
+import { Voucher } from "../system/voucher";
 import { TextStyle, addTextObject } from "./text";
 
 export default class AchvBar extends Phaser.GameObjects.Container {
@@ -9,7 +10,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
   private scoreText: Phaser.GameObjects.Text;
   private descriptionText: Phaser.GameObjects.Text;
 
-  private queue: Achv[] = [];
+  private queue: (Achv | Voucher)[] = [];
 
   public shown: boolean;
 
@@ -47,7 +48,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.shown = false;
   }
 
-  showAchv(achv: Achv): void {
+  showAchv(achv: Achv | Voucher): void {
     if (this.shown) {
       this.queue.push(achv);
       return;
@@ -56,10 +57,12 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     const tier = achv.getTier();
 
     this.bg.setTexture(`achv_bar${tier ? `_${tier + 1}` : ''}`);
-    this.icon.setFrame(achv.iconImage);
-    this.titleText.setText(achv.name);
+    this.icon.setFrame(achv.getIconImage());
+    this.titleText.setText(achv.getName());
     this.descriptionText.setText(achv.description);
-    this.scoreText.setText(`+${achv.score}pt`);
+
+    if (achv instanceof Achv)
+      this.scoreText.setText(`+${(achv as Achv).score}pt`);
 
     (this.scene as BattleScene).playSound('achv');
 

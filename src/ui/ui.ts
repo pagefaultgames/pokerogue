@@ -21,6 +21,10 @@ import MenuUiHandler from './menu-ui-handler';
 import AchvsUiHandler from './achvs-ui-handler';
 import OptionSelectUiHandler from './option-select-ui-handler';
 import EggHatchSceneHandler from './egg-hatch-scene-handler';
+import EggListUiHandler from './egg-list-ui-handler';
+import EggGachaUiHandler from './egg-gacha-ui-handler';
+import VouchersUiHandler from './vouchers-ui-handler';
+import VoucherBar from './voucher-bar';
 
 export enum Mode {
   MESSAGE,
@@ -40,7 +44,10 @@ export enum Mode {
   GAME_MODE_SELECT,
   MENU,
   SETTINGS,
-  ACHIEVEMENTS
+  ACHIEVEMENTS,
+  VOUCHERS,
+  EGG_LIST,
+  EGG_GACHA
 };
 
 const transitionModes = [
@@ -48,7 +55,9 @@ const transitionModes = [
   Mode.SUMMARY,
   Mode.STARTER_SELECT,
   Mode.EVOLUTION_SCENE,
-  Mode.EGG_HATCH_SCENE
+  Mode.EGG_HATCH_SCENE,
+  Mode.EGG_LIST,
+  Mode.EGG_GACHA
 ];
 
 const noTransitionModes = [
@@ -56,7 +65,9 @@ const noTransitionModes = [
   Mode.OPTION_SELECT,
   Mode.GAME_MODE_SELECT,
   Mode.MENU,
-  Mode.SETTINGS
+  Mode.SETTINGS,
+  Mode.ACHIEVEMENTS,
+  Mode.VOUCHERS
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -65,6 +76,7 @@ export default class UI extends Phaser.GameObjects.Container {
   private handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
+  public voucherBar: VoucherBar;
 
   private tooltipContainer: Phaser.GameObjects.Container;
   private tooltipBg: Phaser.GameObjects.NineSlice;
@@ -96,7 +108,10 @@ export default class UI extends Phaser.GameObjects.Container {
       new GameModeSelectUiHandler(scene),
       new MenuUiHandler(scene),
       new SettingsUiHandler(scene),
-      new AchvsUiHandler(scene)
+      new AchvsUiHandler(scene),
+      new VouchersUiHandler(scene),
+      new EggListUiHandler(scene),
+      new EggGachaUiHandler(scene)
     ];
   }
 
@@ -110,7 +125,8 @@ export default class UI extends Phaser.GameObjects.Container {
     this.setupTooltip();
 
     this.achvBar = new AchvBar(this.scene as BattleScene);
-		this.achvBar.setup();
+    this.achvBar.setup();
+   
     (this.scene as BattleScene).uiContainer.add(this.achvBar);
   }
 
@@ -267,8 +283,9 @@ export default class UI extends Phaser.GameObjects.Container {
         }
         resolve();
       };
-      if ((transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1)
-        && (noTransitionModes.indexOf(this.mode) === -1 && noTransitionModes.indexOf(mode) === -1) && !(this.scene as BattleScene).auto) {
+      if (((!chainMode && ((transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1)
+        && (noTransitionModes.indexOf(this.mode) === -1 && noTransitionModes.indexOf(mode) === -1)))
+        || (chainMode && noTransitionModes.indexOf(mode) === -1)) && !(this.scene as BattleScene).auto) {
         this.fadeOut(250).then(() => {
           this.scene.time.delayedCall(100, () => {
             doSetMode();
@@ -300,12 +317,29 @@ export default class UI extends Phaser.GameObjects.Container {
     return this.setModeInternal(mode, false, false, true, args);
   }
 
-  revertMode(): boolean {
-    if (!this.modeChain.length)
-      return false;
-    
-    this.getHandler().clear();
-    this.mode = this.modeChain.pop();
-    return true;
+  revertMode(): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      if (!this.modeChain.length)
+        return resolve(false);
+
+      const lastMode = this.mode;
+
+      const doRevertMode = () => {
+        this.getHandler().clear();
+        this.mode = this.modeChain.pop();
+      };
+
+      if (noTransitionModes.indexOf(lastMode) === -1) {
+        this.fadeOut(250).then(() => {
+          this.scene.time.delayedCall(100, () => {
+            doRevertMode();
+            this.fadeIn(250);
+          });
+        });
+      } else
+        doRevertMode();
+
+      resolve(true);
+    });
   }
 }

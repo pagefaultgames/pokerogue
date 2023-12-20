@@ -34,7 +34,10 @@ import { Species } from "./data/species";
 import { HealAchv, LevelAchv, MoneyAchv, achvs } from "./system/achv";
 import { DexEntry } from "./system/game-data";
 import { pokemonPrevolutions } from "./data/pokemon-evolutions";
-import { trainerConfigs } from "./data/trainer-type";
+import { TrainerType, trainerConfigs } from "./data/trainer-type";
+import { EggHatchPhase } from "./egg-hatch-phase";
+import { Egg } from "./data/egg";
+import { vouchers } from "./system/voucher";
 
 export class CheckLoadPhase extends BattlePhase {
   private loaded: boolean;
@@ -90,6 +93,11 @@ export class CheckLoadPhase extends BattlePhase {
         if (this.scene.currentBattle.double && availablePartyMembers > 1)
           this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
       }
+    }
+
+    for (let achv of Object.keys(this.scene.gameData.achvUnlocks)) {
+      if (vouchers.hasOwnProperty(achv))
+        this.scene.validateVoucher(vouchers[achv]);
     }
 
     super.end();
@@ -2338,6 +2346,7 @@ export class VictoryPhase extends PokemonPhase {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       if (this.scene.currentBattle.battleType === BattleType.TRAINER)
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));
+      this.scene.pushPhase(new EggLapsePhase(this.scene));
       if (this.scene.gameMode !== GameMode.CLASSIC || this.scene.currentBattle.waveIndex < this.scene.finalWave) {
         if (this.scene.currentBattle.waveIndex % 10)
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
@@ -2347,8 +2356,10 @@ export class VictoryPhase extends PokemonPhase {
             if (this.scene.currentBattle.waveIndex <= 150 && !(this.scene.currentBattle.waveIndex % 50))
               this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_POKEBALL));
           }
-          if (this.scene.gameMode !== GameMode.CLASSIC  && !(this.scene.currentBattle.waveIndex % 50))
+          if (this.scene.gameMode !== GameMode.CLASSIC  && !(this.scene.currentBattle.waveIndex % 50)) {
+            this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.VOUCHER));
             this.scene.pushPhase(new AddEnemyBuffModifierPhase(this.scene));
+          }
         }
         this.scene.pushPhase(new NewBattlePhase(this.scene));
       } else
@@ -2366,6 +2377,10 @@ export class TrainerVictoryPhase extends BattlePhase {
 
   start() {
     this.scene.playBgm(this.scene.currentBattle.trainer.config.victoryBgm);
+
+    const trainerType = this.scene.currentBattle.trainer.config.trainerType;
+    if (vouchers.hasOwnProperty(TrainerType[trainerType]))
+      this.scene.validateVoucher(vouchers[TrainerType[trainerType]]);
 
     this.scene.unshiftPhase(new MoneyRewardPhase(this.scene, this.scene.currentBattle.trainer.config.moneyMultiplier));
 
@@ -2964,18 +2979,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     if (pokemon.species.mythical)
       this.scene.validateAchv(achvs.CATCH_MYTHICAL);
 
-    let dexEntry: DexEntry;
-    let speciesId = pokemon.species.speciesId;
-    do {
-      dexEntry = this.scene.gameData.dexData[speciesId];
-      const dexIvs = dexEntry.ivs;
-      for (let i = 0; i < dexIvs.length; i++) {
-        if (dexIvs[i] < pokemon.ivs[i])
-          dexIvs[i] = pokemon.ivs[i];
-      }
-      if (dexIvs.filter(iv => iv === 31).length === 6)
-        this.scene.validateAchv(achvs.PERFECT_IVS);
-    } while (pokemonPrevolutions.hasOwnProperty(speciesId) && (speciesId = pokemonPrevolutions[speciesId]));
+    this.scene.gameData.updateSpeciesDexIvs(pokemon.species.speciesId, pokemon.ivs);
       
     this.scene.ui.showText(`${pokemon.name} was caught!`, null, () => {
       const end = () => {
@@ -3226,6 +3230,31 @@ export class SelectModifierPhase extends BattlePhase {
 
   addModifier(modifier: Modifier): Promise<void> {
     return this.scene.addModifier(modifier, false, true);
+  }
+}
+
+export class EggLapsePhase extends BattlePhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start() {
+    super.start();
+
+    const eggsToHatch: Egg[] = [];
+
+    for (let egg of this.scene.gameData.eggs) {
+      if (--egg.hatchWaves < 1)
+        eggsToHatch.push(egg);
+    }
+
+    if (eggsToHatch.length)
+      this.scene.queueMessage('Oh?');
+
+    for (let egg of eggsToHatch)
+      this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg));
+
+    this.end();
   }
 }
 

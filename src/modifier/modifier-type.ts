@@ -15,6 +15,7 @@ import { GameMode } from '../game-mode';
 import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
 import { SpeciesFormKey } from '../data/pokemon-species';
 import BattleScene from '../battle-scene';
+import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from '../system/voucher';
 
 type Modifier = Modifiers.Modifier;
 
@@ -93,6 +94,13 @@ class AddPokeballModifierType extends ModifierType {
   constructor(pokeballType: PokeballType, count: integer, iconImage?: string) {
     super(`${count}x ${getPokeballName(pokeballType)}`, `Receive ${getPokeballName(pokeballType)} x${count}`,
       (_type, _args) => new Modifiers.AddPokeballModifier(this, pokeballType, count), iconImage, 'pb', 'pb_bounce_1');
+  }
+}
+
+class AddVoucherModifierType extends ModifierType {
+  constructor(voucherType: VoucherType, count: integer) {
+    super(`${count}x ${getVoucherTypeName(voucherType)}`, `Receive ${getVoucherTypeName(voucherType)} x${count}`,
+      (_type, _args) => new Modifiers.AddVoucherModifier(this, voucherType, count), getVoucherTypeIcon(voucherType), 'voucher');
   }
 }
 
@@ -702,6 +710,10 @@ export const modifierTypes = {
 
   MINI_BLACK_HOLE: () => new TurnHeldItemTransferModifierType('Mini Black Hole'),
   
+  VOUCHER: () => new AddVoucherModifierType(VoucherType.REGULAR, 1),
+  VOUCHER_PLUS: () => new AddVoucherModifierType(VoucherType.PLUS, 1),
+  VOUCHER_PREMIUM: () => new AddVoucherModifierType(VoucherType.PREMIUM, 1),
+
   GOLDEN_POKEBALL: () => new ModifierType(`Golden ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle',
     (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold', null, 'pb_bounce_1'),
 
@@ -811,16 +823,17 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, 2),
     new WeightedModifierType(modifierTypes.IV_SCANNER, 2),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 1),
-    new WeightedModifierType(modifierTypes.COIN_CASE, 1),
     new WeightedModifierType(modifierTypes.MEGA_EVOLUTION_ITEM, (party: Pokemon[]) => party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length && !party.filter(p => p.getFormKey().indexOf(SpeciesFormKey.MEGA) > -1).length ? 1 : 0),
     new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 3 : 0),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
-    new WeightedModifierType(modifierTypes.MASTER_BALL, 3),
-    new WeightedModifierType(modifierTypes.SHINY_CHARM, 2),
-    new WeightedModifierType(modifierTypes.MEGA_BRACELET, 1),
-    new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => !p.fusionSpecies).length > 1 ? 1 : 0),
-    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 1 : 0),
+    new WeightedModifierType(modifierTypes.MASTER_BALL, 32),
+    new WeightedModifierType(modifierTypes.SHINY_CHARM, 18),
+    new WeightedModifierType(modifierTypes.MEGA_BRACELET, 12),
+    new WeightedModifierType(modifierTypes.VOUCHER, 6),
+    new WeightedModifierType(modifierTypes.VOUCHER_PLUS, 1),
+    new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => !p.fusionSpecies).length > 1 ? 12 : 0),
+    new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 2 : 0),
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
   [ModifierTier.LUXURY]: [
     new WeightedModifierType(modifierTypes.GOLDEN_EXP_CHARM, 1),

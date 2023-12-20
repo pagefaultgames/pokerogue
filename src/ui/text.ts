@@ -1,3 +1,5 @@
+import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
+
 export enum TextStyle {
   MESSAGE,
   WINDOW,
@@ -14,7 +16,32 @@ export enum TextStyle {
   TOOLTIP_CONTENT
 };
 
-export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle) {
+export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
+  const [ styleOptions, shadowColor, shadowSize ] = getTextStyleOptions(style, extraStyleOptions);
+
+  const ret = scene.add.text(x, y, content, styleOptions);
+  ret.setScale(0.1666666667);
+  ret.setShadow(shadowSize, shadowSize, shadowColor);
+  if (!styleOptions.lineSpacing)
+    ret.setLineSpacing(5);
+
+  return ret;
+}
+
+export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): BBCodeText {
+  const [ styleOptions, shadowColor, shadowSize ] = getTextStyleOptions(style, extraStyleOptions);
+
+  const ret = new BBCodeText(scene, x, y, content, styleOptions as BBCodeText.TextStyle);
+  scene.add.existing(ret);
+  ret.setScale(0.1666666667);
+  ret.setShadow(shadowSize, shadowSize, shadowColor);
+  if (!styleOptions.lineSpacing)
+    ret.setLineSpacing(5);
+
+  return ret;
+}
+
+function getTextStyleOptions(style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle, string, integer ] {
   let shadowColor: string;
   let shadowSize = 6;
 
@@ -64,16 +91,10 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
     styleOptions = Object.assign(styleOptions, extraStyleOptions);
   }
 
-  const ret = scene.add.text(x, y, content, styleOptions);
-  ret.setScale(0.1666666667);
-  ret.setShadow(shadowSize, shadowSize, shadowColor);
-  if (!styleOptions.lineSpacing)
-    ret.setLineSpacing(5);
-
-  return ret;
+  return [ styleOptions, shadowColor, shadowSize ];
 }
 
-export function getTextColor(textStyle: TextStyle, shadow?: boolean) {
+export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
   switch (textStyle) {
     case TextStyle.MESSAGE:
       return !shadow ? '#f8f8f8' : '#6b5a73';

@@ -127,10 +127,10 @@ export default class CommandUiHandler extends UiHandler {
 
     if (!this.cursorObj) {
       this.cursorObj = this.scene.add.image(0, 0, 'cursor');
-      ui.add(this.cursorObj);
+      this.commandsContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setPosition(211 + (cursor % 2 === 1 ? 56 : 0), -31 + (cursor >= 2 ? 16 : 0));
+    this.cursorObj.setPosition(-5 + (cursor % 2 === 1 ? 56 : 0), 8 + (cursor >= 2 ? 16 : 0));
 
     return changed;
   }

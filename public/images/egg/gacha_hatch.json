@@ -1,0 +1,104 @@
+{
+	"textures": [
+		{
+			"image": "gacha_hatch.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 53,
+				"h": 53
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "1.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 25,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 25,
+						"h": 32
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 25,
+						"h": 32
+					}
+				},
+				{
+					"filename": "2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 25,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 25,
+						"h": 31
+					},
+					"frame": {
+						"x": 25,
+						"y": 0,
+						"w": 25,
+						"h": 31
+					}
+				},
+				{
+					"filename": "3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 25,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 25,
+						"h": 22
+					},
+					"frame": {
+						"x": 25,
+						"y": 31,
+						"w": 25,
+						"h": 22
+					}
+				},
+				{
+					"filename": "4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 25,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 25,
+						"h": 12
+					},
+					"frame": {
+						"x": 0,
+						"y": 32,
+						"w": 25,
+						"h": 12
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:dba061ae0c944cad946da89a3db61ef3:6bcb3cebd91542179a70caca502090cd:03d3c0cdbe3979a45ab948bf5fc6c5fe$"
+	}
+}

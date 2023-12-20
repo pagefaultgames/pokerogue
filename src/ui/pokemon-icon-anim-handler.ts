@@ -8,7 +8,6 @@ export enum PokemonIconAnimMode {
 }
 
 export default class PokemonIconAnimHandler {
-  private counter: Phaser.Tweens.Tween;
   private icons: Map<Phaser.GameObjects.Sprite, PokemonIconAnimMode>;
   private toggled: boolean;
 
@@ -22,7 +21,7 @@ export default class PokemonIconAnimHandler {
       for (let i of this.icons.keys())
           i.y += this.getModeYDelta(this.icons.get(i)) * (this.toggled ? 1 : -1);
     };
-    this.counter = scene.tweens.addCounter({
+    scene.tweens.addCounter({
       duration: Utils.fixedInt(200),
       from: 0,
       to: 1,
@@ -65,6 +64,14 @@ export default class PokemonIconAnimHandler {
     if (!Array.isArray(icons))
       icons = [ icons ];
     for (let i of icons) {
+      if (this.toggled)
+        i.y -= this.getModeYDelta(this.icons.get(i));
+      this.icons.delete(i);
+    }
+  }
+
+  removeAll(): void {
+    for (let i of this.icons.keys()) {
       if (this.toggled)
         i.y -= this.getModeYDelta(this.icons.get(i));
       this.icons.delete(i);

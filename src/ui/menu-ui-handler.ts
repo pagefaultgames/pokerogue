@@ -6,7 +6,10 @@ import * as Utils from "../utils";
 
 export enum MenuOptions {
   SETTINGS,
-  ACHIEVEMENTS
+  ACHIEVEMENTS,
+  VOUCHERS,
+  EGG_LIST,
+  EGG_GACHA
 }
 
 export default class MenuUiHandler extends UiHandler {
@@ -62,6 +65,7 @@ export default class MenuUiHandler extends UiHandler {
     const ui = this.getUi();
 
     let success = false;
+    let error = false;
 
     if (button === Button.ACTION) {
       switch (this.cursor as MenuOptions) {
@@ -73,6 +77,24 @@ export default class MenuUiHandler extends UiHandler {
           this.scene.ui.setOverlayMode(Mode.ACHIEVEMENTS);
           success = true;
           break;
+        case MenuOptions.VOUCHERS:
+          this.scene.ui.setOverlayMode(Mode.VOUCHERS);
+          success = true;
+          break;
+        case MenuOptions.EGG_LIST:
+          if (this.scene.gameData.eggs.length) {
+            this.scene.ui.revertMode();
+            this.scene.ui.setOverlayMode(Mode.EGG_LIST);
+            success = true;
+          } else
+            error = true;
+          break;
+        case MenuOptions.EGG_GACHA:
+          this.scene.ui.revertMode();
+          this.scene.ui.setOverlayMode(Mode.EGG_GACHA);
+          success = true;
+          break;
+        
       }
     } else if (button === Button.CANCEL) {
       success = true;
@@ -93,6 +115,8 @@ export default class MenuUiHandler extends UiHandler {
 
     if (success)
       ui.playSelect();
+    else if (error)
+      ui.playError();
 
     return true;
   }
