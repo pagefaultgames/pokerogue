@@ -3,6 +3,7 @@ import { Voucher, getVoucherTypeIcon, getVoucherTypeName, vouchers } from "../sy
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
+import { addWindow } from "./window";
 
 export default class VouchersUiHandler extends MessageUiHandler {
   private vouchersContainer: Phaser.GameObjects.Container;
@@ -26,14 +27,14 @@ export default class VouchersUiHandler extends MessageUiHandler {
 
     this.vouchersContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    const headerBg = this.scene.add.nineslice(0, 0, 'window', null, (this.scene.game.canvas.width / 6) - 2, 24, 6, 6, 6, 6);
+    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
     const headerText = addTextObject(this.scene, 0, 0, 'Vouchers', TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
-    this.voucherIconsBg = this.scene.add.nineslice(0, headerBg.height, 'window', null, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 68, 6, 6, 6, 6);
+    this.voucherIconsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 68);
     this.voucherIconsBg.setOrigin(0, 0);
 
     this.voucherIconsContainer = this.scene.add.container(6, headerBg.height + 6);
@@ -52,21 +53,21 @@ export default class VouchersUiHandler extends MessageUiHandler {
       this.voucherIconsContainer.add(icon);
     }
 
-    const titleBg = this.scene.add.nineslice(0, headerBg.height + this.voucherIconsBg.height, 'window', null, 220, 24, 6, 6, 6, 6);
+    const titleBg = addWindow(this.scene, 0, headerBg.height + this.voucherIconsBg.height, 220, 24);
     titleBg.setOrigin(0, 0);
 
     this.titleText = addTextObject(this.scene, 0, 0, '', TextStyle.WINDOW);
     this.titleText.setOrigin(0, 0);
     this.titleText.setPositionRelative(titleBg, 8, 4);
 
-    const unlockBg = this.scene.add.nineslice(titleBg.x + titleBg.width, titleBg.y, 'window', null, 98, 24, 6, 6, 6, 6);
+    const unlockBg = addWindow(this.scene, titleBg.x + titleBg.width, titleBg.y, 98, 24);
     unlockBg.setOrigin(0, 0);
 
     this.unlockText = addTextObject(this.scene, 0, 0, '', TextStyle.WINDOW);
     this.unlockText.setOrigin(0, 0);
     this.unlockText.setPositionRelative(unlockBg, 8, 4);
 
-    const descriptionBg = this.scene.add.nineslice(0, titleBg.y + titleBg.height, 'window', null, (this.scene.game.canvas.width / 6) - 2, 42, 6, 6, 6, 6);
+    const descriptionBg = addWindow(this.scene, 0, titleBg.y + titleBg.height, (this.scene.game.canvas.width / 6) - 2, 42);
     descriptionBg.setOrigin(0, 0);
 
     const descriptionText = addTextObject(this.scene, 0, 0, '', TextStyle.WINDOW, { maxLines: 2 });

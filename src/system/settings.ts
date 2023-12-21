@@ -1,11 +1,13 @@
 import BattleScene from "../battle-scene";
+import { updateWindowType } from "../ui/window";
 
 export enum Setting {
   Game_Speed = "GAME_SPEED",
   Master_Volume = "MASTER_VOLUME",
   BGM_Volume = "BGM_VOLUME",
   SE_Volume = "SE_VOLUME",
-  Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS"
+  Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
+  Window_Type = "WINDOW_TYPE"
 }
 
 export interface SettingOptions {
@@ -21,7 +23,8 @@ export const settingOptions: SettingOptions = {
   [Setting.Master_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.BGM_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.SE_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
-  [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ]
+  [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ],
+  [Setting.Window_Type]: new Array(4).fill(null).map((_, i) => (i + 1).toString())
 };
 
 export const settingDefaults: SettingDefaults = {
@@ -29,7 +32,8 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Master_Volume]: 5,
   [Setting.BGM_Volume]: 10,
   [Setting.SE_Volume]: 10,
-  [Setting.Show_Stats_on_Level_Up]: 1
+  [Setting.Show_Stats_on_Level_Up]: 1,
+  [Setting.Window_Type]: 1
 };
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
@@ -51,6 +55,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       break;
     case Setting.Show_Stats_on_Level_Up:
       scene.showLevelUpStats = settingOptions[setting][value] === 'On';
+      break;
+    case Setting.Window_Type:
+      updateWindowType(scene, parseInt(settingOptions[setting][value]));
       break;
   }
 

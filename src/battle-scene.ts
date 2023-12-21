@@ -76,6 +76,7 @@ export default class BattleScene extends Phaser.Scene {
 	public seVolume: number = 1;
 	public gameSpeed: integer = 1;
 	public showLevelUpStats: boolean = true;
+	public windowType: integer = 1;
 	public quickStart: boolean = quickStart;
 	public finalWave: integer = 200;
 	
@@ -183,11 +184,11 @@ export default class BattleScene extends Phaser.Scene {
 	preload() {
 		// Load menu images
 		this.loadImage('bg', 'ui');
-		this.loadImage('bg_command', 'ui');
-		this.loadImage('bg_fight', 'ui');
+		this.loadImage('command_fight_labels', 'ui');
 		this.loadAtlas('prompt', 'ui');
 		this.loadImage('cursor', 'ui');
-		this.loadImage('window', 'ui');
+		for (let w = 1; w <= 4; w++)
+			this.loadImage(`window_${w}`, 'ui/windows');
 		this.loadImage('namebox', 'ui');
 		this.loadImage('pbinfo_player', 'ui');
 		this.loadImage('pbinfo_player_mini', 'ui');
@@ -219,10 +220,6 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('party_slot_hp_bar', 'ui');
 		this.loadAtlas('party_slot_hp_overlay', 'ui');
 		this.loadAtlas('party_pb', 'ui');
-		this.loadImage('party_message', 'ui');
-		this.loadImage('party_message_large', 'ui');
-		this.loadImage('party_message_options', 'ui');
-		this.loadImage('party_message_options_wide', 'ui');
 		this.loadAtlas('party_cancel', 'ui');
 
 		this.loadImage('summary_bg', 'ui');
@@ -238,9 +235,6 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('summary_moves_cursor', 'ui');
 		for (let t = 1; t <= 3; t++)
 			this.loadImage(`summary_tabs_${t}`, 'ui');
-
-		for (let o = 1; o <= 3; o++)
-			this.loadImage(`option_select_window_${o}`, 'ui');
 
 		this.loadImage('starter_select_bg', 'ui');
 		this.loadImage('starter_select_message', 'ui');

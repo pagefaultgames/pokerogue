@@ -3,6 +3,7 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
+import { addWindow } from "./window";
 
 export enum MenuOptions {
   SETTINGS,
@@ -31,7 +32,7 @@ export default class MenuUiHandler extends UiHandler {
 
     this.menuContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    this.menuBg = this.scene.add.nineslice((this.scene.game.canvas.width / 6) - 92, 0, 'window', null, 90, (this.scene.game.canvas.height / 6) - 2, 6, 6, 6, 6);
+    this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - 92, 0, 90, (this.scene.game.canvas.height / 6) - 2);
     this.menuBg.setOrigin(0, 0);
 
     this.menuContainer.add(this.menuBg);

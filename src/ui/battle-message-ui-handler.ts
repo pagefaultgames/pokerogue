@@ -4,6 +4,7 @@ import UI, { Mode } from "./ui";
 import * as Utils from "../utils";
 import MessageUiHandler from "./message-ui-handler";
 import { getStatName, Stat } from "../data/pokemon-stat";
+import { addWindow } from "./window";
 
 export default class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsContainer: Phaser.GameObjects.Container;
@@ -12,6 +13,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   private nameText: Phaser.GameObjects.Text;
 
   public bg: Phaser.GameObjects.Image;
+  public commandWindow: Phaser.GameObjects.NineSlice;
+  public movesWindowContainer: Phaser.GameObjects.Container;
   public nameBoxContainer: Phaser.GameObjects.Container;
 
   constructor(scene: BattleScene) {
@@ -29,6 +32,28 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     ui.add(bg);
 
     this.bg = bg;
+
+    this.commandWindow = addWindow(this.scene, 201, -1, 118, 46);
+    this.commandWindow.setOrigin(0, 1);
+    this.commandWindow.setVisible(false);
+    ui.add(this.commandWindow);
+
+    this.movesWindowContainer = this.scene.add.container(1, -1);
+    this.movesWindowContainer.setVisible(false);
+
+    const movesWindow = addWindow(this.scene, 0, 0, 243, 46);
+    movesWindow.setOrigin(0, 1);
+    this.movesWindowContainer.add(movesWindow);
+
+    const moveDetailsWindow = addWindow(this.scene, 238, 0, 80, 46, false, true, 2, 133);
+    moveDetailsWindow.setOrigin(0, 1);
+    this.movesWindowContainer.add(moveDetailsWindow);
+
+    const commandFightLabels = this.scene.add.image(246, -10, 'command_fight_labels');
+    commandFightLabels.setOrigin(0, 1);
+    this.movesWindowContainer.add(commandFightLabels);
+
+    ui.add(this.movesWindowContainer);
 
     const messageContainer = this.scene.add.container(12, -39);
     ui.add(messageContainer);
@@ -68,7 +93,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
     this.levelUpStatsContainer = levelUpStatsContainer;
 
-    const levelUpStatsBg = this.scene.add.nineslice((this.scene.game.canvas.width / 6), -100, 'window', null, 128, 100, 6, 6, 6, 6);
+    const levelUpStatsBg = addWindow(this.scene, (this.scene.game.canvas.width / 6), -100, 128, 100);
     levelUpStatsBg.setOrigin(1, 0);
     levelUpStatsContainer.add(levelUpStatsBg);
 
@@ -98,7 +123,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   show(args: any[]): void {
     super.show(args);
 
-    this.bg.setTexture('bg');
+    this.commandWindow.setVisible(false);
+    this.movesWindowContainer.setVisible(false);
     this.message.setWordWrapWidth(1780);
   }
 

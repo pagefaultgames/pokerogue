@@ -3,6 +3,7 @@ import { Setting, settingDefaults, settingOptions } from "../system/settings";
 import { TextStyle, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
+import { addWindow } from "./window";
 
 export default class SettingsUiHandler extends UiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
@@ -27,14 +28,14 @@ export default class SettingsUiHandler extends UiHandler {
 
     this.settingsContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    const headerBg = this.scene.add.nineslice(0, 0, 'window', null, (this.scene.game.canvas.width / 6) - 2, 24, 6, 6, 6, 6);
+    const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
     const headerText = addTextObject(this.scene, 0, 0, 'Options', TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
-    this.optionsBg = this.scene.add.nineslice(0, headerBg.height, 'window', null, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 2, 6, 6, 6, 6);
+    this.optionsBg = addWindow(this.scene, 0, headerBg.height, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - headerBg.height - 2);
     this.optionsBg.setOrigin(0, 0);
 
     this.optionsContainer = this.scene.add.container(0, 0);

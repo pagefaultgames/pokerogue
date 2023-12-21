@@ -13,6 +13,7 @@ import { DexAttr, DexEntry } from "../system/game-data";
 import * as Utils from "../utils";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import { StatsContainer } from "./stats-container";
+import { addWindow } from "./window";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -95,6 +96,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const starterSelectBg = this.scene.add.image(1, 1, 'starter_select_bg');
     starterSelectBg.setOrigin(0, 0);
     this.starterSelectContainer.add(starterSelectBg);
+
+    this.starterSelectContainer.add(addWindow(this.scene, 107, 1, 34, 92));
+    this.starterSelectContainer.add(addWindow(this.scene, 107, 93, 34, 57));
+    this.starterSelectContainer.add(addWindow(this.scene, 107, 145, 34, 34, true));
+    this.starterSelectContainer.add(addWindow(this.scene, 141, 1, 178, 178));
 
     this.iconAnimHandler = new PokemonIconAnimHandler();
     this.iconAnimHandler.setup(this.scene);

@@ -8,6 +8,7 @@ import { EGG_SEED, Egg, GachaType, getEggTierDefaultHatchWaves, getEggDescriptor
 import { Voucher, VoucherType, getVoucherTypeIcon } from "../system/voucher";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { Type } from "../data/type";
+import { addWindow } from "./window";
 
 const defaultText = 'Select a machine.';
 
@@ -144,7 +145,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaOptionsContainer = this.scene.add.container((this.scene.game.canvas.width / 6), 148);
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
-    this.eggGachaOptionSelectBg = this.scene.add.nineslice(0, 0, 'window', null, 96, 112, 6, 6, 6, 6);
+
+    this.eggGachaOptionSelectBg = addWindow(this.scene, 0, 0, 96, 112);
     this.eggGachaOptionSelectBg.setOrigin(1, 1);
     this.eggGachaOptionsContainer.add(this.eggGachaOptionSelectBg);
 
@@ -167,7 +169,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     new Array(Utils.getEnumKeys(VoucherType).length).fill(null).map((_, i) => {
       const container = this.scene.add.container((this.scene.game.canvas.width / 6) - 56 * i, 0);
 
-      const bg = this.scene.add.nineslice(0, 0, 'window', null, 56, 22, 6, 6, 6, 6);
+      const bg = addWindow(this.scene, 0, 0, 56, 22);
       bg.setOrigin(1, 0);
       container.add(bg);
 
@@ -200,7 +202,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     const gachaMessageBoxContainer = this.scene.add.container(0, 148);
     this.eggGachaContainer.add(gachaMessageBoxContainer);
 
-    const gachaMessageBox = this.scene.add.nineslice(0, 0, 'window', null, 320, 32, 6, 6, 6, 6);
+    const gachaMessageBox = addWindow(this.scene, 0, 0, 320, 32);
     gachaMessageBox.setOrigin(0, 0);
     gachaMessageBoxContainer.add(gachaMessageBox);
 

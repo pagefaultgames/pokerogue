@@ -42,7 +42,8 @@ export default class FightUiHandler extends UiHandler {
     this.fieldIndex = args.length ? args[0] as integer : 0;
 
     const messageHandler = this.getUi().getMessageHandler();
-    messageHandler.bg.setTexture('bg_fight');
+    messageHandler.commandWindow.setVisible(false);
+    messageHandler.movesWindowContainer.setVisible(true);
     this.setCursor(this.getCursor());
     this.displayMoves();
   }

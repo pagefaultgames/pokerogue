@@ -4,10 +4,11 @@ import { addTextObject, TextStyle } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
+import { addWindow } from "./window";
 
 export default class BiomeSelectUiHandler extends UiHandler {
   private biomeSelectContainer: Phaser.GameObjects.Container;
-  private biomeSelectBg: Phaser.GameObjects.Image;
+  private biomeSelectBg: Phaser.GameObjects.NineSlice;
   private biomesText: Phaser.GameObjects.Text;
   private biomeChoices: Biome[];
 
@@ -26,7 +27,7 @@ export default class BiomeSelectUiHandler extends UiHandler {
     this.biomeSelectContainer.setVisible(false);
     ui.add(this.biomeSelectContainer);
 
-    this.biomeSelectBg = this.scene.add.image(0, 0, 'option_select_window_2');
+    this.biomeSelectBg = addWindow(this.scene, 0, 0, 96, 32);
     this.biomeSelectBg.setOrigin(0, 1);
     this.biomeSelectContainer.add(this.biomeSelectBg);
 
@@ -50,7 +51,7 @@ export default class BiomeSelectUiHandler extends UiHandler {
       if (this.biomeChoices.length <= 1)
         return;
 
-      this.biomeSelectBg.setTexture(`option_select_window_${this.biomeChoices.length}`)
+      this.biomeSelectBg.height = (this.biomeChoices.length + 1) * 16;
       this.biomesText.setText(this.biomeChoices.map(b => getBiomeName(b)).join('\n'));
       this.biomesText.setPositionRelative(this.biomeSelectBg, 16, 9);
       this.biomeSelectHandler = args[1] as Function;

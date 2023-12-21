@@ -2,6 +2,7 @@ import BattleScene, { Button } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
+import { addWindow } from "./window";
 
 export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected handlers: Function[];
@@ -29,7 +30,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
 
-    this.optionSelectBg = this.scene.add.nineslice(0, 0, 'window', null, this.getWindowWidth(), this.getWindowHeight(), 6, 6, 6, 6);
+    this.optionSelectBg = addWindow(this.scene, 0, 0, this.getWindowWidth(), this.getWindowHeight());
     this.optionSelectBg.setOrigin(1, 1);
     this.optionSelectContainer.add(this.optionSelectBg);
 

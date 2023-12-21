@@ -5,6 +5,7 @@ import { addTextObject, TextStyle } from "./text";
 import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
+import { addWindow } from "./window";
 
 export default class BallUiHandler extends UiHandler {
   private pokeballSelectContainer: Phaser.GameObjects.Container;
@@ -24,7 +25,7 @@ export default class BallUiHandler extends UiHandler {
     this.pokeballSelectContainer.setVisible(false);
     ui.add(this.pokeballSelectContainer);
 
-    this.pokeballSelectBg = this.scene.add.nineslice(0, 0, 'window', null, 114, 96, 6, 6, 6, 6);
+    this.pokeballSelectBg = addWindow(this.scene, 0, 0, 114, 96);
     this.pokeballSelectBg.setOrigin(0, 1);
     this.pokeballSelectContainer.add(this.pokeballSelectBg);
 

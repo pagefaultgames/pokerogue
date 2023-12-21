@@ -12,6 +12,7 @@ import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import { pokemonEvolutions } from "../data/pokemon-evolutions";
+import { addWindow } from "./window";
 
 const defaultMessage = 'Choose a Pokémon.';
 
@@ -63,7 +64,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private partySlotsContainer: Phaser.GameObjects.Container;
   private partySlots: PartySlot[];
   private partyCancelButton: PartyCancelButton;
-  private partyMessageBox: Phaser.GameObjects.Image;
+  private partyMessageBox: Phaser.GameObjects.NineSlice;
 
   private optionsMode: boolean;
   private optionsScroll: boolean;
@@ -131,7 +132,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     const partyMessageBoxContainer = this.scene.add.container(0, -32);
     partyContainer.add(partyMessageBoxContainer);
 
-    const partyMessageBox = this.scene.add.image(1, 31, 'party_message');
+    const partyMessageBox = addWindow(this.scene, 1, 31, 262, 30);
     partyMessageBox.setOrigin(0, 1);
     partyMessageBoxContainer.add(partyMessageBox);
 
@@ -446,10 +447,10 @@ export default class PartyUiHandler extends MessageUiHandler {
       text = defaultMessage;
 
     if (text?.indexOf('\n') === -1) {
-      this.partyMessageBox.setTexture('party_message');
+      this.partyMessageBox.setSize(262, 30);
       this.message.setY(10);
     } else {
-      this.partyMessageBox.setTexture('party_message_large');
+      this.partyMessageBox.setSize(262, 42);
       this.message.setY(-5);
     }
 
@@ -461,10 +462,6 @@ export default class PartyUiHandler extends MessageUiHandler {
       return;
     
     this.optionsMode = true;
-
-    const wideOptions = this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER;
-
-    this.partyMessageBox.setTexture(`party_message_options${wideOptions ? '_wide' : ''}`);
 
     let optionsMessage = 'Do what with this Pokémon?';
 
@@ -485,6 +482,10 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.showText(optionsMessage, 0);
 
     this.updateOptions();
+
+    const wideOptions = this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER;
+
+    this.partyMessageBox.setSize(262 - (wideOptions ? 88 : 38), 30);
 
     this.setCursor(0);
   }
@@ -579,7 +580,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.options.push(PartyOption.CANCEL);
 
-    const optionBg = this.scene.add.nineslice(0, 0, 'window', null, wideOptions ? 144 : 94, 16 * this.options.length + 13, 6, 6, 6, 6);
+    const optionBg = addWindow(this.scene, 0, 0, wideOptions ? 144 : 94, 16 * this.options.length + 13);
     optionBg.setOrigin(1, 1);
 
     this.optionsContainer.add(optionBg);
@@ -701,7 +702,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.optionsContainer.removeAll(true);
     this.eraseOptionsCursor();
 
-    this.partyMessageBox.setTexture('party_message');
+    this.partyMessageBox.setSize(262, 30);
     this.showText(null, 0);
   }
 

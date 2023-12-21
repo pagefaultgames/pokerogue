@@ -13,6 +13,7 @@ import { StatsContainer } from "./ui/stats-container";
 import { TextStyle, addTextObject } from "./ui/text";
 import { Gender, getGenderColor, getGenderSymbol } from "./data/gender";
 import { achvs } from "./system/achv";
+import { addWindow } from "./ui/window";
 
 export class EggHatchPhase extends BattlePhase {
   private egg: Egg;
@@ -84,7 +85,8 @@ export class EggHatchPhase extends BattlePhase {
       this.eggHatchOverlay.setAlpha(0);
       this.scene.fieldUI.add(this.eggHatchOverlay);
 
-      const infoBg = this.scene.add.nineslice(0, 0, 'window', null, 96, 116, 6, 6, 6, 6);
+      const infoBg = addWindow(this.scene, 0, 0, 96, 116);
+      infoBg.setOrigin(0.5, 0.5);
 
       this.infoContainer = this.scene.add.container(this.eggHatchBg.displayWidth + infoBg.width / 2, this.eggHatchBg.displayHeight / 2);
 

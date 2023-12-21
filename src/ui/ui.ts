@@ -25,6 +25,7 @@ import EggListUiHandler from './egg-list-ui-handler';
 import EggGachaUiHandler from './egg-gacha-ui-handler';
 import VouchersUiHandler from './vouchers-ui-handler';
 import VoucherBar from './voucher-bar';
+import { addWindow } from './window';
 
 export enum Mode {
   MESSAGE,
@@ -134,7 +135,7 @@ export default class UI extends Phaser.GameObjects.Container {
     this.tooltipContainer = this.scene.add.container(0, 0);
     this.tooltipContainer.setVisible(false);
 
-    this.tooltipBg = this.scene.add.nineslice(0, 0, 'window', null, 128, 31, 6, 6, 6, 6);
+    this.tooltipBg = addWindow(this.scene, 0, 0, 128, 31);
     this.tooltipBg.setOrigin(0, 0);
 
     this.tooltipTitle = addTextObject(this.scene, 64, 4, '', TextStyle.TOOLTIP_TITLE);

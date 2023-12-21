@@ -45,7 +45,8 @@ export default class CommandUiHandler extends UiHandler {
     this.commandsContainer.setVisible(true);
 
     const messageHandler = this.getUi().getMessageHandler();
-    messageHandler.bg.setTexture('bg_command');
+    messageHandler.commandWindow.setVisible(true);
+    messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(1110);
     messageHandler.showText(`What will\n${(this.scene.getCurrentPhase() as CommandPhase).getPokemon().name} do?`, 0);
     this.setCursor(this.getCursor());
