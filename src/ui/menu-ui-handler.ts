@@ -1,7 +1,7 @@
 import BattleScene, { Button } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
-import UiHandler from "./uiHandler";
+import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 
 export enum MenuOptions {

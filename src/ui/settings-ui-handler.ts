@@ -2,7 +2,7 @@ import BattleScene, { Button } from "../battle-scene";
 import { Setting, settingDefaults, settingOptions } from "../system/settings";
 import { TextStyle, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
-import UiHandler from "./uiHandler";
+import UiHandler from "./ui-handler";
 
 export default class SettingsUiHandler extends UiHandler {
   private settingsContainer: Phaser.GameObjects.Container;

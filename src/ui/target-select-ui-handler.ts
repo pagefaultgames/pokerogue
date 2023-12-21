@@ -2,7 +2,7 @@ import { BattlerIndex } from "../battle";
 import BattleScene, { Button } from "../battle-scene";
 import { Moves, getMoveTargets } from "../data/move";
 import { Mode } from "./ui";
-import UiHandler from "./uiHandler";
+import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 
 export type TargetSelectCallback = (cursor: integer) => void;

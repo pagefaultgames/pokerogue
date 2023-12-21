@@ -1,5 +1,5 @@
 import { Button, default as BattleScene } from '../battle-scene';
-import UiHandler from './uiHandler';
+import UiHandler from './ui-handler';
 import BattleMessageUiHandler from './battle-message-ui-handler';
 import CommandUiHandler from './command-ui-handler';
 import PartyUiHandler from './party-ui-handler';

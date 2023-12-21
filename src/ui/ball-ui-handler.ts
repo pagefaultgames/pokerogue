@@ -4,7 +4,7 @@ import { getPokeballName, PokeballType } from "../data/pokeball";
 import { addTextObject, TextStyle } from "./text";
 import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
-import UiHandler from "./uiHandler";
+import UiHandler from "./ui-handler";
 
 export default class BallUiHandler extends UiHandler {
   private pokeballSelectContainer: Phaser.GameObjects.Container;

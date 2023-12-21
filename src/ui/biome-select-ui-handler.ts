@@ -2,7 +2,7 @@ import BattleScene, { Button } from "../battle-scene";
 import { Biome, biomeLinks, getBiomeName } from "../data/biome";
 import { addTextObject, TextStyle } from "./text";
 import { Mode } from "./ui";
-import UiHandler from "./uiHandler";
+import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 
 export default class BiomeSelectUiHandler extends UiHandler {

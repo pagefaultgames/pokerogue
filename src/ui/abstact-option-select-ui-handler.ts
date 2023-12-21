@@ -1,7 +1,7 @@
 import BattleScene, { Button } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
-import UiHandler from "./uiHandler";
+import UiHandler from "./ui-handler";
 
 export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected handlers: Function[];

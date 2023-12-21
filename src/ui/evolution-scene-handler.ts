@@ -1,6 +1,6 @@
 import BattleScene, { Button } from "../battle-scene";
 import { Mode } from "./ui";
-import UiHandler from "./uiHandler";
+import UiHandler from "./ui-handler";
 
 export default class EvolutionSceneHandler extends UiHandler {
     public evolutionContainer: Phaser.GameObjects.Container;

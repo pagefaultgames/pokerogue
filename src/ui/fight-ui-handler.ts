@@ -3,7 +3,7 @@ import { addTextObject, TextStyle } from "./text";
 import { Type } from "../data/type";
 import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
-import UiHandler from "./uiHandler";
+import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { CommandPhase } from "../battle-phases";
 

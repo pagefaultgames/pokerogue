@@ -642,7 +642,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.NURSE]: new TrainerConfig(++t).setMoneyMultiplier(1.8).setEncounterBgm('lass').setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.CHARM) || !!s.getLevelMoves().find(plm => plm[1] === Moves.HEAL_PULSE)),
   [TrainerType.NURSERY_AIDE]: new TrainerConfig(++t).setMoneyMultiplier(1.3).setEncounterBgm('lass'),
   [TrainerType.OFFICER]: new TrainerConfig(++t).setMoneyMultiplier(1.55).setEncounterBgm(TrainerType.CLERK)
-    .setPartyTemplates(trainerPartyTemplates.ONE_AVG, trainerPartyTemplates.ONE_STRONG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG, )
+    .setPartyTemplates(trainerPartyTemplates.ONE_AVG, trainerPartyTemplates.ONE_STRONG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG)
     .setSpeciesPools({ 
       [TrainerPoolTier.COMMON]: [ Species.VULPIX, Species.GROWLITHE, Species.SNUBBULL, Species.POOCHYENA, Species.ELECTRIKE, Species.LILLIPUP, Species.YAMPER /* , Species.FIDOUGH */ ],
       [TrainerPoolTier.UNCOMMON]: [ Species.HOUNDOUR, Species.ROCKRUFF /*, Species.MASCHIFF */ ],

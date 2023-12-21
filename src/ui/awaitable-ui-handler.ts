@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { Mode } from "./ui";
-import UiHandler from "./uiHandler";
+import UiHandler from "./ui-handler";
 
 export default abstract class AwaitableUiHandler extends UiHandler {
   protected awaitingActionInput: boolean;
