@@ -5,6 +5,7 @@ import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } fro
 import { Species } from './species';
 import { Type } from './type';
 import { LevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from './pokemon-level-moves';
+import { uncatchableSpecies } from './biome';
 
 export function getPokemonSpecies(species: Species): PokemonSpecies {
   if (species >= 2000)
@@ -107,6 +108,10 @@ export abstract class PokemonSpeciesForm {
 
   isObtainable() {
     return (this.generation <= 8 || pokemonPrevolutions.hasOwnProperty(this.speciesId));
+  }
+
+  isCatchable() {
+    return this.isObtainable() && uncatchableSpecies.indexOf(this.speciesId) === -1;
   }
 
   getSpriteAtlasPath(female: boolean, formIndex?: integer, shiny?: boolean): string {
@@ -433,6 +438,10 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
         && species.legendary === legendary
         && species.mythical === mythical;
     };
+  }
+
+  isObtainable() {
+    return super.isObtainable() || (this.species === 'Paradox Pokémon' && !this.legendary && this.speciesId <= 1017);
   }
 
   getFormSpriteKey(formIndex?: integer) {

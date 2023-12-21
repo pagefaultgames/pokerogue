@@ -23,7 +23,7 @@ export interface Starter {
   pokerus: boolean;
 }
 
-const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII' ];
+const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX' ];
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
@@ -199,7 +199,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.genSpecies.push([]);
 
       for (let species of allSpecies) {
-        if (!speciesStarterValues.hasOwnProperty(species.speciesId) || species.generation !== g + 1)
+        if (!speciesStarterValues.hasOwnProperty(species.speciesId) || species.generation !== g + 1 || !species.isObtainable())
           continue;
         starterSpecies.push(species.speciesId);
         this.speciesLoaded.set(species.speciesId, false);
