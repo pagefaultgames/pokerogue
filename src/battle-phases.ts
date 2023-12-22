@@ -25,7 +25,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagType, ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
-import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
+import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -1769,8 +1769,9 @@ export class MoveEffectPhase extends PokemonPhase {
       if (--user.turnData.hitsLeft >= 1 && this.getTarget()?.isActive())
         this.scene.unshiftPhase(this.getNewHitPhase());
       else {
-        if (user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0) > 1)
-          this.scene.queueMessage(`Hit ${user.turnData.hitCount} time(s)!`);
+        const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
+        if (hitsTotal > 1)
+          this.scene.queueMessage(`Hit ${hitsTotal} time(s)!`);
         this.scene.applyModifiers(HitHealModifier, this.player, user);
       }
     }
@@ -3070,9 +3071,10 @@ export class AttemptRunPhase extends PokemonPhase {
 
     const enemySpeed = enemyField.reduce((total: integer, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD), 0) / enemyField.length;
 
-    const escapeChance = (((playerPokemon.getStat(Stat.SPD) * 128) / enemySpeed) + (30 * this.scene.currentBattle.escapeAttempts++)) % 256;
+    const escapeChance = new Utils.IntegerHolder((((playerPokemon.getStat(Stat.SPD) * 128) / enemySpeed) + (30 * this.scene.currentBattle.escapeAttempts++)) % 256);
+    applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, escapeChance);
 
-    if (Utils.randInt(256) < escapeChance) {
+    if (Utils.randInt(256) < escapeChance.value) {
       this.scene.playSound('flee');
       this.scene.queueMessage('You got away safely!', null, true, 500);
       

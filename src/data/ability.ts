@@ -890,6 +890,14 @@ export class DoubleBerryEffectAbAttr extends AbAttr {
   }
 }
 
+export class RunSuccessAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value = 256;
+
+    return true;
+  }
+}
+
 export class CheckTrappedAbAttr extends AbAttr {
   applyCheckTrapped(pokemon: Pokemon, trapped: Utils.BooleanHolder, args: any[]): boolean {
     return false;
@@ -904,6 +912,14 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
 
   getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
     return getPokemonMessage(pokemon, `\'s ${pokemon.getAbility().name}\nprevents switching!`);
+  }
+}
+
+export class MaxMultiHitAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value = 0;
+
+    return true;
   }
 }
 
@@ -1667,7 +1683,8 @@ export function initAbilities() {
     new Ability(Abilities.EARLY_BIRD, "Early Bird (N)", "The Pokémon awakens from sleep twice as fast as other Pokémon.", 3),
     new Ability(Abilities.FLAME_BODY, "Flame Body", "Contact with the Pokémon may burn the attacker.", 3)
       .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.BURN),
-    new Ability(Abilities.RUN_AWAY, "Run Away (N)", "Enables a sure getaway from wild Pokémon.", 3),
+    new Ability(Abilities.RUN_AWAY, "Run Away", "Enables a sure getaway from wild Pokémon.", 3)
+      .attr(RunSuccessAbAttr),
     new Ability(Abilities.KEEN_EYE, "Keen Eye", "Keen eyes prevent other Pokémon from lowering this Pokémon's accuracy.", 3)
       .attr(ProtectStatAbAttr, BattleStat.ACC),
     new Ability(Abilities.HYPER_CUTTER, "Hyper Cutter", "The Pokémon's proud of its powerful pincers. They prevent other Pokémon from lowering its Attack stat.", 3)
@@ -1740,7 +1757,8 @@ export function initAbilities() {
     new Ability(Abilities.POISON_HEAL, "Poison Heal (N)", "Restores HP if the Pokémon is poisoned instead of losing HP.", 4),
     new Ability(Abilities.ADAPTABILITY, "Adaptability", "Powers up moves of the same type as the Pokémon.", 4)
       .attr(StabBoostAbAttr),
-    new Ability(Abilities.SKILL_LINK, "Skill Link (N)", "Maximizes the number of times multistrike moves hit.", 4),
+    new Ability(Abilities.SKILL_LINK, "Skill Link", "Maximizes the number of times multistrike moves hit.", 4)
+      .attr(MaxMultiHitAbAttr),
     new Ability(Abilities.HYDRATION, "Hydration (N)", "Heals status conditions if it's raining.", 4),
     new Ability(Abilities.SOLAR_POWER, "Solar Power", "Boosts the Sp. Atk stat in harsh sunlight, but HP decreases every turn.", 4)
       .attr(PostWeatherLapseDamageAbAttr, 2, WeatherType.SUNNY, WeatherType.HARSH_SUN)

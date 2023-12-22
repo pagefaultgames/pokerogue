@@ -9,7 +9,7 @@ import { Type } from "./type";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagType, ArenaTrapTag } from "./arena-tag";
-import { Abilities, BlockRecoilDamageAttr, IgnoreContactAbAttr, applyAbAttrs } from "./ability";
+import { Abilities, BlockRecoilDamageAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs } from "./ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
@@ -1583,15 +1583,19 @@ export class MultiHitAttr extends MoveAttr {
     let hitTimes: integer;
     switch (this.multiHitType) {
       case MultiHitType._2_TO_5:
-        const rand = Utils.randInt(16);
-        if (rand >= 10)
-          hitTimes = 2;
-        else if (rand >= 4)
-          hitTimes = 3;
-        else if (rand >= 2)
-          hitTimes = 4;
-        else
-          hitTimes = 5;
+        {
+          const rand = Utils.randInt(16);
+          const hitValue = new Utils.IntegerHolder(rand);
+          applyAbAttrs(MaxMultiHitAbAttr, user, null, hitValue);
+          if (hitValue.value >= 10)
+            hitTimes = 2;
+          else if (hitValue.value >= 4)
+            hitTimes = 3;
+          else if (hitValue.value >= 2)
+            hitTimes = 4;
+          else
+            hitTimes = 5;
+        }
         break;
       case MultiHitType._2:
         hitTimes = 2;
@@ -1604,27 +1608,31 @@ export class MultiHitAttr extends MoveAttr {
         // TODO: Add power increase for every hit
         break;
       case MultiHitType._1_TO_10:
-        const rand10 = Utils.randInt(90);
-        if (rand10 >= 81)
-          hitTimes = 1;
-        else if (rand10 >= 73)
-          hitTimes = 2;
-        else if (rand10 >= 66)
-          hitTimes = 3;
-        else if (rand10 >= 60)
-          hitTimes = 4;
-        else if (rand10 >= 54)
-          hitTimes = 5;
-        else if (rand10 >= 49)
-          hitTimes = 6;
-        else if (rand10 >= 44)
-          hitTimes = 7;
-        else if (rand10 >= 40)
-          hitTimes = 8;
-        else if (rand10 >= 36)
-          hitTimes = 9;
-        else
-          hitTimes = 10;
+        {
+          const rand = Utils.randInt(90);
+          const hitValue = new Utils.IntegerHolder(rand);
+          applyAbAttrs(MaxMultiHitAbAttr, user, null, hitValue);
+          if (hitValue.value >= 81)
+            hitTimes = 1;
+          else if (hitValue.value >= 73)
+            hitTimes = 2;
+          else if (hitValue.value>= 66)
+            hitTimes = 3;
+          else if (hitValue.value >= 60)
+            hitTimes = 4;
+          else if (hitValue.value >= 54)
+            hitTimes = 5;
+          else if (hitValue.value >= 49)
+            hitTimes = 6;
+          else if (hitValue.value >= 44)
+            hitTimes = 7;
+          else if (hitValue.value >= 40)
+            hitTimes = 8;
+          else if (hitValue.value >= 36)
+            hitTimes = 9;
+          else
+            hitTimes = 10;
+        }
         break;
     }
     (args[0] as Utils.IntegerHolder).value = hitTimes;
