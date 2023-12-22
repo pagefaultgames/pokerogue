@@ -25,7 +25,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagType, ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
-import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
+import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -1744,6 +1744,7 @@ export class MoveEffectPhase extends PokemonPhase {
                             if (!user.isPlayer() && this.move instanceof AttackMove)
                               user.scene.applyModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
                           }
+                          applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move, hitResult);
                           if (this.move instanceof AttackMove)
                             this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target.getFieldIndex());
                         })

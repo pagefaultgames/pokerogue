@@ -1677,17 +1677,21 @@ export class StealHeldItemAttr extends MoveEffectAttr {
     super(false, MoveEffectTrigger.HIT);
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const heldItems = this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
-    if (heldItems.length) {
-      const stolenItem = heldItems[Utils.randInt(heldItems.length)];
-      user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false);
-      // Assumes the transfer was successful
-      user.scene.queueMessage(getPokemonMessage(user, ` stole\n${target.name}'s ${stolenItem.type.name}!`));
-      return true;
-    }
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      const heldItems = this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
+      if (heldItems.length) {
+        const stolenItem = heldItems[Utils.randInt(heldItems.length)];
+        user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false).then(success => {
+          if (success)
+            user.scene.queueMessage(getPokemonMessage(user, ` stole\n${target.name}'s ${stolenItem.type.name}!`));
+          resolve(success);
+        });
+        return;
+      }
 
-    return false;
+      resolve(false);
+    });
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {

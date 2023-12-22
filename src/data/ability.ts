@@ -10,6 +10,7 @@ import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
 import { MoveFlags, Moves, RecoilAttr } from "./move";
 import { ArenaTagType } from "./arena-tag";
 import { Stat } from "./pokemon-stat";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
 
 export class Ability {
   public id: Abilities;
@@ -95,6 +96,8 @@ export class DoubleBattleChanceAbAttr extends AbAttr {
     return true;
   }
 }
+
+type PreDefendAbAttrCondition = (pokemon: Pokemon, attacker: Pokemon, move: PokemonMove) => boolean;
 
 export class PreDefendAbAttr extends AbAttr {
   applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -257,6 +260,29 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
 export class PostDefendAbAttr extends AbAttr {
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     return false;
+  }
+}
+
+export class MoveImmunityAbAttr extends PreDefendAbAttr {
+  private immuneCondition: PreDefendAbAttrCondition;
+
+  constructor(immuneCondition: PreDefendAbAttrCondition) {
+    super(true);
+
+    this.immuneCondition = immuneCondition;
+  }
+
+  applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (this.immuneCondition(pokemon, attacker, move)) {
+      cancelled.value = true;
+      return true;
+    }
+
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
+    return `It doesn\'t affect ${pokemon.name}!`;
   }
 }
 
@@ -430,6 +456,35 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
     }
 
     return false;
+  }
+}
+
+export class PostAttackAbAttr extends AbAttr {
+  applyPostAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
+  applyPostAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (hitResult < HitResult.NO_EFFECT) {
+      const heldItems = this.getTargetHeldItems(defender).filter(i => i.getTransferrable(false));
+      if (heldItems.length) {
+        const stolenItem = heldItems[Utils.randInt(heldItems.length)];
+        // TODO: Add support for promises
+        pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false, false).then(success => {
+          if (success)
+            pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` stole\n${defender.name}'s ${stolenItem.type.name}!`));
+        });
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
+    return target.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+      && (m as PokemonHeldItemModifier).pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
   }
 }
 
@@ -779,9 +834,21 @@ export class PostTurnAbAttr extends AbAttr {
   }
 }
 
-export class PostTurnSpeedBoostAbAttr extends PostTurnAbAttr {
+export class PostTurnStatChangeAbAttr extends PostTurnAbAttr {
+  private stats: BattleStat[];
+  private levels: integer;
+
+  constructor(stats: BattleStat | BattleStat[], levels: integer) {
+    super(true);
+
+    this.stats = Array.isArray(stats)
+      ? stats
+      : [ stats ];
+    this.levels = levels;
+  }
+
   applyPostTurn(pokemon: Pokemon, args: any[]): boolean {
-    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ BattleStat.SPD ], 1));
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.levels));
     return true;
   }
 }
@@ -810,6 +877,14 @@ export class StatChangeMultiplierAbAttr extends AbAttr {
 
   apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     (args[0] as Utils.IntegerHolder).value *= this.multiplier;
+
+    return true;
+  }
+}
+
+export class DoubleBerryEffectAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value *= 2;
 
     return true;
   }
@@ -952,6 +1027,29 @@ export function applyPreAttackAbAttrs(attrType: { new(...args: any[]): PreAttack
       continue;
     pokemon.scene.setPhaseQueueSplice();
     if (attr.applyPreAttack(pokemon, defender, move, args)) {
+      if (attr.showAbility)
+        queueShowAbility(pokemon);
+      const message = attr.getTriggerMessage(pokemon, defender, move);
+      if (message)
+        pokemon.scene.queueMessage(message);
+    }
+  }
+
+  pokemon.scene.clearPhaseQueueSplice();
+}
+
+export function applyPostAttackAbAttrs(attrType: { new(...args: any[]): PostAttackAbAttr },
+  pokemon: Pokemon, defender: Pokemon, move: PokemonMove, hitResult: HitResult, ...args: any[]): void {
+  if (!pokemon.canApplyAbility())
+    return;
+
+  const ability = pokemon.getAbility();
+  const attrs = ability.getAttrs(attrType) as PostAttackAbAttr[];
+  for (let attr of attrs) {
+    if (!canApplyAttr(pokemon, attr))
+      continue;
+    pokemon.scene.setPhaseQueueSplice();
+    if (attr.applyPostAttack(pokemon, defender, move, hitResult, args)) {
       if (attr.showAbility)
         queueShowAbility(pokemon);
       const message = attr.getTriggerMessage(pokemon, defender, move);
@@ -1479,7 +1577,7 @@ export function initAbilities() {
     new Ability(Abilities.DRIZZLE, "Drizzle", "The Pokémon makes it rain when it enters a battle.", 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN),
     new Ability(Abilities.SPEED_BOOST, "Speed Boost", "Its Speed stat is boosted every turn.", 3)
-      .attr(PostTurnSpeedBoostAbAttr),
+      .attr(PostTurnStatChangeAbAttr, BattleStat.SPD, 1),
     new Ability(Abilities.BATTLE_ARMOR, "Battle Armor", "Hard armor protects the Pokémon from critical hits.", 3)
       .attr(BlockCritAbAttr),
     new Ability(Abilities.STURDY, "Sturdy (N)", "It cannot be knocked out with one hit. One-hit KO moves cannot knock it out, either.", 3),
@@ -1555,7 +1653,8 @@ export function initAbilities() {
     new Ability(Abilities.MAGNET_PULL, "Magnet Pull", "Prevents Steel-type Pokémon from escaping using its magnetic force.", 3)
       /*.attr(ArenaTrapAbAttr)
       .condition((pokemon: Pokemon) => pokemon.getOpponent()?.isOfType(Type.STEEL))*/,
-    new Ability(Abilities.SOUNDPROOF, "Soundproof (N)", "Soundproofing gives the Pokémon full immunity to all sound-based moves.", 3),
+    new Ability(Abilities.SOUNDPROOF, "Soundproof", "Soundproofing gives the Pokémon full immunity to all sound-based moves.", 3)
+      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.SOUND_BASED)),
     new Ability(Abilities.RAIN_DISH, "Rain Dish", "The Pokémon gradually regains HP in rain.", 3)
       .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.RAIN, WeatherType.HEAVY_RAIN),
     new Ability(Abilities.SAND_STREAM, "Sand Stream", "The Pokémon summons a sandstorm when it enters a battle.", 3)
@@ -1703,7 +1802,9 @@ export function initAbilities() {
     new Ability(Abilities.FLARE_BOOST, "Flare Boost (N)", "Powers up special attacks when the Pokémon is burned.", 5),
     new Ability(Abilities.HARVEST, "Harvest (N)", "May create another Berry after one is used.", 5),
     new Ability(Abilities.TELEPATHY, "Telepathy (N)", "Anticipates an ally's attack and dodges it.", 5),
-    new Ability(Abilities.MOODY, "Moody (N)", "Raises one stat sharply and lowers another every turn.", 5),
+    new Ability(Abilities.MOODY, "Moody", "Raises one stat sharply and lowers another every turn.", 5)
+      .attr(PostTurnStatChangeAbAttr, BattleStat.RAND, 2)
+      .attr(PostTurnStatChangeAbAttr, BattleStat.RAND, -1),
     new Ability(Abilities.OVERCOAT, "Overcoat", "Protects the Pokémon from things like sand, hail, and powder.", 5)
       .attr(BlockWeatherDamageAttr),
     new Ability(Abilities.POISON_TOUCH, "Poison Touch", "May poison a target when the Pokémon makes contact.", 5)
@@ -1740,8 +1841,10 @@ export function initAbilities() {
     new Ability(Abilities.CHEEK_POUCH, "Cheek Pouch (N)", "Restores HP as well when the Pokémon eats a Berry.", 6),
     new Ability(Abilities.PROTEAN, "Protean (N)", "Changes the Pokémon's type to the type of the move it's about to use.", 6),
     new Ability(Abilities.FUR_COAT, "Fur Coat (N)", "Halves the damage from physical moves.", 6),
-    new Ability(Abilities.MAGICIAN, "Magician (N)", "The Pokémon steals the held item of a Pokémon it hits with a move.", 6),
-    new Ability(Abilities.BULLETPROOF, "Bulletproof (N)", "Protects the Pokémon from some ball and bomb moves.", 6),
+    new Ability(Abilities.MAGICIAN, "Magician", "The Pokémon steals the held item of a Pokémon it hits with a move.", 6)
+      .attr(PostAttackStealHeldItemAbAttr),
+    new Ability(Abilities.BULLETPROOF, "Bulletproof", "Protects the Pokémon from some ball and bomb moves.", 6)
+      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.BALLBOMB_MOVE)),
     new Ability(Abilities.COMPETITIVE, "Competitive (N)", "Boosts the Sp. Atk stat sharply when a stat is lowered.", 6),
     new Ability(Abilities.STRONG_JAW, "Strong Jaw (N)", "The Pokémon's strong jaw boosts the power of its biting moves.", 6),
     new Ability(Abilities.REFRIGERATE, "Refrigerate (N)", "Normal-type moves become Ice-type moves. The power of those moves is boosted a little.", 6),
@@ -1824,7 +1927,8 @@ export function initAbilities() {
     new Ability(Abilities.PUNK_ROCK, "Punk Rock (N)", "Boosts the power of sound-based moves. The Pokémon also takes half the damage from these kinds of moves.", 8),
     new Ability(Abilities.SAND_SPIT, "Sand Spit (N)", "The Pokémon creates a sandstorm when it's hit by an attack.", 8),
     new Ability(Abilities.ICE_SCALES, "Ice Scales (N)", "The Pokémon is protected by ice scales, which halve the damage taken from special moves.", 8),
-    new Ability(Abilities.RIPEN, "Ripen (N)", "Ripens Berries and doubles their effect.", 8),
+    new Ability(Abilities.RIPEN, "Ripen", "Ripens Berries and doubles their effect.", 8)
+      .attr(DoubleBerryEffectAbAttr),
     new Ability(Abilities.ICE_FACE, "Ice Face (N)", "The Pokémon's ice head can take a physical attack as a substitute, but the attack also changes the Pokémon's appearance. The ice will be restored when it hails.", 8),
     new Ability(Abilities.POWER_SPOT, "Power Spot (N)", "Just being next to the Pokémon powers up moves.", 8),
     new Ability(Abilities.MIMICRY, "Mimicry (N)", "Changes the Pokémon's type depending on the terrain.", 8),
@@ -1834,7 +1938,8 @@ export function initAbilities() {
     new Ability(Abilities.WANDERING_SPIRIT, "Wandering Spirit (N)", "The Pokémon exchanges Abilities with a Pokémon that hits it with a move that makes direct contact.", 8),
     new Ability(Abilities.GORILLA_TACTICS, "Gorilla Tactics (N)", "Boosts the Pokémon's Attack stat but only allows the use of the first selected move.", 8),
     new Ability(Abilities.NEUTRALIZING_GAS, "Neutralizing Gas (N)", "If the Pokémon with Neutralizing Gas is in the battle, the effects of all Pokémon's Abilities will be nullified or will not be triggered.", 8),
-    new Ability(Abilities.PASTEL_VEIL, "Pastel Veil (N)", "Protects the Pokémon and its ally Pokémon from being poisoned.", 8),
+    new Ability(Abilities.PASTEL_VEIL, "Pastel Veil", "Protects the Pokémon and its ally Pokémon from being poisoned.", 8)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON),
     new Ability(Abilities.HUNGER_SWITCH, "Hunger Switch (N)", "The Pokémon changes its form, alternating between its Full Belly Mode and Hangry Mode after the end of each turn.", 8),
     new Ability(Abilities.QUICK_DRAW, "Quick Draw (N)", "Enables the Pokémon to move first occasionally.", 8),
     new Ability(Abilities.UNSEEN_FIST, "Unseen Fist (N)", "If the Pokémon uses moves that make direct contact, it can attack the target even if the target protects itself.", 8),

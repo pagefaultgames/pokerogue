@@ -6,6 +6,7 @@ import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./battler-tag";
 import { getStatusEffectHealText } from "./status-effect";
 import * as Utils from "../utils";
+import { DoubleBerryEffectAbAttr, applyAbAttrs } from "./ability";
 
 export enum BerryType {
   SITRUS,
@@ -77,10 +78,12 @@ export type BerryEffectFunc = (pokemon: Pokemon) => void;
 export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
   switch (berryType) {
     case BerryType.SITRUS:
-     case BerryType.ENIGMA:
+    case BerryType.ENIGMA:
       return (pokemon: Pokemon) => {
+        const hpHealed = new Utils.NumberHolder(Math.floor(pokemon.getMaxHp() / 4));
+        applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, hpHealed);
         pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
-          Math.floor(pokemon.getMaxHp() / 4), getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\nrestored its HP!`), true));
+          hpHealed.value, getPokemonMessage(pokemon, `'s ${getBerryName(berryType)}\nrestored its HP!`), true));
       };
     case BerryType.LUM:
       return (pokemon: Pokemon) => {
@@ -98,13 +101,19 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
     case BerryType.SALAC:
       return (pokemon: Pokemon) => {
         const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
-        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ battleStat ], 1));
+        const statLevels = new Utils.NumberHolder(1);
+        applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, statLevels);
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ battleStat ], statLevels.value));
       };
     case BerryType.LANSAT:
       return (pokemon: Pokemon) => {
         pokemon.addTag(BattlerTagType.CRIT_BOOST);
       };
     case BerryType.STARF:
-      return (pokemon: Pokemon) => pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ BattleStat.RAND ], 2));
+      return (pokemon: Pokemon) => {
+        const statLevels = new Utils.NumberHolder(2);
+        applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, statLevels);
+        return pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ BattleStat.RAND ], statLevels.value));
+      };
   }
 }
