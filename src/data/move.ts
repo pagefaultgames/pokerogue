@@ -2139,7 +2139,7 @@ export class SolarBeamPowerAttr extends VariablePowerAttr {
   }
 }
 
-export class WinCountPowerAttr extends VariablePowerAttr {
+export class FriendshipPowerAttr extends VariablePowerAttr {
   private invert: boolean;
 
   constructor(invert?: boolean) {
@@ -2152,8 +2152,8 @@ export class WinCountPowerAttr extends VariablePowerAttr {
     const power = args[0] as Utils.NumberHolder;
 
     if (user instanceof PlayerPokemon) {
-      const winCount = Math.min(user.winCount, 100);
-      power.value = Math.max(!this.invert ? winCount : 100 - winCount, 1);
+      const friendshipPower = Math.floor(Math.min(user.friendship, 255) / 2.5);
+      power.value = Math.max(!this.invert ? friendshipPower : 102 - friendshipPower, 1);
     }
 
     return true;
@@ -3492,11 +3492,11 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.USER_AND_ALLIES),
     new AttackMove(Moves.RETURN, "Return", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, "This full-power attack grows more powerful the more the user likes its Trainer.", -1, 0, 2)
-      .attr(WinCountPowerAttr),
+      .attr(FriendshipPowerAttr),
     new AttackMove(Moves.PRESENT, "Present (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, -1, "The user attacks by giving the target a gift with a hidden trap. It restores HP sometimes, however.", -1, 0, 2)
       .makesContact(false),
     new AttackMove(Moves.FRUSTRATION, "Frustration", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, "This full-power attack grows more powerful the less the user likes its Trainer.", -1, 0, 2)
-      .attr(WinCountPowerAttr, true),
+      .attr(FriendshipPowerAttr, true),
     new StatusMove(Moves.SAFEGUARD, "Safeguard (N)", Type.NORMAL, -1, 25, -1, "The user creates a protective field that prevents status conditions for five turns.", -1, 0, 2)
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.PAIN_SPLIT, "Pain Split", Type.NORMAL, -1, 20, -1, "The user adds its HP to the target's HP, then equally shares the combined HP with the target.", -1, 0, 2)

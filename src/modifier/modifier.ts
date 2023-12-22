@@ -1198,6 +1198,30 @@ export class ExpBalanceModifier extends PersistentModifier {
   }
 }
 
+export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierTypes.PokemonFriendshipBoosterModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonFriendshipBoosterModifier;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonFriendshipBoosterModifier(this.type as ModifierTypes.PokemonFriendshipBoosterModifierType, this.pokemonId, this.stackCount);
+  }
+  
+  apply(args: any[]): boolean {
+    (args[1] as Utils.IntegerHolder).value *= 1 + 0.5 * this.getStackCount();
+
+    return true;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 5;
+  }
+}
+
 export class MoneyMultiplierModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);

@@ -404,6 +404,12 @@ export class PokemonExpBoosterModifierType extends PokemonHeldItemModifierType {
   }
 }
 
+export class PokemonFriendshipBoosterModifierType extends PokemonHeldItemModifierType {
+  constructor(name: string, iconImage?: string) {
+    super(name,'Increases friendship gain per victory by 50%', (_type, args) => new Modifiers.PokemonFriendshipBoosterModifier(this, (args[0] as Pokemon).id), iconImage);
+  }
+}
+
 export class TmModifierType extends PokemonModifierType {
   public moveId: Moves;
 
@@ -673,6 +679,8 @@ export const modifierTypes = {
   LUCKY_EGG: () => new PokemonExpBoosterModifierType('Lucky Egg', 40),
   GOLDEN_EGG: () => new PokemonExpBoosterModifierType('Golden Egg', 100),
 
+  SOOTHE_BELL: () => new PokemonFriendshipBoosterModifierType('Soothe Bell'),
+
   AMULET_COIN: () => new ModifierType('Amulet Coin', 'Increases money rewards by 20%', (type, _args) => new Modifiers.MoneyMultiplierModifier(type)),
   GOLDEN_PUNCH: () => new PokemonHeldItemModifierType('Golden Punch', 'Grants 20% of damage inflicted as money', (type, args) => new Modifiers.DamageMoneyRewardModifier(type, (args[0] as Pokemon).id)),
   COIN_CASE: () => new ModifierType('Coin Case', 'After every 10th battle, receive 10% of your money in interest', (type, _args) => new Modifiers.MoneyInterestModifier(type)),
@@ -809,6 +817,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 3),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 3),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 3),
+    new WeightedModifierType(modifierTypes.SOOTHE_BELL, 3),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 2),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 2),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 1),

@@ -5,7 +5,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyInstantReviveChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyInstantReviveChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, PokemonFriendshipBoosterModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -32,8 +32,6 @@ import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { GameMode } from "./game-mode";
 import { Species } from "./data/species";
 import { HealAchv, LevelAchv, MoneyAchv, achvs } from "./system/achv";
-import { DexEntry } from "./system/game-data";
-import { pokemonPrevolutions } from "./data/pokemon-evolutions";
 import { TrainerType, trainerConfigs } from "./data/trainer-type";
 import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
@@ -2247,6 +2245,8 @@ export class FaintPhase extends PokemonPhase {
     this.scene.getField().filter(p => p !== pokemon && p?.isActive(true)).forEach(p => p.removeTagsBySourceId(pokemon.id));
 
     pokemon.faintCry(() => {
+      const friendshipDecrease = new Utils.IntegerHolder(10);
+      pokemon.friendship = Math.max(pokemon.friendship - friendshipDecrease.value, 0);
       pokemon.hideInfo();
       this.scene.playSound('faint');
       this.scene.tweens.add({
@@ -2291,8 +2291,13 @@ export class VictoryPhase extends PokemonPhase {
       for (let partyMember of expPartyMembers) {
         const pId = partyMember.id;
         const participated = participantIds.has(pId);
-        if (participated)
-          partyMember.winCount++;
+        if (participated) {
+          const friendshipIncrease = new Utils.IntegerHolder(2);
+          this.scene.applyModifier(PokemonFriendshipBoosterModifier, true, partyMember, friendshipIncrease);
+          partyMember.friendship = Math.min(partyMember.friendship + friendshipIncrease.value, 255);
+          if (partyMember.friendship === 255)
+            this.scene.validateAchv(achvs.MAX_FRIENDSHIP);
+        }
         else if (!expShareModifier) {
           partyMemberExp.push(0);
           continue;

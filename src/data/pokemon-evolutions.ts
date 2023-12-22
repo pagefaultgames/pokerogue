@@ -1279,9 +1279,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.STARMIE, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.EEVEE]: [
-    new SpeciesEvolution(Species.SYLVEON, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 && !!p.getMoveset().find(m => m.getMove().type === Type.FAIRY)), SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.ESPEON, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 && p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.UMBREON, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 && !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(Species.SYLVEON, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160 && !!p.getMoveset().find(m => m.getMove().type === Type.FAIRY)), SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(Species.ESPEON, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160 && p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(Species.UMBREON, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160 && !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM),
     new SpeciesEvolution(Species.VAPOREON, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
     new SpeciesEvolution(Species.JOLTEON, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
     new SpeciesEvolution(Species.FLAREON, 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
@@ -1558,64 +1558,64 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.ANNIHILAPE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.RAGE_FIST).length > 0), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.PICHU]: [
-    new SpeciesEvolution(Species.PIKACHU, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(Species.PIKACHU, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.SHORT)
   ],
   [Species.CLEFFA]: [
-    new SpeciesEvolution(Species.CLEFAIRY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(Species.CLEFAIRY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.SHORT)
   ],
   [Species.IGGLYBUFF]: [
-    new SpeciesEvolution(Species.JIGGLYPUFF, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(Species.JIGGLYPUFF, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.SHORT)
   ],
   [Species.GOLBAT]: [
-    new SpeciesEvolution(Species.CROBAT, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.CROBAT, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.CHANSEY]: [
-    new SpeciesEvolution(Species.BLISSEY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.BLISSEY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.MUNCHLAX]: [
-    new SpeciesEvolution(Species.SNORLAX, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.SNORLAX, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.TOGEPI]: [
-    new SpeciesEvolution(Species.TOGETIC, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(Species.TOGETIC, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.SHORT)
   ],
   [Species.AZURILL]: [
-    new SpeciesEvolution(Species.MARILL, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(Species.MARILL, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.SHORT)
   ],
   [Species.BUDEW]: [
-    new SpeciesEvolution(Species.ROSELIA, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount > 10 && p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(Species.ROSELIA, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160 && p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.SHORT)
   ],
   [Species.CHINGLING]: [
-    new SpeciesEvolution(Species.CHIMECHO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 && !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.CHIMECHO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160 && !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.BUNEARY]: [
-    new SpeciesEvolution(Species.LOPUNNY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.LOPUNNY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.HAPPINY]: [
-    new SpeciesEvolution(Species.CHANSEY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(Species.CHANSEY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.SHORT)
   ],
   [Species.RIOLU]: [
-    new SpeciesEvolution(Species.LUCARIO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 && p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.LUCARIO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160 && p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.WOOBAT]: [
-    new SpeciesEvolution(Species.SWOOBAT, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.SWOOBAT, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.SWADLOON]: [
-    new SpeciesEvolution(Species.LEAVANNY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.LEAVANNY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.TYPE_NULL]: [
-    new SpeciesEvolution(Species.SILVALLY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 100), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.SILVALLY, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.ALOLA_MEOWTH]: [
-    new SpeciesEvolution(Species.ALOLA_PERSIAN, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.ALOLA_PERSIAN, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.MILCERY]: [
-    new SpeciesEvolution(Species.ALCREMIE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.ALCREMIE, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.SNOM]: [
-    new SpeciesEvolution(Species.FROSMOTH, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 10 && !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.FROSMOTH, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160 && !p.scene.arena.isDaytime()), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.GIMMIGHOUL]: [
-    new SpeciesEvolution(Species.GHOLDENGO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.winCount >= 50), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.GHOLDENGO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.friendship >= 160), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.VENUSAUR]: [
     new SpeciesFormEvolution(Species.VENUSAUR, '', SpeciesFormKey.MEGA, 1, EvolutionItem.VENUSAURITE, null, SpeciesWildEvolutionDelay.MEGA)

@@ -24,7 +24,7 @@ export default class PokemonData {
   public ivs: integer[];
   public moveset: PokemonMove[];
   public status: Status;
-  public winCount: integer;
+  public friendship: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
 
@@ -52,7 +52,7 @@ export default class PokemonData {
     this.hp = source.hp;
     this.stats = source.stats;
     this.ivs = source.ivs;
-    this.winCount = source.winCount;
+    this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.pauseEvolutions = !!source.pauseEvolutions;
     this.pokerus = !!source.pokerus;
 

@@ -123,6 +123,7 @@ export const achvs = {
   LV_250: new LevelAchv('Elite', 250, 'rarer_candy', 50).setSecret(true),
   LV_1000: new LevelAchv('To Go Even Further Beyond', 1000, 'candy_jar', 100).setSecret(true),
   TRANSFER_MAX_BATTLE_STAT: new Achv('Teamwork', 'Baton pass to another party member with at least one stat maxed out', 'stick', 20),
+  MAX_FRIENDSHIP: new Achv('Friendmaxxing', 'Reach max friendship on a Pokémon', 'soothe_bell', 25),
   MEGA_EVOLVE: new Achv('Megamorph', 'Mega evolve a Pokémon', 'mega_bracelet', 50),
   SPLICE: new Achv('Infinite Fusion', 'Splice two Pokémon together with DNA Splicers', 'dna_splicers', 10),
   MINI_BLACK_HOLE: new ModifierAchv('A Hole Lot of Items', 'Acquire a Mini Black Hole', 'mini_black_hole', 25, modifier => modifier instanceof TurnHeldItemTransferModifier).setSecret(),

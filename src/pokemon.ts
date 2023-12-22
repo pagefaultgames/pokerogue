@@ -64,7 +64,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public ivs: integer[];
   public moveset: PokemonMove[];
   public status: Status;
-  public winCount: integer;
+  public friendship: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
 
@@ -122,7 +122,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.ivs = dataSource.ivs;
       this.moveset = dataSource.moveset;
       this.status = dataSource.status;
-      this.winCount = dataSource.winCount;
+      this.friendship = dataSource.friendship !== undefined ? dataSource.friendship : this.species.baseFriendship;
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
       this.fusionSpecies = dataSource.fusionSpecies instanceof PokemonSpecies ? dataSource.fusionSpecies : getPokemonSpecies(dataSource.fusionSpecies);
@@ -158,7 +158,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.shiny === undefined)
         this.trySetShiny();
 
-      this.winCount = 0;
+      this.friendship = species.baseFriendship;
       this.pokerus = false;
 
       if (scene.gameMode === GameMode.SPLICED_ENDLESS)
@@ -455,7 +455,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       ret *= 1.5;
     if (stat === Stat.SPD && this.status && this.status.effect === StatusEffect.PARALYSIS)
       ret >>= 2;
-    return ret;
+    return Math.floor(ret);
   }
 
   calculateStats(): void {
