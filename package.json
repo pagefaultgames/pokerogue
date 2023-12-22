@@ -16,7 +16,7 @@
 		"pokenode-ts": "^1.20.0",
 		"typescript": "^5.0.3",
 		"vite": "^4.5.0",
-		"vite-plugin-fs": "^1.0.0-beta.6"
+		"vite-plugin-fs": "^0.4.4"
 	},
 	"dependencies": {
 		"@material/material-color-utilities": "^0.2.7",

@@ -1013,6 +1013,8 @@ export class TurnInitPhase extends FieldPhase {
   start() {
     super.start();
 
+    //this.scene.pushPhase(new MoveAnimTestPhase(this.scene));
+
     this.scene.getField().forEach((pokemon, i) => {
       if (pokemon?.isActive()) {
         if (pokemon.isPlayer())

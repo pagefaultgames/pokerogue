@@ -24,6 +24,7 @@ dist-ssr
 *.sw?
 
 public/images/trainer/convert/*
+public/images/battle_anims/input/*.png
 public/images/pokemon/input/*.png
 public/images/pokemon/input/output/*
 public/images/pokemon/icons/input/*.png

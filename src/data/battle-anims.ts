@@ -76,6 +76,12 @@ export enum CommonAnim {
     CURSE,
     MAGMA_STORM,
     CLAMP,
+    ORDER_UP_CURLY,
+    ORDER_UP_DROOPY,
+    ORDER_UP_STRETCHY,
+    RAGING_BULL_FIRE,
+    RAGING_BULL_WATER,
+    SALT_CURE,
     SUNNY = 2100,
     RAIN,
     SANDSTORM,
@@ -996,22 +1002,24 @@ export async function populateAnims() {
     const animsData = [];//battleAnimRawData.split('!ruby/array:PBAnimation').slice(1);
     for (let a = 0; a < animsData.length; a++) {
         const fields = animsData[a].split('@').slice(1);
+
+        const nameField = fields.find(f => f.startsWith('name: '));
         
         let isOppMove: boolean;
         let commonAnimId: CommonAnim;
         let chargeAnimId: ChargeAnim;
-        if (!fields[1].startsWith('name: Move:') && !(isOppMove = fields[1].startsWith('name: OppMove:'))) {
-            const nameMatch = commonNamePattern.exec(fields[1]);
+        if (!nameField.startsWith('name: Move:') && !(isOppMove = nameField.startsWith('name: OppMove:'))) {
+            const nameMatch = commonNamePattern.exec(nameField);
             const name = nameMatch[2].toLowerCase();
             if (commonAnimMatchNames.indexOf(name) > -1)
                 commonAnimId = commonAnimIds[commonAnimMatchNames.indexOf(name)];
             else if (chargeAnimMatchNames.indexOf(name) > -1) {
-                isOppMove = fields[1].startsWith('name: Opp ');
+                isOppMove = nameField.startsWith('name: Opp ');
                 chargeAnimId = chargeAnimIds[chargeAnimMatchNames.indexOf(name)];
             }
         }
-        const nameIndex = fields[1].indexOf(':', 5) + 1;
-        const animName = fields[1].slice(nameIndex, fields[1].indexOf('\n', nameIndex));
+        const nameIndex = nameField.indexOf(':', 5) + 1;
+        const animName = nameField.slice(nameIndex, nameField.indexOf('\n', nameIndex));
         if (!moveNameToId.hasOwnProperty(animName) && !commonAnimId && !chargeAnimId)
             continue;
         let anim = commonAnimId || chargeAnimId ? new AnimConfig() : new AnimConfig();
@@ -1045,7 +1053,10 @@ export async function populateAnims() {
                     }
                     break;
                 case 'graphic':
-                    anim.graphic = fieldData !== "''" ? fieldData.slice(0, fieldData.indexOf('.')) : '';
+                    const graphic = fieldData !== "''" ? fieldData : '';
+                    anim.graphic = graphic.indexOf('.') > -1
+                        ? graphic.slice(0, fieldData.indexOf('.'))
+                        : graphic;
                     break;
                 case 'timing':
                     const timingEntries = fieldData.split('- !ruby/object:PBAnimTiming ').slice(1);
