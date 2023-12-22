@@ -13,7 +13,6 @@ import { Abilities, BlockRecoilDamageAttr, IgnoreContactAbAttr, applyAbAttrs } f
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
-import { Species } from "./species";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -2580,7 +2579,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         switchOutTarget.hideInfo();
         switchOutTarget.setVisible(false);
 
-        user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex(), false, this.batonPass, false));
+        if (switchOutTarget.hp)
+          user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex(), false, this.batonPass, false));
       } else {
         switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
         switchOutTarget.hp = 0;

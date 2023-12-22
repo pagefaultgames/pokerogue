@@ -36,9 +36,9 @@ export default class EggListUiHandler extends MessageUiHandler {
     bgColor.setOrigin(0, 0);
     this.eggListContainer.add(bgColor);
 
-    const starterSelectBg = this.scene.add.image(1, 1, 'egg_list_bg');
-    starterSelectBg.setOrigin(0, 0);
-    this.eggListContainer.add(starterSelectBg);
+    const eggListBg = this.scene.add.image(1, 1, 'egg_list_bg');
+    eggListBg.setOrigin(0, 0);
+    this.eggListContainer.add(eggListBg);
 
     this.eggListContainer.add(addWindow(this.scene, 1, 85, 106, 22));
     this.eggListContainer.add(addWindow(this.scene, 1, 102, 106, 50, true));
@@ -77,9 +77,9 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.eggListMessageBoxContainer.setVisible(false);
     this.eggListContainer.add(this.eggListMessageBoxContainer);
 
-    const starterSelectMessageBox = this.scene.add.image(0, 0, 'starter_select_message');
-    starterSelectMessageBox.setOrigin(0, 1);
-    this.eggListMessageBoxContainer.add(starterSelectMessageBox);
+    const eggListMessageBox = addWindow(this.scene, 1, -1, 318, 28);
+    eggListMessageBox.setOrigin(0, 1);
+    this.eggListMessageBoxContainer.add(eggListMessageBox);
 
     this.message = addTextObject(this.scene, 8, -8, '', TextStyle.WINDOW, { maxLines: 1 });
     this.message.setOrigin(0, 1);

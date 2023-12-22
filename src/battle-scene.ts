@@ -237,7 +237,6 @@ export default class BattleScene extends Phaser.Scene {
 			this.loadImage(`summary_tabs_${t}`, 'ui');
 
 		this.loadImage('starter_select_bg', 'ui');
-		this.loadImage('starter_select_message', 'ui');
 		this.loadImage('starter_select_cursor', 'ui');
 		this.loadImage('starter_select_cursor_highlight', 'ui');
 		this.loadImage('starter_select_cursor_pokerus', 'ui');

@@ -261,7 +261,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectMessageBoxContainer.setVisible(false);
     this.starterSelectContainer.add(this.starterSelectMessageBoxContainer);
 
-    const starterSelectMessageBox = this.scene.add.image(0, 0, 'starter_select_message');
+    const starterSelectMessageBox = addWindow(this.scene, 1, -1, 318, 28);
     starterSelectMessageBox.setOrigin(0, 1);
     this.starterSelectMessageBoxContainer.add(starterSelectMessageBox);
 
