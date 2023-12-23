@@ -16,6 +16,7 @@ import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry'
 import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
 import { MoneyAchv } from '../system/achv';
 import { VoucherType } from '../system/voucher';
+import { PreventBerryUseAbAttr, applyAbAttrs } from '../data/ability';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -730,6 +731,14 @@ export class BerryModifier extends PokemonHeldItemModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
+
+    const cancelled = new Utils.BooleanHolder(false);
+    pokemon.getOpponents().map(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
+
+    if (cancelled.value) {
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is too\nnervous to eat berries!'));
+      return false;
+    }
 
     const preserve = new Utils.BooleanHolder(false);
     pokemon.scene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), preserve);

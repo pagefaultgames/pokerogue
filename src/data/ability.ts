@@ -1,5 +1,5 @@
 import Pokemon, { HitResult, PokemonMove } from "../pokemon";
-import { Type } from "./type";
+import { Type, getTypeDamageMultiplier } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { DamagePhase, ObtainStatusEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../battle-phases";
@@ -7,7 +7,7 @@ import { getPokemonMessage } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag, BattlerTagType } from "./battler-tag";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
-import { MoveFlags, Moves, RecoilAttr } from "./move";
+import Move, { MoveCategory, MoveFlags, Moves, RecoilAttr, StealHeldItemAttr } from "./move";
 import { ArenaTagType } from "./arena-tag";
 import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -41,6 +41,14 @@ export class Ability {
     return this;
   }
 
+  conditionalAttr<T extends new (...args: any[]) => AbAttr>(condition: AbAttrCondition, AttrType: T, ...args: ConstructorParameters<T>): Ability {
+    const attr = new AttrType(...args);
+    attr.addCondition(condition);
+    this.attrs.push(attr);
+
+    return this;
+  }
+
   hasAttr(attrType: { new(...args: any[]): AbAttr }): boolean {
     return !!this.getAttrs(attrType).length;
   }
@@ -60,8 +68,12 @@ export class Ability {
 type AbAttrApplyFunc<TAttr extends AbAttr> = (attr: TAttr) => boolean | Promise<boolean>;
 type AbAttrCondition = (pokemon: Pokemon) => boolean;
 
+type PokemonAttackCondition = (user: Pokemon, target: Pokemon, move: Move) => boolean;
+type PokemonDefendCondition = (target: Pokemon, user: Pokemon, move: Move) => boolean;
+
 export abstract class AbAttr {
   public showAbility: boolean;
+  private extraCondition: AbAttrCondition;
 
   constructor(showAbility?: boolean) {
     this.showAbility = showAbility === undefined || showAbility;
@@ -76,7 +88,12 @@ export abstract class AbAttr {
   }
 
   getCondition(): AbAttrCondition {
-    return null;
+    return this.extraCondition || null;
+  }
+
+  addCondition(condition: AbAttrCondition): AbAttr {
+    this.extraCondition = condition;
+    return this;
   }
 }
 
@@ -133,24 +150,30 @@ export class StabBoostAbAttr extends AbAttr {
   }
 }
 
-export class ReceivedTypeDamageMultiplierAbAttr extends PreDefendAbAttr {
-  private moveType: Type;
+export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
+  private condition: PokemonDefendCondition;
   private powerMultiplier: number;
 
-  constructor(moveType: Type, powerMultiplier: number) {
+  constructor(condition: PokemonDefendCondition, powerMultiplier: number) {
     super();
 
-    this.moveType = moveType;
+    this.condition = condition;
     this.powerMultiplier = powerMultiplier;
   }
 
   applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (move.getMove().type === this.moveType) {
+    if (this.condition(pokemon, attacker, move.getMove())) {
       (args[0] as Utils.NumberHolder).value *= this.powerMultiplier;
       return true;
     }
 
     return false;
+  }
+}
+
+export class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
+  constructor(moveType: Type, powerMultiplier: number) {
+    super((user, target, move) => move.type === moveType, powerMultiplier);
   }
 }
 
@@ -389,18 +412,19 @@ export class VariableMovePowerAbAttr extends PreAttackAbAttr {
   }
 }
 
-export class MoveTypePowerBoostAbAttr extends VariableMovePowerAbAttr {
-  private boostedType: Type;
+export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
+  private condition: PokemonAttackCondition;
+  private powerMultiplier: number;
 
-  constructor(boostedType: Type) {
-    super(false);
-
-    this.boostedType = boostedType;
+  constructor(condition: PokemonAttackCondition, powerMultiplier: number) {
+    super(true);
+    this.condition = condition;
+    this.powerMultiplier = powerMultiplier;
   }
 
   applyPreAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
-    if (move.getMove().type === this.boostedType) {
-      (args[0] as Utils.NumberHolder).value *= 1.5;
+    if (this.condition(pokemon, defender, move.getMove())) {
+      (args[0] as Utils.NumberHolder).value *= this.powerMultiplier;
 
       return true;
     }
@@ -409,39 +433,19 @@ export class MoveTypePowerBoostAbAttr extends VariableMovePowerAbAttr {
   }
 }
 
-export class LowHpMoveTypePowerBoostAbAttr extends VariableMovePowerAbAttr {
-  private boostedType: Type;
-
-  constructor(boostedType: Type) {
-    super();
-
-    this.boostedType = boostedType;
+export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
+  constructor(boostedType: Type, powerMultiplier?: number) {
+    super((pokemon, defender, move) => move.type === boostedType, powerMultiplier || 1.5);
   }
+}
 
-  applyPreAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
-    if (move.getMove().type === this.boostedType) {
-      (args[0] as Utils.NumberHolder).value *= 1.5;
-
-      return true;
-    }
-
-    return false;
+export class LowHpMoveTypePowerBoostAbAttr extends MoveTypePowerBoostAbAttr {
+  constructor(boostedType: Type) {
+    super(boostedType);
   }
 
   getCondition(): AbAttrCondition {
     return (pokemon) => pokemon.getHpRatio() <= 0.33;
-  }
-}
-
-export class RecoilMovePowerBoostAbAttr extends VariableMovePowerAbAttr {
-  applyPreAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
-    if (move.getMove().getAttrs(RecoilAttr).length && move.moveId !== Moves.STRUGGLE) {
-      (args[0] as Utils.NumberHolder).value *= 1.2;
-
-      return true;
-    }
-
-    return false;
   }
 }
 
@@ -473,16 +477,56 @@ export class PostAttackAbAttr extends AbAttr {
 }
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
+  private condition: PokemonAttackCondition;
+
+  constructor(condition?: PokemonAttackCondition) {
+    super();
+
+    this.condition = condition;
+  }
+
   applyPostAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (hitResult < HitResult.NO_EFFECT) {
+      if (hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, defender, move.getMove()))) {
         const heldItems = this.getTargetHeldItems(defender).filter(i => i.getTransferrable(false));
         if (heldItems.length) {
           const stolenItem = heldItems[Utils.randInt(heldItems.length)];
-          // TODO: Add support for promises
           pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false, false).then(success => {
             if (success)
               pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` stole\n${defender.name}'s ${stolenItem.type.name}!`));
+            resolve(success);
+          });
+          return;
+        }
+      }
+      resolve(false);
+    });
+  }
+
+  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
+    return target.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+      && (m as PokemonHeldItemModifier).pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
+  }
+}
+
+export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
+  private condition: PokemonDefendCondition;
+
+  constructor(condition?: PokemonDefendCondition) {
+    super();
+
+    this.condition = condition;
+  }
+
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      if (hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, attacker, move.getMove()))) {
+        const heldItems = this.getTargetHeldItems(attacker).filter(i => i.getTransferrable(false));
+        if (heldItems.length) {
+          const stolenItem = heldItems[Utils.randInt(heldItems.length)];
+          pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false, false).then(success => {
+            if (success)
+              pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` stole\n${attacker.name}'s ${stolenItem.type.name}!`));
             resolve(success);
           });
           return;
@@ -895,6 +939,14 @@ export class StatChangeMultiplierAbAttr extends AbAttr {
 export class DoubleBerryEffectAbAttr extends AbAttr {
   apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     (args[0] as Utils.NumberHolder).value *= 2;
+
+    return true;
+  }
+}
+
+export class PreventBerryUseAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = true;
 
     return true;
   }
@@ -1567,7 +1619,8 @@ export function initAbilities() {
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 1.25)
       .attr(TypeImmunityHealAbAttr, Type.WATER),
     new Ability(Abilities.DOWNLOAD, "Download (N)", "Compares an opposing Pokémon's Defense and Sp. Def stats before raising its own Attack or Sp. Atk stat—whichever will be more effective.", 4),
-    new Ability(Abilities.IRON_FIST, "Iron Fist (N)", "Powers up punching moves.", 4),
+    new Ability(Abilities.IRON_FIST, "Iron Fist", "Powers up punching moves.", 4)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PUNCHING_MOVE), 1.2),
     new Ability(Abilities.POISON_HEAL, "Poison Heal (N)", "Restores HP if the Pokémon is poisoned instead of losing HP.", 4),
     new Ability(Abilities.ADAPTABILITY, "Adaptability", "Powers up moves of the same type as the Pokémon.", 4)
       .attr(StabBoostAbAttr),
@@ -1584,7 +1637,8 @@ export function initAbilities() {
     new Ability(Abilities.MAGIC_GUARD, "Magic Guard (N)", "The Pokémon only takes damage from attacks.", 4),
     new Ability(Abilities.NO_GUARD, "No Guard (N)", "The Pokémon employs no-guard tactics to ensure incoming and outgoing attacks always land.", 4),
     new Ability(Abilities.STALL, "Stall (N)", "The Pokémon moves after all other Pokémon do.", 4),
-    new Ability(Abilities.TECHNICIAN, "Technician (N)", "Powers up the Pokémon's weaker moves.", 4),
+    new Ability(Abilities.TECHNICIAN, "Technician", "Powers up the Pokémon's weaker moves.", 4)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.power <= 60, 1.5),
     new Ability(Abilities.LEAF_GUARD, "Leaf Guard", "Prevents status conditions in harsh sunlight.", 4)
       .attr(StatusEffectImmunityAbAttr)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
@@ -1611,15 +1665,17 @@ export function initAbilities() {
     new Ability(Abilities.HONEY_GATHER, "Honey Gather (N)", "The Pokémon may gather Honey after a battle.", 4),
     new Ability(Abilities.FRISK, "Frisk (N)", "When it enters a battle, the Pokémon can check an opposing Pokémon's held item.", 4),
     new Ability(Abilities.RECKLESS, "Reckless", "Powers up moves that have recoil damage.", 4)
-      .attr(RecoilMovePowerBoostAbAttr),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.getAttrs(RecoilAttr).length && move.id !== Moves.STRUGGLE, 1.2),
     new Ability(Abilities.MULTITYPE, "Multitype (N)", "Changes the Pokémon's type to match the Plate or Z-Crystal it holds.", 4),
     new Ability(Abilities.FLOWER_GIFT, "Flower Gift (N)", "Boosts the Attack and Sp. Def stats of itself and allies in harsh sunlight.", 4),
     new Ability(Abilities.BAD_DREAMS, "Bad Dreams (N)", "Reduces the HP of sleeping opposing Pokémon.", 4),
-    new Ability(Abilities.PICKPOCKET, "Pickpocket (N)", "Steals an item from an attacker that made direct contact.", 5),
+    new Ability(Abilities.PICKPOCKET, "Pickpocket", "Steals an item from an attacker that made direct contact.", 5)
+      .attr(PostDefendStealHeldItemAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT)),
     new Ability(Abilities.SHEER_FORCE, "Sheer Force (N)", "Removes additional effects to increase the power of moves when attacking.", 5),
     new Ability(Abilities.CONTRARY, "Contrary", "Makes stat changes have an opposite effect.", 5)
       .attr(StatChangeMultiplierAbAttr, -1),
-    new Ability(Abilities.UNNERVE, "Unnerve (N)", "Unnerves opposing Pokémon and makes them unable to eat Berries.", 5),
+    new Ability(Abilities.UNNERVE, "Unnerve", "Unnerves opposing Pokémon and makes them unable to eat Berries.", 5)
+      .attr(PreventBerryUseAbAttr),
     new Ability(Abilities.DEFIANT, "Defiant (N)", "Boosts the Pokémon's Attack stat sharply when its stats are lowered.", 5),
     new Ability(Abilities.DEFEATIST, "Defeatist (N)", "Halves the Pokémon's Attack and Sp. Atk stats when its HP becomes half or less.", 5),
     new Ability(Abilities.CURSED_BODY, "Cursed Body (N)", "May disable a move used on the Pokémon.", 5),
@@ -1631,15 +1687,18 @@ export function initAbilities() {
     new Ability(Abilities.LIGHT_METAL, "Light Metal", "Halves the Pokémon's weight.", 5)
       .attr(WeightMultiplierAbAttr, 0.5),
     new Ability(Abilities.MULTISCALE, "Multiscale (N)", "Reduces the amount of damage the Pokémon takes while its HP is full.", 5),
-    new Ability(Abilities.TOXIC_BOOST, "Toxic Boost (N)", "Powers up physical attacks when the Pokémon is poisoned.", 5),
-    new Ability(Abilities.FLARE_BOOST, "Flare Boost (N)", "Powers up special attacks when the Pokémon is burned.", 5),
+    new Ability(Abilities.TOXIC_BOOST, "Toxic Boost", "Powers up physical attacks when the Pokémon is poisoned.", 5)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.PHYSICAL && (user.status?.effect === StatusEffect.POISON || user.status?.effect === StatusEffect.TOXIC), 1.5),
+    new Ability(Abilities.FLARE_BOOST, "Flare Boost", "Powers up special attacks when the Pokémon is burned.", 5)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.SPECIAL && user.status?.effect === StatusEffect.BURN, 1.5),
     new Ability(Abilities.HARVEST, "Harvest (N)", "May create another Berry after one is used.", 5),
     new Ability(Abilities.TELEPATHY, "Telepathy (N)", "Anticipates an ally's attack and dodges it.", 5),
     new Ability(Abilities.MOODY, "Moody", "Raises one stat sharply and lowers another every turn.", 5)
       .attr(PostTurnStatChangeAbAttr, BattleStat.RAND, 2)
       .attr(PostTurnStatChangeAbAttr, BattleStat.RAND, -1),
     new Ability(Abilities.OVERCOAT, "Overcoat", "Protects the Pokémon from things like sand, hail, and powder.", 5)
-      .attr(BlockWeatherDamageAttr),
+      .attr(BlockWeatherDamageAttr)
+      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.POWDER_MOVE)),
     new Ability(Abilities.POISON_TOUCH, "Poison Touch", "May poison a target when the Pokémon makes contact.", 5)
       .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON),
     new Ability(Abilities.REGENERATOR, "Regenerator (N)", "Restores a little HP when withdrawn from battle.", 5),
@@ -1663,7 +1722,12 @@ export function initAbilities() {
     new Ability(Abilities.SAP_SIPPER, "Sap Sipper", "Boosts the Attack stat if hit by a Grass-type move instead of taking damage.", 5)
       .attr(TypeImmunityStatChangeAbAttr, Type.GRASS, BattleStat.ATK, 1),
     new Ability(Abilities.PRANKSTER, "Prankster (N)", "Gives priority to a status move.", 5),
-    new Ability(Abilities.SAND_FORCE, "Sand Force (N)", "Boosts the power of Rock-, Ground-, and Steel-type moves in a sandstorm.", 5),
+    new Ability(Abilities.SAND_FORCE, "Sand Force", "Boosts the power of Rock-, Ground-, and Steel-type moves in a sandstorm.", 5)
+      .attr(MoveTypePowerBoostAbAttr, Type.ROCK, 1.3)
+      .attr(MoveTypePowerBoostAbAttr, Type.GROUND, 1.3)
+      .attr(MoveTypePowerBoostAbAttr, Type.STEEL, 1.3)
+      .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
+      .condition(getWeatherCondition(WeatherType.SANDSTORM)),
     new Ability(Abilities.IRON_BARBS, "Iron Barbs (N)", "Inflicts damage on the attacker upon contact with iron barbs.", 5),
     new Ability(Abilities.ZEN_MODE, "Zen Mode (N)", "Changes the Pokémon's shape when HP is half or less.", 5),
     new Ability(Abilities.VICTORY_STAR, "Victory Star (N)", "Boosts the accuracy of its allies and itself.", 5),
@@ -1673,7 +1737,8 @@ export function initAbilities() {
     new Ability(Abilities.FLOWER_VEIL, "Flower Veil (N)", "Ally Grass-type Pokémon are protected from status conditions and the lowering of their stats.", 6),
     new Ability(Abilities.CHEEK_POUCH, "Cheek Pouch (N)", "Restores HP as well when the Pokémon eats a Berry.", 6),
     new Ability(Abilities.PROTEAN, "Protean (N)", "Changes the Pokémon's type to the type of the move it's about to use.", 6),
-    new Ability(Abilities.FUR_COAT, "Fur Coat (N)", "Halves the damage from physical moves.", 6),
+    new Ability(Abilities.FUR_COAT, "Fur Coat", "Halves the damage from physical moves.", 6)
+      .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5),
     new Ability(Abilities.MAGICIAN, "Magician", "The Pokémon steals the held item of a Pokémon it hits with a move.", 6)
       .attr(PostAttackStealHeldItemAbAttr),
     new Ability(Abilities.BULLETPROOF, "Bulletproof", "Protects the Pokémon from some ball and bomb moves.", 6)
@@ -1684,10 +1749,12 @@ export function initAbilities() {
     new Ability(Abilities.SWEET_VEIL, "Sweet Veil (N)", "Prevents itself and ally Pokémon from falling asleep.", 6),
     new Ability(Abilities.STANCE_CHANGE, "Stance Change (N)", "The Pokémon changes its form to Blade Forme when it uses an attack move and changes to Shield Forme when it uses King's Shield.", 6),
     new Ability(Abilities.GALE_WINGS, "Gale Wings (N)", "Gives priority to Flying-type moves when the Pokémon's HP is full.", 6),
-    new Ability(Abilities.MEGA_LAUNCHER, "Mega Launcher (N)", "Powers up aura and pulse moves.", 6),
+    new Ability(Abilities.MEGA_LAUNCHER, "Mega Launcher", "Powers up aura and pulse moves.", 6)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5),
     new Ability(Abilities.GRASS_PELT, "Grass Pelt (N)", "Boosts the Pokémon's Defense stat on Grassy Terrain.", 6),
     new Ability(Abilities.SYMBIOSIS, "Symbiosis (N)", "The Pokémon passes its item to an ally that has used up an item.", 6),
-    new Ability(Abilities.TOUGH_CLAWS, "Tough Claws (N)", "Powers up moves that make direct contact.", 6),
+    new Ability(Abilities.TOUGH_CLAWS, "Tough Claws", "Powers up moves that make direct contact.", 6)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 1.3),
     new Ability(Abilities.PIXILATE, "Pixilate (N)", "Normal-type moves become Fairy-type moves. The power of those moves is boosted a little.", 6),
     new Ability(Abilities.GOOEY, "Gooey (N)", "Contact with the Pokémon lowers the attacker's Speed stat.", 6),
     new Ability(Abilities.AERILATE, "Aerilate (N)", "Normal-type moves become Flying-type moves. The power of those moves is boosted a little.", 6),
@@ -1708,7 +1775,10 @@ export function initAbilities() {
     new Ability(Abilities.MERCILESS, "Merciless (N)", "The Pokémon's attacks become critical hits if the target is poisoned.", 7),
     new Ability(Abilities.SHIELDS_DOWN, "Shields Down (N)", "When its HP becomes half or less, the Pokémon's shell breaks and it becomes aggressive.", 7),
     new Ability(Abilities.STAKEOUT, "Stakeout (N)", "Doubles the damage dealt to the target's replacement if the target switches out.", 7),
-    new Ability(Abilities.WATER_BUBBLE, "Water Bubble (N)", "Lowers the power of Fire-type moves done to the Pokémon and prevents the Pokémon from getting a burn.", 7),
+    new Ability(Abilities.WATER_BUBBLE, "Water Bubble", "Lowers the power of Fire-type moves done to the Pokémon and prevents the Pokémon from getting a burn.", 7)
+      .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
+      .attr(MoveTypePowerBoostAbAttr, Type.WATER, 2)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN),
     new Ability(Abilities.STEELWORKER, "Steelworker", "Powers up Steel-type moves.", 7)
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL),
     new Ability(Abilities.BERSERK, "Berserk (N)", "Boosts the Pokémon's Sp. Atk stat when it takes a hit that causes its HP to become half or less.", 7),
@@ -1731,7 +1801,9 @@ export function initAbilities() {
     new Ability(Abilities.INNARDS_OUT, "Innards Out (N)", "Damages the attacker landing the finishing hit by the amount equal to its last HP.", 7),
     new Ability(Abilities.DANCER, "Dancer (N)", "When another Pokémon uses a dance move, it can use a dance move following it regardless of its Speed.", 7),
     new Ability(Abilities.BATTERY, "Battery (N)", "Powers up ally Pokémon's special moves.", 7),
-    new Ability(Abilities.FLUFFY, "Fluffy (N)", "Halves the damage taken from moves that make direct contact, but doubles that of Fire-type moves.", 7),
+    new Ability(Abilities.FLUFFY, "Fluffy", "Halves the damage taken from moves that make direct contact, but doubles that of Fire-type moves.", 7)
+      .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 0.5)
+      .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.type === Type.FIRE, 2),
     new Ability(Abilities.DAZZLING, "Dazzling (N)", "Surprises the opposing Pokémon, making it unable to attack using priority moves.", 7),
     new Ability(Abilities.SOUL_HEART, "Soul-Heart (N)", "Boosts its Sp. Atk stat every time a Pokémon faints.", 7),
     new Ability(Abilities.TANGLING_HAIR, "Tangling Hair (N)", "Contact with the Pokémon lowers the attacker's Speed stat.", 7),
@@ -1743,10 +1815,12 @@ export function initAbilities() {
     new Ability(Abilities.PSYCHIC_SURGE, "Psychic Surge (N)", "Turns the ground into Psychic Terrain when the Pokémon enters a battle.", 7),
     new Ability(Abilities.MISTY_SURGE, "Misty Surge (N)", "Turns the ground into Misty Terrain when the Pokémon enters a battle.", 7),
     new Ability(Abilities.GRASSY_SURGE, "Grassy Surge (N)", "Turns the ground into Grassy Terrain when the Pokémon enters a battle.", 7),
-    new Ability(Abilities.FULL_METAL_BODY, "Full Metal Body (N)", "Prevents other Pokémon's moves or Abilities from lowering the Pokémon's stats.", 7),
+    new Ability(Abilities.FULL_METAL_BODY, "Full Metal Body", "Prevents other Pokémon's moves or Abilities from lowering the Pokémon's stats.", 7)
+      .attr(ProtectStatAbAttr),
     new Ability(Abilities.SHADOW_SHIELD, "Shadow Shield (N)", "Reduces the amount of damage the Pokémon takes while its HP is full.", 7),
     new Ability(Abilities.PRISM_ARMOR, "Prism Armor (N)", "Reduces the power of supereffective attacks taken.", 7),
-    new Ability(Abilities.NEUROFORCE, "Neuroforce (N)", "Powers up moves that are super effective.", 7),
+    new Ability(Abilities.NEUROFORCE, "Neuroforce", "Powers up moves that are super effective.", 7)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackMoveEffectiveness(move.type) >= 2, 1.25),
     new Ability(Abilities.INTREPID_SWORD, "Intrepid Sword (N)", "Boosts the Pokémon's Attack stat when the Pokémon enters a battle.", 8),
     new Ability(Abilities.DAUNTLESS_SHIELD, "Dauntless Shield (N)", "Boosts the Pokémon's Defense stat when the Pokémon enters a battle.", 8),
     new Ability(Abilities.LIBERO, "Libero (N)", "Changes the Pokémon's type to the type of the move it's about to use.", 8),
@@ -1757,7 +1831,9 @@ export function initAbilities() {
     new Ability(Abilities.GULP_MISSILE, "Gulp Missile (N)", "When the Pokémon uses Surf or Dive, it will come back with prey. When it takes damage, it will spit out the prey to attack.", 8),
     new Ability(Abilities.STALWART, "Stalwart (N)", "Ignores the effects of opposing Pokémon's Abilities and moves that draw in moves.", 8),
     new Ability(Abilities.STEAM_ENGINE, "Steam Engine (N)", "Boosts the Pokémon's Speed stat drastically if hit by a Fire- or Water-type move.", 8),
-    new Ability(Abilities.PUNK_ROCK, "Punk Rock (N)", "Boosts the power of sound-based moves. The Pokémon also takes half the damage from these kinds of moves.", 8),
+    new Ability(Abilities.PUNK_ROCK, "Punk Rock", "Boosts the power of sound-based moves. The Pokémon also takes half the damage from these kinds of moves.", 8)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SOUND_BASED), 1.3)
+      .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.hasFlag(MoveFlags.SOUND_BASED), 0.5),
     new Ability(Abilities.SAND_SPIT, "Sand Spit (N)", "The Pokémon creates a sandstorm when it's hit by an attack.", 8),
     new Ability(Abilities.ICE_SCALES, "Ice Scales (N)", "The Pokémon is protected by ice scales, which halve the damage taken from special moves.", 8),
     new Ability(Abilities.RIPEN, "Ripen", "Ripens Berries and doubles their effect.", 8)
@@ -1787,9 +1863,12 @@ export function initAbilities() {
     new Ability(Abilities.AS_ONE_SPECTRIER, "As One (N)", "This Ability combines the effects of both Calyrex's Unnerve Ability and Spectrier's Grim Neigh Ability.", 8),
     new Ability(Abilities.LINGERING_AROMA, "Lingering Aroma (N)", "Contact with the Pokémon changes the attacker's Ability to Lingering Aroma.", 9),
     new Ability(Abilities.SEED_SOWER, "Seed Sower (N)", "Turns the ground into Grassy Terrain when the Pokémon is hit by an attack.", 9),
-    new Ability(Abilities.THERMAL_EXCHANGE, "Thermal Exchange (N)", "Boosts the Attack stat when the Pokémon is hit by a Fire-type move. The Pokémon also cannot be burned.", 9),
+    new Ability(Abilities.THERMAL_EXCHANGE, "Thermal Exchange (P)", "Boosts the Attack stat when the Pokémon is hit by a Fire-type move. The Pokémon also cannot be burned.", 9)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN),
     new Ability(Abilities.ANGER_SHELL, "Anger Shell (N)", "When an attack causes its HP to drop to half or less, the Pokémon gets angry. This lowers its Defense and Sp. Def stats but boosts its Attack, Sp. Atk, and Speed stats.", 9),
-    new Ability(Abilities.PURIFYING_SALT, "Purifying Salt (N)", "The Pokémon's pure salt protects it from status conditions and halves the damage taken from Ghost-type moves.", 9),
+    new Ability(Abilities.PURIFYING_SALT, "Purifying Salt", "The Pokémon's pure salt protects it from status conditions and halves the damage taken from Ghost-type moves.", 9)
+      .attr(StatusEffectImmunityAbAttr)
+      .attr(ReceivedTypeDamageMultiplierAbAttr, Type.GHOST, 0.5),
     new Ability(Abilities.WELL_BAKED_BODY, "Well-Baked Body", "The Pokémon takes no damage when hit by Fire-type moves. Instead, its Defense stat is sharply boosted.", 9)
       .attr(TypeImmunityStatChangeAbAttr, Type.FIRE, BattleStat.DEF, 2),
     new Ability(Abilities.WIND_RIDER, "Wind Rider (N)", "Boosts the Pokémon's Attack stat if Tailwind takes effect or if the Pokémon is hit by a wind move. The Pokémon also takes no damage from wind moves.", 9),
@@ -1807,11 +1886,14 @@ export function initAbilities() {
     new Ability(Abilities.SWORD_OF_RUIN, "Sword of Ruin (N)", "The power of the Pokémon's ruinous sword lowers the Defense stats of all Pokémon except itself.", 9),
     new Ability(Abilities.TABLETS_OF_RUIN, "Tablets of Ruin (N)", "The power of the Pokémon's ruinous wooden tablets lowers the Attack stats of all Pokémon except itself.", 9),
     new Ability(Abilities.BEADS_OF_RUIN, "Beads of Ruin (N)", "The power of the Pokémon's ruinous beads lowers the Sp. Def stats of all Pokémon except itself.", 9),
-    new Ability(Abilities.ORICHALCUM_PULSE, "Orichalcum Pulse (N)", "Turns the sunlight harsh when the Pokémon enters a battle. The ancient pulse thrumming through the Pokémon also boosts its Attack stat in harsh sunlight.", 9),
+    new Ability(Abilities.ORICHALCUM_PULSE, "Orichalcum Pulse", "Turns the sunlight harsh when the Pokémon enters a battle. The ancient pulse thrumming through the Pokémon also boosts its Attack stat in harsh sunlight.", 9)
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
+      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), BattleStatMultiplierAbAttr, BattleStat.ATK, 1),
     new Ability(Abilities.HADRON_ENGINE, "Hadron Engine (N)", "Turns the ground into Electric Terrain when the Pokémon enters a battle. The futuristic engine within the Pokémon also boosts its Sp. Atk stat on Electric Terrain.", 9),
     new Ability(Abilities.OPPORTUNIST, "Opportunist (N)", "If an opponent's stat is boosted, the Pokémon seizes the opportunity to boost the same stat for itself.", 9),
     new Ability(Abilities.CUD_CHEW, "Cud Chew (N)", "When the Pokémon eats a Berry, it will regurgitate that Berry at the end of the next turn and eat it one more time.", 9),
-    new Ability(Abilities.SHARPNESS, "Sharpness (N)", "Powers up slicing moves.", 9),
+    new Ability(Abilities.SHARPNESS, "Sharpness", "Powers up slicing moves.", 9)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SLICING_MOVE), 1.5),
     new Ability(Abilities.SUPREME_OVERLORD, "Supreme Overlord (N)", "When the Pokémon enters a battle, its Attack and Sp. Atk stats are slightly boosted for each of the allies in its party that have already been defeated.", 9),
     new Ability(Abilities.COSTAR, "Costar (N)", "When the Pokémon enters a battle, it copies an ally's stat changes.", 9),
     new Ability(Abilities.TOXIC_DEBRIS, "Toxic Debris (N)", "Scatters poison spikes at the feet of the opposing team when the Pokémon takes damage from physical moves.", 9),
