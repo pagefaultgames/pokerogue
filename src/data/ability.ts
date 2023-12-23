@@ -60,7 +60,7 @@ export abstract class AbAttr {
     this.showAbility = showAbility === undefined || showAbility;
   }
   
-  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 
@@ -100,7 +100,7 @@ export class DoubleBattleChanceAbAttr extends AbAttr {
 type PreDefendAbAttrCondition = (pokemon: Pokemon, attacker: Pokemon, move: PokemonMove) => boolean;
 
 export class PreDefendAbAttr extends AbAttr {
-  applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -258,7 +258,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
 }
 
 export class PostDefendAbAttr extends AbAttr {
-  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -370,7 +370,7 @@ export class PostDefendCritStatChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PreAttackAbAttr extends AbAttr {
-  applyPreAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+  applyPreAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -449,7 +449,7 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
     this.multiplier = multiplier;
   }
 
-  applyBattleStat(pokemon: Pokemon, battleStat: BattleStat, statValue: Utils.NumberHolder, args: any[]) {
+  applyBattleStat(pokemon: Pokemon, battleStat: BattleStat, statValue: Utils.NumberHolder, args: any[]): boolean | Promise<boolean> {
     if (battleStat === this.battleStat) {
       statValue.value *= this.multiplier;
       return true;
@@ -460,26 +460,29 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
 }
 
 export class PostAttackAbAttr extends AbAttr {
-  applyPostAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+  applyPostAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
-  applyPostAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (hitResult < HitResult.NO_EFFECT) {
-      const heldItems = this.getTargetHeldItems(defender).filter(i => i.getTransferrable(false));
-      if (heldItems.length) {
-        const stolenItem = heldItems[Utils.randInt(heldItems.length)];
-        // TODO: Add support for promises
-        pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false, false).then(success => {
-          if (success)
-            pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` stole\n${defender.name}'s ${stolenItem.type.name}!`));
-        });
-        return true;
+  applyPostAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      if (hitResult < HitResult.NO_EFFECT) {
+        const heldItems = this.getTargetHeldItems(defender).filter(i => i.getTransferrable(false));
+        if (heldItems.length) {
+          const stolenItem = heldItems[Utils.randInt(heldItems.length)];
+          // TODO: Add support for promises
+          pokemon.scene.tryTransferHeldItemModifier(stolenItem, pokemon, false, false).then(success => {
+            if (success)
+              pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` stole\n${defender.name}'s ${stolenItem.type.name}!`));
+            resolve(success);
+          });
+          return;
+        }
       }
-    }
-    return false;
+      resolve(false);
+    });
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
@@ -501,7 +504,7 @@ export class IgnoreOpponentStatChangesAbAttr extends AbAttr {
 }
 
 export class PostSummonAbAttr extends AbAttr {
-  applyPostSummon(pokemon: Pokemon, args: any[]) {
+  applyPostSummon(pokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -624,7 +627,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
 }
 
 export class PreStatChangeAbAttr extends AbAttr {
-  applyPreStatChange(pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  applyPreStatChange(pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -653,7 +656,7 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
 }
 
 export class PreSetStatusAbAttr extends AbAttr {
-  applyPreSetStatus(pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  applyPreSetStatus(pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -682,7 +685,7 @@ export class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
 }
 
 export class PreApplyBattlerTagAbAttr extends AbAttr {
-  applyPreApplyBattlerTag(pokemon: Pokemon, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  applyPreApplyBattlerTag(pokemon: Pokemon, tag: BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -715,7 +718,7 @@ export class BlockCritAbAttr extends AbAttr { }
 export class IgnoreContactAbAttr extends AbAttr { }
 
 export class PreWeatherEffectAbAttr extends AbAttr {
-  applyPreWeatherEffect(pokemon: Pokemon, weather: Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  applyPreWeatherEffect(pokemon: Pokemon, weather: Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -776,7 +779,7 @@ export class PostWeatherLapseAbAttr extends AbAttr {
     this.weatherTypes = weatherTypes;
   }
 
-  applyPostWeatherLapse(pokemon: Pokemon, weather: Weather, args: any[]): boolean {
+  applyPostWeatherLapse(pokemon: Pokemon, weather: Weather, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 
@@ -829,7 +832,7 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
 }
 
 export class PostTurnAbAttr extends AbAttr {
-  applyPostTurn(pokemon: Pokemon, args: any[]) {
+  applyPostTurn(pokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -899,7 +902,7 @@ export class RunSuccessAbAttr extends AbAttr {
 }
 
 export class CheckTrappedAbAttr extends AbAttr {
-  applyCheckTrapped(pokemon: Pokemon, trapped: Utils.BooleanHolder, args: any[]): boolean {
+  applyCheckTrapped(pokemon: Pokemon, trapped: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -939,329 +942,660 @@ export class WeightMultiplierAbAttr extends AbAttr {
   }
 }
 
-export function applyAbAttrs(attrType: { new(...args: any[]): AbAttr }, pokemon: Pokemon, cancelled: Utils.BooleanHolder, ...args: any[]): void {
-  if (!pokemon.canApplyAbility())
-    return;
+export function applyAbAttrs(attrType: { new(...args: any[]): AbAttr }, pokemon: Pokemon, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
 
-  const ability = pokemon.getAbility();
-  const attrs = ability.getAttrs(attrType) as AbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.apply(pokemon, cancelled, args)) {
-      if (attr.showAbility)
-        queueShowAbility(pokemon);
-      const message = attr.getTriggerMessage(pokemon);
-      if (message)
-        pokemon.scene.queueMessage(message);
-    }
-  }
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as AbAttr[];
 
-  pokemon.scene.clearPhaseQueueSplice();
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: AbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        if (attr.showAbility)
+          queueShowAbility(pokemon);
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      };
+      const result = attr.apply(pokemon, cancelled, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
 }
 
 export function applyPreDefendAbAttrs(attrType: { new(...args: any[]): PreDefendAbAttr },
-  pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, ...args: any[]): void {
-  if (!pokemon.canApplyAbility())
-    return;
+  pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
 
-  const ability = pokemon.getAbility();
-  const attrs = ability.getAttrs(attrType) as PreDefendAbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyPreDefend(pokemon, attacker, move, cancelled, args)) {
-      if (attr.showAbility)
-        queueShowAbility(pokemon);
-      const message = attr.getTriggerMessage(pokemon, attacker, move);
-      if (message)
-        pokemon.scene.queueMessage(message);
-    }
-  }
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as PreDefendAbAttr[];
 
-  pokemon.scene.clearPhaseQueueSplice();
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: PreDefendAbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        if (attr.showAbility)
+          queueShowAbility(pokemon);
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      };
+      const result = attr.applyPreDefend(pokemon, attacker, move, cancelled, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
 }
 
 export function applyPostDefendAbAttrs(attrType: { new(...args: any[]): PostDefendAbAttr },
-  pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, ...args: any[]): void {
-  if (!pokemon.canApplyAbility())
-    return;
+  pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
 
-  const ability = pokemon.getAbility();
-  const attrs = ability.getAttrs(attrType) as PostDefendAbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyPostDefend(pokemon, attacker, move, hitResult, args)) {
-      if (attr.showAbility)
-        queueShowAbility(pokemon);
-      const message = attr.getTriggerMessage(pokemon, attacker, move);
-      if (message)
-        pokemon.scene.queueMessage(message);
-    }
-  }
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as PostDefendAbAttr[];
 
-  pokemon.scene.clearPhaseQueueSplice();
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: PostDefendAbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        if (attr.showAbility)
+          queueShowAbility(pokemon);
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      };
+      const result = attr.applyPostDefend(pokemon, attacker, move, hitResult, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
 }
 
 export function applyBattleStatMultiplierAbAttrs(attrType: { new(...args: any[]): BattleStatMultiplierAbAttr },
-  pokemon: Pokemon, battleStat: BattleStat, statValue: Utils.NumberHolder, ...args: any[]) {
-  if (!pokemon.canApplyAbility())
-    return;
+  pokemon: Pokemon, battleStat: BattleStat, statValue: Utils.NumberHolder, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
 
-  const ability = pokemon.getAbility();
-  const attrs = ability.getAttrs(attrType) as BattleStatMultiplierAbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyBattleStat(pokemon, battleStat, statValue, args)) {
-      const message = attr.getTriggerMessage(pokemon);
-      if (message) {
-        if (attr.showAbility)
-          queueShowAbility(pokemon);
-        pokemon.scene.queueMessage(message);
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as BattleStatMultiplierAbAttr[];
+
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: BattleStatMultiplierAbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      };
+      const result = attr.applyBattleStat(pokemon, battleStat, statValue, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
       }
-    }
-  }
-
-  pokemon.scene.clearPhaseQueueSplice();
+    };
+    applyNextAbAttr();
+  });
 }
 
 export function applyPreAttackAbAttrs(attrType: { new(...args: any[]): PreAttackAbAttr },
-  pokemon: Pokemon, defender: Pokemon, move: PokemonMove, ...args: any[]): void {
-  if (!pokemon.canApplyAbility())
-    return;
+  pokemon: Pokemon, defender: Pokemon, move: PokemonMove, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
 
-  const ability = pokemon.getAbility();
-  const attrs = ability.getAttrs(attrType) as PreAttackAbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyPreAttack(pokemon, defender, move, args)) {
-      if (attr.showAbility)
-        queueShowAbility(pokemon);
-      const message = attr.getTriggerMessage(pokemon, defender, move);
-      if (message)
-        pokemon.scene.queueMessage(message);
-    }
-  }
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as PreAttackAbAttr[];
 
-  pokemon.scene.clearPhaseQueueSplice();
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: PreAttackAbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        if (attr.showAbility)
+          queueShowAbility(pokemon);
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      };
+      const result = attr.applyPreAttack(pokemon, defender, move, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
 }
 
 export function applyPostAttackAbAttrs(attrType: { new(...args: any[]): PostAttackAbAttr },
-  pokemon: Pokemon, defender: Pokemon, move: PokemonMove, hitResult: HitResult, ...args: any[]): void {
-  if (!pokemon.canApplyAbility())
-    return;
+  pokemon: Pokemon, defender: Pokemon, move: PokemonMove, hitResult: HitResult, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
 
-  const ability = pokemon.getAbility();
-  const attrs = ability.getAttrs(attrType) as PostAttackAbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyPostAttack(pokemon, defender, move, hitResult, args)) {
-      if (attr.showAbility)
-        queueShowAbility(pokemon);
-      const message = attr.getTriggerMessage(pokemon, defender, move);
-      if (message)
-        pokemon.scene.queueMessage(message);
-    }
-  }
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as PostAttackAbAttr[];
 
-  pokemon.scene.clearPhaseQueueSplice();
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: PostAttackAbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        if (attr.showAbility)
+          queueShowAbility(pokemon);
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      };
+      const result = attr.applyPostAttack(pokemon, defender, move, hitResult, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
 }
 
 export function applyPostSummonAbAttrs(attrType: { new(...args: any[]): PostSummonAbAttr },
-  pokemon: Pokemon, ...args: any[]): void {
-  if (!pokemon.canApplyAbility())
-    return;
+  pokemon: Pokemon, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
 
-  const ability = pokemon.getAbility();
-  const attrs = ability.getAttrs(attrType) as PostSummonAbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyPostSummon(pokemon, args)) {
-      if (attr.showAbility)
-        queueShowAbility(pokemon);
-      const message = attr.getTriggerMessage(pokemon);
-      if (message)
-        pokemon.scene.queueMessage(message);
-    }
-  }
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as PostSummonAbAttr[];
 
-  pokemon.scene.clearPhaseQueueSplice();
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: PostSummonAbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        if (attr.showAbility)
+          queueShowAbility(pokemon);
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      };
+      const result = attr.applyPostSummon(pokemon, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
 }
 
 export function applyPreStatChangeAbAttrs(attrType: { new(...args: any[]): PreStatChangeAbAttr },
-  pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, ...args: any[]): void {
-  if (!pokemon.canApplyAbility())
-    return;
+  pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
 
-  const ability = pokemon.getAbility();
-  const attrs = ability.getAttrs(attrType) as PreStatChangeAbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyPreStatChange(pokemon, stat, cancelled, args)) {
-      if (attr.showAbility)
-        queueShowAbility(pokemon);
-      const message = attr.getTriggerMessage(pokemon, stat);
-      if (message)
-        pokemon.scene.queueMessage(message);
-    }
-  }
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as PreStatChangeAbAttr[];
 
-  pokemon.scene.clearPhaseQueueSplice();
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: PreStatChangeAbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        if (attr.showAbility)
+          queueShowAbility(pokemon);
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      };
+      const result = attr.applyPreStatChange(pokemon, stat, cancelled, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
 }
 
 export function applyPreSetStatusAbAttrs(attrType: { new(...args: any[]): PreSetStatusAbAttr },
-  pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, ...args: any[]): void {
-  if (!pokemon.canApplyAbility())
-    return;
+  pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
 
-  const ability = pokemon.getAbility();
-  const attrs = ability.getAttrs(attrType) as PreSetStatusAbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyPreSetStatus(pokemon, effect, cancelled, args)) {
-      if (attr.showAbility)
-        queueShowAbility(pokemon);
-      const message = attr.getTriggerMessage(pokemon, effect);
-      if (message)
-        pokemon.scene.queueMessage(message);
-    }
-  }
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as PreSetStatusAbAttr[];
 
-  pokemon.scene.clearPhaseQueueSplice();
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: PreSetStatusAbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        if (attr.showAbility)
+          queueShowAbility(pokemon);
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      };
+      const result = attr.applyPreSetStatus(pokemon, effect, cancelled, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
 }
 
 export function applyPreApplyBattlerTagAbAttrs(attrType: { new(...args: any[]): PreApplyBattlerTagAbAttr },
-  pokemon: Pokemon, tag: BattlerTag, cancelled: Utils.BooleanHolder, ...args: any[]): void {
-  if (!pokemon.canApplyAbility())
-    return;
+  pokemon: Pokemon, tag: BattlerTag, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
 
-  const ability = pokemon.getAbility();
-  const attrs = ability.getAttrs(attrType) as PreApplyBattlerTagAbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyPreApplyBattlerTag(pokemon, tag, cancelled, args)) {
-      if (attr.showAbility)
-        queueShowAbility(pokemon);
-      const message = attr.getTriggerMessage(pokemon, tag);
-      if (message)
-        pokemon.scene.queueMessage(message);
-    }
-  }
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as PreApplyBattlerTagAbAttr[];
 
-  pokemon.scene.clearPhaseQueueSplice();
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: PreApplyBattlerTagAbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        if (attr.showAbility)
+          queueShowAbility(pokemon);
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      };
+      const result = attr.applyPreApplyBattlerTag(pokemon, tag, cancelled, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
 }
 
 export function applyPreWeatherEffectAbAttrs(attrType: { new(...args: any[]): PreWeatherEffectAbAttr },
-  pokemon: Pokemon, weather: Weather, cancelled: Utils.BooleanHolder, ...args: any[]): void {
-  if (!pokemon.canApplyAbility())
-    return;
+  pokemon: Pokemon, weather: Weather, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
 
-  const ability = pokemon.getAbility();
-  const attrs = ability.getAttrs(attrType) as PreWeatherEffectAbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyPreWeatherEffect(pokemon, weather, cancelled, args)) {
-      pokemon.scene.abilityBar.showAbility(pokemon);
-      const message = attr.getTriggerMessage(pokemon, weather);
-      if (message)
-        pokemon.scene.queueMessage(message);
-    }
-  }
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as PreWeatherEffectAbAttr[];
 
-  pokemon.scene.clearPhaseQueueSplice();
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: PreWeatherEffectAbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        pokemon.scene.abilityBar.showAbility(pokemon);
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      };
+      const result = attr.applyPreWeatherEffect(pokemon, weather, cancelled, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
 }
 
 export function applyPostTurnAbAttrs(attrType: { new(...args: any[]): PostTurnAbAttr },
-  pokemon: Pokemon, ...args: any[]): void {
-  if (!pokemon.canApplyAbility())
-    return;
+  pokemon: Pokemon, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
 
-  const ability = pokemon.getAbility();
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as PostTurnAbAttr[];
 
-  const attrs = ability.getAttrs(attrType) as PostTurnAbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyPostTurn(pokemon, args)) {
-      if (attr.showAbility)
-        queueShowAbility(pokemon);
-      const message = attr.getTriggerMessage(pokemon);
-      if (message)
-        pokemon.scene.queueMessage(message);
-    }
-  }
-
-  pokemon.scene.clearPhaseQueueSplice();
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: PostTurnAbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        if (attr.showAbility)
+          queueShowAbility(pokemon);
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      };
+      const result = attr.applyPostTurn(pokemon, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
 }
 
 export function applyPostWeatherLapseAbAttrs(attrType: { new(...args: any[]): PostWeatherLapseAbAttr },
-  pokemon: Pokemon, weather: Weather, ...args: any[]): void {
-  if (!pokemon.canApplyAbility())
-    return;
+  pokemon: Pokemon, weather: Weather, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
+    
+    if (weather.isEffectSuppressed(pokemon.scene))
+      return resolve();
 
-  if (weather.isEffectSuppressed(pokemon.scene))
-    return;
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as PostWeatherLapseAbAttr[];
 
-  const ability = pokemon.getAbility();
-
-  const attrs = ability.getAttrs(attrType) as PostWeatherLapseAbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyPostWeatherLapse(pokemon, weather, args)) {
-      if (attr.showAbility)
-        queueShowAbility(pokemon);
-      const message = attr.getTriggerMessage(pokemon, weather);
-      if (message)
-        pokemon.scene.queueMessage(message);
-    }
-  }
-
-  pokemon.scene.clearPhaseQueueSplice();
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: PostWeatherLapseAbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        if (attr.showAbility)
+          queueShowAbility(pokemon);
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.queueMessage(message);
+      };
+      const result = attr.applyPostWeatherLapse(pokemon, weather, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
 }
 
 export function applyCheckTrappedAbAttrs(attrType: { new(...args: any[]): CheckTrappedAbAttr },
-  pokemon: Pokemon, trapped: Utils.BooleanHolder, ...args: any[]): void {
-  if (!pokemon.canApplyAbility())
-    return;
+  pokemon: Pokemon, trapped: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  return new Promise(resolve => {
+    if (!pokemon.canApplyAbility())
+      return resolve();
 
-  const ability = pokemon.getAbility();
-  const attrs = ability.getAttrs(attrType) as CheckTrappedAbAttr[];
-  for (let attr of attrs) {
-    if (!canApplyAttr(pokemon, attr))
-      continue;
-    pokemon.scene.setPhaseQueueSplice();
-    if (attr.applyCheckTrapped(pokemon, trapped, args)) {
-      // Don't show ability bar because this call is asynchronous
-      const message = attr.getTriggerMessage(pokemon);
-      if (message)
-        pokemon.scene.ui.showText(message, null, () => pokemon.scene.ui.showText(null, 0), null, true);
-    }
-  }
+    const ability = pokemon.getAbility();
+    const attrs = ability.getAttrs(attrType) as CheckTrappedAbAttr[];
 
-  pokemon.scene.clearPhaseQueueSplice();
+    const clearSpliceQueueAndResolve = () => {
+      pokemon.scene.clearPhaseQueueSplice();
+      resolve();
+    };
+    const applyNextAbAttr = () => {
+      if (attrs.length)
+        applyAbAttr(attrs.shift());
+      else
+        clearSpliceQueueAndResolve();
+    };
+    const applyAbAttr = (attr: CheckTrappedAbAttr) => {
+      if (!canApplyAttr(pokemon, attr))
+        return applyNextAbAttr();
+      pokemon.scene.setPhaseQueueSplice();
+      const onApplySuccess = () => {
+        // Don't show ability bar because this call is asynchronous
+        const message = attr.getTriggerMessage(pokemon);
+        if (message)
+          pokemon.scene.ui.showText(message, null, () => pokemon.scene.ui.showText(null, 0), null, true);
+      };
+      const result = attr.applyCheckTrapped(pokemon, trapped, args);
+      if (result instanceof Promise) {
+        result.then(success => {
+          if (success)
+            onApplySuccess();
+          applyNextAbAttr();
+        });
+      } else {
+        if (result)
+          onApplySuccess();
+        applyNextAbAttr();
+      }
+    };
+    applyNextAbAttr();
+  });
 }
 
 function canApplyAttr(pokemon: Pokemon, attr: AbAttr): boolean {
