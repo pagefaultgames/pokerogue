@@ -512,9 +512,7 @@ export class PostSummonPhase extends PokemonPhase {
     const pokemon = this.getPokemon();
 
     this.scene.arena.applyTags(ArenaTrapTag, pokemon);
-    applyPostSummonAbAttrs(PostSummonAbAttr, pokemon);
-
-    this.end();
+    applyPostSummonAbAttrs(PostSummonAbAttr, pokemon).then(() => this.end());
   }
 }
 

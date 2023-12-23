@@ -530,8 +530,8 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
   private tagType: BattlerTagType;
   private turnCount: integer;
 
-  constructor(tagType: BattlerTagType, turnCount: integer) {
-    super(false);
+  constructor(tagType: BattlerTagType, turnCount: integer, showAbility?: boolean) {
+    super(showAbility);
 
     this.tagType = tagType;
     this.turnCount = turnCount;
@@ -1498,7 +1498,7 @@ export function initAbilities() {
       .attr(ProtectStatAbAttr, BattleStat.ATK),
     new Ability(Abilities.PICKUP, "Pickup (N)", "The Pokémon may pick up the item an opposing Pokémon used during a battle. It may pick up items outside of battle, too.", 3),
     new Ability(Abilities.TRUANT, "Truant", "The Pokémon can't use a move if it had used a move on the previous turn.", 3)
-      .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.TRUANT, 1),
+      .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.TRUANT, 1, false),
     new Ability(Abilities.HUSTLE, "Hustle", "Boosts the Attack stat, but lowers accuracy.", 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 0.8),
@@ -1591,7 +1591,8 @@ export function initAbilities() {
       .attr(IgnoreOpponentStatChangesAbAttr),
     new Ability(Abilities.TINTED_LENS, "Tinted Lens (N)", "The Pokémon can use \"not very effective\" moves to deal regular damage.", 4),
     new Ability(Abilities.FILTER, "Filter (N)", "Reduces the power of supereffective attacks taken.", 4),
-    new Ability(Abilities.SLOW_START, "Slow Start (N)", "For five turns, the Pokémon's Attack and Speed stats are halved.", 4),
+    new Ability(Abilities.SLOW_START, "Slow Start", "For five turns, the Pokémon's Attack and Speed stats are halved.", 4)
+      .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.SLOW_START, 5),
     new Ability(Abilities.SCRAPPY, "Scrappy (N)", "The Pokémon can hit Ghost-type Pokémon with Normal- and Fighting-type moves.", 4),
     new Ability(Abilities.STORM_DRAIN, "Storm Drain", "Draws in all Water-type moves. Instead of being hit by Water-type moves, it boosts its Sp. Atk.", 4)
       .attr(TypeImmunityStatChangeAbAttr, Type.WATER, BattleStat.SPATK, 1),

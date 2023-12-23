@@ -451,10 +451,28 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const statValue = new Utils.NumberHolder(this.getStat(stat));
     applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this, battleStat, statValue);
     let ret = statValue.value * (Math.max(2, 2 + statLevel.value) / Math.max(2, 2 - statLevel.value));
-    if (stat === Stat.SPDEF && this.scene.arena.weather?.weatherType === WeatherType.SANDSTORM)
-      ret *= 1.5;
-    if (stat === Stat.SPD && this.status && this.status.effect === StatusEffect.PARALYSIS)
-      ret >>= 2;
+    switch (stat) {
+      case Stat.ATK:
+        if (this.getTag(BattlerTagType.SLOW_START))
+          ret >>= 1;
+        console.log(ret, this.name);
+        break;
+      case Stat.DEF:
+        break;
+      case Stat.SPATK:
+        break;
+      case Stat.SPDEF:
+        if (this.scene.arena.weather?.weatherType === WeatherType.SANDSTORM)
+          ret *= 1.5;
+        break;
+      case Stat.SPD:
+        if (this.getTag(BattlerTagType.SLOW_START))
+          ret >>= 1;
+        if (this.status && this.status.effect === StatusEffect.PARALYSIS)
+          ret >>= 2;
+        break;
+    }
+    
     return Math.floor(ret);
   }
 
@@ -1071,7 +1089,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getTag(tagType: BattlerTagType | { new(...args: any[]): BattlerTag }): BattlerTag {
     if (!this.summonData)
       return null;
-    return typeof(tagType) === 'number'
+    return typeof(tagType) === 'string'
       ? this.summonData.tags.find(t => t.tagType === tagType)
       : this.summonData.tags.find(t => t instanceof tagType);
   }
@@ -1085,7 +1103,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getTags(tagType: BattlerTagType | { new(...args: any[]): BattlerTag }): BattlerTag[] {
     if (!this.summonData)
       return [];
-    return typeof(tagType) === 'number'
+    return typeof(tagType) === 'string'
       ? this.summonData.tags.filter(t => t.tagType === tagType)
       : this.summonData.tags.filter(t => t instanceof tagType);
   }

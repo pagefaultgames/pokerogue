@@ -10,38 +10,39 @@ import { Type } from "./type";
 import { Abilities } from "./ability";
 
 export enum BattlerTagType {
-  NONE,
-  RECHARGING,
-  FLINCHED,
-  CONFUSED,
-  INFATUATED,
-  SEEDED,
-  NIGHTMARE,
-  FRENZY,
-  ENCORE,
-  INGRAIN,
-  AQUA_RING,
-  DROWSY,
-  TRAPPED,
-  BIND,
-  WRAP,
-  FIRE_SPIN,
-  WHIRLPOOL,
-  CLAMP,
-  SAND_TOMB,
-  MAGMA_STORM,
-  PROTECTED,
-  PERISH_SONG,
-  TRUANT,
-  FLYING,
-  UNDERGROUND,
-  HIDDEN,
-  FIRE_BOOST,
-  CRIT_BOOST,
-  NO_CRIT,
-  IGNORE_ACCURACY,
-  BYPASS_SLEEP,
-  IGNORE_FLYING
+  NONE = "NONE",
+  RECHARGING = "RECHARGING",
+  FLINCHED = "FLINCHED",
+  CONFUSED = "CONFUSED",
+  INFATUATED = "INFATUATED",
+  SEEDED = "SEEDED",
+  NIGHTMARE = "NIGHTMARE",
+  FRENZY = "FRENZY",
+  ENCORE = "ENCORE",
+  INGRAIN = "INGRAIN",
+  AQUA_RING = "AQUA_RING",
+  DROWSY = "DROWSY",
+  TRAPPED = "TRAPPED",
+  BIND = "BIND",
+  WRAP = "WRAP",
+  FIRE_SPIN = "FIRE_SPIN",
+  WHIRLPOOL = "WHIRLPOOL",
+  CLAMP = "CLAMP",
+  SAND_TOMB = "SAND_TOMB",
+  MAGMA_STORM = "MAGMA_STORM",
+  PROTECTED = "PROTECTED",
+  PERISH_SONG = "PERISH_SONG",
+  TRUANT = "TRUANT",
+  SLOW_START = "SLOW_START",
+  FLYING = "FLYING",
+  UNDERGROUND = "UNDERGROUND",
+  HIDDEN = "HIDDEN",
+  FIRE_BOOST = "FIRE_BOOST",
+  CRIT_BOOST = "CRIT_BOOST",
+  NO_CRIT = "NO_CRIT",
+  IGNORE_ACCURACY = "IGNORE_ACCURACY",
+  BYPASS_SLEEP = "BYPASS_SLEEP",
+  IGNORE_FLYING = "IGNORE_FLYING"
 }
 
 export enum BattlerTagLapseType {
@@ -616,9 +617,19 @@ export class PerishSongTag extends BattlerTag {
   }
 }
 
-export class TruantTag extends BattlerTag {
+export class AbilityBattlerTag extends BattlerTag {
+  public ability: Abilities;
+
+  constructor(tagType: BattlerTagType, ability: Abilities, lapseType: BattlerTagLapseType, turnCount: integer) {
+    super(tagType, lapseType, turnCount, undefined);
+
+    this.ability = ability;
+  }
+}
+
+export class TruantTag extends AbilityBattlerTag {
   constructor() {
-    super(BattlerTagType.TRUANT, BattlerTagLapseType.MOVE, 1, undefined);
+    super(BattlerTagType.TRUANT, Abilities.TRUANT, BattlerTagLapseType.MOVE, 1);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -634,6 +645,31 @@ export class TruantTag extends BattlerTag {
     }
 
     return true;
+  }
+}
+
+export class SlowStartTag extends AbilityBattlerTag {
+  constructor() {
+    super(BattlerTagType.SLOW_START, Abilities.SLOW_START, BattlerTagLapseType.TURN_END, 5);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+    
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' can\'t\nget it going!'), null, false, null, true);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (pokemon.getAbility().id !== this.ability)
+      this.turnCount = 1;
+
+    return super.lapse(pokemon, lapseType);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' finally\ngot its act together!'), null, false, null);
   }
 }
 
@@ -745,6 +781,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new PerishSongTag(turnCount);
     case BattlerTagType.TRUANT:
       return new TruantTag();
+    case BattlerTagType.SLOW_START:
+      return new SlowStartTag();
     case BattlerTagType.FLYING:
     case BattlerTagType.UNDERGROUND:
     case BattlerTagType.HIDDEN:
