@@ -17,6 +17,7 @@ export class Ability {
   public name: string;
   public description: string;
   public generation: integer;
+  public isPassive: boolean;
   public attrs: AbAttr[];
   public conditions: AbAttrCondition[];
 
@@ -42,6 +43,11 @@ export class Ability {
 
   hasAttr(attrType: { new(...args: any[]): AbAttr }): boolean {
     return !!this.getAttrs(attrType).length;
+  }
+
+  passive(): Ability {
+    this.isPassive = true;
+    return this;
   }
 
   condition(condition: AbAttrCondition): Ability {
@@ -1508,7 +1514,8 @@ export function initAbilities() {
     new Ability(Abilities.MINUS, "Minus (N)", "Boosts the Sp. Atk stat of the Pokémon if an ally with the Plus or Minus Ability is also in battle.", 3),
     new Ability(Abilities.FORECAST, "Forecast (N)", "The Pokémon transforms with the weather to change its type to Water, Fire, or Ice.", 3),
     new Ability(Abilities.STICKY_HOLD, "Sticky Hold", "Items held by the Pokémon are stuck fast and cannot be removed by other Pokémon.", 3)
-      .attr(BlockItemTheftAbAttr),
+      .attr(BlockItemTheftAbAttr)
+      .passive(),
     new Ability(Abilities.SHED_SKIN, "Shed Skin (N)", "The Pokémon may heal its own status conditions by shedding its skin.", 3),
     new Ability(Abilities.GUTS, "Guts (N)", "It's so gutsy that having a status condition boosts the Pokémon's Attack stat.", 3),
     new Ability(Abilities.MARVEL_SCALE, "Marvel Scale (N)", "The Pokémon's marvelous scales boost the Defense stat if it has a status condition.", 3),

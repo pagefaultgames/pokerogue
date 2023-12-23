@@ -608,7 +608,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   canApplyAbility(): boolean {
-    return this.hp && !this.getAbility().conditions.find(condition => !condition(this));
+    const ability = this.getAbility();
+    return (this.hp || ability.isPassive) && !this.getAbility().conditions.find(condition => !condition(this));
   }
 
   getWeight(): number {

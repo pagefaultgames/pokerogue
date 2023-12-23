@@ -1398,20 +1398,26 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
     const transferredModifierTypes: ModifierTypes.ModifierType[] = [];
     const itemModifiers = pokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
         && (m as PokemonHeldItemModifier).pokemonId === targetPokemon.id && m.getTransferrable(withinParty), targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
+
+    let heldItemTransferPromises: Promise<void>[] = [];
     
     for (let i = 0; i < transferredItemCount; i++) {
       if (!itemModifiers.length)
         break;
       const randItemIndex = Utils.randInt(itemModifiers.length);
       const randItem = itemModifiers[randItemIndex];
-      if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false, false)) {
-        transferredModifierTypes.push(randItem.type);
-        itemModifiers.splice(randItemIndex, 1);
-      }
+      heldItemTransferPromises.push(pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false, false, true).then(success => {
+        if (success) {
+          transferredModifierTypes.push(randItem.type);
+          itemModifiers.splice(randItemIndex, 1);
+        }
+      }));
     }
 
-    for (let mt of transferredModifierTypes)
-      pokemon.scene.queueMessage(this.getTransferMessage(pokemon, targetPokemon, mt));
+    Promise.all(heldItemTransferPromises).then(() => {
+      for (let mt of transferredModifierTypes)
+        pokemon.scene.queueMessage(this.getTransferMessage(pokemon, targetPokemon, mt));
+    });
 
     return !!transferredModifierTypes.length;
   }
@@ -1447,7 +1453,7 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
-    return 3;
+    return 1;
   }
 }
 

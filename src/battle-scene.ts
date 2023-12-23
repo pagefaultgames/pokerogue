@@ -1209,7 +1209,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.phaseQueue.push(new TurnInitPhase(this));
 	}
 
-	addModifier(modifier: Modifier, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean): Promise<void> {
+	addModifier(modifier: Modifier, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean): Promise<void> {
 		return new Promise(resolve => {
 			const soundName = modifier.type.soundName;
 			this.validateAchvs(ModifierAchv, modifier);
@@ -1220,11 +1220,11 @@ export default class BattleScene extends Phaser.Scene {
 				} else if (!virtual) {
 					const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
 					this.queueMessage(`The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, null, true);
-					return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound).then(() => resolve());
+					return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant).then(() => resolve());
 				}
 
 				if (!ignoreUpdate && !virtual)
-					return this.updateModifiers().then(() => resolve());
+					return this.updateModifiers(true, instant).then(() => resolve());
 			} else if (modifier instanceof ConsumableModifier) {
 				if (playSound && !this.sound.get(soundName))
 					this.playSound(soundName);
@@ -1248,7 +1248,7 @@ export default class BattleScene extends Phaser.Scene {
 							modifier.apply(args);
 					}
 					
-					return Promise.allSettled(this.party.map(p => p.updateInfo())).then(() => resolve());
+					return Promise.allSettled(this.party.map(p => p.updateInfo(instant))).then(() => resolve());
 				} else {
 					const args = [ this ];
 					if (modifier.shouldApply(args))
@@ -1260,61 +1260,58 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	addEnemyModifier(itemModifier: PersistentModifier, ignoreUpdate?: boolean): Promise<void> {
+	addEnemyModifier(itemModifier: PersistentModifier, ignoreUpdate?: boolean, instant?: boolean): Promise<void> {
 		return new Promise(resolve => {
 			itemModifier.add(this.enemyModifiers, false, this);
 			if (!ignoreUpdate)
-				this.updateModifiers(false).then(() => resolve());
+				this.updateModifiers(false, instant).then(() => resolve());
 			else
 				resolve();
 		});
 	}
 
-	tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferStack: boolean, playSound: boolean): Promise<boolean> {
+	tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferStack: boolean, playSound: boolean, instant?: boolean): Promise<boolean> {
 		return new Promise(resolve => {
 			const source = itemModifier.getPokemon(target.scene);
 			const cancelled = new Utils.BooleanHolder(false);
-			applyAbAttrs(BlockItemTheftAbAttr, target, cancelled);
-			if (cancelled.value) {
-				resolve(false);
-				return;
-			}
-			const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
-			newItemModifier.pokemonId = target.id;
-			const matchingModifier = target.scene.findModifier(m => m instanceof PokemonHeldItemModifier
-				&& (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
-			let removeOld = true;
-			if (matchingModifier) {
-				const maxStackCount = matchingModifier.getMaxStackCount(source.scene);
-				if (matchingModifier.stackCount >= maxStackCount) {
-					resolve(false);
+			applyAbAttrs(BlockItemTheftAbAttr, source, cancelled).then(() => {
+				if (cancelled.value)
+					return resolve(false);
+				const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
+				newItemModifier.pokemonId = target.id;
+				const matchingModifier = target.scene.findModifier(m => m instanceof PokemonHeldItemModifier
+					&& (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
+				let removeOld = true;
+				if (matchingModifier) {
+					const maxStackCount = matchingModifier.getMaxStackCount(source.scene);
+					if (matchingModifier.stackCount >= maxStackCount)
+						return resolve(false);
+					const countTaken = transferStack ? Math.min(itemModifier.stackCount, maxStackCount - matchingModifier.stackCount) : 1;
+					itemModifier.stackCount -= countTaken;
+					newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
+					removeOld = !itemModifier.stackCount;
+				} else if (!transferStack) {
+					newItemModifier.stackCount = 1;
+					removeOld = !(--itemModifier.stackCount);
+				}
+				if (!removeOld || this.removeModifier(itemModifier, !source.isPlayer())) {
+					const addModifier = () => {
+						if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
+							if (target.isPlayer())
+								this.addModifier(newItemModifier, false, playSound, false, instant).then(() => resolve(true));
+							else
+								this.addEnemyModifier(newItemModifier, false, instant).then(() => resolve(true));
+						} else
+							resolve(false);
+					};
+					if (source.isPlayer() !== target.isPlayer())
+						this.updateModifiers(source.isPlayer(), instant).then(() => addModifier());
+					else
+						addModifier();
 					return;
 				}
-				const countTaken = transferStack ? Math.min(itemModifier.stackCount, maxStackCount - matchingModifier.stackCount) : 1;
-				itemModifier.stackCount -= countTaken;
-				newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
-				removeOld = !itemModifier.stackCount;
-			} else if (!transferStack) {
-				newItemModifier.stackCount = 1;
-				removeOld = !(--itemModifier.stackCount);
-			}
-			if (!removeOld || this.removeModifier(itemModifier, !source.isPlayer())) {
-				const addModifier = () => {
-					if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
-						if (target.isPlayer())
-							this.addModifier(newItemModifier, false, playSound).then(() => resolve(true));
-						else
-							this.addEnemyModifier(newItemModifier).then(() => resolve(true));
-					} else
-						resolve(false);
-				};
-				if (source.isPlayer() !== target.isPlayer())
-					this.updateModifiers(source.isPlayer()).then(() => addModifier());
-				else
-					addModifier();
-				return;
-			}
-			resolve(false);
+				resolve(false);
+			});
 		});
 	}
 
@@ -1366,7 +1363,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.updateModifiers(false).then(() => this.updateUIPositions());
 	}
 
-	updateModifiers(player?: boolean): Promise<void> {
+	updateModifiers(player?: boolean, instant?: boolean): Promise<void> {
 		if (player === undefined)
 			player = true;
 		return new Promise(resolve => {
@@ -1387,7 +1384,7 @@ export default class BattleScene extends Phaser.Scene {
 					modifiers.splice(modifiers.indexOf(modifier), 1);
 			}
 
-			this.updatePartyForModifiers(player ? this.getParty() : this.getEnemyParty()).then(() => {
+			this.updatePartyForModifiers(player ? this.getParty() : this.getEnemyParty(), instant).then(() => {
 				(player ? this.modifierBar : this.enemyModifierBar).updateModifiers(modifiers);
 				if (!player)
 					this.updateUIPositions();
@@ -1396,11 +1393,11 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	updatePartyForModifiers(party: Pokemon[]): Promise<void> {
+	updatePartyForModifiers(party: Pokemon[], instant?: boolean): Promise<void> {
 		return new Promise(resolve => {
 			Promise.allSettled(party.map(p => {
 				p.calculateStats();
-				return p.updateInfo();
+				return p.updateInfo(instant);
 			})).then(() => resolve());
 		});
 	}
