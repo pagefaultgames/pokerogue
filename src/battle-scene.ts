@@ -77,6 +77,8 @@ export default class BattleScene extends Phaser.Scene {
 	public gameSpeed: integer = 1;
 	public showLevelUpStats: boolean = true;
 	public windowType: integer = 1;
+	public enableTouchControls: boolean = false;
+	public enableVibration: boolean = false;
 	public quickStart: boolean = quickStart;
 	public finalWave: integer = 200;
 	
@@ -910,19 +912,24 @@ export default class BattleScene extends Phaser.Scene {
 		if (this.blockInput)
 			return;
 		let inputSuccess = false;
-		if (this.isButtonPressed(Button.UP))
+		let vibrationLength = 0;
+		if (this.isButtonPressed(Button.UP)) {
 			inputSuccess = this.ui.processInput(Button.UP);
-		else if (this.isButtonPressed(Button.DOWN))
+			vibrationLength = 5;
+		} else if (this.isButtonPressed(Button.DOWN)) {
 			inputSuccess = this.ui.processInput(Button.DOWN);
-		else if (this.isButtonPressed(Button.LEFT))
+			vibrationLength = 5;
+		} else if (this.isButtonPressed(Button.LEFT)) {
 			inputSuccess = this.ui.processInput(Button.LEFT);
-		else if (this.isButtonPressed(Button.RIGHT))
+			vibrationLength = 5;
+		} else if (this.isButtonPressed(Button.RIGHT)) {
 			inputSuccess = this.ui.processInput(Button.RIGHT);
-		else if (this.isButtonPressed(Button.ACTION))
+			vibrationLength = 5;
+		} else if (this.isButtonPressed(Button.ACTION))
 			inputSuccess = this.ui.processInput(Button.ACTION);
-		else if (this.isButtonPressed(Button.CANCEL))
+		else if (this.isButtonPressed(Button.CANCEL)) {
 			inputSuccess = this.ui.processInput(Button.CANCEL);
-		else if (this.isButtonPressed(Button.MENU)) {
+		} else if (this.isButtonPressed(Button.MENU)) {
 			switch (this.ui.getMode()) {
 				case Mode.MESSAGE:
 					if (!(this.ui.getHandler() as MessageUiHandler).pendingPrompt)
@@ -938,12 +945,14 @@ export default class BattleScene extends Phaser.Scene {
 				case Mode.CONFIRM:
 				case Mode.GAME_MODE_SELECT:
 					this.ui.setOverlayMode(Mode.MENU);
+					inputSuccess = true;
 					break;
 				case Mode.MENU:
 				case Mode.SETTINGS:
 				case Mode.ACHIEVEMENTS:
 					this.ui.revertMode();
 					this.playSound('select');
+					inputSuccess = true;
 					break;
 				default:
 					return;
@@ -959,8 +968,7 @@ export default class BattleScene extends Phaser.Scene {
 				inputSuccess = this.ui.processInput(Button.CYCLE_ABILITY);
 			else
 				return;
-		}
-		else if (this.isButtonPressed(Button.SPEED_UP)) {
+		}	else if (this.isButtonPressed(Button.SPEED_UP)) {
 			if (this.gameSpeed < 5) {
 				this.gameData.saveSetting(Setting.Game_Speed, settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) + 1);
 				if (this.ui.getMode() === Mode.SETTINGS)
@@ -983,6 +991,8 @@ export default class BattleScene extends Phaser.Scene {
 				return;
 		} else
 			return;
+		if (inputSuccess && this.enableVibration)
+			navigator.vibrate(vibrationLength || 10);
 		this.blockInput = true;
 		this.time.delayedCall(Utils.fixedInt(250), () => this.blockInput = false);
 	}

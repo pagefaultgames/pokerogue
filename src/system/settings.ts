@@ -8,7 +8,8 @@ export enum Setting {
   SE_Volume = "SE_VOLUME",
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
   Window_Type = "WINDOW_TYPE",
-  Touch_Controls = "TOUCH_CONTROLS"
+  Touch_Controls = "TOUCH_CONTROLS",
+  Vibration = "VIBRATION"
 }
 
 export interface SettingOptions {
@@ -26,7 +27,8 @@ export const settingOptions: SettingOptions = {
   [Setting.SE_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ],
   [Setting.Window_Type]: new Array(4).fill(null).map((_, i) => (i + 1).toString()),
-  [Setting.Touch_Controls]: [ 'Auto', 'Disabled' ]
+  [Setting.Touch_Controls]: [ 'Auto', 'Disabled' ],
+  [Setting.Vibration]: [ 'Auto', 'Disabled' ]
 };
 
 export const settingDefaults: SettingDefaults = {
@@ -36,7 +38,8 @@ export const settingDefaults: SettingDefaults = {
   [Setting.SE_Volume]: 10,
   [Setting.Show_Stats_on_Level_Up]: 1,
   [Setting.Window_Type]: 0,
-  [Setting.Touch_Controls]: 0
+  [Setting.Touch_Controls]: 0,
+  [Setting.Vibration]: 0
 };
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
@@ -63,9 +66,13 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       updateWindowType(scene, parseInt(settingOptions[setting][value]));
       break;
     case Setting.Touch_Controls:
+      scene.enableTouchControls = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
       const touchControls = document.getElementById('touchControls');
       if (touchControls)
-        touchControls.classList.toggle('visible', settingOptions[setting][value] !== 'Disabled' && hasTouchscreen());
+        touchControls.classList.toggle('visible', scene.enableTouchControls);
+      break;
+    case Setting.Vibration:
+      scene.enableVibration = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
       break;
   }
 
