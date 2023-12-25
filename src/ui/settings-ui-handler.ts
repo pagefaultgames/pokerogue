@@ -152,7 +152,16 @@ export default class SettingsUiHandler extends UiHandler {
   }
 
   setOptionCursor(settingIndex: integer, cursor: integer, save?: boolean): boolean {
-    const lastValueLabel = this.optionValueLabels[settingIndex][this.optionCursors[settingIndex]];
+    const setting = Setting[Object.keys(Setting)[settingIndex]];
+
+    if (setting === Setting.Touch_Controls && cursor && hasTouchscreen() && isMobile()) {
+      this.getUi().playError();
+      return false;
+    }
+
+    const lastCursor = this.optionCursors[settingIndex];
+
+    const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
     lastValueLabel.setColor(getTextColor(TextStyle.WINDOW));
     lastValueLabel.setShadowColor(getTextColor(TextStyle.WINDOW, true));
 
@@ -163,7 +172,7 @@ export default class SettingsUiHandler extends UiHandler {
     newValueLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
 
     if (save)
-      this.scene.gameData.saveSetting(Setting[Object.keys(Setting)[settingIndex]], cursor);
+      this.scene.gameData.saveSetting(setting, cursor);
 
     return true;
   }
