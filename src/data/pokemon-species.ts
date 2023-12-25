@@ -441,7 +441,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
   }
 
   isObtainable() {
-    return super.isObtainable() || (this.species === 'Paradox Pokémon' && !this.legendary && this.speciesId <= 1017);
+    return super.isObtainable() || (this.species === 'Paradox Pokémon' && !this.legendary && this.speciesId <= 1025);
   }
 
   getFormSpriteKey(formIndex?: integer) {
@@ -2074,7 +2074,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.IRON_BOULDER, "Iron Boulder", 9, false, false, false, "Paradox Pokémon", Type.ROCK, Type.PSYCHIC, 1.5, 162.5, Abilities.QUARK_DRIVE, Abilities.NONE, Abilities.QUARK_DRIVE, 590, 90, 120, 80, 68, 108, 124, 10, 0, null, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.IRON_CROWN, "Iron Crown", 9, false, false, false, "Paradox Pokémon", Type.STEEL, Type.PSYCHIC, 1.6, 156, Abilities.QUARK_DRIVE, Abilities.NONE, Abilities.QUARK_DRIVE, 590, 90, 72, 100, 122, 108, 98, 10, 0, null, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.TERAPAGOS, "Terapagos", 9, false, true, false, "Tera Pokémon", Type.NORMAL, null, 0.2, 6.5, Abilities.TERA_SHIFT, Abilities.NONE, Abilities.NONE, 450, 90, 65, 85, 65, 85, 60, 5, 50, null, GrowthRate.SLOW, 50, false, false,
-      new PokemonForm("Normal Form", "normal", Type.NORMAL, null, 0.2, 6.5, Abilities.TERA_SHIFT, Abilities.NONE, Abilities.NONE, 450, 90, 65, 85, 65, 85, 60, 5, 50, null),
+      new PokemonForm("Normal Form", "", Type.NORMAL, null, 0.2, 6.5, Abilities.TERA_SHIFT, Abilities.NONE, Abilities.NONE, 450, 90, 65, 85, 65, 85, 60, 5, 50, null),
       new PokemonForm("Terastal Form", "terastal", Type.NORMAL, null, 0.3, 16, Abilities.TERA_SHELL, Abilities.NONE, Abilities.NONE, 600, 95, 95, 110, 105, 110, 85, 5, 50, null),
       new PokemonForm("Stellar Form", "stellar", Type.NORMAL, null, 1.7, 77, Abilities.TERAFORM_ZERO, Abilities.NONE, Abilities.NONE, 700, 160, 105, 110, 130, 110, 85, 5, 50, null),
     ),
@@ -2632,7 +2632,6 @@ export const speciesStarters = {
   [Species.GALAR_PONYTA]: 4,
   [Species.GALAR_SLOWPOKE]: 3,
   [Species.GALAR_FARFETCHD]: 5,
-  [Species.GALAR_MR_MIME]: 5,
   [Species.GALAR_CORSOLA]: 4,
   [Species.GALAR_ZIGZAGOON]: 3,
   [Species.GALAR_DARUMAKA]: 4,
@@ -2716,12 +2715,12 @@ export const speciesStarters = {
   [Species.MUNKIDORI]: 7,
   [Species.FEZANDIPITI]: 7,
   [Species.OGERPON]: 8,
-//[Species.GOUGING_FIRE]: 7,
-//[Species.RAGING_BOLT]: 7,
-//[Species.IRON_BOULDER]: 7,
-//[Species.IRON_CROWN]: 7,
-//[Species.TERAPAGOS]: 8,
-//[Species.PECHARUNT]: 7,
+  [Species.GOUGING_FIRE]: 7,
+  [Species.RAGING_BOLT]: 7,
+  [Species.IRON_BOULDER]: 7,
+  [Species.IRON_CROWN]: 7,
+  [Species.TERAPAGOS]: 8,
+  [Species.PECHARUNT]: 7,
 };
 
 // TODO: Remove

@@ -1058,7 +1058,7 @@ export const biomePokemonPools: BiomePokemonPools = {
       Species.IRON_THORNS
     ],
     [BiomePoolTier.UNCOMMON]: [ Species.ROARING_MOON, Species.IRON_VALIANT ],
-    [BiomePoolTier.RARE]: [ Species.WALKING_WAKE, Species.IRON_LEAVES ],
+    [BiomePoolTier.RARE]: [ Species.WALKING_WAKE, Species.IRON_LEAVES, Species.GOUGING_FIRE, Species.RAGING_BOLT, Species.IRON_BOULDER, Species.IRON_CROWN ],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
     [BiomePoolTier.BOSS]: [ Species.ETERNATUS ],
@@ -6084,15 +6084,19 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.GOUGING_FIRE, Type.FIRE, Type.DRAGON, [
+        [ Biome.END, BiomePoolTier.RARE ]
       ]
     ],
     [ Species.RAGING_BOLT, Type.ELECTRIC, Type.DRAGON, [
+        [ Biome.END, BiomePoolTier.RARE ]
       ]
     ],
     [ Species.IRON_BOULDER, Type.ROCK, Type.PSYCHIC, [
+        [ Biome.END, BiomePoolTier.RARE ]
       ]
     ],
     [ Species.IRON_CROWN, Type.STEEL, Type.PSYCHIC, [
+        [ Biome.END, BiomePoolTier.RARE ]
       ]
     ],
     [ Species.TERAPAGOS, Type.NORMAL, -1, [

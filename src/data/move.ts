@@ -1616,7 +1616,7 @@ export class MultiHitAttr extends MoveAttr {
             hitTimes = 1;
           else if (hitValue.value >= 73)
             hitTimes = 2;
-          else if (hitValue.value>= 66)
+          else if (hitValue.value >= 66)
             hitTimes = 3;
           else if (hitValue.value >= 60)
             hitTimes = 4;
