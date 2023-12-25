@@ -35,7 +35,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.BGM_Volume]: 10,
   [Setting.SE_Volume]: 10,
   [Setting.Show_Stats_on_Level_Up]: 1,
-  [Setting.Window_Type]: 1,
+  [Setting.Window_Type]: 0,
   [Setting.Touch_Controls]: 0
 };
 
