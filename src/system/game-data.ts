@@ -243,6 +243,8 @@ export class GameData {
   }
 
   private loadSettings(): boolean {
+    Object.values(Setting).map(setting => setting as Setting).forEach(setting => setSetting(this.scene, setting, settingDefaults[setting]));
+
     if (!localStorage.hasOwnProperty('settings'))
       return false;
 

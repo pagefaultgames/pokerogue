@@ -1,5 +1,12 @@
 import BattleScene from "../battle-scene";
 
+const windowTypeControlColors = {
+  0: [ '#706880', '#8888c8', '#484868' ],
+  1: [ '#d04028', '#e0a028', '#902008' ],
+  2: [ '#48b840', '#88d880', '#089040' ],
+  3: [ '#2068d0', '#80b0e0', '#104888' ]
+};
+
 export function addWindow(scene: BattleScene, x: number, y: number, width: number, height: number, mergeMaskTop?: boolean, mergeMaskLeft?: boolean, maskOffsetX?: number, maskOffsetY?: number): Phaser.GameObjects.NineSlice {
   const window = scene.add.nineslice(x, y, `window_${scene.windowType}`, null, width, height, 8, 8, 8, 8);
   window.setOrigin(0, 0);
@@ -35,6 +42,9 @@ export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): 
   traverse(scene);
 
   scene.windowType = windowTypeIndex;
+
+  const rootStyle = document.documentElement.style;
+  [ 'base', 'light', 'dark' ].map((k, i) => rootStyle.setProperty(`--color-${k}`, windowTypeControlColors[windowTypeIndex - 1][i]));
 
   const windowKey = `window_${windowTypeIndex}`;
 

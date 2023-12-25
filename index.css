@@ -1,0 +1,157 @@
+:root {
+  --color-base: hsl(0, 0%, 55%);
+  --color-light: hsl(0, 0%, 90%);
+  --color-dark: hsl(0, 0%, 10%);
+  --controls-size: 10vh;
+  --text-shadow-size: 0.65vh;
+}
+
+@media (orientation: landscape) {
+  :root {
+    --controls-size: 20vh;
+    --text-shadow-size: 1.3vh;
+  }
+}
+
+@font-face {
+  font-family: 'emerald';
+  src: url('fonts/pokemon-emerald-pro.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'pkmnems';
+  src: url('fonts/pkmnems.ttf') format('truetype');
+}
+
+html {
+  touch-action: none;
+}
+
+body {
+  margin: 0;
+  background: #484050;
+}
+
+#app {
+  display: flex;
+  justify-content: center;
+}
+
+#touchControls:not(.visible) {
+  display: none;
+}
+
+#dpad, #apad {
+  position: fixed;
+  bottom: 1rem;
+  z-index: 3;
+}
+
+#dpad {
+  left: 1rem;
+}
+
+#apad {
+  right: 1rem;
+}
+
+#dpad svg {
+  width: calc(2 * var(--controls-size));
+  height: calc(2 * var(--controls-size));
+  fill: var(--color-base);
+}
+
+#dpad svg rect {
+  opacity: 0.4;
+}
+
+#apad > * {
+  width: var(--controls-size);
+  height: var(--controls-size);
+}
+
+#apad .apadBtn {
+  width: var(--controls-size);
+  height: var(--controls-size);
+  background-color: var(--color-base);
+  border-radius: 50%;
+}
+
+#apad .apadLabel {
+  font-family: 'emerald';
+  font-size: var(--controls-size);
+  text-shadow: var(--color-dark) var(--text-shadow-size) var(--text-shadow-size);
+  color: var(--color-light);
+  user-select: none;
+}
+
+#apad .apadLabelSmall {
+  font-size: calc(var(--controls-size) / 3);
+  text-shadow: var(--color-dark) calc(var(--text-shadow-size) / 3) calc(var(--text-shadow-size) / 3);
+}
+
+#apad #apadLabelAction, #apad #apadLabelCancel {
+  margin-left: calc(var(--controls-size) / 3);
+  line-height: 0.9;
+}
+
+#apadLabelMenu {
+  margin-left: 10%;
+  line-height: 1.1;
+}
+
+#apad > :nth-child(2) {
+  position: relative;
+  right: var(--controls-size);
+}
+
+#apad .apadRectBtn {
+  position: relative;
+  border-radius: 10%;
+  margin-top: calc(var(--controls-size) * -0.4);
+  bottom: calc(var(--controls-size) * 0.05);
+  left: calc(var(--controls-size) * 0.21);
+  width: calc(var(--controls-size) * 0.6);
+  height: calc(var(--controls-size) * 0.4);
+}
+
+#apad .apadSqBtn {
+  border-radius: 10%;
+  width: calc(var(--controls-size) * 0.3);
+  height: calc(var(--controls-size) * 0.3);
+}
+
+#apad .apadBtnContainer {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-bottom: calc(var(--controls-size) * -0.8);
+  top: calc(var(--controls-size) * -0.9);
+  left: calc(var(--controls-size) * 0.1);
+  width: calc(var(--controls-size) * 0.8);
+  height: calc(var(--controls-size) * 0.8);
+}
+
+#touchControls:not([data-ui-mode='STARTER_SELECT']) #apad .apadBtnContainer {
+  display: none;
+}
+
+#apad .apadRectBtn + .apadBtnContainer {
+  top: calc(var(--controls-size) * -1.9);
+  left: calc(var(--controls-size) * -0.9);
+}
+
+#apad .apadBtnContainer .apadLabel {
+  margin-left: calc(var(--controls-size) / 12);
+  line-height: 0.8;
+}
+
+#dpad path:not(.active), #apad .apadBtn:not(.active) {
+  opacity: 0.4;
+}
+
+#layout:fullscreen #dpad, #layout:fullscreen #apad {
+  bottom: 6rem;
+}

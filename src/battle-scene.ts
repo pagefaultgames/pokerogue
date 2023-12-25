@@ -552,15 +552,19 @@ export default class BattleScene extends Phaser.Scene {
 			[Button.SPEED_UP]: [keyCodes.PLUS],
 			[Button.SLOW_DOWN]: [keyCodes.MINUS]
 		};
+		const mobileKeyConfig = {};
 		this.buttonKeys = [];
 		for (let b of Utils.getEnumValues(Button)) {
 			const keys: Phaser.Input.Keyboard.Key[] = [];
 			if (keyConfig.hasOwnProperty(b)) {
 				for (let k of keyConfig[b])
 					keys.push(this.input.keyboard.addKey(k));
+				mobileKeyConfig[Button[b]] = keys[0];
 			}
 			this.buttonKeys[b] = keys;
 		}
+
+		initTouchControls(mobileKeyConfig);
 	}
 
 	getParty(): PlayerPokemon[] {
