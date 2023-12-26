@@ -373,6 +373,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadBgm('evolution_fanfare', 'bw/evolution_fanfare.mp3');
 		
 		populateAnims();
+
+		//this.load.plugin('rexfilechooserplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexfilechooserplugin.min.js', true);
 	}
 
 	create() {

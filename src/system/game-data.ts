@@ -17,6 +17,27 @@ import { achvs } from "./achv";
 import EggData from "./egg-data";
 import { Egg } from "../data/egg";
 import { VoucherType, vouchers } from "./voucher";
+import { AES, enc } from "crypto-js";
+import { Mode } from "../ui/ui";
+
+const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
+
+export enum GameDataType {
+  SYSTEM,
+  SESSION,
+  SETTINGS
+}
+
+export function getDataTypeKey(dataType: GameDataType): string {
+  switch (dataType) {
+    case GameDataType.SYSTEM:
+      return 'data';
+    case GameDataType.SESSION:
+      return 'sessionData';
+    case GameDataType.SETTINGS:
+      return 'settings';
+  }
+}
 
 interface SystemSaveData {
   trainerId: integer;
@@ -163,16 +184,7 @@ export class GameData {
     if (!localStorage.hasOwnProperty('data'))
       return false;
 
-    const data = JSON.parse(atob(localStorage.getItem('data')), (k: string, v: any) => {
-      if (k === 'eggs') {
-        const ret: EggData[] = [];
-        for (let e of v)
-          ret.push(new EggData(e));
-        return ret;
-      }
-
-      return k.endsWith('Attr') ? BigInt(v) : v;
-    }) as SystemSaveData;
+    const data = this.parseSystemData(atob(localStorage.getItem('data')));
 
     console.debug(data);
 
@@ -223,6 +235,19 @@ export class GameData {
       this.dexData = Object.assign(this.dexData, data.dexData);
 
     return true;
+  }
+
+  private parseSystemData(dataStr: string): SystemSaveData {
+    return JSON.parse(dataStr, (k: string, v: any) => {
+      if (k === 'eggs') {
+        const ret: EggData[] = [];
+        for (let e of v)
+          ret.push(new EggData(e));
+        return ret;
+      }
+
+      return k.endsWith('Attr') ? BigInt(v) : v;
+    }) as SystemSaveData;
   }
 
   public saveSetting(setting: Setting, valueIndex: integer): boolean {
@@ -289,36 +314,8 @@ export class GameData {
         return resolve(false);
 
       try {
-        const sessionData = JSON.parse(atob(localStorage.getItem('sessionData')), (k: string, v: any) => {
-          /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
-    
-          if (versions[0] !== versions[1]) {
-            const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
-          }*/
-
-          if (k === 'party' || k === 'enemyParty' || k === 'enemyField') {
-            const ret: PokemonData[] = [];
-            for (let pd of v)
-              ret.push(new PokemonData(pd));
-            return ret;
-          }
-
-          if (k === 'trainer')
-            return v ? new TrainerData(v) : null;
-
-          if (k === 'modifiers' || k === 'enemyModifiers') {
-            const player = k === 'modifiers';
-            const ret: PersistentModifierData[] = [];
-            for (let md of v)
-              ret.push(new PersistentModifierData(md, player));
-            return ret;
-          }
-
-          if (k === 'arena')
-            return new ArenaData(v);
-
-          return v;
-        }) as SessionSaveData;
+        const sessionDataStr = atob(localStorage.getItem('sessionData'));
+        const sessionData = this.parseSessionData(sessionDataStr);
 
         console.debug(sessionData);
 
@@ -345,10 +342,6 @@ export class GameData {
 
         scene.money = sessionData.money || 0;
         scene.updateMoneyText();
-
-        // TODO: Remove this
-        if (sessionData.enemyField)
-          sessionData.enemyParty = sessionData.enemyField;
 
         const battleType = sessionData.battleType || 0;
         const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfigs[sessionData.trainer.trainerType].isDouble : sessionData.enemyParty.length > 1);
@@ -396,6 +389,126 @@ export class GameData {
 
   clearSession(): void {
     localStorage.removeItem('sessionData');
+  }
+
+  parseSessionData(dataStr: string): SessionSaveData {
+    return JSON.parse(dataStr, (k: string, v: any) => {
+      /*const versions = [ scene.game.config.gameVersion, sessionData.gameVersion || '0.0.0' ];
+
+      if (versions[0] !== versions[1]) {
+        const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
+      }*/
+
+      if (k === 'party' || k === 'enemyParty' || k === 'enemyField') {
+        const ret: PokemonData[] = [];
+        for (let pd of v)
+          ret.push(new PokemonData(pd));
+        return ret;
+      }
+
+      if (k === 'trainer')
+        return v ? new TrainerData(v) : null;
+
+      if (k === 'modifiers' || k === 'enemyModifiers') {
+        const player = k === 'modifiers';
+        const ret: PersistentModifierData[] = [];
+        for (let md of v)
+          ret.push(new PersistentModifierData(md, player));
+        return ret;
+      }
+
+      if (k === 'arena')
+        return new ArenaData(v);
+
+      return v;
+    }) as SessionSaveData;
+  }
+
+  public exportData(dataType: GameDataType): void {
+    const dataKey: string = getDataTypeKey(dataType);
+    const dataStr = atob(localStorage.getItem(dataKey));
+    console.log(dataStr);
+    const encryptedData = AES.encrypt(dataStr, saveKey);
+    const blob = new Blob([ encryptedData.toString() ], {type: 'text/json'});
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = `${dataKey}.prsv`;
+    link.click();
+    link.remove();
+  }
+
+  public importData(dataType: GameDataType): void {
+    const dataKey = getDataTypeKey(dataType);
+
+    let saveFile: any = document.getElementById('saveFile');
+    if (saveFile)
+      saveFile.remove();
+  
+    saveFile = document.createElement('input');
+    saveFile.id = 'saveFile';
+    saveFile.type = 'file';
+    saveFile.accept = '.prsv';
+    saveFile.style.display = 'none';
+    saveFile.addEventListener('change',
+      e => {
+        let reader = new FileReader();
+
+        reader.onload = (_ => {
+            return e => {
+              const dataStr = AES.decrypt(e.target.result.toString(), saveKey).toString(enc.Utf8);
+              let valid = false;
+              try {
+                switch (dataType) {
+                  case GameDataType.SYSTEM:
+                    const systemData = this.parseSystemData(dataStr);
+                    valid = !!systemData.dexData && !!systemData.timestamp;
+                    break;
+                  case GameDataType.SESSION:
+                    const sessionData = this.parseSessionData(dataStr);
+                    valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
+                    break;
+                  case GameDataType.SETTINGS:
+                    valid = true;
+                    break;
+                }
+              } catch (ex) {
+                console.error(ex);
+              }
+
+              let dataName: string;
+              switch (dataType) {
+                case GameDataType.SYSTEM:
+                  dataName = 'save';
+                  break;
+                case GameDataType.SESSION:
+                  dataName = 'session';
+                  break;
+                case GameDataType.SETTINGS:
+                  dataName = 'settings';
+                  break;
+              }
+
+              if (!valid)
+                return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
+              this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
+                this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
+                  localStorage.setItem(dataKey, btoa(dataStr));
+                  window.location = window.location;
+                }, () => {
+                  this.scene.ui.revertMode();
+                  this.scene.ui.showText(null, 0);
+                }, false, 98);
+              });
+            };
+          })((e.target as any).files[0]);
+
+        reader.readAsText((e.target as any).files[0]);
+      }
+    );
+    saveFile.click();
+    /*(this.scene.plugins.get('rexfilechooserplugin') as FileChooserPlugin).open({ accept: '.prsv' })
+      .then(result => {
+    });*/
   }
 
   private initDexData(): void {

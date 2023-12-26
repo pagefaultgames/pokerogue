@@ -117,10 +117,6 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.setCursor(0);
   }
 
-  showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
-    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
-  }
-
   processInput(button: Button): boolean {
     const ui = this.getUi();
 

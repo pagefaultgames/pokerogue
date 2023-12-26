@@ -4,17 +4,24 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { addWindow } from "./window";
+import MessageUiHandler from "./message-ui-handler";
+import { GameDataType } from "../system/game-data";
 
 export enum MenuOptions {
   SETTINGS,
   ACHIEVEMENTS,
   VOUCHERS,
   EGG_LIST,
-  EGG_GACHA
+  EGG_GACHA,
+  IMPORT_SESSION,
+  EXPORT_SESSION,
+  IMPORT_DATA,
+  EXPORT_DATA
 }
 
-export default class MenuUiHandler extends UiHandler {
+export default class MenuUiHandler extends MessageUiHandler {
   private menuContainer: Phaser.GameObjects.Container;
+  private menuMessageBoxContainer: Phaser.GameObjects.Container;
 
   private menuBg: Phaser.GameObjects.NineSlice;
   protected optionSelectText: Phaser.GameObjects.Text;
@@ -32,7 +39,7 @@ export default class MenuUiHandler extends UiHandler {
 
     this.menuContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - 92, 0, 90, (this.scene.game.canvas.height / 6) - 2);
+    this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - 100, 0, 98, (this.scene.game.canvas.height / 6) - 2);
     this.menuBg.setOrigin(0, 0);
 
     this.menuContainer.add(this.menuBg);
@@ -43,6 +50,23 @@ export default class MenuUiHandler extends UiHandler {
     this.menuContainer.add(this.optionSelectText);
 
     ui.add(this.menuContainer);
+
+    this.menuMessageBoxContainer = this.scene.add.container(0, 130);
+    this.menuMessageBoxContainer.setVisible(false);
+    this.menuContainer.add(this.menuMessageBoxContainer);
+
+    const menuMessageBox = addWindow(this.scene, 0, -0, 220, 48);
+    menuMessageBox.setOrigin(0, 0);
+    this.menuMessageBoxContainer.add(menuMessageBox);
+
+    const menuMessageText = addTextObject(this.scene, 8, 8, '', TextStyle.WINDOW, { maxLines: 2 });
+    menuMessageText.setWordWrapWidth(1224);
+    menuMessageText.setOrigin(0, 0);
+    this.menuMessageBoxContainer.add(menuMessageText);
+
+    this.message = menuMessageText;
+
+    this.menuContainer.add(this.menuMessageBoxContainer);
 
     this.setCursor(0);
 
@@ -95,7 +119,16 @@ export default class MenuUiHandler extends UiHandler {
           this.scene.ui.setOverlayMode(Mode.EGG_GACHA);
           success = true;
           break;
-        
+        case MenuOptions.IMPORT_SESSION:
+        case MenuOptions.IMPORT_DATA:
+          this.scene.gameData.importData(this.cursor === MenuOptions.IMPORT_DATA ? GameDataType.SYSTEM : GameDataType.SESSION);
+          success = true;
+          break;
+        case MenuOptions.EXPORT_SESSION:
+        case MenuOptions.EXPORT_DATA:
+          this.scene.gameData.exportData(this.cursor === MenuOptions.EXPORT_DATA ? GameDataType.SYSTEM : GameDataType.SESSION);
+          success = true;
+          break;
       }
     } else if (button === Button.CANCEL) {
       success = true;
@@ -120,6 +153,12 @@ export default class MenuUiHandler extends UiHandler {
       ui.playError();
 
     return true;
+  }
+
+  showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {
+    this.menuMessageBoxContainer.setVisible(!!text);
+
+    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
   setCursor(cursor: integer): boolean {

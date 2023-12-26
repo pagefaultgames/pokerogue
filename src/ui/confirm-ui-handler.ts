@@ -28,6 +28,10 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
       
       this.switchCheck = args.length >= 3 && args[2] as boolean;
 
+      const xOffset = (args.length >= 4 ? -args[3] as number : 0);
+
+      this.optionSelectContainer.x = (this.scene.game.canvas.width / 6) - 1 + xOffset;
+
       this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
     }
   }
