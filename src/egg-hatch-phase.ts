@@ -330,7 +330,7 @@ export class EggHatchPhase extends BattlePhase {
     if (speciesOverride) {
       this.scene.executeWithSeedOffset(() => {
         const pokemonSpecies = getPokemonSpecies(speciesOverride);
-        ret = new PlayerPokemon(this.scene, pokemonSpecies, 5, undefined, this.scene.getSpeciesFormIndex(pokemonSpecies, true), undefined, false);
+        ret = new PlayerPokemon(this.scene, pokemonSpecies, 5, undefined, undefined, undefined, false);
       }, this.egg.id, EGG_SEED.toString());
     } else {
       let minStarterValue: integer;
@@ -399,7 +399,7 @@ export class EggHatchPhase extends BattlePhase {
 
         const pokemonSpecies = getPokemonSpecies(species);
 
-        ret = new PlayerPokemon(this.scene, pokemonSpecies, 5, undefined, this.scene.getSpeciesFormIndex(pokemonSpecies, true), undefined, false);
+        ret = new PlayerPokemon(this.scene, pokemonSpecies, 5, undefined, undefined, undefined, false);
       }, this.egg.id, EGG_SEED.toString());
     }
 

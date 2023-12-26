@@ -37,6 +37,7 @@ import InvertPostFX from './pipelines/invert';
 import { Achv, ModifierAchv, achvs } from './system/achv';
 import { GachaType } from './data/egg';
 import { Voucher, vouchers } from './system/voucher';
+import { Gender } from './data/gender';
 
 const enableAuto = true;
 const quickStart = false;
@@ -781,7 +782,7 @@ export default class BattleScene extends Phaser.Scene {
 		return this.arena;
 	}
 
-	getSpeciesFormIndex(species: PokemonSpecies, ignoreArena?: boolean): integer {
+	getSpeciesFormIndex(species: PokemonSpecies, gender?: Gender, ignoreArena?: boolean): integer {
 		if (!species.forms?.length)
 			return 0;
 
@@ -791,11 +792,23 @@ export default class BattleScene extends Phaser.Scene {
 			case Species.SAWSBUCK:
 			case Species.ORICORIO:
 				return Utils.randSeedInt(species.forms.length);
+			case Species.MEOWSTIC:
+			case Species.INDEEDEE:
+				return gender === Gender.FEMALE ? 1 : 0;
 		}
 
-		return !ignoreArena
-			? this.arena.getSpeciesFormIndex(species)
-			: 0;
+		if (ignoreArena) {
+			switch (species.speciesId) {
+				case Species.BURMY:
+				case Species.WORMADAM:
+				case Species.LYCANROC:
+				case Species.CALYREX:
+					return Utils.randSeedInt(species.forms.length);
+			}
+			return 0;
+		}
+
+		return this.arena.getSpeciesFormIndex(species);
 	}
 
 	trySpreadPokerus(): void {

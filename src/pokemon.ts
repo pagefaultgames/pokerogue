@@ -108,7 +108,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.abilityIndex = abilityIndex !== undefined
       ? abilityIndex
       : (species.abilityHidden && hasHiddenAbility ? species.ability2 ? 2 : 1 : species.ability2 ? randAbilityIndex : 0);
-    this.formIndex = formIndex || 0;
+    if (formIndex !== undefined)
+      this.formIndex = formIndex;
     if (gender !== undefined)
       this.gender = gender;
     if (shiny !== undefined)
@@ -154,6 +155,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.gender = Gender.FEMALE;
         }
       }
+
+      if (this.formIndex === undefined)
+        this.formIndex = this.scene.getSpeciesFormIndex(species, this.gender, this.isPlayer());
 
       if (this.shiny === undefined)
         this.trySetShiny();
@@ -748,7 +752,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    
     this.fusionSpecies = this.scene.randomSpecies(this.scene.currentBattle?.waveIndex || 0, this.level, false, filter, true);
     this.fusionAbilityIndex = (this.fusionSpecies.abilityHidden && hasHiddenAbility ? this.fusionSpecies.ability2 ? 2 : 1 : this.fusionSpecies.ability2 ? randAbilityIndex : 0);
-    this.fusionFormIndex = this.scene.getSpeciesFormIndex(this.fusionSpecies);
     this.fusionShiny = this.shiny;
     
     if (this.fusionSpecies.malePercent === null)
@@ -760,6 +763,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       else
         this.fusionGender = Gender.FEMALE;
     }
+
+    this.fusionFormIndex = this.scene.getSpeciesFormIndex(this.fusionSpecies, this.fusionGender, true);
 
     this.generateName();
   }
@@ -1861,7 +1866,7 @@ export class EnemyPokemon extends Pokemon {
   public aiType: AiType;
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainer: boolean, dataSource?: PokemonData) {
-    super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource ? dataSource.formIndex : scene.getSpeciesFormIndex(species),
+    super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex,
       dataSource?.gender, dataSource ? dataSource.shiny : false, null, dataSource);
 
     this.trainer = trainer;

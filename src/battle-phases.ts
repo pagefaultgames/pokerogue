@@ -2784,8 +2784,7 @@ export class BerryPhase extends CommonAnimPhase {
           berryModifier.consumed = false;
         this.scene.updateModifiers(this.player);
       }
-      super.start();
-      return;
+      return super.start();
     }
 
     this.end();

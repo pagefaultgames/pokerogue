@@ -104,7 +104,7 @@ export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timesta
 }
 
 export function getTypeGachaTypeForTimestamp(scene: BattleScene, timestamp: integer): Type {
-  const types = Utils.getEnumValues(Type);
+  const types = Utils.getEnumValues(Type).slice(1);
   let ret: Type;
   
   scene.executeWithSeedOffset(() => {
