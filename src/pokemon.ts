@@ -132,8 +132,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionShiny = dataSource.fusionShiny;
       this.fusionGender = dataSource.fusionGender;
     } else {
-      this.generateAndPopulateMoveset();
-
       this.id = Utils.randSeedInt(4294967295);
       this.ivs = ivs || [
         Utils.binToDec(Utils.decToBin(this.id).substring(0, 5)),
@@ -167,6 +165,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       if (scene.gameMode === GameMode.SPLICED_ENDLESS)
         this.generateFusionSpecies();
+
+      this.generateAndPopulateMoveset();
     }
 
     this.generateName();

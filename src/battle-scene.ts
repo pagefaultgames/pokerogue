@@ -1423,7 +1423,8 @@ export default class BattleScene extends Phaser.Scene {
 	updatePartyForModifiers(party: Pokemon[], instant?: boolean): Promise<void> {
 		return new Promise(resolve => {
 			Promise.allSettled(party.map(p => {
-				p.calculateStats();
+				if (p.scene)
+					p.calculateStats();
 				return p.updateInfo(instant);
 			})).then(() => resolve());
 		});

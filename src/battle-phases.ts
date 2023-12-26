@@ -3087,13 +3087,13 @@ export class AttemptRunPhase extends PokemonPhase {
         onComplete: () => enemyField.forEach(enemyPokemon => enemyPokemon.destroy())
       });
 
+      this.scene.clearEnemyHeldItemModifiers();
+
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.hideInfo().then(() => enemyPokemon.destroy());
         enemyPokemon.hp = 0;
         enemyPokemon.trySetStatus(StatusEffect.FAINT);
       });
-
-      this.scene.clearEnemyHeldItemModifiers();
 
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       this.scene.pushPhase(new NewBattlePhase(this.scene));
