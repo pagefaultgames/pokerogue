@@ -197,22 +197,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.add(sprite);
     this.add(tintSprite);
 
-    if (this.shiny) {
-      const shinySparkle = this.scene.add.sprite(0, 0, 'shiny');
-      shinySparkle.setVisible(false);
-      shinySparkle.setOrigin(0.5, 1);
-      const frameNames = this.scene.anims.generateFrameNames('shiny', { suffix: '.png', end: 34 });
-      this.scene.anims.create({
-        key: 'sparkle',
-        frames: frameNames,
-        frameRate: 32,
-        showOnStart: true,
-        hideOnComplete: true,
-      });
-      this.add(shinySparkle);
-
-      this.shinySparkle = shinySparkle;
-    }
+    if (this.isShiny() && !this.shinySparkle)
+      this.initShinySparkle();
   }
 
   isOnField(): boolean {
@@ -386,6 +372,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.maskEnabled
       ? this.getAt(1) as Phaser.GameObjects.Sprite
       : this.maskSprite;
+  }
+
+  initShinySparkle(): void {
+    const shinySparkle = this.scene.add.sprite(0, 0, 'shiny');
+    shinySparkle.setVisible(false);
+    shinySparkle.setOrigin(0.5, 1);
+    const frameNames = this.scene.anims.generateFrameNames('shiny', { suffix: '.png', end: 34 });
+    this.scene.anims.create({
+      key: 'sparkle',
+      frames: frameNames,
+      frameRate: 32,
+      showOnStart: true,
+      hideOnComplete: true,
+    });
+    this.add(shinySparkle);
+
+    this.shinySparkle = shinySparkle;
   }
 
   playAnim(): void {
@@ -728,6 +731,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.shiny = (E ^ F) < shinyThreshold.value;
     if ((E ^ F) < 32)
       console.log('REAL SHINY!!');
+
+    if (this.shiny)
+      this.initShinySparkle();
 
     return this.shiny;
   }

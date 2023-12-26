@@ -26,6 +26,7 @@ export class EggHatchPhase extends BattlePhase {
   private eggCrackSprite: Phaser.GameObjects.Sprite;
   private eggLightraysOverlay: Phaser.GameObjects.Sprite;
   private pokemonSprite: Phaser.GameObjects.Sprite;
+  private pokemonShinySparkle: Phaser.GameObjects.Sprite;
 
   private infoContainer: Phaser.GameObjects.Container;
   private statsContainer: StatsContainer;
@@ -79,6 +80,11 @@ export class EggHatchPhase extends BattlePhase {
       const getPokemonSprite = () => this.scene.add.sprite(this.eggHatchBg.displayWidth / 2, this.eggHatchBg.displayHeight / 2, `pkmn__sub`);
 
       this.eggHatchContainer.add((this.pokemonSprite = getPokemonSprite()));
+
+      this.pokemonShinySparkle = this.scene.add.sprite(this.pokemonSprite.x, this.pokemonSprite.y, 'shiny');
+      this.pokemonShinySparkle.setVisible(false);
+
+      this.eggHatchContainer.add(this.pokemonShinySparkle);
 
       this.eggHatchOverlay = this.scene.add.rectangle(0, -this.scene.game.canvas.height / 6, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6, 0xFFFFFF);
       this.eggHatchOverlay.setOrigin(0, 0);
@@ -173,18 +179,25 @@ export class EggHatchPhase extends BattlePhase {
                       ease: 'Cubic.easeIn'
                     });
                     this.scene.time.delayedCall(Utils.fixedInt(1500), () => {
+                      const isShiny = pokemon.isShiny();
                       if (pokemon.species.mythical)
                         this.scene.validateAchv(achvs.HATCH_MYTHICAL);
                       if (pokemon.species.legendary)
                         this.scene.validateAchv(achvs.HATCH_LEGENDARY);
-                      if (pokemon.isShiny())
+                      if (isShiny)
                         this.scene.validateAchv(achvs.HATCH_SHINY);
                       this.eggContainer.setVisible(false);
                       this.pokemonSprite.play(pokemon.getSpriteKey(true));
                       this.pokemonSprite.setVisible(true);
                       this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
                         pokemon.cry();
-                        this.scene.time.delayedCall(Utils.fixedInt(1250), () => {
+                        if (isShiny) {
+                          this.scene.time.delayedCall(Utils.fixedInt(1250), () => {
+                            this.pokemonShinySparkle.play('sparkle');
+                            this.scene.playSound('sparkle');
+                          });
+                        }
+                        this.scene.time.delayedCall(Utils.fixedInt(!isShiny ? 1250 : 1750), () => {
                           this.scene.tweens.add({
                             targets: this.infoContainer,
                             duration: Utils.fixedInt(750),
