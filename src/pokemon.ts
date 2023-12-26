@@ -1884,6 +1884,14 @@ export class EnemyPokemon extends Pokemon {
 
   generateAndPopulateMoveset(): void {
     switch (true) {
+      case (this.species.speciesId === Species.SMEARGLE):
+        this.moveset = [
+          new PokemonMove(Moves.SKETCH),
+          new PokemonMove(Moves.SKETCH),
+          new PokemonMove(Moves.SKETCH),
+          new PokemonMove(Moves.SKETCH)
+        ];
+        break;
       case (this.species.speciesId === Species.ETERNATUS):
         this.moveset = this.formIndex
           ? [
