@@ -1114,7 +1114,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.METROPOLIS]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.CLERK, TrainerType.CYCLIST, TrainerType.OFFICER ],
+    [BiomePoolTier.COMMON]: [ TrainerType.CLERK, TrainerType.CYCLIST, TrainerType.OFFICER, TrainerType.WAITER ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.BREEDER, TrainerType.DEPOT_AGENT, TrainerType.GUITARIST ],
     [BiomePoolTier.RARE]: [ TrainerType.ARTIST ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -6499,7 +6499,10 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ TrainerType.VETERAN, [] ],
-    [ TrainerType.WAITER, [] ],
+    [ TrainerType.WAITER, [
+        [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
+      ]
+    ],
     [ TrainerType.WORKER, [
         [ Biome.POWER_PLANT, BiomePoolTier.COMMON ],
         [ Biome.FACTORY, BiomePoolTier.COMMON ],
