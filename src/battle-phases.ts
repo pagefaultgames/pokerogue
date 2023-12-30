@@ -2501,7 +2501,7 @@ export class GameOverPhase extends BattlePhase {
         this.scene.ui.clearText();
         this.handleUnlocks(this.scene.getParty());
         this.scene.reset();
-        this.scene.newBattle();
+        this.scene.unshiftPhase(new CheckLoadPhase(this.scene));
         this.end();
       });
     });
