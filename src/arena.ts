@@ -1,5 +1,5 @@
 import BattleScene from "./battle-scene";
-import { Biome, BiomePoolTier, BiomeTierPokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "./data/biome";
+import { Biome, BiomePoolTier, BiomeTierPokemonPools, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "./data/biome";
 import * as Utils from "./utils";
 import PokemonSpecies, { getPokemonSpecies } from "./data/pokemon-species";
 import { Species } from "./data/species";
@@ -16,6 +16,7 @@ import { BattlerIndex } from "./battle";
 const WEATHER_OVERRIDE = WeatherType.NONE;
 
 export enum TimeOfDay {
+  ALL = -1,
   DAWN,
   DAY,
   DUSK,
@@ -29,7 +30,9 @@ export class Arena {
   public tags: ArenaTag[];
   public bgm: string;
 
-  private pokemonPool: BiomeTierPokemonPools;
+  private lastTimeOfDay: TimeOfDay;
+
+  private pokemonPool: PokemonPools;
   private trainerPool: BiomeTierTrainerPools;
 
   constructor(scene: BattleScene, biome: Biome, bgm: string) {
@@ -37,8 +40,18 @@ export class Arena {
     this.biomeType = biome;
     this.tags = [];
     this.bgm = bgm;
-    this.pokemonPool = biomePokemonPools[biome];
     this.trainerPool = biomeTrainerPools[biome];
+    this.updatePoolsForTimeOfDay();
+  }
+
+  updatePoolsForTimeOfDay(): void {
+    const timeOfDay = this.getTimeOfDay();
+    if (timeOfDay !== this.lastTimeOfDay) {
+      this.pokemonPool = {};
+      for (let tier of Object.keys(biomePokemonPools[this.biomeType]))
+        this.pokemonPool[tier] = Object.assign([], biomePokemonPools[this.biomeType][tier][TimeOfDay.ALL]).concat(biomePokemonPools[this.biomeType][tier][timeOfDay]);
+      this.lastTimeOfDay = timeOfDay;
+    }
   }
 
   randomSpecies(waveIndex: integer, level: integer, attempt?: integer): PokemonSpecies {
@@ -317,12 +330,12 @@ export class Arena {
       return TimeOfDay.DAY;
 
     if (waveCycle < 20)
-      return TimeOfDay.DAWN;
+      return TimeOfDay.DUSK;
 
     if (waveCycle < 35)
       return TimeOfDay.NIGHT;
 
-    return TimeOfDay.DUSK;
+    return TimeOfDay.DAWN;
   }
 
   isOutside(): boolean {
