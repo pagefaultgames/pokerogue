@@ -22,7 +22,7 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
     return [ 'Yes', 'No' ];
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     if (args.length >= 2 && args[0] instanceof Function && args[1] instanceof Function) {
       super.show(args);
       
@@ -33,7 +33,11 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
       this.optionSelectContainer.x = (this.scene.game.canvas.width / 6) - 1 + xOffset;
 
       this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
+
+      return true;
     }
+
+    return false;
   }
 
   setCursor(cursor: integer): boolean {

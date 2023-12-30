@@ -36,7 +36,7 @@ export default class BiomeSelectUiHandler extends UiHandler {
     this.biomeSelectContainer.add(this.biomesText);
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     if (args.length >= 2 && typeof(args[0]) === 'number' && args[1] instanceof Function) {
       super.show(args);
 
@@ -59,6 +59,8 @@ export default class BiomeSelectUiHandler extends UiHandler {
       this.biomeSelectContainer.setVisible(true);
       this.setCursor(0);
     }
+
+    return true;
   }
 
   processInput(button: Button): boolean {

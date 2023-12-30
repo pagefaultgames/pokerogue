@@ -23,9 +23,9 @@ export default class TargetSelectUiHandler extends UiHandler {
 
   setup(): void { }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     if (args.length < 3)
-      return;
+      return false;
 
     super.show(args);
 
@@ -36,9 +36,11 @@ export default class TargetSelectUiHandler extends UiHandler {
     this.targets = getMoveTargets(this.scene.getPlayerField()[this.fieldIndex], this.move).targets;
 
     if (!this.targets.length)
-      return;
+      return false;
 
     this.setCursor(this.targets.indexOf(this.cursor) > -1 ? this.cursor : this.targets[0]);
+
+    return true;
   }
 
   processInput(button: Button): boolean {

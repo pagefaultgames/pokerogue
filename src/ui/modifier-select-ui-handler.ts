@@ -53,17 +53,17 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollButtonContainer.add(this.rerollCostText);
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     if (this.active) {
       if (args.length >= 3) {
         this.awaitingActionInput = true;
         this.onActionInput = args[2];
       }
-      return;
+      return false;
     }
 
     if (args.length !== 4 || !(args[1] instanceof Array) || !args[1].length || !(args[2] instanceof Function))
-      return;
+      return false;
 
     super.show(args);
 
@@ -135,6 +135,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.awaitingActionInput = true;
       this.onActionInput = args[2];
     });
+
+    return true;
   }
 
   processInput(button: Button): boolean {

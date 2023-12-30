@@ -1,5 +1,22 @@
 import BattleScene from "../battle-scene";
 
+export enum WindowVariant {
+  NORMAL,
+  THIN,
+  XTHIN
+}
+
+export function getWindowVariantSuffix(windowVariant: WindowVariant): string {
+  switch (windowVariant) {
+    case WindowVariant.THIN:
+      return '_thin';
+    case WindowVariant.XTHIN:
+      return '_xthin';
+    default:
+      return '';
+  }
+}
+
 const windowTypeControlColors = {
   0: [ '#706880', '#8888c8', '#484868' ],
   1: [ '#d04028', '#e0a028', '#902008' ],
@@ -7,8 +24,11 @@ const windowTypeControlColors = {
   3: [ '#2068d0', '#80b0e0', '#104888' ]
 };
 
-export function addWindow(scene: BattleScene, x: number, y: number, width: number, height: number, mergeMaskTop?: boolean, mergeMaskLeft?: boolean, maskOffsetX?: number, maskOffsetY?: number): Phaser.GameObjects.NineSlice {
-  const window = scene.add.nineslice(x, y, `window_${scene.windowType}`, null, width, height, 8, 8, 8, 8);
+export function addWindow(scene: BattleScene, x: number, y: number, width: number, height: number, mergeMaskTop?: boolean, mergeMaskLeft?: boolean, maskOffsetX?: number, maskOffsetY?: number, windowVariant?: WindowVariant): Phaser.GameObjects.NineSlice {
+  if (windowVariant === undefined)
+    windowVariant = WindowVariant.NORMAL;
+    
+  const window = scene.add.nineslice(x, y, `window_${scene.windowType}${getWindowVariantSuffix(windowVariant)}`, null, width, height, 6, 6, 6, 6);
   window.setOrigin(0, 0);
 
   if (mergeMaskTop || mergeMaskLeft) {
@@ -24,7 +44,7 @@ export function addWindow(scene: BattleScene, x: number, y: number, width: numbe
 }
 
 export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): void {
-  const windowObjects: Phaser.GameObjects.NineSlice[] = [];
+  const windowObjects: [Phaser.GameObjects.NineSlice, WindowVariant][] = [];
   const traverse = (object: any) => {
     if (object.hasOwnProperty('children')) {
       const children = object.children as Phaser.GameObjects.DisplayList;
@@ -35,7 +55,7 @@ export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): 
         traverse(child);
     } else if (object instanceof Phaser.GameObjects.NineSlice) {
       if (object.texture.key.startsWith('window_'))
-        windowObjects.push(object);
+        windowObjects.push([ object, object.texture.key.endsWith(getWindowVariantSuffix(WindowVariant.XTHIN)) ? WindowVariant.XTHIN : object.texture.key.endsWith(getWindowVariantSuffix(WindowVariant.THIN)) ? WindowVariant.THIN : WindowVariant.NORMAL ]);
     }
   }
 
@@ -48,6 +68,6 @@ export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): 
 
   const windowKey = `window_${windowTypeIndex}`;
 
-  for (let window of windowObjects)
-    window.setTexture(windowKey);
+  for (let [ window, variant ] of windowObjects)
+    window.setTexture(`${windowKey}${getWindowVariantSuffix(variant)}`);
 }

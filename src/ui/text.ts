@@ -1,4 +1,5 @@
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
+import InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 export enum TextStyle {
   MESSAGE,
@@ -22,7 +23,7 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
   const ret = scene.add.text(x, y, content, styleOptions);
   ret.setScale(0.1666666667);
   ret.setShadow(shadowSize, shadowSize, shadowColor);
-  if (!styleOptions.lineSpacing)
+  if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing)
     ret.setLineSpacing(5);
 
   return ret;
@@ -35,13 +36,23 @@ export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, c
   scene.add.existing(ret);
   ret.setScale(0.1666666667);
   ret.setShadow(shadowSize, shadowSize, shadowColor);
-  if (!styleOptions.lineSpacing)
+  if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing)
     ret.setLineSpacing(5);
 
   return ret;
 }
 
-function getTextStyleOptions(style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle, string, integer ] {
+export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, width: number, height: number, style: TextStyle, extraStyleOptions?: InputText.IConfig): InputText {
+  const [ styleOptions ] = getTextStyleOptions(style, extraStyleOptions);
+
+  const ret = new InputText(scene, x, y, width, height, styleOptions as InputText.IConfig);
+  scene.add.existing(ret);
+  ret.setScale(0.1666666667);
+
+  return ret;
+}
+
+function getTextStyleOptions(style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, integer ] {
   let shadowColor: string;
   let shadowSize = 6;
 

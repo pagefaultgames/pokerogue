@@ -314,7 +314,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.updateInstructions();
   }
 
-  show(args: any[]): void {
+  show(args: any[]): boolean {
     if (args.length >= 1 && args[0] instanceof Function) {
       super.show(args);
 
@@ -335,7 +335,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.setCursor(0);
       this.setGenMode(true);
       this.setCursor(0);
+
+      return true;
     }
+
+    return false;
   }
 
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {

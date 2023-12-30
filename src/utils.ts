@@ -130,6 +130,55 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
   return condition ? promiseFunc() : new Promise<T>(resolve => resolve(null));
 }
 
+export const sessionIdKey = 'pokerogue_sessionId';
+export const isLocal = window.location.hostname === 'localhost';
+export const serverUrl = isLocal ? 'http://localhost:8001' : '';
+export const apiUrl = isLocal ? serverUrl : 'api';
+
+export function setCookie(cName: string, cValue: string): void {
+  document.cookie = `${cName}=${cValue};SameSite=Strict;path=/`;
+}
+
+export function getCookie(cName: string): string {
+  const name = `${cName}=`;
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ')
+      c = c.substring(1);
+    if (c.indexOf(name) === 0)
+      return c.substring(name.length, c.length);
+  }
+  return '';
+}
+
+export function apiFetch(path: string): Promise<Response> {
+  return new Promise((resolve, reject) => {
+    const sId = getCookie(sessionIdKey);
+    const headers = sId ? { 'Authorization': sId } : {};
+    fetch(`${apiUrl}/${path}`, { headers: headers })
+      .then(response => resolve(response))
+      .catch(err => reject(err));
+  });
+}
+
+export function apiPost(path: string, data?: any, contentType?: string): Promise<Response> {
+  if (!contentType)
+    contentType = 'application/json';
+  return new Promise((resolve, reject) => {
+    const headers = {
+      'Accept': contentType,
+      'Content-Type': contentType,
+    };
+    const sId = getCookie(sessionIdKey);
+    if (sId)
+      headers['Authorization'] = sId;
+    fetch(`${apiUrl}/${path}`, { method: 'POST', headers: headers, body: data })
+      .then(response => resolve(response))
+      .catch(err => reject(err));
+  });
+}
+
 export class BooleanHolder {
   public value: boolean;
 

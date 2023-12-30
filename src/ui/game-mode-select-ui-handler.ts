@@ -29,7 +29,7 @@ export default class GameModeSelectUiHandler extends AbstractOptionSelectUiHandl
     return ret;
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     if (args.length === 2 && args[0] instanceof Function && args[1] instanceof Function) {
       this.setupOptions();
       
@@ -39,7 +39,11 @@ export default class GameModeSelectUiHandler extends AbstractOptionSelectUiHandl
 
       this.optionSelectContainer.setVisible(true);
       this.setCursor(0);
+
+      return true;
     }
+
+    return false;
   }
 
   processInput(button: Button): boolean {

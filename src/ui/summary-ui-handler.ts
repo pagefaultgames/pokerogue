@@ -181,7 +181,7 @@ export default class SummaryUiHandler extends UiHandler {
     return `summary_${Page[page].toLowerCase()}`;
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     super.show(args);
 
     this.pokemon = args[0] as PlayerPokemon;
@@ -237,6 +237,8 @@ export default class SummaryUiHandler extends UiHandler {
       this.status.setFrame(this.pokemon.status ? StatusEffect[this.pokemon.status.effect].toLowerCase() : 'pokerus');
     } else
       this.hideStatus(!fromSummary);
+
+    return true;
   }
 
   processInput(button: Button): boolean {

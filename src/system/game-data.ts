@@ -19,6 +19,7 @@ import { Egg } from "../data/egg";
 import { VoucherType, vouchers } from "./voucher";
 import { AES, enc } from "crypto-js";
 import { Mode } from "../ui/ui";
+import { updateUserInfo } from "../account";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -155,29 +156,35 @@ export class GameData {
     this.loadSystem();
   }
 
-  public saveSystem(): boolean {
-    if (this.scene.quickStart)
-      return false;
-      
-    const data: SystemSaveData = {
-      trainerId: this.trainerId,
-      secretId: this.secretId,
-      dexData: this.dexData,
-      unlocks: this.unlocks,
-      achvUnlocks: this.achvUnlocks,
-      voucherUnlocks: this.voucherUnlocks,
-      voucherCounts: this.voucherCounts,
-      eggs: this.eggs.map(e => new EggData(e)),
-      gameVersion: this.scene.game.config.gameVersion,
-      timestamp: new Date().getTime()
-    };
+  public saveSystem(): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      if (this.scene.quickStart)
+        return resolve(true);
 
-    localStorage.setItem('data_bak', localStorage.getItem('data'));
-
-    const maxIntAttrValue = Math.pow(2, 31);
-    localStorage.setItem('data', btoa(JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v)));
-
-    return true;
+      updateUserInfo().then(success => {
+        if (!success)
+          return resolve(false);
+        const data: SystemSaveData = {
+          trainerId: this.trainerId,
+          secretId: this.secretId,
+          dexData: this.dexData,
+          unlocks: this.unlocks,
+          achvUnlocks: this.achvUnlocks,
+          voucherUnlocks: this.voucherUnlocks,
+          voucherCounts: this.voucherCounts,
+          eggs: this.eggs.map(e => new EggData(e)),
+          gameVersion: this.scene.game.config.gameVersion,
+          timestamp: new Date().getTime()
+        };
+  
+        localStorage.setItem('data_bak', localStorage.getItem('data'));
+  
+        const maxIntAttrValue = Math.pow(2, 31);
+        localStorage.setItem('data', btoa(JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v)));
+  
+        resolve(true);
+      });
+    });
   }
 
   private loadSystem(): boolean {
@@ -279,29 +286,36 @@ export class GameData {
       setSetting(this.scene, setting as Setting, settings[setting]);
   }
 
-  saveSession(scene: BattleScene): boolean {
-    const sessionData = {
-      seed: scene.seed,
-      gameMode: scene.gameMode,
-      party: scene.getParty().map(p => new PokemonData(p)),
-      enemyParty: scene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
-      arena: new ArenaData(scene.arena),
-      pokeballCounts: scene.pokeballCounts,
-      money: scene.money,
-      waveIndex: scene.currentBattle.waveIndex,
-      battleType: scene.currentBattle.battleType,
-      trainer: scene.currentBattle.battleType == BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
-      gameVersion: scene.game.config.gameVersion,
-      timestamp: new Date().getTime()
-    } as SessionSaveData;
+  saveSession(scene: BattleScene, skipVerification?: boolean): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
+        if (success !== null && !success)
+          return resolve(false);
 
-    localStorage.setItem('sessionData', btoa(JSON.stringify(sessionData)));
+        const sessionData = {
+          seed: scene.seed,
+          gameMode: scene.gameMode,
+          party: scene.getParty().map(p => new PokemonData(p)),
+          enemyParty: scene.getEnemyParty().map(p => new PokemonData(p)),
+          modifiers: scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
+          enemyModifiers: scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+          arena: new ArenaData(scene.arena),
+          pokeballCounts: scene.pokeballCounts,
+          money: scene.money,
+          waveIndex: scene.currentBattle.waveIndex,
+          battleType: scene.currentBattle.battleType,
+          trainer: scene.currentBattle.battleType == BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
+          gameVersion: scene.game.config.gameVersion,
+          timestamp: new Date().getTime()
+        } as SessionSaveData;
 
-    console.debug('Session data saved');
+        localStorage.setItem('sessionData', btoa(JSON.stringify(sessionData)));
 
-    return true;
+        console.debug('Session data saved');
+
+        resolve(true);
+      });
+    });
   }
 
   hasSession() {

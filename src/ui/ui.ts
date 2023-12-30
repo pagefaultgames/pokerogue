@@ -24,8 +24,11 @@ import EggHatchSceneHandler from './egg-hatch-scene-handler';
 import EggListUiHandler from './egg-list-ui-handler';
 import EggGachaUiHandler from './egg-gacha-ui-handler';
 import VouchersUiHandler from './vouchers-ui-handler';
-import VoucherBar from './voucher-bar';
 import { addWindow } from './window';
+import LoginFormUiHandler from './login-form-ui-handler';
+import RegistrationFormUiHandler from './registration-form-ui-handler';
+import LoadingModalUiHandler from './loading-modal-ui-handler';
+import * as Utils from "../utils";
 
 export enum Mode {
   MESSAGE,
@@ -48,7 +51,10 @@ export enum Mode {
   ACHIEVEMENTS,
   VOUCHERS,
   EGG_LIST,
-  EGG_GACHA
+  EGG_GACHA,
+  LOGIN_FORM,
+  REGISTRATION_FORM,
+  LOADING
 };
 
 const transitionModes = [
@@ -68,7 +74,10 @@ const noTransitionModes = [
   Mode.MENU,
   Mode.SETTINGS,
   Mode.ACHIEVEMENTS,
-  Mode.VOUCHERS
+  Mode.VOUCHERS,
+  Mode.LOGIN_FORM,
+  Mode.REGISTRATION_FORM,
+  Mode.LOADING
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -77,7 +86,6 @@ export default class UI extends Phaser.GameObjects.Container {
   private handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
-  public voucherBar: VoucherBar;
 
   private tooltipContainer: Phaser.GameObjects.Container;
   private tooltipBg: Phaser.GameObjects.NineSlice;
@@ -112,7 +120,10 @@ export default class UI extends Phaser.GameObjects.Container {
       new AchvsUiHandler(scene),
       new VouchersUiHandler(scene),
       new EggListUiHandler(scene),
-      new EggGachaUiHandler(scene)
+      new EggGachaUiHandler(scene),
+      new LoginFormUiHandler(scene),
+      new RegistrationFormUiHandler(scene),
+      new LoadingModalUiHandler(scene)
     ];
   }
 
@@ -135,7 +146,7 @@ export default class UI extends Phaser.GameObjects.Container {
     this.tooltipContainer = this.scene.add.container(0, 0);
     this.tooltipContainer.setVisible(false);
 
-    this.tooltipBg = addWindow(this.scene, 0, 0, 128, 31);
+    this.tooltipBg = addWindow(this.scene as BattleScene, 0, 0, 128, 31);
     this.tooltipBg.setOrigin(0, 0);
 
     this.tooltipTitle = addTextObject(this.scene, 64, 4, '', TextStyle.TOOLTIP_TITLE);
@@ -323,7 +334,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
   revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (!this.modeChain.length)
+      if (!this?.modeChain?.length)
         return resolve(false);
 
       const lastMode = this.mode;
@@ -347,6 +358,14 @@ export default class UI extends Phaser.GameObjects.Container {
         doRevertMode();
 
       resolve(true);
+    });
+  }
+
+  revertModes(): Promise<void> {
+    return new Promise<void>(resolve => {
+      if (!this?.modeChain?.length)
+        return resolve();
+      this.revertMode().then(success => Utils.executeIf(success, this.revertModes).then(() => resolve()));
     });
   }
 }

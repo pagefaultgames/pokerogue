@@ -95,7 +95,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
     this.vouchersContainer.setVisible(false);
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     super.show(args);
 
     const voucherUnlocks = this.scene.gameData.voucherUnlocks;
@@ -117,6 +117,8 @@ export default class VouchersUiHandler extends MessageUiHandler {
     this.getUi().moveTo(this.vouchersContainer, this.getUi().length - 1);
 
     this.getUi().hideTooltip();
+
+    return true;
   }
 
   protected showVoucher(voucher: Voucher) {

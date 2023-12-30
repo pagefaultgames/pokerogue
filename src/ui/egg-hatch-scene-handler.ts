@@ -21,10 +21,12 @@ export default class EggHatchSceneHandler extends UiHandler {
     });
   }
 
-  show(_args: any[]): void {
+  show(_args: any[]): boolean {
     super.show(_args);
 
     this.getUi().showText(null, 0);
+
+    return true;
   }
 
   processInput(button: Button): boolean {

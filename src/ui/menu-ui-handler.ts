@@ -1,14 +1,14 @@
 import BattleScene, { Button } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
-import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { addWindow } from "./window";
 import MessageUiHandler from "./message-ui-handler";
 import { GameDataType } from "../system/game-data";
+import { CheckLoadPhase, LoginPhase } from "../battle-phases";
 
 export enum MenuOptions {
-  SETTINGS,
+  GAME_SETTINGS,
   ACHIEVEMENTS,
   VOUCHERS,
   EGG_LIST,
@@ -16,7 +16,8 @@ export enum MenuOptions {
   IMPORT_SESSION,
   EXPORT_SESSION,
   IMPORT_DATA,
-  EXPORT_DATA
+  EXPORT_DATA,
+  LOG_OUT
 }
 
 export default class MenuUiHandler extends MessageUiHandler {
@@ -73,7 +74,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.menuContainer.setVisible(false);
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     super.show(args);
 
     this.menuContainer.setVisible(true);
@@ -84,6 +85,8 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.getUi().hideTooltip();
 
     this.scene.playSound('menu_open');
+
+    return true;
   }
 
   processInput(button: Button): boolean {
@@ -94,7 +97,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     if (button === Button.ACTION) {
       switch (this.cursor as MenuOptions) {
-        case MenuOptions.SETTINGS:
+        case MenuOptions.GAME_SETTINGS:
           this.scene.ui.setOverlayMode(Mode.SETTINGS);
           success = true;
           break;
@@ -129,6 +132,26 @@ export default class MenuUiHandler extends MessageUiHandler {
           this.scene.gameData.exportData(this.cursor === MenuOptions.EXPORT_DATA ? GameDataType.SYSTEM : GameDataType.SESSION);
           success = true;
           break;
+        case MenuOptions.LOG_OUT:
+          success = true;
+          const doLogout = () => {
+            Utils.apiPost('account/logout').then(res => {
+              if (!res.ok)
+                console.error(`Log out failed (${res.status}: ${res.statusText})`);
+              Utils.setCookie(Utils.sessionIdKey, '');
+              this.scene.reset(true);
+            });
+          };
+          if (this.scene.currentBattle) {
+            this.scene.ui.showText('You will lose any progress since the beginning of the battle. Proceed?', null, () => {
+              this.scene.ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
+                this.scene.ui.revertMode();
+                this.scene.ui.showText(null, 0);
+              }, false, 98);
+            });
+          } else
+            doLogout();
+          break;
       }
     } else if (button === Button.CANCEL) {
       success = true;
@@ -141,7 +164,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             success = this.setCursor(this.cursor - 1);
           break;
         case Button.DOWN:
-          if (this.cursor < Utils.getEnumKeys(MenuOptions).length)
+          if (this.cursor + 1 < Utils.getEnumKeys(MenuOptions).length)
             success = this.setCursor(this.cursor + 1);
           break;
       }
@@ -152,7 +175,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     else if (error)
       ui.playError();
 
-    return true;
+    return success || error;
   }
 
   showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {

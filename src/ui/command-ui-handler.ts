@@ -37,7 +37,7 @@ export default class CommandUiHandler extends UiHandler {
     }
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     super.show(args);
 
     this.fieldIndex = args.length ? args[0] as integer : 0;
@@ -50,6 +50,8 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.message.setWordWrapWidth(1110);
     messageHandler.showText(`What will\n${(this.scene.getCurrentPhase() as CommandPhase).getPokemon().name} do?`, 0);
     this.setCursor(this.getCursor());
+
+    return true;
   }
 
   processInput(button: Button): boolean {

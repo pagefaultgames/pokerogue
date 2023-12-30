@@ -219,7 +219,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.setCursor(0);
   }
 
-  show(args: any[]): void {
+  show(args: any[]): boolean {
     super.show(args);
 
     this.getUi().showText(defaultText, 0);
@@ -232,6 +232,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.updateVoucherCounts();
 
     this.eggGachaContainer.setVisible(true);
+
+    return true;
   }
 
   getDelayValue(delay: integer) {
@@ -240,9 +242,89 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     return Utils.fixedInt(delay);
   }
 
-  pull(pullCount?: integer, count?: integer, eggs?: Egg[]) {
+  pull(pullCount?: integer, count?: integer, eggs?: Egg[]): void {
     this.eggGachaOptionsContainer.setVisible(false);
     this.setTransitioning(true);
+
+    const doPull = () => {
+      if (this.transitionCancelled)
+        return this.showSummary(eggs);
+
+      const egg = this.scene.add.sprite(127, 75, 'egg', `egg_${eggs[count].getKey()}`);
+      egg.setScale(0.5);
+
+      this.gachaContainers[this.gachaCursor].add(egg);
+      this.gachaContainers[this.gachaCursor].moveTo(egg, 1);
+
+      const doPullAnim = () => {
+        this.scene.playSound('gacha_running', { loop: true });
+          this.scene.time.delayedCall(this.getDelayValue(count ? 500 : 1250), () => {
+            this.scene.playSound('gacha_dispense');
+            this.scene.time.delayedCall(this.getDelayValue(750), () => {
+              this.scene.sound.stopByKey('gacha_running');
+              this.scene.tweens.add({
+                targets: egg,
+                duration: this.getDelayValue(350),
+                y: 95,
+                ease: 'Bounce.easeOut',
+                onComplete: () => {
+                  this.scene.time.delayedCall(this.getDelayValue(125), () => {
+                    this.scene.playSound('pb_catch');
+                    this.gachaHatches[this.gachaCursor].play('open');
+                    this.scene.tweens.add({
+                      targets: egg,
+                      duration: this.getDelayValue(350),
+                      scale: 0.75,
+                      ease: 'Sine.easeIn'
+                    });
+                    this.scene.tweens.add({
+                      targets: egg,
+                      y: 110,
+                      duration: this.getDelayValue(350),
+                      ease: 'Back.easeOut',
+                      onComplete: () => {
+                        this.gachaHatches[this.gachaCursor].play('close');
+                        this.scene.tweens.add({
+                          targets: egg,
+                          y: 200,
+                          duration: this.getDelayValue(350),
+                          ease: 'Cubic.easeIn',
+                          onComplete: () => {
+                            if (++count < pullCount)
+                              this.pull(pullCount, count, eggs);
+                            else
+                              this.showSummary(eggs);
+                          }
+                        });
+                      }
+                    });
+                  });
+                }
+              });
+            });
+          });
+      };
+
+      if (!count) {
+        this.scene.playSound('gacha_dial');
+        this.scene.tweens.add({
+          targets: this.gachaKnobs[this.gachaCursor],
+          duration: this.getDelayValue(350),
+          angle: 90,
+          ease: 'Cubic.easeInOut',
+          onComplete: () => {
+            this.scene.tweens.add({
+              targets: this.gachaKnobs[this.gachaCursor],
+              duration: this.getDelayValue(350),
+              angle: 0,
+              ease: 'Sine.easeInOut'
+            });
+            this.scene.time.delayedCall(this.getDelayValue(350), doPullAnim);
+          }
+        });
+      } else
+        doPullAnim();
+    };
 
     if (!pullCount)
       pullCount = 1;
@@ -270,87 +352,15 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         this.scene.gameData.eggs.push(egg);
       }
 
-      this.scene.gameData.saveSystem();
-    }
-
-    if (this.transitionCancelled) {
-      return this.showSummary(eggs);
-    }
-
-    const egg = this.scene.add.sprite(127, 75, 'egg', `egg_${eggs[count].getKey()}`);
-    egg.setScale(0.5);
-
-    this.gachaContainers[this.gachaCursor].add(egg);
-    this.gachaContainers[this.gachaCursor].moveTo(egg, 1);
-
-    const doPullAnim = () => {
-      this.scene.playSound('gacha_running', { loop: true });
-        this.scene.time.delayedCall(this.getDelayValue(count ? 500 : 1250), () => {
-          this.scene.playSound('gacha_dispense');
-          this.scene.time.delayedCall(this.getDelayValue(750), () => {
-            this.scene.sound.stopByKey('gacha_running');
-            this.scene.tweens.add({
-              targets: egg,
-              duration: this.getDelayValue(350),
-              y: 95,
-              ease: 'Bounce.easeOut',
-              onComplete: () => {
-                this.scene.time.delayedCall(this.getDelayValue(125), () => {
-                  this.scene.playSound('pb_catch');
-                  this.gachaHatches[this.gachaCursor].play('open');
-                  this.scene.tweens.add({
-                    targets: egg,
-                    duration: this.getDelayValue(350),
-                    scale: 0.75,
-                    ease: 'Sine.easeIn'
-                  });
-                  this.scene.tweens.add({
-                    targets: egg,
-                    y: 110,
-                    duration: this.getDelayValue(350),
-                    ease: 'Back.easeOut',
-                    onComplete: () => {
-                      this.gachaHatches[this.gachaCursor].play('close');
-                      this.scene.tweens.add({
-                        targets: egg,
-                        y: 200,
-                        duration: this.getDelayValue(350),
-                        ease: 'Cubic.easeIn',
-                        onComplete: () => {
-                          if (++count < pullCount)
-                            this.pull(pullCount, count, eggs);
-                          else
-                            this.showSummary(eggs);
-                        }
-                      });
-                    }
-                  });
-                });
-              }
-            });
-          });
-        });
-    };
-
-    if (!count) {
-      this.scene.playSound('gacha_dial');
-      this.scene.tweens.add({
-        targets: this.gachaKnobs[this.gachaCursor],
-        duration: this.getDelayValue(350),
-        angle: 90,
-        ease: 'Cubic.easeInOut',
-        onComplete: () => {
-          this.scene.tweens.add({
-            targets: this.gachaKnobs[this.gachaCursor],
-            duration: this.getDelayValue(350),
-            angle: 0,
-            ease: 'Sine.easeInOut'
-          });
-          this.scene.time.delayedCall(this.getDelayValue(350), doPullAnim);
-        }
+      this.scene.gameData.saveSystem().then(success => {
+        if (!success)
+          return this.scene.reset(true);
+        doPull();
       });
-    } else
-      doPullAnim();
+      return;
+    }
+
+    doPull();
   }
 
   showSummary(eggs: Egg[]): void {

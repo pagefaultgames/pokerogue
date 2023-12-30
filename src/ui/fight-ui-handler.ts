@@ -36,7 +36,7 @@ export default class FightUiHandler extends UiHandler {
     ui.add(this.ppText);
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     super.show(args);
 
     this.fieldIndex = args.length ? args[0] as integer : 0;
@@ -46,6 +46,8 @@ export default class FightUiHandler extends UiHandler {
     messageHandler.movesWindowContainer.setVisible(true);
     this.setCursor(this.getCursor());
     this.displayMoves();
+
+    return true;
   }
 
   processInput(button: Button): boolean {

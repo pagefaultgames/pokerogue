@@ -87,7 +87,7 @@ export default class SettingsUiHandler extends UiHandler {
     this.settingsContainer.setVisible(false);
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     super.show(args);
     
     const settings: object = localStorage.hasOwnProperty('settings') ? JSON.parse(localStorage.getItem('settings')) : {};
@@ -100,6 +100,8 @@ export default class SettingsUiHandler extends UiHandler {
     this.getUi().moveTo(this.settingsContainer, this.getUi().length - 1);
 
     this.getUi().hideTooltip();
+
+    return true;
   }
 
   processInput(button: Button): boolean {

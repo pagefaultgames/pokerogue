@@ -14,8 +14,10 @@ export default abstract class UiHandler {
 
   abstract setup(): void;
 
-  show(_args: any[]): void {
+  show(_args: any[]): boolean {
     this.active = true;
+
+    return true;
   }
 
   abstract processInput(button: Button): boolean;

@@ -54,7 +54,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.optionSelectText.setPositionRelative(this.optionSelectBg, 16, 9);
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     const options = this.getOptions();
 
     if (args.length >= options.length && args.slice(0, options.length).filter(a => a instanceof Function).length === options.length) {
@@ -64,7 +64,11 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
       this.optionSelectContainer.setVisible(true);
       this.setCursor(0);
+
+      return true;
     }
+
+    return false;
   }
 
   processInput(button: Button): boolean {

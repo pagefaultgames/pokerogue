@@ -161,9 +161,9 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.partySlots = [];
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     if (!args.length || this.active)
-      return;
+      return false;
 
     super.show(args);
 
@@ -184,6 +184,8 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.partyBg.setTexture(`party_bg${this.scene.currentBattle.double ? '_double' : ''}`);
     this.populatePartySlots();
     this.setCursor(this.cursor < 6 ? this.cursor : 0);
+
+    return true;
   }
 
   processInput(button: Button): boolean {

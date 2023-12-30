@@ -1,4 +1,4 @@
-import BattleScene, { startingLevel, startingWave } from "./battle-scene";
+import BattleScene, { bypassLogin, startingLevel, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./pokemon";
 import * as Utils from './utils';
 import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr } from "./data/move";
@@ -36,6 +36,55 @@ import { TrainerType, trainerConfigs } from "./data/trainer-type";
 import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
+import { updateUserInfo } from "./account";
+
+export class LoginPhase extends BattlePhase {
+  private showText: boolean;
+
+  constructor(scene: BattleScene, showText?: boolean) {
+    super(scene);
+
+    this.showText = showText === undefined || !!showText;
+  }
+
+  start(): void {
+    super.start();
+
+    this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+    Utils.executeIf(bypassLogin || !!Utils.getCookie(Utils.sessionIdKey), updateUserInfo).then(success => {
+      if (!success) {
+        if (this.showText)
+          this.scene.ui.showText('Log in or create an account to start. No email required!');
+  
+        this.scene.playSound('menu_open');
+    
+        this.scene.ui.setMode(Mode.LOGIN_FORM, {
+          buttonActions: [
+            () => {
+              this.scene.ui.playSelect();
+              this.end();
+            }, () => {
+              this.scene.playSound('menu_open');
+              this.scene.ui.setMode(Mode.REGISTRATION_FORM, {
+                buttonActions: [
+                  () => {
+                    this.scene.ui.playSelect();
+                    this.end();
+                  }, () => {
+                    this.scene.unshiftPhase(new LoginPhase(this.scene, false))
+                    this.end();
+                  }
+                ]
+              });
+            }
+          ]
+        });
+        return null;
+      } else
+        this.end();
+    });
+  }
+}
 
 export class CheckLoadPhase extends BattlePhase {
   private loaded: boolean;
@@ -47,6 +96,8 @@ export class CheckLoadPhase extends BattlePhase {
   }
 
   start(): void {
+    super.start();
+    
     if (!this.scene.gameData.hasSession())
       return this.end();
 
@@ -312,10 +363,13 @@ export class EncounterPhase extends BattlePhase {
 
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
-          this.scene.gameData.saveSession(this.scene);
-          this.scene.gameData.saveSystem();
-        }
-        this.doEncounter();
+          this.scene.gameData.saveSystem().then(success => {
+            if (!success)
+              return this.scene.reset(true);
+            this.scene.gameData.saveSession(this.scene, true).then(() => this.doEncounter());
+          });
+        } else
+          this.doEncounter();
       });
     });
   }
@@ -2531,15 +2585,19 @@ export class UnlockPhase extends BattlePhase {
   start(): void {
     this.scene.time.delayedCall(2000, () => {
       this.scene.gameData.unlocks[this.unlockable] = true;
-      this.scene.gameData.saveSystem();
-      this.scene.playSoundWithoutBgm('level_up_fanfare');
-      this.scene.ui.setMode(Mode.MESSAGE);
-      this.scene.arenaBg.setVisible(false);
-      this.scene.ui.fadeIn(250).then(() => {
-        this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
-          this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
-          this.end();
-        }, null, true, 1500);
+      this.scene.gameData.saveSystem().then(success => {
+        if (success) {
+          this.scene.playSoundWithoutBgm('level_up_fanfare');
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.arenaBg.setVisible(false);
+          this.scene.ui.fadeIn(250).then(() => {
+            this.scene.ui.showText(`${getUnlockableName(this.unlockable)}\nhas been unlocked.`, null, () => {
+              this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
+              this.end();
+            }, null, true, 1500);
+          });
+        } else
+          this.scene.reset(true);
       });
     });
   }

@@ -120,12 +120,14 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.levelUpStatsValuesContent = levelUpStatsValuesContent;
   }
 
-  show(args: any[]): void {
+  show(args: any[]): boolean {
     super.show(args);
 
     this.commandWindow.setVisible(false);
     this.movesWindowContainer.setVisible(false);
     this.message.setWordWrapWidth(1780);
+
+    return true;
   }
 
   processInput(button: Button): boolean {

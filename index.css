@@ -27,6 +27,10 @@ body {
   justify-content: center;
 }
 
+#app > div:first-child {
+  transform-origin: top !important;
+}
+
 #touchControls:not(.visible) {
   display: none;
 }

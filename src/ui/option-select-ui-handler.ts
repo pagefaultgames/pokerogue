@@ -21,9 +21,9 @@ export default class OptionSelectUiHandler extends AbstractOptionSelectUiHandler
     return this.options;
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     if (args.length < 2 || args.length % 2 === 1)
-      return;
+      return false;
 
     const optionNames: string[] = [];
     const optionFuncs: Function[] = [];
@@ -34,6 +34,6 @@ export default class OptionSelectUiHandler extends AbstractOptionSelectUiHandler
 
     this.setupOptions();
 
-    super.show(optionFuncs);
+    return super.show(optionFuncs);
   }
 }

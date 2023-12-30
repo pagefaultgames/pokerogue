@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Biome } from './data/biome';
 import UI, { Mode } from './ui/ui';
-import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase, TrainerMessageTestPhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase, TrainerMessageTestPhase, LoginPhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
@@ -39,9 +39,12 @@ import { Achv, ModifierAchv, achvs } from './system/achv';
 import { GachaType } from './data/egg';
 import { Voucher, vouchers } from './system/voucher';
 import { Gender } from './data/gender';
+import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
+import { WindowVariant, getWindowVariantSuffix } from './ui/window';
 
 const enableAuto = true;
 const quickStart = false;
+export const bypassLogin = false;
 export const startingLevel = 5;
 export const startingWave = 1;
 export const startingBiome = Biome.TOWN;
@@ -52,6 +55,7 @@ export enum Button {
 	DOWN,
 	LEFT,
 	RIGHT,
+	SUBMIT,
 	ACTION,
 	CANCEL,
 	MENU,
@@ -72,6 +76,8 @@ export interface PokeballCounts {
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
 export default class BattleScene extends Phaser.Scene {
+	public rexUI: UIPlugin;
+
 	public auto: boolean;
 	public masterVolume: number = 0.5;
 	public bgmVolume: number = 1;
@@ -192,8 +198,10 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('command_fight_labels', 'ui');
 		this.loadAtlas('prompt', 'ui');
 		this.loadImage('cursor', 'ui');
-		for (let w = 1; w <= 4; w++)
-			this.loadImage(`window_${w}`, 'ui/windows');
+		for (let wv of Utils.getEnumValues(WindowVariant)) {
+			for (let w = 1; w <= 4; w++)
+				this.loadImage(`window_${w}${getWindowVariantSuffix(wv)}`, 'ui/windows');
+		}
 		this.loadImage('namebox', 'ui');
 		this.loadImage('pbinfo_player', 'ui');
 		this.loadImage('pbinfo_player_mini', 'ui');
@@ -376,7 +384,7 @@ export default class BattleScene extends Phaser.Scene {
 		
 		populateAnims();
 
-		//this.load.plugin('rexfilechooserplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexfilechooserplugin.min.js', true);
+		this.load.plugin('rextexteditplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js', true);
 	}
 
 	create() {
@@ -512,6 +520,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.reset();
 
 		if (this.quickStart) {
+			this.newBattle();
+
 			for (let s = 0; s < 3; s++) {
 				const playerSpecies = this.randomSpecies(startingWave, startingLevel);
 				const playerPokemon = new PlayerPokemon(this, playerSpecies, startingLevel, 0, 0);
@@ -537,9 +547,10 @@ export default class BattleScene extends Phaser.Scene {
 			if (enableAuto)
 				initAutoPlay.apply(this);
 
-			if (!this.quickStart)
+			if (!this.quickStart) {
+				this.pushPhase(new LoginPhase(this));
 				this.pushPhase(new CheckLoadPhase(this));
-			else
+			} else
 				this.pushPhase(new EncounterPhase(this));
 
 			this.shiftPhase();
@@ -553,6 +564,7 @@ export default class BattleScene extends Phaser.Scene {
 			[Button.DOWN]: [keyCodes.DOWN, keyCodes.S],
 			[Button.LEFT]: [keyCodes.LEFT, keyCodes.A],
 			[Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
+			[Button.SUBMIT]: [keyCodes.ENTER],
 			[Button.ACTION]: [keyCodes.ENTER, keyCodes.SPACE, keyCodes.Z],
 			[Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
 			[Button.MENU]: [keyCodes.ESC, keyCodes.M],
@@ -571,7 +583,7 @@ export default class BattleScene extends Phaser.Scene {
 			const keys: Phaser.Input.Keyboard.Key[] = [];
 			if (keyConfig.hasOwnProperty(b)) {
 				for (let k of keyConfig[b])
-					keys.push(this.input.keyboard.addKey(k));
+					keys.push(this.input.keyboard.addKey(k, false));
 				mobileKeyConfig[Button[b]] = keys[0];
 			}
 			this.buttonKeys[b] = keys;
@@ -620,7 +632,7 @@ export default class BattleScene extends Phaser.Scene {
 		return findInParty(this.getParty()) || findInParty(this.getEnemyParty());
 	}
 
-	reset(): void {
+	reset(clearScene?: boolean): void {
 		this.seed = Utils.randomString(16);
 		console.log('Seed:', this.seed);
 
@@ -658,6 +670,23 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.trainer.setTexture('trainer_m');
 		this.trainer.setPosition(406, 132);
+
+		if (clearScene) {
+			this.fadeOutBgm(250, false);
+			this.tweens.add({
+				targets: [ this.uiContainer ],
+				alpha: 0,
+				duration: 250,
+				ease: 'Sine.easeInOut',
+				onComplete: () => {
+					this.clearPhaseQueue();
+
+					this.children.removeAll(true);
+					this.game.domContainer.innerHTML = '';
+					this.launchBattle();
+				}
+			});
+		}
 	}
 
 	newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle {
@@ -960,6 +989,8 @@ export default class BattleScene extends Phaser.Scene {
 		} else if (this.isButtonPressed(Button.RIGHT)) {
 			inputSuccess = this.ui.processInput(Button.RIGHT);
 			vibrationLength = 5;
+		} else if (this.isButtonPressed(Button.SUBMIT)) {
+			inputSuccess = this.ui.processInput(Button.SUBMIT) || this.ui.processInput(Button.ACTION);
 		} else if (this.isButtonPressed(Button.ACTION))
 			inputSuccess = this.ui.processInput(Button.ACTION);
 		else if (this.isButtonPressed(Button.CANCEL)) {
@@ -1117,7 +1148,7 @@ export default class BattleScene extends Phaser.Scene {
 
 	fadeOutBgm(duration?: integer, destroy?: boolean): boolean {
 		if (!this.bgm)
-			return;
+			return false;
 		if (!duration)
 			duration = 500;
 		if (destroy === undefined)

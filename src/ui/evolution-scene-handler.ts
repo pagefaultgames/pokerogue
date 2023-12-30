@@ -19,10 +19,12 @@ export default class EvolutionSceneHandler extends UiHandler {
       this.scene.fieldUI.add(this.evolutionContainer);
     }
 
-    show(_args: any[]): void {
+    show(_args: any[]): boolean {
       super.show(_args);
       
       this.scene.fieldUI.bringToTop(this.evolutionContainer);
+
+      return true;
     }
   
     processInput(button: Button): boolean {

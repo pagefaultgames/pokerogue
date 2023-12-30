@@ -105,7 +105,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.achvsContainer.setVisible(false);
   }
 
-  show(args: any[]) {
+  show(args: any[]): boolean {
     super.show(args);
 
     const achvUnlocks = this.scene.gameData.achvUnlocks;
@@ -129,6 +129,8 @@ export default class AchvsUiHandler extends MessageUiHandler {
     this.getUi().moveTo(this.achvsContainer, this.getUi().length - 1);
 
     this.getUi().hideTooltip();
+
+    return true;
   }
 
   protected showAchv(achv: Achv) {

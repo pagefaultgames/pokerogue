@@ -88,7 +88,7 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.cursor = -1;
   }
 
-  show(args: any[]): void {
+  show(args: any[]): boolean {
     super.show(args);
 
     this.eggListContainer.setVisible(true);
@@ -115,6 +115,8 @@ export default class EggListUiHandler extends MessageUiHandler {
     }
 
     this.setCursor(0);
+
+    return true;
   }
 
   processInput(button: Button): boolean {
