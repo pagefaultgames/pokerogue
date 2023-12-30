@@ -87,6 +87,11 @@ export function getFrameMs(frameCount: integer): integer {
   return Math.floor((1 / 60) * 1000 * frameCount);
 }
 
+export function getCurrentTime(): number {
+  const date = new Date();
+  return (((date.getHours() * 60 + date.getMinutes()) / 1440) + 0.675) % 1;
+}
+
 export function binToDec(input: string): integer {
   let place: integer[] = []; 
   let binary: string[] = [];

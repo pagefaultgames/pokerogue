@@ -197,21 +197,24 @@ interface WeatherPoolEntry {
   weight: integer;
 }
 
-export function getRandomWeatherType(biome: Biome): WeatherType {
+export function getRandomWeatherType(arena: any /* Importing from arena causes a circular dependency */): WeatherType {
   let weatherPool: WeatherPoolEntry[] = [];
-  switch (biome) {
+  const hasSun = arena.getTimeOfDay() < 2;
+  switch (arena.biomeType) {
     case Biome.GRASS:
       weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 7 },
-        { weatherType: WeatherType.SUNNY, weight: 3 }
+        { weatherType: WeatherType.NONE, weight: 7 }
       ];
+      if (hasSun)
+        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 3 });
       break;
     case Biome.TALL_GRASS:
       weatherPool = [
-        { weatherType: WeatherType.SUNNY, weight: 8 },
         { weatherType: WeatherType.RAIN, weight: 5 },
         { weatherType: WeatherType.FOG, weight: 2 }
       ];
+      if (hasSun)
+        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 8 });
       break;
     case Biome.FOREST:
       weatherPool = [
@@ -235,9 +238,10 @@ export function getRandomWeatherType(biome: Biome): WeatherType {
     case Biome.BEACH:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.SUNNY, weight: 5 },
         { weatherType: WeatherType.RAIN, weight: 3 }
       ];
+      if (hasSun)
+        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
       break;
     case Biome.LAKE:
       weatherPool = [
@@ -259,15 +263,17 @@ export function getRandomWeatherType(biome: Biome): WeatherType {
     case Biome.BADLANDS:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.SUNNY, weight: 5 },
         { weatherType: WeatherType.SANDSTORM, weight: 2 }
       ];
+      if (hasSun)
+        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
       break;
     case Biome.DESERT:
       weatherPool = [
-        { weatherType: WeatherType.SANDSTORM, weight: 2 },
-        { weatherType: WeatherType.SUNNY, weight: 1 }
+        { weatherType: WeatherType.SANDSTORM, weight: 2 }
       ];
+      if (hasSun)
+        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
       break;
     case Biome.ICE_CAVE:
       weatherPool = [
@@ -276,11 +282,13 @@ export function getRandomWeatherType(biome: Biome): WeatherType {
       break;
     case Biome.MEADOW:
       weatherPool = [
-        { weatherType: WeatherType.SUNNY, weight: 1 }
+        { weatherType: WeatherType.NONE, weight: 2 }
       ];
+      if (hasSun)
+        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
     case Biome.VOLCANO:
       weatherPool = [
-        { weatherType: WeatherType.SUNNY, weight: 1 }
+        { weatherType: hasSun ? WeatherType.SUNNY : WeatherType.NONE, weight: 1 }
       ];
       break;
     case Biome.GRAVEYARD:

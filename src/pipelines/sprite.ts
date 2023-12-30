@@ -1,5 +1,6 @@
 import Pokemon from "../pokemon";
 import Trainer from "../trainer";
+import FieldSpritePipeline from "./field-sprite";
 
 const spriteFragShader = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -16,6 +17,11 @@ varying vec2 outPosition;
 varying float outTintEffect;
 varying vec4 outTint;
 
+uniform float time;
+uniform int isOutside;
+uniform vec3 dayTint;
+uniform vec3 duskTint;
+uniform vec3 nightTint;
 uniform int hasShadow;
 uniform int yCenter;
 uniform float vCutoff;
@@ -27,6 +33,18 @@ uniform ivec4 spriteColors[32];
 uniform ivec4 fusionSpriteColors[32];
 
 const vec3 lumaF = vec3(.299, .587, .114);
+
+float blendOverlay(float base, float blend) {
+	return base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend));
+}
+
+vec3 blendOverlay(vec3 base, vec3 blend) {
+	return vec3(blendOverlay(base.r,blend.r),blendOverlay(base.g,blend.g),blendOverlay(base.b,blend.b));
+}
+
+vec3 blendHardLight(vec3 base, vec3 blend) {
+	return blendOverlay(blend, base);
+}
 
 void main()
 {
@@ -67,6 +85,31 @@ void main()
 
     /* Apply tone */
     color.rgb += tone.rgb * (color.a / 255.0);
+
+    /* Apply day/night tint */
+    if (color.a > 0.0) {
+        vec3 dayNightTint;
+
+        if (time < 0.25) {
+            dayNightTint = dayTint;
+        } else if (isOutside == 0 && time < 0.5) {
+            dayNightTint = mix(dayTint, nightTint, (time - 0.25) / 0.25);
+        } else if (time < 0.375) {
+            dayNightTint = mix(dayTint, duskTint, (time - 0.25) / 0.125);
+        } else if (time < 0.5) {
+            dayNightTint = mix(duskTint, nightTint, (time - 0.375) / 0.125);
+        } else if (time < 0.75) {
+            dayNightTint = nightTint;
+        } else if (isOutside == 0) {
+            dayNightTint = mix(nightTint, dayTint, (time - 0.75) / 0.25);
+        } else if (time < 0.875) {
+            dayNightTint = mix(nightTint, duskTint, (time - 0.75) / 0.125);
+        } else {
+            dayNightTint = mix(duskTint, dayTint, (time - 0.875) / 0.125);
+        }
+
+        color = vec4(blendHardLight(color.rgb, dayNightTint), color.a);
+    }
 
     if (hasShadow == 1) {
         float width = size.x - (yOffset / 2.0);
@@ -131,11 +174,11 @@ void main()
 }
 `;
 
-export default class SpritePipeline extends Phaser.Renderer.WebGL.Pipelines.MultiPipeline {
+export default class SpritePipeline extends FieldSpritePipeline {
     private _tone: number[];
 
     constructor(game: Phaser.Game) {
-        super({
+        super(game, {
             game: game,
             name: 'sprite',
             fragShader: spriteFragShader,
@@ -146,6 +189,8 @@ export default class SpritePipeline extends Phaser.Renderer.WebGL.Pipelines.Mult
     }
 
     onPreRender(): void {
+        super.onPreRender();
+
         this.set1i('hasShadow', 0);
         this.set1i('yCenter', 0);
         this.set2f('relPosition', 0, 0);
@@ -155,7 +200,7 @@ export default class SpritePipeline extends Phaser.Renderer.WebGL.Pipelines.Mult
     }
 
     onBind(gameObject: Phaser.GameObjects.GameObject): void {
-        super.onBind();
+        super.onBind(gameObject);
 
         const sprite = (gameObject as Phaser.GameObjects.Sprite);
 
@@ -186,11 +231,6 @@ export default class SpritePipeline extends Phaser.Renderer.WebGL.Pipelines.Mult
 
         this.set4iv(`spriteColors`, flatSpriteColors.flat());
         this.set4iv(`fusionSpriteColors`, flatFusionSpriteColors.flat());
-    }
-
-    onBatch(gameObject: Phaser.GameObjects.GameObject): void {
-        if (gameObject)
-            this.flush();
     }
 
     batchQuad(gameObject: Phaser.GameObjects.GameObject, x0: number, y0: number, x1: number, y1: number, x2: number, y2: number, x3: number, y3: number,

@@ -183,7 +183,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.battleInfo.initInfo(this);
 
     const getSprite = (hasShadow?: boolean) => {
-      const ret = this.scene.add.sprite(0, 0, `pkmn__${this.isPlayer() ? 'back__' : ''}sub`);
+      const ret = this.scene.addFieldSprite(0, 0, `pkmn__${this.isPlayer() ? 'back__' : ''}sub`);
       ret.setOrigin(0.5, 1);
       ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow });
       return ret;
@@ -375,7 +375,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   initShinySparkle(): void {
-    const shinySparkle = this.scene.add.sprite(0, 0, 'shiny');
+    const shinySparkle = this.scene.addFieldSprite(0, 0, 'shiny');
     shinySparkle.setVisible(false);
     shinySparkle.setOrigin(0.5, 1);
     const frameNames = this.scene.anims.generateFrameNames('shiny', { suffix: '.png', end: 34 });
@@ -721,10 +721,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     let shinyThreshold = new Utils.IntegerHolder(32);
     if (thresholdOverride === undefined) {
-      if (!this.hasTrainer()) {
+      if (!this.hasTrainer())
         this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
-        console.log(shinyThreshold.value, 'SHINY THRESHOLD');
-      }
     } else
       shinyThreshold.value = thresholdOverride;
 

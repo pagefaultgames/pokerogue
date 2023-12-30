@@ -762,7 +762,7 @@ export abstract class BattleAnim {
                         if ((isUser ? u : t) === sprites.length) {
                             const spriteSource = isUser ? userSprite : targetSprite;
                             let sprite: Phaser.GameObjects.Sprite;
-                            sprite = scene.add.sprite(0, 0, spriteSource.texture, spriteSource.frame.name);
+                            sprite = scene.addFieldSprite(0, 0, spriteSource.texture, spriteSource.frame.name);
                             sprite.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: true });
                             [ 'spriteColors', 'fusionSpriteColors' ].map(k => sprite.pipelineData[k] = (isUser ? user : target).getSprite().pipelineData[k]);
                             spriteSource.on('animationupdate', (_anim, frame) => sprite.setFrame(frame.textureFrame));
@@ -787,7 +787,7 @@ export abstract class BattleAnim {
                     } else {
                         const sprites = spriteCache[AnimFrameTarget.GRAPHIC];
                         if (g === sprites.length) {
-                            let newSprite: Phaser.GameObjects.Sprite = scene.add.sprite(0, 0, anim.graphic, 1);
+                            let newSprite: Phaser.GameObjects.Sprite = scene.addFieldSprite(0, 0, anim.graphic, 1);
                             sprites.push(newSprite);
                             scene.field.add(newSprite);
                             spritePriorities.push(1);

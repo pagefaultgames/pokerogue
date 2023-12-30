@@ -427,7 +427,6 @@ export class GameData {
   public exportData(dataType: GameDataType): void {
     const dataKey: string = getDataTypeKey(dataType);
     const dataStr = atob(localStorage.getItem(dataKey));
-    console.log(dataStr);
     const encryptedData = AES.encrypt(dataStr, saveKey);
     const blob = new Blob([ encryptedData.toString() ], {type: 'text/json'});
     const link = document.createElement('a');

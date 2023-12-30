@@ -15,6 +15,13 @@ import { BattlerIndex } from "./battle";
 
 const WEATHER_OVERRIDE = WeatherType.NONE;
 
+export enum TimeOfDay {
+  DAWN,
+  DAY,
+  DUSK,
+  NIGHT
+}
+
 export class Arena {
   public scene: BattleScene;
   public biomeType: Biome;
@@ -136,14 +143,15 @@ export class Arena {
       case Species.VIVILLON:
         return 0;
       case Species.LYCANROC:
-        switch (this.biomeType) {
-          case Biome.CAVE:
-          case Biome.ICE_CAVE:
-          case Biome.FAIRY_CAVE:
+        const timeOfDay = this.getTimeOfDay();
+        switch (timeOfDay) {
+          case TimeOfDay.DAY:
+          case TimeOfDay.DAWN:
+            return 0;
+          case TimeOfDay.DUSK:
             return 2;
-          default:
-            if (!this.isDaytime())
-              return 1;
+          case TimeOfDay.NIGHT:
+            return 1;
         }
       case Species.CALYREX:
         switch (this.biomeType) {
@@ -297,24 +305,77 @@ export class Arena {
     }
   }
 
-  isDaytime(): boolean {
+  getTimeOfDay(): TimeOfDay {
     switch (this.biomeType) {
-      case Biome.TOWN:
-      case Biome.PLAINS:
-      case Biome.GRASS:
-      case Biome.METROPOLIS:
-      case Biome.SEA:
-      case Biome.BEACH:
-      case Biome.LAKE:
-      case Biome.MOUNTAIN:
-      case Biome.BADLANDS:
-      case Biome.DESERT:
-      case Biome.MEADOW:
+      case Biome.ABYSS:
+        return TimeOfDay.NIGHT;
+    }
+
+    const waveCycle = ((this.scene.currentBattle?.waveIndex || 0) + this.scene.getWaveCycleOffset()) % 40;
+
+    if (waveCycle < 15)
+      return TimeOfDay.DAY;
+
+    if (waveCycle < 20)
+      return TimeOfDay.DAWN;
+
+    if (waveCycle < 35)
+      return TimeOfDay.NIGHT;
+
+    return TimeOfDay.DUSK;
+  }
+
+  isOutside(): boolean {
+    switch (this.biomeType) {
+      case Biome.SEABED:
+      case Biome.CAVE:
+      case Biome.ICE_CAVE:
+      case Biome.POWER_PLANT:
       case Biome.DOJO:
-      case Biome.CONSTRUCTION_SITE:
-      case Biome.ISLAND:
-      case Biome.SNOWY_FOREST:
+      case Biome.FACTORY:
+      case Biome.ABYSS:
+      case Biome.FAIRY_CAVE:
+      case Biome.TEMPLE:
+      case Biome.LABORATORY:
+        return false;
+      default:
         return true;
+    }
+  }
+
+  getDayTint(): [integer, integer, integer] {
+    switch (this.biomeType) {
+      case Biome.ABYSS:
+        return [ 64, 64, 64 ];
+      default:
+        return [ 128, 128, 128 ];
+    }
+  }
+
+  getDuskTint(): [integer, integer, integer] {
+    if (!this.isOutside())
+      return [ 0, 0, 0 ];
+
+    switch (this.biomeType) {
+      default:
+        return [ 98, 48, 73 ].map(c => Math.round((c + 128) / 2)) as [integer, integer, integer];
+    }
+  }
+
+  getNightTint(): [integer, integer, integer] {
+    switch (this.biomeType) {
+      case Biome.ABYSS:
+      case Biome.SPACE:
+      case Biome.END:
+        return this.getDayTint();
+    }
+
+    if (!this.isOutside())
+      return [ 64, 64, 64 ];
+
+    switch (this.biomeType) {
+      default:
+        return [ 48, 48, 98 ];
     }
   }
 
@@ -492,12 +553,12 @@ export class ArenaBase extends Phaser.GameObjects.Container {
 
     this.player = player;
 
-    this.base = scene.add.sprite(0, 0, 'plains_a');
+    this.base = scene.addFieldSprite(0, 0, 'plains_a');
     this.base.setOrigin(0, 0);
 
     this.props = !player ?
       new Array(3).fill(null).map(() => {
-        const ret = scene.add.sprite(0, 0, 'plains_b');
+        const ret = scene.addFieldSprite(0, 0, 'plains_b');
         ret.setOrigin(0, 0);
         ret.setVisible(false);
         return ret;

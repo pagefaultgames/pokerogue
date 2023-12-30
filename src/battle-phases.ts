@@ -135,6 +135,7 @@ export class SelectStarterPhase extends BattlePhase {
         this.scene.ui.setMode(Mode.MESSAGE).then(() => {
           SoundFade.fadeOut(this.scene, this.scene.sound.get('menu'), 500, true);
           this.scene.time.delayedCall(500, () => this.scene.playBgm());
+          this.scene.newBattle();
           this.end();
         });
       });
@@ -335,7 +336,7 @@ export class EncounterPhase extends BattlePhase {
         pokemon.resetBattleData();
     }
 
-    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena.biomeType), false);
+    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
@@ -489,7 +490,7 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
         pokemon.resetBattleData();
     }
 
-    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena.biomeType), false);
+    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
@@ -685,7 +686,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   }
 
   summon(): void {
-    const pokeball = this.scene.add.sprite(this.player ? 36 : 248, this.player ? 80 : 44, 'pb', 'pb');
+    const pokeball = this.scene.addFieldSprite(this.player ? 36 : 248, this.player ? 80 : 44, 'pb', 'pb');
     pokeball.setVisible(false);
     pokeball.setOrigin(0.5, 0.625);
     this.scene.field.add(pokeball);
@@ -1953,6 +1954,7 @@ export class StatChangePhase extends PokemonPhase {
       const pokemonMaskSprite = pokemon.maskSprite;
 
       const statSprite = this.scene.add.tileSprite((this.player ? 106 : 236) * 6, ((this.player ? 148 : 84) + (levels.value >= 1 ? 160 : 0)) * 6, 156, 316, 'battle_stats', filteredStats.length > 1 ? 'mix' : BattleStat[filteredStats[0]].toLowerCase());
+      statSprite.setPipeline(this.scene.fieldSpritePipeline);
       statSprite.setAlpha(0);
       statSprite.setScale(6);
       statSprite.setOrigin(0.5, 1);
@@ -2877,7 +2879,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     const fpOffset = pokemon.getFieldPositionOffset();
 
     const pokeballAtlasKey = getPokeballAtlasKey(this.pokeballType);
-    this.pokeball = this.scene.add.sprite(16, 80, 'pb', pokeballAtlasKey);
+    this.pokeball = this.scene.addFieldSprite(16, 80, 'pb', pokeballAtlasKey);
     this.pokeball.setOrigin(0.5, 0.625);
     this.scene.field.add(this.pokeball);
 
