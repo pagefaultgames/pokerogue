@@ -197,6 +197,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.numberText.setShadowColor(getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
 
     this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
+    this.pokemonSprite.pipelineData['ignoreTimeTint'] = true;
     [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon.summonData?.speciesForm)

@@ -16,6 +16,7 @@ varying float outTintEffect;
 varying vec4 outTint;
 
 uniform float time;
+uniform int ignoreTimeTint;
 uniform int isOutside;
 uniform vec3 dayTint;
 uniform vec3 duskTint;
@@ -53,7 +54,7 @@ void main()
     }
 
     /* Apply day/night tint */
-    if (color.a > 0.0) {
+    if (color.a > 0.0 && ignoreTimeTint == 0) {
         vec3 dayNightTint;
 
         if (time < 0.25) {
@@ -124,6 +125,7 @@ export default class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines
 
     onPreRender(): void {
         this.set1f('time', 0);
+        this.set1i('ignoreTimeTint', 0);
     }
 
     onBind(gameObject: Phaser.GameObjects.GameObject): void {
@@ -132,10 +134,14 @@ export default class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines
         const sprite = (gameObject as Phaser.GameObjects.Sprite);
         const scene = sprite.scene as BattleScene;
 
+        const data = sprite.pipelineData;
+        const ignoreTimeTint = data['ignoreTimeTint'] as boolean;
+
         let time = scene.currentBattle?.waveIndex
             ? ((scene.currentBattle.waveIndex + scene.getWaveCycleOffset()) % 40) / 40 // ((new Date().getSeconds() * 1000 + new Date().getMilliseconds()) % 10000) / 10000
             : Utils.getCurrentTime();
-        this.set1f('time', time); 
+        this.set1f('time', time);
+        this.set1i('ignoreTimeTint', ignoreTimeTint ? 1 : 0);
         this.set1i('isOutside', scene.arena.isOutside() ? 1 : 0);
         this.set3fv('dayTint', scene.arena.getDayTint().map(c => c / 255));
         this.set3fv('duskTint', scene.arena.getDuskTint().map(c => c / 255));

@@ -188,6 +188,7 @@ export class EggHatchPhase extends BattlePhase {
                         this.scene.validateAchv(achvs.HATCH_SHINY);
                       this.eggContainer.setVisible(false);
                       this.pokemonSprite.play(pokemon.getSpriteKey(true));
+                      this.pokemonSprite.pipelineData['ignoreTimeTint'] = true;
                       this.pokemonSprite.setVisible(true);
                       this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
                         pokemon.cry();

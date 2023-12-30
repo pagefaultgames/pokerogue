@@ -18,6 +18,7 @@ varying float outTintEffect;
 varying vec4 outTint;
 
 uniform float time;
+uniform int ignoreTimeTint;
 uniform int isOutside;
 uniform vec3 dayTint;
 uniform vec3 duskTint;
@@ -87,7 +88,7 @@ void main()
     color.rgb += tone.rgb * (color.a / 255.0);
 
     /* Apply day/night tint */
-    if (color.a > 0.0) {
+    if (color.a > 0.0 && ignoreTimeTint == 0) {
         vec3 dayNightTint;
 
         if (time < 0.25) {

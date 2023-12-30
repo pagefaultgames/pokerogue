@@ -84,6 +84,7 @@ export class EvolutionPhase extends BattlePhase {
 
       [ this.pokemonSprite, this.pokemonTintSprite, this.pokemonEvoSprite, this.pokemonEvoTintSprite ].map(sprite => {
         sprite.play(pokemon.getSpriteKey(true));
+        sprite.pipelineData['ignoreTimeTint'] = true;
         sprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false });
         [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
           if (pokemon.summonData?.speciesForm)
@@ -98,8 +99,8 @@ export class EvolutionPhase extends BattlePhase {
         pokemon.getPossibleEvolution(this.evolution).then(evolvedPokemon => {
 
           [ this.pokemonEvoSprite, this.pokemonEvoTintSprite ].map(sprite => {
-            console.log(evolvedPokemon.getSpriteKey(true))
             sprite.play(evolvedPokemon.getSpriteKey(true));
+            sprite.pipelineData['ignoreTimeTint'] = true;
             [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
               if (evolvedPokemon.summonData?.speciesForm)
                 k += 'Base';
