@@ -92,7 +92,8 @@ export function getEggGachaTypeDescriptor(scene: BattleScene, egg: Egg): string 
 export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timestamp: integer): Species {
   const legendarySpecies = Object.entries(speciesStarters)
     .filter(s => s[1] >= 8 && s[1] <= 9)
-    .map(s => parseInt(s[0]));
+    .map(s => parseInt(s[0]))
+    .filter(s => getPokemonSpecies(s).isObtainable());
 
   let ret: Species;
 
