@@ -2073,27 +2073,27 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.CATERPIE, Type.BUG, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ]
+        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
       ]
     ],
     [ Species.METAPOD, Type.BUG, -1, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ]
+        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
       ]
     ],
     [ Species.BUTTERFREE, Type.BUG, Type.FLYING, [
-        [ Biome.FOREST, BiomePoolTier.COMMON ]
+        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
       ]
     ],
     [ Species.WEEDLE, Type.BUG, Type.POISON, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ]
+        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
       ]
     ],
     [ Species.KAKUNA, Type.BUG, Type.POISON, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ]
+        [ Biome.TOWN, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
       ]
     ],
     [ Species.BEEDRILL, Type.BUG, Type.POISON, [
-        [ Biome.FOREST, BiomePoolTier.COMMON ]
+        [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
       ]
     ],
     [ Species.PIDGEY, Type.NORMAL, Type.FLYING, [
@@ -2137,15 +2137,17 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.EKANS, Type.POISON, -1, [
-        [ Biome.TOWN, BiomePoolTier.UNCOMMON ],
+        [ Biome.TOWN, BiomePoolTier.UNCOMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
         [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
-        [ Biome.SWAMP, BiomePoolTier.COMMON ]
+        [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+        [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
       ]
     ],
     [ Species.ARBOK, Type.POISON, -1, [
         [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
-        [ Biome.SWAMP, BiomePoolTier.COMMON ],
-        [ Biome.SWAMP, BiomePoolTier.BOSS ]
+        [ Biome.SWAMP, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+        [ Biome.SWAMP, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
+        [ Biome.SWAMP, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
       ]
     ],
     [ Species.PIKACHU, Type.ELECTRIC, -1, [
@@ -2840,13 +2842,13 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.HOOTHOOT, Type.NORMAL, Type.FLYING, [
-        [ Biome.TOWN, BiomePoolTier.COMMON ],
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON ]
+        [ Biome.TOWN, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
+        [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ]
       ]
     ],
     [ Species.NOCTOWL, Type.NORMAL, Type.FLYING, [
-        [ Biome.FOREST, BiomePoolTier.UNCOMMON ],
-        [ Biome.FOREST, BiomePoolTier.BOSS ]
+        [ Biome.FOREST, BiomePoolTier.UNCOMMON, TimeOfDay.NIGHT ],
+        [ Biome.FOREST, BiomePoolTier.BOSS, TimeOfDay.NIGHT ]
       ]
     ],
     [ Species.LEDYBA, Type.BUG, Type.FLYING, [
@@ -3177,9 +3179,9 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.STANTLER, Type.NORMAL, -1, [
-        [ Biome.FOREST, BiomePoolTier.RARE ],
-        [ Biome.FOREST, BiomePoolTier.BOSS_RARE ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON ]
+        [ Biome.FOREST, BiomePoolTier.RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+        [ Biome.FOREST, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
+        [ Biome.SNOWY_FOREST, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
       ]
     ],
     [ Species.SMEARGLE, Type.NORMAL, -1, [
@@ -3328,7 +3330,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.DUSTOX, Type.BUG, Type.POISON, [
-        [ Biome.FOREST, BiomePoolTier.COMMON ],
+        [ Biome.FOREST, BiomePoolTier.COMMON, TimeOfDay.NIGHT ],
         [ Biome.FOREST, BiomePoolTier.BOSS ]
       ]
     ],
@@ -6261,7 +6263,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.WYRDEER, Type.NORMAL, Type.PSYCHIC, [
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS ]
+        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
       ]
     ],
     [ Species.KLEAVOR, Type.BUG, Type.ROCK, [
