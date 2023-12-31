@@ -597,7 +597,8 @@ export class ArenaBase extends Phaser.GameObjects.Container {
         repeat: -1
       });
       this.base.play(baseKey);
-    }
+    } else
+      this.base.stop();
 
     this.add(this.base);
 
@@ -619,7 +620,8 @@ export class ArenaBase extends Phaser.GameObjects.Container {
               repeat: -1
             });
             prop.play(propKey);
-          }
+          } else
+            prop.stop();
 
           prop.setVisible(hasProps && !!(this.propValue & (1 << p)));
           this.add(prop);
