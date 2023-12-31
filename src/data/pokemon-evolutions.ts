@@ -416,12 +416,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.LINOONE, 20, null, null)
   ],
   [Species.WURMPLE]: [
-    new SpeciesEvolution(Species.SILCOON, 7, null, new SpeciesEvolutionCondition((p: Pokemon) => {
-      let ret: boolean;
-      p.scene.executeWithSeedOffset(() => ret = !Utils.randSeedInt(2), p.id);
-      return ret;
-    })), // TODO: Improve these conditions
-    new SpeciesEvolution(Species.CASCOON, 7, null, null)
+    new SpeciesEvolution(Species.SILCOON, 7, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.getTimeOfDay() === TimeOfDay.DAWN || p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), null),
+    new SpeciesEvolution(Species.CASCOON, 7, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), null)
   ],
   [Species.SILCOON]: [
     new SpeciesEvolution(Species.BEAUTIFLY, 10, null, null)
@@ -1407,7 +1403,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.ROCKRUFF]: [
     new SpeciesFormEvolution(Species.LYCANROC, '', 'midday', 25, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), null),
-    new SpeciesFormEvolution(Species.LYCANROC, '', 'dusk', 25, null, new SpeciesEvolutionCondition((p: Pokemon) =>  p.scene.getSpeciesFormIndex(p.species) === 2), null),
+    new SpeciesFormEvolution(Species.LYCANROC, '', 'dusk', 25, null, new SpeciesEvolutionCondition((p: Pokemon) =>  p.scene.getSpeciesFormIndex(p.species) === 1), null),
     new SpeciesFormEvolution(Species.LYCANROC, '', 'midnight', 25, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), null)
   ],
   [Species.STEENEE]: [
