@@ -118,6 +118,14 @@ export interface DexAttrProps {
   formIndex: integer;
 }
 
+const systemShortKeys = {
+  seenAttr: '$sa',
+  caughtAttr: '$ca',
+  seenCount: '$s' ,
+  caughtCount: '$c',
+  ivs: '$i'
+};
+
 export class GameData {
   private scene: BattleScene;
 
@@ -254,6 +262,15 @@ export class GameData {
 
       return k.endsWith('Attr') ? BigInt(v) : v;
     }) as SystemSaveData;
+  }
+
+  private convertSystemDataStr(dataStr: string, shorten: boolean = false): string {
+    const fromKeys = shorten ? Object.keys(systemShortKeys) : Object.values(systemShortKeys);
+    const toKeys = shorten ? Object.values(systemShortKeys) : Object.keys(systemShortKeys);
+    for (let k in fromKeys)
+      dataStr = dataStr.replace(new RegExp(`${fromKeys[k].replace('$', '\\$')}`, 'g'), toKeys[k]);
+
+    return dataStr;
   }
 
   public saveSetting(setting: Setting, valueIndex: integer): boolean {
@@ -439,7 +456,12 @@ export class GameData {
 
   public exportData(dataType: GameDataType): void {
     const dataKey: string = getDataTypeKey(dataType);
-    const dataStr = atob(localStorage.getItem(dataKey));
+    let dataStr = atob(localStorage.getItem(dataKey));
+    switch (dataType) {
+      case GameDataType.SYSTEM:
+        dataStr = this.convertSystemDataStr(dataStr, true);
+        break;
+    }
     const encryptedData = AES.encrypt(dataStr, saveKey);
     const blob = new Blob([ encryptedData.toString() ], {type: 'text/json'});
     const link = document.createElement('a');
@@ -467,11 +489,12 @@ export class GameData {
 
         reader.onload = (_ => {
             return e => {
-              const dataStr = AES.decrypt(e.target.result.toString(), saveKey).toString(enc.Utf8);
+              let dataStr = AES.decrypt(e.target.result.toString(), saveKey).toString(enc.Utf8);
               let valid = false;
               try {
                 switch (dataType) {
                   case GameDataType.SYSTEM:
+                    dataStr = this.convertSystemDataStr(dataStr);
                     const systemData = this.parseSystemData(dataStr);
                     valid = !!systemData.dexData && !!systemData.timestamp;
                     break;
