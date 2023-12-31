@@ -1,11 +1,10 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene, { Button, bypassLogin } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { addWindow } from "./window";
 import MessageUiHandler from "./message-ui-handler";
 import { GameDataType } from "../system/game-data";
-import { CheckLoadPhase, LoginPhase } from "../battle-phases";
 
 export enum MenuOptions {
   GAME_SETTINGS,
@@ -29,8 +28,16 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   private cursorObj: Phaser.GameObjects.Image;
 
+  protected ignoredMenuOptions: MenuOptions[];
+  protected menuOptions: MenuOptions[];
+
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
+
+    this.ignoredMenuOptions = /*!bypassLogin */ false
+      ? [ MenuOptions.IMPORT_SESSION, MenuOptions.IMPORT_DATA ]
+      : [];
+    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => this.ignoredMenuOptions.indexOf(m) === -1);
   }
 
   setup() {
@@ -45,7 +52,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.menuContainer.add(this.menuBg);
 
-    this.optionSelectText = addTextObject(this.scene, 0, 0, Utils.getEnumKeys(MenuOptions).map(o => Utils.toReadableString(o)).join('\n'), TextStyle.WINDOW, { maxLines: Utils.getEnumKeys(MenuOptions).length });
+    this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => Utils.toReadableString(MenuOptions[o])).join('\n'), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
     this.optionSelectText.setPositionRelative(this.menuBg, 14, 6);
     this.optionSelectText.setLineSpacing(12);
     this.menuContainer.add(this.optionSelectText);
@@ -96,7 +103,14 @@ export default class MenuUiHandler extends MessageUiHandler {
     let error = false;
 
     if (button === Button.ACTION) {
-      switch (this.cursor as MenuOptions) {
+      let adjustedCursor = this.cursor;
+      for (let imo of this.ignoredMenuOptions) {
+        if (adjustedCursor >= imo)
+          adjustedCursor++;
+        else
+          break;
+      }
+      switch (adjustedCursor) {
         case MenuOptions.GAME_SETTINGS:
           this.scene.ui.setOverlayMode(Mode.SETTINGS);
           success = true;
@@ -164,7 +178,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             success = this.setCursor(this.cursor - 1);
           break;
         case Button.DOWN:
-          if (this.cursor + 1 < Utils.getEnumKeys(MenuOptions).length)
+          if (this.cursor + 1 < this.menuOptions.length)
             success = this.setCursor(this.cursor + 1);
           break;
       }

@@ -1,4 +1,4 @@
-import BattleScene, { PokeballCounts } from "../battle-scene";
+import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../pokemon";
 import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, speciesStarters } from "../data/pokemon-species";
@@ -185,70 +185,100 @@ export class GameData {
           gameVersion: this.scene.game.config.gameVersion,
           timestamp: new Date().getTime()
         };
-  
-        localStorage.setItem('data_bak', localStorage.getItem('data'));
-  
+
         const maxIntAttrValue = Math.pow(2, 31);
-        localStorage.setItem('data', btoa(JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v)));
-  
-        resolve(true);
+        const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
+
+        if (!bypassLogin) {
+          Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData)
+            .then(response => response.text())
+            .then(error => {
+              if (error) {
+                console.error(error);
+                return resolve(false);
+              }
+              resolve(true);
+            });
+        } else {
+          localStorage.setItem('data_bak', localStorage.getItem('data'));
+
+          localStorage.setItem('data', btoa(systemData));
+        }
       });
     });
   }
 
-  private loadSystem(): boolean {
-    if (!localStorage.hasOwnProperty('data'))
-      return false;
+  private loadSystem(): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      if (bypassLogin && !localStorage.hasOwnProperty('data'))
+        return false;
 
-    const data = this.parseSystemData(atob(localStorage.getItem('data')));
+      const handleSystemData = (systemDataStr: string) => {
+        const systemData = this.parseSystemData(systemDataStr);
 
-    console.debug(data);
+        console.debug(systemData);
 
-    /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
-    
-    if (versions[0] !== versions[1]) {
-      const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
-    }*/
+        /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
+        
+        if (versions[0] !== versions[1]) {
+          const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
+        }*/
 
-    this.trainerId = data.trainerId;
-    this.secretId = data.secretId;
+        this.trainerId = systemData.trainerId;
+        this.secretId = systemData.secretId;
 
-    if (data.unlocks) {
-      for (let key of Object.keys(data.unlocks)) {
-        if (this.unlocks.hasOwnProperty(key))
-          this.unlocks[key] = data.unlocks[key];
+        if (systemData.unlocks) {
+          for (let key of Object.keys(systemData.unlocks)) {
+            if (this.unlocks.hasOwnProperty(key))
+              this.unlocks[key] = systemData.unlocks[key];
+          }
+        }
+
+        if (systemData.achvUnlocks) {
+          for (let a of Object.keys(systemData.achvUnlocks)) {
+            if (achvs.hasOwnProperty(a))
+              this.achvUnlocks[a] = systemData.achvUnlocks[a];
+          } 
+        }
+
+        if (systemData.voucherUnlocks) {
+          for (let v of Object.keys(systemData.voucherUnlocks)) {
+            if (vouchers.hasOwnProperty(v))
+              this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
+          }
+        }
+
+        if (systemData.voucherCounts) {
+          Utils.getEnumKeys(VoucherType).forEach(key => {
+            const index = VoucherType[key];
+            this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
+          });
+        }
+
+        this.eggs = systemData.eggs
+          ? systemData.eggs.map(e => e.toEgg())
+          : [];
+
+        this.dexData = Object.assign(this.dexData, systemData.dexData);
+        this.consolidateDexData(this.dexData);
+
+        resolve(true);
       }
-    }
 
-    if (data.achvUnlocks) {
-      for (let a of Object.keys(data.achvUnlocks)) {
-        if (achvs.hasOwnProperty(a))
-          this.achvUnlocks[a] = data.achvUnlocks[a];
-      } 
-    }
+      if (!bypassLogin) {
+        Utils.apiFetch(`savedata/get?datatype=${GameDataType.SYSTEM}`)
+          .then(response => response.text())
+          .then(response => {
+            if (!response.length || response[0] !== '{') {
+              console.error(response);
+              return resolve(false);
+            }
 
-    if (data.voucherUnlocks) {
-      for (let v of Object.keys(data.voucherUnlocks)) {
-        if (vouchers.hasOwnProperty(v))
-          this.voucherUnlocks[v] = data.voucherUnlocks[v];
-      }
-    }
-
-    if (data.voucherCounts) {
-      Utils.getEnumKeys(VoucherType).forEach(key => {
-        const index = VoucherType[key];
-        this.voucherCounts[index] = data.voucherCounts[index] || 0;
-      });
-    }
-
-    this.eggs = data.eggs
-      ? data.eggs.map(e => e.toEgg())
-      : [];
-
-    this.dexData = Object.assign(this.dexData, data.dexData);
-    this.consolidateDexData(this.dexData);
-
-    return true;
+            handleSystemData(response);
+          });
+      } else
+        handleSystemData(atob(localStorage.getItem('data')));
+    });
   }
 
   private parseSystemData(dataStr: string): SystemSaveData {
@@ -325,95 +355,120 @@ export class GameData {
           timestamp: new Date().getTime()
         } as SessionSaveData;
 
-        localStorage.setItem('sessionData', btoa(JSON.stringify(sessionData)));
+        console.log(JSON.stringify(sessionData));
 
-        console.debug('Session data saved');
+        if (!bypassLogin) {
+          Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}`, JSON.stringify(sessionData))
+            .then(response => response.text())
+            .then(error => {
+              if (error) {
+                console.error(error);
+                return resolve(false);
+              }
+              console.debug('Session data saved');
+              resolve(true);
+            });
+        } else {
+          localStorage.setItem('sessionData', btoa(JSON.stringify(sessionData)));
 
-        resolve(true);
+          console.debug('Session data saved');
+
+          resolve(true);
+        }
       });
     });
   }
 
-  hasSession() {
-    return !!localStorage.getItem('sessionData');
-  }
-
   loadSession(scene: BattleScene): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
-      if (!this.hasSession())
-        return resolve(false);
+      const handleSessionData = async (sessionDataStr: string) => {
+        try {
+          const sessionData = this.parseSessionData(sessionDataStr);
 
-      try {
-        const sessionDataStr = atob(localStorage.getItem('sessionData'));
-        const sessionData = this.parseSessionData(sessionDataStr);
+          console.debug(sessionData);
 
-        console.debug(sessionData);
+          scene.seed = sessionData.seed || scene.game.config.seed[0];
+          scene.resetSeed();
 
-        scene.seed = sessionData.seed || scene.game.config.seed[0];
-        scene.resetSeed();
+          scene.gameMode = sessionData.gameMode || GameMode.CLASSIC;
 
-        scene.gameMode = sessionData.gameMode || GameMode.CLASSIC;
+          const loadPokemonAssets: Promise<void>[] = [];
 
-        const loadPokemonAssets: Promise<void>[] = [];
+          const party = scene.getParty();
+          party.splice(0, party.length);
 
-        const party = scene.getParty();
-        party.splice(0, party.length);
+          for (let p of sessionData.party) {
+            const pokemon = p.toPokemon(scene) as PlayerPokemon;
+            pokemon.setVisible(false);
+            loadPokemonAssets.push(pokemon.loadAssets());
+            party.push(pokemon);
+          }
 
-        for (let p of sessionData.party) {
-          const pokemon = p.toPokemon(scene) as PlayerPokemon;
-          pokemon.setVisible(false);
-          loadPokemonAssets.push(pokemon.loadAssets());
-          party.push(pokemon);
+          Object.keys(scene.pokeballCounts).forEach((key: string) => {
+            scene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
+          });
+
+          scene.money = sessionData.money || 0;
+          scene.updateMoneyText();
+
+          const battleType = sessionData.battleType || 0;
+          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfigs[sessionData.trainer.trainerType].isDouble : sessionData.enemyParty.length > 1);
+
+          scene.newArena(sessionData.arena.biome, true);
+
+          sessionData.enemyParty.forEach((enemyData, e) => {
+            const enemyPokemon = enemyData.toPokemon(scene, battleType) as EnemyPokemon;
+            battle.enemyParty[e] = enemyPokemon;
+            if (battleType === BattleType.WILD)
+              battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
+
+            loadPokemonAssets.push(enemyPokemon.loadAssets());
+          });
+
+          scene.arena.weather = sessionData.arena.weather;
+          // TODO
+          //scene.arena.tags = sessionData.arena.tags;
+
+          const modifiersModule = await import('../modifier/modifier');
+
+          for (let modifierData of sessionData.modifiers) {
+            const modifier = modifierData.toModifier(scene, modifiersModule[modifierData.className]);
+            if (modifier)
+              scene.addModifier(modifier, true);
+          }
+
+          scene.updateModifiers(true);
+
+          for (let enemyModifierData of sessionData.enemyModifiers) {
+            const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
+            if (modifier)
+              scene.addEnemyModifier(modifier, true);
+          }
+
+          scene.updateModifiers(false);
+
+          Promise.all(loadPokemonAssets).then(() => resolve(true));
+        } catch (err) {
+          reject(err);
+          return;
         }
+      };
 
-        Object.keys(scene.pokeballCounts).forEach((key: string) => {
-          scene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
-        });
+      if (!bypassLogin) {
+        Utils.apiFetch(`savedata/get?datatype=${GameDataType.SESSION}`)
+          .then(response => response.text())
+          .then(async response => {
+            if (!response.length || response[0] !== '{') {
+              console.error(response);
+              return resolve(false);
+            }
 
-        scene.money = sessionData.money || 0;
-        scene.updateMoneyText();
+            console.log(JSON.parse(response));
 
-        const battleType = sessionData.battleType || 0;
-        const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfigs[sessionData.trainer.trainerType].isDouble : sessionData.enemyParty.length > 1);
-
-        scene.newArena(sessionData.arena.biome, true);
-
-        sessionData.enemyParty.forEach((enemyData, e) => {
-          const enemyPokemon = enemyData.toPokemon(scene, battleType) as EnemyPokemon;
-          battle.enemyParty[e] = enemyPokemon;
-          if (battleType === BattleType.WILD)
-            battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
-
-          loadPokemonAssets.push(enemyPokemon.loadAssets());
-        });
-
-        scene.arena.weather = sessionData.arena.weather;
-        // TODO
-        //scene.arena.tags = sessionData.arena.tags;
-
-        const modifiersModule = await import('../modifier/modifier');
-
-        for (let modifierData of sessionData.modifiers) {
-          const modifier = modifierData.toModifier(scene, modifiersModule[modifierData.className]);
-          if (modifier)
-            scene.addModifier(modifier, true);
-        }
-
-        scene.updateModifiers(true);
-
-        for (let enemyModifierData of sessionData.enemyModifiers) {
-          const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
-          if (modifier)
-            scene.addEnemyModifier(modifier, true);
-        }
-
-        scene.updateModifiers(false);
-
-        Promise.all(loadPokemonAssets).then(() => resolve(true));
-      } catch (err) {
-        reject(err);
-        return;
-      }
+            await handleSessionData(response);
+          });
+      } else
+        await handleSessionData(atob(localStorage.getItem('sessionData')));
     });
   }
 
@@ -431,6 +486,8 @@ export class GameData {
 
       if (k === 'party' || k === 'enemyParty' || k === 'enemyField') {
         const ret: PokemonData[] = [];
+        if (v === null)
+          v = [];
         for (let pd of v)
           ret.push(new PokemonData(pd));
         return ret;
@@ -442,6 +499,8 @@ export class GameData {
       if (k === 'modifiers' || k === 'enemyModifiers') {
         const player = k === 'modifiers';
         const ret: PersistentModifierData[] = [];
+        if (v === null)
+          v = [];
         for (let md of v)
           ret.push(new PersistentModifierData(md, player));
         return ret;
@@ -456,19 +515,33 @@ export class GameData {
 
   public exportData(dataType: GameDataType): void {
     const dataKey: string = getDataTypeKey(dataType);
-    let dataStr = atob(localStorage.getItem(dataKey));
-    switch (dataType) {
-      case GameDataType.SYSTEM:
-        dataStr = this.convertSystemDataStr(dataStr, true);
-        break;
-    }
-    const encryptedData = AES.encrypt(dataStr, saveKey);
-    const blob = new Blob([ encryptedData.toString() ], {type: 'text/json'});
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.download = `${dataKey}.prsv`;
-    link.click();
-    link.remove();
+    const handleData = (dataStr: string) => {
+      switch (dataType) {
+        case GameDataType.SYSTEM:
+          dataStr = this.convertSystemDataStr(dataStr, true);
+          break;
+      }
+      const encryptedData = AES.encrypt(dataStr, saveKey);
+      const blob = new Blob([ encryptedData.toString() ], {type: 'text/json'});
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `${dataKey}.prsv`;
+      link.click();
+      link.remove();
+    };
+    if (!bypassLogin && dataType !== GameDataType.SETTINGS) {
+      Utils.apiFetch(`savedata/get?datatype=${dataType}`)
+        .then(response => response.text())
+        .then(response => {
+          if (!response.length || response[0] !== '{') {
+            console.error(response);
+            return;
+          }
+
+          handleData(response);
+        });
+    } else
+      handleData(atob(localStorage.getItem(dataKey)));
   }
 
   public importData(dataType: GameDataType): void {
@@ -523,12 +596,30 @@ export class GameData {
                   break;
               }
 
+              const displayError = (error: string) => this.scene.ui.showText(error, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
+
               if (!valid)
                 return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
               this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
                 this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-                  localStorage.setItem(dataKey, btoa(dataStr));
-                  window.location = window.location;
+                  if (!bypassLogin && dataType !== GameDataType.SETTINGS) {
+                    updateUserInfo().then(success => {
+                      if (!success)
+                        return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
+                      Utils.apiPost(`savedata/update?datatype=${dataType}`, dataStr)
+                        .then(response => response.text())
+                        .then(error => {
+                          if (error) {
+                            console.error(error);
+                            return displayError(`An error occurred while updating ${dataName} data. Please contact the administrator.`);
+                          }
+                          window.location = window.location;
+                        });
+                    });
+                  } else {
+                    localStorage.setItem(dataKey, btoa(dataStr));
+                    window.location = window.location;
+                  }
                 }, () => {
                   this.scene.ui.revertMode();
                   this.scene.ui.showText(null, 0);

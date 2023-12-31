@@ -36,7 +36,8 @@ import { TrainerType, trainerConfigs } from "./data/trainer-type";
 import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
-import { updateUserInfo } from "./account";
+import { loggedInUser, updateUserInfo } from "./account";
+import { GameDataType } from "./system/game-data";
 
 export class LoginPhase extends BattlePhase {
   private showText: boolean;
@@ -71,7 +72,7 @@ export class LoginPhase extends BattlePhase {
                     this.scene.ui.playSelect();
                     this.end();
                   }, () => {
-                    this.scene.unshiftPhase(new LoginPhase(this.scene, false))
+                    this.scene.unshiftPhase(new LoginPhase(this.scene, false));
                     this.end();
                   }
                 ]
@@ -83,6 +84,53 @@ export class LoginPhase extends BattlePhase {
       } else
         this.end();
     });
+  }
+}
+
+// TODO: Remove
+export class ConsolidateDataPhase extends BattlePhase {
+  start(): void {
+    super.start();
+    
+    Utils.apiFetch(`savedata/get?datatype=${GameDataType.SYSTEM}`)
+      .then(response => response.text())
+      .then(response => {
+        if (!response.length || response[0] !== '{') {
+          console.log('System data not found: Loading legacy local system data');
+
+          const systemDataStr = atob(localStorage.getItem('data'));
+
+          Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemDataStr)
+            .then(response => response.text())
+            .then(error => {
+              if (error) {
+                console.error(error);
+                return this.end();
+              }
+
+              Utils.apiFetch(`savedata/get?datatype=${GameDataType.SESSION}`)
+                .then(response => response.text())
+                .then(response => {
+                  if (!response.length || response[0] !== '{') {
+                    console.log('System data not found: Loading legacy local session data');
+
+                    const sessionDataStr = atob(localStorage.getItem('sessionData'));
+
+                    Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}`, sessionDataStr)
+                      .then(response => response.text())
+                      .then(error => {
+                        if (error)
+                          console.error(error);
+
+                        this.end();
+                      });
+                  } else
+                    this.end();
+                });
+            });
+          } else
+            this.end();
+      });
   }
 }
 
@@ -98,7 +146,7 @@ export class CheckLoadPhase extends BattlePhase {
   start(): void {
     super.start();
     
-    if (!this.scene.gameData.hasSession())
+    if (!loggedInUser?.hasGameSession)
       return this.end();
     
     this.scene.ui.setMode(Mode.MESSAGE);
