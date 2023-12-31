@@ -395,7 +395,10 @@ export class EggHatchPhase extends BattlePhase {
       let totalWeight = 0;
       const speciesWeights = [];
       for (let speciesId of speciesPool) {
-        const weight = Math.floor((((maxStarterValue - speciesStarters[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
+        let weight = Math.floor((((maxStarterValue - speciesStarters[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
+        const species = getPokemonSpecies(speciesId);
+        if (species.isRegional())
+          weight = Math.floor(weight / (species.isRareRegional() ? 8 : 2));
         speciesWeights.push(totalWeight + weight);
         totalWeight += weight;
       }
