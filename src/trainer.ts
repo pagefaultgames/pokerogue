@@ -136,7 +136,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
 
       const species = template.isSameSpecies(index) && index > offset
-        ? getPokemonSpecies(battle.enemyParty[offset].species.getSpeciesForLevel(level))
+        ? getPokemonSpecies(battle.enemyParty[offset].species.getSpeciesForLevel(level, false, true))
         : this.genNewPartyMemberSpecies(level);
       
       ret = new EnemyPokemon(this.scene, species, level, true);
@@ -163,7 +163,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     } else
       species = this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
 
-    let ret = getPokemonSpecies(species.getSpeciesForLevel(level, true));
+    let ret = getPokemonSpecies(species.getSpeciesForLevel(level, true, true));
     let retry = false;
 
     console.log(ret.getName());
@@ -174,6 +174,18 @@ export default class Trainer extends Phaser.GameObjects.Container {
       const partyMemberTypes = battle.enemyParty.map(p => p.getTypes()).flat();
       if (partyMemberTypes.indexOf(ret.type1) > -1 || (ret.type2 !== null && partyMemberTypes.indexOf(ret.type2) > -1))
         retry = true;
+    }
+
+    if (!retry && this.config.specialtyTypes.length && !this.config.specialtyTypes.find(t => ret.isOfType(t))) {
+      retry = true;
+      console.log('Attempting reroll of species evolution to fit specialty type...');
+      let evoAttempt = 0;
+      while (retry && evoAttempt++ < 10) {
+        ret = getPokemonSpecies(species.getSpeciesForLevel(level, true, true));
+        console.log(ret.name);
+        if (this.config.specialtyTypes.find(t => ret.isOfType(t)))
+          retry = false;
+      }
     }
 
     if (retry && (attempt || 0) < 10) {

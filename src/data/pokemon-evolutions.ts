@@ -19,8 +19,7 @@ export enum SpeciesWildEvolutionDelay {
   MEDIUM,
   LONG,
   VERY_LONG,
-  MEGA,
-  NEVER
+  MEGA
 }
 
 export enum EvolutionItem {
@@ -259,7 +258,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.ELECTRODE, 30, null, null)
   ],
   [Species.CUBONE]: [
-    new SpeciesEvolution(Species.ALOLA_MAROWAK, 28, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.ISLAND), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.ALOLA_MAROWAK, 28, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.ISLAND), SpeciesWildEvolutionDelay.MEDIUM),
     new SpeciesEvolution(Species.MAROWAK, 28, null, null)
   ],
   [Species.TYROGUE]: [
@@ -268,7 +267,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.HITMONTOP, 20, null, new SpeciesEvolutionCondition((p: Pokemon) => p.stats[Stat.ATK] === p.stats[Stat.DEF]))
   ],
   [Species.KOFFING]: [
-    new SpeciesEvolution(Species.GALAR_WEEZING, 35, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.METROPOLIS), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.GALAR_WEEZING, 35, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.METROPOLIS), SpeciesWildEvolutionDelay.MEDIUM),
     new SpeciesEvolution(Species.WEEZING, 35, null, null)
   ],
   [Species.RHYHORN]: [
@@ -314,7 +313,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.QUILAVA, 14, null, null)
   ],
   [Species.QUILAVA]: [
-    new SpeciesEvolution(Species.HISUI_TYPHLOSION, 36, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.HISUI_TYPHLOSION, 36, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesEvolution(Species.TYPHLOSION, 36, null, null)
   ],
   [Species.TOTODILE]: [
@@ -663,7 +662,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.DEWOTT, 17, null, null)
   ],
   [Species.DEWOTT]: [
-    new SpeciesEvolution(Species.HISUI_SAMUROTT, 36, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.HISUI_SAMUROTT, 36, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesEvolution(Species.SAMUROTT, 36, null, null)
   ],
   [Species.PATRAT]: [
@@ -814,7 +813,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.KINGAMBIT, 64, null, null)
   ],
   [Species.RUFFLET]: [
-    new SpeciesEvolution(Species.HISUI_BRAVIARY, 54, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.HISUI_BRAVIARY, 54, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesEvolution(Species.BRAVIARY, 54, null, null)
   ],
   [Species.VULLABY]: [
@@ -900,15 +899,15 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.AURORUS, 39, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.GOOMY]: [
-    new SpeciesEvolution(Species.HISUI_SLIGGOO, 40, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.HISUI_SLIGGOO, 40, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesEvolution(Species.SLIGGOO, 40, null, null)
   ],
   [Species.SLIGGOO]: [
-    new SpeciesEvolution(Species.HISUI_GOODRA, 54, null, new SpeciesEvolutionCondition((p: Pokemon) => [ WeatherType.RAIN, WeatherType.HEAVY_RAIN ].indexOf(p.scene.arena.weather?.weatherType || WeatherType.NONE) > -1 && p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.HISUI_GOODRA, 54, null, new SpeciesEvolutionCondition((p: Pokemon) => [ WeatherType.RAIN, WeatherType.HEAVY_RAIN ].indexOf(p.scene.arena.weather?.weatherType || WeatherType.NONE) > -1 && p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesEvolution(Species.GOODRA, 50, null, new SpeciesEvolutionCondition((p: Pokemon) => [ WeatherType.RAIN, WeatherType.HEAVY_RAIN ].indexOf(p.scene.arena.weather?.weatherType || WeatherType.NONE) > -1), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.BERGMITE]: [
-    new SpeciesEvolution(Species.HISUI_AVALUGG, 37, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.HISUI_AVALUGG, 37, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesEvolution(Species.AVALUGG, 37, null, null)
   ],
   [Species.NOIBAT]: [
@@ -918,7 +917,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.DARTRIX, 17, null, null)
   ],
   [Species.DARTRIX]: [
-    new SpeciesEvolution(Species.HISUI_DECIDUEYE, 36, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.HISUI_DECIDUEYE, 36, null, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesEvolution(Species.DECIDUEYE, 36, null, null)
   ],
   [Species.LITTEN]: [
@@ -1228,7 +1227,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CLODSIRE, 20, null, null)
   ],
   [Species.PIKACHU]: [
-    new SpeciesEvolution(Species.ALOLA_RAICHU, 1, EvolutionItem.THUNDER_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.ISLAND), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.ALOLA_RAICHU, 1, EvolutionItem.THUNDER_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.ISLAND), SpeciesWildEvolutionDelay.MEDIUM),
     new SpeciesEvolution(Species.RAICHU, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.NIDORINA]: [
@@ -1267,7 +1266,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CLOYSTER, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.EXEGGCUTE]: [
-    new SpeciesEvolution(Species.ALOLA_EXEGGUTOR, 1, EvolutionItem.LEAF_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.ISLAND), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.ALOLA_EXEGGUTOR, 1, EvolutionItem.LEAF_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.ISLAND), SpeciesWildEvolutionDelay.MEDIUM),
     new SpeciesEvolution(Species.EXEGGUTOR, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.TANGELA]: [
@@ -1353,7 +1352,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.SUDOWOODO, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.MIMIC).length > 0), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.MIME_JR]: [
-    new SpeciesEvolution(Species.GALAR_MR_MIME, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.MIMIC).length > 0 && p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.GALAR_MR_MIME, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.MIMIC).length > 0 && p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.MEDIUM),
     new SpeciesEvolution(Species.MR_MIME, 1, null, new SpeciesEvolutionCondition((p: Pokemon) => p.moveset.filter(m => m.moveId === Moves.MIMIC).length > 0), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.MANTYKE]: [
@@ -1375,7 +1374,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.WHIMSICOTT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.PETILIL]: [
-    new SpeciesEvolution(Species.HISUI_LILLIGANT, 1, EvolutionItem.SUN_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.NEVER),
+    new SpeciesEvolution(Species.HISUI_LILLIGANT, 1, EvolutionItem.SUN_STONE, new SpeciesEvolutionCondition((p: Pokemon) => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesEvolution(Species.LILLIGANT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.BASCULIN]: [

@@ -966,10 +966,7 @@ export default class BattleScene extends Phaser.Scene {
 			}
 			return s;
 		}))] : allSpecies.filter(s => s.isCatchable());
-		let ret = filteredSpecies[Utils.randSeedInt(filteredSpecies.length)];
-		if (!filterAllEvolutions)
-			ret = getPokemonSpecies(ret.getSpeciesForLevel(level, true));
-		return ret;
+		return filteredSpecies[Utils.randSeedInt(filteredSpecies.length)];
 	}
 
 	checkInput(): boolean {

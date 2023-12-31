@@ -6,6 +6,15 @@ import { Species } from './species';
 import { Type } from './type';
 import { LevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from './pokemon-level-moves';
 import { uncatchableSpecies } from './biome';
+import * as Utils from '../utils';
+
+export enum Region {
+  NORMAL,
+  ALOLA,
+  GALAR,
+  HISUI,
+  PALDEA
+}
 
 export function getPokemonSpecies(species: Species): PokemonSpecies {
   if (species >= 2000)
@@ -106,12 +115,29 @@ export abstract class PokemonSpeciesForm {
     return pokemonSpeciesLevelMoves[this.speciesId].slice(0);
   }
 
-  isObtainable() {
+  getRegion(): Region {
+    return Math.floor(this.speciesId / 2000) as Region;
+  }
+
+  isObtainable(): boolean {
     return (this.generation <= 8 || pokemonPrevolutions.hasOwnProperty(this.speciesId));
   }
 
-  isCatchable() {
+  isCatchable(): boolean {
     return this.isObtainable() && uncatchableSpecies.indexOf(this.speciesId) === -1;
+  }
+
+  isRegional(): boolean {
+    return this.getRegion() > Region.NORMAL;
+  }
+
+  isRareRegional(): boolean {
+    switch (this.getRegion()) {
+      case Region.HISUI:
+        return true;
+    }
+
+    return false;
   }
 
   getSpriteAtlasPath(female: boolean, formIndex?: integer, shiny?: boolean): string {
@@ -318,7 +344,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
     return this.name;
   }
 
-  getSpeciesForLevel(level: integer, allowEvolving?: boolean): Species {
+  getSpeciesForLevel(level: integer, allowEvolving?: boolean, forTrainer?: boolean): Species {
     const prevolutionLevels = this.getPrevolutionLevels();
 
     if (prevolutionLevels.length) {
@@ -342,14 +368,19 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
     let noEvolutionChance = 1;
 
     for (let ev of evolutions) {
-      if (ev.level > level || ev.wildDelay === SpeciesWildEvolutionDelay.NEVER)
+      if (ev.level > level)
         continue;
 
       let evolutionChance: number;
       
-      if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE)
+      const evolutionSpecies = getPokemonSpecies(ev.speciesId);
+      const isRegional = evolutionSpecies.isRegional();
+      
+      if (!forTrainer && isRegional)
+        evolutionChance = 0;
+      else if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE) {
         evolutionChance = Math.min(0.5 + easeInFunc(Math.min(level - ev.level, 40) / 40) / 2, 1);
-      else {
+      } else {
         let preferredMinLevel = (ev.level - 1) + ev.wildDelay * 10;
         let evolutionLevel = ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2);
 
@@ -363,6 +394,9 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
       }
 
       if (evolutionChance > 0) {
+        if (isRegional)
+          evolutionChance /= (evolutionSpecies.isRareRegional() ? 16 : 4);
+
         totalWeight += evolutionChance;
 
         evolutionPool.set(totalWeight, ev.speciesId);
@@ -372,10 +406,10 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
       }
     }
 
-    if (noEvolutionChance === 1 || Math.random() < noEvolutionChance)
+    if (noEvolutionChance === 1 || Phaser.Math.RND.realInRange(0, 1) < noEvolutionChance)
       return this.speciesId;
       
-    const randValue = evolutionPool.size === 1 ? 0 : Math.random() * totalWeight;
+    const randValue = evolutionPool.size === 1 ? 0 : Utils.randSeedInt(totalWeight);
 
     for (let weight of evolutionPool.keys()) {
       if (randValue < weight)
