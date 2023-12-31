@@ -285,6 +285,8 @@ export class GameData {
     return JSON.parse(dataStr, (k: string, v: any) => {
       if (k === 'eggs') {
         const ret: EggData[] = [];
+        if (v === null)
+          v = [];
         for (let e of v)
           ret.push(new EggData(e));
         return ret;
