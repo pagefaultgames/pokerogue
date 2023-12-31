@@ -122,6 +122,8 @@ export class EggHatchPhase extends BattlePhase {
       this.eggHatchContainer.add(this.infoContainer);
 
       const pokemon = this.generatePokemon();
+      if (pokemon.fusionSpecies)
+        pokemon.clearFusionSpecies();
 
       let abilityYOffset = 5;
 
@@ -210,7 +212,7 @@ export class EggHatchPhase extends BattlePhase {
                           
                           this.scene.ui.showText(`${pokemon.name} hatched from the egg!`, null, () => {
                             this.scene.gameData.updateSpeciesDexIvs(pokemon.species.speciesId, pokemon.ivs);
-                            this.scene.gameData.setPokemonCaught(pokemon).then(() => {
+                            this.scene.gameData.setPokemonCaught(pokemon, true, true).then(() => {
                               this.scene.ui.showText(null, 0);
                               this.end();
                             });
@@ -323,8 +325,8 @@ export class EggHatchPhase extends BattlePhase {
     updateParticle();
   }
 
-  generatePokemon(): Pokemon {
-    let ret: Pokemon;
+  generatePokemon(): PlayerPokemon {
+    let ret: PlayerPokemon;
     let speciesOverride: Species;
 
     if (this.egg.isManaphyEgg()) {

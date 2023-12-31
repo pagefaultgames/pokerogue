@@ -775,6 +775,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.generateName();
   }
 
+  clearFusionSpecies(): void {
+    this.fusionSpecies = undefined;
+    this.fusionFormIndex = 0;
+    this.fusionAbilityIndex = 0;
+    this.fusionShiny = false;
+    this.fusionGender = 0;
+
+    this.generateName();
+    this.calculateStats();
+  }
+
   generateAndPopulateMoveset(): void {
     this.moveset = [];
     const movePool = [];
@@ -1815,6 +1826,11 @@ export class PlayerPokemon extends Pokemon {
     return !!(this.fusionSpecies || (this.species.speciesId === Species.KYUREM && this.formIndex));
   }
 
+  clearFusionSpecies(): void {
+    super.clearFusionSpecies();
+    this.generateCompatibleTms();
+  }
+
   fuse(pokemon: PlayerPokemon): Promise<void> {
     return new Promise(resolve => {
       if (this.species.speciesId === Species.KYUREM && (pokemon.species.speciesId === Species.RESHIRAM || pokemon.species.speciesId === Species.ZEKROM))
@@ -1852,15 +1868,8 @@ export class PlayerPokemon extends Pokemon {
 
   unfuse(): Promise<void> {
     return new Promise(resolve => {
-      this.fusionSpecies = undefined;
-      this.fusionFormIndex = 0;
-      this.fusionAbilityIndex = 0;
-      this.fusionShiny = false;
-      this.fusionGender = 0;
+      this.clearFusionSpecies();
 
-      this.generateName();
-      this.calculateStats();
-      this.generateCompatibleTms();
       this.updateInfo(true).then(() => resolve());
       this.updateFusionPalette();
     });
