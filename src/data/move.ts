@@ -2581,6 +2581,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
+      if (move.category !== MoveCategory.STATUS && !this.getSwitchOutCondition()(user, target, move))
+        return resolve(false);
       const switchOutTarget = this.user ? user : target;
       if (switchOutTarget instanceof PlayerPokemon) {
         (switchOutTarget as PlayerPokemon).switchOut(this.batonPass).then(() => resolve(true));
@@ -2590,21 +2592,17 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         switchOutTarget.resetSummonData();
         switchOutTarget.hideInfo();
         switchOutTarget.setVisible(false);
+        switchOutTarget.scene.field.remove(switchOutTarget);
 
         if (switchOutTarget.hp)
           user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex(), false, this.batonPass, false));
       } else {
-        switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
-        switchOutTarget.hp = 0;
-        switchOutTarget.trySetStatus(StatusEffect.FAINT);
-
-        user.scene.queueMessage(getPokemonMessage(switchOutTarget, ' fled!'), null, true, 500);
-
-        if (!switchOutTarget.getAlly()?.isActive(true)) {
-          user.scene.clearEnemyHeldItemModifiers();
-
-          user.scene.pushPhase(new BattleEndPhase(user.scene));
-          user.scene.pushPhase(new NewBattlePhase(user.scene));
+        switchOutTarget.setVisible(false);
+        
+        if (switchOutTarget.hp) {
+          switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
+          switchOutTarget.scene.field.remove(switchOutTarget);
+          user.scene.queueMessage(getPokemonMessage(switchOutTarget, ' fled!'), null, true, 500);
         }
       }
 
@@ -2613,6 +2611,10 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveCondition {
+    return (user, target, move) => move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move);
+  }
+
+  getSwitchOutCondition(): MoveCondition {
     return (user, target, move) => {
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;

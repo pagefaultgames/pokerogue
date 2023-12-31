@@ -100,7 +100,8 @@ export class CheckLoadPhase extends BattlePhase {
     
     if (!this.scene.gameData.hasSession())
       return this.end();
-
+    
+    this.scene.ui.setMode(Mode.MESSAGE);
     this.scene.ui.showText('You currently have a session in progress.\nWould you like to continue where you left off?', null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
