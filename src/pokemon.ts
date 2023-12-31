@@ -163,8 +163,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.friendship = species.baseFriendship;
       this.pokerus = false;
 
-      if (scene.gameMode === GameMode.SPLICED_ENDLESS)
+      if (scene.gameMode === GameMode.SPLICED_ENDLESS) {
+        this.calculateStats();
         this.generateFusionSpecies();
+      }
 
       this.generateAndPopulateMoveset();
     }
