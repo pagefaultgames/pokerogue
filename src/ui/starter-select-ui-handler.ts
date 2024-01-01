@@ -357,7 +357,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (this.startCursorObj.visible) {
       switch (button) {
         case Button.ACTION:
-          if (this.tryStart())
+          if (this.tryStart(true))
             success = true;
           else
             error = true;
@@ -801,7 +801,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     return true;
   }
 
-  tryStart(): boolean {
+  tryStart(manualTrigger: boolean = false): boolean {
     if (!this.starterGens.length)
       return false;
 
@@ -809,7 +809,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     const cancel = () => {
       ui.setMode(Mode.STARTER_SELECT);
-      this.popStarter();
+      if (!manualTrigger)
+        this.popStarter();
       this.clearText();
     };
 
