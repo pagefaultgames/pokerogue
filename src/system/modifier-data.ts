@@ -32,18 +32,23 @@ export default class ModifierData {
     if (!typeFunc)
       return null;
 
-    let type = typeFunc();
-    type.id = this.typeId;
-    type.generatorId = this.typeGeneratorId;
+    try {
+      let type = typeFunc();
+      type.id = this.typeId;
+      type.generatorId = this.typeGeneratorId;
 
-    if (type instanceof ModifierTypeGenerator)
-      type = (type as ModifierTypeGenerator).generateType(this.player ? scene.getParty() : scene.getEnemyField(), this.typePregenArgs);
+      if (type instanceof ModifierTypeGenerator)
+        type = (type as ModifierTypeGenerator).generateType(this.player ? scene.getParty() : scene.getEnemyField(), this.typePregenArgs);
 
-    const ret = Reflect.construct(constructor, ([ type ] as any[]).concat(this.args).concat(this.stackCount)) as PersistentModifier;
+      const ret = Reflect.construct(constructor, ([ type ] as any[]).concat(this.args).concat(this.stackCount)) as PersistentModifier;
 
-    if (ret.stackCount > ret.getMaxStackCount(scene))
-      ret.stackCount = ret.getMaxStackCount(scene);
+      if (ret.stackCount > ret.getMaxStackCount(scene))
+        ret.stackCount = ret.getMaxStackCount(scene);
 
-    return ret;
+      return ret;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
   }
 }
