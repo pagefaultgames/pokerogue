@@ -3840,8 +3840,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ],
     [ Species.JIRACHI, Type.STEEL, Type.PSYCHIC, [ ]
     ],
-    [ Species.DEOXYS, Type.PSYCHIC, -1, [
-      ]
+    [ Species.DEOXYS, Type.PSYCHIC, -1, [ ]
     ],
     [ Species.TURTWIG, Type.GRASS, -1, [
         [ Biome.GRASS, BiomePoolTier.RARE ]
@@ -4333,8 +4332,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ],
     [ Species.SHAYMIN, Type.GRASS, -1, [ ]
     ],
-    [ Species.ARCEUS, Type.NORMAL, -1, [
-      ]
+    [ Species.ARCEUS, Type.NORMAL, -1, [ ]
     ],
     [ Species.VICTINI, Type.PSYCHIC, Type.FIRE, [ ]
     ],
