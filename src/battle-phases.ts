@@ -118,7 +118,7 @@ export class ConsolidateDataPhase extends BattlePhase {
                 .then(response => response.text())
                 .then(response => {
                   if (!response.length || response[0] !== '{') {
-                    console.log('System data not found: Loading legacy local session data');
+                    console.log('Session data not found: Loading legacy local session data');
 
                     const sessionDataStr = atob(localStorage.getItem('sessionData'));
 
@@ -128,10 +128,10 @@ export class ConsolidateDataPhase extends BattlePhase {
                         if (error)
                           console.error(error);
 
-                        this.end();
+                        window.location = window.location;
                       });
                   } else
-                    this.end();
+                    window.location = window.location;
                 });
             });
           } else
