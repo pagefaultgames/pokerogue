@@ -19,7 +19,7 @@ import { Egg } from "../data/egg";
 import { VoucherType, vouchers } from "./voucher";
 import { AES, enc } from "crypto-js";
 import { Mode } from "../ui/ui";
-import { updateUserInfo } from "../account";
+import { loggedInUser, updateUserInfo } from "../account";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -357,8 +357,6 @@ export class GameData {
           timestamp: new Date().getTime()
         } as SessionSaveData;
 
-        console.log(JSON.stringify(sessionData));
-
         if (!bypassLogin) {
           Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}`, JSON.stringify(sessionData))
             .then(response => response.text())
@@ -465,8 +463,6 @@ export class GameData {
               return resolve(false);
             }
 
-            console.log(JSON.parse(response));
-
             await handleSessionData(response);
           });
       } else
@@ -474,8 +470,25 @@ export class GameData {
     });
   }
 
-  clearSession(): void {
-    localStorage.removeItem('sessionData');
+  clearSession(): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      if (bypassLogin) {
+        localStorage.removeItem('sessionData');
+        return resolve(true);
+      }
+
+      updateUserInfo().then(success => {
+        if (success !== null && !success)
+          return resolve(false);
+        Utils.apiFetch(`savedata/delete?datatype=${GameDataType.SESSION}`).then(response => {
+          if (response.ok) {
+            loggedInUser.hasGameSession = false;
+            return resolve(true);
+          }
+          resolve(false);
+        });
+      });
+    });
   }
 
   parseSessionData(dataStr: string): SessionSaveData {

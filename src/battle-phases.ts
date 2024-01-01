@@ -85,6 +85,12 @@ export class LoginPhase extends BattlePhase {
         this.end();
     });
   }
+
+  end(): void {
+    this.scene.ui.setMode(Mode.MESSAGE);
+
+    super.end();
+  }
 }
 
 // TODO: Remove
@@ -2592,20 +2598,20 @@ export class GameOverPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.gameData.clearSession();
-
-    this.scene.time.delayedCall(1000, () => {
-      if (this.victory)
-        this.scene.validateAchv(achvs.CLASSIC_VICTORY);
-      const fadeDuration = this.victory ? 10000 : 5000;
-      this.scene.fadeOutBgm(fadeDuration, true);
-      this.scene.ui.fadeOut(fadeDuration).then(() => {
-        this.scene.clearPhaseQueue();
-        this.scene.ui.clearText();
-        this.handleUnlocks(this.scene.getParty());
-        this.scene.reset();
-        this.scene.unshiftPhase(new CheckLoadPhase(this.scene));
-        this.end();
+    this.scene.gameData.clearSession().then(() => {
+      this.scene.time.delayedCall(1000, () => {
+        if (this.victory)
+          this.scene.validateAchv(achvs.CLASSIC_VICTORY);
+        const fadeDuration = this.victory ? 10000 : 5000;
+        this.scene.fadeOutBgm(fadeDuration, true);
+        this.scene.ui.fadeOut(fadeDuration).then(() => {
+          this.scene.clearPhaseQueue();
+          this.scene.ui.clearText();
+          this.handleUnlocks(this.scene.getParty());
+          this.scene.reset();
+          this.scene.unshiftPhase(new CheckLoadPhase(this.scene));
+          this.end();
+        });
       });
     });
   }
