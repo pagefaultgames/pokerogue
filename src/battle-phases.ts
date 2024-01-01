@@ -2479,7 +2479,7 @@ export class VictoryPhase extends PokemonPhase {
               this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_POKEBALL));
           }
           if (this.scene.gameMode !== GameMode.CLASSIC  && !(this.scene.currentBattle.waveIndex % 50)) {
-            this.scene.pushPhase(new ModifierRewardPhase(this.scene, !(this.scene.currentBattle.waveIndex % 250) ? modifierTypes.VOUCHER_PLUS : modifierTypes.VOUCHER));
+            this.scene.pushPhase(new ModifierRewardPhase(this.scene, !(this.scene.currentBattle.waveIndex % 250) ? modifierTypes.VOUCHER_PREMIUM : modifierTypes.VOUCHER_PLUS));
             this.scene.pushPhase(new AddEnemyBuffModifierPhase(this.scene));
           }
         }

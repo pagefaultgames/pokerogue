@@ -562,7 +562,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
               success = this.setCursor(this.cursor - 1);
             break;
           case Button.DOWN:
-            if (this.cursor < 4)
+            if (this.cursor < 5)
               success = this.setCursor(this.cursor + 1);
             break;
           case Button.LEFT:
