@@ -97,8 +97,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     starterSelectBg.setOrigin(0, 0);
     this.starterSelectContainer.add(starterSelectBg);
 
-    this.starterSelectContainer.add(addWindow(this.scene, 107, 1, 34, 92));
-    this.starterSelectContainer.add(addWindow(this.scene, 107, 93, 34, 57));
+    this.starterSelectContainer.add(addWindow(this.scene, 107, 1, 34, 58));
+    this.starterSelectContainer.add(addWindow(this.scene, 107, 59, 34, 91));
     this.starterSelectContainer.add(addWindow(this.scene, 107, 145, 34, 34, true));
     this.starterSelectContainer.add(addWindow(this.scene, 141, 1, 178, 178));
 
@@ -158,7 +158,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       return cursorObj;
     });
 
-    this.starterCursorObjs = new Array(3).fill(null).map(() => {
+    this.starterCursorObjs = new Array(6).fill(null).map(() => {
       const cursorObj = this.scene.add.image(0, 0, 'starter_select_cursor_highlight');
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
@@ -219,8 +219,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     }
 
-    this.starterIcons = new Array(3).fill(null).map((_, i) => {
-      const icon = this.scene.add.sprite(113, 97 + 16 * i, 'pokemon_icons_0');
+    this.starterIcons = new Array(6).fill(null).map((_, i) => {
+      const icon = this.scene.add.sprite(113, 63 + 13 * i, 'pokemon_icons_0');
       icon.setScale(0.5);
       icon.setOrigin(0, 0);
       icon.setFrame('unknown');
@@ -380,7 +380,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             success = this.setCursor(this.genCursor - 1);
           break;
         case Button.DOWN:
-          if (this.genCursor < 4)
+          if (this.genCursor < 2)
             success = this.setCursor(this.genCursor + 1);
           else {
             this.startCursorObj.setVisible(true);
@@ -396,7 +396,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         if (!this.speciesStarterDexEntry?.caughtAttr)
           error = true;
-        else if (this.starterCursors.length < 3) {
+        else if (this.starterCursors.length < 6) {
           ui.setModeWithoutClear(Mode.OPTION_SELECT, 'Add to Party', () => {
             ui.setMode(Mode.STARTER_SELECT);
             let isDupe = false;
@@ -419,7 +419,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               this.starterAttr.push(this.dexAttrCursor);
               if (this.speciesLoaded.get(species.speciesId))
                 species.cry(this.scene);
-              if (this.starterCursors.length === 3)
+              if (this.starterCursors.length === 6 || this.value === 10)
                 this.tryStart();
               this.updateInstructions();
               ui.playSelect();
@@ -572,7 +572,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.genScrollCursor--;
         cursor++;
         this.updateGenOptions();
-      } else if (cursor === 4 && this.genScrollCursor < gens.length - 5) {
+      } else if (cursor === 2 && this.genScrollCursor < gens.length - 3) {
         this.genScrollCursor++;
         cursor--;
         this.updateGenOptions();
@@ -620,11 +620,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   updateGenOptions(): void {
     let text = '';
-    for (let g = this.genScrollCursor; g <= this.genScrollCursor + 4; g++) {
+    for (let g = this.genScrollCursor; g <= this.genScrollCursor + 2; g++) {
       let optionText = gens[g];
       if (g === this.genScrollCursor && this.genScrollCursor)
         optionText = '↑';
-      else if (g === this.genScrollCursor + 4 && this.genScrollCursor < gens.length - 5)
+      else if (g === this.genScrollCursor + 2 && this.genScrollCursor < gens.length - 3)
         optionText = '↓'
       text += `${text ? '\n' : ''}${optionText}`;
     }
