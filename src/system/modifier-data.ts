@@ -22,7 +22,7 @@ export default class ModifierData {
         this.typePregenArgs = (source.type as GeneratedPersistentModifierType).getPregenArgs();
     } else if (source.typePregenArgs)
       this.typePregenArgs = source.typePregenArgs;
-    this.args = sourceModifier ? sourceModifier.getArgs() : source.args;
+    this.args = sourceModifier ? sourceModifier.getArgs() : source.args || [];
     this.stackCount = source.stackCount;
     this.className = sourceModifier ? sourceModifier.constructor.name : source.className;
   }
