@@ -354,7 +354,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     let success = false;
     let error = false;
 
-    if (this.startCursorObj.visible) {
+    if (button === Button.SUBMIT) {
+      if (this.tryStart(true))
+        success = true;
+      else
+        error = true;
+    } else if (this.startCursorObj.visible) {
       switch (button) {
         case Button.ACTION:
           if (this.tryStart(true))
