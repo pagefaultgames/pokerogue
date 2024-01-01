@@ -2,7 +2,7 @@ import * as Modifiers from './modifier';
 import { AttackMove, Moves, allMoves } from '../data/move';
 import { PokeballType, getPokeballName } from '../data/pokeball';
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from '../pokemon';
-import { EvolutionItem, pokemonEvolutions } from '../data/pokemon-evolutions';
+import { EvolutionItem, SpeciesFriendshipEvolutionCondition, pokemonEvolutions } from '../data/pokemon-evolutions';
 import { Stat, getStatName } from '../data/pokemon-stat';
 import { tmPoolTiers, tmSpecies } from '../data/tms';
 import { Type } from '../data/type';
@@ -817,7 +817,10 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 3),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 3),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 3),
-    new WeightedModifierType(modifierTypes.SOOTHE_BELL, 3),
+    new WeightedModifierType(modifierTypes.SOOTHE_BELL, (party: Pokemon[]) => {
+      const friendshipBenefitPartyMemberCount = Math.min(party.filter(p => (pokemonEvolutions.hasOwnProperty(p.species.speciesId) && pokemonEvolutions[p.species.speciesId].find(e => e.condition && e.condition instanceof SpeciesFriendshipEvolutionCondition)) || p.moveset.find(m => m.moveId === Moves.RETURN)).length, 3);
+      return friendshipBenefitPartyMemberCount * 3;
+    }),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 2),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 2),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 1),
