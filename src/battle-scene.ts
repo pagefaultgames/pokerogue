@@ -567,7 +567,7 @@ export default class BattleScene extends Phaser.Scene {
 			[Button.LEFT]: [keyCodes.LEFT, keyCodes.A],
 			[Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
 			[Button.SUBMIT]: [keyCodes.ENTER],
-			[Button.ACTION]: [keyCodes.ENTER, keyCodes.SPACE, keyCodes.Z],
+			[Button.ACTION]: [keyCodes.SPACE, keyCodes.ENTER, keyCodes.Z],
 			[Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
 			[Button.MENU]: [keyCodes.ESC, keyCodes.M],
 			[Button.CYCLE_SHINY]: [keyCodes.R],
