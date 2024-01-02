@@ -374,9 +374,9 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
       let evolutionChance: number;
       
       const evolutionSpecies = getPokemonSpecies(ev.speciesId);
-      const isRegional = evolutionSpecies.isRegional();
+      const isRegionalEvolution = !this.isRegional() && evolutionSpecies.isRegional();
       
-      if (!forTrainer && isRegional)
+      if (!forTrainer && isRegionalEvolution)
         evolutionChance = 0;
       else if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE) {
         const maxLevelDiff = forTrainer || isBoss ? forTrainer && isBoss ? 10 : 20 : 40;
@@ -396,7 +396,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
       }
 
       if (evolutionChance > 0) {
-        if (isRegional)
+        if (isRegionalEvolution)
           evolutionChance /= (evolutionSpecies.isRareRegional() ? 16 : 4);
 
         totalWeight += evolutionChance;
