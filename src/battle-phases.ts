@@ -260,7 +260,7 @@ export abstract class FieldPhase extends BattlePhase {
       const aSpeed = a?.getBattleStat(Stat.SPD) || 0;
       const bSpeed = b?.getBattleStat(Stat.SPD) || 0;
 
-      return aSpeed < bSpeed ? 1 : aSpeed > bSpeed ? -1 : !Utils.randInt(2) ? -1 : 1;
+      return aSpeed < bSpeed ? 1 : aSpeed > bSpeed ? -1 : !this.scene.currentBattle.randSeedInt(2) ? -1 : 1;
     });
 
     const speedReversed = new Utils.BooleanHolder(false);
@@ -1692,7 +1692,7 @@ export class MovePhase extends BattlePhase {
       
       switch (this.pokemon.status.effect) {
         case StatusEffect.PARALYSIS:
-          if (Utils.randInt(4) === 0) {
+          if (!this.pokemon.randSeedInt(4)) {
             activated = true;
             this.cancelled = true;
           }
@@ -1704,7 +1704,7 @@ export class MovePhase extends BattlePhase {
           this.cancelled = activated;
           break;
         case StatusEffect.FREEZE:
-          healed = Utils.randInt(5) === 0;
+          healed = !this.pokemon.randSeedInt(5);
           activated = !healed;
           this.cancelled = activated;
           break;
@@ -1919,7 +1919,7 @@ export class MoveEffectPhase extends PokemonPhase {
     applyAbAttrs(IgnoreOpponentStatChangesAbAttr, target, null, userAccuracyLevel);
     applyAbAttrs(IgnoreOpponentStatChangesAbAttr, this.getUserPokemon(), null, targetEvasionLevel);
     this.scene.applyModifiers(TempBattleStatBoosterModifier, this.player, TempBattleStat.ACC, userAccuracyLevel);
-    const rand = Utils.randInt(100, 1);
+    const rand = this.getUserPokemon().randSeedInt(100, 1);
     let accuracyMultiplier = 1;
     if (userAccuracyLevel.value !== targetEvasionLevel.value) {
       accuracyMultiplier = userAccuracyLevel.value > targetEvasionLevel.value
@@ -2020,9 +2020,8 @@ export class StatChangePhase extends PokemonPhase {
   constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer) {
     super(scene, battlerIndex);
 
-    const allStats = Utils.getEnumValues(BattleStat);
     this.selfTarget = selfTarget;
-    this.stats = stats.map(s => s !== BattleStat.RAND ? s : allStats[Utils.randInt(BattleStat.SPD + 1)]);
+    this.stats = stats;
     this.levels = levels;
   }
 
@@ -2032,7 +2031,8 @@ export class StatChangePhase extends PokemonPhase {
     if (pokemon.isFainted())
       return this.end();
 
-    const filteredStats = this.stats.filter(stat => {
+    const allStats = Utils.getEnumValues(BattleStat);
+    const filteredStats = this.stats.map(s => s !== BattleStat.RAND ? s : allStats[pokemon.randSeedInt(BattleStat.SPD + 1)]).filter(stat => {
       const cancelled = new Utils.BooleanHolder(false);
 
       if (!this.selfTarget && this.levels < 0)
@@ -3046,7 +3046,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                     shakeCounter.stop();
                     this.failCatch(shakeCount);
                   } else if (shakeCount++ < 3) {
-                    if (Utils.randInt(65536) < y)
+                    if (pokemon.randSeedInt(65536) < y)
                       this.scene.playSound('pb_move');
                     else {
                       shakeCounter.stop();
@@ -3190,7 +3190,7 @@ export class AttemptRunPhase extends PokemonPhase {
     const escapeChance = new Utils.IntegerHolder((((playerPokemon.getStat(Stat.SPD) * 128) / enemySpeed) + (30 * this.scene.currentBattle.escapeAttempts++)) % 256);
     applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, escapeChance);
 
-    if (Utils.randInt(256) < escapeChance.value) {
+    if (playerPokemon.randSeedInt(256) < escapeChance.value) {
       this.scene.playSound('flee');
       this.scene.queueMessage('You got away safely!', null, true, 500);
       

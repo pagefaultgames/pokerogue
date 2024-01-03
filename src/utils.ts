@@ -2,12 +2,12 @@ export function toReadableString(str: string): string {
   return str.replace(/\_/g, ' ').split(' ').map(s => `${s.slice(0, 1)}${s.slice(1).toLowerCase()}`).join(' ');
 }
 
-export function randomString(length: integer) {
+export function randomString(length: integer, seeded: boolean = false) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   
   for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
+    const randomIndex = seeded ? randSeedInt(characters.length) : Math.floor(Math.random() * characters.length);
     result += characters[randomIndex];
   }
   
@@ -56,17 +56,13 @@ export function padInt(value: integer, length: integer, padWith?: string): strin
   return valueStr;
 }
 
-export function randInt(range: integer, min?: integer): integer {
-  if (!min)
-    min = 0;
+export function randInt(range: integer, min: integer = 0): integer {
   if (range === 1)
     return min;
   return Math.floor(Math.random() * range) + min;
 }
 
-export function randSeedInt(range: integer, min?: integer): integer {
-  if (!min)
-    min = 0;
+export function randSeedInt(range: integer, min: integer = 0): integer {
   if (range === 1)
     return min;
   return Phaser.Math.RND.integerInRange(min, (range - 1) + min);
@@ -162,9 +158,7 @@ export function apiFetch(path: string): Promise<Response> {
   });
 }
 
-export function apiPost(path: string, data?: any, contentType?: string): Promise<Response> {
-  if (!contentType)
-    contentType = 'application/json';
+export function apiPost(path: string, data?: any, contentType: string = 'application/json'): Promise<Response> {
   return new Promise((resolve, reject) => {
     const headers = {
       'Accept': contentType,

@@ -48,6 +48,8 @@ export default class Battle {
     public playerParticipantIds: Set<integer> = new Set<integer>();
     public escapeAttempts: integer = 0;
     public lastMove: Moves;
+    public battleSeed: string;
+    private battleSeedState: string;
 
     constructor(waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean) {
         this.waveIndex = waveIndex;
@@ -61,6 +63,8 @@ export default class Battle {
         this.double = double;
         this.turn = 0;
         this.started = false;
+        this.battleSeed = Utils.randomString(16, true);
+        this.battleSeedState = null;
     }
 
     private getLevelForWave(): integer {
@@ -86,6 +90,7 @@ export default class Battle {
     incrementTurn(scene: BattleScene): void {
         this.turn++;
         this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [ bt, null ]));
+        this.battleSeedState = null;
     }
 
     addParticipant(playerPokemon: PlayerPokemon): void {
@@ -119,6 +124,19 @@ export default class Battle {
             return 'battle_wild';
 
         return null;
+    }
+
+    randSeedInt(range: integer, min: integer = 0): integer {
+        let ret: integer;
+        const state = Phaser.Math.RND.state();
+        if (this.battleSeedState)
+            Phaser.Math.RND.state(this.battleSeedState);
+        else
+            Phaser.Math.RND.sow([ Utils.shiftCharCodes(this.battleSeed, this.turn << 6) ]);
+        ret = Utils.randSeedInt(range, min);
+        this.battleSeedState = Phaser.Math.RND.state();
+        Phaser.Math.RND.state(state);
+        return ret;
     }
 }
 

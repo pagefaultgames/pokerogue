@@ -202,10 +202,10 @@ export class ConfusedTag extends BattlerTag {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nconfused!'));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
 
-      if (Utils.randInt(2)) {
+      if (pokemon.randSeedInt(2)) {
         const atk = pokemon.getBattleStat(Stat.ATK);
         const def = pokemon.getBattleStat(Stat.DEF);
-        const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (Utils.randInt(15, 85) / 100));
+        const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100));
         pokemon.scene.queueMessage('It hurt itself in its\nconfusion!');
         pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex()));
         pokemon.damage(damage);
@@ -250,7 +250,7 @@ export class InfatuatedTag extends BattlerTag {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is in love\nwith ${pokemon.scene.getPokemonById(this.sourceId).name}!`));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.ATTRACT));
 
-      if (Utils.randInt(2)) {
+      if (pokemon.randSeedInt(2)) {
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nimmobilized by love!'));
         (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
       }
@@ -347,7 +347,7 @@ export class FrenzyTag extends BattlerTag {
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    pokemon.addTag(BattlerTagType.CONFUSED, Utils.randIntRange(1, 4) + 1);
+    pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
   }
 }
 

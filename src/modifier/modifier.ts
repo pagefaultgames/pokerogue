@@ -565,7 +565,7 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
     const pokemon = args[0] as Pokemon;
     const surviveDamage = args[1] as Utils.BooleanHolder;
 
-    if (!surviveDamage.value && Utils.randInt(10) < this.getStackCount()) {
+    if (!surviveDamage.value && pokemon.randSeedInt(10) < this.getStackCount()) {
       surviveDamage.value = true;
 
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` hung on\nusing its ${this.type.name}!`));
@@ -598,9 +598,10 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
   }
 
   apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
     const flinched = args[1] as Utils.BooleanHolder;
 
-    if (!flinched.value && Utils.randInt(10) < this.getStackCount()) {
+    if (!flinched.value && pokemon.randSeedInt(10) < this.getStackCount()) {
       flinched.value = true;
       return true;
     }
@@ -741,7 +742,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
     }
 
     const preserve = new Utils.BooleanHolder(false);
-    pokemon.scene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), preserve);
+    pokemon.scene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
 
     getBerryEffectFunc(this.berryType)(pokemon);
     if (!preserve.value)
@@ -769,12 +770,12 @@ export class PreserveBerryModifier extends PersistentModifier {
   }
 
   shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args[0] instanceof Utils.BooleanHolder;
+    return super.shouldApply(args) && args[0] instanceof Pokemon && args[1] instanceof Utils.BooleanHolder;
   }
 
   apply(args: any[]): boolean {
-    if (!(args[0] as Utils.BooleanHolder).value)
-      (args[0] as Utils.BooleanHolder).value = Utils.randInt(this.getMaxStackCount(null)) < this.getStackCount();
+    if (!(args[1] as Utils.BooleanHolder).value)
+      (args[1] as Utils.BooleanHolder).value = (args[0] as Pokemon).randSeedInt(this.getMaxStackCount(null)) < this.getStackCount();
 
     return true;
   }
@@ -1396,7 +1397,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
     if (!opponents.length)
       return false;
 
-    const targetPokemon = opponents[Utils.randInt(opponents.length)];
+    const targetPokemon = opponents[pokemon.randSeedInt(opponents.length)];
 
     const transferredItemCount = this.getTransferredItemCount();
     if (!transferredItemCount)
@@ -1413,7 +1414,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
     for (let i = 0; i < transferredItemCount; i++) {
       if (!itemModifiers.length)
         break;
-      const randItemIndex = Utils.randInt(itemModifiers.length);
+      const randItemIndex = pokemon.randSeedInt(itemModifiers.length);
       const randItem = itemModifiers[randItemIndex];
       heldItemTransferPromises.push(pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false, false, true).then(success => {
         if (success) {

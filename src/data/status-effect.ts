@@ -16,14 +16,10 @@ export class Status {
   public turnCount: integer;
   public cureTurn: integer;
 
-  constructor(effect: StatusEffect, turnCount?: integer, cureTurn?: integer) {
+  constructor(effect: StatusEffect, turnCount: integer = 0, cureTurn?: integer) {
     this.effect = effect;
     this.turnCount = turnCount === undefined ? 0 : turnCount;
-    if (cureTurn === undefined) {
-      if (effect === StatusEffect.SLEEP)
-        this.cureTurn = Utils.randInt(3, 2);
-    } else
-      this.cureTurn = cureTurn;
+    this.cureTurn = cureTurn;
   }
 
   incrementTurn(): void {

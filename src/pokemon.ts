@@ -132,7 +132,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionShiny = dataSource.fusionShiny;
       this.fusionGender = dataSource.fusionGender;
     } else {
-      this.id = Utils.randSeedInt(4294967295);
+      this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || [
         Utils.binToDec(Utils.decToBin(this.id).substring(0, 5)),
         Utils.binToDec(Utils.decToBin(this.id).substring(5, 10)),
@@ -956,7 +956,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (source.getTag(BattlerTagType.CRIT_BOOST))
               critLevel.value += 2;
             const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
-            isCritical = !source.getTag(BattlerTagType.NO_CRIT) && !(this.getAbility().hasAttr(BlockCritAbAttr)) && (critChance === 1 || !Utils.randInt(critChance));
+            isCritical = !source.getTag(BattlerTagType.NO_CRIT) && !(this.getAbility().hasAttr(BlockCritAbAttr)) && (critChance === 1 || !this.scene.currentBattle.randSeedInt(critChance));
           }
           const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this);
           const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source);
@@ -968,7 +968,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           applyAbAttrs(StabBoostAbAttr, source, null, stabMultiplier);
 
           if (!isTypeImmune) {
-            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * weatherTypeMultiplier * ((Utils.randInt(15) + 85) / 100)) * criticalMultiplier;
+            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * weatherTypeMultiplier * ((this.scene.currentBattle.randSeedInt(15) + 85) / 100)) * criticalMultiplier;
             if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
               damage.value = Math.floor(damage.value / 2);
             move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
@@ -1087,14 +1087,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.species.speciesId === Species.ETERNATUS && this.formIndex === 1;
   }
 
-  addTag(tagType: BattlerTagType, turnCount?: integer, sourceMove?: Moves, sourceId?: integer): boolean {
+  addTag(tagType: BattlerTagType, turnCount: integer = 0, sourceMove?: Moves, sourceId?: integer): boolean {
     const existingTag = this.getTag(tagType);
     if (existingTag) {
       existingTag.onOverlap(this);
       return false;
     }
 
-    const newTag = getBattlerTag(tagType, turnCount || 0, sourceMove, sourceId);
+    const newTag = getBattlerTag(tagType, turnCount, sourceMove, sourceId);
 
     const cancelled = new Utils.BooleanHolder(false);
     applyPreApplyBattlerTagAbAttrs(PreApplyBattlerTagAbAttr, this, newTag, cancelled);
@@ -1387,10 +1387,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (cancelled.value)
       return false;
 
-    if (effect === StatusEffect.SLEEP)
-      this.setFrameRate(4);
+    let cureTurn: integer;
 
-    this.status = new Status(effect);
+    if (effect === StatusEffect.SLEEP) {
+      cureTurn = this.randSeedIntRange(2, 4);
+      this.setFrameRate(4);
+    }
+
+    this.status = new Status(effect, 0, cureTurn);
     return true;
   }
 
@@ -1693,6 +1697,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     fusionCanvas.remove();
   }
 
+  randSeedInt(range: integer, min: integer = 0): integer {
+    return this.scene.currentBattle
+      ? this.scene.currentBattle.randSeedInt(range, min)
+      : Utils.randSeedInt(range, min);
+  }
+
+  randSeedIntRange(min: integer, max: integer): integer {
+    return this.randSeedInt((max - min) + 1, min);
+  }
+
   destroy(): void {
     this.battleInfo.destroy();
     super.destroy();
@@ -1958,7 +1972,7 @@ export class EnemyPokemon extends Pokemon {
       }
       switch (this.aiType) {
         case AiType.RANDOM:
-          const moveId = movePool[Utils.randInt(movePool.length)].moveId;
+          const moveId = movePool[this.scene.currentBattle.randSeedInt(movePool.length)].moveId;
           return { move: moveId, targets: this.getNextTargets(moveId) };
         case AiType.SMART_RANDOM:
         case AiType.SMART:
@@ -1990,7 +2004,7 @@ export class EnemyPokemon extends Pokemon {
           });
           let r = 0;
           if (this.aiType === AiType.SMART_RANDOM) {
-            while (r < sortedMovePool.length - 1 && Utils.randInt(8) >= 5)
+            while (r < sortedMovePool.length - 1 && this.scene.currentBattle.randSeedInt(8) >= 5)
               r++;
           }
           console.log(movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));
@@ -2043,7 +2057,7 @@ export class EnemyPokemon extends Pokemon {
       return total;
     }, 0);
 
-    const randValue = Utils.randInt(totalWeight);
+    const randValue = this.scene.currentBattle.randSeedInt(totalWeight);
     let targetIndex: integer;
 
     thresholds.every((t, i) => {
