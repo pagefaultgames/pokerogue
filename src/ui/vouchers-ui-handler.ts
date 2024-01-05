@@ -5,6 +5,9 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./window";
 
+const itemRows = 4;
+const itemCols = 17;
+
 export default class VouchersUiHandler extends MessageUiHandler {
   private vouchersContainer: Phaser.GameObjects.Container;
   private voucherIconsContainer: Phaser.GameObjects.Container;
@@ -14,10 +17,16 @@ export default class VouchersUiHandler extends MessageUiHandler {
   private titleText: Phaser.GameObjects.Text;
   private unlockText: Phaser.GameObjects.Text;
 
+  private itemsTotal: integer;
+  private scrollCursor: integer;
+
   private cursorObj: Phaser.GameObjects.NineSlice;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
+    
+    this.itemsTotal = Object.keys(vouchers).length;
+    this.scrollCursor = 0;
   }
 
   setup() {
@@ -41,9 +50,9 @@ export default class VouchersUiHandler extends MessageUiHandler {
     
     this.voucherIcons = [];
 
-    for (let a = 0; a < Object.keys(vouchers).length; a++) {
-      const x = (a % 17) * 18;
-      const y = Math.floor(a / 17) * 18;
+    for (let a = 0; a < itemRows * itemCols; a++) {
+      const x = (a % itemCols) * 18;
+      const y = Math.floor(a / itemCols) * 18;
 
       const icon = this.scene.add.sprite(x, y, 'items', 'unknown');
       icon.setOrigin(0, 0);
@@ -98,21 +107,11 @@ export default class VouchersUiHandler extends MessageUiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
-    const voucherUnlocks = this.scene.gameData.voucherUnlocks;
-
-    Object.values(vouchers).forEach((voucher: Voucher, i: integer) => {
-      const icon = this.voucherIcons[i];
-      const unlocked = voucherUnlocks.hasOwnProperty(voucher.id);
-
-      icon.setFrame(getVoucherTypeIcon(voucher.voucherType));
-      if (!unlocked)
-        icon.setTintFill(0);
-      else
-        icon.clearTint();
-    });
-
     this.vouchersContainer.setVisible(true);
     this.setCursor(0);
+    this.setScrollCursor(0);
+
+    this.updateVoucherIcons();
 
     this.getUi().moveTo(this.vouchersContainer, this.getUi().length - 1);
 
@@ -139,21 +138,34 @@ export default class VouchersUiHandler extends MessageUiHandler {
       success = true;
       this.scene.ui.revertMode();
     } else {
+      const rowIndex = Math.floor(this.cursor / itemCols);
+      const itemOffset = (this.scrollCursor * itemCols);
       switch (button) {
         case Button.UP:
-          if (this.cursor >= 17)
-            success = this.setCursor(this.cursor - 17);
+          if (this.cursor < itemCols) {
+            if (this.scrollCursor)
+              success = this.setScrollCursor(this.scrollCursor - 1);
+          } else
+            success = this.setCursor(this.cursor - itemCols);
           break;
         case Button.DOWN:
-          if (this.cursor + 17 < Object.keys(vouchers).length)
-            success = this.setCursor(this.cursor + 17);
+          const canMoveDown = (this.cursor + itemOffset) + itemCols < this.itemsTotal;
+          if (rowIndex >= itemRows - 1) {
+            if (this.scrollCursor < Math.ceil(this.itemsTotal / itemCols) - itemRows && canMoveDown)
+              success = this.setScrollCursor(this.scrollCursor + 1);
+          } else if (canMoveDown)
+            success = this.setCursor(this.cursor + itemCols);
           break;
         case Button.LEFT:
-          if (this.cursor)
+          if (!this.cursor && this.scrollCursor)
+            success = this.setScrollCursor(this.scrollCursor - 1) && this.setCursor(this.cursor + (itemCols - 1));
+          else if (this.cursor)
             success = this.setCursor(this.cursor - 1);
           break;
         case Button.RIGHT:
-          if (this.cursor < Object.keys(vouchers).length - 1)
+          if (this.cursor + 1 === itemRows * itemCols && this.scrollCursor < Math.ceil(this.itemsTotal / itemCols) - itemRows) {
+            success = this.setScrollCursor(this.scrollCursor + 1) && this.setCursor(this.cursor - (itemCols - 1));
+          } else if (this.cursor + itemOffset < Object.keys(vouchers).length - 1)
             success = this.setCursor(this.cursor + 1);
           break;
       }
@@ -180,9 +192,44 @@ export default class VouchersUiHandler extends MessageUiHandler {
     this.cursorObj.setPositionRelative(this.voucherIcons[this.cursor], 0, 0);
 
     if (updateVoucher)
-      this.showVoucher(vouchers[Object.keys(vouchers)[cursor]]);
+      this.showVoucher(vouchers[Object.keys(vouchers)[cursor + this.scrollCursor * itemCols]]);
 
     return ret;
+  }
+
+  setScrollCursor(scrollCursor: integer): boolean {
+    if (scrollCursor === this.scrollCursor)
+      return false;
+
+    this.scrollCursor = scrollCursor;
+
+    this.updateVoucherIcons();
+
+    return true;
+  }
+
+  updateVoucherIcons(): void {
+    const voucherUnlocks = this.scene.gameData.voucherUnlocks;
+
+    const itemOffset = this.scrollCursor * itemCols;
+    const itemLimit = itemRows * itemCols;
+
+    const voucherRange = Object.values(vouchers).slice(itemOffset, itemLimit + itemOffset);
+
+    voucherRange.forEach((voucher: Voucher, i: integer) => {
+      const icon = this.voucherIcons[i];
+      const unlocked = voucherUnlocks.hasOwnProperty(voucher.id);
+
+      icon.setFrame(getVoucherTypeIcon(voucher.voucherType));
+      icon.setVisible(true);
+      if (!unlocked)
+        icon.setTintFill(0);
+      else
+        icon.clearTint();
+    });
+
+    if (voucherRange.length < this.voucherIcons.length)
+      this.voucherIcons.slice(voucherRange.length).map(i => i.setVisible(false));
   }
 
   clear() {

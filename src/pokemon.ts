@@ -464,7 +464,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case Stat.ATK:
         if (this.getTag(BattlerTagType.SLOW_START))
           ret >>= 1;
-        console.log(ret, this.name);
         break;
       case Stat.DEF:
         break;

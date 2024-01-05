@@ -701,18 +701,18 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.resetSeed(newWaveIndex);
 		
-		if (fixedBattles.hasOwnProperty(newWaveIndex) && this.gameMode === GameMode.CLASSIC) {
+		if (fixedBattles.hasOwnProperty(newWaveIndex) && this.gameMode === GameMode.CLASSIC && trainerData === undefined) {
 			battleConfig = fixedBattles[newWaveIndex];
 			newDouble = battleConfig.double;
 			newBattleType = battleConfig.battleType;
-			this.executeWithSeedOffset(() => newTrainer = battleConfig.getTrainer(this), newWaveIndex);
+			this.executeWithSeedOffset(() => newTrainer = battleConfig.getTrainer(this), (battleConfig.seedOffsetWaveIndex || newWaveIndex) << 8);
 			if (newTrainer)
 				this.field.add(newTrainer);
 		} else {
 			if (this.gameMode !== GameMode.CLASSIC)
 				newBattleType = BattleType.WILD;
 			else if (battleType === undefined) {
-				if (newWaveIndex > 20 && !(newWaveIndex % 30))
+				if ((newWaveIndex % 30) === 20)
 					newBattleType = BattleType.TRAINER;
 				else if (newWaveIndex % 10 !== 1 && newWaveIndex % 10) {
 					const trainerChance = this.arena.getTrainerChance();
@@ -722,7 +722,7 @@ export default class BattleScene extends Phaser.Scene {
 						for (let w = Math.max(newWaveIndex - 3, waveBase + 2); w <= Math.min(newWaveIndex + 3, waveBase + 9); w++) {
 							if (w === newWaveIndex)
 								continue;
-							if (((w > 20 && !(w % 30)) || fixedBattles.hasOwnProperty(w))) {
+							if ((w % 30) === 20 || fixedBattles.hasOwnProperty(w)) {
 								allowTrainerBattle = false;
 								break;
 							} else if (w < newWaveIndex) {

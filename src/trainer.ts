@@ -114,14 +114,12 @@ export default class Trainer extends Phaser.GameObjects.Container {
     this.scene.executeWithSeedOffset(() => {
       const template = this.getPartyTemplate();
 
-      const isLastIndex = index === template.size - 1;
-
       if (this.config.partyMemberFuncs.hasOwnProperty(index)) {
         ret = this.config.partyMemberFuncs[index](this.scene, level);
         return;
       }
-      if (isLastIndex && this.config.partyMemberFuncs.hasOwnProperty(-1)) {
-        ret = this.config.partyMemberFuncs[-1](this.scene, level);
+      if (this.config.partyMemberFuncs.hasOwnProperty(index - template.size)) {
+        ret = this.config.partyMemberFuncs[index - template.size](this.scene, level);
         return;
       }
 

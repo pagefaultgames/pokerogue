@@ -156,6 +156,7 @@ export class FixedBattleConfig {
     public double: boolean;
     public getTrainer: GetTrainerFunc;
     public getEnemyParty: GetEnemyPartyFunc;
+    public seedOffsetWaveIndex: integer;
 
     setBattleType(battleType: BattleType): FixedBattleConfig {
         this.battleType = battleType;
@@ -176,6 +177,26 @@ export class FixedBattleConfig {
         this.getEnemyParty = getEnemyPartyFunc;
         return this;
     }
+
+    setSeedOffsetWave(seedOffsetWaveIndex: integer): FixedBattleConfig {
+        this.seedOffsetWaveIndex = seedOffsetWaveIndex;
+        return this;
+    }
+}
+
+function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[]): GetTrainerFunc {
+    return (scene: BattleScene) => {
+        const rand = Utils.randSeedInt(trainerPool.length);
+        console.log(rand);
+        const trainerTypes: TrainerType[] = [];
+        for (let trainerPoolEntry of trainerPool) {
+            const trainerType = Array.isArray(trainerPoolEntry)
+                ? Phaser.Math.RND.pick(trainerPoolEntry)
+                : trainerPoolEntry;
+            trainerTypes.push(trainerType);
+        }
+        return new Trainer(scene, trainerTypes[rand]);
+    };
 }
 
 interface FixedBattleConfigs {
@@ -196,15 +217,15 @@ export const fixedBattles: FixedBattleConfigs = {
     [145]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_5, true)),
     [186]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.SHAUNTAL)),
-    [187]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.MARSHAL)),
-    [188]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.GRIMSLEY)),
-    [189]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.CAITLIN)),
-    [190]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, Phaser.Math.RND.pick([ TrainerType.BLUE, TrainerType.RED, TrainerType.LANCE, TrainerType.STEVEN, TrainerType.WALLACE, TrainerType.CYNTHIA, TrainerType.IRIS, TrainerType.ALDER, TrainerType.CYNTHIA ]))),
+        .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, [ TrainerType.HALA, TrainerType.MOLAYNE ]/*, TrainerType.RIKA, TrainerType.CRISPIN*/ ])),
+    [187]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(186)
+        .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.BRUNO, TrainerType.KOGA, TrainerType.PHOEBE, TrainerType.BERTHA, TrainerType.MARSHAL, TrainerType.SIEBOLD, TrainerType.OLIVIA/*, TrainerType.POPPY, TrainerType.AMARYS*/ ])),
+    [188]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(186)
+        .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA/*, TrainerType.LARRY_ELITE, TrainerType.LACEY*/ ])),
+    [189]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(186)
+        .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI/*, TrainerType.HASSEL, TrainerType.DRAYTON*/ ])),
+    [190]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(186)
+        .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.BLUE, TrainerType.RED, TrainerType.LANCE_CHAMPION, TrainerType.STEVEN, TrainerType.WALLACE, TrainerType.CYNTHIA, TrainerType.IRIS, TrainerType.ALDER, TrainerType.IRIS, TrainerType.DIANTHA, TrainerType.LEON/*, TrainerType.NEMONA, TrainerType.KIERAN*/ ])),
     [195]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_6, true))
-}
+};
