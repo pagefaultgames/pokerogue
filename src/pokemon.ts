@@ -65,6 +65,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public moveset: PokemonMove[];
   public status: Status;
   public friendship: integer;
+  public metLevel: integer;
+  public metBiome: Biome | -1;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
 
@@ -124,6 +126,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.moveset = dataSource.moveset;
       this.status = dataSource.status;
       this.friendship = dataSource.friendship !== undefined ? dataSource.friendship : this.species.baseFriendship;
+      this.metLevel = dataSource.metLevel || 5;
+      this.metBiome = dataSource.metBiome;
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
       this.fusionSpecies = dataSource.fusionSpecies instanceof PokemonSpecies ? dataSource.fusionSpecies : getPokemonSpecies(dataSource.fusionSpecies);
@@ -161,6 +165,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.trySetShiny();
 
       this.friendship = species.baseFriendship;
+      this.metLevel = level;
+      this.metBiome = scene.currentBattle ? scene.arena.biomeType : -1;
       this.pokerus = false;
 
       if (scene.gameMode === GameMode.SPLICED_ENDLESS) {
@@ -1717,15 +1723,11 @@ export default interface Pokemon {
 }
 
 export class PlayerPokemon extends Pokemon {
-  public metBiome: Biome;
-  public metLevel: integer;
   public compatibleTms: Moves[];
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, ivs?: integer[], dataSource?: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, ivs, dataSource);
     
-    this.metBiome = scene.arena?.biomeType || Biome.TOWN;
-    this.metLevel = level;
     this.generateCompatibleTms();
   }
 
@@ -2092,6 +2094,8 @@ export class EnemyPokemon extends Pokemon {
 
     if (party.length < 6) {
       this.pokeball = pokeballType;
+      this.metLevel = this.level;
+      this.metBiome = this.scene.arena.biomeType;
       const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, null, this);
       party.push(newPokemon);
       ret = newPokemon;

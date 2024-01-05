@@ -1,5 +1,6 @@
 import { BattleType } from "../battle";
 import BattleScene from "../battle-scene";
+import { Biome } from "../data/biome";
 import { Gender } from "../data/gender";
 import { PokeballType } from "../data/pokeball";
 import { getPokemonSpecies } from "../data/pokemon-species";
@@ -25,6 +26,8 @@ export default class PokemonData {
   public moveset: PokemonMove[];
   public status: Status;
   public friendship: integer;
+  public metLevel: integer;
+  public metBiome: Biome | -1;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
 
@@ -53,6 +56,8 @@ export default class PokemonData {
     this.stats = source.stats;
     this.ivs = source.ivs;
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
+    this.metLevel = source.metLevel || 5;
+    this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
     this.pauseEvolutions = !!source.pauseEvolutions;
     this.pokerus = !!source.pokerus;
 

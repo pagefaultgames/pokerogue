@@ -45,7 +45,9 @@ export enum Biome {
   END = 50
 };
 
-export function getBiomeName(biome: Biome) {
+export function getBiomeName(biome: Biome | -1) {
+  if (biome === -1)
+    return 'Somewhere you can\'t remember';
   switch (biome) {
     case Biome.GRASS:
       return 'Grassy Field';

@@ -9,6 +9,7 @@ export enum TextStyle {
   PARTY_RED,
   SUMMARY,
   SUMMARY_RED,
+  SUMMARY_PINK,
   SUMMARY_GOLD,
   MONEY,
   SETTINGS_LABEL,
@@ -68,6 +69,7 @@ function getTextStyleOptions(style: TextStyle, extraStyleOptions?: Phaser.Types.
   switch (style) {
     case TextStyle.SUMMARY:
     case TextStyle.SUMMARY_RED:
+    case TextStyle.SUMMARY_PINK:
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.WINDOW:
     case TextStyle.MESSAGE:
@@ -105,6 +107,10 @@ function getTextStyleOptions(style: TextStyle, extraStyleOptions?: Phaser.Types.
   return [ styleOptions, shadowColor, shadowSize ];
 }
 
+export function getBBCodeFrag(content: string, textStyle: TextStyle): string {
+  return `[color=${getTextColor(textStyle)}][shadow=${getTextColor(textStyle, true)}]${content}[/shadow][/color]`;
+}
+
 export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
   switch (textStyle) {
     case TextStyle.MESSAGE:
@@ -122,6 +128,8 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
       return !shadow ? '#ffffff' : '#636363';
     case TextStyle.SUMMARY_RED:
     case TextStyle.TOOLTIP_TITLE:
+      return !shadow ? '#e70808' : '#ffbd73';
+    case TextStyle.SUMMARY_PINK:
       return !shadow ? '#f89890' : '#984038';
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.MONEY:

@@ -4,7 +4,7 @@ import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { PlayerPokemon } from "../pokemon";
 import { Type } from "../data/type";
-import { TextStyle, addTextObject, getTextColor } from "./text";
+import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "./text";
 import Move, { MoveCategory } from "../data/move";
 import { getPokeballAtlasKey } from "../data/pokeball";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
@@ -12,6 +12,7 @@ import { getLevelTotalExp } from "../data/exp";
 import { Stat, getStatName } from "../data/pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { StatusEffect } from "../data/status-effect";
+import { getBiomeName } from "../data/biome";
 
 enum Page {
   PROFILE,
@@ -529,6 +530,12 @@ export default class SummaryUiHandler extends UiHandler {
             y: `-=${14.83 * (abilityDescriptionLineCount - 2)}`
           });
         }
+
+        let memoString = `${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? 'apparently ' : ''}met at Lv`, TextStyle.WINDOW)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(',', TextStyle.WINDOW)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag('.', TextStyle.WINDOW)}`;
+       
+        const memoText = addBBCodeTextObject(this.scene, 7, 113, memoString, TextStyle.WINDOW);
+        memoText.setOrigin(0, 0);
+        profileContainer.add(memoText);
         break;
       case Page.STATS:
         const statsContainer = this.scene.add.container(0, -pageBg.height);
@@ -619,7 +626,7 @@ export default class SummaryUiHandler extends UiHandler {
         this.extraMoveRowContainer.add(extraRowOverlay);
 
         const extraRowText = addTextObject(this.scene, 35, 0, this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? this.newMove.name : 'Cancel',
-          this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? TextStyle.SUMMARY_RED : TextStyle.SUMMARY);
+          this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY);
         extraRowText.setOrigin(0, 1);
         this.extraMoveRowContainer.add(extraRowText);
 

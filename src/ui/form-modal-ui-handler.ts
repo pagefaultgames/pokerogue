@@ -65,8 +65,8 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     });
 
     this.errorMessage = addTextObject(this.scene, 10, (hasTitle ? 31 : 5) + 20 * (fields.length - 1) + 16, '', TextStyle.TOOLTIP_CONTENT);
-    this.errorMessage.setColor(getTextColor(TextStyle.SUMMARY_RED));
-    this.errorMessage.setShadowColor(getTextColor(TextStyle.SUMMARY_RED, true));
+    this.errorMessage.setColor(getTextColor(TextStyle.SUMMARY_PINK));
+    this.errorMessage.setShadowColor(getTextColor(TextStyle.SUMMARY_PINK, true));
     this.errorMessage.setVisible(false);
     this.modalContainer.add(this.errorMessage);
   }
