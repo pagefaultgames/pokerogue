@@ -38,6 +38,7 @@ import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
 import { GameDataType } from "./system/game-data";
+import { addPokeballCaptureStars, addPokeballOpenParticles } from "./anims";
 
 export class LoginPhase extends BattlePhase {
   private showText: boolean;
@@ -842,6 +843,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
                 this.scene.field.moveBelow(pokemon, playerPokemon);
               this.scene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
             }
+            addPokeballOpenParticles(this.scene, pokemon.x, pokemon.y - 16, pokemon.pokeball);
             this.scene.updateModifiers(this.player);
             pokemon.showInfo();
             pokemon.playAnim();
@@ -3000,6 +3002,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     this.scene.time.delayedCall(300, () => {
       this.scene.field.moveBelow(this.pokeball as Phaser.GameObjects.GameObject, pokemon);
     });
+
     this.scene.tweens.add({
       targets: this.pokeball,
       x: { value: 236 + fpOffset[0], ease: 'Linear' },
@@ -3010,9 +3013,12 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.scene.time.delayedCall(17, () => this.pokeball.setTexture('pb', `${pokeballAtlasKey}_open`));
         this.scene.playSound('pb_rel');
         pokemon.tint(getPokeballTintColor(this.pokeballType));
+
+        addPokeballOpenParticles(this.scene, this.pokeball.x, this.pokeball.y, this.pokeballType);
+
         this.scene.tweens.add({
           targets: pokemon,
-          duration: 250,
+          duration: 500,
           ease: 'Sine.easeIn',
           scale: 0.25,
           y: 20,
@@ -3052,8 +3058,31 @@ export class AttemptCapturePhase extends PokemonPhase {
                       shakeCounter.stop();
                       this.failCatch(shakeCount);
                     }
-                  } else
-                    this.scene.playSound('pb_lock')
+                  } else {
+                    this.scene.playSound('pb_lock');
+                    addPokeballCaptureStars(this.scene, this.pokeball);
+                    
+                    const pbTint = this.scene.add.sprite(this.pokeball.x, this.pokeball.y, 'pb', 'pb');
+                    pbTint.setOrigin(this.pokeball.originX, this.pokeball.originY);
+                    pbTint.setTintFill(0);
+                    pbTint.setAlpha(0);
+                    this.scene.field.add(pbTint);
+                    this.scene.tweens.add({
+                      targets: pbTint,
+                      alpha: 0.375,
+                      duration: 200,
+                      easing: 'Sine.easeOut',
+                      onComplete: () => {
+                        this.scene.tweens.add({
+                          targets: pbTint,
+                          alpha: 0,
+                          duration: 200,
+                          easing: 'Sine.easeIn',
+                          onComplete: () => pbTint.destroy()
+                        });
+                      }
+                    });
+                  }
                 },
                 onComplete: () => this.catch()
               });

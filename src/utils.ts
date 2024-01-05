@@ -33,18 +33,18 @@ export function clampInt(value: integer, min: integer, max: integer): integer {
   return Math.min(Math.max(value, min), max);
 }
 
-export function randGauss(value: number): number { 
-  let rand = 0;
-  for(var i = value; i > 0; i--)
-      rand += Math.random();
-  return rand / value;
+export function randGauss(stdev: number, mean: number = 0): number {
+  const u = 1 - Math.random();
+  const v = Math.random();
+  const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  return z * stdev + mean;
 }
 
-export function randSeedGauss(value: number): number { 
-  let rand = 0;
-  for(var i = value; i > 0; i--)
-      rand += Phaser.Math.RND.realInRange(0, 1);
-  return rand / value;
+export function randSeedGauss(stdev: number, mean: number = 0): number {
+  const u = 1 - Phaser.Math.RND.realInRange(0, 1);
+  const v = Phaser.Math.RND.realInRange(0, 1);
+  const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  return z * stdev + mean;
 }
 
 export function padInt(value: integer, length: integer, padWith?: string): string {

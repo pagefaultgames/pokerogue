@@ -8,6 +8,7 @@ import { Mode } from "./ui/ui";
 import { LearnMovePhase } from "./battle-phases";
 import { SpeciesFormKey } from "./data/pokemon-species";
 import { achvs } from "./system/achv";
+import { cos, sin } from "./anims";
 
 export class EvolutionPhase extends BattlePhase {
   private partyMemberIndex: integer;
@@ -251,14 +252,6 @@ export class EvolutionPhase extends BattlePhase {
     });
   }
 
-  sin(index: integer, amplitude: integer): number {
-    return amplitude * Math.sin(index * (Math.PI / 128));
-  }
-
-  cos(index: integer, amplitude: integer): number {
-    return amplitude * Math.cos(index * (Math.PI / 128));
-  }
-
   doSpiralUpward() {
     let f = 0;
       
@@ -381,8 +374,8 @@ export class EvolutionPhase extends BattlePhase {
     const updateParticle = () => {
       if (!f || particle.y > 8) {
         particle.setPosition(initialX, 88 - (f * f) / 80);
-        particle.y += this.sin(trigIndex, amp) / 4;
-        particle.x += this.cos(trigIndex, amp);
+        particle.y += sin(trigIndex, amp) / 4;
+        particle.x += cos(trigIndex, amp);
         particle.setScale(1 - (f / 80));
         trigIndex += 4;
         if (f & 1)
@@ -417,9 +410,9 @@ export class EvolutionPhase extends BattlePhase {
     const updateParticle = () => {
       if (!f || particle.y < 88) {
         particle.setPosition(initialX, 8 + (f * f) / 5);
-        particle.y += this.sin(trigIndex, amp) / 4;
-        particle.x += this.cos(trigIndex, amp);
-        amp = 8 + this.sin(f * 4, 40);
+        particle.y += sin(trigIndex, amp) / 4;
+        particle.x += cos(trigIndex, amp);
+        amp = 8 + sin(f * 4, 40);
         f++;
       } else {
         particle.destroy();
@@ -449,8 +442,8 @@ export class EvolutionPhase extends BattlePhase {
     const updateParticle = () => {
       if (amp > 8) {
         particle.setPosition(initialX, initialY);
-        particle.y += this.sin(trigIndex, amp);
-        particle.x += this.cos(trigIndex, amp);
+        particle.y += sin(trigIndex, amp);
+        particle.x += cos(trigIndex, amp);
         amp -= speed;
         trigIndex += 4;
       } else {
@@ -486,7 +479,7 @@ export class EvolutionPhase extends BattlePhase {
         yOffset++;
       if (trigIndex < 128) {
         particle.setPosition(initialX + (speed * f) / 3, initialY + yOffset);
-        particle.y += -this.sin(trigIndex, amp);
+        particle.y += -sin(trigIndex, amp);
         if (f > 108)
           particle.setScale((1 - (f - 108) / 20));
         trigIndex++;

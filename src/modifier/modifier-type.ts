@@ -313,7 +313,7 @@ function getAttackTypeBoosterItemName(type: Type) {
     case Type.DARK:
       return 'Black Glasses';
     case Type.FAIRY:
-      return 'Clefairy Doll';
+      return 'Fairy Feather';
   }
 }
 
