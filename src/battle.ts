@@ -80,7 +80,14 @@ export default class Battle {
 
         const deviation = 10 / this.waveIndex;
 
-        return Math.max(Math.round(baseLevel + Math.abs(Utils.randSeedGauss(deviation))), 1);
+        return Math.max(Math.round(baseLevel + Math.abs(this.randSeedGaussForLevel(deviation))), 1);
+    }
+
+    randSeedGaussForLevel(value: number): number { 
+        let rand = 0;
+        for (var i = value; i > 0; i--)
+            rand += Phaser.Math.RND.realInRange(0, 1);
+        return rand / value;
     }
 
     getBattlerCount(): integer {
