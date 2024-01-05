@@ -41,7 +41,8 @@ function doDefaultPbOpenParticles(scene: BattleScene, x: number, y: number, radi
     });
     particle.play({
       key: 'pb_open_particle',
-      startFrame: (index + 3) % 4
+      startFrame: (index + 3) % 4,
+      frameRate: Math.floor(16 * scene.gameSpeed)
     });
     scene.tweens.add({
       targets: particle,
