@@ -795,12 +795,12 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   }
 
   summon(): void {
-    const pokeball = this.scene.addFieldSprite(this.player ? 36 : 248, this.player ? 80 : 44, 'pb', 'pb');
+    const pokemon = this.getPokemon();
+
+    const pokeball = this.scene.addFieldSprite(this.player ? 36 : 248, this.player ? 80 : 44, 'pb', getPokeballAtlasKey(pokemon.pokeball));
     pokeball.setVisible(false);
     pokeball.setOrigin(0.5, 0.625);
     this.scene.field.add(pokeball);
-
-    const pokemon = this.getPokemon();
 
     if (this.fieldIndex === 1)
       pokemon.setFieldPosition(FieldPosition.RIGHT, 0);
@@ -3022,7 +3022,7 @@ export class AttemptCapturePhase extends PokemonPhase {
             this.scene.playSound('pb_catch');
             this.scene.time.delayedCall(17, () => this.pokeball.setTexture('pb', `${pokeballAtlasKey}`));
 
-            const doShake = pokeballMultiplier > -1 ? () => {
+            const doShake = () => {
               let shakeCount = 0;
               const pbX = this.pokeball.x;
               const shakeCounter = this.scene.tweens.addCounter({
@@ -3057,7 +3057,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                 },
                 onComplete: () => this.catch()
               });
-            } : () => this.catch();
+            };
 
             this.scene.time.delayedCall(250, () => doPokeballBounceAnim(this.scene, this.pokeball, 16, 72, 350, doShake));
           }
@@ -3121,7 +3121,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.scene.field.remove(pokemon, true);
       };
       const addToParty = () => {
-        const newPokemon = pokemon.addToParty();
+        const newPokemon = pokemon.addToParty(this.pokeballType);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
         if (this.scene.getParty().filter(p => p.isShiny()).length === 6)
           this.scene.validateAchv(achvs.SHINY_PARTY);

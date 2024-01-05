@@ -2086,11 +2086,12 @@ export class EnemyPokemon extends Pokemon {
     return BattlerIndex.ENEMY + this.getFieldIndex();
   }
 
-  addToParty() {
+  addToParty(pokeballType: PokeballType) {
     const party = this.scene.getParty();
     let ret: PlayerPokemon = null;
 
     if (party.length < 6) {
+      this.pokeball = pokeballType;
       const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, null, this);
       party.push(newPokemon);
       ret = newPokemon;
