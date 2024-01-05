@@ -225,7 +225,7 @@ export const fixedBattles: FixedBattleConfigs = {
     [189]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(186)
         .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI/*, TrainerType.HASSEL, TrainerType.DRAYTON*/ ])),
     [190]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(186)
-        .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.BLUE, TrainerType.RED, TrainerType.LANCE_CHAMPION, TrainerType.STEVEN, TrainerType.WALLACE, TrainerType.CYNTHIA, TrainerType.IRIS, TrainerType.ALDER, TrainerType.IRIS, TrainerType.DIANTHA, TrainerType.LEON/*, TrainerType.NEMONA, TrainerType.KIERAN*/ ])),
+        .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.BLUE, TrainerType.RED, TrainerType.LANCE_CHAMPION, TrainerType.STEVEN, TrainerType.WALLACE, TrainerType.CYNTHIA, TrainerType.ALDER, TrainerType.IRIS, TrainerType.DIANTHA, TrainerType.LEON/*, TrainerType.GEETA, TrainerType.NEMONA, TrainerType.KIERAN*/ ])),
     [195]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_6, true))
 };

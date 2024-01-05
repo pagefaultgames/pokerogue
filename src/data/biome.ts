@@ -7351,7 +7351,8 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [ TrainerType.IRIS, [] ],
     [ TrainerType.DIANTHA, [] ],
     [ TrainerType.LEON, [] ],
-    /*[ TrainerType.NEMONA, [] ],
+    /*[ TrainerType.GEETA, [] ],
+    [ TrainerType.NEMONA, [] ],
     [ TrainerType.KIERAN, [] ],*/
     [ TrainerType.RIVAL, [] ]
   ];

@@ -178,7 +178,8 @@ export enum TrainerType {
   IRIS,
   DIANTHA,
   LEON,
-  /*NEMONA,
+  /*GEETA,
+  NEMONA,
   KIERAN,*/
 
   RIVAL = 375,
@@ -1053,7 +1054,8 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion([ Species.HAXORUS, Species.YVELTAL, Species.DRUDDIGON, Species.ARON, Species.LAPRAS ]),
   [TrainerType.DIANTHA]: new TrainerConfig(++t).initForChampion([ Species.HAWLUCHA, Species.XERNEAS, Species.GOURGEIST, Species.GOODRA, Species.GARDEVOIR ]),
   [TrainerType.LEON]: new TrainerConfig(++t).initForChampion([ Species.DRAGAPULT, [ Species.ZACIAN, Species.ZAMAZENTA ], Species.SEISMITOAD, Species.AEGISLASH, Species.MR_RIME ]),
-  /*[TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion([ Species.LYCANROC, Species.KORAIDON, Species.KOMMO_O, Species.PAWMOT, Species.DUSKNOIR ]),
+  /*[TrainerType.GEETA]: new TrainerConfig(++t).initForChampion([ Species.GLIMMORA, Species.ESPATHRA, Species.GOGOAT, Species.VELUZA, Species.KINGAMBIT ]),
+  [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion([ Species.LYCANROC, Species.KORAIDON, Species.KOMMO_O, Species.PAWMOT, Species.DUSKNOIR ]),
   [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion([ Species.POLITOED, Species.MIRAIDON, Species.HYDRAPPLE, Species.PORYGON_Z, Species.GRIMMSNARL ]),*/
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL)).setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival').setPartyTemplates(trainerPartyTemplates.RIVAL).setEncounterMessages([
