@@ -112,19 +112,19 @@ export class EggHatchPhase extends BattlePhase {
       pokemonGenderText.setVisible(false);
       this.infoContainer.add(pokemonGenderText);
 
-      const pokemonAbilityLabelText = addTextObject(this.scene, -18, 20, 'Ability:', TextStyle.WINDOW, { fontSize: '64px' });
+      const pokemonAbilityLabelText = addTextObject(this.scene, -18, 30, 'Ability:', TextStyle.WINDOW, { fontSize: '64px' });
       pokemonAbilityLabelText.setOrigin(1, 0);
       this.infoContainer.add(pokemonAbilityLabelText);
 
-      const pokemonAbilityText = addTextObject(this.scene, -14, 20, '', TextStyle.WINDOW, { fontSize: '64px' });
+      const pokemonAbilityText = addTextObject(this.scene, -14, 30, '', TextStyle.WINDOW, { fontSize: '64px' });
       pokemonAbilityText.setOrigin(0, 0);
       this.infoContainer.add(pokemonAbilityText);
 
-      const pokemonNatureLabelText = addTextObject(this.scene, -18, 30, 'Nature:', TextStyle.WINDOW, { fontSize: '64px' });
+      const pokemonNatureLabelText = addTextObject(this.scene, -18, 40, 'Nature:', TextStyle.WINDOW, { fontSize: '64px' });
       pokemonNatureLabelText.setOrigin(1, 0);
       this.infoContainer.add(pokemonNatureLabelText);
 
-      const pokemonNatureText = addBBCodeTextObject(this.scene, -14, 30, '', TextStyle.WINDOW, { fontSize: '64px', lineSpacing: 3, maxLines: 2 });
+      const pokemonNatureText = addBBCodeTextObject(this.scene, -14, 40, '', TextStyle.WINDOW, { fontSize: '64px', lineSpacing: 3, maxLines: 2 });
       pokemonNatureText.setOrigin(0, 0);
       this.infoContainer.add(pokemonNatureText);
 
