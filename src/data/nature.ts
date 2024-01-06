@@ -40,7 +40,7 @@ export function getNatureName(nature: Nature, includeStatEffects: boolean = fals
       const multiplier = getNatureStatMultiplier(nature, stat);
       if (multiplier > 1)
         increasedStat = stat;
-      else
+      else if (multiplier < 1)
         decreasedStat = stat;
     }
     const textStyle = forStarterSelect ? TextStyle.SUMMARY : TextStyle.WINDOW;
