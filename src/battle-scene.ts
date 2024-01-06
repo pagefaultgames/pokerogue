@@ -63,6 +63,7 @@ export enum Button {
 	CYCLE_FORM,
 	CYCLE_GENDER,
 	CYCLE_ABILITY,
+	CYCLE_NATURE,
 	QUICK_START,
 	AUTO,
 	SPEED_UP,
@@ -575,6 +576,7 @@ export default class BattleScene extends Phaser.Scene {
 			[Button.CYCLE_FORM]: [keyCodes.F],
 			[Button.CYCLE_GENDER]: [keyCodes.G],
 			[Button.CYCLE_ABILITY]: [keyCodes.E],
+			[Button.CYCLE_NATURE]: [keyCodes.N],
 			[Button.QUICK_START]: [keyCodes.Q],
 			[Button.AUTO]: [keyCodes.F2],
 			[Button.SPEED_UP]: [keyCodes.PLUS],
@@ -1032,6 +1034,8 @@ export default class BattleScene extends Phaser.Scene {
 				inputSuccess = this.ui.processInput(Button.CYCLE_GENDER);
 			else if (this.isButtonPressed(Button.CYCLE_ABILITY))
 				inputSuccess = this.ui.processInput(Button.CYCLE_ABILITY);
+			else if (this.isButtonPressed(Button.CYCLE_NATURE))
+				inputSuccess = this.ui.processInput(Button.CYCLE_NATURE);
 			else
 				return;
 		}	else if (this.isButtonPressed(Button.SPEED_UP)) {

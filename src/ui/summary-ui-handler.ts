@@ -7,12 +7,13 @@ import { Type } from "../data/type";
 import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "./text";
 import Move, { MoveCategory } from "../data/move";
 import { getPokeballAtlasKey } from "../data/pokeball";
-import { getGenderColor, getGenderSymbol } from "../data/gender";
+import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat, getStatName } from "../data/pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { StatusEffect } from "../data/status-effect";
 import { getBiomeName } from "../data/biome";
+import { Nature, getNatureStatMultiplier } from "../data/nature";
 
 enum Page {
   PROFILE,
@@ -531,7 +532,7 @@ export default class SummaryUiHandler extends UiHandler {
           });
         }
 
-        let memoString = `${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? 'apparently ' : ''}met at Lv`, TextStyle.WINDOW)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(',', TextStyle.WINDOW)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag('.', TextStyle.WINDOW)}`;
+        let memoString = `${getBBCodeFrag(Utils.toReadableString(Nature[this.pokemon.nature]), TextStyle.SUMMARY_RED)} nature,\n${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? 'apparently ' : ''}met at Lv`, TextStyle.WINDOW)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(',', TextStyle.WINDOW)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag('.', TextStyle.WINDOW)}`;
        
         const memoText = addBBCodeTextObject(this.scene, 7, 113, memoString, TextStyle.WINDOW);
         memoText.setOrigin(0, 0);
@@ -550,7 +551,9 @@ export default class SummaryUiHandler extends UiHandler {
           const rowIndex = s % 3;
           const colIndex = Math.floor(s / 3);
 
-          const statLabel = addTextObject(this.scene, 27 + 115 * colIndex, 56 + 16 * rowIndex, statName, TextStyle.SUMMARY);
+          const natureStatMultiplier = getNatureStatMultiplier(this.pokemon.nature, s);
+
+          const statLabel = addTextObject(this.scene, 27 + 115 * colIndex, 56 + 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_BLUE : TextStyle.SUMMARY_PINK);
           statLabel.setOrigin(0.5, 0);
           statsContainer.add(statLabel);
 

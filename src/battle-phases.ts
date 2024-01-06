@@ -25,7 +25,7 @@ import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagType, ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
-import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
+import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -39,6 +39,7 @@ import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
 import { GameDataType } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./anims";
+import { Nature } from "./data/nature";
 
 export class LoginPhase extends BattlePhase {
   private showText: boolean;
@@ -228,7 +229,7 @@ export class SelectStarterPhase extends BattlePhase {
           ? !starterProps.female ? Gender.MALE : Gender.FEMALE
           : Gender.GENDERLESS;
         const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-        const starterPokemon = new PlayerPokemon(this.scene, starter.species, startingLevel, starterProps.abilityIndex, starterProps.formIndex, starterGender, starterProps.shiny, starterIvs);
+        const starterPokemon = new PlayerPokemon(this.scene, starter.species, startingLevel, starterProps.abilityIndex, starterProps.formIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
         if (starter.pokerus)
           starterPokemon.pokerus = true;
         if (this.scene.gameMode === GameMode.SPLICED_ENDLESS)
@@ -372,6 +373,9 @@ export class EncounterPhase extends BattlePhase {
         else {
           const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
           battle.enemyParty[e] = new EnemyPokemon(this.scene, enemySpecies, level, false);
+          this.scene.getParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
+            applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, battle.enemyParty[e]);
+          });
         }
       }
       const enemyPokemon = this.scene.getEnemyParty()[e];

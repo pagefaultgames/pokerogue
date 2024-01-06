@@ -89,11 +89,6 @@ body {
   line-height: 0.9;
 }
 
-#apadLabelMenu {
-  margin-left: 10%;
-  line-height: 1.1;
-}
-
 #apad > :nth-child(2) {
   position: relative;
   right: var(--controls-size);
@@ -101,12 +96,12 @@ body {
 
 #apad .apadRectBtn {
   position: relative;
+  text-align: center;
+  padding-right: 10%;
   border-radius: 10%;
-  margin-top: calc(var(--controls-size) * -0.4);
   bottom: calc(var(--controls-size) * 0.05);
-  left: calc(var(--controls-size) * 0.21);
   width: calc(var(--controls-size) * 0.6);
-  height: calc(var(--controls-size) * 0.4);
+  height: calc(var(--controls-size) * 0.3);
 }
 
 #apad .apadSqBtn {
@@ -118,21 +113,34 @@ body {
 #apad .apadBtnContainer {
   position: relative;
   display: flex;
+}
+
+#apad .apadRectBtnContainer {
+  flex-wrap: wrap;
+  margin-top: calc(var(--controls-size) * -0.8);
+  left: calc(var(--controls-size) * 0.175);
+  height: calc(var(--controls-size) * 0.8);
+}
+
+#apad .apadSqBtnContainer {
   flex-wrap: wrap;
   justify-content: space-evenly;
   align-items: center;
   margin-bottom: calc(var(--controls-size) * -0.8);
   top: calc(var(--controls-size) * -0.9);
-  left: calc(var(--controls-size) * 0.1);
   width: calc(var(--controls-size) * 0.8);
   height: calc(var(--controls-size) * 0.8);
 }
 
-#touchControls:not([data-ui-mode='STARTER_SELECT']) #apad .apadBtnContainer {
+#apad .apadRectBtnContainer > #apadMenu {
+  align-self: flex-end;
+}
+
+#touchControls:not([data-ui-mode='STARTER_SELECT']) #apad .apadRectBtnContainer > #apadCycleNature, #touchControls:not([data-ui-mode='STARTER_SELECT']) #apad .apadSqBtnContainer {
   display: none;
 }
 
-#apad .apadRectBtn + .apadBtnContainer {
+#apad .apadRectBtnContainer + .apadSqBtnContainer {
   top: calc(var(--controls-size) * -1.9);
   left: calc(var(--controls-size) * -0.9);
 }

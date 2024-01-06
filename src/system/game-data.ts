@@ -20,6 +20,7 @@ import { VoucherType, vouchers } from "./voucher";
 import { AES, enc } from "crypto-js";
 import { Mode } from "../ui/ui";
 import { loggedInUser, updateUserInfo } from "../account";
+import { Nature } from "../data/nature";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -94,6 +95,7 @@ export interface DexData {
 export interface DexEntry {
   seenAttr: bigint;
   caughtAttr: bigint;
+  natureAttr: integer,
   seenCount: integer;
   caughtCount: integer;
   hatchedCount: integer;
@@ -121,6 +123,7 @@ export interface DexAttrProps {
 const systemShortKeys = {
   seenAttr: '$sa',
   caughtAttr: '$ca',
+  natureAttr: '$na',
   seenCount: '$s' ,
   caughtCount: '$c',
   ivs: '$i'
@@ -133,6 +136,7 @@ export class GameData {
   public secretId: integer;
   
   public dexData: DexData;
+  private defaultDexData: DexData;
 
   public unlocks: Unlocks;
 
@@ -261,6 +265,7 @@ export class GameData {
 
         this.dexData = Object.assign(this.dexData, systemData.dexData);
         this.consolidateDexData(this.dexData);
+        this.defaultDexData = null;
 
         resolve(true);
       }
@@ -292,7 +297,7 @@ export class GameData {
         return ret;
       }
 
-      return k.endsWith('Attr') ? BigInt(v) : v;
+      return k.endsWith('Attr') && k !== 'natureAttr' ? BigInt(v) : v;
     }) as SystemSaveData;
   }
 
@@ -657,7 +662,7 @@ export class GameData {
 
     for (let species of allSpecies) {
       data[species.speciesId] = {
-        seenAttr: 0n, caughtAttr: 0n, seenCount: 0, caughtCount: 0, hatchedCount: 0, ivs: [ 0, 0, 0, 0, 0, 0 ]
+        seenAttr: 0n, caughtAttr: 0n, natureAttr: 0, seenCount: 0, caughtCount: 0, hatchedCount: 0, ivs: [ 0, 0, 0, 0, 0, 0 ]
       };
     }
 
@@ -675,14 +680,24 @@ export class GameData {
 
     const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.ABILITY_1 | DexAttr.DEFAULT_FORM;
 
-    for (let ds of defaultStarters) {
-      let entry = data[ds] as DexEntry;
+    const defaultStarterNatures: Nature[] = [];
+
+    this.scene.executeWithSeedOffset(() => {
+      const neutralNatures = [ Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY ];
+      for (let s = 0; s < defaultStarters.length; s++)
+        defaultStarterNatures.push(Phaser.Math.RND.pick(neutralNatures));
+    }, 0, 'default');
+
+    for (let ds = 0; ds < defaultStarters.length; ds++) {
+      let entry = data[defaultStarters[ds]] as DexEntry;
       entry.seenAttr = defaultStarterAttr;
       entry.caughtAttr = defaultStarterAttr;
+      entry.natureAttr = Math.pow(2, defaultStarterNatures[ds] + 1);
       for (let i in entry.ivs)
         entry.ivs[i] = 10;
     }
 
+    this.defaultDexData = Object.assign({}, data);
     this.dexData = data;
   }
 
@@ -702,6 +717,7 @@ export class GameData {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
       dexEntry.caughtAttr |= pokemon.getDexAttr();
+      dexEntry.natureAttr |= Math.pow(2, pokemon.nature + 1);
       if (incrementCount) {
         if (!fromEgg)
           dexEntry.caughtCount++;
@@ -767,6 +783,28 @@ export class GameData {
     };
   }
 
+  getSpeciesDefaultNature(species: PokemonSpecies): Nature {
+    const dexEntry = this.dexData[species.speciesId];
+    for (let n = 0; n < 25; n++) {
+      if (dexEntry.natureAttr & Math.pow(2, n + 1))
+        return n as Nature;
+    }
+    return 0 as Nature;
+  }
+
+  getSpeciesDefaultNatureAttr(species: PokemonSpecies): integer {
+    return Math.pow(2, this.getSpeciesDefaultNature(species));
+  }
+
+  getNaturesForAttr(natureAttr: integer): Nature[] {
+    let ret: Nature[] = [];
+    for (let n = 0; n < 25; n++) {
+      if (natureAttr & Math.pow(2, n + 1))
+        ret.push(n);
+    }
+    return ret;
+  }
+
   getFormIndex(attr: bigint): integer {
     if (!attr || attr < DexAttr.DEFAULT_FORM)
       return 0;
@@ -785,6 +823,8 @@ export class GameData {
       const entry = dexData[k] as DexEntry;
       if (!entry.hasOwnProperty('hatchedCount'))
         entry.hatchedCount = 0;
+      if (!entry.hasOwnProperty('natureAttr') || (entry.caughtAttr && !entry.natureAttr))
+        entry.natureAttr = this.defaultDexData[k].natureAttr || Math.pow(2, Utils.randInt(25, 1));
     }
   }
 }

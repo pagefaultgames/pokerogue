@@ -1005,6 +1005,18 @@ export class WeightMultiplierAbAttr extends AbAttr {
   }
 }
 
+export class SyncEncounterNatureAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    (args[0] as Pokemon).setNature(pokemon.nature);
+
+    return true;
+  }
+}
+
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, isAsync?: boolean, showAbilityInstant?: boolean): Promise<void> {
   return new Promise(resolve => {
@@ -1505,7 +1517,8 @@ export function initAbilities() {
       .attr(TypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(BattlerTagType.IGNORE_FLYING) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY)),
     new Ability(Abilities.EFFECT_SPORE, "Effect Spore", "Contact with the Pokémon may inflict poison, sleep, or paralysis on its attacker.", 3)
       .attr(PostDefendContactApplyStatusEffectAbAttr, 10, StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP),
-    new Ability(Abilities.SYNCHRONIZE, "Synchronize (N)", "The attacker will receive the same status condition if it inflicts a burn, poison, or paralysis to the Pokémon.", 3),
+    new Ability(Abilities.SYNCHRONIZE, "Synchronize (N)", "The attacker will receive the same status condition if it inflicts a burn, poison, or paralysis to the Pokémon.", 3)
+      .attr(SyncEncounterNatureAbAttr),
     new Ability(Abilities.CLEAR_BODY, "Clear Body", "Prevents other Pokémon's moves or Abilities from lowering the Pokémon's stats.", 3)
       .attr(ProtectStatAbAttr),
     new Ability(Abilities.NATURAL_CURE, "Natural Cure (N)", "All status conditions heal when the Pokémon switches out.", 3),

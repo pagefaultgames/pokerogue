@@ -71,7 +71,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         let label = ivs[i].toString();
         if (this.showDiff && originalIvs) {
           if (originalIvs[i] < ivs[i])
-            label += ` ([color=${getGenderColor(Gender.MALE)}][shadow=${getGenderColor(Gender.MALE, true)}]+${ivs[i] - originalIvs[i]}[/shadow][/color])`;
+            label += ` ([color=${getTextColor(TextStyle.SUMMARY_BLUE)}][shadow=${getTextColor(TextStyle.SUMMARY_BLUE, true)}]+${ivs[i] - originalIvs[i]}[/shadow][/color])`;
           else
             label += ' (-)';
         }

@@ -2,6 +2,7 @@ import { BattleType } from "../battle";
 import BattleScene from "../battle-scene";
 import { Biome } from "../data/biome";
 import { Gender } from "../data/gender";
+import { Nature } from "../data/nature";
 import { PokeballType } from "../data/pokeball";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { Species } from "../data/species";
@@ -23,6 +24,7 @@ export default class PokemonData {
   public hp: integer;
   public stats: integer[];
   public ivs: integer[];
+  public nature: Nature;
   public moveset: PokemonMove[];
   public status: Status;
   public friendship: integer;
@@ -55,6 +57,7 @@ export default class PokemonData {
     this.hp = source.hp;
     this.stats = source.stats;
     this.ivs = source.ivs;
+    this.nature = source.nature !== undefined ? source.nature : 0 as Nature;
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
@@ -92,7 +95,7 @@ export default class PokemonData {
   toPokemon(scene: BattleScene, battleType?: BattleType): Pokemon {
     const species = getPokemonSpecies(this.species);
     if (this.player)
-      return new PlayerPokemon(scene, species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, null, this);
+      return new PlayerPokemon(scene, species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
     return new EnemyPokemon(scene, species, this.level, battleType === BattleType.TRAINER, this);
   }
 }

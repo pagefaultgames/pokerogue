@@ -9,6 +9,7 @@ export enum TextStyle {
   PARTY_RED,
   SUMMARY,
   SUMMARY_RED,
+  SUMMARY_BLUE,
   SUMMARY_PINK,
   SUMMARY_GOLD,
   MONEY,
@@ -129,6 +130,8 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
     case TextStyle.SUMMARY_RED:
     case TextStyle.TOOLTIP_TITLE:
       return !shadow ? '#e70808' : '#ffbd73';
+    case TextStyle.SUMMARY_BLUE:
+      return !shadow ? '#40c8f8' : '#006090';
     case TextStyle.SUMMARY_PINK:
       return !shadow ? '#f89890' : '#984038';
     case TextStyle.SUMMARY_GOLD:

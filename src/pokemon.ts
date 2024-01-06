@@ -33,6 +33,7 @@ import { LevelMoves } from './data/pokemon-level-moves';
 import { DamageAchv, achvs } from './system/achv';
 import { DexAttr } from './system/game-data';
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from '@material/material-color-utilities';
+import { Nature, getNatureStatMultiplier } from './data/nature';
 
 export enum FieldPosition {
   CENTER,
@@ -62,6 +63,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public hp: integer;
   public stats: integer[];
   public ivs: integer[];
+  public nature: Nature;
   public moveset: PokemonMove[];
   public status: Status;
   public friendship: integer;
@@ -88,7 +90,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, ivs?: integer[], dataSource?: Pokemon | PokemonData) {
+  constructor(scene: BattleScene, x: number, y: number, species: PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
     super(scene, x, y);
 
     if (!species.isObtainable() && this.isPlayer())
@@ -123,6 +125,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.hp = dataSource.hp;
       this.stats = dataSource.stats;
       this.ivs = dataSource.ivs;
+      this.nature = dataSource.nature || 0 as Nature;
       this.moveset = dataSource.moveset;
       this.status = dataSource.status;
       this.friendship = dataSource.friendship !== undefined ? dataSource.friendship : this.species.baseFriendship;
@@ -145,6 +148,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         Utils.binToDec(Utils.decToBin(this.id).substring(20, 25)),
         Utils.binToDec(Utils.decToBin(this.id).substring(25, 30))
       ];
+
+      this.nature = nature !== undefined
+        ? nature
+        : Utils.randSeedInt(25) as Nature;
     
       if (this.gender === undefined) {
         if (this.species.malePercent === null)
@@ -519,10 +526,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (lastMaxHp && value > lastMaxHp)
             this.hp += value - lastMaxHp;
         }
-      } else
-        value = Math.min(value + 5, 99999);
+      } else {
+        value += 5;
+        const natureStatMultiplier = getNatureStatMultiplier(this.nature, s);
+        if (natureStatMultiplier !== 1)
+          value = Math[natureStatMultiplier > 1 ? 'ceil' : 'floor'](value * natureStatMultiplier);
+        value = Math.min(value, 99999);
+      }
       this.stats[s] = value;
     }
+  }
+
+  setNature(nature: Nature): void {
+    this.nature = nature;
+    this.calculateStats();
   }
 
   getMaxHp(): integer {
@@ -1725,8 +1742,8 @@ export default interface Pokemon {
 export class PlayerPokemon extends Pokemon {
   public compatibleTms: Moves[];
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, ivs?: integer[], dataSource?: Pokemon | PokemonData) {
-    super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, ivs, dataSource);
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
+    super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, ivs, nature, dataSource);
     
     this.generateCompatibleTms();
   }
@@ -1791,7 +1808,7 @@ export class PlayerPokemon extends Pokemon {
     return new Promise(resolve => {
       const species = getPokemonSpecies(evolution.speciesId);
       const formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0);
-      const ret = new PlayerPokemon(this.scene, species, this.level, this.abilityIndex, formIndex, this.gender, this.shiny, this.ivs, this);
+      const ret = new PlayerPokemon(this.scene, species, this.level, this.abilityIndex, formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
       ret.loadAssets().then(() => resolve(ret));
     });
   }
@@ -1822,7 +1839,7 @@ export class PlayerPokemon extends Pokemon {
     if (this.species.speciesId === Species.NINCADA && evolution.speciesId === Species.NINJASK) {
       const newEvolution = pokemonEvolutions[this.species.speciesId][1];
       if (newEvolution.condition.predicate(this)) {
-        const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny);
+        const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature);
         this.scene.getParty().push(newPokemon);
         newPokemon.evolve(newEvolution);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
@@ -1897,7 +1914,7 @@ export class EnemyPokemon extends Pokemon {
 
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainer: boolean, dataSource?: PokemonData) {
     super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex,
-      dataSource?.gender, dataSource ? dataSource.shiny : false, null, dataSource);
+      dataSource?.gender, dataSource ? dataSource.shiny : false, null, dataSource ? dataSource.nature : undefined, dataSource);
 
     this.trainer = trainer;
 
@@ -2096,7 +2113,7 @@ export class EnemyPokemon extends Pokemon {
       this.pokeball = pokeballType;
       this.metLevel = this.level;
       this.metBiome = this.scene.arena.biomeType;
-      const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, null, this);
+      const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
       party.push(newPokemon);
       ret = newPokemon;
     }

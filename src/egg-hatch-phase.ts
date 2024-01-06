@@ -7,13 +7,14 @@ import { EGG_SEED, Egg, GachaType, getLegendaryGachaSpeciesForTimestamp, getType
 import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
 import { ModifierTier } from "./modifier/modifier-type";
 import { Species } from "./data/species";
-import Pokemon, { PlayerPokemon } from "./pokemon";
+import { PlayerPokemon } from "./pokemon";
 import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import { StatsContainer } from "./ui/stats-container";
-import { TextStyle, addTextObject } from "./ui/text";
+import { TextStyle, addBBCodeTextObject, addTextObject } from "./ui/text";
 import { Gender, getGenderColor, getGenderSymbol } from "./data/gender";
 import { achvs } from "./system/achv";
 import { addWindow } from "./ui/window";
+import { getNatureName } from "./data/nature";
 
 export class EggHatchPhase extends BattlePhase {
   private egg: Egg;
@@ -91,33 +92,41 @@ export class EggHatchPhase extends BattlePhase {
       this.eggHatchOverlay.setAlpha(0);
       this.scene.fieldUI.add(this.eggHatchOverlay);
 
-      const infoBg = addWindow(this.scene, 0, 0, 96, 116);
+      const infoBg = addWindow(this.scene, 0, 0, 104, 132);
       infoBg.setOrigin(0.5, 0.5);
 
       this.infoContainer = this.scene.add.container(this.eggHatchBg.displayWidth + infoBg.width / 2, this.eggHatchBg.displayHeight / 2);
 
-      this.statsContainer = new StatsContainer(this.scene, -48, -54, true);
+      this.statsContainer = new StatsContainer(this.scene, -48, -64, true);
 
       this.infoContainer.add(infoBg);
       this.infoContainer.add(this.statsContainer);
 
-      const pokemonGenderLabelText = addTextObject(this.scene, -16, 32, 'Gender:', TextStyle.WINDOW, { fontSize: '64px' });
+      const pokemonGenderLabelText = addTextObject(this.scene, -18, 20, 'Gender:', TextStyle.WINDOW, { fontSize: '64px' });
       pokemonGenderLabelText.setOrigin(1, 0);
       pokemonGenderLabelText.setVisible(false);
       this.infoContainer.add(pokemonGenderLabelText);
 
-      const pokemonGenderText = addTextObject(this.scene, -12, 32, '', TextStyle.WINDOW, { fontSize: '64px' });
+      const pokemonGenderText = addTextObject(this.scene, -14, 20, '', TextStyle.WINDOW, { fontSize: '64px' });
       pokemonGenderText.setOrigin(0, 0);
       pokemonGenderText.setVisible(false);
       this.infoContainer.add(pokemonGenderText);
 
-      const pokemonAbilityLabelText = addTextObject(this.scene, -16, 32, 'Ability:', TextStyle.WINDOW, { fontSize: '64px' });
+      const pokemonAbilityLabelText = addTextObject(this.scene, -18, 20, 'Ability:', TextStyle.WINDOW, { fontSize: '64px' });
       pokemonAbilityLabelText.setOrigin(1, 0);
       this.infoContainer.add(pokemonAbilityLabelText);
 
-      const pokemonAbilityText = addTextObject(this.scene, -12, 32, '', TextStyle.WINDOW, { fontSize: '64px' });
+      const pokemonAbilityText = addTextObject(this.scene, -14, 20, '', TextStyle.WINDOW, { fontSize: '64px' });
       pokemonAbilityText.setOrigin(0, 0);
       this.infoContainer.add(pokemonAbilityText);
+
+      const pokemonNatureLabelText = addTextObject(this.scene, -18, 30, 'Nature:', TextStyle.WINDOW, { fontSize: '64px' });
+      pokemonNatureLabelText.setOrigin(1, 0);
+      this.infoContainer.add(pokemonNatureLabelText);
+
+      const pokemonNatureText = addBBCodeTextObject(this.scene, -14, 30, '', TextStyle.WINDOW, { fontSize: '64px', lineSpacing: 3, maxLines: 2 });
+      pokemonNatureText.setOrigin(0, 0);
+      this.infoContainer.add(pokemonNatureText);
 
       this.eggHatchContainer.add(this.infoContainer);
 
@@ -125,21 +134,16 @@ export class EggHatchPhase extends BattlePhase {
       if (pokemon.fusionSpecies)
         pokemon.clearFusionSpecies();
 
-      let abilityYOffset = 5;
-
       if (pokemon.gender > Gender.GENDERLESS) {
         pokemonGenderText.setText(getGenderSymbol(pokemon.gender));
         pokemonGenderText.setColor(getGenderColor(pokemon.gender));
         pokemonGenderText.setShadowColor(getGenderColor(pokemon.gender, true));
         pokemonGenderLabelText.setVisible(true);
         pokemonGenderText.setVisible(true);
-
-        abilityYOffset = 10;
       }
 
-      [ pokemonAbilityLabelText, pokemonAbilityText ].map(t => t.y += abilityYOffset);
-
       pokemonAbilityText.setText(pokemon.getAbility().name);
+      pokemonNatureText.setText(getNatureName(pokemon.nature, true));
 
       const originalIvs: integer[] = this.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr
         ? this.scene.gameData.dexData[pokemon.species.speciesId].ivs
@@ -205,7 +209,7 @@ export class EggHatchPhase extends BattlePhase {
                             targets: this.infoContainer,
                             duration: Utils.fixedInt(750),
                             ease: 'Cubic.easeInOut',
-                            x: this.eggHatchBg.displayWidth - 48
+                            x: this.eggHatchBg.displayWidth - 52
                           });
 
                           this.scene.playSoundWithoutBgm('evolution_fanfare');
