@@ -3070,7 +3070,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                     shakeCounter.stop();
                     this.failCatch(shakeCount);
                   } else if (shakeCount++ < 3) {
-                    if (pokemon.randSeedInt(65536) < y)
+                    if (pokeballMultiplier === -1 || pokemon.randSeedInt(65536) < y)
                       this.scene.playSound('pb_move');
                     else {
                       shakeCounter.stop();
