@@ -319,9 +319,10 @@ export const trainerPartyTemplates = {
   SIX_WEAK_BALANCED: new TrainerPartyTemplate(6, TrainerPartyMemberStrength.WEAK, false, true),
 
   GYM_LEADER_1: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONG), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONGER)),
-  GYM_LEADER_2: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, TrainerPartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONG), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONGER)),
-  GYM_LEADER_3: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(3, TrainerPartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONG), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONGER)),
-  GYM_LEADER_4: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(4, TrainerPartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONG), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONGER)),
+  GYM_LEADER_2: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, TrainerPartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONG), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONGER)),
+  GYM_LEADER_3: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(2, TrainerPartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONG), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONGER)),
+  GYM_LEADER_4: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(3, TrainerPartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONG), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONGER)),
+  GYM_LEADER_5: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(4, TrainerPartyMemberStrength.AVERAGE), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONG), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONGER)),
 
   ELITE_FOUR: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(3, TrainerPartyMemberStrength.AVERAGE), new TrainerPartyTemplate(2, TrainerPartyMemberStrength.STRONG), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONGER)),
 
@@ -621,11 +622,11 @@ interface TrainerConfigs {
 }
 
 function getWavePartyTemplate(scene: BattleScene, ...templates: TrainerPartyTemplate[]) {
-  return templates[Math.min(Math.max(Math.ceil(((scene.currentBattle?.waveIndex || startingWave) - 10) / 20) - 1, 0), templates.length - 1)];
+  return templates[Math.min(Math.max(Math.ceil(((scene.currentBattle?.waveIndex || startingWave) - 20) / 30), 0), templates.length - 1)];
 }
 
 function getGymLeaderPartyTemplate(scene: BattleScene) {
-  return getWavePartyTemplate(scene, trainerPartyTemplates.GYM_LEADER_1, trainerPartyTemplates.GYM_LEADER_2, trainerPartyTemplates.GYM_LEADER_3, trainerPartyTemplates.GYM_LEADER_4);
+  return getWavePartyTemplate(scene, trainerPartyTemplates.GYM_LEADER_1, trainerPartyTemplates.GYM_LEADER_2, trainerPartyTemplates.GYM_LEADER_3, trainerPartyTemplates.GYM_LEADER_4, trainerPartyTemplates.GYM_LEADER_5);
 }
 
 function getRandomPartyMemberFunc(speciesPool: Species[], postProcess?: (enemyPokemon: EnemyPokemon) => void): PartyMemberFunc {
