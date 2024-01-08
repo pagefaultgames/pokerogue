@@ -55,7 +55,7 @@ export class Arena {
   }
 
   randomSpecies(waveIndex: integer, level: integer, attempt?: integer): PokemonSpecies {
-    const isBoss = (waveIndex % 10 === 0 || (this.scene.gameMode !== GameMode.CLASSIC && Utils.randSeedInt(100) < Math.min(Math.max(Math.ceil((waveIndex - 250) / 50), 0) * 2, 30))) && !!this.pokemonPool[BiomePoolTier.BOSS].length
+    const isBoss = !!this.scene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
       && (this.biomeType !== Biome.END || this.scene.gameMode === GameMode.CLASSIC || waveIndex % 250 === 0);
     const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
     let tier = !isBoss

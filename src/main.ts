@@ -62,6 +62,7 @@ Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
+Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
 document.fonts.load('16px emerald').then(() => document.fonts.load('10px pkmnems'));
 

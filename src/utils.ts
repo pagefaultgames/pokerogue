@@ -63,7 +63,7 @@ export function randInt(range: integer, min: integer = 0): integer {
 }
 
 export function randSeedInt(range: integer, min: integer = 0): integer {
-  if (range === 1)
+  if (range <= 1)
     return min;
   return Phaser.Math.RND.integerInRange(min, (range - 1) + min);
 }

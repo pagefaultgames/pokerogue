@@ -14,7 +14,7 @@ import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
 import { Status, StatusEffect } from './data/status-effect';
 import { reverseCompatibleTms, tmSpecies } from './data/tms';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './data/pokemon-evolutions';
-import { DamagePhase, FaintPhase, SwitchSummonPhase } from './battle-phases';
+import { DamagePhase, FaintPhase, StatChangePhase, SwitchSummonPhase } from './battle-phases';
 import { BattleStat } from './data/battle-stat';
 import { BattlerTag, BattlerTagLapseType, BattlerTagType, EncoreTag, TypeBoostTag, getBattlerTag } from './data/battler-tag';
 import { Species } from './data/species';
@@ -104,9 +104,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const randAbilityIndex = Utils.randSeedInt(2);
 
     this.species = species;
-    this.battleInfo = this.isPlayer()
-      ? new PlayerBattleInfo(scene)
-      : new EnemyBattleInfo(scene);
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
     this.abilityIndex = abilityIndex !== undefined
@@ -190,12 +187,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.shiny = false;
 
     this.calculateStats();
+  }
 
+  init(): void {
     this.fieldPosition = FieldPosition.CENTER;
 
-    scene.fieldUI.addAt(this.battleInfo, 0);
-    
-    this.battleInfo.initInfo(this);
+    this.initBattleInfo();
+
+    this.scene.fieldUI.addAt(this.battleInfo, 0);
 
     const getSprite = (hasShadow?: boolean) => {
       const ret = this.scene.addFieldSprite(0, 0, `pkmn__${this.isPlayer() ? 'back__' : ''}sub`);
@@ -215,6 +214,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isShiny() && !this.shinySparkle)
       this.initShinySparkle();
   }
+
+  abstract initBattleInfo(): void;
 
   isOnField(): boolean {
     if (!this.scene)
@@ -570,6 +571,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.shiny || (this.fusionSpecies && this.fusionShiny);
   }
 
+  abstract isBoss(): boolean;
+
   getMoveset(ignoreOverride?: boolean): PokemonMove[] {
     const ret = !ignoreOverride && this.summonData?.moveset
       ? this.summonData.moveset
@@ -852,18 +855,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return move?.isUsable(this, ignorePp);
   }
 
-  showInfo() {
+  showInfo(): void {
     if (!this.battleInfo.visible) {
       const otherBattleInfo = this.scene.fieldUI.getAll().slice(0, 4).filter(ui => ui instanceof BattleInfo && ((ui as BattleInfo) instanceof PlayerBattleInfo) === this.isPlayer()).find(() => true);
       if (!otherBattleInfo || !this.getFieldIndex())
         this.scene.fieldUI.sendToBack(this.battleInfo);
       else
         this.scene.fieldUI.moveAbove(this.battleInfo, otherBattleInfo);
-      this.battleInfo.setX(this.battleInfo.x + (this.isPlayer() ? 150 : -150));
+      this.battleInfo.setX(this.battleInfo.x + (this.isPlayer() ? 150 : !this.isBoss() ? -150 : -198));
       this.battleInfo.setVisible(true);
       this.scene.tweens.add({
         targets: this.battleInfo,
-        x: this.isPlayer() ? '-=150' : '+=150',
+        x: this.isPlayer() ? '-=150' : `+=${!this.isBoss() ? 150 : 246}`,
         duration: 1000,
         ease: 'Sine.easeOut'
       });
@@ -875,12 +878,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.battleInfo.visible) {
         this.scene.tweens.add({
           targets: this.battleInfo,
-          x: this.isPlayer() ? '+=150' : '-=150',
+          x: this.isPlayer() ? '+=150' : `-=${!this.isBoss() ? 150 : 198}`,
           duration: 500,
           ease: 'Sine.easeIn',
           onComplete: () => {
             this.battleInfo.setVisible(false);
-            this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : -150));
+            this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : !this.isBoss() ? -150 : -198));
             resolve();
           }
         });
@@ -1039,8 +1042,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (isCritical)
               this.scene.queueMessage('A critical hit!');
             this.scene.setPhaseQueueSplice();
-            damage.value = Math.min(damage.value, this.hp);
-            this.damage(damage.value);
+            damage.value = this.damage(damage.value);
             if (source.isPlayer())
               this.scene.validateAchvs(DamageAchv, damage);
             source.turnData.damageDealt += damage.value;
@@ -1083,9 +1085,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return result;
   }
 
-  damage(damage: integer, preventEndure?: boolean): void {
+  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
     if (this.isFainted())
-      return;
+      return 0;
 
     if (this.hp > 1 && this.hp - damage <= 0 && !preventEndure) {
       const surviveDamage = new Utils.BooleanHolder(false);
@@ -1094,19 +1096,25 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         damage = this.hp - 1;
     }
 
-    this.hp = Math.max(this.hp - damage, 0);
+    damage = Math.min(damage, this.hp);
+
+    this.hp = this.hp - damage;
     if (this.isFainted()) {
       this.scene.unshiftPhase(new FaintPhase(this.scene, this.getBattlerIndex(), preventEndure));
       this.resetSummonData();
     }
+
+    return damage;
   }
 
-  heal(amount: integer): void {
-    this.hp = Math.min(this.hp + amount, this.getMaxHp());
+  heal(amount: integer): integer {
+    const healAmount = Math.min(amount, this.getMaxHp() - this.hp);
+    this.hp += healAmount;
+    return healAmount;
   }
 
   isBossImmune(): boolean {
-    return this.species.speciesId === Species.ETERNATUS && this.formIndex === 1;
+    return this.isBoss();
   }
 
   addTag(tagType: BattlerTagType, turnCount: integer = 0, sourceMove?: Moves, sourceId?: integer): boolean {
@@ -1742,10 +1750,15 @@ export default interface Pokemon {
 export class PlayerPokemon extends Pokemon {
   public compatibleTms: Moves[];
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData) {
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender: Gender, shiny: boolean, ivs: integer[], nature: Nature, dataSource: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, ivs, nature, dataSource);
     
     this.generateCompatibleTms();
+  }
+
+  initBattleInfo(): void {
+    this.battleInfo = new PlayerBattleInfo(this.scene);
+    this.battleInfo.initInfo(this);
   }
 
   isPlayer(): boolean {
@@ -1754,6 +1767,10 @@ export class PlayerPokemon extends Pokemon {
 
   hasTrainer(): boolean {
     return true;
+  }
+
+  isBoss(): boolean {
+    return false;
   }
 
   getFieldIndex(): integer {
@@ -1808,7 +1825,7 @@ export class PlayerPokemon extends Pokemon {
     return new Promise(resolve => {
       const species = getPokemonSpecies(evolution.speciesId);
       const formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0);
-      const ret = new PlayerPokemon(this.scene, species, this.level, this.abilityIndex, formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
+      const ret = this.scene.addPlayerPokemon(species, this.level, this.abilityIndex, formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
       ret.loadAssets().then(() => resolve(ret));
     });
   }
@@ -1839,7 +1856,7 @@ export class PlayerPokemon extends Pokemon {
     if (this.species.speciesId === Species.NINCADA && evolution.speciesId === Species.NINJASK) {
       const newEvolution = pokemonEvolutions[this.species.speciesId][1];
       if (newEvolution.condition.predicate(this)) {
-        const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature);
+        const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature);
         this.scene.getParty().push(newPokemon);
         newPokemon.evolve(newEvolution);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
@@ -1911,12 +1928,16 @@ export class PlayerPokemon extends Pokemon {
 export class EnemyPokemon extends Pokemon {
   public trainer: boolean;
   public aiType: AiType;
+  public bossSegments: integer;
+  public bossSegmentIndex: integer;
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainer: boolean, dataSource?: PokemonData) {
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainer: boolean, boss: boolean, dataSource: PokemonData) {
     super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex,
       dataSource?.gender, dataSource ? dataSource.shiny : false, null, dataSource ? dataSource.nature : undefined, dataSource);
 
     this.trainer = trainer;
+    if (boss)
+      this.setBoss();
 
     if (!dataSource) {
       this.trySetShiny();
@@ -1932,6 +1953,22 @@ export class EnemyPokemon extends Pokemon {
     }
 
     this.aiType = AiType.SMART_RANDOM;
+  }
+
+  initBattleInfo(): void {
+    this.battleInfo = new EnemyBattleInfo(this.scene);
+    this.battleInfo.updateBossSegments(this);
+    this.battleInfo.initInfo(this);
+  }
+
+  setBoss(boss: boolean = true): void {
+    if (boss) {
+      this.bossSegments = this.scene.getEncounterBossSegments(this.scene.currentBattle.waveIndex, this.level, this.species, true);
+      this.bossSegmentIndex = this.bossSegments - 1;
+    } else {
+      this.bossSegments = 0;
+      this.bossSegmentIndex = 0;
+    }
   }
 
   generateAndPopulateMoveset(): void {
@@ -2097,6 +2134,107 @@ export class EnemyPokemon extends Pokemon {
     return this.trainer;
   }
 
+  isBoss(): boolean {
+    return !!this.bossSegments;
+  }
+
+  getBossSegmentIndex(): integer {
+    const segments = (this as EnemyPokemon).bossSegments;
+    const segmentSize = this.getMaxHp() / segments;
+    for (let s = segments - 1; s > 0; s--) {
+      const hpThreshold = Math.round(segmentSize * s);
+      if (this.hp > hpThreshold) {
+        return s;
+      }
+    }
+
+    return 0;
+  }
+
+  damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
+    if (this.isFainted())
+      return 0;
+
+    let clearedSegment = false;
+
+    if (!ignoreSegments && this.isBoss()) {
+      const segmentSize = this.getMaxHp() / this.bossSegments;
+      for (let s = this.bossSegments - 1; s > 0; s--) {
+        const hpThreshold = Math.round(segmentSize * s);
+        if (this.hp > hpThreshold) {
+          if (this.hp - damage < hpThreshold) {
+            damage = this.hp - hpThreshold;
+            clearedSegment = true;
+            this.handleBossSegmentCleared(s);
+          }
+          break;
+        }
+      }
+    }
+
+    return super.damage(damage, ignoreSegments, preventEndure);
+  }
+
+  handleBossSegmentCleared(segmentIndex: integer): void {
+    while (segmentIndex - 1 < this.bossSegmentIndex) {
+      let boostedStat = BattleStat.RAND;
+
+      const battleStats = Utils.getEnumValues(BattleStat).slice(0, -2);
+      const statWeights = new Array().fill(battleStats.length).filter((bs: BattleStat) => this.summonData.battleStats[bs] < 6).map((bs: BattleStat) => this.getStat(bs + 1));
+      const statThresholds: integer[] = [];
+      let totalWeight = 0;
+      for (let bs of battleStats) {
+        totalWeight += statWeights[bs];
+        statThresholds.push(totalWeight);
+      }
+
+      const randInt = Utils.randSeedInt(totalWeight);
+
+      for (let bs of battleStats) {
+        if (randInt < statThresholds[bs]) {
+          boostedStat = bs;
+          break;
+        }
+      }
+
+      let statLevels = 1;
+
+      switch (segmentIndex) {
+        case 1:
+          if (this.bossSegments >= 3)
+            statLevels++;
+          break;
+        case 2:
+          if (this.bossSegments >= 5)
+            statLevels++;
+          break;
+      }
+        
+
+      this.scene.unshiftPhase(new StatChangePhase(this.scene, this.getBattlerIndex(), true, [ boostedStat ], statLevels));
+
+      this.bossSegmentIndex--;
+    }
+  }
+
+  heal(amount: integer): integer {
+    if (this.isBoss()) {
+      let amountRatio = amount / this.getMaxHp();
+      let segmentBypassCount = Math.floor(amountRatio / (1 / this.bossSegments));
+      const segmentSize = this.getMaxHp() / this.bossSegments;
+      for (let s = 1; s < this.bossSegments; s++) {
+        const hpThreshold = Math.round(segmentSize * s);
+        if (this.hp <= hpThreshold) {
+          const healAmount = Math.min(amount, this.getMaxHp() - this.hp, Math.round(hpThreshold + (segmentSize * segmentBypassCount) - this.hp));
+          this.hp += healAmount;
+          return healAmount;
+        }
+      }
+    }
+
+    return super.heal(amount);
+  }
+
   getFieldIndex(): integer {
     return this.scene.getEnemyField().indexOf(this);
   }
@@ -2113,7 +2251,7 @@ export class EnemyPokemon extends Pokemon {
       this.pokeball = pokeballType;
       this.metLevel = this.level;
       this.metBiome = this.scene.arena.biomeType;
-      const newPokemon = new PlayerPokemon(this.scene, this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
+      const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
       party.push(newPokemon);
       ret = newPokemon;
     }

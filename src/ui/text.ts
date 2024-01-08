@@ -109,7 +109,7 @@ function getTextStyleOptions(style: TextStyle, extraStyleOptions?: Phaser.Types.
 }
 
 export function getBBCodeFrag(content: string, textStyle: TextStyle): string {
-  return `[color=${getTextColor(textStyle)}][shadow=${getTextColor(textStyle, true)}]${content}[/shadow][/color]`;
+  return `[color=${getTextColor(textStyle)}][shadow=${getTextColor(textStyle, true)}]${content}`;
 }
 
 export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {

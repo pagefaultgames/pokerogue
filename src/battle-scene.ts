@@ -41,6 +41,8 @@ import { Voucher, vouchers } from './system/voucher';
 import { Gender } from './data/gender';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 import { WindowVariant, getWindowVariantSuffix } from './ui/window';
+import PokemonData from './system/pokemon-data';
+import { Nature } from './data/nature';
 
 const enableAuto = true;
 const quickStart = false;
@@ -207,10 +209,12 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('pbinfo_player', 'ui');
 		this.loadImage('pbinfo_player_mini', 'ui');
 		this.loadImage('pbinfo_enemy_mini', 'ui');
+		this.loadImage('pbinfo_enemy_boss', 'ui');
 		this.loadImage('overlay_lv', 'ui');
 		this.loadAtlas('numbers', 'ui');
 		this.loadAtlas('numbers_red', 'ui');
 		this.loadAtlas('overlay_hp', 'ui');
+		this.loadAtlas('overlay_hp_boss', 'ui');
 		this.loadImage('overlay_exp', 'ui');
 		this.loadImage('icon_owned', 'ui');
 		this.loadImage('ability_bar', 'ui');
@@ -526,7 +530,7 @@ export default class BattleScene extends Phaser.Scene {
 
 			for (let s = 0; s < 3; s++) {
 				const playerSpecies = this.randomSpecies(startingWave, startingLevel);
-				const playerPokemon = new PlayerPokemon(this, playerSpecies, startingLevel, 0, 0);
+				const playerPokemon = this.addPlayerPokemon(playerSpecies, startingLevel, 0, 0);
 				playerPokemon.setVisible(false);
 				this.party.push(playerPokemon);
 
@@ -637,6 +641,22 @@ export default class BattleScene extends Phaser.Scene {
 		return findInParty(this.getParty()) || findInParty(this.getEnemyParty());
 	}
 
+	addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
+		const pokemon = new PlayerPokemon(this, species, level, abilityIndex, formIndex, gender, shiny, ivs, nature, dataSource);
+		if (postProcess)
+			postProcess(pokemon);
+		pokemon.init();
+		return pokemon;
+	}
+
+	addEnemyPokemon(species: PokemonSpecies, level: integer, trainer: boolean, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
+		const pokemon = new EnemyPokemon(this, species, level, trainer, boss, dataSource);
+		if (postProcess)
+			postProcess(pokemon);
+		pokemon.init();
+		return pokemon;
+	}
+
 	reset(clearScene?: boolean): void {
 		this.seed = Utils.randomString(16);
 		console.log('Seed:', this.seed);
@@ -715,7 +735,7 @@ export default class BattleScene extends Phaser.Scene {
 			if (this.gameMode !== GameMode.CLASSIC)
 				newBattleType = BattleType.WILD;
 			else if (battleType === undefined) {
-				if ((newWaveIndex % 30) === 20)
+				if ((newWaveIndex % 30) === 20 && newWaveIndex !== 200)
 					newBattleType = BattleType.TRAINER;
 				else if (newWaveIndex % 10 !== 1 && newWaveIndex % 10) {
 					const trainerChance = this.arena.getTrainerChance();
@@ -857,6 +877,33 @@ export default class BattleScene extends Phaser.Scene {
 		this.executeWithSeedOffset(() => {
 			ret = Utils.randSeedInt(8) * 5;
 		}, 0, this.seed.toString());
+		return ret;
+	}
+
+	getEncounterBossSegments(waveIndex: integer, level: integer, species?: PokemonSpecies, forceBoss: boolean = false): integer {
+		let isBoss: boolean;
+		if (forceBoss || (species && (species.pseudoLegendary || species.legendary || species.mythical)))
+			isBoss = true;
+		else {
+			this.executeWithSeedOffset(() => {
+				isBoss = waveIndex % 10 === 0 || (this.gameMode !== GameMode.CLASSIC && Utils.randSeedInt(100) < Math.min(Math.max(Math.ceil((waveIndex - 250) / 50), 0) * 2, 30));
+			}, waveIndex << 2);
+		}
+		if (!isBoss)
+			return 0;
+
+		let ret: integer = 2;
+
+		if (level >= 100)
+			ret++;
+		if (species) {
+			if (species.baseTotal >= 670)
+				ret++;
+			if (species.legendary)
+				ret++;
+		}
+		ret += Math.floor(waveIndex / 250);
+
 		return ret;
 	}
 

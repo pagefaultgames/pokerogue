@@ -3,6 +3,7 @@ import { ModifierTypeFunc, modifierTypes } from "../modifier/modifier-type";
 import { EnemyPokemon } from "../pokemon";
 import * as Utils from "../utils";
 import { Moves } from "./move";
+import { PokeballType } from "./pokeball";
 import { pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
 import PokemonSpecies, { PokemonSpeciesFilter, getPokemonSpecies } from "./pokemon-species";
 import { Species } from "./species";
@@ -630,10 +631,7 @@ function getGymLeaderPartyTemplate(scene: BattleScene) {
 function getRandomPartyMemberFunc(speciesPool: Species[], postProcess?: (enemyPokemon: EnemyPokemon) => void): PartyMemberFunc {
   return (scene: BattleScene, level: integer) => {
     const species = getPokemonSpecies(Phaser.Math.RND.pick(speciesPool)).getSpeciesForLevel(level, true, true, scene.currentBattle.trainer.config.isBoss);
-    const ret = new EnemyPokemon(scene, getPokemonSpecies(species), level, true);
-    if (postProcess)
-      postProcess(ret);
-    return ret;
+    return scene.addEnemyPokemon(getPokemonSpecies(species), level, true, undefined, undefined, postProcess);
   };
 }
 
@@ -641,9 +639,7 @@ function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilt
   const originalSpeciesFilter = speciesFilter;
   speciesFilter = (species: PokemonSpecies) => allowLegendaries || (!species.legendary && !species.pseudoLegendary && !species.mythical) && originalSpeciesFilter(species);
   return (scene: BattleScene, level: integer) => {
-    const ret = new EnemyPokemon(scene, getPokemonSpecies(scene.randomSpecies(scene.currentBattle.waveIndex, level, false, speciesFilter).getSpeciesForLevel(level, true, true, scene.currentBattle.trainer.config.isBoss)), level, true);
-    if (postProcess)
-      postProcess(ret);
+    const ret = scene.addEnemyPokemon(getPokemonSpecies(scene.randomSpecies(scene.currentBattle.waveIndex, level, false, speciesFilter).getSpeciesForLevel(level, true, true, scene.currentBattle.trainer.config.isBoss)), level, true, undefined, undefined, postProcess);
     return ret;
   };
 }
@@ -1111,11 +1107,18 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT, Species.TALONFLAME, Species.TOUCANNON, Species.CORVIKNIGHT ]))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450))
     .setSpeciesFilter(species => species.baseTotal >= 540)
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RAYQUAZA ])),
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RAYQUAZA ], p => {
+      p.setBoss();
+      p.pokeball = PokeballType.MASTER_BALL;
+    })),
   [TrainerType.RIVAL_6]: new TrainerConfig(++t).setBoss().setStaticParty().setMoneyMultiplier(3).setEncounterBgm('final').setBattleBgm('battle_rival_3').setPartyTemplates(trainerPartyTemplates.RIVAL_6)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT, Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA, Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA, Species.RILLABOOM, Species.CINDERACE, Species.INTELEON ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT, Species.TALONFLAME, Species.TOUCANNON, Species.CORVIKNIGHT ]))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450))
     .setSpeciesFilter(species => species.baseTotal >= 540)
-    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RAYQUAZA ], p => p.formIndex = 1)),
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RAYQUAZA ], p => {
+      p.setBoss();
+      p.pokeball = PokeballType.MASTER_BALL;
+      p.formIndex = 1;
+    })),
 }

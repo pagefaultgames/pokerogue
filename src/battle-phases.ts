@@ -1,7 +1,7 @@
 import BattleScene, { bypassLogin, startingLevel, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -39,7 +39,6 @@ import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
 import { GameDataType } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./anims";
-import { Nature } from "./data/nature";
 
 export class LoginPhase extends BattlePhase {
   private showText: boolean;
@@ -229,7 +228,7 @@ export class SelectStarterPhase extends BattlePhase {
           ? !starterProps.female ? Gender.MALE : Gender.FEMALE
           : Gender.GENDERLESS;
         const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-        const starterPokemon = new PlayerPokemon(this.scene, starter.species, startingLevel, starterProps.abilityIndex, starterProps.formIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
+        const starterPokemon = this.scene.addPlayerPokemon(starter.species, startingLevel, starterProps.abilityIndex, starterProps.formIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
         if (starter.pokerus)
           starterPokemon.pokerus = true;
         if (this.scene.gameMode === GameMode.SPLICED_ENDLESS)
@@ -372,7 +371,7 @@ export class EncounterPhase extends BattlePhase {
           battle.enemyParty[e] = battle.trainer.genPartyMember(e);
         else {
           const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
-          battle.enemyParty[e] = new EnemyPokemon(this.scene, enemySpecies, level, false);
+          battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, false, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
           this.scene.getParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
             applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, battle.enemyParty[e]);
           });
@@ -386,8 +385,10 @@ export class EncounterPhase extends BattlePhase {
           this.scene.gameData.setPokemonSeen(enemyPokemon);
       }
 
-      if (this.scene.gameMode === GameMode.CLASSIC && (battle.waveIndex === 200 || !(battle.waveIndex % 250)) && enemyPokemon.species.speciesId === Species.ETERNATUS)
+      if (this.scene.gameMode === GameMode.CLASSIC && (battle.waveIndex === 200 || !(battle.waveIndex % 250)) && enemyPokemon.species.speciesId === Species.ETERNATUS) {
         enemyPokemon.formIndex = 1;
+        enemyPokemon.setBoss();
+      }
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
   
@@ -1246,15 +1247,21 @@ export class CommandPhase extends FieldPhase {
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
             }, null, true);
           } else if (cursor < 4) {
-            this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.BALL, cursor: cursor };
-            if (targets.length > 1)
-              this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
-            else {
+            const targetPokemon = this.scene.getEnemyField().find(p => p.isActive(true));
+            if (targetPokemon.isBoss() && targetPokemon.getBossSegmentIndex()) {
+              this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+              this.scene.ui.setMode(Mode.MESSAGE);
+              this.scene.ui.showText(`The target Pokémon is too strong to be caught!\nYou need to weaken it first!`, null, () => {
+                this.scene.ui.showText(null, 0);
+                this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
+              }, null, true);
+            } else {
+              this.scene.currentBattle.turnCommands[this.fieldIndex] = { command: Command.BALL, cursor: cursor };
               this.scene.currentBattle.turnCommands[this.fieldIndex].targets = targets;
               if (this.fieldIndex)
                 this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
+              success = true;
             }
-            success = true;
           }
         }
         break;
@@ -1741,6 +1748,9 @@ export class MovePhase extends BattlePhase {
       if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER)
         return;
     }
+
+    if (this.pokemon.getTag(BattlerTagType.RECHARGING))
+      return;
     
     this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
   }
@@ -2951,7 +2961,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
       if (!this.revive)
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       const healAmount = new Utils.NumberHolder(this.hpHealed * hpRestoreMultiplier.value);
-      pokemon.heal(healAmount.value);
+      healAmount.value = pokemon.heal(healAmount.value);
       this.scene.validateAchvs(HealAchv, healAmount);
       pokemon.updateInfo().then(() => super.end());
     } else if (this.showFullHpMessage)
@@ -2979,7 +2989,7 @@ export class AttemptCapturePhase extends PokemonPhase {
   start() {
     super.start();
 
-    const pokemon = this.getPokemon();
+    const pokemon = this.getPokemon() as EnemyPokemon;
 
     if (!pokemon?.hp)
       return this.end();
@@ -2988,7 +2998,11 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     this.originalY = pokemon.y;
 
-    const _3m = 3 * pokemon.getMaxHp();
+    const relMaxHp = !pokemon.isBoss()
+      ? pokemon.getMaxHp()
+      : Math.round(pokemon.getMaxHp() / pokemon.bossSegments);
+
+    const _3m = 3 * relMaxHp;
     const _2h = 2 * pokemon.hp;
     const catchRate = pokemon.species.catchRate;
     const pokeballMultiplier = getPokeballCatchMultiplier(this.pokeballType);

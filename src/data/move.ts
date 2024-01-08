@@ -58,8 +58,8 @@ export enum MoveFlags {
   WIND_MOVE = 8192
 }
 
-type MoveCondition = (user: Pokemon, target: Pokemon, move: Move) => boolean;
-type UserMoveCondition = (user: Pokemon, move: Move) => boolean;
+type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
+type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
 
 export default class Move {
   public id: Moves;
@@ -111,18 +111,24 @@ export default class Move {
   attr<T extends new (...args: any[]) => MoveAttr>(AttrType: T, ...args: ConstructorParameters<T>): this {
     const attr = new AttrType(...args);
     this.attrs.push(attr);
-    const attrCondition = attr.getCondition();
-    if (attrCondition)
+    let attrCondition = attr.getCondition();
+    if (attrCondition) {
+      if (typeof attrCondition === 'function')
+        attrCondition = new MoveCondition(attrCondition);
       this.conditions.push(attrCondition);
+    }
 
     return this;
   }
 
   addAttr(attr: MoveAttr): this {
     this.attrs.push(attr);
-    const attrCondition = attr.getCondition();
-    if (attrCondition)
+    let attrCondition = attr.getCondition();
+    if (attrCondition) {
+      if (typeof attrCondition === 'function')
+        attrCondition = new MoveCondition(attrCondition);
       this.conditions.push(attrCondition);
+    }
 
     return this;
   }
@@ -136,7 +142,9 @@ export default class Move {
     return !!(this.flags & flag);
   }
 
-  condition(condition: MoveCondition): this {
+  condition(condition: MoveCondition | MoveConditionFunc): this {
+    if (typeof condition === 'function')
+      condition = new MoveCondition(condition as MoveConditionFunc);
     this.conditions.push(condition);
 
     return this;
@@ -232,7 +240,7 @@ export default class Move {
 
   applyConditions(user: Pokemon, target: Pokemon, move: Move): boolean {
     for (let condition of this.conditions) {
-      if (!condition(user, target, move))
+      if (!condition.apply(user, target, move))
         return false;
     }
 
@@ -245,6 +253,9 @@ export default class Move {
     for (let attr of this.attrs)
       score += attr.getUserBenefitScore(user, target, move);
 
+    for (let condition of this.conditions)
+      score += condition.getUserBenefitScore(user, target, move);
+
     return score;
   }
 
@@ -252,7 +263,7 @@ export default class Move {
     let score = 0;
 
     for (let attr of this.attrs)
-      score += attr.getTargetBenefitScore(user, target, move);
+      score += attr.getTargetBenefitScore(user, !attr.selfTarget ? target : user, move) * (target !== user && attr.selfTarget ? -1 : 1);
 
     return score;
   }
@@ -1237,11 +1248,17 @@ export enum Moves {
 };
 
 export abstract class MoveAttr {
+  public selfTarget: boolean;
+
+  constructor(selfTarget: boolean = false) {
+    this.selfTarget = selfTarget;
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
     return true;
   }
 
-  getCondition(): MoveCondition {
+  getCondition(): MoveCondition | MoveConditionFunc {
     return null;
   }
 
@@ -1261,13 +1278,10 @@ export enum MoveEffectTrigger {
 }
 
 export class MoveEffectAttr extends MoveAttr {
-  public selfTarget: boolean;
   public trigger: MoveEffectTrigger;
 
   constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger) {
-    super();
-
-    this.selfTarget = !!selfTarget;
+    super(selfTarget);
     this.trigger = trigger !== undefined ? trigger : MoveEffectTrigger.POST_APPLY;
   }
 
@@ -1360,7 +1374,7 @@ export class MatchHpAttr extends FixedDamageAttr {
     return true;
   } 
   
-  getCondition(): MoveCondition {
+  getCondition(): MoveConditionFunc {
     return (user, target, move) => user.hp <= target.hp;
   }
   
@@ -1388,7 +1402,7 @@ export class CounterDamageAttr extends FixedDamageAttr {
     return true;
   }
 
-  getCondition(): MoveCondition {
+  getCondition(): MoveConditionFunc {
     return (user, target, move) => !!user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).length;
   }
 }
@@ -1440,7 +1454,7 @@ export class RecoilAttr extends MoveEffectAttr {
 
     user.scene.unshiftPhase(new DamagePhase(user.scene, user.getBattlerIndex(), HitResult.OTHER));
     user.scene.queueMessage(getPokemonMessage(user, ' is hit\nwith recoil!'));
-    user.damage(recoilDamage);
+    user.damage(recoilDamage, true);
 
     return true;
   }
@@ -1460,7 +1474,7 @@ export class SacrificialAttr extends MoveEffectAttr {
       return false;
 
     user.scene.unshiftPhase(new DamagePhase(user.scene, user.getBattlerIndex(), HitResult.OTHER));
-    user.damage(user.getMaxHp());
+    user.damage(user.getMaxHp(), true, true);
 
     return true;
   }
@@ -1500,7 +1514,7 @@ export class HealAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    return (1 - (this.selfTarget ? user : target).getHpRatio()) * 20;
+    return Math.round((1 - (this.selfTarget ? user : target).getHpRatio()) * 20);
   }
 }
 
@@ -1772,7 +1786,7 @@ export class WeatherChangeAttr extends MoveEffectAttr {
     return user.scene.arena.trySetWeather(this.weatherType, true);
   }
 
-  getCondition(): MoveCondition {
+  getCondition(): MoveConditionFunc {
     return (user, target, move) => !user.scene.arena.weather || (user.scene.arena.weather.weatherType !== this.weatherType && !user.scene.arena.weather.isImmutable());
   }
 }
@@ -1804,7 +1818,7 @@ export class OneHitKOAttr extends MoveAttr {
     return true;
   }
 
-  getCondition(): MoveCondition {
+  getCondition(): MoveConditionFunc {
     return (user, target, move) => user.level >= target.level;
   }
 }
@@ -1918,9 +1932,9 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 export class StatChangeAttr extends MoveEffectAttr {
   public stats: BattleStat[];
   public levels: integer;
-  private condition: MoveCondition;
+  private condition: MoveConditionFunc;
 
-  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveCondition) {
+  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc) {
     super(selfTarget, MoveEffectTrigger.HIT);
     this.stats = typeof(stats) === 'number'
       ? [ stats as BattleStat ]
@@ -1980,13 +1994,13 @@ export class HpSplitAttr extends MoveEffectAttr {
       if (user.hp < hpValue) 
         user.heal(hpValue - user.hp);
       else if (user.hp > hpValue)
-        user.damage(user.hp - hpValue);
+        user.damage(user.hp - hpValue, true);
       infoUpdates.push(user.updateInfo());
 
       if (target.hp < hpValue) 
         target.heal(hpValue - target.hp);
       else if (target.hp > hpValue)
-        target.damage(target.hp - hpValue);
+        target.damage(target.hp - hpValue, true);
       infoUpdates.push(target.updateInfo());
 
       return Promise.all(infoUpdates).then(() => resolve(true));
@@ -2232,9 +2246,9 @@ export class OneHitKOAccuracyAttr extends MoveAttr {
 }
 
 export class MissEffectAttr extends MoveAttr {
-  private missEffectFunc: UserMoveCondition;
+  private missEffectFunc: UserMoveConditionFunc;
 
-  constructor(missEffectFunc: UserMoveCondition) {
+  constructor(missEffectFunc: UserMoveConditionFunc) {
     super();
 
     this.missEffectFunc = missEffectFunc;
@@ -2280,7 +2294,7 @@ export class DisableMoveAttr extends MoveEffectAttr {
     return false;
   }
   
-  getCondition(): MoveCondition {
+  getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       if (target.summonData.disabledMove)
         return false;
@@ -2335,7 +2349,7 @@ export class FrenzyAttr extends MoveEffectAttr {
   }
 }
 
-export const frenzyMissFunc: UserMoveCondition = (user: Pokemon, move: Move) => {
+export const frenzyMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move) => {
   while (user.getMoveQueue().length && user.getMoveQueue()[0].move === move.id)
     user.getMoveQueue().shift();
   user.lapseTag(BattlerTagType.FRENZY);
@@ -2375,7 +2389,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     return move.chance;
   }
 
-  getCondition(): MoveCondition {
+  getCondition(): MoveConditionFunc {
     return this.failOnOverlap
       ? (user, target, move) => !(this.selfTarget ? user : target).getTag(this.tagType)
       : null;
@@ -2383,6 +2397,8 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     switch (this.tagType) {
+      case BattlerTagType.RECHARGING:
+        return -16;
       case BattlerTagType.FLINCHED:
         return -5;
       case BattlerTagType.CONFUSED:
@@ -2394,7 +2410,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.NIGHTMARE:
         return -5;
       case BattlerTagType.FRENZY:
-        return -2;
+        return -3;
       case BattlerTagType.ENCORE:
         return -2;
       case BattlerTagType.INGRAIN:
@@ -2415,7 +2431,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.PROTECTED:
         return 5;
       case BattlerTagType.PERISH_SONG:
-        return -8;
+        return -16;
       case BattlerTagType.FLYING:
         return 5;
       case BattlerTagType.CRIT_BOOST:
@@ -2460,6 +2476,12 @@ export class ConfuseAttr extends AddBattlerTagAttr {
   }
 }
 
+export class RechargeAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.RECHARGING, true);
+  }
+}
+
 export class TrapAttr extends AddBattlerTagAttr {
   constructor(tagType: BattlerTagType) {
     super(tagType, false, false, 3, 6);
@@ -2471,7 +2493,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
     super(BattlerTagType.PROTECTED, true);
   }
 
-  getCondition(): MoveCondition {
+  getCondition(): MoveConditionFunc {
     return ((user, target, move): boolean => {
       let timesUsed = 0;
       const moveHistory = user.getLastXMoves();
@@ -2514,7 +2536,7 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
     return true;
   }
 
-  getCondition(): MoveCondition {
+  getCondition(): MoveConditionFunc {
     return (user, target, move) => super.getCondition()(user, target, move) && !target.isBossImmune();
   }
 }
@@ -2560,7 +2582,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 }
 
 export class AddArenaTrapTagAttr extends AddArenaTagAttr {
-  getCondition(): MoveCondition {
+  getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       if (move.category !== MoveCategory.STATUS || !user.scene.arena.getTag(this.tagType))
         return true;
@@ -2619,11 +2641,11 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     });
   }
 
-  getCondition(): MoveCondition {
+  getCondition(): MoveConditionFunc {
     return (user, target, move) => move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move);
   }
 
-  getSwitchOutCondition(): MoveCondition {
+  getSwitchOutCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
@@ -2736,7 +2758,7 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
   }
 }
 
-const lastMoveCopiableCondition: MoveCondition = (user, target, move) => {
+const lastMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
   const copiableMove = user.scene.currentBattle.lastMove;
 
   if (!copiableMove)
@@ -2770,13 +2792,13 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
     return true;
   }
 
-  getCondition(): MoveCondition {
+  getCondition(): MoveConditionFunc {
     return lastMoveCopiableCondition;
   }
 }
 
 // TODO: Review this
-const targetMoveCopiableCondition: MoveCondition = (user, target, move) => {
+const targetMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
   const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
   if (!targetMoves.length)
     return false;
@@ -2815,7 +2837,7 @@ export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
     return true;
   }
 
-  getCondition(): MoveCondition {
+  getCondition(): MoveConditionFunc {
     return targetMoveCopiableCondition;
   }
 }
@@ -2847,7 +2869,7 @@ export class SketchAttr extends MoveEffectAttr {
     return true;
   }
 
-  getCondition(): MoveCondition {
+  getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       if (!targetMoveCopiableCondition(user, target, move))
         return false;
@@ -2891,7 +2913,7 @@ export class TransformAttr extends MoveEffectAttr {
   }
 }
 
-const failOnGravityCondition: MoveCondition = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
+const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
 
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
@@ -2914,6 +2936,32 @@ export function applyMoveAttrs(attrType: { new(...args: any[]): MoveAttr }, user
 
 export function applyFilteredMoveAttrs(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon, move: Move, ...args: any[]): Promise<void> {
   return applyMoveAttrsInternal(attrFilter, user, target, move, args);
+}
+
+export class MoveCondition {
+  protected func: MoveConditionFunc;
+
+  constructor(func: MoveConditionFunc) {
+    this.func = func;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move): boolean {
+    return this.func(user, target, move);
+  }
+
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    return 0;
+  }
+}
+
+export class FirstMoveCondition extends MoveCondition {
+  constructor() {
+    super((user, target, move) => !user.getMoveHistory().length);
+  }
+
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    return this.apply(user, target, move) ? 10 : -20;
+  }
 }
 
 export type MoveTargetSet = {
@@ -3127,7 +3175,7 @@ export function initMoves() {
     new AttackMove(Moves.AURORA_BEAM, "Aurora Beam", Type.ICE, MoveCategory.SPECIAL, 65, 100, 20, -1, "The target is hit with a rainbow-colored beam. This may also lower the target's Attack stat.", 10, 0, 1)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new AttackMove(Moves.HYPER_BEAM, "Hyper Beam", Type.NORMAL, MoveCategory.SPECIAL, 150, 90, 5, 163, "The target is attacked with a powerful beam. The user can't move on the next turn.", -1, 0, 1)
-      .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
+      .attr(RechargeAttr),
     new AttackMove(Moves.PECK, "Peck", Type.FLYING, MoveCategory.PHYSICAL, 35, 100, 35, -1, "The target is jabbed with a sharply pointed beak or horn.", -1, 0, 1),
     new AttackMove(Moves.DRILL_PECK, "Drill Peck", Type.FLYING, MoveCategory.PHYSICAL, 80, 100, 20, -1, "A corkscrewing attack that strikes the target with a sharp beak acting as a drill.", -1, 0, 1),
     new AttackMove(Moves.SUBMISSION, "Submission", Type.FIGHTING, MoveCategory.PHYSICAL, 80, 80, 20, -1, "The user grabs the target and recklessly dives for the ground. This also damages the user a little.", -1, 0, 1)
@@ -3597,7 +3645,7 @@ export function initMoves() {
       .makesContact(false),
     new AttackMove(Moves.FAKE_OUT, "Fake Out", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 10, -1, "This attack hits first and makes the target flinch. It only works the first turn each time the user enters battle.", 100, 3, 3)
       .attr(FlinchAttr)
-      .condition((user, target, move) => !user.getMoveHistory().length),
+      .condition(new FirstMoveCondition()),
     new AttackMove(Moves.UPROAR, "Uproar (N)", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, -1, "The user attacks in an uproar for three turns. During that time, no Pokémon can fall asleep.", -1, 0, 3)
       .ignoresVirtual()
       .soundBased()
@@ -3712,9 +3760,9 @@ export function initMoves() {
     new AttackMove(Moves.CRUSH_CLAW, "Crush Claw", Type.NORMAL, MoveCategory.PHYSICAL, 75, 95, 10, -1, "The user slashes the target with hard and sharp claws. This may also lower the target's Defense stat.", 50, 0, 3)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
     new AttackMove(Moves.BLAST_BURN, "Blast Burn", Type.FIRE, MoveCategory.SPECIAL, 150, 90, 5, 153, "The target is razed by a fiery explosion. The user can't move on the next turn.", -1, 0, 3)
-      .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
+      .attr(RechargeAttr),
     new AttackMove(Moves.HYDRO_CANNON, "Hydro Cannon", Type.WATER, MoveCategory.SPECIAL, 150, 90, 5, 154, "The target is hit with a watery blast. The user can't move on the next turn.", -1, 0, 3)
-      .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
+      .attr(RechargeAttr),
     new AttackMove(Moves.METEOR_MASH, "Meteor Mash", Type.STEEL, MoveCategory.PHYSICAL, 90, 90, 10, -1, "The target is hit with a hard punch fired like a meteor. This may also raise the user's Attack stat.", 20, 0, 3)
       .attr(StatChangeAttr, BattleStat.ATK, 1, true)
       .punchingMove(),
@@ -3791,7 +3839,7 @@ export function initMoves() {
       .target(MoveTarget.USER_AND_ALLIES),
     new AttackMove(Moves.DRAGON_CLAW, "Dragon Claw", Type.DRAGON, MoveCategory.PHYSICAL, 80, 100, 15, 78, "The user slashes the target with huge sharp claws.", -1, 0, 3),
     new AttackMove(Moves.FRENZY_PLANT, "Frenzy Plant", Type.GRASS, MoveCategory.SPECIAL, 150, 90, 5, 155, "The user slams the target with the roots of an enormous tree. The user can't move on the next turn.", -1, 0, 3)
-      .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
+      .attr(RechargeAttr),
     new SelfStatusMove(Moves.BULK_UP, "Bulk Up", Type.FIGHTING, -1, 20, 64, "The user tenses its muscles to bulk up its body, raising both its Attack and Defense stats.", -1, 0, 3)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], 1, true),
     new AttackMove(Moves.BOUNCE, "Bounce", Type.FLYING, MoveCategory.PHYSICAL, 85, 85, 5, -1, "The user bounces up high, then drops on the target on the second turn. This may also leave the target with paralysis.", 30, 0, 3)
@@ -3960,7 +4008,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPDEF, -1),
     new StatusMove(Moves.SWITCHEROO, "Switcheroo (N)", Type.DARK, 100, 10, -1, "The user trades held items with the target faster than the eye can follow.", -1, 0, 4),
     new AttackMove(Moves.GIGA_IMPACT, "Giga Impact", Type.NORMAL, MoveCategory.PHYSICAL, 150, 90, 5, 152, "The user charges at the target using every bit of its power. The user can't move on the next turn.", -1, 0, 4)
-      .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
+      .attr(RechargeAttr),
     new SelfStatusMove(Moves.NASTY_PLOT, "Nasty Plot", Type.DARK, -1, 20, 140, "The user stimulates its brain by thinking bad thoughts. This sharply raises the user's Sp. Atk stat.", -1, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPATK, 2, true),
     new AttackMove(Moves.BULLET_PUNCH, "Bullet Punch", Type.STEEL, MoveCategory.PHYSICAL, 40, 100, 30, -1, "The user strikes the target with tough punches as fast as bullets. This move always goes first.", -1, 1, 4)
@@ -4018,7 +4066,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
     new AttackMove(Moves.POWER_WHIP, "Power Whip", Type.GRASS, MoveCategory.PHYSICAL, 120, 85, 10, -1, "The user violently whirls its vines, tentacles, or the like to harshly lash the target.", -1, 0, 4),
     new AttackMove(Moves.ROCK_WRECKER, "Rock Wrecker", Type.ROCK, MoveCategory.PHYSICAL, 150, 90, 5, -1, "The user launches a huge boulder at the target to attack. The user can't move on the next turn.", -1, 0, 4)
-      .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true)
+      .attr(RechargeAttr)
       .makesContact(false)
       .ballBombMove(),
     new AttackMove(Moves.CROSS_POISON, "Cross Poison", Type.POISON, MoveCategory.PHYSICAL, 70, 100, 20, -1, "A slashing attack with a poisonous blade that may also poison the target. Critical hits land more easily.", 10, 0, 4)
@@ -4068,7 +4116,7 @@ export function initMoves() {
     new AttackMove(Moves.DOUBLE_HIT, "Double Hit", Type.NORMAL, MoveCategory.PHYSICAL, 35, 90, 10, -1, "The user slams the target with a long tail, vines, or a tentacle. The target is hit twice in a row.", -1, 0, 4)
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.ROAR_OF_TIME, "Roar of Time", Type.DRAGON, MoveCategory.SPECIAL, 150, 90, 5, -1, "The user blasts the target with power that distorts even time. The user can't move on the next turn.", -1, 0, 4)
-      .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
+      .attr(RechargeAttr),
     new AttackMove(Moves.SPACIAL_REND, "Spacial Rend", Type.DRAGON, MoveCategory.SPECIAL, 100, 95, 5, -1, "The user tears the target along with the space around it. Critical hits land more easily.", -1, 0, 4)
       .attr(HighCritAttr),
     new SelfStatusMove(Moves.LUNAR_DANCE, "Lunar Dance (N)", Type.PSYCHIC, -1, 10, -1, "The user faints. In return, the Pokémon taking its place will have its status and HP fully restored.", -1, 0, 4)
@@ -4465,7 +4513,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.SHORE_UP, "Shore Up", Type.GROUND, -1, 10, -1, "The user regains up to half of its max HP. It restores more HP in a sandstorm.", -1, 0, 7)
       .attr(SandHealAttr),
     new AttackMove(Moves.FIRST_IMPRESSION, "First Impression", Type.BUG, MoveCategory.PHYSICAL, 90, 100, 10, -1, "Although this move has great power, it only works the first turn each time the user enters battle.", -1, 2, 7)
-      .condition((user, target, move) => !user.getMoveHistory().length),
+      .condition(new FirstMoveCondition()),
     new SelfStatusMove(Moves.BANEFUL_BUNKER, "Baneful Bunker (N)", Type.POISON, -1, 10, -1, "In addition to protecting the user from attacks, this move also poisons any attacker that makes direct contact.", -1, 4, 7),
     new AttackMove(Moves.SPIRIT_SHACKLE, "Spirit Shackle (N)", Type.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, -1, "The user attacks while simultaneously stitching the target's shadow to the ground to prevent the target from escaping.", -1, 0, 7),
     new AttackMove(Moves.DARKEST_LARIAT, "Darkest Lariat (N)", Type.DARK, MoveCategory.PHYSICAL, 85, 100, 10, -1, "The user swings both arms and hits the target. The target's stat changes don't affect this attack's damage.", -1, 0, 7),
@@ -4551,7 +4599,7 @@ export function initMoves() {
     new AttackMove(Moves.LIQUIDATION, "Liquidation", Type.WATER, MoveCategory.PHYSICAL, 85, 100, 10, -1, "The user slams into the target using a full-force blast of water. This may also lower the target's Defense stat.", 20, 0, 7)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
     new AttackMove(Moves.PRISMATIC_LASER, "Prismatic Laser", Type.PSYCHIC, MoveCategory.SPECIAL, 160, 100, 10, -1, "The user shoots powerful lasers using the power of a prism. The user can't move on the next turn.", -1, 0, 7)
-      .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
+      .attr(RechargeAttr),
     new AttackMove(Moves.SPECTRAL_THIEF, "Spectral Thief (N)", Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, "The user hides in the target's shadow, steals the target's stat boosts, and then attacks.", -1, 0, 7),
     new AttackMove(Moves.SUNSTEEL_STRIKE, "Sunsteel Strike (N)", Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, "The user slams into the target with the force of a meteor. This move can be used on the target regardless of its Abilities.", -1, 0, 7),
     new AttackMove(Moves.MOONGEIST_BEAM, "Moongeist Beam (N)", Type.GHOST, MoveCategory.SPECIAL, 100, 100, 5, -1, "The user emits a sinister ray to attack the target. This move can be used on the target regardless of its Abilities.", -1, 0, 7),
@@ -4702,9 +4750,9 @@ export function initMoves() {
       .attr(ProtectAttr),
     new AttackMove(Moves.FALSE_SURRENDER, "False Surrender", Type.DARK, MoveCategory.PHYSICAL, 80, -1, 10, -1, "The user pretends to bow its head, but then it stabs the target with its disheveled hair. This attack never misses.", -1, 0, 8),
     new AttackMove(Moves.METEOR_ASSAULT, "Meteor Assault", Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 5, -1, "The user attacks wildly with its thick leek. The user can't move on the next turn, because the force of this move makes it stagger.", -1, 0, 8)
-      .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
+      .attr(RechargeAttr),
     new AttackMove(Moves.ETERNABEAM, "Eternabeam", Type.DRAGON, MoveCategory.SPECIAL, 160, 90, 5, -1, "This is Eternatus's most powerful attack in its original form. The user can't move on the next turn.", -1, 0, 8)
-      .attr(AddBattlerTagAttr, BattlerTagType.RECHARGING, true),
+      .attr(RechargeAttr),
     new AttackMove(Moves.STEEL_BEAM, "Steel Beam (N)", Type.STEEL, MoveCategory.SPECIAL, 140, 95, 5, -1, "The user fires a beam of steel that it collected from its entire body. This also damages the user.", -1, 0, 8),
     new AttackMove(Moves.EXPANDING_FORCE, "Expanding Force (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, "The user attacks the target with its psychic power. This move's power goes up and damages all opposing Pokémon on Psychic Terrain.", -1, 0, 8),
     new AttackMove(Moves.STEEL_ROLLER, "Steel Roller (N)", Type.STEEL, MoveCategory.PHYSICAL, 130, 100, 5, -1, "The user attacks while destroying the terrain. This move fails when the ground hasn't turned into a terrain.", -1, 0, 8),

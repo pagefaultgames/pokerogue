@@ -1,4 +1,4 @@
-import { default as Pokemon } from '../pokemon';
+import { EnemyPokemon, default as Pokemon } from '../pokemon';
 import { getLevelTotalExp, getLevelRelExp } from '../data/exp';
 import * as Utils from '../utils';
 import { addTextObject, TextStyle } from './text';
@@ -9,6 +9,8 @@ import BattleScene from '../battle-scene';
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private player: boolean;
   private mini: boolean;
+  private boss: boolean;
+  private bossSegments: integer;
   private offset: boolean;
   private lastName: string;
   private lastStatus: StatusEffect;
@@ -29,6 +31,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private statusIndicator: Phaser.GameObjects.Sprite;
   private levelContainer: Phaser.GameObjects.Container;
   private hpBar: Phaser.GameObjects.Image;
+  private hpBarSegmentDividers: Phaser.GameObjects.Rectangle[];
   private levelNumbersContainer: Phaser.GameObjects.Container;
   private hpNumbersContainer: Phaser.GameObjects.Container;
   private expBar: Phaser.GameObjects.Image;
@@ -37,6 +40,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     super(scene, x, y);
     this.player = player;
     this.mini = !player;
+    this.boss = false;
     this.offset = false;
     this.lastName = null;
     this.lastStatus = StatusEffect.NONE;
@@ -100,6 +104,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.hpBar.setOrigin(0);
     this.add(this.hpBar);
 
+    this.hpBarSegmentDividers = [];
+
     this.levelNumbersContainer = this.scene.add.container(9.5, 0);
     this.levelContainer.add(this.levelNumbersContainer);
 
@@ -137,6 +143,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const dexAttr = pokemon.getDexAttr();
       if ((dexEntry.caughtAttr & dexAttr) < dexAttr)
         this.ownedIcon.setTint(0x808080);
+
+      if (this.boss)
+        this.updateBossSegmentDividers(pokemon.getMaxHp());
     }
 
     this.hpBar.setScale(pokemon.getHpRatio(), 1);
@@ -158,7 +167,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   getTextureName(): string {
-    return `pbinfo_${this.player ? 'player' : 'enemy'}${this.mini ? '_mini' : ''}`;
+    return `pbinfo_${this.player ? 'player' : 'enemy'}${!this.player && this.boss ? '_boss' : this.mini ? '_mini' : ''}`;
   }
 
   setMini(mini: boolean): void {
@@ -180,6 +189,40 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     const toggledElements = [ this.hpNumbersContainer, this.expBar ];
     toggledElements.forEach(el => el.setVisible(!mini));
+  }
+
+  updateBossSegments(pokemon: EnemyPokemon): void {
+    const boss = !!pokemon.bossSegments;
+
+    if (boss !== this.boss) {
+      this.boss = boss;
+      
+      [ this.nameText, this.genderText, this.splicedIcon, this.ownedIcon, this.statusIndicator, this.levelContainer ].map(e => e.x += 48 * (boss ? -1 : 1));
+      this.hpBar.x += 38 * (boss ? -1 : 1);
+      this.hpBar.y += 2 * (this.boss ? -1 : 1);
+      this.hpBar.setTexture(`overlay_hp${boss ? '_boss' : ''}`);
+      this.box.setTexture(this.getTextureName());
+    }
+    
+    this.bossSegments = boss ? pokemon.bossSegments : 0;
+    this.updateBossSegmentDividers(pokemon.hp);
+  }
+
+  updateBossSegmentDividers(hp: number): void {
+    while (this.hpBarSegmentDividers.length)
+      this.hpBarSegmentDividers.pop().destroy();
+
+    if (this.boss && this.bossSegments > 1) {
+      for (let s = 1; s < this.bossSegments; s++) {
+        const dividerX = (Math.round((hp / this.bossSegments) * s) / hp) * this.hpBar.width;
+        const divider = this.scene.add.rectangle(0, 0, 1, this.hpBar.height, 0xffffff);
+        divider.setOrigin(0.5, 0);
+        this.add(divider);
+
+        divider.setPositionRelative(this.hpBar, dividerX, 0);
+        this.hpBarSegmentDividers.push(divider);
+      }
+    }
   }
   
   setOffset(offset: boolean): void {

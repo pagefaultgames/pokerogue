@@ -39,6 +39,8 @@ export default class PokemonData {
   public fusionShiny: boolean;
   public fusionGender: Gender;
 
+  public boss: boolean;
+
   public summonData: PokemonSummonData;
 
   constructor(source: Pokemon | any) {
@@ -70,6 +72,8 @@ export default class PokemonData {
     this.fusionShiny = source.fusionShiny;
     this.fusionGender = source.fusionGender;
 
+    this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
+
     if (sourcePokemon) {
       this.moveset = sourcePokemon.moveset;
       this.status = sourcePokemon.status;
@@ -95,7 +99,7 @@ export default class PokemonData {
   toPokemon(scene: BattleScene, battleType?: BattleType): Pokemon {
     const species = getPokemonSpecies(this.species);
     if (this.player)
-      return new PlayerPokemon(scene, species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
-    return new EnemyPokemon(scene, species, this.level, battleType === BattleType.TRAINER, this);
+      return scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
+    return scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER, this.boss, this);
   }
 }

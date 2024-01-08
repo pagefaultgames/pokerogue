@@ -610,7 +610,7 @@ export class PerishSongTag extends BattlerTag {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, `\'s perish count fell to ${this.turnCount}.`));
     else {
       pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), HitResult.ONE_HIT_KO));
-      pokemon.damage(pokemon.hp);
+      pokemon.damage(pokemon.hp, true, true);
     }
 
     return ret;
