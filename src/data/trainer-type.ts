@@ -530,7 +530,7 @@ export class TrainerConfig {
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
     if (specialtyTypes.length) {
-      this.setSpeciesFilter(p => !!specialtyTypes.find(t => p.isOfType(t)));
+      this.setSpeciesFilter(p => specialtyTypes.find(t => p.isOfType(t)) !== undefined);
       this.setSpecialtyTypes(...specialtyTypes);
     }
     this.setMoneyMultiplier(2.5);
