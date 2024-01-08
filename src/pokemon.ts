@@ -1401,6 +1401,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (this.isOfType(Type.POISON) || this.isOfType(Type.STEEL))
           return false;
         break;
+      case StatusEffect.PARALYSIS:
+        if (this.isOfType(Type.ELECTRIC))
+          return false;
+        break;
       case StatusEffect.FREEZE:
         if (this.isOfType(Type.ICE))
           return false;
