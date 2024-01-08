@@ -3,7 +3,7 @@ import { Biome } from './data/biome';
 import UI, { Mode } from './ui/ui';
 import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase, TrainerMessageTestPhase, LoginPhase, ConsolidateDataPhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
-import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
+import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
 import * as Utils from './utils';
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
@@ -899,7 +899,7 @@ export default class BattleScene extends Phaser.Scene {
 		if (species) {
 			if (species.baseTotal >= 670)
 				ret++;
-			if (species.legendary)
+			if (speciesStarters.hasOwnProperty(species.speciesId) && speciesStarters[species.speciesId] > 8)
 				ret++;
 		}
 		ret += Math.floor(waveIndex / 250);
