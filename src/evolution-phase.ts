@@ -85,8 +85,8 @@ export class EvolutionPhase extends BattlePhase {
 
       [ this.pokemonSprite, this.pokemonTintSprite, this.pokemonEvoSprite, this.pokemonEvoTintSprite ].map(sprite => {
         sprite.play(pokemon.getSpriteKey(true));
-        sprite.pipelineData['ignoreTimeTint'] = true;
         sprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false });
+        sprite.pipelineData['ignoreTimeTint'] = true;
         [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
           if (pokemon.summonData?.speciesForm)
             k += 'Base';
