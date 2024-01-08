@@ -517,7 +517,6 @@ export function getBiomeKey(biome: Biome): string {
     case Biome.POWER_PLANT:
       return 'ruins';
     case Biome.METROPOLIS:
-    case Biome.CONSTRUCTION_SITE:
       return 'slum';
     case Biome.JUNGLE:
       return 'tall_grass';
@@ -544,6 +543,7 @@ export function getBiomeHasProps(biomeType: Biome): boolean {
     case Biome.RUINS:
     case Biome.WASTELAND:
     case Biome.ABYSS:
+    case Biome.CONSTRUCTION_SITE:
     case Biome.FAIRY_CAVE:
     case Biome.TEMPLE:
     case Biome.LABORATORY:
