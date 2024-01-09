@@ -4924,7 +4924,7 @@
 					}
 				},
 				{
-					"filename": "steelixite",
+					"filename": "soul_dew",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4945,7 +4945,7 @@
 					}
 				},
 				{
-					"filename": "swampertite",
+					"filename": "steelixite",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4966,7 +4966,7 @@
 					}
 				},
 				{
-					"filename": "tyranitarite",
+					"filename": "swampertite",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4987,7 +4987,7 @@
 					}
 				},
 				{
-					"filename": "venusaurite",
+					"filename": "tyranitarite",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -5006,6 +5006,27 @@
 						"w": 16,
 						"h": 16
 					}
+				},
+				{
+					"filename": "venusaurite",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 8,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 297,
+						"y": 289,
+						"w": 16,
+						"h": 16
+					}
 				}
 			]
 		}
@@ -5013,6 +5034,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:3d96f166cb04b00665907a39d006b2ef:f182d2a1b46296a49dfc48249c1682fb:110e074689c9edd2c54833ce2e4d9270$"
+		"smartupdate": "$TexturePacker:SmartUpdate:add9eb8b8733956530a2c48ab73c92b3:e3840500ae12890f9d66a76a719ccd1d:110e074689c9edd2c54833ce2e4d9270$"
 	}
 }

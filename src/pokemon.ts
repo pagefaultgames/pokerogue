@@ -7,7 +7,7 @@ import * as Utils from './utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier } from './data/type';
 import { getLevelTotalExp } from './data/exp';
 import { Stat } from './data/pokemon-stat';
-import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
+import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { Gender } from './data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
@@ -529,9 +529,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       } else {
         value += 5;
-        const natureStatMultiplier = getNatureStatMultiplier(this.nature, s);
-        if (natureStatMultiplier !== 1)
-          value = Math[natureStatMultiplier > 1 ? 'ceil' : 'floor'](value * natureStatMultiplier);
+        const natureStatMultiplier = new Utils.NumberHolder(getNatureStatMultiplier(this.nature, s));
+        this.scene.applyModifier(PokemonNatureWeightModifier, this.isPlayer(), this, natureStatMultiplier);
+        if (natureStatMultiplier.value !== 1)
+          value = Math.max(Math[natureStatMultiplier.value > 1 ? 'ceil' : 'floor'](value * natureStatMultiplier.value), 1);
         value = Math.min(value, 99999);
       }
       this.stats[s] = value;

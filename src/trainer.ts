@@ -75,6 +75,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
       const strength = partyTemplate.getStrength(i)
       
       switch (strength) {
+        case TrainerPartyMemberStrength.WEAKEST:
+          multiplier = 0.85;
+          break;
         case TrainerPartyMemberStrength.WEAKER:
           multiplier = 0.95;
           break;

@@ -204,6 +204,7 @@ export interface TrainerTierPools {
 }
 
 export enum TrainerPartyMemberStrength {
+  WEAKEST,
   WEAKER,
   WEAK,
   AVERAGE,
@@ -305,17 +306,20 @@ export const trainerPartyTemplates = {
   THREE_AVG: new TrainerPartyTemplate(3, TrainerPartyMemberStrength.AVERAGE),
   THREE_AVG_SAME: new TrainerPartyTemplate(3, TrainerPartyMemberStrength.AVERAGE, true),
   THREE_WEAK_BALANCED: new TrainerPartyTemplate(3, TrainerPartyMemberStrength.WEAK, false, true),
+  FOUR_WEAKEST: new TrainerPartyTemplate(4, TrainerPartyMemberStrength.WEAKEST),
   FOUR_WEAKER: new TrainerPartyTemplate(4, TrainerPartyMemberStrength.WEAKER),
   FOUR_WEAKER_SAME: new TrainerPartyTemplate(4, TrainerPartyMemberStrength.WEAKER, true),
   FOUR_WEAK: new TrainerPartyTemplate(4, TrainerPartyMemberStrength.WEAK),
   FOUR_WEAK_SAME: new TrainerPartyTemplate(4, TrainerPartyMemberStrength.WEAK, true),
   FOUR_WEAK_BALANCED: new TrainerPartyTemplate(4, TrainerPartyMemberStrength.WEAK, false, true),
+  FIVE_WEAKEST: new TrainerPartyTemplate(5, TrainerPartyMemberStrength.WEAKEST),
   FIVE_WEAKER: new TrainerPartyTemplate(5, TrainerPartyMemberStrength.WEAKER),
   FIVE_WEAK: new TrainerPartyTemplate(5, TrainerPartyMemberStrength.WEAK),
   FIVE_WEAK_BALANCED: new TrainerPartyTemplate(5, TrainerPartyMemberStrength.WEAK, false, true),
-  SIX_WEAK_SAME: new TrainerPartyTemplate(6, TrainerPartyMemberStrength.WEAKER, true),
+  SIX_WEAKEST: new TrainerPartyTemplate(6, TrainerPartyMemberStrength.WEAKEST),
   SIX_WEAKER: new TrainerPartyTemplate(6, TrainerPartyMemberStrength.WEAKER),
   SIX_WEAKER_SAME: new TrainerPartyTemplate(6, TrainerPartyMemberStrength.WEAKER, true),
+  SIX_WEAK_SAME: new TrainerPartyTemplate(6, TrainerPartyMemberStrength.WEAKER, true),
   SIX_WEAK_BALANCED: new TrainerPartyTemplate(6, TrainerPartyMemberStrength.WEAK, false, true),
 
   GYM_LEADER_1: new TrainerPartyCompoundTemplate(new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONG), new TrainerPartyTemplate(1, TrainerPartyMemberStrength.STRONGER)),
@@ -673,7 +677,7 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.ULTRA_RARE]: [ Species.KUBFU ]
     }),
   [TrainerType.BREEDER]: new TrainerConfig(++t).setMoneyMultiplier(1.325).setEncounterBgm(TrainerType.POKEFAN).setHasGenders().setDouble()
-    .setPartyTemplateFunc(scene => getWavePartyTemplate(scene, trainerPartyTemplates.FOUR_WEAKER, trainerPartyTemplates.FIVE_WEAKER, trainerPartyTemplates.SIX_WEAKER)),
+    .setPartyTemplateFunc(scene => getWavePartyTemplate(scene, trainerPartyTemplates.FOUR_WEAKEST, trainerPartyTemplates.FIVE_WEAKEST, trainerPartyTemplates.SIX_WEAKEST)),
   [TrainerType.CLERK]: new TrainerConfig(++t).setHasGenders().setEncounterBgm(TrainerType.CLERK)
     .setPartyTemplates(trainerPartyTemplates.TWO_WEAK, trainerPartyTemplates.THREE_WEAK, trainerPartyTemplates.ONE_AVG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.TWO_WEAK_ONE_AVG)
     .setSpeciesPools({

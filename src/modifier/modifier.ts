@@ -1232,6 +1232,34 @@ export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierTypes.ModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonNatureWeightModifier;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonNatureWeightModifier(this.type, this.pokemonId, this.stackCount);
+  }
+  
+  apply(args: any[]): boolean {
+    const multiplier = args[1] as Utils.IntegerHolder;
+    if (multiplier.value !== 1) {
+      multiplier.value += 0.05 * this.getStackCount() * (multiplier.value > 1 ? 1 : -1);
+      return true;
+    }
+
+    return false;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 5;
+  }
+}
+
 export class MoneyMultiplierModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);
