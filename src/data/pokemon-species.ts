@@ -168,7 +168,7 @@ export abstract class PokemonSpeciesForm {
 
     let ret = this.speciesId.toString();
 
-    if (shiny && this.generation < 8)
+    if (shiny)
       ret += 's';
     
     switch (this.speciesId) {
