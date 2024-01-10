@@ -207,6 +207,8 @@ export class GameData {
           localStorage.setItem('data_bak', localStorage.getItem('data'));
 
           localStorage.setItem('data', btoa(systemData));
+
+          resolve(true);
         }
       });
     });
