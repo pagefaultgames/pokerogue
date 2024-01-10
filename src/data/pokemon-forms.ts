@@ -431,8 +431,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.LANDORUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItem.REVEAL_GLASS))
   ],
   [Species.KELDEO]: [
-    new SpeciesFormChange(Species.KELDEO, 'ordinary', 'resolute', new SpeciesFormChangeMoveLearnedTrigger(Moves.SACRED_SWORD)),
-    new SpeciesFormChange(Species.KELDEO, 'resolute', 'ordinary', new SpeciesFormChangeMoveLearnedTrigger(Moves.SACRED_SWORD, false))
+    new SpeciesFormChange(Species.KELDEO, 'ordinary', 'resolute', new SpeciesFormChangeMoveLearnedTrigger(Moves.SECRET_SWORD)),
+    new SpeciesFormChange(Species.KELDEO, 'resolute', 'ordinary', new SpeciesFormChangeMoveLearnedTrigger(Moves.SECRET_SWORD, false))
   ],
   [Species.MELOETTA]: [
     new SpeciesFormChange(Species.MELOETTA, 'aria', 'pirouette', new SpeciesFormChangeMoveUsedTrigger(Moves.RELIC_SONG), true),
