@@ -34,7 +34,7 @@ import { DamageAchv, achvs } from './system/achv';
 import { DexAttr } from './system/game-data';
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from '@material/material-color-utilities';
 import { Nature, getNatureStatMultiplier } from './data/nature';
-import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveUsedTrigger, SpeciesFormChangeStatusEffectTrigger } from './data/pokemon-forms';
+import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger, SpeciesFormChangeStatusEffectTrigger } from './data/pokemon-forms';
 
 export enum FieldPosition {
   CENTER,
@@ -856,6 +856,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       console.log(allMoves[movePool[moveIndex]]);
       movePool.splice(moveIndex, 1);
     }
+
+    this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveLearnedTrigger);
   }
 
   trySelectMove(moveIndex: integer, ignorePp?: boolean): boolean {
