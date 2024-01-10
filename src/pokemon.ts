@@ -34,6 +34,7 @@ import { DamageAchv, achvs } from './system/achv';
 import { DexAttr } from './system/game-data';
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from '@material/material-color-utilities';
 import { Nature, getNatureStatMultiplier } from './data/nature';
+import { SpeciesFormChange, SpeciesFormChangeMoveUsedTrigger, SpeciesFormChangeStatusEffectTrigger } from './data/pokemon-forms';
 
 export enum FieldPosition {
   CENTER,
@@ -145,10 +146,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         Utils.binToDec(Utils.decToBin(this.id).substring(20, 25)),
         Utils.binToDec(Utils.decToBin(this.id).substring(25, 30))
       ];
-
-      this.nature = nature !== undefined
-        ? nature
-        : Utils.randSeedInt(25) as Nature;
     
       if (this.gender === undefined) {
         if (this.species.malePercent === null)
@@ -163,10 +160,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
 
       if (this.formIndex === undefined)
-        this.formIndex = this.scene.getSpeciesFormIndex(species, this.gender, this.isPlayer());
+        this.formIndex = this.scene.getSpeciesFormIndex(species, this.gender, this.nature, this.isPlayer());
 
       if (this.shiny === undefined)
         this.trySetShiny();
+
+      if (nature !== undefined)
+        this.setNature(nature);
+      else
+        this.generateNature();
 
       this.friendship = species.baseFriendship;
       this.metLevel = level;
@@ -544,6 +546,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.calculateStats();
   }
 
+  generateNature(naturePool?: Nature[]): void {
+    if (naturePool === undefined)
+      naturePool = Utils.getEnumValues(Nature);
+    const nature = naturePool[Utils.randSeedInt(naturePool.length)];
+    this.setNature(nature);
+  }
+
   getMaxHp(): integer {
     return this.getStat(Stat.HP);
   }
@@ -796,7 +805,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.fusionGender = Gender.FEMALE;
     }
 
-    this.fusionFormIndex = this.scene.getSpeciesFormIndex(this.fusionSpecies, this.fusionGender, true);
+    this.fusionFormIndex = this.scene.getSpeciesFormIndex(this.fusionSpecies, this.fusionGender, this.nature, true);
 
     this.generateName();
   }
@@ -1227,6 +1236,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.summonData.moveQueue;
   }
 
+  changeForm(formChange: SpeciesFormChange): Promise<void> {
+    return new Promise(resolve => {
+      this.formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === formChange.formKey), 0);
+      this.generateName();
+      const abilityCount = this.getSpeciesForm().getAbilityCount();
+      if (this.abilityIndex >= abilityCount) // Shouldn't happen
+        this.abilityIndex = abilityCount - 1;
+      this.scene.gameData.setPokemonSeen(this, true);
+      this.loadAssets().then(() => {
+        this.calculateStats();
+        this.scene.updateModifiers(this.isPlayer(), true);
+        this.updateInfo().then(() => resolve());
+      });
+    });
+  }
+
   cry(soundConfig?: Phaser.Types.Sound.SoundConfig): AnySound {
     const cry = this.getSpeciesForm().cry(this.scene, soundConfig);
     let duration = cry.totalDuration * 1000;
@@ -1430,6 +1455,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.status = new Status(effect, 0, cureTurn);
+
+    if (effect !== StatusEffect.FAINT)
+      this.scene.triggerPokemonFormChange(this, SpeciesFormChangeStatusEffectTrigger, true);
+
     return true;
   }
 
@@ -1462,6 +1491,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.battleSummonData = new PokemonBattleSummonData();
     if (this.getTag(BattlerTagType.SEEDED))
       this.lapseTag(BattlerTagType.SEEDED);
+    this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveUsedTrigger, true);
   }
 
   resetTurnData(): void {
@@ -1876,6 +1906,33 @@ export class PlayerPokemon extends Pokemon {
     }
   }
 
+  getPossibleForm(formChange: SpeciesFormChange): Promise<Pokemon> {
+    return new Promise(resolve => {
+      const formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === formChange.formKey), 0);
+      const ret = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
+      ret.loadAssets().then(() => resolve(ret));
+    });
+  }
+
+  changeForm(formChange: SpeciesFormChange): Promise<void> {
+    return new Promise(resolve => {
+      this.formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === formChange.formKey), 0);
+      this.generateName();
+      const abilityCount = this.getSpeciesForm().getAbilityCount();
+      if (this.abilityIndex >= abilityCount) // Shouldn't happen
+        this.abilityIndex = abilityCount - 1;
+      this.compatibleTms.splice(0, this.compatibleTms.length);
+      this.generateCompatibleTms();
+      this.scene.gameData.setPokemonSeen(this, false);
+      this.scene.gameData.setPokemonCaught(this, false);
+      this.loadAssets().then(() => {
+        this.calculateStats();
+        this.scene.updateModifiers(true, true);
+        this.updateInfo().then(() => resolve());
+      });
+    });
+  }
+
   isFusion(): boolean {
     return !!(this.fusionSpecies || (this.species.speciesId === Species.KYUREM && this.formIndex));
   }
@@ -2160,8 +2217,6 @@ export class EnemyPokemon extends Pokemon {
     if (this.isFainted())
       return 0;
 
-    let clearedSegment = false;
-
     if (!ignoreSegments && this.isBoss()) {
       const segmentSize = this.getMaxHp() / this.bossSegments;
       for (let s = this.bossSegments - 1; s > 0; s--) {
@@ -2169,7 +2224,6 @@ export class EnemyPokemon extends Pokemon {
         if (this.hp > hpThreshold) {
           if (this.hp - damage < hpThreshold) {
             damage = this.hp - hpThreshold;
-            clearedSegment = true;
             this.handleBossSegmentCleared(s);
           }
           break;

@@ -16,6 +16,7 @@ import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
 import { SpeciesFormKey } from '../data/pokemon-species';
 import BattleScene from '../battle-scene';
 import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from '../system/voucher';
+import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from '../data/pokemon-forms';
 
 type Modifier = Modifiers.Modifier;
 
@@ -446,6 +447,26 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
   }
 }
 
+export class FormChangeItemModifierType extends PokemonModifierType implements GeneratedPersistentModifierType {
+  public formChangeItem: FormChangeItem;
+
+  constructor(formChangeItem: FormChangeItem) {
+    super(Utils.toReadableString(FormChangeItem[formChangeItem]), `Causes certain Pokémon to change form`, (_type, args) => new Modifiers.PokemonFormChangeItemModifier(this, (args[0] as PlayerPokemon).id, formChangeItem, true),
+    (pokemon: PlayerPokemon) => {
+      if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) && !!pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger)))
+        return null;
+
+      return PartyUiHandler.NoEffectMessage;
+    }, FormChangeItem[formChangeItem].toLowerCase());
+
+    this.formChangeItem = formChangeItem;
+  }
+
+  getPregenArgs(): any[] {
+    return [ this.formChangeItem ];
+  }
+}
+
 export class FusePokemonModifierType extends PokemonModifierType {
   constructor(name: string, iconImage?: string) {
     super(name, 'Combines two Pokémon (transfers ability, splits base stats and types, shares move pool)', (_type, args) => new Modifiers.FusePokemonModifier(this, (args[0] as PlayerPokemon).id, (args[1] as PlayerPokemon).id),
@@ -524,7 +545,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
 }
 
 class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
-  constructor(mega: boolean) {
+  constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs)
         return new EvolutionItemModifierType(pregenArgs[0] as EvolutionItem);
@@ -532,12 +553,32 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
       const evolutionItemPool = party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
         const evolutions = pokemonEvolutions[p.species.speciesId];
         return evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || '') === p.getFormKey()) && (!e.condition || e.condition.predicate(p)));
-      }).flat().filter(e => (e.item >= 100) === mega).flatMap(e => e.item);
+      }).flat().flatMap(e => e.item);
 
       if (!evolutionItemPool.length)
         return null;
 
       return new EvolutionItemModifierType(evolutionItemPool[Utils.randSeedInt(evolutionItemPool.length)]);
+    });
+  }
+}
+
+class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
+  constructor() {
+    super((party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs)
+        return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
+
+      const formChangeItemPool = party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
+        const formChanges = pokemonFormChanges[p.species.speciesId];
+        return formChanges.filter(fc => fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 || party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length)
+          .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger).filter(t => t && t.active);
+      }).flat().flatMap(fc => fc.item);
+
+      if (!formChangeItemPool.length)
+        return null;
+
+      return new FormChangeItemModifierType(formChangeItemPool[Utils.randSeedInt(formChangeItemPool.length)]);
     });
   }
 }
@@ -593,8 +634,8 @@ export const modifierTypes = {
   RARE_CANDY: () => new PokemonLevelIncrementModifierType('Rare Candy'),
   RARER_CANDY: () => new AllPokemonLevelIncrementModifierType('Rarer Candy'),
 
-  EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(false),
-  MEGA_EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(true),
+  EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(),
+  FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(),
 
   MEGA_BRACELET: () => new ModifierType('Mega Bracelet', 'Mega stones become available', (type, _args) => new Modifiers.MegaEvolutionAccessModifier(type)),
 
@@ -838,7 +879,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, 2),
     new WeightedModifierType(modifierTypes.IV_SCANNER, 2),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 1),
-    new WeightedModifierType(modifierTypes.MEGA_EVOLUTION_ITEM, (party: Pokemon[]) => party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length && !party.filter(p => p.getFormKey().indexOf(SpeciesFormKey.MEGA) > -1).length ? 1 : 0),
+    new WeightedModifierType(modifierTypes.FORM_CHANGE_ITEM, 1),
     new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 3 : 0),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [

@@ -5,7 +5,7 @@ import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier } from './modifier/modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { initAutoPlay } from './system/auto-play';
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
@@ -43,6 +43,8 @@ import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 import { WindowVariant, getWindowVariantSuffix } from './ui/window';
 import PokemonData from './system/pokemon-data';
 import { Nature } from './data/nature';
+import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, getSpeciesFormChangeMessage, pokemonFormChanges } from './data/pokemon-forms';
+import { FormChangePhase, QuietFormChangePhase } from './form-change-phase';
 
 const enableAuto = true;
 const quickStart = false;
@@ -99,6 +101,7 @@ export default class BattleScene extends Phaser.Scene {
 	private phaseQueuePrepend: BattlePhase[];
 	private phaseQueuePrependSpliceIndex: integer;
 	private currentPhase: BattlePhase;
+	private standbyPhase: BattlePhase;
 	public field: Phaser.GameObjects.Container;
 	public fieldUI: Phaser.GameObjects.Container;
 	public pbTray: PokeballTray;
@@ -381,6 +384,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.loadBgm('level_up_fanfare', 'bw/level_up_fanfare.mp3');
 		this.loadBgm('item_fanfare', 'bw/item_fanfare.mp3');
+		this.loadBgm('minor_fanfare', 'bw/minor_fanfare.mp3');
 		this.loadBgm('heal', 'bw/heal.mp3');
 		this.loadBgm('victory_trainer', 'bw/victory_trainer.mp3');
 		this.loadBgm('victory_gym', 'bw/victory_gym.mp3');
@@ -806,9 +810,12 @@ export default class BattleScene extends Phaser.Scene {
 				this.arena.removeAllTags();
 				playerField.forEach((_, p) => this.unshiftPhase(new ReturnPhase(this, p)));
 				this.unshiftPhase(new ShowTrainerPhase(this));
-				for (let pokemon of this.getParty()) {
-					if (pokemon)
+			}
+			for (let pokemon of this.getParty()) {
+				if (pokemon) {
+					if (resetArenaState)
 						pokemon.resetBattleData();
+					this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
 				}
 			}
 			if (this.gameMode === GameMode.CLASSIC && !isNewBiome)
@@ -843,7 +850,7 @@ export default class BattleScene extends Phaser.Scene {
 		return this.arena;
 	}
 
-	getSpeciesFormIndex(species: PokemonSpecies, gender?: Gender, ignoreArena?: boolean): integer {
+	getSpeciesFormIndex(species: PokemonSpecies, gender?: Gender, nature?: Nature, ignoreArena?: boolean): integer {
 		if (!species.forms?.length)
 			return 0;
 
@@ -856,6 +863,11 @@ export default class BattleScene extends Phaser.Scene {
 			case Species.MEOWSTIC:
 			case Species.INDEEDEE:
 				return gender === Gender.FEMALE ? 1 : 0;
+			case Species.TOXTRICITY:
+				const lowkeyNatures = [ Nature.LONELY, Nature.BOLD, Nature.RELAXED, Nature.TIMID, Nature.SERIOUS, Nature.MODEST, Nature.MILD, Nature.QUIET, Nature.BASHFUL, Nature.CALM, Nature.GENTLE, Nature.CAREFUL ];
+				if (nature !== undefined && lowkeyNatures.indexOf(nature) > -1)
+					return 1;
+				return 0;
 		}
 
 		if (ignoreArena) {
@@ -1292,6 +1304,10 @@ export default class BattleScene extends Phaser.Scene {
 		return this.currentPhase;
 	}
 
+	getStandbyPhase(): BattlePhase {
+		return this.standbyPhase;
+	}
+
 	pushPhase(phase: BattlePhase): void {
 		this.phaseQueue.push(phase);
 	}
@@ -1316,6 +1332,12 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	shiftPhase(): void {
+		if (this.standbyPhase) {
+			this.currentPhase = this.standbyPhase;
+			this.standbyPhase = null;
+			return;
+		}
+
 		if (this.phaseQueuePrependSpliceIndex > -1)
 			this.clearPhaseQueueSplice();
 		if (this.phaseQueuePrepend.length) {
@@ -1326,6 +1348,17 @@ export default class BattleScene extends Phaser.Scene {
 			this.populatePhaseQueue();
 		this.currentPhase = this.phaseQueue.shift();
 		this.currentPhase.start();
+	}
+	
+	overridePhase(phase: BattlePhase): boolean {
+		if (this.standbyPhase)
+			return false;
+
+		this.standbyPhase = this.currentPhase;
+		this.currentPhase = phase;
+		phase.start();
+
+		return true;
 	}
 
 	queueMessage(message: string, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, defer?: boolean) {
@@ -1346,6 +1379,8 @@ export default class BattleScene extends Phaser.Scene {
 			this.validateAchvs(ModifierAchv, modifier);
 			if (modifier instanceof PersistentModifier) {
 				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual, this)) {
+					if (modifier instanceof PokemonFormChangeItemModifier)
+						modifier.apply([ this.getPokemonById(modifier.pokemonId) ]);
 					if (playSound && !this.sound.get(soundName))
 						this.playSound(soundName);
 				} else if (!virtual) {
@@ -1585,6 +1620,28 @@ export default class BattleScene extends Phaser.Scene {
 		}
 
 		return null;
+	}
+
+	triggerPokemonFormChange(pokemon: Pokemon, formChangeTriggerType: { new(...args: any[]): SpeciesFormChangeTrigger }, delayed: boolean = false, modal: boolean = false): boolean {
+		if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)) {
+			const matchingFormChange = pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon));
+			if (matchingFormChange) {
+				let phase: BattlePhase;
+				if (pokemon instanceof PlayerPokemon && !matchingFormChange.quiet)
+					phase = new FormChangePhase(this, pokemon, matchingFormChange, modal);
+				else
+					phase = new QuietFormChangePhase(this, pokemon, matchingFormChange);
+				if (!matchingFormChange.quiet && modal)
+					this.overridePhase(phase);
+				else if (delayed)
+					this.pushPhase(phase);
+				else
+					this.unshiftPhase(phase);
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	validateAchvs(achvType: { new(...args: any[]): Achv }, ...args: any[]): void {

@@ -44,11 +44,18 @@ export default class CommandUiHandler extends UiHandler {
 
     this.commandsContainer.setVisible(true);
 
+    let commandPhase: CommandPhase;
+    let currentPhase = this.scene.getCurrentPhase();
+    if (currentPhase instanceof CommandPhase)
+      commandPhase = currentPhase;
+    else
+      commandPhase = this.scene.getStandbyPhase() as CommandPhase;
+
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(1110);
-    messageHandler.showText(`What will\n${(this.scene.getCurrentPhase() as CommandPhase).getPokemon().name} do?`, 0);
+    messageHandler.showText(`What will\n${commandPhase.getPokemon().name} do?`, 0);
     this.setCursor(this.getCursor());
 
     return true;
@@ -118,8 +125,6 @@ export default class CommandUiHandler extends UiHandler {
   }
 
   setCursor(cursor: integer): boolean {
-    const ui = this.getUi();
-
     const changed = this.getCursor() !== cursor;
     if (changed) {
       if (!this.fieldIndex)
@@ -140,6 +145,7 @@ export default class CommandUiHandler extends UiHandler {
 
   clear(): void {
     super.clear();
+    this.getUi().getMessageHandler().commandWindow.setVisible(false);
     this.commandsContainer.setVisible(false);
     this.getUi().getMessageHandler().clearText();
     this.eraseCursor();

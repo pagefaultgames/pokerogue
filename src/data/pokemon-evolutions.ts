@@ -12,14 +12,14 @@ import { SpeciesFormKey } from "./pokemon-species";
 import { WeatherType } from "./weather";
 import { Biome } from "./biome";
 import { TimeOfDay } from "../arena";
+import { Nature } from "./nature";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
   SHORT,
   MEDIUM,
   LONG,
-  VERY_LONG,
-  MEGA
+  VERY_LONG
 }
 
 export enum EvolutionItem {
@@ -34,56 +34,7 @@ export enum EvolutionItem {
   ICE_STONE,
   DUSK_STONE,
   DAWN_STONE,
-  SHINY_STONE,
-
-  ABOMASITE = 100,
-  ABSOLITE,
-  AERODACTYLITE,
-  AGGRONITE,
-  ALAKAZITE,
-  ALTARIANITE,
-  AMPHAROSITE,
-  AUDINITE,
-  BANETTITE,
-  BEEDRILLITE,
-  BLASTOISINITE,
-  BLAZIKENITE,
-  CAMERUPTITE,
-  CHARIZARDITE_X,
-  CHARIZARDITE_Y,
-  DIANCITE,
-  GALLADITE,
-  GARCHOMPITE,
-  GARDEVOIRITE,
-  GENGARITE,
-  GLALITITE,
-  GYARADOSITE,
-  HERACRONITE,
-  HOUNDOOMINITE,
-  KANGASKHANITE,
-  LATIASITE,
-  LATIOSITE,
-  LOPUNNITE,
-  LUCARIONITE,
-  MANECTITE,
-  MAWILITE,
-  MEDICHAMITE,
-  METAGROSSITE,
-  MEWTWONITE_X,
-  MEWTWONITE_Y,
-  PIDGEOTITE,
-  PINSIRITE,
-  RAYQUAZITE,
-  SABLENITE,
-  SALAMENCITE,
-  SCEPTILITE,
-  SCIZORITE,
-  SHARPEDONITE,
-  SLOWBRONITE,
-  STEELIXITE,
-  SWAMPERTITE,
-  TYRANITARITE,
-  VENUSAURITE,
+  SHINY_STONE
 }
 
 export type EvolutionConditionPredicate = (p: Pokemon) => boolean;
@@ -1068,7 +1019,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.BARRASKEWDA, 26, null, null)
   ],
   [Species.TOXEL]: [
-    new SpeciesEvolution(Species.TOXTRICITY, 30, null, null)
+    new SpeciesFormEvolution(Species.TOXTRICITY, '', 'lowkey', 30, null,
+      new SpeciesEvolutionCondition(p => [ Nature.LONELY, Nature.BOLD, Nature.RELAXED, Nature.TIMID, Nature.SERIOUS, Nature.MODEST, Nature.MILD, Nature.QUIET, Nature.BASHFUL, Nature.CALM, Nature.GENTLE, Nature.CAREFUL ].indexOf(p.nature) > -1)),
+    new SpeciesFormEvolution(Species.TOXTRICITY, '', 'amped', 30, null, null)
   ],
   [Species.SIZZLIPEDE]: [
     new SpeciesEvolution(Species.CENTISKORCH, 28, null, null)
@@ -1618,146 +1571,6 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.GIMMIGHOUL]: [
     new SpeciesEvolution(Species.GHOLDENGO, 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.VERY_LONG)
-  ],
-  [Species.VENUSAUR]: [
-    new SpeciesFormEvolution(Species.VENUSAUR, '', SpeciesFormKey.MEGA, 1, EvolutionItem.VENUSAURITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.BLASTOISE]: [
-    new SpeciesFormEvolution(Species.BLASTOISE, '', SpeciesFormKey.MEGA, 1, EvolutionItem.BLASTOISINITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.CHARIZARD]: [
-    new SpeciesFormEvolution(Species.CHARIZARD, '', SpeciesFormKey.MEGA_X, 1, EvolutionItem.CHARIZARDITE_X, null, SpeciesWildEvolutionDelay.MEGA),
-    new SpeciesFormEvolution(Species.CHARIZARD, '', SpeciesFormKey.MEGA_Y, 1, EvolutionItem.CHARIZARDITE_Y, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.BEEDRILL]: [
-    new SpeciesFormEvolution(Species.BEEDRILL, '', SpeciesFormKey.MEGA, 1, EvolutionItem.BEEDRILLITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.PIDGEOT]: [
-    new SpeciesFormEvolution(Species.PIDGEOT, '', SpeciesFormKey.MEGA, 1, EvolutionItem.PIDGEOTITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.ALAKAZAM]: [
-    new SpeciesFormEvolution(Species.ALAKAZAM, '', SpeciesFormKey.MEGA, 1, EvolutionItem.ALAKAZITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.SLOWBRO]: [
-    new SpeciesFormEvolution(Species.SLOWBRO, '', SpeciesFormKey.MEGA, 1, EvolutionItem.SLOWBRONITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.GENGAR]: [
-    new SpeciesFormEvolution(Species.GENGAR, '', SpeciesFormKey.MEGA, 1, EvolutionItem.GENGARITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.KANGASKHAN]: [
-    new SpeciesFormEvolution(Species.KANGASKHAN, '', SpeciesFormKey.MEGA, 1, EvolutionItem.KANGASKHANITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.PINSIR]: [
-    new SpeciesFormEvolution(Species.PINSIR, '', SpeciesFormKey.MEGA, 1, EvolutionItem.PINSIRITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.GYARADOS]: [
-    new SpeciesFormEvolution(Species.GYARADOS, '', SpeciesFormKey.MEGA, 1, EvolutionItem.GYARADOSITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.AERODACTYL]: [
-    new SpeciesFormEvolution(Species.AERODACTYL, '', SpeciesFormKey.MEGA, 1, EvolutionItem.AERODACTYLITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.MEWTWO]: [
-    new SpeciesFormEvolution(Species.MEWTWO, '', SpeciesFormKey.MEGA_X, 1, EvolutionItem.MEWTWONITE_X, null, SpeciesWildEvolutionDelay.MEGA),
-    new SpeciesFormEvolution(Species.MEWTWO, '', SpeciesFormKey.MEGA_Y, 1, EvolutionItem.MEWTWONITE_Y, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.AMPHAROS]: [
-    new SpeciesFormEvolution(Species.AMPHAROS, '', SpeciesFormKey.MEGA, 1, EvolutionItem.AMPHAROSITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.STEELIX]: [
-    new SpeciesFormEvolution(Species.STEELIX, '', SpeciesFormKey.MEGA, 1, EvolutionItem.STEELIXITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.SCIZOR]: [
-    new SpeciesFormEvolution(Species.SCIZOR, '', SpeciesFormKey.MEGA, 1, EvolutionItem.SCIZORITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.HERACROSS]: [
-    new SpeciesFormEvolution(Species.HERACROSS, '', SpeciesFormKey.MEGA, 1, EvolutionItem.HERACRONITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.HOUNDOOM]: [
-    new SpeciesFormEvolution(Species.HOUNDOOM, '', SpeciesFormKey.MEGA, 1, EvolutionItem.HOUNDOOMINITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.TYRANITAR]: [
-    new SpeciesFormEvolution(Species.TYRANITAR, '', SpeciesFormKey.MEGA, 1, EvolutionItem.TYRANITARITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.SCEPTILE]: [
-    new SpeciesFormEvolution(Species.SCEPTILE, '', SpeciesFormKey.MEGA, 1, EvolutionItem.SCEPTILITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.BLAZIKEN]: [
-    new SpeciesFormEvolution(Species.BLAZIKEN, '', SpeciesFormKey.MEGA, 1, EvolutionItem.BLAZIKENITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.SWAMPERT]: [
-    new SpeciesFormEvolution(Species.SWAMPERT, '', SpeciesFormKey.MEGA, 1, EvolutionItem.SWAMPERTITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.GARDEVOIR]: [
-    new SpeciesFormEvolution(Species.GARDEVOIR, '', SpeciesFormKey.MEGA, 1, EvolutionItem.GARDEVOIRITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.SABLEYE]: [
-    new SpeciesFormEvolution(Species.SABLEYE, '', SpeciesFormKey.MEGA, 1, EvolutionItem.SABLENITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.MAWILE]: [
-    new SpeciesFormEvolution(Species.MAWILE, '', SpeciesFormKey.MEGA, 1, EvolutionItem.MAWILITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.AGGRON]: [
-    new SpeciesFormEvolution(Species.AGGRON, '', SpeciesFormKey.MEGA, 1, EvolutionItem.AGGRONITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.MEDICHAM]: [
-    new SpeciesFormEvolution(Species.MEDICHAM, '', SpeciesFormKey.MEGA, 1, EvolutionItem.MEDICHAMITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.MANECTRIC]: [
-    new SpeciesFormEvolution(Species.MANECTRIC, '', SpeciesFormKey.MEGA, 1, EvolutionItem.MANECTITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.SHARPEDO]: [
-    new SpeciesFormEvolution(Species.SHARPEDO, '', SpeciesFormKey.MEGA, 1, EvolutionItem.SHARPEDONITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.CAMERUPT]: [
-    new SpeciesFormEvolution(Species.CAMERUPT, '', SpeciesFormKey.MEGA, 1, EvolutionItem.CAMERUPTITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.ALTARIA]: [
-    new SpeciesFormEvolution(Species.ALTARIA, '', SpeciesFormKey.MEGA, 1, EvolutionItem.ALTARIANITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.BANETTE]: [
-    new SpeciesFormEvolution(Species.BANETTE, '', SpeciesFormKey.MEGA, 1, EvolutionItem.BANETTITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.ABSOL]: [
-    new SpeciesFormEvolution(Species.ABSOL, '', SpeciesFormKey.MEGA, 1, EvolutionItem.ABSOLITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.GLALIE]: [
-    new SpeciesFormEvolution(Species.GLALIE, '', SpeciesFormKey.MEGA, 1, EvolutionItem.GLALITITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.SALAMENCE]: [
-    new SpeciesFormEvolution(Species.SALAMENCE, '', SpeciesFormKey.MEGA, 1, EvolutionItem.SALAMENCITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.METAGROSS]: [
-    new SpeciesFormEvolution(Species.METAGROSS, '', SpeciesFormKey.MEGA, 1, EvolutionItem.METAGROSSITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.LATIAS]: [
-    new SpeciesFormEvolution(Species.LATIAS, '', SpeciesFormKey.MEGA, 1, EvolutionItem.LATIASITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.LATIOS]: [
-    new SpeciesFormEvolution(Species.LATIOS, '', SpeciesFormKey.MEGA, 1, EvolutionItem.LATIOSITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.RAYQUAZA]: [
-    new SpeciesFormEvolution(Species.RAYQUAZA, '', SpeciesFormKey.MEGA, 1, EvolutionItem.RAYQUAZITE, new SpeciesEvolutionCondition(p => p.moveset.filter(m => m.moveId === Moves.DRAGON_ASCENT).length > 0), SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.LOPUNNY]: [
-    new SpeciesFormEvolution(Species.LOPUNNY, '', SpeciesFormKey.MEGA, 1, EvolutionItem.LOPUNNITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.GARCHOMP]: [
-    new SpeciesFormEvolution(Species.GARCHOMP, '', SpeciesFormKey.MEGA, 1, EvolutionItem.GARCHOMPITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.LUCARIO]: [
-    new SpeciesFormEvolution(Species.LUCARIO, '', SpeciesFormKey.MEGA, 1, EvolutionItem.LUCARIONITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.ABOMASNOW]: [
-    new SpeciesFormEvolution(Species.ABOMASNOW, '', SpeciesFormKey.MEGA, 1, EvolutionItem.ABOMASITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.GALLADE]: [
-    new SpeciesFormEvolution(Species.GALLADE, '', SpeciesFormKey.MEGA, 1, EvolutionItem.GALLADITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.AUDINO]: [
-    new SpeciesFormEvolution(Species.AUDINO, '', SpeciesFormKey.MEGA, 1, EvolutionItem.AUDINITE, null, SpeciesWildEvolutionDelay.MEGA)
-  ],
-  [Species.DIANCIE]: [
-    new SpeciesFormEvolution(Species.DIANCIE, '', SpeciesFormKey.MEGA, 1, EvolutionItem.DIANCITE, null, SpeciesWildEvolutionDelay.MEGA)
   ]
 };
 

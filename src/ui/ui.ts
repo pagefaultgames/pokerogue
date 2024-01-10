@@ -345,6 +345,7 @@ export default class UI extends Phaser.GameObjects.Container {
         const touchControls = document.getElementById('touchControls');
         if (touchControls)
           touchControls.dataset.uiMode = Mode[this.mode];
+        resolve(true);
       };
 
       if (noTransitionModes.indexOf(lastMode) === -1) {
@@ -356,8 +357,6 @@ export default class UI extends Phaser.GameObjects.Container {
         });
       } else
         doRevertMode();
-
-      resolve(true);
     });
   }
 

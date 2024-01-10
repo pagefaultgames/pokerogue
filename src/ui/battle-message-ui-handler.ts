@@ -1,6 +1,6 @@
 import BattleScene, { Button } from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
-import UI, { Mode } from "./ui";
+import { Mode } from "./ui";
 import * as Utils from "../utils";
 import MessageUiHandler from "./message-ui-handler";
 import { getStatName, Stat } from "../data/pokemon-stat";

@@ -6,13 +6,14 @@ import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
+import { PokemonFormChangeItemModifier, PokemonHeldItemModifier, SwitchEffectTransferModifier } from "../modifier/modifier";
 import { Moves, allMoves } from "../data/move";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import { pokemonEvolutions } from "../data/pokemon-evolutions";
 import { addWindow } from "./window";
+import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 
 const defaultMessage = 'Choose a Pokémon.';
 
@@ -38,11 +39,12 @@ export enum PartyOption {
   TRANSFER,
   SPLICE,
   SUMMARY,
-  UNPAUSE_EVO,
+  UNPAUSE_EVOLUTION,
   RELEASE,
   SCROLL_UP = 1000,
   SCROLL_DOWN = 1001,
-  MOVE_1 = 2000,
+  FORM_CHANGE_ITEM = 2000,
+  MOVE_1 = 3000,
   MOVE_2,
   MOVE_3,
   MOVE_4
@@ -72,6 +74,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private optionsScrollCursor: integer = 0;
   private optionsScrollTotal: integer = 0;
   private optionsContainer: Phaser.GameObjects.Container;
+  private optionsBg: Phaser.GameObjects.NineSlice;
   private optionsCursorObj: Phaser.GameObjects.Image;
   private options: integer[];
 
@@ -228,7 +231,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
           ui.playSelect();
           return true;
-        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVO && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
+        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string;
           if (option !== PartyOption.TRANSFER && option !== PartyOption.SPLICE) {
@@ -262,8 +265,23 @@ export default class PartyUiHandler extends MessageUiHandler {
                 this.selectCallback = null;
                 selectCallback(this.cursor, option);
               }
-            } else if (this.cursor)
-              (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor, option === PartyOption.PASS_BATON);
+            } else {
+              if (option >= PartyOption.FORM_CHANGE_ITEM && this.scene.getCurrentPhase() instanceof CommandPhase) {
+                switch (this.partyUiMode) {
+                  case PartyUiMode.SWITCH:
+                  case PartyUiMode.FAINT_SWITCH:
+                  case PartyUiMode.POST_BATTLE_SWITCH:
+                    let formChangeItemModifiers = this.scene.findModifiers(m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id) as PokemonFormChangeItemModifier[];
+                    if (formChangeItemModifiers.find(m => m.active))
+                      formChangeItemModifiers = formChangeItemModifiers.filter(m => m.active);
+                    const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
+                    modifier.active = !modifier.active;
+                    this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
+                    break;
+                }
+              } else if (this.cursor)
+                (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor, option === PartyOption.PASS_BATON);
+            }
             if (this.partyUiMode !== PartyUiMode.MODIFIER && this.partyUiMode !== PartyUiMode.TM_MODIFIER && this.partyUiMode !== PartyUiMode.MOVE_MODIFIER)
               ui.playSelect();
             return true;
@@ -275,7 +293,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           ui.playSelect();
           ui.setModeWithoutClear(Mode.SUMMARY, pokemon).then(() =>  this.clearOptions());
           return true;
-        } else if (option === PartyOption.UNPAUSE_EVO) {
+        } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
           this.clearOptions();
           ui.playSelect();
           pokemon.pauseEvolutions = false;
@@ -356,7 +374,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           break;
         case Button.RIGHT:
           const battlerCount = this.scene.currentBattle.getBattlerCount();
-          if (slotCount && this.cursor < battlerCount)
+          if (slotCount > battlerCount && this.cursor < battlerCount)
             success = this.setCursor(this.lastCursor < 6 ? this.lastCursor || battlerCount : battlerCount);
           break;
       }
@@ -423,8 +441,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         this.optionsCursorObj.setOrigin(0, 0);
         this.optionsContainer.add(this.optionsCursorObj);
       }
-      const wideOptions = this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER;
-      this.optionsCursorObj.setPosition(-86 - (wideOptions ? 50 : 0), -19 - (16 * ((this.options.length - 1) - this.optionsCursor)));
+      this.optionsCursorObj.setPosition(8 - this.optionsBg.displayWidth, -19 - (16 * ((this.options.length - 1) - this.optionsCursor)));
     } else {
       changed = this.cursor !== cursor;
       if (changed) {
@@ -485,9 +502,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.updateOptions();
 
-    const wideOptions = this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER;
-
-    this.partyMessageBox.setSize(262 - (wideOptions ? 88 : 38), 30);
+    this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 30);
 
     this.setCursor(0);
   }
@@ -512,6 +527,8 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.eraseOptionsCursor();
     }
 
+    let formChangeItemModifiers: PokemonFormChangeItemModifier[];
+
     if (this.partyUiMode !== PartyUiMode.MOVE_MODIFIER && this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_MODIFIER && (this.transferMode || this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER)) {
       switch (this.partyUiMode) {
         case PartyUiMode.SWITCH:
@@ -523,6 +540,13 @@ export default class PartyUiHandler extends MessageUiHandler {
                 && this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
                   && (m as SwitchEffectTransferModifier).pokemonId === this.scene.getPlayerField()[this.fieldIndex].id))
               this.options.push(PartyOption.PASS_BATON);
+          }
+          if (this.scene.getCurrentPhase() instanceof CommandPhase) {
+            formChangeItemModifiers = this.scene.findModifiers(m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id) as PokemonFormChangeItemModifier[];
+            if (formChangeItemModifiers.find(m => m.active))
+              formChangeItemModifiers = formChangeItemModifiers.filter(m => m.active);
+            for (let i = 0; i < formChangeItemModifiers.length; i++)
+              this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
           }
           break;
         case PartyUiMode.MODIFIER:
@@ -549,7 +573,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.options.push(PartyOption.SUMMARY);
 
       if (pokemon.pauseEvolutions && pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId))
-        this.options.push(PartyOption.UNPAUSE_EVO);
+        this.options.push(PartyOption.UNPAUSE_EVOLUTION);
 
       if (this.partyUiMode === PartyUiMode.SWITCH)
         this.options.push(PartyOption.RELEASE);
@@ -582,13 +606,16 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.options.push(PartyOption.CANCEL);
 
-    const optionBg = addWindow(this.scene, 0, 0, wideOptions ? 144 : 94, 16 * this.options.length + 13);
-    optionBg.setOrigin(1, 1);
+    this.optionsBg = addWindow(this.scene, 0, 0, 0, 16 * this.options.length + 13);
+    this.optionsBg.setOrigin(1, 1);
 
-    this.optionsContainer.add(optionBg);
+    this.optionsContainer.add(this.optionsBg);
 
     optionStartIndex = 0;
     optionEndIndex = this.options.length;
+
+    let widestOptionWidth = 0;
+    let optionTexts: Phaser.GameObjects.Text[] = [];
 
     for (let o = optionStartIndex; o < optionEndIndex; o++) {
       const option = this.options[this.options.length - (o + 1)];
@@ -602,11 +629,12 @@ export default class PartyUiHandler extends MessageUiHandler {
           case PartyOption.MOVE_4:
             optionName = pokemon.moveset[option - PartyOption.MOVE_1].getName();
             break;
-          case PartyOption.UNPAUSE_EVO:
-            optionName = 'Unpause Evo.';
-            break;
           default:
-            optionName = Utils.toReadableString(PartyOption[option]);
+            if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {
+              const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
+              optionName = `${modifier.active ? 'Deactivate' : 'Activate'} ${modifier.type.name}`;
+            } else
+              optionName = Utils.toReadableString(PartyOption[option]);
             break;
         }
       } else if (option === PartyOption.SCROLL_UP)
@@ -625,15 +653,23 @@ export default class PartyUiHandler extends MessageUiHandler {
       }
 
       const yCoord = -6 - 16 * o;
-      const optionText = addTextObject(this.scene, -79 - (wideOptions ? 50 : 0), yCoord - 16, optionName, TextStyle.WINDOW);
+      const optionText = addTextObject(this.scene, 0, yCoord - 16, optionName, TextStyle.WINDOW);
       if (altText) {
         optionText.setColor('#40c8f8');
         optionText.setShadowColor('#006090')
       }
       optionText.setOrigin(0, 0);
 
+      optionTexts.push(optionText);
+
+      widestOptionWidth = Math.max(optionText.displayWidth, widestOptionWidth);
+
       this.optionsContainer.add(optionText);
     }
+
+    this.optionsBg.width = Math.max(widestOptionWidth + 24, 94);
+    for (let optionText of optionTexts)
+      optionText.x = 15 - this.optionsBg.width;
   }
 
   startTransfer(): void {

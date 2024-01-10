@@ -445,11 +445,3 @@ export class EggHatchPhase extends BattlePhase {
     return ret;
   }
 }
-
-export class EndEvolutionPhase extends BattlePhase {
-  start() {
-    super.start();
-
-    this.scene.ui.setModeForceTransition(Mode.MESSAGE).then(() => this.end());
-  }
-}

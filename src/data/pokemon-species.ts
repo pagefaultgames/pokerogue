@@ -510,7 +510,11 @@ export class PokemonForm extends PokemonSpeciesForm {
 export enum SpeciesFormKey {
   MEGA = "mega",
   MEGA_X = "mega-x",
-  MEGA_Y = "mega-y"
+  MEGA_Y = "mega-y",
+  PRIMAL = "primal",
+  ORIGIN = "origin",
+  INCARNATE = "incarnate",
+  THERIAN = "therian"
 }
 
 export const allSpecies: PokemonSpecies[] = [];
@@ -1711,7 +1715,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.SANDYGAST, "Sandygast", 7, false, false, false, "Sand Heap Pokémon", Type.GHOST, Type.GROUND, 0.5, 70, Abilities.WATER_COMPACTION, Abilities.NONE, Abilities.SAND_VEIL, 320, 55, 55, 80, 70, 45, 15, 140, 50, 64, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.PALOSSAND, "Palossand", 7, false, false, false, "Sand Castle Pokémon", Type.GHOST, Type.GROUND, 1.3, 250, Abilities.WATER_COMPACTION, Abilities.NONE, Abilities.SAND_VEIL, 480, 85, 75, 110, 100, 75, 35, 60, 50, 168, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.PYUKUMUKU, "Pyukumuku", 7, false, false, false, "Sea Cucumber Pokémon", Type.WATER, null, 0.3, 1.2, Abilities.INNARDS_OUT, Abilities.NONE, Abilities.UNAWARE, 410, 55, 60, 130, 30, 130, 5, 60, 50, 144, GrowthRate.FAST, 50, false),
-    new PokemonSpecies(Species.TYPE_NULL, "Type: Null", 7, false, false, false, "Synthetic Pokémon", Type.NORMAL, null, 1.9, 120.5, Abilities.BATTLE_ARMOR, Abilities.NONE, Abilities.NONE, 534, 95, 95, 95, 95, 95, 59, 3, 0, 107, GrowthRate.SLOW, null, false),
+    new PokemonSpecies(Species.TYPE_NULL, "Type: Null", 7, true, false, false, "Synthetic Pokémon", Type.NORMAL, null, 1.9, 120.5, Abilities.BATTLE_ARMOR, Abilities.NONE, Abilities.NONE, 534, 95, 95, 95, 95, 95, 59, 3, 0, 107, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.SILVALLY, "Silvally", 7, true, false, false, "Synthetic Pokémon", Type.NORMAL, null, 2.3, 100.5, Abilities.RKS_SYSTEM, Abilities.NONE, Abilities.NONE, 570, 95, 95, 95, 95, 95, 95, 3, 0, 285, GrowthRate.SLOW, null, false, false,
       new PokemonForm("Type: Normal", "normal", Type.NORMAL, null, 2.3, 100.5, Abilities.RKS_SYSTEM, Abilities.NONE, Abilities.NONE, 570, 95, 95, 95, 95, 95, 95, 3, 0, 285, false, ""),
       new PokemonForm("Type: Fighting", "fighting", Type.FIGHTING, null, 2.3, 100.5, Abilities.RKS_SYSTEM, Abilities.NONE, Abilities.NONE, 570, 95, 95, 95, 95, 95, 95, 3, 0, 285),

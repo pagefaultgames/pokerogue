@@ -39,6 +39,8 @@ import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
 import { GameDataType } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./anims";
+import { getPokemonSpecies } from "./data/pokemon-species";
+import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger } from "./data/pokemon-forms";
 
 export class LoginPhase extends BattlePhase {
   private showText: boolean;
@@ -883,6 +885,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     pokemon.resetTurnData();
 
+    this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
+
     this.queuePostSummon();
   }
 
@@ -938,6 +942,7 @@ export class SwitchSummonPhase extends SummonPhase {
       onComplete: () => {
         pokemon.setVisible(false);
         this.scene.field.remove(pokemon);
+        this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
         this.scene.time.delayedCall(750, () => this.switchAndSummon());
       }
     });
@@ -974,6 +979,8 @@ export class SwitchSummonPhase extends SummonPhase {
       pokemon.transferSummon(this.lastPokemon);
 
     this.lastPokemon?.resetSummonData();
+
+    this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
   }
 
   queuePostSummon(): void {
@@ -997,6 +1004,8 @@ export class ReturnPhase extends SwitchSummonPhase {
 
     pokemon.resetTurnData();
     pokemon.resetSummonData();
+
+    this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger);
   }
 }
 
@@ -1843,6 +1852,8 @@ export class MoveEffectPhase extends PokemonPhase {
           moveHistoryEntry.result = MoveResult.SUCCESS;
           
           const hitResult = !isProtected ? target.apply(user, this.move) : HitResult.NO_EFFECT;
+
+          this.scene.triggerPokemonFormChange(user, SpeciesFormChangeMoveUsedTrigger);
 
           applyAttrs.push(new Promise(resolve => {
             applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.PRE_APPLY,
@@ -2806,7 +2817,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     if (!pokemon.pauseEvolutions) {
       const evolution = pokemon.getEvolution();
       if (evolution)
-        this.scene.unshiftPhase(new EvolutionPhase(this.scene, this.partyMemberIndex, evolution, this.lastLevel));
+        this.scene.unshiftPhase(new EvolutionPhase(this.scene, pokemon as PlayerPokemon, evolution, this.lastLevel));
     }
   }
 }
@@ -2846,7 +2857,10 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
           .then(() => {
             this.scene.ui.setMode(messageMode).then(() => {
               this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
-              this.scene.ui.showText(`${pokemon.name} learned\n${move.name}!`, null, () => this.end(), messageMode === Mode.EVOLUTION_SCENE ? 1000 : null, true);
+              this.scene.ui.showText(`${pokemon.name} learned\n${move.name}!`, null, () => {
+                this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
+                this.end();
+              }, messageMode === Mode.EVOLUTION_SCENE ? 1000 : null, true);
             });
           });
         });

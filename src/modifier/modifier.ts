@@ -17,6 +17,7 @@ import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
 import { MoneyAchv } from '../system/achv';
 import { VoucherType } from '../system/voucher';
 import { PreventBerryUseAbAttr, applyAbAttrs } from '../data/ability';
+import { FormChangeItem, SpeciesFormChangeItemTrigger } from '../data/pokemon-forms';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -990,7 +991,7 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
       && (!e.condition || e.condition.predicate(pokemon)));
 
     if (matchingEvolution) {
-      pokemon.scene.unshiftPhase(new EvolutionPhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), matchingEvolution, pokemon.level - 1));
+      pokemon.scene.unshiftPhase(new EvolutionPhase(pokemon.scene, pokemon, matchingEvolution, pokemon.level - 1));
       return true;
     }
 
@@ -1257,6 +1258,39 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 5;
+  }
+}
+
+export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
+  public formChangeItem: FormChangeItem;
+  public active: boolean;
+
+  constructor(type: ModifierTypes.FormChangeItemModifierType, pokemonId: integer, formChangeItem: FormChangeItem, active: boolean, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+    this.formChangeItem = formChangeItem;
+    this.active = active;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonFormChangeItemModifier && modifier.formChangeItem === this.formChangeItem;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonFormChangeItemModifier(this.type as ModifierTypes.FormChangeItemModifierType, this.pokemonId, this.formChangeItem, this.active, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.formChangeItem, this.active);
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+
+    return pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger);
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 1;
   }
 }
 
