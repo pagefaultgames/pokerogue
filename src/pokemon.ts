@@ -34,7 +34,7 @@ import { DamageAchv, achvs } from './system/achv';
 import { DexAttr } from './system/game-data';
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from '@material/material-color-utilities';
 import { Nature, getNatureStatMultiplier } from './data/nature';
-import { SpeciesFormChange, SpeciesFormChangeMoveUsedTrigger, SpeciesFormChangeStatusEffectTrigger } from './data/pokemon-forms';
+import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveUsedTrigger, SpeciesFormChangeStatusEffectTrigger } from './data/pokemon-forms';
 
 export enum FieldPosition {
   CENTER,
@@ -1491,7 +1491,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.battleSummonData = new PokemonBattleSummonData();
     if (this.getTag(BattlerTagType.SEEDED))
       this.lapseTag(BattlerTagType.SEEDED);
-    this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveUsedTrigger, true);
+    if (this.scene)
+      this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveUsedTrigger, true);
   }
 
   resetTurnData(): void {
@@ -2313,6 +2314,7 @@ export class EnemyPokemon extends Pokemon {
       const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
       party.push(newPokemon);
       ret = newPokemon;
+      this.scene.triggerPokemonFormChange(newPokemon, SpeciesFormChangeActiveTrigger, true);
     }
 
     return ret;
