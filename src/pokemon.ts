@@ -2223,10 +2223,12 @@ export class EnemyPokemon extends Pokemon {
     if (!ignoreSegments && this.isBoss()) {
       const segmentSize = this.getMaxHp() / this.bossSegments;
       for (let s = this.bossSegments - 1; s > 0; s--) {
-        const hpThreshold = Math.round(segmentSize * s);
-        if (this.hp > hpThreshold) {
-          if (this.hp - damage < hpThreshold) {
-            damage = this.hp - hpThreshold;
+        const hpThreshold = segmentSize * s;
+        const roundedHpThreshold = Math.round(hpThreshold);
+        if (this.hp > roundedHpThreshold) {
+          if (this.hp - damage < roundedHpThreshold) {
+            const bypassSegment = (this.hp - roundedHpThreshold) / damage < 0.1;
+            damage = this.hp - (bypassSegment ? Math.round(hpThreshold - segmentSize) : roundedHpThreshold);
             this.handleBossSegmentCleared(s);
           }
           break;
@@ -2285,8 +2287,8 @@ export class EnemyPokemon extends Pokemon {
       let segmentBypassCount = Math.floor(amountRatio / (1 / this.bossSegments));
       const segmentSize = this.getMaxHp() / this.bossSegments;
       for (let s = 1; s < this.bossSegments; s++) {
-        const hpThreshold = Math.round(segmentSize * s);
-        if (this.hp <= hpThreshold) {
+        const hpThreshold = segmentSize * s;
+        if (this.hp <= Math.round(hpThreshold)) {
           const healAmount = Math.min(amount, this.getMaxHp() - this.hp, Math.round(hpThreshold + (segmentSize * segmentBypassCount) - this.hp));
           this.hp += healAmount;
           return healAmount;
