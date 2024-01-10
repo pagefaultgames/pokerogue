@@ -477,7 +477,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
   }
 
   isObtainable() {
-    return super.isObtainable() || (this.species === 'Paradox Pokémon' && !this.legendary && this.speciesId <= 1025);
+    return super.isObtainable() || (this.species === 'Wild Bull Pokémon') || (this.species === 'Water Fish Pokémon') || (this.species === 'Paradox Pokémon' && !this.legendary && this.speciesId <= 1025);
   }
 
   getFormSpriteKey(formIndex?: integer) {
