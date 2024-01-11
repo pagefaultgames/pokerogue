@@ -5,7 +5,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./window";
 import * as Utils from "../utils";
-import { GameData } from "../system/game-data";
+import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
 
 interface DisplayStat {
@@ -46,8 +46,44 @@ const displayStats: DisplayStats = {
       return `${starterCount} (${Math.floor((starterCount / starterKeys.length) * 1000) / 10}%)`;
     }
   },
+  shinyStartersUnlocked: {
+    label: 'Shiny Starters',
+    sourceFunc: gameData => {
+      const starterKeys = Object.keys(speciesStarters);
+      let starterCount = 0;
+      for (let s of starterKeys) {
+        if (gameData.dexData[s].caughtAttr & DexAttr.SHINY)
+          starterCount++;
+      }
+      return `${starterCount} (${Math.floor((starterCount / starterKeys.length) * 1000) / 10}%)`;
+    }
+  },
+  dexSeen: {
+    label: 'Species Seen',
+    sourceFunc: gameData => {
+      const dexKeys = Object.keys(gameData.dexData);
+      let seenCount = 0;
+      for (let s of dexKeys) {
+        if (gameData.dexData[s].seenAttr)
+          seenCount++;
+      }
+      return `${seenCount} (${Math.floor((seenCount / dexKeys.length) * 1000) / 10}%)`;
+    }
+  },
+  dexCaught: {
+    label: 'Species Caught',
+    sourceFunc: gameData => {
+      const dexKeys = Object.keys(gameData.dexData);
+      let caughtCount = 0;
+      for (let s of dexKeys) {
+        if (gameData.dexData[s].caughtAttr)
+          caughtCount++;
+      }
+      return `${caughtCount} (${Math.floor((caughtCount / dexKeys.length) * 1000) / 10}%)`;
+    }
+  },
   classicSessionsPlayed: 'Runs (Classic)',
-  sessionsWon: 'Runs (Classic)',
+  sessionsWon: 'Wins (Classic)',
   endlessSessionsPlayed: 'Runs (Endless)?',
   highestEndlessWave: 'Highest Wave (Endless)?',
   highestMoney: 'Highest Money',
