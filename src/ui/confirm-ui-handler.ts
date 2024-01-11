@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import AbstractOptionSelectUiHandler from "./abstact-option-select-ui-handler";
+import AbstractOptionSelectUiHandler, { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { Mode } from "./ui";
 
 export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
@@ -14,17 +14,22 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
     return 48;
   }
 
-  getWindowHeight(): integer {
-    return 48;
-  }
-
-  getOptions(): string[] {
-    return [ 'Yes', 'No' ];
-  }
-
   show(args: any[]): boolean {
     if (args.length >= 2 && args[0] instanceof Function && args[1] instanceof Function) {
-      super.show(args);
+      const config: OptionSelectConfig = {
+        options: [
+          {
+            label: 'Yes',
+            handler: args[0]
+          },
+          {
+            label: 'No',
+            handler: args[1]
+          }
+        ]
+      };
+
+      super.show([ config ]);
       
       this.switchCheck = args.length >= 3 && args[2] as boolean;
 

@@ -21,6 +21,7 @@ import { AES, enc } from "crypto-js";
 import { Mode } from "../ui/ui";
 import { loggedInUser, updateUserInfo } from "../account";
 import { Nature } from "../data/nature";
+import { GameStats } from "./game-stats";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -45,6 +46,7 @@ interface SystemSaveData {
   trainerId: integer;
   secretId: integer;
   dexData: DexData;
+  gameStats: GameStats;
   unlocks: Unlocks;
   achvUnlocks: AchvUnlocks;
   voucherUnlocks: VoucherUnlocks;
@@ -138,6 +140,8 @@ export class GameData {
   public dexData: DexData;
   private defaultDexData: DexData;
 
+  public gameStats: GameStats;
+
   public unlocks: Unlocks;
 
   public achvUnlocks: AchvUnlocks;
@@ -151,6 +155,7 @@ export class GameData {
     this.loadSettings();
     this.trainerId = Utils.randSeedInt(65536);
     this.secretId = Utils.randSeedInt(65536);
+    this.gameStats = new GameStats();
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
       [Unlockables.MINI_BLACK_HOLE]: false,
@@ -174,13 +179,14 @@ export class GameData {
       if (this.scene.quickStart)
         return resolve(true);
 
-      updateUserInfo().then(success => {
+      updateUserInfo().then((success: boolean) => {
         if (!success)
           return resolve(false);
         const data: SystemSaveData = {
           trainerId: this.trainerId,
           secretId: this.secretId,
           dexData: this.dexData,
+          gameStats: this.gameStats,
           unlocks: this.unlocks,
           achvUnlocks: this.achvUnlocks,
           voucherUnlocks: this.voucherUnlocks,
@@ -232,6 +238,9 @@ export class GameData {
 
         this.trainerId = systemData.trainerId;
         this.secretId = systemData.secretId;
+
+        if (systemData.gameStats)
+          this.gameStats = systemData.gameStats;
 
         if (systemData.unlocks) {
           for (let key of Object.keys(systemData.unlocks)) {
@@ -290,7 +299,9 @@ export class GameData {
 
   private parseSystemData(dataStr: string): SystemSaveData {
     return JSON.parse(dataStr, (k: string, v: any) => {
-      if (k === 'eggs') {
+      if (k === 'gameStats')
+        return new GameStats(v);
+      else if (k === 'eggs') {
         const ret: EggData[] = [];
         if (v === null)
           v = [];
@@ -417,6 +428,9 @@ export class GameData {
 
           scene.money = sessionData.money || 0;
           scene.updateMoneyText();
+
+          if (scene.money > this.gameStats.highestMoney)
+            this.gameStats.highestMoney = scene.money;
 
           const battleType = sessionData.battleType || 0;
           const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfigs[sessionData.trainer.trainerType].isDouble : sessionData.enemyParty.length > 1);
@@ -706,8 +720,12 @@ export class GameData {
   setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true): void {
     const dexEntry = this.dexData[pokemon.species.speciesId];
     dexEntry.seenAttr |= pokemon.getDexAttr();
-    if (incrementCount)
+    if (incrementCount) {
       dexEntry.seenCount++;
+      this.gameStats.pokemonSeen++;
+      if (pokemon.isShiny())
+        this.gameStats.shinyPokemonSeen++;
+    }
   }
 
   setPokemonCaught(pokemon: Pokemon, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
@@ -721,10 +739,25 @@ export class GameData {
       dexEntry.caughtAttr |= pokemon.getDexAttr();
       dexEntry.natureAttr |= Math.pow(2, pokemon.nature + 1);
       if (incrementCount) {
-        if (!fromEgg)
+        if (!fromEgg) {
           dexEntry.caughtCount++;
-        else
+          this.gameStats.pokemonCaught++;
+          if (pokemon.species.pseudoLegendary || pokemon.species.legendary)
+            this.gameStats.legendaryPokemonCaught++;
+          else if (pokemon.species.mythical)
+            this.gameStats.mythicalPokemonCaught++;
+          if (pokemon.isShiny())
+            this.gameStats.shinyPokemonCaught++;
+        } else {
           dexEntry.hatchedCount++;
+          this.gameStats.pokemonHatched++;
+          if (pokemon.species.pseudoLegendary || pokemon.species.legendary)
+            this.gameStats.legendaryPokemonHatched++;
+          else if (pokemon.species.mythical)
+            this.gameStats.mythicalPokemonHatched++;
+          if (pokemon.isShiny())
+            this.gameStats.shinyPokemonHatched++;
+        }
       }
 
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);

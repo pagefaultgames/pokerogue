@@ -4,12 +4,24 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./window";
 
-export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
-  protected handlers: Function[];
+export interface OptionSelectConfig {
+  xOffset?: number;
+  options: OptionSelectItem[];
+}
 
+export interface OptionSelectItem {
+  label: string;
+  handler: Function;
+  keepOpen?: boolean;
+  overrideSound?: boolean;
+}
+
+export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected optionSelectContainer: Phaser.GameObjects.Container;
   protected optionSelectBg: Phaser.GameObjects.NineSlice;
   protected optionSelectText: Phaser.GameObjects.Text;
+
+  protected config: OptionSelectConfig;
 
   private cursorObj: Phaser.GameObjects.Image;
 
@@ -19,9 +31,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
   abstract getWindowWidth(): integer;
 
-  abstract getWindowHeight(): integer;
-
-  abstract getOptions(): string[];
+  getWindowHeight(): integer {
+    return ((this.config?.options || []).length + 1) * 16;
+  }
 
   setup() {
     const ui = this.getUi();
@@ -34,19 +46,19 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.optionSelectBg.setOrigin(1, 1);
     this.optionSelectContainer.add(this.optionSelectBg);
 
-    this.setupOptions();
     this.setCursor(0);
   }
 
   protected setupOptions() {
-    const options = this.getOptions();
+    const options = this.config?.options || [];
 
     if (this.optionSelectText)
       this.optionSelectText.destroy();
 
-    this.optionSelectText = addTextObject(this.scene, 0, 0, options.join('\n'), TextStyle.WINDOW, { maxLines: options.length });
+    this.optionSelectText = addTextObject(this.scene, 0, 0, options.map(o => o.label).join('\n'), TextStyle.WINDOW, { maxLines: options.length });
     this.optionSelectText.setLineSpacing(12);
     this.optionSelectContainer.add(this.optionSelectText);
+    this.optionSelectContainer.x = (this.scene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0);
 
     this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
     this.optionSelectBg.height = this.getWindowHeight();
@@ -55,20 +67,20 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   }
 
   show(args: any[]): boolean {
-    const options = this.getOptions();
+    if (!args.length || !args[0].hasOwnProperty('options') || !args[0].options.length)
+      return false;
 
-    if (args.length >= options.length && args.slice(0, options.length).filter(a => a instanceof Function).length === options.length) {
-      super.show(args);
-      
-      this.handlers = args.slice(0, options.length) as Function[];
+    super.show(args);
 
-      this.optionSelectContainer.setVisible(true);
-      this.setCursor(0);
+    this.config = args[0] as OptionSelectConfig;
+    this.setupOptions();
 
-      return true;
-    }
+    this.scene.ui.bringToTop(this.optionSelectContainer);
 
-    return false;
+    this.optionSelectContainer.setVisible(true);
+    this.setCursor(0);
+
+    return true;
   }
 
   processInput(button: Button): boolean {
@@ -76,15 +88,19 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     let success = false;
 
-    const options = this.getOptions();
+    const options = this.config?.options || [];
+
+    let playSound = true;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
       success = true;
       if (button === Button.CANCEL)
         this.setCursor(options.length - 1);
-      const handler = this.handlers[this.cursor];
-      handler();
-      this.clear();
+      const option = options[this.cursor];
+      option.handler();
+      if (!option.keepOpen)
+        this.clear();
+      playSound = !option.overrideSound;
     } else {
       switch (button) {
         case Button.UP:
@@ -98,7 +114,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       }
     }
 
-    if (success)
+    if (success && playSound)
       ui.playSelect();
 
     return success;
@@ -119,8 +135,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
   clear() {
     super.clear();
-    for (let h = 0; h < this.handlers.length; h++)
-      this.handlers[h] = null;
+    this.config = null;
     this.optionSelectContainer.setVisible(false);
     this.eraseCursor();
   }

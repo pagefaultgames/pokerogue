@@ -39,7 +39,6 @@ import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
 import { GameDataType } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./anims";
-import { getPokemonSpecies } from "./data/pokemon-species";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger } from "./data/pokemon-forms";
 
 export class LoginPhase extends BattlePhase {
@@ -244,6 +243,10 @@ export class SelectStarterPhase extends BattlePhase {
         this.scene.ui.setMode(Mode.MESSAGE).then(() => {
           SoundFade.fadeOut(this.scene, this.scene.sound.get('menu'), 500, true);
           this.scene.time.delayedCall(500, () => this.scene.playBgm());
+          if (this.scene.gameMode === GameMode.CLASSIC)
+            this.scene.gameData.gameStats.classicSessionsPlayed++;
+          else
+            this.scene.gameData.gameStats.endlessSessionsPlayed++;
           this.scene.newBattle();
           this.end();
         });
@@ -1550,6 +1553,12 @@ export class BattleEndPhase extends BattlePhase {
   start() {
     super.start();
 
+    this.scene.gameData.gameStats.battles++;
+    if (this.scene.currentBattle.trainer)
+      this.scene.gameData.gameStats.trainersDefeated++;
+    if (this.scene.gameMode === GameMode.ENDLESS && this.scene.currentBattle.waveIndex + 1 > this.scene.gameData.gameStats.highestEndlessWave)
+			this.scene.gameData.gameStats.highestEndlessWave = this.scene.currentBattle.waveIndex + 1;
+
     for (let pokemon of this.scene.getField()) {
       if (pokemon)
         pokemon.resetBattleSummonData();
@@ -2418,6 +2427,8 @@ export class VictoryPhase extends PokemonPhase {
   start() {
     super.start();
 
+    this.scene.gameData.gameStats.pokemonDefeated++;
+
     const participantIds = this.scene.currentBattle.playerParticipantIds;
     const party = this.scene.getParty();
     const expShareModifier = this.scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
@@ -2627,8 +2638,11 @@ export class GameOverPhase extends BattlePhase {
 
     this.scene.gameData.clearSession().then(() => {
       this.scene.time.delayedCall(1000, () => {
-        if (this.victory)
+        if (this.victory) {
           this.scene.validateAchv(achvs.CLASSIC_VICTORY);
+          this.scene.gameData.gameStats.sessionsWon++;
+        }
+        this.scene.gameData.saveSystem();
         const fadeDuration = this.victory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
         this.scene.ui.fadeOut(fadeDuration).then(() => {
@@ -2800,6 +2814,9 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
 
   start() {
     super.start();
+
+    if (this.level > this.scene.gameData.gameStats.highestLevel)
+      this.scene.gameData.gameStats.highestLevel = this.level;
 
     this.scene.validateAchvs(LevelAchv, new Utils.IntegerHolder(this.level));
 

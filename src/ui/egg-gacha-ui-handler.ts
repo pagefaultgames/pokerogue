@@ -346,10 +346,25 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       for (let tier of tiers) {
         const egg = new Egg(Utils.randInt(EGG_SEED, EGG_SEED * tier), this.gachaCursor, getEggTierDefaultHatchWaves(tier), timestamp);
-        if (egg.isManaphyEgg())
+        if (egg.isManaphyEgg()) {
+          this.scene.gameData.gameStats.manaphyEggsPulled++;
           egg.hatchWaves = getEggTierDefaultHatchWaves(ModifierTier.ULTRA);
+        } else {
+          switch (tier) {
+            case ModifierTier.GREAT:
+              this.scene.gameData.gameStats.rareEggsPulled++;
+              break;
+            case ModifierTier.ULTRA:
+              this.scene.gameData.gameStats.epicEggsPulled++;
+              break;
+            case ModifierTier.MASTER:
+              this.scene.gameData.gameStats.legendaryEggsPulled++;
+              break;
+          }
+        }
         eggs.push(egg);
         this.scene.gameData.eggs.push(egg);
+        this.scene.gameData.gameStats.eggsPulled++;
       }
 
       this.scene.gameData.saveSystem().then(success => {

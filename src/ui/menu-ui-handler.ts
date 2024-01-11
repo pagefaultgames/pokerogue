@@ -5,17 +5,16 @@ import * as Utils from "../utils";
 import { addWindow } from "./window";
 import MessageUiHandler from "./message-ui-handler";
 import { GameDataType } from "../system/game-data";
+import { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 
 export enum MenuOptions {
   GAME_SETTINGS,
   ACHIEVEMENTS,
+  STATS,
   VOUCHERS,
   EGG_LIST,
   EGG_GACHA,
-  IMPORT_SESSION,
-  EXPORT_SESSION,
-  IMPORT_DATA,
-  EXPORT_DATA,
+  MANAGE_DATA,
   LOG_OUT
 }
 
@@ -31,12 +30,14 @@ export default class MenuUiHandler extends MessageUiHandler {
   protected ignoredMenuOptions: MenuOptions[];
   protected menuOptions: MenuOptions[];
 
+  protected manageDataConfig: OptionSelectConfig;
+
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
-    this.ignoredMenuOptions = /*!bypassLogin */ false
-      ? [ MenuOptions.IMPORT_SESSION, MenuOptions.IMPORT_DATA ]
-      : [];
+    this.ignoredMenuOptions = !bypassLogin
+      ? [ ]
+      : [ MenuOptions.LOG_OUT ];
     this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => this.ignoredMenuOptions.indexOf(m) === -1);
   }
 
@@ -76,6 +77,44 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.menuContainer.add(this.menuMessageBoxContainer);
 
+    const manageDataOptions = [];
+
+    if (bypassLogin) {
+      manageDataOptions.push({
+        label: 'Import Session',
+        handler: () => this.scene.gameData.importData(GameDataType.SESSION),
+        keepOpen: true
+      });
+    }
+    manageDataOptions.push({
+      label: 'Export Session',
+      handler: () => this.scene.gameData.exportData(GameDataType.SESSION),
+      keepOpen: true
+    });
+    if (bypassLogin) {
+      manageDataOptions.push({
+        label: 'Import Data',
+        handler: () => this.scene.gameData.importData(GameDataType.SYSTEM),
+        keepOpen: true
+      });
+    }
+    manageDataOptions.push(
+      {
+        label: 'Export Data',
+        handler: () => this.scene.gameData.exportData(GameDataType.SYSTEM),
+        keepOpen: true
+      },
+      {
+        label: 'Cancel',
+        handler: () => this.scene.ui.revertMode()
+      }
+    );
+
+    this.manageDataConfig = {
+      xOffset: 98,
+      options: manageDataOptions
+    };
+
     this.setCursor(0);
 
     this.menuContainer.setVisible(false);
@@ -112,38 +151,36 @@ export default class MenuUiHandler extends MessageUiHandler {
       }
       switch (adjustedCursor) {
         case MenuOptions.GAME_SETTINGS:
-          this.scene.ui.setOverlayMode(Mode.SETTINGS);
+          ui.setOverlayMode(Mode.SETTINGS);
           success = true;
           break;
         case MenuOptions.ACHIEVEMENTS:
-          this.scene.ui.setOverlayMode(Mode.ACHIEVEMENTS);
+          ui.setOverlayMode(Mode.ACHIEVEMENTS);
+          success = true;
+          break;
+        case MenuOptions.STATS:
+          ui.setOverlayMode(Mode.GAME_STATS);
           success = true;
           break;
         case MenuOptions.VOUCHERS:
-          this.scene.ui.setOverlayMode(Mode.VOUCHERS);
+          ui.setOverlayMode(Mode.VOUCHERS);
           success = true;
           break;
         case MenuOptions.EGG_LIST:
           if (this.scene.gameData.eggs.length) {
-            this.scene.ui.revertMode();
-            this.scene.ui.setOverlayMode(Mode.EGG_LIST);
+            ui.revertMode();
+            ui.setOverlayMode(Mode.EGG_LIST);
             success = true;
           } else
             error = true;
           break;
         case MenuOptions.EGG_GACHA:
-          this.scene.ui.revertMode();
-          this.scene.ui.setOverlayMode(Mode.EGG_GACHA);
+          ui.revertMode();
+          ui.setOverlayMode(Mode.EGG_GACHA);
           success = true;
           break;
-        case MenuOptions.IMPORT_SESSION:
-        case MenuOptions.IMPORT_DATA:
-          this.scene.gameData.importData(this.cursor === MenuOptions.IMPORT_DATA ? GameDataType.SYSTEM : GameDataType.SESSION);
-          success = true;
-          break;
-        case MenuOptions.EXPORT_SESSION:
-        case MenuOptions.EXPORT_DATA:
-          this.scene.gameData.exportData(this.cursor === MenuOptions.EXPORT_DATA ? GameDataType.SYSTEM : GameDataType.SESSION);
+        case MenuOptions.MANAGE_DATA:
+          ui.setOverlayMode(Mode.OPTION_SELECT, this.manageDataConfig);
           success = true;
           break;
         case MenuOptions.LOG_OUT:
@@ -157,10 +194,10 @@ export default class MenuUiHandler extends MessageUiHandler {
             });
           };
           if (this.scene.currentBattle) {
-            this.scene.ui.showText('You will lose any progress since the beginning of the battle. Proceed?', null, () => {
-              this.scene.ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
-                this.scene.ui.revertMode();
-                this.scene.ui.showText(null, 0);
+            ui.showText('You will lose any progress since the beginning of the battle. Proceed?', null, () => {
+              ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
+                ui.revertMode();
+                ui.showText(null, 0);
               }, false, 98);
             });
           } else
@@ -169,7 +206,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       }
     } else if (button === Button.CANCEL) {
       success = true;
-      if (!this.scene.ui.revertMode())
+      if (!ui.revertMode())
         ui.setMode(Mode.MESSAGE);
     } else {
       switch (button) {

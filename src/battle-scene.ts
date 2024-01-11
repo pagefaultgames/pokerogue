@@ -402,6 +402,15 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.gameData = new GameData(this);
 
+		this.time.addEvent({
+			delay: Utils.fixedInt(1000),
+			repeat: -1,
+    	callback: () => {
+				if (this.gameData)
+					this.gameData.gameStats.playTime++;
+			}
+		})
+
 		this.setupControls();
 
 		this.load.setBaseURL();

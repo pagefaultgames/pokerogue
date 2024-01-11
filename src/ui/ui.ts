@@ -29,6 +29,7 @@ import LoginFormUiHandler from './login-form-ui-handler';
 import RegistrationFormUiHandler from './registration-form-ui-handler';
 import LoadingModalUiHandler from './loading-modal-ui-handler';
 import * as Utils from "../utils";
+import GameStatsUiHandler from './game-stats-ui-handler';
 
 export enum Mode {
   MESSAGE,
@@ -49,6 +50,7 @@ export enum Mode {
   MENU,
   SETTINGS,
   ACHIEVEMENTS,
+  GAME_STATS,
   VOUCHERS,
   EGG_LIST,
   EGG_GACHA,
@@ -74,6 +76,7 @@ const noTransitionModes = [
   Mode.MENU,
   Mode.SETTINGS,
   Mode.ACHIEVEMENTS,
+  Mode.GAME_STATS,
   Mode.VOUCHERS,
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
@@ -118,6 +121,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new MenuUiHandler(scene),
       new SettingsUiHandler(scene),
       new AchvsUiHandler(scene),
+      new GameStatsUiHandler(scene),
       new VouchersUiHandler(scene),
       new EggListUiHandler(scene),
       new EggGachaUiHandler(scene),

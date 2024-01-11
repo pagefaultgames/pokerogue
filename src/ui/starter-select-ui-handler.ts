@@ -419,38 +419,50 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (!this.speciesStarterDexEntry?.caughtAttr)
           error = true;
         else if (this.starterCursors.length < 6) {
-          ui.setModeWithoutClear(Mode.OPTION_SELECT, 'Add to Party', () => {
-            ui.setMode(Mode.STARTER_SELECT);
-            let isDupe = false;
-            for (let s = 0; s < this.starterCursors.length; s++) {
-              if (this.starterGens[s] === this.getGenCursorWithScroll() && this.starterCursors[s] === this.cursor) {
-                isDupe = true;
-                break;
+          ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+            options: [
+              {
+                label: 'Add to Party',
+                handler: () => {
+                  ui.setMode(Mode.STARTER_SELECT);
+                  let isDupe = false;
+                  for (let s = 0; s < this.starterCursors.length; s++) {
+                    if (this.starterGens[s] === this.getGenCursorWithScroll() && this.starterCursors[s] === this.cursor) {
+                      isDupe = true;
+                      break;
+                    }
+                  }
+                  const species = this.genSpecies[this.getGenCursorWithScroll()][this.cursor];
+                  if (!isDupe && this.tryUpdateValue(speciesStarterValues[species.speciesId])) {
+                    const cursorObj = this.starterCursorObjs[this.starterCursors.length];
+                    cursorObj.setVisible(true);
+                    cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
+                    const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
+                    this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex));
+                    this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny));
+                    this.starterGens.push(this.getGenCursorWithScroll());
+                    this.starterCursors.push(this.cursor);
+                    this.starterAttr.push(this.dexAttrCursor);
+                    this.starterNatures.push(this.natureCursor as unknown as Nature);
+                    if (this.speciesLoaded.get(species.speciesId))
+                      species.cry(this.scene);
+                    if (this.starterCursors.length === 6 || this.value === 10)
+                      this.tryStart();
+                    this.updateInstructions();
+                    ui.playSelect();
+                  } else
+                    ui.playError();
+                },
+                overrideSound: true
+              },
+              {
+                label: 'Toggle IVs',
+                handler: () => {
+                  this.toggleStatsMode();
+                  ui.setMode(Mode.STARTER_SELECT);
+                }
               }
-            }
-            const species = this.genSpecies[this.getGenCursorWithScroll()][this.cursor];
-            if (!isDupe && this.tryUpdateValue(speciesStarterValues[species.speciesId])) {
-              const cursorObj = this.starterCursorObjs[this.starterCursors.length];
-              cursorObj.setVisible(true);
-              cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
-              const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
-              this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex));
-              this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny));
-              this.starterGens.push(this.getGenCursorWithScroll());
-              this.starterCursors.push(this.cursor);
-              this.starterAttr.push(this.dexAttrCursor);
-              this.starterNatures.push(this.natureCursor as unknown as Nature);
-              if (this.speciesLoaded.get(species.speciesId))
-                species.cry(this.scene);
-              if (this.starterCursors.length === 6 || this.value === 10)
-                this.tryStart();
-              this.updateInstructions();
-              ui.playSelect();
-            } else
-              ui.playError();
-          }, 'Toggle IVs', () => {
-            this.toggleStatsMode();
-            ui.setMode(Mode.STARTER_SELECT);
+            ]
           });
           success = true;
         }
