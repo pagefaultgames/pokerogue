@@ -189,6 +189,8 @@ export default class SummaryUiHandler extends UiHandler {
     this.pokemon = args[0] as PlayerPokemon;
     this.summaryUiMode = args.length > 1 ? args[1] as SummaryUiMode : SummaryUiMode.DEFAULT;
 
+    this.scene.ui.bringToTop(this.summaryContainer);
+
     this.summaryContainer.setVisible(true);
     this.cursor = -1;
 
