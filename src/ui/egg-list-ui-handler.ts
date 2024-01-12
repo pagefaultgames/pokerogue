@@ -91,6 +91,8 @@ export default class EggListUiHandler extends MessageUiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
+    this.getUi().bringToTop(this.eggListContainer);
+
     this.eggListContainer.setVisible(true);
 
     let e = 0;

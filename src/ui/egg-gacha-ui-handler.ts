@@ -231,6 +231,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     this.updateVoucherCounts();
 
+    this.getUi().bringToTop(this.eggGachaContainer);
+
     this.eggGachaContainer.setVisible(true);
 
     return true;
