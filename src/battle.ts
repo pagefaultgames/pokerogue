@@ -223,15 +223,15 @@ export const fixedBattles: FixedBattleConfigs = {
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_4, true)),
     [145]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_5, true)),
-    [186]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
+    [182]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, [ TrainerType.HALA, TrainerType.MOLAYNE ]/*, TrainerType.RIKA, TrainerType.CRISPIN*/ ])),
-    [187]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(186)
+    [184]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(182)
         .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.BRUNO, TrainerType.KOGA, TrainerType.PHOEBE, TrainerType.BERTHA, TrainerType.MARSHAL, TrainerType.SIEBOLD, TrainerType.OLIVIA/*, TrainerType.POPPY, TrainerType.AMARYS*/ ])),
-    [188]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(186)
+    [186]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(182)
         .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.AGATHA, TrainerType.BRUNO, TrainerType.GLACIA, TrainerType.FLINT, TrainerType.GRIMSLEY, TrainerType.WIKSTROM, TrainerType.ACEROLA/*, TrainerType.LARRY_ELITE, TrainerType.LACEY*/ ])),
-    [189]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(186)
+    [188]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(182)
         .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.LANCE, TrainerType.KAREN, TrainerType.DRAKE, TrainerType.LUCIAN, TrainerType.CAITLIN, TrainerType.DRASNA, TrainerType.KAHILI/*, TrainerType.HASSEL, TrainerType.DRAYTON*/ ])),
-    [190]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(186)
+    [190]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(182)
         .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.BLUE, TrainerType.RED, TrainerType.LANCE_CHAMPION, TrainerType.STEVEN, TrainerType.WALLACE, TrainerType.CYNTHIA, TrainerType.ALDER, TrainerType.IRIS, TrainerType.DIANTHA, TrainerType.LEON/*, TrainerType.GEETA, TrainerType.NEMONA, TrainerType.KIERAN*/ ])),
     [195]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_6, true))
