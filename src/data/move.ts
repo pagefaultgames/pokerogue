@@ -4614,7 +4614,8 @@ export function initMoves() {
     /* Unused */
     new AttackMove(Moves.TEN_MILLION_VOLT_THUNDERBOLT, "10,000,000 Volt Thunderbolt (N)", Type.ELECTRIC, MoveCategory.SPECIAL, 195, -1, 1, -1, "The user, Pikachu wearing a cap, powers up a jolt of electricity using its Z-Power and unleashes it. Critical hits land more easily.", -1, 0, 7),
     /* End Unused */
-    new AttackMove(Moves.MIND_BLOWN, "Mind Blown (N)", Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, -1, "The user attacks everything around it by causing its own head to explode. This also damages the user.", -1, 0, 7)
+    new AttackMove(Moves.MIND_BLOWN, "Mind Blown", Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, -1, "The user attacks everything around it by causing its own head to explode. This also damages the user.", -1, 0, 7)
+      .attr(RecoilAttr, true, 0.5)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.PLASMA_FISTS, "Plasma Fists (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 15, -1, "The user attacks with electrically charged fists. This move changes Normal-type moves to Electric-type moves.", -1, 0, 7)
       .punchingMove(),
