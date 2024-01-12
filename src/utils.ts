@@ -88,6 +88,17 @@ export function getCurrentTime(): number {
   return (((date.getHours() * 60 + date.getMinutes()) / 1440) + 0.675) % 1;
 }
 
+const secondsInHour = 3600;
+
+export function getPlayTimeString(totalSeconds: integer): string {
+  const days = `${Math.floor(totalSeconds / (secondsInHour * 24))}`;
+  const hours = `${Math.floor(totalSeconds % (secondsInHour * 24) / secondsInHour)}`;
+  const minutes = `${Math.floor(totalSeconds % secondsInHour / 60)}`;
+  const seconds = `${Math.floor(totalSeconds % 60)}`;
+
+  return `${days.padStart(2, '0')}:${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
+}
+
 export function binToDec(input: string): integer {
   let place: integer[] = []; 
   let binary: string[] = [];

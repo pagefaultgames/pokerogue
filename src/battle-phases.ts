@@ -363,9 +363,8 @@ export class EncounterPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.updateWaveCountText();
-    this.scene.updateMoneyText();
-
+    this.scene.initSession();
+    
     const loadEnemyAssets = [];
 
     const battle = this.scene.currentBattle;

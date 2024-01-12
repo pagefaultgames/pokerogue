@@ -84,6 +84,7 @@ export default class BattleScene extends Phaser.Scene {
 	public rexUI: UIPlugin;
 
 	public auto: boolean;
+	public sessionPlayTime: integer = null;
 	public masterVolume: number = 0.5;
 	public bgmVolume: number = 1;
 	public seVolume: number = 1;
@@ -141,6 +142,7 @@ export default class BattleScene extends Phaser.Scene {
 	private bgm: AnySound;
 	private bgmResumeTimer: Phaser.Time.TimerEvent;
 	private bgmCache: Set<string> = new Set();
+	private playTimeTimer: Phaser.Time.TimerEvent;
 	
 	private buttonKeys: Phaser.Input.Keyboard.Key[][];
 
@@ -402,15 +404,6 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.gameData = new GameData(this);
 
-		this.time.addEvent({
-			delay: Utils.fixedInt(1000),
-			repeat: -1,
-    	callback: () => {
-				if (this.gameData)
-					this.gameData.gameStats.playTime++;
-			}
-		})
-
 		this.setupControls();
 
 		this.load.setBaseURL();
@@ -576,6 +569,27 @@ export default class BattleScene extends Phaser.Scene {
 
 			this.shiftPhase();
 		});
+	}
+
+	initSession(): void {
+		this.sessionPlayTime = 0;
+
+		if (this.playTimeTimer)
+			this.playTimeTimer.destroy();
+
+		this.playTimeTimer = this.time.addEvent({
+			delay: Utils.fixedInt(1000),
+			repeat: -1,
+    	callback: () => {
+				if (this.gameData)
+					this.gameData.gameStats.playTime++;
+				if (this.sessionPlayTime !== null)
+					this.sessionPlayTime++;
+			}
+		});
+
+		this.updateWaveCountText();
+		this.updateMoneyText();
 	}
 
 	setupControls() {

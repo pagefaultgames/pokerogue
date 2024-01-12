@@ -1,5 +1,4 @@
 import BattleScene, { Button } from "../battle-scene";
-import { GameStats } from "../system/game-stats";
 import { TextStyle, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
@@ -18,20 +17,9 @@ interface DisplayStats {
   [key: string]: DisplayStat | string
 }
 
-const secondsInHour = 3600;
-
 const displayStats: DisplayStats = {
   playTime: {
-    sourceFunc: gameData => {
-      const totalSeconds = gameData.gameStats.playTime;
-
-      const days = `${Math.floor(totalSeconds / (secondsInHour * 24))}`;
-      const hours = `${Math.floor(totalSeconds % (secondsInHour * 24) / secondsInHour)}`;
-      const minutes = `${Math.floor(totalSeconds % secondsInHour / 60)}`;
-      const seconds = `${Math.floor(totalSeconds % 60)}`;
-    
-      return `${days.padStart(2, '0')}:${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
-    }
+    sourceFunc: gameData => Utils.getPlayTimeString(gameData.gameStats.playTime)
   },
   battles: 'Total Battles',
   startersUnlocked: {

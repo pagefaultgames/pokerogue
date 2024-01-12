@@ -58,6 +58,7 @@ interface SystemSaveData {
 
 interface SessionSaveData {
   seed: string;
+  playTime: integer;
   gameMode: GameMode;
   party: PokemonData[];
   enemyParty: PokemonData[];
@@ -360,6 +361,7 @@ export class GameData {
 
         const sessionData = {
           seed: scene.seed,
+          playTime: scene.sessionPlayTime,
           gameMode: scene.gameMode,
           party: scene.getParty().map(p => new PokemonData(p)),
           enemyParty: scene.getEnemyParty().map(p => new PokemonData(p)),
@@ -407,6 +409,8 @@ export class GameData {
 
           scene.seed = sessionData.seed || scene.game.config.seed[0];
           scene.resetSeed();
+
+          scene.sessionPlayTime = sessionData.playTime || 0;
 
           scene.gameMode = sessionData.gameMode || GameMode.CLASSIC;
 
