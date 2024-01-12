@@ -1525,7 +1525,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CROBAT, 1, null, new SpeciesFriendshipEvolutionCondition(110), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.CHANSEY]: [
-    new SpeciesEvolution(Species.BLISSEY, 1, null, new SpeciesFriendshipEvolutionCondition(90), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(Species.BLISSEY, 1, null, new SpeciesFriendshipEvolutionCondition(200), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.MUNCHLAX]: [
     new SpeciesEvolution(Species.SNORLAX, 1, null, new SpeciesFriendshipEvolutionCondition(90), SpeciesWildEvolutionDelay.MEDIUM)
@@ -1546,7 +1546,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.LOPUNNY, 1, null, new SpeciesFriendshipEvolutionCondition(90), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.HAPPINY]: [
-    new SpeciesEvolution(Species.CHANSEY, 1, null, new SpeciesFriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(Species.CHANSEY, 1, null, new SpeciesFriendshipEvolutionCondition(160), SpeciesWildEvolutionDelay.SHORT)
   ],
   [Species.RIOLU]: [
     new SpeciesEvolution(Species.LUCARIO, 1, null, new SpeciesFriendshipEvolutionCondition(90, p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), SpeciesWildEvolutionDelay.MEDIUM)
