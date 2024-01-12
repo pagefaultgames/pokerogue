@@ -4467,7 +4467,7 @@ export function initMoves() {
     new AttackMove(Moves.PRECIPICE_BLADES, "Precipice Blades", Type.GROUND, MoveCategory.PHYSICAL, 120, 85, 10, -1, "The user attacks opposing Pokémon by manifesting the power of the land in fearsome blades of stone.", -1, 0, 6)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.DRAGON_ASCENT, "Dragon Ascent", Type.FLYING, MoveCategory.PHYSICAL, 120, 100, 5, -1, "After soaring upward, the user attacks its target by dropping out of the sky at high speeds. But it lowers its own Defense and Sp. Def stats in the process.", 100, 0, 6)
-      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1),
+      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true),
     new AttackMove(Moves.HYPERSPACE_FURY, "Hyperspace Fury", Type.DARK, MoveCategory.PHYSICAL, 100, -1, 5, -1, "Using its many arms, the user unleashes a barrage of attacks that ignore the effects of moves like Protect and Detect. But the user's Defense stat falls.", 100, 0, 6)
       .attr(StatChangeAttr, BattleStat.DEF, -1, true)
       .ignoresProtect(),
