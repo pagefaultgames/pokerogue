@@ -114,7 +114,6 @@ export class FormChangePhase extends EvolutionPhase {
                                         this.pokemon.cry();
                                         this.scene.time.delayedCall(1250, () => {
                                           const isMega = this.formChange.formKey.indexOf(SpeciesFormKey.MEGA) > -1;
-                                          const isRevert = !isMega && this.formChange.formKey === this.pokemon.species.forms[0].formKey;
                                           let playEvolutionFanfare = false;
                                           if (isMega) {
                                             this.scene.validateAchv(achvs.MEGA_EVOLVE);
@@ -179,7 +178,7 @@ export class QuietFormChangePhase extends BattlePhase {
 
     if (this.pokemon.formIndex === this.pokemon.species.forms.findIndex(f => f.formKey === this.formChange.formKey))
       return this.end();
-    
+
     const preName = this.pokemon.name;
     this.pokemon.changeForm(this.formChange).then(() => {
       this.scene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), Utils.fixedInt(1500));

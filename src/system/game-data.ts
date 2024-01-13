@@ -62,7 +62,6 @@ interface SessionSaveData {
   gameMode: GameMode;
   party: PokemonData[];
   enemyParty: PokemonData[];
-  enemyField: PokemonData[];
   modifiers: PersistentModifierData[];
   enemyModifiers: PersistentModifierData[];
   arena: ArenaData;
@@ -524,7 +523,7 @@ export class GameData {
         const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
       }*/
 
-      if (k === 'party' || k === 'enemyParty' || k === 'enemyField') {
+      if (k === 'party' || k === 'enemyParty') {
         const ret: PokemonData[] = [];
         if (v === null)
           v = [];

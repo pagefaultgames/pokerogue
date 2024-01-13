@@ -784,7 +784,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const filter = !forStarter ? this.species.getCompatibleFusionSpeciesFilter()
     : species => {
-      return (pokemonEvolutions.hasOwnProperty(species.speciesId) && pokemonEvolutions[species.speciesId].find(e => !e.evoFormKey || e.evoFormKey.indexOf(SpeciesFormKey.MEGA) === -1))
+      return pokemonEvolutions.hasOwnProperty(species.speciesId)
       && !pokemonPrevolutions.hasOwnProperty(species.speciesId)
       && !species.pseudoLegendary
       && !species.legendary

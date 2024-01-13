@@ -588,7 +588,7 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
 
       const formChangeItemPool = party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
         const formChanges = pokemonFormChanges[p.species.speciesId];
-        return formChanges.filter(fc => fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 || party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length)
+        return formChanges.filter(fc => (fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) || party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length)
           .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger).filter(t => t && t.active);
       }).flat().flatMap(fc => fc.item);
 
