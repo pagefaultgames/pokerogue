@@ -122,7 +122,7 @@ export default class FightUiHandler extends UiHandler {
       const pokemonMove = moveset[cursor];
       this.typeIcon.setTexture('types', Type[pokemonMove.getMove().type].toLowerCase());
 
-      const maxPP = pokemonMove.getMove().pp + pokemonMove.ppUp;
+      const maxPP = pokemonMove.getMovePp();
       const pp = maxPP - pokemonMove.ppUsed;
 
       this.ppText.setText(`${Utils.padInt(pp, 2, '  ')}/${Utils.padInt(maxPP, 2, '  ')}`);
