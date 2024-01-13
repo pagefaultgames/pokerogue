@@ -924,6 +924,24 @@ export class PokemonAllMovePpRestoreModifier extends ConsumablePokemonModifier {
   }
 }
 
+export class PokemonPpUpModifier extends ConsumablePokemonMoveModifier {
+  private upPoints: integer;
+
+  constructor(type: ModifierType, pokemonId: integer, moveIndex: integer, upPoints: integer) {
+    super(type, pokemonId, moveIndex);
+
+    this.upPoints = upPoints;
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+    const move = pokemon.getMoveset()[this.moveIndex];
+    move.ppUp = Math.min(move.ppUp + this.upPoints, move.ppUp + 3);
+
+    return true;
+  }
+}
+
 export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
   constructor(type: ModifierType, pokemonId: integer) {
     super(type, pokemonId);

@@ -2426,15 +2426,19 @@ export class PokemonMove {
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
     if (this.moveId && pokemon.summonData?.disabledMove === this.moveId)
       return false;
-    return ignorePp || this.ppUsed < this.getMove().pp + this.ppUp || this.getMove().pp === -1;
+    return ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1;
   }
 
   getMove(): Move {
     return allMoves[this.moveId];
   }
 
+  getMovePp(): integer {
+    return this.getMove().pp + this.ppUp * Math.max(Math.floor(this.getMove().pp / 5), 1);
+  }
+
   getPpRatio(): number {
-    return 1 - (this.ppUsed / (this.getMove().pp + this.ppUp));
+    return 1 - (this.ppUsed / this.getMovePp());
   }
 
   getName(): string {

@@ -203,7 +203,7 @@ export class PokemonPpRestoreModifierType extends PokemonMoveModifierType {
       return null;
     }, iconImage, 'ether');
 
-    this.restorePoints = this.restorePoints;
+    this.restorePoints = restorePoints;
   }
 }
 
@@ -218,7 +218,24 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
         return null;
       }, iconImage, 'elixir');
 
-    this.restorePoints = this.restorePoints;
+    this.restorePoints = restorePoints;
+  }
+}
+
+export class PokemonPpUpModifierType extends PokemonMoveModifierType {
+  protected upPoints: integer;
+
+  constructor(name: string, upPoints: integer, iconImage?: string) {
+    super(name, `Permanently increase PP for one Pokémon move by ${upPoints} for every 5 maximum PP (maximum 3)`, (_type, args) => new Modifiers.PokemonPpUpModifier(this, (args[0] as PlayerPokemon).id, (args[1] as integer), this.upPoints),
+      (_pokemon: PlayerPokemon) => {
+      return null;
+    }, (pokemonMove: PokemonMove) => {
+      if (pokemonMove.getMove().pp < 5 || pokemonMove.ppUp >= 3)
+        return PartyUiHandler.NoEffectMessage;
+      return null;
+    }, iconImage, 'ppUp');
+
+    this.upPoints = upPoints;
   }
 }
 
@@ -662,6 +679,9 @@ export const modifierTypes = {
   ELIXIR: () => new PokemonAllMovePpRestoreModifierType('Elixir', 10),
   MAX_ELIXIR: () => new PokemonAllMovePpRestoreModifierType('Max Elixir', -1),
 
+  PP_UP: () => new PokemonPpUpModifierType('PP Up', 1),
+  PP_MAX: () => new PokemonPpUpModifierType('PP Max', 3),
+
   LURE: () => new DoubleBattleChanceBoosterModifierType('Lure', 5),
   SUPER_LURE: () => new DoubleBattleChanceBoosterModifierType('Super Lure', 10),
   MAX_LURE: () => new DoubleBattleChanceBoosterModifierType('Max Lure', 25),
@@ -854,6 +874,8 @@ const modifierPool = {
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 8),
     new WeightedModifierType(modifierTypes.MAX_LURE, 4),
+    new WeightedModifierType(modifierTypes.PP_UP, 6),
+    new WeightedModifierType(modifierTypes.PP_MAX, 2),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 5),
     new WeightedModifierType(modifierTypes.MEMORY_MUSHROOM, (party: Pokemon[]) => party.filter(p => p.getLearnableLevelMoves().length).length ? 4 : 0),
