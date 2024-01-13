@@ -1,7 +1,8 @@
 import BattleScene, { bypassLogin, startingLevel, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./pokemon";
 import * as Utils from './utils';
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, Moves, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr } from "./data/move";
+import { Moves } from "./data/enums/moves";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -15,10 +16,13 @@ import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import { EvolutionPhase } from "./evolution-phase";
 import { BattlePhase } from "./battle-phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
-import { Biome, biomeDepths, biomeLinks } from "./data/biome";
-import { FusePokemonModifierType, ModifierPoolType, ModifierTier, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, RememberMoveModifierType, TmModifierType, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { biomeDepths, biomeLinks } from "./data/biomes";
+import { Biome } from "./data/enums/biome";
+import { ModifierTier } from "./modifier/modifier-tier";
+import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, RememberMoveModifierType, TmModifierType, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, BattlerTagType, EncoreTag, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tag";
+import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tags";
+import { BattlerTagType } from "./data/enums/battler-tag-type";
 import { getPokemonMessage } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
@@ -29,17 +33,20 @@ import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAtt
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
+import { BattleSpec } from "./enums/battle-spec";
 import { GameMode } from "./game-mode";
-import { Species } from "./data/species";
+import { Species } from "./data/enums/species";
 import { HealAchv, LevelAchv, MoneyAchv, achvs } from "./system/achv";
-import { TrainerType, trainerConfigs } from "./data/trainer-type";
+import { trainerConfigs } from "./data/trainer-config";
+import { TrainerType } from "./data/enums/trainer-type";
 import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
 import { GameDataType } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./anims";
-import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger } from "./data/pokemon-forms";
+import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger } from "./data/pokemon-forms";
+import { battleSpecDialogue } from "./data/dialogue";
 
 export class LoginPhase extends BattlePhase {
   private showText: boolean;
@@ -364,7 +371,7 @@ export class EncounterPhase extends BattlePhase {
     super.start();
 
     this.scene.initSession();
-    
+
     const loadEnemyAssets = [];
 
     const battle = this.scene.currentBattle;
@@ -389,8 +396,9 @@ export class EncounterPhase extends BattlePhase {
           this.scene.gameData.setPokemonSeen(enemyPokemon);
       }
 
-      if (this.scene.gameMode === GameMode.CLASSIC && (battle.waveIndex === 200 || !(battle.waveIndex % 250)) && enemyPokemon.species.speciesId === Species.ETERNATUS) {
-        enemyPokemon.formIndex = 1;
+      if (this.scene.gameMode === GameMode.CLASSIC && (battle.battleSpec === BattleSpec.FINAL_BOSS || !(battle.waveIndex % 250)) && enemyPokemon.species.speciesId === Species.ETERNATUS) {
+        if (battle.battleSpec !== BattleSpec.FINAL_BOSS)
+          enemyPokemon.formIndex = 1;
         enemyPokemon.setBoss();
       }
 
@@ -462,11 +470,28 @@ export class EncounterPhase extends BattlePhase {
       targets: [ this.scene.arenaEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.arenaPlayer, this.scene.trainer ].flat(),
       x: (_target, _key, value, fieldIndex: integer) => fieldIndex < 2 + (enemyField.length) ? value + 300 : value - 300,
       duration: 2000,
-      onComplete: () => this.doEncounterCommon()
+      onComplete: () => {
+        if (!this.tryOverrideForBattleSpec())
+          this.doEncounterCommon();
+      }
     });
   }
 
-  doEncounterCommon() {
+  getEncounterMessage(): string {
+    const enemyField = this.scene.getEnemyField();
+
+    if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS)
+      return `${enemyField[0].name} appeared.`;
+
+    if (this.scene.currentBattle.battleType === BattleType.TRAINER)
+      return `${this.scene.currentBattle.trainer.getName()}\nwould like to battle!`;
+
+    return enemyField.length === 1
+      ? `A wild ${enemyField[0].name} appeared!`
+      : `A wild ${enemyField[0].name}\nand ${enemyField[1].name} appeared!`;
+  }
+
+  doEncounterCommon(showEncounterMessage: boolean = true) {
     const enemyField = this.scene.getEnemyField();
 
     if (this.scene.currentBattle.battleType === BattleType.WILD) {
@@ -477,10 +502,10 @@ export class EncounterPhase extends BattlePhase {
         if (enemyPokemon.isShiny())
           this.scene.validateAchv(achvs.SEE_SHINY);
       });
-      let text = enemyField.length === 1
-        ? `A wild ${enemyField[0].name} appeared!`
-        : `A wild ${enemyField[0].name}\nand ${enemyField[1].name} appeared!`;
-      this.scene.ui.showText(text, null, () => this.end(), 1500);
+      if (showEncounterMessage)
+        this.scene.ui.showText(this.getEncounterMessage(), null, () => this.end(), 1500);
+      else
+        this.end();
     } else if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
       const trainer = this.scene.currentBattle.trainer;
       trainer.untint(100, 'Sine.easeOut');
@@ -491,8 +516,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.playBgm(undefined);
         this.scene.pbTray.showPbTray(this.scene.getParty());
 			  this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
-        const text = `${this.scene.currentBattle.trainer.getName()}\nwould like to battle!`;
-        this.scene.ui.showText(text, null, () => {
+        const doTrainerSummon = () => {
           this.scene.tweens.add({
             targets: this.scene.currentBattle.trainer,
             x: '+=16',
@@ -506,7 +530,11 @@ export class EncounterPhase extends BattlePhase {
           if (this.scene.currentBattle.double && availablePartyMembers > 1)
             this.scene.unshiftPhase(new SummonPhase(this.scene, 1, false));
           this.end();
-        }, 1500, true);
+        };
+        if (showEncounterMessage)
+          this.scene.ui.showText(this.getEncounterMessage(), null, doTrainerSummon, 1500, true);
+        else
+          doTrainerSummon();
       };
 
       if (!trainer.config.encounterMessages.length)
@@ -514,13 +542,7 @@ export class EncounterPhase extends BattlePhase {
       else {
         let message: string;
         this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(this.scene.currentBattle.trainer.config.encounterMessages), this.scene.currentBattle.waveIndex);
-        const messagePages = message.split(/\$/g).map(m => m.trim());
-        let showMessageAndSummon = () => doSummon();
-        for (let p = messagePages.length - 1; p >= 0; p--) {
-          const originalFunc = showMessageAndSummon;
-          showMessageAndSummon = () => this.scene.ui.showDialogue(messagePages[p], trainer.getName(), null, originalFunc, null, true);
-        }
-        showMessageAndSummon();
+        this.scene.ui.showDialogue(message, trainer.getName(), null, doSummon, null, true);
       }
     }
   }
@@ -570,6 +592,21 @@ export class EncounterPhase extends BattlePhase {
 
     super.end();
   }
+
+  tryOverrideForBattleSpec(): boolean {
+    switch (this.scene.currentBattle.battleSpec) {
+      case BattleSpec.FINAL_BOSS:
+        const enemy = this.scene.getEnemyPokemon();
+        this.scene.ui.showText(this.getEncounterMessage(), null, () => {
+          this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].encounter, enemy.name, null, () => {
+            this.doEncounterCommon(false);
+          }, null, true);
+        }, 1500, true);
+        return true;
+    }
+
+    return false;
+  }
 }
 
 export class NextEncounterPhase extends EncounterPhase {
@@ -592,7 +629,8 @@ export class NextEncounterPhase extends EncounterPhase {
         if (this.scene.lastEnemyTrainer)
           this.scene.lastEnemyTrainer.destroy();
         
-        this.doEncounterCommon();
+        if (!this.tryOverrideForBattleSpec())
+          this.doEncounterCommon();
       }
     });
   }
@@ -616,7 +654,10 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
       targets: [ this.scene.arenaEnemy, enemyField ].flat(),
       x: '+=300',
       duration: 2000,
-      onComplete: () => this.doEncounterCommon()
+      onComplete: () => {
+        if (!this.tryOverrideForBattleSpec())
+          this.doEncounterCommon();
+      }
     });
   }
 }
@@ -1604,7 +1645,7 @@ export class CommonAnimPhase extends PokemonPhase {
 }
 
 export class MovePhase extends BattlePhase {
-  protected pokemon: Pokemon;
+  public pokemon: Pokemon;
   protected targets: BattlerIndex[];
   protected move: PokemonMove;
   protected followUp: boolean;
@@ -2337,6 +2378,26 @@ export class DamagePhase extends PokemonPhase {
     } else
       this.getPokemon().updateInfo().then(() => this.end());
   }
+
+  end() {
+    switch (this.scene.currentBattle.battleSpec) {
+      case BattleSpec.FINAL_BOSS:
+        const pokemon = this.getPokemon();
+        if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && !pokemon.bossSegmentIndex) {
+          this.scene.fadeOutBgm(Utils.fixedInt(2000), false);
+          this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin, pokemon.name, null, () => {
+            this.scene.addEnemyModifier(getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier, false, true);
+            pokemon.generateAndPopulateMoveset(1);
+            this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+            super.end();
+          }, null, true);
+          return;
+        }
+        break;
+    }
+
+    super.end();
+  }
 }
 
 export class FaintPhase extends PokemonPhase {
@@ -2371,6 +2432,13 @@ export class FaintPhase extends PokemonPhase {
         }
       }
     }
+
+    if (!this.tryOverrideForBattleSpec())
+      this.doFaint();
+  }
+
+  doFaint(): void {
+    const pokemon = this.getPokemon();
 
     this.scene.queueMessage(getPokemonMessage(pokemon, ' fainted!'), null, true);
 
@@ -2415,6 +2483,19 @@ export class FaintPhase extends PokemonPhase {
         }
       });
     });
+  }
+
+  tryOverrideForBattleSpec(): boolean {
+    switch (this.scene.currentBattle.battleSpec) {
+      case BattleSpec.FINAL_BOSS:
+        const enemy = this.getPokemon();
+        if (enemy.formIndex) {
+          this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin, enemy.name, null, () => this.doFaint(), null, true);
+          return true;
+        }
+    }
+
+    return false;
   }
 }
 

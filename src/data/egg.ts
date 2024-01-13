@@ -1,8 +1,8 @@
-import { ModifierTier } from "../modifier/modifier-type";
+import { ModifierTier } from "../modifier/modifier-tier";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import BattleScene from "../battle-scene";
-import { Species } from "./species";
+import { Species } from "./enums/species";
 import { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 
 export const EGG_SEED = 1073741824;

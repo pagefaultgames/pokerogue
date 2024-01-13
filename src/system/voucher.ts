@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
-import { TrainerType, trainerConfigs } from "../data/trainer-type";
-import { ModifierTier } from "../modifier/modifier-type";
+import { TrainerType } from "../data/enums/trainer-type";
+import { ModifierTier } from "../modifier/modifier-tier";
 import { Achv, achvs } from "./achv";
 
 export enum VoucherType {
@@ -86,30 +86,33 @@ const voucherAchvs: Achv[] = [ achvs.CLASSIC_VICTORY ];
 
 {
   (function() {
-    for (let achv of voucherAchvs) {
-      const voucherType = achv.score >= 150
-        ? VoucherType.GOLDEN
-        : achv.score >= 100
-          ? VoucherType.PREMIUM
-          : achv.score >= 75
-            ? VoucherType.PLUS
-            : VoucherType.REGULAR;
-      vouchers[achv.id] = new Voucher(voucherType, achv.description);
-    }
+    import('../data/trainer-config').then(tc => {
+      for (let achv of voucherAchvs) {
+        const voucherType = achv.score >= 150
+          ? VoucherType.GOLDEN
+          : achv.score >= 100
+            ? VoucherType.PREMIUM
+            : achv.score >= 75
+              ? VoucherType.PLUS
+              : VoucherType.REGULAR;
+        vouchers[achv.id] = new Voucher(voucherType, achv.description);
+      }
 
-    const bossTrainerTypes = Object.keys(trainerConfigs)
-      .filter(tt => trainerConfigs[tt].isBoss && trainerConfigs[tt].getDerivedType() !== TrainerType.RIVAL);
+      const trainerConfigs = tc.trainerConfigs;
+      const bossTrainerTypes = Object.keys(trainerConfigs)
+        .filter(tt => trainerConfigs[tt].isBoss && trainerConfigs[tt].getDerivedType() !== TrainerType.RIVAL);
 
-    for (let trainerType of bossTrainerTypes) {
-      const voucherType = trainerConfigs[trainerType].moneyMultiplier < 10
-        ? VoucherType.PLUS
-        : VoucherType.PREMIUM;
-      const key = TrainerType[trainerType];
-      vouchers[key] = new Voucher(voucherType, `Defeat ${trainerConfigs[trainerType].name}`);
-    }
+      for (let trainerType of bossTrainerTypes) {
+        const voucherType = trainerConfigs[trainerType].moneyMultiplier < 10
+          ? VoucherType.PLUS
+          : VoucherType.PREMIUM;
+        const key = TrainerType[trainerType];
+        vouchers[key] = new Voucher(voucherType, `Defeat ${trainerConfigs[trainerType].name}`);
+      }
 
-    const voucherKeys = Object.keys(vouchers);
-    for (let k of voucherKeys)
-      vouchers[k].id = k;
+      const voucherKeys = Object.keys(vouchers);
+      for (let k of voucherKeys)
+        vouchers[k].id = k;
+    });
   })();
 }

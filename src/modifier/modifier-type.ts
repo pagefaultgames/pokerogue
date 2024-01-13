@@ -1,5 +1,6 @@
 import * as Modifiers from './modifier';
-import { AttackMove, Moves, allMoves } from '../data/move';
+import { AttackMove, allMoves } from '../data/move';
+import { Moves } from "../data/enums/moves";
 import { PokeballType, getPokeballName } from '../data/pokeball';
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from '../pokemon';
 import { EvolutionItem, SpeciesFriendshipEvolutionCondition, pokemonEvolutions } from '../data/pokemon-evolutions';
@@ -17,16 +18,9 @@ import { SpeciesFormKey } from '../data/pokemon-species';
 import BattleScene from '../battle-scene';
 import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from '../system/voucher';
 import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from '../data/pokemon-forms';
+import { ModifierTier } from './modifier-tier';
 
 type Modifier = Modifiers.Modifier;
-
-export enum ModifierTier {
-  COMMON,
-  GREAT,
-  ULTRA,
-  MASTER,
-  LUXURY
-};
 
 export enum ModifierPoolType {
   PLAYER,
@@ -1083,7 +1077,7 @@ export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: 
 
 export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: EnemyPokemon[], poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER, gameMode: GameMode): PokemonHeldItemModifierType[] {
   const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType).type as PokemonHeldItemModifierType);
-  if ((gameMode === GameMode.CLASSIC && waveIndex === 200) || !(waveIndex % 1000))
+  if (!(waveIndex % 1000))
     ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemModifierType);
   return ret;
 }

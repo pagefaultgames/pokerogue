@@ -4,10 +4,12 @@ import { SpeciesFormKey } from "./data/pokemon-species";
 import { achvs } from "./system/achv";
 import { SpeciesFormChange, getSpeciesFormChangeMessage } from "./data/pokemon-forms";
 import { EndEvolutionPhase, EvolutionPhase } from "./evolution-phase";
-import Pokemon, { PlayerPokemon } from "./pokemon";
+import Pokemon, { EnemyPokemon, PlayerPokemon } from "./pokemon";
 import { Mode } from "./ui/ui";
 import PartyUiHandler from "./ui/party-ui-handler";
 import { BattlePhase } from "./battle-phase";
+import { BattleSpec } from "./enums/battle-spec";
+import { MovePhase, PokemonHealPhase } from "./battle-phases";
 
 export class FormChangePhase extends EvolutionPhase {
   private formChange: SpeciesFormChange;
@@ -183,5 +185,22 @@ export class QuietFormChangePhase extends BattlePhase {
     this.pokemon.changeForm(this.formChange).then(() => {
       this.scene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), Utils.fixedInt(1500));
     });
+  }
+
+  end(): void {
+    if (this.pokemon.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && this.pokemon instanceof EnemyPokemon) {
+      this.scene.playBgm();
+      this.scene.unshiftPhase(new PokemonHealPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getMaxHp(), null, false));
+      this.pokemon.bossSegments = 5;
+      this.pokemon.bossSegmentIndex = 4;
+      this.pokemon.initBattleInfo();
+      this.pokemon.cry();
+      
+      const movePhase = this.scene.findPhase(p => p instanceof MovePhase && p.pokemon === this.pokemon) as MovePhase;
+      if (movePhase)
+        movePhase.cancel();
+    }
+
+    super.end();
   }
 }

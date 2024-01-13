@@ -1,9 +1,9 @@
-import { TimeOfDay } from "../arena";
+import { TimeOfDay } from "./enums/time-of-day";
 import { PokemonFormChangeItemModifier } from "../modifier/modifier";
 import Pokemon from "../pokemon";
-import { Moves } from "./move";
+import { Moves } from "./enums/moves";
 import { SpeciesFormKey } from "./pokemon-species";
-import { Species } from "./species";
+import { Species } from "./enums/species";
 import { StatusEffect } from "./status-effect";
 
 export enum FormChangeItem {
@@ -135,6 +135,12 @@ export abstract class SpeciesFormChangeTrigger {
 
   hasTriggerType(triggerType: { new(...args: any[]): SpeciesFormChangeTrigger }): boolean {
     return this instanceof triggerType;
+  }
+}
+
+export class SpeciesFormChangeManualTrigger extends SpeciesFormChangeTrigger {
+  canChange(pokemon: Pokemon): boolean {
+    return true;
   }
 }
 
@@ -441,6 +447,9 @@ export const pokemonFormChanges: PokemonFormChanges = {
   ],
   [Species.DIANCIE]: [
     new SpeciesFormChange(Species.DIANCIE, '', SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.DIANCITE))
+  ],
+  [Species.ETERNATUS]: [
+    new SpeciesFormChange(Species.ETERNATUS, '', 'eternamax', new SpeciesFormChangeManualTrigger())
   ],
   [Species.ENAMORUS]: [
     new SpeciesFormChange(Species.ENAMORUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItem.REVEAL_GLASS))

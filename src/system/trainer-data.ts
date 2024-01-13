@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import { TrainerType } from "../data/trainer-type";
+import { TrainerType } from "../data/enums/trainer-type";
 import Trainer from "../trainer";
 
 export default class TrainerData {

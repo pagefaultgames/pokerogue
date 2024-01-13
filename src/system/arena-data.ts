@@ -1,6 +1,6 @@
 import { Arena } from "../arena";
 import { ArenaTag } from "../data/arena-tag";
-import { Biome } from "../data/biome";
+import { Biome } from "../data/enums/biome";
 import { Weather } from "../data/weather";
 
 export default class ArenaData {

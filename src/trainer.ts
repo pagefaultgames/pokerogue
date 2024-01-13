@@ -1,7 +1,8 @@
 import BattleScene from "./battle-scene";
 import { pokemonPrevolutions } from "./data/pokemon-evolutions";
 import PokemonSpecies, { getPokemonSpecies } from "./data/pokemon-species";
-import { TrainerConfig, TrainerPartyCompoundTemplate, TrainerPartyMemberStrength, TrainerPartyTemplate, TrainerPoolTier, TrainerType, trainerConfigs, trainerPartyTemplates } from "./data/trainer-type";
+import { TrainerConfig, TrainerPartyCompoundTemplate, TrainerPartyMemberStrength, TrainerPartyTemplate, TrainerPoolTier, trainerConfigs, trainerPartyTemplates } from "./data/trainer-config";
+import { TrainerType } from "./data/enums/trainer-type";
 import { EnemyPokemon } from "./pokemon";
 import * as Utils from "./utils";
 

@@ -1,5 +1,6 @@
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
+import { ModifierTier } from "../modifier/modifier-tier";
 
 export enum TextStyle {
   MESSAGE,
@@ -146,15 +147,15 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
 
 export function getModifierTierTextTint(tier: integer): integer {
   switch (tier) {
-    case 0: // ModifierTier.COMMON:
+    case ModifierTier.COMMON:
       return 0xffffff;
-    case 1: // ModifierTier.GREAT:
+    case ModifierTier.GREAT:
       return 0x3890f8;
-    case 2: // ModifierTier.ULTRA:
+    case ModifierTier.ULTRA:
       return 0xf8d038;
-    case 3: // ModifierTier.MASTER:
+    case ModifierTier.MASTER:
       return 0xe020c0;
-    case 4: // ModifierTier.LUXURY:
+    case ModifierTier.LUXURY:
       return 0xe64a18;
   }
 }

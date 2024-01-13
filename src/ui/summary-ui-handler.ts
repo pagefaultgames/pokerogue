@@ -12,7 +12,7 @@ import { getLevelTotalExp } from "../data/exp";
 import { Stat, getStatName } from "../data/pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { StatusEffect } from "../data/status-effect";
-import { getBiomeName } from "../data/biome";
+import { getBiomeName } from "../data/biomes";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
 
 enum Page {

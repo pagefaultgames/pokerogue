@@ -1,10 +1,11 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
 import BattleScene from "../battle-scene";
-import { AttackMove, ChargeAttr, DelayedAttackAttr, MoveFlags, Moves, SelfStatusMove, allMoves } from "./move";
+import { AttackMove, ChargeAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, allMoves } from "./move";
 import Pokemon from "../pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
 import stringify, { Element } from "json-stable-stringify";
+import { Moves } from "./enums/moves";
 //import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {

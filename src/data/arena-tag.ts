@@ -1,13 +1,14 @@
 import { Arena } from "../arena";
 import { Type } from "./type";
 import * as Utils from "../utils";
-import { Moves, allMoves } from "./move";
+import { allMoves } from "./move";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../pokemon";
 import { DamagePhase, MoveEffectPhase, ObtainStatusEffectPhase } from "../battle-phases";
 import { StatusEffect } from "./status-effect";
-import { BattlerTagType } from "./battler-tag";
+import { BattlerTagType } from "./enums/battler-tag-type";
 import { BattlerIndex } from "../battle";
+import { Moves } from "./enums/moves";
 
 export enum ArenaTagType {
   NONE,

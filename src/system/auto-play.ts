@@ -1,8 +1,8 @@
 import { SelectModifierPhase } from "../battle-phases";
 import BattleScene, { Button } from "../battle-scene";
-import { ModifierTier, ModifierType, ModifierTypeOption, PokemonBaseStatBoosterModifierType, PokemonHpRestoreModifierType, PokemonReviveModifierType } from "../modifier/modifier-type";
+import { ModifierType, ModifierTypeOption, PokemonBaseStatBoosterModifierType, PokemonHpRestoreModifierType, PokemonReviveModifierType } from "../modifier/modifier-type";
 import Pokemon, { AiType, EnemyPokemon, PlayerPokemon, PokemonMove } from "../pokemon";
-import { Species } from "../data/species";
+import { Species } from "../data/enums/species";
 import BattleMessageUiHandler from "../ui/battle-message-ui-handler";
 import CommandUiHandler from "../ui/command-ui-handler";
 import FightUiHandler from "../ui/fight-ui-handler";
@@ -11,6 +11,7 @@ import ModifierSelectUiHandler from "../ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "../ui/party-ui-handler";
 import ConfirmUiHandler from "../ui/confirm-ui-handler";
 import { Mode } from "../ui/ui";
+import { ModifierTier } from "../modifier/modifier-tier";
 
 export function initAutoPlay() {
     const thisArg = this as BattleScene;

@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { Biome } from './data/biome';
 import UI, { Mode } from './ui/ui';
 import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase, TrainerMessageTestPhase, LoginPhase, ConsolidateDataPhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
@@ -11,11 +10,14 @@ import { initAutoPlay } from './system/auto-play';
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
 import { BattlePhase } from './battle-phase';
 import { initGameSpeed } from './system/game-speed';
+import { Biome } from "./data/enums/biome";
 import { Arena, ArenaBase, getBiomeHasProps, getBiomeKey } from './arena';
 import { GameData } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
-import { Moves, initMoves } from './data/move';
+import { Moves } from "./data/enums/moves";
+import { } from "./data/move";
+import { initMoves } from './data/move';
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, applyAbAttrs, initAbilities } from './data/ability';
@@ -24,7 +26,8 @@ import { GameMode } from './game-mode';
 import FieldSpritePipeline from './pipelines/field-sprite';
 import SpritePipeline from './pipelines/sprite';
 import PartyExpBar from './ui/party-exp-bar';
-import { TrainerType, trainerConfigs } from './data/trainer-type';
+import { trainerConfigs } from './data/trainer-config';
+import { TrainerType } from "./data/enums/trainer-type";
 import Trainer from './trainer';
 import TrainerData from './system/trainer-data';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
@@ -33,7 +36,7 @@ import PokeballTray from './ui/pokeball-tray';
 import { Setting, settingOptions } from './system/settings';
 import SettingsUiHandler from './ui/settings-ui-handler';
 import MessageUiHandler from './ui/message-ui-handler';
-import { Species } from './data/species';
+import { Species } from './data/enums/species';
 import InvertPostFX from './pipelines/invert';
 import { Achv, ModifierAchv, achvs } from './system/achv';
 import { GachaType } from './data/egg';
@@ -43,7 +46,7 @@ import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 import { WindowVariant, getWindowVariantSuffix } from './ui/window';
 import PokemonData from './system/pokemon-data';
 import { Nature } from './data/nature';
-import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, getSpeciesFormChangeMessage, pokemonFormChanges } from './data/pokemon-forms';
+import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from './data/pokemon-forms';
 import { FormChangePhase, QuietFormChangePhase } from './form-change-phase';
 
 const enableAuto = true;
@@ -817,7 +820,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.lastEnemyTrainer = lastBattle?.trainer ?? null;
 
-		this.currentBattle = new Battle(newWaveIndex, newBattleType, newTrainer, newDouble);
+		this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble);
 		this.currentBattle.incrementTurn(this);
 
 		//this.pushPhase(new TrainerMessageTestPhase(this));
@@ -933,8 +936,6 @@ export default class BattleScene extends Phaser.Scene {
 			ret++;
 		if (species) {
 			if (species.baseTotal >= 670)
-				ret++;
-			if (speciesStarters.hasOwnProperty(species.speciesId) && speciesStarters[species.speciesId] > 8)
 				ret++;
 		}
 		ret += Math.floor(waveIndex / 250);
@@ -1289,6 +1290,8 @@ export default class BattleScene extends Phaser.Scene {
 				return 12.235;
 			case 'battle_elite':
 				return 17.730;
+			case 'battle_final_encounter':
+				return 19.159;
 			case 'battle_final':
 				return 16.453;
 			case 'battle_gym':
@@ -1311,6 +1314,8 @@ export default class BattleScene extends Phaser.Scene {
 				return 12.703;
 			case 'battle_wild_strong':
 				return 13.940;
+			case 'end_summit':
+				return 30.025;
 		}
 
 		return 0;
@@ -1382,6 +1387,10 @@ export default class BattleScene extends Phaser.Scene {
 		phase.start();
 
 		return true;
+	}
+
+	findPhase(phaseFilter: (phase: BattlePhase) => boolean): BattlePhase {
+		return this.phaseQueue.find(phaseFilter);
 	}
 
 	queueMessage(message: string, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, defer?: boolean) {
@@ -1654,7 +1663,7 @@ export default class BattleScene extends Phaser.Scene {
 					phase = new FormChangePhase(this, pokemon, matchingFormChange, modal);
 				else
 					phase = new QuietFormChangePhase(this, pokemon, matchingFormChange);
-				if (!matchingFormChange.quiet && modal)
+				if (pokemon instanceof PlayerPokemon && !matchingFormChange.quiet && modal)
 					this.overridePhase(phase);
 				else if (delayed)
 					this.pushPhase(phase);

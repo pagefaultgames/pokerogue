@@ -1,27 +1,22 @@
 import BattleScene from "./battle-scene";
-import { Biome, BiomePoolTier, BiomeTierPokemonPools, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "./data/biome";
+import { BiomePoolTier, BiomeTierPokemonPools, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "./data/biomes";
+import { Biome } from "./data/enums/biome";
 import * as Utils from "./utils";
 import PokemonSpecies, { getPokemonSpecies } from "./data/pokemon-species";
-import { Species } from "./data/species";
+import { Species } from "./data/enums/species";
 import { Weather, WeatherType, getWeatherClearMessage, getWeatherStartMessage } from "./data/weather";
 import { CommonAnimPhase } from "./battle-phases";
 import { CommonAnim } from "./data/battle-anims";
 import { Type } from "./data/type";
-import Move, { Moves } from "./data/move";
+import Move from "./data/move";
 import { ArenaTag, ArenaTagType, getArenaTag } from "./data/arena-tag";
 import { GameMode } from "./game-mode";
-import { TrainerType } from "./data/trainer-type";
+import { TrainerType } from "./data/enums/trainer-type";
 import { BattlerIndex } from "./battle";
+import { Moves } from "./data/enums/moves";
+import { TimeOfDay } from "./data/enums/time-of-day";
 
 const WEATHER_OVERRIDE = WeatherType.NONE;
-
-export enum TimeOfDay {
-  ALL = -1,
-  DAWN,
-  DAY,
-  DUSK,
-  NIGHT
-}
 
 export class Arena {
   public scene: BattleScene;

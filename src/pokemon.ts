@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import BattleScene, { AnySound } from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './ui/battle-info';
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, Moves, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, AttackMove, AddBattlerTagAttr, OneHitKOAttr } from "./data/move";
+import { Moves } from "./data/enums/moves";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, AttackMove, AddBattlerTagAttr, OneHitKOAttr } from "./data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier } from './data/type';
@@ -16,15 +17,17 @@ import { reverseCompatibleTms, tmSpecies } from './data/tms';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './data/pokemon-evolutions';
 import { DamagePhase, FaintPhase, StatChangePhase, SwitchSummonPhase } from './battle-phases';
 import { BattleStat } from './data/battle-stat';
-import { BattlerTag, BattlerTagLapseType, BattlerTagType, EncoreTag, TypeBoostTag, getBattlerTag } from './data/battler-tag';
-import { Species } from './data/species';
+import { BattlerTag, BattlerTagLapseType, EncoreTag, TypeBoostTag, getBattlerTag } from './data/battler-tags';
+import { BattlerTagType } from "./data/enums/battler-tag-type";
+import { Species } from './data/enums/species';
 import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
 import { ArenaTagType, WeakenMoveTypeTag } from './data/arena-tag';
-import { Biome } from './data/biome';
+import { Biome } from "./data/enums/biome";
 import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 import { BattlerIndex } from './battle';
+import { BattleSpec } from "./enums/battle-spec";
 import { Mode } from './ui/ui';
 import PartyUiHandler, { PartyOption, PartyUiMode } from './ui/party-ui-handler';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
@@ -2023,11 +2026,14 @@ export class EnemyPokemon extends Pokemon {
   }
 
   initBattleInfo(): void {
-    this.battleInfo = new EnemyBattleInfo(this.scene);
-    this.battleInfo.updateBossSegments(this);
-    this.battleInfo.initInfo(this);
+    if (!this.battleInfo) {
+      this.battleInfo = new EnemyBattleInfo(this.scene);
+      this.battleInfo.updateBossSegments(this);
+      this.battleInfo.initInfo(this);
+    } else
+      this.battleInfo.updateBossSegments(this);
   }
-
+  
   setBoss(boss: boolean = true): void {
     if (boss) {
       this.bossSegments = this.scene.getEncounterBossSegments(this.scene.currentBattle.waveIndex, this.level, this.species, true);
@@ -2038,7 +2044,7 @@ export class EnemyPokemon extends Pokemon {
     }
   }
 
-  generateAndPopulateMoveset(): void {
+  generateAndPopulateMoveset(formIndex?: integer): void {
     switch (true) {
       case (this.species.speciesId === Species.SMEARGLE):
         this.moveset = [
@@ -2049,18 +2055,18 @@ export class EnemyPokemon extends Pokemon {
         ];
         break;
       case (this.species.speciesId === Species.ETERNATUS):
-        this.moveset = this.formIndex
+        this.moveset = (formIndex !== undefined ? formIndex : this.formIndex)
           ? [
             new PokemonMove(Moves.DYNAMAX_CANNON),
-            new PokemonMove(Moves.SLUDGE_BOMB),
+            new PokemonMove(Moves.CROSS_POISON),
             new PokemonMove(Moves.FLAMETHROWER),
             new PokemonMove(Moves.RECOVER)
           ]
           : [
             new PokemonMove(Moves.ETERNABEAM),
-            new PokemonMove(Moves.CROSS_POISON),
+            new PokemonMove(Moves.SLUDGE_BOMB),
             new PokemonMove(Moves.DRAGON_DANCE),
-            new PokemonMove(Moves.RECOVER)
+            new PokemonMove(Moves.COSMIC_POWER)
           ];
       break;
       default:
@@ -2105,12 +2111,17 @@ export class EnemyPokemon extends Pokemon {
             const move = pokemonMove.getMove();
             let moveScore = moveScores[m];
 
+            let targetScores: integer[] = [];
+
             for (let mt of moveTargets[move.id]) {
               const target = this.scene.getField()[mt];
-              moveScore += move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
+              let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
+              if (mt !== this.getBattlerIndex())
+                targetScore *= target.getAttackMoveEffectiveness(move.type);
+              targetScores.push(targetScore);
             }
 
-            moveScore /= moveTargets[move.id].length
+            moveScore += Math.max(...targetScores);
 
             // could make smarter by checking opponent def/spdef
             moveScores[m] = moveScore;
@@ -2229,7 +2240,7 @@ export class EnemyPokemon extends Pokemon {
         const roundedHpThreshold = Math.round(hpThreshold);
         if (this.hp > roundedHpThreshold) {
           if (this.hp - damage < roundedHpThreshold) {
-            const bypassSegment = (this.hp - roundedHpThreshold) / damage < 0.1;
+            const bypassSegment = this.canBypassBossSegments() && (this.hp - roundedHpThreshold) / damage < 0.1;
             damage = this.hp - (bypassSegment ? Math.round(hpThreshold - segmentSize) : roundedHpThreshold);
             this.handleBossSegmentCleared(s);
           }
@@ -2239,6 +2250,15 @@ export class EnemyPokemon extends Pokemon {
     }
 
     return super.damage(damage, ignoreSegments, preventEndure);
+  }
+
+  canBypassBossSegments(): boolean {
+    if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+      if (!this.formIndex && (this.bossSegmentIndex - 1) <= 1)
+        return false;
+    }
+
+    return true;
   }
 
   handleBossSegmentCleared(segmentIndex: integer): void {
@@ -2275,7 +2295,6 @@ export class EnemyPokemon extends Pokemon {
             statLevels++;
           break;
       }
-        
 
       this.scene.unshiftPhase(new StatChangePhase(this.scene, this.getBattlerIndex(), true, [ boostedStat ], statLevels));
 

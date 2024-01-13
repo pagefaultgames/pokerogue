@@ -3,10 +3,11 @@ import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
 import Trainer from "./trainer";
-import { Species } from "./data/species";
-import { Moves } from "./data/move";
-import { TrainerType } from "./data/trainer-type";
+import { Species } from "./data/enums/species";
+import { Moves } from "./data/enums/moves";
+import { TrainerType } from "./data/enums/trainer-type";
 import { GameMode } from "./game-mode";
+import { BattleSpec } from "./enums/battle-spec";
 
 export enum BattleType {
     WILD,
@@ -35,8 +36,10 @@ interface TurnCommands {
 }
 
 export default class Battle {
+    protected gameMode: GameMode;
     public waveIndex: integer;
     public battleType: BattleType;
+    public battleSpec: BattleSpec;
     public trainer: Trainer;
     public enemyLevels: integer[];
     public enemyParty: EnemyPokemon[];
@@ -51,10 +54,12 @@ export default class Battle {
     public battleSeed: string;
     private battleSeedState: string;
 
-    constructor(waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean) {
+    constructor(gameMode: integer, waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean) {
+        this.gameMode = gameMode;
         this.waveIndex = waveIndex;
         this.battleType = battleType;
         this.trainer = trainer;
+        this.initBattleSpec();
         this.enemyLevels = battleType !== BattleType.TRAINER
             ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
             : trainer.getPartyLevels(this.waveIndex);
@@ -67,13 +72,22 @@ export default class Battle {
         this.battleSeedState = null;
     }
 
+    private initBattleSpec(): void {
+        let spec = BattleSpec.DEFAULT;
+        if (this.gameMode === GameMode.CLASSIC) {
+            if (this.waveIndex === 200)
+                spec = BattleSpec.FINAL_BOSS;
+        }
+        this.battleSpec = spec;
+    }
+
     private getLevelForWave(): integer {
         let baseLevel = 1 + this.waveIndex / 2 + Math.pow(this.waveIndex / 25, 2);
         const bossMultiplier = 1.2;
 
         if (!(this.waveIndex % 10)) {
             const ret = Math.floor(baseLevel * bossMultiplier);
-            if (this.waveIndex === 200 || !(this.waveIndex % 250))
+            if (this.battleSpec === BattleSpec.FINAL_BOSS || !(this.waveIndex % 250))
                 return Math.ceil(ret / 25) * 25;
             return ret + Math.round(Phaser.Math.RND.realInRange(-1, 1) * Math.floor(this.waveIndex / 10));
         }
@@ -114,10 +128,14 @@ export default class Battle {
             if (!this.started && this.trainer.config.encounterBgm && this.trainer.config.encounterMessages.length)
                 return `encounter_${this.trainer.getEncounterBgm()}`;
             return this.trainer.getBattleBgm();
-        }
+        } else if (this.gameMode === GameMode.CLASSIC && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS)
+            return 'end_summit';
         for (let pokemon of battlers) {
-            if (pokemon.species.speciesId === Species.ETERNATUS)
-                return 'battle_final';
+            if (this.battleSpec === BattleSpec.FINAL_BOSS) {
+                if (pokemon.formIndex)
+                    return 'battle_final';
+                return 'battle_final_encounter';
+            }
             if (pokemon.species.legendary || pokemon.species.pseudoLegendary || pokemon.species.mythical) {
                 if (pokemon.species.speciesId === Species.KYUREM)
                     return 'battle_legendary_z';
@@ -149,7 +167,7 @@ export default class Battle {
 
 export class FixedBattle extends Battle {
     constructor(scene: BattleScene, waveIndex: integer, config: FixedBattleConfig) {
-        super(waveIndex, config.battleType, config.battleType === BattleType.TRAINER ? config.getTrainer(scene) : null, config.double);
+        super(scene.gameMode, waveIndex, config.battleType, config.battleType === BattleType.TRAINER ? config.getTrainer(scene) : null, config.double);
         if (config.getEnemyParty)
             this.enemyParty = config.getEnemyParty(scene);
     }

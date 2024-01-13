@@ -1,16 +1,18 @@
 import Pokemon, { HitResult, PokemonMove } from "../pokemon";
-import { Type, getTypeDamageMultiplier } from "./type";
+import { Type } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { DamagePhase, ObtainStatusEffectPhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../battle-phases";
 import { getPokemonMessage } from "../messages";
 import { Weather, WeatherType } from "./weather";
-import { BattlerTag, BattlerTagType } from "./battler-tag";
+import { BattlerTag } from "./battler-tags";
+import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
-import Move, { MoveCategory, MoveFlags, Moves, RecoilAttr, StealHeldItemAttr } from "./move";
+import Move, { MoveCategory, MoveFlags, RecoilAttr } from "./move";
 import { ArenaTagType } from "./arena-tag";
 import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { Moves } from "./enums/moves";
 
 export class Ability {
   public id: Abilities;

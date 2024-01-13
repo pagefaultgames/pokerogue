@@ -1,11 +1,11 @@
 import { BattleType } from "../battle";
 import BattleScene from "../battle-scene";
-import { Biome } from "../data/biome";
+import { Biome } from "../data/enums/biome";
 import { Gender } from "../data/gender";
 import { Nature } from "../data/nature";
 import { PokeballType } from "../data/pokeball";
 import { getPokemonSpecies } from "../data/pokemon-species";
-import { Species } from "../data/species";
+import { Species } from "../data/enums/species";
 import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove, PokemonSummonData } from "../pokemon";
 
@@ -43,7 +43,7 @@ export default class PokemonData {
 
   public summonData: PokemonSummonData;
 
-  constructor(source: Pokemon | any) {
+  constructor(source: Pokemon | any, forHistory: boolean = false) {
     const sourcePokemon = source instanceof Pokemon ? source as Pokemon : null;
     this.id = source.id;
     this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
@@ -54,16 +54,19 @@ export default class PokemonData {
     this.pokeball = source.pokeball;
     this.level = source.level;
     this.exp = source.exp;
-    this.levelExp = source.levelExp;
+    if (!forHistory)
+      this.levelExp = source.levelExp;
     this.gender = source.gender;
-    this.hp = source.hp;
+    if (!forHistory)
+      this.hp = source.hp;
     this.stats = source.stats;
     this.ivs = source.ivs;
     this.nature = source.nature !== undefined ? source.nature : 0 as Nature;
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
-    this.pauseEvolutions = !!source.pauseEvolutions;
+    if (!forHistory)
+      this.pauseEvolutions = !!source.pauseEvolutions;
     this.pokerus = !!source.pokerus;
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
@@ -72,21 +75,26 @@ export default class PokemonData {
     this.fusionShiny = source.fusionShiny;
     this.fusionGender = source.fusionGender;
 
-    this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
+    if (!forHistory)
+      this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
 
     if (sourcePokemon) {
       this.moveset = sourcePokemon.moveset;
-      this.status = sourcePokemon.status;
-      if (this.player)
-        this.summonData = sourcePokemon.summonData;
+      if (!forHistory) {
+        this.status = sourcePokemon.status;
+        if (this.player)
+          this.summonData = sourcePokemon.summonData;
+      }
     } else {
       this.moveset = source.moveset.map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
-      this.status = source.status
-        ? new Status(source.status.effect, source.status.turnCount, source.status.cureTurn)
-        : undefined;
+      if (!forHistory) {
+        this.status = source.status
+          ? new Status(source.status.effect, source.status.turnCount, source.status.cureTurn)
+          : undefined;
+      }
 
       this.summonData = new PokemonSummonData();
-      if (source.summonData) {
+      if (!forHistory && source.summonData) {
         this.summonData.battleStats = source.summonData.battleStats;
         this.summonData.moveQueue = source.summonData.moveQueue;
         this.summonData.tags = []; // TODO

@@ -1,6 +1,6 @@
 import BattleScene, { Button } from "../battle-scene";
 import PokemonSpecies, { SpeciesFormKey, allSpecies, getPokemonSpecies, speciesStarters as speciesStarterValues } from "../data/pokemon-species";
-import { Species } from "../data/species";
+import { Species } from "../data/enums/species";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
 import MessageUiHandler from "./message-ui-handler";

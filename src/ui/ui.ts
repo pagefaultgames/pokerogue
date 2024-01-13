@@ -189,12 +189,22 @@ export default class UI extends Phaser.GameObjects.Container {
       this.getMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  showDialogue(text: string, name: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void {
-    const handler = this.getHandler();
-    if (handler instanceof MessageUiHandler)
-      (handler as MessageUiHandler).showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
-    else
-      this.getMessageHandler().showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
+  showDialogue(text: string, name: string, delay: integer = 0, callback: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void {
+    if (text.indexOf('$') > -1) {
+      const messagePages = text.split(/\$/g).map(m => m.trim());
+      let showMessageAndCallback = () => callback();
+      for (let p = messagePages.length - 1; p >= 0; p--) {
+        const originalFunc = showMessageAndCallback;
+        showMessageAndCallback = () => this.showDialogue(messagePages[p], name, null, originalFunc, null, true);
+      }
+      showMessageAndCallback();
+    } else {
+      const handler = this.getHandler();
+      if (handler instanceof MessageUiHandler)
+        (handler as MessageUiHandler).showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
+      else
+        this.getMessageHandler().showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
+    }
   }
 
   showTooltip(title: string, content: string, overlap?: boolean): void {

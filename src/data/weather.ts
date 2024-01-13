@@ -1,4 +1,4 @@
-import { Biome } from "./biome";
+import { Biome } from "./enums/biome";
 import { getPokemonMessage } from "../messages";
 import Pokemon from "../pokemon";
 import { Type } from "./type";

@@ -2,10 +2,10 @@ import { Abilities } from './ability';
 import BattleScene, { AnySound } from '../battle-scene';
 import { GrowthRate } from './exp';
 import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from './pokemon-evolutions';
-import { Species } from './species';
+import { Species } from './enums/species';
 import { Type } from './type';
 import { LevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from './pokemon-level-moves';
-import { uncatchableSpecies } from './biome';
+import { uncatchableSpecies } from './biomes';
 import * as Utils from '../utils';
 
 export enum Region {

@@ -2,194 +2,15 @@ import BattleScene, { startingWave } from "../battle-scene";
 import { ModifierTypeFunc, modifierTypes } from "../modifier/modifier-type";
 import { EnemyPokemon } from "../pokemon";
 import * as Utils from "../utils";
-import { Moves } from "./move";
+import { TrainerType } from "./enums/trainer-type";
+import { Moves } from "./enums/moves";
 import { PokeballType } from "./pokeball";
 import { pokemonEvolutions, pokemonPrevolutions } from "./pokemon-evolutions";
 import PokemonSpecies, { PokemonSpeciesFilter, getPokemonSpecies } from "./pokemon-species";
-import { Species } from "./species";
+import { Species } from "./enums/species";
 import { tmSpecies } from "./tms";
 import { Type } from "./type";
-
-export enum TrainerType {
-  UNKNOWN,
-  ACE_TRAINER,
-  ARTIST,
-  BACKERS,
-  BACKPACKER,
-  BAKER,
-  BEAUTY,
-  BIKER,
-  BLACK_BELT,
-  BREEDER,
-  CLERK,
-  CYCLIST,
-  DANCER,
-  DEPOT_AGENT,
-  DOCTOR,
-  FISHERMAN,
-  GUITARIST,
-  HARLEQUIN,
-  HIKER,
-  HOOLIGANS,
-  HOOPSTER,
-  INFIELDER,
-  JANITOR,
-  LINEBACKER,
-  MAID,
-  MUSICIAN,
-  NURSE,
-  NURSERY_AIDE,
-  OFFICER,
-  PARASOL_LADY,
-  PILOT,
-  POKEFAN,
-  PRESCHOOLER,
-  PSYCHIC,
-  RANGER,
-  RICH,
-  RICH_KID,
-  ROUGHNECK,
-  SCIENTIST,
-  SMASHER,
-  SNOW_WORKER,
-  STRIKER,
-  STUDENT,
-  SWIMMER,
-  TWINS,
-  VETERAN,
-  WAITER,
-  WORKER,
-  YOUNGSTER,
-
-  BROCK = 200,
-  MISTY,
-  LT_SURGE,
-  ERIKA,
-  JANINE,
-  SABRINA,
-  BLAINE,
-  GIOVANNI,
-  FALKNER,
-  BUGSY,
-  WHITNEY,
-  MORTY,
-  CHUCK,
-  JASMINE,
-  PRYCE,
-  CLAIR,
-  ROXANNE,
-  BRAWLY,
-  WATTSON,
-  FLANNERY,
-  NORMAN,
-  WINONA,
-  TATE,
-  LIZA,
-  JUAN,
-  ROARK,
-  GARDENIA,
-  MAYLENE,
-  CRASHER_WAKE,
-  FANTINA,
-  BYRON,
-  CANDICE,
-  VOLKNER,
-  CILAN,
-  CHILI,
-  CRESS,
-  CHEREN,
-  LENORA,
-  ROXIE,
-  BURGH,
-  ELESA,
-  CLAY,
-  SKYLA,
-  BRYCEN,
-  DRAYDEN,
-  MARLON,
-  VIOLA,
-  GRANT,
-  KORRINA,
-  RAMOS,
-  CLEMONT,
-  VALERIE,
-  OLYMPIA,
-  WULFRIC,
-  MILO,
-  NESSA,
-  KABU,
-  BEA,
-  ALLISTER,
-  OPAL,
-  BEDE,
-  GORDIE,
-  MELONY,
-  PIERS,
-  MARNIE,
-  RAIHAN,
-  /*KATY,
-  BRASSIUS,
-  IONO,
-  KOFU,
-  LARRY,
-  RYME,
-  TULIP,
-  GRUSHA*/
-
-  LORELEI = 300,
-  BRUNO,
-  AGATHA,
-  LANCE,
-  WILL,
-  KOGA,
-  KAREN,
-  SIDNEY,
-  PHOEBE,
-  GLACIA,
-  DRAKE,
-  AARON,
-  BERTHA,
-  FLINT,
-  LUCIAN,
-  SHAUNTAL,
-  MARSHAL,
-  GRIMSLEY,
-  CAITLIN,
-  MALVA,
-  SIEBOLD,
-  WIKSTROM,
-  DRASNA,
-  HALA,
-  MOLAYNE,
-  OLIVIA,
-  ACEROLA,
-  KAHILI,
-  /*RIKA,
-  POPPY,
-  LARRY_ELITE,
-  HASSEL*/
-
-  BLUE = 350,
-  RED,
-  LANCE_CHAMPION,
-  STEVEN,
-  WALLACE,
-  CYNTHIA,
-  ALDER,
-  IRIS,
-  DIANTHA,
-  LEON,
-  /*GEETA,
-  NEMONA,
-  KIERAN,*/
-
-  RIVAL = 375,
-  RIVAL_2,
-  RIVAL_3,
-  RIVAL_4,
-  RIVAL_5,
-  RIVAL_6
-}
+import { initTrainerTypeDialogue } from "./dialogue";
 
 export enum TrainerPoolTier {
   COMMON,
@@ -498,24 +319,6 @@ export class TrainerConfig {
     return this;
   }
 
-  setEncounterMessages(messages: string[], femaleMessages?: string[]): TrainerConfig {
-    this.encounterMessages = messages;
-    this.femaleEncounterMessages = femaleMessages;
-    return this;
-  }
-
-  setVictoryMessages(messages: string[], femaleMessages?: string[]): TrainerConfig {
-    this.victoryMessages = messages;
-    this.femaleVictoryMessages = femaleMessages;
-    return this;
-  }
-
-  setDefeatMessages(messages: string[], femaleMessages?: string[]): TrainerConfig {
-    this.defeatMessages = messages;
-    this.femaleDefeatMessages = femaleMessages;
-    return this;
-  }
-
   setModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
     this.modifierRewardFuncs = modifierTypeFuncs.map(func => () => {
       const modifierTypeFunc = func();
@@ -798,24 +601,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.YOUNGSTER]: new TrainerConfig(++t).setMoneyMultiplier(0.5).setEncounterBgm(TrainerType.YOUNGSTER).setHasGenders('Lass', 'lass').setPartyTemplates(trainerPartyTemplates.TWO_WEAKER)
     .setSpeciesPools(
       [ Species.CATERPIE, Species.WEEDLE, Species.RATTATA, Species.SENTRET, Species.POOCHYENA, Species.ZIGZAGOON, Species.WURMPLE, Species.BIDOOF, Species.PATRAT, Species.LILLIPUP ]
-    ).setEncounterMessages([
-    `Hey, wanna battle?`,
-    `Are you a new trainer too?`,
-    `Hey, I haven't seen you before. Let's battle!`
-  ], [
-    `Let's have a battle, shall we?`,
-    `You look like a new trainer. Let's have a battle!`,
-    `I don't recognize you. How about a battle?`
-  ]).setVictoryMessages([
-    `Wow! You're strong!`,
-    `I didn't stand a chance, huh.`,
-    `I'll find you again when I'm older and beat you!`
-  ], [
-    `That was impressive! I've got a lot to learn.`,
-    `I didn't think you'd beat me that bad…`,
-    `I hope we get to have a rematch some day.`
-  ]),
-
+    ),
   [TrainerType.BROCK]: new TrainerConfig((t = TrainerType.BROCK)).initForGymLeader([ Species.GEODUDE, Species.ONIX ], Type.ROCK),
   [TrainerType.MISTY]: new TrainerConfig(++t).initForGymLeader([ Species.STARYU, Species.PSYDUCK ], Type.WATER),
   [TrainerType.LT_SURGE]: new TrainerConfig(++t).initForGymLeader([ Species.VOLTORB, Species.PIKACHU, Species.ELECTABUZZ ], Type.ELECTRIC),
@@ -832,132 +618,15 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.JASMINE]: new TrainerConfig(++t).initForGymLeader([ Species.MAGNEMITE, Species.STEELIX ], Type.STEEL),
   [TrainerType.PRYCE]: new TrainerConfig(++t).initForGymLeader([ Species.SEEL, Species.SWINUB ], Type.ICE),
   [TrainerType.CLAIR]: new TrainerConfig(++t).initForGymLeader([ Species.DRATINI, Species.HORSEA, Species.GYARADOS ], Type.DRAGON),
-  [TrainerType.ROXANNE]: new TrainerConfig(++t).initForGymLeader([ Species.GEODUDE, Species.NOSEPASS ], Type.ROCK)
-	.setEncounterMessages([
-		`Would you kindly demonstrate how you battle?`,
-		`You can learn many things by battling many trainers.`,
-		`Oh, you caught me strategizing.\nWould you like to battle?`
-  ]).setVictoryMessages([
-		`Oh, I appear to have lost.\nI understand.`,
-		`It seems that I still have so much more to learn when it comes to battle.`,
-		`I'll take what I learned here today to heart.`
-  ]).setDefeatMessages([
-		`I have learned many things from our battle.\nI hope you have too.`,
-		`I look forward to battling you again.\nI hope you'll use what you've learned here.`,
-		`I won due to everything I have learned.`
-  ]),
-  [TrainerType.BRAWLY]: new TrainerConfig(++t).initForGymLeader([ Species.MACHOP, Species.MAKUHITA ], Type.FIGHTING)
-    .setEncounterMessages([
-		`Oh man, a challenger!\nLet's see what you can do!`,
-		`You seem like a big splash.\nLet's battle!`,
-		`Time to create a storm!\nLet's go!`
-  ]).setVictoryMessages([
-		`Oh woah, you've washed me out!`,
-		`You surfed my wave and crashed me down!`,
-		`I feel like I'm lost in Granite Cave!`
-  ]).setDefeatMessages([
-		`Haha, I surfed the big wave!\nChallenge me again sometime.`,
-		`Surf with me again some time!`,
-		`Just like the tides come in and out, I hope you return to challenge me again.`
-  ]),
-  [TrainerType.WATTSON]: new TrainerConfig(++t).initForGymLeader([ Species.MAGNEMITE, Species.VOLTORB, Species.ELECTRIKE ], Type.ELECTRIC)
-    .setEncounterMessages([
-		`Time to get shocked!\nWahahahaha!`,
-		`I'll make sparks fly!\nWahahahaha!`,
-		`I hope you brought Paralyz Heal!\nWahahahaha!`
-  ]).setVictoryMessages([
-		`Seems like I'm out of charge!\nWahahahaha!`,
-		`You've completely grounded me!\nWahahahaha!`,
-		`Thanks for the thrill!\nWahahahaha!`
-  ]).setDefeatMessages([
-		`Recharge your batteries and challenge me again sometime!\nWahahahaha!`,
-		`I hope you found our battle electrifying!\nWahahahaha!`,
-		`Aren't you shocked I won?\nWahahahaha!`
-  ]),
-  [TrainerType.FLANNERY]: new TrainerConfig(++t).initForGymLeader([ Species.SLUGMA, Species.TORKOAL, Species.NUMEL ], Type.FIRE)
-    .setEncounterMessages([
-		`Nice to meet you! Wait, no…\nI will crush you!`,
-		`I've only been a leader for a little while, but I'll smoke you!`,
-		`It's time to demonstrate the moves my grandfather has taught me! Let's battle!`
-  ]).setVictoryMessages([
-		`You remind me of my grandfather…\nNo wonder I lost.`,
-		`Am I trying too hard?\nI should relax, can't get too heated.`,
-		`Losing isn't going to smother me out.\nTime to reignite training!`
-  ]).setDefeatMessages([
-		`I hope I've made my grandfather proud…\nLet's battle again some time.`,
-		`I…I can't believe I won!\nDoing things my way worked!`,
-		`Let's exchange burning hot moves again soon!`
-  ]),
-  [TrainerType.NORMAN]: new TrainerConfig(++t).initForGymLeader([ Species.SLAKOTH, Species.SPINDA, Species.CHANSEY, Species.KANGASKHAN ], Type.NORMAL)
-    .setEncounterMessages([
-		`I'm surprised you managed to get here.\nLet's battle.`,
-		`I'll do everything in my power as a Gym Leader to win.\nLet's go!`,
-		`You better give this your all.\nIt's time to battle!`
-  ]).setVictoryMessages([
-		`I lost to you…?\nRules are rules, though.`,
-		`Was moving from Olivine a mistake…?`,
-		`I can't believe it.\nThat was a great match.`
-  ]).setDefeatMessages([
-		`We both tried our best.\nI hope we can battle again soon.`,
-		`You should try challenging my kid instead.\nYou might learn something!`,
-		`Thank you for the excellent battle.\nBetter luck next time.`
-  ]),
-  [TrainerType.WINONA]: new TrainerConfig(++t).initForGymLeader([ Species.SWABLU, Species.WINGULL, Species.TROPIUS, Species.SKARMORY ], Type.FLYING)
-    .setEncounterMessages([
-		`I've been soaring the skies looking for prey…\nAnd you're my target!`,
-		`No matter how our battle is, my Flying Pokémon and I will triumph with grace. Let's battle!`,
-		`I hope you aren't scared of heights.\nLet's ascend!`
-  ]).setVictoryMessages([
-		`You're the first Trainer I've seen with more grace than I.\nExcellently played.`,
-		`Oh, my Flying Pokémon have plummeted!\nVery well.`,
-		`Though I may have fallen, my Pokémon will continue to fly!`
-  ]).setDefeatMessages([
-		`My Flying Pokémon and I will forever dance elegantly!`,
-		`I hope you enjoyed our show.\nOur graceful dance is finished.`,
-		`Won't you come see our elegant choreography again?`
-  ]),
-  [TrainerType.TATE]: new TrainerConfig(++t).initForGymLeader([ Species.SOLROCK, Species.NATU, Species.CHIMECHO, Species.GALLADE ], Type.PSYCHIC)
-    .setEncounterMessages([
-		`Hehehe…\nWere you surprised to see me without my sister?`,
-		`I can see what you're thinking…\nYou want to battle!`,
-		`How can you defeat someone…\nWho knows your every move?`
-  ]).setVictoryMessages([
-		`It can't be helped…\nI miss Liza…`,
-		`Your bond with your Pokémon was stronger than mine.`,
-		`If I were with Liza, we would have won.\nWe can finish each other's thoughts!`
-  ]).setDefeatMessages([
-		`My Pokémon and I are superior!`,
-		`If you can't even defeat me, you'll never be able to defeat Liza either.`,
-		`It's all thanks to my strict training with Liza.\nI can make myself one with Pokémon.`
-  ]),
-  [TrainerType.LIZA]: new TrainerConfig(++t).initForGymLeader([ Species.LUNATONE, Species.SPOINK, Species.BALTOY, Species.GARDEVOIR ], Type.PSYCHIC)
-    .setEncounterMessages([
-		`Fufufu…\nWere you surprised to see me without my brother?`,
-		`I can determine what you desire…\nYou want to battle, don't you?`,
-		`How can you defeat someone…\nWho's one with their Pokémon?`
-  ]).setVictoryMessages([
-		`It can't be helped…\nI miss Tate…`,
-		`Your bond with your Pokémon…\nIt's stronger than mine.`,
-		`If I were with Tate, we would have won.\nWe can finish each other's sentences!`
-  ]).setDefeatMessages([
-		`My Pokémon and I are victorious.`,
-		`If you can't even defeat me, you'll never be able to defeat Tate either.`,
-		`It's all thanks to my strict training with Tate.\nI can synchronize myself with my Pokémon.`
-  ]),
-  [TrainerType.JUAN]: new TrainerConfig(++t).initForGymLeader([ Species.HORSEA, Species.BARBOACH, Species.SPHEAL, Species.RELICANTH ], Type.WATER)
-    .setEncounterMessages([
-		`Now's not the time to act coy.\nLet's battle!`,
-		`Ahahaha, You'll be witness to my artistry with Water Pokémon!`,
-		`A typhoon approaches!\nWill you be able to test me?`
-  ]).setVictoryMessages([
-		`You may be a genius who can take on Wallace!`,
-		`I focused on elegance while you trained.\nIt's only natural that you defeated me.`,
-		`Ahahaha!\nVery well, You have won this time.`
-  ]).setDefeatMessages([
-		`My Pokémon and I have sculpted an illusion of Water and come out victorious.`,
-		`Ahahaha, I have won, and you have lost.`,
-		`Shall I loan you my outfit? It may help you battle!\nAhahaha, I jest!`
-  ]),
+  [TrainerType.ROXANNE]: new TrainerConfig(++t).initForGymLeader([ Species.GEODUDE, Species.NOSEPASS ], Type.ROCK),
+  [TrainerType.BRAWLY]: new TrainerConfig(++t).initForGymLeader([ Species.MACHOP, Species.MAKUHITA ], Type.FIGHTING),
+  [TrainerType.WATTSON]: new TrainerConfig(++t).initForGymLeader([ Species.MAGNEMITE, Species.VOLTORB, Species.ELECTRIKE ], Type.ELECTRIC),
+  [TrainerType.FLANNERY]: new TrainerConfig(++t).initForGymLeader([ Species.SLUGMA, Species.TORKOAL, Species.NUMEL ], Type.FIRE),
+  [TrainerType.NORMAN]: new TrainerConfig(++t).initForGymLeader([ Species.SLAKOTH, Species.SPINDA, Species.CHANSEY, Species.KANGASKHAN ], Type.NORMAL),
+  [TrainerType.WINONA]: new TrainerConfig(++t).initForGymLeader([ Species.SWABLU, Species.WINGULL, Species.TROPIUS, Species.SKARMORY ], Type.FLYING),
+  [TrainerType.TATE]: new TrainerConfig(++t).initForGymLeader([ Species.SOLROCK, Species.NATU, Species.CHIMECHO, Species.GALLADE ], Type.PSYCHIC),
+  [TrainerType.LIZA]: new TrainerConfig(++t).initForGymLeader([ Species.LUNATONE, Species.SPOINK, Species.BALTOY, Species.GARDEVOIR ], Type.PSYCHIC),
+  [TrainerType.JUAN]: new TrainerConfig(++t).initForGymLeader([ Species.HORSEA, Species.BARBOACH, Species.SPHEAL, Species.RELICANTH ], Type.WATER),
   [TrainerType.ROARK]: new TrainerConfig(++t).initForGymLeader([ Species.CRANIDOS, Species.LARVITAR, Species.GEODUDE ], Type.ROCK),
   [TrainerType.GARDENIA]: new TrainerConfig(++t).initForGymLeader([ Species.ROSELIA, Species.TANGELA, Species.TURTWIG ], Type.GRASS),
   [TrainerType.MAYLENE]: new TrainerConfig(++t).initForGymLeader([ Species.LUCARIO, Species.MEDITITE, Species.CHIMCHAR ], Type.FIGHTING),
@@ -1059,55 +728,24 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion([ Species.LYCANROC, Species.KORAIDON, Species.KOMMO_O, Species.PAWMOT, Species.DUSKNOIR ]),
   [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion([ Species.POLITOED, Species.MIRAIDON, Species.HYDRAPPLE, Species.PORYGON_Z, Species.GRIMMSNARL ]),*/
 
-  [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL)).setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival').setPartyTemplates(trainerPartyTemplates.RIVAL).setEncounterMessages([
-    `There you are! I've been looking everywhere for you!\nDid you forget to say goodbye to your best friend?
-    $So you're finally pursuing your dream, huh?\nI knew you'd do it one day…
-    $Anyway, I'll forgive you for forgetting me, but on one condition. You have to battle me!
-    $You'd better give it your best! Wouldn't want your adventure to be over before it started, right?`
-  ]).setVictoryMessages([
-    `You already have three Pokémon?!\nThat's not fair at all!
-    $Just kidding! I lost fair and square, and now I know you'll do fine out there.
-    $By the way, the professor wanted me to give you some items. Hopefully they're helpful!
-    $Do your best like always! I believe in you!`
-  ]).setModifierRewardFuncs(() => modifierTypes.SUPER_EXP_CHARM, () => modifierTypes.EXP_SHARE).setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.CHIKORITA, Species.CYNDAQUIL, Species.TOTODILE, Species.TREECKO, Species.TORCHIC, Species.MUDKIP, Species.TURTWIG, Species.CHIMCHAR, Species.PIPLUP, Species.SNIVY, Species.TEPIG, Species.OSHAWOTT, Species.CHESPIN, Species.FENNEKIN, Species.FROAKIE, Species.ROWLET, Species.LITTEN, Species.POPPLIO, Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE ]))
+  [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL)).setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival').setPartyTemplates(trainerPartyTemplates.RIVAL)
+    .setModifierRewardFuncs(() => modifierTypes.SUPER_EXP_CHARM, () => modifierTypes.EXP_SHARE).setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE, Species.CHIKORITA, Species.CYNDAQUIL, Species.TOTODILE, Species.TREECKO, Species.TORCHIC, Species.MUDKIP, Species.TURTWIG, Species.CHIMCHAR, Species.PIPLUP, Species.SNIVY, Species.TEPIG, Species.OSHAWOTT, Species.CHESPIN, Species.FENNEKIN, Species.FROAKIE, Species.ROWLET, Species.LITTEN, Species.POPPLIO, Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEY, Species.HOOTHOOT, Species.TAILLOW, Species.STARLY, Species.PIDOVE, Species.FLETCHLING, Species.PIKIPEK, Species.ROOKIDEE ])),
-  [TrainerType.RIVAL_2]: new TrainerConfig(++t).setStaticParty().setMoneyMultiplier(1.25).setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival').setPartyTemplates(trainerPartyTemplates.RIVAL_2).setEncounterMessages([
-    `Oh, fancy meeting you here. Looks like you're still undefeated. Right on!
-    $I know what you're thinking, and no, I wasn't following you. I just happened to be in the area.
-    $I'm happy for you but I just want to let you know that it's OK to lose sometimes.
-    $We learn from our mistakes, often more than we would if we kept succeeding.
-    $In any case, I've been training hard for our rematch, so you'd better give it your all!`
-  ]).setVictoryMessages([
-    `I… wasn't supposed to lose that time…`
-  ]).setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.IVYSAUR, Species.CHARMELEON, Species.WARTORTLE, Species.BAYLEEF, Species.QUILAVA, Species.CROCONAW, Species.GROVYLE, Species.COMBUSKEN, Species.MARSHTOMP, Species.GROTLE, Species.MONFERNO, Species.PRINPLUP, Species.SERVINE, Species.PIGNITE, Species.DEWOTT, Species.QUILLADIN, Species.BRAIXEN, Species.FROGADIER, Species.DARTRIX, Species.TORRACAT, Species.BRIONNE, Species.THWACKEY, Species.RABOOT, Species.DRIZZILE ]))
+  [TrainerType.RIVAL_2]: new TrainerConfig(++t).setStaticParty().setMoneyMultiplier(1.25).setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival').setPartyTemplates(trainerPartyTemplates.RIVAL_2)
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.IVYSAUR, Species.CHARMELEON, Species.WARTORTLE, Species.BAYLEEF, Species.QUILAVA, Species.CROCONAW, Species.GROVYLE, Species.COMBUSKEN, Species.MARSHTOMP, Species.GROTLE, Species.MONFERNO, Species.PRINPLUP, Species.SERVINE, Species.PIGNITE, Species.DEWOTT, Species.QUILLADIN, Species.BRAIXEN, Species.FROGADIER, Species.DARTRIX, Species.TORRACAT, Species.BRIONNE, Species.THWACKEY, Species.RABOOT, Species.DRIZZILE ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOTTO, Species.HOOTHOOT, Species.TAILLOW, Species.STARAVIA, Species.TRANQUILL, Species.FLETCHINDER, Species.TRUMBEAK, Species.CORVISQUIRE ]))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450)),
-  [TrainerType.RIVAL_3]: new TrainerConfig(++t).setStaticParty().setMoneyMultiplier(1.5).setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival').setPartyTemplates(trainerPartyTemplates.RIVAL_3).setEncounterMessages([
-    `Long time no see! Still haven't lost, huh.\nYou're starting to get on my nerves. Just kidding!
-    $But really, I think it's about time you came home.\nYour family and friends miss you, you know.
-    $I know your dream means a lot to you, but the reality is you're going to lose sooner or later.
-    $And when you do, I'll be there for you like always.\nNow, let me show you how strong I've become!`
-  ]).setVictoryMessages([
-    `After all that… it wasn't enough…?`
-  ]).setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT, Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA, Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA, Species.RILLABOOM, Species.CINDERACE, Species.INTELEON ]))
+  [TrainerType.RIVAL_3]: new TrainerConfig(++t).setStaticParty().setMoneyMultiplier(1.5).setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival').setPartyTemplates(trainerPartyTemplates.RIVAL_3)
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT, Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA, Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA, Species.RILLABOOM, Species.CINDERACE, Species.INTELEON ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT, Species.TALONFLAME, Species.TOUCANNON, Species.CORVIKNIGHT ]))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450))
     .setSpeciesFilter(species => species.baseTotal >= 540),
-  [TrainerType.RIVAL_4]: new TrainerConfig(++t).setBoss().setStaticParty().setMoneyMultiplier(1.75).setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival_2').setPartyTemplates(trainerPartyTemplates.RIVAL_4).setEncounterMessages([
-    `It's me! You didn't forget about me again did you?
-    $You made it really far! I'm proud of you.\nBut it looks like it's the end of your journey.
-    $You've awoken something in me I never knew was there.\nIt seems like all I do now is train.
-    $I hardly even eat or sleep now, I just train my Pokémon all day, getting stronger every time.
-    $And now, I've finally reached peak performance.\nI don't think anyone could beat me now.
-    $And you know what? It's all because of you.\nI don't know whether to thank you or hate you.
-    $Prepare yourself.`
-  ]).setVictoryMessages([
-    `What…@d{64} what are you?`
-  ]).setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT, Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA, Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA, Species.RILLABOOM, Species.CINDERACE, Species.INTELEON ]))
+  [TrainerType.RIVAL_4]: new TrainerConfig(++t).setBoss().setStaticParty().setMoneyMultiplier(1.75).setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival_2').setPartyTemplates(trainerPartyTemplates.RIVAL_4)
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT, Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA, Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA, Species.RILLABOOM, Species.CINDERACE, Species.INTELEON ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT, Species.TALONFLAME, Species.TOUCANNON, Species.CORVIKNIGHT ]))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450))
     .setSpeciesFilter(species => species.baseTotal >= 540),
-  [TrainerType.RIVAL_5]: new TrainerConfig(++t).setBoss().setStaticParty().setMoneyMultiplier(2.25).setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival_3').setPartyTemplates(trainerPartyTemplates.RIVAL_5).setEncounterMessages([ `…` ]).setVictoryMessages([ '…' ])
+  [TrainerType.RIVAL_5]: new TrainerConfig(++t).setBoss().setStaticParty().setMoneyMultiplier(2.25).setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival_3').setPartyTemplates(trainerPartyTemplates.RIVAL_5)
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.VENUSAUR, Species.CHARIZARD, Species.BLASTOISE, Species.MEGANIUM, Species.TYPHLOSION, Species.FERALIGATR, Species.SCEPTILE, Species.BLAZIKEN, Species.SWAMPERT, Species.TORTERRA, Species.INFERNAPE, Species.EMPOLEON, Species.SERPERIOR, Species.EMBOAR, Species.SAMUROTT, Species.CHESNAUGHT, Species.DELPHOX, Species.GRENINJA, Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA, Species.RILLABOOM, Species.CINDERACE, Species.INTELEON ]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([ Species.PIDGEOT, Species.NOCTOWL, Species.SWELLOW, Species.STARAPTOR, Species.UNFEZANT, Species.TALONFLAME, Species.TOUCANNON, Species.CORVIKNIGHT ]))
     .setPartyMemberFunc(2, getSpeciesFilterRandomPartyMemberFunc((species: PokemonSpecies) => !pokemonEvolutions.hasOwnProperty(species.speciesId) && !pokemonPrevolutions.hasOwnProperty(species.speciesId) && species.baseTotal >= 450))
@@ -1126,4 +764,8 @@ export const trainerConfigs: TrainerConfigs = {
       p.pokeball = PokeballType.MASTER_BALL;
       p.formIndex = 1;
     })),
-}
+};
+
+(function() {
+  initTrainerTypeDialogue();
+})();

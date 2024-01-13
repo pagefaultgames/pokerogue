@@ -3,7 +3,7 @@ import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult } from "../pokemon";
 import { getBattleStatName } from "./battle-stat";
 import { BattleStat } from "./battle-stat";
-import { BattlerTagType } from "./battler-tag";
+import { BattlerTagType } from "./enums/battler-tag-type";
 import { getStatusEffectHealText } from "./status-effect";
 import * as Utils from "../utils";
 import { DoubleBerryEffectAbAttr, applyAbAttrs } from "./ability";
