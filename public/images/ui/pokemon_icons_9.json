@@ -10,7 +10,7 @@
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "980.png",
+					"filename": "980",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -31,7 +31,7 @@
 					}
 				},
 				{
-					"filename": "980s.png",
+					"filename": "980s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -52,7 +52,7 @@
 					}
 				},
 				{
-					"filename": "8194.png",
+					"filename": "8194",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -73,7 +73,7 @@
 					}
 				},
 				{
-					"filename": "8194s.png",
+					"filename": "8194s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -94,7 +94,7 @@
 					}
 				},
 				{
-					"filename": "985.png",
+					"filename": "985",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -115,7 +115,7 @@
 					}
 				},
 				{
-					"filename": "985s.png",
+					"filename": "985s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -136,7 +136,7 @@
 					}
 				},
 				{
-					"filename": "8128.png",
+					"filename": "8128",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -157,7 +157,7 @@
 					}
 				},
 				{
-					"filename": "8128s.png",
+					"filename": "8128s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -178,7 +178,7 @@
 					}
 				},
 				{
-					"filename": "1011.png",
+					"filename": "1011",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -199,7 +199,7 @@
 					}
 				},
 				{
-					"filename": "1011s.png",
+					"filename": "1011s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -220,7 +220,7 @@
 					}
 				},
 				{
-					"filename": "986.png",
+					"filename": "986",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -241,7 +241,7 @@
 					}
 				},
 				{
-					"filename": "986s.png",
+					"filename": "986s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -262,7 +262,7 @@
 					}
 				},
 				{
-					"filename": "990.png",
+					"filename": "990",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -283,7 +283,7 @@
 					}
 				},
 				{
-					"filename": "990s.png",
+					"filename": "990s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -304,7 +304,7 @@
 					}
 				},
 				{
-					"filename": "987.png",
+					"filename": "987",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -325,7 +325,7 @@
 					}
 				},
 				{
-					"filename": "987s.png",
+					"filename": "987s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -346,7 +346,7 @@
 					}
 				},
 				{
-					"filename": "991.png",
+					"filename": "991",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -367,7 +367,7 @@
 					}
 				},
 				{
-					"filename": "991s.png",
+					"filename": "991s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -388,7 +388,7 @@
 					}
 				},
 				{
-					"filename": "8128-aqua.png",
+					"filename": "8128-aqua",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -409,7 +409,7 @@
 					}
 				},
 				{
-					"filename": "8128s-aqua.png",
+					"filename": "8128s-aqua",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -430,7 +430,7 @@
 					}
 				},
 				{
-					"filename": "984.png",
+					"filename": "984",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -451,7 +451,7 @@
 					}
 				},
 				{
-					"filename": "984s.png",
+					"filename": "984s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -472,7 +472,7 @@
 					}
 				},
 				{
-					"filename": "993.png",
+					"filename": "993",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -493,7 +493,7 @@
 					}
 				},
 				{
-					"filename": "993s.png",
+					"filename": "993s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -514,7 +514,7 @@
 					}
 				},
 				{
-					"filename": "1022.png",
+					"filename": "1022",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -535,7 +535,7 @@
 					}
 				},
 				{
-					"filename": "1022s.png",
+					"filename": "1022s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -556,7 +556,7 @@
 					}
 				},
 				{
-					"filename": "979.png",
+					"filename": "979",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -577,7 +577,7 @@
 					}
 				},
 				{
-					"filename": "979s.png",
+					"filename": "979s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -598,7 +598,7 @@
 					}
 				},
 				{
-					"filename": "982.png",
+					"filename": "982",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -619,7 +619,7 @@
 					}
 				},
 				{
-					"filename": "982s.png",
+					"filename": "982s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -640,7 +640,7 @@
 					}
 				},
 				{
-					"filename": "992.png",
+					"filename": "992",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -661,7 +661,7 @@
 					}
 				},
 				{
-					"filename": "992s.png",
+					"filename": "992s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -682,7 +682,7 @@
 					}
 				},
 				{
-					"filename": "1009.png",
+					"filename": "1009",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -703,7 +703,7 @@
 					}
 				},
 				{
-					"filename": "1009s.png",
+					"filename": "1009s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -724,7 +724,7 @@
 					}
 				},
 				{
-					"filename": "1010.png",
+					"filename": "1010",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -745,7 +745,7 @@
 					}
 				},
 				{
-					"filename": "1010s.png",
+					"filename": "1010s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -766,7 +766,7 @@
 					}
 				},
 				{
-					"filename": "989.png",
+					"filename": "989",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -787,7 +787,7 @@
 					}
 				},
 				{
-					"filename": "989s.png",
+					"filename": "989s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -808,7 +808,7 @@
 					}
 				},
 				{
-					"filename": "1005.png",
+					"filename": "1005",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -829,7 +829,7 @@
 					}
 				},
 				{
-					"filename": "1005s.png",
+					"filename": "1005s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -850,7 +850,7 @@
 					}
 				},
 				{
-					"filename": "1006.png",
+					"filename": "1006",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -871,7 +871,7 @@
 					}
 				},
 				{
-					"filename": "1006s.png",
+					"filename": "1006s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -892,7 +892,7 @@
 					}
 				},
 				{
-					"filename": "8128-blaze.png",
+					"filename": "8128-blaze",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -913,7 +913,7 @@
 					}
 				},
 				{
-					"filename": "8128s-blaze.png",
+					"filename": "8128s-blaze",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -934,7 +934,7 @@
 					}
 				},
 				{
-					"filename": "981.png",
+					"filename": "981",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -955,7 +955,7 @@
 					}
 				},
 				{
-					"filename": "981s.png",
+					"filename": "981s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -976,7 +976,7 @@
 					}
 				},
 				{
-					"filename": "982-three-segment.png",
+					"filename": "982-three-segment",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -997,7 +997,7 @@
 					}
 				},
 				{
-					"filename": "982s-three-segment.png",
+					"filename": "982s-three-segment",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1018,7 +1018,7 @@
 					}
 				},
 				{
-					"filename": "983.png",
+					"filename": "983",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1039,7 +1039,7 @@
 					}
 				},
 				{
-					"filename": "983s.png",
+					"filename": "983s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1060,7 +1060,7 @@
 					}
 				},
 				{
-					"filename": "988.png",
+					"filename": "988",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1081,7 +1081,7 @@
 					}
 				},
 				{
-					"filename": "988s.png",
+					"filename": "988s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1102,7 +1102,7 @@
 					}
 				},
 				{
-					"filename": "994.png",
+					"filename": "994",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1123,7 +1123,7 @@
 					}
 				},
 				{
-					"filename": "994s.png",
+					"filename": "994s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1144,7 +1144,7 @@
 					}
 				},
 				{
-					"filename": "995.png",
+					"filename": "995",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1165,7 +1165,7 @@
 					}
 				},
 				{
-					"filename": "995s.png",
+					"filename": "995s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1186,7 +1186,7 @@
 					}
 				},
 				{
-					"filename": "1018.png",
+					"filename": "1018",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1207,7 +1207,7 @@
 					}
 				},
 				{
-					"filename": "1018s.png",
+					"filename": "1018s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1228,7 +1228,7 @@
 					}
 				},
 				{
-					"filename": "1019.png",
+					"filename": "1019",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1249,7 +1249,7 @@
 					}
 				},
 				{
-					"filename": "1019s.png",
+					"filename": "1019s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1270,7 +1270,7 @@
 					}
 				},
 				{
-					"filename": "1020.png",
+					"filename": "1020",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1291,7 +1291,7 @@
 					}
 				},
 				{
-					"filename": "1020s.png",
+					"filename": "1020s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1312,7 +1312,7 @@
 					}
 				},
 				{
-					"filename": "1021.png",
+					"filename": "1021",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1333,7 +1333,7 @@
 					}
 				},
 				{
-					"filename": "1021s.png",
+					"filename": "1021s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1354,7 +1354,7 @@
 					}
 				},
 				{
-					"filename": "1023.png",
+					"filename": "1023",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1375,7 +1375,7 @@
 					}
 				},
 				{
-					"filename": "1023s.png",
+					"filename": "1023s",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
