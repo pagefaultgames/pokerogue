@@ -286,7 +286,7 @@ export abstract class FieldPhase extends BattlePhase {
   }
 
   executeForAll(func: PokemonFunc): void {
-    const field = this.scene.getField().filter(p => p?.isActive());
+    const field = this.scene.getField().filter(p => p?.summonData && p.isActive());
     field.forEach(pokemon => func(pokemon));
   }
 }
@@ -2389,6 +2389,14 @@ export class DamagePhase extends PokemonPhase {
             this.scene.addEnemyModifier(getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier, false, true);
             pokemon.generateAndPopulateMoveset(1);
             this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+            this.scene.currentBattle.double = true;
+            const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted());
+            if (availablePartyMembers.length > 1) {
+              this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, true));
+              if (!availablePartyMembers[1].isOnField())
+                this.scene.pushPhase(new SummonPhase(this.scene, 1));
+            }
+
             super.end();
           }, null, true);
           return;

@@ -207,6 +207,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow });
       return ret;
     };
+
+    this.setScale(this.getSpriteScale());
     
     const sprite = getSprite(true);
     const tintSprite = getSprite();
@@ -394,6 +396,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.maskEnabled
       ? this.getAt(1) as Phaser.GameObjects.Sprite
       : this.maskSprite;
+  }
+
+  getSpriteScale(): number {
+    return 1;
   }
 
   initShinySparkle(): void {
@@ -1250,6 +1256,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.abilityIndex >= abilityCount) // Shouldn't happen
         this.abilityIndex = abilityCount - 1;
       this.scene.gameData.setPokemonSeen(this, true);
+      this.setScale(this.getSpriteScale());
       this.loadAssets().then(() => {
         this.calculateStats();
         this.scene.updateModifiers(this.isPlayer(), true);
@@ -1559,7 +1566,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.maskSprite = this.getTintSprite();
       this.maskSprite.setVisible(true);
       this.maskSprite.setPosition(this.x * 6, this.y * 6);
-      this.maskSprite.setScale(6);
+      this.maskSprite.setScale(6 * this.getSpriteScale());
       this.maskEnabled = true;
     }
   }
@@ -1568,7 +1575,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.maskEnabled) {
       this.maskSprite.setVisible(false);
       this.maskSprite.setPosition(0, 0);
-      this.maskSprite.setScale(1);
+      this.maskSprite.setScale(this.getSpriteScale());
       this.maskSprite = null;
       this.maskEnabled = false;
     }

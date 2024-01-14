@@ -760,8 +760,8 @@ export abstract class BattleAnim {
                         if (isUser && target === user)
                             continue;
                         const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];
+                        const spriteSource = isUser ? userSprite : targetSprite;
                         if ((isUser ? u : t) === sprites.length) {
-                            const spriteSource = isUser ? userSprite : targetSprite;
                             let sprite: Phaser.GameObjects.Sprite;
                             sprite = scene.addFieldSprite(0, 0, spriteSource.texture, spriteSource.frame.name);
                             sprite.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: true });
@@ -772,12 +772,12 @@ export abstract class BattleAnim {
                         }
 
                         const spriteIndex = isUser ? u++ : t++;
-                        const pokemonSprite =  sprites[spriteIndex];
+                        const pokemonSprite = sprites[spriteIndex];
                         const graphicFrameData = frameData.get(frame.target).get(spriteIndex);
-                        pokemonSprite.setPosition(graphicFrameData.x, graphicFrameData.y);
+                        pokemonSprite.setPosition(graphicFrameData.x, graphicFrameData.y - ((spriteSource.height / 2) * (spriteSource.parentContainer.scale - 1)));
                         
                         pokemonSprite.setAngle(graphicFrameData.angle);
-                        pokemonSprite.setScale(graphicFrameData.scaleX,  graphicFrameData.scaleY);
+                        pokemonSprite.setScale(graphicFrameData.scaleX * spriteSource.parentContainer.scale,  graphicFrameData.scaleY * spriteSource.parentContainer.scale);
 
                         pokemonSprite.setData('locked', frame.locked);
 

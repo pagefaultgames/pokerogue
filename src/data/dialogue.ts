@@ -257,7 +257,7 @@ export const battleSpecDialogue = {
                $Each cycle your mind reverts to its former state.\nEven so, somehow, remnants of your former selves remain.
                $Until now you have yet to succeed, but I sense a different presence in you this time.\n
                $You are the only one here, though it is as if there is… another.
-               $Will you finally prove a formidable challenge to me?\nThe challenge I have longed for for millenia?
+               $Will you finally prove a formidable challenge to me?\nThe challenge I have longed for for millennia?
                $We begin.`,
     firstStageWin: `I see. The presence I felt was indeed real.\nIt appears I no longer need to hold back.
                    $Do not disappoint me.`,

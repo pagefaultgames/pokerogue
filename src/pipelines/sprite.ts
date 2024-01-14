@@ -212,15 +212,18 @@ export default class SpritePipeline extends FieldSpritePipeline {
         const spriteColors = (ignoreOverride && data['spriteColorsBase']) || data['spriteColors'] || [] as number[][];
         const fusionSpriteColors = (ignoreOverride && data['fusionSpriteColorsBase']) || data['fusionSpriteColors'] || [] as number[][];
 
-        const position = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer
+        const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
+        const position = isEntityObj
             ? [ sprite.parentContainer.x, sprite.parentContainer.y ]
             : [ sprite.x, sprite.y ];
         position[0] += -(sprite.width - sprite.frame.width) / 2 + sprite.frame.x;
+        if (sprite.originY === 0.5)
+            position[1] += (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1);
         this.set1i('hasShadow', hasShadow ? 1 : 0);
         this.set1i('yCenter', sprite.originY === 0.5 ? 1 : 0);
         this.set2f('relPosition', position[0], position[1]);
         this.set2f('size', sprite.frame.width, sprite.height);
-        this.set1f('yOffset', sprite.height - sprite.frame.height);
+        this.set1f('yOffset', sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
         this.set4fv('tone', tone);
         const emptyColors = [ 0, 0, 0, 0 ];
         const flatSpriteColors: integer[] = [];
@@ -243,13 +246,14 @@ export default class SpritePipeline extends FieldSpritePipeline {
 
         const hasShadow = sprite.pipelineData['hasShadow'] as boolean;
         if (hasShadow) {
-            const baseY = (sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer
+            const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
+            const baseY = (isEntityObj
                 ? sprite.parentContainer.y
-                : sprite.y + sprite.height / 2) * 6;
+                : sprite.y + sprite.height) * 6;
             const bottomPadding = Math.ceil(sprite.height * 0.05) * 6;
             const yDelta = (baseY - y1) / 6;
             y2 = y1 = baseY + bottomPadding;
-            const pixelHeight = (v1 - v0) / sprite.frame.height;
+            const pixelHeight = ((v1 - v0) / (sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale)));
             v1 += (yDelta + bottomPadding / 6) * pixelHeight;
         }
         

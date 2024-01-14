@@ -182,8 +182,79 @@ export class QuietFormChangePhase extends BattlePhase {
       return this.end();
 
     const preName = this.pokemon.name;
-    this.pokemon.changeForm(this.formChange).then(() => {
-      this.scene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), Utils.fixedInt(1500));
+
+    const getPokemonSprite = () => {
+      const sprite = this.scene.addFieldSprite(this.pokemon.x + this.pokemon.getSprite().x, this.pokemon.y + this.pokemon.getSprite().y, `pkmn__sub`);
+      sprite.setOrigin(0.5, 1);
+      sprite.play(this.pokemon.getSpriteKey()).stop();
+      sprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false });
+      [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
+        if (this.pokemon.summonData?.speciesForm)
+          k += 'Base';
+        sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k];
+      });
+      this.scene.field.add(sprite);
+      return sprite;
+    }
+
+    const [ pokemonTintSprite, pokemonFormTintSprite ] = [ getPokemonSprite(), getPokemonSprite() ];
+
+    this.pokemon.getSprite().on('animationupdate', (_anim, frame) => {
+      if (frame.textureKey === pokemonTintSprite.texture.key)
+        pokemonTintSprite.setFrame(frame.textureFrame);
+      else
+        pokemonFormTintSprite.setFrame(frame.textureFrame);
+    });
+
+    pokemonTintSprite.setAlpha(0);
+    pokemonTintSprite.setTintFill(0xFFFFFF);
+    pokemonFormTintSprite.setVisible(false);
+    pokemonFormTintSprite.setTintFill(0xFFFFFF);
+
+    this.scene.playSound('PRSFX- Transform');
+
+    this.scene.tweens.add({
+      targets: pokemonTintSprite,
+      alpha: 1,
+      duration: 1000,
+      ease: 'Cubic.easeIn',
+      onComplete: () => {
+        this.pokemon.setVisible(false);
+        this.pokemon.changeForm(this.formChange).then(() => {
+          pokemonFormTintSprite.setScale(0.01);
+          pokemonFormTintSprite.play(this.pokemon.getSpriteKey()).stop();
+          pokemonFormTintSprite.setVisible(true);
+          this.scene.tweens.add({
+            targets: pokemonTintSprite,
+            delay: 250,
+            scale: 0.01,
+            ease: 'Cubic.easeInOut',
+            duration: 500,
+            onComplete: () => pokemonTintSprite.destroy()
+          });
+          this.scene.tweens.add({
+            targets: pokemonFormTintSprite,
+            delay: 250,
+            scale: 1,
+            ease: 'Cubic.easeInOut',
+            duration: 500,
+            onComplete: () => {
+              this.pokemon.setVisible(true);
+              this.scene.tweens.add({
+                targets: pokemonFormTintSprite,
+                delay: 250,
+                alpha: 0,
+                ease: 'Cubic.easeOut',
+                duration: 1000,
+                onComplete: () => {
+                  pokemonTintSprite.setVisible(false);
+                  this.scene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), Utils.fixedInt(1500));
+                }
+              });
+            }
+          });
+        });
+      }
     });
   }
 
