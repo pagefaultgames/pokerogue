@@ -399,6 +399,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getSpriteScale(): number {
+    if (this.species.speciesId === Species.ETERNATUS && this.formIndex)
+      return 1.5;
     return 1;
   }
 
@@ -1565,8 +1567,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.maskEnabled) {
       this.maskSprite = this.getTintSprite();
       this.maskSprite.setVisible(true);
-      this.maskSprite.setPosition(this.x * 6, this.y * 6);
-      this.maskSprite.setScale(6 * this.getSpriteScale());
+      this.maskSprite.setPosition(this.x * this.parentContainer.scale + this.parentContainer.x,
+                                  this.y * this.parentContainer.scale + this.parentContainer.y);
+      this.maskSprite.setScale(this.getSpriteScale() * this.parentContainer.scale);
       this.maskEnabled = true;
     }
   }

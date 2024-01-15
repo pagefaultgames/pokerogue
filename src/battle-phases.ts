@@ -449,8 +449,8 @@ export class EncounterPhase extends BattlePhase {
 
   doEncounter() {
     this.scene.playBgm(undefined, true);
-
     this.scene.updateModifiers(false);
+    this.scene.setFieldScale(1);
 
     /*if (startingWave > 10) {
       for (let m = 0; m < Math.min(Math.floor(startingWave / 10), 99); m++)
@@ -617,6 +617,8 @@ export class NextEncounterPhase extends EncounterPhase {
   doEncounter(): void {
     this.scene.playBgm(undefined, true);
 
+    this.scene.arenaNextEnemy.setVisible(true);
+
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
       targets: [ this.scene.arenaEnemy, this.scene.arenaNextEnemy, this.scene.currentBattle.trainer, enemyField, this.scene.lastEnemyTrainer ].flat(),
@@ -626,6 +628,7 @@ export class NextEncounterPhase extends EncounterPhase {
         this.scene.arenaEnemy.setX(this.scene.arenaNextEnemy.x);
         this.scene.arenaEnemy.setAlpha(1);
         this.scene.arenaNextEnemy.setX(this.scene.arenaNextEnemy.x - 300);
+        this.scene.arenaNextEnemy.setVisible(false);
         if (this.scene.lastEnemyTrainer)
           this.scene.lastEnemyTrainer.destroy();
         
@@ -836,7 +839,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       this.scene.tweens.add({
         targets: this.scene.trainer,
         x: -36,
-        duration: 1000
+        duration: 1000,
+        onComplete: () => this.scene.trainer.setVisible(false)
       });
       this.scene.time.delayedCall(750, () => this.summon());
     } else {
@@ -1059,6 +1063,8 @@ export class ShowTrainerPhase extends BattlePhase {
 
   start() {
     super.start();
+
+    this.scene.trainer.setVisible(true)
 
     this.scene.trainer.setTexture('trainer_m');
 
@@ -2138,7 +2144,12 @@ export class StatChangePhase extends PokemonPhase {
       pokemon.enableMask();
       const pokemonMaskSprite = pokemon.maskSprite;
 
-      const statSprite = this.scene.add.tileSprite((this.player ? 106 : 236) * 6, ((this.player ? 148 : 84) + (levels.value >= 1 ? 160 : 0)) * 6, 156, 316, 'battle_stats', filteredStats.length > 1 ? 'mix' : BattleStat[filteredStats[0]].toLowerCase());
+      const tileX = (this.player ? 106 : 236) * pokemon.getSpriteScale() * this.scene.field.scale;
+      const tileY = ((this.player ? 148 : 84) + (levels.value >= 1 ? 160 : 0)) * pokemon.getSpriteScale() * this.scene.field.scale;
+      const tileWidth = 156 * this.scene.field.scale * pokemon.getSpriteScale();
+      const tileHeight = 316 * this.scene.field.scale * pokemon.getSpriteScale();
+
+      const statSprite = this.scene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, 'battle_stats', filteredStats.length > 1 ? 'mix' : BattleStat[filteredStats[0]].toLowerCase());
       statSprite.setPipeline(this.scene.fieldSpritePipeline);
       statSprite.setAlpha(0);
       statSprite.setScale(6);
@@ -2388,6 +2399,7 @@ export class DamagePhase extends PokemonPhase {
           this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin, pokemon.name, null, () => {
             this.scene.addEnemyModifier(getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier, false, true);
             pokemon.generateAndPopulateMoveset(1);
+            this.scene.setFieldScale(0.75);
             this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
             this.scene.currentBattle.double = true;
             const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted());

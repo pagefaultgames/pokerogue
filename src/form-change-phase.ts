@@ -235,7 +235,7 @@ export class QuietFormChangePhase extends BattlePhase {
           this.scene.tweens.add({
             targets: pokemonFormTintSprite,
             delay: 250,
-            scale: 1,
+            scale: this.pokemon.getSpriteScale(),
             ease: 'Cubic.easeInOut',
             duration: 500,
             onComplete: () => {

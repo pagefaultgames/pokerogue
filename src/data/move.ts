@@ -1614,10 +1614,6 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
 
     return true;
   }
-
-  getCondition(): MoveConditionFunc {
-    return (user, target, move) => super.getCondition()(user, target, move) && !target.isBossImmune();
-  }
 }
 
 export class HitsTagAttr extends MoveAttr {
@@ -2006,6 +2002,8 @@ export class DiscourageFrequentUseAttr extends MoveAttr {
 }
 
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
+
+const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
 
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
@@ -2602,6 +2600,7 @@ export function initMoves() {
       .attr(FaintCountdownAttr)
       .ignoresProtect()
       .soundBased()
+      .condition(failOnBossCondition)
       .target(MoveTarget.ALL),
     new AttackMove(Moves.ICY_WIND, "Icy Wind", Type.ICE, MoveCategory.SPECIAL, 55, 95, 15, 34, "The user attacks with a gust of chilled air. This also lowers opposing Pokémon's Speed stats.", 100, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
@@ -2663,7 +2662,8 @@ export function initMoves() {
     new StatusMove(Moves.SAFEGUARD, "Safeguard (N)", Type.NORMAL, -1, 25, -1, "The user creates a protective field that prevents status conditions for five turns.", -1, 0, 2)
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.PAIN_SPLIT, "Pain Split", Type.NORMAL, -1, 20, -1, "The user adds its HP to the target's HP, then equally shares the combined HP with the target.", -1, 0, 2)
-      .attr(HpSplitAttr),
+      .attr(HpSplitAttr)
+      .condition(failOnBossCondition),
     new AttackMove(Moves.SACRED_FIRE, "Sacred Fire", Type.FIRE, MoveCategory.PHYSICAL, 100, 95, 5, -1, "The target is razed with a mystical fire of great intensity. This may also leave the target with a burn.", 50, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .makesContact(false),
@@ -2796,7 +2796,8 @@ export function initMoves() {
       .condition((user, target, move) => !target.status),
     new AttackMove(Moves.KNOCK_OFF, "Knock Off (N)", Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, "The user slaps down the target's held item, and that item can't be used in that battle. The move does more damage if the target has a held item.", -1, 0, 3),
     new AttackMove(Moves.ENDEAVOR, "Endeavor", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "This attack move cuts down the target's HP to equal the user's HP.", -1, 0, 3)
-      .attr(MatchHpAttr),
+      .attr(MatchHpAttr)
+      .condition(failOnBossCondition),
     new AttackMove(Moves.ERUPTION, "Eruption", Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, -1, "The user attacks opposing Pokémon with explosive fury. The lower the user's HP, the lower the move's power.", -1, 0, 3)
       .attr(HpPowerAttr)
       .target(MoveTarget.ALL_NEAR_ENEMIES),

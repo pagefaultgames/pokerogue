@@ -48,6 +48,7 @@ import PokemonData from './system/pokemon-data';
 import { Nature } from './data/nature';
 import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from './data/pokemon-forms';
 import { FormChangePhase, QuietFormChangePhase } from './form-change-phase';
+import { BattleSpec } from './enums/battle-spec';
 
 const enableAuto = true;
 const quickStart = false;
@@ -426,6 +427,14 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	launchBattle() {
+		this.arenaBg = this.addFieldSprite(0, 0, 'plains_bg');
+		this.arenaBgTransition = this.addFieldSprite(0, 0, `plains_bg`);
+
+		[ this.arenaBgTransition, this.arenaBg ].forEach(a => {
+			a.setScale(6);
+			a.setOrigin(0);
+		});
+
 		const field = this.add.container(0, 0);
 		field.setScale(6);
 
@@ -494,8 +503,6 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.quickStart = this.quickStart || this.isButtonPressed(Button.QUICK_START);
 
-		this.arenaBg = this.addFieldSprite(0, 0, 'plains_bg');
-		this.arenaBgTransition = this.addFieldSprite(0, 0, `plains_bg`);
 		this.arenaPlayer = new ArenaBase(this, true);
 		this.arenaPlayerTransition = new ArenaBase(this, true);
 		this.arenaEnemy = new ArenaBase(this, false);
@@ -503,8 +510,9 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.arenaBgTransition.setVisible(false);
 		this.arenaPlayerTransition.setVisible(false);
+		this.arenaNextEnemy.setVisible(false);
 
-		[ this.arenaBg, this.arenaBgTransition, this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy ].forEach(a => {
+		[ this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy ].forEach(a => {
 			if (a instanceof Phaser.GameObjects.Sprite)
 				a.setOrigin(0, 0);
 			field.add(a);
@@ -722,6 +730,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.arenaPlayer.setPosition(300, 0);
 		this.arenaPlayerTransition.setPosition(0, 0);
 		[ this.arenaEnemy, this.arenaNextEnemy ].forEach(a => a.setPosition(-280, 0));
+		this.arenaNextEnemy.setVisible(false);
 
 		this.trainer.setTexture('trainer_m');
 		this.trainer.setPosition(406, 132);
@@ -827,7 +836,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		if (!waveIndex && lastBattle) {
 			const isNewBiome = !(lastBattle.waveIndex % 10);
-			const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER;
+			const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
 			this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
 			this.trySpreadPokerus();
 			if (!isNewBiome && (newWaveIndex % 10) == 5)
@@ -874,6 +883,29 @@ export default class BattleScene extends Phaser.Scene {
 		}
 
 		return this.arena;
+	}
+
+	setFieldScale(scale: number, instant: boolean = false): Promise<void> {
+		return new Promise(resolve => {
+			scale *= 6;
+			if (this.field.scale === scale)
+				return resolve();
+
+			const defaultWidth = this.arenaBg.width * 6;
+			const defaultHeight = this.arenaBg.height * 6;
+			const scaledWidth = this.arenaBg.width * scale;
+			const scaledHeight = this.arenaBg.height * scale;
+
+			this.tweens.add({
+				targets: this.field,
+				scale: scale,
+				x: (defaultWidth - scaledWidth) / 2,
+				y: defaultHeight - scaledHeight,
+				duration: !instant ? Utils.fixedInt(Math.abs(this.field.scale - scale) * 200) : 0,
+				ease: 'Sine.easeInOut',
+				onComplete: () => resolve()
+			});
+		});
 	}
 
 	getSpeciesFormIndex(species: PokemonSpecies, gender?: Gender, nature?: Nature, ignoreArena?: boolean): integer {
@@ -1240,9 +1272,9 @@ export default class BattleScene extends Phaser.Scene {
 			duration = 500;
 		if (destroy === undefined)
       destroy = true;
-    const bgm = this.sound.get(this.bgm.key);
+    const bgm = this.sound.getAllPlaying().find(bgm => bgm.key === this.bgm.key);
 		if (bgm) {
-			SoundFade.fadeOut(this, bgm, duration, destroy);
+			SoundFade.fadeOut(this, this.bgm, duration, destroy);
 			return true;
 		}
 

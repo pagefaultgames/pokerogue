@@ -25,6 +25,7 @@ uniform vec3 duskTint;
 uniform vec3 nightTint;
 uniform int hasShadow;
 uniform int yCenter;
+uniform float fieldScale;
 uniform float vCutoff;
 uniform vec2 relPosition;
 uniform vec2 size;
@@ -115,8 +116,8 @@ void main()
     if (hasShadow == 1) {
         float width = size.x - (yOffset / 2.0);
 
-        float spriteX = ((floor(outPosition.x / 6.0) - relPosition.x) / width) + 0.5;
-        float spriteY = ((floor(outPosition.y / 6.0) - relPosition.y) / size.y);
+        float spriteX = ((floor(outPosition.x / fieldScale) - relPosition.x) / width) + 0.5;
+        float spriteY = ((floor(outPosition.y / fieldScale) - relPosition.y) / size.y);
 
         if (yCenter == 1) {
             spriteY += 0.5;
@@ -213,14 +214,19 @@ export default class SpritePipeline extends FieldSpritePipeline {
         const fusionSpriteColors = (ignoreOverride && data['fusionSpriteColorsBase']) || data['fusionSpriteColors'] || [] as number[][];
 
         const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
+        const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
+        const fieldScaleRatio = field.scale / 6;
         const position = isEntityObj
             ? [ sprite.parentContainer.x, sprite.parentContainer.y ]
             : [ sprite.x, sprite.y ];
-        position[0] += -(sprite.width - sprite.frame.width) / 2 + sprite.frame.x;
+        position[0] += field.x / field.scale;
+        position[1] += field.y / field.scale;
+        position[0] += -(sprite.width - (sprite.frame.width)) / 2 + sprite.frame.x;
         if (sprite.originY === 0.5)
             position[1] += (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1);
         this.set1i('hasShadow', hasShadow ? 1 : 0);
         this.set1i('yCenter', sprite.originY === 0.5 ? 1 : 0);
+        this.set1f('fieldScale', field.scale);
         this.set2f('relPosition', position[0], position[1]);
         this.set2f('size', sprite.frame.width, sprite.height);
         this.set1f('yOffset', sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
@@ -247,14 +253,16 @@ export default class SpritePipeline extends FieldSpritePipeline {
         const hasShadow = sprite.pipelineData['hasShadow'] as boolean;
         if (hasShadow) {
             const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
+            const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
+            const fieldScaleRatio = field.scale / 6;
             const baseY = (isEntityObj
                 ? sprite.parentContainer.y
-                : sprite.y + sprite.height) * 6;
-            const bottomPadding = Math.ceil(sprite.height * 0.05) * 6;
-            const yDelta = (baseY - y1) / 6;
+                : sprite.y + sprite.height) * 6 / fieldScaleRatio;
+            const bottomPadding = Math.ceil(sprite.height * 0.05) * 6 / fieldScaleRatio;
+            const yDelta = (baseY - y1) / field.scale;
             y2 = y1 = baseY + bottomPadding;
-            const pixelHeight = ((v1 - v0) / (sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale)));
-            v1 += (yDelta + bottomPadding / 6) * pixelHeight;
+            const pixelHeight = (v1 - v0) / (sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
+            v1 += (yDelta + bottomPadding / field.scale) * pixelHeight;
         }
         
         return super.batchQuad(gameObject, x0, y0, x1, y1, x2, y2, x3, y3, u0, v0, u1, v1, tintTL, tintTR, tintBL, tintBR, tintEffect, texture, unit);
