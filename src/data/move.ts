@@ -1737,6 +1737,10 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       return (!player && !user.scene.currentBattle.battleType) || party.filter(p => !p.isFainted()).length > user.scene.currentBattle.getBattlerCount();
     };
   }
+
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+    return -100; // Overridden in switch logic
+  }
 }
 
 export class CopyTypeAttr extends MoveEffectAttr {

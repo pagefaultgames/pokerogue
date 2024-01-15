@@ -198,21 +198,27 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return ret;
   }
 
-  getNextSummonIndex(): integer {
+  getPartyMemberMatchupScores(): [integer, integer][] {
     const party = this.scene.getEnemyParty();
     const nonFaintedPartyMembers = party.slice(this.scene.currentBattle.getBattlerCount()).filter(p => !p.isFainted());
     const partyMemberScores = nonFaintedPartyMembers.map(p => {
       const playerField = this.scene.getPlayerField();
       let score = 0;
+      let ret: [integer, integer];
       for (let playerPokemon of playerField) {
         score += p.getMatchupScore(playerPokemon);
         if (playerPokemon.species.legendary)
           score /= 2;
       }
       score /= playerField.length;
-      return [ party.indexOf(p), score ];
+      ret = [ party.indexOf(p), score ];
+      return ret;
     });
 
+    return partyMemberScores;
+  }
+
+  getSortedPartyMemberMatchupScores(partyMemberScores: [integer, integer][] = this.getPartyMemberMatchupScores()) {
     const sortedPartyMemberScores = partyMemberScores.slice(0);
     sortedPartyMemberScores.sort((a, b) => {
       const scoreA = a[1];
@@ -220,8 +226,21 @@ export default class Trainer extends Phaser.GameObjects.Container {
       return scoreA < scoreB ? 1 : scoreA > scoreB ? -1 : 0;
     });
 
+    return sortedPartyMemberScores;
+  }
+
+  getNextSummonIndex(partyMemberScores: [integer, integer][] = this.getPartyMemberMatchupScores()): integer {
+    const sortedPartyMemberScores = this.getSortedPartyMemberMatchupScores(partyMemberScores);
+
     const maxScorePartyMemberIndexes = partyMemberScores.filter(pms => pms[1] === sortedPartyMemberScores[0][1]).map(pms => pms[0]);
-    return maxScorePartyMemberIndexes[Utils.randSeedInt(maxScorePartyMemberIndexes.length)];
+
+    if (maxScorePartyMemberIndexes.length > 1) {
+      let rand: integer;
+      this.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(maxScorePartyMemberIndexes.length), this.scene.currentBattle.turn << 2);
+      return maxScorePartyMemberIndexes[rand];
+    }
+
+    return maxScorePartyMemberIndexes[0];
   }
   
   getPartyMemberModifierChanceMultiplier(index: integer): number {

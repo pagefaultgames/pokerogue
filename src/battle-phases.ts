@@ -967,7 +967,7 @@ export class SwitchSummonPhase extends SummonPhase {
     if (!this.player && this.slotIndex === -1)
       this.slotIndex = this.scene.currentBattle.trainer.getNextSummonIndex();
 
-    if (!this.doReturn || (this.slotIndex !== -1 && !this.scene.getParty()[this.slotIndex])) {
+    if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? this.scene.getParty() : this.scene.getEnemyParty())[this.slotIndex])) {
       this.switchAndSummon();
       return;
     }
@@ -975,7 +975,7 @@ export class SwitchSummonPhase extends SummonPhase {
     const pokemon = this.getPokemon();
 
     if (!this.batonPass)
-      this.scene.getEnemyField().forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
+      (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
 
     this.scene.ui.showText(this.player ? `Come back, ${pokemon.name}!` : `${this.scene.currentBattle.trainer.getName()}\nwithdrew ${pokemon.name}!`);
     this.scene.playSound('pb_rel');
@@ -996,11 +996,11 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   switchAndSummon() {
-    const party = this.getParty();
+    const party = this.player ? this.getParty() : this.scene.getEnemyParty();
     const switchedPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
     if (this.batonPass && switchedPokemon) {
-      this.scene.getEnemyField().forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedPokemon.id));
+      (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedPokemon.id));
       if (!this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedPokemon.id)) {
         const batonPassModifier = this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
           && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id) as SwitchEffectTransferModifier;
@@ -1427,6 +1427,40 @@ export class EnemyCommandPhase extends FieldPhase {
 
     const enemyPokemon = this.scene.getEnemyField()[this.fieldIndex];
 
+    const trainer = this.scene.currentBattle.trainer;
+
+    if (trainer) {
+      const opponents = enemyPokemon.getOpponents();
+
+      const trapTag = enemyPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
+      const trapped = new Utils.BooleanHolder(false);
+      opponents.forEach(playerPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, playerPokemon, trapped));
+      if (enemyPokemon.moveset.find(m => m.moveId === Moves.BATON_PASS && m.isUsable(enemyPokemon)) && (enemyPokemon.summonData.battleStats.reduce((total, stat) => total += stat, 0) >= 0 || trapTag || trapped.value)) {
+        this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
+          { command: Command.FIGHT, move: { move: Moves.BATON_PASS, targets: enemyPokemon.getNextTargets(Moves.BATON_PASS) } };
+
+        return this.end();
+      } else if (!trapTag && !trapped.value) {
+        const partyMemberScores = trainer.getPartyMemberMatchupScores();
+
+        if (partyMemberScores.length) {
+          const matchupScores = opponents.map(opp => enemyPokemon.getMatchupScore(opp));
+          const matchupScore = matchupScores.reduce((total, score) => total += score, 0) / matchupScores.length;
+          
+          const sortedPartyMemberScores = trainer.getSortedPartyMemberMatchupScores(partyMemberScores);
+
+          if (sortedPartyMemberScores[0][1] >= matchupScore * (trainer.config.isBoss ? 2 : 3)) {
+            const index = trainer.getNextSummonIndex(partyMemberScores);
+
+            this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
+              { command: Command.POKEMON, cursor: index, args: [ false ] };
+
+            return this.end();
+          }
+        }
+      }
+    }
+
     const nextMove = enemyPokemon.getNextMove();
 
     this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
@@ -1527,7 +1561,7 @@ export class TurnStartPhase extends FieldPhase {
         case Command.RUN:
           const isSwitch = turnCommand.command === Command.POKEMON;
           if (isSwitch)
-            this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean));
+            this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, pokemon.getFieldIndex(), turnCommand.cursor, true, turnCommand.args[0] as boolean, pokemon.isPlayer()));
           else
             this.scene.unshiftPhase(new AttemptRunPhase(this.scene, pokemon.getFieldIndex()));
           break;

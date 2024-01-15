@@ -902,7 +902,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.battleInfo.visible) {
         this.scene.tweens.add({
           targets: this.battleInfo,
-          x: this.isPlayer() ? '+=150' : `-=${!this.isBoss() ? 150 : 198}`,
+          x: this.isPlayer() ? '+=150' : `-=${!this.isBoss() ? 150 : 246}`,
           duration: 500,
           ease: 'Sine.easeIn',
           onComplete: () => {
