@@ -25,7 +25,7 @@ import { TempBattleStat } from './data/temp-battle-stat';
 import { WeakenMoveTypeTag } from './data/arena-tag';
 import { ArenaTagType } from "./data/enums/arena-tag-type";
 import { Biome } from "./data/enums/biome";
-import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
+import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
 import { BattlerIndex } from './battle';
 import { BattleSpec } from "./enums/battle-spec";
@@ -1466,14 +1466,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (cancelled.value)
       return false;
 
-    let cureTurn: integer;
+    let cureTurn: Utils.IntegerHolder;
 
     if (effect === StatusEffect.SLEEP) {
-      cureTurn = this.randSeedIntRange(2, 4);
+      cureTurn = new Utils.IntegerHolder(this.randSeedIntRange(2, 4));
+      applyAbAttrs(ReduceStatusEffectDurationAbAttr, this, null, effect, cureTurn);
+
       this.setFrameRate(4);
     }
 
-    this.status = new Status(effect, 0, cureTurn);
+    this.status = new Status(effect, 0, cureTurn?.value);
 
     if (effect !== StatusEffect.FAINT)
       this.scene.triggerPokemonFormChange(this, SpeciesFormChangeStatusEffectTrigger, true);

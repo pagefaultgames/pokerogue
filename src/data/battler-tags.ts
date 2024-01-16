@@ -8,7 +8,7 @@ import * as Utils from "../utils";
 import { Moves } from "./enums/moves";
 import { ChargeAttr, allMoves } from "./move";
 import { Type } from "./type";
-import { Abilities } from "./ability";
+import { Abilities, FlinchEffectAbAttr, applyAbAttrs } from "./ability";
 import { BattlerTagType } from "./enums/battler-tag-type";
 
 export enum BattlerTagLapseType {
@@ -121,6 +121,12 @@ export class TrappedTag extends BattlerTag {
 export class FlinchedTag extends BattlerTag {
   constructor(sourceMove: Moves) {
     super(BattlerTagType.FLINCHED, BattlerTagLapseType.MOVE, 0, sourceMove);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    applyAbAttrs(FlinchEffectAbAttr, pokemon, null);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {

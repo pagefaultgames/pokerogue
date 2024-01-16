@@ -6,7 +6,7 @@ import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { getStatusEffectHealText } from "./status-effect";
 import * as Utils from "../utils";
-import { DoubleBerryEffectAbAttr, applyAbAttrs } from "./ability";
+import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } from "./ability";
 
 export enum BerryType {
   SITRUS,
@@ -63,13 +63,23 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
     case BerryType.APICOT:
      case BerryType.SALAC:
       return (pokemon: Pokemon) => {
+        const threshold = new Utils.NumberHolder(0.25);
         const battleStat = (berryType - BerryType.LIECHI) as BattleStat;
-        return pokemon.getHpRatio() < 0.25 && pokemon.summonData.battleStats[battleStat] < 6;
+        applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
+        return pokemon.getHpRatio() < threshold.value && pokemon.summonData.battleStats[battleStat] < 6;
       };
     case BerryType.LANSAT:
-      return (pokemon: Pokemon) => pokemon.getHpRatio() < 0.25 && !pokemon.getTag(BattlerTagType.CRIT_BOOST);
+      return (pokemon: Pokemon) => {
+        const threshold = new Utils.NumberHolder(0.25);
+        applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
+        return pokemon.getHpRatio() < 0.25 && !pokemon.getTag(BattlerTagType.CRIT_BOOST);
+      }
     case BerryType.STARF:
-      return (pokemon: Pokemon) => pokemon.getHpRatio() < 0.25;
+      return (pokemon: Pokemon) => {
+        const threshold = new Utils.NumberHolder(0.25);
+        applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
+        return pokemon.getHpRatio() < 0.25;
+      }
   }
 }
 

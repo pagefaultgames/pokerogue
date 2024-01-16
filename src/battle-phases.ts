@@ -30,7 +30,7 @@ import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, ge
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
+import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -977,6 +977,8 @@ export class SwitchSummonPhase extends SummonPhase {
 
     if (!this.batonPass)
       (this.player ? this.scene.getEnemyField() : this.scene.getPlayerField()).forEach(enemyPokemon => enemyPokemon.removeTagsBySourceId(pokemon.id));
+
+    applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, pokemon);
 
     this.scene.ui.showText(this.player ? `Come back, ${pokemon.name}!` : `${this.scene.currentBattle.trainer.getName()}\nwithdrew ${pokemon.name}!`);
     this.scene.playSound('pb_rel');

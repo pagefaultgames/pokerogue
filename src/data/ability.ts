@@ -679,6 +679,28 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class PreSwitchOutAbAttr extends AbAttr {
+  constructor() {
+    super(true);
+  }
+
+  applyPreSwitchOut(pokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
+export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
+  applyPreSwitchOut(pokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
+    if (pokemon.status) {
+      pokemon.resetStatus();
+      pokemon.updateInfo();
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class PreStatChangeAbAttr extends AbAttr {
   applyPreStatChange(pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -991,6 +1013,67 @@ export class MaxMultiHitAbAttr extends AbAttr {
   }
 }
 
+export class ReduceStatusEffectDurationAbAttr extends AbAttr {
+  private statusEffect: StatusEffect;
+
+  constructor(statusEffect: StatusEffect) {
+    super(true);
+
+    this.statusEffect = statusEffect;
+  }
+
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (args[0] === this.statusEffect) {
+      (args[1] as Utils.IntegerHolder).value = Math.floor((args[1] as Utils.IntegerHolder).value / 2);
+      return true;
+    }
+
+    return false;
+  }
+}
+
+export class FlinchEffectAbAttr extends AbAttr {
+  constructor() {
+    super(true);
+  }
+}
+
+export class FlinchStatChangeAbAttr extends FlinchEffectAbAttr {
+  private stats: BattleStat[];
+  private levels: integer;
+
+  constructor(stats: BattleStat | BattleStat[], levels: integer) {
+    super();
+
+    this.stats = Array.isArray(stats)
+      ? stats
+      : [ stats ];
+    this.levels = levels;
+  }
+
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.levels));
+    return true;
+  }
+}
+
+export class ReduceBerryUseThresholdAbAttr extends AbAttr {
+  constructor() {
+    super(true);
+  }
+
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const hpRatio = pokemon.getHpRatio();
+
+    if (args[0].value < hpRatio) {
+      args[0].value *= 2;
+      return args[0].value >= hpRatio;
+    }
+
+    return false;
+  }
+}
+
 export class WeightMultiplierAbAttr extends AbAttr {
   private multiplier: integer;
 
@@ -1106,6 +1189,11 @@ export function applyPostAttackAbAttrs(attrType: { new(...args: any[]): PostAtta
 export function applyPostSummonAbAttrs(attrType: { new(...args: any[]): PostSummonAbAttr },
   pokemon: Pokemon, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostSummonAbAttr>(attrType, pokemon, attr => attr.applyPostSummon(pokemon, args));
+}
+
+export function applyPreSwitchOutAbAttrs(attrType: { new(...args: any[]): PreSwitchOutAbAttr },
+  pokemon: Pokemon, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PreSwitchOutAbAttr>(attrType, pokemon, attr => attr.applyPreSwitchOut(pokemon, args), false, true);
 }
 
 export function applyPreStatChangeAbAttrs(attrType: { new(...args: any[]): PreStatChangeAbAttr },
@@ -1523,7 +1611,8 @@ export function initAbilities() {
       .attr(SyncEncounterNatureAbAttr),
     new Ability(Abilities.CLEAR_BODY, "Clear Body", "Prevents other Pokémon's moves or Abilities from lowering the Pokémon's stats.", 3)
       .attr(ProtectStatAbAttr),
-    new Ability(Abilities.NATURAL_CURE, "Natural Cure (N)", "All status conditions heal when the Pokémon switches out.", 3),
+    new Ability(Abilities.NATURAL_CURE, "Natural Cure", "All status conditions heal when the Pokémon switches out.", 3)
+      .attr(PreSwitchOutResetStatusAbAttr),
     new Ability(Abilities.LIGHTNING_ROD, "Lightning Rod", "The Pokémon draws in all Electric-type moves. Instead of being hit by Electric-type moves, it boosts its Sp. Atk.", 3)
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPATK, 1),
     new Ability(Abilities.SERENE_GRACE, "Serene Grace (N)", "Boosts the likelihood of additional effects occurring when attacking.", 3),
@@ -1560,7 +1649,8 @@ export function initAbilities() {
     new Ability(Abilities.THICK_FAT, "Thick Fat", "The Pokémon is protected by a layer of thick fat, which halves the damage taken from Fire- and Ice-type moves.", 3)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.ICE, 0.5),
-    new Ability(Abilities.EARLY_BIRD, "Early Bird (N)", "The Pokémon awakens from sleep twice as fast as other Pokémon.", 3),
+    new Ability(Abilities.EARLY_BIRD, "Early Bird", "The Pokémon awakens from sleep twice as fast as other Pokémon.", 3)
+      .attr(ReduceStatusEffectDurationAbAttr, StatusEffect.SLEEP),
     new Ability(Abilities.FLAME_BODY, "Flame Body", "Contact with the Pokémon may burn the attacker.", 3)
       .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.BURN),
     new Ability(Abilities.RUN_AWAY, "Run Away", "Enables a sure getaway from wild Pokémon.", 3)
@@ -1616,11 +1706,13 @@ export function initAbilities() {
     new Ability(Abilities.MOTOR_DRIVE, "Motor Drive", "Boosts its Speed stat if hit by an Electric-type move instead of taking damage.", 4)
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPD, 1),
     new Ability(Abilities.RIVALRY, "Rivalry (N)", "Becomes competitive and deals more damage to Pokémon of the same gender, but deals less to Pokémon of the opposite gender.", 4),
-    new Ability(Abilities.STEADFAST, "Steadfast (N)", "The Pokémon's determination boosts the Speed stat each time the Pokémon flinches.", 4),
+    new Ability(Abilities.STEADFAST, "Steadfast", "The Pokémon's determination boosts the Speed stat each time the Pokémon flinches.", 4)
+      .attr(FlinchStatChangeAbAttr, BattleStat.SPD, 1),
     new Ability(Abilities.SNOW_CLOAK, "Snow Cloak", "Boosts evasiveness in a hailstorm.", 4)
       .attr(BattleStatMultiplierAbAttr, BattleStat.EVA, 1.2)
       .attr(BlockWeatherDamageAttr, WeatherType.HAIL),
-    new Ability(Abilities.GLUTTONY, "Gluttony (N)", "Makes the Pokémon eat a held Berry when its HP drops to half or less, which is sooner than usual.", 4),
+    new Ability(Abilities.GLUTTONY, "Gluttony", "Makes the Pokémon eat a held Berry when its HP drops to half or less, which is sooner than usual.", 4)
+      .attr(ReduceBerryUseThresholdAbAttr),
     new Ability(Abilities.ANGER_POINT, "Anger Point", "The Pokémon is angered when it takes a critical hit, and that maxes its Attack stat.", 4)
       .attr(PostDefendCritStatChangeAbAttr, BattleStat.ATK, 6),
     new Ability(Abilities.UNBURDEN, "Unburden (N)", "Boosts the Speed stat if the Pokémon's held item is used or lost.", 4),
