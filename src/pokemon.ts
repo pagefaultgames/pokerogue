@@ -22,7 +22,8 @@ import { BattlerTagType } from "./data/enums/battler-tag-type";
 import { Species } from './data/enums/species';
 import { WeatherType } from './data/weather';
 import { TempBattleStat } from './data/temp-battle-stat';
-import { ArenaTagType, WeakenMoveTypeTag } from './data/arena-tag';
+import { WeakenMoveTypeTag } from './data/arena-tag';
+import { ArenaTagType } from "./data/enums/arena-tag-type";
 import { Biome } from "./data/enums/biome";
 import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from './data/ability';
 import PokemonData from './system/pokemon-data';
@@ -1115,7 +1116,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (this.hp > 1 && this.hp - damage <= 0 && !preventEndure) {
       const surviveDamage = new Utils.BooleanHolder(false);
-      this.scene.applyModifiers(SurviveDamageModifier, this.isPlayer(), this, surviveDamage);
+      if (this.lapseTag(BattlerTagType.ENDURING))
+        surviveDamage.value = true;
+      if (!surviveDamage.value)
+        this.scene.applyModifiers(SurviveDamageModifier, this.isPlayer(), this, surviveDamage);
       if (surviveDamage.value)
         damage = this.hp - 1;
     }

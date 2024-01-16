@@ -1,7 +1,7 @@
 import { Moves } from "./enums/moves";
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
 import { BattleEndPhase, DamagePhase, MovePhase, NewBattlePhase, ObtainStatusEffectPhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../battle-phases";
-import { BattleStat } from "./battle-stat";
+import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { getPokemonMessage } from "../messages";
@@ -10,11 +10,12 @@ import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
-import { ArenaTagType, ArenaTrapTag } from "./arena-tag";
+import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
+import { ArenaTagType } from "./enums/arena-tag-type";
 import { Abilities, BlockRecoilDamageAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs } from "./ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
-import { Stat } from "./pokemon-stat";
+import { Stat, getStatName } from "./pokemon-stat";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -998,7 +999,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
           (args[0] as Utils.BooleanHolder).value = true;
           user.scene.queueMessage(getPokemonMessage(user, ` ${this.chargeText.replace('{TARGET}', target.name)}`));
           user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
-          user.scene.arena.addTag(this.tagType, 3, move.id, user.id, target.getBattlerIndex());
+          user.scene.arena.addTag(this.tagType, 3, move.id, user.id, ArenaTagSide.BOTH, target.getBattlerIndex());
 
           resolve(true);
         });
@@ -1012,23 +1013,25 @@ export class StatChangeAttr extends MoveEffectAttr {
   public stats: BattleStat[];
   public levels: integer;
   private condition: MoveConditionFunc;
+  private showMessage: boolean;
 
-  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc) {
+  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true) {
     super(selfTarget, MoveEffectTrigger.HIT);
     this.stats = typeof(stats) === 'number'
       ? [ stats as BattleStat ]
       : stats as BattleStat[];
     this.levels = levels;
     this.condition = condition || null;
+    this.showMessage = showMessage;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
     if (!super.apply(user, target, move, args) || (this.condition && !this.condition(user, target, move)))
       return false;
 
     if (move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) {
       const levels = this.getLevels(user);
-      user.scene.unshiftPhase(new StatChangePhase(user.scene, (this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, levels));
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, (this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, levels, this.showMessage));
       return true;
     }
 
@@ -1058,6 +1061,27 @@ export class GrowthStatChangeAttr extends StatChangeAttr {
         return this.levels + 1;
     }
     return this.levels;
+  }
+}
+
+export class HalfHpStatMaxAttr extends StatChangeAttr {
+  constructor(stat: BattleStat) {
+    super(stat, 12, true, null, false);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      user.damage(Math.floor(user.getMaxHp() / 2));
+      user.updateInfo().then(() => {
+        const ret = super.apply(user, target, move, args);
+        user.scene.queueMessage(getPokemonMessage(user, ` cut its own hp\nand maximized its ${getBattleStatName(this.stats[0])}!`));
+        resolve(ret);
+      });
+    });
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => user.getHpRatio() > 0.5 || user.summonData.battleStats[this.stats[0]] >= 6;
   }
 }
 
@@ -1568,8 +1592,8 @@ export class TrapAttr extends AddBattlerTagAttr {
 }
 
 export class ProtectAttr extends AddBattlerTagAttr {
-  constructor() {
-    super(BattlerTagType.PROTECTED, true);
+  constructor(tagType: BattlerTagType = BattlerTagType.PROTECTED) {
+    super(tagType, true);
   }
 
   getCondition(): MoveConditionFunc {
@@ -1577,12 +1601,18 @@ export class ProtectAttr extends AddBattlerTagAttr {
       let timesUsed = 0;
       const moveHistory = user.getLastXMoves();
       let turnMove: TurnMove;
-      while (moveHistory.length && (turnMove = moveHistory.shift()).move === move.id && turnMove.result === MoveResult.SUCCESS)
+      while (moveHistory.length && allMoves[(turnMove = moveHistory.shift()).move].getAttrs(ProtectAttr).find(pa => (pa as ProtectAttr).tagType === this.tagType) && turnMove.result === MoveResult.SUCCESS)
         timesUsed++;
       if (timesUsed)
         return !user.randSeedInt(Math.pow(2, timesUsed));
       return true;
     });
+  }
+}
+
+export class EndureAttr extends ProtectAttr {
+  constructor() {
+    super(BattlerTagType.ENDURING);
   }
 }
 
@@ -1635,12 +1665,14 @@ export class HitsTagAttr extends MoveAttr {
 export class AddArenaTagAttr extends MoveEffectAttr {
   public tagType: ArenaTagType;
   public turnCount: integer;
+  private failOnOverlap: boolean;
 
-  constructor(tagType: ArenaTagType, turnCount?: integer) {
+  constructor(tagType: ArenaTagType, turnCount?: integer, failOnOverlap: boolean = false) {
     super(true);
 
     this.tagType = tagType;
     this.turnCount = turnCount;
+    this.failOnOverlap = failOnOverlap;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -1648,11 +1680,17 @@ export class AddArenaTagAttr extends MoveEffectAttr {
       return false;
 
     if (move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) {
-      user.scene.arena.addTag(this.tagType, this.turnCount, move.id, user.id);
+      user.scene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
       return true;
     }
 
     return false;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return this.failOnOverlap
+      ? (user, target, move) => !user.scene.arena.getTagOnSide(this.tagType, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)
+      : null;
   }
 }
 
@@ -1738,8 +1776,10 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     };
   }
 
-  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return -100; // Overridden in switch logic
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    if (this.batonPass)
+      return -100; // Overridden in switch logic
+    return this.user ? Math.floor(user.getHpRatio() * 20) : super.getUserBenefitScore(user, target, move);
   }
 }
 
@@ -2249,7 +2289,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(Moves.FLAMETHROWER, "Flamethrower", Type.FIRE, MoveCategory.SPECIAL, 90, 100, 15, 125, "The target is scorched with an intense blast of fire. This may also leave the target with a burn.", 10, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.BURN),
-    new StatusMove(Moves.MIST, "Mist (N)", Type.ICE, -1, 30, -1, "The user cloaks itself and its allies in a white mist that prevents any of their stats from being lowered for five turns.", -1, 0, 1)
+    new StatusMove(Moves.MIST, "Mist", Type.ICE, -1, 30, -1, "The user cloaks itself and its allies in a white mist that prevents any of their stats from being lowered for five turns.", -1, 0, 1)
+      .attr(AddArenaTagAttr, ArenaTagType.MIST, 5, true)
       .target(MoveTarget.USER_SIDE),
     new AttackMove(Moves.WATER_GUN, "Water Gun", Type.WATER, MoveCategory.SPECIAL, 40, 100, 25, -1, "The target is blasted with a forceful shot of water.", -1, 0, 1),
     new AttackMove(Moves.HYDRO_PUMP, "Hydro Pump", Type.WATER, MoveCategory.SPECIAL, 110, 80, 5, 142, "The target is blasted by a huge volume of water launched under great pressure.", -1, 0, 1),
@@ -2582,7 +2623,8 @@ export function initMoves() {
     new AttackMove(Moves.FEINT_ATTACK, "Feint Attack", Type.DARK, MoveCategory.PHYSICAL, 60, -1, 20, -1, "The user approaches the target disarmingly, then throws a sucker punch. This attack never misses.", -1, 0, 2),
     new StatusMove(Moves.SWEET_KISS, "Sweet Kiss", Type.FAIRY, 75, 10, -1, "The user kisses the target with a sweet, angelic cuteness that causes confusion.", -1, 0, 2)
       .attr(ConfuseAttr),
-    new SelfStatusMove(Moves.BELLY_DRUM, "Belly Drum (N)", Type.NORMAL, -1, 10, -1, "The user maximizes its Attack stat in exchange for HP equal to half its max HP.", -1, 0, 2),
+    new SelfStatusMove(Moves.BELLY_DRUM, "Belly Drum", Type.NORMAL, -1, 10, -1, "The user maximizes its Attack stat in exchange for HP equal to half its max HP.", -1, 0, 2)
+      .attr(HalfHpStatMaxAttr, BattleStat.ATK),
     new AttackMove(Moves.SLUDGE_BOMB, "Sludge Bomb", Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, 148, "Unsanitary sludge is hurled at the target. This may also poison the target.", 30, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .ballBombMove(),
@@ -2627,7 +2669,8 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.GIGA_DRAIN, "Giga Drain", Type.GRASS, MoveCategory.SPECIAL, 75, 100, 10, 111, "A nutrient-draining attack. The user's HP is restored by half the damage taken by the target.", -1, 0, 2)
       .attr(HitHealAttr),
-    new SelfStatusMove(Moves.ENDURE, "Endure (N)", Type.NORMAL, -1, 10, 47, "The user endures any attack with at least 1 HP. Its chance of failing rises if it is used in succession.", -1, 4, 2),
+    new SelfStatusMove(Moves.ENDURE, "Endure", Type.NORMAL, -1, 10, 47, "The user endures any attack with at least 1 HP. Its chance of failing rises if it is used in succession.", -1, 4, 2)
+      .attr(EndureAttr),
     new StatusMove(Moves.CHARM, "Charm", Type.FAIRY, 100, 20, 2, "The user gazes at the target rather charmingly, making it less wary. This harshly lowers the target's Attack stat.", -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.ATK, -2),
     new AttackMove(Moves.ROLLOUT, "Rollout", Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, "The user continually rolls into the target over five turns. It becomes more powerful each time it hits.", -1, 0, 2)

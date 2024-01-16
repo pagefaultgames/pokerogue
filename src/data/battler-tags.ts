@@ -564,6 +564,27 @@ export class ProtectedTag extends BattlerTag {
   }
 }
 
+export class EnduringTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.ENDURING, BattlerTagLapseType.CUSTOM, 0, sourceMove);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' braced\nitself!'));
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' endured\nthe hit!'));
+      return true;
+    }
+
+    return super.lapse(pokemon, lapseType);
+  }
+}
+
 export class PerishSongTag extends BattlerTag {
   constructor(turnCount: integer) {
     super(BattlerTagType.PERISH_SONG, BattlerTagLapseType.TURN_END, turnCount, Moves.PERISH_SONG);
@@ -743,6 +764,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new MagmaStormTag(turnCount, sourceId);
     case BattlerTagType.PROTECTED:
       return new ProtectedTag(sourceMove);
+    case BattlerTagType.ENDURING:
+      return new EnduringTag(sourceMove);
     case BattlerTagType.PERISH_SONG:
       return new PerishSongTag(turnCount);
     case BattlerTagType.TRUANT:

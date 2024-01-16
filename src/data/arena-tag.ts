@@ -9,18 +9,12 @@ import { StatusEffect } from "./status-effect";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { BattlerIndex } from "../battle";
 import { Moves } from "./enums/moves";
+import { ArenaTagType } from "./enums/arena-tag-type";
 
-export enum ArenaTagType {
-  NONE,
-  MUD_SPORT,
-  WATER_SPORT,
-  SPIKES,
-  TOXIC_SPIKES,
-  FUTURE_SIGHT,
-  DOOM_DESIRE,
-  STEALTH_ROCK,
-  TRICK_ROOM,
-  GRAVITY
+export enum ArenaTagSide {
+  BOTH,
+  PLAYER,
+  ENEMY
 }
 
 export abstract class ArenaTag {
@@ -28,22 +22,24 @@ export abstract class ArenaTag {
   public turnCount: integer;
   public sourceMove: Moves;
   public sourceId: integer;
+  public side: ArenaTagSide;
 
-  constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId?: integer) {
+  constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId?: integer, side: ArenaTagSide = ArenaTagSide.BOTH) {
     this.tagType = tagType;
     this.turnCount = turnCount;
     this.sourceMove = sourceMove;
     this.sourceId = sourceId;
+    this.side = side;
   }
 
-  apply(args: any[]): boolean {
+  apply(arena: Arena, args: any[]): boolean {
     return true;
   }
 
   onAdd(arena: Arena): void { }
 
   onRemove(arena: Arena): void {
-    arena.scene.queueMessage(`${this.getMoveName()}\'s effect wore off.`);
+    arena.scene.queueMessage(`${this.getMoveName()}\'s effect wore off${this.side === ArenaTagSide.PLAYER ? '\non your side' : this.side === ArenaTagSide.ENEMY ? '\non the foe\'s side' : ''}.`);
   }
 
   onOverlap(arena: Arena): void { }
@@ -59,6 +55,27 @@ export abstract class ArenaTag {
   }
 }
 
+export class MistTag extends ArenaTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.MIST, turnCount, Moves.MIST, sourceId, side);
+  }
+
+  onAdd(arena: Arena): void {
+    super.onAdd(arena);
+
+    const source = arena.scene.getPokemonById(this.sourceId);
+    arena.scene.queueMessage(getPokemonMessage(source, `'s team became\nshrowded in mist!`));
+  }
+
+  apply(arena: Arena, args: any[]): boolean {
+    (args[0] as Utils.BooleanHolder).value = true;
+
+    arena.scene.queueMessage('The mist prevented\nthe lowering of stats!');
+    
+    return true;
+  }
+}
+
 export class WeakenMoveTypeTag extends ArenaTag {
   private weakenedType: Type;
 
@@ -68,7 +85,7 @@ export class WeakenMoveTypeTag extends ArenaTag {
     this.weakenedType = type;
   }
 
-  apply(args: any[]): boolean {
+  apply(arena: Arena, args: any[]): boolean {
     if ((args[0] as Type) === this.weakenedType) {
       (args[1] as Utils.NumberHolder).value *= 0.33;
       return true;
@@ -110,8 +127,8 @@ export class ArenaTrapTag extends ArenaTag {
   public layers: integer;
   public maxLayers: integer;
 
-  constructor(tagType: ArenaTagType, sourceMove: Moves, sourceId: integer, maxLayers: integer) {
-    super(tagType, 0, sourceMove, sourceId);
+  constructor(tagType: ArenaTagType, sourceMove: Moves, sourceId: integer, side: ArenaTagSide, maxLayers: integer) {
+    super(tagType, 0, sourceMove, sourceId, side);
 
     this.layers = 1;
     this.maxLayers = maxLayers;
@@ -125,9 +142,9 @@ export class ArenaTrapTag extends ArenaTag {
     }
   }
 
-  apply(args: any[]): boolean { 
+  apply(arena: Arena, args: any[]): boolean { 
     const pokemon = args[0] as Pokemon;
-    if (this.sourceId === pokemon.id || !!(pokemon.scene.getPokemonById(this.sourceId)?.isPlayer()) === pokemon.isPlayer())
+    if (this.sourceId === pokemon.id || (this.side === ArenaTagSide.PLAYER) === pokemon.isPlayer())
       return false;
 
     return this.activateTrap(pokemon);
@@ -139,8 +156,8 @@ export class ArenaTrapTag extends ArenaTag {
 }
 
 class SpikesTag extends ArenaTrapTag {
-  constructor(sourceId: integer) {
-    super(ArenaTagType.SPIKES, Moves.SPIKES, sourceId, 3);
+  constructor(sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.SPIKES, Moves.SPIKES, sourceId, side, 3);
   }
 
   onAdd(arena: Arena): void {
@@ -165,8 +182,8 @@ class SpikesTag extends ArenaTrapTag {
 }
 
 class ToxicSpikesTag extends ArenaTrapTag {
-  constructor(sourceId: integer) {
-    super(ArenaTagType.TOXIC_SPIKES, Moves.TOXIC_SPIKES, sourceId, 2);
+  constructor(sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.TOXIC_SPIKES, Moves.TOXIC_SPIKES, sourceId, side, 2);
   }
 
   onAdd(arena: Arena): void {
@@ -211,8 +228,8 @@ class DelayedAttackTag extends ArenaTag {
 }
 
 class StealthRockTag extends ArenaTrapTag {
-  constructor(sourceId: integer) {
-    super(ArenaTagType.STEALTH_ROCK, Moves.STEALTH_ROCK, sourceId, 1);
+  constructor(sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.STEALTH_ROCK, Moves.STEALTH_ROCK, sourceId, side, 1);
   }
 
   onAdd(arena: Arena): void {
@@ -263,7 +280,7 @@ export class TrickRoomTag extends ArenaTag {
     super(ArenaTagType.TRICK_ROOM, turnCount, Moves.TRICK_ROOM, sourceId);
   }
 
-  apply(args: any[]): boolean {
+  apply(arena: Arena, args: any[]): boolean {
     const speedReversed = args[0] as Utils.BooleanHolder;
     speedReversed.value = !speedReversed.value;
     return true;
@@ -292,21 +309,23 @@ export class GravityTag extends ArenaTag {
   }
 }
 
-export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex): ArenaTag {
+export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
   switch (tagType) {
+    case ArenaTagType.MIST:
+      return new MistTag(turnCount, sourceId, side);
     case ArenaTagType.MUD_SPORT:
       return new MudSportTag(turnCount, sourceId);
     case ArenaTagType.WATER_SPORT:
       return new WaterSportTag(turnCount, sourceId);
     case ArenaTagType.SPIKES:
-      return new SpikesTag(sourceId);
+      return new SpikesTag(sourceId, side);
     case ArenaTagType.TOXIC_SPIKES:
-      return new ToxicSpikesTag(sourceId);
+      return new ToxicSpikesTag(sourceId, side);
     case ArenaTagType.FUTURE_SIGHT:
     case ArenaTagType.DOOM_DESIRE:
       return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex);
     case ArenaTagType.STEALTH_ROCK:
-      return new StealthRockTag(sourceId);
+      return new StealthRockTag(sourceId, side);
     case ArenaTagType.TRICK_ROOM:
       return new TrickRoomTag(turnCount, sourceId);
     case ArenaTagType.GRAVITY:

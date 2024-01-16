@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
 import Move, { MoveCategory, MoveFlags, RecoilAttr } from "./move";
-import { ArenaTagType } from "./arena-tag";
+import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { Moves } from "./enums/moves";

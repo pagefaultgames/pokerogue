@@ -9,7 +9,8 @@ import { CommonAnimPhase } from "./battle-phases";
 import { CommonAnim } from "./data/battle-anims";
 import { Type } from "./data/type";
 import Move from "./data/move";
-import { ArenaTag, ArenaTagType, getArenaTag } from "./data/arena-tag";
+import { ArenaTag, ArenaTagSide, getArenaTag } from "./data/arena-tag";
+import { ArenaTagType } from "./data/enums/arena-tag-type";
 import { GameMode } from "./game-mode";
 import { TrainerType } from "./data/enums/trainer-type";
 import { BattlerIndex } from "./battle";
@@ -387,21 +388,27 @@ export class Arena {
     }
   }
 
-  applyTags(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, ...args: any[]): void {
-    const tags = typeof tagType === 'number'
+  applyTagsForSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide, ...args: any[]): void {
+    let tags = typeof tagType === 'string'
       ? this.tags.filter(t => t.tagType === tagType)
       : this.tags.filter(t => t instanceof tagType);
-    tags.forEach(t => t.apply(args));
+    if (side !== ArenaTagSide.BOTH)
+      tags = tags.filter(t => t.side === side);
+    tags.forEach(t => t.apply(this, args));
+	}
+  
+  applyTags(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, ...args: any[]): void {
+    this.applyTagsForSide(tagType, ArenaTagSide.BOTH, args);
 	}
 
-  addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex): boolean {
+  addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide = ArenaTagSide.BOTH, targetIndex?: BattlerIndex): boolean {
     const existingTag = this.getTag(tagType);
     if (existingTag) {
       existingTag.onOverlap(this);
       return false;
     }
 
-    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex);
+    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
     this.tags.push(newTag);
     newTag.onAdd(this);
 
@@ -409,9 +416,13 @@ export class Arena {
   }
 
   getTag(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }): ArenaTag {
-    return typeof(tagType) === 'number'
-      ? this.tags.find(t => t.tagType === tagType)
-      : this.tags.find(t => t instanceof tagType);
+    return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
+  }
+
+  getTagOnSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide): ArenaTag {
+    return typeof(tagType) === 'string'
+      ? this.tags.find(t => t.tagType === tagType && (t.side === ArenaTagSide.BOTH || t.side === side))
+      : this.tags.find(t => t instanceof tagType && (t.side === ArenaTagSide.BOTH || t.side === side));
   }
 
   lapseTags(): void {

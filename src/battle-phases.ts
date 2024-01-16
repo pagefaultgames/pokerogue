@@ -28,7 +28,8 @@ import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
 import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
-import { ArenaTagType, ArenaTrapTag, TrickRoomTag } from "./data/arena-tag";
+import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
+import { ArenaTagType } from "./data/enums/arena-tag-type";
 import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./arena";
@@ -2072,7 +2073,9 @@ export class MoveEndPhase extends PokemonPhase {
   start() {
     super.start();
 
-    this.getPokemon().lapseTags(BattlerTagLapseType.AFTER_MOVE);
+    const pokemon = this.getPokemon();
+    if (pokemon.isActive(true))
+      pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
     this.end();
   }
@@ -2132,13 +2135,15 @@ export class StatChangePhase extends PokemonPhase {
   private stats: BattleStat[];
   private selfTarget: boolean;
   private levels: integer;
+  private showMessage: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer, showMessage: boolean = true) {
     super(scene, battlerIndex);
 
     this.selfTarget = selfTarget;
     this.stats = stats;
     this.levels = levels;
+    this.showMessage = showMessage;
   }
 
   start() {
@@ -2152,6 +2157,9 @@ export class StatChangePhase extends PokemonPhase {
       const cancelled = new Utils.BooleanHolder(false);
 
       if (!this.selfTarget && this.levels < 0)
+        this.scene.arena.applyTagsForSide(MistTag, pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY, cancelled);
+
+      if (!cancelled.value && !this.selfTarget && this.levels < 0)
         applyPreStatChangeAbAttrs(ProtectStatAbAttr, this.getPokemon(), stat, cancelled);
       
       return !cancelled.value;
@@ -2164,9 +2172,11 @@ export class StatChangePhase extends PokemonPhase {
     const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats[stat] + levels.value, 6) : Math.max(battleStats[stat] + levels.value, -6)) - battleStats[stat]);
 
     const end = () => {
-      const messages = this.getStatChangeMessages(filteredStats, levels.value, relLevels);
-      for (let message of messages)
-        this.scene.queueMessage(message);
+      if (this.showMessage) {
+        const messages = this.getStatChangeMessages(filteredStats, levels.value, relLevels);
+        for (let message of messages)
+          this.scene.queueMessage(message);
+      }
 
       for (let stat of filteredStats)
         pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
