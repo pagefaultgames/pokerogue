@@ -578,7 +578,7 @@ export default class SummaryUiHandler extends UiHandler {
           statsContainer.add(icon);
           
           icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
-          icon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(item.type.name, item.type.description, true));
+          icon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(item.type.name, item.type.getDescription(this.scene), true));
           icon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
         });
 

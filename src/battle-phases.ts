@@ -2733,11 +2733,8 @@ export class MoneyRewardPhase extends BattlePhase {
   }
 
   start() {
-    const waveIndex = this.scene.currentBattle.waveIndex;
-    const waveSetIndex = Math.ceil(waveIndex / 10) - 1;
-    const moneyValue = Math.pow((waveSetIndex + 1 + (0.75 + (((waveIndex - 1) % 10) + 1) / 10)) * 100, 1 + 0.005 * waveSetIndex) * this.moneyMultiplier;
-    const moneyAmount = new Utils.IntegerHolder(Math.floor(moneyValue / 10) * 10);
-    
+    const moneyAmount = new Utils.IntegerHolder(this.scene.getMoneyAmountForWave(this.moneyMultiplier));
+
     this.scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
     this.scene.money += moneyAmount.value;

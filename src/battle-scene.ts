@@ -1437,6 +1437,13 @@ export default class BattleScene extends Phaser.Scene {
 		this.phaseQueue.push(new TurnInitPhase(this));
 	}
 
+	getMoneyAmountForWave(moneyMultiplier: number): integer {
+		const waveIndex = this.currentBattle.waveIndex;
+		const waveSetIndex = Math.ceil(waveIndex / 10) - 1;
+		const moneyValue = Math.pow((waveSetIndex + 1 + (0.75 + (((waveIndex - 1) % 10) + 1) / 10)) * 100, 1 + 0.005 * waveSetIndex) * moneyMultiplier;
+		return Math.floor(moneyValue / 10) * 10;
+	}
+
 	addModifier(modifier: Modifier, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean): Promise<void> {
 		return new Promise(resolve => {
 			const soundName = modifier.type.soundName;

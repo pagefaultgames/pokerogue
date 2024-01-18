@@ -35,7 +35,7 @@ export class ModifierType {
   public id: string;
   public generatorId: string;
   public name: string;
-  public description: string;
+  protected description: string;
   public iconImage: string;
   public group: string;
   public soundName: string;
@@ -49,6 +49,10 @@ export class ModifierType {
     this.group = group || '';
     this.soundName = soundName || 'restore';
     this.newModifierFunc = newModifierFunc;
+  }
+
+  getDescription(scene: BattleScene): string {
+    return this.description;
   }
 
   setTier(tier: ModifierTier): void {
@@ -403,6 +407,20 @@ class AllPokemonFullReviveModifierType extends AllPokemonFullHpRestoreModifierTy
   }
 }
 
+export class MoneyRewardModifierType extends ModifierType {
+  private moneyMultiplier: number;
+
+  constructor(name: string, moneyMultiplier: number, moneyMultiplierDescriptor: string, iconImage?: string) {
+    super(name, `Grants a ${moneyMultiplierDescriptor} amount of money (₽{AMOUNT})`, (_type, _args) => new Modifiers.MoneyRewardModifier(this, moneyMultiplier), iconImage, 'money', 'buy');
+
+    this.moneyMultiplier = moneyMultiplier;
+  }
+
+  getDescription(scene: BattleScene): string {
+    return this.description.replace('{AMOUNT}', scene.getMoneyAmountForWave(this.moneyMultiplier).toLocaleString('en-US'));
+  }
+}
+
 export class ExpBoosterModifierType extends ModifierType {
   constructor(name: string, boostPercent: integer, iconImage?: string) {
     super(name, `Increases gain of EXP. Points by ${boostPercent}%`, () => new Modifiers.ExpBoosterModifier(this, boostPercent), iconImage);
@@ -738,6 +756,10 @@ export const modifierTypes = {
 
   SOUL_DEW: () => new PokemonHeldItemModifierType('Soul Dew', 'Increases the influence of a Pokémon\'s nature on its stats by 5% (additive)', (type, args) => new Modifiers.PokemonNatureWeightModifier(type, (args[0] as Pokemon).id)),
 
+  NUGGET: () => new MoneyRewardModifierType('Nugget', 1, 'small'),
+  BIG_NUGGET: () => new MoneyRewardModifierType('Big Nugget', 2.5, 'moderate'),
+  RELIC_GOLD: () => new MoneyRewardModifierType('Relic Gold', 10, 'large'),
+
   AMULET_COIN: () => new ModifierType('Amulet Coin', 'Increases money rewards by 20%', (type, _args) => new Modifiers.MoneyMultiplierModifier(type)),
   GOLDEN_PUNCH: () => new PokemonHeldItemModifierType('Golden Punch', 'Grants 20% of damage inflicted as money', (type, args) => new Modifiers.DamageMoneyRewardModifier(type, (args[0] as Pokemon).id)),
   COIN_CASE: () => new ModifierType('Coin Case', 'After every 10th battle, receive 10% of your money in interest', (type, _args) => new Modifiers.MoneyInterestModifier(type)),
@@ -856,6 +878,8 @@ const modifierPool = {
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.SUPER_LURE, 4),
+    new WeightedModifierType(modifierTypes.NUGGET, 5),
+    new WeightedModifierType(modifierTypes.BIG_NUGGET, 1),
     new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => party[0].scene.gameMode === GameMode.CLASSIC ? 1 : 0),
     new WeightedModifierType(modifierTypes.TM_GREAT, 2),
     new WeightedModifierType(modifierTypes.EXP_SHARE, 1),
@@ -868,6 +892,7 @@ const modifierPool = {
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 8),
     new WeightedModifierType(modifierTypes.MAX_LURE, 4),
+    new WeightedModifierType(modifierTypes.RELIC_GOLD, 3),
     new WeightedModifierType(modifierTypes.PP_UP, 6),
     new WeightedModifierType(modifierTypes.PP_MAX, 2),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 4),

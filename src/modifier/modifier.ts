@@ -57,7 +57,7 @@ export class ModifierBar extends Phaser.GameObjects.Container {
       this.setModifierIconPosition(icon, visibleIconModifiers.length);
       icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
       icon.on('pointerover', () => {
-        (this.scene as BattleScene).ui.showTooltip(modifier.type.name, modifier.type.description);
+        (this.scene as BattleScene).ui.showTooltip(modifier.type.name, modifier.type.getDescription(this.scene as BattleScene));
         if (this.modifierCache && this.modifierCache.length > iconOverflowIndex)
           thisArg.updateModifierOverflowVisibility(true);
       });
@@ -1309,6 +1309,29 @@ export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 1;
+  }
+}
+
+export class MoneyRewardModifier extends ConsumableModifier {
+  private moneyMultiplier: number;
+
+  constructor(type: ModifierType, moneyMultiplier: number) {
+    super(type);
+
+    this.moneyMultiplier = moneyMultiplier;
+  }
+
+  apply(args: any[]): boolean {
+    const scene = args[0] as BattleScene;
+    const moneyAmount = new Utils.IntegerHolder(scene.getMoneyAmountForWave(this.moneyMultiplier));
+
+    scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+    
+    scene.money += moneyAmount.value;
+    scene.updateMoneyText();
+    scene.validateAchvs(MoneyAchv);
+
+    return true;
   }
 }
 

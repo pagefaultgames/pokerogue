@@ -218,7 +218,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     if (cursor < this.options.length) {
       const sliceWidth = (this.scene.game.canvas.width / 6) / (this.options.length + 2);
       this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, -this.scene.game.canvas.height / 12 - 20);
-      ui.showText(this.options[this.cursor].modifierTypeOption.type.description);
+      ui.showText(this.options[this.cursor].modifierTypeOption.type.getDescription(this.scene));
     } else if (cursor === this.options.length) {
       this.cursorObj.setPosition(6, -60);
       ui.showText('Spend money to reroll your item options');
