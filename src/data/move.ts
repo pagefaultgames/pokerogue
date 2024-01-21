@@ -1601,7 +1601,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
       let timesUsed = 0;
       const moveHistory = user.getLastXMoves();
       let turnMove: TurnMove;
-      while (moveHistory.length && allMoves[(turnMove = moveHistory.shift()).move].getAttrs(ProtectAttr).find(pa => (pa as ProtectAttr).tagType === this.tagType) && turnMove.result === MoveResult.SUCCESS)
+      while (moveHistory.length && allMoves[(turnMove = moveHistory.shift()).move].getAttrs(ProtectAttr).find(pa => (pa as ProtectAttr).tagType === this.tagType))
         timesUsed++;
       if (timesUsed)
         return !user.randSeedInt(Math.pow(2, timesUsed));

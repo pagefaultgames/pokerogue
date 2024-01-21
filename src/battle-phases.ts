@@ -2151,7 +2151,7 @@ export class StatChangePhase extends PokemonPhase {
   start() {
     const pokemon = this.getPokemon();
 
-    if (pokemon.isFainted())
+    if (!pokemon.isActive(true))
       return this.end();
 
     const allStats = Utils.getEnumValues(BattleStat);

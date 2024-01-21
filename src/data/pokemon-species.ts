@@ -2413,7 +2413,7 @@ export const speciesStarters = {
   [Species.SPIRITOMB]: 5,
   [Species.GIBLE]: 4,
   [Species.MUNCHLAX]: 4,
-  [Species.RIOLU]: 5,
+  [Species.RIOLU]: 4,
   [Species.HIPPOPOTAS]: 3,
   [Species.SKORUPI]: 3,
   [Species.CROAGUNK]: 3,
