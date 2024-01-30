@@ -2554,10 +2554,12 @@ export class FaintPhase extends PokemonPhase {
   tryOverrideForBattleSpec(): boolean {
     switch (this.scene.currentBattle.battleSpec) {
       case BattleSpec.FINAL_BOSS:
-        const enemy = this.getPokemon();
-        if (enemy.formIndex) {
-          this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin, enemy.name, null, () => this.doFaint(), null, true);
-          return true;
+        if (!this.player) {
+          const enemy = this.getPokemon();
+          if (enemy.formIndex) {
+            this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin, enemy.name, null, () => this.doFaint(), null, true);
+            return true;
+          }
         }
     }
 
