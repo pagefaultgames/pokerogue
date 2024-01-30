@@ -1882,7 +1882,7 @@ export class PlayerPokemon extends Pokemon {
   getPossibleEvolution(evolution: SpeciesEvolution): Promise<Pokemon> {
     return new Promise(resolve => {
       const species = getPokemonSpecies(evolution.speciesId);
-      const formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0);
+      const formIndex = evolution.evoFormKey !== null ? Math.max(this.species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0) : this.formIndex;
       const ret = this.scene.addPlayerPokemon(species, this.level, this.abilityIndex, formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
       ret.loadAssets().then(() => resolve(ret));
     });
