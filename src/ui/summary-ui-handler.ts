@@ -676,7 +676,7 @@ export default class SummaryUiHandler extends UiHandler {
           ppText.setOrigin(0, 1);
 
           if (move) {
-            const maxPP = move.getMove().pp + move.ppUp;
+            const maxPP = move.getMovePp();
             const pp = maxPP - move.ppUsed;
             ppText.setText(`${Utils.padInt(pp, 2, '  ')}/${Utils.padInt(maxPP, 2, '  ')}`);
           }
