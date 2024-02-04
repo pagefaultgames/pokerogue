@@ -69,19 +69,23 @@ export class LoginPhase extends BattlePhase {
           this.scene.ui.showText('Log in or create an account to start. No email required!');
   
         this.scene.playSound('menu_open');
+
+        const loadData = () => {
+          this.scene.gameData.loadSystem().then(() => this.end());
+        };
     
         this.scene.ui.setMode(Mode.LOGIN_FORM, {
           buttonActions: [
             () => {
               this.scene.ui.playSelect();
-              this.end();
+              loadData();
             }, () => {
               this.scene.playSound('menu_open');
               this.scene.ui.setMode(Mode.REGISTRATION_FORM, {
                 buttonActions: [
                   () => {
                     this.scene.ui.playSelect();
-                    this.end();
+                    loadData();
                   }, () => {
                     this.scene.unshiftPhase(new LoginPhase(this.scene, false));
                     this.end();

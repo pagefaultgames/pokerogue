@@ -220,7 +220,7 @@ export class GameData {
     });
   }
 
-  private loadSystem(): Promise<boolean> {
+  public loadSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin && !localStorage.hasOwnProperty('data'))
         return false;
