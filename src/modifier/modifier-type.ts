@@ -132,24 +132,26 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
 export class PokemonHpRestoreModifierType extends PokemonModifierType {
   protected restorePoints: integer;
   protected restorePercent: integer;
+  protected healStatus: boolean;
 
-  constructor(name: string, restorePoints: integer, restorePercent: integer, newModifierFunc?: NewModifierFunc, selectFilter?: PokemonSelectFilter, iconImage?: string, group?: string) {
-    super(name, restorePoints ? `Restore ${restorePoints} HP or ${restorePercent}% HP for one Pokémon, whichever is higher` : `Restore ${restorePercent}% HP for one Pokémon`,
-      newModifierFunc || ((_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, this.restorePercent, false)),
+  constructor(name: string, restorePoints: integer, restorePercent: integer, healStatus: boolean = false, newModifierFunc?: NewModifierFunc, selectFilter?: PokemonSelectFilter, iconImage?: string, group?: string) {
+    super(name, restorePoints ? `Restore ${restorePoints} HP or ${restorePercent}% HP for one Pokémon, whichever is higher` : `Fully restores HP for one Pokémon${healStatus ? ' and heals any status ailment ' : ''}`,
+      newModifierFunc || ((_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, this.restorePercent, this.healStatus, false)),
     selectFilter || ((pokemon: PlayerPokemon) => {
-      if (!pokemon.hp || pokemon.hp >= pokemon.getMaxHp())
+      if (!pokemon.hp || (pokemon.hp >= pokemon.getMaxHp() && (!this.healStatus || !pokemon.status)))
         return PartyUiHandler.NoEffectMessage;
       return null;
     }), iconImage, group || 'potion');
 
     this.restorePoints = restorePoints;
     this.restorePercent = restorePercent;
+    this.healStatus = healStatus;
   }
 }
 
 export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
   constructor(name: string, restorePercent: integer, iconImage?: string) {
-    super(name, 0, restorePercent, (_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, 0, this.restorePercent, true),
+    super(name, 0, restorePercent, false, (_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, 0, this.restorePercent, false, true),
       ((pokemon: PlayerPokemon) => {
         if (!pokemon.isFainted())
           return PartyUiHandler.NoEffectMessage;
@@ -367,7 +369,7 @@ export class AllPokemonLevelIncrementModifierType extends ModifierType {
 function getBaseStatBoosterItemName(stat: Stat) {
   switch (stat) {
     case Stat.HP:
-      return 'Hp-Up';
+      return 'HP Up';
     case Stat.ATK:
       return 'Protein';
     case Stat.DEF:
@@ -397,13 +399,13 @@ export class PokemonBaseStatBoosterModifierType extends PokemonHeldItemModifierT
 
 class AllPokemonFullHpRestoreModifierType extends ModifierType {
   constructor(name: string, description?: string, newModifierFunc?: NewModifierFunc, iconImage?: string) {
-    super(name, description || `Restore 100% HP for all Pokémon`, newModifierFunc || ((_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100)), iconImage);
+    super(name, description || `Restore 100% HP for all Pokémon`, newModifierFunc || ((_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100, false)), iconImage);
   }
 }
 
 class AllPokemonFullReviveModifierType extends AllPokemonFullHpRestoreModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name, `Revives all fainted Pokémon, restoring 100% HP`, (_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100, true), iconImage);
+    super(name, `Revives all fainted Pokémon, fully restoring HP`, (_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100, false, true), iconImage);
   }
 }
 
@@ -417,7 +419,7 @@ export class MoneyRewardModifierType extends ModifierType {
   }
 
   getDescription(scene: BattleScene): string {
-    return this.description.replace('{AMOUNT}', scene.getMoneyAmountForWave(this.moneyMultiplier).toLocaleString('en-US'));
+    return this.description.replace('{AMOUNT}', scene.getWaveMoneyAmount(this.moneyMultiplier).toLocaleString('en-US'));
   }
 }
 
@@ -673,7 +675,8 @@ export const modifierTypes = {
   POTION: () => new PokemonHpRestoreModifierType('Potion', 20, 10),
   SUPER_POTION: () => new PokemonHpRestoreModifierType('Super Potion', 50, 25),
   HYPER_POTION: () => new PokemonHpRestoreModifierType('Hyper Potion', 200, 50),
-  MAX_POTION: () => new PokemonHpRestoreModifierType('Max Potion', 100, 100),
+  MAX_POTION: () => new PokemonHpRestoreModifierType('Max Potion', 0, 100),
+  FULL_RESTORE: () => new PokemonHpRestoreModifierType('Full Restore', 0, 100, true),
   
   REVIVE: () => new PokemonReviveModifierType('Revive', 50),
   MAX_REVIVE: () => new PokemonReviveModifierType('Max Revive', 100),
@@ -768,7 +771,7 @@ export const modifierTypes = {
 
   HEALING_CHARM: () => new ModifierType('Healing Charm', 'Increases the effectiveness of HP restoring moves and items by 25% (excludes revives)',
     (type, _args) => new Modifiers.HealingBoosterModifier(type, 1.25), 'healing_charm'),
-  CANDY_JAR: () => new ModifierType('Candy Jar', 'Increases the number of levels added by RARE CANDY items by 1', (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type)),
+  CANDY_JAR: () => new ModifierType('Candy Jar', 'Increases the number of levels added by Rare Candy items by 1', (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type)),
 
   BERRY_POUCH: () => new ModifierType('Berry Pouch', 'Adds a 25% chance that a used berry will not be consumed',
     (type, _args) => new Modifiers.PreserveBerryModifier(type)),
@@ -867,6 +870,11 @@ const modifierPool = {
     }),
     new WeightedModifierType(modifierTypes.MAX_POTION, (party: Pokemon[]) => {
       const thresholdPartyMemberCount = Math.min(party.filter(p => p.getInverseHp() >= 150 || p.getHpRatio() <= 0.5).length, 3);
+      return thresholdPartyMemberCount;
+    }),
+    new WeightedModifierType(modifierTypes.FULL_RESTORE, (party: Pokemon[]) => {
+      const statusEffectPartyMemberCount = Math.min(party.filter(p => p.hp && !!p.status).length, 3);
+      const thresholdPartyMemberCount = Math.floor((Math.min(party.filter(p => p.getInverseHp() >= 150 || p.getHpRatio() <= 0.5).length, 3) + statusEffectPartyMemberCount) / 2);
       return thresholdPartyMemberCount;
     }),
     new WeightedModifierType(modifierTypes.ELIXIR, (party: Pokemon[]) => {
@@ -1085,6 +1093,42 @@ export function getPlayerModifierTypeOptionsForWave(waveIndex: integer, count: i
   return options;
 }
 
+export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer): ModifierTypeOption[] {
+  if (!(waveIndex % 10))
+    return [];
+
+  const options = [
+    [
+      new ModifierTypeOption(modifierTypes.POTION(), false, baseCost * 0.1),
+      new ModifierTypeOption(modifierTypes.ETHER(), false, baseCost * 0.2),
+      new ModifierTypeOption(modifierTypes.REVIVE(), false, baseCost)
+    ],
+    [
+      new ModifierTypeOption(modifierTypes.SUPER_POTION(), false, baseCost * 0.225),
+      new ModifierTypeOption(modifierTypes.ELIXIR(), false, baseCost * 0.5)
+    ],
+    [
+      new ModifierTypeOption(modifierTypes.FULL_HEAL(), false, baseCost * 0.5),
+      new ModifierTypeOption(modifierTypes.MAX_ETHER(), false, baseCost * 0.5)
+    ],
+    [
+      new ModifierTypeOption(modifierTypes.HYPER_POTION(), false, baseCost * 0.4),
+      new ModifierTypeOption(modifierTypes.MAX_REVIVE(), false, baseCost * 1.375)
+    ],
+    [
+      new ModifierTypeOption(modifierTypes.MAX_POTION(), false, baseCost * 0.75),
+      new ModifierTypeOption(modifierTypes.MAX_ELIXIR(), false, baseCost * 1.25)
+    ],
+    [
+      new ModifierTypeOption(modifierTypes.FULL_RESTORE(), false, baseCost * 1.125)
+    ],
+    [
+      new ModifierTypeOption(modifierTypes.SACRED_ASH(), false, baseCost * 6)
+    ]
+  ];
+  return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
+}
+
 export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: Modifiers.PersistentModifier[], scene: BattleScene): Modifiers.EnemyPersistentModifier {
   const tierStackCount = tier === ModifierTier.ULTRA ? 10 : tier === ModifierTier.GREAT ? 5 : 1;
   const retryCount = 50;
@@ -1163,9 +1207,11 @@ export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType 
 export class ModifierTypeOption {
   public type: ModifierType;
   public upgraded: boolean;
+  public cost: integer;
 
-  constructor(type: ModifierType, upgraded: boolean) {
+  constructor(type: ModifierType, upgraded: boolean, cost: number = 0) {
     this.type = type;
     this.upgraded = upgraded;
+    this.cost = Math.round(cost);
   }
 }

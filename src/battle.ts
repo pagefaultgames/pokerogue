@@ -212,7 +212,6 @@ export class FixedBattleConfig {
 function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[]): GetTrainerFunc {
     return (scene: BattleScene) => {
         const rand = Utils.randSeedInt(trainerPool.length);
-        console.log(rand);
         const trainerTypes: TrainerType[] = [];
         for (let trainerPoolEntry of trainerPool) {
             const trainerType = Array.isArray(trainerPoolEntry)

@@ -836,13 +836,15 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
 export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
   private restorePoints: integer;
   private restorePercent: number;
+  private healStatus: boolean;
   public fainted: boolean;
 
-  constructor(type: ModifierType, pokemonId: integer, restorePoints: integer, restorePercent: number, fainted?: boolean) {
+  constructor(type: ModifierType, pokemonId: integer, restorePoints: integer, restorePercent: number, healStatus: boolean, fainted?: boolean) {
     super(type, pokemonId);
 
     this.restorePoints = restorePoints;
     this.restorePercent = restorePercent;
+    this.healStatus = healStatus;
     this.fainted = !!fainted;
   }
 
@@ -856,7 +858,7 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
       let restorePoints = this.restorePoints;
       if (!this.fainted)
         restorePoints = Math.floor(restorePoints * (args[1] as number));
-      else
+      if (this.fainted || this.healStatus)
         pokemon.resetStatus();
       pokemon.hp = Math.min(pokemon.hp + Math.max(Math.ceil(Math.max(Math.floor((this.restorePercent * 0.01) * pokemon.getMaxHp()), restorePoints)), 1), pokemon.getMaxHp());
     }
@@ -1323,7 +1325,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
   apply(args: any[]): boolean {
     const scene = args[0] as BattleScene;
-    const moneyAmount = new Utils.IntegerHolder(scene.getMoneyAmountForWave(this.moneyMultiplier));
+    const moneyAmount = new Utils.IntegerHolder(scene.getWaveMoneyAmount(this.moneyMultiplier));
 
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
     

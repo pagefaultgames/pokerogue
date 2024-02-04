@@ -80,6 +80,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       const gachaUnderlay = this.scene.add.sprite(115, 80, `gacha_underlay_${gachaTypeKey}`);
       gachaUnderlay.setOrigin(0, 0);
 
+      const gachaEggs = this.scene.add.sprite(0, 0, 'gacha_eggs');
+      gachaEggs.setOrigin(0, 0);
+
       const gachaGlass = this.scene.add.sprite(0, 0, 'gacha_glass');
       gachaGlass.setOrigin(0, 0);
 
@@ -118,6 +121,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       const gachaHatch = this.scene.add.sprite(115, 73, 'gacha_hatch');
       gachaHatch.setOrigin(0, 0);
 
+      gachaContainer.add(gachaEggs);
       gachaContainer.add(gachaUnderlay);
       gachaContainer.add(gacha);
       gachaContainer.add(gachaGlass);

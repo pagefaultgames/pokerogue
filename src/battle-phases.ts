@@ -19,7 +19,7 @@ import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } fr
 import { biomeDepths, biomeLinks } from "./data/biomes";
 import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
-import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, RememberMoveModifierType, TmModifierType, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, RememberMoveModifierType, TmModifierType, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptionsForWave, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
@@ -48,6 +48,7 @@ import { GameDataType } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue } from "./data/dialogue";
+import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
 
 export class LoginPhase extends BattlePhase {
   private showText: boolean;
@@ -2735,7 +2736,7 @@ export class MoneyRewardPhase extends BattlePhase {
   }
 
   start() {
-    const moneyAmount = new Utils.IntegerHolder(this.scene.getMoneyAmountForWave(this.moneyMultiplier));
+    const moneyAmount = new Utils.IntegerHolder(this.scene.getWaveMoneyAmount(this.moneyMultiplier));
 
     this.scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
@@ -3464,57 +3465,88 @@ export class SelectModifierPhase extends BattlePhase {
       this.scene.applyModifiers(ExtraModifierModifier, true, modifierCount);
     const typeOptions: ModifierTypeOption[] = this.getModifierTypeOptions(modifierCount.value);
 
-    const modifierSelectCallback = (cursor: integer) => {
-      if (cursor < 0) {
+    const modifierSelectCallback = (rowCursor: integer, cursor: integer) => {
+      if (rowCursor < 0 || cursor < 0) {
         this.scene.ui.setMode(Mode.MESSAGE);
         super.end();
         return true;
-      } else if (cursor === typeOptions.length) {
-        const rerollCost = this.getRerollCost();
-        if (this.scene.money < rerollCost) {
-          this.scene.ui.playError();
-          return false;
-        } else {
-          this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1));
-          this.scene.ui.clearText();
-          this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
-          this.scene.money -= rerollCost;
-          this.scene.updateMoneyText();
-          this.scene.playSound('buy');
-        }
-        return true;
-      } else if (cursor === typeOptions.length + 1) {
-        this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, toSlotIndex: integer) => {
-          if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
-              const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-                && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
-              const itemModifier = itemModifiers[itemIndex];
-              this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, true).then(success => {
-                if (success) {
-                  this.scene.ui.clearText();
-                  this.scene.ui.setMode(Mode.MESSAGE);
-                  super.end();
-                } else
-                  this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost());
-              });
-            });
-          } else
-            this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost());
-        }, PartyUiHandler.FilterItemMaxStacks);
-        return true;
+      }
+      let modifierType: ModifierType;
+      let cost: integer;
+      switch (rowCursor) {
+        case 0:
+          if (!cursor) {
+            const rerollCost = this.getRerollCost();
+            if (this.scene.money < rerollCost) {
+              this.scene.ui.playError();
+              return false;
+            } else {
+              this.scene.unshiftPhase(new SelectModifierPhase(this.scene, this.rerollCount + 1));
+              this.scene.ui.clearText();
+              this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
+              this.scene.money -= rerollCost;
+              this.scene.updateMoneyText();
+              this.scene.playSound('buy');
+            }
+          } else {
+            this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, toSlotIndex: integer) => {
+              if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
+                this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+                  const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+                    && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
+                  const itemModifier = itemModifiers[itemIndex];
+                  this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, true).then(success => {
+                    if (success) {
+                      this.scene.ui.clearText();
+                      this.scene.ui.setMode(Mode.MESSAGE);
+                      super.end();
+                    } else
+                      this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost());
+                  });
+                });
+              } else
+                this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost());
+            }, PartyUiHandler.FilterItemMaxStacks);
+          }
+          return true;
+        case 1:
+          modifierType = typeOptions[cursor].type;
+          break;
+        default:
+          const shopOptions = getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1));
+          const shopOption = shopOptions[rowCursor > 2 || shopOptions.length <= SHOP_OPTIONS_ROW_LIMIT ? cursor : cursor + SHOP_OPTIONS_ROW_LIMIT];
+          modifierType = shopOption.type;
+          cost = shopOption.cost;
+          break;
       }
 
-      const modifierType = typeOptions[cursor].type;
+      if (cost && this.scene.money < cost) {
+        this.scene.ui.playError();
+        return false;
+      }
+
+      const applyModifier = (modifier: Modifier, playSound: boolean = false) => {
+        this.scene.addModifier(modifier, false, playSound).then(() => {
+          if (cost) {
+            this.scene.money -= cost;
+            this.scene.updateMoneyText();
+            this.scene.playSound('buy');
+            (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
+          } else {
+            this.scene.ui.clearText();
+            this.scene.ui.setMode(Mode.MESSAGE);
+            super.end();
+          }
+        });
+      };
+
       if (modifierType instanceof PokemonModifierType) {
         if (modifierType instanceof FusePokemonModifierType) {
           this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.SPLICE, -1, (fromSlotIndex: integer, spliceSlotIndex: integer) => {
             if (spliceSlotIndex !== undefined && fromSlotIndex < 6 && spliceSlotIndex < 6 && fromSlotIndex !== spliceSlotIndex) {
               this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
                 const modifier = modifierType.newModifier(party[fromSlotIndex], party[spliceSlotIndex]);
-                this.scene.ui.clearText();
-                this.scene.ui.setMode(Mode.MESSAGE);
-                this.scene.addModifier(modifier, false, true).then(() => super.end());
+                applyModifier(modifier, true);
               });
             } else
               this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost());
@@ -3534,27 +3566,21 @@ export class SelectModifierPhase extends BattlePhase {
           this.scene.ui.setModeWithoutClear(Mode.PARTY, partyUiMode, -1, (slotIndex: integer, option: PartyOption) => {
             if (slotIndex < 6) {
               this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
-                const modifierType = typeOptions[cursor].type;
                 const modifier = !isMoveModifier
                   ? !isRememberMoveModifier
                     ? modifierType.newModifier(party[slotIndex])
                   : modifierType.newModifier(party[slotIndex], option as integer)
                   : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
-                this.scene.ui.clearText();
-                this.scene.ui.setMode(Mode.MESSAGE);
-                this.scene.addModifier(modifier, false, true).then(() => super.end());
+                applyModifier(modifier, true);
               });
             } else
               this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost());
           }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId);
         }
-      } else {
-        this.addModifier(typeOptions[cursor].type.newModifier()).then(() => super.end());
-        this.scene.ui.clearText();
-        this.scene.ui.setMode(Mode.MESSAGE);
-      }
+      } else
+        applyModifier(typeOptions[cursor].type.newModifier());
 
-      return true;
+      return !cost;
     };
     this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost());
   }

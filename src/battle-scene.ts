@@ -336,6 +336,7 @@ export default class BattleScene extends Phaser.Scene {
 			this.loadAtlas(`gacha_underlay_${key}`, 'egg');
 		});
 		this.loadImage('gacha_glass', 'egg');
+		this.loadImage('gacha_eggs', 'egg');
 		this.loadAtlas('gacha_hatch', 'egg');
 		this.loadImage('gacha_knob', 'egg');
 
@@ -1437,7 +1438,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.phaseQueue.push(new TurnInitPhase(this));
 	}
 
-	getMoneyAmountForWave(moneyMultiplier: number): integer {
+	getWaveMoneyAmount(moneyMultiplier: number): integer {
 		const waveIndex = this.currentBattle.waveIndex;
 		const waveSetIndex = Math.ceil(waveIndex / 10) - 1;
 		const moneyValue = Math.pow((waveSetIndex + 1 + (0.75 + (((waveIndex - 1) % 10) + 1) / 10)) * 100, 1 + 0.005 * waveSetIndex) * moneyMultiplier;
