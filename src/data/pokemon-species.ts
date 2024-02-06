@@ -120,7 +120,7 @@ export abstract class PokemonSpeciesForm {
   }
 
   isObtainable(): boolean {
-    return (this.generation <= 8 || pokemonPrevolutions.hasOwnProperty(this.speciesId));
+    return (this.generation <= 9 || pokemonPrevolutions.hasOwnProperty(this.speciesId));
   }
 
   isCatchable(): boolean {
@@ -477,7 +477,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
   }
 
   isObtainable() {
-    return super.isObtainable() || (this.species === 'Wild Bull Pokémon') || (this.species === 'Water Fish Pokémon') || (this.species === 'Paradox Pokémon' && !this.legendary && this.speciesId <= 1025);
+    return super.isObtainable();
   }
 
   getFormSpriteKey(formIndex?: integer) {
@@ -2107,18 +2107,18 @@ export function initSpecies() {
       new PokemonForm("Hearthflame Mask", "hearthflame-mask", Type.GRASS, Type.FIRE, 1.2, 39.8, Abilities.MOLD_BREAKER, Abilities.NONE, Abilities.NONE, 550, 80, 120, 84, 60, 96, 110, 5, 50, 275),
       new PokemonForm("Cornerstone Mask", "cornerstone-mask", Type.GRASS, Type.ROCK, 1.2, 39.8, Abilities.STURDY, Abilities.NONE, Abilities.NONE, 550, 80, 120, 84, 60, 96, 110, 5, 50, 275),
     ),
-    new PokemonSpecies(Species.ARCHALUDON, "Archaludon", 9, false, false, false, "Alloy Pokémon", Type.STEEL, Type.DRAGON, 2, 60, Abilities.STAMINA, Abilities.STURDY, Abilities.STALWART, 535, 90, 105, 130, 125, 65, 85, 10, 50, null, GrowthRate.MEDIUM_FAST, 50, false),
-    new PokemonSpecies(Species.HYDRAPPLE, "Hydrapple", 9, false, false, false, "Apple Hydra Pokémon", Type.GRASS, Type.DRAGON, 1.8, 93, Abilities.SUPERSWEET_SYRUP, Abilities.REGENERATOR, Abilities.STICKY_HOLD, 540, 106, 80, 110, 120, 80, 44, 10, 50, null, GrowthRate.ERRATIC, 50, false),
+    new PokemonSpecies(Species.ARCHALUDON, "Archaludon", 9, false, false, false, "Alloy Pokémon", Type.STEEL, Type.DRAGON, 2, 60, Abilities.STAMINA, Abilities.STURDY, Abilities.STALWART, 535, 90, 105, 130, 125, 65, 85, 10, 50, 300, GrowthRate.MEDIUM_FAST, 50, false),
+    new PokemonSpecies(Species.HYDRAPPLE, "Hydrapple", 9, false, false, false, "Apple Hydra Pokémon", Type.GRASS, Type.DRAGON, 1.8, 93, Abilities.SUPERSWEET_SYRUP, Abilities.REGENERATOR, Abilities.STICKY_HOLD, 540, 106, 80, 110, 120, 80, 44, 10, 50, 270, GrowthRate.ERRATIC, 50, false),
     new PokemonSpecies(Species.GOUGING_FIRE, "Gouging Fire", 9, false, false, false, "Paradox Pokémon", Type.FIRE, Type.DRAGON, 3.5, 590, Abilities.PROTOSYNTHESIS, Abilities.NONE, Abilities.NONE, 590, 105, 115, 121, 65, 93, 91, 10, 0, 295, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.RAGING_BOLT, "Raging Bolt", 9, false, false, false, "Paradox Pokémon", Type.ELECTRIC, Type.DRAGON, 5.2, 480, Abilities.PROTOSYNTHESIS, Abilities.NONE, Abilities.NONE, 590, 125, 73, 91, 137, 89, 75, 10, 0, 295, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.IRON_BOULDER, "Iron Boulder", 9, false, false, false, "Paradox Pokémon", Type.ROCK, Type.PSYCHIC, 1.5, 162.5, Abilities.QUARK_DRIVE, Abilities.NONE, Abilities.NONE, 590, 90, 120, 80, 68, 108, 124, 10, 0, 295, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.IRON_CROWN, "Iron Crown", 9, false, false, false, "Paradox Pokémon", Type.STEEL, Type.PSYCHIC, 1.6, 156, Abilities.QUARK_DRIVE, Abilities.NONE, Abilities.NONE, 590, 90, 72, 100, 122, 108, 98, 10, 0, 295, GrowthRate.SLOW, null, false),
-    new PokemonSpecies(Species.TERAPAGOS, "Terapagos", 9, false, true, false, "Tera Pokémon", Type.NORMAL, null, 0.2, 6.5, Abilities.TERA_SHIFT, Abilities.NONE, Abilities.NONE, 450, 90, 65, 85, 65, 85, 60, 5, 50, null, GrowthRate.SLOW, 50, false, false,
-      new PokemonForm("Normal Form", "", Type.NORMAL, null, 0.2, 6.5, Abilities.TERA_SHIFT, Abilities.NONE, Abilities.NONE, 450, 90, 65, 85, 65, 85, 60, 5, 50, null),
-      new PokemonForm("Terastal Form", "terastal", Type.NORMAL, null, 0.3, 16, Abilities.TERA_SHELL, Abilities.NONE, Abilities.NONE, 600, 95, 95, 110, 105, 110, 85, 5, 50, null),
-      new PokemonForm("Stellar Form", "stellar", Type.NORMAL, null, 1.7, 77, Abilities.TERAFORM_ZERO, Abilities.NONE, Abilities.NONE, 700, 160, 105, 110, 130, 110, 85, 5, 50, null),
+    new PokemonSpecies(Species.TERAPAGOS, "Terapagos", 9, false, true, false, "Tera Pokémon", Type.NORMAL, null, 0.2, 6.5, Abilities.TERA_SHIFT, Abilities.NONE, Abilities.NONE, 450, 90, 65, 85, 65, 85, 60, 5, 50, 90, GrowthRate.SLOW, 50, false, false,
+      new PokemonForm("Normal Form", "", Type.NORMAL, null, 0.2, 6.5, Abilities.TERA_SHIFT, Abilities.NONE, Abilities.NONE, 450, 90, 65, 85, 65, 85, 60, 5, 50, 90),
+      new PokemonForm("Terastal Form", "terastal", Type.NORMAL, null, 0.3, 16, Abilities.TERA_SHELL, Abilities.NONE, Abilities.NONE, 600, 95, 95, 110, 105, 110, 85, 5, 50, 90),
+      new PokemonForm("Stellar Form", "stellar", Type.NORMAL, null, 1.7, 77, Abilities.TERAFORM_ZERO, Abilities.NONE, Abilities.NONE, 700, 160, 105, 110, 130, 110, 85, 5, 50, 90),
     ),
-    new PokemonSpecies(Species.PECHARUNT, "Pecharunt", 9, false, false, true, "Subjugation Pokémon", Type.POISON, Type.GHOST, 0.3, 0.3, Abilities.POISON_PUPPETEER, Abilities.NONE, Abilities.NONE, 600, 88, 88, 160, 88, 88, 88, 3, 0, null, GrowthRate.SLOW, null, false),
+    new PokemonSpecies(Species.PECHARUNT, "Pecharunt", 9, false, false, true, "Subjugation Pokémon", Type.POISON, Type.GHOST, 0.3, 0.3, Abilities.POISON_PUPPETEER, Abilities.NONE, Abilities.NONE, 600, 88, 88, 160, 88, 88, 88, 3, 0, 300, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.ALOLA_RATTATA, "Rattata", 7, false, false, false, "Mouse Pokémon", Type.DARK, null, 0.3, 3.8, Abilities.GLUTTONY, Abilities.HUSTLE, Abilities.THICK_FAT, 253, 30, 56, 35, 25, 35, 72, 255, 70, 51, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.ALOLA_RATICATE, "Raticate", 7, false, false, false, "Mouse Pokémon", Type.DARK, null, 0.7, 25.5, Abilities.GLUTTONY, Abilities.HUSTLE, Abilities.THICK_FAT, 413, 75, 71, 70, 40, 80, 77, 127, 70, 145, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.ALOLA_RAICHU, "Raichu", 7, false, false, false, "Mouse Pokémon", Type.ELECTRIC, Type.PSYCHIC, 0.7, 21, Abilities.SURGE_SURFER, Abilities.NONE, Abilities.NONE, 485, 60, 85, 50, 95, 85, 110, 75, 50, 243, GrowthRate.MEDIUM_FAST, 50, false),
@@ -2767,7 +2767,7 @@ export const speciesStarters = {
 {
   //setTimeout(() => {
     /*for (let tc of Object.keys(trainerConfigs)) {
-      console.log(TrainerType[tc], !trainerConfigs[tc].speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 8).filter(trainerConfigs[tc].speciesFilter).map(s => {
+      console.log(TrainerType[tc], !trainerConfigs[tc].speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 9).filter(trainerConfigs[tc].speciesFilter).map(s => {
         while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
 				  s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
         return s;
@@ -2775,7 +2775,7 @@ export const speciesStarters = {
     }
 
     const speciesFilter = (species: PokemonSpecies) => !species.legendary && !species.pseudoLegendary && !species.mythical && species.baseTotal >= 540;
-    console.log(!speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 8).filter(speciesFilter).map(s => {
+    console.log(!speciesFilter ? 'all' : [...new Set(allSpecies.filter(s => s.generation <= 9).filter(speciesFilter).map(s => {
       while (pokemonPrevolutions.hasOwnProperty(s.speciesId))
         s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
       return s;

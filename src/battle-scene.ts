@@ -913,9 +913,12 @@ export default class BattleScene extends Phaser.Scene {
 			case Species.DEERLING:
 			case Species.SAWSBUCK:
 			case Species.ORICORIO:
+			case Species.SQUAWKABILLY:
+			case Species.TATSUGIRI:
 				return Utils.randSeedInt(species.forms.length);
 			case Species.MEOWSTIC:
 			case Species.INDEEDEE:
+			case Species.OINKOLOGNE:
 				return gender === Gender.FEMALE ? 1 : 0;
 			case Species.TOXTRICITY:
 				const lowkeyNatures = [ Nature.LONELY, Nature.BOLD, Nature.RELAXED, Nature.TIMID, Nature.SERIOUS, Nature.MODEST, Nature.MILD, Nature.QUIET, Nature.BASHFUL, Nature.CALM, Nature.GENTLE, Nature.CAREFUL ];
