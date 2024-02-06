@@ -48,7 +48,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
   getName(includeTitle: boolean = false): string {
     let name = this.config.getName(this.female);
-    return includeTitle ? `${this.config.title} ${name}` : name;
+    return includeTitle && this.config.title ? `${this.config.title} ${name}` : name;
   }
 
   getBattleBgm(): string {
