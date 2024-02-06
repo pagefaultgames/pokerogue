@@ -915,6 +915,7 @@ export default class BattleScene extends Phaser.Scene {
 			case Species.ORICORIO:
 			case Species.SQUAWKABILLY:
 			case Species.TATSUGIRI:
+			case Species.PALDEA_TAUROS:
 				return Utils.randSeedInt(species.forms.length);
 			case Species.MEOWSTIC:
 			case Species.INDEEDEE:
