@@ -44,11 +44,12 @@ import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
-import { GameDataType } from "./system/game-data";
+import { GameDataType, PlayerGender } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue } from "./data/dialogue";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
+import { Setting } from "./system/settings";
 
 export class LoginPhase extends BattlePhase {
   private showText: boolean;
@@ -220,6 +221,39 @@ export class CheckLoadPhase extends BattlePhase {
     }
 
     super.end();
+  }
+}
+
+export class SelectGenderPhase extends BattlePhase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+  
+  start(): void {
+    super.start();
+
+    this.scene.ui.showText('Are you a boy or a girl?', null, () => {
+      this.scene.ui.setMode(Mode.OPTION_SELECT, {
+        options: [
+          {
+            label: 'Boy',
+            handler: () => {
+              this.scene.gameData.gender = PlayerGender.MALE;
+              this.scene.gameData.saveSetting(Setting.Player_Gender, 0);
+              this.scene.gameData.saveSystem().then(() => this.end());
+            }
+          },
+          {
+            label: 'Girl',
+            handler: () => {
+              this.scene.gameData.gender = PlayerGender.FEMALE;
+              this.scene.gameData.saveSetting(Setting.Player_Gender, 1);
+              this.scene.gameData.saveSystem().then(() => this.end());
+            }
+          }
+        ]
+      });
+    });
   }
 }
 
@@ -841,7 +875,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       this.scene.ui.showText(`Go! ${this.getPokemon().name}!`);
       if (this.player)
          this.scene.pbTray.hide();
-      this.scene.trainer.setTexture('trainer_m_back_pb');
+      this.scene.trainer.setTexture(`trainer_${this.scene.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back_pb`);
       this.scene.time.delayedCall(562, () => {
         this.scene.trainer.setFrame('2');
         this.scene.time.delayedCall(64, () => {
@@ -1080,7 +1114,7 @@ export class ShowTrainerPhase extends BattlePhase {
 
     this.scene.trainer.setVisible(true)
 
-    this.scene.trainer.setTexture('trainer_m_back');
+    this.scene.trainer.setTexture(`trainer_${this.scene.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
 
     this.scene.tweens.add({
       targets: this.scene.trainer,
@@ -3742,8 +3776,12 @@ export class ScanIvsPhase extends PokemonPhase {
 }
 
 export class TrainerMessageTestPhase extends BattlePhase {
-  constructor(scene: BattleScene) {
+  private trainerTypes: TrainerType[];
+
+  constructor(scene: BattleScene, ...trainerTypes: TrainerType[]) {
     super(scene);
+    
+    this.trainerTypes = trainerTypes;
   }
 
   start() {
@@ -3752,7 +3790,10 @@ export class TrainerMessageTestPhase extends BattlePhase {
     let testMessages: string[] = [];
     
     for (let t of Object.keys(trainerConfigs)) {
-      const config = trainerConfigs[parseInt(t)];
+      const type = parseInt(t);
+      if (this.trainerTypes.length && !this.trainerTypes.find(tt => tt === type as TrainerType))
+        continue;
+      const config = trainerConfigs[type];
       [ config.encounterMessages, config.femaleEncounterMessages, config.victoryMessages, config.femaleVictoryMessages, config.defeatMessages, config.femaleDefeatMessages ]
         .map(messages => {
           if (messages?.length)

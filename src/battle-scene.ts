@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import UI, { Mode } from './ui/ui';
-import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase, TrainerMessageTestPhase, LoginPhase, ConsolidateDataPhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase, TrainerMessageTestPhase, LoginPhase, ConsolidateDataPhase, SelectGenderPhase } from './battle-phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
 import * as Utils from './utils';
@@ -12,7 +12,7 @@ import { BattlePhase } from './battle-phase';
 import { initGameSpeed } from './system/game-speed';
 import { Biome } from "./data/enums/biome";
 import { Arena, ArenaBase, getBiomeHasProps, getBiomeKey } from './arena';
-import { GameData } from './system/game-data';
+import { GameData, PlayerGender } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
@@ -521,7 +521,7 @@ export default class BattleScene extends Phaser.Scene {
 			field.add(a);
 		});
 
-		const trainer = this.addFieldSprite(0, 0, 'trainer_m_back');
+		const trainer = this.addFieldSprite(0, 0, `trainer_${this.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
 		trainer.setOrigin(0.5, 1);
 
 		field.add(trainer);
@@ -570,6 +570,8 @@ export default class BattleScene extends Phaser.Scene {
 				this.pushPhase(new LoginPhase(this));
 				if (!bypassLogin)
 					this.pushPhase(new ConsolidateDataPhase(this)); // TODO: Remove
+				if (!this.gameData.gender)
+					this.pushPhase(new SelectGenderPhase(this));
 				this.pushPhase(new CheckLoadPhase(this));
 			} else
 				this.pushPhase(new EncounterPhase(this));
@@ -728,7 +730,7 @@ export default class BattleScene extends Phaser.Scene {
 		[ this.arenaEnemy, this.arenaNextEnemy ].forEach(a => a.setPosition(-280, 0));
 		this.arenaNextEnemy.setVisible(false);
 
-		this.trainer.setTexture('trainer_m_back');
+		this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
 		this.trainer.setPosition(406, 186);
 
 		if (clearScene) {

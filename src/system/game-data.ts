@@ -31,6 +31,12 @@ export enum GameDataType {
   SETTINGS
 }
 
+export enum PlayerGender {
+  UNSET,
+  MALE,
+  FEMALE
+}
+
 export function getDataTypeKey(dataType: GameDataType): string {
   switch (dataType) {
     case GameDataType.SYSTEM:
@@ -45,6 +51,7 @@ export function getDataTypeKey(dataType: GameDataType): string {
 interface SystemSaveData {
   trainerId: integer;
   secretId: integer;
+  gender: PlayerGender;
   dexData: DexData;
   gameStats: GameStats;
   unlocks: Unlocks;
@@ -136,6 +143,8 @@ export class GameData {
 
   public trainerId: integer;
   public secretId: integer;
+
+  public gender: PlayerGender;
   
   public dexData: DexData;
   private defaultDexData: DexData;
@@ -185,6 +194,7 @@ export class GameData {
         const data: SystemSaveData = {
           trainerId: this.trainerId,
           secretId: this.secretId,
+          gender: this.gender,
           dexData: this.dexData,
           gameStats: this.gameStats,
           unlocks: this.unlocks,
@@ -238,6 +248,10 @@ export class GameData {
 
         this.trainerId = systemData.trainerId;
         this.secretId = systemData.secretId;
+
+        this.gender = systemData.gender;
+
+        this.saveSetting(Setting.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
 
         if (systemData.gameStats)
           this.gameStats = systemData.gameStats;
