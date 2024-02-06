@@ -300,8 +300,10 @@ export default class BattleScene extends Phaser.Scene {
 		});
 
 		// Load trainer images
-		this.loadImage('trainer_m', 'trainer');
-		this.loadAtlas('trainer_m_pb', 'trainer');
+		this.loadAtlas('trainer_m_back', 'trainer');
+		this.loadAtlas('trainer_m_back_pb', 'trainer');
+		this.loadAtlas('trainer_f_back', 'trainer');
+		this.loadAtlas('trainer_f_back_pb', 'trainer');
 
 		Utils.getEnumValues(TrainerType).map(tt => {
 			const config = trainerConfigs[tt];
@@ -519,14 +521,7 @@ export default class BattleScene extends Phaser.Scene {
 			field.add(a);
 		});
 
-		const trainerPbFrameNames = this.anims.generateFrameNames('trainer_m_pb', { zeroPad: 2, start: 1, end: 12 });
-		this.anims.create({
-			key: 'trainer_m_pb',
-			frames: trainerPbFrameNames,
-			frameRate: 16
-		});
-
-		const trainer = this.addFieldSprite(0, 0, 'trainer_m');
+		const trainer = this.addFieldSprite(0, 0, 'trainer_m_back');
 		trainer.setOrigin(0.5, 1);
 
 		field.add(trainer);
@@ -733,8 +728,8 @@ export default class BattleScene extends Phaser.Scene {
 		[ this.arenaEnemy, this.arenaNextEnemy ].forEach(a => a.setPosition(-280, 0));
 		this.arenaNextEnemy.setVisible(false);
 
-		this.trainer.setTexture('trainer_m');
-		this.trainer.setPosition(406, 132);
+		this.trainer.setTexture('trainer_m_back');
+		this.trainer.setPosition(406, 186);
 
 		if (clearScene) {
 			this.fadeOutBgm(250, false);

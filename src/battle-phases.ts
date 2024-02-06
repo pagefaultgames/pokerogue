@@ -490,7 +490,7 @@ export class EncounterPhase extends BattlePhase {
       return `${enemyField[0].name} appeared.`;
 
     if (this.scene.currentBattle.battleType === BattleType.TRAINER)
-      return `${this.scene.currentBattle.trainer.getName()}\nwould like to battle!`;
+      return `${this.scene.currentBattle.trainer.getName(true)}\nwould like to battle!`;
 
     return enemyField.length === 1
       ? `A wild ${enemyField[0].name} appeared!`
@@ -841,7 +841,13 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       this.scene.ui.showText(`Go! ${this.getPokemon().name}!`);
       if (this.player)
          this.scene.pbTray.hide();
-      this.scene.trainer.play('trainer_m_pb');
+      this.scene.trainer.setTexture('trainer_m_back_pb');
+      this.scene.time.delayedCall(562, () => {
+        this.scene.trainer.setFrame('2');
+        this.scene.time.delayedCall(64, () => {
+          this.scene.trainer.setFrame('3');
+        });
+      });
       this.scene.tweens.add({
         targets: this.scene.trainer,
         x: -36,
@@ -851,7 +857,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       this.scene.time.delayedCall(750, () => this.summon());
     } else {
       this.scene.pbTrayEnemy.hide();
-      this.scene.ui.showText(`${this.scene.currentBattle.trainer.getName()} sent out\n${this.getPokemon().name}!`, null, () => this.summon());
+      this.scene.ui.showText(`${this.scene.currentBattle.trainer.getName(true)} sent out\n${this.getPokemon().name}!`, null, () => this.summon());
     }
   }
 
@@ -985,7 +991,7 @@ export class SwitchSummonPhase extends SummonPhase {
 
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, pokemon);
 
-    this.scene.ui.showText(this.player ? `Come back, ${pokemon.name}!` : `${this.scene.currentBattle.trainer.getName()}\nwithdrew ${pokemon.name}!`);
+    this.scene.ui.showText(this.player ? `Come back, ${pokemon.name}!` : `${this.scene.currentBattle.trainer.getName(true)}\nwithdrew ${pokemon.name}!`);
     this.scene.playSound('pb_rel');
     pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, 'Sine.easeIn');
@@ -1019,7 +1025,7 @@ export class SwitchSummonPhase extends SummonPhase {
     if (switchedPokemon) {
       party[this.slotIndex] = this.lastPokemon;
       party[this.fieldIndex] = switchedPokemon;
-      this.scene.ui.showText(this.player ? `Go! ${switchedPokemon.name}!` : `${this.scene.currentBattle.trainer.getName()} sent out\n${this.getPokemon().name}!`);
+      this.scene.ui.showText(this.player ? `Go! ${switchedPokemon.name}!` : `${this.scene.currentBattle.trainer.getName(true)} sent out\n${this.getPokemon().name}!`);
       this.summon();
     } else
       this.end();
@@ -1074,7 +1080,7 @@ export class ShowTrainerPhase extends BattlePhase {
 
     this.scene.trainer.setVisible(true)
 
-    this.scene.trainer.setTexture('trainer_m');
+    this.scene.trainer.setTexture('trainer_m_back');
 
     this.scene.tweens.add({
       targets: this.scene.trainer,
@@ -2703,7 +2709,7 @@ export class TrainerVictoryPhase extends BattlePhase {
         this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.VOUCHER));
     }
 
-    this.scene.ui.showText(`You defeated\n${this.scene.currentBattle.trainer.getName()}!`, null, () => {
+    this.scene.ui.showText(`You defeated\n${this.scene.currentBattle.trainer.getName(true)}!`, null, () => {
       const defeatMessages = this.scene.currentBattle.trainer.config.victoryMessages;
       let showMessageAndEnd = () => this.end();
       if (defeatMessages.length) {
