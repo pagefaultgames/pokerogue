@@ -676,7 +676,7 @@ export class GameData {
                 }, () => {
                   this.scene.ui.revertMode();
                   this.scene.ui.showText(null, 0);
-                }, false, 98);
+                }, false, -98);
               });
             };
           })((e.target as any).files[0]);

@@ -6,7 +6,7 @@ import { Mode } from "./ui";
 import MessageUiHandler from "./message-ui-handler";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { allAbilities } from "../data/ability";
-import { GameMode } from "../game-mode";
+import { GameMode, gameModeNames } from "../game-mode";
 import { Unlockables } from "../system/unlockables";
 import { GrowthRate, getGrowthRateColor } from "../data/exp";
 import { DexAttr, DexEntry } from "../system/game-data";
@@ -463,7 +463,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   ui.setMode(Mode.STARTER_SELECT);
                 }
               }
-            ]
+            ],
+            yOffset: 47
           });
           success = true;
         }
@@ -925,10 +926,30 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         };
         if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
           ui.setMode(Mode.STARTER_SELECT);
-          ui.showText('Select a game mode.', null, () => ui.setModeWithoutClear(Mode.GAME_MODE_SELECT, startRun, cancel));
+          const options = [
+            {
+              label: gameModeNames[GameMode.CLASSIC],
+              handler: () => startRun(GameMode.CLASSIC)
+            },
+            {
+              label: gameModeNames[GameMode.ENDLESS],
+              handler: () => startRun(GameMode.ENDLESS)
+            }
+          ];
+          if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
+            options.push({
+              label: gameModeNames[GameMode.SPLICED_ENDLESS],
+              handler: () => startRun(GameMode.SPLICED_ENDLESS)
+            });
+          }
+          options.push({
+            label: 'Cancel',
+            handler: () => cancel()
+          });
+          ui.showText('Select a game mode.', null, () => ui.setModeWithoutClear(Mode.OPTION_SELECT, { options: options, yOffset: 19 }));
         } else
           startRun(GameMode.CLASSIC);
-      }, cancel);
+      }, cancel, null, null, 19);
     });
 
     return true;

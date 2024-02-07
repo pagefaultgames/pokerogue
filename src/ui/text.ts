@@ -100,7 +100,7 @@ function getTextStyleOptions(style: TextStyle, extraStyleOptions?: Phaser.Types.
 
   if (extraStyleOptions) {
     if (extraStyleOptions.fontSize) {
-      const sizeRatio = parseInt(extraStyleOptions.fontSize.toString().slice(0, -2)) / parseInt(styleOptions.fontSize.slice(0, -2));
+      const sizeRatio = parseInt(extraStyleOptions.fontSize.toString().slice(0, -2)) / parseInt(styleOptions.fontSize.toString().slice(0, -2));
       shadowSize *= sizeRatio;
     }
     styleOptions = Object.assign(styleOptions, extraStyleOptions);

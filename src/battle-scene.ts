@@ -1128,7 +1128,6 @@ export default class BattleScene extends Phaser.Scene {
 				case Mode.BIOME_SELECT:
 				case Mode.STARTER_SELECT:
 				case Mode.CONFIRM:
-				case Mode.GAME_MODE_SELECT:
 					this.ui.setOverlayMode(Mode.MENU);
 					inputSuccess = true;
 					break;

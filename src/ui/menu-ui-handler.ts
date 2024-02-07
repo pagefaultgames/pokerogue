@@ -198,7 +198,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
                 ui.revertMode();
                 ui.showText(null, 0);
-              }, false, 98);
+              }, false, -98);
             });
           } else
             doLogout();
