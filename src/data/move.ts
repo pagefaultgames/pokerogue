@@ -1085,6 +1085,26 @@ export class HalfHpStatMaxAttr extends StatChangeAttr {
   }
 }
 
+export class CutHpStatBoostAttr extends StatChangeAttr {
+  constructor(stat: BattleStat | BattleStat[]) {
+    super(stat, 1, true, null, true);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      user.damage(Math.floor(user.getMaxHp() / 3));
+      user.updateInfo().then(() => {
+        const ret = super.apply(user, target, move, args);
+        resolve(ret);
+      });
+    });
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => user.getHpRatio() > 0.33;
+  }
+}
+
 export class HpSplitAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -1530,6 +1550,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.CLAMP:
       case BattlerTagType.SAND_TOMB:
       case BattlerTagType.MAGMA_STORM:
+      case BattlerTagType.THUNDER_CAGE:
         return -3;
       case BattlerTagType.PROTECTED:
         return 5;
@@ -1587,7 +1608,7 @@ export class RechargeAttr extends AddBattlerTagAttr {
 
 export class TrapAttr extends AddBattlerTagAttr {
   constructor(tagType: BattlerTagType) {
-    super(tagType, false, false, 3, 6);
+    super(tagType, false, false, 4, 5);
   }
 }
 
@@ -2732,7 +2753,7 @@ export function initMoves() {
     new AttackMove(Moves.PURSUIT, "Pursuit (N)", Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, "The power of this attack move is doubled if it's used on a target that's switching out of battle.", -1, 0, 2),
     new AttackMove(Moves.RAPID_SPIN, "Rapid Spin", Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, -1, "A spin attack that can also eliminate such moves as Bind, Wrap, and Leech Seed. This also raises the user's Speed stat.", 100, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
-      .attr(LapseBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.SEEDED ], true),
+      .attr(LapseBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.THUNDER_CAGE, BattlerTagType.SEEDED ], true),
     new StatusMove(Moves.SWEET_SCENT, "Sweet Scent", Type.NORMAL, 100, 20, -1, "A sweet scent that harshly lowers opposing Pokémon's evasiveness.", -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.EVA, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -3654,7 +3675,8 @@ export function initMoves() {
       .attr(SandHealAttr),
     new AttackMove(Moves.FIRST_IMPRESSION, "First Impression", Type.BUG, MoveCategory.PHYSICAL, 90, 100, 10, -1, "Although this move has great power, it only works the first turn each time the user enters battle.", -1, 2, 7)
       .condition(new FirstMoveCondition()),
-    new SelfStatusMove(Moves.BANEFUL_BUNKER, "Baneful Bunker (N)", Type.POISON, -1, 10, -1, "In addition to protecting the user from attacks, this move also poisons any attacker that makes direct contact.", -1, 4, 7),
+    new SelfStatusMove(Moves.BANEFUL_BUNKER, "Baneful Bunker (P)", Type.POISON, -1, 10, -1, "In addition to protecting the user from attacks, this move also poisons any attacker that makes direct contact.", -1, 4, 7)
+      .attr(ProtectAttr),
     new AttackMove(Moves.SPIRIT_SHACKLE, "Spirit Shackle (N)", Type.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, -1, "The user attacks while simultaneously stitching the target's shadow to the ground to prevent the target from escaping.", -1, 0, 7),
     new AttackMove(Moves.DARKEST_LARIAT, "Darkest Lariat (N)", Type.DARK, MoveCategory.PHYSICAL, 85, 100, 10, -1, "The user swings both arms and hits the target. The target's stat changes don't affect this attack's damage.", -1, 0, 7),
     new AttackMove(Moves.SPARKLING_ARIA, "Sparkling Aria (N)", Type.WATER, MoveCategory.SPECIAL, 90, 100, 10, -1, "The user bursts into song, emitting many bubbles. Any Pokémon suffering from a burn will be healed by the touch of these bubbles.", -1, 0, 7)
@@ -3684,7 +3706,8 @@ export function initMoves() {
     new AttackMove(Moves.THROAT_CHOP, "Throat Chop (N)", Type.DARK, MoveCategory.PHYSICAL, 80, 100, 15, -1, "The user attacks the target's throat, and the resultant suffering prevents the target from using moves that emit sound for two turns.", 100, 0, 7),
     new AttackMove(Moves.POLLEN_PUFF, "Pollen Puff (N)", Type.BUG, MoveCategory.SPECIAL, 90, 100, 15, -1, "The user attacks the enemy with a pollen puff that explodes. If the target is an ally, it gives the ally a pollen puff that restores its HP instead.", -1, 0, 7)
       .ballBombMove(),
-    new AttackMove(Moves.ANCHOR_SHOT, "Anchor Shot (N)", Type.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, -1, "The user entangles the target with its anchor chain while attacking. The target becomes unable to flee.", -1, 0, 7),
+    new AttackMove(Moves.ANCHOR_SHOT, "Anchor Shot", Type.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, -1, "The user entangles the target with its anchor chain while attacking. The target becomes unable to flee.", -1, 0, 7)
+      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1),
     new StatusMove(Moves.PSYCHIC_TERRAIN, "Psychic Terrain (N)", Type.PSYCHIC, -1, 10, -1, "This protects Pokémon on the ground from priority moves and powers up Psychic-type moves for five turns.", -1, 0, 7)
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.LUNGE, "Lunge", Type.BUG, MoveCategory.PHYSICAL, 80, 100, 15, -1, "The user makes a lunge at the target, attacking with full force. This also lowers the target's Attack stat.", 100, 0, 7)
@@ -3783,13 +3806,15 @@ export function initMoves() {
     new AttackMove(Moves.FREEZY_FROST, "Freezy Frost (N)", Type.ICE, MoveCategory.SPECIAL, 100, 90, 10, -1, "The user attacks with a crystal made of cold frozen haze. It eliminates every stat change among all the Pokémon engaged in battle.", -1, 0, 7),
     new AttackMove(Moves.SPARKLY_SWIRL, "Sparkly Swirl (N)", Type.FAIRY, MoveCategory.SPECIAL, 120, 85, 5, -1, "The user attacks the target by wrapping it with a whirlwind of an overpowering scent. This also heals all status conditions of the user's party.", -1, 0, 7),
     new AttackMove(Moves.VEEVEE_VOLLEY, "Veevee Volley (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 20, -1, "The more Eevee loves its Trainer, the greater the move's power. It never misses.", -1, 0, 7),
-     /* End Unused */
+    /* End Unused */
     new AttackMove(Moves.DOUBLE_IRON_BASH, "Double Iron Bash", Type.STEEL, MoveCategory.PHYSICAL, 60, 100, 5, -1, "The user rotates, centering the hex nut in its chest, and then strikes with its arms twice in a row. This may also make the target flinch.", 30, 0, 7)
       .attr(MultiHitAttr, MultiHitType._2)
       .attr(FlinchAttr)
       .punchingMove(),
+    /* Unused */
     new SelfStatusMove(Moves.MAX_GUARD, "Max Guard", Type.NORMAL, -1, 10, -1, "This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession.", -1, 4, 8)
       .attr(ProtectAttr),
+    /* End Unused */
     new AttackMove(Moves.DYNAMAX_CANNON, "Dynamax Cannon", Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 5, -1, "The user unleashes a strong beam from its core. This move deals twice the damage if the target is over level 200.", -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.level > 200 ? 2 : 1)
       .attr(DiscourageFrequentUseAttr)
@@ -3801,7 +3826,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.NO_RETREAT, "No Retreat", Type.FIGHTING, -1, 5, -1, "This move raises all the user's stats but prevents the user from switching out or fleeing.", 100, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, true, 1),
-    new StatusMove(Moves.TAR_SHOT, "Tar Shot (N)", Type.ROCK, 100, 15, -1, "The user pours sticky tar over the target, lowering the target's Speed stat. The target becomes weaker to Fire-type moves.", 100, 0, 8),
+    new StatusMove(Moves.TAR_SHOT, "Tar Shot (P)", Type.ROCK, 100, 15, -1, "The user pours sticky tar over the target, lowering the target's Speed stat. The target becomes weaker to Fire-type moves.", 100, 0, 8)
+      .attr(StatChangeAttr, BattleStat.SPD, -1),
     new StatusMove(Moves.MAGIC_POWDER, "Magic Powder (N)", Type.PSYCHIC, 100, 20, -1, "The user scatters a cloud of magic powder that changes the target to Psychic type.", -1, 0, 8)
       .powderMove(),
     new AttackMove(Moves.DRAGON_DARTS, "Dragon Darts (P)", Type.DRAGON, MoveCategory.PHYSICAL, 50, 100, 10, -1, "The user attacks twice using Dreepy. If there are two targets, this move hits each target once.", -1, 0, 8)
@@ -3853,8 +3879,8 @@ export function initMoves() {
     new AttackMove(Moves.MAX_STEELSPIKE, "Max Steelspike (N)", Type.STEEL, MoveCategory.PHYSICAL, 10, -1, 10, -1, "This is a Steel-type attack Dynamax Pokémon use. This raises ally Pokémon's Defense stats.", -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY),
     /* End Unused */
-    new SelfStatusMove(Moves.CLANGOROUS_SOUL, "Clangorous Soul (P)", Type.DRAGON, 100, 5, -1, "The user raises all its stats by using some of its HP.", 100, 0, 8)
-      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
+    new SelfStatusMove(Moves.CLANGOROUS_SOUL, "Clangorous Soul", Type.DRAGON, 100, 5, -1, "The user raises all its stats by using some of its HP.", 100, 0, 8)
+      .attr(CutHpStatBoostAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ])
       .soundBased()
       .danceMove(),
     new AttackMove(Moves.BODY_PRESS, "Body Press (N)", Type.FIGHTING, MoveCategory.PHYSICAL, 80, 100, 10, -1, "The user attacks by slamming its body into the target. The higher the user's Defense, the more damage it can inflict on the target.", -1, 0, 8),
@@ -3870,7 +3896,8 @@ export function initMoves() {
     new AttackMove(Moves.BEHEMOTH_BLADE, "Behemoth Blade", Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, "The user wields a large, powerful sword using its whole body and cuts the target in a vigorous attack.", -1, 0, 8)
       .slicingMove(),
     new AttackMove(Moves.BEHEMOTH_BASH, "Behemoth Bash", Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, "The user's body becomes a firm shield and slams into the target fiercely.", -1, 0, 8),
-    new AttackMove(Moves.AURA_WHEEL, "Aura Wheel (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 110, 100, 10, -1, "Morpeko attacks and raises its Speed with the energy stored in its cheeks. This move's type changes depending on the user's form.", 100, 0, 8),
+    new AttackMove(Moves.AURA_WHEEL, "Aura Wheel (P)", Type.ELECTRIC, MoveCategory.PHYSICAL, 110, 100, 10, -1, "Morpeko attacks and raises its Speed with the energy stored in its cheeks. This move's type changes depending on the user's form.", 100, 0, 8)
+      .attr(StatChangeAttr, BattleStat.SPD, 1, true),
     new AttackMove(Moves.BREAKING_SWIPE, "Breaking Swipe", Type.DRAGON, MoveCategory.PHYSICAL, 60, 100, 15, -1, "The user swings its tough tail wildly and attacks opposing Pokémon. This also lowers their Attack stats.", 100, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
@@ -3921,9 +3948,9 @@ export function initMoves() {
     new AttackMove(Moves.POLTERGEIST, "Poltergeist (N)", Type.GHOST, MoveCategory.PHYSICAL, 110, 90, 5, -1, "The user attacks the target by controlling the target's item. The move fails if the target doesn't have an item.", -1, 0, 8),
     new StatusMove(Moves.CORROSIVE_GAS, "Corrosive Gas (N)", Type.POISON, 100, 40, -1, "The user surrounds everything around it with highly acidic gas and melts away items they hold.", -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new StatusMove(Moves.COACHING, "Coaching (P)", Type.FIGHTING, -1, 10, -1, "The user properly coaches its ally Pokémon, boosting their Attack and Defense stats.", 100, 0, 8)
+    new StatusMove(Moves.COACHING, "Coaching", Type.FIGHTING, -1, 10, -1, "The user properly coaches its ally Pokémon, boosting their Attack and Defense stats.", 100, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], 1)
-      .target(MoveTarget.USER_AND_ALLIES),
+      .target(MoveTarget.NEAR_ALLY),
     new AttackMove(Moves.FLIP_TURN, "Flip Turn", Type.WATER, MoveCategory.PHYSICAL, 60, 100, 20, -1, "After making its attack, the user rushes back to switch places with a party Pokémon in waiting.", -1, 0, 8)
       .attr(ForceSwitchOutAttr, true),
     new AttackMove(Moves.TRIPLE_AXEL, "Triple Axel (P)", Type.ICE, MoveCategory.PHYSICAL, 20, 90, 10, -1, "A consecutive three-kick attack that becomes more powerful with each successful hit.", -1, 0, 8)
@@ -3946,8 +3973,10 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._3)
       .attr(CritOnlyAttr)
       .punchingMove(),
-    new AttackMove(Moves.THUNDER_CAGE, "Thunder Cage (N)", Type.ELECTRIC, MoveCategory.SPECIAL, 80, 90, 15, -1, "The user traps the target in a cage of sparking electricity for four to five turns.", 100, 0, 8),
-    new AttackMove(Moves.DRAGON_ENERGY, "Dragon Energy (N)", Type.DRAGON, MoveCategory.SPECIAL, 150, 100, 5, -1, "Converting its life-force into power, the user attacks opposing Pokémon. The lower the user's HP, the lower the move's power.", -1, 0, 8)
+    new AttackMove(Moves.THUNDER_CAGE, "Thunder Cage", Type.ELECTRIC, MoveCategory.SPECIAL, 80, 90, 15, -1, "The user traps the target in a cage of sparking electricity for four to five turns.", 100, 0, 8)
+      .attr(TrapAttr, BattlerTagType.THUNDER_CAGE),
+    new AttackMove(Moves.DRAGON_ENERGY, "Dragon Energy", Type.DRAGON, MoveCategory.SPECIAL, 150, 100, 5, -1, "Converting its life-force into power, the user attacks opposing Pokémon. The lower the user's HP, the lower the move's power.", -1, 0, 8)
+      .attr(HpPowerAttr)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.FREEZING_GLARE, "Freezing Glare", Type.PSYCHIC, MoveCategory.SPECIAL, 90, 100, 10, -1, "The user shoots its psychic power from its eyes to attack. This may also leave the target frozen.", 10, 0, 8)
       .attr(StatusEffectAttr, StatusEffect.FREEZE),
@@ -4007,8 +4036,9 @@ export function initMoves() {
       .attr(HighCritAttr)
       .attr(StatChangeAttr, BattleStat.DEF, -1)
       .attr(FlinchAttr),
-    new AttackMove(Moves.INFERNAL_PARADE, "Infernal Parade (P)", Type.GHOST, MoveCategory.SPECIAL, 60, 100, 15, -1, "The user attacks with myriad fireballs. This may also leave the target with a burn. This move's power is doubled if the target has a status condition.", 30, 0, 8)
-      .attr(StatusEffectAttr, StatusEffect.BURN),
+    new AttackMove(Moves.INFERNAL_PARADE, "Infernal Parade", Type.GHOST, MoveCategory.SPECIAL, 60, 100, 15, -1, "The user attacks with myriad fireballs. This may also leave the target with a burn. This move's power is doubled if the target has a status condition.", 30, 0, 8)
+      .attr(StatusEffectAttr, StatusEffect.BURN)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.status ? 2 : 1),
     new AttackMove(Moves.CEASELESS_EDGE, "Ceaseless Edge", Type.DARK, MoveCategory.PHYSICAL, 65, 90, 15, -1, "The user slashes its shell blade at the target. Shell splinters left behind by this attack remain scattered under the target as spikes.", 100, 0, 8)
       .attr(AddArenaTrapTagAttr, ArenaTagType.SPIKES)
       .slicingMove(),
@@ -4057,8 +4087,9 @@ export function initMoves() {
     new AttackMove(Moves.SALT_CURE, "Salt Cure (N)", Type.ROCK, MoveCategory.PHYSICAL, 40, 100, 15, -1, "The user salt cures the target, inflicting damage every turn. Steel and Water types are more strongly affected by this move.", -1, 0, 9),
     new AttackMove(Moves.TRIPLE_DIVE, "Triple Dive", Type.WATER, MoveCategory.PHYSICAL, 30, 95, 10, -1, "The user performs a perfectly timed triple dive, hitting the target with splashes of water three times in a row.", -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._3),
-    new AttackMove(Moves.MORTAL_SPIN, "Mortal Spin", Type.POISON, MoveCategory.PHYSICAL, 30, 100, 15, -1, "The user performs a spin attack that can also eliminate the effects of such moves as Bind, Wrap, and Leech Seed. This also poisons opposing Pokémon.", -1, 0, 9)
-      .attr(LapseBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.SEEDED ], true)
+    new AttackMove(Moves.MORTAL_SPIN, "Mortal Spin", Type.POISON, MoveCategory.PHYSICAL, 30, 100, 15, -1, "The user performs a spin attack that can also eliminate the effects of such moves as Bind, Wrap, and Leech Seed. This also poisons opposing Pokémon.", 100, 0, 9)
+      .attr(LapseBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.THUNDER_CAGE, BattlerTagType.SEEDED ], true)
+      .attr(StatusEffectAttr, StatusEffect.POISON)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.DOODLE, "Doodle (N)", Type.NORMAL, 100, 10, -1, "The user captures the very essence of the target in a sketch. This changes the Abilities of the user and its ally Pokémon to that of the target.", -1, 0, 9),
     new SelfStatusMove(Moves.FILLET_AWAY, "Fillet Away (N)", Type.NORMAL, -1, 10, -1, "The user sharply boosts its Attack, Sp. Atk, and Speed stats by using its own HP.", -1, 0, 9),
@@ -4137,7 +4168,8 @@ export function initMoves() {
       .attr(HitHealAttr)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(Moves.SYRUP_BOMB, "Syrup Bomb (N)", Type.GRASS, MoveCategory.SPECIAL, 60, 85, 10, -1, "The user sets off an explosion of sticky candy syrup, which coats the target and causes the target's Speed stat to drop each turn for three turns.", -1, 0, 9)
+    new AttackMove(Moves.SYRUP_BOMB, "Syrup Bomb (P)", Type.GRASS, MoveCategory.SPECIAL, 60, 85, 10, -1, "The user sets off an explosion of sticky candy syrup, which coats the target and causes the target's Speed stat to drop each turn for three turns.", -1, 0, 9)
+      .attr(StatChangeAttr, BattleStat.SPD, -1) //Temporary
       .ballBombMove(),
     new AttackMove(Moves.IVY_CUDGEL, "Ivy Cudgel (P)", Type.GRASS, MoveCategory.PHYSICAL, 100, 100, 10, -1, "The user strikes with an ivy-wrapped cudgel. This move's type changes depending on the mask worn by the user, and it has a heightened chance of landing a critical hit.", -1, 0, 9)
       .attr(HighCritAttr),

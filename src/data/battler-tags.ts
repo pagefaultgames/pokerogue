@@ -467,7 +467,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is hurt\nby ${this.getMoveName()}!`));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, this.commonAnim));
 
-      const damage = Math.ceil(pokemon.getMaxHp() / 16);
+      const damage = Math.ceil(pokemon.getMaxHp() / 8);
       pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex()));
       pokemon.damage(damage);
     }
@@ -547,6 +547,17 @@ export class MagmaStormTag extends DamagingTrapTag {
     return getPokemonMessage(pokemon, ` became trapped\nby swirling magma!`);
   }
 }
+
+export class ThunderCageTag extends DamagingTrapTag {
+  constructor(turnCount: integer, sourceId: integer) {
+    super(BattlerTagType.THUNDER_CAGE, CommonAnim.THUNDER_CAGE, turnCount, Moves.THUNDER_CAGE, sourceId);
+  }
+
+  getTrapMessage(pokemon: Pokemon): string {
+    return getPokemonMessage(pokemon.scene.getPokemonById(this.sourceId), ` trapped the ${pokemon.name}!`);
+  }
+}
+
 
 export class ProtectedTag extends BattlerTag {
   constructor(sourceMove: Moves) {
@@ -768,6 +779,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new SandTombTag(turnCount, sourceId);
     case BattlerTagType.MAGMA_STORM:
       return new MagmaStormTag(turnCount, sourceId);
+    case BattlerTagType.THUNDER_CAGE:
+      return new ThunderCageTag(turnCount, sourceId);
     case BattlerTagType.PROTECTED:
       return new ProtectedTag(sourceMove);
     case BattlerTagType.ENDURING:
