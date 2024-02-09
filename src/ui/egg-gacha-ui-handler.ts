@@ -260,7 +260,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       egg.setScale(0.5);
 
       this.gachaContainers[this.gachaCursor].add(egg);
-      this.gachaContainers[this.gachaCursor].moveTo(egg, 1);
+      this.gachaContainers[this.gachaCursor].moveTo(egg, 2);
 
       const doPullAnim = () => {
         this.scene.playSound('gacha_running', { loop: true });
