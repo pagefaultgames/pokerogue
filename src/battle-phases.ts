@@ -581,7 +581,10 @@ export class EncounterPhase extends BattlePhase {
         doSummon();
       else {
         let message: string;
-        this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(this.scene.currentBattle.trainer.config.encounterMessages), this.scene.currentBattle.waveIndex);
+        if (trainer.config.hasGenders && trainer.config.encounterMessages.length === 2)
+          message = this.scene.currentBattle.trainer.config.encounterMessages[trainer.female ? 1 : 0];
+        else
+          this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(this.scene.currentBattle.trainer.config.encounterMessages), this.scene.currentBattle.waveIndex);
         this.scene.ui.showDialogue(message, trainer.getName(), null, doSummon, null, true);
       }
     }
@@ -2748,7 +2751,10 @@ export class TrainerVictoryPhase extends BattlePhase {
       let showMessageAndEnd = () => this.end();
       if (defeatMessages.length) {
         let message: string;
-        this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(this.scene.currentBattle.trainer.config.victoryMessages), this.scene.currentBattle.waveIndex);
+        if (this.scene.currentBattle.trainer.config.hasGenders && this.scene.currentBattle.trainer.config.victoryMessages.length === 2)
+          message = this.scene.currentBattle.trainer.config.encounterMessages[this.scene.currentBattle.trainer.female ? 1 : 0];
+        else
+          this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(this.scene.currentBattle.trainer.config.victoryMessages), this.scene.currentBattle.waveIndex);
         const messagePages = message.split(/\$/g).map(m => m.trim());
       
         for (let p = messagePages.length - 1; p >= 0; p--) {
