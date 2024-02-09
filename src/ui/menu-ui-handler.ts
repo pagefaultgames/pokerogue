@@ -79,25 +79,21 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     const manageDataOptions = [];
 
-    if (bypassLogin) {
-      manageDataOptions.push({
-        label: 'Import Session',
-        handler: () => this.scene.gameData.importData(GameDataType.SESSION),
-        keepOpen: true
-      });
-    }
+    manageDataOptions.push({
+      label: 'Import Session',
+      handler: () => this.scene.gameData.importData(GameDataType.SESSION),
+      keepOpen: true
+    });
     manageDataOptions.push({
       label: 'Export Session',
       handler: () => this.scene.gameData.exportData(GameDataType.SESSION),
       keepOpen: true
     });
-    if (bypassLogin) {
-      manageDataOptions.push({
-        label: 'Import Data',
-        handler: () => this.scene.gameData.importData(GameDataType.SYSTEM),
-        keepOpen: true
-      });
-    }
+    manageDataOptions.push({
+      label: 'Import Data',
+      handler: () => this.scene.gameData.importData(GameDataType.SYSTEM),
+      keepOpen: true
+    });
     manageDataOptions.push(
       {
         label: 'Export Data',
