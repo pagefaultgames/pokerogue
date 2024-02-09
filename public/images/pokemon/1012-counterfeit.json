@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "1012.png",
+			"image": "1012-counterfeit.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 58,
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:7cabc71c4278aa67428b6c5e926ea015:e47a01e4a15a82395146845de4f45739:58aa324a420f40a9ba665ff341db146f$"
+		"smartupdate": "$TexturePacker:SmartUpdate:b3f10c32e234bfa5d1a806e9ee9e3a0b:919eaf891e6b250243e26f663942e9f9:58aa324a420f40a9ba665ff341db146f$"
 	}
 }
