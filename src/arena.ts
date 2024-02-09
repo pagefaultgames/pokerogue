@@ -398,7 +398,7 @@ export class Arena {
 	}
   
   applyTags(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, ...args: any[]): void {
-    this.applyTagsForSide(tagType, ArenaTagSide.BOTH, args);
+    this.applyTagsForSide(tagType, ArenaTagSide.BOTH, ...args);
 	}
 
   addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide = ArenaTagSide.BOTH, targetIndex?: BattlerIndex): boolean {
