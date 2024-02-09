@@ -1099,31 +1099,31 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
 
   const options = [
     [
-      new ModifierTypeOption(modifierTypes.POTION(), false, baseCost * 0.1),
-      new ModifierTypeOption(modifierTypes.ETHER(), false, baseCost * 0.2),
-      new ModifierTypeOption(modifierTypes.REVIVE(), false, baseCost)
+      new ModifierTypeOption(modifierTypes.POTION(), false, baseCost * 0.2),
+      new ModifierTypeOption(modifierTypes.ETHER(), false, baseCost * 0.4),
+      new ModifierTypeOption(modifierTypes.REVIVE(), false, baseCost * 2)
     ],
     [
-      new ModifierTypeOption(modifierTypes.SUPER_POTION(), false, baseCost * 0.225),
-      new ModifierTypeOption(modifierTypes.ELIXIR(), false, baseCost * 0.5)
+      new ModifierTypeOption(modifierTypes.SUPER_POTION(), false, baseCost * 0.45),
+      new ModifierTypeOption(modifierTypes.ELIXIR(), false, baseCost)
     ],
     [
-      new ModifierTypeOption(modifierTypes.FULL_HEAL(), false, baseCost * 0.5),
-      new ModifierTypeOption(modifierTypes.MAX_ETHER(), false, baseCost * 0.5)
+      new ModifierTypeOption(modifierTypes.FULL_HEAL(), false, baseCost),
+      new ModifierTypeOption(modifierTypes.MAX_ETHER(), false, baseCost)
     ],
     [
-      new ModifierTypeOption(modifierTypes.HYPER_POTION(), false, baseCost * 0.4),
-      new ModifierTypeOption(modifierTypes.MAX_REVIVE(), false, baseCost * 1.375)
+      new ModifierTypeOption(modifierTypes.HYPER_POTION(), false, baseCost * 0.8),
+      new ModifierTypeOption(modifierTypes.MAX_REVIVE(), false, baseCost * 2.75)
     ],
     [
-      new ModifierTypeOption(modifierTypes.MAX_POTION(), false, baseCost * 0.75),
-      new ModifierTypeOption(modifierTypes.MAX_ELIXIR(), false, baseCost * 1.25)
+      new ModifierTypeOption(modifierTypes.MAX_POTION(), false, baseCost * 1.5),
+      new ModifierTypeOption(modifierTypes.MAX_ELIXIR(), false, baseCost * 2.5)
     ],
     [
-      new ModifierTypeOption(modifierTypes.FULL_RESTORE(), false, baseCost * 1.125)
+      new ModifierTypeOption(modifierTypes.FULL_RESTORE(), false, baseCost * 2.25)
     ],
     [
-      new ModifierTypeOption(modifierTypes.SACRED_ASH(), false, baseCost * 6)
+      new ModifierTypeOption(modifierTypes.SACRED_ASH(), false, baseCost * 12)
     ]
   ];
   return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
