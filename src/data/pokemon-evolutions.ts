@@ -1445,8 +1445,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CETITAN, 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.POLTCHAGEIST]: [
-    new SpeciesFormEvolution(Species.SINISTCHA, 'counterfeit', 'unremarkable', 1, EvolutionItem.UNREMARKABLE_TEACUP, null, null),
-    new SpeciesFormEvolution(Species.SINISTCHA, 'artisan', 'masterpiece', 1, EvolutionItem.MASTERPIECE_TEACUP, null, null)
+    new SpeciesFormEvolution(Species.SINISTCHA, 'counterfeit', 'unremarkable', 1, EvolutionItem.UNREMARKABLE_TEACUP, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(Species.SINISTCHA, 'artisan', 'masterpiece', 1, EvolutionItem.MASTERPIECE_TEACUP, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.DIPPLIN]: [
     new SpeciesEvolution(Species.HYDRAPPLE, 1, null, new SpeciesEvolutionCondition(p => p.moveset.filter(m => m.moveId === Moves.DRAGON_CHEER).length > 0), SpeciesWildEvolutionDelay.VERY_LONG)

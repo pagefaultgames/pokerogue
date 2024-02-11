@@ -205,6 +205,10 @@ export abstract class PokemonSpeciesForm {
       switch (this.speciesId) {
         case Species.GALAR_SLOWPOKE:
           break;
+        case Species.ETERNAL_FLOETTE:
+          break;
+        case Species.BLOODMOON_URSALUNA:
+          break;
         default:
           speciesId = speciesId % 2000;
           break;
@@ -232,7 +236,6 @@ export abstract class PokemonSpeciesForm {
         case 'droopy':
         case 'stretchy':
         case 'roaming':
-        case 'eternal':
         case 'complete':
         case '10':
         case 'super':
@@ -1549,7 +1552,6 @@ export function initSpecies() {
       new PokemonForm("Orange Flower", "orange", Type.FAIRY, null, 0.2, 0.9, Abilities.FLOWER_VEIL, Abilities.NONE, Abilities.SYMBIOSIS, 371, 54, 45, 47, 75, 98, 52, 120, 70, 130),
       new PokemonForm("Blue Flower", "blue", Type.FAIRY, null, 0.2, 0.9, Abilities.FLOWER_VEIL, Abilities.NONE, Abilities.SYMBIOSIS, 371, 54, 45, 47, 75, 98, 52, 120, 70, 130),
       new PokemonForm("White Flower", "white", Type.FAIRY, null, 0.2, 0.9, Abilities.FLOWER_VEIL, Abilities.NONE, Abilities.SYMBIOSIS, 371, 54, 45, 47, 75, 98, 52, 120, 70, 130),
-      new PokemonForm("Eternal", "eternal", Type.FAIRY, null, 0.2, 0.9, Abilities.FLOWER_VEIL, Abilities.NONE, Abilities.SYMBIOSIS, 551, 74, 65, 67, 125, 128, 92, 120, 70, 130),
     ),
     new PokemonSpecies(Species.FLORGES, "Florges", 6, false, false, false, "Garden Pokémon", Type.FAIRY, null, 1.1, 10, Abilities.FLOWER_VEIL, Abilities.NONE, Abilities.SYMBIOSIS, 552, 78, 65, 68, 112, 154, 75, 45, 70, 248, GrowthRate.MEDIUM_FAST, 0, false, false,
       new PokemonForm("Red Flower", "red", Type.FAIRY, null, 1.1, 10, Abilities.FLOWER_VEIL, Abilities.NONE, Abilities.SYMBIOSIS, 552, 78, 65, 68, 112, 154, 75, 45, 70, 248),
@@ -1940,10 +1942,7 @@ export function initSpecies() {
     ),
     new PokemonSpecies(Species.WYRDEER, "Wyrdeer", 8, false, false, false, "Big Horn Pokémon", Type.NORMAL, Type.PSYCHIC, 1.8, 95.1, Abilities.INTIMIDATE, Abilities.FRISK, Abilities.SAP_SIPPER, 525, 103, 105, 72, 105, 75, 65, 135, 50, 263, GrowthRate.SLOW, 50, false),
     new PokemonSpecies(Species.KLEAVOR, "Kleavor", 8, false, false, false, "Axe Pokémon", Type.BUG, Type.ROCK, 1.8, 89, Abilities.SWARM, Abilities.SHEER_FORCE, Abilities.SHARPNESS, 500, 70, 135, 95, 45, 70, 85, 115, 50, 175, GrowthRate.MEDIUM_FAST, 50, false),
-    new PokemonSpecies(Species.URSALUNA, "Ursaluna", 8, false, false, false, "Peat Pokémon", Type.GROUND, Type.NORMAL, 2.4, 290, Abilities.GUTS, Abilities.BULLETPROOF, Abilities.UNNERVE, 550, 130, 140, 105, 45, 80, 50, 75, 50, 275, GrowthRate.MEDIUM_FAST, 50, false, false,
-      new PokemonForm("Normal", "", Type.GROUND, Type.NORMAL, 2.4, 290, Abilities.GUTS, Abilities.BULLETPROOF, Abilities.UNNERVE, 550, 130, 140, 105, 45, 80, 50, 75, 50, 275),
-      new PokemonForm("Blood Moon", "bloodmoon", Type.GROUND, Type.NORMAL, 2.4, 290, Abilities.MINDS_EYE, Abilities.NONE, Abilities.NONE, 555, 113, 70, 120, 135, 65, 52, 75, 50, 275),
-    ),
+    new PokemonSpecies(Species.URSALUNA, "Ursaluna", 8, false, false, false, "Peat Pokémon", Type.GROUND, Type.NORMAL, 2.4, 290, Abilities.GUTS, Abilities.BULLETPROOF, Abilities.UNNERVE, 550, 130, 140, 105, 45, 80, 50, 75, 50, 275, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.BASCULEGION, "Basculegion", 8, false, false, false, "Big Fish Pokémon", Type.WATER, Type.GHOST, 3, 110, Abilities.SWIFT_SWIM, Abilities.ADAPTABILITY, Abilities.MOLD_BREAKER, 530, 120, 112, 65, 80, 75, 78, 135, 50, 265, GrowthRate.MEDIUM_FAST, 50, false, false,
       new PokemonForm("Male", "male", Type.WATER, Type.GHOST, 3, 110, Abilities.SWIFT_SWIM, Abilities.ADAPTABILITY, Abilities.MOLD_BREAKER, 530, 120, 112, 65, 80, 75, 78, 135, 50, 265, false, ""),
       new PokemonForm("Female", "female", Type.WATER, Type.GHOST, 3, 110, Abilities.SWIFT_SWIM, Abilities.ADAPTABILITY, Abilities.MOLD_BREAKER, 530, 120, 92, 65, 100, 75, 78, 135, 50, 265),
@@ -2143,6 +2142,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.ALOLA_MUK, "Muk", 7, false, false, false, "Sludge Pokémon", Type.POISON, Type.DARK, 1, 52, Abilities.POISON_TOUCH, Abilities.GLUTTONY, Abilities.POWER_OF_ALCHEMY, 500, 105, 105, 75, 65, 100, 50, 75, 70, 175, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.ALOLA_EXEGGUTOR, "Exeggutor", 7, false, false, false, "Coconut Pokémon", Type.GRASS, Type.DRAGON, 10.9, 415.6, Abilities.FRISK, Abilities.NONE, Abilities.HARVEST, 530, 95, 105, 85, 125, 75, 45, 45, 50, 186, GrowthRate.SLOW, 50, false),
     new PokemonSpecies(Species.ALOLA_MAROWAK, "Marowak", 7, false, false, false, "Bone Keeper Pokémon", Type.FIRE, Type.GHOST, 1, 34, Abilities.CURSED_BODY, Abilities.LIGHTNING_ROD, Abilities.ROCK_HEAD, 425, 60, 80, 110, 50, 80, 45, 75, 50, 149, GrowthRate.MEDIUM_FAST, 50, false),
+    new PokemonSpecies(Species.ETERNAL_FLOETTE, "Floette", 6, false, false, false, "Single Bloom Pokémon", Type.FAIRY, null, 0.2, 0.9, Abilities.FLOWER_VEIL, Abilities.NONE, Abilities.SYMBIOSIS, 551, 74, 65, 67, 125, 128, 92, 120, 70, 130, GrowthRate.MEDIUM_FAST, 0, false),
     new PokemonSpecies(Species.GALAR_MEOWTH, "Meowth", 8, false, false, false, "Scratch Cat Pokémon", Type.STEEL, null, 0.4, 7.5, Abilities.PICKUP, Abilities.TOUGH_CLAWS, Abilities.UNNERVE, 290, 50, 65, 55, 40, 40, 40, 255, 50, 58, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.GALAR_PONYTA, "Ponyta", 8, false, false, false, "Fire Horse Pokémon", Type.PSYCHIC, null, 0.8, 24, Abilities.RUN_AWAY, Abilities.PASTEL_VEIL, Abilities.ANTICIPATION, 410, 50, 85, 55, 65, 65, 90, 190, 50, 82, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.GALAR_RAPIDASH, "Rapidash", 8, false, false, false, "Fire Horse Pokémon", Type.PSYCHIC, Type.FAIRY, 1.7, 80, Abilities.RUN_AWAY, Abilities.PASTEL_VEIL, Abilities.ANTICIPATION, 500, 65, 100, 70, 80, 80, 105, 60, 50, 175, GrowthRate.MEDIUM_FAST, 50, false),
@@ -2187,6 +2187,7 @@ export function initSpecies() {
       new PokemonForm("Aqua Breed", "aqua", Type.FIGHTING, Type.WATER, 1.4, 110, Abilities.INTIMIDATE, Abilities.ANGER_POINT, Abilities.CUD_CHEW, 490, 75, 110, 105, 30, 70, 100, 45, 50, 172),
     ),
     new PokemonSpecies(Species.PALDEA_WOOPER, "Wooper", 9, false, false, false, "Water Fish Pokémon", Type.POISON, Type.GROUND, 0.4, 11, Abilities.POISON_POINT, Abilities.WATER_ABSORB, Abilities.UNAWARE, 210, 55, 45, 45, 25, 25, 15, 255, 50, 42, GrowthRate.MEDIUM_FAST, 50, true),
+    new PokemonSpecies(Species.BLOODMOON_URSALUNA, "Ursaluna", 9, false, false, false, "Peat Pokémon", Type.GROUND, Type.NORMAL, 2.7, 333, Abilities.MINDS_EYE, Abilities.NONE, Abilities.NONE, 555, 113, 70, 120, 135, 65, 52, 75, 50, 275, GrowthRate.MEDIUM_FAST, 50, false),
   );
 }
 
@@ -2563,6 +2564,7 @@ export const speciesStarters = {
   [Species.DIANCIE]: 7,
   [Species.HOOPA]: 7,
   [Species.VOLCANION]: 7,
+  [Species.ETERNAL_FLOETTE]: 5,
 
   [Species.ROWLET]: 3,
   [Species.LITTEN]: 3,
@@ -2730,8 +2732,6 @@ export const speciesStarters = {
   [Species.VELUZA]: 4,
   [Species.DONDOZO]: 5,
   [Species.TATSUGIRI]: 5,
-  [Species.PALDEA_TAUROS]: 5,
-  [Species.PALDEA_WOOPER]: 3,
   [Species.GREAT_TUSK]: 6,
   [Species.SCREAM_TAIL]: 6,
   [Species.BRUTE_BONNET]: 6,
@@ -2767,6 +2767,9 @@ export const speciesStarters = {
   [Species.IRON_CROWN]: 7,
   [Species.TERAPAGOS]: 8,
   [Species.PECHARUNT]: 7,
+  [Species.PALDEA_TAUROS]: 5,
+  [Species.PALDEA_WOOPER]: 3,
+  [Species.BLOODMOON_URSALUNA]: 7,
 };
 
 // TODO: Remove
