@@ -1,5 +1,5 @@
 import BattleScene, { Button } from "../battle-scene";
-import PokemonSpecies, { SpeciesFormKey, allSpecies, getPokemonSpecies, speciesStarters as speciesStarterValues } from "../data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, speciesStarters } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
@@ -42,6 +42,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonAbilityText: Phaser.GameObjects.Text;
   private pokemonNatureLabelText: Phaser.GameObjects.Text;
   private pokemonNatureText: BBCodeText;
+  private pokemonCaughtCountLabelText: Phaser.GameObjects.Text;
+  private pokemonCaughtCountText: Phaser.GameObjects.Text;
   private genOptionsText: Phaser.GameObjects.Text;
   private instructionsText: Phaser.GameObjects.Text;
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
@@ -114,7 +116,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.iconAnimHandler = new PokemonIconAnimHandler();
     this.iconAnimHandler.setup(this.scene);
 
-    this.pokemonNumberText = addTextObject(this.scene, 17, 1, '000', TextStyle.SUMMARY);
+    this.pokemonNumberText = addTextObject(this.scene, 17, 1, '0000', TextStyle.SUMMARY);
     this.pokemonNumberText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNumberText);
 
@@ -135,23 +137,32 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonGenderText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGenderText);
 
-    this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 126, 'Ability:', TextStyle.SUMMARY, { fontSize: '64px' });
+    this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 126, 'Ability:', TextStyle.SUMMARY, { fontSize: '56px' });
     this.pokemonAbilityLabelText.setOrigin(0, 0);
     this.pokemonAbilityLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonAbilityLabelText);
 
-    this.pokemonAbilityText = addTextObject(this.scene, 34, 126, '', TextStyle.SUMMARY, { fontSize: '64px' });
+    this.pokemonAbilityText = addTextObject(this.scene, 30, 126, '', TextStyle.SUMMARY, { fontSize: '56px' });
     this.pokemonAbilityText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonAbilityText);
 
-    this.pokemonNatureLabelText = addTextObject(this.scene, 6, 135, 'Nature:', TextStyle.SUMMARY, { fontSize: '64px' });
+    this.pokemonNatureLabelText = addTextObject(this.scene, 6, 135, 'Nature:', TextStyle.SUMMARY, { fontSize: '56px' });
     this.pokemonNatureLabelText.setOrigin(0, 0);
     this.pokemonNatureLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonNatureLabelText);
 
-    this.pokemonNatureText = addBBCodeTextObject(this.scene, 34, 135, '', TextStyle.SUMMARY, { fontSize: '64px' });
+    this.pokemonNatureText = addBBCodeTextObject(this.scene, 30, 135, '', TextStyle.SUMMARY, { fontSize: '56px' });
     this.pokemonNatureText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNatureText);
+
+    this.pokemonCaughtCountLabelText = addTextObject(this.scene, 6, 144, 'Caught/Hatched:', TextStyle.SUMMARY, { fontSize: '56px' });
+    this.pokemonCaughtCountLabelText.setOrigin(0, 0);
+    this.pokemonCaughtCountLabelText.setVisible(false);
+    this.starterSelectContainer.add(this.pokemonCaughtCountLabelText);
+
+    this.pokemonCaughtCountText = addTextObject(this.scene, 58, 144, '0/0 (0)', TextStyle.SUMMARY, { fontSize: '56px' });
+    this.pokemonCaughtCountText.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.pokemonCaughtCountText);
 
     this.genOptionsText = addTextObject(this.scene, 124, 7, '', TextStyle.WINDOW, { fontSize: 72, lineSpacing: 39, align: 'center' });
     this.genOptionsText.setShadowOffset(4.5, 4.5);
@@ -217,7 +228,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.genSpecies.push([]);
 
       for (let species of allSpecies) {
-        if (!speciesStarterValues.hasOwnProperty(species.speciesId) || species.generation !== g + 1 || !species.isObtainable())
+        if (!speciesStarters.hasOwnProperty(species.speciesId) || species.generation !== g + 1 || !species.isObtainable())
           continue;
         starterSpecies.push(species.speciesId);
         this.speciesLoaded.set(species.speciesId, false);
@@ -272,7 +283,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonSprite = this.scene.add.sprite(53, 63, `pkmn__sub`);
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.instructionsText = addTextObject(this.scene, 4, 148, '', TextStyle.PARTY, { fontSize: '42px' });
+    this.instructionsText = addTextObject(this.scene, 4, 156, '', TextStyle.PARTY, { fontSize: '42px' });
     this.starterSelectContainer.add(this.instructionsText);
 
     this.starterSelectMessageBoxContainer = this.scene.add.container(0, this.scene.game.canvas.height / 6);
@@ -434,7 +445,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                     }
                   }
                   const species = this.genSpecies[this.getGenCursorWithScroll()][this.cursor];
-                  if (!isDupe && this.tryUpdateValue(speciesStarterValues[species.speciesId])) {
+                  if (!isDupe && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
                     const cursorObj = this.starterCursorObjs[this.starterCursors.length];
                     cursorObj.setVisible(true);
                     cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
@@ -636,10 +647,33 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       const genLimit = this.genSpecies[genCursorWithScroll].length;
       for (let s = 0; s < 81; s++) {
-        const slotVisible = s < genLimit && !!(this.scene.gameData.dexData[this.genSpecies[genCursorWithScroll][s].speciesId].caughtAttr);
-        this.starterValueLabels[s].setText(slotVisible ? speciesStarterValues[this.genSpecies[genCursorWithScroll][s].speciesId] : 0);
+        const speciesId = s < genLimit ? this.genSpecies[genCursorWithScroll][s].speciesId : 0 as Species;
+        const slotVisible = speciesId && !!(this.scene.gameData.dexData[speciesId].caughtAttr);
+        if (slotVisible) {
+          const baseStarterValue = speciesStarters[speciesId];
+          const starterValue = slotVisible ? this.scene.gameData.getSpeciesStarterValue(speciesId) : 0;
+          let valueStr = starterValue.toString();
+          if (valueStr.startsWith('0.'))
+            valueStr = valueStr.slice(1);
+          this.starterValueLabels[s].setText(valueStr);
+          let textStyle: TextStyle;
+          switch (baseStarterValue - starterValue) {
+            case 0:
+              textStyle = TextStyle.WINDOW;
+              break;
+            case 1:
+            case 0.5:
+              textStyle = TextStyle.SUMMARY_BLUE;
+              break;
+            default:
+              textStyle = TextStyle.SUMMARY_GOLD;
+              break;
+          }
+          this.starterValueLabels[s].setColor(getTextColor(textStyle));
+          this.starterValueLabels[s].setShadowColor(getTextColor(textStyle, true));
+        }
         this.starterValueLabels[s].setVisible(slotVisible);
-        this.shinyIcons[s].setVisible(slotVisible && !!(this.scene.gameData.dexData[this.genSpecies[genCursorWithScroll][s].speciesId].caughtAttr & DexAttr.SHINY));
+        this.shinyIcons[s].setVisible(slotVisible && !!(this.scene.gameData.dexData[speciesId].caughtAttr & DexAttr.SHINY));
       }
     } else {
       changed = super.setCursor(cursor);
@@ -716,7 +750,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.lastSpecies = species;
 
     if (species && this.speciesStarterDexEntry?.caughtAttr) {
-      this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 3));
+      this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 4));
       this.pokemonNameText.setText(species.name);
       this.pokemonGrowthRateText.setText(Utils.toReadableString(GrowthRate[species.growthRate]));
       this.pokemonGrowthRateText.setColor(getGrowthRateColor(species.growthRate));
@@ -724,6 +758,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonGrowthRateLabelText.setVisible(true);
       this.pokemonAbilityLabelText.setVisible(true);
       this.pokemonNatureLabelText.setVisible(true);
+      this.pokemonCaughtCountLabelText.setVisible(true);
+      this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}/${this.speciesStarterDexEntry.hatchedCount} (${this.speciesStarterDexEntry.caughtCount + this.speciesStarterDexEntry.hatchedCount})`);
+      this.pokemonCaughtCountText.setVisible(true);
       this.iconAnimHandler.addOrUpdate(this.starterSelectGenIconContainers[species.generation - 1].getAt(this.genSpecies[species.generation - 1].indexOf(species)) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.PASSIVE);
 
       let starterIndex = -1;
@@ -748,12 +785,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.abilityIndex, defaultNature);
       }
     } else {
-      this.pokemonNumberText.setText(Utils.padInt(0, 3));
+      this.pokemonNumberText.setText(Utils.padInt(0, 4));
       this.pokemonNameText.setText(species ? '???' : '');
       this.pokemonGrowthRateText.setText('');
       this.pokemonGrowthRateLabelText.setVisible(false);
       this.pokemonAbilityLabelText.setVisible(false);
       this.pokemonNatureLabelText.setVisible(false);
+      this.pokemonCaughtCountLabelText.setVisible(false);
+      this.pokemonCaughtCountText.setVisible(false);
 
       this.setSpeciesDetails(species, false, 0, false, 0, 0);
     }
@@ -879,10 +918,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   tryUpdateValue(add?: integer): boolean {
-    const value = this.starterGens.reduce((total: integer, gen: integer, i: integer) => total += speciesStarterValues[this.genSpecies[gen][this.starterCursors[i]].speciesId], 0);
+    const value = this.starterGens.reduce((total: integer, gen: integer, i: integer) => total += this.scene.gameData.getSpeciesStarterValue(this.genSpecies[gen][this.starterCursors[i]].speciesId), 0);
     const newValue = value + (add || 0);
     const overLimit = newValue > 10;
-    this.valueLimitLabel.setText(`${newValue}/10`);
+    let newValueStr = newValue.toString();
+    if (newValueStr.startsWith('0.'))
+      newValueStr = newValueStr.slice(1);
+    this.valueLimitLabel.setText(`${newValueStr}/10`);
     this.valueLimitLabel.setColor(getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK));
     this.valueLimitLabel.setShadowColor(getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK, true));
     if (overLimit) {

@@ -94,7 +94,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.shinyOverlay.setOrigin(0, 1);
     this.summaryContainer.add(this.shinyOverlay);
 
-    this.numberText = addTextObject(this.scene, 17, -149, '000', TextStyle.SUMMARY);
+    this.numberText = addTextObject(this.scene, 17, -149, '0000', TextStyle.SUMMARY);
     this.numberText.setOrigin(0, 1);
     this.summaryContainer.add(this.numberText);
 
@@ -196,7 +196,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.shinyOverlay.setVisible(this.pokemon.isShiny());
 
-    this.numberText.setText(Utils.padInt(this.pokemon.species.speciesId, 3));
+    this.numberText.setText(Utils.padInt(this.pokemon.species.speciesId, 4));
     this.numberText.setColor(getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
     this.numberText.setShadowColor(getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
 

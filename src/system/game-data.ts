@@ -857,6 +857,40 @@ export class GameData {
     return ret;
   }
 
+  getSpeciesStarterValue(speciesId: Species): number {
+    const baseValue = speciesStarters[speciesId];
+    let value = baseValue;
+    const caughtHatchedCount = this.dexData[speciesId].caughtCount + this.dexData[speciesId].hatchedCount;
+
+    const decrementValue = (value: number) => {
+      if (value > 1)
+        value--;
+      else
+        value /= 2;
+      return value;
+    }
+
+    let thresholdA: integer;
+    let thresholdB: integer;
+
+    if (baseValue >= 8)
+      [ thresholdA, thresholdB ] = [ 3, 10 ];
+    else if (baseValue >= 6)
+      [ thresholdA, thresholdB ] = [ 5, 20 ];
+    else if (baseValue >= 4)
+      [ thresholdA, thresholdB ] = [ 10, 30 ];
+    else
+      [ thresholdA, thresholdB ] = [ 25, 100 ];
+
+    if (caughtHatchedCount >= thresholdA) {
+      value = decrementValue(value);
+      if (caughtHatchedCount >= thresholdB)
+        value = decrementValue(value);
+    }
+
+    return value;
+  }
+
   getFormIndex(attr: bigint): integer {
     if (!attr || attr < DexAttr.DEFAULT_FORM)
       return 0;
