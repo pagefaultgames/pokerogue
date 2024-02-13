@@ -15,8 +15,12 @@ export enum MenuOptions {
   EGG_LIST,
   EGG_GACHA,
   MANAGE_DATA,
+  COMMUNITY,
   LOG_OUT
 }
+
+const discordUrl = 'https://discord.gg/uWpTfdKG49';
+const githubUrl = 'https://github.com/Flashfyre/pokerogue';
 
 export default class MenuUiHandler extends MessageUiHandler {
   private menuContainer: Phaser.GameObjects.Container;
@@ -31,6 +35,7 @@ export default class MenuUiHandler extends MessageUiHandler {
   protected menuOptions: MenuOptions[];
 
   protected manageDataConfig: OptionSelectConfig;
+  protected communityConfig: OptionSelectConfig;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
@@ -111,6 +116,28 @@ export default class MenuUiHandler extends MessageUiHandler {
       options: manageDataOptions
     };
 
+    const communityOptions = [
+      {
+        label: 'Discord',
+        handler: () => window.open(discordUrl, '_blank').focus(),
+        keepOpen: true
+      },
+      {
+        label: 'GitHub',
+        handler: () => window.open(githubUrl, '_blank').focus(),
+        keepOpen: true
+      },
+      {
+        label: 'Cancel',
+        handler: () => this.scene.ui.revertMode()
+      }
+    ];
+
+    this.communityConfig = {
+      xOffset: 98,
+      options: communityOptions
+    };
+
     this.setCursor(0);
 
     this.menuContainer.setVisible(false);
@@ -177,6 +204,10 @@ export default class MenuUiHandler extends MessageUiHandler {
           break;
         case MenuOptions.MANAGE_DATA:
           ui.setOverlayMode(Mode.OPTION_SELECT, this.manageDataConfig);
+          success = true;
+          break;
+        case MenuOptions.COMMUNITY:
+          ui.setOverlayMode(Mode.OPTION_SELECT, this.communityConfig);
           success = true;
           break;
         case MenuOptions.LOG_OUT:
