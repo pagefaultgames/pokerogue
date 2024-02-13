@@ -50,6 +50,7 @@ import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, Species
 import { battleSpecDialogue } from "./data/dialogue";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
 import { Setting } from "./system/settings";
+import { Tutorial, handleTutorial } from "./tutorial";
 
 export class LoginPhase extends BattlePhase {
   private showText: boolean;
@@ -105,7 +106,7 @@ export class LoginPhase extends BattlePhase {
   end(): void {
     this.scene.ui.setMode(Mode.MESSAGE);
 
-    super.end();
+    handleTutorial(this.scene, Tutorial.Intro).then(() => super.end());
   }
 }
 
@@ -585,7 +586,7 @@ export class EncounterPhase extends BattlePhase {
           message = this.scene.currentBattle.trainer.config.encounterMessages[trainer.female ? 1 : 0];
         else
           this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(this.scene.currentBattle.trainer.config.encounterMessages), this.scene.currentBattle.waveIndex);
-        this.scene.ui.showDialogue(message, trainer.getName(), null, doSummon, null, true);
+        this.scene.ui.showDialogue(message, trainer.getName(), null, doSummon);
       }
     }
   }
@@ -643,7 +644,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.ui.showText(this.getEncounterMessage(), null, () => {
           this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].encounter, enemy.name, null, () => {
             this.doEncounterCommon(false);
-          }, null, true);
+          });
         }, 1500, true);
         return true;
     }
@@ -2504,7 +2505,7 @@ export class DamagePhase extends PokemonPhase {
             }
 
             super.end();
-          }, null, true);
+          });
           return;
         }
         break;
@@ -2605,7 +2606,7 @@ export class FaintPhase extends PokemonPhase {
         if (!this.player) {
           const enemy = this.getPokemon();
           if (enemy.formIndex) {
-            this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin, enemy.name, null, () => this.doFaint(), null, true);
+            this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin, enemy.name, null, () => this.doFaint());
             return true;
           }
         }
@@ -2759,7 +2760,7 @@ export class TrainerVictoryPhase extends BattlePhase {
       
         for (let p = messagePages.length - 1; p >= 0; p--) {
           const originalFunc = showMessageAndEnd;
-          showMessageAndEnd = () => this.scene.ui.showDialogue(messagePages[p], this.scene.currentBattle.trainer.getName(), null, originalFunc, null, true);
+          showMessageAndEnd = () => this.scene.ui.showDialogue(messagePages[p], this.scene.currentBattle.trainer.getName(), null, originalFunc);
         }
       }
       showMessageAndEnd();

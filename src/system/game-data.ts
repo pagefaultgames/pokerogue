@@ -22,13 +22,15 @@ import { Mode } from "../ui/ui";
 import { loggedInUser, updateUserInfo } from "../account";
 import { Nature } from "../data/nature";
 import { GameStats } from "./game-stats";
+import { Tutorial } from "../tutorial";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
 export enum GameDataType {
   SYSTEM,
   SESSION,
-  SETTINGS
+  SETTINGS,
+  TUTORIALS
 }
 
 export enum PlayerGender {
@@ -45,6 +47,8 @@ export function getDataTypeKey(dataType: GameDataType): string {
       return 'sessionData';
     case GameDataType.SETTINGS:
       return 'settings';
+    case GameDataType.TUTORIALS:
+      return 'tutorials';
   }
 }
 
@@ -127,6 +131,10 @@ export interface DexAttrProps {
   female: boolean;
   abilityIndex: integer;
   formIndex: integer;
+}
+
+export interface TutorialFlags {
+  [key: string]: boolean
 }
 
 const systemShortKeys = {
@@ -366,6 +374,39 @@ export class GameData {
       setSetting(this.scene, setting as Setting, settings[setting]);
   }
 
+  public saveTutorialFlag(tutorial: Tutorial, flag: boolean): boolean {
+    let tutorials: object = {};
+    if (localStorage.hasOwnProperty('tutorials'))
+      tutorials = JSON.parse(localStorage.getItem('tutorials'));
+
+    Object.keys(Tutorial).map(t => t as Tutorial).forEach(t => {
+      const key = Tutorial[t];
+      if (key === tutorial)
+        tutorials[key] = flag;
+      else
+        tutorials[key] ??= false;
+    });
+
+    localStorage.setItem('tutorials', JSON.stringify(tutorials));
+
+    return true;
+  }
+
+  public getTutorialFlags(): TutorialFlags {
+    const ret: TutorialFlags = {};
+    Object.values(Tutorial).map(tutorial => tutorial as Tutorial).forEach(tutorial => ret[Tutorial[tutorial]] = false);
+
+    if (!localStorage.hasOwnProperty('tutorials'))
+      return ret;
+
+    const tutorials = JSON.parse(localStorage.getItem('tutorials'));
+
+    for (let tutorial of Object.keys(tutorials))
+      ret[tutorial] = tutorials[tutorial];
+
+    return ret;
+  }
+
   saveSession(scene: BattleScene, skipVerification?: boolean): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
@@ -582,7 +623,7 @@ export class GameData {
       link.click();
       link.remove();
     };
-    if (!bypassLogin && dataType !== GameDataType.SETTINGS) {
+    if (!bypassLogin && dataType < GameDataType.SETTINGS) {
       Utils.apiFetch(`savedata/get?datatype=${dataType}`)
         .then(response => response.text())
         .then(response => {
@@ -629,6 +670,7 @@ export class GameData {
                     valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
                     break;
                   case GameDataType.SETTINGS:
+                  case GameDataType.TUTORIALS:
                     valid = true;
                     break;
                 }
@@ -647,6 +689,9 @@ export class GameData {
                 case GameDataType.SETTINGS:
                   dataName = 'settings';
                   break;
+                case GameDataType.TUTORIALS:
+                  dataName = 'tutorials';
+                  break;
               }
 
               const displayError = (error: string) => this.scene.ui.showText(error, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
@@ -655,7 +700,7 @@ export class GameData {
                 return this.scene.ui.showText(`Your ${dataName} data could not be loaded. It may be corrupted.`, null, () => this.scene.ui.showText(null, 0), Utils.fixedInt(1500));
               this.scene.ui.showText(`Your ${dataName} data will be overridden and the page will reload. Proceed?`, null, () => {
                 this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
-                  if (!bypassLogin && dataType !== GameDataType.SETTINGS) {
+                  if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                     updateUserInfo().then(success => {
                       if (!success)
                         return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);

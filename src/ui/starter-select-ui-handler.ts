@@ -17,6 +17,7 @@ import { addWindow } from "./window";
 import { Nature, getNatureName } from "../data/nature";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { pokemonFormChanges } from "../data/pokemon-forms";
+import { Tutorial, handleTutorial } from "../tutorial";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -364,6 +365,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.setCursor(0);
       this.setGenMode(true);
       this.setCursor(0);
+
+      //handleTutorial(this.scene, Tutorial.Starter_Select);
 
       return true;
     }

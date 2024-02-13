@@ -94,6 +94,7 @@ export default class BattleScene extends Phaser.Scene {
 	public seVolume: number = 1;
 	public gameSpeed: integer = 1;
 	public showLevelUpStats: boolean = true;
+	public enableTutorials: boolean = true;
 	public windowType: integer = 1;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;

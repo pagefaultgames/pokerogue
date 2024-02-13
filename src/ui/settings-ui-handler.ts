@@ -9,10 +9,13 @@ export default class SettingsUiHandler extends UiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
   private optionsContainer: Phaser.GameObjects.Container;
 
+  private scrollCursor: integer;
+
   private optionsBg: Phaser.GameObjects.NineSlice;
 
   private optionCursors: integer[];
 
+  private settingLabels: Phaser.GameObjects.Text[];
   private optionValueLabels: Phaser.GameObjects.Text[][];
 
   private cursorObj: Phaser.GameObjects.NineSlice;
@@ -40,14 +43,14 @@ export default class SettingsUiHandler extends UiHandler {
 
     this.optionsContainer = this.scene.add.container(0, 0);
 
-    const settingLabels = [];
+    this.settingLabels = [];
     this.optionValueLabels = [];
 
     Object.keys(Setting).forEach((setting, s) => {
-      settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, setting.replace(/\_/g, ' '), TextStyle.SETTINGS_LABEL);
-      settingLabels[s].setOrigin(0, 0);
+      this.settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, setting.replace(/\_/g, ' '), TextStyle.SETTINGS_LABEL);
+      this.settingLabels[s].setOrigin(0, 0);
 
-      this.optionsContainer.add(settingLabels[s]);
+      this.optionsContainer.add(this.settingLabels[s]);
 
       this.optionValueLabels.push(settingOptions[Setting[setting]].map((option, o) => {
         const valueLabel = addTextObject(this.scene, 0, 0, option, settingDefaults[Setting[setting]] === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
@@ -60,7 +63,7 @@ export default class SettingsUiHandler extends UiHandler {
 
       const totalWidth = this.optionValueLabels[s].map(o => o.width).reduce((total, width) => total += width, 0);
 
-      const labelWidth =  Math.max(78, settingLabels[s].displayWidth + 8);
+      const labelWidth =  Math.max(78, this.settingLabels[s].displayWidth + 8);
 
       const totalSpace = (300 - labelWidth) - totalWidth / 6;
       const optionSpacing = Math.floor(totalSpace / (this.optionValueLabels[s].length - 1));
@@ -68,7 +71,7 @@ export default class SettingsUiHandler extends UiHandler {
       let xOffset = 0;
 
       for (let value of this.optionValueLabels[s]) {
-        value.setPositionRelative(settingLabels[s], labelWidth + xOffset, 0);
+        value.setPositionRelative(this.settingLabels[s], labelWidth + xOffset, 0);
         xOffset += value.width / 6 + optionSpacing;
       }
     });
@@ -83,6 +86,7 @@ export default class SettingsUiHandler extends UiHandler {
     ui.add(this.settingsContainer);
 
     this.setCursor(0);
+    this.setScrollCursor(0);
 
     this.settingsContainer.setVisible(false);
   }
@@ -113,22 +117,31 @@ export default class SettingsUiHandler extends UiHandler {
       success = true;
       this.scene.ui.revertMode();
     } else {
+      const cursor = this.cursor + this.scrollCursor;
       switch (button) {
         case Button.UP:
-          if (this.cursor)
-            success = this.setCursor(this.cursor - 1);
+          if (cursor) {
+            if (this.cursor)
+              success = this.setCursor(this.cursor - 1);
+            else
+              success = this.setScrollCursor(this.scrollCursor - 1);
+          }
           break;
         case Button.DOWN:
-          if (this.cursor < this.optionValueLabels.length - 1)
-            success = this.setCursor(this.cursor + 1);
+          if (cursor < this.optionValueLabels.length) {
+            if (this.cursor < 8)
+              success = this.setCursor(this.cursor + 1);
+            else if (this.scrollCursor < this.optionValueLabels.length - 9)
+              success = this.setScrollCursor(this.scrollCursor + 1);
+          }
           break;
         case Button.LEFT:
-          if (this.optionCursors[this.cursor])
-            success = this.setOptionCursor(this.cursor, this.optionCursors[this.cursor] - 1, true);
+          if (this.optionCursors[cursor])
+            success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
           break;
         case Button.RIGHT:
-          if (this.optionCursors[this.cursor] < this.optionValueLabels[this.cursor].length - 1)
-            success = this.setOptionCursor(this.cursor, this.optionCursors[this.cursor] + 1, true);
+          if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
+            success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
           break;
       }
     }
@@ -148,7 +161,7 @@ export default class SettingsUiHandler extends UiHandler {
       this.optionsContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setPositionRelative(this.optionsBg, 4, 4 + this.cursor * 16);
+    this.cursorObj.setPositionRelative(this.optionsBg, 4, 4 + (this.cursor + this.scrollCursor) * 16);
 
     return ret;
   }
@@ -177,6 +190,30 @@ export default class SettingsUiHandler extends UiHandler {
       this.scene.gameData.saveSetting(setting, cursor);
 
     return true;
+  }
+
+  setScrollCursor(scrollCursor: integer): boolean {
+    if (scrollCursor === this.scrollCursor)
+      return false;
+
+    this.scrollCursor = scrollCursor;
+
+    this.updateSettingsScroll();
+
+    this.setCursor(this.cursor);
+
+    return true;
+  }
+
+  updateSettingsScroll(): void {
+    this.optionsContainer.setY(-16 * this.scrollCursor);
+
+    for (let s = 0; s < this.settingLabels.length; s++) {
+      const visible = s >= this.scrollCursor && s < this.scrollCursor + 9;
+      this.settingLabels[s].setVisible(visible);
+      for (let option of this.optionValueLabels[s])
+        option.setVisible(visible);
+    }
   }
 
   clear() {
