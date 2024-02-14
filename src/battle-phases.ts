@@ -580,7 +580,7 @@ export class EncounterPhase extends BattlePhase {
       
       const encounterMessages = this.scene.currentBattle.trainer.getEncounterMessages();
 
-      if (!encounterMessages.length)
+      if (!encounterMessages?.length)
         doSummon();
       else {
         let message: string;
@@ -2746,7 +2746,7 @@ export class TrainerVictoryPhase extends BattlePhase {
     this.scene.ui.showText(`You defeated\n${this.scene.currentBattle.trainer.getName(true)}!`, null, () => {
       const victoryMessages = this.scene.currentBattle.trainer.getVictoryMessages();
       let showMessageAndEnd = () => this.end();
-      if (victoryMessages.length) {
+      if (victoryMessages?.length) {
         let message: string;
         this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(victoryMessages), this.scene.currentBattle.waveIndex);
         const messagePages = message.split(/\$/g).map(m => m.trim());

@@ -126,7 +126,7 @@ export default class Battle {
     getBgmOverride(scene: BattleScene): string {
         const battlers = this.enemyParty.slice(0, this.getBattlerCount());
         if (this.battleType === BattleType.TRAINER) {
-            if (!this.started && this.trainer.config.encounterBgm && this.trainer.getEncounterMessages().length)
+            if (!this.started && this.trainer.config.encounterBgm && this.trainer.getEncounterMessages()?.length)
                 return `encounter_${this.trainer.getEncounterBgm()}`;
             return this.trainer.getBattleBgm();
         } else if (this.gameMode === GameMode.CLASSIC && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS)
