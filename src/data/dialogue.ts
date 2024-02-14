@@ -195,28 +195,28 @@ export const trainerTypeDialogue = {
   [TrainerType.RIVAL]: [
     {
       encounter: [
-        `Hey, I was looking for you! I knew you were eager to get going but doesn't your best friend deserve a goodbye?
-        $So you're finally pursuing your dream, huh?\nI knew you'd do it one day…
+        `Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…
+        $So you're really pursuing your dream after all?\n I almost can't believe it.
         $Since we're here, how about a battle?\nAfter all, I want to make sure you're ready.
         $Don't hold back, I want you to give me everything you've got!`
       ],
       victory: [
-        `Wow, I guess you really are ready, huh?\nI didn't stand a chance.
-        $Now I know you'll have no problems out there.\nYou're a champion in the making.
+        `Wow… You actually cleaned me out.\nAre you actually a beginner?
+        $Maybe it was a bit of luck but…\nWho knows you might just be able to go all the way.
         $By the way, the professor asked me to give you these items. They look pretty cool.
-        $Good luck! I believe in you!`
+        $Good luck out there!`
       ]
     },
     {
       encounter: [
         `There you are! I've been looking everywhere for you!\nDid you forget to say goodbye to your best friend?
-        $So you're finally pursuing your dream, huh?\nI knew you'd do it one day…
+        $You're going after your dream, huh?\nThat day is really today isn't it…
         $Anyway, I'll forgive you for forgetting me, but on one condition. You have to battle me!
-        $You'd better give it your best! Wouldn't want your adventure to be over before it started, right?`
+        $Give it your all! Wouldn't want your adventure to be over before it started, right?`
       ],
       victory: [
-        `You just started and you're already this strong?!\nYou cheated, didn't you?
-        $Just kidding! I lost fair and square, and now I know you'll do fine out there.
+        `You just started and you're already this strong?!\nYou totally cheated, didn't you?
+        $Just kidding! I lost fair and square… I have a feeling you're going to do really well out there.
         $By the way, the professor wanted me to give you some items. Hopefully they're helpful!
         $Do your best like always! I believe in you!`
       ]
@@ -225,11 +225,11 @@ export const trainerTypeDialogue = {
   [TrainerType.RIVAL_2]: [
     {
       encounter: [
-        `Oh, you're here too! Still a perfect record, huh? As I expected.
+        `Hey, you're here too?\nStill a perfect record, huh…?
         $I know it kind of looks like I followed you here, but that's mostly not true.
         $Honestly though, I've been itching for a rematch since you beat me back at home.
         $I've been doing a lot of my own training so I'll definitely put up a fight this time.
-        $Don't hold back, just like before! I'm ready now!`
+        $Don't hold back, just like before!\nLet's go!`
       ],
       victory: [
         `Oh. I guess I was overconfident.`
@@ -237,8 +237,8 @@ export const trainerTypeDialogue = {
     },
     {
       encounter: [
-        `Oh, fancy meeting you here. Looks like you're still undefeated. Right on!
-        $I know what you're thinking, and no, I wasn't following you. I just happened to be in the area.
+        `Oh, fancy meeting you here. Looks like you're still undefeated. Huh… Not bad!
+        $I know what you're thinking, and no, I wasn't creeping on you. I just happened to be in the area.
         $I'm happy for you but I just want to let you know that it's OK to lose sometimes.
         $We learn from our mistakes, often more than we would if we kept succeeding.
         $In any case, I've been training hard for our rematch, so you'd better give it your all!`
@@ -251,26 +251,26 @@ export const trainerTypeDialogue = {
   [TrainerType.RIVAL_3]: [
     {
       encounter: [
-        `Look who it is! It's been a while. You're… still undefeated? Huh.
-        $I was sort of hoping otherwise.\nIt's not the same back home without you.
+        `Hey, look who it is! It's been a while.\nYou're… still undefeated? Huh.
+        $Things have been kind of… strange.\nIt's not the same back home without you.
         $I know it's selfish, but I need to get this off my chest.\nI think you're in over your head here.
         $Never losing once is just unrealistic.\nWe need to lose sometimes in order to grow.
         $You've had a great run but there's still so much ahead, and it only gets harder. Are you prepared for that?
         $If so, prove it to me.`
       ],
       victory: [
-        `But… I've been training so much…\nHow are we still so far apart?`
+        `This is ridiculous… I've hardly stopped training…\nHow are we still so far apart?`
       ]
     },
     {
       encounter: [
         `Long time no see! Still haven't lost, huh.\nYou're starting to get on my nerves. Just kidding!
-        $But really, I think it's about time you came home.\nYour family and friends miss you, you know.
-        $I know your dream means a lot to you, but the reality is you're going to lose sooner or later.
+        $But really, don't you miss home by now? Or… me?\nI… I mean, we've really missed you.
+        $I support you in your dream and everything, but the reality is you're going to lose sooner or later.
         $And when you do, I'll be there for you like always.\nNow, let me show you how strong I've become!`
       ],
       victory: [
-        `After all that… it wasn't enough…?`
+        `After all that… it wasn't enough…?\nYou'll never come back at this rate…`
       ]
     }
   ],
@@ -278,29 +278,31 @@ export const trainerTypeDialogue = {
     {
       encounter: [
         `Hey.
-        $I won't mince words. I'm here to win, and this time I will.
+        $I won't mince words or pleasantries with you.\nI'm here to win, plain and simple.
         $I've learned to maximize my potential by putting all my time into training.
         $You get a lot of extra time when you cut out the unnecessary sleep and social interaction.
         $None of that matters anymore, not until I win.
-        $I've even reached the point where I don't lose anymore. Maybe your philosophy wasn't so wrong after all.
+        $I've even reached the point where I don't lose anymore.\nI suppose your philosophy wasn't so wrong after all.
+        $Losing is for the weak, and I'm not weak anymore.
         $Prepare yourself.`
       ],
       victory: [
-        `What…@d{64} what are you?`
+        `What…@d{64} What are you?`
       ]
     },
     {
       encounter: [
-        `It's me! You didn't forget about me again did you?
-        $You made it really far! I'm proud of you.\nBut it looks like it's the end of your journey.
+        `It's me! You didn't forget about me again… did you?
+        $You should be proud of how far you made it. Congrats!\nBut it looks like it's the end of your journey.
         $You've awoken something in me I never knew was there.\nIt seems like all I do now is train.
         $I hardly even eat or sleep now, I just train my Pokémon all day, getting stronger every time.
+        $In fact, I… hardly recognize myself.
         $And now, I've finally reached peak performance.\nI don't think anyone could beat me now.
         $And you know what? It's all because of you.\nI don't know whether to thank you or hate you.
         $Prepare yourself.`
       ],
       victory: [
-        `What…@d{64} what are you?`
+        `What…@d{64} What are you?`
       ]
     }
   ],
@@ -308,26 +310,52 @@ export const trainerTypeDialogue = {
     encounter: [ `…` ],
     victory: [ '…' ]
   },
-  [TrainerType.RIVAL_6]: {
-    encounter: [
-      `We meet again.
-      $I've had some time to reflect on all this.\nThere's a reason this all seems so strange.
-      $Your dream, my drive to beat you…\nIt's all a part of something greater.
-      $This isn't about me, or about you… This is about the world, and it's my purpose to push you to your limits.
-      $Whether I've fulfilled that purpose I can't say, but I've done everything in my power.
-      $Being in this dreadful place, I can see it now.\nThis is all the world's known for a long time now.
-      $Those times we cherished together that seem so recent are nothing but a distant memory.
-      $Who can say whether they were ever even real in the first place.
-      $You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
-      $I hardly know what any of this means, I just know that it's true.
-      $If you can't defeat me here and now, you won't stand a chance.`
-    ],
-    victory: [
-      `It looks like my work is done here.
-      $I want you to promise me one thing.\nAfter you heal the world, please come home.
-      $…Thank you.`
-    ]
-  }
+  [TrainerType.RIVAL_6]: [
+    {
+      encounter: [
+        `We meet again.
+        $I've had some time to reflect on all this.\nThere's a reason this all seems so strange.
+        $Your dream, my drive to beat you…\nIt's all a part of something greater.
+        $This isn't about me, or about you… This is about the world, and it's my purpose to push you to your limits.
+        $Whether I've fulfilled that purpose I can't say, but I've done everything in my power.
+        $This place we ended up in is terrifying… Yet somehow I feel unphased, like I've been here before.
+        $You feel the same, don't you?
+        $…and it's like something here is speaking to me.\nThis is all the world's known for a long time now.
+        $Those times we cherished together that seem so recent are nothing but a distant memory.
+        $Who can say whether they were ever even real in the first place.
+        $You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
+        $I hardly know what any of this means, I just know that it's true.
+        $If you can't defeat me here and now, you won't stand a chance.`
+      ],
+      victory: [
+        `It looks like my work is done here.
+        $I want you to promise me one thing.\nAfter you heal the world, please come home.`
+      ]
+    },
+    {
+      encounter: [
+        `So it's just us again.
+        $You know, I keep going around and around in my head…
+        $There's something to all this, why everything seems so strange now…
+        $You have your dream, and I have this ambition in me…
+        $I just can't help but feel there's a greater purpose to all this, to what we're doing, you and I.
+        $I think I'm supposed to push you… to your limits.
+        $I'm not sure if I've been doing a good job at that, but I've tried my best up to now.
+        $It's something about this strange and dreadful place… Everything seems so clear…
+        $This… is all the world's known for a long time now.
+        $It's like I can barely remember the memories we cherished together.
+        $Were they even real? They seem so far away now…
+        $You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
+        $I… don't know what all this means… but I feel it's true.
+        $If you can't defeat me here and now, you won't stand a chance.`
+      ],
+      victory: [
+        `I… I think I fulfilled my purpose…
+        $Promise me… After you heal the world… Please… come home safe.
+        $…Thank you.`
+      ]
+    }
+  ]
 };
 
 export const battleSpecDialogue = {

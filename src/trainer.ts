@@ -59,6 +59,18 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return !this.female ? this.config.encounterBgm : this.config.femaleEncounterBgm || this.config.encounterBgm;
   }
 
+  getEncounterMessages(): string[] {
+    return !this.female ? this.config.encounterMessages : this.config.femaleEncounterMessages;
+  }
+
+  getVictoryMessages(): string[] {
+    return !this.female ? this.config.victoryMessages : this.config.femaleVictoryMessages;
+  }
+
+  getDefeatMessages(): string[] {
+    return !this.female ? this.config.defeatMessages : this.config.femaleDefeatMessages;
+  }
+
   getPartyTemplate(): TrainerPartyTemplate {
     if (this.config.partyTemplateFunc)
       return this.config.partyTemplateFunc(this.scene);

@@ -577,15 +577,14 @@ export class EncounterPhase extends BattlePhase {
         else
           doTrainerSummon();
       };
+      
+      const encounterMessages = this.scene.currentBattle.trainer.getEncounterMessages();
 
-      if (!trainer.config.encounterMessages.length)
+      if (!encounterMessages.length)
         doSummon();
       else {
         let message: string;
-        if (trainer.config.hasGenders && trainer.config.encounterMessages.length === 2)
-          message = this.scene.currentBattle.trainer.config.encounterMessages[trainer.female ? 1 : 0];
-        else
-          this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(this.scene.currentBattle.trainer.config.encounterMessages), this.scene.currentBattle.waveIndex);
+        this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(encounterMessages), this.scene.currentBattle.waveIndex);
         this.scene.ui.showDialogue(message, trainer.getName(), null, doSummon);
       }
     }
@@ -2745,14 +2744,11 @@ export class TrainerVictoryPhase extends BattlePhase {
     }
 
     this.scene.ui.showText(`You defeated\n${this.scene.currentBattle.trainer.getName(true)}!`, null, () => {
-      const defeatMessages = this.scene.currentBattle.trainer.config.victoryMessages;
+      const victoryMessages = this.scene.currentBattle.trainer.getVictoryMessages();
       let showMessageAndEnd = () => this.end();
-      if (defeatMessages.length) {
+      if (victoryMessages.length) {
         let message: string;
-        if (this.scene.currentBattle.trainer.config.hasGenders && this.scene.currentBattle.trainer.config.victoryMessages.length === 2)
-          message = this.scene.currentBattle.trainer.config.encounterMessages[this.scene.currentBattle.trainer.female ? 1 : 0];
-        else
-          this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(this.scene.currentBattle.trainer.config.victoryMessages), this.scene.currentBattle.waveIndex);
+        this.scene.executeWithSeedOffset(() => message = Phaser.Math.RND.pick(victoryMessages), this.scene.currentBattle.waveIndex);
         const messagePages = message.split(/\$/g).map(m => m.trim());
       
         for (let p = messagePages.length - 1; p >= 0; p--) {
