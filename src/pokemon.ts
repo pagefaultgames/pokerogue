@@ -1905,7 +1905,7 @@ export class PlayerPokemon extends Pokemon {
       this.scene.gameData.setPokemonCaught(this, false);
       this.loadAssets().then(() => {
         this.calculateStats();
-        this.updateInfo().then(() => resolve());
+        this.updateInfo(true).then(() => resolve());
       });
     });
   }
@@ -1948,11 +1948,10 @@ export class PlayerPokemon extends Pokemon {
       this.generateCompatibleTms();
       this.scene.gameData.setPokemonSeen(this, false);
       this.scene.gameData.setPokemonCaught(this, false);
-      this.scene.gameData.gameStats.pokemonFused++;
       this.loadAssets().then(() => {
         this.calculateStats();
         this.scene.updateModifiers(true, true);
-        this.updateInfo().then(() => resolve());
+        this.updateInfo(true).then(() => resolve());
       });
     });
   }
@@ -1979,6 +1978,7 @@ export class PlayerPokemon extends Pokemon {
       }
 
       this.scene.validateAchv(achvs.SPLICE);
+      this.scene.gameData.gameStats.pokemonFused++;
 
       this.generateName();
       this.calculateStats();

@@ -237,10 +237,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
   updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
     return new Promise(resolve => {
-      if (!this.scene) {
-        resolve();
-        return;
-      }
+      if (!this.scene)
+        return resolve();
 
       if (this.lastName !== pokemon.name) {
         this.updateNameText(pokemon);
@@ -306,10 +304,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.lastLevelCapped = isLevelCapped;
       }
 
-      if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
-        updatePokemonHp();
-        return;
-      } else if (!this.player && this.lastLevel !== pokemon.level) {
+      if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp())
+        return updatePokemonHp();
+      else if (!this.player && this.lastLevel !== pokemon.level) {
         this.setLevel(pokemon.level);
         this.lastLevel = pokemon.level;
       }
