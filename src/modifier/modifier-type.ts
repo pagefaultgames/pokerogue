@@ -17,7 +17,7 @@ import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
 import { SpeciesFormKey } from '../data/pokemon-species';
 import BattleScene from '../battle-scene';
 import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from '../system/voucher';
-import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from '../data/pokemon-forms';
+import { FormChangeItem, SpeciesFormChangeItemTrigger, gigantamaxFormChanges, pokemonFormChanges } from '../data/pokemon-forms';
 import { ModifierTier } from './modifier-tier';
 
 type Modifier = Modifiers.Modifier;
@@ -614,6 +614,26 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
+class GigantamaxItemModifierTypeGenerator extends ModifierTypeGenerator {
+  constructor() {
+    super((party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs)
+        return new FormChangeItemModifierType(FormChangeItem.MAX_MUSHROOMS);
+
+      const formChangeItemPool = party.filter(p => gigantamaxFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
+        const formChanges = gigantamaxFormChanges[p.species.speciesId];
+        return formChanges.filter(fc => (fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1 && fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX_RAPID) === -1 && fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX_SINGLE) === -1 && fc.formKey.indexOf('eternamax') === -1) || party[0].scene.getModifiers(Modifiers.GigantamaxAccessModifier).length)
+          .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger).filter(t => t && t.active);
+      }).flat().flatMap(fc => fc.item);
+
+      if (!formChangeItemPool.length)
+        return null;
+
+      return new FormChangeItemModifierType(formChangeItemPool[Utils.randSeedInt(formChangeItemPool.length)]);
+    });
+  }
+}
+
 export class ContactHeldItemTransferChanceModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, chancePercent: integer, iconImage?: string, group?: string, soundName?: string) {
     super(name, `Upon attacking, there is a ${chancePercent}% chance the foe's held item will be stolen`, (type, args) => new Modifiers.ContactHeldItemTransferChanceModifier(type, (args[0] as Pokemon).id, chancePercent), iconImage, group, soundName);
@@ -667,8 +687,10 @@ export const modifierTypes = {
 
   EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(),
   FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(),
+  GIGANTAMAX_ITEM: () => new GigantamaxItemModifierTypeGenerator(),
 
   MEGA_BRACELET: () => new ModifierType('Mega Bracelet', 'Mega stones become available', (type, _args) => new Modifiers.MegaEvolutionAccessModifier(type)),
+  DYNAMAX_BAND: () => new ModifierType('Dynamax Band', 'Gigantamaxing becomes available', (type, _args) => new Modifiers.GigantamaxAccessModifier(type)),
 
   MAP: () => new ModifierType('Map', 'Allows you to choose your destination at a crossroads', (type, _args) => new Modifiers.MapModifier(type)),
 
@@ -929,12 +951,14 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.IV_SCANNER, 2),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 1),
     new WeightedModifierType(modifierTypes.FORM_CHANGE_ITEM, 1),
+    new WeightedModifierType(modifierTypes.GIGANTAMAX_ITEM, 1),
     new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 3 : 0),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 32),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 18),
     new WeightedModifierType(modifierTypes.MEGA_BRACELET, 12),
+    new WeightedModifierType(modifierTypes.DYNAMAX_BAND, 12),
     new WeightedModifierType(modifierTypes.VOUCHER, 6),
     new WeightedModifierType(modifierTypes.VOUCHER_PLUS, 1),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => !p.fusionSpecies).length > 1 ? 12 : 0),

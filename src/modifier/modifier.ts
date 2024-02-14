@@ -386,6 +386,24 @@ export class MegaEvolutionAccessModifier extends PersistentModifier {
   }
 }
 
+export class GigantamaxAccessModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+  
+  clone(): GigantamaxAccessModifier {
+    return new GigantamaxAccessModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 1;
+  }
+}
+
 export abstract class PokemonHeldItemModifier extends PersistentModifier {
   public pokemonId: integer;
 

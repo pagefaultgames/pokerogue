@@ -4,8 +4,8 @@
 			"image": "892-rapid-strike.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 82,
-				"h": 82
+				"w": 80,
+				"h": 80
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 62,
-						"h": 82
+						"w": 66,
+						"h": 80
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 62,
-						"h": 82
+						"w": 66,
+						"h": 80
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 62,
-						"h": 82
+						"w": 66,
+						"h": 80
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:4b1d09b7bd63646215728ae73956cda8:4d31bb9039d8bb9aa090c5e15a0613b3:cf20847cc0c8da34f07909ad4139cda2$"
+		"smartupdate": "$TexturePacker:SmartUpdate:84522f67f2eaaed16d8e730a027c17d4:e0dfe84f8c089aba289a8fac8b4185c9:b183daa5f6863f7988fee020ed8a7a06$"
 	}
 }
