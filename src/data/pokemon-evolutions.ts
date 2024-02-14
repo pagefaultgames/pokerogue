@@ -174,7 +174,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.DUGTRIO, 26, null, null)
   ],
   [Species.MEOWTH]: [
-    new SpeciesEvolution(Species.PERSIAN, 28, null, null)
+    new SpeciesFormEvolution(Species.PERSIAN, '', '', 28, null, null)
   ],
   [Species.PSYDUCK]: [
     new SpeciesEvolution(Species.GOLDUCK, 33, null, null)
@@ -1199,8 +1199,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CLODSIRE, 20, null, null)
   ],
   [Species.PIKACHU]: [
-    new SpeciesEvolution(Species.ALOLA_RAICHU, 1, EvolutionItem.THUNDER_STONE, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.ISLAND), SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.RAICHU, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesFormEvolution(Species.ALOLA_RAICHU, '', '', 1, EvolutionItem.THUNDER_STONE, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.ISLAND), SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesFormEvolution(Species.RAICHU, '', '', 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.NIDORINA]: [
     new SpeciesEvolution(Species.NIDOQUEEN, 1, EvolutionItem.MOON_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1251,14 +1251,14 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.STARMIE, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.EEVEE]: [
-    new SpeciesEvolution(Species.SYLVEON, 1, null, new SpeciesFriendshipEvolutionCondition(70, p => !!p.getMoveset().find(m => m.getMove().type === Type.FAIRY)), SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.ESPEON, 1, null, new SpeciesFriendshipEvolutionCondition(70, p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.UMBREON, 1, null, new SpeciesFriendshipEvolutionCondition(70, p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.VAPOREON, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.JOLTEON, 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.FLAREON, 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.LEAFEON, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(Species.GLACEON, 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesFormEvolution(Species.SYLVEON, '', '', 1, null, new SpeciesFriendshipEvolutionCondition(70, p => !!p.getMoveset().find(m => m.getMove().type === Type.FAIRY)), SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesFormEvolution(Species.ESPEON, '', '', 1, null, new SpeciesFriendshipEvolutionCondition(70, p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesFormEvolution(Species.UMBREON, '', '', 1, null, new SpeciesFriendshipEvolutionCondition(70, p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesFormEvolution(Species.VAPOREON, '', '', 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesFormEvolution(Species.JOLTEON, '', '', 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesFormEvolution(Species.FLAREON, '', '', 1, EvolutionItem.FIRE_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesFormEvolution(Species.LEAFEON, '', '', 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesFormEvolution(Species.GLACEON, '', '', 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.MEDIUM),
   ],
   [Species.TOGETIC]: [
     new SpeciesEvolution(Species.TOGEKISS, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
@@ -1410,7 +1410,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.ALCREMIE, 1, EvolutionItem.STRAWBERRY_SWEET, null, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.DURALUDON]: [
-    new SpeciesEvolution(Species.ARCHALUDON, 1, EvolutionItem.METAL_ALLOY, null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesFormEvolution(Species.ARCHALUDON, '', '', 1, EvolutionItem.METAL_ALLOY, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.KUBFU]: [
     new SpeciesFormEvolution(Species.URSHIFU, '', 'single-strike', 1, EvolutionItem.SCROLL_OF_DARKNESS, null, null),

@@ -177,7 +177,7 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return !!pokemon.scene.findModifier(m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id && m.formChangeItem === this.item && m.active === this.active && (!pokemon.formIndex === this.active));
+    return !!pokemon.scene.findModifier(m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id && m.formChangeItem === this.item && m.active === this.active);
   }
 }
 
@@ -251,6 +251,19 @@ export class SpeciesFormChangeMoveUsedTrigger extends SpeciesFormChangeTrigger {
 
   canChange(pokemon: Pokemon): boolean {
     return pokemon.summonData && !!pokemon.getLastXMoves(1).filter(m => m.move === this.move).length === this.used;
+  }
+}
+
+export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
+  private formKey: string;
+
+  constructor(formKey: string) {
+    super();
+    this.formKey = formKey;
+  }
+
+  canChange(pokemon: Pokemon): boolean {
+    return this.formKey === pokemon.species.forms[pokemon.scene.getSpeciesFormIndex(pokemon.species, pokemon.gender, pokemon.nature, true)].formKey;
   }
 }
 
@@ -490,8 +503,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.MELMETAL, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.ETERNATUS]: [
-    new SpeciesFormChange(Species.ETERNATUS, '', 'eternamax', new SpeciesFormChangeManualTrigger()),
-    new SpeciesFormChange(Species.ETERNATUS, '', 'eternamax', new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(Species.ETERNATUS, '', SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeManualTrigger()),
+    new SpeciesFormChange(Species.ETERNATUS, '', SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.ENAMORUS]: [
     new SpeciesFormChange(Species.ENAMORUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItem.REVEAL_GLASS))
@@ -527,7 +540,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.SANDACONDA, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.TOXTRICITY]: [
-    new SpeciesFormChange(Species.TOXTRICITY, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(Species.TOXTRICITY, 'amped', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.TOXTRICITY, 'lowkey', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.TOXTRICITY, SpeciesFormKey.GIGANTAMAX, 'amped', new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS, false), new SpeciesDefaultFormMatchTrigger('amped'))),
+    new SpeciesFormChange(Species.TOXTRICITY, SpeciesFormKey.GIGANTAMAX, 'lowkey', new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS, false), new SpeciesDefaultFormMatchTrigger('lowkey')))
   ],
   [Species.CENTISKORCH]: [
     new SpeciesFormChange(Species.CENTISKORCH, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
@@ -539,116 +555,13 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.GRIMMSNARL, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.ALCREMIE]: [
-    new SpeciesFormChange(Species.ALCREMIE, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(Species.ALCREMIE, 'vanilla-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.COPPERAJAH]: [
     new SpeciesFormChange(Species.COPPERAJAH, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.DURALUDON]: [
     new SpeciesFormChange(Species.DURALUDON, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.URSHIFU]: [
-    new SpeciesFormChange(Species.URSHIFU, 'single-strike', SpeciesFormKey.GIGANTAMAX_SINGLE, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(Species.URSHIFU, 'rapid-strike', SpeciesFormKey.GIGANTAMAX_RAPID, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ]
-};
-
-export const gigantamaxFormChanges: PokemonFormChanges = {
-  [Species.VENUSAUR]: [
-    new SpeciesFormChange(Species.VENUSAUR, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.BLASTOISE]: [
-    new SpeciesFormChange(Species.BLASTOISE, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.CHARIZARD]: [
-    new SpeciesFormChange(Species.CHARIZARD, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.BUTTERFREE]: [
-    new SpeciesFormChange(Species.BUTTERFREE, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.PIKACHU]: [
-    new SpeciesFormChange(Species.PIKACHU, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.MEOWTH]: [
-    new SpeciesFormChange(Species.MEOWTH, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.MACHAMP]: [
-    new SpeciesFormChange(Species.MACHAMP, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.GENGAR]: [
-    new SpeciesFormChange(Species.GENGAR, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.KINGLER]: [
-    new SpeciesFormChange(Species.KINGLER, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.LAPRAS]: [
-    new SpeciesFormChange(Species.LAPRAS, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.EEVEE]: [
-    new SpeciesFormChange(Species.EEVEE, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.SNORLAX]: [
-    new SpeciesFormChange(Species.SNORLAX, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.GARBODOR]: [
-    new SpeciesFormChange(Species.GARBODOR, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.MELMETAL]: [
-    new SpeciesFormChange(Species.MELMETAL, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.RILLABOOM]: [
-    new SpeciesFormChange(Species.RILLABOOM, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.CINDERACE]: [
-    new SpeciesFormChange(Species.CINDERACE, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.INTELEON]: [
-    new SpeciesFormChange(Species.INTELEON, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.CORVIKNIGHT]: [
-    new SpeciesFormChange(Species.CORVIKNIGHT, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.ORBEETLE]: [
-    new SpeciesFormChange(Species.ORBEETLE, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.DREDNAW]: [
-    new SpeciesFormChange(Species.DREDNAW, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.COALOSSAL]: [
-    new SpeciesFormChange(Species.COALOSSAL, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.FLAPPLE]: [
-    new SpeciesFormChange(Species.FLAPPLE, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.APPLETUN]: [
-    new SpeciesFormChange(Species.APPLETUN, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.SANDACONDA]: [
-    new SpeciesFormChange(Species.SANDACONDA, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.TOXTRICITY]: [
-    new SpeciesFormChange(Species.TOXTRICITY, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.CENTISKORCH]: [
-    new SpeciesFormChange(Species.CENTISKORCH, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.HATTERENE]: [
-    new SpeciesFormChange(Species.HATTERENE, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.GRIMMSNARL]: [
-    new SpeciesFormChange(Species.GRIMMSNARL, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.ALCREMIE]: [
-    new SpeciesFormChange(Species.ALCREMIE, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.COPPERAJAH]: [
-    new SpeciesFormChange(Species.COPPERAJAH, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.DURALUDON]: [
-    new SpeciesFormChange(Species.DURALUDON, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.ETERNATUS]: [
-    new SpeciesFormChange(Species.ETERNATUS, '', 'eternamax', new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.URSHIFU]: [
     new SpeciesFormChange(Species.URSHIFU, 'single-strike', SpeciesFormKey.GIGANTAMAX_SINGLE, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),

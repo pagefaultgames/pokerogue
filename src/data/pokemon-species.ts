@@ -342,13 +342,15 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
       const form = this.forms[formIndex];
       switch (form.formKey) {
         case SpeciesFormKey.MEGA:
-        case SpeciesFormKey.MEGA_X:
-        case SpeciesFormKey.MEGA_Y:
-        case SpeciesFormKey.GIGANTAMAX:
-        case SpeciesFormKey.GIGANTAMAX_SINGLE:
-        case SpeciesFormKey.GIGANTAMAX_RAPID:
-        case 'eternamax':
+        case SpeciesFormKey.ETERNAMAX:
           return `${form.formName} ${this.name}`;
+        case SpeciesFormKey.MEGA_X:
+          return `Mega ${this.name} X`;
+        case SpeciesFormKey.MEGA_X:
+          return `Mega ${this.name} Y`;
+        default:
+          if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1)
+            return `G-Max ${this.name}`;
       }
     }
     return this.name;
@@ -528,7 +530,7 @@ export enum SpeciesFormKey {
   GIGANTAMAX = "gigantamax",
   GIGANTAMAX_SINGLE = "gigantamax-single",
   GIGANTAMAX_RAPID = "gigantamax-rapid",
-  "eternamax" = "eternamax"
+  ETERNAMAX = "eternamax"
 }
 
 export const allSpecies: PokemonSpecies[] = [];
@@ -2018,8 +2020,8 @@ export function initSpecies() {
     new PokemonSpecies(Species.URSHIFU, "Urshifu", 8, true, false, false, "Wushu Pokémon", Type.FIGHTING, Type.DARK, 1.9, 105, Abilities.UNSEEN_FIST, Abilities.NONE, Abilities.NONE, 550, 100, 130, 100, 63, 60, 97, 3, 50, 275, GrowthRate.SLOW, 87.5, false, true,
       new PokemonForm("Single Strike Style", "single-strike", Type.FIGHTING, Type.DARK, 1.9, 105, Abilities.UNSEEN_FIST, Abilities.NONE, Abilities.NONE, 550, 100, 130, 100, 63, 60, 97, 3, 50, 275, false, ""),
       new PokemonForm("Rapid Strike Style", "rapid-strike", Type.FIGHTING, Type.WATER, 1.9, 105, Abilities.UNSEEN_FIST, Abilities.NONE, Abilities.NONE, 550, 100, 130, 100, 63, 60, 97, 3, 50, 275),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX_SINGLE, Type.FIGHTING, Type.DARK, 29, 105, Abilities.UNSEEN_FIST, Abilities.NONE, Abilities.NONE, 650, 125, 160, 120, 75, 70, 100, 3, 50, 275),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX_RAPID, Type.FIGHTING, Type.WATER, 26, 105, Abilities.UNSEEN_FIST, Abilities.NONE, Abilities.NONE, 650, 125, 160, 120, 75, 70, 100, 3, 50, 275),
+      new PokemonForm("G-Max Single Strike Style", SpeciesFormKey.GIGANTAMAX_SINGLE, Type.FIGHTING, Type.DARK, 29, 105, Abilities.UNSEEN_FIST, Abilities.NONE, Abilities.NONE, 650, 125, 160, 120, 75, 70, 100, 3, 50, 275),
+      new PokemonForm("G-Max Rapid Strike Style", SpeciesFormKey.GIGANTAMAX_RAPID, Type.FIGHTING, Type.WATER, 26, 105, Abilities.UNSEEN_FIST, Abilities.NONE, Abilities.NONE, 650, 125, 160, 120, 75, 70, 100, 3, 50, 275),
     ),
     new PokemonSpecies(Species.ZARUDE, "Zarude", 8, false, false, true, "Rogue Monkey Pokémon", Type.DARK, Type.GRASS, 1.8, 70, Abilities.LEAF_GUARD, Abilities.NONE, Abilities.NONE, 600, 105, 120, 105, 70, 95, 105, 3, 0, 300, GrowthRate.SLOW, null, false, false,
       new PokemonForm("Normal", "", Type.DARK, Type.GRASS, 1.8, 70, Abilities.LEAF_GUARD, Abilities.NONE, Abilities.NONE, 600, 105, 120, 105, 70, 95, 105, 3, 0, 300),

@@ -17,7 +17,7 @@ import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
 import { SpeciesFormKey } from '../data/pokemon-species';
 import BattleScene from '../battle-scene';
 import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from '../system/voucher';
-import { FormChangeItem, SpeciesFormChangeItemTrigger, gigantamaxFormChanges, pokemonFormChanges } from '../data/pokemon-forms';
+import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from '../data/pokemon-forms';
 import { ModifierTier } from './modifier-tier';
 
 type Modifier = Modifiers.Modifier;
@@ -602,27 +602,8 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
 
       const formChangeItemPool = party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
         const formChanges = pokemonFormChanges[p.species.speciesId];
-        return formChanges.filter(fc => (fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) || party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length)
-          .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger).filter(t => t && t.active);
-      }).flat().flatMap(fc => fc.item);
-
-      if (!formChangeItemPool.length)
-        return null;
-
-      return new FormChangeItemModifierType(formChangeItemPool[Utils.randSeedInt(formChangeItemPool.length)]);
-    });
-  }
-}
-
-class GigantamaxItemModifierTypeGenerator extends ModifierTypeGenerator {
-  constructor() {
-    super((party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs)
-        return new FormChangeItemModifierType(FormChangeItem.MAX_MUSHROOMS);
-
-      const formChangeItemPool = party.filter(p => gigantamaxFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
-        const formChanges = gigantamaxFormChanges[p.species.speciesId];
-        return formChanges.filter(fc => (fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1 && fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX_RAPID) === -1 && fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX_SINGLE) === -1 && fc.formKey.indexOf('eternamax') === -1) || party[0].scene.getModifiers(Modifiers.GigantamaxAccessModifier).length)
+        return formChanges.filter(fc => ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) || party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length)
+          && ((fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1 && fc.formKey.indexOf(SpeciesFormKey.ETERNAMAX) === -1) || party[0].scene.getModifiers(Modifiers.GigantamaxAccessModifier).length))
           .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger).filter(t => t && t.active);
       }).flat().flatMap(fc => fc.item);
 
@@ -687,7 +668,6 @@ export const modifierTypes = {
 
   EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(),
   FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(),
-  GIGANTAMAX_ITEM: () => new GigantamaxItemModifierTypeGenerator(),
 
   MEGA_BRACELET: () => new ModifierType('Mega Bracelet', 'Mega stones become available', (type, _args) => new Modifiers.MegaEvolutionAccessModifier(type)),
   DYNAMAX_BAND: () => new ModifierType('Dynamax Band', 'Gigantamaxing becomes available', (type, _args) => new Modifiers.GigantamaxAccessModifier(type)),
@@ -951,7 +931,6 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.IV_SCANNER, 2),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 1),
     new WeightedModifierType(modifierTypes.FORM_CHANGE_ITEM, 1),
-    new WeightedModifierType(modifierTypes.GIGANTAMAX_ITEM, 1),
     new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 3 : 0),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
