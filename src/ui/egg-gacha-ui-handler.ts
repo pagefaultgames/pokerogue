@@ -9,6 +9,7 @@ import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { Type } from "../data/type";
 import { addWindow } from "./window";
+import { Tutorial, handleTutorial } from "../tutorial";
 
 const defaultText = 'Select a machine.';
 
@@ -238,6 +239,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.getUi().bringToTop(this.eggGachaContainer);
 
     this.eggGachaContainer.setVisible(true);
+
+    handleTutorial(this.scene, Tutorial.Egg_Gacha);
 
     return true;
   }
@@ -475,6 +478,23 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.voucherCountLabels.forEach((label, type) => {
       label.setText(this.scene.gameData.voucherCounts[type].toString());
     });
+  }
+
+  showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {
+    if (!text)
+      text = defaultText;
+    
+    if (text?.indexOf('\n') === -1) {
+      this.eggGachaMessageBox.setSize(320, 32);
+      this.eggGachaMessageBox.setY(0);
+      this.message.setY(8);
+    } else {
+      this.eggGachaMessageBox.setSize(320, 46);
+      this.eggGachaMessageBox.setY(-14);
+      this.message.setY(-6);
+    }
+
+    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
   showError(text: string): void {

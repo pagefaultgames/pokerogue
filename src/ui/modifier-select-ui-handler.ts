@@ -5,6 +5,7 @@ import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from 
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { handleTutorial, Tutorial } from "../tutorial";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -163,8 +164,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
 
       this.setCursor(0);
       this.setRowCursor(1);
-      this.awaitingActionInput = true;
-      this.onActionInput = args[2];
+
+      handleTutorial(this.scene, Tutorial.Select_Item).then(() => {
+        this.setCursor(0);
+        this.awaitingActionInput = true;
+        this.onActionInput = args[2];
+      });
     });
 
     return true;

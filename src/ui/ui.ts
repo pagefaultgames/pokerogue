@@ -29,6 +29,7 @@ import RegistrationFormUiHandler from './registration-form-ui-handler';
 import LoadingModalUiHandler from './loading-modal-ui-handler';
 import * as Utils from "../utils";
 import GameStatsUiHandler from './game-stats-ui-handler';
+import AwaitableUiHandler from './awaitable-ui-handler';
 
 export enum Mode {
   MESSAGE,
@@ -174,7 +175,12 @@ export default class UI extends Phaser.GameObjects.Container {
     if (this.overlayActive)
       return false;
 
-    return this.getHandler().processInput(button);
+    const handler = this.getHandler();
+
+    if (handler instanceof AwaitableUiHandler && handler.tutorialActive)
+      return handler.processTutorialInput(button);
+
+    return handler.processInput(button);
   }
 
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void {

@@ -47,6 +47,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonCaughtCountText: Phaser.GameObjects.Text;
   private genOptionsText: Phaser.GameObjects.Text;
   private instructionsText: Phaser.GameObjects.Text;
+  private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private statsContainer: StatsContainer;
 
@@ -291,12 +292,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectMessageBoxContainer.setVisible(false);
     this.starterSelectContainer.add(this.starterSelectMessageBoxContainer);
 
-    const starterSelectMessageBox = addWindow(this.scene, 1, -1, 318, 28);
-    starterSelectMessageBox.setOrigin(0, 1);
-    this.starterSelectMessageBoxContainer.add(starterSelectMessageBox);
+    this.starterSelectMessageBox = addWindow(this.scene, 1, -1, 318, 28);
+    this.starterSelectMessageBox.setOrigin(0, 1);
+    this.starterSelectMessageBoxContainer.add(this.starterSelectMessageBox);
 
-    this.message = addTextObject(this.scene, 8, -8, '', TextStyle.WINDOW, { maxLines: 1 });
-    this.message.setOrigin(0, 1);
+    this.message = addTextObject(this.scene, 8, 8, '', TextStyle.WINDOW, { maxLines: 2 });
+    this.message.setOrigin(0, 0);
     this.starterSelectMessageBoxContainer.add(this.message);
 
     const date = new Date();
@@ -366,7 +367,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.setGenMode(true);
       this.setCursor(0);
 
-      //handleTutorial(this.scene, Tutorial.Starter_Select);
+      handleTutorial(this.scene, Tutorial.Starter_Select);
 
       return true;
     }
@@ -377,7 +378,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer) {
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
 
-    this.starterSelectMessageBoxContainer.setVisible(true);
+    if (text?.indexOf('\n') === -1) {
+      this.starterSelectMessageBox.setSize(318, 28);
+      this.message.setY(-22);
+    } else {
+      this.starterSelectMessageBox.setSize(318, 42);
+      this.message.setY(-37);
+    }
+
+    this.starterSelectMessageBoxContainer.setVisible(!!text?.length);
   }
 
   processInput(button: Button): boolean {

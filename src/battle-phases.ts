@@ -630,11 +630,8 @@ export class EncounterPhase extends BattlePhase {
           this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
       }
     }
-      
-    // TODO: Remove
-    //this.scene.unshiftPhase(new SelectModifierPhase(this.scene));
 
-    super.end();
+    handleTutorial(this.scene, Tutorial.Access_Menu).then(() => super.end());
   }
 
   tryOverrideForBattleSpec(): boolean {

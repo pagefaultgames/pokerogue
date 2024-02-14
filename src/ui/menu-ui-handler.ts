@@ -6,6 +6,7 @@ import { addWindow } from "./window";
 import MessageUiHandler from "./message-ui-handler";
 import { GameDataType } from "../system/game-data";
 import { OptionSelectConfig } from "./abstact-option-select-ui-handler";
+import { Tutorial, handleTutorial } from "../tutorial";
 
 export enum MenuOptions {
   GAME_SETTINGS,
@@ -154,6 +155,8 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.getUi().hideTooltip();
 
     this.scene.playSound('menu_open');
+
+    handleTutorial(this.scene, Tutorial.Menu);
 
     return true;
   }
