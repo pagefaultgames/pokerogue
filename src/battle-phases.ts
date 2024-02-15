@@ -3622,7 +3622,7 @@ export class SelectModifierPhase extends BattlePhase {
           }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId);
         }
       } else
-        applyModifier(typeOptions[cursor].type.newModifier());
+        applyModifier(modifierType.newModifier());
 
       return !cost;
     };
