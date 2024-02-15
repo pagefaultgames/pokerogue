@@ -895,6 +895,12 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.EXP_SHARE, 1),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 1),
     new WeightedModifierType(modifierTypes.EXP_CHARM, 2),
+    new WeightedModifierType(modifierTypes.MEMORY_MUSHROOM, (party: Pokemon[]) => {
+      if (!party.find(p => p.getLearnableLevelMoves().length))
+        return 0;
+      const highestPartyLevel = party.map(p => p.level).reduce((highestLevel: integer, level: integer) => Math.max(highestLevel, level), 1);
+      return Math.min(Math.ceil(highestPartyLevel / 20), 4);
+    }),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode === GameMode.SPLICED_ENDLESS && party.filter(p => !p.fusionSpecies).length > 1 ? 4 : 0),
     new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode === GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 6 : 0),
@@ -907,7 +913,6 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.PP_MAX, 2),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 5),
-    new WeightedModifierType(modifierTypes.MEMORY_MUSHROOM, (party: Pokemon[]) => party.filter(p => p.getLearnableLevelMoves().length).length ? 4 : 0),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 3),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 3),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 3),
