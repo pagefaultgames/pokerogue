@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "rival_m.png",
+			"image": "player_alt_f.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 69,
@@ -14,19 +14,19 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 41,
+						"w": 27,
 						"h": 69
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 41,
+						"w": 27,
 						"h": 69
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 41,
+						"w": 27,
 						"h": 69
 					}
 				}
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:0ce2f748ed22ae690182d71c0d1abf8c:cf0bfa9654caf4297c79dd85ad92877c:7ef6104245066e3b4078d0f6ef5e5edf$"
+		"smartupdate": "$TexturePacker:SmartUpdate:5f971489695d808dd4a75244472baa7a:5390e2006b9312c8b6d7c2f5a93a3dad:0aaa288a75ecf87b6647cbb7fd0d2ecc$"
 	}
 }
