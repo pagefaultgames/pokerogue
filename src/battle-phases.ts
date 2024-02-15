@@ -639,7 +639,7 @@ export class EncounterPhase extends BattlePhase {
       case BattleSpec.FINAL_BOSS:
         const enemy = this.scene.getEnemyPokemon();
         this.scene.ui.showText(this.getEncounterMessage(), null, () => {
-          this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].encounter, enemy.name, null, () => {
+          this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].encounter, enemy.species.name, null, () => {
             this.doEncounterCommon(false);
           });
         }, 1500, true);
@@ -2492,7 +2492,7 @@ export class DamagePhase extends PokemonPhase {
         const pokemon = this.getPokemon();
         if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && !pokemon.bossSegmentIndex) {
           this.scene.fadeOutBgm(Utils.fixedInt(2000), false);
-          this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin, pokemon.name, null, () => {
+          this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin, pokemon.species.name, null, () => {
             this.scene.addEnemyModifier(getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier, false, true);
             pokemon.generateAndPopulateMoveset(1);
             this.scene.setFieldScale(0.75);
@@ -2607,7 +2607,7 @@ export class FaintPhase extends PokemonPhase {
         if (!this.player) {
           const enemy = this.getPokemon();
           if (enemy.formIndex) {
-            this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin, enemy.name, null, () => this.doFaint());
+            this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin, enemy.species.name, null, () => this.doFaint());
             return true;
           }
         }
