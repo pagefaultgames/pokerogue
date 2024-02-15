@@ -884,6 +884,16 @@ export default class BattleScene extends Phaser.Scene {
 		return this.arena;
 	}
 
+	updateFieldScale(): Promise<void> {
+		return new Promise(resolve => {
+			const fieldScale = Math.floor(Math.pow(1 / this.getField().filter(p => p?.isActive())
+				.map(p => p.getSpriteScale())
+				.reduce((highestScale: number, scale: number) => highestScale = Math.max(scale, highestScale), 0), 0.7) * 40
+			) / 40;
+			this.setFieldScale(fieldScale).then(() => resolve());
+		});
+	}
+
 	setFieldScale(scale: number, instant: boolean = false): Promise<void> {
 		return new Promise(resolve => {
 			scale *= 6;

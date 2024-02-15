@@ -543,6 +543,7 @@ export class EncounterPhase extends BattlePhase {
         if (enemyPokemon.isShiny())
           this.scene.validateAchv(achvs.SEE_SHINY);
       });
+      this.scene.updateFieldScale();
       if (showEncounterMessage)
         this.scene.ui.showText(this.getEncounterMessage(), null, () => this.end(), 1500);
       else
@@ -945,6 +946,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
             }
             addPokeballOpenParticles(this.scene, pokemon.x, pokemon.y - 16, pokemon.pokeball);
             this.scene.updateModifiers(this.player);
+            this.scene.updateFieldScale();
             pokemon.showInfo();
             pokemon.playAnim();
             pokemon.setVisible(true);
@@ -952,11 +954,12 @@ export class SummonPhase extends PartyMemberPokemonPhase {
             pokemon.setScale(0.5);
             pokemon.tint(getPokeballTintColor(pokemon.pokeball));
             pokemon.untint(250, 'Sine.easeIn');
+            this.scene.updateFieldScale();
             this.scene.tweens.add({
               targets: pokemon,
               duration: 250,
               ease: 'Sine.easeIn',
-              scale: 1,
+              scale: pokemon.getSpriteScale(),
               onComplete: () => {
                 pokemon.cry();
                 pokemon.getSprite().clearTint();
@@ -1099,6 +1102,8 @@ export class ReturnPhase extends SwitchSummonPhase {
 
     pokemon.resetTurnData();
     pokemon.resetSummonData();
+
+    this.scene.updateFieldScale();
 
     this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger);
   }
