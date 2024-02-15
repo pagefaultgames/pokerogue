@@ -346,7 +346,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
           return `${form.formName} ${this.name}`;
         case SpeciesFormKey.MEGA_X:
           return `Mega ${this.name} X`;
-        case SpeciesFormKey.MEGA_X:
+        case SpeciesFormKey.MEGA_Y:
           return `Mega ${this.name} Y`;
         default:
           if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1)
