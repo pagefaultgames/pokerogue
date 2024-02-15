@@ -1763,7 +1763,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           user.scene.queueMessage(getPokemonMessage(switchOutTarget, ' fled!'), null, true, 500);
         }
 
-        if (move.category === MoveCategory.STATUS && !switchOutTarget.getAlly()?.isActive(true)) {
+        if (!switchOutTarget.getAlly()?.isActive(true)) {
           user.scene.clearEnemyHeldItemModifiers();
 
           user.scene.pushPhase(new BattleEndPhase(user.scene));
