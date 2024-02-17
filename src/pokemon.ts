@@ -626,7 +626,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const teraType = this.getTeraType();
       if (teraType != Type.UNKNOWN)
         types.push(teraType);
-    } else {
+    }
+
+    if (!types.length || !includeTeraType) {
       if (!ignoreOverride && this.summonData?.types)
         this.summonData.types.forEach(t => types.push(t));
       else {
