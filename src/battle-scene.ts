@@ -1622,6 +1622,8 @@ export default class BattleScene extends Phaser.Scene {
 
 	generateEnemyModifiers(): Promise<void> {
 		return new Promise(resolve => {
+			if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS)
+				return resolve();
 			const waveIndex = this.currentBattle.waveIndex;
 			const chances = Math.ceil(waveIndex / 10);
 			const isBoss = !(waveIndex % 10) || (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer.config.isBoss);

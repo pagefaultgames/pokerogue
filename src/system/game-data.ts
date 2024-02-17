@@ -23,6 +23,7 @@ import { loggedInUser, updateUserInfo } from "../account";
 import { Nature } from "../data/nature";
 import { GameStats } from "./game-stats";
 import { Tutorial } from "../tutorial";
+import { BattleSpec } from "../enums/battle-spec";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -519,13 +520,16 @@ export class GameData {
 
           scene.updateModifiers(true);
 
-          for (let enemyModifierData of sessionData.enemyModifiers) {
-            const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
-            if (modifier)
-              scene.addEnemyModifier(modifier, true);
-          }
+          // TODO: Remove if
+          if (battle.battleSpec !== BattleSpec.FINAL_BOSS) {
+            for (let enemyModifierData of sessionData.enemyModifiers) {
+              const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
+              if (modifier)
+                scene.addEnemyModifier(modifier, true);
+            }
 
-          scene.updateModifiers(false);
+            scene.updateModifiers(false);
+          }
 
           Promise.all(loadPokemonAssets).then(() => resolve(true));
         } catch (err) {
