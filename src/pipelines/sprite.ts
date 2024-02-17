@@ -23,12 +23,16 @@ uniform int isOutside;
 uniform vec3 dayTint;
 uniform vec3 duskTint;
 uniform vec3 nightTint;
+uniform float teraTime;
+uniform vec3 teraColor;
 uniform int hasShadow;
 uniform int yCenter;
 uniform float fieldScale;
 uniform float vCutoff;
 uniform vec2 relPosition;
+uniform vec2 texFrameUv;
 uniform vec2 size;
+uniform vec2 texSize;
 uniform float yOffset;
 uniform vec4 tone;
 uniform ivec4 spriteColors[32];
@@ -48,11 +52,107 @@ vec3 blendHardLight(vec3 base, vec3 blend) {
 	return blendOverlay(blend, base);
 }
 
-void main()
-{
-    vec4 texture;
+float hue2rgb(float f1, float f2, float hue) {
+	if (hue < 0.0)
+		hue += 1.0;
+	else if (hue > 1.0)
+		hue -= 1.0;
+	float res;
+	if ((6.0 * hue) < 1.0)
+		res = f1 + (f2 - f1) * 6.0 * hue;
+	else if ((2.0 * hue) < 1.0)
+		res = f2;
+	else if ((3.0 * hue) < 2.0)
+		res = f1 + (f2 - f1) * ((2.0 / 3.0) - hue) * 6.0;
+	else
+		res = f1;
+	return res;
+}
 
-    %forloop%
+vec3 rgb2hsl(vec3 color) {
+	vec3 hsl;
+	
+	float fmin = min(min(color.r, color.g), color.b);
+	float fmax = max(max(color.r, color.g), color.b);
+	float delta = fmax - fmin;
+
+	hsl.z = (fmax + fmin) / 2.0;
+
+	if (delta == 0.0) {
+		hsl.x = 0.0;
+		hsl.y = 0.0;
+	} else {
+		if (hsl.z < 0.5)
+			hsl.y = delta / (fmax + fmin);
+		else
+			hsl.y = delta / (2.0 - fmax - fmin);
+		
+		float deltaR = (((fmax - color.r) / 6.0) + (delta / 2.0)) / delta;
+		float deltaG = (((fmax - color.g) / 6.0) + (delta / 2.0)) / delta;
+		float deltaB = (((fmax - color.b) / 6.0) + (delta / 2.0)) / delta;
+
+		if (color.r == fmax )
+			hsl.x = deltaB - deltaG;
+		else if (color.g == fmax)
+			hsl.x = (1.0 / 3.0) + deltaR - deltaB;
+		else if (color.b == fmax)
+			hsl.x = (2.0 / 3.0) + deltaG - deltaR;
+
+		if (hsl.x < 0.0)
+			hsl.x += 1.0;
+		else if (hsl.x > 1.0)
+			hsl.x -= 1.0;
+	}
+
+	return hsl;
+}
+
+vec3 hsl2rgb(vec3 hsl) {
+	vec3 rgb;
+	
+	if (hsl.y == 0.0)
+		rgb = vec3(hsl.z);
+	else {
+		float f2;
+		
+		if (hsl.z < 0.5)
+			f2 = hsl.z * (1.0 + hsl.y);
+		else
+			f2 = (hsl.z + hsl.y) - (hsl.y * hsl.z);
+			
+		float f1 = 2.0 * hsl.z - f2;
+		
+		rgb.r = hue2rgb(f1, f2, hsl.x + (1.0/3.0));
+		rgb.g = hue2rgb(f1, f2, hsl.x);
+		rgb.b= hue2rgb(f1, f2, hsl.x - (1.0/3.0));
+	}
+	
+	return rgb;
+}
+
+vec3 blendHue(vec3 base, vec3 blend) {
+	vec3 baseHSL = rgb2hsl(base);
+	return hsl2rgb(vec3(rgb2hsl(blend).r, baseHSL.g, baseHSL.b));
+}
+
+vec3 rgb2hsv(vec3 c) {
+    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+
+    float d = q.x - min(q.w, q.y);
+    float e = 1.0e-10;
+    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+}
+
+vec3 hsv2rgb(vec3 c) {
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+void main() {
+    vec4 texture = texture2D(uMainSampler[0], outTexCoord);
 
     for (int i = 0; i < 32; i++) {
         if (spriteColors[i][3] == 0)
@@ -72,6 +172,24 @@ void main()
 
     //  Multiply texture tint
     vec4 color = texture * texel;
+
+    if (color.a > 0.0 && teraColor.r > 0.0 && teraColor.g > 0.0 && teraColor.b > 0.0) {
+        vec2 relUv = vec2((outTexCoord.x - texFrameUv.x) / (size.x / texSize.x), (outTexCoord.y - texFrameUv.y) / (size.y / texSize.y));
+        vec2 teraTexCoord = vec2(relUv.x * (size.x / 200.0), relUv.y * (size.y / 120.0));
+        vec4 teraCol = texture2D(uMainSampler[1], teraTexCoord);
+        float floorValue = 86.0 / 255.0;
+        vec3 teraPatternHsv = rgb2hsv(teraCol.rgb);
+        teraCol.rgb = hsv2rgb(vec3((teraPatternHsv.b - floorValue) * 4.0 + teraTexCoord.x * fieldScale / 2.0 + teraTexCoord.y * fieldScale / 2.0 + teraTime * 255.0, teraPatternHsv.b, teraPatternHsv.b));
+
+        color.rgb = mix(color.rgb, blendHue(color.rgb, teraColor), 0.625);
+        teraCol.rgb = mix(teraCol.rgb, teraColor, 0.5);
+        color.rgb = blendOverlay(color.rgb, teraCol.rgb);
+
+        if (teraColor.r < 1.0 || teraColor.g < 1.0 || teraColor.b < 1.0) {
+            vec3 teraColHsv = rgb2hsv(teraColor);
+            color.rgb = mix(color.rgb, teraColor, (1.0 - teraColHsv.g) / 2.0);
+        }
+    }
 
     if (outTintEffect == 1.0) {
         //  Solid color + texture alpha
@@ -110,7 +228,7 @@ void main()
             dayNightTint = mix(duskTint, dayTint, (time - 0.875) / 0.125);
         }
 
-        color = vec4(blendHardLight(color.rgb, dayNightTint), color.a);
+        color.rgb = blendHardLight(color.rgb, dayNightTint);
     }
 
     if (hasShadow == 1) {
@@ -144,13 +262,11 @@ void main()
 `;
 
 const spriteVertShader = `
-#ifdef GL_FRAGMENT_PRECISION_HIGH
-precision highp float;
-#else
 precision mediump float;
-#endif
 
 uniform mat4 uProjectionMatrix;
+uniform int uRoundPixels;
+uniform vec2 uResolution;
 
 attribute vec2 inPosition;
 attribute vec2 inTexCoord;
@@ -159,6 +275,7 @@ attribute float inTintEffect;
 attribute vec4 inTint;
 
 varying vec2 outTexCoord;
+varying vec2 outtexFrameUv;
 varying float outTexId;
 varying vec2 outPosition;
 varying float outTintEffect;
@@ -167,7 +284,10 @@ varying vec4 outTint;
 void main()
 {
     gl_Position = uProjectionMatrix * vec4(inPosition, 1.0, 1.0);
-
+    if (uRoundPixels == 1)
+    {
+        gl_Position.xy = floor(((gl_Position.xy + 1.0) * 0.5 * uResolution) + 0.5) / uResolution * 2.0 - 1.0;
+    }
     outTexCoord = inTexCoord;
     outTexId = inTexId;
     outPosition = inPosition;
@@ -193,10 +313,14 @@ export default class SpritePipeline extends FieldSpritePipeline {
     onPreRender(): void {
         super.onPreRender();
 
+        this.set1f('teraTime', 0);
+        this.set3fv('teraColor', [ 0, 0, 0 ]);
         this.set1i('hasShadow', 0);
         this.set1i('yCenter', 0);
         this.set2f('relPosition', 0, 0);
+        this.set2f('texFrameUv', 0, 0);
         this.set2f('size', 0, 0);
+        this.set2f('texSize', 0, 0);
         this.set1f('yOffset', 0);
         this.set4fv('tone', this._tone);
     }
@@ -208,6 +332,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
 
         const data = sprite.pipelineData;
         const tone = data['tone'] as number[];
+        const teraColor = data['teraColor'] as integer[] ?? [ 0, 0, 0 ];
         const hasShadow = data['hasShadow'] as boolean;
         const ignoreOverride = data['ignoreOverride'] as boolean;
         const spriteColors = (ignoreOverride && data['spriteColorsBase']) || data['spriteColors'] || [] as number[][];
@@ -215,7 +340,6 @@ export default class SpritePipeline extends FieldSpritePipeline {
 
         const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
         const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
-        const fieldScaleRatio = field.scale / 6;
         const position = isEntityObj
             ? [ sprite.parentContainer.x, sprite.parentContainer.y ]
             : [ sprite.x, sprite.y ];
@@ -224,13 +348,18 @@ export default class SpritePipeline extends FieldSpritePipeline {
         position[0] += -(sprite.width - (sprite.frame.width)) / 2 + sprite.frame.x;
         if (sprite.originY === 0.5)
             position[1] += (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1);
+        this.set1f('teraTime', (this.game.getTime() % 500000) / 500000);
+        this.set3fv('teraColor', teraColor.map(c => c / 255));
         this.set1i('hasShadow', hasShadow ? 1 : 0);
         this.set1i('yCenter', sprite.originY === 0.5 ? 1 : 0);
         this.set1f('fieldScale', field.scale);
         this.set2f('relPosition', position[0], position[1]);
+        this.set2f('texFrameUv', sprite.frame.u0, sprite.frame.v0);
         this.set2f('size', sprite.frame.width, sprite.height);
+        this.set2f('texSize', sprite.texture.source[0].width, sprite.texture.source[0].height);
         this.set1f('yOffset', sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
         this.set4fv('tone', tone);
+        this.bindTexture(this.game.textures.get('tera').source[0].glTexture, 1);
         const emptyColors = [ 0, 0, 0, 0 ];
         const flatSpriteColors: integer[] = [];
         const flatFusionSpriteColors: integer[] = [];

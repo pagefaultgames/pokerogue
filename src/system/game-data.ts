@@ -763,7 +763,7 @@ export class GameData {
     this.scene.executeWithSeedOffset(() => {
       const neutralNatures = [ Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY ];
       for (let s = 0; s < defaultStarters.length; s++)
-        defaultStarterNatures.push(Phaser.Math.RND.pick(neutralNatures));
+        defaultStarterNatures.push(Utils.randSeedItem(neutralNatures));
     }, 0, 'default');
 
     for (let ds = 0; ds < defaultStarters.length; ds++) {

@@ -192,7 +192,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
         if (shownIvsCount < 6) {
           let statsPool = stats.slice(0);
           for (let i = 0; i < shownIvsCount; i++) {
-            const shownStat = Phaser.Math.RND.pick(statsPool);
+            const shownStat = Utils.randSeedItem(statsPool);
             shownStats.push(shownStat);
             statsPool.splice(statsPool.indexOf(shownStat), 1);
           }

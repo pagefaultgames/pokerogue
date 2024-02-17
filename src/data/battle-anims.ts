@@ -6,6 +6,7 @@ import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
 import stringify, { Element } from "json-stable-stringify";
 import { Moves } from "./enums/moves";
+import { getTypeRgb } from "./type";
 //import fs from 'vite-plugin-fs/browser';
 
 export enum AnimFrameTarget {
@@ -764,8 +765,7 @@ export abstract class BattleAnim {
                         const spriteSource = isUser ? userSprite : targetSprite;
                         if ((isUser ? u : t) === sprites.length) {
                             let sprite: Phaser.GameObjects.Sprite;
-                            sprite = scene.addFieldSprite(0, 0, spriteSource.texture, spriteSource.frame.name);
-                            sprite.setPipeline(scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: true });
+                            sprite = scene.addPokemonSprite(isUser ? user : target, 0, 0, spriteSource.texture, spriteSource.frame.name, true);
                             [ 'spriteColors', 'fusionSpriteColors' ].map(k => sprite.pipelineData[k] = (isUser ? user : target).getSprite().pipelineData[k]);
                             spriteSource.on('animationupdate', (_anim, frame) => sprite.setFrame(frame.textureFrame));
                             scene.field.add(sprite);

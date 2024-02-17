@@ -59,6 +59,11 @@ export class ModifierType {
     this.tier = tier;
   }
 
+  withIdFromFunc(func: ModifierTypeFunc): ModifierType {
+    this.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === func);
+    return this;
+  }
+
   newModifier(...args: any[]): Modifier {
     return this.newModifierFunc(this, args);
   }
@@ -615,6 +620,20 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
+export class TerastallizeModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
+  private teraType: Type;
+
+  constructor(teraType: Type) {
+    super(`${Utils.toReadableString(Type[teraType])} Tera Shard`, `${Utils.toReadableString(Type[teraType])} Terastallizes the holder for up to 10 battles`, (type, args) => new Modifiers.TerastallizeModifier(type as TerastallizeModifierType, (args[0] as Pokemon).id, teraType), null, 'tera_shard');
+
+    this.teraType = teraType;
+  }
+
+  getPregenArgs(): any[] {
+    return [ this.teraType ];
+  }
+}
+
 export class ContactHeldItemTransferChanceModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, chancePercent: integer, iconImage?: string, group?: string, soundName?: string) {
     super(name, `Upon attacking, there is a ${chancePercent}% chance the foe's held item will be stolen`, (type, args) => new Modifiers.ContactHeldItemTransferChanceModifier(type, (args[0] as Pokemon).id, chancePercent), iconImage, group, soundName);
@@ -670,7 +689,8 @@ export const modifierTypes = {
   FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(),
 
   MEGA_BRACELET: () => new ModifierType('Mega Bracelet', 'Mega stones become available', (type, _args) => new Modifiers.MegaEvolutionAccessModifier(type)),
-  DYNAMAX_BAND: () => new ModifierType('Dynamax Band', 'Gigantamaxing becomes available', (type, _args) => new Modifiers.GigantamaxAccessModifier(type)),
+  DYNAMAX_BAND: () => new ModifierType('Dynamax Band', 'Max Mushrooms become available', (type, _args) => new Modifiers.GigantamaxAccessModifier(type)),
+  TERA_ORB: () => new ModifierType('Tera Orb', 'Tera Shards become available', (type, _args) => new Modifiers.TerastallizeAccessModifier(type)),
 
   MAP: () => new ModifierType('Map', 'Allows you to choose your destination at a crossroads', (type, _args) => new Modifiers.MapModifier(type)),
 
@@ -720,6 +740,20 @@ export const modifierTypes = {
   }),
 
   ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterModifierTypeGenerator(),
+
+  TERA_SHARD: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    if (pregenArgs)
+      return new TerastallizeModifierType(pregenArgs[0] as Type);
+    if (!party[0].scene.getModifiers(Modifiers.TerastallizeAccessModifier).length)
+      return null;
+    let type: Type;
+    if (!Utils.randInt(3)) {
+      const partyMemberTypes = party.map(p => p.getTypes(false, true)).flat();
+      type = Utils.randSeedItem(partyMemberTypes);
+    } else
+      type = Utils.randSeedInt(64) ? Utils.randSeedInt(18) as Type : Type.STELLAR;
+    return new TerastallizeModifierType(type);
+  }),
 
   BERRY: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs)
@@ -902,6 +936,7 @@ const modifierPool = {
       return Math.min(Math.ceil(highestPartyLevel / 20), 4);
     }),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
+    new WeightedModifierType(modifierTypes.TERA_SHARD, 1),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode === GameMode.SPLICED_ENDLESS && party.filter(p => !p.fusionSpecies).length > 1 ? 4 : 0),
     new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode === GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 6 : 0),
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
@@ -934,6 +969,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.OVAL_CHARM, 2),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, 2),
     new WeightedModifierType(modifierTypes.IV_SCANNER, 2),
+    new WeightedModifierType(modifierTypes.TERA_ORB, 3),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 1),
     new WeightedModifierType(modifierTypes.FORM_CHANGE_ITEM, 1),
     new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 3 : 0),
@@ -1054,7 +1090,10 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
     pool[t].reduce((total: integer, modifierType: WeightedModifierType) => {
       const weightedModifierType = modifierType as WeightedModifierType;
       const existingModifiers = party[0].scene.findModifiers(m => (m.type.generatorId || m.type.id) === weightedModifierType.modifierType.id, player);
-      const weight = !existingModifiers.length || existingModifiers.filter(m => m.stackCount < m.getMaxStackCount(party[0].scene, true)).length
+      const weight = !existingModifiers.length
+        || weightedModifierType.modifierType instanceof PokemonHeldItemModifierType
+        || (weightedModifierType.modifierType instanceof ModifierTypeGenerator && weightedModifierType.modifierType.generateType(party) instanceof PokemonHeldItemModifierType)
+        || existingModifiers.find(m => m.stackCount < m.getMaxStackCount(party[0].scene, true))
         ? weightedModifierType.weight instanceof Function
           ? (weightedModifierType.weight as Function)(party)
           : weightedModifierType.weight as integer

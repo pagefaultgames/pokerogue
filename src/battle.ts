@@ -216,7 +216,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[]): Get
         const trainerTypes: TrainerType[] = [];
         for (let trainerPoolEntry of trainerPool) {
             const trainerType = Array.isArray(trainerPoolEntry)
-                ? Phaser.Math.RND.pick(trainerPoolEntry)
+                ? Utils.randSeedItem(trainerPoolEntry)
                 : trainerPoolEntry;
             trainerTypes.push(trainerType);
         }

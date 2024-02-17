@@ -265,7 +265,7 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
     this.battlesLeft = battlesLeft;
   }
 
-  lapse(): boolean {
+  lapse(args: any[]): boolean {
     return !!--this.battlesLeft;
   }
 
@@ -279,6 +279,10 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
     container.add(battleCountText);
 
     return container;
+  }
+
+  getBattlesLeft(): integer {
+    return this.battlesLeft;
   }
 
   getMaxStackCount(scene: BattleScene, forThreshold?: boolean): number {
@@ -404,6 +408,24 @@ export class GigantamaxAccessModifier extends PersistentModifier {
   }
 }
 
+export class TerastallizeAccessModifier extends PersistentModifier {
+  constructor(type: ModifierType, stackCount?: integer) {
+    super(type, stackCount);
+  }
+  
+  clone(): TerastallizeAccessModifier {
+    return new TerastallizeAccessModifier(this.type, this.stackCount);
+  }
+
+  apply(args: any[]): boolean {
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 1;
+  }
+}
+
 export abstract class PokemonHeldItemModifier extends PersistentModifier {
   public pokemonId: integer;
 
@@ -479,6 +501,85 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   abstract getMaxHeldItemCount(pokemon: Pokemon): integer
+}
+
+export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModifier {
+  protected battlesLeft: integer;
+
+  constructor(type: ModifierTypes.ModifierType, pokemonId: integer, battlesLeft?: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+
+    this.battlesLeft = battlesLeft;
+  }
+
+  lapse(args: any[]): boolean {
+    return !!--this.battlesLeft;
+  }
+
+  getIcon(scene: BattleScene, forSummary?: boolean): Phaser.GameObjects.Container {
+    const container = super.getIcon(scene, forSummary);
+
+    if (this.getPokemon(scene).isPlayer()) {
+      const battleCountText = addTextObject(scene, 27, 0, this.battlesLeft.toString(), TextStyle.PARTY, { fontSize: '66px', color: '#f89890' });
+      battleCountText.setShadow(0, 0, null);
+      battleCountText.setStroke('#984038', 16)
+      battleCountText.setOrigin(1, 0);
+      container.add(battleCountText);
+    }
+
+    return container;
+  }
+
+  getBattlesLeft(): integer {
+    return this.battlesLeft;
+  }
+
+  getMaxStackCount(scene: BattleScene, forThreshold?: boolean): number {
+    return 1;
+  }
+}
+
+export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
+  public teraType: Type;
+
+  constructor(type: ModifierTypes.TerastallizeModifierType, pokemonId: integer, teraType: Type, battlesLeft?: integer, stackCount?: integer) {
+    super(type, pokemonId, battlesLeft || 10, stackCount);
+
+    this.teraType = teraType;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    if (modifier instanceof TerastallizeModifier && modifier.teraType === this.teraType)
+      return true;
+    return false;
+  }
+
+  clone(): TerastallizeModifier {
+    return new TerastallizeModifier(this.type as ModifierTypes.TerastallizeModifierType, this.pokemonId, this.teraType, this.battlesLeft, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ this.pokemonId, this.teraType, this.battlesLeft ];
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+    pokemon.updateSpritePipelineData();
+    return true;
+  }
+
+  lapse(args: any[]): boolean {
+    const ret = super.lapse(args);
+    if (!ret) {
+      const pokemon = args[0] as Pokemon;
+      pokemon.updateSpritePipelineData();
+    }
+    return ret;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 1;
+  }
 }
 
 export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
@@ -1323,8 +1424,19 @@ export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
+    const active = args[1] as boolean;
 
-    return pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger);
+    let switchActive = this.active && !active;
+
+    if (switchActive)
+      this.active = false;
+
+    const ret = pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger);
+
+    if (switchActive)
+      this.active = true;
+
+    return ret;
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {

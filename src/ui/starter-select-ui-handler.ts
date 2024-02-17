@@ -11,13 +11,14 @@ import { Unlockables } from "../system/unlockables";
 import { GrowthRate, getGrowthRateColor } from "../data/exp";
 import { DexAttr, DexEntry } from "../system/game-data";
 import * as Utils from "../utils";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "../sprite/pokemon-icon-anim-handler";
 import { StatsContainer } from "./stats-container";
 import { addWindow } from "./window";
 import { Nature, getNatureName } from "../data/nature";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { pokemonFormChanges } from "../data/pokemon-forms";
 import { Tutorial, handleTutorial } from "../tutorial";
+import PokemonSpriteSparkleHandler from "../sprite/pokemon-sprite-sparkle-handler";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -310,7 +311,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         let pokerusCursor: integer;
 
         const generateSpecies = () => {
-          randomSpeciesId = Phaser.Math.RND.pick(starterSpecies);
+          randomSpeciesId = Utils.randSeedItem(starterSpecies);
           species = getPokemonSpecies(randomSpeciesId);
           pokerusCursor = this.genSpecies[species.generation - 1].indexOf(species);
         };

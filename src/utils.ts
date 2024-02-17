@@ -72,6 +72,18 @@ export function randIntRange(min: integer, max: integer): integer {
   return randInt(max - min, min);
 }
 
+export function randSeedItem<T>(items: T[]): T {
+  return items.length === 1
+    ? items[0]
+    : Phaser.Math.RND.pick(items);
+}
+
+export function randSeedWeightedItem<T>(items: T[]): T {
+  return items.length === 1
+    ? items[0]
+    : Phaser.Math.RND.weightedPick(items);
+}
+
 export function getSunday(date: Date): Date {
   const day = date.getDay(),
   diff = date.getDate() - day;

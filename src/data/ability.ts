@@ -322,7 +322,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (hitResult < HitResult.NO_EFFECT) {
       const type = move.getMove().type;
-      const pokemonTypes = pokemon.getTypes();
+      const pokemonTypes = pokemon.getTypes(true);
       if (pokemonTypes.length !== 1 || pokemonTypes[0] !== type) {
         pokemon.summonData.types = [ type ];
         return true;
@@ -333,7 +333,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
   }
 
   getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
-    return getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nmade it the ${Utils.toReadableString(Type[pokemon.getTypes()[0]])} type!`);
+    return getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nmade it the ${Utils.toReadableString(Type[pokemon.getTypes(true)[0]])} type!`);
   }
 }
 
@@ -656,7 +656,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     const targets = pokemon.getOpponents();
     let target: Pokemon;
     if (targets.length > 1)
-      pokemon.scene.executeWithSeedOffset(() => target = Phaser.Math.RND.pick(targets), pokemon.scene.currentBattle.waveIndex);
+      pokemon.scene.executeWithSeedOffset(() => target = Utils.randSeedItem(targets), pokemon.scene.currentBattle.waveIndex);
     else
       target = targets[0];
 

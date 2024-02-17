@@ -4,7 +4,7 @@ import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier } from './modifier/modifier';
+import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { initAutoPlay } from './system/auto-play';
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
@@ -49,6 +49,8 @@ import { Nature } from './data/nature';
 import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from './data/pokemon-forms';
 import { FormChangePhase, QuietFormChangePhase } from './form-change-phase';
 import { BattleSpec } from './enums/battle-spec';
+import { getTypeRgb } from './data/type';
+import PokemonSpriteSparkleHandler from './sprite/pokemon-sprite-sparkle-handler';
 
 const enableAuto = true;
 const quickStart = false;
@@ -140,6 +142,8 @@ export default class BattleScene extends Phaser.Scene {
 
 	public seed: string;
 	public waveSeed: string;
+
+	private spriteSparkleHandler: PokemonSpriteSparkleHandler;
 
 	public fieldSpritePipeline: FieldSpritePipeline;
 	public spritePipeline: SpritePipeline;
@@ -235,6 +239,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('achv_bar_4', 'ui');
 		this.loadImage('shiny_star', 'ui', 'shiny.png');
 		this.loadImage('icon_spliced', 'ui');
+		this.loadImage('icon_tera', 'ui');
+		this.loadImage('type_tera', 'ui');
 
 		this.loadImage('pb_tray_overlay_player', 'ui');
 		this.loadImage('pb_tray_overlay_enemy', 'ui');
@@ -318,8 +324,10 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage(`pkmn__sub`, 'pokemon', 'sub.png');
 		this.loadAtlas('battle_stats', 'effects');
 		this.loadAtlas('shiny', 'effects');
+		this.loadImage('tera', 'effects');
 		this.loadAtlas('pb_particles', 'effects');
 		this.loadImage('evo_sparkle', 'effects');
+		this.loadAtlas('tera_sparkle', 'effects');
 		this.load.video('evo_bg', 'images/effects/evo_bg.mp4', true);
 
 		this.loadAtlas('pb', '');
@@ -501,6 +509,9 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.updateUIPositions();
 
+		this.spriteSparkleHandler = new PokemonSpriteSparkleHandler();
+		this.spriteSparkleHandler.setup(this);
+
 		this.party = [];
 
 		let loadPokemonAssets = [];
@@ -535,6 +546,15 @@ export default class BattleScene extends Phaser.Scene {
 			frameRate: 6,
 			repeat: -1,
 			showOnStart: true
+		});
+
+		this.anims.create({
+			key: 'tera_sparkle',
+			frames: this.anims.generateFrameNumbers('tera_sparkle', { start: 0, end: 12 }),
+			frameRate: 18,
+			repeat: 0,
+			showOnStart: true,
+			hideOnComplete: true
 		});
 
 		this.reset();
@@ -1036,6 +1056,18 @@ export default class BattleScene extends Phaser.Scene {
 		return ret;
 	}
 
+	addPokemonSprite(pokemon: Pokemon, x: number, y: number, texture: string | Phaser.Textures.Texture, frame?: string | number, hasShadow: boolean = false, ignoreOverride: boolean = false): Phaser.GameObjects.Sprite {
+		const ret = this.addFieldSprite(x, y, texture, frame);
+		this.initPokemonSprite(ret, pokemon);
+		return ret;
+	}
+
+	initPokemonSprite(sprite: Phaser.GameObjects.Sprite, pokemon?: Pokemon, hasShadow: boolean = false, ignoreOverride: boolean = false): Phaser.GameObjects.Sprite {
+		sprite.setPipeline(this.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: hasShadow, ignoreOverride: ignoreOverride, teraColor: pokemon ? getTypeRgb(pokemon.getTeraType()) : undefined });
+		this.spriteSparkleHandler.add(sprite);
+		return sprite;
+	}
+
 	showFieldOverlay(duration: integer): Promise<void> {
 		return new Promise(resolve => {
 			this.tweens.add({
@@ -1460,10 +1492,13 @@ export default class BattleScene extends Phaser.Scene {
 		return new Promise(resolve => {
 			const soundName = modifier.type.soundName;
 			this.validateAchvs(ModifierAchv, modifier);
+			const modifiersToRemove: PersistentModifier[] = [];
 			if (modifier instanceof PersistentModifier) {
+				if (modifier instanceof TerastallizeModifier)
+					modifiersToRemove.push(...(this.findModifiers(m => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId)));
 				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual, this)) {
-					if (modifier instanceof PokemonFormChangeItemModifier)
-						modifier.apply([ this.getPokemonById(modifier.pokemonId) ]);
+					if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier)
+						modifier.apply([ this.getPokemonById(modifier.pokemonId), true ]);
 					if (playSound && !this.sound.get(soundName))
 						this.playSound(soundName);
 				} else if (!virtual) {
@@ -1471,6 +1506,9 @@ export default class BattleScene extends Phaser.Scene {
 					this.queueMessage(`The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, null, true);
 					return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant).then(() => resolve());
 				}
+				
+				for (let rm of modifiersToRemove)
+					this.removeModifier(rm);
 
 				if (!ignoreUpdate && !virtual)
 					return this.updateModifiers(true, instant).then(() => resolve());
@@ -1509,9 +1547,17 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	addEnemyModifier(itemModifier: PersistentModifier, ignoreUpdate?: boolean, instant?: boolean): Promise<void> {
+	addEnemyModifier(modifier: PersistentModifier, ignoreUpdate?: boolean, instant?: boolean): Promise<void> {
 		return new Promise(resolve => {
-			itemModifier.add(this.enemyModifiers, false, this);
+			const modifiersToRemove: PersistentModifier[] = [];
+			if (modifier instanceof TerastallizeModifier)
+					modifiersToRemove.push(...(this.findModifiers(m => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId, false)));
+			if ((modifier as PersistentModifier).add(this.enemyModifiers, false, this)) {
+				if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier)
+					modifier.apply([ this.getPokemonById(modifier.pokemonId), true ]);
+				for (let rm of modifiersToRemove)
+					this.removeModifier(rm, true);
+			}
 			if (!ignoreUpdate)
 				this.updateModifiers(false, instant).then(() => resolve());
 			else
@@ -1586,7 +1632,15 @@ export default class BattleScene extends Phaser.Scene {
 			else
 				modifierChance = !isBoss ? 12 : 4;
 
-			this.getEnemyParty().forEach((enemyPokemon: EnemyPokemon, i: integer) => {
+			const party = this.getEnemyParty();
+
+			if (this.currentBattle.trainer) {
+				const modifiers = this.currentBattle.trainer.genModifiers(party);
+				for (let modifier of modifiers)
+					this.addEnemyModifier(modifier, true, true);
+			}
+
+			party.forEach((enemyPokemon: EnemyPokemon, i: integer) => {
 				let pokemonModifierChance = modifierChance;
 				if (this.currentBattle.battleType === BattleType.TRAINER)
 					pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i));
@@ -1657,33 +1711,27 @@ export default class BattleScene extends Phaser.Scene {
 		const modifierIndex = modifiers.indexOf(modifier);
 		if (modifierIndex > -1) {
 			modifiers.splice(modifierIndex, 1);
+			if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier)
+				modifier.apply([ this.getPokemonById(modifier.pokemonId), false ]);
 			return true;
 		}
 
 		return false;
 	}
 
-	getModifiers(modifierType: { new(...args: any[]): Modifier }, player?: boolean): PersistentModifier[] {
-		if (player === undefined)
-			player = true;
+	getModifiers(modifierType: { new(...args: any[]): Modifier }, player: boolean = true): PersistentModifier[] {
 		return (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType);
 	}
 
-	findModifiers(modifierFilter: ModifierPredicate, player?: boolean): PersistentModifier[] {
-		if (player === undefined)
-			player = true;
+	findModifiers(modifierFilter: ModifierPredicate, player: boolean = true): PersistentModifier[] {
 		return (player ? this.modifiers : this.enemyModifiers).filter(m => (modifierFilter as ModifierPredicate)(m));
 	}
 
-	findModifier(modifierFilter: ModifierPredicate, player?: boolean): PersistentModifier {
-		if (player === undefined)
-			player = true;
+	findModifier(modifierFilter: ModifierPredicate, player: boolean = true): PersistentModifier {
 		return (player ? this.modifiers : this.enemyModifiers).find(m => (modifierFilter as ModifierPredicate)(m));
 	}
 
-	applyModifiers(modifierType: { new(...args: any[]): Modifier }, player?: boolean, ...args: any[]): void {
-		if (player === undefined)
-			player = true;
+	applyModifiers(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): void {
 		const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
 		for (let modifier of modifiers) {
 			if (modifier.apply(args))
@@ -1691,9 +1739,7 @@ export default class BattleScene extends Phaser.Scene {
 		}
 	}
 
-	applyModifier(modifierType: { new(...args: any[]): Modifier }, player?: boolean, ...args: any[]): PersistentModifier {
-		if (player === undefined)
-			player = true;
+	applyModifier(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier {
 		const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
 		for (let modifier of modifiers) {
 			if (modifier.apply(args)) {

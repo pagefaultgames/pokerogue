@@ -2,13 +2,13 @@ import Phaser from 'phaser';
 import BattleScene, { AnySound } from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './ui/battle-info';
 import { Moves } from "./data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, AttackMove, AddBattlerTagAttr, OneHitKOAttr } from "./data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr } from "./data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
-import { Type, TypeDamageMultiplier, getTypeDamageMultiplier } from './data/type';
+import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from './data/type';
 import { getLevelTotalExp } from './data/exp';
 import { Stat } from './data/pokemon-stat';
-import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier } from './modifier/modifier';
+import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, TerastallizeModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
 import { Gender } from './data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
@@ -203,9 +203,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.scene.fieldUI.addAt(this.battleInfo, 0);
 
     const getSprite = (hasShadow?: boolean) => {
-      const ret = this.scene.addFieldSprite(0, 0, `pkmn__${this.isPlayer() ? 'back__' : ''}sub`);
+      const ret = this.scene.addPokemonSprite(this, 0, 0, `pkmn__${this.isPlayer() ? 'back__' : ''}sub`, undefined, true);
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow });
+      ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, teraColor: getTypeRgb(this.getTeraType()) });
       return ret;
     };
 
@@ -404,6 +404,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 || formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1)
       return 1.5;
     return 1;
+  }
+
+  updateSpritePipelineData(): void {
+    [ this.getSprite(), this.getTintSprite() ].map(s => s.pipelineData['teraColor'] = getTypeRgb(this.getTeraType()));
+    this.updateInfo(true);
   }
 
   initShinySparkle(): void {
@@ -614,26 +619,32 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getLevelMoves(1, true).filter(lm => !this.moveset.filter(m => m.moveId === lm).length).filter((move: Moves, i: integer, array: Moves[]) => array.indexOf(move) === i);
   }
 
-  getTypes(ignoreOverride?: boolean): Type[] {
+  getTypes(includeTeraType = false, ignoreOverride?: boolean): Type[] {
     const types = [];
 
-    if (!ignoreOverride && this.summonData?.types)
-      this.summonData.types.forEach(t => types.push(t));
-    else {
-      const speciesForm = this.getSpeciesForm();
-      
-      types.push(speciesForm.type1);
+    if (includeTeraType) {
+      const teraType = this.getTeraType();
+      if (teraType != Type.UNKNOWN)
+        types.push(teraType);
+    } else {
+      if (!ignoreOverride && this.summonData?.types)
+        this.summonData.types.forEach(t => types.push(t));
+      else {
+        const speciesForm = this.getSpeciesForm();
+        
+        types.push(speciesForm.type1);
 
-      const fusionSpeciesForm = this.getFusionSpeciesForm();
-      if (fusionSpeciesForm) {
-        if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== speciesForm.type1)
-          types.push(fusionSpeciesForm.type2);
-        else if (fusionSpeciesForm.type1 !== speciesForm.type1)
-          types.push(fusionSpeciesForm.type1);
+        const fusionSpeciesForm = this.getFusionSpeciesForm();
+        if (fusionSpeciesForm) {
+          if (fusionSpeciesForm.type2 !== null && fusionSpeciesForm.type2 !== speciesForm.type1)
+            types.push(fusionSpeciesForm.type2);
+          else if (fusionSpeciesForm.type1 !== speciesForm.type1)
+            types.push(fusionSpeciesForm.type1);
+        }
+
+        if (types.length === 1 && speciesForm.type2 !== null)
+          types.push(speciesForm.type2);
       }
-
-      if (types.length === 1 && speciesForm.type2 !== null)
-        types.push(speciesForm.type2);
     }
 
     if (this.getTag(BattlerTagType.IGNORE_FLYING) || this.scene.arena.getTag(ArenaTagType.GRAVITY)) {
@@ -649,7 +660,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   isOfType(type: Type) {
-    return this.getTypes().indexOf(type) > -1;
+    return this.getTypes(true).indexOf(type) > -1;
   }
 
   getAbility(): Ability {
@@ -677,14 +688,29 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return weight.value;
   }
 
+  getTeraType(): Type {
+    const teraModifier = this.scene.findModifier(m => m instanceof TerastallizeModifier
+      && m.pokemonId === this.id && !!m.getBattlesLeft(), this.isPlayer()) as TerastallizeModifier;
+    if (teraModifier)
+      return teraModifier.teraType;
+
+    return Type.UNKNOWN;
+  }
+
+  isTerastallized(): boolean {
+    return this.getTeraType() !== Type.UNKNOWN;
+  }
+
   getAttackMoveEffectiveness(moveType: Type): TypeDamageMultiplier {
-    const types = this.getTypes();
+    if (moveType === Type.STELLAR)
+      return this.isTerastallized() ? 2 : 1;
+    const types = this.getTypes(true);
     return getTypeDamageMultiplier(moveType, types[0]) * (types.length > 1 ? getTypeDamageMultiplier(moveType, types[1]) : 1) as TypeDamageMultiplier;
   }
 
   getMatchupScore(pokemon: Pokemon): number {
-    const types = this.getTypes();
-    const enemyTypes = pokemon.getTypes();
+    const types = this.getTypes(true);
+    const enemyTypes = pokemon.getTypes(true);
     let atkScore = pokemon.getAttackMoveEffectiveness(types[0]);
     let defScore = 1 / this.getAttackMoveEffectiveness(enemyTypes[0]);
     if (types.length > 1)
@@ -965,7 +991,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const cancelled = new Utils.BooleanHolder(false);
     const typeless = !!move.getAttrs(TypelessAttr).length;
-    const types = this.getTypes();
+    const types = this.getTypes(true);
     const typeMultiplier = new Utils.NumberHolder(!typeless && moveCategory !== MoveCategory.STATUS
       ? getTypeDamageMultiplier(move.type, types[0]) * (types.length > 1 ? getTypeDamageMultiplier(move.type, types[1]) : 1)
       : 1);
@@ -977,6 +1003,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case MoveCategory.SPECIAL:
         const isPhysical = moveCategory === MoveCategory.PHYSICAL;
         const power = new Utils.NumberHolder(move.power);
+        const sourceTeraType = source.getTeraType();
+        if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === move.type && power.value < 60 && move.priority <= 0 && !move.getAttrs(MultiHitAttr).length)
+          power.value = 60;
         applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, this, battlerMove, power);
 
         if (!typeless)
@@ -1011,12 +1040,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
           const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this);
           const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source);
-          const sourceTypes = source.getTypes();
-          const stabMultiplier = new Utils.NumberHolder(sourceTypes[0] === move.type || (sourceTypes.length > 1 && sourceTypes[1] === move.type) ? 1.5 : 1);
           const criticalMultiplier = isCritical ? 2 : 1;
           const isTypeImmune = (typeMultiplier.value * weatherTypeMultiplier) === 0;
+          const sourceTypes = source.getTypes();
+          const matchesSourceType = sourceTypes[0] === move.type || (sourceTypes.length > 1 && sourceTypes[1] === move.type);
+          let stabMultiplier = new Utils.NumberHolder(1);
+          if (sourceTeraType === Type.UNKNOWN && matchesSourceType)
+            stabMultiplier.value += 0.5;
+          else if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === move.type)
+            stabMultiplier.value += 0.5;
 
           applyAbAttrs(StabBoostAbAttr, source, null, stabMultiplier);
+
+          if (sourceTeraType !== Type.UNKNOWN && matchesSourceType)
+            stabMultiplier.value = Math.min(stabMultiplier.value + 0.5, 2.25);
 
           if (!isTypeImmune) {
             damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * weatherTypeMultiplier * ((this.scene.currentBattle.randSeedInt(15) + 85) / 100)) * criticalMultiplier;

@@ -8,6 +8,7 @@ import { Mode } from "./ui/ui";
 import { LearnMovePhase } from "./battle-phases";
 import { cos, sin } from "./anims";
 import { PlayerPokemon } from "./pokemon";
+import { getTypeRgb } from "./data/type";
 
 export class EvolutionPhase extends BattlePhase {
   protected pokemon: PlayerPokemon;
@@ -70,7 +71,7 @@ export class EvolutionPhase extends BattlePhase {
       this.evolutionBgOverlay.setAlpha(0);
       this.evolutionContainer.add(this.evolutionBgOverlay);
 
-      const getPokemonSprite = () => this.scene.addFieldSprite(this.evolutionBaseBg.displayWidth / 2, this.evolutionBaseBg.displayHeight / 2, `pkmn__sub`);
+      const getPokemonSprite = () => this.scene.addPokemonSprite(this.pokemon, this.evolutionBaseBg.displayWidth / 2, this.evolutionBaseBg.displayHeight / 2, `pkmn__sub`);
 
       this.evolutionContainer.add((this.pokemonSprite = getPokemonSprite()));
       this.evolutionContainer.add((this.pokemonTintSprite = getPokemonSprite()));
@@ -90,7 +91,7 @@ export class EvolutionPhase extends BattlePhase {
 
       [ this.pokemonSprite, this.pokemonTintSprite, this.pokemonEvoSprite, this.pokemonEvoTintSprite ].map(sprite => {
         sprite.play(this.pokemon.getSpriteKey(true));
-        sprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false });
+        sprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(this.pokemon.getTeraType()) });
         sprite.pipelineData['ignoreTimeTint'] = true;
         [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
           if (this.pokemon.summonData?.speciesForm)

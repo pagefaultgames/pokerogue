@@ -5,6 +5,7 @@ import { TrainerConfig, TrainerPartyCompoundTemplate, TrainerPartyMemberStrength
 import { TrainerType } from "./data/enums/trainer-type";
 import { EnemyPokemon } from "./pokemon";
 import * as Utils from "./utils";
+import { PersistentModifier } from "./modifier/modifier";
 
 export default class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;
@@ -17,7 +18,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       ? trainerConfigs[trainerType]
       : trainerConfigs[TrainerType.ACE_TRAINER];
     this.female = female;
-    this.partyTemplateIndex = Math.min(partyTemplateIndex !== undefined ? partyTemplateIndex : Phaser.Math.RND.weightedPick(this.config.partyTemplates.map((_, i) => i)), 
+    this.partyTemplateIndex = Math.min(partyTemplateIndex !== undefined ? partyTemplateIndex : Utils.randSeedWeightedItem(this.config.partyTemplates.map((_, i) => i)), 
       this.config.partyTemplates.length - 1);
       
     // TODO: Remove when Phaser weightedPick bug is fixed
@@ -174,7 +175,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
         tier--;
       }
       const tierPool = this.config.speciesPools[tier];
-      species = getPokemonSpecies(Phaser.Math.RND.pick(tierPool));
+      species = getPokemonSpecies(Utils.randSeedItem(tierPool));
     } else
       species = this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
 
@@ -186,7 +187,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     if (pokemonPrevolutions.hasOwnProperty(species.speciesId) && ret.speciesId !== species.speciesId)
       retry = true;
     else if (template.isBalanced(battle.enemyParty.length)) {
-      const partyMemberTypes = battle.enemyParty.map(p => p.getTypes()).flat();
+      const partyMemberTypes = battle.enemyParty.map(p => p.getTypes(true)).flat();
       if (partyMemberTypes.indexOf(ret.type1) > -1 || (ret.type2 !== null && partyMemberTypes.indexOf(ret.type2) > -1))
         retry = true;
     }
@@ -269,6 +270,12 @@ export default class Trainer extends Phaser.GameObjects.Container {
       case TrainerPartyMemberStrength.STRONGER:
         return 0.375;
     }
+  }
+
+  genModifiers(party: EnemyPokemon[]): PersistentModifier[] {
+    if (this.config.genModifiersFunc)
+      return this.config.genModifiersFunc(party);
+    return [];
   }
 
   loadAssets(): Promise<void> {

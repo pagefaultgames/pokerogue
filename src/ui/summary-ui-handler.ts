@@ -3,7 +3,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { PlayerPokemon } from "../pokemon";
-import { Type } from "../data/type";
+import { Type, getTypeRgb } from "../data/type";
 import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "./text";
 import Move, { MoveCategory } from "../data/move";
 import { getPokeballAtlasKey } from "../data/pokeball";
@@ -98,8 +98,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.numberText.setOrigin(0, 1);
     this.summaryContainer.add(this.numberText);
 
-    this.pokemonSprite = this.scene.add.sprite(56, -106, `pkmn__sub`);
-    this.pokemonSprite.setPipeline(this.scene.spritePipeline, { ignoreOverride: true, tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false });
+    this.pokemonSprite = this.scene.initPokemonSprite(this.scene.add.sprite(56, -106, `pkmn__sub`), null, false, true);
     this.summaryContainer.add(this.pokemonSprite);
 
     this.nameText = addTextObject(this.scene, 6, -54, '', TextStyle.SUMMARY);
@@ -201,6 +200,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.numberText.setShadowColor(getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
 
     this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
+    this.pokemonSprite.pipelineData['teraColor'] = getTypeRgb(this.pokemon.getTeraType());
     this.pokemonSprite.pipelineData['ignoreTimeTint'] = true;
     [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
@@ -489,16 +489,26 @@ export default class SummaryUiHandler extends UiHandler {
         typeLabel.setOrigin(0, 0);
         profileContainer.add(typeLabel);
 
-        const getTypeIcon = (index: integer, type: Type) => {
-          const typeIcon = this.scene.add.sprite(39 + 34 * index, 42, 'types', Type[type].toLowerCase());
+        const getTypeIcon = (index: integer, type: Type, tera: boolean = false) => {
+          const xCoord = 39 + 34 * index;
+          const typeIcon = !tera
+            ? this.scene.add.sprite(xCoord, 42, 'types', Type[type].toLowerCase())
+            : this.scene.add.sprite(xCoord, 42, 'type_tera');
+          if (tera) {
+            typeIcon.setScale(0.5);
+            const typeRgb = getTypeRgb(type);
+            typeIcon.setTint(Phaser.Display.Color.GetColor(typeRgb[0], typeRgb[1], typeRgb[2]));
+          }
           typeIcon.setOrigin(0, 1);
           return typeIcon;
         };
 
-        const types = this.pokemon.getTypes(true);
+        const types = this.pokemon.getTypes(false, true);
         profileContainer.add(getTypeIcon(0, types[0]));
         if (types.length > 1)
           profileContainer.add(getTypeIcon(1, types[1]));
+        if (this.pokemon.isTerastallized())
+          profileContainer.add(getTypeIcon(types.length, this.pokemon.getTeraType(), true));
 
         const ability = this.pokemon.getAbility();
 
@@ -534,7 +544,7 @@ export default class SummaryUiHandler extends UiHandler {
           });
         }
 
-        let memoString = `${getBBCodeFrag(Utils.toReadableString(Nature[this.pokemon.nature]), TextStyle.SUMMARY_RED)} nature,\n${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? 'apparently ' : ''}met at Lv`, TextStyle.WINDOW)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(',', TextStyle.WINDOW)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag('.', TextStyle.WINDOW)}`;
+        let memoString = `${getBBCodeFrag(Utils.toReadableString(Nature[this.pokemon.nature]), TextStyle.SUMMARY_RED)}${getBBCodeFrag(' nature,', TextStyle.WINDOW)}\n${getBBCodeFrag(`${this.pokemon.metBiome === -1 ? 'apparently ' : ''}met at Lv`, TextStyle.WINDOW)}${getBBCodeFrag(this.pokemon.metLevel.toString(), TextStyle.SUMMARY_RED)}${getBBCodeFrag(',', TextStyle.WINDOW)}\n${getBBCodeFrag(getBiomeName(this.pokemon.metBiome), TextStyle.SUMMARY_RED)}${getBBCodeFrag('.', TextStyle.WINDOW)}`;
        
         const memoText = addBBCodeTextObject(this.scene, 7, 113, memoString, TextStyle.WINDOW);
         memoText.setOrigin(0, 0);

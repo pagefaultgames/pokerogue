@@ -1813,7 +1813,7 @@ export class CopyTypeAttr extends MoveEffectAttr {
     if (!super.apply(user, target, move, args))
       return false;
 
-    user.summonData.types = target.getTypes();
+    user.summonData.types = target.getTypes(true);
 
     user.scene.queueMessage(getPokemonMessage(user, `'s type\nchanged to match ${target.name}'s!`));
 

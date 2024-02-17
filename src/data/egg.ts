@@ -98,7 +98,7 @@ export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timesta
   let ret: Species;
 
   scene.executeWithSeedOffset(() => {
-    ret = Phaser.Math.RND.pick(legendarySpecies);
+    ret = Utils.randSeedItem(legendarySpecies);
   }, Utils.getSunday(new Date(timestamp)).getTime(), EGG_SEED.toString());
 
   return ret;
@@ -109,7 +109,7 @@ export function getTypeGachaTypeForTimestamp(scene: BattleScene, timestamp: inte
   let ret: Type;
   
   scene.executeWithSeedOffset(() => {
-    ret = Phaser.Math.RND.pick(types);
+    ret = Utils.randSeedItem(types);
   }, Utils.getSunday(new Date(timestamp)).getTime(), EGG_SEED.toString());
 
   return ret;

@@ -5,6 +5,7 @@ import { addTextObject, TextStyle } from './text';
 import { getGenderSymbol, getGenderColor, Gender } from '../data/gender';
 import { StatusEffect } from '../data/status-effect';
 import BattleScene from '../battle-scene';
+import { Type, getTypeRgb } from '../data/type';
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   private player: boolean;
@@ -13,6 +14,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private bossSegments: integer;
   private offset: boolean;
   private lastName: string;
+  private lastTeraType: Type;
   private lastStatus: StatusEffect;
   private lastHp: integer;
   private lastMaxHp: integer;
@@ -26,6 +28,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private nameText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
   private ownedIcon: Phaser.GameObjects.Sprite;
+  private teraIcon: Phaser.GameObjects.Sprite;
   private splicedIcon: Phaser.GameObjects.Sprite;
   private shinyIcon: Phaser.GameObjects.Sprite;
   private statusIndicator: Phaser.GameObjects.Sprite;
@@ -43,6 +46,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.boss = false;
     this.offset = false;
     this.lastName = null;
+    this.lastTeraType = Type.UNKNOWN;
     this.lastStatus = StatusEffect.NONE;
     this.lastHp = -1;
     this.lastMaxHp = -1;
@@ -75,11 +79,19 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.add(this.ownedIcon);
     }
 
+    this.teraIcon = this.scene.add.sprite(0, 0, 'icon_tera');
+    this.teraIcon.setVisible(false);
+    this.teraIcon.setOrigin(0, 0);
+    this.teraIcon.setScale(0.5);
+    this.teraIcon.setPositionRelative(this.nameText, 0, 2);
+    this.teraIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 14, 15), Phaser.Geom.Rectangle.Contains);
+    this.add(this.teraIcon);
+
     this.splicedIcon = this.scene.add.sprite(0, 0, 'icon_spliced');
     this.splicedIcon.setVisible(false);
     this.splicedIcon.setOrigin(0, 0);
     this.splicedIcon.setPositionRelative(this.nameText, 0, 2);
-    this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 5, 7), Phaser.Geom.Rectangle.Contains);
+    this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 5, 8), Phaser.Geom.Rectangle.Contains);
     this.add(this.splicedIcon);
 
     this.statusIndicator = this.scene.add.sprite(0, 0, 'statuses');
@@ -130,7 +142,17 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.genderText.setColor(getGenderColor(pokemon.gender));
     this.genderText.setPositionRelative(this.nameText, nameTextWidth, 0);
 
-    this.splicedIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1, 1);
+    this.lastTeraType = pokemon.getTeraType();
+
+    this.teraIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1, 2);
+    this.teraIcon.setVisible(this.lastTeraType !== Type.UNKNOWN);
+    this.teraIcon.on('pointerover', () => {
+      if (this.lastTeraType !== Type.UNKNOWN)
+        (this.scene as BattleScene).ui.showTooltip(null, `${Utils.toReadableString(Type[this.lastTeraType])} Terastallized`);
+    });
+    this.teraIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
+
+    this.splicedIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0), 1);
     this.splicedIcon.setVisible(!!pokemon.fusionSpecies);
     if (this.splicedIcon.visible) {
       this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${pokemon.species.getName(pokemon.formIndex)}/${pokemon.fusionSpecies.getName(pokemon.fusionFormIndex)}`));
@@ -197,7 +219,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     if (boss !== this.boss) {
       this.boss = boss;
       
-      [ this.nameText, this.genderText, this.splicedIcon, this.ownedIcon, this.statusIndicator, this.levelContainer ].map(e => e.x += 48 * (boss ? -1 : 1));
+      [ this.nameText, this.genderText, this.teraIcon, this.splicedIcon, this.ownedIcon, this.statusIndicator, this.levelContainer ].map(e => e.x += 48 * (boss ? -1 : 1));
       this.hpBar.x += 38 * (boss ? -1 : 1);
       this.hpBar.y += 2 * (this.boss ? -1 : 1);
       this.hpBar.setTexture(`overlay_hp${boss ? '_boss' : ''}`);
@@ -240,12 +262,25 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       if (!this.scene)
         return resolve();
 
-      if (this.lastName !== pokemon.name) {
+      const nameUpdated = this.lastName !== pokemon.name;
+
+      if (nameUpdated) {
         this.updateNameText(pokemon);
-        const nameTextWidth = this.nameText.displayWidth;
-        this.genderText.setPositionRelative(this.nameText, nameTextWidth, 0);
-        this.splicedIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1, 1);
+        this.genderText.setPositionRelative(this.nameText, this.nameText.displayWidth, 0);
       }
+      
+      const teraType = pokemon.getTeraType();
+      const teraTypeUpdated = this.lastTeraType !== teraType;
+
+      if (teraTypeUpdated) {
+        this.teraIcon.setVisible(teraType !== Type.UNKNOWN);
+        this.teraIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1, 2);
+        this.teraIcon.setTintFill(Phaser.Display.Color.GetColor(...getTypeRgb(teraType)));
+        this.lastTeraType = teraType;
+      }
+
+      if (nameUpdated || teraTypeUpdated)
+        this.splicedIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0), 1);
 
       if (this.lastStatus !== (pokemon.status?.effect || StatusEffect.NONE)) {
         this.lastStatus = pokemon.status?.effect || StatusEffect.NONE;

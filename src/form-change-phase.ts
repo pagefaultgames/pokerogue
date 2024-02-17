@@ -10,6 +10,7 @@ import PartyUiHandler from "./ui/party-ui-handler";
 import { BattlePhase } from "./battle-phase";
 import { BattleSpec } from "./enums/battle-spec";
 import { MovePhase, PokemonHealPhase } from "./battle-phases";
+import { getTypeRgb } from "./data/type";
 
 export class FormChangePhase extends EvolutionPhase {
   private formChange: SpeciesFormChange;
@@ -184,10 +185,10 @@ export class QuietFormChangePhase extends BattlePhase {
     const preName = this.pokemon.name;
 
     const getPokemonSprite = () => {
-      const sprite = this.scene.addFieldSprite(this.pokemon.x + this.pokemon.getSprite().x, this.pokemon.y + this.pokemon.getSprite().y, `pkmn__sub`);
+      const sprite = this.scene.addPokemonSprite(this.pokemon, this.pokemon.x + this.pokemon.getSprite().x, this.pokemon.y + this.pokemon.getSprite().y, `pkmn__sub`);
       sprite.setOrigin(0.5, 1);
       sprite.play(this.pokemon.getSpriteKey()).stop();
-      sprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false });
+      sprite.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: false, teraColor: getTypeRgb(this.pokemon.getTeraType()) });
       [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
         if (this.pokemon.summonData?.speciesForm)
           k += 'Base';

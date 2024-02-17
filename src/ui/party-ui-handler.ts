@@ -11,7 +11,7 @@ import { allMoves } from "../data/move";
 import { Moves } from "../data/enums/moves";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "../sprite/pokemon-icon-anim-handler";
 import { pokemonEvolutions } from "../data/pokemon-evolutions";
 import { addWindow } from "./window";
 import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
@@ -102,7 +102,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private static FilterAllMoves = (_pokemonMove: PokemonMove) => null;
 
   public static FilterItemMaxStacks = (pokemon: PlayerPokemon, modifier: PokemonHeldItemModifier) => {
-    const matchingModifier = pokemon.scene.findModifier(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).matchType(modifier)) as PokemonHeldItemModifier;
+    const matchingModifier = pokemon.scene.findModifier(m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(modifier)) as PokemonHeldItemModifier;
     if (matchingModifier && matchingModifier.stackCount === matchingModifier.getMaxStackCount(pokemon.scene))
       return `${pokemon.name} has too many\nof this item!`;
     return null;

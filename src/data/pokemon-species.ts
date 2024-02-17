@@ -2372,6 +2372,7 @@ export const speciesStarters = {
   [Species.TOGEPI]: 3,
   [Species.NATU]: 2,
   [Species.MAREEP]: 3,
+  [Species.MARILL]: 4,
   [Species.HOPPIP]: 1,
   [Species.AIPOM]: 3,
   [Species.SUNKERN]: 1,
