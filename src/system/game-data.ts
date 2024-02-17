@@ -492,6 +492,7 @@ export class GameData {
 
           const battleType = sessionData.battleType || 0;
           const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfigs[sessionData.trainer.trainerType].isDouble : sessionData.enemyParty.length > 1);
+          battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
           scene.newArena(sessionData.arena.biome, true);
 
