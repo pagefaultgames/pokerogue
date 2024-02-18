@@ -3390,7 +3390,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.end();
       };
       const removePokemon = () => {
-        this.scene.getPlayerField().filter(p => p.isActive()).forEach(playerPokemon => playerPokemon.removeTagsBySourceId(pokemon.id));
+        this.scene.getPlayerField().filter(p => p.isActive(true)).forEach(playerPokemon => playerPokemon.removeTagsBySourceId(pokemon.id));
         pokemon.hp = 0;
         pokemon.trySetStatus(StatusEffect.FAINT);
         this.scene.clearEnemyHeldItemModifiers();
