@@ -8,8 +8,8 @@ import { getPokemonSpecies, speciesStarters } from "./pokemon-species";
 export const EGG_SEED = 1073741824;
 
 export enum GachaType {
-  LEGENDARY,
   TYPE,
+  LEGENDARY,
   SHINY
 }
 
