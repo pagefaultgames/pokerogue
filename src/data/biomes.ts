@@ -7614,6 +7614,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [ TrainerType.ALDER, [] ],
     [ TrainerType.IRIS, [] ],
     [ TrainerType.DIANTHA, [] ],
+    [ TrainerType.HAU, [] ],
     [ TrainerType.LEON, [] ],
     [ TrainerType.GEETA, [] ],
     [ TrainerType.NEMONA, [] ],

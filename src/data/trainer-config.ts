@@ -757,6 +757,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.ALDER]: new TrainerConfig(++t).initForChampion([ Species.VOLCARONA, Species.GROUDON, Species.BOUFFALANT, Species.ACCELGOR, Species.CONKELDURR ]),
   [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion([ Species.HAXORUS, Species.YVELTAL, Species.DRUDDIGON, Species.ARON, Species.LAPRAS ]),
   [TrainerType.DIANTHA]: new TrainerConfig(++t).initForChampion([ Species.HAWLUCHA, Species.XERNEAS, Species.GOURGEIST, Species.GOODRA, Species.GARDEVOIR ]),
+  [TrainerType.HAU]: new TrainerConfig(++t).initForChampion([ Species.ALOLA_RAICHU, [ Species.SOLGALEO, Species.LUNALA ], Species.NOIVERN, [ Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA ], Species.CRABOMINABLE ]),
   [TrainerType.LEON]: new TrainerConfig(++t).initForChampion([ Species.DRAGAPULT, [ Species.ZACIAN, Species.ZAMAZENTA ], Species.SEISMITOAD, Species.AEGISLASH, Species.MR_RIME ]),
   [TrainerType.GEETA]: new TrainerConfig(++t).initForChampion([ Species.GLIMMORA, Species.MIRAIDON, Species.ESPATHRA, Species.VELUZA, Species.KINGAMBIT ]),
   [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion([ Species.LYCANROC, Species.KORAIDON, Species.KOMMO_O, Species.PAWMOT, Species.DUSKNOIR ]),

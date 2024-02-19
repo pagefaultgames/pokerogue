@@ -169,6 +169,7 @@ export enum TrainerType {
   ALDER,
   IRIS,
   DIANTHA,
+  HAU,
   LEON,
   GEETA,
   NEMONA,
