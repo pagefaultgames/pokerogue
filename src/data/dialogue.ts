@@ -39,6 +39,142 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
+  [TrainerType.BROCK]: {
+    encounter: [
+      `My expertise on Rock-type Pokémon will take you down! Come on!`,
+      `My rock-hard willpower will overwhelm you!`,
+      `Allow me to show you the true strength of my Pokémon!`
+    ],
+    victory: [
+      `Your Pokémon's strength have overcome my rock-hard defenses!`,
+      `The world is huge! I'm glad to have had a chance to battle you.`,
+      `Perhaps I should go back to pursuing my dream as a Pokémon Breeder…`
+    ],
+    defeat: [
+      `The best offense is a good defense!\nThat's my way of doing things!`,
+      `Come study rocks with me next time to better learn how to fight them!`,
+      `Hah, all my traveling around the regions is paying off!`
+    ]
+  },
+  [TrainerType.MISTY]: {
+    encounter: [
+      `My policy is an all out offensive with Water-type Pokémon!`,
+      `Hiya, I'll show you the strength of my aquatic Pokémon!`,
+      `My dream was to go on a journey and battle powerful trainers…\nWill you be a sufficient challenge?`
+    ],
+    victory: [
+      `You really are strong… I'll admit that you are skilled…`,
+      `Grrr… You know you just got lucky, right?!`,
+      `Wow, you're too much! I can't believe you beat me!`
+    ],
+    defeat: [
+      `Was the mighty Misty too much for you?`,
+      `I hope you saw my Pokémon's elegant swimming techniques!`,
+      `Your Pokémon were no match for my pride and joys!`
+    ]
+  },
+  [TrainerType.LT_SURGE]: {
+    encounter: [
+      `My Electric Pokémon saved me during the war! I'll show you how!`,
+      `Ten-hut! I'll shock you into surrender!`,
+      `I'll zap you just like I do to all my enemies in battle!`
+    ],
+    victory: [
+      `Whoa! Your team's the real deal, kid!`,
+      `Aaargh, you're strong! Even my electric tricks lost against you.`,
+      `That was an absolutely shocking loss!`
+    ],
+    defeat: [
+      `Oh yeah! When it comes to Electric-type Pokémon, I'm number one in the world!`,
+      `Hahaha! That was an electrifying battle, kid!`,
+      `A Pokémon battle is war, and I have showed you first-hand combat!`
+    ]
+  },
+  [TrainerType.ERIKA]: {
+    encounter: [
+      `Ah, the weather is lovely here…\nOh, a battle? Very well then.`,
+      `My Pokémon battling skills rival that of my flower arranging skills.`,
+      `Oh, I hope the pleasant aroma of my Pokémon doesn't put me to sleep again…`
+    ],
+    victory: [
+      `Oh! I concede defeat.`,
+      `That match was most delightful.`,
+      `Ah, it appears it is my loss…`
+    ],
+    defeat: [
+      `I was afraid I would doze off…`,
+      `Oh my, it seems my Grass Pokémon overwhelmed you.`,
+      `That battle was such a soothing experience.`
+    ]
+  },
+  [TrainerType.JANINE]: {
+    encounter: [
+      `I am mastering the art of poisonous attacks.\nI shall spar with you today!`,
+      `Father trusts that I can hold my own.\nI will prove him right!`,
+      `My ninja techniques are only second to my Father's!\nCan you keep up?`
+    ],
+    victory: [
+      `Even now, I still need training… I understand.`,
+      `Your battle technique has outmatched mine.`,
+      `I'm going to really apply myself and improve my skills.`
+    ],
+    defeat: [
+      `Fufufu… the poison has sapped all your strength to battle.`,
+      `Ha! You didn't stand a chance against my superior ninja skills!`,
+      `Father's faith in me has proven to not be misplaced.`
+    ]
+  },
+  [TrainerType.SABRINA]: {
+    encounter: [
+      `Through my psychic ability, I had a vision of your arrival!`,
+      `I dislike fighting, but if you wish, I will show you my powers!`,
+      `I can sense great ambition in you. I shall see if it not unfounded.`
+    ],
+    victory: [
+      `Your power… It far exceeds what I foresaw…`,
+      `I failed to accurately predict your power.`,
+      `Even with my immense psychic powers, I cannot sense another as strong as you.`
+    ],
+    defeat: [
+      `This victory… It is exactly as I foresaw in my visions!`,
+      `Perhaps it was another I sensed a great desire in…`,
+      `Hone your abilities before recklessly charging into battle.\nYou never know what the future may hold if you do…`
+    ]
+  },
+  [TrainerType.BLAINE]: {
+    encounter: [
+      `Hah! Hope you brought a Burn Heal!`,
+      `My fiery Pokémon will incinerate all challengers!`,
+      `Get ready to play with fire!`
+    ],
+    victory: [
+      `I have burned down to nothing! Not even ashes remain!`,
+      `Didn't I stoke the flames high enough?`,
+      `I'm all burned out… But this makes my motivation to improve burn even hotter!`
+    ],
+    defeat: [
+      `My raging inferno cannot be quelled!`,
+      `My Pokémon have been powered up with the heat from this victory!`,
+      `Hah! My passion burns brighter than yours!`
+    ]
+  },
+  [TrainerType.GIOVANNI]: {
+    encounter: [
+      `I, the leader of Team Rocket, will make you feel a world of pain!`,
+      `My training here will be vital before I am to face my old associates again.`,
+      `I do not think you are prepared for the level of failure you are about to experience!`
+    ],
+    victory: [
+      `WHAT! Me, lose?! There is nothing I wish to say to you!`,
+      `Hmph… You could never understand what I hope to achieve.`,
+      `This defeat is merely delaying the inevitable.\nI will rise Team Rocket from the ashes in due time.`
+    ],
+    defeat: [
+      `Not being able to measure your own strength shows that you are still but a child.`,
+      `Do not try to interfere with me again.`,
+      `I hope you understand how foolish challenging me was.`
+    ]
+  },
   [TrainerType.ROXANNE]: {
     encounter: [
       `Would you kindly demonstrate how you battle?`,
