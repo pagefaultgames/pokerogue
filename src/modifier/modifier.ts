@@ -564,9 +564,11 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    pokemon.scene.validateAchv(achvs.TERASTALLIZE);
-    if (this.teraType === Type.STELLAR)
-      pokemon.scene.validateAchv(achvs.STELLAR_TERASTALLIZE);
+    if (pokemon.isPlayer()) {
+      pokemon.scene.validateAchv(achvs.TERASTALLIZE);
+      if (this.teraType === Type.STELLAR)
+        pokemon.scene.validateAchv(achvs.STELLAR_TERASTALLIZE);
+    }
     pokemon.updateSpritePipelineData();
     return true;
   }
