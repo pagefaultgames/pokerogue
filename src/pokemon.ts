@@ -1112,8 +1112,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               this.scene.queueMessage('A critical hit!');
             this.scene.setPhaseQueueSplice();
             damage.value = this.damage(damage.value);
-            if (source.isPlayer())
+            if (source.isPlayer()) {
               this.scene.validateAchvs(DamageAchv, damage);
+              if (damage.value > this.scene.gameData.gameStats.highestDamage)
+                this.scene.gameData.gameStats.highestDamage = damage.value;
+            }
             source.turnData.damageDealt += damage.value;
             this.battleData.hitCount++;
             this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id });
