@@ -14,7 +14,7 @@ import * as Utils from "../utils";
 import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
 import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
-import { MoneyAchv } from '../system/achv';
+import { MoneyAchv, achvs } from '../system/achv';
 import { VoucherType } from '../system/voucher';
 import { PreventBerryUseAbAttr, applyAbAttrs } from '../data/ability';
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from '../data/pokemon-forms';
@@ -564,6 +564,9 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
+    pokemon.scene.validateAchv(achvs.TERASTALLIZE);
+    if (this.teraType === Type.STELLAR)
+      pokemon.scene.validateAchv(achvs.STELLAR_TERASTALLIZE);
     pokemon.updateSpritePipelineData();
     return true;
   }

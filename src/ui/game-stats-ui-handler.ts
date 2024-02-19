@@ -75,6 +75,8 @@ const displayStats: DisplayStats = {
   endlessSessionsPlayed: 'Runs (Endless)?',
   highestEndlessWave: 'Highest Wave (Endless)?',
   highestMoney: 'Highest Money',
+  highestDamage: 'Highest Damage',
+  highestHeal: 'Highest HP Healed',
   pokemonSeen: 'Pokémon Encountered',
   pokemonDefeated: 'Pokémon Defeated',
   pokemonCaught: 'Pokémon Caught',

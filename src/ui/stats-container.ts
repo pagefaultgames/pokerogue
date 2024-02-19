@@ -2,7 +2,6 @@ import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodete
 import BattleScene from "../battle-scene";
 import { Stat, getStatName } from "../data/pokemon-stat";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
-import { Gender, getGenderColor } from "../data/gender";
 
 const ivChartSize = 24;
 const ivChartStatCoordMultipliers = [ [ 0, 1 ], [ 0.825, 0.5 ], [ 0.825, -0.5 ], [ 0, -1 ], [ -0.825, -0.5 ], [ -0.825, 0.5 ] ];

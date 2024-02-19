@@ -10,6 +10,8 @@ export class GameStats {
   public highestEndlessWave: integer;
   public highestLevel: integer;
   public highestMoney: integer;
+  public highestDamage: integer;
+  public highestHeal: integer;
   public pokemonSeen: integer;
   public pokemonDefeated: integer;
   public pokemonCaught: integer;
@@ -40,6 +42,8 @@ export class GameStats {
     this.highestEndlessWave = source?.highestEndlessWave || 0;
     this.highestLevel = source?.highestLevel || 0;
     this.highestMoney = source?.highestMoney || 0;
+    this.highestDamage = source?.highestDamage || 0;
+    this.highestHeal = source?.highestHeal || 0;
     this.pokemonSeen = source?.pokemonSeen || 0;
     this.pokemonDefeated = source?.pokemonDefeated || 0;
     this.pokemonCaught = source?.pokemonCaught || 0;

@@ -1058,7 +1058,7 @@ export default class BattleScene extends Phaser.Scene {
 
 	addPokemonSprite(pokemon: Pokemon, x: number, y: number, texture: string | Phaser.Textures.Texture, frame?: string | number, hasShadow: boolean = false, ignoreOverride: boolean = false): Phaser.GameObjects.Sprite {
 		const ret = this.addFieldSprite(x, y, texture, frame);
-		this.initPokemonSprite(ret, pokemon);
+		this.initPokemonSprite(ret, pokemon, hasShadow, ignoreOverride);
 		return ret;
 	}
 

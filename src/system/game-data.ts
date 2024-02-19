@@ -860,7 +860,7 @@ export class GameData {
     } while (pokemonPrevolutions.hasOwnProperty(speciesId) && (speciesId = pokemonPrevolutions[speciesId]));
   }
 
-  getSpeciesDefaultDexAttr(species: PokemonSpecies): bigint {
+  getSpeciesDefaultDexAttr(species: PokemonSpecies, forSeen: boolean = false): bigint {
     let ret = 0n;
     const dexEntry = this.dexData[species.speciesId];
     const attr = dexEntry.caughtAttr;

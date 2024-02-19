@@ -18,7 +18,6 @@ import { Nature, getNatureName } from "../data/nature";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { pokemonFormChanges } from "../data/pokemon-forms";
 import { Tutorial, handleTutorial } from "../tutorial";
-import PokemonSpriteSparkleHandler from "../sprite/pokemon-sprite-sparkle-handler";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -40,6 +39,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonGrowthRateLabelText: Phaser.GameObjects.Text;
   private pokemonGrowthRateText: Phaser.GameObjects.Text;
   private pokemonGenderText: Phaser.GameObjects.Text;
+  private pokemonUncaughtText: Phaser.GameObjects.Text;
   private pokemonAbilityLabelText: Phaser.GameObjects.Text;
   private pokemonAbilityText: Phaser.GameObjects.Text;
   private pokemonNatureLabelText: Phaser.GameObjects.Text;
@@ -139,6 +139,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonGenderText = addTextObject(this.scene, 96, 112, '', TextStyle.SUMMARY);
     this.pokemonGenderText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGenderText);
+
+    this.pokemonUncaughtText = addTextObject(this.scene, 6, 126, 'Uncaught', TextStyle.SUMMARY, { fontSize: '56px' });
+    this.pokemonUncaughtText.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.pokemonUncaughtText);
 
     this.pokemonAbilityLabelText = addTextObject(this.scene, 6, 126, 'Ability:', TextStyle.SUMMARY, { fontSize: '56px' });
     this.pokemonAbilityLabelText.setOrigin(0, 0);
@@ -244,7 +248,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         icon.setScale(0.5);
         icon.setOrigin(0, 0);
         icon.setFrame(species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny));
-        icon.setTintFill(0);
+        icon.setTint(0);
         this.starterSelectGenIconContainers[g].add(icon);
         this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
         s++;
@@ -356,6 +360,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           const icon = this.starterSelectGenIconContainers[g].getAt(s) as Phaser.GameObjects.Sprite;
           if (dexEntry.caughtAttr)
             icon.clearTint();
+          else if (dexEntry.seenAttr)
+            icon.setTint(0x808080);
         });
       }
 
@@ -762,56 +768,78 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.lastSpecies = species;
 
-    if (species && this.speciesStarterDexEntry?.caughtAttr) {
+    if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
       this.pokemonNumberText.setText(Utils.padInt(species.speciesId, 4));
       this.pokemonNameText.setText(species.name);
-      this.pokemonGrowthRateText.setText(Utils.toReadableString(GrowthRate[species.growthRate]));
-      this.pokemonGrowthRateText.setColor(getGrowthRateColor(species.growthRate));
-      this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
-      this.pokemonGrowthRateLabelText.setVisible(true);
-      this.pokemonAbilityLabelText.setVisible(true);
-      this.pokemonNatureLabelText.setVisible(true);
-      this.pokemonCaughtCountLabelText.setVisible(true);
-      this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}/${this.speciesStarterDexEntry.hatchedCount} (${this.speciesStarterDexEntry.caughtCount + this.speciesStarterDexEntry.hatchedCount})`);
-      this.pokemonCaughtCountText.setVisible(true);
-      this.iconAnimHandler.addOrUpdate(this.starterSelectGenIconContainers[species.generation - 1].getAt(this.genSpecies[species.generation - 1].indexOf(species)) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.PASSIVE);
 
-      let starterIndex = -1;
+      if (this.speciesStarterDexEntry?.caughtAttr) {
+        this.pokemonGrowthRateText.setText(Utils.toReadableString(GrowthRate[species.growthRate]));
+        this.pokemonGrowthRateText.setColor(getGrowthRateColor(species.growthRate));
+        this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
+        this.pokemonGrowthRateLabelText.setVisible(true);
+        this.pokemonUncaughtText.setVisible(false);
+        this.pokemonAbilityLabelText.setVisible(true);
+        this.pokemonNatureLabelText.setVisible(true);
+        this.pokemonCaughtCountLabelText.setVisible(true);
+        this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}/${this.speciesStarterDexEntry.hatchedCount} (${this.speciesStarterDexEntry.caughtCount + this.speciesStarterDexEntry.hatchedCount})`);
+        this.pokemonCaughtCountText.setVisible(true);
+        this.iconAnimHandler.addOrUpdate(this.starterSelectGenIconContainers[species.generation - 1].getAt(this.genSpecies[species.generation - 1].indexOf(species)) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.PASSIVE);
 
-      this.starterGens.every((g, i) => {
-        const starterSpecies = this.genSpecies[g][this.starterCursors[i]];
-        if (starterSpecies.speciesId === species.speciesId) {
-          starterIndex = i;
-          return false;
+        let starterIndex = -1;
+
+        this.starterGens.every((g, i) => {
+          const starterSpecies = this.genSpecies[g][this.starterCursors[i]];
+          if (starterSpecies.speciesId === species.speciesId) {
+            starterIndex = i;
+            return false;
+          }
+          return true;
+        });
+
+        if (starterIndex > -1) {
+          const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.starterAttr[starterIndex]);
+          this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.abilityIndex, this.starterNatures[starterIndex]);
+        } else {
+          const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species);
+          const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
+          const props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+          
+          this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.abilityIndex, defaultNature);
         }
-        return true;
-      });
-
-      if (starterIndex > -1) {
-        const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.starterAttr[starterIndex]);
-        this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.abilityIndex, this.starterNatures[starterIndex]);
+        this.pokemonSprite.clearTint();
       } else {
-        const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species);
+        this.pokemonGrowthRateText.setText('');
+        this.pokemonGrowthRateLabelText.setVisible(false);
+        this.pokemonUncaughtText.setVisible(true);
+        this.pokemonAbilityLabelText.setVisible(false);
+        this.pokemonNatureLabelText.setVisible(false);
+        this.pokemonCaughtCountLabelText.setVisible(false);
+        this.pokemonCaughtCountText.setVisible(false);
+
+        const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, true);
         const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
         const props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
         
-        this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.abilityIndex, defaultNature);
+        this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.abilityIndex, defaultNature, true);
+        this.pokemonSprite.setTint(0x808080);
       }
     } else {
       this.pokemonNumberText.setText(Utils.padInt(0, 4));
       this.pokemonNameText.setText(species ? '???' : '');
       this.pokemonGrowthRateText.setText('');
       this.pokemonGrowthRateLabelText.setVisible(false);
+      this.pokemonUncaughtText.setVisible(!!species);
       this.pokemonAbilityLabelText.setVisible(false);
       this.pokemonNatureLabelText.setVisible(false);
       this.pokemonCaughtCountLabelText.setVisible(false);
       this.pokemonCaughtCountText.setVisible(false);
 
       this.setSpeciesDetails(species, false, 0, false, 0, 0);
+      this.pokemonSprite.clearTint();
     }
   }
 
-  setSpeciesDetails(species: PokemonSpecies, shiny: boolean, formIndex: integer, female: boolean, abilityIndex: integer, natureIndex: integer): void {
+  setSpeciesDetails(species: PokemonSpecies, shiny: boolean, formIndex: integer, female: boolean, abilityIndex: integer, natureIndex: integer, forSeen: boolean = false): void {
     const oldProps = species ? this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor) : null;
     this.dexAttrCursor = 0n;
 
@@ -836,7 +864,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if (species) {
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
       if (!dexEntry.caughtAttr) {
-        const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species));
+        const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.scene.gameData.getSpeciesDefaultDexAttr(species, forSeen));
         const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
         if (shiny === undefined || shiny !== props.shiny)
           shiny = props.shiny;
@@ -850,7 +878,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           natureIndex = defaultNature;
       }
 
-      if (this.speciesStarterDexEntry?.caughtAttr) {
+      if (forSeen ? this.speciesStarterDexEntry?.seenAttr : this.speciesStarterDexEntry?.caughtAttr) {
         let starterIndex = -1;
 
         this.starterGens.every((g, i) => {

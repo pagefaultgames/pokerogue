@@ -68,10 +68,10 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.ELECTRIC:
         case Type.ICE:
         case Type.DRAGON:
-        case Type.DARK:
           return 1;
         case Type.ROCK:
         case Type.BUG:
+        case Type.DARK:
           return 0.5;
         default:
           return 0;

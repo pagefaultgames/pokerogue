@@ -116,10 +116,12 @@ export class FormChangePhase extends EvolutionPhase {
                                       this.scene.time.delayedCall(250, () => {
                                         this.pokemon.cry();
                                         this.scene.time.delayedCall(1250, () => {
-                                          const isMega = this.formChange.formKey.indexOf(SpeciesFormKey.MEGA) > -1;
                                           let playEvolutionFanfare = false;
-                                          if (isMega) {
+                                          if (this.formChange.formKey.indexOf(SpeciesFormKey.MEGA) > -1) {
                                             this.scene.validateAchv(achvs.MEGA_EVOLVE);
+                                            playEvolutionFanfare = true;
+                                          } else if (this.formChange.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 || this.formChange.formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1) {
+                                            this.scene.validateAchv(achvs.GIGANTAMAX);
                                             playEvolutionFanfare = true;
                                           }
 
