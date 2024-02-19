@@ -22,7 +22,7 @@
 		"@material/material-color-utilities": "^0.2.7",
 		"crypto-js": "^4.2.0",
 		"json-stable-stringify": "^1.1.0",
-		"phaser": "^3.80.0-beta.2",
+		"phaser": "^3.70.0",
 		"phaser3-rex-plugins": "^1.1.84"
 	}
 }
