@@ -2575,12 +2575,13 @@ export class FaintPhase extends PokemonPhase {
     this.scene.queueMessage(getPokemonMessage(pokemon, ' fainted!'), null, true);
 
     if (this.player) {
-      const nonFaintedPartyMemberCount = this.scene.getParty().filter(p => !p.isFainted()).length;
+      const nonFaintedPartyMembers = this.scene.getParty().filter(p => !p.isFainted());
+      const nonFaintedPartyMemberCount = nonFaintedPartyMembers.length;
       if (!nonFaintedPartyMemberCount)
         this.scene.unshiftPhase(new GameOverPhase(this.scene));
-      else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount())
+      else if (nonFaintedPartyMemberCount >= this.scene.currentBattle.getBattlerCount() || (this.scene.currentBattle.double && !nonFaintedPartyMembers[0].isActive(true)))
         this.scene.pushPhase(new SwitchPhase(this.scene, this.fieldIndex, true, false));
-      else if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double)
+      if (nonFaintedPartyMemberCount === 1 && this.scene.currentBattle.double)
         this.scene.unshiftPhase(new ToggleDoublePositionPhase(this.scene, true));
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
@@ -2925,6 +2926,10 @@ export class SwitchPhase extends BattlePhase {
 
   start() {
     super.start();
+
+    // Skip modal switch if impossible
+    if (this.isModal && !this.scene.getParty().filter(p => !p.isFainted() && !p.isActive(true)).length)
+      return super.end();
 
     // Override field index to 0 in case of double battle where 2/3 remaining party members fainted at once
     const fieldIndex = this.scene.currentBattle.getBattlerCount() === 1 || this.scene.getParty().filter(p => !p.isFainted()).length > 1 ? this.fieldIndex : 0;
