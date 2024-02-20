@@ -1372,7 +1372,7 @@ export class CommandPhase extends FieldPhase {
             }, null, true);
           } else if (cursor < 4) {
             const targetPokemon = this.scene.getEnemyField().find(p => p.isActive(true));
-            if (targetPokemon.isBoss() && targetPokemon.getBossSegmentIndex()) {
+            if (targetPokemon.isBoss() && targetPokemon.bossSegmentIndex) {
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
               this.scene.ui.setMode(Mode.MESSAGE);
               this.scene.ui.showText(`The target Pokémon is too strong to be caught!\nYou need to weaken it first!`, null, () => {
