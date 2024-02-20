@@ -1,4 +1,5 @@
 import BattleScene, { Button } from "../battle-scene";
+import { EggHatchPhase } from "../egg-hatch-phase";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 
@@ -30,6 +31,12 @@ export default class EggHatchSceneHandler extends UiHandler {
   }
 
   processInput(button: Button): boolean {
+    if (button === Button.ACTION || button === Button.CANCEL) {
+      const phase = this.scene.getCurrentPhase() as EggHatchPhase;
+      if (phase.trySkip())
+        return true;
+    }
+
     return this.scene.ui.getMessageHandler().processInput(button);
   }
 

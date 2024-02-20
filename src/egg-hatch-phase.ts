@@ -32,6 +32,11 @@ export class EggHatchPhase extends BattlePhase {
   private infoContainer: Phaser.GameObjects.Container;
   private statsContainer: StatsContainer;
 
+  private pokemon: PlayerPokemon;
+  private canSkip: boolean;
+  private skipped: boolean;
+  private evolutionBgm: AnySound;
+
   constructor(scene: BattleScene, egg: Egg) {
     super(scene);
 
@@ -153,84 +158,41 @@ export class EggHatchPhase extends BattlePhase {
 
       this.pokemonSprite.setVisible(false);
 
-      let evolutionBgm: AnySound;
+      this.pokemon = pokemon;
 
       pokemon.loadAssets().then(() => {
-        this.scene.time.delayedCall(1000, () => evolutionBgm = this.scene.playSoundWithoutBgm('evolution'));
+        this.scene.time.delayedCall(1000, () => {
+          this.evolutionBgm = this.scene.playSoundWithoutBgm('evolution');
+          this.canSkip = true;
+        });
 
         this.scene.time.delayedCall(2000, () => {
+          if (this.skipped)
+            return;
           this.eggCrackSprite.setVisible(true);
           this.doSpray(1, this.eggSprite.displayHeight / -2);
           this.doEggShake(2).then(() => {
+            if (this.skipped)
+            return;
             this.scene.time.delayedCall(1000, () => {
+              if (this.skipped)
+                return;
               this.doSpray(2, this.eggSprite.displayHeight / -4);
               this.eggCrackSprite.setFrame('1');
               this.scene.time.delayedCall(125, () => this.eggCrackSprite.setFrame('2'));
               this.doEggShake(4).then(() => {
+                if (this.skipped)
+                  return;
                 this.scene.time.delayedCall(1000, () => {
+                  if (this.skipped)
+                    return;
                   this.scene.playSound('egg_crack');
                   this.doSpray(4);
                   this.eggCrackSprite.setFrame('3');
                   this.scene.time.delayedCall(125, () => this.eggCrackSprite.setFrame('4'));
                   this.doEggShake(8, 2).then(() => {
-                    SoundFade.fadeOut(this.scene, evolutionBgm, Utils.fixedInt(100));
-                    for (let e = 0; e < 5; e++)
-                      this.scene.time.delayedCall(Utils.fixedInt(375 * e), () => this.scene.playSound('egg_hatch', { volume: 1 - (e * 0.2) }));
-                    this.eggLightraysOverlay.setVisible(true);
-                    this.eggLightraysOverlay.play('egg_lightrays');
-                    this.scene.tweens.add({
-                      duration: Utils.fixedInt(125),
-                      targets: this.eggHatchOverlay,
-                      alpha: 1,
-                      ease: 'Cubic.easeIn'
-                    });
-                    this.scene.time.delayedCall(Utils.fixedInt(1500), () => {
-                      const isShiny = pokemon.isShiny();
-                      if (pokemon.species.mythical)
-                        this.scene.validateAchv(achvs.HATCH_MYTHICAL);
-                      if (pokemon.species.legendary)
-                        this.scene.validateAchv(achvs.HATCH_LEGENDARY);
-                      if (isShiny)
-                        this.scene.validateAchv(achvs.HATCH_SHINY);
-                      this.eggContainer.setVisible(false);
-                      this.pokemonSprite.play(pokemon.getSpriteKey(true));
-                      this.pokemonSprite.pipelineData['ignoreTimeTint'] = true;
-                      this.pokemonSprite.setVisible(true);
-                      this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
-                        pokemon.cry();
-                        if (isShiny) {
-                          this.scene.time.delayedCall(Utils.fixedInt(1250), () => {
-                            this.pokemonShinySparkle.play('sparkle');
-                            this.scene.playSound('sparkle');
-                          });
-                        }
-                        this.scene.time.delayedCall(Utils.fixedInt(!isShiny ? 1250 : 1750), () => {
-                          this.scene.tweens.add({
-                            targets: this.infoContainer,
-                            duration: Utils.fixedInt(750),
-                            ease: 'Cubic.easeInOut',
-                            x: this.eggHatchBg.displayWidth - 52
-                          });
-
-                          this.scene.playSoundWithoutBgm('evolution_fanfare');
-                          
-                          this.scene.ui.showText(`${pokemon.name} hatched from the egg!`, null, () => {
-                            this.scene.gameData.updateSpeciesDexIvs(pokemon.species.speciesId, pokemon.ivs);
-                            this.scene.gameData.setPokemonCaught(pokemon, true, true).then(() => {
-                              this.scene.ui.showText(null, 0);
-                              this.end();
-                            });
-                          }, null, true, 3000);
-                          //this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
-                        });
-                      });
-                      this.scene.tweens.add({
-                        duration: Utils.fixedInt(3000),
-                        targets: this.eggHatchOverlay,
-                        alpha: 0,
-                        ease: 'Cubic.easeOut'
-                      });
-                    });
+                    if (!this.skipped)
+                      this.doHatch();
                   });
                 });
               });
@@ -273,6 +235,76 @@ export class EggHatchPhase extends BattlePhase {
             }
           })
         }
+      });
+    });
+  }
+
+  trySkip(): boolean {
+    if (!this.canSkip || this.skipped)
+      return false;
+    this.skipped = true;
+    this.doHatch();
+    return true;
+  }
+
+  doHatch(): void {
+    this.canSkip = false;
+    SoundFade.fadeOut(this.scene, this.evolutionBgm, Utils.fixedInt(100));
+    for (let e = 0; e < 5; e++)
+      this.scene.time.delayedCall(Utils.fixedInt(375 * e), () => this.scene.playSound('egg_hatch', { volume: 1 - (e * 0.2) }));
+    this.eggLightraysOverlay.setVisible(true);
+    this.eggLightraysOverlay.play('egg_lightrays');
+    this.scene.tweens.add({
+      duration: Utils.fixedInt(125),
+      targets: this.eggHatchOverlay,
+      alpha: 1,
+      ease: 'Cubic.easeIn'
+    });
+    this.scene.time.delayedCall(Utils.fixedInt(1500), () => {
+      const isShiny = this.pokemon.isShiny();
+      if (this.pokemon.species.mythical)
+        this.scene.validateAchv(achvs.HATCH_MYTHICAL);
+      if (this.pokemon.species.legendary)
+        this.scene.validateAchv(achvs.HATCH_LEGENDARY);
+      if (isShiny)
+        this.scene.validateAchv(achvs.HATCH_SHINY);
+      this.eggContainer.setVisible(false);
+      this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
+      this.pokemonSprite.pipelineData['ignoreTimeTint'] = true;
+      this.pokemonSprite.setVisible(true);
+      this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
+        this.pokemon.cry();
+        if (isShiny) {
+          this.scene.time.delayedCall(Utils.fixedInt(1250), () => {
+            this.pokemonShinySparkle.play('sparkle');
+            this.scene.playSound('sparkle');
+          });
+        }
+        this.scene.time.delayedCall(Utils.fixedInt(!isShiny ? 1250 : 1750), () => {
+          this.scene.tweens.add({
+            targets: this.infoContainer,
+            duration: Utils.fixedInt(750),
+            ease: 'Cubic.easeInOut',
+            x: this.eggHatchBg.displayWidth - 52
+          });
+
+          this.scene.playSoundWithoutBgm('evolution_fanfare');
+          
+          this.scene.ui.showText(`${this.pokemon.name} hatched from the egg!`, null, () => {
+            this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
+            this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
+              this.scene.ui.showText(null, 0);
+              this.end();
+            });
+          }, null, true, 3000);
+          //this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
+        });
+      });
+      this.scene.tweens.add({
+        duration: Utils.fixedInt(3000),
+        targets: this.eggHatchOverlay,
+        alpha: 0,
+        ease: 'Cubic.easeOut'
       });
     });
   }
