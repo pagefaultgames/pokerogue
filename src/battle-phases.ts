@@ -1755,8 +1755,8 @@ export class CommonAnimPhase extends PokemonPhase {
 
 export class MovePhase extends BattlePhase {
   public pokemon: Pokemon;
+  public move: PokemonMove;
   protected targets: BattlerIndex[];
-  protected move: PokemonMove;
   protected followUp: boolean;
   protected ignorePp: boolean;
   protected cancelled: boolean;

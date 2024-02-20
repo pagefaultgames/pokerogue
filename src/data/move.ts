@@ -916,14 +916,18 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
   private chargeText: string;
   private tagType: BattlerTagType;
   public chargeEffect: boolean;
+  public sameTurn: boolean;
+  public followUpPriority: integer;
 
-  constructor(chargeAnim: ChargeAnim, chargeText: string, tagType?: BattlerTagType, chargeEffect?: boolean) {
+  constructor(chargeAnim: ChargeAnim, chargeText: string, tagType?: BattlerTagType, chargeEffect: boolean = false, sameTurn: boolean = false, followUpPriority?: integer) {
     super();
 
     this.chargeAnim = chargeAnim;
     this.chargeText = chargeText;
     this.tagType = tagType;
-    this.chargeEffect = !!chargeEffect;
+    this.chargeEffect = chargeEffect;
+    this.sameTurn = sameTurn;
+    this.followUpPriority = followUpPriority;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
@@ -939,6 +943,8 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
             applyMoveAttrs(MoveEffectAttr, user, target, move);
           user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
           user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true });
+          if (this.sameTurn)
+            user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], user.moveset.find(m => m.moveId === move.id), true), this.followUpPriority);
           resolve(true);
         });
       } else
@@ -1594,7 +1600,6 @@ export class LapseBattlerTagAttr extends MoveEffectAttr {
     return true;
   }
 }
-
 
 export class RemoveBattlerTagAttr extends MoveEffectAttr {
   public tagTypes: BattlerTagType[];
@@ -3754,8 +3759,8 @@ export function initMoves() {
     new AttackMove(Moves.TROP_KICK, "Trop Kick", Type.GRASS, MoveCategory.PHYSICAL, 70, 100, 15, -1, "The user lands an intense kick of tropical origins on the target. This also lowers the target's Attack stat.", 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new StatusMove(Moves.INSTRUCT, "Instruct (N)", Type.PSYCHIC, -1, 15, -1, "The user instructs the target to use the target's last move again.", -1, 0, 7),
-    new AttackMove(Moves.BEAK_BLAST, "Beak Blast", Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, "The user first heats up its beak, and then it attacks the target. Making direct contact with the Pokémon while it's heating up its beak results in a burn.", -1, -3, 7)
-      .attr(ChargeAttr, ChargeAnim.BEAK_BLAST_CHARGING, "started\nheating up its beak!")
+    new AttackMove(Moves.BEAK_BLAST, "Beak Blast (P)", Type.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, "The user first heats up its beak, and then it attacks the target. Making direct contact with the Pokémon while it's heating up its beak results in a burn.", -1, 5, 7)
+      .attr(ChargeAttr, ChargeAnim.BEAK_BLAST_CHARGING, "started\nheating up its beak!", undefined, false, true, -3)
       .ballBombMove(),
     new AttackMove(Moves.CLANGING_SCALES, "Clanging Scales", Type.DRAGON, MoveCategory.SPECIAL, 110, 100, 5, -1, "The user rubs the scales on its entire body and makes a huge noise to attack opposing Pokémon. The user's Defense stat goes down after the attack.", 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.DEF, -1, true)
