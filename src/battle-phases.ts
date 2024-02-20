@@ -284,11 +284,12 @@ export class SelectStarterPhase extends BattlePhase {
       const loadPokemonAssets: Promise<void>[] = [];
       for (let starter of starters) {
         const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
+        const starterFormIndex = Math.min(starterProps.formIndex, starter.species.forms.length - 1);
         const starterGender = starter.species.malePercent !== null
           ? !starterProps.female ? Gender.MALE : Gender.FEMALE
           : Gender.GENDERLESS;
         const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-        const starterPokemon = this.scene.addPlayerPokemon(starter.species, startingLevel, starterProps.abilityIndex, starterProps.formIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
+        const starterPokemon = this.scene.addPlayerPokemon(starter.species, startingLevel, starterProps.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
         if (starter.pokerus)
           starterPokemon.pokerus = true;
         if (this.scene.gameMode === GameMode.SPLICED_ENDLESS)

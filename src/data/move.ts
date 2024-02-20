@@ -2944,7 +2944,7 @@ export function initMoves() {
     new AttackMove(Moves.NEEDLE_ARM, "Needle Arm", Type.GRASS, MoveCategory.PHYSICAL, 60, 100, 15, -1, "The user attacks by wildly swinging its thorny arms. This may also make the target flinch.", 30, 0, 3)
       .attr(FlinchAttr),
     new SelfStatusMove(Moves.SLACK_OFF, "Slack Off", Type.NORMAL, -1, 10, -1, "The user slacks off, restoring its own HP by up to half of its max HP.", -1, 0, 3)
-      .attr(HealAttr),
+      .attr(HealAttr, 0.5),
     new AttackMove(Moves.HYPER_VOICE, "Hyper Voice", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, 117, "The user lets loose a horribly echoing shout with the power to inflict damage.", -1, 0, 3)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
