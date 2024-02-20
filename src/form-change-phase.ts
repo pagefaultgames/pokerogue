@@ -186,6 +186,13 @@ export class QuietFormChangePhase extends BattlePhase {
 
     const preName = this.pokemon.name;
 
+    if (!this.pokemon.isOnField()) {
+      this.pokemon.changeForm(this.formChange).then(() => {
+        this.scene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), null, true);
+      });
+      return;
+    }
+
     const getPokemonSprite = () => {
       const sprite = this.scene.addPokemonSprite(this.pokemon, this.pokemon.x + this.pokemon.getSprite().x, this.pokemon.y + this.pokemon.getSprite().y, `pkmn__sub`);
       sprite.setOrigin(0.5, 1);
