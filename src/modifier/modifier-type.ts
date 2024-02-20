@@ -1090,9 +1090,12 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
     pool[t].reduce((total: integer, modifierType: WeightedModifierType) => {
       const weightedModifierType = modifierType as WeightedModifierType;
       const existingModifiers = party[0].scene.findModifiers(m => (m.type.generatorId || m.type.id) === weightedModifierType.modifierType.id, player);
+      const itemModifierType = weightedModifierType.modifierType instanceof ModifierTypeGenerator
+        ? weightedModifierType.modifierType.generateType(party)
+        : weightedModifierType;
       const weight = !existingModifiers.length
-        || weightedModifierType.modifierType instanceof PokemonHeldItemModifierType
-        || (weightedModifierType.modifierType instanceof ModifierTypeGenerator && weightedModifierType.modifierType.generateType(party) instanceof PokemonHeldItemModifierType)
+        || itemModifierType instanceof PokemonHeldItemModifierType
+        || itemModifierType instanceof FormChangeItemModifierType
         || existingModifiers.find(m => m.stackCount < m.getMaxStackCount(party[0].scene, true))
         ? weightedModifierType.weight instanceof Function
           ? (weightedModifierType.weight as Function)(party)
