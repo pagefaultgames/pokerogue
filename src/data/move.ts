@@ -770,7 +770,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return !(this.selfTarget ? user : target).status ? Math.floor(move.chance * -0.1) : 0;
+    return !(this.selfTarget ? user : target).status && target.getAttackMoveEffectiveness(move.type) ? Math.floor(move.chance * -0.1) : 0;
   }
 }
 
