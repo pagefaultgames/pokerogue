@@ -157,3 +157,7 @@ body {
 #layout:fullscreen #dpad, #layout:fullscreen #apad {
   bottom: 6rem;
 }
+
+input:-internal-autofill-selected {
+  -webkit-background-clip: text;
+}

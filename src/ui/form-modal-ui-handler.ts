@@ -50,6 +50,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       this.modalContainer.add(label);
 
       const inputContainer = this.scene.add.container(70, (hasTitle ? 28 : 2) + 20 * f);
+      inputContainer.setVisible(false);
 
       const inputBg = addWindow(this.scene, 0, 0, 80, 16, false, false, 0, 0, WindowVariant.XTHIN);
 
