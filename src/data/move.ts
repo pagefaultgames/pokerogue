@@ -1518,7 +1518,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       : null;
   }
 
-  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+  getTagTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     switch (this.tagType) {
       case BattlerTagType.RECHARGING:
         return -16;
@@ -1566,12 +1566,19 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
         return 3;
     }
   }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    let chance = this.getTagChance(user, target, move);
+    if (chance < 0)
+      chance = 100;
+    return Math.floor(this.getTagTargetBenefitScore(user, target, move) * (chance / 100));
+  }
 }
 
 export class LapseBattlerTagAttr extends MoveEffectAttr {
   public tagTypes: BattlerTagType[];
 
-  constructor(tagTypes: BattlerTagType[], selfTarget?: boolean) {
+  constructor(tagTypes: BattlerTagType[], selfTarget: boolean = false) {
     super(selfTarget);
 
     this.tagTypes = tagTypes;
@@ -1583,6 +1590,27 @@ export class LapseBattlerTagAttr extends MoveEffectAttr {
 
     for (let tagType of this.tagTypes)
       (this.selfTarget ? user : target).lapseTag(tagType);
+    
+    return true;
+  }
+}
+
+
+export class RemoveBattlerTagAttr extends MoveEffectAttr {
+  public tagTypes: BattlerTagType[];
+
+  constructor(tagTypes: BattlerTagType[], selfTarget: boolean = false) {
+    super(selfTarget);
+
+    this.tagTypes = tagTypes;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    for (let tagType of this.tagTypes)
+      (this.selfTarget ? user : target).removeTag(tagType);
     
     return true;
   }
@@ -3064,7 +3092,7 @@ export function initMoves() {
     new AttackMove(Moves.NATURAL_GIFT, "Natural Gift (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, "The user draws power to attack by using its held Berry. The Berry determines the move's type and power.", -1, 0, 4)
       .makesContact(false),
     new AttackMove(Moves.FEINT, "Feint", Type.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, "This attack hits a target using a move such as Protect or Detect. This also lifts the effects of those moves.", -1, 2, 4)
-      .condition((user, target, move) => !!target.getTag(BattlerTagType.PROTECTED))
+      .attr(RemoveBattlerTagAttr, [ BattlerTagType.PROTECTED ])
       .makesContact(false)
       .ignoresProtect(),
     new AttackMove(Moves.PLUCK, "Pluck (N)", Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 20, -1, "The user pecks the target. If the target is holding a Berry, the user eats it and gains its effect.", -1, 0, 4),
