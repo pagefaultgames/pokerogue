@@ -2296,20 +2296,23 @@ export class EnemyPokemon extends Pokemon {
     if (this.isFainted())
       return 0;
 
-    if (!ignoreSegments && this.isBoss()) {
-      const segmentSize = this.getMaxHp() / this.bossSegments;
-      for (let s = this.bossSegments - 1; s > 0; s--) {
-        const hpThreshold = segmentSize * s;
-        const roundedHpThreshold = Math.round(hpThreshold);
-        if (this.hp > roundedHpThreshold) {
-          if (this.hp - damage < roundedHpThreshold) {
-            const bypassSegment = this.canBypassBossSegments() && (this.hp - roundedHpThreshold) / damage < 0.1;
-            damage = this.hp - (bypassSegment ? Math.round(hpThreshold - segmentSize) : roundedHpThreshold);
-            this.handleBossSegmentCleared(s);
+    if (this.isBoss()) {
+      if (!ignoreSegments) {
+        const segmentSize = this.getMaxHp() / this.bossSegments;
+        for (let s = this.bossSegmentIndex; s > 0; s--) {
+          const hpThreshold = segmentSize * s;
+          const roundedHpThreshold = Math.round(hpThreshold);
+          if (this.hp >= roundedHpThreshold) {
+            if (this.hp - damage < roundedHpThreshold) {
+              const bypassSegment = this.canBypassBossSegments() && (this.hp - roundedHpThreshold) / damage < 0.1;
+              damage = this.hp - (bypassSegment ? Math.round(hpThreshold - segmentSize) : roundedHpThreshold);
+              this.handleBossSegmentCleared(s);
+            }
+            break;
           }
-          break;
         }
       }
+      this.battleInfo.updateBossSegments(this);
     }
 
     return super.damage(damage, ignoreSegments, preventEndure);

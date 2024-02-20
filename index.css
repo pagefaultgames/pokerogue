@@ -160,4 +160,5 @@ body {
 
 input:-internal-autofill-selected {
   -webkit-background-clip: text;
+  background-clip: text;
 }

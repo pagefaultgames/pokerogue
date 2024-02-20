@@ -167,7 +167,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.ownedIcon.setTint(0x808080);
 
       if (this.boss)
-        this.updateBossSegmentDividers(pokemon.getMaxHp());
+        this.updateBossSegmentDividers(pokemon as EnemyPokemon);
     }
 
     this.hpBar.setScale(pokemon.getHpRatio(), 1);
@@ -200,9 +200,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     this.box.setTexture(this.getTextureName());
 
-    if (this.player) {
+    if (this.player)
       this.y -= 12 * (mini ? 1 : -1);
-    }
 
     const offsetElements = [ this.nameText, this.genderText, this.statusIndicator, this.levelContainer ];
     offsetElements.forEach(el => el.y += 1.5 * (mini ? -1 : 1));
@@ -227,17 +226,17 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     }
     
     this.bossSegments = boss ? pokemon.bossSegments : 0;
-    this.updateBossSegmentDividers(pokemon.hp);
+    this.updateBossSegmentDividers(pokemon);
   }
 
-  updateBossSegmentDividers(hp: number): void {
+  updateBossSegmentDividers(pokemon: EnemyPokemon): void {
     while (this.hpBarSegmentDividers.length)
       this.hpBarSegmentDividers.pop().destroy();
 
     if (this.boss && this.bossSegments > 1) {
       for (let s = 1; s < this.bossSegments; s++) {
-        const dividerX = (Math.round((hp / this.bossSegments) * s) / hp) * this.hpBar.width;
-        const divider = this.scene.add.rectangle(0, 0, 1, this.hpBar.height, 0xffffff);
+        const dividerX = (Math.round((pokemon.hp / this.bossSegments) * s) / pokemon.hp) * this.hpBar.width;
+        const divider = this.scene.add.rectangle(0, 0, 1, this.hpBar.height, pokemon.bossSegmentIndex >= s ? 0xFFFFFF : 0x404040);
         divider.setOrigin(0.5, 0);
         this.add(divider);
 
