@@ -343,8 +343,10 @@ export default class SpritePipeline extends FieldSpritePipeline {
         const position = isEntityObj
             ? [ sprite.parentContainer.x, sprite.parentContainer.y ]
             : [ sprite.x, sprite.y ];
-        position[0] += field.x / field.scale;
-        position[1] += field.y / field.scale;
+        if (field) {
+            position[0] += field.x / field.scale;
+            position[1] += field.y / field.scale;
+        }
         position[0] += -(sprite.width - (sprite.frame.width)) / 2 + sprite.frame.x;
         if (sprite.originY === 0.5)
             position[1] += (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1);
@@ -352,7 +354,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
         this.set3fv('teraColor', teraColor.map(c => c / 255));
         this.set1i('hasShadow', hasShadow ? 1 : 0);
         this.set1i('yCenter', sprite.originY === 0.5 ? 1 : 0);
-        this.set1f('fieldScale', field.scale);
+        this.set1f('fieldScale', field?.scale || 1);
         this.set2f('relPosition', position[0], position[1]);
         this.set2f('texFrameUv', sprite.frame.u0, sprite.frame.v0);
         this.set2f('size', sprite.frame.width, sprite.height);
