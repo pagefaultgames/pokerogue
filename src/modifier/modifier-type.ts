@@ -805,8 +805,8 @@ export const modifierTypes = {
 
   GRIP_CLAW: () => new ContactHeldItemTransferChanceModifierType('Grip Claw', 10),
 
-  HEALING_CHARM: () => new ModifierType('Healing Charm', 'Increases the effectiveness of HP restoring moves and items by 25% (excludes revives)',
-    (type, _args) => new Modifiers.HealingBoosterModifier(type, 1.25), 'healing_charm'),
+  HEALING_CHARM: () => new ModifierType('Healing Charm', 'Increases the effectiveness of HP restoring moves and items by 10% (excludes revives)',
+    (type, _args) => new Modifiers.HealingBoosterModifier(type, 1.1), 'healing_charm'),
   CANDY_JAR: () => new ModifierType('Candy Jar', 'Increases the number of levels added by Rare Candy items by 1', (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type)),
 
   BERRY_POUCH: () => new ModifierType('Berry Pouch', 'Adds a 25% chance that a used berry will not be consumed',
@@ -846,7 +846,7 @@ export const modifierTypes = {
   ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Token', 'Increases damage by 20%', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 20), 'wl_item_drop'),
   ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Protection Token', 'Reduces incoming damage by 10%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 10), 'wl_guard_spec'),
   //ENEMY_SUPER_EFFECT_BOOSTER: () => new ModifierType('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new Modifiers.EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_custom_super_effective'),
-  ENEMY_HEAL: () => new ModifierType('Recovery Token', 'Heals 5% of max HP every turn', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 10), 'wl_potion'),
+  ENEMY_HEAL: () => new ModifierType('Recovery Token', 'Heals 5% of max HP every turn', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 5), 'wl_potion'),
   ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Poison Token', 10, StatusEffect.POISON, 'wl_antidote'),
   ENEMY_ATTACK_PARALYZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Paralyze Token', 10, StatusEffect.PARALYSIS, 'wl_paralyze_heal'),
   ENEMY_ATTACK_SLEEP_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Sleep Token', 10, StatusEffect.SLEEP, 'wl_awakening'),
@@ -958,7 +958,6 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.SOUL_DEW, 3),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 2),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 2),
-    new WeightedModifierType(modifierTypes.HEALING_CHARM, 1),
     new WeightedModifierType(modifierTypes.BATON, 1),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 3),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 2),
@@ -978,6 +977,7 @@ const modifierPool = {
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 32),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 18),
+    new WeightedModifierType(modifierTypes.HEALING_CHARM, 18),
     new WeightedModifierType(modifierTypes.VOUCHER_PLUS, 6),
     new WeightedModifierType(modifierTypes.MEGA_BRACELET, (party: Pokemon[]) => Math.ceil(party[0].scene.currentBattle.waveIndex / 50) * 8),
     new WeightedModifierType(modifierTypes.DYNAMAX_BAND, (party: Pokemon[]) => Math.ceil(party[0].scene.currentBattle.waveIndex / 50) * 8),

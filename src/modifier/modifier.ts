@@ -1220,13 +1220,13 @@ export class HealingBoosterModifier extends PersistentModifier {
 
   apply(args: any[]): boolean {
     const healingMultiplier = args[0] as Utils.IntegerHolder;
-    healingMultiplier.value = Math.floor(healingMultiplier.value * (this.multiplier + (this.getStackCount() - 1)));
+    healingMultiplier.value *= 1 + ((this.multiplier - 1) * this.getStackCount());
 
     return true;
   }
 
   getMaxStackCount(scene: BattleScene): integer {
-    return 4;
+    return 5;
   }
 }
 
