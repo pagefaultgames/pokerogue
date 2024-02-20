@@ -216,8 +216,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     tintSprite.setVisible(false);
 
-    this.add(sprite);
-    this.add(tintSprite);
+    this.addAt(sprite, 0);
+    this.addAt(tintSprite, 1);
 
     if (this.isShiny() && !this.shinySparkle)
       this.initShinySparkle();
