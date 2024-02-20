@@ -435,6 +435,8 @@ export class EncounterPhase extends BattlePhase {
         else {
           const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
           battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, false, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
+          if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS)
+            battle.enemyParty[e].ivs = new Array(6).fill(31);
           this.scene.getParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
             applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, battle.enemyParty[e]);
           });
