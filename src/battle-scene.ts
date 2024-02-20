@@ -591,8 +591,6 @@ export default class BattleScene extends Phaser.Scene {
 				this.pushPhase(new LoginPhase(this));
 				if (!bypassLogin)
 					this.pushPhase(new ConsolidateDataPhase(this)); // TODO: Remove
-				if (!this.gameData.gender)
-					this.pushPhase(new SelectGenderPhase(this));
 				this.pushPhase(new CheckLoadPhase(this));
 			} else
 				this.pushPhase(new EncounterPhase(this));

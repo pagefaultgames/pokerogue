@@ -73,7 +73,7 @@ export class LoginPhase extends BattlePhase {
         this.scene.playSound('menu_open');
 
         const loadData = () => {
-          this.scene.gameData.loadSystem().then(() => this.end());
+          updateUserInfo().then(() => this.scene.gameData.loadSystem().then(() => this.end()));
         };
     
         this.scene.ui.setMode(Mode.LOGIN_FORM, {
@@ -98,14 +98,25 @@ export class LoginPhase extends BattlePhase {
           ]
         });
         return null;
-      } else
-        this.end();
+      } else {
+        this.scene.gameData.loadSystem().then(success => {
+          if (success)
+            this.end();
+          else {
+            this.scene.ui.setMode(Mode.MESSAGE);
+            this.scene.ui.showText('Failed to load save data. Please reload the page.\nIf this continues, please contact the administrator.');
+          }
+        });
+      }
     });
   }
 
   end(): void {
     this.scene.ui.setMode(Mode.MESSAGE);
 
+    if (!this.scene.gameData.gender)
+      this.scene.unshiftPhase(new SelectGenderPhase(this.scene));
+    
     handleTutorial(this.scene, Tutorial.Intro).then(() => super.end());
   }
 }

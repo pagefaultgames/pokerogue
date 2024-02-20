@@ -189,7 +189,6 @@ export class GameData {
     };
     this.eggs = [];
     this.initDexData();
-    this.loadSystem();
   }
 
   public saveSystem(): Promise<boolean> {
@@ -242,66 +241,71 @@ export class GameData {
   public loadSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin && !localStorage.hasOwnProperty('data'))
-        return false;
+        return resolve(false);
 
       const handleSystemData = (systemDataStr: string) => {
-        const systemData = this.parseSystemData(systemDataStr);
+        try {
+          const systemData = this.parseSystemData(systemDataStr);
 
-        console.debug(systemData);
+          console.debug(systemData);
 
-        /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
-        
-        if (versions[0] !== versions[1]) {
-          const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
-        }*/
+          /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
+          
+          if (versions[0] !== versions[1]) {
+            const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
+          }*/
 
-        this.trainerId = systemData.trainerId;
-        this.secretId = systemData.secretId;
+          this.trainerId = systemData.trainerId;
+          this.secretId = systemData.secretId;
 
-        this.gender = systemData.gender;
+          this.gender = systemData.gender;
 
-        this.saveSetting(Setting.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
+          this.saveSetting(Setting.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
 
-        if (systemData.gameStats)
-          this.gameStats = systemData.gameStats;
+          if (systemData.gameStats)
+            this.gameStats = systemData.gameStats;
 
-        if (systemData.unlocks) {
-          for (let key of Object.keys(systemData.unlocks)) {
-            if (this.unlocks.hasOwnProperty(key))
-              this.unlocks[key] = systemData.unlocks[key];
+          if (systemData.unlocks) {
+            for (let key of Object.keys(systemData.unlocks)) {
+              if (this.unlocks.hasOwnProperty(key))
+                this.unlocks[key] = systemData.unlocks[key];
+            }
           }
-        }
 
-        if (systemData.achvUnlocks) {
-          for (let a of Object.keys(systemData.achvUnlocks)) {
-            if (achvs.hasOwnProperty(a))
-              this.achvUnlocks[a] = systemData.achvUnlocks[a];
-          } 
-        }
-
-        if (systemData.voucherUnlocks) {
-          for (let v of Object.keys(systemData.voucherUnlocks)) {
-            if (vouchers.hasOwnProperty(v))
-              this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
+          if (systemData.achvUnlocks) {
+            for (let a of Object.keys(systemData.achvUnlocks)) {
+              if (achvs.hasOwnProperty(a))
+                this.achvUnlocks[a] = systemData.achvUnlocks[a];
+            } 
           }
+
+          if (systemData.voucherUnlocks) {
+            for (let v of Object.keys(systemData.voucherUnlocks)) {
+              if (vouchers.hasOwnProperty(v))
+                this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
+            }
+          }
+
+          if (systemData.voucherCounts) {
+            Utils.getEnumKeys(VoucherType).forEach(key => {
+              const index = VoucherType[key];
+              this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
+            });
+          }
+
+          this.eggs = systemData.eggs
+            ? systemData.eggs.map(e => e.toEgg())
+            : [];
+
+          this.dexData = Object.assign(this.dexData, systemData.dexData);
+          this.consolidateDexData(this.dexData);
+          this.defaultDexData = null;
+
+          resolve(true);
+        } catch (err) {
+          console.error(err);
+          resolve(false);
         }
-
-        if (systemData.voucherCounts) {
-          Utils.getEnumKeys(VoucherType).forEach(key => {
-            const index = VoucherType[key];
-            this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
-          });
-        }
-
-        this.eggs = systemData.eggs
-          ? systemData.eggs.map(e => e.toEgg())
-          : [];
-
-        this.dexData = Object.assign(this.dexData, systemData.dexData);
-        this.consolidateDexData(this.dexData);
-        this.defaultDexData = null;
-
-        resolve(true);
       }
 
       if (!bypassLogin) {

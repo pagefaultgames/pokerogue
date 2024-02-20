@@ -7,6 +7,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { GameDataType } from "../system/game-data";
 import { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { Tutorial, handleTutorial } from "../tutorial";
+import { updateUserInfo } from "../account";
 
 export enum MenuOptions {
   GAME_SETTINGS,
@@ -220,7 +221,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               if (!res.ok)
                 console.error(`Log out failed (${res.status}: ${res.statusText})`);
               Utils.setCookie(Utils.sessionIdKey, '');
-              this.scene.reset(true);
+              updateUserInfo().then(() => this.scene.reset(true));
             });
           };
           if (this.scene.currentBattle) {
