@@ -3244,11 +3244,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     this.originalY = pokemon.y;
 
-    const relMaxHp = !pokemon.isBoss()
-      ? pokemon.getMaxHp()
-      : Math.round(pokemon.getMaxHp() / pokemon.bossSegments);
-
-    const _3m = 3 * relMaxHp;
+    const _3m = 3 * pokemon.getMaxHp();
     const _2h = 2 * pokemon.hp;
     const catchRate = pokemon.species.catchRate;
     const pokeballMultiplier = getPokeballCatchMultiplier(this.pokeballType);
