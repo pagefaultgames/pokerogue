@@ -65,7 +65,10 @@ export enum FormChangeItem {
   GRISEOUS_CORE,
   REVEAL_GLASS,
   GRACIDEA,
-  MAX_MUSHROOMS
+  MAX_MUSHROOMS,
+  WELLSPRING_MASK,
+  HEARTHFLAME_MASK,
+  CORNERSTONE_MASK
 }
 
 export type SpeciesFormChangeConditionPredicate = (p: Pokemon) => boolean;
@@ -502,13 +505,6 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.MELMETAL]: [
     new SpeciesFormChange(Species.MELMETAL, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
-  [Species.ETERNATUS]: [
-    new SpeciesFormChange(Species.ETERNATUS, '', SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeManualTrigger()),
-    new SpeciesFormChange(Species.ETERNATUS, '', SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
-  ],
-  [Species.ENAMORUS]: [
-    new SpeciesFormChange(Species.ENAMORUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItem.REVEAL_GLASS))
-  ],
   [Species.RILLABOOM]: [
     new SpeciesFormChange(Species.RILLABOOM, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
@@ -563,9 +559,21 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.DURALUDON]: [
     new SpeciesFormChange(Species.DURALUDON, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
+  [Species.ETERNATUS]: [
+    new SpeciesFormChange(Species.ETERNATUS, '', SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeManualTrigger()),
+    new SpeciesFormChange(Species.ETERNATUS, '', SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+  ],
   [Species.URSHIFU]: [
     new SpeciesFormChange(Species.URSHIFU, 'single-strike', SpeciesFormKey.GIGANTAMAX_SINGLE, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
     new SpeciesFormChange(Species.URSHIFU, 'rapid-strike', SpeciesFormKey.GIGANTAMAX_RAPID, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+  ],
+  [Species.ENAMORUS]: [
+    new SpeciesFormChange(Species.ENAMORUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItem.REVEAL_GLASS))
+  ],
+  [Species.OGERPON]: [
+    new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'wellspring-mask', new SpeciesFormChangeItemTrigger(FormChangeItem.WELLSPRING_MASK)),
+    new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'hearthflame-mask', new SpeciesFormChangeItemTrigger(FormChangeItem.HEARTHFLAME_MASK)),
+    new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'cornerstone-mask', new SpeciesFormChangeItemTrigger(FormChangeItem.CORNERSTONE_MASK))
   ]
 };
 
