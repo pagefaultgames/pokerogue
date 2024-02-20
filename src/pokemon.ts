@@ -2381,7 +2381,8 @@ export class EnemyPokemon extends Pokemon {
           const healAmount = Math.min(amount, this.getMaxHp() - this.hp, Math.round(hpThreshold + (segmentSize * segmentBypassCount) - this.hp));
           this.hp += healAmount;
           return healAmount;
-        }
+        } else if (s >= this.bossSegmentIndex)
+          return super.heal(amount);
       }
     }
 
