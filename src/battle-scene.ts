@@ -241,6 +241,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('icon_spliced', 'ui');
 		this.loadImage('icon_tera', 'ui');
 		this.loadImage('type_tera', 'ui');
+		this.loadAtlas('type_bgs', 'ui');
 
 		this.loadImage('pb_tray_overlay_player', 'ui');
 		this.loadImage('pb_tray_overlay_enemy', 'ui');

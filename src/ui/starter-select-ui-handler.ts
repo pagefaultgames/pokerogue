@@ -18,6 +18,9 @@ import { Nature, getNatureName } from "../data/nature";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { pokemonFormChanges } from "../data/pokemon-forms";
 import { Tutorial, handleTutorial } from "../tutorial";
+import { pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
+import { allMoves } from "../data/move";
+import { Type } from "../data/type";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -46,6 +49,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonNatureText: BBCodeText;
   private pokemonCaughtCountLabelText: Phaser.GameObjects.Text;
   private pokemonCaughtCountText: Phaser.GameObjects.Text;
+  private pokemonMoveContainers: Phaser.GameObjects.Container[];
+  private pokemonMoveBgs: Phaser.GameObjects.NineSlice[];
+  private pokemonMoveLabels: Phaser.GameObjects.Text[];
   private genOptionsText: Phaser.GameObjects.Text;
   private instructionsText: Phaser.GameObjects.Text;
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
@@ -171,6 +177,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonCaughtCountText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonCaughtCountText);
 
+    this.pokemonMoveContainers = [];
+    this.pokemonMoveBgs = [];
+    this.pokemonMoveLabels = [];
+
     this.genOptionsText = addTextObject(this.scene, 124, 7, '', TextStyle.WINDOW, { fontSize: 72, lineSpacing: 39, align: 'center' });
     this.genOptionsText.setShadowOffset(4.5, 4.5);
     this.genOptionsText.setOrigin(0.5, 0);
@@ -289,6 +299,27 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.pokemonSprite = this.scene.add.sprite(53, 63, `pkmn__sub`);
     this.starterSelectContainer.add(this.pokemonSprite);
+
+    for (let m = 0; m < 4; m++) {
+      const moveContainer = this.scene.add.container(102, 16 + 7 * m);
+      moveContainer.setScale(0.5);
+
+      const moveBg = this.scene.add.nineslice(0, 0, 'type_bgs', 'unknown', 92, 14, 2, 2, 2, 2);
+      moveBg.setOrigin(1, 0);
+
+      const moveLabel = addTextObject(this.scene, -moveBg.width / 2, 0, 'Thunder Wave', TextStyle.PARTY);
+      moveLabel.setOrigin(0.5, 0);
+
+      this.pokemonMoveBgs.push(moveBg);
+      this.pokemonMoveLabels.push(moveLabel);
+
+      moveContainer.add(moveBg);
+      moveContainer.add(moveLabel);
+
+      this.pokemonMoveContainers.push(moveContainer);
+
+      this.starterSelectContainer.add(moveContainer);
+    }
 
     this.instructionsText = addTextObject(this.scene, 4, 156, '', TextStyle.PARTY, { fontSize: '42px' });
     this.starterSelectContainer.add(this.instructionsText);
@@ -490,6 +521,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 label: 'Toggle IVs',
                 handler: () => {
                   this.toggleStatsMode();
+                  ui.setMode(Mode.STARTER_SELECT);
+                }
+              },
+              {
+                label: 'Cancel',
+                handler: () => {
                   ui.setMode(Mode.STARTER_SELECT);
                 }
               }
@@ -861,6 +898,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.assetLoadCancelled = null;
     }
 
+    const starterMoves = [];
+
     if (species) {
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
       if (!dexEntry.caughtAttr) {
@@ -934,6 +973,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonAbilityText.setShadowColor(getTextColor(!isHidden ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
 
         this.pokemonNatureText.setText(getNatureName(natureIndex as unknown as Nature, true, true));
+
+        starterMoves.push(...pokemonSpeciesLevelMoves[species.speciesId].slice(0, 4).filter(lm => lm[0] <= 5).map(lm => lm[1]));
       } else {
         this.pokemonAbilityText.setText('');
         this.pokemonNatureText.setText('');
@@ -942,6 +983,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonGenderText.setText('');
       this.pokemonAbilityText.setText('');
       this.pokemonNatureText.setText('');
+    }
+
+    for (let m = 0; m < 4; m++) {
+      const move = m < starterMoves.length ? allMoves[starterMoves[m]] : null;
+      this.pokemonMoveBgs[m].setFrame(Type[move ? move.type : Type.UNKNOWN].toString().toLowerCase());
+      this.pokemonMoveLabels[m].setText(move ? move.name : '-');
+      this.pokemonMoveContainers[m].setVisible(!!move);
     }
 
     this.updateInstructions();
