@@ -7,7 +7,7 @@ import { PokeballType } from "../data/pokeball";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
 import { Status } from "../data/status-effect";
-import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove, PokemonSummonData } from "../pokemon";
+import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../pokemon";
 
 export default class PokemonData {
   public id: integer;
@@ -48,7 +48,7 @@ export default class PokemonData {
     this.id = source.id;
     this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
     this.species = sourcePokemon ? sourcePokemon.species.speciesId : source.species;
-    this.formIndex = source.formIndex;
+    this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
     this.abilityIndex = source.abilityIndex;
     this.shiny = source.shiny;
     this.pokeball = source.pokeball;

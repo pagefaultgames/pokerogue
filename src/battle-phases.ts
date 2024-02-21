@@ -284,7 +284,7 @@ export class SelectStarterPhase extends BattlePhase {
       const loadPokemonAssets: Promise<void>[] = [];
       for (let starter of starters) {
         const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
-        const starterFormIndex = Math.min(starterProps.formIndex, starter.species.forms.length - 1);
+        const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
         const starterGender = starter.species.malePercent !== null
           ? !starterProps.female ? Gender.MALE : Gender.FEMALE
           : Gender.GENDERLESS;
