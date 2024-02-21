@@ -4,9 +4,10 @@ import { GrowthRate } from './exp';
 import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from './pokemon-evolutions';
 import { Species } from './enums/species';
 import { Type } from './type';
-import { LevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from './pokemon-level-moves';
+import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from './pokemon-level-moves';
 import { uncatchableSpecies } from './biomes';
 import * as Utils from '../utils';
+import { StarterMoveset } from '../system/game-data';
 
 export enum Region {
   NORMAL,
@@ -257,6 +258,18 @@ export abstract class PokemonSpeciesForm {
       }
     }
     return ret;
+  }
+
+  validateStarterMoveset(moveset: StarterMoveset): boolean {
+    for (let moveId of moveset) {
+      if (pokemonFormLevelMoves.hasOwnProperty(this.speciesId) && pokemonFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex)) {
+        if (!pokemonFormLevelMoves[this.speciesId][this.formIndex].find(lm => lm[0] <= 5 && lm[1] === moveId))
+          return false;
+      } else if (!pokemonSpeciesLevelMoves[this.speciesId].find(lm => lm[0] <= 5 && lm[1] === moveId))
+        return false;
+    }
+
+    return true;
   }
 
   loadAssets(scene: BattleScene, female: boolean, formIndex?: integer, shiny?: boolean, startLoad?: boolean): Promise<void> {

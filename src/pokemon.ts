@@ -35,7 +35,7 @@ import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
 import { GameMode } from './game-mode';
 import { LevelMoves } from './data/pokemon-level-moves';
 import { DamageAchv, achvs } from './system/achv';
-import { DexAttr } from './system/game-data';
+import { DexAttr, StarterMoveset } from './system/game-data';
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from '@material/material-color-utilities';
 import { Nature, getNatureStatMultiplier } from './data/nature';
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger, SpeciesFormChangeStatusEffectTrigger } from './data/pokemon-forms';
@@ -1922,6 +1922,15 @@ export class PlayerPokemon extends Pokemon {
       if (compatible)
         this.compatibleTms.push(moveId);
     }
+  }
+
+  tryPopulateMoveset(moveset: StarterMoveset): boolean {
+    if (!this.getSpeciesForm().validateStarterMoveset(moveset))
+      return false;
+
+    this.moveset = moveset.map(m => new PokemonMove(m));
+
+    return true;
   }
 
   switchOut(batonPass: boolean): Promise<void> {

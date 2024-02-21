@@ -9,7 +9,7 @@ import { allAbilities } from "../data/ability";
 import { GameMode, gameModeNames } from "../game-mode";
 import { Unlockables } from "../system/unlockables";
 import { GrowthRate, getGrowthRateColor } from "../data/exp";
-import { DexAttr, DexEntry } from "../system/game-data";
+import { DexAttr, DexEntry, StarterFormMoveData, StarterMoveset } from "../system/game-data";
 import * as Utils from "../utils";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "../sprite/pokemon-icon-anim-handler";
 import { StatsContainer } from "./stats-container";
@@ -18,9 +18,10 @@ import { Nature, getNatureName } from "../data/nature";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { pokemonFormChanges } from "../data/pokemon-forms";
 import { Tutorial, handleTutorial } from "../tutorial";
-import { pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
+import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../data/pokemon-level-moves";
 import { allMoves } from "../data/move";
 import { Type } from "../data/type";
+import { Moves } from "../data/enums/moves";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -28,6 +29,7 @@ export interface Starter {
   species: PokemonSpecies;
   dexAttr: bigint;
   nature: Nature;
+  moveset: StarterMoveset;
   pokerus: boolean;
 }
 
@@ -64,6 +66,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private natureCursor: integer = 0;
   private genCursor: integer = 0;
   private genScrollCursor: integer = 0;
+  private starterMoveset: StarterMoveset;
 
   private genSpecies: PokemonSpecies[][] = [];
   private lastSpecies: PokemonSpecies;
@@ -74,7 +77,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokerusCursors: integer[] = [];
   private starterAttr: bigint[] = [];
   private starterNatures: Nature[] = [];
+  private starterMovesets: StarterMoveset[] = [];
   private speciesStarterDexEntry: DexEntry;
+  private speciesStarterMoves: Moves[];
   private canCycleShiny: boolean;
   private canCycleForm: boolean;
   private canCycleGender: boolean;
@@ -481,56 +486,125 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         if (!this.speciesStarterDexEntry?.caughtAttr)
           error = true;
         else if (this.starterCursors.length < 6) {
-          ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-            options: [
-              {
-                label: 'Add to Party',
-                handler: () => {
-                  ui.setMode(Mode.STARTER_SELECT);
-                  let isDupe = false;
-                  for (let s = 0; s < this.starterCursors.length; s++) {
-                    if (this.starterGens[s] === this.getGenCursorWithScroll() && this.starterCursors[s] === this.cursor) {
-                      isDupe = true;
-                      break;
-                    }
+          const options = [
+            {
+              label: 'Add to Party',
+              handler: () => {
+                ui.setMode(Mode.STARTER_SELECT);
+                let isDupe = false;
+                for (let s = 0; s < this.starterCursors.length; s++) {
+                  if (this.starterGens[s] === this.getGenCursorWithScroll() && this.starterCursors[s] === this.cursor) {
+                    isDupe = true;
+                    break;
                   }
-                  const species = this.genSpecies[this.getGenCursorWithScroll()][this.cursor];
-                  if (!isDupe && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
-                    const cursorObj = this.starterCursorObjs[this.starterCursors.length];
-                    cursorObj.setVisible(true);
-                    cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
-                    const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
-                    this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex));
-                    this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny));
-                    this.starterGens.push(this.getGenCursorWithScroll());
-                    this.starterCursors.push(this.cursor);
-                    this.starterAttr.push(this.dexAttrCursor);
-                    this.starterNatures.push(this.natureCursor as unknown as Nature);
-                    if (this.speciesLoaded.get(species.speciesId))
-                      species.cry(this.scene);
-                    if (this.starterCursors.length === 6 || this.value === 10)
-                      this.tryStart();
-                    this.updateInstructions();
-                    ui.playSelect();
-                  } else
-                    ui.playError();
-                },
-                overrideSound: true
-              },
-              {
-                label: 'Toggle IVs',
-                handler: () => {
-                  this.toggleStatsMode();
-                  ui.setMode(Mode.STARTER_SELECT);
                 }
+                const species = this.genSpecies[this.getGenCursorWithScroll()][this.cursor];
+                if (!isDupe && this.tryUpdateValue(this.scene.gameData.getSpeciesStarterValue(species.speciesId))) {
+                  const cursorObj = this.starterCursorObjs[this.starterCursors.length];
+                  cursorObj.setVisible(true);
+                  cursorObj.setPosition(this.cursorObj.x, this.cursorObj.y);
+                  const props = this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
+                  this.starterIcons[this.starterCursors.length].setTexture(species.getIconAtlasKey(props.formIndex));
+                  this.starterIcons[this.starterCursors.length].setFrame(species.getIconId(props.female, props.formIndex, props.shiny));
+                  this.starterGens.push(this.getGenCursorWithScroll());
+                  this.starterCursors.push(this.cursor);
+                  this.starterAttr.push(this.dexAttrCursor);
+                  this.starterNatures.push(this.natureCursor as unknown as Nature);
+                  this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
+                  if (this.speciesLoaded.get(species.speciesId))
+                    species.cry(this.scene);
+                  if (this.starterCursors.length === 6 || this.value === 10)
+                    this.tryStart();
+                  this.updateInstructions();
+                  ui.playSelect();
+                } else
+                  ui.playError();
               },
-              {
-                label: 'Cancel',
-                handler: () => {
-                  ui.setMode(Mode.STARTER_SELECT);
-                }
+              overrideSound: true
+            },
+            {
+              label: 'Toggle IVs',
+              handler: () => {
+                this.toggleStatsMode();
+                ui.setMode(Mode.STARTER_SELECT);
               }
-            ],
+            }
+          ];
+          if (this.speciesStarterMoves.length > 1) {
+            const showSwapOptions = (moveset: StarterMoveset) => {
+              ui.setMode(Mode.STARTER_SELECT).then(() => {
+                ui.showText('Select a move to swap out.', null, () => {
+                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                    options: moveset.map((m, i) => {
+                      return {
+                        label: allMoves[m].name,
+                        handler: () => {
+                          ui.setMode(Mode.STARTER_SELECT).then(() => {
+                            ui.showText(`Select a move to swap with ${allMoves[m].name}.`, null, () => {
+                              ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                                options: this.speciesStarterMoves.filter(sm => sm !== m).map(sm => {
+                                  return {
+                                    label: allMoves[sm].name,
+                                    handler: () => {
+                                      const speciesId = this.lastSpecies.speciesId;
+                                      const existingMoveIndex = this.starterMoveset.indexOf(sm);
+                                      this.starterMoveset[i] = sm;
+                                      if (existingMoveIndex > -1)
+                                        this.starterMoveset[existingMoveIndex] = m;
+                                      const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
+                                      if (!this.scene.gameData.starterMoveData.hasOwnProperty(speciesId) && pokemonFormLevelMoves.hasOwnProperty(speciesId)) {
+                                        this.scene.gameData.starterMoveData[speciesId] = pokemonFormLevelMoves.hasOwnProperty(speciesId)
+                                          ? {}
+                                          : this.starterMoveset.slice(0) as StarterMoveset;
+                                      }
+                                      if (pokemonFormLevelMoves.hasOwnProperty(speciesId)) {
+                                        if (!this.scene.gameData.starterMoveData[speciesId].hasOwnProperty(props.formIndex))
+                                          this.scene.gameData.starterMoveData[speciesId][props.formIndex] = this.starterMoveset.slice(0) as StarterMoveset;
+                                      } else
+                                        this.scene.gameData.starterMoveData[speciesId] = this.starterMoveset.slice(0) as StarterMoveset;
+                                      this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, false);
+                                      showSwapOptions(this.starterMoveset);
+                                    }
+                                  };
+                                }).concat({
+                                  label: 'Cancel',
+                                  handler: () => {
+                                    showSwapOptions(this.starterMoveset);
+                                  }
+                                }),
+                                yOffset: 19
+                              });
+                            });
+                          });
+                        }
+                      }
+                    }).concat({
+                      label: 'Cancel',
+                      handler: () => {
+                        this.clearText();
+                        ui.setMode(Mode.STARTER_SELECT);
+                      }
+                    }),
+                    yOffset: 19
+                  });
+                });
+              });
+            };
+            options.push({
+              label: 'Manage Moves',
+              handler: () => {
+                showSwapOptions(this.starterMoveset);
+              }
+            });
+          }
+          options.push({
+            label: 'Cancel',
+            handler: () => {
+              ui.setMode(Mode.STARTER_SELECT);
+            }
+          });
+          ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+            options: options,
             yOffset: 47
           });
           success = true;
@@ -898,7 +972,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.assetLoadCancelled = null;
     }
 
-    const starterMoves = [];
+    this.starterMoveset = null;
+    this.speciesStarterMoves = [];
 
     if (species) {
       const dexEntry = this.scene.gameData.dexData[species.speciesId];
@@ -974,7 +1049,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         this.pokemonNatureText.setText(getNatureName(natureIndex as unknown as Nature, true, true));
 
-        starterMoves.push(...pokemonSpeciesLevelMoves[species.speciesId].slice(0, 4).filter(lm => lm[0] <= 5).map(lm => lm[1]));
+        let levelMoves: LevelMoves;
+        if (pokemonFormLevelMoves.hasOwnProperty(species.speciesId) && pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex))
+          levelMoves = pokemonFormLevelMoves[species.speciesId][formIndex];
+        else
+          levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
+        this.speciesStarterMoves.push(...levelMoves.filter(lm => lm[0] <= 5).map(lm => lm[1]));
+        
+        const speciesMoveData = this.scene.gameData.starterMoveData[species.speciesId];
+        let moveData: StarterMoveset = speciesMoveData
+          ? Array.isArray(speciesMoveData)
+            ? speciesMoveData as StarterMoveset
+            : (speciesMoveData as StarterFormMoveData)[formIndex]
+          : null;
+        this.starterMoveset = moveData || (this.speciesStarterMoves.slice(0, 4) as StarterMoveset);
       } else {
         this.pokemonAbilityText.setText('');
         this.pokemonNatureText.setText('');
@@ -985,8 +1073,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonNatureText.setText('');
     }
 
+    if (!this.starterMoveset)
+      this.starterMoveset = this.speciesStarterMoves.slice(0, 4) as StarterMoveset;
+
     for (let m = 0; m < 4; m++) {
-      const move = m < starterMoves.length ? allMoves[starterMoves[m]] : null;
+      const move = m < this.starterMoveset.length ? allMoves[this.starterMoveset[m]] : null;
       this.pokemonMoveBgs[m].setFrame(Type[move ? move.type : Type.UNKNOWN].toString().toLowerCase());
       this.pokemonMoveLabels[m].setText(move ? move.name : '-');
       this.pokemonMoveContainers[m].setVisible(!!move);
@@ -1000,6 +1091,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterCursors.pop();
     this.starterAttr.pop();
     this.starterNatures.pop();
+    this.starterMovesets.pop();
     this.starterCursorObjs[this.starterCursors.length].setVisible(false);
     this.starterIcons[this.starterCursors.length].setTexture('pokemon_icons_0');
     this.starterIcons[this.starterCursors.length].setFrame('unknown');
@@ -1051,6 +1143,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               species: starterSpecies,
               dexAttr: thisObj.starterAttr[i],
               nature: thisObj.starterNatures[i] as Nature,
+              moveset: thisObj.starterMovesets[i],
               pokerus: !![ 0, 1, 2 ].filter(n => thisObj.pokerusGens[n] === starterSpecies.generation - 1 && thisObj.pokerusCursors[n] === thisObj.genSpecies[starterSpecies.generation - 1].indexOf(starterSpecies)).length
             };
           }));

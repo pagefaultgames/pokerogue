@@ -290,6 +290,7 @@ export class SelectStarterPhase extends BattlePhase {
           : Gender.GENDERLESS;
         const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
         const starterPokemon = this.scene.addPlayerPokemon(starter.species, startingLevel, starterProps.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
+        starterPokemon.tryPopulateMoveset(starter.moveset);
         if (starter.pokerus)
           starterPokemon.pokerus = true;
         if (this.scene.gameMode === GameMode.SPLICED_ENDLESS)

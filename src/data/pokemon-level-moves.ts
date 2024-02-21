@@ -1,7 +1,7 @@
 import { Moves } from "./enums/moves";
 import { Species } from "./enums/species";
 
-export type LevelMoves = (integer | Moves)[][];
+export type LevelMoves = ([integer, Moves])[];
 
 interface PokemonSpeciesLevelMoves {
   [key: integer]: LevelMoves

@@ -24,6 +24,7 @@ import { Nature } from "../data/nature";
 import { GameStats } from "./game-stats";
 import { Tutorial } from "../tutorial";
 import { BattleSpec } from "../enums/battle-spec";
+import { Moves } from "../data/enums/moves";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -58,6 +59,7 @@ interface SystemSaveData {
   secretId: integer;
   gender: PlayerGender;
   dexData: DexData;
+  starterMoveData: StarterMoveData;
   gameStats: GameStats;
   unlocks: Unlocks;
   achvUnlocks: AchvUnlocks;
@@ -134,6 +136,16 @@ export interface DexAttrProps {
   formIndex: integer;
 }
 
+export type StarterMoveset = [ Moves ] | [ Moves, Moves ] | [ Moves, Moves, Moves ] | [ Moves, Moves, Moves, Moves ];
+
+export interface StarterMoveData {
+  [key: integer]: StarterMoveset | StarterFormMoveData
+}
+
+export interface StarterFormMoveData {
+  [key: integer]: StarterMoveset
+}
+
 export interface TutorialFlags {
   [key: string]: boolean
 }
@@ -158,6 +170,8 @@ export class GameData {
   public dexData: DexData;
   private defaultDexData: DexData;
 
+  public starterMoveData: StarterMoveData;
+
   public gameStats: GameStats;
 
   public unlocks: Unlocks;
@@ -173,6 +187,7 @@ export class GameData {
     this.loadSettings();
     this.trainerId = Utils.randSeedInt(65536);
     this.secretId = Utils.randSeedInt(65536);
+    this.starterMoveData = {};
     this.gameStats = new GameStats();
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
@@ -204,6 +219,7 @@ export class GameData {
           secretId: this.secretId,
           gender: this.gender,
           dexData: this.dexData,
+          starterMoveData: this.starterMoveData,
           gameStats: this.gameStats,
           unlocks: this.unlocks,
           achvUnlocks: this.achvUnlocks,
@@ -261,6 +277,8 @@ export class GameData {
           this.gender = systemData.gender;
 
           this.saveSetting(Setting.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
+
+          this.starterMoveData = systemData.starterMoveData || {};
 
           if (systemData.gameStats)
             this.gameStats = systemData.gameStats;
