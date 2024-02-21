@@ -3825,20 +3825,29 @@ export function initMoves() {
     new AttackMove(Moves.CLANGOROUS_SOULBLAZE, "Clangorous Soulblaze (N)", Type.DRAGON, MoveCategory.SPECIAL, 185, -1, 1, -1, "After obtaining Z-Power, the user, Kommo-o, attacks the opposing Pokémon with full force. This move boosts the user's stats.", 100, 0, 7)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(Moves.ZIPPY_ZAP, "Zippy Zap (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 80, 100, 10, -1, "The user attacks the target with bursts of electricity at high speed. This move always goes first and results in a critical hit.", 100, 2, 7),
-    new AttackMove(Moves.SPLISHY_SPLASH, "Splishy Splash (N)", Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, -1, "The user charges a huge wave with electricity and hits the opposing Pokémon with the wave. This may also leave the opposing Pokémon with paralysis.", 30, 0, 7)
+    new AttackMove(Moves.ZIPPY_ZAP, "Zippy Zap", Type.ELECTRIC, MoveCategory.PHYSICAL, 80, 100, 10, -1, "The user attacks the target with bursts of electricity at high speed. This move always goes first and results in a critical hit.", 100, 2, 7)
+      .attr(CritOnlyAttr),
+    new AttackMove(Moves.SPLISHY_SPLASH, "Splishy Splash", Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, -1, "The user charges a huge wave with electricity and hits the opposing Pokémon with the wave. This may also leave the opposing Pokémon with paralysis.", 30, 0, 7)
+      .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(Moves.FLOATY_FALL, "Floaty Fall (N)", Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, "The user floats in the air, and then dives at a steep angle to attack the target. This may also make the target flinch.", 30, 0, 7),
-    new AttackMove(Moves.PIKA_PAPOW, "Pika Papow (N)", Type.ELECTRIC, MoveCategory.SPECIAL, -1, -1, 20, -1, "The more Pikachu loves its Trainer, the greater the move's power. It never misses.", -1, 0, 7),
-    new AttackMove(Moves.BOUNCY_BUBBLE, "Bouncy Bubble (N)", Type.WATER, MoveCategory.SPECIAL, 60, 100, 20, -1, "The user attacks by shooting water bubbles at the target. It then absorbs water and restores its HP by half the damage taken by the target.", -1, 0, 7),
-    new AttackMove(Moves.BUZZY_BUZZ, "Buzzy Buzz (N)", Type.ELECTRIC, MoveCategory.SPECIAL, 60, 100, 20, -1, "The user shoots a jolt of electricity to attack the target. This also leaves the target with paralysis.", 100, 0, 7),
-    new AttackMove(Moves.SIZZLY_SLIDE, "Sizzly Slide (N)", Type.FIRE, MoveCategory.PHYSICAL, 60, 100, 20, -1, "The user cloaks itself in fire and charges at the target. This also leaves the target with a burn.", 100, 0, 7),
+    new AttackMove(Moves.FLOATY_FALL, "Floaty Fall", Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, "The user floats in the air, and then dives at a steep angle to attack the target. This may also make the target flinch.", 30, 0, 7)
+      .attr(FlinchAttr),
+    new AttackMove(Moves.PIKA_PAPOW, "Pika Papow", Type.ELECTRIC, MoveCategory.SPECIAL, -1, -1, 20, -1, "The more Pikachu loves its Trainer, the greater the move's power. It never misses.", -1, 0, 7)
+      .attr(FriendshipPowerAttr),
+    new AttackMove(Moves.BOUNCY_BUBBLE, "Bouncy Bubble", Type.WATER, MoveCategory.SPECIAL, 60, 100, 20, -1, "The user attacks by shooting water bubbles at the target. It then absorbs water and restores its HP by half the damage taken by the target.", -1, 0, 7)
+      .attr(HitHealAttr),
+    new AttackMove(Moves.BUZZY_BUZZ, "Buzzy Buzz", Type.ELECTRIC, MoveCategory.SPECIAL, 60, 100, 20, -1, "The user shoots a jolt of electricity to attack the target. This also leaves the target with paralysis.", 100, 0, 7)
+      .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
+    new AttackMove(Moves.SIZZLY_SLIDE, "Sizzly Slide", Type.FIRE, MoveCategory.PHYSICAL, 60, 100, 20, -1, "The user cloaks itself in fire and charges at the target. This also leaves the target with a burn.", 100, 0, 7)
+      .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(Moves.GLITZY_GLOW, "Glitzy Glow (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 95, 15, -1, "The user bombards the target with telekinetic force. A wondrous wall of light is put up to weaken the power of the opposing Pokémon's special moves.", -1, 0, 7),
     new AttackMove(Moves.BADDY_BAD, "Baddy Bad (N)", Type.DARK, MoveCategory.SPECIAL, 80, 95, 15, -1, "The user acts bad and attacks the target. A wondrous wall of light is put up to weaken the power of the opposing Pokémon's physical moves.", -1, 0, 7),
-    new AttackMove(Moves.SAPPY_SEED, "Sappy Seed (N)", Type.GRASS, MoveCategory.PHYSICAL, 100, 90, 10, -1, "The user grows a gigantic stalk that scatters seeds to attack the target. The seeds drain the target's HP every turn.", 100, 0, 7),
+    new AttackMove(Moves.SAPPY_SEED, "Sappy Seed", Type.GRASS, MoveCategory.PHYSICAL, 100, 90, 10, -1, "The user grows a gigantic stalk that scatters seeds to attack the target. The seeds drain the target's HP every turn.", 100, 0, 7)
+      .attr(AddBattlerTagAttr, BattlerTagType.SEEDED),
     new AttackMove(Moves.FREEZY_FROST, "Freezy Frost (N)", Type.ICE, MoveCategory.SPECIAL, 100, 90, 10, -1, "The user attacks with a crystal made of cold frozen haze. It eliminates every stat change among all the Pokémon engaged in battle.", -1, 0, 7),
     new AttackMove(Moves.SPARKLY_SWIRL, "Sparkly Swirl (N)", Type.FAIRY, MoveCategory.SPECIAL, 120, 85, 5, -1, "The user attacks the target by wrapping it with a whirlwind of an overpowering scent. This also heals all status conditions of the user's party.", -1, 0, 7),
-    new AttackMove(Moves.VEEVEE_VOLLEY, "Veevee Volley (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 20, -1, "The more Eevee loves its Trainer, the greater the move's power. It never misses.", -1, 0, 7),
+    new AttackMove(Moves.VEEVEE_VOLLEY, "Veevee Volley", Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 20, -1, "The more Eevee loves its Trainer, the greater the move's power. It never misses.", -1, 0, 7)
+      .attr(FriendshipPowerAttr),
     /* End Unused */
     new AttackMove(Moves.DOUBLE_IRON_BASH, "Double Iron Bash", Type.STEEL, MoveCategory.PHYSICAL, 60, 100, 5, -1, "The user rotates, centering the hex nut in its chest, and then strikes with its arms twice in a row. This may also make the target flinch.", 30, 0, 7)
       .attr(MultiHitAttr, MultiHitType._2)
