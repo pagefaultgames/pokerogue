@@ -433,9 +433,9 @@ export default class PartyUiHandler extends MessageUiHandler {
             this.optionsScrollCursor += isDown ? 1 : -1;
         }
       }
-      if (isScroll) {
+      if (isScroll)
         this.updateOptions();
-       } else
+      else
         this.optionsCursor = cursor;
       if (!this.optionsCursorObj) {
         this.optionsCursorObj = this.scene.add.image(0, 0, 'cursor');
@@ -509,8 +509,6 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   updateOptions(): void {
-    const wideOptions = this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER;
-
     const pokemon = this.scene.getParty()[this.cursor];
 
     const learnableLevelMoves = this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER

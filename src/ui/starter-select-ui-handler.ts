@@ -51,9 +51,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonNatureText: BBCodeText;
   private pokemonCaughtCountLabelText: Phaser.GameObjects.Text;
   private pokemonCaughtCountText: Phaser.GameObjects.Text;
+  private pokemonMovesContainer: Phaser.GameObjects.Container;
   private pokemonMoveContainers: Phaser.GameObjects.Container[];
   private pokemonMoveBgs: Phaser.GameObjects.NineSlice[];
   private pokemonMoveLabels: Phaser.GameObjects.Text[];
+  private pokemonAdditionalMoveCountLabel: Phaser.GameObjects.Text;
+  private pokemonEggMovesContainer: Phaser.GameObjects.Container;
+  private pokemonEggMoveContainers: Phaser.GameObjects.Container[];
+  private pokemonEggMoveBgs: Phaser.GameObjects.NineSlice[];
+  private pokemonEggMoveLabels: Phaser.GameObjects.Text[];
   private genOptionsText: Phaser.GameObjects.Text;
   private instructionsText: Phaser.GameObjects.Text;
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
@@ -186,6 +192,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonMoveBgs = [];
     this.pokemonMoveLabels = [];
 
+    this.pokemonEggMoveContainers = [];
+    this.pokemonEggMoveBgs = [];
+    this.pokemonEggMoveLabels = [];
+
     this.genOptionsText = addTextObject(this.scene, 124, 7, '', TextStyle.WINDOW, { fontSize: 72, lineSpacing: 39, align: 'center' });
     this.genOptionsText.setShadowOffset(4.5, 4.5);
     this.genOptionsText.setOrigin(0.5, 0);
@@ -305,14 +315,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonSprite = this.scene.add.sprite(53, 63, `pkmn__sub`);
     this.starterSelectContainer.add(this.pokemonSprite);
 
+    this.pokemonMovesContainer = this.scene.add.container(102, 16);
+    this.pokemonMovesContainer.setScale(0.5);
+
     for (let m = 0; m < 4; m++) {
-      const moveContainer = this.scene.add.container(102, 16 + 7 * m);
-      moveContainer.setScale(0.5);
+      const moveContainer = this.scene.add.container(0, 14 * m);
 
       const moveBg = this.scene.add.nineslice(0, 0, 'type_bgs', 'unknown', 92, 14, 2, 2, 2, 2);
       moveBg.setOrigin(1, 0);
 
-      const moveLabel = addTextObject(this.scene, -moveBg.width / 2, 0, 'Thunder Wave', TextStyle.PARTY);
+      const moveLabel = addTextObject(this.scene, -moveBg.width / 2, 0, '-', TextStyle.PARTY);
       moveLabel.setOrigin(0.5, 0);
 
       this.pokemonMoveBgs.push(moveBg);
@@ -322,9 +334,46 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       moveContainer.add(moveLabel);
 
       this.pokemonMoveContainers.push(moveContainer);
-
-      this.starterSelectContainer.add(moveContainer);
+      this.pokemonMovesContainer.add(moveContainer);      
     }
+
+    this.pokemonAdditionalMoveCountLabel = addTextObject(this.scene, -this.pokemonMoveBgs[0].width / 2, 56, '(+0)', TextStyle.PARTY);
+    this.pokemonAdditionalMoveCountLabel.setOrigin(0.5, 0);
+
+    this.pokemonMovesContainer.add(this.pokemonAdditionalMoveCountLabel);
+
+    this.starterSelectContainer.add(this.pokemonMovesContainer);
+
+    this.pokemonEggMovesContainer = this.scene.add.container(102, 94);
+    this.pokemonEggMovesContainer.setScale(0.25);
+    this.pokemonEggMovesContainer.setVisible(false);
+
+    const eggMovesLabel = addTextObject(this.scene, -46, 0, 'Egg Moves', TextStyle.SUMMARY);
+    eggMovesLabel.setOrigin(0.5, 0);
+    
+    this.pokemonEggMovesContainer.add(eggMovesLabel);
+
+    for (let m = 0; m < 4; m++) {
+      const eggMoveContainer = this.scene.add.container(0, 16 + 14 * m);
+
+      const eggMoveBg = this.scene.add.nineslice(0, 0, 'type_bgs', 'unknown', 92, 14, 2, 2, 2, 2);
+      eggMoveBg.setOrigin(1, 0);
+
+      const eggMoveLabel = addTextObject(this.scene, -eggMoveBg.width / 2, 0, '???', TextStyle.PARTY);
+      eggMoveLabel.setOrigin(0.5, 0);
+
+      this.pokemonEggMoveBgs.push(eggMoveBg);
+      this.pokemonEggMoveLabels.push(eggMoveLabel);
+
+      eggMoveContainer.add(eggMoveBg);
+      eggMoveContainer.add(eggMoveLabel);
+
+      this.pokemonEggMoveContainers.push(eggMoveContainer);
+
+      this.pokemonEggMovesContainer.add(eggMoveContainer);
+    }
+
+    this.starterSelectContainer.add(this.pokemonEggMovesContainer);
 
     this.instructionsText = addTextObject(this.scene, 4, 156, '', TextStyle.PARTY, { fontSize: '42px' });
     this.starterSelectContainer.add(this.instructionsText);
@@ -572,6 +621,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                     showSwapOptions(this.starterMoveset);
                                   }
                                 }),
+                                maxOptions: 8,
                                 yOffset: 19
                               });
                             });
@@ -585,6 +635,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                         ui.setMode(Mode.STARTER_SELECT);
                       }
                     }),
+                    maxOptions: 8,
                     yOffset: 19
                   });
                 });
@@ -1082,6 +1133,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonMoveLabels[m].setText(move ? move.name : '-');
       this.pokemonMoveContainers[m].setVisible(!!move);
     }
+
+    this.pokemonAdditionalMoveCountLabel.setText(`(+${Math.max(this.speciesStarterMoves.length - 4, 0)})`);
+    this.pokemonAdditionalMoveCountLabel.setVisible(this.speciesStarterMoves.length > 4);
 
     this.updateInstructions();
   }
