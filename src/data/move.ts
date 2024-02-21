@@ -3770,6 +3770,7 @@ export function initMoves() {
     new AttackMove(Moves.BRUTAL_SWING, "Brutal Swing", Type.DARK, MoveCategory.PHYSICAL, 60, 100, 20, -1, "The user swings its body around violently to inflict damage on everything in its vicinity.", -1, 0, 7)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new StatusMove(Moves.AURORA_VEIL, "Aurora Veil (N)", Type.ICE, -1, 20, -1, "This move reduces damage from physical and special moves for five turns. This can be used only in a hailstorm.", -1, 0, 7)
+      .condition((user, target, move) => user.scene.arena.weather?.weatherType === WeatherType.HAIL)
       .target(MoveTarget.USER_SIDE),
     /* Unused */
     new AttackMove(Moves.SINISTER_ARROW_RAID, "Sinister Arrow Raid (N)", Type.GHOST, MoveCategory.PHYSICAL, 180, -1, 1, -1, "The user, Decidueye, creates countless arrows using its Z-Power and shoots the target with full force.", -1, 0, 7),

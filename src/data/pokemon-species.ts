@@ -352,7 +352,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
 
   getName(formIndex?: integer): string {
     if (formIndex !== undefined && this.forms.length) {
-      const form = this.forms[formIndex];
+      const form = this.forms[Math.min(formIndex, this.forms.length - 1)];
       switch (form.formKey) {
         case SpeciesFormKey.MEGA:
         case SpeciesFormKey.ETERNAMAX:
