@@ -8,7 +8,7 @@ import { Weather, WeatherType } from "./weather";
 import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
-import Move, { MoveCategory, MoveFlags, RecoilAttr } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, RecoilAttr, StatusEffectAttr } from "./move";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -191,7 +191,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   }
 
   applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (move.getMove().type === this.immuneType) {
+    if ((move instanceof AttackMove || move.getMove().getAttrs(StatusEffectAttr).length) && move.getMove().type === this.immuneType) {
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
