@@ -2885,8 +2885,9 @@ export class GameOverPhase extends BattlePhase {
 
     this.scene.gameData.clearSession().then(() => {
       this.scene.time.delayedCall(1000, () => {
+        let firstClear = false;
         if (this.victory) {
-          this.scene.validateAchv(achvs.CLASSIC_VICTORY);
+          firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
           this.scene.gameData.gameStats.sessionsWon++;
         }
         this.scene.gameData.saveSystem();
@@ -2896,6 +2897,8 @@ export class GameOverPhase extends BattlePhase {
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
           this.handleUnlocks(this.scene.getParty());
+          if (!firstClear)
+            this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
           this.scene.reset();
           this.scene.unshiftPhase(new CheckLoadPhase(this.scene));
           this.end();

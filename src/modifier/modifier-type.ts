@@ -59,6 +59,20 @@ export class ModifierType {
     this.tier = tier;
   }
 
+  getOrInferTier(): ModifierTier {
+    if (this.tier)
+      return this.tier;
+    if (!this.id)
+      return null;
+    for (let tier of Utils.getEnumValues(ModifierTier)) {
+      if (!modifierPool.hasOwnProperty(tier))
+        continue;
+      if (modifierPool[tier].find(m => (m as WeightedModifierType).modifierType.id === (this.generatorId || this.id)))
+        return (this.tier = tier);
+    }
+    return null;
+  }
+
   withIdFromFunc(func: ModifierTypeFunc): ModifierType {
     this.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === func);
     return this;

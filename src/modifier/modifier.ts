@@ -18,6 +18,7 @@ import { MoneyAchv, achvs } from '../system/achv';
 import { VoucherType } from '../system/voucher';
 import { PreventBerryUseAbAttr, applyAbAttrs } from '../data/ability';
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from '../data/pokemon-forms';
+import { ModifierTier } from './modifier-tier';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -1648,12 +1649,18 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
     const transferredModifierTypes: ModifierTypes.ModifierType[] = [];
     const itemModifiers = pokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
         && (m as PokemonHeldItemModifier).pokemonId === targetPokemon.id && m.getTransferrable(withinParty), targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
+    let highestItemTier = itemModifiers.map(m => m.type.getOrInferTier()).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
+    let tierItemModifiers = itemModifiers.filter(m => m.type.getOrInferTier() === highestItemTier);
 
     let heldItemTransferPromises: Promise<void>[] = [];
     
     for (let i = 0; i < transferredItemCount; i++) {
-      if (!itemModifiers.length)
-        break;
+      if (!tierItemModifiers.length) {
+        while (highestItemTier-- && !tierItemModifiers.length)
+          tierItemModifiers = itemModifiers.filter(m => m.type.tier === highestItemTier);
+        if (!tierItemModifiers.length)
+          break;
+      }
       const randItemIndex = pokemon.randSeedInt(itemModifiers.length);
       const randItem = itemModifiers[randItemIndex];
       heldItemTransferPromises.push(pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false, false, true).then(success => {
