@@ -2851,7 +2851,7 @@ export class MoneyRewardPhase extends BattlePhase {
 }
 
 export class ModifierRewardPhase extends BattlePhase {
-  private modifierType: ModifierType;
+  protected modifierType: ModifierType;
 
   constructor(scene: BattleScene, modifierTypeFunc: ModifierTypeFunc) {
     super(scene);
@@ -2862,12 +2862,45 @@ export class ModifierRewardPhase extends BattlePhase {
   start() {
     super.start();
 
-    const newModifier = this.modifierType.newModifier();
+    this.doReward().then(() => this.end());
+  }
 
-    this.scene.addModifier(newModifier).then(() => {
-      this.scene.playSoundWithoutBgm('item_fanfare');
-      this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => this.end(), null, true);
-    });
+  doReward(): Promise<void> {
+    return new Promise<void>(resolve => {
+      const newModifier = this.modifierType.newModifier();
+      this.scene.addModifier(newModifier).then(() => {
+        this.scene.playSoundWithoutBgm('item_fanfare');
+        this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => resolve(), null, true);
+      });
+    })
+  }
+}
+
+export class GameOverModifierRewardPhase extends ModifierRewardPhase {
+  constructor(scene: BattleScene, modifierTypeFunc: ModifierTypeFunc) {
+    super(scene, modifierTypeFunc);
+  }
+
+  doReward(): Promise<void> {
+    return new Promise<void>(resolve => {
+      const newModifier = this.modifierType.newModifier();
+      this.scene.addModifier(newModifier).then(() => {
+        this.scene.gameData.saveSystem().then(success => {
+          if (success) {
+            this.scene.playSoundWithoutBgm('level_up_fanfare');
+            this.scene.ui.setMode(Mode.MESSAGE);
+            this.scene.arenaBg.setVisible(false);
+            this.scene.ui.fadeIn(250).then(() => {
+              this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => {
+                this.scene.time.delayedCall(1500, () => this.scene.arenaBg.setVisible(true));
+                resolve();
+              }, null, true, 1500);
+            });
+          } else
+            this.scene.reset(true);
+        });
+      });
+    })
   }
 }
 
@@ -2896,9 +2929,9 @@ export class GameOverPhase extends BattlePhase {
         this.scene.ui.fadeOut(fadeDuration).then(() => {
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
-          this.handleUnlocks(this.scene.getParty());
-          if (!firstClear)
-            this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
+          this.handleUnlocks();
+          if (this.victory && !firstClear)
+            this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
           this.scene.reset();
           this.scene.unshiftPhase(new CheckLoadPhase(this.scene));
           this.end();
@@ -2907,7 +2940,7 @@ export class GameOverPhase extends BattlePhase {
     });
   }
 
-  handleUnlocks(party: PlayerPokemon[]): void {
+  handleUnlocks(): void {
     if (this.victory) {
       if (!this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE])
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.ENDLESS_MODE));
