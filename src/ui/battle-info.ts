@@ -84,7 +84,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.teraIcon.setOrigin(0, 0);
     this.teraIcon.setScale(0.5);
     this.teraIcon.setPositionRelative(this.nameText, 0, 2);
-    this.teraIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 14, 15), Phaser.Geom.Rectangle.Contains);
+    this.teraIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.add(this.teraIcon);
 
     this.splicedIcon = this.scene.add.sprite(0, 0, 'icon_spliced');
