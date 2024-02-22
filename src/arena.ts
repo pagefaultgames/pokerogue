@@ -421,8 +421,8 @@ export class Arena {
 
   getTagOnSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide): ArenaTag {
     return typeof(tagType) === 'string'
-      ? this.tags.find(t => t.tagType === tagType && (t.side === ArenaTagSide.BOTH || t.side === side))
-      : this.tags.find(t => t instanceof tagType && (t.side === ArenaTagSide.BOTH || t.side === side));
+      ? this.tags.find(t => t.tagType === tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side))
+      : this.tags.find(t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
   }
 
   lapseTags(): void {
