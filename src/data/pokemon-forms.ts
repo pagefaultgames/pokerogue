@@ -66,6 +66,13 @@ export enum FormChangeItem {
   REVEAL_GLASS,
   GRACIDEA,
   MAX_MUSHROOMS,
+  PRISON_BOTTLE,
+  N_LUNARIZER,
+  N_SOLARIZER,
+  RUSTED_SWORD,
+  RUSTED_SHIELD,
+  ICY_REINS_OF_UNITY,
+  SHADOW_REINS_OF_UNITY,
   WELLSPRING_MASK,
   HEARTHFLAME_MASK,
   CORNERSTONE_MASK
@@ -502,6 +509,13 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.DIANCIE]: [
     new SpeciesFormChange(Species.DIANCIE, '', SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.DIANCITE))
   ],
+  [Species.HOOPA]: [
+    new SpeciesFormChange(Species.HOOPA, '', 'unbound', new SpeciesFormChangeItemTrigger(FormChangeItem.PRISON_BOTTLE))
+  ],
+  [Species.NECROZMA]: [
+    new SpeciesFormChange(Species.NECROZMA, '', 'dawn-wings', new SpeciesFormChangeItemTrigger(FormChangeItem.N_LUNARIZER)),
+    new SpeciesFormChange(Species.NECROZMA, '', 'dusk-mane', new SpeciesFormChangeItemTrigger(FormChangeItem.N_SOLARIZER))
+  ],
   [Species.MELMETAL]: [
     new SpeciesFormChange(Species.MELMETAL, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
@@ -559,6 +573,12 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.DURALUDON]: [
     new SpeciesFormChange(Species.DURALUDON, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
+  [Species.ZACIAN]: [
+    new SpeciesFormChange(Species.ZACIAN, 'hero', 'crowned', new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SWORD))
+  ],
+  [Species.ZAMAZENTA]: [
+    new SpeciesFormChange(Species.ZAMAZENTA, 'hero', 'crowned', new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SHIELD))
+  ],
   [Species.ETERNATUS]: [
     new SpeciesFormChange(Species.ETERNATUS, '', SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeManualTrigger()),
     new SpeciesFormChange(Species.ETERNATUS, '', SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
@@ -566,6 +586,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.URSHIFU]: [
     new SpeciesFormChange(Species.URSHIFU, 'single-strike', SpeciesFormKey.GIGANTAMAX_SINGLE, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
     new SpeciesFormChange(Species.URSHIFU, 'rapid-strike', SpeciesFormKey.GIGANTAMAX_RAPID, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+  ],
+  [Species.CALYREX]: [
+    new SpeciesFormChange(Species.CALYREX, '', 'ice', new SpeciesFormChangeItemTrigger(FormChangeItem.ICY_REINS_OF_UNITY)),
+    new SpeciesFormChange(Species.CALYREX, '', 'shadow', new SpeciesFormChangeItemTrigger(FormChangeItem.SHADOW_REINS_OF_UNITY))
   ],
   [Species.ENAMORUS]: [
     new SpeciesFormChange(Species.ENAMORUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItem.REVEAL_GLASS))
