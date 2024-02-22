@@ -75,7 +75,7 @@ export class ModifierBar extends Phaser.GameObjects.Container {
   }
 
   updateModifierOverflowVisibility(ignoreLimit: boolean) {
-    for (let modifier of this.getAll().map(m => m as Phaser.GameObjects.Container).slice(iconOverflowIndex))
+    for (let modifier of this.getAll().map(m => m as Phaser.GameObjects.Container).slice(0, this.getAll().length - iconOverflowIndex))
       modifier.setVisible(ignoreLimit);
   }
 
