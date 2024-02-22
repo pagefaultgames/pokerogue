@@ -6173,7 +6173,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
         [ Biome.SNOWY_FOREST, BiomePoolTier.COMMON ]
       ]
     ],
-    [ Species.INDEEDEE, Type.PSYCHIC, -1, [
+    [ Species.INDEEDEE, Type.PSYCHIC, Type.NORMAL, [
         [ Biome.METROPOLIS, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
       ]
     ],

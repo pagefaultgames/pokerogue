@@ -2466,7 +2466,7 @@ export function initMoves() {
       .soundBased(),
     new SelfStatusMove(Moves.DOUBLE_TEAM, "Double Team", Type.NORMAL, -1, 15, -1, "By moving rapidly, the user makes illusory copies of itself to raise its evasiveness.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.EVA, 1, true),
-    new SelfStatusMove(Moves.RECOVER, "Recover", Type.NORMAL, -1, 10, -1, "Restoring its own cells, the user restores its own HP by half of its max HP.", -1, 0, 1)
+    new SelfStatusMove(Moves.RECOVER, "Recover", Type.NORMAL, -1, 5, -1, "Restoring its own cells, the user restores its own HP by half of its max HP.", -1, 0, 1)
       .attr(HealAttr, 0.5),
     new SelfStatusMove(Moves.HARDEN, "Harden", Type.NORMAL, -1, 30, -1, "The user stiffens all the muscles in its body to raise its Defense stat.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, 1, true),
@@ -2536,7 +2536,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPDEF, 2, true),
     new StatusMove(Moves.KINESIS, "Kinesis", Type.PSYCHIC, 80, 15, -1, "The user distracts the target by bending a spoon. This lowers the target's accuracy.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
-    new SelfStatusMove(Moves.SOFT_BOILED, "Soft-Boiled", Type.NORMAL, -1, 10, -1, "The user restores its own HP by up to half of its max HP.", -1, 0, 1)
+    new SelfStatusMove(Moves.SOFT_BOILED, "Soft-Boiled", Type.NORMAL, -1, 5, -1, "The user restores its own HP by up to half of its max HP.", -1, 0, 1)
       .attr(HealAttr, 0.5),
     new AttackMove(Moves.HIGH_JUMP_KICK, "High Jump Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 130, 90, 10, -1, "The target is attacked with a knee kick from a jump. If it misses, the user is hurt instead.", -1, 0, 1)
       .attr(MissEffectAttr, (user: Pokemon, move: Move) => { user.damage(Math.floor(user.getMaxHp() / 2)); return true; })
@@ -2594,7 +2594,7 @@ export function initMoves() {
     new AttackMove(Moves.BONEMERANG, "Bonemerang", Type.GROUND, MoveCategory.PHYSICAL, 50, 90, 10, -1, "The user throws the bone it holds. The bone loops around to hit the target twice—coming and going.", -1, 0, 1)
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false),
-    new SelfStatusMove(Moves.REST, "Rest", Type.PSYCHIC, -1, 10, 85, "The user goes to sleep for two turns. This fully restores the user's HP and heals any status conditions.", -1, 0, 1)
+    new SelfStatusMove(Moves.REST, "Rest", Type.PSYCHIC, -1, 5, 85, "The user goes to sleep for two turns. This fully restores the user's HP and heals any status conditions.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
       .condition((user, target, move) => user.status?.effect !== StatusEffect.SLEEP),
@@ -2733,7 +2733,7 @@ export function initMoves() {
     new StatusMove(Moves.SWAGGER, "Swagger", Type.NORMAL, 85, 15, -1, "The user enrages and confuses the target. However, this also sharply raises the target's Attack stat.", -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.ATK, 2)
       .attr(ConfuseAttr),
-    new SelfStatusMove(Moves.MILK_DRINK, "Milk Drink", Type.NORMAL, -1, 10, -1, "The user restores its own HP by up to half of its max HP.", -1, 0, 2)
+    new SelfStatusMove(Moves.MILK_DRINK, "Milk Drink", Type.NORMAL, -1, 5, -1, "The user restores its own HP by up to half of its max HP.", -1, 0, 2)
       .attr(HealAttr, 0.5),
     new AttackMove(Moves.SPARK, "Spark", Type.ELECTRIC, MoveCategory.PHYSICAL, 65, 100, 20, -1, "The user throws an electrically charged tackle at the target. This may also leave the target with paralysis.", 30, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
@@ -2920,9 +2920,9 @@ export function initMoves() {
       .attr(CopyBiomeTypeAttr),
     new SelfStatusMove(Moves.TAIL_GLOW, "Tail Glow", Type.BUG, -1, 20, -1, "The user stares at flashing lights to focus its mind, drastically raising its Sp. Atk stat.", -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, 3, true),
-    new AttackMove(Moves.LUSTER_PURGE, "Luster Purge", Type.PSYCHIC, MoveCategory.SPECIAL, 70, 100, 5, -1, "The user lets loose a damaging burst of light. This may also lower the target's Sp. Def stat.", 50, 0, 3)
+    new AttackMove(Moves.LUSTER_PURGE, "Luster Purge", Type.PSYCHIC, MoveCategory.SPECIAL, 95, 100, 5, -1, "The user lets loose a damaging burst of light. This may also lower the target's Sp. Def stat.", 50, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1),
-    new AttackMove(Moves.MIST_BALL, "Mist Ball", Type.PSYCHIC, MoveCategory.SPECIAL, 70, 100, 5, -1, "A mist-like flurry of down envelops and damages the target. This may also lower the target's Sp. Atk stat.", 50, 0, 3)
+    new AttackMove(Moves.MIST_BALL, "Mist Ball", Type.PSYCHIC, MoveCategory.SPECIAL, 95, 100, 5, -1, "A mist-like flurry of down envelops and damages the target. This may also lower the target's Sp. Atk stat.", 50, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, -1)
       .ballBombMove(),
     new StatusMove(Moves.FEATHER_DANCE, "Feather Dance", Type.FLYING, 100, 15, -1, "The user covers the target's body with a mass of down that harshly lowers its Attack stat.", -1, 0, 3)
@@ -2943,7 +2943,7 @@ export function initMoves() {
       .ballBombMove(),
     new AttackMove(Moves.NEEDLE_ARM, "Needle Arm", Type.GRASS, MoveCategory.PHYSICAL, 60, 100, 15, -1, "The user attacks by wildly swinging its thorny arms. This may also make the target flinch.", 30, 0, 3)
       .attr(FlinchAttr),
-    new SelfStatusMove(Moves.SLACK_OFF, "Slack Off", Type.NORMAL, -1, 10, -1, "The user slacks off, restoring its own HP by up to half of its max HP.", -1, 0, 3)
+    new SelfStatusMove(Moves.SLACK_OFF, "Slack Off", Type.NORMAL, -1, 5, -1, "The user slacks off, restoring its own HP by up to half of its max HP.", -1, 0, 3)
       .attr(HealAttr, 0.5),
     new AttackMove(Moves.HYPER_VOICE, "Hyper Voice", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, 117, "The user lets loose a horribly echoing shout with the power to inflict damage.", -1, 0, 3)
       .soundBased()
@@ -3075,7 +3075,7 @@ export function initMoves() {
       .attr(DelayedAttackAttr, ArenaTagType.DOOM_DESIRE, ChargeAnim.DOOM_DESIRE_CHARGING, 'chose\nDOOM DESIRE as its destiny!'),
     new AttackMove(Moves.PSYCHO_BOOST, "Psycho Boost", Type.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, "The user attacks the target at full power. The attack's recoil harshly lowers the user's Sp. Atk stat.", 100, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
-    new SelfStatusMove(Moves.ROOST, "Roost", Type.FLYING, -1, 10, -1, "The user lands and rests its body. This move restores the user's HP by up to half of its max HP.", -1, 0, 4)
+    new SelfStatusMove(Moves.ROOST, "Roost", Type.FLYING, -1, 5, -1, "The user lands and rests its body. This move restores the user's HP by up to half of its max HP.", -1, 0, 4)
       .attr(HealAttr, 0.5)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, true, false, 1),
     new StatusMove(Moves.GRAVITY, "Gravity", Type.PSYCHIC, -1, 5, -1, "This move enables Flying-type Pokémon or Pokémon with the Levitate Ability to be hit by Ground-type moves. Moves that involve flying can't be used.", -1, 0, 4)
@@ -3704,7 +3704,7 @@ export function initMoves() {
     new AttackMove(Moves.TWINKLE_TACKLE__SPECIAL, "Twinkle Tackle (N)", Type.FAIRY, MoveCategory.SPECIAL, -1, -1, 1, -1, "Dummy Data", -1, 0, 7),
     new AttackMove(Moves.CATASTROPIKA, "Catastropika (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 210, -1, 1, -1, "The user, Pikachu, surrounds itself with the maximum amount of electricity using its Z-Power and pounces on its target with full force.", -1, 0, 7),
     /* End Unused */
-    new SelfStatusMove(Moves.SHORE_UP, "Shore Up", Type.GROUND, -1, 10, -1, "The user regains up to half of its max HP. It restores more HP in a sandstorm.", -1, 0, 7)
+    new SelfStatusMove(Moves.SHORE_UP, "Shore Up", Type.GROUND, -1, 5, -1, "The user regains up to half of its max HP. It restores more HP in a sandstorm.", -1, 0, 7)
       .attr(SandHealAttr),
     new AttackMove(Moves.FIRST_IMPRESSION, "First Impression", Type.BUG, MoveCategory.PHYSICAL, 90, 100, 10, -1, "Although this move has great power, it only works the first turn each time the user enters battle.", -1, 2, 7)
       .condition(new FirstMoveCondition()),
@@ -4009,7 +4009,7 @@ export function initMoves() {
     new StatusMove(Moves.JUNGLE_HEALING, "Jungle Healing (P)", Type.GRASS, -1, 10, -1, "The user becomes one with the jungle, restoring HP and healing any status conditions of itself and its ally Pokémon in battle.", -1, 0, 8)
       .attr(HealAttr, 0.25)
       .target(MoveTarget.USER_AND_ALLIES),
-    new AttackMove(Moves.WICKED_BLOW, "Wicked Blow", Type.DARK, MoveCategory.PHYSICAL, 80, 100, 5, -1, "The user, having mastered the Dark style, strikes the target with a fierce blow. This attack always results in a critical hit.", -1, 0, 8)
+    new AttackMove(Moves.WICKED_BLOW, "Wicked Blow", Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, "The user, having mastered the Dark style, strikes the target with a fierce blow. This attack always results in a critical hit.", -1, 0, 8)
       .attr(CritOnlyAttr)
       .punchingMove(),
     new AttackMove(Moves.SURGING_STRIKES, "Surging Strikes", Type.WATER, MoveCategory.PHYSICAL, 25, 100, 5, -1, "The user, having mastered the Water style, strikes the target with a flowing motion three times in a row. This attack always results in a critical hit.", -1, 0, 8)
@@ -4028,7 +4028,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.THUNDEROUS_KICK, "Thunderous Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 90, 100, 10, -1, "The user overwhelms the target with lightning-like movement before delivering a kick. This also lowers the target's Defense stat.", 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
-    new AttackMove(Moves.GLACIAL_LANCE, "Glacial Lance", Type.ICE, MoveCategory.PHYSICAL, 130, 100, 5, -1, "The user attacks by hurling a blizzard-cloaked icicle lance at opposing Pokémon.", -1, 0, 8)
+    new AttackMove(Moves.GLACIAL_LANCE, "Glacial Lance", Type.ICE, MoveCategory.PHYSICAL, 120, 100, 5, -1, "The user attacks by hurling a blizzard-cloaked icicle lance at opposing Pokémon.", -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.ASTRAL_BARRAGE, "Astral Barrage", Type.GHOST, MoveCategory.SPECIAL, 120, 100, 5, -1, "The user attacks by sending a frightful amount of small ghosts at opposing Pokémon.", -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
