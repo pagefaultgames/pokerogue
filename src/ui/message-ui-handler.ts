@@ -28,12 +28,16 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   private showTextInternal(text: string, delay: integer, callback: Function, callbackDelay: integer, prompt: boolean, promptDelay: integer) {
     if (delay === null || delay === undefined)
       delay = 20;
+    let charVarMap = new Map<integer, string>();
     let delayMap = new Map<integer, integer>();
     let soundMap = new Map<integer, string>();
-    const actionPattern = /@(d|s)\{(.*?)\}/;
+    const actionPattern = /@(c|d|s)\{(.*?)\}/;
     let actionMatch: RegExpExecArray;
     while ((actionMatch = actionPattern.exec(text))) {
       switch (actionMatch[1]) {
+        case 'c':
+          charVarMap.set(actionMatch.index, actionMatch[2]);
+          break;
         case 'd':
           delayMap.set(actionMatch.index, parseInt(actionMatch[2]));
           break;
@@ -67,10 +71,13 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
         delay: delay,
         callback: () => {
           const charIndex = text.length - this.textTimer.repeatCount;
+          const charVar = charVarMap.get(charIndex);
           const charSound = soundMap.get(charIndex);
           const charDelay = delayMap.get(charIndex);
           this.message.setText(text.slice(0, charIndex));
           const advance = () => {
+            if (charVar)
+              this.scene.charSprite.setVariant(charVar);
             if (charSound)
               this.scene.playSound(charSound);
             if (callback && !this.textTimer.repeatCount) {

@@ -51,6 +51,7 @@ import { FormChangePhase, QuietFormChangePhase } from './form-change-phase';
 import { BattleSpec } from './enums/battle-spec';
 import { getTypeRgb } from './data/type';
 import PokemonSpriteSparkleHandler from './sprite/pokemon-sprite-sparkle-handler';
+import CharSprite from './ui/char-sprite';
 
 const enableAuto = true;
 const quickStart = false;
@@ -112,6 +113,7 @@ export default class BattleScene extends Phaser.Scene {
 	private standbyPhase: Phase;
 	public field: Phaser.GameObjects.Container;
 	public fieldUI: Phaser.GameObjects.Container;
+	public charSprite: CharSprite;
 	public pbTray: PokeballTray;
 	public pbTrayEnemy: PokeballTray;
 	public abilityBar: AbilityBar;
@@ -320,6 +322,9 @@ export default class BattleScene extends Phaser.Scene {
 				this.loadAtlas(config.getKey(true), 'trainer');
 		});
 
+		// Load character sprites
+		this.loadAtlas('c_rival_f', 'character', 'rival_f');
+
 		// Load pokemon-related images
 		this.loadImage(`pkmn__back__sub`, 'pokemon/back', 'sub.png');
 		this.loadImage(`pkmn__sub`, 'pokemon', 'sub.png');
@@ -482,6 +487,11 @@ export default class BattleScene extends Phaser.Scene {
 		this.enemyModifierBar = new ModifierBar(this, true);
 		this.add.existing(this.enemyModifierBar);
 		uiContainer.add(this.enemyModifierBar);
+
+		this.charSprite = new CharSprite(this);
+		this.charSprite.setup();
+
+		this.fieldUI.add(this.charSprite);
 
 		this.pbTray = new PokeballTray(this, true);
 		this.pbTray.setup();
@@ -850,7 +860,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble);
 		this.currentBattle.incrementTurn(this);
 
-		//this.pushPhase(new TrainerMessageTestPhase(this));
+		//this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
 
 		if (!waveIndex && lastBattle) {
 			const isNewBiome = !(lastBattle.waveIndex % 10);
