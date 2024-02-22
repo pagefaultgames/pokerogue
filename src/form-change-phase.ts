@@ -7,9 +7,8 @@ import { EndEvolutionPhase, EvolutionPhase } from "./evolution-phase";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "./pokemon";
 import { Mode } from "./ui/ui";
 import PartyUiHandler from "./ui/party-ui-handler";
-import { BattlePhase } from "./battle-phase";
 import { BattleSpec } from "./enums/battle-spec";
-import { MovePhase, PokemonHealPhase } from "./battle-phases";
+import { BattlePhase, MovePhase, PokemonHealPhase } from "./phases";
 import { getTypeRgb } from "./data/type";
 
 export class FormChangePhase extends EvolutionPhase {

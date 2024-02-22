@@ -1,16 +1,16 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlePhase } from "./battle-phase";
+import { Phase } from "./phase";
 import BattleScene from "./battle-scene";
 import { SpeciesEvolution } from "./data/pokemon-evolutions";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
-import { LearnMovePhase } from "./battle-phases";
+import { LearnMovePhase } from "./phases";
 import { cos, sin } from "./anims";
 import { PlayerPokemon } from "./pokemon";
 import { getTypeRgb } from "./data/type";
 
-export class EvolutionPhase extends BattlePhase {
+export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;
   protected lastLevel: integer;
   
@@ -505,7 +505,7 @@ export class EvolutionPhase extends BattlePhase {
   }
 }
 
-export class EndEvolutionPhase extends BattlePhase {
+export class EndEvolutionPhase extends Phase {
   start() {
     super.start();
 

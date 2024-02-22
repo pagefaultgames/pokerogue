@@ -1,5 +1,5 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlePhase } from "./battle-phase";
+import { Phase } from "./phase";
 import BattleScene, { AnySound } from "./battle-scene";
 import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
@@ -16,7 +16,7 @@ import { achvs } from "./system/achv";
 import { addWindow } from "./ui/window";
 import { getNatureName } from "./data/nature";
 
-export class EggHatchPhase extends BattlePhase {
+export class EggHatchPhase extends Phase {
   private egg: Egg;
 
   private eggHatchContainer: Phaser.GameObjects.Container;

@@ -1,4 +1,4 @@
-import { CommandPhase } from "../battle-phases";
+import { CommandPhase } from "../phases";
 import BattleScene, { Button } from "../battle-scene";
 import { PlayerPokemon, PokemonMove } from "../pokemon";
 import { addTextObject, TextStyle } from "./text";

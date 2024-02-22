@@ -1,6 +1,6 @@
 import { Moves } from "./enums/moves";
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, DamagePhase, MovePhase, NewBattlePhase, ObtainStatusEffectPhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../battle-phases";
+import { BattleEndPhase, DamagePhase, MovePhase, NewBattlePhase, ObtainStatusEffectPhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";

@@ -1,6 +1,6 @@
 import BattleScene from "./battle-scene";
 
-export class BattlePhase {
+export class Phase {
   protected scene: BattleScene;
 
   constructor(scene: BattleScene) {

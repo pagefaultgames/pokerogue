@@ -49,7 +49,7 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
         if (b >= party.length)
           ballFrame = 'empty';
         else if (!party[b].hp)
-          ballFrame = 'fainted';
+          ballFrame = 'faint';
         else if (party[b].status)
           ballFrame = 'status';
         ball.setFrame(ballFrame);

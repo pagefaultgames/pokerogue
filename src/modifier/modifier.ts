@@ -1,5 +1,5 @@
 import * as ModifierTypes from './modifier-type';
-import { LearnMovePhase, LevelUpPhase, ObtainStatusEffectPhase, PokemonHealPhase } from "../battle-phases";
+import { LearnMovePhase, LevelUpPhase, ObtainStatusEffectPhase, PokemonHealPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { PokeballType } from "../data/pokeball";

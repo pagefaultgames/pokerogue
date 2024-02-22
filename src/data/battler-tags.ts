@@ -1,5 +1,5 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, DamagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase, ShowAbilityPhase } from "../battle-phases";
+import { CommonAnimPhase, DamagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase, ShowAbilityPhase } from "../phases";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../pokemon";
 import { Stat } from "./pokemon-stat";

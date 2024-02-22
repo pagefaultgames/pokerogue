@@ -14,7 +14,7 @@ import { StatusEffect, getStatusEffectActivationText, getStatusEffectCatchRateMu
 import { SummaryUiMode } from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import { EvolutionPhase } from "./evolution-phase";
-import { BattlePhase } from "./battle-phase";
+import { Phase } from "./phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
 import { biomeDepths, biomeLinks } from "./data/biomes";
 import { Biome } from "./data/enums/biome";
@@ -52,7 +52,7 @@ import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-s
 import { Setting } from "./system/settings";
 import { Tutorial, handleTutorial } from "./tutorial";
 
-export class LoginPhase extends BattlePhase {
+export class LoginPhase extends Phase {
   private showText: boolean;
 
   constructor(scene: BattleScene, showText?: boolean) {
@@ -122,7 +122,7 @@ export class LoginPhase extends BattlePhase {
 }
 
 // TODO: Remove
-export class ConsolidateDataPhase extends BattlePhase {
+export class ConsolidateDataPhase extends Phase {
   start(): void {
     super.start();
     
@@ -168,7 +168,7 @@ export class ConsolidateDataPhase extends BattlePhase {
   }
 }
 
-export class CheckLoadPhase extends BattlePhase {
+export class CheckLoadPhase extends Phase {
   private loaded: boolean;
 
   constructor(scene: BattleScene) {
@@ -236,7 +236,7 @@ export class CheckLoadPhase extends BattlePhase {
   }
 }
 
-export class SelectGenderPhase extends BattlePhase {
+export class SelectGenderPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
   }
@@ -269,7 +269,7 @@ export class SelectGenderPhase extends BattlePhase {
   }
 }
 
-export class SelectStarterPhase extends BattlePhase {
+export class SelectStarterPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
   }
@@ -312,6 +312,34 @@ export class SelectStarterPhase extends BattlePhase {
           this.end();
         });
       });
+    });
+  }
+}
+
+export class BattlePhase extends Phase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  showEnemyTrainer(): void {
+    this.scene.tweens.add({
+      targets: this.scene.currentBattle.trainer,
+      x: '-=16',
+      y: '+=16',
+      alpha: 1,
+      ease: 'Sine.easeInOut',
+      duration: 750
+    });
+  }
+
+  hideEnemyTrainer(): void {
+    this.scene.tweens.add({
+      targets: this.scene.currentBattle.trainer,
+      x: '+=16',
+      y: '-=16',
+      alpha: 0,
+      ease: 'Sine.easeInOut',
+      duration: 750
     });
   }
 }
@@ -574,14 +602,7 @@ export class EncounterPhase extends BattlePhase {
         this.scene.pbTray.showPbTray(this.scene.getParty());
 			  this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
         const doTrainerSummon = () => {
-          this.scene.tweens.add({
-            targets: this.scene.currentBattle.trainer,
-            x: '+=16',
-            y: '-=16',
-            alpha: 0,
-            ease: 'Sine.easeInOut',
-            duration: 750
-          });
+          this.hideEnemyTrainer();
           const availablePartyMembers = this.scene.getEnemyParty().filter(p => !p.isFainted()).length;
           this.scene.unshiftPhase(new SummonPhase(this.scene, 0, false));
           if (this.scene.currentBattle.double && availablePartyMembers > 1)
@@ -1028,12 +1049,20 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   preSummon(): void {
-    if (!this.player && this.slotIndex === -1)
-      this.slotIndex = this.scene.currentBattle.trainer.getNextSummonIndex();
+    if (!this.player) {
+      if (this.slotIndex === -1)
+        this.slotIndex = this.scene.currentBattle.trainer.getNextSummonIndex();
+      this.showEnemyTrainer();
+      this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
+    }
 
     if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? this.scene.getParty() : this.scene.getEnemyParty())[this.slotIndex])) {
-      this.switchAndSummon();
-      return;
+      if (this.player)
+        return this.switchAndSummon();
+      else {
+        this.scene.time.delayedCall(750, () => this.switchAndSummon());
+        return;
+      }
     }
 
     const pokemon = this.getPokemon();
@@ -1077,8 +1106,19 @@ export class SwitchSummonPhase extends SummonPhase {
     if (switchedPokemon) {
       party[this.slotIndex] = this.lastPokemon;
       party[this.fieldIndex] = switchedPokemon;
-      this.scene.ui.showText(this.player ? `Go! ${switchedPokemon.name}!` : `${this.scene.currentBattle.trainer.getName(true)} sent out\n${this.getPokemon().name}!`);
-      this.summon();
+      const showTextAndSummon = () => {
+        this.scene.ui.showText(this.player ? `Go! ${switchedPokemon.name}!` : `${this.scene.currentBattle.trainer.getName(true)} sent out\n${this.getPokemon().name}!`);
+        this.summon();
+      };
+      if (this.player)
+        showTextAndSummon();
+      else {
+        this.scene.time.delayedCall(1500, () => {
+          this.hideEnemyTrainer();
+          this.scene.pbTrayEnemy.hide();
+          showTextAndSummon();
+        });
+      }
     } else
       this.end();
   }
@@ -2416,7 +2456,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
   }
 }
 
-export class MessagePhase extends BattlePhase {
+export class MessagePhase extends Phase {
   private text: string;
   private callbackDelay: integer;
   private prompt: boolean;
@@ -2783,14 +2823,7 @@ export class TrainerVictoryPhase extends BattlePhase {
       showMessageAndEnd();
     }, null, true);
 
-    this.scene.tweens.add({
-      targets: this.scene.currentBattle.trainer,
-      x: '-=16',
-      y: '+=16',
-      alpha: 1,
-      ease: 'Sine.easeInOut',
-      duration: 750
-    });
+    this.showEnemyTrainer();
   }
 }
 
@@ -2883,7 +2916,7 @@ export class GameOverPhase extends BattlePhase {
   }
 }
 
-export class UnlockPhase extends BattlePhase {
+export class UnlockPhase extends Phase {
   private unlockable: Unlockables;
 
   constructor(scene: BattleScene, unlockable: Unlockables) {
@@ -3682,7 +3715,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 }
 
-export class EggLapsePhase extends BattlePhase {
+export class EggLapsePhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
   }
@@ -3707,7 +3740,7 @@ export class EggLapsePhase extends BattlePhase {
   }
 }
 
-export class AddEnemyBuffModifierPhase extends BattlePhase {
+export class AddEnemyBuffModifierPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
   }

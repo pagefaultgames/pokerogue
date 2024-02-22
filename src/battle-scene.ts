@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import UI, { Mode } from './ui/ui';
-import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase, TrainerMessageTestPhase, LoginPhase, ConsolidateDataPhase, SelectGenderPhase, MovePhase } from './battle-phases';
+import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase, TrainerMessageTestPhase, LoginPhase, ConsolidateDataPhase, SelectGenderPhase, MovePhase } from './phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
 import * as Utils from './utils';
@@ -8,7 +8,7 @@ import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, P
 import { PokeballType } from './data/pokeball';
 import { initAutoPlay } from './system/auto-play';
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
-import { BattlePhase } from './battle-phase';
+import { Phase } from './phase';
 import { initGameSpeed } from './system/game-speed';
 import { Biome } from "./data/enums/biome";
 import { Arena, ArenaBase, getBiomeHasProps, getBiomeKey } from './arena';
@@ -105,11 +105,11 @@ export default class BattleScene extends Phaser.Scene {
 	
 	public gameData: GameData;
 
-	private phaseQueue: BattlePhase[];
-	private phaseQueuePrepend: BattlePhase[];
+	private phaseQueue: Phase[];
+	private phaseQueuePrepend: Phase[];
 	private phaseQueuePrependSpliceIndex: integer;
-	private currentPhase: BattlePhase;
-	private standbyPhase: BattlePhase;
+	private currentPhase: Phase;
+	private standbyPhase: Phase;
 	public field: Phaser.GameObjects.Container;
 	public fieldUI: Phaser.GameObjects.Container;
 	public pbTray: PokeballTray;
@@ -1403,19 +1403,19 @@ export default class BattleScene extends Phaser.Scene {
 			this.cameras.main.removePostPipeline('InvertPostFX');
 	}
 
-	getCurrentPhase(): BattlePhase {
+	getCurrentPhase(): Phase {
 		return this.currentPhase;
 	}
 
-	getStandbyPhase(): BattlePhase {
+	getStandbyPhase(): Phase {
 		return this.standbyPhase;
 	}
 
-	pushPhase(phase: BattlePhase): void {
+	pushPhase(phase: Phase): void {
 		this.phaseQueue.push(phase);
 	}
 
-	unshiftPhase(phase: BattlePhase): void {
+	unshiftPhase(phase: Phase): void {
 		if (this.phaseQueuePrependSpliceIndex === -1)
 			this.phaseQueuePrepend.push(phase);
 		else
@@ -1453,7 +1453,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.currentPhase.start();
 	}
 	
-	overridePhase(phase: BattlePhase): boolean {
+	overridePhase(phase: Phase): boolean {
 		if (this.standbyPhase)
 			return false;
 
@@ -1464,7 +1464,7 @@ export default class BattleScene extends Phaser.Scene {
 		return true;
 	}
 
-	findPhase(phaseFilter: (phase: BattlePhase) => boolean): BattlePhase {
+	findPhase(phaseFilter: (phase: Phase) => boolean): Phase {
 		return this.phaseQueue.find(phaseFilter);
 	}
 
@@ -1765,7 +1765,7 @@ export default class BattleScene extends Phaser.Scene {
 		if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)) {
 			const matchingFormChange = pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon));
 			if (matchingFormChange) {
-				let phase: BattlePhase;
+				let phase: Phase;
 				if (pokemon instanceof PlayerPokemon && !matchingFormChange.quiet)
 					phase = new FormChangePhase(this, pokemon, matchingFormChange, modal);
 				else

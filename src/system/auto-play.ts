@@ -1,4 +1,4 @@
-import { SelectModifierPhase } from "../battle-phases";
+import { SelectModifierPhase } from "../phases";
 import BattleScene, { Button } from "../battle-scene";
 import { ModifierType, ModifierTypeOption, PokemonBaseStatBoosterModifierType, PokemonHpRestoreModifierType, PokemonReviveModifierType } from "../modifier/modifier-type";
 import Pokemon, { AiType, EnemyPokemon, PlayerPokemon, PokemonMove } from "../pokemon";

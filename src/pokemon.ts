@@ -15,7 +15,7 @@ import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
 import { Status, StatusEffect } from './data/status-effect';
 import { reverseCompatibleTms, tmSpecies } from './data/tms';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './data/pokemon-evolutions';
-import { DamagePhase, FaintPhase, StatChangePhase, SwitchSummonPhase } from './battle-phases';
+import { DamagePhase, FaintPhase, StatChangePhase, SwitchSummonPhase } from './phases';
 import { BattleStat } from './data/battle-stat';
 import { BattlerTag, BattlerTagLapseType, EncoreTag, TypeBoostTag, getBattlerTag } from './data/battler-tags';
 import { BattlerTagType } from "./data/enums/battler-tag-type";
