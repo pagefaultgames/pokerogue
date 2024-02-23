@@ -762,6 +762,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
 		this.trainer.setPosition(406, 186);
+		this.trainer.setVisible(true)
 
 		if (clearScene) {
 			this.fadeOutBgm(250, false);

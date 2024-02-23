@@ -351,8 +351,8 @@ export const trainerTypeDialogue = {
         $@c{angry_mopen}Give it your all! Wouldn't want your adventure to be over before it started, right?`
       ],
       victory: [
-        `@c{shock}You just started and you're already this strong?!\n@c{angry}@d{96}You totally cheated, didn't you?
-        $@c{smile_wave_wink}Just kidding! @d{64}@c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.
+        `@c{shock}You just started and you're already this strong?!@d{96}\n@c{angry}You totally cheated, didn't you?
+        $@c{smile_wave_wink}Just kidding!@d{64} @c{smile_eclosed}I lost fair and square… I have a feeling you're going to do really well out there.
         $@c{smile}By the way, the professor wanted me to give you some items. Hopefully they're helpful!
         $@c{smile_wave}Do your best like always! I believe in you!`
       ]
@@ -442,10 +442,24 @@ export const trainerTypeDialogue = {
       ]
     }
   ],
-  [TrainerType.RIVAL_5]: {
-    encounter: [ `…` ],
-    victory: [ '…' ]
-  },
+  [TrainerType.RIVAL_5]: [
+    {
+      encounter: [
+        `…`
+      ],
+      victory: [
+        `…`
+      ]
+    },
+    {
+      encounter: [
+        `@c{neutral}…`
+      ],
+      victory: [
+        `@c{neutral}…`
+      ]
+    }
+  ],
   [TrainerType.RIVAL_6]: [
     {
       encounter: [

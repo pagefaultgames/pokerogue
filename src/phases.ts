@@ -2817,18 +2817,28 @@ export class TrainerVictoryPhase extends BattlePhase {
 
     this.scene.ui.showText(`You defeated\n${this.scene.currentBattle.trainer.getName(true)}!`, null, () => {
       const victoryMessages = this.scene.currentBattle.trainer.getVictoryMessages();
-      let showMessageAndEnd = () => this.end();
-      if (victoryMessages?.length) {
+      const showMessage = () => {
         let message: string;
         this.scene.executeWithSeedOffset(() => message = Utils.randSeedItem(victoryMessages), this.scene.currentBattle.waveIndex);
         const messagePages = message.split(/\$/g).map(m => m.trim());
       
         for (let p = messagePages.length - 1; p >= 0; p--) {
-          const originalFunc = showMessageAndEnd;
-          showMessageAndEnd = () => this.scene.ui.showDialogue(messagePages[p], this.scene.currentBattle.trainer.getName(), null, originalFunc);
+          const originalFunc = showMessageOrEnd;
+          showMessageOrEnd = () => this.scene.ui.showDialogue(messagePages[p], this.scene.currentBattle.trainer.getName(), null, originalFunc);
         }
-      }
-      showMessageAndEnd();
+
+        showMessageOrEnd();
+      };
+      let showMessageOrEnd = () => this.end();
+      if (victoryMessages?.length) {
+        if (this.scene.currentBattle.trainer.config.hasCharSprite) {
+          const originalFunc = showMessageOrEnd;
+          showMessageOrEnd = () => this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => originalFunc()));
+          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(this.scene.currentBattle.trainer.getKey(), 'shock').then(() => showMessage()));
+        } else
+          showMessage();
+      } else
+        showMessageOrEnd();
     }, null, true);
 
     this.showEnemyTrainer();
