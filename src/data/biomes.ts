@@ -7610,10 +7610,10 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [ TrainerType.IRIS, [] ],
     [ TrainerType.DIANTHA, [] ],
     [ TrainerType.HAU, [] ],
-    [ TrainerType.LEON, [] ],
     [ TrainerType.GEETA, [] ],
     [ TrainerType.NEMONA, [] ],
     [ TrainerType.KIERAN, [] ],
+    [ TrainerType.LEON, [] ],
     [ TrainerType.RIVAL, [] ]
   ];
 
