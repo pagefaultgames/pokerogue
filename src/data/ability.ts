@@ -191,7 +191,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   }
 
   applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if ((move instanceof AttackMove || move.getMove().getAttrs(StatusEffectAttr).length) && move.getMove().type === this.immuneType) {
+    if ((move.getMove() instanceof AttackMove || move.getMove().getAttrs(StatusEffectAttr).length) && move.getMove().type === this.immuneType) {
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
