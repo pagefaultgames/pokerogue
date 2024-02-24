@@ -4109,7 +4109,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.SILK_TRAP, "Silk Trap (N)", Type.BUG, -1, 10, -1, "The user spins a silken trap, protecting itself from damage while lowering the Speed stat of any attacker that makes direct contact.", -1, 4, 9),
     new AttackMove(Moves.AXE_KICK, "Axe Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 120, 90, 10, -1, "The user attacks by kicking up into the air and slamming its heel down upon the target. This may also confuse the target. If it misses, the user takes damage instead.", 30, 0, 9)
       .attr(MissEffectAttr, (user: Pokemon, move: Move) => { user.damage(Math.floor(user.getMaxHp() / 2)); return true; })
-      .attr(FlinchAttr),
+      .attr(ConfuseAttr),
     new AttackMove(Moves.LAST_RESPECTS, "Last Respects (N)", Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, "The user attacks to avenge its allies. The more defeated allies there are in the user's party, the greater the move's power.", -1, 0, 9),
     new AttackMove(Moves.LUMINA_CRASH, "Lumina Crash", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, "The user attacks by unleashing a peculiar light that even affects the mind. This also harshly lowers the target's Sp. Def stat.", 100, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2),
