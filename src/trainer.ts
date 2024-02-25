@@ -87,12 +87,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
     for (let i = 0; i < partyTemplate.size; i++) {
       let multiplier = 1;
       
-      const strength = partyTemplate.getStrength(i)
+      const strength = partyTemplate.getStrength(i);
       
       switch (strength) {
-        case TrainerPartyMemberStrength.WEAKEST:
-          multiplier = 0.9;
-          break;
         case TrainerPartyMemberStrength.WEAKER:
           multiplier = 0.95;
           break;
@@ -110,7 +107,14 @@ export default class Trainer extends Phaser.GameObjects.Container {
           break;
       }
 
-      const level = Math.ceil(baseLevel * multiplier);
+      let levelOffset = 0;
+
+      if (strength < TrainerPartyMemberStrength.STRONG) {
+        multiplier = Math.min(multiplier + 0.025 * Math.floor(waveIndex / 25), 1.2);
+        levelOffset = -Math.floor((waveIndex / 50) * (TrainerPartyMemberStrength.STRONG - strength));
+      }
+
+      const level = Math.ceil(baseLevel * multiplier) + levelOffset;
       ret.push(level);
     }
 
