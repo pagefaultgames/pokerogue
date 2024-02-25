@@ -150,7 +150,8 @@ export abstract class PokemonSpeciesForm {
       formIndex = this.formIndex;
 
     const formSpriteKey = this.getFormSpriteKey(formIndex);
-    return `${shiny ? 'shiny__' : ''}${this.genderDiffs && female ? 'female__' : ''}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ''}`;
+    const showGenderDiffs = this.genderDiffs && female && ![ SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX ].find(k => formSpriteKey === k);
+    return `${shiny ? 'shiny__' : ''}${showGenderDiffs ? 'female__' : ''}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ''}`;
   }
 
   getSpriteKey(female: boolean, formIndex?: integer, shiny?: boolean): string {
