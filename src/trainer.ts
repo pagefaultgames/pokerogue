@@ -91,7 +91,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       
       switch (strength) {
         case TrainerPartyMemberStrength.WEAKEST:
-          multiplier = 0.85;
+          multiplier = 0.9;
           break;
         case TrainerPartyMemberStrength.WEAKER:
           multiplier = 0.95;
@@ -110,13 +110,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
           break;
       }
 
-      let level = Math.ceil(baseLevel * multiplier);
-      if (strength < TrainerPartyMemberStrength.STRONG) {
-        const minLevel = Math.ceil(baseLevel * 1.2) - Math.floor(waveIndex / 25);
-        if (level < minLevel)
-          level = minLevel;
-      }
-
+      const level = Math.ceil(baseLevel * multiplier);
       ret.push(level);
     }
 
