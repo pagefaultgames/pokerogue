@@ -25,6 +25,8 @@ import { GameStats } from "./game-stats";
 import { Tutorial } from "../tutorial";
 import { BattleSpec } from "../enums/battle-spec";
 import { Moves } from "../data/enums/moves";
+import { speciesEggMoves } from "../data/egg-moves";
+import { allMoves } from "../data/move";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -60,6 +62,7 @@ interface SystemSaveData {
   gender: PlayerGender;
   dexData: DexData;
   starterMoveData: StarterMoveData;
+  starterEggMoveData: StarterEggMoveData;
   gameStats: GameStats;
   unlocks: Unlocks;
   achvUnlocks: AchvUnlocks;
@@ -146,6 +149,10 @@ export interface StarterFormMoveData {
   [key: integer]: StarterMoveset
 }
 
+export interface StarterEggMoveData {
+  [key: integer]: integer
+}
+
 export interface TutorialFlags {
   [key: string]: boolean
 }
@@ -172,6 +179,8 @@ export class GameData {
 
   public starterMoveData: StarterMoveData;
 
+  public starterEggMoveData: StarterEggMoveData;
+
   public gameStats: GameStats;
 
   public unlocks: Unlocks;
@@ -188,6 +197,7 @@ export class GameData {
     this.trainerId = Utils.randSeedInt(65536);
     this.secretId = Utils.randSeedInt(65536);
     this.starterMoveData = {};
+    this.starterEggMoveData = {};
     this.gameStats = new GameStats();
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
@@ -204,6 +214,7 @@ export class GameData {
     };
     this.eggs = [];
     this.initDexData();
+    this.initEggMoveData();
   }
 
   public saveSystem(): Promise<boolean> {
@@ -220,6 +231,7 @@ export class GameData {
           gender: this.gender,
           dexData: this.dexData,
           starterMoveData: this.starterMoveData,
+          starterEggMoveData: this.starterEggMoveData,
           gameStats: this.gameStats,
           unlocks: this.unlocks,
           achvUnlocks: this.achvUnlocks,
@@ -279,6 +291,13 @@ export class GameData {
           this.saveSetting(Setting.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
 
           this.starterMoveData = systemData.starterMoveData || {};
+          
+          if (systemData.starterEggMoveData)
+            this.starterEggMoveData = systemData.starterEggMoveData;
+          else {
+            this.starterEggMoveData = {};
+            this.initEggMoveData();
+          }
 
           if (systemData.gameStats)
             this.gameStats = systemData.gameStats;
@@ -806,6 +825,15 @@ export class GameData {
     this.dexData = data;
   }
 
+  private initEggMoveData(): void {
+    const data: StarterEggMoveData = {};
+    
+    const starterSpeciesIds = Object.keys(speciesEggMoves).map(k => parseInt(k) as Species);
+
+    for (let speciesId of starterSpeciesIds)
+      data[speciesId] = 0;
+  }
+
   setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true): void {
     const dexEntry = this.dexData[pokemon.species.speciesId];
     dexEntry.seenAttr |= pokemon.getDexAttr();
@@ -822,7 +850,7 @@ export class GameData {
   }
 
   setPokemonSpeciesCaught(pokemon: Pokemon, species: PokemonSpecies, incrementCount: boolean = true, fromEgg: boolean = false): Promise<void> {
-    return new Promise<void>((resolve) => {
+    return new Promise<void>(resolve => {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
       dexEntry.caughtAttr |= pokemon.getDexAttr();
@@ -865,6 +893,31 @@ export class GameData {
         this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => checkPrevolution(), null, true);
       } else
         checkPrevolution();
+    });
+  }
+
+  setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      const speciesId = species.speciesId;
+      if (!speciesEggMoves.hasOwnProperty(speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
+        resolve(false);
+        return;
+      }
+
+      if (!this.starterEggMoveData.hasOwnProperty(speciesId))
+        this.starterEggMoveData[speciesId] = 0;
+
+      const value = Math.pow(2, eggMoveIndex);
+
+      if (this.starterEggMoveData[speciesId] & eggMoveIndex) {
+        resolve(false);
+        return;
+      }
+
+      this.starterEggMoveData[speciesId] |= value;
+
+      this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
+      this.scene.ui.showText(`${eggMoveIndex === 3 ? 'Rare ' : ''}Egg Move unlocked: ${allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name}`, null, () => resolve(true), null, true);
     });
   }
 

@@ -22,6 +22,7 @@ import { LevelMoves, pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "../
 import { allMoves } from "../data/move";
 import { Type } from "../data/type";
 import { Moves } from "../data/enums/moves";
+import { speciesEggMoves } from "../data/egg-moves";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -144,12 +145,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonNameText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNameText);
 
-    this.pokemonGrowthRateLabelText = addTextObject(this.scene, 8, 103, 'Growth Rate:', TextStyle.SUMMARY, { fontSize: '48px' });
+    this.pokemonGrowthRateLabelText = addTextObject(this.scene, 8, 106, 'Growth Rate:', TextStyle.SUMMARY, { fontSize: '36px' });
     this.pokemonGrowthRateLabelText.setOrigin(0, 0);
     this.pokemonGrowthRateLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonGrowthRateLabelText);
 
-    this.pokemonGrowthRateText = addTextObject(this.scene, 44, 103, '', TextStyle.SUMMARY_PINK, { fontSize: '48px' });
+    this.pokemonGrowthRateText = addTextObject(this.scene, 34, 106, '', TextStyle.SUMMARY_PINK, { fontSize: '36px' });
     this.pokemonGrowthRateText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGrowthRateText);
 
@@ -344,9 +345,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.pokemonMovesContainer);
 
-    this.pokemonEggMovesContainer = this.scene.add.container(102, 94);
-    this.pokemonEggMovesContainer.setScale(0.25);
-    this.pokemonEggMovesContainer.setVisible(false);
+    this.pokemonEggMovesContainer = this.scene.add.container(102, 85);
+    this.pokemonEggMovesContainer.setScale(0.375);
 
     const eggMovesLabel = addTextObject(this.scene, -46, 0, 'Egg Moves', TextStyle.SUMMARY);
     eggMovesLabel.setOrigin(0.5, 0);
@@ -617,9 +617,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                   };
                                 }).concat({
                                   label: 'Cancel',
-                                  handler: () => {
-                                    showSwapOptions(this.starterMoveset);
-                                  }
+                                  handler: () => showSwapOptions(this.starterMoveset)
                                 }),
                                 maxOptions: 8,
                                 yOffset: 19
@@ -1106,6 +1104,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         else
           levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
         this.speciesStarterMoves.push(...levelMoves.filter(lm => lm[0] <= 5).map(lm => lm[1]));
+        if (speciesEggMoves.hasOwnProperty(species.speciesId)) {
+          for (let em = 0; em < 4; em++) {
+            if (this.scene.gameData.starterEggMoveData[species.speciesId] & Math.pow(2, em))
+              this.speciesStarterMoves.push(speciesEggMoves[species.speciesId][em]);
+          }
+        }
         
         const speciesMoveData = this.scene.gameData.starterMoveData[species.speciesId];
         let moveData: StarterMoveset = speciesMoveData
@@ -1133,6 +1137,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonMoveLabels[m].setText(move ? move.name : '-');
       this.pokemonMoveContainers[m].setVisible(!!move);
     }
+
+    const hasEggMoves = species && speciesEggMoves.hasOwnProperty(species.speciesId);
+
+    for (let em = 0; em < 4; em++) {
+      const eggMove = hasEggMoves ? allMoves[speciesEggMoves[species.speciesId][em]] : null;
+      const eggMoveUnlocked = eggMove && this.scene.gameData.starterEggMoveData.hasOwnProperty(species.speciesId) && this.scene.gameData.starterEggMoveData[species.speciesId] & Math.pow(2, em);
+      this.pokemonEggMoveBgs[em].setFrame(Type[eggMove ? eggMove.type : Type.UNKNOWN].toString().toLowerCase());
+      this.pokemonEggMoveLabels[em].setText(eggMove && eggMoveUnlocked ? eggMove.name : '???');
+    }
+
+    this.pokemonEggMovesContainer.setVisible(hasEggMoves);
 
     this.pokemonAdditionalMoveCountLabel.setText(`(+${Math.max(this.speciesStarterMoves.length - 4, 0)})`);
     this.pokemonAdditionalMoveCountLabel.setVisible(this.speciesStarterMoves.length > 4);

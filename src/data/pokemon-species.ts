@@ -7,7 +7,8 @@ import { Type } from './type';
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from './pokemon-level-moves';
 import { uncatchableSpecies } from './biomes';
 import * as Utils from '../utils';
-import { StarterMoveset } from '../system/game-data';
+import { StarterEggMoveData, StarterMoveset } from '../system/game-data';
+import { speciesEggMoves } from './egg-moves';
 
 export enum Region {
   NORMAL,
@@ -96,6 +97,13 @@ export abstract class PokemonSpeciesForm {
       this.baseFriendship = baseFriendship;
       this.baseExp = baseExp;
       this.genderDiffs = genderDiffs;
+  }
+
+  getRootSpeciesId(): Species {
+    let ret = this.speciesId;
+    while (pokemonPrevolutions.hasOwnProperty(ret))
+      ret = pokemonPrevolutions[ret];
+    return ret;
   }
 
   isOfType(type: integer): boolean {
@@ -261,8 +269,14 @@ export abstract class PokemonSpeciesForm {
     return ret;
   }
 
-  validateStarterMoveset(moveset: StarterMoveset): boolean {
+  validateStarterMoveset(moveset: StarterMoveset, eggMoves: integer): boolean {
+    const rootSpeciesId = this.getRootSpeciesId();
     for (let moveId of moveset) {
+      if (speciesEggMoves.hasOwnProperty(rootSpeciesId)) {
+        const eggMoveIndex = speciesEggMoves[rootSpeciesId].findIndex(m => m === moveId);
+        if (eggMoveIndex > -1 && eggMoves & Math.pow(2, eggMoveIndex))
+          continue;
+      }
       if (pokemonFormLevelMoves.hasOwnProperty(this.speciesId) && pokemonFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex)) {
         if (!pokemonFormLevelMoves[this.speciesId][this.formIndex].find(lm => lm[0] <= 5 && lm[1] === moveId))
           return false;

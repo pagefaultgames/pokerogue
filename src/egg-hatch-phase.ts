@@ -15,6 +15,7 @@ import { Gender, getGenderColor, getGenderSymbol } from "./data/gender";
 import { achvs } from "./system/achv";
 import { addWindow } from "./ui/window";
 import { getNatureName } from "./data/nature";
+import { pokemonPrevolutions } from "./data/pokemon-evolutions";
 
 export class EggHatchPhase extends Phase {
   private egg: Egg;
@@ -33,6 +34,7 @@ export class EggHatchPhase extends Phase {
   private statsContainer: StatsContainer;
 
   private pokemon: PlayerPokemon;
+  private eggMoveIndex: integer;
   private canSkip: boolean;
   private skipped: boolean;
   private evolutionBgm: AnySound;
@@ -293,8 +295,10 @@ export class EggHatchPhase extends Phase {
           this.scene.ui.showText(`${this.pokemon.name} hatched from the egg!`, null, () => {
             this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
             this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
-              this.scene.ui.showText(null, 0);
-              this.end();
+              this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(() => {
+                this.scene.ui.showText(null, 0);
+                this.end();
+              });
             });
           }, null, true, 3000);
           //this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
@@ -412,7 +416,7 @@ export class EggHatchPhase extends Phase {
       let speciesPool = Object.keys(speciesStarters)
         .filter(s => speciesStarters[s] >= minStarterValue && speciesStarters[s] <= maxStarterValue)
         .map(s => parseInt(s) as Species)
-        .filter(s => getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
+        .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
 
       if (this.egg.gachaType === GachaType.TYPE) {
         let tryOverrideType: boolean;
@@ -473,6 +477,12 @@ export class EggHatchPhase extends Phase {
       for (let s = 0; s < ret.ivs.length; s++)
         ret.ivs[s] = Math.max(ret.ivs[s], secondaryIvs[s]);
     }, ret.id, EGG_SEED.toString());
+
+    this.scene.executeWithSeedOffset(() => {
+      const rand = Utils.randSeedInt(10);
+
+      this.eggMoveIndex = rand ? Math.floor((rand - 1) / 3) : 3;
+    }, this.egg.id, EGG_SEED.toString());
     
     return ret;
   }

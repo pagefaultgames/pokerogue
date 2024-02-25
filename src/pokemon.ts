@@ -1925,7 +1925,7 @@ export class PlayerPokemon extends Pokemon {
   }
 
   tryPopulateMoveset(moveset: StarterMoveset): boolean {
-    if (!this.getSpeciesForm().validateStarterMoveset(moveset))
+    if (!this.getSpeciesForm().validateStarterMoveset(moveset, this.scene.gameData.starterEggMoveData[this.species.getRootSpeciesId()]))
       return false;
 
     this.moveset = moveset.map(m => new PokemonMove(m));

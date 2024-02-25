@@ -1712,8 +1712,8 @@ export class TurnEndPhase extends FieldPhase {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
       
       if (pokemon.summonData.disabledMove && !--pokemon.summonData.disabledTurns) {
-        pokemon.summonData.disabledMove = Moves.NONE;
         this.scene.pushPhase(new MessagePhase(this.scene, `${allMoves[pokemon.summonData.disabledMove].name} is disabled\nno more!`));
+        pokemon.summonData.disabledMove = Moves.NONE;
       }
 
       const hasUsableBerry = !!this.scene.findModifier(m => m instanceof BerryModifier && m.shouldApply([ pokemon ]), pokemon.isPlayer());
