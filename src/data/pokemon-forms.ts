@@ -66,6 +66,8 @@ export enum FormChangeItem {
   REVEAL_GLASS,
   GRACIDEA,
   MAX_MUSHROOMS,
+  DARK_STONE,
+  LIGHT_STONE,
   PRISON_BOTTLE,
   N_LUNARIZER,
   N_SOLARIZER,
@@ -496,6 +498,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
   ],
   [Species.LANDORUS]: [
     new SpeciesFormChange(Species.LANDORUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItem.REVEAL_GLASS))
+  ],
+  [Species.KYUREM]: [
+    new SpeciesFormChange(Species.KYUREM, '', 'black', new SpeciesFormChangeItemTrigger(FormChangeItem.DARK_STONE)),
+    new SpeciesFormChange(Species.KYUREM, '', 'white', new SpeciesFormChangeItemTrigger(FormChangeItem.LIGHT_STONE))
   ],
   [Species.KELDEO]: [
     new SpeciesFormChange(Species.KELDEO, 'ordinary', 'resolute', new SpeciesFormChangeMoveLearnedTrigger(Moves.SECRET_SWORD)),
