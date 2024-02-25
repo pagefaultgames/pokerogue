@@ -274,8 +274,9 @@ export abstract class PokemonSpeciesForm {
 
   loadAssets(scene: BattleScene, female: boolean, formIndex?: integer, shiny?: boolean, startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
+      const spriteKey = this.getSpriteKey(female, formIndex, shiny);
       scene.load.audio(this.getCryKey(formIndex), `audio/cry/${this.getCryKey(formIndex)}.ogg`);
-      scene.loadAtlas(this.getSpriteKey(female, formIndex, shiny), 'pokemon', this.getSpriteAtlasPath(female, formIndex, shiny));
+      scene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny));
       scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
         // Ignore warnings for missing frames, because there will be a lot
@@ -1689,8 +1690,8 @@ export function initSpecies() {
     new PokemonSpecies(Species.NOIBAT, "Noibat", 6, false, false, false, "Sound Wave Pokémon", Type.FLYING, Type.DRAGON, 0.5, 8, Abilities.FRISK, Abilities.INFILTRATOR, Abilities.TELEPATHY, 245, 40, 30, 35, 45, 40, 55, 190, 50, 49, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.NOIVERN, "Noivern", 6, false, false, false, "Sound Wave Pokémon", Type.FLYING, Type.DRAGON, 1.5, 85, Abilities.FRISK, Abilities.INFILTRATOR, Abilities.TELEPATHY, 535, 85, 70, 80, 97, 80, 123, 45, 50, 187, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.XERNEAS, "Xerneas", 6, false, true, false, "Life Pokémon", Type.FAIRY, null, 3, 215, Abilities.FAIRY_AURA, Abilities.NONE, Abilities.NONE, 680, 126, 131, 95, 131, 98, 99, 45, 0, 340, GrowthRate.SLOW, null, false, true,
-      new PokemonForm("Active Mode", "active", Type.FAIRY, null, 3, 215, Abilities.FAIRY_AURA, Abilities.NONE, Abilities.NONE, 680, 126, 131, 95, 131, 98, 99, 45, 0, 340, false, ""),
-      new PokemonForm("Neutral Mode", "neutral", Type.FAIRY, null, 3, 215, Abilities.FAIRY_AURA, Abilities.NONE, Abilities.NONE, 680, 126, 131, 95, 131, 98, 99, 45, 0, 340, false, ""),
+      new PokemonForm("Neutral Mode", "neutral", Type.FAIRY, null, 3, 215, Abilities.FAIRY_AURA, Abilities.NONE, Abilities.NONE, 680, 126, 131, 95, 131, 98, 99, 45, 0, 340),
+      new PokemonForm("Active Mode", "active", Type.FAIRY, null, 3, 215, Abilities.FAIRY_AURA, Abilities.NONE, Abilities.NONE, 680, 126, 131, 95, 131, 98, 99, 45, 0, 340)
     ),
     new PokemonSpecies(Species.YVELTAL, "Yveltal", 6, false, true, false, "Destruction Pokémon", Type.DARK, Type.FLYING, 5.8, 203, Abilities.DARK_AURA, Abilities.NONE, Abilities.NONE, 680, 126, 131, 95, 131, 98, 99, 45, 0, 340, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.ZYGARDE, "Zygarde", 6, true, false, false, "Order Pokémon", Type.DRAGON, Type.GROUND, 5, 305, Abilities.AURA_BREAK, Abilities.NONE, Abilities.NONE, 600, 108, 100, 121, 81, 95, 95, 3, 0, 300, GrowthRate.SLOW, null, false, false,
@@ -1849,7 +1850,10 @@ export function initSpecies() {
       new PokemonForm("Normal", "", Type.STEEL, Type.FAIRY, 1, 80.5, Abilities.SOUL_HEART, Abilities.NONE, Abilities.NONE, 600, 80, 95, 115, 130, 115, 65, 3, 0, 300),
       new PokemonForm("Original", "original", Type.STEEL, Type.FAIRY, 1, 80.5, Abilities.SOUL_HEART, Abilities.NONE, Abilities.NONE, 600, 80, 95, 115, 130, 115, 65, 3, 0, 300),
     ),
-    new PokemonSpecies(Species.MARSHADOW, "Marshadow", 7, true, false, true, "Gloomdweller Pokémon", Type.FIGHTING, Type.GHOST, 0.7, 22.2, Abilities.TECHNICIAN, Abilities.NONE, Abilities.NONE, 600, 90, 125, 80, 90, 90, 125, 3, 0, 300, GrowthRate.SLOW, null, false),
+    new PokemonSpecies(Species.MARSHADOW, "Marshadow", 7, true, false, true, "Gloomdweller Pokémon", Type.FIGHTING, Type.GHOST, 0.7, 22.2, Abilities.TECHNICIAN, Abilities.NONE, Abilities.NONE, 600, 90, 125, 80, 90, 90, 125, 3, 0, 300, GrowthRate.SLOW, null, false, true,
+      new PokemonForm("Normal", "", Type.FIGHTING, Type.GHOST, 0.7, 22.2, Abilities.TECHNICIAN, Abilities.NONE, Abilities.NONE, 600, 90, 125, 80, 90, 90, 125, 3, 0, 300),
+      new PokemonForm("Zenith", "zenith", Type.FIGHTING, Type.GHOST, 0.7, 22.2, Abilities.TECHNICIAN, Abilities.NONE, Abilities.NONE, 600, 90, 125, 80, 90, 90, 125, 3, 0, 300)
+    ),
     new PokemonSpecies(Species.POIPOLE, "Poipole", 7, true, false, false, "Poison Pin Pokémon", Type.POISON, null, 0.6, 1.8, Abilities.BEAST_BOOST, Abilities.NONE, Abilities.NONE, 420, 67, 73, 67, 73, 67, 73, 45, 0, 210, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.NAGANADEL, "Naganadel", 7, true, false, false, "Poison Pin Pokémon", Type.POISON, Type.DRAGON, 3.6, 150, Abilities.BEAST_BOOST, Abilities.NONE, Abilities.NONE, 540, 73, 73, 73, 127, 73, 121, 45, 0, 270, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.STAKATAKA, "Stakataka", 7, true, false, false, "Rampart Pokémon", Type.ROCK, Type.STEEL, 5.5, 820, Abilities.BEAST_BOOST, Abilities.NONE, Abilities.NONE, 570, 61, 131, 211, 53, 101, 13, 30, 0, 285, GrowthRate.SLOW, null, false),

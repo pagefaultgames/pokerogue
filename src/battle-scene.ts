@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import UI, { Mode } from './ui/ui';
 import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase, TrainerMessageTestPhase, LoginPhase, ConsolidateDataPhase, SelectGenderPhase, MovePhase } from './phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
-import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
+import PokemonSpecies, { PokemonSpeciesFilter, SpeciesFormKey, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
 import * as Utils from './utils';
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
@@ -61,6 +61,8 @@ export const startingWave = 1;
 export const startingBiome = Biome.TOWN;
 export const startingMoney = 1000;
 
+const expSpriteKeys: string[] = [];
+
 export enum Button {
 	UP,
 	DOWN,
@@ -99,6 +101,7 @@ export default class BattleScene extends Phaser.Scene {
 	public showLevelUpStats: boolean = true;
 	public enableTutorials: boolean = true;
 	public windowType: integer = 1;
+	public experimentalSprites: boolean = false;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
 	public quickStart: boolean = quickStart;
@@ -183,6 +186,26 @@ export default class BattleScene extends Phaser.Scene {
 		if (folder)
 			folder += '/';
 		this.load.atlas(key, `images/${folder}${filenameRoot}.png`, `images/${folder}/${filenameRoot}.json`);
+	}
+
+	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
+		if (experimental === undefined)
+			experimental = this.experimentalSprites;
+		if (experimental) {
+			const keyMatch = /^pkmn__(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?$/g.exec(key);
+			let k = keyMatch[4];
+			if (keyMatch[2])
+				k += 's';
+			if (keyMatch[1])
+				k += 'b';
+			if (keyMatch[3])
+				k += 'f';
+			if (keyMatch[5])
+				k += keyMatch[5];
+			if (expSpriteKeys.indexOf(k) === -1)
+				experimental = false;
+		}
+		this.load.atlas(key, `images/pokemon/${experimental ? 'exp/' : ''}${atlasPath}.png`,  `images/pokemon/${experimental ? 'exp/' : ''}${atlasPath}.json`);
 	}
 
 	loadSpritesheet(key: string, folder: string, size: integer, filename?: string) {
@@ -629,6 +652,15 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.updateWaveCountText();
 		this.updateMoneyText();
+	}
+
+	initExpSprites(): void {
+		if (expSpriteKeys.length)
+			return;
+		fetch('./exp_sprites.json').then(res => res.json()).then(keys => {
+			if (Array.isArray(keys))
+				expSpriteKeys.push(...keys);
+		});
 	}
 
 	setupControls() {

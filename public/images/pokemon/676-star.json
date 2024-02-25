@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "676-star.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 72,
+				"h": 72
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 56,
+						"h": 72
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 56,
+						"h": 72
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 56,
+						"h": 72
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:31c1ce60aa953fb647ff40c50ac54cf1:d7eefc05e299310d05d389e05997e449:dd7fedf66b493b0bbdef5d25e0041dd8$"
+	}
+}

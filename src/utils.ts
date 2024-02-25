@@ -1,3 +1,5 @@
+export const MissingTextureKey = '__MISSING';
+
 export function toReadableString(str: string): string {
   return str.replace(/\_/g, ' ').split(' ').map(s => `${s.slice(0, 1)}${s.slice(1).toLowerCase()}`).join(' ');
 }

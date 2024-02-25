@@ -10,6 +10,7 @@ export enum Setting {
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
   Window_Type = "WINDOW_TYPE",
   Tutorials = "TUTORIALS",
+  Sprite_Set = "SPRITE_SET",
   Player_Gender = "PLAYER_GENDER",
   Touch_Controls = "TOUCH_CONTROLS",
   Vibration = "VIBRATION"
@@ -31,6 +32,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ],
   [Setting.Window_Type]: new Array(4).fill(null).map((_, i) => (i + 1).toString()),
   [Setting.Tutorials]: [ 'Off', 'On' ],
+  [Setting.Sprite_Set]: [ 'Consistent', 'Prioritize Animation' ],
   [Setting.Player_Gender]: [ 'Boy', 'Girl' ],
   [Setting.Touch_Controls]: [ 'Auto', 'Disabled' ],
   [Setting.Vibration]: [ 'Auto', 'Disabled' ]
@@ -44,6 +46,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Show_Stats_on_Level_Up]: 1,
   [Setting.Window_Type]: 0,
   [Setting.Tutorials]: 1,
+  [Setting.Sprite_Set]: 0,
   [Setting.Player_Gender]: 0,
   [Setting.Touch_Controls]: 0,
   [Setting.Vibration]: 0
@@ -74,6 +77,11 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       break;
     case Setting.Tutorials:
       scene.enableTutorials = settingOptions[setting][value] === 'On';
+      break;
+    case Setting.Sprite_Set:
+      scene.experimentalSprites = !!value;
+      if (value)
+        scene.initExpSprites();
       break;
     case Setting.Player_Gender:
       if (scene.gameData) {
