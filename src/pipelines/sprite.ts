@@ -376,7 +376,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
 
     batchQuad(gameObject: Phaser.GameObjects.GameObject, x0: number, y0: number, x1: number, y1: number, x2: number, y2: number, x3: number, y3: number,
         u0: number, v0: number, u1: number, v1: number, tintTL: number, tintTR: number, tintBL: number, tintBR: number, tintEffect: number | boolean,
-        texture?: WebGLTexture, unit?: number): boolean {
+        texture?: Phaser.Renderer.WebGL.Wrappers.WebGLTextureWrapper, unit?: number): boolean {
         const sprite = gameObject as Phaser.GameObjects.Sprite;
 
         this.set1f('vCutoff', v1);

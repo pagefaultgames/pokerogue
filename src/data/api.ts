@@ -1,5 +1,5 @@
 import { MainClient, NamedAPIResource } from 'pokenode-ts';
-import { MoveTarget, Moves, allMoves } from './move';
+import { MoveTarget, allMoves } from './move';
 import * as Utils from '../utils';
 import fs from 'vite-plugin-fs/browser';
 import PokemonSpecies, { PokemonForm, SpeciesFormKey, allSpecies } from './pokemon-species';
@@ -9,6 +9,7 @@ import { Abilities, allAbilities } from './ability';
 import { Species } from './enums/species';
 import { pokemonFormLevelMoves } from './pokemon-level-moves';
 import { tmSpecies } from './tms';
+import { Moves } from './enums/moves';
 
 const targetMap = {
   'specific-move': MoveTarget.ATTACKER,
