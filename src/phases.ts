@@ -705,6 +705,11 @@ export class NextEncounterPhase extends EncounterPhase {
   doEncounter(): void {
     this.scene.playBgm(undefined, true);
 
+    for (let pokemon of this.scene.getParty()) {
+      if (pokemon)
+        pokemon.resetBattleData();
+    }
+
     this.scene.arenaNextEnemy.setVisible(true);
 
     const enemyField = this.scene.getEnemyField();
