@@ -14,7 +14,7 @@ import { Gender } from './data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
 import { Status, StatusEffect } from './data/status-effect';
 import { reverseCompatibleTms, tmSpecies } from './data/tms';
-import { pokemonEvolutions, pokemonPrevolutions, SpeciesEvolution, SpeciesEvolutionCondition } from './data/pokemon-evolutions';
+import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition } from './data/pokemon-evolutions';
 import { DamagePhase, FaintPhase, StatChangePhase, SwitchSummonPhase } from './phases';
 import { BattleStat } from './data/battle-stat';
 import { BattlerTag, BattlerTagLapseType, EncoreTag, TypeBoostTag, getBattlerTag } from './data/battler-tags';
@@ -726,7 +726,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (atkScore + defScore) * hpDiffRatio;
   }
 
-  getEvolution(): SpeciesEvolution {
+  getEvolution(): SpeciesFormEvolution {
     if (!pokemonEvolutions.hasOwnProperty(this.species.speciesId))
       return null;
 
@@ -1950,7 +1950,7 @@ export class PlayerPokemon extends Pokemon {
     });
   }
   
-  getPossibleEvolution(evolution: SpeciesEvolution): Promise<Pokemon> {
+  getPossibleEvolution(evolution: SpeciesFormEvolution): Promise<Pokemon> {
     return new Promise(resolve => {
       const species = getPokemonSpecies(evolution.speciesId);
       const formIndex = evolution.evoFormKey !== null ? Math.max(this.species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0) : this.formIndex;
@@ -1959,7 +1959,7 @@ export class PlayerPokemon extends Pokemon {
     });
   }
 
-  evolve(evolution: SpeciesEvolution): Promise<void> {
+  evolve(evolution: SpeciesFormEvolution): Promise<void> {
     return new Promise(resolve => {
       this.pauseEvolutions = false;
       this.handleSpecialEvolutions(evolution);
@@ -1981,7 +1981,7 @@ export class PlayerPokemon extends Pokemon {
     });
   }
 
-  private handleSpecialEvolutions(evolution: SpeciesEvolution) {
+  private handleSpecialEvolutions(evolution: SpeciesFormEvolution) {
     if (this.species.speciesId === Species.NINCADA && evolution.speciesId === Species.NINJASK) {
       const newEvolution = pokemonEvolutions[this.species.speciesId][1];
       if (newEvolution.condition.predicate(this)) {

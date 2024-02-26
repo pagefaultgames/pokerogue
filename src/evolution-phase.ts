@@ -1,7 +1,7 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { Phase } from "./phase";
 import BattleScene from "./battle-scene";
-import { SpeciesEvolution } from "./data/pokemon-evolutions";
+import { SpeciesFormEvolution } from "./data/pokemon-evolutions";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
@@ -14,7 +14,7 @@ export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;
   protected lastLevel: integer;
   
-  private evolution: SpeciesEvolution;
+  private evolution: SpeciesFormEvolution;
 
   protected evolutionContainer: Phaser.GameObjects.Container;
   protected evolutionBaseBg: Phaser.GameObjects.Image;
@@ -26,7 +26,7 @@ export class EvolutionPhase extends Phase {
   protected pokemonEvoSprite: Phaser.GameObjects.Sprite;
   protected pokemonEvoTintSprite: Phaser.GameObjects.Sprite;
 
-  constructor(scene: BattleScene, pokemon: PlayerPokemon, evolution: SpeciesEvolution, lastLevel: integer) {
+  constructor(scene: BattleScene, pokemon: PlayerPokemon, evolution: SpeciesFormEvolution, lastLevel: integer) {
     super(scene);
 
     this.pokemon = pokemon;

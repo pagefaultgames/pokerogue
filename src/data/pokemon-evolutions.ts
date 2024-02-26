@@ -100,7 +100,7 @@ export class SpeciesFriendshipEvolutionCondition extends SpeciesEvolutionConditi
 }
 
 interface PokemonEvolutions {
-  [key: string]: SpeciesEvolution[]
+  [key: string]: SpeciesFormEvolution[]
 }
 
 export const pokemonEvolutions: PokemonEvolutions = {

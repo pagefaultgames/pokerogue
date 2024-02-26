@@ -5,7 +5,7 @@ import beautify from 'json-beautify';
 import { TrainerType } from "./enums/trainer-type";
 import { TimeOfDay } from "./enums/time-of-day";
 import { Biome } from "./enums/biome";
-import { SpeciesEvolution } from "./pokemon-evolutions";
+import { SpeciesFormEvolution } from "./pokemon-evolutions";
 
 export function getBiomeName(biome: Biome | -1) {
   if (biome === -1)
@@ -7659,7 +7659,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       const speciesId = pb[0] as Species;
       const biomeEntries = pb[3] as (Biome | BiomePoolTier)[][];
 
-      const speciesEvolutions: SpeciesEvolution[] = pokemonEvolutions.hasOwnProperty(speciesId)
+      const speciesEvolutions: SpeciesFormEvolution[] = pokemonEvolutions.hasOwnProperty(speciesId)
         ? pokemonEvolutions[speciesId]
         : [];
       
@@ -7688,7 +7688,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
             const existingSpeciesIds = biomeTierPool[t] as unknown as Species[];
             for (let es = 0; es < existingSpeciesIds.length; es++) {
               const existingSpeciesId = existingSpeciesIds[es];
-              if (pokemonEvolutions.hasOwnProperty(existingSpeciesId) && (pokemonEvolutions[existingSpeciesId] as SpeciesEvolution[]).find(ese => ese.speciesId === speciesId)) {
+              if (pokemonEvolutions.hasOwnProperty(existingSpeciesId) && (pokemonEvolutions[existingSpeciesId] as SpeciesFormEvolution[]).find(ese => ese.speciesId === speciesId)) {
                 treeIndex = t;
                 arrayIndex = es + 1;
                 break;
