@@ -346,6 +346,7 @@ export default class BattleScene extends Phaser.Scene {
 		});
 
 		// Load character sprites
+		this.loadAtlas('c_rival_m', 'character', 'rival_m');
 		this.loadAtlas('c_rival_f', 'character', 'rival_f');
 
 		// Load pokemon-related images

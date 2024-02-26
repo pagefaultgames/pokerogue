@@ -47,7 +47,7 @@ import { loggedInUser, updateUserInfo } from "./account";
 import { GameDataType, PlayerGender } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger } from "./data/pokemon-forms";
-import { battleSpecDialogue } from "./data/dialogue";
+import { battleSpecDialogue, getCharVariantFromDialogue } from "./data/dialogue";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
 import { Setting } from "./system/settings";
 import { Tutorial, handleTutorial } from "./tutorial";
@@ -628,7 +628,7 @@ export class EncounterPhase extends BattlePhase {
           });
         };
         if (this.scene.currentBattle.trainer.config.hasCharSprite)
-          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(trainer.getKey(), 'smile').then(() => showDialogueAndSummon()));
+          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(trainer.getKey(), getCharVariantFromDialogue(encounterMessages[0])).then(() => showDialogueAndSummon()));
         else
           showDialogueAndSummon();
       }
@@ -2834,7 +2834,7 @@ export class TrainerVictoryPhase extends BattlePhase {
         if (this.scene.currentBattle.trainer.config.hasCharSprite) {
           const originalFunc = showMessageOrEnd;
           showMessageOrEnd = () => this.scene.charSprite.hide().then(() => this.scene.hideFieldOverlay(250).then(() => originalFunc()));
-          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(this.scene.currentBattle.trainer.getKey(), 'shock').then(() => showMessage()));
+          this.scene.showFieldOverlay(500).then(() => this.scene.charSprite.showCharacter(this.scene.currentBattle.trainer.getKey(), getCharVariantFromDialogue(victoryMessages[0])).then(() => showMessage()));
         } else
           showMessage();
       } else

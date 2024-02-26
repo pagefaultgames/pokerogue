@@ -331,16 +331,16 @@ export const trainerTypeDialogue = {
   [TrainerType.RIVAL]: [
     {
       encounter: [
-        `Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…
-        $So you're really pursuing your dream after all?\n I almost can't believe it.
-        $Since we're here, how about a battle?\nAfter all, I want to make sure you're ready.
-        $@c{angry_mopen}Don't hold back, I want you to give me everything you've got!`
+        `@c{smile}Hey, I was looking for you! I knew you were eager to get going but I expected at least a goodbye…
+        $@c{smile_eclosed}So you're really pursuing your dream after all?\n I almost can't believe it.
+        $@c{serious_smile_fists}Since we're here, how about a battle?\nAfter all, I want to make sure you're ready.
+        $@c{serious_mopen_fists}Don't hold back, I want you to give me everything you've got!`
       ],
       victory: [
-        `Wow… You actually cleaned me out.\nAre you actually a beginner?
-        $Maybe it was a bit of luck but…\nWho knows you might just be able to go all the way.
+        `@c{shock}Wow… You actually cleaned me out.\nAre you actually a beginner?
+        $@c{smile}Maybe it was a bit of luck but…\nWho knows you might just be able to go all the way.
         $By the way, the professor asked me to give you these items. They look pretty cool.
-        $Good luck out there!`
+        $@c{serious_smile_fists}Good luck out there!`
       ]
     },
     {
@@ -361,14 +361,14 @@ export const trainerTypeDialogue = {
   [TrainerType.RIVAL_2]: [
     {
       encounter: [
-        `Hey, you're here too?\nStill a perfect record, huh…?
-        $I know it kind of looks like I followed you here, but that's mostly not true.
-        $Honestly though, I've been itching for a rematch since you beat me back at home.
+        `@c{smile}Hey, you're here too?\n@c{smile_eclosed}Still a perfect record, huh…?
+        $@c{serious_mopen_fists}I know it kind of looks like I followed you here, but that's mostly not true.
+        $@c{serious_smile_fists}Honestly though, I've been itching for a rematch since you beat me back at home.
         $I've been doing a lot of my own training so I'll definitely put up a fight this time.
-        $Don't hold back, just like before!\nLet's go!`
+        $@c{serious_mopen_fists}Don't hold back, just like before!\nLet's go!`
       ],
       victory: [
-        `Oh. I guess I was overconfident.`
+        `@c{neutral_eclosed}Oh. I guess I was overconfident.`
       ]
     },
     {
@@ -387,15 +387,15 @@ export const trainerTypeDialogue = {
   [TrainerType.RIVAL_3]: [
     {
       encounter: [
-        `Hey, look who it is! It's been a while.\nYou're… still undefeated? Huh.
-        $Things have been kind of… strange.\nIt's not the same back home without you.
-        $I know it's selfish, but I need to get this off my chest.\nI think you're in over your head here.
-        $Never losing once is just unrealistic.\nWe need to lose sometimes in order to grow.
-        $You've had a great run but there's still so much ahead, and it only gets harder. Are you prepared for that?
-        $If so, prove it to me.`
+        `@c{smile}Hey, look who it is! It's been a while.\n@c{neutral}You're… still undefeated? Huh.
+        $@c{neutral_eclosed}Things have been kind of… strange.\nIt's not the same back home without you.
+        $@c{serious}I know it's selfish, but I need to get this off my chest.\n@c{neutral_eclosed}I think you're in over your head here.
+        $@c{serious}Never losing once is just unrealistic.\nWe need to lose sometimes in order to grow.
+        $@c{neutral_eclosed}You've had a great run but there's still so much ahead, and it only gets harder. @c{neutral}Are you prepared for that?
+        $@c{serious_mopen_fists}If so, prove it to me.`
       ],
       victory: [
-        `This is ridiculous… I've hardly stopped training…\nHow are we still so far apart?`
+        `@c{angry_mhalf}This is ridiculous… I've hardly stopped training…\nHow are we still so far apart?`
       ]
     },
     {
@@ -413,17 +413,17 @@ export const trainerTypeDialogue = {
   [TrainerType.RIVAL_4]: [
     {
       encounter: [
-        `Hey.
-        $I won't mince words or pleasantries with you.\nI'm here to win, plain and simple.
-        $I've learned to maximize my potential by putting all my time into training.
-        $You get a lot of extra time when you cut out the unnecessary sleep and social interaction.
-        $None of that matters anymore, not until I win.
-        $I've even reached the point where I don't lose anymore.\nI suppose your philosophy wasn't so wrong after all.
-        $Losing is for the weak, and I'm not weak anymore.
-        $Prepare yourself.`
+        `@c{neutral}Hey.
+        $I won't mince words or pleasantries with you.\n@c{neutral_eclosed}I'm here to win, plain and simple.
+        $@c{serious_mhalf_fists}I've learned to maximize my potential by putting all my time into training.
+        $@c{smile}You get a lot of extra time when you cut out the unnecessary sleep and social interaction.
+        $@c{serious_mopen_fists}None of that matters anymore, not until I win.
+        $@c{neutral_eclosed}I've even reached the point where I don't lose anymore.\n@c{smile_eclosed}I suppose your philosophy wasn't so wrong after all.
+        $@c{angry_mhalf}Losing is for the weak, and I'm not weak anymore.
+        $@c{serious_mopen_fists}Prepare yourself.`
       ],
       victory: [
-        `What…@d{64} What are you?`
+        `@c{neutral}What…@d{64} What are you?`
       ]
     },
     {
@@ -445,10 +445,10 @@ export const trainerTypeDialogue = {
   [TrainerType.RIVAL_5]: [
     {
       encounter: [
-        `…`
+        `@c{neutral}…`
       ],
       victory: [
-        `…`
+        `@c{neutral}…`
       ]
     },
     {
@@ -463,23 +463,23 @@ export const trainerTypeDialogue = {
   [TrainerType.RIVAL_6]: [
     {
       encounter: [
-        `We meet again.
-        $I've had some time to reflect on all this.\nThere's a reason this all seems so strange.
-        $Your dream, my drive to beat you…\nIt's all a part of something greater.
-        $This isn't about me, or about you… This is about the world, and it's my purpose to push you to your limits.
-        $Whether I've fulfilled that purpose I can't say, but I've done everything in my power.
-        $This place we ended up in is terrifying… Yet somehow I feel unphased, like I've been here before.
-        $You feel the same, don't you?
-        $…and it's like something here is speaking to me.\nThis is all the world's known for a long time now.
+        `@c{smile_eclosed}We meet again.
+        $@c{neutral}I've had some time to reflect on all this.\nThere's a reason this all seems so strange.
+        $@c{neutral_eclosed}Your dream, my drive to beat you…\nIt's all a part of something greater.
+        $@c{serious}This isn't about me, or about you… This is about the world, @c{serious_mhalf_fists}and it's my purpose to push you to your limits.
+        $@c{neutral_eclosed}Whether I've fulfilled that purpose I can't say, but I've done everything in my power.
+        $@c{neutral}This place we ended up in is terrifying… Yet somehow I feel unphased, like I've been here before.
+        $@c{serious_mhalf_fists}You feel the same, don't you?
+        $@c{serious}…and it's like something here is speaking to me.\nThis is all the world's known for a long time now.
         $Those times we cherished together that seem so recent are nothing but a distant memory.
-        $Who can say whether they were ever even real in the first place.
-        $You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
-        $I hardly know what any of this means, I just know that it's true.
-        $If you can't defeat me here and now, you won't stand a chance.`
+        $@c{neutral_eclosed}Who can say whether they were ever even real in the first place.
+        $@c{serious_mopen_fists}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
+        $@c{serious_smile_fists}I hardly know what any of this means, I just know that it's true.
+        $@c{serious_mopen_fists}If you can't defeat me here and now, you won't stand a chance.`
       ],
       victory: [
-        `It looks like my work is done here.
-        $I want you to promise me one thing.\nAfter you heal the world, please come home.`
+        `@c{smile_eclosed}It looks like my work is done here.
+        $I want you to promise me one thing.\n@c{smile}After you heal the world, please come home.`
       ]
     },
     {
@@ -524,7 +524,14 @@ export const battleSpecDialogue = {
   }
 };
 
-export function initTrainerTypeDialogue() {
+export function getCharVariantFromDialogue(message: string): string {
+  const variantMatch = /@c\{(.*?)\}/.exec(message);
+  if (variantMatch)
+    return variantMatch[1];
+  return 'neutral';
+}
+
+export function initTrainerTypeDialogue(): void {
   const trainerTypes = Object.keys(trainerTypeDialogue).map(t => parseInt(t) as TrainerType);
   for (let trainerType of trainerTypes) {
     const messages = trainerTypeDialogue[trainerType];
