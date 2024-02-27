@@ -219,9 +219,6 @@ export class GameData {
 
   public saveSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (this.scene.quickStart)
-        return resolve(true);
-
       updateUserInfo().then((success: boolean) => {
         if (!success)
           return resolve(false);

@@ -243,6 +243,8 @@ export class InfatuatedTag extends BattlerTag {
 }
 
 export class SeedTag extends BattlerTag {
+  private sourceIndex: integer;
+
   constructor(sourceId: integer) {
     super(BattlerTagType.SEEDED, BattlerTagLapseType.AFTER_MOVE, 1, Moves.LEECH_SEED, sourceId);
   }
@@ -251,19 +253,22 @@ export class SeedTag extends BattlerTag {
     super.onAdd(pokemon);
     
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' was seeded!'));
+    this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId).getBattlerIndex();
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret) {
-      const source = pokemon.scene.getPokemonById(this.sourceId);
-      pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.LEECH_SEED));
+      const source = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
+      if (source) {
+        pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.LEECH_SEED));
 
-      const damage = Math.max(Math.floor(pokemon.getMaxHp() / 8), 1);
-      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex()));
-      pokemon.damage(damage);
-      pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, source.getBattlerIndex(), damage, getPokemonMessage(pokemon, '\'s health is\nsapped by Leech Seed!'), false, true));
+        const damage = Math.max(Math.floor(pokemon.getMaxHp() / 8), 1);
+        pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex()));
+        pokemon.damage(damage);
+        pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, source.getBattlerIndex(), damage, getPokemonMessage(pokemon, '\'s health is\nsapped by Leech Seed!'), false, true));
+      }
     }
     
     return ret;

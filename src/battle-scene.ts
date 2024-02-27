@@ -6,7 +6,6 @@ import PokemonSpecies, { PokemonSpeciesFilter, SpeciesFormKey, allSpecies, getPo
 import * as Utils from './utils';
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
-import { initAutoPlay } from './system/auto-play';
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets, populateAnims } from './data/battle-anims';
 import { Phase } from './phase';
 import { initGameSpeed } from './system/game-speed';
@@ -53,8 +52,6 @@ import { getTypeRgb } from './data/type';
 import PokemonSpriteSparkleHandler from './sprite/pokemon-sprite-sparkle-handler';
 import CharSprite from './ui/char-sprite';
 
-const enableAuto = true;
-const quickStart = false;
 export const bypassLogin = false;
 export const startingLevel = 5;
 export const startingWave = 1;
@@ -77,8 +74,6 @@ export enum Button {
 	CYCLE_GENDER,
 	CYCLE_ABILITY,
 	CYCLE_NATURE,
-	QUICK_START,
-	AUTO,
 	SPEED_UP,
 	SLOW_DOWN
 }
@@ -92,7 +87,6 @@ export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound
 export default class BattleScene extends Phaser.Scene {
 	public rexUI: UIPlugin;
 
-	public auto: boolean;
 	public sessionPlayTime: integer = null;
 	public masterVolume: number = 0.5;
 	public bgmVolume: number = 1;
@@ -104,7 +98,6 @@ export default class BattleScene extends Phaser.Scene {
 	public experimentalSprites: boolean = false;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
-	public quickStart: boolean = quickStart;
 	public finalWave: integer = 200;
 	
 	public gameData: GameData;
@@ -551,8 +544,6 @@ export default class BattleScene extends Phaser.Scene {
 
 		let loadPokemonAssets = [];
 
-		this.quickStart = this.quickStart || this.isButtonPressed(Button.QUICK_START);
-
 		this.arenaPlayer = new ArenaBase(this, true);
 		this.arenaPlayerTransition = new ArenaBase(this, true);
 		this.arenaEnemy = new ArenaBase(this, false);
@@ -594,19 +585,6 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.reset();
 
-		if (this.quickStart) {
-			this.newBattle();
-
-			for (let s = 0; s < 3; s++) {
-				const playerSpecies = this.randomSpecies(startingWave, startingLevel);
-				const playerPokemon = this.addPlayerPokemon(playerSpecies, startingLevel, 0, 0);
-				playerPokemon.setVisible(false);
-				this.party.push(playerPokemon);
-
-				loadPokemonAssets.push(playerPokemon.loadAssets());
-			}
-		}
-
 		const ui = new UI(this);
 		this.uiContainer.add(ui);
 
@@ -619,16 +597,10 @@ export default class BattleScene extends Phaser.Scene {
 			initCommonAnims().then(() => loadCommonAnimAssets(this, true)),
 			initMoveAnim(Moves.STRUGGLE).then(() => loadMoveAnimAssets(this, [ Moves.STRUGGLE ], true))
 		]).then(() => {
-			if (enableAuto)
-				initAutoPlay.apply(this);
-
-			if (!this.quickStart) {
-				this.pushPhase(new LoginPhase(this));
-				if (!bypassLogin)
-					this.pushPhase(new ConsolidateDataPhase(this)); // TODO: Remove
-				this.pushPhase(new CheckLoadPhase(this));
-			} else
-				this.pushPhase(new EncounterPhase(this));
+			this.pushPhase(new LoginPhase(this));
+			if (!bypassLogin)
+				this.pushPhase(new ConsolidateDataPhase(this)); // TODO: Remove
+			this.pushPhase(new CheckLoadPhase(this));
 
 			this.shiftPhase();
 		});
@@ -680,8 +652,6 @@ export default class BattleScene extends Phaser.Scene {
 			[Button.CYCLE_GENDER]: [keyCodes.G],
 			[Button.CYCLE_ABILITY]: [keyCodes.E],
 			[Button.CYCLE_NATURE]: [keyCodes.N],
-			[Button.QUICK_START]: [keyCodes.Q],
-			[Button.AUTO]: [keyCodes.F2],
 			[Button.SPEED_UP]: [keyCodes.PLUS],
 			[Button.SLOW_DOWN]: [keyCodes.MINUS]
 		};
@@ -1252,15 +1222,6 @@ export default class BattleScene extends Phaser.Scene {
 				if (this.ui.getMode() === Mode.SETTINGS)
 					(this.ui.getHandler() as SettingsUiHandler).show([]);
 			}
-		} else if (enableAuto) {
-			if (this.isButtonPressed(Button.AUTO)) {
-				this.auto = !this.auto;
-				if (this.auto)
-					this.gameSpeed = Math.floor(this.gameSpeed);
-				else if (this.gameSpeed > 5)
-					this.gameSpeed = 5;
-			} else
-				return;
 		} else
 			return;
 		if (inputSuccess && this.enableVibration)
