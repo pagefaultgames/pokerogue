@@ -915,7 +915,7 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
   public chargeAnim: ChargeAnim;
   private chargeText: string;
   private tagType: BattlerTagType;
-  public chargeEffect: boolean;
+  private chargeEffect: boolean;
   public sameTurn: boolean;
   public followUpPriority: integer;
 
@@ -932,8 +932,8 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-      const lastMove = user.getLastXMoves() as TurnMove[];
-      if (!lastMove.length || lastMove[0].move !== move.id || lastMove[0].result !== MoveResult.OTHER) {
+      const lastMove = user.getLastXMoves().find(() => true);
+      if (!lastMove || lastMove.move !== move.id || lastMove.result !== MoveResult.OTHER) {
         (args[0] as Utils.BooleanHolder).value = true;
         new MoveChargeAnim(this.chargeAnim, move.id, user).play(user.scene, () => {
           user.scene.queueMessage(getPokemonMessage(user, ` ${this.chargeText.replace('{TARGET}', target.name)}`));
@@ -950,6 +950,13 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
       } else
         resolve(false);
     });
+  }
+
+  usedChargeEffect(user: Pokemon, target: Pokemon, move: Move): boolean {
+    if (!this.chargeEffect)
+      return false;
+    const lastMove = user.getLastXMoves().find(() => true);
+    return lastMove && lastMove.move === move.id && lastMove.result === MoveResult.OTHER;
   }
 }
 
