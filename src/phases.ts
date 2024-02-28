@@ -2091,11 +2091,11 @@ export class MoveEffectPhase extends PokemonPhase {
                       Utils.executeIf(!isProtected && !chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT,
                         user, target, this.move.getMove()).then(() => {
                           return Utils.executeIf(!target.isFainted(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult).then(() => {
-                            if (!user.isPlayer() && this.move instanceof AttackMove)
+                            if (!user.isPlayer() && this.move.getMove() instanceof AttackMove)
                               user.scene.applyModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
                           })).then(() => {
                             applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move, hitResult).then(() => {
-                              if (this.move instanceof AttackMove)
+                              if (this.move.getMove() instanceof AttackMove)
                                 this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target.getFieldIndex());
                               resolve();
                             });

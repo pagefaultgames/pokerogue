@@ -2038,15 +2038,11 @@ export class PlayerPokemon extends Pokemon {
 
   fuse(pokemon: PlayerPokemon): Promise<void> {
     return new Promise(resolve => {
-      if (this.species.speciesId === Species.KYUREM && (pokemon.species.speciesId === Species.RESHIRAM || pokemon.species.speciesId === Species.ZEKROM))
-        this.formIndex = pokemon.species.speciesId === Species.RESHIRAM ? 1 : 2;
-      else {
-        this.fusionSpecies = pokemon.species;
-        this.fusionFormIndex = pokemon.formIndex;
-        this.fusionAbilityIndex = pokemon.abilityIndex;
-        this.fusionShiny = pokemon.shiny;
-        this.fusionGender = pokemon.gender;
-      }
+      this.fusionSpecies = pokemon.species;
+      this.fusionFormIndex = pokemon.formIndex;
+      this.fusionAbilityIndex = pokemon.abilityIndex;
+      this.fusionShiny = pokemon.shiny;
+      this.fusionGender = pokemon.gender;
 
       this.scene.validateAchv(achvs.SPLICE);
       this.scene.gameData.gameStats.pokemonFused++;

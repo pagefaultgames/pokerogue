@@ -565,7 +565,7 @@ export default class SummaryUiHandler extends UiHandler {
 
           const natureStatMultiplier = getNatureStatMultiplier(this.pokemon.nature, s);
 
-          const statLabel = addTextObject(this.scene, 27 + 115 * colIndex, 56 + 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_BLUE : TextStyle.SUMMARY_PINK);
+          const statLabel = addTextObject(this.scene, 27 + 115 * colIndex, 56 + 16 * rowIndex, statName, natureStatMultiplier === 1 ? TextStyle.SUMMARY : natureStatMultiplier > 1 ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
           statLabel.setOrigin(0.5, 0);
           statsContainer.add(statLabel);
 
