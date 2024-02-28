@@ -406,6 +406,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return 1;
   }
 
+  updateScale(): void {
+    this.setScale(this.getSpriteScale());
+  }
+
   updateSpritePipelineData(): void {
     [ this.getSprite(), this.getTintSprite() ].map(s => s.pipelineData['teraColor'] = getTypeRgb(this.getTeraType()));
     this.updateInfo(true);

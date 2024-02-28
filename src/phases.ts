@@ -482,11 +482,15 @@ export class EncounterPhase extends BattlePhase {
 
       if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
         if (this.scene.gameMode === GameMode.CLASSIC && (battle.battleSpec === BattleSpec.FINAL_BOSS || !(battle.waveIndex % 250))) {
-          if (battle.battleSpec !== BattleSpec.FINAL_BOSS)
+          if (battle.battleSpec !== BattleSpec.FINAL_BOSS) {
             enemyPokemon.formIndex = 1;
+            enemyPokemon.updateScale();
+          }
           enemyPokemon.setBoss();
-        } else if (!(battle.waveIndex % 1000))
+        } else if (!(battle.waveIndex % 1000)) {
           enemyPokemon.formIndex = 1;
+          enemyPokemon.updateScale();
+        }
       }
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
