@@ -1736,7 +1736,7 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
   }
 
   getTransferredItemCount(): integer {
-    return Math.random() < (this.chance * this.getStackCount()) ? 1 : 0;
+    return Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount()) ? 1 : 0;
   }
 
   getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierTypes.ModifierType): string {
@@ -1924,7 +1924,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
 
   apply(args: any[]): boolean {
     const target = (args[0] as Pokemon);
-    if (Math.random() < this.chance * this.getStackCount()) {
+    if (Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
       target.scene.unshiftPhase(new ObtainStatusEffectPhase(target.scene, target.getBattlerIndex(), this.effect));
       return true;
     }
@@ -1956,7 +1956,7 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
 
   apply(args: any[]): boolean {
     const target = (args[0] as Pokemon);
-    if (target.status && Math.random() < this.chance * this.getStackCount()) {
+    if (target.status && Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
       target.scene.queueMessage(getPokemonMessage(target, ` was cured of its\n${getStatusEffectDescriptor(target.status.effect)}!`));
       target.resetStatus();
       target.updateInfo();
@@ -1991,7 +1991,7 @@ export class EnemyInstantReviveChanceModifier extends EnemyPersistentModifier {
   }
 
   apply(args: any[]): boolean {
-    if (Math.random() >= this.chance * this.getStackCount())
+    if (Phaser.Math.RND.realInRange(0, 1) >= (this.chance * this.getStackCount()))
       return false;
 
     const pokemon = args[0] as Pokemon;
