@@ -15,7 +15,7 @@ import { initMoveAnim, loadMoveAnimAssets } from './data/battle-anims';
 import { Status, StatusEffect } from './data/status-effect';
 import { reverseCompatibleTms, tmSpecies } from './data/tms';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition } from './data/pokemon-evolutions';
-import { DamagePhase, FaintPhase, StatChangePhase, SwitchSummonPhase } from './phases';
+import { DamagePhase, FaintPhase, LearnMovePhase, StatChangePhase, SwitchSummonPhase } from './phases';
 import { BattleStat } from './data/battle-stat';
 import { BattlerTag, BattlerTagLapseType, EncoreTag, TypeBoostTag, getBattlerTag } from './data/battler-tags';
 import { BattlerTagType } from "./data/enums/battler-tag-type";
@@ -2065,6 +2065,7 @@ export class PlayerPokemon extends Pokemon {
       this.generateName();
       this.calculateStats();
       this.generateCompatibleTms();
+      pokemon.getMoveset(true).map(m => this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.scene.getParty().indexOf(this), m.getMove().id)));
       this.updateInfo(true).then(() => {
         const fusedPartyMemberIndex = this.scene.getParty().indexOf(pokemon);
         const fusedPartyMemberHeldModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
