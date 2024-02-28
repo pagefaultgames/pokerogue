@@ -955,8 +955,9 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
   usedChargeEffect(user: Pokemon, target: Pokemon, move: Move): boolean {
     if (!this.chargeEffect)
       return false;
-    const lastMove = user.getLastXMoves().find(() => true);
-    return lastMove && lastMove.move === move.id && lastMove.result === MoveResult.OTHER;
+    // Account for move history being populated when this function is called
+    const lastMoves = user.getLastXMoves(2);
+    return lastMoves.length === 2 && lastMoves[1].move === move.id && lastMoves[1].result === MoveResult.OTHER;
   }
 }
 
@@ -2206,7 +2207,7 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
       break;
     case MoveTarget.ALL:
     case MoveTarget.BOTH_SIDES:
-      set = [ user, user.getAlly() ].concat(user.getOpponents());
+      set = [ user, user.getAlly() ].concat(opponents);
       multiple = true;
       break;
   }
