@@ -13,7 +13,7 @@ import { getPokemonMessage } from '../messages';
 import * as Utils from "../utils";
 import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
-import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
+import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from '../data/status-effect';
 import { MoneyAchv, achvs } from '../system/achv';
 import { VoucherType } from '../system/voucher';
 import { PreventBerryUseAbAttr, applyAbAttrs } from '../data/ability';
@@ -1957,7 +1957,7 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
   apply(args: any[]): boolean {
     const target = (args[0] as Pokemon);
     if (target.status && Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
-      target.scene.queueMessage(getPokemonMessage(target, ` was cured of its\n${getStatusEffectDescriptor(target.status.effect)}!`));
+      target.scene.queueMessage(getPokemonMessage(target, getStatusEffectHealText(target.status.effect)));
       target.resetStatus();
       target.updateInfo();
       return true;

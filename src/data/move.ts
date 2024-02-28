@@ -6,7 +6,7 @@ import { EncoreTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { AttackMoveResult, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../pokemon";
-import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
+import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
@@ -827,7 +827,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
 
     const pokemon = this.selfTarget ? user : target;
     if (pokemon.status && this.effects.indexOf(pokemon.status.effect) > -1) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` was cured of its\n${getStatusEffectDescriptor(pokemon.status.effect)}!`));
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status.effect)));
       pokemon.resetStatus();
       pokemon.updateInfo();
       
@@ -2651,6 +2651,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.NIGHTMARE)
       .condition((user, target, move) => target.status?.effect === StatusEffect.SLEEP),
     new AttackMove(Moves.FLAME_WHEEL, "Flame Wheel", Type.FIRE, MoveCategory.PHYSICAL, 60, 100, 25, -1, "The user cloaks itself in fire and charges at the target. This may also leave the target with a burn.", 10, 0, 2)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(Moves.SNORE, "Snore", Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 15, -1, "This attack can be used only if the user is asleep. The harsh noise may also make the target flinch.", 30, 0, 2)
       .attr(BypassSleepAttr)
@@ -2774,6 +2775,7 @@ export function initMoves() {
       .attr(HpSplitAttr)
       .condition(failOnBossCondition),
     new AttackMove(Moves.SACRED_FIRE, "Sacred Fire", Type.FIRE, MoveCategory.PHYSICAL, 100, 95, 5, -1, "The target is razed with a mystical fire of great intensity. This may also leave the target with a burn.", 50, 0, 2)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .makesContact(false),
     new AttackMove(Moves.MAGNITUDE, "Magnitude (N)", Type.GROUND, MoveCategory.PHYSICAL, -1, 100, 30, -1, "The user attacks everything around it with a ground-shaking quake. Its power varies.", -1, 0, 2)
@@ -2855,6 +2857,7 @@ export function initMoves() {
     new AttackMove(Moves.SPIT_UP, "Spit Up (N)", Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, "The power stored using the move Stockpile is released at once in an attack. The more power is stored, the greater the move's power.", -1, 0, 3),
     new SelfStatusMove(Moves.SWALLOW, "Swallow (N)", Type.NORMAL, -1, 10, -1, "The power stored using the move Stockpile is absorbed by the user to heal its HP. Storing more power heals more HP.", -1, 0, 3),
     new AttackMove(Moves.HEAT_WAVE, "Heat Wave", Type.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 118, "The user attacks by exhaling hot breath on opposing Pokémon. This may also leave those Pokémon with a burn.", 10, 0, 3)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .windMove()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -2982,7 +2985,8 @@ export function initMoves() {
       .windMove()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.OVERHEAT, "Overheat", Type.FIRE, MoveCategory.SPECIAL, 130, 90, 5, 157, "The user attacks the target at full power. The attack's recoil harshly lowers the user's Sp. Atk stat.", 100, 0, 3)
-      .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
+      .attr(StatChangeAttr, BattleStat.SPATK, -2, true)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE),
     new StatusMove(Moves.ODOR_SLEUTH, "Odor Sleuth (N)", Type.NORMAL, -1, 40, -1, "Enables a Ghost-type target to be hit by Normal- and Fighting-type attacks. This also enables an evasive target to be hit.", -1, 0, 3),
     new AttackMove(Moves.ROCK_TOMB, "Rock Tomb", Type.ROCK, MoveCategory.PHYSICAL, 60, 95, 15, 36, "Boulders are hurled at the target. This also lowers the target's Speed stat by preventing its movement.", 100, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
@@ -3160,6 +3164,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.MAGNET_RISE, "Magnet Rise (N)", Type.ELECTRIC, -1, 10, -1, "The user levitates using electrically generated magnetism for five turns.", -1, 0, 4),
     new AttackMove(Moves.FLARE_BLITZ, "Flare Blitz", Type.FIRE, MoveCategory.PHYSICAL, 120, 100, 15, 165, "The user cloaks itself in fire and charges the target. This also damages the user quite a lot. This attack may leave the target with a burn.", 10, 0, 4)
       .attr(RecoilAttr)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .condition(failOnGravityCondition),
     new AttackMove(Moves.FORCE_PALM, "Force Palm", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, "The target is attacked with a shock wave. This may also leave the target with paralysis.", 30, 0, 4)
@@ -3406,6 +3411,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.ALLY_SWITCH, "Ally Switch (N)", Type.PSYCHIC, -1, 15, -1, "The user teleports using a strange power and switches places with one of its allies.", -1, 2, 5)
       .ignoresProtect(),
     new AttackMove(Moves.SCALD, "Scald", Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, "The user shoots boiling hot water at its target. This may also leave the target with a burn.", 30, 0, 5)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new SelfStatusMove(Moves.SHELL_SMASH, "Shell Smash", Type.NORMAL, -1, 15, -1, "The user breaks its shell, which lowers Defense and Sp. Def stats but sharply raises its Attack, Sp. Atk, and Speed stats.", -1, 0, 5)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], 2, true)
@@ -3530,7 +3536,8 @@ export function initMoves() {
       .makesContact(false),
     new AttackMove(Moves.V_CREATE, "V-create", Type.FIRE, MoveCategory.PHYSICAL, 180, 95, 5, -1, "With a hot flame on its forehead, the user hurls itself at its target. This lowers the user's Defense, Sp. Def, and Speed stats.", 100, 0, 5)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF, BattleStat.SPD ], -1, true),
-    new AttackMove(Moves.FUSION_FLARE, "Fusion Flare (P)", Type.FIRE, MoveCategory.SPECIAL, 100, 100, 5, -1, "The user brings down a giant flame. This move's power is increased when influenced by an enormous lightning bolt.", -1, 0, 5),
+    new AttackMove(Moves.FUSION_FLARE, "Fusion Flare (P)", Type.FIRE, MoveCategory.SPECIAL, 100, 100, 5, -1, "The user brings down a giant flame. This move's power is increased when influenced by an enormous lightning bolt.", -1, 0, 5)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE),
     new AttackMove(Moves.FUSION_BOLT, "Fusion Bolt (P)", Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 5, -1, "The user throws down a giant lightning bolt. This move's power is increased when influenced by an enormous flame.", -1, 0, 5)
       .makesContact(false),
     new AttackMove(Moves.FLYING_PRESS, "Flying Press (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, -1, "The user dives down onto the target from the sky. This move is Fighting and Flying type simultaneously.", -1, 0, 6),
@@ -3601,6 +3608,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, 2, true)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.STEAM_ERUPTION, "Steam Eruption", Type.WATER, MoveCategory.SPECIAL, 110, 95, 5, -1, "The user immerses the target in superheated steam. This may also leave the target with a burn.", 30, 0, 6)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(Moves.HYPERSPACE_HOLE, "Hyperspace Hole", Type.PSYCHIC, MoveCategory.SPECIAL, 80, -1, 5, -1, "Using a hyperspace hole, the user appears right next to the target and strikes. This also hits a target using a move such as Protect or Detect.", -1, 0, 6)
       .ignoresProtect(),
@@ -3749,7 +3757,8 @@ export function initMoves() {
     new AttackMove(Moves.FIRE_LASH, "Fire Lash", Type.FIRE, MoveCategory.PHYSICAL, 80, 100, 15, -1, "The user strikes the target with a burning lash. This also lowers the target's Defense stat.", 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
     new AttackMove(Moves.POWER_TRIP, "Power Trip (N)", Type.DARK, MoveCategory.PHYSICAL, 20, 100, 10, -1, "The user boasts its strength and attacks the target. The more the user's stats are raised, the greater the move's power.", -1, 0, 7),
-    new AttackMove(Moves.BURN_UP, "Burn Up (P)", Type.FIRE, MoveCategory.SPECIAL, 130, 100, 5, -1, "To inflict massive damage, the user burns itself out. After using this move, the user will no longer be Fire type.", -1, 0, 7),
+    new AttackMove(Moves.BURN_UP, "Burn Up (P)", Type.FIRE, MoveCategory.SPECIAL, 130, 100, 5, -1, "To inflict massive damage, the user burns itself out. After using this move, the user will no longer be Fire type.", -1, 0, 7)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE),
     new StatusMove(Moves.SPEED_SWAP, "Speed Swap (N)", Type.PSYCHIC, -1, 10, -1, "The user exchanges Speed stats with the target.", -1, 0, 7),
     new AttackMove(Moves.SMART_STRIKE, "Smart Strike", Type.STEEL, MoveCategory.PHYSICAL, 70, -1, 10, -1, "The user stabs the target with a sharp horn. This attack never misses.", -1, 0, 7),
     new StatusMove(Moves.PURIFY, "Purify (N)", Type.POISON, -1, 20, -1, "The user heals the target's status condition. If the move succeeds, it also restores the user's own HP.", -1, 0, 7),
@@ -3935,6 +3944,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, -1),
     new AttackMove(Moves.SNAP_TRAP, "Snap Trap (P)", Type.GRASS, MoveCategory.PHYSICAL, 35, 100, 15, -1, "The user snares the target in a snap trap for four to five turns.", 100, 0, 8),
     new AttackMove(Moves.PYRO_BALL, "Pyro Ball", Type.FIRE, MoveCategory.PHYSICAL, 120, 90, 5, -1, "The user attacks by igniting a small stone and launching it as a fiery ball at the target. This may also leave the target with a burn.", 10, 0, 8)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .ballBombMove(),
     new AttackMove(Moves.BEHEMOTH_BLADE, "Behemoth Blade", Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, "The user wields a large, powerful sword using its whole body and cuts the target in a vigorous attack.", -1, 0, 8)
@@ -4006,6 +4016,7 @@ export function initMoves() {
     new AttackMove(Moves.DUAL_WINGBEAT, "Dual Wingbeat", Type.FLYING, MoveCategory.PHYSICAL, 40, 90, 10, -1, "The user slams the target with its wings. The target is hit twice in a row.", -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.SCORCHING_SANDS, "Scorching Sands", Type.GROUND, MoveCategory.SPECIAL, 70, 100, 10, -1, "The user throws scorching sand at the target to attack. This may also leave the target with a burn.", 30, 0, 8)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new StatusMove(Moves.JUNGLE_HEALING, "Jungle Healing (P)", Type.GRASS, -1, 10, -1, "The user becomes one with the jungle, restoring HP and healing any status conditions of itself and its ally Pokémon in battle.", -1, 0, 8)
       .attr(HealAttr, 0.25)
@@ -4210,6 +4221,7 @@ export function initMoves() {
     new AttackMove(Moves.BLOOD_MOON, "Blood Moon (P)", Type.NORMAL, MoveCategory.SPECIAL, 140, 100, 5, -1, "The user unleashes the full brunt of its spirit from a full moon that shines as red as blood. This move can't be used twice in a row.", -1, 0, 9),
     new AttackMove(Moves.MATCHA_GOTCHA, "Matcha Gotcha", Type.GRASS, MoveCategory.SPECIAL, 80, 90, 15, -1, "The user fires a blast of tea that it mixed. The user's HP is restored by up to half the damage taken by the target. This may also leave the target with a burn.", 20, 0, 9)
       .attr(HitHealAttr)
+      .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.SYRUP_BOMB, "Syrup Bomb (P)", Type.GRASS, MoveCategory.SPECIAL, 60, 85, 10, -1, "The user sets off an explosion of sticky candy syrup, which coats the target and causes the target's Speed stat to drop each turn for three turns.", -1, 0, 9)
