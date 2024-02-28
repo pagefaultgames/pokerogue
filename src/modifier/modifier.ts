@@ -1800,7 +1800,7 @@ export abstract class EnemyPersistentModifier extends PersistentModifier {
   }
 
   getMaxStackCount(scene: BattleScene): integer {
-    return this.type.tier ? 1 : 5;
+    return 5;
   }
 }
 
