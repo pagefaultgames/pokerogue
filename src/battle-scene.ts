@@ -1224,7 +1224,7 @@ export default class BattleScene extends Phaser.Scene {
 			}
 		} else
 			return;
-		if (inputSuccess && this.enableVibration)
+		if (inputSuccess && this.enableVibration && typeof navigator.vibrate !== 'undefined')
 			navigator.vibrate(vibrationLength || 10);
 		this.blockInput = true;
 		this.time.delayedCall(Utils.fixedInt(250), () => this.blockInput = false);

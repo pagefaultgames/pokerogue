@@ -986,7 +986,7 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 1),
     new WeightedModifierType(modifierTypes.FORM_CHANGE_ITEM, 1),
     new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode !== GameMode.SPLICED_ENDLESS && party.filter(p => p.fusionSpecies).length ? 3 : 0),
-    new WeightedModifierType(modifierTypes.VOUCHER, 1),
+    new WeightedModifierType(modifierTypes.VOUCHER, 3),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.MASTER_BALL, 32),
