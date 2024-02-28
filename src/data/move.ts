@@ -282,7 +282,7 @@ export class AttackMove extends Move {
 
     let attackScore = 0;
 
-    const effectiveness = target.getAttackMoveEffectiveness(this.type);
+    const effectiveness = target.getAttackTypeEffectiveness(this.type);
     attackScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
     if (attackScore) {
       if (this.category === MoveCategory.PHYSICAL) {
@@ -770,7 +770,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return !(this.selfTarget ? user : target).status && target.getAttackMoveEffectiveness(move.type) ? Math.floor(move.chance * -0.1) : 0;
+    return !(this.selfTarget ? user : target).status && target.getAttackTypeEffectiveness(move.type) ? Math.floor(move.chance * -0.1) : 0;
   }
 }
 

@@ -240,7 +240,7 @@ class StealthRockTag extends ArenaTrapTag {
   }
 
   activateTrap(pokemon: Pokemon): boolean {
-    const effectiveness = pokemon.getAttackMoveEffectiveness(Type.ROCK);
+    const effectiveness = pokemon.getAttackTypeEffectiveness(Type.ROCK);
 
     let damageHpRatio: number;
 

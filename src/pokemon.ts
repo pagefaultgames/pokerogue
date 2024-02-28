@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import BattleScene, { AnySound } from './battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from './ui/battle-info';
 import { Moves } from "./data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusEffectAttr } from "./data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusEffectAttr, AttackMove } from "./data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from './data/type';
@@ -707,7 +707,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getTeraType() !== Type.UNKNOWN;
   }
 
-  getAttackMoveEffectiveness(moveType: Type): TypeDamageMultiplier {
+  getAttackMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
+    const typeless = !!move.getMove().getAttrs(TypelessAttr).length;
+    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.getMove().type));
+    const cancelled = new Utils.BooleanHolder(false);
+    if (!typeless)
+      applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, typeMultiplier, true);
+    if (!cancelled.value)
+      applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, move, cancelled, typeMultiplier, true);
+    return (!cancelled.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
+  }
+
+  getAttackTypeEffectiveness(moveType: Type): TypeDamageMultiplier {
     if (moveType === Type.STELLAR)
       return this.isTerastallized() ? 2 : 1;
     const types = this.getTypes(true);
@@ -718,12 +729,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const types = this.getTypes(true);
     const enemyTypes = pokemon.getTypes(true);
     const outspeed = (this.isActive(true) ? this.getBattleStat(Stat.SPD, pokemon) : this.getStat(Stat.SPD)) <= pokemon.getBattleStat(Stat.SPD, this);
-    let atkScore = pokemon.getAttackMoveEffectiveness(types[0]) * (outspeed ? 1.25 : 1);
-    let defScore = 1 / Math.max(this.getAttackMoveEffectiveness(enemyTypes[0]), 0.25);
+    let atkScore = pokemon.getAttackTypeEffectiveness(types[0]) * (outspeed ? 1.25 : 1);
+    let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0]), 0.25);
     if (types.length > 1)
-      atkScore *= pokemon.getAttackMoveEffectiveness(types[1]);
+      atkScore *= pokemon.getAttackTypeEffectiveness(types[1]);
     if (enemyTypes.length > 1)
-      defScore *= (1 / this.getAttackMoveEffectiveness(enemyTypes[1]));
+      defScore *= (1 / this.getAttackTypeEffectiveness(enemyTypes[1]));
     let hpDiffRatio = this.getHpRatio() + (1 - pokemon.getHpRatio());
     if (outspeed)
       hpDiffRatio = Math.min(hpDiffRatio * 1.5, 1);
@@ -2204,7 +2215,7 @@ export class EnemyPokemon extends Pokemon {
               const target = this.scene.getField()[mt];
               let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
               if (mt !== this.getBattlerIndex())
-                targetScore *= target.getAttackMoveEffectiveness(move.type);
+                targetScore *= target.getAttackMoveEffectiveness(this, pokemonMove);
               targetScores.push(targetScore);
             }
 

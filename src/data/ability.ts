@@ -213,9 +213,13 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
     const ret = super.applyPreDefend(pokemon, attacker, move, cancelled, args);
 
     if (ret) {
-      if (pokemon.getHpRatio() < 1)
-        pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
-          Math.max(Math.floor(pokemon.getMaxHp() / 4), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
+      if (pokemon.getHpRatio() < 1) {
+        const simulated = args.length > 1 && args[1];
+        if (!simulated) {
+          pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
+            Math.max(Math.floor(pokemon.getMaxHp() / 4), 1), getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nrestored its HP a little!`), true));
+        }
+      }
       return true;
     }
     
@@ -239,7 +243,9 @@ class TypeImmunityStatChangeAbAttr extends TypeImmunityAbAttr {
 
     if (ret) {
       cancelled.value = true;
-      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ this.stat ], this.levels));
+      const simulated = args.length > 1 && args[1];
+      if (!simulated)
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ this.stat ], this.levels));
     }
     
     return ret;
@@ -262,7 +268,9 @@ class TypeImmunityAddBattlerTagAbAttr extends TypeImmunityAbAttr {
 
     if (ret) {
       cancelled.value = true;
-      pokemon.addTag(this.tagType, this.turnCount, undefined, pokemon.id);
+      const simulated = args.length > 1 && args[1];
+      if (!simulated)
+        pokemon.addTag(this.tagType, this.turnCount, undefined, pokemon.id);
     }
     
     return ret;
@@ -275,7 +283,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
   }
 
   applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (pokemon.getAttackMoveEffectiveness(move.getMove().type) < 2) {
+    if (pokemon.getAttackTypeEffectiveness(move.getMove().type) < 2) {
       cancelled.value = true;
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
@@ -1103,7 +1111,7 @@ export class SyncEncounterNatureAbAttr extends AbAttr {
 }
 
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
-  pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, isAsync?: boolean, showAbilityInstant?: boolean): Promise<void> {
+  pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false): Promise<void> {
   return new Promise(resolve => {
     if (!pokemon.canApplyAbility())
       return resolve();
@@ -1126,18 +1134,20 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any
         return applyNextAbAttr();
       pokemon.scene.setPhaseQueueSplice();
       const onApplySuccess = () => {
-        if (attr.showAbility) {
+        if (attr.showAbility && !quiet) {
           if (showAbilityInstant)
             pokemon.scene.abilityBar.showAbility(pokemon);
           else
             queueShowAbility(pokemon);
         }
-        const message = attr.getTriggerMessage(pokemon);
-        if (message) {
-          if (isAsync)
-            pokemon.scene.ui.showText(message, null, () => pokemon.scene.ui.showText(null, 0), null, true);
-          else
-            pokemon.scene.queueMessage(message);
+        if (!quiet) {
+          const message = attr.getTriggerMessage(pokemon);
+          if (message) {
+            if (isAsync)
+              pokemon.scene.ui.showText(message, null, () => pokemon.scene.ui.showText(null, 0), null, true);
+            else
+              pokemon.scene.queueMessage(message);
+          }
         }
       };
       const result = applyFunc(attr);
@@ -1163,7 +1173,8 @@ export function applyAbAttrs(attrType: { new(...args: any[]): AbAttr }, pokemon:
 
 export function applyPreDefendAbAttrs(attrType: { new(...args: any[]): PreDefendAbAttr },
   pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreDefendAbAttr>(attrType, pokemon, attr => attr.applyPreDefend(pokemon, attacker, move, cancelled, args));
+  const simulated = args.length > 1 && args[1];
+  return applyAbAttrsInternal<PreDefendAbAttr>(attrType, pokemon, attr => attr.applyPreDefend(pokemon, attacker, move, cancelled, args), false, false, simulated);
 }
 
 export function applyPostDefendAbAttrs(attrType: { new(...args: any[]): PostDefendAbAttr },
@@ -1928,7 +1939,7 @@ export function initAbilities() {
     new Ability(Abilities.SHADOW_SHIELD, "Shadow Shield (N)", "Reduces the amount of damage the Pokémon takes while its HP is full.", 7),
     new Ability(Abilities.PRISM_ARMOR, "Prism Armor (N)", "Reduces the power of supereffective attacks taken.", 7),
     new Ability(Abilities.NEUROFORCE, "Neuroforce", "Powers up moves that are super effective.", 7)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackMoveEffectiveness(move.type) >= 2, 1.25),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type) >= 2, 1.25),
     new Ability(Abilities.INTREPID_SWORD, "Intrepid Sword (N)", "Boosts the Pokémon's Attack stat when the Pokémon enters a battle.", 8),
     new Ability(Abilities.DAUNTLESS_SHIELD, "Dauntless Shield (N)", "Boosts the Pokémon's Defense stat when the Pokémon enters a battle.", 8),
     new Ability(Abilities.LIBERO, "Libero (N)", "Changes the Pokémon's type to the type of the move it's about to use.", 8),

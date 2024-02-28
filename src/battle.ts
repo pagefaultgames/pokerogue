@@ -100,7 +100,7 @@ export default class Battle {
 
     randSeedGaussForLevel(value: number): number { 
         let rand = 0;
-        for (var i = value; i > 0; i--)
+        for (let i = value; i > 0; i--)
             rand += Phaser.Math.RND.realInRange(0, 1);
         return rand / value;
     }
