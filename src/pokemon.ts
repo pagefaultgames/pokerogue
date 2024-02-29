@@ -2065,9 +2065,12 @@ export class PlayerPokemon extends Pokemon {
       this.generateName();
       this.calculateStats();
       this.generateCompatibleTms();
-      pokemon.getMoveset(true).map(m => this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.scene.getParty().indexOf(this), m.getMove().id)));
       this.updateInfo(true).then(() => {
         const fusedPartyMemberIndex = this.scene.getParty().indexOf(pokemon);
+        let partyMemberIndex = this.scene.getParty().indexOf(this);
+        if (partyMemberIndex > fusedPartyMemberIndex)
+          partyMemberIndex--;
+        pokemon.getMoveset(true).map(m => this.scene.unshiftPhase(new LearnMovePhase(this.scene, partyMemberIndex, m.getMove().id)));
         const fusedPartyMemberHeldModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
           && (m as PokemonHeldItemModifier).pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
         const transferModifiers: Promise<boolean>[] = [];
