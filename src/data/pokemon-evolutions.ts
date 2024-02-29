@@ -873,7 +873,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.SLIGGOO, 40, null, null)
   ],
   [Species.SLIGGOO]: [
-    new SpeciesEvolution(Species.GOODRA, 50, null, new SpeciesEvolutionCondition(p => [ WeatherType.RAIN, WeatherType.HEAVY_RAIN ].indexOf(p.scene.arena.weather?.weatherType || WeatherType.NONE) > -1), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.GOODRA, 50, null, new SpeciesEvolutionCondition(p => [ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_RAIN ].indexOf(p.scene.arena.weather?.weatherType || WeatherType.NONE) > -1), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.BERGMITE]: [
     new SpeciesEvolution(Species.HISUI_AVALUGG, 37, null, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType === Biome.RUINS), SpeciesWildEvolutionDelay.VERY_LONG),
@@ -1095,7 +1095,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.HISUI_ZOROARK, 30, null, null)
   ],
   [Species.HISUI_SLIGGOO]: [
-    new SpeciesEvolution(Species.HISUI_GOODRA, 54, null, new SpeciesEvolutionCondition(p => [ WeatherType.RAIN, WeatherType.HEAVY_RAIN ].indexOf(p.scene.arena.weather?.weatherType || WeatherType.NONE) > -1), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.HISUI_GOODRA, 50, null, new SpeciesEvolutionCondition(p => [ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_RAIN ].indexOf(p.scene.arena.weather?.weatherType || WeatherType.NONE) > -1), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.SPRIGATITO]: [
     new SpeciesEvolution(Species.FLORAGATO, 16, null, null)
