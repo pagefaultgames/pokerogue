@@ -1432,7 +1432,7 @@ export class CommandPhase extends FieldPhase {
               this.scene.ui.showText(null, 0);
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
             }, null, true);
-          } else if (cursor < 4) {
+          } else if (cursor < 5) {
             const targetPokemon = this.scene.getEnemyField().find(p => p.isActive(true));
             if (targetPokemon.isBoss() && targetPokemon.bossSegmentIndex) {
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
