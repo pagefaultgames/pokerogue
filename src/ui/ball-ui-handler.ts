@@ -25,7 +25,7 @@ export default class BallUiHandler extends UiHandler {
     this.pokeballSelectContainer.setVisible(false);
     ui.add(this.pokeballSelectContainer);
 
-    this.pokeballSelectBg = addWindow(this.scene, 0, 0, 114, 96);
+    this.pokeballSelectBg = addWindow(this.scene, 0, 0, 114, 112);
     this.pokeballSelectBg.setOrigin(0, 1);
     this.pokeballSelectContainer.add(this.pokeballSelectBg);
 
