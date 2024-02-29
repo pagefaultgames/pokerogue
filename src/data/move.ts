@@ -1095,7 +1095,7 @@ export class HalfHpStatMaxAttr extends StatChangeAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => user.getHpRatio() > 0.5 || user.summonData.battleStats[this.stats[0]] >= 6;
+    return (user, target, move) => user.getHpRatio() > 0.5 && user.summonData.battleStats[this.stats[0]] < 6;
   }
 }
 
