@@ -5,7 +5,6 @@ import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
 import { EGG_SEED, Egg, GachaType, getLegendaryGachaSpeciesForTimestamp, getTypeGachaTypeForTimestamp } from "./data/egg";
 import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
-import { ModifierTier } from "./modifier/modifier-tier";
 import { Species } from "./data/enums/species";
 import { PlayerPokemon } from "./pokemon";
 import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
@@ -16,6 +15,7 @@ import { achvs } from "./system/achv";
 import { addWindow } from "./ui/window";
 import { getNatureName } from "./data/nature";
 import { pokemonPrevolutions } from "./data/pokemon-evolutions";
+import { EggTier } from "./data/enums/egg-type";
 
 export class EggHatchPhase extends Phase {
   private egg: Egg;
@@ -375,7 +375,7 @@ export class EggHatchPhase extends Phase {
   
         speciesOverride = rand ? Species.PHIONE : Species.MANAPHY;
       }, this.egg.id, EGG_SEED.toString());
-    } else if (this.egg.tier === ModifierTier.MASTER
+    } else if (this.egg.tier === EggTier.MASTER
       && this.egg.gachaType === GachaType.LEGENDARY) {
       this.scene.executeWithSeedOffset(() => {
         if (!Utils.randSeedInt(2))
@@ -393,15 +393,15 @@ export class EggHatchPhase extends Phase {
       let maxStarterValue: integer;
 
       switch (this.egg.tier) {
-        case ModifierTier.GREAT:
+        case EggTier.GREAT:
           minStarterValue = 4;
           maxStarterValue = 5;
           break;
-        case ModifierTier.ULTRA:
+        case EggTier.ULTRA:
           minStarterValue = 6;
           maxStarterValue = 7;
           break;
-        case ModifierTier.MASTER:
+        case EggTier.MASTER:
           minStarterValue = 8;
           maxStarterValue = 9;
           break;

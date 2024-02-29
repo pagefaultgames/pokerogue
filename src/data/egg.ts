@@ -1,9 +1,9 @@
-import { ModifierTier } from "../modifier/modifier-tier";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import BattleScene from "../battle-scene";
 import { Species } from "./enums/species";
 import { getPokemonSpecies, speciesStarters } from "./pokemon-species";
+import { EggTier } from "./enums/egg-type";
 
 export const EGG_SEED = 1073741824;
 
@@ -15,7 +15,7 @@ export enum GachaType {
 
 export class Egg {
   public id: integer;
-  public tier: ModifierTier;
+  public tier: EggTier;
   public gachaType: GachaType;
   public hatchWaves: integer;
   public timestamp: integer;
@@ -29,7 +29,7 @@ export class Egg {
   }
 
   isManaphyEgg(): boolean {
-    return this.tier === ModifierTier.COMMON && !(this.id % 255);
+    return this.tier === EggTier.COMMON && !(this.id % 255);
   }
 
   getKey(): string {
@@ -39,13 +39,13 @@ export class Egg {
   }
 }
 
-export function getEggTierDefaultHatchWaves(tier: ModifierTier): integer {
+export function getEggTierDefaultHatchWaves(tier: EggTier): integer {
   switch (tier) {
-    case ModifierTier.COMMON:
+    case EggTier.COMMON:
       return 10;
-    case ModifierTier.GREAT:
+    case EggTier.GREAT:
       return 25;
-    case ModifierTier.ULTRA:
+    case EggTier.ULTRA:
       return 50;
   }
   return 100;
@@ -55,11 +55,11 @@ export function getEggDescriptor(egg: Egg): string {
   if (egg.isManaphyEgg())
     return 'Manaphy';
   switch (egg.tier) {
-    case ModifierTier.GREAT:
+    case EggTier.GREAT:
       return 'Rare';
-    case ModifierTier.ULTRA:
+    case EggTier.ULTRA:
       return 'Epic';
-    case ModifierTier.MASTER:
+    case EggTier.MASTER:
       return 'Legendary';
     default:
       return 'Common';

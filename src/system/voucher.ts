@@ -1,7 +1,7 @@
 import BattleScene from "../battle-scene";
 import { TrainerType } from "../data/enums/trainer-type";
 import { ModifierTier } from "../modifier/modifier-tier";
-import { Achv, achvs } from "./achv";
+import { Achv, AchvTier, achvs } from "./achv";
 
 export enum VoucherType {
   REGULAR,
@@ -35,16 +35,16 @@ export class Voucher {
     return getVoucherTypeIcon(this.voucherType);
   }
 
-  getTier(): ModifierTier {
+  getTier(): AchvTier {
     switch (this.voucherType) {
       case VoucherType.REGULAR:
-        return ModifierTier.COMMON;
+        return AchvTier.COMMON;
       case VoucherType.PLUS:
-        return ModifierTier.GREAT;
+        return AchvTier.GREAT;
       case VoucherType.PREMIUM:
-        return ModifierTier.ULTRA;
+        return AchvTier.ULTRA;
       case VoucherType.GOLDEN:
-        return ModifierTier.MASTER;
+        return AchvTier.MASTER;
     }
   }
 }

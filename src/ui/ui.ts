@@ -326,7 +326,7 @@ export default class UI extends Phaser.GameObjects.Container {
       };
       if (((!chainMode && ((transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1)
         && (noTransitionModes.indexOf(this.mode) === -1 && noTransitionModes.indexOf(mode) === -1)))
-        || (chainMode && noTransitionModes.indexOf(mode) === -1)) && !(this.scene as BattleScene).auto) {
+        || (chainMode && noTransitionModes.indexOf(mode) === -1))) {
         this.fadeOut(250).then(() => {
           this.scene.time.delayedCall(100, () => {
             doSetMode();

@@ -1,6 +1,7 @@
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import { ModifierTier } from "../modifier/modifier-tier";
+import { EggTier } from "../data/enums/egg-type";
 
 export enum TextStyle {
   MESSAGE,
@@ -145,7 +146,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
   }
 }
 
-export function getModifierTierTextTint(tier: integer): integer {
+export function getModifierTierTextTint(tier: ModifierTier): integer {
   switch (tier) {
     case ModifierTier.COMMON:
       return 0xffffff;
@@ -153,9 +154,24 @@ export function getModifierTierTextTint(tier: integer): integer {
       return 0x3890f8;
     case ModifierTier.ULTRA:
       return 0xf8d038;
+    case ModifierTier.ROGUE:
+      return 0xd52929;
     case ModifierTier.MASTER:
       return 0xe020c0;
     case ModifierTier.LUXURY:
       return 0xe64a18;
+  }
+}
+
+export function getEggTierTextTint(tier: EggTier): integer {
+  switch (tier) {
+    case EggTier.COMMON:
+      return getModifierTierTextTint(ModifierTier.COMMON);
+    case EggTier.GREAT:
+      return getModifierTierTextTint(ModifierTier.GREAT);
+    case EggTier.ULTRA:
+      return getModifierTierTextTint(ModifierTier.ULTRA);
+    case EggTier.MASTER:
+      return getModifierTierTextTint(ModifierTier.MASTER);
   }
 }

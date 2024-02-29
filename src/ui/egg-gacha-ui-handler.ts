@@ -1,15 +1,15 @@
 import BattleScene, { Button } from "../battle-scene";
 import { Mode } from "./ui";
-import { TextStyle, addTextObject, getModifierTierTextTint } from "./text";
+import { TextStyle, addTextObject, getEggTierTextTint } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import * as Utils from "../utils";
-import { ModifierTier } from "../modifier/modifier-tier";
 import { EGG_SEED, Egg, GachaType, getEggTierDefaultHatchWaves, getEggDescriptor, getLegendaryGachaSpeciesForTimestamp, getTypeGachaTypeForTimestamp } from "../data/egg";
 import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { Type } from "../data/type";
 import { addWindow } from "./window";
 import { Tutorial, handleTutorial } from "../tutorial";
+import { EggTier } from "../data/enums/egg-type";
 
 const defaultText = 'Select a machine.';
 
@@ -343,13 +343,13 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       eggs = [];
       const tierValueOffset = this.gachaCursor === GachaType.LEGENDARY ? 1 : 0;
       const tiers = new Array(pullCount).fill(null).map(() => {
-        const tierValue = Utils.randInt(256);
-        return tierValue >= 52 + tierValueOffset ? ModifierTier.COMMON : tierValue + tierValueOffset >= 8 ? ModifierTier.GREAT : tierValue >= 1 + tierValueOffset ? ModifierTier.ULTRA : ModifierTier.MASTER;
+        const tierValue = Utils.randInt(1024);
+        return tierValue >= 52 + tierValueOffset ? EggTier.COMMON : tierValue + tierValueOffset >= 8 ? EggTier.GREAT : tierValue >= 1 + tierValueOffset ? EggTier.ULTRA : EggTier.MASTER;
       });
-      if (pullCount >= 25 && !tiers.filter(t => t >= ModifierTier.ULTRA).length)
-        tiers[Utils.randInt(tiers.length)] = ModifierTier.ULTRA;
-      else if (pullCount >= 10 && !tiers.filter(t => t >= ModifierTier.GREAT).length)
-        tiers[Utils.randInt(tiers.length)] = ModifierTier.GREAT;
+      if (pullCount >= 25 && !tiers.filter(t => t >= EggTier.ULTRA).length)
+        tiers[Utils.randInt(tiers.length)] = EggTier.ULTRA;
+      else if (pullCount >= 10 && !tiers.filter(t => t >= EggTier.GREAT).length)
+        tiers[Utils.randInt(tiers.length)] = EggTier.GREAT;
 
       const timestamp = new Date().getTime();
 
@@ -357,16 +357,16 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         const egg = new Egg(Utils.randInt(EGG_SEED, EGG_SEED * tier), this.gachaCursor, getEggTierDefaultHatchWaves(tier), timestamp);
         if (egg.isManaphyEgg()) {
           this.scene.gameData.gameStats.manaphyEggsPulled++;
-          egg.hatchWaves = getEggTierDefaultHatchWaves(ModifierTier.ULTRA);
+          egg.hatchWaves = getEggTierDefaultHatchWaves(EggTier.ULTRA);
         } else {
           switch (tier) {
-            case ModifierTier.GREAT:
+            case EggTier.GREAT:
               this.scene.gameData.gameStats.rareEggsPulled++;
               break;
-            case ModifierTier.ULTRA:
+            case EggTier.ULTRA:
               this.scene.gameData.gameStats.epicEggsPulled++;
               break;
-            case ModifierTier.MASTER:
+            case EggTier.MASTER:
               this.scene.gameData.gameStats.legendaryEggsPulled++;
               break;
           }
@@ -417,7 +417,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
           const eggText = addTextObject(this.scene, 0, 14, getEggDescriptor(egg), TextStyle.PARTY, { align: 'center' });
           eggText.setOrigin(0.5, 0);
-          eggText.setTint(getModifierTierTextTint(!egg.isManaphyEgg() ? egg.tier : ModifierTier.ULTRA));
+          eggText.setTint(getEggTierTextTint(!egg.isManaphyEgg() ? egg.tier : EggTier.ULTRA));
           ret.add(eggText);
 
           this.eggGachaSummaryContainer.addAt(ret, 0);

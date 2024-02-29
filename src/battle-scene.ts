@@ -1171,7 +1171,7 @@ export default class BattleScene extends Phaser.Scene {
 		else if (this.isButtonPressed(Button.CANCEL)) {
 			inputSuccess = this.ui.processInput(Button.CANCEL);
 		} else if (this.isButtonPressed(Button.MENU)) {
-			switch (this.ui.getMode()) {
+			switch (this.ui?.getMode()) {
 				case Mode.MESSAGE:
 					if (!(this.ui.getHandler() as MessageUiHandler).pendingPrompt)
 						return;
@@ -1213,13 +1213,13 @@ export default class BattleScene extends Phaser.Scene {
 		}	else if (this.isButtonPressed(Button.SPEED_UP)) {
 			if (this.gameSpeed < 5) {
 				this.gameData.saveSetting(Setting.Game_Speed, settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) + 1);
-				if (this.ui.getMode() === Mode.SETTINGS)
+				if (this.ui?.getMode() === Mode.SETTINGS)
 					(this.ui.getHandler() as SettingsUiHandler).show([]);
 			}
 		} else if (this.isButtonPressed(Button.SLOW_DOWN)) {
 			if (this.gameSpeed > 1) {
 				this.gameData.saveSetting(Setting.Game_Speed, Math.max(settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) - 1, 0));
-				if (this.ui.getMode() === Mode.SETTINGS)
+				if (this.ui?.getMode() === Mode.SETTINGS)
 					(this.ui.getHandler() as SettingsUiHandler).show([]);
 			}
 		} else

@@ -117,7 +117,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.shopOptionsRows[row].push(option);
     }
 
-    const hasUpgrade = typeOptions.filter(to => to.upgraded).length;
+    const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
 
     this.scene.showFieldOverlay(750);
 
@@ -130,18 +130,19 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         const value = t.getValue();
         const index = Math.floor(value * typeOptions.length);
         if (index > i && index <= typeOptions.length) {
-          const option = this.options[i++];
-          option?.show(Math.floor((1 - value) * 1250) * 0.325 + (hasUpgrade ? 2000 : 0));
+          const option = this.options[i];
+          option?.show(Math.floor((1 - value) * 1250) * 0.325 + 2000 * maxUpgradeCount, -(maxUpgradeCount - typeOptions[i].upgradeCount));
+          i++;
         }
       }
     });
 
-    this.scene.time.delayedCall(1000 + (hasUpgrade ? 2000 : 0), () => {
+    this.scene.time.delayedCall(1000 + maxUpgradeCount * 2000, () => {
       for (let shopOption of this.shopOptionsRows.flat())
-        shopOption.show(0);
+        shopOption.show(0, 0);
     });
 
-    this.scene.time.delayedCall(4000 + (hasUpgrade ? 2000 : 0), () => {
+    this.scene.time.delayedCall(4000 + maxUpgradeCount * 2000, () => {
       if (partyHasHeldItem) {
         this.transferButtonContainer.setAlpha(0);
         this.transferButtonContainer.setVisible(true);
@@ -385,7 +386,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   setup() {
     if (!this.modifierTypeOption.cost) {
       const getPb = (): Phaser.GameObjects.Sprite => {
-        const pb = this.scene.add.sprite(0, -182, 'pb', this.getPbAtlasKey(true));
+        const pb = this.scene.add.sprite(0, -182, 'pb', this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount));
         pb.setScale(2);
         return pb;
       };
@@ -434,7 +435,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     }
   }
 
-  show(remainingDuration: integer) {
+  show(remainingDuration: integer, upgradeCountOffset: integer) {
     if (!this.modifierTypeOption.cost) {
       this.scene.tweens.add({
         targets: this.pb,
@@ -465,9 +466,10 @@ class ModifierOption extends Phaser.GameObjects.Container {
         }
       });
 
-      if (this.modifierTypeOption.upgraded) {
-        this.scene.time.delayedCall(remainingDuration, () => {
-          (this.scene as BattleScene).playSound('upgrade');
+      for (let u = 0; u < this.modifierTypeOption.upgradeCount; u++) {
+        const upgradeIndex = u;
+        this.scene.time.delayedCall(remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (upgradeIndex + 1 + upgradeCountOffset)), () => {
+          (this.scene as BattleScene).playSound('upgrade', { rate: 1 + 0.25 * upgradeIndex });
           this.pbTint.setPosition(this.pb.x, this.pb.y);
           this.pbTint.setTintFill(0xFFFFFF);
           this.pbTint.setAlpha(0);
@@ -478,11 +480,11 @@ class ModifierOption extends Phaser.GameObjects.Container {
             duration: 1000,
             ease: 'Sine.easeIn',
             onComplete: () => {
-              this.pb.setTexture('pb', this.getPbAtlasKey(false));
+              this.pb.setTexture('pb', this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount + (upgradeIndex + 1)));
               this.scene.tweens.add({
                 targets: this.pbTint,
                 alpha: 0,
-                duration: 1000,
+                duration: 750,
                 ease: 'Sine.easeOut',
                 onComplete: () => {
                   this.pbTint.setVisible(false);
@@ -499,7 +501,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
         return;
 
       if (!this.modifierTypeOption.cost) {
-        this.pb.setTexture('pb', `${this.getPbAtlasKey(false)}_open`);
+        this.pb.setTexture('pb', `${this.getPbAtlasKey(0)}_open`);
         (this.scene as BattleScene).playSound('pb_rel');
         
         this.scene.tweens.add({
@@ -547,8 +549,8 @@ class ModifierOption extends Phaser.GameObjects.Container {
     });
   }
 
-  getPbAtlasKey(beforeUpgrade: boolean) {
-    return getPokeballAtlasKey((this.modifierTypeOption.type.tier - (beforeUpgrade && this.modifierTypeOption.upgraded ? 1 : 0)) as integer as PokeballType);
+  getPbAtlasKey(tierOffset: integer = 0) {
+    return getPokeballAtlasKey((this.modifierTypeOption.type.tier + tierOffset) as integer as PokeballType);
   }
 
   updateCostText(): void {

@@ -11,6 +11,7 @@ export function addPokeballOpenParticles(scene: BattleScene, x: number, y: numbe
       doDefaultPbOpenParticles(scene, x, y, 96);
       break;
     case PokeballType.ULTRA_BALL:
+    case PokeballType.ROGUE_BALL:
       doUbOpenParticles(scene, x, y);
       break;
     case PokeballType.MASTER_BALL:
