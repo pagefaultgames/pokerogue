@@ -139,7 +139,7 @@ export default class Battle {
             }
             if (pokemon.species.legendary || pokemon.species.pseudoLegendary || pokemon.species.mythical) {
                 if (pokemon.species.speciesId === Species.KYUREM)
-                    return 'battle_legendary_z';
+                    return 'battle_legendary_k';
                 if (pokemon.species.legendary)
                     return 'battle_legendary_rz';
                 return 'battle_legendary';
