@@ -2346,7 +2346,7 @@ export const speciesStarters = {
   [Species.MANKEY]: 4,
   [Species.GROWLITHE]: 4,
   [Species.POLIWAG]: 3,
-  [Species.ABRA]: 4,
+  [Species.ABRA]: 3,
   [Species.MACHOP]: 3,
   [Species.BELLSPROUT]: 3,
   [Species.TENTACOOL]: 3,

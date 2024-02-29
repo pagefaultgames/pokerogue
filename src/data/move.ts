@@ -2913,7 +2913,7 @@ export function initMoves() {
     new AttackMove(Moves.ERUPTION, "Eruption", Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, -1, "The user attacks opposing Pokémon with explosive fury. The lower the user's HP, the lower the move's power.", -1, 0, 3)
       .attr(HpPowerAttr)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new StatusMove(Moves.SKILL_SWAP, "Skill Swap (N)", Type.PSYCHIC, -1, 1, 98, "The user employs its psychic power to exchange Abilities with the target.", -1, 0, 3),
+    new StatusMove(Moves.SKILL_SWAP, "Skill Swap (N)", Type.PSYCHIC, -1, 10, 98, "The user employs its psychic power to exchange Abilities with the target.", -1, 0, 3),
     new SelfStatusMove(Moves.IMPRISON, "Imprison (N)", Type.PSYCHIC, -1, 10, 92, "If opposing Pokémon know any move also known by the user, they are prevented from using it.", -1, 0, 3),
     new SelfStatusMove(Moves.REFRESH, "Refresh", Type.NORMAL, -1, 20, -1, "The user rests to cure itself of poisoning, a burn, or paralysis.", -1, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN)
