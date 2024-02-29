@@ -1020,8 +1020,10 @@ const wildModifierPool = {
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.LUCKY_EGG, 4),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
+  [ModifierTier.ROGUE]: [
+    new WeightedModifierType(modifierTypes.LUCKY_EGG, 4),
+  ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.GOLDEN_EGG, 1)
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
@@ -1119,7 +1121,7 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
       const existingModifiers = party[0].scene.findModifiers(m => (m.type.generatorId || m.type.id) === weightedModifierType.modifierType.id, player);
       const itemModifierType = weightedModifierType.modifierType instanceof ModifierTypeGenerator
         ? weightedModifierType.modifierType.generateType(party)
-        : weightedModifierType;
+        : weightedModifierType.modifierType;
       const weight = !existingModifiers.length
         || itemModifierType instanceof PokemonHeldItemModifierType
         || itemModifierType instanceof FormChangeItemModifierType
