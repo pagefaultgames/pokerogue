@@ -1080,7 +1080,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
     pokemon.scene.applyModifiers(LevelIncrementBoosterModifier, true, levelCount);
 
     pokemon.level += levelCount.value;
-    if (pokemon.level <= pokemon.scene.getMaxExpLevel()) {
+    if (pokemon.level <= pokemon.scene.getMaxExpLevel(true)) {
       pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
       pokemon.levelExp = 0;
     }
