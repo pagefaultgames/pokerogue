@@ -1126,12 +1126,10 @@ export default class BattleScene extends Phaser.Scene {
 		this.ui?.achvBar.setY((this.game.canvas.height / 6 + this.moneyText.y + 15));
 	}
 
-	getMaxExpLevel(ignoreLevelCap?: boolean): integer {
-		if (ignoreLevelCap)
-			return 10000;
+	getMaxExpLevel(): integer {
 		const lastWaveIndex = Math.ceil((this.currentBattle?.waveIndex || 1) / 10) * 10;
 		const baseLevel = (1 + lastWaveIndex / 2 + Math.pow(lastWaveIndex / 25, 2)) * 1.2;
-		return Math.min(Math.ceil(baseLevel / 2) * 2 + 2, 10000);
+		return Math.ceil(baseLevel / 2) * 2 + 2;
 	}
 
 	randomSpecies(waveIndex: integer, level: integer, fromArenaPool?: boolean, speciesFilter?: PokemonSpeciesFilter, filterAllEvolutions?: boolean): PokemonSpecies {

@@ -139,6 +139,29 @@ export function decToBin(input: integer): string {
   return bin;
 }
 
+export function formatStat(stat: integer, forHp: boolean = false): string {
+  if (stat < (forHp ? 100000 : 1000000))
+    return stat.toString();
+  let ret = stat.toString();
+  let suffix = '';
+  switch (Math.ceil(ret.length / 3) - 1) {
+    case 1:
+      suffix = 'K';
+      break;
+    case 2:
+      suffix = 'M';
+      break;
+    case 3:
+      suffix = 'B';
+      break;
+    default:
+      return '?';
+  }
+  const digits = ((ret.length + 2) % 3) + 1;
+  const decimalNumber = parseInt(ret.slice(digits, digits + (3 - digits)));
+  return `${ret.slice(0, digits)}${decimalNumber ? `.${decimalNumber}` : ''}${suffix}`;
+}
+
 export function getEnumKeys(enumType): string[] {
   return Object.values(enumType).filter(v => isNaN(parseInt(v.toString()))).map(v => v.toString());
 }

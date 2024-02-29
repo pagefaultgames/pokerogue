@@ -542,7 +542,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       let baseStat = baseStats[s];
       let value = Math.floor(((2 * baseStat + this.ivs[s]) * this.level) * 0.01);
       if (isHp) {
-        value = Math.min(value + this.level + 10, 99999);
+        value = value + this.level + 10;
         if (this.getAbility().hasAttr(NonSuperEffectiveImmunityAbAttr))
           value = 1;
         if (this.hp > value || this.hp === undefined)
@@ -558,7 +558,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.scene.applyModifier(PokemonNatureWeightModifier, this.isPlayer(), this, natureStatMultiplier);
         if (natureStatMultiplier.value !== 1)
           value = Math.max(Math[natureStatMultiplier.value > 1 ? 'ceil' : 'floor'](value * natureStatMultiplier.value), 1);
-        value = Math.min(value, 99999);
       }
       this.stats[s] = value;
     }
