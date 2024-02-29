@@ -181,6 +181,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.setLevel(pokemon.level);
     this.lastLevel = pokemon.level;
 
+    this.shinyIcon.setVisible(pokemon.isShiny());
+
     if (this.player) {
       this.expBar.setScale(pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate), 1);
       this.lastExp = pokemon.exp;
