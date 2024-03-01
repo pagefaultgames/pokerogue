@@ -532,9 +532,8 @@ export class RecoilAttr extends MoveEffectAttr {
     if (!recoilDamage)
       return false;
 
-    user.scene.unshiftPhase(new DamagePhase(user.scene, user.getBattlerIndex(), HitResult.OTHER));
+    user.scene.unshiftPhase(new DamagePhase(user.scene, user.getBattlerIndex(), user.damage(recoilDamage, true), HitResult.OTHER));
     user.scene.queueMessage(getPokemonMessage(user, ' is hit\nwith recoil!'));
-    user.damage(recoilDamage, true);
 
     return true;
   }
@@ -553,8 +552,7 @@ export class SacrificialAttr extends MoveEffectAttr {
     if (!super.apply(user, target, move, args))
       return false;
 
-    user.scene.unshiftPhase(new DamagePhase(user.scene, user.getBattlerIndex(), HitResult.OTHER));
-    user.damage(user.getMaxHp(), true, true);
+    user.scene.unshiftPhase(new DamagePhase(user.scene, user.getBattlerIndex(), user.damage(user.hp, true, true), HitResult.OTHER));
 
     return true;
   }
@@ -1085,7 +1083,9 @@ export class HalfHpStatMaxAttr extends StatChangeAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      user.damage(Math.floor(user.getMaxHp() / 2));
+      const damage = user.damage(Math.floor(user.getMaxHp() / 2), true);
+      if (damage)
+        user.scene.damageNumberHandler.add(user, damage);
       user.updateInfo().then(() => {
         const ret = super.apply(user, target, move, args);
         user.scene.queueMessage(getPokemonMessage(user, ` cut its own hp\nand maximized its ${getBattleStatName(this.stats[0])}!`));
@@ -1106,7 +1106,9 @@ export class CutHpStatBoostAttr extends StatChangeAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      user.damage(Math.floor(user.getMaxHp() / 3));
+      const damage = user.damage(Math.floor(user.getMaxHp() / 3), true);
+      if (damage)
+        user.scene.damageNumberHandler.add(user, damage);
       user.updateInfo().then(() => {
         const ret = super.apply(user, target, move, args);
         resolve(ret);
@@ -1128,16 +1130,26 @@ export class HpSplitAttr extends MoveEffectAttr {
       const infoUpdates = [];
   
       const hpValue = Math.floor((target.hp + user.hp) / 2);
-      if (user.hp < hpValue) 
-        user.heal(hpValue - user.hp);
-      else if (user.hp > hpValue)
-        user.damage(user.hp - hpValue, true);
+      if (user.hp < hpValue) {
+        const healing = user.heal(hpValue - user.hp);
+        if (healing)
+          user.scene.damageNumberHandler.add(user, healing, HitResult.HEAL);
+      } else if (user.hp > hpValue) {
+        const damage = user.damage(user.hp - hpValue, true);
+        if (damage)
+          user.scene.damageNumberHandler.add(user, damage);
+      }
       infoUpdates.push(user.updateInfo());
 
-      if (target.hp < hpValue) 
-        target.heal(hpValue - target.hp);
-      else if (target.hp > hpValue)
-        target.damage(target.hp - hpValue, true);
+      if (target.hp < hpValue) {
+        const healing = target.heal(hpValue - target.hp);
+        if (healing)
+          user.scene.damageNumberHandler.add(user, healing, HitResult.HEAL);
+      } else if (target.hp > hpValue) {
+        const damage = target.damage(target.hp - hpValue, true);
+        if (damage)
+          target.scene.damageNumberHandler.add(target, damage);
+      }
       infoUpdates.push(target.updateInfo());
 
       return Promise.all(infoUpdates).then(() => resolve(true));
@@ -1396,6 +1408,13 @@ export class MissEffectAttr extends MoveAttr {
     return true;
   }
 }
+
+const halveHpMissEffectFunc = (user: Pokemon, move: Move) => {
+  const damage = user.damage(Math.floor(user.getMaxHp() / 2));
+  if (damage)
+    user.scene.damageNumberHandler.add(user, damage, HitResult.OTHER);
+  return true;
+};
 
 export class TypelessAttr extends MoveAttr { }
 
@@ -2280,7 +2299,7 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.MEGA_KICK, "Mega Kick", Type.NORMAL, MoveCategory.PHYSICAL, 120, 75, 5, -1, "The target is attacked by a kick launched with muscle-packed power.", -1, 0, 1),
     new AttackMove(Moves.JUMP_KICK, "Jump Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, -1, "The user jumps up high, then strikes with a kick. If the kick misses, the user hurts itself.", -1, 0, 1)
-      .attr(MissEffectAttr, (user: Pokemon, move: Move) => { user.damage(Math.floor(user.getMaxHp() / 2)); return true; })
+      .attr(MissEffectAttr, halveHpMissEffectFunc)
       .condition(failOnGravityCondition),
     new AttackMove(Moves.ROLLING_KICK, "Rolling Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 85, 15, -1, "The user lashes out with a quick, spinning kick. This may also make the target flinch.", 30, 0, 1)
       .attr(FlinchAttr),
@@ -2547,7 +2566,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.SOFT_BOILED, "Soft-Boiled", Type.NORMAL, -1, 5, -1, "The user restores its own HP by up to half of its max HP.", -1, 0, 1)
       .attr(HealAttr, 0.5),
     new AttackMove(Moves.HIGH_JUMP_KICK, "High Jump Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 130, 90, 10, -1, "The target is attacked with a knee kick from a jump. If it misses, the user is hurt instead.", -1, 0, 1)
-      .attr(MissEffectAttr, (user: Pokemon, move: Move) => { user.damage(Math.floor(user.getMaxHp() / 2)); return true; })
+      .attr(MissEffectAttr, halveHpMissEffectFunc)
       .condition(failOnGravityCondition),
     new StatusMove(Moves.GLARE, "Glare", Type.NORMAL, 100, 30, -1, "The user intimidates the target with the pattern on its belly to cause paralysis.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
@@ -4120,7 +4139,7 @@ export function initMoves() {
     new AttackMove(Moves.TERA_BLAST, "Tera Blast (P)", Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, "If the user has Terastallized, it unleashes energy of its Tera Type. This move inflicts damage using the Attack or Sp. Atk stat-whichever is higher for the user.", -1, 0, 9),
     new SelfStatusMove(Moves.SILK_TRAP, "Silk Trap (N)", Type.BUG, -1, 10, -1, "The user spins a silken trap, protecting itself from damage while lowering the Speed stat of any attacker that makes direct contact.", -1, 4, 9),
     new AttackMove(Moves.AXE_KICK, "Axe Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 120, 90, 10, -1, "The user attacks by kicking up into the air and slamming its heel down upon the target. This may also confuse the target. If it misses, the user takes damage instead.", 30, 0, 9)
-      .attr(MissEffectAttr, (user: Pokemon, move: Move) => { user.damage(Math.floor(user.getMaxHp() / 2)); return true; })
+      .attr(MissEffectAttr, halveHpMissEffectFunc)
       .attr(ConfuseAttr),
     new AttackMove(Moves.LAST_RESPECTS, "Last Respects (P)", Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, "The user attacks to avenge its allies. The more defeated allies there are in the user's party, the greater the move's power.", -1, 0, 9),
     new AttackMove(Moves.LUMINA_CRASH, "Lumina Crash", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, "The user attacks by unleashing a peculiar light that even affects the mind. This also harshly lowers the target's Sp. Def stat.", 100, 0, 9)
@@ -4250,7 +4269,7 @@ export function initMoves() {
     new AttackMove(Moves.ALLURING_VOICE, "Alluring Voice (P)", Type.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, -1, "The user attacks the target using its angelic voice. This also confuses the target if its stats have been boosted during the turn.", -1, 0, 9),
     new AttackMove(Moves.TEMPER_FLARE, "Temper Flare (P)", Type.FIRE, MoveCategory.PHYSICAL, 75, 100, 10, -1, "Spurred by desperation, the user attacks the target. This move's power is doubled if the user's previous move failed.", -1, 0, 9),
     new AttackMove(Moves.SUPERCELL_SLAM, "Supercell Slam", Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 95, 15, -1, "The user electrifies its body and drops onto the target to inflict damage. If this move misses, the user takes damage instead.", -1, 0, 9)
-      .attr(MissEffectAttr, (user: Pokemon, move: Move) => { user.damage(Math.floor(user.getMaxHp() / 2)); return true; }),
+      .attr(MissEffectAttr, halveHpMissEffectFunc),
     new AttackMove(Moves.PSYCHIC_NOISE, "Psychic Noise (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 75, 100, 10, -1, "The user attacks the target with unpleasant sound waves. For two turns, the target is prevented from recovering HP through moves, Abilities, or held items.", -1, 0, 9)
       .soundBased(),
     new AttackMove(Moves.UPPER_HAND, "Upper Hand (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, -1, "The user reacts to the target's movement and strikes with the heel of its palm, making the target flinch. This move fails if the target is not readying a priority move.", -1, 0, 9),

@@ -1,5 +1,5 @@
 import { TextStyle, addTextObject } from "../ui/text";
-import Pokemon, { AttackMoveResult, HitResult } from "./pokemon";
+import Pokemon, { DamageResult, HitResult } from "./pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
 
@@ -10,17 +10,21 @@ export default class DamageNumberHandler {
     this.damageNumbers = new Map();
   }
 
-  add(target: Pokemon, result: AttackMoveResult): void {
+  add(target: Pokemon, amount: integer, result: DamageResult | HitResult.HEAL = HitResult.EFFECTIVE, critical: boolean = false): void {
     const scene = target.scene;
+
+    if (!scene.damageNumbersMode)
+      return;
+
     const battlerIndex = target.getBattlerIndex();
     const baseScale = target.getSpriteScale() / 6;
-    const damageNumber = addTextObject(scene, target.x, -(scene.game.canvas.height / 6) + target.y - target.getSprite().height / 2, Utils.formatStat(result.damage, true), TextStyle.SUMMARY);
+    const damageNumber = addTextObject(scene, target.x, -(scene.game.canvas.height / 6) + target.y - target.getSprite().height / 2, Utils.formatStat(amount, true), TextStyle.SUMMARY);
     damageNumber.setOrigin(0.5, 1);
     damageNumber.setScale(baseScale);
 
     let [ textColor, shadowColor ] = [ null, null ];
 
-    switch (result.result) {
+    switch (result) {
       case HitResult.SUPER_EFFECTIVE:
         [ textColor, shadowColor ] = [ '#f8d030', '#b8a038' ];
         break;
@@ -30,6 +34,9 @@ export default class DamageNumberHandler {
       case HitResult.ONE_HIT_KO:
         [ textColor, shadowColor ] = [ '#a040a0', '#483850' ];
         break;
+      case HitResult.HEAL:
+        [ textColor, shadowColor ] = [ '#78c850', '#588040' ];
+        break;
       default:
         [ textColor, shadowColor ] = [ '#ffffff', '#636363' ];
         break;
@@ -38,7 +45,7 @@ export default class DamageNumberHandler {
     if (textColor)
       damageNumber.setColor(textColor);
     if (shadowColor) {
-      if (result.critical) {
+      if (critical) {
         damageNumber.setShadowOffset(0, 0);
         damageNumber.setStroke(shadowColor, 12);
       } else

@@ -1123,11 +1123,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
              this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage);
 
           if (damage) {
-            this.scene.unshiftPhase(new DamagePhase(this.scene, this.getBattlerIndex(), result as DamageResult));
+            damage.value = this.damage(damage.value);
+            this.scene.unshiftPhase(new DamagePhase(this.scene, this.getBattlerIndex(), damage.value, result as DamageResult, isCritical));
             if (isCritical)
               this.scene.queueMessage('A critical hit!');
             this.scene.setPhaseQueueSplice();
-            damage.value = this.damage(damage.value);
             if (source.isPlayer()) {
               this.scene.validateAchvs(DamageAchv, damage);
               if (damage.value > this.scene.gameData.gameStats.highestDamage)
@@ -1137,8 +1137,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.battleData.hitCount++;
             const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id };
             this.turnData.attacksReceived.unshift(attackResult);
-            if (damage.value && this.scene.damageNumbersMode)
-              this.scene.damageNumberHandler.add(this, attackResult);
             if (source.isPlayer() && !this.isPlayer())
               this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage)
           }
@@ -2344,7 +2342,7 @@ export class EnemyPokemon extends Pokemon {
           const hpThreshold = segmentSize * s;
           const roundedHpThreshold = Math.round(hpThreshold);
           if (this.hp >= roundedHpThreshold) {
-            if (this.hp - damage < roundedHpThreshold) {
+            if (this.hp - damage <= roundedHpThreshold) {
               const hpRemainder = this.hp - roundedHpThreshold;
               let segmentsBypassed = 0;
               while (this.canBypassBossSegments(segmentsBypassed + 1) && (damage - hpRemainder) >= Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1))) {
@@ -2536,6 +2534,7 @@ export enum HitResult {
   ONE_HIT_KO,
   NO_EFFECT,
   STATUS,
+  HEAL,
   FAIL,
   MISS,
   OTHER

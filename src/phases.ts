@@ -2394,9 +2394,10 @@ export class WeatherEffectPhase extends CommonAnimPhase {
           if (cancelled.value)
             return;
 
+          const damage = Math.ceil(pokemon.getMaxHp() / 16);
+
           this.scene.queueMessage(getWeatherDamageMessage(this.weather.weatherType, pokemon));
-          this.scene.unshiftPhase(new DamagePhase(this.scene, pokemon.getBattlerIndex()));
-          pokemon.damage(Math.ceil(pokemon.getMaxHp() / 16));
+          this.scene.unshiftPhase(new DamagePhase(this.scene, pokemon.getBattlerIndex(), pokemon.damage(damage)));
         };
 
         this.executeForAll((pokemon: Pokemon) => {
@@ -2458,19 +2459,22 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
     const pokemon = this.getPokemon();
     if (pokemon?.isActive(true) && pokemon.status && pokemon.status.isPostTurn()) {
       pokemon.status.incrementTurn();
-      new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => {
-        this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect)));
-        switch (pokemon.status.effect) {
-          case StatusEffect.POISON:
-          case StatusEffect.BURN:
-            pokemon.damage(Math.max(pokemon.getMaxHp() >> 3, 1));
-            break;
-          case StatusEffect.TOXIC:
-            pokemon.damage(Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1));
-            break;
-        }
-        pokemon.updateInfo().then(() => this.end());
-      });
+      this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect)));
+      let damage: integer = 0;
+      switch (pokemon.status.effect) {
+        case StatusEffect.POISON:
+        case StatusEffect.BURN:
+          damage = Math.max(pokemon.getMaxHp() >> 3, 1);
+          break;
+        case StatusEffect.TOXIC:
+          damage = Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1);
+          break;
+      }
+      if (damage) {
+        this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage));
+        pokemon.updateInfo();
+      }
+      new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => this.end());
     } else
       this.end();
   }
@@ -2512,12 +2516,16 @@ export class MessagePhase extends Phase {
 }
 
 export class DamagePhase extends PokemonPhase {
+  private amount: integer;
   private damageResult: DamageResult;
+  private critical: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, damageResult?: DamageResult) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, amount: integer, damageResult?: DamageResult, critical: boolean = false) {
     super(scene, battlerIndex);
 
+    this.amount = amount;
     this.damageResult = damageResult || HitResult.EFFECTIVE;
+    this.critical = critical;
   }
 
   start() {
@@ -2548,6 +2556,9 @@ export class DamagePhase extends PokemonPhase {
         this.scene.playSound('hit_weak');
         break;
     }
+
+    if (this.amount)
+      this.scene.damageNumberHandler.add(this.getPokemon(), this.amount, this.damageResult, this.critical);
 
     if (this.damageResult !== HitResult.OTHER) {
       const flashTimer = this.scene.time.addEvent({
@@ -2685,10 +2696,15 @@ export class FaintPhase extends PokemonPhase {
       case BattleSpec.FINAL_BOSS:
         if (!this.player) {
           const enemy = this.getPokemon();
-          if (enemy.formIndex) {
+          if (enemy.formIndex)
             this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin, enemy.species.name, null, () => this.doFaint());
-            return true;
+          else {
+            // Final boss' HP threshold has been bypassed; cancel faint and force check for 2nd phase
+            enemy.hp++;
+            this.scene.unshiftPhase(new DamagePhase(this.scene, enemy.getBattlerIndex(), 0, HitResult.OTHER));
+            this.end();
           }
+          return true;
         }
     }
 
@@ -3310,6 +3326,8 @@ export class PokemonHealPhase extends CommonAnimPhase {
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
       healAmount.value = pokemon.heal(healAmount.value);
+      if (healAmount.value)
+        this.scene.damageNumberHandler.add(pokemon, healAmount.value, HitResult.HEAL);
       if (pokemon.isPlayer()) {
         this.scene.validateAchvs(HealAchv, healAmount);
         if (healAmount.value > this.scene.gameData.gameStats.highestHeal)

@@ -170,10 +170,10 @@ class SpikesTag extends ArenaTrapTag {
   activateTrap(pokemon: Pokemon): boolean {
     if ((!pokemon.isOfType(Type.FLYING) || pokemon.getTag(BattlerTagType.IGNORE_FLYING) || pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))) {
       const damageHpRatio = 1 / (10 - 2 * this.layers);
+      const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
 
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is hurt\nby the spikes!'));
-      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), HitResult.OTHER));
-      pokemon.damage(Math.ceil(pokemon.getMaxHp() * damageHpRatio));
+      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.damage(damage), HitResult.OTHER));
       return true;
     }
 
@@ -266,9 +266,9 @@ class StealthRockTag extends ArenaTrapTag {
     }
 
     if (damageHpRatio) {
+      const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
       pokemon.scene.queueMessage(`Pointed stones dug into\n${pokemon.name}!`);
-      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), HitResult.OTHER));
-      pokemon.damage(Math.ceil(pokemon.getMaxHp() * damageHpRatio));
+      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.damage(damage), HitResult.OTHER));
     }
 
     return false;

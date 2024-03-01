@@ -179,8 +179,7 @@ export class ConfusedTag extends BattlerTag {
         const def = pokemon.getBattleStat(Stat.DEF);
         const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100));
         pokemon.scene.queueMessage('It hurt itself in its\nconfusion!');
-        pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex()));
-        pokemon.damage(damage);
+        pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.damage(damage)));
         pokemon.battleData.hitCount++;
         (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
       }
@@ -264,9 +263,9 @@ export class SeedTag extends BattlerTag {
       if (source) {
         pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.LEECH_SEED));
 
-        const damage = Math.max(Math.floor(pokemon.getMaxHp() / 8), 1);
-        pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex()));
-        pokemon.damage(damage);
+        const damage = pokemon.damage(Math.max(Math.floor(pokemon.getMaxHp() / 8), 1));
+        
+        pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), damage));
         pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, source.getBattlerIndex(), damage, getPokemonMessage(pokemon, '\'s health is\nsapped by Leech Seed!'), false, true));
       }
     }
@@ -304,8 +303,7 @@ export class NightmareTag extends BattlerTag {
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.CURSE)); // TODO: Update animation type
 
       const damage = Math.ceil(pokemon.getMaxHp() / 4);
-      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex()));
-      pokemon.damage(damage);
+      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.damage(damage)));
     }
     
     return ret;
@@ -473,8 +471,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, this.commonAnim));
 
       const damage = Math.ceil(pokemon.getMaxHp() / 8);
-      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex()));
-      pokemon.damage(damage);
+      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.damage(damage)));
     }
 
     return ret;
@@ -617,10 +614,8 @@ export class PerishSongTag extends BattlerTag {
 
     if (ret)
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, `\'s perish count fell to ${this.turnCount}.`));
-    else {
-      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), HitResult.ONE_HIT_KO));
-      pokemon.damage(pokemon.hp, true, true);
-    }
+    else
+      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.damage(pokemon.hp, true, true), HitResult.ONE_HIT_KO));
 
     return ret;
   }
