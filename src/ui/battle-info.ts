@@ -333,7 +333,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
         if ((this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level)) {
           const originalResolve = resolve;
-          resolve = () => this.updatePokemonExp(pokemon).then(() => originalResolve());
+          let durationMultipler = Math.max(Phaser.Tweens.Builders.GetEaseFunction('Cubic.easeIn')(1 - (Math.min(pokemon.level - this.lastLevel, 10) / 10)), 0.1);
+          resolve = () => this.updatePokemonExp(pokemon, false, durationMultipler).then(() => originalResolve());
         } else if (isLevelCapped !== this.lastLevelCapped)
           this.setLevel(pokemon.level);
 
@@ -372,7 +373,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.lastName = pokemon.name;
   }
 
-  updatePokemonExp(pokemon: Pokemon, instant?: boolean): Promise<void> {
+  updatePokemonExp(pokemon: Pokemon, instant?: boolean, levelDurationMultiplier: number = 1): Promise<void> {
     return new Promise(resolve => {
       const levelUp = this.lastLevel < pokemon.level;
       const relLevelExp = getLevelRelExp(this.lastLevel + 1, pokemon.species.growthRate);
@@ -386,7 +387,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         instant = true;
       }
       const durationMultiplier = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeIn')(1 - (Math.max(this.lastLevel - 100, 0) / 150));
-      let duration = this.visible && !instant ? (((levelExp - this.lastLevelExp) / relLevelExp) * 1650) * durationMultiplier : 0;
+      let duration = this.visible && !instant ? (((levelExp - this.lastLevelExp) / relLevelExp) * 1650) * durationMultiplier * levelDurationMultiplier : 0;
       if (duration)
         (this.scene as BattleScene).playSound('exp');
       this.scene.tweens.add({
@@ -395,10 +396,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         scaleX: ratio,
         duration: duration,
         onComplete: () => {
-          if (!this.scene) {
-            resolve();
-            return;
-          }
+          if (!this.scene)
+            return resolve();
           if (duration)
             this.scene.sound.stopByKey('exp');
           if (ratio === 1) {
@@ -406,7 +405,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
             this.lastLevel++;
             (this.scene as BattleScene).playSound('level_up');
             this.setLevel(this.lastLevel);
-            this.scene.time.delayedCall(500, () => {
+            this.scene.time.delayedCall(500 * levelDurationMultiplier, () => {
               this.expBar.setScale(0, 1);
               this.updateInfo(pokemon, instant).then(() => resolve());
             });
