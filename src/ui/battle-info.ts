@@ -236,8 +236,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.hpBarSegmentDividers.pop().destroy();
 
     if (this.boss && this.bossSegments > 1) {
+      const maxHp = pokemon.getMaxHp();
       for (let s = 1; s < this.bossSegments; s++) {
-        const dividerX = (Math.round((pokemon.hp / this.bossSegments) * s) / pokemon.hp) * this.hpBar.width;
+        const dividerX = (Math.round((maxHp / this.bossSegments) * s) /  maxHp) * this.hpBar.width;
         const divider = this.scene.add.rectangle(0, 0, 1, this.hpBar.height, pokemon.bossSegmentIndex >= s ? 0xFFFFFF : 0x404040);
         divider.setOrigin(0.5, 0);
         this.add(divider);
