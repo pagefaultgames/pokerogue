@@ -15,7 +15,7 @@ import { ArenaTagType } from "./enums/arena-tag-type";
 import { Abilities, BlockRecoilDamageAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs } from "./ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
-import { Stat, getStatName } from "./pokemon-stat";
+import { Stat } from "./pokemon-stat";
 
 export enum MoveCategory {
   PHYSICAL,

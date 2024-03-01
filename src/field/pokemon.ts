@@ -1135,7 +1135,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             }
             source.turnData.damageDealt += damage.value;
             this.battleData.hitCount++;
-            this.turnData.attacksReceived.unshift({ move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id });
+            const attackResult = { move: move.id, result: result as DamageResult, damage: damage.value, critical: isCritical, sourceId: source.id };
+            this.turnData.attacksReceived.unshift(attackResult);
+            if (damage.value && this.scene.damageNumbersMode)
+              this.scene.damageNumberHandler.add(this, attackResult);
             if (source.isPlayer() && !this.isPlayer())
               this.scene.applyModifiers(DamageMoneyRewardModifier, true, source, damage)
           }

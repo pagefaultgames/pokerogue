@@ -36,6 +36,24 @@ export function initGameSpeed() {
       config.hold = transformValue(config.hold);
     return originalTweensAdd.apply(this, [ config ]);
   };
+  const originalTweensChain = this.tweens.chain;
+  this.tweens.chain = function (config: Phaser.Types.Tweens.TweenChainBuilderConfig): Phaser.Tweens.TweenChain {
+    if (config.tweens) {
+      config.tweens.forEach(t => {
+        if (t.duration)
+          t.duration = transformValue(t.duration);
+        if (t.delay)
+          t.delay = transformValue(t.delay);
+        if (t.repeatDelay)
+          t.repeatDelay = transformValue(t.repeatDelay);
+        if (t.loopDelay)
+          t.loopDelay = transformValue(t.loopDelay);
+        if (t.hold)
+          t.hold = transformValue(t.hold);
+      });
+    }
+    return originalTweensChain.apply(this, [ config ]);
+  };
   const originalAddCounter = this.tweens.addCounter;
   this.tweens.addCounter = function (config: Phaser.Types.Tweens.NumberTweenBuilderConfig) {
     if (config.duration)

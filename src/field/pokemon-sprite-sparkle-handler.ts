@@ -38,7 +38,6 @@ export default class PokemonSpriteSparkleHandler {
         const sparkle = (s.scene as BattleScene).addFieldSprite(((pokemon?.x || 0) + s.x + pixelX * ratioX + xOffset), ((pokemon?.y || 0) + s.y + pixelY * ratioY + yOffset), 'tera_sparkle');
         sparkle.pipelineData['ignoreTimeTint'] = s.pipelineData['ignoreTimeTint'];
         sparkle.play('tera_sparkle');
-        const teraColor = s.pipelineData['teraColor'] as number[];
         parent.add(sparkle);
         s.scene.time.delayedCall(Utils.fixedInt(Math.floor((1000 / 12) * 13)), () => sparkle.destroy());
       }

@@ -51,6 +51,7 @@ import { BattleSpec } from './enums/battle-spec';
 import { getTypeRgb } from './data/type';
 import PokemonSpriteSparkleHandler from './field/pokemon-sprite-sparkle-handler';
 import CharSprite from './ui/char-sprite';
+import DamageNumberHandler from './field/damage-number-handler';
 
 export const bypassLogin = false;
 export const startingLevel = 5;
@@ -92,6 +93,7 @@ export default class BattleScene extends Phaser.Scene {
 	public bgmVolume: number = 1;
 	public seVolume: number = 1;
 	public gameSpeed: integer = 1;
+	public damageNumbersMode: integer = 0;
 	public showLevelUpStats: boolean = true;
 	public enableTutorials: boolean = true;
 	public windowType: integer = 1;
@@ -141,6 +143,7 @@ export default class BattleScene extends Phaser.Scene {
 	public seed: string;
 	public waveSeed: string;
 
+	public damageNumberHandler: DamageNumberHandler
 	private spriteSparkleHandler: PokemonSpriteSparkleHandler;
 
 	public fieldSpritePipeline: FieldSpritePipeline;
@@ -536,6 +539,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.fieldUI.add(this.moneyText);
 
 		this.updateUIPositions();
+
+		this.damageNumberHandler = new DamageNumberHandler();
 
 		this.spriteSparkleHandler = new PokemonSpriteSparkleHandler();
 		this.spriteSparkleHandler.setup(this);
