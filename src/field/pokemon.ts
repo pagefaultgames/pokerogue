@@ -1123,8 +1123,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
              this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage);
 
           if (damage) {
-            damage.value = this.damage(damage.value);
-            this.scene.unshiftPhase(new DamagePhase(this.scene, this.getBattlerIndex(), damage.value, result as DamageResult, isCritical));
+            damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical);
             if (isCritical)
               this.scene.queueMessage('A critical hit!');
             this.scene.setPhaseQueueSplice();
@@ -1198,6 +1197,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.resetSummonData();
     }
 
+    return damage;
+  }
+
+  damageAndUpdate(damage: integer, result?: DamageResult, critical: boolean = false, ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
+    const damagePhase = new DamagePhase(this.scene, this.getBattlerIndex(), damage, result as DamageResult, critical);
+    this.scene.unshiftPhase(damagePhase);
+    damage = this.damage(damage, ignoreSegments, preventEndure);
+    // Damage amount may have changed, but needed to be queued before calling damage function
+    damagePhase.updateAmount(damage);
     return damage;
   }
 

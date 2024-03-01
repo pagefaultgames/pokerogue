@@ -532,7 +532,7 @@ export class RecoilAttr extends MoveEffectAttr {
     if (!recoilDamage)
       return false;
 
-    user.scene.unshiftPhase(new DamagePhase(user.scene, user.getBattlerIndex(), user.damage(recoilDamage, true), HitResult.OTHER));
+    user.damageAndUpdate(recoilDamage, HitResult.OTHER, false, true);
     user.scene.queueMessage(getPokemonMessage(user, ' is hit\nwith recoil!'));
 
     return true;
@@ -552,7 +552,7 @@ export class SacrificialAttr extends MoveEffectAttr {
     if (!super.apply(user, target, move, args))
       return false;
 
-    user.scene.unshiftPhase(new DamagePhase(user.scene, user.getBattlerIndex(), user.damage(user.hp, true, true), HitResult.OTHER));
+    user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
 
     return true;
   }

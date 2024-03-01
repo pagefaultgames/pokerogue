@@ -173,7 +173,7 @@ class SpikesTag extends ArenaTrapTag {
       const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
 
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is hurt\nby the spikes!'));
-      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.damage(damage), HitResult.OTHER));
+      pokemon.damageAndUpdate(damage, HitResult.OTHER);
       return true;
     }
 
@@ -268,7 +268,7 @@ class StealthRockTag extends ArenaTrapTag {
     if (damageHpRatio) {
       const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
       pokemon.scene.queueMessage(`Pointed stones dug into\n${pokemon.name}!`);
-      pokemon.scene.unshiftPhase(new DamagePhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.damage(damage), HitResult.OTHER));
+      pokemon.damageAndUpdate(damage, HitResult.OTHER);
     }
 
     return false;
