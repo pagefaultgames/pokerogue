@@ -2345,35 +2345,35 @@ export class EnemyPokemon extends Pokemon {
 
     let bossSegmentIndex = this.bossSegmentIndex;
 
-    if (this.isBoss()) {
-      if (!ignoreSegments) {
-        const segmentSize = this.getMaxHp() / this.bossSegments;
-        for (let s = this.bossSegmentIndex; s > 0; s--) {
-          const hpThreshold = segmentSize * s;
-          const roundedHpThreshold = Math.round(hpThreshold);
-          if (this.hp >= roundedHpThreshold) {
-            if (this.hp - damage <= roundedHpThreshold) {
-              const hpRemainder = this.hp - roundedHpThreshold;
-              let segmentsBypassed = 0;
-              while (segmentsBypassed < this.bossSegmentIndex && this.canBypassBossSegments(segmentsBypassed + 1) && (damage - hpRemainder) >= Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1))) {
-                segmentsBypassed++;
-                //console.log('damage', damage, 'segment', segmentsBypassed + 1, 'segment size', segmentSize, 'damage needed', Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1)));
-              }
-
-              damage = hpRemainder + Math.round(segmentSize * segmentsBypassed);
-              bossSegmentIndex = s - segmentsBypassed;
+    if (this.isBoss() && !ignoreSegments) {
+      const segmentSize = this.getMaxHp() / this.bossSegments;
+      for (let s = this.bossSegmentIndex; s > 0; s--) {
+        const hpThreshold = segmentSize * s;
+        const roundedHpThreshold = Math.round(hpThreshold);
+        if (this.hp >= roundedHpThreshold) {
+          if (this.hp - damage <= roundedHpThreshold) {
+            const hpRemainder = this.hp - roundedHpThreshold;
+            let segmentsBypassed = 0;
+            while (segmentsBypassed < this.bossSegmentIndex && this.canBypassBossSegments(segmentsBypassed + 1) && (damage - hpRemainder) >= Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1))) {
+              segmentsBypassed++;
+              //console.log('damage', damage, 'segment', segmentsBypassed + 1, 'segment size', segmentSize, 'damage needed', Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1)));
             }
-            break;
+
+            damage = hpRemainder + Math.round(segmentSize * segmentsBypassed);
+            bossSegmentIndex = s - segmentsBypassed;
           }
+          break;
         }
       }
-      this.battleInfo.updateBossSegments(this);
     }
 
     const ret = super.damage(damage, ignoreSegments, preventEndure);
 
-    if (this.isBoss() && bossSegmentIndex < this.bossSegmentIndex)
-      this.handleBossSegmentCleared(bossSegmentIndex);
+    if (this.isBoss()) {
+      if (bossSegmentIndex < this.bossSegmentIndex)
+        this.handleBossSegmentCleared(bossSegmentIndex);
+      this.battleInfo.updateBossSegments(this);
+    }
 
     return ret;
   }
