@@ -1117,7 +1117,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             ? speciesMoveData as StarterMoveset
             : (speciesMoveData as StarterFormMoveData)[formIndex]
           : null;
-        this.starterMoveset = moveData || (this.speciesStarterMoves.slice(0, 4) as StarterMoveset);
+        const availableStarterMoves = this.speciesStarterMoves.concat(speciesEggMoves[species.speciesId]);
+        this.starterMoveset = (moveData || (this.speciesStarterMoves.slice(0, 4) as StarterMoveset)).filter(m => availableStarterMoves.find(sm => sm === m)) as StarterMoveset;
+        // Consolidate move data if it contains an incompatible move
+        if (this.starterMoveset.length < 4 && this.starterMoveset.length < availableStarterMoves.length)
+          this.starterMoveset.push(...availableStarterMoves.filter(sm => this.starterMoveset.indexOf(sm) === -1).slice(0, 4 - this.starterMoveset.length));
       } else {
         this.pokemonAbilityText.setText('');
         this.pokemonNatureText.setText('');

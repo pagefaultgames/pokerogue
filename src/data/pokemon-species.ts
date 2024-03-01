@@ -7,7 +7,7 @@ import { Type } from './type';
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from './pokemon-level-moves';
 import { uncatchableSpecies } from './biomes';
 import * as Utils from '../utils';
-import { StarterEggMoveData, StarterMoveset } from '../system/game-data';
+import { StarterMoveset } from '../system/game-data';
 import { speciesEggMoves } from './egg-moves';
 
 export enum Region {
