@@ -3166,7 +3166,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     if (this.level <= 100) {
       const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
       for (let lm of levelMoves)
-        this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm));
+        this.scene.unshiftPhase(new LearnMovePhase(this.scene, this.partyMemberIndex, lm[1]));
     }
     if (!pokemon.pauseEvolutions) {
       const evolution = pokemon.getEvolution();

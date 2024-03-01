@@ -1699,7 +1699,7 @@ export class EndureAttr extends ProtectAttr {
 
 export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
   constructor() {
-    super(BattlerTagType.IGNORE_ACCURACY, true, false, 1);
+    super(BattlerTagType.IGNORE_ACCURACY, true, false, 2);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {

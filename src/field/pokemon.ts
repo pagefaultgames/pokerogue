@@ -619,7 +619,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getLearnableLevelMoves(): Moves[] {
-    return this.getLevelMoves(1, true).filter(lm => !this.moveset.filter(m => m.moveId === lm).length).filter((move: Moves, i: integer, array: Moves[]) => array.indexOf(move) === i);
+    return this.getLevelMoves(1, true).map(lm => lm[1]).filter(lm => !this.moveset.filter(m => m.moveId === lm).length).filter((move: Moves, i: integer, array: Moves[]) => array.indexOf(move) === i);
   }
 
   getTypes(includeTeraType = false, ignoreOverride?: boolean): Type[] {
@@ -755,11 +755,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return null;
   }
 
-  getLevelMoves(startingLevel?: integer, includeEvolutionMoves?: boolean): Moves[] {
-    const ret: Moves[] = [];
+  getLevelMoves(startingLevel?: integer, includeEvolutionMoves?: boolean): LevelMoves {
+    const ret: LevelMoves = [];
     let levelMoves = this.getSpeciesForm().getLevelMoves();
     if (!startingLevel)
-        startingLevel = this.level;
+      startingLevel = this.level;
     if (this.fusionSpecies) {
       const evolutionLevelMoves = levelMoves.slice(0, Math.max(levelMoves.findIndex(lm => !!lm[0]), 0));
       const fusionLevelMoves = this.getFusionSpeciesForm().getLevelMoves();
@@ -795,7 +795,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           continue;
         else if (level > this.level)
           break;
-        ret.push(lm[1]);
+        ret.push(lm);
       }
     }
 
@@ -884,7 +884,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   generateAndPopulateMoveset(): void {
     this.moveset = [];
     const movePool = [];
-    const allLevelMoves = this.getSpeciesForm().getLevelMoves();
+    const allLevelMoves = this.getLevelMoves(1);
     if (!allLevelMoves) {
       console.log(this.species.speciesId, 'ERROR')
       return;
