@@ -1036,7 +1036,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.NUMEL, "Numel", 3, false, false, false, "Numb Pokémon", Type.FIRE, Type.GROUND, 0.7, 24, Abilities.OBLIVIOUS, Abilities.SIMPLE, Abilities.OWN_TEMPO, 305, 60, 60, 40, 65, 45, 35, 255, 70, 61, GrowthRate.MEDIUM_FAST, 50, true),
     new PokemonSpecies(Species.CAMERUPT, "Camerupt", 3, false, false, false, "Eruption Pokémon", Type.FIRE, Type.GROUND, 1.9, 220, Abilities.MAGMA_ARMOR, Abilities.SOLID_ROCK, Abilities.ANGER_POINT, 460, 70, 100, 70, 105, 75, 40, 150, 70, 161, GrowthRate.MEDIUM_FAST, 50, true, true,
       new PokemonForm("Normal", "", Type.FIRE, Type.GROUND, 1.9, 220, Abilities.MAGMA_ARMOR, Abilities.SOLID_ROCK, Abilities.ANGER_POINT, 460, 70, 100, 70, 105, 75, 40, 150, 70, 161, true),
-      new PokemonForm("Mega", SpeciesFormKey.MEGA, Type.FIRE, Type.GROUND, 2.5, 320.5, Abilities.SHEER_FORCE, Abilities.NONE, Abilities.NONE, 560, 70, 120, 100, 145, 105, 20, 150, 70, 161, true),
+      new PokemonForm("Mega", SpeciesFormKey.MEGA, Type.FIRE, Type.GROUND, 2.5, 320.5, Abilities.SHEER_FORCE, Abilities.NONE, Abilities.NONE, 560, 70, 120, 100, 145, 105, 20, 150, 70, 161),
     ),
     new PokemonSpecies(Species.TORKOAL, "Torkoal", 3, false, false, false, "Coal Pokémon", Type.FIRE, null, 0.5, 80.4, Abilities.WHITE_SMOKE, Abilities.DROUGHT, Abilities.SHELL_ARMOR, 470, 70, 85, 140, 85, 70, 20, 90, 50, 165, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.SPOINK, "Spoink", 3, false, false, false, "Bounce Pokémon", Type.PSYCHIC, null, 0.7, 30.6, Abilities.THICK_FAT, Abilities.OWN_TEMPO, Abilities.GLUTTONY, 330, 60, 25, 35, 70, 80, 60, 255, 70, 66, GrowthRate.FAST, 50, false),

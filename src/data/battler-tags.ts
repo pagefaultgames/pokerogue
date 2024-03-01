@@ -731,7 +731,7 @@ export class CritBoostTag extends BattlerTag {
 
 export class IgnoreAccuracyTag extends BattlerTag {
   constructor(sourceMove: Moves) {
-    super(BattlerTagType.IGNORE_ACCURACY, BattlerTagLapseType.TURN_END, 1, sourceMove);
+    super(BattlerTagType.IGNORE_ACCURACY, BattlerTagLapseType.TURN_END, 2, sourceMove);
   }
 }
 
