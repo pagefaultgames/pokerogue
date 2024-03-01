@@ -2343,7 +2343,9 @@ export class EnemyPokemon extends Pokemon {
     if (this.isFainted())
       return 0;
 
-    let bossSegmentIndex = this.bossSegmentIndex;
+    let clearedBossSegmentIndex = this.isBoss() 
+      ? this.bossSegmentIndex + 1
+      : 0;
 
     if (this.isBoss() && !ignoreSegments) {
       const segmentSize = this.getMaxHp() / this.bossSegments;
@@ -2360,7 +2362,7 @@ export class EnemyPokemon extends Pokemon {
             }
 
             damage = hpRemainder + Math.round(segmentSize * segmentsBypassed);
-            bossSegmentIndex = s - segmentsBypassed;
+            clearedBossSegmentIndex = s - segmentsBypassed;
           }
           break;
         }
@@ -2370,8 +2372,8 @@ export class EnemyPokemon extends Pokemon {
     const ret = super.damage(damage, ignoreSegments, preventEndure);
 
     if (this.isBoss()) {
-      if (bossSegmentIndex < this.bossSegmentIndex)
-        this.handleBossSegmentCleared(bossSegmentIndex);
+      if (clearedBossSegmentIndex <= this.bossSegmentIndex)
+        this.handleBossSegmentCleared(clearedBossSegmentIndex);
       this.battleInfo.updateBossSegments(this);
     }
 

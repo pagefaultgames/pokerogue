@@ -289,11 +289,14 @@ export class GameData {
 
           this.starterMoveData = systemData.starterMoveData || {};
           
-          if (systemData.starterEggMoveData)
-            this.starterEggMoveData = systemData.starterEggMoveData;
-          else {
-            this.starterEggMoveData = {};
-            this.initEggMoveData();
+          this.starterEggMoveData = {};
+          this.initEggMoveData();
+
+          if (systemData.starterEggMoveData) {
+            for (let key of Object.keys(systemData.starterEggMoveData)) {
+              if (this.starterEggMoveData.hasOwnProperty(key))
+                this.starterEggMoveData[key] = systemData.starterEggMoveData[key];
+            }
           }
 
           if (systemData.gameStats)
