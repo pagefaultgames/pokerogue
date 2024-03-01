@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import Pokemon from "../pokemon";
+import Pokemon from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
 
 export default class PartyExpBar extends Phaser.GameObjects.Container {

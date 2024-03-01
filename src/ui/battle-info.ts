@@ -1,4 +1,4 @@
-import { EnemyPokemon, default as Pokemon } from '../pokemon';
+import { EnemyPokemon, default as Pokemon } from '../field/pokemon';
 import { getLevelTotalExp, getLevelRelExp } from '../data/exp';
 import * as Utils from '../utils';
 import { addTextObject, TextStyle } from './text';

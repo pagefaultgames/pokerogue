@@ -11,7 +11,7 @@ import { Unlockables } from "../system/unlockables";
 import { GrowthRate, getGrowthRateColor } from "../data/exp";
 import { DexAttr, DexEntry, StarterFormMoveData, StarterMoveset } from "../system/game-data";
 import * as Utils from "../utils";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "../sprite/pokemon-icon-anim-handler";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import { StatsContainer } from "./stats-container";
 import { addWindow } from "./window";
 import { Nature, getNatureName } from "../data/nature";

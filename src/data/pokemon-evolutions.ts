@@ -3,7 +3,7 @@ import { AttackTypeBoosterModifier, FlinchChanceModifier } from "../modifier/mod
 import { AttackTypeBoosterModifierType } from "../modifier/modifier-type";
 import { Moves } from "./enums/moves";
 import { PokeballType } from "./pokeball";
-import Pokemon from "../pokemon";
+import Pokemon from "../field/pokemon";
 import { Stat } from "./pokemon-stat";
 import { Species } from "./enums/species";
 import { Type } from "./type";

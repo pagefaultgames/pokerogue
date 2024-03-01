@@ -7,7 +7,7 @@ import { PokeballType } from "../data/pokeball";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
 import { Status } from "../data/status-effect";
-import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../pokemon";
+import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
 
 export default class PokemonData {
   public id: integer;

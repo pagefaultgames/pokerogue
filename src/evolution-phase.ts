@@ -6,8 +6,8 @@ import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
 import { LearnMovePhase } from "./phases";
-import { cos, sin } from "./anims";
-import { PlayerPokemon } from "./pokemon";
+import { cos, sin } from "./field/anims";
+import { PlayerPokemon } from "./field/pokemon";
 import { getTypeRgb } from "./data/type";
 
 export class EvolutionPhase extends Phase {

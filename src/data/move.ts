@@ -5,7 +5,7 @@ import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { getPokemonMessage } from "../messages";
-import Pokemon, { AttackMoveResult, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../pokemon";
+import Pokemon, { AttackMoveResult, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Type } from "./type";
 import * as Utils from "../utils";

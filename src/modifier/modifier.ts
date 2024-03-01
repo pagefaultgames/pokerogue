@@ -3,7 +3,7 @@ import { LearnMovePhase, LevelUpPhase, ObtainStatusEffectPhase, PokemonHealPhase
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { PokeballType } from "../data/pokeball";
-import Pokemon, { PlayerPokemon } from "../pokemon";
+import Pokemon, { PlayerPokemon } from "../field/pokemon";
 import { Stat } from "../data/pokemon-stat";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from '../data/type';

@@ -1,6 +1,6 @@
 import BattleScene, { startingWave } from "../battle-scene";
 import { ModifierTypeFunc, modifierTypes } from "../modifier/modifier-type";
-import { EnemyPokemon } from "../pokemon";
+import { EnemyPokemon } from "../field/pokemon";
 import * as Utils from "../utils";
 import { TrainerType } from "./enums/trainer-type";
 import { Moves } from "./enums/moves";

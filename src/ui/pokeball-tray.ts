@@ -1,5 +1,5 @@
 import BattleScene from "../battle-scene";
-import Pokemon from "../pokemon";
+import Pokemon from "../field/pokemon";
 
 export default class PokeballTray extends Phaser.GameObjects.Container {
   private player: boolean;

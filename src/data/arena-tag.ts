@@ -1,9 +1,9 @@
-import { Arena } from "../arena";
+import { Arena } from "../field/arena";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { allMoves } from "./move";
 import { getPokemonMessage } from "../messages";
-import Pokemon, { HitResult, PokemonMove } from "../pokemon";
+import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { DamagePhase, MoveEffectPhase, ObtainStatusEffectPhase } from "../phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerTagType } from "./enums/battler-tag-type";

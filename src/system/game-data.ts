@@ -1,5 +1,5 @@
 import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
-import Pokemon, { EnemyPokemon, PlayerPokemon } from "../pokemon";
+import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, speciesStarters } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";

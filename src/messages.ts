@@ -1,5 +1,5 @@
 import { BattleSpec } from "./enums/battle-spec";
-import Pokemon from "./pokemon";
+import Pokemon from "./field/pokemon";
 
 export function getPokemonMessage(pokemon: Pokemon, content: string): string {
   let prefix: string;

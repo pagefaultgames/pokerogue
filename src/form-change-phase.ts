@@ -4,7 +4,7 @@ import { SpeciesFormKey } from "./data/pokemon-species";
 import { achvs } from "./system/achv";
 import { SpeciesFormChange, getSpeciesFormChangeMessage } from "./data/pokemon-forms";
 import { EndEvolutionPhase, EvolutionPhase } from "./evolution-phase";
-import Pokemon, { EnemyPokemon, PlayerPokemon } from "./pokemon";
+import Pokemon, { EnemyPokemon, PlayerPokemon } from "./field/pokemon";
 import { Mode } from "./ui/ui";
 import PartyUiHandler from "./ui/party-ui-handler";
 import { BattleSpec } from "./enums/battle-spec";

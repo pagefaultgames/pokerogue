@@ -1,4 +1,4 @@
-import Pokemon, { HitResult, PokemonMove } from "../pokemon";
+import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";

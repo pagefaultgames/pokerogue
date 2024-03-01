@@ -1,4 +1,4 @@
-import { Arena } from "../arena";
+import { Arena } from "../field/arena";
 import { ArenaTag } from "../data/arena-tag";
 import { Biome } from "../data/enums/biome";
 import { Weather } from "../data/weather";

@@ -1,6 +1,6 @@
 import BattleScene, { Button } from "../battle-scene";
 import { Mode } from "./ui";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "../sprite/pokemon-icon-anim-handler";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import { TextStyle, addTextObject } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import { EGG_SEED, Egg, GachaType, getEggGachaTypeDescriptor, getEggHatchWavesMessage, getEggDescriptor } from "../data/egg";

@@ -6,7 +6,7 @@ import { Mode } from "./ui/ui";
 import { EGG_SEED, Egg, GachaType, getLegendaryGachaSpeciesForTimestamp, getTypeGachaTypeForTimestamp } from "./data/egg";
 import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
 import { Species } from "./data/enums/species";
-import { PlayerPokemon } from "./pokemon";
+import { PlayerPokemon } from "./field/pokemon";
 import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import { StatsContainer } from "./ui/stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./ui/text";

@@ -1,6 +1,6 @@
 import { TimeOfDay } from "./enums/time-of-day";
 import { PokemonFormChangeItemModifier } from "../modifier/modifier";
-import Pokemon from "../pokemon";
+import Pokemon from "../field/pokemon";
 import { Moves } from "./enums/moves";
 import { SpeciesFormKey } from "./pokemon-species";
 import { Species } from "./enums/species";

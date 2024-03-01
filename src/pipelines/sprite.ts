@@ -1,5 +1,5 @@
-import Pokemon from "../pokemon";
-import Trainer from "../trainer";
+import Pokemon from "../field/pokemon";
+import Trainer from "../field/trainer";
 import FieldSpritePipeline from "./field-sprite";
 
 const spriteFragShader = `

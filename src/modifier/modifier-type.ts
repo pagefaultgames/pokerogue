@@ -2,7 +2,7 @@ import * as Modifiers from './modifier';
 import { AttackMove, allMoves } from '../data/move';
 import { Moves } from "../data/enums/moves";
 import { PokeballType, getPokeballName } from '../data/pokeball';
-import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from '../pokemon';
+import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from '../field/pokemon';
 import { EvolutionItem, SpeciesFriendshipEvolutionCondition, pokemonEvolutions } from '../data/pokemon-evolutions';
 import { Stat, getStatName } from '../data/pokemon-stat';
 import { tmPoolTiers, tmSpecies } from '../data/tms';
@@ -739,6 +739,10 @@ export const modifierTypes = {
 
   PP_UP: () => new PokemonPpUpModifierType('PP Up', 1),
   PP_MAX: () => new PokemonPpUpModifierType('PP Max', 3),
+
+  /*REPEL: () => new DoubleBattleChanceBoosterModifierType('Repel', 5),
+  SUPER_REPEL: () => new DoubleBattleChanceBoosterModifierType('Super Repel', 10),
+  MAX_REPEL: () => new DoubleBattleChanceBoosterModifierType('Max Repel', 25),*/
 
   LURE: () => new DoubleBattleChanceBoosterModifierType('Lure', 5),
   SUPER_LURE: () => new DoubleBattleChanceBoosterModifierType('Super Lure', 10),

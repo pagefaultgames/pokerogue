@@ -1,8 +1,8 @@
 import BattleScene from "./battle-scene";
-import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./pokemon";
+import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./field/pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
-import Trainer from "./trainer";
+import Trainer from "./field/trainer";
 import { Species } from "./data/enums/species";
 import { Moves } from "./data/enums/moves";
 import { TrainerType } from "./data/enums/trainer-type";

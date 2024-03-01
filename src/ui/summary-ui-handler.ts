@@ -2,7 +2,7 @@ import BattleScene, { Button } from "../battle-scene";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
-import { PlayerPokemon } from "../pokemon";
+import { PlayerPokemon } from "../field/pokemon";
 import { Type, getTypeRgb } from "../data/type";
 import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "./text";
 import Move, { MoveCategory } from "../data/move";

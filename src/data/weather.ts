@@ -1,6 +1,6 @@
 import { Biome } from "./enums/biome";
 import { getPokemonMessage } from "../messages";
-import Pokemon from "../pokemon";
+import Pokemon from "../field/pokemon";
 import { Type } from "./type";
 import Move, { AttackMove } from "./move";
 import * as Utils from "../utils";

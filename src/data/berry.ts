@@ -1,6 +1,6 @@
 import { PokemonHealPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage } from "../messages";
-import Pokemon, { HitResult } from "../pokemon";
+import Pokemon, { HitResult } from "../field/pokemon";
 import { getBattleStatName } from "./battle-stat";
 import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./enums/battler-tag-type";

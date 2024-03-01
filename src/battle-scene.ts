@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import UI, { Mode } from './ui/ui';
-import { EncounterPhase, SummonPhase, NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, TestMessagePhase, ShowTrainerPhase, TrainerMessageTestPhase, LoginPhase, ConsolidateDataPhase, SelectGenderPhase, MovePhase } from './phases';
-import Pokemon, { PlayerPokemon, EnemyPokemon } from './pokemon';
-import PokemonSpecies, { PokemonSpeciesFilter, SpeciesFormKey, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
+import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, ConsolidateDataPhase, MovePhase } from './phases';
+import Pokemon, { PlayerPokemon, EnemyPokemon } from './field/pokemon';
+import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
@@ -10,7 +10,7 @@ import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets
 import { Phase } from './phase';
 import { initGameSpeed } from './system/game-speed';
 import { Biome } from "./data/enums/biome";
-import { Arena, ArenaBase, getBiomeHasProps, getBiomeKey } from './arena';
+import { Arena, ArenaBase, getBiomeHasProps, getBiomeKey } from './field/arena';
 import { GameData, PlayerGender } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
@@ -27,7 +27,7 @@ import SpritePipeline from './pipelines/sprite';
 import PartyExpBar from './ui/party-exp-bar';
 import { trainerConfigs } from './data/trainer-config';
 import { TrainerType } from "./data/enums/trainer-type";
-import Trainer from './trainer';
+import Trainer from './field/trainer';
 import TrainerData from './system/trainer-data';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
 import { pokemonPrevolutions } from './data/pokemon-evolutions';
@@ -49,7 +49,7 @@ import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFor
 import { FormChangePhase, QuietFormChangePhase } from './form-change-phase';
 import { BattleSpec } from './enums/battle-spec';
 import { getTypeRgb } from './data/type';
-import PokemonSpriteSparkleHandler from './sprite/pokemon-sprite-sparkle-handler';
+import PokemonSpriteSparkleHandler from './field/pokemon-sprite-sparkle-handler';
 import CharSprite from './ui/char-sprite';
 
 export const bypassLogin = false;

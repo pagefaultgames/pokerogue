@@ -1,5 +1,5 @@
 import BattleScene, { bypassLogin, startingLevel, startingWave } from "./battle-scene";
-import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./pokemon";
+import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
 import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr } from "./data/move";
@@ -32,7 +32,7 @@ import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-
 import { ArenaTagType } from "./data/enums/arena-tag-type";
 import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
-import { getBiomeKey } from "./arena";
+import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { BattleSpec } from "./enums/battle-spec";
 import { GameMode } from "./game-mode";
@@ -45,7 +45,7 @@ import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
 import { GameDataType, PlayerGender } from "./system/game-data";
-import { addPokeballCaptureStars, addPokeballOpenParticles } from "./anims";
+import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue } from "./data/dialogue";
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";

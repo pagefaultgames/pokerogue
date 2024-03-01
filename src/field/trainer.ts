@@ -1,11 +1,11 @@
-import BattleScene from "./battle-scene";
-import { pokemonPrevolutions } from "./data/pokemon-evolutions";
-import PokemonSpecies, { getPokemonSpecies } from "./data/pokemon-species";
-import { TrainerConfig, TrainerPartyCompoundTemplate, TrainerPartyMemberStrength, TrainerPartyTemplate, TrainerPoolTier, trainerConfigs, trainerPartyTemplates } from "./data/trainer-config";
-import { TrainerType } from "./data/enums/trainer-type";
+import BattleScene from "../battle-scene";
+import { pokemonPrevolutions } from "../data/pokemon-evolutions";
+import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
+import { TrainerConfig, TrainerPartyCompoundTemplate, TrainerPartyMemberStrength, TrainerPartyTemplate, TrainerPoolTier, trainerConfigs, trainerPartyTemplates } from "../data/trainer-config";
+import { TrainerType } from "../data/enums/trainer-type";
 import { EnemyPokemon } from "./pokemon";
-import * as Utils from "./utils";
-import { PersistentModifier } from "./modifier/modifier";
+import * as Utils from "../utils";
+import { PersistentModifier } from "../modifier/modifier";
 
 export default class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;

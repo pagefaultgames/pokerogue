@@ -1,7 +1,7 @@
 //import { battleAnimRawData } from "./battle-anim-raw-data";
 import BattleScene from "../battle-scene";
 import { AttackMove, ChargeAttr, DelayedAttackAttr, MoveFlags, SelfStatusMove, allMoves } from "./move";
-import Pokemon from "../pokemon";
+import Pokemon from "../field/pokemon";
 import * as Utils from "../utils";
 import { BattlerIndex } from "../battle";
 import stringify, { Element } from "json-stable-stringify";

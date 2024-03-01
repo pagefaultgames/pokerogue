@@ -1,6 +1,6 @@
 import { CommandPhase } from "../phases";
 import BattleScene, { Button } from "../battle-scene";
-import { PlayerPokemon, PokemonMove } from "../pokemon";
+import { PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { addTextObject, TextStyle } from "./text";
 import { Command } from "./command-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
@@ -11,7 +11,7 @@ import { allMoves } from "../data/move";
 import { Moves } from "../data/enums/moves";
 import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { StatusEffect } from "../data/status-effect";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "../sprite/pokemon-icon-anim-handler";
+import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import { pokemonEvolutions } from "../data/pokemon-evolutions";
 import { addWindow } from "./window";
 import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
