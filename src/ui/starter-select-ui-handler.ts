@@ -1117,7 +1117,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             ? speciesMoveData as StarterMoveset
             : (speciesMoveData as StarterFormMoveData)[formIndex]
           : null;
-        const availableStarterMoves = this.speciesStarterMoves.concat(speciesEggMoves[species.speciesId]);
+        const availableStarterMoves = this.speciesStarterMoves.concat(speciesEggMoves.hasOwnProperty(species.speciesId) ? speciesEggMoves[species.speciesId].filter((_, em: integer) => this.scene.gameData.starterEggMoveData[species.speciesId] & Math.pow(2, em)) : []);
         this.starterMoveset = (moveData || (this.speciesStarterMoves.slice(0, 4) as StarterMoveset)).filter(m => availableStarterMoves.find(sm => sm === m)) as StarterMoveset;
         // Consolidate move data if it contains an incompatible move
         if (this.starterMoveset.length < 4 && this.starterMoveset.length < availableStarterMoves.length)
