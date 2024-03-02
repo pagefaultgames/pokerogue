@@ -2083,13 +2083,15 @@ export class PlayerPokemon extends Pokemon {
           && (m as PokemonHeldItemModifier).pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
         const transferModifiers: Promise<boolean>[] = [];
         for (let modifier of fusedPartyMemberHeldModifiers)
-          transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, true, false));
+          transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, true, false, true, true));
         Promise.allSettled(transferModifiers).then(() => {
-          this.scene.removePartyMemberModifiers(fusedPartyMemberIndex);
-          this.scene.getParty().splice(fusedPartyMemberIndex, 1)[0];
-          pokemon.destroy();
-          this.updateFusionPalette();
-          resolve();
+          this.scene.updateModifiers(true, true).then(() => {
+            this.scene.removePartyMemberModifiers(fusedPartyMemberIndex);
+            this.scene.getParty().splice(fusedPartyMemberIndex, 1)[0];
+            pokemon.destroy();
+            this.updateFusionPalette();
+            resolve();
+          });
         });
       });
     });

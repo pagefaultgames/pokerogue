@@ -3826,7 +3826,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, -1),
     new AttackMove(Moves.PRISMATIC_LASER, "Prismatic Laser", Type.PSYCHIC, MoveCategory.SPECIAL, 160, 100, 10, -1, "The user shoots powerful lasers using the power of a prism. The user can't move on the next turn.", -1, 0, 7)
       .attr(RechargeAttr),
-    new AttackMove(Moves.SPECTRAL_THIEF, "Spectral Thief (NP)", Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, "The user hides in the target's shadow, steals the target's stat boosts, and then attacks.", -1, 0, 7),
+    new AttackMove(Moves.SPECTRAL_THIEF, "Spectral Thief (P)", Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, "The user hides in the target's shadow, steals the target's stat boosts, and then attacks.", -1, 0, 7),
     new AttackMove(Moves.SUNSTEEL_STRIKE, "Sunsteel Strike (P)", Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, "The user slams into the target with the force of a meteor. This move can be used on the target regardless of its Abilities.", -1, 0, 7),
     new AttackMove(Moves.MOONGEIST_BEAM, "Moongeist Beam (P)", Type.GHOST, MoveCategory.SPECIAL, 100, 100, 5, -1, "The user emits a sinister ray to attack the target. This move can be used on the target regardless of its Abilities.", -1, 0, 7),
     new StatusMove(Moves.TEARFUL_LOOK, "Tearful Look", Type.NORMAL, -1, 20, -1, "The user gets teary eyed to make the target lose its combative spirit. This lowers the target's Attack and Sp. Atk stats.", 100, 0, 7)

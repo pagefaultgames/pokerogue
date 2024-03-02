@@ -1583,7 +1583,7 @@ export default class BattleScene extends Phaser.Scene {
 		});
 	}
 
-	tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferStack: boolean, playSound: boolean, instant?: boolean): Promise<boolean> {
+	tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferStack: boolean, playSound: boolean, instant?: boolean, ignoreUpdate?: boolean): Promise<boolean> {
 		return new Promise(resolve => {
 			const source = itemModifier.getPokemon(target.scene);
 			const cancelled = new Utils.BooleanHolder(false);
@@ -1611,13 +1611,13 @@ export default class BattleScene extends Phaser.Scene {
 					const addModifier = () => {
 						if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
 							if (target.isPlayer())
-								this.addModifier(newItemModifier, false, playSound, false, instant).then(() => resolve(true));
+								this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant).then(() => resolve(true));
 							else
-								this.addEnemyModifier(newItemModifier, false, instant).then(() => resolve(true));
+								this.addEnemyModifier(newItemModifier, ignoreUpdate, instant).then(() => resolve(true));
 						} else
 							resolve(false);
 					};
-					if (source.isPlayer() !== target.isPlayer())
+					if (source.isPlayer() !== target.isPlayer() && !ignoreUpdate)
 						this.updateModifiers(source.isPlayer(), instant).then(() => addModifier());
 					else
 						addModifier();
