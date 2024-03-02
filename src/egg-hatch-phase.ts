@@ -369,85 +369,76 @@ export class EggHatchPhase extends Phase {
     let ret: PlayerPokemon;
     let speciesOverride: Species;
 
-    if (this.egg.isManaphyEgg()) {
-      this.scene.executeWithSeedOffset(() => {
+    this.scene.executeWithSeedOffset(() => {
+
+      if (this.egg.isManaphyEgg()) {
         const rand = Utils.randSeedInt(8);
   
         speciesOverride = rand ? Species.PHIONE : Species.MANAPHY;
-      }, this.egg.id, EGG_SEED.toString());
-    } else if (this.egg.tier === EggTier.MASTER
-      && this.egg.gachaType === GachaType.LEGENDARY) {
-      this.scene.executeWithSeedOffset(() => {
+      } else if (this.egg.tier === EggTier.MASTER
+        && this.egg.gachaType === GachaType.LEGENDARY) {
         if (!Utils.randSeedInt(2))
           speciesOverride = getLegendaryGachaSpeciesForTimestamp(this.scene, this.egg.timestamp);
-      }, this.egg.id, EGG_SEED.toString());
-    }
+      }
 
-    if (speciesOverride) {
-      this.scene.executeWithSeedOffset(() => {
+      if (speciesOverride) {
         const pokemonSpecies = getPokemonSpecies(speciesOverride);
         ret = this.scene.addPlayerPokemon(pokemonSpecies, 5, undefined, undefined, undefined, false);
-      }, this.egg.id, EGG_SEED.toString());
-    } else {
-      let minStarterValue: integer;
-      let maxStarterValue: integer;
+      } else {
+        let minStarterValue: integer;
+        let maxStarterValue: integer;
 
-      switch (this.egg.tier) {
-        case EggTier.GREAT:
-          minStarterValue = 4;
-          maxStarterValue = 5;
-          break;
-        case EggTier.ULTRA:
-          minStarterValue = 6;
-          maxStarterValue = 7;
-          break;
-        case EggTier.MASTER:
-          minStarterValue = 8;
-          maxStarterValue = 9;
-          break;
-        default:
-          minStarterValue = 1;
-          maxStarterValue = 3;
-          break;
-      }
-
-      const ignoredSpecies = [ Species.PHIONE, Species.MANAPHY, Species.ETERNATUS ];
-
-      let speciesPool = Object.keys(speciesStarters)
-        .filter(s => speciesStarters[s] >= minStarterValue && speciesStarters[s] <= maxStarterValue)
-        .map(s => parseInt(s) as Species)
-        .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
-
-      if (this.egg.gachaType === GachaType.TYPE) {
-        let tryOverrideType: boolean;
-
-        this.scene.executeWithSeedOffset(() => {
-          tryOverrideType = !Utils.randSeedInt(2);
-        }, this.egg.id, EGG_SEED.toString());
-
-        if (tryOverrideType) {
-          const type = getTypeGachaTypeForTimestamp(this.scene, this.egg.timestamp);
-          const typeFilteredSpeciesPool = speciesPool
-            .filter(s => getPokemonSpecies(s).isOfType(type));
-          if (typeFilteredSpeciesPool.length)
-            speciesPool = typeFilteredSpeciesPool;
+        switch (this.egg.tier) {
+          case EggTier.GREAT:
+            minStarterValue = 4;
+            maxStarterValue = 5;
+            break;
+          case EggTier.ULTRA:
+            minStarterValue = 6;
+            maxStarterValue = 7;
+            break;
+          case EggTier.MASTER:
+            minStarterValue = 8;
+            maxStarterValue = 9;
+            break;
+          default:
+            minStarterValue = 1;
+            maxStarterValue = 3;
+            break;
         }
-      }
 
-      let totalWeight = 0;
-      const speciesWeights = [];
-      for (let speciesId of speciesPool) {
-        let weight = Math.floor((((maxStarterValue - speciesStarters[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
-        const species = getPokemonSpecies(speciesId);
-        if (species.isRegional())
-          weight = Math.floor(weight / (species.isRareRegional() ? 8 : 2));
-        speciesWeights.push(totalWeight + weight);
-        totalWeight += weight;
-      }
+        const ignoredSpecies = [ Species.PHIONE, Species.MANAPHY, Species.ETERNATUS ];
 
-      let species: Species;
+        let speciesPool = Object.keys(speciesStarters)
+          .filter(s => speciesStarters[s] >= minStarterValue && speciesStarters[s] <= maxStarterValue)
+          .map(s => parseInt(s) as Species)
+          .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
 
-      this.scene.executeWithSeedOffset(() => {
+        if (this.egg.gachaType === GachaType.TYPE) {
+          let tryOverrideType = !Utils.randSeedInt(2);
+
+          if (tryOverrideType) {
+            const type = getTypeGachaTypeForTimestamp(this.scene, this.egg.timestamp);
+            const typeFilteredSpeciesPool = speciesPool
+              .filter(s => getPokemonSpecies(s).isOfType(type));
+            if (typeFilteredSpeciesPool.length)
+              speciesPool = typeFilteredSpeciesPool;
+          }
+        }
+
+        let totalWeight = 0;
+        const speciesWeights = [];
+        for (let speciesId of speciesPool) {
+          let weight = Math.floor((((maxStarterValue - speciesStarters[speciesId]) / ((maxStarterValue - minStarterValue) + 1)) * 1.5 + 1) * 100);
+          const species = getPokemonSpecies(speciesId);
+          if (species.isRegional())
+            weight = Math.floor(weight / (species.isRareRegional() ? 8 : 2));
+          speciesWeights.push(totalWeight + weight);
+          totalWeight += weight;
+        }
+
+        let species: Species;
+
         const rand = Utils.randSeedInt(totalWeight);
         for (let s = 0; s < speciesWeights.length; s++) {
           if (rand < speciesWeights[s]) {
@@ -459,12 +450,10 @@ export class EggHatchPhase extends Phase {
         const pokemonSpecies = getPokemonSpecies(species);
 
         ret = this.scene.addPlayerPokemon(pokemonSpecies, 5, undefined, undefined, undefined, false);
-      }, this.egg.id, EGG_SEED.toString());
-    }
+      }
 
-    ret.trySetShiny(this.egg.gachaType === GachaType.SHINY ? 1024 : 512);
+      ret.trySetShiny(this.egg.gachaType === GachaType.SHINY ? 1024 : 512);
 
-    this.scene.executeWithSeedOffset(() => {
       const secondaryId = Utils.randSeedInt(4294967295);
       const secondaryIvs = [
         Utils.binToDec(Utils.decToBin(secondaryId).substring(0, 5)),
@@ -474,11 +463,10 @@ export class EggHatchPhase extends Phase {
         Utils.binToDec(Utils.decToBin(secondaryId).substring(20, 25)),
         Utils.binToDec(Utils.decToBin(secondaryId).substring(25, 30))
       ];
+
       for (let s = 0; s < ret.ivs.length; s++)
         ret.ivs[s] = Math.max(ret.ivs[s], secondaryIvs[s]);
-    }, ret.id, EGG_SEED.toString());
 
-    this.scene.executeWithSeedOffset(() => {
       const rand = Utils.randSeedInt(10);
 
       this.eggMoveIndex = rand ? Math.floor((rand - 1) / 3) : 3;

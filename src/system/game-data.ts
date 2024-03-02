@@ -911,7 +911,7 @@ export class GameData {
 
       const value = Math.pow(2, eggMoveIndex);
 
-      if (this.starterEggMoveData[speciesId] & eggMoveIndex) {
+      if (this.starterEggMoveData[speciesId] & value) {
         resolve(false);
         return;
       }
