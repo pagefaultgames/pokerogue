@@ -832,6 +832,8 @@ export class GameData {
 
     for (let speciesId of starterSpeciesIds)
       data[speciesId] = 0;
+
+    this.starterEggMoveData = data;
   }
 
   setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true): void {
