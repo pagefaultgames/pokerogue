@@ -1434,7 +1434,7 @@ export class CommandPhase extends FieldPhase {
             }, null, true);
           } else if (cursor < 5) {
             const targetPokemon = this.scene.getEnemyField().find(p => p.isActive(true));
-            if (targetPokemon.isBoss() && targetPokemon.bossSegmentIndex) {
+            if (targetPokemon.isBoss() && targetPokemon.bossSegmentIndex >= 1) {
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
               this.scene.ui.setMode(Mode.MESSAGE);
               this.scene.ui.showText(`The target Pokémon is too strong to be caught!\nYou need to weaken it first!`, null, () => {
@@ -2583,7 +2583,7 @@ export class DamagePhase extends PokemonPhase {
     switch (this.scene.currentBattle.battleSpec) {
       case BattleSpec.FINAL_BOSS:
         const pokemon = this.getPokemon();
-        if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && !pokemon.bossSegmentIndex) {
+        if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
           this.scene.fadeOutBgm(Utils.fixedInt(2000), false);
           this.scene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin, pokemon.species.name, null, () => {
             this.scene.addEnemyModifier(getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(pokemon) as PersistentModifier, false, true);
