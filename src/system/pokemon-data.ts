@@ -86,7 +86,7 @@ export default class PokemonData {
           this.summonData = sourcePokemon.summonData;
       }
     } else {
-      this.moveset = source.moveset.map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
+      this.moveset = source.moveset.filter(m => m).map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp));
       if (!forHistory) {
         this.status = source.status
           ? new Status(source.status.effect, source.status.turnCount, source.status.cureTurn)

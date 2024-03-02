@@ -1861,11 +1861,11 @@ export function initSpecies() {
       new PokemonForm("Dawn Wings", "dawn-wings", Type.PSYCHIC, Type.GHOST, 4.2, 350, Abilities.PRISM_ARMOR, Abilities.NONE, Abilities.NONE, 680, 97, 113, 109, 157, 127, 77, 255, 0, 300),
       new PokemonForm("Ultra", "ultra", Type.PSYCHIC, Type.DRAGON, 7.5, 230, Abilities.NEUROFORCE, Abilities.NONE, Abilities.NONE, 754, 97, 167, 97, 167, 97, 129, 255, 0, 300),
     ),
-    new PokemonSpecies(Species.MAGEARNA, "Magearna", 7, true, false, true, "Artificial Pokémon", Type.STEEL, Type.FAIRY, 1, 80.5, Abilities.SOUL_HEART, Abilities.NONE, Abilities.NONE, 600, 80, 95, 115, 130, 115, 65, 3, 0, 300, GrowthRate.SLOW, null, false, false,
+    new PokemonSpecies(Species.MAGEARNA, "Magearna", 7, false, false, true, "Artificial Pokémon", Type.STEEL, Type.FAIRY, 1, 80.5, Abilities.SOUL_HEART, Abilities.NONE, Abilities.NONE, 600, 80, 95, 115, 130, 115, 65, 3, 0, 300, GrowthRate.SLOW, null, false, false,
       new PokemonForm("Normal", "", Type.STEEL, Type.FAIRY, 1, 80.5, Abilities.SOUL_HEART, Abilities.NONE, Abilities.NONE, 600, 80, 95, 115, 130, 115, 65, 3, 0, 300),
       new PokemonForm("Original", "original", Type.STEEL, Type.FAIRY, 1, 80.5, Abilities.SOUL_HEART, Abilities.NONE, Abilities.NONE, 600, 80, 95, 115, 130, 115, 65, 3, 0, 300),
     ),
-    new PokemonSpecies(Species.MARSHADOW, "Marshadow", 7, true, false, true, "Gloomdweller Pokémon", Type.FIGHTING, Type.GHOST, 0.7, 22.2, Abilities.TECHNICIAN, Abilities.NONE, Abilities.NONE, 600, 90, 125, 80, 90, 90, 125, 3, 0, 300, GrowthRate.SLOW, null, false, true,
+    new PokemonSpecies(Species.MARSHADOW, "Marshadow", 7, false, false, true, "Gloomdweller Pokémon", Type.FIGHTING, Type.GHOST, 0.7, 22.2, Abilities.TECHNICIAN, Abilities.NONE, Abilities.NONE, 600, 90, 125, 80, 90, 90, 125, 3, 0, 300, GrowthRate.SLOW, null, false, true,
       new PokemonForm("Normal", "", Type.FIGHTING, Type.GHOST, 0.7, 22.2, Abilities.TECHNICIAN, Abilities.NONE, Abilities.NONE, 600, 90, 125, 80, 90, 90, 125, 3, 0, 300),
       new PokemonForm("Zenith", "zenith", Type.FIGHTING, Type.GHOST, 0.7, 22.2, Abilities.TECHNICIAN, Abilities.NONE, Abilities.NONE, 600, 90, 125, 80, 90, 90, 125, 3, 0, 300)
     ),

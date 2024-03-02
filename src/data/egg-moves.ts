@@ -450,7 +450,7 @@ export const speciesEggMoves = {
   [Species.FALINKS]: [ Moves.POPULATION_BOMB, Moves.BEAT_UP, Moves.SPIKY_SHIELD, Moves.COLLISION_COURSE ],
   [Species.PINCURCHIN]: [ Moves.SPIKY_SHIELD, Moves.EARTH_POWER, Moves.TOXIC, Moves.BANEFUL_BUNKER ],
   [Species.SNOM]: [ Moves.FLASH_CANNON, Moves.NASTY_PLOT, Moves.EARTH_POWER, Moves.SURF ],
-  [Species.STONJOURNER]: [ Moves.BODY_PRESS, Moves.WONDER_ROOM, Moves.AQUA_STEP, Moves.THUNDEROUS_KICK ],
+  [Species.STONJOURNER]: [ Moves.BODY_PRESS, Moves.WONDER_ROOM, Moves.ANCIENT_POWER, Moves.THUNDEROUS_KICK ],
   [Species.EISCUE]: [ Moves.TRIPLE_AXEL, Moves.WAVE_CRASH, Moves.LOW_KICK, Moves.SHELL_SMASH ],
   [Species.INDEEDEE]: [ Moves.LIFE_DEW, Moves.HORN_LEECH, Moves.MOONBLAST, Moves.SPOTLIGHT ],
   [Species.MORPEKO]: [ Moves.CLOSE_COMBAT, Moves.MILK_DRINK, Moves.TEMPER_FLARE, Moves.DOUBLE_SHOCK ],
