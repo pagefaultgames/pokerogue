@@ -475,7 +475,7 @@ export const speciesEggMoves = {
   [Species.FUECOCO]: [ Moves.EARTHQUAKE, Moves.SLACK_OFF, Moves.INFERNAL_PARADE, Moves.BELCH ],
   [Species.QUAXLY]: [ Moves.HIGH_JUMP_KICK, Moves.ROOST, Moves.REVELATION_DANCE, Moves.SURGING_STRIKES ],
   [Species.LECHONK]: [ Moves.PLUCK, Moves.RECYCLE, Moves.POWER_TRIP, Moves.FILLET_AWAY ],
-  [Species.TAROUNTULA]: [ Moves.SUCKER_PUNCH, Moves.LUNGE, Moves.SUCKER_PUNCH, Moves.FIRST_IMPRESSION ],
+  [Species.TAROUNTULA]: [ Moves.STEAMROLLER, Moves.LUNGE, Moves.SUCKER_PUNCH, Moves.FIRST_IMPRESSION ],
   [Species.NYMBLE]: [ Moves.POWER_UP_PUNCH, Moves.KNOCK_OFF, Moves.LEECH_LIFE, Moves.WICKED_BLOW ],
   [Species.PAWMI]: [ Moves.VOLT_TACKLE, Moves.WISH, Moves.DRAIN_PUNCH, Moves.HAMMER_ARM ],
   [Species.TANDEMAUS]: [ Moves.BITE, Moves.FEINT, Moves.BARRAGE, Moves.BOOMBURST ],
