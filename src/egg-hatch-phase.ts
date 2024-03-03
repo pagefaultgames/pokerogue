@@ -466,10 +466,11 @@ export class EggHatchPhase extends Phase {
 
       for (let s = 0; s < ret.ivs.length; s++)
         ret.ivs[s] = Math.max(ret.ivs[s], secondaryIvs[s]);
-
-      const rand = Utils.randSeedInt(10);
-
-      this.eggMoveIndex = rand ? Math.floor((rand - 1) / 3) : 3;
+      
+      this.eggMoveIndex = Utils.randSeedInt(6 * Math.pow(2, 3 - this.egg.tier))
+        ? Utils.randSeedInt(3)
+        : 3;
+        
     }, this.egg.id, EGG_SEED.toString());
     
     return ret;
