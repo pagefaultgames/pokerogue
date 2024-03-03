@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "386-normal.png",
+			"image": "386.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 306,
