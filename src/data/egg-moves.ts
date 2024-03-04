@@ -140,7 +140,7 @@ export const speciesEggMoves = {
   [Species.SHROOMISH]: [ Moves.COUNTER, Moves.CHARM, Moves.AXE_KICK, Moves.DIRE_CLAW ],
   [Species.SLAKOTH]: [ Moves.FACADE, Moves.POWER_UP_PUNCH, Moves.THROAT_CHOP, Moves.ENTRAINMENT ],
   [Species.NINCADA]: [ Moves.NIGHT_SHADE, Moves.STICKY_WEB, Moves.ENDEAVOR, Moves.SHED_TAIL ],
-  [Species.WHISMUR]: [ Moves.BOOMBURST, Moves.DOUBLE_HIT, Moves.SPARKLING_ARIA, Moves.TORCH_SONG ],
+  [Species.WHISMUR]: [ Moves.ALLURING_VOICE, Moves.DOUBLE_HIT, Moves.SPARKLING_ARIA, Moves.TORCH_SONG ],
   [Species.MAKUHITA]: [ Moves.UPPER_HAND, Moves.MAT_BLOCK, Moves.DETECT, Moves.MIGHTY_CLEAVE ],
   [Species.AZURILL]: [ Moves.BOUNCY_BUBBLE, Moves.SPIRIT_BREAK, Moves.FLOATY_FALL, Moves.STRENGTH_SAP ],
   [Species.NOSEPASS]: [ Moves.PAIN_SPLIT, Moves.SMART_STRIKE, Moves.TACHYON_CUTTER, Moves.BODY_PRESS ],
@@ -156,7 +156,7 @@ export const speciesEggMoves = {
   [Species.ILLUMISE]: [ Moves.FIRE_BLAST, Moves.MOONBLAST, Moves.HEALING_WISH, Moves.TAIL_GLOW ],
   [Species.GULPIN]: [ Moves.MORTAL_SPIN, Moves.LEECH_LIFE, Moves.MIRROR_COAT, Moves.MALIGNANT_CHAIN ],
   [Species.CARVANHA]: [ Moves.WAVE_CRASH, Moves.SCALE_SHOT, Moves.FILLET_AWAY, Moves.FISHIOUS_REND ],
-  [Species.WAILMER]: [ Moves.WATER_SPOUT, Moves.BRAVE_BIRD, Moves.FREEZE_DRY, Moves.RECOVER ],
+  [Species.WAILMER]: [ Moves.CURSE, Moves.BRAVE_BIRD, Moves.FREEZE_DRY, Moves.RECOVER ],
   [Species.NUMEL]: [ Moves.SPIKES, Moves.STEALTH_ROCK, Moves.SHORE_UP, Moves.THOUSAND_WAVES ],
   [Species.TORKOAL]: [ Moves.IRON_DEFENSE, Moves.SPIKES, Moves.BODY_PRESS, Moves.EXPLOSION ],
   [Species.SPOINK]: [ Moves.THUNDER_WAVE, Moves.RECOVER, Moves.SIMPLE_BEAM, Moves.PSYCHO_BOOST ],
@@ -433,7 +433,7 @@ export const speciesEggMoves = {
   [Species.NICKIT]: [ Moves.KNOCK_OFF, Moves.BURNING_JEALOUSY, Moves.PURSUIT, Moves.TIDY_UP ],
   [Species.GOSSIFLEUR]: [ Moves.DECORATE, Moves.FLORAL_HEALING, Moves.FLOWER_TRICK, Moves.CHLOROBLAST ],
   [Species.WOOLOO]: [ Moves.ROLLOUT, Moves.BOUNCE, Moves.ICE_BALL, Moves.BODY_PRESS ],
-  [Species.CHEWTLE]: [ Moves.FIRE_FANG, Moves.MEGAHORN, Moves.STONE_AXE, Moves.SHELL_SMASH ],
+  [Species.CHEWTLE]: [ Moves.FIRE_FANG, Moves.MEGAHORN, Moves.SHELL_SMASH, Moves.STONE_AXE ],
   [Species.YAMPER]: [ Moves.ICE_FANG, Moves.HONE_CLAWS, Moves.TRAILBLAZE, Moves.ZIPPY_ZAP ],
   [Species.ROLYCOLY]: [ Moves.STEAMROLLER, Moves.SPIN_OUT, Moves.BURN_UP, Moves.STEAM_ERUPTION ],
   [Species.APPLIN]: [ Moves.DRAGON_CHEER, Moves.AROMATHERAPY, Moves.BUG_BITE, Moves.STRENGTH_SAP ],
@@ -452,7 +452,7 @@ export const speciesEggMoves = {
   [Species.SNOM]: [ Moves.FLASH_CANNON, Moves.SURF, Moves.EARTH_POWER, Moves.ESPER_WING ],
   [Species.STONJOURNER]: [ Moves.BODY_PRESS, Moves.CURSE, Moves.ANCIENT_POWER, Moves.THUNDEROUS_KICK ],
   [Species.EISCUE]: [ Moves.TRIPLE_AXEL, Moves.WAVE_CRASH, Moves.LOW_KICK, Moves.SHELL_SMASH ],
-  [Species.INDEEDEE]: [ Moves.LIFE_DEW, Moves.HORN_LEECH, Moves.MOONBLAST, Moves.SPOTLIGHT ],
+  [Species.INDEEDEE]: [ Moves.HEAL_PULSE, Moves.HORN_LEECH, Moves.MOONBLAST, Moves.SPOTLIGHT ],
   [Species.MORPEKO]: [ Moves.CLOSE_COMBAT, Moves.MILK_DRINK, Moves.TEMPER_FLARE, Moves.DOUBLE_SHOCK ],
   [Species.CUFANT]: [ Moves.LIQUIDATION, Moves.HEAVY_SLAM, Moves.CLOSE_COMBAT, Moves.GIGATON_HAMMER ],
   [Species.DRACOZOLT]: [ Moves.SUPERCELL_SLAM, Moves.DRAGON_HAMMER, Moves.BOLT_STRIKE, Moves.SHED_TAIL ],
@@ -570,7 +570,7 @@ export const speciesEggMoves = {
   [Species.HISUI_ZORUA]: [ Moves.ALLURING_VOICE, Moves.GLARE, Moves.TORCH_SONG, Moves.TRANSFORM ],
   [Species.PALDEA_TAUROS]: [ Moves.HEAD_CHARGE, Moves.BLAZE_KICK, Moves.AQUA_STEP, Moves.NO_RETREAT ],
   [Species.PALDEA_WOOPER]: [ Moves.RECOVER, Moves.DOUBLE_KICK, Moves.ANCIENT_POWER, Moves.VENOM_DRENCH ],
-  [Species.BLOODMOON_URSALUNA]: [ Moves.GLARE, Moves.EARTH_POWER, Moves.CALM_MIND, Moves.BOOMBURST ]
+  [Species.BLOODMOON_URSALUNA]: [ Moves.GLARE, Moves.SCORCHING_SANDS, Moves.CALM_MIND, Moves.BOOMBURST ]
 };
 
 function parseEggMoves(content: string): void {
