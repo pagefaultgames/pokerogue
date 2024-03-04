@@ -961,6 +961,8 @@ export default class BattleScene extends Phaser.Scene {
 
 		switch (species.speciesId) {
 			case Species.UNOWN:
+			case Species.SHELLOS:
+			case Species.GASTRODON:
 			case Species.DEERLING:
 			case Species.SAWSBUCK:
 			case Species.ORICORIO:

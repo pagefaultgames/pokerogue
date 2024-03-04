@@ -3141,7 +3141,8 @@ export function initMoves() {
     new AttackMove(Moves.METAL_BURST, "Metal Burst (N)", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, "The user retaliates with much greater force against the opponent that last inflicted damage on it.", -1, 0, 4)
       .makesContact(false)
       .target(MoveTarget.ATTACKER),
-    new AttackMove(Moves.U_TURN, "U-turn (P)", Type.BUG, MoveCategory.PHYSICAL, 70, 100, 20, 60, "After making its attack, the user rushes back to switch places with a party Pokémon in waiting.", -1, 0, 4),
+    new AttackMove(Moves.U_TURN, "U-turn", Type.BUG, MoveCategory.PHYSICAL, 70, 100, 20, 60, "After making its attack, the user rushes back to switch places with a party Pokémon in waiting.", -1, 0, 4)
+      .attr(ForceSwitchOutAttr, true),
     new AttackMove(Moves.CLOSE_COMBAT, "Close Combat", Type.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, 167, "The user fights the target up close without guarding itself. This also lowers the user's Defense and Sp. Def stats.", 100, 0, 4)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true),
     new AttackMove(Moves.PAYBACK, "Payback (P)", Type.DARK, MoveCategory.PHYSICAL, 50, 100, 10, -1, "The user stores power, then attacks. If the user moves after the target, this attack's power will be doubled.", -1, 0, 4),
