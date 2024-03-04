@@ -1116,11 +1116,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             }
           }
 
-          if (!source.isPlayer())
-             this.scene.applyModifiers(EnemyDamageBoosterModifier, false, damage);
-
-          if (!this.isPlayer())
-             this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage);
+          if (!fixedDamage.value) {
+            if (!source.isPlayer())
+              this.scene.applyModifiers(EnemyDamageBoosterModifier, false, damage);
+            if (!this.isPlayer())
+              this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage);
+          }
 
           if (damage) {
             damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical);
