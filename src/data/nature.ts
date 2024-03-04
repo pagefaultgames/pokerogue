@@ -45,7 +45,7 @@ export function getNatureName(nature: Nature, includeStatEffects: boolean = fals
     }
     const textStyle = forStarterSelect ? TextStyle.SUMMARY : TextStyle.WINDOW;
     if (increasedStat && decreasedStat)
-      ret = `${getBBCodeFrag(`${ret}${!forStarterSelect ? '\n' : ' '}(`, textStyle)}${getBBCodeFrag(`+${getStatName(increasedStat, true)}`, TextStyle.SUMMARY_BLUE)}${getBBCodeFrag('/', textStyle)}${getBBCodeFrag(`-${getStatName(decreasedStat, true)}`, TextStyle.SUMMARY_PINK)}${getBBCodeFrag(')', textStyle)}`;
+      ret = `${getBBCodeFrag(`${ret}${!forStarterSelect ? '\n' : ' '}(`, textStyle)}${getBBCodeFrag(`+${getStatName(increasedStat, true)}`, TextStyle.SUMMARY_PINK)}${getBBCodeFrag('/', textStyle)}${getBBCodeFrag(`-${getStatName(decreasedStat, true)}`, TextStyle.SUMMARY_BLUE)}${getBBCodeFrag(')', textStyle)}`;
     else
       ret = getBBCodeFrag(`${ret}${!forStarterSelect ? '\n' : ' '}(-)`, textStyle);
   }

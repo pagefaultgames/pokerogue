@@ -3855,6 +3855,7 @@ export function initMoves() {
     new AttackMove(Moves.CLANGOROUS_SOULBLAZE, "Clangorous Soulblaze (P)", Type.DRAGON, MoveCategory.SPECIAL, 185, -1, 1, -1, "After obtaining Z-Power, the user, Kommo-o, attacks the opposing Pokémon with full force. This move boosts the user's stats.", 100, 0, 7)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
+    /* End Unused */
     new AttackMove(Moves.ZIPPY_ZAP, "Zippy Zap", Type.ELECTRIC, MoveCategory.PHYSICAL, 80, 100, 10, -1, "The user attacks the target with bursts of electricity at high speed. This move always goes first and results in a critical hit.", 100, 2, 7)
       .attr(CritOnlyAttr),
     new AttackMove(Moves.SPLISHY_SPLASH, "Splishy Splash", Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, -1, "The user charges a huge wave with electricity and hits the opposing Pokémon with the wave. This may also leave the opposing Pokémon with paralysis.", 30, 0, 7)
@@ -3878,7 +3879,6 @@ export function initMoves() {
     new AttackMove(Moves.SPARKLY_SWIRL, "Sparkly Swirl (P)", Type.FAIRY, MoveCategory.SPECIAL, 120, 85, 5, -1, "The user attacks the target by wrapping it with a whirlwind of an overpowering scent. This also heals all status conditions of the user's party.", -1, 0, 7),
     new AttackMove(Moves.VEEVEE_VOLLEY, "Veevee Volley", Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 20, -1, "The more Eevee loves its Trainer, the greater the move's power. It never misses.", -1, 0, 7)
       .attr(FriendshipPowerAttr),
-    /* End Unused */
     new AttackMove(Moves.DOUBLE_IRON_BASH, "Double Iron Bash", Type.STEEL, MoveCategory.PHYSICAL, 60, 100, 5, -1, "The user rotates, centering the hex nut in its chest, and then strikes with its arms twice in a row. This may also make the target flinch.", 30, 0, 7)
       .attr(MultiHitAttr, MultiHitType._2)
       .attr(FlinchAttr)
@@ -4225,7 +4225,6 @@ export function initMoves() {
     new AttackMove(Moves.AQUA_CUTTER, "Aqua Cutter", Type.WATER, MoveCategory.PHYSICAL, 70, 100, 20, -1, "The user expels pressurized water to cut at the target like a blade. This move has a heightened chance of landing a critical hit.", -1, 0, 9)
       .attr(HighCritAttr)
       .slicingMove(),
-    /* Unused */
     new AttackMove(Moves.BLAZING_TORQUE, "Blazing Torque", Type.FIRE, MoveCategory.PHYSICAL, 80, 100, 10, -1, "The user revs their blazing engine into the target. This may also leave the target with a burn.", 30, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(Moves.WICKED_TORQUE, "Wicked Torque", Type.DARK, MoveCategory.PHYSICAL, 80, 100, 10, -1, "The user revs their engine into the target with malicious intent. This may put the target to sleep.", 10, 0, 9)
@@ -4236,7 +4235,6 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.MAGICAL_TORQUE, "Magical Torque", Type.FAIRY, MoveCategory.PHYSICAL, 100, 100, 10, -1, "The user revs their fae-like engine into the target. This may also confuse the target.", 30, 0, 9)
       .attr(ConfuseAttr),
-    /* End Unused */
     new AttackMove(Moves.BLOOD_MOON, "Blood Moon (P)", Type.NORMAL, MoveCategory.SPECIAL, 140, 100, 5, -1, "The user unleashes the full brunt of its spirit from a full moon that shines as red as blood. This move can't be used twice in a row.", -1, 0, 9),
     new AttackMove(Moves.MATCHA_GOTCHA, "Matcha Gotcha", Type.GRASS, MoveCategory.SPECIAL, 80, 90, 15, -1, "The user fires a blast of tea that it mixed. The user's HP is restored by up to half the damage taken by the target. This may also leave the target with a burn.", 20, 0, 9)
       .attr(HitHealAttr)
