@@ -2374,6 +2374,10 @@ export class EnemyPokemon extends Pokemon {
     const ret = super.damage(damage, ignoreSegments, preventEndure);
 
     if (this.isBoss()) {
+      if (ignoreSegments) {
+        const segmentSize = this.getMaxHp() / this.bossSegments;
+        clearedBossSegmentIndex = Math.ceil(this.hp / segmentSize);
+      }
       if (clearedBossSegmentIndex <= this.bossSegmentIndex)
         this.handleBossSegmentCleared(clearedBossSegmentIndex);
       this.battleInfo.updateBossSegments(this);
