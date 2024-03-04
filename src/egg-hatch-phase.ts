@@ -3,7 +3,7 @@ import { Phase } from "./phase";
 import BattleScene, { AnySound } from "./battle-scene";
 import * as Utils from "./utils";
 import { Mode } from "./ui/ui";
-import { EGG_SEED, Egg, GachaType, getLegendaryGachaSpeciesForTimestamp, getTypeGachaTypeForTimestamp } from "./data/egg";
+import { EGG_SEED, Egg, GachaType, getLegendaryGachaSpeciesForTimestamp } from "./data/egg";
 import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
 import { Species } from "./data/enums/species";
 import { PlayerPokemon } from "./field/pokemon";
@@ -414,18 +414,6 @@ export class EggHatchPhase extends Phase {
           .map(s => parseInt(s) as Species)
           .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && getPokemonSpecies(s).isObtainable() && ignoredSpecies.indexOf(s) === -1);
 
-        if (this.egg.gachaType === GachaType.TYPE) {
-          let tryOverrideType = !Utils.randSeedInt(2);
-
-          if (tryOverrideType) {
-            const type = getTypeGachaTypeForTimestamp(this.scene, this.egg.timestamp);
-            const typeFilteredSpeciesPool = speciesPool
-              .filter(s => getPokemonSpecies(s).isOfType(type));
-            if (typeFilteredSpeciesPool.length)
-              speciesPool = typeFilteredSpeciesPool;
-          }
-        }
-
         let totalWeight = 0;
         const speciesWeights = [];
         for (let speciesId of speciesPool) {
@@ -467,10 +455,11 @@ export class EggHatchPhase extends Phase {
       for (let s = 0; s < ret.ivs.length; s++)
         ret.ivs[s] = Math.max(ret.ivs[s], secondaryIvs[s]);
       
-      this.eggMoveIndex = Utils.randSeedInt(6 * Math.pow(2, 3 - this.egg.tier))
+      const baseChance = this.egg.gachaType === GachaType.MOVE ? 3 : 6;
+      this.eggMoveIndex = Utils.randSeedInt(baseChance * Math.pow(2, 3 - this.egg.tier))
         ? Utils.randSeedInt(3)
         : 3;
-        
+
     }, this.egg.id, EGG_SEED.toString());
     
     return ret;

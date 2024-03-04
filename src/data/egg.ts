@@ -8,7 +8,7 @@ import { EggTier } from "./enums/egg-type";
 export const EGG_SEED = 1073741824;
 
 export enum GachaType {
-  TYPE,
+  MOVE,
   LEGENDARY,
   SHINY
 }
@@ -82,8 +82,8 @@ export function getEggGachaTypeDescriptor(scene: BattleScene, egg: Egg): string 
   switch (egg.gachaType) {
     case GachaType.LEGENDARY:
       return `Legendary Rate Up (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, egg.timestamp)).getName()})`;
-    case GachaType.TYPE:
-      return `Type Rate Up (${Utils.toReadableString(Type[getTypeGachaTypeForTimestamp(scene, egg.timestamp)])})`;
+    case GachaType.MOVE:
+      return 'Rare Egg Move Rate Up';
     case GachaType.SHINY:
       return 'Shiny Rate Up';
   }
@@ -99,18 +99,6 @@ export function getLegendaryGachaSpeciesForTimestamp(scene: BattleScene, timesta
 
   scene.executeWithSeedOffset(() => {
     ret = Utils.randSeedItem(legendarySpecies);
-  }, Utils.getSunday(new Date(timestamp)).getTime(), EGG_SEED.toString());
-
-  return ret;
-}
-
-export function getTypeGachaTypeForTimestamp(scene: BattleScene, timestamp: integer): Type {
-  const allTypes = Utils.getEnumValues(Type);
-  const types = allTypes.slice(1, allTypes.length - 1);
-  let ret: Type;
-  
-  scene.executeWithSeedOffset(() => {
-    ret = Utils.randSeedItem(types);
   }, Utils.getSunday(new Date(timestamp)).getTime(), EGG_SEED.toString());
 
   return ret;

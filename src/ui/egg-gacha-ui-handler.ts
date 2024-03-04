@@ -3,7 +3,7 @@ import { Mode } from "./ui";
 import { TextStyle, addTextObject, getEggTierTextTint } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import * as Utils from "../utils";
-import { EGG_SEED, Egg, GachaType, getEggTierDefaultHatchWaves, getEggDescriptor, getLegendaryGachaSpeciesForTimestamp, getTypeGachaTypeForTimestamp } from "../data/egg";
+import { EGG_SEED, Egg, GachaType, getEggTierDefaultHatchWaves, getEggDescriptor, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
 import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
 import { getPokemonSpecies } from "../data/pokemon-species";
 import { Type } from "../data/type";
@@ -101,14 +101,10 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
           gachaInfoContainer.add(pokemonIcon);
           break;
-        case GachaType.TYPE:
-          const typeIcon = this.scene.add.sprite(-22, 7, 'types', 'unknown');
-          typeIcon.setScale(0.75);
-          typeIcon.setOrigin(0, 0.5);
-
-          gachaUpLabel.x += 4;
-
-          gachaInfoContainer.add(typeIcon);
+        case GachaType.MOVE:
+          gachaUpLabel.setText('Move UP!');
+          gachaUpLabel.setX(0);
+          gachaUpLabel.setOrigin(0.5, 0);
           break;
         case GachaType.SHINY:
           gachaUpLabel.setText('Shiny UP!');
@@ -461,10 +457,6 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(this.scene, new Date().getTime()));
         const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
         pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
-        break;
-      case GachaType.TYPE:
-        const typeIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
-        typeIcon.setFrame(Type[getTypeGachaTypeForTimestamp(this.scene, new Date().getTime())].toLowerCase());
         break;
     }
   }
