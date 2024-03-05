@@ -49,7 +49,7 @@ const tutorialHandlers = {
                           $These range from consumables, to Pokémon held items, to passive permanent items.
                           $Most non-consumable item effects will stack in various ways.
                           $Some items will only show up if they can be used, such as evolution items.
-                          $You may also choose to transfer a held item (and any duplicates) between Pokémon instead of choosing an item.
+                          $You can also transfer held items between Pokémon using the transfer option.
                           $The transfer option will appear in the bottom right once you have obtained a held item.
                           $You may purchase consumable items with money, and a larger variety will be available the further you get.
                           $Be sure to buy these before you pick your random item, as it will progress to the next battle once you do.`, null, () => scene.ui.showText('', null, () => scene.ui.setModeWithoutClear(Mode.MODIFIER_SELECT).then(() => resolve())), null, true);

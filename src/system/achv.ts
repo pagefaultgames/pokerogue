@@ -119,7 +119,7 @@ export const achvs = {
   _1000_HEAL: new HealAchv('Big Healer', 1000, 'super_potion', 25).setSecret(true),
   _2500_HEAL: new HealAchv('Cleric', 2500, 'hyper_potion', 50).setSecret(true),
   _10000_HEAL: new HealAchv('Recovery Master', 10000, 'max_potion', 100).setSecret(true),
-  LV_100: new LevelAchv('But Wait, There\'s More!', 50, 'rare_candy', 25).setSecret(),
+  LV_100: new LevelAchv('But Wait, There\'s More!', 100, 'rare_candy', 25).setSecret(),
   LV_250: new LevelAchv('Elite', 250, 'rarer_candy', 50).setSecret(true),
   LV_1000: new LevelAchv('To Go Even Further Beyond', 1000, 'candy_jar', 100).setSecret(true),
   TRANSFER_MAX_BATTLE_STAT: new Achv('Teamwork', 'Baton pass to another party member with at least one stat maxed out', 'stick', 20),
