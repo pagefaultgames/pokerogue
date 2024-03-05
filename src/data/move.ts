@@ -780,16 +780,24 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 }
 
-export class StealHeldItemAttr extends MoveEffectAttr {
-  constructor() {
+export class StealHeldItemChanceAttr extends MoveEffectAttr {
+  private chance: number;
+
+  constructor(chance: number) {
     super(false, MoveEffectTrigger.HIT);
+    this.chance = chance;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
+      const rand = Phaser.Math.RND.realInRange(0, 1);
+      if (rand >= this.chance)
+        return resolve(false);
       const heldItems = this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
       if (heldItems.length) {
-        const stolenItem = heldItems[user.randSeedInt(heldItems.length)];
+        const highestItemTier = heldItems.map(m => m.type.getOrInferTier()).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
+        const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier() === highestItemTier);
+        const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
         user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false).then(success => {
           if (success)
             user.scene.queueMessage(getPokemonMessage(user, ` stole\n${target.name}'s ${stolenItem.type.name}!`));
@@ -2688,8 +2696,8 @@ export function initMoves() {
         user.turnData.hitsLeft = 1;
         return true;
       }),
-    new AttackMove(Moves.THIEF, "Thief", Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, 18, "The user attacks and steals the target's held item simultaneously. The user can't steal anything if it already holds an item.", -1, 0, 2)
-      .attr(StealHeldItemAttr),
+    new AttackMove(Moves.THIEF, "Thief", Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, 18, "The user attacks and has a 30% chance to steal the target's held item simultaneously.", -1, 0, 2)
+      .attr(StealHeldItemChanceAttr, 0.3),
     new StatusMove(Moves.SPIDER_WEB, "Spider Web", Type.BUG, -1, 10, -1, "The user ensnares the target with thin, gooey silk so it can't flee from battle.", -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1),
     new StatusMove(Moves.MIND_READER, "Mind Reader", Type.NORMAL, -1, 5, -1, "The user senses the target's movements with its mind to ensure its next attack does not miss the target.", -1, 0, 2)
@@ -3106,8 +3114,8 @@ export function initMoves() {
     new AttackMove(Moves.POISON_TAIL, "Poison Tail", Type.POISON, MoveCategory.PHYSICAL, 50, 100, 25, 26, "The user hits the target with its tail. This may also poison the target. Critical hits land more easily.", 10, 0, 3)
       .attr(HighCritAttr)
       .attr(StatusEffectAttr, StatusEffect.POISON),
-    new AttackMove(Moves.COVET, "Covet", Type.NORMAL, MoveCategory.PHYSICAL, 60, 100, 25, -1, "The user endearingly approaches the target, then steals the target's held item.", -1, 0, 3)
-      .attr(StealHeldItemAttr),
+    new AttackMove(Moves.COVET, "Covet", Type.NORMAL, MoveCategory.PHYSICAL, 60, 100, 25, -1, "The user endearingly approaches the target, then has a 30% chance to steal the target's held item.", -1, 0, 3)
+      .attr(StealHeldItemChanceAttr, 0.3),
     new AttackMove(Moves.VOLT_TACKLE, "Volt Tackle", Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 15, -1, "The user electrifies itself and charges the target. This also damages the user quite a lot. This attack may leave the target with paralysis.", 10, 0, 3)
       .attr(RecoilAttr)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
