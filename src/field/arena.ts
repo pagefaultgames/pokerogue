@@ -434,9 +434,9 @@ export class Arena {
   }
 
   removeAllTags(): void {
-    for (let t of this.tags) {
-      t.onRemove(this);
-      this.tags.splice(this.tags.indexOf(t), 1);
+    while (this.tags.length) {
+      this.tags[0].onRemove(this);
+      this.tags.splice(0, 1);
     }
   }
 
