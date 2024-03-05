@@ -149,7 +149,7 @@ export class EggHatchPhase extends Phase {
         pokemonGenderText.setVisible(true);
       }
 
-      pokemonAbilityText.setText(pokemon.getAbility().name);
+      pokemonAbilityText.setText(pokemon.getAbility(true).name);
       pokemonNatureText.setText(getNatureName(pokemon.nature, true));
 
       const originalIvs: integer[] = this.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr

@@ -13,8 +13,8 @@ import { PokeballType } from '../data/pokeball';
 import { Gender } from '../data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from '../data/battle-anims';
 import { Status, StatusEffect } from '../data/status-effect';
-import { reverseCompatibleTms, tmSpecies } from '../data/tms';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition } from '../data/pokemon-evolutions';
+import { reverseCompatibleTms, tmSpecies } from '../data/tms';
 import { DamagePhase, FaintPhase, LearnMovePhase, StatChangePhase, SwitchSummonPhase } from '../phases';
 import { BattleStat } from '../data/battle-stat';
 import { BattlerTag, BattlerTagLapseType, EncoreTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
@@ -668,7 +668,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getTypes(true).indexOf(type) > -1;
   }
 
-  getAbility(): Ability {
+  getAbility(ignoreOverride?: boolean): Ability {
+    if (!ignoreOverride && this.summonData?.ability)
+      return allAbilities[this.summonData.ability];
     if (ABILITY_OVERRIDE && this.isPlayer())
       return allAbilities[ABILITY_OVERRIDE];
     if (OPP_ABILITY_OVERRIDE && !this.isPlayer())
@@ -2513,6 +2515,7 @@ export class PokemonSummonData {
 
   public speciesForm: PokemonSpeciesForm;
   public fusionSpeciesForm: PokemonSpeciesForm;
+  public ability: Abilities = Abilities.NONE;
   public gender: Gender;
   public fusionGender: Gender;
   public stats: integer[];

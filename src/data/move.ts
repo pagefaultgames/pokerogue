@@ -12,7 +12,7 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { Abilities, BlockRecoilDamageAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs } from "./ability";
+import { Abilities, ProtectAbilityAbAttr, BlockRecoilDamageAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs } from "./ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
@@ -2096,6 +2096,25 @@ export class SketchAttr extends MoveEffectAttr {
   }
 }
 
+export class SwitchAbilitiesAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    const tempAbilityId = user.getAbility().id;
+    user.summonData.ability = target.getAbility().id;
+    target.summonData.ability = tempAbilityId;
+
+    user.scene.queueMessage(getPokemonMessage(user, ` swapped\nAbilities with its target!`));
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => !target.getAbility().hasAttr(ProtectAbilityAbAttr);
+  }
+}
+
 export class TransformAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -2941,7 +2960,8 @@ export function initMoves() {
     new AttackMove(Moves.ERUPTION, "Eruption", Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, -1, "The user attacks opposing Pokémon with explosive fury. The lower the user's HP, the lower the move's power.", -1, 0, 3)
       .attr(HpPowerAttr)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new StatusMove(Moves.SKILL_SWAP, "Skill Swap (N)", Type.PSYCHIC, -1, 10, 98, "The user employs its psychic power to exchange Abilities with the target.", -1, 0, 3),
+    new StatusMove(Moves.SKILL_SWAP, "Skill Swap", Type.PSYCHIC, -1, 10, 98, "The user employs its psychic power to exchange Abilities with the target.", -1, 0, 3)
+      .attr(SwitchAbilitiesAttr),
     new SelfStatusMove(Moves.IMPRISON, "Imprison (N)", Type.PSYCHIC, -1, 10, 92, "If opposing Pokémon know any move also known by the user, they are prevented from using it.", -1, 0, 3),
     new SelfStatusMove(Moves.REFRESH, "Refresh", Type.NORMAL, -1, 20, -1, "The user rests to cure itself of poisoning, a burn, or paralysis.", -1, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN)

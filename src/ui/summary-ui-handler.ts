@@ -510,7 +510,7 @@ export default class SummaryUiHandler extends UiHandler {
         if (this.pokemon.isTerastallized())
           profileContainer.add(getTypeIcon(types.length, this.pokemon.getTeraType(), true));
 
-        const ability = this.pokemon.getAbility();
+        const ability = this.pokemon.getAbility(true);
 
         const abilityNameText = addTextObject(this.scene, 7, 66, ability.name, TextStyle.SUMMARY);
         abilityNameText.setOrigin(0, 1);
