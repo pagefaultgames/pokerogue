@@ -375,6 +375,14 @@ export class MoveEffectAttr extends MoveAttr {
   }
 }
 
+export class StatusMoveTypeImmunityAttr extends MoveAttr {
+  public immuneType: Type;
+
+  constructor(immuneType: Type) {
+    super(false);
+  }
+}
+
 export class HighCritAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     (args[0] as Utils.IntegerHolder).value++;
@@ -2450,7 +2458,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new StatusMove(Moves.THUNDER_WAVE, "Thunder Wave", Type.ELECTRIC, 90, 20, 82, "The user launches a weak jolt of electricity that paralyzes the target.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
-      .attr(ThunderAccuracyAttr),
+      .attr(ThunderAccuracyAttr)
+      .attr(StatusMoveTypeImmunityAttr, Type.GROUND),
     new AttackMove(Moves.THUNDER, "Thunder", Type.ELECTRIC, MoveCategory.SPECIAL, 110, 70, 10, 166, "A wicked thunderbolt is dropped on the target to inflict damage. This may also leave the target with paralysis.", 30, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.ROCK_THROW, "Rock Throw", Type.ROCK, MoveCategory.PHYSICAL, 50, 90, 15, -1, "The user picks up and throws a small rock at the target to attack.", -1, 0, 1)
