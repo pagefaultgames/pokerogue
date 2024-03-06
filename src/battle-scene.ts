@@ -1372,17 +1372,33 @@ export default class BattleScene extends Phaser.Scene {
 
 	getBgmLoopPoint(bgmName: string): number {
 		switch (bgmName) {
-			case 'battle_champion':
-				return 27.653;
-			case 'battle_cynthia':
+			case 'battle_kanto_champion':
+				return 13.950;
+			case 'battle_johto_champion':
+				return 23.498;
+			case 'battle_hoenn_champion':
+				return 11.328;
+			case 'battle_sinnoh_champion':
 				return 12.235;
+			case 'battle_champion_alder':
+				return 27.653;
+			case 'battle_champion_iris':
+				return 10.145;
 			case 'battle_elite':
 				return 17.730;
 			case 'battle_final_encounter':
 				return 19.159;
 			case 'battle_final':
 				return 16.453;
-			case 'battle_gym':
+			case 'battle_kanto_gym':
+				return 13.857;
+			case 'battle_johto_gym':
+				return 12.911;
+			case 'battle_hoenn_gym':
+				return 12.379;
+			case 'battle_sinnoh_gym':
+				return 13.122;
+			case 'battle_unova_gym':
 				return 19.145;
 			case 'battle_legendary':
 				return 13.855;

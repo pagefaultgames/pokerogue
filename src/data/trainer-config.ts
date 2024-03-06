@@ -361,7 +361,7 @@ export class TrainerConfig {
     this.setMoneyMultiplier(2.5);
     this.setBoss();
     this.setStaticParty();
-    this.setBattleBgm('battle_gym');
+    this.setBattleBgm('battle_unova_gym');
     this.setVictoryBgm('victory_gym');
     this.setGenModifiersFunc(party => {
       const waveIndex = party[0].scene.currentBattle.waveIndex;
@@ -404,7 +404,7 @@ export class TrainerConfig {
     this.setMoneyMultiplier(10);
     this.setBoss();
     this.setStaticParty();
-    this.setBattleBgm('battle_champion');
+    this.setBattleBgm('battle_champion_alder');
     this.setVictoryBgm('victory_champion');
     this.setGenModifiersFunc(party => getRandomTeraModifiers(party, 3));
     return this;
@@ -639,39 +639,39 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesPools(
       [ Species.CATERPIE, Species.WEEDLE, Species.RATTATA, Species.SENTRET, Species.POOCHYENA, Species.ZIGZAGOON, Species.WURMPLE, Species.BIDOOF, Species.PATRAT, Species.LILLIPUP ]
     ),
-  [TrainerType.BROCK]: new TrainerConfig((t = TrainerType.BROCK)).initForGymLeader([ Species.GEODUDE, Species.ONIX ], Type.ROCK),
-  [TrainerType.MISTY]: new TrainerConfig(++t).initForGymLeader([ Species.STARYU, Species.PSYDUCK ], Type.WATER),
-  [TrainerType.LT_SURGE]: new TrainerConfig(++t).initForGymLeader([ Species.VOLTORB, Species.PIKACHU, Species.ELECTABUZZ ], Type.ELECTRIC),
-  [TrainerType.ERIKA]: new TrainerConfig(++t).initForGymLeader([ Species.ODDISH, Species.BELLSPROUT, Species.TANGELA, Species.HOPPIP ], Type.GRASS),
-  [TrainerType.JANINE]: new TrainerConfig(++t).initForGymLeader([ Species.VENONAT, Species.SPINARAK, Species.ZUBAT ], Type.POISON),
-  [TrainerType.SABRINA]: new TrainerConfig(++t).initForGymLeader([ Species.ABRA, Species.MR_MIME, Species.ESPEON ], Type.PSYCHIC),
-  [TrainerType.BLAINE]: new TrainerConfig(++t).initForGymLeader([ Species.GROWLITHE, Species.PONYTA, Species.MAGMAR ], Type.FIRE),
-  [TrainerType.GIOVANNI]: new TrainerConfig(++t).initForGymLeader([ Species.SANDILE, Species.MURKROW, Species.NIDORAN_M, Species.NIDORAN_F ], Type.DARK),
-  [TrainerType.FALKNER]: new TrainerConfig(++t).initForGymLeader([ Species.PIDGEY, Species.HOOTHOOT, Species.DODUO ], Type.FLYING),
-  [TrainerType.BUGSY]: new TrainerConfig(++t).initForGymLeader([ Species.SCYTHER, Species.HERACROSS, Species.SHUCKLE, Species.PINSIR ], Type.BUG),
-  [TrainerType.WHITNEY]: new TrainerConfig(++t).initForGymLeader([ Species.CLEFAIRY, Species.MILTANK ], Type.NORMAL),
-  [TrainerType.MORTY]: new TrainerConfig(++t).initForGymLeader([ Species.GASTLY, Species.MISDREAVUS, Species.SABLEYE ], Type.GHOST),
-  [TrainerType.CHUCK]: new TrainerConfig(++t).initForGymLeader([ Species.POLIWRATH, ], Type.FIGHTING),
-  [TrainerType.JASMINE]: new TrainerConfig(++t).initForGymLeader([ Species.MAGNEMITE, Species.STEELIX ], Type.STEEL),
-  [TrainerType.PRYCE]: new TrainerConfig(++t).initForGymLeader([ Species.SEEL, Species.SWINUB ], Type.ICE),
-  [TrainerType.CLAIR]: new TrainerConfig(++t).initForGymLeader([ Species.DRATINI, Species.HORSEA, Species.GYARADOS ], Type.DRAGON),
-  [TrainerType.ROXANNE]: new TrainerConfig(++t).initForGymLeader([ Species.GEODUDE, Species.NOSEPASS ], Type.ROCK),
-  [TrainerType.BRAWLY]: new TrainerConfig(++t).initForGymLeader([ Species.MACHOP, Species.MAKUHITA ], Type.FIGHTING),
-  [TrainerType.WATTSON]: new TrainerConfig(++t).initForGymLeader([ Species.MAGNEMITE, Species.VOLTORB, Species.ELECTRIKE ], Type.ELECTRIC),
-  [TrainerType.FLANNERY]: new TrainerConfig(++t).initForGymLeader([ Species.SLUGMA, Species.TORKOAL, Species.NUMEL ], Type.FIRE),
-  [TrainerType.NORMAN]: new TrainerConfig(++t).initForGymLeader([ Species.SLAKOTH, Species.SPINDA, Species.CHANSEY, Species.KANGASKHAN ], Type.NORMAL),
-  [TrainerType.WINONA]: new TrainerConfig(++t).initForGymLeader([ Species.SWABLU, Species.WINGULL, Species.TROPIUS, Species.SKARMORY ], Type.FLYING),
-  [TrainerType.TATE]: new TrainerConfig(++t).initForGymLeader([ Species.SOLROCK, Species.NATU, Species.CHIMECHO, Species.GALLADE ], Type.PSYCHIC),
-  [TrainerType.LIZA]: new TrainerConfig(++t).initForGymLeader([ Species.LUNATONE, Species.SPOINK, Species.BALTOY, Species.GARDEVOIR ], Type.PSYCHIC),
-  [TrainerType.JUAN]: new TrainerConfig(++t).initForGymLeader([ Species.HORSEA, Species.BARBOACH, Species.SPHEAL, Species.RELICANTH ], Type.WATER),
-  [TrainerType.ROARK]: new TrainerConfig(++t).initForGymLeader([ Species.CRANIDOS, Species.LARVITAR, Species.GEODUDE ], Type.ROCK),
-  [TrainerType.GARDENIA]: new TrainerConfig(++t).initForGymLeader([ Species.ROSELIA, Species.TANGELA, Species.TURTWIG ], Type.GRASS),
-  [TrainerType.MAYLENE]: new TrainerConfig(++t).initForGymLeader([ Species.LUCARIO, Species.MEDITITE, Species.CHIMCHAR ], Type.FIGHTING),
-  [TrainerType.CRASHER_WAKE]: new TrainerConfig(++t).initForGymLeader([ Species.BUIZEL, Species.MAGIKARP, Species.PIPLUP ], Type.WATER),
-  [TrainerType.FANTINA]: new TrainerConfig(++t).initForGymLeader([ Species.MISDREAVUS, Species.DRIFLOON, Species.SPIRITOMB ], Type.GHOST),
-  [TrainerType.BYRON]: new TrainerConfig(++t).initForGymLeader([ Species.SHIELDON, Species.BRONZOR, Species.AGGRON ], Type.STEEL),
-  [TrainerType.CANDICE]: new TrainerConfig(++t).initForGymLeader([ Species.SNEASEL, Species.SNOVER, Species.SNORUNT ], Type.ICE),
-  [TrainerType.VOLKNER]: new TrainerConfig(++t).initForGymLeader([ Species.SHINX, Species.CHINCHOU, Species.ROTOM ], Type.ELECTRIC),
+  [TrainerType.BROCK]: new TrainerConfig((t = TrainerType.BROCK)).initForGymLeader([ Species.GEODUDE, Species.ONIX ], Type.ROCK).setBattleBgm('battle_kanto_gym'),
+  [TrainerType.MISTY]: new TrainerConfig(++t).initForGymLeader([ Species.STARYU, Species.PSYDUCK ], Type.WATER).setBattleBgm('battle_kanto_gym'),
+  [TrainerType.LT_SURGE]: new TrainerConfig(++t).initForGymLeader([ Species.VOLTORB, Species.PIKACHU, Species.ELECTABUZZ ], Type.ELECTRIC).setBattleBgm('battle_kanto_gym'),
+  [TrainerType.ERIKA]: new TrainerConfig(++t).initForGymLeader([ Species.ODDISH, Species.BELLSPROUT, Species.TANGELA, Species.HOPPIP ], Type.GRASS).setBattleBgm('battle_kanto_gym'),
+  [TrainerType.JANINE]: new TrainerConfig(++t).initForGymLeader([ Species.VENONAT, Species.SPINARAK, Species.ZUBAT ], Type.POISON).setBattleBgm('battle_kanto_gym'),
+  [TrainerType.SABRINA]: new TrainerConfig(++t).initForGymLeader([ Species.ABRA, Species.MR_MIME, Species.ESPEON ], Type.PSYCHIC).setBattleBgm('battle_kanto_gym'),
+  [TrainerType.BLAINE]: new TrainerConfig(++t).initForGymLeader([ Species.GROWLITHE, Species.PONYTA, Species.MAGMAR ], Type.FIRE).setBattleBgm('battle_kanto_gym'),
+  [TrainerType.GIOVANNI]: new TrainerConfig(++t).initForGymLeader([ Species.SANDILE, Species.MURKROW, Species.NIDORAN_M, Species.NIDORAN_F ], Type.DARK).setBattleBgm('battle_kanto_gym'),
+  [TrainerType.FALKNER]: new TrainerConfig(++t).initForGymLeader([ Species.PIDGEY, Species.HOOTHOOT, Species.DODUO ], Type.FLYING).setBattleBgm('battle_johto_gym'),
+  [TrainerType.BUGSY]: new TrainerConfig(++t).initForGymLeader([ Species.SCYTHER, Species.HERACROSS, Species.SHUCKLE, Species.PINSIR ], Type.BUG).setBattleBgm('battle_johto_gym'),
+  [TrainerType.WHITNEY]: new TrainerConfig(++t).initForGymLeader([ Species.CLEFAIRY, Species.MILTANK ], Type.NORMAL).setBattleBgm('battle_johto_gym'),
+  [TrainerType.MORTY]: new TrainerConfig(++t).initForGymLeader([ Species.GASTLY, Species.MISDREAVUS, Species.SABLEYE ], Type.GHOST).setBattleBgm('battle_johto_gym'),
+  [TrainerType.CHUCK]: new TrainerConfig(++t).initForGymLeader([ Species.POLIWRATH, ], Type.FIGHTING).setBattleBgm('battle_johto_gym'),
+  [TrainerType.JASMINE]: new TrainerConfig(++t).initForGymLeader([ Species.MAGNEMITE, Species.STEELIX ], Type.STEEL).setBattleBgm('battle_johto_gym'),
+  [TrainerType.PRYCE]: new TrainerConfig(++t).initForGymLeader([ Species.SEEL, Species.SWINUB ], Type.ICE).setBattleBgm('battle_johto_gym'),
+  [TrainerType.CLAIR]: new TrainerConfig(++t).initForGymLeader([ Species.DRATINI, Species.HORSEA, Species.GYARADOS ], Type.DRAGON).setBattleBgm('battle_johto_gym'),
+  [TrainerType.ROXANNE]: new TrainerConfig(++t).initForGymLeader([ Species.GEODUDE, Species.NOSEPASS ], Type.ROCK).setBattleBgm('battle_hoenn_gym'),
+  [TrainerType.BRAWLY]: new TrainerConfig(++t).initForGymLeader([ Species.MACHOP, Species.MAKUHITA ], Type.FIGHTING).setBattleBgm('battle_hoenn_gym'),
+  [TrainerType.WATTSON]: new TrainerConfig(++t).initForGymLeader([ Species.MAGNEMITE, Species.VOLTORB, Species.ELECTRIKE ], Type.ELECTRIC).setBattleBgm('battle_hoenn_gym'),
+  [TrainerType.FLANNERY]: new TrainerConfig(++t).initForGymLeader([ Species.SLUGMA, Species.TORKOAL, Species.NUMEL ], Type.FIRE).setBattleBgm('battle_hoenn_gym'),
+  [TrainerType.NORMAN]: new TrainerConfig(++t).initForGymLeader([ Species.SLAKOTH, Species.SPINDA, Species.CHANSEY, Species.KANGASKHAN ], Type.NORMAL).setBattleBgm('battle_hoenn_gym'),
+  [TrainerType.WINONA]: new TrainerConfig(++t).initForGymLeader([ Species.SWABLU, Species.WINGULL, Species.TROPIUS, Species.SKARMORY ], Type.FLYING).setBattleBgm('battle_hoenn_gym'),
+  [TrainerType.TATE]: new TrainerConfig(++t).initForGymLeader([ Species.SOLROCK, Species.NATU, Species.CHIMECHO, Species.GALLADE ], Type.PSYCHIC).setBattleBgm('battle_hoenn_gym'),
+  [TrainerType.LIZA]: new TrainerConfig(++t).initForGymLeader([ Species.LUNATONE, Species.SPOINK, Species.BALTOY, Species.GARDEVOIR ], Type.PSYCHIC).setBattleBgm('battle_hoenn_gym'),
+  [TrainerType.JUAN]: new TrainerConfig(++t).initForGymLeader([ Species.HORSEA, Species.BARBOACH, Species.SPHEAL, Species.RELICANTH ], Type.WATER).setBattleBgm('battle_hoenn_gym'),
+  [TrainerType.ROARK]: new TrainerConfig(++t).initForGymLeader([ Species.CRANIDOS, Species.LARVITAR, Species.GEODUDE ], Type.ROCK).setBattleBgm('battle_sinnoh_gym'),
+  [TrainerType.GARDENIA]: new TrainerConfig(++t).initForGymLeader([ Species.ROSELIA, Species.TANGELA, Species.TURTWIG ], Type.GRASS).setBattleBgm('battle_sinnoh_gym'),
+  [TrainerType.MAYLENE]: new TrainerConfig(++t).initForGymLeader([ Species.LUCARIO, Species.MEDITITE, Species.CHIMCHAR ], Type.FIGHTING).setBattleBgm('battle_sinnoh_gym'),
+  [TrainerType.CRASHER_WAKE]: new TrainerConfig(++t).initForGymLeader([ Species.BUIZEL, Species.MAGIKARP, Species.PIPLUP ], Type.WATER).setBattleBgm('battle_sinnoh_gym'),
+  [TrainerType.FANTINA]: new TrainerConfig(++t).initForGymLeader([ Species.MISDREAVUS, Species.DRIFLOON, Species.SPIRITOMB ], Type.GHOST).setBattleBgm('battle_sinnoh_gym'),
+  [TrainerType.BYRON]: new TrainerConfig(++t).initForGymLeader([ Species.SHIELDON, Species.BRONZOR, Species.AGGRON ], Type.STEEL).setBattleBgm('battle_sinnoh_gym'),
+  [TrainerType.CANDICE]: new TrainerConfig(++t).initForGymLeader([ Species.SNEASEL, Species.SNOVER, Species.SNORUNT ], Type.ICE).setBattleBgm('battle_sinnoh_gym'),
+  [TrainerType.VOLKNER]: new TrainerConfig(++t).initForGymLeader([ Species.SHINX, Species.CHINCHOU, Species.ROTOM ], Type.ELECTRIC).setBattleBgm('battle_sinnoh_gym'),
   [TrainerType.CILAN]: new TrainerConfig(++t).initForGymLeader([ Species.PANSAGE, Species.COTTONEE, Species.PETILIL ], Type.GRASS),
   [TrainerType.CHILI]: new TrainerConfig(++t).initForGymLeader([ Species.PANSEAR, Species.DARUMAKA, Species.HEATMOR ], Type.FIRE),
   [TrainerType.CRESS]: new TrainerConfig(++t).initForGymLeader([ Species.PANPOUR, Species.BASCULIN, Species.TYMPOLE ], Type.WATER),
@@ -751,14 +751,14 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.LACEY]: new TrainerConfig(++t).initForEliteFour([ Species.EXCADRILL, Species.PRIMARINA, Species.ALCREMIE, Species.GALAR_SLOWBRO ], Type.FAIRY),
   [TrainerType.DRAYTON]: new TrainerConfig(++t).initForEliteFour([ Species.DRAGONITE, Species.ARCHALUDON, Species.FLYGON, Species.SCEPTILE ], Type.DRAGON),
 
-  [TrainerType.BLUE]: new TrainerConfig((t = TrainerType.BLUE)).initForChampion([ Species.GYARADOS, Species.MEWTWO, Species.ARCANINE, Species.ALAKAZAM, Species.PIDGEOT ]),
-  [TrainerType.RED]: new TrainerConfig(++t).initForChampion([ Species.CHARIZARD, [ Species.LUGIA, Species.HO_OH ], Species.SNORLAX, Species.RAICHU, Species.ESPEON ]),
-  [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).initForChampion([ Species.DRAGONITE, [ Species.ZACIAN, Species.ZAMAZENTA ], Species.AERODACTYL, Species.KINGDRA, Species.ALOLA_EXEGGUTOR ]),
-  [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion([ Species.METAGROSS, [ Species.DIALGA, Species.PALKIA ], Species.SKARMORY, Species.AGGRON, Species.CARBINK ]),
-  [TrainerType.WALLACE]: new TrainerConfig(++t).initForChampion([ Species.MILOTIC, Species.KYOGRE, Species.WHISCASH, Species.WALREIN, Species.LUDICOLO ]),
-  [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion([ Species.SPIRITOMB, Species.GIRATINA, Species.GARCHOMP, Species.MILOTIC, Species.LUCARIO, Species.TOGEKISS ]).setBattleBgm('battle_cynthia'),
+  [TrainerType.BLUE]: new TrainerConfig((t = TrainerType.BLUE)).initForChampion([ Species.GYARADOS, Species.MEWTWO, Species.ARCANINE, Species.ALAKAZAM, Species.PIDGEOT ]).setBattleBgm('battle_kanto_champion'),
+  [TrainerType.RED]: new TrainerConfig(++t).initForChampion([ Species.CHARIZARD, [ Species.LUGIA, Species.HO_OH ], Species.SNORLAX, Species.RAICHU, Species.ESPEON ]).setBattleBgm('battle_johto_champion'),
+  [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).initForChampion([ Species.DRAGONITE, [ Species.ZACIAN, Species.ZAMAZENTA ], Species.AERODACTYL, Species.KINGDRA, Species.ALOLA_EXEGGUTOR ]).setBattleBgm('battle_johto_champion'),
+  [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion([ Species.METAGROSS, [ Species.DIALGA, Species.PALKIA ], Species.SKARMORY, Species.AGGRON, Species.CARBINK ]).setBattleBgm('battle_hoenn_champion'),
+  [TrainerType.WALLACE]: new TrainerConfig(++t).initForChampion([ Species.MILOTIC, Species.KYOGRE, Species.WHISCASH, Species.WALREIN, Species.LUDICOLO ]).setBattleBgm('battle_hoenn_champion'),
+  [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion([ Species.SPIRITOMB, Species.GIRATINA, Species.GARCHOMP, Species.MILOTIC, Species.LUCARIO, Species.TOGEKISS ]).setBattleBgm('battle_sinnoh_champion'),
   [TrainerType.ALDER]: new TrainerConfig(++t).initForChampion([ Species.VOLCARONA, Species.GROUDON, Species.BOUFFALANT, Species.ACCELGOR, Species.CONKELDURR ]),
-  [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion([ Species.HAXORUS, Species.YVELTAL, Species.DRUDDIGON, Species.ARON, Species.LAPRAS ]),
+  [TrainerType.IRIS]: new TrainerConfig(++t).initForChampion([ Species.HAXORUS, Species.YVELTAL, Species.DRUDDIGON, Species.ARON, Species.LAPRAS ]).setBattleBgm('battle_champion_iris'),
   [TrainerType.DIANTHA]: new TrainerConfig(++t).initForChampion([ Species.HAWLUCHA, Species.XERNEAS, Species.GOURGEIST, Species.GOODRA, Species.GARDEVOIR ]),
   [TrainerType.HAU]: new TrainerConfig(++t).initForChampion([ Species.ALOLA_RAICHU, [ Species.SOLGALEO, Species.LUNALA ], Species.NOIVERN, [ Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA ], Species.CRABOMINABLE ]),
   [TrainerType.GEETA]: new TrainerConfig(++t).initForChampion([ Species.GLIMMORA, Species.MIRAIDON, Species.ESPATHRA, Species.VELUZA, Species.KINGAMBIT ]),

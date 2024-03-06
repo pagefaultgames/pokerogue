@@ -204,7 +204,7 @@ export const speciesEggMoves = {
   [Species.STARLY]: [ Moves.SWORDS_DANCE, Moves.OUTRAGE, Moves.FLAME_CHARGE, Moves.COLLISION_COURSE ],
   [Species.BIDOOF]: [ Moves.SUPER_FANG, Moves.LIQUIDATION, Moves.BODY_PRESS, Moves.NO_RETREAT ],
   [Species.KRICKETOT]: [ Moves.BOOMBURST, Moves.SING, Moves.SPARKLING_ARIA, Moves.QUIVER_DANCE ],
-  [Species.SHINX]: [ Moves.VOLT_TACKLE, Moves.JAW_LOCK, Moves.FACADE, Moves.FISHIOUS_REND ],
+  [Species.SHINX]: [ Moves.HOWL, Moves.JAW_LOCK, Moves.FACADE, Moves.VOLT_TACKLE ],
   [Species.BUDEW]: [ Moves.FLORAL_HEALING, Moves.BOOMBURST, Moves.SPORE, Moves.SEED_FLARE ],
   [Species.CRANIDOS]: [ Moves.STONE_AXE, Moves.DRAGON_RUSH, Moves.SUPERPOWER, Moves.ROCK_WRECKER ],
   [Species.SHIELDON]: [ Moves.COSMIC_POWER, Moves.BODY_PRESS, Moves.KINGS_SHIELD, Moves.BEHEMOTH_BASH ],
