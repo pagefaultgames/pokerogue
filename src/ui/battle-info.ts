@@ -90,8 +90,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.splicedIcon = this.scene.add.sprite(0, 0, 'icon_spliced');
     this.splicedIcon.setVisible(false);
     this.splicedIcon.setOrigin(0, 0);
+    this.splicedIcon.setScale(0.5);
     this.splicedIcon.setPositionRelative(this.nameText, 0, 2);
-    this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 5, 8), Phaser.Geom.Rectangle.Contains);
+    this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.add(this.splicedIcon);
 
     this.statusIndicator = this.scene.add.sprite(0, 0, 'statuses');
@@ -152,7 +153,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     });
     this.teraIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
 
-    this.splicedIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0), 1);
+    this.splicedIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0), 2);
     this.splicedIcon.setVisible(!!pokemon.fusionSpecies);
     if (this.splicedIcon.visible) {
       this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${pokemon.species.getName(pokemon.formIndex)}/${pokemon.fusionSpecies.getName(pokemon.fusionFormIndex)}`));
