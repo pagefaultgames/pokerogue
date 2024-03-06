@@ -12,6 +12,7 @@ export enum Setting {
   Window_Type = "WINDOW_TYPE",
   Tutorials = "TUTORIALS",
   Sprite_Set = "SPRITE_SET",
+  Fusion_Palette_Swaps = "FUSION_PALETTE_SWAPS",
   Player_Gender = "PLAYER_GENDER",
   Touch_Controls = "TOUCH_CONTROLS",
   Vibration = "VIBRATION"
@@ -35,6 +36,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Window_Type]: new Array(4).fill(null).map((_, i) => (i + 1).toString()),
   [Setting.Tutorials]: [ 'Off', 'On' ],
   [Setting.Sprite_Set]: [ 'Consistent', 'Prioritize Animation' ],
+  [Setting.Fusion_Palette_Swaps]: [ 'Off', 'On' ],
   [Setting.Player_Gender]: [ 'Boy', 'Girl' ],
   [Setting.Touch_Controls]: [ 'Auto', 'Disabled' ],
   [Setting.Vibration]: [ 'Auto', 'Disabled' ]
@@ -50,6 +52,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Window_Type]: 0,
   [Setting.Tutorials]: 1,
   [Setting.Sprite_Set]: 0,
+  [Setting.Fusion_Palette_Swaps]: 1,
   [Setting.Player_Gender]: 0,
   [Setting.Touch_Controls]: 0,
   [Setting.Vibration]: 0
@@ -88,6 +91,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       scene.experimentalSprites = !!value;
       if (value)
         scene.initExpSprites();
+      break;
+    case Setting.Fusion_Palette_Swaps:
+      scene.fusionPaletteSwaps = !!value;
       break;
     case Setting.Player_Gender:
       if (scene.gameData) {

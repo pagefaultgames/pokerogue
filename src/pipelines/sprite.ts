@@ -1,3 +1,4 @@
+import BattleScene from "../battle-scene";
 import Pokemon from "../field/pokemon";
 import Trainer from "../field/trainer";
 import FieldSpritePipeline from "./field-sprite";
@@ -335,8 +336,6 @@ export default class SpritePipeline extends FieldSpritePipeline {
         const teraColor = data['teraColor'] as integer[] ?? [ 0, 0, 0 ];
         const hasShadow = data['hasShadow'] as boolean;
         const ignoreOverride = data['ignoreOverride'] as boolean;
-        const spriteColors = (ignoreOverride && data['spriteColorsBase']) || data['spriteColors'] || [] as number[][];
-        const fusionSpriteColors = (ignoreOverride && data['fusionSpriteColorsBase']) || data['fusionSpriteColors'] || [] as number[][];
 
         const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
         const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
@@ -362,16 +361,21 @@ export default class SpritePipeline extends FieldSpritePipeline {
         this.set1f('yOffset', sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
         this.set4fv('tone', tone);
         this.bindTexture(this.game.textures.get('tera').source[0].glTexture, 1);
-        const emptyColors = [ 0, 0, 0, 0 ];
-        const flatSpriteColors: integer[] = [];
-        const flatFusionSpriteColors: integer[] = [];
-        for (let c = 0; c < 32; c++) {
-          flatSpriteColors.splice(flatSpriteColors.length, 0, c < spriteColors.length ? spriteColors[c] : emptyColors);
-          flatFusionSpriteColors.splice(flatFusionSpriteColors.length, 0, c < fusionSpriteColors.length ? fusionSpriteColors[c] : emptyColors);
-        }
+        if ((gameObject.scene as BattleScene).fusionPaletteSwaps) {
+            const spriteColors = (ignoreOverride && data['spriteColorsBase']) || data['spriteColors'] || [] as number[][];
+            const fusionSpriteColors = (ignoreOverride && data['fusionSpriteColorsBase']) || data['fusionSpriteColors'] || [] as number[][];
 
-        this.set4iv(`spriteColors`, flatSpriteColors.flat());
-        this.set4iv(`fusionSpriteColors`, flatFusionSpriteColors.flat());
+            const emptyColors = [ 0, 0, 0, 0 ];
+            const flatSpriteColors: integer[] = [];
+            const flatFusionSpriteColors: integer[] = [];
+            for (let c = 0; c < 32; c++) {
+                flatSpriteColors.splice(flatSpriteColors.length, 0, c < spriteColors.length ? spriteColors[c] : emptyColors);
+                flatFusionSpriteColors.splice(flatFusionSpriteColors.length, 0, c < fusionSpriteColors.length ? fusionSpriteColors[c] : emptyColors);
+            }
+
+            this.set4iv(`spriteColors`, flatSpriteColors.flat());
+            this.set4iv(`fusionSpriteColors`, flatFusionSpriteColors.flat());
+        }
     }
 
     batchQuad(gameObject: Phaser.GameObjects.GameObject, x0: number, y0: number, x1: number, y1: number, x2: number, y2: number, x3: number, y3: number,
