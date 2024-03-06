@@ -4,7 +4,7 @@
 			"image": "pb_particles.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 66,
+				"w": 80,
 				"h": 8
 			},
 			"scale": 1,
@@ -193,6 +193,48 @@
 					},
 					"frame": {
 						"x": 60,
+						"y": 0,
+						"w": 6,
+						"h": 6
+					}
+				},
+				{
+					"filename": "9.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 8,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 8,
+						"h": 8
+					},
+					"frame": {
+						"x": 66,
+						"y": 0,
+						"w": 8,
+						"h": 8
+					}
+				},
+				{
+					"filename": "10.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 8,
+						"h": 8
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 1,
+						"w": 6,
+						"h": 6
+					},
+					"frame": {
+						"x": 74,
 						"y": 0,
 						"w": 6,
 						"h": 6

@@ -11,8 +11,10 @@ export function addPokeballOpenParticles(scene: BattleScene, x: number, y: numbe
       doDefaultPbOpenParticles(scene, x, y, 96);
       break;
     case PokeballType.ULTRA_BALL:
+      doUbOpenParticles(scene, x, y, 8);
+      break;
     case PokeballType.ROGUE_BALL:
-      doUbOpenParticles(scene, x, y);
+      doUbOpenParticles(scene, x, y, 10);
       break;
     case PokeballType.MASTER_BALL:
       doMbOpenParticles(scene, x, y);
@@ -63,10 +65,10 @@ function doDefaultPbOpenParticles(scene: BattleScene, x: number, y: number, radi
   });
 }
 
-function doUbOpenParticles(scene: BattleScene, x: number, y: number) {
+function doUbOpenParticles(scene: BattleScene, x: number, y: number, frameIndex: integer) {
   let particles: Phaser.GameObjects.Image[] = [];
   for (let i = 0; i < 10; i++)
-    particles.push(doFanOutParticle(scene, i * 25, x, y, 1, 1, 5, 8));
+    particles.push(doFanOutParticle(scene, i * 25, x, y, 1, 1, 5, frameIndex));
 
   scene.tweens.add({
     targets: particles,
