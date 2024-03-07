@@ -1300,7 +1300,7 @@
     "0": [
       {
         "frameIndex": 0,
-        "resourceName": "Teleport.ogg",
+        "resourceName": "Teleport.m4a",
         "volume": 80,
         "pitch": 110,
         "eventType": "AnimTimedSoundEvent"

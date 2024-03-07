@@ -609,7 +609,7 @@
       "10": [
         {
           "frameIndex": 10,
-          "resourceName": "Blow3.ogg",
+          "resourceName": "Blow3.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -1220,7 +1220,7 @@
       "10": [
         {
           "frameIndex": 10,
-          "resourceName": "Blow3.ogg",
+          "resourceName": "Blow3.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"

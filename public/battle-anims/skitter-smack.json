@@ -1291,7 +1291,7 @@
       "0": [
         {
           "frameIndex": 0,
-          "resourceName": "Darkness6.ogg",
+          "resourceName": "Darkness6.m4a",
           "volume": 80,
           "pitch": 30,
           "eventType": "AnimTimedSoundEvent"
@@ -1309,7 +1309,7 @@
       "23": [
         {
           "frameIndex": 23,
-          "resourceName": "Darkness6.ogg",
+          "resourceName": "Darkness6.m4a",
           "volume": 80,
           "pitch": 30,
           "eventType": "AnimTimedSoundEvent"
@@ -2615,7 +2615,7 @@
       "0": [
         {
           "frameIndex": 0,
-          "resourceName": "Darkness6.ogg",
+          "resourceName": "Darkness6.m4a",
           "volume": 40,
           "pitch": 30,
           "eventType": "AnimTimedSoundEvent"
@@ -2633,7 +2633,7 @@
       "23": [
         {
           "frameIndex": 23,
-          "resourceName": "Darkness6.ogg",
+          "resourceName": "Darkness6.m4a",
           "volume": 40,
           "pitch": 30,
           "eventType": "AnimTimedSoundEvent"

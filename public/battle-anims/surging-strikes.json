@@ -2532,7 +2532,7 @@
     "43": [
       {
         "frameIndex": 43,
-        "resourceName": "Water1.ogg",
+        "resourceName": "Water1.m4a",
         "volume": 65,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -2541,7 +2541,7 @@
     "46": [
       {
         "frameIndex": 46,
-        "resourceName": "Blow3.ogg",
+        "resourceName": "Blow3.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

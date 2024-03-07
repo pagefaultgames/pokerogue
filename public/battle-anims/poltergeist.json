@@ -1653,7 +1653,7 @@
     "10": [
       {
         "frameIndex": 10,
-        "resourceName": "Fire5.ogg",
+        "resourceName": "Fire5.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -1662,7 +1662,7 @@
     "25": [
       {
         "frameIndex": 25,
-        "resourceName": "Blow3.ogg",
+        "resourceName": "Blow3.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -1671,7 +1671,7 @@
     "27": [
       {
         "frameIndex": 27,
-        "resourceName": "Fire5.ogg",
+        "resourceName": "Fire5.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

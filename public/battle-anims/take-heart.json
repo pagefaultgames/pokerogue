@@ -977,7 +977,7 @@
     "7": [
       {
         "frameIndex": 7,
-        "resourceName": "Saint6.ogg",
+        "resourceName": "Saint6.m4a",
         "volume": 100,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

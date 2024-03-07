@@ -6910,7 +6910,7 @@
     "0": [
       {
         "frameIndex": 0,
-        "resourceName": "Thunder9.ogg",
+        "resourceName": "Thunder9.m4a",
         "volume": 100,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

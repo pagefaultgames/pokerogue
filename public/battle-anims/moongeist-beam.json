@@ -1328,7 +1328,7 @@
       "0": [
         {
           "frameIndex": 0,
-          "resourceName": "Saint9.ogg",
+          "resourceName": "Saint9.m4a",
           "volume": 60,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -2685,7 +2685,7 @@
       "0": [
         {
           "frameIndex": 0,
-          "resourceName": "Saint9.ogg",
+          "resourceName": "Saint9.m4a",
           "volume": 60,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"

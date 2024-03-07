@@ -953,7 +953,7 @@
     "0": [
       {
         "frameIndex": 0,
-        "resourceName": "Darkness2.ogg",
+        "resourceName": "Darkness2.m4a",
         "volume": 80,
         "pitch": 70,
         "eventType": "AnimTimedSoundEvent"
@@ -991,7 +991,7 @@
     "16": [
       {
         "frameIndex": 16,
-        "resourceName": "Ace.ogg",
+        "resourceName": "Ace.m4a",
         "volume": 80,
         "pitch": 80,
         "eventType": "AnimTimedSoundEvent"

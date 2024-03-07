@@ -940,7 +940,7 @@
     "4": [
       {
         "frameIndex": 4,
-        "resourceName": "Blow4.ogg",
+        "resourceName": "Blow4.m4a",
         "volume": 100,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

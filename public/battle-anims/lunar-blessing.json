@@ -567,7 +567,7 @@
     "0": [
       {
         "frameIndex": 0,
-        "resourceName": "Saint9.ogg",
+        "resourceName": "Saint9.m4a",
         "volume": 100,
         "pitch": 70,
         "eventType": "AnimTimedSoundEvent"
@@ -576,7 +576,7 @@
     "7": [
       {
         "frameIndex": 7,
-        "resourceName": "Shiny sparkle.ogg",
+        "resourceName": "Shiny sparkle.m4a",
         "volume": 100,
         "pitch": 70,
         "eventType": "AnimTimedSoundEvent"

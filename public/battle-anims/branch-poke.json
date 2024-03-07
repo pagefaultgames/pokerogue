@@ -359,7 +359,7 @@
     "4": [
       {
         "frameIndex": 4,
-        "resourceName": "Blow1.ogg",
+        "resourceName": "Blow1.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

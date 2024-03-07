@@ -1076,7 +1076,7 @@
     "8": [
       {
         "frameIndex": 8,
-        "resourceName": "Wind7.ogg",
+        "resourceName": "Wind7.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -1085,7 +1085,7 @@
     "12": [
       {
         "frameIndex": 12,
-        "resourceName": "Wind7.ogg",
+        "resourceName": "Wind7.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -1094,7 +1094,7 @@
     "16": [
       {
         "frameIndex": 16,
-        "resourceName": "Wind7.ogg",
+        "resourceName": "Wind7.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -1103,7 +1103,7 @@
     "20": [
       {
         "frameIndex": 20,
-        "resourceName": "Wind7.ogg",
+        "resourceName": "Wind7.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -1130,7 +1130,7 @@
       },
       {
         "frameIndex": 24,
-        "resourceName": "Shiny sparkle.ogg",
+        "resourceName": "Shiny sparkle.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

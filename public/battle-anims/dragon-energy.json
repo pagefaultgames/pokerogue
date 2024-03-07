@@ -1548,7 +1548,7 @@
       },
       {
         "frameIndex": 0,
-        "resourceName": "Absorb2.ogg",
+        "resourceName": "Absorb2.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

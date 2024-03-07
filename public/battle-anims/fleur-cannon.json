@@ -3533,7 +3533,7 @@
     "31": [
       {
         "frameIndex": 31,
-        "resourceName": "Saint3.ogg",
+        "resourceName": "Saint3.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

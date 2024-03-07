@@ -1175,7 +1175,7 @@
     "20": [
       {
         "frameIndex": 20,
-        "resourceName": "Saint9.ogg",
+        "resourceName": "Saint9.m4a",
         "volume": 100,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

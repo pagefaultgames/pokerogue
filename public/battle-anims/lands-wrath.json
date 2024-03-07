@@ -2025,7 +2025,7 @@
     "0": [
       {
         "frameIndex": 0,
-        "resourceName": "Saint8.ogg",
+        "resourceName": "Saint8.m4a",
         "volume": 80,
         "pitch": 69,
         "eventType": "AnimTimedSoundEvent"
@@ -2034,7 +2034,7 @@
     "18": [
       {
         "frameIndex": 18,
-        "resourceName": "Earth4.ogg",
+        "resourceName": "Earth4.m4a",
         "volume": 80,
         "pitch": 80,
         "eventType": "AnimTimedSoundEvent"
@@ -2043,7 +2043,7 @@
     "22": [
       {
         "frameIndex": 22,
-        "resourceName": "Earth1.ogg",
+        "resourceName": "Earth1.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -2052,7 +2052,7 @@
     "30": [
       {
         "frameIndex": 30,
-        "resourceName": "Earth1.ogg",
+        "resourceName": "Earth1.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -2061,7 +2061,7 @@
     "38": [
       {
         "frameIndex": 38,
-        "resourceName": "Earth1.ogg",
+        "resourceName": "Earth1.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

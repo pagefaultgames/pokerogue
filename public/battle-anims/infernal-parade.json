@@ -1144,7 +1144,7 @@
     "19": [
       {
         "frameIndex": 19,
-        "resourceName": "Fire2.ogg",
+        "resourceName": "Fire2.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

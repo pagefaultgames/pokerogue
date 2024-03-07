@@ -4474,7 +4474,7 @@
     "0": [
       {
         "frameIndex": 0,
-        "resourceName": "Darkness2.ogg",
+        "resourceName": "Darkness2.m4a",
         "volume": 80,
         "pitch": 30,
         "eventType": "AnimTimedSoundEvent"
@@ -4483,7 +4483,7 @@
     "24": [
       {
         "frameIndex": 24,
-        "resourceName": "Blow3.ogg",
+        "resourceName": "Blow3.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -4492,7 +4492,7 @@
     "28": [
       {
         "frameIndex": 28,
-        "resourceName": "Blow3.ogg",
+        "resourceName": "Blow3.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -4501,7 +4501,7 @@
     "32": [
       {
         "frameIndex": 32,
-        "resourceName": "Blow3.ogg",
+        "resourceName": "Blow3.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -4510,7 +4510,7 @@
     "36": [
       {
         "frameIndex": 36,
-        "resourceName": "Blow3.ogg",
+        "resourceName": "Blow3.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -4519,7 +4519,7 @@
     "40": [
       {
         "frameIndex": 40,
-        "resourceName": "Blow3.ogg",
+        "resourceName": "Blow3.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -4528,7 +4528,7 @@
     "44": [
       {
         "frameIndex": 44,
-        "resourceName": "Blow3.ogg",
+        "resourceName": "Blow3.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -4537,7 +4537,7 @@
     "48": [
       {
         "frameIndex": 48,
-        "resourceName": "Blow3.ogg",
+        "resourceName": "Blow3.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -4546,7 +4546,7 @@
     "52": [
       {
         "frameIndex": 52,
-        "resourceName": "Blow3.ogg",
+        "resourceName": "Blow3.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -4555,7 +4555,7 @@
     "56": [
       {
         "frameIndex": 56,
-        "resourceName": "Blow3.ogg",
+        "resourceName": "Blow3.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -4564,7 +4564,7 @@
     "60": [
       {
         "frameIndex": 60,
-        "resourceName": "Blow3.ogg",
+        "resourceName": "Blow3.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

@@ -1070,7 +1070,7 @@
       "1": [
         {
           "frameIndex": 1,
-          "resourceName": "Water2.ogg",
+          "resourceName": "Water2.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -1079,7 +1079,7 @@
       "10": [
         {
           "frameIndex": 10,
-          "resourceName": "Blow1.ogg",
+          "resourceName": "Blow1.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -1088,7 +1088,7 @@
       "24": [
         {
           "frameIndex": 24,
-          "resourceName": "Water3.ogg",
+          "resourceName": "Water3.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -2179,7 +2179,7 @@
       "1": [
         {
           "frameIndex": 1,
-          "resourceName": "Water2.ogg",
+          "resourceName": "Water2.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -2188,7 +2188,7 @@
       "10": [
         {
           "frameIndex": 10,
-          "resourceName": "Blow1.ogg",
+          "resourceName": "Blow1.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -2197,7 +2197,7 @@
       "24": [
         {
           "frameIndex": 24,
-          "resourceName": "Water3.ogg",
+          "resourceName": "Water3.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"

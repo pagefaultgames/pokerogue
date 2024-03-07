@@ -1073,7 +1073,7 @@ export async function populateAnims() {
                             case 0:
                                 if (resourceName && resourceName.indexOf('.') === -1) {
                                     let ext: string;
-                                    [ 'wav', 'mp3', 'ogg' ].every(e => {
+                                    [ 'wav', 'mp3', 'm4a' ].every(e => {
                                         if (seNames.indexOf(`${resourceName}.${e}`) > -1) {
                                             ext = e;
                                             return false;

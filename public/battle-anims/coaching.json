@@ -1500,7 +1500,7 @@
     "3": [
       {
         "frameIndex": 3,
-        "resourceName": "Blow5.ogg",
+        "resourceName": "Blow5.m4a",
         "volume": 60,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -1509,7 +1509,7 @@
     "10": [
       {
         "frameIndex": 10,
-        "resourceName": "Blow5.ogg",
+        "resourceName": "Blow5.m4a",
         "volume": 60,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -1527,7 +1527,7 @@
     "17": [
       {
         "frameIndex": 17,
-        "resourceName": "Blow5.ogg",
+        "resourceName": "Blow5.m4a",
         "volume": 60,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -1536,7 +1536,7 @@
     "24": [
       {
         "frameIndex": 24,
-        "resourceName": "Blow5.ogg",
+        "resourceName": "Blow5.m4a",
         "volume": 60,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

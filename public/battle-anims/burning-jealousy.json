@@ -1247,7 +1247,7 @@
     "0": [
       {
         "frameIndex": 0,
-        "resourceName": "Fire2.ogg",
+        "resourceName": "Fire2.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -1256,7 +1256,7 @@
     "16": [
       {
         "frameIndex": 16,
-        "resourceName": "Fire1.ogg",
+        "resourceName": "Fire1.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -1265,7 +1265,7 @@
     "24": [
       {
         "frameIndex": 24,
-        "resourceName": "Fire1.ogg",
+        "resourceName": "Fire1.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

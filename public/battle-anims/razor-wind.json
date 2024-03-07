@@ -2659,7 +2659,7 @@
     "0": [
       {
         "frameIndex": 0,
-        "resourceName": "Wind8.ogg",
+        "resourceName": "Wind8.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -2668,7 +2668,7 @@
     "5": [
       {
         "frameIndex": 5,
-        "resourceName": "Wind7.ogg",
+        "resourceName": "Wind7.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -2677,7 +2677,7 @@
     "8": [
       {
         "frameIndex": 8,
-        "resourceName": "Wind7.ogg",
+        "resourceName": "Wind7.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -2686,7 +2686,7 @@
     "11": [
       {
         "frameIndex": 11,
-        "resourceName": "Wind8.ogg",
+        "resourceName": "Wind8.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -2695,7 +2695,7 @@
     "16": [
       {
         "frameIndex": 16,
-        "resourceName": "Wind7.ogg",
+        "resourceName": "Wind7.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -2704,7 +2704,7 @@
     "19": [
       {
         "frameIndex": 19,
-        "resourceName": "Wind7.ogg",
+        "resourceName": "Wind7.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -2713,7 +2713,7 @@
     "22": [
       {
         "frameIndex": 22,
-        "resourceName": "Wind8.ogg",
+        "resourceName": "Wind8.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -2722,7 +2722,7 @@
     "27": [
       {
         "frameIndex": 27,
-        "resourceName": "Wind7.ogg",
+        "resourceName": "Wind7.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -2731,7 +2731,7 @@
     "30": [
       {
         "frameIndex": 30,
-        "resourceName": "Wind7.ogg",
+        "resourceName": "Wind7.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

@@ -1089,7 +1089,7 @@
       "4": [
         {
           "frameIndex": 4,
-          "resourceName": "Saint7.ogg",
+          "resourceName": "Saint7.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -1098,7 +1098,7 @@
       "15": [
         {
           "frameIndex": 15,
-          "resourceName": "Saint9.ogg",
+          "resourceName": "Saint9.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -2198,7 +2198,7 @@
       "4": [
         {
           "frameIndex": 4,
-          "resourceName": "Saint7.ogg",
+          "resourceName": "Saint7.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -2207,7 +2207,7 @@
       "15": [
         {
           "frameIndex": 15,
-          "resourceName": "Saint9.ogg",
+          "resourceName": "Saint9.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"

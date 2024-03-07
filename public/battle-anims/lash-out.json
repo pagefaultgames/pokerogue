@@ -1944,7 +1944,7 @@
       "0": [
         {
           "frameIndex": 0,
-          "resourceName": "Fire2.ogg",
+          "resourceName": "Fire2.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -1953,7 +1953,7 @@
       "9": [
         {
           "frameIndex": 9,
-          "resourceName": "Fire1.ogg",
+          "resourceName": "Fire1.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -1962,7 +1962,7 @@
       "21": [
         {
           "frameIndex": 21,
-          "resourceName": "Fire1.ogg",
+          "resourceName": "Fire1.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -3915,7 +3915,7 @@
       "0": [
         {
           "frameIndex": 0,
-          "resourceName": "Fire2.ogg",
+          "resourceName": "Fire2.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -3924,7 +3924,7 @@
       "9": [
         {
           "frameIndex": 9,
-          "resourceName": "Fire1.ogg",
+          "resourceName": "Fire1.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -3933,7 +3933,7 @@
       "21": [
         {
           "frameIndex": 21,
-          "resourceName": "Fire1.ogg",
+          "resourceName": "Fire1.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"

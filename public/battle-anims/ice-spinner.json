@@ -1337,7 +1337,7 @@
     "0": [
       {
         "frameIndex": 0,
-        "resourceName": "Ice8.ogg",
+        "resourceName": "Ice8.m4a",
         "volume": 100,
         "pitch": 110,
         "eventType": "AnimTimedSoundEvent"
@@ -1346,7 +1346,7 @@
     "7": [
       {
         "frameIndex": 7,
-        "resourceName": "Ice8.ogg",
+        "resourceName": "Ice8.m4a",
         "volume": 100,
         "pitch": 110,
         "eventType": "AnimTimedSoundEvent"

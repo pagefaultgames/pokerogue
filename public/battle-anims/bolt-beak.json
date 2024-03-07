@@ -1143,7 +1143,7 @@
       "7": [
         {
           "frameIndex": 7,
-          "resourceName": "Thunder1.ogg",
+          "resourceName": "Thunder1.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -2337,7 +2337,7 @@
       "7": [
         {
           "frameIndex": 7,
-          "resourceName": "Thunder1.ogg",
+          "resourceName": "Thunder1.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"

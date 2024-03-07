@@ -355,7 +355,7 @@
     "3": [
       {
         "frameIndex": 3,
-        "resourceName": "Water2.ogg",
+        "resourceName": "Water2.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

@@ -815,7 +815,7 @@
     "2": [
       {
         "frameIndex": 2,
-        "resourceName": "metal.ogg",
+        "resourceName": "metal.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -824,7 +824,7 @@
     "4": [
       {
         "frameIndex": 4,
-        "resourceName": "Blow4.ogg",
+        "resourceName": "Blow4.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -833,7 +833,7 @@
     "13": [
       {
         "frameIndex": 13,
-        "resourceName": "metal.ogg",
+        "resourceName": "metal.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -842,7 +842,7 @@
     "15": [
       {
         "frameIndex": 15,
-        "resourceName": "Blow4.ogg",
+        "resourceName": "Blow4.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

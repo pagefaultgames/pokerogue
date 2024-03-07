@@ -2418,7 +2418,7 @@
       "48": [
         {
           "frameIndex": 48,
-          "resourceName": "Thunder3.ogg",
+          "resourceName": "Thunder3.m4a",
           "volume": 70,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -4906,7 +4906,7 @@
       "48": [
         {
           "frameIndex": 48,
-          "resourceName": "Thunder3.ogg",
+          "resourceName": "Thunder3.m4a",
           "volume": 70,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"

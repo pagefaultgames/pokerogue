@@ -1239,7 +1239,7 @@
     "0": [
       {
         "frameIndex": 0,
-        "resourceName": "Darkness2.ogg",
+        "resourceName": "Darkness2.m4a",
         "volume": 80,
         "pitch": 60,
         "eventType": "AnimTimedSoundEvent"
@@ -1248,7 +1248,7 @@
     "15": [
       {
         "frameIndex": 15,
-        "resourceName": "Explosion6.ogg",
+        "resourceName": "Explosion6.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

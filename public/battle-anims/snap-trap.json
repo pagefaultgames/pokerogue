@@ -1187,7 +1187,7 @@
     "7": [
       {
         "frameIndex": 7,
-        "resourceName": "metal.ogg",
+        "resourceName": "metal.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

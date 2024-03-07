@@ -568,7 +568,7 @@
       "12": [
         {
           "frameIndex": 12,
-          "resourceName": "Blow1.ogg",
+          "resourceName": "Blow1.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -1147,7 +1147,7 @@
       "12": [
         {
           "frameIndex": 12,
-          "resourceName": "Blow1.ogg",
+          "resourceName": "Blow1.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"

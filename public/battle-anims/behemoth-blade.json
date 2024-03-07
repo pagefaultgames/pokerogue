@@ -2380,7 +2380,7 @@
       "9": [
         {
           "frameIndex": 9,
-          "resourceName": "Saint7.ogg",
+          "resourceName": "Saint7.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -2389,7 +2389,7 @@
       "29": [
         {
           "frameIndex": 29,
-          "resourceName": "Sword2.ogg",
+          "resourceName": "Sword2.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -4781,7 +4781,7 @@
       "9": [
         {
           "frameIndex": 9,
-          "resourceName": "Saint7.ogg",
+          "resourceName": "Saint7.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"
@@ -4801,7 +4801,7 @@
       "29": [
         {
           "frameIndex": 29,
-          "resourceName": "Sword2.ogg",
+          "resourceName": "Sword2.m4a",
           "volume": 80,
           "pitch": 100,
           "eventType": "AnimTimedSoundEvent"

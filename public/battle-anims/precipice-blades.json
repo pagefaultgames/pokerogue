@@ -1433,7 +1433,7 @@
     "2": [
       {
         "frameIndex": 2,
-        "resourceName": "Earth1.ogg",
+        "resourceName": "Earth1.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -1442,7 +1442,7 @@
     "11": [
       {
         "frameIndex": 11,
-        "resourceName": "Earth1.ogg",
+        "resourceName": "Earth1.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -1451,7 +1451,7 @@
     "18": [
       {
         "frameIndex": 18,
-        "resourceName": "Earth5.ogg",
+        "resourceName": "Earth5.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"

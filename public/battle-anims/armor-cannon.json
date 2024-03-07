@@ -957,7 +957,7 @@
     "0": [
       {
         "frameIndex": 0,
-        "resourceName": "Blow7.ogg",
+        "resourceName": "Blow7.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
@@ -975,7 +975,7 @@
       },
       {
         "frameIndex": 8,
-        "resourceName": "Explosion1.ogg",
+        "resourceName": "Explosion1.m4a",
         "volume": 80,
         "pitch": 100,
         "eventType": "AnimTimedSoundEvent"
