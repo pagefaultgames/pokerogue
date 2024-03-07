@@ -1604,9 +1604,9 @@ export default class BattleScene extends Phaser.Scene {
 
 	tryTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferStack: boolean, playSound: boolean, instant?: boolean, ignoreUpdate?: boolean): Promise<boolean> {
 		return new Promise(resolve => {
-			const source = itemModifier.getPokemon(target.scene);
+			const source = itemModifier.pokemonId ? itemModifier.getPokemon(target.scene) : null;
 			const cancelled = new Utils.BooleanHolder(false);
-			applyAbAttrs(BlockItemTheftAbAttr, source, cancelled).then(() => {
+			Utils.executeIf(!!source, () => applyAbAttrs(BlockItemTheftAbAttr, source, cancelled)).then(() => {
 				if (cancelled.value)
 					return resolve(false);
 				const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
@@ -1615,7 +1615,7 @@ export default class BattleScene extends Phaser.Scene {
 					&& (m as PokemonHeldItemModifier).matchType(itemModifier) && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier;
 				let removeOld = true;
 				if (matchingModifier) {
-					const maxStackCount = matchingModifier.getMaxStackCount(source.scene);
+					const maxStackCount = matchingModifier.getMaxStackCount(target.scene);
 					if (matchingModifier.stackCount >= maxStackCount)
 						return resolve(false);
 					const countTaken = transferStack ? Math.min(itemModifier.stackCount, maxStackCount - matchingModifier.stackCount) : 1;
@@ -1626,7 +1626,7 @@ export default class BattleScene extends Phaser.Scene {
 					newItemModifier.stackCount = 1;
 					removeOld = !(--itemModifier.stackCount);
 				}
-				if (!removeOld || this.removeModifier(itemModifier, !source.isPlayer())) {
+				if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
 					const addModifier = () => {
 						if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
 							if (target.isPlayer())
@@ -1636,7 +1636,7 @@ export default class BattleScene extends Phaser.Scene {
 						} else
 							resolve(false);
 					};
-					if (source.isPlayer() !== target.isPlayer() && !ignoreUpdate)
+					if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate)
 						this.updateModifiers(source.isPlayer(), instant).then(() => addModifier());
 					else
 						addModifier();

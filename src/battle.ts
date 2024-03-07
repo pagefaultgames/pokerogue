@@ -9,6 +9,7 @@ import { TrainerType } from "./data/enums/trainer-type";
 import { GameMode } from "./game-mode";
 import { BattleSpec } from "./enums/battle-spec";
 import { PlayerGender } from "./system/game-data";
+import { PersistentModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 
 export enum BattleType {
     WILD,
@@ -49,8 +50,9 @@ export default class Battle {
     public started: boolean;
     public turn: integer;
     public turnCommands: TurnCommands;
-    public playerParticipantIds: Set<integer> = new Set<integer>();
-    public escapeAttempts: integer = 0;
+    public playerParticipantIds: Set<integer>;
+    public postBattleLoot: PokemonHeldItemModifier[];
+    public escapeAttempts: integer;
     public lastMove: Moves;
     public battleSeed: string;
     private battleSeedState: string;
@@ -68,6 +70,9 @@ export default class Battle {
         this.seenEnemyPartyMemberIds = new Set<integer>();
         this.double = double;
         this.turn = 0;
+        this.playerParticipantIds = new Set<integer>();
+        this.postBattleLoot = [];
+        this.escapeAttempts = 0;
         this.started = false;
         this.battleSeed = Utils.randomString(16, true);
         this.battleSeedState = null;
@@ -121,6 +126,14 @@ export default class Battle {
 
     removeFaintedParticipant(playerPokemon: PlayerPokemon): void {
         this.playerParticipantIds.delete(playerPokemon.id);
+    }
+
+    addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
+        this.postBattleLoot.push(...enemyPokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id, false).map(i => {
+            const ret = i as PokemonHeldItemModifier;
+            ret.pokemonId = null;
+            return ret;
+        }));
     }
 
     getBgmOverride(scene: BattleScene): string {

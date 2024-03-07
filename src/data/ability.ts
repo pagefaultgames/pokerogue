@@ -1020,6 +1020,31 @@ export class MaxMultiHitAbAttr extends AbAttr {
   }
 }
 
+export class PostBattleAbAttr extends AbAttr {
+  constructor() {
+    super(true);
+  }
+
+  applyPostBattle(pokemon: Pokemon, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class PostBattleLootAbAttr extends PostBattleAbAttr {
+  applyPostBattle(pokemon: Pokemon, args: any[]): boolean {
+    const postBattleLoot = pokemon.scene.currentBattle.postBattleLoot;
+    if (postBattleLoot.length) {
+      const randItem = Utils.randSeedItem(postBattleLoot);
+      if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false, true, true)) {
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` picked up\n${randItem.type.name}!`));
+        return true;
+      }
+    }
+
+    return false;
+  }
+}
+
 export class ReduceStatusEffectDurationAbAttr extends AbAttr {
   private statusEffect: StatusEffect;
 
@@ -1245,6 +1270,11 @@ export function applyPostWeatherLapseAbAttrs(attrType: { new(...args: any[]): Po
 export function applyCheckTrappedAbAttrs(attrType: { new(...args: any[]): CheckTrappedAbAttr },
   pokemon: Pokemon, trapped: Utils.BooleanHolder, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, attr => attr.applyCheckTrapped(pokemon, trapped, args), true);
+}
+
+export function applyPostBattleAbAttrs(attrType: { new(...args: any[]): PostBattleAbAttr },
+  pokemon: Pokemon, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostBattleAbAttr>(attrType, pokemon, attr => attr.applyPostBattle(pokemon, args));
 }
 
 function canApplyAttr(pokemon: Pokemon, attr: AbAttr): boolean {
@@ -1676,7 +1706,8 @@ export function initAbilities() {
       .attr(ProtectStatAbAttr, BattleStat.ACC),
     new Ability(Abilities.HYPER_CUTTER, "Hyper Cutter", "The Pokémon's proud of its powerful pincers. They prevent other Pokémon from lowering its Attack stat.", 3)
       .attr(ProtectStatAbAttr, BattleStat.ATK),
-    new Ability(Abilities.PICKUP, "Pickup (N)", "The Pokémon may pick up the item an opposing Pokémon used during a battle. It may pick up items outside of battle, too.", 3),
+    new Ability(Abilities.PICKUP, "Pickup", "The Pokémon may pick up the item an opposing Pokémon held during a battle.", 3)
+      .attr(PostBattleLootAbAttr),
     new Ability(Abilities.TRUANT, "Truant", "The Pokémon can't use a move if it had used a move on the previous turn.", 3)
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.TRUANT, 1, false),
     new Ability(Abilities.HUSTLE, "Hustle", "Boosts the Attack stat, but lowers accuracy.", 3)
