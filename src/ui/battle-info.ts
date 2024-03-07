@@ -153,7 +153,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     });
     this.teraIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
 
-    this.splicedIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0), 2);
+    this.splicedIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0), 2.5);
     this.splicedIcon.setVisible(!!pokemon.fusionSpecies);
     if (this.splicedIcon.visible) {
       this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${pokemon.species.getName(pokemon.formIndex)}/${pokemon.fusionSpecies.getName(pokemon.fusionFormIndex)}`));
@@ -283,7 +283,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       }
 
       if (nameUpdated || teraTypeUpdated)
-        this.splicedIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0), 1);
+        this.splicedIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0), 1.5);
 
       if (this.lastStatus !== (pokemon.status?.effect || StatusEffect.NONE)) {
         this.lastStatus = pokemon.status?.effect || StatusEffect.NONE;
@@ -363,7 +363,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     let nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.BATTLE_INFO);
     nameTextWidth = nameSizeTest.displayWidth;
 
-    while (nameTextWidth > (this.player || !this.boss ? 60 : 98) - ((pokemon.gender !== Gender.GENDERLESS ? 6 : 0) + (pokemon.fusionSpecies ? 6 : 0) + (pokemon.isShiny() ? 8 : 0) + (Math.min(pokemon.level.toString().length, 3) - 3) * 8)) {
+    while (nameTextWidth > (this.player || !this.boss ? 60 : 98) - ((pokemon.gender !== Gender.GENDERLESS ? 6 : 0) + (pokemon.fusionSpecies ? 8 : 0) + (pokemon.isShiny() ? 8 : 0) + (Math.min(pokemon.level.toString().length, 3) - 3) * 8)) {
       displayName = `${displayName.slice(0, displayName.endsWith('.') ? -2 : -1).trimEnd()}.`;
       nameSizeTest.setText(displayName);
       nameTextWidth = nameSizeTest.displayWidth;

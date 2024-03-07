@@ -28,6 +28,22 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
   const fragAPattern = /([a-z]{2}.*?[aeiou(?:y$)\-\']+)(.*?)$/i;
   const fragBPattern = /([a-z]{2}.*?[aeiou(?:y$)\-\'])(.*?)$/i;
 
+  const [ speciesAPrefixMatch, speciesBPrefixMatch ] = [ speciesAName, speciesBName ].map(n => /^(?:Mega|(?:G|E)\-Max) /.exec(n));
+  const [ speciesAPrefix, speciesBPrefix ] = [ speciesAPrefixMatch, speciesBPrefixMatch ].map(m => m ? m[0] : '');
+
+  if (speciesAPrefix)
+    speciesAName = speciesAName.slice(speciesAPrefix.length);
+  if (speciesBPrefix)
+    speciesBName = speciesBName.slice(speciesBPrefix.length);
+
+  const [ speciesASuffixMatch, speciesBSuffixMatch ] = [ speciesAName, speciesBName ].map(n => / (?:X|Y)$/.exec(n));
+  const [ speciesASuffix, speciesBSuffix ] = [ speciesASuffixMatch, speciesBSuffixMatch ].map(m => m ? m[0] : '');
+
+  if (speciesASuffix)
+    speciesAName = speciesAName.slice(0, -speciesASuffix.length);
+  if (speciesBSuffix)
+    speciesBName = speciesBName.slice(0, -speciesBSuffix.length);
+
   const splitNameA = speciesAName.split(/ /g);
   const splitNameB = speciesBName.split(/ /g);
   
@@ -58,7 +74,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
 
   fragB = `${fragB.slice(0, 1).toLowerCase()}${fragB.slice(1)}`;
 
-  return `${fragA}${fragB}`;
+  return `${speciesAPrefix || speciesBPrefix}${fragA}${fragB}${speciesBSuffix || speciesASuffix}`;
 }
 
 export type PokemonSpeciesFilter = (species: PokemonSpecies) => boolean;
@@ -371,6 +387,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
       const form = this.forms[formIndex];
       switch (form.formKey) {
         case SpeciesFormKey.MEGA:
+        case SpeciesFormKey.PRIMAL:
         case SpeciesFormKey.ETERNAMAX:
           return `${form.formName} ${this.name}`;
         case SpeciesFormKey.MEGA_X:

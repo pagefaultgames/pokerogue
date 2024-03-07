@@ -816,7 +816,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     let nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.PARTY);
     nameTextWidth = nameSizeTest.displayWidth;
 
-    while (nameTextWidth > (this.slotIndex ? 52 : 80)) {
+    while (nameTextWidth > (this.slotIndex >= battlerCount ? 52 : (76 - (this.pokemon.fusionSpecies ? 8 : 0)))) {
       displayName = `${displayName.slice(0, displayName.endsWith('.') ? -2 : -1).trimEnd()}.`;
       nameSizeTest.setText(displayName);
       nameTextWidth = nameSizeTest.displayWidth;
