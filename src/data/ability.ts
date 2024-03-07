@@ -1283,7 +1283,7 @@ function canApplyAttr(pokemon: Pokemon, attr: AbAttr): boolean {
 }
 
 function queueShowAbility(pokemon: Pokemon): void {
-  pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.getBattlerIndex()));
+  pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id));
   pokemon.scene.clearPhaseQueueSplice();
 }
 

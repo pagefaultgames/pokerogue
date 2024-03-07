@@ -640,7 +640,7 @@ export class TruantTag extends AbilityBattlerTag {
 
     if (lastMove && lastMove.move !== Moves.NONE) {
       (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
-      pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.getBattlerIndex()));
+      pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id));
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nloafing around!'));
     }
 
