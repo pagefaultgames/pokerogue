@@ -853,6 +853,18 @@ class PartySlot extends Phaser.GameObjects.Container {
       slotInfoContainer.add(slotGenderText);
     }
 
+    if (this.pokemon.fusionSpecies) {
+      const splicedIcon = this.scene.add.image(0, 0, 'icon_spliced');
+      splicedIcon.setScale(0.5);
+      splicedIcon.setOrigin(0, 0);
+      if (this.slotIndex >= battlerCount)
+        splicedIcon.setPositionRelative(slotLevelLabel, 36 - (genderSymbol ? 8 : 0), 0.5);
+      else
+        splicedIcon.setPositionRelative(slotName, 76 - (genderSymbol ? 8 : 0), 3.5);
+
+      slotInfoContainer.add(splicedIcon);
+    }
+
     if (this.pokemon.status) {
       const statusIndicator = this.scene.add.sprite(0, 0, 'statuses');
       statusIndicator.setFrame(StatusEffect[this.pokemon.status?.effect].toLowerCase());

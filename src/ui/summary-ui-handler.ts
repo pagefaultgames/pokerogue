@@ -35,6 +35,7 @@ export default class SummaryUiHandler extends UiHandler {
   private numberText: Phaser.GameObjects.Text;
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private nameText: Phaser.GameObjects.Text;
+  private splicedIcon: Phaser.GameObjects.Sprite;
   private pokeball: Phaser.GameObjects.Sprite;
   private levelText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
@@ -104,6 +105,13 @@ export default class SummaryUiHandler extends UiHandler {
     this.nameText = addTextObject(this.scene, 6, -54, '', TextStyle.SUMMARY);
     this.nameText.setOrigin(0, 0);
     this.summaryContainer.add(this.nameText);
+
+    this.splicedIcon = this.scene.add.sprite(0, -54, 'icon_spliced');
+    this.splicedIcon.setVisible(false);
+    this.splicedIcon.setOrigin(0, 0);
+    this.splicedIcon.setScale(0.75);
+    this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
+    this.summaryContainer.add(this.splicedIcon);
 
     this.pokeball = this.scene.add.sprite(6, -19, 'pb');
     this.pokeball.setOrigin(0, 1);
@@ -211,6 +219,13 @@ export default class SummaryUiHandler extends UiHandler {
     this.pokemon.cry();
 
     this.nameText.setText(this.pokemon.name);
+
+    this.splicedIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + 2, 3);
+    this.splicedIcon.setVisible(!!this.pokemon.fusionSpecies);
+    if (this.splicedIcon.visible) {
+      this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${this.pokemon.species.getName(this.pokemon.formIndex)}/${this.pokemon.fusionSpecies.getName(this.pokemon.fusionFormIndex)}`, true));
+      this.splicedIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
+    }
 
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
     this.levelText.setText(this.pokemon.level.toString());
