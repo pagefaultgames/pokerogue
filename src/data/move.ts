@@ -3096,7 +3096,7 @@ export function initMoves() {
     new StatusMove(Moves.BLOCK, "Block", Type.NORMAL, -1, 5, -1, "The user blocks the target's way with arms spread wide to prevent escape.", -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1),
     new StatusMove(Moves.HOWL, "Howl", Type.NORMAL, -1, 40, -1, "The user howls loudly to raise the spirit of itself and allies. This raises their Attack stats.", -1, 0, 3)
-      .attr(StatChangeAttr, BattleStat.ATK, 1, true)
+      .attr(StatChangeAttr, BattleStat.ATK, 1)
       .soundBased()
       .target(MoveTarget.USER_AND_ALLIES),
     new AttackMove(Moves.DRAGON_CLAW, "Dragon Claw", Type.DRAGON, MoveCategory.PHYSICAL, 80, 100, 15, 78, "The user slashes the target with huge sharp claws.", -1, 0, 3),
@@ -3688,8 +3688,10 @@ export function initMoves() {
       .attr(ChargeAttr, ChargeAnim.GEOMANCY_CHARGING, "is charging its power!")
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 2, true)
       .ignoresVirtual(),
-    new StatusMove(Moves.MAGNETIC_FLUX, "Magnetic Flux (N)", Type.ELECTRIC, -1, 20, -1, "The user manipulates magnetic fields, which raises the Defense and Sp. Def stats of ally Pokémon with the Plus or Minus Ability.", -1, 0, 6)
-      .target(MoveTarget.USER_AND_ALLIES),
+    new StatusMove(Moves.MAGNETIC_FLUX, "Magnetic Flux", Type.ELECTRIC, -1, 20, -1, "The user manipulates magnetic fields, which raises the Defense and Sp. Def stats of ally Pokémon with the Plus or Minus Ability.", -1, 0, 6)
+      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, false, (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS].find(a => a === user.getAbility().id))
+      .target(MoveTarget.USER_AND_ALLIES)
+      .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => a === p.getAbility().id))),
     new StatusMove(Moves.HAPPY_HOUR, "Happy Hour (N)", Type.NORMAL, -1, 30, -1, "Using Happy Hour doubles the amount of prize money received after battle.", -1, 0, 6) // No animation
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ELECTRIC_TERRAIN, "Electric Terrain (N)", Type.ELECTRIC, -1, 10, -1, "The user electrifies the ground for five turns, powering up Electric-type moves. Pokémon on the ground no longer fall asleep.", -1, 0, 6)

@@ -1072,8 +1072,10 @@ export class SwitchSummonPhase extends SummonPhase {
     if (!this.player) {
       if (this.slotIndex === -1)
         this.slotIndex = this.scene.currentBattle.trainer.getNextSummonIndex();
-      this.showEnemyTrainer();
-      this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
+      if (this.slotIndex > -1) {
+        this.showEnemyTrainer();
+        this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
+      }
     }
 
     if (!this.doReturn || (this.slotIndex !== -1 && !(this.player ? this.scene.getParty() : this.scene.getEnemyParty())[this.slotIndex])) {
