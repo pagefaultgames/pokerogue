@@ -1774,7 +1774,7 @@ export class BattleEndPhase extends BattlePhase {
         pokemon.resetBattleSummonData();
     }
 
-    for (let pokemon of this.scene.getParty())
+    for (let pokemon of this.scene.getParty().filter(p => !p.isFainted()))
       applyPostBattleAbAttrs(PostBattleAbAttr, pokemon);
 
     this.scene.clearEnemyHeldItemModifiers();
@@ -2806,7 +2806,7 @@ export class VictoryPhase extends PokemonPhase {
       }
     }
 
-    if (!this.scene.getEnemyParty().filter(p => !p?.isFainted(true)).length) {
+    if (!this.scene.getEnemyParty().find(p => this.scene.currentBattle.battleType ? !p?.isFainted(true) : p.isOnField())) {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       if (this.scene.currentBattle.battleType === BattleType.TRAINER)
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));
