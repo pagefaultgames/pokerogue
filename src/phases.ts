@@ -2021,7 +2021,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const user = this.getUserPokemon();
     const targets = this.getTargets();
 
-    if (!user)
+    if (!user || !user.scene)
       return this.end();
 
     const overridden = new Utils.BooleanHolder(false);
