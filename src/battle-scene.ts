@@ -52,6 +52,8 @@ import { getTypeRgb } from './data/type';
 import PokemonSpriteSparkleHandler from './field/pokemon-sprite-sparkle-handler';
 import CharSprite from './ui/char-sprite';
 import DamageNumberHandler from './field/damage-number-handler';
+import { StatsContainer } from './ui/stats-container';
+import PokemonInfoContainer from './ui/pokemon-info-container';
 
 export const bypassLogin = false;
 export const startingLevel = 5;
@@ -130,6 +132,7 @@ export default class BattleScene extends Phaser.Scene {
 	public currentBattle: Battle;
 	public pokeballCounts: PokeballCounts;
 	public money: integer;
+	public pokemonInfoContainer: PokemonInfoContainer;
 	private party: PlayerPokemon[];
 	private waveCountText: Phaser.GameObjects.Text;
 	private moneyText: Phaser.GameObjects.Text;
@@ -545,6 +548,11 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.spriteSparkleHandler = new PokemonSpriteSparkleHandler();
 		this.spriteSparkleHandler.setup(this);
+
+		this.pokemonInfoContainer = new PokemonInfoContainer(this, (this.game.canvas.width / 6) + 52, -(this.game.canvas.height / 6) + 66);
+		this.pokemonInfoContainer.setup();
+
+		this.fieldUI.add(this.pokemonInfoContainer);
 
 		this.party = [];
 

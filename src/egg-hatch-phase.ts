@@ -8,14 +8,10 @@ import EggHatchSceneHandler from "./ui/egg-hatch-scene-handler";
 import { Species } from "./data/enums/species";
 import { PlayerPokemon } from "./field/pokemon";
 import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
-import { StatsContainer } from "./ui/stats-container";
-import { TextStyle, addBBCodeTextObject, addTextObject } from "./ui/text";
-import { Gender, getGenderColor, getGenderSymbol } from "./data/gender";
 import { achvs } from "./system/achv";
-import { addWindow } from "./ui/window";
-import { getNatureName } from "./data/nature";
 import { pokemonPrevolutions } from "./data/pokemon-evolutions";
 import { EggTier } from "./data/enums/egg-type";
+import PokemonInfoContainer from "./ui/pokemon-info-container";
 
 export class EggHatchPhase extends Phase {
   private egg: Egg;
@@ -30,8 +26,7 @@ export class EggHatchPhase extends Phase {
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private pokemonShinySparkle: Phaser.GameObjects.Sprite;
 
-  private infoContainer: Phaser.GameObjects.Container;
-  private statsContainer: StatsContainer;
+  private infoContainer: PokemonInfoContainer;
 
   private pokemon: PlayerPokemon;
   private eggMoveIndex: integer;
@@ -99,64 +94,14 @@ export class EggHatchPhase extends Phase {
       this.eggHatchOverlay.setAlpha(0);
       this.scene.fieldUI.add(this.eggHatchOverlay);
 
-      const infoBg = addWindow(this.scene, 0, 0, 104, 132);
-      infoBg.setOrigin(0.5, 0.5);
-
-      this.infoContainer = this.scene.add.container(this.eggHatchBg.displayWidth + infoBg.width / 2, this.eggHatchBg.displayHeight / 2);
-
-      this.statsContainer = new StatsContainer(this.scene, -48, -64, true);
-
-      this.infoContainer.add(infoBg);
-      this.infoContainer.add(this.statsContainer);
-
-      const pokemonGenderLabelText = addTextObject(this.scene, -18, 20, 'Gender:', TextStyle.WINDOW, { fontSize: '64px' });
-      pokemonGenderLabelText.setOrigin(1, 0);
-      pokemonGenderLabelText.setVisible(false);
-      this.infoContainer.add(pokemonGenderLabelText);
-
-      const pokemonGenderText = addTextObject(this.scene, -14, 20, '', TextStyle.WINDOW, { fontSize: '64px' });
-      pokemonGenderText.setOrigin(0, 0);
-      pokemonGenderText.setVisible(false);
-      this.infoContainer.add(pokemonGenderText);
-
-      const pokemonAbilityLabelText = addTextObject(this.scene, -18, 30, 'Ability:', TextStyle.WINDOW, { fontSize: '64px' });
-      pokemonAbilityLabelText.setOrigin(1, 0);
-      this.infoContainer.add(pokemonAbilityLabelText);
-
-      const pokemonAbilityText = addTextObject(this.scene, -14, 30, '', TextStyle.WINDOW, { fontSize: '64px' });
-      pokemonAbilityText.setOrigin(0, 0);
-      this.infoContainer.add(pokemonAbilityText);
-
-      const pokemonNatureLabelText = addTextObject(this.scene, -18, 40, 'Nature:', TextStyle.WINDOW, { fontSize: '64px' });
-      pokemonNatureLabelText.setOrigin(1, 0);
-      this.infoContainer.add(pokemonNatureLabelText);
-
-      const pokemonNatureText = addBBCodeTextObject(this.scene, -14, 40, '', TextStyle.WINDOW, { fontSize: '64px', lineSpacing: 3, maxLines: 2 });
-      pokemonNatureText.setOrigin(0, 0);
-      this.infoContainer.add(pokemonNatureText);
+      this.infoContainer = new PokemonInfoContainer(this.scene);
+      this.infoContainer.setup();
 
       this.eggHatchContainer.add(this.infoContainer);
 
       const pokemon = this.generatePokemon();
       if (pokemon.fusionSpecies)
         pokemon.clearFusionSpecies();
-
-      if (pokemon.gender > Gender.GENDERLESS) {
-        pokemonGenderText.setText(getGenderSymbol(pokemon.gender));
-        pokemonGenderText.setColor(getGenderColor(pokemon.gender));
-        pokemonGenderText.setShadowColor(getGenderColor(pokemon.gender, true));
-        pokemonGenderLabelText.setVisible(true);
-        pokemonGenderText.setVisible(true);
-      }
-
-      pokemonAbilityText.setText(pokemon.getAbility(true).name);
-      pokemonNatureText.setText(getNatureName(pokemon.nature, true));
-
-      const originalIvs: integer[] = this.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr
-        ? this.scene.gameData.dexData[pokemon.species.speciesId].ivs
-        : null;
-
-      this.statsContainer.updateIvs(pokemon.ivs, originalIvs);
 
       this.pokemonSprite.setVisible(false);
 
@@ -283,12 +228,7 @@ export class EggHatchPhase extends Phase {
           });
         }
         this.scene.time.delayedCall(Utils.fixedInt(!isShiny ? 1250 : 1750), () => {
-          this.scene.tweens.add({
-            targets: this.infoContainer,
-            duration: Utils.fixedInt(750),
-            ease: 'Cubic.easeInOut',
-            x: this.eggHatchBg.displayWidth - 52
-          });
+          this.infoContainer.show(this.pokemon);
 
           this.scene.playSoundWithoutBgm('evolution_fanfare');
           

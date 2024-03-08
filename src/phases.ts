@@ -3530,10 +3530,13 @@ export class AttemptCapturePhase extends PokemonPhase {
     if (pokemon.species.mythical)
       this.scene.validateAchv(achvs.CATCH_MYTHICAL);
 
+    this.scene.pokemonInfoContainer.show(pokemon, true);
+
     this.scene.gameData.updateSpeciesDexIvs(pokemon.species.speciesId, pokemon.ivs);
       
     this.scene.ui.showText(`${pokemon.name} was caught!`, null, () => {
       const end = () => {
+        this.scene.pokemonInfoContainer.hide();
         this.removePb();
         this.end();
       };
