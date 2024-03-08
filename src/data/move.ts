@@ -1951,7 +1951,7 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
 export class RandomMoveAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-      const moveIds = Utils.getEnumValues(Moves).filter(m => !allMoves[m].hasFlag(MoveFlags.IGNORE_VIRTUAL));
+      const moveIds = Utils.getEnumValues(Moves).filter(m => !allMoves[m].hasFlag(MoveFlags.IGNORE_VIRTUAL) && !allMoves[m].name.endsWith(' (N)'));
       const moveId = moveIds[user.randSeedInt(moveIds.length)];
       
       const moveTargets = getMoveTargets(user, moveId);
