@@ -1036,6 +1036,7 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
     if (postBattleLoot.length) {
       const randItem = Utils.randSeedItem(postBattleLoot);
       if (pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false, true, true)) {
+        postBattleLoot.splice(postBattleLoot.indexOf(randItem), 1);
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` picked up\n${randItem.type.name}!`));
         return true;
       }
