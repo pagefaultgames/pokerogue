@@ -335,7 +335,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       moveContainer.add(moveLabel);
 
       this.pokemonMoveContainers.push(moveContainer);
-      this.pokemonMovesContainer.add(moveContainer);      
+      this.pokemonMovesContainer.add(moveContainer);
     }
 
     this.pokemonAdditionalMoveCountLabel = addTextObject(this.scene, -this.pokemonMoveBgs[0].width / 2, 56, '(+0)', TextStyle.PARTY);

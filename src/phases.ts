@@ -1150,6 +1150,9 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const pokemon = this.getPokemon();
 
+    // Compensate for turn spent summoning
+    pokemon.battleSummonData.turnCount--;
+
     if (this.batonPass && pokemon)
       pokemon.transferSummon(this.lastPokemon);
 

@@ -52,7 +52,6 @@ import { getTypeRgb } from './data/type';
 import PokemonSpriteSparkleHandler from './field/pokemon-sprite-sparkle-handler';
 import CharSprite from './ui/char-sprite';
 import DamageNumberHandler from './field/damage-number-handler';
-import { StatsContainer } from './ui/stats-container';
 import PokemonInfoContainer from './ui/pokemon-info-container';
 
 export const bypassLogin = false;

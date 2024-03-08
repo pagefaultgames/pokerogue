@@ -2206,7 +2206,7 @@ export class MoveCondition {
 
 export class FirstMoveCondition extends MoveCondition {
   constructor() {
-    super((user, target, move) => !user.getMoveHistory().length);
+    super((user, target, move) => user.battleSummonData?.turnCount === 1);
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
