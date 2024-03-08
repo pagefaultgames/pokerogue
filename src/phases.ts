@@ -1562,7 +1562,7 @@ export class EnemyCommandPhase extends FieldPhase {
 
     const trainer = this.scene.currentBattle.trainer;
 
-    if (trainer) {
+    if (trainer && !enemyPokemon.getMoveQueue().length) {
       const opponents = enemyPokemon.getOpponents();
 
       const trapTag = enemyPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
