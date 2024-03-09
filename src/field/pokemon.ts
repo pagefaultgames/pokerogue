@@ -1126,7 +1126,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
 
           if (damage) {
-            damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical);
+            const oneHitKo = result === HitResult.ONE_HIT_KO;
+            damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo);
             if (isCritical)
               this.scene.queueMessage('A critical hit!');
             this.scene.setPhaseQueueSplice();
