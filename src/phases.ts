@@ -100,7 +100,7 @@ export class LoginPhase extends Phase {
         return null;
       } else {
         this.scene.gameData.loadSystem().then(success => {
-          if (success)
+          if (success || bypassLogin)
             this.end();
           else {
             this.scene.ui.setMode(Mode.MESSAGE);
