@@ -131,6 +131,15 @@ export class PreDefendAbAttr extends AbAttr {
   }
 }
 
+export class PreDefendEndureAbAttr extends PreDefendAbAttr {
+  applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (pokemon.getHpRatio() < 1 || (args[0] as Utils.NumberHolder).value < pokemon.hp)
+      return false;
+
+    return pokemon.addTag(BattlerTagType.ENDURING, 1);
+  }
+}
+
 export class BlockItemTheftAbAttr extends AbAttr {
   apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     cancelled.value = true;
@@ -797,6 +806,13 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
 }
 
 export class BlockCritAbAttr extends AbAttr { }
+
+export class BlockOneHitKOAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = false;
+    return true;
+  }
+}
 
 export class IgnoreContactAbAttr extends AbAttr { }
 
@@ -1610,7 +1626,9 @@ export function initAbilities() {
       .attr(PostTurnStatChangeAbAttr, BattleStat.SPD, 1),
     new Ability(Abilities.BATTLE_ARMOR, "Battle Armor", "Hard armor protects the Pokémon from critical hits.", 3)
       .attr(BlockCritAbAttr),
-    new Ability(Abilities.STURDY, "Sturdy (N)", "It cannot be knocked out with one hit. One-hit KO moves cannot knock it out, either.", 3),
+    new Ability(Abilities.STURDY, "Sturdy", "It cannot be knocked out with one hit. One-hit KO moves cannot knock it out, either.", 3)    
+      .attr(PreDefendEndureAbAttr)
+      .attr(BlockOneHitKOAbAttr),
     new Ability(Abilities.DAMP, "Damp (N)", "Prevents the use of explosive moves, such as Self-Destruct, by dampening its surroundings.", 3),
     new Ability(Abilities.LIMBER, "Limber", "Its limber body protects the Pokémon from paralysis.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS),

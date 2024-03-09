@@ -12,7 +12,7 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { Abilities, ProtectAbilityAbAttr, BlockRecoilDamageAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs } from "./ability";
+import { Abilities, ProtectAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs } from "./ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
@@ -913,7 +913,11 @@ export class OneHitKOAttr extends MoveAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => user.level >= target.level;
+    return (user, target, move) => {
+      const cancelled = new Utils.BooleanHolder(false);
+      applyAbAttrs(BlockOneHitKOAbAttr, target, cancelled);
+      return !cancelled && user.level >= target.level;
+    }
   }
 }
 

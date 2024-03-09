@@ -25,7 +25,7 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { WeakenMoveTypeTag } from '../data/arena-tag';
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { Biome } from "../data/enums/biome";
-import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from '../data/ability';
+import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from '../data/ability';
 import PokemonData from '../system/pokemon-data';
 import { BattlerIndex } from '../battle';
 import { BattleSpec } from "../enums/battle-spec";
@@ -47,7 +47,7 @@ export enum FieldPosition {
 }
 
 const ABILITY_OVERRIDE = Abilities.NONE;
-const MOVE_OVERRIDE = Moves.NONE;
+const MOVE_OVERRIDE = Moves.NONE;;
 
 const OPP_ABILITY_OVERRIDE = Abilities.NONE;
 const OPP_MOVE_OVERRIDE = Moves.NONE;
@@ -1126,6 +1126,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
 
           if (damage) {
+            applyPreDefendAbAttrs(PreDefendEndureAbAttr, this, source, battlerMove, cancelled, damage);
+
             const oneHitKo = result === HitResult.ONE_HIT_KO;
             damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo);
             if (isCritical)
