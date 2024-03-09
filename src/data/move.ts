@@ -1252,6 +1252,39 @@ export class WeightPowerAttr extends VariablePowerAttr {
   }
 }
 
+export class BattleStatRatioPowerAttr extends VariablePowerAttr {
+  private stat: Stat;
+  private invert: boolean;
+
+  constructor(stat: Stat, invert: boolean = false) {
+    super();
+
+    this.stat = stat;
+    this.invert = invert;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0] as Utils.NumberHolder;
+
+    const statRatio = target.getStat(this.stat) / user.getStat(this.stat);
+    const statThresholds = [ 0.25, 1 / 3, 0.5, 1, -1 ];
+    let statThresholdPowers = [ 150, 120, 80, 60, 40 ];
+
+    if (this.invert)
+      statThresholdPowers = statThresholdPowers.reverse();
+
+    let w = 0;
+    while (w < statThresholds.length - 1 && statRatio > statThresholds[w]) {
+      if (++w === statThresholds.length)
+        break;
+    }
+
+    power.value = statThresholdPowers[w];
+
+    return true;
+  }
+}
+
 export class LowHpPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
@@ -3156,7 +3189,8 @@ export function initMoves() {
     new AttackMove(Moves.HAMMER_ARM, "Hammer Arm", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 90, 10, -1, "The user swings and hits with its strong, heavy fist. It lowers the user's Speed, however.", 100, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPD, -1, true)
       .punchingMove(),
-    new AttackMove(Moves.GYRO_BALL, "Gyro Ball (N)", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "The user tackles the target with a high-speed spin. The slower the user compared to the target, the greater the move's power.", -1, 0, 4)
+    new AttackMove(Moves.GYRO_BALL, "Gyro Ball", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "The user tackles the target with a high-speed spin. The slower the user compared to the target, the greater the move's power.", -1, 0, 4)
+      .attr(BattleStatRatioPowerAttr, Stat.SPD, true)
       .ballBombMove(),
     new SelfStatusMove(Moves.HEALING_WISH, "Healing Wish", Type.PSYCHIC, -1, 10, -1, "The user faints. In return, the Pokémon taking its place will have its HP restored and status conditions cured.", -1, 0, 4)
       .attr(SacrificialAttr),
@@ -3438,7 +3472,8 @@ export function initMoves() {
     new AttackMove(Moves.HEAVY_SLAM, "Heavy Slam (N)", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, 121, "The user slams into the target with its heavy body. The more the user outweighs the target, the greater the move's power.", -1, 0, 5),
     new AttackMove(Moves.SYNCHRONOISE, "Synchronoise (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, "Using an odd shock wave, the user inflicts damage on any Pokémon of the same type in the area around it.", -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new AttackMove(Moves.ELECTRO_BALL, "Electro Ball (N)", Type.ELECTRIC, MoveCategory.SPECIAL, -1, 100, 10, 72, "The user hurls an electric orb at the target. The faster the user is than the target, the greater the move's power.", -1, 0, 5)
+    new AttackMove(Moves.ELECTRO_BALL, "Electro Ball", Type.ELECTRIC, MoveCategory.SPECIAL, -1, 100, 10, 72, "The user hurls an electric orb at the target. The faster the user is than the target, the greater the move's power.", -1, 0, 5)
+      .attr(BattleStatRatioPowerAttr, Stat.SPD)
       .ballBombMove(),
     new StatusMove(Moves.SOAK, "Soak (P)", Type.WATER, 100, 20, -1, "The user shoots a torrent of water at the target and changes the target's type to Water.", -1, 0, 5),
     new AttackMove(Moves.FLAME_CHARGE, "Flame Charge", Type.FIRE, MoveCategory.PHYSICAL, 50, 100, 20, 38, "Cloaking itself in flame, the user attacks the target. Then, building up more power, the user raises its Speed stat.", 100, 0, 5)
