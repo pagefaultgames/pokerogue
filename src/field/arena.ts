@@ -285,20 +285,6 @@ export class Arena {
       this.scene.queueMessage(getTerrainStartMessage(terrain));
     } else
       this.scene.queueMessage(getTerrainClearMessage(oldTerrainType));
-    /*[
-      this.scene.arenaBg,
-      this.scene.arenaBgTransition,
-      this.scene.arenaPlayer.base,
-      this.scene.arenaPlayer.props,
-      this.scene.arenaPlayerTransition.base,
-      this.scene.arenaPlayerTransition.props,
-      this.scene.arenaEnemy.base,
-      this.scene.arenaEnemy.props,
-      this.scene.arenaNextEnemy.base,
-      this.scene.arenaNextEnemy.props
-    ]
-    .flat()
-    .map(a => a.pipelineData['terrainColor'] = getTerrainColor());*/
     
     return true;
   }

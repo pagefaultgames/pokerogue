@@ -51,6 +51,7 @@ import { battleSpecDialogue, getCharVariantFromDialogue } from "./data/dialogue"
 import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
 import { Setting } from "./system/settings";
 import { Tutorial, handleTutorial } from "./tutorial";
+import { TerrainType } from "./data/terrain";
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -1744,7 +1745,7 @@ export class TurnEndPhase extends FieldPhase {
         this.scene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
       }
 
-      if (this.scene.arena.terrain && pokemon.isGrounded()) {
+      if (this.scene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
         this.scene.unshiftPhase(new PokemonHealPhase(this.scene, pokemon.getBattlerIndex(),
           Math.max(pokemon.getMaxHp() >> 4, 1), getPokemonMessage(pokemon, ' regained\nhealth from the Grassy Terrain!'), true));
       }
