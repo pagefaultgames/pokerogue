@@ -925,19 +925,12 @@ export class TerrainChangeAttr extends MoveEffectAttr {
 }
 
 export class ClearTerrainAttr extends MoveEffectAttr {
-  private terrainType: TerrainType;
-  
-  constructor(terrainType: TerrainType) {
+  constructor() {
     super();
-
-    this.terrainType = terrainType;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.scene.arena.terrain?.terrainType === this.terrainType)
-      return user.scene.arena.trySetTerrain(TerrainType.NONE, true, true);
-
-    return false;
+    return user.scene.arena.trySetTerrain(TerrainType.NONE, true, true);
   }
 }
 
@@ -3390,7 +3383,8 @@ export function initMoves() {
       .attr(ConfuseAttr),
     new StatusMove(Moves.DEFOG, "Defog", Type.FLYING, -1, 15, -1, "A strong wind blows away the target's barriers such as Reflect or Light Screen. This also lowers the target's evasiveness.", -1, 0, 4)
       .attr(StatChangeAttr, BattleStat.EVA, -1)
-      .attr(ClearWeatherAttr, WeatherType.FOG),
+      .attr(ClearWeatherAttr, WeatherType.FOG)
+      .attr(ClearTerrainAttr),
     new StatusMove(Moves.TRICK_ROOM, "Trick Room", Type.PSYCHIC, -1, 5, 161, "The user creates a bizarre area in which slower Pokémon get to move first for five turns.", -1, -7, 4)
       .attr(AddArenaTagAttr, ArenaTagType.TRICK_ROOM, 5)
       .ignoresProtect()
@@ -3974,7 +3968,8 @@ export function initMoves() {
     new AttackMove(Moves.SEARING_SUNRAZE_SMASH, "Searing Sunraze Smash (P)", Type.STEEL, MoveCategory.PHYSICAL, 200, -1, 1, -1, "After obtaining Z-Power, the user, Solgaleo, attacks the target with full force. This move can ignore the effect of the target's Ability.", -1, 0, 7),
     new AttackMove(Moves.MENACING_MOONRAZE_MAELSTROM, "Menacing Moonraze Maelstrom (P)", Type.GHOST, MoveCategory.SPECIAL, 200, -1, 1, -1, "After obtaining Z-Power, the user, Lunala, attacks the target with full force. This move can ignore the effect of the target's Ability.", -1, 0, 7),
     new AttackMove(Moves.LETS_SNUGGLE_FOREVER, "Let's Snuggle Forever (P)", Type.FAIRY, MoveCategory.PHYSICAL, 190, -1, 1, -1, "After obtaining Z-Power, the user, Mimikyu, punches the target with full force.", -1, 0, 7),
-    new AttackMove(Moves.SPLINTERED_STORMSHARDS, "Splintered Stormshards (P)", Type.ROCK, MoveCategory.PHYSICAL, 190, -1, 1, -1, "After obtaining Z-Power, the user, Lycanroc, attacks the target with full force. This move negates the effect on the battlefield.", -1, 0, 7),
+    new AttackMove(Moves.SPLINTERED_STORMSHARDS, "Splintered Stormshards", Type.ROCK, MoveCategory.PHYSICAL, 190, -1, 1, -1, "After obtaining Z-Power, the user, Lycanroc, attacks the target with full force. This move negates the effect on the battlefield.", -1, 0, 7)
+      .attr(ClearTerrainAttr),
     new AttackMove(Moves.CLANGOROUS_SOULBLAZE, "Clangorous Soulblaze (P)", Type.DRAGON, MoveCategory.SPECIAL, 185, -1, 1, -1, "After obtaining Z-Power, the user, Kommo-o, attacks the opposing Pokémon with full force. This move boosts the user's stats.", 100, 0, 7)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -4120,7 +4115,9 @@ export function initMoves() {
       .attr(RechargeAttr),
     new AttackMove(Moves.STEEL_BEAM, "Steel Beam (P)", Type.STEEL, MoveCategory.SPECIAL, 140, 95, 5, -1, "The user fires a beam of steel that it collected from its entire body. This also damages the user.", -1, 0, 8),
     new AttackMove(Moves.EXPANDING_FORCE, "Expanding Force (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, "The user attacks the target with its psychic power. This move's power goes up and damages all opposing Pokémon on Psychic Terrain.", -1, 0, 8),
-    new AttackMove(Moves.STEEL_ROLLER, "Steel Roller (P)", Type.STEEL, MoveCategory.PHYSICAL, 130, 100, 5, -1, "The user attacks while destroying the terrain. This move fails when the ground hasn't turned into a terrain.", -1, 0, 8),
+    new AttackMove(Moves.STEEL_ROLLER, "Steel Roller", Type.STEEL, MoveCategory.PHYSICAL, 130, 100, 5, -1, "The user attacks while destroying the terrain. This move fails when the ground hasn't turned into a terrain.", -1, 0, 8)
+      .attr(ClearTerrainAttr)
+      .condition((user, target, move) => !!user.scene.arena.terrain),
     new AttackMove(Moves.SCALE_SHOT, "Scale Shot (P)", Type.DRAGON, MoveCategory.PHYSICAL, 25, 90, 20, -1, "The user attacks by shooting scales two to five times in a row. This move boosts the user's Speed stat but lowers its Defense stat.", 100, 0, 8)
       //.attr(StatChangeAttr, BattleStat.SPD, 1, true) // TODO: Have boosts only apply at end of move, not after every hit
       //.attr(StatChangeAttr, BattleStat.DEF, -1, true)
@@ -4278,7 +4275,8 @@ export function initMoves() {
     new AttackMove(Moves.POPULATION_BOMB, "Population Bomb (P)", Type.NORMAL, MoveCategory.PHYSICAL, 20, 90, 10, -1, "The user's fellows gather in droves to perform a combo attack that hits the target one to ten times in a row.", -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._1_TO_10)
       .slicingMove(),
-    new AttackMove(Moves.ICE_SPINNER, "Ice Spinner (P)", Type.ICE, MoveCategory.PHYSICAL, 80, 100, 15, -1, "The user covers its feet in thin ice and twirls around, slamming into the target. This move's spinning motion also destroys the terrain.", -1, 0, 9),
+    new AttackMove(Moves.ICE_SPINNER, "Ice Spinner", Type.ICE, MoveCategory.PHYSICAL, 80, 100, 15, -1, "The user covers its feet in thin ice and twirls around, slamming into the target. This move's spinning motion also destroys the terrain.", -1, 0, 9)
+      .attr(ClearTerrainAttr),
     new AttackMove(Moves.GLAIVE_RUSH, "Glaive Rush (P)", Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 5, -1, "The user throws its entire body into a reckless charge. After this move is used, attacks on the user cannot miss and will inflict double damage until the user's next turn.", -1, 0, 9),
     new StatusMove(Moves.REVIVAL_BLESSING, "Revival Blessing (N)", Type.NORMAL, -1, 1, -1, "The user bestows a loving blessing, reviving a party Pokémon that has fainted and restoring half that Pokémon's max HP.", -1, 0, 9),
     new AttackMove(Moves.SALT_CURE, "Salt Cure (P)", Type.ROCK, MoveCategory.PHYSICAL, 40, 100, 15, -1, "The user salt cures the target, inflicting damage every turn. Steel and Water types are more strongly affected by this move.", -1, 0, 9),
