@@ -381,6 +381,8 @@ export class StatusMoveTypeImmunityAttr extends MoveAttr {
 
   constructor(immuneType: Type) {
     super(false);
+
+    this.immuneType = immuneType;
   }
 }
 
