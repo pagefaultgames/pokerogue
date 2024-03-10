@@ -1,5 +1,5 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, DamagePhase, MovePhase, ObtainStatusEffectPhase, PokemonHealPhase, ShowAbilityPhase } from "../phases";
+import { CommonAnimPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase } from "../phases";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat } from "./pokemon-stat";
@@ -10,6 +10,7 @@ import { ChargeAttr, allMoves } from "./move";
 import { Type } from "./type";
 import { Abilities, FlinchEffectAbAttr, applyAbAttrs } from "./ability";
 import { BattlerTagType } from "./enums/battler-tag-type";
+import { TerrainType } from "./terrain";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -146,6 +147,10 @@ export class FlinchedTag extends BattlerTag {
 export class ConfusedTag extends BattlerTag {
   constructor(turnCount: integer, sourceMove: Moves) {
     super(BattlerTagType.CONFUSED, BattlerTagLapseType.MOVE, turnCount, sourceMove);
+  }
+
+  canAdd(pokemon: Pokemon): boolean {
+    return pokemon.scene.arena.terrain?.terrainType !== TerrainType.MISTY || !pokemon.isGrounded();
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -427,6 +432,10 @@ export class DrowsyTag extends BattlerTag {
     super(BattlerTagType.DROWSY, BattlerTagLapseType.TURN_END, 2, Moves.YAWN);
   }
 
+  canAdd(pokemon: Pokemon): boolean {
+    return pokemon.scene.arena.terrain?.terrainType !== TerrainType.ELECTRIC || !pokemon.isGrounded();
+  }
+
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
@@ -435,7 +444,7 @@ export class DrowsyTag extends BattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (!super.lapse(pokemon, lapseType)) {
-      pokemon.scene.unshiftPhase(new ObtainStatusEffectPhase(pokemon.scene, pokemon.getBattlerIndex(), StatusEffect.SLEEP));
+      pokemon.trySetStatus(StatusEffect.SLEEP, true);
       return false;
     }
 

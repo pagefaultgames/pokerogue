@@ -1744,6 +1744,11 @@ export class TurnEndPhase extends FieldPhase {
         this.scene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
       }
 
+      if (this.scene.arena.terrain && pokemon.isGrounded()) {
+        this.scene.unshiftPhase(new PokemonHealPhase(this.scene, pokemon.getBattlerIndex(),
+          Math.max(pokemon.getMaxHp() >> 4, 1), getPokemonMessage(pokemon, ' regained\nhealth from the Grassy Terrain!'), true));
+      }
+
       applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
 
       this.scene.applyModifiers(TurnHeldItemTransferModifier, pokemon.isPlayer(), pokemon);

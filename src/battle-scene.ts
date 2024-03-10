@@ -468,8 +468,8 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	launchBattle() {
-		this.arenaBg = this.addFieldSprite(0, 0, 'plains_bg');
-		this.arenaBgTransition = this.addFieldSprite(0, 0, `plains_bg`);
+		this.arenaBg = this.addFieldSprite(0, 0, 'plains_bg', null, 0);
+		this.arenaBgTransition = this.addFieldSprite(0, 0, `plains_bg`, null, 1);
 
 		[ this.arenaBgTransition, this.arenaBg ].forEach(a => {
 			a.setScale(6);
@@ -920,6 +920,7 @@ export default class BattleScene extends Phaser.Scene {
 			const biomeKey = getBiomeKey(biome);
 
 			this.arenaBg.setTexture(`${biomeKey}_bg`);
+			this.arenaBg.pipelineData['terrainColorRatio'] = this.arena.getBgTerrainColorRatioForBiome();
 			this.arenaBgTransition.setTexture(`${biomeKey}_bg`);
 			this.arenaPlayer.setBiome(biome);
 			this.arenaPlayerTransition.setBiome(biome);
@@ -1077,9 +1078,11 @@ export default class BattleScene extends Phaser.Scene {
 		Phaser.Math.RND.state(state);
 	}
 
-	addFieldSprite(x: number, y: number, texture: string | Phaser.Textures.Texture, frame?: string | number): Phaser.GameObjects.Sprite {
+	addFieldSprite(x: number, y: number, texture: string | Phaser.Textures.Texture, frame?: string | number, terrainColorRatio: number = 0): Phaser.GameObjects.Sprite {
 		const ret = this.add.sprite(x, y, texture, frame);
 		ret.setPipeline(this.fieldSpritePipeline);
+		if (terrainColorRatio)
+			ret.pipelineData['terrainColorRatio'] = terrainColorRatio;
 
 		return ret;
 	}

@@ -6,6 +6,7 @@ import Move, { AttackMove } from "./move";
 import * as Utils from "../utils";
 import BattleScene from "../battle-scene";
 import { SuppressWeatherEffectAbAttr, applyPreWeatherEffectAbAttrs } from "./ability";
+import { TerrainType } from "./terrain";
 
 export enum WeatherType {
   NONE,
@@ -112,7 +113,7 @@ export class Weather {
   }
 }
 
-export function getWeatherStartMessage(weatherType: WeatherType) {
+export function getWeatherStartMessage(weatherType: WeatherType): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
       return 'The sunlight got bright!';
@@ -135,7 +136,7 @@ export function getWeatherStartMessage(weatherType: WeatherType) {
   return null;
 }
 
-export function getWeatherLapseMessage(weatherType: WeatherType) {
+export function getWeatherLapseMessage(weatherType: WeatherType): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
       return 'The sunlight is strong.';
@@ -158,7 +159,7 @@ export function getWeatherLapseMessage(weatherType: WeatherType) {
   return null;
 }
 
-export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon) {
+export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string {
   switch (weatherType) {
     case WeatherType.SANDSTORM:
       return getPokemonMessage(pokemon, ' is buffeted\nby the sandstorm!');
@@ -169,7 +170,7 @@ export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokem
   return null;
 }
 
-export function getWeatherClearMessage(weatherType: WeatherType) {
+export function getWeatherClearMessage(weatherType: WeatherType): string {
   switch (weatherType) {
     case WeatherType.SUNNY:
       return 'The sunlight faded.';
@@ -190,6 +191,18 @@ export function getWeatherClearMessage(weatherType: WeatherType) {
   }
 
   return null;
+}
+
+export function getTerrainStartMessage(terrainType: TerrainType): string {
+  return terrainType
+    ? `The terrain became ${Utils.toReadableString(TerrainType[terrainType])}!`
+    : null;
+}
+
+export function getTerrainClearMessage(terrainType: TerrainType): string {
+  return terrainType
+    ? `The ${Utils.toReadableString(TerrainType[terrainType])} terrain faded.`
+    : null;
 }
 
 interface WeatherPoolEntry {

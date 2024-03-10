@@ -1,5 +1,5 @@
 import * as ModifierTypes from './modifier-type';
-import { LearnMovePhase, LevelUpPhase, ObtainStatusEffectPhase, PokemonHealPhase } from "../phases";
+import { LearnMovePhase, LevelUpPhase, PokemonHealPhase } from "../phases";
 import BattleScene from "../battle-scene";
 import { getLevelTotalExp } from "../data/exp";
 import { PokeballType } from "../data/pokeball";
@@ -13,12 +13,11 @@ import { getPokemonMessage } from '../messages';
 import * as Utils from "../utils";
 import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
-import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from '../data/status-effect';
+import { StatusEffect, getStatusEffectHealText } from '../data/status-effect';
 import { MoneyAchv, achvs } from '../system/achv';
 import { VoucherType } from '../system/voucher';
 import { PreventBerryUseAbAttr, applyAbAttrs } from '../data/ability';
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from '../data/pokemon-forms';
-import { ModifierTier } from './modifier-tier';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -1924,10 +1923,8 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
 
   apply(args: any[]): boolean {
     const target = (args[0] as Pokemon);
-    if (Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount())) {
-      target.scene.unshiftPhase(new ObtainStatusEffectPhase(target.scene, target.getBattlerIndex(), this.effect));
-      return true;
-    }
+    if (Phaser.Math.RND.realInRange(0, 1) < (this.chance * this.getStackCount()))
+      return target.trySetStatus(this.effect, true);
 
     return false;
   }

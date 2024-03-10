@@ -4,9 +4,8 @@ import * as Utils from "../utils";
 import { allMoves } from "./move";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { DamagePhase, MoveEffectPhase, ObtainStatusEffectPhase } from "../phases";
+import { MoveEffectPhase } from "../phases";
 import { StatusEffect } from "./status-effect";
-import { BattlerTagType } from "./enums/battler-tag-type";
 import { BattlerIndex } from "../battle";
 import { Moves } from "./enums/moves";
 import { ArenaTagType } from "./enums/arena-tag-type";
@@ -168,7 +167,7 @@ class SpikesTag extends ArenaTrapTag {
   }
 
   activateTrap(pokemon: Pokemon): boolean {
-    if ((!pokemon.isOfType(Type.FLYING) || pokemon.getTag(BattlerTagType.IGNORE_FLYING) || pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))) {
+    if (pokemon.isGrounded()) {
       const damageHpRatio = 1 / (10 - 2 * this.layers);
       const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
 
@@ -194,12 +193,9 @@ class ToxicSpikesTag extends ArenaTrapTag {
   }
 
   activateTrap(pokemon: Pokemon): boolean {
-    if (!pokemon.status && (!pokemon.isOfType(Type.FLYING) || pokemon.getTag(BattlerTagType.IGNORE_FLYING) || pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))) {
+    if (!pokemon.status && pokemon.isGrounded()) {
       const toxic = this.layers > 1;
-
-      pokemon.scene.unshiftPhase(new ObtainStatusEffectPhase(pokemon.scene, pokemon.getBattlerIndex(),
-        !toxic ? StatusEffect.POISON : StatusEffect.TOXIC, null, `the ${this.getMoveName()}`));
-      return true;
+      return pokemon.trySetStatus(!toxic ? StatusEffect.POISON : StatusEffect.TOXIC, true, null, `the ${this.getMoveName()}`);
     }
 
     return false;

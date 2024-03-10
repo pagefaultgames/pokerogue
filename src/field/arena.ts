@@ -4,7 +4,7 @@ import { Biome } from "../data/enums/biome";
 import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
-import { Weather, WeatherType, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
+import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
 import { CommonAnimPhase } from "../phases";
 import { CommonAnim } from "../data/battle-anims";
 import { Type } from "../data/type";
@@ -16,6 +16,7 @@ import { TrainerType } from "../data/enums/trainer-type";
 import { BattlerIndex } from "../battle";
 import { Moves } from "../data/enums/moves";
 import { TimeOfDay } from "../data/enums/time-of-day";
+import { Terrain, TerrainType, getTerrainColor } from "../data/terrain";
 
 const WEATHER_OVERRIDE = WeatherType.NONE;
 
@@ -23,9 +24,9 @@ export class Arena {
   public scene: BattleScene;
   public biomeType: Biome;
   public weather: Weather;
+  public terrain: Terrain;
   public tags: ArenaTag[];
   public bgm: string;
-
   private lastTimeOfDay: TimeOfDay;
 
   private pokemonPool: PokemonPools;
@@ -230,6 +231,17 @@ export class Arena {
     }
   }
 
+  getBgTerrainColorRatioForBiome(): number {
+    switch (this.biomeType) {
+      case Biome.SPACE:
+        return 1;
+      case Biome.END:
+        return 0;
+    }
+
+    return 83 / 132;
+  }
+
   trySetWeatherOverride(weather: WeatherType): boolean {
     this.weather = new Weather(weather, 0);
     this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
@@ -259,15 +271,52 @@ export class Arena {
     return true;
   }
 
+  trySetTerrain(terrain: TerrainType, viaMove: boolean, ignoreAnim: boolean = false): boolean {
+    if (this.terrain?.terrainType === (terrain || undefined))
+      return false;
+
+    const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
+
+    this.terrain = terrain ? new Terrain(terrain, viaMove ? 5 : 0) : null;
+    
+    if (this.terrain) {
+      if (!ignoreAnim)
+        this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.MISTY_TERRAIN + (terrain - 1)));
+      this.scene.queueMessage(getTerrainStartMessage(terrain));
+    } else
+      this.scene.queueMessage(getTerrainClearMessage(oldTerrainType));
+    /*[
+      this.scene.arenaBg,
+      this.scene.arenaBgTransition,
+      this.scene.arenaPlayer.base,
+      this.scene.arenaPlayer.props,
+      this.scene.arenaPlayerTransition.base,
+      this.scene.arenaPlayerTransition.props,
+      this.scene.arenaEnemy.base,
+      this.scene.arenaEnemy.props,
+      this.scene.arenaNextEnemy.base,
+      this.scene.arenaNextEnemy.props
+    ]
+    .flat()
+    .map(a => a.pipelineData['terrainColor'] = getTerrainColor());*/
+    
+    return true;
+  }
+
   isMoveWeatherCancelled(move: Move) {
     return this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(move);
   }
 
-  getAttackTypeMultiplier(attackType: Type): number {
-    if (!this.weather || this.weather.isEffectSuppressed(this.scene))
-      return 1;
+  getAttackTypeMultiplier(attackType: Type, grounded: boolean): number {
+    let weatherMultiplier = 1;
+    if (this.weather && !this.weather.isEffectSuppressed(this.scene))
+      weatherMultiplier = this.weather.getAttackTypeMultiplier(attackType);
 
-    return this.weather.getAttackTypeMultiplier(attackType);
+    let terrainMultiplier = 1;
+    if (this.terrain && !grounded)
+      terrainMultiplier = this.terrain.getAttackTypeMultiplier(attackType);
+
+    return weatherMultiplier * terrainMultiplier;
   }
 
   getTrainerChance(): integer {
@@ -572,12 +621,12 @@ export class ArenaBase extends Phaser.GameObjects.Container {
 
     this.player = player;
 
-    this.base = scene.addFieldSprite(0, 0, 'plains_a');
+    this.base = scene.addFieldSprite(0, 0, 'plains_a', null, 1);
     this.base.setOrigin(0, 0);
 
     this.props = !player ?
       new Array(3).fill(null).map(() => {
-        const ret = scene.addFieldSprite(0, 0, 'plains_b');
+        const ret = scene.addFieldSprite(0, 0, 'plains_b', null, 1);
         ret.setOrigin(0, 0);
         ret.setVisible(false);
         return ret;

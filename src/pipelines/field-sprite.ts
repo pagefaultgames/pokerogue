@@ -1,4 +1,5 @@
 import BattleScene from "../battle-scene";
+import { TerrainType, getTerrainColor } from "../data/terrain";
 import * as Utils from "../utils";
 
 const spriteFragShader = `
@@ -21,6 +22,8 @@ uniform int isOutside;
 uniform vec3 dayTint;
 uniform vec3 duskTint;
 uniform vec3 nightTint;
+uniform vec3 terrainColor;
+uniform float terrainColorRatio;
 
 float blendOverlay(float base, float blend) {
 	return base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend));
@@ -32,6 +35,89 @@ vec3 blendOverlay(vec3 base, vec3 blend) {
 
 vec3 blendHardLight(vec3 base, vec3 blend) {
 	return blendOverlay(blend, base);
+}
+
+float hue2rgb(float f1, float f2, float hue) {
+	if (hue < 0.0)
+		hue += 1.0;
+	else if (hue > 1.0)
+		hue -= 1.0;
+	float res;
+	if ((6.0 * hue) < 1.0)
+		res = f1 + (f2 - f1) * 6.0 * hue;
+	else if ((2.0 * hue) < 1.0)
+		res = f2;
+	else if ((3.0 * hue) < 2.0)
+		res = f1 + (f2 - f1) * ((2.0 / 3.0) - hue) * 6.0;
+	else
+		res = f1;
+	return res;
+}
+
+vec3 rgb2hsl(vec3 color) {
+	vec3 hsl;
+	
+	float fmin = min(min(color.r, color.g), color.b);
+	float fmax = max(max(color.r, color.g), color.b);
+	float delta = fmax - fmin;
+
+	hsl.z = (fmax + fmin) / 2.0;
+
+	if (delta == 0.0) {
+		hsl.x = 0.0;
+		hsl.y = 0.0;
+	} else {
+		if (hsl.z < 0.5)
+			hsl.y = delta / (fmax + fmin);
+		else
+			hsl.y = delta / (2.0 - fmax - fmin);
+		
+		float deltaR = (((fmax - color.r) / 6.0) + (delta / 2.0)) / delta;
+		float deltaG = (((fmax - color.g) / 6.0) + (delta / 2.0)) / delta;
+		float deltaB = (((fmax - color.b) / 6.0) + (delta / 2.0)) / delta;
+
+		if (color.r == fmax )
+			hsl.x = deltaB - deltaG;
+		else if (color.g == fmax)
+			hsl.x = (1.0 / 3.0) + deltaR - deltaB;
+		else if (color.b == fmax)
+			hsl.x = (2.0 / 3.0) + deltaG - deltaR;
+
+		if (hsl.x < 0.0)
+			hsl.x += 1.0;
+		else if (hsl.x > 1.0)
+			hsl.x -= 1.0;
+	}
+
+	return hsl;
+}
+
+vec3 hsl2rgb(vec3 hsl) {
+	vec3 rgb;
+	
+	if (hsl.y == 0.0)
+		rgb = vec3(hsl.z);
+	else {
+		float f2;
+		
+		if (hsl.z < 0.5)
+			f2 = hsl.z * (1.0 + hsl.y);
+		else
+			f2 = (hsl.z + hsl.y) - (hsl.y * hsl.z);
+			
+		float f1 = 2.0 * hsl.z - f2;
+		
+		rgb.r = hue2rgb(f1, f2, hsl.x + (1.0/3.0));
+		rgb.g = hue2rgb(f1, f2, hsl.x);
+		rgb.b= hue2rgb(f1, f2, hsl.x - (1.0/3.0));
+	}
+	
+	return rgb;
+}
+
+vec3 blendHue(vec3 base, vec3 blend) {
+	vec3 baseHSL = rgb2hsl(base);
+	return hsl2rgb(vec3(rgb2hsl(blend).r, baseHSL.g, baseHSL.b));
 }
 
 void main() {
@@ -75,6 +161,12 @@ void main() {
         }
 
         color = vec4(blendHardLight(color.rgb, dayNightTint), color.a);
+    }
+
+    if (terrainColorRatio > 0.0 && 1.0 - terrainColorRatio < outTexCoord.y) {
+        if (color.a > 0.0 && terrainColor.r > 0.0 && terrainColor.g > 0.0 && terrainColor.b > 0.0) {
+            color.rgb = mix(color.rgb, blendHue(color.rgb, terrainColor), 1.0);
+        }
     }
 
     gl_FragColor = color;
@@ -127,6 +219,8 @@ export default class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines
     onPreRender(): void {
         this.set1f('time', 0);
         this.set1i('ignoreTimeTint', 0);
+        this.set1f('terrainColorRatio', 0);
+        this.set3fv('terrainColor', [ 0, 0, 0 ]);
     }
 
     onBind(gameObject: Phaser.GameObjects.GameObject): void {
@@ -137,6 +231,7 @@ export default class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines
 
         const data = sprite.pipelineData;
         const ignoreTimeTint = data['ignoreTimeTint'] as boolean;
+        const terrainColorRatio = data['terrainColorRatio'] as number || 0;
 
         let time = scene.currentBattle?.waveIndex
             ? ((scene.currentBattle.waveIndex + scene.getWaveCycleOffset()) % 40) / 40 // ((new Date().getSeconds() * 1000 + new Date().getMilliseconds()) % 10000) / 10000
@@ -147,6 +242,8 @@ export default class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines
         this.set3fv('dayTint', scene.arena.getDayTint().map(c => c / 255));
         this.set3fv('duskTint', scene.arena.getDuskTint().map(c => c / 255));
         this.set3fv('nightTint', scene.arena.getNightTint().map(c => c / 255));
+        this.set3fv('terrainColor', getTerrainColor(scene.arena.terrain?.terrainType || TerrainType.NONE).map(c => c / 255));
+        this.set1f('terrainColorRatio', terrainColorRatio);
     }
 
     onBatch(gameObject: Phaser.GameObjects.GameObject): void {

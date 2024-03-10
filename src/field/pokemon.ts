@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import BattleScene, { AnySound } from '../battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -15,7 +15,7 @@ import { initMoveAnim, loadMoveAnimAssets } from '../data/battle-anims';
 import { Status, StatusEffect } from '../data/status-effect';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition } from '../data/pokemon-evolutions';
 import { reverseCompatibleTms, tmSpecies } from '../data/tms';
-import { DamagePhase, FaintPhase, LearnMovePhase, StatChangePhase, SwitchSummonPhase } from '../phases';
+import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase } from '../phases';
 import { BattleStat } from '../data/battle-stat';
 import { BattlerTag, BattlerTagLapseType, EncoreTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
 import { BattlerTagType } from "../data/enums/battler-tag-type";
@@ -39,6 +39,7 @@ import { DexAttr, StarterMoveset } from '../system/game-data';
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from '@material/material-color-utilities';
 import { Nature, getNatureStatMultiplier } from '../data/nature';
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
+import { TerrainType } from '../data/terrain';
 
 export enum FieldPosition {
   CENTER,
@@ -664,8 +665,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return types;
   }
 
-  isOfType(type: Type) {
-    return this.getTypes(true).indexOf(type) > -1;
+  isOfType(type: Type): boolean {
+    return !!this.getTypes(true).find(t => t === type);
   }
 
   getAbility(ignoreOverride?: boolean): Ability {
@@ -706,6 +707,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   isTerastallized(): boolean {
     return this.getTeraType() !== Type.UNKNOWN;
+  }
+
+  isGrounded(): boolean {
+    return !this.isOfType(Type.FLYING);
   }
 
   getAttackMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
@@ -1042,7 +1047,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         else {
           if (source.findTag(t => t instanceof TypeBoostTag && (t as TypeBoostTag).boostedType === move.type))
             power.value *= 1.5;
-          const weatherTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(move.type);
+          const arenaAttackTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(move.type, this.isGrounded());
+          if (this.scene.arena.terrain?.terrainType === TerrainType.GRASSY && this.isGrounded() && move.type === Type.GROUND && move.moveTarget === MoveTarget.ALL_NEAR_OTHERS)
+            power.value /= 2;
           applyMoveAttrs(VariablePowerAttr, source, this, move, power);
           if (!typeless) {
             this.scene.arena.applyTags(WeakenMoveTypeTag, move.type, power);
@@ -1065,7 +1072,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this);
           const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source);
           const criticalMultiplier = isCritical ? 2 : 1;
-          const isTypeImmune = (typeMultiplier.value * weatherTypeMultiplier) === 0;
+          const isTypeImmune = (typeMultiplier.value * arenaAttackTypeMultiplier) === 0;
           const sourceTypes = source.getTypes();
           const matchesSourceType = sourceTypes[0] === move.type || (sourceTypes.length > 1 && sourceTypes[1] === move.type);
           let stabMultiplier = new Utils.NumberHolder(1);
@@ -1080,7 +1087,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             stabMultiplier.value = Math.min(stabMultiplier.value + 0.5, 2.25);
 
           if (!isTypeImmune) {
-            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * weatherTypeMultiplier * ((this.scene.currentBattle.randSeedInt(15) + 85) / 100)) * criticalMultiplier;
+            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier * ((this.scene.currentBattle.randSeedInt(15) + 85) / 100)) * criticalMultiplier;
             if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
               damage.value = Math.floor(damage.value / 2);
             move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
@@ -1088,6 +1095,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                 damage.value *= 2;
             });
           }
+
+          if (this.scene.arena.terrain?.terrainType === TerrainType.MISTY && this.isGrounded() && move.type === Type.DRAGON)
+            damage.value = Math.floor(damage.value / 2);
 
           const fixedDamage = new Utils.IntegerHolder(0);
           applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
@@ -1528,9 +1538,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
   }
 
-  trySetStatus(effect: StatusEffect): boolean {
-    if (this.status && effect !== StatusEffect.FAINT)
+  canSetStatus(effect: StatusEffect, quiet: boolean = false): boolean {
+    if (effect !== StatusEffect.FAINT && this.status)
       return false;
+    if (this.isGrounded() && this.scene.arena.terrain?.terrainType === TerrainType.MISTY)
+      return false;
+
     switch (effect) {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
@@ -1541,6 +1554,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (this.isOfType(Type.ELECTRIC))
           return false;
         break;
+      case StatusEffect.SLEEP:
+        if (this.isGrounded() && this.scene.arena.terrain?.terrainType === TerrainType.ELECTRIC)
+          return false;
       case StatusEffect.FREEZE:
         if (this.isOfType(Type.ICE))
           return false;
@@ -1552,21 +1568,33 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const cancelled = new Utils.BooleanHolder(false);
-    applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled);
+    applyPreSetStatusAbAttrs(StatusEffectImmunityAbAttr, this, effect, cancelled, quiet);
 
     if (cancelled.value)
       return false;
 
-    let cureTurn: Utils.IntegerHolder;
+    return true;
+  }
+
+  trySetStatus(effect: StatusEffect, asPhase: boolean = false, cureTurn: integer = 0, sourceText: string = null): boolean {
+    if (!this.canSetStatus(effect, asPhase))
+      return false;
+
+    if (asPhase) {
+      this.scene.unshiftPhase(new ObtainStatusEffectPhase(this.scene, this.getBattlerIndex(), effect, cureTurn, sourceText));
+      return true;
+    }
+
+    let statusCureTurn: Utils.IntegerHolder;
 
     if (effect === StatusEffect.SLEEP) {
-      cureTurn = new Utils.IntegerHolder(this.randSeedIntRange(2, 4));
-      applyAbAttrs(ReduceStatusEffectDurationAbAttr, this, null, effect, cureTurn);
+      statusCureTurn = new Utils.IntegerHolder(this.randSeedIntRange(2, 4));
+      applyAbAttrs(ReduceStatusEffectDurationAbAttr, this, null, effect, statusCureTurn);
 
       this.setFrameRate(4);
     }
 
-    this.status = new Status(effect, 0, cureTurn?.value);
+    this.status = new Status(effect, 0, statusCureTurn?.value);
 
     if (effect !== StatusEffect.FAINT)
       this.scene.triggerPokemonFormChange(this, SpeciesFormChangeStatusEffectTrigger, true);

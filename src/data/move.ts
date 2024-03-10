@@ -1,12 +1,12 @@
 import { Moves } from "./enums/moves";
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, DamagePhase, MovePhase, NewBattlePhase, ObtainStatusEffectPhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MovePhase, NewBattlePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { AttackMoveResult, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
-import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
+import { StatusEffect, getStatusEffectHealText } from "./status-effect";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { WeatherType } from "./weather";
@@ -16,6 +16,7 @@ import { Abilities, ProtectAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAb
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
+import { TerrainType } from "./terrain";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -767,10 +768,8 @@ export class StatusEffectAttr extends MoveEffectAttr {
         else
           return false;
       }
-      if (!pokemon.status || (pokemon.status.effect === this.effect && move.chance < 0)) {
-        user.scene.unshiftPhase(new ObtainStatusEffectPhase(user.scene, pokemon.getBattlerIndex(), this.effect, this.cureTurn));
-        return true;
-      }
+      if (!pokemon.status || (pokemon.status.effect === this.effect && move.chance < 0))
+        return pokemon.trySetStatus(this.effect, true);
     }
     return false;
   }
@@ -902,6 +901,46 @@ export class ClearWeatherAttr extends MoveEffectAttr {
   }
 }
 
+export class TerrainChangeAttr extends MoveEffectAttr {
+  private terrainType: TerrainType;
+  
+  constructor(terrainType: TerrainType) {
+    super();
+
+    this.terrainType = terrainType;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    return user.scene.arena.trySetTerrain(this.terrainType, true, true);
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => !user.scene.arena.terrain || (user.scene.arena.terrain.terrainType !== this.terrainType);
+  }
+
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+    // TODO: Expand on this
+    return user.scene.arena.terrain ? 0 : 6;
+  }
+}
+
+export class ClearTerrainAttr extends MoveEffectAttr {
+  private terrainType: TerrainType;
+  
+  constructor(terrainType: TerrainType) {
+    super();
+
+    this.terrainType = terrainType;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (user.scene.arena.terrain?.terrainType === this.terrainType)
+      return user.scene.arena.trySetTerrain(TerrainType.NONE, true, true);
+
+    return false;
+  }
+}
+
 export class OneHitKOAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (target.isBossImmune())
@@ -979,9 +1018,9 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
   }
 }
 
-export class SolarBeamChargeAttr extends ChargeAttr {
-  constructor() {
-    super(ChargeAnim.SOLAR_BEAM_CHARGING, 'took\nin sunlight!');
+export class SunlightChargeAttr extends ChargeAttr {
+  constructor(chargeAnim: ChargeAnim, chargeText: string) {
+    super(chargeAnim, chargeText);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
@@ -1347,7 +1386,7 @@ export class TurnDamagedDoublePowerAttr extends VariablePowerAttr {
   }
 }
 
-export class SolarBeamPowerAttr extends VariablePowerAttr {
+export class AntiSunlightPowerDecreaseAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
       const power = args[0] as Utils.NumberHolder;
@@ -2491,8 +2530,8 @@ export function initMoves() {
       .slicingMove()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.SOLAR_BEAM, "Solar Beam", Type.GRASS, MoveCategory.SPECIAL, 120, 100, 10, 168, "In this two-turn attack, the user gathers light, then blasts a bundled beam on the next turn.", -1, 0, 1)
-      .attr(SolarBeamChargeAttr)
-      .attr(SolarBeamPowerAttr)
+      .attr(SunlightChargeAttr, ChargeAnim.SOLAR_BEAM_CHARGING, 'took\nin sunlight!')
+      .attr(AntiSunlightPowerDecreaseAttr)
       .ignoresVirtual(),
     new StatusMove(Moves.POISON_POWDER, "Poison Powder", Type.POISON, 75, 35, -1, "The user scatters a cloud of poisonous dust that poisons the target.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.POISON)
@@ -3677,9 +3716,11 @@ export function initMoves() {
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.FLOWER_SHIELD, "Flower Shield (N)", Type.FAIRY, -1, 10, -1, "The user raises the Defense stats of all Grass-type Pokémon in battle with a mysterious power.", 100, 0, 6)
       .target(MoveTarget.ALL),
-    new StatusMove(Moves.GRASSY_TERRAIN, "Grassy Terrain (N)", Type.GRASS, -1, 10, -1, "The user turns the ground to grass for five turns. This restores the HP of Pokémon on the ground a little every turn and powers up Grass-type moves.", -1, 0, 6)
+    new StatusMove(Moves.GRASSY_TERRAIN, "Grassy Terrain", Type.GRASS, -1, 10, -1, "The user turns the ground to grass for five turns. This restores the HP of Pokémon on the ground a little every turn and powers up Grass-type moves.", -1, 0, 6)
+      .attr(TerrainChangeAttr, TerrainType.GRASSY)
       .target(MoveTarget.BOTH_SIDES),
-    new StatusMove(Moves.MISTY_TERRAIN, "Misty Terrain (N)", Type.FAIRY, -1, 10, -1, "This protects Pokémon on the ground from status conditions and halves damage from Dragon-type moves for five turns.", -1, 0, 6)
+    new StatusMove(Moves.MISTY_TERRAIN, "Misty Terrain", Type.FAIRY, -1, 10, -1, "This protects Pokémon on the ground from status conditions and halves damage from Dragon-type moves for five turns.", -1, 0, 6)
+      .attr(TerrainChangeAttr, TerrainType.MISTY)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.ELECTRIFY, "Electrify (N)", Type.ELECTRIC, -1, 20, -1, "If the target is electrified before it uses a move during that turn, the target's move becomes Electric type.", -1, 0, 6),
     new AttackMove(Moves.PLAY_ROUGH, "Play Rough", Type.FAIRY, MoveCategory.PHYSICAL, 90, 90, 10, -1, "The user plays rough with the target and attacks it. This may also lower the target's Attack stat.", 10, 0, 6)
@@ -3733,7 +3774,8 @@ export function initMoves() {
       .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => a === p.getAbility().id))),
     new StatusMove(Moves.HAPPY_HOUR, "Happy Hour (N)", Type.NORMAL, -1, 30, -1, "Using Happy Hour doubles the amount of prize money received after battle.", -1, 0, 6) // No animation
       .target(MoveTarget.USER_SIDE),
-    new StatusMove(Moves.ELECTRIC_TERRAIN, "Electric Terrain (N)", Type.ELECTRIC, -1, 10, -1, "The user electrifies the ground for five turns, powering up Electric-type moves. Pokémon on the ground no longer fall asleep.", -1, 0, 6)
+    new StatusMove(Moves.ELECTRIC_TERRAIN, "Electric Terrain", Type.ELECTRIC, -1, 10, -1, "The user electrifies the ground for five turns, powering up Electric-type moves. Pokémon on the ground no longer fall asleep.", -1, 0, 6)
+      .attr(TerrainChangeAttr, TerrainType.ELECTRIC)
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.DAZZLING_GLEAM, "Dazzling Gleam", Type.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, -1, "The user damages opposing Pokémon by emitting a powerful flash.", -1, 0, 6)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -3831,7 +3873,8 @@ export function initMoves() {
     new StatusMove(Moves.STRENGTH_SAP, "Strength Sap (P)", Type.GRASS, 100, 10, -1, "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat.", 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new AttackMove(Moves.SOLAR_BLADE, "Solar Blade", Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, -1, "In this two-turn attack, the user gathers light and fills a blade with the light's energy, attacking the target on the next turn.", -1, 0, 7)
-      .attr(ChargeAttr, ChargeAnim.SOLAR_BLADE_CHARGING, "is glowing!")
+      .attr(SunlightChargeAttr, ChargeAnim.SOLAR_BLADE_CHARGING, "is glowing!")
+      .attr(AntiSunlightPowerDecreaseAttr)
       .slicingMove(),
     new AttackMove(Moves.LEAFAGE, "Leafage", Type.GRASS, MoveCategory.PHYSICAL, 40, 100, 40, -1, "The user attacks by pelting the target with leaves.", -1, 0, 7),
     new StatusMove(Moves.SPOTLIGHT, "Spotlight (N)", Type.NORMAL, -1, 15, -1, "The user shines a spotlight on the target so that only the target will be attacked during the turn.", -1, 3, 7),
@@ -3848,7 +3891,8 @@ export function initMoves() {
       .ballBombMove(),
     new AttackMove(Moves.ANCHOR_SHOT, "Anchor Shot", Type.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, -1, "The user entangles the target with its anchor chain while attacking. The target becomes unable to flee.", -1, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1),
-    new StatusMove(Moves.PSYCHIC_TERRAIN, "Psychic Terrain (N)", Type.PSYCHIC, -1, 10, -1, "This protects Pokémon on the ground from priority moves and powers up Psychic-type moves for five turns.", -1, 0, 7)
+    new StatusMove(Moves.PSYCHIC_TERRAIN, "Psychic Terrain", Type.PSYCHIC, -1, 10, -1, "This protects Pokémon on the ground from priority moves and powers up Psychic-type moves for five turns.", -1, 0, 7)
+      .attr(TerrainChangeAttr, TerrainType.PSYCHIC)
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.LUNGE, "Lunge", Type.BUG, MoveCategory.PHYSICAL, 80, 100, 15, -1, "The user makes a lunge at the target, attacking with full force. This also lowers the target's Attack stat.", 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
