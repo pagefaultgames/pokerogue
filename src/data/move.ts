@@ -17,6 +17,7 @@ import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
+import { getTypeParameterOwner } from "typescript";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -2088,6 +2089,25 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
   }
 }
 
+export class FirstMoveTypeAttr extends MoveEffectAttr {
+  constructor() {
+    super(true);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    const firstMoveType = target.moveset[0].getMove().type
+   
+    user.summonData.types = [ firstMoveType ];
+
+    user.scene.queueMessage(getPokemonMessage(user, ` converted\ninto the ${Utils.toReadableString(Type[firstMoveType])} type!`));
+
+    return true;
+  }
+}
+
 export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
   private enemyMoveset: boolean;
 
@@ -2883,7 +2903,8 @@ export function initMoves() {
       .bitingMove(),
     new SelfStatusMove(Moves.SHARPEN, "Sharpen", Type.NORMAL, -1, 30, -1, "The user makes its edges more jagged,  which raises its Attack stat.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.ATK, 1, true),
-    new SelfStatusMove(Moves.CONVERSION, "Conversion (N)", Type.NORMAL, -1, 30, -1, "The user changes its type to become the same type as the move at the top of the list of moves it knows.", -1, 0, 1),
+    new SelfStatusMove(Moves.CONVERSION, "Conversion", Type.NORMAL, -1, 30, -1, "The user changes its type to become the same type as the move at the top of the list of moves it knows.", -1, 0, 1)
+      .attr(FirstMoveTypeAttr),
     new AttackMove(Moves.TRI_ATTACK, "Tri Attack", Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, "The user strikes with a simultaneous three-beam attack. This may also burn, freeze, or paralyze the target.", 20, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .attr(StatusEffectAttr, StatusEffect.BURN)
