@@ -883,6 +883,7 @@ export const modifierTypes = {
   ENEMY_STATUS_EFFECT_HEAL_CHANCE: () => new ModifierType('Full Heal Token', 'Adds a 10% chance every turn to heal a status condition', (type, _args) => new Modifiers.EnemyStatusEffectHealChanceModifier(type, 10), 'wl_full_heal'),
   ENEMY_INSTANT_REVIVE_CHANCE: () => new EnemyInstantReviveChanceModifierType('Revive Token', 5, false, 'wl_revive'),
   ENEMY_INSTANT_MAX_REVIVE_CHANCE: () => new EnemyInstantReviveChanceModifierType('Max Revive Token', 2, true, 'wl_max_revive'),
+  ENEMY_FUSED_CHANCE: () => new ModifierType('Fusion Token', 'Adds a 1% chance that a wild Pokémon will be a fusion', (type, _args) => new Modifiers.EnemyFusionChanceModifier(type, 1), 'wl_custom_spliced'),
 };
 
 const modifierPool = {
@@ -1063,17 +1064,18 @@ const trainerModifierPool = {
 
 const enemyBuffModifierPool = {
   [ModifierTier.COMMON]: [
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_HEAL, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_POISON_CHANCE, 1),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_PARALYZE_CHANCE, 1),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_SLEEP_CHANCE, 1),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_FREEZE_CHANCE, 1),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_BURN_CHANCE, 1),
-    new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_REVIVE_CHANCE, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_MAX_REVIVE_CHANCE, 3)
+    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_HEAL, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_POISON_CHANCE, 2),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_PARALYZE_CHANCE, 2),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_SLEEP_CHANCE, 2),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_FREEZE_CHANCE, 2),
+    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_BURN_CHANCE, 2),
+    new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_REVIVE_CHANCE, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_MAX_REVIVE_CHANCE, 6),
+    new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1)
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 5),
@@ -1081,7 +1083,8 @@ const enemyBuffModifierPool = {
     new WeightedModifierType(modifierTypes.ENEMY_HEAL, 5),
     new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 5),
     new WeightedModifierType(modifierTypes.ENEMY_INSTANT_REVIVE_CHANCE, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_MAX_REVIVE_CHANCE, 3)
+    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_MAX_REVIVE_CHANCE, 3),
+    new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1)
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 5),
@@ -1089,7 +1092,8 @@ const enemyBuffModifierPool = {
     new WeightedModifierType(modifierTypes.ENEMY_HEAL, 5),
     new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 5),
     new WeightedModifierType(modifierTypes.ENEMY_INSTANT_REVIVE_CHANCE, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_MAX_REVIVE_CHANCE, 3)
+    new WeightedModifierType(modifierTypes.ENEMY_INSTANT_MAX_REVIVE_CHANCE, 3),
+    new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 300)
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.ROGUE]: [ ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
   [ModifierTier.MASTER]: [ ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
@@ -1232,7 +1236,7 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
 }
 
 export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: Modifiers.PersistentModifier[], scene: BattleScene): Modifiers.EnemyPersistentModifier {
-  const tierStackCount = tier === ModifierTier.ULTRA ? 10 : tier === ModifierTier.GREAT ? 5 : 1;
+  const tierStackCount = tier === ModifierTier.ULTRA ? 5 : tier === ModifierTier.GREAT ? 3 : 1;
   const retryCount = 50;
   let candidate = getNewModifierTypeOption(null, ModifierPoolType.ENEMY_BUFF, tier);
   let r = 0;

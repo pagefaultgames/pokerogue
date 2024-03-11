@@ -8,7 +8,7 @@ import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
 import { getLevelTotalExp } from '../data/exp';
 import { Stat } from '../data/pokemon-stat';
-import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, TerastallizeModifier } from '../modifier/modifier';
+import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, TerastallizeModifier } from '../modifier/modifier';
 import { PokeballType } from '../data/pokeball';
 import { Gender } from '../data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from '../data/battle-anims';
@@ -180,7 +180,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metBiome = scene.currentBattle ? scene.arena.biomeType : -1;
       this.pokerus = false;
 
-      if (scene.gameMode === GameMode.SPLICED_ENDLESS) {
+      const fused = new Utils.BooleanHolder(scene.gameMode === GameMode.SPLICED_ENDLESS);
+      if (!fused.value && !this.isPlayer() && !this.hasTrainer())
+        this.scene.applyModifier(EnemyFusionChanceModifier, false, fused);
+
+      if (fused.value) {
         this.calculateStats();
         this.generateFusionSpecies();
       }
@@ -2556,6 +2560,8 @@ export class PokemonSummonData {
 
 export class PokemonBattleData {
   public hitCount: integer = 0;
+  public revived: boolean = false;
+  public maxRevived: boolean = false;
 }
 
 export class PokemonBattleSummonData {

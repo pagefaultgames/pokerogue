@@ -2650,8 +2650,14 @@ export class FaintPhase extends PokemonPhase {
       if (!pokemon.isPlayer()) {
         const enemyInstantReviveModifiers = this.scene.findModifiers(m => m instanceof EnemyInstantReviveChanceModifier, false);
         for (let modifier of enemyInstantReviveModifiers) {
-          if (modifier.shouldApply([ pokemon ]) && modifier.apply([ pokemon ]))
+          const maxRevive = (modifier as EnemyInstantReviveChanceModifier).fullHeal;
+          const prop = maxRevive ? 'maxRevived' : 'revived';
+          if (pokemon.battleData[prop])
+            continue;
+          if (modifier.shouldApply([ pokemon ]) && modifier.apply([ pokemon ])) {
+            pokemon.battleData[prop] = true;
             return this.end();
+          }
         }
       }
     }
@@ -3852,7 +3858,11 @@ export class AddEnemyBuffModifierPhase extends Phase {
     const tier = !(waveIndex % 1000) ? ModifierTier.ULTRA : !(waveIndex % 250) ? ModifierTier.GREAT : ModifierTier.COMMON;
 
     regenerateModifierPoolThresholds(this.scene.getEnemyParty(), ModifierPoolType.ENEMY_BUFF);
-    this.scene.addEnemyModifier(getEnemyBuffModifierForWave(tier, this.scene.findModifiers(m => m instanceof EnemyPersistentModifier, false), this.scene)).then(() => this.end());
+    
+    const count = Math.ceil(waveIndex / 250);
+    for (let i = 0; i < count; i++)
+      this.scene.addEnemyModifier(getEnemyBuffModifierForWave(tier, this.scene.findModifiers(m => m instanceof EnemyPersistentModifier, false), this.scene), true, true);
+    this.scene.updateModifiers(false, true).then(() => this.end());
   }
 }
 

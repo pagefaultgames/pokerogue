@@ -2005,3 +2005,38 @@ export class EnemyInstantReviveChanceModifier extends EnemyPersistentModifier {
     return 10;
   }
 }
+
+export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
+  private chance: number;
+
+  constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
+    super(type, stackCount);
+
+    this.chance = chancePercent / 100;
+  }
+
+  match(modifier: Modifier) {
+    return modifier instanceof EnemyFusionChanceModifier && modifier.chance === this.chance;
+  }
+
+  clone() {
+    return new EnemyFusionChanceModifier(this.type, this.chance * 100, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return [ this.chance * 100 ];
+  }
+
+  apply(args: any[]): boolean {
+    if (Phaser.Math.RND.realInRange(0, 1) >= (this.chance * this.getStackCount()))
+      return false;
+
+    (args[0] as Utils.BooleanHolder).value = true;
+
+    return true;
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 10;
+  }
+}
