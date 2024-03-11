@@ -607,6 +607,35 @@ export class HealAttr extends MoveEffectAttr {
   }
 }
 
+export class SacrificialFullRestoreAttr extends SacrificialAttr {
+  constructor() {
+    super();
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    // We don't know which party member will be chosen, so pick the highest max HP in the party
+    const maxPartyMemberHp = user.scene.getParty().map(p => p.getMaxHp()).reduce((maxHp: integer, hp: integer) => Math.max(hp, maxHp), 0);
+
+    console.log(maxPartyMemberHp);
+
+    user.scene.pushPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
+      maxPartyMemberHp, getPokemonMessage(user, '\'s Healing Wish\nwas granted!'), true, false, false, true));
+
+    return true;
+  }
+
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    return -20;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => user.scene.getParty().filter(p => p.isActive()).length > user.scene.currentBattle.getBattlerCount();
+  }
+}
+
 export abstract class WeatherHealAttr extends HealAttr {
   constructor() {
     super(0.5);
@@ -802,6 +831,52 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
         user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false).then(success => {
           if (success)
             user.scene.queueMessage(getPokemonMessage(user, ` stole\n${target.name}'s ${stolenItem.type.name}!`));
+          resolve(success);
+        });
+        return;
+      }
+
+      resolve(false);
+    });
+  }
+
+  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
+    return target.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+      && (m as PokemonHeldItemModifier).pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
+  }
+
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+    const heldItems = this.getTargetHeldItems(target);
+    return heldItems.length ? 5 : 0;
+  }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+    const heldItems = this.getTargetHeldItems(target);
+    return heldItems.length ? -5 : 0;
+  }
+}
+
+export class RemoveHeldItemAttr extends MoveEffectAttr {
+  private chance: number;
+
+  constructor(chance: number) {
+    super(false, MoveEffectTrigger.HIT);
+    this.chance = chance;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      const rand = Phaser.Math.RND.realInRange(0, 1);
+      if (rand >= this.chance)
+        return resolve(false);
+      const heldItems = this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
+      if (heldItems.length) {
+        const highestItemTier = heldItems.map(m => m.type.getOrInferTier()).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
+        const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier() === highestItemTier);
+        const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
+        user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false).then(success => {
+          if (success)
+            user.scene.queueMessage(getPokemonMessage(user, ` knocked off\n${target.name}'s ${stolenItem.type.name}!`));
           resolve(success);
         });
         return;
@@ -2084,6 +2159,25 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
   }
 }
 
+export class ReducePPMoveAttr extends OverrideMoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    //const lastMove = target.getLastXMoves().find(() => true);
+    const lastMove = user.scene.currentBattle.lastMove;
+
+    const moveTargets = getMoveTargets(user, lastMove);
+    if (!moveTargets.targets.length)
+      return false;
+
+    const targets = moveTargets.multiple || moveTargets.targets.length === 1
+      ? moveTargets.targets
+      : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
+        ? [ target.getBattlerIndex() ]
+        : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
+
+    return true;
+  }
+}
+
 // TODO: Review this
 const targetMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
   const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
@@ -3230,8 +3324,8 @@ export function initMoves() {
     new AttackMove(Moves.GYRO_BALL, "Gyro Ball", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "The user tackles the target with a high-speed spin. The slower the user compared to the target, the greater the move's power.", -1, 0, 4)
       .attr(BattleStatRatioPowerAttr, Stat.SPD, true)
       .ballBombMove(),
-    new SelfStatusMove(Moves.HEALING_WISH, "Healing Wish", Type.PSYCHIC, -1, 10, -1, "The user faints. In return, the Pokémon taking its place will have its HP restored and status conditions cured.", -1, 0, 4)
-      .attr(SacrificialAttr),
+    new SelfStatusMove(Moves.HEALING_WISH, "Healing Wish (N)", Type.PSYCHIC, -1, 10, -1, "The user faints. In return, the Pokémon taking its place will have its HP restored and status conditions cured.", -1, 0, 4)
+      .attr(SacrificialFullRestoreAttr),
     new AttackMove(Moves.BRINE, "Brine", Type.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, "If the target's HP is half or less, this attack will hit with double the power.", -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHpRatio() < 0.5 ? 2 : 1),
     new AttackMove(Moves.NATURAL_GIFT, "Natural Gift (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, "The user draws power to attack by using its held Berry. The Berry determines the move's type and power.", -1, 0, 4)
@@ -3264,7 +3358,8 @@ export function initMoves() {
       .makesContact(),
     new StatusMove(Moves.HEAL_BLOCK, "Heal Block (N)", Type.PSYCHIC, 100, 15, -1, "For five turns, the user prevents the opposing team from using any moves, Abilities, or held items that recover HP.", -1, 0, 4)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(Moves.WRING_OUT, "Wring Out (N)", Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 5, -1, "The user powerfully wrings the target. The more HP the target has, the greater the move's power.", -1, 0, 4)
+    new AttackMove(Moves.WRING_OUT, "Wring Out", Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 5, -1, "The user powerfully wrings the target. The more HP the target has, the greater the move's power.", -1, 0, 4)
+      .attr(OpponentHighHpPowerAttr)
       .makesContact(),
     new SelfStatusMove(Moves.POWER_TRICK, "Power Trick (N)", Type.PSYCHIC, -1, 10, -1, "The user employs its psychic power to switch its Attack stat with its Defense stat.", -1, 0, 4),
     new StatusMove(Moves.GASTRO_ACID, "Gastro Acid (N)", Type.POISON, 100, 10, -1, "The user hurls up its stomach acids on the target. The fluid eliminates the effect of the target's Ability.", -1, 0, 4),

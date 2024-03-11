@@ -3318,15 +3318,17 @@ export class PokemonHealPhase extends CommonAnimPhase {
   private showFullHpMessage: boolean;
   private skipAnim: boolean;
   private revive: boolean;
+  private healStatus: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, hpHealed: integer, message: string, showFullHpMessage: boolean, skipAnim?: boolean, revive?: boolean) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, hpHealed: integer, message: string, showFullHpMessage: boolean, skipAnim: boolean = false, revive: boolean = false, healStatus: boolean = false) {
     super(scene, battlerIndex, undefined, CommonAnim.HEALTH_UP);
 
     this.hpHealed = hpHealed;
     this.message = message;
     this.showFullHpMessage = showFullHpMessage;
-    this.skipAnim = !!skipAnim;
-    this.revive = !!revive;
+    this.skipAnim = skipAnim;
+    this.revive = revive;
+    this.healStatus = healStatus;
   }
 
   start() {
@@ -3346,6 +3348,9 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
     const fullHp = pokemon.getHpRatio() >= 1;
 
+    const hasMessage = !!this.message;
+    let lastStatusEffect = StatusEffect.NONE;
+
     if (!fullHp) {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       if (!this.revive)
@@ -3359,12 +3364,19 @@ export class PokemonHealPhase extends CommonAnimPhase {
         if (healAmount.value > this.scene.gameData.gameStats.highestHeal)
           this.scene.gameData.gameStats.highestHeal = healAmount.value;
       }
+      if (this.healStatus && !this.revive && pokemon.status) {
+        lastStatusEffect = pokemon.status.effect;
+        pokemon.resetStatus();
+      }
       pokemon.updateInfo().then(() => super.end());
     } else if (this.showFullHpMessage)
       this.message = getPokemonMessage(pokemon, `'s\nHP is full!`);
 
     if (this.message)
       this.scene.queueMessage(this.message);
+
+    if (this.healStatus && lastStatusEffect && !hasMessage)
+      this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(lastStatusEffect)));
 
     if (fullHp)
       super.end();
