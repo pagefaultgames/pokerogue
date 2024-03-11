@@ -287,16 +287,20 @@ export class AttackMove extends Move {
     attackScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
     if (attackScore) {
       if (this.category === MoveCategory.PHYSICAL) {
-        if (user.getBattleStat(Stat.ATK, target) > user.getBattleStat(Stat.SPATK, target)) {
-          const statRatio = user.getBattleStat(Stat.SPATK, target) / user.getBattleStat(Stat.ATK, target);
+        const atk = new Utils.IntegerHolder(user.getBattleStat(Stat.ATK, target));
+        applyMoveAttrs(VariableAtkAttr, user, target, move, atk);
+        if (atk.value > user.getBattleStat(Stat.SPATK, target)) {
+          const statRatio = user.getBattleStat(Stat.SPATK, target) / atk.value;
           if (statRatio <= 0.75)
             attackScore *= 2;
           else if (statRatio <= 0.875)
             attackScore *= 1.5;
         }
       } else {
-        if (user.getBattleStat(Stat.SPATK, target) > user.getBattleStat(Stat.ATK, target)) {
-          const statRatio = user.getBattleStat(Stat.ATK, target) / user.getBattleStat(Stat.SPATK, target);
+        const spAtk = new Utils.IntegerHolder(user.getBattleStat(Stat.SPATK, target));
+        applyMoveAttrs(VariableAtkAttr, user, target, move, spAtk);
+        if (spAtk.value > user.getBattleStat(Stat.ATK, target)) {
+          const statRatio = user.getBattleStat(Stat.ATK, target) / spAtk.value;
           if (statRatio <= 0.75)
             attackScore *= 2;
           else if (statRatio <= 0.875)
@@ -1500,6 +1504,28 @@ export class HitCountPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     (args[0] as Utils.NumberHolder).value += Math.min(user.battleData.hitCount, 6) * 50;
 
+    return true;
+  }
+}
+
+export class VariableAtkAttr extends MoveAttr {
+  constructor() {
+    super();
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    //const atk = args[0] as Utils.IntegerHolder;
+    return false;
+  }
+}
+
+export class DefAtkAttr extends VariableAtkAttr {
+  constructor() {
+    super();
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    (args[0] as Utils.IntegerHolder).value = user.getBattleStat(Stat.DEF, target);
     return true;
   }
 }
@@ -4170,7 +4196,8 @@ export function initMoves() {
       .attr(CutHpStatBoostAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ])
       .soundBased()
       .danceMove(),
-    new AttackMove(Moves.BODY_PRESS, "Body Press (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 80, 100, 10, -1, "The user attacks by slamming its body into the target. The higher the user's Defense, the more damage it can inflict on the target.", -1, 0, 8),
+    new AttackMove(Moves.BODY_PRESS, "Body Press", Type.FIGHTING, MoveCategory.PHYSICAL, 80, 100, 10, -1, "The user attacks by slamming its body into the target. The higher the user's Defense, the more damage it can inflict on the target.", -1, 0, 8)
+      .attr(DefAtkAttr),
     new StatusMove(Moves.DECORATE, "Decorate", Type.FAIRY, -1, 15, -1, "The user sharply raises the target's Attack and Sp. Atk stats by decorating the target.", 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.ATK, 2)
       .attr(StatChangeAttr, BattleStat.SPATK, 2),

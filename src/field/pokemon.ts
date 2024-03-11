@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import BattleScene, { AnySound } from '../battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -1073,8 +1073,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
             isCritical = !source.getTag(BattlerTagType.NO_CRIT) && !(this.getAbility().hasAttr(BlockCritAbAttr)) && (critChance === 1 || !this.scene.currentBattle.randSeedInt(critChance));
           }
-          const sourceAtk = source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this);
-          const targetDef = this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source);
+          const sourceAtk = new Utils.IntegerHolder(source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this));
+          const targetDef = new Utils.IntegerHolder(this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source));
           const criticalMultiplier = isCritical ? 2 : 1;
           const isTypeImmune = (typeMultiplier.value * arenaAttackTypeMultiplier) === 0;
           const sourceTypes = source.getTypes();
@@ -1090,8 +1090,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (sourceTeraType !== Type.UNKNOWN && matchesSourceType)
             stabMultiplier.value = Math.min(stabMultiplier.value + 0.5, 2.25);
 
+          applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
+
           if (!isTypeImmune) {
-            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk / targetDef) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier * ((this.scene.currentBattle.randSeedInt(15) + 85) / 100)) * criticalMultiplier;
+            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier * ((this.scene.currentBattle.randSeedInt(15) + 85) / 100)) * criticalMultiplier;
             if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
               damage.value = Math.floor(damage.value / 2);
             move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
