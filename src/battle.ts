@@ -9,7 +9,7 @@ import { TrainerType } from "./data/enums/trainer-type";
 import { GameMode } from "./game-mode";
 import { BattleSpec } from "./enums/battle-spec";
 import { PlayerGender } from "./system/game-data";
-import { PersistentModifier, PokemonHeldItemModifier } from "./modifier/modifier";
+import { PokemonHeldItemModifier } from "./modifier/modifier";
 
 export enum BattleType {
     WILD,

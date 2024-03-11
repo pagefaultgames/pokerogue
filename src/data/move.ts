@@ -2159,22 +2159,44 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
   }
 }
 
-export class ReducePPMoveAttr extends OverrideMoveEffectAttr {
+export class ReducePpMoveAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    //const lastMove = target.getLastXMoves().find(() => true);
-    const lastMove = user.scene.currentBattle.lastMove;
-
-    const moveTargets = getMoveTargets(user, lastMove);
-    if (!moveTargets.targets.length)
-      return false;
-
-    const targets = moveTargets.multiple || moveTargets.targets.length === 1
-      ? moveTargets.targets
-      : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
-        ? [ target.getBattlerIndex() ]
-        : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
+    // Null checks can be skipped due to condition function
+    const lastMove = target.getLastXMoves().find(() => true);
+    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
+    const lastPpUsed = movesetMove.ppUsed;
+    movesetMove.ppUsed = Math.min(movesetMove.ppUsed + 4, movesetMove.getMovePp());
+    user.scene.queueMessage(`It reduced the PP of ${getPokemonMessage(target, `'s\n${movesetMove.getName()} by ${movesetMove.ppUsed - lastPpUsed}!`)}`);
 
     return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => {
+      const lastMove = target.getLastXMoves().find(() => true);
+      if (lastMove) {
+        const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
+        return !!movesetMove?.getPpRatio();
+      }
+      return false;
+    };
+  }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+    const lastMove = target.getLastXMoves().find(() => true);
+    if (lastMove) {
+      const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
+      if (movesetMove) {
+        const maxPp = movesetMove.getMovePp();
+        const ppLeft = maxPp - movesetMove.ppUsed;
+        const value = -(8 - Math.ceil(Math.min(maxPp, 30) / 5));
+        if (ppLeft < 4)
+          return (value / 4) * ppLeft;
+        return value;
+      }
+    }
+
+    return 0;
   }
 }
 
@@ -2893,7 +2915,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.REVERSAL, "Reversal", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 15, 134, "An all-out attack that becomes more powerful the less HP the user has.", -1, 0, 2)
       .attr(LowHpPowerAttr),
-    new StatusMove(Moves.SPITE, "Spite (N)", Type.GHOST, 100, 10, -1, "The user unleashes its grudge on the move last used by the target by cutting 4 PP from it.", -1, 0, 2),
+    new StatusMove(Moves.SPITE, "Spite", Type.GHOST, 100, 10, -1, "The user unleashes its grudge on the move last used by the target by cutting 4 PP from it.", -1, 0, 2)
+      .attr(ReducePpMoveAttr),
     new AttackMove(Moves.POWDER_SNOW, "Powder Snow", Type.ICE, MoveCategory.SPECIAL, 40, 100, 25, -1, "The user attacks with a chilling gust of powdery snow. This may also freeze opposing Pokémon.", 10, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
