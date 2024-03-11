@@ -371,7 +371,7 @@ export const speciesEggMoves = {
   [Species.VOLCANION]: [ Moves.HYDRO_STEAM, Moves.HYDRO_CANNON, Moves.BLAST_BURN, Moves.METEOR_BEAM ],
   [Species.ROWLET]: [ Moves.SNIPE_SHOT, Moves.DRACO_METEOR, Moves.TRIPLE_ARROWS, Moves.THOUSAND_ARROWS ],
   [Species.LITTEN]: [ Moves.FAKE_OUT, Moves.PARTING_SHOT, Moves.PSYCHIC_FANGS, Moves.FLYING_PRESS ],
-  [Species.POPPLIO]: [ Moves.ENCORE, Moves.TORCH_SONG, Moves.BOOMBURST, Moves.RELIC_SONG ],
+  [Species.POPPLIO]: [ Moves.ENCORE, Moves.BOUNCY_BUBBLE, Moves.ALLURING_VOICE, Moves.BOOMBURST ],
   [Species.PIKIPEK]: [ Moves.BOOMBURST, Moves.FLAME_CHARGE, Moves.KNOCK_OFF, Moves.BURNING_BULWARK ],
   [Species.YUNGOOS]: [ Moves.HYPER_FANG, Moves.POISON_FANG, Moves.SWORDS_DANCE, Moves.FORESIGHT ],
   [Species.GRUBBIN]: [ Moves.ELECTROWEB, Moves.AIR_SLASH, Moves.SIGNAL_BEAM, Moves.ELECTRO_SHOT ],

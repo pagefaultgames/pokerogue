@@ -4034,7 +4034,7 @@ export function initMoves() {
     new StatusMove(Moves.COURT_CHANGE, "Court Change (N)", Type.NORMAL, 100, 10, -1, "With its mysterious power, the user swaps the effects on either side of the field.", -1, 0, 8)
       .target(MoveTarget.BOTH_SIDES),
     /* Unused */
-    new AttackMove(Moves.MAX_FLARE, "Max Flare (N)", Type.FIRE, MoveCategory.PHYSICAL, 100, -1, 10, -1, "This is a Fire-type attack Dynamax Pokémon use. The user intensifies the sun for five turns.", -1, 0, 8)
+    new AttackMove(Moves.MAX_FLARE, "Max Flare (N)", Type.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, "This is a Fire-type attack Dynamax Pokémon use. The user intensifies the sun for five turns.", -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY),
     new AttackMove(Moves.MAX_FLUTTERBY, "Max Flutterby (N)", Type.BUG, MoveCategory.PHYSICAL, 10, -1, 10, -1, "This is a Bug-type attack Dynamax Pokémon use. This lowers the target's Sp. Atk stat.", -1, 0, 8)
       .target(MoveTarget.NEAR_ENEMY),
@@ -4258,6 +4258,74 @@ export function initMoves() {
       .target(MoveTarget.USER_AND_ALLIES),
     new SelfStatusMove(Moves.TAKE_HEART, "Take Heart (P)", Type.PSYCHIC, -1, 10, -1, "The user lifts its spirits, curing its own status conditions and boosting its Sp. Atk and Sp. Def stats.", -1, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF ], 1, true),
+    /* Unused
+    new AttackMove(Moves.G_MAX_WILDFIRE, "G-Max Wildfire (N)", Type.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Fire-type attack that Gigantamax Charizard use. This move continues to deal damage to opponents for four turns.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_BEFUDDLE, "G-Max Befuddle (N)", Type.BUG, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Bug-type attack that Gigantamax Butterfree use. This move inflicts the poisoned, paralyzed, or asleep status condition on opponents.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_VOLT_CRASH, "G-Max Volt Crash (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, "An Electric-type attack that Gigantamax Pikachu use. This move paralyzes opponents.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_GOLD_RUSH, "G-Max Gold Rush (N)", Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Normal-type attack that Gigantamax Meowth use. This move confuses opponents and also earns extra money.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_CHI_STRIKE, "G-Max Chi Strike (N)", Type.FIGHTING, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Fighting-type attack that Gigantamax Machamp use. This move raises the chance of critical hits.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_TERROR, "G-Max Terror (N)", Type.GHOST, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Ghost-type attack that Gigantamax Gengar use. This Pokémon steps on the opposing Pokémon's shadow to prevent them from escaping.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_RESONANCE, "G-Max Resonance (N)", Type.ICE, MoveCategory.PHYSICAL, 10, -1, 10, -1, "An Ice-type attack that Gigantamax Lapras use. This move reduces the damage received for five turns.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_CUDDLE, "G-Max Cuddle (N)", Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Normal-type attack that Gigantamax Eevee use. This move infatuates opponents.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_REPLENISH, "G-Max Replenish (N)", Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Normal-type attack that Gigantamax Snorlax use. This move restores Berries that have been eaten.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_MALODOR, "G-Max Malodor (N)", Type.POISON, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Poison-type attack that Gigantamax Garbodor use. This move poisons opponents.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_STONESURGE, "G-Max Stonesurge (N)", Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Water-type attack that Gigantamax Drednaw use. This move scatters sharp rocks around the field.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_WIND_RAGE, "G-Max Wind Rage (N)", Type.FLYING, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Flying-type attack that Gigantamax Corviknight use. This move removes the effects of moves like Reflect and Light Screen.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_STUN_SHOCK, "G-Max Stun Shock (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, "An Electric-type attack that Gigantamax Toxtricity use. This move poisons or paralyzes opponents.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_FINALE, "G-Max Finale (N)", Type.FAIRY, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Fairy-type attack that Gigantamax Alcremie use. This move heals the HP of allies.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_DEPLETION, "G-Max Depletion (N)", Type.DRAGON, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Dragon-type attack that Gigantamax Duraludon use. Reduces the PP of the last move used.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_GRAVITAS, "G-Max Gravitas (N)", Type.PSYCHIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Psychic-type attack that Gigantamax Orbeetle use. This move changes gravity for five turns.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_VOLCALITH, "G-Max Volcalith (N)", Type.ROCK, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Rock-type attack that Gigantamax Coalossal use. This move continues to deal damage to opponents for four turns.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_SANDBLAST, "G-Max Sandblast (N)", Type.GROUND, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Ground-type attack that Gigantamax Sandaconda use. Opponents are trapped in a raging sandstorm for four to five turns.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_SNOOZE, "G-Max Snooze (N)", Type.DARK, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Dark-type attack that Gigantamax Grimmsnarl use. The user lets loose a huge yawn that lulls the targets into falling asleep on the next turn.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_TARTNESS, "G-Max Tartness (N)", Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Grass-type attack that Gigantamax Flapple use. This move reduces the opponents' evasiveness.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_SWEETNESS, "G-Max Sweetness (N)", Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Grass-type attack that Gigantamax Appletun use. This move heals the status conditions of allies.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_SMITE, "G-Max Smite (N)", Type.FAIRY, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Fairy-type attack that Gigantamax Hatterene use. This move confuses opponents.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_STEELSURGE, "G-Max Steelsurge (N)", Type.STEEL, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Steel-type attack that Gigantamax Copperajah use. This move scatters sharp spikes around the field.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_MELTDOWN, "G-Max Meltdown (N)", Type.STEEL, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Steel-type attack that Gigantamax Melmetal use. This move makes opponents incapable of using the same move twice in a row.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_FOAM_BURST, "G-Max Foam Burst (N)", Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Water-type attack that Gigantamax Kingler use. This move harshly lowers the Speed of opponents.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_CENTIFERNO, "G-Max Centiferno (N)", Type.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Fire-type attack that Gigantamax Centiskorch use. This move traps opponents in flames for four to five turns.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_VINE_LASH, "G-Max Vine Lash (N)", Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Grass-type attack that Gigantamax Venusaur use. This move continues to deal damage to opponents for four turns.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_CANNONADE, "G-Max Cannonade (N)", Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Water-type attack that Gigantamax Blastoise use. This move continues to deal damage to opponents for four turns.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_DRUM_SOLO, "G-Max Drum Solo (N)", Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Grass-type attack that Gigantamax Rillaboom use. This move can be used on the target regardless of its Abilities.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_FIREBALL, "G-Max Fireball (N)", Type.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Fire-type attack that Gigantamax Cinderace use. This move can be used on the target regardless of its Abilities.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_HYDROSNIPE, "G-Max Hydrosnipe (N)", Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Water-type attack that Gigantamax Inteleon use. This move can be used on the target regardless of its Abilities.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_ONE_BLOW, "G-Max One Blow (N)", Type.DARK, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Dark-type attack that Gigantamax Urshifu use. This single-strike move can ignore Max Guard.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    new AttackMove(Moves.G_MAX_RAPID_FLOW, "G-Max Rapid Flow (N)", Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, "A Water-type attack that Gigantamax Urshifu use. This rapid-strike move can ignore Max Guard.", -1, 0, 8)
+      .target(MoveTarget.ALL_NEAR_ENEMIES),
+    End Unused */
     new AttackMove(Moves.TERA_BLAST, "Tera Blast (P)", Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, "If the user has Terastallized, it unleashes energy of its Tera Type. This move inflicts damage using the Attack or Sp. Atk stat-whichever is higher for the user.", -1, 0, 9),
     new SelfStatusMove(Moves.SILK_TRAP, "Silk Trap (N)", Type.BUG, -1, 10, -1, "The user spins a silken trap, protecting itself from damage while lowering the Speed stat of any attacker that makes direct contact.", -1, 4, 9),
     new AttackMove(Moves.AXE_KICK, "Axe Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 120, 90, 10, -1, "The user attacks by kicking up into the air and slamming its heel down upon the target. This may also confuse the target. If it misses, the user takes damage instead.", 30, 0, 9)
