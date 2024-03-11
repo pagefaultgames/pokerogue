@@ -1512,7 +1512,7 @@ export class VariableAtkAttr extends MoveAttr {
     super();
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     //const atk = args[0] as Utils.IntegerHolder;
     return false;
   }
@@ -1523,8 +1523,30 @@ export class DefAtkAttr extends VariableAtkAttr {
     super();
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     (args[0] as Utils.IntegerHolder).value = user.getBattleStat(Stat.DEF, target);
+    return true;
+  }
+}
+
+export class VariableDefAttr extends MoveAttr {
+  constructor() {
+    super();
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    //const def = args[0] as Utils.IntegerHolder;
+    return false;
+  }
+}
+
+export class DefDefAttr extends VariableDefAttr {
+  constructor() {
+    super();
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value = target.getBattleStat(Stat.DEF, user);
     return true;
   }
 }
@@ -3647,7 +3669,8 @@ export function initMoves() {
     new StatusMove(Moves.WONDER_ROOM, "Wonder Room (N)", Type.PSYCHIC, -1, 10, -1, "The user creates a bizarre area in which Pokémon's Defense and Sp. Def stats are swapped for five turns.", -1, 0, 5)
       .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES),
-    new AttackMove(Moves.PSYSHOCK, "Psyshock (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, 54, "The user materializes an odd psychic wave to attack the target. This attack does physical damage.", -1, 0, 5),
+    new AttackMove(Moves.PSYSHOCK, "Psyshock", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, 54, "The user materializes an odd psychic wave to attack the target. This attack does physical damage.", -1, 0, 5)
+      .attr(DefDefAttr),
     new AttackMove(Moves.VENOSHOCK, "Venoshock", Type.POISON, MoveCategory.SPECIAL, 65, 100, 10, 45, "The user drenches the target in a special poisonous liquid. This move's power is doubled if the target is poisoned.", -1, 0, 5)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status && (target.status.effect === StatusEffect.POISON || target.status.effect === StatusEffect.TOXIC) ? 2 : 1),
     new SelfStatusMove(Moves.AUTOTOMIZE, "Autotomize (P)", Type.STEEL, -1, 15, -1, "The user sheds part of its body to make itself lighter and sharply raise its Speed stat.", -1, 0, 5)
