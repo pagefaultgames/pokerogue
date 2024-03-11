@@ -624,10 +624,8 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
     // We don't know which party member will be chosen, so pick the highest max HP in the party
     const maxPartyMemberHp = user.scene.getParty().map(p => p.getMaxHp()).reduce((maxHp: integer, hp: integer) => Math.max(hp, maxHp), 0);
 
-    console.log(maxPartyMemberHp);
-
     user.scene.pushPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
-      maxPartyMemberHp, getPokemonMessage(user, '\'s Healing Wish\nwas granted!'), true, false, false, true));
+      maxPartyMemberHp, getPokemonMessage(user, '\'s Healing Wish\nwas granted!'), true, false, false, true), true);
 
     return true;
   }
@@ -2098,11 +2096,11 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
     if (!super.apply(user, target, move, args))
       return false;
 
-    const firstMoveType = target.moveset[0].getMove().type
+    const firstMoveType = target.getMoveset()[0].getMove().type
    
     user.summonData.types = [ firstMoveType ];
 
-    user.scene.queueMessage(getPokemonMessage(user, ` converted\ninto the ${Utils.toReadableString(Type[firstMoveType])} type!`));
+    user.scene.queueMessage(getPokemonMessage(user, ` transformed\ninto to the ${Utils.toReadableString(Type[firstMoveType])} type!`));
 
     return true;
   }
@@ -3394,7 +3392,7 @@ export function initMoves() {
     new AttackMove(Moves.GYRO_BALL, "Gyro Ball", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "The user tackles the target with a high-speed spin. The slower the user compared to the target, the greater the move's power.", -1, 0, 4)
       .attr(BattleStatRatioPowerAttr, Stat.SPD, true)
       .ballBombMove(),
-    new SelfStatusMove(Moves.HEALING_WISH, "Healing Wish (N)", Type.PSYCHIC, -1, 10, -1, "The user faints. In return, the Pokémon taking its place will have its HP restored and status conditions cured.", -1, 0, 4)
+    new SelfStatusMove(Moves.HEALING_WISH, "Healing Wish", Type.PSYCHIC, -1, 10, -1, "The user faints. In return, the Pokémon taking its place will have its HP restored and status conditions cured.", -1, 0, 4)
       .attr(SacrificialFullRestoreAttr),
     new AttackMove(Moves.BRINE, "Brine", Type.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, "If the target's HP is half or less, this attack will hit with double the power.", -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHpRatio() < 0.5 ? 2 : 1),

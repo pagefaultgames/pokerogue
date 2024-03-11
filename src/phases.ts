@@ -3369,6 +3369,10 @@ export class PokemonHealPhase extends CommonAnimPhase {
         pokemon.resetStatus();
       }
       pokemon.updateInfo().then(() => super.end());
+    } else if (this.healStatus && !this.revive && pokemon.status) {
+        lastStatusEffect = pokemon.status.effect;
+        pokemon.resetStatus();
+        pokemon.updateInfo().then(() => super.end());
     } else if (this.showFullHpMessage)
       this.message = getPokemonMessage(pokemon, `'s\nHP is full!`);
 
@@ -3378,7 +3382,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     if (this.healStatus && lastStatusEffect && !hasMessage)
       this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(lastStatusEffect)));
 
-    if (fullHp)
+    if (fullHp && !lastStatusEffect)
       super.end();
   }
 }

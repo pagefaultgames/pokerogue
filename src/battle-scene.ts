@@ -109,6 +109,7 @@ export default class BattleScene extends Phaser.Scene {
 	private phaseQueue: Phase[];
 	private phaseQueuePrepend: Phase[];
 	private phaseQueuePrependSpliceIndex: integer;
+	private nextCommandPhaseQueue: Phase[];
 	private currentPhase: Phase;
 	private standbyPhase: Phase;
 	public field: Phaser.GameObjects.Container;
@@ -171,6 +172,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.phaseQueue = [];
 		this.phaseQueuePrepend = [];
 		this.phaseQueuePrependSpliceIndex = -1;
+		this.nextCommandPhaseQueue = [];
 	}
 
 	loadImage(key: string, folder: string, filename?: string) {
@@ -1450,8 +1452,8 @@ export default class BattleScene extends Phaser.Scene {
 		return this.standbyPhase;
 	}
 
-	pushPhase(phase: Phase): void {
-		this.phaseQueue.push(phase);
+	pushPhase(phase: Phase, defer: boolean = false): void {
+		(!defer ? this.phaseQueue : this.nextCommandPhaseQueue).push(phase);
 	}
 
 	unshiftPhase(phase: Phase): void {
@@ -1525,6 +1527,10 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	populatePhaseQueue(): void {
+		if (this.nextCommandPhaseQueue.length) {
+			this.phaseQueue.push(...this.nextCommandPhaseQueue);
+			this.nextCommandPhaseQueue.splice(0, this.nextCommandPhaseQueue.length);
+		}
 		this.phaseQueue.push(new TurnInitPhase(this));
 	}
 
