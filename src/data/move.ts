@@ -1253,6 +1253,20 @@ export class CutHpStatBoostAttr extends StatChangeAttr {
   }
 }
 
+export class InvertStatsAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    for (let s = 0; s < target.summonData.battleStats.length; s++)
+      target.summonData.battleStats[s] *= -1;
+
+    target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere all reversed!`));
+
+    return true;
+  }
+}
+
 export class HpSplitAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -3891,7 +3905,8 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -1)
       .attr(ForceSwitchOutAttr, true)
       .soundBased(),
-    new StatusMove(Moves.TOPSY_TURVY, "Topsy-Turvy (N)", Type.DARK, -1, 20, -1, "All stat changes affecting the target turn topsy-turvy and become the opposite of what they were.", -1, 0, 6),
+    new StatusMove(Moves.TOPSY_TURVY, "Topsy-Turvy", Type.DARK, -1, 20, -1, "All stat changes affecting the target turn topsy-turvy and become the opposite of what they were.", -1, 0, 6)
+      .attr(InvertStatsAttr),
     new AttackMove(Moves.DRAINING_KISS, "Draining Kiss", Type.FAIRY, MoveCategory.SPECIAL, 50, 100, 10, -1, "The user steals the target's HP with a kiss. The user's HP is restored by over half of the damage taken by the target.", -1, 0, 6)
       .attr(HitHealAttr),
     new StatusMove(Moves.CRAFTY_SHIELD, "Crafty Shield (N)", Type.FAIRY, -1, 10, -1, "The user protects itself and its allies from status moves with a mysterious power. This does not stop moves that do damage.", -1, 3, 6)
