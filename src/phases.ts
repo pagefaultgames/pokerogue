@@ -30,7 +30,7 @@ import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, ge
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
+import { Abilities, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -369,7 +369,7 @@ export abstract class FieldPhase extends BattlePhase {
   }
 
   executeForAll(func: PokemonFunc): void {
-    const field = this.scene.getField().filter(p => p?.summonData && p.isActive());
+    const field = this.scene.getField(true).filter(p => p.summonData);
     field.forEach(pokemon => func(pokemon));
   }
 }
@@ -1867,6 +1867,15 @@ export class MovePhase extends BattlePhase {
       return this.end();
     }
 
+    // Move redirection abilities (ie. Storm Drain) only support single target moves
+    const moveTarget = this.targets.length === 1
+      ? new Utils.IntegerHolder(this.targets[0])
+      : null;
+    if (moveTarget) {
+      this.scene.getField(true).forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, this.move.moveId, moveTarget));
+      this.targets[0] = moveTarget.value;
+    }
+
     if (this.targets.length === 1 && this.targets[0] === BattlerIndex.ATTACKER) {
       if (this.pokemon.turnData.attacksReceived.length) {
         const attacker = this.pokemon.turnData.attacksReceived.length ? this.pokemon.scene.getPokemonById(this.pokemon.turnData.attacksReceived[0].sourceId) : null;
@@ -1880,8 +1889,8 @@ export class MovePhase extends BattlePhase {
       }
     }
 
-    const targets = this.scene.getField().filter(p => {
-      if (p?.isActive(true) && this.targets.indexOf(p.getBattlerIndex()) > -1) {
+    const targets = this.scene.getField(true).filter(p => {
+      if (this.targets.indexOf(p.getBattlerIndex()) > -1) {
         const hiddenTag = p.getTag(HiddenTag);
         if (hiddenTag && !this.move.getMove().getAttrs(HitsTagAttr).filter(hta => (hta as HitsTagAttr).tagType === hiddenTag.tagType).length)
           return false;
@@ -2197,7 +2206,7 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   getTargets(): Pokemon[] {
-    return this.scene.getField().filter(p => p?.isActive(true) && this.targets.indexOf(p.getBattlerIndex()) > -1);
+    return this.scene.getField(true).filter(p => this.targets.indexOf(p.getBattlerIndex()) > -1);
   }
 
   getTarget(): Pokemon {
@@ -2690,7 +2699,7 @@ export class FaintPhase extends PokemonPhase {
     }
 
     pokemon.lapseTags(BattlerTagLapseType.FAINT);
-    this.scene.getField().filter(p => p !== pokemon && p?.isActive(true)).forEach(p => p.removeTagsBySourceId(pokemon.id));
+    this.scene.getField(true).filter(p => p !== pokemon).forEach(p => p.removeTagsBySourceId(pokemon.id));
 
     pokemon.faintCry(() => {
       const friendshipDecrease = new Utils.IntegerHolder(10);

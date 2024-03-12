@@ -711,13 +711,15 @@ export default class BattleScene extends Phaser.Scene {
 		return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
 	}
 
-	getField(): Pokemon[] {
+	getField(activeOnly: boolean = false): Pokemon[] {
 		const ret = new Array(4).fill(null);
 		const playerField = this.getPlayerField();
 		const enemyField = this.getEnemyField();
 		ret.splice(0, playerField.length, ...playerField);
 		ret.splice(2, enemyField.length, ...enemyField);
-		return ret;
+		return activeOnly
+			? ret.filter(p => p?.isActive())
+			: ret;
 	}
 
 	getPokemonById(pokemonId: integer): Pokemon {
@@ -935,7 +937,7 @@ export default class BattleScene extends Phaser.Scene {
 
 	updateFieldScale(): Promise<void> {
 		return new Promise(resolve => {
-			const fieldScale = Math.floor(Math.pow(1 / this.getField().filter(p => p?.isActive())
+			const fieldScale = Math.floor(Math.pow(1 / this.getField(true)
 				.map(p => p.getSpriteScale())
 				.reduce((highestScale: number, scale: number) => highestScale = Math.max(scale, highestScale), 0), 0.7) * 40
 			) / 40;

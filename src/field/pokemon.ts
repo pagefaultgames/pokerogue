@@ -2303,7 +2303,7 @@ export class EnemyPokemon extends Pokemon {
 
   getNextTargets(moveId: Moves): BattlerIndex[] {
     const moveTargets = getMoveTargets(this, moveId);
-    const targets = this.scene.getField().filter(p => p?.isActive(true) && moveTargets.targets.indexOf(p.getBattlerIndex()) > -1);
+    const targets = this.scene.getField(true).filter(p => moveTargets.targets.indexOf(p.getBattlerIndex()) > -1);
     if (moveTargets.multiple)
       return targets.map(p => p.getBattlerIndex());
 

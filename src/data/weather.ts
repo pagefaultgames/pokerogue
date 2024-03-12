@@ -101,7 +101,7 @@ export class Weather {
   }
 
   isEffectSuppressed(scene: BattleScene): boolean {
-    const field = scene.getField().filter(p => p);
+    const field = scene.getField(true);
 
     for (let pokemon of field) {
       const suppressWeatherEffectAbAttr = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr).find(() => true) as SuppressWeatherEffectAbAttr;

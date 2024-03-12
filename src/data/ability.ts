@@ -8,7 +8,7 @@ import { Weather, WeatherType } from "./weather";
 import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
-import Move, { AttackMove, MoveCategory, MoveFlags, RecoilAttr, StatusMoveTypeImmunityAttr } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, allMoves } from "./move";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -1062,6 +1062,39 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
   }
 }
 
+export class RedirectMoveAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (this.canRedirect(args[0] as Moves)) {
+      const target = args[1] as Utils.IntegerHolder;
+      const newTarget = pokemon.getBattlerIndex();
+      if (target.value !== newTarget) {
+        target.value = newTarget;
+        return true;
+      }
+    }
+
+    return false;
+  }
+  
+  canRedirect(moveId: Moves): boolean {
+    const move = allMoves[moveId];
+    return !![ MoveTarget.NEAR_OTHER, MoveTarget.OTHER ].find(t => move.moveTarget === t);
+  }
+}
+
+export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
+  public type: Type;
+
+  constructor(type: Type) {
+    super();
+    this.type = type;
+  }
+
+  canRedirect(moveId: Moves): boolean {
+    return super.canRedirect(moveId) && allMoves[moveId].type === this.type;
+  }
+}
+
 export class ReduceStatusEffectDurationAbAttr extends AbAttr {
   private statusEffect: StatusEffect;
 
@@ -1681,6 +1714,7 @@ export function initAbilities() {
     new Ability(Abilities.NATURAL_CURE, "Natural Cure", "All status conditions heal when the Pokémon switches out.", 3)
       .attr(PreSwitchOutResetStatusAbAttr),
     new Ability(Abilities.LIGHTNING_ROD, "Lightning Rod", "The Pokémon draws in all Electric-type moves. Instead of being hit by Electric-type moves, it boosts its Sp. Atk.", 3)
+      .attr(RedirectTypeMoveAbAttr, Type.ELECTRIC)
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPATK, 1),
     new Ability(Abilities.SERENE_GRACE, "Serene Grace (N)", "Boosts the likelihood of additional effects occurring when attacking.", 3),
     new Ability(Abilities.SWIFT_SWIM, "Swift Swim", "Boosts the Pokémon's Speed stat in rain.", 3)
@@ -1831,6 +1865,7 @@ export function initAbilities() {
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.SLOW_START, 5),
     new Ability(Abilities.SCRAPPY, "Scrappy (N)", "The Pokémon can hit Ghost-type Pokémon with Normal- and Fighting-type moves.", 4),
     new Ability(Abilities.STORM_DRAIN, "Storm Drain", "Draws in all Water-type moves. Instead of being hit by Water-type moves, it boosts its Sp. Atk.", 4)
+      .attr(RedirectTypeMoveAbAttr, Type.WATER)
       .attr(TypeImmunityStatChangeAbAttr, Type.WATER, BattleStat.SPATK, 1),
     new Ability(Abilities.ICE_BODY, "Ice Body", "The Pokémon gradually regains HP in a hailstorm.", 4)
       .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.HAIL),
