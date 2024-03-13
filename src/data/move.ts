@@ -4098,8 +4098,8 @@ export function initMoves() {
       .attr(SandHealAttr),
     new AttackMove(Moves.FIRST_IMPRESSION, "First Impression", Type.BUG, MoveCategory.PHYSICAL, 90, 100, 10, -1, "Although this move has great power, it only works the first turn each time the user enters battle.", -1, 2, 7)
       .condition(new FirstMoveCondition()),
-    new SelfStatusMove(Moves.BANEFUL_BUNKER, "Baneful Bunker (P)", Type.POISON, -1, 10, -1, "In addition to protecting the user from attacks, this move also poisons any attacker that makes direct contact.", -1, 4, 7)
-      .attr(ProtectAttr),
+    new SelfStatusMove(Moves.BANEFUL_BUNKER, "Baneful Bunker", Type.POISON, -1, 10, -1, "In addition to protecting the user from attacks, this move also poisons any attacker that makes direct contact.", -1, 4, 7)
+      .attr(ProtectAttr, BattlerTagType.BANEFUL_BUNKER),
     new AttackMove(Moves.SPIRIT_SHACKLE, "Spirit Shackle (P)", Type.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, -1, "The user attacks while simultaneously stitching the target's shadow to the ground to prevent the target from escaping.", -1, 0, 7),
     new AttackMove(Moves.DARKEST_LARIAT, "Darkest Lariat (P)", Type.DARK, MoveCategory.PHYSICAL, 85, 100, 10, -1, "The user swings both arms and hits the target. The target's stat changes don't affect this attack's damage.", -1, 0, 7),
     new AttackMove(Moves.SPARKLING_ARIA, "Sparkling Aria", Type.WATER, MoveCategory.SPECIAL, 90, 100, 10, -1, "The user bursts into song, emitting many bubbles. Any Pokémon suffering from a burn will be healed by the touch of these bubbles.", -1, 0, 7)

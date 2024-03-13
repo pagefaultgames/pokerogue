@@ -1,12 +1,12 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase } from "../phases";
+import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase } from "../phases";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
 import { Moves } from "./enums/moves";
-import { ChargeAttr, allMoves } from "./move";
+import { ChargeAttr, MoveFlags, allMoves } from "./move";
 import { Type } from "./type";
 import { Abilities, FlinchEffectAbAttr, applyAbAttrs } from "./ability";
 import { BattlerTagType } from "./enums/battler-tag-type";
@@ -567,8 +567,8 @@ export class ThunderCageTag extends DamagingTrapTag {
 
 
 export class ProtectedTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
-    super(BattlerTagType.PROTECTED, BattlerTagLapseType.CUSTOM, 0, sourceMove);
+  constructor(sourceMove: Moves, tagType: BattlerTagType = BattlerTagType.PROTECTED) {
+    super(tagType, BattlerTagLapseType.CUSTOM, 0, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -585,6 +585,26 @@ export class ProtectedTag extends BattlerTag {
     }
 
     return super.lapse(pokemon, lapseType);
+  }
+}
+
+export class ContactPoisonProtectedTag extends ProtectedTag {
+  constructor(sourceMove: Moves) {
+    super(sourceMove, BattlerTagType.BANEFUL_BUNKER);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = super.lapse(pokemon, lapseType);
+
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      const effectPhase = pokemon.scene.getCurrentPhase();
+      if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
+        const attacker = effectPhase.getPokemon();
+        attacker.trySetStatus(StatusEffect.POISON, true);
+      }
+    }
+
+    return ret;
   }
 }
 
@@ -788,6 +808,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new ThunderCageTag(turnCount, sourceId);
     case BattlerTagType.PROTECTED:
       return new ProtectedTag(sourceMove);
+    case BattlerTagType.BANEFUL_BUNKER:
+      return new ContactPoisonProtectedTag(sourceMove);
     case BattlerTagType.ENDURING:
       return new EnduringTag(sourceMove);
     case BattlerTagType.PERISH_SONG:
