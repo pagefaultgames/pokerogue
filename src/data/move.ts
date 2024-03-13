@@ -1310,6 +1310,51 @@ export class VariablePowerAttr extends MoveAttr {
   }
 }
 
+export class MagnitudePowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0] as Utils.NumberHolder;
+
+    //const rateNumberChance = Phaser.Math.RND.realInRange ( 5, 10, 20, 30, 20, 10, 5);
+    //const rateNumber = Phaser.Math.RND.realInRange ( 4, 5 , 6, 7, 8, 9, 10 );
+    //const rateNumberPowers = Phaser.Math.RND.realInRange ( 10, 30, 50, 70, 90, 110, 150 );
+
+    let rateNumber: integer;
+
+    const rand = user.randSeedInt(100);
+    const powerGrade = new Utils.IntegerHolder(rand);
+    if (powerGrade.value >= 95){
+      power.value = 150;
+      rateNumber = 10;
+    }
+    else if (powerGrade.value >= 85){
+      power.value = 110;
+      rateNumber = 9;
+    }
+    else if (powerGrade.value >= 65){
+      power.value = 90;
+      rateNumber = 8;
+    }
+    else if (powerGrade.value >= 35){
+      power.value = 70;
+      rateNumber = 7;
+    }
+    else if (powerGrade.value >= 15){
+      power.value = 50;
+      rateNumber = 6;
+    }
+    else if (powerGrade.value >= 5){
+      power.value = 30;
+      rateNumber = 5;
+    }
+    else (powerGrade.value >= 0);
+      power.value = 10;
+      rateNumber = 4;
+
+    return false;
+  }
+
+}
+
 export class MovePowerMultiplierAttr extends VariablePowerAttr {
   private powerMultiplierFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
 
