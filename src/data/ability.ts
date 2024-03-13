@@ -1859,7 +1859,9 @@ export function initAbilities() {
     new Ability(Abilities.FOREWARN, "Forewarn (N)", "When it enters a battle, the Pokémon can tell one of the moves an opposing Pokémon has.", 4),
     new Ability(Abilities.UNAWARE, "Unaware", "When attacking, the Pokémon ignores the target Pokémon's stat changes.", 4)
       .attr(IgnoreOpponentStatChangesAbAttr),
-    new Ability(Abilities.TINTED_LENS, "Tinted Lens (N)", "The Pokémon can use \"not very effective\" moves to deal regular damage.", 4),
+    new Ability(Abilities.TINTED_LENS, "Tinted Lens", "The Pokémon can use \"not very effective\" moves to deal regular damage.", 4)
+    // Please check if I did this right - Xiapher.
+    .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type) <= 0.5, 2),
     new Ability(Abilities.FILTER, "Filter (N)", "Reduces the power of supereffective attacks taken.", 4),
     new Ability(Abilities.SLOW_START, "Slow Start", "For five turns, the Pokémon's Attack and Speed stats are halved.", 4)
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.SLOW_START, 5),
