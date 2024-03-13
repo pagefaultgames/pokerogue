@@ -1889,7 +1889,10 @@ export function initAbilities() {
     new Ability(Abilities.UNNERVE, "Unnerve", "Unnerves opposing Pokémon and makes them unable to eat Berries.", 5)
       .attr(PreventBerryUseAbAttr),
     new Ability(Abilities.DEFIANT, "Defiant (N)", "Boosts the Pokémon's Attack stat sharply when its stats are lowered.", 5),
-    new Ability(Abilities.DEFEATIST, "Defeatist (N)", "Halves the Pokémon's Attack and Sp. Atk stats when its HP becomes half or less.", 5),
+    new Ability(Abilities.DEFEATIST, "Defeatist", "Halves the Pokémon's Attack and Sp. Atk stats when its HP becomes half or less.", 5)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 0.5)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 0.5)
+      .condition((pokemon) => pokemon.getHpRatio() <= 0.5),
     new Ability(Abilities.CURSED_BODY, "Cursed Body (N)", "May disable a move used on the Pokémon.", 5),
     new Ability(Abilities.HEALER, "Healer (N)", "Sometimes heals an ally's status condition.", 5),
     new Ability(Abilities.FRIEND_GUARD, "Friend Guard (N)", "Reduces damage done to allies.", 5),
