@@ -58,7 +58,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public name: string;
   public species: PokemonSpecies;
   public formIndex: integer;
-  public abilityIndex: integer;s
+  public abilityIndex: integer;
   public shiny: boolean;
   public pokeball: PokeballType;
   protected battleInfo: BattleInfo;
