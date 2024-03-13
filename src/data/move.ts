@@ -4690,8 +4690,8 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.TERA_STARSTORM, "Tera Starstorm (P)", Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, "With the power of its crystals, the user bombards and eliminates the target. When used by Terapagos in its Stellar Form, this move damages all opposing Pokémon.", -1, 0, 9),
     new AttackMove(Moves.FICKLE_BEAM, "Fickle Beam (P)", Type.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, -1, "The user shoots a beam of light to inflict damage. Sometimes all the user's heads shoot beams in unison, doubling the move's power.", -1, 0, 9),
-    new StatusMove(Moves.BURNING_BULWARK, "Burning Bulwark (P)", Type.FIRE, -1, 10, -1, "The user's intensely hot fur protects it from attacks and also burns any attacker that makes direct contact with it.", 100, 4, 9)
-      .attr(ProtectAttr),
+    new StatusMove(Moves.BURNING_BULWARK, "Burning Bulwark", Type.FIRE, -1, 10, -1, "The user's intensely hot fur protects it from attacks and also burns any attacker that makes direct contact with it.", 100, 4, 9)
+      .attr(ProtectAttr, BattlerTagType.BURNING_BULWARK),
     new AttackMove(Moves.THUNDERCLAP, "Thunderclap (P)", Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 5, -1, "This move enables the user to attack first with a jolt of electricity. This move fails if the target is not readying an attack.", -1, 1, 9),
     new AttackMove(Moves.MIGHTY_CLEAVE, "Mighty Cleave", Type.ROCK, MoveCategory.PHYSICAL, 95, 100, 5, -1, "The user wields the light that has accumulated atop its head to cleave the target. This move hits even if the target protects itself.", -1, 0, 9)
       .ignoresProtect(),

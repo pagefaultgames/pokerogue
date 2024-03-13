@@ -2090,8 +2090,6 @@ export class MoveEffectPhase extends PokemonPhase {
             continue;
           }
 
-          console.log(target.findTags(t => t instanceof ProtectedTag), 'TAGS')
-
           const isProtected = !this.move.getMove().hasFlag(MoveFlags.IGNORE_PROTECT) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
 
           moveHistoryEntry.result = MoveResult.SUCCESS;
