@@ -13,6 +13,7 @@ import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { Moves } from "./enums/moves";
+import { TerrainType } from "./terrain";
 
 export class Ability {
   public id: Abilities;
@@ -664,6 +665,20 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
+  private terrainType: TerrainType;
+
+  constructor(terrainType: TerrainType) {
+    super();
+
+    this.terrainType = terrainType;
+  }
+
+  applyPostSummon(pokemon: Pokemon, args: any[]): boolean {
+    return pokemon.scene.arena.trySetTerrain(this.terrainType, false);
+  }
+}
+
 export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   constructor() {
     super(true);
@@ -927,6 +942,13 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
 
     return false;
   }
+}
+
+function getTerrainCondition(...terrainTypes: TerrainType[]): AbAttrCondition {
+  return (pokemon: Pokemon) => {
+    const terrainType = pokemon.scene.arena.terrain?.terrainType;
+    return terrainType && terrainTypes.indexOf(terrainType) > -1;
+  };
 }
 
 export class PostTurnAbAttr extends AbAttr {
@@ -1969,7 +1991,8 @@ export function initAbilities() {
     new Ability(Abilities.GALE_WINGS, "Gale Wings (N)", "Gives priority to Flying-type moves when the Pokémon's HP is full.", 6),
     new Ability(Abilities.MEGA_LAUNCHER, "Mega Launcher", "Powers up aura and pulse moves.", 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5),
-    new Ability(Abilities.GRASS_PELT, "Grass Pelt (N)", "Boosts the Pokémon's Defense stat on Grassy Terrain.", 6),
+    new Ability(Abilities.GRASS_PELT, "Grass Pelt", "Boosts the Pokémon's Defense stat on Grassy Terrain.", 6)
+      .conditionalAttr(getTerrainCondition(TerrainType.GRASSY), BattleStatMultiplierAbAttr, BattleStat.DEF, 2), //Intended functionality is to boost the actual stat, not the stat stages. Doesn't seem to work?
     new Ability(Abilities.SYMBIOSIS, "Symbiosis (N)", "The Pokémon passes its item to an ally that has used up an item.", 6),
     new Ability(Abilities.TOUGH_CLAWS, "Tough Claws", "Powers up moves that make direct contact.", 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 1.3),
@@ -2009,7 +2032,8 @@ export function initAbilities() {
     new Ability(Abilities.LIQUID_VOICE, "Liquid Voice (N)", "All sound-based moves become Water-type moves.", 7),
     new Ability(Abilities.TRIAGE, "Triage (N)", "Gives priority to a healing move.", 7),
     new Ability(Abilities.GALVANIZE, "Galvanize (N)", "Normal-type moves become Electric-type moves. The power of those moves is boosted a little.", 7),
-    new Ability(Abilities.SURGE_SURFER, "Surge Surfer (N)", "Doubles the Pokémon's Speed stat on Electric Terrain.", 7),
+    new Ability(Abilities.SURGE_SURFER, "Surge Surfer", "Doubles the Pokémon's Speed stat on Electric Terrain.", 7)
+      .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), BattleStatMultiplierAbAttr, BattleStat.SPD, 2), //Intended functionality is to boost the actual stat, not the stat stages. Doesn't seem to work?
     new Ability(Abilities.SCHOOLING, "Schooling (N)", "When it has a lot of HP, the Pokémon forms a powerful school. It stops schooling when its HP is low.", 7)
       .attr(ProtectAbilityAbAttr),
     new Ability(Abilities.DISGUISE, "Disguise (N)", "Once per battle, the shroud that covers the Pokémon can protect it from an attack.", 7)
@@ -2036,10 +2060,14 @@ export function initAbilities() {
     new Ability(Abilities.BEAST_BOOST, "Beast Boost (N)", "The Pokémon boosts its most proficient stat each time it knocks out a Pokémon.", 7),
     new Ability(Abilities.RKS_SYSTEM, "RKS System (N)", "Changes the Pokémon's type to match the memory disc it holds.", 7)
       .attr(ProtectAbilityAbAttr),
-    new Ability(Abilities.ELECTRIC_SURGE, "Electric Surge (N)", "Turns the ground into Electric Terrain when the Pokémon enters a battle.", 7),
-    new Ability(Abilities.PSYCHIC_SURGE, "Psychic Surge (N)", "Turns the ground into Psychic Terrain when the Pokémon enters a battle.", 7),
-    new Ability(Abilities.MISTY_SURGE, "Misty Surge (N)", "Turns the ground into Misty Terrain when the Pokémon enters a battle.", 7),
-    new Ability(Abilities.GRASSY_SURGE, "Grassy Surge (N)", "Turns the ground into Grassy Terrain when the Pokémon enters a battle.", 7),
+    new Ability(Abilities.ELECTRIC_SURGE, "Electric Surge", "Turns the ground into Electric Terrain when the Pokémon enters a battle.", 7)
+      .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC),
+    new Ability(Abilities.PSYCHIC_SURGE, "Psychic Surge", "Turns the ground into Psychic Terrain when the Pokémon enters a battle.", 7)
+      .attr(PostSummonTerrainChangeAbAttr, TerrainType.PSYCHIC),
+    new Ability(Abilities.MISTY_SURGE, "Misty Surge", "Turns the ground into Misty Terrain when the Pokémon enters a battle.", 7)
+      .attr(PostSummonTerrainChangeAbAttr, TerrainType.MISTY),
+    new Ability(Abilities.GRASSY_SURGE, "Grassy Surge", "Turns the ground into Grassy Terrain when the Pokémon enters a battle.", 7)
+      .attr(PostSummonTerrainChangeAbAttr, TerrainType.GRASSY),
     new Ability(Abilities.FULL_METAL_BODY, "Full Metal Body", "Prevents other Pokémon's moves or Abilities from lowering the Pokémon's stats.", 7)
       .attr(ProtectStatAbAttr),
     new Ability(Abilities.SHADOW_SHIELD, "Shadow Shield (N)", "Reduces the amount of damage the Pokémon takes while its HP is full.", 7),
@@ -2120,9 +2148,11 @@ export function initAbilities() {
     new Ability(Abilities.BEADS_OF_RUIN, "Beads of Ruin (N)", "The power of the Pokémon's ruinous beads lowers the Sp. Def stats of all Pokémon except itself.", 9),
     new Ability(Abilities.ORICHALCUM_PULSE, "Orichalcum Pulse", "Turns the sunlight harsh when the Pokémon enters a battle. The ancient pulse thrumming through the Pokémon also boosts its Attack stat in harsh sunlight.", 9)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
-      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), BattleStatMultiplierAbAttr, BattleStat.ATK, 1)
+      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), BattleStatMultiplierAbAttr, BattleStat.ATK, 1) //Doesn't seem to work?
       .attr(ProtectAbilityAbAttr),
-    new Ability(Abilities.HADRON_ENGINE, "Hadron Engine (N)", "Turns the ground into Electric Terrain when the Pokémon enters a battle. The futuristic engine within the Pokémon also boosts its Sp. Atk stat on Electric Terrain.", 9)
+    new Ability(Abilities.HADRON_ENGINE, "Hadron Engine", "Turns the ground into Electric Terrain when the Pokémon enters a battle. The futuristic engine within the Pokémon also boosts its Sp. Atk stat on Electric Terrain.", 9)
+      .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
+      .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), BattleStatMultiplierAbAttr, BattleStat.SPATK, 1) //Doesn't seem to work?
       .attr(ProtectAbilityAbAttr),
     new Ability(Abilities.OPPORTUNIST, "Opportunist (N)", "If an opponent's stat is boosted, the Pokémon seizes the opportunity to boost the same stat for itself.", 9),
     new Ability(Abilities.CUD_CHEW, "Cud Chew (N)", "When the Pokémon eats a Berry, it will regurgitate that Berry at the end of the next turn and eat it one more time.", 9),

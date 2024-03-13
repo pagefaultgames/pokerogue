@@ -26,6 +26,10 @@ export class Terrain {
 
   getAttackTypeMultiplier(attackType: Type): number {
     switch (this.terrainType) {
+      case TerrainType.ELECTRIC:
+        if (attackType === Type.ELECTRIC)
+          return 1.3;
+        break;
       case TerrainType.GRASSY:
         if (attackType === Type.GRASS)
           return 1.3;
