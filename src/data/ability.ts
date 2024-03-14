@@ -1853,7 +1853,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.TRACE, "Trace (N)", "When it enters a battle, the Pokémon copies an opposing Pokémon's Ability.", 3),
     new Ability(Abilities.HUGE_POWER, "Huge Power", "Doubles the Pokémon's Attack stat.", 3)
-      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 2, true),
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 2),
     new Ability(Abilities.POISON_POINT, "Poison Point", "Contact with the Pokémon may poison the attacker.", 3)
       .attr(PostDefendContactApplyStatusEffectAbAttr, StatusEffect.POISON),
     new Ability(Abilities.INNER_FOCUS, "Inner Focus", "The Pokémon's intensely focused, and that protects the Pokémon from flinching.", 3)
@@ -1939,7 +1939,7 @@ export function initAbilities() {
       .attr(ProtectStatAbAttr)
       .ignorable(),
     new Ability(Abilities.PURE_POWER, "Pure Power", "Using its pure power, the Pokémon doubles its Attack stat.", 3)
-      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 2, true),
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 2),
     new Ability(Abilities.SHELL_ARMOR, "Shell Armor", "A hard shell protects the Pokémon from critical hits.", 3)
       .attr(BlockCritAbAttr)
       .ignorable(),
