@@ -30,7 +30,6 @@ export class GameMode implements GameModeConfig {
   constructor(modeId: GameModes, config: GameModeConfig) {
     this.modeId = modeId;
     Object.assign(this, config);
-    console.log(modeId, this, config);
   }
 
   getWaveForDifficulty(waveIndex: integer): integer {

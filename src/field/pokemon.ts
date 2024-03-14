@@ -32,7 +32,6 @@ import { BattleSpec } from "../enums/battle-spec";
 import { Mode } from '../ui/ui';
 import PartyUiHandler, { PartyOption, PartyUiMode } from '../ui/party-ui-handler';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
-import { GameModes } from '../game-mode';
 import { LevelMoves } from '../data/pokemon-level-moves';
 import { DamageAchv, achvs } from '../system/achv';
 import { DexAttr, StarterMoveset } from '../system/game-data';
