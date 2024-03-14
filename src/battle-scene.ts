@@ -1624,7 +1624,7 @@ export default class BattleScene extends Phaser.Scene {
 		return new Promise(resolve => {
 			const source = itemModifier.pokemonId ? itemModifier.getPokemon(target.scene) : null;
 			const cancelled = new Utils.BooleanHolder(false);
-			Utils.executeIf(!!source, () => applyAbAttrs(BlockItemTheftAbAttr, source, cancelled)).then(() => {
+			Utils.executeIf(source && source.isPlayer() !== target.isPlayer(), () => applyAbAttrs(BlockItemTheftAbAttr, source, cancelled)).then(() => {
 				if (cancelled.value)
 					return resolve(false);
 				const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
