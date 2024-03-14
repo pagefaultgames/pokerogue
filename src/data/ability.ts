@@ -2114,9 +2114,11 @@ export function initAbilities() {
     new Ability(Abilities.IRON_BARBS, "Iron Barbs (N)", "Inflicts damage on the attacker upon contact with iron barbs.", 5),
     new Ability(Abilities.ZEN_MODE, "Zen Mode (N)", "Changes the Pokémon's shape when HP is half or less.", 5),
     new Ability(Abilities.VICTORY_STAR, "Victory Star (N)", "Boosts the accuracy of its allies and itself.", 5),
-    new Ability(Abilities.TURBOBLAZE, "Turboblaze (N)", "Moves can be used on the target regardless of its Abilities.", 5)
+    new Ability(Abilities.TURBOBLAZE, "Turboblaze", "Moves can be used on the target regardless of its Abilities.", 5)
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is radiating a blazing aura!'))
       .attr(MoveAbilityBypassAbAttr),
-    new Ability(Abilities.TERAVOLT, "Teravolt (N)", "Moves can be used on the target regardless of its Abilities.", 5)
+    new Ability(Abilities.TERAVOLT, "Teravolt", "Moves can be used on the target regardless of its Abilities.", 5)
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is radiating a bursting aura!'))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.AROMA_VEIL, "Aroma Veil (N)", "Protects itself and its allies from attacks that limit their move choices.", 6)
       .ignorable(),
