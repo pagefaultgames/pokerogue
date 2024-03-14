@@ -1546,10 +1546,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   canSetStatus(effect: StatusEffect, quiet: boolean = false): boolean {
-    if (effect !== StatusEffect.FAINT && this.status)
-      return false;
-    if (this.isGrounded() && this.scene.arena.terrain?.terrainType === TerrainType.MISTY)
-      return false;
+    if (effect !== StatusEffect.FAINT) {
+      if (this.status)
+        return false;
+      if (this.isGrounded() && this.scene.arena.terrain?.terrainType === TerrainType.MISTY)
+        return false;
+    }
 
     switch (effect) {
       case StatusEffect.POISON:
