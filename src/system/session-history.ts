@@ -1,4 +1,4 @@
-import { GameMode } from "../game-mode";
+import { GameModes } from "../game-mode";
 import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
 
@@ -12,7 +12,7 @@ export interface SessionHistory {
   seed: string;
   playTime: integer;
   result: SessionHistoryResult,
-  gameMode: GameMode;
+  gameMode: GameModes;
   party: PokemonData[];
   modifiers: PersistentModifierData[];
   money: integer;

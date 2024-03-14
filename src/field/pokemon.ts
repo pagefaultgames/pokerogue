@@ -32,7 +32,7 @@ import { BattleSpec } from "../enums/battle-spec";
 import { Mode } from '../ui/ui';
 import PartyUiHandler, { PartyOption, PartyUiMode } from '../ui/party-ui-handler';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
-import { GameMode } from '../game-mode';
+import { GameModes } from '../game-mode';
 import { LevelMoves } from '../data/pokemon-level-moves';
 import { DamageAchv, achvs } from '../system/achv';
 import { DexAttr, StarterMoveset } from '../system/game-data';
@@ -180,7 +180,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metBiome = scene.currentBattle ? scene.arena.biomeType : -1;
       this.pokerus = false;
 
-      const fused = new Utils.BooleanHolder(scene.gameMode === GameMode.SPLICED_ENDLESS);
+      const fused = new Utils.BooleanHolder(scene.gameMode.isSplicedOnly);
       if (!fused.value && !this.isPlayer() && !this.hasTrainer())
         this.scene.applyModifier(EnemyFusionChanceModifier, false, fused);
 
@@ -536,7 +536,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const fusionBaseStats = this.getFusionSpeciesForm().baseStats;
       for (let s = 0; s < this.stats.length; s++)
         baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
-    } else if (this.scene.gameMode === GameMode.SPLICED_ENDLESS) {
+    } else if (this.scene.gameMode.isSplicedOnly) {
       for (let s = 0; s < this.stats.length; s++)
         baseStats[s] = Math.ceil(baseStats[s] / 2);
     }

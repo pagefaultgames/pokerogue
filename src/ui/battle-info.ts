@@ -282,8 +282,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.lastTeraType = teraType;
       }
 
-      if (nameUpdated || teraTypeUpdated)
+      if (nameUpdated || teraTypeUpdated) {
+        this.splicedIcon.setVisible(!!pokemon.fusionSpecies);
         this.splicedIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0), 1.5);
+      }
 
       if (this.lastStatus !== (pokemon.status?.effect || StatusEffect.NONE)) {
         this.lastStatus = pokemon.status?.effect || StatusEffect.NONE;

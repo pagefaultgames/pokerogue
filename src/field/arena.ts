@@ -11,7 +11,7 @@ import { Type } from "../data/type";
 import Move from "../data/move";
 import { ArenaTag, ArenaTagSide, getArenaTag } from "../data/arena-tag";
 import { ArenaTagType } from "../data/enums/arena-tag-type";
-import { GameMode } from "../game-mode";
+import { GameModes } from "../game-mode";
 import { TrainerType } from "../data/enums/trainer-type";
 import { BattlerIndex } from "../battle";
 import { Moves } from "../data/enums/moves";
@@ -55,7 +55,7 @@ export class Arena {
 
   randomSpecies(waveIndex: integer, level: integer, attempt?: integer): PokemonSpecies {
     const isBoss = !!this.scene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
-      && (this.biomeType !== Biome.END || this.scene.gameMode === GameMode.CLASSIC || waveIndex % 250 === 0);
+      && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
     const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
     let tier = !isBoss
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE
@@ -125,7 +125,7 @@ export class Arena {
 
   randomTrainerType(waveIndex: integer): TrainerType {
     const isBoss = (waveIndex % 30) === 20 && !!this.trainerPool[BiomePoolTier.BOSS].length
-      && (this.biomeType !== Biome.END || this.scene.gameMode === GameMode.CLASSIC || waveIndex % 250 === 0);
+      && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
     const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
     let tier = !isBoss
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE

@@ -6,7 +6,7 @@ import Trainer from "./field/trainer";
 import { Species } from "./data/enums/species";
 import { Moves } from "./data/enums/moves";
 import { TrainerType } from "./data/enums/trainer-type";
-import { GameMode } from "./game-mode";
+import { GameMode, GameModes } from "./game-mode";
 import { BattleSpec } from "./enums/battle-spec";
 import { PlayerGender } from "./system/game-data";
 import { PokemonHeldItemModifier } from "./modifier/modifier";
@@ -57,7 +57,7 @@ export default class Battle {
     public battleSeed: string;
     private battleSeedState: string;
 
-    constructor(gameMode: integer, waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean) {
+    constructor(gameMode: GameMode, waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean) {
         this.gameMode = gameMode;
         this.waveIndex = waveIndex;
         this.battleType = battleType;
@@ -80,7 +80,7 @@ export default class Battle {
 
     private initBattleSpec(): void {
         let spec = BattleSpec.DEFAULT;
-        if (this.gameMode === GameMode.CLASSIC) {
+        if (this.gameMode.isClassic) {
             if (this.waveIndex === 200)
                 spec = BattleSpec.FINAL_BOSS;
         }
@@ -88,17 +88,20 @@ export default class Battle {
     }
 
     private getLevelForWave(): integer {
-        let baseLevel = 1 + this.waveIndex / 2 + Math.pow(this.waveIndex / 25, 2);
+        let levelWaveIndex = this.waveIndex;
+        if (this.gameMode.isDaily)
+            levelWaveIndex += 30 + Math.floor(this.waveIndex / 5);
+        let baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
         const bossMultiplier = 1.2;
 
         if (!(this.waveIndex % 10)) {
             const ret = Math.floor(baseLevel * bossMultiplier);
             if (this.battleSpec === BattleSpec.FINAL_BOSS || !(this.waveIndex % 250))
                 return Math.ceil(ret / 25) * 25;
-            return ret + Math.round(Phaser.Math.RND.realInRange(-1, 1) * Math.floor(this.waveIndex / 10));
+            return ret + Math.round(Phaser.Math.RND.realInRange(-1, 1) * Math.floor(levelWaveIndex / 10));
         }
 
-        const deviation = 10 / this.waveIndex;
+        const deviation = 10 / levelWaveIndex;
 
         return Math.max(Math.round(baseLevel + Math.abs(this.randSeedGaussForLevel(deviation))), 1);
     }
@@ -142,7 +145,7 @@ export default class Battle {
             if (!this.started && this.trainer.config.encounterBgm && this.trainer.getEncounterMessages()?.length)
                 return `encounter_${this.trainer.getEncounterBgm()}`;
             return this.trainer.getBattleBgm();
-        } else if (this.gameMode === GameMode.CLASSIC && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS)
+        } else if (this.gameMode.isClassic && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS)
             return 'end_summit';
         for (let pokemon of battlers) {
             if (this.battleSpec === BattleSpec.FINAL_BOSS) {
@@ -159,7 +162,7 @@ export default class Battle {
             }
         }
 
-        if (scene.gameMode === GameMode.CLASSIC && this.waveIndex <= 4)
+        if (scene.gameMode.isClassic && this.waveIndex <= 4)
             return 'battle_wild';
 
         return null;

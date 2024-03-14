@@ -35,7 +35,7 @@ import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { BattleSpec } from "./enums/battle-spec";
-import { GameMode } from "./game-mode";
+import { GameModes } from "./game-mode";
 import { Species } from "./data/enums/species";
 import { HealAchv, LevelAchv, MoneyAchv, achvs } from "./system/achv";
 import { trainerConfigs } from "./data/trainer-config";
@@ -294,7 +294,7 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.tryPopulateMoveset(starter.moveset);
         if (starter.pokerus)
           starterPokemon.pokerus = true;
-        if (this.scene.gameMode === GameMode.SPLICED_ENDLESS)
+        if (this.scene.gameMode.isSplicedOnly)
           starterPokemon.generateFusionSpecies(true);
         starterPokemon.setVisible(false);
         party.push(starterPokemon);
@@ -305,7 +305,7 @@ export class SelectStarterPhase extends Phase {
         this.scene.ui.setMode(Mode.MESSAGE).then(() => {
           SoundFade.fadeOut(this.scene, this.scene.sound.get('menu'), 500, true);
           this.scene.time.delayedCall(500, () => this.scene.playBgm());
-          if (this.scene.gameMode === GameMode.CLASSIC)
+          if (this.scene.gameMode.isClassic)
             this.scene.gameData.gameStats.classicSessionsPlayed++;
           else
             this.scene.gameData.gameStats.endlessSessionsPlayed++;
@@ -482,7 +482,7 @@ export class EncounterPhase extends BattlePhase {
       }
 
       if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
-        if (this.scene.gameMode === GameMode.CLASSIC && (battle.battleSpec === BattleSpec.FINAL_BOSS || !(battle.waveIndex % 250))) {
+        if (this.scene.gameMode.isClassic && (battle.battleSpec === BattleSpec.FINAL_BOSS || this.scene.gameMode.isWaveFinal(battle.waveIndex))) {
           if (battle.battleSpec !== BattleSpec.FINAL_BOSS) {
             enemyPokemon.formIndex = 1;
             enemyPokemon.updateScale();
@@ -797,9 +797,9 @@ export class SelectBiomePhase extends BattlePhase {
       this.end();
     };
 
-    if (this.scene.gameMode === GameMode.CLASSIC && this.scene.currentBattle.waveIndex === this.scene.finalWave - 9)
+    if (this.scene.gameMode.isClassic && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex + 9))
       setNextBiome(Biome.END);
-    else if (this.scene.gameMode !== GameMode.CLASSIC)
+    else if (this.scene.gameMode.hasRandomBiomes)
       setNextBiome(this.generateNextBiome());
     else if (Array.isArray(biomeLinks[currentBiome])) {
       let biomes: Biome[];
@@ -1775,7 +1775,7 @@ export class BattleEndPhase extends BattlePhase {
     this.scene.gameData.gameStats.battles++;
     if (this.scene.currentBattle.trainer)
       this.scene.gameData.gameStats.trainersDefeated++;
-    if (this.scene.gameMode === GameMode.ENDLESS && this.scene.currentBattle.waveIndex + 1 > this.scene.gameData.gameStats.highestEndlessWave)
+    if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex + 1 > this.scene.gameData.gameStats.highestEndlessWave)
 			this.scene.gameData.gameStats.highestEndlessWave = this.scene.currentBattle.waveIndex + 1;
 
     for (let pokemon of this.scene.getField()) {
@@ -2844,16 +2844,16 @@ export class VictoryPhase extends PokemonPhase {
       if (this.scene.currentBattle.battleType === BattleType.TRAINER)
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));
       this.scene.pushPhase(new EggLapsePhase(this.scene));
-      if (this.scene.gameMode !== GameMode.CLASSIC || this.scene.currentBattle.waveIndex < this.scene.finalWave) {
+      if (this.scene.gameMode.isEndless || !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
         if (this.scene.currentBattle.waveIndex % 10)
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
         else {
-          const superExpWave = this.scene.gameMode === GameMode.CLASSIC ? 20 : 10;
+          const superExpWave = !this.scene.gameMode.isEndless ? 20 : 10;
           if (this.scene.currentBattle.waveIndex <= 750 && (this.scene.currentBattle.waveIndex <= 500 || (this.scene.currentBattle.waveIndex % 30) === superExpWave))
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, (this.scene.currentBattle.waveIndex % 30) !== superExpWave || this.scene.currentBattle.waveIndex > 250 ? modifierTypes.EXP_CHARM : modifierTypes.SUPER_EXP_CHARM));
           if (this.scene.currentBattle.waveIndex <= 150 && !(this.scene.currentBattle.waveIndex % 50))
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_POKEBALL));
-          if (this.scene.gameMode !== GameMode.CLASSIC && !(this.scene.currentBattle.waveIndex % 50)) {
+          if (this.scene.gameMode.isEndless && !(this.scene.currentBattle.waveIndex % 50)) {
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, !(this.scene.currentBattle.waveIndex % 250) ? modifierTypes.VOUCHER_PREMIUM : modifierTypes.VOUCHER_PLUS));
             this.scene.pushPhase(new AddEnemyBuffModifierPhase(this.scene));
           }

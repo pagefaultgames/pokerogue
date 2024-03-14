@@ -6,7 +6,7 @@ import { Mode } from "./ui";
 import MessageUiHandler from "./message-ui-handler";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { allAbilities } from "../data/ability";
-import { GameMode, gameModeNames } from "../game-mode";
+import { GameModes, gameModes } from "../game-mode";
 import { Unlockables } from "../system/unlockables";
 import { GrowthRate, getGrowthRateColor } from "../data/exp";
 import { DexAttr, DexEntry, StarterFormMoveData, StarterMoveset } from "../system/game-data";
@@ -1204,8 +1204,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     ui.showText('Begin with these Pokémon?', null, () => {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
-        const startRun = (gameMode: GameMode) => {
-          this.scene.gameMode = gameMode;
+        const startRun = (gameMode: GameModes) => {
+          this.scene.gameMode = gameModes[gameMode];
           ui.setMode(Mode.STARTER_SELECT);
           const thisObj = this;
           const originalStarterSelectCallback = this.starterSelectCallback;
@@ -1225,18 +1225,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           ui.setMode(Mode.STARTER_SELECT);
           const options = [
             {
-              label: gameModeNames[GameMode.CLASSIC],
-              handler: () => startRun(GameMode.CLASSIC)
+              label: gameModes[GameModes.CLASSIC].getName(),
+              handler: () => startRun(GameModes.CLASSIC)
             },
             {
-              label: gameModeNames[GameMode.ENDLESS],
-              handler: () => startRun(GameMode.ENDLESS)
+              label: gameModes[GameModes.ENDLESS].getName(),
+              handler: () => startRun(GameModes.ENDLESS)
             }
           ];
           if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
             options.push({
-              label: gameModeNames[GameMode.SPLICED_ENDLESS],
-              handler: () => startRun(GameMode.SPLICED_ENDLESS)
+              label: gameModes[GameModes.SPLICED_ENDLESS].getName(),
+              handler: () => startRun(GameModes.SPLICED_ENDLESS)
             });
           }
           options.push({
@@ -1245,7 +1245,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           });
           ui.showText('Select a game mode.', null, () => ui.setModeWithoutClear(Mode.OPTION_SELECT, { options: options, yOffset: 19 }));
         } else
-          startRun(GameMode.CLASSIC);
+          startRun(GameModes.CLASSIC);
       }, cancel, null, null, 19);
     });
 
