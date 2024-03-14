@@ -88,9 +88,7 @@ export default class Battle {
     }
 
     private getLevelForWave(): integer {
-        let levelWaveIndex = this.waveIndex;
-        if (this.gameMode.isDaily)
-            levelWaveIndex += 30 + Math.floor(this.waveIndex / 5);
+        let levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
         let baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
         const bossMultiplier = 1.2;
 

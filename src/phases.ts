@@ -3771,18 +3771,17 @@ export class SelectModifierPhase extends BattlePhase {
       }
 
       const applyModifier = (modifier: Modifier, playSound: boolean = false) => {
-        this.scene.addModifier(modifier, false, playSound).then(() => {
-          if (cost) {
-            this.scene.money -= cost;
-            this.scene.updateMoneyText();
-            this.scene.playSound('buy');
-            (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
-          } else {
-            this.scene.ui.clearText();
-            this.scene.ui.setMode(Mode.MESSAGE);
-            super.end();
-          }
-        });
+        this.scene.addModifier(modifier, false, playSound);
+        if (cost) {
+          this.scene.money -= cost;
+          this.scene.updateMoneyText();
+          this.scene.playSound('buy');
+          (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
+        } else {
+          this.scene.ui.clearText();
+          this.scene.ui.setMode(Mode.MESSAGE);
+          super.end();
+        }
       };
 
       if (modifierType instanceof PokemonModifierType) {

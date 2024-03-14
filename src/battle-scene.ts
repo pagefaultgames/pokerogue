@@ -102,7 +102,6 @@ export default class BattleScene extends Phaser.Scene {
 	public fusionPaletteSwaps: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
-	public finalWave: integer = 200;
 	
 	public gameData: GameData;
 
