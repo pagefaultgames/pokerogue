@@ -46,12 +46,12 @@ export class Terrain {
 
 export function getTerrainColor(terrainType: TerrainType): [ integer, integer, integer ] {
   switch (terrainType) {
-    case TerrainType.GRASSY:
-      return [ 120, 200, 80 ];
     case TerrainType.MISTY:
       return [ 232, 136, 200 ];
     case TerrainType.ELECTRIC:
       return [ 248, 248, 120 ];
+    case TerrainType.GRASSY:
+      return [ 120, 200, 80 ];
     case TerrainType.PSYCHIC:
       return [ 160, 64, 160 ];
   }

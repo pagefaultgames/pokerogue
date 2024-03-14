@@ -25,7 +25,7 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { WeakenMoveTypeTag } from '../data/arena-tag';
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { Biome } from "../data/enums/biome";
-import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from '../data/ability';
+import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, BypassBurnDamageReductionAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveAbilityBypassAbAttr, MoveImmunityAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from '../data/ability';
 import PokemonData from '../system/pokemon-data';
 import { BattlerIndex } from '../battle';
 import { BattleSpec } from "../enums/battle-spec";
@@ -690,6 +690,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   canApplyAbility(): boolean {
     const ability = this.getAbility();
+    if (ability.isIgnorable && this.scene.arena.ignoreAbilities)
+        return false;
     return (this.hp || ability.isPassive) && !this.getAbility().conditions.find(condition => !condition(this));
   }
 
@@ -1038,6 +1040,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (sourceTeraType !== Type.UNKNOWN && sourceTeraType === move.type && power.value < 60 && move.priority <= 0 && !move.getAttrs(MultiHitAttr).length)
           power.value = 60;
         applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, this, battlerMove, power);
+        this.scene.getField(true).map(p => applyPreAttackAbAttrs(FieldVariableMovePowerAbAttr, this, source, battlerMove, power));
 
         applyPreDefendAbAttrs(ReceivedMoveDamageMultiplierAbAttr, this, source, battlerMove, cancelled, power);
 
@@ -1071,7 +1074,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (source.getTag(BattlerTagType.CRIT_BOOST))
               critLevel.value += 2;
             const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
-            isCritical = !source.getTag(BattlerTagType.NO_CRIT) && !(this.getAbility().hasAttr(BlockCritAbAttr)) && (critChance === 1 || !this.scene.currentBattle.randSeedInt(critChance));
+            const blockCrit = new Utils.BooleanHolder(false);
+            applyAbAttrs(BlockCritAbAttr, this, null);
+            isCritical = !blockCrit.value && !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !this.scene.currentBattle.randSeedInt(critChance));
           }
           const sourceAtk = new Utils.IntegerHolder(source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this));
           const targetDef = new Utils.IntegerHolder(this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source));
@@ -1095,8 +1100,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
           if (!isTypeImmune) {
             damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier * ((this.scene.currentBattle.randSeedInt(15) + 85) / 100)) * criticalMultiplier;
-            if (isPhysical && source.status && source.status.effect === StatusEffect.BURN)
-              damage.value = Math.floor(damage.value / 2);
+            if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
+              const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
+              applyAbAttrs(BypassBurnDamageReductionAbAttr, this, burnDamageReductionCancelled);
+              if (!burnDamageReductionCancelled.value)
+                damage.value = Math.floor(damage.value / 2);
+            }
             move.getAttrs(HitsTagAttr).map(hta => hta as HitsTagAttr).filter(hta => hta.doubleDamage).forEach(hta => {
               if (this.getTag(hta.tagType))
                 damage.value *= 2;

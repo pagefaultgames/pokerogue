@@ -17,7 +17,6 @@ import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
-import { getTypeParameterOwner } from "typescript";
 
 export enum MoveCategory {
   PHYSICAL,

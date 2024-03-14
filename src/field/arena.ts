@@ -16,7 +16,7 @@ import { TrainerType } from "../data/enums/trainer-type";
 import { BattlerIndex } from "../battle";
 import { Moves } from "../data/enums/moves";
 import { TimeOfDay } from "../data/enums/time-of-day";
-import { Terrain, TerrainType, getTerrainColor } from "../data/terrain";
+import { Terrain, TerrainType } from "../data/terrain";
 
 const WEATHER_OVERRIDE = WeatherType.NONE;
 
@@ -27,6 +27,8 @@ export class Arena {
   public terrain: Terrain;
   public tags: ArenaTag[];
   public bgm: string;
+  public ignoreAbilities: boolean;
+
   private lastTimeOfDay: TimeOfDay;
 
   private pokemonPool: PokemonPools;
@@ -421,6 +423,10 @@ export class Arena {
       default:
         return [ 48, 48, 98 ];
     }
+  }
+
+  setIgnoreAbilities(ignoreAbilities: boolean = true): void {
+    this.ignoreAbilities = ignoreAbilities;
   }
 
   applyTagsForSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide, ...args: any[]): void {
