@@ -31,7 +31,7 @@ export default class LoadingModalUiHandler extends ModalUiHandler {
   setup(): void {
     super.setup();
 
-    const label = addTextObject(this.scene, this.getWidth() / 2, this.getHeight() / 2, 'Loading...', TextStyle.WINDOW);
+    const label = addTextObject(this.scene, this.getWidth() / 2, this.getHeight() / 2, 'Loading…', TextStyle.WINDOW);
     label.setOrigin(0.5, 0.5);
 
     this.modalContainer.add(label);

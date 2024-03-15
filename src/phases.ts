@@ -51,7 +51,8 @@ import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-s
 import { Setting } from "./system/settings";
 import { Tutorial, handleTutorial } from "./tutorial";
 import { TerrainType } from "./data/terrain";
-import { OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
+import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
+import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -134,23 +135,19 @@ export class TitlePhase extends Phase {
   start(): void {
     super.start();
 
+    this.scene.ui.fadeIn(250);
+
+    this.scene.fadeOutBgm(0, false);
+
+    this.showOptions();
+  }
+
+  showOptions(): void {
     const options: OptionSelectItem[] = [];
     if (loggedInUser?.lastSessionSlot > -1) {
       options.push({
         label: 'Continue',
-        handler: () => {
-          this.scene.ui.setMode(Mode.MESSAGE);
-          this.scene.gameData.loadSession(this.scene, loggedInUser.lastSessionSlot).then((success: boolean) => {
-            if (success) {
-              this.loaded = true;
-              this.scene.ui.showText('Session loaded successfully.', null, () => this.end());
-            } else
-              this.end();
-          }).catch(err => {
-            console.error(err);
-            this.scene.ui.showText('Your session data could not be loaded.\nIt may be corrupted. Please reload the page.', null);
-          });
-        }
+        handler: () => this.loadSaveSlot(loggedInUser.lastSessionSlot)
       });
     }
     options.push({
@@ -158,16 +155,19 @@ export class TitlePhase extends Phase {
       handler: () => {
         this.scene.ui.setMode(Mode.MESSAGE);
         this.scene.ui.clearText();
-        this.scene.sessionSlotId = 0;
         this.end();
       }
     },
-    /*{
+    {
       label: 'Load',
-      handler: () => {
-        
-      }
-    },*/
+      handler: () => this.scene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
+        (slotId: integer) => {
+          if (slotId === -1)
+            return this.showOptions();
+          this.loadSaveSlot(slotId);
+        }
+      )
+    },
     /*{
       label: 'Daily Run',
       handler: () => {
@@ -176,8 +176,25 @@ export class TitlePhase extends Phase {
       },
       keepOpen: true
     }*/);
-    this.scene.ui.setMode(Mode.OPTION_SELECT, {
-      options: options
+    const config: OptionSelectConfig = {
+      options: options,
+      noCancel: true
+    };
+    this.scene.ui.setMode(Mode.OPTION_SELECT, config);
+  }
+
+  loadSaveSlot(slotId: integer): void {
+    this.scene.sessionSlotId = slotId;
+    this.scene.ui.setMode(Mode.MESSAGE);
+    this.scene.gameData.loadSession(this.scene, slotId).then((success: boolean) => {
+      if (success) {
+        this.loaded = true;
+        this.scene.ui.showText('Session loaded successfully.', null, () => this.end());
+      } else
+        this.end();
+    }).catch(err => {
+      console.error(err);
+      this.scene.ui.showText('Your session data could not be loaded.\nIt may be corrupted.', null);
     });
   }
 
@@ -303,28 +320,35 @@ export class SelectStarterPhase extends Phase {
     this.scene.playBgm('menu');
 
     this.scene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
-      const party = this.scene.getParty();
-      const loadPokemonAssets: Promise<void>[] = [];
-      for (let starter of starters) {
-        const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
-        const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
-        const starterGender = starter.species.malePercent !== null
-          ? !starterProps.female ? Gender.MALE : Gender.FEMALE
-          : Gender.GENDERLESS;
-        const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-        const starterPokemon = this.scene.addPlayerPokemon(starter.species, startingLevel, starterProps.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
-        starterPokemon.tryPopulateMoveset(starter.moveset);
-        if (starter.pokerus)
-          starterPokemon.pokerus = true;
-        if (this.scene.gameMode.isSplicedOnly)
-          starterPokemon.generateFusionSpecies(true);
-        starterPokemon.setVisible(false);
-        party.push(starterPokemon);
-        loadPokemonAssets.push(starterPokemon.loadAssets());
-      }
-      Promise.all(loadPokemonAssets).then(() => {
-        this.scene.ui.clearText();
-        this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+      this.scene.ui.clearText();
+      this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+        if (slotId === -1) {
+          this.scene.clearPhaseQueue();
+          this.scene.pushPhase(new TitlePhase(this.scene));
+          return this.end();
+        }
+        this.scene.sessionSlotId = slotId;
+
+        const party = this.scene.getParty();
+        const loadPokemonAssets: Promise<void>[] = [];
+        for (let starter of starters) {
+          const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
+          const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
+          const starterGender = starter.species.malePercent !== null
+            ? !starterProps.female ? Gender.MALE : Gender.FEMALE
+            : Gender.GENDERLESS;
+          const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
+          const starterPokemon = this.scene.addPlayerPokemon(starter.species, startingLevel, starterProps.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
+          starterPokemon.tryPopulateMoveset(starter.moveset);
+          if (starter.pokerus)
+            starterPokemon.pokerus = true;
+          if (this.scene.gameMode.isSplicedOnly)
+            starterPokemon.generateFusionSpecies(true);
+          starterPokemon.setVisible(false);
+          party.push(starterPokemon);
+          loadPokemonAssets.push(starterPokemon.loadAssets());
+        }
+        Promise.all(loadPokemonAssets).then(() => {
           SoundFade.fadeOut(this.scene, this.scene.sound.get('menu'), 500, true);
           this.scene.time.delayedCall(500, () => this.scene.playBgm());
           if (this.scene.gameMode.isClassic)
@@ -332,6 +356,7 @@ export class SelectStarterPhase extends Phase {
           else
             this.scene.gameData.gameStats.endlessSessionsPlayed++;
           this.scene.newBattle();
+          this.scene.sessionPlayTime = 0;
           this.end();
         });
       });
@@ -3029,7 +3054,7 @@ export class GameOverPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.gameData.clearSession().then(() => {
+    this.scene.gameData.clearSession(this.scene.sessionSlotId).then(() => {
       this.scene.time.delayedCall(1000, () => {
         let firstClear = false;
         if (this.victory) {

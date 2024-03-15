@@ -30,6 +30,7 @@ import LoadingModalUiHandler from './loading-modal-ui-handler';
 import * as Utils from "../utils";
 import GameStatsUiHandler from './game-stats-ui-handler';
 import AwaitableUiHandler from './awaitable-ui-handler';
+import SaveSlotSelectUiHandler from './save-slot-select-ui-handler';
 
 export enum Mode {
   MESSAGE,
@@ -38,7 +39,7 @@ export enum Mode {
   BALL,
   TARGET_SELECT,
   MODIFIER_SELECT,
-  //LOAD_SESSION,
+  SAVE_SLOT,
   PARTY,
   SUMMARY,
   BIOME_SELECT,
@@ -60,7 +61,7 @@ export enum Mode {
 };
 
 const transitionModes = [
-  //Mode.LOAD_SESSION,
+  Mode.SAVE_SLOT,
   Mode.PARTY,
   Mode.SUMMARY,
   Mode.STARTER_SELECT,
@@ -109,7 +110,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new BallUiHandler(scene),
       new TargetSelectUiHandler(scene),
       new ModifierSelectUiHandler(scene),
-      //LoadSessionUiHandler(scene),
+      new SaveSlotSelectUiHandler(scene),
       new PartyUiHandler(scene),
       new SummaryUiHandler(scene),
       new BiomeSelectUiHandler(scene),
@@ -274,10 +275,8 @@ export default class UI extends Phaser.GameObjects.Container {
 
   fadeOut(duration: integer): Promise<void> {
     return new Promise(resolve => {
-      if (this.overlayActive) {
-        resolve();
-        return;
-      }
+      if (this.overlayActive)
+        return resolve();
       this.overlayActive = true;
       this.overlay.setAlpha(0);
       this.overlay.setVisible(true);
@@ -293,6 +292,8 @@ export default class UI extends Phaser.GameObjects.Container {
 
   fadeIn(duration: integer): Promise<void> {
     return new Promise(resolve => {
+      if (!this.overlayActive)
+        return resolve();
       this.scene.tweens.add({
         targets: this.overlay,
         alpha: 0,

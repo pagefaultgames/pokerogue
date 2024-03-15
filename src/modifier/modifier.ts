@@ -24,6 +24,13 @@ export type ModifierPredicate = (modifier: Modifier) => boolean;
 
 const iconOverflowIndex = 24;
 
+export const modifierSortFunc = (a: Modifier, b: Modifier) => {
+  const aId = a instanceof PokemonHeldItemModifier ? a.pokemonId : 4294967295;
+  const bId = b instanceof PokemonHeldItemModifier ? b.pokemonId : 4294967295;
+
+  return aId < bId ? 1 : aId > bId ? -1 : 0;
+};
+
 export class ModifierBar extends Phaser.GameObjects.Container {
   private player: boolean;
   private modifierCache: PersistentModifier[];
@@ -40,12 +47,7 @@ export class ModifierBar extends Phaser.GameObjects.Container {
 
     const visibleIconModifiers = modifiers.filter(m => m.isIconVisible(this.scene as BattleScene));
 
-    visibleIconModifiers.sort((a: Modifier, b: Modifier) => {
-      const aId = a instanceof PokemonHeldItemModifier ? a.pokemonId : 4294967295;
-      const bId = b instanceof PokemonHeldItemModifier ? b.pokemonId : 4294967295;
-
-      return aId < bId ? 1 : aId > bId ? -1 : 0;
-    });
+    visibleIconModifiers.sort(modifierSortFunc);
 
     const thisArg = this;
 
@@ -197,7 +199,7 @@ export abstract class PersistentModifier extends Modifier {
 
     const text = addTextObject(scene, 8, 12, this.stackCount.toString(), TextStyle.PARTY, { fontSize: '66px', color: !isStackMax ? '#f8f8f8' : maxColor });
     text.setShadow(0, 0, null);
-    text.setStroke('#424242', 16)
+    text.setStroke('#424242', 16);
     text.setOrigin(0, 0);
 
     return text;
@@ -495,6 +497,8 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
 
   getMaxStackCount(scene: BattleScene, forThreshold?: boolean): integer {
     const pokemon = this.getPokemon(scene);
+    if (!pokemon)
+      return 0;
     if (pokemon.isPlayer() && forThreshold)
       return scene.getParty().map(p => this.getMaxHeldItemCount(p)).reduce((stackCount: integer, maxStackCount: integer) => Math.max(stackCount, maxStackCount), 0);
     return this.getMaxHeldItemCount(pokemon);

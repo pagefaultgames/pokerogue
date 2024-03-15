@@ -86,14 +86,54 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     const manageDataOptions = [];
 
+    const confirmSlot = (message: string, slotFilter: (i: integer) => boolean, callback: (i: integer) => void) => {
+      ui.revertMode();
+      ui.showText(message, null, () => {
+        const config: OptionSelectConfig = {
+          options: new Array(3).fill(null).map((_, i) => i).filter(slotFilter).map(i => {
+            return {
+              label: `Slot ${i + 1}`,
+              handler: () => {
+                callback(i);
+                ui.revertMode();
+                ui.showText(null, 0);
+              }
+            };
+          }).concat([{
+            label: 'Cancel',
+            handler: () => {
+              ui.revertMode();
+              ui.showText(null, 0);
+            }
+          }]),
+          xOffset: 98
+        };
+        ui.setOverlayMode(Mode.OPTION_SELECT, config);
+      });
+    };
+
     manageDataOptions.push({
       label: 'Import Session',
-      handler: () => this.scene.gameData.importData(GameDataType.SESSION),
+      handler: () => confirmSlot('Select a slot to import to.', () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId)),
       keepOpen: true
     });
     manageDataOptions.push({
       label: 'Export Session',
-      handler: () => this.scene.gameData.exportData(GameDataType.SESSION),
+      handler: () => {
+        const dataSlots: integer[] = [];
+        Promise.all(
+          new Array(3).fill(null).map((_, i) => {
+            const slotId = i;
+            return this.scene.gameData.getSession(slotId).then(data => {
+              if (data)
+                dataSlots.push(slotId);
+            })
+          })).then(() => {
+            confirmSlot('Select a slot to export from.',
+              i => dataSlots.indexOf(i) > -1,
+              slotId => this.scene.gameData.tryExportData(GameDataType.SESSION, slotId));
+          });
+      },
       keepOpen: true
     });
     manageDataOptions.push({
@@ -104,7 +144,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     manageDataOptions.push(
       {
         label: 'Export Data',
-        handler: () => this.scene.gameData.exportData(GameDataType.SYSTEM),
+        handler: () => this.scene.gameData.tryExportData(GameDataType.SYSTEM),
         keepOpen: true
       },
       {

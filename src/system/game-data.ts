@@ -33,7 +33,6 @@ const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet n
 export enum GameDataType {
   SYSTEM,
   SESSION,
-  DAILY_SESSION,
   SETTINGS,
   TUTORIALS
 }
@@ -44,12 +43,15 @@ export enum PlayerGender {
   FEMALE
 }
 
-export function getDataTypeKey(dataType: GameDataType): string {
+export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
   switch (dataType) {
     case GameDataType.SYSTEM:
       return 'data';
     case GameDataType.SESSION:
-      return 'sessionData';
+      let ret = 'sessionData';
+      if (slotId)
+        ret += slotId;
+      return ret;
     case GameDataType.SETTINGS:
       return 'settings';
     case GameDataType.TUTORIALS:
@@ -74,7 +76,7 @@ interface SystemSaveData {
   timestamp: integer;
 }
 
-interface SessionSaveData {
+export interface SessionSaveData {
   seed: string;
   playTime: integer;
   gameMode: GameModes;
@@ -496,12 +498,38 @@ export class GameData {
     });
   }
 
-  loadSession(scene: BattleScene, slotId: integer): Promise<boolean> {
+  getSession(slotId: integer): Promise<SessionSaveData> {
     return new Promise(async (resolve, reject) => {
       const handleSessionData = async (sessionDataStr: string) => {
         try {
           const sessionData = this.parseSessionData(sessionDataStr);
+          resolve(sessionData);
+        } catch (err) {
+          reject(err);
+          return;
+        }
+      };
 
+      if (!bypassLogin) {
+        Utils.apiFetch(`savedata/get?datatype=${GameDataType.SESSION}&slot=${slotId}`)
+          .then(response => response.text())
+          .then(async response => {
+            if (!response.length || response[0] !== '{') {
+              console.error(response);
+              return resolve(null);
+            }
+
+            await handleSessionData(response);
+          });
+      } else
+        await handleSessionData(atob(localStorage.getItem(`sessionData${slotId ? slotId : ''}`)));
+    });
+  }
+
+  loadSession(scene: BattleScene, slotId: integer): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        this.getSession(slotId).then(async sessionData => {
           console.debug(sessionData);
 
           scene.seed = sessionData.seed || scene.game.config.seed[0];
@@ -562,41 +590,27 @@ export class GameData {
 
           scene.updateModifiers(true);
 
-          // TODO: Remove if
-          if (battle.battleSpec !== BattleSpec.FINAL_BOSS) {
-            for (let enemyModifierData of sessionData.enemyModifiers) {
-              const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
-              if (modifier)
-                scene.addEnemyModifier(modifier, true);
-            }
-
-            scene.updateModifiers(false);
+          for (let enemyModifierData of sessionData.enemyModifiers) {
+            const modifier = enemyModifierData.toModifier(scene, modifiersModule[enemyModifierData.className]);
+            if (modifier)
+              scene.addEnemyModifier(modifier, true);
           }
 
+          scene.updateModifiers(false);
+
           Promise.all(loadPokemonAssets).then(() => resolve(true));
-        } catch (err) {
+        }).catch(err => {
           reject(err);
           return;
-        }
-      };
-
-      if (!bypassLogin) {
-        Utils.apiFetch(`savedata/get?datatype=${GameDataType.SESSION}&slot=${slotId}`)
-          .then(response => response.text())
-          .then(async response => {
-            if (!response.length || response[0] !== '{') {
-              console.error(response);
-              return resolve(false);
-            }
-
-            await handleSessionData(response);
-          });
-      } else
-        await handleSessionData(atob(localStorage.getItem(`sessionData${slotId ? slotId : ''}`)));
+        });
+      } catch (err) {
+        reject(err);
+        return;
+      }
     });
   }
 
-  clearSession(): Promise<boolean> {
+  clearSession(slotId: integer): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin) {
         localStorage.removeItem('sessionData');
@@ -606,9 +620,9 @@ export class GameData {
       updateUserInfo().then(success => {
         if (success !== null && !success)
           return resolve(false);
-        Utils.apiFetch(`savedata/delete?datatype=${GameDataType.SESSION}`).then(response => {
+        Utils.apiFetch(`savedata/delete?datatype=${GameDataType.SESSION}&slot=${slotId}`).then(response => {
           if (response.ok) {
-            loggedInUser.hasGameSession = false;
+            loggedInUser.lastSessionSlot = -1;
             return resolve(true);
           }
           resolve(false);
@@ -654,39 +668,47 @@ export class GameData {
     }) as SessionSaveData;
   }
 
-  public exportData(dataType: GameDataType): void {
-    const dataKey: string = getDataTypeKey(dataType);
-    const handleData = (dataStr: string) => {
-      switch (dataType) {
-        case GameDataType.SYSTEM:
-          dataStr = this.convertSystemDataStr(dataStr, true);
-          break;
-      }
-      const encryptedData = AES.encrypt(dataStr, saveKey);
-      const blob = new Blob([ encryptedData.toString() ], {type: 'text/json'});
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      link.download = `${dataKey}.prsv`;
-      link.click();
-      link.remove();
-    };
-    if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-      Utils.apiFetch(`savedata/get?datatype=${dataType}`)
-        .then(response => response.text())
-        .then(response => {
-          if (!response.length || response[0] !== '{') {
-            console.error(response);
-            return;
-          }
+  public tryExportData(dataType: GameDataType, slotId: integer = 0): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      const dataKey: string = getDataTypeKey(dataType, slotId);
+      const handleData = (dataStr: string) => {
+        switch (dataType) {
+          case GameDataType.SYSTEM:
+            dataStr = this.convertSystemDataStr(dataStr, true);
+            break;
+        }
+        const encryptedData = AES.encrypt(dataStr, saveKey);
+        const blob = new Blob([ encryptedData.toString() ], {type: 'text/json'});
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `${dataKey}.prsv`;
+        link.click();
+        link.remove();
+      };
+      if (!bypassLogin && dataType < GameDataType.SETTINGS) {
+        Utils.apiFetch(`savedata/get?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}`)
+          .then(response => response.text())
+          .then(response => {
+            if (!response.length || response[0] !== '{') {
+              console.error(response);
+              resolve(false);
+              return;
+            }
 
-          handleData(response);
-        });
-    } else
-      handleData(atob(localStorage.getItem(dataKey)));
+            handleData(response);
+            resolve(true);
+          });
+      } else {
+        const data = localStorage.getItem(dataKey);
+        if (data)
+          handleData(atob(data));
+        resolve(!!data);
+      }
+    });
   }
 
-  public importData(dataType: GameDataType): void {
-    const dataKey = getDataTypeKey(dataType);
+  public importData(dataType: GameDataType, slotId: integer = 0): void {
+    const dataKey = getDataTypeKey(dataType, slotId);
 
     let saveFile: any = document.getElementById('saveFile');
     if (saveFile)
@@ -751,7 +773,7 @@ export class GameData {
                     updateUserInfo().then(success => {
                       if (!success)
                         return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
-                      Utils.apiPost(`savedata/update?datatype=${dataType}`, dataStr)
+                      Utils.apiPost(`savedata/update?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}`, dataStr)
                         .then(response => response.text())
                         .then(error => {
                           if (error) {

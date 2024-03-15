@@ -139,10 +139,10 @@ export function decToBin(input: integer): string {
   return bin;
 }
 
-export function formatStat(stat: integer, forHp: boolean = false): string {
-  if (stat < (forHp ? 100000 : 1000000))
-    return stat.toString();
-  let ret = stat.toString();
+export function formatLargeNumber(count: integer, threshold: integer): string {
+  if (count < threshold)
+    return count.toString();
+  let ret = count.toString();
   let suffix = '';
   switch (Math.ceil(ret.length / 3) - 1) {
     case 1:
@@ -160,6 +160,10 @@ export function formatStat(stat: integer, forHp: boolean = false): string {
   const digits = ((ret.length + 2) % 3) + 1;
   const decimalNumber = parseInt(ret.slice(digits, digits + (3 - digits)));
   return `${ret.slice(0, digits)}${decimalNumber ? `.${decimalNumber}` : ''}${suffix}`;
+}
+
+export function formatStat(stat: integer, forHp: boolean = false): string {
+  return formatLargeNumber(stat, forHp ? 100000 : 1000000);
 }
 
 export function getEnumKeys(enumType): string[] {

@@ -622,7 +622,8 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	initSession(): void {
-		this.sessionPlayTime = 0;
+		if (this.sessionPlayTime === null)
+			this.sessionPlayTime = 0;
 
 		if (this.playTimeTimer)
 			this.playTimeTimer.destroy();
@@ -1336,13 +1337,9 @@ export default class BattleScene extends Phaser.Scene {
 		}
 	}
 
-	fadeOutBgm(duration?: integer, destroy?: boolean): boolean {
+	fadeOutBgm(duration: integer = 500, destroy: boolean = true): boolean {
 		if (!this.bgm)
 			return false;
-		if (!duration)
-			duration = 500;
-		if (destroy === undefined)
-      destroy = true;
     const bgm = this.sound.getAllPlaying().find(bgm => bgm.key === this.bgm.key);
 		if (bgm) {
 			SoundFade.fadeOut(this, this.bgm, duration, destroy);

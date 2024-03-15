@@ -9,6 +9,7 @@ export interface OptionSelectConfig {
   yOffset?: number;
   options: OptionSelectItem[];
   maxOptions?: integer;
+  noCancel?: boolean;
 }
 
 export interface OptionSelectItem {
@@ -110,8 +111,10 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
         if (this.config?.maxOptions && this.config.options.length > this.config.maxOptions) {
           this.scrollCursor = (this.config.options.length - this.config.maxOptions) + 1;
           this.cursor = options.length - 1;
-        } else
+        } else if (!this.config?.noCancel)
           this.setCursor(options.length - 1);
+        else
+          return false;
       }
       const option = this.config.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))];
       option.handler();

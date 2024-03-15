@@ -23,6 +23,7 @@ import { allMoves } from "../data/move";
 import { Type } from "../data/type";
 import { Moves } from "../data/enums/moves";
 import { speciesEggMoves } from "../data/egg-moves";
+import { TitlePhase } from "../phases";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -492,6 +493,20 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
       else
         error = true;
+    } else if (button === Button.CANCEL) {
+      if (this.statsMode) {
+        this.toggleStatsMode(false);
+        success = true;
+      } else if (this.starterCursors.length) {
+        this.popStarter();
+        success = true;
+        this.updateInstructions();
+      } else {
+        this.scene.clearPhaseQueue();
+        this.scene.pushPhase(new TitlePhase(this.scene));
+        this.scene.getCurrentPhase().end();
+        success = true;
+      }
     } else if (this.startCursorObj.visible) {
       switch (button) {
         case Button.ACTION:
@@ -657,15 +672,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             yOffset: 47
           });
           success = true;
-        }
-      } else if (button === Button.CANCEL) {
-        if (this.statsMode) {
-          this.toggleStatsMode(false);
-          success = true;
-        } else if (this.starterCursors.length) {
-          this.popStarter();
-          success = true;
-          this.updateInstructions();
         }
       } else {
         const genStarters = this.starterSelectGenIconContainers[this.getGenCursorWithScroll()].getAll().length;
