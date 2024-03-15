@@ -521,8 +521,13 @@ export class GameData {
 
             await handleSessionData(response);
           });
-      } else
-        await handleSessionData(atob(localStorage.getItem(`sessionData${slotId ? slotId : ''}`)));
+      } else {
+        const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ''}`);
+        if (sessionData)
+          await handleSessionData(atob(sessionData));
+        else
+          return resolve(null);
+      }
     });
   }
 
