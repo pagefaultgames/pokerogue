@@ -108,7 +108,7 @@ export default class MenuUiHandler extends MessageUiHandler {
           }]),
           xOffset: 98
         };
-        ui.setOverlayMode(Mode.OPTION_SELECT, config);
+        ui.setOverlayMode(Mode.MENU_OPTION_SELECT, config);
       });
     };
 
@@ -247,11 +247,11 @@ export default class MenuUiHandler extends MessageUiHandler {
           success = true;
           break;
         case MenuOptions.MANAGE_DATA:
-          ui.setOverlayMode(Mode.OPTION_SELECT, this.manageDataConfig);
+          ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.manageDataConfig);
           success = true;
           break;
         case MenuOptions.COMMUNITY:
-          ui.setOverlayMode(Mode.OPTION_SELECT, this.communityConfig);
+          ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.communityConfig);
           success = true;
           break;
         case MenuOptions.LOG_OUT:

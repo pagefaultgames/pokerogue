@@ -1202,6 +1202,7 @@ export default class BattleScene extends Phaser.Scene {
 				case Mode.FIGHT:
 				case Mode.BALL:
 				case Mode.TARGET_SELECT:
+				case Mode.SAVE_SLOT:
 				case Mode.PARTY:
 				case Mode.SUMMARY:
 				case Mode.BIOME_SELECT:
