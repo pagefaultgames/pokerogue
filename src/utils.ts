@@ -87,10 +87,10 @@ export function randSeedWeightedItem<T>(items: T[]): T {
 }
 
 export function getSunday(date: Date): Date {
-  const day = date.getDay(),
-  diff = date.getDate() - day;
+  const day = date.getDay();
+  const diff = date.getDate() - day;
   const newDate = new Date(date.setDate(diff));
-  return new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+  return new Date(Date.UTC(newDate.getUTCFullYear(), newDate.getUTCMonth(), newDate.getUTCDate()));
 }
 
 export function getFrameMs(frameCount: integer): integer {

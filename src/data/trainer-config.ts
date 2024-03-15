@@ -11,7 +11,7 @@ import { Species } from "./enums/species";
 import { tmSpecies } from "./tms";
 import { Type } from "./type";
 import { initTrainerTypeDialogue } from "./dialogue";
-import { PersistentModifier, TerastallizeModifier } from "../modifier/modifier";
+import { PersistentModifier } from "../modifier/modifier";
 
 export enum TrainerPoolTier {
   COMMON,

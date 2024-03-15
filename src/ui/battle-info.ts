@@ -359,7 +359,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   updateNameText(pokemon: Pokemon): void {
-    let displayName = pokemon.name;
+    let displayName = pokemon.name.replace(/[♂♀]/g, '');
     let nameTextWidth: number;
 
     let nameSizeTest = addTextObject(this.scene, 0, 0, displayName, TextStyle.BATTLE_INFO);
