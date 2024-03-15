@@ -38,6 +38,7 @@ export enum Mode {
   BALL,
   TARGET_SELECT,
   MODIFIER_SELECT,
+  //LOAD_SESSION,
   PARTY,
   SUMMARY,
   BIOME_SELECT,
@@ -59,6 +60,7 @@ export enum Mode {
 };
 
 const transitionModes = [
+  //Mode.LOAD_SESSION,
   Mode.PARTY,
   Mode.SUMMARY,
   Mode.STARTER_SELECT,
@@ -107,6 +109,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new BallUiHandler(scene),
       new TargetSelectUiHandler(scene),
       new ModifierSelectUiHandler(scene),
+      //LoadSessionUiHandler(scene),
       new PartyUiHandler(scene),
       new SummaryUiHandler(scene),
       new BiomeSelectUiHandler(scene),

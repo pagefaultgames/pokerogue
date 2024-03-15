@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import UI, { Mode } from './ui/ui';
-import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, CheckLoadPhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, ConsolidateDataPhase, MovePhase } from './phases';
+import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, ConsolidateDataPhase, MovePhase, TitlePhase } from './phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './field/pokemon';
 import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
 import * as Utils from './utils';
@@ -104,6 +104,7 @@ export default class BattleScene extends Phaser.Scene {
 	public enableVibration: boolean = false;
 	
 	public gameData: GameData;
+	public sessionSlotId: integer;
 
 	private phaseQueue: Phase[];
 	private phaseQueuePrepend: Phase[];
@@ -614,7 +615,7 @@ export default class BattleScene extends Phaser.Scene {
 			this.pushPhase(new LoginPhase(this));
 			if (!bypassLogin)
 				this.pushPhase(new ConsolidateDataPhase(this)); // TODO: Remove
-			this.pushPhase(new CheckLoadPhase(this));
+			this.pushPhase(new TitlePhase(this));
 
 			this.shiftPhase();
 		});
@@ -1205,6 +1206,7 @@ export default class BattleScene extends Phaser.Scene {
 				case Mode.BIOME_SELECT:
 				case Mode.STARTER_SELECT:
 				case Mode.CONFIRM:
+				case Mode.OPTION_SELECT:
 					this.ui.setOverlayMode(Mode.MENU);
 					inputSuccess = true;
 					break;

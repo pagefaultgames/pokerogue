@@ -5,6 +5,7 @@ import { version } from '../package.json';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 import BBCodeTextPlugin from 'phaser3-rex-plugins/plugins/bbcodetext-plugin';
 import InputTextPlugin from 'phaser3-rex-plugins/plugins/inputtext-plugin.js';
+import BBCodeText from 'phaser3-rex-plugins/plugins/bbcodetext';
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.WEBGL,
@@ -62,6 +63,7 @@ Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
+BBCodeText.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
 document.fonts.load('16px emerald').then(() => document.fonts.load('10px pkmnems'));

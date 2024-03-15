@@ -35,7 +35,6 @@ import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { BattleSpec } from "./enums/battle-spec";
-import { GameModes } from "./game-mode";
 import { Species } from "./data/enums/species";
 import { HealAchv, LevelAchv, MoneyAchv, achvs } from "./system/achv";
 import { trainerConfigs } from "./data/trainer-config";
@@ -52,6 +51,7 @@ import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-s
 import { Setting } from "./system/settings";
 import { Tutorial, handleTutorial } from "./tutorial";
 import { TerrainType } from "./data/terrain";
+import { OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -122,6 +122,96 @@ export class LoginPhase extends Phase {
   }
 }
 
+export class TitlePhase extends Phase {
+  private loaded: boolean;
+
+  constructor(scene: BattleScene) {
+    super(scene);
+
+    this.loaded = false;
+  }
+
+  start(): void {
+    super.start();
+
+    const options: OptionSelectItem[] = [];
+    if (loggedInUser?.lastSessionSlot > -1) {
+      options.push({
+        label: 'Continue',
+        handler: () => {
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.gameData.loadSession(this.scene, loggedInUser.lastSessionSlot).then((success: boolean) => {
+            if (success) {
+              this.loaded = true;
+              this.scene.ui.showText('Session loaded successfully.', null, () => this.end());
+            } else
+              this.end();
+          }).catch(err => {
+            console.error(err);
+            this.scene.ui.showText('Your session data could not be loaded.\nIt may be corrupted. Please reload the page.', null);
+          });
+        }
+      });
+    }
+    options.push({
+      label: 'New Game',
+      handler: () => {
+        this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.ui.clearText();
+        this.scene.sessionSlotId = 0;
+        this.end();
+      }
+    },
+    /*{
+      label: 'Load',
+      handler: () => {
+        
+      }
+    },*/
+    /*{
+      label: 'Daily Run',
+      handler: () => {
+        //this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.ui.showText('This feature is not available yet.\nPlease check back soon!', null, () => this.scene.ui.clearText(), Utils.fixedInt(1000));
+      },
+      keepOpen: true
+    }*/);
+    this.scene.ui.setMode(Mode.OPTION_SELECT, {
+      options: options
+    });
+  }
+
+  end(): void {
+    if (!this.loaded) {
+      this.scene.arena.preloadBgm();
+      this.scene.pushPhase(new SelectStarterPhase(this.scene));
+    } else
+      this.scene.playBgm();
+
+    this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
+
+    if (this.loaded) {
+      const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted()).length;
+
+      this.scene.pushPhase(new SummonPhase(this.scene, 0));
+      if (this.scene.currentBattle.double && availablePartyMembers > 1)
+        this.scene.pushPhase(new SummonPhase(this.scene, 1));
+      if (this.scene.currentBattle.waveIndex > 1 && this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+        this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
+        if (this.scene.currentBattle.double && availablePartyMembers > 1)
+          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+      }
+    }
+
+    for (let achv of Object.keys(this.scene.gameData.achvUnlocks)) {
+      if (vouchers.hasOwnProperty(achv))
+        this.scene.validateVoucher(vouchers[achv]);
+    }
+
+    super.end();
+  }
+}
+
 // TODO: Remove
 export class ConsolidateDataPhase extends Phase {
   start(): void {
@@ -166,74 +256,6 @@ export class ConsolidateDataPhase extends Phase {
           } else
             this.end();
       });
-  }
-}
-
-export class CheckLoadPhase extends Phase {
-  private loaded: boolean;
-
-  constructor(scene: BattleScene) {
-    super(scene);
-
-    this.loaded = false;
-  }
-
-  start(): void {
-    super.start();
-    
-    if (!loggedInUser?.hasGameSession)
-      return this.end();
-    
-    this.scene.ui.setMode(Mode.MESSAGE);
-    this.scene.ui.showText('You currently have a session in progress.\nWould you like to continue where you left off?', null, () => {
-      this.scene.ui.setMode(Mode.CONFIRM, () => {
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.gameData.loadSession(this.scene).then((success: boolean) => {
-          if (success) {
-            this.loaded = true;
-            this.scene.ui.showText('Session loaded successfully.', null, () => this.end());
-          } else
-            this.end();
-        }).catch(err => {
-          console.error(err);
-          this.scene.ui.showText('Your session data could not be loaded.\nIt may be corrupted. Please reload the page.', null);
-        });
-      }, () => {
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.clearText();
-        this.end();
-      })
-    });
-  }
-
-  end(): void {
-    if (!this.loaded) {
-      this.scene.arena.preloadBgm();
-      this.scene.pushPhase(new SelectStarterPhase(this.scene));
-    } else
-      this.scene.playBgm();
-
-    this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
-
-    if (this.loaded) {
-      const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted()).length;
-
-      this.scene.pushPhase(new SummonPhase(this.scene, 0));
-      if (this.scene.currentBattle.double && availablePartyMembers > 1)
-        this.scene.pushPhase(new SummonPhase(this.scene, 1));
-      if (this.scene.currentBattle.waveIndex > 1 && this.scene.currentBattle.battleType !== BattleType.TRAINER) {
-        this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
-        if (this.scene.currentBattle.double && availablePartyMembers > 1)
-          this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
-      }
-    }
-
-    for (let achv of Object.keys(this.scene.gameData.achvUnlocks)) {
-      if (vouchers.hasOwnProperty(achv))
-        this.scene.validateVoucher(vouchers[achv]);
-    }
-
-    super.end();
   }
 }
 
@@ -3024,7 +3046,7 @@ export class GameOverPhase extends BattlePhase {
           if (this.victory && !firstClear)
             this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
           this.scene.reset();
-          this.scene.unshiftPhase(new CheckLoadPhase(this.scene));
+          this.scene.unshiftPhase(new TitlePhase(this.scene));
           this.end();
         });
       });

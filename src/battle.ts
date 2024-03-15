@@ -6,7 +6,7 @@ import Trainer from "./field/trainer";
 import { Species } from "./data/enums/species";
 import { Moves } from "./data/enums/moves";
 import { TrainerType } from "./data/enums/trainer-type";
-import { GameMode, GameModes } from "./game-mode";
+import { GameMode } from "./game-mode";
 import { BattleSpec } from "./enums/battle-spec";
 import { PlayerGender } from "./system/game-data";
 import { PokemonHeldItemModifier } from "./modifier/modifier";

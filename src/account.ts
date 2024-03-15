@@ -3,7 +3,7 @@ import * as Utils from "./utils";
 
 export interface UserInfo {
   username: string;
-  hasGameSession: boolean;
+  lastSessionSlot: integer;
 }
 
 export let loggedInUser: UserInfo = null;
@@ -11,7 +11,14 @@ export let loggedInUser: UserInfo = null;
 export function updateUserInfo(): Promise<boolean> {
   return new Promise<boolean>(resolve => {
     if (bypassLogin) {
-      loggedInUser = { username: 'Guest', hasGameSession: !!localStorage.getItem('sessionData') };
+      let lastSessionSlot = -1;
+      for (let s = 0; s < 2; s++) {
+        if (localStorage.getItem(`sessionData${s ? s : ''}`)) {
+          lastSessionSlot = s;
+          break;
+        }
+      }
+      loggedInUser = { username: 'Guest', lastSessionSlot: lastSessionSlot };
       return resolve(true);
     }
     Utils.apiFetch('account/info').then(response => {

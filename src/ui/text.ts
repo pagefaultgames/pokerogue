@@ -40,8 +40,8 @@ export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, c
   scene.add.existing(ret);
   ret.setScale(0.1666666667);
   ret.setShadow(shadowSize, shadowSize, shadowColor);
-  if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing)
-    ret.setLineSpacing(5);
+  if (!(styleOptions as BBCodeText.TextStyle).lineSpacing)
+    ret.setLineSpacing(10);
 
   return ret;
 }

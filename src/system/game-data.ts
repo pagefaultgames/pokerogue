@@ -33,6 +33,7 @@ const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet n
 export enum GameDataType {
   SYSTEM,
   SESSION,
+  DAILY_SESSION,
   SETTINGS,
   TUTORIALS
 }
@@ -474,7 +475,7 @@ export class GameData {
         } as SessionSaveData;
 
         if (!bypassLogin) {
-          Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}`, JSON.stringify(sessionData))
+          Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}&slot=${scene.sessionSlotId}`, JSON.stringify(sessionData))
             .then(response => response.text())
             .then(error => {
               if (error) {
@@ -495,7 +496,7 @@ export class GameData {
     });
   }
 
-  loadSession(scene: BattleScene): Promise<boolean> {
+  loadSession(scene: BattleScene, slotId: integer): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       const handleSessionData = async (sessionDataStr: string) => {
         try {
@@ -580,7 +581,7 @@ export class GameData {
       };
 
       if (!bypassLogin) {
-        Utils.apiFetch(`savedata/get?datatype=${GameDataType.SESSION}`)
+        Utils.apiFetch(`savedata/get?datatype=${GameDataType.SESSION}&slot=${slotId}`)
           .then(response => response.text())
           .then(async response => {
             if (!response.length || response[0] !== '{') {
@@ -591,7 +592,7 @@ export class GameData {
             await handleSessionData(response);
           });
       } else
-        await handleSessionData(atob(localStorage.getItem('sessionData')));
+        await handleSessionData(atob(localStorage.getItem(`sessionData${slotId ? slotId : ''}`)));
     });
   }
 
