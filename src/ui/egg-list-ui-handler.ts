@@ -66,7 +66,7 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.eggListIconContainer = this.scene.add.container(115, 9);
     this.eggListContainer.add(this.eggListIconContainer);
 
-    this.cursorObj = this.scene.add.image(0, 0, 'starter_select_cursor');
+    this.cursorObj = this.scene.add.image(0, 0, 'select_cursor');
     this.cursorObj.setOrigin(0, 0);
     this.eggListContainer.add(this.cursorObj);
 

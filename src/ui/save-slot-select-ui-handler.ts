@@ -172,7 +172,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     let changed = super.setCursor(cursor);
     
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, 'starter_select_cursor_highlight', null, 296, 44, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, 'select_cursor_highlight_thick', null, 296, 44, 2, 2, 2, 2);
       this.cursorObj.setOrigin(0, 0);
       this.sessionSlotsContainer.add(this.cursorObj);
     }
@@ -254,6 +254,8 @@ class SessionSlot extends Phaser.GameObjects.Container {
       iconContainer.add(text);
 
       pokemonIconsContainer.add(iconContainer);
+
+      pokemon.destroy();
     });
 
     this.add(pokemonIconsContainer);

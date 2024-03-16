@@ -11,7 +11,6 @@ import { Type } from "../data/type";
 import Move from "../data/move";
 import { ArenaTag, ArenaTagSide, getArenaTag } from "../data/arena-tag";
 import { ArenaTagType } from "../data/enums/arena-tag-type";
-import { GameModes } from "../game-mode";
 import { TrainerType } from "../data/enums/trainer-type";
 import { BattlerIndex } from "../battle";
 import { Moves } from "../data/enums/moves";
@@ -357,7 +356,7 @@ export class Arena {
         return TimeOfDay.NIGHT;
     }
 
-    const waveCycle = ((this.scene.currentBattle?.waveIndex || 0) + this.scene.getWaveCycleOffset()) % 40;
+    const waveCycle = ((this.scene.currentBattle?.waveIndex || 0) + this.scene.waveCycleOffset) % 40;
 
     if (waveCycle < 15)
       return TimeOfDay.DAY;

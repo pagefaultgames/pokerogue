@@ -156,7 +156,7 @@ export default class SettingsUiHandler extends UiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, 'starter_select_cursor_highlight', null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, 'select_cursor_highlight', null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.optionsContainer.add(this.cursorObj);
     }

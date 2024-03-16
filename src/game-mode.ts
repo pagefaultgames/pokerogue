@@ -1,3 +1,6 @@
+import BattleScene, { STARTING_BIOME_OVERRIDE, STARTING_LEVEL_OVERRIDE, STARTING_MONEY_OVERRIDE } from "./battle-scene";
+import { Biome } from "./data/enums/biome";
+
 export enum GameModes {
   CLASSIC,
   ENDLESS,
@@ -30,6 +33,30 @@ export class GameMode implements GameModeConfig {
   constructor(modeId: GameModes, config: GameModeConfig) {
     this.modeId = modeId;
     Object.assign(this, config);
+  }
+
+  getStartingLevel(): integer {
+    if (STARTING_LEVEL_OVERRIDE)
+      return STARTING_LEVEL_OVERRIDE;
+    switch (this.modeId) {
+      case GameModes.DAILY:
+        return 20;
+      default:
+        return 5;
+    }
+  }
+
+  getStartingMoney(): integer {
+    return STARTING_MONEY_OVERRIDE || 1000;
+  }
+
+  getStartingBiome(scene: BattleScene): Biome {
+    switch (this.modeId) {
+      case GameModes.DAILY:
+        return scene.generateRandomBiome(this.getWaveForDifficulty(1));
+      default:
+        return STARTING_BIOME_OVERRIDE || Biome.TOWN;
+    }
   }
 
   getWaveForDifficulty(waveIndex: integer): integer {

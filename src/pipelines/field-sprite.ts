@@ -234,7 +234,7 @@ export default class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines
         const terrainColorRatio = data['terrainColorRatio'] as number || 0;
 
         let time = scene.currentBattle?.waveIndex
-            ? ((scene.currentBattle.waveIndex + scene.getWaveCycleOffset()) % 40) / 40 // ((new Date().getSeconds() * 1000 + new Date().getMilliseconds()) % 10000) / 10000
+            ? ((scene.currentBattle.waveIndex + scene.waveCycleOffset) % 40) / 40 // ((new Date().getSeconds() * 1000 + new Date().getMilliseconds()) % 10000) / 10000
             : Utils.getCurrentTime();
         this.set1f('time', time);
         this.set1i('ignoreTimeTint', ignoreTimeTint ? 1 : 0);

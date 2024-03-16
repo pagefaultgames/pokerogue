@@ -1932,7 +1932,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   destroy(): void {
-    this.battleInfo.destroy();
+    this.battleInfo?.destroy();
     super.destroy();
   }
 }
@@ -2046,8 +2046,10 @@ export class PlayerPokemon extends Pokemon {
         this.abilityIndex = abilityCount - 1;
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
-      this.scene.gameData.setPokemonSeen(this, false);
-      this.scene.gameData.setPokemonCaught(this, false);
+      if (!this.scene.gameMode.isDaily || this.metBiome > -1) {
+        this.scene.gameData.setPokemonSeen(this, false);
+        this.scene.gameData.setPokemonCaught(this, false);
+      }
       this.loadAssets().then(() => {
         this.calculateStats();
         this.updateInfo(true).then(() => resolve());
@@ -2091,8 +2093,10 @@ export class PlayerPokemon extends Pokemon {
         this.abilityIndex = abilityCount - 1;
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
-      this.scene.gameData.setPokemonSeen(this, false);
-      this.scene.gameData.setPokemonCaught(this, false);
+      if (!this.scene.gameMode.isDaily || this.metBiome > -1) {
+        this.scene.gameData.setPokemonSeen(this, false);
+        this.scene.gameData.setPokemonCaught(this, false);
+      }
       this.loadAssets().then(() => {
         this.calculateStats();
         this.scene.updateModifiers(true, true);

@@ -70,9 +70,11 @@ const displayStats: DisplayStats = {
       return `${caughtCount} (${Math.floor((caughtCount / dexKeys.length) * 1000) / 10}%)`;
     }
   },
-  classicSessionsPlayed: 'Runs (Classic)',
-  sessionsWon: 'Wins (Classic)',
-  endlessSessionsPlayed: 'Runs (Endless)?',
+  classicSessionsPlayed: 'Classic Runs',
+  sessionsWon: 'Classic Wins',
+  dailyRunSessionsPlayed: 'Daily Run Attempts',
+  dailyRunSessionsWon: 'Daily Run Wins',
+  endlessSessionsPlayed: 'Endless Runs?',
   highestEndlessWave: 'Highest Wave (Endless)?',
   highestMoney: 'Highest Money',
   highestDamage: 'Highest Damage',

@@ -53,12 +53,16 @@ import PokemonSpriteSparkleHandler from './field/pokemon-sprite-sparkle-handler'
 import CharSprite from './ui/char-sprite';
 import DamageNumberHandler from './field/damage-number-handler';
 import PokemonInfoContainer from './ui/pokemon-info-container';
+import { biomeDepths } from './data/biomes';
 
 export const bypassLogin = false;
-export const startingLevel = 5;
-export const startingWave = 1;
-export const startingBiome = Biome.TOWN;
-export const startingMoney = 1000;
+
+export const STARTING_LEVEL_OVERRIDE = 0;
+export const STARTING_WAVE_OVERRIDE = 0;
+export const STARTING_BIOME_OVERRIDE = Biome.TOWN;
+export const STARTING_MONEY_OVERRIDE = 0;
+
+export const startingWave = STARTING_WAVE_OVERRIDE || 1;
 
 const expSpriteKeys: string[] = [];
 
@@ -146,6 +150,7 @@ export default class BattleScene extends Phaser.Scene {
 
 	public seed: string;
 	public waveSeed: string;
+	public waveCycleOffset: integer;
 
 	public damageNumberHandler: DamageNumberHandler
 	private spriteSparkleHandler: PokemonSpriteSparkleHandler;
@@ -298,11 +303,12 @@ export default class BattleScene extends Phaser.Scene {
 			this.loadImage(`summary_tabs_${t}`, 'ui');
 
 		this.loadImage('starter_select_bg', 'ui');
-		this.loadImage('starter_select_cursor', 'ui');
-		this.loadImage('starter_select_cursor_highlight', 'ui');
-		this.loadImage('starter_select_cursor_pokerus', 'ui');
-		this.loadImage('starter_select_gen_cursor', 'ui');
-		this.loadImage('starter_select_gen_cursor_highlight', 'ui');
+		this.loadImage('select_cursor', 'ui');
+		this.loadImage('select_cursor_highlight', 'ui');
+		this.loadImage('select_cursor_highlight_thick', 'ui');
+		this.loadImage('select_cursor_pokerus', 'ui');
+		this.loadImage('select_gen_cursor', 'ui');
+		this.loadImage('select_gen_cursor_highlight', 'ui');
 
 		this.loadImage('default_bg', 'arenas');
 
@@ -744,13 +750,18 @@ export default class BattleScene extends Phaser.Scene {
 		return pokemon;
 	}
 
+	setSeed(seed: string): void {
+		this.seed = seed;
+		this.waveCycleOffset = this.getGenerateWaveCycleOffset();
+	}
+
 	reset(clearScene?: boolean): void {
-		this.seed = Utils.randomString(16);
+		this.setSeed(Utils.randomString(16));
 		console.log('Seed:', this.seed);
 
 		this.gameMode = gameModes[GameModes.CLASSIC];
 
-		this.money = startingMoney;
+		this.money = 0;
 
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 		this.pokeballCounts[PokeballType.POKEBALL] += 5;
@@ -767,13 +778,14 @@ export default class BattleScene extends Phaser.Scene {
 			p.destroy();
 			
 		this.currentBattle = null;
+
 		this.waveCountText.setText(startingWave.toString());
 		this.waveCountText.setVisible(false);
 
 		this.updateMoneyText();
 		this.moneyText.setVisible(false);
 
-		this.newArena(startingBiome, true);
+		this.newArena(STARTING_BIOME_OVERRIDE || Biome.TOWN, true);
 
 		this.arenaBgTransition.setPosition(0, 0);
 		this.arenaPlayer.setPosition(300, 0);
@@ -1009,7 +1021,7 @@ export default class BattleScene extends Phaser.Scene {
 		return this.arena.getSpeciesFormIndex(species);
 	}
 
-	getWaveCycleOffset(): integer {
+	private getGenerateWaveCycleOffset(): integer {
 		let ret = 0;
 		this.executeWithSeedOffset(() => {
 			ret = Utils.randSeedInt(8) * 5;
@@ -1168,6 +1180,29 @@ export default class BattleScene extends Phaser.Scene {
 			return s;
 		}))] : allSpecies.filter(s => s.isCatchable());
 		return filteredSpecies[Utils.randSeedInt(filteredSpecies.length)];
+	}
+
+	generateRandomBiome(waveIndex: integer): Biome {
+		const relWave = waveIndex % 250;
+		const biomes = Utils.getEnumValues(Biome).slice(1, Utils.getEnumValues(Biome).filter(b => b >= 40).length * -1);
+		const maxDepth = biomeDepths[Biome.END][0] - 2;
+		const depthWeights = new Array(maxDepth + 1).fill(null)
+			.map((_, i: integer) => ((1 - Math.min(Math.abs((i / (maxDepth - 1)) - (relWave / 250)) + 0.25, 1)) / 0.75) * 250);
+		const biomeThresholds: integer[] = [];
+		let totalWeight = 0;
+		for (let biome of biomes) {
+			totalWeight += Math.ceil(depthWeights[biomeDepths[biome][0] - 1] / biomeDepths[biome][1]);
+			biomeThresholds.push(totalWeight);
+		}
+
+		const randInt = Utils.randSeedInt(totalWeight);
+
+		for (let biome of biomes) {
+			if (randInt < biomeThresholds[biome])
+				return biome;
+		}
+
+		return biomes[Utils.randSeedInt(biomes.length)];
 	}
 
 	checkInput(): boolean {

@@ -537,7 +537,7 @@ export class GameData {
         this.getSession(slotId).then(async sessionData => {
           console.debug(sessionData);
 
-          scene.seed = sessionData.seed || scene.game.config.seed[0];
+          scene.setSeed(sessionData.seed || scene.game.config.seed[0]);
           scene.resetSeed();
 
           scene.sessionPlayTime = sessionData.playTime || 0;

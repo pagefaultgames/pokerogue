@@ -1,4 +1,4 @@
-import BattleScene, { bypassLogin, startingLevel, startingWave } from "./battle-scene";
+import BattleScene, { STARTING_BIOME_OVERRIDE, bypassLogin, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
@@ -16,7 +16,7 @@ import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import { EvolutionPhase } from "./evolution-phase";
 import { Phase } from "./phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
-import { biomeDepths, biomeLinks } from "./data/biomes";
+import { biomeLinks } from "./data/biomes";
 import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, RememberMoveModifierType, TmModifierType, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptionsForWave, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
@@ -53,6 +53,8 @@ import { Tutorial, handleTutorial } from "./tutorial";
 import { TerrainType } from "./data/terrain";
 import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
 import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
+import { getDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
+import { GameModes, gameModes } from "./game-mode";
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -159,7 +161,7 @@ export class TitlePhase extends Phase {
       }
     },
     {
-      label: 'Load',
+      label: 'Load Game',
       handler: () => this.scene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
         (slotId: integer) => {
           if (slotId === -1)
@@ -167,13 +169,10 @@ export class TitlePhase extends Phase {
           this.loadSaveSlot(slotId);
         }
       )
-    },
-    /*{
+    }/*,
+    {
       label: 'Daily Run',
-      handler: () => {
-        //this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.showText('This feature is not available yet.\nPlease check back soon!', null, () => this.scene.ui.clearText(), Utils.fixedInt(1000));
-      },
+      handler: () => this.initDailyRun(),
       keepOpen: true
     }*/);
     const config: OptionSelectConfig = {
@@ -198,12 +197,56 @@ export class TitlePhase extends Phase {
     });
   }
 
+  initDailyRun(): void {
+    this.scene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: integer) => {
+      this.scene.clearPhaseQueue();
+      if (slotId === -1) {
+        this.scene.pushPhase(new TitlePhase(this.scene));
+        return this.end();
+      }
+      this.scene.sessionSlotId = slotId;
+      this.scene.setSeed(getDailyRunSeed(this.scene));
+
+      this.scene.gameMode = gameModes[GameModes.DAILY];
+      this.scene.money = this.scene.gameMode.getStartingMoney();
+
+      const starters = getDailyRunStarters(this.scene);
+
+      const party = this.scene.getParty();
+      const loadPokemonAssets: Promise<void>[] = [];
+      for (let starter of starters) {
+        const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
+        const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
+        const starterGender = starter.species.malePercent !== null
+          ? !starterProps.female ? Gender.MALE : Gender.FEMALE
+          : Gender.GENDERLESS;
+        const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
+        const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starterProps.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
+        if (starter.moveset)
+          starterPokemon.tryPopulateMoveset(starter.moveset);
+        starterPokemon.setVisible(false);
+        party.push(starterPokemon);
+        loadPokemonAssets.push(starterPokemon.loadAssets());
+      }
+      Promise.all(loadPokemonAssets).then(() => {
+        this.scene.time.delayedCall(500, () => this.scene.playBgm());
+        this.scene.gameData.gameStats.dailyRunSessionsPlayed++;
+        this.scene.newBattle();
+        this.scene.sessionPlayTime = 0;
+        this.end();
+      });
+    });
+  }
+
   end(): void {
-    if (!this.loaded) {
+    if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
       this.scene.pushPhase(new SelectStarterPhase(this.scene));
     } else
       this.scene.playBgm();
+
+    if (!this.loaded)
+      this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene), true);
 
     this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
 
@@ -338,7 +381,7 @@ export class SelectStarterPhase extends Phase {
             ? !starterProps.female ? Gender.MALE : Gender.FEMALE
             : Gender.GENDERLESS;
           const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-          const starterPokemon = this.scene.addPlayerPokemon(starter.species, startingLevel, starterProps.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
+          const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starterProps.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
           starterPokemon.tryPopulateMoveset(starter.moveset);
           if (starter.pokerus)
             starterPokemon.pokerus = true;
@@ -869,28 +912,7 @@ export class SelectBiomePhase extends BattlePhase {
   generateNextBiome(): Biome {
     if (!(this.scene.currentBattle.waveIndex % 50))
       return Biome.END;
-    else {
-      const relWave = this.scene.currentBattle.waveIndex % 250;
-      const biomes = Utils.getEnumValues(Biome).slice(1, Utils.getEnumValues(Biome).filter(b => b >= 40).length * -1);
-      const maxDepth = biomeDepths[Biome.END][0] - 2;
-      const depthWeights = new Array(maxDepth + 1).fill(null)
-        .map((_, i: integer) => ((1 - Math.min(Math.abs((i / (maxDepth - 1)) - (relWave / 250)) + 0.25, 1)) / 0.75) * 250);
-      const biomeThresholds: integer[] = [];
-      let totalWeight = 0;
-      for (let biome of biomes) {
-        totalWeight += Math.ceil(depthWeights[biomeDepths[biome][0] - 1] / biomeDepths[biome][1]);
-        biomeThresholds.push(totalWeight);
-      }
-
-      const randInt = Utils.randSeedInt(totalWeight);
-
-      for (let biome of biomes) {
-        if (randInt < biomeThresholds[biome])
-          return biome;
-      }
-
-      return biomes[Utils.randSeedInt(biomes.length)];
-    }
+    return this.scene.generateRandomBiome(this.scene.currentBattle.waveIndex);
   }
 }
 

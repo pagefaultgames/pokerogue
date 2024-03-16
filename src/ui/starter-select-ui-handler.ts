@@ -31,7 +31,7 @@ export interface Starter {
   species: PokemonSpecies;
   dexAttr: bigint;
   nature: Nature;
-  moveset: StarterMoveset;
+  moveset?: StarterMoveset;
   pokerus: boolean;
 }
 
@@ -214,7 +214,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
 
     this.pokerusCursorObjs = new Array(3).fill(null).map(() => {
-      const cursorObj = this.scene.add.image(0, 0, 'starter_select_cursor_pokerus');
+      const cursorObj = this.scene.add.image(0, 0, 'select_cursor_pokerus');
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
       this.starterSelectContainer.add(cursorObj);
@@ -222,22 +222,22 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
 
     this.starterCursorObjs = new Array(6).fill(null).map(() => {
-      const cursorObj = this.scene.add.image(0, 0, 'starter_select_cursor_highlight');
+      const cursorObj = this.scene.add.image(0, 0, 'select_cursor_highlight');
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
       this.starterSelectContainer.add(cursorObj);
       return cursorObj;
     });
 
-    this.cursorObj = this.scene.add.image(0, 0, 'starter_select_cursor');
+    this.cursorObj = this.scene.add.image(0, 0, 'select_cursor');
     this.cursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.cursorObj);
 
-    this.genCursorHighlightObj = this.scene.add.image(111, 5, 'starter_select_gen_cursor_highlight');
+    this.genCursorHighlightObj = this.scene.add.image(111, 5, 'select_gen_cursor_highlight');
     this.genCursorHighlightObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.genCursorHighlightObj);
 
-    this.genCursorObj = this.scene.add.image(111, 5, 'starter_select_gen_cursor');
+    this.genCursorObj = this.scene.add.image(111, 5, 'select_gen_cursor');
     this.genCursorObj.setVisible(false);
     this.genCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.genCursorObj);
@@ -250,7 +250,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     startLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(startLabel);
 
-    this.startCursorObj = this.scene.add.nineslice(111, 160, 'starter_select_cursor', null, 26, 15, 1, 1, 1, 1);
+    this.startCursorObj = this.scene.add.nineslice(111, 160, 'select_cursor', null, 26, 15, 1, 1, 1, 1);
     this.startCursorObj.setVisible(false);
     this.startCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.startCursorObj);
@@ -1212,6 +1212,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
         const startRun = (gameMode: GameModes) => {
           this.scene.gameMode = gameModes[gameMode];
+          this.scene.money = this.scene.gameMode.getStartingMoney();
           ui.setMode(Mode.STARTER_SELECT);
           const thisObj = this;
           const originalStarterSelectCallback = this.starterSelectCallback;

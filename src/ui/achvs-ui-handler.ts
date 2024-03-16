@@ -185,7 +185,7 @@ export default class AchvsUiHandler extends MessageUiHandler {
     let updateAchv = ret;
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, 'starter_select_cursor_highlight', null, 16, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, 'select_cursor_highlight', null, 16, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.achvIconsContainer.add(this.cursorObj);
       updateAchv = true;
