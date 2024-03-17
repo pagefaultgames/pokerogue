@@ -3392,7 +3392,7 @@ export function initMoves() {
     new AttackMove(Moves.SHEER_COLD, "Sheer Cold", Type.ICE, MoveCategory.SPECIAL, -1, 30, 5, -1, "The target faints instantly. It's less likely to hit the target if it's used by Pokémon other than Ice types.", -1, 0, 3)
       .attr(OneHitKOAttr)
       .attr(OneHitKOAccuracyAttr),
-    new AttackMove(Moves.MUDDY_WATER, "Muddy Water", Type.WATER, MoveCategory.SPECIAL, 110, 85, 10, -1, "The user attacks by shooting muddy water at opposing Pokémon. This may also lower their accuracy.", 30, 0, 3)
+    new AttackMove(Moves.MUDDY_WATER, "Muddy Water", Type.WATER, MoveCategory.SPECIAL, 90, 85, 10, -1, "The user attacks by shooting muddy water at opposing Pokémon. This may also lower their accuracy.", 30, 0, 3)
       .attr(StatChangeAttr, BattleStat.ACC, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.BULLET_SEED, "Bullet Seed", Type.GRASS, MoveCategory.PHYSICAL, 25, 100, 30, 56, "The user forcefully shoots seeds at the target two to five times in a row.", -1, 0, 3)

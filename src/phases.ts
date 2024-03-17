@@ -181,11 +181,14 @@ export class TitlePhase extends Phase {
       noCancel: true
     };
     this.scene.ui.setMode(Mode.OPTION_SELECT, config);
+
+    this.scene.dailyRunScoreboard.showAndUpdate(true);
   }
 
   loadSaveSlot(slotId: integer): void {
     this.scene.sessionSlotId = slotId;
     this.scene.ui.setMode(Mode.MESSAGE);
+    this.scene.dailyRunScoreboard.hide(false);
     this.scene.gameData.loadSession(this.scene, slotId).then((success: boolean) => {
       if (success) {
         this.loaded = true;
@@ -253,6 +256,8 @@ export class TitlePhase extends Phase {
   }
 
   end(): void {
+    this.scene.dailyRunScoreboard.hide(false);
+
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
       this.scene.pushPhase(new SelectStarterPhase(this.scene));

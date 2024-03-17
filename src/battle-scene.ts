@@ -54,6 +54,7 @@ import CharSprite from './ui/char-sprite';
 import DamageNumberHandler from './field/damage-number-handler';
 import PokemonInfoContainer from './ui/pokemon-info-container';
 import { biomeDepths } from './data/biomes';
+import { DailyRunScoreboard } from './ui/daily-run-scoreboard';
 
 export const bypassLogin = false;
 
@@ -138,6 +139,7 @@ export default class BattleScene extends Phaser.Scene {
 	public pokeballCounts: PokeballCounts;
 	public money: integer;
 	public pokemonInfoContainer: PokemonInfoContainer;
+	public dailyRunScoreboard: DailyRunScoreboard;
 	private party: PlayerPokemon[];
 	private waveCountText: Phaser.GameObjects.Text;
 	private moneyText: Phaser.GameObjects.Text;
@@ -561,6 +563,11 @@ export default class BattleScene extends Phaser.Scene {
 		this.pokemonInfoContainer.setup();
 
 		this.fieldUI.add(this.pokemonInfoContainer);
+
+		this.dailyRunScoreboard = new DailyRunScoreboard(this, 1, -(this.game.canvas.height / 6) + 1);
+		this.dailyRunScoreboard.setup();
+
+		this.fieldUI.add(this.dailyRunScoreboard);
 
 		this.party = [];
 
