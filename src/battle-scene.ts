@@ -332,7 +332,7 @@ export default class BattleScene extends Phaser.Scene {
 				this.loadAtlas(baseBKey, 'arenas');
 			if (getBiomeHasProps(bt)) {
 				for (let p = 1; p <= 3; p++) {
-					const isPropAnimated = p === 3 && btKey === 'end';
+					const isPropAnimated = p === 3 && [ 'power_plant', 'end' ].find(b => b === btKey);
 					const propKey = `${btKey}_b_${p}`;
 					if (!isPropAnimated)
 						this.loadImage(propKey, 'arenas');

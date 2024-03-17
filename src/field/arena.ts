@@ -564,8 +564,6 @@ export class Arena {
 
 export function getBiomeKey(biome: Biome): string {
   switch (biome) {
-    case Biome.POWER_PLANT:
-      return 'ruins';
     case Biome.METROPOLIS:
       return 'slum';
     case Biome.JUNGLE:
@@ -587,6 +585,7 @@ export function getBiomeHasProps(biomeType: Biome): boolean {
     case Biome.DESERT:
     case Biome.ICE_CAVE:
     case Biome.MEADOW:
+    case Biome.POWER_PLANT:
     case Biome.VOLCANO:
     case Biome.GRAVEYARD:
     case Biome.FACTORY:
