@@ -1640,7 +1640,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.GRASS]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER ],
+    [BiomePoolTier.COMMON]: [ TrainerType.BREEDER, TrainerType.STUDENT ],
     [BiomePoolTier.UNCOMMON]: [ TrainerType.ACE_TRAINER ],
     [BiomePoolTier.RARE]: [ TrainerType.BLACK_BELT ],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1871,7 +1871,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.WASTELAND]: {
-    [BiomePoolTier.COMMON]: [],
+    [BiomePoolTier.COMMON]: [ TrainerType.VETERAN ],
     [BiomePoolTier.UNCOMMON]: [],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
@@ -1948,8 +1948,8 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
   },
   [Biome.SLUM]: {
-    [BiomePoolTier.COMMON]: [ TrainerType.BAKER, TrainerType.OFFICER ],
-    [BiomePoolTier.UNCOMMON]: [],
+    [BiomePoolTier.COMMON]: [ TrainerType.BIKER, TrainerType.OFFICER, TrainerType.ROUGHNECK ],
+    [BiomePoolTier.UNCOMMON]: [ TrainerType.BAKER ],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
@@ -7140,13 +7140,16 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ TrainerType.BAKER, [ 
-        [ Biome.SLUM, BiomePoolTier.COMMON ]
+        [ Biome.SLUM, BiomePoolTier.UNCOMMON ]
       ]
     ],
     [ TrainerType.BEAUTY, [
       [ Biome.FAIRY_CAVE, BiomePoolTier.COMMON ]
     ] ],
-    [ TrainerType.BIKER, [] ],
+    [ TrainerType.BIKER, [
+        [ Biome.SLUM, BiomePoolTier.COMMON ]
+      ] 
+    ],
     [ TrainerType.BLACK_BELT, [
         [ Biome.DOJO, BiomePoolTier.COMMON ],
         [ Biome.PLAINS, BiomePoolTier.RARE ],
@@ -7235,7 +7238,10 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ TrainerType.RICH_KID, [] ],
-    [ TrainerType.ROUGHNECK, [] ],
+    [ TrainerType.ROUGHNECK, [
+        [ Biome.SLUM, BiomePoolTier.COMMON ]
+      ] 
+    ],
     [ TrainerType.SCIENTIST, [
         [ Biome.DESERT, BiomePoolTier.COMMON ],
         [ Biome.RUINS, BiomePoolTier.COMMON ]
@@ -7248,7 +7254,10 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ TrainerType.STRIKER, [] ],
-    [ TrainerType.STUDENT, [] ],
+    [ TrainerType.STUDENT, [
+        [ Biome.GRASS, BiomePoolTier.COMMON ]
+      ] 
+    ],
     [ TrainerType.SWIMMER, [
         [ Biome.SEA, BiomePoolTier.COMMON ]
       ]
@@ -7257,7 +7266,10 @@ export const biomeTrainerPools: BiomeTrainerPools = {
         [ Biome.PLAINS, BiomePoolTier.COMMON ]
       ]
     ],
-    [ TrainerType.VETERAN, [] ],
+    [ TrainerType.VETERAN, [
+        [ Biome.WASTELAND, BiomePoolTier.COMMON ]
+      ] 
+    ],
     [ TrainerType.WAITER, [
         [ Biome.METROPOLIS, BiomePoolTier.COMMON ]
       ]

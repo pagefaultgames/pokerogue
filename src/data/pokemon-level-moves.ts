@@ -169,6 +169,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.METAPOD]: [
     [ 0, Moves.HARDEN ],
+    [ 1, Moves.HARDEN ],
   ],
   [Species.BUTTERFREE]: [
     [ 0, Moves.GUST ],
@@ -197,6 +198,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.KAKUNA]: [
     [ 0, Moves.HARDEN ],
+    [ 1, Moves.HARDEN ],
   ],
   [Species.BEEDRILL]: [
     [ 0, Moves.TWINEEDLE ],
@@ -4472,6 +4474,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.SILCOON]: [
     [ 0, Moves.HARDEN ],
+    [ 1, Moves.HARDEN ],
   ],
   [Species.BEAUTIFLY]: [
     [ 0, Moves.GUST ],
@@ -4490,6 +4493,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.CASCOON]: [
     [ 0, Moves.HARDEN ],
+    [ 1, Moves.HARDEN ],
   ],
   [Species.DUSTOX]: [
     [ 0, Moves.GUST ],
@@ -18519,26 +18523,6 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 39, Moves.DOUBLE_EDGE ],
       [ 45, Moves.EARTH_POWER ],
       [ 51, Moves.BELCH ],
-    ],
-  },
-  [Species.URSALUNA]: {
-    1: [
-      [ 1, Moves.SCRATCH ],
-      [ 1, Moves.LEER ],
-      [ 1, Moves.LICK ],
-      [ 1, Moves.HEADLONG_RUSH ],
-      [ 8, Moves.FURY_SWIPES ],
-      [ 13, Moves.PAYBACK ],
-      [ 17, Moves.HARDEN ],
-      [ 22, Moves.SLASH ],
-      [ 25, Moves.PLAY_NICE ],
-      [ 35, Moves.SCARY_FACE ],
-      [ 41, Moves.REST ],
-      [ 41, Moves.SNORE ],
-      [ 48, Moves.EARTH_POWER ],
-      [ 56, Moves.MOONBLAST ],
-      [ 64, Moves.HAMMER_ARM ],
-      [ 70, Moves.BLOOD_MOON ],
     ],
   },
   [Species.PALDEA_TAUROS]: {
