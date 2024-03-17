@@ -362,6 +362,11 @@ export class SelectGenderPhase extends Phase {
       });
     });
   }
+
+  end(): void {
+    this.scene.ui.setMode(Mode.MESSAGE);
+    super.end();
+  }
 }
 
 export class SelectStarterPhase extends Phase {
