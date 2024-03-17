@@ -1169,7 +1169,7 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
   }
   const ignoredIndexes = {};
   const modifierTableData = {};
-  const thresholds = Object.fromEntries(new Map(Object.keys(pool).slice(0, -1).map(t => {
+  const thresholds = Object.fromEntries(new Map(Object.keys(pool).map(t => {
     ignoredIndexes[t] = [];
     const thresholds = new Map();
     const tierModifierIds: string[] = [];
