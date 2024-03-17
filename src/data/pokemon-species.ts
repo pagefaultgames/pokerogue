@@ -165,6 +165,21 @@ export abstract class PokemonSpeciesForm {
     return false;
   }
 
+  getBaseExp(): integer {
+    let ret = this.baseExp;
+    switch (this.getFormSpriteKey()) {
+      case SpeciesFormKey.MEGA:
+      case SpeciesFormKey.MEGA_X:
+      case SpeciesFormKey.MEGA_Y:
+      case SpeciesFormKey.PRIMAL:
+      case SpeciesFormKey.GIGANTAMAX:
+      case SpeciesFormKey.ETERNAMAX:
+        ret *= 1.5;
+        break;
+    }
+    return ret;
+  }
+
   getSpriteAtlasPath(female: boolean, formIndex?: integer, shiny?: boolean): string {
     return this.getSpriteId(female, formIndex, shiny).replace(/\_{2}/g, '/');
   }

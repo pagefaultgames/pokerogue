@@ -51,6 +51,7 @@ export default class Battle {
     public turn: integer;
     public turnCommands: TurnCommands;
     public playerParticipantIds: Set<integer>;
+    public battleScore: integer;
     public postBattleLoot: PokemonHeldItemModifier[];
     public escapeAttempts: integer;
     public lastMove: Moves;
@@ -71,6 +72,7 @@ export default class Battle {
         this.double = double;
         this.turn = 0;
         this.playerParticipantIds = new Set<integer>();
+        this.battleScore = 0;
         this.postBattleLoot = [];
         this.escapeAttempts = 0;
         this.started = false;
@@ -141,6 +143,17 @@ export default class Battle {
             ret.pokemonId = null;
             return ret;
         }));
+    }
+
+    addBattleScore(scene: BattleScene): void {
+        let partyMemberTurnMultiplier = scene.getEnemyParty().length / 2 + 0.5;
+        if (this.double)
+            partyMemberTurnMultiplier /= 1.5;
+        const turnMultiplier = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeIn')(1 - Math.min(this.turn - 2, 10 * partyMemberTurnMultiplier) / (10 * partyMemberTurnMultiplier));
+        const finalBattleScore = Math.ceil(this.battleScore * turnMultiplier);
+        scene.score += finalBattleScore;
+        console.log(`Battle Score: ${finalBattleScore} (${this.turn - 1} Turns x${Math.floor(turnMultiplier * 100) / 100})`);
+        console.log(`Total Score: ${scene.score}`);
     }
 
     getBgmOverride(scene: BattleScene): string {

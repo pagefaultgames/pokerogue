@@ -17,7 +17,7 @@ import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
 import { } from "./data/move";
 import { initMoves } from './data/move';
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
+import { ModifierPoolType, PokemonBaseStatBoosterModifierType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';
@@ -131,6 +131,7 @@ export default class BattleScene extends Phaser.Scene {
 	public arenaNextEnemy: ArenaBase;
 	public arena: Arena;
 	public gameMode: GameMode;
+	public score: integer;
 	public trainer: Phaser.GameObjects.Sprite;
 	public lastEnemyTrainer: Trainer;
 	public currentBattle: Battle;
@@ -761,6 +762,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.gameMode = gameModes[GameModes.CLASSIC];
 
+		this.score = 0;
 		this.money = 0;
 
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
@@ -1136,6 +1138,14 @@ export default class BattleScene extends Phaser.Scene {
 		this.moneyText.setY(this.waveCountText.y + 10);
 		this.partyExpBar.setY(this.moneyText.y + 15);
 		this.ui?.achvBar.setY((this.game.canvas.height / 6 + this.moneyText.y + 15));
+	}
+
+	addFaintedEnemyScore(enemy: EnemyPokemon): void {
+		let scoreIncrease = enemy.getSpeciesForm().getBaseExp() * (enemy.level / this.getMaxExpLevel()) * ((enemy.ivs.reduce((iv: integer, total: integer) => total += iv, 0) / 93) * 0.2 + 0.8);
+		this.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemy.id, false).map(m => scoreIncrease *= (m as PokemonHeldItemModifier).getScoreMultiplier());
+		if (enemy.isBoss())
+			scoreIncrease *= Math.sqrt(enemy.bossSegments);
+		this.currentBattle.battleScore += Math.ceil(scoreIncrease);
 	}
 
 	getMaxExpLevel(ignoreLevelCap?: boolean): integer {

@@ -23,7 +23,6 @@ import { loggedInUser, updateUserInfo } from "../account";
 import { Nature } from "../data/nature";
 import { GameStats } from "./game-stats";
 import { Tutorial } from "../tutorial";
-import { BattleSpec } from "../enums/battle-spec";
 import { Moves } from "../data/enums/moves";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
@@ -87,6 +86,7 @@ export interface SessionSaveData {
   arena: ArenaData;
   pokeballCounts: PokeballCounts;
   money: integer;
+  score: integer;
   waveIndex: integer;
   battleType: BattleType;
   trainer: TrainerData;
@@ -452,29 +452,34 @@ export class GameData {
     return ret;
   }
 
+  private getSessionSaveData(scene: BattleScene): SessionSaveData {
+    return {
+      seed: scene.seed,
+      playTime: scene.sessionPlayTime,
+      gameMode: scene.gameMode.modeId,
+      party: scene.getParty().map(p => new PokemonData(p)),
+      enemyParty: scene.getEnemyParty().map(p => new PokemonData(p)),
+      modifiers: scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
+      enemyModifiers: scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+      arena: new ArenaData(scene.arena),
+      pokeballCounts: scene.pokeballCounts,
+      money: scene.money,
+      score: scene.score,
+      waveIndex: scene.currentBattle.waveIndex,
+      battleType: scene.currentBattle.battleType,
+      trainer: scene.currentBattle.battleType == BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
+      gameVersion: scene.game.config.gameVersion,
+      timestamp: new Date().getTime()
+    } as SessionSaveData;
+  }
+
   saveSession(scene: BattleScene, skipVerification?: boolean): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
         if (success !== null && !success)
           return resolve(false);
 
-        const sessionData = {
-          seed: scene.seed,
-          playTime: scene.sessionPlayTime,
-          gameMode: scene.gameMode.modeId,
-          party: scene.getParty().map(p => new PokemonData(p)),
-          enemyParty: scene.getEnemyParty().map(p => new PokemonData(p)),
-          modifiers: scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
-          enemyModifiers: scene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
-          arena: new ArenaData(scene.arena),
-          pokeballCounts: scene.pokeballCounts,
-          money: scene.money,
-          waveIndex: scene.currentBattle.waveIndex,
-          battleType: scene.currentBattle.battleType,
-          trainer: scene.currentBattle.battleType == BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,
-          gameVersion: scene.game.config.gameVersion,
-          timestamp: new Date().getTime()
-        } as SessionSaveData;
+        const sessionData = this.getSessionSaveData(scene);
 
         if (!bypassLogin) {
           Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}&slot=${scene.sessionSlotId}`, JSON.stringify(sessionData))
@@ -566,6 +571,8 @@ export class GameData {
           if (scene.money > this.gameStats.highestMoney)
             this.gameStats.highestMoney = scene.money;
 
+          scene.score = sessionData.score;
+
           const battleType = sessionData.battleType || 0;
           const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfigs[sessionData.trainer.trainerType].isDouble : sessionData.enemyParty.length > 1);
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
@@ -636,7 +643,7 @@ export class GameData {
     });
   }
 
-  tryClearSession(slotId: integer): Promise<[success: boolean, newClear: boolean]> {
+  tryClearSession(scene: BattleScene, slotId: integer): Promise<[success: boolean, newClear: boolean]> {
     return new Promise<[boolean, boolean]>(resolve => {
       if (bypassLogin) {
         localStorage.removeItem('sessionData');
@@ -646,7 +653,8 @@ export class GameData {
       updateUserInfo().then(success => {
         if (success !== null && !success)
           return resolve([false, false]);
-        Utils.apiFetch(`savedata/clear?slot=${slotId}`).then(response => {
+        const sessionData = this.getSessionSaveData(scene);
+        Utils.apiPost(`savedata/clear?slot=${slotId}`, JSON.stringify(sessionData)).then(response => {
           if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
             return response.json();

@@ -1860,6 +1860,8 @@ export class BattleEndPhase extends BattlePhase {
   start() {
     super.start();
 
+    this.scene.currentBattle.addBattleScore(this.scene);
+
     this.scene.gameData.gameStats.battles++;
     if (this.scene.currentBattle.trainer)
       this.scene.gameData.gameStats.trainersDefeated++;
@@ -2814,8 +2816,10 @@ export class FaintPhase extends PokemonPhase {
           pokemon.trySetStatus(StatusEffect.FAINT);
           if (pokemon.isPlayer())
             this.scene.currentBattle.removeFaintedParticipant(pokemon as PlayerPokemon);
-          else
+          else {
+            this.scene.addFaintedEnemyScore(pokemon as EnemyPokemon);
             this.scene.currentBattle.addPostBattleLoot(pokemon as EnemyPokemon);
+          }
           this.scene.field.remove(pokemon);
           this.end();
         }
@@ -3098,7 +3102,7 @@ export class GameOverPhase extends BattlePhase {
   start() {
     super.start();
 
-    (this.victory ? this.scene.gameData.tryClearSession : this.scene.gameData.deleteSession)(this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
+    (this.victory ? this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId) : this.scene.gameData.deleteSession(this.scene.sessionSlotId)).then((success: boolean | [boolean, boolean]) => {
       this.scene.time.delayedCall(1000, () => {
         let firstClear = false;
         if (this.victory && success[1]) {
@@ -3687,6 +3691,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         this.end();
       };
       const removePokemon = () => {
+        this.scene.addFaintedEnemyScore(pokemon);
         this.scene.getPlayerField().filter(p => p.isActive(true)).forEach(playerPokemon => playerPokemon.removeTagsBySourceId(pokemon.id));
         pokemon.hp = 0;
         pokemon.trySetStatus(StatusEffect.FAINT);

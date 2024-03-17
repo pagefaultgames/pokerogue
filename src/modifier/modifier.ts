@@ -495,6 +495,10 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return scene.getPokemonById(this.pokemonId);
   }
 
+  getScoreMultiplier(): number {
+    return 1;
+  }
+
   getMaxStackCount(scene: BattleScene, forThreshold?: boolean): integer {
     const pokemon = this.getPokemon(scene);
     if (!pokemon)
@@ -585,6 +589,14 @@ export class TerastallizeModifier extends LapsingPokemonHeldItemModifier {
     }
     return ret;
   }
+  
+  getTransferrable(withinParty: boolean): boolean {
+    return false;
+  }
+
+  getScoreMultiplier(): number {
+    return 1.25;
+  }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 1;
@@ -627,6 +639,10 @@ export class PokemonBaseStatModifier extends PokemonHeldItemModifier {
     return false;
   }
 
+  getScoreMultiplier(): number {
+    return 1.1;
+  }
+
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return pokemon.ivs[this.stat];
   }
@@ -666,6 +682,10 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
     (args[1] as Utils.NumberHolder).value = Math.floor((args[1] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
 
     return true;
+  }
+
+  getScoreMultiplier(): number {
+    return 1.2;
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
