@@ -3107,6 +3107,7 @@ export class GameOverPhase extends BattlePhase {
         const fadeDuration = this.victory ? 10000 : 5000;
         this.scene.fadeOutBgm(fadeDuration, true);
         this.scene.ui.fadeOut(fadeDuration).then(() => {
+          this.scene.setFieldScale(1, true);
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
           this.handleUnlocks();
