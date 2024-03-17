@@ -455,7 +455,7 @@ interface TrainerConfigs {
 }
 
 function getWavePartyTemplate(scene: BattleScene, ...templates: TrainerPartyTemplate[]) {
-  return templates[Math.min(Math.max(Math.ceil(((scene.currentBattle?.waveIndex || startingWave) - 20) / 30), 0), templates.length - 1)];
+  return templates[Math.min(Math.max(Math.ceil((scene.gameMode.getWaveForDifficulty(scene.currentBattle?.waveIndex || startingWave, true) - 20) / 30), 0), templates.length - 1)];
 }
 
 function getGymLeaderPartyTemplate(scene: BattleScene) {

@@ -756,7 +756,7 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	reset(clearScene?: boolean): void {
-		this.setSeed(Utils.randomString(16));
+		this.setSeed(Utils.randomString(24));
 		console.log('Seed:', this.seed);
 
 		this.gameMode = gameModes[GameModes.CLASSIC];
@@ -835,35 +835,9 @@ export default class BattleScene extends Phaser.Scene {
 		} else {
 			if (!this.gameMode.hasTrainers)
 				newBattleType = BattleType.WILD;
-			else if (battleType === undefined) {
-				if ((newWaveIndex % 30) === 20 && !this.gameMode.isWaveFinal(newWaveIndex))
-					newBattleType = BattleType.TRAINER;
-				else if (newWaveIndex % 10 !== 1 && newWaveIndex % 10) {
-					const trainerChance = this.arena.getTrainerChance();
-					let allowTrainerBattle = true;
-					if (trainerChance) {
-						const waveBase = Math.floor(newWaveIndex / 10) * 10;
-						for (let w = Math.max(newWaveIndex - 3, waveBase + 2); w <= Math.min(newWaveIndex + 3, waveBase + 9); w++) {
-							if (w === newWaveIndex)
-								continue;
-							if ((w % 30) === 20 || fixedBattles.hasOwnProperty(w)) {
-								allowTrainerBattle = false;
-								break;
-							} else if (w < newWaveIndex) {
-								this.executeWithSeedOffset(() => {
-									const waveTrainerChance = this.arena.getTrainerChance();
-									if (!Utils.randSeedInt(waveTrainerChance))
-										allowTrainerBattle = false;
-								}, w);
-								if (!allowTrainerBattle)
-									break;
-							}
-						}
-					}
-					newBattleType = allowTrainerBattle && trainerChance && !Utils.randSeedInt(trainerChance) ? BattleType.TRAINER : BattleType.WILD;
-				} else
-					newBattleType = BattleType.WILD;
-			} else
+			else if (battleType === undefined)
+				newBattleType = this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD;
+			else
 				newBattleType = battleType;
 
 			if (newBattleType === BattleType.TRAINER) {
@@ -897,7 +871,7 @@ export default class BattleScene extends Phaser.Scene {
 		//this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
 
 		if (!waveIndex && lastBattle) {
-			const isNewBiome = !(lastBattle.waveIndex % 10);
+			const isNewBiome = !(lastBattle.waveIndex % 10) || (this.gameMode.isDaily && lastBattle.waveIndex === 49);
 			const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
 			this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
 			this.trySpreadPokerus();
@@ -1030,6 +1004,9 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	getEncounterBossSegments(waveIndex: integer, level: integer, species?: PokemonSpecies, forceBoss: boolean = false): integer {
+		if (this.gameMode.isDaily && this.gameMode.isWaveFinal(waveIndex))
+			return 5;
+
 		let isBoss: boolean;
 		if (forceBoss || (species && (species.pseudoLegendary || species.legendary || species.mythical)))
 			isBoss = true;
@@ -1164,7 +1141,7 @@ export default class BattleScene extends Phaser.Scene {
 	getMaxExpLevel(ignoreLevelCap?: boolean): integer {
 		if (ignoreLevelCap)
 			return Number.MAX_SAFE_INTEGER;
-		const lastWaveIndex = Math.ceil((this.currentBattle?.waveIndex || 1) / 10) * 10;
+		const lastWaveIndex = Math.ceil((this.gameMode.getWaveForDifficulty(this.currentBattle?.waveIndex || 1)) / 10) * 10;
 		const baseLevel = (1 + lastWaveIndex / 2 + Math.pow(lastWaveIndex / 25, 2)) * 1.2;
 		return Math.ceil(baseLevel / 2) * 2 + 2;
 	}

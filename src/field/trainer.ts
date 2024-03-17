@@ -78,7 +78,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
     const ret = [];
     const partyTemplate = this.getPartyTemplate();
     
-    let baseLevel = 1 + waveIndex / 2 + Math.pow(waveIndex / 25, 2);
+    const difficultyWaveIndex = this.scene.gameMode.getWaveForDifficulty(waveIndex);
+    let baseLevel = 1 + difficultyWaveIndex / 2 + Math.pow(difficultyWaveIndex / 25, 2);
 
     for (let i = 0; i < partyTemplate.size; i++) {
       let multiplier = 1;
@@ -106,8 +107,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
       let levelOffset = 0;
 
       if (strength < TrainerPartyMemberStrength.STRONG) {
-        multiplier = Math.min(multiplier + 0.025 * Math.floor(waveIndex / 25), 1.2);
-        levelOffset = -Math.floor((waveIndex / 50) * (TrainerPartyMemberStrength.STRONG - strength));
+        multiplier = Math.min(multiplier + 0.025 * Math.floor(difficultyWaveIndex / 25), 1.2);
+        levelOffset = -Math.floor((difficultyWaveIndex / 50) * (TrainerPartyMemberStrength.STRONG - strength));
       }
 
       const level = Math.ceil(baseLevel * multiplier) + levelOffset;

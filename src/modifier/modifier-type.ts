@@ -12,7 +12,6 @@ import * as Utils from '../utils';
 import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
 import { Unlockables } from '../system/unlockables';
-import { GameModes } from '../game-mode';
 import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
 import { SpeciesFormKey } from '../data/pokemon-species';
 import BattleScene from '../battle-scene';
@@ -29,7 +28,8 @@ export enum ModifierPoolType {
   PLAYER,
   WILD,
   TRAINER,
-  ENEMY_BUFF
+  ENEMY_BUFF,
+  DAILY_STARTER
 }
 
 type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier;
@@ -775,7 +775,7 @@ export const modifierTypes = {
     if (!party[0].scene.getModifiers(Modifiers.TerastallizeAccessModifier).length)
       return null;
     let type: Type;
-    if (!Utils.randInt(3)) {
+    if (!Utils.randSeedInt(3)) {
       const partyMemberTypes = party.map(p => p.getTypes(false, true)).flat();
       type = Utils.randSeedItem(partyMemberTypes);
     } else
@@ -886,7 +886,11 @@ export const modifierTypes = {
   ENEMY_FUSED_CHANCE: () => new ModifierType('Fusion Token', 'Adds a 1% chance that a wild Pokémon will be a fusion', (type, _args) => new Modifiers.EnemyFusionChanceModifier(type, 1), 'wl_custom_spliced'),
 };
 
-const modifierPool = {
+interface ModifierPool {
+  [tier: string]: WeightedModifierType[]
+}
+
+const modifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(modifierTypes.POKEBALL, 6),
     new WeightedModifierType(modifierTypes.RARE_CANDY, 2),
@@ -1015,12 +1019,10 @@ const modifierPool = {
     new WeightedModifierType(modifierTypes.VOUCHER_PLUS, 8),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
     new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 1 : 0, 1),
-  ].map(m => { m.setTier(ModifierTier.MASTER); return m; }),
-  [ModifierTier.LUXURY]: [
-  ].map(m => { m.setTier(ModifierTier.LUXURY); return m; }),
+  ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
 };
 
-const wildModifierPool = {
+const wildModifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(modifierTypes.BERRY, 1)
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
@@ -1038,7 +1040,7 @@ const wildModifierPool = {
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
 };
 
-const trainerModifierPool = {
+const trainerModifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(modifierTypes.BERRY, 8),
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3)
@@ -1062,7 +1064,7 @@ const trainerModifierPool = {
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
 };
 
-const enemyBuffModifierPool = {
+const enemyBuffModifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 10),
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 10),
@@ -1099,6 +1101,32 @@ const enemyBuffModifierPool = {
   [ModifierTier.MASTER]: [ ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
 };
 
+const dailyStarterModifierPool: ModifierPool = {
+  [ModifierTier.COMMON]: [
+    new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 1),
+    new WeightedModifierType(modifierTypes.BERRY, 3),
+  ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
+  [ModifierTier.GREAT]: [
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5),
+  ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
+  [ModifierTier.ULTRA]: [
+    new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
+    new WeightedModifierType(modifierTypes.SOOTHE_BELL, 1),
+    new WeightedModifierType(modifierTypes.SOUL_DEW, 1),
+    new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 1),
+  ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
+  [ModifierTier.ROGUE]: [
+    new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
+    new WeightedModifierType(modifierTypes.BATON, 2),
+    new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
+    new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
+  ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
+  [ModifierTier.MASTER]: [
+    new WeightedModifierType(modifierTypes.LEFTOVERS, 1),
+    new WeightedModifierType(modifierTypes.SHELL_BELL, 1),
+  ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
+};
+
 export function getModifierType(modifierTypeFunc: ModifierTypeFunc): ModifierType {
   const modifierType = modifierTypeFunc();
   if (!modifierType.id)
@@ -1109,6 +1137,9 @@ export function getModifierType(modifierTypeFunc: ModifierTypeFunc): ModifierTyp
 let modifierPoolThresholds = {};
 let ignoredPoolIndexes = {};
 
+let dailyStarterModifierPoolThresholds = {};
+let ignoredDailyStarterPoolIndexes = {};
+
 let enemyModifierPoolThresholds = {};
 let enemyIgnoredPoolIndexes = {};
 
@@ -1118,8 +1149,24 @@ let enemyBuffIgnoredPoolIndexes = {};
 const tierWeights = [ 769 / 1024, 192 / 1024, 48 / 1024, 12 / 1024, 1 / 1024 ];
 
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType) {
-  const player = !poolType;
-  const pool = player ? modifierPool : poolType === ModifierPoolType.WILD ? wildModifierPool : poolType === ModifierPoolType.TRAINER ? trainerModifierPool : enemyBuffModifierPool;
+  let pool: ModifierPool;
+  switch (poolType) {
+    case ModifierPoolType.PLAYER:
+      pool = modifierPool;
+      break;
+    case ModifierPoolType.WILD:
+      pool = wildModifierPool;
+      break;
+    case ModifierPoolType.TRAINER:
+      pool = trainerModifierPool;
+      break;
+    case ModifierPoolType.ENEMY_BUFF:
+      pool = enemyBuffModifierPool;
+      break;
+    case ModifierPoolType.DAILY_STARTER:
+      pool = dailyStarterModifierPool;
+      break;
+  }
   const ignoredIndexes = {};
   const modifierTableData = {};
   const thresholds = Object.fromEntries(new Map(Object.keys(pool).slice(0, -1).map(t => {
@@ -1130,7 +1177,7 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
     let i = 0;
     pool[t].reduce((total: integer, modifierType: WeightedModifierType) => {
       const weightedModifierType = modifierType as WeightedModifierType;
-      const existingModifiers = party[0].scene.findModifiers(m => (m.type.generatorId || m.type.id) === weightedModifierType.modifierType.id, player);
+      const existingModifiers = party[0].scene.findModifiers(m => (m.type.generatorId || m.type.id) === weightedModifierType.modifierType.id, poolType === ModifierPoolType.PLAYER);
       const itemModifierType = weightedModifierType.modifierType instanceof ModifierTypeGenerator
         ? weightedModifierType.modifierType.generateType(party)
         : weightedModifierType.modifierType;
@@ -1168,15 +1215,24 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
   }
   if (outputModifierData)
     console.table(modifierTableData);
-  if (player) {
-    modifierPoolThresholds = thresholds;
-    ignoredPoolIndexes = ignoredIndexes;
-  } else if (poolType !== ModifierPoolType.ENEMY_BUFF) {
-    enemyModifierPoolThresholds = thresholds;
-    enemyIgnoredPoolIndexes = ignoredIndexes;
-  } else {
-    enemyBuffModifierPoolThresholds = thresholds;
-    enemyBuffIgnoredPoolIndexes = ignoredIndexes;
+  switch (poolType) {
+    case ModifierPoolType.PLAYER:
+      modifierPoolThresholds = thresholds;
+      ignoredPoolIndexes = ignoredIndexes;
+      break;
+    case ModifierPoolType.WILD:
+    case ModifierPoolType.TRAINER:
+      enemyModifierPoolThresholds = thresholds;
+      enemyIgnoredPoolIndexes = ignoredIndexes;
+      break;
+    case ModifierPoolType.ENEMY_BUFF:
+      enemyBuffModifierPoolThresholds = thresholds;
+      enemyBuffIgnoredPoolIndexes = ignoredIndexes;
+      break;
+    case ModifierPoolType.DAILY_STARTER:
+      dailyStarterModifierPoolThresholds = thresholds;
+      ignoredDailyStarterPoolIndexes = ignoredIndexes;
+      break;
   }
 }
 
@@ -1184,9 +1240,7 @@ export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
   return modifierTypes[id];
 }
 
-export function getPlayerModifierTypeOptionsForWave(waveIndex: integer, count: integer, party: PlayerPokemon[]): ModifierTypeOption[] {
-  if (waveIndex % 10 === 0)
-    return modifierPool[ModifierTier.LUXURY].filter(m => !(m.weight instanceof Function) || m.weight(party)).map(m => new ModifierTypeOption(m.modifierType, 0));
+export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemon[]): ModifierTypeOption[] {
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
   new Array(count).fill(0).map(() => {
@@ -1257,9 +1311,46 @@ export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer,
   return ret;
 }
 
+export function getDailyRunStarterModifiers(party: PlayerPokemon[]): Modifiers.PokemonHeldItemModifier[] {
+  const ret: Modifiers.PokemonHeldItemModifier[] = [];
+  for (let p of party) {
+    for (let m = 0; m < 3; m++) {
+      const tierValue = Utils.randSeedInt(64);
+      const tier = tierValue > 25 ? ModifierTier.COMMON : tierValue > 12 ? ModifierTier.GREAT : tierValue > 4 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
+      const modifier = getNewModifierTypeOption(party, ModifierPoolType.DAILY_STARTER, tier).type.newModifier(p) as Modifiers.PokemonHeldItemModifier;
+      ret.push(modifier);
+    }
+  }
+
+  return ret;
+}
+
 function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgradeCount?: integer): ModifierTypeOption {
   const player = !poolType;
-  const pool = player ? modifierPool : poolType === ModifierPoolType.WILD ? wildModifierPool : poolType === ModifierPoolType.TRAINER ? trainerModifierPool : enemyBuffModifierPool;
+  let pool: ModifierPool;
+  let thresholds: object;
+  switch (poolType) {
+    case ModifierPoolType.PLAYER:
+      pool = modifierPool;
+      thresholds = modifierPoolThresholds;
+      break;
+    case ModifierPoolType.WILD:
+      pool = wildModifierPool;
+      thresholds = enemyModifierPoolThresholds;
+      break;
+    case ModifierPoolType.TRAINER:
+      pool = trainerModifierPool;
+      thresholds = enemyModifierPoolThresholds;
+      break;
+    case ModifierPoolType.ENEMY_BUFF:
+      pool = enemyBuffModifierPool;
+      thresholds = enemyBuffModifierPoolThresholds;
+      break;
+    case ModifierPoolType.DAILY_STARTER:
+      pool = dailyStarterModifierPool;
+      thresholds = dailyStarterModifierPoolThresholds;
+      break;
+  }
   if (tier === undefined) {
     const tierValue = Utils.randSeedInt(1024);
     upgradeCount = 0;
@@ -1283,7 +1374,6 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     }
   }
   
-  const thresholds = player ? modifierPoolThresholds : pool !== enemyBuffModifierPool ? enemyModifierPoolThresholds : enemyBuffModifierPoolThresholds;
   const tierThresholds = Object.keys(thresholds[tier]);
   const totalWeight = parseInt(tierThresholds[tierThresholds.length - 1]);
   const value = Utils.randSeedInt(totalWeight);
@@ -1314,7 +1404,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
 }
 
 export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {
-  let modifierType: ModifierType | WeightedModifierType = modifierPool[tier || ModifierTier.COMMON][tier !== ModifierTier.LUXURY ? 0 : 2];
+  let modifierType: ModifierType | WeightedModifierType = modifierPool[tier || ModifierTier.COMMON][0];
   if (modifierType instanceof WeightedModifierType)
     modifierType = (modifierType as WeightedModifierType).modifierType;
   return modifierType;

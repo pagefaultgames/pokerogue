@@ -11,12 +11,19 @@ export interface DailyRunConfig {
   starters: Starter;
 }
 
-export function getDailyRunSeed(scene: BattleScene): string {
-  return 'Test';//Utils.randomString(16)
+export function fetchDailyRunSeed(): Promise<string> {
+  return new Promise<string>(resolve => {
+    Utils.apiFetch('daily/seed').then(response => {
+      if (!response.ok) {
+        resolve(null);
+        return;
+      }
+      return response.text();
+    }).then(seed => resolve(seed));
+  });
 }
 
-export function getDailyRunStarters(scene: BattleScene): Starter[] {
-  const seed = getDailyRunSeed(scene);
+export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[] {
   const starters: Starter[] = [];
 
   scene.executeWithSeedOffset(() => {
@@ -25,13 +32,15 @@ export function getDailyRunStarters(scene: BattleScene): Starter[] {
     starterWeights.push(Utils.randSeedInt(9 - starterWeights[0], 1));
     starterWeights.push(10 - (starterWeights[0] + starterWeights[1]));
 
+    const startingLevel = gameModes[GameModes.DAILY].getStartingLevel();
+
     for (let s = 0; s < starterWeights.length; s++) {
       const weight = starterWeights[s];
       const weightSpecies = Object.keys(speciesStarters)
         .map(s => parseInt(s) as Species)
         .filter(s => speciesStarters[s] === weight);
-      const starterSpecies = getPokemonSpecies(Phaser.Math.RND.pick(weightSpecies));
-      const pokemon = new PlayerPokemon(scene, starterSpecies, gameModes[GameModes.DAILY].getStartingLevel(), undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+      const starterSpecies = getPokemonSpecies(getPokemonSpecies(Utils.randSeedItem(weightSpecies)).getSpeciesForLevel(startingLevel, true, true, false, true));
+      const pokemon = new PlayerPokemon(scene, starterSpecies, startingLevel, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
       const starter: Starter = {
         species: starterSpecies,
         dexAttr: pokemon.getDexAttr(),
@@ -42,6 +51,5 @@ export function getDailyRunStarters(scene: BattleScene): Starter[] {
       pokemon.destroy();
     }
   }, 0, seed);
-
   return starters;
 }

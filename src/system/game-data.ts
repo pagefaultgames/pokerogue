@@ -615,7 +615,7 @@ export class GameData {
     });
   }
 
-  clearSession(slotId: integer): Promise<boolean> {
+  deleteSession(slotId: integer): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin) {
         localStorage.removeItem('sessionData');
@@ -632,6 +632,27 @@ export class GameData {
           }
           resolve(false);
         });
+      });
+    });
+  }
+
+  tryClearSession(slotId: integer): Promise<[success: boolean, newClear: boolean]> {
+    return new Promise<[boolean, boolean]>(resolve => {
+      if (bypassLogin) {
+        localStorage.removeItem('sessionData');
+        return resolve([true, true]);
+      }
+
+      updateUserInfo().then(success => {
+        if (success !== null && !success)
+          return resolve([false, false]);
+        Utils.apiFetch(`savedata/clear?slot=${slotId}`).then(response => {
+          if (response.ok) {
+            loggedInUser.lastSessionSlot = -1;
+            return response.json();
+          }
+          resolve([false, false]);
+        }).then(jsonResponse => resolve([true, jsonResponse.success as boolean]));
       });
     });
   }

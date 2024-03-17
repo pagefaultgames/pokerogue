@@ -53,6 +53,9 @@ export class Arena {
   }
 
   randomSpecies(waveIndex: integer, level: integer, attempt?: integer): PokemonSpecies {
+    const overrideSpecies = this.scene.gameMode.getOverrideSpecies(waveIndex);
+    if (overrideSpecies)
+      return overrideSpecies;
     const isBoss = !!this.scene.getEncounterBossSegments(waveIndex, level) && !!this.pokemonPool[BiomePoolTier.BOSS].length
       && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
     const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
@@ -123,8 +126,9 @@ export class Arena {
   }
 
   randomTrainerType(waveIndex: integer): TrainerType {
-    const isBoss = (waveIndex % 30) === 20 && !!this.trainerPool[BiomePoolTier.BOSS].length
-      && (this.biomeType !== Biome.END || this.scene.gameMode.isClassic || this.scene.gameMode.isWaveFinal(waveIndex));
+    const isBoss = !!this.trainerPool[BiomePoolTier.BOSS].length
+      && this.scene.gameMode.isTrainerBoss(waveIndex, this.biomeType);
+    console.log(isBoss, this.trainerPool)
     const tierValue = Utils.randSeedInt(!isBoss ? 512 : 64);
     let tier = !isBoss
       ? tierValue >= 156 ? BiomePoolTier.COMMON : tierValue >= 32 ? BiomePoolTier.UNCOMMON : tierValue >= 6 ? BiomePoolTier.RARE : tierValue >= 1 ? BiomePoolTier.SUPER_RARE : BiomePoolTier.ULTRA_RARE

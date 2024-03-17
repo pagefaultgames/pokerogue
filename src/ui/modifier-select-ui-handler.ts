@@ -90,7 +90,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.updateRerollCostText();
 
     const typeOptions = args[1] as ModifierTypeOption[];
-    const shopTypeOptions = getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1));
+    const shopTypeOptions = !this.scene.gameMode.hasNoShop
+      ? getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1))
+      : [];
     const optionsYOffset = shopTypeOptions.length >= SHOP_OPTIONS_ROW_LIMIT ? -8 : -24;
     
     for (let m = 0; m < typeOptions.length; m++) {

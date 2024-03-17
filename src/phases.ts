@@ -1,8 +1,8 @@
-import BattleScene, { STARTING_BIOME_OVERRIDE, bypassLogin, startingWave } from "./battle-scene";
+import BattleScene, { bypassLogin, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveCategory, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -19,7 +19,7 @@ import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } fr
 import { biomeLinks } from "./data/biomes";
 import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
-import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, RememberMoveModifierType, TmModifierType, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptionsForWave, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
@@ -53,7 +53,7 @@ import { Tutorial, handleTutorial } from "./tutorial";
 import { TerrainType } from "./data/terrain";
 import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
 import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
-import { getDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
+import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameModes, gameModes } from "./game-mode";
 
 export class LoginPhase extends Phase {
@@ -137,6 +137,7 @@ export class TitlePhase extends Phase {
   start(): void {
     super.start();
 
+    this.scene.ui.clearText();
     this.scene.ui.fadeIn(250);
 
     this.scene.fadeOutBgm(0, false);
@@ -169,12 +170,12 @@ export class TitlePhase extends Phase {
           this.loadSaveSlot(slotId);
         }
       )
-    }/*,
+    },
     {
-      label: 'Daily Run',
+      label: 'Daily Run (Beta)',
       handler: () => this.initDailyRun(),
       keepOpen: true
-    }*/);
+    });
     const config: OptionSelectConfig = {
       options: options,
       noCancel: true
@@ -205,35 +206,48 @@ export class TitlePhase extends Phase {
         return this.end();
       }
       this.scene.sessionSlotId = slotId;
-      this.scene.setSeed(getDailyRunSeed(this.scene));
 
-      this.scene.gameMode = gameModes[GameModes.DAILY];
-      this.scene.money = this.scene.gameMode.getStartingMoney();
+      fetchDailyRunSeed().then(seed => {
+        this.scene.setSeed(seed);
+        this.scene.resetSeed(1);
 
-      const starters = getDailyRunStarters(this.scene);
+        this.scene.gameMode = gameModes[GameModes.DAILY];
+        this.scene.money = this.scene.gameMode.getStartingMoney();
 
-      const party = this.scene.getParty();
-      const loadPokemonAssets: Promise<void>[] = [];
-      for (let starter of starters) {
-        const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
-        const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
-        const starterGender = starter.species.malePercent !== null
-          ? !starterProps.female ? Gender.MALE : Gender.FEMALE
-          : Gender.GENDERLESS;
-        const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-        const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starterProps.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
-        if (starter.moveset)
-          starterPokemon.tryPopulateMoveset(starter.moveset);
-        starterPokemon.setVisible(false);
-        party.push(starterPokemon);
-        loadPokemonAssets.push(starterPokemon.loadAssets());
-      }
-      Promise.all(loadPokemonAssets).then(() => {
-        this.scene.time.delayedCall(500, () => this.scene.playBgm());
-        this.scene.gameData.gameStats.dailyRunSessionsPlayed++;
-        this.scene.newBattle();
-        this.scene.sessionPlayTime = 0;
-        this.end();
+        const starters = getDailyRunStarters(this.scene, seed);
+        const startingLevel = this.scene.gameMode.getStartingLevel();
+
+        const party = this.scene.getParty();
+        const loadPokemonAssets: Promise<void>[] = [];
+        for (let starter of starters) {
+          const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
+          const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
+          const starterGender = starter.species.malePercent !== null
+            ? !starterProps.female ? Gender.MALE : Gender.FEMALE
+            : Gender.GENDERLESS;
+          const starterPokemon = this.scene.addPlayerPokemon(starter.species, startingLevel, starterProps.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, undefined, starter.nature);
+          starterPokemon.setVisible(false);
+          party.push(starterPokemon);
+          loadPokemonAssets.push(starterPokemon.loadAssets());
+        }
+        
+        regenerateModifierPoolThresholds(party, ModifierPoolType.DAILY_STARTER);
+        const modifiers: Modifier[] = Array(3).fill(null).map(() => modifierTypes.EXP_SHARE().withIdFromFunc(modifierTypes.EXP_SHARE).newModifier())
+          .concat(Array(3).fill(null).map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()))
+          .concat(getDailyRunStarterModifiers(party));
+
+        for (let m of modifiers)
+          this.scene.addModifier(m, true, false, false, true);
+        this.scene.updateModifiers(true, true);
+
+        Promise.all(loadPokemonAssets).then(() => {
+          this.scene.time.delayedCall(500, () => this.scene.playBgm());
+          this.scene.gameData.gameStats.dailyRunSessionsPlayed++;
+          this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene), true);
+          this.scene.newBattle();
+          this.scene.sessionPlayTime = 0;
+          this.end();
+        });
       });
     });
   }
@@ -242,11 +256,9 @@ export class TitlePhase extends Phase {
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
       this.scene.pushPhase(new SelectStarterPhase(this.scene));
+      this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene), true);
     } else
       this.scene.playBgm();
-
-    if (!this.loaded)
-      this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene), true);
 
     this.scene.pushPhase(new EncounterPhase(this.scene, this.loaded));
 
@@ -833,6 +845,8 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
   }
 
   doEncounter(): void {
+    this.scene.playBgm(undefined, true);
+
     for (let pokemon of this.scene.getParty()) {
       if (pokemon)
         pokemon.resetBattleData();
@@ -887,7 +901,8 @@ export class SelectBiomePhase extends BattlePhase {
       this.end();
     };
 
-    if (this.scene.gameMode.isClassic && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex + 9))
+    if ((this.scene.gameMode.isClassic && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex + 9))
+      || (this.scene.gameMode.isDaily && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)))
       setNextBiome(Biome.END);
     else if (this.scene.gameMode.hasRandomBiomes)
       setNextBiome(this.generateNextBiome());
@@ -948,8 +963,6 @@ export class SwitchBiomePhase extends BattlePhase {
         this.scene.arenaPlayerTransition.setBiome(this.nextBiome);
         this.scene.arenaPlayerTransition.setAlpha(0);
         this.scene.arenaPlayerTransition.setVisible(true);
-
-        this.scene.time.delayedCall(1000, () => this.scene.playBgm());
 
         this.scene.tweens.add({
           targets: [ this.scene.arenaPlayer, this.scene.arenaBgTransition, this.scene.arenaPlayerTransition ],
@@ -2917,7 +2930,11 @@ export class VictoryPhase extends PokemonPhase {
       if (this.scene.gameMode.isEndless || !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
         if (this.scene.currentBattle.waveIndex % 10)
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
-        else {
+        else if (this.scene.gameMode.isDaily) {
+          this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.EXP_CHARM));
+          if (this.scene.currentBattle.waveIndex > 10 && !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex))
+            this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_POKEBALL));
+        } else {
           const superExpWave = !this.scene.gameMode.isEndless ? 20 : 10;
           if (this.scene.currentBattle.waveIndex <= 750 && (this.scene.currentBattle.waveIndex <= 500 || (this.scene.currentBattle.waveIndex % 30) === superExpWave))
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, (this.scene.currentBattle.waveIndex % 30) !== superExpWave || this.scene.currentBattle.waveIndex > 250 ? modifierTypes.EXP_CHARM : modifierTypes.SUPER_EXP_CHARM));
@@ -3076,12 +3093,15 @@ export class GameOverPhase extends BattlePhase {
   start() {
     super.start();
 
-    this.scene.gameData.clearSession(this.scene.sessionSlotId).then(() => {
+    (this.victory ? this.scene.gameData.tryClearSession : this.scene.gameData.deleteSession)(this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
       this.scene.time.delayedCall(1000, () => {
         let firstClear = false;
-        if (this.victory) {
-          firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
-          this.scene.gameData.gameStats.sessionsWon++;
+        if (this.victory && success[1]) {
+          if (this.scene.gameMode.isClassic) {
+            firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
+            this.scene.gameData.gameStats.sessionsWon++;
+          } else if (this.scene.gameMode.isDaily && success[1])
+            this.scene.gameData.gameStats.dailyRunSessionsWon++;
         }
         this.scene.gameData.saveSystem();
         const fadeDuration = this.victory ? 10000 : 5000;
@@ -3090,7 +3110,7 @@ export class GameOverPhase extends BattlePhase {
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
           this.handleUnlocks();
-          if (this.victory && !firstClear)
+          if (this.victory && !firstClear && success[1])
             this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
           this.scene.reset();
           this.scene.unshiftPhase(new TitlePhase(this.scene));
@@ -3189,6 +3209,7 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
     let exp = new Utils.NumberHolder(this.expValue);
     this.scene.applyModifiers(ExpBoosterModifier, true, exp);
     exp.value = Math.floor(exp.value);
+    console.log(this.expValue, exp.value);
     this.scene.ui.showText(`${pokemon.name} gained\n${exp.value} EXP. Points!`, null, () => {
       const lastLevel = pokemon.level;
       let newLevel: integer;
@@ -3916,7 +3937,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, modifierCount, this.scene.getParty());
+    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty());
   }
 
   addModifier(modifier: Modifier): Promise<void> {

@@ -1073,9 +1073,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (source.getTag(BattlerTagType.CRIT_BOOST))
               critLevel.value += 2;
             const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
-            const blockCrit = new Utils.BooleanHolder(false);
-            applyAbAttrs(BlockCritAbAttr, this, null);
-            isCritical = !blockCrit.value && !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !this.scene.currentBattle.randSeedInt(critChance));
+            isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !this.scene.currentBattle.randSeedInt(critChance));
+            if (isCritical) {
+              const blockCrit = new Utils.BooleanHolder(false);
+              applyAbAttrs(BlockCritAbAttr, this, null, blockCrit);
+              if (blockCrit.value)
+                isCritical = false;
+            }
           }
           const sourceAtk = new Utils.IntegerHolder(source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this));
           const targetDef = new Utils.IntegerHolder(this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source));

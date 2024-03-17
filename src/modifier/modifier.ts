@@ -1260,17 +1260,14 @@ export class ExpBoosterModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
+    console.log(this.boostMultiplier);
     (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
 
     return true;
   }
 
-  getStackCount(): integer {
-    return this.boostMultiplier < 1 ? super.getStackCount() : 10;
-  }
-
   getMaxStackCount(scene: BattleScene, forThreshold?: boolean): integer {
-    return 99;
+    return this.boostMultiplier < 1 ? this.boostMultiplier < 0.6 ? 99 : 30 : 10;
   }
 }
 
