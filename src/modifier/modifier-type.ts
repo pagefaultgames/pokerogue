@@ -1304,8 +1304,8 @@ export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: 
   return modifier;
 }
 
-export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: EnemyPokemon[], poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER): PokemonHeldItemModifierType[] {
-  const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType).type as PokemonHeldItemModifierType);
+export function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: EnemyPokemon[], poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER, upgradeChance: integer = 0): PokemonHeldItemModifierType[] {
+  const ret = new Array(count).fill(0).map(() => getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !Utils.randSeedInt(upgradeChance) ? 1 : 0).type as PokemonHeldItemModifierType);
   if (!(waveIndex % 1000))
     ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemModifierType);
   return ret;
@@ -1353,7 +1353,8 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
   }
   if (tier === undefined) {
     const tierValue = Utils.randSeedInt(1024);
-    upgradeCount = 0;
+    if (!upgradeCount)
+      upgradeCount = 0;
     if (player && tierValue) {
       const partyShinyCount = party.filter(p => p.isShiny() && !p.isFainted()).length;
       const upgradeOdds = Math.floor(32 / ((partyShinyCount + 2) / 2));
@@ -1365,7 +1366,8 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
       } while (upgraded);
     }
     tier = tierValue > 255 ? ModifierTier.COMMON : tierValue > 60 ? ModifierTier.GREAT : tierValue > 12 ? ModifierTier.ULTRA : tierValue ? ModifierTier.ROGUE : ModifierTier.MASTER;
-    upgradeCount = Math.min(upgradeCount, ModifierTier.MASTER - tier);
+    if (!upgradeCount)
+      upgradeCount = Math.min(upgradeCount, ModifierTier.MASTER - tier);
     tier += upgradeCount;
     while (tier && (!modifierPool.hasOwnProperty(tier) || !modifierPool[tier].length)) {
       tier--;
@@ -1373,7 +1375,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
         upgradeCount--;
     }
   }
-  
+
   const tierThresholds = Object.keys(thresholds[tier]);
   const totalWeight = parseInt(tierThresholds[tierThresholds.length - 1]);
   const value = Utils.randSeedInt(totalWeight);

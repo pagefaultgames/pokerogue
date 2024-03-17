@@ -1690,11 +1690,11 @@ export default class BattleScene extends Phaser.Scene {
 		return new Promise(resolve => {
 			if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS)
 				return resolve();
-			const waveIndex = this.currentBattle.waveIndex;
-			const chances = Math.ceil(waveIndex / 10);
-			const isBoss = !(waveIndex % 10) || (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer.config.isBoss);
-			
-			const modifierChance = this.gameMode.getEnemyModifierChance(isBoss);
+			const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(this.currentBattle.waveIndex);
+			const isFinalBoss = this.gameMode.isWaveFinal(this.currentBattle.waveIndex);
+			let chances = Math.ceil(difficultyWaveIndex / 10);
+			if (isFinalBoss)
+				chances = Math.ceil(chances * 2.5);
 
 			const party = this.getEnemyParty();
 
@@ -1705,6 +1705,13 @@ export default class BattleScene extends Phaser.Scene {
 			}
 
 			party.forEach((enemyPokemon: EnemyPokemon, i: integer) => {
+				const isBoss = enemyPokemon.isBoss() || (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer.config.isBoss);
+				let upgradeChance = 32;
+				if (isBoss)
+					upgradeChance /= 2;
+				if (isFinalBoss)
+					upgradeChance /= 8;
+				const modifierChance = this.gameMode.getEnemyModifierChance(isBoss);
 				let pokemonModifierChance = modifierChance;
 				if (this.currentBattle.battleType === BattleType.TRAINER)
 					pokemonModifierChance = Math.ceil(pokemonModifierChance * this.currentBattle.trainer.getPartyMemberModifierChanceMultiplier(i));
@@ -1715,7 +1722,7 @@ export default class BattleScene extends Phaser.Scene {
 				}
 				if (isBoss)
 					count = Math.max(count, Math.floor(chances / 2));
-				getEnemyModifierTypesForWave(waveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD)
+				getEnemyModifierTypesForWave(difficultyWaveIndex, count, [ enemyPokemon ], this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD, upgradeChance)
 					.map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false, this));
 			});
 

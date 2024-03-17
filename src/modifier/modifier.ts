@@ -1260,7 +1260,6 @@ export class ExpBoosterModifier extends PersistentModifier {
   }
 
   apply(args: any[]): boolean {
-    console.log(this.boostMultiplier);
     (args[0] as Utils.NumberHolder).value = Math.floor((args[0] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
 
     return true;

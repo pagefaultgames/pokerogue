@@ -392,6 +392,13 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       }
       const durationMultiplier = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeIn')(1 - (Math.max(this.lastLevel - 100, 0) / 150));
       let duration = this.visible && !instant ? (((levelExp - this.lastLevelExp) / relLevelExp) * 1650) * durationMultiplier * levelDurationMultiplier : 0;
+      if (ratio === 1) {
+        this.lastLevelExp = 0;
+        this.lastLevel++;
+      } else {
+        this.lastExp = pokemon.exp;
+        this.lastLevelExp = pokemon.levelExp;
+      }
       if (duration)
         (this.scene as BattleScene).playSound('exp');
       this.scene.tweens.add({
@@ -405,8 +412,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
           if (duration)
             this.scene.sound.stopByKey('exp');
           if (ratio === 1) {
-            this.lastLevelExp = 0;
-            this.lastLevel++;
             (this.scene as BattleScene).playSound('level_up');
             this.setLevel(this.lastLevel);
             this.scene.time.delayedCall(500 * levelDurationMultiplier, () => {
@@ -414,9 +419,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
               this.updateInfo(pokemon, instant).then(() => resolve());
             });
             return;
-          } else {
-            this.lastExp = pokemon.exp;
-            this.lastLevelExp = pokemon.levelExp;
           }
           resolve();
         }
