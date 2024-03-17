@@ -5215,11 +5215,11 @@ export const biomeTrainerPools: BiomeTrainerPools = {
         [ Biome.FOREST, BiomePoolTier.COMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
       ]
     ],
-    [ Species.LITLEO, Type.FIRE, -1, [
+    [ Species.LITLEO, Type.FIRE, Type.NORMAL, [
         [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ]
       ]
     ],
-    [ Species.PYROAR, Type.FIRE, -1, [
+    [ Species.PYROAR, Type.FIRE, Type.NORMAL, [
         [ Biome.JUNGLE, BiomePoolTier.UNCOMMON ],
         [ Biome.JUNGLE, BiomePoolTier.BOSS ]
       ]
@@ -5337,11 +5337,11 @@ export const biomeTrainerPools: BiomeTrainerPools = {
         [ Biome.BEACH, BiomePoolTier.BOSS ]
       ]
     ],
-    [ Species.HELIOPTILE, Type.ELECTRIC, -1, [
+    [ Species.HELIOPTILE, Type.ELECTRIC, Type.NORMAL, [
         [ Biome.DESERT, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
       ]
     ],
-    [ Species.HELIOLISK, Type.ELECTRIC, -1, [
+    [ Species.HELIOLISK, Type.ELECTRIC, Type.NORMAL, [
         [ Biome.DESERT, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
       ]
     ],
@@ -6106,7 +6106,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
         [ Biome.ABYSS, BiomePoolTier.BOSS ]
       ]
     ],
-    [ Species.OBSTAGOON, Type.DARK, -1, [
+    [ Species.OBSTAGOON, Type.DARK, Type.NORMAL, [
         [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
         [ Biome.SLUM, BiomePoolTier.BOSS_RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
       ]
@@ -6416,15 +6416,15 @@ export const biomeTrainerPools: BiomeTrainerPools = {
         [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
       ]
     ],
-    [ Species.SMOLIV, Type.GRASS, -1, [
+    [ Species.SMOLIV, Type.GRASS, Type.NORMAL, [
         [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
       ]
     ],
-    [ Species.DOLLIV, Type.GRASS, -1, [
+    [ Species.DOLLIV, Type.GRASS, Type.NORMAL, [
         [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
       ]
     ],
-    [ Species.ARBOLIVA, Type.GRASS, -1, [
+    [ Species.ARBOLIVA, Type.GRASS, Type.NORMAL, [
         [ Biome.MEADOW, BiomePoolTier.UNCOMMON, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ],
         [ Biome.MEADOW, BiomePoolTier.BOSS, [ TimeOfDay.DAWN, TimeOfDay.DAY ] ]
       ]
@@ -6492,11 +6492,11 @@ export const biomeTrainerPools: BiomeTrainerPools = {
         [ Biome.ABYSS, BiomePoolTier.BOSS ]
       ]
     ],
-    [ Species.SHROODLE, Type.POISON, -1, [
+    [ Species.SHROODLE, Type.POISON, Type.NORMAL, [
         [ Biome.FOREST, BiomePoolTier.COMMON ]
       ]
     ],
-    [ Species.GRAFAIAI, Type.POISON, -1, [
+    [ Species.GRAFAIAI, Type.POISON, Type.NORMAL, [
         [ Biome.FOREST, BiomePoolTier.COMMON ],
         [ Biome.FOREST, BiomePoolTier.BOSS ]
       ]
@@ -6596,7 +6596,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
         [ Biome.SLUM, BiomePoolTier.BOSS_RARE ]
       ]
     ],
-    [ Species.CYCLIZAR, Type.DRAGON, -1, [
+    [ Species.CYCLIZAR, Type.DRAGON, Type.NORMAL, [
         [ Biome.WASTELAND, BiomePoolTier.UNCOMMON ]
       ]
     ],
@@ -6851,11 +6851,11 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ],
     [ Species.PECHARUNT, Type.POISON, Type.GHOST, [ ]
     ],
-    [ Species.ALOLA_RATTATA, Type.DARK, -1, [
+    [ Species.ALOLA_RATTATA, Type.DARK, Type.NORMAL, [
         [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
       ]
     ],
-    [ Species.ALOLA_RATICATE, Type.DARK, -1, [
+    [ Species.ALOLA_RATICATE, Type.DARK, Type.NORMAL, [
         [ Biome.ISLAND, BiomePoolTier.COMMON, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
         [ Biome.ISLAND, BiomePoolTier.BOSS, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
       ]
@@ -7001,11 +7001,11 @@ export const biomeTrainerPools: BiomeTrainerPools = {
         [ Biome.SEABED, BiomePoolTier.SUPER_RARE ]
       ]
     ],
-    [ Species.GALAR_ZIGZAGOON, Type.DARK, -1, [
+    [ Species.GALAR_ZIGZAGOON, Type.DARK, Type.NORMAL, [
         [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
       ]
     ],
-    [ Species.GALAR_LINOONE, Type.DARK, -1, [
+    [ Species.GALAR_LINOONE, Type.DARK, Type.NORMAL, [
         [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ]
       ]
     ],
