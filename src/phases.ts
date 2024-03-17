@@ -182,13 +182,13 @@ export class TitlePhase extends Phase {
     };
     this.scene.ui.setMode(Mode.OPTION_SELECT, config);
 
-    this.scene.dailyRunScoreboard.showAndUpdate(true);
+    this.scene.dailyRunScoreboard.showAndUpdate();
   }
 
   loadSaveSlot(slotId: integer): void {
     this.scene.sessionSlotId = slotId;
     this.scene.ui.setMode(Mode.MESSAGE);
-    this.scene.dailyRunScoreboard.hide(false);
+    this.scene.dailyRunScoreboard.hide();
     this.scene.gameData.loadSession(this.scene, slotId).then((success: boolean) => {
       if (success) {
         this.loaded = true;
@@ -206,7 +206,7 @@ export class TitlePhase extends Phase {
       this.scene.clearPhaseQueue();
       if (slotId === -1) {
         this.scene.pushPhase(new TitlePhase(this.scene));
-        return this.end();
+        return super.end();
       }
       this.scene.sessionSlotId = slotId;
 
@@ -256,7 +256,7 @@ export class TitlePhase extends Phase {
   }
 
   end(): void {
-    this.scene.dailyRunScoreboard.hide(false);
+    this.scene.dailyRunScoreboard.hide();
 
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
@@ -3224,7 +3224,6 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
     let exp = new Utils.NumberHolder(this.expValue);
     this.scene.applyModifiers(ExpBoosterModifier, true, exp);
     exp.value = Math.floor(exp.value);
-    console.log(this.expValue, exp.value);
     this.scene.ui.showText(`${pokemon.name} gained\n${exp.value} EXP. Points!`, null, () => {
       const lastLevel = pokemon.level;
       let newLevel: integer;
