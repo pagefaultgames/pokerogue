@@ -150,6 +150,10 @@ export default class Battle {
         let partyMemberTurnMultiplier = scene.getEnemyParty().length / 2 + 0.5;
         if (this.double)
             partyMemberTurnMultiplier /= 1.5;
+        for (let p of scene.getEnemyParty()) {
+            if (p.isBoss())
+                partyMemberTurnMultiplier *= (p.bossSegments / 1.5) / scene.getEnemyParty().length;
+        }
         const turnMultiplier = Phaser.Tweens.Builders.GetEaseFunction('Sine.easeIn')(1 - Math.min(this.turn - 2, 10 * partyMemberTurnMultiplier) / (10 * partyMemberTurnMultiplier));
         const finalBattleScore = Math.ceil(this.battleScore * turnMultiplier);
         scene.score += finalBattleScore;
