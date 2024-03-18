@@ -6,7 +6,8 @@ import * as Utils from "../utils";
 interface RankingEntry {
   rank: integer,
   username: string,
-  score: integer
+  score: integer,
+  wave: integer
 }
 
 export class DailyRunScoreboard extends Phaser.GameObjects.Container {
@@ -21,14 +22,14 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    const titleWindow = addWindow(this.scene, 0, 0, 104, 16, false, false, null, null, WindowVariant.THIN);
+    const titleWindow = addWindow(this.scene, 0, 0, 114, 16, false, false, null, null, WindowVariant.THIN);
     this.add(titleWindow);
 
     this.titleLabel = addTextObject(this.scene, titleWindow.displayWidth / 2, titleWindow.displayHeight / 2, 'Daily Rankings', TextStyle.WINDOW, { fontSize: '64px' });
     this.titleLabel.setOrigin(0.5, 0.5);
     this.add(this.titleLabel);
 
-    const window = addWindow(this.scene, 0, 15, 104, 115, false, false, null, null, WindowVariant.THIN);
+    const window = addWindow(this.scene, 0, 15, 114, 115, false, false, null, null, WindowVariant.THIN);
     this.add(window);
 
     this.rankingsContainer = this.scene.add.container(6, 19);
@@ -44,7 +45,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
   }
 
   updateRankings(rankings: RankingEntry[]) {
-    const getEntry = (rank: string, username: string, score: string) => {
+    const getEntry = (rank: string, username: string, score: string, wave: string) => {
       const entryContainer = this.scene.add.container(0, 0);
 
       const rankLabel = addTextObject(this.scene, 0, 0, rank, TextStyle.WINDOW, { fontSize: '54px' });
@@ -56,13 +57,16 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       const scoreLabel = addTextObject(this.scene, 68, 0, score, TextStyle.WINDOW, { fontSize: '54px' });
       entryContainer.add(scoreLabel);
 
+      const waveLabel = addTextObject(this.scene, 90, 0, wave, TextStyle.WINDOW, { fontSize: '54px' });
+      entryContainer.add(waveLabel);
+
       return entryContainer;
     };
 
-    this.rankingsContainer.add(getEntry('#', 'Username', 'Score'));
+    this.rankingsContainer.add(getEntry('#', 'Username', 'Score', 'Wave'));
 
     rankings.forEach((r: RankingEntry, i: integer) => {
-      const entryContainer = getEntry(r.rank.toString(), r.username, r.score.toString());
+      const entryContainer = getEntry(r.rank.toString(), r.username, r.score.toString(), r.wave.toString());
       entryContainer.setY(r.rank * 9);
       this.rankingsContainer.add(entryContainer);
     });
