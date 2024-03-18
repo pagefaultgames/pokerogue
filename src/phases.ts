@@ -2962,6 +2962,7 @@ export class VictoryPhase extends PokemonPhase {
         this.scene.pushPhase(new NewBattlePhase(this.scene));
       } else {
         this.scene.currentBattle.battleType = BattleType.CLEAR;
+        this.scene.score += this.scene.gameMode.getClearScoreBonus();
         this.scene.pushPhase(new GameOverPhase(this.scene, true));
       }
     }

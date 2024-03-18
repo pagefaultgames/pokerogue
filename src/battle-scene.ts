@@ -17,7 +17,7 @@ import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
 import { } from "./data/move";
 import { initMoves } from './data/move';
-import { ModifierPoolType, PokemonBaseStatBoosterModifierType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';

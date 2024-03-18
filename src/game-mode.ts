@@ -138,6 +138,15 @@ export class GameMode implements GameModeConfig {
     }
   }
 
+  getClearScoreBonus(): integer {
+    switch (this.modeId) {
+      case GameModes.CLASSIC:
+        return 5000;
+      case GameModes.DAILY:
+        return 2500;
+    }
+  }
+
   getEnemyModifierChance(isBoss: boolean): integer {
     switch (this.modeId) {
       case GameModes.CLASSIC:
