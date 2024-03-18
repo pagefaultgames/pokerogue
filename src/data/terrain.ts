@@ -1,3 +1,4 @@
+import Move from "./move";
 import { Type } from "./type";
 
 export enum TerrainType {
@@ -41,6 +42,15 @@ export class Terrain {
     }
 
     return 1;
+  }
+
+  isMoveTerrainCancelled(move: Move): boolean {
+    switch (this.terrainType) {
+      case TerrainType.PSYCHIC:
+        return move.priority > 0;
+    }
+
+    return false;
   }
 }
 

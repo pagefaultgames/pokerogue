@@ -194,15 +194,35 @@ export function getWeatherClearMessage(weatherType: WeatherType): string {
 }
 
 export function getTerrainStartMessage(terrainType: TerrainType): string {
-  return terrainType
-    ? `The terrain became ${Utils.toReadableString(TerrainType[terrainType])}!`
-    : null;
+  switch (terrainType) {
+    case TerrainType.MISTY:
+      return 'Mist swirled around the battlefield!';
+    case TerrainType.ELECTRIC:
+      return 'An electric current ran across the battlefield!';
+    case TerrainType.GRASSY:
+      return 'Grass grew to cover the battlefield!';
+    case TerrainType.PSYCHIC:
+      return 'The battlefield got weird!';
+  }
 }
 
 export function getTerrainClearMessage(terrainType: TerrainType): string {
-  return terrainType
-    ? `The ${Utils.toReadableString(TerrainType[terrainType])} terrain faded.`
-    : null;
+  switch (terrainType) {
+    case TerrainType.MISTY:
+      return 'The mist disappeared from the battlefield.';
+    case TerrainType.ELECTRIC:
+      return 'The electricity disappeared from the battlefield.';
+    case TerrainType.GRASSY:
+      return 'The grass disappeared from the battlefield.';
+    case TerrainType.PSYCHIC:
+      return 'The weirdness disappeared from the battlefield!';
+  }
+}
+
+export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainType): string {
+  if (terrainType === TerrainType.MISTY)
+    return getPokemonMessage(pokemon, ` surrounds itself with a protective mist!`);
+  return getPokemonMessage(pokemon, ` is protected by the ${Utils.toReadableString(TerrainType[terrainType])} Terrain!`);
 }
 
 interface WeatherPoolEntry {

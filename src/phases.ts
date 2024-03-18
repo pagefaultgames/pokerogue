@@ -26,7 +26,7 @@ import { BattlerTagType } from "./data/enums/battler-tag-type";
 import { getPokemonMessage } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
 import { Gender } from "./data/gender";
-import { Weather, WeatherType, getRandomWeatherType, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
+import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
@@ -2040,13 +2040,18 @@ export class MovePhase extends BattlePhase {
 
       // Assume conditions affecting targets only apply to moves with a single target
       let success = this.move.getMove().applyConditions(this.pokemon, targets[0], this.move.getMove());
+      let failedText = null;
       if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
         success = false;
+      else if (success && this.scene.arena.isMoveTerrainCancelled(this.move.getMove())) {
+        success = false;
+        failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
+      }
       if (success)
         this.scene.unshiftPhase(this.getEffectPhase());
       else {
         this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
-        this.showFailedText();
+        this.showFailedText(failedText);
       }
       
       this.end();
@@ -2109,8 +2114,8 @@ export class MovePhase extends BattlePhase {
     this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
   }
 
-  showFailedText(): void {
-    this.scene.queueMessage('But it failed!');
+  showFailedText(failedText: string = null): void {
+    this.scene.queueMessage(failedText || 'But it failed!');
   }
 
   end() {

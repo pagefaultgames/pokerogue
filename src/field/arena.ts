@@ -298,6 +298,10 @@ export class Arena {
     return this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(move);
   }
 
+  isMoveTerrainCancelled(move: Move) {
+    return this.terrain && this.terrain.isMoveTerrainCancelled(move);
+  }
+
   getAttackTypeMultiplier(attackType: Type, grounded: boolean): number {
     let weatherMultiplier = 1;
     if (this.weather && !this.weather.isEffectSuppressed(this.scene))
