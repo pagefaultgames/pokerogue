@@ -3991,7 +3991,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(Moves.HYPERSPACE_HOLE, "Hyperspace Hole", Type.PSYCHIC, MoveCategory.SPECIAL, 80, -1, 5, -1, "Using a hyperspace hole, the user appears right next to the target and strikes. This also hits a target using a move such as Protect or Detect.", -1, 0, 6)
       .ignoresProtect(),
-    new AttackMove(Moves.WATER_SHURIKEN, "Water Shuriken", Type.WATER, MoveCategory.SPECIAL, 15, 100, 20, -1, "The user hits the target with throwing stars two to five times in a row. This move always goes first.", -1, 1, 6),
+    new AttackMove(Moves.WATER_SHURIKEN, "Water Shuriken", Type.WATER, MoveCategory.SPECIAL, 15, 100, 20, -1, "The user hits the target with throwing stars two to five times in a row. This move always goes first.", -1, 1, 6)
+      .attr(MultiHitAttr),
     new AttackMove(Moves.MYSTICAL_FIRE, "Mystical Fire", Type.FIRE, MoveCategory.SPECIAL, 75, 100, 10, -1, "The user attacks by breathing a special, hot fire. This also lowers the target's Sp. Atk stat.", 100, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPATK, -1),
     new SelfStatusMove(Moves.SPIKY_SHIELD, "Spiky Shield (P)", Type.GRASS, -1, 10, -1, "In addition to protecting the user from attacks, this move also damages any attacker that makes direct contact.", -1, 4, 6)
