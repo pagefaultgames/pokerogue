@@ -2194,6 +2194,8 @@ export class MoveEffectPhase extends PokemonPhase {
 
           const isProtected = !this.move.getMove().hasFlag(MoveFlags.IGNORE_PROTECT) && target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType));
 
+          const firstHit = moveHistoryEntry.result !== MoveResult.SUCCESS;
+
           moveHistoryEntry.result = MoveResult.SUCCESS;
           
           const hitResult = !isProtected ? target.apply(user, this.move) : HitResult.NO_EFFECT;
@@ -2201,13 +2203,13 @@ export class MoveEffectPhase extends PokemonPhase {
           this.scene.triggerPokemonFormChange(user, SpeciesFormChangeMoveUsedTrigger);
 
           applyAttrs.push(new Promise(resolve => {
-            applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.PRE_APPLY,
+            applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.PRE_APPLY && (!attr.selfTarget || firstHit),
               user, target, this.move.getMove()).then(() => {
               if (hitResult !== HitResult.FAIL) {
                 const chargeEffect = !!this.move.getMove().getAttrs(ChargeAttr).find(ca => (ca as ChargeAttr).usedChargeEffect(user, this.getTarget(), this.move.getMove()));
                 // Charge attribute with charge effect takes all effect attributes and applies them to charge stage, so ignore them if this is present
                 Utils.executeIf(!chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_APPLY
-                  && (attr as MoveEffectAttr).selfTarget, user, target, this.move.getMove())).then(() => {
+                  && (attr as MoveEffectAttr).selfTarget && firstHit, user, target, this.move.getMove())).then(() => {
                   if (hitResult !== HitResult.NO_EFFECT) {
                     applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_APPLY
                       && !(attr as MoveEffectAttr).selfTarget, user, target, this.move.getMove()).then(() => {
@@ -2217,7 +2219,7 @@ export class MoveEffectPhase extends PokemonPhase {
                         if (flinched.value)
                           target.addTag(BattlerTagType.FLINCHED, undefined, this.move.moveId, user.id);
                       }
-                      Utils.executeIf(!isProtected && !chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT,
+                      Utils.executeIf(!isProtected && !chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT && (!attr.selfTarget || firstHit),
                         user, target, this.move.getMove()).then(() => {
                           return Utils.executeIf(!target.isFainted(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult).then(() => {
                             if (!user.isPlayer() && this.move.getMove() instanceof AttackMove)
