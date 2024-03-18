@@ -470,11 +470,20 @@ export class Arena {
   }
 
   lapseTags(): void {
-    const tags = this.tags;
-    tags.filter(t => !(t.lapse(this))).forEach(t => {
+    this.tags.filter(t => !(t.lapse(this))).forEach(t => {
       t.onRemove(this);
-      tags.splice(tags.indexOf(t), 1);
+      this.tags.splice(this.tags.indexOf(t), 1);
     });
+  }
+
+  removeTag(tagType: ArenaTagType): boolean {
+    const tags = this.tags;
+    const tag = tags.find(t => t.tagType === tagType);
+    if (tag) {
+      tag.onRemove(this);
+      tags.splice(tags.indexOf(tag), 1);
+    }
+    return !!tag;
   }
 
   removeAllTags(): void {

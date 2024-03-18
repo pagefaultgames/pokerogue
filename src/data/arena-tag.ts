@@ -141,7 +141,7 @@ export class ArenaTrapTag extends ArenaTag {
     }
   }
 
-  apply(arena: Arena, args: any[]): boolean { 
+  apply(arena: Arena, args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
     if (this.sourceId === pokemon.id || (this.side === ArenaTagSide.PLAYER) !== pokemon.isPlayer())
       return false;
@@ -181,8 +181,11 @@ class SpikesTag extends ArenaTrapTag {
 }
 
 class ToxicSpikesTag extends ArenaTrapTag {
+  private neutralized: boolean;
+
   constructor(sourceId: integer, side: ArenaTagSide) {
     super(ArenaTagType.TOXIC_SPIKES, Moves.TOXIC_SPIKES, sourceId, side, 2);
+    this.neutralized = false;
   }
 
   onAdd(arena: Arena): void {
@@ -192,10 +195,23 @@ class ToxicSpikesTag extends ArenaTrapTag {
     arena.scene.queueMessage(`${this.getMoveName()} were scattered\nall around ${source.getOpponentDescriptor()}'s feet!`);
   }
 
+  onRemove(arena: Arena): void {
+    if (!this.neutralized)
+      super.onRemove(arena);
+  }
+
   activateTrap(pokemon: Pokemon): boolean {
     if (!pokemon.status && pokemon.isGrounded()) {
       const toxic = this.layers > 1;
-      return pokemon.trySetStatus(!toxic ? StatusEffect.POISON : StatusEffect.TOXIC, true, null, `the ${this.getMoveName()}`);
+      if (pokemon.trySetStatus(!toxic ? StatusEffect.POISON : StatusEffect.TOXIC, true, null, `the ${this.getMoveName()}`))
+        return true;
+      else if (pokemon.isOfType(Type.POISON)) {
+        this.neutralized = true;
+        if (pokemon.scene.arena.removeTag(this.tagType)) {
+          pokemon.scene.queueMessage(`The ${this.getMoveName()} were\nneutralized by ${pokemon.name}.`);
+          return true;
+        }
+      }
     }
 
     return false;
