@@ -21,14 +21,14 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    const titleWindow = addWindow(this.scene, 0, 0, 110, 16, false, false, null, null, WindowVariant.THIN);
+    const titleWindow = addWindow(this.scene, 0, 0, 104, 16, false, false, null, null, WindowVariant.THIN);
     this.add(titleWindow);
 
     this.titleLabel = addTextObject(this.scene, titleWindow.displayWidth / 2, titleWindow.displayHeight / 2, 'Daily Rankings', TextStyle.WINDOW, { fontSize: '64px' });
     this.titleLabel.setOrigin(0.5, 0.5);
     this.add(this.titleLabel);
 
-    const window = addWindow(this.scene, 0, 15, 110, 115, false, false, null, null, WindowVariant.THIN);
+    const window = addWindow(this.scene, 0, 15, 104, 115, false, false, null, null, WindowVariant.THIN);
     this.add(window);
 
     this.rankingsContainer = this.scene.add.container(6, 19);

@@ -13,7 +13,8 @@ import { PokemonHeldItemModifier } from "./modifier/modifier";
 
 export enum BattleType {
     WILD,
-    TRAINER
+    TRAINER,
+    CLEAR
 }
 
 export enum BattlerIndex {

@@ -2960,8 +2960,10 @@ export class VictoryPhase extends PokemonPhase {
           }
         }
         this.scene.pushPhase(new NewBattlePhase(this.scene));
-      } else
+      } else {
+        this.scene.currentBattle.battleType = BattleType.CLEAR;
         this.scene.pushPhase(new GameOverPhase(this.scene, true));
+      }
     }
 
     this.end();
@@ -3107,7 +3109,7 @@ export class GameOverPhase extends BattlePhase {
   start() {
     super.start();
 
-    (this.victory ? this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId) : this.scene.gameData.deleteSession(this.scene.sessionSlotId)).then((success: boolean | [boolean, boolean]) => {
+    this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
       this.scene.time.delayedCall(1000, () => {
         let firstClear = false;
         if (this.victory && success[1]) {
