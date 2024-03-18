@@ -3217,7 +3217,7 @@ export function initMoves() {
     new AttackMove(Moves.FAKE_OUT, "Fake Out", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 10, -1, "This attack hits first and makes the target flinch. It only works the first turn each time the user enters battle.", 100, 3, 3)
       .attr(FlinchAttr)
       .condition(new FirstMoveCondition()),
-    new AttackMove(Moves.UPROAR, "Uproar (N)", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, -1, "The user attacks in an uproar for three turns. During that time, no Pokémon can fall asleep.", -1, 0, 3)
+    new AttackMove(Moves.UPROAR, "Uproar (P)", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, -1, "The user attacks in an uproar for three turns. During that time, no Pokémon can fall asleep.", -1, 0, 3)
       .ignoresVirtual()
       .soundBased()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
@@ -3244,7 +3244,7 @@ export function initMoves() {
     new AttackMove(Moves.FACADE, "Facade", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 25, "This attack move doubles its power if the user is poisoned, burned, or paralyzed.", -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.status
         && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1),
-    new AttackMove(Moves.FOCUS_PUNCH, "Focus Punch (N)", Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, "The user focuses its mind before launching a punch. This move fails if the user is hit before it is used.", -1, -3, 3)
+    new AttackMove(Moves.FOCUS_PUNCH, "Focus Punch (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, "The user focuses its mind before launching a punch. This move fails if the user is hit before it is used.", -1, -3, 3)
       .punchingMove()
       .ignoresVirtual(),
     new AttackMove(Moves.SMELLING_SALTS, "Smelling Salts", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 10, -1, "This attack's power is doubled when used on a target with paralysis. This also cures the target's paralysis, however.", -1, 0, 3)
@@ -3269,12 +3269,12 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], -1, true),
     new SelfStatusMove(Moves.MAGIC_COAT, "Magic Coat (N)", Type.PSYCHIC, -1, 15, -1, "Moves like Leech Seed and moves that inflict status conditions are blocked by a barrier and reflected back to the user of those moves.", -1, 4, 3),
     new SelfStatusMove(Moves.RECYCLE, "Recycle (N)", Type.NORMAL, -1, 10, -1, "The user recycles a held item that has been used in battle so it can be used again.", -1, 0, 3),
-    new AttackMove(Moves.REVENGE, "Revenge (N)", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, "This attack move's power is doubled if the user has been hurt by the opponent in the same turn.", -1, -4, 3),
-    new AttackMove(Moves.BRICK_BREAK, "Brick Break (N)", Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, 58, "The user attacks with a swift chop. It can also break barriers, such as Light Screen and Reflect.", -1, 0, 3),
+    new AttackMove(Moves.REVENGE, "Revenge (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, "This attack move's power is doubled if the user has been hurt by the opponent in the same turn.", -1, -4, 3),
+    new AttackMove(Moves.BRICK_BREAK, "Brick Break (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, 58, "The user attacks with a swift chop. It can also break barriers, such as Light Screen and Reflect.", -1, 0, 3),
     new StatusMove(Moves.YAWN, "Yawn", Type.NORMAL, -1, 10, -1, "The user lets loose a huge yawn that lulls the target into falling asleep on the next turn.", -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, move) => !target.status),
-    new AttackMove(Moves.KNOCK_OFF, "Knock Off (N)", Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, "The user slaps down the target's held item, and that item can't be used in that battle. The move does more damage if the target has a held item.", -1, 0, 3),
+    new AttackMove(Moves.KNOCK_OFF, "Knock Off (P)", Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, "The user slaps down the target's held item, and that item can't be used in that battle. The move does more damage if the target has a held item.", -1, 0, 3),
     new AttackMove(Moves.ENDEAVOR, "Endeavor", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, "This attack move cuts down the target's HP to equal the user's HP.", -1, 0, 3)
       .attr(MatchHpAttr)
       .condition(failOnBossCondition),
@@ -3482,7 +3482,7 @@ export function initMoves() {
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.PROTECTED ])
       .makesContact(false)
       .ignoresProtect(),
-    new AttackMove(Moves.PLUCK, "Pluck (N)", Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 20, -1, "The user pecks the target. If the target is holding a Berry, the user eats it and gains its effect.", -1, 0, 4),
+    new AttackMove(Moves.PLUCK, "Pluck (P)", Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 20, -1, "The user pecks the target. If the target is holding a Berry, the user eats it and gains its effect.", -1, 0, 4),
     new StatusMove(Moves.TAILWIND, "Tailwind (N)", Type.FLYING, -1, 15, 113, "The user whips up a turbulent whirlwind that ups the Speed stats of the user and its allies for four turns.", -1, 0, 4)
       .windMove()
       .target(MoveTarget.USER_SIDE),
@@ -3753,12 +3753,12 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
       .danceMove(),
     new AttackMove(Moves.HEAVY_SLAM, "Heavy Slam (N)", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, 121, "The user slams into the target with its heavy body. The more the user outweighs the target, the greater the move's power.", -1, 0, 5),
-    new AttackMove(Moves.SYNCHRONOISE, "Synchronoise (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, "Using an odd shock wave, the user inflicts damage on any Pokémon of the same type in the area around it.", -1, 0, 5)
+    new AttackMove(Moves.SYNCHRONOISE, "Synchronoise (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, "Using an odd shock wave, the user inflicts damage on any Pokémon of the same type in the area around it.", -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.ELECTRO_BALL, "Electro Ball", Type.ELECTRIC, MoveCategory.SPECIAL, -1, 100, 10, 72, "The user hurls an electric orb at the target. The faster the user is than the target, the greater the move's power.", -1, 0, 5)
       .attr(BattleStatRatioPowerAttr, Stat.SPD)
       .ballBombMove(),
-    new StatusMove(Moves.SOAK, "Soak (P)", Type.WATER, 100, 20, -1, "The user shoots a torrent of water at the target and changes the target's type to Water.", -1, 0, 5),
+    new StatusMove(Moves.SOAK, "Soak (N)", Type.WATER, 100, 20, -1, "The user shoots a torrent of water at the target and changes the target's type to Water.", -1, 0, 5),
     new AttackMove(Moves.FLAME_CHARGE, "Flame Charge", Type.FIRE, MoveCategory.PHYSICAL, 50, 100, 20, 38, "Cloaking itself in flame, the user attacks the target. Then, building up more power, the user raises its Speed stat.", 100, 0, 5)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true),
     new SelfStatusMove(Moves.COIL, "Coil", Type.POISON, -1, 20, -1, "The user coils up and concentrates. This raises its Attack and Defense stats as well as its accuracy.", -1, 0, 5)
@@ -3768,7 +3768,7 @@ export function initMoves() {
     new AttackMove(Moves.ACID_SPRAY, "Acid Spray", Type.POISON, MoveCategory.SPECIAL, 40, 100, 20, 13, "The user spits fluid that works to melt the target. This harshly lowers the target's Sp. Def stat.", 100, 0, 5)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2)
       .ballBombMove(),
-    new AttackMove(Moves.FOUL_PLAY, "Foul Play (N)", Type.DARK, MoveCategory.PHYSICAL, 95, 100, 15, 62, "The user turns the target's power against it. The higher the target's Attack stat, the greater the damage it deals.", -1, 0, 5),
+    new AttackMove(Moves.FOUL_PLAY, "Foul Play (P)", Type.DARK, MoveCategory.PHYSICAL, 95, 100, 15, 62, "The user turns the target's power against it. The higher the target's Attack stat, the greater the damage it deals.", -1, 0, 5),
     new StatusMove(Moves.SIMPLE_BEAM, "Simple Beam (N)", Type.NORMAL, 100, 15, -1, "The user's mysterious psychic wave changes the target's Ability to Simple.", -1, 0, 5),
     new StatusMove(Moves.ENTRAINMENT, "Entrainment (N)", Type.NORMAL, 100, 15, -1, "The user dances with an odd rhythm that compels the target to mimic it, making the target's Ability the same as the user's.", -1, 0, 5),
     new StatusMove(Moves.AFTER_YOU, "After You (N)", Type.NORMAL, -1, 15, -1, "The user helps the target and makes it use its move right after the user.", -1, 0, 5)
@@ -3778,9 +3778,9 @@ export function initMoves() {
     new AttackMove(Moves.ECHOED_VOICE, "Echoed Voice", Type.NORMAL, MoveCategory.SPECIAL, 40, 100, 15, -1, "The user attacks the target with an echoing voice. If this move is used every turn, its power is increased.", -1, 0, 5)
       .attr(ConsecutiveUseMultiBasePowerAttr, 5, false)
       .soundBased(),
-    new AttackMove(Moves.CHIP_AWAY, "Chip Away (N)", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, "Looking for an opening, the user strikes consistently. The target's stat changes don't affect this attack's damage.", -1, 0, 5),
-    new AttackMove(Moves.CLEAR_SMOG, "Clear Smog (N)", Type.POISON, MoveCategory.SPECIAL, 50, -1, 15, -1, "The user attacks the target by throwing a clump of special mud. All stat changes are returned to normal.", -1, 0, 5),
-    new AttackMove(Moves.STORED_POWER, "Stored Power (N)", Type.PSYCHIC, MoveCategory.SPECIAL, 20, 100, 10, 41, "The user attacks the target with stored power. The more the user's stats are raised, the greater the move's power.", -1, 0, 5),
+    new AttackMove(Moves.CHIP_AWAY, "Chip Away (P)", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, "Looking for an opening, the user strikes consistently. The target's stat changes don't affect this attack's damage.", -1, 0, 5),
+    new AttackMove(Moves.CLEAR_SMOG, "Clear Smog (P)", Type.POISON, MoveCategory.SPECIAL, 50, -1, 15, -1, "The user attacks the target by throwing a clump of special mud. All stat changes are returned to normal.", -1, 0, 5),
+    new AttackMove(Moves.STORED_POWER, "Stored Power (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 20, 100, 10, 41, "The user attacks the target with stored power. The more the user's stats are raised, the greater the move's power.", -1, 0, 5),
     new StatusMove(Moves.QUICK_GUARD, "Quick Guard (N)", Type.FIGHTING, -1, 15, -1, "The user protects itself and its allies from priority moves.", -1, 3, 5)
       .target(MoveTarget.USER_SIDE),
     new SelfStatusMove(Moves.ALLY_SWITCH, "Ally Switch (N)", Type.PSYCHIC, -1, 15, -1, "The user teleports using a strange power and switches places with one of its allies.", -1, 2, 5)
@@ -3811,7 +3811,7 @@ export function initMoves() {
     new AttackMove(Moves.ACROBATICS, "Acrobatics (P)", Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, 14, "The user nimbly strikes the target. If the user is not holding an item, this attack inflicts massive damage.", -1, 0, 5),
     new StatusMove(Moves.REFLECT_TYPE, "Reflect Type", Type.NORMAL, -1, 15, -1, "The user reflects the target's type, making the user the same type as the target.", -1, 0, 5)
       .attr(CopyTypeAttr),
-    new AttackMove(Moves.RETALIATE, "Retaliate (N)", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 5, -1, "The user gets revenge for a fainted ally. If an ally fainted in the previous turn, this move's power is increased.", -1, 0, 5),
+    new AttackMove(Moves.RETALIATE, "Retaliate (P)", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 5, -1, "The user gets revenge for a fainted ally. If an ally fainted in the previous turn, this move's power is increased.", -1, 0, 5),
     new AttackMove(Moves.FINAL_GAMBIT, "Final Gambit", Type.FIGHTING, MoveCategory.SPECIAL, -1, 100, 5, -1, "The user risks everything to attack its target. The user faints but does damage equal to its HP.", -1, 0, 5)
       .attr(UserHpDamageAttr)
       .attr(SacrificialAttr),
@@ -3863,7 +3863,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, 3, true),
     new AttackMove(Moves.NIGHT_DAZE, "Night Daze", Type.DARK, MoveCategory.SPECIAL, 85, 95, 10, -1, "The user lets loose a pitch-black shock wave at its target. This may also lower the target's accuracy.", 40, 0, 5)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
-    new AttackMove(Moves.PSYSTRIKE, "Psystrike (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 10, -1, "The user materializes an odd psychic wave to attack the target. This attack does physical damage.", -1, 0, 5),
+    new AttackMove(Moves.PSYSTRIKE, "Psystrike", Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 10, -1, "The user materializes an odd psychic wave to attack the target. This attack does physical damage.", -1, 0, 5)
+      .attr(DefDefAttr),
     new AttackMove(Moves.TAIL_SLAP, "Tail Slap", Type.NORMAL, MoveCategory.PHYSICAL, 25, 85, 10, -1, "The user attacks by striking the target with its hard tail. It hits the target two to five times in a row.", -1, 0, 5)
       .attr(MultiHitAttr),
     new AttackMove(Moves.HURRICANE, "Hurricane", Type.FLYING, MoveCategory.SPECIAL, 110, 70, 10, 160, "The user attacks by wrapping its opponent in a fierce wind that flies up into the sky. This may also confuse the target.", 30, 0, 5)
@@ -4139,7 +4140,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new AttackMove(Moves.FIRE_LASH, "Fire Lash", Type.FIRE, MoveCategory.PHYSICAL, 80, 100, 15, -1, "The user strikes the target with a burning lash. This also lowers the target's Defense stat.", 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
-    new AttackMove(Moves.POWER_TRIP, "Power Trip (N)", Type.DARK, MoveCategory.PHYSICAL, 20, 100, 10, -1, "The user boasts its strength and attacks the target. The more the user's stats are raised, the greater the move's power.", -1, 0, 7),
+    new AttackMove(Moves.POWER_TRIP, "Power Trip (P)", Type.DARK, MoveCategory.PHYSICAL, 20, 100, 10, -1, "The user boasts its strength and attacks the target. The more the user's stats are raised, the greater the move's power.", -1, 0, 7),
     new AttackMove(Moves.BURN_UP, "Burn Up (P)", Type.FIRE, MoveCategory.SPECIAL, 130, 100, 5, -1, "To inflict massive damage, the user burns itself out. After using this move, the user will no longer be Fire type.", -1, 0, 7)
       .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE),
     new StatusMove(Moves.SPEED_SWAP, "Speed Swap (N)", Type.PSYCHIC, -1, 10, -1, "The user exchanges Speed stats with the target.", -1, 0, 7),
