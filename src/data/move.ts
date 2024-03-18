@@ -362,10 +362,12 @@ export enum MoveEffectTrigger {
 
 export class MoveEffectAttr extends MoveAttr {
   public trigger: MoveEffectTrigger;
+  public firstHitOnly: boolean;
 
-  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger) {
+  constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly: boolean = false) {
     super(selfTarget);
     this.trigger = trigger !== undefined ? trigger : MoveEffectTrigger.POST_APPLY;
+    this.firstHitOnly = firstHitOnly;
   }
 
   canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
@@ -1156,8 +1158,8 @@ export class StatChangeAttr extends MoveEffectAttr {
   private condition: MoveConditionFunc;
   private showMessage: boolean;
 
-  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true) {
-    super(selfTarget, MoveEffectTrigger.HIT);
+  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false) {
+    super(selfTarget, MoveEffectTrigger.HIT, firstHitOnly);
     this.stats = typeof(stats) === 'number'
       ? [ stats as BattleStat ]
       : stats as BattleStat[];
@@ -4616,7 +4618,7 @@ export function initMoves() {
       .danceMove(),
     new AttackMove(Moves.RAGING_BULL, "Raging Bull (P)", Type.NORMAL, MoveCategory.PHYSICAL, 90, 100, 10, "The user performs a tackle like a raging bull. This move's type depends on the user's form. It can also break barriers, such as Light Screen and Reflect.", -1, 0, 9),
     new AttackMove(Moves.MAKE_IT_RAIN, "Make It Rain (P)", Type.STEEL, MoveCategory.SPECIAL, 120, 100, 5, "The user attacks by throwing out a mass of coins. This also lowers the user's Sp. Atk stat. Money is earned after the battle.", -1, 0, 9)
-      .attr(StatChangeAttr, BattleStat.SPATK, -1, true)
+      .attr(StatChangeAttr, BattleStat.SPATK, -1, true, null, true, true)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.PSYBLADE, "Psyblade (P)", Type.PSYCHIC, MoveCategory.PHYSICAL, 80, 100, 15, "The user rends the target with an ethereal blade. This move's power is boosted by 50 percent if the user is on Electric Terrain.", -1, 0, 9)
       .slicingMove(),

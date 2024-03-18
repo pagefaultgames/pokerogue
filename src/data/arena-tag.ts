@@ -208,7 +208,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
       else if (pokemon.isOfType(Type.POISON)) {
         this.neutralized = true;
         if (pokemon.scene.arena.removeTag(this.tagType)) {
-          pokemon.scene.queueMessage(`The ${this.getMoveName()} were\nneutralized by ${pokemon.name}.`);
+          pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` absorbed the ${this.getMoveName()}!`));
           return true;
         }
       }

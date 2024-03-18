@@ -54,10 +54,10 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       const usernameLabel = addTextObject(this.scene, 12, 0, username, TextStyle.WINDOW, { fontSize: '54px' });
       entryContainer.add(usernameLabel);
 
-      const scoreLabel = addTextObject(this.scene, 68, 0, score, TextStyle.WINDOW, { fontSize: '54px' });
+      const scoreLabel = addTextObject(this.scene, 84, 0, score, TextStyle.WINDOW, { fontSize: '54px' });
       entryContainer.add(scoreLabel);
 
-      const waveLabel = addTextObject(this.scene, 90, 0, wave, TextStyle.WINDOW, { fontSize: '54px' });
+      const waveLabel = addTextObject(this.scene, 68, 0, wave, TextStyle.WINDOW, { fontSize: '54px' });
       entryContainer.add(waveLabel);
 
       return entryContainer;
