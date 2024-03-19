@@ -3848,7 +3848,8 @@ export function initMoves() {
     new AttackMove(Moves.WATER_PLEDGE, "Water Pledge (P)", Type.WATER, MoveCategory.SPECIAL, 80, 100, 10, "A column of water hits the target. When used with its fire equivalent, its power increases and a rainbow appears.", -1, 0, 5),
     new AttackMove(Moves.FIRE_PLEDGE, "Fire Pledge (P)", Type.FIRE, MoveCategory.SPECIAL, 80, 100, 10, "A column of fire hits the target. When used with its grass equivalent, its power increases and a vast sea of fire appears.", -1, 0, 5),
     new AttackMove(Moves.GRASS_PLEDGE, "Grass Pledge (P)", Type.GRASS, MoveCategory.SPECIAL, 80, 100, 10, "A column of grass hits the target. When used with its water equivalent, its power increases and a vast swamp appears.", -1, 0, 5),
-    new AttackMove(Moves.VOLT_SWITCH, "Volt Switch (P)", Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, "After making its attack, the user rushes back to switch places with a party Pokémon in waiting.", -1, 0, 5),
+    new AttackMove(Moves.VOLT_SWITCH, "Volt Switch", Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, "After making its attack, the user rushes back to switch places with a party Pokémon in waiting.", -1, 0, 5)
+      .attr(ForceSwitchOutAttr, true),
     new AttackMove(Moves.STRUGGLE_BUG, "Struggle Bug", Type.BUG, MoveCategory.SPECIAL, 50, 100, 20, "While resisting, the user attacks opposing Pokémon. This lowers the Sp. Atk stats of those hit.", 100, 0, 5)
       .attr(StatChangeAttr, BattleStat.SPATK, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
