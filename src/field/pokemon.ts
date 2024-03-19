@@ -1126,7 +1126,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             result = HitResult.EFFECTIVE;
           }
 
-          console.log('damage', damage, move.name, move.power, sourceAtk, targetDef);
+          console.log('damage', damage, move.name, power.value, sourceAtk, targetDef);
           
           if (!result) {
             if (!typeMultiplier.value)

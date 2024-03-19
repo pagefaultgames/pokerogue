@@ -380,6 +380,23 @@ export class MoveEffectAttr extends MoveAttr {
   }
 }
 
+export class PreMoveMessageAttr extends MoveAttr {
+  private message: string | ((user: Pokemon, target: Pokemon, move: Move) => string);
+
+  constructor(message: string | ((user: Pokemon, target: Pokemon, move: Move) => string)) {
+    super();
+    this.message = message;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const message = typeof this.message === 'string'
+      ? this.message as string
+      : this.message(user, target, move);
+    user.scene.queueMessage(message, 500);
+    return true;
+  }
+}
+
 export class StatusMoveTypeImmunityAttr extends MoveAttr {
   public immuneType: Type;
 
@@ -1309,51 +1326,6 @@ export class VariablePowerAttr extends MoveAttr {
   }
 }
 
-export class MagnitudePowerAttr extends VariablePowerAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const power = args[0] as Utils.NumberHolder;
-
-    //const rateNumberChance = Phaser.Math.RND.realInRange ( 5, 10, 20, 30, 20, 10, 5);
-    //const rateNumber = Phaser.Math.RND.realInRange ( 4, 5 , 6, 7, 8, 9, 10 );
-    //const rateNumberPowers = Phaser.Math.RND.realInRange ( 10, 30, 50, 70, 90, 110, 150 );
-
-    let rateNumber: integer;
-
-    const rand = user.randSeedInt(100);
-    const powerGrade = new Utils.IntegerHolder(rand);
-    if (powerGrade.value >= 95){
-      power.value = 150;
-      rateNumber = 10;
-    }
-    else if (powerGrade.value >= 85){
-      power.value = 110;
-      rateNumber = 9;
-    }
-    else if (powerGrade.value >= 65){
-      power.value = 90;
-      rateNumber = 8;
-    }
-    else if (powerGrade.value >= 35){
-      power.value = 70;
-      rateNumber = 7;
-    }
-    else if (powerGrade.value >= 15){
-      power.value = 50;
-      rateNumber = 6;
-    }
-    else if (powerGrade.value >= 5){
-      power.value = 30;
-      rateNumber = 5;
-    }
-    else (powerGrade.value >= 0);
-      power.value = 10;
-      rateNumber = 4;
-
-    return false;
-  }
-
-}
-
 export class MovePowerMultiplierAttr extends VariablePowerAttr {
   private powerMultiplierFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
 
@@ -1505,15 +1477,67 @@ export class OpponentHighHpPowerAttr extends VariablePowerAttr {
   }
 }
 
-export class TurnDamagedDoublePowerAttr extends VariablePowerAttr {
+export class FirstAttackDoublePowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const power = args[0] as Utils.NumberHolder;
-    if (target.turnData.damageDealt) { // Would need to be updated for doublebattles
-      power.value *= 2;
+    console.log(target.getLastXMoves(1), target.scene.currentBattle.turn);
+    if (!target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn)) {
+      (args[0] as Utils.NumberHolder).value *= 2;
       return true;
     }
 
     return false;
+  }
+}
+
+export class TurnDamagedDoublePowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (user.turnData.attacksReceived.find(r => r.damage && r.sourceId === target.id)) {
+      (args[0] as Utils.NumberHolder).value *= 2;
+      return true;
+    }
+
+    return false;
+  }
+}
+
+const magnitudeMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
+  let message: string;
+  user.scene.executeWithSeedOffset(() => {
+    const magnitudeThresholds = [ 5, 15, 35, 65, 75, 95 ];
+
+    const rand = Utils.randSeedInt(100);
+
+    let m = 0;
+    for (; m < magnitudeThresholds.length; m++) {
+      if (rand < magnitudeThresholds[m])
+        break;
+    }
+
+    message = `Magnitude ${m + 4}!`;
+  }, user.scene.currentBattle.turn << 6);
+  return message;
+};
+
+export class MagnitudePowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0] as Utils.NumberHolder;
+
+    const magnitudeThresholds = [ 5, 15, 35, 65, 75, 95 ];
+    const magnitudePowers = [ 10, 30, 50, 70, 90, 100, 110, 150 ];
+
+    let rand: integer;
+    
+    user.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(100), user.scene.currentBattle.turn << 6);
+
+    let m = 0;
+    for (; m < magnitudeThresholds.length; m++) {
+      if (rand < magnitudeThresholds[m])
+        break;
+    }
+
+    power.value = magnitudePowers[m];
+
+    return true;
   }
 }
 
@@ -3146,7 +3170,9 @@ export function initMoves() {
       .attr(HealStatusEffectAttr, false, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .makesContact(false),
-    new AttackMove(Moves.MAGNITUDE, "Magnitude (N)", Type.GROUND, MoveCategory.PHYSICAL, -1, 100, 30, "The user attacks everything around it with a ground-shaking quake. Its power varies.", -1, 0, 2)
+    new AttackMove(Moves.MAGNITUDE, "Magnitude", Type.GROUND, MoveCategory.PHYSICAL, -1, 100, 30, "The user attacks everything around it with a ground-shaking quake. Its power varies.", -1, 0, 2)
+      .attr(PreMoveMessageAttr, magnitudeMessageFunc)
+      .attr(MagnitudePowerAttr)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.DYNAMIC_PUNCH, "Dynamic Punch", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 50, 5, "The user punches the target with full, concentrated power. This confuses the target if it hits.", 100, 0, 2)
@@ -4275,8 +4301,10 @@ export function initMoves() {
       .target(MoveTarget.ALL),
     new StatusMove(Moves.OCTOLOCK, "Octolock (P)", Type.FIGHTING, 100, 15, "The user locks the target in and prevents it from fleeing. This move also lowers the target's Defense and Sp. Def every turn.", -1, 0, 8)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1),
-    new AttackMove(Moves.BOLT_BEAK, "Bolt Beak (P)", Type.ELECTRIC, MoveCategory.PHYSICAL, 85, 100, 10, "The user stabs the target with its electrified beak. If the user attacks before the target, the power of this move is doubled.", -1, 0, 8),
-    new AttackMove(Moves.FISHIOUS_REND, "Fishious Rend (P)", Type.WATER, MoveCategory.PHYSICAL, 85, 100, 10, "The user rends the target with its hard gills. If the user attacks before the target, the power of this move is doubled.", -1, 0, 8)
+    new AttackMove(Moves.BOLT_BEAK, "Bolt Beak", Type.ELECTRIC, MoveCategory.PHYSICAL, 85, 100, 10, "The user stabs the target with its electrified beak. If the user attacks before the target, the power of this move is doubled.", -1, 0, 8)
+      .attr(FirstAttackDoublePowerAttr),
+    new AttackMove(Moves.FISHIOUS_REND, "Fishious Rend", Type.WATER, MoveCategory.PHYSICAL, 85, 100, 10, "The user rends the target with its hard gills. If the user attacks before the target, the power of this move is doubled.", -1, 0, 8)
+      .attr(FirstAttackDoublePowerAttr)
       .bitingMove(),
     new StatusMove(Moves.COURT_CHANGE, "Court Change (N)", Type.NORMAL, 100, 10, "With its mysterious power, the user swaps the effects on either side of the field.", -1, 0, 8)
       .target(MoveTarget.BOTH_SIDES),
