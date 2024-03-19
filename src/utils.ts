@@ -36,6 +36,8 @@ export function clampInt(value: integer, min: integer, max: integer): integer {
 }
 
 export function randGauss(stdev: number, mean: number = 0): number {
+  if (!stdev)
+    return 0;
   const u = 1 - Math.random();
   const v = Math.random();
   const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
@@ -43,6 +45,8 @@ export function randGauss(stdev: number, mean: number = 0): number {
 }
 
 export function randSeedGauss(stdev: number, mean: number = 0): number {
+  if (!stdev)
+    return 0;
   const u = 1 - Phaser.Math.RND.realInRange(0, 1);
   const v = Phaser.Math.RND.realInRange(0, 1);
   const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);

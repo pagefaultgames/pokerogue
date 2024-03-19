@@ -767,11 +767,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return null;
   }
 
-  getLevelMoves(startingLevel?: integer, includeEvolutionMoves?: boolean): LevelMoves {
+  getLevelMoves(startingLevel?: integer, includeEvolutionMoves: boolean = false, simulateEvolutionChain: boolean = false): LevelMoves {
     const ret: LevelMoves = [];
-    let levelMoves = this.getSpeciesForm().getLevelMoves();
+    let levelMoves: LevelMoves = [];
     if (!startingLevel)
       startingLevel = this.level;
+    if (simulateEvolutionChain) {
+      const evolutionChain = this.species.getSimulatedEvolutionChain(this.level, this.hasTrainer(), this.isBoss(), this.isPlayer());
+      for (let e = 0; e < evolutionChain.length; e++) {
+        const speciesLevelMoves = getPokemonSpecies(evolutionChain[e][0] as Species).getLevelMoves();
+        levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && !lm[0]) || ((!e || lm[0] >= evolutionChain[e - 1][0]) && (e === evolutionChain.length - 1 || lm[0] < evolutionChain[e + 1][0]))));
+      }
+    } else
+      levelMoves = this.getSpeciesForm().getLevelMoves();
     if (this.fusionSpecies) {
       const evolutionLevelMoves = levelMoves.slice(0, Math.max(levelMoves.findIndex(lm => !!lm[0]), 0));
       const fusionLevelMoves = this.getFusionSpeciesForm().getLevelMoves();
@@ -896,7 +904,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   generateAndPopulateMoveset(): void {
     this.moveset = [];
     const movePool = [];
-    const allLevelMoves = this.getLevelMoves(1);
+    const allLevelMoves = this.getLevelMoves(1, true, true);
     if (!allLevelMoves) {
       console.log(this.species.speciesId, 'ERROR')
       return;

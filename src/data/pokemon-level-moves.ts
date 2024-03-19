@@ -4474,7 +4474,6 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.SILCOON]: [
     [ 0, Moves.HARDEN ],
-    [ 1, Moves.HARDEN ],
   ],
   [Species.BEAUTIFLY]: [
     [ 0, Moves.GUST ],
@@ -4493,7 +4492,6 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.CASCOON]: [
     [ 0, Moves.HARDEN ],
-    [ 1, Moves.HARDEN ],
   ],
   [Species.DUSTOX]: [
     [ 0, Moves.GUST ],
