@@ -143,6 +143,7 @@ export default class BattleScene extends Phaser.Scene {
 	private party: PlayerPokemon[];
 	private waveCountText: Phaser.GameObjects.Text;
 	private moneyText: Phaser.GameObjects.Text;
+	private scoreText: Phaser.GameObjects.Text;
 	private modifierBar: ModifierBar;
 	private enemyModifierBar: ModifierBar;
 	private fieldOverlay: Phaser.GameObjects.Rectangle;
@@ -548,9 +549,13 @@ export default class BattleScene extends Phaser.Scene {
 		this.waveCountText.setOrigin(1, 0);
 		this.fieldUI.add(this.waveCountText);
 
-		this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.MONEY);
+		this.moneyText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, '', TextStyle.MONEY);
 		this.moneyText.setOrigin(1, 0);
 		this.fieldUI.add(this.moneyText);
+
+		this.scoreText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, '', TextStyle.PARTY, { fontSize: '54px' });
+		this.scoreText.setOrigin(1, 0);
+		this.fieldUI.add(this.scoreText);
 
 		this.updateUIPositions();
 
@@ -655,6 +660,7 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.updateWaveCountText();
 		this.updateMoneyText();
+		this.updateScoreText();
 	}
 
 	initExpSprites(): void {
@@ -1139,12 +1145,19 @@ export default class BattleScene extends Phaser.Scene {
 		this.moneyText.setVisible(true);
 	}
 
+	updateScoreText(): void {
+		this.scoreText.setText(`Score: ${this.score.toString()}`);
+		this.scoreText.setVisible(this.gameMode.isDaily);
+	}
+
 	updateUIPositions(): void {
 		const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible(this)).length;
 		this.waveCountText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
 		this.moneyText.setY(this.waveCountText.y + 10);
-		this.partyExpBar.setY(this.moneyText.y + 15);
-		this.ui?.achvBar.setY((this.game.canvas.height / 6 + this.moneyText.y + 15));
+		this.scoreText.setY(this.moneyText.y + 10);
+		const offsetY = (this.scoreText.visible ? this.scoreText : this.moneyText).y + 15;
+		this.partyExpBar.setY(offsetY);
+		this.ui?.achvBar.setY(this.game.canvas.height / 6 + offsetY);
 	}
 
 	addFaintedEnemyScore(enemy: EnemyPokemon): void {

@@ -572,6 +572,7 @@ export class GameData {
             this.gameStats.highestMoney = scene.money;
 
           scene.score = sessionData.score;
+          scene.updateScoreText();
 
           const battleType = sessionData.battleType || 0;
           const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfigs[sessionData.trainer.trainerType].isDouble : sessionData.enemyParty.length > 1);

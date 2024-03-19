@@ -159,6 +159,7 @@ export default class Battle {
         scene.score += finalBattleScore;
         console.log(`Battle Score: ${finalBattleScore} (${this.turn - 1} Turns x${Math.floor(turnMultiplier * 100) / 100})`);
         console.log(`Total Score: ${scene.score}`);
+        scene.updateScoreText();
     }
 
     getBgmOverride(scene: BattleScene): string {
