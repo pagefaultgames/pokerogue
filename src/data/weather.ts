@@ -5,7 +5,7 @@ import { Type } from "./type";
 import Move, { AttackMove } from "./move";
 import * as Utils from "../utils";
 import BattleScene from "../battle-scene";
-import { SuppressWeatherEffectAbAttr, applyPreWeatherEffectAbAttrs } from "./ability";
+import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType } from "./terrain";
 
 export enum WeatherType {

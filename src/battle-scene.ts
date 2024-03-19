@@ -1539,6 +1539,24 @@ export default class BattleScene extends Phaser.Scene {
 		return this.phaseQueue.find(phaseFilter);
 	}
 
+	tryReplacePhase(phaseFilter: (phase: Phase) => boolean, phase: Phase): boolean {
+		const phaseIndex = this.phaseQueue.findIndex(phaseFilter);
+		if (phaseIndex > -1) {
+			this.phaseQueue[phaseIndex] = phase;
+			return true;
+		}
+		return false;
+	}
+
+	tryRemovePhase(phaseFilter: (phase: Phase) => boolean): boolean {
+		const phaseIndex = this.phaseQueue.findIndex(phaseFilter);
+		if (phaseIndex > -1) {
+			this.phaseQueue.splice(phaseIndex, 1);
+			return true;
+		}
+		return false;
+	}
+
 	pushMovePhase(movePhase: MovePhase, priorityOverride?: integer): void {
 		const priority = priorityOverride !== undefined ? priorityOverride : movePhase.move.getMove().priority;
 		const lowerPriorityPhase = this.phaseQueue.find(p => p instanceof MovePhase && p.move.getMove().priority < priority);

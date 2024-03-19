@@ -84,8 +84,8 @@ export abstract class AbAttr {
   public showAbility: boolean;
   private extraCondition: AbAttrCondition;
 
-  constructor(showAbility?: boolean) {
-    this.showAbility = showAbility === undefined || showAbility;
+  constructor(showAbility: boolean = true) {
+    this.showAbility = showAbility;
   }
   
   apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
@@ -946,6 +946,34 @@ function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
   };
 }
 
+export class PostWeatherChangeAbAttr extends AbAttr {
+  applyPostWeatherChange(pokemon: Pokemon, weather: WeatherType, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class PostWeatherChangeAddBattlerTagAttr extends PostWeatherChangeAbAttr {
+  private tagType: BattlerTagType;
+  private turnCount: integer;
+  private weatherTypes: WeatherType[];
+
+  constructor(tagType: BattlerTagType, turnCount: integer, ...weatherTypes: WeatherType[]) {
+    super();
+
+    this.tagType = tagType;
+    this.turnCount = turnCount;
+    this.weatherTypes = weatherTypes;
+  }
+
+  applyPostWeatherChange(pokemon: Pokemon, weather: WeatherType, args: any[]): boolean {
+    console.log(this.weatherTypes.find(w => weather === w), WeatherType[weather]);
+    if (!this.weatherTypes.find(w => weather === w))
+      return false;
+
+    return pokemon.addTag(this.tagType, this.turnCount);
+  }
+}
+
 export class PostWeatherLapseAbAttr extends AbAttr {
   protected weatherTypes: WeatherType[];
 
@@ -1003,6 +1031,33 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
     }
 
     return false;
+  }
+}
+
+export class PostTerrainChangeAbAttr extends AbAttr {
+  applyPostTerrainChange(pokemon: Pokemon, terrain: TerrainType, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class PostTerrainChangeAddBattlerTagAttr extends PostTerrainChangeAbAttr {
+  private tagType: BattlerTagType;
+  private turnCount: integer;
+  private terrainTypes: TerrainType[];
+
+  constructor(tagType: BattlerTagType, turnCount: integer, ...terrainTypes: TerrainType[]) {
+    super();
+
+    this.tagType = tagType;
+    this.turnCount = turnCount;
+    this.terrainTypes = terrainTypes;
+  }
+
+  applyPostTerrainChange(pokemon: Pokemon, terrain: TerrainType, args: any[]): boolean {
+    if (!this.terrainTypes.find(t => terrain === terrain))
+      return false;
+
+    return pokemon.addTag(this.tagType, this.turnCount);
   }
 }
 
@@ -1420,9 +1475,19 @@ export function applyPostTurnAbAttrs(attrType: { new(...args: any[]): PostTurnAb
   return applyAbAttrsInternal<PostTurnAbAttr>(attrType, pokemon, attr => attr.applyPostTurn(pokemon, args));
 }
 
+export function applyPostWeatherChangeAbAttrs(attrType: { new(...args: any[]): PostWeatherChangeAbAttr },
+  pokemon: Pokemon, weather: WeatherType, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostWeatherChangeAbAttr>(attrType, pokemon, attr => attr.applyPostWeatherChange(pokemon, weather, args));
+}
+
 export function applyPostWeatherLapseAbAttrs(attrType: { new(...args: any[]): PostWeatherLapseAbAttr },
   pokemon: Pokemon, weather: Weather, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostWeatherLapseAbAttr>(attrType, pokemon, attr => attr.applyPostWeatherLapse(pokemon, weather, args));
+}
+
+export function applyPostTerrainChangeAbAttrs(attrType: { new(...args: any[]): PostTerrainChangeAbAttr },
+  pokemon: Pokemon, terrain: TerrainType, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostTerrainChangeAbAttr>(attrType, pokemon, attr => attr.applyPostTerrainChange(pokemon, terrain, args));
 }
 
 export function applyCheckTrappedAbAttrs(attrType: { new(...args: any[]): CheckTrappedAbAttr },
@@ -2312,9 +2377,13 @@ export function initAbilities() {
     new Ability(Abilities.COMMANDER, "Commander (N)", "When the Pokémon enters a battle, it goes inside the mouth of an ally Dondozo if one is on the field. The Pokémon then issues commands from there.", 9)
       .attr(ProtectAbilityAbAttr),
     new Ability(Abilities.ELECTROMORPHOSIS, "Electromorphosis (N)", "The Pokémon becomes charged when it takes damage, boosting the power of the next Electric-type move the Pokémon uses.", 9),
-    new Ability(Abilities.PROTOSYNTHESIS, "Protosynthesis (N)", "Boosts the Pokémon's most proficient stat in harsh sunlight or if the Pokémon is holding Booster Energy.", 9)
+    new Ability(Abilities.PROTOSYNTHESIS, "Protosynthesis", "Boosts the Pokémon's most proficient stat in harsh sunlight or if the Pokémon is holding Booster Energy.", 9)
+      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), PostSummonAddBattlerTagAbAttr, BattlerTagType.PROTOSYNTHESIS, 0, true)
+      .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.PROTOSYNTHESIS, 0, WeatherType.SUNNY, WeatherType.HARSH_SUN)
       .attr(ProtectAbilityAbAttr),
-    new Ability(Abilities.QUARK_DRIVE, "Quark Drive (N)", "Boosts the Pokémon's most proficient stat on Electric Terrain or if the Pokémon is holding Booster Energy.", 9)
+    new Ability(Abilities.QUARK_DRIVE, "Quark Drive", "Boosts the Pokémon's most proficient stat on Electric Terrain or if the Pokémon is holding Booster Energy.", 9)
+      .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), PostSummonAddBattlerTagAbAttr, BattlerTagType.QUARK_DRIVE, 0, true)
+      .attr(PostTerrainChangeAddBattlerTagAttr, BattlerTagType.QUARK_DRIVE, 0, TerrainType.ELECTRIC)
       .attr(ProtectAbilityAbAttr),
     new Ability(Abilities.GOOD_AS_GOLD, "Good as Gold (N)", "A body of pure, solid gold gives the Pokémon full immunity to other Pokémon's status moves.", 9)
       .ignorable(),

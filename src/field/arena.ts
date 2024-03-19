@@ -1,11 +1,11 @@
 import BattleScene from "../battle-scene";
-import { BiomePoolTier, BiomeTierPokemonPools, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "../data/biomes";
+import { BiomePoolTier, PokemonPools, BiomeTierTrainerPools, biomePokemonPools, biomeTrainerPools } from "../data/biomes";
 import { Biome } from "../data/enums/biome";
 import * as Utils from "../utils";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
 import { Weather, WeatherType, getTerrainClearMessage, getTerrainStartMessage, getWeatherClearMessage, getWeatherStartMessage } from "../data/weather";
-import { CommonAnimPhase } from "../phases";
+import { CommonAnimPhase, WeatherEffectPhase } from "../phases";
 import { CommonAnim } from "../data/battle-anims";
 import { Type } from "../data/type";
 import Move from "../data/move";
@@ -16,6 +16,7 @@ import { BattlerIndex } from "../battle";
 import { Moves } from "../data/enums/moves";
 import { TimeOfDay } from "../data/enums/time-of-day";
 import { Terrain, TerrainType } from "../data/terrain";
+import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 
 const WEATHER_OVERRIDE = WeatherType.NONE;
 
@@ -268,10 +269,18 @@ export class Arena {
     this.weather = weather ? new Weather(weather, viaMove ? 5 : 0) : null;
     
     if (this.weather) {
+      this.scene.tryReplacePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType, new WeatherEffectPhase(this.scene, this.weather));
       this.scene.unshiftPhase(new CommonAnimPhase(this.scene, undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
       this.scene.queueMessage(getWeatherStartMessage(weather));
-    } else
+    } else {
+      this.scene.tryRemovePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType);
       this.scene.queueMessage(getWeatherClearMessage(oldWeatherType));
+    }
+
+    this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
+      pokemon.findAndRemoveTags(t => 'weatherTypes' in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather));
+      applyPostWeatherChangeAbAttrs(PostWeatherChangeAbAttr, pokemon, weather);
+    });
     
     return true;
   }
@@ -290,6 +299,11 @@ export class Arena {
       this.scene.queueMessage(getTerrainStartMessage(terrain));
     } else
       this.scene.queueMessage(getTerrainClearMessage(oldTerrainType));
+
+    this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
+      pokemon.findAndRemoveTags(t => 'terrainTypes' in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain));
+      applyPostTerrainChangeAbAttrs(PostTerrainChangeAbAttr, pokemon, terrain);
+    });
     
     return true;
   }

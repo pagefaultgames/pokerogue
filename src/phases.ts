@@ -1840,7 +1840,7 @@ export class TurnEndPhase extends FieldPhase {
 
       if (this.scene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
         this.scene.unshiftPhase(new PokemonHealPhase(this.scene, pokemon.getBattlerIndex(),
-          Math.max(pokemon.getMaxHp() >> 4, 1), getPokemonMessage(pokemon, ' regained\nhealth from the Grassy Terrain!'), true));
+          Math.max(pokemon.getMaxHp() >> 4, 1), getPokemonMessage(pokemon, '\'s HP was restored.'), true));
       }
 
       applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
@@ -2505,7 +2505,7 @@ export class StatChangePhase extends PokemonPhase {
 }
 
 export class WeatherEffectPhase extends CommonAnimPhase {
-  private weather: Weather;
+  public weather: Weather;
 
   constructor(scene: BattleScene, weather: Weather) {
     super(scene, undefined, undefined, CommonAnim.SUNNY + (weather.weatherType - 1));

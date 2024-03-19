@@ -2,7 +2,7 @@ import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase } from "../phases";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
-import { Stat } from "./pokemon-stat";
+import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
 import { Moves } from "./enums/moves";
@@ -11,6 +11,7 @@ import { Type } from "./type";
 import { Abilities, FlinchEffectAbAttr, applyAbAttrs } from "./ability";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { TerrainType } from "./terrain";
+import { WeatherType } from "./weather";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -63,6 +64,14 @@ export class BattlerTag {
       ? allMoves[this.sourceMove].name
       : null;
   }
+}
+
+export interface WeatherBattlerTag {
+  weatherTypes: WeatherType[];
+}
+
+export interface TerrainBattlerTag {
+  terrainTypes: TerrainType[];
 }
 
 export class RechargingTag extends BattlerTag {
@@ -722,6 +731,66 @@ export class SlowStartTag extends AbilityBattlerTag {
   }
 }
 
+export class HighestStatBoostTag extends AbilityBattlerTag {
+  public stat: Stat;
+  public multiplier: number;
+
+  constructor(tagType: BattlerTagType, ability: Abilities) {
+    super(tagType, ability, BattlerTagLapseType.CUSTOM, 1);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    const stats = [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ];
+    let highestStat: Stat;
+    stats.map(s => pokemon.getBattleStat(s)).reduce((highestValue: integer, value: integer, i: integer) => {
+      if (value > highestValue) {
+        highestStat = stats[i];
+        return highestValue += value;
+      }
+      return highestValue;
+    }, 0);
+
+    this.stat = highestStat;
+
+    switch (this.stat) {
+      case Stat.SPD:
+        this.multiplier = 1.5;
+        break;
+      default:
+        this.multiplier = 1.3;
+        break;
+    }
+    
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, `'s ${getStatName(highestStat)}\nwas heightened!`), null, false, null, true);
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onRemove(pokemon);
+
+    pokemon.scene.queueMessage(`The effects of ${getPokemonMessage(pokemon, `'s\n${pokemon.getAbility().name} wore off!`)}`);
+  }
+}
+
+export class WeatherHighestStatBoostTag extends HighestStatBoostTag implements WeatherBattlerTag {
+  public weatherTypes: WeatherType[];
+
+  constructor(tagType: BattlerTagType, ability: Abilities, ...weatherTypes: WeatherType[]) {
+    super(tagType, ability);
+    this.weatherTypes = weatherTypes;
+  }
+}
+
+export class TerrainHighestStatBoostTag extends HighestStatBoostTag implements TerrainBattlerTag {
+  public terrainTypes: TerrainType[];
+
+  constructor(tagType: BattlerTagType, ability: Abilities, ...terrainTypes: TerrainType[]) {
+    super(tagType, ability);
+    this.terrainTypes = terrainTypes;
+  }
+}
+
 export class HideSpriteTag extends BattlerTag {
   constructor(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves) {
     super(tagType, BattlerTagLapseType.MOVE_EFFECT, turnCount, sourceMove);
@@ -840,6 +909,10 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new TruantTag();
     case BattlerTagType.SLOW_START:
       return new SlowStartTag();
+    case BattlerTagType.PROTOSYNTHESIS:
+      return new WeatherHighestStatBoostTag(tagType, Abilities.PROTOSYNTHESIS, WeatherType.SUNNY, WeatherType.HARSH_SUN);
+    case BattlerTagType.QUARK_DRIVE:
+      return new TerrainHighestStatBoostTag(tagType, Abilities.QUARK_DRIVE, TerrainType.ELECTRIC);
     case BattlerTagType.FLYING:
     case BattlerTagType.UNDERGROUND:
     case BattlerTagType.HIDDEN:
