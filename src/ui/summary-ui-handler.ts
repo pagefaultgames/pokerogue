@@ -7,13 +7,15 @@ import { Type, getTypeRgb } from "../data/type";
 import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "./text";
 import Move, { MoveCategory } from "../data/move";
 import { getPokeballAtlasKey } from "../data/pokeball";
-import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
+import { getGenderColor, getGenderSymbol } from "../data/gender";
 import { getLevelTotalExp } from "../data/exp";
 import { Stat, getStatName } from "../data/pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { StatusEffect } from "../data/status-effect";
 import { getBiomeName } from "../data/biomes";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
+import { loggedInUser } from "../account";
+import { PlayerGender } from "../system/game-data";
 
 enum Page {
   PROFILE,
@@ -499,6 +501,19 @@ export default class SummaryUiHandler extends UiHandler {
       case Page.PROFILE:
         const profileContainer = this.scene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
+
+        const trainerLabel = addTextObject(this.scene, 7, 12, 'OT/', TextStyle.SUMMARY);
+        trainerLabel.setOrigin(0, 0);
+        profileContainer.add(trainerLabel);
+
+        const trainerText = addTextObject(this.scene, 25, 12, loggedInUser?.username || 'Unknown',
+          this.scene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE);
+        trainerText.setOrigin(0, 0);
+        profileContainer.add(trainerText);
+
+        const trainerIdText = addTextObject(this.scene, 174, 12, this.scene.gameData.trainerId.toString(), TextStyle.SUMMARY);
+        trainerIdText.setOrigin(0, 0);
+        profileContainer.add(trainerIdText);
 
         const typeLabel = addTextObject(this.scene, 7, 28, 'Type/', TextStyle.WINDOW);
         typeLabel.setOrigin(0, 0);
