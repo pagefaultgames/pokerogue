@@ -1829,7 +1829,7 @@ export class TurnEndPhase extends FieldPhase {
 
       const hasUsableBerry = !!this.scene.findModifier(m => m instanceof BerryModifier && m.shouldApply([ pokemon ]), pokemon.isPlayer());
       if (hasUsableBerry)
-        this.scene.pushPhase(new BerryPhase(this.scene, pokemon.getBattlerIndex()));
+        this.scene.unshiftPhase(new BerryPhase(this.scene, pokemon.getBattlerIndex()));
 
       this.scene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 

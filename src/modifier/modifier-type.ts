@@ -788,13 +788,15 @@ export const modifierTypes = {
       return new BerryModifierType(pregenArgs[0] as BerryType);
     const berryTypes = Utils.getEnumValues(BerryType);
     let randBerryType: BerryType;
-    let rand = Utils.randSeedInt(10);
+    let rand = Utils.randSeedInt(12);
     if (rand < 2)
       randBerryType = BerryType.SITRUS;
     else if (rand < 4)
       randBerryType = BerryType.LUM;
+    else if (rand < 6)
+      randBerryType = BerryType.LEPPA;
     else
-      randBerryType = berryTypes[Utils.randSeedInt(berryTypes.length - 2) + 2];
+      randBerryType = berryTypes[Utils.randSeedInt(berryTypes.length - 3) + 2];
     return new BerryModifierType(randBerryType);
   }),
 

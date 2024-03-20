@@ -18,7 +18,8 @@ export enum BerryType {
   APICOT,
   SALAC,
   LANSAT,
-  STARF
+  STARF,
+  LEPPA
 }
 
 export function getBerryName(berryType: BerryType) {
@@ -44,6 +45,8 @@ export function getBerryEffectDescription(berryType: BerryType) {
       return 'Raises critical hit ratio if HP is below 25%';
     case BerryType.STARF:
       return 'Sharply raises a random stat if HP is below 25%';
+    case BerryType.LEPPA:
+      return 'Restores 10 PP to a move if its PP reaches 0';
   }
 }
 
@@ -73,13 +76,19 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
         const threshold = new Utils.NumberHolder(0.25);
         applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
         return pokemon.getHpRatio() < 0.25 && !pokemon.getTag(BattlerTagType.CRIT_BOOST);
-      }
+      };
     case BerryType.STARF:
       return (pokemon: Pokemon) => {
         const threshold = new Utils.NumberHolder(0.25);
         applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
         return pokemon.getHpRatio() < 0.25;
-      }
+      };
+    case BerryType.LEPPA:
+      return (pokemon: Pokemon) => {
+        const threshold = new Utils.NumberHolder(0.25);
+        applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, threshold);
+        return !!pokemon.getMoveset().find(m => !m.getPpRatio());
+      };
   }
 }
 
@@ -123,7 +132,13 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       return (pokemon: Pokemon) => {
         const statLevels = new Utils.NumberHolder(2);
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, statLevels);
-        return pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ BattleStat.RAND ], statLevels.value));
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ BattleStat.RAND ], statLevels.value));
+      };
+    case BerryType.LEPPA:
+      return (pokemon: Pokemon) => {
+        const ppRestoreMove = pokemon.getMoveset().find(m => !m.getPpRatio());
+        ppRestoreMove.ppUsed = Math.max(ppRestoreMove.ppUsed - 10, 0);
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` restored PP to its move ${ppRestoreMove.getName()}\nusing its ${getBerryName(berryType)}!`));
       };
   }
 }

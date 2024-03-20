@@ -4,8 +4,8 @@
 			"image": "items.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 371,
-				"h": 371
+				"w": 370,
+				"h": 370
 			},
 			"scale": 1,
 			"frames": [
@@ -451,27 +451,6 @@
 					}
 				},
 				{
-					"filename": "full_heal",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 9,
-						"y": 4,
-						"w": 15,
-						"h": 23
-					},
-					"frame": {
-						"x": 356,
-						"y": 0,
-						"w": 15,
-						"h": 23
-					}
-				},
-				{
 					"filename": "black_augurite",
 					"rotated": false,
 					"trimmed": true,
@@ -598,7 +577,7 @@
 					}
 				},
 				{
-					"filename": "coupon",
+					"filename": "choice_specs",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -607,57 +586,15 @@
 					},
 					"spriteSourceSize": {
 						"x": 4,
-						"y": 7,
-						"w": 23,
-						"h": 19
+						"y": 8,
+						"w": 24,
+						"h": 18
 					},
 					"frame": {
 						"x": 0,
 						"y": 352,
-						"w": 23,
-						"h": 19
-					}
-				},
-				{
-					"filename": "golden_mystic_ticket",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 7,
-						"w": 23,
-						"h": 19
-					},
-					"frame": {
-						"x": 23,
-						"y": 352,
-						"w": 23,
-						"h": 19
-					}
-				},
-				{
-					"filename": "leftovers",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 8,
-						"y": 5,
-						"w": 15,
-						"h": 22
-					},
-					"frame": {
-						"x": 356,
-						"y": 23,
-						"w": 15,
-						"h": 22
+						"w": 24,
+						"h": 18
 					}
 				},
 				{
@@ -889,6 +826,27 @@
 						"y": 324,
 						"w": 18,
 						"h": 24
+					}
+				},
+				{
+					"filename": "exp_balance",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 5,
+						"w": 24,
+						"h": 22
+					},
+					"frame": {
+						"x": 24,
+						"y": 348,
+						"w": 24,
+						"h": 22
 					}
 				},
 				{
@@ -1144,7 +1102,7 @@
 					}
 				},
 				{
-					"filename": "scope-lens",
+					"filename": "leppa_berry",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1165,6 +1123,27 @@
 					}
 				},
 				{
+					"filename": "scope-lens",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 5,
+						"w": 24,
+						"h": 23
+					},
+					"frame": {
+						"x": 280,
+						"y": 24,
+						"w": 24,
+						"h": 23
+					}
+				},
+				{
 					"filename": "sun_stone",
 					"rotated": false,
 					"trimmed": true,
@@ -1179,7 +1158,7 @@
 						"h": 24
 					},
 					"frame": {
-						"x": 280,
+						"x": 304,
 						"y": 24,
 						"w": 24,
 						"h": 24
@@ -1200,35 +1179,14 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 304,
+						"x": 328,
 						"y": 24,
 						"w": 24,
 						"h": 23
 					}
 				},
 				{
-					"filename": "berry_pouch",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 5,
-						"w": 23,
-						"h": 23
-					},
-					"frame": {
-						"x": 328,
-						"y": 24,
-						"w": 23,
-						"h": 23
-					}
-				},
-				{
-					"filename": "red_orb",
+					"filename": "sachet",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1238,14 +1196,14 @@
 					"spriteSourceSize": {
 						"x": 6,
 						"y": 4,
-						"w": 20,
-						"h": 24
+						"w": 18,
+						"h": 23
 					},
 					"frame": {
-						"x": 351,
-						"y": 45,
-						"w": 20,
-						"h": 24
+						"x": 352,
+						"y": 24,
+						"w": 18,
+						"h": 23
 					}
 				},
 				{
@@ -1270,7 +1228,7 @@
 					}
 				},
 				{
-					"filename": "shiny_charm",
+					"filename": "red_orb",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1280,18 +1238,18 @@
 					"spriteSourceSize": {
 						"x": 6,
 						"y": 4,
-						"w": 21,
+						"w": 20,
 						"h": 24
 					},
 					"frame": {
 						"x": 95,
 						"y": 46,
-						"w": 21,
+						"w": 20,
 						"h": 24
 					}
 				},
 				{
-					"filename": "dynamax_band",
+					"filename": "berry_pouch",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1300,19 +1258,19 @@
 					},
 					"spriteSourceSize": {
 						"x": 4,
-						"y": 4,
+						"y": 5,
 						"w": 23,
 						"h": 23
 					},
 					"frame": {
-						"x": 116,
+						"x": 115,
 						"y": 44,
 						"w": 23,
 						"h": 23
 					}
 				},
 				{
-					"filename": "dragon_fang",
+					"filename": "black_belt",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1321,19 +1279,19 @@
 					},
 					"spriteSourceSize": {
 						"x": 5,
-						"y": 5,
-						"w": 21,
+						"y": 4,
+						"w": 22,
 						"h": 23
 					},
 					"frame": {
-						"x": 139,
+						"x": 138,
 						"y": 44,
-						"w": 21,
+						"w": 22,
 						"h": 23
 					}
 				},
 				{
-					"filename": "exp_balance",
+					"filename": "exp_share",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1354,7 +1312,7 @@
 					}
 				},
 				{
-					"filename": "exp_share",
+					"filename": "peat_block",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1375,7 +1333,7 @@
 					}
 				},
 				{
-					"filename": "peat_block",
+					"filename": "dynamax_band",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1384,15 +1342,15 @@
 					},
 					"spriteSourceSize": {
 						"x": 4,
-						"y": 5,
-						"w": 24,
-						"h": 22
+						"y": 4,
+						"w": 23,
+						"h": 23
 					},
 					"frame": {
 						"x": 208,
 						"y": 47,
-						"w": 24,
-						"h": 22
+						"w": 23,
+						"h": 23
 					}
 				},
 				{
@@ -1410,7 +1368,7 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 232,
+						"x": 231,
 						"y": 47,
 						"w": 23,
 						"h": 23
@@ -1431,7 +1389,28 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 255,
+						"x": 254,
+						"y": 47,
+						"w": 23,
+						"h": 23
+					}
+				},
+				{
+					"filename": "rarer_candy",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 5,
+						"w": 23,
+						"h": 23
+					},
+					"frame": {
+						"x": 277,
 						"y": 47,
 						"w": 23,
 						"h": 23
@@ -1452,10 +1431,31 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 278,
+						"x": 300,
 						"y": 48,
 						"w": 23,
 						"h": 22
+					}
+				},
+				{
+					"filename": "revive",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 8,
+						"w": 12,
+						"h": 17
+					},
+					"frame": {
+						"x": 356,
+						"y": 0,
+						"w": 12,
+						"h": 17
 					}
 				},
 				{
@@ -1543,7 +1543,7 @@
 					}
 				},
 				{
-					"filename": "super_lure",
+					"filename": "shiny_charm",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1551,37 +1551,16 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 8,
+						"x": 6,
 						"y": 4,
-						"w": 17,
+						"w": 21,
 						"h": 24
 					},
 					"frame": {
 						"x": 40,
 						"y": 178,
-						"w": 17,
+						"w": 21,
 						"h": 24
-					}
-				},
-				{
-					"filename": "black_belt",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 4,
-						"w": 22,
-						"h": 23
-					},
-					"frame": {
-						"x": 40,
-						"y": 202,
-						"w": 22,
-						"h": 23
 					}
 				},
 				{
@@ -1599,8 +1578,8 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 41,
-						"y": 225,
+						"x": 40,
+						"y": 202,
 						"w": 22,
 						"h": 23
 					}
@@ -1621,7 +1600,7 @@
 					},
 					"frame": {
 						"x": 41,
-						"y": 248,
+						"y": 225,
 						"w": 22,
 						"h": 23
 					}
@@ -1642,7 +1621,7 @@
 					},
 					"frame": {
 						"x": 41,
-						"y": 271,
+						"y": 248,
 						"w": 22,
 						"h": 23
 					}
@@ -1662,9 +1641,30 @@
 						"h": 23
 					},
 					"frame": {
+						"x": 41,
+						"y": 271,
+						"w": 22,
+						"h": 23
+					}
+				},
+				{
+					"filename": "dragon_fang",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 21,
+						"h": 23
+					},
+					"frame": {
 						"x": 42,
 						"y": 294,
-						"w": 22,
+						"w": 21,
 						"h": 23
 					}
 				},
@@ -1690,7 +1690,7 @@
 					}
 				},
 				{
-					"filename": "fighting_tera_shard",
+					"filename": "super_lure",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1698,16 +1698,16 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 6,
+						"x": 8,
 						"y": 4,
-						"w": 22,
-						"h": 23
+						"w": 17,
+						"h": 24
 					},
 					"frame": {
-						"x": 46,
+						"x": 48,
 						"y": 340,
-						"w": 22,
-						"h": 23
+						"w": 17,
+						"h": 24
 					}
 				},
 				{
@@ -1725,14 +1725,14 @@
 						"h": 14
 					},
 					"frame": {
-						"x": 116,
+						"x": 115,
 						"y": 67,
 						"w": 24,
 						"h": 14
 					}
 				},
 				{
-					"filename": "big_nugget",
+					"filename": "dusk_stone",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1742,56 +1742,14 @@
 					"spriteSourceSize": {
 						"x": 6,
 						"y": 6,
-						"w": 20,
-						"h": 20
+						"w": 21,
+						"h": 21
 					},
 					"frame": {
-						"x": 140,
+						"x": 139,
 						"y": 67,
-						"w": 20,
-						"h": 20
-					}
-				},
-				{
-					"filename": "choice_specs",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 8,
-						"w": 24,
-						"h": 18
-					},
-					"frame": {
-						"x": 160,
-						"y": 69,
-						"w": 24,
-						"h": 18
-					}
-				},
-				{
-					"filename": "dragon_scale",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 8,
-						"w": 24,
-						"h": 18
-					},
-					"frame": {
-						"x": 184,
-						"y": 69,
-						"w": 24,
-						"h": 18
+						"w": 21,
+						"h": 21
 					}
 				},
 				{
@@ -1809,7 +1767,7 @@
 						"h": 20
 					},
 					"frame": {
-						"x": 208,
+						"x": 160,
 						"y": 69,
 						"w": 24,
 						"h": 20
@@ -1830,6 +1788,48 @@
 						"h": 20
 					},
 					"frame": {
+						"x": 184,
+						"y": 69,
+						"w": 24,
+						"h": 20
+					}
+				},
+				{
+					"filename": "sacred_ash",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 24,
+						"h": 20
+					},
+					"frame": {
+						"x": 208,
+						"y": 70,
+						"w": 24,
+						"h": 20
+					}
+				},
+				{
+					"filename": "shadow_reins_of_unity",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 24,
+						"h": 20
+					},
+					"frame": {
 						"x": 232,
 						"y": 70,
 						"w": 24,
@@ -1837,7 +1837,7 @@
 					}
 				},
 				{
-					"filename": "sacred_ash",
+					"filename": "soft_sand",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1879,7 +1879,28 @@
 					}
 				},
 				{
-					"filename": "dusk_stone",
+					"filename": "amulet_coin",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 5,
+						"w": 23,
+						"h": 21
+					},
+					"frame": {
+						"x": 303,
+						"y": 70,
+						"w": 23,
+						"h": 21
+					}
+				},
+				{
+					"filename": "big_nugget",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1889,18 +1910,18 @@
 					"spriteSourceSize": {
 						"x": 6,
 						"y": 6,
-						"w": 21,
-						"h": 21
+						"w": 20,
+						"h": 20
 					},
 					"frame": {
 						"x": 95,
 						"y": 70,
-						"w": 21,
-						"h": 21
+						"w": 20,
+						"h": 20
 					}
 				},
 				{
-					"filename": "shadow_reins_of_unity",
+					"filename": "dragon_scale",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1909,15 +1930,15 @@
 					},
 					"spriteSourceSize": {
 						"x": 4,
-						"y": 7,
+						"y": 8,
 						"w": 24,
-						"h": 20
+						"h": 18
 					},
 					"frame": {
-						"x": 116,
+						"x": 115,
 						"y": 81,
 						"w": 24,
-						"h": 20
+						"h": 18
 					}
 				},
 				{
@@ -1942,7 +1963,7 @@
 					}
 				},
 				{
-					"filename": "sachet",
+					"filename": "razor_fang",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1950,20 +1971,20 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 6,
-						"y": 4,
+						"x": 7,
+						"y": 6,
 						"w": 18,
-						"h": 23
+						"h": 20
 					},
 					"frame": {
 						"x": 56,
 						"y": 75,
 						"w": 18,
-						"h": 23
+						"h": 20
 					}
 				},
 				{
-					"filename": "rarer_candy",
+					"filename": "stick",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -1978,8 +1999,50 @@
 					},
 					"frame": {
 						"x": 49,
-						"y": 98,
+						"y": 95,
 						"w": 23,
+						"h": 23
+					}
+				},
+				{
+					"filename": "auspicious_armor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 5,
+						"w": 23,
+						"h": 21
+					},
+					"frame": {
+						"x": 72,
+						"y": 97,
+						"w": 23,
+						"h": 21
+					}
+				},
+				{
+					"filename": "mystic_water",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 5,
+						"w": 20,
+						"h": 23
+					},
+					"frame": {
+						"x": 95,
+						"y": 90,
+						"w": 20,
 						"h": 23
 					}
 				},
@@ -1998,14 +2061,35 @@
 						"h": 15
 					},
 					"frame": {
-						"x": 140,
-						"y": 87,
+						"x": 115,
+						"y": 99,
 						"w": 24,
 						"h": 15
 					}
 				},
 				{
-					"filename": "soft_sand",
+					"filename": "leaf_stone",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 21,
+						"h": 23
+					},
+					"frame": {
+						"x": 139,
+						"y": 88,
+						"w": 21,
+						"h": 23
+					}
+				},
+				{
+					"filename": "rusted_sword",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2014,61 +2098,19 @@
 					},
 					"spriteSourceSize": {
 						"x": 4,
-						"y": 7,
-						"w": 24,
-						"h": 20
-					},
-					"frame": {
-						"x": 164,
-						"y": 87,
-						"w": 24,
-						"h": 20
-					}
-				},
-				{
-					"filename": "blue_orb",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 6,
-						"w": 20,
-						"h": 20
-					},
-					"frame": {
-						"x": 188,
-						"y": 87,
-						"w": 20,
-						"h": 20
-					}
-				},
-				{
-					"filename": "amulet_coin",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
 						"y": 5,
 						"w": 23,
-						"h": 21
+						"h": 22
 					},
 					"frame": {
-						"x": 208,
+						"x": 160,
 						"y": 89,
 						"w": 23,
-						"h": 21
+						"h": 22
 					}
 				},
 				{
-					"filename": "auspicious_armor",
+					"filename": "charcoal",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2076,16 +2118,16 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 4,
+						"x": 5,
 						"y": 5,
-						"w": 23,
-						"h": 21
+						"w": 22,
+						"h": 22
 					},
 					"frame": {
-						"x": 231,
-						"y": 90,
-						"w": 23,
-						"h": 21
+						"x": 183,
+						"y": 89,
+						"w": 22,
+						"h": 22
 					}
 				},
 				{
@@ -2103,7 +2145,49 @@
 						"h": 21
 					},
 					"frame": {
-						"x": 254,
+						"x": 205,
+						"y": 90,
+						"w": 23,
+						"h": 21
+					}
+				},
+				{
+					"filename": "n_lunarizer",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 6,
+						"w": 23,
+						"h": 21
+					},
+					"frame": {
+						"x": 228,
+						"y": 90,
+						"w": 23,
+						"h": 21
+					}
+				},
+				{
+					"filename": "n_solarizer",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 6,
+						"w": 23,
+						"h": 21
+					},
+					"frame": {
+						"x": 251,
 						"y": 90,
 						"w": 23,
 						"h": 21
@@ -2124,262 +2208,10 @@
 						"h": 20
 					},
 					"frame": {
-						"x": 277,
+						"x": 274,
 						"y": 91,
 						"w": 23,
 						"h": 20
-					}
-				},
-				{
-					"filename": "leaf_stone",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 21,
-						"h": 23
-					},
-					"frame": {
-						"x": 95,
-						"y": 91,
-						"w": 21,
-						"h": 23
-					}
-				},
-				{
-					"filename": "stick",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 5,
-						"w": 23,
-						"h": 23
-					},
-					"frame": {
-						"x": 72,
-						"y": 98,
-						"w": 23,
-						"h": 23
-					}
-				},
-				{
-					"filename": "black_glasses",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 8,
-						"w": 23,
-						"h": 17
-					},
-					"frame": {
-						"x": 116,
-						"y": 101,
-						"w": 23,
-						"h": 17
-					}
-				},
-				{
-					"filename": "mystic_ticket",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 7,
-						"w": 23,
-						"h": 19
-					},
-					"frame": {
-						"x": 139,
-						"y": 102,
-						"w": 23,
-						"h": 19
-					}
-				},
-				{
-					"filename": "fire_stone",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 23
-					},
-					"frame": {
-						"x": 54,
-						"y": 121,
-						"w": 22,
-						"h": 23
-					}
-				},
-				{
-					"filename": "fire_tera_shard",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 4,
-						"w": 22,
-						"h": 23
-					},
-					"frame": {
-						"x": 76,
-						"y": 121,
-						"w": 22,
-						"h": 23
-					}
-				},
-				{
-					"filename": "flying_tera_shard",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 4,
-						"w": 22,
-						"h": 23
-					},
-					"frame": {
-						"x": 55,
-						"y": 144,
-						"w": 22,
-						"h": 23
-					}
-				},
-				{
-					"filename": "focus_sash",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 4,
-						"w": 22,
-						"h": 23
-					},
-					"frame": {
-						"x": 77,
-						"y": 144,
-						"w": 22,
-						"h": 23
-					}
-				},
-				{
-					"filename": "n_lunarizer",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 6,
-						"w": 23,
-						"h": 21
-					},
-					"frame": {
-						"x": 162,
-						"y": 107,
-						"w": 23,
-						"h": 21
-					}
-				},
-				{
-					"filename": "n_solarizer",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 6,
-						"w": 23,
-						"h": 21
-					},
-					"frame": {
-						"x": 185,
-						"y": 107,
-						"w": 23,
-						"h": 21
-					}
-				},
-				{
-					"filename": "pair_of_tickets",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 7,
-						"w": 23,
-						"h": 19
-					},
-					"frame": {
-						"x": 208,
-						"y": 110,
-						"w": 23,
-						"h": 19
-					}
-				},
-				{
-					"filename": "relic_crown",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 7,
-						"w": 23,
-						"h": 18
-					},
-					"frame": {
-						"x": 231,
-						"y": 111,
-						"w": 23,
-						"h": 18
 					}
 				},
 				{
@@ -2397,14 +2229,14 @@
 						"h": 20
 					},
 					"frame": {
-						"x": 254,
-						"y": 111,
+						"x": 297,
+						"y": 91,
 						"w": 23,
 						"h": 20
 					}
 				},
 				{
-					"filename": "rusted_sword",
+					"filename": "fighting_tera_shard",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2412,125 +2244,20 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 4,
-						"y": 5,
-						"w": 23,
-						"h": 22
+						"x": 6,
+						"y": 4,
+						"w": 22,
+						"h": 23
 					},
 					"frame": {
-						"x": 277,
-						"y": 111,
-						"w": 23,
-						"h": 22
-					}
-				},
-				{
-					"filename": "razor_fang",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 7,
-						"y": 6,
-						"w": 18,
-						"h": 20
-					},
-					"frame": {
-						"x": 98,
-						"y": 114,
-						"w": 18,
-						"h": 20
-					}
-				},
-				{
-					"filename": "shell_bell",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 7,
-						"w": 23,
-						"h": 20
-					},
-					"frame": {
-						"x": 116,
+						"x": 54,
 						"y": 118,
-						"w": 23,
-						"h": 20
-					}
-				},
-				{
-					"filename": "wellspring_mask",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 5,
-						"w": 23,
-						"h": 21
-					},
-					"frame": {
-						"x": 139,
-						"y": 121,
-						"w": 23,
-						"h": 21
-					}
-				},
-				{
-					"filename": "wise_glasses",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 4,
-						"y": 8,
-						"w": 23,
-						"h": 17
-					},
-					"frame": {
-						"x": 162,
-						"y": 128,
-						"w": 23,
-						"h": 17
-					}
-				},
-				{
-					"filename": "blunder_policy",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 6,
 						"w": 22,
-						"h": 19
-					},
-					"frame": {
-						"x": 185,
-						"y": 128,
-						"w": 22,
-						"h": 19
+						"h": 23
 					}
 				},
 				{
-					"filename": "charcoal",
+					"filename": "fire_stone",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2541,116 +2268,11 @@
 						"x": 5,
 						"y": 5,
 						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 207,
-						"y": 129,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "dire_hit",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 229,
-						"y": 129,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "deep_sea_scale",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 6,
-						"w": 22,
-						"h": 20
-					},
-					"frame": {
-						"x": 251,
-						"y": 131,
-						"w": 22,
-						"h": 20
-					}
-				},
-				{
-					"filename": "deep_sea_tooth",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 6,
-						"w": 22,
-						"h": 21
-					},
-					"frame": {
-						"x": 273,
-						"y": 133,
-						"w": 22,
-						"h": 21
-					}
-				},
-				{
-					"filename": "ghost_tera_shard",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 4,
-						"w": 22,
 						"h": 23
 					},
 					"frame": {
-						"x": 57,
-						"y": 167,
-						"w": 22,
-						"h": 23
-					}
-				},
-				{
-					"filename": "grass_tera_shard",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 4,
-						"w": 22,
-						"h": 23
-					},
-					"frame": {
-						"x": 79,
-						"y": 167,
+						"x": 76,
+						"y": 118,
 						"w": 22,
 						"h": 23
 					}
@@ -2670,14 +2292,14 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 99,
-						"y": 134,
+						"x": 98,
+						"y": 113,
 						"w": 17,
 						"h": 23
 					}
 				},
 				{
-					"filename": "dna_splicers",
+					"filename": "dire_hit",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2691,14 +2313,56 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 116,
-						"y": 138,
+						"x": 115,
+						"y": 114,
 						"w": 22,
 						"h": 22
 					}
 				},
 				{
-					"filename": "dubious_disc",
+					"filename": "fire_tera_shard",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 4,
+						"w": 22,
+						"h": 23
+					},
+					"frame": {
+						"x": 55,
+						"y": 141,
+						"w": 22,
+						"h": 23
+					}
+				},
+				{
+					"filename": "flying_tera_shard",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 4,
+						"w": 22,
+						"h": 23
+					},
+					"frame": {
+						"x": 77,
+						"y": 141,
+						"w": 22,
+						"h": 23
+					}
+				},
+				{
+					"filename": "focus_sash",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2707,19 +2371,19 @@
 					},
 					"spriteSourceSize": {
 						"x": 5,
-						"y": 7,
+						"y": 4,
 						"w": 22,
-						"h": 19
+						"h": 23
 					},
 					"frame": {
-						"x": 138,
-						"y": 142,
+						"x": 99,
+						"y": 136,
 						"w": 22,
-						"h": 19
+						"h": 23
 					}
 				},
 				{
-					"filename": "electirizer",
+					"filename": "ghost_tera_shard",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2727,20 +2391,20 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
+						"x": 6,
+						"y": 4,
 						"w": 22,
-						"h": 22
+						"h": 23
 					},
 					"frame": {
-						"x": 160,
-						"y": 145,
+						"x": 121,
+						"y": 136,
 						"w": 22,
-						"h": 22
+						"h": 23
 					}
 				},
 				{
-					"filename": "enigma_berry",
+					"filename": "grass_tera_shard",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -2748,58 +2412,16 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
+						"x": 6,
+						"y": 4,
 						"w": 22,
-						"h": 22
+						"h": 23
 					},
 					"frame": {
-						"x": 182,
-						"y": 147,
+						"x": 61,
+						"y": 164,
 						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "fairy_feather",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 7,
-						"w": 22,
-						"h": 20
-					},
-					"frame": {
-						"x": 204,
-						"y": 151,
-						"w": 22,
-						"h": 20
-					}
-				},
-				{
-					"filename": "ganlon_berry",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 226,
-						"y": 151,
-						"w": 22,
-						"h": 22
+						"h": 23
 					}
 				},
 				{
@@ -2817,31 +2439,10 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 248,
-						"y": 151,
+						"x": 83,
+						"y": 164,
 						"w": 22,
 						"h": 23
-					}
-				},
-				{
-					"filename": "guard_spec",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 270,
-						"y": 154,
-						"w": 22,
-						"h": 22
 					}
 				},
 				{
@@ -2859,30 +2460,9 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 62,
-						"y": 190,
+						"x": 105,
+						"y": 159,
 						"w": 22,
-						"h": 23
-					}
-				},
-				{
-					"filename": "mystic_water",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 5,
-						"w": 20,
-						"h": 23
-					},
-					"frame": {
-						"x": 84,
-						"y": 190,
-						"w": 20,
 						"h": 23
 					}
 				},
@@ -2901,10 +2481,73 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 63,
-						"y": 213,
+						"x": 127,
+						"y": 159,
 						"w": 22,
 						"h": 23
+					}
+				},
+				{
+					"filename": "prism_scale",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 8,
+						"w": 15,
+						"h": 15
+					},
+					"frame": {
+						"x": 61,
+						"y": 187,
+						"w": 15,
+						"h": 15
+					}
+				},
+				{
+					"filename": "black_glasses",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 8,
+						"w": 23,
+						"h": 17
+					},
+					"frame": {
+						"x": 76,
+						"y": 187,
+						"w": 23,
+						"h": 17
+					}
+				},
+				{
+					"filename": "wellspring_mask",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 5,
+						"w": 23,
+						"h": 21
+					},
+					"frame": {
+						"x": 62,
+						"y": 204,
+						"w": 23,
+						"h": 21
 					}
 				},
 				{
@@ -2923,7 +2566,7 @@
 					},
 					"frame": {
 						"x": 63,
-						"y": 236,
+						"y": 225,
 						"w": 22,
 						"h": 23
 					}
@@ -2944,7 +2587,7 @@
 					},
 					"frame": {
 						"x": 63,
-						"y": 259,
+						"y": 248,
 						"w": 22,
 						"h": 23
 					}
@@ -2964,8 +2607,8 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 85,
-						"y": 213,
+						"x": 63,
+						"y": 271,
 						"w": 22,
 						"h": 23
 					}
@@ -2985,8 +2628,8 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 85,
-						"y": 236,
+						"x": 63,
+						"y": 294,
 						"w": 22,
 						"h": 23
 					}
@@ -3006,8 +2649,8 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 85,
-						"y": 259,
+						"x": 64,
+						"y": 317,
 						"w": 22,
 						"h": 23
 					}
@@ -3027,555 +2670,9 @@
 						"h": 23
 					},
 					"frame": {
-						"x": 64,
-						"y": 282,
+						"x": 65,
+						"y": 340,
 						"w": 22,
-						"h": 23
-					}
-				},
-				{
-					"filename": "steel_tera_shard",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 4,
-						"w": 22,
-						"h": 23
-					},
-					"frame": {
-						"x": 64,
-						"y": 305,
-						"w": 22,
-						"h": 23
-					}
-				},
-				{
-					"filename": "sharp_beak",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 21,
-						"h": 23
-					},
-					"frame": {
-						"x": 86,
-						"y": 282,
-						"w": 21,
-						"h": 23
-					}
-				},
-				{
-					"filename": "stellar_tera_shard",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 4,
-						"w": 22,
-						"h": 23
-					},
-					"frame": {
-						"x": 86,
-						"y": 305,
-						"w": 22,
-						"h": 23
-					}
-				},
-				{
-					"filename": "water_tera_shard",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 4,
-						"w": 22,
-						"h": 23
-					},
-					"frame": {
-						"x": 68,
-						"y": 328,
-						"w": 22,
-						"h": 23
-					}
-				},
-				{
-					"filename": "malicious_armor",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 6,
-						"w": 22,
-						"h": 20
-					},
-					"frame": {
-						"x": 68,
-						"y": 351,
-						"w": 22,
-						"h": 20
-					}
-				},
-				{
-					"filename": "whipped_dream",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 4,
-						"w": 21,
-						"h": 23
-					},
-					"frame": {
-						"x": 90,
-						"y": 328,
-						"w": 21,
-						"h": 23
-					}
-				},
-				{
-					"filename": "tera_orb",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 6,
-						"w": 22,
-						"h": 20
-					},
-					"frame": {
-						"x": 90,
-						"y": 351,
-						"w": 22,
-						"h": 20
-					}
-				},
-				{
-					"filename": "ice_stone",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 301,
-						"y": 48,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "magmarizer",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 323,
-						"y": 47,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "dawn_stone",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 6,
-						"w": 20,
-						"h": 21
-					},
-					"frame": {
-						"x": 303,
-						"y": 70,
-						"w": 20,
-						"h": 21
-					}
-				},
-				{
-					"filename": "mini_black_hole",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 300,
-						"y": 91,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "protector",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 323,
-						"y": 69,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "scroll_of_darkness",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 322,
-						"y": 91,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "liechi_berry",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 6,
-						"w": 22,
-						"h": 21
-					},
-					"frame": {
-						"x": 300,
-						"y": 113,
-						"w": 22,
-						"h": 21
-					}
-				},
-				{
-					"filename": "scroll_of_waters",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 322,
-						"y": 113,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "shed_shell",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 345,
-						"y": 69,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "starf_berry",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 344,
-						"y": 91,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "thunder_stone",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 344,
-						"y": 113,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "sweet_apple",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 6,
-						"w": 22,
-						"h": 21
-					},
-					"frame": {
-						"x": 295,
-						"y": 134,
-						"w": 22,
-						"h": 21
-					}
-				},
-				{
-					"filename": "syrupy_apple",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 6,
-						"w": 22,
-						"h": 21
-					},
-					"frame": {
-						"x": 292,
-						"y": 155,
-						"w": 22,
-						"h": 21
-					}
-				},
-				{
-					"filename": "tart_apple",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 6,
-						"w": 22,
-						"h": 21
-					},
-					"frame": {
-						"x": 317,
-						"y": 135,
-						"w": 22,
-						"h": 21
-					}
-				},
-				{
-					"filename": "tm_bug",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 339,
-						"y": 135,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "tm_dark",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 314,
-						"y": 156,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "tm_dragon",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 5,
-						"w": 22,
-						"h": 22
-					},
-					"frame": {
-						"x": 336,
-						"y": 157,
-						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "potion",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 8,
-						"y": 5,
-						"w": 17,
-						"h": 23
-					},
-					"frame": {
-						"x": 101,
-						"y": 167,
-						"w": 17,
-						"h": 23
-					}
-				},
-				{
-					"filename": "super_potion",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 8,
-						"y": 5,
-						"w": 17,
-						"h": 23
-					},
-					"frame": {
-						"x": 104,
-						"y": 190,
-						"w": 17,
 						"h": 23
 					}
 				},
@@ -3594,8 +2691,8 @@
 						"h": 24
 					},
 					"frame": {
-						"x": 107,
-						"y": 213,
+						"x": 85,
+						"y": 204,
 						"w": 16,
 						"h": 24
 					}
@@ -3615,8 +2712,8 @@
 						"h": 24
 					},
 					"frame": {
-						"x": 107,
-						"y": 237,
+						"x": 85,
+						"y": 228,
 						"w": 16,
 						"h": 24
 					}
@@ -3636,14 +2733,14 @@
 						"h": 24
 					},
 					"frame": {
-						"x": 107,
-						"y": 261,
+						"x": 85,
+						"y": 252,
 						"w": 16,
 						"h": 24
 					}
 				},
 				{
-					"filename": "apicot_berry",
+					"filename": "potion",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -3651,41 +2748,20 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 6,
-						"y": 6,
-						"w": 19,
-						"h": 20
-					},
-					"frame": {
-						"x": 107,
-						"y": 285,
-						"w": 19,
-						"h": 20
-					}
-				},
-				{
-					"filename": "metal_coat",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
+						"x": 8,
 						"y": 5,
-						"w": 19,
-						"h": 22
+						"w": 17,
+						"h": 23
 					},
 					"frame": {
-						"x": 108,
-						"y": 305,
-						"w": 19,
-						"h": 22
+						"x": 85,
+						"y": 276,
+						"w": 17,
+						"h": 23
 					}
 				},
 				{
-					"filename": "metronome",
+					"filename": "dark_stone",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -3694,14 +2770,539 @@
 					},
 					"spriteSourceSize": {
 						"x": 7,
+						"y": 7,
+						"w": 18,
+						"h": 18
+					},
+					"frame": {
+						"x": 85,
+						"y": 299,
+						"w": 18,
+						"h": 18
+					}
+				},
+				{
+					"filename": "sharp_beak",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
 						"y": 5,
-						"w": 17,
+						"w": 21,
+						"h": 23
+					},
+					"frame": {
+						"x": 86,
+						"y": 317,
+						"w": 21,
+						"h": 23
+					}
+				},
+				{
+					"filename": "steel_tera_shard",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 4,
+						"w": 22,
+						"h": 23
+					},
+					"frame": {
+						"x": 87,
+						"y": 340,
+						"w": 22,
+						"h": 23
+					}
+				},
+				{
+					"filename": "dna_splicers",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
 						"h": 22
 					},
 					"frame": {
-						"x": 111,
-						"y": 327,
+						"x": 323,
+						"y": 48,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "stellar_tera_shard",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 4,
+						"w": 22,
+						"h": 23
+					},
+					"frame": {
+						"x": 345,
+						"y": 47,
+						"w": 22,
+						"h": 23
+					}
+				},
+				{
+					"filename": "deep_sea_tooth",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 6,
+						"w": 22,
+						"h": 21
+					},
+					"frame": {
+						"x": 326,
+						"y": 70,
+						"w": 22,
+						"h": 21
+					}
+				},
+				{
+					"filename": "water_tera_shard",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 4,
+						"w": 22,
+						"h": 23
+					},
+					"frame": {
+						"x": 348,
+						"y": 70,
+						"w": 22,
+						"h": 23
+					}
+				},
+				{
+					"filename": "shell_bell",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 7,
+						"w": 23,
+						"h": 20
+					},
+					"frame": {
+						"x": 320,
+						"y": 91,
+						"w": 23,
+						"h": 20
+					}
+				},
+				{
+					"filename": "coupon",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 343,
+						"y": 93,
+						"w": 23,
+						"h": 19
+					}
+				},
+				{
+					"filename": "electirizer",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 137,
+						"y": 114,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "super_potion",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 5,
 						"w": 17,
+						"h": 23
+					},
+					"frame": {
+						"x": 143,
+						"y": 136,
+						"w": 17,
+						"h": 23
+					}
+				},
+				{
+					"filename": "enigma_berry",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 159,
+						"y": 111,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "ganlon_berry",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 181,
+						"y": 111,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "guard_spec",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 203,
+						"y": 111,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "ice_stone",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 225,
+						"y": 111,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "magmarizer",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 247,
+						"y": 111,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "mini_black_hole",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 269,
+						"y": 111,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "protector",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 291,
+						"y": 111,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "scroll_of_darkness",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 313,
+						"y": 111,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "scroll_of_waters",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 160,
+						"y": 133,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "shed_shell",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 182,
+						"y": 133,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "starf_berry",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 204,
+						"y": 133,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "thunder_stone",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 226,
+						"y": 133,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "tm_bug",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 248,
+						"y": 133,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "tm_dark",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 270,
+						"y": 133,
+						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "tm_dragon",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 22
+					},
+					"frame": {
+						"x": 292,
+						"y": 133,
+						"w": 22,
 						"h": 22
 					}
 				},
@@ -3720,14 +3321,14 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 112,
-						"y": 349,
+						"x": 314,
+						"y": 133,
 						"w": 22,
 						"h": 22
 					}
 				},
 				{
-					"filename": "sitrus_berry",
+					"filename": "liechi_berry",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -3735,16 +3336,16 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 6,
-						"y": 5,
-						"w": 20,
-						"h": 22
+						"x": 5,
+						"y": 6,
+						"w": 22,
+						"h": 21
 					},
 					"frame": {
-						"x": 118,
-						"y": 160,
-						"w": 20,
-						"h": 22
+						"x": 335,
+						"y": 112,
+						"w": 22,
+						"h": 21
 					}
 				},
 				{
@@ -3762,10 +3363,31 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 138,
-						"y": 161,
+						"x": 336,
+						"y": 133,
 						"w": 22,
 						"h": 22
+					}
+				},
+				{
+					"filename": "full_heal",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 4,
+						"w": 15,
+						"h": 23
+					},
+					"frame": {
+						"x": 149,
+						"y": 159,
+						"w": 15,
+						"h": 23
 					}
 				},
 				{
@@ -3783,8 +3405,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 160,
-						"y": 167,
+						"x": 164,
+						"y": 155,
 						"w": 22,
 						"h": 22
 					}
@@ -3804,8 +3426,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 182,
-						"y": 169,
+						"x": 186,
+						"y": 155,
 						"w": 22,
 						"h": 22
 					}
@@ -3825,8 +3447,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 204,
-						"y": 171,
+						"x": 208,
+						"y": 155,
 						"w": 22,
 						"h": 22
 					}
@@ -3846,8 +3468,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 226,
-						"y": 173,
+						"x": 230,
+						"y": 155,
 						"w": 22,
 						"h": 22
 					}
@@ -3867,8 +3489,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 248,
-						"y": 174,
+						"x": 252,
+						"y": 155,
 						"w": 22,
 						"h": 22
 					}
@@ -3888,8 +3510,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 270,
-						"y": 176,
+						"x": 274,
+						"y": 155,
 						"w": 22,
 						"h": 22
 					}
@@ -3909,8 +3531,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 292,
-						"y": 176,
+						"x": 296,
+						"y": 155,
 						"w": 22,
 						"h": 22
 					}
@@ -3930,10 +3552,73 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 314,
-						"y": 178,
+						"x": 318,
+						"y": 155,
 						"w": 22,
 						"h": 22
+					}
+				},
+				{
+					"filename": "metal_coat",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 5,
+						"w": 19,
+						"h": 22
+					},
+					"frame": {
+						"x": 340,
+						"y": 155,
+						"w": 19,
+						"h": 22
+					}
+				},
+				{
+					"filename": "golden_mystic_ticket",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 105,
+						"y": 182,
+						"w": 23,
+						"h": 19
+					}
+				},
+				{
+					"filename": "mystic_ticket",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 128,
+						"y": 182,
+						"w": 23,
+						"h": 19
 					}
 				},
 				{
@@ -3951,30 +3636,9 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 336,
-						"y": 179,
+						"x": 101,
+						"y": 201,
 						"w": 22,
-						"h": 22
-					}
-				},
-				{
-					"filename": "soothe_bell",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 8,
-						"y": 5,
-						"w": 17,
-						"h": 22
-					},
-					"frame": {
-						"x": 121,
-						"y": 182,
-						"w": 17,
 						"h": 22
 					}
 				},
@@ -3993,8 +3657,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 138,
-						"y": 183,
+						"x": 101,
+						"y": 223,
 						"w": 22,
 						"h": 22
 					}
@@ -4014,8 +3678,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 160,
-						"y": 189,
+						"x": 123,
+						"y": 201,
 						"w": 22,
 						"h": 22
 					}
@@ -4035,8 +3699,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 182,
-						"y": 191,
+						"x": 101,
+						"y": 245,
 						"w": 22,
 						"h": 22
 					}
@@ -4056,8 +3720,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 204,
-						"y": 193,
+						"x": 123,
+						"y": 223,
 						"w": 22,
 						"h": 22
 					}
@@ -4077,10 +3741,31 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 226,
-						"y": 195,
+						"x": 123,
+						"y": 245,
 						"w": 22,
 						"h": 22
+					}
+				},
+				{
+					"filename": "whipped_dream",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 4,
+						"w": 21,
+						"h": 23
+					},
+					"frame": {
+						"x": 102,
+						"y": 267,
+						"w": 21,
+						"h": 23
 					}
 				},
 				{
@@ -4098,9 +3783,30 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 248,
-						"y": 196,
+						"x": 123,
+						"y": 267,
 						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "sitrus_berry",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 5,
+						"w": 20,
+						"h": 22
+					},
+					"frame": {
+						"x": 103,
+						"y": 290,
+						"w": 20,
 						"h": 22
 					}
 				},
@@ -4119,9 +3825,30 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 270,
-						"y": 198,
+						"x": 123,
+						"y": 289,
 						"w": 22,
+						"h": 22
+					}
+				},
+				{
+					"filename": "metronome",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 5,
+						"w": 17,
+						"h": 22
+					},
+					"frame": {
+						"x": 107,
+						"y": 312,
+						"w": 17,
 						"h": 22
 					}
 				},
@@ -4140,10 +3867,31 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 292,
-						"y": 198,
+						"x": 124,
+						"y": 311,
 						"w": 22,
 						"h": 22
+					}
+				},
+				{
+					"filename": "apicot_berry",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 6,
+						"w": 19,
+						"h": 20
+					},
+					"frame": {
+						"x": 151,
+						"y": 182,
+						"w": 19,
+						"h": 20
 					}
 				},
 				{
@@ -4161,8 +3909,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 314,
-						"y": 200,
+						"x": 170,
+						"y": 177,
 						"w": 22,
 						"h": 22
 					}
@@ -4182,52 +3930,10 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 336,
-						"y": 201,
+						"x": 192,
+						"y": 177,
 						"w": 22,
 						"h": 22
-					}
-				},
-				{
-					"filename": "prism_scale",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 9,
-						"y": 8,
-						"w": 15,
-						"h": 15
-					},
-					"frame": {
-						"x": 123,
-						"y": 204,
-						"w": 15,
-						"h": 15
-					}
-				},
-				{
-					"filename": "upgrade",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 7,
-						"w": 22,
-						"h": 19
-					},
-					"frame": {
-						"x": 138,
-						"y": 205,
-						"w": 22,
-						"h": 19
 					}
 				},
 				{
@@ -4245,10 +3951,136 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 160,
-						"y": 211,
+						"x": 214,
+						"y": 177,
 						"w": 22,
 						"h": 22
+					}
+				},
+				{
+					"filename": "sweet_apple",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 6,
+						"w": 22,
+						"h": 21
+					},
+					"frame": {
+						"x": 236,
+						"y": 177,
+						"w": 22,
+						"h": 21
+					}
+				},
+				{
+					"filename": "syrupy_apple",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 6,
+						"w": 22,
+						"h": 21
+					},
+					"frame": {
+						"x": 258,
+						"y": 177,
+						"w": 22,
+						"h": 21
+					}
+				},
+				{
+					"filename": "tart_apple",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 6,
+						"w": 22,
+						"h": 21
+					},
+					"frame": {
+						"x": 280,
+						"y": 177,
+						"w": 22,
+						"h": 21
+					}
+				},
+				{
+					"filename": "deep_sea_scale",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 6,
+						"w": 22,
+						"h": 20
+					},
+					"frame": {
+						"x": 302,
+						"y": 177,
+						"w": 22,
+						"h": 20
+					}
+				},
+				{
+					"filename": "fairy_feather",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 7,
+						"w": 22,
+						"h": 20
+					},
+					"frame": {
+						"x": 324,
+						"y": 177,
+						"w": 22,
+						"h": 20
+					}
+				},
+				{
+					"filename": "malicious_armor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 6,
+						"w": 22,
+						"h": 20
+					},
+					"frame": {
+						"x": 145,
+						"y": 202,
+						"w": 22,
+						"h": 20
 					}
 				},
 				{
@@ -4266,52 +4098,10 @@
 						"h": 21
 					},
 					"frame": {
-						"x": 182,
-						"y": 213,
+						"x": 145,
+						"y": 222,
 						"w": 21,
 						"h": 21
-					}
-				},
-				{
-					"filename": "metal_alloy",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 7,
-						"w": 21,
-						"h": 19
-					},
-					"frame": {
-						"x": 203,
-						"y": 215,
-						"w": 21,
-						"h": 19
-					}
-				},
-				{
-					"filename": "masterpiece_teacup",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 7,
-						"w": 21,
-						"h": 18
-					},
-					"frame": {
-						"x": 224,
-						"y": 217,
-						"w": 21,
-						"h": 18
 					}
 				},
 				{
@@ -4329,8 +4119,8 @@
 						"h": 21
 					},
 					"frame": {
-						"x": 245,
-						"y": 218,
+						"x": 145,
+						"y": 243,
 						"w": 21,
 						"h": 21
 					}
@@ -4350,14 +4140,14 @@
 						"h": 21
 					},
 					"frame": {
-						"x": 266,
-						"y": 220,
+						"x": 145,
+						"y": 264,
 						"w": 21,
 						"h": 21
 					}
 				},
 				{
-					"filename": "gb",
+					"filename": "dawn_stone",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4368,55 +4158,13 @@
 						"x": 6,
 						"y": 6,
 						"w": 20,
-						"h": 20
+						"h": 21
 					},
 					"frame": {
-						"x": 287,
-						"y": 220,
+						"x": 145,
+						"y": 285,
 						"w": 20,
-						"h": 20
-					}
-				},
-				{
-					"filename": "unremarkable_teacup",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 7,
-						"w": 21,
-						"h": 18
-					},
-					"frame": {
-						"x": 307,
-						"y": 222,
-						"w": 21,
-						"h": 18
-					}
-				},
-				{
-					"filename": "relic_gold",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 9,
-						"y": 11,
-						"w": 15,
-						"h": 11
-					},
-					"frame": {
-						"x": 123,
-						"y": 219,
-						"w": 15,
-						"h": 11
+						"h": 21
 					}
 				},
 				{
@@ -4434,14 +4182,14 @@
 						"h": 21
 					},
 					"frame": {
-						"x": 123,
-						"y": 230,
+						"x": 146,
+						"y": 306,
 						"w": 19,
 						"h": 21
 					}
 				},
 				{
-					"filename": "oval_stone",
+					"filename": "blue_orb",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4449,16 +4197,79 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 7,
-						"y": 7,
-						"w": 18,
-						"h": 19
+						"x": 6,
+						"y": 6,
+						"w": 20,
+						"h": 20
 					},
 					"frame": {
-						"x": 142,
-						"y": 224,
-						"w": 18,
-						"h": 19
+						"x": 346,
+						"y": 177,
+						"w": 20,
+						"h": 20
+					}
+				},
+				{
+					"filename": "leftovers",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 5,
+						"w": 15,
+						"h": 22
+					},
+					"frame": {
+						"x": 109,
+						"y": 334,
+						"w": 15,
+						"h": 22
+					}
+				},
+				{
+					"filename": "tera_orb",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 6,
+						"w": 22,
+						"h": 20
+					},
+					"frame": {
+						"x": 124,
+						"y": 333,
+						"w": 22,
+						"h": 20
+					}
+				},
+				{
+					"filename": "wise_glasses",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 8,
+						"w": 23,
+						"h": 17
+					},
+					"frame": {
+						"x": 124,
+						"y": 353,
+						"w": 23,
+						"h": 17
 					}
 				},
 				{
@@ -4476,14 +4287,161 @@
 						"h": 20
 					},
 					"frame": {
-						"x": 123,
-						"y": 251,
+						"x": 146,
+						"y": 327,
 						"w": 19,
 						"h": 20
 					}
 				},
 				{
-					"filename": "hard_stone",
+					"filename": "relic_gold",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 11,
+						"w": 15,
+						"h": 11
+					},
+					"frame": {
+						"x": 109,
+						"y": 356,
+						"w": 15,
+						"h": 11
+					}
+				},
+				{
+					"filename": "soothe_bell",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 5,
+						"w": 17,
+						"h": 22
+					},
+					"frame": {
+						"x": 147,
+						"y": 347,
+						"w": 17,
+						"h": 22
+					}
+				},
+				{
+					"filename": "pair_of_tickets",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 23,
+						"h": 19
+					},
+					"frame": {
+						"x": 170,
+						"y": 199,
+						"w": 23,
+						"h": 19
+					}
+				},
+				{
+					"filename": "blunder_policy",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 6,
+						"w": 22,
+						"h": 19
+					},
+					"frame": {
+						"x": 193,
+						"y": 199,
+						"w": 22,
+						"h": 19
+					}
+				},
+				{
+					"filename": "dubious_disc",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 7,
+						"w": 22,
+						"h": 19
+					},
+					"frame": {
+						"x": 215,
+						"y": 199,
+						"w": 22,
+						"h": 19
+					}
+				},
+				{
+					"filename": "relic_crown",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 7,
+						"w": 23,
+						"h": 18
+					},
+					"frame": {
+						"x": 237,
+						"y": 198,
+						"w": 23,
+						"h": 18
+					}
+				},
+				{
+					"filename": "upgrade",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 7,
+						"w": 22,
+						"h": 19
+					},
+					"frame": {
+						"x": 260,
+						"y": 198,
+						"w": 22,
+						"h": 19
+					}
+				},
+				{
+					"filename": "gb",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4493,13 +4451,13 @@
 					"spriteSourceSize": {
 						"x": 6,
 						"y": 6,
-						"w": 19,
+						"w": 20,
 						"h": 20
 					},
 					"frame": {
-						"x": 142,
-						"y": 243,
-						"w": 19,
+						"x": 282,
+						"y": 198,
+						"w": 20,
 						"h": 20
 					}
 				},
@@ -4518,8 +4476,176 @@
 						"h": 20
 					},
 					"frame": {
-						"x": 161,
-						"y": 233,
+						"x": 302,
+						"y": 197,
+						"w": 20,
+						"h": 20
+					}
+				},
+				{
+					"filename": "mb",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 6,
+						"w": 20,
+						"h": 20
+					},
+					"frame": {
+						"x": 322,
+						"y": 197,
+						"w": 20,
+						"h": 20
+					}
+				},
+				{
+					"filename": "metal_alloy",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 7,
+						"w": 21,
+						"h": 19
+					},
+					"frame": {
+						"x": 342,
+						"y": 197,
+						"w": 21,
+						"h": 19
+					}
+				},
+				{
+					"filename": "masterpiece_teacup",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 7,
+						"w": 21,
+						"h": 18
+					},
+					"frame": {
+						"x": 237,
+						"y": 216,
+						"w": 21,
+						"h": 18
+					}
+				},
+				{
+					"filename": "unremarkable_teacup",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 7,
+						"w": 21,
+						"h": 18
+					},
+					"frame": {
+						"x": 258,
+						"y": 217,
+						"w": 21,
+						"h": 18
+					}
+				},
+				{
+					"filename": "everstone",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 17
+					},
+					"frame": {
+						"x": 279,
+						"y": 218,
+						"w": 20,
+						"h": 17
+					}
+				},
+				{
+					"filename": "golden_egg",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 6,
+						"w": 17,
+						"h": 20
+					},
+					"frame": {
+						"x": 165,
+						"y": 285,
+						"w": 17,
+						"h": 20
+					}
+				},
+				{
+					"filename": "hard_stone",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 6,
+						"w": 19,
+						"h": 20
+					},
+					"frame": {
+						"x": 165,
+						"y": 305,
+						"w": 19,
+						"h": 20
+					}
+				},
+				{
+					"filename": "pb",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 6,
+						"w": 20,
+						"h": 20
+					},
+					"frame": {
+						"x": 165,
+						"y": 325,
 						"w": 20,
 						"h": 20
 					}
@@ -4539,14 +4665,14 @@
 						"h": 19
 					},
 					"frame": {
-						"x": 181,
-						"y": 234,
+						"x": 165,
+						"y": 345,
 						"w": 20,
 						"h": 19
 					}
 				},
 				{
-					"filename": "mb",
+					"filename": "lucky_egg",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4554,79 +4680,16 @@
 						"h": 32
 					},
 					"spriteSourceSize": {
-						"x": 6,
+						"x": 7,
 						"y": 6,
-						"w": 20,
+						"w": 17,
 						"h": 20
 					},
 					"frame": {
-						"x": 201,
-						"y": 234,
-						"w": 20,
+						"x": 166,
+						"y": 222,
+						"w": 17,
 						"h": 20
-					}
-				},
-				{
-					"filename": "pb",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 6,
-						"w": 20,
-						"h": 20
-					},
-					"frame": {
-						"x": 221,
-						"y": 235,
-						"w": 20,
-						"h": 20
-					}
-				},
-				{
-					"filename": "everstone",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 17
-					},
-					"frame": {
-						"x": 241,
-						"y": 239,
-						"w": 20,
-						"h": 17
-					}
-				},
-				{
-					"filename": "mega_bracelet",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 16
-					},
-					"frame": {
-						"x": 161,
-						"y": 253,
-						"w": 20,
-						"h": 16
 					}
 				},
 				{
@@ -4644,31 +4707,10 @@
 						"h": 20
 					},
 					"frame": {
-						"x": 181,
-						"y": 253,
+						"x": 166,
+						"y": 242,
 						"w": 20,
 						"h": 20
-					}
-				},
-				{
-					"filename": "razor_claw",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 7,
-						"w": 20,
-						"h": 19
-					},
-					"frame": {
-						"x": 201,
-						"y": 254,
-						"w": 20,
-						"h": 19
 					}
 				},
 				{
@@ -4686,8 +4728,8 @@
 						"h": 20
 					},
 					"frame": {
-						"x": 221,
-						"y": 255,
+						"x": 166,
+						"y": 262,
 						"w": 20,
 						"h": 20
 					}
@@ -4707,8 +4749,8 @@
 						"h": 20
 					},
 					"frame": {
-						"x": 241,
-						"y": 256,
+						"x": 183,
+						"y": 218,
 						"w": 20,
 						"h": 20
 					}
@@ -4728,14 +4770,14 @@
 						"h": 20
 					},
 					"frame": {
-						"x": 261,
-						"y": 241,
+						"x": 203,
+						"y": 218,
 						"w": 20,
 						"h": 20
 					}
 				},
 				{
-					"filename": "wl_ability_urge",
+					"filename": "razor_claw",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -4744,15 +4786,15 @@
 					},
 					"spriteSourceSize": {
 						"x": 6,
-						"y": 8,
+						"y": 7,
 						"w": 20,
-						"h": 18
+						"h": 19
 					},
 					"frame": {
-						"x": 261,
-						"y": 261,
+						"x": 186,
+						"y": 238,
 						"w": 20,
-						"h": 18
+						"h": 19
 					}
 				},
 				{
@@ -4770,10 +4812,73 @@
 						"h": 19
 					},
 					"frame": {
-						"x": 142,
-						"y": 263,
+						"x": 186,
+						"y": 257,
 						"w": 19,
 						"h": 19
+					}
+				},
+				{
+					"filename": "miracle_seed",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 7,
+						"w": 19,
+						"h": 19
+					},
+					"frame": {
+						"x": 206,
+						"y": 238,
+						"w": 19,
+						"h": 19
+					}
+				},
+				{
+					"filename": "wl_ability_urge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 205,
+						"y": 257,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "mega_bracelet",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 16
+					},
+					"frame": {
+						"x": 186,
+						"y": 276,
+						"w": 20,
+						"h": 16
 					}
 				},
 				{
@@ -4791,8 +4896,8 @@
 						"h": 18
 					},
 					"frame": {
-						"x": 161,
-						"y": 269,
+						"x": 206,
+						"y": 275,
 						"w": 20,
 						"h": 18
 					}
@@ -4812,8 +4917,8 @@
 						"h": 18
 					},
 					"frame": {
-						"x": 181,
-						"y": 273,
+						"x": 184,
+						"y": 292,
 						"w": 20,
 						"h": 18
 					}
@@ -4833,10 +4938,31 @@
 						"h": 18
 					},
 					"frame": {
-						"x": 201,
-						"y": 273,
+						"x": 204,
+						"y": 293,
 						"w": 20,
 						"h": 18
+					}
+				},
+				{
+					"filename": "oval_stone",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 7,
+						"w": 18,
+						"h": 19
+					},
+					"frame": {
+						"x": 185,
+						"y": 310,
+						"w": 18,
+						"h": 19
 					}
 				},
 				{
@@ -4854,8 +4980,8 @@
 						"h": 18
 					},
 					"frame": {
-						"x": 221,
-						"y": 275,
+						"x": 203,
+						"y": 311,
 						"w": 20,
 						"h": 18
 					}
@@ -4875,8 +5001,8 @@
 						"h": 18
 					},
 					"frame": {
-						"x": 241,
-						"y": 276,
+						"x": 185,
+						"y": 329,
 						"w": 20,
 						"h": 18
 					}
@@ -4896,407 +5022,8 @@
 						"h": 18
 					},
 					"frame": {
-						"x": 261,
-						"y": 279,
-						"w": 20,
-						"h": 18
-					}
-				},
-				{
-					"filename": "abomasite",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 8,
-						"y": 8,
-						"w": 16,
-						"h": 16
-					},
-					"frame": {
-						"x": 126,
-						"y": 271,
-						"w": 16,
-						"h": 16
-					}
-				},
-				{
-					"filename": "dark_stone",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 7,
-						"y": 7,
-						"w": 18,
-						"h": 18
-					},
-					"frame": {
-						"x": 126,
-						"y": 287,
-						"w": 18,
-						"h": 18
-					}
-				},
-				{
-					"filename": "golden_egg",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 7,
-						"y": 6,
-						"w": 17,
-						"h": 20
-					},
-					"frame": {
-						"x": 127,
-						"y": 305,
-						"w": 17,
-						"h": 20
-					}
-				},
-				{
-					"filename": "lucky_egg",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 7,
-						"y": 6,
-						"w": 17,
-						"h": 20
-					},
-					"frame": {
-						"x": 144,
-						"y": 282,
-						"w": 17,
-						"h": 20
-					}
-				},
-				{
-					"filename": "wl_full_heal",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 161,
-						"y": 287,
-						"w": 20,
-						"h": 18
-					}
-				},
-				{
-					"filename": "relic_band",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 7,
-						"y": 9,
-						"w": 17,
-						"h": 16
-					},
-					"frame": {
-						"x": 144,
-						"y": 302,
-						"w": 17,
-						"h": 16
-					}
-				},
-				{
-					"filename": "wl_full_restore",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 181,
-						"y": 291,
-						"w": 20,
-						"h": 18
-					}
-				},
-				{
-					"filename": "wl_guard_spec",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 201,
-						"y": 291,
-						"w": 20,
-						"h": 18
-					}
-				},
-				{
-					"filename": "wl_hyper_potion",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 161,
-						"y": 305,
-						"w": 20,
-						"h": 18
-					}
-				},
-				{
-					"filename": "wl_ice_heal",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 221,
-						"y": 293,
-						"w": 20,
-						"h": 18
-					}
-				},
-				{
-					"filename": "wl_item_drop",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 241,
-						"y": 294,
-						"w": 20,
-						"h": 18
-					}
-				},
-				{
-					"filename": "wl_item_urge",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 261,
-						"y": 297,
-						"w": 20,
-						"h": 18
-					}
-				},
-				{
-					"filename": "wl_max_elixir",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 181,
-						"y": 309,
-						"w": 20,
-						"h": 18
-					}
-				},
-				{
-					"filename": "wl_max_ether",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 201,
-						"y": 309,
-						"w": 20,
-						"h": 18
-					}
-				},
-				{
-					"filename": "wl_max_potion",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 221,
-						"y": 311,
-						"w": 20,
-						"h": 18
-					}
-				},
-				{
-					"filename": "wl_max_revive",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 241,
-						"y": 312,
-						"w": 20,
-						"h": 18
-					}
-				},
-				{
-					"filename": "wl_paralyze_heal",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 261,
-						"y": 315,
-						"w": 20,
-						"h": 18
-					}
-				},
-				{
-					"filename": "miracle_seed",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 7,
-						"w": 19,
-						"h": 19
-					},
-					"frame": {
-						"x": 128,
-						"y": 325,
-						"w": 19,
-						"h": 19
-					}
-				},
-				{
-					"filename": "wl_potion",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 6,
-						"y": 8,
-						"w": 20,
-						"h": 18
-					},
-					"frame": {
-						"x": 328,
-						"y": 223,
+						"x": 185,
+						"y": 347,
 						"w": 20,
 						"h": 18
 					}
@@ -5316,14 +5043,14 @@
 						"h": 18
 					},
 					"frame": {
-						"x": 348,
-						"y": 223,
+						"x": 205,
+						"y": 329,
 						"w": 18,
 						"h": 18
 					}
 				},
 				{
-					"filename": "wl_reset_urge",
+					"filename": "wl_full_heal",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -5337,35 +5064,14 @@
 						"h": 18
 					},
 					"frame": {
-						"x": 134,
-						"y": 344,
+						"x": 205,
+						"y": 347,
 						"w": 20,
 						"h": 18
 					}
 				},
 				{
-					"filename": "revive",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 32,
-						"h": 32
-					},
-					"spriteSourceSize": {
-						"x": 10,
-						"y": 8,
-						"w": 12,
-						"h": 17
-					},
-					"frame": {
-						"x": 147,
-						"y": 327,
-						"w": 12,
-						"h": 17
-					}
-				},
-				{
-					"filename": "wl_revive",
+					"filename": "wl_full_restore",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -5379,14 +5085,14 @@
 						"h": 18
 					},
 					"frame": {
-						"x": 159,
-						"y": 323,
+						"x": 225,
+						"y": 234,
 						"w": 20,
 						"h": 18
 					}
 				},
 				{
-					"filename": "wl_super_potion",
+					"filename": "wl_guard_spec",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -5400,8 +5106,239 @@
 						"h": 18
 					},
 					"frame": {
-						"x": 179,
-						"y": 327,
+						"x": 225,
+						"y": 252,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "wl_hyper_potion",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 226,
+						"y": 270,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "wl_ice_heal",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 245,
+						"y": 235,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "wl_item_drop",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 265,
+						"y": 235,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "relic_band",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 9,
+						"w": 17,
+						"h": 16
+					},
+					"frame": {
+						"x": 245,
+						"y": 253,
+						"w": 17,
+						"h": 16
+					}
+				},
+				{
+					"filename": "wl_item_urge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 262,
+						"y": 253,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "abomasite",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 8,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 246,
+						"y": 269,
+						"w": 16,
+						"h": 16
+					}
+				},
+				{
+					"filename": "wl_max_elixir",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 262,
+						"y": 271,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "wl_max_ether",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 285,
+						"y": 235,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "wl_max_potion",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 282,
+						"y": 253,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "wl_max_revive",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 282,
+						"y": 271,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "wl_paralyze_heal",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 226,
+						"y": 288,
 						"w": 20,
 						"h": 18
 					}
@@ -5421,10 +5358,52 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 199,
-						"y": 327,
+						"x": 246,
+						"y": 285,
 						"w": 16,
 						"h": 16
+					}
+				},
+				{
+					"filename": "wl_potion",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 262,
+						"y": 289,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "wl_reset_urge",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 282,
+						"y": 289,
+						"w": 20,
+						"h": 18
 					}
 				},
 				{
@@ -5442,10 +5421,52 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 215,
-						"y": 329,
+						"x": 246,
+						"y": 301,
 						"w": 16,
 						"h": 16
+					}
+				},
+				{
+					"filename": "wl_revive",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 262,
+						"y": 307,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "wl_super_potion",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 20,
+						"h": 18
+					},
+					"frame": {
+						"x": 282,
+						"y": 307,
+						"w": 20,
+						"h": 18
 					}
 				},
 				{
@@ -5463,8 +5484,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 281,
-						"y": 241,
+						"x": 299,
+						"y": 218,
 						"w": 16,
 						"h": 16
 					}
@@ -5484,8 +5505,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 281,
-						"y": 257,
+						"x": 315,
+						"y": 217,
 						"w": 16,
 						"h": 16
 					}
@@ -5505,8 +5526,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 281,
-						"y": 273,
+						"x": 331,
+						"y": 217,
 						"w": 16,
 						"h": 16
 					}
@@ -5526,8 +5547,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 281,
-						"y": 289,
+						"x": 347,
+						"y": 216,
 						"w": 16,
 						"h": 16
 					}
@@ -5547,8 +5568,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 281,
-						"y": 305,
+						"x": 305,
+						"y": 234,
 						"w": 16,
 						"h": 16
 					}
@@ -5568,8 +5589,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 297,
-						"y": 240,
+						"x": 321,
+						"y": 233,
 						"w": 16,
 						"h": 16
 					}
@@ -5589,8 +5610,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 297,
-						"y": 256,
+						"x": 337,
+						"y": 233,
 						"w": 16,
 						"h": 16
 					}
@@ -5610,8 +5631,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 297,
-						"y": 272,
+						"x": 353,
+						"y": 232,
 						"w": 16,
 						"h": 16
 					}
@@ -5631,8 +5652,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 297,
-						"y": 288,
+						"x": 302,
+						"y": 253,
 						"w": 16,
 						"h": 16
 					}
@@ -5652,8 +5673,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 297,
-						"y": 304,
+						"x": 302,
+						"y": 269,
 						"w": 16,
 						"h": 16
 					}
@@ -5673,8 +5694,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 281,
-						"y": 321,
+						"x": 302,
+						"y": 285,
 						"w": 16,
 						"h": 16
 					}
@@ -5694,8 +5715,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 297,
-						"y": 320,
+						"x": 302,
+						"y": 301,
 						"w": 16,
 						"h": 16
 					}
@@ -5715,8 +5736,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 154,
-						"y": 344,
+						"x": 302,
+						"y": 317,
 						"w": 16,
 						"h": 16
 					}
@@ -5736,8 +5757,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 170,
-						"y": 345,
+						"x": 224,
+						"y": 306,
 						"w": 16,
 						"h": 16
 					}
@@ -5757,8 +5778,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 186,
-						"y": 345,
+						"x": 223,
+						"y": 322,
 						"w": 16,
 						"h": 16
 					}
@@ -5778,8 +5799,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 231,
-						"y": 330,
+						"x": 225,
+						"y": 338,
 						"w": 16,
 						"h": 16
 					}
@@ -5799,8 +5820,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 202,
-						"y": 345,
+						"x": 225,
+						"y": 354,
 						"w": 16,
 						"h": 16
 					}
@@ -5820,8 +5841,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 218,
-						"y": 346,
+						"x": 239,
+						"y": 322,
 						"w": 16,
 						"h": 16
 					}
@@ -5841,8 +5862,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 234,
-						"y": 346,
+						"x": 241,
+						"y": 338,
 						"w": 16,
 						"h": 16
 					}
@@ -5862,8 +5883,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 313,
-						"y": 241,
+						"x": 241,
+						"y": 354,
 						"w": 16,
 						"h": 16
 					}
@@ -5883,8 +5904,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 313,
-						"y": 257,
+						"x": 321,
+						"y": 249,
 						"w": 16,
 						"h": 16
 					}
@@ -5904,8 +5925,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 329,
-						"y": 241,
+						"x": 337,
+						"y": 249,
 						"w": 16,
 						"h": 16
 					}
@@ -5925,8 +5946,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 313,
-						"y": 273,
+						"x": 353,
+						"y": 248,
 						"w": 16,
 						"h": 16
 					}
@@ -5946,8 +5967,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 329,
-						"y": 257,
+						"x": 318,
+						"y": 265,
 						"w": 16,
 						"h": 16
 					}
@@ -5967,8 +5988,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 345,
-						"y": 241,
+						"x": 318,
+						"y": 281,
 						"w": 16,
 						"h": 16
 					}
@@ -5988,8 +6009,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 313,
-						"y": 289,
+						"x": 334,
+						"y": 265,
 						"w": 16,
 						"h": 16
 					}
@@ -6009,8 +6030,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 329,
-						"y": 273,
+						"x": 318,
+						"y": 297,
 						"w": 16,
 						"h": 16
 					}
@@ -6030,8 +6051,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 345,
-						"y": 257,
+						"x": 334,
+						"y": 281,
 						"w": 16,
 						"h": 16
 					}
@@ -6051,8 +6072,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 313,
-						"y": 305,
+						"x": 318,
+						"y": 313,
 						"w": 16,
 						"h": 16
 					}
@@ -6072,8 +6093,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 329,
-						"y": 289,
+						"x": 334,
+						"y": 297,
 						"w": 16,
 						"h": 16
 					}
@@ -6093,8 +6114,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 345,
-						"y": 273,
+						"x": 334,
+						"y": 313,
 						"w": 16,
 						"h": 16
 					}
@@ -6114,8 +6135,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 329,
-						"y": 305,
+						"x": 318,
+						"y": 329,
 						"w": 16,
 						"h": 16
 					}
@@ -6135,8 +6156,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 345,
-						"y": 289,
+						"x": 334,
+						"y": 329,
 						"w": 16,
 						"h": 16
 					}
@@ -6156,8 +6177,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 345,
-						"y": 305,
+						"x": 350,
+						"y": 265,
 						"w": 16,
 						"h": 16
 					}
@@ -6177,8 +6198,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 313,
-						"y": 321,
+						"x": 350,
+						"y": 281,
 						"w": 16,
 						"h": 16
 					}
@@ -6198,8 +6219,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 329,
-						"y": 321,
+						"x": 350,
+						"y": 297,
 						"w": 16,
 						"h": 16
 					}
@@ -6219,8 +6240,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 345,
-						"y": 321,
+						"x": 350,
+						"y": 313,
 						"w": 16,
 						"h": 16
 					}
@@ -6240,8 +6261,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 297,
-						"y": 336,
+						"x": 350,
+						"y": 329,
 						"w": 16,
 						"h": 16
 					}
@@ -6261,8 +6282,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 313,
-						"y": 337,
+						"x": 257,
+						"y": 345,
 						"w": 16,
 						"h": 16
 					}
@@ -6282,8 +6303,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 329,
-						"y": 337,
+						"x": 273,
+						"y": 325,
 						"w": 16,
 						"h": 16
 					}
@@ -6303,8 +6324,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 345,
-						"y": 337,
+						"x": 257,
+						"y": 325,
 						"w": 16,
 						"h": 16
 					}
@@ -6324,8 +6345,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 250,
-						"y": 352,
+						"x": 273,
+						"y": 341,
 						"w": 16,
 						"h": 16
 					}
@@ -6345,8 +6366,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 266,
-						"y": 352,
+						"x": 289,
+						"y": 333,
 						"w": 16,
 						"h": 16
 					}
@@ -6366,8 +6387,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 282,
-						"y": 352,
+						"x": 289,
+						"y": 349,
 						"w": 16,
 						"h": 16
 					}
@@ -6387,8 +6408,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 298,
-						"y": 353,
+						"x": 305,
+						"y": 345,
 						"w": 16,
 						"h": 16
 					}
@@ -6408,8 +6429,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 314,
-						"y": 353,
+						"x": 321,
+						"y": 345,
 						"w": 16,
 						"h": 16
 					}
@@ -6429,8 +6450,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 330,
-						"y": 353,
+						"x": 337,
+						"y": 345,
 						"w": 16,
 						"h": 16
 					}
@@ -6450,8 +6471,8 @@
 						"h": 16
 					},
 					"frame": {
-						"x": 346,
-						"y": 353,
+						"x": 353,
+						"y": 345,
 						"w": 16,
 						"h": 16
 					}
@@ -6462,6 +6483,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:7cd362a97270dd6359e5835d97292379:63b0137b78f903e137beee4e9cfd0ebf:110e074689c9edd2c54833ce2e4d9270$"
+		"smartupdate": "$TexturePacker:SmartUpdate:08fb2b49a2e781abb989c9a857493924:c754bd9a18af947301698be2a6af521d:110e074689c9edd2c54833ce2e4d9270$"
 	}
 }
