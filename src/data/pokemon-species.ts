@@ -524,7 +524,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
     for (let p of allEvolvingPokemon) {
       for (let e of pokemonEvolutions[p]) {
-        if (e.speciesId === this.speciesId && (!this.forms.length || (e.evoFormKey || '') === this.forms[this.formIndex].formKey)) {
+        if (e.speciesId === this.speciesId && (!this.forms.length || !e.evoFormKey || e.evoFormKey === this.forms[this.formIndex].formKey)) {
           const speciesId = parseInt(p) as Species;
           let level = e.level;
           prevolutionLevels.push([ speciesId, level ]);
