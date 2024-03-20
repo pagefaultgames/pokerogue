@@ -776,8 +776,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const evolutionChain = this.species.getSimulatedEvolutionChain(this.level, this.hasTrainer(), this.isBoss(), this.isPlayer());
       for (let e = 0; e < evolutionChain.length; e++) {
         const speciesLevelMoves = getPokemonSpecies(evolutionChain[e][0] as Species).getLevelMoves();
-        levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && !lm[0]) || ((!e || lm[0] >= evolutionChain[e - 1][0]) && (e === evolutionChain.length - 1 || lm[0] < evolutionChain[e + 1][0]))));
+        levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && !lm[0]) || (!e && (e === evolutionChain.length - 1 || lm[0] < evolutionChain[e + 1][0]))));
       }
+      const uniqueMoves: Moves[] = [];
+      levelMoves = levelMoves.filter(lm => {
+        if (uniqueMoves.find(m => m === lm[1]))
+          return false;
+        uniqueMoves.push(lm[1]);
+        return true;
+      });
     } else
       levelMoves = this.getSpeciesForm().getLevelMoves();
     if (this.fusionSpecies) {
