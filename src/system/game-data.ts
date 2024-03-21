@@ -537,10 +537,10 @@ export class GameData {
     });
   }
 
-  loadSession(scene: BattleScene, slotId: integer): Promise<boolean> {
+  loadSession(scene: BattleScene, slotId: integer, sessionData?: SessionSaveData): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
-        this.getSession(slotId).then(async sessionData => {
+        const initSessionFromData = async sessionData => {
           console.debug(sessionData);
 
           scene.setSeed(sessionData.seed || scene.game.config.seed[0]);
@@ -614,10 +614,17 @@ export class GameData {
           scene.updateModifiers(false);
 
           Promise.all(loadPokemonAssets).then(() => resolve(true));
-        }).catch(err => {
-          reject(err);
-          return;
-        });
+        };
+        if (sessionData)
+          initSessionFromData(sessionData);
+        else {
+          this.getSession(slotId)
+            .then(data => initSessionFromData(data))
+            .catch(err => {
+              reject(err);
+              return;
+            });
+        }
       } catch (err) {
         reject(err);
         return;

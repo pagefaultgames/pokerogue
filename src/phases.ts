@@ -43,7 +43,7 @@ import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
-import { GameDataType, PlayerGender } from "./system/game-data";
+import { GameDataType, PlayerGender, SessionSaveData } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue } from "./data/dialogue";
@@ -127,6 +127,7 @@ export class LoginPhase extends Phase {
 
 export class TitlePhase extends Phase {
   private loaded: boolean;
+  private lastSessionData: SessionSaveData;
 
   constructor(scene: BattleScene) {
     super(scene);
@@ -142,7 +143,13 @@ export class TitlePhase extends Phase {
 
     this.scene.fadeOutBgm(0, false);
 
-    this.showOptions();
+    this.scene.gameData.getSession(loggedInUser.lastSessionSlot).then(sessionData => {
+      this.lastSessionData = sessionData;
+      const biomeKey = getBiomeKey(sessionData.arena.biome);
+      const bgTexture = `${biomeKey}_bg`;
+      this.scene.arenaBg.setTexture(bgTexture);
+      this.showOptions();
+    });
   }
 
   showOptions(): void {
@@ -150,7 +157,7 @@ export class TitlePhase extends Phase {
     if (loggedInUser?.lastSessionSlot > -1) {
       options.push({
         label: 'Continue',
-        handler: () => this.loadSaveSlot(loggedInUser.lastSessionSlot)
+        handler: () => this.loadSaveSlot(-1)
       });
     }
     options.push({
@@ -178,18 +185,16 @@ export class TitlePhase extends Phase {
     });
     const config: OptionSelectConfig = {
       options: options,
-      noCancel: true
+      noCancel: true,
+      yOffset: 47
     };
-    this.scene.ui.setMode(Mode.OPTION_SELECT, config);
-
-    this.scene.dailyRunScoreboard.showAndUpdate();
+    this.scene.ui.setMode(Mode.TITLE, config);
   }
 
   loadSaveSlot(slotId: integer): void {
-    this.scene.sessionSlotId = slotId;
+    this.scene.sessionSlotId = slotId > -1 ? slotId : loggedInUser.lastSessionSlot;
     this.scene.ui.setMode(Mode.MESSAGE);
-    this.scene.dailyRunScoreboard.hide();
-    this.scene.gameData.loadSession(this.scene, slotId).then((success: boolean) => {
+    this.scene.gameData.loadSession(this.scene, slotId, slotId === -1 ? this.lastSessionData : null).then((success: boolean) => {
       if (success) {
         this.loaded = true;
         this.scene.ui.showText('Session loaded successfully.', null, () => this.end());
@@ -256,8 +261,6 @@ export class TitlePhase extends Phase {
   }
 
   end(): void {
-    this.scene.dailyRunScoreboard.hide();
-
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
       this.scene.pushPhase(new SelectStarterPhase(this.scene));

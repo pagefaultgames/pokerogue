@@ -31,9 +31,11 @@ import * as Utils from "../utils";
 import GameStatsUiHandler from './game-stats-ui-handler';
 import AwaitableUiHandler from './awaitable-ui-handler';
 import SaveSlotSelectUiHandler from './save-slot-select-ui-handler';
+import TitleUiHandler from './title-ui-handler';
 
 export enum Mode {
   MESSAGE,
+  TITLE,
   COMMAND,
   FIGHT,
   BALL,
@@ -73,6 +75,7 @@ const transitionModes = [
 ];
 
 const noTransitionModes = [
+  Mode.TITLE,
   Mode.CONFIRM,
   Mode.OPTION_SELECT,
   Mode.MENU,
@@ -107,6 +110,7 @@ export default class UI extends Phaser.GameObjects.Container {
     this.modeChain = [];
     this.handlers = [
       new BattleMessageUiHandler(scene),
+      new TitleUiHandler(scene),
       new CommandUiHandler(scene),
       new FightUiHandler(scene),
       new BallUiHandler(scene),

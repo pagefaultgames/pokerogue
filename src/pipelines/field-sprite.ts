@@ -109,7 +109,7 @@ vec3 hsl2rgb(vec3 hsl) {
 		
 		rgb.r = hue2rgb(f1, f2, hsl.x + (1.0/3.0));
 		rgb.g = hue2rgb(f1, f2, hsl.x);
-		rgb.b= hue2rgb(f1, f2, hsl.x - (1.0/3.0));
+		rgb.b = hue2rgb(f1, f2, hsl.x - (1.0/3.0));
 	}
 	
 	return rgb;

@@ -290,7 +290,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
         this.hasData = true;
         await this.setupWithData(sessionData);
         resolve(true);
-      })
+      });
     });
   }
 }

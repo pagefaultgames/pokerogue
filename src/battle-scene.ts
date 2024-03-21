@@ -54,7 +54,6 @@ import CharSprite from './ui/char-sprite';
 import DamageNumberHandler from './field/damage-number-handler';
 import PokemonInfoContainer from './ui/pokemon-info-container';
 import { biomeDepths } from './data/biomes';
-import { DailyRunScoreboard } from './ui/daily-run-scoreboard';
 
 export const bypassLogin = false;
 
@@ -124,8 +123,8 @@ export default class BattleScene extends Phaser.Scene {
 	public pbTrayEnemy: PokeballTray;
 	public abilityBar: AbilityBar;
 	public partyExpBar: PartyExpBar;
-	public arenaBg: Phaser.GameObjects.Sprite;
-	public arenaBgTransition: Phaser.GameObjects.Sprite;
+	public arenaBg: Phaser.GameObjects.NineSlice;
+	public arenaBgTransition: Phaser.GameObjects.NineSlice;
 	public arenaPlayer: ArenaBase;
 	public arenaPlayerTransition: ArenaBase;
 	public arenaEnemy: ArenaBase;
@@ -139,7 +138,6 @@ export default class BattleScene extends Phaser.Scene {
 	public pokeballCounts: PokeballCounts;
 	public money: integer;
 	public pokemonInfoContainer: PokemonInfoContainer;
-	public dailyRunScoreboard: DailyRunScoreboard;
 	private party: PlayerPokemon[];
 	private waveCountText: Phaser.GameObjects.Text;
 	private moneyText: Phaser.GameObjects.Text;
@@ -316,6 +314,8 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.loadImage('default_bg', 'arenas');
 
+		this.loadImage('logo', '');
+
 		// Load arena images
 		Utils.getEnumValues(Biome).map(bt => {
 			const btKey = Biome[bt].toLowerCase();
@@ -480,12 +480,14 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	launchBattle() {
-		this.arenaBg = this.addFieldSprite(0, 0, 'plains_bg', null, 0);
-		this.arenaBgTransition = this.addFieldSprite(0, 0, `plains_bg`, null, 1);
+		this.arenaBg = this.add.nineslice(0, 0, 'plains_bg', null, 320, 180, 0, 0, 132, 0);
+		this.arenaBgTransition = this.add.nineslice(0, 0, 'plains_bg', null, 320, 180, 0, 0, 132, 0);
 
 		[ this.arenaBgTransition, this.arenaBg ].forEach(a => {
+			a.setPipeline(this.fieldSpritePipeline);
 			a.setScale(6);
 			a.setOrigin(0);
+			a.setSize(320, 240);
 		});
 
 		const field = this.add.container(0, 0);
@@ -568,11 +570,6 @@ export default class BattleScene extends Phaser.Scene {
 		this.pokemonInfoContainer.setup();
 
 		this.fieldUI.add(this.pokemonInfoContainer);
-
-		this.dailyRunScoreboard = new DailyRunScoreboard(this, 1, -(this.game.canvas.height / 6) + 1);
-		this.dailyRunScoreboard.setup();
-
-		this.fieldUI.add(this.dailyRunScoreboard);
 
 		this.party = [];
 

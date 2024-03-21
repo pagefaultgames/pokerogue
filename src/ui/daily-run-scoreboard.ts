@@ -40,8 +40,6 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     this.loadingLabel.setVisible(false);
 
     this.add(this.loadingLabel);
-
-    this.setVisible(false);
   }
 
   updateRankings(rankings: RankingEntry[]) {
@@ -72,7 +70,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     });
   }
 
-  showAndUpdate() {
+  update() {
     this.rankingsContainer.removeAll(true);
 
     this.loadingLabel.setText('Loading…');
@@ -87,12 +85,6 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
         } else
           this.loadingLabel.setText('No Rankings');
       });
-
-    this.setVisible(true);
-  }
-
-  hide() {
-    this.setVisible(false);
   }
 }
 
