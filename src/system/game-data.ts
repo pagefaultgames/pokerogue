@@ -576,8 +576,8 @@ export class GameData {
           scene.updateScoreText();
 
           const battleType = sessionData.battleType || 0;
-          const trainerConfig = trainerConfigs[sessionData.trainer.trainerType];
-          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig.doubleOnly || sessionData.trainer.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1);
+          const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
+          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1);
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
           scene.newArena(sessionData.arena.biome, true);
