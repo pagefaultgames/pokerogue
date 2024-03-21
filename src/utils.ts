@@ -78,6 +78,12 @@ export function randIntRange(min: integer, max: integer): integer {
   return randInt(max - min, min);
 }
 
+export function randItem<T>(items: T[]): T {
+  return items.length === 1
+    ? items[0]
+    : items[randInt(items.length)];
+}
+
 export function randSeedItem<T>(items: T[]): T {
   return items.length === 1
     ? items[0]

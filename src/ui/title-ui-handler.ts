@@ -3,10 +3,13 @@ import { DailyRunScoreboard } from "./daily-run-scoreboard";
 import OptionSelectUiHandler from "./option-select-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
+import { TextStyle, addTextObject } from "./text";
+import { splashMessages } from "../data/splash-messages";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   private titleContainer: Phaser.GameObjects.Container;
   private dailyRunScoreboard: DailyRunScoreboard;
+  private splashMessage: Phaser.GameObjects.Text;
 
   constructor(scene: BattleScene, mode: Mode = Mode.TITLE) {
     super(scene, mode);
@@ -25,16 +28,33 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
+    this.splashMessage = addTextObject(this.scene, logo.x + 64, logo.y + logo.displayHeight - 8, '', TextStyle.MONEY, { fontSize: '54px' });
+    this.splashMessage.setOrigin(0.5, 0.5);
+    this.splashMessage.setAngle(-20)
+    this.titleContainer.add(this.splashMessage);
+
     this.dailyRunScoreboard = new DailyRunScoreboard(this.scene, 1, 49);
 		this.dailyRunScoreboard.setup();
 
     this.titleContainer.add(this.dailyRunScoreboard);
+
+    const originalSplashMessageScale = this.splashMessage.scale;
+
+    this.scene.tweens.add({
+      targets: this.splashMessage,
+      duration: Utils.fixedInt(350),
+      scale: originalSplashMessageScale * 1.25,
+      loop: -1,
+      yoyo: true,
+    })
   }
 
   show(args: any[]): boolean {
     const ret = super.show(args);
 
     if (ret) {
+      this.splashMessage.setText(Utils.randItem(splashMessages));
+
       const ui = this.getUi();
 
       this.dailyRunScoreboard.update();
