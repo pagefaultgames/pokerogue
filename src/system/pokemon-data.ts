@@ -105,10 +105,10 @@ export default class PokemonData {
     }
   }
 
-  toPokemon(scene: BattleScene, battleType?: BattleType, partyMemberIndex: integer = 0): Pokemon {
+  toPokemon(scene: BattleScene, battleType?: BattleType, partyMemberIndex: integer = 0, double: boolean = false): Pokemon {
     const species = getPokemonSpecies(this.species);
     if (this.player)
       return scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
-    return scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
+    return scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
   }
 }

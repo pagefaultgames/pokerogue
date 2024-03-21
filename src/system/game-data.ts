@@ -583,7 +583,7 @@ export class GameData {
           scene.newArena(sessionData.arena.biome, true);
 
           sessionData.enemyParty.forEach((enemyData, e) => {
-            const enemyPokemon = enemyData.toPokemon(scene, battleType, e) as EnemyPokemon;
+            const enemyPokemon = enemyData.toPokemon(scene, battleType, e, sessionData.trainer?.variant === TrainerVariant.DOUBLE) as EnemyPokemon;
             battle.enemyParty[e] = enemyPokemon;
             if (battleType === BattleType.WILD)
               battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);

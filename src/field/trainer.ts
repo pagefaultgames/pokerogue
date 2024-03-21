@@ -271,6 +271,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   getPartyMemberMatchupScores(trainerSlot: TrainerSlot = TrainerSlot.NONE): [integer, integer][] {
+    if (trainerSlot && !this.isDouble())
+      trainerSlot = TrainerSlot.NONE;
+    
     const party = this.scene.getEnemyParty();
     const nonFaintedPartyMembers = party.slice(this.scene.currentBattle.getBattlerCount()).filter(p => !p.isFainted()).filter(p => !trainerSlot || p.trainerSlot === trainerSlot);
     const partyMemberScores = nonFaintedPartyMembers.map(p => {
