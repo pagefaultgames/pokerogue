@@ -2104,7 +2104,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         switchOutTarget.scene.field.remove(switchOutTarget);
 
         if (switchOutTarget.hp)
-          user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex(), false, this.batonPass, false));
+          user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot), false, this.batonPass, false));
       } else {
         switchOutTarget.setVisible(false);
         

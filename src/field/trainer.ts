@@ -302,6 +302,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
   }
 
   getNextSummonIndex(trainerSlot: TrainerSlot = TrainerSlot.NONE, partyMemberScores: [integer, integer][] = this.getPartyMemberMatchupScores(trainerSlot)): integer {
+    if (trainerSlot && !this.isDouble())
+      trainerSlot = TrainerSlot.NONE;
+
     const sortedPartyMemberScores = this.getSortedPartyMemberMatchupScores(partyMemberScores);
 
     const maxScorePartyMemberIndexes = partyMemberScores.filter(pms => pms[1] === sortedPartyMemberScores[0][1]).map(pms => pms[0]);
