@@ -1247,6 +1247,7 @@ export default class BattleScene extends Phaser.Scene {
 				case Mode.MESSAGE:
 					if (!(this.ui.getHandler() as MessageUiHandler).pendingPrompt)
 						return;
+				case Mode.TITLE:
 				case Mode.COMMAND:
 				case Mode.FIGHT:
 				case Mode.BALL:
