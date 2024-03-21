@@ -77,10 +77,10 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
       partnerTintSprite.setVisible(false);
 
-      sprite.x = -16;
-      tintSprite.x = -16;
-      partnerSprite.x = 16;
-      partnerTintSprite.x = 16;
+      sprite.x = -4;
+      tintSprite.x = -4;
+      partnerSprite.x = 28;
+      partnerTintSprite.x = 28;
 
       this.add(partnerSprite);
       this.add(partnerTintSprite);
