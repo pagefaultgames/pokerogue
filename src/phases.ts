@@ -144,17 +144,19 @@ export class TitlePhase extends Phase {
     this.scene.fadeOutBgm(0, false);
 
     this.scene.gameData.getSession(loggedInUser.lastSessionSlot).then(sessionData => {
-      this.lastSessionData = sessionData;
-      const biomeKey = getBiomeKey(sessionData.arena.biome);
-      const bgTexture = `${biomeKey}_bg`;
-      this.scene.arenaBg.setTexture(bgTexture);
+      if (sessionData) {
+        this.lastSessionData = sessionData;
+        const biomeKey = getBiomeKey(sessionData.arena.biome);
+        const bgTexture = `${biomeKey}_bg`;
+        this.scene.arenaBg.setTexture(bgTexture);
+      }
       this.showOptions();
     });
   }
 
   showOptions(): void {
     const options: OptionSelectItem[] = [];
-    if (loggedInUser?.lastSessionSlot > -1) {
+    if (this.lastSessionData) {
       options.push({
         label: 'Continue',
         handler: () => this.loadSaveSlot(-1)
