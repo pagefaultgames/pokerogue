@@ -8,6 +8,7 @@ import { getPokemonSpecies } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
 import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
+import { TrainerSlot } from "../data/trainer-config";
 
 export default class PokemonData {
   public id: integer;
@@ -104,10 +105,10 @@ export default class PokemonData {
     }
   }
 
-  toPokemon(scene: BattleScene, battleType?: BattleType): Pokemon {
+  toPokemon(scene: BattleScene, battleType?: BattleType, partyMemberIndex: integer = 0): Pokemon {
     const species = getPokemonSpecies(this.species);
     if (this.player)
       return scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
-    return scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER, this.boss, this);
+    return scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
   }
 }

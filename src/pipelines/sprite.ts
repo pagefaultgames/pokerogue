@@ -346,9 +346,9 @@ export default class SpritePipeline extends FieldSpritePipeline {
             position[0] += field.x / field.scale;
             position[1] += field.y / field.scale;
         }
-        position[0] += -(sprite.width - (sprite.frame.width)) / 2 + sprite.frame.x;
+        position[0] += -(sprite.width - (sprite.frame.width)) / 2 + sprite.frame.x + (sprite.x - field.x);
         if (sprite.originY === 0.5)
-            position[1] += (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1);
+            position[1] += (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1) + (sprite.y - field.y);
         this.set1f('teraTime', (this.game.getTime() % 500000) / 500000);
         this.set3fv('teraColor', teraColor.map(c => c / 255));
         this.set1i('hasShadow', hasShadow ? 1 : 0);

@@ -39,6 +39,7 @@ import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from '@material/material-
 import { Nature, getNatureStatMultiplier } from '../data/nature';
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
 import { TerrainType } from '../data/terrain';
+import { TrainerSlot } from '../data/trainer-config';
 
 export enum FieldPosition {
   CENTER,
@@ -2193,16 +2194,16 @@ export class PlayerPokemon extends Pokemon {
 }
 
 export class EnemyPokemon extends Pokemon {
-  public trainer: boolean;
+  public trainerSlot: TrainerSlot;
   public aiType: AiType;
   public bossSegments: integer;
   public bossSegmentIndex: integer;
 
-  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainer: boolean, boss: boolean, dataSource: PokemonData) {
+  constructor(scene: BattleScene, species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean, dataSource: PokemonData) {
     super(scene, 236, 84, species, level, dataSource?.abilityIndex, dataSource?.formIndex,
       dataSource?.gender, dataSource ? dataSource.shiny : false, null, dataSource ? dataSource.nature : undefined, dataSource);
 
-    this.trainer = trainer;
+    this.trainerSlot = trainerSlot;
     if (boss)
       this.setBoss();
 
@@ -2406,7 +2407,7 @@ export class EnemyPokemon extends Pokemon {
   }
 
   hasTrainer(): boolean {
-    return this.trainer;
+    return !!this.trainerSlot;
   }
 
   isBoss(): boolean {

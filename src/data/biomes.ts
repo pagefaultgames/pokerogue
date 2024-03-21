@@ -1828,7 +1828,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   },
   [Biome.GRAVEYARD]: {
     [BiomePoolTier.COMMON]: [ TrainerType.PSYCHIC ],
-    [BiomePoolTier.UNCOMMON]: [],
+    [BiomePoolTier.UNCOMMON]: [ TrainerType.HEX_MANIAC ],
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
@@ -7210,7 +7210,6 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [ TrainerType.LINEBACKER, [] ],
     [ TrainerType.MAID, [] ],
     [ TrainerType.MUSICIAN, [] ],
-    [ TrainerType.NURSE, [] ],
     [ TrainerType.NURSERY_AIDE, [] ],
     [ TrainerType.OFFICER, [
         [ Biome.METROPOLIS, BiomePoolTier.COMMON ],
@@ -7282,6 +7281,10 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ],
     [ TrainerType.YOUNGSTER, [
         [ Biome.TOWN, BiomePoolTier.COMMON ]
+      ]
+    ],
+    [ TrainerType.HEX_MANIAC, [
+        [ Biome.GRAVEYARD, BiomePoolTier.UNCOMMON ]
       ]
     ],
     [ TrainerType.BROCK, [

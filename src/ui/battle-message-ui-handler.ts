@@ -10,6 +10,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsContainer: Phaser.GameObjects.Container;
   private levelUpStatsIncrContent: Phaser.GameObjects.Text;
   private levelUpStatsValuesContent: Phaser.GameObjects.Text;
+  private nameBox: Phaser.GameObjects.NineSlice;
   private nameText: Phaser.GameObjects.Text;
 
   public bg: Phaser.GameObjects.Image;
@@ -71,12 +72,12 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.nameBoxContainer = this.scene.add.container(0, -16);
     this.nameBoxContainer.setVisible(false);
 
-    const nameBox = this.scene.add.nineslice(0, 0, 'namebox', null, 72, 16, 8, 8, 5, 5);
-    nameBox.setOrigin(0, 0);
+    this.nameBox = this.scene.add.nineslice(0, 0, 'namebox', null, 72, 16, 8, 8, 5, 5);
+    this.nameBox.setOrigin(0, 0);
 
     this.nameText = addTextObject(this.scene, 8, 0, 'Rival', TextStyle.MESSAGE, { maxLines: 1 });
 
-    this.nameBoxContainer.add(nameBox);
+    this.nameBoxContainer.add(this.nameBox);
     this.nameBoxContainer.add(this.nameText);
     messageContainer.add(this.nameBoxContainer);
 
@@ -229,6 +230,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
   showNameText(name: string): void {
     this.nameBoxContainer.setVisible(true);
     this.nameText.setText(name);
+    this.nameBox.width = this.nameText.displayWidth + 16;
   }
 
   hideNameText(): void {

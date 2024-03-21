@@ -1,6 +1,7 @@
 
 export enum TrainerType {
   UNKNOWN,
+  
   ACE_TRAINER,
   ARTIST,
   BACKERS,
@@ -26,7 +27,7 @@ export enum TrainerType {
   LINEBACKER,
   MAID,
   MUSICIAN,
-  NURSE,
+  HEX_MANIAC,
   NURSERY_AIDE,
   OFFICER,
   PARASOL_LADY,

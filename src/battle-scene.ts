@@ -25,9 +25,9 @@ import { GameMode, GameModes, gameModes } from './game-mode';
 import FieldSpritePipeline from './pipelines/field-sprite';
 import SpritePipeline from './pipelines/sprite';
 import PartyExpBar from './ui/party-exp-bar';
-import { trainerConfigs } from './data/trainer-config';
+import { TrainerSlot, trainerConfigs } from './data/trainer-config';
 import { TrainerType } from "./data/enums/trainer-type";
-import Trainer from './field/trainer';
+import Trainer, { TrainerVariant } from './field/trainer';
 import TrainerData from './system/trainer-data';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
 import { pokemonPrevolutions } from './data/pokemon-evolutions';
@@ -351,9 +351,9 @@ export default class BattleScene extends Phaser.Scene {
 
 		Utils.getEnumValues(TrainerType).map(tt => {
 			const config = trainerConfigs[tt];
-			this.loadAtlas(config.getKey(), 'trainer');
-			if (config.isDouble)
-				this.loadAtlas(config.getKey(true), 'trainer');
+			this.loadAtlas(config.getSpriteKey(), 'trainer');
+			if (config.doubleOnly || config.hasDouble)
+				this.loadAtlas(config.getSpriteKey(true), 'trainer');
 		});
 
 		// Load character sprites
@@ -756,8 +756,8 @@ export default class BattleScene extends Phaser.Scene {
 		return pokemon;
 	}
 
-	addEnemyPokemon(species: PokemonSpecies, level: integer, trainer: boolean, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
-		const pokemon = new EnemyPokemon(this, species, level, trainer, boss, dataSource);
+	addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
+		const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
 		if (postProcess)
 			postProcess(pokemon);
 		pokemon.init();
@@ -839,6 +839,8 @@ export default class BattleScene extends Phaser.Scene {
 		let battleConfig: FixedBattleConfig = null;
 
 		this.resetSeed(newWaveIndex);
+
+		const playerField = this.getPlayerField();
 		
 		if (this.gameMode.hasFixedBattles && fixedBattles.hasOwnProperty(newWaveIndex) && trainerData === undefined) {
 			battleConfig = fixedBattles[newWaveIndex];
@@ -856,12 +858,20 @@ export default class BattleScene extends Phaser.Scene {
 				newBattleType = battleType;
 
 			if (newBattleType === BattleType.TRAINER) {
-				newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, this.arena.randomTrainerType(newWaveIndex), !!Utils.randSeedInt(2));
+				const trainerType = this.arena.randomTrainerType(newWaveIndex);
+				let doubleTrainer = false;
+				if (trainerConfigs[trainerType].doubleOnly)
+					doubleTrainer = true;
+				else if (trainerConfigs[trainerType].hasDouble) {
+					const doubleChance = new Utils.IntegerHolder(newWaveIndex % 10 === 0 ? 32 : 8);
+					this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
+					playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
+					doubleTrainer = !Utils.randSeedInt(doubleChance.value);
+				}
+				newTrainer = trainerData !== undefined ? trainerData.toTrainer(this) : new Trainer(this, trainerType, doubleTrainer ? TrainerVariant.DOUBLE : Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
 				this.field.add(newTrainer);
 			}
 		}
-
-		const playerField = this.getPlayerField();
 
 		if (double === undefined && newWaveIndex > 1) {
 			if (newBattleType === BattleType.WILD && !this.gameMode.isWaveFinal(newWaveIndex)) {
@@ -870,7 +880,7 @@ export default class BattleScene extends Phaser.Scene {
 				playerField.forEach(p => applyAbAttrs(DoubleBattleChanceAbAttr, p, null, doubleChance));
 				newDouble = !Utils.randSeedInt(doubleChance.value);
 			} else if (newBattleType === BattleType.TRAINER)
-				newDouble = newTrainer.config.isDouble;
+				newDouble = newTrainer.variant === TrainerVariant.DOUBLE;
 		} else if (!battleConfig)
 			newDouble = !!double;
 

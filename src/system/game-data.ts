@@ -26,6 +26,7 @@ import { Tutorial } from "../tutorial";
 import { Moves } from "../data/enums/moves";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
+import { TrainerVariant } from "../field/trainer";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -575,13 +576,14 @@ export class GameData {
           scene.updateScoreText();
 
           const battleType = sessionData.battleType || 0;
-          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfigs[sessionData.trainer.trainerType].isDouble : sessionData.enemyParty.length > 1);
+          const trainerConfig = trainerConfigs[sessionData.trainer.trainerType];
+          const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig.doubleOnly || sessionData.trainer.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1);
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
           scene.newArena(sessionData.arena.biome, true);
 
           sessionData.enemyParty.forEach((enemyData, e) => {
-            const enemyPokemon = enemyData.toPokemon(scene, battleType) as EnemyPokemon;
+            const enemyPokemon = enemyData.toPokemon(scene, battleType, e) as EnemyPokemon;
             battle.enemyParty[e] = enemyPokemon;
             if (battleType === BattleType.WILD)
               battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);

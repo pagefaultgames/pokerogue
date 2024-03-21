@@ -2,7 +2,7 @@ import BattleScene from "./battle-scene";
 import { EnemyPokemon, PlayerPokemon, QueuedMove } from "./field/pokemon";
 import { Command } from "./ui/command-ui-handler";
 import * as Utils from "./utils";
-import Trainer from "./field/trainer";
+import Trainer, { TrainerVariant } from "./field/trainer";
 import { Species } from "./data/enums/species";
 import { Moves } from "./data/enums/moves";
 import { TrainerType } from "./data/enums/trainer-type";
@@ -259,7 +259,7 @@ function getRandomTrainerFunc(trainerPool: (TrainerType | TrainerType[])[]): Get
                 : trainerPoolEntry;
             trainerTypes.push(trainerType);
         }
-        return new Trainer(scene, trainerTypes[rand]);
+        return new Trainer(scene, trainerTypes[rand], TrainerVariant.DEFAULT);
     };
 }
 
@@ -269,17 +269,17 @@ interface FixedBattleConfigs {
 
 export const fixedBattles: FixedBattleConfigs = {
     [5]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, !!Utils.randSeedInt(2))),
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.YOUNGSTER, Utils.randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
     [8]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL, scene.gameData.gender === PlayerGender.MALE)),
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
     [25]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_2, scene.gameData.gender === PlayerGender.MALE)),
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_2, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
     [55]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_3, scene.gameData.gender === PlayerGender.MALE)),
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_3, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
     [95]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_4, scene.gameData.gender === PlayerGender.MALE)),
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_4, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
     [145]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_5, scene.gameData.gender === PlayerGender.MALE)),
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_5, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT)),
     [182]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
         .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.LORELEI, TrainerType.WILL, TrainerType.SIDNEY, TrainerType.AARON, TrainerType.SHAUNTAL, TrainerType.MALVA, [ TrainerType.HALA, TrainerType.MOLAYNE ], TrainerType.RIKA, TrainerType.CRISPIN ])),
     [184]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(182)
@@ -291,5 +291,5 @@ export const fixedBattles: FixedBattleConfigs = {
     [190]: new FixedBattleConfig().setBattleType(BattleType.TRAINER).setSeedOffsetWave(182)
         .setGetTrainerFunc(getRandomTrainerFunc([ TrainerType.BLUE, [ TrainerType.RED, TrainerType.LANCE_CHAMPION ], [ TrainerType.STEVEN, TrainerType.WALLACE ], TrainerType.CYNTHIA, [ TrainerType.ALDER, TrainerType.IRIS ], TrainerType.DIANTHA, TrainerType.HAU, [ TrainerType.GEETA, TrainerType.NEMONA ], TrainerType.KIERAN, TrainerType.LEON ])),
     [195]: new FixedBattleConfig().setBattleType(BattleType.TRAINER)
-        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_6, scene.gameData.gender === PlayerGender.MALE))
+        .setGetTrainerFunc(scene => new Trainer(scene, TrainerType.RIVAL_6, scene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT))
 };

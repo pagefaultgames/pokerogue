@@ -37,7 +37,7 @@ import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { BattleSpec } from "./enums/battle-spec";
 import { Species } from "./data/enums/species";
 import { HealAchv, LevelAchv, MoneyAchv, achvs } from "./system/achv";
-import { trainerConfigs } from "./data/trainer-config";
+import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
 import { TrainerType } from "./data/enums/trainer-type";
 import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
@@ -434,7 +434,22 @@ export class BattlePhase extends Phase {
     super(scene);
   }
 
-  showEnemyTrainer(): void {
+  showEnemyTrainer(trainerSlot: TrainerSlot = TrainerSlot.NONE): void {
+    const sprites = this.scene.currentBattle.trainer.getSprites();
+    const tintSprites = this.scene.currentBattle.trainer.getTintSprites();
+    for (let i = 0; i < sprites.length; i++) {
+      const visible = !trainerSlot || !i === (trainerSlot === TrainerSlot.TRAINER) || sprites.length < 2;
+      [ sprites[i], tintSprites[i] ].map(sprite => {
+        if (visible)
+          sprite.x = trainerSlot ? 0 : i ? 16 : -16;
+        sprite.setVisible(visible);
+        sprite.clearTint();
+      })
+      sprites[i].setVisible(visible);
+      tintSprites[i].setVisible(visible);
+      sprites[i].clearTint();
+      tintSprites[i].clearTint();
+    }
     this.scene.tweens.add({
       targets: this.scene.currentBattle.trainer,
       x: '-=16',
@@ -577,7 +592,7 @@ export class EncounterPhase extends BattlePhase {
           battle.enemyParty[e] = battle.trainer.genPartyMember(e);
         else {
           const enemySpecies = this.scene.randomSpecies(battle.waveIndex, level, true);
-          battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, false, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
+          battle.enemyParty[e] = this.scene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, !!this.scene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies));
           if (this.scene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS)
             battle.enemyParty[e].ivs = new Array(6).fill(31);
           this.scene.getParty().slice(0, !battle.double ? 1 : 2).reverse().forEach(playerPokemon => {
@@ -688,7 +703,7 @@ export class EncounterPhase extends BattlePhase {
       return `${enemyField[0].name} appeared.`;
 
     if (this.scene.currentBattle.battleType === BattleType.TRAINER)
-      return `${this.scene.currentBattle.trainer.getName(true)}\nwould like to battle!`;
+      return `${this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true)}\nwould like to battle!`;
 
     return enemyField.length === 1
       ? `A wild ${enemyField[0].name} appeared!`
@@ -1041,7 +1056,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       this.scene.time.delayedCall(750, () => this.summon());
     } else {
       this.scene.pbTrayEnemy.hide();
-      this.scene.ui.showText(`${this.scene.currentBattle.trainer.getName(true)} sent out\n${this.getPokemon().name}!`, null, () => this.summon());
+      this.scene.ui.showText(`${this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER)} sent out\n${this.getPokemon().name}!`, null, () => this.summon());
     }
   }
 
@@ -1164,9 +1179,9 @@ export class SwitchSummonPhase extends SummonPhase {
   preSummon(): void {
     if (!this.player) {
       if (this.slotIndex === -1)
-        this.slotIndex = this.scene.currentBattle.trainer.getNextSummonIndex();
+        this.slotIndex = this.scene.currentBattle.trainer.getNextSummonIndex(!this.fieldIndex ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
       if (this.slotIndex > -1) {
-        this.showEnemyTrainer();
+        this.showEnemyTrainer(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
         this.scene.pbTrayEnemy.showPbTray(this.scene.getEnemyParty());
       }
     }
@@ -1187,7 +1202,7 @@ export class SwitchSummonPhase extends SummonPhase {
 
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, pokemon);
 
-    this.scene.ui.showText(this.player ? `Come back, ${pokemon.name}!` : `${this.scene.currentBattle.trainer.getName(true)}\nwithdrew ${pokemon.name}!`);
+    this.scene.ui.showText(this.player ? `Come back, ${pokemon.name}!` : `${this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER)}\nwithdrew ${pokemon.name}!`);
     this.scene.playSound('pb_rel');
     pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, 'Sine.easeIn');
@@ -1222,7 +1237,7 @@ export class SwitchSummonPhase extends SummonPhase {
       party[this.slotIndex] = this.lastPokemon;
       party[this.fieldIndex] = switchedPokemon;
       const showTextAndSummon = () => {
-        this.scene.ui.showText(this.player ? `Go! ${switchedPokemon.name}!` : `${this.scene.currentBattle.trainer.getName(true)} sent out\n${this.getPokemon().name}!`);
+        this.scene.ui.showText(this.player ? `Go! ${switchedPokemon.name}!` : `${this.scene.currentBattle.trainer.getName(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER)} sent out\n${this.getPokemon().name}!`);
         this.summon();
       };
       if (this.player)
@@ -1677,7 +1692,7 @@ export class EnemyCommandPhase extends FieldPhase {
           const sortedPartyMemberScores = trainer.getSortedPartyMemberMatchupScores(partyMemberScores);
 
           if (sortedPartyMemberScores[0][1] >= matchupScore * (trainer.config.isBoss ? 2 : 3)) {
-            const index = trainer.getNextSummonIndex(partyMemberScores);
+            const index = trainer.getNextSummonIndex(undefined, partyMemberScores);
 
             this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
               { command: Command.POKEMON, cursor: index, args: [ false ] };
@@ -2804,7 +2819,7 @@ export class FaintPhase extends PokemonPhase {
     } else {
       this.scene.unshiftPhase(new VictoryPhase(this.scene, this.battlerIndex));
       if (this.scene.currentBattle.battleType === BattleType.TRAINER) {
-        const hasReservePartyMember = !!this.scene.getEnemyParty().filter(p => p.isActive() && !p.isOnField()).length;
+        const hasReservePartyMember = !!this.scene.getEnemyParty().filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot).length;
         if (hasReservePartyMember)
           this.scene.pushPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, -1, false, false, false));
       }
@@ -3000,7 +3015,7 @@ export class TrainerVictoryPhase extends BattlePhase {
         this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.VOUCHER));
     }
 
-    this.scene.ui.showText(`You defeated\n${this.scene.currentBattle.trainer.getName(true)}!`, null, () => {
+    this.scene.ui.showText(`You defeated\n${this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true)}!`, null, () => {
       const victoryMessages = this.scene.currentBattle.trainer.getVictoryMessages();
       const showMessage = () => {
         let message: string;

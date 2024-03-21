@@ -5,7 +5,7 @@ import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { getPokemonMessage } from "../messages";
-import Pokemon, { AttackMoveResult, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
+import Pokemon, { AttackMoveResult, EnemyPokemon, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove } from "../field/pokemon";
 import { StatusEffect, getStatusEffectHealText } from "./status-effect";
 import { Type } from "./type";
 import * as Utils from "../utils";
@@ -2144,7 +2144,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
 
       const party = player ? user.scene.getParty() : user.scene.getEnemyParty();
-      return (!player && !user.scene.currentBattle.battleType) || party.filter(p => !p.isFainted()).length > user.scene.currentBattle.getBattlerCount();
+      return (!player && !user.scene.currentBattle.battleType) || party.filter(p => !p.isFainted() && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > user.scene.currentBattle.getBattlerCount();
     };
   }
 
