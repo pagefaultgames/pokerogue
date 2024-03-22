@@ -3550,7 +3550,15 @@ export function initMoves() {
     new StatusMove(Moves.GUARD_SWAP, "Guard Swap (N)", Type.PSYCHIC, -1, 10, "The user employs its psychic power to switch changes to its Defense and Sp. Def stats with the target.", -1, 0, 4),
     new AttackMove(Moves.PUNISHMENT, "Punishment (N)", Type.DARK, MoveCategory.PHYSICAL, -1, 100, 5, "The more the target has powered up with stat changes, the greater the move's power.", -1, 0, 4),
     new AttackMove(Moves.LAST_RESORT, "Last Resort", Type.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, "This move can be used only after the user has used all the other moves it knows in the battle.", -1, 0, 4)
-      .condition((user, target, move) => !user.getMoveset().filter(m => m.moveId !== move.id && m.getPpRatio() > 0).length),
+      .condition((user, target, move) => {
+        const uniqueUsedMoveIds = new Set<Moves>();
+        const movesetMoveIds = user.getMoveset().map(m => m.moveId);
+        user.getMoveHistory().map(m => {
+          if (m.move !== move.id && movesetMoveIds.find(mm => mm === m.move))
+            uniqueUsedMoveIds.add(m.move);
+        });
+        return uniqueUsedMoveIds.size >= movesetMoveIds.length - 1;
+      }),
     new StatusMove(Moves.WORRY_SEED, "Worry Seed (N)", Type.GRASS, 100, 10, "A seed that causes worry is planted on the target. It prevents sleep by making the target's Ability Insomnia.", -1, 0, 4),
     new AttackMove(Moves.SUCKER_PUNCH, "Sucker Punch (P)", Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, "This move enables the user to attack first. This move fails if the target is not readying an attack.", -1, 1, 4),
     new StatusMove(Moves.TOXIC_SPIKES, "Toxic Spikes", Type.POISON, -1, 20, "The user lays a trap of poison spikes at the feet of the opposing team. The spikes will poison opposing Pokémon that switch into battle.", -1, 0, 4)
