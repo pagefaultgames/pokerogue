@@ -151,15 +151,18 @@ export class TitlePhase extends Phase {
         this.scene.arenaBg.setTexture(bgTexture);
       }
       this.showOptions();
+    }).catch(err => {
+      console.error(err);
+      this.showOptions();
     });
   }
 
   showOptions(): void {
     const options: OptionSelectItem[] = [];
-    if (this.lastSessionData) {
+    if (loggedInUser.lastSessionSlot > -1) {
       options.push({
         label: 'Continue',
-        handler: () => this.loadSaveSlot(-1)
+        handler: () => this.loadSaveSlot(this.lastSessionData ? -1 : loggedInUser.lastSessionSlot)
       });
     }
     options.push({
