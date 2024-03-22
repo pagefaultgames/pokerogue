@@ -797,6 +797,9 @@ export default class BattleScene extends Phaser.Scene {
 		this.updateMoneyText();
 		this.moneyText.setVisible(false);
 
+		this.updateScoreText();
+		this.scoreText.setVisible(false);
+
 		this.newArena(STARTING_BIOME_OVERRIDE || Biome.TOWN, true);
 
 		this.arenaBgTransition.setPosition(0, 0);
