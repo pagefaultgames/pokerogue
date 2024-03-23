@@ -33,7 +33,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.splashMessage.setAngle(-20)
     this.titleContainer.add(this.splashMessage);
 
-    this.dailyRunScoreboard = new DailyRunScoreboard(this.scene, 1, 47);
+    this.dailyRunScoreboard = new DailyRunScoreboard(this.scene, 1, 44);
 		this.dailyRunScoreboard.setup();
 
     this.titleContainer.add(this.dailyRunScoreboard);
