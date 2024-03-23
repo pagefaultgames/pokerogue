@@ -392,7 +392,7 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
-      return pokemon.trySetStatus(effect, true);
+      return attacker.trySetStatus(effect, true);
     }
 
     return false;
@@ -414,7 +414,7 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
 
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && pokemon.randSeedInt(100) < this.chance)
-      return attacker.addTag(this.tagType, this.turnCount, move.moveId, pokemon.id);
+      return attacker.addTag(this.tagType, this.turnCount, move.moveId, attacker.id);
 
     return false;
   }
