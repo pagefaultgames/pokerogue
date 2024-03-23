@@ -945,7 +945,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.GOLISOPOD, 30, null, null)
   ],
   [Species.SANDYGAST]: [
-    new SpeciesEvolution(Species.PALOSSAND, 48, null, null)
+    new SpeciesEvolution(Species.PALOSSAND, 42, null, null)
   ],
   [Species.JANGMO_O]: [
     new SpeciesEvolution(Species.HAKAMO_O, 35, null, null)
