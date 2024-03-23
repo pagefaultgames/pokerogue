@@ -248,6 +248,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('command_fight_labels', 'ui');
 		this.loadAtlas('prompt', 'ui');
 		this.loadImage('cursor', 'ui');
+		this.loadImage('cursor_reverse', 'ui');
 		for (let wv of Utils.getEnumValues(WindowVariant)) {
 			for (let w = 1; w <= 4; w++)
 				this.loadImage(`window_${w}${getWindowVariantSuffix(wv)}`, 'ui/windows');
