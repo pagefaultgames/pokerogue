@@ -8,6 +8,7 @@ export const splashMessages = [
   'Live Bug Testing!',
   'Heavy RoR2 Influence!',
   'Pokémon Risk and Pokémon Rain!',
+  'Now with 33% More Salt!',
   'Infinite Fusion at Home!',
   'Broken Egg Moves!',
   'Mubstitute!',
