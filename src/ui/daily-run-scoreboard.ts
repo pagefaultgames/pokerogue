@@ -71,7 +71,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       this.update(this.category < Utils.getEnumKeys(ScoreboardCategory).length - 1 ? this.category + 1 : 0);
     });
 
-    this.prevPageButton = this.scene.add.sprite(window.displayWidth / 2 - 16, titleWindow.displayHeight + window.displayHeight - 16, 'cursor_reverse');
+    this.prevPageButton = this.scene.add.sprite(window.displayWidth / 2 - 16, titleWindow.displayHeight + window.displayHeight - 15, 'cursor_reverse');
     this.prevPageButton.setOrigin(0, 0);
     this.prevPageButton.setAlpha(0.5);
     this.add(this.prevPageButton);
@@ -82,11 +82,11 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
         this.update(undefined, this.page > 1 ? this.page - 1 : this.pageCount);
     });
 
-    this.pageNumberLabel = addTextObject(this.scene, window.displayWidth / 2, titleWindow.displayHeight + window.displayHeight - 17, '1', TextStyle.WINDOW, { fontSize: '64px' });
+    this.pageNumberLabel = addTextObject(this.scene, window.displayWidth / 2, titleWindow.displayHeight + window.displayHeight - 16, '1', TextStyle.WINDOW, { fontSize: '64px' });
     this.pageNumberLabel.setOrigin(0.5, 0);
     this.add(this.pageNumberLabel);
 
-    this.nextPageButton = this.scene.add.sprite(window.displayWidth / 2 + 16, titleWindow.displayHeight + window.displayHeight - 16, 'cursor');
+    this.nextPageButton = this.scene.add.sprite(window.displayWidth / 2 + 16, titleWindow.displayHeight + window.displayHeight - 15, 'cursor');
     this.nextPageButton.setOrigin(1, 0);
     this.nextPageButton.setAlpha(0.5);
     this.add(this.nextPageButton);
@@ -126,7 +126,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
 
     rankings.forEach((r: RankingEntry, i: integer) => {
       const entryContainer = getEntry(r.rank.toString(), r.username, r.score.toString(), r.wave.toString());
-      entryContainer.setY(r.rank * 9);
+      entryContainer.setY((i + 1) * 9);
       this.rankingsContainer.add(entryContainer);
     });
   }
