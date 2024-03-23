@@ -6,7 +6,6 @@ import * as Utils from "../utils";
 import { EGG_SEED, Egg, GachaType, getEggTierDefaultHatchWaves, getEggDescriptor, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
 import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
 import { getPokemonSpecies } from "../data/pokemon-species";
-import { Type } from "../data/type";
 import { addWindow } from "./window";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { EggTier } from "../data/enums/egg-type";

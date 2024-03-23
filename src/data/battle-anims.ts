@@ -560,6 +560,8 @@ function loadAnimAssets(scene: BattleScene, anims: AnimConfig[], startLoad?: boo
         const backgrounds = new Set<string>();
         const sounds = new Set<string>();
         for (let a of anims) {
+            if (!a.frames?.length)
+                continue;
             const animSounds = a.getSoundResourceNames();
             for (let ms of animSounds)
                 sounds.add(ms);
