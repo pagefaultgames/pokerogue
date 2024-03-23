@@ -277,8 +277,10 @@ export default class MenuUiHandler extends MessageUiHandler {
       }
     } else if (button === Button.CANCEL) {
       success = true;
-      if (!ui.revertMode())
-        ui.setMode(Mode.MESSAGE);
+      ui.revertMode().then(result => {
+        if (!result)
+           ui.setMode(Mode.MESSAGE);
+      });
     } else {
       switch (button) {
         case Button.UP:
