@@ -3860,9 +3860,14 @@ export class SelectModifierPhase extends BattlePhase {
 
     const modifierSelectCallback = (rowCursor: integer, cursor: integer) => {
       if (rowCursor < 0 || cursor < 0) {
-        this.scene.ui.setMode(Mode.MESSAGE);
-        super.end();
-        return true;
+        this.scene.ui.showText(`Are you sure you want to skip taking an item?`, null, () => {
+          this.scene.ui.setOverlayMode(Mode.CONFIRM, () => {
+            this.scene.ui.revertMode();
+            this.scene.ui.setMode(Mode.MESSAGE);
+            super.end();
+          }, () => this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost()));
+        });
+        return false;
       }
       let modifierType: ModifierType;
       let cost: integer;
