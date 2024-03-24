@@ -965,9 +965,9 @@ export default class BattleScene extends Phaser.Scene {
 				return resolve();
 
 			const defaultWidth = this.arenaBg.width * 6;
-			const defaultHeight = this.arenaBg.height * 6;
+			const defaultHeight = 132 * 6;
 			const scaledWidth = this.arenaBg.width * scale;
-			const scaledHeight = this.arenaBg.height * scale;
+			const scaledHeight = 132 * scale;
 
 			this.tweens.add({
 				targets: this.field,

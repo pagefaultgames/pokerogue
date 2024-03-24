@@ -1267,10 +1267,10 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
     ],
     [
       new ModifierTypeOption(modifierTypes.SUPER_POTION(), 0, baseCost * 0.45),
-      new ModifierTypeOption(modifierTypes.ELIXIR(), 0, baseCost)
+      new ModifierTypeOption(modifierTypes.FULL_HEAL(), 0, baseCost),
     ],
     [
-      new ModifierTypeOption(modifierTypes.FULL_HEAL(), 0, baseCost),
+      new ModifierTypeOption(modifierTypes.ELIXIR(), 0, baseCost),
       new ModifierTypeOption(modifierTypes.MAX_ETHER(), 0, baseCost)
     ],
     [
