@@ -2257,7 +2257,7 @@ export class EnemyPokemon extends Pokemon {
             new PokemonMove(Moves.DYNAMAX_CANNON),
             new PokemonMove(Moves.CROSS_POISON),
             new PokemonMove(Moves.FLAMETHROWER),
-            new PokemonMove(Moves.RECOVER, 4)
+            new PokemonMove(Moves.RECOVER, 0, -4)
           ]
           : [
             new PokemonMove(Moves.ETERNABEAM),
