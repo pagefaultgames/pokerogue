@@ -932,17 +932,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
 
     if (attackMovePool.length) {
-      const moveIndex = Utils.randSeedInt(attackMovePool.length);
-      this.moveset.push(new PokemonMove(attackMovePool[moveIndex], 0, 0));
-      console.log(allMoves[attackMovePool[moveIndex]]);
-      movePool.splice(movePool.findIndex(m => m === attackMovePool[moveIndex]), 1);
+      const randomAttackMove = Utils.randSeedWeightedItem(attackMovePool.reverse());
+      this.moveset.push(new PokemonMove(randomAttackMove, 0, 0));
+      movePool.splice(movePool.findIndex(m => m === randomAttackMove), 1);
     }
 
     while (movePool.length && this.moveset.length < 4) {
-      const moveIndex = Utils.randSeedInt(movePool.length);
-      this.moveset.push(new PokemonMove(movePool[moveIndex], 0, 0));
-      console.log(allMoves[movePool[moveIndex]]);
-      movePool.splice(moveIndex, 1);
+      const randomMove = Utils.randSeedWeightedItem(movePool.reverse());
+      this.moveset.push(new PokemonMove(randomMove, 0, 0));
+      console.log(allMoves[randomMove]);
+      movePool.splice(movePool.indexOf(randomMove), 1);
     }
 
     this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveLearnedTrigger);
