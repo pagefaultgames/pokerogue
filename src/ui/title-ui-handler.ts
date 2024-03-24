@@ -9,7 +9,10 @@ import { splashMessages } from "../data/splash-messages";
 export default class TitleUiHandler extends OptionSelectUiHandler {
   private titleContainer: Phaser.GameObjects.Container;
   private dailyRunScoreboard: DailyRunScoreboard;
+  private playerCountLabel: Phaser.GameObjects.Text;
   private splashMessage: Phaser.GameObjects.Text;
+
+  private playerCountTimer;
 
   constructor(scene: BattleScene, mode: Mode = Mode.TITLE) {
     super(scene, mode);
@@ -38,6 +41,10 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     this.titleContainer.add(this.dailyRunScoreboard);
 
+    this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 90, '? Players Online', TextStyle.MESSAGE, { fontSize: '54px' });
+    this.playerCountLabel.setOrigin(1, 0);
+    this.titleContainer.add(this.playerCountLabel);
+
     const originalSplashMessageScale = this.splashMessage.scale;
 
     this.scene.tweens.add({
@@ -49,6 +56,12 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     })
   }
 
+  updatePlayerCount(): void {
+    Utils.apiFetch(`game/playercount`)
+      .then(request => request.json())
+      .then(count => this.playerCountLabel.setText(`${count} Players Online`));
+  }
+
   show(args: any[]): boolean {
     const ret = super.show(args);
 
@@ -58,6 +71,10 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       const ui = this.getUi();
 
       this.dailyRunScoreboard.update();
+
+      this.updatePlayerCount();
+
+      this.playerCountTimer = setInterval(() => this.updatePlayerCount(), 10000);
 
       this.scene.tweens.add({
         targets: [ this.titleContainer, ui.getMessageHandler().bg ],
@@ -74,6 +91,9 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     super.clear();
 
     const ui = this.getUi();
+
+    clearInterval(this.playerCountTimer);
+    this.playerCountTimer = null;
 
     this.scene.tweens.add({
       targets: [ this.titleContainer, ui.getMessageHandler().bg ],
