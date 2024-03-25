@@ -378,9 +378,15 @@ export class EncoreTag extends BattlerTag {
 
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' got\nan Encore!'));
 
-    const turnCommand =  pokemon.scene.currentBattle.turnCommands[pokemon.getFieldIndex()];
-    if (turnCommand)
-      turnCommand.move = { move: this.moveId, targets: pokemon.getLastXMoves(1)[0].targets };
+    const movePhase = pokemon.scene.findPhase(m => m instanceof MovePhase && m.pokemon === pokemon);
+    if (movePhase) {
+      const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
+      if (movesetMove) {
+        const lastMove = pokemon.getLastXMoves(1)[0];
+        pokemon.scene.tryReplacePhase((m => m instanceof MovePhase && m.pokemon === pokemon),
+          new MovePhase(pokemon.scene, pokemon, lastMove.targets, movesetMove));
+      }
+    }
   }
 
   onRemove(pokemon: Pokemon): void {
