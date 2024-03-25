@@ -39,6 +39,7 @@ const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX' ];
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
+  private shinyOverlay: Phaser.GameObjects.Image;
   private starterSelectGenIconContainers: Phaser.GameObjects.Container[];
   private pokemonNumberText: Phaser.GameObjects.Text;
   private pokemonSprite: Phaser.GameObjects.Sprite;
@@ -129,6 +130,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const starterSelectBg = this.scene.add.image(1, 1, 'starter_select_bg');
     starterSelectBg.setOrigin(0, 0);
     this.starterSelectContainer.add(starterSelectBg);
+
+    this.shinyOverlay = this.scene.add.image(6, 6, 'summary_overlay_shiny');
+    this.shinyOverlay.setOrigin(0, 0);
+    this.shinyOverlay.setVisible(false);
+    this.starterSelectContainer.add(this.shinyOverlay);
 
     this.starterSelectContainer.add(addWindow(this.scene, 107, 1, 34, 58));
     this.starterSelectContainer.add(addWindow(this.scene, 107, 59, 34, 91));
@@ -1047,6 +1053,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           natureIndex = defaultNature;
       }
 
+      this.shinyOverlay.setVisible(shiny);
+      this.pokemonNumberText.setColor(getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY));
+      this.pokemonNumberText.setShadowColor(getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true));
+
       if (forSeen ? this.speciesStarterDexEntry?.seenAttr : this.speciesStarterDexEntry?.caughtAttr) {
         let starterIndex = -1;
 
@@ -1133,6 +1143,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonNatureText.setText('');
       }
     } else {
+      this.shinyOverlay.setVisible(false);
+      this.pokemonNumberText.setColor(getTextColor(TextStyle.SUMMARY));
+      this.pokemonNumberText.setShadowColor(getTextColor(TextStyle.SUMMARY, true));
       this.pokemonGenderText.setText('');
       this.pokemonAbilityText.setText('');
       this.pokemonNatureText.setText('');
