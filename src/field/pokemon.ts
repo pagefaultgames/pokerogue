@@ -84,6 +84,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public fusionShiny: boolean;
   public fusionGender: Gender;
 
+  private summonDataPrimer: PokemonSummonData;
+
   public summonData: PokemonSummonData;
   public battleData: PokemonBattleData;
   public battleSummonData: PokemonBattleSummonData;
@@ -1659,6 +1661,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
+  primeSummonData(summonDataPrimer: PokemonSummonData): void {
+    this.summonDataPrimer = summonDataPrimer;
+  }
+
   resetSummonData(): void {
     if (this.summonData?.speciesForm) {
       this.summonData.speciesForm = null;
@@ -1668,6 +1674,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.battleData)
       this.resetBattleData();
     this.resetBattleSummonData();
+    if (this.summonDataPrimer) {
+      for (let k of Object.keys(this.summonData)) {
+        if (this.summonDataPrimer[k])
+          this.summonData[k] = this.summonDataPrimer[k];
+      }
+      this.summonDataPrimer = null;
+    }
   }
 
   resetBattleData(): void {
