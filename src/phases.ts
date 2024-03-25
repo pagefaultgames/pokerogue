@@ -1691,7 +1691,7 @@ export class EnemyCommandPhase extends FieldPhase {
 
         return this.end();
       } else if (!trapTag && !trapped.value) {
-        const partyMemberScores = trainer.getPartyMemberMatchupScores();
+        const partyMemberScores = trainer.getPartyMemberMatchupScores(enemyPokemon.trainerSlot);
 
         if (partyMemberScores.length) {
           const matchupScores = opponents.map(opp => enemyPokemon.getMatchupScore(opp));
@@ -1700,7 +1700,7 @@ export class EnemyCommandPhase extends FieldPhase {
           const sortedPartyMemberScores = trainer.getSortedPartyMemberMatchupScores(partyMemberScores);
 
           if (sortedPartyMemberScores[0][1] >= matchupScore * (trainer.config.isBoss ? 2 : 3)) {
-            const index = trainer.getNextSummonIndex(undefined, partyMemberScores);
+            const index = trainer.getNextSummonIndex(enemyPokemon.trainerSlot, partyMemberScores);
 
             this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
               { command: Command.POKEMON, cursor: index, args: [ false ] };

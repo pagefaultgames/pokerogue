@@ -7,7 +7,6 @@
   - Complete move logic
 - Abilities
   - Complete ability logic
-- Natures
 - Pokemon summary screen
   - Add IV screen
 - Capture logic
