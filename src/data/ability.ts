@@ -1848,7 +1848,7 @@ export function initAbilities() {
       .condition(getWeatherCondition(WeatherType.SANDSTORM))
       .ignorable(),
     new Ability(Abilities.STATIC, "Static", "The Pokémon is charged with static electricity, so contact with it may cause paralysis.", 3)
-      .attr(PostDefendContactApplyStatusEffectAbAttr, StatusEffect.PARALYSIS),
+      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.PARALYSIS),
     new Ability(Abilities.VOLT_ABSORB, "Volt Absorb", "Restores HP if hit by an Electric-type move instead of taking damage.", 3)
       .attr(TypeImmunityHealAbAttr, Type.ELECTRIC)
       .ignorable(),
