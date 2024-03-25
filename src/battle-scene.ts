@@ -1862,12 +1862,17 @@ export default class BattleScene extends Phaser.Scene {
 		return (player ? this.modifiers : this.enemyModifiers).find(m => (modifierFilter as ModifierPredicate)(m));
 	}
 
-	applyModifiers(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): void {
+	applyModifiers(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
+		const appliedModifiers: PersistentModifier[] = [];
 		const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
 		for (let modifier of modifiers) {
-			if (modifier.apply(args))
+			if (modifier.apply(args)) {
 				console.log('Applied', modifier.type.name, !player ? '(enemy)' : '');
+				appliedModifiers.push(modifier);
+			}
 		}
+
+		return appliedModifiers;
 	}
 
 	applyModifier(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier {

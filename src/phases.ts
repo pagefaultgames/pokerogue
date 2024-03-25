@@ -3455,15 +3455,17 @@ export class BerryPhase extends CommonAnimPhase {
   }
 
   start() {
-    let berryModifier: BerryModifier;
+    let berryModifiers: BerryModifier[];
 
-    if ((berryModifier = this.scene.applyModifier(BerryModifier, this.player, this.getPokemon()) as BerryModifier)) {
-      if (berryModifier.consumed) {
-        if (!--berryModifier.stackCount)
-          this.scene.removeModifier(berryModifier);
-        else
-          berryModifier.consumed = false;
-        this.scene.updateModifiers(this.player);
+    if ((berryModifiers = this.scene.applyModifiers(BerryModifier, this.player, this.getPokemon()) as BerryModifier[])) {
+      for (let berryModifier of berryModifiers) {
+        if (berryModifier.consumed) {
+          if (!--berryModifier.stackCount)
+            this.scene.removeModifier(berryModifier);
+          else
+            berryModifier.consumed = false;
+          this.scene.updateModifiers(this.player);
+        }
       }
       return super.start();
     }
