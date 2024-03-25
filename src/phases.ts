@@ -221,10 +221,11 @@ export class TitlePhase extends Phase {
       this.scene.sessionSlotId = slotId;
 
       fetchDailyRunSeed().then(seed => {
+        this.scene.gameMode = gameModes[GameModes.DAILY];
+
         this.scene.setSeed(seed);
         this.scene.resetSeed(1);
 
-        this.scene.gameMode = gameModes[GameModes.DAILY];
         this.scene.money = this.scene.gameMode.getStartingMoney();
 
         const starters = getDailyRunStarters(this.scene, seed);
@@ -2980,7 +2981,7 @@ export class VictoryPhase extends PokemonPhase {
           if (this.scene.currentBattle.waveIndex > 10 && !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex))
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_POKEBALL));
         } else {
-          const superExpWave = !this.scene.gameMode.isEndless ? 20 : 10;
+          const superExpWave = !this.scene.gameMode.isEndless ? (this.scene.offsetGym ? 0 : 20) : 10;
           if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex === 10)
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.EXP_SHARE));
           if (this.scene.currentBattle.waveIndex <= 750 && (this.scene.currentBattle.waveIndex <= 500 || (this.scene.currentBattle.waveIndex % 30) === superExpWave))

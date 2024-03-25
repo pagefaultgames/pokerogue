@@ -114,7 +114,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setShadowColor(getGenderColor(pokemon.gender, true));
         this.pokemonGenderLabelText.setVisible(true);
         this.pokemonGenderText.setVisible(true);
-      }
+      } else
+        this.pokemonGenderText.setVisible(false);
 
       this.pokemonAbilityText.setText(pokemon.getAbility(true).name);
       this.pokemonNatureText.setText(getNatureName(pokemon.nature, true));

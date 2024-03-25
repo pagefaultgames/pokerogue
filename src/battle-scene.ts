@@ -153,6 +153,7 @@ export default class BattleScene extends Phaser.Scene {
 	public seed: string;
 	public waveSeed: string;
 	public waveCycleOffset: integer;
+	public offsetGym: boolean;
 
 	public damageNumberHandler: DamageNumberHandler
 	private spriteSparkleHandler: PokemonSpriteSparkleHandler;
@@ -764,14 +765,15 @@ export default class BattleScene extends Phaser.Scene {
 
 	setSeed(seed: string): void {
 		this.seed = seed;
-		this.waveCycleOffset = this.getGenerateWaveCycleOffset();
+		this.waveCycleOffset = this.getGeneratedWaveCycleOffset();
+		this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
 	}
 
 	reset(clearScene?: boolean): void {
+		this.gameMode = gameModes[GameModes.CLASSIC];
+		
 		this.setSeed(Utils.randomString(24));
 		console.log('Seed:', this.seed);
-
-		this.gameMode = gameModes[GameModes.CLASSIC];
 
 		this.score = 0;
 		this.money = 0;
@@ -1021,7 +1023,15 @@ export default class BattleScene extends Phaser.Scene {
 		return this.arena.getSpeciesFormIndex(species);
 	}
 
-	private getGenerateWaveCycleOffset(): integer {
+	private getGeneratedOffsetGym(): boolean {
+		let ret = false;
+		this.executeWithSeedOffset(() => {
+			ret = !Utils.randSeedInt(2);
+		}, 0, this.seed.toString());
+		return ret;
+	}
+
+	private getGeneratedWaveCycleOffset(): integer {
 		let ret = 0;
 		this.executeWithSeedOffset(() => {
 			ret = Utils.randSeedInt(8) * 5;

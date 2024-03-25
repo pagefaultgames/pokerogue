@@ -543,12 +543,12 @@ export class GameData {
         const initSessionFromData = async sessionData => {
           console.debug(sessionData);
 
+          scene.gameMode = gameModes[sessionData.gameMode || GameModes.CLASSIC];
+
           scene.setSeed(sessionData.seed || scene.game.config.seed[0]);
           scene.resetSeed();
 
           scene.sessionPlayTime = sessionData.playTime || 0;
-
-          scene.gameMode = gameModes[sessionData.gameMode || GameModes.CLASSIC];
 
           const loadPokemonAssets: Promise<void>[] = [];
 

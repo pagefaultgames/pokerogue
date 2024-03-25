@@ -78,7 +78,7 @@ export class GameMode implements GameModeConfig {
   isWaveTrainer(waveIndex: integer, arena: Arena): boolean {
     if (this.isDaily)
       return waveIndex % 10 === 5 || (!(waveIndex % 10) && waveIndex > 10 && !this.isWaveFinal(waveIndex));
-    if ((waveIndex % 30) === 20 && !this.isWaveFinal(waveIndex))
+    if ((waveIndex % 30) === (arena.scene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex))
       return true;
     else if (waveIndex % 10 !== 1 && waveIndex % 10) {
       const trainerChance = arena.getTrainerChance();
@@ -88,7 +88,7 @@ export class GameMode implements GameModeConfig {
         for (let w = Math.max(waveIndex - 3, waveBase + 2); w <= Math.min(waveIndex + 3, waveBase + 9); w++) {
           if (w === waveIndex)
             continue;
-          if ((w % 30) === 20 || fixedBattles.hasOwnProperty(w)) {
+          if ((w % 30) === (arena.scene.offsetGym ? 0 : 20) || fixedBattles.hasOwnProperty(w)) {
             allowTrainerBattle = false;
             break;
           } else if (w < waveIndex) {
@@ -107,12 +107,12 @@ export class GameMode implements GameModeConfig {
     return false;
   }
   
-  isTrainerBoss(waveIndex: integer, biomeType: Biome): boolean {
+  isTrainerBoss(waveIndex: integer, biomeType: Biome, offsetGym: boolean): boolean {
     switch (this.modeId) {
       case GameModes.DAILY:
         return waveIndex > 10 && waveIndex < 50 && !(waveIndex % 10);
       default:
-        return (waveIndex % 30) === 20 && (biomeType !== Biome.END || this.isClassic || this.isWaveFinal(waveIndex));
+        return (waveIndex % 30) === (offsetGym ? 0 : 20) && (biomeType !== Biome.END || this.isClassic || this.isWaveFinal(waveIndex));
     }
   }
 
