@@ -779,7 +779,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const evolutionChain = this.species.getSimulatedEvolutionChain(this.level, this.hasTrainer(), this.isBoss(), this.isPlayer());
       for (let e = 0; e < evolutionChain.length; e++) {
         const speciesLevelMoves = getPokemonSpecies(evolutionChain[e][0] as Species).getLevelMoves();
-        levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && !lm[0]) || (!e && (e === evolutionChain.length - 1 || lm[0] < evolutionChain[e + 1][0]))));
+        levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && !lm[0]) || (lm[0] >= evolutionChain[e][1] && (e === evolutionChain.length - 1 || lm[0] <= evolutionChain[e + 1][1]))));
       }
       const uniqueMoves: Moves[] = [];
       levelMoves = levelMoves.filter(lm => {
@@ -924,8 +924,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const levelMove = allLevelMoves[m];
       if (this.level < levelMove[0])
         break;
-      if (movePool.indexOf(levelMove[1]) === -1)
-        movePool.push(levelMove[1]);
+      if (movePool.indexOf(levelMove[1]) === -1) {
+        if (!allMoves[levelMove[1]].name.endsWith(' (N)'))
+          movePool.push(levelMove[1]);
+        else
+          movePool.unshift(levelMove[1]);
+      }
     }
 
     const attackMovePool = movePool.filter(m => {
