@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import BattleScene, { AnySound } from '../battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -2326,8 +2326,18 @@ export class EnemyPokemon extends Pokemon {
             for (let mt of moveTargets[move.id]) {
               const target = this.scene.getField()[mt];
               let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
-              if (mt !== this.getBattlerIndex())
-                targetScore *= target.getAttackMoveEffectiveness(this, pokemonMove);
+              if (move instanceof AttackMove) {
+                const effectiveness = target.getAttackMoveEffectiveness(this, pokemonMove);
+                if (target.isPlayer() !== this.isPlayer()) {
+                  targetScore *= effectiveness;
+                  if (this.isOfType(move.type))
+                    targetScore *= 1.5;
+                } else {
+                  targetScore /= effectiveness;
+                  if (this.isOfType(move.type))
+                    targetScore /= 1.5;
+                }
+              }
               targetScores.push(targetScore);
             }
 
