@@ -57,7 +57,7 @@ export class ModifierBar extends Phaser.GameObjects.Container {
         icon.setVisible(false);
       this.add(icon);
       this.setModifierIconPosition(icon, visibleIconModifiers.length);
-      icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
+      icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 24), Phaser.Geom.Rectangle.Contains);
       icon.on('pointerover', () => {
         (this.scene as BattleScene).ui.showTooltip(modifier.type.name, modifier.type.getDescription(this.scene as BattleScene));
         if (this.modifierCache && this.modifierCache.length > iconOverflowIndex)
@@ -77,7 +77,8 @@ export class ModifierBar extends Phaser.GameObjects.Container {
   }
 
   updateModifierOverflowVisibility(ignoreLimit: boolean) {
-    for (let modifier of this.getAll().map(m => m as Phaser.GameObjects.Container).slice(0, this.getAll().length - iconOverflowIndex))
+    const modifierIcons = this.getAll().reverse();
+    for (let modifier of modifierIcons.map(m => m as Phaser.GameObjects.Container).slice(iconOverflowIndex))
       modifier.setVisible(ignoreLimit);
   }
 

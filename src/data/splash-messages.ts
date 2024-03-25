@@ -12,8 +12,11 @@ export const splashMessages = [
   'Infinite Fusion at Home!',
   'Broken Egg Moves!',
   'Mubstitute!',
+  'That\'s Crazy!',
   'Questionable Balancing!',
   'Sudden Difficulty Spikes!',
   'Based on an Unfinished Flash Game!',
+  'More Addictive than Intended!',
+  'Eevee Expo!',
   'YNOproject!'
 ];
