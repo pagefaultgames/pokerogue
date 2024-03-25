@@ -372,7 +372,7 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
 
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (hitResult < HitResult.NO_EFFECT)
-      return pokemon.scene.arena.trySetTerrain(this.terrainType, false);
+      return pokemon.scene.arena.trySetTerrain(this.terrainType, true);
 
     return false;
   }
@@ -716,7 +716,7 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
 
   applyPostSummon(pokemon: Pokemon, args: any[]): boolean {
     if (!pokemon.scene.arena.weather?.isImmutable())
-      return pokemon.scene.arena.trySetWeather(this.weatherType, false);
+      return pokemon.scene.arena.trySetWeather(this.weatherType, true);
 
     return false;
   }
@@ -732,7 +732,7 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
   }
 
   applyPostSummon(pokemon: Pokemon, args: any[]): boolean {
-    return pokemon.scene.arena.trySetTerrain(this.terrainType, false);
+    return pokemon.scene.arena.trySetTerrain(this.terrainType, true);
   }
 }
 

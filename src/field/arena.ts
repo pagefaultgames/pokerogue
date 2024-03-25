@@ -255,7 +255,7 @@ export class Arena {
     return true
   }
 
-  trySetWeather(weather: WeatherType, viaMove: boolean): boolean {
+  trySetWeather(weather: WeatherType, hasPokemonSource: boolean): boolean {
     // override hook for debugging
     if (WEATHER_OVERRIDE) {
       return this.trySetWeatherOverride(WEATHER_OVERRIDE);
@@ -266,7 +266,7 @@ export class Arena {
 
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
-    this.weather = weather ? new Weather(weather, viaMove ? 5 : 0) : null;
+    this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
     
     if (this.weather) {
       this.scene.tryReplacePhase(phase => phase instanceof WeatherEffectPhase && phase.weather.weatherType === oldWeatherType, new WeatherEffectPhase(this.scene, this.weather));
@@ -285,13 +285,13 @@ export class Arena {
     return true;
   }
 
-  trySetTerrain(terrain: TerrainType, viaMove: boolean, ignoreAnim: boolean = false): boolean {
+  trySetTerrain(terrain: TerrainType, hasPokemonSource: boolean, ignoreAnim: boolean = false): boolean {
     if (this.terrain?.terrainType === (terrain || undefined))
       return false;
 
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
-    this.terrain = terrain ? new Terrain(terrain, viaMove ? 5 : 0) : null;
+    this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
     
     if (this.terrain) {
       if (!ignoreAnim)
