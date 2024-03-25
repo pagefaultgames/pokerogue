@@ -1,5 +1,6 @@
 import BattleScene, { Button } from "../battle-scene";
 import { Setting, settingDefaults, settingOptions } from "../system/settings";
+import { hasTouchscreen, isMobile } from "../touch-controls";
 import { TextStyle, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";

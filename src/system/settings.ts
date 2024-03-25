@@ -1,4 +1,5 @@
 import BattleScene from "../battle-scene";
+import { hasTouchscreen } from "../touch-controls";
 import { updateWindowType } from "../ui/window";
 import { PlayerGender } from "./game-data";
 

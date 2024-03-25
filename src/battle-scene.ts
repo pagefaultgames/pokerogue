@@ -54,6 +54,7 @@ import CharSprite from './ui/char-sprite';
 import DamageNumberHandler from './field/damage-number-handler';
 import PokemonInfoContainer from './ui/pokemon-info-container';
 import { biomeDepths } from './data/biomes';
+import { initTouchControls } from './touch-controls';
 
 export const bypassLogin = false;
 
