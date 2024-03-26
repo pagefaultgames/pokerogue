@@ -161,10 +161,12 @@ export class BlockItemTheftAbAttr extends AbAttr {
 
 export class StabBoostAbAttr extends AbAttr {
   apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if ((args[0] as Utils.NumberHolder).value > 1)
+    if ((args[0] as Utils.NumberHolder).value > 1) {
       (args[0] as Utils.NumberHolder).value += 0.5;
+      return true;
+    }
     
-    return true;
+    return false;
   }
 }
 
