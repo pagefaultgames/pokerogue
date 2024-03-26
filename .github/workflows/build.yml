@@ -1,7 +1,8 @@
+name: Build
+
 on:
-  push:
-    branches:
-      - "*"
+  push: {}
+  pull_request: {}
 
 jobs:
   build:
@@ -16,9 +17,23 @@ jobs:
       - name: Build
         run: npm run build
         env:
-            NODE_ENV: production
+          NODE_ENV: production
       - name: Upload Artifact
+        id: upload-artifact
         uses: actions/upload-artifact@v4
         with:
-          name: '${{ github.event.repository.name }}-${{ github.ref_name }}-${{ github.sha }}'
+          name: "${{ github.event.repository.name }}-${{ github.sha }}"
           path: dist
+      - name: Trigger Deployment
+        # only run on the main branch
+        if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
+        uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0 # v3.0.0
+        with:
+          event-type: deploy-ssh
+          client-payload: |
+            {
+              "ref": "${{ github.ref }}",
+              "sha": "${{ github.sha }}",
+              "artifact-url": "${{ steps.upload-artifact.outputs.artifact-url }}",
+              "artifact-name": "${{ github.event.repository.name }}-${{ github.sha }}"
+            }
