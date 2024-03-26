@@ -1881,6 +1881,9 @@ export class TurnEndPhase extends FieldPhase {
     if (this.scene.arena.weather && !this.scene.arena.weather.lapse())
       this.scene.arena.trySetWeather(WeatherType.NONE, false);
 
+    if (this.scene.arena.terrain && !this.scene.arena.terrain.lapse())
+      this.scene.arena.trySetTerrain(TerrainType.NONE, false);
+
     this.end();
   }
 }
