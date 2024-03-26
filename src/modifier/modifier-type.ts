@@ -983,10 +983,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 8),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
-    new WeightedModifierType(modifierTypes.SOOTHE_BELL, (party: Pokemon[]) => {
-      const friendshipBenefitPartyMemberCount = Math.min(party.filter(p => (pokemonEvolutions.hasOwnProperty(p.species.speciesId) && pokemonEvolutions[p.species.speciesId].find(e => e.condition && e.condition instanceof SpeciesFriendshipEvolutionCondition)) || p.moveset.find(m => m.moveId === Moves.RETURN)).length, 3);
-      return friendshipBenefitPartyMemberCount * 3;
-    }, 9),
+    new WeightedModifierType(modifierTypes.SOOTHE_BELL, (party: Pokemon[]) => party.find(p => (pokemonEvolutions.hasOwnProperty(p.species.speciesId) && pokemonEvolutions[p.species.speciesId].find(e => e.condition && e.condition instanceof SpeciesFriendshipEvolutionCondition)) || p.moveset.find(m => m.moveId === Moves.RETURN)) ? 16 : 0, 16),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 2),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 2),
     new WeightedModifierType(modifierTypes.IV_SCANNER, 2),

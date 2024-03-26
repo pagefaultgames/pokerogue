@@ -1468,7 +1468,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.ONIX]: [
     new SpeciesEvolution(Species.STEELIX, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(
-        p => !!p.scene.findModifier(m => m instanceof AttackTypeBoosterModifier && (m.type as AttackTypeBoosterModifierType).moveType === Type.STEEL)),
+        p => p.moveset.filter(m => m.getMove().type === Type.STEEL).length > 0),
         SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.RHYDON]: [
@@ -1479,7 +1479,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.SCYTHER]: [
     new SpeciesEvolution(Species.SCIZOR, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(
-      p => !!p.scene.findModifier(m => m instanceof AttackTypeBoosterModifier && (m.type as AttackTypeBoosterModifierType).moveType === Type.STEEL) ),
+      p => p.moveset.filter(m => m.getMove().type === Type.STEEL).length > 0),
       SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesEvolution(Species.KLEAVOR, 1, EvolutionItem.BLACK_AUGURITE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
