@@ -335,6 +335,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
         const tone = data['tone'] as number[];
         const teraColor = data['teraColor'] as integer[] ?? [ 0, 0, 0 ];
         const hasShadow = data['hasShadow'] as boolean;
+        const ignoreFieldPos = data['ignoreFieldPos'] as boolean;
         const ignoreOverride = data['ignoreOverride'] as boolean;
 
         const isEntityObj = sprite.parentContainer instanceof Pokemon || sprite.parentContainer instanceof Trainer;
@@ -346,9 +347,9 @@ export default class SpritePipeline extends FieldSpritePipeline {
             position[0] += field.x / field.scale;
             position[1] += field.y / field.scale;
         }
-        position[0] += -(sprite.width - (sprite.frame.width)) / 2 + sprite.frame.x + (sprite.x - field.x);
+        position[0] += -(sprite.width - (sprite.frame.width)) / 2 + sprite.frame.x + (!ignoreFieldPos ? (sprite.x - field.x) : 0);
         if (sprite.originY === 0.5)
-            position[1] += (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1) + (sprite.y - field.y);
+            position[1] += (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1) + (!ignoreFieldPos ? (sprite.y - field.y) : 0);
         this.set1f('teraTime', (this.game.getTime() % 500000) / 500000);
         this.set3fv('teraColor', teraColor.map(c => c / 255));
         this.set1i('hasShadow', hasShadow ? 1 : 0);
