@@ -7,8 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      artifact_name: "${{ github.event.repository.name }}-${{ github.ref_name }}-${{ github.sha }}"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -24,7 +22,7 @@ jobs:
         id: upload-artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ github.event.repository.name }}-${{ github.ref_name }}-${{ github.sha }}"
+          name: "${{ github.event.repository.name }}-${{ github.sha }}"
           path: dist
       - name: Trigger Deployment
         # only run on the main branch
@@ -37,5 +35,5 @@ jobs:
               "ref": "${{ github.ref }}",
               "sha": "${{ github.sha }}",
               "artifact-url": "${{ steps.upload-artifact.outputs.artifact-url }}",
-              "artifact-name": "${{ github.event.repository.name }}-${{ github.ref_name }}-${{ github.sha }}"
+              "artifact-name": "${{ github.event.repository.name }}-${{ github.sha }}"
             }
