@@ -3889,7 +3889,7 @@ export function initMoves() {
     new AttackMove(Moves.RAZOR_SHELL, "Razor Shell", Type.WATER, MoveCategory.PHYSICAL, 75, 95, 10, "The user cuts its target with sharp shells. This may also lower the target's Defense stat.", 50, 0, 5)
       .attr(StatChangeAttr, BattleStat.DEF, -1)
       .slicingMove(),
-    new AttackMove(Moves.HEAT_CRASH, "Heat Crash (P)", Type.FIRE, MoveCategory.PHYSICAL, -1, 100, 10, "The user slams its target with its flame-covered body. The more the user outweighs the target, the greater the move's power.", -1, 0, 5),
+    new AttackMove(Moves.HEAT_CRASH, "Heat Crash (N)", Type.FIRE, MoveCategory.PHYSICAL, -1, 100, 10, "The user slams its target with its flame-covered body. The more the user outweighs the target, the greater the move's power.", -1, 0, 5),
     new AttackMove(Moves.LEAF_TORNADO, "Leaf Tornado", Type.GRASS, MoveCategory.SPECIAL, 65, 90, 10, "The user attacks its target by encircling it in sharp leaves. This attack may also lower the target's accuracy.", 50, 0, 5)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
     new AttackMove(Moves.STEAMROLLER, "Steamroller", Type.BUG, MoveCategory.PHYSICAL, 65, 100, 20, "The user crushes its target by rolling over the target with its rolled-up body. This may also make the target flinch.", 30, 0, 5)
@@ -4496,7 +4496,8 @@ export function initMoves() {
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(Moves.WAVE_CRASH, "Wave Crash", Type.WATER, MoveCategory.PHYSICAL, 120, 100, 10, "The user shrouds itself in water and slams into the target with its whole body to inflict damage. This also damages the user quite a lot.", -1, 0, 8)
       .attr(RecoilAttr),
-    new AttackMove(Moves.CHLOROBLAST, "Chloroblast (P)", Type.GRASS, MoveCategory.SPECIAL, 150, 95, 5, "The user launches its amassed chlorophyll to inflict damage on the target. This also damages the user.", -1, 0, 8),
+    new AttackMove(Moves.CHLOROBLAST, "Chloroblast", Type.GRASS, MoveCategory.SPECIAL, 150, 95, 5, "The user launches its amassed chlorophyll to inflict damage on the target. This also damages the user.", -1, 0, 8)
+      .attr(RecoilAttr, true, 0.5),
     new AttackMove(Moves.MOUNTAIN_GALE, "Mountain Gale", Type.ICE, MoveCategory.PHYSICAL, 100, 85, 10, "The user hurls giant chunks of ice at the target to inflict damage. This may also make the target flinch.", 30, 0, 8)
       .attr(FlinchAttr),
     new SelfStatusMove(Moves.VICTORY_DANCE, "Victory Dance", Type.FIGHTING, -1, 10, "The user performs an intense dance to usher in victory, boosting its Attack, Defense, and Speed stats.", 100, 0, 8)
