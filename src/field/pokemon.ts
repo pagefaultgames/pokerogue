@@ -748,7 +748,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (types.length > 1)
       atkScore *= pokemon.getAttackTypeEffectiveness(types[1]);
     if (enemyTypes.length > 1)
-      defScore *= (1 / this.getAttackTypeEffectiveness(enemyTypes[1]));
+      defScore *= (1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1]), 0.25));
     let hpDiffRatio = this.getHpRatio() + (1 - pokemon.getHpRatio());
     if (outspeed)
       hpDiffRatio = Math.min(hpDiffRatio * 1.5, 1);
