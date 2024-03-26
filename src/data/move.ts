@@ -4401,7 +4401,8 @@ export function initMoves() {
       .attr(RechargeAttr),
     new AttackMove(Moves.ETERNABEAM, "Eternabeam", Type.DRAGON, MoveCategory.SPECIAL, 160, 90, 5, "This is Eternatus's most powerful attack in its original form. The user can't move on the next turn.", -1, 0, 8)
       .attr(RechargeAttr),
-    new AttackMove(Moves.STEEL_BEAM, "Steel Beam (P)", Type.STEEL, MoveCategory.SPECIAL, 140, 95, 5, "The user fires a beam of steel that it collected from its entire body. This also damages the user.", -1, 0, 8),
+    new AttackMove(Moves.STEEL_BEAM, "Steel Beam", Type.STEEL, MoveCategory.SPECIAL, 140, 95, 5, "The user fires a beam of steel that it collected from its entire body. This also damages the user.", -1, 0, 8)
+      .attr(RecoilAttr, true, 0.5),
     new AttackMove(Moves.EXPANDING_FORCE, "Expanding Force (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, "The user attacks the target with its psychic power. This move's power goes up and damages all opposing Pokémon on Psychic Terrain.", -1, 0, 8),
     new AttackMove(Moves.STEEL_ROLLER, "Steel Roller", Type.STEEL, MoveCategory.PHYSICAL, 130, 100, 5, "The user attacks while destroying the terrain. This move fails when the ground hasn't turned into a terrain.", -1, 0, 8)
       .attr(ClearTerrainAttr)
