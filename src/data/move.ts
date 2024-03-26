@@ -4749,7 +4749,7 @@ export function initMoves() {
       .attr(MissEffectAttr, halveHpMissEffectFunc),
     new AttackMove(Moves.PSYCHIC_NOISE, "Psychic Noise (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 75, 100, 10, "The user attacks the target with unpleasant sound waves. For two turns, the target is prevented from recovering HP through moves, Abilities, or held items.", -1, 0, 9)
       .soundBased(),
-    new AttackMove(Moves.UPPER_HAND, "Upper Hand (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, "The user reacts to the target's movement and strikes with the heel of its palm, making the target flinch. This move fails if the target is not readying a priority move.", -1, 0, 9),
+    new AttackMove(Moves.UPPER_HAND, "Upper Hand (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, "The user reacts to the target's movement and strikes with the heel of its palm, making the target flinch. This move fails if the target is not readying a priority move.", -1, 3, 9),
     new AttackMove(Moves.MALIGNANT_CHAIN, "Malignant Chain", Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, "The user pours toxins into the target by wrapping them in a toxic, corrosive chain. This may also leave the target badly poisoned.", 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
   );
