@@ -21,7 +21,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd ${{ secrets.TMP_DIR }}
-            wget -O "${{ env.ARTIFACT_NAME }}.zip" ${{ github.event.client_payload.artifact-url }}
+            wget -O "${{ env.ARTIFACT_NAME }}.zip" --header="Authorization: token ${{ github.token }}" ${{ github.event.client_payload.artifact-url }}
             unzip -aDo "${{ env.ARTIFACT_NAME }}.zip" -d "${{ env.ARTIFACT_NAME }}"
             rsync -vR --delete "${{ env.ARTIFACT_NAME }}/" "${{ secrets.DESTINATION_DIR }}"
             rm -rf "./${{ env.ARTIFACT_NAME }}.zip" "./${{ env.ARTIFACT_NAME }}"
