@@ -819,7 +819,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
           return false;
       }
       if (!pokemon.status || (pokemon.status.effect === this.effect && move.chance < 0))
-        return pokemon.trySetStatus(this.effect, true);
+        return pokemon.trySetStatus(this.effect, true, this.cureTurn);
     }
     return false;
   }
@@ -2995,7 +2995,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.REST, "Rest", Type.PSYCHIC, -1, 5, "The user goes to sleep for two turns. This fully restores the user's HP and heals any status conditions.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
-      .condition((user, target, move) => user.status?.effect !== StatusEffect.SLEEP),
+      .condition((user, target, move) => user.status?.effect !== StatusEffect.SLEEP && user.getHpRatio() < 1),
     new AttackMove(Moves.ROCK_SLIDE, "Rock Slide", Type.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, "Large boulders are hurled at opposing Pokémon to inflict damage. This may also make the opposing Pokémon flinch.", 30, 0, 1)
       .attr(FlinchAttr)
       .makesContact(false)
