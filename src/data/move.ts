@@ -3513,7 +3513,7 @@ export function initMoves() {
       .windMove()
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ACUPRESSURE, "Acupressure", Type.NORMAL, -1, 30, "The user applies pressure to stress points, sharply boosting one of its or its allies' stats.", -1, 0, 4)
-      .attr(StatChangeAttr, BattleStat.RAND, 2, true)
+      .attr(StatChangeAttr, BattleStat.RAND, 2)
       .target(MoveTarget.USER_OR_NEAR_ALLY),
     new AttackMove(Moves.METAL_BURST, "Metal Burst (N)", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, "The user retaliates with much greater force against the opponent that last inflicted damage on it.", -1, 0, 4)
       .makesContact(false)
@@ -4391,7 +4391,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, -1),
     new AttackMove(Moves.STRANGE_STEAM, "Strange Steam", Type.FAIRY, MoveCategory.SPECIAL, 90, 95, 10, "The user attacks the target by emitting steam. This may also confuse the target.", 20, 0, 8)
       .attr(ConfuseAttr),
-    new StatusMove(Moves.LIFE_DEW, "Life Dew (N)", Type.WATER, -1, 10, "The user scatters mysterious water around and restores the HP of itself and its ally Pokémon in the battle.", -1, 0, 8)
+    new StatusMove(Moves.LIFE_DEW, "Life Dew", Type.WATER, -1, 10, "The user scatters mysterious water around and restores the HP of itself and its ally Pokémon in the battle.", -1, 0, 8)
+      .attr(HealAttr, 0.25, true, false)
       .target(MoveTarget.USER_AND_ALLIES),
     new SelfStatusMove(Moves.OBSTRUCT, "Obstruct (P)", Type.DARK, 100, 10, "This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession. Direct contact harshly lowers the attacker's Defense stat.", -1, 4, 8)
       .attr(ProtectAttr),
