@@ -1,0 +1,26 @@
+name: Deploy via SSH
+
+on:
+  repository_dispatch:
+    types: [deploy-ssh]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+        ARTIFACT_NAME: ${{ github.event.client_payload.artifact-name }}
+        ARTIFACT_URL: ${{ github.event.client_payload.artifact-url }}
+    steps:
+      - uses: appleboy/ssh-action@029f5b4aeeeb58fdfe1410a5d17f967dacf36262 # v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd ${{ secrets.TMP_DIR }}
+            wget -O "${{ env.ARTIFACT_NAME }}.zip" ${{ github.event.client_payload.artifact-url }}
+            unzip -aDo "${{ env.ARTIFACT_NAME }}.zip" -d "${{ env.ARTIFACT_NAME }}"
+            rm -f "${{ env.ARTIFACT_NAME }}.zip"
+            rsync -vR --delete "${{ env.ARTIFACT_NAME }}/" "${{ secrets.DESTINATION_DIR }}"
+            rm -rf ./${{ env.ARTIFACT_NAME }}
