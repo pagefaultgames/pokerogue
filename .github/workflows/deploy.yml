@@ -21,6 +21,5 @@ jobs:
             cd ${{ secrets.TMP_DIR }}
             wget -O "${{ env.ARTIFACT_NAME }}.zip" ${{ github.event.client_payload.artifact-url }}
             unzip -aDo "${{ env.ARTIFACT_NAME }}.zip" -d "${{ env.ARTIFACT_NAME }}"
-            rm -f "${{ env.ARTIFACT_NAME }}.zip"
             rsync -vR --delete "${{ env.ARTIFACT_NAME }}/" "${{ secrets.DESTINATION_DIR }}"
-            rm -rf ./${{ env.ARTIFACT_NAME }}
+            rm -rf "./${{ env.ARTIFACT_NAME }}.zip" "./${{ env.ARTIFACT_NAME }}"
