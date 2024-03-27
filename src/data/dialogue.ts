@@ -368,7 +368,11 @@ export const trainerTypeDialogue = {
         $@c{serious_mopen_fists}Don't hold back, just like before!\nLet's go!`
       ],
       victory: [
-        `@c{neutral_eclosed}Oh. I guess I was overconfident.`
+        `@c{neutral_eclosed}Oh. I guess I was overconfident.
+        $@c{smile}That's alright, though. I figured this might happen.\n@c{serious_mopen_fists}It just means I need to try harder for next time!\n
+        $@c{smile}Oh, not that you really need the help, but I had an extra one of these lying around and figured you might want it.\n
+        $@c{serious_smile_fists}Don't expect another one after this, though!\nI can't keep giving my opponent an advantage after all.
+        $@c{smile}Anyway, take care!`
       ]
     },
     {
@@ -380,7 +384,11 @@ export const trainerTypeDialogue = {
         $@c{angry_mopen}In any case, I've been training hard for our rematch, so you'd better give it your all!`
       ],
       victory: [
-        `@c{neutral}I… wasn't supposed to lose that time…`
+        `@c{neutral}I… wasn't supposed to lose that time…
+        $@c{smile}Aw well. That just means I'll have to train even harder for next time!
+        $@c{smile_wave}I also got you another one of these!\n@c{smile_wave_wink}No need to thank me~.
+        $@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!
+        $@c{smile_wave}Keep at it!`
       ]
     }
   ],

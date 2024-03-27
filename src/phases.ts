@@ -450,7 +450,7 @@ export class BattlePhase extends Phase {
       const visible = !trainerSlot || !i === (trainerSlot === TrainerSlot.TRAINER) || sprites.length < 2;
       [ sprites[i], tintSprites[i] ].map(sprite => {
         if (visible)
-          sprite.x = trainerSlot ? 0 : i ? 16 : -16;
+          sprite.x = trainerSlot || sprites.length < 2 ? 0 : i ? 16 : -16;
         sprite.setVisible(visible);
         sprite.clearTint();
       })
