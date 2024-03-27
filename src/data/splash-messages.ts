@@ -15,9 +15,17 @@ export const splashMessages = [
   'That\'s Crazy!',
   'Orance Juice!',
   'Questionable Balancing!',
+  'Cool Shaders!',
+  'AI-Free!',
+  'Help Wanted!',
   'Sudden Difficulty Spikes!',
   'Based on an Unfinished Flash Game!',
   'More Addictive than Intended!',
+  'Mostly Consistent Seeds!',
+  'Achievement Points Don\'t Do Anything!',
+  'You Do Not Start at Level 2000!',
+  'Also Try Pokéngine!',
+  'Also Try Emerald Rogue!',
   'Eevee Expo!',
   'YNOproject!'
 ];
