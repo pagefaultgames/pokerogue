@@ -2058,7 +2058,7 @@ export class MovePhase extends BattlePhase {
           if (this.move.ppUsed === this.move.getMove().pp)
             break;
           if (opponent.getAbility().id === Abilities.PRESSURE)
-            this.move.ppUsed++;
+            this.move.ppUsed = Math.min(this.move.ppUsed + 1, this.move.getMovePp());
         }
       }
 
