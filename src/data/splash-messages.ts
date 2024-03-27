@@ -13,6 +13,7 @@ export const splashMessages = [
   'Broken Egg Moves!',
   'Mubstitute!',
   'That\'s Crazy!',
+  'Orance Juice!',
   'Questionable Balancing!',
   'Sudden Difficulty Spikes!',
   'Based on an Unfinished Flash Game!',

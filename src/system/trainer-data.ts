@@ -19,6 +19,6 @@ export default class TrainerData {
   }
 
   toTrainer(scene: BattleScene): Trainer {
-    return new Trainer(scene, this.trainerType, this.variant, this.partyTemplateIndex);
+    return new Trainer(scene, this.trainerType, this.variant, this.partyTemplateIndex, this.name, this.partnerName);
   }
 }
