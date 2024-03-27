@@ -624,7 +624,8 @@ export class HealAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    return Math.round((1 - (this.selfTarget ? user : target).getHpRatio()) * 20);
+    let score = ((1 - (this.selfTarget ? user : target).getHpRatio()) * 20) - this.healRatio * 10;
+    return Math.round(score / (1 - this.healRatio / 2));
   }
 }
 

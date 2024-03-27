@@ -1465,6 +1465,10 @@ export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
     return ret;
   }
 
+  getTransferrable(withinParty: boolean) {
+    return withinParty;
+  }
+
   getMaxHeldItemCount(pokemon: Pokemon): integer {
     return 1;
   }
