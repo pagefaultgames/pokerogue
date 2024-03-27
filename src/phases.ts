@@ -2969,7 +2969,7 @@ export class VictoryPhase extends PokemonPhase {
         const splitExp = Math.floor(totalExp / recipientExpPartyMemberIndexes.length);
 
         expPartyMembers.forEach((_partyMember, pm) => {
-          partyMemberExp[pm] = recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0;
+          partyMemberExp[pm] = Phaser.Math.Linear(partyMemberExp[pm], recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0, 0.2 * expBalanceModifier.getStackCount());
         });
       }
 

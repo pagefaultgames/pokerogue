@@ -808,7 +808,7 @@ export const modifierTypes = {
 
   EXP_SHARE: () => new ModifierType('EXP. All', 'Non-participants receive 20% of a single participant\'s EXP. Points',
     (type, _args) => new Modifiers.ExpShareModifier(type), 'exp_share'),
-  EXP_BALANCE: () => new ModifierType('EXP. Balance', 'All EXP. Points received from battles are split between the lower leveled party members',
+  EXP_BALANCE: () => new ModifierType('EXP. Balance', 'Weighs EXP. Points received from battles towards lower leveled party members',
     (type, _args) => new Modifiers.ExpBalanceModifier(type)),
 
   OVAL_CHARM: () => new ModifierType('Oval Charm', 'When multiple Pokémon participate in a battle, each gets an extra 10% of the total EXP',
@@ -989,10 +989,10 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.IV_SCANNER, 2),
     new WeightedModifierType(modifierTypes.EXP_CHARM, 8),
     new WeightedModifierType(modifierTypes.EXP_SHARE, 12),
-    new WeightedModifierType(modifierTypes.EXP_BALANCE, 1),
+    new WeightedModifierType(modifierTypes.EXP_BALANCE, 4),
     new WeightedModifierType(modifierTypes.TERA_ORB, (party: Pokemon[]) => Math.min(Math.max(Math.floor(party[0].scene.currentBattle.waveIndex / 50) * 2, 1), 4), 4),
     new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => !party[0].scene.gameMode.isSplicedOnly && party.filter(p => p.fusionSpecies).length ? 3 : 0, 3),
-    new WeightedModifierType(modifierTypes.VOUCHER, 3),
+    new WeightedModifierType(modifierTypes.VOUCHER, (party: Pokemon[]) => !party[0].scene.gameMode.isDaily ? 3 : 0, 3),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.ROGUE]: [
     new WeightedModifierType(modifierTypes.ROGUE_BALL, 24),
@@ -1015,7 +1015,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.MASTER_BALL, 32),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 18),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 18),
-    new WeightedModifierType(modifierTypes.VOUCHER_PLUS, 8),
+    new WeightedModifierType(modifierTypes.VOUCHER_PLUS, (party: Pokemon[]) => !party[0].scene.gameMode.isDaily ? 8 : 0, 8),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
     new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 1 : 0, 1),
   ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
