@@ -2117,8 +2117,10 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         if (!switchOutTarget.getAlly()?.isActive(true)) {
           user.scene.clearEnemyHeldItemModifiers();
 
-          user.scene.pushPhase(new BattleEndPhase(user.scene));
-          user.scene.pushPhase(new NewBattlePhase(user.scene));
+          if (switchOutTarget.hp) {
+            user.scene.pushPhase(new BattleEndPhase(user.scene));
+            user.scene.pushPhase(new NewBattlePhase(user.scene));
+          }
         }
       }
 
