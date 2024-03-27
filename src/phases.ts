@@ -2635,11 +2635,13 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
       let damage: integer = 0;
       switch (pokemon.status.effect) {
         case StatusEffect.POISON:
-        case StatusEffect.BURN:
-          damage = Math.max(pokemon.getMaxHp() >> 4, 1);
+          damage = Math.max(pokemon.getMaxHp() >> 3, 1);
           break;
         case StatusEffect.TOXIC:
           damage = Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1);
+          break;
+        case StatusEffect.BURN:
+          damage = Math.max(pokemon.getMaxHp() >> 4, 1);
           break;
       }
       if (damage) {
