@@ -3,7 +3,7 @@ import BattleScene, { AnySound } from '../battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
 import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove } from "../data/move";
-import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies } from '../data/pokemon-species';
+import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
 import { getLevelTotalExp } from '../data/exp';
@@ -778,7 +778,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (simulateEvolutionChain) {
       const evolutionChain = this.species.getSimulatedEvolutionChain(this.level, this.hasTrainer(), this.isBoss(), this.isPlayer());
       for (let e = 0; e < evolutionChain.length; e++) {
-        const speciesLevelMoves = getPokemonSpecies(evolutionChain[e][0] as Species).getLevelMoves();
+        // TODO: Might need to pass specific form index in simulated evolution chain
+        const speciesLevelMoves = getPokemonSpeciesForm(evolutionChain[e][0] as Species, this.formIndex).getLevelMoves();
         levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && !lm[0]) || (lm[0] >= evolutionChain[e][1] && (e === evolutionChain.length - 1 || lm[0] <= evolutionChain[e + 1][1]))));
       }
       const uniqueMoves: Moves[] = [];
@@ -2074,7 +2075,7 @@ export class PlayerPokemon extends Pokemon {
   getPossibleEvolution(evolution: SpeciesFormEvolution): Promise<Pokemon> {
     return new Promise(resolve => {
       const species = getPokemonSpecies(evolution.speciesId);
-      const formIndex = evolution.evoFormKey !== null ? Math.max(this.species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0) : this.formIndex;
+      const formIndex = evolution.evoFormKey !== null ? Math.max(species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0) : this.formIndex;
       const ret = this.scene.addPlayerPokemon(species, this.level, this.abilityIndex, formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
       ret.loadAssets().then(() => resolve(ret));
     });

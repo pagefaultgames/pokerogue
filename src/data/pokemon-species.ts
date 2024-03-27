@@ -24,6 +24,15 @@ export function getPokemonSpecies(species: Species): PokemonSpecies {
   return allSpecies[species - 1];
 }
 
+export function getPokemonSpeciesForm(species: Species, formIndex: integer): PokemonSpeciesForm {
+  let retSpecies: PokemonSpecies = species >= 2000
+    ? allSpecies.find(s => s.speciesId === species)
+    : allSpecies[species - 1];
+  if (formIndex < retSpecies.forms?.length)
+    return retSpecies.forms[formIndex];
+  return retSpecies;
+}
+
 export function getFusedSpeciesName(speciesAName: string, speciesBName: string): string {
   const fragAPattern = /([a-z]{2}.*?[aeiou(?:y$)\-\']+)(.*?)$/i;
   const fragBPattern = /([a-z]{2}.*?[aeiou(?:y$)\-\'])(.*?)$/i;
