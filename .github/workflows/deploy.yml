@@ -1,31 +1,36 @@
 name: Deploy
 
 on:
-  repository_dispatch:
-    types: [deploy-ssh]
+  push: {}
+  pull_request: {}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      ARTIFACT_NAME: ${{ github.event.client_payload.artifact-name }}
-      ARTIFACT_URL: ${{ github.event.client_payload.artifact-url }}
     steps:
-      - name: Deploy via SSH
-        id: deploy
-        uses: appleboy/ssh-action@029f5b4aeeeb58fdfe1410a5d17f967dacf36262 # v1.0.3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            cd ${{ secrets.TMP_DIR }}
-            wget -O "${{ env.ARTIFACT_NAME }}.zip" --header="Authorization: token ${{ github.token }}" ${{ env.ARTIFACT_URL }}
-            unzip -aDo "${{ env.ARTIFACT_NAME }}.zip" -d "${{ env.ARTIFACT_NAME }}"
-            rsync -vR --delete "${{ env.ARTIFACT_NAME }}/" "${{ secrets.DESTINATION_DIR }}"
-            rm -rf "./${{ env.ARTIFACT_NAME }}.zip" "./${{ env.ARTIFACT_NAME }}"
+          node-version: "20"
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+      - name: Set up SSH
+        if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
+        run: |
+          mkdir ~/.ssh
+          echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/id_ed25519.pub
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/*
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      - name: Deploy build on server
+        if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
+        run: rsync -vrm dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DESTINATION_DIR }}
       - name: Purge Cloudflare Cache
+        if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
         id: purge-cache
         uses: NathanVaughn/actions-cloudflare-purge@f70c63827b539cf48eb3a29fdaa7547eca4dede4 #latest commit at the time
         with:
