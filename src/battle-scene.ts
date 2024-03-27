@@ -1193,8 +1193,9 @@ export default class BattleScene extends Phaser.Scene {
 	getMaxExpLevel(ignoreLevelCap?: boolean): integer {
 		if (ignoreLevelCap)
 			return Number.MAX_SAFE_INTEGER;
-		const lastWaveIndex = Math.ceil((this.gameMode.getWaveForDifficulty(this.currentBattle?.waveIndex || 1)) / 10) * 10;
-		const baseLevel = (1 + lastWaveIndex / 2 + Math.pow(lastWaveIndex / 25, 2)) * 1.2;
+		const waveIndex = Math.ceil((this.currentBattle?.waveIndex || 1) / 10) * 10;
+		const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(waveIndex);
+		const baseLevel = (1 + difficultyWaveIndex / 2 + Math.pow(difficultyWaveIndex / 25, 2)) * 1.2;
 		return Math.ceil(baseLevel / 2) * 2 + 2;
 	}
 
