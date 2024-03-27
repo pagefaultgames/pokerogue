@@ -590,7 +590,7 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 class TmModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(tier: ModifierTier) {
     super((party: Pokemon[]) => {
-      const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms);
+      const partyMemberCompatibleTms = party.map(p => (p as PlayerPokemon).compatibleTms.filter(tm => !p.moveset.find(m => m.moveId === tm)));
       const tierUniqueCompatibleTms = partyMemberCompatibleTms.flat().filter(tm => tmPoolTiers[tm] === tier).filter(tm => !allMoves[tm].name.endsWith(' (N)')).filter((tm, i, array) => array.indexOf(tm) === i);
       if (!tierUniqueCompatibleTms.length)
         return null;
