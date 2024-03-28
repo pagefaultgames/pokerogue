@@ -671,8 +671,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return types;
   }
 
-  isOfType(type: Type): boolean {
-    return !!this.getTypes(true).find(t => t === type);
+  isOfType(type: Type, forDefend: boolean = false): boolean {
+    return !!this.getTypes(true, forDefend).find(t => t === type);
   }
 
   getAbility(ignoreOverride?: boolean): Ability {
@@ -718,7 +718,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   isGrounded(): boolean {
-    return !this.isOfType(Type.FLYING);
+    return !this.isOfType(Type.FLYING, true);
   }
 
   getAttackMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
