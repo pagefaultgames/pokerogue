@@ -1109,6 +1109,10 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
       pokemon.levelExp = 0;
     }
 
+    const friendshipIncrease = new Utils.IntegerHolder(5);
+    pokemon.scene.applyModifier(PokemonFriendshipBoosterModifier, true, pokemon, friendshipIncrease);
+    pokemon.friendship = Math.min(pokemon.friendship + friendshipIncrease.value, 255);
+
     pokemon.scene.unshiftPhase(new LevelUpPhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), pokemon.level - levelCount.value, pokemon.level));
 
     return true;
