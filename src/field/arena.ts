@@ -17,7 +17,7 @@ import { Moves } from "../data/enums/moves";
 import { TimeOfDay } from "../data/enums/time-of-day";
 import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
-import { PartyMemberStrength } from "../data/enums/party-member-strength";
+import Pokemon from "./pokemon";
 
 const WEATHER_OVERRIDE = WeatherType.NONE;
 
@@ -313,8 +313,8 @@ export class Arena {
     return this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(move);
   }
 
-  isMoveTerrainCancelled(move: Move) {
-    return this.terrain && this.terrain.isMoveTerrainCancelled(move);
+  isMoveTerrainCancelled(user: Pokemon, move: Move) {
+    return this.terrain && this.terrain.isMoveTerrainCancelled(user, move);
   }
 
   getAttackTypeMultiplier(attackType: Type, grounded: boolean): number {

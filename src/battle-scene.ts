@@ -19,7 +19,7 @@ import { } from "./data/move";
 import { initMoves } from './data/move';
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
-import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, applyAbAttrs, initAbilities } from './data/ability';
+import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';
 import { GameMode, GameModes, gameModes } from './game-mode';
 import FieldSpritePipeline from './pipelines/field-sprite';
@@ -1595,8 +1595,9 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	pushMovePhase(movePhase: MovePhase, priorityOverride?: integer): void {
-		const priority = priorityOverride !== undefined ? priorityOverride : movePhase.move.getMove().priority;
-		const lowerPriorityPhase = this.phaseQueue.find(p => p instanceof MovePhase && p.move.getMove().priority < priority);
+		const movePriority = new Utils.IntegerHolder(priorityOverride !== undefined ? priorityOverride : movePhase.move.getMove().priority);
+		applyAbAttrs(IncrementMovePriorityAbAttr, movePhase.pokemon, null, movePhase.move.getMove(), movePriority);
+		const lowerPriorityPhase = this.phaseQueue.find(p => p instanceof MovePhase && p.move.getMove().priority < movePriority.value);
 		if (lowerPriorityPhase)
 			this.phaseQueue.splice(this.phaseQueue.indexOf(lowerPriorityPhase), 0, movePhase);
 		else

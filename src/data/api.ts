@@ -540,8 +540,7 @@ export async function printMoves() {
     } else if (matchingLine)
       flavorText = allMoves[move.id].effect;
     const moveTarget = targetMap[move.target.name];
-    const moveTm = move.id < allMoves.length ? allMoves[move.id].tm : -1;
-    moveStr += `\n    new ${move.damage_class.name !== 'status' ? 'Attack' : (moveTarget === MoveTarget.USER ? 'Self' : '') + 'Status'}Move(Moves.${moveEnumName}, "${moveName}", Type.${move.type.name.toUpperCase()}${move.damage_class.name !== 'status' ? `, MoveCategory.${move.damage_class.name.toUpperCase()}` : ''}${move.damage_class.name !== 'status' ? `, ${move.power || -1}` : ''}, ${move.accuracy || -1}, ${move.pp}, ${moveTm}, "${flavorText?.replace(/\n/g, '\\n').replace(/  /g, ' ').replace(/’/g, '\'') || ''}", ${move.effect_chance || -1}, ${move.priority}, ${generationMap[move.generation.name]})`;
+    moveStr += `\n    new ${move.damage_class.name !== 'status' ? 'Attack' : (moveTarget === MoveTarget.USER ? 'Self' : '') + 'Status'}Move(Moves.${moveEnumName}, "${moveName}", Type.${move.type.name.toUpperCase()}${move.damage_class.name !== 'status' ? `, MoveCategory.${move.damage_class.name.toUpperCase()}` : ''}${move.damage_class.name !== 'status' ? `, ${move.power || -1}` : ''}, ${move.accuracy || -1}, ${move.pp}, "${flavorText?.replace(/\n/g, '\\n').replace(/  /g, ' ').replace(/’/g, '\'') || ''}", ${move.effect_chance || -1}, ${move.priority}, ${generationMap[move.generation.name]})`;
     const expectedTarget = move.damage_class.name !== 'status' || moveTarget !== MoveTarget.USER ? MoveTarget.NEAR_OTHER : MoveTarget.USER;
     if (matchingLine && matchingLine.length > 1) {
       const newLineIndex = matchingLine.indexOf('\n');

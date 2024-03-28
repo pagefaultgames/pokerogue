@@ -914,6 +914,24 @@ export class BlockOneHitKOAbAttr extends AbAttr {
   }
 }
 
+export class IncrementMovePriorityAbAttr extends AbAttr {
+  private moveIncrementFunc: (move: Move) => boolean;
+
+  constructor(moveIncrementFunc: (move: Move) => boolean) {
+    super(true);
+
+    this.moveIncrementFunc = moveIncrementFunc;
+  }
+
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (!this.moveIncrementFunc(args[0] as Move))
+      return false;
+      
+    (args[0] as Utils.IntegerHolder).value++;
+    return true;
+  }
+}
+
 export class IgnoreContactAbAttr extends AbAttr { }
 
 export class PreWeatherEffectAbAttr extends AbAttr {
@@ -2192,7 +2210,8 @@ export function initAbilities() {
     new Ability(Abilities.SAP_SIPPER, "Sap Sipper", "Boosts the Attack stat if hit by a Grass-type move instead of taking damage.", 5)
       .attr(TypeImmunityStatChangeAbAttr, Type.GRASS, BattleStat.ATK, 1)
       .ignorable(),
-    new Ability(Abilities.PRANKSTER, "Prankster (N)", "Gives priority to a status move.", 5),
+    new Ability(Abilities.PRANKSTER, "Prankster", "Gives priority to a status move.", 5)
+      .attr(IncrementMovePriorityAbAttr, (move: Move) => move.category === MoveCategory.STATUS),
     new Ability(Abilities.SAND_FORCE, "Sand Force", "Boosts the power of Rock-, Ground-, and Steel-type moves in a sandstorm.", 5)
       .attr(MoveTypePowerBoostAbAttr, Type.ROCK, 1.3)
       .attr(MoveTypePowerBoostAbAttr, Type.GROUND, 1.3)

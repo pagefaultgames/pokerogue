@@ -30,7 +30,7 @@ import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, get
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { Abilities, CheckTrappedAbAttr, MoveAbilityBypassAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs } from "./data/ability";
+import { Abilities, CheckTrappedAbAttr, MoveAbilityBypassAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -1768,11 +1768,17 @@ export class TurnStartPhase extends FieldPhase {
         else if (bCommand.command === Command.FIGHT)
           return -1;
       } else if (aCommand.command === Command.FIGHT) {
-        const aPriority = allMoves[aCommand.move.move].priority;
-        const bPriority = allMoves[bCommand.move.move].priority;
+        const aMove = allMoves[aCommand.move.move];
+        const bMove = allMoves[bCommand.move.move];
+
+        const aPriority = new Utils.IntegerHolder(aMove.priority);
+        const bPriority = new Utils.IntegerHolder(bMove.priority);
+
+		    applyAbAttrs(IncrementMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a), null, aMove, aPriority);
+        applyAbAttrs(IncrementMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b), null, bMove, bPriority);
         
-        if (aPriority !== bPriority)
-          return aPriority < bPriority ? 1 : -1;
+        if (aPriority.value !== bPriority.value)
+          return aPriority.value < bPriority.value ? 1 : -1;
       }
       
       const aIndex = order.indexOf(a);
@@ -2070,7 +2076,7 @@ export class MovePhase extends BattlePhase {
       let failedText = null;
       if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
         success = false;
-      else if (success && this.scene.arena.isMoveTerrainCancelled(this.move.getMove())) {
+      else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.move.getMove())) {
         success = false;
         failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
       }
