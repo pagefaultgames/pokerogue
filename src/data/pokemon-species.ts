@@ -9,6 +9,8 @@ import { uncatchableSpecies } from './biomes';
 import * as Utils from '../utils';
 import { StarterMoveset } from '../system/game-data';
 import { speciesEggMoves } from './egg-moves';
+import { PartyMemberStrength } from "./enums/party-member-strength";
+import { GameMode } from '../game-mode';
 
 export enum Region {
   NORMAL,
@@ -426,7 +428,32 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
     return this.name;
   }
 
-  getSpeciesForLevel(level: integer, allowEvolving: boolean = false, forTrainer: boolean = false, isBoss: boolean = false, player: boolean = false): Species {
+  getWildSpeciesForLevel(level: integer, allowEvolving: boolean, isBoss: boolean, gameMode: GameMode): Species {
+    return this.getSpeciesForLevel(level, allowEvolving, false, (isBoss ? PartyMemberStrength.WEAKER : PartyMemberStrength.AVERAGE) + (gameMode?.isEndless ? 1 : 0));
+  }
+
+  getTrainerSpeciesForLevel(level: integer, allowEvolving: boolean = false, strength: PartyMemberStrength): Species {
+    return this.getSpeciesForLevel(level, allowEvolving, true, strength);
+  }
+
+  private getStrengthLevelDiff(strength: PartyMemberStrength): integer {
+    switch (Math.min(strength, PartyMemberStrength.STRONGER)) {
+      case PartyMemberStrength.WEAKEST:
+        return 60;
+      case PartyMemberStrength.WEAKER:
+        return 40;
+      case PartyMemberStrength.WEAK:
+        return 20;
+      case PartyMemberStrength.AVERAGE:
+        return 10;
+      case PartyMemberStrength.STRONG:
+        return 5;
+      default:
+        return 0;
+    }
+  }
+
+  getSpeciesForLevel(level: integer, allowEvolving: boolean = false, forTrainer: boolean = false, strength: PartyMemberStrength = PartyMemberStrength.WEAKER): Species {
     const prevolutionLevels = this.getPrevolutionLevels();
 
     if (prevolutionLevels.length) {
@@ -460,25 +487,28 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
       
       if (!forTrainer && isRegionalEvolution)
         evolutionChance = 0;
-      else if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE) {
-        if (player)
-          evolutionChance = 1;
-        else {
-          const maxLevelDiff = forTrainer || isBoss ? forTrainer && isBoss ? 10 : 20 : 40;
-          const minChance = forTrainer ? 0.5 : 0.75;
-          evolutionChance = Math.min(minChance + easeInFunc(Math.min(level - ev.level, maxLevelDiff) / maxLevelDiff) * (1 - minChance), 1);
-        }
-      } else {
-        let preferredMinLevel = (ev.level - 1) + ev.wildDelay * (player ? 0 : forTrainer || isBoss ? forTrainer && isBoss ? 5 : 10 : 20);
-        let evolutionLevel = ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2);
+      else {
+        if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE) {
+          if (strength === PartyMemberStrength.STRONGER)
+            evolutionChance = 1;
+          else {
+            const maxLevelDiff = this.getStrengthLevelDiff(strength);
+            const minChance: number = 0.875 - 0.125 * strength;
+            
+            evolutionChance = Math.min(minChance + easeInFunc(Math.min(level - ev.level, maxLevelDiff) / maxLevelDiff) * (1 - minChance), 1);
+          }
+        } else {
+          let preferredMinLevel = (ev.level - 1) + ev.wildDelay * this.getStrengthLevelDiff(strength + 1);
+          let evolutionLevel = ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2);
 
-        if (ev.level <= 1 && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
-          const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId).level;
-          if (prevolutionLevel > 1)
-            evolutionLevel = prevolutionLevel;
-        }
+          if (ev.level <= 1 && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
+            const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId).level;
+            if (prevolutionLevel > 1)
+              evolutionLevel = prevolutionLevel;
+          }
 
-        evolutionChance = Math.min(0.65 * easeInFunc((Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel)) + 0.35 * easeOutFunc(Math.min(level - evolutionLevel, preferredMinLevel * 2.5) / (preferredMinLevel * 2.5)), 1);
+          evolutionChance = Math.min(0.65 * easeInFunc((Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel)) + 0.35 * easeOutFunc(Math.min(level - evolutionLevel, preferredMinLevel * 2.5) / (preferredMinLevel * 2.5)), 1);
+        }
       }
 
       if (evolutionChance > 0) {
@@ -501,7 +531,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
 
     for (let weight of evolutionPool.keys()) {
       if (randValue < weight)
-        return getPokemonSpecies(evolutionPool.get(weight)).getSpeciesForLevel(level, true, forTrainer, isBoss);
+        return getPokemonSpecies(evolutionPool.get(weight)).getSpeciesForLevel(level, true, forTrainer, strength);
     }
 
     return this.speciesId;

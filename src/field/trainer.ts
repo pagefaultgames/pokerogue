@@ -1,7 +1,8 @@
 import BattleScene from "../battle-scene";
 import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { getPokemonSpecies } from "../data/pokemon-species";
-import { TrainerConfig, TrainerPartyCompoundTemplate, TrainerPartyMemberStrength, TrainerPartyTemplate, TrainerPoolTier, TrainerSlot, trainerConfigs, trainerPartyTemplates } from "../data/trainer-config";
+import { TrainerConfig, TrainerPartyCompoundTemplate, TrainerPartyTemplate, TrainerPoolTier, TrainerSlot, trainerConfigs, trainerPartyTemplates } from "../data/trainer-config";
+import { PartyMemberStrength } from "../data/enums/party-member-strength";
 import { TrainerType } from "../data/enums/trainer-type";
 import { EnemyPokemon } from "./pokemon";
 import * as Utils from "../utils";
@@ -150,28 +151,28 @@ export default class Trainer extends Phaser.GameObjects.Container {
       const strength = partyTemplate.getStrength(i);
       
       switch (strength) {
-        case TrainerPartyMemberStrength.WEAKER:
+        case PartyMemberStrength.WEAKER:
           multiplier = 0.95;
           break;
-        case TrainerPartyMemberStrength.WEAK:
+        case PartyMemberStrength.WEAK:
           multiplier = 1.0;
           break;
-        case TrainerPartyMemberStrength.AVERAGE:
+        case PartyMemberStrength.AVERAGE:
           multiplier = 1.1;
           break;
-        case TrainerPartyMemberStrength.STRONG:
+        case PartyMemberStrength.STRONG:
           multiplier = 1.2;
           break;
-        case TrainerPartyMemberStrength.STRONGER:
+        case PartyMemberStrength.STRONGER:
           multiplier = 1.25;
           break;
       }
 
       let levelOffset = 0;
 
-      if (strength < TrainerPartyMemberStrength.STRONG) {
+      if (strength < PartyMemberStrength.STRONG) {
         multiplier = Math.min(multiplier + 0.025 * Math.floor(difficultyWaveIndex / 25), 1.2);
-        levelOffset = -Math.floor((difficultyWaveIndex / 50) * (TrainerPartyMemberStrength.STRONG - strength));
+        levelOffset = -Math.floor((difficultyWaveIndex / 50) * (PartyMemberStrength.STRONG - strength));
       }
 
       const level = Math.ceil(baseLevel * multiplier) + levelOffset;
@@ -189,13 +190,14 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     this.scene.executeWithSeedOffset(() => {
       const template = this.getPartyTemplate();
+      const strength: PartyMemberStrength = template.getStrength(index);
 
       if (this.config.partyMemberFuncs.hasOwnProperty(index)) {
-        ret = this.config.partyMemberFuncs[index](this.scene, level);
+        ret = this.config.partyMemberFuncs[index](this.scene, level, strength);
         return;
       }
       if (this.config.partyMemberFuncs.hasOwnProperty(index - template.size)) {
-        ret = this.config.partyMemberFuncs[index - template.size](this.scene, level);
+        ret = this.config.partyMemberFuncs[index - template.size](this.scene, level, template.getStrength(index));
         return;
       }
 
@@ -210,8 +212,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
       }
 
       const species = template.isSameSpecies(index) && index > offset
-        ? getPokemonSpecies(battle.enemyParty[offset].species.getSpeciesForLevel(level, false, true, this.config.isBoss))
-        : this.genNewPartyMemberSpecies(level);
+        ? getPokemonSpecies(battle.enemyParty[offset].species.getTrainerSpeciesForLevel(level, false, template.getStrength(offset)))
+        : this.genNewPartyMemberSpecies(level, strength);
       
       ret = this.scene.addEnemyPokemon(species, level, !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
     }, this.config.hasStaticParty ? this.config.getDerivedType() + ((index + 1) << 8) : this.scene.currentBattle.waveIndex + (this.config.getDerivedType() << 10) + (((!this.config.useSameSeedForAllMembers ? index : 0) + 1) << 8));
@@ -219,7 +221,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return ret;
   }
 
-  genNewPartyMemberSpecies(level: integer, attempt?: integer): PokemonSpecies {
+  genNewPartyMemberSpecies(level: integer, strength: PartyMemberStrength, attempt?: integer): PokemonSpecies {
     const battle = this.scene.currentBattle;
     const template = this.getPartyTemplate();
 
@@ -237,7 +239,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     } else
       species = this.scene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
 
-    let ret = getPokemonSpecies(species.getSpeciesForLevel(level, true, true, this.config.isBoss));
+    let ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength));
     let retry = false;
 
     console.log(ret.getName());
@@ -255,7 +257,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
       console.log('Attempting reroll of species evolution to fit specialty type...');
       let evoAttempt = 0;
       while (retry && evoAttempt++ < 10) {
-        ret = getPokemonSpecies(species.getSpeciesForLevel(level, true, true, this.config.isBoss));
+        ret = getPokemonSpecies(species.getTrainerSpeciesForLevel(level, true, strength));
         console.log(ret.name);
         if (this.config.specialtyTypes.find(t => ret.isOfType(t)))
           retry = false;
@@ -264,7 +266,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     if (retry && (attempt || 0) < 10) {
       console.log('Rerolling party member...')
-      ret = this.genNewPartyMemberSpecies(level, (attempt || 0) + 1);
+      ret = this.genNewPartyMemberSpecies(level, strength, (attempt || 0) + 1);
     }
 
     return ret;
@@ -323,15 +325,15 @@ export default class Trainer extends Phaser.GameObjects.Container {
   
   getPartyMemberModifierChanceMultiplier(index: integer): number {
     switch (this.getPartyTemplate().getStrength(index)) {
-      case TrainerPartyMemberStrength.WEAKER:
+      case PartyMemberStrength.WEAKER:
         return 0.75;
-      case TrainerPartyMemberStrength.WEAK:
+      case PartyMemberStrength.WEAK:
         return 0.675;
-      case TrainerPartyMemberStrength.AVERAGE:
+      case PartyMemberStrength.AVERAGE:
         return 0.5625;
-      case TrainerPartyMemberStrength.STRONG:
+      case PartyMemberStrength.STRONG:
         return 0.45;
-      case TrainerPartyMemberStrength.STRONGER:
+      case PartyMemberStrength.STRONGER:
         return 0.375;
     }
   }

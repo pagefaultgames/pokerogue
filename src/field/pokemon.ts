@@ -2254,9 +2254,9 @@ export class EnemyPokemon extends Pokemon {
       this.battleInfo.updateBossSegments(this);
   }
   
-  setBoss(boss: boolean = true): void {
+  setBoss(boss: boolean = true, bossSegments: integer = 0): void {
     if (boss) {
-      this.bossSegments = this.scene.getEncounterBossSegments(this.scene.currentBattle.waveIndex, this.level, this.species, true);
+      this.bossSegments = bossSegments || this.scene.getEncounterBossSegments(this.scene.currentBattle.waveIndex, this.level, this.species, true);
       this.bossSegmentIndex = this.bossSegments - 1;
     } else {
       this.bossSegments = 0;

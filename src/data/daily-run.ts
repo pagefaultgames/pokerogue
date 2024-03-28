@@ -5,6 +5,7 @@ import { Starter } from "../ui/starter-select-ui-handler";
 import * as Utils from "../utils";
 import { Species } from "./enums/species";
 import { getPokemonSpecies, speciesStarters } from "./pokemon-species";
+import { PartyMemberStrength } from "./enums/party-member-strength";
 
 export interface DailyRunConfig {
   seed: integer;
@@ -39,7 +40,7 @@ export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[]
       const weightSpecies = Object.keys(speciesStarters)
         .map(s => parseInt(s) as Species)
         .filter(s => speciesStarters[s] === weight);
-      const starterSpecies = getPokemonSpecies(getPokemonSpecies(Utils.randSeedItem(weightSpecies)).getSpeciesForLevel(startingLevel, true, true, false, true));
+      const starterSpecies = getPokemonSpecies(getPokemonSpecies(Utils.randSeedItem(weightSpecies)).getTrainerSpeciesForLevel(startingLevel, true, PartyMemberStrength.STRONGER));
       const pokemon = new PlayerPokemon(scene, starterSpecies, startingLevel, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
       const starter: Starter = {
         species: starterSpecies,

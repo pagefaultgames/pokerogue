@@ -17,6 +17,7 @@ import { Moves } from "../data/enums/moves";
 import { TimeOfDay } from "../data/enums/time-of-day";
 import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
+import { PartyMemberStrength } from "../data/enums/party-member-strength";
 
 const WEATHER_OVERRIDE = WeatherType.NONE;
 
@@ -118,7 +119,7 @@ export class Arena {
       return this.randomSpecies(waveIndex, level, (attempt || 0) + 1);
     }
 
-    const newSpeciesId = ret.getSpeciesForLevel(level, true, false, isBoss);
+    const newSpeciesId = ret.getWildSpeciesForLevel(level, true, isBoss, this.scene.gameMode);
     if (newSpeciesId !== ret.speciesId) {
       console.log('Replaced', Species[ret.speciesId], 'with', Species[newSpeciesId]);
       ret = getPokemonSpecies(newSpeciesId);
