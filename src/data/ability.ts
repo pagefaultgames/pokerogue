@@ -762,7 +762,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     
     pokemon.scene.playSound('PRSFX- Transform');
 
-    pokemon.loadAssets().then(() => pokemon.playAnim());
+    pokemon.loadAssets(false).then(() => pokemon.playAnim());
 
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` transformed\ninto ${target.name}!`));
 

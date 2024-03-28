@@ -2480,7 +2480,7 @@ export class TransformAttr extends MoveEffectAttr {
 
       user.scene.queueMessage(getPokemonMessage(user, ` transformed\ninto ${target.name}!`));
 
-      user.loadAssets().then(() => {
+      user.loadAssets(false).then(() => {
         user.playAnim();
         resolve(true);
       });

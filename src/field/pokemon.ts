@@ -275,7 +275,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract getBattlerIndex(): BattlerIndex;
 
-  loadAssets(): Promise<void> {
+  loadAssets(ignoreOveride: boolean = true): Promise<void> {
     return new Promise(resolve => {
       const moveIds = this.getMoveset().map(m => m.getMove().id);
       Promise.allSettled(moveIds.map(m => initMoveAnim(m)))
@@ -283,10 +283,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           loadMoveAnimAssets(this.scene, moveIds);
           this.getSpeciesForm().loadAssets(this.scene, this.getGender() === Gender.FEMALE, this.formIndex, this.shiny);
           if (this.isPlayer() || this.getFusionSpeciesForm())
-            this.scene.loadPokemonAtlas(this.getBattleSpriteKey(true, true), this.getBattleSpriteAtlasPath(true, true));
+            this.scene.loadPokemonAtlas(this.getBattleSpriteKey(true, ignoreOveride), this.getBattleSpriteAtlasPath(true, ignoreOveride));
           if (this.getFusionSpeciesForm()) {
             this.getFusionSpeciesForm().loadAssets(this.scene, this.getFusionGender() === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny);
-            this.scene.loadPokemonAtlas(this.getFusionBattleSpriteKey(true, true), this.getFusionBattleSpriteAtlasPath(true, true));
+            this.scene.loadPokemonAtlas(this.getFusionBattleSpriteKey(true, ignoreOveride), this.getFusionBattleSpriteAtlasPath(true, ignoreOveride));
           }
           this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             if (this.isPlayer()) {
