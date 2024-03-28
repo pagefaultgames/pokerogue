@@ -669,6 +669,10 @@ export class PerishSongTag extends BattlerTag {
     super(BattlerTagType.PERISH_SONG, BattlerTagLapseType.TURN_END, turnCount, Moves.PERISH_SONG);
   }
 
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.isBossImmune();
+  }
+
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = super.lapse(pokemon, lapseType);
 

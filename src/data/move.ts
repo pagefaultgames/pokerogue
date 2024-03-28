@@ -1826,10 +1826,8 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       return false;
 
     const chance = this.getTagChance(user, target, move);
-    if (chance < 0 || chance === 100 || user.randSeedInt(100) < chance) {
-      (this.selfTarget ? user : target).addTag(this.tagType,  user.randSeedInt(this.turnCountMax - this.turnCountMin, this.turnCountMin), move.id, user.id);
-      return true;
-    }
+    if (chance < 0 || chance === 100 || user.randSeedInt(100) < chance)
+      return (this.selfTarget ? user : target).addTag(this.tagType,  user.randSeedInt(this.turnCountMax - this.turnCountMin, this.turnCountMin), move.id, user.id);
 
     return false;
   }
