@@ -1954,7 +1954,7 @@ export class CommonAnimPhase extends PokemonPhase {
 export class MovePhase extends BattlePhase {
   public pokemon: Pokemon;
   public move: PokemonMove;
-  protected targets: BattlerIndex[];
+  public targets: BattlerIndex[];
   protected followUp: boolean;
   protected ignorePp: boolean;
   protected cancelled: boolean;
@@ -2846,6 +2846,18 @@ export class FaintPhase extends PokemonPhase {
         const hasReservePartyMember = !!this.scene.getEnemyParty().filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot).length;
         if (hasReservePartyMember)
           this.scene.pushPhase(new SwitchSummonPhase(this.scene, this.fieldIndex, -1, false, false, false));
+      }
+    }
+
+    if (this.scene.currentBattle.double) {
+      const allyPokemon = pokemon.getAlly();
+      if (allyPokemon?.isActive(true)) {
+        let targetingMovePhase: MovePhase;
+        do {
+          targetingMovePhase = this.scene.findPhase(mp => mp instanceof MovePhase && mp.targets.length === 1 && mp.targets[0] === pokemon.getBattlerIndex()) as MovePhase;
+          if (targetingMovePhase && targetingMovePhase.targets[0] !== allyPokemon.getBattlerIndex())
+            targetingMovePhase.targets[0] = allyPokemon.getBattlerIndex();
+        } while (targetingMovePhase);
       }
     }
 
