@@ -2084,7 +2084,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 64, Moves.HYPER_BEAM ],
   ],
   [Species.PINSIR]: [
-    [ 1, Moves.VICE_GRIP ],
+    [ 1, Moves.VISE_GRIP ],
     [ 1, Moves.HARDEN ],
     [ 4, Moves.FOCUS_ENERGY ],
     [ 8, Moves.BIND ],
@@ -9992,7 +9992,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 56, Moves.EXPLOSION ],
   ],
   [Species.KLINK]: [
-    [ 1, Moves.VICE_GRIP ],
+    [ 1, Moves.VISE_GRIP ],
     [ 1, Moves.THUNDER_SHOCK ],
     [ 4, Moves.BIND ],
     [ 8, Moves.CHARGE ],
@@ -10008,7 +10008,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 48, Moves.HYPER_BEAM ],
   ],
   [Species.KLANG]: [
-    [ 1, Moves.VICE_GRIP ],
+    [ 1, Moves.VISE_GRIP ],
     [ 1, Moves.BIND ],
     [ 1, Moves.THUNDER_SHOCK ],
     [ 1, Moves.CHARGE ],
@@ -10024,7 +10024,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 54, Moves.HYPER_BEAM ],
   ],
   [Species.KLINKLANG]: [
-    [ 1, Moves.VICE_GRIP ],
+    [ 1, Moves.VISE_GRIP ],
     [ 1, Moves.BIND ],
     [ 1, Moves.THUNDER_SHOCK ],
     [ 1, Moves.CHARGE ],
@@ -10565,7 +10565,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.DURANT]: [
     [ 1, Moves.SAND_ATTACK ],
     [ 1, Moves.FURY_CUTTER ],
-    [ 4, Moves.VICE_GRIP ],
+    [ 4, Moves.VISE_GRIP ],
     [ 8, Moves.METAL_CLAW ],
     [ 12, Moves.BEAT_UP ],
     [ 16, Moves.BUG_BITE ],
@@ -12341,7 +12341,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 52, Moves.REST ],
   ],
   [Species.GRUBBIN]: [
-    [ 1, Moves.VICE_GRIP ],
+    [ 1, Moves.VISE_GRIP ],
     [ 1, Moves.MUD_SLAP ],
     [ 5, Moves.STRING_SHOT ],
     [ 10, Moves.BUG_BITE ],
@@ -12354,7 +12354,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.CHARJABUG]: [
     [ 0, Moves.CHARGE ],
-    [ 1, Moves.VICE_GRIP ],
+    [ 1, Moves.VISE_GRIP ],
     [ 1, Moves.STRING_SHOT ],
     [ 1, Moves.MUD_SLAP ],
     [ 1, Moves.BUG_BITE ],

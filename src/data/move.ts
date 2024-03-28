@@ -2637,7 +2637,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .punchingMove(),
     new AttackMove(Moves.SCRATCH, "Scratch", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, "Hard, pointed, sharp claws rake the target to inflict damage.", -1, 0, 1),
-    new AttackMove(Moves.VICE_GRIP, "Vise Grip", Type.NORMAL, MoveCategory.PHYSICAL, 55, 100, 30, "The target is gripped and squeezed from both sides to inflict damage.", -1, 0, 1),
+    new AttackMove(Moves.VISE_GRIP, "Vise Grip", Type.NORMAL, MoveCategory.PHYSICAL, 55, 100, 30, "The target is gripped and squeezed from both sides to inflict damage.", -1, 0, 1),
     new AttackMove(Moves.GUILLOTINE, "Guillotine", Type.NORMAL, MoveCategory.PHYSICAL, -1, 30, 5, "A vicious, tearing attack with big pincers. The target faints instantly if this attack hits.", -1, 0, 1)
       .attr(OneHitKOAttr)
       .attr(OneHitKOAccuracyAttr),
@@ -3963,7 +3963,7 @@ export function initMoves() {
       .target(MoveTarget.ALL),
     new StatusMove(Moves.STICKY_WEB, "Sticky Web (N)", Type.BUG, -1, 20, "The user weaves a sticky net around the opposing team, which lowers their Speed stats upon switching into battle.", -1, 0, 6)
       .target(MoveTarget.ENEMY_SIDE),
-    new AttackMove(Moves.FELL_STINGER, "Fell Stinger (N)", Type.BUG, MoveCategory.PHYSICAL, 50, 100, 25, "When the user knocks out a target with this move, the user's Attack stat rises drastically.", -1, 0, 6),
+    new AttackMove(Moves.FELL_STINGER, "Fell Stinger (P)", Type.BUG, MoveCategory.PHYSICAL, 50, 100, 25, "When the user knocks out a target with this move, the user's Attack stat rises drastically.", -1, 0, 6),
     new AttackMove(Moves.PHANTOM_FORCE, "Phantom Force", Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, "The user vanishes somewhere, then strikes the target on the next turn. This move hits even if the target protects itself.", -1, 0, 6)
       .attr(ChargeAttr, ChargeAnim.PHANTOM_FORCE_CHARGING, 'vanished\ninstantly!', BattlerTagType.HIDDEN)
       .ignoresProtect()
