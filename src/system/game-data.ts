@@ -1067,14 +1067,35 @@ export class GameData {
     let thresholdA: integer;
     let thresholdB: integer;
 
-    if (baseValue >= 8)
-      [ thresholdA, thresholdB ] = [ 3, 10 ];
-    else if (baseValue >= 6)
-      [ thresholdA, thresholdB ] = [ 5, 20 ];
-    else if (baseValue >= 4)
-      [ thresholdA, thresholdB ] = [ 10, 30 ];
-    else
-      [ thresholdA, thresholdB ] = [ 25, 100 ];
+    switch (baseValue) {
+      case 1:
+        [ thresholdA, thresholdB ] = [ 25, 100 ];
+        break;
+      case 2:
+        [ thresholdA, thresholdB ] = [ 20, 70 ];
+        break;
+      case 3:
+        [ thresholdA, thresholdB ] = [ 15, 50 ];
+        break;
+      case 4:
+        [ thresholdA, thresholdB ] = [ 10, 30 ];
+        break;
+      case 5:
+        [ thresholdA, thresholdB ] = [ 8, 25 ];
+        break;
+      case 6:
+        [ thresholdA, thresholdB ] = [ 5, 15 ];
+        break;
+      case 7:
+        [ thresholdA, thresholdB ] = [ 4, 12 ];
+        break;
+      case 8:
+        [ thresholdA, thresholdB ] = [ 3, 10 ];
+        break;
+      default:
+        [ thresholdA, thresholdB ] = [ 2, 5 ];
+        break;
+    }
 
     if (caughtHatchedCount >= thresholdA) {
       value = decrementValue(value);
