@@ -1415,8 +1415,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesFormEvolution(Species.ARCHALUDON, '', '', 1, EvolutionItem.METAL_ALLOY, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.KUBFU]: [
-    new SpeciesFormEvolution(Species.URSHIFU, '', 'single-strike', 1, EvolutionItem.SCROLL_OF_DARKNESS, null, null),
-    new SpeciesFormEvolution(Species.URSHIFU, '', 'rapid-strike', 1, EvolutionItem.SCROLL_OF_WATERS, null, null)
+    new SpeciesFormEvolution(Species.URSHIFU, '', 'single-strike', 1, EvolutionItem.SCROLL_OF_DARKNESS, null, SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesFormEvolution(Species.URSHIFU, '', 'rapid-strike', 1, EvolutionItem.SCROLL_OF_WATERS, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.GALAR_DARUMAKA]: [
     new SpeciesEvolution(Species.GALAR_DARMANITAN, 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.LONG)
