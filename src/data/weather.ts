@@ -243,6 +243,7 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       break;
     case Biome.TALL_GRASS:
       weatherPool = [
+        { weatherType: WeatherType.NONE, weight: 8 },
         { weatherType: WeatherType.RAIN, weight: 5 },
         { weatherType: WeatherType.FOG, weight: 2 }
       ];

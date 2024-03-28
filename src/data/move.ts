@@ -17,6 +17,7 @@ import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
+import { SpeciesFormChangeActiveTrigger } from "./pokemon-forms";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -2103,6 +2104,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         switchOutTarget.hideInfo();
         switchOutTarget.setVisible(false);
         switchOutTarget.scene.field.remove(switchOutTarget);
+        user.scene.triggerPokemonFormChange(switchOutTarget, SpeciesFormChangeActiveTrigger, true);
 
         if (switchOutTarget.hp)
           user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot), false, this.batonPass, false));

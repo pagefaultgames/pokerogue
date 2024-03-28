@@ -337,7 +337,7 @@ export const trainerTypeDialogue = {
         $@c{serious_mopen_fists}Don't hold back, I want you to give me everything you've got!`
       ],
       victory: [
-        `@c{shock}Wow… You actually cleaned me out.\nAre you actually a beginner?
+        `@c{shock}Wow… You cleaned me out.\nAre you actually a beginner?
         $@c{smile}Maybe it was a bit of luck but…\nWho knows you might just be able to go all the way.
         $By the way, the professor asked me to give you these items. They look pretty cool.
         $@c{serious_smile_fists}Good luck out there!`
