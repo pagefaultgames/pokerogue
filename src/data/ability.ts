@@ -588,6 +588,27 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   }
 }
 
+export class PostAttackContactApplyStatusEffectAbAttr extends PostAttackAbAttr {
+  private chance: integer;
+  private effects: StatusEffect[];
+
+  constructor(chance: integer, ...effects: StatusEffect[]) {
+    super();
+
+    this.chance = chance;
+    this.effects = effects;
+  }
+
+  applyPostAttack(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
+      const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
+      return attacker.trySetStatus(effect, true);
+    }
+
+    return false;
+  }
+}
+
 export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   private condition: PokemonDefendCondition;
 
@@ -2145,7 +2166,7 @@ export function initAbilities() {
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.POWDER_MOVE))
       .ignorable(),
     new Ability(Abilities.POISON_TOUCH, "Poison Touch", "May poison a target when the Pokémon makes contact.", 5)
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON),
+      .attr(PostAttackContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON),
     new Ability(Abilities.REGENERATOR, "Regenerator (N)", "Restores a little HP when withdrawn from battle.", 5),
     new Ability(Abilities.BIG_PECKS, "Big Pecks", "Protects the Pokémon from Defense-lowering effects.", 5)
       .attr(ProtectStatAbAttr, BattleStat.DEF)
