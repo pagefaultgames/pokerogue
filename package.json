@@ -39,10 +39,5 @@
 	"imports": {
 		"#app": "./src/main.js",
 		"#app/*": "./src/*"
-	},
-	"jest": {
-		"setupFiles": [
-			"jest-canvas-mock"
-		]
 	}
 }
