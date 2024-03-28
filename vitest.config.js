@@ -3,6 +3,9 @@ import { defineConfig } from 'vite';
 
 export default defineConfig(({ mode }) => {
 	return {
+		test: {
+			environment: 'happy-dom',
+		},
 		plugins: [/*fs()*/],
 		server: { host: '0.0.0.0', port: 8000 },
 		clearScreen: false,
