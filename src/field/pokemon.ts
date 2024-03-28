@@ -2057,7 +2057,7 @@ export class PlayerPokemon extends Pokemon {
     return true;
   }
 
-  switchOut(batonPass: boolean): Promise<void> {
+  switchOut(batonPass: boolean, removeFromField: boolean = false): Promise<void> {
     return new Promise(resolve => {
       this.resetTurnData();
       this.resetSummonData();
@@ -2067,6 +2067,11 @@ export class PlayerPokemon extends Pokemon {
       this.scene.ui.setMode(Mode.PARTY, PartyUiMode.FAINT_SWITCH, this.getFieldIndex(), (slotIndex: integer, option: PartyOption) => {
         if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6)
           this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, this.getFieldIndex(), slotIndex, false, batonPass));
+        if (removeFromField) {
+          this.setVisible(false);
+          this.scene.field.remove(this);
+          this.scene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
+        }
         this.scene.ui.setMode(Mode.MESSAGE).then(() => resolve());
       }, PartyUiHandler.FilterNonFainted);
     });
