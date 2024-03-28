@@ -992,6 +992,7 @@ export default class BattleScene extends Phaser.Scene {
 			case Species.UNOWN:
 			case Species.SHELLOS:
 			case Species.GASTRODON:
+			case Species.BASCULIN:
 			case Species.DEERLING:
 			case Species.SAWSBUCK:
 			case Species.ORICORIO:
@@ -1001,6 +1002,7 @@ export default class BattleScene extends Phaser.Scene {
 				return Utils.randSeedInt(species.forms.length);
 			case Species.MEOWSTIC:
 			case Species.INDEEDEE:
+			case Species.BASCULEGION:
 			case Species.OINKOLOGNE:
 				return gender === Gender.FEMALE ? 1 : 0;
 			case Species.TOXTRICITY:

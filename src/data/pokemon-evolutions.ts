@@ -1352,8 +1352,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.LILLIGANT, 1, EvolutionItem.SUN_STONE, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAWN || p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.BASCULIN]: [
-    new SpeciesFormEvolution(Species.BASCULEGION, 'white-striped', 'male', 25, null, new SpeciesEvolutionCondition(p => p.gender === Gender.MALE, p => p.gender = Gender.MALE)),
-    new SpeciesFormEvolution(Species.BASCULEGION, 'white-striped', 'female', 25, null, new SpeciesEvolutionCondition(p => p.gender === Gender.FEMALE, p => p.gender = Gender.FEMALE))
+    new SpeciesFormEvolution(Species.BASCULEGION, 'white-striped', 'male', 25, null, new SpeciesEvolutionCondition(p => p.gender === Gender.MALE, p => p.gender = Gender.MALE), SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesFormEvolution(Species.BASCULEGION, 'white-striped', 'female', 25, null, new SpeciesEvolutionCondition(p => p.gender === Gender.FEMALE, p => p.gender = Gender.FEMALE), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MINCCINO]: [
     new SpeciesEvolution(Species.CINCCINO, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.LONG)
