@@ -776,7 +776,7 @@ export const modifierTypes = {
       return null;
     let type: Type;
     if (!Utils.randSeedInt(3)) {
-      const partyMemberTypes = party.map(p => p.getTypes(false, true)).flat();
+      const partyMemberTypes = party.map(p => p.getTypes(false, false, true)).flat();
       type = Utils.randSeedItem(partyMemberTypes);
     } else
       type = Utils.randSeedInt(64) ? Utils.randSeedInt(18) as Type : Type.STELLAR;

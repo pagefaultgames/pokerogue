@@ -533,7 +533,7 @@ export default class SummaryUiHandler extends UiHandler {
           return typeIcon;
         };
 
-        const types = this.pokemon.getTypes(false, true);
+        const types = this.pokemon.getTypes(false, false, true);
         profileContainer.add(getTypeIcon(0, types[0]));
         if (types.length > 1)
           profileContainer.add(getTypeIcon(1, types[1]));

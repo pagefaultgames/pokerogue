@@ -629,7 +629,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getLevelMoves(1, true).map(lm => lm[1]).filter(lm => !this.moveset.filter(m => m.moveId === lm).length).filter((move: Moves, i: integer, array: Moves[]) => array.indexOf(move) === i);
   }
 
-  getTypes(includeTeraType = false, ignoreOverride?: boolean): Type[] {
+  getTypes(includeTeraType = false, forDefend: boolean = false, ignoreOverride?: boolean): Type[] {
     const types = [];
 
     if (includeTeraType) {
@@ -659,7 +659,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    if (this.getTag(BattlerTagType.IGNORE_FLYING) || this.scene.arena.getTag(ArenaTagType.GRAVITY)) {
+    if (forDefend && (this.getTag(BattlerTagType.IGNORE_FLYING) || this.scene.arena.getTag(ArenaTagType.GRAVITY))) {
       const flyingIndex = types.indexOf(Type.FLYING);
       if (flyingIndex > -1)
         types.splice(flyingIndex, 1);
@@ -735,13 +735,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getAttackTypeEffectiveness(moveType: Type): TypeDamageMultiplier {
     if (moveType === Type.STELLAR)
       return this.isTerastallized() ? 2 : 1;
-    const types = this.getTypes(true);
+    const types = this.getTypes(true, true);
     return getTypeDamageMultiplier(moveType, types[0]) * (types.length > 1 ? getTypeDamageMultiplier(moveType, types[1]) : 1) as TypeDamageMultiplier;
   }
 
   getMatchupScore(pokemon: Pokemon): number {
     const types = this.getTypes(true);
-    const enemyTypes = pokemon.getTypes(true);
+    const enemyTypes = pokemon.getTypes(true, true);
     const outspeed = (this.isActive(true) ? this.getBattleStat(Stat.SPD, pokemon) : this.getStat(Stat.SPD)) <= pokemon.getBattleStat(Stat.SPD, this);
     let atkScore = pokemon.getAttackTypeEffectiveness(types[0]) * (outspeed ? 1.25 : 1);
     let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0]), 0.25);
@@ -1045,7 +1045,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const cancelled = new Utils.BooleanHolder(false);
     const typeless = !!move.getAttrs(TypelessAttr).length;
-    const types = this.getTypes(true);
+    const types = this.getTypes(true, true);
     const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => (attr as StatusMoveTypeImmunityAttr).immuneType === move.type))
       ? getTypeDamageMultiplier(move.type, types[0]) * (types.length > 1 ? getTypeDamageMultiplier(move.type, types[1]) : 1)
       : 1);
