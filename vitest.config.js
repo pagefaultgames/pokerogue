@@ -4,7 +4,26 @@ import { defineConfig } from 'vite';
 export default defineConfig(({ mode }) => {
 	return {
 		test: {
-			environment: 'happy-dom',
+			setupFiles: ['./src/test/vitest.setup.ts'],
+			environment: 'jsdom',
+			deps: {
+				optimizer: {
+					web: {
+						include: ['vitest-canvas-mock'],
+					}
+				}
+			},
+			threads: false,
+			environmentOptions: {
+				jsdom: {
+					resources: 'usable',
+				},
+			},
+			coverage: {
+				provider: 'istanbul',
+				reportsDirectory: 'coverage',
+				reporters: ['text-summary', 'html'],
+			},
 		},
 		plugins: [/*fs()*/],
 		server: { host: '0.0.0.0', port: 8000 },
