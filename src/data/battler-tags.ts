@@ -340,8 +340,8 @@ export class FrenzyTag extends BattlerTag {
 export class EncoreTag extends BattlerTag {
   public moveId: Moves;
 
-  constructor(sourceMove: Moves, sourceId: integer) {
-    super(BattlerTagType.ENCORE, BattlerTagLapseType.AFTER_MOVE, 3, sourceMove, sourceId);
+  constructor(sourceId: integer) {
+    super(BattlerTagType.ENCORE, BattlerTagLapseType.AFTER_MOVE, 3, Moves.ENCORE, sourceId);
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -393,6 +393,16 @@ export class EncoreTag extends BattlerTag {
     super.onRemove(pokemon);
 
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\'s Encore\nended!'));
+  }
+}
+
+export class HelpingHandTag extends BattlerTag {
+  constructor(sourceId: integer) {
+    super(BattlerTagType.HELPING_HAND, BattlerTagLapseType.TURN_END, 1, Moves.HELPING_HAND, sourceId);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon.scene.getPokemonById(this.sourceId), ` is ready to\nhelp ${pokemon.name}!`));
   }
 }
 
@@ -880,7 +890,9 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.FRENZY:
       return new FrenzyTag(sourceMove, sourceId);
     case BattlerTagType.ENCORE:
-      return new EncoreTag(sourceMove, sourceId);
+      return new EncoreTag(sourceId);
+    case BattlerTagType.HELPING_HAND:
+      return new HelpingHandTag(sourceId);
     case BattlerTagType.INGRAIN:
       return new IngrainTag(sourceId);
     case BattlerTagType.AQUA_RING:
@@ -939,6 +951,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
     case BattlerTagType.IGNORE_FLYING:
       return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+    case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
   }

@@ -3205,7 +3205,7 @@ export function initMoves() {
       .hidesUser(),
     new StatusMove(Moves.ENCORE, "Encore", Type.NORMAL, 100, 5, "The user compels the target to keep using the move it encored for three turns.", -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
-      .condition((user, target, move) => new EncoreTag(move.id, user.id).canAdd(target)),
+      .condition((user, target, move) => new EncoreTag(user.id).canAdd(target)),
     new AttackMove(Moves.PURSUIT, "Pursuit (P)", Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, "The power of this attack move is doubled if it's used on a target that's switching out of battle.", -1, 0, 2),
     new AttackMove(Moves.RAPID_SPIN, "Rapid Spin", Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, "A spin attack that can also eliminate such moves as Bind, Wrap, and Leech Seed. This also raises the user's Speed stat.", 100, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
@@ -3300,7 +3300,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.CHARGE, "Charge (P)", Type.ELECTRIC, -1, 20, "The user boosts the power of the Electric move it uses on the next turn. This also raises the user's Sp. Def stat.", -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, 1, true),
     new StatusMove(Moves.TAUNT, "Taunt (N)", Type.DARK, 100, 20, "The target is taunted into a rage that allows it to use only attack moves for three turns.", -1, 0, 3),
-    new StatusMove(Moves.HELPING_HAND, "Helping Hand (N)", Type.NORMAL, -1, 20, "The user assists an ally by boosting the power of that ally's attack.", -1, 5, 3)
+    new StatusMove(Moves.HELPING_HAND, "Helping Hand", Type.NORMAL, -1, 20, "The user assists an ally by boosting the power of that ally's attack.", -1, 5, 3)
+      .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.TRICK, "Trick (N)", Type.PSYCHIC, 100, 10, "The user catches the target off guard and swaps its held item with its own.", -1, 0, 3),
     new StatusMove(Moves.ROLE_PLAY, "Role Play (N)", Type.PSYCHIC, -1, 10, "The user mimics the target completely, copying the target's Ability.", -1, 0, 3),

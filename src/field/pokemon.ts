@@ -17,7 +17,7 @@ import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEv
 import { reverseCompatibleTms, tmSpecies } from '../data/tms';
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase } from '../phases';
 import { BattleStat } from '../data/battle-stat';
-import { BattlerTag, BattlerTagLapseType, EncoreTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
+import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
 import { BattlerTagType } from "../data/enums/battler-tag-type";
 import { Species } from '../data/enums/species';
 import { WeatherType } from '../data/weather';
@@ -1076,6 +1076,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.scene.arena.applyTags(WeakenMoveTypeTag, move.type, power);
             this.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, power);
           }
+          if (source.getTag(HelpingHandTag))
+            power.value *= 1.5;
           let isCritical: boolean;
           const critOnly = new Utils.BooleanHolder(false);
           applyMoveAttrs(CritOnlyAttr, source, this, move, critOnly);
