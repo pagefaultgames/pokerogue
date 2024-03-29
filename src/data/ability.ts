@@ -927,7 +927,7 @@ export class IncrementMovePriorityAbAttr extends AbAttr {
     if (!this.moveIncrementFunc(args[0] as Move))
       return false;
       
-    (args[0] as Utils.IntegerHolder).value++;
+    (args[1] as Utils.IntegerHolder).value++;
     return true;
   }
 }
