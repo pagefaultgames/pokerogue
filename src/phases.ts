@@ -637,6 +637,17 @@ export class EncounterPhase extends BattlePhase {
 
     if (battle.battleType === BattleType.TRAINER)
       loadEnemyAssets.push(battle.trainer.loadAssets().then(() => battle.trainer.initSprite()));
+    else {
+      const bossCount = battle.enemyParty.filter(p => p.isBoss()).length;
+      if (bossCount > 1) {
+        for (let enemyPokemon of battle.enemyParty) {
+          if (enemyPokemon.isBoss()) {
+            enemyPokemon.setBoss(true, Math.ceil(enemyPokemon.bossSegments / bossCount));
+            enemyPokemon.initBattleInfo();
+          }
+        }
+      }
+    }
 
     Promise.all(loadEnemyAssets).then(() => {
       battle.enemyParty.forEach((enemyPokemon, e) => {
