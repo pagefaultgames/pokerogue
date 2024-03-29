@@ -1,7 +1,7 @@
 import * as Modifiers from './modifier';
 import { AttackMove, allMoves } from '../data/move';
 import { Moves } from "../data/enums/moves";
-import { PokeballType, getPokeballName } from '../data/pokeball';
+import { PokeballType, getPokeballCatchMultiplier, getPokeballName } from '../data/pokeball';
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from '../field/pokemon';
 import { EvolutionItem, SpeciesFriendshipEvolutionCondition, pokemonEvolutions } from '../data/pokemon-evolutions';
 import { Stat, getStatName } from '../data/pokemon-stat';
@@ -113,7 +113,7 @@ export interface GeneratedPersistentModifierType {
 
 class AddPokeballModifierType extends ModifierType {
   constructor(pokeballType: PokeballType, count: integer, iconImage?: string) {
-    super(`${count}x ${getPokeballName(pokeballType)}`, `Receive ${getPokeballName(pokeballType)} x${count}`,
+    super(`${count}x ${getPokeballName(pokeballType)}`, `Receive ${getPokeballName(pokeballType)} x${count}\nCatch Rate: ${getPokeballCatchMultiplier(pokeballType) > -1 ? `${getPokeballCatchMultiplier(pokeballType)}x` : 'Certain'}`,
       (_type, _args) => new Modifiers.AddPokeballModifier(this, pokeballType, count), iconImage, 'pb', 'pb_bounce_1');
   }
 }
