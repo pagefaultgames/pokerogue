@@ -1173,7 +1173,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage);
           }
 
-          if (damage) {
+          if (damage.value) {
             applyPreDefendAbAttrs(PreDefendEndureAbAttr, this, source, battlerMove, cancelled, damage);
 
             const oneHitKo = result === HitResult.ONE_HIT_KO;
