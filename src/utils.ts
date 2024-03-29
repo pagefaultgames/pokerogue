@@ -149,6 +149,17 @@ export function decToBin(input: integer): string {
   return bin;
 }
 
+export function getIvsFromId(id: integer): integer[] {
+  return [
+    binToDec(decToBin(id).substring(0, 5)),
+    binToDec(decToBin(id).substring(5, 10)),
+    binToDec(decToBin(id).substring(10, 15)),
+    binToDec(decToBin(id).substring(15, 20)),
+    binToDec(decToBin(id).substring(20, 25)),
+    binToDec(decToBin(id).substring(25, 30))
+  ];
+}
+
 export function formatLargeNumber(count: integer, threshold: integer): string {
   if (count < threshold)
     return count.toString();

@@ -758,6 +758,12 @@ export default class BattleScene extends Phaser.Scene {
 
 	addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
 		const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+		if (boss) {
+			const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
+
+			for (let s = 0; s < pokemon.ivs.length; s++)
+				pokemon.ivs[s] = Math.round(Phaser.Math.Linear(Math.min(pokemon.ivs[s], secondaryIvs[s]), Math.max(pokemon.ivs[s], secondaryIvs[s]), 0.75));
+		}
 		if (postProcess)
 			postProcess(pokemon);
 		pokemon.init();

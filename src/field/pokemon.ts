@@ -145,14 +145,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionGender = dataSource.fusionGender;
     } else {
       this.id = Utils.randSeedInt(4294967296);
-      this.ivs = ivs || [
-        Utils.binToDec(Utils.decToBin(this.id).substring(0, 5)),
-        Utils.binToDec(Utils.decToBin(this.id).substring(5, 10)),
-        Utils.binToDec(Utils.decToBin(this.id).substring(10, 15)),
-        Utils.binToDec(Utils.decToBin(this.id).substring(15, 20)),
-        Utils.binToDec(Utils.decToBin(this.id).substring(20, 25)),
-        Utils.binToDec(Utils.decToBin(this.id).substring(25, 30))
-      ];
+      this.ivs = ivs || Utils.getIvsFromId(this.id);
     
       if (this.gender === undefined) {
         if (this.species.malePercent === null)

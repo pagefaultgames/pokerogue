@@ -382,15 +382,7 @@ export class EggHatchPhase extends Phase {
 
       ret.trySetShiny(this.egg.gachaType === GachaType.SHINY ? 1024 : 512);
 
-      const secondaryId = Utils.randSeedInt(4294967295);
-      const secondaryIvs = [
-        Utils.binToDec(Utils.decToBin(secondaryId).substring(0, 5)),
-        Utils.binToDec(Utils.decToBin(secondaryId).substring(5, 10)),
-        Utils.binToDec(Utils.decToBin(secondaryId).substring(10, 15)),
-        Utils.binToDec(Utils.decToBin(secondaryId).substring(15, 20)),
-        Utils.binToDec(Utils.decToBin(secondaryId).substring(20, 25)),
-        Utils.binToDec(Utils.decToBin(secondaryId).substring(25, 30))
-      ];
+      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
 
       for (let s = 0; s < ret.ivs.length; s++)
         ret.ivs[s] = Math.max(ret.ivs[s], secondaryIvs[s]);
