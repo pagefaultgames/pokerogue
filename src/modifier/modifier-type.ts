@@ -601,7 +601,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
 }
 
 class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
-  constructor() {
+  constructor(rare: boolean) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs)
         return new EvolutionItemModifierType(pregenArgs[0] as EvolutionItem);
@@ -609,7 +609,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
       const evolutionItemPool = party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
         const evolutions = pokemonEvolutions[p.species.speciesId];
         return evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || '') === p.getFormKey()) && (!e.condition || e.condition.predicate(p)));
-      }).flat().flatMap(e => e.item);
+      }).flat().flatMap(e => e.item).filter(i => (i <= 50) === rare);
 
       if (!evolutionItemPool.length)
         return null;
@@ -709,7 +709,8 @@ export const modifierTypes = {
   RARE_CANDY: () => new PokemonLevelIncrementModifierType('Rare Candy'),
   RARER_CANDY: () => new AllPokemonLevelIncrementModifierType('Rarer Candy'),
 
-  EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(),
+  EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(false),
+  RARE_EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(true),
   FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(),
 
   MEGA_BRACELET: () => new ModifierType('Mega Bracelet', 'Mega stones become available', (type, _args) => new Modifiers.MegaEvolutionAccessModifier(type)),
@@ -957,6 +958,7 @@ const modifierPool: ModifierPool = {
     }, 3),
     new WeightedModifierType(modifierTypes.SUPER_LURE, 4),
     new WeightedModifierType(modifierTypes.NUGGET, 5),
+    new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, 2),
     new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => party[0].scene.gameMode.isClassic ? 1 : 0, 1),
     new WeightedModifierType(modifierTypes.TM_GREAT, 2),
     new WeightedModifierType(modifierTypes.MEMORY_MUSHROOM, (party: Pokemon[]) => {
@@ -976,7 +978,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BIG_NUGGET, 12),
     new WeightedModifierType(modifierTypes.PP_UP, 9),
     new WeightedModifierType(modifierTypes.PP_MAX, 3),
-    new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, 16),
+    new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, 8),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),
