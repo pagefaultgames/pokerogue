@@ -609,7 +609,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
       const evolutionItemPool = party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
         const evolutions = pokemonEvolutions[p.species.speciesId];
         return evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || '') === p.getFormKey()) && (!e.condition || e.condition.predicate(p)));
-      }).flat().flatMap(e => e.item).filter(i => (i <= 50) === rare);
+      }).flat().flatMap(e => e.item).filter(i => (i > 50) === rare);
 
       if (!evolutionItemPool.length)
         return null;
