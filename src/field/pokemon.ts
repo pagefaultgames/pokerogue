@@ -1366,7 +1366,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   removeTagsBySourceId(sourceId: integer): void {
-    this.findAndRemoveTags(t => t.sourceId === sourceId);
+    this.findAndRemoveTags(t => t.isSourceLinked() && t.sourceId === sourceId);
   }
 
   transferTagsBySourceId(sourceId: integer, newSourceId: integer): void {

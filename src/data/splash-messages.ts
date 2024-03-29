@@ -1,6 +1,7 @@
 export const splashMessages = [
   'Join the Discord!',
   'Infinite Levels!',
+  'Everything Stacks!',
   'Optional Save Scumming!',
   '35 Biomes!',
   'Open Source!',

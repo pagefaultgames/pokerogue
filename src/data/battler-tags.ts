@@ -250,6 +250,10 @@ export class InfatuatedTag extends BattlerTag {
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' got over\nits infatuation.'));
   }
 
+  isSourceLinked(): boolean {
+    return true;
+  }
+
   getDescriptor(): string {
     return 'infatuation';
   }
