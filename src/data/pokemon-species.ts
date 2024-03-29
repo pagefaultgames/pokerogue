@@ -498,8 +498,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
             evolutionChance = Math.min(minChance + easeInFunc(Math.min(level - ev.level, maxLevelDiff) / maxLevelDiff) * (1 - minChance), 1);
           }
         } else {
-          let preferredMinLevel = Math.max((ev.level - 1) + ev.wildDelay * this.getStrengthLevelDiff(strength + 1), 1);
-          let evolutionLevel = Math.max(ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2), 1);
+          let preferredMinLevel = (ev.level - 1) + ev.wildDelay * this.getStrengthLevelDiff(strength + 1);
+          let evolutionLevel = ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2);
 
           if (ev.level <= 1 && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
             const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(ev => ev.speciesId === this.speciesId).level;

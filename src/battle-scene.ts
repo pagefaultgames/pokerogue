@@ -58,7 +58,6 @@ import { initTouchControls } from './touch-controls';
 
 export const bypassLogin = false;
 
-export const SEED_OVERRIDE = '';
 export const STARTING_LEVEL_OVERRIDE = 0;
 export const STARTING_WAVE_OVERRIDE = 0;
 export const STARTING_BIOME_OVERRIDE = Biome.TOWN;
@@ -780,7 +779,7 @@ export default class BattleScene extends Phaser.Scene {
 	reset(clearScene?: boolean): void {
 		this.gameMode = gameModes[GameModes.CLASSIC];
 		
-		this.setSeed(SEED_OVERRIDE || Utils.randomString(24));
+		this.setSeed(Utils.randomString(24));
 		console.log('Seed:', this.seed);
 
 		this.score = 0;
