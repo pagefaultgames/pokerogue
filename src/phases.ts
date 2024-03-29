@@ -2202,7 +2202,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
       const targetHitChecks = Object.fromEntries(targets.map(p => [ p.getBattlerIndex(), this.hitCheck(p) ]));
       const activeTargets = targets.map(t => t.isActive(true));
-      if (targets.length === 1 && !targetHitChecks[this.targets[0]] || !activeTargets.length) {
+      if (!activeTargets.length || (!this.move.getMove().isMultiTarget() && !targetHitChecks[this.targets[0]])) {
         user.turnData.hitCount = 1;
         user.turnData.hitsLeft = 1;
         if (activeTargets.length) {

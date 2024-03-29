@@ -145,6 +145,22 @@ export default class Move {
     return !!(this.flags & flag);
   }
 
+  isMultiTarget(): boolean {
+    switch (this.moveTarget) {
+      case MoveTarget.ALL_OTHERS:
+      case MoveTarget.ALL_NEAR_OTHERS:
+      case MoveTarget.ALL_NEAR_ENEMIES:
+      case MoveTarget.ALL_ENEMIES:
+      case MoveTarget.USER_AND_ALLIES:
+      case MoveTarget.ALL:
+      case MoveTarget.USER_SIDE:
+      case MoveTarget.ENEMY_SIDE:
+      case MoveTarget.BOTH_SIDES:
+        return true;
+    }
+    return false;
+  }
+
   condition(condition: MoveCondition | MoveConditionFunc): this {
     if (typeof condition === 'function')
       condition = new MoveCondition(condition as MoveConditionFunc);
