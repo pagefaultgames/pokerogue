@@ -556,6 +556,33 @@ export class RandomLevelDamageAttr extends FixedDamageAttr {
   }
 }
 
+export class ModifiedDamageAttr extends MoveAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const initialDamage = args[0] as Utils.IntegerHolder;
+    initialDamage.value = this.getModifiedDamage(user, target, move, initialDamage.value);
+
+    return true;
+  }
+
+  getModifiedDamage(user: Pokemon, target: Pokemon, move: Move, damage: integer): integer {
+    return damage;
+  }
+}
+
+export class SurviveDamageAttr extends ModifiedDamageAttr {
+  getModifiedDamage(user: Pokemon, target: Pokemon, move: Move, damage: number): number {
+    return Math.min(damage, target.hp - 1);
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => target.hp > 1;
+  }
+  
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    return target.hp > 1 ? 0 : -20;
+  }
+}
+
 export class RecoilAttr extends MoveEffectAttr {
   private useHp: boolean;
   private damageRatio: number;
@@ -3149,7 +3176,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.ATK, -2),
     new AttackMove(Moves.ROLLOUT, "Rollout", Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, "The user continually rolls into the target over five turns. It becomes more powerful each time it hits.", -1, 0, 2)
       .attr(ConsecutiveUseDoublePowerAttr, 5, true, true, Moves.DEFENSE_CURL),
-    new AttackMove(Moves.FALSE_SWIPE, "False Swipe (P)", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 40, "A restrained attack that prevents the target from fainting. The target is left with at least 1 HP.", -1, 0, 2),
+    new AttackMove(Moves.FALSE_SWIPE, "False Swipe", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 40, "A restrained attack that prevents the target from fainting. The target is left with at least 1 HP.", -1, 0, 2)
+      .attr(SurviveDamageAttr),
     new StatusMove(Moves.SWAGGER, "Swagger", Type.NORMAL, 85, 15, "The user enrages and confuses the target. However, this also sharply raises the target's Attack stat.", -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.ATK, 2)
       .attr(ConfuseAttr),
@@ -4084,7 +4112,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new AttackMove(Moves.NUZZLE, "Nuzzle", Type.ELECTRIC, MoveCategory.PHYSICAL, 20, 100, 20, "The user attacks by nuzzling its electrified cheeks against the target. This also leaves the target with paralysis.", 100, 0, 6)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
-    new AttackMove(Moves.HOLD_BACK, "Hold Back (P)", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 40, "The user holds back when it attacks, and the target is left with at least 1 HP.", -1, 0, 6),
+    new AttackMove(Moves.HOLD_BACK, "Hold Back", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 40, "The user holds back when it attacks, and the target is left with at least 1 HP.", -1, 0, 6)
+      .attr(SurviveDamageAttr),
     new AttackMove(Moves.INFESTATION, "Infestation (P)", Type.BUG, MoveCategory.SPECIAL, 20, 100, 20, "The target is infested and attacked for four to five turns. The target can't flee during this time.", 100, 0, 6),
     new AttackMove(Moves.POWER_UP_PUNCH, "Power-Up Punch", Type.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 20, "Striking opponents over and over makes the user's fists harder. Hitting a target raises the Attack stat.", 100, 0, 6)
       .attr(StatChangeAttr, BattleStat.ATK, 1, true)
