@@ -595,6 +595,8 @@ export class EncounterPhase extends BattlePhase {
 
     const battle = this.scene.currentBattle;
 
+    let totalBst = 0;
+
     battle.enemyLevels.forEach((level, e) => {
       if (!this.loaded) {
         if (battle.battleType === BattleType.TRAINER)
@@ -629,6 +631,8 @@ export class EncounterPhase extends BattlePhase {
           enemyPokemon.updateScale();
         }
       }
+      
+      totalBst += enemyPokemon.getSpeciesForm().baseTotal;
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
   
@@ -638,11 +642,10 @@ export class EncounterPhase extends BattlePhase {
     if (battle.battleType === BattleType.TRAINER)
       loadEnemyAssets.push(battle.trainer.loadAssets().then(() => battle.trainer.initSprite()));
     else {
-      const bossCount = battle.enemyParty.filter(p => p.isBoss()).length;
-      if (bossCount > 1) {
+      if (battle.enemyParty.filter(p => p.isBoss()).length > 1) {
         for (let enemyPokemon of battle.enemyParty) {
           if (enemyPokemon.isBoss()) {
-            enemyPokemon.setBoss(true, Math.ceil(enemyPokemon.bossSegments / bossCount));
+            enemyPokemon.setBoss(true, Math.ceil(enemyPokemon.bossSegments * (enemyPokemon.getSpeciesForm().baseTotal / totalBst)));
             enemyPokemon.initBattleInfo();
           }
         }
