@@ -548,6 +548,8 @@ export class GameData {
           scene.setSeed(sessionData.seed || scene.game.config.seed[0]);
           scene.resetSeed();
 
+          console.log('Seed:', scene.seed);
+
           scene.sessionPlayTime = sessionData.playTime || 0;
 
           const loadPokemonAssets: Promise<void>[] = [];
