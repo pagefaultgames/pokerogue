@@ -2243,7 +2243,9 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.getAttrs(RecoilAttr).length && move.id !== Moves.STRUGGLE, 1.2),
     new Ability(Abilities.MULTITYPE, "Multitype (N)", "Changes the Pokémon's type to match the Plate or Z-Crystal it holds.", 4)
       .attr(ProtectAbilityAbAttr),
-    new Ability(Abilities.FLOWER_GIFT, "Flower Gift (N)", "Boosts the Attack and Sp. Def stats of itself and allies in harsh sunlight.", 4)
+    new Ability(Abilities.FLOWER_GIFT, "Flower Gift (P)", "Boosts the Attack and Sp. Def stats of itself and allies in harsh sunlight.", 4)
+      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5)
+      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), BattleStatMultiplierAbAttr, BattleStat.SPDEF, 1.5)
       .ignorable(),
     new Ability(Abilities.BAD_DREAMS, "Bad Dreams (N)", "Reduces the HP of sleeping opposing Pokémon.", 4),
     new Ability(Abilities.PICKPOCKET, "Pickpocket", "Steals an item from an attacker that made direct contact.", 5)
