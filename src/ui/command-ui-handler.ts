@@ -72,20 +72,24 @@ export default class CommandUiHandler extends UiHandler {
       
       if (button === Button.ACTION) {
         switch (cursor) {
+          // Fight
           case 0:
             if ((this.scene.getCurrentPhase() as CommandPhase).checkFightOverride())
               return true;
             ui.setMode(Mode.FIGHT, (this.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
             success = true;
             break;
+          // Ball
           case 1:
             ui.setModeWithoutClear(Mode.BALL);
             success = true;
             break;
+          // Pokemon
           case 2:
             ui.setMode(Mode.PARTY, PartyUiMode.SWITCH, (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(), null, PartyUiHandler.FilterNonFainted);
             success = true;
             break;
+          // Run
           case 3:
             (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
             success = true;
