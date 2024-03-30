@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "1017-hearthflame-mask-tera.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 144,
+				"h": 144
+			},
+			"scale": 0.5,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 144,
+						"h": 144
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 0,
+						"w": 136,
+						"h": 144
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 136,
+						"h": 144
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:e85adb80edf2c01ef6f95faf83de58ce:c7ed7dc68c465d2334a81deca3c86664:a668acdf23dbfab4355fc0c90e8f5362$"
+	}
+}

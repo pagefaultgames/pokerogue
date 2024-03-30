@@ -1887,7 +1887,10 @@ export enum Abilities {
   SUPERSWEET_SYRUP,
   HOSPITALITY,
   TOXIC_CHAIN,
-  EMBODY_ASPECT,
+  EMBODY_ASPECT_TEAL,
+  EMBODY_ASPECT_WELLSPRING,
+  EMBODY_ASPECT_HEARTHFLAME,
+  EMBODY_ASPECT_CORNERSTONE,
   TERA_SHIFT,
   TERA_SHELL,
   TERAFORM_ZERO,
@@ -2423,10 +2426,16 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, Type.ELECTRIC),
     new Ability(Abilities.DRAGONS_MAW, "Dragon's Maw", "Powers up Dragon-type moves.", 8)
       .attr(MoveTypePowerBoostAbAttr, Type.DRAGON),
-    new Ability(Abilities.CHILLING_NEIGH, "Chilling Neigh (N)", "When the Pokémon knocks out a target, it utters a chilling neigh, which boosts its Attack stat.", 8),
-    new Ability(Abilities.GRIM_NEIGH, "Grim Neigh (N)", "When the Pokémon knocks out a target, it utters a terrifying neigh, which boosts its Sp. Atk stat.", 8),
-    new Ability(Abilities.AS_ONE_GLASTRIER, "As One (N)", "This Ability combines the effects of both Calyrex's Unnerve Ability and Glastrier's Chilling Neigh Ability.", 8),
-    new Ability(Abilities.AS_ONE_SPECTRIER, "As One (N)", "This Ability combines the effects of both Calyrex's Unnerve Ability and Spectrier's Grim Neigh Ability.", 8),
+    new Ability(Abilities.CHILLING_NEIGH, "Chilling Neigh", "When the Pokémon knocks out a target, it utters a chilling neigh, which boosts its Attack stat.", 8)
+      .attr(PostVictoryStatChangeAbAttr, BattleStat.ATK, 1),
+    new Ability(Abilities.GRIM_NEIGH, "Grim Neigh", "When the Pokémon knocks out a target, it utters a terrifying neigh, which boosts its Sp. Atk stat.", 8)
+      .attr(PostVictoryStatChangeAbAttr, BattleStat.SPATK, 1),
+    new Ability(Abilities.AS_ONE_GLASTRIER, "As One", "This Ability combines the effects of both Calyrex's Unnerve Ability and Glastrier's Chilling Neigh Ability.", 8)
+      .attr(PreventBerryUseAbAttr)
+      .attr(PostVictoryStatChangeAbAttr, BattleStat.ATK, 1),
+    new Ability(Abilities.AS_ONE_SPECTRIER, "As One", "This Ability combines the effects of both Calyrex's Unnerve Ability and Spectrier's Grim Neigh Ability.", 8)
+      .attr(PreventBerryUseAbAttr)
+      .attr(PostVictoryStatChangeAbAttr, BattleStat.SPATK, 1),
     new Ability(Abilities.LINGERING_AROMA, "Lingering Aroma (N)", "Contact with the Pokémon changes the attacker's Ability to Lingering Aroma.", 9),
     new Ability(Abilities.SEED_SOWER, "Seed Sower", "Turns the ground into Grassy Terrain when the Pokémon is hit by an attack.", 9)
       .attr(PostDefendTerrainChangeAbAttr, TerrainType.GRASSY),
@@ -2495,7 +2504,10 @@ export function initAbilities() {
     new Ability(Abilities.SUPERSWEET_SYRUP, "Supersweet Syrup (N)", "A sickly sweet scent spreads across the field the first time the Pokémon enters a battle, lowering the evasiveness of opposing Pokémon.", 9),
     new Ability(Abilities.HOSPITALITY, "Hospitality (N)", "When the Pokémon enters a battle, it showers its ally with hospitality, restoring a small amount of the ally's HP.", 9),
     new Ability(Abilities.TOXIC_CHAIN, "Toxic Chain (N)", "The power of the Pokémon's toxic chain may badly poison any target the Pokémon hits with a move.", 9),
-    new Ability(Abilities.EMBODY_ASPECT, "Embody Aspect (N)", "Depending on the Mask held, the Pokémon receives a boost to either their Attack, Defense, Sp. Def, or Speed.", 9),
+    new Ability(Abilities.EMBODY_ASPECT_TEAL, "Embody Aspect (N)", "The Pokémon's heart fills with memories, causing the Teal Mask to shine and the Pokémon's Speed stat to be boosted.", 9),
+    new Ability(Abilities.EMBODY_ASPECT_WELLSPRING, "Embody Aspect (N)", "The Pokémon's heart fills with memories, causing the Wellspring Mask to shine and the Pokémon's Sp. Def stat to be boosted.", 9),
+    new Ability(Abilities.EMBODY_ASPECT_HEARTHFLAME, "Embody Aspect (N)", "The Pokémon's heart fills with memories, causing the Hearthflame Mask to shine and the Pokémon's Attack stat to be boosted.", 9),
+    new Ability(Abilities.EMBODY_ASPECT_CORNERSTONE, "Embody Aspect (N)", "The Pokémon's heart fills with memories, causing the Cornerstone Mask to shine and the Pokémon's Defense stat to be boosted.", 9),
     new Ability(Abilities.TERA_SHIFT, "Tera Shift (N)", "When the Pokémon enters a battle, it absorbs the energy around itself and transforms into its Terastal Form.", 9),
     new Ability(Abilities.TERA_SHELL, "Tera Shell (N)", "The Pokémon's shell contains the powers of each type. All damage-dealing moves that hit the Pokémon when its HP is full will not be very effective.", 9)
       .ignorable(),
