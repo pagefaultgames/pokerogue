@@ -37,7 +37,7 @@ import { DamageAchv, achvs } from '../system/achv';
 import { DexAttr, StarterMoveset } from '../system/game-data';
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from '@material/material-color-utilities';
 import { Nature, getNatureStatMultiplier } from '../data/nature';
-import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
+import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
 import { TerrainType } from '../data/terrain';
 import { TrainerSlot } from '../data/trainer-config';
 
@@ -1697,7 +1697,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.getTag(BattlerTagType.SEEDED))
       this.lapseTag(BattlerTagType.SEEDED);
     if (this.scene)
-      this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveTrigger, true);
+      this.scene.triggerPokemonFormChange(this, SpeciesFormChangePostMoveTrigger, true);
   }
 
   resetTurnData(): void {

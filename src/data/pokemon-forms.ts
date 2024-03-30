@@ -6,6 +6,7 @@ import { SpeciesFormKey } from "./pokemon-species";
 import { Species } from "./enums/species";
 import { StatusEffect } from "./status-effect";
 import { MoveCategory, allMoves } from "./move";
+import { Abilities } from "./ability";
 
 export enum FormChangeItem {
   NONE,
@@ -90,13 +91,15 @@ export class SpeciesFormChange {
   public formKey: string;
   public trigger: SpeciesFormChangeTrigger;
   public quiet: boolean;
+  private conditions: SpeciesFormChangeCondition[];
 
-  constructor(speciesId: Species, preFormKey: string, evoFormKey: string, trigger: SpeciesFormChangeTrigger, quiet: boolean = false) {
+  constructor(speciesId: Species, preFormKey: string, evoFormKey: string, trigger: SpeciesFormChangeTrigger, quiet: boolean = false, ...conditions: SpeciesFormChangeCondition[]) {
     this.speciesId = speciesId;
     this.preFormKey = preFormKey;
     this.formKey = evoFormKey;
     this.trigger = trigger;
     this.quiet = quiet;
+    this.conditions = conditions;
   }
 
   canChange(pokemon: Pokemon): boolean {
@@ -112,6 +115,11 @@ export class SpeciesFormChange {
 
     if (formKeys[pokemon.formIndex] === this.formKey)
       return false;
+
+    for (let condition of this.conditions) {
+      if (!condition.predicate(pokemon))
+        return false;
+    }
 
     if (!this.trigger.canChange(pokemon))
       return false;
@@ -527,8 +535,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.MELOETTA, 'pirouette', 'aria', new SpeciesFormChangeActiveTrigger(false), true)
   ],
   [Species.AEGISLASH]: [
-    new SpeciesFormChange(Species.AEGISLASH, 'blade', 'shield', new SpeciesFormChangePreMoveTrigger(Moves.KINGS_SHIELD), true),
-    new SpeciesFormChange(Species.AEGISLASH, 'shield', 'blade', new SpeciesFormChangePreMoveTrigger(m => allMoves[m].category !== MoveCategory.STATUS), true)
+    new SpeciesFormChange(Species.AEGISLASH, 'blade', 'shield', new SpeciesFormChangePreMoveTrigger(Moves.KINGS_SHIELD), true, new SpeciesFormChangeCondition(p => p.getAbility().id === Abilities.STANCE_CHANGE)),
+    new SpeciesFormChange(Species.AEGISLASH, 'shield', 'blade', new SpeciesFormChangePreMoveTrigger(m => allMoves[m].category !== MoveCategory.STATUS), true, new SpeciesFormChangeCondition(p => p.getAbility().id === Abilities.STANCE_CHANGE))
   ],
   [Species.DIANCIE]: [
     new SpeciesFormChange(Species.DIANCIE, '', SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.DIANCITE))
