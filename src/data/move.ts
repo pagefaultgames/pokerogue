@@ -161,6 +161,16 @@ export default class Move {
     return false;
   }
 
+  isTypeImmune(type: Type): boolean {
+    switch (type) {
+      case Type.GRASS:
+        if (this.hasFlag(MoveFlags.POWDER_MOVE))
+          return true;
+        break;
+    }
+    return false;
+  }
+
   condition(condition: MoveCondition | MoveConditionFunc): this {
     if (typeof condition === 'function')
       condition = new MoveCondition(condition as MoveConditionFunc);
