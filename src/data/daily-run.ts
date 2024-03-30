@@ -4,7 +4,7 @@ import { GameModes, gameModes } from "../game-mode";
 import { Starter } from "../ui/starter-select-ui-handler";
 import * as Utils from "../utils";
 import { Species } from "./enums/species";
-import { getPokemonSpecies, speciesStarters } from "./pokemon-species";
+import PokemonSpecies, { PokemonSpeciesForm, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./pokemon-species";
 import { PartyMemberStrength } from "./enums/party-member-strength";
 
 export interface DailyRunConfig {
@@ -28,29 +28,45 @@ export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[]
   const starters: Starter[] = [];
 
   scene.executeWithSeedOffset(() => {
-    const starterWeights = [];
-    starterWeights.push(Math.round(3.5 + Math.abs(Utils.randSeedGauss(1))));
-    starterWeights.push(Utils.randSeedInt(9 - starterWeights[0], 1));
-    starterWeights.push(10 - (starterWeights[0] + starterWeights[1]));
-
     const startingLevel = gameModes[GameModes.DAILY].getStartingLevel();
 
-    for (let s = 0; s < starterWeights.length; s++) {
-      const weight = starterWeights[s];
-      const weightSpecies = Object.keys(speciesStarters)
+    if (/\d{18}$/.test(seed)) {
+      for (let s = 0; s < 3; s++) {
+        const offset = 6 + s * 6;
+        const starterSpeciesForm = getPokemonSpeciesForm(parseInt(seed.slice(offset, offset + 4)) as Species, parseInt(seed.slice(offset + 4, offset + 6)));
+        starters.push(getDailyRunStarter(scene, starterSpeciesForm, startingLevel));
+      }
+      return;
+    }
+
+    const starterCosts: integer[] = [];
+    starterCosts.push(Math.round(3.5 + Math.abs(Utils.randSeedGauss(1))));
+    starterCosts.push(Utils.randSeedInt(9 - starterCosts[0], 1));
+    starterCosts.push(10 - (starterCosts[0] + starterCosts[1]));
+
+    for (let c = 0; c < starterCosts.length; c++) {
+      const cost = starterCosts[c];
+      const costSpecies = Object.keys(speciesStarters)
         .map(s => parseInt(s) as Species)
-        .filter(s => speciesStarters[s] === weight);
-      const starterSpecies = getPokemonSpecies(getPokemonSpecies(Utils.randSeedItem(weightSpecies)).getTrainerSpeciesForLevel(startingLevel, true, PartyMemberStrength.STRONGER));
-      const pokemon = new PlayerPokemon(scene, starterSpecies, startingLevel, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
-      const starter: Starter = {
-        species: starterSpecies,
-        dexAttr: pokemon.getDexAttr(),
-        nature: pokemon.nature,
-        pokerus: pokemon.pokerus
-      };
-      starters.push(starter);
-      pokemon.destroy();
+        .filter(s => speciesStarters[s] === cost);
+      const starterSpecies = getPokemonSpecies(getPokemonSpecies(Utils.randSeedItem(costSpecies)).getTrainerSpeciesForLevel(startingLevel, true, PartyMemberStrength.STRONGER));
+      starters.push(getDailyRunStarter(scene, starterSpecies, startingLevel));
     }
   }, 0, seed);
+  
   return starters;
+}
+
+function getDailyRunStarter(scene: BattleScene, starterSpeciesForm: PokemonSpeciesForm, startingLevel: integer): Starter {
+  const starterSpecies = starterSpeciesForm instanceof PokemonSpecies ? starterSpeciesForm : getPokemonSpecies(starterSpeciesForm.speciesId);
+  const formIndex = starterSpeciesForm instanceof PokemonSpecies ? undefined : starterSpeciesForm.formIndex;
+  const pokemon = new PlayerPokemon(scene, starterSpecies, startingLevel, undefined, formIndex, undefined, undefined, undefined, undefined, undefined);
+  const starter: Starter = {
+    species: starterSpecies,
+    dexAttr: pokemon.getDexAttr(),
+    nature: pokemon.nature,
+    pokerus: pokemon.pokerus
+  };
+  pokemon.destroy();
+  return starter;
 }
