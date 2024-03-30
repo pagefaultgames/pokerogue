@@ -1,4 +1,4 @@
-<img src="./public/images/logo.png" width="300" alt="PokéRogue">
+<picture><img src="./public/images/logo.png" width="300" alt="PokéRogue"></picture>
 
 PokéRogue is a browser based Pokémon fangame heavily inspired by the roguelite genre. Battle endlessly while gathering stacking items, exploring many different biomes, fighting trainers, bosses, and more! 
 
