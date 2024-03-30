@@ -8,7 +8,7 @@ export function getPokemonMessage(pokemon: Pokemon, content: string): string {
       prefix = !pokemon.isPlayer() ? pokemon.hasTrainer() ? 'Foe ' : 'Wild ' : '';
       break;
     case BattleSpec.FINAL_BOSS:
-      prefix = 'Foe ';
+      prefix = !pokemon.isPlayer() ? 'Foe ' : '';
       break;
   }
   return `${prefix}${pokemon.name}${content}`;
