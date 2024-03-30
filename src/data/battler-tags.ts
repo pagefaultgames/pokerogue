@@ -983,6 +983,10 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new ProtectedTag(sourceMove);
     case BattlerTagType.KINGS_SHIELD:
       return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.ATK, -1);
+    case BattlerTagType.OBSTRUCT:
+      return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.DEF, -2);
+    case BattlerTagType.SILK_TRAP:
+      return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.SPD, -1);
     case BattlerTagType.BANEFUL_BUNKER:
       return new ContactPoisonProtectedTag(sourceMove);
     case BattlerTagType.BURNING_BULWARK:

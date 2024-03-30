@@ -4451,8 +4451,8 @@ export function initMoves() {
     new StatusMove(Moves.LIFE_DEW, "Life Dew", Type.WATER, -1, 10, "The user scatters mysterious water around and restores the HP of itself and its ally Pokémon in the battle.", -1, 0, 8)
       .attr(HealAttr, 0.25, true, false)
       .target(MoveTarget.USER_AND_ALLIES),
-    new SelfStatusMove(Moves.OBSTRUCT, "Obstruct (P)", Type.DARK, 100, 10, "This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession. Direct contact harshly lowers the attacker's Defense stat.", -1, 4, 8)
-      .attr(ProtectAttr),
+    new SelfStatusMove(Moves.OBSTRUCT, "Obstruct", Type.DARK, 100, 10, "This move enables the user to protect itself from all attacks. Its chance of failing rises if it is used in succession. Direct contact harshly lowers the attacker's Defense stat.", -1, 4, 8)
+      .attr(ProtectAttr, BattlerTagType.OBSTRUCT),
     new AttackMove(Moves.FALSE_SURRENDER, "False Surrender", Type.DARK, MoveCategory.PHYSICAL, 80, -1, 10, "The user pretends to bow its head, but then it stabs the target with its disheveled hair. This attack never misses.", -1, 0, 8),
     new AttackMove(Moves.METEOR_ASSAULT, "Meteor Assault", Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 5, "The user attacks wildly with its thick leek. The user can't move on the next turn, because the force of this move makes it stagger.", -1, 0, 8)
       .attr(RechargeAttr),
@@ -4672,7 +4672,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     End Unused */
     new AttackMove(Moves.TERA_BLAST, "Tera Blast (P)", Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, "If the user has Terastallized, it unleashes energy of its Tera Type. This move inflicts damage using the Attack or Sp. Atk stat-whichever is higher for the user.", -1, 0, 9),
-    new SelfStatusMove(Moves.SILK_TRAP, "Silk Trap (N)", Type.BUG, -1, 10, "The user spins a silken trap, protecting itself from damage while lowering the Speed stat of any attacker that makes direct contact.", -1, 4, 9),
+    new SelfStatusMove(Moves.SILK_TRAP, "Silk Trap", Type.BUG, -1, 10, "The user spins a silken trap, protecting itself from damage while lowering the Speed stat of any attacker that makes direct contact.", -1, 4, 9)
+      .attr(ProtectAttr, BattlerTagType.SILK_TRAP),
     new AttackMove(Moves.AXE_KICK, "Axe Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 120, 90, 10, "The user attacks by kicking up into the air and slamming its heel down upon the target. This may also confuse the target. If it misses, the user takes damage instead.", 30, 0, 9)
       .attr(MissEffectAttr, halveHpMissEffectFunc)
       .attr(ConfuseAttr),
