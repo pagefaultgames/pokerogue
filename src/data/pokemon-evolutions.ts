@@ -418,7 +418,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.KIRLIA]: [
     new SpeciesEvolution(Species.GARDEVOIR, 30, null, new SpeciesEvolutionCondition(p => p.gender === Gender.FEMALE, p => p.gender = Gender.FEMALE)),
-    new SpeciesEvolution(Species.GALLADE, 1, EvolutionItem.DAWN_STONE, new SpeciesEvolutionCondition(p => p.gender === Gender.MALE, p => p.gender = Gender.MALE), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(Species.GALLADE, 30, null, new SpeciesEvolutionCondition(p => p.gender === Gender.MALE, p => p.gender = Gender.MALE))
   ],
   [Species.SURSKIT]: [
     new SpeciesEvolution(Species.MASQUERAIN, 22, null, null)
