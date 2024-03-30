@@ -3011,7 +3011,8 @@ export class VictoryPhase extends PokemonPhase {
         if (exp) {
           const partyMemberIndex = party.indexOf(expPartyMembers[pm]);
           this.scene.unshiftPhase(expPartyMembers[pm].isOnField() ? new ExpPhase(this.scene, partyMemberIndex, exp) : new ShowPartyExpBarPhase(this.scene, partyMemberIndex, exp));
-          applyPostVictoryAbAttrs(PostVictoryAbAttr, expPartyMembers[pm]);
+          if (expPartyMembers[pm].isOnField())
+            applyPostVictoryAbAttrs(PostVictoryAbAttr, expPartyMembers[pm]);
         }
       }
     }
