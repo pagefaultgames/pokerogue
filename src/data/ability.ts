@@ -642,6 +642,33 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   }
 }
 
+export class PostVictoryAbAttr extends AbAttr {
+  applyPostVictory(pokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
+class PostVictoryStatChangeAbAttr extends PostVictoryAbAttr {
+  private stat: BattleStat | ((p: Pokemon) => BattleStat);
+  private levels: integer;
+
+  constructor(stat: BattleStat | ((p: Pokemon) => BattleStat), levels: integer) {
+    super();
+
+    this.stat = stat;
+    this.levels = levels;
+  }
+
+  applyPostVictory(pokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
+    const stat = typeof this.stat === 'function'
+      ? this.stat(pokemon)
+      : this.stat;
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ stat ], this.levels));
+    
+    return true;
+  }
+}
+
 export class IgnoreOpponentStatChangesAbAttr extends AbAttr {
   constructor() {
     super(false);
@@ -1480,6 +1507,11 @@ export function applyPostAttackAbAttrs(attrType: { new(...args: any[]): PostAtta
   return applyAbAttrsInternal<PostAttackAbAttr>(attrType, pokemon, attr => attr.applyPostAttack(pokemon, defender, move, hitResult, args));
 }
 
+export function applyPostVictoryAbAttrs(attrType: { new(...args: any[]): PostVictoryAbAttr },
+  pokemon: Pokemon, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostVictoryAbAttr>(attrType, pokemon, attr => attr.applyPostVictory(pokemon, args));
+}
+
 export function applyPostSummonAbAttrs(attrType: { new(...args: any[]): PostSummonAbAttr },
   pokemon: Pokemon, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostSummonAbAttr>(attrType, pokemon, attr => attr.applyPostSummon(pokemon, args));
@@ -2202,7 +2234,8 @@ export function initAbilities() {
       .attr(PostSummonTransformAbAttr),
     new Ability(Abilities.INFILTRATOR, "Infiltrator (N)", "Passes through the opposing Pokémon's barrier, substitute, and the like and strikes.", 5),
     new Ability(Abilities.MUMMY, "Mummy (N)", "Contact with the Pokémon changes the attacker's Ability to Mummy.", 5),
-    new Ability(Abilities.MOXIE, "Moxie (N)", "The Pokémon shows moxie, and that boosts the Attack stat after knocking out any Pokémon.", 5),
+    new Ability(Abilities.MOXIE, "Moxie", "The Pokémon shows moxie, and that boosts the Attack stat after knocking out any Pokémon.", 5)
+      .attr(PostVictoryStatChangeAbAttr, BattleStat.ATK, 1),
     new Ability(Abilities.JUSTIFIED, "Justified (N)", "Being hit by a Dark-type move boosts the Attack stat of the Pokémon, for justice.", 5),
     new Ability(Abilities.RATTLED, "Rattled (N)", "Dark-, Ghost-, and Bug-type moves scare the Pokémon and boost its Speed stat.", 5),
     new Ability(Abilities.MAGIC_BOUNCE, "Magic Bounce (N)", "Reflects status moves instead of getting hit by them.", 5)
@@ -2328,7 +2361,8 @@ export function initAbilities() {
     new Ability(Abilities.TANGLING_HAIR, "Tangling Hair (N)", "Contact with the Pokémon lowers the attacker's Speed stat.", 7),
     new Ability(Abilities.RECEIVER, "Receiver (N)", "The Pokémon copies the Ability of a defeated ally.", 7),
     new Ability(Abilities.POWER_OF_ALCHEMY, "Power of Alchemy (N)", "The Pokémon copies the Ability of a defeated ally.", 7),
-    new Ability(Abilities.BEAST_BOOST, "Beast Boost (N)", "The Pokémon boosts its most proficient stat each time it knocks out a Pokémon.", 7),
+    new Ability(Abilities.BEAST_BOOST, "Beast Boost", "The Pokémon boosts its most proficient stat each time it knocks out a Pokémon.", 7)
+      .attr(PostVictoryStatChangeAbAttr, p => Utils.getEnumValues(BattleStat).slice(1, -2).map(s => s as BattleStat).findIndex(bs => p.getStat((bs + 1) as Stat)), 1),
     new Ability(Abilities.RKS_SYSTEM, "RKS System (N)", "Changes the Pokémon's type to match the memory disc it holds.", 7)
       .attr(ProtectAbilityAbAttr),
     new Ability(Abilities.ELECTRIC_SURGE, "Electric Surge", "Turns the ground into Electric Terrain when the Pokémon enters a battle.", 7)
