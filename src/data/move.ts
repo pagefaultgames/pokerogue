@@ -1888,27 +1888,18 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   getTagTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     switch (this.tagType) {
       case BattlerTagType.RECHARGING:
+      case BattlerTagType.PERISH_SONG:
         return -16;
       case BattlerTagType.FLINCHED:
-        return -5;
       case BattlerTagType.CONFUSED:
-        return -5;
       case BattlerTagType.INFATUATED:
-        return -5;
-      case BattlerTagType.SEEDED:
-        return -3;
       case BattlerTagType.NIGHTMARE:
-        return -5;
-      case BattlerTagType.FRENZY:
-        return -3;
-      case BattlerTagType.ENCORE:
-        return -2;
-      case BattlerTagType.INGRAIN:
-        return 3;
-      case BattlerTagType.AQUA_RING:
-        return 3;
       case BattlerTagType.DROWSY:
-        return -5;
+      case BattlerTagType.NO_CRIT:
+          return -5;
+      case BattlerTagType.SEEDED:
+      case BattlerTagType.SALT_CURED:
+      case BattlerTagType.FRENZY:
       case BattlerTagType.TRAPPED:
       case BattlerTagType.BIND:
       case BattlerTagType.WRAP:
@@ -1919,18 +1910,16 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.MAGMA_STORM:
       case BattlerTagType.THUNDER_CAGE:
         return -3;
+      case BattlerTagType.ENCORE:
+        return -2;
+      case BattlerTagType.INGRAIN:
+      case BattlerTagType.IGNORE_ACCURACY:
+      case BattlerTagType.AQUA_RING:
+        return 3;
       case BattlerTagType.PROTECTED:
-        return 5;
-      case BattlerTagType.PERISH_SONG:
-        return -16;
       case BattlerTagType.FLYING:
-        return 5;
       case BattlerTagType.CRIT_BOOST:
         return 5;
-      case BattlerTagType.NO_CRIT:
-        return -5;
-      case BattlerTagType.IGNORE_ACCURACY:
-        return 3;
     }
   }
 
@@ -4686,7 +4675,9 @@ export function initMoves() {
       .attr(ClearTerrainAttr),
     new AttackMove(Moves.GLAIVE_RUSH, "Glaive Rush (P)", Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 5, "The user throws its entire body into a reckless charge. After this move is used, attacks on the user cannot miss and will inflict double damage until the user's next turn.", -1, 0, 9),
     new StatusMove(Moves.REVIVAL_BLESSING, "Revival Blessing (N)", Type.NORMAL, -1, 1, "The user bestows a loving blessing, reviving a party Pokémon that has fainted and restoring half that Pokémon's max HP.", -1, 0, 9),
-    new AttackMove(Moves.SALT_CURE, "Salt Cure (P)", Type.ROCK, MoveCategory.PHYSICAL, 40, 100, 15, "The user salt cures the target, inflicting damage every turn. Steel and Water types are more strongly affected by this move.", -1, 0, 9),
+    new AttackMove(Moves.SALT_CURE, "Salt Cure", Type.ROCK, MoveCategory.PHYSICAL, 40, 100, 15, "The user salt cures the target, inflicting damage every turn. Steel and Water types are more strongly affected by this move.", -1, 0, 9)
+    .attr(AddBattlerTagAttr, BattlerTagType.SALT_CURED)
+    .condition((user, target, move) => !target.getTag(BattlerTagType.SALT_CURED)),
     new AttackMove(Moves.TRIPLE_DIVE, "Triple Dive", Type.WATER, MoveCategory.PHYSICAL, 30, 95, 10, "The user performs a perfectly timed triple dive, hitting the target with splashes of water three times in a row.", -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._3),
     new AttackMove(Moves.MORTAL_SPIN, "Mortal Spin", Type.POISON, MoveCategory.PHYSICAL, 30, 100, 15, "The user performs a spin attack that can also eliminate the effects of such moves as Bind, Wrap, and Leech Seed. This also poisons opposing Pokémon.", 100, 0, 9)

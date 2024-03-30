@@ -1520,6 +1520,7 @@ export default class BattleScene extends Phaser.Scene {
 			this.cameras.main.removePostPipeline('InvertPostFX');
 	}
 
+	/* Phase Functions */
 	getCurrentPhase(): Phase {
 		return this.currentPhase;
 	}

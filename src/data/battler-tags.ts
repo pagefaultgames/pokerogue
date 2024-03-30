@@ -877,6 +877,37 @@ export class IgnoreAccuracyTag extends BattlerTag {
   }
 }
 
+export class SaltCuredTag extends BattlerTag {
+  private sourceIndex: integer;
+
+  constructor(sourceId: integer) {
+    super(BattlerTagType.SALT_CURED, BattlerTagLapseType.AFTER_MOVE, 1, Moves.SALT_CURE, sourceId);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+    
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is being salt cured!'));
+    this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId).getBattlerIndex();
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+
+    if (ret) {
+      const source = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
+      pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.SALT_CURE));
+
+      const pokemonSteelOrWater = pokemon.isOfType(Type.STEEL) || pokemon.isOfType(Type.WATER);
+      pokemon.damageAndUpdate(Math.max(Math.floor(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), 1));
+
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is hurt by ${this.getMoveName()}!`));
+    }
+    
+    return ret;
+  }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
     case BattlerTagType.RECHARGING:
@@ -955,6 +986,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
     case BattlerTagType.IGNORE_FLYING:
       return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+    case BattlerTagType.SALT_CURED:
+      return new SaltCuredTag(sourceId);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
