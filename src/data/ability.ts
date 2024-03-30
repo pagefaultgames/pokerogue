@@ -2323,7 +2323,10 @@ export function initAbilities() {
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
       .condition(getWeatherCondition(WeatherType.SANDSTORM)),
     new Ability(Abilities.IRON_BARBS, "Iron Barbs (N)", "Inflicts damage on the attacker upon contact with iron barbs.", 5),
-    new Ability(Abilities.ZEN_MODE, "Zen Mode (N)", "Changes the Pokémon's shape when HP is half or less.", 5),
+    new Ability(Abilities.ZEN_MODE, "Zen Mode", "Changes the Pokémon's shape when HP is half or less.", 5)
+      .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() >= 0.5 ? 0 : 1)
+      .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() >= 0.5 ? 0 : 1)
+      .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() >= 0.5 ? 0 : 1),
     new Ability(Abilities.VICTORY_STAR, "Victory Star (N)", "Boosts the accuracy of its allies and itself.", 5),
     new Ability(Abilities.TURBOBLAZE, "Turboblaze", "Moves can be used on the target regardless of its Abilities.", 5)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is radiating a blazing aura!'))

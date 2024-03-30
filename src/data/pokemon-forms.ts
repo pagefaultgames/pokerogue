@@ -487,6 +487,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.SHAYMIN, 'sky', 'land', new SpeciesFormChangeTimeOfDayTrigger(TimeOfDay.DAWN, TimeOfDay.NIGHT)),
     new SpeciesFormChange(Species.SHAYMIN, 'sky', 'land', new SpeciesFormChangeStatusEffectTrigger(StatusEffect.FREEZE))
   ],
+  [Species.DARMANITAN]: [
+    new SpeciesFormChange(Species.DARMANITAN, '', 'zen', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.DARMANITAN, 'zen', '', new SpeciesFormChangeManualTrigger(), true)
+  ],
   [Species.GARBODOR]: [
     new SpeciesFormChange(Species.GARBODOR, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
@@ -615,6 +619,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
   ],
   [Species.TERAPAGOS]: [
     new SpeciesFormChange(Species.TERAPAGOS, '', 'terastal', new SpeciesFormChangeManualTrigger(), true)
+  ],
+  [Species.GALAR_DARMANITAN]: [
+    new SpeciesFormChange(Species.GALAR_DARMANITAN, '', 'zen', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.GALAR_DARMANITAN, 'zen', '', new SpeciesFormChangeManualTrigger(), true)
   ]
 };
 
