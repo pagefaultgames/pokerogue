@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "snow_worker.png",
+			"image": "snow_worker_m.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 183,
