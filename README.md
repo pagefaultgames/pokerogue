@@ -1,4 +1,26 @@
-# PokéRogue
+<img src="./public/images/logo.png" width="300" alt="PokéRogue">
+
+PokéRogue is a browser based Pokémon fangame heavily inspired by the roguelite genre. Battle endlessly while gathering stacking items, exploring many different biomes, fighting trainers, bosses, and more! 
+
+# Contributing
+## Development
+If you have the motivation and experience with Typescript/Javascript (or are willing to learn) please feel free to fork the repository and make pull requests with contributions. If you don't know what to work on but want to help, reference the below **To-Do** section or the **#vote** channel in the discord. 
+
+### Environment Setup
+node: 18.3.0
+
+1. Clone the repo and in the root directory run `npm install`
+    - *if you run into any errors, reach out in the **#dev-corner** channel in discord*
+2. Run `npm run start` to locally run the project in `localhost:8000`
+
+### FAQ
+
+**How do I test a new ability/move?**
+- In the `pokemon.ts` file there are overrides you can set to apply the new move/ability to your active pokemon
+
+**How do I test a specific seed/wave?**
+- In the `battle-scene.ts` file there are overrides for seed, starting level, starting wave, starting biome, and starting money
+
 
 ## To Do
 
@@ -23,7 +45,8 @@
   - Add random mode
   - Add Nuzlocke mode
 
-## Credits
+# Credits
+> If this project contains assets you have produced and you do not see your name here, **please** reach out.
 
 ### BGM
   - Pokémon Mystery Dungeon: Explorers of Sky
@@ -91,5 +114,3 @@
 
 ### Move Animations
   - Pokémon Reborn
-
-If this project contains assets you have produced and you do not see your name here, please reach out.
