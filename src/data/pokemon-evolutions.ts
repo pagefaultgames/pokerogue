@@ -889,19 +889,19 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.DARTRIX]: [
     new SpeciesEvolution(Species.HISUI_DECIDUEYE, 36, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DUSK || p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesEvolution(Species.DECIDUEYE, 36, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAWN || p.scene.arena.getTimeOfDay() === TimeOfDay.DAY))
+    new SpeciesEvolution(Species.DECIDUEYE, 34, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAWN || p.scene.arena.getTimeOfDay() === TimeOfDay.DAY))
   ],
   [Species.LITTEN]: [
     new SpeciesEvolution(Species.TORRACAT, 17, null, null)
   ],
   [Species.TORRACAT]: [
-    new SpeciesEvolution(Species.INCINEROAR, 36, null, null)
+    new SpeciesEvolution(Species.INCINEROAR, 34, null, null)
   ],
   [Species.POPPLIO]: [
     new SpeciesEvolution(Species.BRIONNE, 17, null, null)
   ],
   [Species.BRIONNE]: [
-    new SpeciesEvolution(Species.PRIMARINA, 36, null, null)
+    new SpeciesEvolution(Species.PRIMARINA, 34, null, null)
   ],
   [Species.PIKIPEK]: [
     new SpeciesEvolution(Species.TRUMBEAK, 14, null, null)
