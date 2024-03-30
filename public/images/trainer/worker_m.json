@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "worker.png",
+			"image": "worker_m.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 252,
