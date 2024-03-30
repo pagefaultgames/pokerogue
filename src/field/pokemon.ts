@@ -1608,6 +1608,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case StatusEffect.SLEEP:
         if (this.isGrounded() && this.scene.arena.terrain?.terrainType === TerrainType.ELECTRIC)
           return false;
+        break;
       case StatusEffect.FREEZE:
         if (this.isOfType(Type.ICE))
           return false;
