@@ -2406,9 +2406,9 @@ export function initAbilities() {
     new Ability(Abilities.SURGE_SURFER, "Surge Surfer", "Doubles the Pokémon's Speed stat on Electric Terrain.", 7)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), BattleStatMultiplierAbAttr, BattleStat.SPD, 2),
     new Ability(Abilities.SCHOOLING, "Schooling", "When it has a lot of HP, the Pokémon forms a powerful school. It stops schooling when its HP is low.", 7)
-      .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() <= 0.25 ? 0 : 1)
-      .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.25 ? 0 : 1)
-      .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.25 ? 0 : 1)
+      .attr(PostBattleInitFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
+      .attr(PostSummonFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
+      .attr(PostTurnFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
       .attr(ProtectAbilityAbAttr),
     new Ability(Abilities.DISGUISE, "Disguise (N)", "Once per battle, the shroud that covers the Pokémon can protect it from an attack.", 7)
       .ignorable()
