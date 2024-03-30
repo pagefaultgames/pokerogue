@@ -518,6 +518,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.HOOPA]: [
     new SpeciesFormChange(Species.HOOPA, '', 'unbound', new SpeciesFormChangeItemTrigger(FormChangeItem.PRISON_BOTTLE))
   ],
+  [Species.WISHIWASHI]: [
+    new SpeciesFormChange(Species.WISHIWASHI, '', 'school', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.WISHIWASHI, 'school', '', new SpeciesFormChangeManualTrigger(), true)
+  ],
   [Species.NECROZMA]: [
     new SpeciesFormChange(Species.NECROZMA, '', 'dawn-wings', new SpeciesFormChangeItemTrigger(FormChangeItem.N_LUNARIZER)),
     new SpeciesFormChange(Species.NECROZMA, '', 'dusk-mane', new SpeciesFormChangeItemTrigger(FormChangeItem.N_SOLARIZER))

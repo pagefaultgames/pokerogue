@@ -2514,7 +2514,7 @@ export class EnemyPokemon extends Pokemon {
     while (segmentIndex - 1 < this.bossSegmentIndex) {
       let boostedStat = BattleStat.RAND;
 
-      const battleStats = Utils.getEnumValues(BattleStat).slice(0, -2);
+      const battleStats = Utils.getEnumValues(BattleStat).slice(0, -3);
       const statWeights = new Array().fill(battleStats.length).filter((bs: BattleStat) => this.summonData.battleStats[bs] < 6).map((bs: BattleStat) => this.getStat(bs + 1));
       const statThresholds: integer[] = [];
       let totalWeight = 0;

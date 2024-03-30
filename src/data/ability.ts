@@ -14,6 +14,7 @@ import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { Moves } from "./enums/moves";
 import { TerrainType } from "./terrain";
+import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 
 export class Ability {
   public id: Abilities;
@@ -127,6 +128,30 @@ export class DoubleBattleChanceAbAttr extends AbAttr {
     const doubleChance = (args[0] as Utils.IntegerHolder);
     doubleChance.value = Math.max(doubleChance.value / 2, 1);
     return true;
+  }
+}
+
+export class PostBattleInitAbAttr extends AbAttr {
+  applyPostBattleInit(pokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
+export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
+  private formFunc: (p: Pokemon) => integer;
+
+  constructor(formFunc: ((p: Pokemon) => integer)) {
+    super(true);
+
+    this.formFunc = formFunc;
+  }
+
+  applyPostBattleInit(pokemon: Pokemon, args: any[]): boolean {
+    const formIndex = this.formFunc(pokemon);
+    if (formIndex !== pokemon.formIndex)
+      return pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+
+    return false;
   }
 }
 
@@ -786,6 +811,24 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
+  private formFunc: (p: Pokemon) => integer;
+
+  constructor(formFunc: ((p: Pokemon) => integer)) {
+    super(true);
+
+    this.formFunc = formFunc;
+  }
+
+  applyPostSummon(pokemon: Pokemon, args: any[]): boolean {
+    const formIndex = this.formFunc(pokemon);
+    if (formIndex !== pokemon.formIndex)
+      return pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+
+    return false;
+  }
+}
+
 export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   constructor() {
     super(true);
@@ -1174,6 +1217,26 @@ export class PostTurnHealAbAttr extends PostTurnAbAttr {
   }
 }
 
+export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
+  private formFunc: (p: Pokemon) => integer;
+
+  constructor(formFunc: ((p: Pokemon) => integer)) {
+    super(true);
+
+    this.formFunc = formFunc;
+  }
+
+  applyPostTurn(pokemon: Pokemon, args: any[]): boolean {
+    const formIndex = this.formFunc(pokemon);
+    if (formIndex !== pokemon.formIndex) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class StatChangeMultiplierAbAttr extends AbAttr {
   private multiplier: integer;
 
@@ -1479,6 +1542,11 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any
 
 export function applyAbAttrs(attrType: { new(...args: any[]): AbAttr }, pokemon: Pokemon, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<AbAttr>(attrType, pokemon, attr => attr.apply(pokemon, cancelled, args));
+}
+
+export function applyPostBattleInitAbAttrs(attrType: { new(...args: any[]): PostBattleInitAbAttr },
+  pokemon: Pokemon, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostBattleInitAbAttr>(attrType, pokemon, attr => attr.applyPostBattleInit(pokemon, args));
 }
 
 export function applyPreDefendAbAttrs(attrType: { new(...args: any[]): PreDefendAbAttr },
@@ -2337,7 +2405,10 @@ export function initAbilities() {
     new Ability(Abilities.GALVANIZE, "Galvanize (N)", "Normal-type moves become Electric-type moves. The power of those moves is boosted a little.", 7),
     new Ability(Abilities.SURGE_SURFER, "Surge Surfer", "Doubles the Pokémon's Speed stat on Electric Terrain.", 7)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), BattleStatMultiplierAbAttr, BattleStat.SPD, 2),
-    new Ability(Abilities.SCHOOLING, "Schooling (N)", "When it has a lot of HP, the Pokémon forms a powerful school. It stops schooling when its HP is low.", 7)
+    new Ability(Abilities.SCHOOLING, "Schooling", "When it has a lot of HP, the Pokémon forms a powerful school. It stops schooling when its HP is low.", 7)
+      .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() <= 0.25 ? 0 : 1)
+      .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.25 ? 0 : 1)
+      .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.25 ? 0 : 1)
       .attr(ProtectAbilityAbAttr),
     new Ability(Abilities.DISGUISE, "Disguise (N)", "Once per battle, the shroud that covers the Pokémon can protect it from an attack.", 7)
       .ignorable()
@@ -2365,7 +2436,19 @@ export function initAbilities() {
     new Ability(Abilities.RECEIVER, "Receiver (N)", "The Pokémon copies the Ability of a defeated ally.", 7),
     new Ability(Abilities.POWER_OF_ALCHEMY, "Power of Alchemy (N)", "The Pokémon copies the Ability of a defeated ally.", 7),
     new Ability(Abilities.BEAST_BOOST, "Beast Boost", "The Pokémon boosts its most proficient stat each time it knocks out a Pokémon.", 7)
-      .attr(PostVictoryStatChangeAbAttr, p => Utils.getEnumValues(BattleStat).slice(1, -2).map(s => s as BattleStat).findIndex(bs => p.getStat((bs + 1) as Stat)), 1),
+      .attr(PostVictoryStatChangeAbAttr, p => {
+        const battleStats = Utils.getEnumValues(BattleStat).slice(0, -3).map(s => s as BattleStat);
+        let highestBattleStat = 0;
+        let highestBattleStatIndex = 0;
+        battleStats.map((bs: BattleStat, i: integer) => {
+          const stat = p.getStat(bs + 1);
+          if (stat > highestBattleStat) {
+            highestBattleStatIndex = i;
+            highestBattleStat = stat;
+          }
+        });
+        return highestBattleStatIndex;
+      }, 1),
     new Ability(Abilities.RKS_SYSTEM, "RKS System (N)", "Changes the Pokémon's type to match the memory disc it holds.", 7)
       .attr(ProtectAbilityAbAttr),
     new Ability(Abilities.ELECTRIC_SURGE, "Electric Surge", "Turns the ground into Electric Terrain when the Pokémon enters a battle.", 7)
