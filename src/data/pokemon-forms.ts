@@ -577,6 +577,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.ALCREMIE]: [
     new SpeciesFormChange(Species.ALCREMIE, 'vanilla-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
+  [Species.MORPEKO]: [
+    new SpeciesFormChange(Species.MORPEKO, 'full-belly', 'hangry', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MORPEKO, 'hangry', 'full-belly', new SpeciesFormChangeManualTrigger(), true)
+  ],
   [Species.COPPERAJAH]: [
     new SpeciesFormChange(Species.COPPERAJAH, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],

@@ -2074,7 +2074,7 @@ export function initAbilities() {
     new Ability(Abilities.WATER_VEIL, "Water Veil", "The Pokémon is covered with a water veil, which prevents the Pokémon from getting a burn.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .ignorable(),
-    new Ability(Abilities.MAGNET_PULL, "Magnet Pull", "Prevents Steel-type Pokémon from escaping using its magnetic force.", 3)
+    new Ability(Abilities.MAGNET_PULL, "Magnet Pull (N)", "Prevents Steel-type Pokémon from escaping using its magnetic force.", 3)
       /*.attr(ArenaTrapAbAttr)
       .condition((pokemon: Pokemon) => pokemon.getOpponent()?.isOfType(Type.STEEL))*/,
     new Ability(Abilities.SOUNDPROOF, "Soundproof", "Soundproofing gives the Pokémon full immunity to all sound-based moves.", 3)
@@ -2501,7 +2501,9 @@ export function initAbilities() {
     new Ability(Abilities.PASTEL_VEIL, "Pastel Veil", "Protects the Pokémon and its ally Pokémon from being poisoned.", 8)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON)
       .ignorable(),
-    new Ability(Abilities.HUNGER_SWITCH, "Hunger Switch (N)", "The Pokémon changes its form, alternating between its Full Belly Mode and Hangry Mode after the end of each turn.", 8),
+    new Ability(Abilities.HUNGER_SWITCH, "Hunger Switch", "The Pokémon changes its form, alternating between its Full Belly Mode and Hangry Mode after the end of each turn.", 8)
+      .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1)
+      .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 1 : 0),
     new Ability(Abilities.QUICK_DRAW, "Quick Draw (N)", "Enables the Pokémon to move first occasionally.", 8),
     new Ability(Abilities.UNSEEN_FIST, "Unseen Fist (N)", "If the Pokémon uses moves that make direct contact, it can attack the target even if the target protects itself.", 8),
     new Ability(Abilities.CURIOUS_MEDICINE, "Curious Medicine (N)", "When the Pokémon enters a battle, it scatters medicine from its shell, which removes all stat changes from allies.", 8),
