@@ -608,6 +608,9 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'wellspring-mask', new SpeciesFormChangeItemTrigger(FormChangeItem.WELLSPRING_MASK)),
     new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'hearthflame-mask', new SpeciesFormChangeItemTrigger(FormChangeItem.HEARTHFLAME_MASK)),
     new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'cornerstone-mask', new SpeciesFormChangeItemTrigger(FormChangeItem.CORNERSTONE_MASK))
+  ],
+  [Species.TERAPAGOS]: [
+    new SpeciesFormChange(Species.TERAPAGOS, '', 'terastal', new SpeciesFormChangeManualTrigger(), true)
   ]
 };
 

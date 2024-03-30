@@ -2591,7 +2591,8 @@ export function initAbilities() {
     new Ability(Abilities.EMBODY_ASPECT_WELLSPRING, "Embody Aspect (N)", "The Pokémon's heart fills with memories, causing the Wellspring Mask to shine and the Pokémon's Sp. Def stat to be boosted.", 9),
     new Ability(Abilities.EMBODY_ASPECT_HEARTHFLAME, "Embody Aspect (N)", "The Pokémon's heart fills with memories, causing the Hearthflame Mask to shine and the Pokémon's Attack stat to be boosted.", 9),
     new Ability(Abilities.EMBODY_ASPECT_CORNERSTONE, "Embody Aspect (N)", "The Pokémon's heart fills with memories, causing the Cornerstone Mask to shine and the Pokémon's Defense stat to be boosted.", 9),
-    new Ability(Abilities.TERA_SHIFT, "Tera Shift (N)", "When the Pokémon enters a battle, it absorbs the energy around itself and transforms into its Terastal Form.", 9),
+    new Ability(Abilities.TERA_SHIFT, "Tera Shift", "When the Pokémon enters a battle, it absorbs the energy around itself and transforms into its Terastal Form.", 9)
+      .attr(PostSummonFormChangeAbAttr, p => p.getFormKey() ? 0 : 1),
     new Ability(Abilities.TERA_SHELL, "Tera Shell (N)", "The Pokémon's shell contains the powers of each type. All damage-dealing moves that hit the Pokémon when its HP is full will not be very effective.", 9)
       .ignorable(),
     new Ability(Abilities.TERAFORM_ZERO, "Teraform Zero (N)", "When Terapagos changes into its Stellar Form, it uses its hidden powers to eliminate all effects of weather and terrain, reducing them to zero.", 9),
