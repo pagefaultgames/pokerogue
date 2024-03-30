@@ -37,7 +37,7 @@ import { DamageAchv, achvs } from '../system/achv';
 import { DexAttr, StarterMoveset } from '../system/game-data';
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from '@material/material-color-utilities';
 import { Nature, getNatureStatMultiplier } from '../data/nature';
-import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveUsedTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
+import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangeMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
 import { TerrainType } from '../data/terrain';
 import { TrainerSlot } from '../data/trainer-config';
 
@@ -268,7 +268,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract getBattlerIndex(): BattlerIndex;
 
-  loadAssets(ignoreOveride: boolean = true): Promise<void> {
+  loadAssets(ignoreOverride: boolean = true): Promise<void> {
     return new Promise(resolve => {
       const moveIds = this.getMoveset().map(m => m.getMove().id);
       Promise.allSettled(moveIds.map(m => initMoveAnim(m)))
@@ -276,10 +276,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           loadMoveAnimAssets(this.scene, moveIds);
           this.getSpeciesForm().loadAssets(this.scene, this.getGender() === Gender.FEMALE, this.formIndex, this.shiny);
           if (this.isPlayer() || this.getFusionSpeciesForm())
-            this.scene.loadPokemonAtlas(this.getBattleSpriteKey(true, ignoreOveride), this.getBattleSpriteAtlasPath(true, ignoreOveride));
+            this.scene.loadPokemonAtlas(this.getBattleSpriteKey(true, ignoreOverride), this.getBattleSpriteAtlasPath(true, ignoreOverride));
           if (this.getFusionSpeciesForm()) {
             this.getFusionSpeciesForm().loadAssets(this.scene, this.getFusionGender() === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny);
-            this.scene.loadPokemonAtlas(this.getFusionBattleSpriteKey(true, ignoreOveride), this.getFusionBattleSpriteAtlasPath(true, ignoreOveride));
+            this.scene.loadPokemonAtlas(this.getFusionBattleSpriteKey(true, ignoreOverride), this.getFusionBattleSpriteAtlasPath(true, ignoreOverride));
           }
           this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
             if (this.isPlayer()) {
@@ -1413,7 +1413,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const abilityCount = this.getSpeciesForm().getAbilityCount();
       if (this.abilityIndex >= abilityCount) // Shouldn't happen
         this.abilityIndex = abilityCount - 1;
-      this.scene.gameData.setPokemonSeen(this, true);
+      this.scene.gameData.setPokemonSeen(this, false);
       this.setScale(this.getSpriteScale());
       this.loadAssets().then(() => {
         this.calculateStats();
@@ -1697,7 +1697,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.getTag(BattlerTagType.SEEDED))
       this.lapseTag(BattlerTagType.SEEDED);
     if (this.scene)
-      this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveUsedTrigger, true);
+      this.scene.triggerPokemonFormChange(this, SpeciesFormChangeMoveTrigger, true);
   }
 
   resetTurnData(): void {
@@ -2099,14 +2099,17 @@ export class PlayerPokemon extends Pokemon {
         this.abilityIndex = abilityCount - 1;
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
+      const updateAndResolve = () => {
+        this.loadAssets().then(() => {
+          this.calculateStats();
+          this.updateInfo(true).then(() => resolve());
+        });
+      };
       if (!this.scene.gameMode.isDaily || this.metBiome > -1) {
         this.scene.gameData.setPokemonSeen(this, false);
-        this.scene.gameData.setPokemonCaught(this, false);
-      }
-      this.loadAssets().then(() => {
-        this.calculateStats();
-        this.updateInfo(true).then(() => resolve());
-      });
+        this.scene.gameData.setPokemonCaught(this, false).then(() => updateAndResolve());
+      } else
+        updateAndResolve();
     });
   }
 
@@ -2146,15 +2149,18 @@ export class PlayerPokemon extends Pokemon {
         this.abilityIndex = abilityCount - 1;
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
+      const updateAndResolve = () => {
+        this.loadAssets().then(() => {
+          this.calculateStats();
+          this.scene.updateModifiers(true, true);
+          this.updateInfo(true).then(() => resolve());
+        });
+      };
       if (!this.scene.gameMode.isDaily || this.metBiome > -1) {
         this.scene.gameData.setPokemonSeen(this, false);
-        this.scene.gameData.setPokemonCaught(this, false);
-      }
-      this.loadAssets().then(() => {
-        this.calculateStats();
-        this.scene.updateModifiers(true, true);
-        this.updateInfo(true).then(() => resolve());
-      });
+        this.scene.gameData.setPokemonCaught(this, false).then(() => updateAndResolve());
+      } else
+        updateAndResolve();
     });
   }
 

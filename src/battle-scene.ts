@@ -59,6 +59,8 @@ import { initTouchControls } from './touch-controls';
 export const bypassLogin = false;
 
 export const SEED_OVERRIDE = '';
+export const STARTER_SPECIES_OVERRIDE = 0;
+export const STARTER_FORM_OVERRIDE = 0;
 export const STARTING_LEVEL_OVERRIDE = 0;
 export const STARTING_WAVE_OVERRIDE = 0;
 export const STARTING_BIOME_OVERRIDE = Biome.TOWN;

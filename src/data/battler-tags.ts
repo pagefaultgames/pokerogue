@@ -1,5 +1,5 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
-import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase } from "../phases";
+import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
@@ -12,6 +12,7 @@ import { Abilities, FlinchEffectAbAttr, applyAbAttrs } from "./ability";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
+import { BattleStat } from "./battle-stat";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -617,6 +618,32 @@ export class ProtectedTag extends BattlerTag {
   }
 }
 
+export class ContactStatChangeProtectedTag extends ProtectedTag {
+  private stat: BattleStat;
+  private levels: integer;
+
+  constructor(sourceMove: Moves, tagType: BattlerTagType, stat: BattleStat, levels: integer) {
+    super(sourceMove, tagType);
+
+    this.stat = stat;
+    this.levels = levels;
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = super.lapse(pokemon, lapseType);
+
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      const effectPhase = pokemon.scene.getCurrentPhase();
+      if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
+        const attacker = effectPhase.getPokemon();
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, attacker.getBattlerIndex(), true, [ this.stat ], this.levels));
+      }
+    }
+
+    return ret;
+  }
+}
+
 export class ContactPoisonProtectedTag extends ProtectedTag {
   constructor(sourceMove: Moves) {
     super(sourceMove, BattlerTagType.BANEFUL_BUNKER);
@@ -954,6 +981,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new ThunderCageTag(turnCount, sourceId);
     case BattlerTagType.PROTECTED:
       return new ProtectedTag(sourceMove);
+    case BattlerTagType.KINGS_SHIELD:
+      return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.ATK, -1);
     case BattlerTagType.BANEFUL_BUNKER:
       return new ContactPoisonProtectedTag(sourceMove);
     case BattlerTagType.BURNING_BULWARK:

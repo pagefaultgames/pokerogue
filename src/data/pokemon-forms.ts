@@ -5,6 +5,7 @@ import { Moves } from "./enums/moves";
 import { SpeciesFormKey } from "./pokemon-species";
 import { Species } from "./enums/species";
 import { StatusEffect } from "./status-effect";
+import { MoveCategory, allMoves } from "./move";
 
 export enum FormChangeItem {
   NONE,
@@ -251,18 +252,27 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
   }
 }
 
-export class SpeciesFormChangeMoveUsedTrigger extends SpeciesFormChangeTrigger {
-  public move: Moves;
+export abstract class SpeciesFormChangeMoveTrigger extends SpeciesFormChangeTrigger {
+  public movePredicate: (m: Moves) => boolean;
   public used: boolean;
 
-  constructor(move: Moves, used: boolean = true) {
+  constructor(move: Moves | ((m: Moves) => boolean), used: boolean = true) {
     super();
-    this.move = move;
+    this.movePredicate = typeof move === 'function' ? move : (m: Moves) => m === move;
     this.used = used;
   }
+}
 
+export class SpeciesFormChangePreMoveTrigger extends SpeciesFormChangeMoveTrigger {
   canChange(pokemon: Pokemon): boolean {
-    return pokemon.summonData && !!pokemon.getLastXMoves(1).filter(m => m.move === this.move).length === this.used;
+    const command = pokemon.scene.currentBattle.turnCommands[pokemon.getFieldIndex()];
+    return command?.move && this.movePredicate(command.move.move) === this.used;
+  }
+}
+
+export class SpeciesFormChangePostMoveTrigger extends SpeciesFormChangeMoveTrigger {
+  canChange(pokemon: Pokemon): boolean {
+    return pokemon.summonData && !!pokemon.getLastXMoves(1).filter(m => this.movePredicate(m.move)).length === this.used;
   }
 }
 
@@ -512,9 +522,13 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.KELDEO, 'resolute', 'ordinary', new SpeciesFormChangeMoveLearnedTrigger(Moves.SECRET_SWORD, false))
   ],
   [Species.MELOETTA]: [
-    new SpeciesFormChange(Species.MELOETTA, 'aria', 'pirouette', new SpeciesFormChangeMoveUsedTrigger(Moves.RELIC_SONG), true),
-    new SpeciesFormChange(Species.MELOETTA, 'pirouette', 'aria', new SpeciesFormChangeMoveUsedTrigger(Moves.RELIC_SONG), true),
+    new SpeciesFormChange(Species.MELOETTA, 'aria', 'pirouette', new SpeciesFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
+    new SpeciesFormChange(Species.MELOETTA, 'pirouette', 'aria', new SpeciesFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
     new SpeciesFormChange(Species.MELOETTA, 'pirouette', 'aria', new SpeciesFormChangeActiveTrigger(false), true)
+  ],
+  [Species.AEGISLASH]: [
+    new SpeciesFormChange(Species.AEGISLASH, 'blade', 'shield', new SpeciesFormChangePreMoveTrigger(Moves.KINGS_SHIELD), true),
+    new SpeciesFormChange(Species.AEGISLASH, 'shield', 'blade', new SpeciesFormChangePreMoveTrigger(m => allMoves[m].category !== MoveCategory.STATUS), true)
   ],
   [Species.DIANCIE]: [
     new SpeciesFormChange(Species.DIANCIE, '', SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.DIANCITE))
