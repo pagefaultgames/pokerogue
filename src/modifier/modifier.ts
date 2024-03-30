@@ -1540,7 +1540,7 @@ export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
 
   apply(args: any[]): boolean {
     const scene = (args[0] as Pokemon).scene;
-    const moneyAmount = new Utils.IntegerHolder(Math.floor((args[1] as Utils.IntegerHolder).value * (0.2 * this.getStackCount())));
+    const moneyAmount = new Utils.IntegerHolder(Math.floor((args[1] as Utils.IntegerHolder).value * (0.5 * this.getStackCount())));
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
     scene.money += moneyAmount.value;
     scene.updateMoneyText();
