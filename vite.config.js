@@ -8,10 +8,11 @@ export default defineConfig(({ mode }) => {
 		clearScreen: false,
 		build: {
 			minify: 'esbuild',
+			sourcemap: true
 		},
 		esbuild: {
 			pure: mode === 'production' ? [ 'console.log' ] : [],
 			keepNames: true,
-		}
+		},
 	}
 })

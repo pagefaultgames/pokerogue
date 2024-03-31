@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"target": "ES2020",
+		"module": "ES2020",
+		"moduleResolution": "Bundler",
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"strictNullChecks": false,
+		"sourceMap": true,
+		"rootDir": "./src",
+		"baseUrl": "./src",
+		"paths": {
+			"#app/*": ["*.ts"],
+			"#app": ["."]
+		},
+		"outDir": "./build",
+		"noEmit": true
+	}
+}
