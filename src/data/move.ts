@@ -1409,12 +1409,12 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
 export abstract class ConsecutiveUsePowerMultiplierAttr extends MovePowerMultiplierAttr {
   constructor(limit: integer, resetOnFail: boolean, resetOnLimit?: boolean, ...comboMoves: Moves[]) {
     super((user: Pokemon, target: Pokemon, move: Move): number => {
-      const moveHistory = user.getMoveHistory().reverse().slice(0);
+      const moveHistory = user.getMoveHistory().reverse().slice(1);
 
       let count = 0;
       let turnMove: TurnMove;
 
-      while (((turnMove = moveHistory.shift())?.move === move.id || (comboMoves.length && comboMoves.indexOf(turnMove?.move) > -1)) && (!resetOnFail || turnMove.result === MoveResult.SUCCESS)) {
+      while (((turnMove = moveHistory.shift())?.move === move.id || (comboMoves.length && comboMoves.includes(turnMove?.move))) && (!resetOnFail || turnMove.result === MoveResult.SUCCESS)) {
         if (count < (limit - 1))
           count++;
         else if (resetOnLimit)
@@ -1423,7 +1423,7 @@ export abstract class ConsecutiveUsePowerMultiplierAttr extends MovePowerMultipl
           break;
       }
 
-      return this.getMultiplier(count - 1);
+      return this.getMultiplier(count);
     });
   }
 
