@@ -55,7 +55,6 @@ import DamageNumberHandler from './field/damage-number-handler';
 import PokemonInfoContainer from './ui/pokemon-info-container';
 import { biomeDepths } from './data/biomes';
 import { initTouchControls } from './touch-controls';
-import { UiTheme } from './enums/ui-theme';
 
 export const bypassLogin = false;
 
@@ -106,8 +105,7 @@ export default class BattleScene extends Phaser.Scene {
 	public damageNumbersMode: integer = 0;
 	public showLevelUpStats: boolean = true;
 	public enableTutorials: boolean = true;
-	public uiTheme: UiTheme = UiTheme.DEFAULT;
-	public windowType: integer = 9;
+	public windowType: integer = 1;
 	public experimentalSprites: boolean = false;
 	public fusionPaletteSwaps: boolean = true;
 	public enableTouchControls: boolean = false;
@@ -193,10 +191,6 @@ export default class BattleScene extends Phaser.Scene {
 		if (!filename)
 			filename = `${key}.png`;
 		this.load.image(key, `images/${folder}/${filename}`);
-		if (this.uiTheme && folder.startsWith('ui')) {
-			folder = folder.replace('ui', 'ui/legacy');
-			this.load.image(`${key}_legacy`, `images/${folder}/${filename}`);
-		}
 	}
 
 	loadAtlas(key: string, folder: string, filenameRoot?: string) {
@@ -205,10 +199,6 @@ export default class BattleScene extends Phaser.Scene {
 		if (folder)
 			folder += '/';
 		this.load.atlas(key, `images/${folder}${filenameRoot}.png`, `images/${folder}/${filenameRoot}.json`);
-		if (this.uiTheme && folder.startsWith('ui')) {
-			folder = folder.replace('ui', 'ui/legacy');
-			this.load.atlas(`${key}_legacy`, `images/${folder}${filenameRoot}.png`, `images/${folder}/${filenameRoot}.json`);
-		}
 	}
 
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
@@ -235,10 +225,6 @@ export default class BattleScene extends Phaser.Scene {
 		if (!filename)
 			filename = `${key}.png`;
 		this.load.spritesheet(key, `images/${folder}/${filename}`, { frameWidth: size, frameHeight: size });
-		if (this.uiTheme && folder.startsWith('ui')) {
-			folder = folder.replace('ui', 'ui/legacy');
-			this.load.spritesheet(`${key}_legacy`, `images/${folder}/${filename}`, { frameWidth: size, frameHeight: size });
-		}
 	}
 
 	loadSe(key: string, folder?: string, filenames?: string | string[]) {
@@ -415,7 +401,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('egg_list_bg', 'ui');
 
 		for (let i = 0; i < 10; i++)
-			this.loadAtlas(`pokemon_icons_${i}`, '');
+			this.loadAtlas(`pokemon_icons_${i}`, 'ui');
 
 		this.loadSe('select');
 		this.loadSe('menu_open');

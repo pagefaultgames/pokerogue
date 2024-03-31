@@ -1,5 +1,4 @@
 import BattleScene, { Button } from "../battle-scene";
-import { TextStyle, getTextColor } from "./text";
 import UI, { Mode } from "./ui";
 
 export default abstract class UiHandler {
@@ -25,10 +24,6 @@ export default abstract class UiHandler {
 
   getUi() {
     return this.scene.ui;
-  }
-
-  getTextColor(style: TextStyle, shadow: boolean = false): string {
-    return getTextColor(style, shadow, this.scene.uiTheme);
   }
 
   getCursor(): integer {

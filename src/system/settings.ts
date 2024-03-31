@@ -10,7 +10,6 @@ export enum Setting {
   SE_Volume = "SE_VOLUME",
   Damage_Numbers = "DAMAGE_NUMBERS",
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
-  UI_Theme = "UI_THEME",
   Window_Type = "WINDOW_TYPE",
   Tutorials = "TUTORIALS",
   Sprite_Set = "SPRITE_SET",
@@ -35,7 +34,6 @@ export const settingOptions: SettingOptions = {
   [Setting.SE_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.Damage_Numbers]: [ 'Off', 'Simple', 'Fancy' ],
   [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ],
-  [Setting.UI_Theme]: [ 'Default', 'Legacy' ],
   [Setting.Window_Type]: new Array(4).fill(null).map((_, i) => (i + 1).toString()),
   [Setting.Tutorials]: [ 'Off', 'On' ],
   [Setting.Sprite_Set]: [ 'Consistent', 'Prioritize Animation' ],
@@ -52,7 +50,6 @@ export const settingDefaults: SettingDefaults = {
   [Setting.SE_Volume]: 10,
   [Setting.Damage_Numbers]: 0,
   [Setting.Show_Stats_on_Level_Up]: 1,
-  [Setting.UI_Theme]: 0,
   [Setting.Window_Type]: 0,
   [Setting.Tutorials]: 1,
   [Setting.Sprite_Set]: 0,
@@ -84,9 +81,6 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       break;
     case Setting.Show_Stats_on_Level_Up:
       scene.showLevelUpStats = settingOptions[setting][value] === 'On';
-      break;
-    case Setting.UI_Theme:
-      scene.uiTheme = parseInt(settingOptions[setting][value]);
       break;
     case Setting.Window_Type:
       updateWindowType(scene, parseInt(settingOptions[setting][value]));
