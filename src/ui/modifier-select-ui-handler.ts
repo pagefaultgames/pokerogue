@@ -267,7 +267,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       ui.showText('Spend money to reroll your item options');
     } else {
       this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 50, -60);
-      ui.showText('Transfer a held item from one Pokémon to another instead of selecting an item');
+      ui.showText('Transfer a held item from one Pokémon to another');
     }
 
     return ret;
