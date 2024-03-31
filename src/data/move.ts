@@ -1423,7 +1423,7 @@ export abstract class ConsecutiveUsePowerMultiplierAttr extends MovePowerMultipl
           break;
       }
 
-      return this.getMultiplier(count);
+      return this.getMultiplier(count - 1);
     });
   }
 
