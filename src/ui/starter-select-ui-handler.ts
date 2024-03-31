@@ -415,6 +415,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         let dupe = false;
 
         do {
+          dupe = false;
+
           generateSpecies();
 
           for (let pc = 0; pc < c; pc++) {
