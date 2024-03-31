@@ -183,8 +183,8 @@ export const biomePokemonPools: BiomePokemonPools = {
         { 1: [ Species.ROCKRUFF ], 25: [ Species.LYCANROC ] },
         { 1: [ Species.PAWMI ], 18: [ Species.PAWMO ], 32: [ Species.PAWMOT ] }
       ],
-      [TimeOfDay.DUSK]: [ { 1: [ Species.MANKEY ], 28: [ Species.PRIMEAPE ], 40: [ Species.ANNIHILAPE ] } ],
-      [TimeOfDay.NIGHT]: [ { 1: [ Species.MANKEY ], 28: [ Species.PRIMEAPE ], 40: [ Species.ANNIHILAPE ] } ],
+      [TimeOfDay.DUSK]: [ { 1: [ Species.MANKEY ], 28: [ Species.PRIMEAPE ], 75: [ Species.ANNIHILAPE ] } ],
+      [TimeOfDay.NIGHT]: [ { 1: [ Species.MANKEY ], 28: [ Species.PRIMEAPE ], 75: [ Species.ANNIHILAPE ] } ],
       [TimeOfDay.ALL]: [
         { 1: [ Species.PIDGEY ], 18: [ Species.PIDGEOTTO ], 36: [ Species.PIDGEOT ] },
         { 1: [ Species.SPEAROW ], 20: [ Species.FEAROW ] },
@@ -199,7 +199,7 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.NIGHT]: [ { 1: [ Species.SHINX ], 15: [ Species.LUXIO ], 30: [ Species.LUXRAY ] } ],
       [TimeOfDay.ALL]: [ { 1: [ Species.ABRA ], 16: [ Species.KADABRA ] }, { 1: [ Species.BUNEARY ], 20: [ Species.LOPUNNY ] }, { 1: [ Species.ROOKIDEE ], 18: [ Species.CORVISQUIRE ], 38: [ Species.CORVIKNIGHT ] } ]
     },
-    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.FARFETCHD, Species.LICKITUNG, Species.CHANSEY, Species.EEVEE, Species.SNORLAX, { 1: [ Species.DUNSPARCE ], 40: [ Species.DUDUNSPARCE ] } ] },
+    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.FARFETCHD, Species.LICKITUNG, Species.CHANSEY, Species.EEVEE, Species.SNORLAX, { 1: [ Species.DUNSPARCE ], 72: [ Species.DUDUNSPARCE ] } ] },
     [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.DITTO, Species.LATIAS, Species.LATIOS ] },
     [BiomePoolTier.BOSS]: {
       [TimeOfDay.DAWN]: [ Species.DODRIO, Species.FURRET, Species.GUMSHOOS, Species.GREEDENT ],
@@ -249,8 +249,8 @@ export const biomePokemonPools: BiomePokemonPools = {
   },
   [Biome.TALL_GRASS]: {
     [BiomePoolTier.COMMON]: {
-      [TimeOfDay.DAWN]: [ { 1: [ Species.BOUNSWEET ], 18: [ Species.STEENEE ], 30: [ Species.TSAREENA ] } ],
-      [TimeOfDay.DAY]: [ { 1: [ Species.NIDORAN_F ], 16: [ Species.NIDORINA ] }, { 1: [ Species.NIDORAN_M ], 16: [ Species.NIDORINO ] }, { 1: [ Species.BOUNSWEET ], 18: [ Species.STEENEE ], 30: [ Species.TSAREENA ] } ],
+      [TimeOfDay.DAWN]: [ { 1: [ Species.BOUNSWEET ], 18: [ Species.STEENEE ], 58: [ Species.TSAREENA ] } ],
+      [TimeOfDay.DAY]: [ { 1: [ Species.NIDORAN_F ], 16: [ Species.NIDORINA ] }, { 1: [ Species.NIDORAN_M ], 16: [ Species.NIDORINO ] }, { 1: [ Species.BOUNSWEET ], 18: [ Species.STEENEE ], 58: [ Species.TSAREENA ] } ],
       [TimeOfDay.DUSK]: [ { 1: [ Species.ODDISH ], 21: [ Species.GLOOM ] }, { 1: [ Species.KRICKETOT ], 10: [ Species.KRICKETUNE ] } ],
       [TimeOfDay.NIGHT]: [ { 1: [ Species.ODDISH ], 21: [ Species.GLOOM ] }, { 1: [ Species.KRICKETOT ], 10: [ Species.KRICKETUNE ] } ],
       [TimeOfDay.ALL]: [ { 1: [ Species.NINCADA ], 20: [ Species.NINJASK ] }, { 1: [ Species.FOMANTIS ], 44: [ Species.LURANTIS ] }, { 1: [ Species.NYMBLE ], 24: [ Species.LOKIX ] } ]
@@ -267,9 +267,9 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.DAY]: [],
       [TimeOfDay.DUSK]: [],
       [TimeOfDay.NIGHT]: [],
-      [TimeOfDay.ALL]: [ Species.PINSIR, { 1: [ Species.CHIKORITA ], 16: [ Species.BAYLEEF ], 32: [ Species.MEGANIUM ] }, { 1: [ Species.GIRAFARIG ], 40: [ Species.FARIGIRAF ] }, Species.ZANGOOSE, Species.KECLEON, Species.TROPIUS ]
+      [TimeOfDay.ALL]: [ Species.PINSIR, { 1: [ Species.CHIKORITA ], 16: [ Species.BAYLEEF ], 32: [ Species.MEGANIUM ] }, { 1: [ Species.GIRAFARIG ], 72: [ Species.FARIGIRAF ] }, Species.ZANGOOSE, Species.KECLEON, Species.TROPIUS ]
     },
-    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.SCYTHER, Species.SHEDINJA ] },
+    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.SCYTHER, Species.SHEDINJA, Species.ROTOM ] },
     [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] },
     [BiomePoolTier.BOSS]: {
       [TimeOfDay.DAWN]: [ Species.TSAREENA ],
@@ -358,7 +358,7 @@ export const biomePokemonPools: BiomePokemonPools = {
         { 1: [ Species.EKANS ], 22: [ Species.ARBOK ] },
         { 1: [ Species.TEDDIURSA ], 30: [ Species.URSARING ] },
         { 1: [ Species.BURMY ], 20: [ Species.WORMADAM ] },
-        { 1: [ Species.PANSAGE ], 20: [ Species.SIMISAGE ] }
+        { 1: [ Species.PANSAGE ], 30: [ Species.SIMISAGE ] }
       ]
     },
     [BiomePoolTier.RARE]: {
@@ -373,7 +373,7 @@ export const biomePokemonPools: BiomePokemonPools = {
         Species.KARRABLAST,
         Species.SHELMET,
         { 1: [ Species.CHESPIN ], 16: [ Species.QUILLADIN ], 36: [ Species.CHESNAUGHT ] },
-        { 1: [ Species.ROWLET ], 17: [ Species.DARTRIX ], 36: [ Species.DECIDUEYE ] },
+        { 1: [ Species.ROWLET ], 17: [ Species.DARTRIX ], 34: [ Species.DECIDUEYE ] },
         Species.SQUAWKABILLY,
         { 1: [ Species.TOEDSCOOL ], 30: [ Species.TOEDSCRUEL ] }
       ]
@@ -406,8 +406,8 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.ALL]: [ { 1: [ Species.TENTACOOL ], 30: [ Species.TENTACRUEL ] }, { 1: [ Species.MAGIKARP ], 20: [ Species.GYARADOS ] }, { 1: [ Species.BUIZEL ], 26: [ Species.FLOATZEL ] } ]
     },
     [BiomePoolTier.UNCOMMON]: {
-      [TimeOfDay.DAWN]: [ { 1: [ Species.STARYU ], 20: [ Species.STARMIE ] } ],
-      [TimeOfDay.DAY]: [ { 1: [ Species.STARYU ], 20: [ Species.STARMIE ] } ],
+      [TimeOfDay.DAWN]: [ { 1: [ Species.STARYU ], 30: [ Species.STARMIE ] } ],
+      [TimeOfDay.DAY]: [ { 1: [ Species.STARYU ], 30: [ Species.STARMIE ] } ],
       [TimeOfDay.DUSK]: [ { 1: [ Species.SLOWPOKE ], 37: [ Species.SLOWBRO ] }, Species.SHELLDER, { 1: [ Species.CARVANHA ], 30: [ Species.SHARPEDO ] } ],
       [TimeOfDay.NIGHT]: [ { 1: [ Species.SLOWPOKE ], 37: [ Species.SLOWBRO ] }, Species.SHELLDER, { 1: [ Species.CHINCHOU ], 27: [ Species.LANTURN ] }, { 1: [ Species.CARVANHA ], 30: [ Species.SHARPEDO ] } ],
       [TimeOfDay.ALL]: [
@@ -415,7 +415,7 @@ export const biomePokemonPools: BiomePokemonPools = {
         { 1: [ Species.HORSEA ], 32: [ Species.SEADRA ] },
         { 1: [ Species.GOLDEEN ], 33: [ Species.SEAKING ] },
         { 1: [ Species.WAILMER ], 40: [ Species.WAILORD ] },
-        { 1: [ Species.PANPOUR ], 20: [ Species.SIMIPOUR ] },
+        { 1: [ Species.PANPOUR ], 30: [ Species.SIMIPOUR ] },
         { 1: [ Species.WATTREL ], 25: [ Species.KILOWATTREL ] }
       ]
     },
@@ -424,9 +424,9 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.DAY]: [],
       [TimeOfDay.DUSK]: [],
       [TimeOfDay.NIGHT]: [],
-      [TimeOfDay.ALL]: [ Species.LAPRAS, { 1: [ Species.PIPLUP ], 16: [ Species.PRINPLUP ], 36: [ Species.EMPOLEON ] }, { 1: [ Species.POPPLIO ], 17: [ Species.BRIONNE ], 36: [ Species.PRIMARINA ] } ]
+      [TimeOfDay.ALL]: [ Species.LAPRAS, { 1: [ Species.PIPLUP ], 16: [ Species.PRINPLUP ], 36: [ Species.EMPOLEON ] }, { 1: [ Species.POPPLIO ], 17: [ Species.BRIONNE ], 34: [ Species.PRIMARINA ] } ]
     },
-    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.KINGDRA, { 1: [ Species.TIRTOUGA ], 37: [ Species.CARRACOSTA ] } ] },
+    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.KINGDRA, Species.ROTOM, { 1: [ Species.TIRTOUGA ], 37: [ Species.CARRACOSTA ] } ] },
     [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] },
     [BiomePoolTier.BOSS]: {
       [TimeOfDay.DAWN]: [ Species.PELIPPER, Species.CRAMORANT, Species.PALAFIN ],
@@ -473,8 +473,8 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.ALL]: [ { 1: [ Species.TOTODILE ], 18: [ Species.CROCONAW ], 30: [ Species.FERALIGATR ] }, { 1: [ Species.MUDKIP ], 16: [ Species.MARSHTOMP ], 36: [ Species.SWAMPERT ] } ]
     },
     [BiomePoolTier.SUPER_RARE]: {
-      [TimeOfDay.DAWN]: [ { 1: [ Species.GALAR_SLOWPOKE ], 40: [ Species.GALAR_SLOWBRO ] }, Species.HISUI_SLIGGOO, Species.HISUI_GOODRA ],
-      [TimeOfDay.DAY]: [ { 1: [ Species.GALAR_SLOWPOKE ], 40: [ Species.GALAR_SLOWBRO ] }, Species.HISUI_SLIGGOO, Species.HISUI_GOODRA ],
+      [TimeOfDay.DAWN]: [ { 1: [ Species.GALAR_SLOWPOKE ], 40: [ Species.GALAR_SLOWBRO ] }, { 1: [ Species.HISUI_SLIGGOO ], 90: [ Species.HISUI_GOODRA ] } ],
+      [TimeOfDay.DAY]: [ { 1: [ Species.GALAR_SLOWPOKE ], 40: [ Species.GALAR_SLOWBRO ] }, { 1: [ Species.HISUI_SLIGGOO ], 90: [ Species.HISUI_GOODRA ] } ],
       [TimeOfDay.DUSK]: [],
       [TimeOfDay.NIGHT]: [],
       [TimeOfDay.ALL]: [ Species.POLITOED, Species.GALAR_STUNFISK ]
@@ -499,8 +499,8 @@ export const biomePokemonPools: BiomePokemonPools = {
   },
   [Biome.BEACH]: {
     [BiomePoolTier.COMMON]: {
-      [TimeOfDay.DAWN]: [ { 1: [ Species.STARYU ], 20: [ Species.STARMIE ] } ],
-      [TimeOfDay.DAY]: [ { 1: [ Species.STARYU ], 20: [ Species.STARMIE ] } ],
+      [TimeOfDay.DAWN]: [ { 1: [ Species.STARYU ], 30: [ Species.STARMIE ] } ],
+      [TimeOfDay.DAY]: [ { 1: [ Species.STARYU ], 30: [ Species.STARMIE ] } ],
       [TimeOfDay.DUSK]: [ Species.SHELLDER ],
       [TimeOfDay.NIGHT]: [ Species.SHELLDER ],
       [TimeOfDay.ALL]: [
@@ -517,7 +517,7 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.DAY]: [],
       [TimeOfDay.DUSK]: [],
       [TimeOfDay.NIGHT]: [],
-      [TimeOfDay.ALL]: [ { 1: [ Species.BURMY ], 20: [ Species.WORMADAM ] }, { 1: [ Species.CLAUNCHER ], 37: [ Species.CLAWITZER ] }, { 1: [ Species.SANDYGAST ], 48: [ Species.PALOSSAND ] } ]
+      [TimeOfDay.ALL]: [ { 1: [ Species.BURMY ], 20: [ Species.WORMADAM ] }, { 1: [ Species.CLAUNCHER ], 37: [ Species.CLAWITZER ] }, { 1: [ Species.SANDYGAST ], 42: [ Species.PALOSSAND ] } ]
     },
     [BiomePoolTier.RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ { 1: [ Species.QUAXLY ], 16: [ Species.QUAXWELL ], 36: [ Species.QUAQUAVAL ] }, Species.TATSUGIRI ] },
     [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ { 1: [ Species.TIRTOUGA ], 37: [ Species.CARRACOSTA ] } ] },
@@ -710,6 +710,7 @@ export const biomePokemonPools: BiomePokemonPools = {
         { 1: [ Species.CRANIDOS ], 30: [ Species.RAMPARDOS ] },
         { 1: [ Species.SHIELDON ], 30: [ Species.BASTIODON ] },
         { 1: [ Species.GIBLE ], 24: [ Species.GABITE ], 48: [ Species.GARCHOMP ] },
+        Species.ROTOM,
         Species.ARCHEOPS,
         { 1: [ Species.AXEW ], 38: [ Species.FRAXURE ] }
       ]
@@ -741,8 +742,8 @@ export const biomePokemonPools: BiomePokemonPools = {
       ]
     },
     [BiomePoolTier.UNCOMMON]: {
-      [TimeOfDay.DAWN]: [ { 1: [ Species.SIZZLIPEDE ], 28: [ Species.CENTISKORCH ] }, { 1: [ Species.CAPSAKID ], 20: [ Species.SCOVILLAIN ] } ],
-      [TimeOfDay.DAY]: [ { 1: [ Species.SIZZLIPEDE ], 28: [ Species.CENTISKORCH ] }, { 1: [ Species.CAPSAKID ], 20: [ Species.SCOVILLAIN ] } ],
+      [TimeOfDay.DAWN]: [ { 1: [ Species.SIZZLIPEDE ], 28: [ Species.CENTISKORCH ] }, { 1: [ Species.CAPSAKID ], 30: [ Species.SCOVILLAIN ] } ],
+      [TimeOfDay.DAY]: [ { 1: [ Species.SIZZLIPEDE ], 28: [ Species.CENTISKORCH ] }, { 1: [ Species.CAPSAKID ], 30: [ Species.SCOVILLAIN ] } ],
       [TimeOfDay.DUSK]: [],
       [TimeOfDay.NIGHT]: [],
       [TimeOfDay.ALL]: [
@@ -878,11 +879,11 @@ export const biomePokemonPools: BiomePokemonPools = {
         { 1: [ Species.SNORUNT ], 42: [ Species.GLALIE ] },
         { 1: [ Species.SPHEAL ], 32: [ Species.SEALEO ], 44: [ Species.WALREIN ] },
         Species.EISCUE,
-        { 1: [ Species.CETODDLE ], 20: [ Species.CETITAN ] }
+        { 1: [ Species.CETODDLE ], 30: [ Species.CETITAN ] }
       ]
     },
     [BiomePoolTier.RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.JYNX, Species.LAPRAS, Species.FROSLASS, Species.CRYOGONAL ] },
-    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.DELIBIRD, { 1: [ Species.AMAURA ], 59: [ Species.AURORUS ] } ] },
+    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.DELIBIRD, Species.ROTOM, { 1: [ Species.AMAURA ], 59: [ Species.AURORUS ] } ] },
     [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.ARTICUNO, Species.REGICE ] },
     [BiomePoolTier.BOSS]: {
       [TimeOfDay.DAWN]: [],
@@ -913,14 +914,14 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.DAWN]: [
         { 1: [ Species.PONYTA ], 40: [ Species.RAPIDASH ] },
         { 1: [ Species.SNUBBULL ], 23: [ Species.GRANBULL ] },
-        { 1: [ Species.SKITTY ], 20: [ Species.DELCATTY ] },
+        { 1: [ Species.SKITTY ], 30: [ Species.DELCATTY ] },
         Species.BOUFFALANT,
         { 1: [ Species.SMOLIV ], 25: [ Species.DOLLIV ], 35: [ Species.ARBOLIVA ] }
       ],
       [TimeOfDay.DAY]: [
         { 1: [ Species.PONYTA ], 40: [ Species.RAPIDASH ] },
         { 1: [ Species.SNUBBULL ], 23: [ Species.GRANBULL ] },
-        { 1: [ Species.SKITTY ], 20: [ Species.DELCATTY ] },
+        { 1: [ Species.SKITTY ], 30: [ Species.DELCATTY ] },
         Species.BOUFFALANT,
         { 1: [ Species.SMOLIV ], 25: [ Species.DOLLIV ], 35: [ Species.ARBOLIVA ] }
       ],
@@ -969,7 +970,7 @@ export const biomePokemonPools: BiomePokemonPools = {
         Species.DEDENNE,
         { 1: [ Species.GRUBBIN ], 20: [ Species.CHARJABUG ] },
         { 1: [ Species.PAWMI ], 18: [ Species.PAWMO ], 32: [ Species.PAWMOT ] },
-        { 1: [ Species.TADBULB ], 20: [ Species.BELLIBOLT ] }
+        { 1: [ Species.TADBULB ], 30: [ Species.BELLIBOLT ] }
       ]
     },
     [BiomePoolTier.UNCOMMON]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.ELECTABUZZ, Species.PLUSLE, Species.MINUN, Species.PACHIRISU, Species.EMOLGA, Species.TOGEDEMARU ] },
@@ -1003,7 +1004,7 @@ export const biomePokemonPools: BiomePokemonPools = {
         { 1: [ Species.ROLYCOLY ], 18: [ Species.CARKOL ], 34: [ Species.COALOSSAL ] }
       ]
     },
-    [BiomePoolTier.UNCOMMON]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.MAGMAR, Species.TORKOAL, { 1: [ Species.PANSEAR ], 20: [ Species.SIMISEAR ] }, Species.HEATMOR, Species.TURTONATOR ] },
+    [BiomePoolTier.UNCOMMON]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.MAGMAR, Species.TORKOAL, { 1: [ Species.PANSEAR ], 30: [ Species.SIMISEAR ] }, Species.HEATMOR, Species.TURTONATOR ] },
     [BiomePoolTier.RARE]: {
       [TimeOfDay.DAWN]: [],
       [TimeOfDay.DAY]: [],
@@ -1015,12 +1016,12 @@ export const biomePokemonPools: BiomePokemonPools = {
         { 1: [ Species.CHIMCHAR ], 14: [ Species.MONFERNO ], 36: [ Species.INFERNAPE ] },
         { 1: [ Species.TEPIG ], 17: [ Species.PIGNITE ], 36: [ Species.EMBOAR ] },
         { 1: [ Species.FENNEKIN ], 16: [ Species.BRAIXEN ], 36: [ Species.DELPHOX ] },
-        { 1: [ Species.LITTEN ], 17: [ Species.TORRACAT ], 36: [ Species.INCINEROAR ] },
+        { 1: [ Species.LITTEN ], 17: [ Species.TORRACAT ], 34: [ Species.INCINEROAR ] },
         { 1: [ Species.SCORBUNNY ], 16: [ Species.RABOOT ], 35: [ Species.CINDERACE ] },
         { 1: [ Species.CHARCADET ], 30: [ Species.ARMAROUGE ] }
       ]
     },
-    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.FLAREON, { 1: [ Species.LARVESTA ], 59: [ Species.VOLCARONA ] }, Species.HISUI_GROWLITHE ] },
+    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.FLAREON, Species.ROTOM, { 1: [ Species.LARVESTA ], 59: [ Species.VOLCARONA ] }, Species.HISUI_GROWLITHE ] },
     [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.ENTEI, Species.HEATRAN, Species.VOLCANION, Species.CHI_YU ] },
     [BiomePoolTier.BOSS]: {
       [TimeOfDay.DAWN]: [],
@@ -1084,11 +1085,11 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.DUSK]: [],
       [TimeOfDay.NIGHT]: [],
       [TimeOfDay.ALL]: [
-        { 1: [ Species.MANKEY ], 28: [ Species.PRIMEAPE ], 40: [ Species.ANNIHILAPE ] },
+        { 1: [ Species.MANKEY ], 28: [ Species.PRIMEAPE ], 75: [ Species.ANNIHILAPE ] },
         { 1: [ Species.MAKUHITA ], 24: [ Species.HARIYAMA ] },
         { 1: [ Species.MEDITITE ], 37: [ Species.MEDICHAM ] },
         { 1: [ Species.STUFFUL ], 27: [ Species.BEWEAR ] },
-        { 1: [ Species.CLOBBOPUS ], 20: [ Species.GRAPPLOCT ] }
+        { 1: [ Species.CLOBBOPUS ], 55: [ Species.GRAPPLOCT ] }
       ]
     },
     [BiomePoolTier.UNCOMMON]: {
@@ -1128,7 +1129,7 @@ export const biomePokemonPools: BiomePokemonPools = {
     },
     [BiomePoolTier.UNCOMMON]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ { 1: [ Species.BRONZOR ], 33: [ Species.BRONZONG ] }, Species.KLEFKI ] },
     [BiomePoolTier.RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] },
-    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ { 1: [ Species.PORYGON ], 20: [ Species.PORYGON2 ] }, { 1: [ Species.BELDUM ], 20: [ Species.METANG ], 45: [ Species.METAGROSS ] } ] },
+    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ { 1: [ Species.PORYGON ], 30: [ Species.PORYGON2 ] }, { 1: [ Species.BELDUM ], 20: [ Species.METANG ], 45: [ Species.METAGROSS ] } ] },
     [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.GENESECT, Species.MAGEARNA ] },
     [BiomePoolTier.BOSS]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.KLINKLANG, Species.KLEFKI ] },
     [BiomePoolTier.BOSS_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] },
@@ -1272,7 +1273,7 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.NIGHT]: [],
       [TimeOfDay.ALL]: [ { 1: [ Species.BELDUM ], 20: [ Species.METANG ], 45: [ Species.METAGROSS ] }, Species.SIGILYPH, { 1: [ Species.SOLOSIS ], 32: [ Species.DUOSION ], 41: [ Species.REUNICLUS ] } ]
     },
-    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ { 1: [ Species.PORYGON ], 20: [ Species.PORYGON2 ] } ] },
+    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ { 1: [ Species.PORYGON ], 30: [ Species.PORYGON2 ] } ] },
     [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.CRESSELIA, { 1: [ Species.COSMOG ], 43: [ Species.COSMOEM ] }, Species.CELESTEELA ] },
     [BiomePoolTier.BOSS]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [ Species.SOLROCK ], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [ Species.LUNATONE ], [TimeOfDay.ALL]: [ Species.CLEFABLE, Species.BRONZONG, Species.MUSHARNA, Species.REUNICLUS, Species.MINIOR ] },
     [BiomePoolTier.BOSS_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.METAGROSS, Species.PORYGON_Z ] },
@@ -1326,9 +1327,9 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.DUSK]: [ Species.TANGELA, { 1: [ Species.SPINARAK ], 22: [ Species.ARIADOS ] }, { 1: [ Species.PANCHAM ], 52: [ Species.PANGORO ] } ],
       [TimeOfDay.NIGHT]: [ Species.TANGELA, { 1: [ Species.PANCHAM ], 52: [ Species.PANGORO ] } ],
       [TimeOfDay.ALL]: [
-        { 1: [ Species.PANSAGE ], 20: [ Species.SIMISAGE ] },
-        { 1: [ Species.PANSEAR ], 20: [ Species.SIMISEAR ] },
-        { 1: [ Species.PANPOUR ], 20: [ Species.SIMIPOUR ] },
+        { 1: [ Species.PANSAGE ], 30: [ Species.SIMISAGE ] },
+        { 1: [ Species.PANSEAR ], 30: [ Species.SIMISEAR ] },
+        { 1: [ Species.PANPOUR ], 30: [ Species.SIMIPOUR ] },
         { 1: [ Species.JOLTIK ], 36: [ Species.GALVANTULA ] },
         { 1: [ Species.LITLEO ], 35: [ Species.PYROAR ] },
         { 1: [ Species.FOMANTIS ], 44: [ Species.LURANTIS ] },
@@ -1379,11 +1380,11 @@ export const biomePokemonPools: BiomePokemonPools = {
         { 1: [ Species.JIGGLYPUFF ], 30: [ Species.WIGGLYTUFF ] },
         { 1: [ Species.MARILL ], 18: [ Species.AZUMARILL ] },
         Species.MAWILE,
-        { 1: [ Species.SPRITZEE ], 20: [ Species.AROMATISSE ] },
-        { 1: [ Species.SWIRLIX ], 20: [ Species.SLURPUFF ] },
+        { 1: [ Species.SPRITZEE ], 40: [ Species.AROMATISSE ] },
+        { 1: [ Species.SWIRLIX ], 40: [ Species.SLURPUFF ] },
         { 1: [ Species.CUTIEFLY ], 25: [ Species.RIBOMBEE ] },
         { 1: [ Species.MORELULL ], 24: [ Species.SHIINOTIC ] },
-        { 1: [ Species.MILCERY ], 20: [ Species.ALCREMIE ] }
+        { 1: [ Species.MILCERY ], 30: [ Species.ALCREMIE ] }
       ]
     },
     [BiomePoolTier.UNCOMMON]: {
@@ -1536,7 +1537,7 @@ export const biomePokemonPools: BiomePokemonPools = {
         { 1: [ Species.ALOLA_SANDSHREW ], 30: [ Species.ALOLA_SANDSLASH ] },
         { 1: [ Species.ALOLA_VULPIX ], 30: [ Species.ALOLA_NINETALES ] },
         { 1: [ Species.ALOLA_DIGLETT ], 26: [ Species.ALOLA_DUGTRIO ] },
-        { 1: [ Species.ALOLA_GEODUDE ], 20: [ Species.ALOLA_GOLEM ], 25: [ Species.ALOLA_GRAVELER ] },
+        { 1: [ Species.ALOLA_GEODUDE ], 25: [ Species.ALOLA_GRAVELER ], 40: [ Species.ALOLA_GOLEM ] },
         { 1: [ Species.ALOLA_GRIMER ], 38: [ Species.ALOLA_MUK ] }
       ]
     },
@@ -1576,12 +1577,12 @@ export const biomePokemonPools: BiomePokemonPools = {
       ]
     },
     [BiomePoolTier.UNCOMMON]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ { 1: [ Species.SOLOSIS ], 32: [ Species.DUOSION ], 41: [ Species.REUNICLUS ] } ] },
-    [BiomePoolTier.RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.DITTO, { 1: [ Species.PORYGON ], 20: [ Species.PORYGON2 ] } ] },
-    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] },
-    [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.ROTOM, Species.TYPE_NULL ] },
+    [BiomePoolTier.RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.DITTO, { 1: [ Species.PORYGON ], 30: [ Species.PORYGON2 ] } ] },
+    [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.ROTOM ] },
+    [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.TYPE_NULL ] },
     [BiomePoolTier.BOSS]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.MUK, Species.ELECTRODE, Species.BRONZONG, Species.MAGNEZONE, Species.PORYGON_Z, Species.REUNICLUS, Species.KLINKLANG ] },
     [BiomePoolTier.BOSS_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] },
-    [BiomePoolTier.BOSS_SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.ROTOM, Species.ZYGARDE, Species.SILVALLY ] },
+    [BiomePoolTier.BOSS_SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.ZYGARDE, Species.SILVALLY ] },
     [BiomePoolTier.BOSS_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.MEWTWO, Species.MIRAIDON ] }
   },
   [Biome.END]: {
@@ -4319,8 +4320,12 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.ROTOM, Type.ELECTRIC, Type.GHOST, [
-        [ Biome.LABORATORY, BiomePoolTier.ULTRA_RARE ],
-        [ Biome.LABORATORY, BiomePoolTier.BOSS_SUPER_RARE ]
+        [ Biome.LABORATORY, BiomePoolTier.SUPER_RARE ],
+        [ Biome.VOLCANO, BiomePoolTier.SUPER_RARE ],
+        [ Biome.SEA, BiomePoolTier.SUPER_RARE ],
+        [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ],
+        [ Biome.MOUNTAIN, BiomePoolTier.SUPER_RARE ],
+        [ Biome.TALL_GRASS, BiomePoolTier.SUPER_RARE ]
       ]
     ],
     [ Species.UXIE, Type.PSYCHIC, -1, [

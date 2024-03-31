@@ -1026,6 +1026,7 @@ export default class BattleScene extends Phaser.Scene {
 			switch (species.speciesId) {
 				case Species.BURMY:
 				case Species.WORMADAM:
+				case Species.ROTOM:
 				case Species.LYCANROC:
 				case Species.CALYREX:
 					return Utils.randSeedInt(species.forms.length);
