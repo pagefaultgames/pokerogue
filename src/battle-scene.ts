@@ -130,8 +130,8 @@ export default class BattleScene extends Phaser.Scene {
 	public pbTrayEnemy: PokeballTray;
 	public abilityBar: AbilityBar;
 	public partyExpBar: PartyExpBar;
-	public arenaBg: Phaser.GameObjects.NineSlice;
-	public arenaBgTransition: Phaser.GameObjects.NineSlice;
+	public arenaBg: Phaser.GameObjects.Sprite;
+	public arenaBgTransition: Phaser.GameObjects.Sprite;
 	public arenaPlayer: ArenaBase;
 	public arenaPlayerTransition: ArenaBase;
 	public arenaEnemy: ArenaBase;
@@ -506,8 +506,8 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	launchBattle() {
-		this.arenaBg = this.add.nineslice(0, 0, 'plains_bg', null, 320, 180, 0, 0, 132, 0);
-		this.arenaBgTransition = this.add.nineslice(0, 0, 'plains_bg', null, 320, 180, 0, 0, 132, 0);
+		this.arenaBg = this.add.sprite(0, 0, 'plains_bg');
+		this.arenaBgTransition = this.add.sprite(0, 0, 'plains_bg');
 
 		[ this.arenaBgTransition, this.arenaBg ].forEach(a => {
 			a.setPipeline(this.fieldSpritePipeline);
