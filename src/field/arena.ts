@@ -493,7 +493,7 @@ export class Arena {
   }
 
   findTagsOnSide(tagPredicate: (t: ArenaTag) => boolean, side: ArenaTagSide): ArenaTag[] {
-    return this.tags.filter(t => tagPredicate && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
+    return this.tags.filter(t => tagPredicate(t) && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
   }
 
   lapseTags(): void {
