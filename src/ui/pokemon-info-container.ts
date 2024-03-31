@@ -22,6 +22,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private pokemonMoveLabels: Phaser.GameObjects.Text[];
 
   private initialX: number;
+  private movesContainerInitialX: number;
 
   public statsContainer: StatsContainer;
 
@@ -37,6 +38,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     infoBg.setOrigin(0.5, 0.5);
 
     this.pokemonMovesContainer = this.scene.add.container(6, 14);
+
+    this.movesContainerInitialX = this.pokemonMovesContainer.x;
 
     this.pokemonMovesContainers = [];
     this.pokemonMoveBgs = [];
@@ -142,7 +145,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
           targets: this.pokemonMovesContainer,
           duration: Utils.fixedInt(325),
           ease: 'Cubic.easeInOut',
-          x: '-=57',
+          x: this.movesContainerInitialX - 57,
           onComplete: () => resolve()
         });
       }
@@ -168,7 +171,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         targets: this.pokemonMovesContainer,
         duration: Utils.fixedInt(750),
         ease: 'Cubic.easeInOut',
-        x: '+=57'
+        x: this.movesContainerInitialX
       });
 
       this.scene.tweens.add({
