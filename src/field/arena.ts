@@ -488,6 +488,14 @@ export class Arena {
       : this.tags.find(t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
   }
 
+  findTags(tagPredicate: (t: ArenaTag) => boolean): ArenaTag[] {
+    return this.findTagsOnSide(tagPredicate, ArenaTagSide.BOTH);
+  }
+
+  findTagsOnSide(tagPredicate: (t: ArenaTag) => boolean, side: ArenaTagSide): ArenaTag[] {
+    return this.tags.filter(t => tagPredicate && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side));
+  }
+
   lapseTags(): void {
     this.tags.filter(t => !(t.lapse(this))).forEach(t => {
       t.onRemove(this);
@@ -662,7 +670,7 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     const hasProps = getBiomeHasProps(biome);
     const biomeKey = getBiomeKey(biome);
     const baseKey = `${biomeKey}_${this.player ? 'a' : 'b'}`;
-
+    
     this.base.setTexture(baseKey);
 
     if (this.base.texture.frameTotal > 1) {

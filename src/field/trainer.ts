@@ -8,6 +8,8 @@ import { EnemyPokemon } from "./pokemon";
 import * as Utils from "../utils";
 import { PersistentModifier } from "../modifier/modifier";
 import { trainerNamePools } from "../data/trainer-names";
+import { ArenaTagType } from "#app/data/enums/arena-tag-type";
+import { ArenaTag, ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
 
 export enum TrainerVariant {
   DEFAULT,
@@ -272,7 +274,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     return ret;
   }
 
-  getPartyMemberMatchupScores(trainerSlot: TrainerSlot = TrainerSlot.NONE): [integer, integer][] {
+  getPartyMemberMatchupScores(trainerSlot: TrainerSlot = TrainerSlot.NONE, forSwitch: boolean = false): [integer, integer][] {
     if (trainerSlot && !this.isDouble())
       trainerSlot = TrainerSlot.NONE;
     
@@ -288,6 +290,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
           score /= 2;
       }
       score /= playerField.length;
+      if (forSwitch && !p.isOnField())
+        this.scene.arena.findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY).map(t => score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p));
       ret = [ party.indexOf(p), score ];
       return ret;
     });

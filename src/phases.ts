@@ -1715,7 +1715,7 @@ export class EnemyCommandPhase extends FieldPhase {
 
         return this.end();
       } else if (!trapTag && !trapped.value) {
-        const partyMemberScores = trainer.getPartyMemberMatchupScores(enemyPokemon.trainerSlot);
+        const partyMemberScores = trainer.getPartyMemberMatchupScores(enemyPokemon.trainerSlot, true);
 
         if (partyMemberScores.length) {
           const matchupScores = opponents.map(opp => enemyPokemon.getMatchupScore(opp));

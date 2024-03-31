@@ -163,8 +163,8 @@ void main() {
         color = vec4(blendHardLight(color.rgb, dayNightTint), color.a);
     }
 
-    if (terrainColorRatio > 0.0 && 1.0 - terrainColorRatio < outTexCoord.y) {
-        if (color.a > 0.0 && terrainColor.r > 0.0 && terrainColor.g > 0.0 && terrainColor.b > 0.0) {
+    if (terrainColorRatio > 0.0 && (1.0 - terrainColorRatio) < outTexCoord.y) {
+        if (color.a > 0.0 && (terrainColor.r > 0.0 || terrainColor.g > 0.0 || terrainColor.b > 0.0)) {
             color.rgb = mix(color.rgb, blendHue(color.rgb, terrainColor), 1.0);
         }
     }
@@ -226,7 +226,7 @@ export default class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines
     onBind(gameObject: Phaser.GameObjects.GameObject): void {
         super.onBind();
 
-        const sprite = (gameObject as Phaser.GameObjects.Sprite);
+        const sprite = gameObject as Phaser.GameObjects.Sprite | Phaser.GameObjects.NineSlice;
         const scene = sprite.scene as BattleScene;
 
         const data = sprite.pipelineData;

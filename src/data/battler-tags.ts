@@ -264,7 +264,7 @@ export class SeedTag extends BattlerTag {
   private sourceIndex: integer;
 
   constructor(sourceId: integer) {
-    super(BattlerTagType.SEEDED, BattlerTagLapseType.AFTER_MOVE, 1, Moves.LEECH_SEED, sourceId);
+    super(BattlerTagType.SEEDED, BattlerTagLapseType.TURN_END, 1, Moves.LEECH_SEED, sourceId);
   }
 
   onAdd(pokemon: Pokemon): void {

@@ -152,6 +152,10 @@ export class ArenaTrapTag extends ArenaTag {
   activateTrap(pokemon: Pokemon): boolean {
     return false;
   }
+
+  getMatchupScoreMultiplier(pokemon: Pokemon): number {
+    return pokemon.isGrounded() ? 1 : Phaser.Math.Linear(0, 1 / Math.pow(2, this.layers), Math.min(pokemon.getHpRatio(), 0.5) * 2);
+  }
 }
 
 class SpikesTag extends ArenaTrapTag {
@@ -216,6 +220,14 @@ class ToxicSpikesTag extends ArenaTrapTag {
 
     return false;
   }
+
+  getMatchupScoreMultiplier(pokemon: Pokemon): number {
+    if (pokemon.isGrounded() || !pokemon.canSetStatus(StatusEffect.POISON, true))
+      return 1;
+    if (pokemon.isOfType(Type.POISON))
+      return 1.25;
+    return super.getMatchupScoreMultiplier(pokemon);
+  }
 }
 
 class DelayedAttackTag extends ArenaTag {
@@ -251,7 +263,7 @@ class StealthRockTag extends ArenaTrapTag {
     arena.scene.queueMessage(`Pointed stones float in the air\naround ${source.getOpponentDescriptor()}!`);
   }
 
-  activateTrap(pokemon: Pokemon): boolean {
+  getDamageHpRatio(pokemon: Pokemon): number {
     const effectiveness = pokemon.getAttackTypeEffectiveness(Type.ROCK);
 
     let damageHpRatio: number;
@@ -277,6 +289,12 @@ class StealthRockTag extends ArenaTrapTag {
         break;
     }
 
+    return damageHpRatio;
+  }
+
+  activateTrap(pokemon: Pokemon): boolean {
+    const damageHpRatio = this.getDamageHpRatio(pokemon);
+
     if (damageHpRatio) {
       const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
       pokemon.scene.queueMessage(`Pointed stones dug into\n${pokemon.name}!`);
@@ -284,6 +302,11 @@ class StealthRockTag extends ArenaTrapTag {
     }
 
     return false;
+  }
+
+  getMatchupScoreMultiplier(pokemon: Pokemon): number {
+    const damageHpRatio = this.getDamageHpRatio(pokemon);
+    return Phaser.Math.Linear(super.getMatchupScoreMultiplier(pokemon), 1, 1 - Math.pow(damageHpRatio, damageHpRatio));
   }
 }
 

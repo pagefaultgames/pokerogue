@@ -948,14 +948,15 @@ export default class BattleScene extends Phaser.Scene {
 		if (init) {
 			const biomeKey = getBiomeKey(biome);
 
-			this.arenaBg.setTexture(`${biomeKey}_bg`);
-			this.arenaBg.pipelineData['terrainColorRatio'] = this.arena.getBgTerrainColorRatioForBiome();
-			this.arenaBgTransition.setTexture(`${biomeKey}_bg`);
 			this.arenaPlayer.setBiome(biome);
 			this.arenaPlayerTransition.setBiome(biome);
 			this.arenaEnemy.setBiome(biome);
 			this.arenaNextEnemy.setBiome(biome);
+			this.arenaBg.setTexture(`${biomeKey}_bg`);
+			this.arenaBgTransition.setTexture(`${biomeKey}_bg`);
 		}
+
+		this.arenaBg.pipelineData = { terrainColorRatio: this.arena.getBgTerrainColorRatioForBiome() };
 
 		return this.arena;
 	}
