@@ -423,8 +423,11 @@ export class PreMoveMessageAttr extends MoveAttr {
     const message = typeof this.message === 'string'
       ? this.message as string
       : this.message(user, target, move);
-    user.scene.queueMessage(message, 500);
-    return true;
+    if (message) {
+      user.scene.queueMessage(message, 500);
+      return true;
+    }
+    return false;
   }
 }
 
@@ -1406,6 +1409,30 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
   }
 }
 
+const doublePowerChanceMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
+  let message: string = null;
+  user.scene.executeWithSeedOffset(() => {
+    let rand = Utils.randSeedInt(100);
+    if (rand < move.chance)
+      message = getPokemonMessage(user, ' is going all out for this attack!');
+  }, user.scene.currentBattle.turn << 6, user.scene.waveSeed);
+  return message;
+};
+
+export class DoublePowerChanceAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    let rand: integer;
+    user.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(100), user.scene.currentBattle.turn << 6, user.scene.waveSeed);
+    if (rand < move.chance) {
+      const power = args[0] as Utils.NumberHolder;
+      power.value *= 2;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export abstract class ConsecutiveUsePowerMultiplierAttr extends MovePowerMultiplierAttr {
   constructor(limit: integer, resetOnFail: boolean, resetOnLimit?: boolean, ...comboMoves: Moves[]) {
     super((user: Pokemon, target: Pokemon, move: Move): number => {
@@ -1577,7 +1604,7 @@ const magnitudeMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
     }
 
     message = `Magnitude ${m + 4}!`;
-  }, user.scene.currentBattle.turn << 6);
+  }, user.scene.currentBattle.turn << 6, user.scene.waveSeed);
   return message;
 };
 
@@ -1590,7 +1617,7 @@ export class MagnitudePowerAttr extends VariablePowerAttr {
 
     let rand: integer;
     
-    user.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(100), user.scene.currentBattle.turn << 6);
+    user.scene.executeWithSeedOffset(() => rand = Utils.randSeedInt(100), user.scene.currentBattle.turn << 6, user.scene.waveSeed);
 
     let m = 0;
     for (; m < magnitudeThresholds.length; m++) {
@@ -4790,7 +4817,9 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, 1, true)
       .ignoresVirtual(),
     new AttackMove(Moves.TERA_STARSTORM, "Tera Starstorm (P)", Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, "With the power of its crystals, the user bombards and eliminates the target. When used by Terapagos in its Stellar Form, this move damages all opposing Pokémon.", -1, 0, 9),
-    new AttackMove(Moves.FICKLE_BEAM, "Fickle Beam (P)", Type.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, "The user shoots a beam of light to inflict damage. Sometimes all the user's heads shoot beams in unison, doubling the move's power.", -1, 0, 9),
+    new AttackMove(Moves.FICKLE_BEAM, "Fickle Beam", Type.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, "The user shoots a beam of light to inflict damage. Sometimes all the user's heads shoot beams in unison, doubling the move's power.", 30, 0, 9)
+      .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc)
+      .attr(DoublePowerChanceAttr),
     new StatusMove(Moves.BURNING_BULWARK, "Burning Bulwark", Type.FIRE, -1, 10, "The user's intensely hot fur protects it from attacks and also burns any attacker that makes direct contact with it.", 100, 4, 9)
       .attr(ProtectAttr, BattlerTagType.BURNING_BULWARK),
     new AttackMove(Moves.THUNDERCLAP, "Thunderclap (P)", Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 5, "This move enables the user to attack first with a jolt of electricity. This move fails if the target is not readying an attack.", -1, 1, 9),
