@@ -908,7 +908,7 @@ export class SaltCuredTag extends BattlerTag {
   private sourceIndex: integer;
 
   constructor(sourceId: integer) {
-    super(BattlerTagType.SALT_CURED, BattlerTagLapseType.AFTER_MOVE, 1, Moves.SALT_CURE, sourceId);
+    super(BattlerTagType.SALT_CURED, BattlerTagLapseType.TURN_END, 1, Moves.SALT_CURE, sourceId);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -922,8 +922,7 @@ export class SaltCuredTag extends BattlerTag {
     const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (ret) {
-      const source = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
-      pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.SALT_CURE));
+      pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.SALT_CURE));
 
       const pokemonSteelOrWater = pokemon.isOfType(Type.STEEL) || pokemon.isOfType(Type.WATER);
       pokemon.damageAndUpdate(Math.max(Math.floor(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), 1));
