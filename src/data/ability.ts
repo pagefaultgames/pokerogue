@@ -1484,7 +1484,7 @@ export class ProtectAbilityAbAttr extends AbAttr {
 }
 
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
-  pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false): Promise<void> {
+  pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false): Promise<void> {
   return new Promise(resolve => {
     if (!pokemon.canApplyAbility())
       return resolve();
@@ -1514,7 +1514,7 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any
             queueShowAbility(pokemon);
         }
         if (!quiet) {
-          const message = attr.getTriggerMessage(pokemon);
+          const message = attr.getTriggerMessage(pokemon, args);
           if (message) {
             if (isAsync)
               pokemon.scene.ui.showText(message, null, () => pokemon.scene.ui.showText(null, 0), null, true);
@@ -1541,104 +1541,104 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any
 }
 
 export function applyAbAttrs(attrType: { new(...args: any[]): AbAttr }, pokemon: Pokemon, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<AbAttr>(attrType, pokemon, attr => attr.apply(pokemon, cancelled, args));
+  return applyAbAttrsInternal<AbAttr>(attrType, pokemon, attr => attr.apply(pokemon, cancelled, args), args);
 }
 
 export function applyPostBattleInitAbAttrs(attrType: { new(...args: any[]): PostBattleInitAbAttr },
   pokemon: Pokemon, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostBattleInitAbAttr>(attrType, pokemon, attr => attr.applyPostBattleInit(pokemon, args));
+  return applyAbAttrsInternal<PostBattleInitAbAttr>(attrType, pokemon, attr => attr.applyPostBattleInit(pokemon, args), args);
 }
 
 export function applyPreDefendAbAttrs(attrType: { new(...args: any[]): PreDefendAbAttr },
   pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
   const simulated = args.length > 1 && args[1];
-  return applyAbAttrsInternal<PreDefendAbAttr>(attrType, pokemon, attr => attr.applyPreDefend(pokemon, attacker, move, cancelled, args), false, false, simulated);
+  return applyAbAttrsInternal<PreDefendAbAttr>(attrType, pokemon, attr => attr.applyPreDefend(pokemon, attacker, move, cancelled, args), args, false, false, simulated);
 }
 
 export function applyPostDefendAbAttrs(attrType: { new(...args: any[]): PostDefendAbAttr },
   pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostDefendAbAttr>(attrType, pokemon, attr => attr.applyPostDefend(pokemon, attacker, move, hitResult, args));
+  return applyAbAttrsInternal<PostDefendAbAttr>(attrType, pokemon, attr => attr.applyPostDefend(pokemon, attacker, move, hitResult, args), args);
 }
 
 export function applyBattleStatMultiplierAbAttrs(attrType: { new(...args: any[]): BattleStatMultiplierAbAttr },
   pokemon: Pokemon, battleStat: BattleStat, statValue: Utils.NumberHolder, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<BattleStatMultiplierAbAttr>(attrType, pokemon, attr => attr.applyBattleStat(pokemon, battleStat, statValue, args));
+  return applyAbAttrsInternal<BattleStatMultiplierAbAttr>(attrType, pokemon, attr => attr.applyBattleStat(pokemon, battleStat, statValue, args), args);
 }
 
 export function applyPreAttackAbAttrs(attrType: { new(...args: any[]): PreAttackAbAttr },
   pokemon: Pokemon, defender: Pokemon, move: PokemonMove, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreAttackAbAttr>(attrType, pokemon, attr => attr.applyPreAttack(pokemon, defender, move, args));
+  return applyAbAttrsInternal<PreAttackAbAttr>(attrType, pokemon, attr => attr.applyPreAttack(pokemon, defender, move, args), args);
 }
 
 export function applyPostAttackAbAttrs(attrType: { new(...args: any[]): PostAttackAbAttr },
   pokemon: Pokemon, defender: Pokemon, move: PokemonMove, hitResult: HitResult, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostAttackAbAttr>(attrType, pokemon, attr => attr.applyPostAttack(pokemon, defender, move, hitResult, args));
+  return applyAbAttrsInternal<PostAttackAbAttr>(attrType, pokemon, attr => attr.applyPostAttack(pokemon, defender, move, hitResult, args), args);
 }
 
 export function applyPostVictoryAbAttrs(attrType: { new(...args: any[]): PostVictoryAbAttr },
   pokemon: Pokemon, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostVictoryAbAttr>(attrType, pokemon, attr => attr.applyPostVictory(pokemon, args));
+  return applyAbAttrsInternal<PostVictoryAbAttr>(attrType, pokemon, attr => attr.applyPostVictory(pokemon, args), args);
 }
 
 export function applyPostSummonAbAttrs(attrType: { new(...args: any[]): PostSummonAbAttr },
   pokemon: Pokemon, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostSummonAbAttr>(attrType, pokemon, attr => attr.applyPostSummon(pokemon, args));
+  return applyAbAttrsInternal<PostSummonAbAttr>(attrType, pokemon, attr => attr.applyPostSummon(pokemon, args), args);
 }
 
 export function applyPreSwitchOutAbAttrs(attrType: { new(...args: any[]): PreSwitchOutAbAttr },
   pokemon: Pokemon, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreSwitchOutAbAttr>(attrType, pokemon, attr => attr.applyPreSwitchOut(pokemon, args), false, true);
+  return applyAbAttrsInternal<PreSwitchOutAbAttr>(attrType, pokemon, attr => attr.applyPreSwitchOut(pokemon, args), args, false, true);
 }
 
 export function applyPreStatChangeAbAttrs(attrType: { new(...args: any[]): PreStatChangeAbAttr },
   pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreStatChangeAbAttr>(attrType, pokemon, attr => attr.applyPreStatChange(pokemon, stat, cancelled, args));
+  return applyAbAttrsInternal<PreStatChangeAbAttr>(attrType, pokemon, attr => attr.applyPreStatChange(pokemon, stat, cancelled, args), args);
 }
 
 export function applyPreSetStatusAbAttrs(attrType: { new(...args: any[]): PreSetStatusAbAttr },
   pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
   const simulated = args.length > 1 && args[1];
-  return applyAbAttrsInternal<PreSetStatusAbAttr>(attrType, pokemon, attr => attr.applyPreSetStatus(pokemon, effect, cancelled, args), false, false, !simulated);
+  return applyAbAttrsInternal<PreSetStatusAbAttr>(attrType, pokemon, attr => attr.applyPreSetStatus(pokemon, effect, cancelled, args), args, false, false, !simulated);
 }
 
 export function applyPreApplyBattlerTagAbAttrs(attrType: { new(...args: any[]): PreApplyBattlerTagAbAttr },
   pokemon: Pokemon, tag: BattlerTag, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreApplyBattlerTagAbAttr>(attrType, pokemon, attr => attr.applyPreApplyBattlerTag(pokemon, tag, cancelled, args));
+  return applyAbAttrsInternal<PreApplyBattlerTagAbAttr>(attrType, pokemon, attr => attr.applyPreApplyBattlerTag(pokemon, tag, cancelled, args), args);
 }
 
 export function applyPreWeatherEffectAbAttrs(attrType: { new(...args: any[]): PreWeatherEffectAbAttr },
   pokemon: Pokemon, weather: Weather, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PreWeatherDamageAbAttr>(attrType, pokemon, attr => attr.applyPreWeatherEffect(pokemon, weather, cancelled, args), false, true);
+  return applyAbAttrsInternal<PreWeatherDamageAbAttr>(attrType, pokemon, attr => attr.applyPreWeatherEffect(pokemon, weather, cancelled, args), args, false, true);
 }
 
 export function applyPostTurnAbAttrs(attrType: { new(...args: any[]): PostTurnAbAttr },
   pokemon: Pokemon, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostTurnAbAttr>(attrType, pokemon, attr => attr.applyPostTurn(pokemon, args));
+  return applyAbAttrsInternal<PostTurnAbAttr>(attrType, pokemon, attr => attr.applyPostTurn(pokemon, args), args);
 }
 
 export function applyPostWeatherChangeAbAttrs(attrType: { new(...args: any[]): PostWeatherChangeAbAttr },
   pokemon: Pokemon, weather: WeatherType, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostWeatherChangeAbAttr>(attrType, pokemon, attr => attr.applyPostWeatherChange(pokemon, weather, args));
+  return applyAbAttrsInternal<PostWeatherChangeAbAttr>(attrType, pokemon, attr => attr.applyPostWeatherChange(pokemon, weather, args), args);
 }
 
 export function applyPostWeatherLapseAbAttrs(attrType: { new(...args: any[]): PostWeatherLapseAbAttr },
   pokemon: Pokemon, weather: Weather, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostWeatherLapseAbAttr>(attrType, pokemon, attr => attr.applyPostWeatherLapse(pokemon, weather, args));
+  return applyAbAttrsInternal<PostWeatherLapseAbAttr>(attrType, pokemon, attr => attr.applyPostWeatherLapse(pokemon, weather, args), args);
 }
 
 export function applyPostTerrainChangeAbAttrs(attrType: { new(...args: any[]): PostTerrainChangeAbAttr },
   pokemon: Pokemon, terrain: TerrainType, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostTerrainChangeAbAttr>(attrType, pokemon, attr => attr.applyPostTerrainChange(pokemon, terrain, args));
+  return applyAbAttrsInternal<PostTerrainChangeAbAttr>(attrType, pokemon, attr => attr.applyPostTerrainChange(pokemon, terrain, args), args);
 }
 
 export function applyCheckTrappedAbAttrs(attrType: { new(...args: any[]): CheckTrappedAbAttr },
   pokemon: Pokemon, trapped: Utils.BooleanHolder, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, attr => attr.applyCheckTrapped(pokemon, trapped, args), true);
+  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, attr => attr.applyCheckTrapped(pokemon, trapped, args), args, true);
 }
 
 export function applyPostBattleAbAttrs(attrType: { new(...args: any[]): PostBattleAbAttr },
   pokemon: Pokemon, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostBattleAbAttr>(attrType, pokemon, attr => attr.applyPostBattle(pokemon, args));
+  return applyAbAttrsInternal<PostBattleAbAttr>(attrType, pokemon, attr => attr.applyPostBattle(pokemon, args), args);
 }
 
 function canApplyAttr(pokemon: Pokemon, attr: AbAttr): boolean {
