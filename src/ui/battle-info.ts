@@ -38,6 +38,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private levelNumbersContainer: Phaser.GameObjects.Container;
   private hpNumbersContainer: Phaser.GameObjects.Container;
   private expBar: Phaser.GameObjects.Image;
+  private expMaskRect: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);
@@ -119,7 +120,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     this.hpBarSegmentDividers = [];
 
-    this.levelNumbersContainer = this.scene.add.container(9.5, 0);
+    this.levelNumbersContainer = this.scene.add.container(9.5, (this.scene as BattleScene).uiTheme ? 0 : -0.5);
     this.levelContainer.add(this.levelNumbersContainer);
 
     if (this.player) {
@@ -128,10 +129,20 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
       const expBar = this.scene.add.image(-98, 18, 'overlay_exp');
       expBar.setOrigin(0);
-      expBar.setScale(0, 1);
       this.add(expBar);
 
+      const expMaskRect = this.scene.make.graphics({});
+      expMaskRect.setScale(6);
+      expMaskRect.fillStyle(0xFFFFFF);
+      expMaskRect.beginPath();
+      expMaskRect.fillRect(127, 126, 85, 2);
+
+      const expMask = expMaskRect.createGeometryMask();
+
+      expBar.setMask(expMask);
+
       this.expBar = expBar;
+      this.expMaskRect = expMaskRect;
     }
   }
 
@@ -185,7 +196,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.shinyIcon.setVisible(pokemon.isShiny());
 
     if (this.player) {
-      this.expBar.setScale(pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate), 1);
+      this.expMaskRect.x = (pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate)) * 510;
       this.lastExp = pokemon.exp;
       this.lastLevelExp = pokemon.levelExp;
     }
@@ -402,9 +413,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       if (duration)
         (this.scene as BattleScene).playSound('exp');
       this.scene.tweens.add({
-        targets: this.expBar,
+        targets: this.expMaskRect,
         ease: 'Sine.easeIn',
-        scaleX: ratio,
+        x: ratio * 510,
         duration: duration,
         onComplete: () => {
           if (!this.scene)
@@ -415,7 +426,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
             (this.scene as BattleScene).playSound('level_up');
             this.setLevel(this.lastLevel);
             this.scene.time.delayedCall(500 * levelDurationMultiplier, () => {
-              this.expBar.setScale(0, 1);
+              this.expMaskRect.x = 0;
               this.updateInfo(pokemon, instant).then(() => resolve());
             });
             return;

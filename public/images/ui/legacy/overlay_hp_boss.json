@@ -1,0 +1,83 @@
+{
+	"textures": [
+		{
+			"image": "overlay_hp_boss.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 96,
+				"h": 12
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "high",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 86,
+						"h": 4
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 86,
+						"h": 4
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 86,
+						"h": 4
+					}
+				},
+				{
+					"filename": "medium",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 86,
+						"h": 4
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 98,
+						"h": 4
+					},
+					"frame": {
+						"x": 0,
+						"y": 4,
+						"w": 86,
+						"h": 4
+					}
+				},
+				{
+					"filename": "low",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 86,
+						"h": 4
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 86,
+						"h": 4
+					},
+					"frame": {
+						"x": 0,
+						"y": 8,
+						"w": 86,
+						"h": 4
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:0ab3d30defc8fe4d0802d006063b09c5:9cc1fb380aa2908ff6c9e92f310fde62:e6c4614fcfcf040f918551c90d4448f7$"
+	}
+}
