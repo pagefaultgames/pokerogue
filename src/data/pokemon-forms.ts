@@ -273,7 +273,7 @@ export abstract class SpeciesFormChangeMoveTrigger extends SpeciesFormChangeTrig
 
 export class SpeciesFormChangePreMoveTrigger extends SpeciesFormChangeMoveTrigger {
   canChange(pokemon: Pokemon): boolean {
-    const command = pokemon.scene.currentBattle.turnCommands[pokemon.getFieldIndex()];
+    const command = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
     return command?.move && this.movePredicate(command.move.move) === this.used;
   }
 }
