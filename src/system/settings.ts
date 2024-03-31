@@ -44,7 +44,7 @@ export const settingOptions: SettingOptions = {
 };
 
 export const settingDefaults: SettingDefaults = {
-  [Setting.Game_Speed]: 0,
+  [Setting.Game_Speed]: 3,
   [Setting.Master_Volume]: 5,
   [Setting.BGM_Volume]: 10,
   [Setting.SE_Volume]: 10,
