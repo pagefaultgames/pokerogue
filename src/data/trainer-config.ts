@@ -785,7 +785,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.WIKSTROM]: new TrainerConfig(++t).initForEliteFour([ Species.KLEFKI, Species.PROBOPASS, Species.SCIZOR, Species.AEGISLASH ], Type.STEEL),
   [TrainerType.DRASNA]: new TrainerConfig(++t).initForEliteFour([ Species.DRAGALGE, Species.DRUDDIGON, Species.ALTARIA, Species.NOIVERN ], Type.DRAGON),
   [TrainerType.HALA]: new TrainerConfig(++t).initForEliteFour([ Species.HARIYAMA, Species.BEWEAR, Species.CRABOMINABLE, Species.POLIWRATH ], Type.FIGHTING),
-  [TrainerType.MOLAYNE]: new TrainerConfig(++t).initForEliteFour([ Species.KLEFKI, Species.MAGNEZONE, Species.METAGROSS, Species.ALOLA_DUGTRIO ], Type.PSYCHIC),
+  [TrainerType.MOLAYNE]: new TrainerConfig(++t).initForEliteFour([ Species.KLEFKI, Species.MAGNEZONE, Species.METAGROSS, Species.ALOLA_DUGTRIO ], Type.STEEL),
   [TrainerType.OLIVIA]: new TrainerConfig(++t).initForEliteFour([ Species.ARMALDO, Species.CRADILY, Species.ALOLA_GOLEM, Species.LYCANROC ], Type.ROCK),
   [TrainerType.ACEROLA]: new TrainerConfig(++t).initForEliteFour([ Species.BANETTE, Species.DRIFBLIM, Species.DHELMISE, Species.PALOSSAND ], Type.GHOST),
   [TrainerType.KAHILI]: new TrainerConfig(++t).initForEliteFour([ Species.BRAVIARY, Species.HAWLUCHA, Species.ORICORIO, Species.TOUCANNON ], Type.FLYING),
