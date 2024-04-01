@@ -92,7 +92,7 @@ export class LoginPhase extends Phase {
                 buttonActions: [
                   () => {
                     this.scene.ui.playSelect();
-                    loadData();
+                    updateUserInfo().then(() => this.end());
                   }, () => {
                     this.scene.unshiftPhase(new LoginPhase(this.scene, false));
                     this.end();
@@ -297,53 +297,6 @@ export class TitlePhase extends Phase {
     }
 
     super.end();
-  }
-}
-
-// TODO: Remove
-export class ConsolidateDataPhase extends Phase {
-  start(): void {
-    super.start();
-    
-    Utils.apiFetch(`savedata/get?datatype=${GameDataType.SYSTEM}`)
-      .then(response => response.text())
-      .then(response => {
-        if (!response.length || response[0] !== '{') {
-          console.log('System data not found: Loading legacy local system data');
-
-          const systemDataStr = atob(localStorage.getItem('data'));
-
-          Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemDataStr)
-            .then(response => response.text())
-            .then(error => {
-              if (error) {
-                console.error(error);
-                return this.end();
-              }
-
-              Utils.apiFetch(`savedata/get?datatype=${GameDataType.SESSION}`)
-                .then(response => response.text())
-                .then(response => {
-                  if (!response.length || response[0] !== '{') {
-                    console.log('Session data not found: Loading legacy local session data');
-
-                    const sessionDataStr = atob(localStorage.getItem('sessionData'));
-
-                    Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}`, sessionDataStr)
-                      .then(response => response.text())
-                      .then(error => {
-                        if (error)
-                          console.error(error);
-
-                        window.location = window.location;
-                      });
-                  } else
-                    window.location = window.location;
-                });
-            });
-          } else
-            this.end();
-      });
   }
 }
 

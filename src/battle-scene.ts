@@ -685,8 +685,6 @@ export default class BattleScene extends Phaser.Scene {
 			initMoveAnim(Moves.STRUGGLE).then(() => loadMoveAnimAssets(this, [ Moves.STRUGGLE ], true))
 		]).then(() => {
 			this.pushPhase(new LoginPhase(this));
-			if (!bypassLogin)
-				this.pushPhase(new ConsolidateDataPhase(this)); // TODO: Remove
 			this.pushPhase(new TitlePhase(this));
 
 			this.shiftPhase();
