@@ -1768,6 +1768,24 @@ export class BlizzardAccuracyAttr extends VariableAccuracyAttr {
   }
 }
 
+export class VariableMoveTypeMultiplierAttr extends MoveAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class FreezeDryMultiplierAttr extends VariableMoveTypeMultiplierAttr {
+  apply(user:Pokemon,target:Pokemon, move:Move, args: any[]) : boolean {
+    const multiplier = args[0] as Utils.NumberHolder;
+    if (target.isOfType(Type.WATER)){
+      //Increased twice because initial reduction against water
+      multiplier.value *=4;
+    }
+    console.log(multiplier.value);
+    return false;
+  }
+}
+
 export class OneHitKOAccuracyAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const accuracy = args[0] as Utils.NumberHolder;
@@ -4060,8 +4078,9 @@ export function initMoves() {
     new AttackMove(Moves.PETAL_BLIZZARD, "Petal Blizzard", Type.GRASS, MoveCategory.PHYSICAL, 90, 100, 15, "The user stirs up a violent petal blizzard and attacks everything around it.", -1, 0, 6)
       .windMove()
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new AttackMove(Moves.FREEZE_DRY, "Freeze-Dry (P)", Type.ICE, MoveCategory.SPECIAL, 70, 100, 20, "The user rapidly cools the target. This may also leave the target frozen. This move is super effective on Water types.", 10, 0, 6)
-      .attr(StatusEffectAttr, StatusEffect.FREEZE),
+    new AttackMove(Moves.FREEZE_DRY, "Freeze-Dry", Type.ICE, MoveCategory.SPECIAL, 70, 100, 20, "The user rapidly cools the target. This may also leave the target frozen. This move is super effective on Water types.", 10, 0, 6)
+      .attr(StatusEffectAttr, StatusEffect.FREEZE)
+      .attr(FreezeDryMultiplierAttr),
     new AttackMove(Moves.DISARMING_VOICE, "Disarming Voice", Type.FAIRY, MoveCategory.SPECIAL, 40, -1, 15, "Letting out a charming cry, the user does emotional damage to opposing Pokémon. This attack never misses.", -1, 0, 6)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
