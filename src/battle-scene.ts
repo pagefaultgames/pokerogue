@@ -286,7 +286,7 @@ export default class BattleScene extends Phaser.Scene {
 			for (let w = 1; w <= 5; w++)
 				this.loadImage(`window_${w}${getWindowVariantSuffix(wv)}`, 'ui/windows');
 		}
-		this.loadImage('namebox', 'ui');
+		this.loadAtlas('namebox', 'ui');
 		this.loadImage('pbinfo_player', 'ui');
 		this.loadImage('pbinfo_player_mini', 'ui');
 		this.loadImage('pbinfo_enemy_mini', 'ui');

@@ -58,7 +58,7 @@ export function addWindow(scene: BattleScene, x: number, y: number, width: numbe
 
 export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): void {
   const windowObjects: [Phaser.GameObjects.NineSlice, WindowVariant][] = [];
-  const bgObjects: Phaser.GameObjects.Image[] = [];
+  const themedObjects: Phaser.GameObjects.Image[] = [];
   const traverse = (object: any) => {
     if (object.hasOwnProperty('children')) {
       const children = object.children as Phaser.GameObjects.DisplayList;
@@ -70,8 +70,10 @@ export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): 
     } else if (object instanceof Phaser.GameObjects.NineSlice) {
       if (object.texture.key.startsWith('window_'))
         windowObjects.push([ object, object.texture.key.endsWith(getWindowVariantSuffix(WindowVariant.XTHIN)) ? WindowVariant.XTHIN : object.texture.key.endsWith(getWindowVariantSuffix(WindowVariant.THIN)) ? WindowVariant.THIN : WindowVariant.NORMAL ]);
-    } else if (object instanceof Phaser.GameObjects.Sprite && object.texture?.key === 'bg')
-      bgObjects.push(object)
+    } else if (object instanceof Phaser.GameObjects.Sprite) {
+      if ([ 'bg', 'namebox' ].includes(object.texture?.key))
+        themedObjects.push(object);
+    }
   }
 
   traverse(scene);
@@ -86,8 +88,8 @@ export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): 
   for (let [ window, variant ] of windowObjects)
     window.setTexture(`${windowKey}${getWindowVariantSuffix(variant)}`);
 
-  for (let bg of bgObjects)
-    bg.setFrame(windowTypeIndex);
+  for (let obj of themedObjects)
+    obj.setFrame(windowTypeIndex);
 }
 
 export function addUiThemeOverrides(scene: BattleScene): void {

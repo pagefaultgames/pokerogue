@@ -72,7 +72,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.nameBoxContainer = this.scene.add.container(0, -16);
     this.nameBoxContainer.setVisible(false);
 
-    this.nameBox = this.scene.add.nineslice(0, 0, 'namebox', null, 72, 16, 8, 8, 5, 5);
+    this.nameBox = this.scene.add.nineslice(0, 0, 'namebox', this.scene.windowType, 72, 16, 8, 8, 5, 5);
     this.nameBox.setOrigin(0, 0);
 
     this.nameText = addTextObject(this.scene, 8, 0, 'Rival', TextStyle.MESSAGE, { maxLines: 1 });
