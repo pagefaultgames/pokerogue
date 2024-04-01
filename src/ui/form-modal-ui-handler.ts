@@ -1,9 +1,10 @@
 import BattleScene, { Button } from "../battle-scene";
 import { ModalConfig, ModalUiHandler } from "./modal-ui-handler";
 import { Mode } from "./ui";
-import { TextStyle, addTextInputObject, addTextObject, getTextColor } from "./text";
+import { TextStyle, addTextInputObject, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
+import * as Utils from "../utils";
 
 export interface FormModalConfig extends ModalConfig {
   errorMessage?: string;
@@ -89,6 +90,17 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
             this.submitAction();
         });
       }
+
+      this.modalContainer.y += 24;
+      this.modalContainer.setAlpha(0);
+
+      this.scene.tweens.add({
+        targets: this.modalContainer,
+        duration: Utils.fixedInt(1000),
+        ease: 'Sine.easeInOut',
+        y: '-=24',
+        alpha: 1
+      });
 
       return true;
     }
