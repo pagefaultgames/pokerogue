@@ -2470,8 +2470,10 @@ export function initAbilities() {
     new Ability(Abilities.PRISM_ARMOR, "Prism Armor (N)", "Reduces the power of supereffective attacks taken.", 7),
     new Ability(Abilities.NEUROFORCE, "Neuroforce", "Powers up moves that are super effective.", 7)
       .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type) >= 2, 1.25),
-    new Ability(Abilities.INTREPID_SWORD, "Intrepid Sword (N)", "Boosts the Pokémon's Attack stat when the Pokémon enters a battle.", 8),
-    new Ability(Abilities.DAUNTLESS_SHIELD, "Dauntless Shield (N)", "Boosts the Pokémon's Defense stat when the Pokémon enters a battle.", 8),
+    new Ability(Abilities.INTREPID_SWORD, "Intrepid Sword", "Boosts the Pokémon's Attack stat when the Pokémon enters a battle.", 8)
+      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 1, true),
+    new Ability(Abilities.DAUNTLESS_SHIELD, "Dauntless Shield", "Boosts the Pokémon's Defense stat when the Pokémon enters a battle.", 8)
+      .attr(PostSummonStatChangeAbAttr, BattleStat.DEF, 1, true),
     new Ability(Abilities.LIBERO, "Libero (N)", "Changes the Pokémon's type to the type of the move it's about to use.", 8),
     new Ability(Abilities.BALL_FETCH, "Ball Fetch (N)", "If the Pokémon is not holding an item, it will fetch the Poké Ball from the first failed throw of the battle.", 8),
     new Ability(Abilities.COTTON_DOWN, "Cotton Down (N)", "When the Pokémon is hit by an attack, it scatters cotton fluff around and lowers the Speed stat of all Pokémon except itself.", 8),
