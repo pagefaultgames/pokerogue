@@ -1781,7 +1781,6 @@ export class FreezeDryMultiplierAttr extends VariableMoveTypeMultiplierAttr {
       //Increased twice because initial reduction against water
       multiplier.value *=4;
     }
-    console.log(multiplier.value);
     return false;
   }
 }
