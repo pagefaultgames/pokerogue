@@ -1087,7 +1087,7 @@ export class PokemonPpUpModifier extends ConsumablePokemonMoveModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
     const move = pokemon.getMoveset()[this.moveIndex];
-    move.ppUp = Math.min(move.ppUp + this.upPoints, move.ppUp + 3);
+    move.ppUp = Math.min(move.ppUp + this.upPoints, 3);
 
     return true;
   }
