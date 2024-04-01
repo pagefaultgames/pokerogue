@@ -28,7 +28,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.textTimer = null;
     this.textCallbackTimer = null;
 
-    const bg = this.scene.add.sprite(0, 0, 'bg', this.scene.windowType + 1);
+    const bg = this.scene.add.sprite(0, 0, 'bg', this.scene.windowType);
 		bg.setOrigin(0, 1);
     ui.add(bg);
 
