@@ -44,6 +44,17 @@ export class Arena {
     this.updatePoolsForTimeOfDay();
   }
 
+  init() {
+    const biomeKey = getBiomeKey(this.biomeType);
+
+    this.scene.arenaPlayer.setBiome(this.biomeType);
+    this.scene.arenaPlayerTransition.setBiome(this.biomeType);
+    this.scene.arenaEnemy.setBiome(this.biomeType);
+    this.scene.arenaNextEnemy.setBiome(this.biomeType);
+    this.scene.arenaBg.setTexture(`${biomeKey}_bg`);
+    this.scene.arenaBgTransition.setTexture(`${biomeKey}_bg`);
+  }
+
   updatePoolsForTimeOfDay(): void {
     const timeOfDay = this.getTimeOfDay();
     if (timeOfDay !== this.lastTimeOfDay) {
@@ -664,28 +675,27 @@ export class ArenaBase extends Phaser.GameObjects.Container {
   }
 
   setBiome(biome: Biome, propValue?: integer): void {
-    if (this.biome === biome)
-      return;
-
     const hasProps = getBiomeHasProps(biome);
     const biomeKey = getBiomeKey(biome);
     const baseKey = `${biomeKey}_${this.player ? 'a' : 'b'}`;
     
-    this.base.setTexture(baseKey);
+    if (biome !== this.biome) {
+      this.base.setTexture(baseKey);
 
-    if (this.base.texture.frameTotal > 1) {
-      const baseFrameNames = this.scene.anims.generateFrameNames(baseKey, { zeroPad: 4, suffix: ".png", start: 1, end: this.base.texture.frameTotal - 1 });
-      this.scene.anims.create({
-        key: baseKey,
-        frames: baseFrameNames,
-        frameRate: 12,
-        repeat: -1
-      });
-      this.base.play(baseKey);
-    } else
-      this.base.stop();
+      if (this.base.texture.frameTotal > 1) {
+        const baseFrameNames = this.scene.anims.generateFrameNames(baseKey, { zeroPad: 4, suffix: ".png", start: 1, end: this.base.texture.frameTotal - 1 });
+        this.scene.anims.create({
+          key: baseKey,
+          frames: baseFrameNames,
+          frameRate: 12,
+          repeat: -1
+        });
+        this.base.play(baseKey);
+      } else
+        this.base.stop();
 
-    this.add(this.base);
+      this.add(this.base);
+    }
 
     if (!this.player) {
       (this.scene as BattleScene).executeWithSeedOffset(() => {
@@ -711,7 +721,7 @@ export class ArenaBase extends Phaser.GameObjects.Container {
           prop.setVisible(hasProps && !!(this.propValue & (1 << p)));
           this.add(prop);
         });
-      }, (this.scene as BattleScene).currentBattle?.waveIndex || 0);
+      }, (this.scene as BattleScene).currentBattle?.waveIndex || 0, (this.scene as BattleScene).waveSeed);
     }
   }
 }

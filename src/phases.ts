@@ -258,8 +258,9 @@ export class TitlePhase extends Phase {
         Promise.all(loadPokemonAssets).then(() => {
           this.scene.time.delayedCall(500, () => this.scene.playBgm());
           this.scene.gameData.gameStats.dailyRunSessionsPlayed++;
-          this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene), true);
+          this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene));
           this.scene.newBattle();
+          this.scene.arena.init();
           this.scene.sessionPlayTime = 0;
           this.end();
         });
@@ -271,7 +272,7 @@ export class TitlePhase extends Phase {
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
       this.scene.pushPhase(new SelectStarterPhase(this.scene));
-      this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene), true);
+      this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene));
     } else
       this.scene.playBgm();
 
@@ -435,6 +436,7 @@ export class SelectStarterPhase extends Phase {
           else
             this.scene.gameData.gameStats.endlessSessionsPlayed++;
           this.scene.newBattle();
+          this.scene.arena.init();
           this.scene.sessionPlayTime = 0;
           this.end();
         });
@@ -497,7 +499,7 @@ export abstract class FieldPhase extends BattlePhase {
       const aSpeed = a?.getBattleStat(Stat.SPD) || 0;
       const bSpeed = b?.getBattleStat(Stat.SPD) || 0;
 
-      return aSpeed < bSpeed ? 1 : aSpeed > bSpeed ? -1 : !this.scene.currentBattle.randSeedInt(2) ? -1 : 1;
+      return aSpeed < bSpeed ? 1 : aSpeed > bSpeed ? -1 : !this.scene.randBattleSeedInt(2) ? -1 : 1;
     });
 
     const speedReversed = new Utils.BooleanHolder(false);
@@ -874,6 +876,7 @@ export class NextEncounterPhase extends EncounterPhase {
         pokemon.resetBattleData();
     }
 
+    this.scene.arenaNextEnemy.setBiome(this.scene.arena.biomeType);
     this.scene.arenaNextEnemy.setVisible(true);
 
     const enemyField = this.scene.getEnemyField();
@@ -882,6 +885,7 @@ export class NextEncounterPhase extends EncounterPhase {
       x: '+=300',
       duration: 2000,
       onComplete: () => {
+        this.scene.arenaEnemy.setBiome(this.scene.arena.biomeType);
         this.scene.arenaEnemy.setX(this.scene.arenaNextEnemy.x);
         this.scene.arenaEnemy.setAlpha(1);
         this.scene.arenaNextEnemy.setX(this.scene.arenaNextEnemy.x - 300);

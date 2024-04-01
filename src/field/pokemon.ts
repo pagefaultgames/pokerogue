@@ -1092,7 +1092,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (source.getTag(BattlerTagType.CRIT_BOOST))
               critLevel.value += 2;
             const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
-            isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !this.scene.currentBattle.randSeedInt(critChance));
+            isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !this.scene.randBattleSeedInt(critChance));
             if (isCritical) {
               const blockCrit = new Utils.BooleanHolder(false);
               applyAbAttrs(BlockCritAbAttr, this, null, blockCrit);
@@ -1121,7 +1121,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
 
           if (!isTypeImmune) {
-            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier * ((this.scene.currentBattle.randSeedInt(15) + 85) / 100)) * criticalMultiplier;
+            damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier * ((this.scene.randBattleSeedInt(15) + 85) / 100)) * criticalMultiplier;
             if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
               const burnDamageReductionCancelled = new Utils.BooleanHolder(false);
               applyAbAttrs(BypassBurnDamageReductionAbAttr, this, burnDamageReductionCancelled);
@@ -1971,7 +1971,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   randSeedInt(range: integer, min: integer = 0): integer {
     return this.scene.currentBattle
-      ? this.scene.currentBattle.randSeedInt(range, min)
+      ? this.scene.randBattleSeedInt(range, min)
       : Utils.randSeedInt(range, min);
   }
 
@@ -2326,7 +2326,7 @@ export class EnemyPokemon extends Pokemon {
       }
       switch (this.aiType) {
         case AiType.RANDOM:
-          const moveId = movePool[this.scene.currentBattle.randSeedInt(movePool.length)].moveId;
+          const moveId = movePool[this.scene.randBattleSeedInt(movePool.length)].moveId;
           return { move: moveId, targets: this.getNextTargets(moveId) };
         case AiType.SMART_RANDOM:
         case AiType.SMART:
@@ -2373,7 +2373,7 @@ export class EnemyPokemon extends Pokemon {
           });
           let r = 0;
           if (this.aiType === AiType.SMART_RANDOM) {
-            while (r < sortedMovePool.length - 1 && this.scene.currentBattle.randSeedInt(8) >= 5)
+            while (r < sortedMovePool.length - 1 && this.scene.randBattleSeedInt(8) >= 5)
               r++;
           }
           console.log(movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));
@@ -2426,7 +2426,7 @@ export class EnemyPokemon extends Pokemon {
       return total;
     }, 0);
 
-    const randValue = this.scene.currentBattle.randSeedInt(totalWeight);
+    const randValue = this.scene.randBattleSeedInt(totalWeight);
     let targetIndex: integer;
 
     thresholds.every((t, i) => {

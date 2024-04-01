@@ -577,12 +577,14 @@ export class GameData {
           scene.score = sessionData.score;
           scene.updateScoreText();
 
+          scene.newArena(sessionData.arena.biome);
+
           const battleType = sessionData.battleType || 0;
           const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
           const battle = scene.newBattle(sessionData.waveIndex, battleType, sessionData.trainer, battleType === BattleType.TRAINER ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE : sessionData.enemyParty.length > 1);
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
-          scene.newArena(sessionData.arena.biome, true);
+          scene.arena.init();
 
           sessionData.enemyParty.forEach((enemyData, e) => {
             const enemyPokemon = enemyData.toPokemon(scene, battleType, e, sessionData.trainer?.variant === TrainerVariant.DOUBLE) as EnemyPokemon;

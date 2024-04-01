@@ -67,6 +67,7 @@ export const STARTING_LEVEL_OVERRIDE = 0;
 export const STARTING_WAVE_OVERRIDE = 0;
 export const STARTING_BIOME_OVERRIDE = Biome.TOWN;
 export const STARTING_MONEY_OVERRIDE = 0;
+const DEBUG_RNG = false;
 
 export const startingWave = STARTING_WAVE_OVERRIDE || 1;
 
@@ -178,6 +179,10 @@ export default class BattleScene extends Phaser.Scene {
 
 	private blockInput: boolean;
 
+	public rngCounter: integer = 0;
+	public rngSeedOverride: string = '';
+	public rngOffset: integer = 0;
+
 	constructor() {
 		super('battle');
 
@@ -274,6 +279,20 @@ export default class BattleScene extends Phaser.Scene {
 			const buildIdMatch = /index\-(.*?)\.js$/.exec(indexFile);
 			if (buildIdMatch)
 				this.load['cacheBuster'] = buildIdMatch[1];
+		}
+
+		if (DEBUG_RNG) {
+			const scene = this;
+			const originalRealInRange = Phaser.Math.RND.realInRange;
+			Phaser.Math.RND.realInRange = function (min: number, max: number): number {
+				const ret = originalRealInRange.apply(this, [ min, max ]);
+				const args = [ 'RNG', ++scene.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
+				args.push(`seed: ${scene.rngSeedOverride || scene.waveSeed || scene.seed}`);
+				if (scene.rngOffset)
+					args.push(`offset: ${scene.rngOffset}`);
+				console.log(...args);
+				return ret;
+			};
 		}
 
 		// Load menu images
@@ -805,8 +824,13 @@ export default class BattleScene extends Phaser.Scene {
 
 	setSeed(seed: string): void {
 		this.seed = seed;
+		this.rngCounter = 0;
 		this.waveCycleOffset = this.getGeneratedWaveCycleOffset();
 		this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
+	}
+
+	randBattleSeedInt(range: integer, min: integer = 0): integer {
+		return this.currentBattle.randSeedInt(this, range, min);
 	}
 
 	reset(clearScene?: boolean): void {
@@ -843,13 +867,15 @@ export default class BattleScene extends Phaser.Scene {
 		this.updateScoreText();
 		this.scoreText.setVisible(false);
 
-		this.newArena(STARTING_BIOME_OVERRIDE || Biome.TOWN, true);
+		this.newArena(STARTING_BIOME_OVERRIDE || Biome.TOWN);
 
 		this.arenaBgTransition.setPosition(0, 0);
 		this.arenaPlayer.setPosition(300, 0);
 		this.arenaPlayerTransition.setPosition(0, 0);
 		[ this.arenaEnemy, this.arenaNextEnemy ].forEach(a => a.setPosition(-280, 0));
 		this.arenaNextEnemy.setVisible(false);
+
+		this.arena.init();
 
 		this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
 		this.trainer.setPosition(406, 186);
@@ -933,7 +959,9 @@ export default class BattleScene extends Phaser.Scene {
 
 		this.lastEnemyTrainer = lastBattle?.trainer ?? null;
 
-		this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble);
+		this.executeWithSeedOffset(() => {
+			this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble);
+		}, newWaveIndex << 3, this.waveSeed);
 		this.currentBattle.incrementTurn(this);
 
 		//this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
@@ -972,19 +1000,8 @@ export default class BattleScene extends Phaser.Scene {
 		return this.currentBattle;
 	}
 
-	newArena(biome: Biome, init?: boolean): Arena {
+	newArena(biome: Biome): Arena {
 		this.arena = new Arena(this, biome, Biome[biome].toLowerCase());
-
-		if (init) {
-			const biomeKey = getBiomeKey(biome);
-
-			this.arenaPlayer.setBiome(biome);
-			this.arenaPlayerTransition.setBiome(biome);
-			this.arenaEnemy.setBiome(biome);
-			this.arenaNextEnemy.setBiome(biome);
-			this.arenaBg.setTexture(`${biomeKey}_bg`);
-			this.arenaBgTransition.setTexture(`${biomeKey}_bg`);
-		}
 
 		this.arenaBg.pipelineData = { terrainColorRatio: this.arena.getBgTerrainColorRatioForBiome() };
 
@@ -1139,17 +1156,29 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	resetSeed(waveIndex?: integer): void {
-		this.waveSeed = Utils.shiftCharCodes(this.seed, waveIndex || this.currentBattle?.waveIndex || 0);
+		const wave = waveIndex || this.currentBattle?.waveIndex || 0;
+		this.waveSeed = Utils.shiftCharCodes(this.seed, wave);
 		Phaser.Math.RND.sow([ this.waveSeed ]);
+		console.log('Wave Seed:', this.waveSeed, wave);
+		this.rngCounter = 0;
 	}
 
 	executeWithSeedOffset(func: Function, offset: integer, seedOverride?: string): void {
 		if (!func)
 			return;
+		const tempRngCounter = this.rngCounter;
+		const tempRngOffset = this.rngOffset;
+		const tempRngSeedOverride = this.rngSeedOverride;
 		const state = Phaser.Math.RND.state();
 		Phaser.Math.RND.sow([ Utils.shiftCharCodes(seedOverride || this.seed, offset) ]);
+		this.rngCounter = 0;
+		this.rngOffset = offset;
+		this.rngSeedOverride = seedOverride || '';
 		func();
 		Phaser.Math.RND.state(state);
+		this.rngCounter = tempRngCounter;
+		this.rngOffset = tempRngOffset;
+		this.rngSeedOverride = tempRngSeedOverride;
 	}
 
 	addFieldSprite(x: number, y: number, texture: string | Phaser.Textures.Texture, frame?: string | number, terrainColorRatio: number = 0): Phaser.GameObjects.Sprite {

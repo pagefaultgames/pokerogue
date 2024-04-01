@@ -59,6 +59,8 @@ export default class Battle {
     public battleSeed: string;
     private battleSeedState: string;
 
+    private rngCounter: integer = 0;
+
     constructor(gameMode: GameMode, waveIndex: integer, battleType: BattleType, trainer: Trainer, double: boolean) {
         this.gameMode = gameMode;
         this.waveIndex = waveIndex;
@@ -191,16 +193,24 @@ export default class Battle {
         return null;
     }
 
-    randSeedInt(range: integer, min: integer = 0): integer {
+    randSeedInt(scene: BattleScene, range: integer, min: integer = 0): integer {
         let ret: integer;
+        const tempRngCounter = scene.rngCounter;
+        const tempSeedOverride = scene.rngSeedOverride;
         const state = Phaser.Math.RND.state();
         if (this.battleSeedState)
             Phaser.Math.RND.state(this.battleSeedState);
-        else
+        else {
             Phaser.Math.RND.sow([ Utils.shiftCharCodes(this.battleSeed, this.turn << 6) ]);
+            console.log('Battle Seed:', this.battleSeed);
+        }
+        scene.rngCounter = this.rngCounter++;
+        scene.rngSeedOverride = this.battleSeed;
         ret = Utils.randSeedInt(range, min);
         this.battleSeedState = Phaser.Math.RND.state();
         Phaser.Math.RND.state(state);
+        scene.rngCounter = tempRngCounter;
+        scene.rngSeedOverride = tempSeedOverride;
         return ret;
     }
 }
