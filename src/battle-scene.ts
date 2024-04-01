@@ -56,6 +56,7 @@ import PokemonInfoContainer from './ui/pokemon-info-container';
 import { biomeDepths } from './data/biomes';
 import { initTouchControls } from './touch-controls';
 import { UiTheme } from './enums/ui-theme';
+import CacheBustedLoaderPlugin from './plugins/cache-busted-loader-plugin';
 
 export const bypassLogin = false;
 
@@ -188,6 +189,8 @@ export default class BattleScene extends Phaser.Scene {
 		this.phaseQueuePrepend = [];
 		this.phaseQueuePrependSpliceIndex = -1;
 		this.nextCommandPhaseQueue = [];
+
+		Phaser.Plugins.PluginCache.register('Loader', CacheBustedLoaderPlugin, 'load');
 	}
 
 	loadImage(key: string, folder: string, filename?: string) {
@@ -266,6 +269,13 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	preload() {
+		const indexFile = Array.from(document.querySelectorAll('script')).map(s => s.src).find(s => /\/index/.test(s));
+		if (indexFile) {
+			const buildIdMatch = /index\-(.*?)\.js$/.exec(indexFile);
+			if (buildIdMatch)
+				this.load['cacheBuster'] = buildIdMatch[1];
+		}
+
 		// Load menu images
 		this.loadAtlas('bg', 'ui');
 		this.loadImage('command_fight_labels', 'ui');
