@@ -316,8 +316,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const canReroll = this.scene.money >= this.rerollCost;
 
     this.rerollCostText.setText(`₽${this.rerollCost.toLocaleString('en-US')}`);
-    this.rerollCostText.setColor(getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
-    this.rerollCostText.setShadowColor(getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED, true));
+    this.rerollCostText.setColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
+    this.rerollCostText.setShadowColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED, true));
   }
 
   clear() {
@@ -556,10 +556,11 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   updateCostText(): void {
-    const textStyle = this.modifierTypeOption.cost <= (this.scene as BattleScene).money ? TextStyle.MONEY : TextStyle.PARTY_RED;
+    const scene = this.scene as BattleScene;
+    const textStyle = this.modifierTypeOption.cost <= scene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
     this.itemCostText.setText(`₽${this.modifierTypeOption.cost.toLocaleString('en-US')}`);
-    this.itemCostText.setColor(getTextColor(textStyle));
-    this.itemCostText.setShadowColor(getTextColor(textStyle, true));
+    this.itemCostText.setColor(getTextColor(textStyle, false, scene.uiTheme));
+    this.itemCostText.setShadowColor(getTextColor(textStyle, true, scene.uiTheme));
   }
 }

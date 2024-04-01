@@ -4,7 +4,7 @@ import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import Pokemon from "../field/pokemon";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
-import { addWindow } from "./window";
+import { addWindow } from "./ui-theme";
 import { getNatureName } from "../data/nature";
 import * as Utils from "../utils";
 import { Type } from "../data/type";

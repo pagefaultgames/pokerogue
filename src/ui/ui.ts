@@ -23,7 +23,7 @@ import EggHatchSceneHandler from './egg-hatch-scene-handler';
 import EggListUiHandler from './egg-list-ui-handler';
 import EggGachaUiHandler from './egg-gacha-ui-handler';
 import VouchersUiHandler from './vouchers-ui-handler';
-import { addWindow } from './window';
+import { addWindow } from './ui-theme';
 import LoginFormUiHandler from './login-form-ui-handler';
 import RegistrationFormUiHandler from './registration-form-ui-handler';
 import LoadingModalUiHandler from './loading-modal-ui-handler';

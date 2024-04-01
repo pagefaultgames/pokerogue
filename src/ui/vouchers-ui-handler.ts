@@ -3,7 +3,7 @@ import { Voucher, getVoucherTypeIcon, getVoucherTypeName, vouchers } from "../sy
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
-import { addWindow } from "./window";
+import { addWindow } from "./ui-theme";
 
 const itemRows = 4;
 const itemCols = 17;

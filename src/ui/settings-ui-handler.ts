@@ -1,10 +1,10 @@
 import BattleScene, { Button } from "../battle-scene";
-import { Setting, settingDefaults, settingOptions } from "../system/settings";
+import { Setting, reloadSettings, settingDefaults, settingOptions } from "../system/settings";
 import { hasTouchscreen, isMobile } from "../touch-controls";
-import { TextStyle, addTextObject, getTextColor } from "./text";
+import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
-import { addWindow } from "./window";
+import { addWindow } from "./ui-theme";
 
 export default class SettingsUiHandler extends UiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
@@ -21,8 +21,12 @@ export default class SettingsUiHandler extends UiHandler {
 
   private cursorObj: Phaser.GameObjects.NineSlice;
 
+  private reloadRequired: boolean;
+
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
+
+    this.reloadRequired = false;
   }
 
   setup() {
@@ -48,7 +52,11 @@ export default class SettingsUiHandler extends UiHandler {
     this.optionValueLabels = [];
 
     Object.keys(Setting).forEach((setting, s) => {
-      this.settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, setting.replace(/\_/g, ' '), TextStyle.SETTINGS_LABEL);
+      let settingName = setting.replace(/\_/g, ' ');
+      if (reloadSettings.includes(Setting[setting]))
+        settingName += ' (Requires Reload)';
+
+      this.settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
       this.settingLabels[s].setOrigin(0, 0);
 
       this.optionsContainer.add(this.settingLabels[s]);
@@ -157,7 +165,7 @@ export default class SettingsUiHandler extends UiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, 'select_cursor_highlight', null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
+      this.cursorObj = this.scene.add.nineslice(0, 0, 'summary_moves_cursor', null, (this.scene.game.canvas.width / 6) - 10, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0);
       this.optionsContainer.add(this.cursorObj);
     }
@@ -178,17 +186,20 @@ export default class SettingsUiHandler extends UiHandler {
     const lastCursor = this.optionCursors[settingIndex];
 
     const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
-    lastValueLabel.setColor(getTextColor(TextStyle.WINDOW));
-    lastValueLabel.setShadowColor(getTextColor(TextStyle.WINDOW, true));
+    lastValueLabel.setColor(this.getTextColor(TextStyle.WINDOW));
+    lastValueLabel.setShadowColor(this.getTextColor(TextStyle.WINDOW, true));
 
     this.optionCursors[settingIndex] = cursor;
 
     const newValueLabel = this.optionValueLabels[settingIndex][cursor];
-    newValueLabel.setColor(getTextColor(TextStyle.SETTINGS_SELECTED));
-    newValueLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
+    newValueLabel.setColor(this.getTextColor(TextStyle.SETTINGS_SELECTED));
+    newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
 
-    if (save)
-      this.scene.gameData.saveSetting(setting, cursor);
+    if (save) {
+      this.scene.gameData.saveSetting(setting, cursor)
+      if (reloadSettings.includes(setting))
+        this.reloadRequired = true;
+    }
 
     return true;
   }
@@ -221,6 +232,10 @@ export default class SettingsUiHandler extends UiHandler {
     super.clear();
     this.settingsContainer.setVisible(false);
     this.eraseCursor();
+    if (this.reloadRequired) {
+      this.reloadRequired = false;
+      this.scene.reset(true);
+    } 
   }
 
   eraseCursor() {

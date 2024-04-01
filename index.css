@@ -56,7 +56,7 @@ body {
 }
 
 #dpad svg rect {
-  opacity: 0.4;
+  opacity: 0.6;
 }
 
 #apad > * {
@@ -151,7 +151,7 @@ body {
 }
 
 #dpad path:not(.active), #apad .apadBtn:not(.active) {
-  opacity: 0.4;
+  opacity: 0.6;
 }
 
 #layout:fullscreen #dpad, #layout:fullscreen #apad {

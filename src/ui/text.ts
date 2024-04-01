@@ -2,14 +2,18 @@ import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodete
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import { ModifierTier } from "../modifier/modifier-tier";
 import { EggTier } from "../data/enums/egg-type";
+import BattleScene from "../battle-scene";
+import { UiTheme } from "../enums/ui-theme";
 
 export enum TextStyle {
   MESSAGE,
   WINDOW,
+  WINDOW_ALT,
   BATTLE_INFO,
   PARTY,
   PARTY_RED,
   SUMMARY,
+  SUMMARY_ALT,
   SUMMARY_RED,
   SUMMARY_BLUE,
   SUMMARY_PINK,
@@ -22,7 +26,7 @@ export enum TextStyle {
 };
 
 export function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
-  const [ styleOptions, shadowColor, shadowSize ] = getTextStyleOptions(style, extraStyleOptions);
+  const [ styleOptions, shadowColor, shadowSize ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
   const ret = scene.add.text(x, y, content, styleOptions);
   ret.setScale(0.1666666667);
@@ -34,7 +38,7 @@ export function addTextObject(scene: Phaser.Scene, x: number, y: number, content
 }
 
 export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): BBCodeText {
-  const [ styleOptions, shadowColor, shadowSize ] = getTextStyleOptions(style, extraStyleOptions);
+  const [ styleOptions, shadowColor, shadowSize ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
   const ret = new BBCodeText(scene, x, y, content, styleOptions as BBCodeText.TextStyle);
   scene.add.existing(ret);
@@ -47,7 +51,7 @@ export function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, c
 }
 
 export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, width: number, height: number, style: TextStyle, extraStyleOptions?: InputText.IConfig): InputText {
-  const [ styleOptions ] = getTextStyleOptions(style, extraStyleOptions);
+  const [ styleOptions ] = getTextStyleOptions(style, (scene as BattleScene).uiTheme, extraStyleOptions);
 
   const ret = new InputText(scene, x, y, width, height, styleOptions as InputText.IConfig);
   scene.add.existing(ret);
@@ -56,14 +60,14 @@ export function addTextInputObject(scene: Phaser.Scene, x: number, y: number, wi
   return ret;
 }
 
-function getTextStyleOptions(style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, integer ] {
+function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [ Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, integer ] {
   let shadowColor: string;
   let shadowSize = 6;
 
   let styleOptions: Phaser.Types.GameObjects.Text.TextStyle = {
     fontFamily: 'emerald',
     fontSize: '96px',
-    color: getTextColor(style, false),
+    color: getTextColor(style, false, uiTheme),
     padding: {
       bottom: 6
     }
@@ -97,7 +101,7 @@ function getTextStyleOptions(style: TextStyle, extraStyleOptions?: Phaser.Types.
       break;
   }
 
-  shadowColor = getTextColor(style, true);
+  shadowColor = getTextColor(style, true, uiTheme);
 
   if (extraStyleOptions) {
     if (extraStyleOptions.fontSize) {
@@ -114,21 +118,31 @@ export function getBBCodeFrag(content: string, textStyle: TextStyle): string {
   return `[color=${getTextColor(textStyle)}][shadow=${getTextColor(textStyle, true)}]${content}`;
 }
 
-export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
+export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: UiTheme = UiTheme.DEFAULT): string {
   switch (textStyle) {
     case TextStyle.MESSAGE:
       return !shadow ? '#f8f8f8' : '#6b5a73';
     case TextStyle.WINDOW:
     case TextStyle.TOOLTIP_CONTENT:
+      if (uiTheme)
+        return !shadow ? '#484848' : '#d0d0c8';
+      return !shadow ? '#f8f8f8' : '#6b5a73';
+    case TextStyle.WINDOW_ALT:
       return !shadow ? '#484848' : '#d0d0c8';
     case TextStyle.BATTLE_INFO:
-      return !shadow ? '#404040' : '#ded6b5';
+      if (uiTheme)
+        return !shadow ? '#404040' : '#ded6b5';
+      return !shadow ? '#f8f8f8' : '#6b5a73';
     case TextStyle.PARTY:
       return !shadow ? '#f8f8f8' : '#707070';
     case TextStyle.PARTY_RED:
       return !shadow ? '#f89890' : '#984038';
     case TextStyle.SUMMARY:
       return !shadow ? '#ffffff' : '#636363';
+    case TextStyle.SUMMARY_ALT:
+      if (uiTheme)
+        return !shadow ? '#ffffff' : '#636363';
+      return !shadow ? '#484848' : '#d0d0c8';
     case TextStyle.SUMMARY_RED:
     case TextStyle.TOOLTIP_TITLE:
       return !shadow ? '#e70808' : '#ffbd73';

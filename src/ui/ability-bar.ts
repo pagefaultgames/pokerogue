@@ -2,8 +2,8 @@ import BattleScene from "../battle-scene";
 import Pokemon from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
 
-const hiddenX = -91;
-const shownX = 10;
+const hiddenX = -118;
+const shownX = 0;
 const baseY = -116;
 
 export default class AbilityBar extends Phaser.GameObjects.Container {
@@ -20,7 +20,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   }
 
   setup(): void {
-    this.bg = this.scene.add.image(0, 0, 'ability_bar');
+    this.bg = this.scene.add.image(0, 0, 'ability_bar_left');
     this.bg.setOrigin(0, 0);
 
     this.add(this.bg);

@@ -3,7 +3,7 @@ import { gameModes } from "../game-mode";
 import { SessionSaveData } from "../system/game-data";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
-import { addWindow } from "./window";
+import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import PokemonData from "../system/pokemon-data";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -172,7 +172,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
     let changed = super.setCursor(cursor);
     
     if (!this.cursorObj) {
-      this.cursorObj = this.scene.add.nineslice(0, 0, 'select_cursor_highlight_thick', null, 296, 44, 2, 2, 2, 2);
+      this.cursorObj = this.scene.add.nineslice(0, 0, 'select_cursor_highlight_thick', null, 296, 44, 6, 6, 6, 6);
       this.cursorObj.setOrigin(0, 0);
       this.sessionSlotsContainer.add(this.cursorObj);
     }

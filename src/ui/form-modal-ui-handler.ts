@@ -2,7 +2,7 @@ import BattleScene, { Button } from "../battle-scene";
 import { ModalConfig, ModalUiHandler } from "./modal-ui-handler";
 import { Mode } from "./ui";
 import { TextStyle, addTextInputObject, addTextObject, getTextColor } from "./text";
-import { WindowVariant, addWindow } from "./window";
+import { WindowVariant, addWindow } from "./ui-theme";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 export interface FormModalConfig extends ModalConfig {
@@ -66,8 +66,8 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     });
 
     this.errorMessage = addTextObject(this.scene, 10, (hasTitle ? 31 : 5) + 20 * (fields.length - 1) + 16, '', TextStyle.TOOLTIP_CONTENT);
-    this.errorMessage.setColor(getTextColor(TextStyle.SUMMARY_PINK));
-    this.errorMessage.setShadowColor(getTextColor(TextStyle.SUMMARY_PINK, true));
+    this.errorMessage.setColor(this.getTextColor(TextStyle.SUMMARY_PINK));
+    this.errorMessage.setShadowColor(this.getTextColor(TextStyle.SUMMARY_PINK, true));
     this.errorMessage.setVisible(false);
     this.modalContainer.add(this.errorMessage);
   }

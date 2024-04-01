@@ -3,7 +3,7 @@ import { Achv, achvs } from "../system/achv";
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
-import { addWindow } from "./window";
+import { addWindow } from "./ui-theme";
 
 export default class AchvsUiHandler extends MessageUiHandler {
   private achvsContainer: Phaser.GameObjects.Container;

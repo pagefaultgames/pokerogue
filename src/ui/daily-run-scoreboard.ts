@@ -1,6 +1,6 @@
 import BattleScene from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
-import { WindowVariant, addWindow } from "./window";
+import { WindowVariant, addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 
 interface RankingEntry {

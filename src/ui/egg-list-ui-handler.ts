@@ -5,7 +5,7 @@ import { TextStyle, addTextObject } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import { EGG_SEED, Egg, GachaType, getEggGachaTypeDescriptor, getEggHatchWavesMessage, getEggDescriptor } from "../data/egg";
 import * as Utils from "../utils";
-import { addWindow } from "./window";
+import { addWindow } from "./ui-theme";
 
 export default class EggListUiHandler extends MessageUiHandler {
   private eggListContainer: Phaser.GameObjects.Container;
@@ -36,7 +36,7 @@ export default class EggListUiHandler extends MessageUiHandler {
     bgColor.setOrigin(0, 0);
     this.eggListContainer.add(bgColor);
 
-    const eggListBg = this.scene.add.image(1, 1, 'egg_list_bg');
+    const eggListBg = this.scene.add.image(0, 0, 'egg_list_bg');
     eggListBg.setOrigin(0, 0);
     this.eggListContainer.add(eggListBg);
 
@@ -48,7 +48,7 @@ export default class EggListUiHandler extends MessageUiHandler {
     this.iconAnimHandler = new PokemonIconAnimHandler();
     this.iconAnimHandler.setup(this.scene);
 
-    this.eggNameText = addTextObject(this.scene, 6, 66, '', TextStyle.SUMMARY);
+    this.eggNameText = addTextObject(this.scene, 8, 66, '', TextStyle.SUMMARY);
     this.eggNameText.setOrigin(0, 0);
     this.eggListContainer.add(this.eggNameText);
 

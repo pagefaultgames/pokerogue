@@ -42,7 +42,7 @@ import { GachaType } from './data/egg';
 import { Voucher, vouchers } from './system/voucher';
 import { Gender } from './data/gender';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
-import { WindowVariant, getWindowVariantSuffix } from './ui/window';
+import { WindowVariant, addUiThemeOverrides, getWindowVariantSuffix } from './ui/ui-theme';
 import PokemonData from './system/pokemon-data';
 import { Nature } from './data/nature';
 import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from './data/pokemon-forms';
@@ -55,6 +55,7 @@ import DamageNumberHandler from './field/damage-number-handler';
 import PokemonInfoContainer from './ui/pokemon-info-container';
 import { biomeDepths } from './data/biomes';
 import { initTouchControls } from './touch-controls';
+import { UiTheme } from './enums/ui-theme';
 
 export const bypassLogin = false;
 
@@ -68,6 +69,7 @@ export const STARTING_MONEY_OVERRIDE = 0;
 
 export const startingWave = STARTING_WAVE_OVERRIDE || 1;
 
+export const legacyCompatibleImages: string[] = [];
 const expSpriteKeys: string[] = [];
 
 export enum Button {
@@ -105,7 +107,8 @@ export default class BattleScene extends Phaser.Scene {
 	public damageNumbersMode: integer = 0;
 	public showLevelUpStats: boolean = true;
 	public enableTutorials: boolean = true;
-	public windowType: integer = 1;
+	public uiTheme: UiTheme = UiTheme.DEFAULT;
+	public windowType: integer = 0;
 	public experimentalSprites: boolean = false;
 	public fusionPaletteSwaps: boolean = true;
 	public enableTouchControls: boolean = false;
@@ -191,6 +194,11 @@ export default class BattleScene extends Phaser.Scene {
 		if (!filename)
 			filename = `${key}.png`;
 		this.load.image(key, `images/${folder}/${filename}`);
+		if (folder.startsWith('ui')) {
+			legacyCompatibleImages.push(key);
+			folder = folder.replace('ui', 'ui/legacy');
+			this.load.image(`${key}_legacy`, `images/${folder}/${filename}`);
+		}
 	}
 
 	loadAtlas(key: string, folder: string, filenameRoot?: string) {
@@ -199,6 +207,11 @@ export default class BattleScene extends Phaser.Scene {
 		if (folder)
 			folder += '/';
 		this.load.atlas(key, `images/${folder}${filenameRoot}.png`, `images/${folder}/${filenameRoot}.json`);
+		if (folder.startsWith('ui')) {
+			legacyCompatibleImages.push(key);
+			folder = folder.replace('ui', 'ui/legacy');
+			this.load.atlas(`${key}_legacy`, `images/${folder}${filenameRoot}.png`, `images/${folder}/${filenameRoot}.json`);
+		}
 	}
 
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
@@ -215,7 +228,7 @@ export default class BattleScene extends Phaser.Scene {
 				k += 'f';
 			if (keyMatch[5])
 				k += keyMatch[5];
-			if (expSpriteKeys.indexOf(k) === -1)
+			if (!expSpriteKeys.includes(k))
 				experimental = false;
 		}
 		this.load.atlas(key, `images/pokemon/${experimental ? 'exp/' : ''}${atlasPath}.png`,  `images/pokemon/${experimental ? 'exp/' : ''}${atlasPath}.json`);
@@ -225,6 +238,11 @@ export default class BattleScene extends Phaser.Scene {
 		if (!filename)
 			filename = `${key}.png`;
 		this.load.spritesheet(key, `images/${folder}/${filename}`, { frameWidth: size, frameHeight: size });
+		if (folder.startsWith('ui')) {
+			legacyCompatibleImages.push(key);
+			folder = folder.replace('ui', 'ui/legacy');
+			this.load.spritesheet(`${key}_legacy`, `images/${folder}/${filename}`, { frameWidth: size, frameHeight: size });
+		}
 	}
 
 	loadSe(key: string, folder?: string, filenames?: string | string[]) {
@@ -249,13 +267,13 @@ export default class BattleScene extends Phaser.Scene {
 
 	preload() {
 		// Load menu images
-		this.loadImage('bg', 'ui');
+		this.loadAtlas('bg', 'ui');
 		this.loadImage('command_fight_labels', 'ui');
 		this.loadAtlas('prompt', 'ui');
 		this.loadImage('cursor', 'ui');
 		this.loadImage('cursor_reverse', 'ui');
 		for (let wv of Utils.getEnumValues(WindowVariant)) {
-			for (let w = 1; w <= 4; w++)
+			for (let w = 1; w <= 5; w++)
 				this.loadImage(`window_${w}${getWindowVariantSuffix(wv)}`, 'ui/windows');
 		}
 		this.loadImage('namebox', 'ui');
@@ -270,7 +288,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadAtlas('overlay_hp_boss', 'ui');
 		this.loadImage('overlay_exp', 'ui');
 		this.loadImage('icon_owned', 'ui');
-		this.loadImage('ability_bar', 'ui');
+		this.loadImage('ability_bar_left', 'ui');
 		this.loadImage('party_exp_bar', 'ui');
 		this.loadImage('achv_bar', 'ui');
 		this.loadImage('achv_bar_2', 'ui');
@@ -401,7 +419,7 @@ export default class BattleScene extends Phaser.Scene {
 		this.loadImage('egg_list_bg', 'ui');
 
 		for (let i = 0; i < 10; i++)
-			this.loadAtlas(`pokemon_icons_${i}`, 'ui');
+			this.loadAtlas(`pokemon_icons_${i}`, '');
 
 		this.loadSe('select');
 		this.loadSe('menu_open');
@@ -466,6 +484,8 @@ export default class BattleScene extends Phaser.Scene {
 		initGameSpeed.apply(this);
 
 		this.gameData = new GameData(this);
+
+		addUiThemeOverrides(this);
 
 		this.setupControls();
 

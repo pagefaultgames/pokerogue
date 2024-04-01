@@ -4,7 +4,7 @@ import { Mode } from "./ui";
 import * as Utils from "../utils";
 import MessageUiHandler from "./message-ui-handler";
 import { getStatName, Stat } from "../data/pokemon-stat";
-import { addWindow } from "./window";
+import { addWindow } from "./ui-theme";
 
 export default class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsContainer: Phaser.GameObjects.Container;
@@ -28,7 +28,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     this.textTimer = null;
     this.textCallbackTimer = null;
 
-    const bg = this.scene.add.image(0, 0, 'bg');
+    const bg = this.scene.add.sprite(0, 0, 'bg', this.scene.windowType + 1);
 		bg.setOrigin(0, 1);
     ui.add(bg);
 

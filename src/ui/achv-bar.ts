@@ -36,7 +36,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
     this.scoreText.setOrigin(1, 0);
     this.add(this.scoreText);
 
-    this.descriptionText = addTextObject(this.scene, 43, 16, '', TextStyle.WINDOW, { fontSize: '72px' });
+    this.descriptionText = addTextObject(this.scene, 43, 16, '', TextStyle.WINDOW_ALT, { fontSize: '72px' });
     this.descriptionText.setOrigin(0, 0);
     this.add(this.descriptionText);
 

@@ -2,7 +2,7 @@ import BattleScene, { Button, bypassLogin } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
-import { addWindow } from "./window";
+import { addWindow } from "./ui-theme";
 import MessageUiHandler from "./message-ui-handler";
 import { GameDataType } from "../system/game-data";
 import { OptionSelectConfig } from "./abstact-option-select-ui-handler";
@@ -18,6 +18,7 @@ export enum MenuOptions {
   EGG_GACHA,
   MANAGE_DATA,
   COMMUNITY,
+  RETURN_TO_TITLE,
   LOG_OUT
 }
 
@@ -45,7 +46,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.ignoredMenuOptions = !bypassLogin
       ? [ ]
       : [ MenuOptions.LOG_OUT ];
-    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => this.ignoredMenuOptions.indexOf(m) === -1);
+    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => parseInt(MenuOptions[m]) as MenuOptions).filter(m => !this.ignoredMenuOptions.includes(m));
   }
 
   setup() {
@@ -253,6 +254,18 @@ export default class MenuUiHandler extends MessageUiHandler {
         case MenuOptions.COMMUNITY:
           ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.communityConfig);
           success = true;
+          break;
+        case MenuOptions.RETURN_TO_TITLE:
+          if (this.scene.currentBattle) {
+            success = true;
+            ui.showText('You will lose any progress since the beginning of the battle. Proceed?', null, () => {
+              ui.setOverlayMode(Mode.CONFIRM, () => this.scene.reset(true), () => {
+                ui.revertMode();
+                ui.showText(null, 0);
+              }, false, -98);
+            });
+          } else
+            error = true;
           break;
         case MenuOptions.LOG_OUT:
           success = true;
