@@ -7,19 +7,19 @@
 				"w": 87,
 				"h": 87
 			},
-			"scale": 1,
+			"scale": 0.5,
 			"frames": [
 				{
 					"filename": "0001.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 81,
-						"h": 87
+						"w": 96,
+						"h": 96
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
+						"x": 7,
+						"y": 4,
 						"w": 81,
 						"h": 87
 					},
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": ""
+		"smartupdate": "$TexturePacker:SmartUpdate:4d011c09cafb3448cad5e194a58340de:71c9beb87982be042131b9a44da32816:e5ce226e10186edc3c1541efe491b286$"
 	}
 }
