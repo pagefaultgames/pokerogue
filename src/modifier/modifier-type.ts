@@ -958,7 +958,9 @@ const modifierPool: ModifierPool = {
     }, 3),
     new WeightedModifierType(modifierTypes.SUPER_LURE, 4),
     new WeightedModifierType(modifierTypes.NUGGET, 5),
-    new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, 2),
+    new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, (party: Pokemon[]) => {
+      return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15), 8);
+    }, 8),
     new WeightedModifierType(modifierTypes.MAP, (party: Pokemon[]) => party[0].scene.gameMode.isClassic ? 1 : 0, 1),
     new WeightedModifierType(modifierTypes.TM_GREAT, 2),
     new WeightedModifierType(modifierTypes.MEMORY_MUSHROOM, (party: Pokemon[]) => {
@@ -978,7 +980,9 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BIG_NUGGET, 12),
     new WeightedModifierType(modifierTypes.PP_UP, 9),
     new WeightedModifierType(modifierTypes.PP_MAX, 3),
-    new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, 8),
+    new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => {
+      return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32);
+    }, 32),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),
