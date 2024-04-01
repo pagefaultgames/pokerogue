@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import BattleScene, { AnySound } from '../battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -1042,6 +1042,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => (attr as StatusMoveTypeImmunityAttr).immuneType === move.type))
       ? getTypeDamageMultiplier(move.type, types[0]) * (types.length > 1 ? getTypeDamageMultiplier(move.type, types[1]) : 1)
       : 1);
+    applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
     if (typeless)
       typeMultiplier.value = 1;
     if (this.getTypes(true, true).find(t => move.isTypeImmune(t)))
