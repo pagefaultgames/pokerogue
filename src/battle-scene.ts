@@ -67,6 +67,7 @@ export const STARTING_LEVEL_OVERRIDE = 0;
 export const STARTING_WAVE_OVERRIDE = 0;
 export const STARTING_BIOME_OVERRIDE = Biome.TOWN;
 export const STARTING_MONEY_OVERRIDE = 0;
+export const ENEMY_SPECIES_OVERRIDE = 0;
 const DEBUG_RNG = false;
 
 export const startingWave = STARTING_WAVE_OVERRIDE || 1;
@@ -809,6 +810,8 @@ export default class BattleScene extends Phaser.Scene {
 	}
 
 	addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
+		if (ENEMY_SPECIES_OVERRIDE)
+			species = getPokemonSpecies(ENEMY_SPECIES_OVERRIDE);
 		const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
 		if (boss) {
 			const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
