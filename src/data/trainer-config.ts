@@ -800,7 +800,7 @@ export const trainerConfigs: TrainerConfigs = {
 
   [TrainerType.BLUE]: new TrainerConfig((t = TrainerType.BLUE)).initForChampion([ Species.GYARADOS, Species.MEWTWO, Species.ARCANINE, Species.ALAKAZAM, Species.PIDGEOT ]).setBattleBgm('battle_kanto_champion'),
   [TrainerType.RED]: new TrainerConfig(++t).initForChampion([ Species.CHARIZARD, [ Species.LUGIA, Species.HO_OH ], Species.SNORLAX, Species.RAICHU, Species.ESPEON ]).setBattleBgm('battle_johto_champion'),
-  [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).initForChampion([ Species.DRAGONITE, [ Species.ZACIAN, Species.ZAMAZENTA ], Species.AERODACTYL, Species.KINGDRA, Species.ALOLA_EXEGGUTOR ]).setBattleBgm('battle_johto_champion'),
+  [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t).initForChampion([ Species.DRAGONITE, Species.ZYGARDE, Species.AERODACTYL, Species.KINGDRA, Species.ALOLA_EXEGGUTOR ]).setBattleBgm('battle_johto_champion'),
   [TrainerType.STEVEN]: new TrainerConfig(++t).initForChampion([ Species.METAGROSS, [ Species.DIALGA, Species.PALKIA ], Species.SKARMORY, Species.AGGRON, Species.CARBINK ]).setBattleBgm('battle_hoenn_champion'),
   [TrainerType.WALLACE]: new TrainerConfig(++t).initForChampion([ Species.MILOTIC, Species.KYOGRE, Species.WHISCASH, Species.WALREIN, Species.LUDICOLO ]).setBattleBgm('battle_hoenn_champion'),
   [TrainerType.CYNTHIA]: new TrainerConfig(++t).initForChampion([ Species.SPIRITOMB, Species.GIRATINA, Species.GARCHOMP, Species.MILOTIC, Species.LUCARIO, Species.TOGEKISS ]).setBattleBgm('battle_sinnoh_champion'),
@@ -810,8 +810,8 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.HAU]: new TrainerConfig(++t).initForChampion([ Species.ALOLA_RAICHU, [ Species.SOLGALEO, Species.LUNALA ], Species.NOIVERN, [ Species.DECIDUEYE, Species.INCINEROAR, Species.PRIMARINA ], Species.CRABOMINABLE ]),
   [TrainerType.GEETA]: new TrainerConfig(++t).initForChampion([ Species.GLIMMORA, Species.MIRAIDON, Species.ESPATHRA, Species.VELUZA, Species.KINGAMBIT ]),
   [TrainerType.NEMONA]: new TrainerConfig(++t).initForChampion([ Species.LYCANROC, Species.KORAIDON, Species.KOMMO_O, Species.PAWMOT, Species.DUSKNOIR ]),
-  [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion([ Species.POLITOED, Species.TERAPAGOS, Species.HYDRAPPLE, Species.PORYGON_Z, Species.GRIMMSNARL ]),
-  [TrainerType.LEON]: new TrainerConfig(++t).initForChampion([ Species.DRAGAPULT, [ Species.ZACIAN, Species.ZAMAZENTA ], Species.SEISMITOAD, Species.AEGISLASH, Species.MR_RIME ]),
+  [TrainerType.KIERAN]: new TrainerConfig(++t).initForChampion([ Species.POLITOED, [ Species.OGERPON, Species.TERAPAGOS ], Species.HYDRAPPLE, Species.PORYGON_Z, Species.GRIMMSNARL ]),
+  [TrainerType.LEON]: new TrainerConfig(++t).initForChampion([ Species.DRAGAPULT, [ Species.ZACIAN, Species.ZAMAZENTA ], Species.SEISMITOAD, Species.AEGISLASH, Species.CHARIZARD ]),
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL)).setName('Finn').setHasGenders('Ivy').setHasCharSprite().setTitle('Rival').setStaticParty().setEncounterBgm(TrainerType.RIVAL).setBattleBgm('battle_rival').setPartyTemplates(trainerPartyTemplates.RIVAL)
     .setModifierRewardFuncs(() => modifierTypes.SUPER_EXP_CHARM, () => modifierTypes.EXP_SHARE)
