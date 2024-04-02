@@ -3,17 +3,17 @@
 PokéRogue is a browser based Pokémon fangame heavily inspired by the roguelite genre. Battle endlessly while gathering stacking items, exploring many different biomes, fighting trainers, bosses, and more! 
 
 # Contributing
-## Development
+## 🛠️ Development
 If you have the motivation and experience with Typescript/Javascript (or are willing to learn) please feel free to fork the repository and make pull requests with contributions. If you don't know what to work on but want to help, reference the below **To-Do** section or the **#vote** channel in the discord. 
 
-### Environment Setup
+### 💻 Environment Setup
 node: 18.3.0
 
 1. Clone the repo and in the root directory run `npm install`
     - *if you run into any errors, reach out in the **#dev-corner** channel in discord*
 2. Run `npm run start` to locally run the project in `localhost:8000`
 
-### FAQ
+### ❔ FAQ 
 
 **How do I test a new ability/move?**
 - In the `pokemon.ts` file there are overrides you can set to apply the new move/ability to your active pokemon
@@ -22,33 +22,13 @@ node: 18.3.0
 - In the `battle-scene.ts` file there are overrides for seed, starting level, starting wave, starting biome, and starting money
 
 
-## To Do
+## 🪧 To Do
+Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to see what we're working on
 
-- Add carry-over starter mechanic
-- Moves
-  - Complete move logic
-- Abilities
-  - Complete ability logic
-- Pokemon summary screen
-  - Add IV screen
-- Capture logic
-  - Critical capture
-- Modifiers
-  - Various mainline game items for various enhancements
-- Trainers
-  - Finish party pools
-  - Add dialogue
-  - Add reward for gym leader victories
-- Battle animations
-  - Fix broken battle animations (mostly ones with backgrounds)
-- Modes
-  - Add random mode
-  - Add Nuzlocke mode
-
-# Credits
+# 📝 Credits
 > If this project contains assets you have produced and you do not see your name here, **please** reach out.
 
-### BGM
+### 🎵 BGM
   - Pokémon Mystery Dungeon: Explorers of Sky
     - Arata Iiyoshi
     - Hideki Sakamoto
@@ -65,27 +45,27 @@ node: 18.3.0
     - Atsuhiro Ishizuna
   - Pokémon Black/White 2
 
-### Sound Effects
+### 🎵 Sound Effects
   - Pokémon Emerald
   - Pokémon Black/White
 
-### Backgrounds
+### 🎨 Backgrounds
   - Squip (Paid Commissions)
   - Contributions by Someonealive-QN
 
-### Game Logo
+### 🎨 Game Logo
   - Gonstar (Paid Commission)
 
-### Trainer Sprites
+### 🎨 Trainer Sprites
   - GAMEFREAK (Pokémon Black/White 2, Pokémon Diamond/Pearl)
   - kyledove
   - Brumirage
   - pkmn_realidea (Paid Commissions)
 
-### Trainer Portraits
+### 🎨 Trainer Portraits
   - pkmn_realidea (Paid Commissions)
 
-### Pokemon Sprites
+### 🎨 Pokemon Sprites
   - GAMEFREAK (Pokémon Black/White 2)
   - Smogon Sprite Project (Various Artists)
   - Skyflyer
