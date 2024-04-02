@@ -9,6 +9,7 @@ import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { Moves } from "./enums/moves";
 import { ArenaTagType } from "./enums/arena-tag-type";
+import { BlockNonDirectDamageAbAttr, applyAbAttrs } from "./ability";
 
 export enum ArenaTagSide {
   BOTH,
@@ -172,12 +173,17 @@ class SpikesTag extends ArenaTrapTag {
 
   activateTrap(pokemon: Pokemon): boolean {
     if (pokemon.isGrounded()) {
-      const damageHpRatio = 1 / (10 - 2 * this.layers);
-      const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
+      const cancelled = new Utils.BooleanHolder(false);
+      applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is hurt\nby the spikes!'));
-      pokemon.damageAndUpdate(damage, HitResult.OTHER);
-      return true;
+      if (!cancelled.value) {
+        const damageHpRatio = 1 / (10 - 2 * this.layers);
+        const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
+
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is hurt\nby the spikes!'));
+        pokemon.damageAndUpdate(damage, HitResult.OTHER);
+        return true;
+      }
     }
 
     return false;
@@ -293,6 +299,12 @@ class StealthRockTag extends ArenaTrapTag {
   }
 
   activateTrap(pokemon: Pokemon): boolean {
+    const cancelled = new Utils.BooleanHolder(false);
+    applyAbAttrs(BlockNonDirectDamageAbAttr,  pokemon, cancelled);
+
+    if (cancelled.value)
+      return false;
+    
     const damageHpRatio = this.getDamageHpRatio(pokemon);
 
     if (damageHpRatio) {

@@ -12,7 +12,7 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { Abilities, ProtectAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs } from "./ability";
+import { Abilities, ProtectAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr } from "./ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
@@ -634,6 +634,10 @@ export class RecoilAttr extends MoveEffectAttr {
     if (!recoilDamage)
       return false;
 
+    applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
+    if (cancelled.value)
+      return false;
+      
     user.damageAndUpdate(recoilDamage, HitResult.OTHER, false, true);
     user.scene.queueMessage(getPokemonMessage(user, ' is hit\nwith recoil!'));
 
@@ -1825,6 +1829,11 @@ export class MissEffectAttr extends MoveAttr {
 }
 
 const halveHpMissEffectFunc = (user: Pokemon, move: Move) => {
+  const cancelled = new Utils.BooleanHolder(false);
+  applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
+  if (cancelled.value)
+    return false;
+  
   const damage = user.damage(Math.floor(user.getMaxHp() / 2));
   if (damage)
     user.scene.damageNumberHandler.add(user, damage, HitResult.OTHER);

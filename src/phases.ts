@@ -30,7 +30,7 @@ import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, get
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { Abilities, CheckTrappedAbAttr, MoveAbilityBypassAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr } from "./data/ability";
+import { Abilities, CheckTrappedAbAttr, MoveAbilityBypassAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -2551,6 +2551,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
           const cancelled = new Utils.BooleanHolder(false);
 
           applyPreWeatherEffectAbAttrs(PreWeatherDamageAbAttr, pokemon, this.weather, cancelled);
+          applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
           if (cancelled.value)
             return;
@@ -2620,24 +2621,32 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
     const pokemon = this.getPokemon();
     if (pokemon?.isActive(true) && pokemon.status && pokemon.status.isPostTurn()) {
       pokemon.status.incrementTurn();
-      this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect)));
-      let damage: integer = 0;
-      switch (pokemon.status.effect) {
-        case StatusEffect.POISON:
-          damage = Math.max(pokemon.getMaxHp() >> 3, 1);
-          break;
-        case StatusEffect.TOXIC:
-          damage = Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1);
-          break;
-        case StatusEffect.BURN:
-          damage = Math.max(pokemon.getMaxHp() >> 4, 1);
-          break;
-      }
-      if (damage) {
-        this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage));
-        pokemon.updateInfo();
-      }
-      new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => this.end());
+      const cancelled = new Utils.BooleanHolder(false);
+      applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+
+      console.log(cancelled.value)
+
+      if (!cancelled.value) {
+        this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect)));
+        let damage: integer = 0;
+        switch (pokemon.status.effect) {
+          case StatusEffect.POISON:
+            damage = Math.max(pokemon.getMaxHp() >> 3, 1);
+            break;
+          case StatusEffect.TOXIC:
+            damage = Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1);
+            break;
+          case StatusEffect.BURN:
+            damage = Math.max(pokemon.getMaxHp() >> 4, 1);
+            break;
+        }
+        if (damage) {
+          this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage));
+          pokemon.updateInfo();
+        }
+        new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => this.end());
+      } else
+        this.end();
     } else
       this.end();
   }

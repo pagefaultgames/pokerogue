@@ -977,9 +977,16 @@ export class BlockCritAbAttr extends AbAttr {
   }
 }
 
+export class BlockNonDirectDamageAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = true;
+    return true;
+  }
+}
+
 export class BlockOneHitKOAbAttr extends AbAttr {
   apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    cancelled.value = false;
+    cancelled.value = true;
     return true;
   }
 }
@@ -2200,7 +2207,8 @@ export function initAbilities() {
     new Ability(Abilities.QUICK_FEET, "Quick Feet (N)", "Boosts the Speed stat if the Pokémon has a status condition.", 4),
     new Ability(Abilities.NORMALIZE, "Normalize (N)", "All the Pokémon's moves become Normal type. The power of those moves is boosted a little.", 4),
     new Ability(Abilities.SNIPER, "Sniper (N)", "Powers up moves if they become critical hits when attacking.", 4),
-    new Ability(Abilities.MAGIC_GUARD, "Magic Guard (N)", "The Pokémon only takes damage from attacks.", 4),
+    new Ability(Abilities.MAGIC_GUARD, "Magic Guard", "The Pokémon only takes damage from attacks.", 4)
+      .attr(BlockNonDirectDamageAbAttr),
     new Ability(Abilities.NO_GUARD, "No Guard (N)", "The Pokémon employs no-guard tactics to ensure incoming and outgoing attacks always land.", 4),
     new Ability(Abilities.STALL, "Stall (N)", "The Pokémon moves after all other Pokémon do.", 4),
     new Ability(Abilities.TECHNICIAN, "Technician", "Powers up the Pokémon's weaker moves.", 4)

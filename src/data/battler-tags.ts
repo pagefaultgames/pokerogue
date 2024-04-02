@@ -8,7 +8,7 @@ import * as Utils from "../utils";
 import { Moves } from "./enums/moves";
 import { ChargeAttr, MoveFlags, allMoves } from "./move";
 import { Type } from "./type";
-import { Abilities, FlinchEffectAbAttr, applyAbAttrs } from "./ability";
+import { Abilities, BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, applyAbAttrs } from "./ability";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
@@ -280,10 +280,15 @@ export class SeedTag extends BattlerTag {
     if (ret) {
       const source = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
       if (source) {
-        pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.LEECH_SEED));
+        const cancelled = new Utils.BooleanHolder(false);
+        applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
-        const damage = pokemon.damageAndUpdate(Math.max(Math.floor(pokemon.getMaxHp() / 8), 1));
-        pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, source.getBattlerIndex(), damage, getPokemonMessage(pokemon, '\'s health is\nsapped by Leech Seed!'), false, true));
+        if (!cancelled.value) {
+          pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.LEECH_SEED));
+
+          const damage = pokemon.damageAndUpdate(Math.max(Math.floor(pokemon.getMaxHp() / 8), 1));
+          pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, source.getBattlerIndex(), damage, getPokemonMessage(pokemon, '\'s health is\nsapped by Leech Seed!'), false, true));
+        }
       }
     }
     
@@ -319,7 +324,11 @@ export class NightmareTag extends BattlerTag {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is locked\nin a Nightmare!'));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, CommonAnim.CURSE)); // TODO: Update animation type
 
-      pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / 4));
+      const cancelled = new Utils.BooleanHolder(false);
+      applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+
+      if (!cancelled.value)
+        pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / 4));
     }
     
     return ret;
@@ -506,7 +515,11 @@ export abstract class DamagingTrapTag extends TrappedTag {
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is hurt\nby ${this.getMoveName()}!`));
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), undefined, this.commonAnim));
 
-      pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / 8))
+      const cancelled = new Utils.BooleanHolder(false);
+      applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+
+      if (!cancelled.value)
+        pokemon.damageAndUpdate(Math.ceil(pokemon.getMaxHp() / 8))
     }
 
     return ret;
@@ -924,10 +937,15 @@ export class SaltCuredTag extends BattlerTag {
     if (ret) {
       pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.SALT_CURE));
 
-      const pokemonSteelOrWater = pokemon.isOfType(Type.STEEL) || pokemon.isOfType(Type.WATER);
-      pokemon.damageAndUpdate(Math.max(Math.floor(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), 1));
+      const cancelled = new Utils.BooleanHolder(false);
+      applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
 
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is hurt by ${this.getMoveName()}!`));
+      if (!cancelled.value) {
+        const pokemonSteelOrWater = pokemon.isOfType(Type.STEEL) || pokemon.isOfType(Type.WATER);
+        pokemon.damageAndUpdate(Math.max(Math.floor(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), 1));
+
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` is hurt by ${this.getMoveName()}!`));
+      }
     }
     
     return ret;
