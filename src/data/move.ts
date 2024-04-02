@@ -4401,7 +4401,9 @@ export function initMoves() {
       .attr(DiscourageFrequentUseAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.SNIPE_SHOT, "Snipe Shot (P)", Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, "The user ignores the effects of opposing Pokémon's moves and Abilities that draw in moves, allowing this move to hit the chosen target.", -1, 0, 8),
-    new AttackMove(Moves.JAW_LOCK, "Jaw Lock (P)", Type.DARK, MoveCategory.PHYSICAL, 80, 100, 10, "This move prevents the user and the target from switching out until either of them faints. The effect goes away if either of the Pokémon leaves the field.", -1, 0, 8)
+    new AttackMove(Moves.JAW_LOCK, "Jaw Lock", Type.DARK, MoveCategory.PHYSICAL, 80, 100, 10, "This move prevents the user and the target from switching out until either of them faints. The effect goes away if either of the Pokémon leaves the field.", -1, 0, 8)
+      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
+      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, false, 1)
       .bitingMove(),
     new SelfStatusMove(Moves.STUFF_CHEEKS, "Stuff Cheeks (N)", Type.NORMAL, -1, 10, "The user eats its held Berry, then sharply raises its Defense stat.", 100, 0, 8),
     new SelfStatusMove(Moves.NO_RETREAT, "No Retreat", Type.FIGHTING, -1, 5, "This move raises all the user's stats but prevents the user from switching out or fleeing.", 100, 0, 8)
