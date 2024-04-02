@@ -497,7 +497,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.PALKIA, '', SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.LUSTROUS_ORB))
   ],
   [Species.GIRATINA]: [
-    new SpeciesFormChange(Species.GIRATINA, '', SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.GRISEOUS_CORE))
+    new SpeciesFormChange(Species.GIRATINA, 'altered', SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.GRISEOUS_CORE))
   ],
   [Species.SHAYMIN]: [
     new SpeciesFormChange(Species.SHAYMIN, 'land', 'sky', new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeTimeOfDayTrigger(TimeOfDay.DAY, TimeOfDay.DUSK),
