@@ -2979,10 +2979,15 @@ export class VictoryPhase extends PokemonPhase {
         if (exp) {
           const partyMemberIndex = party.indexOf(expPartyMembers[pm]);
           this.scene.unshiftPhase(expPartyMembers[pm].isOnField() ? new ExpPhase(this.scene, partyMemberIndex, exp) : new ShowPartyExpBarPhase(this.scene, partyMemberIndex, exp));
-          if (expPartyMembers[pm].isOnField())
-            applyPostVictoryAbAttrs(PostVictoryAbAttr, expPartyMembers[pm]);
         }
       }
+    }
+
+    const defeatedPokemon = this.getPokemon();
+    if (defeatedPokemon.turnData?.attacksReceived?.length) {
+      const defeatSource = this.scene.getPokemonById(defeatedPokemon.turnData.attacksReceived[0].sourceId);
+      if (defeatSource?.isOnField())
+        applyPostVictoryAbAttrs(PostVictoryAbAttr, defeatSource);
     }
 
     if (!this.scene.getEnemyParty().find(p => this.scene.currentBattle.battleType ? !p?.isFainted(true) : p.isOnField())) {
