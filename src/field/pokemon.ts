@@ -491,7 +491,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (move)
         applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, opponent, move, statLevel);
     }
-    if (move)
     if (this.isPlayer())
       this.scene.applyModifiers(TempBattleStatBoosterModifier, this.isPlayer(), battleStat as integer as TempBattleStat, statLevel);
     const statValue = new Utils.NumberHolder(this.getStat(stat));
