@@ -1915,7 +1915,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
     if (pokemon.getHpRatio() < 1) {
       const scene = pokemon.scene;
       scene.unshiftPhase(new PokemonHealPhase(scene, pokemon.getBattlerIndex(),
-        Math.max(Math.min(Math.floor(pokemon.getMaxHp() / (100 / this.healPercent)) * this.stackCount, (pokemon.getMaxHp() - pokemon.hp) - 1), 1), getPokemonMessage(pokemon, `\nrestored some HP!`), true));
+        Math.max(Math.floor(pokemon.getMaxHp() / (100 / this.healPercent)) * this.stackCount, 1), getPokemonMessage(pokemon, `\nrestored some HP!`), true, false, false, false, true));
       return true;
     }
 

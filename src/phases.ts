@@ -1843,14 +1843,14 @@ export class TurnEndPhase extends FieldPhase {
 
       this.scene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
-      if (!pokemon.isPlayer()) {
-        this.scene.applyModifiers(EnemyTurnHealModifier, false, pokemon);
-        this.scene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
-      }
-
       if (this.scene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
         this.scene.unshiftPhase(new PokemonHealPhase(this.scene, pokemon.getBattlerIndex(),
           Math.max(pokemon.getMaxHp() >> 4, 1), getPokemonMessage(pokemon, '\'s HP was restored.'), true));
+      }
+
+      if (!pokemon.isPlayer()) {
+        this.scene.applyModifiers(EnemyTurnHealModifier, false, pokemon);
+        this.scene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
       }
 
       applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
@@ -3499,8 +3499,9 @@ export class PokemonHealPhase extends CommonAnimPhase {
   private skipAnim: boolean;
   private revive: boolean;
   private healStatus: boolean;
+  private preventFullHeal: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, hpHealed: integer, message: string, showFullHpMessage: boolean, skipAnim: boolean = false, revive: boolean = false, healStatus: boolean = false) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, hpHealed: integer, message: string, showFullHpMessage: boolean, skipAnim: boolean = false, revive: boolean = false, healStatus: boolean = false, preventFullHeal: boolean = false) {
     super(scene, battlerIndex, undefined, CommonAnim.HEALTH_UP);
 
     this.hpHealed = hpHealed;
@@ -3509,6 +3510,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     this.skipAnim = skipAnim;
     this.revive = revive;
     this.healStatus = healStatus;
+    this.preventFullHeal = preventFullHeal;
   }
 
   start() {
@@ -3536,6 +3538,9 @@ export class PokemonHealPhase extends CommonAnimPhase {
       if (!this.revive)
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
+      // Prevent healing to full if specified (in case of healing tokens so Sturdy doesn't cause a softlock)
+      if (this.preventFullHeal && pokemon.hp + healAmount.value >= pokemon.getMaxHp())
+        healAmount.value = (pokemon.getMaxHp() - pokemon.hp) - 1;
       healAmount.value = pokemon.heal(healAmount.value);
       if (healAmount.value)
         this.scene.damageNumberHandler.add(pokemon, healAmount.value, HitResult.HEAL);
