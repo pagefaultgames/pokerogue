@@ -96,6 +96,16 @@ export function randSeedWeightedItem<T>(items: T[]): T {
     : Phaser.Math.RND.weightedPick(items);
 }
 
+export function randSeedEasedWeightedItem<T>(items: T[], easingFunction: string = 'Sine.easeIn'): T {
+  if (!items.length)
+    return null;
+  if (items.length === 1)
+    return items[0];
+  const value = Phaser.Math.RND.realInRange(0, 1);
+  const easedValue = Phaser.Tweens.Builders.GetEaseFunction(easingFunction)(value);
+  return items[Math.floor(easedValue * items.length)];
+}
+
 export function getSunday(date: Date): Date {
   const day = date.getDay();
   const diff = date.getDate() - day;
