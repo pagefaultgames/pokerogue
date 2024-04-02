@@ -2562,7 +2562,8 @@ export function initAbilities() {
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), PostSummonAddBattlerTagAbAttr, BattlerTagType.QUARK_DRIVE, 0, true)
       .attr(PostTerrainChangeAddBattlerTagAttr, BattlerTagType.QUARK_DRIVE, 0, TerrainType.ELECTRIC)
       .attr(ProtectAbilityAbAttr),
-    new Ability(Abilities.GOOD_AS_GOLD, "Good as Gold (N)", "A body of pure, solid gold gives the Pokémon full immunity to other Pokémon's status moves.", 9)
+    new Ability(Abilities.GOOD_AS_GOLD, "Good as Gold (P)", "A body of pure, solid gold gives the Pokémon full immunity to other Pokémon's status moves.", 9)
+      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().category === MoveCategory.STATUS)
       .ignorable(),
     new Ability(Abilities.VESSEL_OF_RUIN, "Vessel of Ruin (N)", "The power of the Pokémon's ruinous vessel lowers the Sp. Atk stats of all Pokémon except itself.", 9)
       .ignorable(),
