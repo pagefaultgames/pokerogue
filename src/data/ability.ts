@@ -155,6 +155,42 @@ export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
   }
 }
 
+export class PostBattleInitStatChangeAbAttr extends PostBattleInitAbAttr {
+  private stats: BattleStat[];
+  private levels: integer;
+  private selfTarget: boolean;
+
+  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean) {
+    super();
+
+    this.stats = typeof(stats) === 'number'
+      ? [ stats as BattleStat ]
+      : stats as BattleStat[];
+    this.levels = levels;
+    this.selfTarget = !!selfTarget;
+  }
+
+  applyPostBattleInit(pokemon: Pokemon, args: any[]): boolean {
+    const statChangePhases: StatChangePhase[] = [];
+
+    if (this.selfTarget)
+      statChangePhases.push(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.levels));
+    else {
+      for (let opponent of pokemon.getOpponents())
+        statChangePhases.push(new StatChangePhase(pokemon.scene, opponent.getBattlerIndex(), false, this.stats, this.levels));
+    }
+
+    for (let statChangePhase of statChangePhases) {
+      if (!this.selfTarget && !statChangePhase.getPokemon().summonData)
+        pokemon.scene.pushPhase(statChangePhase); // TODO: This causes the ability bar to be shown at the wrong time
+      else
+        pokemon.scene.unshiftPhase(statChangePhase);
+    }
+   
+    return true;
+  }
+}
+
 type PreDefendAbAttrCondition = (pokemon: Pokemon, attacker: Pokemon, move: PokemonMove) => boolean;
 
 export class PreDefendAbAttr extends AbAttr {
@@ -2605,10 +2641,14 @@ export function initAbilities() {
     new Ability(Abilities.SUPERSWEET_SYRUP, "Supersweet Syrup (N)", "A sickly sweet scent spreads across the field the first time the Pokémon enters a battle, lowering the evasiveness of opposing Pokémon.", 9),
     new Ability(Abilities.HOSPITALITY, "Hospitality (N)", "When the Pokémon enters a battle, it showers its ally with hospitality, restoring a small amount of the ally's HP.", 9),
     new Ability(Abilities.TOXIC_CHAIN, "Toxic Chain (N)", "The power of the Pokémon's toxic chain may badly poison any target the Pokémon hits with a move.", 9),
-    new Ability(Abilities.EMBODY_ASPECT_TEAL, "Embody Aspect (N)", "The Pokémon's heart fills with memories, causing the Teal Mask to shine and the Pokémon's Speed stat to be boosted.", 9),
-    new Ability(Abilities.EMBODY_ASPECT_WELLSPRING, "Embody Aspect (N)", "The Pokémon's heart fills with memories, causing the Wellspring Mask to shine and the Pokémon's Sp. Def stat to be boosted.", 9),
-    new Ability(Abilities.EMBODY_ASPECT_HEARTHFLAME, "Embody Aspect (N)", "The Pokémon's heart fills with memories, causing the Hearthflame Mask to shine and the Pokémon's Attack stat to be boosted.", 9),
-    new Ability(Abilities.EMBODY_ASPECT_CORNERSTONE, "Embody Aspect (N)", "The Pokémon's heart fills with memories, causing the Cornerstone Mask to shine and the Pokémon's Defense stat to be boosted.", 9),
+    new Ability(Abilities.EMBODY_ASPECT_TEAL, "Embody Aspect", "The Pokémon's heart fills with memories, causing the Teal Mask to shine and the Pokémon's Speed stat to be boosted.", 9)
+      .attr(PostBattleInitStatChangeAbAttr, BattleStat.SPD, 1, true),
+    new Ability(Abilities.EMBODY_ASPECT_WELLSPRING, "Embody Aspect", "The Pokémon's heart fills with memories, causing the Wellspring Mask to shine and the Pokémon's Sp. Def stat to be boosted.", 9)
+      .attr(PostBattleInitStatChangeAbAttr, BattleStat.SPDEF, 1, true),
+    new Ability(Abilities.EMBODY_ASPECT_HEARTHFLAME, "Embody Aspect", "The Pokémon's heart fills with memories, causing the Hearthflame Mask to shine and the Pokémon's Attack stat to be boosted.", 9)
+      .attr(PostBattleInitStatChangeAbAttr, BattleStat.ATK, 1, true),
+    new Ability(Abilities.EMBODY_ASPECT_CORNERSTONE, "Embody Aspect", "The Pokémon's heart fills with memories, causing the Cornerstone Mask to shine and the Pokémon's Defense stat to be boosted.", 9)
+      .attr(PostBattleInitStatChangeAbAttr, BattleStat.DEF, 1, true),
     new Ability(Abilities.TERA_SHIFT, "Tera Shift", "When the Pokémon enters a battle, it absorbs the energy around itself and transforms into its Terastal Form.", 9)
       .attr(PostSummonFormChangeAbAttr, p => p.getFormKey() ? 0 : 1),
     new Ability(Abilities.TERA_SHELL, "Tera Shell (N)", "The Pokémon's shell contains the powers of each type. All damage-dealing moves that hit the Pokémon when its HP is full will not be very effective.", 9)

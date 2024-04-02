@@ -3932,7 +3932,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPDEF, -2)
       .ballBombMove(),
     new AttackMove(Moves.FOUL_PLAY, "Foul Play", Type.DARK, MoveCategory.PHYSICAL, 95, 100, 15, "The user turns the target's power against it. The higher the target's Attack stat, the greater the damage it deals.", -1, 0, 5)
-    .attr(TargetAtkUserAtkAttr),
+      .attr(TargetAtkUserAtkAttr),
     new StatusMove(Moves.SIMPLE_BEAM, "Simple Beam (N)", Type.NORMAL, 100, 15, "The user's mysterious psychic wave changes the target's Ability to Simple.", -1, 0, 5),
     new StatusMove(Moves.ENTRAINMENT, "Entrainment (N)", Type.NORMAL, 100, 15, "The user dances with an odd rhythm that compels the target to mimic it, making the target's Ability the same as the user's.", -1, 0, 5),
     new StatusMove(Moves.AFTER_YOU, "After You (N)", Type.NORMAL, -1, 15, "The user helps the target and makes it use its move right after the user.", -1, 0, 5)
