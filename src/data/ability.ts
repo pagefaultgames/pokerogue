@@ -163,7 +163,7 @@ export class PreDefendAbAttr extends AbAttr {
   }
 }
 
-export class PreDefendEndureAbAttr extends PreDefendAbAttr {
+export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (pokemon.getHpRatio() < 1 || (args[0] as Utils.NumberHolder).value < pokemon.hp)
       return false;
@@ -1978,7 +1978,7 @@ export function initAbilities() {
       .attr(BlockCritAbAttr)
       .ignorable(),
     new Ability(Abilities.STURDY, "Sturdy", "It cannot be knocked out with one hit. One-hit KO moves cannot knock it out, either.", 3)    
-      .attr(PreDefendEndureAbAttr)
+      .attr(PreDefendFullHpEndureAbAttr)
       .attr(BlockOneHitKOAbAttr)
       .ignorable(),
     new Ability(Abilities.DAMP, "Damp (N)", "Prevents the use of explosive moves, such as Self-Destruct, by dampening its surroundings.", 3)
