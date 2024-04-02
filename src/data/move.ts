@@ -1691,6 +1691,16 @@ export class VariableAtkAttr extends MoveAttr {
   }
 }
 
+export class TargetAtkUserAtkAttr extends VariableAtkAttr {
+  constructor(){
+    super();
+  }
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value = target.getBattleStat(Stat.ATK, target);
+    return true;
+  }
+}
+
 export class DefAtkAttr extends VariableAtkAttr {
   constructor() {
     super();
@@ -1774,13 +1784,11 @@ export class VariableMoveTypeMultiplierAttr extends MoveAttr {
   }
 }
 
-export class FreezeDryMultiplierAttr extends VariableMoveTypeMultiplierAttr {
-  apply(user:Pokemon,target:Pokemon, move:Move, args: any[]) : boolean {
+export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
-    if (target.isOfType(Type.WATER)){
-      //Increased twice because initial reduction against water
-      multiplier.value *=4;
-    }
+    if (target.isOfType(Type.WATER))
+      multiplier.value *= 4; // Increased twice because initial reduction against water
     return false;
   }
 }
@@ -3906,7 +3914,8 @@ export function initMoves() {
     new AttackMove(Moves.ACID_SPRAY, "Acid Spray", Type.POISON, MoveCategory.SPECIAL, 40, 100, 20, "The user spits fluid that works to melt the target. This harshly lowers the target's Sp. Def stat.", 100, 0, 5)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2)
       .ballBombMove(),
-    new AttackMove(Moves.FOUL_PLAY, "Foul Play (P)", Type.DARK, MoveCategory.PHYSICAL, 95, 100, 15, "The user turns the target's power against it. The higher the target's Attack stat, the greater the damage it deals.", -1, 0, 5),
+    new AttackMove(Moves.FOUL_PLAY, "Foul Play", Type.DARK, MoveCategory.PHYSICAL, 95, 100, 15, "The user turns the target's power against it. The higher the target's Attack stat, the greater the damage it deals.", -1, 0, 5)
+    .attr(TargetAtkUserAtkAttr),
     new StatusMove(Moves.SIMPLE_BEAM, "Simple Beam (N)", Type.NORMAL, 100, 15, "The user's mysterious psychic wave changes the target's Ability to Simple.", -1, 0, 5),
     new StatusMove(Moves.ENTRAINMENT, "Entrainment (N)", Type.NORMAL, 100, 15, "The user dances with an odd rhythm that compels the target to mimic it, making the target's Ability the same as the user's.", -1, 0, 5),
     new StatusMove(Moves.AFTER_YOU, "After You (N)", Type.NORMAL, -1, 15, "The user helps the target and makes it use its move right after the user.", -1, 0, 5)
@@ -4084,7 +4093,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.FREEZE_DRY, "Freeze-Dry", Type.ICE, MoveCategory.SPECIAL, 70, 100, 20, "The user rapidly cools the target. This may also leave the target frozen. This move is super effective on Water types.", 10, 0, 6)
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
-      .attr(FreezeDryMultiplierAttr),
+      .attr(WaterSuperEffectTypeMultiplierAttr),
     new AttackMove(Moves.DISARMING_VOICE, "Disarming Voice", Type.FAIRY, MoveCategory.SPECIAL, 40, -1, 15, "Letting out a charming cry, the user does emotional damage to opposing Pokémon. This attack never misses.", -1, 0, 6)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
