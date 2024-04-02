@@ -7,6 +7,7 @@ export enum Tutorial {
   Access_Menu = "ACCESS_MENU",
   Menu = "MENU",
   Starter_Select = "STARTER_SELECT",
+  Pokerus = "POKERUS",
   Select_Item = "SELECT_ITEM",
   Egg_Gacha = "EGG_GACHA"
 }
@@ -41,6 +42,12 @@ const tutorialHandlers = {
                         $Each starter has a value. Your party can have up to\n6 members as long as the total does not exceed 10.
                         $You can also select gender, ability, and form depending on\nthe variants you've caught or hatched.
                         $The IVs for a species are also the best of every one you've\ncaught or hatched, so try to get lots of the same species!`, null, () => scene.ui.showText('', null, () => resolve()), null, true);
+    });
+  },
+  [Tutorial.Pokerus]:  (scene: BattleScene) => {
+    return new Promise<void>(resolve => {
+      scene.ui.showText(`A daily random 3 selectable starters have a purple border.
+                        $If you see a starter you own with one of these,\ntry adding it to your party. Be sure to check its summary!`, null, () => scene.ui.showText('', null, () => resolve()), null, true);
     });
   },
   [Tutorial.Select_Item]: (scene: BattleScene) => {

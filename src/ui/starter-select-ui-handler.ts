@@ -986,6 +986,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.abilityIndex, defaultNature);
         }
         this.pokemonSprite.clearTint();
+        if (this.pokerusCursors.find((cursor: integer, i: integer) => cursor === this.cursor && this.pokerusGens[i] === this.genCursor))
+          handleTutorial(this.scene, Tutorial.Pokerus);
       } else {
         this.pokemonGrowthRateText.setText('');
         this.pokemonGrowthRateLabelText.setVisible(false);
