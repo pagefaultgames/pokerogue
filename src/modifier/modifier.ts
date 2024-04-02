@@ -18,6 +18,7 @@ import { MoneyAchv, achvs } from '../system/achv';
 import { VoucherType } from '../system/voucher';
 import { PreventBerryUseAbAttr, applyAbAttrs } from '../data/ability';
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from '../data/pokemon-forms';
+import { Nature } from '#app/data/nature';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -1088,6 +1089,23 @@ export class PokemonPpUpModifier extends ConsumablePokemonMoveModifier {
     const pokemon = args[0] as Pokemon;
     const move = pokemon.getMoveset()[this.moveIndex];
     move.ppUp = Math.min(move.ppUp + this.upPoints, 3);
+
+    return true;
+  }
+}
+
+export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
+  public nature: Nature;
+
+  constructor(type: ModifierType, pokemonId: integer, nature: Nature) {
+    super(type, pokemonId);
+
+    this.nature = nature;
+  }
+
+  apply(args: any[]): boolean {
+    const pokemon = args[0] as Pokemon;
+    pokemon.nature = this.nature;
 
     return true;
   }

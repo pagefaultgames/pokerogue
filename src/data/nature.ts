@@ -30,7 +30,7 @@ export enum Nature {
   QUIRKY
 }
 
-export function getNatureName(nature: Nature, includeStatEffects: boolean = false, forStarterSelect: boolean = false): string {
+export function getNatureName(nature: Nature, includeStatEffects: boolean = false, forStarterSelect: boolean = false, ignoreBBCode: boolean = false): string {
   let ret = Utils.toReadableString(Nature[nature]);
   if (includeStatEffects) {
     const stats = Utils.getEnumValues(Stat).slice(1);
@@ -44,10 +44,11 @@ export function getNatureName(nature: Nature, includeStatEffects: boolean = fals
         decreasedStat = stat;
     }
     const textStyle = forStarterSelect ? TextStyle.SUMMARY_ALT : TextStyle.WINDOW;
+    const getTextFrag = !ignoreBBCode ? getBBCodeFrag : (text: string, style: TextStyle) => text;
     if (increasedStat && decreasedStat)
-      ret = `${getBBCodeFrag(`${ret}${!forStarterSelect ? '\n' : ' '}(`, textStyle)}${getBBCodeFrag(`+${getStatName(increasedStat, true)}`, TextStyle.SUMMARY_PINK)}${getBBCodeFrag('/', textStyle)}${getBBCodeFrag(`-${getStatName(decreasedStat, true)}`, TextStyle.SUMMARY_BLUE)}${getBBCodeFrag(')', textStyle)}`;
+      ret = `${getTextFrag(`${ret}${!forStarterSelect ? '\n' : ' '}(`, textStyle)}${getTextFrag(`+${getStatName(increasedStat, true)}`, TextStyle.SUMMARY_PINK)}${getTextFrag('/', textStyle)}${getTextFrag(`-${getStatName(decreasedStat, true)}`, TextStyle.SUMMARY_BLUE)}${getTextFrag(')', textStyle)}`;
     else
-      ret = getBBCodeFrag(`${ret}${!forStarterSelect ? '\n' : ' '}(-)`, textStyle);
+      ret = getTextFrag(`${ret}${!forStarterSelect ? '\n' : ' '}(-)`, textStyle);
   }
   return ret;
 }
