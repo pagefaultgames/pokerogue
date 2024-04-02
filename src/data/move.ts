@@ -1691,6 +1691,16 @@ export class VariableAtkAttr extends MoveAttr {
   }
 }
 
+export class TargetAtkAsAtkAttr extends VariableAtkAttr {
+  constructor(){
+    super();
+  }
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value = target.getBattleStat(Stat.ATK, target);
+    return true;
+  }
+}
+
 export class DefAtkAttr extends VariableAtkAttr {
   constructor() {
     super();
@@ -3906,7 +3916,8 @@ export function initMoves() {
     new AttackMove(Moves.ACID_SPRAY, "Acid Spray", Type.POISON, MoveCategory.SPECIAL, 40, 100, 20, "The user spits fluid that works to melt the target. This harshly lowers the target's Sp. Def stat.", 100, 0, 5)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2)
       .ballBombMove(),
-    new AttackMove(Moves.FOUL_PLAY, "Foul Play (P)", Type.DARK, MoveCategory.PHYSICAL, 95, 100, 15, "The user turns the target's power against it. The higher the target's Attack stat, the greater the damage it deals.", -1, 0, 5),
+    new AttackMove(Moves.FOUL_PLAY, "Foul Play", Type.DARK, MoveCategory.PHYSICAL, 95, 100, 15, "The user turns the target's power against it. The higher the target's Attack stat, the greater the damage it deals.", -1, 0, 5)
+    .attr(TargetAtkAsAtkAttr),
     new StatusMove(Moves.SIMPLE_BEAM, "Simple Beam (N)", Type.NORMAL, 100, 15, "The user's mysterious psychic wave changes the target's Ability to Simple.", -1, 0, 5),
     new StatusMove(Moves.ENTRAINMENT, "Entrainment (N)", Type.NORMAL, 100, 15, "The user dances with an odd rhythm that compels the target to mimic it, making the target's Ability the same as the user's.", -1, 0, 5),
     new StatusMove(Moves.AFTER_YOU, "After You (N)", Type.NORMAL, -1, 15, "The user helps the target and makes it use its move right after the user.", -1, 0, 5)
