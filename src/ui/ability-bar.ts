@@ -25,11 +25,11 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
 
     this.add(this.bg);
 
-    this.pokemonNameText = addTextObject(this.scene, 5, 3, '', TextStyle.MESSAGE, { fontSize: '72px' });
+    this.pokemonNameText = addTextObject(this.scene, 15, 3, '', TextStyle.MESSAGE, { fontSize: '72px' });
     this.pokemonNameText.setOrigin(0, 0);
     this.add(this.pokemonNameText);
 
-    this.abilityNameText = addTextObject(this.scene, 87, 16, '', TextStyle.WINDOW, { fontSize: '72px' });
+    this.abilityNameText = addTextObject(this.scene, 97, 16, '', TextStyle.WINDOW, { fontSize: '72px' });
     this.abilityNameText.setOrigin(1, 0);
     this.add(this.abilityNameText);
 
