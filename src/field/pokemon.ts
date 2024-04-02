@@ -767,10 +767,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       for (let e = 0; e < evolutionChain.length; e++) {
         // TODO: Might need to pass specific form index in simulated evolution chain
         const speciesLevelMoves = getPokemonSpeciesForm(evolutionChain[e][0] as Species, this.formIndex).getLevelMoves();
-        levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && !lm[0]) || ((!e || lm[0] > 1) && (e === evolutionChain.length - 1 || lm[0] <= evolutionChain[e + 1][1]))));
+        levelMoves.push(...speciesLevelMoves.filter(lm => (includeEvolutionMoves && !lm[0]) || (lm[0] >= evolutionChain[e][1] && (e === evolutionChain.length - 1 || lm[0] <= evolutionChain[e + 1][1]))));
       }
-      levelMoves.sort((lma: [integer, integer], lmb: [integer, integer]) => lma[0] < lmb[0] ? 1 : -1);
-      const uniqueMoves: Moves[] = [];``
+      const uniqueMoves: Moves[] = [];
       levelMoves = levelMoves.filter(lm => {
         if (uniqueMoves.find(m => m === lm[1]))
           return false;
@@ -927,14 +926,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
 
     if (attackMovePool.length) {
-      const randomAttackMove = Utils.randSeedEasedWeightedItem(attackMovePool);
+      const randomAttackMove = Utils.randSeedWeightedItem(attackMovePool.reverse());
       this.moveset.push(new PokemonMove(randomAttackMove, 0, 0));
       movePool.splice(movePool.findIndex(m => m === randomAttackMove), 1);
     }
 
     while (movePool.length && this.moveset.length < 4) {
-      const randomMove = Utils.randSeedEasedWeightedItem(movePool);
+      const randomMove = Utils.randSeedWeightedItem(movePool.reverse());
       this.moveset.push(new PokemonMove(randomMove, 0, 0));
+      console.log(allMoves[randomMove]);
       movePool.splice(movePool.indexOf(randomMove), 1);
     }
 
