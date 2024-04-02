@@ -2143,7 +2143,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
   private failOnOverlap: boolean;
 
   constructor(tagType: ArenaTagType, turnCount?: integer, failOnOverlap: boolean = false) {
-    super(true);
+    super(true, MoveEffectTrigger.POST_APPLY, true);
 
     this.tagType = tagType;
     this.turnCount = turnCount;
