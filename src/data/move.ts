@@ -2189,7 +2189,10 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         return resolve(false);
       const switchOutTarget = this.user ? user : target;
       if (switchOutTarget instanceof PlayerPokemon) {
-        (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true));
+        if (switchOutTarget.hp)
+          (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true));
+        else
+          resolve(false);
         return;
       } else if (user.scene.currentBattle.battleType) {
         switchOutTarget.resetTurnData();

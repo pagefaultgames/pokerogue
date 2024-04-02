@@ -19,7 +19,7 @@ import { } from "./data/move";
 import { initMoves } from './data/move';
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
-import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
+import { Abilities, BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';
 import { GameMode, GameModes, gameModes } from './game-mode';
 import FieldSpritePipeline from './pipelines/field-sprite';
@@ -68,7 +68,13 @@ export const STARTING_LEVEL_OVERRIDE = 0;
 export const STARTING_WAVE_OVERRIDE = 0;
 export const STARTING_BIOME_OVERRIDE = Biome.TOWN;
 export const STARTING_MONEY_OVERRIDE = 0;
-export const ENEMY_SPECIES_OVERRIDE = 0;
+
+export const ABILITY_OVERRIDE = Abilities.NONE;
+export const MOVE_OVERRIDE = Moves.NONE;
+export const OPP_SPECIES_OVERRIDE = 0;
+export const OPP_ABILITY_OVERRIDE = Abilities.NONE;
+export const OPP_MOVE_OVERRIDE = Moves.NONE;
+
 const DEBUG_RNG = false;
 
 export const startingWave = STARTING_WAVE_OVERRIDE || 1;
@@ -552,8 +558,8 @@ export default class BattleScene extends SceneBase {
 	}
 
 	addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
-		if (ENEMY_SPECIES_OVERRIDE)
-			species = getPokemonSpecies(ENEMY_SPECIES_OVERRIDE);
+		if (OPP_SPECIES_OVERRIDE)
+			species = getPokemonSpecies(OPP_SPECIES_OVERRIDE);
 		const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
 		if (boss) {
 			const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));

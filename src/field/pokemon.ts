@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import BattleScene, { AnySound } from '../battle-scene';
+import BattleScene, { ABILITY_OVERRIDE, AnySound, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE } from '../battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
 import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr } from "../data/move";
@@ -46,12 +46,6 @@ export enum FieldPosition {
   LEFT,
   RIGHT
 }
-
-const ABILITY_OVERRIDE = Abilities.NONE;
-const MOVE_OVERRIDE = Moves.NONE;
-
-const OPP_ABILITY_OVERRIDE = Abilities.NONE;
-const OPP_MOVE_OVERRIDE = Moves.NONE;
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: integer;
