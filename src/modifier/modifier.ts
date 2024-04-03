@@ -1210,18 +1210,6 @@ export class FusePokemonModifier extends ConsumablePokemonModifier {
   }
 }
 
-export class UnfusePokemonModifier extends ConsumablePokemonModifier {
-  constructor(type: ModifierType, pokemonId: integer) {
-    super(type, pokemonId);
-  }
-
-  apply(args: any[]): boolean {
-    (args[0] as PlayerPokemon).unfuse();
-
-    return true;
-  }
-}
-
 export class MultipleParticipantExpBonusModifier extends PersistentModifier {
   constructor(type: ModifierType, stackCount?: integer) {
     super(type, stackCount);

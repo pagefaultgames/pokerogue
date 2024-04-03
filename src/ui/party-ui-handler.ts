@@ -38,9 +38,10 @@ export enum PartyOption {
   APPLY,
   TEACH,
   TRANSFER,
-  SPLICE,
   SUMMARY,
   UNPAUSE_EVOLUTION,
+  SPLICE,
+  UNSPLICE,
   RELEASE,
   SCROLL_UP = 1000,
   SCROLL_DOWN = 1001,
@@ -232,7 +233,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
           ui.playSelect();
           return true;
-        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
+        } else if ((option !== PartyOption.SUMMARY && option !== PartyOption.UNPAUSE_EVOLUTION && option !== PartyOption.UNSPLICE && option !== PartyOption.RELEASE && option !== PartyOption.CANCEL)
           || (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)) {
           let filterResult: string;
           if (option !== PartyOption.TRANSFER && option !== PartyOption.SPLICE) {
@@ -299,6 +300,26 @@ export default class PartyUiHandler extends MessageUiHandler {
           ui.playSelect();
           pokemon.pauseEvolutions = false;
           this.showText(`Evolutions have been unpaused for ${pokemon.name}.`, null, () => this.showText(null, 0), null, true);
+        } else if (option === PartyOption.UNSPLICE) {
+          this.clearOptions();
+          ui.playSelect();
+          this.showText(`Do you really want to unsplice ${pokemon.fusionSpecies.name}\nfrom ${pokemon.name}? ${pokemon.fusionSpecies.name} will be lost.`, null, () => {
+            ui.setModeWithoutClear(Mode.CONFIRM, () => {
+              const fusionName = pokemon.name;
+              pokemon.unfuse().then(() => {
+                this.clearPartySlots();
+                this.populatePartySlots();
+                ui.setMode(Mode.PARTY);
+                this.showText(`${fusionName} was reverted to ${pokemon.name}.`, null, () => {
+                  ui.setMode(Mode.PARTY);
+                  this.showText(null, 0);
+                }, null, true);
+              });
+            }, () => {
+              ui.setMode(Mode.PARTY);
+              this.showText(null, 0);
+            });
+          });
         } else if (option === PartyOption.RELEASE) {
           this.clearOptions();
           ui.playSelect();
@@ -574,8 +595,12 @@ export default class PartyUiHandler extends MessageUiHandler {
       if (pokemon.pauseEvolutions && pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId))
         this.options.push(PartyOption.UNPAUSE_EVOLUTION);
 
-      if (this.partyUiMode === PartyUiMode.SWITCH)
+      if (this.partyUiMode === PartyUiMode.SWITCH) {
+        if (pokemon.isFusion())
+          this.options.push(PartyOption.UNSPLICE);
         this.options.push(PartyOption.RELEASE);
+      } else if (this.partyUiMode === PartyUiMode.SPLICE && pokemon.isFusion())
+        this.options.push(PartyOption.UNSPLICE);
     } else if (this.partyUiMode === PartyUiMode.MOVE_MODIFIER) {
       for (let m = 0; m < pokemon.moveset.length; m++)
         this.options.push(PartyOption.MOVE_1 + m);

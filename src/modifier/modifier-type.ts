@@ -551,17 +551,6 @@ export class FusePokemonModifierType extends PokemonModifierType {
   }
 }
 
-export class UnfusePokemonModifierType extends PokemonModifierType {
-  constructor(name: string, iconImage?: string) {
-    super(name, 'Removes the fusion aspects of a spliced Pokémon, but the second Pokémon is lost', (_type, args) => new Modifiers.UnfusePokemonModifier(this, (args[0] as PlayerPokemon).id),
-      (pokemon: PlayerPokemon) => {
-        if (!pokemon.isFusion())
-          return PartyUiHandler.NoEffectMessage;
-        return null;
-      }, iconImage);
-  }
-}
-
 class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
@@ -886,7 +875,6 @@ export const modifierTypes = {
   IV_SCANNER: () => new ModifierType('IV Scanner', 'Allows scanning the IVs of wild Pokémon', (type, _args) => new Modifiers.IvScannerModifier(type), 'scanner'),
 
   DNA_SPLICERS: () => new FusePokemonModifierType('DNA Splicers'),
-  REVERSE_DNA_SPLICERS: () => new UnfusePokemonModifierType('Reverse DNA Splicers', 'dna_splicers'),
 
   MINI_BLACK_HOLE: () => new TurnHeldItemTransferModifierType('Mini Black Hole'),
   
@@ -995,7 +983,6 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
     new WeightedModifierType(modifierTypes.TERA_SHARD, 1),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 4 : 0),
-    new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => party[0].scene.gameMode.isSplicedOnly && party.filter(p => p.fusionSpecies).length ? 6 : 0),
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 24),
@@ -1021,7 +1008,6 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.EXP_SHARE, 12),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 4),
     new WeightedModifierType(modifierTypes.TERA_ORB, (party: Pokemon[]) => Math.min(Math.max(Math.floor(party[0].scene.currentBattle.waveIndex / 50) * 2, 1), 4), 4),
-    new WeightedModifierType(modifierTypes.REVERSE_DNA_SPLICERS, (party: Pokemon[]) => !party[0].scene.gameMode.isSplicedOnly && party.filter(p => p.fusionSpecies).length ? 3 : 0, 3),
     new WeightedModifierType(modifierTypes.VOUCHER, (party: Pokemon[]) => !party[0].scene.gameMode.isDaily ? 3 : 0, 3),
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.ROGUE]: [
