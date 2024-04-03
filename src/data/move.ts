@@ -2072,12 +2072,6 @@ export class RemoveBattlerTagAttr extends MoveEffectAttr {
   }
 }
 
-// export class GroundedAttr extends AddBattlerTagAttr {
-//   constructor() {
-//     super(BattlerTagType.IGNORE_FLYING)
-//   }
-// }
-
 export class FlinchAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.FLINCHED, false);
