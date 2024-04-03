@@ -483,6 +483,12 @@ export class PokemonFriendshipBoosterModifierType extends PokemonHeldItemModifie
   }
 }
 
+export class PokemonMultiHitModifierType extends PokemonHeldItemModifierType {
+  constructor(name: string, iconImage?: string) {
+    super(name, `Attacks hit one additional time at the cost of a 60/75/82.5% power reduction per stack respectively`, (type, args) => new Modifiers.PokemonMultiHitModifier(type as PokemonMultiHitModifierType, (args[0] as Pokemon).id), iconImage);
+  }
+}
+
 export class TmModifierType extends PokemonModifierType {
   public moveId: Moves;
 
@@ -848,6 +854,8 @@ export const modifierTypes = {
 
   GRIP_CLAW: () => new ContactHeldItemTransferChanceModifierType('Grip Claw', 10),
 
+  MULTI_LENS: () => new PokemonMultiHitModifierType('Multi Lens', 'zoom_lens'),
+
   HEALING_CHARM: () => new ModifierType('Healing Charm', 'Increases the effectiveness of HP restoring moves and items by 10% (excludes revives)',
     (type, _args) => new Modifiers.HealingBoosterModifier(type, 1.1), 'healing_charm'),
   CANDY_JAR: () => new ModifierType('Candy Jar', 'Increases the number of levels added by Rare Candy items by 1', (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type)),
@@ -1031,6 +1039,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.MASTER_BALL, 32),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 18),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 18),
+    new WeightedModifierType(modifierTypes.MULTI_LENS, 24),
     new WeightedModifierType(modifierTypes.VOUCHER_PLUS, (party: Pokemon[]) => !party[0].scene.gameMode.isDaily ? 8 : 0, 8),
     new WeightedModifierType(modifierTypes.DNA_SPLICERS, (party: Pokemon[]) => !party[0].scene.gameMode.isSplicedOnly && party.filter(p => !p.fusionSpecies).length > 1 ? 24 : 0, 24),
     new WeightedModifierType(modifierTypes.MINI_BLACK_HOLE, (party: Pokemon[]) => party[0].scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE] ? 1 : 0, 1),

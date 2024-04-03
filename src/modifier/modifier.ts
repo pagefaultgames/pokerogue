@@ -1436,6 +1436,43 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
+  constructor(type: ModifierTypes.PokemonMultiHitModifierType, pokemonId: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return modifier instanceof PokemonMultiHitModifier;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonMultiHitModifier(this.type as ModifierTypes.PokemonMultiHitModifierType, this.pokemonId, this.stackCount);
+  }
+  
+  apply(args: any[]): boolean {
+    (args[1] as Utils.IntegerHolder).value *= (this.getStackCount() + 1);
+
+    const power = args[2] as Utils.NumberHolder;
+    switch (this.getStackCount()) {
+      case 1:
+        power.value *= 0.4;
+        break;
+      case 2:
+        power.value *= 0.25;
+        break;
+      case 3:
+        power.value *= 0.175;
+        break;
+    }
+
+    return true;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 3;
+  }
+}
+
 export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
   public formChangeItem: FormChangeItem;
   public active: boolean;
