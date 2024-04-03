@@ -18,6 +18,7 @@ import BattleScene from '../battle-scene';
 import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from '../system/voucher';
 import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from '../data/pokemon-forms';
 import { ModifierTier } from './modifier-tier';
+import { Nature, getNatureName, getNatureStatMultiplier } from '#app/data/nature';
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -261,6 +262,21 @@ export class PokemonPpUpModifierType extends PokemonMoveModifierType {
     }, iconImage, 'ppUp');
 
     this.upPoints = upPoints;
+  }
+}
+
+export class PokemonNatureChangeModifierType extends PokemonModifierType {
+  protected nature: Nature;
+
+  constructor(nature: Nature) {
+    super(`${getNatureName(nature)} Mint`, `Changes a Pokémon\'s nature to ${getNatureName(nature, true, true, true)}`, ((_type, args) => new Modifiers.PokemonNatureChangeModifier(this, (args[0] as PlayerPokemon).id, this.nature)),
+      ((pokemon: PlayerPokemon) => {
+        if (pokemon.nature === this.nature)
+          return PartyUiHandler.NoEffectMessage;
+        return null;
+      }), `mint_${Utils.getEnumKeys(Stat).find(s => getNatureStatMultiplier(nature, Stat[s]) > 1)?.toLowerCase() || 'neutral' }`, 'mint');
+
+    this.nature = nature;
   }
 }
 
@@ -771,6 +787,12 @@ export const modifierTypes = {
 
   ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterModifierTypeGenerator(),
 
+  MINT: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    if (pregenArgs)
+      return new PokemonNatureChangeModifierType(pregenArgs[0] as Nature);
+    return new PokemonNatureChangeModifierType(Utils.randSeedInt(Utils.getEnumValues(Nature).length) as Nature);
+  }),
+
   TERA_SHARD: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs)
       return new TerastallizeModifierType(pregenArgs[0] as Type);
@@ -981,6 +1003,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BIG_NUGGET, 12),
     new WeightedModifierType(modifierTypes.PP_UP, 9),
     new WeightedModifierType(modifierTypes.PP_MAX, 3),
+    new WeightedModifierType(modifierTypes.MINT, 4),
     new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => {
       return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32);
     }, 32),
@@ -993,7 +1016,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.SOOTHE_BELL, (party: Pokemon[]) => party.find(p => (pokemonEvolutions.hasOwnProperty(p.species.speciesId) && pokemonEvolutions[p.species.speciesId].find(e => e.condition && e.condition instanceof SpeciesFriendshipEvolutionCondition)) || p.moveset.find(m => m.moveId === Moves.RETURN)) ? 16 : 0, 16),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 2),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 2),
-    new WeightedModifierType(modifierTypes.IV_SCANNER, 2),
+    new WeightedModifierType(modifierTypes.IV_SCANNER, 4),
     new WeightedModifierType(modifierTypes.EXP_CHARM, 8),
     new WeightedModifierType(modifierTypes.EXP_SHARE, 12),
     new WeightedModifierType(modifierTypes.EXP_BALANCE, 4),
