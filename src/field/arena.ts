@@ -257,7 +257,7 @@ export class Arena {
         return 0;
     }
 
-    return 83 / 132;
+    return 131 / 180;
   }
 
   trySetWeatherOverride(weather: WeatherType): boolean {
