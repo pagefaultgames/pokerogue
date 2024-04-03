@@ -44,6 +44,7 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
     - Arata Iiyoshi
     - Atsuhiro Ishizuna
   - Pokémon Black/White 2
+  - edifette (Title screen music)
 
 ### 🎵 Sound Effects
   - Pokémon Emerald
@@ -52,6 +53,10 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
 ### 🎨 Backgrounds
   - Squip (Paid Commissions)
   - Contributions by Someonealive-QN
+
+### UI
+  - GAMEFREAK
+  - LJ Birdman
 
 ### 🎨 Game Logo
   - Gonstar (Paid Commission)
