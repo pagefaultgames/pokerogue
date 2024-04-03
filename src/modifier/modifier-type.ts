@@ -564,6 +564,9 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         return new AttackTypeBoosterModifierType(pregenArgs[0] as Type, 20);
 
       const attackMoveTypes = party.map(p => p.getMoveset().map(m => m.getMove()).filter(m => m instanceof AttackMove).map(m => m.type)).flat();
+      if (!attackMoveTypes.length)
+        return null;
+
       const attackMoveTypeWeights = new Map<Type, integer>();
       let totalWeight = 0;
       for (let t of attackMoveTypes) {
@@ -1349,7 +1352,7 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[]): Modifiers.P
   return ret;
 }
 
-function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgradeCount?: integer): ModifierTypeOption {
+function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgradeCount?: integer, retryCount: integer = 0): ModifierTypeOption {
   const player = !poolType;
   let pool: ModifierPool;
   let thresholds: object;
@@ -1398,6 +1401,9 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
       if (upgradeCount)
         upgradeCount--;
     }
+  } else if (retryCount === 10 && tier) {
+    retryCount = 0;
+    tier--;
   }
 
   const tierThresholds = Object.keys(thresholds[tier]);
@@ -1420,7 +1426,7 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     if (modifierType === null) {
       if (player)
         console.log(ModifierTier[tier], upgradeCount);
-      return getNewModifierTypeOption(party, poolType, tier, upgradeCount);
+      return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount);
     }
   }
 
