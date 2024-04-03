@@ -154,17 +154,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.gender = Gender.FEMALE;
         }
       }
-      
+
+      if (this.formIndex === undefined)
+        this.formIndex = this.scene.getSpeciesFormIndex(species, this.gender, this.nature, this.isPlayer());
+
+      if (this.shiny === undefined)
+        this.trySetShiny();
+
       if (nature !== undefined)
         this.setNature(nature);
       else
         this.generateNature();
-
-      if (this.formIndex === undefined)
-        this.formIndex = this.scene.getSpeciesFormIndex(species, this.gender, this.getNature(), this.isPlayer());
-
-      if (this.shiny === undefined)
-        this.trySetShiny();
 
       this.friendship = species.baseFriendship;
       this.metLevel = level;
