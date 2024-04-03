@@ -2176,7 +2176,7 @@ export class PlayerPokemon extends Pokemon {
   }
 
   isFusion(): boolean {
-    return !!(this.fusionSpecies || (this.species.speciesId === Species.KYUREM && this.formIndex));
+    return !!this.fusionSpecies;
   }
 
   clearFusionSpecies(): void {
