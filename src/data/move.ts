@@ -1804,8 +1804,10 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
       if (target.isOfType(Type.FLYING))
         multiplier.value = 1;
       target.addTag(BattlerTagType.IGNORE_FLYING, 20, move.id, user.id); //TODO: Grounded effect should not have turn limit
-        }
-      return false;
+      return true;
+    }
+
+    return false;
   }
 }
 
