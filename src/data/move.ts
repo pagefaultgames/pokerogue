@@ -1796,6 +1796,21 @@ export class VariableMoveTypeMultiplierAttr extends MoveAttr {
   }
 }
 
+export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!target.getTag(BattlerTagType.IGNORE_FLYING)) {
+      const multiplier = args[0] as Utils.NumberHolder;
+      //When a flying type is hit, the first hit is always 1x multiplier. Levitating pokemon are instantly affected by typing
+      if (target.isOfType(Type.FLYING))
+        multiplier.value = 1;
+      target.addTag(BattlerTagType.IGNORE_FLYING, 20, move.id, user.id); //TODO: Grounded effect should not have turn limit
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
@@ -4211,7 +4226,7 @@ export function initMoves() {
     new AttackMove(Moves.OBLIVION_WING, "Oblivion Wing", Type.FLYING, MoveCategory.SPECIAL, 80, 100, 10, "The user absorbs its target's HP. The user's HP is restored by over half of the damage taken by the target.", -1, 0, 6)
       .attr(HitHealAttr, 0.75),
     new AttackMove(Moves.THOUSAND_ARROWS, "Thousand Arrows", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, "This move also hits opposing Pokémon that are in the air. Those Pokémon are knocked down to the ground.", 100, 0, 6)
-      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 5)
+      .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.THOUSAND_WAVES, "Thousand Waves", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, "The user attacks with a wave that crawls along the ground. Those it hits can't flee from battle.", -1, 0, 6)
