@@ -1503,7 +1503,7 @@ export class SyncEncounterNatureAbAttr extends AbAttr {
   }
 
   apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    (args[0] as Pokemon).setNature(pokemon.nature);
+    (args[0] as Pokemon).setNature(pokemon.getNature());
 
     return true;
   }

@@ -27,6 +27,7 @@ export default class PokemonData {
   public stats: integer[];
   public ivs: integer[];
   public nature: Nature;
+  public natureOverride: Nature | -1;
   public moveset: PokemonMove[];
   public status: Status;
   public friendship: integer;
@@ -64,6 +65,7 @@ export default class PokemonData {
     this.stats = source.stats;
     this.ivs = source.ivs;
     this.nature = source.nature !== undefined ? source.nature : 0 as Nature;
+    this.natureOverride = source.natureOverride !== undefined ? source.natureOverride : -1;
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;

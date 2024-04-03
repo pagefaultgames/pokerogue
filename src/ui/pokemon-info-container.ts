@@ -121,7 +121,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         this.pokemonGenderText.setVisible(false);
 
       this.pokemonAbilityText.setText(pokemon.getAbility(true).name);
-      this.pokemonNatureText.setText(getNatureName(pokemon.nature, true));
+      this.pokemonNatureText.setText(getNatureName(pokemon.getNature(), true));
 
       const originalIvs: integer[] = this.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr
       ? this.scene.gameData.dexData[pokemon.species.speciesId].ivs

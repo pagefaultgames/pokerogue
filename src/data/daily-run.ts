@@ -64,7 +64,7 @@ function getDailyRunStarter(scene: BattleScene, starterSpeciesForm: PokemonSpeci
   const starter: Starter = {
     species: starterSpecies,
     dexAttr: pokemon.getDexAttr(),
-    nature: pokemon.nature,
+    nature: pokemon.getNature(),
     pokerus: pokemon.pokerus
   };
   pokemon.destroy();

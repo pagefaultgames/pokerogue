@@ -1038,7 +1038,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [Species.TOXEL]: [
     new SpeciesFormEvolution(Species.TOXTRICITY, '', 'lowkey', 30, null,
-      new SpeciesEvolutionCondition(p => [ Nature.LONELY, Nature.BOLD, Nature.RELAXED, Nature.TIMID, Nature.SERIOUS, Nature.MODEST, Nature.MILD, Nature.QUIET, Nature.BASHFUL, Nature.CALM, Nature.GENTLE, Nature.CAREFUL ].indexOf(p.nature) > -1)),
+      new SpeciesEvolutionCondition(p => [ Nature.LONELY, Nature.BOLD, Nature.RELAXED, Nature.TIMID, Nature.SERIOUS, Nature.MODEST, Nature.MILD, Nature.QUIET, Nature.BASHFUL, Nature.CALM, Nature.GENTLE, Nature.CAREFUL ].indexOf(p.getNature()) > -1)),
     new SpeciesFormEvolution(Species.TOXTRICITY, '', 'amped', 30, null, null)
   ],
   [Species.SIZZLIPEDE]: [

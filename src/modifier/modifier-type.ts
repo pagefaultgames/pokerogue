@@ -271,7 +271,7 @@ export class PokemonNatureChangeModifierType extends PokemonModifierType {
   constructor(nature: Nature) {
     super(`${getNatureName(nature)} Mint`, `Changes a Pokémon\'s nature to ${getNatureName(nature, true, true, true)}`, ((_type, args) => new Modifiers.PokemonNatureChangeModifier(this, (args[0] as PlayerPokemon).id, this.nature)),
       ((pokemon: PlayerPokemon) => {
-        if (pokemon.nature === this.nature)
+        if (pokemon.getNature() === this.nature)
           return PartyUiHandler.NoEffectMessage;
         return null;
       }), `mint_${Utils.getEnumKeys(Stat).find(s => getNatureStatMultiplier(nature, Stat[s]) > 1)?.toLowerCase() || 'neutral' }`, 'mint');

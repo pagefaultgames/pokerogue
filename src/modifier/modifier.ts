@@ -1105,7 +1105,7 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
 
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
-    pokemon.nature = this.nature;
+    pokemon.natureOverride = this.nature;
 
     return true;
   }

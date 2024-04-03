@@ -64,6 +64,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public stats: integer[];
   public ivs: integer[];
   public nature: Nature;
+  public natureOverride: Nature | -1;
   public moveset: PokemonMove[];
   public status: Status;
   public friendship: integer;
@@ -125,6 +126,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.stats = dataSource.stats;
       this.ivs = dataSource.ivs;
       this.nature = dataSource.nature || 0 as Nature;
+      this.natureOverride = dataSource.natureOverride !== undefined ? dataSource.natureOverride : -1;
       this.moveset = dataSource.moveset;
       this.status = dataSource.status;
       this.friendship = dataSource.friendship !== undefined ? dataSource.friendship : this.species.baseFriendship;
@@ -152,17 +154,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             this.gender = Gender.FEMALE;
         }
       }
-
-      if (this.formIndex === undefined)
-        this.formIndex = this.scene.getSpeciesFormIndex(species, this.gender, this.nature, this.isPlayer());
-
-      if (this.shiny === undefined)
-        this.trySetShiny();
-
+      
       if (nature !== undefined)
         this.setNature(nature);
       else
         this.generateNature();
+
+      if (this.formIndex === undefined)
+        this.formIndex = this.scene.getSpeciesFormIndex(species, this.gender, this.getNature(), this.isPlayer());
+
+      if (this.shiny === undefined)
+        this.trySetShiny();
 
       this.friendship = species.baseFriendship;
       this.metLevel = level;
@@ -560,6 +562,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
+  getNature(): Nature {
+    return this.natureOverride !== -1 ? this.natureOverride : this.nature;
+  }
+
   setNature(nature: Nature): void {
     this.nature = nature;
     this.calculateStats();
@@ -887,7 +893,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.fusionGender = Gender.FEMALE;
     }
 
-    this.fusionFormIndex = this.scene.getSpeciesFormIndex(this.fusionSpecies, this.fusionGender, this.nature, true);
+    this.fusionFormIndex = this.scene.getSpeciesFormIndex(this.fusionSpecies, this.fusionGender, this.getNature(), true);
 
     this.generateName();
   }
@@ -2119,6 +2125,7 @@ export class PlayerPokemon extends Pokemon {
       const newEvolution = pokemonEvolutions[this.species.speciesId][1];
       if (newEvolution.condition.predicate(this)) {
         const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature);
+        newPokemon.natureOverride = this.natureOverride;
         this.scene.getParty().push(newPokemon);
         newPokemon.evolve(newEvolution);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
