@@ -932,6 +932,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
+    movePool.reverse();
+
     const attackMovePool = movePool.filter(m => {
       const move = allMoves[m];
       return move.category !== MoveCategory.STATUS;
