@@ -1800,9 +1800,9 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!target.getTag(BattlerTagType.IGNORE_FLYING)) {
       const multiplier = args[0] as Utils.NumberHolder;
-      //Before pokemon is grounded, when a flying type is hit, the first hit is always 1x multiplier. Pokemon with air balloon/levitate/telekinesis are instantly affected by typing
+      //When a flying type is hit, the first hit is always 1x multiplier. Levitating pokemon are instantly affected by typing
       if (target.isOfType(Type.FLYING))
-            multiplier.value = 1;
+        multiplier.value = 1;
       target.addTag(BattlerTagType.IGNORE_FLYING, 20, move.id, user.id); //TODO: Grounded effect should not have turn limit
         }
       return false;
