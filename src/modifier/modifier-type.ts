@@ -525,7 +525,8 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
   constructor(formChangeItem: FormChangeItem) {
     super(Utils.toReadableString(FormChangeItem[formChangeItem]), `Causes certain Pokémon to change form`, (_type, args) => new Modifiers.PokemonFormChangeItemModifier(this, (args[0] as PlayerPokemon).id, formChangeItem, true),
     (pokemon: PlayerPokemon) => {
-      if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) && !!pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger)))
+      if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) && !!pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger)
+        && (fc.trigger as SpeciesFormChangeItemTrigger).item === this.formChangeItem))
         return null;
 
       return PartyUiHandler.NoEffectMessage;

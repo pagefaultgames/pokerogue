@@ -12,7 +12,7 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { Abilities, ProtectAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs } from "./ability";
+import { Abilities, ProtectAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr } from "./ability";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
@@ -441,6 +441,14 @@ export class StatusMoveTypeImmunityAttr extends MoveAttr {
   }
 }
 
+export class IgnoreOpponentStatChangesAttr extends MoveAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value = 0;
+
+    return true;
+  }
+}
+
 export class HighCritAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     (args[0] as Utils.IntegerHolder).value++;
@@ -626,6 +634,10 @@ export class RecoilAttr extends MoveEffectAttr {
     if (!recoilDamage)
       return false;
 
+    applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
+    if (cancelled.value)
+      return false;
+      
     user.damageAndUpdate(recoilDamage, HitResult.OTHER, false, true);
     user.scene.queueMessage(getPokemonMessage(user, ' is hit\nwith recoil!'));
 
@@ -1817,6 +1829,11 @@ export class MissEffectAttr extends MoveAttr {
 }
 
 const halveHpMissEffectFunc = (user: Pokemon, move: Move) => {
+  const cancelled = new Utils.BooleanHolder(false);
+  applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
+  if (cancelled.value)
+    return false;
+  
   const damage = user.damage(Math.floor(user.getMaxHp() / 2));
   if (damage)
     user.scene.damageNumberHandler.add(user, damage, HitResult.OTHER);
@@ -3915,7 +3932,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPDEF, -2)
       .ballBombMove(),
     new AttackMove(Moves.FOUL_PLAY, "Foul Play", Type.DARK, MoveCategory.PHYSICAL, 95, 100, 15, "The user turns the target's power against it. The higher the target's Attack stat, the greater the damage it deals.", -1, 0, 5)
-    .attr(TargetAtkUserAtkAttr),
+      .attr(TargetAtkUserAtkAttr),
     new StatusMove(Moves.SIMPLE_BEAM, "Simple Beam (N)", Type.NORMAL, 100, 15, "The user's mysterious psychic wave changes the target's Ability to Simple.", -1, 0, 5),
     new StatusMove(Moves.ENTRAINMENT, "Entrainment (N)", Type.NORMAL, 100, 15, "The user dances with an odd rhythm that compels the target to mimic it, making the target's Ability the same as the user's.", -1, 0, 5),
     new StatusMove(Moves.AFTER_YOU, "After You (N)", Type.NORMAL, -1, 15, "The user helps the target and makes it use its move right after the user.", -1, 0, 5)
@@ -3925,7 +3942,8 @@ export function initMoves() {
     new AttackMove(Moves.ECHOED_VOICE, "Echoed Voice", Type.NORMAL, MoveCategory.SPECIAL, 40, 100, 15, "The user attacks the target with an echoing voice. If this move is used every turn, its power is increased.", -1, 0, 5)
       .attr(ConsecutiveUseMultiBasePowerAttr, 5, false)
       .soundBased(),
-    new AttackMove(Moves.CHIP_AWAY, "Chip Away (P)", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, "Looking for an opening, the user strikes consistently. The target's stat changes don't affect this attack's damage.", -1, 0, 5),
+    new AttackMove(Moves.CHIP_AWAY, "Chip Away", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, "Looking for an opening, the user strikes consistently. The target's stat changes don't affect this attack's damage.", -1, 0, 5)
+      .attr(IgnoreOpponentStatChangesAttr),
     new AttackMove(Moves.CLEAR_SMOG, "Clear Smog (P)", Type.POISON, MoveCategory.SPECIAL, 50, -1, 15, "The user attacks the target by throwing a clump of special mud. All stat changes are returned to normal.", -1, 0, 5),
     new AttackMove(Moves.STORED_POWER, "Stored Power (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 20, 100, 10, "The user attacks the target with stored power. The more the user's stats are raised, the greater the move's power.", -1, 0, 5),
     new StatusMove(Moves.QUICK_GUARD, "Quick Guard (N)", Type.FIGHTING, -1, 15, "The user protects itself and its allies from priority moves.", -1, 3, 5)
@@ -3998,7 +4016,8 @@ export function initMoves() {
       .attr(FlinchAttr),
     new AttackMove(Moves.HORN_LEECH, "Horn Leech", Type.GRASS, MoveCategory.PHYSICAL, 75, 100, 10, "The user drains the target's energy with its horns. The user's HP is restored by half the damage taken by the target.", -1, 0, 5)
       .attr(HitHealAttr),
-    new AttackMove(Moves.SACRED_SWORD, "Sacred Sword (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 90, 100, 15, "The user attacks by slicing with a long horn. The target's stat changes don't affect this attack's damage.", -1, 0, 5)
+    new AttackMove(Moves.SACRED_SWORD, "Sacred Sword", Type.FIGHTING, MoveCategory.PHYSICAL, 90, 100, 15, "The user attacks by slicing with a long horn. The target's stat changes don't affect this attack's damage.", -1, 0, 5)
+      .attr(IgnoreOpponentStatChangesAttr)  
       .slicingMove(),
     new AttackMove(Moves.RAZOR_SHELL, "Razor Shell", Type.WATER, MoveCategory.PHYSICAL, 75, 95, 10, "The user cuts its target with sharp shells. This may also lower the target's Defense stat.", 50, 0, 5)
       .attr(StatChangeAttr, BattleStat.DEF, -1)
@@ -4262,7 +4281,8 @@ export function initMoves() {
       .attr(ProtectAttr, BattlerTagType.BANEFUL_BUNKER),
     new AttackMove(Moves.SPIRIT_SHACKLE, "Spirit Shackle (P)", Type.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, "The user attacks while simultaneously stitching the target's shadow to the ground to prevent the target from escaping.", -1, 0, 7)
       .makesContact(false),
-    new AttackMove(Moves.DARKEST_LARIAT, "Darkest Lariat (P)", Type.DARK, MoveCategory.PHYSICAL, 85, 100, 10, "The user swings both arms and hits the target. The target's stat changes don't affect this attack's damage.", -1, 0, 7),
+    new AttackMove(Moves.DARKEST_LARIAT, "Darkest Lariat", Type.DARK, MoveCategory.PHYSICAL, 85, 100, 10, "The user swings both arms and hits the target. The target's stat changes don't affect this attack's damage.", -1, 0, 7)
+      .attr(IgnoreOpponentStatChangesAttr),
     new AttackMove(Moves.SPARKLING_ARIA, "Sparkling Aria", Type.WATER, MoveCategory.SPECIAL, 90, 100, 10, "The user bursts into song, emitting many bubbles. Any Pokémon suffering from a burn will be healed by the touch of these bubbles.", -1, 0, 7)
       .attr(HealStatusEffectAttr, false, StatusEffect.BURN)
       .soundBased()

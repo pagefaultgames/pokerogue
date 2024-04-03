@@ -637,7 +637,15 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.OGERPON]: [
     new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'wellspring-mask', new SpeciesFormChangeItemTrigger(FormChangeItem.WELLSPRING_MASK)),
     new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'hearthflame-mask', new SpeciesFormChangeItemTrigger(FormChangeItem.HEARTHFLAME_MASK)),
-    new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'cornerstone-mask', new SpeciesFormChangeItemTrigger(FormChangeItem.CORNERSTONE_MASK))
+    new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'cornerstone-mask', new SpeciesFormChangeItemTrigger(FormChangeItem.CORNERSTONE_MASK)),
+    new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'teal-mask-tera', new SpeciesFormChangeManualTrigger(), true), //When holding a Grass Tera Shard
+    new SpeciesFormChange(Species.OGERPON, 'teal-mask-tera', 'teal-mask', new SpeciesFormChangeManualTrigger(), true), //When no longer holding a Grass Tera Shard
+    new SpeciesFormChange(Species.OGERPON, 'wellspring-mask', 'wellspring-mask-tera', new SpeciesFormChangeManualTrigger(), true), //When holding a Water Tera Shard
+    new SpeciesFormChange(Species.OGERPON, 'wellspring-mask-tera', 'wellspring-mask', new SpeciesFormChangeManualTrigger(), true), //When no longer holding a Water Tera Shard
+    new SpeciesFormChange(Species.OGERPON, 'hearthflame-mask', 'hearthflame-mask-tera', new SpeciesFormChangeManualTrigger(), true), //When holding a Fire Tera Shard
+    new SpeciesFormChange(Species.OGERPON, 'hearthflame-mask-tera', 'hearthflame-mask', new SpeciesFormChangeManualTrigger(), true), //When no longer holding a Fire Tera Shard
+    new SpeciesFormChange(Species.OGERPON, 'cornerstone-mask', 'cornerstone-mask-tera', new SpeciesFormChangeManualTrigger(), true), //When holding a Rock Tera Shard
+    new SpeciesFormChange(Species.OGERPON, 'cornerstone-mask-tera', 'cornerstone-mask', new SpeciesFormChangeManualTrigger(), true) //When no longer holding a Rock Tera Shard
   ],
   [Species.TERAPAGOS]: [
     new SpeciesFormChange(Species.TERAPAGOS, '', 'terastal', new SpeciesFormChangeManualTrigger(), true)

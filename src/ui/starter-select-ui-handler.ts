@@ -72,7 +72,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private genMode: boolean;
   private statsMode: boolean;
   private dexAttrCursor: bigint = 0n;
-  private natureCursor: integer = 0;
+  private natureCursor: integer = -1;
   private genCursor: integer = 0;
   private genScrollCursor: integer = 0;
   private starterMoveset: StarterMoveset;
@@ -1022,18 +1022,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   setSpeciesDetails(species: PokemonSpecies, shiny: boolean, formIndex: integer, female: boolean, abilityIndex: integer, natureIndex: integer, forSeen: boolean = false): void {
     const oldProps = species ? this.scene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor) : null;
+    const oldNatureIndex = this.natureCursor > -1 ? this.natureCursor : this.scene.gameData.getSpeciesDefaultNature(species);
     this.dexAttrCursor = 0n;
+    this.natureCursor = -1;
 
     if (species) {
       this.dexAttrCursor |= (shiny !== undefined ? !shiny : !(shiny = oldProps.shiny)) ? DexAttr.NON_SHINY : DexAttr.SHINY;
       this.dexAttrCursor |= (female !== undefined ? !female : !(female = oldProps.female)) ? DexAttr.MALE : DexAttr.FEMALE;
       this.dexAttrCursor |= (abilityIndex !== undefined ? !abilityIndex : !(abilityIndex = oldProps.abilityIndex)) ? DexAttr.ABILITY_1 : species.ability2 && abilityIndex === 1 ? DexAttr.ABILITY_2 : DexAttr.ABILITY_HIDDEN;
       this.dexAttrCursor |= this.scene.gameData.getFormAttr(formIndex !== undefined ? formIndex : (formIndex = oldProps.formIndex));
-      if (natureIndex === undefined)
-        natureIndex = this.scene.gameData.getSpeciesDefaultNature(species);
+      this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
     }
-
-    this.natureCursor = natureIndex;
 
     this.pokemonSprite.setVisible(false);
 
