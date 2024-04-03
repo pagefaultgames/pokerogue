@@ -166,6 +166,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       else
         this.generateNature();
 
+      this.natureOverride = -1;
+
       this.friendship = species.baseFriendship;
       this.metLevel = level;
       this.metBiome = scene.currentBattle ? scene.arena.biomeType : -1;
