@@ -865,8 +865,8 @@ export class MultiHitAttr extends MoveAttr {
     return true;
   }
 
-  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return 5;
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+    return -5;
   }
 }
 
@@ -2290,9 +2290,14 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    if (this.batonPass)
-      return -100; // Overridden in switch logic
-    return this.user ? Math.floor(user.getHpRatio() * 20) : super.getUserBenefitScore(user, target, move);
+    if (!user.scene.getEnemyParty().find(p => p.isActive() && !p.isOnField()))
+      return -20;
+    let ret = this.user ? Math.floor((1 - user.getHpRatio()) * 20) : super.getUserBenefitScore(user, target, move);
+    if (this.user && this.batonPass) {
+      const battleStatTotal = user.summonData.battleStats.reduce((bs: integer, total: integer) => total += bs, 0);
+      ret = ret / 2 + (Phaser.Tweens.Builders.GetEaseFunction('Sine.easeOut')(Math.min(Math.abs(battleStatTotal), 10) / 10) * (battleStatTotal >= 0 ? 10 : -10));
+    }
+    return ret;
   }
 }
 

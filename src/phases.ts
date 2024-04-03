@@ -1666,12 +1666,7 @@ export class EnemyCommandPhase extends FieldPhase {
       const trapTag = enemyPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
       const trapped = new Utils.BooleanHolder(false);
       opponents.forEach(playerPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, playerPokemon, trapped));
-      if (enemyPokemon.moveset.find(m => m.moveId === Moves.BATON_PASS && m.isUsable(enemyPokemon)) && (enemyPokemon.summonData.battleStats.reduce((total, stat) => total += stat, 0) >= 0 || trapTag || trapped.value)) {
-        this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
-          { command: Command.FIGHT, move: { move: Moves.BATON_PASS, targets: enemyPokemon.getNextTargets(Moves.BATON_PASS) } };
-
-        return this.end();
-      } else if (!trapTag && !trapped.value) {
+      if (!trapTag && !trapped.value) {
         const partyMemberScores = trainer.getPartyMemberMatchupScores(enemyPokemon.trainerSlot, true);
 
         if (partyMemberScores.length) {
