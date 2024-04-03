@@ -22,6 +22,7 @@ export enum MenuOptions {
   LOG_OUT
 }
 
+const wikiUrl = 'https://wiki.pokerogue.net';
 const discordUrl = 'https://discord.gg/uWpTfdKG49';
 const githubUrl = 'https://github.com/Flashfyre/pokerogue';
 
@@ -160,6 +161,11 @@ export default class MenuUiHandler extends MessageUiHandler {
     };
 
     const communityOptions = [
+      {
+        label: 'Wiki',
+        handler: () => window.open(wikiUrl, '_blank').focus(),
+        keepOpen: true
+      },
       {
         label: 'Discord',
         handler: () => window.open(discordUrl, '_blank').focus(),
