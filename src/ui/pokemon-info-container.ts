@@ -3,7 +3,7 @@ import BattleScene from "../battle-scene";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import Pokemon from "../field/pokemon";
 import { StatsContainer } from "./stats-container";
-import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
+import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { addWindow } from "./ui-theme";
 import { getNatureName } from "../data/nature";
 import * as Utils from "../utils";
@@ -120,7 +120,12 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       } else
         this.pokemonGenderText.setVisible(false);
 
-      this.pokemonAbilityText.setText(pokemon.getAbility(true).name);
+      const ability = pokemon.getAbility(true);
+      const abilityTextStyle = ability.id === pokemon.getSpeciesForm().abilityHidden ? TextStyle.MONEY : TextStyle.WINDOW;
+      this.pokemonAbilityText.setText(ability.name);
+      this.pokemonAbilityText.setText(getTextColor(abilityTextStyle));
+      this.pokemonAbilityText.setShadowColor(getTextColor(abilityTextStyle, true));
+
       this.pokemonNatureText.setText(getNatureName(pokemon.getNature(), true));
 
       const originalIvs: integer[] = this.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr
