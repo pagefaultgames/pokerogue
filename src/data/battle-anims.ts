@@ -455,16 +455,14 @@ export function initMoveAnim(move: Moves): Promise<void> {
         } else {
             moveAnims.set(move, null);
             const defaultMoveAnim = allMoves[move] instanceof AttackMove ? Moves.TACKLE : allMoves[move] instanceof SelfStatusMove ? Moves.FOCUS_ENERGY : Moves.TAIL_WHIP;
+            const moveName = Moves[move].toLowerCase().replace(/\_/g, '-');
             const fetchAnimAndResolve = (move: Moves) => {
-                fetch(`./battle-anims/${Moves[move].toLowerCase().replace(/\_/g, '-')}.json`)
+                fetch(`./battle-anims/${moveName}.json`)
                     .then(response => {
                         if (!response.ok) {
-                            console.error(response.status, response.statusText);
-                            if (move !== defaultMoveAnim)
-                                fetchAnimAndResolve(defaultMoveAnim);
-                            else
-                                resolve();
-                            return;
+                            console.error(`Could not load animation file for move '${moveName}'`, response.status, response.statusText);
+                            populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
+                            return resolve();
                         }
                         return response.json();
                     })

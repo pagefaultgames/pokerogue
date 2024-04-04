@@ -429,10 +429,12 @@ export default class BattleScene extends SceneBase {
 
 		ui.setup();
 
+		const defaultMoves = [ Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE ];
+
 		Promise.all([
 			Promise.all(loadPokemonAssets),
 			initCommonAnims().then(() => loadCommonAnimAssets(this, true)),
-			initMoveAnim(Moves.STRUGGLE).then(() => loadMoveAnimAssets(this, [ Moves.STRUGGLE ], true))
+			Promise.all([ Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE ].map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(this, defaultMoves, true))
 		]).then(() => {
 			this.pushPhase(new LoginPhase(this));
 			this.pushPhase(new TitlePhase(this));
