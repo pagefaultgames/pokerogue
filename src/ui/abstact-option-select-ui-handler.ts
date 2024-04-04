@@ -3,12 +3,14 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
+import * as Utils from "../utils";
 
 export interface OptionSelectConfig {
   xOffset?: number;
   yOffset?: number;
   options: OptionSelectItem[];
   maxOptions?: integer;
+  delay?: integer;
   noCancel?: boolean;
 }
 
@@ -28,6 +30,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected optionSelectText: Phaser.GameObjects.Text;
 
   protected config: OptionSelectConfig;
+
+  protected blockInput: boolean;
 
   protected scrollCursor: integer = 0;
 
@@ -93,10 +97,22 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.scrollCursor = 0;
     this.setCursor(0);
 
+    if (this.config.delay) {
+      this.blockInput = true;
+      this.optionSelectText.setAlpha(0.5);
+      this.scene.time.delayedCall(Utils.fixedInt(this.config.delay), () => {
+        this.blockInput = false;
+        this.optionSelectText.setAlpha(1);
+      });
+    }
+
     return true;
   }
 
   processInput(button: Button): boolean {
+    if (this.blockInput)
+      return false;
+
     const ui = this.getUi();
 
     let success = false;

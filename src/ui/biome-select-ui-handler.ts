@@ -15,6 +15,8 @@ export default class BiomeSelectUiHandler extends UiHandler {
 
   private cursorObj: Phaser.GameObjects.Image;
 
+  private blockInput: boolean;
+
   private biomeSelectHandler: Function;
 
   constructor(scene: BattleScene) {
@@ -59,12 +61,22 @@ export default class BiomeSelectUiHandler extends UiHandler {
       
       this.biomeSelectContainer.setVisible(true);
       this.setCursor(0);
+
+      this.blockInput = true;
+      this.biomesText.setAlpha(0.5);
+      this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
+        this.blockInput = false;
+        this.biomesText.setAlpha(1);
+      });
     }
 
     return true;
   }
 
   processInput(button: Button): boolean {
+    if (this.blockInput)
+      return false;
+
     const ui = this.getUi();
 
     let success = false;

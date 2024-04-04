@@ -26,7 +26,8 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
             label: 'No',
             handler: args[1]
           }
-        ]
+        ],
+        delay: args.length >= 6 && args[5] !== null ? args[5] as integer : 0
       };
 
       super.show([ config ]);

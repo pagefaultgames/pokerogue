@@ -9,11 +9,12 @@ export enum Setting {
   BGM_Volume = "BGM_VOLUME",
   SE_Volume = "SE_VOLUME",
   Damage_Numbers = "DAMAGE_NUMBERS",
-  Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
   UI_Theme = "UI_THEME",
   Window_Type = "WINDOW_TYPE",
   Tutorials = "TUTORIALS",
+  Enable_Retries = "ENABLE_RETRIES",
   Sprite_Set = "SPRITE_SET",
+  Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
   Fusion_Palette_Swaps = "FUSION_PALETTE_SWAPS",
   Player_Gender = "PLAYER_GENDER",
   Touch_Controls = "TOUCH_CONTROLS",
@@ -34,11 +35,12 @@ export const settingOptions: SettingOptions = {
   [Setting.BGM_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.SE_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.Damage_Numbers]: [ 'Off', 'Simple', 'Fancy' ],
-  [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ],
   [Setting.UI_Theme]: [ 'Default', 'Legacy' ],
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
   [Setting.Tutorials]: [ 'Off', 'On' ],
+  [Setting.Enable_Retries]: [ 'Off', 'On' ],
   [Setting.Sprite_Set]: [ 'Consistent', 'Prioritize Animation' ],
+  [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ],
   [Setting.Fusion_Palette_Swaps]: [ 'Off', 'On' ],
   [Setting.Player_Gender]: [ 'Boy', 'Girl' ],
   [Setting.Touch_Controls]: [ 'Auto', 'Disabled' ],
@@ -51,11 +53,12 @@ export const settingDefaults: SettingDefaults = {
   [Setting.BGM_Volume]: 10,
   [Setting.SE_Volume]: 10,
   [Setting.Damage_Numbers]: 0,
-  [Setting.Show_Stats_on_Level_Up]: 1,
   [Setting.UI_Theme]: 0,
   [Setting.Window_Type]: 0,
   [Setting.Tutorials]: 1,
+  [Setting.Enable_Retries]: 0,
   [Setting.Sprite_Set]: 0,
+  [Setting.Show_Stats_on_Level_Up]: 1,
   [Setting.Fusion_Palette_Swaps]: 1,
   [Setting.Player_Gender]: 0,
   [Setting.Touch_Controls]: 0,
@@ -84,9 +87,6 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     case Setting.Damage_Numbers:
       scene.damageNumbersMode = value;
       break;
-    case Setting.Show_Stats_on_Level_Up:
-      scene.showLevelUpStats = settingOptions[setting][value] === 'On';
-      break;
     case Setting.UI_Theme:
       scene.uiTheme = value;
       break;
@@ -96,10 +96,16 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     case Setting.Tutorials:
       scene.enableTutorials = settingOptions[setting][value] === 'On';
       break;
+    case Setting.Enable_Retries:
+      scene.enableRetries = settingOptions[setting][value] === 'On';
+      break;
     case Setting.Sprite_Set:
       scene.experimentalSprites = !!value;
       if (value)
         scene.initExpSprites();
+      break;
+    case Setting.Show_Stats_on_Level_Up:
+      scene.showLevelUpStats = settingOptions[setting][value] === 'On';
       break;
     case Setting.Fusion_Palette_Swaps:
       scene.fusionPaletteSwaps = !!value;

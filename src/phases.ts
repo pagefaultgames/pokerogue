@@ -3175,6 +3175,38 @@ export class GameOverPhase extends BattlePhase {
   start() {
     super.start();
 
+    if (this.victory || !this.scene.enableRetries)
+      this.handleClearSession();
+    else {
+      this.scene.ui.showText(`Would you like to retry from the start of the battle?`, null, () => {
+        this.scene.ui.setMode(Mode.CONFIRM, () => {
+          this.scene.ui.fadeOut(1250).then(() => {
+          this.scene.reset();
+            this.scene.clearPhaseQueue();
+            this.scene.gameData.loadSession(this.scene, this.scene.sessionSlotId).then(() => {
+              this.scene.pushPhase(new EncounterPhase(this.scene, true));
+
+              const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted()).length;
+    
+              this.scene.pushPhase(new SummonPhase(this.scene, 0));
+              if (this.scene.currentBattle.double && availablePartyMembers > 1)
+                this.scene.pushPhase(new SummonPhase(this.scene, 1));
+              if (this.scene.currentBattle.waveIndex > 1 && this.scene.currentBattle.battleType !== BattleType.TRAINER) {
+                this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
+                if (this.scene.currentBattle.double && availablePartyMembers > 1)
+                  this.scene.pushPhase(new CheckSwitchPhase(this.scene, 1, this.scene.currentBattle.double));
+              }
+
+              this.scene.ui.fadeIn(1250);
+              this.end();
+            });
+          });
+        }, () => this.handleClearSession(), false, 0, 0, 1000);
+      });
+    }
+  }
+
+  handleClearSession(): void {
     this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
       this.scene.time.delayedCall(1000, () => {
         let firstClear = false;
