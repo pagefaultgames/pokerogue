@@ -11,15 +11,12 @@ node: 18.3.0
 
 1. Clone the repo and in the root directory run `npm install`
     - *if you run into any errors, reach out in the **#dev-corner** channel in discord*
-2. Run `npm run start` to locally run the project in `localhost:8000`
+2. Run `npm run start:dev` to locally run the project in `localhost:8000`
 
 ### ❔ FAQ 
 
-**How do I test a new ability/move?**
-- In the `pokemon.ts` file there are overrides you can set to apply the new move/ability to your active pokemon
-
-**How do I test a specific seed/wave?**
-- In the `battle-scene.ts` file there are overrides for seed, starting level, starting wave, starting biome, and starting money
+**How do I test a new _______?**
+- In the `battle-scene.ts` file there are overrides for most values you'll need to change for testing
 
 
 ## 🪧 To Do
