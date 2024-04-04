@@ -1431,6 +1431,9 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
       break;
     }
   }
+
+  if (index === undefined)
+    return null;
   
   if (player)
     console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier])

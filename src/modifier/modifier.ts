@@ -1891,7 +1891,7 @@ abstract class EnemyDamageMultiplierModifier extends EnemyPersistentModifier {
   }
 
   getMaxStackCount(scene: BattleScene): integer {
-    return 99;
+    return 999;
   }
 }
 
