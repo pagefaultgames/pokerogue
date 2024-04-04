@@ -405,6 +405,29 @@ export class MoveImmunityAbAttr extends PreDefendAbAttr {
   }
 }
 
+export class PostDefendStatChangeAbAttr extends PostDefendAbAttr {
+  private condition: PokemonDefendCondition;
+  private stat: BattleStat;
+  private levels: integer;
+
+  constructor(condition: PokemonDefendCondition, stat: BattleStat, levels: integer) {
+    super(true);
+
+    this.condition = condition;
+    this.stat = stat;
+    this.levels = levels;
+  }
+
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (this.condition(pokemon, attacker, move.getMove())) {
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ this.stat ], this.levels));
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (hitResult < HitResult.NO_EFFECT) {
@@ -2309,7 +2332,9 @@ export function initAbilities() {
     new Ability(Abilities.HEALER, "Healer (N)", "Sometimes heals an ally's status condition.", 5),
     new Ability(Abilities.FRIEND_GUARD, "Friend Guard (N)", "Reduces damage done to allies.", 5)
       .ignorable(),
-    new Ability(Abilities.WEAK_ARMOR, "Weak Armor (N)", "Physical attacks to the Pokémon lower its Defense stat but sharply raise its Speed stat.", 5),
+    new Ability(Abilities.WEAK_ARMOR, "Weak Armor", "Physical attacks to the Pokémon lower its Defense stat but sharply raise its Speed stat.", 5)
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, BattleStat.DEF, -1)
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, BattleStat.SPD, 2),
     new Ability(Abilities.HEAVY_METAL, "Heavy Metal", "Doubles the Pokémon's weight.", 5)
       .attr(WeightMultiplierAbAttr, 2)
       .ignorable(),
@@ -2428,7 +2453,8 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN),
     new Ability(Abilities.DELTA_STREAM, "Delta Stream", "The Pokémon changes the weather to eliminate all of the Flying type's weaknesses.", 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS),
-    new Ability(Abilities.STAMINA, "Stamina (N)", "Boosts the Defense stat when hit by an attack.", 7),
+    new Ability(Abilities.STAMINA, "Stamina", "Boosts the Defense stat when hit by an attack.", 7)
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category != MoveCategory.STATUS, BattleStat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, "Wimp Out (N)", "The Pokémon cowardly switches out when its HP becomes half or less.", 7),
     new Ability(Abilities.EMERGENCY_EXIT, "Emergency Exit (N)", "The Pokémon, sensing danger, switches out when its HP becomes half or less.", 7),
     new Ability(Abilities.WATER_COMPACTION, "Water Compaction (N)", "Boosts the Pokémon's Defense stat sharply when hit by a Water-type move.", 7),
