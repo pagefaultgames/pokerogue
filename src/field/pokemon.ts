@@ -2509,7 +2509,13 @@ export class EnemyPokemon extends Pokemon {
       }
     }
 
-    const ret = super.damage(damage, ignoreSegments, preventEndure);
+    switch (this.scene.currentBattle.battleSpec) {
+      case BattleSpec.FINAL_BOSS:
+        if (!this.formIndex && this.bossSegmentIndex < 1)
+          damage = Math.min(damage, this.hp - 1);
+    }
+
+    let ret = super.damage(damage, ignoreSegments, preventEndure);
 
     if (this.isBoss()) {
       if (ignoreSegments) {
