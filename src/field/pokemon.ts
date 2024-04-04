@@ -973,11 +973,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.scene.fieldUI.moveAbove(this.battleInfo, otherBattleInfo);
       this.battleInfo.setX(this.battleInfo.x + (this.isPlayer() ? 150 : !this.isBoss() ? -150 : -198));
       this.battleInfo.setVisible(true);
+      if (this.isPlayer())
+        this.battleInfo.expMaskRect.x += 150;
       this.scene.tweens.add({
-        targets: this.battleInfo,
+        targets: [ this.battleInfo, this.battleInfo.expMaskRect ],
         x: this.isPlayer() ? '-=150' : `+=${!this.isBoss() ? 150 : 246}`,
         duration: 1000,
-        ease: 'Sine.easeOut'
+        ease: 'Cubic.easeOut'
       });
     }
   }
@@ -986,11 +988,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return new Promise(resolve => {
       if (this.battleInfo.visible) {
         this.scene.tweens.add({
-          targets: this.battleInfo,
+          targets: [ this.battleInfo, this.battleInfo.expMaskRect ],
           x: this.isPlayer() ? '+=150' : `-=${!this.isBoss() ? 150 : 246}`,
           duration: 500,
-          ease: 'Sine.easeIn',
+          ease: 'Cubic.easeIn',
           onComplete: () => {
+            if (this.isPlayer())
+              this.battleInfo.expMaskRect.x -= 150;
             this.battleInfo.setVisible(false);
             this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : !this.isBoss() ? -150 : -198));
             resolve();

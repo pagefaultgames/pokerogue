@@ -40,7 +40,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private type1Icon: Phaser.GameObjects.Sprite;
   private type2Icon: Phaser.GameObjects.Sprite;
   private expBar: Phaser.GameObjects.Image;
-  private expMaskRect: Phaser.GameObjects.Graphics;
+  
+  public expMaskRect: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene, x: number, y: number, player: boolean) {
     super(scene, x, y);

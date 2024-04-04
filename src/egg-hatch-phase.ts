@@ -30,6 +30,7 @@ export class EggHatchPhase extends Phase {
 
   private pokemon: PlayerPokemon;
   private eggMoveIndex: integer;
+  private hatched: boolean;
   private canSkip: boolean;
   private skipped: boolean;
   private evolutionBgm: AnySound;
@@ -108,9 +109,11 @@ export class EggHatchPhase extends Phase {
       this.pokemon = pokemon;
 
       pokemon.loadAssets().then(() => {
+        this.canSkip = true;
+
         this.scene.time.delayedCall(1000, () => {
-          this.evolutionBgm = this.scene.playSoundWithoutBgm('evolution');
-          this.canSkip = true;
+          if (!this.skipped)
+            this.evolutionBgm = this.scene.playSoundWithoutBgm('evolution');
         });
 
         this.scene.time.delayedCall(2000, () => {
@@ -190,13 +193,18 @@ export class EggHatchPhase extends Phase {
     if (!this.canSkip || this.skipped)
       return false;
     this.skipped = true;
-    this.doHatch();
+    if (!this.hatched)
+      this.doHatch();
+    else
+      this.doReveal();
     return true;
   }
 
   doHatch(): void {
     this.canSkip = false;
-    SoundFade.fadeOut(this.scene, this.evolutionBgm, Utils.fixedInt(100));
+    this.hatched = true;
+    if (this.evolutionBgm)
+      SoundFade.fadeOut(this.scene, this.evolutionBgm, Utils.fixedInt(100));
     for (let e = 0; e < 5; e++)
       this.scene.time.delayedCall(Utils.fixedInt(375 * e), () => this.scene.playSound('egg_hatch', { volume: 1 - (e * 0.2) }));
     this.eggLightraysOverlay.setVisible(true);
@@ -205,51 +213,61 @@ export class EggHatchPhase extends Phase {
       duration: Utils.fixedInt(125),
       targets: this.eggHatchOverlay,
       alpha: 1,
-      ease: 'Cubic.easeIn'
+      ease: 'Cubic.easeIn',
+      onComplete: () => {
+        this.skipped = false;
+        this.canSkip = true;
+      }
     });
     this.scene.time.delayedCall(Utils.fixedInt(1500), () => {
-      const isShiny = this.pokemon.isShiny();
-      if (this.pokemon.species.mythical)
-        this.scene.validateAchv(achvs.HATCH_MYTHICAL);
-      if (this.pokemon.species.legendary)
-        this.scene.validateAchv(achvs.HATCH_LEGENDARY);
-      if (isShiny)
-        this.scene.validateAchv(achvs.HATCH_SHINY);
-      this.eggContainer.setVisible(false);
-      this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
-      this.pokemonSprite.pipelineData['ignoreTimeTint'] = true;
-      this.pokemonSprite.setVisible(true);
-      this.scene.time.delayedCall(Utils.fixedInt(1000), () => {
-        this.pokemon.cry();
-        if (isShiny) {
-          this.scene.time.delayedCall(Utils.fixedInt(1250), () => {
-            this.pokemonShinySparkle.play('sparkle');
-            this.scene.playSound('sparkle');
-          });
-        }
-        this.scene.time.delayedCall(Utils.fixedInt(!isShiny ? 1250 : 1750), () => {
-          this.infoContainer.show(this.pokemon);
+      this.canSkip = false;
+      if (!this.skipped)
+        this.doReveal();
+    });
+  }
 
-          this.scene.playSoundWithoutBgm('evolution_fanfare');
-          
-          this.scene.ui.showText(`${this.pokemon.name} hatched from the egg!`, null, () => {
-            this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
-            this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
-              this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(() => {
-                this.scene.ui.showText(null, 0);
-                this.end();
-              });
-            });
-          }, null, true, 3000);
-          //this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
+  doReveal(): void {
+    const isShiny = this.pokemon.isShiny();
+    if (this.pokemon.species.mythical)
+      this.scene.validateAchv(achvs.HATCH_MYTHICAL);
+    if (this.pokemon.species.legendary)
+      this.scene.validateAchv(achvs.HATCH_LEGENDARY);
+    if (isShiny)
+      this.scene.validateAchv(achvs.HATCH_SHINY);
+    this.eggContainer.setVisible(false);
+    this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
+    this.pokemonSprite.pipelineData['ignoreTimeTint'] = true;
+    this.pokemonSprite.setVisible(true);
+    this.scene.time.delayedCall(Utils.fixedInt(250), () => {
+      this.pokemon.cry();
+      if (isShiny) {
+        this.scene.time.delayedCall(Utils.fixedInt(500), () => {
+          this.pokemonShinySparkle.play('sparkle');
+          this.scene.playSound('sparkle');
         });
+      }
+      this.scene.time.delayedCall(Utils.fixedInt(!this.skipped ? !isShiny ? 1250 : 1750 : !isShiny ? 250 : 750), () => {
+        this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
+
+        this.scene.playSoundWithoutBgm('evolution_fanfare');
+        
+        this.scene.ui.showText(`${this.pokemon.name} hatched from the egg!`, null, () => {
+          this.scene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
+          this.scene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
+            this.scene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(() => {
+              this.scene.ui.showText(null, 0);
+              this.end();
+            });
+          });
+        }, null, true, 3000);
+        //this.scene.time.delayedCall(Utils.fixedInt(4250), () => this.scene.playBgm());
       });
-      this.scene.tweens.add({
-        duration: Utils.fixedInt(3000),
-        targets: this.eggHatchOverlay,
-        alpha: 0,
-        ease: 'Cubic.easeOut'
-      });
+    });
+    this.scene.tweens.add({
+      duration: Utils.fixedInt(this.skipped ? 500 : 3000),
+      targets: this.eggHatchOverlay,
+      alpha: 0,
+      ease: 'Cubic.easeOut'
     });
   }
 
@@ -288,14 +306,15 @@ export class EggHatchPhase extends Phase {
     });
 
     const updateParticle = () => {
-      yOffset++;
+      const speedMultiplier = this.skipped ? 6 : 1;
+      yOffset += speedMultiplier;
       if (trigIndex < 160) {
         particle.setPosition(initialX + (speed * f) / 3, initialY + yOffset);
         particle.y += -this.sin(trigIndex, amp);
         if (f > 108)
           particle.setScale((1 - (f - 108) / 20));
-        trigIndex += 2;
-        f++;
+        trigIndex += 2 * speedMultiplier;
+        f += speedMultiplier;
       } else {
         particle.destroy();
         particleTimer.remove();

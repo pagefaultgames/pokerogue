@@ -109,7 +109,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.setVisible(false);
   }
 
-  show(pokemon: Pokemon, showMoves: boolean = false): Promise<void> {
+  show(pokemon: Pokemon, showMoves: boolean = false, speedMultiplier: number = 1): Promise<void> {
     return new Promise<void>(resolve => {
       if (pokemon.gender > Gender.GENDERLESS) {
         this.pokemonGenderText.setText(getGenderSymbol(pokemon.gender));
@@ -136,7 +136,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       this.scene.tweens.add({
         targets: this,
-        duration: Utils.fixedInt(750),
+        duration: Utils.fixedInt(Math.floor(750 / speedMultiplier)),
         ease: 'Cubic.easeInOut',
         x: this.initialX - 104,
         onComplete: () => {
@@ -146,9 +146,9 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       if (showMoves) {
         this.scene.tweens.add({
-          delay: Utils.fixedInt(325),
+          delay: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
           targets: this.pokemonMovesContainer,
-          duration: Utils.fixedInt(325),
+          duration: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
           ease: 'Cubic.easeInOut',
           x: this.movesContainerInitialX - 57,
           onComplete: () => resolve()
@@ -167,21 +167,21 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     });
   }
 
-  hide(): Promise<void> {
+  hide(speedMultiplier: number = 1): Promise<void> {
     return new Promise(resolve => {
       if (!this.shown)
         return resolve();
 
       this.scene.tweens.add({
         targets: this.pokemonMovesContainer,
-        duration: Utils.fixedInt(750),
+        duration: Utils.fixedInt(Math.floor(750 / speedMultiplier)),
         ease: 'Cubic.easeInOut',
         x: this.movesContainerInitialX
       });
 
       this.scene.tweens.add({
         targets: this,
-        duration: Utils.fixedInt(750),
+        duration: Utils.fixedInt(Math.floor(750 / speedMultiplier)),
         ease: 'Cubic.easeInOut',
         x: this.initialX,
         onComplete: () => {
