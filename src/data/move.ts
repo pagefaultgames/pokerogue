@@ -1564,6 +1564,39 @@ export class LowHpPowerAttr extends VariablePowerAttr {
   }
 }
 
+export class CompareWeightPowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0] as Utils.NumberHolder;
+    const userWeight = user.getWeight();
+    const targetWeight = target.getWeight();
+
+    if (!userWeight || userWeight === 0)
+      return false;
+    
+    const relativeWeight = (targetWeight / userWeight) * 100;
+
+    switch (true) {
+      case (relativeWeight < 20.01):
+        power.value = 120;
+        break;
+      case (relativeWeight < 25.01):
+        power.value = 100;
+        break;
+      case (relativeWeight < 33.35):
+        power.value = 80;
+        break;
+      case (relativeWeight < 50.01):
+        power.value = 60;
+        break;
+      default:
+        power.value = 40;
+        break;
+    }
+
+    return true;
+  }
+}
+
 export class HpPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     (args[0] as Utils.NumberHolder).value = Math.max(Math.floor(150 * user.getHpRatio()), 1);
@@ -3935,7 +3968,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.QUIVER_DANCE, "Quiver Dance", Type.BUG, -1, 20, "The user lightly performs a beautiful, mystic dance. This boosts the user's Sp. Atk, Sp. Def, and Speed stats.", -1, 0, 5)
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
       .danceMove(),
-    new AttackMove(Moves.HEAVY_SLAM, "Heavy Slam (N)", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, "The user slams into the target with its heavy body. The more the user outweighs the target, the greater the move's power.", -1, 0, 5),
+    new AttackMove(Moves.HEAVY_SLAM, "Heavy Slam", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, "The user slams into the target with its heavy body. The more the user outweighs the target, the greater the move's power.", -1, 0, 5)
+      .attr(CompareWeightPowerAttr),
     new AttackMove(Moves.SYNCHRONOISE, "Synchronoise (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, "Using an odd shock wave, the user inflicts damage on any Pokémon of the same type in the area around it.", -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.ELECTRO_BALL, "Electro Ball", Type.ELECTRIC, MoveCategory.SPECIAL, -1, 100, 10, "The user hurls an electric orb at the target. The faster the user is than the target, the greater the move's power.", -1, 0, 5)
@@ -4042,7 +4076,8 @@ export function initMoves() {
     new AttackMove(Moves.RAZOR_SHELL, "Razor Shell", Type.WATER, MoveCategory.PHYSICAL, 75, 95, 10, "The user cuts its target with sharp shells. This may also lower the target's Defense stat.", 50, 0, 5)
       .attr(StatChangeAttr, BattleStat.DEF, -1)
       .slicingMove(),
-    new AttackMove(Moves.HEAT_CRASH, "Heat Crash (N)", Type.FIRE, MoveCategory.PHYSICAL, -1, 100, 10, "The user slams its target with its flame-covered body. The more the user outweighs the target, the greater the move's power.", -1, 0, 5),
+    new AttackMove(Moves.HEAT_CRASH, "Heat Crash", Type.FIRE, MoveCategory.PHYSICAL, -1, 100, 10, "The user slams its target with its flame-covered body. The more the user outweighs the target, the greater the move's power.", -1, 0, 5)
+      .attr(CompareWeightPowerAttr),
     new AttackMove(Moves.LEAF_TORNADO, "Leaf Tornado", Type.GRASS, MoveCategory.SPECIAL, 65, 90, 10, "The user attacks its target by encircling it in sharp leaves. This attack may also lower the target's accuracy.", 50, 0, 5)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
     new AttackMove(Moves.STEAMROLLER, "Steamroller", Type.BUG, MoveCategory.PHYSICAL, 65, 100, 20, "The user crushes its target by rolling over the target with its rolled-up body. This may also make the target flinch.", 30, 0, 5)
