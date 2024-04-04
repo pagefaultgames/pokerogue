@@ -3015,7 +3015,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.HARDEN, "Harden", Type.NORMAL, -1, 30, "The user stiffens all the muscles in its body to raise its Defense stat.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, 1, true),
     new SelfStatusMove(Moves.MINIMIZE, "Minimize", Type.NORMAL, -1, 10, "The user compresses its body to make itself look smaller, which sharply raises its evasiveness.", -1, 0, 1)
-      .attr(StatChangeAttr, BattleStat.EVA, 1, true),
+      .attr(StatChangeAttr, BattleStat.EVA, 2, true),
     new StatusMove(Moves.SMOKESCREEN, "Smokescreen", Type.NORMAL, 100, 20, "The user releases an obscuring cloud of smoke or ink. This lowers the target's accuracy.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
     new StatusMove(Moves.CONFUSE_RAY, "Confuse Ray", Type.GHOST, 100, 10, "The target is exposed to a sinister ray that triggers confusion.", -1, 0, 1)
