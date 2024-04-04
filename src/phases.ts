@@ -2850,7 +2850,7 @@ export class FaintPhase extends PokemonPhase {
       if (allyPokemon?.isActive(true)) {
         let targetingMovePhase: MovePhase;
         do {
-          targetingMovePhase = this.scene.findPhase(mp => mp instanceof MovePhase && mp.targets.length === 1 && mp.targets[0] === pokemon.getBattlerIndex()) as MovePhase;
+          targetingMovePhase = this.scene.findPhase(mp => mp instanceof MovePhase && mp.targets.length === 1 && mp.targets[0] === pokemon.getBattlerIndex() && mp.pokemon.isPlayer() !== allyPokemon.isPlayer()) as MovePhase;
           if (targetingMovePhase && targetingMovePhase.targets[0] !== allyPokemon.getBattlerIndex())
             targetingMovePhase.targets[0] = allyPokemon.getBattlerIndex();
         } while (targetingMovePhase);

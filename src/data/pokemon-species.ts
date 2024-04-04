@@ -623,7 +623,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
 
   getFormSpriteKey(formIndex?: integer) {
     if (this.forms.length && formIndex >= this.forms.length) {
-      console.warn(`Attempted accessing form with index ${formIndex} of species ${this.getName()} with only ${this.forms?.length || 0} forms`);
+      console.warn(`Attempted accessing form with index ${formIndex} of species ${this.getName()} with only ${this.forms.length || 0} forms`);
       formIndex = Math.min(formIndex, this.forms.length - 1);
     }
     return this.forms?.length
