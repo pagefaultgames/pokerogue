@@ -1891,7 +1891,7 @@ abstract class EnemyDamageMultiplierModifier extends EnemyPersistentModifier {
   }
 
   getMaxStackCount(scene: BattleScene): integer {
-    return 999;
+    return 99;
   }
 }
 
@@ -1910,6 +1910,10 @@ export class EnemyDamageBoosterModifier extends EnemyDamageMultiplierModifier {
 
   getArgs(): any[] {
     return [ (this.damageMultiplier - 1) * 100 ];
+  }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return 999;
   }
 }
 
