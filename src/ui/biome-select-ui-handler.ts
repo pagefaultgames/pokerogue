@@ -74,14 +74,14 @@ export default class BiomeSelectUiHandler extends UiHandler {
   }
 
   processInput(button: Button): boolean {
-    if (this.blockInput)
-      return false;
-
     const ui = this.getUi();
 
     let success = false;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
+      if (this.blockInput)
+        return false;
+      
       success = true;
       const originalBiomeSelectHandler = this.biomeSelectHandler;
       this.biomeSelectHandler = null;

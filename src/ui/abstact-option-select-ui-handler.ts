@@ -110,9 +110,6 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   }
 
   processInput(button: Button): boolean {
-    if (this.blockInput)
-      return false;
-
     const ui = this.getUi();
 
     let success = false;
@@ -122,6 +119,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     let playSound = true;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
+      if (this.blockInput)
+        return false;
+      
       success = true;
       if (button === Button.CANCEL) {
         if (this.config?.maxOptions && this.config.options.length > this.config.maxOptions) {
