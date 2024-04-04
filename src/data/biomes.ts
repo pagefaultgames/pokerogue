@@ -1076,7 +1076,7 @@ export const biomePokemonPools: BiomePokemonPools = {
     },
     [BiomePoolTier.BOSS_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.SKELEDIRGE, Species.CERULEDGE ] },
     [BiomePoolTier.BOSS_SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.MARSHADOW, Species.SPECTRIER, Species.HISUI_TYPHLOSION ] },
-    [BiomePoolTier.BOSS_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.GIRATINA, Species.CALYREX ] }
+    [BiomePoolTier.BOSS_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.GIRATINA ] }
   },
   [Biome.DOJO]: {
     [BiomePoolTier.COMMON]: {
@@ -1524,7 +1524,7 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.NIGHT]: [ Species.HISUI_ZOROARK ],
       [TimeOfDay.ALL]: [ Species.MR_RIME, Species.GLASTRIER, Species.CHIEN_PAO ]
     },
-    [BiomePoolTier.BOSS_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.ZACIAN, Species.CALYREX, Species.GALAR_ARTICUNO ] }
+    [BiomePoolTier.BOSS_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ Species.ZACIAN, Species.GALAR_ARTICUNO ] }
   },
   [Biome.ISLAND]: {
     [BiomePoolTier.COMMON]: {
@@ -6278,9 +6278,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.CALYREX, Type.PSYCHIC, Type.GRASS, [
-        [ Biome.FOREST, BiomePoolTier.BOSS_ULTRA_RARE ],
-        [ Biome.GRAVEYARD, BiomePoolTier.BOSS_ULTRA_RARE ],
-        [ Biome.SNOWY_FOREST, BiomePoolTier.BOSS_ULTRA_RARE ]
+        [ Biome.FOREST, BiomePoolTier.BOSS_ULTRA_RARE ]
       ]
     ],
     [ Species.WYRDEER, Type.NORMAL, Type.PSYCHIC, [

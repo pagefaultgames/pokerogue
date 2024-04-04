@@ -805,6 +805,7 @@ export default class BattleScene extends SceneBase {
 			case Species.BASCULIN:
 			case Species.DEERLING:
 			case Species.SAWSBUCK:
+			case Species.VIVILLON:
 			case Species.ORICORIO:
 			case Species.SQUAWKABILLY:
 			case Species.TATSUGIRI:
@@ -828,7 +829,6 @@ export default class BattleScene extends SceneBase {
 				case Species.WORMADAM:
 				case Species.ROTOM:
 				case Species.LYCANROC:
-				case Species.CALYREX:
 					return Utils.randSeedInt(species.forms.length);
 			}
 			return 0;
