@@ -533,6 +533,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.setGenMode(true);
           success = true;
           break;
+        case Button.LEFT:
+          this.startCursorObj.setVisible(false);
+          this.setGenMode(false);
+          this.setCursor(this.cursor + 8);
+          success = true;
+          break;
         case Button.RIGHT:
           this.startCursorObj.setVisible(false);
           this.setGenMode(false);
@@ -553,6 +559,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.setGenMode(true);
             success = true;
           }
+          break;
+        case Button.LEFT:
+          success = this.setGenMode(false);
+          this.setCursor(this.cursor + 8);
           break;
         case Button.RIGHT:
           success = this.setGenMode(false);
@@ -770,6 +780,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           case Button.RIGHT:
             if (this.cursor % 9 < (row < rows - 1 ? 8 : (genStarters - 1) % 9))
               success = this.setCursor(this.cursor + 1);
+            else {
+              if (row >= Math.min(5, rows - 1))
+                this.startCursorObj.setVisible(true);
+              success = this.setGenMode(true);
+            }
             break;
         }
       }
