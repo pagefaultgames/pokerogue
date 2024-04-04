@@ -37,6 +37,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private hpBarSegmentDividers: Phaser.GameObjects.Rectangle[];
   private levelNumbersContainer: Phaser.GameObjects.Container;
   private hpNumbersContainer: Phaser.GameObjects.Container;
+  private type1Icon: Phaser.GameObjects.Sprite;
+  private type2Icon: Phaser.GameObjects.Sprite;
   private expBar: Phaser.GameObjects.Image;
   private expMaskRect: Phaser.GameObjects.Graphics;
 
@@ -123,6 +125,14 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.levelNumbersContainer = this.scene.add.container(9.5, (this.scene as BattleScene).uiTheme ? 0 : -0.5);
     this.levelContainer.add(this.levelNumbersContainer);
 
+    this.type1Icon = this.scene.add.sprite(player ? -139 : -15, player ? -17 : -15.5, `pbinfo_${player ? 'player' : 'enemy'}_type1`);
+    this.type1Icon.setOrigin(0, 0);
+    this.add(this.type1Icon);
+
+    this.type2Icon = this.scene.add.sprite(player ? -139 : -15, player ? -1 : -2.5, `pbinfo_${player ? 'player' : 'enemy'}_type2`);
+    this.type2Icon.setOrigin(0, 0);
+    this.add(this.type2Icon);
+
     if (this.player) {
       this.hpNumbersContainer = this.scene.add.container(-15, 10);
       this.add(this.hpNumbersContainer);
@@ -195,6 +205,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     this.shinyIcon.setVisible(pokemon.isShiny());
 
+    const types = pokemon.getTypes(true);
+    this.type1Icon.setFrame(Type[types[0]].toLowerCase());
+    this.type2Icon.setVisible(types.length > 1);
+    if (types.length > 1)
+      this.type2Icon.setFrame(Type[types[1]].toLowerCase());
+
     if (this.player) {
       this.expMaskRect.x = (pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate)) * 510;
       this.lastExp = pokemon.exp;
@@ -219,6 +235,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     const offsetElements = [ this.nameText, this.genderText, this.teraIcon, this.splicedIcon, this.statusIndicator, this.levelContainer ];
     offsetElements.forEach(el => el.y += 1.5 * (mini ? -1 : 1));
+
+    [ this.type1Icon, this.type2Icon ].forEach(el => {
+      el.x += 4 * (mini ? 1 : -1);
+      el.y += -8 * (mini ? 1 : -1);
+    });
 
     this.shinyIcon.setPositionRelative(this.levelContainer, -12, -5);
 
@@ -309,6 +330,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         if (!this.player && this.ownedIcon.visible)
           this.ownedIcon.setAlpha(this.statusIndicator.visible ? 0 : 1);
       }
+
+      const types = pokemon.getTypes(true);
+      this.type1Icon.setFrame(Type[types[0]].toLowerCase());
+      this.type2Icon.setVisible(types.length > 1);
+      if (types.length > 1)
+        this.type2Icon.setFrame(Type[types[1]].toLowerCase());
 
       const updateHpFrame = () => {
         const hpFrame = this.hpBar.scaleX > 0.5 ? 'high' : this.hpBar.scaleX > 0.25 ? 'medium' : 'low';
