@@ -59,7 +59,7 @@ import { UiTheme } from './enums/ui-theme';
 import CacheBustedLoaderPlugin from './plugins/cache-busted-loader-plugin';
 import { SceneBase } from './scene-base';
 
-export const bypassLogin = false;
+export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
 export const SEED_OVERRIDE = '';
 export const STARTER_SPECIES_OVERRIDE = 0;
@@ -115,7 +115,7 @@ export default class BattleScene extends SceneBase {
 	public gameSpeed: integer = 1;
 	public damageNumbersMode: integer = 0;
 	public showLevelUpStats: boolean = true;
-	public enableTutorials: boolean = true;
+	public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
 	public uiTheme: UiTheme = UiTheme.DEFAULT;
 	public windowType: integer = 0;
 	public experimentalSprites: boolean = false;
