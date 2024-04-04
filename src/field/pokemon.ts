@@ -878,6 +878,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       && !species.pseudoLegendary
       && !species.legendary
       && !species.mythical
+      && !species.isTrainerForbidden()
       && species.speciesId !== this.species.speciesId
     };
    

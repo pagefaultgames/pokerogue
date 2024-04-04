@@ -59,7 +59,7 @@ export function addWindow(scene: BattleScene, x: number, y: number, width: numbe
 
 export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): void {
   const windowObjects: [Phaser.GameObjects.NineSlice, WindowVariant][] = [];
-  const themedObjects: Phaser.GameObjects.Image[] = [];
+  const themedObjects: (Phaser.GameObjects.Image | Phaser.GameObjects.NineSlice)[] = [];
   const traverse = (object: any) => {
     if (object.hasOwnProperty('children') && object.children instanceof Phaser.GameObjects.DisplayList) {
       const children = object.children as Phaser.GameObjects.DisplayList;
@@ -71,8 +71,10 @@ export function updateWindowType(scene: BattleScene, windowTypeIndex: integer): 
     } else if (object instanceof Phaser.GameObjects.NineSlice) {
       if (object.texture.key.startsWith('window_'))
         windowObjects.push([ object, object.texture.key.endsWith(getWindowVariantSuffix(WindowVariant.XTHIN)) ? WindowVariant.XTHIN : object.texture.key.endsWith(getWindowVariantSuffix(WindowVariant.THIN)) ? WindowVariant.THIN : WindowVariant.NORMAL ]);
+      else if (object.texture?.key === 'namebox')
+        themedObjects.push(object);
     } else if (object instanceof Phaser.GameObjects.Sprite) {
-      if ([ 'bg', 'namebox' ].includes(object.texture?.key))
+      if (object.texture?.key === 'bg')
         themedObjects.push(object);
     }
   }

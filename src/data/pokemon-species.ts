@@ -167,6 +167,10 @@ export abstract class PokemonSpeciesForm {
     return this.getRegion() > Region.NORMAL;
   }
 
+  isTrainerForbidden(): boolean {
+    return [ Species.ETERNAL_FLOETTE, Species.BLOODMOON_URSALUNA ].includes(this.speciesId);
+  }
+
   isRareRegional(): boolean {
     switch (this.getRegion()) {
       case Region.HISUI:
@@ -613,7 +617,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
         && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution
         && species.pseudoLegendary === pseudoLegendary
         && species.legendary === legendary
-        && species.mythical === mythical;
+        && species.mythical === mythical
+        && (this.isTrainerForbidden() || !species.isTrainerForbidden());
     };
   }
 
