@@ -2392,7 +2392,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
       return false;
 
     const firstMoveType = target.getMoveset()[0].getMove().type
-   
+  
     user.summonData.types = [ firstMoveType ];
 
     user.scene.queueMessage(getPokemonMessage(user, ` transformed\ninto to the ${Utils.toReadableString(Type[firstMoveType])} type!`));
@@ -2687,6 +2687,18 @@ export class DiscourageFrequentUseAttr extends MoveAttr {
   }
 }
 
+export class MoneyAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, MoveEffectTrigger.HIT);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move): boolean {
+    user.scene.currentBattle.moneyScattered += user.scene.getWaveMoneyAmount(0.2);
+    user.scene.queueMessage("Coins were scattered everywhere!")
+    return true;
+  }
+}
+
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
 
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
@@ -2811,7 +2823,8 @@ export function initMoves() {
       .punchingMove(),
     new AttackMove(Moves.MEGA_PUNCH, "Mega Punch", Type.NORMAL, MoveCategory.PHYSICAL, 80, 85, 20, "The target is slugged by a punch thrown with muscle-packed power.", -1, 0, 1)
       .punchingMove(),
-    new AttackMove(Moves.PAY_DAY, "Pay Day (P)", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 20, "Numerous coins are hurled at the target to inflict damage. Money is earned after the battle.", -1, 0, 1)
+    new AttackMove(Moves.PAY_DAY, "Pay Day", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 20, "Numerous coins are hurled at the target to inflict damage. Money is earned after the battle.", -1, 0, 1)
+      .attr(MoneyAttr)
       .makesContact(false),
     new AttackMove(Moves.FIRE_PUNCH, "Fire Punch", Type.FIRE, MoveCategory.PHYSICAL, 75, 100, 15, "The target is punched with a fiery fist. This may also leave the target with a burn.", 10, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.BURN)
@@ -4893,7 +4906,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
       .danceMove(),
     new AttackMove(Moves.RAGING_BULL, "Raging Bull (P)", Type.NORMAL, MoveCategory.PHYSICAL, 90, 100, 10, "The user performs a tackle like a raging bull. This move's type depends on the user's form. It can also break barriers, such as Light Screen and Reflect.", -1, 0, 9),
-    new AttackMove(Moves.MAKE_IT_RAIN, "Make It Rain (P)", Type.STEEL, MoveCategory.SPECIAL, 120, 100, 5, "The user attacks by throwing out a mass of coins. This also lowers the user's Sp. Atk stat. Money is earned after the battle.", -1, 0, 9)
+    new AttackMove(Moves.MAKE_IT_RAIN, "Make It Rain", Type.STEEL, MoveCategory.SPECIAL, 120, 100, 5, "The user attacks by throwing out a mass of coins. This also lowers the user's Sp. Atk stat. Money is earned after the battle.", -1, 0, 9)
+      .attr(MoneyAttr)
       .attr(StatChangeAttr, BattleStat.SPATK, -1, true, null, true, true)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.PSYBLADE, "Psyblade (P)", Type.PSYCHIC, MoveCategory.PHYSICAL, 80, 100, 15, "The user rends the target with an ethereal blade. This move's power is boosted by 50 percent if the user is on Electric Terrain.", -1, 0, 9)

@@ -1874,6 +1874,8 @@ export class BattleEndPhase extends BattlePhase {
     super.start();
 
     this.scene.currentBattle.addBattleScore(this.scene);
+    if (this.scene.currentBattle.moneyScattered)
+      this.scene.currentBattle.pickUpScatteredMoney(this.scene);
 
     this.scene.gameData.gameStats.battles++;
     if (this.scene.currentBattle.trainer)
