@@ -1725,6 +1725,16 @@ export class HitCountPowerAttr extends VariablePowerAttr {
   }
 }
 
+export class StatChangeCountPowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const positiveStats: number = user.summonData.battleStats.reduce((total, stat) => stat > 0 && stat ? total + stat : total, 0);
+
+    (args[0] as Utils.NumberHolder).value += positiveStats * 20;
+
+    return true;
+  }
+}
+
 export class VariableAtkAttr extends MoveAttr {
   constructor() {
     super();
@@ -3999,7 +4009,8 @@ export function initMoves() {
     new AttackMove(Moves.CHIP_AWAY, "Chip Away", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, "Looking for an opening, the user strikes consistently. The target's stat changes don't affect this attack's damage.", -1, 0, 5)
       .attr(IgnoreOpponentStatChangesAttr),
     new AttackMove(Moves.CLEAR_SMOG, "Clear Smog (P)", Type.POISON, MoveCategory.SPECIAL, 50, -1, 15, "The user attacks the target by throwing a clump of special mud. All stat changes are returned to normal.", -1, 0, 5),
-    new AttackMove(Moves.STORED_POWER, "Stored Power (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 20, 100, 10, "The user attacks the target with stored power. The more the user's stats are raised, the greater the move's power.", -1, 0, 5),
+    new AttackMove(Moves.STORED_POWER, "Stored Power", Type.PSYCHIC, MoveCategory.SPECIAL, 20, 100, 10, "The user attacks the target with stored power. The more the user's stats are raised, the greater the move's power.", -1, 0, 5)
+      .attr(StatChangeCountPowerAttr),
     new StatusMove(Moves.QUICK_GUARD, "Quick Guard (N)", Type.FIGHTING, -1, 15, "The user protects itself and its allies from priority moves.", -1, 3, 5)
       .target(MoveTarget.USER_SIDE),
     new SelfStatusMove(Moves.ALLY_SWITCH, "Ally Switch (N)", Type.PSYCHIC, -1, 15, "The user teleports using a strange power and switches places with one of its allies.", -1, 2, 5)
@@ -4377,7 +4388,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new AttackMove(Moves.FIRE_LASH, "Fire Lash", Type.FIRE, MoveCategory.PHYSICAL, 80, 100, 15, "The user strikes the target with a burning lash. This also lowers the target's Defense stat.", 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
-    new AttackMove(Moves.POWER_TRIP, "Power Trip (P)", Type.DARK, MoveCategory.PHYSICAL, 20, 100, 10, "The user boasts its strength and attacks the target. The more the user's stats are raised, the greater the move's power.", -1, 0, 7),
+    new AttackMove(Moves.POWER_TRIP, "Power Trip", Type.DARK, MoveCategory.PHYSICAL, 20, 100, 10, "The user boasts its strength and attacks the target. The more the user's stats are raised, the greater the move's power.", -1, 0, 7)
+      .attr(StatChangeCountPowerAttr),
     new AttackMove(Moves.BURN_UP, "Burn Up (P)", Type.FIRE, MoveCategory.SPECIAL, 130, 100, 5, "To inflict massive damage, the user burns itself out. After using this move, the user will no longer be Fire type.", -1, 0, 7)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE),
     new StatusMove(Moves.SPEED_SWAP, "Speed Swap (N)", Type.PSYCHIC, -1, 10, "The user exchanges Speed stats with the target.", -1, 0, 7),
