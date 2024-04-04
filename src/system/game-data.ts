@@ -972,7 +972,7 @@ export class GameData {
       };
 
       if (newCatch && speciesStarters.hasOwnProperty(species.speciesId)) {
-        this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
+        this.scene.playSound('level_up_fanfare');
         this.scene.ui.showText(`${species.name} has been\nadded as a starter!`, null, () => checkPrevolution(), null, true);
       } else
         checkPrevolution();
@@ -999,7 +999,7 @@ export class GameData {
 
       this.starterEggMoveData[speciesId] |= value;
 
-      this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
+      this.scene.playSound('level_up_fanfare');
       this.scene.ui.showText(`${eggMoveIndex === 3 ? 'Rare ' : ''}Egg Move unlocked: ${allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name}`, null, () => resolve(true), null, true);
     });
   }

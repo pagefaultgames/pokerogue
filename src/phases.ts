@@ -1400,7 +1400,7 @@ export class LevelCapPhase extends FieldPhase {
     super.start();
 
     this.scene.ui.setMode(Mode.MESSAGE).then(() => {
-      this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
+      this.scene.playSound('level_up_fanfare');
       this.scene.ui.showText(`The level cap\nhas increased to ${this.scene.getMaxExpLevel()}!`, null, () => this.end(), null, true);
       this.executeForAll(pokemon => pokemon.updateInfo(true));
     });
@@ -3128,7 +3128,7 @@ export class ModifierRewardPhase extends BattlePhase {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
-        this.scene.playSoundWithoutBgm('item_fanfare');
+        this.scene.playSound('item_fanfare');
         this.scene.ui.showText(`You received\n${newModifier.type.name}!`, null, () => resolve(), null, true);
       });
     })
@@ -3146,7 +3146,7 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
       this.scene.addModifier(newModifier).then(() => {
         this.scene.gameData.saveSystem().then(success => {
           if (success) {
-            this.scene.playSoundWithoutBgm('level_up_fanfare');
+            this.scene.playSound('level_up_fanfare');
             this.scene.ui.setMode(Mode.MESSAGE);
             this.scene.arenaBg.setVisible(false);
             this.scene.ui.fadeIn(250).then(() => {
@@ -3261,7 +3261,7 @@ export class UnlockPhase extends Phase {
       this.scene.gameData.unlocks[this.unlockable] = true;
       this.scene.gameData.saveSystem().then(success => {
         if (success) {
-          this.scene.playSoundWithoutBgm('level_up_fanfare');
+          this.scene.playSound('level_up_fanfare');
           this.scene.ui.setMode(Mode.MESSAGE);
           this.scene.arenaBg.setVisible(false);
           this.scene.ui.fadeIn(250).then(() => {
@@ -3406,7 +3406,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     const prevStats = pokemon.stats.slice(0);
     pokemon.calculateStats();
     pokemon.updateInfo();
-    this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
+    this.scene.playSound('level_up_fanfare');
     this.scene.ui.showText(`${this.getPokemon().name} grew to\nLv. ${this.level}!`, null, () => this.scene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end()), null, true);
     if (this.level <= 100) {
       const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
@@ -3455,7 +3455,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         loadMoveAnimAssets(this.scene, [ this.moveId ], true)
           .then(() => {
             this.scene.ui.setMode(messageMode).then(() => {
-              this.scene.playSoundWithoutBgm('level_up_fanfare', 1500);
+              this.scene.playSound('level_up_fanfare');
               this.scene.ui.showText(`${pokemon.name} learned\n${move.name}!`, null, () => {
                 this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeMoveLearnedTrigger, true);
                 this.end();
@@ -4147,7 +4147,7 @@ export class PartyHealPhase extends BattlePhase {
         pokemon.updateInfo(true);
       }
       const healSong = this.scene.playSoundWithoutBgm('heal');
-      this.scene.time.delayedCall(healSong.totalDuration * 1000, () => {
+      this.scene.time.delayedCall(Utils.fixedInt(healSong.totalDuration * 1000), () => {
         healSong.destroy();
         if (this.resumeBgm && bgmPlaying)
           this.scene.playBgm();
