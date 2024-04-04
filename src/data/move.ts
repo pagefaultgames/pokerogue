@@ -2874,7 +2874,7 @@ export function initMoves() {
       .attr(MissEffectAttr, frenzyMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(Moves.DOUBLE_EDGE, "Double-Edge", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, "A reckless, life-risking tackle in which the user rushes the target. This also damages the user quite a lot.", -1, 0, 1)
-      .attr(RecoilAttr),
+      .attr(RecoilAttr, false, 0.33),
     new StatusMove(Moves.TAIL_WHIP, "Tail Whip", Type.NORMAL, 100, 30, "The user wags its tail cutely, making opposing Pokémon less wary and lowering their Defense stats.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -3638,7 +3638,7 @@ export function initMoves() {
     new AttackMove(Moves.COVET, "Covet", Type.NORMAL, MoveCategory.PHYSICAL, 60, 100, 25, "The user endearingly approaches the target, then has a 30% chance to steal the target's held item.", -1, 0, 3)
       .attr(StealHeldItemChanceAttr, 0.3),
     new AttackMove(Moves.VOLT_TACKLE, "Volt Tackle", Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 15, "The user electrifies itself and charges the target. This also damages the user quite a lot. This attack may leave the target with paralysis.", 10, 0, 3)
-      .attr(RecoilAttr)
+      .attr(RecoilAttr, false, 0.33)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.MAGICAL_LEAF, "Magical Leaf", Type.GRASS, MoveCategory.SPECIAL, 60, -1, 20, "The user scatters curious leaves that chase the target. This attack never misses.", -1, 0, 3),
     new StatusMove(Moves.WATER_SPORT, "Water Sport", Type.WATER, -1, 15, "The user soaks the battlefield with water. This weakens Fire-type moves for five turns.", -1, 0, 3)
@@ -3751,7 +3751,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.AQUA_RING, true, true),
     new SelfStatusMove(Moves.MAGNET_RISE, "Magnet Rise (N)", Type.ELECTRIC, -1, 10, "The user levitates using electrically generated magnetism for five turns.", -1, 0, 4),
     new AttackMove(Moves.FLARE_BLITZ, "Flare Blitz", Type.FIRE, MoveCategory.PHYSICAL, 120, 100, 15, "The user cloaks itself in fire and charges the target. This also damages the user quite a lot. This attack may leave the target with a burn.", 10, 0, 4)
-      .attr(RecoilAttr)
+      .attr(RecoilAttr, false, 0.33)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .condition(failOnGravityCondition),
@@ -3798,7 +3798,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPDEF, -1)
       .ballBombMove(),
     new AttackMove(Moves.BRAVE_BIRD, "Brave Bird", Type.FLYING, MoveCategory.PHYSICAL, 120, 100, 15, "The user tucks in its wings and charges from a low altitude. This also damages the user quite a lot.", -1, 0, 4)
-      .attr(RecoilAttr),
+      .attr(RecoilAttr, false, 0.33),
     new AttackMove(Moves.EARTH_POWER, "Earth Power", Type.GROUND, MoveCategory.SPECIAL, 90, 100, 10, "The user makes the ground under the target erupt with power. This may also lower the target's Sp. Def stat.", 10, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1),
     new StatusMove(Moves.SWITCHEROO, "Switcheroo (N)", Type.DARK, 100, 10, "The user trades held items with the target faster than the eye can follow.", -1, 0, 4),
@@ -3898,7 +3898,7 @@ export function initMoves() {
     new AttackMove(Moves.CHARGE_BEAM, "Charge Beam", Type.ELECTRIC, MoveCategory.SPECIAL, 50, 90, 10, "The user attacks the target with an electric charge. The user may use any remaining electricity to raise its Sp. Atk stat.", 70, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPATK, 1, true),
     new AttackMove(Moves.WOOD_HAMMER, "Wood Hammer", Type.GRASS, MoveCategory.PHYSICAL, 120, 100, 15, "The user slams its rugged body into the target to attack. This also damages the user quite a lot.", -1, 0, 4)
-      .attr(RecoilAttr),
+      .attr(RecoilAttr, false, 0.33),
     new AttackMove(Moves.AQUA_JET, "Aqua Jet", Type.WATER, MoveCategory.PHYSICAL, 40, 100, 20, "The user lunges at the target at a speed that makes it almost invisible. This move always goes first.", -1, 1, 4),
     new AttackMove(Moves.ATTACK_ORDER, "Attack Order", Type.BUG, MoveCategory.PHYSICAL, 90, 100, 15, "The user calls out its underlings to pummel the target. Critical hits land more easily.", -1, 0, 4)
       .attr(HighCritAttr)
@@ -3908,7 +3908,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.HEAL_ORDER, "Heal Order", Type.BUG, -1, 10, "The user calls out its underlings to heal it. The user regains up to half of its max HP.", -1, 0, 4)
       .attr(HealAttr, 0.5),
     new AttackMove(Moves.HEAD_SMASH, "Head Smash", Type.ROCK, MoveCategory.PHYSICAL, 150, 80, 5, "The user attacks the target with a hazardous, full-power headbutt. This also damages the user terribly.", -1, 0, 4)
-      .attr(RecoilAttr),
+      .attr(RecoilAttr, false, 0.5),
     new AttackMove(Moves.DOUBLE_HIT, "Double Hit", Type.NORMAL, MoveCategory.PHYSICAL, 35, 90, 10, "The user slams the target with a long tail, vines, or a tentacle. The target is hit twice in a row.", -1, 0, 4)
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.ROAR_OF_TIME, "Roar of Time", Type.DRAGON, MoveCategory.SPECIAL, 150, 90, 5, "The user blasts the target with power that distorts even time. The user can't move on the next turn.", -1, 0, 4)
@@ -4711,7 +4711,7 @@ export function initMoves() {
       .attr(MissEffectAttr, frenzyMissFunc)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(Moves.WAVE_CRASH, "Wave Crash", Type.WATER, MoveCategory.PHYSICAL, 120, 100, 10, "The user shrouds itself in water and slams into the target with its whole body to inflict damage. This also damages the user quite a lot.", -1, 0, 8)
-      .attr(RecoilAttr),
+      .attr(RecoilAttr, false, 0.33),
     new AttackMove(Moves.CHLOROBLAST, "Chloroblast", Type.GRASS, MoveCategory.SPECIAL, 150, 95, 5, "The user launches its amassed chlorophyll to inflict damage on the target. This also damages the user.", -1, 0, 8)
       .attr(RecoilAttr, true, 0.5),
     new AttackMove(Moves.MOUNTAIN_GALE, "Mountain Gale", Type.ICE, MoveCategory.PHYSICAL, 100, 85, 10, "The user hurls giant chunks of ice at the target to inflict damage. This may also make the target flinch.", 30, 0, 8)
