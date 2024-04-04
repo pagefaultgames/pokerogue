@@ -269,6 +269,10 @@ export abstract class PokemonSpeciesForm {
     let ret = speciesId.toString();
     const forms = getPokemonSpecies(speciesId).forms;
     if (forms.length) {
+      if (formIndex >= forms.length) {
+        console.warn(`Attempted accessing form with index ${formIndex} of species ${getPokemonSpecies(speciesId).getName()} with only ${forms.length || 0} forms`);
+        formIndex = Math.min(formIndex, forms.length - 1);
+      }
       const formKey = forms[formIndex || 0].formKey;
       switch (formKey) {
         case SpeciesFormKey.MEGA:
@@ -618,6 +622,10 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
   }
 
   getFormSpriteKey(formIndex?: integer) {
+    if (this.forms.length && formIndex >= this.forms.length) {
+      console.warn(`Attempted accessing form with index ${formIndex} of species ${this.getName()} with only ${this.forms?.length || 0} forms`);
+      formIndex = Math.min(formIndex, this.forms.length - 1);
+    }
     return this.forms?.length
       ? this.forms[formIndex || 0].getFormSpriteKey()
       : '';
