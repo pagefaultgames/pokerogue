@@ -32,6 +32,7 @@ import GameStatsUiHandler from './game-stats-ui-handler';
 import AwaitableUiHandler from './awaitable-ui-handler';
 import SaveSlotSelectUiHandler from './save-slot-select-ui-handler';
 import TitleUiHandler from './title-ui-handler';
+import SavingIconHandler from './saving-icon-handler';
 
 export enum Mode {
   MESSAGE,
@@ -95,6 +96,7 @@ export default class UI extends Phaser.GameObjects.Container {
   private handlers: UiHandler[];
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
+  public savingIcon: SavingIconHandler;
 
   private tooltipContainer: Phaser.GameObjects.Container;
   private tooltipBg: Phaser.GameObjects.NineSlice;
@@ -152,6 +154,11 @@ export default class UI extends Phaser.GameObjects.Container {
     this.achvBar.setup();
    
     (this.scene as BattleScene).uiContainer.add(this.achvBar);
+
+    this.savingIcon = new SavingIconHandler(this.scene as BattleScene);
+    this.savingIcon.setup();
+
+    (this.scene as BattleScene).uiContainer.add(this.savingIcon);
   }
 
   private setupTooltip() {

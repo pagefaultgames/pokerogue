@@ -97,6 +97,8 @@ export class LoadingScene extends SceneBase {
     this.loadImage('select_gen_cursor', 'ui');
     this.loadImage('select_gen_cursor_highlight', 'ui');
 
+    this.loadImage('saving_icon', 'ui');
+
     this.loadImage('default_bg', 'arenas');
     // Load arena images
     Utils.getEnumValues(Biome).map(bt => {

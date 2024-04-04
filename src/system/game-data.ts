@@ -223,9 +223,12 @@ export class GameData {
 
   public saveSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
+      this.scene.ui.savingIcon.show();
       updateUserInfo().then((success: boolean) => {
-        if (!success)
+        if (!success) {
+          this.scene.ui.savingIcon.hide();
           return resolve(false);
+        }
         const data: SystemSaveData = {
           trainerId: this.trainerId,
           secretId: this.secretId,
@@ -250,6 +253,7 @@ export class GameData {
           Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData)
             .then(response => response.text())
             .then(error => {
+              this.scene.ui.savingIcon.hide();
               if (error) {
                 console.error(error);
                 return resolve(false);
@@ -260,6 +264,8 @@ export class GameData {
           localStorage.setItem('data_bak', localStorage.getItem('data'));
 
           localStorage.setItem('data', btoa(systemData));
+
+          this.scene.ui.savingIcon.hide();
 
           resolve(true);
         }
