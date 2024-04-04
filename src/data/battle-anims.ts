@@ -459,7 +459,7 @@ export function initMoveAnim(move: Moves): Promise<void> {
                 fetch(`./battle-anims/${Moves[move].toLowerCase().replace(/\_/g, '-')}.json`)
                     .then(response => {
                         if (!response.ok) {
-                            console.error(response.statusText);
+                            console.error(response.status, response.statusText);
                             if (move !== defaultMoveAnim)
                                 fetchAnimAndResolve(defaultMoveAnim);
                             else
