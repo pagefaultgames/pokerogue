@@ -9,7 +9,8 @@ import { TrainerType } from "./data/enums/trainer-type";
 import { GameMode } from "./game-mode";
 import { BattleSpec } from "./enums/battle-spec";
 import { PlayerGender } from "./system/game-data";
-import { PokemonHeldItemModifier } from "./modifier/modifier";
+import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
+import { MoneyAchv } from "./system/achv";
 
 export enum BattleType {
     WILD,
@@ -59,6 +60,7 @@ export default class Battle {
     public lastMove: Moves;
     public battleSeed: string;
     private battleSeedState: string;
+    public moneyScattered: number;
 
     private rngCounter: integer = 0;
 
@@ -83,6 +85,7 @@ export default class Battle {
         this.started = false;
         this.battleSeed = Utils.randomString(16, true);
         this.battleSeedState = null;
+        this.moneyScattered = 0;
     }
 
     private initBattleSpec(): void {
@@ -148,6 +151,19 @@ export default class Battle {
             ret.pokemonId = null;
             return ret;
         }));
+    }
+
+    pickUpScatteredMoney(scene: BattleScene): void {
+        const moneyAmount = new Utils.IntegerHolder(scene.currentBattle.moneyScattered);
+        scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+
+        scene.money += moneyAmount.value;
+        scene.updateMoneyText();
+    
+        scene.validateAchvs(MoneyAchv);
+        scene.queueMessage(`You picked up ₽${moneyAmount.value.toLocaleString('en-US')}!`, null, true);
+
+        scene.currentBattle.moneyScattered = 0;
     }
 
     addBattleScore(scene: BattleScene): void {

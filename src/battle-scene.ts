@@ -10,7 +10,7 @@ import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets
 import { Phase } from './phase';
 import { initGameSpeed } from './system/game-speed';
 import { Biome } from "./data/enums/biome";
-import { Arena, ArenaBase, getBiomeHasProps, getBiomeKey } from './field/arena';
+import { Arena, ArenaBase } from './field/arena';
 import { GameData, PlayerGender } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
@@ -26,7 +26,6 @@ import FieldSpritePipeline from './pipelines/field-sprite';
 import SpritePipeline from './pipelines/sprite';
 import PartyExpBar from './ui/party-exp-bar';
 import { TrainerSlot, trainerConfigs } from './data/trainer-config';
-import { TrainerType } from "./data/enums/trainer-type";
 import Trainer, { TrainerVariant } from './field/trainer';
 import TrainerData from './system/trainer-data';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
@@ -38,11 +37,10 @@ import MessageUiHandler from './ui/message-ui-handler';
 import { Species } from './data/enums/species';
 import InvertPostFX from './pipelines/invert';
 import { Achv, ModifierAchv, achvs } from './system/achv';
-import { GachaType } from './data/egg';
 import { Voucher, vouchers } from './system/voucher';
 import { Gender } from './data/gender';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
-import { WindowVariant, addUiThemeOverrides, getWindowVariantSuffix } from './ui/ui-theme';
+import { addUiThemeOverrides } from './ui/ui-theme';
 import PokemonData from './system/pokemon-data';
 import { Nature } from './data/nature';
 import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from './data/pokemon-forms';
@@ -888,26 +886,22 @@ export default class BattleScene extends SceneBase {
 	trySpreadPokerus(): void {
 		const party = this.getParty();
 		const infectedIndexes: integer[] = [];
+		const spread = (index: number, spreadTo: number) => {
+			const partyMember = party[index + spreadTo];
+			if (!partyMember.pokerus && !Utils.randSeedInt(10)) {
+				partyMember.pokerus = true;
+				infectedIndexes.push(index + spreadTo);
+			}
+		};
 		party.forEach((pokemon, p) => {
 			if (!pokemon.pokerus || infectedIndexes.indexOf(p) > -1)
 				return;
 			
 			this.executeWithSeedOffset(() => {
-				if (p) {
-					const partyMember = party[p - 1];
-					if (!partyMember.pokerus && !Utils.randSeedInt(10)) {
-						partyMember.pokerus = true;
-						infectedIndexes.push(p - 1);
-					}
-				}
-
-				if (p < party.length - 1) {
-					const partyMember = party[p + 1];
-					if (!partyMember.pokerus && !Utils.randSeedInt(10)) {
-						partyMember.pokerus = true;
-						infectedIndexes.push(p + 1);
-					}
-				}
+				if (p)
+					spread(p, -1);
+				if (p < party.length - 1)
+					spread(p, 1);
 			}, this.currentBattle.waveIndex + (p << 8));
 		});
 	}
