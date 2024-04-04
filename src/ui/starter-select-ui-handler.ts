@@ -1,5 +1,5 @@
 import BattleScene, { Button } from "../battle-scene";
-import PokemonSpecies, { allSpecies, getPokemonSpecies, speciesStarters } from "../data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
@@ -589,7 +589,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   this.starterNatures.push(this.natureCursor as unknown as Nature);
                   this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
                   if (this.speciesLoaded.get(species.speciesId))
-                    species.cry(this.scene);
+                    getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
                   if (this.starterCursors.length === 6 || this.value === 10)
                     this.tryStart();
                   this.updateInstructions();
