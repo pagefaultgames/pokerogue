@@ -2985,7 +2985,7 @@ export const speciesStarters = {
   [Species.ORTHWORM]: 4,
   [Species.GLIMMET]: 4,
   [Species.GREAVARD]: 4,
-  [Species.FLAMIGO]: 3,
+  [Species.FLAMIGO]: 4,
   [Species.CETODDLE]: 4,
   [Species.VELUZA]: 4,
   [Species.DONDOZO]: 5,
