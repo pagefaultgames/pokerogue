@@ -942,6 +942,19 @@ export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
   }
 }
 
+export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
+  applyPreSwitchOut(pokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
+    if (pokemon.getHpRatio() < 1 ) {
+      const healAmount = Math.floor(pokemon.getMaxHp() * 0.33);
+      pokemon.heal(healAmount);
+      pokemon.updateInfo();
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class PreStatChangeAbAttr extends AbAttr {
   applyPreStatChange(pokemon: Pokemon, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -2359,7 +2372,8 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.POISON_TOUCH, "Poison Touch", "May poison a target when the Pokémon makes contact.", 5)
       .attr(PostAttackContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON),
-    new Ability(Abilities.REGENERATOR, "Regenerator (N)", "Restores a little HP when withdrawn from battle.", 5),
+    new Ability(Abilities.REGENERATOR, "Regenerator", "Restores a little HP when withdrawn from battle.", 5)
+    .attr(PreSwitchOutHealAbAttr),
     new Ability(Abilities.BIG_PECKS, "Big Pecks", "Protects the Pokémon from Defense-lowering effects.", 5)
       .attr(ProtectStatAbAttr, BattleStat.DEF)
       .ignorable(),
