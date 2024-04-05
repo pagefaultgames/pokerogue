@@ -896,8 +896,8 @@ export const modifierTypes = {
   GOLDEN_POKEBALL: () => new ModifierType(`Golden ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle',
     (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold', null, 'pb_bounce_1'),
 
-  ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Token', 'Increases damage by 20%', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 20), 'wl_item_drop'),
-  ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Protection Token', 'Reduces incoming damage by 10%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 10), 'wl_guard_spec'),
+  ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Token', 'Increases damage by 10%', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 10), 'wl_item_drop'),
+  ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Protection Token', 'Reduces incoming damage by 5%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 5), 'wl_guard_spec'),
   //ENEMY_SUPER_EFFECT_BOOSTER: () => new ModifierType('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new Modifiers.EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_custom_super_effective'),
   ENEMY_HEAL: () => new ModifierType('Recovery Token', 'Heals 5% of max HP every turn', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 5), 'wl_potion'),
   ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Poison Token', 10, StatusEffect.POISON, 'wl_antidote'),

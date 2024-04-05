@@ -1900,7 +1900,7 @@ abstract class EnemyDamageMultiplierModifier extends EnemyPersistentModifier {
 
 export class EnemyDamageBoosterModifier extends EnemyDamageMultiplierModifier {
   constructor(type: ModifierType, boostPercent: number, stackCount?: integer) {
-    super(type, 1 + ((boostPercent || 20) * 0.01), stackCount);
+    super(type, 1 + ((boostPercent || 10) * 0.01), stackCount);
   }
 
   match(modifier: Modifier): boolean {
@@ -1922,7 +1922,7 @@ export class EnemyDamageBoosterModifier extends EnemyDamageMultiplierModifier {
 
 export class EnemyDamageReducerModifier extends EnemyDamageMultiplierModifier {
   constructor(type: ModifierType, reductionPercent: number, stackCount?: integer) {
-    super(type, 1 - ((reductionPercent || 10) * 0.01), stackCount);
+    super(type, 1 - ((reductionPercent || 5) * 0.01), stackCount);
   }
 
   match(modifier: Modifier): boolean {
