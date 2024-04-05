@@ -694,7 +694,7 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
-    return 10;
+    return 99;
   }
 }
 
