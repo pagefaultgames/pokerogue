@@ -952,15 +952,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return move.category !== MoveCategory.STATUS;
     });
 
+    const easeType = this.hasTrainer() || this.isBoss() ? this.hasTrainer() && this.isBoss() ? 'Quart.easeIn' : 'Cubic.easeIn' : 'Sine.easeIn';
+
     if (attackMovePool.length) {
-      const randomAttackMove = Utils.randSeedEasedWeightedItem(attackMovePool);
+      const randomAttackMove = Utils.randSeedEasedWeightedItem(attackMovePool, easeType);
       this.moveset.push(new PokemonMove(randomAttackMove, 0, 0));
       console.log(allMoves[randomAttackMove]);
       movePool.splice(movePool.findIndex(m => m === randomAttackMove), 1);
     }
 
     while (movePool.length && this.moveset.length < 4) {
-      const randomMove = Utils.randSeedEasedWeightedItem(movePool);
+      const randomMove = Utils.randSeedEasedWeightedItem(movePool, easeType);
       this.moveset.push(new PokemonMove(randomMove, 0, 0));
       console.log(allMoves[randomMove]);
       movePool.splice(movePool.indexOf(randomMove), 1);
