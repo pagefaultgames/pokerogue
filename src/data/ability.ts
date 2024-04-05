@@ -2143,7 +2143,7 @@ export function initAbilities() {
     new Ability(Abilities.HUGE_POWER, "Huge Power", "Doubles the Pokémon's Attack stat.", 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 2),
     new Ability(Abilities.POISON_POINT, "Poison Point", "Contact with the Pokémon may poison the attacker.", 3)
-      .attr(PostDefendContactApplyStatusEffectAbAttr, -1, StatusEffect.POISON),
+      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON),
     new Ability(Abilities.INNER_FOCUS, "Inner Focus", "The Pokémon's intensely focused, and that protects the Pokémon from flinching.", 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.FLINCHED)
       .ignorable(),
