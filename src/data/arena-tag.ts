@@ -78,7 +78,7 @@ export class MistTag extends ArenaTag {
 
 export class WeakenMoveScreenTag extends ArenaTag {
   constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide) {
-    super(tagType, turnCount, sourceMove, sourceId);
+    super(tagType, turnCount, sourceMove, sourceId, side);
   }
 
   apply(arena: Arena, args: any[]): boolean {
