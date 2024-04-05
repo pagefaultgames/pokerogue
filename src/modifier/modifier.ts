@@ -666,6 +666,8 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
       const attackTypeBoosterModifier = modifier as AttackTypeBoosterModifier;
       return attackTypeBoosterModifier.moveType === this.moveType && attackTypeBoosterModifier.boostMultiplier === this.boostMultiplier;
     }
+
+    return false;
   }
 
   clone() {
@@ -677,7 +679,7 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   }
 
   shouldApply(args: any[]): boolean {
-    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.NumberHolder;
+    return super.shouldApply(args) && args.length === 3 && typeof args[1] === 'number' && args[2] instanceof Utils.NumberHolder;
   }
 
   apply(args: any[]): boolean {
