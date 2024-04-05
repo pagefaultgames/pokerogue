@@ -1658,7 +1658,9 @@ export class EnemyCommandPhase extends FieldPhase {
 
     const enemyPokemon = this.scene.getEnemyField()[this.fieldIndex];
 
-    const trainer = this.scene.currentBattle.trainer;
+    const battle = this.scene.currentBattle;
+
+    const trainer = battle.trainer;
 
     if (trainer && !enemyPokemon.getMoveQueue().length) {
       const opponents = enemyPokemon.getOpponents();
@@ -1675,11 +1677,15 @@ export class EnemyCommandPhase extends FieldPhase {
           
           const sortedPartyMemberScores = trainer.getSortedPartyMemberMatchupScores(partyMemberScores);
 
-          if (sortedPartyMemberScores[0][1] >= matchupScore * (trainer.config.isBoss ? 2 : 3)) {
+          const switchMultiplier = 1 - (battle.enemySwitchCounter ? Math.pow(0.1, (1 / battle.enemySwitchCounter)) : 0);
+
+          if (sortedPartyMemberScores[0][1] * switchMultiplier >= matchupScore * (trainer.config.isBoss ? 2 : 3)) {
             const index = trainer.getNextSummonIndex(enemyPokemon.trainerSlot, partyMemberScores);
 
-            this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
+            battle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
               { command: Command.POKEMON, cursor: index, args: [ false ] };
+            
+            battle.enemySwitchCounter++;
 
             return this.end();
           }
@@ -1691,6 +1697,8 @@ export class EnemyCommandPhase extends FieldPhase {
 
     this.scene.currentBattle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
       { command: Command.FIGHT, move: nextMove };
+
+    this.scene.currentBattle.enemySwitchCounter = Math.max(this.scene.currentBattle.enemySwitchCounter - 1, 0);
 
     this.end();
   }

@@ -49,6 +49,7 @@ export default class Battle {
     public seenEnemyPartyMemberIds: Set<integer>;
     public double: boolean;
     public started: boolean;
+    public enemySwitchCounter: integer;
     public turn: integer;
     public turnCommands: TurnCommands;
     public playerParticipantIds: Set<integer>;
@@ -73,6 +74,7 @@ export default class Battle {
         this.enemyParty = [];
         this.seenEnemyPartyMemberIds = new Set<integer>();
         this.double = double;
+        this.enemySwitchCounter = 0;
         this.turn = 0;
         this.playerParticipantIds = new Set<integer>();
         this.battleScore = 0;
