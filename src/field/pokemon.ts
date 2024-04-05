@@ -1272,7 +1272,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isFainted())
       return 0;
 
-    if (this.hp > 1 && this.hp - damage <= 0 && !preventEndure) {
+    if (this.hp >= 1 && this.hp - damage <= 0 && !preventEndure) {
       const surviveDamage = new Utils.BooleanHolder(false);
       if (this.lapseTag(BattlerTagType.ENDURING))
         surviveDamage.value = true;
