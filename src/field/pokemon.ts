@@ -485,12 +485,24 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.stats[stat];
   }
 
-  getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move): integer {
+  getBattleStat(stat: Stat, opponent?: Pokemon, move?: Move, isCritical: boolean = false): integer {
     if (stat === Stat.HP)
       return this.getStat(Stat.HP);
     const battleStat = (stat - 1) as BattleStat;
     const statLevel = new Utils.IntegerHolder(this.summonData.battleStats[battleStat]);
     if (opponent) {
+      if (isCritical) {
+        switch (stat) {
+          case Stat.ATK:
+          case Stat.SPATK:
+            statLevel.value = Math.max(statLevel.value, 0);
+            break;
+          case Stat.DEF:
+          case Stat.SPDEF:
+            statLevel.value = Math.min(statLevel.value, 0);
+            break;
+        }
+      }
       applyAbAttrs(IgnoreOpponentStatChangesAbAttr, opponent, null, statLevel);
       if (move)
         applyMoveAttrs(IgnoreOpponentStatChangesAttr, this, opponent, move, statLevel);
@@ -1116,8 +1128,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                 isCritical = false;
             }
           }
-          const sourceAtk = new Utils.IntegerHolder(source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this));
-          const targetDef = new Utils.IntegerHolder(this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move));
+          const sourceAtk = new Utils.IntegerHolder(source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this, null, true));
+          const targetDef = new Utils.IntegerHolder(this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, true));
           const criticalMultiplier = isCritical ? 2 : 1;
           const isTypeImmune = (typeMultiplier.value * arenaAttackTypeMultiplier) === 0;
           const sourceTypes = source.getTypes();
