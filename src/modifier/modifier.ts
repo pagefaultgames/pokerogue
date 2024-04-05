@@ -1903,11 +1903,12 @@ abstract class EnemyDamageMultiplierModifier extends EnemyPersistentModifier {
 
 export class EnemyDamageBoosterModifier extends EnemyDamageMultiplierModifier {
   constructor(type: ModifierType, boostPercent: number, stackCount?: integer) {
-    super(type, 1 + ((boostPercent || 10) * 0.01), stackCount);
+    //super(type, 1 + ((boostPercent || 10) * 0.01), stackCount);
+    super(type, 1.1, stackCount); // Hardcode multiplier temporarily
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyDamageBoosterModifier && modifier.damageMultiplier === this.damageMultiplier;
+    return modifier instanceof EnemyDamageBoosterModifier;
   }
 
   clone(): EnemyDamageBoosterModifier {
@@ -1925,18 +1926,19 @@ export class EnemyDamageBoosterModifier extends EnemyDamageMultiplierModifier {
 
 export class EnemyDamageReducerModifier extends EnemyDamageMultiplierModifier {
   constructor(type: ModifierType, reductionPercent: number, stackCount?: integer) {
-    super(type, 1 - ((reductionPercent || 5) * 0.01), stackCount);
+    //super(type, 1 - ((reductionPercent || 5) * 0.01), stackCount);
+    super(type, 0.95, stackCount); // Hardcode multiplier temporarily
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyDamageReducerModifier && modifier.damageMultiplier === this.damageMultiplier;
+    return modifier instanceof EnemyDamageReducerModifier;
   }
 
   clone(): EnemyDamageReducerModifier {
     return new EnemyDamageReducerModifier(this.type, (1 - this.damageMultiplier) * 100, this.stackCount);
   }
 
-   getArgs(): any[] {
+  getArgs(): any[] {
     return [ (1 - this.damageMultiplier) * 100 ];
   }
 }
@@ -1947,11 +1949,12 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
   constructor(type: ModifierType, healPercent: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.healPercent = healPercent || 3;
+    // Hardcode temporarily
+    this.healPercent = 3;
   }
 
   match(modifier: Modifier): boolean {
-    return modifier instanceof EnemyTurnHealModifier && modifier.healPercent === this.healPercent;
+    return modifier instanceof EnemyTurnHealModifier;
   }
 
   clone(): EnemyTurnHealModifier {
