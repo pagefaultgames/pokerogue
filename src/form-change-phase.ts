@@ -272,6 +272,7 @@ export class QuietFormChangePhase extends BattlePhase {
       this.scene.playBgm();
       this.pokemon.summonData.battleStats = [ 0, 0, 0, 0, 0, 0, 0 ];
       this.scene.unshiftPhase(new PokemonHealPhase(this.scene, this.pokemon.getBattlerIndex(), this.pokemon.getMaxHp(), null, false, false, false, true));
+      this.pokemon.findAndRemoveTags(() => true);
       this.pokemon.bossSegments = 5;
       this.pokemon.bossSegmentIndex = 4;
       this.pokemon.initBattleInfo();
