@@ -211,18 +211,20 @@ class ToxicSpikesTag extends ArenaTrapTag {
   }
 
   activateTrap(pokemon: Pokemon): boolean {
-    if (!pokemon.status && pokemon.isGrounded()) {
-      const toxic = this.layers > 1;
-      if (pokemon.trySetStatus(!toxic ? StatusEffect.POISON : StatusEffect.TOXIC, true, null, `the ${this.getMoveName()}`))
+    if (pokemon.isOfType(Type.POISON) && pokemon.isGrounded()) {
+      this.neutralized = true;
+      if (pokemon.scene.arena.removeTag(this.tagType)) {
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` absorbed the ${this.getMoveName()}!`));
         return true;
-      else if (pokemon.isOfType(Type.POISON)) {
-        this.neutralized = true;
-        if (pokemon.scene.arena.removeTag(this.tagType)) {
-          pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` absorbed the ${this.getMoveName()}!`));
-          return true;
-        }
       }
     }
+    else if (!pokemon.status && pokemon.isGrounded()) {
+      const toxic = this.layers > 1;
+      if (pokemon.trySetStatus(!toxic ? StatusEffect.POISON : StatusEffect.TOXIC, true, null, `the ${this.getMoveName()}`))
+        return true;      
+    }
+    return false;
+  }
 
     return false;
   }
