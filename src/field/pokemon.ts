@@ -8,7 +8,7 @@ import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
 import { getLevelTotalExp } from '../data/exp';
 import { Stat } from '../data/pokemon-stat';
-import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, PokemonMultiHitModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, TerastallizeModifier } from '../modifier/modifier';
+import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBoosterModifier, EnemyDamageReducerModifier, EnemyEndureChanceModifier, EnemyFusionChanceModifier, HiddenAbilityRateBoosterModifier, PokemonBaseStatModifier, PokemonHeldItemModifier, PokemonMultiHitModifier, PokemonNatureWeightModifier, ShinyRateBoosterModifier, SurviveDamageModifier, TempBattleStatBoosterModifier, TerastallizeModifier } from '../modifier/modifier';
 import { PokeballType } from '../data/pokeball';
 import { Gender } from '../data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from '../data/battle-anims';
@@ -1194,6 +1194,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (damage.value) {
             if (this.getHpRatio() === 1)
               applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, this, source, battlerMove, cancelled, damage);
+            else if (!this.isPlayer() && damage.value >= this.hp)
+              this.scene.applyModifiers(EnemyEndureChanceModifier, false, this);
 
             const oneHitKo = result === HitResult.ONE_HIT_KO;
             damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo);
@@ -2671,8 +2673,7 @@ export class PokemonSummonData {
 
 export class PokemonBattleData {
   public hitCount: integer = 0;
-  public revived: boolean = false;
-  public maxRevived: boolean = false;
+  public endured: boolean = false;
 }
 
 export class PokemonBattleSummonData {

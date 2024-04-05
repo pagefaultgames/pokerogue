@@ -19,6 +19,7 @@ import { VoucherType } from '../system/voucher';
 import { PreventBerryUseAbAttr, applyAbAttrs } from '../data/ability';
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from '../data/pokemon-forms';
 import { Nature } from '#app/data/nature';
+import { BattlerTagType } from '#app/data/enums/battler-tag-type';
 
 type ModifierType = ModifierTypes.ModifierType;
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -1946,7 +1947,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
   constructor(type: ModifierType, healPercent: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.healPercent = healPercent || 10;
+    this.healPercent = healPercent || 3;
   }
 
   match(modifier: Modifier): boolean {
@@ -1975,7 +1976,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
   }
 
   getMaxStackCount(scene: BattleScene): integer {
-    return 20;
+    return 10;
   }
 }
 
@@ -2045,39 +2046,36 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
   }
 }
 
-export class EnemyInstantReviveChanceModifier extends EnemyPersistentModifier {
-  public fullHeal: boolean;
+export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
   private chance: number;
 
-  constructor(type: ModifierType, healFull: boolean, chancePercent: number, stackCount?: integer) {
+  constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.fullHeal = healFull;
-    this.chance = (chancePercent || healFull ? 2 : 5) / 100;
+    this.chance = (chancePercent || 5) / 100;
   }
 
   match(modifier: Modifier) {
-    return modifier instanceof EnemyInstantReviveChanceModifier && modifier.fullHeal === this.fullHeal && modifier.chance === this.chance;
+    return modifier instanceof EnemyEndureChanceModifier && modifier.chance === this.chance;
   }
 
   clone() {
-    return new EnemyInstantReviveChanceModifier(this.type, this.fullHeal, this.chance * 100, this.stackCount);
+    return new EnemyEndureChanceModifier(this.type, this.chance * 100, this.stackCount);
   }
 
   getArgs(): any[] {
-    return [ this.fullHeal, this.chance * 100 ];
+    return [ this.chance * 100 ];
   }
 
   apply(args: any[]): boolean {
-    if (Phaser.Math.RND.realInRange(0, 1) >= (this.chance * this.getStackCount()))
+    const target = (args[0] as Pokemon);
+
+    if (target.battleData.endured || Phaser.Math.RND.realInRange(0, 1) >= (this.chance * this.getStackCount()))
       return false;
+    
+    target.addTag(BattlerTagType.ENDURING, 1);
 
-    const pokemon = args[0] as Pokemon;
-
-    pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, pokemon.getBattlerIndex(),
-      Math.max(Math.floor(pokemon.getMaxHp() / (this.fullHeal ? 1 : 2)), 1), getPokemonMessage(pokemon, ` was revived\nby its ${this.type.name}!`), false, false, true));
-
-    pokemon.resetStatus();
+    target.battleData.endured = true;
 
     return true;
   }

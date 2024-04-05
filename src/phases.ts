@@ -6,7 +6,7 @@ import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMov
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyInstantReviveChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, PokemonFriendshipBoosterModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier } from "./modifier/modifier";
+import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyEndureChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, PokemonFriendshipBoosterModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier } from "./modifier/modifier";
 import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
 import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
 import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
@@ -2791,8 +2791,6 @@ export class FaintPhase extends PokemonPhase {
   start() {
     super.start();
 
-    const pokemon = this.getPokemon();
-
     if (!this.preventEndure) {
       const instantReviveModifier = this.scene.applyModifier(PokemonInstantReviveModifier, this.player, this.getPokemon()) as PokemonInstantReviveModifier;
 
@@ -2801,20 +2799,6 @@ export class FaintPhase extends PokemonPhase {
           this.scene.removeModifier(instantReviveModifier);
         this.scene.updateModifiers(this.player);
         return this.end();
-      }
-
-      if (!pokemon.isPlayer()) {
-        const enemyInstantReviveModifiers = this.scene.findModifiers(m => m instanceof EnemyInstantReviveChanceModifier, false);
-        for (let modifier of enemyInstantReviveModifiers) {
-          const maxRevive = (modifier as EnemyInstantReviveChanceModifier).fullHeal;
-          const prop = maxRevive ? 'maxRevived' : 'revived';
-          if (pokemon.battleData[prop])
-            continue;
-          if (modifier.shouldApply([ pokemon ]) && modifier.apply([ pokemon ])) {
-            pokemon.battleData[prop] = true;
-            return this.end();
-          }
-        }
       }
     }
 
