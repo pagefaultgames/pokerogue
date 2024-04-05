@@ -1513,10 +1513,10 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.CONKELDURR, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.KARRABLAST]: [
-    new SpeciesEvolution(Species.ESCAVALIER, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => !!p.scene.getParty().find(p => p.species.speciesId === Species.SHELMET)), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.ESCAVALIER, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => !!p.scene.gameData.dexData[Species.SHELMET].caughtAttr), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.SHELMET]: [
-    new SpeciesEvolution(Species.ACCELGOR, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => !!p.scene.getParty().find(p => p.species.speciesId === Species.KARRABLAST)), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.ACCELGOR, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => !!p.scene.gameData.dexData[Species.KARRABLAST].caughtAttr), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.SPRITZEE]: [
     new SpeciesEvolution(Species.AROMATISSE, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => true /*Sachet*/), SpeciesWildEvolutionDelay.VERY_LONG)
