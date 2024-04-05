@@ -2218,13 +2218,15 @@ export class AddArenaTagAttr extends MoveEffectAttr {
   public tagType: ArenaTagType;
   public turnCount: integer;
   private failOnOverlap: boolean;
+  private selfSideTarget: boolean;
 
-  constructor(tagType: ArenaTagType, turnCount?: integer, failOnOverlap: boolean = false) {
+  constructor(tagType: ArenaTagType, turnCount?: integer, failOnOverlap: boolean = false, selfSideTarget: boolean = false) {
     super(true, MoveEffectTrigger.POST_APPLY, true);
 
     this.tagType = tagType;
     this.turnCount = turnCount;
     this.failOnOverlap = failOnOverlap;
+    this.selfSideTarget = selfSideTarget;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2232,7 +2234,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
       return false;
 
     if (move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) {
-      user.scene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+      user.scene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
       return true;
     }
 
@@ -4511,8 +4513,10 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.SIZZLY_SLIDE, "Sizzly Slide", Type.FIRE, MoveCategory.PHYSICAL, 60, 100, 20, "The user cloaks itself in fire and charges at the target. This also leaves the target with a burn.", 100, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.BURN),
-    new AttackMove(Moves.GLITZY_GLOW, "Glitzy Glow (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 95, 15, "The user bombards the target with telekinetic force. A wondrous wall of light is put up to weaken the power of the opposing Pokémon's special moves.", -1, 0, 7),
-    new AttackMove(Moves.BADDY_BAD, "Baddy Bad (P)", Type.DARK, MoveCategory.SPECIAL, 80, 95, 15, "The user acts bad and attacks the target. A wondrous wall of light is put up to weaken the power of the opposing Pokémon's physical moves.", -1, 0, 7),
+    new AttackMove(Moves.GLITZY_GLOW, "Glitzy Glow", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 95, 15, "The user bombards the target with telekinetic force. A wondrous wall of light is put up to weaken the power of the opposing Pokémon's special moves.", -1, 0, 7)
+      .attr(AddArenaTagAttr, ArenaTagType.LIGHT_SCREEN, 5, false, true),
+    new AttackMove(Moves.BADDY_BAD, "Baddy Bad", Type.DARK, MoveCategory.SPECIAL, 80, 95, 15, "The user acts bad and attacks the target. A wondrous wall of light is put up to weaken the power of the opposing Pokémon's physical moves.", -1, 0, 7)
+      .attr(AddArenaTagAttr, ArenaTagType.REFLECT, 5, false, true),
     new AttackMove(Moves.SAPPY_SEED, "Sappy Seed", Type.GRASS, MoveCategory.PHYSICAL, 100, 90, 10, "The user grows a gigantic stalk that scatters seeds to attack the target. The seeds drain the target's HP every turn.", 100, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.SEEDED),
     new AttackMove(Moves.FREEZY_FROST, "Freezy Frost (P)", Type.ICE, MoveCategory.SPECIAL, 100, 90, 10, "The user attacks with a crystal made of cold frozen haze. It eliminates every stat change among all the Pokémon engaged in battle.", -1, 0, 7),
