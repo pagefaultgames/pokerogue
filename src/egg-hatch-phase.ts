@@ -16,6 +16,7 @@ import PokemonInfoContainer from "./ui/pokemon-info-container";
 export class EggHatchPhase extends Phase {
   private egg: Egg;
 
+  private eggHatchHandler: EggHatchSceneHandler;
   private eggHatchContainer: Phaser.GameObjects.Container;
   private eggHatchBg: Phaser.GameObjects.Image;
   private eggHatchOverlay: Phaser.GameObjects.Rectangle;
@@ -58,9 +59,9 @@ export class EggHatchPhase extends Phase {
 
       this.scene.fadeOutBgm(null, false);
 
-      const eggHatchHandler = this.scene.ui.getHandler() as EggHatchSceneHandler;
+      this.eggHatchHandler = this.scene.ui.getHandler() as EggHatchSceneHandler;
 
-      this.eggHatchContainer = eggHatchHandler.eggHatchContainer;
+      this.eggHatchContainer = this.eggHatchHandler.eggHatchContainer;
 
       this.eggHatchBg = this.scene.add.image(0, 0, 'default_bg');
       this.eggHatchBg.setOrigin(0, 0);
@@ -151,6 +152,10 @@ export class EggHatchPhase extends Phase {
         });
       });
     });
+  }
+  end() {
+    this.eggHatchHandler.clear()
+    super.end()
   }
 
   doEggShake(intensity: number, repeatCount?: integer, count?: integer): Promise<void> {
