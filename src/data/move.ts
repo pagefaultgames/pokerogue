@@ -3071,11 +3071,13 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, 1, true),
     new SelfStatusMove(Moves.BARRIER, "Barrier", Type.PSYCHIC, -1, 20, "The user throws up a sturdy wall that sharply raises its Defense stat.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, 2, true),
-    new StatusMove(Moves.LIGHT_SCREEN, "Light Screen (N)", Type.PSYCHIC, -1, 30, "A wondrous wall of light is put up to reduce damage from special attacks for five turns.", -1, 0, 1)
+    new StatusMove(Moves.LIGHT_SCREEN, "Light Screen", Type.PSYCHIC, -1, 30, "A wondrous wall of light is put up to reduce damage from special attacks for five turns.", -1, 0, 1)
+      .attr(AddArenaTagAttr, ArenaTagType.LIGHT_SCREEN, 5, true)
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.HAZE, "Haze (N)", Type.ICE, -1, 30, "The user creates a haze that eliminates every stat change among all the Pokémon engaged in battle.", -1, 0, 1)
       .target(MoveTarget.BOTH_SIDES),
-    new StatusMove(Moves.REFLECT, "Reflect (N)", Type.PSYCHIC, -1, 20, "A wondrous wall of light is put up to reduce damage from physical attacks for five turns.", -1, 0, 1)
+    new StatusMove(Moves.REFLECT, "Reflect", Type.PSYCHIC, -1, 20, "A wondrous wall of light is put up to reduce damage from physical attacks for five turns.", -1, 0, 1)
+      .attr(AddArenaTagAttr, ArenaTagType.REFLECT, 5, true)
       .target(MoveTarget.USER_SIDE),
     new SelfStatusMove(Moves.FOCUS_ENERGY, "Focus Energy", Type.NORMAL, -1, 30, "The user takes a deep breath and focuses so that critical hits land more easily.", -1, 0, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.CRIT_BOOST, true, true),
@@ -4415,8 +4417,9 @@ export function initMoves() {
     new AttackMove(Moves.DRAGON_HAMMER, "Dragon Hammer", Type.DRAGON, MoveCategory.PHYSICAL, 90, 100, 15, "The user uses its body like a hammer to attack the target and inflict damage.", -1, 0, 7),
     new AttackMove(Moves.BRUTAL_SWING, "Brutal Swing", Type.DARK, MoveCategory.PHYSICAL, 60, 100, 20, "The user swings its body around violently to inflict damage on everything in its vicinity.", -1, 0, 7)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new StatusMove(Moves.AURORA_VEIL, "Aurora Veil (N)", Type.ICE, -1, 20, "This move reduces damage from physical and special moves for five turns. This can be used only in a hailstorm.", -1, 0, 7)
-      .condition((user, target, move) => user.scene.arena.weather?.weatherType === WeatherType.HAIL)
+    new StatusMove(Moves.AURORA_VEIL, "Aurora Veil", Type.ICE, -1, 20, "This move reduces damage from physical and special moves for five turns. This can be used only in a hailstorm.", -1, 0, 7)
+      .condition((user, target, move) => user.scene.arena.weather?.weatherType === WeatherType.HAIL && !user.scene.arena.weather?.isEffectSuppressed(user.scene))
+      .attr(AddArenaTagAttr, ArenaTagType.AURORA_VEIL, 5, true)
       .target(MoveTarget.USER_SIDE),
     /* Unused */
     new AttackMove(Moves.SINISTER_ARROW_RAID, "Sinister Arrow Raid (P)", Type.GHOST, MoveCategory.PHYSICAL, 180, -1, 1, "The user, Decidueye, creates countless arrows using its Z-Power and shoots the target with full force.", -1, 0, 7)

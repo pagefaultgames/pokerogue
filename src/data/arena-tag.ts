@@ -1,7 +1,7 @@
 import { Arena } from "../field/arena";
 import { Type } from "./type";
 import * as Utils from "../utils";
-import { allMoves } from "./move";
+import { MoveCategory, allMoves } from "./move";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { MoveEffectPhase } from "../phases";
@@ -73,6 +73,75 @@ export class MistTag extends ArenaTag {
     arena.scene.queueMessage('The mist prevented\nthe lowering of stats!');
     
     return true;
+  }
+}
+
+export class WeakenMoveScreenTag extends ArenaTag {
+  constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide) {
+    super(tagType, turnCount, sourceMove, sourceId);
+  }
+
+  apply(arena: Arena, args: any[]): boolean {
+    if ((args[1] as boolean)) {
+      (args[2] as Utils.NumberHolder).value = 2732/4096;
+    } else {
+      (args[2] as Utils.NumberHolder).value = 0.5;
+    }
+    return true;
+  }
+}
+
+class ReflectTag extends WeakenMoveScreenTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.REFLECT, turnCount, Moves.REFLECT, sourceId, side);
+  }
+
+  apply(arena: Arena, args: any[]): boolean {
+    if ((args[0] as MoveCategory) === MoveCategory.PHYSICAL) {
+      if ((args[1] as boolean)) {
+        (args[2] as Utils.NumberHolder).value = 2732/4096;
+      } else {
+        (args[2] as Utils.NumberHolder).value = 0.5;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(`Reflect reduced the damage of physical moves${this.side === ArenaTagSide.PLAYER ? '\non your side' : this.side === ArenaTagSide.ENEMY ? '\non the foe\'s side' : ''}.`);
+  }
+}
+
+class LightScreenTag extends WeakenMoveScreenTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.LIGHT_SCREEN, turnCount, Moves.LIGHT_SCREEN, sourceId, side);
+  }
+
+  apply(arena: Arena, args: any[]): boolean {
+    if ((args[0] as MoveCategory) === MoveCategory.SPECIAL) {
+      if ((args[1] as boolean)) {
+        (args[2] as Utils.NumberHolder).value = 2732/4096;
+      } else {
+        (args[2] as Utils.NumberHolder).value = 0.5;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(`Light Screen reduced the damage of special moves${this.side === ArenaTagSide.PLAYER ? '\non your side' : this.side === ArenaTagSide.ENEMY ? '\non the foe\'s side' : ''}.`);
+  }
+}
+
+class AuroraVeilTag extends WeakenMoveScreenTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.AURORA_VEIL, turnCount, Moves.AURORA_VEIL, sourceId, side);
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(`Aurora Veil reduced the damage of moves${this.side === ArenaTagSide.PLAYER ? '\non your side' : this.side === ArenaTagSide.ENEMY ? '\non the foe\'s side' : ''}.`);
   }
 }
 
@@ -378,5 +447,11 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
       return new TrickRoomTag(turnCount, sourceId);
     case ArenaTagType.GRAVITY:
       return new GravityTag(turnCount);
+    case ArenaTagType.REFLECT:
+      return new ReflectTag(turnCount, sourceId, side);
+    case ArenaTagType.LIGHT_SCREEN:
+      return new LightScreenTag(turnCount, sourceId, side);
+    case ArenaTagType.AURORA_VEIL:
+      return new AuroraVeilTag(turnCount, sourceId, side);
   }
 }
