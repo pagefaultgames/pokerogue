@@ -1132,7 +1132,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
           const sourceAtk = new Utils.IntegerHolder(source.getBattleStat(isPhysical ? Stat.ATK : Stat.SPATK, this, null, isCritical));
           const targetDef = new Utils.IntegerHolder(this.getBattleStat(isPhysical ? Stat.DEF : Stat.SPDEF, source, move, isCritical));
-          const criticalMultiplier = isCritical ? 2 : 1;
+          const criticalMultiplier = isCritical ? 1.5 : 1;
           const screenMultiplier = new Utils.NumberHolder(1);
           if (!isCritical) {
             this.scene.arena.applyTagsForSide(WeakenMoveScreenTag, this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY, move.category, this.scene.currentBattle.double, screenMultiplier);
@@ -1239,7 +1239,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                 this.scene.queueMessage('It\'s super effective!');
                 break;
               case HitResult.NOT_VERY_EFFECTIVE:
-                this.scene.queueMessage('It\'s not very effective!');
+                this.scene.queueMessage('It\'s not very effective…');
                 break;
               case HitResult.NO_EFFECT:
                 this.scene.queueMessage(`It doesn\'t affect ${this.name}!`);
