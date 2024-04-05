@@ -699,7 +699,7 @@ export class ContactBurnProtectedTag extends ProtectedTag {
 
 export class EnduringTag extends BattlerTag {
   constructor(sourceMove: Moves) {
-    super(BattlerTagType.ENDURING, BattlerTagLapseType.CUSTOM, 0, sourceMove);
+    super(BattlerTagType.ENDURING, BattlerTagLapseType.TURN_END, 0, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
