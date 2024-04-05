@@ -856,6 +856,8 @@ export const modifierTypes = {
   GOLDEN_PUNCH: () => new PokemonHeldItemModifierType('Golden Punch', 'Grants 50% of damage inflicted as money', (type, args) => new Modifiers.DamageMoneyRewardModifier(type, (args[0] as Pokemon).id)),
   COIN_CASE: () => new ModifierType('Coin Case', 'After every 10th battle, receive 10% of your money in interest', (type, _args) => new Modifiers.MoneyInterestModifier(type)),
 
+  LOCK_CAPSULE: () => new ModifierType('Lock Capsule', 'Allows you to lock item rarities when rerolling items', (type, _args) => new Modifiers.LockModifierTiersModifier(type), 'lock_capsule'),
+
   GRIP_CLAW: () => new ContactHeldItemTransferChanceModifierType('Grip Claw', 10),
 
   MULTI_LENS: () => new PokemonMultiHitModifierType('Multi Lens', 'zoom_lens'),
@@ -1032,6 +1034,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, 6),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
+    new WeightedModifierType(modifierTypes.LOCK_CAPSULE, 3),
     new WeightedModifierType(modifierTypes.SUPER_EXP_CHARM, 10),
     new WeightedModifierType(modifierTypes.FORM_CHANGE_ITEM, 18),
     new WeightedModifierType(modifierTypes.MEGA_BRACELET, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 50), 4) * 8, 32),

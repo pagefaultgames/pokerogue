@@ -3923,7 +3923,7 @@ export class SelectModifierPhase extends BattlePhase {
             this.scene.ui.revertMode();
             this.scene.ui.setMode(Mode.MESSAGE);
             super.end();
-          }, () => this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions)));
+          }, () => this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers)));
         });
         return false;
       }
@@ -3932,7 +3932,7 @@ export class SelectModifierPhase extends BattlePhase {
       switch (rowCursor) {
         case 0:
           if (!cursor) {
-            const rerollCost = this.getRerollCost(typeOptions);
+            const rerollCost = this.getRerollCost(typeOptions, this.scene.lockModifierTiers);
             if (this.scene.money < rerollCost) {
               this.scene.ui.playError();
               return false;
@@ -3944,18 +3944,25 @@ export class SelectModifierPhase extends BattlePhase {
               this.scene.updateMoneyText();
               this.scene.playSound('buy');
             }
-          } else {
+          } else if (cursor === 1) {
             this.scene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.MODIFIER_TRANSFER, -1, (fromSlotIndex: integer, itemIndex: integer, toSlotIndex: integer) => {
               if (toSlotIndex !== undefined && fromSlotIndex < 6 && toSlotIndex < 6 && fromSlotIndex !== toSlotIndex && itemIndex > -1) {
-                this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions)).then(() => {
+                this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers)).then(() => {
                   const itemModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
                     && (m as PokemonHeldItemModifier).getTransferrable(true) && (m as PokemonHeldItemModifier).pokemonId === party[fromSlotIndex].id) as PokemonHeldItemModifier[];
                   const itemModifier = itemModifiers[itemIndex];
                   this.scene.tryTransferHeldItemModifier(itemModifier, party[toSlotIndex], true, true);
                 });
               } else
-                this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions));
+                this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
             }, PartyUiHandler.FilterItemMaxStacks);
+          } else {
+            this.scene.lockModifierTiers = !this.scene.lockModifierTiers;
+            const uiHandler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+            uiHandler.setRerollCost(this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
+            uiHandler.updateLockRaritiesText();
+            uiHandler.updateRerollCostText();
+            return false;
           }
           return true;
         case 1:
@@ -3997,7 +4004,7 @@ export class SelectModifierPhase extends BattlePhase {
                 applyModifier(modifier, true);
               });
             } else
-              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions));
+              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
           }, modifierType.selectFilter);
         } else {
           const pokemonModifierType = modifierType as PokemonModifierType;
@@ -4022,7 +4029,7 @@ export class SelectModifierPhase extends BattlePhase {
                 applyModifier(modifier, true);
               });
             } else
-              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions));
+              this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
           }, pokemonModifierType.selectFilter, modifierType instanceof PokemonMoveModifierType ? (modifierType as PokemonMoveModifierType).moveSelectFilter : undefined, tmMoveId);
         }
       } else
@@ -4030,7 +4037,7 @@ export class SelectModifierPhase extends BattlePhase {
 
       return !cost;
     };
-    this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions));
+    this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
   }
 
   updateSeed(): void {
@@ -4041,11 +4048,14 @@ export class SelectModifierPhase extends BattlePhase {
     return true;
   }
 
-  getRerollCost(typeOptions: ModifierTypeOption[]): integer {
+  getRerollCost(typeOptions: ModifierTypeOption[], lockRarities: boolean): integer {
     let baseValue = 0;
-    const tierValues = [ 50, 125, 300, 750, 2000 ];
-    for (let opt of typeOptions)
-      baseValue += tierValues[opt.type.tier];
+    if (lockRarities) {
+      const tierValues = [ 50, 125, 300, 750, 2000 ];
+      for (let opt of typeOptions)
+        baseValue += tierValues[opt.type.tier];
+    } else
+      baseValue = 250;
     return Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount);
   }
   
@@ -4054,7 +4064,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   getModifierTypeOptions(modifierCount: integer): ModifierTypeOption[] {
-    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.modifierTiers);
+    return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined);
   }
 
   addModifier(modifier: Modifier): Promise<void> {

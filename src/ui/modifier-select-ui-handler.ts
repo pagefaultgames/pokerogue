@@ -4,7 +4,7 @@ import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
 import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
-import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
@@ -12,8 +12,10 @@ export const SHOP_OPTIONS_ROW_LIMIT = 6;
 export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
   private rerollButtonContainer: Phaser.GameObjects.Container;
+  private lockRarityButtonContainer: Phaser.GameObjects.Container;
   private transferButtonContainer: Phaser.GameObjects.Container;
   private rerollCostText: Phaser.GameObjects.Text;
+  private lockRarityButtonText: Phaser.GameObjects.Text;
 
   private rowCursor: integer = 0;
   private player: boolean;
@@ -57,6 +59,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollCostText.setOrigin(0, 0);
     this.rerollCostText.setPositionRelative(rerollButtonText, rerollButtonText.displayWidth + 5, 1);
     this.rerollButtonContainer.add(this.rerollCostText);
+
+    this.lockRarityButtonContainer = this.scene.add.container(16, -64);
+    this.lockRarityButtonContainer.setVisible(false);
+    ui.add(this.lockRarityButtonContainer);
+
+    this.lockRarityButtonText = addTextObject(this.scene, -4, -2, 'Lock Rarities', TextStyle.PARTY);
+    this.lockRarityButtonText.setOrigin(0, 0);
+    this.lockRarityButtonContainer.add(this.lockRarityButtonText);
   }
 
   show(args: any[]): boolean {
@@ -78,12 +88,18 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.player = args[0];
 
     const partyHasHeldItem = this.player && !!this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).getTransferrable(true)).length;
+    const canLockRarities = !!this.scene.findModifier(m => m instanceof LockModifierTiersModifier);
 
     this.transferButtonContainer.setVisible(false);
     this.transferButtonContainer.setAlpha(0);
 
     this.rerollButtonContainer.setVisible(false);
     this.rerollButtonContainer.setAlpha(0);
+
+    this.lockRarityButtonContainer.setVisible(false);
+    this.lockRarityButtonContainer.setAlpha(0);
+
+    this.rerollButtonContainer.setPositionRelative(this.lockRarityButtonContainer, 0, canLockRarities ? -12 : 0);
 
     this.rerollCost = args[3] as integer;
 
@@ -155,15 +171,16 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         });
       }
 
-      if (this.scene.currentBattle.waveIndex % 10) {
-        this.rerollButtonContainer.setAlpha(0);
-        this.rerollButtonContainer.setVisible(true);
-        this.scene.tweens.add({
-          targets: this.rerollButtonContainer,
-          alpha: 1,
-          duration: 250
-        });
-      }
+      this.rerollButtonContainer.setAlpha(0);
+      this.lockRarityButtonContainer.setAlpha(0);
+      this.rerollButtonContainer.setVisible(true);
+      this.lockRarityButtonContainer.setVisible(canLockRarities);
+
+      this.scene.tweens.add({
+        targets: [ this.rerollButtonContainer, this.lockRarityButtonContainer ],
+        alpha: 1,
+        duration: 250
+      });
 
       this.setCursor(0);
       this.setRowCursor(1);
@@ -210,24 +227,28 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     } else {
       switch (button) {
         case Button.UP:
-          if (this.rowCursor < this.shopOptionsRows.length + 1)
+          if (!this.rowCursor && this.cursor === 2)
+            success = this.setCursor(0);
+          else if (this.rowCursor < this.shopOptionsRows.length + 1)
             success = this.setRowCursor(this.rowCursor + 1);
           break;
         case Button.DOWN:
           if (this.rowCursor)
             success = this.setRowCursor(this.rowCursor - 1);
+          else if (this.lockRarityButtonContainer.visible && !this.cursor)
+            success = this.setCursor(2);
           break;
         case Button.LEFT:
-          if (!this.rowCursor)
-            success = this.rerollButtonContainer.visible && this.setCursor(0);
-          else if (this.cursor)
+          if (!this.rowCursor) {
+            success = this.cursor === 1 && this.rerollButtonContainer.visible && this.setCursor(0);
+          } else if (this.cursor)
             success = this.setCursor(this.cursor - 1);
           else if (this.rowCursor === 1 && this.rerollButtonContainer.visible)
             success = this.setRowCursor(0);
           break;
         case Button.RIGHT:
           if (!this.rowCursor)
-            success = this.transferButtonContainer.visible && this.setCursor(1);
+            success = this.cursor !== 1 && this.transferButtonContainer.visible && this.setCursor(1);
           else if (this.cursor < this.getRowItems(this.rowCursor) - 1)
             success = this.setCursor(this.cursor + 1);
           else if (this.rowCursor === 1 && this.transferButtonContainer.visible)
@@ -263,11 +284,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 16, (-this.scene.game.canvas.height / 12 - this.scene.game.canvas.height / 32) - (-16 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))));
       ui.showText(options[this.cursor].modifierTypeOption.type.getDescription(this.scene));
     } else if (!cursor) {
-      this.cursorObj.setPosition(6, -60);
+      this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
       ui.showText('Spend money to reroll your item options');
-    } else {
+    } else if (cursor === 1) {
       this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 50, -60);
       ui.showText('Transfer a held item from one Pokémon to another');
+    } else {
+      this.cursorObj.setPosition(6, -60);
+      ui.showText('Lock item rarities on reroll (affects reroll cost)');
     }
 
     return ret;
@@ -304,6 +328,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     }
   }
 
+  setRerollCost(rerollCost: integer): void {
+    this.rerollCost = rerollCost;
+  }
+
   updateCostText(): void {
     const shopOptions = this.shopOptionsRows.flat();
     for (let shopOption of shopOptions)
@@ -318,6 +346,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollCostText.setText(`₽${this.rerollCost.toLocaleString('en-US')}`);
     this.rerollCostText.setColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
     this.rerollCostText.setShadowColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED, true));
+  }
+
+  updateLockRaritiesText(): void {
+    const textStyle = this.scene.lockModifierTiers ? TextStyle.SUMMARY_BLUE : TextStyle.PARTY;
+    this.lockRarityButtonText.setColor(this.getTextColor(textStyle));
+    this.lockRarityButtonText.setShadowColor(this.getTextColor(textStyle, true));
   }
 
   clear() {
@@ -342,7 +376,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       onComplete: () => options.forEach(o => o.destroy())
     });
     
-    [ this.rerollButtonContainer, this.transferButtonContainer ].forEach(container => {
+    [ this.rerollButtonContainer, this.transferButtonContainer, this.lockRarityButtonContainer ].forEach(container => {
       if (container.visible) {
         this.scene.tweens.add({
           targets: container,

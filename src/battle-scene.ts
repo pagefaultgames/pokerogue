@@ -149,6 +149,7 @@ export default class BattleScene extends SceneBase {
 	public arena: Arena;
 	public gameMode: GameMode;
 	public score: integer;
+	public lockModifierTiers: boolean;
 	public trainer: Phaser.GameObjects.Sprite;
 	public lastEnemyTrainer: Trainer;
 	public currentBattle: Battle;
@@ -595,6 +596,8 @@ export default class BattleScene extends SceneBase {
 
 		this.score = 0;
 		this.money = 0;
+
+		this.lockModifierTiers = false;
 
 		this.pokeballCounts = Object.fromEntries(Utils.getEnumValues(PokeballType).filter(p => p <= PokeballType.MASTER_BALL).map(t => [ t, 0 ]));
 		this.pokeballCounts[PokeballType.POKEBALL] += 5;

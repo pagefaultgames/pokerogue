@@ -65,6 +65,7 @@ const setPositionRelative = function (guideObject: any, x: number, y: number) {
 	this.setPosition(x, y);
 };
 
+Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative;
