@@ -154,8 +154,9 @@ export class EggHatchPhase extends Phase {
     });
   }
   end() {
-    this.eggHatchHandler.clear()
-    super.end()
+    if (this.scene.findPhase((p) => p instanceof EggHatchPhase))
+      this.eggHatchHandler.clear();
+    super.end();
   }
 
   doEggShake(intensity: number, repeatCount?: integer, count?: integer): Promise<void> {

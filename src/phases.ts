@@ -4090,19 +4090,17 @@ export class EggLapsePhase extends Phase {
   start() {
     super.start();
 
-    const eggsToHatch: Egg[] = [];
+    const eggsToHatch: Egg[] = this.scene.gameData.eggs.filter((egg: Egg) => {
+      return --egg.hatchWaves < 1
+    })
 
-    for (let egg of this.scene.gameData.eggs) {
-      if (--egg.hatchWaves < 1)
-        eggsToHatch.push(egg);
-    }
-
-    if (eggsToHatch.length)
+    if (eggsToHatch.length) {
       this.scene.queueMessage('Oh?');
-
-    for (let egg of eggsToHatch)
-      this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg));
-
+      
+      for (let egg of eggsToHatch) 
+        this.scene.unshiftPhase(new EggHatchPhase(this.scene, egg));
+    
+    }
     this.end();
   }
 }
