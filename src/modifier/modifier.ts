@@ -681,9 +681,12 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
   }
 
   apply(args: any[]): boolean {
-    (args[1] as Utils.NumberHolder).value = Math.floor((args[1] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
+    if (args[1] === this.moveType) {
+      (args[2] as Utils.NumberHolder).value = Math.floor((args[2] as Utils.NumberHolder).value * (1 + (this.getStackCount() * this.boostMultiplier)));
+      return true;
+    }
 
-    return true;
+    return false;
   }
 
   getScoreMultiplier(): number {
@@ -1424,7 +1427,7 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const multiplier = args[1] as Utils.IntegerHolder;
     if (multiplier.value !== 1) {
-      multiplier.value += 0.05 * this.getStackCount() * (multiplier.value > 1 ? 1 : -1);
+      multiplier.value += 0.1 * this.getStackCount() * (multiplier.value > 1 ? 1 : -1);
       return true;
     }
 
@@ -1432,7 +1435,7 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
-    return 5;
+    return 10;
   }
 }
 

@@ -1092,7 +1092,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, new Utils.IntegerHolder(0), power);
           if (!typeless) {
             this.scene.arena.applyTags(WeakenMoveTypeTag, move.type, power);
-            this.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, power);
+            this.scene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, move.type, power);
           }
           if (source.getTag(HelpingHandTag))
             power.value *= 1.5;

@@ -845,7 +845,7 @@ export const modifierTypes = {
 
   SOOTHE_BELL: () => new PokemonFriendshipBoosterModifierType('Soothe Bell'),
 
-  SOUL_DEW: () => new PokemonHeldItemModifierType('Soul Dew', 'Increases the influence of a Pokémon\'s nature on its stats by 5% (additive)', (type, args) => new Modifiers.PokemonNatureWeightModifier(type, (args[0] as Pokemon).id)),
+  SOUL_DEW: () => new PokemonHeldItemModifierType('Soul Dew', 'Increases the influence of a Pokémon\'s nature on its stats by 10% (additive)', (type, args) => new Modifiers.PokemonNatureWeightModifier(type, (args[0] as Pokemon).id)),
 
   NUGGET: () => new MoneyRewardModifierType('Nugget', 1, 'small'),
   BIG_NUGGET: () => new MoneyRewardModifierType('Big Nugget', 2.5, 'moderate'),
@@ -1012,7 +1012,6 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.TM_ULTRA, 8),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
     new WeightedModifierType(modifierTypes.SOOTHE_BELL, (party: Pokemon[]) => party.find(p => (pokemonEvolutions.hasOwnProperty(p.species.speciesId) && pokemonEvolutions[p.species.speciesId].find(e => e.condition && e.condition instanceof SpeciesFriendshipEvolutionCondition)) || p.moveset.find(m => m.moveId === Moves.RETURN)) ? 16 : 0, 16),
-    new WeightedModifierType(modifierTypes.SOUL_DEW, 2),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 2),
     new WeightedModifierType(modifierTypes.IV_SCANNER, 4),
     new WeightedModifierType(modifierTypes.EXP_CHARM, 8),
@@ -1029,6 +1028,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 4),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
     new WeightedModifierType(modifierTypes.BATON, 2),
+    new WeightedModifierType(modifierTypes.SOUL_DEW, 8),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, 6),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),

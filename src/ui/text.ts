@@ -114,8 +114,8 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
   return [ styleOptions, shadowColor, shadowSize ];
 }
 
-export function getBBCodeFrag(content: string, textStyle: TextStyle): string {
-  return `[color=${getTextColor(textStyle)}][shadow=${getTextColor(textStyle, true)}]${content}`;
+export function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme: UiTheme = UiTheme.DEFAULT): string {
+  return `[color=${getTextColor(textStyle, false, uiTheme)}][shadow=${getTextColor(textStyle, true, uiTheme)}]${content}`;
 }
 
 export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: UiTheme = UiTheme.DEFAULT): string {

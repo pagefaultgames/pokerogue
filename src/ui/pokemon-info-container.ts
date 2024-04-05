@@ -123,10 +123,10 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       const ability = pokemon.getAbility(true);
       const abilityTextStyle = ability.id === pokemon.getSpeciesForm().abilityHidden ? TextStyle.MONEY : TextStyle.WINDOW;
       this.pokemonAbilityText.setText(ability.name);
-      this.pokemonAbilityText.setColor(getTextColor(abilityTextStyle));
-      this.pokemonAbilityText.setShadowColor(getTextColor(abilityTextStyle, true));
+      this.pokemonAbilityText.setColor(getTextColor(abilityTextStyle, false, this.scene.uiTheme));
+      this.pokemonAbilityText.setShadowColor(getTextColor(abilityTextStyle, true, this.scene.uiTheme));
 
-      this.pokemonNatureText.setText(getNatureName(pokemon.getNature(), true));
+      this.pokemonNatureText.setText(getNatureName(pokemon.getNature(), true, false, false, this.scene.uiTheme));
 
       const originalIvs: integer[] = this.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr
       ? this.scene.gameData.dexData[pokemon.species.speciesId].ivs
