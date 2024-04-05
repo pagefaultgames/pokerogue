@@ -307,7 +307,7 @@ export class TempBattleStatBoosterModifierType extends ModifierType implements G
 
   constructor(tempBattleStat: TempBattleStat) {
     super(getTempBattleStatBoosterItemName(tempBattleStat),
-      `Increases the ${getTempBattleStatName(tempBattleStat)} of all party members by 1 stage for 5 battles`,
+      `Increases the ${getTempBattleStatName(tempBattleStat)} of all party members by 1 stage for 10 battles`,
       (_type, _args) => new Modifiers.TempBattleStatBoosterModifier(this, this.tempBattleStat),
       getTempBattleStatBoosterItemName(tempBattleStat).replace(/\./g, '').replace(/[ ]/g, '_').toLowerCase());
 
@@ -770,9 +770,10 @@ export const modifierTypes = {
   TEMP_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs)
       return new TempBattleStatBoosterModifierType(pregenArgs[0] as TempBattleStat);
-    const randTempBattleStat = Utils.randSeedInt(7) as TempBattleStat;
+    const randTempBattleStat = Utils.randSeedInt(6) as TempBattleStat;
     return new TempBattleStatBoosterModifierType(randTempBattleStat);
   }),
+  DIRE_HIT: () => new TempBattleStatBoosterModifierType(TempBattleStat.CRIT),
 
   BASE_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
@@ -996,14 +997,13 @@ const modifierPool: ModifierPool = {
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, 24),
+    new WeightedModifierType(modifierTypes.DIRE_HIT, 8),
     new WeightedModifierType(modifierTypes.MAX_LURE, 4),
     new WeightedModifierType(modifierTypes.BIG_NUGGET, 12),
     new WeightedModifierType(modifierTypes.PP_UP, 9),
     new WeightedModifierType(modifierTypes.PP_MAX, 3),
     new WeightedModifierType(modifierTypes.MINT, 4),
-    new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => {
-      return Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32);
-    }, 32),
+    new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32), 32),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),

@@ -1136,6 +1136,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
           applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
 
+          if (isCritical) {
+            sourceAtk.value = Math.max(sourceAtk.value, 0);
+            targetDef.value = Math.min(targetDef.value, 0);
+          }
+
           if (!isTypeImmune) {
             damage.value = Math.ceil(((((2 * source.level / 5 + 2) * power.value * sourceAtk.value / targetDef.value) / 50) + 2) * stabMultiplier.value * typeMultiplier.value * arenaAttackTypeMultiplier * ((this.scene.randBattleSeedInt(15) + 85) / 100)) * criticalMultiplier;
             if (isPhysical && source.status && source.status.effect === StatusEffect.BURN) {
