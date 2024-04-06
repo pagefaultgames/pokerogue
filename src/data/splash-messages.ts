@@ -1,7 +1,7 @@
 export const battleCountSplashMessage = '{COUNT} Battles Won!';
 
-export const splashMessages = [
-  battleCountSplashMessage,
+export const splashMessages = Array(10).fill(battleCountSplashMessage);
+splashMessages.push(...[
   'Join the Discord!',
   'Infinite Levels!',
   'Everything Stacks!',
@@ -32,4 +32,4 @@ export const splashMessages = [
   'Also Try Emerald Rogue!',
   'Eevee Expo!',
   'YNOproject!'
-];
+]);
