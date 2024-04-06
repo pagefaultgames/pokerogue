@@ -765,7 +765,7 @@ export class EncounterPhase extends BattlePhase {
       enemyField.map(p => this.scene.pushPhase(new PostSummonPhase(this.scene, p.getBattlerIndex())));
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier)
-        enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount(), 6))));
+        enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
     }
 
     if (!this.loaded) {

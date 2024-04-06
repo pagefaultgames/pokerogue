@@ -895,7 +895,7 @@ export const modifierTypes = {
   SHINY_CHARM: () => new ModifierType('Shiny Charm', 'Dramatically increases the chance of a wild Pokémon being shiny', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
   ABILITY_CHARM: () => new ModifierType('Ability Charm', 'Dramatically increases the chance of a wild Pokémon having a hidden ability', (type, _args) => new Modifiers.HiddenAbilityRateBoosterModifier(type)),
 
-  IV_SCANNER: () => new ModifierType('IV Scanner', 'Allows scanning the IVs of wild Pokémon', (type, _args) => new Modifiers.IvScannerModifier(type), 'scanner'),
+  IV_SCANNER: () => new ModifierType('IV Scanner', 'Allows scanning the IVs of wild Pokémon. 2 IVs are revealed per stack. The best IVs are shown first.', (type, _args) => new Modifiers.IvScannerModifier(type), 'scanner'),
 
   DNA_SPLICERS: () => new FusePokemonModifierType('DNA Splicers'),
 

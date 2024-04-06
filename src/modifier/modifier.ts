@@ -1873,7 +1873,7 @@ export class IvScannerModifier extends PersistentModifier {
   }
 
   getMaxStackCount(scene: BattleScene): integer {
-    return 5;
+    return 3;
   }
 }
 
