@@ -1183,9 +1183,11 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as PlayerPokemon;
 
-    let matchingEvolution = pokemonEvolutions[pokemon.species.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
-      && (e.evoFormKey === null || (e.preFormKey || '') === pokemon.getFormKey())
-      && (!e.condition || e.condition.predicate(pokemon)));
+    let matchingEvolution = pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
+      ? pokemonEvolutions[pokemon.species.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
+        && (e.evoFormKey === null || (e.preFormKey || '') === pokemon.getFormKey())
+        && (!e.condition || e.condition.predicate(pokemon)))
+      : null;
 
     if (!matchingEvolution && pokemon.isFusion()) {
       matchingEvolution = pokemonEvolutions[pokemon.fusionSpecies.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
