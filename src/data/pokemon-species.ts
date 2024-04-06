@@ -3043,8 +3043,6 @@ export const noStarterFormKeys: string[] = [
   SpeciesFormKey.ETERNAMAX
 ].map(k => k.toString());
 
-console.log(noStarterFormKeys)
-
 // TODO: Remove
 {
   //setTimeout(() => {
