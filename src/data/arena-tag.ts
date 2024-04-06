@@ -1,15 +1,16 @@
 import { Arena } from "../field/arena";
 import { Type } from "./type";
 import * as Utils from "../utils";
-import { MoveCategory, allMoves } from "./move";
+import { MoveCategory, StatChangeAttr, allMoves } from "./move";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { MoveEffectPhase } from "../phases";
+import { MoveEffectPhase, StatChangePhase } from "../phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { Moves } from "./enums/moves";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { BlockNonDirectDamageAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, ProtectStatAbAttr, applyAbAttrs } from "./ability";
+import { BattleStat } from "./battle-stat";
 
 export enum ArenaTagSide {
   BOTH,
@@ -392,6 +393,34 @@ class StealthRockTag extends ArenaTrapTag {
   }
 }
 
+class StickyWebTag extends ArenaTrapTag {
+  constructor(sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.STICKY_WEB, Moves.STICKY_WEB, sourceId, side, 1);
+  }
+
+  onAdd(arena: Arena): void {
+    super.onAdd(arena);
+    
+    const source = arena.scene.getPokemonById(this.sourceId);
+    arena.scene.queueMessage(`A ${this.getMoveName()} has been laid out on the ground around the opposing team!`);
+  }
+
+  activateTrap(pokemon: Pokemon): boolean {
+    if (pokemon.isGrounded()) {
+      const cancelled = new Utils.BooleanHolder(false);
+      applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
+      if (!cancelled.value) {
+        pokemon.scene.queueMessage(`The opposing ${pokemon.name} was caught in a sticky web!`);
+        const statLevels = new Utils.NumberHolder(-1);
+        pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, [BattleStat.SPD], statLevels.value));
+      }
+    }
+
+    return false;
+  }
+
+}
+
 export class TrickRoomTag extends ArenaTag {
   constructor(turnCount: integer, sourceId: integer) {
     super(ArenaTagType.TRICK_ROOM, turnCount, Moves.TRICK_ROOM, sourceId);
@@ -443,6 +472,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
       return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex);
     case ArenaTagType.STEALTH_ROCK:
       return new StealthRockTag(sourceId, side);
+    case ArenaTagType.STICKY_WEB:
+      return new StickyWebTag(sourceId, side);
     case ArenaTagType.TRICK_ROOM:
       return new TrickRoomTag(turnCount, sourceId);
     case ArenaTagType.GRAVITY:

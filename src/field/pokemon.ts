@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import BattleScene, { ABILITY_OVERRIDE, AnySound, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE } from '../battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -181,8 +181,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.calculateStats();
         this.generateFusionSpecies();
       }
-
-      this.generateAndPopulateMoveset();
     }
 
     this.generateName();
@@ -939,7 +937,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   generateAndPopulateMoveset(): void {
     this.moveset = [];
-    const movePool = [];
+    let movePool: Moves[] = [];
     const allLevelMoves = this.getLevelMoves(1, true, true);
     if (!allLevelMoves) {
       console.log(this.species.speciesId, 'ERROR');
@@ -957,6 +955,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           movePool.unshift(levelMove[1]);
       }
     }
+
+    if (this.isBoss())
+      movePool = movePool.filter(m => !allMoves[m].getAttrs(SacrificialAttr).length);
 
     movePool.reverse();
 
@@ -2047,6 +2048,8 @@ export class PlayerPokemon extends Pokemon {
   constructor(scene: BattleScene, species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender: Gender, shiny: boolean, ivs: integer[], nature: Nature, dataSource: Pokemon | PokemonData) {
     super(scene, 106, 148, species, level, abilityIndex, formIndex, gender, shiny, ivs, nature, dataSource);
     
+    if (!dataSource)
+      this.generateAndPopulateMoveset();
     this.generateCompatibleTms();
   }
 
@@ -2319,6 +2322,8 @@ export class EnemyPokemon extends Pokemon {
       this.setBoss();
 
     if (!dataSource) {
+      this.generateAndPopulateMoveset();
+
       this.trySetShiny();
 
       let prevolution: Species;

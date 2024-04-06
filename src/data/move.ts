@@ -4176,7 +4176,8 @@ export function initMoves() {
     new AttackMove(Moves.BELCH, "Belch (P)", Type.POISON, MoveCategory.SPECIAL, 120, 90, 10, "The user lets out a damaging belch at the target. The user must eat a held Berry to use this move.", -1, 0, 6),
     new StatusMove(Moves.ROTOTILLER, "Rototiller (N)", Type.GROUND, -1, 10, "Tilling the soil, the user makes it easier for plants to grow. This raises the Attack and Sp. Atk stats of Grass-type Pokémon.", 100, 0, 6)
       .target(MoveTarget.ALL),
-    new StatusMove(Moves.STICKY_WEB, "Sticky Web (N)", Type.BUG, -1, 20, "The user weaves a sticky net around the opposing team, which lowers their Speed stats upon switching into battle.", -1, 0, 6)
+    new StatusMove(Moves.STICKY_WEB, "Sticky Web", Type.BUG, -1, 20, "The user weaves a sticky net around the opposing team, which lowers their Speed stats upon switching into battle.", -1, 0, 6)
+      .attr(AddArenaTrapTagAttr, ArenaTagType.STICKY_WEB)
       .target(MoveTarget.ENEMY_SIDE),
     new AttackMove(Moves.FELL_STINGER, "Fell Stinger (P)", Type.BUG, MoveCategory.PHYSICAL, 50, 100, 25, "When the user knocks out a target with this move, the user's Attack stat rises drastically.", -1, 0, 6),
     new AttackMove(Moves.PHANTOM_FORCE, "Phantom Force", Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, "The user vanishes somewhere, then strikes the target on the next turn. This move hits even if the target protects itself.", -1, 0, 6)
