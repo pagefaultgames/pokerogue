@@ -2024,8 +2024,9 @@ export class MovePhase extends BattlePhase {
 
     const doMove = () => {
       this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
+	    
       if (!this.followUp && this.canMove() && !this.cancelled) {
-            this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
+        this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
       }
       if (this.cancelled) {
         this.pokemon.pushMoveHistory({ move: Moves.NONE, result: MoveResult.FAIL });
