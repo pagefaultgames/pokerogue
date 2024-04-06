@@ -5,7 +5,7 @@ import { BattleStat, getBattleStatName } from "./battle-stat";
 import { PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage } from "../messages";
 import { Weather, WeatherType } from "./weather";
-import { BattlerTag, getBattlerTag } from "./battler-tags";
+import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, allMoves } from "./move";
