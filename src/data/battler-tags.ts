@@ -134,7 +134,7 @@ export class TrappedTag extends BattlerTag {
 
 export class FlinchedTag extends BattlerTag {
   constructor(sourceMove: Moves) {
-    super(BattlerTagType.FLINCHED, BattlerTagLapseType.MOVE, 0, sourceMove);
+    super(BattlerTagType.FLINCHED, BattlerTagLapseType.PRE_MOVE, 0, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
