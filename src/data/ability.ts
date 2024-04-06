@@ -5,7 +5,7 @@ import { BattleStat, getBattleStatName } from "./battle-stat";
 import { PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage } from "../messages";
 import { Weather, WeatherType } from "./weather";
-import { BattlerTag } from "./battler-tags";
+import { BattlerTag, getBattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor } from "./status-effect";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, allMoves } from "./move";
@@ -525,6 +525,32 @@ export class PostDefendCritStatChangeAbAttr extends PostDefendAbAttr {
 
   getCondition(): AbAttrCondition {
     return (pokemon: Pokemon) => pokemon.turnData.attacksReceived.length && pokemon.turnData.attacksReceived[pokemon.turnData.attacksReceived.length - 1].critical;
+  }
+}
+
+export class PostDefendContactDamageAttackerAbAttr extends PostDefendAbAttr {
+  percentMaxHealthDamage: number;
+  constructor(percentMaxHealthDamage: number) {
+    super();
+    this.percentMaxHealthDamage = percentMaxHealthDamage;
+  }
+  
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
+      attacker.damageAndUpdate(attacker.getMaxHp()*(this.percentMaxHealthDamage),HitResult.EFFECTIVE,false,false,false);
+      return true;
+    }
+    return false;
+  }
+}
+
+export class RoughSkinAbAttr extends PostDefendContactDamageAttackerAbAttr {
+  constructor() {
+    super(1/8);
+  }
+
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
+    return `${pokemon.name}${(pokemon.name.endsWith('s')?`'`:`'s`)} Rough Skin hurt its attacker!`;
   }
 }
 
@@ -2107,7 +2133,9 @@ export function initAbilities() {
       .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, -1),
     new Ability(Abilities.SHADOW_TAG, "Shadow Tag", "This Pokémon steps on the opposing Pokémon's shadow to prevent it from escaping.", 3)
       .attr(ArenaTrapAbAttr),
-    new Ability(Abilities.ROUGH_SKIN, "Rough Skin (N)", "This Pokémon inflicts damage with its rough skin to the attacker on contact.", 3),
+    new Ability(Abilities.ROUGH_SKIN, "Rough Skin", "This Pokémon inflicts damage with its rough skin to the attacker on contact.", 3)
+      .attr(RoughSkinAbAttr)
+      .ignorable(),
     new Ability(Abilities.WONDER_GUARD, "Wonder Guard", "Its mysterious power only lets supereffective moves hit the Pokémon.", 3)
       .attr(NonSuperEffectiveImmunityAbAttr)
       .attr(ProtectAbilityAbAttr)
