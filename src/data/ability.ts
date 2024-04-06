@@ -204,7 +204,7 @@ export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
     if (pokemon.getHpRatio() < 1 || (args[0] as Utils.NumberHolder).value < pokemon.hp)
       return false;
 
-    return pokemon.addTag(BattlerTagType.ENDURING, 1);
+    return pokemon.addTag(BattlerTagType.STURDY, 1);
   }
 }
 

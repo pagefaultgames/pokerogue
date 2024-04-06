@@ -1284,11 +1284,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   damage(damage: integer, ignoreSegments: boolean = false, preventEndure: boolean = false): integer {
     if (this.isFainted())
       return 0;
+    const surviveDamage = new Utils.BooleanHolder(false);
 
-    if (this.hp >= 1 && this.hp - damage <= 0 && !preventEndure) {
-      const surviveDamage = new Utils.BooleanHolder(false);
-      if (this.lapseTag(BattlerTagType.ENDURING))
-        surviveDamage.value = true;
+    if (!preventEndure && this.hp - damage <= 0) {
+      if(this.hp >= 1 && this.getTag(BattlerTagType.ENDURING))
+        surviveDamage.value = this.lapseTag(BattlerTagType.ENDURING)
+      else if (this.hp > 1 && this.getTag(BattlerTagType.STURDY))
+        surviveDamage.value = this.lapseTag(BattlerTagType.STURDY)
       if (!surviveDamage.value)
         this.scene.applyModifiers(SurviveDamageModifier, this.isPlayer(), this, surviveDamage);
       if (surviveDamage.value)
