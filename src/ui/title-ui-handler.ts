@@ -4,15 +4,16 @@ import OptionSelectUiHandler from "./option-select-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
-import { splashMessages } from "../data/splash-messages";
+import { battleCountSplashMessage, splashMessages } from "../data/splash-messages";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   private titleContainer: Phaser.GameObjects.Container;
   private dailyRunScoreboard: DailyRunScoreboard;
   private playerCountLabel: Phaser.GameObjects.Text;
-  private splashMessage: Phaser.GameObjects.Text;
+  private splashMessage: string;
+  private splashMessageText: Phaser.GameObjects.Text;
 
-  private playerCountTimer;
+  private titleStatsTimer;
 
   constructor(scene: BattleScene, mode: Mode = Mode.TITLE) {
     super(scene, mode);
@@ -31,11 +32,6 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
-    this.splashMessage = addTextObject(this.scene, logo.x + 64, logo.y + logo.displayHeight - 8, '', TextStyle.MONEY, { fontSize: '54px' });
-    this.splashMessage.setOrigin(0.5, 0.5);
-    this.splashMessage.setAngle(-20)
-    this.titleContainer.add(this.splashMessage);
-
     this.dailyRunScoreboard = new DailyRunScoreboard(this.scene, 1, 44);
 		this.dailyRunScoreboard.setup();
 
@@ -45,10 +41,15 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
 
-    const originalSplashMessageScale = this.splashMessage.scale;
+    this.splashMessageText = addTextObject(this.scene, logo.x + 64, logo.y + logo.displayHeight - 8, '', TextStyle.MONEY, { fontSize: '54px' });
+    this.splashMessageText.setOrigin(0.5, 0.5);
+    this.splashMessageText.setAngle(-20)
+    this.titleContainer.add(this.splashMessageText);
+
+    const originalSplashMessageScale = this.splashMessageText.scale;
 
     this.scene.tweens.add({
-      targets: this.splashMessage,
+      targets: this.splashMessageText,
       duration: Utils.fixedInt(350),
       scale: originalSplashMessageScale * 1.25,
       loop: -1,
@@ -56,25 +57,30 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     })
   }
 
-  updatePlayerCount(): void {
-    Utils.apiFetch(`game/playercount`)
+  updateTitleStats(): void {
+    Utils.apiFetch(`game/titlestats`)
       .then(request => request.json())
-      .then(count => this.playerCountLabel.setText(`${count} Players Online`));
+      .then(stats => {
+        this.playerCountLabel.setText(`${stats.playerCount} Players Online`);
+        if (this.splashMessage === battleCountSplashMessage)
+          this.splashMessageText.setText(battleCountSplashMessage.replace('{COUNT}', stats.battleCount.toLocaleString('en-US')));
+      });
   }
 
   show(args: any[]): boolean {
     const ret = super.show(args);
 
     if (ret) {
-      this.splashMessage.setText(Utils.randItem(splashMessages));
+      this.splashMessage = Utils.randItem(splashMessages);
+      this.splashMessageText.setText(this.splashMessage.replace('{COUNT}', '?'));
 
       const ui = this.getUi();
 
       this.dailyRunScoreboard.update();
 
-      this.updatePlayerCount();
+      this.updateTitleStats();
 
-      this.playerCountTimer = setInterval(() => this.updatePlayerCount(), 10000);
+      this.titleStatsTimer = setInterval(() => this.updateTitleStats(), 10000);
 
       this.scene.tweens.add({
         targets: [ this.titleContainer, ui.getMessageHandler().bg ],
@@ -92,8 +98,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     const ui = this.getUi();
 
-    clearInterval(this.playerCountTimer);
-    this.playerCountTimer = null;
+    clearInterval(this.titleStatsTimer);
+    this.titleStatsTimer = null;
 
     this.scene.tweens.add({
       targets: [ this.titleContainer, ui.getMessageHandler().bg ],

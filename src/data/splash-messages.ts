@@ -1,4 +1,7 @@
+export const battleCountSplashMessage = '{COUNT} Battles Won!';
+
 export const splashMessages = [
+  battleCountSplashMessage,
   'Join the Discord!',
   'Infinite Levels!',
   'Everything Stacks!',
