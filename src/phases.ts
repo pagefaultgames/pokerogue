@@ -3752,7 +3752,8 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     this.scene.playSound('pb_rel');
     pokemon.setY(this.originalY);
-    pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
+    if (pokemon.status?.effect !== StatusEffect.SLEEP)
+      pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
     pokemon.tint(getPokeballTintColor(this.pokeballType));
     pokemon.setVisible(true);
     pokemon.untint(250, 'Sine.easeOut');

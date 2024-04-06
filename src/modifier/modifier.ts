@@ -8,7 +8,7 @@ import { Stat } from "../data/pokemon-stat";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from '../data/type';
 import { EvolutionPhase } from '../evolution-phase';
-import { pokemonEvolutions } from '../data/pokemon-evolutions';
+import { FusionSpeciesFormEvolution, pokemonEvolutions } from '../data/pokemon-evolutions';
 import { getPokemonMessage } from '../messages';
 import * as Utils from "../utils";
 import { TempBattleStat } from '../data/temp-battle-stat';
@@ -1183,9 +1183,17 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as PlayerPokemon;
 
-    const matchingEvolution = pokemonEvolutions[pokemon.species.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
+    let matchingEvolution = pokemonEvolutions[pokemon.species.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
       && (e.evoFormKey === null || (e.preFormKey || '') === pokemon.getFormKey())
       && (!e.condition || e.condition.predicate(pokemon)));
+
+    if (!matchingEvolution && pokemon.isFusion()) {
+      matchingEvolution = pokemonEvolutions[pokemon.fusionSpecies.speciesId].find(e => e.item === (this.type as ModifierTypes.EvolutionItemModifierType).evolutionItem
+        && (e.evoFormKey === null || (e.preFormKey || '') === pokemon.getFusionFormKey())
+        && (!e.condition || e.condition.predicate(pokemon)));
+      if (matchingEvolution)
+        matchingEvolution = new FusionSpeciesFormEvolution(pokemon.species.speciesId, matchingEvolution);
+    }
 
     if (matchingEvolution) {
       pokemon.scene.unshiftPhase(new EvolutionPhase(pokemon.scene, pokemon, matchingEvolution, pokemon.level - 1));

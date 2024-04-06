@@ -13,7 +13,7 @@ import { PokeballType } from '../data/pokeball';
 import { Gender } from '../data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from '../data/battle-anims';
 import { Status, StatusEffect } from '../data/status-effect';
-import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition } from '../data/pokemon-evolutions';
+import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from '../data/pokemon-evolutions';
 import { reverseCompatibleTms, tmSpecies } from '../data/tms';
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase } from '../phases';
 import { BattleStat } from '../data/battle-stat';
@@ -620,6 +620,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.shiny || (this.fusionSpecies && this.fusionShiny);
   }
 
+  isFusion(): boolean {
+    return !!this.fusionSpecies;
+  }
+
   abstract isBoss(): boolean;
 
   getMoveset(ignoreOverride?: boolean): PokemonMove[] {
@@ -766,14 +770,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getEvolution(): SpeciesFormEvolution {
-    if (!pokemonEvolutions.hasOwnProperty(this.species.speciesId))
-      return null;
+    if (pokemonEvolutions.hasOwnProperty(this.species.speciesId)) {
+      const evolutions = pokemonEvolutions[this.species.speciesId];
+      for (let e of evolutions) {
+        if (!e.item && this.level >= e.level && (!e.preFormKey || this.getFormKey() === e.preFormKey)) {
+          if (e.condition === null || (e.condition as SpeciesEvolutionCondition).predicate(this))
+            return e;
+        }
+      }
+    }
 
-    const evolutions = pokemonEvolutions[this.species.speciesId];
-    for (let e of evolutions) {
-      if (!e.item && this.level >= e.level && (!e.preFormKey || this.getFormKey() === e.preFormKey)) {
-        if (e.condition === null || (e.condition as SpeciesEvolutionCondition).predicate(this))
-          return e;
+    if (this.isFusion() && pokemonEvolutions.hasOwnProperty(this.fusionSpecies.speciesId)) {
+      const fusionEvolutions = pokemonEvolutions[this.fusionSpecies.speciesId].map(e => new FusionSpeciesFormEvolution(this.species.speciesId, e));
+      for (let fe of fusionEvolutions) {
+        if (!fe.item && this.level >= fe.level && (!fe.preFormKey || this.getFusionFormKey() === fe.preFormKey)) {
+          if (fe.condition === null || (fe.condition as SpeciesEvolutionCondition).predicate(this))
+            return fe;
+        }
       }
     }
 
@@ -2116,9 +2129,21 @@ export class PlayerPokemon extends Pokemon {
   
   getPossibleEvolution(evolution: SpeciesFormEvolution): Promise<Pokemon> {
     return new Promise(resolve => {
-      const species = getPokemonSpecies(evolution.speciesId);
-      const formIndex = evolution.evoFormKey !== null ? Math.max(species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0) : this.formIndex;
-      const ret = this.scene.addPlayerPokemon(species, this.level, this.abilityIndex, formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
+      const evolutionSpecies = getPokemonSpecies(evolution.speciesId);
+      const isFusion = evolution instanceof FusionSpeciesFormEvolution;
+      let ret: PlayerPokemon;
+      if (isFusion) {
+        const originalFusionSpecies = this.fusionSpecies;
+        const originalFusionFormIndex = this.fusionFormIndex;
+        this.fusionSpecies = evolutionSpecies;
+        this.fusionFormIndex = evolution.evoFormKey !== null ? Math.max(evolutionSpecies.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0) : this.fusionFormIndex;
+        ret = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
+        this.fusionSpecies = originalFusionSpecies;
+        this.fusionFormIndex = originalFusionFormIndex;
+      } else {
+        const formIndex = evolution.evoFormKey !== null && !isFusion ? Math.max(evolutionSpecies.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0) : this.formIndex;
+        ret = this.scene.addPlayerPokemon(!isFusion ? evolutionSpecies : this.species, this.level, this.abilityIndex, formIndex, this.gender, this.shiny, this.ivs, this.nature, this);
+      }
       ret.loadAssets().then(() => resolve(ret));
     });
   }
@@ -2127,13 +2152,28 @@ export class PlayerPokemon extends Pokemon {
     return new Promise(resolve => {
       this.pauseEvolutions = false;
       this.handleSpecialEvolutions(evolution);
-      this.species = getPokemonSpecies(evolution.speciesId);
-      if (evolution.preFormKey !== null)
-        this.formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === evolution.evoFormKey), 0);
+      const isFusion = evolution instanceof FusionSpeciesFormEvolution;
+      if (!isFusion)
+        this.species = getPokemonSpecies(evolution.speciesId);
+      else
+        this.fusionSpecies = getPokemonSpecies(evolution.speciesId);
+      if (evolution.preFormKey !== null) {
+        const formIndex = Math.max((!isFusion ? this.species : this.fusionSpecies).forms.findIndex(f => f.formKey === evolution.evoFormKey), 0);
+        if (!isFusion)
+          this.formIndex = formIndex;
+        else
+          this.fusionFormIndex = formIndex;
+      }
       this.generateName();
-      const abilityCount = this.getSpeciesForm().getAbilityCount();
-      if (this.abilityIndex >= abilityCount) // Shouldn't happen
-        this.abilityIndex = abilityCount - 1;
+      if (!isFusion) {
+        const abilityCount = this.getSpeciesForm().getAbilityCount();
+        if (this.abilityIndex >= abilityCount) // Shouldn't happen
+          this.abilityIndex = abilityCount - 1;
+      } else {
+        const abilityCount = this.getFusionSpeciesForm().getAbilityCount();
+        if (this.fusionAbilityIndex >= abilityCount) // Shouldn't happen
+          this.fusionAbilityIndex = abilityCount - 1;
+      }
       this.compatibleTms.splice(0, this.compatibleTms.length);
       this.generateCompatibleTms();
       const updateAndResolve = () => {
@@ -2152,11 +2192,17 @@ export class PlayerPokemon extends Pokemon {
   }
 
   private handleSpecialEvolutions(evolution: SpeciesFormEvolution) {
-    if (this.species.speciesId === Species.NINCADA && evolution.speciesId === Species.NINJASK) {
+    const isFusion = evolution instanceof FusionSpeciesFormEvolution;
+    if ((!isFusion ? this.species : this.fusionSpecies).speciesId === Species.NINCADA && evolution.speciesId === Species.NINJASK) {
       const newEvolution = pokemonEvolutions[this.species.speciesId][1];
       if (newEvolution.condition.predicate(this)) {
         const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature);
         newPokemon.natureOverride = this.natureOverride;
+        newPokemon.fusionSpecies = this.fusionSpecies;
+        newPokemon.fusionFormIndex = this.fusionFormIndex;
+        newPokemon.fusionAbilityIndex = this.fusionAbilityIndex;
+        newPokemon.fusionShiny = this.fusionShiny;
+        newPokemon.fusionGender = this.fusionGender;
         this.scene.getParty().push(newPokemon);
         newPokemon.evolve(newEvolution);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
@@ -2201,10 +2247,6 @@ export class PlayerPokemon extends Pokemon {
       } else
         updateAndResolve();
     });
-  }
-
-  isFusion(): boolean {
-    return !!this.fusionSpecies;
   }
 
   clearFusionSpecies(): void {

@@ -513,6 +513,9 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
       if (pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) && pokemonEvolutions[pokemon.species.speciesId].filter(e => e.item === this.evolutionItem
         && (!e.condition || e.condition.predicate(pokemon))).length)
         return null;
+      else if (pokemon.isFusion() && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) && pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.item === this.evolutionItem
+        && (!e.condition || e.condition.predicate(pokemon))).length)
+        return null;
 
       return PartyUiHandler.NoEffectMessage;
     }, EvolutionItem[evolutionItem].toLowerCase());
@@ -621,10 +624,16 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
       if (pregenArgs)
         return new EvolutionItemModifierType(pregenArgs[0] as EvolutionItem);
 
-      const evolutionItemPool = party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
-        const evolutions = pokemonEvolutions[p.species.speciesId];
-        return evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || '') === p.getFormKey()) && (!e.condition || e.condition.predicate(p)));
-      }).flat().flatMap(e => e.item).filter(i => (i > 50) === rare);
+      const evolutionItemPool = [
+        party.filter(p => pokemonEvolutions.hasOwnProperty(p.species.speciesId)).map(p => {
+          const evolutions = pokemonEvolutions[p.species.speciesId];
+          return evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || '') === p.getFormKey()) && (!e.condition || e.condition.predicate(p)));
+        }).flat(),
+        party.filter(p => p.isFusion() && pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId)).map(p => {
+          const evolutions = pokemonEvolutions[p.fusionSpecies.speciesId];
+          return evolutions.filter(e => e.item !== EvolutionItem.NONE && (e.evoFormKey === null || (e.preFormKey || '') === p.getFusionFormKey()) && (!e.condition || e.condition.predicate(p)));
+        }).flat()
+      ].flat().flatMap(e => e.item).filter(i => (i > 50) === rare);
 
       if (!evolutionItemPool.length)
         return null;

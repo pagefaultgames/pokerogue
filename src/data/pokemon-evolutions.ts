@@ -85,6 +85,16 @@ export class SpeciesEvolution extends SpeciesFormEvolution {
   }
 }
 
+export class FusionSpeciesFormEvolution extends SpeciesFormEvolution {
+  public primarySpeciesId: Species;
+
+  constructor(primarySpeciesId: Species, evolution: SpeciesFormEvolution) {
+    super(evolution.speciesId, evolution.preFormKey, evolution.evoFormKey, evolution.level, evolution.item, evolution.condition, evolution.wildDelay);
+
+    this.primarySpeciesId = primarySpeciesId;
+  }
+}
+
 export class SpeciesEvolutionCondition {
   public predicate: EvolutionConditionPredicate;
   public enforceFunc: EvolutionConditionEnforceFunc;
