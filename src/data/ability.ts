@@ -530,6 +530,7 @@ export class PostDefendCritStatChangeAbAttr extends PostDefendAbAttr {
 
 export class PostDefendContactDamageAttackerAbAttr extends PostDefendAbAttr {
   percentMaxHealthDamage: number;
+  abilityName: string;
   constructor(percentMaxHealthDamage: number) {
     super();
     this.percentMaxHealthDamage = percentMaxHealthDamage;
@@ -542,15 +543,9 @@ export class PostDefendContactDamageAttackerAbAttr extends PostDefendAbAttr {
     }
     return false;
   }
-}
-
-export class RoughSkinAbAttr extends PostDefendContactDamageAttackerAbAttr {
-  constructor() {
-    super(1/8);
-  }
 
   getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
-    return `${pokemon.name}${(pokemon.name.endsWith('s')?`'`:`'s`)} Rough Skin hurt its attacker!`;
+    return `${pokemon.name}${(pokemon.name.endsWith('s')?`'`:`'s`)} ${pokemon.getAbility().name} hurt its attacker!`;
   }
 }
 
@@ -2134,7 +2129,7 @@ export function initAbilities() {
     new Ability(Abilities.SHADOW_TAG, "Shadow Tag", "This Pokémon steps on the opposing Pokémon's shadow to prevent it from escaping.", 3)
       .attr(ArenaTrapAbAttr),
     new Ability(Abilities.ROUGH_SKIN, "Rough Skin", "This Pokémon inflicts damage with its rough skin to the attacker on contact.", 3)
-      .attr(RoughSkinAbAttr)
+      .attr(PostDefendContactDamageAttackerAbAttr,1/8)
       .ignorable(),
     new Ability(Abilities.WONDER_GUARD, "Wonder Guard", "Its mysterious power only lets supereffective moves hit the Pokémon.", 3)
       .attr(NonSuperEffectiveImmunityAbAttr)
@@ -2439,7 +2434,8 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL, 1.3)
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
       .condition(getWeatherCondition(WeatherType.SANDSTORM)),
-    new Ability(Abilities.IRON_BARBS, "Iron Barbs (N)", "Inflicts damage on the attacker upon contact with iron barbs.", 5),
+    new Ability(Abilities.IRON_BARBS, "Iron Barbs", "Inflicts damage on the attacker upon contact with iron barbs.", 5)
+      .attr(PostDefendContactDamageAttackerAbAttr,1/8),
     new Ability(Abilities.ZEN_MODE, "Zen Mode", "Changes the Pokémon's shape when HP is half or less.", 5)
       .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() >= 0.5 ? 0 : 1)
       .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() >= 0.5 ? 0 : 1)
