@@ -55,7 +55,7 @@ import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select
 import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameModes, gameModes } from "./game-mode";
-import { getPokemonSpecies } from "./data/pokemon-species";
+import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -765,7 +765,7 @@ export class EncounterPhase extends BattlePhase {
       enemyField.map(p => this.scene.pushPhase(new PostSummonPhase(this.scene, p.getBattlerIndex())));
       const ivScannerModifier = this.scene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier)
-        enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount(), 6))));
+        enemyField.map(p => this.scene.pushPhase(new ScanIvsPhase(this.scene, p.getBattlerIndex(), Math.min(ivScannerModifier.getStackCount() * 2, 6))));
     }
 
     if (!this.loaded) {
@@ -1512,7 +1512,7 @@ export class CommandPhase extends FieldPhase {
         }
         break;
       case Command.BALL:
-        if (this.scene.arena.biomeType === Biome.END) {
+        if (this.scene.arena.biomeType === Biome.END && (!this.scene.gameMode.isClassic || this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarters).length - 1)) {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           this.scene.ui.setMode(Mode.MESSAGE);
           this.scene.ui.showText(`An unseen force\nprevents using Poké Balls.`, null, () => {
@@ -2571,7 +2571,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
           const damage = Math.ceil(pokemon.getMaxHp() / 16);
 
           this.scene.queueMessage(getWeatherDamageMessage(this.weather.weatherType, pokemon));
-          pokemon.damageAndUpdate(damage);
+          pokemon.damageAndUpdate(damage, HitResult.OTHER, false, false, true);
         };
 
         this.executeForAll((pokemon: Pokemon) => {
@@ -3752,7 +3752,8 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     this.scene.playSound('pb_rel');
     pokemon.setY(this.originalY);
-    pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
+    if (pokemon.status?.effect !== StatusEffect.SLEEP)
+      pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
     pokemon.tint(getPokeballTintColor(this.pokeballType));
     pokemon.setVisible(true);
     pokemon.untint(250, 'Sine.easeOut');

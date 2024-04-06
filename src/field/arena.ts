@@ -269,9 +269,8 @@ export class Arena {
 
   trySetWeather(weather: WeatherType, hasPokemonSource: boolean): boolean {
     // override hook for debugging
-    if (WEATHER_OVERRIDE) {
+    if (WEATHER_OVERRIDE)
       return this.trySetWeatherOverride(WEATHER_OVERRIDE);
-    }
     
     if (this.weather?.weatherType === (weather || undefined))
       return false;

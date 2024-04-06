@@ -26,10 +26,12 @@ export class Weather {
 
   constructor(weatherType: WeatherType, turnsLeft?: integer) {
     this.weatherType = weatherType;
-    this.turnsLeft = turnsLeft || 0;
+    this.turnsLeft = !this.isImmutable() ? turnsLeft || 0 : 0;
   }
 
   lapse(): boolean {
+    if (this.isImmutable())
+      return true;
     if (this.turnsLeft)
       return !!--this.turnsLeft;
 

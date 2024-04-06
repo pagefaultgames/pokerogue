@@ -193,7 +193,14 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
         if (shownIvsCount < 6) {
           let statsPool = stats.slice(0);
           for (let i = 0; i < shownIvsCount; i++) {
-            const shownStat = Utils.randSeedItem(statsPool);
+            let shownStat: Stat;
+            let highestIv = -1;
+            statsPool.map(s => {
+              if (ivs[s] > highestIv) {
+                shownStat = s as Stat;
+                highestIv = ivs[s];
+              }
+            });
             shownStats.push(shownStat);
             statsPool.splice(statsPool.indexOf(shownStat), 1);
           }
