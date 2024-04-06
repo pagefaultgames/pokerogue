@@ -721,6 +721,21 @@ export class EnduringTag extends BattlerTag {
   }
 }
 
+export class SturdyTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.STURDY, BattlerTagLapseType.TURN_END, 0, sourceMove);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' endured\nthe hit!'));
+      return true;
+    }
+
+    return super.lapse(pokemon, lapseType);
+  }
+}
+
 export class PerishSongTag extends BattlerTag {
   constructor(turnCount: integer) {
     super(BattlerTagType.PERISH_SONG, BattlerTagLapseType.TURN_END, turnCount, Moves.PERISH_SONG);
@@ -1013,6 +1028,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new ContactBurnProtectedTag(sourceMove);
     case BattlerTagType.ENDURING:
       return new EnduringTag(sourceMove);
+    case BattlerTagType.STURDY:
+      return new SturdyTag(sourceMove);
     case BattlerTagType.PERISH_SONG:
       return new PerishSongTag(turnCount);
     case BattlerTagType.TRUANT:
