@@ -2302,7 +2302,8 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.TINTED_LENS, "Tinted Lens", "The Pokémon can use \"not very effective\" moves to deal regular damage.", 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type) <= 0.5, 2),
-    new Ability(Abilities.FILTER, "Filter (N)", "Reduces the power of supereffective attacks taken.", 4)
+    new Ability(Abilities.FILTER, "Filter", "Reduces the power of supereffective attacks taken.", 4)
+      .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getAttackTypeEffectiveness(move.type) >= 2, 0.75)
       .ignorable(),
     new Ability(Abilities.SLOW_START, "Slow Start", "For five turns, the Pokémon's Attack and Speed stats are halved.", 4)
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.SLOW_START, 5),
@@ -2313,7 +2314,8 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.ICE_BODY, "Ice Body", "The Pokémon gradually regains HP in a hailstorm.", 4)
       .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.HAIL),
-    new Ability(Abilities.SOLID_ROCK, "Solid Rock (N)", "Reduces the power of supereffective attacks taken.", 4)
+    new Ability(Abilities.SOLID_ROCK, "Solid Rock", "Reduces the power of supereffective attacks taken.", 4)
+      .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getAttackTypeEffectiveness(move.type) >= 2, 0.75)
       .ignorable(),
     new Ability(Abilities.SNOW_WARNING, "Snow Warning", "The Pokémon summons a hailstorm when it enters a battle.", 4)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HAIL),
@@ -2354,7 +2356,8 @@ export function initAbilities() {
     new Ability(Abilities.LIGHT_METAL, "Light Metal", "Halves the Pokémon's weight.", 5)
       .attr(WeightMultiplierAbAttr, 0.5)
       .ignorable(),
-    new Ability(Abilities.MULTISCALE, "Multiscale (N)", "Reduces the amount of damage the Pokémon takes while its HP is full.", 5)
+    new Ability(Abilities.MULTISCALE, "Multiscale", "Reduces the amount of damage the Pokémon takes while its HP is full.", 5)
+      .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getHpRatio() === 1, 0.5)
       .ignorable(),
     new Ability(Abilities.TOXIC_BOOST, "Toxic Boost", "Powers up physical attacks when the Pokémon is poisoned.", 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.PHYSICAL && (user.status?.effect === StatusEffect.POISON || user.status?.effect === StatusEffect.TOXIC), 1.5),
@@ -2392,7 +2395,8 @@ export function initAbilities() {
     new Ability(Abilities.MUMMY, "Mummy (N)", "Contact with the Pokémon changes the attacker's Ability to Mummy.", 5),
     new Ability(Abilities.MOXIE, "Moxie", "The Pokémon shows moxie, and that boosts the Attack stat after knocking out any Pokémon.", 5)
       .attr(PostVictoryStatChangeAbAttr, BattleStat.ATK, 1),
-    new Ability(Abilities.JUSTIFIED, "Justified (N)", "Being hit by a Dark-type move boosts the Attack stat of the Pokémon, for justice.", 5),
+    new Ability(Abilities.JUSTIFIED, "Justified", "Being hit by a Dark-type move boosts the Attack stat of the Pokémon, for justice.", 5)
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.DARK && move.category !== MoveCategory.STATUS, BattleStat.ATK, 1),
     new Ability(Abilities.RATTLED, "Rattled (N)", "Dark-, Ghost-, and Bug-type moves scare the Pokémon and boost its Speed stat.", 5),
     new Ability(Abilities.MAGIC_BOUNCE, "Magic Bounce (N)", "Reflects status moves instead of getting hit by them.", 5)
       .ignorable(),
@@ -2471,7 +2475,8 @@ export function initAbilities() {
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category != MoveCategory.STATUS, BattleStat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, "Wimp Out (N)", "The Pokémon cowardly switches out when its HP becomes half or less.", 7),
     new Ability(Abilities.EMERGENCY_EXIT, "Emergency Exit (N)", "The Pokémon, sensing danger, switches out when its HP becomes half or less.", 7),
-    new Ability(Abilities.WATER_COMPACTION, "Water Compaction (N)", "Boosts the Pokémon's Defense stat sharply when hit by a Water-type move.", 7),
+    new Ability(Abilities.WATER_COMPACTION, "Water Compaction", "Boosts the Pokémon's Defense stat sharply when hit by a Water-type move.", 7)
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER , BattleStat.DEF, 2),
     new Ability(Abilities.MERCILESS, "Merciless (N)", "The Pokémon's attacks become critical hits if the target is poisoned.", 7),
     new Ability(Abilities.SHIELDS_DOWN, "Shields Down (N)", "When its HP becomes half or less, the Pokémon's shell breaks and it becomes aggressive.", 7)
       .attr(ProtectAbilityAbAttr),
@@ -2520,7 +2525,8 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.DAZZLING, "Dazzling (N)", "Surprises the opposing Pokémon, making it unable to attack using priority moves.", 7)
       .ignorable(),
-    new Ability(Abilities.SOUL_HEART, "Soul-Heart (N)", "Boosts its Sp. Atk stat every time a Pokémon faints.", 7),
+    new Ability(Abilities.SOUL_HEART, "Soul-Heart (P)", "Boosts its Sp. Atk stat every time a Pokémon faints.", 7)
+      .attr(PostVictoryStatChangeAbAttr, BattleStat.SPATK, 1),
     new Ability(Abilities.TANGLING_HAIR, "Tangling Hair (N)", "Contact with the Pokémon lowers the attacker's Speed stat.", 7),
     new Ability(Abilities.RECEIVER, "Receiver (N)", "The Pokémon copies the Ability of a defeated ally.", 7),
     new Ability(Abilities.POWER_OF_ALCHEMY, "Power of Alchemy (N)", "The Pokémon copies the Ability of a defeated ally.", 7),
@@ -2550,8 +2556,10 @@ export function initAbilities() {
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.GRASSY),
     new Ability(Abilities.FULL_METAL_BODY, "Full Metal Body", "Prevents other Pokémon's moves or Abilities from lowering the Pokémon's stats.", 7)
       .attr(ProtectStatAbAttr),
-    new Ability(Abilities.SHADOW_SHIELD, "Shadow Shield (N)", "Reduces the amount of damage the Pokémon takes while its HP is full.", 7),
-    new Ability(Abilities.PRISM_ARMOR, "Prism Armor (N)", "Reduces the power of supereffective attacks taken.", 7),
+    new Ability(Abilities.SHADOW_SHIELD, "Shadow Shield", "Reduces the amount of damage the Pokémon takes while its HP is full.", 7)
+      .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getHpRatio() === 1, 0.5),
+    new Ability(Abilities.PRISM_ARMOR, "Prism Armor", "Reduces the power of supereffective attacks taken.", 7)
+      .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getAttackTypeEffectiveness(move.type) >= 2, 0.75),
     new Ability(Abilities.NEUROFORCE, "Neuroforce", "Powers up moves that are super effective.", 7)
       .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type) >= 2, 1.25),
     new Ability(Abilities.INTREPID_SWORD, "Intrepid Sword", "Boosts the Pokémon's Attack stat when the Pokémon enters a battle.", 8)
