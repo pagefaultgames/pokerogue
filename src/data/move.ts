@@ -638,7 +638,7 @@ export class RecoilAttr extends MoveEffectAttr {
     if (cancelled.value)
       return false;
       
-    user.damageAndUpdate(recoilDamage, HitResult.OTHER, false, true);
+    user.damageAndUpdate(recoilDamage, HitResult.OTHER, false, true, true);
     user.scene.queueMessage(getPokemonMessage(user, ' is hit\nwith recoil!'));
 
     return true;
