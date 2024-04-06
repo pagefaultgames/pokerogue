@@ -17,6 +17,7 @@ import { BattleStat } from "./battle-stat";
 export enum BattlerTagLapseType {
   FAINT,
   MOVE,
+  PRE_MOVE,
   AFTER_MOVE,
   MOVE_EFFECT,
   TURN_END,
@@ -77,7 +78,7 @@ export interface TerrainBattlerTag {
 
 export class RechargingTag extends BattlerTag {
   constructor(sourceMove: Moves) {
-    super(BattlerTagType.RECHARGING, BattlerTagLapseType.MOVE, 1, sourceMove);
+    super(BattlerTagType.RECHARGING, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -90,7 +91,9 @@ export class RechargingTag extends BattlerTag {
     super.lapse(pokemon, lapseType);
 
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' must\nrecharge!'));
-
+    (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
+    pokemon.getMoveQueue().shift();
+    
     return true;
   }
 }
