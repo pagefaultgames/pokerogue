@@ -1,7 +1,7 @@
 import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { pokemonPrevolutions } from "../data/pokemon-evolutions";
-import PokemonSpecies, { allSpecies, getPokemonSpecies, speciesStarters } from "../data/pokemon-species";
+import PokemonSpecies, { SpeciesFormKey, allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
 import * as Utils from "../utils";
 import PokemonData from "./pokemon-data";
@@ -936,7 +936,12 @@ export class GameData {
     return new Promise<void>(resolve => {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
-      dexEntry.caughtAttr |= pokemon.getDexAttr();
+      const formIndex = pokemon.formIndex;
+      if (noStarterFormKeys.includes(pokemon.getFormKey()))
+        pokemon.formIndex = 0;
+      const dexAttr = pokemon.getDexAttr();
+      pokemon.formIndex = formIndex;
+      dexEntry.caughtAttr |= dexAttr;
       dexEntry.natureAttr |= Math.pow(2, pokemon.nature + 1);
       if (incrementCount) {
         if (!fromEgg) {
@@ -1016,6 +1021,27 @@ export class GameData {
       if (dexIvs.filter(iv => iv === 31).length === 6)
         this.scene.validateAchv(achvs.PERFECT_IVS);
     } while (pokemonPrevolutions.hasOwnProperty(speciesId) && (speciesId = pokemonPrevolutions[speciesId]));
+  }
+
+  getSpeciesCount(dexEntryPredicate: (entry: DexEntry) => boolean): integer {
+    const dexKeys = Object.keys(this.dexData);
+    let speciesCount = 0;
+    for (let s of dexKeys) {
+      if (dexEntryPredicate(this.dexData[s]))
+        speciesCount++;
+    }
+    return speciesCount;
+  }
+
+  getStarterCount(dexEntryPredicate: (entry: DexEntry) => boolean): integer {
+    const starterKeys = Object.keys(speciesStarters);
+    let starterCount = 0;
+    for (let s of starterKeys) {
+      const starterDexEntry = this.dexData[s];
+      if (dexEntryPredicate(starterDexEntry))
+        starterCount++;
+    }
+    return starterCount;
   }
 
   getSpeciesDefaultDexAttr(species: PokemonSpecies, forSeen: boolean = false): bigint {

@@ -55,7 +55,7 @@ import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select
 import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameModes, gameModes } from "./game-mode";
-import { getPokemonSpecies } from "./data/pokemon-species";
+import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -1512,7 +1512,7 @@ export class CommandPhase extends FieldPhase {
         }
         break;
       case Command.BALL:
-        if (this.scene.arena.biomeType === Biome.END) {
+        if (this.scene.arena.biomeType === Biome.END && (!this.scene.gameMode.isClassic || this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarters).length - 1)) {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           this.scene.ui.setMode(Mode.MESSAGE);
           this.scene.ui.showText(`An unseen force\nprevents using Poké Balls.`, null, () => {
