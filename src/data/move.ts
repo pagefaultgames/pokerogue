@@ -2264,7 +2264,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   private batonPass: boolean;
 
   constructor(user?: boolean, batonPass?: boolean) {
-    super(false, MoveEffectTrigger.HIT);
+    super(false, MoveEffectTrigger.HIT, true);
 
     this.user = !!user;
     this.batonPass = !!batonPass;
