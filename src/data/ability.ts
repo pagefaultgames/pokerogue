@@ -539,7 +539,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
-      attacker.damageAndUpdate(attacker.getMaxHp() * (1 / this.damageRatio), HitResult.EFFECTIVE, false, false, false);
+      attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
       return true;
     }
     
