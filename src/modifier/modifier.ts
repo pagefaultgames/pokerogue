@@ -326,7 +326,7 @@ export class TempBattleStatBoosterModifier extends LapsingPersistentModifier {
   private tempBattleStat: TempBattleStat;
 
   constructor(type: ModifierTypes.TempBattleStatBoosterModifierType, tempBattleStat: TempBattleStat, battlesLeft?: integer, stackCount?: integer) {
-    super(type, battlesLeft || 10, stackCount);
+    super(type, battlesLeft || 5, stackCount);
 
     this.tempBattleStat = tempBattleStat;
   }
