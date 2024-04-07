@@ -2362,7 +2362,7 @@ export class MoveEffectPhase extends PokemonPhase {
       return true;
 
     if (this.scene.arena.weather?.weatherType === WeatherType.FOG)
-      moveAccuracy.value = Math.floor(moveAccuracy.value * 0.8);
+      moveAccuracy.value = Math.floor(moveAccuracy.value * 0.9);
 
     if (!this.move.getMove().getAttrs(OneHitKOAttr).length && this.scene.arena.getTag(ArenaTagType.GRAVITY))
       moveAccuracy.value = Math.floor(moveAccuracy.value * 1.67);
