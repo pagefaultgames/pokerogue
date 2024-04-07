@@ -143,17 +143,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || Utils.getIvsFromId(this.id);
     
-      if (this.gender === undefined) {
-        if (this.species.malePercent === null)
-          this.gender = Gender.GENDERLESS;
-        else {
-          const genderChance = (this.id % 256) * 0.390625;
-          if (genderChance < this.species.malePercent)
-            this.gender = Gender.MALE;
-          else
-            this.gender = Gender.FEMALE;
-        }
-      }
+      if (this.gender === undefined)
+        this.generateGender();
 
       if (this.formIndex === undefined)
         this.formIndex = this.scene.getSpeciesFormIndex(species, this.gender, this.nature, this.isPlayer());
@@ -600,6 +591,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getHpRatio(): number {
     return Math.floor((this.hp / this.getMaxHp()) * 100) / 100;
+  }
+
+  generateGender(): void {
+    if (this.species.malePercent === null)
+      this.gender = Gender.GENDERLESS;
+    else {
+      const genderChance = (this.id % 256) * 0.390625;
+      if (genderChance < this.species.malePercent)
+        this.gender = Gender.MALE;
+      else
+        this.gender = Gender.FEMALE;
+    }
   }
 
   getGender(ignoreOverride?: boolean): Gender {
