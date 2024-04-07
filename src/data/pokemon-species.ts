@@ -39,7 +39,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
   const fragAPattern = /([a-z]{2}.*?[aeiou(?:y$)\-\']+)(.*?)$/i;
   const fragBPattern = /([a-z]{2}.*?[aeiou(?:y$)\-\'])(.*?)$/i;
 
-  const [ speciesAPrefixMatch, speciesBPrefixMatch ] = [ speciesAName, speciesBName ].map(n => /^(?:Mega|(?:G|E)\-Max) /.exec(n));
+  const [ speciesAPrefixMatch, speciesBPrefixMatch ] = [ speciesAName, speciesBName ].map(n => /^(?:[^ ]+) /.exec(n));
   const [ speciesAPrefix, speciesBPrefix ] = [ speciesAPrefixMatch, speciesBPrefixMatch ].map(m => m ? m[0] : '');
 
   if (speciesAPrefix)
@@ -47,7 +47,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
   if (speciesBPrefix)
     speciesBName = speciesBName.slice(speciesBPrefix.length);
 
-  const [ speciesASuffixMatch, speciesBSuffixMatch ] = [ speciesAName, speciesBName ].map(n => / (?:X|Y)$/.exec(n));
+  const [ speciesASuffixMatch, speciesBSuffixMatch ] = [ speciesAName, speciesBName ].map(n => / (?:[^ ]+)$/.exec(n));
   const [ speciesASuffix, speciesBSuffix ] = [ speciesASuffixMatch, speciesBSuffixMatch ].map(m => m ? m[0] : '');
 
   if (speciesASuffix)
