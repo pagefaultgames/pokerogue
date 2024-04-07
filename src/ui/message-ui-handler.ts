@@ -46,14 +46,18 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           break;
       }
       text = text.slice(0, actionMatch.index) + text.slice(actionMatch.index + actionMatch[2].length + 4);
+    }
 
-      // TODO: Fix this logic not working properly, presumably with existing line breaks
-      // Predetermine overflow line breaks to avoid words breaking while displaying
-      /*const textWords = text.split(' ');
-      let lastLineCount = 1;
-      let newText = textWords[0];
-      for (let w = 1; w < textWords.length; w++) {
-        const nextWordText = `${newText} ${textWords[w]}`;
+    // Predetermine overflow line breaks to avoid words breaking while displaying
+    const textWords = text.split(' ');
+    let lastLineCount = 1;
+    let newText = textWords[0];
+    for (let w = 1; w < textWords.length; w++) {
+      const nextWordText = `${newText} ${textWords[w]}`;
+      if (textWords[w].includes('\n')) {
+        newText = nextWordText;
+        lastLineCount++;
+      } else {
         const lineCount = this.message.runWordWrap(nextWordText).split(/\n/g).length;
         if (lineCount > lastLineCount) {
           lastLineCount = lineCount;
@@ -61,9 +65,10 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
         } else
           newText = nextWordText;
       }
-
-      text = newText;*/
     }
+
+    text = newText;
+    
     if (this.textTimer) {
       this.textTimer.remove();
       if (this.textCallbackTimer)
