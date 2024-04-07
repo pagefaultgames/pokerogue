@@ -599,6 +599,9 @@ export class EncounterPhase extends BattlePhase {
       console.log(enemyPokemon.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
     });
 
+    if (this.scene.getParty().filter(p => p.isShiny()).length === 6)
+      this.scene.validateAchv(achvs.SHINY_PARTY);
+
     if (battle.battleType === BattleType.TRAINER)
       loadEnemyAssets.push(battle.trainer.loadAssets().then(() => battle.trainer.initSprite()));
     else {
