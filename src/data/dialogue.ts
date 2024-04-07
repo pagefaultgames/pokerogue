@@ -504,8 +504,8 @@ export const trainerTypeDialogue = {
         $@c{smile_eclosed}It's like I can barely remember the memories we cherished together.
         $@c{smile_ehalf}Were they even real? They seem so far away now…
         $@c{angry_mopen}You need to keep pushing, because if you don't, it will never end. You're the only one who can do this.
-        $I… don't know what all this means… but I feel it's true.
-        $If you can't defeat me here and now, you won't stand a chance.`
+        $@c{smile_ehalf}I… don't know what all this means… but I feel it's true.
+        $@c{neutral}If you can't defeat me here and now, you won't stand a chance.`
       ],
       victory: [
         `@c{smile_ehalf}I… I think I fulfilled my purpose…
