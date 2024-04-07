@@ -409,18 +409,20 @@ export class PostDefendStatChangeAbAttr extends PostDefendAbAttr {
   private condition: PokemonDefendCondition;
   private stat: BattleStat;
   private levels: integer;
+  private selfTarget: boolean;
 
-  constructor(condition: PokemonDefendCondition, stat: BattleStat, levels: integer) {
+  constructor(condition: PokemonDefendCondition, stat: BattleStat, levels: integer, selfTarget: boolean = true) {
     super(true);
 
     this.condition = condition;
     this.stat = stat;
     this.levels = levels;
+    this.selfTarget = selfTarget;
   }
 
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (this.condition(pokemon, attacker, move.getMove())) {
-      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ this.stat ], this.levels));
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, (this.selfTarget ? pokemon : attacker).getBattlerIndex(), true, [ this.stat ], this.levels));
       return true;
     }
 
@@ -2480,7 +2482,8 @@ export function initAbilities() {
     new Ability(Abilities.TOUGH_CLAWS, "Tough Claws", "Powers up moves that make direct contact.", 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 1.3),
     new Ability(Abilities.PIXILATE, "Pixilate (N)", "Normal-type moves become Fairy-type moves. The power of those moves is boosted a little.", 6),
-    new Ability(Abilities.GOOEY, "Gooey (N)", "Contact with the Pokémon lowers the attacker's Speed stat.", 6),
+    new Ability(Abilities.GOOEY, "Gooey", "Contact with the Pokémon lowers the attacker's Speed stat.", 6)
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), BattleStat.SPD, -1, false),
     new Ability(Abilities.AERILATE, "Aerilate (N)", "Normal-type moves become Flying-type moves. The power of those moves is boosted a little.", 6),
     new Ability(Abilities.PARENTAL_BOND, "Parental Bond (N)", "Parent and child each attacks.", 6),
     new Ability(Abilities.DARK_AURA, "Dark Aura", "Powers up each Pokémon's Dark-type moves.", 6)
@@ -2553,7 +2556,8 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.SOUL_HEART, "Soul-Heart (P)", "Boosts its Sp. Atk stat every time a Pokémon faints.", 7)
       .attr(PostVictoryStatChangeAbAttr, BattleStat.SPATK, 1),
-    new Ability(Abilities.TANGLING_HAIR, "Tangling Hair (N)", "Contact with the Pokémon lowers the attacker's Speed stat.", 7),
+    new Ability(Abilities.TANGLING_HAIR, "Tangling Hair", "Contact with the Pokémon lowers the attacker's Speed stat.", 7)
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), BattleStat.SPD, -1, false),
     new Ability(Abilities.RECEIVER, "Receiver (N)", "The Pokémon copies the Ability of a defeated ally.", 7),
     new Ability(Abilities.POWER_OF_ALCHEMY, "Power of Alchemy (N)", "The Pokémon copies the Ability of a defeated ally.", 7),
     new Ability(Abilities.BEAST_BOOST, "Beast Boost", "The Pokémon boosts its most proficient stat each time it knocks out a Pokémon.", 7)
