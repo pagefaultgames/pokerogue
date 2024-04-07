@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { Button } from "../battle-scene";
 import AbstractOptionSelectUiHandler, { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { Mode } from "./ui";
 
@@ -45,6 +45,13 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
     }
 
     return false;
+  }
+
+  processInput(button: Button): boolean {
+    if (button === Button.CANCEL && this.blockInput)
+      this.unblockInput();
+
+    return super.processInput(button);
   }
 
   setCursor(cursor: integer): boolean {

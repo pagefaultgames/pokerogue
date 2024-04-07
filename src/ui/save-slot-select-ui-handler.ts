@@ -112,7 +112,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
                   ui.setOverlayMode(Mode.CONFIRM, () => saveAndCallback(), () => {
                     ui.revertMode();
                     ui.showText(null, 0);
-                  }, false, 0, 19);
+                  }, false, 0, 19, 2000);
                 });
               } else
                 saveAndCallback();

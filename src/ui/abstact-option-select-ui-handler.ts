@@ -100,10 +100,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     if (this.config.delay) {
       this.blockInput = true;
       this.optionSelectText.setAlpha(0.5);
-      this.scene.time.delayedCall(Utils.fixedInt(this.config.delay), () => {
-        this.blockInput = false;
-        this.optionSelectText.setAlpha(1);
-      });
+      this.scene.time.delayedCall(Utils.fixedInt(this.config.delay), () => this.unblockInput());
     }
 
     return true;
@@ -119,8 +116,10 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     let playSound = true;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
-      if (this.blockInput)
+      if (this.blockInput) {
+        ui.playError();
         return false;
+      }
       
       success = true;
       if (button === Button.CANCEL) {
@@ -154,6 +153,14 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       ui.playSelect();
 
     return success;
+  }
+
+  unblockInput(): void {
+    if (!this.blockInput)
+      return;
+
+    this.blockInput = false;
+    this.optionSelectText.setAlpha(1);
   }
 
   getOptionsWithScroll(): OptionSelectItem[] {
