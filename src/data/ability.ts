@@ -476,7 +476,7 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   }
 
   applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !pokemon.status && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance)) {
+    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.status && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance)) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
       return attacker.trySetStatus(effect, true);
     }
@@ -511,7 +511,7 @@ export class PostDefendCritStatChangeAbAttr extends PostDefendAbAttr {
   private levels: integer;
 
   constructor(stat: BattleStat, levels: integer) {
-    super(true);
+    super();
 
     this.stat = stat;
     this.levels = levels;
@@ -525,6 +525,29 @@ export class PostDefendCritStatChangeAbAttr extends PostDefendAbAttr {
 
   getCondition(): AbAttrCondition {
     return (pokemon: Pokemon) => pokemon.turnData.attacksReceived.length && pokemon.turnData.attacksReceived[pokemon.turnData.attacksReceived.length - 1].critical;
+  }
+}
+
+export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
+  private damageRatio: integer;
+
+  constructor(damageRatio: integer) {
+    super();
+
+    this.damageRatio = damageRatio;
+  }
+  
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
+      attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+      return true;
+    }
+    
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name}\nhurt its attacker!`);
   }
 }
 
@@ -2107,7 +2130,9 @@ export function initAbilities() {
       .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, -1),
     new Ability(Abilities.SHADOW_TAG, "Shadow Tag", "This Pokémon steps on the opposing Pokémon's shadow to prevent it from escaping.", 3)
       .attr(ArenaTrapAbAttr),
-    new Ability(Abilities.ROUGH_SKIN, "Rough Skin (N)", "This Pokémon inflicts damage with its rough skin to the attacker on contact.", 3),
+    new Ability(Abilities.ROUGH_SKIN, "Rough Skin", "This Pokémon inflicts damage with its rough skin to the attacker on contact.", 3)
+      .attr(PostDefendContactDamageAbAttr, 8)
+      .ignorable(),
     new Ability(Abilities.WONDER_GUARD, "Wonder Guard", "Its mysterious power only lets supereffective moves hit the Pokémon.", 3)
       .attr(NonSuperEffectiveImmunityAbAttr)
       .attr(ProtectAbilityAbAttr)
@@ -2411,7 +2436,8 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL, 1.3)
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
       .condition(getWeatherCondition(WeatherType.SANDSTORM)),
-    new Ability(Abilities.IRON_BARBS, "Iron Barbs (N)", "Inflicts damage on the attacker upon contact with iron barbs.", 5),
+    new Ability(Abilities.IRON_BARBS, "Iron Barbs", "Inflicts damage on the attacker upon contact with iron barbs.", 5)
+      .attr(PostDefendContactDamageAbAttr, 8),
     new Ability(Abilities.ZEN_MODE, "Zen Mode", "Changes the Pokémon's shape when HP is half or less.", 5)
       .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() >= 0.5 ? 0 : 1)
       .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() >= 0.5 ? 0 : 1)
