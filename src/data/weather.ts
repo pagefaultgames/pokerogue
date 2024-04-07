@@ -293,7 +293,7 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       break;
     case Biome.MOUNTAIN:
       weatherPool = [
-        { weatherType: WeatherType.STRONG_WINDS, weight: 1 }
+        { weatherType: WeatherType.NONE, weight: 1 }
       ];
       break;
     case Biome.BADLANDS:
