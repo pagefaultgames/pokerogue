@@ -1973,6 +1973,10 @@ export class EnemyDamageReducerModifier extends EnemyDamageMultiplierModifier {
   getArgs(): any[] {
     return [ (1 - this.damageMultiplier) * 100 ];
   }
+
+  getMaxStackCount(scene: BattleScene): integer {
+    return scene.currentBattle.waveIndex < 2000 ? super.getMaxStackCount(scene) : 999;
+  }
 }
 
 export class EnemyTurnHealModifier extends EnemyPersistentModifier {
