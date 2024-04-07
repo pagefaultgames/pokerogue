@@ -6,7 +6,7 @@ import { Mode } from "./ui";
 import MessageUiHandler from "./message-ui-handler";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
 import { allAbilities } from "../data/ability";
-import { GameModes, gameModes } from "../game-mode";
+import { GameMode, GameModes, gameModes } from "../game-mode";
 import { Unlockables } from "../system/unlockables";
 import { GrowthRate, getGrowthRateColor } from "../data/exp";
 import { DexAttr, DexEntry, StarterFormMoveData, StarterMoveset } from "../system/game-data";
@@ -111,6 +111,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private iconAnimHandler: PokemonIconAnimHandler;
 
   private starterSelectCallback: StarterSelectCallback;
+  private gameMode: GameModes;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.STARTER_SELECT);
@@ -450,7 +451,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]): boolean {
-    if (args.length >= 1 && args[0] instanceof Function) {
+    if (args.length >= 2 && args[0] instanceof Function && typeof args[1] === 'number') {
       super.show(args);
 
       for (let g = 0; g < this.genSpecies.length; g++) {
@@ -468,10 +469,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       this.starterSelectContainer.setVisible(true);
 
+      this.gameMode = args[1];
+
       this.setGenMode(false);
       this.setCursor(0);
       this.setGenMode(true);
       this.setCursor(0);
+      this.tryUpdateValue(0);
 
       handleTutorial(this.scene, Tutorial.Starter_Select);
 
@@ -600,7 +604,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
                   if (this.speciesLoaded.get(species.speciesId))
                     getPokemonSpeciesForm(species.speciesId, props.formIndex).cry(this.scene);
-                  if (this.starterCursors.length === 6 || this.value === 10)
+                  if (this.starterCursors.length === 6 || this.value === this.getValueLimit())
                     this.tryStart();
                   this.updateInstructions();
                   ui.playSelect();
@@ -824,6 +828,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       instructionLines.push(cil);
 
     this.instructionsText.setText(instructionLines.join('\n'));
+  }
+
+  getValueLimit(): integer {
+    switch (this.gameMode) {
+      case GameModes.ENDLESS:
+      case GameModes.SPLICED_ENDLESS:
+        return 15;
+      default:
+        return 10;
+    }
   }
 
   setCursor(cursor: integer): boolean {
@@ -1216,11 +1230,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   tryUpdateValue(add?: integer): boolean {
     const value = this.starterGens.reduce((total: integer, gen: integer, i: integer) => total += this.scene.gameData.getSpeciesStarterValue(this.genSpecies[gen][this.starterCursors[i]].speciesId), 0);
     const newValue = value + (add || 0);
-    const overLimit = newValue > 10;
+    const overLimit = newValue > this.getValueLimit();
     let newValueStr = newValue.toString();
     if (newValueStr.startsWith('0.'))
       newValueStr = newValueStr.slice(1);
-    this.valueLimitLabel.setText(`${newValueStr}/10`);
+    this.valueLimitLabel.setText(`${newValueStr}/${this.getValueLimit()}`);
     this.valueLimitLabel.setColor(this.getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK));
     this.valueLimitLabel.setShadowColor(this.getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK, true));
     if (overLimit) {
@@ -1264,31 +1278,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             };
           }));
         };
-        if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
-          ui.setMode(Mode.STARTER_SELECT);
-          const options = [
-            {
-              label: gameModes[GameModes.CLASSIC].getName(),
-              handler: () => startRun(GameModes.CLASSIC)
-            },
-            {
-              label: gameModes[GameModes.ENDLESS].getName(),
-              handler: () => startRun(GameModes.ENDLESS)
-            }
-          ];
-          if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
-            options.push({
-              label: gameModes[GameModes.SPLICED_ENDLESS].getName(),
-              handler: () => startRun(GameModes.SPLICED_ENDLESS)
-            });
-          }
-          options.push({
-            label: 'Cancel',
-            handler: () => cancel()
-          });
-          ui.showText('Select a game mode.', null, () => ui.setModeWithoutClear(Mode.OPTION_SELECT, { options: options, yOffset: 19 }));
-        } else
-          startRun(GameModes.CLASSIC);
+        startRun(this.gameMode);
       }, cancel, null, null, 19);
     });
 

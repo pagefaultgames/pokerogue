@@ -129,6 +129,7 @@ export class LoginPhase extends Phase {
 export class TitlePhase extends Phase {
   private loaded: boolean;
   private lastSessionData: SessionSaveData;
+  private gameMode: GameModes;
 
   constructor(scene: BattleScene) {
     super(scene);
@@ -169,9 +170,40 @@ export class TitlePhase extends Phase {
     options.push({
       label: 'New Game',
       handler: () => {
-        this.scene.ui.setMode(Mode.MESSAGE);
-        this.scene.ui.clearText();
-        this.end();
+        const setModeAndEnd = (gameMode: GameModes) => {
+          this.gameMode = gameMode;
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.clearText();
+          this.end();
+        };
+        if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
+          const options = [
+            {
+              label: gameModes[GameModes.CLASSIC].getName(),
+              handler: () => setModeAndEnd(GameModes.CLASSIC)
+            },
+            {
+              label: gameModes[GameModes.ENDLESS].getName(),
+              handler: () => setModeAndEnd(GameModes.ENDLESS)
+            }
+          ];
+          if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
+            options.push({
+              label: gameModes[GameModes.SPLICED_ENDLESS].getName(),
+              handler: () => setModeAndEnd(GameModes.SPLICED_ENDLESS)
+            });
+          }
+          options.push({
+            label: 'Cancel',
+            handler: () => {
+              this.scene.clearPhaseQueue();
+              this.scene.pushPhase(new TitlePhase(this.scene));
+              super.end();
+            }
+          });
+          this.scene.ui.showText('Select a game mode.', null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
+        } else
+          this.end();
       }
     },
     {
@@ -271,7 +303,7 @@ export class TitlePhase extends Phase {
   end(): void {
     if (!this.loaded && !this.scene.gameMode.isDaily) {
       this.scene.arena.preloadBgm();
-      this.scene.pushPhase(new SelectStarterPhase(this.scene));
+      this.scene.pushPhase(new SelectStarterPhase(this.scene, this.gameMode));
       this.scene.newArena(this.scene.gameMode.getStartingBiome(this.scene));
     } else
       this.scene.playBgm();
@@ -339,8 +371,12 @@ export class SelectGenderPhase extends Phase {
 }
 
 export class SelectStarterPhase extends Phase {
-  constructor(scene: BattleScene) {
+  private gameMode: GameModes;
+
+  constructor(scene: BattleScene, gameMode: GameModes) {
     super(scene);
+
+    this.gameMode = gameMode;
   }
 
   start() {
@@ -394,7 +430,7 @@ export class SelectStarterPhase extends Phase {
           this.end();
         });
       });
-    });
+    }, this.gameMode);
   }
 }
 
@@ -2322,7 +2358,7 @@ export class MoveEffectPhase extends PokemonPhase {
       return true;
 
     if (this.scene.arena.weather?.weatherType === WeatherType.FOG)
-      moveAccuracy.value = Math.floor(moveAccuracy.value * 0.6);
+      moveAccuracy.value = Math.floor(moveAccuracy.value * 0.8);
 
     if (!this.move.getMove().getAttrs(OneHitKOAttr).length && this.scene.arena.getTag(ArenaTagType.GRAVITY))
       moveAccuracy.value = Math.floor(moveAccuracy.value * 1.67);
