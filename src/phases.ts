@@ -2869,7 +2869,7 @@ export class FaintPhase extends PokemonPhase {
 
     this.scene.queueMessage(getPokemonMessage(pokemon, ' fainted!'), null, true);
 
-    const alivePlayField = this.scene.getField().filter(p => p && p !== pokemon);
+    const alivePlayField = this.scene.getField(true);
     alivePlayField.forEach(p => applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p));
     if (pokemon.turnData?.attacksReceived?.length) {
       const defeatSource = this.scene.getPokemonById(pokemon.turnData.attacksReceived[0].sourceId);
