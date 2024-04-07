@@ -795,6 +795,33 @@ class PostVictoryStatChangeAbAttr extends PostVictoryAbAttr {
   }
 }
 
+export class PostKnockOutAbAttr extends AbAttr {
+  applyPostKnockOut(pokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
+export class PostKnockOutStatChangeAbAttr extends PostKnockOutAbAttr {
+  private stat: BattleStat | ((p: Pokemon) => BattleStat);
+  private levels: integer;
+
+  constructor(stat: BattleStat | ((p: Pokemon) => BattleStat), levels: integer) {
+    super();
+
+    this.stat = stat;
+    this.levels = levels;
+  }
+
+  applyPostKnockOut(pokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
+    const stat = typeof this.stat === 'function'
+      ? this.stat(pokemon)
+      : this.stat;
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ stat ], this.levels));
+    
+    return true;
+  }
+}
+
 export class IgnoreOpponentStatChangesAbAttr extends AbAttr {
   constructor() {
     super(false);
@@ -1696,6 +1723,11 @@ export function applyPostAttackAbAttrs(attrType: { new(...args: any[]): PostAtta
   return applyAbAttrsInternal<PostAttackAbAttr>(attrType, pokemon, attr => attr.applyPostAttack(pokemon, defender, move, hitResult, args), args);
 }
 
+export function applyPostKnockOutAbAttrs(attrType: { new(...args: any[]): PostKnockOutAbAttr },
+  pokemon: Pokemon, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostKnockOutAbAttr>(attrType, pokemon, attr => attr.applyPostKnockOut(pokemon, args), args);
+} 
+
 export function applyPostVictoryAbAttrs(attrType: { new(...args: any[]): PostVictoryAbAttr },
   pokemon: Pokemon, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostVictoryAbAttr>(attrType, pokemon, attr => attr.applyPostVictory(pokemon, args), args);
@@ -2571,8 +2603,8 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.DAZZLING, "Dazzling (N)", "Surprises the opposing Pokémon, making it unable to attack using priority moves.", 7)
       .ignorable(),
-    new Ability(Abilities.SOUL_HEART, "Soul-Heart (P)", "Boosts its Sp. Atk stat every time a Pokémon faints.", 7)
-      .attr(PostVictoryStatChangeAbAttr, BattleStat.SPATK, 1),
+    new Ability(Abilities.SOUL_HEART, "Soul-Heart", "Boosts its Sp. Atk stat every time a Pokémon faints.", 7)
+      .attr(PostKnockOutStatChangeAbAttr, BattleStat.SPATK, 1),
     new Ability(Abilities.TANGLING_HAIR, "Tangling Hair", "Contact with the Pokémon lowers the attacker's Speed stat.", 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), BattleStat.SPD, -1, false),
     new Ability(Abilities.RECEIVER, "Receiver (N)", "The Pokémon copies the Ability of a defeated ally.", 7),
