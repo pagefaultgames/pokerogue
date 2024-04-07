@@ -4255,8 +4255,8 @@ export function initMoves() {
       .attr(MultiHitAttr),
     new AttackMove(Moves.MYSTICAL_FIRE, "Mystical Fire", Type.FIRE, MoveCategory.SPECIAL, 75, 100, 10, "The user attacks by breathing a special, hot fire. This also lowers the target's Sp. Atk stat.", 100, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPATK, -1),
-    new SelfStatusMove(Moves.SPIKY_SHIELD, "Spiky Shield (P)", Type.GRASS, -1, 10, "In addition to protecting the user from attacks, this move also damages any attacker that makes direct contact.", -1, 4, 6)
-      .attr(ProtectAttr),
+    new SelfStatusMove(Moves.SPIKY_SHIELD, "Spiky Shield", Type.GRASS, -1, 10, "In addition to protecting the user from attacks, this move also damages any attacker that makes direct contact.", -1, 4, 6)
+      .attr(ProtectAttr, BattlerTagType.SPIKY_SHIELD),
     new StatusMove(Moves.AROMATIC_MIST, "Aromatic Mist", Type.FAIRY, -1, 20, "The user raises the Sp. Def stat of an ally Pokémon by using a mysterious aroma.", -1, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPDEF, 1)
       .target(MoveTarget.NEAR_ALLY),

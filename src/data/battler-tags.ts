@@ -634,6 +634,30 @@ export class ProtectedTag extends BattlerTag {
   }
 }
 
+export class ContactDamageProtectedTag extends ProtectedTag {
+  private damageRatio: integer;
+
+  constructor(sourceMove: Moves, damageRatio: integer) {
+    super(sourceMove, BattlerTagType.SPIKY_SHIELD);
+
+    this.damageRatio = damageRatio;
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const ret = super.lapse(pokemon, lapseType);
+
+    if (lapseType === BattlerTagLapseType.CUSTOM) {
+      const effectPhase = pokemon.scene.getCurrentPhase();
+      if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
+        const attacker = effectPhase.getPokemon();
+        attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+      }
+    }
+
+    return ret;
+  }
+}
+
 export class ContactStatChangeProtectedTag extends ProtectedTag {
   private stat: BattleStat;
   private levels: integer;
@@ -1016,6 +1040,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new ThunderCageTag(turnCount, sourceId);
     case BattlerTagType.PROTECTED:
       return new ProtectedTag(sourceMove);
+    case BattlerTagType.SPIKY_SHIELD:
+      return new ContactDamageProtectedTag(sourceMove, 8);
     case BattlerTagType.KINGS_SHIELD:
       return new ContactStatChangeProtectedTag(sourceMove, tagType, BattleStat.ATK, -1);
     case BattlerTagType.OBSTRUCT:

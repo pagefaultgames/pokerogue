@@ -2498,11 +2498,11 @@ export function initAbilities() {
     new Ability(Abilities.DELTA_STREAM, "Delta Stream", "The Pokémon changes the weather to eliminate all of the Flying type's weaknesses.", 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS),
     new Ability(Abilities.STAMINA, "Stamina", "Boosts the Defense stat when hit by an attack.", 7)
-      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category != MoveCategory.STATUS, BattleStat.DEF, 1),
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, "Wimp Out (N)", "The Pokémon cowardly switches out when its HP becomes half or less.", 7),
     new Ability(Abilities.EMERGENCY_EXIT, "Emergency Exit (N)", "The Pokémon, sensing danger, switches out when its HP becomes half or less.", 7),
     new Ability(Abilities.WATER_COMPACTION, "Water Compaction", "Boosts the Pokémon's Defense stat sharply when hit by a Water-type move.", 7)
-      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER , BattleStat.DEF, 2),
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER, BattleStat.DEF, 2),
     new Ability(Abilities.MERCILESS, "Merciless (N)", "The Pokémon's attacks become critical hits if the target is poisoned.", 7),
     new Ability(Abilities.SHIELDS_DOWN, "Shields Down (N)", "When its HP becomes half or less, the Pokémon's shell breaks and it becomes aggressive.", 7)
       .attr(ProtectAbilityAbAttr),
