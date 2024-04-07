@@ -2601,7 +2601,8 @@ export function initAbilities() {
     new Ability(Abilities.GULP_MISSILE, "Gulp Missile (N)", "When the Pokémon uses Surf or Dive, it will come back with prey. When it takes damage, it will spit out the prey to attack.", 8)
       .attr(ProtectAbilityAbAttr),
     new Ability(Abilities.STALWART, "Stalwart (N)", "Ignores the effects of opposing Pokémon's Abilities and moves that draw in moves.", 8),
-    new Ability(Abilities.STEAM_ENGINE, "Steam Engine (N)", "Boosts the Pokémon's Speed stat drastically if hit by a Fire- or Water-type move.", 8),
+    new Ability(Abilities.STEAM_ENGINE, "Steam Engine", "Boosts the Pokémon's Speed stat drastically if hit by a Fire- or Water-type move.", 8)
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.FIRE || move.type === Type.WATER, BattleStat.SPD, 6),
     new Ability(Abilities.PUNK_ROCK, "Punk Rock", "Boosts the power of sound-based moves. The Pokémon also takes half the damage from these kinds of moves.", 8)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SOUND_BASED), 1.3)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.hasFlag(MoveFlags.SOUND_BASED), 0.5)
