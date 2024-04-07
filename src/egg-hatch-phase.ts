@@ -113,36 +113,36 @@ export class EggHatchPhase extends Phase {
         this.canSkip = true;
 
         this.scene.time.delayedCall(1000, () => {
-          if (!this.skipped)
+          if (!this.hatched)
             this.evolutionBgm = this.scene.playSoundWithoutBgm('evolution');
         });
 
         this.scene.time.delayedCall(2000, () => {
-          if (this.skipped)
+          if (this.hatched)
             return;
           this.eggCrackSprite.setVisible(true);
           this.doSpray(1, this.eggSprite.displayHeight / -2);
           this.doEggShake(2).then(() => {
-            if (this.skipped)
-            return;
+            if (this.hatched)
+              return;
             this.scene.time.delayedCall(1000, () => {
-              if (this.skipped)
+              if (this.hatched)
                 return;
               this.doSpray(2, this.eggSprite.displayHeight / -4);
               this.eggCrackSprite.setFrame('1');
               this.scene.time.delayedCall(125, () => this.eggCrackSprite.setFrame('2'));
               this.doEggShake(4).then(() => {
-                if (this.skipped)
+                if (this.hatched)
                   return;
                 this.scene.time.delayedCall(1000, () => {
-                  if (this.skipped)
+                  if (this.hatched)
                     return;
                   this.scene.playSound('egg_crack');
                   this.doSpray(4);
                   this.eggCrackSprite.setFrame('3');
                   this.scene.time.delayedCall(125, () => this.eggCrackSprite.setFrame('4'));
                   this.doEggShake(8, 2).then(() => {
-                    if (!this.skipped)
+                    if (!this.hatched)
                       this.doHatch();
                   });
                 });
@@ -153,9 +153,12 @@ export class EggHatchPhase extends Phase {
       });
     });
   }
+
   end() {
     if (this.scene.findPhase((p) => p instanceof EggHatchPhase))
       this.eggHatchHandler.clear();
+    else
+      this.scene.time.delayedCall(250, () => this.scene.setModifiersVisible(true));
     super.end();
   }
 

@@ -1640,6 +1640,10 @@ export default class BattleScene extends SceneBase {
 		this.updateModifiers(false).then(() => this.updateUIPositions());
 	}
 
+	setModifiersVisible(visible: boolean) {
+		[ this.modifierBar, this.enemyModifierBar ].map(m => m.setVisible(visible));
+	}
+
 	updateModifiers(player?: boolean, instant?: boolean): Promise<void> {
 		if (player === undefined)
 			player = true;
