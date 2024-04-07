@@ -202,8 +202,12 @@ export class TitlePhase extends Phase {
             }
           });
           this.scene.ui.showText('Select a game mode.', null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
-        } else
+        } else {
+          this.gameMode = GameModes.CLASSIC;
+          this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.clearText();
           this.end();
+        }
       }
     },
     {
