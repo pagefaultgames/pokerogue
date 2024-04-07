@@ -36,13 +36,14 @@ export enum EvolutionItem {
   DUSK_STONE,
   DAWN_STONE,
   SHINY_STONE,
-  CHIPPED_POT,
   CRACKED_POT,
   SWEET_APPLE,
   TART_APPLE,
   STRAWBERRY_SWEET,
+  UNREMARKABLE_TEACUP,
 
-  BLACK_AUGURITE = 51,
+  CHIPPED_POT = 51,
+  BLACK_AUGURITE,
   GALARICA_CUFF,
   GALARICA_WREATH,
   PEAT_BLOCK,
@@ -52,8 +53,7 @@ export enum EvolutionItem {
   METAL_ALLOY,
   SCROLL_OF_DARKNESS,
   SCROLL_OF_WATERS,
-  SYRUPY_APPLE,
-  UNREMARKABLE_TEACUP
+  SYRUPY_APPLE
 }
 
 export type EvolutionConditionPredicate = (p: Pokemon) => boolean;
