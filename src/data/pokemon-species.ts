@@ -2958,7 +2958,7 @@ export const speciesStarters = {
   [Species.QUAXLY]: 3,
   [Species.LECHONK]: 2,
   [Species.TAROUNTULA]: 2,
-  [Species.NYMBLE]: 2,
+  [Species.NYMBLE]: 4,
   [Species.PAWMI]: 3,
   [Species.TANDEMAUS]: 4,
   [Species.FIDOUGH]: 3,

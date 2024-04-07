@@ -553,6 +553,23 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   }
 }
 
+export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
+  private weatherType: WeatherType;
+
+  constructor(weatherType: WeatherType) {
+    super();
+
+    this.weatherType = weatherType;
+  }
+
+  applyPostDefend(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (!pokemon.scene.arena.weather?.isImmutable())
+      return pokemon.scene.arena.trySetWeather(this.weatherType, true);
+
+    return false;
+  }
+}
+
 export class PreAttackAbAttr extends AbAttr {
   applyPreAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -2611,7 +2628,8 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SOUND_BASED), 1.3)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.hasFlag(MoveFlags.SOUND_BASED), 0.5)
       .ignorable(),
-    new Ability(Abilities.SAND_SPIT, "Sand Spit (N)", "The Pokémon creates a sandstorm when it's hit by an attack.", 8),
+    new Ability(Abilities.SAND_SPIT, "Sand Spit", "The Pokémon creates a sandstorm when it's hit by an attack.", 8)
+      .attr(PostDefendWeatherChangeAbAttr, WeatherType.SANDSTORM),
     new Ability(Abilities.ICE_SCALES, "Ice Scales", "The Pokémon is protected by ice scales, which halve the damage taken from special moves.", 8)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.SPECIAL, 0.5)
       .ignorable(),
