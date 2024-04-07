@@ -307,7 +307,7 @@ export class TempBattleStatBoosterModifierType extends ModifierType implements G
 
   constructor(tempBattleStat: TempBattleStat) {
     super(getTempBattleStatBoosterItemName(tempBattleStat),
-      `Increases the ${getTempBattleStatName(tempBattleStat)} of all party members by 1 stage for 10 battles`,
+      `Increases the ${getTempBattleStatName(tempBattleStat)} of all party members by 1 stage for 5 battles`,
       (_type, _args) => new Modifiers.TempBattleStatBoosterModifier(this, this.tempBattleStat),
       getTempBattleStatBoosterItemName(tempBattleStat).replace(/\./g, '').replace(/[ ]/g, '_').toLowerCase());
 
