@@ -615,9 +615,10 @@ export class EncounterPhase extends BattlePhase {
       if (e < (battle.double ? 2 : 1)) {
         enemyPokemon.setX(-66 + enemyPokemon.getFieldPositionOffset()[0]);
         enemyPokemon.resetSummonData();
-        if (!this.loaded)
-          this.scene.gameData.setPokemonSeen(enemyPokemon);
       }
+
+      if (!this.loaded)
+        this.scene.gameData.setPokemonSeen(enemyPokemon);
 
       if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
         if (this.scene.gameMode.isClassic && (battle.battleSpec === BattleSpec.FINAL_BOSS || this.scene.gameMode.isWaveFinal(battle.waveIndex))) {
