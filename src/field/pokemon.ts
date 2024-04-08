@@ -751,7 +751,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (moveType === Type.STELLAR)
       return this.isTerastallized() ? 2 : 1;
     const types = this.getTypes(true, true);
-    let multiplier =  getTypeDamageMultiplier(moveType, types[0]) * (types.length > 1 ? getTypeDamageMultiplier(moveType, types[1]) : 1) as TypeDamageMultiplier;
+    let multiplier = getTypeDamageMultiplier(moveType, types[0]) * (types.length > 1 ? getTypeDamageMultiplier(moveType, types[1]) : 1) as TypeDamageMultiplier;
     // Handle strong winds lowering effectiveness of types super effective against pure flying
     if (this.scene.arena.weather?.weatherType === WeatherType.STRONG_WINDS && !this.scene.arena.weather.isEffectSuppressed(this.scene) && multiplier >= 2 && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(moveType, Type.FLYING) === 2)
       multiplier /= 2;
@@ -1096,6 +1096,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       typeMultiplier.value = 1;
     if (this.getTypes(true, true).find(t => move.isTypeImmune(t)))
       typeMultiplier.value = 0;
+    // Handle strong winds lowering effectiveness of types super effective against pure flying
+    if (this.scene.arena.weather?.weatherType === WeatherType.STRONG_WINDS && !this.scene.arena.weather.isEffectSuppressed(this.scene) && typeMultiplier.value >= 2 && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(move.type, Type.FLYING) === 2)
+      typeMultiplier.value /= 2;
 
     switch (moveCategory) {
       case MoveCategory.PHYSICAL:
