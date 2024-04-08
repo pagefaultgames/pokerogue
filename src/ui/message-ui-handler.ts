@@ -52,9 +52,10 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       // Predetermine overflow line breaks to avoid words breaking while displaying
       const textWords = text.split(' ');
       let lastLineCount = 1;
-      let newText = textWords[0];
-      for (let w = 1; w < textWords.length; w++) {
+      let newText = '';
+      for (let w = 0; w < textWords.length; w++) {
         const nextWordText = `${newText} ${textWords[w]}`;
+        console.log(nextWordText);
         if (textWords[w].includes('\n')) {
           newText = nextWordText;
           lastLineCount++;
