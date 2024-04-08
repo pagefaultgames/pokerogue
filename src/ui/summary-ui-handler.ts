@@ -41,6 +41,7 @@ export default class SummaryUiHandler extends UiHandler {
   private pokeball: Phaser.GameObjects.Sprite;
   private levelText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
+  private shinyStar: Phaser.GameObjects.Image;
   private statusContainer: Phaser.GameObjects.Container;
   private status: Phaser.GameObjects.Image;
   private summaryPageContainer: Phaser.GameObjects.Container;
@@ -95,6 +96,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.shinyOverlay = this.scene.add.image(6, -54, 'summary_overlay_shiny');
     this.shinyOverlay.setOrigin(0, 1);
+    this.shinyOverlay.setVisible(false);
     this.summaryContainer.add(this.shinyOverlay);
 
     this.numberText = addTextObject(this.scene, 17, -149, '0000', TextStyle.SUMMARY);
@@ -126,6 +128,11 @@ export default class SummaryUiHandler extends UiHandler {
     this.genderText = addTextObject(this.scene, 96, -17, '', TextStyle.SUMMARY);
     this.genderText.setOrigin(0, 1);
     this.summaryContainer.add(this.genderText);
+
+    this.shinyStar = this.scene.add.image(96, -19, 'shiny_star');
+    this.shinyStar.setOrigin(0, 1);
+    this.shinyStar.setVisible(false);
+    this.summaryContainer.add(this.shinyStar);
 
     this.statusContainer = this.scene.add.container(-106, -16);
 
@@ -234,6 +241,9 @@ export default class SummaryUiHandler extends UiHandler {
     this.genderText.setText(getGenderSymbol(this.pokemon.getGender(true)));
     this.genderText.setColor(getGenderColor(this.pokemon.getGender(true)));
     this.genderText.setShadowColor(getGenderColor(this.pokemon.getGender(true), true));
+
+    this.shinyStar.setX(96 - (this.genderText.text ? 10 : 0));
+    this.shinyStar.setVisible(this.pokemon.isShiny());
 
     switch (this.summaryUiMode) {
       case SummaryUiMode.DEFAULT:
