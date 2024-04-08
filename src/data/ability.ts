@@ -1416,6 +1416,39 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
   }
 }
 
+export class PostBiomeChangeAbAttr extends AbAttr { }
+
+export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
+  private weatherType: WeatherType;
+
+  constructor(weatherType: WeatherType) {
+    super();
+
+    this.weatherType = weatherType;
+  }
+
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (!pokemon.scene.arena.weather?.isImmutable())
+      return pokemon.scene.arena.trySetWeather(this.weatherType, true);
+
+    return false;
+  }
+}
+
+export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
+  private terrainType: TerrainType;
+
+  constructor(terrainType: TerrainType) {
+    super();
+
+    this.terrainType = terrainType;
+  }
+
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    return pokemon.scene.arena.trySetTerrain(this.terrainType, true);
+  }
+}
+
 export class StatChangeMultiplierAbAttr extends AbAttr {
   private multiplier: integer;
 
@@ -2155,7 +2188,8 @@ export function initAbilities() {
   allAbilities.push(
     new Ability(Abilities.STENCH, "Stench (N)", "By releasing stench when attacking, this Pokémon may cause the target to flinch.", 3),
     new Ability(Abilities.DRIZZLE, "Drizzle", "The Pokémon makes it rain when it enters a battle.", 3)
-      .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN),
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN),
     new Ability(Abilities.SPEED_BOOST, "Speed Boost", "Its Speed stat is boosted every turn.", 3)
       .attr(PostTurnStatChangeAbAttr, BattleStat.SPD, 1),
     new Ability(Abilities.BATTLE_ARMOR, "Battle Armor", "Hard armor protects the Pokémon from critical hits.", 3)
@@ -2269,7 +2303,8 @@ export function initAbilities() {
     new Ability(Abilities.RAIN_DISH, "Rain Dish", "The Pokémon gradually regains HP in rain.", 3)
       .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.RAIN, WeatherType.HEAVY_RAIN),
     new Ability(Abilities.SAND_STREAM, "Sand Stream", "The Pokémon summons a sandstorm when it enters a battle.", 3)
-      .attr(PostSummonWeatherChangeAbAttr, WeatherType.SANDSTORM),
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.SANDSTORM)
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SANDSTORM),
     new Ability(Abilities.PRESSURE, "Pressure", "By putting pressure on the opposing Pokémon, it raises their PP usage.", 3)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is exerting its Pressure!')),
     new Ability(Abilities.THICK_FAT, "Thick Fat", "The Pokémon is protected by a layer of thick fat, which halves the damage taken from Fire- and Ice-type moves.", 3)
@@ -2323,7 +2358,8 @@ export function initAbilities() {
     new Ability(Abilities.ROCK_HEAD, "Rock Head", "Protects the Pokémon from recoil damage.", 3)
       .attr(BlockRecoilDamageAttr),
     new Ability(Abilities.DROUGHT, "Drought", "Turns the sunlight harsh when the Pokémon enters a battle.", 3)
-      .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY),
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY),
     new Ability(Abilities.ARENA_TRAP, "Arena Trap", "Prevents opposing Pokémon from fleeing.", 3)
       .attr(ArenaTrapAbAttr),
     new Ability(Abilities.VITAL_SPIRIT, "Vital Spirit", "The Pokémon is full of vitality, and that prevents it from falling asleep.", 3)
@@ -2425,7 +2461,8 @@ export function initAbilities() {
       .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getAttackTypeEffectiveness(move.type) >= 2, 0.75)
       .ignorable(),
     new Ability(Abilities.SNOW_WARNING, "Snow Warning", "The Pokémon summons a hailstorm when it enters a battle.", 4)
-      .attr(PostSummonWeatherChangeAbAttr, WeatherType.HAIL),
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.HAIL)
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HAIL),
     new Ability(Abilities.HONEY_GATHER, "Honey Gather (N)", "The Pokémon may gather Honey after a battle.", 4),
     new Ability(Abilities.FRISK, "Frisk (N)", "When it enters a battle, the Pokémon can check an opposing Pokémon's held item.", 4),
     new Ability(Abilities.RECKLESS, "Reckless", "Powers up moves that have recoil damage.", 4)
@@ -2578,11 +2615,14 @@ export function initAbilities() {
     new Ability(Abilities.AURA_BREAK, "Aura Break (N)", "The effects of \"Aura\" Abilities are reversed to lower the power of affected moves.", 6)
       .ignorable(),
     new Ability(Abilities.PRIMORDIAL_SEA, "Primordial Sea", "The Pokémon changes the weather to nullify Fire-type attacks.", 6)
-      .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN),
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN),
     new Ability(Abilities.DESOLATE_LAND, "Desolate Land", "The Pokémon changes the weather to nullify Water-type attacks.", 6)
-      .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN),
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN),
     new Ability(Abilities.DELTA_STREAM, "Delta Stream", "The Pokémon changes the weather to eliminate all of the Flying type's weaknesses.", 6)
-      .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS),
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS),
     new Ability(Abilities.STAMINA, "Stamina", "Boosts the Defense stat when hit by an attack.", 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, "Wimp Out (N)", "The Pokémon cowardly switches out when its HP becomes half or less.", 7),
@@ -2661,13 +2701,17 @@ export function initAbilities() {
     new Ability(Abilities.RKS_SYSTEM, "RKS System (N)", "Changes the Pokémon's type to match the memory disc it holds.", 7)
       .attr(ProtectAbilityAbAttr),
     new Ability(Abilities.ELECTRIC_SURGE, "Electric Surge", "Turns the ground into Electric Terrain when the Pokémon enters a battle.", 7)
-      .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC),
+      .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
+      .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC),
     new Ability(Abilities.PSYCHIC_SURGE, "Psychic Surge", "Turns the ground into Psychic Terrain when the Pokémon enters a battle.", 7)
-      .attr(PostSummonTerrainChangeAbAttr, TerrainType.PSYCHIC),
+      .attr(PostSummonTerrainChangeAbAttr, TerrainType.PSYCHIC)
+      .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.PSYCHIC),
     new Ability(Abilities.MISTY_SURGE, "Misty Surge", "Turns the ground into Misty Terrain when the Pokémon enters a battle.", 7)
-      .attr(PostSummonTerrainChangeAbAttr, TerrainType.MISTY),
+      .attr(PostSummonTerrainChangeAbAttr, TerrainType.MISTY)
+      .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.MISTY),
     new Ability(Abilities.GRASSY_SURGE, "Grassy Surge", "Turns the ground into Grassy Terrain when the Pokémon enters a battle.", 7)
-      .attr(PostSummonTerrainChangeAbAttr, TerrainType.GRASSY),
+      .attr(PostSummonTerrainChangeAbAttr, TerrainType.GRASSY)
+      .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.GRASSY),
     new Ability(Abilities.FULL_METAL_BODY, "Full Metal Body", "Prevents other Pokémon's moves or Abilities from lowering the Pokémon's stats.", 7)
       .attr(ProtectStatAbAttr),
     new Ability(Abilities.SHADOW_SHIELD, "Shadow Shield", "Reduces the amount of damage the Pokémon takes while its HP is full.", 7)
@@ -2782,10 +2826,12 @@ export function initAbilities() {
     new Ability(Abilities.BEADS_OF_RUIN, "Beads of Ruin (N)", "The power of the Pokémon's ruinous beads lowers the Sp. Def stats of all Pokémon except itself.", 9),
     new Ability(Abilities.ORICHALCUM_PULSE, "Orichalcum Pulse", "Turns the sunlight harsh when the Pokémon enters a battle. The ancient pulse thrumming through the Pokémon also boosts its Attack stat in harsh sunlight.", 9)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
+      .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), BattleStatMultiplierAbAttr, BattleStat.ATK, 4 / 3)
       .attr(ProtectAbilityAbAttr),
     new Ability(Abilities.HADRON_ENGINE, "Hadron Engine", "Turns the ground into Electric Terrain when the Pokémon enters a battle. The futuristic engine within the Pokémon also boosts its Sp. Atk stat on Electric Terrain.", 9)
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
+      .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), BattleStatMultiplierAbAttr, BattleStat.SPATK, 4 / 3)
       .attr(ProtectAbilityAbAttr),
     new Ability(Abilities.OPPORTUNIST, "Opportunist (N)", "If an opponent's stat is boosted, the Pokémon seizes the opportunity to boost the same stat for itself.", 9),
