@@ -2213,8 +2213,8 @@ export class MoveEffectPhase extends PokemonPhase {
     const user = this.getUserPokemon();
     const targets = this.getTargets();
 
-    if (!user || !user.scene)
-      return this.end();
+    if (!user?.isOnField())
+      return super.end();
 
     const overridden = new Utils.BooleanHolder(false);
 
@@ -2344,20 +2344,22 @@ export class MoveEffectPhase extends PokemonPhase {
     if (this.move.getMove().moveTarget === MoveTarget.USER)
       return true;
 
+    const user = this.getUserPokemon();
+
     // Hit check only calculated on first hit for multi-hit moves
-    if (this.getUserPokemon().turnData.hitsLeft < this.getUserPokemon().turnData.hitCount)
+    if (user.turnData.hitsLeft < user.turnData.hitCount)
       return true;
 
     const hiddenTag = target.getTag(HiddenTag);
     if (hiddenTag && !this.move.getMove().getAttrs(HitsTagAttr).filter(hta => (hta as HitsTagAttr).tagType === hiddenTag.tagType).length)
       return false;
 
-    if (this.getUserPokemon().getTag(BattlerTagType.IGNORE_ACCURACY) && (this.getUserPokemon().getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) > -1)
+    if (user.getTag(BattlerTagType.IGNORE_ACCURACY) && (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) > -1)
       return true;
 
     const moveAccuracy = new Utils.NumberHolder(this.move.getMove().accuracy);
 
-    applyMoveAttrs(VariableAccuracyAttr, this.getUserPokemon(), target, this.move.getMove(), moveAccuracy);
+    applyMoveAttrs(VariableAccuracyAttr, user, target, this.move.getMove(), moveAccuracy);
 
     if (moveAccuracy.value === -1)
       return true;
@@ -2368,14 +2370,14 @@ export class MoveEffectPhase extends PokemonPhase {
     if (!this.move.getMove().getAttrs(OneHitKOAttr).length && this.scene.arena.getTag(ArenaTagType.GRAVITY))
       moveAccuracy.value = Math.floor(moveAccuracy.value * 1.67);
       
-    const userAccuracyLevel = new Utils.IntegerHolder(this.getUserPokemon().summonData.battleStats[BattleStat.ACC]);
+    const userAccuracyLevel = new Utils.IntegerHolder(user.summonData.battleStats[BattleStat.ACC]);
     const targetEvasionLevel = new Utils.IntegerHolder(target.summonData.battleStats[BattleStat.EVA]);
     applyAbAttrs(IgnoreOpponentStatChangesAbAttr, target, null, userAccuracyLevel);
-    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, this.getUserPokemon(), null, targetEvasionLevel);
-    applyMoveAttrs(IgnoreOpponentStatChangesAttr, this.getUserPokemon(), target, this.move.getMove(), targetEvasionLevel);
+    applyAbAttrs(IgnoreOpponentStatChangesAbAttr, user, null, targetEvasionLevel);
+    applyMoveAttrs(IgnoreOpponentStatChangesAttr, user, target, this.move.getMove(), targetEvasionLevel);
     this.scene.applyModifiers(TempBattleStatBoosterModifier, this.player, TempBattleStat.ACC, userAccuracyLevel);
 
-    const rand = this.getUserPokemon().randSeedInt(100, 1);
+    const rand = user.randSeedInt(100, 1);
 
     const accuracyMultiplier = new Utils.NumberHolder(1);
     if (userAccuracyLevel.value !== targetEvasionLevel.value) {
@@ -2384,7 +2386,7 @@ export class MoveEffectPhase extends PokemonPhase {
         : 3 / (3 + Math.min(targetEvasionLevel.value - userAccuracyLevel.value, 6));
     }
 
-    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this.getUserPokemon(), BattleStat.ACC, accuracyMultiplier);
+    applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, user, BattleStat.ACC, accuracyMultiplier);
 
     const evasionMultiplier = new Utils.NumberHolder(1);
     applyBattleStatMultiplierAbAttrs(BattleStatMultiplierAbAttr, this.getTarget(), BattleStat.EVA, evasionMultiplier);
