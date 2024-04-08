@@ -1133,7 +1133,7 @@ export class OneHitKOAttr extends MoveAttr {
     return (user, target, move) => {
       const cancelled = new Utils.BooleanHolder(false);
       applyAbAttrs(BlockOneHitKOAbAttr, target, cancelled);
-      return !cancelled && user.level >= target.level;
+      return !cancelled.value && user.level >= target.level;
     }
   }
 }
@@ -1877,7 +1877,7 @@ export class OneHitKOAccuracyAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const accuracy = args[0] as Utils.NumberHolder;
     accuracy.value = 30 + 70 * Math.min(target.level / user.level, 0.5) * 2;
-    return false;
+    return true;
   }
 }
 
