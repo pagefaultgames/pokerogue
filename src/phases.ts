@@ -2099,7 +2099,8 @@ export class MovePhase extends BattlePhase {
 
       if (!moveQueue.length || !moveQueue.shift().ignorePP) {
         this.move.ppUsed++;
-        for (let opponent of this.pokemon.getOpponents()) {
+        const targetedOpponents = this.pokemon.getOpponents().filter(o => this.targets.includes(o.getBattlerIndex()));
+        for (let opponent of targetedOpponents) {
           if (this.move.ppUsed === this.move.getMove().pp)
             break;
           if (opponent.getAbility().id === Abilities.PRESSURE)
