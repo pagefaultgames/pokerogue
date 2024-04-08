@@ -9,7 +9,7 @@ import { allAbilities } from "../data/ability";
 import { GameMode, GameModes, gameModes } from "../game-mode";
 import { Unlockables } from "../system/unlockables";
 import { GrowthRate, getGrowthRateColor } from "../data/exp";
-import { DexAttr, DexEntry, StarterFormMoveData, StarterMoveset } from "../system/game-data";
+import { DexAttr, DexAttrProps, DexEntry, StarterFormMoveData, StarterMoveset } from "../system/game-data";
 import * as Utils from "../utils";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import { StatsContainer } from "./stats-container";
@@ -634,6 +634,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                             ui.showText(`Select a move to swap with ${allMoves[m].name}.`, null, () => {
                               ui.setModeWithoutClear(Mode.OPTION_SELECT, {
                                 options: this.speciesStarterMoves.filter(sm => sm !== m).map(sm => {
+                                  // make an option for each available starter move
                                   return {
                                     label: allMoves[sm].name,
                                     handler: () => {
@@ -642,14 +643,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                       this.starterMoveset[i] = sm;
                                       if (existingMoveIndex > -1)
                                         this.starterMoveset[existingMoveIndex] = m;
-                                      const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
+                                      const props: DexAttrProps = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
+                                      // form moves has the species but starterMoveData doesn't
                                       if (!this.scene.gameData.starterMoveData.hasOwnProperty(speciesId) && pokemonFormLevelMoves.hasOwnProperty(speciesId)) {
                                         this.scene.gameData.starterMoveData[speciesId] = pokemonFormLevelMoves.hasOwnProperty(speciesId)
                                           ? {}
                                           : this.starterMoveset.slice(0) as StarterMoveset;
                                       }
                                       if (pokemonFormLevelMoves.hasOwnProperty(speciesId)) {
-                                        if (!this.scene.gameData.starterMoveData[speciesId].hasOwnProperty(props.formIndex))
+                                        // does the species' starter move data have its form's starter moves and has it been updated
+                                        if (this.scene.gameData.starterMoveData[speciesId].hasOwnProperty(props.formIndex) && this.scene.gameData.starterMoveData[speciesId][props.formIndex][existingMoveIndex] !== sm)
                                           this.scene.gameData.starterMoveData[speciesId][props.formIndex] = this.starterMoveset.slice(0) as StarterMoveset;
                                       } else
                                         this.scene.gameData.starterMoveData[speciesId] = this.starterMoveset.slice(0) as StarterMoveset;
