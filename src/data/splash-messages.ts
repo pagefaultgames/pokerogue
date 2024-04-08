@@ -21,7 +21,6 @@ splashMessages.push(...[
   'Questionable Balancing!',
   'Cool Shaders!',
   'AI-Free!',
-  'Help Wanted!',
   'Sudden Difficulty Spikes!',
   'Based on an Unfinished Flash Game!',
   'More Addictive than Intended!',

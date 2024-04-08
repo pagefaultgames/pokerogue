@@ -1091,17 +1091,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // 2nd argument is for MoveTypeChangePowerMultiplierAbAttr
     applyAbAttrs(VariableMoveTypeAbAttr, source, null, variableType, typeChangeMovePowerMultiplier);
     const type = variableType.value as Type;
+    const types = this.getTypes(true, true);
 
     const cancelled = new Utils.BooleanHolder(false);
     const typeless = !!move.getAttrs(TypelessAttr).length;
-    const types = this.getTypes(true, true);
-    const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => (attr as StatusMoveTypeImmunityAttr).immuneType === type))
+    const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => types.includes((attr as StatusMoveTypeImmunityAttr).immuneType)))
       ? getTypeDamageMultiplier(type, types[0]) * (types.length > 1 ? getTypeDamageMultiplier(type, types[1]) : 1)
       : 1);
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
     if (typeless)
       typeMultiplier.value = 1;
-    if (this.getTypes(true, true).find(t => move.isTypeImmune(t)))
+    if (types.find(t => move.isTypeImmune(t)))
       typeMultiplier.value = 0;
 
     switch (moveCategory) {
