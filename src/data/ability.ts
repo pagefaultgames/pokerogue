@@ -50,10 +50,10 @@ export class Ability {
     const attr = new AttrType(...args);
     attr.addCondition(condition);
     this.attrs.push(attr);
-
+    
     return this;
   }
-
+  
   hasAttr(attrType: { new(...args: any[]): AbAttr }): boolean {
     return !!this.getAttrs(attrType).length;
   }
@@ -579,7 +579,38 @@ export class PreAttackAbAttr extends AbAttr {
 export class VariableMovePowerAbAttr extends PreAttackAbAttr {
   applyPreAttack(pokemon: Pokemon, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
     //const power = args[0] as Utils.NumberHolder;
+    return false;
+  }
+}
+
+export class VariableMoveTypeAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    //const power = args[0] as Utils.IntegerHolder;
     return false; 
+  }
+}
+
+export class MoveTypeChangePowerMultiplierAbAttr extends VariableMoveTypeAbAttr {
+  private matchType: Type;
+  private newType: Type;
+  private powerMultiplier: number;
+
+  constructor(matchType: Type, newType: Type, powerMultiplier: number){
+    super(true);
+    this.matchType = matchType;
+    this.newType = newType;
+    this.powerMultiplier = powerMultiplier;
+  }
+
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const type = (args[0] as Utils.IntegerHolder);
+    if (type.value == this.matchType) {
+      type.value = this.newType;
+      (args[1] as Utils.NumberHolder).value *= this.powerMultiplier;
+      return true;
+    }
+    
+    return false;
   }
 }
 
@@ -2517,7 +2548,8 @@ export function initAbilities() {
     new Ability(Abilities.COMPETITIVE, "Competitive (N)", "Boosts the Sp. Atk stat sharply when a stat is lowered.", 6),
     new Ability(Abilities.STRONG_JAW, "Strong Jaw", "The Pokémon's strong jaw boosts the power of its biting moves.", 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.BITING_MOVE), 1.5),
-    new Ability(Abilities.REFRIGERATE, "Refrigerate (N)", "Normal-type moves become Ice-type moves. The power of those moves is boosted a little.", 6),
+    new Ability(Abilities.REFRIGERATE, "Refrigerate", "Normal-type moves become Ice-type moves. The power of those moves is boosted a little.", 6)
+      .attr(MoveTypeChangePowerMultiplierAbAttr, Type.NORMAL, Type.ICE, 1.2),
     new Ability(Abilities.SWEET_VEIL, "Sweet Veil (N)", "Prevents itself and ally Pokémon from falling asleep.", 6)
       .ignorable(),
     new Ability(Abilities.STANCE_CHANGE, "Stance Change", "The Pokémon changes its form to Blade Forme when it uses an attack move and changes to Shield Forme when it uses King's Shield.", 6)
@@ -2530,10 +2562,12 @@ export function initAbilities() {
     new Ability(Abilities.SYMBIOSIS, "Symbiosis (N)", "The Pokémon passes its item to an ally that has used up an item.", 6),
     new Ability(Abilities.TOUGH_CLAWS, "Tough Claws", "Powers up moves that make direct contact.", 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 1.3),
-    new Ability(Abilities.PIXILATE, "Pixilate (N)", "Normal-type moves become Fairy-type moves. The power of those moves is boosted a little.", 6),
+    new Ability(Abilities.PIXILATE, "Pixilate", "Normal-type moves become Fairy-type moves. The power of those moves is boosted a little.", 6)
+      .attr(MoveTypeChangePowerMultiplierAbAttr, Type.NORMAL, Type.FAIRY, 1.2),
     new Ability(Abilities.GOOEY, "Gooey", "Contact with the Pokémon lowers the attacker's Speed stat.", 6)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), BattleStat.SPD, -1, false),
-    new Ability(Abilities.AERILATE, "Aerilate (N)", "Normal-type moves become Flying-type moves. The power of those moves is boosted a little.", 6),
+    new Ability(Abilities.AERILATE, "Aerilate", "Normal-type moves become Flying-type moves. The power of those moves is boosted a little.", 6)
+      .attr(MoveTypeChangePowerMultiplierAbAttr, Type.NORMAL, Type.FLYING, 1.2),
     new Ability(Abilities.PARENTAL_BOND, "Parental Bond (N)", "Parent and child each attacks.", 6),
     new Ability(Abilities.DARK_AURA, "Dark Aura", "Powers up each Pokémon's Dark-type moves.", 6)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is radiating a Dark Aura!'))
@@ -2574,7 +2608,8 @@ export function initAbilities() {
       .attr(IgnoreContactAbAttr),
     new Ability(Abilities.LIQUID_VOICE, "Liquid Voice (N)", "All sound-based moves become Water-type moves.", 7),
     new Ability(Abilities.TRIAGE, "Triage (N)", "Gives priority to a healing move.", 7),
-    new Ability(Abilities.GALVANIZE, "Galvanize (N)", "Normal-type moves become Electric-type moves. The power of those moves is boosted a little.", 7),
+    new Ability(Abilities.GALVANIZE, "Galvanize", "Normal-type moves become Electric-type moves. The power of those moves is boosted a little.", 7)
+      .attr(MoveTypeChangePowerMultiplierAbAttr, Type.NORMAL, Type.ELECTRIC, 1.2),
     new Ability(Abilities.SURGE_SURFER, "Surge Surfer", "Doubles the Pokémon's Speed stat on Electric Terrain.", 7)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), BattleStatMultiplierAbAttr, BattleStat.SPD, 2),
     new Ability(Abilities.SCHOOLING, "Schooling", "When it has a lot of HP, the Pokémon forms a powerful school. It stops schooling when its HP is low.", 7)
