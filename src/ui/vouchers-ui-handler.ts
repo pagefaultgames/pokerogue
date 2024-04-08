@@ -205,7 +205,7 @@ export default class VouchersUiHandler extends MessageUiHandler {
 
     this.updateVoucherIcons();
 
-    this.showVoucher(vouchers[Object.keys(vouchers)[this.cursor + this.scrollCursor * itemCols]]);
+    this.showVoucher(vouchers[Object.keys(vouchers)[Math.min(this.cursor + this.scrollCursor * itemCols, Object.values(vouchers).length - 1)]]);
 
     return true;
   }
