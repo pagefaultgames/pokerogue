@@ -548,16 +548,18 @@ type MoveFilter = (move: Move) => boolean;
 
 export class CounterDamageAttr extends FixedDamageAttr {
   private moveFilter: MoveFilter;
+  private multiplier: number;
 
-  constructor(moveFilter: MoveFilter) {
+  constructor(moveFilter: MoveFilter, multiplier: integer) {
     super(0);
 
     this.moveFilter = moveFilter;
+    this.multiplier = multiplier;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const damage = user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).reduce((total: integer, ar: AttackMoveResult) => total + ar.damage, 0);
-    (args[0] as Utils.IntegerHolder).value = Math.max(damage * 2, 1);
+    (args[0] as Utils.IntegerHolder).value = Math.floor(Math.max(damage * this.multiplier, 1));
 
     return true;
   }
@@ -2983,7 +2985,7 @@ export function initMoves() {
     new AttackMove(Moves.LOW_KICK, "Low Kick", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, "A powerful low kick that makes the target fall over. The heavier the target, the greater the move's power.", -1, 0, 1)
       .attr(WeightPowerAttr),
     new AttackMove(Moves.COUNTER, "Counter", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, "A retaliation move that counters any physical attack, inflicting double the damage taken.", -1, -5, 1)
-      .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.PHYSICAL)
+      .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.PHYSICAL, 2)
       .target(MoveTarget.ATTACKER),
     new AttackMove(Moves.SEISMIC_TOSS, "Seismic Toss", Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, "The target is thrown using the power of gravity. It inflicts damage equal to the user's level.", -1, 0, 1)
       .attr(LevelDamageAttr),
@@ -3453,7 +3455,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, -1)
       .bitingMove(),
     new AttackMove(Moves.MIRROR_COAT, "Mirror Coat", Type.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 20, "A retaliation move that counters any special attack, inflicting double the damage taken.", -1, -5, 2)
-      .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.SPECIAL)
+      .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.SPECIAL, 2)
       .target(MoveTarget.ATTACKER),
     new StatusMove(Moves.PSYCH_UP, "Psych Up (N)", Type.NORMAL, -1, 10, "The user hypnotizes itself into copying any stat change made by the target.", -1, 0, 2),
     new AttackMove(Moves.EXTREME_SPEED, "Extreme Speed", Type.NORMAL, MoveCategory.PHYSICAL, 80, 100, 5, "The user charges the target at blinding speed. This move always goes first.", -1, 2, 2),
@@ -3751,7 +3753,8 @@ export function initMoves() {
     new StatusMove(Moves.ACUPRESSURE, "Acupressure", Type.NORMAL, -1, 30, "The user applies pressure to stress points, sharply boosting one of its or its allies' stats.", -1, 0, 4)
       .attr(StatChangeAttr, BattleStat.RAND, 2)
       .target(MoveTarget.USER_OR_NEAR_ALLY),
-    new AttackMove(Moves.METAL_BURST, "Metal Burst (N)", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, "The user retaliates with much greater force against the opponent that last inflicted damage on it.", -1, 0, 4)
+    new AttackMove(Moves.METAL_BURST, "Metal Burst", Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, "The user retaliates with much greater force against the opponent that last inflicted damage on it.", -1, 0, 4)
+      .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)
       .makesContact(false)
       .target(MoveTarget.ATTACKER),
     new AttackMove(Moves.U_TURN, "U-turn", Type.BUG, MoveCategory.PHYSICAL, 70, 100, 20, "After making its attack, the user rushes back to switch places with a party Pokémon in waiting.", -1, 0, 4)
@@ -4998,8 +5001,7 @@ export function initMoves() {
     new AttackMove(Moves.GIGATON_HAMMER, "Gigaton Hammer (P)", Type.STEEL, MoveCategory.PHYSICAL, 160, 100, 5, "The user swings its whole body around to attack with its huge hammer. This move can't be used twice in a row.", -1, 0, 9)
       .makesContact(false),
     new AttackMove(Moves.COMEUPPANCE, "Comeuppance", Type.DARK, MoveCategory.PHYSICAL, 1, 100, 10, "The user retaliates with much greater force against the opponent that last inflicted damage on it.", -1, 0, 9)
-      .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.PHYSICAL)
-      .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.SPECIAL)
+      .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)
       .target(MoveTarget.ATTACKER),
     new AttackMove(Moves.AQUA_CUTTER, "Aqua Cutter", Type.WATER, MoveCategory.PHYSICAL, 70, 100, 20, "The user expels pressurized water to cut at the target like a blade. This move has a heightened chance of landing a critical hit.", -1, 0, 9)
       .attr(HighCritAttr)
