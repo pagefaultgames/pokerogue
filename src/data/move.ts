@@ -60,7 +60,8 @@ export enum MoveFlags {
   BALLBOMB_MOVE = 1024,
   POWDER_MOVE = 2048,
   DANCE_MOVE = 4096,
-  WIND_MOVE = 8192
+  WIND_MOVE = 8192,
+  TRIAGE_MOVE = 16384
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -257,6 +258,11 @@ export default class Move {
 
   windMove(windMove?: boolean): this {
     this.setFlag(MoveFlags.WIND_MOVE, windMove);
+    return this;
+  }
+
+  triageMove(triageMove?: boolean): this {
+    this.setFlag(MoveFlags.TRIAGE_MOVE, triageMove);
     return this;
   }
 
@@ -2983,9 +2989,11 @@ export function initMoves() {
       .attr(LevelDamageAttr),
     new AttackMove(Moves.STRENGTH, "Strength", Type.NORMAL, MoveCategory.PHYSICAL, 80, 100, 15, "The target is slugged with a punch thrown at maximum power.", -1, 0, 1),
     new AttackMove(Moves.ABSORB, "Absorb", Type.GRASS, MoveCategory.SPECIAL, 20, 100, 25, "A nutrient-draining attack. The user's HP is restored by half the damage taken by the target.", -1, 0, 1)
-      .attr(HitHealAttr),
+      .attr(HitHealAttr)
+      .triageMove(),
     new AttackMove(Moves.MEGA_DRAIN, "Mega Drain", Type.GRASS, MoveCategory.SPECIAL, 40, 100, 15, "A nutrient-draining attack. The user's HP is restored by half the damage taken by the target.", -1, 0, 1)
-      .attr(HitHealAttr),
+      .attr(HitHealAttr)
+      .triageMove(),
     new StatusMove(Moves.LEECH_SEED, "Leech Seed", Type.GRASS, 90, 10, "A seed is planted on the target. It steals some HP from the target every turn.", -1, 0, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.SEEDED)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SEEDED) && !target.isOfType(Type.GRASS)),
@@ -3073,7 +3081,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.DOUBLE_TEAM, "Double Team", Type.NORMAL, -1, 15, "By moving rapidly, the user makes illusory copies of itself to raise its evasiveness.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.EVA, 1, true),
     new SelfStatusMove(Moves.RECOVER, "Recover", Type.NORMAL, -1, 5, "Restoring its own cells, the user restores its own HP by half of its max HP.", -1, 0, 1)
-      .attr(HealAttr, 0.5),
+      .attr(HealAttr, 0.5)
+      .triageMove(),
     new SelfStatusMove(Moves.HARDEN, "Harden", Type.NORMAL, -1, 30, "The user stiffens all the muscles in its body to raise its Defense stat.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, 1, true),
     new SelfStatusMove(Moves.MINIMIZE, "Minimize", Type.NORMAL, -1, 10, "The user compresses its body to make itself look smaller, which sharply raises its evasiveness.", -1, 0, 1)
@@ -3145,7 +3154,8 @@ export function initMoves() {
     new StatusMove(Moves.KINESIS, "Kinesis", Type.PSYCHIC, 80, 15, "The user distracts the target by bending a spoon. This lowers the target's accuracy.", -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
     new SelfStatusMove(Moves.SOFT_BOILED, "Soft-Boiled", Type.NORMAL, -1, 5, "The user restores its own HP by up to half of its max HP.", -1, 0, 1)
-      .attr(HealAttr, 0.5),
+      .attr(HealAttr, 0.5)
+      .triageMove(),
     new AttackMove(Moves.HIGH_JUMP_KICK, "High Jump Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 130, 90, 10, "The target is attacked with a knee kick from a jump. If it misses, the user is hurt instead.", -1, 0, 1)
       .attr(MissEffectAttr, halveHpMissEffectFunc)
       .condition(failOnGravityCondition),
@@ -3153,7 +3163,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.DREAM_EATER, "Dream Eater", Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 15, "The user eats the dreams of a sleeping target. The user's HP is restored by half the damage taken by the target.", -1, 0, 1)
       .attr(HitHealAttr)
-      .condition((user, target, move) => target.status?.effect === StatusEffect.SLEEP),
+      .condition((user, target, move) => target.status?.effect === StatusEffect.SLEEP)
+      .triageMove(),
     new StatusMove(Moves.POISON_GAS, "Poison Gas", Type.POISON, 90, 40, "A cloud of poison gas is sprayed in the face of opposing Pokémon, poisoning those it hits.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -3162,7 +3173,8 @@ export function initMoves() {
       .makesContact(false)
       .ballBombMove(),
     new AttackMove(Moves.LEECH_LIFE, "Leech Life", Type.BUG, MoveCategory.PHYSICAL, 80, 100, 10, "The user drains the target's blood. The user's HP is restored by half the damage taken by the target.", -1, 0, 1)
-      .attr(HitHealAttr),
+      .attr(HitHealAttr)
+      .triageMove(),
     new StatusMove(Moves.LOVELY_KISS, "Lovely Kiss", Type.NORMAL, 75, 10, "With a scary face, the user tries to force a kiss on the target. If it succeeds, the target falls asleep.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP),
     new AttackMove(Moves.SKY_ATTACK, "Sky Attack", Type.FLYING, MoveCategory.PHYSICAL, 140, 90, 5, "A second-turn attack move where critical hits land more easily. This may also make the target flinch.", 30, 0, 1)
@@ -3205,7 +3217,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.REST, "Rest", Type.PSYCHIC, -1, 5, "The user goes to sleep for two turns. This fully restores the user's HP and heals any status conditions.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
-      .condition((user, target, move) => user.status?.effect !== StatusEffect.SLEEP && user.getHpRatio() < 1),
+      .condition((user, target, move) => user.status?.effect !== StatusEffect.SLEEP && user.getHpRatio() < 1)
+      .triageMove(),
     new AttackMove(Moves.ROCK_SLIDE, "Rock Slide", Type.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, "Large boulders are hurled at opposing Pokémon to inflict damage. This may also make the opposing Pokémon flinch.", 30, 0, 1)
       .attr(FlinchAttr)
       .makesContact(false)
@@ -3334,7 +3347,8 @@ export function initMoves() {
       .windMove()
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.GIGA_DRAIN, "Giga Drain", Type.GRASS, MoveCategory.SPECIAL, 75, 100, 10, "A nutrient-draining attack. The user's HP is restored by half the damage taken by the target.", -1, 0, 2)
-      .attr(HitHealAttr),
+      .attr(HitHealAttr)
+      .triageMove(),
     new SelfStatusMove(Moves.ENDURE, "Endure", Type.NORMAL, -1, 10, "The user endures any attack with at least 1 HP. Its chance of failing rises if it is used in succession.", -1, 4, 2)
       .attr(EndureAttr),
     new StatusMove(Moves.CHARM, "Charm", Type.FAIRY, 100, 20, "The user gazes at the target rather charmingly, making it less wary. This harshly lowers the target's Attack stat.", -1, 0, 2)
@@ -3347,7 +3361,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.ATK, 2)
       .attr(ConfuseAttr),
     new SelfStatusMove(Moves.MILK_DRINK, "Milk Drink", Type.NORMAL, -1, 5, "The user restores its own HP by up to half of its max HP.", -1, 0, 2)
-      .attr(HealAttr, 0.5),
+      .attr(HealAttr, 0.5)
+      .triageMove(),
     new AttackMove(Moves.SPARK, "Spark", Type.ELECTRIC, MoveCategory.PHYSICAL, 65, 100, 20, "The user throws an electrically charged tackle at the target. This may also leave the target with paralysis.", 30, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.FURY_CUTTER, "Fury Cutter", Type.BUG, MoveCategory.PHYSICAL, 40, 95, 20, "The target is slashed with scythes or claws. This attack becomes more powerful if it hits in succession.", -1, 0, 2)
@@ -3412,11 +3427,14 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.ATK, 1, true),
     new AttackMove(Moves.VITAL_THROW, "Vital Throw", Type.FIGHTING, MoveCategory.PHYSICAL, 70, -1, 10, "The user attacks last. In return, this throw move never misses.", -1, -1, 2),
     new SelfStatusMove(Moves.MORNING_SUN, "Morning Sun", Type.NORMAL, -1, 5, "The user restores its own HP. The amount of HP regained varies with the weather.", -1, 0, 2)
-      .attr(PlantHealAttr),
+      .attr(PlantHealAttr)
+      .triageMove(),
     new SelfStatusMove(Moves.SYNTHESIS, "Synthesis", Type.GRASS, -1, 5, "The user restores its own HP. The amount of HP regained varies with the weather.", -1, 0, 2)
-      .attr(PlantHealAttr),
+      .attr(PlantHealAttr)
+      .triageMove(),
     new SelfStatusMove(Moves.MOONLIGHT, "Moonlight", Type.FAIRY, -1, 5, "The user restores its own HP. The amount of HP regained varies with the weather.", -1, 0, 2)
-      .attr(PlantHealAttr),
+      .attr(PlantHealAttr)
+      .triageMove(),
     new AttackMove(Moves.HIDDEN_POWER, "Hidden Power (P)", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, "A unique attack that varies in type depending on the Pokémon using it.", -1, 0, 2),
     new AttackMove(Moves.CROSS_CHOP, "Cross Chop", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 80, 5, "The user delivers a double chop with its forearms crossed. Critical hits land more easily.", -1, 0, 2)
       .attr(HighCritAttr),
@@ -3461,7 +3479,8 @@ export function initMoves() {
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new SelfStatusMove(Moves.STOCKPILE, "Stockpile (N)", Type.NORMAL, -1, 20, "The user charges up power and raises both its Defense and Sp. Def stats. The move can be used three times.", -1, 0, 3),
     new AttackMove(Moves.SPIT_UP, "Spit Up (N)", Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, "The power stored using the move Stockpile is released at once in an attack. The more power is stored, the greater the move's power.", -1, 0, 3),
-    new SelfStatusMove(Moves.SWALLOW, "Swallow (N)", Type.NORMAL, -1, 10, "The power stored using the move Stockpile is absorbed by the user to heal its HP. Storing more power heals more HP.", -1, 0, 3),
+    new SelfStatusMove(Moves.SWALLOW, "Swallow (N)", Type.NORMAL, -1, 10, "The power stored using the move Stockpile is absorbed by the user to heal its HP. Storing more power heals more HP.", -1, 0, 3)
+      .triageMove(),
     new AttackMove(Moves.HEAT_WAVE, "Heat Wave", Type.FIRE, MoveCategory.SPECIAL, 95, 90, 10, "The user attacks by exhaling hot breath on opposing Pokémon. This may also leave those Pokémon with a burn.", 10, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
@@ -3498,7 +3517,8 @@ export function initMoves() {
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.TRICK, "Trick (N)", Type.PSYCHIC, 100, 10, "The user catches the target off guard and swaps its held item with its own.", -1, 0, 3),
     new StatusMove(Moves.ROLE_PLAY, "Role Play (N)", Type.PSYCHIC, -1, 10, "The user mimics the target completely, copying the target's Ability.", -1, 0, 3),
-    new SelfStatusMove(Moves.WISH, "Wish (N)", Type.NORMAL, -1, 10, "One turn after this move is used, the user's or its replacement's HP is restored by half the user's max HP.", -1, 0, 3),
+    new SelfStatusMove(Moves.WISH, "Wish (N)", Type.NORMAL, -1, 10, "One turn after this move is used, the user's or its replacement's HP is restored by half the user's max HP.", -1, 0, 3)
+      .triageMove(),
     new SelfStatusMove(Moves.ASSIST, "Assist", Type.NORMAL, -1, 20, "The user hurriedly and randomly uses a move among those known by ally Pokémon.", -1, 0, 3)
       .attr(RandomMovesetMoveAttr, true)
       .ignoresVirtual(),
@@ -3563,7 +3583,8 @@ export function initMoves() {
     new AttackMove(Moves.NEEDLE_ARM, "Needle Arm", Type.GRASS, MoveCategory.PHYSICAL, 60, 100, 15, "The user attacks by wildly swinging its thorny arms. This may also make the target flinch.", 30, 0, 3)
       .attr(FlinchAttr),
     new SelfStatusMove(Moves.SLACK_OFF, "Slack Off", Type.NORMAL, -1, 5, "The user slacks off, restoring its own HP by up to half of its max HP.", -1, 0, 3)
-      .attr(HealAttr, 0.5),
+      .attr(HealAttr, 0.5)
+      .triageMove(),
     new AttackMove(Moves.HYPER_VOICE, "Hyper Voice", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 10, "The user lets loose a horribly echoing shout with the power to inflict damage.", -1, 0, 3)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -3697,7 +3718,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
     new SelfStatusMove(Moves.ROOST, "Roost", Type.FLYING, -1, 5, "The user lands and rests its body. This move restores the user's HP by up to half of its max HP.", -1, 0, 4)
       .attr(HealAttr, 0.5)
-      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, true, false, 1),
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, true, false, 1)
+      .triageMove(),
     new StatusMove(Moves.GRAVITY, "Gravity", Type.PSYCHIC, -1, 5, "This move enables Flying-type Pokémon or Pokémon with the Levitate Ability to be hit by Ground-type moves. Moves that involve flying can't be used.", -1, 0, 4)
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
       .target(MoveTarget.BOTH_SIDES),
@@ -3712,7 +3734,8 @@ export function initMoves() {
       .attr(BattleStatRatioPowerAttr, Stat.SPD, true)
       .ballBombMove(),
     new SelfStatusMove(Moves.HEALING_WISH, "Healing Wish", Type.PSYCHIC, -1, 10, "The user faints. In return, the Pokémon taking its place will have its HP restored and status conditions cured.", -1, 0, 4)
-      .attr(SacrificialFullRestoreAttr),
+      .attr(SacrificialFullRestoreAttr)
+      .triageMove(),
     new AttackMove(Moves.BRINE, "Brine", Type.WATER, MoveCategory.SPECIAL, 65, 100, 10, "If the target's HP is half or less, this attack will hit with double the power.", -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHpRatio() < 0.5 ? 2 : 1),
     new AttackMove(Moves.NATURAL_GIFT, "Natural Gift (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, "The user draws power to attack by using its held Berry. The Berry determines the move's type and power.", -1, 0, 4)
@@ -3820,7 +3843,8 @@ export function initMoves() {
     new AttackMove(Moves.POWER_GEM, "Power Gem", Type.ROCK, MoveCategory.SPECIAL, 80, 100, 20, "The user attacks with a ray of light that sparkles as if it were made of gemstones.", -1, 0, 4),
     new AttackMove(Moves.DRAIN_PUNCH, "Drain Punch", Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 10, "An energy-draining punch. The user's HP is restored by half the damage taken by the target.", -1, 0, 4)
       .attr(HitHealAttr)
-      .punchingMove(),
+      .punchingMove()
+      .triageMove(),
     new AttackMove(Moves.VACUUM_WAVE, "Vacuum Wave", Type.FIGHTING, MoveCategory.SPECIAL, 40, 100, 30, "The user whirls its fists to send a wave of pure vacuum at the target. This move always goes first.", -1, 1, 4),
     new AttackMove(Moves.FOCUS_BLAST, "Focus Blast", Type.FIGHTING, MoveCategory.SPECIAL, 120, 70, 5, "The user heightens its mental focus and unleashes its power. This may also lower the target's Sp. Def stat.", 10, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1)
@@ -3937,7 +3961,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.DEFEND_ORDER, "Defend Order", Type.BUG, -1, 10, "The user calls out its underlings to shield its body, raising its Defense and Sp. Def stats.", -1, 0, 4)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, true),
     new SelfStatusMove(Moves.HEAL_ORDER, "Heal Order", Type.BUG, -1, 10, "The user calls out its underlings to heal it. The user regains up to half of its max HP.", -1, 0, 4)
-      .attr(HealAttr, 0.5),
+      .attr(HealAttr, 0.5)
+      .triageMove(),
     new AttackMove(Moves.HEAD_SMASH, "Head Smash", Type.ROCK, MoveCategory.PHYSICAL, 150, 80, 5, "The user attacks the target with a hazardous, full-power headbutt. This also damages the user terribly.", -1, 0, 4)
       .attr(RecoilAttr, false, 0.5),
     new AttackMove(Moves.DOUBLE_HIT, "Double Hit", Type.NORMAL, MoveCategory.PHYSICAL, 35, 90, 10, "The user slams the target with a long tail, vines, or a tentacle. The target is hit twice in a row.", -1, 0, 4)
@@ -3948,7 +3973,8 @@ export function initMoves() {
       .attr(HighCritAttr),
     new SelfStatusMove(Moves.LUNAR_DANCE, "Lunar Dance (N)", Type.PSYCHIC, -1, 10, "The user faints. In return, the Pokémon taking its place will have its status and HP fully restored.", -1, 0, 4)
       .attr(SacrificialAttr)
-      .danceMove(),
+      .danceMove()
+      .triageMove(),
     new AttackMove(Moves.CRUSH_GRIP, "Crush Grip", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, "The target is crushed with great force. The more HP the target has left, the greater this move's power.", -1, 0, 4)
       .attr(OpponentHighHpPowerAttr),
     new AttackMove(Moves.MAGMA_STORM, "Magma Storm", Type.FIRE, MoveCategory.SPECIAL, 100, 75, 5, "The target becomes trapped within a maelstrom of fire that rages for four to five turns.", 100, 0, 4)
@@ -4045,7 +4071,8 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true),
     new StatusMove(Moves.HEAL_PULSE, "Heal Pulse", Type.PSYCHIC, -1, 10, "The user emits a healing pulse that restores the target's HP by up to half of its max HP.", -1, 0, 5)
       .attr(HealAttr, 0.5, false, false)
-      .pulseMove(),
+      .pulseMove()
+      .triageMove(),
     new AttackMove(Moves.HEX, "Hex", Type.GHOST, MoveCategory.SPECIAL, 65, 100, 10, "This relentless attack does massive damage to a target affected by status conditions.", -1, 0, 5)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status ? 2 : 1),
     new AttackMove(Moves.SKY_DROP, "Sky Drop", Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 10, "The user takes the target into the sky, then drops it during the next turn. The target cannot attack while in the sky.", -1, 0, 5)
@@ -4101,7 +4128,8 @@ export function initMoves() {
     new AttackMove(Moves.HEART_STAMP, "Heart Stamp", Type.PSYCHIC, MoveCategory.PHYSICAL, 60, 100, 25, "The user unleashes a vicious blow after its cute act makes the target less wary. This may also make the target flinch.", 30, 0, 5)
       .attr(FlinchAttr),
     new AttackMove(Moves.HORN_LEECH, "Horn Leech", Type.GRASS, MoveCategory.PHYSICAL, 75, 100, 10, "The user drains the target's energy with its horns. The user's HP is restored by half the damage taken by the target.", -1, 0, 5)
-      .attr(HitHealAttr),
+      .attr(HitHealAttr)
+      .triageMove(),
     new AttackMove(Moves.SACRED_SWORD, "Sacred Sword", Type.FIGHTING, MoveCategory.PHYSICAL, 90, 100, 15, "The user attacks by slicing with a long horn. The target's stat changes don't affect this attack's damage.", -1, 0, 5)
       .attr(IgnoreOpponentStatChangesAttr)  
       .slicingMove(),
@@ -4192,7 +4220,8 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.PARABOLIC_CHARGE, "Parabolic Charge", Type.ELECTRIC, MoveCategory.SPECIAL, 65, 100, 20, "The user attacks everything around it. The user's HP is restored by half the damage taken by those hit.", -1, 0, 6)
       .attr(HitHealAttr)
-      .target(MoveTarget.ALL_NEAR_OTHERS),
+      .target(MoveTarget.ALL_NEAR_OTHERS)
+      .triageMove(),
     new StatusMove(Moves.FORESTS_CURSE, "Forest's Curse (N)", Type.GRASS, 100, 20, "The user puts a forest curse on the target. The target is now Grass type as well.", -1, 0, 6),
     new AttackMove(Moves.PETAL_BLIZZARD, "Petal Blizzard", Type.GRASS, MoveCategory.PHYSICAL, 90, 100, 15, "The user stirs up a violent petal blizzard and attacks everything around it.", -1, 0, 6)
       .windMove()
@@ -4212,7 +4241,8 @@ export function initMoves() {
       .attr(InvertStatsAttr),
     new AttackMove(Moves.DRAINING_KISS, "Draining Kiss", Type.FAIRY, MoveCategory.SPECIAL, 50, 100, 10, "The user steals the target's HP with a kiss. The user's HP is restored by over half of the damage taken by the target.", -1, 0, 6)
       .attr(HitHealAttr)
-      .makesContact(),
+      .makesContact()
+      .triageMove(),
     new StatusMove(Moves.CRAFTY_SHIELD, "Crafty Shield (N)", Type.FAIRY, -1, 10, "The user protects itself and its allies from status moves with a mysterious power. This does not stop moves that do damage.", -1, 3, 6)
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.FLOWER_SHIELD, "Flower Shield (N)", Type.FAIRY, -1, 10, "The user raises the Defense stats of all Grass-type Pokémon in battle with a mysterious power.", 100, 0, 6)
@@ -4297,7 +4327,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.ATK, 1, true)
       .punchingMove(),
     new AttackMove(Moves.OBLIVION_WING, "Oblivion Wing", Type.FLYING, MoveCategory.SPECIAL, 80, 100, 10, "The user absorbs its target's HP. The user's HP is restored by over half of the damage taken by the target.", -1, 0, 6)
-      .attr(HitHealAttr, 0.75),
+      .attr(HitHealAttr, 0.75)
+      .triageMove(),
     new AttackMove(Moves.THOUSAND_ARROWS, "Thousand Arrows", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, "This move also hits opposing Pokémon that are in the air. Those Pokémon are knocked down to the ground.", 100, 0, 6)
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
       .makesContact(false)
@@ -4362,7 +4393,8 @@ export function initMoves() {
     new AttackMove(Moves.CATASTROPIKA, "Catastropika (N)", Type.ELECTRIC, MoveCategory.PHYSICAL, 210, -1, 1, "The user, Pikachu, surrounds itself with the maximum amount of electricity using its Z-Power and pounces on its target with full force.", -1, 0, 7),
     /* End Unused */
     new SelfStatusMove(Moves.SHORE_UP, "Shore Up", Type.GROUND, -1, 5, "The user regains up to half of its max HP. It restores more HP in a sandstorm.", -1, 0, 7)
-      .attr(SandHealAttr),
+      .attr(SandHealAttr)
+      .triageMove(),
     new AttackMove(Moves.FIRST_IMPRESSION, "First Impression", Type.BUG, MoveCategory.PHYSICAL, 90, 100, 10, "Although this move has great power, it only works the first turn each time the user enters battle.", -1, 2, 7)
       .condition(new FirstMoveCondition()),
     new SelfStatusMove(Moves.BANEFUL_BUNKER, "Baneful Bunker", Type.POISON, -1, 10, "In addition to protecting the user from attacks, this move also poisons any attacker that makes direct contact.", -1, 4, 7)
@@ -4379,10 +4411,12 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, -1, true)
       .punchingMove(),
     new StatusMove(Moves.FLORAL_HEALING, "Floral Healing (P)", Type.FAIRY, -1, 10, "The user restores the target's HP by up to half of its max HP. It restores more HP when the terrain is grass.", -1, 0, 7)
-      .attr(HealAttr, 0.5, true, false),
+      .attr(HealAttr, 0.5, true, false)
+      .triageMove(),
     new AttackMove(Moves.HIGH_HORSEPOWER, "High Horsepower", Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, "The user fiercely attacks the target using its entire body.", -1, 0, 7),
     new StatusMove(Moves.STRENGTH_SAP, "Strength Sap (P)", Type.GRASS, 100, 10, "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat.", 100, 0, 7)
-      .attr(StatChangeAttr, BattleStat.ATK, -1),
+      .attr(StatChangeAttr, BattleStat.ATK, -1)
+      .triageMove(),
     new AttackMove(Moves.SOLAR_BLADE, "Solar Blade", Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, "In this two-turn attack, the user gathers light and fills a blade with the light's energy, attacking the target on the next turn.", -1, 0, 7)
       .attr(SunlightChargeAttr, ChargeAnim.SOLAR_BLADE_CHARGING, "is glowing!")
       .attr(AntiSunlightPowerDecreaseAttr)
@@ -4416,7 +4450,8 @@ export function initMoves() {
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE),
     new StatusMove(Moves.SPEED_SWAP, "Speed Swap (N)", Type.PSYCHIC, -1, 10, "The user exchanges Speed stats with the target.", -1, 0, 7),
     new AttackMove(Moves.SMART_STRIKE, "Smart Strike", Type.STEEL, MoveCategory.PHYSICAL, 70, -1, 10, "The user stabs the target with a sharp horn. This attack never misses.", -1, 0, 7),
-    new StatusMove(Moves.PURIFY, "Purify (N)", Type.POISON, -1, 20, "The user heals the target's status condition. If the move succeeds, it also restores the user's own HP.", -1, 0, 7),
+    new StatusMove(Moves.PURIFY, "Purify (N)", Type.POISON, -1, 20, "The user heals the target's status condition. If the move succeeds, it also restores the user's own HP.", -1, 0, 7)
+      .triageMove(),
     new AttackMove(Moves.REVELATION_DANCE, "Revelation Dance (P)", Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 15, "The user attacks the target by dancing very hard. The user's type determines the type of this move.", -1, 0, 7)
       .danceMove(),
     new AttackMove(Moves.CORE_ENFORCER, "Core Enforcer (N)", Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 10, "If the Pokémon the user has inflicted damage on have already used their moves, this move eliminates the effect of the target's Ability.", -1, 0, 7)
@@ -4796,7 +4831,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.LUNAR_BLESSING, "Lunar Blessing (P)", Type.PSYCHIC, -1, 5, "The user receives a blessing from the crescent moon, restoring HP and curing status conditions for itself and its ally Pokémon currently in the battle.", -1, 0, 8)
       .attr(HealAttr, 0.25)
-      .target(MoveTarget.USER_AND_ALLIES),
+      .target(MoveTarget.USER_AND_ALLIES)
+      .triageMove(),
     new SelfStatusMove(Moves.TAKE_HEART, "Take Heart (P)", Type.PSYCHIC, -1, 10, "The user lifts its spirits, curing its own status conditions and boosting its Sp. Atk and Sp. Def stats.", -1, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF ], 1, true),
     /* Unused
@@ -4892,7 +4928,8 @@ export function initMoves() {
     new AttackMove(Moves.ICE_SPINNER, "Ice Spinner", Type.ICE, MoveCategory.PHYSICAL, 80, 100, 15, "The user covers its feet in thin ice and twirls around, slamming into the target. This move's spinning motion also destroys the terrain.", -1, 0, 9)
       .attr(ClearTerrainAttr),
     new AttackMove(Moves.GLAIVE_RUSH, "Glaive Rush (P)", Type.DRAGON, MoveCategory.PHYSICAL, 120, 100, 5, "The user throws its entire body into a reckless charge. After this move is used, attacks on the user cannot miss and will inflict double damage until the user's next turn.", -1, 0, 9),
-    new StatusMove(Moves.REVIVAL_BLESSING, "Revival Blessing (N)", Type.NORMAL, -1, 1, "The user bestows a loving blessing, reviving a party Pokémon that has fainted and restoring half that Pokémon's max HP.", -1, 0, 9),
+    new StatusMove(Moves.REVIVAL_BLESSING, "Revival Blessing (N)", Type.NORMAL, -1, 1, "The user bestows a loving blessing, reviving a party Pokémon that has fainted and restoring half that Pokémon's max HP.", -1, 0, 9)
+      .triageMove(),
     new AttackMove(Moves.SALT_CURE, "Salt Cure", Type.ROCK, MoveCategory.PHYSICAL, 40, 100, 15, "The user salt cures the target, inflicting damage every turn. Steel and Water types are more strongly affected by this move.", -1, 0, 9)
       .attr(AddBattlerTagAttr, BattlerTagType.SALT_CURED)
       .makesContact(false),
@@ -4955,7 +4992,8 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true),
     new AttackMove(Moves.BITTER_BLADE, "Bitter Blade", Type.FIRE, MoveCategory.PHYSICAL, 90, 100, 10, "The user focuses its bitter feelings toward the world of the living into a slashing attack. The user's HP is restored by up to half the damage taken by the target.", -1, 0, 9)
       .attr(HitHealAttr)
-      .slicingMove(),
+      .slicingMove()
+      .triageMove(),
     new AttackMove(Moves.DOUBLE_SHOCK, "Double Shock (P)", Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, "The user discharges all the electricity from its body to perform a high-damage attack. After using this move, the user will no longer be Electric type.", -1, 0, 9),
     new AttackMove(Moves.GIGATON_HAMMER, "Gigaton Hammer (P)", Type.STEEL, MoveCategory.PHYSICAL, 160, 100, 5, "The user swings its whole body around to attack with its huge hammer. This move can't be used twice in a row.", -1, 0, 9)
       .makesContact(false),
@@ -4987,7 +5025,8 @@ export function initMoves() {
       .attr(HitHealAttr)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .triageMove(),
     new AttackMove(Moves.SYRUP_BOMB, "Syrup Bomb (P)", Type.GRASS, MoveCategory.SPECIAL, 60, 85, 10, "The user sets off an explosion of sticky candy syrup, which coats the target and causes the target's Speed stat to drop each turn for three turns.", -1, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPD, -1) //Temporary
       .ballBombMove(),

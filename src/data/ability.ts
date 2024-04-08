@@ -1164,19 +1164,21 @@ export class BlockOneHitKOAbAttr extends AbAttr {
 }
 
 export class IncrementMovePriorityAbAttr extends AbAttr {
-  private moveIncrementFunc: (move: Move) => boolean;
+  private moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean;
+  private increaseAmount: integer;
 
-  constructor(moveIncrementFunc: (move: Move) => boolean) {
+  constructor(moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean, increaseAmount = 1) {
     super(true);
 
     this.moveIncrementFunc = moveIncrementFunc;
+    this.increaseAmount = increaseAmount;
   }
 
   apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (!this.moveIncrementFunc(args[0] as Move))
+    if (!this.moveIncrementFunc(pokemon, args[0] as Move))
       return false;
       
-    (args[1] as Utils.IntegerHolder).value++;
+    (args[1] as Utils.IntegerHolder).value += this.increaseAmount;
     return true;
   }
 }
@@ -2548,7 +2550,7 @@ export function initAbilities() {
       .attr(TypeImmunityStatChangeAbAttr, Type.GRASS, BattleStat.ATK, 1)
       .ignorable(),
     new Ability(Abilities.PRANKSTER, "Prankster", "Gives priority to a status move.", 5)
-      .attr(IncrementMovePriorityAbAttr, (move: Move) => move.category === MoveCategory.STATUS),
+      .attr(IncrementMovePriorityAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS),
     new Ability(Abilities.SAND_FORCE, "Sand Force", "Boosts the power of Rock-, Ground-, and Steel-type moves in a sandstorm.", 5)
       .attr(MoveTypePowerBoostAbAttr, Type.ROCK, 1.3)
       .attr(MoveTypePowerBoostAbAttr, Type.GROUND, 1.3)
@@ -2591,7 +2593,8 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.STANCE_CHANGE, "Stance Change", "The Pokémon changes its form to Blade Forme when it uses an attack move and changes to Shield Forme when it uses King's Shield.", 6)
       .attr(ProtectAbilityAbAttr),
-    new Ability(Abilities.GALE_WINGS, "Gale Wings (N)", "Gives priority to Flying-type moves when the Pokémon's HP is full.", 6),
+    new Ability(Abilities.GALE_WINGS, "Gale Wings", "Gives priority to Flying-type moves when the Pokémon's HP is full.", 6)
+      .attr(IncrementMovePriorityAbAttr, (pokemon, move) => pokemon.getHpRatio() === 1 && move.type === Type.FLYING),
     new Ability(Abilities.MEGA_LAUNCHER, "Mega Launcher", "Powers up aura and pulse moves.", 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5),
     new Ability(Abilities.GRASS_PELT, "Grass Pelt", "Boosts the Pokémon's Defense stat on Grassy Terrain.", 6)
@@ -2647,7 +2650,8 @@ export function initAbilities() {
     new Ability(Abilities.LONG_REACH, "Long Reach", "The Pokémon uses its moves without making contact with the target.", 7)
       .attr(IgnoreContactAbAttr),
     new Ability(Abilities.LIQUID_VOICE, "Liquid Voice (N)", "All sound-based moves become Water-type moves.", 7),
-    new Ability(Abilities.TRIAGE, "Triage (N)", "Gives priority to a healing move.", 7),
+    new Ability(Abilities.TRIAGE, "Triage", "Gives priority to a healing move.", 7)
+      .attr(IncrementMovePriorityAbAttr, (pokemon, move) => move.hasFlag(MoveFlags.TRIAGE_MOVE), 3),
     new Ability(Abilities.GALVANIZE, "Galvanize", "Normal-type moves become Electric-type moves. The power of those moves is boosted a little.", 7)
       .attr(MoveTypeChangePowerMultiplierAbAttr, Type.NORMAL, Type.ELECTRIC, 1.2),
     new Ability(Abilities.SURGE_SURFER, "Surge Surfer", "Doubles the Pokémon's Speed stat on Electric Terrain.", 7)
