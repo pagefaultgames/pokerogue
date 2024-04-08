@@ -73,8 +73,15 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
       const lastCharA = fragA.slice(fragA.length - 1);
       const prevCharB = fragBMatch[1].slice(fragBMatch.length - 1);
       fragB = (/[\-']/.test(prevCharB) ? prevCharB : '') + fragBMatch[2] || prevCharB;
-      if (lastCharA === fragB[0] && /[aiu]/.test(lastCharA))
-        fragB = fragB.slice(1);
+      if (lastCharA === fragB[0]) {
+        if (/[aiu]/.test(lastCharA))
+          fragB = fragB.slice(1);
+        else {
+          const newCharMatch = new RegExp(`[^${lastCharA}]`).exec(fragB);
+          if (newCharMatch.index > 0)
+            fragB = fragB.slice(newCharMatch.index);
+        }
+      }
     } else
       fragB = speciesBName;
   } else
