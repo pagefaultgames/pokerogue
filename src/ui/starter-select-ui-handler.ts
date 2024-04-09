@@ -889,7 +889,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const genLimit = this.genSpecies[genCursorWithScroll].length;
       for (let s = 0; s < 81; s++) {
         const speciesId = s < genLimit ? this.genSpecies[genCursorWithScroll][s].speciesId : 0 as Species;
-        const slotVisible = speciesId && !!(this.scene.gameData.dexData[speciesId].caughtAttr);
+        const slotVisible = !!speciesId;
         if (slotVisible) {
           const baseStarterValue = speciesStarters[speciesId];
           const starterValue = slotVisible ? this.scene.gameData.getSpeciesStarterValue(speciesId) : 0;
@@ -914,7 +914,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.starterValueLabels[s].setShadowColor(this.getTextColor(textStyle, true));
         }
         this.starterValueLabels[s].setVisible(slotVisible);
-        this.shinyIcons[s].setVisible(slotVisible && !!(this.scene.gameData.dexData[speciesId].caughtAttr & DexAttr.SHINY));
+        this.shinyIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.dexData[speciesId].caughtAttr & DexAttr.SHINY));
       }
     } else {
       changed = super.setCursor(cursor);
@@ -1244,16 +1244,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   tryUpdateValue(add?: integer): boolean {
     const value = this.starterGens.reduce((total: integer, gen: integer, i: integer) => total += this.scene.gameData.getSpeciesStarterValue(this.genSpecies[gen][this.starterCursors[i]].speciesId), 0);
     const newValue = value + (add || 0);
-    const overLimit = newValue > this.getValueLimit();
+    const valueLimit = this.getValueLimit();
+    const overLimit = newValue > valueLimit;
     let newValueStr = newValue.toString();
     if (newValueStr.startsWith('0.'))
       newValueStr = newValueStr.slice(1);
-    this.valueLimitLabel.setText(`${newValueStr}/${this.getValueLimit()}`);
+    this.valueLimitLabel.setText(`${newValueStr}/${valueLimit}`);
     this.valueLimitLabel.setColor(this.getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK));
     this.valueLimitLabel.setShadowColor(this.getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK, true));
     if (overLimit) {
       this.scene.time.delayedCall(Utils.fixedInt(500), () => this.tryUpdateValue());
       return false;
+    }
+    for (let g = 0; g < this.genSpecies.length; g++) {
+      for (let s = 0; s < this.genSpecies[g].length; s++)
+        (this.starterSelectGenIconContainers[g].getAt(s) as Phaser.GameObjects.Sprite).setAlpha((newValue + this.scene.gameData.getSpeciesStarterValue(this.genSpecies[g][s].speciesId)) > valueLimit ? 0.375 : 1);
     }
     this.value = newValue;
     return true;
