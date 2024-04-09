@@ -1832,6 +1832,19 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
   }
 }
 
+export class ToxicAccuracyAttr extends VariableAccuracyAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+      if (user.isOfType(Type.POISON)) {
+        const accuracy = args[0] as Utils.NumberHolder;
+        accuracy.value = -1;
+        return true;
+      }
+
+    return false;
+  }
+}
+
+
 export class BlizzardAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
@@ -1871,8 +1884,11 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
 export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
-    if (target.isOfType(Type.WATER))
+    if (target.isOfType(Type.WATER)) {
       multiplier.value *= 4; // Increased twice because initial reduction against water
+      return true;
+    }
+
     return false;
   }
 }
@@ -3060,7 +3076,8 @@ export function initMoves() {
       .attr(ChargeAttr, ChargeAnim.DIG_CHARGING, 'dug a hole!', BattlerTagType.UNDERGROUND)
       .ignoresVirtual(),
     new StatusMove(Moves.TOXIC, "Toxic", Type.POISON, 90, 10, "A move that leaves the target badly poisoned. Its poison damage worsens every turn.", -1, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.TOXIC),
+      .attr(StatusEffectAttr, StatusEffect.TOXIC)
+      .attr(ToxicAccuracyAttr),
     new AttackMove(Moves.CONFUSION, "Confusion", Type.PSYCHIC, MoveCategory.SPECIAL, 50, 100, 25, "The target is hit by a weak telekinetic force. This may also confuse the target.", 10, 0, 1)
       .attr(ConfuseAttr),
     new AttackMove(Moves.PSYCHIC, "Psychic", Type.PSYCHIC, MoveCategory.SPECIAL, 90, 100, 10, "The target is hit by a strong telekinetic force. This may also lower the target's Sp. Def stat.", 10, 0, 1)
@@ -4341,7 +4358,7 @@ export function initMoves() {
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.THOUSAND_WAVES, "Thousand Waves", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, "The user attacks with a wave that crawls along the ground. Those it hits can't flee from battle.", -1, 0, 6)
-      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1)
+      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.LANDS_WRATH, "Land's Wrath", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, "The user gathers the energy of the land and focuses that power on opposing Pokémon to damage them.", -1, 0, 6)
