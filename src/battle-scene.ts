@@ -1083,12 +1083,15 @@ export default class BattleScene extends SceneBase {
 			inputSuccess = this.ui.processInput(Button.RIGHT);
 			vibrationLength = 5;
 			this.setLastProcessedMovementTime(Button.RIGHT)
-		} else if (this.buttonJustPressed(Button.SUBMIT)) {
+		} else if (this.buttonJustPressed(Button.SUBMIT) || this.repeatInputDurationJustPassed(Button.SUBMIT)) {
 			inputSuccess = this.ui.processInput(Button.SUBMIT) || this.ui.processInput(Button.ACTION);
-		} else if (this.buttonJustPressed(Button.ACTION)) {
+			this.setLastProcessedMovementTime(Button.SUBMIT);
+		} else if (this.buttonJustPressed(Button.ACTION) || this.repeatInputDurationJustPassed(Button.ACTION)) {
 			inputSuccess = this.ui.processInput(Button.ACTION);
-		} else if (this.buttonJustPressed(Button.CANCEL)) {
+			this.setLastProcessedMovementTime(Button.ACTION);
+		} else if (this.buttonJustPressed(Button.CANCEL)|| this.repeatInputDurationJustPassed(Button.CANCEL)) {
 			inputSuccess = this.ui.processInput(Button.CANCEL);
+			this.setLastProcessedMovementTime(Button.CANCEL);
 		} else if (this.buttonJustPressed(Button.MENU)) {
 			switch (this.ui?.getMode()) {
 				case Mode.MESSAGE:
