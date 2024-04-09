@@ -1566,8 +1566,10 @@ export class PostFaintAbAttr extends AbAttr {
 
 export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   private damageRatio: integer;
+  
   constructor(damageRatio: integer) {
     super();
+
     this.damageRatio = damageRatio;
   }
 
@@ -1576,11 +1578,12 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
       attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
       return true;
     }
+
     return false;
   }
 
   getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
-    return `${pokemon.name}${(pokemon.name.endsWith('s')?`'`:`'s`)} ${pokemon.getAbility().name} hurt\nits attacker!`
+    return getPokemonMessage(pokemon, `'s ${pokemon.getAbility().name} hurt\nits attacker!`);
   }
 }
 

@@ -2878,10 +2878,8 @@ export class FaintPhase extends PokemonPhase {
 
     if (pokemon.getAbility().hasAttr(PostFaintAbAttr)) {
       if (pokemon.turnData?.attacksReceived?.length) {
-        const defeatSource = this.scene.getPokemonById(pokemon.turnData.attacksReceived[0].sourceId);
-        const defeatMove = new PokemonMove(pokemon.turnData.attacksReceived[0].move);
-        const defeatResult = pokemon.turnData.attacksReceived[0].result;
-        applyPostFaintAbAttrs(PostFaintAbAttr,pokemon,defeatSource,defeatMove,defeatResult);
+        const lastAttack = pokemon.turnData.attacksReceived[0];
+        applyPostFaintAbAttrs(PostFaintAbAttr,pokemon, this.scene.getPokemonById(lastAttack.sourceId), new PokemonMove(lastAttack.move), lastAttack.result);
       }
     }
 
