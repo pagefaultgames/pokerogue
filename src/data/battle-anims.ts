@@ -722,6 +722,41 @@ export abstract class BattleAnim {
         const userSprite = user.getSprite();
         const targetSprite = target.getSprite();
 
+        const spriteCache: SpriteCache = {
+            [AnimFrameTarget.GRAPHIC]: [],
+            [AnimFrameTarget.USER]: [],
+            [AnimFrameTarget.TARGET]: []
+        };
+        const spritePriorities: integer[] = [];
+
+        const cleanUpAndComplete = () => {
+            userSprite.setPosition(0, 0);
+            userSprite.setScale(1);
+            userSprite.setAlpha(1);
+            userSprite.pipelineData['tone'] = [ 0.0, 0.0, 0.0, 0.0 ];
+            userSprite.setAngle(0);
+            targetSprite.setPosition(0, 0);
+            targetSprite.setScale(1);
+            targetSprite.setAlpha(1);
+            targetSprite.pipelineData['tone'] = [ 0.0, 0.0, 0.0, 0.0 ];
+            targetSprite.setAngle(0);
+            if (!this.isHideUser())
+                userSprite.setVisible(true);
+            if (!this.isHideTarget() && (targetSprite !== userSprite || !this.isHideUser()))
+                targetSprite.setVisible(true);
+            for (let ms of Object.values(spriteCache).flat()) {
+                if (ms)
+                    ms.destroy();
+            }
+            if (this.bgSprite)
+                this.bgSprite.destroy();
+            if (callback)
+                callback();
+        };
+
+        if (!scene.moveAnimations)
+            return cleanUpAndComplete();
+
         const anim = this.getAnim();
 
         const userInitialX = user.x;
@@ -734,13 +769,6 @@ export abstract class BattleAnim {
         
         let r = anim.frames.length;
         let f = 0;
-
-        const spriteCache: SpriteCache = {
-            [AnimFrameTarget.GRAPHIC]: [],
-            [AnimFrameTarget.USER]: [],
-            [AnimFrameTarget.TARGET]: []
-        };
-        const spritePriorities: integer[] = [];
 
         scene.tweens.addCounter({
             duration: Utils.getFrameMs(3),
@@ -880,30 +908,6 @@ export abstract class BattleAnim {
                 r--;
             },
             onComplete: () => {
-                const cleanUpAndComplete = () => {
-                    userSprite.setPosition(0, 0);
-                    userSprite.setScale(1);
-                    userSprite.setAlpha(1);
-                    userSprite.pipelineData['tone'] = [ 0.0, 0.0, 0.0, 0.0 ];
-                    userSprite.setAngle(0);
-                    targetSprite.setPosition(0, 0);
-                    targetSprite.setScale(1);
-                    targetSprite.setAlpha(1);
-                    targetSprite.pipelineData['tone'] = [ 0.0, 0.0, 0.0, 0.0 ];
-                    targetSprite.setAngle(0);
-                    if (!this.isHideUser())
-                        userSprite.setVisible(true);
-                    if (!this.isHideTarget() && (targetSprite !== userSprite || !this.isHideUser()))
-                        targetSprite.setVisible(true);
-                    for (let ms of Object.values(spriteCache).flat()) {
-                        if (ms)
-                            ms.destroy();
-                    }
-                    if (this.bgSprite)
-                        this.bgSprite.destroy();
-                    if (callback)
-                        callback();
-                };
                 for (let ms of Object.values(spriteCache).flat()) {
                     if (ms && !ms.getData('locked'))
                         ms.destroy();

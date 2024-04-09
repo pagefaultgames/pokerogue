@@ -12,6 +12,7 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   private abilityNameText: Phaser.GameObjects.Text;
 
   private tween: Phaser.Tweens.Tween;
+  private autoHideTimer: number;
 
   public shown: boolean;
 
@@ -55,7 +56,10 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
       x: shownX,
       duration: 500,
       ease: 'Sine.easeOut',
-      onComplete: () => this.tween = null
+      onComplete: () => {
+        this.tween = null;
+        this.resetAutoHideTimer();
+      }
     });
    
     this.setVisible(true);
@@ -65,6 +69,9 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
   hide(): void {
     if (!this.shown)
       return;
+
+    if (this.autoHideTimer)
+      clearInterval(this.autoHideTimer);
 
     if (this.tween)
       this.tween.stop();
@@ -81,5 +88,14 @@ export default class AbilityBar extends Phaser.GameObjects.Container {
     });
 
     this.shown = false;
+  }
+
+  resetAutoHideTimer(): void {
+    if (this.autoHideTimer)
+      clearInterval(this.autoHideTimer);
+    this.autoHideTimer = setTimeout(() => {
+      this.hide();
+      this.autoHideTimer = null;
+    }, 2500);
   }
 }

@@ -18,6 +18,7 @@ import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
 import { SpeciesFormChangeActiveTrigger } from "./pokemon-forms";
+import { Species } from "./enums/species";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -520,6 +521,10 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
     (args[0] as Utils.IntegerHolder).value = Math.floor(target.hp / 2);
 
     return true;
+  }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+    return target.getHpRatio() > 0.5 ? Math.floor(((target.getHpRatio() - 0.5) * -24) + 4) : -20;
   }
 }
 
@@ -1828,6 +1833,18 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
   }
 }
 
+export class ToxicAccuracyAttr extends VariableAccuracyAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+      if (user.isOfType(Type.POISON)) {
+        const accuracy = args[0] as Utils.NumberHolder;
+        accuracy.value = -1;
+        return true;
+      }
+
+    return false;
+  }
+}
+
 export class BlizzardAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
@@ -1837,6 +1854,57 @@ export class BlizzardAccuracyAttr extends VariableAccuracyAttr {
         accuracy.value = -1;
         return true;
       }
+    }
+
+    return false;
+  }
+}
+
+export class VariableMoveTypeAttr extends MoveAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.MORPEKO)) {
+      const form = user.species.speciesId === Species.MORPEKO ? user.formIndex : user.fusionSpecies.formIndex;
+      const type = (args[0] as Utils.IntegerHolder);
+
+      switch (form) {
+        case 1: // Hangry Mode
+          type.value = Type.DARK;
+          break;
+        default: // Full Belly Mode
+          type.value = Type.ELECTRIC;
+          break;
+      }
+      return true;
+    }
+
+    return false;
+  }
+}
+
+export class RagingBullTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.PALDEA_TAUROS)) {
+      const form = user.species.speciesId === Species.PALDEA_TAUROS ? user.formIndex : user.fusionSpecies.formIndex;
+      const type = (args[0] as Utils.IntegerHolder);
+
+      switch (form) {
+        case 1: // Blaze breed
+          type.value = Type.FIRE;
+          break;
+        case 2: // Aqua breed
+          type.value = Type.WATER;
+          break;
+        default:
+          type.value = Type.FIGHTING;
+          break;
+      }
+      return true;
     }
 
     return false;
@@ -1867,8 +1935,11 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
 export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
-    if (target.isOfType(Type.WATER))
+    if (target.isOfType(Type.WATER)) {
       multiplier.value *= 4; // Increased twice because initial reduction against water
+      return true;
+    }
+
     return false;
   }
 }
@@ -3056,7 +3127,8 @@ export function initMoves() {
       .attr(ChargeAttr, ChargeAnim.DIG_CHARGING, 'dug a hole!', BattlerTagType.UNDERGROUND)
       .ignoresVirtual(),
     new StatusMove(Moves.TOXIC, "Toxic", Type.POISON, 90, 10, "A move that leaves the target badly poisoned. Its poison damage worsens every turn.", -1, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.TOXIC),
+      .attr(StatusEffectAttr, StatusEffect.TOXIC)
+      .attr(ToxicAccuracyAttr),
     new AttackMove(Moves.CONFUSION, "Confusion", Type.PSYCHIC, MoveCategory.SPECIAL, 50, 100, 25, "The target is hit by a weak telekinetic force. This may also confuse the target.", 10, 0, 1)
       .attr(ConfuseAttr),
     new AttackMove(Moves.PSYCHIC, "Psychic", Type.PSYCHIC, MoveCategory.SPECIAL, 90, 100, 10, "The target is hit by a strong telekinetic force. This may also lower the target's Sp. Def stat.", 10, 0, 1)
@@ -4337,7 +4409,7 @@ export function initMoves() {
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.THOUSAND_WAVES, "Thousand Waves", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, "The user attacks with a wave that crawls along the ground. Those it hits can't flee from battle.", -1, 0, 6)
-      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1)
+      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.LANDS_WRATH, "Land's Wrath", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, "The user gathers the energy of the land and focuses that power on opposing Pokémon to damage them.", -1, 0, 6)
@@ -4660,9 +4732,11 @@ export function initMoves() {
     new AttackMove(Moves.BEHEMOTH_BLADE, "Behemoth Blade", Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, "The user wields a large, powerful sword using its whole body and cuts the target in a vigorous attack.", -1, 0, 8)
       .slicingMove(),
     new AttackMove(Moves.BEHEMOTH_BASH, "Behemoth Bash", Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, "The user's body becomes a firm shield and slams into the target fiercely.", -1, 0, 8),
-    new AttackMove(Moves.AURA_WHEEL, "Aura Wheel (P)", Type.ELECTRIC, MoveCategory.PHYSICAL, 110, 100, 10, "Morpeko attacks and raises its Speed with the energy stored in its cheeks. This move's type changes depending on the user's form.", 100, 0, 8)
+    new AttackMove(Moves.AURA_WHEEL, "Aura Wheel", Type.ELECTRIC, MoveCategory.PHYSICAL, 110, 100, 10, "Morpeko attacks and raises its Speed with the energy stored in its cheeks. This move's type changes depending on the user's form.", 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
-      .makesContact(false),
+      .makesContact(false)
+      .attr(AuraWheelTypeAttr)
+      .condition((user, target, move) => [user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.MORPEKO)), // Missing custom fail message
     new AttackMove(Moves.BREAKING_SWIPE, "Breaking Swipe", Type.DRAGON, MoveCategory.PHYSICAL, 60, 100, 15, "The user swings its tough tail wildly and attacks opposing Pokémon. This also lowers their Attack stats.", 100, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
@@ -4955,7 +5029,8 @@ export function initMoves() {
     new AttackMove(Moves.AQUA_STEP, "Aqua Step", Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, "The user toys with the target and attacks it using light and fluid dance steps. This also boosts the user's Speed stat.", 100, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
       .danceMove(),
-    new AttackMove(Moves.RAGING_BULL, "Raging Bull (P)", Type.NORMAL, MoveCategory.PHYSICAL, 90, 100, 10, "The user performs a tackle like a raging bull. This move's type depends on the user's form. It can also break barriers, such as Light Screen and Reflect.", -1, 0, 9),
+    new AttackMove(Moves.RAGING_BULL, "Raging Bull (P)", Type.NORMAL, MoveCategory.PHYSICAL, 90, 100, 10, "The user performs a tackle like a raging bull. This move's type depends on the user's form. It can also break barriers, such as Light Screen and Reflect.", -1, 0, 9)
+      .attr(RagingBullTypeAttr),
     new AttackMove(Moves.MAKE_IT_RAIN, "Make It Rain", Type.STEEL, MoveCategory.SPECIAL, 120, 100, 5, "The user attacks by throwing out a mass of coins. This also lowers the user's Sp. Atk stat. Money is earned after the battle.", -1, 0, 9)
       .attr(MoneyAttr)
       .attr(StatChangeAttr, BattleStat.SPATK, -1, true, null, true, true)

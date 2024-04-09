@@ -183,26 +183,14 @@ export abstract class PersistentModifier extends Modifier {
     return container;
   }
 
-  getIconStackText(scene: BattleScene, virtual?: boolean): Phaser.GameObjects.Text {
+  getIconStackText(scene: BattleScene, virtual?: boolean): Phaser.GameObjects.BitmapText {
     if (this.getMaxStackCount(scene) === 1 || (virtual && !this.virtualStackCount))
       return null;
 
-    const isStackMax = this.getStackCount() >= this.getMaxStackCount(scene);
-    const maxColor = '#f89890';
-    const maxStrokeColor = '#984038';
-
-    if (virtual) {
-      const virtualText = addTextObject(scene, 27, 12, `+${this.virtualStackCount.toString()}`, TextStyle.PARTY, { fontSize: '66px', color: !isStackMax ? '#40c8f8' : maxColor });
-      virtualText.setShadow(0, 0, null);
-      virtualText.setStroke(!isStackMax ? '#006090' : maxStrokeColor, 16)
-      virtualText.setOrigin(1, 0);
-
-      return virtualText;
-    }
-
-    const text = addTextObject(scene, 8, 12, this.stackCount.toString(), TextStyle.PARTY, { fontSize: '66px', color: !isStackMax ? '#f8f8f8' : maxColor });
-    text.setShadow(0, 0, null);
-    text.setStroke('#424242', 16);
+    const text = scene.add.bitmapText(10, 15, 'item-count', this.stackCount.toString(), 11);
+    text.letterSpacing = -0.5;
+    if (this.getStackCount() >= this.getMaxStackCount(scene))
+      text.setTint(0xf89890)
     text.setOrigin(0, 0);
 
     return text;
@@ -1772,7 +1760,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       }
       const randItemIndex = pokemon.randSeedInt(itemModifiers.length);
       const randItem = itemModifiers[randItemIndex];
-      heldItemTransferPromises.push(pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false, false, true).then(success => {
+      heldItemTransferPromises.push(pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false, false).then(success => {
         if (success) {
           transferredModifierTypes.push(randItem.type);
           itemModifiers.splice(randItemIndex, 1);

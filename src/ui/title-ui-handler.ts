@@ -13,7 +13,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   private splashMessage: string;
   private splashMessageText: Phaser.GameObjects.Text;
 
-  private titleStatsTimer;
+  private titleStatsTimer: number;
 
   constructor(scene: BattleScene, mode: Mode = Mode.TITLE) {
     super(scene, mode);

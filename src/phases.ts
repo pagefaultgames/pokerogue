@@ -2540,7 +2540,7 @@ export class StatChangePhase extends PokemonPhase {
       this.end();
     };
 
-    if (relLevels.filter(l => l).length) {
+    if (relLevels.filter(l => l).length && this.scene.moveAnimations) {
       pokemon.enableMask();
       const pokemonMaskSprite = pokemon.maskSprite;
 

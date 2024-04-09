@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import Phaser, { Time } from 'phaser';
 import UI, { Mode } from './ui/ui';
 import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from './phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './field/pokemon';
@@ -78,6 +78,7 @@ const DEBUG_RNG = false;
 export const startingWave = STARTING_WAVE_OVERRIDE || 1;
 
 const expSpriteKeys: string[] = [];
+const repeatInputDelayMillis = 250;
 
 export enum Button {
 	UP,
@@ -118,6 +119,8 @@ export default class BattleScene extends SceneBase {
 	public uiTheme: UiTheme = UiTheme.DEFAULT;
 	public windowType: integer = 0;
 	public experimentalSprites: boolean = false;
+	public moveAnimations: boolean = true;
+	public hpBarSpeed: integer = 0;
 	public fusionPaletteSwaps: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
@@ -183,8 +186,10 @@ export default class BattleScene extends SceneBase {
 	private playTimeTimer: Phaser.Time.TimerEvent;
 	
 	private buttonKeys: Phaser.Input.Keyboard.Key[][];
-
-	private blockInput: boolean;
+	private lastProcessedButtonPressTimes: Map<Button, number> = new Map();
+	// movementButtonLock ensures only a single movement key is firing repeated inputs
+	// (i.e. by holding down a button) at a time
+	private movementButtonLock: Button;
 
 	public rngCounter: integer = 0;
 	public rngSeedOverride: string = '';
@@ -1062,29 +1067,34 @@ export default class BattleScene extends SceneBase {
 	}
 
 	checkInput(): boolean {
-		if (this.blockInput)
-			return;
 		let inputSuccess = false;
 		let vibrationLength = 0;
-		if (this.isButtonPressed(Button.UP)) {
+		if (this.buttonJustPressed(Button.UP) || this.repeatInputDurationJustPassed(Button.UP)) {
 			inputSuccess = this.ui.processInput(Button.UP);
 			vibrationLength = 5;
-		} else if (this.isButtonPressed(Button.DOWN)) {
+			this.setLastProcessedMovementTime(Button.UP)
+		} else if (this.buttonJustPressed(Button.DOWN) || this.repeatInputDurationJustPassed(Button.DOWN)) {
 			inputSuccess = this.ui.processInput(Button.DOWN);
 			vibrationLength = 5;
-		} else if (this.isButtonPressed(Button.LEFT)) {
+			this.setLastProcessedMovementTime(Button.DOWN)
+		} else if (this.buttonJustPressed(Button.LEFT) || this.repeatInputDurationJustPassed(Button.LEFT)) {
 			inputSuccess = this.ui.processInput(Button.LEFT);
 			vibrationLength = 5;
-		} else if (this.isButtonPressed(Button.RIGHT)) {
+			this.setLastProcessedMovementTime(Button.LEFT)
+		} else if (this.buttonJustPressed(Button.RIGHT) || this.repeatInputDurationJustPassed(Button.RIGHT)) {
 			inputSuccess = this.ui.processInput(Button.RIGHT);
 			vibrationLength = 5;
-		} else if (this.isButtonPressed(Button.SUBMIT)) {
+			this.setLastProcessedMovementTime(Button.RIGHT)
+		} else if (this.buttonJustPressed(Button.SUBMIT) || this.repeatInputDurationJustPassed(Button.SUBMIT)) {
 			inputSuccess = this.ui.processInput(Button.SUBMIT) || this.ui.processInput(Button.ACTION);
-		} else if (this.isButtonPressed(Button.ACTION))
+			this.setLastProcessedMovementTime(Button.SUBMIT);
+		} else if (this.buttonJustPressed(Button.ACTION) || this.repeatInputDurationJustPassed(Button.ACTION)) {
 			inputSuccess = this.ui.processInput(Button.ACTION);
-		else if (this.isButtonPressed(Button.CANCEL)) {
+			this.setLastProcessedMovementTime(Button.ACTION);
+		} else if (this.buttonJustPressed(Button.CANCEL)|| this.repeatInputDurationJustPassed(Button.CANCEL)) {
 			inputSuccess = this.ui.processInput(Button.CANCEL);
-		} else if (this.isButtonPressed(Button.MENU)) {
+			this.setLastProcessedMovementTime(Button.CANCEL);
+		} else if (this.buttonJustPressed(Button.MENU)) {
 			switch (this.ui?.getMode()) {
 				case Mode.MESSAGE:
 					if (!(this.ui.getHandler() as MessageUiHandler).pendingPrompt)
@@ -1115,25 +1125,25 @@ export default class BattleScene extends SceneBase {
 					return;
 			}
 		} else if (this.ui?.getHandler() instanceof StarterSelectUiHandler) {
-			if (this.isButtonPressed(Button.CYCLE_SHINY))
+			if (this.buttonJustPressed(Button.CYCLE_SHINY)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_SHINY);
-			else if (this.isButtonPressed(Button.CYCLE_FORM))
+			} else if (this.buttonJustPressed(Button.CYCLE_FORM)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_FORM);
-			else if (this.isButtonPressed(Button.CYCLE_GENDER))
+			} else if (this.buttonJustPressed(Button.CYCLE_GENDER)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_GENDER);
-			else if (this.isButtonPressed(Button.CYCLE_ABILITY))
+			} else if (this.buttonJustPressed(Button.CYCLE_ABILITY)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_ABILITY);
-			else if (this.isButtonPressed(Button.CYCLE_NATURE))
+			} else if (this.buttonJustPressed(Button.CYCLE_NATURE)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_NATURE);
-			else
+			} else
 				return;
-		}	else if (this.isButtonPressed(Button.SPEED_UP)) {
+		}	else if (this.buttonJustPressed(Button.SPEED_UP)) {
 			if (this.gameSpeed < 5) {
 				this.gameData.saveSetting(Setting.Game_Speed, settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) + 1);
 				if (this.ui?.getMode() === Mode.SETTINGS)
 					(this.ui.getHandler() as SettingsUiHandler).show([]);
 			}
-		} else if (this.isButtonPressed(Button.SLOW_DOWN)) {
+		} else if (this.buttonJustPressed(Button.SLOW_DOWN)) {
 			if (this.gameSpeed > 1) {
 				this.gameData.saveSetting(Setting.Game_Speed, Math.max(settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) - 1, 0));
 				if (this.ui?.getMode() === Mode.SETTINGS)
@@ -1142,13 +1152,34 @@ export default class BattleScene extends SceneBase {
 		} else
 			return;
 		if (inputSuccess && this.enableVibration && typeof navigator.vibrate !== 'undefined')
-			navigator.vibrate(vibrationLength || 10);
-		this.blockInput = true;
-		this.time.delayedCall(Utils.fixedInt(250), () => this.blockInput = false);
+			navigator.vibrate(vibrationLength || 10);		
 	}
 
-	isButtonPressed(button: Button): boolean {
-		return this.buttonKeys[button].filter(k => k.isDown).length >= 1;
+	buttonJustPressed(button: Button): boolean {
+		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustDown(k));
+	}
+
+	/**
+	 * repeatInputDurationJustPassed returns true if @param button has been held down long
+	 * enough to fire a repeated input. A button must claim the movementButtonLock before
+	 * firing a repeated input - this is to prevent multiple buttons from firing repeatedly.
+	 */
+	repeatInputDurationJustPassed(button: Button): boolean {
+		if (this.movementButtonLock !== null && this.movementButtonLock !== button) {
+			return false;
+		}
+		if (this.buttonKeys[button].every(k => k.isUp)) {
+			this.movementButtonLock = null;
+			return false;
+		}
+		if (this.time.now - this.lastProcessedButtonPressTimes.get(button) >= repeatInputDelayMillis) {
+			return true;
+		}
+	}
+
+	setLastProcessedMovementTime(button: Button) {
+		this.lastProcessedButtonPressTimes.set(button, this.time.now);
+		this.movementButtonLock = button;
 	}
 
 	isBgmPlaying(): boolean {

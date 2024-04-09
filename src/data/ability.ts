@@ -2764,7 +2764,7 @@ export function initAbilities() {
     new Ability(Abilities.DAUNTLESS_SHIELD, "Dauntless Shield", "Boosts the Pokémon's Defense stat when the Pokémon enters a battle.", 8)
       .attr(PostSummonStatChangeAbAttr, BattleStat.DEF, 1, true),
     new Ability(Abilities.LIBERO, "Libero (N)", "Changes the Pokémon's type to the type of the move it's about to use.", 8),
-    new Ability(Abilities.BALL_FETCH, "Ball Fetch (N)", "If the Pokémon is not holding an item, it will fetch the Poké Ball from the first failed throw of the battle.", 8),
+    new Ability(Abilities.BALL_FETCH, "Ball Fetch (N)", "The Pokémon will fetch the Poké Ball from the first failed throw of the battle.", 8),
     new Ability(Abilities.COTTON_DOWN, "Cotton Down (N)", "When the Pokémon is hit by an attack, it scatters cotton fluff around and lowers the Speed stat of all Pokémon except itself.", 8),
     new Ability(Abilities.PROPELLER_TAIL, "Propeller Tail (N)", "Ignores the effects of opposing Pokémon's Abilities and moves that draw in moves.", 8),
     new Ability(Abilities.MIRROR_ARMOR, "Mirror Armor (N)", "Bounces back only the stat-lowering effects that the Pokémon receives.", 8)
