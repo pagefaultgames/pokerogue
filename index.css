@@ -41,6 +41,12 @@ body {
   z-index: 3;
 }
 
+@media (orientation: portrait) {
+  #dpad, #apad {
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+}
+
 #dpad {
   left: 1rem;
 }
