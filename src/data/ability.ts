@@ -531,7 +531,7 @@ export class PostDefendCritStatChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
-  private damageRatio: integer;
+  protected damageRatio: integer;
 
   constructor(damageRatio: integer) {
     super();
@@ -1558,6 +1558,35 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
   }
 }
 
+export class PostFaintAbAttr extends AbAttr {
+  applyPostFaint(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
+      return `${pokemon.name}${(pokemon.name.endsWith('s')?`'`:`'s`)} ${pokemon.getAbility().name} hurt\nits attacker!`
+  }
+}
+
+export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
+  damageRatio: integer;
+  constructor(damageRatio: integer) {
+    super();
+    this.damageRatio = damageRatio;
+    this.addCondition((pokemon: Pokemon)=>{
+      return pokemon.isFainted(false);
+    });
+  }
+
+  applyPostFaint(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
+      attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+      return true;
+    }
+    return false;
+  }
+}
+
 export class RedirectMoveAbAttr extends AbAttr {
   apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (this.canRedirect(args[0] as Moves)) {
@@ -1858,6 +1887,11 @@ export function applyCheckTrappedAbAttrs(attrType: { new(...args: any[]): CheckT
 export function applyPostBattleAbAttrs(attrType: { new(...args: any[]): PostBattleAbAttr },
   pokemon: Pokemon, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostBattleAbAttr>(attrType, pokemon, attr => attr.applyPostBattle(pokemon, args), args);
+}
+
+export function applyPostFaintAbAttrs(attrType: { new(...args: any[]): PostFaintAbAttr },
+  pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostFaintAbAttr>(attrType, pokemon, attr => attr.applyPostFaint(pokemon, attacker, move, hitResult, args), args);
 }
 
 function canApplyAttr(pokemon: Pokemon, attr: AbAttr): boolean {
@@ -2250,7 +2284,8 @@ export function initAbilities() {
       .attr(ArenaTrapAbAttr),
     new Ability(Abilities.ROUGH_SKIN, "Rough Skin", "This Pokémon inflicts damage with its rough skin to the attacker on contact.", 3)
       .attr(PostDefendContactDamageAbAttr, 8)
-      .ignorable(),
+      .ignorable()
+      .passive(),
     new Ability(Abilities.WONDER_GUARD, "Wonder Guard", "Its mysterious power only lets supereffective moves hit the Pokémon.", 3)
       .attr(NonSuperEffectiveImmunityAbAttr)
       .attr(ProtectAbilityAbAttr)
@@ -2439,7 +2474,9 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' breaks the mold!'))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(Abilities.SUPER_LUCK, "Super Luck (N)", "The Pokémon is so lucky that the critical-hit ratios of its moves are boosted.", 4),
-    new Ability(Abilities.AFTERMATH, "Aftermath (N)", "Damages the attacker if it contacts the Pokémon with a finishing hit.", 4),
+    new Ability(Abilities.AFTERMATH, "Aftermath", "Damages the attacker if it contacts the Pokémon with a finishing hit.", 4)
+      .attr(PostFaintContactDamageAbAttr,4)
+      .passive(),
     new Ability(Abilities.ANTICIPATION, "Anticipation (N)", "The Pokémon can sense an opposing Pokémon's dangerous moves.", 4),
     new Ability(Abilities.FOREWARN, "Forewarn (N)", "When it enters a battle, the Pokémon can tell one of the moves an opposing Pokémon has.", 4),
     new Ability(Abilities.UNAWARE, "Unaware", "When attacking, the Pokémon ignores the target Pokémon's stat changes.", 4)
@@ -2558,7 +2595,8 @@ export function initAbilities() {
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
       .condition(getWeatherCondition(WeatherType.SANDSTORM)),
     new Ability(Abilities.IRON_BARBS, "Iron Barbs", "Inflicts damage on the attacker upon contact with iron barbs.", 5)
-      .attr(PostDefendContactDamageAbAttr, 8),
+      .attr(PostDefendContactDamageAbAttr, 8)
+      .passive(),
     new Ability(Abilities.ZEN_MODE, "Zen Mode", "Changes the Pokémon's shape when HP is half or less.", 5)
       .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() >= 0.5 ? 0 : 1)
       .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() >= 0.5 ? 0 : 1)
