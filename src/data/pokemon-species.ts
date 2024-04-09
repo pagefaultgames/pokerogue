@@ -1835,7 +1835,7 @@ export function initSpecies() {
       new PokemonForm("10% Forme Power Construct", "10-pc", Type.DRAGON, Type.GROUND, 1.2, 33.5, Abilities.POWER_CONSTRUCT, Abilities.NONE, Abilities.NONE, 486, 54, 100, 71, 61, 85, 115, 3, 0, 300, false, "10"),
       new PokemonForm("Complete Forme", "complete", Type.DRAGON, Type.GROUND, 4.5, 610, Abilities.POWER_CONSTRUCT, Abilities.NONE, Abilities.NONE, 708, 216, 100, 121, 91, 95, 85, 3, 0, 300),
     ),
-    new PokemonSpecies(Species.DIANCIE, "Diancie", 6, false, false, true, "Jewel Pokémon", Type.ROCK, Type.FAIRY, 0.7, 8.8, Abilities.CLEAR_BODY, Abilities.NONE, Abilities.NONE, 600, 50, 100, 150, 100, 150, 50, 3, 50, 300, GrowthRate.SLOW, 0, false, true,
+    new PokemonSpecies(Species.DIANCIE, "Diancie", 6, false, false, true, "Jewel Pokémon", Type.ROCK, Type.FAIRY, 0.7, 8.8, Abilities.CLEAR_BODY, Abilities.NONE, Abilities.NONE, 600, 50, 100, 150, 100, 150, 50, 3, 50, 300, GrowthRate.SLOW, null, false, true,
       new PokemonForm("Normal", "", Type.ROCK, Type.FAIRY, 0.7, 8.8, Abilities.CLEAR_BODY, Abilities.NONE, Abilities.NONE, 600, 50, 100, 150, 100, 150, 50, 3, 50, 300),
       new PokemonForm("Mega", SpeciesFormKey.MEGA, Type.ROCK, Type.FAIRY, 1.1, 27.8, Abilities.MAGIC_BOUNCE, Abilities.NONE, Abilities.NONE, 700, 50, 160, 110, 160, 110, 110, 3, 50, 300),
     ),
