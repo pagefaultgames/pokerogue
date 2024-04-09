@@ -27,6 +27,7 @@ splashMessages.push(...[
   'Mostly Consistent Seeds!',
   'Achievement Points Don\'t Do Anything!',
   'You Do Not Start at Level 2000!',
+  'Don\'t Talk About the Manaphy Egg Incident!',
   'Also Try Pokéngine!',
   'Also Try Emerald Rogue!',
   'Also Try Radical Red!',
