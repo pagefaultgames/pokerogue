@@ -638,7 +638,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                   return {
                                     label: allMoves[sm].name,
                                     handler: () => {
-                                      this.swichMoveHandler(i, sm, m)
+                                      this.switchMoveHandler(i, sm, m)
                                       showSwapOptions(this.starterMoveset);
                                     }
                                   };
@@ -787,7 +787,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     return success || error;
   }
 
-  swichMoveHandler(i: number, newMove: Moves, move: Moves) {
+  switchMoveHandler(i: number, newMove: Moves, move: Moves) {
     const speciesId = this.lastSpecies.speciesId;
     const existingMoveIndex = this.starterMoveset.indexOf(newMove);
     this.starterMoveset[i] = newMove;
@@ -796,21 +796,21 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     const props: DexAttrProps = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
     // species has different forms
     if (pokemonFormLevelMoves.hasOwnProperty(speciesId)) {
-      // starterMoveData doesn't have base form moves
-      if (!this.scene.gameData.starterMoveData.hasOwnProperty(speciesId)){
-        this.scene.gameData.starterMoveData[speciesId] = this.starterMoveset.slice(0) as StarterMoveset;
-      }
-      const starterMoveData = this.scene.gameData.starterMoveData[speciesId]
+      // starterMoveData doesn't have base form moves or is using the single form format
+      if (!this.scene.gameData.starterMoveData.hasOwnProperty(speciesId) || Array.isArray(this.scene.gameData.starterMoveData[speciesId]))
+        this.scene.gameData.starterMoveData[speciesId] = { [props.formIndex]: this.starterMoveset.slice(0) as StarterMoveset };
+      const starterMoveData = this.scene.gameData.starterMoveData[speciesId][props.formIndex];
+
       // starterMoveData doesn't have active form moves
-      if (!starterMoveData.hasOwnProperty(props.formIndex)) {
+      if (!starterMoveData.hasOwnProperty(props.formIndex))
         this.scene.gameData.starterMoveData[speciesId][props.formIndex] = this.starterMoveset.slice(0) as StarterMoveset;
-      }
+
       // does the species' starter move data have its form's starter moves and has it been updated
-      if (starterMoveData.hasOwnProperty(props.formIndex) && Array.isArray(starterMoveData[props.formIndex])) {
+      if (starterMoveData.hasOwnProperty(props.formIndex)) {
         // active form move hasn't been updated
         if (starterMoveData[props.formIndex][existingMoveIndex] !== newMove)
           this.scene.gameData.starterMoveData[speciesId][props.formIndex] = this.starterMoveset.slice(0) as StarterMoveset;
-      } 
+      }
     } else
       this.scene.gameData.starterMoveData[speciesId] = this.starterMoveset.slice(0) as StarterMoveset;
     this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, false);
