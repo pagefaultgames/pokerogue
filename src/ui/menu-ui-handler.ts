@@ -114,7 +114,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       });
     };
 
-    if (Utils.isLocal) {
+    if (/*Utils.isLocal*/true) {
       manageDataOptions.push({
         label: 'Import Session',
         handler: () => confirmSlot('Select a slot to import to.', () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId)),
@@ -140,7 +140,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true
     });
-    if (Utils.isLocal) {
+    if (/*Utils.isLocal*/true) {
       manageDataOptions.push({
         label: 'Import Data',
         handler: () => this.scene.gameData.importData(GameDataType.SYSTEM),
