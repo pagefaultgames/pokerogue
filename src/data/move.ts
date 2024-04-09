@@ -523,7 +523,7 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return target.getHpRatio() > 0.5 ? Math.floor(((target.getHpRatio() - 0.5) * 24) * 12 - 4) : -20;
+    return target.getHpRatio() > 0.5 ? Math.floor(((target.getHpRatio() - 0.5) * -24) + 4) : -20;
   }
 }
 
