@@ -591,7 +591,10 @@ export default class BattleScene extends SceneBase {
 		return this.currentBattle.randSeedInt(this, range, min);
 	}
 
-	reset(clearScene?: boolean): void {
+	reset(clearScene: boolean = false, clearData: boolean = false): void {
+		if (clearData)
+			this.gameData = new GameData(this);
+
 		this.gameMode = gameModes[GameModes.CLASSIC];
 		
 		this.setSeed(SEED_OVERRIDE || Utils.randomString(24));
