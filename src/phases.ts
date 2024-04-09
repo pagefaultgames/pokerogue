@@ -56,7 +56,6 @@ import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameModes, gameModes } from "./game-mode";
 import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
-import { getPositionOfLineAndCharacter } from "typescript";
 
 export class LoginPhase extends Phase {
   private showText: boolean;

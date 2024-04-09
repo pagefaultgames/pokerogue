@@ -531,7 +531,7 @@ export class PostDefendCritStatChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
-  protected damageRatio: integer;
+  private damageRatio: integer;
 
   constructor(damageRatio: integer) {
     super();
@@ -1562,20 +1562,13 @@ export class PostFaintAbAttr extends AbAttr {
   applyPostFaint(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     return false;
   }
-
-  getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
-      return `${pokemon.name}${(pokemon.name.endsWith('s')?`'`:`'s`)} ${pokemon.getAbility().name} hurt\nits attacker!`
-  }
 }
 
 export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
-  damageRatio: integer;
+  private damageRatio: integer;
   constructor(damageRatio: integer) {
     super();
     this.damageRatio = damageRatio;
-    this.addCondition((pokemon: Pokemon)=>{
-      return pokemon.isFainted(false);
-    });
   }
 
   applyPostFaint(pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
@@ -1584,6 +1577,10 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
       return true;
     }
     return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, ...args: any[]): string {
+    return `${pokemon.name}${(pokemon.name.endsWith('s')?`'`:`'s`)} ${pokemon.getAbility().name} hurt\nits attacker!`
   }
 }
 
