@@ -120,6 +120,7 @@ export default class BattleScene extends SceneBase {
 	public windowType: integer = 0;
 	public experimentalSprites: boolean = false;
 	public moveAnimations: boolean = true;
+	public hpBarSpeed: integer = 0;
 	public fusionPaletteSwaps: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;

@@ -1760,7 +1760,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       }
       const randItemIndex = pokemon.randSeedInt(itemModifiers.length);
       const randItem = itemModifiers[randItemIndex];
-      heldItemTransferPromises.push(pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false, false, true).then(success => {
+      heldItemTransferPromises.push(pokemon.scene.tryTransferHeldItemModifier(randItem, pokemon, false, false).then(success => {
         if (success) {
           transferredModifierTypes.push(randItem.type);
           itemModifiers.splice(randItemIndex, 1);
