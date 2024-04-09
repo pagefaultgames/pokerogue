@@ -1868,9 +1868,11 @@ export class VariableMoveTypeAttr extends MoveAttr {
 
 export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.getSpeciesForm().speciesId === Species.MORPEKO) {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.MORPEKO)) {
+      const form = user.species.speciesId === Species.MORPEKO ? user.formIndex : user.fusionSpecies.formIndex;
       const type = (args[0] as Utils.IntegerHolder);
-      switch (user.formIndex) {
+
+      switch (form) {
         case 1: // Hangry Mode
           type.value = Type.DARK;
           break;
@@ -1887,9 +1889,11 @@ export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
 
 export class RagingBullTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.getSpeciesForm().speciesId === Species.PALDEA_TAUROS) {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.PALDEA_TAUROS)) {
+      const form = user.species.speciesId === Species.PALDEA_TAUROS ? user.formIndex : user.fusionSpecies.formIndex;
       const type = (args[0] as Utils.IntegerHolder);
-      switch (user.formIndex) {
+
+      switch (form) {
         case 1: // Blaze breed
           type.value = Type.FIRE;
           break;
@@ -4732,7 +4736,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
       .makesContact(false)
       .attr(AuraWheelTypeAttr)
-      .condition((user, target, move) => user.species.speciesId === Species.MORPEKO), // Missing custom fail message
+      .condition((user, target, move) => [user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.MORPEKO)), // Missing custom fail message
     new AttackMove(Moves.BREAKING_SWIPE, "Breaking Swipe", Type.DRAGON, MoveCategory.PHYSICAL, 60, 100, 15, "The user swings its tough tail wildly and attacks opposing Pokémon. This also lowers their Attack stats.", 100, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
