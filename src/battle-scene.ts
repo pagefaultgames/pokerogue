@@ -186,7 +186,7 @@ export default class BattleScene extends SceneBase {
 	private buttonKeys: Phaser.Input.Keyboard.Key[][];
 	private lastProcessedButtonPressTimes: Map<Button, number> = new Map();
 	// movementButtonLock ensures only a single movement key is firing repeated inputs
-	// (i.e. by holding down a button) at a time.
+	// (i.e. by holding down a button) at a time
 	private movementButtonLock: Button;
 
 	public rngCounter: integer = 0;
