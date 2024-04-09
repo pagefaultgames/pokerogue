@@ -54,7 +54,8 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       let lastLineCount = 1;
       let newText = '';
       for (let w = 0; w < textWords.length; w++) {
-        const nextWordText = `${newText} ${textWords[w]}`;
+        const nextWordText = newText ? `${newText} ${textWords[w]}` : textWords[w];
+        
         if (textWords[w].includes('\n')) {
           newText = nextWordText;
           lastLineCount++;
@@ -68,7 +69,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
         }
       }
 
-      text = newText.trimStart();
+      text = newText;
     }
 
     if (this.textTimer) {

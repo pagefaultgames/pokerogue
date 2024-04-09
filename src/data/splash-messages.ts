@@ -29,6 +29,7 @@ splashMessages.push(...[
   'You Do Not Start at Level 2000!',
   'Also Try Pokéngine!',
   'Also Try Emerald Rogue!',
+  'Also Try Radical Red!',
   'Eevee Expo!',
   'YNOproject!'
 ]);
