@@ -129,6 +129,9 @@ export class LoadingScene extends SceneBase {
       }
     });
 
+    // Load bitmap fonts
+    this.load.bitmapFont('item-count', 'fonts/item-count.png', 'fonts/item-count.xml');
+
     // Load trainer images
     this.loadAtlas('trainer_m_back', 'trainer');
     this.loadAtlas('trainer_m_back_pb', 'trainer');
