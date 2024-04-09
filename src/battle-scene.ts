@@ -119,6 +119,7 @@ export default class BattleScene extends SceneBase {
 	public uiTheme: UiTheme = UiTheme.DEFAULT;
 	public windowType: integer = 0;
 	public experimentalSprites: boolean = false;
+	public moveAnimations: boolean = true;
 	public fusionPaletteSwaps: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
