@@ -600,7 +600,8 @@ export default class BattleScene extends SceneBase {
 
 			const iconHeight = (icon.frame.cutHeight <= fusionIcon.frame.cutHeight ? Math.ceil : Math.floor)((icon.frame.cutHeight + fusionIcon.frame.cutHeight) / 4);
 			
-			const iconFrameId = `${icon.frame.name}h${iconHeight}`;
+			// Inefficient, but for some reason didn't work with only the unique properties as part of the name
+			const iconFrameId = `${icon.frame.name}f${fusionIcon.frame.name}`;
 
 			if (!icon.frame.texture.has(iconFrameId))
 				icon.frame.texture.add(iconFrameId, icon.frame.sourceIndex, icon.frame.cutX, icon.frame.cutY, icon.frame.cutWidth, iconHeight);
@@ -613,7 +614,9 @@ export default class BattleScene extends SceneBase {
 
 			const fusionIconY = fusionIcon.frame.cutY + icon.frame.cutHeight;
 			const fusionIconHeight = fusionIcon.frame.cutHeight - icon.frame.cutHeight;
-			const fusionIconFrameId = `${fusionIcon.frame.name}y${fusionIconY}`;
+
+			// Inefficient, but for some reason didn't work with only the unique properties as part of the name
+			const fusionIconFrameId = `${fusionIcon.frame.name}f${icon.frame.name}`;
 
 			if (!fusionIcon.frame.texture.has(fusionIconFrameId))
 				fusionIcon.frame.texture.add(fusionIconFrameId, fusionIcon.frame.sourceIndex, fusionIcon.frame.cutX, fusionIconY, fusionIcon.frame.cutWidth, fusionIconHeight);
