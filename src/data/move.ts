@@ -1377,23 +1377,6 @@ export class HalfHpStatMaxAttr extends StatChangeAttr {
 
 export class CutHpStatBoostAttr extends StatChangeAttr {
   constructor(stat: BattleStat | BattleStat[]) {
-    super(stat, 2, true, null, true);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      const damage = user.damage(Math.floor(user.getMaxHp() / 2), true);
-      if (damage)
-        user.scene.damageNumberHandler.add(user, damage);
-      user.updateInfo().then(() => {
-        const ret = super.apply(user, target, move, args);
-        resolve(ret);
-      });
-    });
-  }
-
-export class CutHpStatBoostAttr extends StatChangeAttr {
-  constructor(stat: BattleStat | BattleStat[]) {
     super(stat, 1, true, null, true);
   }
 
@@ -5107,8 +5090,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.DOODLE, "Doodle (N)", Type.NORMAL, 100, 10, "The user captures the very essence of the target in a sketch. This changes the Abilities of the user and its ally Pokémon to that of the target.", -1, 0, 9),
-    new SelfStatusMove(Moves.FILLET_AWAY, "Fillet Away", Type.NORMAL, -1, 10, "The user sharply boosts its Attack, Sp. Atk, and Speed stats by using its own HP.", -1, 0, 9)
-      .attr(HalfHpStatBoostAttr, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ]),
+    new SelfStatusMove(Moves.FILLET_AWAY, "Fillet Away (N)", Type.NORMAL, -1, 10, "The user sharply boosts its Attack, Sp. Atk, and Speed stats by using its own HP.", -1, 0, 9),
     new AttackMove(Moves.KOWTOW_CLEAVE, "Kowtow Cleave", Type.DARK, MoveCategory.PHYSICAL, 85, -1, 10, "The user slashes at the target after kowtowing to make the target let down its guard. This attack never misses.", -1, 0, 9)
       .slicingMove(),
     new AttackMove(Moves.FLOWER_TRICK, "Flower Trick", Type.GRASS, MoveCategory.PHYSICAL, 70, -1, 10, "The user throws a rigged bouquet of flowers at the target. This attack never misses and always lands a critical hit.", 100, 0, 9)
