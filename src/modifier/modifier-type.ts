@@ -63,16 +63,35 @@ export class ModifierType {
     this.tier = tier;
   }
 
-  getOrInferTier(): ModifierTier {
+  getOrInferTier(poolType: ModifierPoolType = ModifierPoolType.PLAYER): ModifierTier {
     if (this.tier)
       return this.tier;
     if (!this.id)
       return null;
-    for (let tier of Utils.getEnumValues(ModifierTier)) {
-      if (!modifierPool.hasOwnProperty(tier))
-        continue;
-      if (modifierPool[tier].find(m => (m as WeightedModifierType).modifierType.id === (this.generatorId || this.id)))
-        return (this.tier = tier);
+    let poolTypes: ModifierPoolType[];
+    switch (poolType) {
+      case ModifierPoolType.PLAYER:
+        poolTypes = [ poolType, ModifierPoolType.TRAINER, ModifierPoolType.WILD ];
+        break;
+      case ModifierPoolType.WILD:
+        poolTypes = [ poolType, ModifierPoolType.PLAYER, ModifierPoolType.TRAINER ];
+        break;
+      case ModifierPoolType.TRAINER:
+        poolTypes = [ poolType, ModifierPoolType.PLAYER, ModifierPoolType.WILD ];
+        break;
+      default:
+        poolTypes = [ poolType ];
+        break;
+    }
+    // Try multiple pool types in case of stolen items
+    for (let type of poolTypes) {
+      const pool = getModifierPoolForType(type);
+      for (let tier of Utils.getEnumValues(ModifierTier)) {
+        if (!pool.hasOwnProperty(tier))
+          continue;
+        if (pool[tier].find(m => (m as WeightedModifierType).modifierType.id === (this.generatorId || this.id)))
+          return (this.tier = tier);
+      }
     }
     return null;
   }
@@ -1179,9 +1198,7 @@ let enemyIgnoredPoolIndexes = {};
 let enemyBuffModifierPoolThresholds = {};
 let enemyBuffIgnoredPoolIndexes = {};
 
-const tierWeights = [ 769 / 1024, 192 / 1024, 48 / 1024, 12 / 1024, 1 / 1024 ];
-
-export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount: integer = 0) {
+export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool {
   let pool: ModifierPool;
   switch (poolType) {
     case ModifierPoolType.PLAYER:
@@ -1200,6 +1217,14 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
       pool = dailyStarterModifierPool;
       break;
   }
+  return pool;
+}
+
+const tierWeights = [ 769 / 1024, 192 / 1024, 48 / 1024, 12 / 1024, 1 / 1024 ];
+
+export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount: integer = 0) {
+  const pool = getModifierPoolForType(poolType);
+ 
   const ignoredIndexes = {};
   const modifierTableData = {};
   const thresholds = Object.fromEntries(new Map(Object.keys(pool).map(t => {
@@ -1360,27 +1385,22 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[]): Modifiers.P
 
 function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, tier?: ModifierTier, upgradeCount?: integer, retryCount: integer = 0): ModifierTypeOption {
   const player = !poolType;
-  let pool: ModifierPool;
+  const pool = getModifierPoolForType(poolType);
   let thresholds: object;
   switch (poolType) {
     case ModifierPoolType.PLAYER:
-      pool = modifierPool;
       thresholds = modifierPoolThresholds;
       break;
     case ModifierPoolType.WILD:
-      pool = wildModifierPool;
       thresholds = enemyModifierPoolThresholds;
       break;
     case ModifierPoolType.TRAINER:
-      pool = trainerModifierPool;
       thresholds = enemyModifierPoolThresholds;
       break;
     case ModifierPoolType.ENEMY_BUFF:
-      pool = enemyBuffModifierPool;
       thresholds = enemyBuffModifierPoolThresholds;
       break;
     case ModifierPoolType.DAILY_STARTER:
-      pool = dailyStarterModifierPool;
       thresholds = dailyStarterModifierPoolThresholds;
       break;
   }

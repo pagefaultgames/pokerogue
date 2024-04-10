@@ -1738,12 +1738,13 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       return false;
 
     const withinParty = pokemon.isPlayer() === targetPokemon.isPlayer();
+    const poolType = pokemon.isPlayer() ? ModifierTypes.ModifierPoolType.PLAYER : pokemon.hasTrainer() ? ModifierTypes.ModifierPoolType.TRAINER : ModifierTypes.ModifierPoolType.WILD;
 
     const transferredModifierTypes: ModifierTypes.ModifierType[] = [];
     const itemModifiers = pokemon.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
         && (m as PokemonHeldItemModifier).pokemonId === targetPokemon.id && m.getTransferrable(withinParty), targetPokemon.isPlayer()) as PokemonHeldItemModifier[];
-    let highestItemTier = itemModifiers.map(m => m.type.getOrInferTier()).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
-    let tierItemModifiers = itemModifiers.filter(m => m.type.getOrInferTier() === highestItemTier);
+    let highestItemTier = itemModifiers.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
+    let tierItemModifiers = itemModifiers.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
 
     let heldItemTransferPromises: Promise<void>[] = [];
     

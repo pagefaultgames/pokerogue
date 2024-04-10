@@ -19,6 +19,7 @@ import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
 import { SpeciesFormChangeActiveTrigger } from "./pokemon-forms";
 import { Species } from "./enums/species";
+import { ModifierPoolType } from "#app/modifier/modifier-type";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -934,8 +935,9 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
         return resolve(false);
       const heldItems = this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
       if (heldItems.length) {
-        const highestItemTier = heldItems.map(m => m.type.getOrInferTier()).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
-        const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier() === highestItemTier);
+        const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
+        const highestItemTier = heldItems.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
+        const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
         const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
         user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false).then(success => {
           if (success)
@@ -980,8 +982,9 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
         return resolve(false);
       const heldItems = this.getTargetHeldItems(target).filter(i => i.getTransferrable(false));
       if (heldItems.length) {
-        const highestItemTier = heldItems.map(m => m.type.getOrInferTier()).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
-        const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier() === highestItemTier);
+        const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
+        const highestItemTier = heldItems.map(m => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier, highestTier), 0);
+        const tierHeldItems = heldItems.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
         const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
         user.scene.tryTransferHeldItemModifier(stolenItem, user, false, false).then(success => {
           if (success)
