@@ -215,7 +215,9 @@ export const serverUrl = isLocal ? 'http://localhost:8001' : '';
 export const apiUrl = isLocal ? serverUrl : 'api';
 
 export function setCookie(cName: string, cValue: string): void {
-  document.cookie = `${cName}=${cValue};SameSite=Strict;path=/`;
+  const expiration = new Date();
+  expiration.setTime(new Date().getTime() + 3600000 * 24 * 7);
+  document.cookie = `${cName}=${cValue};SameSite=Strict;path=/;expires=${expiration.toUTCString()}`;
 }
 
 export function getCookie(cName: string): string {
