@@ -224,8 +224,8 @@ export class GameData {
   public saveSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       this.scene.ui.savingIcon.show();
-      updateUserInfo().then((success: boolean) => {
-        if (!success) {
+      updateUserInfo().then(response => {
+        if (!response[0]) {
           this.scene.ui.savingIcon.hide();
           return resolve(false);
         }

@@ -8,8 +8,8 @@ export interface UserInfo {
 
 export let loggedInUser: UserInfo = null;
 
-export function updateUserInfo(): Promise<boolean> {
-  return new Promise<boolean>(resolve => {
+export function updateUserInfo(): Promise<[boolean, integer]> {
+  return new Promise<[boolean, integer]>(resolve => {
     if (bypassLogin) {
       let lastSessionSlot = -1;
       for (let s = 0; s < 2; s++) {
@@ -19,18 +19,21 @@ export function updateUserInfo(): Promise<boolean> {
         }
       }
       loggedInUser = { username: 'Guest', lastSessionSlot: lastSessionSlot };
-      return resolve(true);
+      return resolve([ true, 200 ]);
     }
     Utils.apiFetch('account/info').then(response => {
+      console.log(response.status);
       if (!response.ok) {
-        loggedInUser = null;
-        resolve(false);
+        resolve([ false, response.status ]);
         return;
       }
       return response.json();
     }).then(jsonResponse => {
       loggedInUser = jsonResponse;
-      resolve(true);
+      resolve([ true, 200 ]);
+    }).catch(err => {
+      console.error(err);
+      resolve([ false, 500 ]);
     });
   });
 }

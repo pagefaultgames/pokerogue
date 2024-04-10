@@ -69,39 +69,48 @@ export class LoginPhase extends Phase {
   start(): void {
     super.start();
 
-    this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
-    Utils.executeIf(bypassLogin || !!Utils.getCookie(Utils.sessionIdKey), updateUserInfo).then(success => {
-      if (!success) {
-        if (this.showText)
-          this.scene.ui.showText('Log in or create an account to start. No email required!');
-  
-        this.scene.playSound('menu_open');
+    const hasSession = !!Utils.getCookie(Utils.sessionIdKey);
 
-        const loadData = () => {
-          updateUserInfo().then(() => this.scene.gameData.loadSystem().then(() => this.end()));
-        };
+    this.scene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+    Utils.executeIf(bypassLogin || hasSession, updateUserInfo).then(response => {
+      const success = response ? response[0] : false;
+      const statusCode = response ? response[1] : null;
+      if (!success) {
+        if (!statusCode || statusCode === 400) {
+          if (this.showText)
+            this.scene.ui.showText('Log in or create an account to start. No email required!');
     
-        this.scene.ui.setMode(Mode.LOGIN_FORM, {
-          buttonActions: [
-            () => {
-              this.scene.ui.playSelect();
-              loadData();
-            }, () => {
-              this.scene.playSound('menu_open');
-              this.scene.ui.setMode(Mode.REGISTRATION_FORM, {
-                buttonActions: [
-                  () => {
-                    this.scene.ui.playSelect();
-                    updateUserInfo().then(() => this.end());
-                  }, () => {
-                    this.scene.unshiftPhase(new LoginPhase(this.scene, false));
-                    this.end();
-                  }
-                ]
-              });
-            }
-          ]
-        });
+          this.scene.playSound('menu_open');
+
+          const loadData = () => {
+            updateUserInfo().then(() => this.scene.gameData.loadSystem().then(() => this.end()));
+          };
+      
+          this.scene.ui.setMode(Mode.LOGIN_FORM, {
+            buttonActions: [
+              () => {
+                this.scene.ui.playSelect();
+                loadData();
+              }, () => {
+                this.scene.playSound('menu_open');
+                this.scene.ui.setMode(Mode.REGISTRATION_FORM, {
+                  buttonActions: [
+                    () => {
+                      this.scene.ui.playSelect();
+                      updateUserInfo().then(() => this.end());
+                    }, () => {
+                      this.scene.unshiftPhase(new LoginPhase(this.scene, false));
+                      this.end();
+                    }
+                  ]
+                });
+              }
+            ]
+          });
+        } else {
+          this.scene.unshiftPhase(new UnavailablePhase(this.scene));
+          super.end();
+        }
         return null;
       } else {
         this.scene.gameData.loadSystem().then(success => {
@@ -333,6 +342,19 @@ export class TitlePhase extends Phase {
     }
 
     super.end();
+  }
+}
+
+export class UnavailablePhase extends Phase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start(): void {
+    this.scene.ui.setMode(Mode.UNAVAILABLE, () => {
+      this.scene.unshiftPhase(new LoginPhase(this.scene, true));
+      this.end();
+    });
   }
 }
 

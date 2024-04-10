@@ -33,6 +33,7 @@ import AwaitableUiHandler from './awaitable-ui-handler';
 import SaveSlotSelectUiHandler from './save-slot-select-ui-handler';
 import TitleUiHandler from './title-ui-handler';
 import SavingIconHandler from './saving-icon-handler';
+import UnavailableModalUiHandler from './unavailable-modal-ui-handler';
 
 export enum Mode {
   MESSAGE,
@@ -61,7 +62,8 @@ export enum Mode {
   EGG_GACHA,
   LOGIN_FORM,
   REGISTRATION_FORM,
-  LOADING
+  LOADING,
+  UNAVAILABLE
 };
 
 const transitionModes = [
@@ -87,7 +89,8 @@ const noTransitionModes = [
   Mode.VOUCHERS,
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
-  Mode.LOADING
+  Mode.LOADING,
+  Mode.UNAVAILABLE
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -137,7 +140,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new EggGachaUiHandler(scene),
       new LoginFormUiHandler(scene),
       new RegistrationFormUiHandler(scene),
-      new LoadingModalUiHandler(scene)
+      new LoadingModalUiHandler(scene),
+      new UnavailableModalUiHandler(scene)
     ];
   }
 
