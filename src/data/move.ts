@@ -2296,10 +2296,15 @@ export class ProtectAttr extends AddBattlerTagAttr {
       let timesUsed = 0;
       const moveHistory = user.getLastXMoves();
       let turnMove: TurnMove;
-      while (moveHistory.length && allMoves[(turnMove = moveHistory.shift()).move].getAttrs(ProtectAttr).find(pa => (pa as ProtectAttr).tagType === this.tagType))
+
+      while (moveHistory.length) {
+        turnMove = moveHistory.shift();
+        if(!allMoves[turnMove.move].getAttrs(ProtectAttr).length || turnMove.result !== MoveResult.SUCCESS)
+          break;
         timesUsed++;
+      }
       if (timesUsed)
-        return !user.randSeedInt(Math.pow(2, timesUsed));
+        return !user.randSeedInt(Math.pow(3, timesUsed));
       return true;
     });
   }
