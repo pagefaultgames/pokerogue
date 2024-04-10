@@ -1297,9 +1297,38 @@ export class StatChangeAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-    // TODO: Add awareness of level limits
-    const levels = this.getLevels(user);
-    return (levels * 4) + (levels > 0 ? -2 : 2);
+    let ret = 0;
+    let moveLevels = this.getLevels(user);
+    for (let stat of this.stats) {
+      let levels = moveLevels;
+      if (levels > 0)
+        levels = Math.min(target.summonData.battleStats[stat] + levels, 6) - target.summonData.battleStats[stat];
+      else
+        levels = Math.max(target.summonData.battleStats[stat] + levels, -6) - target.summonData.battleStats[stat];
+      let noEffect = false;
+      switch (stat) {
+        case BattleStat.ATK:
+          if (this.selfTarget)
+            noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.PHYSICAL);
+          break;
+        case BattleStat.DEF:
+          if (!this.selfTarget)
+            noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.PHYSICAL);
+          break;
+        case BattleStat.SPATK:
+          if (this.selfTarget)
+            noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.SPECIAL);
+          break;
+        case BattleStat.SPDEF:
+          if (!this.selfTarget)
+            noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.SPECIAL);
+          break;
+      }
+      if (noEffect)
+        continue;
+      ret += (levels * 4) + (levels > 0 ? -2 : 2);
+    }
+    return ret;
   }
 }
 
@@ -1325,7 +1354,7 @@ export class HalfHpStatMaxAttr extends StatChangeAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      const damage = user.damage(Math.floor(user.getMaxHp() / 2), true);
+      const damage = user.damageAndUpdate(Math.floor(user.getMaxHp() / 2), HitResult.OTHER, false, true);
       if (damage)
         user.scene.damageNumberHandler.add(user, damage);
       user.updateInfo().then(() => {
@@ -1339,6 +1368,8 @@ export class HalfHpStatMaxAttr extends StatChangeAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => user.getHpRatio() > 0.5 && user.summonData.battleStats[this.stats[0]] < 6;
   }
+
+  // TODO: Add benefit score that considers HP cut
 }
 
 export class CutHpStatBoostAttr extends StatChangeAttr {

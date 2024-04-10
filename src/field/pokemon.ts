@@ -2363,7 +2363,7 @@ export class EnemyPokemon extends Pokemon {
       }
     }
 
-    this.aiType = AiType.SMART_RANDOM;
+    this.aiType = boss || this.hasTrainer() ? AiType.SMART : AiType.SMART_RANDOM;
   }
 
   initBattleInfo(): void {
@@ -2461,17 +2461,21 @@ export class EnemyPokemon extends Pokemon {
             for (let mt of moveTargets[move.id]) {
               const target = this.scene.getField()[mt];
               let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
-              if (move instanceof AttackMove) {
+              if (move.name.endsWith(' (N)'))
+                targetScore = -20;
+              else if (move instanceof AttackMove) {
                 const effectiveness = target.getAttackMoveEffectiveness(this, pokemonMove);
                 if (target.isPlayer() !== this.isPlayer()) {
                   targetScore *= effectiveness;
                   if (this.isOfType(moveType))
                     targetScore *= 1.5;
-                } else {
+                } else if (effectiveness) {
                   targetScore /= effectiveness;
                   if (this.isOfType(moveType))
                     targetScore /= 1.5;
                 }
+                if (!targetScore)
+                  targetScore = -20;
               }
               targetScores.push(targetScore);
             }
@@ -2493,6 +2497,10 @@ export class EnemyPokemon extends Pokemon {
           let r = 0;
           if (this.aiType === AiType.SMART_RANDOM) {
             while (r < sortedMovePool.length - 1 && this.scene.randBattleSeedInt(8) >= 5)
+              r++;
+          } else if (this.aiType === AiType.SMART) {
+            while (r < sortedMovePool.length - 1 && (moveScores[movePool.indexOf(sortedMovePool[r + 1])] / moveScores[movePool.indexOf(sortedMovePool[r])]) >= 0
+              && this.scene.randBattleSeedInt(100) < Math.round((moveScores[movePool.indexOf(sortedMovePool[r + 1])] / moveScores[movePool.indexOf(sortedMovePool[r])]) * 50))
               r++;
           }
           console.log(movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));
