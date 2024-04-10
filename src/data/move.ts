@@ -4785,7 +4785,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.GRASSY_GLIDE, "Grassy Glide (P)", Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, "Gliding on the ground, the user attacks the target. This move always goes first on Grassy Terrain.", -1, 0, 8),
     new AttackMove(Moves.RISING_VOLTAGE, "Rising Voltage", Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, "The user attacks with electric voltage rising from the ground. This move's power doubles when the target is on Electric Terrain.", -1, 0, 8)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1 ),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1),
     new AttackMove(Moves.TERRAIN_PULSE, "Terrain Pulse (P)", Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, "The user utilizes the power of the terrain to attack. This move's type and power changes depending on the terrain when it's used.", -1, 0, 8)
       .pulseMove(),
     new AttackMove(Moves.SKITTER_SMACK, "Skitter Smack", Type.BUG, MoveCategory.PHYSICAL, 70, 90, 10, "The user skitters behind the target to attack. This also lowers the target's Sp. Atk stat.", 100, 0, 8)
