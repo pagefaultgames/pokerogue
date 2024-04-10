@@ -9,6 +9,7 @@ import PersistentModifierData from "./modifier-data";
 import ArenaData from "./arena-data";
 import { Unlockables } from "./unlockables";
 import { GameModes, gameModes } from "../game-mode";
+import GameModeModifiers from "./game-mode-modifiers";
 import { BattleType } from "../battle";
 import TrainerData from "./trainer-data";
 import { trainerConfigs } from "../data/trainer-config";
@@ -80,6 +81,7 @@ export interface SessionSaveData {
   seed: string;
   playTime: integer;
   gameMode: GameModes;
+  gameModeModiefiers: GameModeModifiers
   party: PokemonData[];
   enemyParty: PokemonData[];
   modifiers: PersistentModifierData[];
@@ -468,6 +470,7 @@ export class GameData {
       seed: scene.seed,
       playTime: scene.sessionPlayTime,
       gameMode: scene.gameMode.modeId,
+      gameModeModiefiers: scene.gameModeModifiers,
       party: scene.getParty().map(p => new PokemonData(p)),
       enemyParty: scene.getEnemyParty().map(p => new PokemonData(p)),
       modifiers: scene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
@@ -554,6 +557,7 @@ export class GameData {
           console.debug(sessionData);
 
           scene.gameMode = gameModes[sessionData.gameMode || GameModes.CLASSIC];
+          scene.gameModeModifiers = sessionData.gameModeModiefiers || new GameModeModifiers({})
 
           scene.setSeed(sessionData.seed || scene.game.config.seed[0]);
           scene.resetSeed();

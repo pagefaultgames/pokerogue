@@ -959,14 +959,14 @@ const modifierPool: ModifierPool = {
     }, 18),
     new WeightedModifierType(modifierTypes.REVIVE, (party: Pokemon[]) => {
       const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
-      return faintedPartyMemberCount * 9;
+      return party[0].scene.gameModeModifiers.isPermaDeath? 0 : faintedPartyMemberCount * 9;
     }, 3),
     new WeightedModifierType(modifierTypes.MAX_REVIVE, (party: Pokemon[]) => {
       const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
-      return faintedPartyMemberCount * 3;
+      return party[0].scene.gameModeModifiers.isPermaDeath ? 0 : faintedPartyMemberCount * 3;
     }, 9),
     new WeightedModifierType(modifierTypes.SACRED_ASH, (party: Pokemon[]) => {
-      return party.filter(p => p.isFainted()).length >= Math.ceil(party.length / 2) ? 1 : 0;
+      return party[0].scene.gameModeModifiers.isPermaDeath ? 0 : party.filter(p => p.isFainted()).length >= Math.ceil(party.length / 2) ? 1 : 0;
     }, 1),
     new WeightedModifierType(modifierTypes.HYPER_POTION, (party: Pokemon[]) => {
       const thresholdPartyMemberCount = Math.min(party.filter(p => p.getInverseHp() >= 100 || p.getHpRatio() <= 0.625).length, 3);
@@ -1286,7 +1286,7 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   return options;
 }
 
-export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer): ModifierTypeOption[] {
+export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer, permadeath:boolean = false): ModifierTypeOption[] {
   if (!(waveIndex % 10))
     return [];
 
@@ -1294,7 +1294,7 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
     [
       new ModifierTypeOption(modifierTypes.POTION(), 0, baseCost * 0.2),
       new ModifierTypeOption(modifierTypes.ETHER(), 0, baseCost * 0.4),
-      new ModifierTypeOption(modifierTypes.REVIVE(), 0, baseCost * 2)
+      ... !permadeath ? [new ModifierTypeOption(modifierTypes.REVIVE(), 0, baseCost * 2)] : [],
     ],
     [
       new ModifierTypeOption(modifierTypes.SUPER_POTION(), 0, baseCost * 0.45),
@@ -1306,7 +1306,7 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
     ],
     [
       new ModifierTypeOption(modifierTypes.HYPER_POTION(), 0, baseCost * 0.8),
-      new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0, baseCost * 2.75)
+      ... !permadeath ? [new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0, baseCost * 2.75)] : [],
     ],
     [
       new ModifierTypeOption(modifierTypes.MAX_POTION(), 0, baseCost * 1.5),
@@ -1316,7 +1316,7 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
       new ModifierTypeOption(modifierTypes.FULL_RESTORE(), 0, baseCost * 2.25)
     ],
     [
-      new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 12)
+      ... !permadeath ? [new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 12)] : []
     ]
   ];
   return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();

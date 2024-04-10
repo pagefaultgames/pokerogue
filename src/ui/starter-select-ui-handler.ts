@@ -24,6 +24,7 @@ import { Type } from "../data/type";
 import { Moves } from "../data/enums/moves";
 import { speciesEggMoves } from "../data/egg-moves";
 import { TitlePhase } from "../phases";
+import GameModeModifiers from "../system/game-mode-modifiers";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -112,6 +113,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   private starterSelectCallback: StarterSelectCallback;
   private gameMode: GameModes;
+  private gameModeModifierConfig = {isPermaDeath: false}
 
   constructor(scene: BattleScene) {
     super(scene, Mode.STARTER_SELECT);
@@ -1264,7 +1266,54 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     return true;
   }
 
-  tryStart(manualTrigger: boolean = false): boolean {
+  showRunMods(manualTrigger: boolean = false, permadeath: boolean = false): boolean {
+    const ui = this.getUi();
+    let options = [];
+    options.push(
+      {
+        label: permadeath ? 'Permadeath (enabled)' : 'Permadeath (disabled)',
+        handler: () => {
+          ui.setMode(Mode.STARTER_SELECT);
+          this.gameModeModifierConfig.isPermaDeath = !permadeath
+          this.showRunMods(manualTrigger,!permadeath)
+        }
+      })
+    options.push(
+      {
+        label: 'Done',
+        handler: () => {
+          this.scene.gameModeModifiers = new GameModeModifiers(this.gameModeModifierConfig)
+          ui.setMode(Mode.STARTER_SELECT);
+          this.tryStartRun(manualTrigger)
+        }
+      })
+    ui.showText('Select desired run modifiers', null, () => {
+      ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+        options: options,
+        yOffset: 20
+      });
+    });
+    return true
+  }
+
+
+  tryStart(manualTrigger: boolean = false): boolean{
+    const cancel = () => {
+      this.clearText();
+      ui.setMode(Mode.STARTER_SELECT);
+      this.tryStartRun(manualTrigger)
+    };
+    const ui = this.getUi();
+    ui.showText('Enable custom game modifiers?', null, () => {
+      ui.setModeWithoutClear(Mode.CONFIRM, () => {
+        ui.setMode(Mode.STARTER_SELECT);
+        this.showRunMods(manualTrigger)
+      }, cancel, null, null, 19);
+    });
+    return true
+  }
+
+  tryStartRun(manualTrigger: boolean = false): boolean {
     if (!this.starterGens.length)
       return false;
 
@@ -1278,7 +1327,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     };
 
     ui.showText('Begin with these Pokémon?', null, () => {
-      ui.setModeWithoutClear(Mode.CONFIRM, () => {
+      ui.setModeWithoutClear(Mode.CONFIRM,  () => {
         const startRun = (gameMode: GameModes) => {
           this.scene.gameMode = gameModes[gameMode];
           this.scene.money = this.scene.gameMode.getStartingMoney();

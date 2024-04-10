@@ -3293,6 +3293,9 @@ export class GameOverPhase extends BattlePhase {
           if (this.scene.gameMode.isClassic) {
             firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
             this.scene.gameData.gameStats.sessionsWon++;
+            if (this.scene.gameModeModifiers.isPermaDeath){
+              this.scene.validateAchv(achvs.PERMADEATH_VICTORY);
+            }
           } else if (this.scene.gameMode.isDaily && success[1])
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
         }
@@ -4065,7 +4068,7 @@ export class SelectModifierPhase extends BattlePhase {
           modifierType = typeOptions[cursor].type;
           break;
         default:
-          const shopOptions = getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1));
+          const shopOptions = getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1),this.scene.gameModeModifiers.isPermaDeath);
           const shopOption = shopOptions[rowCursor > 2 || shopOptions.length <= SHOP_OPTIONS_ROW_LIMIT ? cursor : cursor + SHOP_OPTIONS_ROW_LIMIT];
           modifierType = shopOption.type;
           cost = shopOption.cost;
@@ -4228,11 +4231,12 @@ export class PartyHealPhase extends BattlePhase {
       this.scene.fadeOutBgm(1000, false);
     this.scene.ui.fadeOut(1000).then(() => {
       for (let pokemon of this.scene.getParty()) {
-        pokemon.hp = pokemon.getMaxHp();
-        pokemon.resetStatus();
-        for (let move of pokemon.moveset)
+        if (!this.scene.gameModeModifiers.isPermaDeath && pokemon.hp == 0){
+          pokemon.hp = pokemon.getMaxHp();
+          pokemon.resetStatus();
+          for (let move of pokemon.moveset)
           move.ppUsed = 0;
-        pokemon.updateInfo(true);
+          pokemon.updateInfo(true);
       }
       const healSong = this.scene.playSoundWithoutBgm('heal');
       this.scene.time.delayedCall(Utils.fixedInt(healSong.totalDuration * 1000), () => {
@@ -4241,7 +4245,7 @@ export class PartyHealPhase extends BattlePhase {
           this.scene.playBgm();
         this.scene.ui.fadeIn(500).then(() => this.end());
       });
-    });
+    }});
   }
 }
 
