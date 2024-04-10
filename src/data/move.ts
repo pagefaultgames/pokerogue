@@ -1911,6 +1911,36 @@ export class RagingBullTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
+export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
+      const type = (args[0] as Utils.IntegerHolder);
+
+      switch (user.scene.arena.weather?.weatherType) {
+        case WeatherType.SUNNY:
+        case WeatherType.HARSH_SUN:
+          type.value = Type.FIRE;
+          break;
+        case WeatherType.RAIN:
+        case WeatherType.HEAVY_RAIN:
+          type.value = Type.WATER;
+          break;
+        case WeatherType.SANDSTORM:
+          type.value = Type.ROCK;
+          break;
+        case WeatherType.HAIL:
+          type.value = Type.ICE;
+          break;
+        default:
+          return false;
+      }
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class VariableMoveTypeMultiplierAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return false;
@@ -3676,7 +3706,9 @@ export function initMoves() {
       .punchingMove(),
     new AttackMove(Moves.ASTONISH, "Astonish", Type.GHOST, MoveCategory.PHYSICAL, 30, 100, 15, "The user attacks the target while shouting in a startling fashion. This may also make the target flinch.", 30, 0, 3)
       .attr(FlinchAttr),
-    new AttackMove(Moves.WEATHER_BALL, "Weather Ball (P)", Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, "This attack move varies in power and type depending on the weather.", -1, 0, 3)
+    new AttackMove(Moves.WEATHER_BALL, "Weather Ball", Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, "This attack move varies in power and type depending on the weather.", -1, 0, 3)
+      .attr(WeatherBallTypeAttr)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1)
       .ballBombMove(),
     new StatusMove(Moves.AROMATHERAPY, "Aromatherapy (N)", Type.GRASS, -1, 5, "The user releases a soothing scent that heals all status conditions affecting the user's party.", -1, 0, 3)
       .target(MoveTarget.USER_AND_ALLIES),
