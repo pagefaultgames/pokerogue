@@ -4,7 +4,7 @@ import { TextStyle, addTextObject } from "./text";
 
 export default class PartyExpBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.NineSlice;
-  private pokemonIcon: Phaser.GameObjects.Sprite;
+  private pokemonIcon: Phaser.GameObjects.Container;
   private expText: Phaser.GameObjects.Text;
 
   private tween: Phaser.Tweens.Tween;
@@ -21,11 +21,6 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
 
     this.add(this.bg);
 
-    this.pokemonIcon = this.scene.add.sprite(1, 9, 'pokemon_icons_0');
-    this.pokemonIcon.setOrigin(0, 0.5);
-    this.pokemonIcon.setScale(0.5);
-    this.add(this.pokemonIcon);
-
     this.expText = addTextObject(this.scene, 22, 4, '', TextStyle.BATTLE_INFO);
     this.expText.setOrigin(0, 0);
     this.add(this.expText);
@@ -39,8 +34,11 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
       if (this.shown)
         return resolve();
 
-      this.pokemonIcon.setTexture(pokemon.getIconAtlasKey());
-      this.pokemonIcon.setFrame(pokemon.getIconId());
+      this.pokemonIcon = (this.scene as BattleScene).addPokemonIcon(pokemon, -8, 15, 0, 0.5);
+      this.pokemonIcon.setScale(0.5);
+      
+      this.add(this.pokemonIcon);
+
       this.expText.setText(`+${expValue.toString()}`);
 
       this.bg.width = this.expText.displayWidth + 28;
@@ -83,6 +81,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
           this.tween = null;
           this.shown = false;
           this.setVisible(false);
+          this.pokemonIcon?.destroy();
           resolve();
         }
       });

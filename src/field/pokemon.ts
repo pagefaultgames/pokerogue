@@ -357,8 +357,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getSpeciesForm(ignoreOverride).getIconAtlasKey(this.formIndex);
   }
 
+  getFusionIconAtlasKey(ignoreOverride?: boolean): string {
+    return this.getFusionSpeciesForm(ignoreOverride).getIconAtlasKey(this.fusionFormIndex);
+  }
+
   getIconId(ignoreOverride?: boolean): string {
     return this.getSpeciesForm(ignoreOverride).getIconId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.isShiny());
+  }
+
+  getFusionIconId(ignoreOverride?: boolean): string {
+    return this.getFusionSpeciesForm(ignoreOverride).getIconId(this.getFusionGender(ignoreOverride) === Gender.FEMALE, this.fusionFormIndex, this.isShiny());
   }
 
   getSpeciesForm(ignoreOverride?: boolean): PokemonSpeciesForm {

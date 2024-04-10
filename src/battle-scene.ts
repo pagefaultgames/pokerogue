@@ -580,6 +580,64 @@ export default class BattleScene extends SceneBase {
 		return pokemon;
 	}
 
+	addPokemonIcon(pokemon: Pokemon, x: number, y: number, originX: number = 0.5, originY: number = 0.5, ignoreOverride: boolean = false): Phaser.GameObjects.Container {
+		const container = this.add.container(x, y);
+		
+		const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
+    icon.setFrame(pokemon.getIconId(true));
+		icon.setOrigin(0.5, 0);
+
+		container.add(icon);
+
+		if (pokemon.isFusion()) {
+			const fusionIcon = this.add.sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride));
+			fusionIcon.setOrigin(0.5, 0)
+			fusionIcon.setFrame(pokemon.getFusionIconId(true));
+
+			const originalWidth = icon.width;
+			const originalHeight = icon.height;
+			const originalFrame = icon.frame;
+
+			const iconHeight = (icon.frame.cutHeight <= fusionIcon.frame.cutHeight ? Math.ceil : Math.floor)((icon.frame.cutHeight + fusionIcon.frame.cutHeight) / 4);
+			
+			const iconFrameId = `${icon.frame.name}h${iconHeight}`;
+
+			if (!icon.frame.texture.has(iconFrameId))
+				icon.frame.texture.add(iconFrameId, icon.frame.sourceIndex, icon.frame.cutX, icon.frame.cutY, icon.frame.cutWidth, iconHeight);
+
+			icon.setFrame(iconFrameId);
+
+			fusionIcon.y = icon.frame.cutHeight;
+
+			const originalFusionFrame = fusionIcon.frame;
+
+			const fusionIconY = fusionIcon.frame.cutY + icon.frame.cutHeight;
+			const fusionIconHeight = fusionIcon.frame.cutHeight - icon.frame.cutHeight;
+			const fusionIconFrameId = `${fusionIcon.frame.name}y${fusionIconY}`;
+
+			if (!fusionIcon.frame.texture.has(fusionIconFrameId))
+				fusionIcon.frame.texture.add(fusionIconFrameId, fusionIcon.frame.sourceIndex, fusionIcon.frame.cutX, fusionIconY, fusionIcon.frame.cutWidth, fusionIconHeight);
+			fusionIcon.setFrame(fusionIconFrameId);
+
+			const frameY = (originalFrame.y + originalFusionFrame.y) / 2;
+			icon.frame.y = fusionIcon.frame.y = frameY;
+
+			container.add(fusionIcon);
+
+			if (originX !== 0.5)
+				container.x -= originalWidth * (originX - 0.5);
+			if (originY !== 0)
+				container.y -= (originalHeight) * originY;
+		} else {
+			if (originX !== 0.5)
+				container.x -= icon.width * (originX - 0.5);
+			if (originY !== 0)
+				container.y -= icon.height * originY;
+		}
+
+		return container;
+	}
+
 	setSeed(seed: string): void {
 		this.seed = seed;
 		this.rngCounter = 0;

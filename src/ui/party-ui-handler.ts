@@ -795,7 +795,7 @@ class PartySlot extends Phaser.GameObjects.Container {
   private slotBg: Phaser.GameObjects.Image;
   private slotPb: Phaser.GameObjects.Sprite;
 
-  private pokemonIcon: Phaser.GameObjects.Sprite;
+  private pokemonIcon: Phaser.GameObjects.Container;
   private iconAnimHandler: PokemonIconAnimHandler;
 
   constructor(scene: BattleScene, slotIndex: integer, pokemon: PlayerPokemon, iconAnimHandler: PokemonIconAnimHandler, partyUiMode: PartyUiMode, tmMoveId: Moves) {
@@ -825,8 +825,7 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     this.add(slotPb);
 
-    this.pokemonIcon = this.scene.add.sprite(slotPb.x, slotPb.y, this.pokemon.getIconAtlasKey(true));
-    this.pokemonIcon.setFrame(this.pokemon.getIconId(true));
+    this.pokemonIcon = (this.scene as BattleScene).addPokemonIcon(this.pokemon, slotPb.x, slotPb.y, 0.5, 0.5, true);
 
     this.add(this.pokemonIcon);
 
