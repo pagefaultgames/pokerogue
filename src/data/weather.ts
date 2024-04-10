@@ -247,7 +247,6 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
         { weatherType: WeatherType.RAIN, weight: 5 },
-        { weatherType: WeatherType.FOG, weight: 2 }
       ];
       if (hasSun)
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 8 });
@@ -266,9 +265,9 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       break;
     case Biome.SWAMP:
       weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 2 },
-        { weatherType: WeatherType.RAIN, weight: 5 },
-        { weatherType: WeatherType.FOG, weight: 8 }
+        { weatherType: WeatherType.NONE, weight: 3 },
+        { weatherType: WeatherType.RAIN, weight: 4 },
+        { weatherType: WeatherType.FOG, weight: 1 }
       ];
       break;
     case Biome.BEACH:
@@ -283,7 +282,7 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 10 },
         { weatherType: WeatherType.RAIN, weight: 5 },
-        { weatherType: WeatherType.FOG, weight: 3 }
+        { weatherType: WeatherType.FOG, weight: 1 }
       ];
       break;
     case Biome.SEABED:
@@ -329,25 +328,23 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       break;
     case Biome.GRAVEYARD:
       weatherPool = [
+        { weatherType: WeatherType.NONE, weight: 3 },
         { weatherType: WeatherType.FOG, weight: 1 }
       ];
       break;
     case Biome.RUINS:
       weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 4 },
-        { weatherType: WeatherType.FOG, weight: 1 }
+        { weatherType: WeatherType.NONE, weight: 4 }
       ];
       break;
     case Biome.WASTELAND:
       weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 4 },
-        { weatherType: WeatherType.FOG, weight: 1 }
+        { weatherType: WeatherType.NONE, weight: 4 }
       ];
       break;
     case Biome.ABYSS:
       weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 4 },
-        { weatherType: WeatherType.FOG, weight: 1 }
+        { weatherType: WeatherType.NONE, weight: 4 }
       ];
       break;
   }
