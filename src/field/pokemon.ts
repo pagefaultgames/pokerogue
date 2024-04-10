@@ -734,7 +734,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   isGrounded(): boolean {
-    return !this.isOfType(Type.FLYING, true);
+    return !this.isOfType(Type.FLYING, true) && this.getAbility().id !== Abilities.LEVITATE;
   }
 
   getAttackMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
