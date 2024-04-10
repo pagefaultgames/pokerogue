@@ -1376,13 +1376,17 @@ export class HalfHpStatMaxAttr extends StatChangeAttr {
 }
 
 export class CutHpStatBoostAttr extends StatChangeAttr {
-  constructor(stat: BattleStat | BattleStat[]) {
-    super(stat, 1, true, null, true);
+  private cutRatio: integer;
+
+  constructor(stat: BattleStat | BattleStat[], levels: integer, cutRatio: integer) {
+    super(stat, levels, true, null, true);
+
+    this.cutRatio = cutRatio;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      const damage = user.damage(Math.floor(user.getMaxHp() / 3), true);
+      const damage = user.damageAndUpdate(Math.floor(user.getMaxHp() / this.cutRatio), HitResult.OTHER, false, true);
       if (damage)
         user.scene.damageNumberHandler.add(user, damage);
       user.updateInfo().then(() => {
@@ -1393,7 +1397,7 @@ export class CutHpStatBoostAttr extends StatChangeAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => user.getHpRatio() > 0.33;
+    return (user, target, move) => user.getHpRatio() > 1 / this.cutRatio;
   }
 }
 
@@ -4784,7 +4788,7 @@ export function initMoves() {
       .target(MoveTarget.NEAR_ENEMY),
     /* End Unused */
     new SelfStatusMove(Moves.CLANGOROUS_SOUL, "Clangorous Soul", Type.DRAGON, 100, 5, "The user raises all its stats by using some of its HP.", 100, 0, 8)
-      .attr(CutHpStatBoostAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ])
+      .attr(CutHpStatBoostAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, 3)
       .soundBased()
       .danceMove(),
     new AttackMove(Moves.BODY_PRESS, "Body Press", Type.FIGHTING, MoveCategory.PHYSICAL, 80, 100, 10, "The user attacks by slamming its body into the target. The higher the user's Defense, the more damage it can inflict on the target.", -1, 0, 8)
@@ -5090,7 +5094,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.DOODLE, "Doodle (N)", Type.NORMAL, 100, 10, "The user captures the very essence of the target in a sketch. This changes the Abilities of the user and its ally Pokémon to that of the target.", -1, 0, 9),
-    new SelfStatusMove(Moves.FILLET_AWAY, "Fillet Away (N)", Type.NORMAL, -1, 10, "The user sharply boosts its Attack, Sp. Atk, and Speed stats by using its own HP.", -1, 0, 9),
+    new SelfStatusMove(Moves.FILLET_AWAY, "Fillet Away", Type.NORMAL, -1, 10, "The user sharply boosts its Attack, Sp. Atk, and Speed stats by using its own HP.", -1, 0, 9)
+      .attr(CutHpStatBoostAttr, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], 2, 2),
     new AttackMove(Moves.KOWTOW_CLEAVE, "Kowtow Cleave", Type.DARK, MoveCategory.PHYSICAL, 85, -1, 10, "The user slashes at the target after kowtowing to make the target let down its guard. This attack never misses.", -1, 0, 9)
       .slicingMove(),
     new AttackMove(Moves.FLOWER_TRICK, "Flower Trick", Type.GRASS, MoveCategory.PHYSICAL, 70, -1, 10, "The user throws a rigged bouquet of flowers at the target. This attack never misses and always lands a critical hit.", 100, 0, 9)
