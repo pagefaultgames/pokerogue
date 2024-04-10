@@ -4274,7 +4274,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(Moves.SECRET_SWORD, "Secret Sword (P)", Type.FIGHTING, MoveCategory.SPECIAL, 85, 100, 10, "The user cuts with its long horn. The odd power contained in the horn does physical damage to the target.", -1, 0, 5)
+    new AttackMove(Moves.SECRET_SWORD, "Secret Sword", Type.FIGHTING, MoveCategory.SPECIAL, 85, 100, 10, "The user cuts with its long horn. The odd power contained in the horn does physical damage to the target.", -1, 0, 5)
+      .attr(DefDefAttr)
       .slicingMove(),
     new AttackMove(Moves.GLACIATE, "Glaciate", Type.ICE, MoveCategory.SPECIAL, 65, 95, 10, "The user attacks by blowing freezing cold air at opposing Pokémon. This lowers their Speed stats.", 100, 0, 5)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
@@ -4815,7 +4816,8 @@ export function initMoves() {
     new AttackMove(Moves.MISTY_EXPLOSION, "Misty Explosion (P)", Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, "The user attacks everything around it and faints upon using this move. This move's power is increased on Misty Terrain.", -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.GRASSY_GLIDE, "Grassy Glide (P)", Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, "Gliding on the ground, the user attacks the target. This move always goes first on Grassy Terrain.", -1, 0, 8),
-    new AttackMove(Moves.RISING_VOLTAGE, "Rising Voltage (P)", Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, "The user attacks with electric voltage rising from the ground. This move's power doubles when the target is on Electric Terrain.", -1, 0, 8),
+    new AttackMove(Moves.RISING_VOLTAGE, "Rising Voltage", Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, "The user attacks with electric voltage rising from the ground. This move's power doubles when the target is on Electric Terrain.", -1, 0, 8)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1 ),
     new AttackMove(Moves.TERRAIN_PULSE, "Terrain Pulse (P)", Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, "The user utilizes the power of the terrain to attack. This move's type and power changes depending on the terrain when it's used.", -1, 0, 8)
       .pulseMove(),
     new AttackMove(Moves.SKITTER_SMACK, "Skitter Smack", Type.BUG, MoveCategory.PHYSICAL, 70, 90, 10, "The user skitters behind the target to attack. This also lowers the target's Sp. Atk stat.", 100, 0, 8)
@@ -5067,7 +5069,8 @@ export function initMoves() {
       .attr(MoneyAttr)
       .attr(StatChangeAttr, BattleStat.SPATK, -1, true, null, true, true)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(Moves.PSYBLADE, "Psyblade (P)", Type.PSYCHIC, MoveCategory.PHYSICAL, 80, 100, 15, "The user rends the target with an ethereal blade. This move's power is boosted by 50 percent if the user is on Electric Terrain.", -1, 0, 9)
+    new AttackMove(Moves.PSYBLADE, "Psyblade", Type.PSYCHIC, MoveCategory.PHYSICAL, 80, 100, 15, "The user rends the target with an ethereal blade. This move's power is boosted by 50 percent if the user is on Electric Terrain.", -1, 0, 9)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1)  
       .slicingMove(),
     new AttackMove(Moves.HYDRO_STEAM, "Hydro Steam (P)", Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, "The user blasts the target with boiling-hot water. This move's power is not lowered in harsh sunlight but rather boosted by 50 percent.", -1, 0, 9),
     new AttackMove(Moves.RUINATION, "Ruination", Type.DARK, MoveCategory.SPECIAL, 1, 90, 10, "The user summons a ruinous disaster. This cuts the target's HP in half.", -1, 0, 9)
