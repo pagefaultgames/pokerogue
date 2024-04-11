@@ -3562,9 +3562,9 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
       .condition((user, target, move) => new EncoreTag(user.id).canAdd(target)),
     new AttackMove(Moves.PURSUIT, "Pursuit (P)", Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, "The power of this attack move is doubled if it's used on a target that's switching out of battle.", -1, 0, 2),
-    new AttackMove(Moves.RAPID_SPIN, "Rapid Spin", Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, "A spin attack that can also eliminate such moves as Bind, Wrap, and Leech Seed. This also raises the user's Speed stat.", 100, 0, 2)
+    new AttackMove(Moves.RAPID_SPIN, "Rapid Spin (P)", Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, "A spin attack that can also eliminate such moves as Bind, Wrap, and Leech Seed. This also raises the user's Speed stat.", 100, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
-      .attr(LapseBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.THUNDER_CAGE, BattlerTagType.SEEDED ], true),
+      .attr(RemoveBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.THUNDER_CAGE, BattlerTagType.SEEDED ], true),
     new StatusMove(Moves.SWEET_SCENT, "Sweet Scent", Type.NORMAL, 100, 20, "A sweet scent that harshly lowers opposing Pokémon's evasiveness.", -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.EVA, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),

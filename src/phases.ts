@@ -326,9 +326,9 @@ export class TitlePhase extends Phase {
     if (this.loaded) {
       const availablePartyMembers = this.scene.getParty().filter(p => !p.isFainted()).length;
 
-      this.scene.pushPhase(new SummonPhase(this.scene, 0));
+      this.scene.pushPhase(new SummonPhase(this.scene, 0, true, true));
       if (this.scene.currentBattle.double && availablePartyMembers > 1)
-        this.scene.pushPhase(new SummonPhase(this.scene, 1));
+        this.scene.pushPhase(new SummonPhase(this.scene, 1, true, true));
       if (this.scene.currentBattle.waveIndex > 1 && this.scene.currentBattle.battleType !== BattleType.TRAINER) {
         this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
         if (this.scene.currentBattle.double && availablePartyMembers > 1)
@@ -1074,8 +1074,12 @@ export class SwitchBiomePhase extends BattlePhase {
 }
 
 export class SummonPhase extends PartyMemberPokemonPhase {
-  constructor(scene: BattleScene, fieldIndex: integer, player?: boolean) {
-    super(scene, fieldIndex, player !== undefined ? player : true);
+  private loaded: boolean;
+
+  constructor(scene: BattleScene, fieldIndex: integer, player: boolean = true, loaded: boolean = false) {
+    super(scene, fieldIndex, player);
+
+    this.loaded = loaded;
   }
 
   start() {
@@ -1203,9 +1207,11 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     pokemon.resetTurnData();
 
-    this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
+    if (!this.loaded) {
+      this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
 
-    this.queuePostSummon();
+      this.queuePostSummon();
+    }
   }
 
   queuePostSummon(): void {

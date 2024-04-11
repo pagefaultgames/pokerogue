@@ -165,13 +165,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metBiome = scene.currentBattle ? scene.arena.biomeType : -1;
       this.pokerus = false;
 
-      const fused = new Utils.BooleanHolder(scene.gameMode.isSplicedOnly);
-      if (!fused.value && !this.isPlayer() && !this.hasTrainer())
-        this.scene.applyModifier(EnemyFusionChanceModifier, false, fused);
+      if (level > 1) {
+        const fused = new Utils.BooleanHolder(scene.gameMode.isSplicedOnly);
+        if (!fused.value && !this.isPlayer() && !this.hasTrainer())
+          this.scene.applyModifier(EnemyFusionChanceModifier, false, fused);
 
-      if (fused.value) {
-        this.calculateStats();
-        this.generateFusionSpecies();
+        if (fused.value) {
+          this.calculateStats();
+          this.generateFusionSpecies();
+        }
       }
     }
 
@@ -706,7 +708,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return allAbilities[ABILITY_OVERRIDE];
     if (OPP_ABILITY_OVERRIDE && !this.isPlayer())
       return allAbilities[OPP_ABILITY_OVERRIDE];
-    if (this.fusionSpecies)
+    if (this.isFusion())
       return allAbilities[this.getFusionSpeciesForm().getAbility(this.fusionAbilityIndex)];
     let abilityId = this.getSpeciesForm().getAbility(this.abilityIndex);
     if (abilityId === Abilities.NONE)
