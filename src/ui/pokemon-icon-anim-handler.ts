@@ -7,8 +7,10 @@ export enum PokemonIconAnimMode {
   ACTIVE
 }
 
+type PokemonIcon = Phaser.GameObjects.Container | Phaser.GameObjects.Sprite;
+
 export default class PokemonIconAnimHandler {
-  private icons: Map<Phaser.GameObjects.Container, PokemonIconAnimMode>;
+  private icons: Map<PokemonIcon, PokemonIconAnimMode>;
   private toggled: boolean;
 
   setup(scene: BattleScene): void {
@@ -43,7 +45,7 @@ export default class PokemonIconAnimHandler {
     }
   }
 
-  addOrUpdate(icons: Phaser.GameObjects.Container | Phaser.GameObjects.Container[], mode: PokemonIconAnimMode): void {
+  addOrUpdate(icons: PokemonIcon | PokemonIcon[], mode: PokemonIconAnimMode): void {
     if (!Array.isArray(icons))
       icons = [ icons ];
     for (let i of icons) {
@@ -60,7 +62,7 @@ export default class PokemonIconAnimHandler {
     }
   }
 
-  remove(icons: Phaser.GameObjects.Container | Phaser.GameObjects.Container[]): void {
+  remove(icons: PokemonIcon | PokemonIcon[]): void {
     if (!Array.isArray(icons))
       icons = [ icons ];
     for (let i of icons) {
