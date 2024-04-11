@@ -523,7 +523,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case Stat.SPATK:
         break;
       case Stat.SPDEF:
-        if (this.scene.arena.weather?.weatherType === WeatherType.SANDSTORM)
+        if (this.isOfType(Type.ROCK) && this.scene.arena.weather?.weatherType === WeatherType.SANDSTORM)
           ret *= 1.5;
         break;
       case Stat.SPD:
