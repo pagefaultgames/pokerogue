@@ -46,6 +46,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonNameText: Phaser.GameObjects.Text;
   private pokemonGrowthRateLabelText: Phaser.GameObjects.Text;
   private pokemonGrowthRateText: Phaser.GameObjects.Text;
+  private type1Icon: Phaser.GameObjects.Sprite;
+  private type2Icon: Phaser.GameObjects.Sprite;
   private pokemonGenderText: Phaser.GameObjects.Text;
   private pokemonUncaughtText: Phaser.GameObjects.Text;
   private pokemonAbilityLabelText: Phaser.GameObjects.Text;
@@ -166,6 +168,16 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonGrowthRateText = addTextObject(this.scene, 34, 106, '', TextStyle.SUMMARY_PINK, { fontSize: '36px' });
     this.pokemonGrowthRateText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGrowthRateText);
+
+    this.type1Icon = this.scene.add.sprite(8, 98, 'types');
+    this.type1Icon.setScale(0.5);
+    this.type1Icon.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.type1Icon);
+
+    this.type2Icon = this.scene.add.sprite(26, 98, 'types');
+    this.type2Icon.setScale(0.5);
+    this.type2Icon.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.type2Icon);
 
     this.pokemonGenderText = addTextObject(this.scene, 96, 112, '', TextStyle.SUMMARY_ALT);
     this.pokemonGenderText.setOrigin(0, 0);
@@ -999,6 +1011,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonGrowthRateText.setColor(getGrowthRateColor(species.growthRate));
         this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
         this.pokemonGrowthRateLabelText.setVisible(true);
+        this.type1Icon.setFrame(Type[species.type1].toLowerCase());
+        this.type1Icon.setVisible(true);
+        if (species.type2) {
+          this.type2Icon.setFrame(Type[species.type2].toLowerCase());
+          this.type2Icon.setVisible(true);
+        } else
+          this.type2Icon.setVisible(false);
         this.pokemonUncaughtText.setVisible(false);
         this.pokemonAbilityLabelText.setVisible(true);
         this.pokemonNatureLabelText.setVisible(true);
@@ -1034,6 +1053,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       } else {
         this.pokemonGrowthRateText.setText('');
         this.pokemonGrowthRateLabelText.setVisible(false);
+        this.type1Icon.setVisible(false);
+        this.type2Icon.setVisible(false);
         this.pokemonUncaughtText.setVisible(true);
         this.pokemonAbilityLabelText.setVisible(false);
         this.pokemonNatureLabelText.setVisible(false);
@@ -1052,6 +1073,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonNameText.setText(species ? '???' : '');
       this.pokemonGrowthRateText.setText('');
       this.pokemonGrowthRateLabelText.setVisible(false);
+      this.type1Icon.setVisible(false);
+      this.type2Icon.setVisible(false);
       this.pokemonUncaughtText.setVisible(!!species);
       this.pokemonAbilityLabelText.setVisible(false);
       this.pokemonNatureLabelText.setVisible(false);
@@ -1221,7 +1244,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonEggMoveLabels[em].setText(eggMove && eggMoveUnlocked ? eggMove.name : '???');
     }
 
-    this.pokemonEggMovesContainer.setVisible(hasEggMoves);
+    this.pokemonEggMovesContainer.setVisible(this.speciesStarterDexEntry?.caughtAttr && hasEggMoves);
 
     this.pokemonAdditionalMoveCountLabel.setText(`(+${Math.max(this.speciesStarterMoves.length - 4, 0)})`);
     this.pokemonAdditionalMoveCountLabel.setVisible(this.speciesStarterMoves.length > 4);
