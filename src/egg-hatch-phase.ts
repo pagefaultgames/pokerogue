@@ -351,7 +351,7 @@ export class EggHatchPhase extends Phase {
 
       if (speciesOverride) {
         const pokemonSpecies = getPokemonSpecies(speciesOverride);
-        ret = this.scene.addPlayerPokemon(pokemonSpecies, 5, undefined, undefined, undefined, false);
+        ret = this.scene.addPlayerPokemon(pokemonSpecies, 1, undefined, undefined, undefined, false);
       } else {
         let minStarterValue: integer;
         let maxStarterValue: integer;
@@ -405,7 +405,7 @@ export class EggHatchPhase extends Phase {
 
         const pokemonSpecies = getPokemonSpecies(species);
 
-        ret = this.scene.addPlayerPokemon(pokemonSpecies, 5, undefined, undefined, undefined, false);
+        ret = this.scene.addPlayerPokemon(pokemonSpecies, 1, undefined, undefined, undefined, false);
       }
 
       ret.trySetShiny(this.egg.gachaType === GachaType.SHINY ? 1024 : 512);
