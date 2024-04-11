@@ -535,8 +535,8 @@ export abstract class FieldPhase extends BattlePhase {
 
 export abstract class PokemonPhase extends FieldPhase {
   protected battlerIndex: BattlerIndex | integer;
-  protected player: boolean;
-  protected fieldIndex: integer;
+  public player: boolean;
+  public fieldIndex: integer;
 
   constructor(scene: BattleScene, battlerIndex: BattlerIndex | integer) {
     super(scene);
@@ -1446,6 +1446,7 @@ export class CheckSwitchPhase extends BattlePhase {
     this.scene.ui.showText(`Will you switch\n${this.useName ? pokemon.name : 'Pokémon'}?`, null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
+        this.scene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
         this.scene.unshiftPhase(new SwitchPhase(this.scene, this.fieldIndex, false, true));
         this.end();
       }, () => {
