@@ -1568,7 +1568,17 @@ export class CommandPhase extends FieldPhase {
           const moveId = !useStruggle ? cursor > -1 ? playerPokemon.getMoveset()[cursor].moveId : Moves.NONE : Moves.STRUGGLE;
           const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
           const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
-          if (!moveId)
+          if (moveId) {
+            const move = playerPokemon.getMoveset()[cursor];
+            if (move.getName().endsWith(' (N)')) {
+              this.scene.ui.setMode(Mode.MESSAGE);
+              this.scene.ui.showText(`${move.getName().slice(0, -4)} is not yet implemented and cannot be selected.`, null, () => {
+                this.scene.ui.clearText();
+                this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+              }, null, true);
+              return;
+            }
+          } else
             turnCommand.targets = [ this.fieldIndex ];
           console.log(moveTargets, playerPokemon.name);
           if (moveTargets.targets.length <= 1 || moveTargets.multiple)
