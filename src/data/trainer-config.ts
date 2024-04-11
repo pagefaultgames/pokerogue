@@ -309,7 +309,7 @@ export class TrainerConfig {
   }
 
   setEncounterBgm(encounterBgm: TrainerType | string): TrainerConfig {
-    this.encounterBgm = typeof encounterBgm === 'number' ? TrainerType[encounterBgm].toString().replace(/\_/g, ' ').toLowerCase() : encounterBgm;
+    this.encounterBgm = typeof encounterBgm === 'number' ? TrainerType[encounterBgm].toString().toLowerCase() : encounterBgm;
     return this;
   }
 
