@@ -10888,6 +10888,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 91, Moves.SELF_DESTRUCT ],
   ],
   [Species.CHESPIN]: [
+    [ 1, Moves.TACKLE ],
     [ 1, Moves.VINE_WHIP ],
     [ 1, Moves.GROWL ],
     [ 8, Moves.ROLLOUT ],
@@ -10902,6 +10903,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 48, Moves.WOOD_HAMMER ],
   ],
   [Species.QUILLADIN]: [
+    [ 1, Moves.TACKLE ],
     [ 1, Moves.VINE_WHIP ],
     [ 1, Moves.GROWL ],
     [ 8, Moves.ROLLOUT ],
