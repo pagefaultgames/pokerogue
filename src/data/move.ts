@@ -3648,7 +3648,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
       .condition((user, target, move) => new EncoreTag(user.id).canAdd(target)),
     new AttackMove(Moves.PURSUIT, "Pursuit (P)", Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, "The power of this attack move is doubled if it's used on a target that's switching out of battle.", -1, 0, 2),
-    new AttackMove(Moves.RAPID_SPIN, "Rapid Spin (P)", Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, "A spin attack that can also eliminate such moves as Bind, Wrap, and Leech Seed. This also raises the user's Speed stat.", 100, 0, 2)
+    new AttackMove(Moves.RAPID_SPIN, "Rapid Spin", Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, "A spin attack that can also eliminate such moves as Bind, Wrap, and Leech Seed. This also raises the user's Speed stat.", 100, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.THUNDER_CAGE, BattlerTagType.SEEDED ], true)
       .attr(RemoveArenaTagAttr, [ArenaTagType.SPIKES, ArenaTagType.STEALTH_ROCK, ArenaTagType.STICKY_WEB, ArenaTagType.TOXIC_SPIKES], true, ArenaTagSide.PLAYER),
