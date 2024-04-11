@@ -2319,25 +2319,24 @@ export class PlayerPokemon extends Pokemon {
       this.generateName();
       this.calculateStats();
       this.generateCompatibleTms();
-      this.updateInfo(true).then(() => {
-        const fusedPartyMemberIndex = this.scene.getParty().indexOf(pokemon);
-        let partyMemberIndex = this.scene.getParty().indexOf(this);
-        if (partyMemberIndex > fusedPartyMemberIndex)
-          partyMemberIndex--;
-        pokemon.getMoveset(true).map(m => this.scene.unshiftPhase(new LearnMovePhase(this.scene, partyMemberIndex, m.getMove().id)));
-        const fusedPartyMemberHeldModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-          && (m as PokemonHeldItemModifier).pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
-        const transferModifiers: Promise<boolean>[] = [];
-        for (let modifier of fusedPartyMemberHeldModifiers)
-          transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, true, false, true, true));
-        Promise.allSettled(transferModifiers).then(() => {
-          this.scene.updateModifiers(true, true).then(() => {
-            this.scene.removePartyMemberModifiers(fusedPartyMemberIndex);
-            this.scene.getParty().splice(fusedPartyMemberIndex, 1)[0];
-            pokemon.destroy();
-            this.updateFusionPalette();
-            resolve();
-          });
+      this.updateInfo(true);
+      const fusedPartyMemberIndex = this.scene.getParty().indexOf(pokemon);
+      let partyMemberIndex = this.scene.getParty().indexOf(this);
+      if (partyMemberIndex > fusedPartyMemberIndex)
+        partyMemberIndex--;
+      pokemon.getMoveset(true).map(m => this.scene.unshiftPhase(new LearnMovePhase(this.scene, partyMemberIndex, m.getMove().id)));
+      const fusedPartyMemberHeldModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+        && (m as PokemonHeldItemModifier).pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
+      const transferModifiers: Promise<boolean>[] = [];
+      for (let modifier of fusedPartyMemberHeldModifiers)
+        transferModifiers.push(this.scene.tryTransferHeldItemModifier(modifier, this, true, false, true, true));
+      Promise.allSettled(transferModifiers).then(() => {
+        this.scene.updateModifiers(true, true).then(() => {
+          this.scene.removePartyMemberModifiers(fusedPartyMemberIndex);
+          this.scene.getParty().splice(fusedPartyMemberIndex, 1)[0];
+          pokemon.destroy();
+          this.updateFusionPalette();
+          resolve();
         });
       });
     });
