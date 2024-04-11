@@ -1934,13 +1934,13 @@ export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = (args[0] as Utils.IntegerHolder);
     const atkRatio = user.getBattleStat(Stat.ATK, target, move) / target.getBattleStat(Stat.DEF, user, move);
-    const defRatio = user.getBattleStat(Stat.SPATK, target, move) / target.getBattleStat(Stat.SPDEF, user, move);
+    const specialRatio = user.getBattleStat(Stat.SPATK, target, move) / target.getBattleStat(Stat.SPDEF, user, move);
 
     // Shell Side Arm is much more complicated than it looks, this is a partial implementation to try to achieve something similar to the games
-    if (atkRatio > defRatio) {
+    if (atkRatio > specialRatio) {
       category.value = MoveCategory.PHYSICAL;
       return true;
-    } else if (atkRatio === defRatio && user.randSeedInt(1) === 0) {
+    } else if (atkRatio === specialRatio && user.randSeedInt(2) === 0) {
       category.value = MoveCategory.PHYSICAL;
       return true;
     }
