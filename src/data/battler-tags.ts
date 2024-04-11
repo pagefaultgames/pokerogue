@@ -827,7 +827,7 @@ export class SlowStartTag extends AbilityBattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (pokemon.getAbility().id !== this.ability && (pokemon.canApplyAbility(true) && pokemon.getPassiveAbility().id !== this.ability))
+    if ((!pokemon.canApplyAbility() || pokemon.getAbility().id !== this.ability) && (!pokemon.canApplyAbility(true) || pokemon.getPassiveAbility().id !== this.ability))
       this.turnCount = 1;
 
     return super.lapse(pokemon, lapseType);
