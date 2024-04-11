@@ -479,7 +479,7 @@ export class Arena {
 	}
 
   addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide = ArenaTagSide.BOTH, targetIndex?: BattlerIndex): boolean {
-    const existingTag = this.getTag(tagType);
+    const existingTag = this.getTag(tagType,side);
     if (existingTag) {
       existingTag.onOverlap(this);
       return false;
@@ -492,8 +492,8 @@ export class Arena {
     return true;
   }
 
-  getTag(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }): ArenaTag {
-    return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
+  getTag(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
+    return this.getTagOnSide(tagType, side);
   }
 
   getTagOnSide(tagType: ArenaTagType | { new(...args: any[]): ArenaTag }, side: ArenaTagSide): ArenaTag {
@@ -517,9 +517,9 @@ export class Arena {
     });
   }
 
-  removeTag(tagType: ArenaTagType): boolean {
+  removeTag(tagType: ArenaTagType, side: ArenaTagSide = ArenaTagSide.BOTH): boolean {
     const tags = this.tags;
-    const tag = tags.find(t => t.tagType === tagType);
+    const tag = tags.find(t => t.tagType === tagType && t.side === side);
     if (tag) {
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
