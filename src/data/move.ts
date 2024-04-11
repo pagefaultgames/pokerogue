@@ -2535,44 +2535,35 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     });
   }
   
-  // Function to apply any effects to the user/target before switching out
-  applyEffectsBeforeSwitchOut(user: Pokemon, target: Pokemon, move: Move) {
-  	// Create an instance of PostDefendContactApplyStatusEffectAbAttr
-  	const postDefendAttr = new PostDefendContactApplyStatusEffectAbAttr();
-  
-  	// Apply the effects based on the logic in PostDefendContactApplyStatusEffectAbAttr
-  	postDefendAttr.applyPostDefend(user, target, move);
-  }
-  
   getCondition(): MoveConditionFunc {
   	return (user, target, move) => move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move);
   }
   
   getSwitchOutCondition(): MoveConditionFunc {
   	return (user, target, move) => {
-  		const switchOutTarget = (this.user ? user : target);
-  		const player = switchOutTarget instanceof PlayerPokemon;
-  	
-  		if (!player && !user.scene.currentBattle.battleType) {
-  		if (this.batonPass)
-  			return false;
-  		// Don't allow wild opponents to flee on the boss stage since it can ruin a run early on
-  		if (!(user.scene.currentBattle.waveIndex % 10))
-  			return false;
-  		}
-  	
-  		const party = player ? user.scene.getParty() : user.scene.getEnemyParty();
-  		return (!player && !user.scene.currentBattle.battleType) || party.filter(p => !p.isFainted() && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > user.scene.currentBattle.getBattlerCount();
+  	  const switchOutTarget = (this.user ? user : target);
+  	  const player = switchOutTarget instanceof PlayerPokemon;
+  	  
+  	  if (!player && !user.scene.currentBattle.battleType) {
+  	  if (this.batonPass)
+  	  	return false;
+  	  // Don't allow wild opponents to flee on the boss stage since it can ruin a run early on
+  	  if (!(user.scene.currentBattle.waveIndex % 10))
+  	  	return false;
+  	  }
+  	  
+  	  const party = player ? user.scene.getParty() : user.scene.getEnemyParty();
+  	  return (!player && !user.scene.currentBattle.battleType) || party.filter(p => !p.isFainted() && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > user.scene.currentBattle.getBattlerCount();
   	};
   }
   
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
-  	if (!user.scene.getEnemyParty().find(p => p.isActive() && !p.isOnField()))
-  		return -20;
+    if (!user.scene.getEnemyParty().find(p => p.isActive() && !p.isOnField()))
+  	  return -20;
   	let ret = this.user ? Math.floor((1 - user.getHpRatio()) * 20) : super.getUserBenefitScore(user, target, move);
   	if (this.user && this.batonPass) {
-  		const battleStatTotal = user.summonData.battleStats.reduce((bs: integer, total: integer) => total += bs, 0);
-  		ret = ret / 2 + (Phaser.Tweens.Builders.GetEaseFunction('Sine.easeOut')(Math.min(Math.abs(battleStatTotal), 10) / 10) * (battleStatTotal >= 0 ? 10 : -10));
+  	  const battleStatTotal = user.summonData.battleStats.reduce((bs: integer, total: integer) => total += bs, 0);
+  	  ret = ret / 2 + (Phaser.Tweens.Builders.GetEaseFunction('Sine.easeOut')(Math.min(Math.abs(battleStatTotal), 10) / 10) * (battleStatTotal >= 0 ? 10 : -10));
   	}
   	return ret;
   }
