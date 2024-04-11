@@ -2706,7 +2706,7 @@ export class EnemyPokemon extends Pokemon {
           break;
       }
 
-      this.scene.unshiftPhase(new StatChangePhase(this.scene, this.getBattlerIndex(), true, [ boostedStat ], statLevels));
+      this.scene.unshiftPhase(new StatChangePhase(this.scene, this.getBattlerIndex(), true, [ boostedStat ], statLevels, true, true));
 
       this.bossSegmentIndex--;
     }

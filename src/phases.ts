@@ -2525,14 +2525,16 @@ export class StatChangePhase extends PokemonPhase {
   private selfTarget: boolean;
   private levels: integer;
   private showMessage: boolean;
+  private ignoreAbilities: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer, showMessage: boolean = true) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer, showMessage: boolean = true, ignoreAbilities: boolean = false) {
     super(scene, battlerIndex);
 
     this.selfTarget = selfTarget;
     this.stats = stats;
     this.levels = levels;
     this.showMessage = showMessage;
+    this.ignoreAbilities = ignoreAbilities;
   }
 
   start() {
@@ -2555,7 +2557,9 @@ export class StatChangePhase extends PokemonPhase {
     });
 
     const levels = new Utils.IntegerHolder(this.levels);
-    applyAbAttrs(StatChangeMultiplierAbAttr, pokemon, null, levels);
+
+    if (!this.ignoreAbilities)
+      applyAbAttrs(StatChangeMultiplierAbAttr, pokemon, null, levels);
 
     const battleStats = this.getPokemon().summonData.battleStats;
     const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats[stat] + levels.value, 6) : Math.max(battleStats[stat] + levels.value, -6)) - battleStats[stat]);
