@@ -12,7 +12,8 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { Abilities, ProtectAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr } from "./ability";
+import { ProtectAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr } from "./ability";
+import { Abilities } from "./enums/abilities";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
@@ -271,7 +272,7 @@ export default class Move {
   checkFlag(flag: MoveFlags, user: Pokemon, target: Pokemon): boolean {
     switch (flag) {
       case MoveFlags.MAKES_CONTACT:
-        if (user.getAbility().hasAttr(IgnoreContactAbAttr))
+        if ((user.canApplyAbility() && user.getAbility().hasAttr(IgnoreContactAbAttr)) || (user.canApplyAbility(true) && user.getPassiveAbility().hasAttr(IgnoreContactAbAttr)))
           return false;
         break;
     }
@@ -1892,6 +1893,57 @@ export class BlizzardAccuracyAttr extends VariableAccuracyAttr {
         accuracy.value = -1;
         return true;
       }
+    }
+
+    return false;
+  }
+}
+
+export class VariableMoveCategoryAttr extends MoveAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    return false;
+  }
+}
+
+export class PhotonGeyserCategoryAttr extends VariableMoveCategoryAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const category = (args[0] as Utils.IntegerHolder);
+
+    if (user.getBattleStat(Stat.ATK, target, move) > user.getBattleStat(Stat.SPATK, target, move)) {
+      category.value = MoveCategory.PHYSICAL;
+      return true;
+    }
+
+    return false;
+  }
+}
+
+export class TeraBlastCategoryAttr extends VariableMoveCategoryAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const category = (args[0] as Utils.IntegerHolder);
+
+    if (user.isTerastallized() && user.getBattleStat(Stat.ATK, target, move) > user.getBattleStat(Stat.SPATK, target, move)) {
+      category.value = MoveCategory.PHYSICAL;
+      return true;
+    }
+
+    return false;
+  }
+}
+
+export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const category = (args[0] as Utils.IntegerHolder);
+    const atkRatio = user.getBattleStat(Stat.ATK, target, move) / target.getBattleStat(Stat.DEF, user, move);
+    const specialRatio = user.getBattleStat(Stat.SPATK, target, move) / target.getBattleStat(Stat.SPDEF, user, move);
+
+    // Shell Side Arm is much more complicated than it looks, this is a partial implementation to try to achieve something similar to the games
+    if (atkRatio > specialRatio) {
+      category.value = MoveCategory.PHYSICAL;
+      return true;
+    } else if (atkRatio === specialRatio && user.randSeedInt(2) === 0) {
+      category.value = MoveCategory.PHYSICAL;
+      return true;
     }
 
     return false;
@@ -4453,9 +4505,9 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 2, true)
       .ignoresVirtual(),
     new StatusMove(Moves.MAGNETIC_FLUX, "Magnetic Flux", Type.ELECTRIC, -1, 20, "The user manipulates magnetic fields, which raises the Defense and Sp. Def stats of ally Pokémon with the Plus or Minus Ability.", -1, 0, 6)
-      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, false, (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS].find(a => a === user.getAbility().id))
+      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, false, (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS].find(a => a === user.getAbility().id || (user.canApplyPassive() && a === user.getPassiveAbility().id)))
       .target(MoveTarget.USER_AND_ALLIES)
-      .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => a === p.getAbility().id))),
+      .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => a === p.getAbility().id || (user.canApplyPassive() && a === user.getPassiveAbility().id)))),
     new StatusMove(Moves.HAPPY_HOUR, "Happy Hour (N)", Type.NORMAL, -1, 30, "Using Happy Hour doubles the amount of prize money received after battle.", -1, 0, 6) // No animation
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ELECTRIC_TERRAIN, "Electric Terrain", Type.ELECTRIC, -1, 10, "The user electrifies the ground for five turns, powering up Electric-type moves. Pokémon on the ground no longer fall asleep.", -1, 0, 6)
@@ -4580,9 +4632,9 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, -1),
     new SelfStatusMove(Moves.LASER_FOCUS, "Laser Focus (N)", Type.NORMAL, -1, 30, "The user concentrates intensely. The attack on the next turn always results in a critical hit.", -1, 0, 7),
     new StatusMove(Moves.GEAR_UP, "Gear Up", Type.STEEL, -1, 20, "The user engages its gears to raise the Attack and Sp. Atk stats of ally Pokémon with the Plus or Minus Ability.", -1, 0, 7)
-      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, false, (user, target, move) => [ Abilities.PLUS, Abilities.MINUS ].indexOf(target.getAbility().id) > -1)
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, false, (user, target, move) => [ Abilities.PLUS, Abilities.MINUS ].includes(target.getAbility().id) || (target.canApplyPassive() && [ Abilities.PLUS, Abilities.MINUS ].includes(target.getPassiveAbility().id)))
       .target(MoveTarget.USER_AND_ALLIES)
-      .condition((user, target, move) => !![ user, user.getAlly() ].find(p => p && [ Abilities.PLUS, Abilities.MINUS ].indexOf(p.getAbility().id) > -1)),
+      .condition((user, target, move) => !![ user, user.getAlly() ].find(p => p && [ Abilities.PLUS, Abilities.MINUS ].includes(p.getAbility().id) || (target.canApplyPassive() && [ Abilities.PLUS, Abilities.MINUS ].includes(target.getPassiveAbility().id)))),
     new AttackMove(Moves.THROAT_CHOP, "Throat Chop (P)", Type.DARK, MoveCategory.PHYSICAL, 80, 100, 15, "The user attacks the target's throat, and the resultant suffering prevents the target from using moves that emit sound for two turns.", 100, 0, 7),
     new AttackMove(Moves.POLLEN_PUFF, "Pollen Puff (P)", Type.BUG, MoveCategory.SPECIAL, 90, 100, 15, "The user attacks the enemy with a pollen puff that explodes. If the target is an ally, it gives the ally a pollen puff that restores its HP instead.", -1, 0, 7)
       .ballBombMove(),
@@ -4672,9 +4724,11 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.PLASMA_FISTS, "Plasma Fists (P)", Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 15, "The user attacks with electrically charged fists. This move changes Normal-type moves to Electric-type moves.", -1, 0, 7)
       .punchingMove(),
-    new AttackMove(Moves.PHOTON_GEYSER, "Photon Geyser (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 5, "The user attacks a target with a pillar of light. This move inflicts Attack or Sp. Atk damage—whichever stat is higher for the user.", -1, 0, 7),
+    new AttackMove(Moves.PHOTON_GEYSER, "Photon Geyser (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 5, "The user attacks a target with a pillar of light. This move inflicts Attack or Sp. Atk damage—whichever stat is higher for the user.", -1, 0, 7)
+      .attr(PhotonGeyserCategoryAttr),
     /* Unused */
-    new AttackMove(Moves.LIGHT_THAT_BURNS_THE_SKY, "Light That Burns the Sky (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 200, -1, 1, "This attack inflicts Attack or Sp. Atk damage—whichever stat is higher for the user, Necrozma. This move ignores the target's Ability.", -1, 0, 7),
+    new AttackMove(Moves.LIGHT_THAT_BURNS_THE_SKY, "Light That Burns the Sky (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 200, -1, 1, "This attack inflicts Attack or Sp. Atk damage—whichever stat is higher for the user, Necrozma. This move ignores the target's Ability.", -1, 0, 7)
+      .attr(PhotonGeyserCategoryAttr),
     new AttackMove(Moves.SEARING_SUNRAZE_SMASH, "Searing Sunraze Smash (P)", Type.STEEL, MoveCategory.PHYSICAL, 200, -1, 1, "After obtaining Z-Power, the user, Solgaleo, attacks the target with full force. This move can ignore the effect of the target's Ability.", -1, 0, 7),
     new AttackMove(Moves.MENACING_MOONRAZE_MAELSTROM, "Menacing Moonraze Maelstrom (P)", Type.GHOST, MoveCategory.SPECIAL, 200, -1, 1, "After obtaining Z-Power, the user, Lunala, attacks the target with full force. This move can ignore the effect of the target's Ability.", -1, 0, 7),
     new AttackMove(Moves.LETS_SNUGGLE_FOREVER, "Let's Snuggle Forever (P)", Type.FAIRY, MoveCategory.PHYSICAL, 190, -1, 1, "After obtaining Z-Power, the user, Mimikyu, punches the target with full force.", -1, 0, 7),
@@ -4855,7 +4909,9 @@ export function initMoves() {
       .attr(ChargeAttr, ChargeAnim.METEOR_BEAM_CHARGING, 'is overflowing\nwith space power!', null, true)
       .attr(StatChangeAttr, BattleStat.SPATK, 1, true)
       .ignoresVirtual(),
-    new AttackMove(Moves.SHELL_SIDE_ARM, "Shell Side Arm (P)", Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, "This move inflicts physical or special damage, whichever will be more effective. This may also poison the target.", 20, 0, 8),
+    new AttackMove(Moves.SHELL_SIDE_ARM, "Shell Side Arm (P)", Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, "This move inflicts physical or special damage, whichever will be more effective. This may also poison the target.", 20, 0, 8)
+      .attr(ShellSideArmCategoryAttr)
+      .attr(StatusEffectAttr, StatusEffect.POISON),
     new AttackMove(Moves.MISTY_EXPLOSION, "Misty Explosion (P)", Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, "The user attacks everything around it and faints upon using this move. This move's power is increased on Misty Terrain.", -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.GRASSY_GLIDE, "Grassy Glide (P)", Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, "Gliding on the ground, the user attacks the target. This move always goes first on Grassy Terrain.", -1, 0, 8),
@@ -5057,7 +5113,8 @@ export function initMoves() {
     new AttackMove(Moves.G_MAX_RAPID_FLOW, "G-Max Rapid Flow (N)", Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, "A Water-type attack that Gigantamax Urshifu use. This rapid-strike move can ignore Max Guard.", -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     End Unused */
-    new AttackMove(Moves.TERA_BLAST, "Tera Blast (P)", Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, "If the user has Terastallized, it unleashes energy of its Tera Type. This move inflicts damage using the Attack or Sp. Atk stat-whichever is higher for the user.", -1, 0, 9),
+    new AttackMove(Moves.TERA_BLAST, "Tera Blast (P)", Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, "If the user has Terastallized, it unleashes energy of its Tera Type. This move inflicts damage using the Attack or Sp. Atk stat-whichever is higher for the user.", -1, 0, 9)
+      .attr(TeraBlastCategoryAttr),
     new SelfStatusMove(Moves.SILK_TRAP, "Silk Trap", Type.BUG, -1, 10, "The user spins a silken trap, protecting itself from damage while lowering the Speed stat of any attacker that makes direct contact.", -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP),
     new AttackMove(Moves.AXE_KICK, "Axe Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 120, 90, 10, "The user attacks by kicking up into the air and slamming its heel down upon the target. This may also confuse the target. If it misses, the user takes damage instead.", 30, 0, 9)
@@ -5193,7 +5250,8 @@ export function initMoves() {
       .attr(ElectroShotChargeAttr)
       .attr(StatChangeAttr, BattleStat.SPATK, 1, true)
       .ignoresVirtual(),
-    new AttackMove(Moves.TERA_STARSTORM, "Tera Starstorm (P)", Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, "With the power of its crystals, the user bombards and eliminates the target. When used by Terapagos in its Stellar Form, this move damages all opposing Pokémon.", -1, 0, 9),
+    new AttackMove(Moves.TERA_STARSTORM, "Tera Starstorm (P)", Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, "With the power of its crystals, the user bombards and eliminates the target. When used by Terapagos in its Stellar Form, this move damages all opposing Pokémon.", -1, 0, 9)
+      .attr(TeraBlastCategoryAttr),
     new AttackMove(Moves.FICKLE_BEAM, "Fickle Beam", Type.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, "The user shoots a beam of light to inflict damage. Sometimes all the user's heads shoot beams in unison, doubling the move's power.", 30, 0, 9)
       .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc)
       .attr(DoublePowerChanceAttr),

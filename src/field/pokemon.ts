@@ -2,8 +2,8 @@ import Phaser from 'phaser';
 import BattleScene, { ABILITY_OVERRIDE, AnySound, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE } from '../battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr } from "../data/move";
-import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from '../data/pokemon-species';
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr } from "../data/move";
+import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, starterPassiveAbilities } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
 import { getLevelTotalExp } from '../data/exp';
@@ -25,7 +25,8 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from '../data/arena-tag';
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { Biome } from "../data/enums/biome";
-import { Abilities, Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, BypassBurnDamageReductionAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from '../data/ability';
+import { Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, BypassBurnDamageReductionAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from '../data/ability';
+import { Abilities } from "#app/data/enums/abilities";
 import PokemonData from '../system/pokemon-data';
 import { BattlerIndex } from '../battle';
 import { BattleSpec } from "../enums/battle-spec";
@@ -556,7 +557,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       let value = Math.floor(((2 * baseStat + this.ivs[s]) * this.level) * 0.01);
       if (isHp) {
         value = value + this.level + 10;
-        if (this.getAbility().hasAttr(NonSuperEffectiveImmunityAbAttr))
+        if ((this.canApplyAbility() && this.getAbility().hasAttr(NonSuperEffectiveImmunityAbAttr)) || (this.canApplyAbility(true) && this.getPassiveAbility().hasAttr(NonSuperEffectiveImmunityAbAttr)))
           value = 1;
         if (this.hp > value || this.hp === undefined)
           this.hp = value;
@@ -716,11 +717,24 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return allAbilities[abilityId];
   }
 
-  canApplyAbility(): boolean {
-    const ability = this.getAbility();
+  getPassiveAbility(): Ability {
+    let starterSpeciesId = this.species.speciesId;
+    while (pokemonPrevolutions.hasOwnProperty(starterSpeciesId))
+      starterSpeciesId = pokemonPrevolutions[starterSpeciesId];
+    return allAbilities[starterPassiveAbilities[starterSpeciesId]];
+  }
+
+  canApplyPassive(): boolean {
+    return this.isBoss();
+  }
+
+  canApplyAbility(passive: boolean = false): boolean {
+    if (passive && !this.canApplyPassive())
+      return false;
+    const ability = (!passive ? this.getAbility() : this.getPassiveAbility());
     if (ability.isIgnorable && this.scene.arena.ignoreAbilities)
         return false;
-    return (this.hp || ability.isPassive) && !this.getAbility().conditions.find(condition => !condition(this));
+    return (this.hp || ability.isBypassFaint) && !ability.conditions.find(condition => !condition(this));
   }
 
   getWeight(): number {
@@ -1093,8 +1107,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   apply(source: Pokemon, battlerMove: PokemonMove): HitResult {
     let result: HitResult;
     const move = battlerMove.getMove();
-    const moveCategory = move.category;
     let damage = new Utils.NumberHolder(0);
+
+    const variableCategory = new Utils.IntegerHolder(move.category);
+    applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, variableCategory);
+    const moveCategory = variableCategory.value as MoveCategory;
 
     const variableType = new Utils.IntegerHolder(move.type);
     const typeChangeMovePowerMultiplier = new Utils.NumberHolder(1);

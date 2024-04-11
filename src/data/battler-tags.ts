@@ -8,11 +8,13 @@ import * as Utils from "../utils";
 import { Moves } from "./enums/moves";
 import { ChargeAttr, MoveFlags, allMoves } from "./move";
 import { Type } from "./type";
-import { Abilities, BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, applyAbAttrs } from "./ability";
+import { Abilities } from "./enums/abilities";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { TerrainType } from "./terrain";
 import { WeatherType } from "./weather";
 import { BattleStat } from "./battle-stat";
+import { allAbilities } from "./ability"
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -797,14 +799,15 @@ export class TruantTag extends AbilityBattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (pokemon.getAbility().id !== Abilities.TRUANT)
+    if ((!pokemon.canApplyAbility() || pokemon.getAbility().id !== Abilities.TRUANT) && (!pokemon.canApplyAbility(true) || pokemon.getPassiveAbility().id !== Abilities.TRUANT))
       return super.lapse(pokemon, lapseType);
+    const passive = pokemon.getAbility().id !== Abilities.TRUANT;
 
     const lastMove = pokemon.getLastXMoves().find(() => true);
 
     if (lastMove && lastMove.move !== Moves.NONE) {
       (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
-      pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id));
+      pokemon.scene.unshiftPhase(new ShowAbilityPhase(pokemon.scene, pokemon.id, passive));
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is\nloafing around!'));
     }
 
@@ -824,7 +827,7 @@ export class SlowStartTag extends AbilityBattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (pokemon.getAbility().id !== this.ability)
+    if ((!pokemon.canApplyAbility() || pokemon.getAbility().id !== this.ability) && (!pokemon.canApplyAbility(true) || pokemon.getPassiveAbility().id !== this.ability))
       this.turnCount = 1;
 
     return super.lapse(pokemon, lapseType);
@@ -875,7 +878,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
-    pokemon.scene.queueMessage(`The effects of ${getPokemonMessage(pokemon, `'s\n${pokemon.getAbility().name} wore off!`)}`);
+    pokemon.scene.queueMessage(`The effects of ${getPokemonMessage(pokemon, `'s\n${allAbilities[this.ability].name} wore off!`)}`);
   }
 }
 
