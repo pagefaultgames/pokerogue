@@ -6,7 +6,7 @@ import { SpeciesFormKey } from "./pokemon-species";
 import { Species } from "./enums/species";
 import { StatusEffect } from "./status-effect";
 import { MoveCategory, allMoves } from "./move";
-import { Abilities } from "./ability";
+import { Abilities } from "./enums/abilities";
 
 export enum FormChangeItem {
   NONE,
