@@ -57,6 +57,7 @@ import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameModes, gameModes } from "./game-mode";
 import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
+import { default as i18next, menuNS }from './plugins/i18n';
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -173,12 +174,12 @@ export class TitlePhase extends Phase {
     const options: OptionSelectItem[] = [];
     if (loggedInUser.lastSessionSlot > -1) {
       options.push({
-        label: 'Continue',
+        label: i18next.t('continue', {ns: menuNS}),
         handler: () => this.loadSaveSlot(this.lastSessionData ? -1 : loggedInUser.lastSessionSlot)
       });
     }
     options.push({
-      label: 'New Game',
+      label: i18next.t('menu:newGame'),
       handler: () => {
         const setModeAndEnd = (gameMode: GameModes) => {
           this.gameMode = gameMode;
@@ -204,14 +205,14 @@ export class TitlePhase extends Phase {
             });
           }
           options.push({
-            label: 'Cancel',
+            label: i18next.t('menu:cancel'),
             handler: () => {
               this.scene.clearPhaseQueue();
               this.scene.pushPhase(new TitlePhase(this.scene));
               super.end();
             }
           });
-          this.scene.ui.showText('Select a game mode.', null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
+          this.scene.ui.showText(i18next.t("menu:selectGameMode"), null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
         } else {
           this.gameMode = GameModes.CLASSIC;
           this.scene.ui.setMode(Mode.MESSAGE);
@@ -221,7 +222,7 @@ export class TitlePhase extends Phase {
       }
     },
     {
-      label: 'Load Game',
+      label: i18next.t('menu:loadGame'),
       handler: () => this.scene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
         (slotId: integer) => {
           if (slotId === -1)
@@ -231,7 +232,7 @@ export class TitlePhase extends Phase {
       )
     },
     {
-      label: 'Daily Run (Beta)',
+      label: i18next.t('menu:dailyRun'),
       handler: () => this.initDailyRun(),
       keepOpen: true
     });
