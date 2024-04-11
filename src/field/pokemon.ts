@@ -725,7 +725,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   canApplyAbility(passive: boolean = false): boolean {
-    if (passive && !this.isBoss())
+    if (passive)
       return false;
     const ability = (!passive ? this.getAbility() : this.getPassiveAbility());
     if (ability.isIgnorable && this.scene.arena.ignoreAbilities)
