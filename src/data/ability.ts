@@ -7,7 +7,7 @@ import { getPokemonMessage } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
-import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText} from "./status-effect";
+import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, allMoves } from "./move";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -1367,14 +1367,14 @@ export class PostTurnAbAttr extends AbAttr {
 }
 
 export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
-  applyPostTurn(pokemon: Pokemon, args: any[]): boolean | Promise<boolean> {
+  applyPostTurn(pokemon: Pokemon, args: any[]): boolean {
     if (pokemon.status) {
 	
-	  pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status?.effect)));
-	  pokemon.resetStatus();
-	  pokemon.updateInfo();
-	  return true;
-	}
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status?.effect)));
+      pokemon.resetStatus();
+      pokemon.updateInfo();
+      return true;
+    }
 	
     return false;
   }
@@ -2391,7 +2391,7 @@ export function initAbilities() {
       .passive()
       .ignorable(),
     new Ability(Abilities.SHED_SKIN, "Shed Skin", "The Pokémon may heal its own status conditions by shedding its skin.", 3)
-	  .conditionalAttr(pokemon=> !!Math.floor(Math.random() * 2) == 0, PostTurnResetStatusAbAttr),
+	  .conditionalAttr(pokemon => !!Utils.randSeedInt(3) == 0, PostTurnResetStatusAbAttr),
     new Ability(Abilities.GUTS, "Guts", "It's so gutsy that having a status condition boosts the Pokémon's Attack stat.", 3)
       .attr(BypassBurnDamageReductionAbAttr)
       .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5),
@@ -2467,8 +2467,8 @@ export function initAbilities() {
     new Ability(Abilities.SKILL_LINK, "Skill Link", "Maximizes the number of times multistrike moves hit.", 4)
       .attr(MaxMultiHitAbAttr),
     new Ability(Abilities.HYDRATION, "Hydration", "Heals status conditions if it's raining.", 4)
-	  .attr(PostTurnResetStatusAbAttr)
-	  .condition(getWeatherCondition(WeatherType.RAIN, WeatherType.HEAVY_RAIN)),
+      .attr(PostTurnResetStatusAbAttr)
+      .condition(getWeatherCondition(WeatherType.RAIN, WeatherType.HEAVY_RAIN)),
     new Ability(Abilities.SOLAR_POWER, "Solar Power", "Boosts the Sp. Atk stat in harsh sunlight, but HP decreases every turn.", 4)
       .attr(PostWeatherLapseDamageAbAttr, 2, WeatherType.SUNNY, WeatherType.HARSH_SUN)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 1.5)
