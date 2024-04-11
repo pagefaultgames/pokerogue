@@ -22,7 +22,6 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
       return resolve([ true, 200 ]);
     }
     Utils.apiFetch('account/info').then(response => {
-      console.log(response.status);
       if (!response.ok) {
         resolve([ false, response.status ]);
         return;
