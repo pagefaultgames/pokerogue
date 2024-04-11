@@ -2421,8 +2421,9 @@ export class HitsTagAttr extends MoveAttr {
 export class AddArenaTagAttr extends MoveEffectAttr {
   public tagType: ArenaTagType;
   public turnCount: integer;
+  public selfSideTarget: boolean;
   private failOnOverlap: boolean;
-  private selfSideTarget: boolean;
+  
 
   constructor(tagType: ArenaTagType, turnCount?: integer, failOnOverlap: boolean = false, selfSideTarget: boolean = false) {
     super(true, MoveEffectTrigger.POST_APPLY, true);
@@ -2452,10 +2453,43 @@ export class AddArenaTagAttr extends MoveEffectAttr {
   }
 }
 
+export class RemoveArenaTagAttr extends MoveEffectAttr {
+  public tagTypes: ArenaTagType[];
+  private selfSideTarget: boolean;
+  private side: ArenaTagSide;
+
+  constructor(tagTypes: ArenaTagType[], selfSideTarget: boolean = false, side: ArenaTagSide = ArenaTagSide.PLAYER) {
+    super(true, MoveEffectTrigger.HIT, true);
+    this.tagTypes = tagTypes;
+    this.selfSideTarget = selfSideTarget;
+    this.side = side;
+
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+    if (move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) {
+      for (let tagType of this.tagTypes)
+        if (this.side != ArenaTagSide.BOTH)
+          {
+            user.scene.arena.removeTag(tagType, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+          }
+        else
+          {
+            user.scene.arena.removeTag(tagType, ArenaTagSide.PLAYER);
+            user.scene.arena.removeTag(tagType, ArenaTagSide.ENEMY);
+          } 
+      return true;
+    }
+    return false;
+  }
+}
+
 export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      if (move.category !== MoveCategory.STATUS || !user.scene.arena.getTag(this.tagType))
+      if (move.category !== MoveCategory.STATUS || !user.scene.arena.getTag(this.tagType, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY))
         return true;
       const tag = user.scene.arena.getTag(this.tagType) as ArenaTrapTag;
       return tag.layers < tag.maxLayers;
@@ -3616,7 +3650,8 @@ export function initMoves() {
     new AttackMove(Moves.PURSUIT, "Pursuit (P)", Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, "The power of this attack move is doubled if it's used on a target that's switching out of battle.", -1, 0, 2),
     new AttackMove(Moves.RAPID_SPIN, "Rapid Spin (P)", Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, "A spin attack that can also eliminate such moves as Bind, Wrap, and Leech Seed. This also raises the user's Speed stat.", 100, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
-      .attr(RemoveBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.THUNDER_CAGE, BattlerTagType.SEEDED ], true),
+      .attr(RemoveBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.THUNDER_CAGE, BattlerTagType.SEEDED ], true)
+      .attr(RemoveArenaTagAttr, [ArenaTagType.SPIKES, ArenaTagType.STEALTH_ROCK, ArenaTagType.STICKY_WEB, ArenaTagType.TOXIC_SPIKES], true, ArenaTagSide.PLAYER),
     new StatusMove(Moves.SWEET_SCENT, "Sweet Scent", Type.NORMAL, 100, 20, "A sweet scent that harshly lowers opposing Pokémon's evasiveness.", -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.EVA, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -4101,6 +4136,7 @@ export function initMoves() {
       .attr(ConfuseAttr),
     new StatusMove(Moves.DEFOG, "Defog", Type.FLYING, -1, 15, "A strong wind blows away the target's barriers such as Reflect or Light Screen. This also lowers the target's evasiveness.", -1, 0, 4)
       .attr(StatChangeAttr, BattleStat.EVA, -1)
+      .attr(RemoveArenaTagAttr, [ArenaTagType.SPIKES, ArenaTagType.STEALTH_ROCK, ArenaTagType.STICKY_WEB, ArenaTagType.TOXIC_SPIKES], false, ArenaTagSide.BOTH)
       .attr(ClearWeatherAttr, WeatherType.FOG)
       .attr(ClearTerrainAttr),
     new StatusMove(Moves.TRICK_ROOM, "Trick Room", Type.PSYCHIC, -1, 5, "The user creates a bizarre area in which slower Pokémon get to move first for five turns.", -1, -7, 4)
@@ -5147,7 +5183,8 @@ export function initMoves() {
     new AttackMove(Moves.TRIPLE_DIVE, "Triple Dive", Type.WATER, MoveCategory.PHYSICAL, 30, 95, 10, "The user performs a perfectly timed triple dive, hitting the target with splashes of water three times in a row.", -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._3),
     new AttackMove(Moves.MORTAL_SPIN, "Mortal Spin", Type.POISON, MoveCategory.PHYSICAL, 30, 100, 15, "The user performs a spin attack that can also eliminate the effects of such moves as Bind, Wrap, and Leech Seed. This also poisons opposing Pokémon.", 100, 0, 9)
-      .attr(LapseBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.THUNDER_CAGE, BattlerTagType.SEEDED ], true)
+    .attr(RemoveBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.THUNDER_CAGE, BattlerTagType.SEEDED ], true)
+    .attr(RemoveArenaTagAttr, [ArenaTagType.SPIKES, ArenaTagType.STEALTH_ROCK, ArenaTagType.STICKY_WEB, ArenaTagType.TOXIC_SPIKES], true, ArenaTagSide.PLAYER)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.DOODLE, "Doodle (N)", Type.NORMAL, 100, 10, "The user captures the very essence of the target in a sketch. This changes the Abilities of the user and its ally Pokémon to that of the target.", -1, 0, 9),
@@ -5185,7 +5222,8 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr, true, false)
       .target(MoveTarget.BOTH_SIDES),
     new SelfStatusMove(Moves.TIDY_UP, "Tidy Up (P)", Type.NORMAL, -1, 10, "The user tidies up and removes the effects of Spikes, Stealth Rock, Sticky Web, Toxic Spikes, and Substitute. This also boosts the user's Attack and Speed stats.", 100, 0, 9)
-      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPD ], 1, true),
+    .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPD ], 1, true)
+    .attr(RemoveArenaTagAttr, [ArenaTagType.SPIKES, ArenaTagType.STEALTH_ROCK, ArenaTagType.STICKY_WEB, ArenaTagType.TOXIC_SPIKES], true, ArenaTagSide.BOTH),
     new StatusMove(Moves.SNOWSCAPE, "Snowscape", Type.ICE, -1, 10, "The user summons a snowstorm lasting five turns. This boosts the Defense stats of Ice types.", -1, 0, 9)
       .attr(WeatherChangeAttr, WeatherType.HAIL) // Set to Hail for now, if Snow is added in the future, change this
       .target(MoveTarget.BOTH_SIDES),
