@@ -2140,6 +2140,7 @@ export function initAbilities() {
     new Ability(Abilities.SNOW_CLOAK, "Snow Cloak", "Boosts evasiveness in a hailstorm.", 4)
       .attr(BattleStatMultiplierAbAttr, BattleStat.EVA, 1.2)
       .attr(BlockWeatherDamageAttr, WeatherType.HAIL)
+      .condition(GetWeatherCondition(WeatherType.HAIL))
       .ignorable(),
     new Ability(Abilities.GLUTTONY, "Gluttony", "Makes the Pokémon eat a held Berry when its HP drops to half or less, which is sooner than usual.", 4)
       .attr(ReduceBerryUseThresholdAbAttr),
