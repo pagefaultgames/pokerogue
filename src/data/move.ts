@@ -5246,8 +5246,8 @@ export function initMoves() {
       .attr(HighCritAttr)
       .makesContact(false),
     new AttackMove(Moves.ELECTRO_SHOT, "Electro Shot", Type.ELECTRIC, MoveCategory.SPECIAL, 130, 100, 10, "The user gathers electricity on the first turn, boosting its Sp. Atk stat, then fires a high-voltage shot on the next turn. The shot will be fired immediately in rain.", 100, 0, 9)
+      .attr(StatChangeAttr, BattleStat.SPATK, 1, true) // Raises stat before attacking
       .attr(ElectroShotChargeAttr)
-      .attr(StatChangeAttr, BattleStat.SPATK, 1, true)
       .ignoresVirtual(),
     new AttackMove(Moves.TERA_STARSTORM, "Tera Starstorm (P)", Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, "With the power of its crystals, the user bombards and eliminates the target. When used by Terapagos in its Stellar Form, this move damages all opposing Pokémon.", -1, 0, 9)
       .attr(TeraBlastCategoryAttr),
