@@ -1221,19 +1221,36 @@ export class SunlightChargeAttr extends ChargeAttr {
 }
 
 export class ElectroShotChargeAttr extends ChargeAttr {
+  private statIncreaseApplied: boolean;
   constructor() {
     super(ChargeAnim.ELECTRO_SHOT_CHARGING, 'absorbed electricity!', null, true);
-    // Add the StatChangeAttr functionality here so it always applies first
-    this.attr(StatChangeAttr, BattleStat.SPATK, 1, true);
+    this.statIncreaseApplied = false;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
       const weatherType = user.scene.arena.weather?.weatherType;
-      if (!user.scene.arena.weather?.isEffectSuppressed(user.scene) && (weatherType === WeatherType.RAIN || weatherType === WeatherType.HEAVY_RAIN))
+      if (!user.scene.arena.weather?.isEffectSuppressed(user.scene) && (weatherType === WeatherType.RAIN || weatherType === WeatherType.HEAVY_RAIN)) {
+        // Apply the SPATK increase if the move is used in the rain
+				const statChangeAttr = new StatChangeAttr(BattleStat.SPATK, 1, true);
+        statChangeAttr.apply(user, target, move, args);
         resolve(false);
-      else
-        super.apply(user, target, move, args).then(result => resolve(result));
+			}
+      else {
+        if (!this.statIncreaseApplied) {
+          // Apply the SPATK increase only if it hasn't been applied before
+          const statChangeAttr = new StatChangeAttr(BattleStat.SPATK, 1, true);
+          statChangeAttr.apply(user, target, move, args);
+          this.statIncreaseApplied = true;
+        }
+        super.apply(user, target, move, args).then(result => {
+          if (!result) {
+            // On the second turn, reset the statIncreaseApplied flag
+            this.statIncreaseApplied = false;
+          }
+          resolve(result);
+        });
+      }
     });
   }
 }
