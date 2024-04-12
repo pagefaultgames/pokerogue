@@ -941,6 +941,34 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class DownloadAbAttr extends PostSummonAbAttr {
+  private enemyDef: integer;
+  private enemySpDef: integer;
+  private stats: BattleStat[];
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+	this.enemyDef = 0;
+	this.enemySpDef = 0;
+	
+	for (let opponent of pokemon.getOpponents()) {
+	  this.enemyDef += opponent.stats[BattleStat.DEF];
+	  this.enemySpDef += opponent.stats[BattleStat.SPDEF];
+    }
+	
+	if (this.enemyDef < this.enemySpDef)
+	  this.stats = [BattleStat.ATK];
+	else
+	  this.stats = [BattleStat.SPATK];
+
+	if (this.enemyDef > 0 && this.enemySpDef > 0) { // only activate if there's actually an enemy to download from
+	  pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, this.stats, 1));
+	  return true;
+    }
+	
+    return false;
+  }
+}
+
 export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
   private weatherType: WeatherType;
 
@@ -2159,8 +2187,9 @@ export function initAbilities() {
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 1.25)
       .attr(TypeImmunityHealAbAttr, Type.WATER)
       .ignorable(),
-    new Ability(Abilities.DOWNLOAD, "Download (N)", "Compares an opposing Pokémon's Defense and Sp. Def stats before raising its own Attack or Sp. Atk stat—whichever will be more effective.", 4),
-    new Ability(Abilities.IRON_FIST, "Iron Fist", "Powers up punching moves.", 4)
+    new Ability(Abilities.DOWNLOAD, "Download", "Compares an opposing Pokémon's Defense and Sp. Def stats before raising its own Attack or Sp. Atk stat—whichever will be more effective.", 4)
+      .attr(DownloadAbAttr),
+	new Ability(Abilities.IRON_FIST, "Iron Fist", "Powers up punching moves.", 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PUNCHING_MOVE), 1.2),
     new Ability(Abilities.POISON_HEAL, "Poison Heal (N)", "Restores HP if the Pokémon is poisoned instead of losing HP.", 4),
     new Ability(Abilities.ADAPTABILITY, "Adaptability", "Powers up moves of the same type as the Pokémon.", 4)
