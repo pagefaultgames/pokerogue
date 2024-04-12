@@ -51,8 +51,7 @@ export class Terrain {
   isMoveTerrainCancelled(user: Pokemon, move: Move): boolean {
     switch (this.terrainType) {
       case TerrainType.PSYCHIC:
-        if (!move.getAttrs(ProtectAttr).length )
-        {
+        if (!move.getAttrs(ProtectAttr).length){
           const priority = new Utils.IntegerHolder(move.priority);
           applyAbAttrs(IncrementMovePriorityAbAttr, user, null, move, priority);
           return priority.value > 0;
