@@ -1179,6 +1179,13 @@ export class BlockCritAbAttr extends AbAttr {
   }
 }
 
+export class BonusCritAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    (args[0] as Utils.BooleanHolder).value = true;
+    return true;
+  }
+}
+
 export class BlockNonDirectDamageAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     cancelled.value = true;
@@ -2189,7 +2196,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.DOWNLOAD, "Download", "Compares an opposing Pokémon's Defense and Sp. Def stats before raising its own Attack or Sp. Atk stat—whichever will be more effective.", 4)
       .attr(DownloadAbAttr),
-	new Ability(Abilities.IRON_FIST, "Iron Fist", "Powers up punching moves.", 4)
+    new Ability(Abilities.IRON_FIST, "Iron Fist", "Powers up punching moves.", 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PUNCHING_MOVE), 1.2),
     new Ability(Abilities.POISON_HEAL, "Poison Heal (N)", "Restores HP if the Pokémon is poisoned instead of losing HP.", 4),
     new Ability(Abilities.ADAPTABILITY, "Adaptability", "Powers up moves of the same type as the Pokémon.", 4)
@@ -2220,7 +2227,8 @@ export function initAbilities() {
     new Ability(Abilities.MOLD_BREAKER, "Mold Breaker", "Moves can be used on the target regardless of its Abilities.", 4)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' breaks the mold!'))
       .attr(MoveAbilityBypassAbAttr),
-    new Ability(Abilities.SUPER_LUCK, "Super Luck (N)", "The Pokémon is so lucky that the critical-hit ratios of its moves are boosted.", 4),
+    new Ability(Abilities.SUPER_LUCK, "Super Luck (P)", "The Pokémon is so lucky that the critical-hit ratios of its moves are boosted.", 4)
+      .attr(BonusCritAbAttr),
     new Ability(Abilities.AFTERMATH, "Aftermath", "Damages the attacker if it contacts the Pokémon with a finishing hit.", 4)
       .attr(PostFaintContactDamageAbAttr,4)
       .bypassFaint(),

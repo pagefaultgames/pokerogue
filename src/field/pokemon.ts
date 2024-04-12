@@ -25,7 +25,7 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from '../data/arena-tag';
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { Biome } from "../data/enums/biome";
-import { Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, BypassBurnDamageReductionAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from '../data/ability';
+import { Ability, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from '../data/ability';
 import { Abilities } from "#app/data/enums/abilities";
 import PokemonData from '../system/pokemon-data';
 import { BattlerIndex } from '../battle';
@@ -1182,6 +1182,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             const critLevel = new Utils.IntegerHolder(0);
             applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
             this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);
+            const bonusCrit = new Utils.BooleanHolder(false);
+            if (applyAbAttrs(BonusCritAbAttr, this, null, bonusCrit)) {
+              if (bonusCrit.value)
+                critLevel.value += 1;
+            }
             if (source.getTag(BattlerTagType.CRIT_BOOST))
               critLevel.value += 2;
             const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
