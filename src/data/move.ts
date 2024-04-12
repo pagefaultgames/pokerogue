@@ -2300,6 +2300,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.PROTECTED:
       case BattlerTagType.FLYING:
       case BattlerTagType.CRIT_BOOST:
+      case BattlerTagType.ALWAYS_CRIT:
         return 5;
     }
   }
@@ -2409,6 +2410,21 @@ export class EndureAttr extends ProtectAttr {
 export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.IGNORE_ACCURACY, true, false, 2);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    user.scene.queueMessage(getPokemonMessage(user, ` took aim\nat ${target.name}!`));
+
+    return true;
+  }
+}
+
+export class AlwaysCritsAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.ALWAYS_CRIT, true, false, 2);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -4678,7 +4694,8 @@ export function initMoves() {
     new StatusMove(Moves.TOXIC_THREAD, "Toxic Thread", Type.POISON, 100, 20, "The user shoots poisonous threads to poison the target and lower the target's Speed stat.", 100, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .attr(StatChangeAttr, BattleStat.SPD, -1),
-    new SelfStatusMove(Moves.LASER_FOCUS, "Laser Focus (N)", Type.NORMAL, -1, 30, "The user concentrates intensely. The attack on the next turn always results in a critical hit.", -1, 0, 7),
+    new SelfStatusMove(Moves.LASER_FOCUS, "Laser Focus", Type.NORMAL, -1, 30, "The user concentrates intensely. The attack on the next turn always results in a critical hit.", -1, 0, 7)
+			.attr(AddBattlerTagAttr, BattlerTagType.ALWAYS_CRIT, true, false),
     new StatusMove(Moves.GEAR_UP, "Gear Up", Type.STEEL, -1, 20, "The user engages its gears to raise the Attack and Sp. Atk stats of ally Pokémon with the Plus or Minus Ability.", -1, 0, 7)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, false, (user, target, move) => [ Abilities.PLUS, Abilities.MINUS ].includes(target.getAbility().id) || (target.canApplyPassive() && [ Abilities.PLUS, Abilities.MINUS ].includes(target.getPassiveAbility().id)))
       .target(MoveTarget.USER_AND_ALLIES)
