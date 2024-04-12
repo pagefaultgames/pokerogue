@@ -1,0 +1,39 @@
+services:
+  web:
+    build:
+      context: .
+    image: pagefaultgames/pokerogue    
+    container_name: pokerogue
+    init: true
+    environment:
+      PORT: 8000
+    ports:
+      - 8000:8000
+    profiles: [""]
+
+  dev:
+    build: 
+      context: .
+      dockerfile: ./Dockerfile.dev
+    environment:
+      NODE_ENV: development
+    command: npm run start:dev -- --host --port 8000
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          ignore:
+            - node_modules/
+        - action: sync
+          path: ./public
+          target: /app/public
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./package.json
+        - action: rebuild
+          path: ./package-lock.json
+    ports:
+      - 8000:8000
+    profiles: ["dev"]

@@ -1,0 +1,26 @@
+# syntax=docker/dockerfile:1
+
+ARG NODE_VERSION=${NODE_VERSION:-18.3.0}
+ARG OS=${OS:-alpine}
+
+######################################
+FROM node:${NODE_VERSION}-${OS} as dev
+
+ENV VITE_BYPASS_LOGIN=1 \
+    VITE_BYPASS_TUTORIAL=0 \
+    NODE_ENV=development
+
+USER node
+
+WORKDIR /app
+
+RUN --mount=type=bind,source=package.json,target=package.json \
+    --mount=type=bind,source=package-lock.json,target=package-lock.json \
+    --mount=type=cache,target=/root/.npm \
+    npm ci
+
+COPY --chown=node:node . .
+
+EXPOSE 8000
+
+CMD npm run start:dev -- --host --port 8000
