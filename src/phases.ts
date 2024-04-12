@@ -57,7 +57,7 @@ import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameModes, gameModes } from "./game-mode";
 import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
-import { default as i18next, menuNS }from './plugins/i18n';
+import i18next from './plugins/i18n';
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -174,7 +174,7 @@ export class TitlePhase extends Phase {
     const options: OptionSelectItem[] = [];
     if (loggedInUser.lastSessionSlot > -1) {
       options.push({
-        label: i18next.t('continue', {ns: menuNS}),
+        label: i18next.t('menu:continue'),
         handler: () => this.loadSaveSlot(this.lastSessionData ? -1 : loggedInUser.lastSessionSlot)
       });
     }
