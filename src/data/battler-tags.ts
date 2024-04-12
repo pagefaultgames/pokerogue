@@ -956,6 +956,12 @@ export class CritBoostTag extends BattlerTag {
   }
 }
 
+export class AlwaysCritTag extends BattlerTag {
+  constructor(sourceMove: Moves) {
+    super(BattlerTagType.ALWAYS_CRIT, BattlerTagLapseType.TURN_END, 2, sourceMove);
+  }
+}
+
 export class IgnoreAccuracyTag extends BattlerTag {
   constructor(sourceMove: Moves) {
     super(BattlerTagType.IGNORE_ACCURACY, BattlerTagLapseType.TURN_END, 2, sourceMove);
@@ -1077,6 +1083,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new TypeBoostTag(tagType, sourceMove, Type.FIRE);
     case BattlerTagType.CRIT_BOOST:
       return new CritBoostTag(tagType, sourceMove);
+    case BattlerTagType.ALWAYS_CRIT:
+      return new AlwaysCritTag(tagType, sourceMove);
     case BattlerTagType.NO_CRIT:
       return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
     case BattlerTagType.IGNORE_ACCURACY:
