@@ -1558,6 +1558,7 @@ export default class BattleScene extends SceneBase {
 			const soundName = modifier.type.soundName;
 			this.validateAchvs(ModifierAchv, modifier);
 			const modifiersToRemove: PersistentModifier[] = [];
+			const modifierPromises: Promise<boolean>[] = [];
 			if (modifier instanceof PersistentModifier) {
 				if (modifier instanceof TerastallizeModifier)
 					modifiersToRemove.push(...(this.findModifiers(m => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId)));
@@ -1596,11 +1597,14 @@ export default class BattleScene extends SceneBase {
 						} else if (modifier instanceof FusePokemonModifier)
 							args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
 							
-						if (modifier.shouldApply(args))
-							modifier.apply(args);
+						if (modifier.shouldApply(args)) {
+							const result = modifier.apply(args);
+							if (result instanceof Promise)
+								modifierPromises.push(result);
+						}
 					}
 					
-					return Promise.allSettled(this.party.map(p => p.updateInfo(instant))).then(() => resolve());
+					return Promise.allSettled([this.party.map(p => p.updateInfo(instant)), ...modifierPromises]).then(() => resolve());
 				} else {
 					const args = [ this ];
 					if (modifier.shouldApply(args))

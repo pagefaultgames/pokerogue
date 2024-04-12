@@ -601,8 +601,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getMaxHp() - this.hp;
   }
 
-  getHpRatio(): number {
-    return Math.floor((this.hp / this.getMaxHp()) * 100) / 100;
+  getHpRatio(precise: boolean = false): number {
+    return precise
+      ? this.hp / this.getMaxHp()
+      : ((this.hp / this.getMaxHp()) * 100) / 100;
   }
 
   generateGender(): void {
@@ -2324,7 +2326,6 @@ export class PlayerPokemon extends Pokemon {
       let partyMemberIndex = this.scene.getParty().indexOf(this);
       if (partyMemberIndex > fusedPartyMemberIndex)
         partyMemberIndex--;
-      pokemon.getMoveset(true).map(m => this.scene.unshiftPhase(new LearnMovePhase(this.scene, partyMemberIndex, m.getMove().id)));
       const fusedPartyMemberHeldModifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
         && (m as PokemonHeldItemModifier).pokemonId === pokemon.id, true) as PokemonHeldItemModifier[];
       const transferModifiers: Promise<boolean>[] = [];
@@ -2334,6 +2335,8 @@ export class PlayerPokemon extends Pokemon {
         this.scene.updateModifiers(true, true).then(() => {
           this.scene.removePartyMemberModifiers(fusedPartyMemberIndex);
           this.scene.getParty().splice(fusedPartyMemberIndex, 1)[0];
+          const newPartyMemberIndex = this.scene.getParty().indexOf(this);
+          pokemon.getMoveset(true).map(m => this.scene.unshiftPhase(new LearnMovePhase(this.scene, newPartyMemberIndex, m.getMove().id)));
           pokemon.destroy();
           this.updateFusionPalette();
           resolve();
