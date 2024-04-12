@@ -1174,8 +1174,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             power.value *= 1.5;
           let isCritical: boolean;
           const critOnly = new Utils.BooleanHolder(false);
+				  const critAlways = source.getTag(BattlerTagType.ALWAYS_CRIT);
           applyMoveAttrs(CritOnlyAttr, source, this, move, critOnly);
-          if (critOnly.value)
+					if (critOnly.value || critAlways)
             isCritical = true;
           else {
             const critLevel = new Utils.IntegerHolder(0);
