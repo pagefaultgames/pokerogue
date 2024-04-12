@@ -813,6 +813,19 @@ export class HitHealAttr extends MoveEffectAttr {
   }
 }
 
+export class StrengthSapHealAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, MoveEffectTrigger.HIT);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
+      target.stats[Stat.ATK] * (Math.max(2, 2 + target.summonData.battleStats[BattleStat.ATK]) / Math.max(2, 2 - target.summonData.battleStats[BattleStat.ATK])),
+      getPokemonMessage(user, ` regained\nhealth!`), false, true));
+    return true;
+  }
+}
+
 export class MultiHitAttr extends MoveAttr {
   private multiHitType: MultiHitType;
 
@@ -4617,8 +4630,10 @@ export function initMoves() {
       .attr(HealAttr, 0.5, true, false)
       .triageMove(),
     new AttackMove(Moves.HIGH_HORSEPOWER, "High Horsepower", Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, "The user fiercely attacks the target using its entire body.", -1, 0, 7),
-    new StatusMove(Moves.STRENGTH_SAP, "Strength Sap (P)", Type.GRASS, 100, 10, "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat.", 100, 0, 7)
+    new StatusMove(Moves.STRENGTH_SAP, "Strength Sap", Type.GRASS, 100, 10, "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat.", 100, 0, 7)
+      .attr(StrengthSapHealAttr)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
+      .condition((user, target, move) => target.summonData.battleStats[BattleStat.ATK] > -6)
       .triageMove(),
     new AttackMove(Moves.SOLAR_BLADE, "Solar Blade", Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, "In this two-turn attack, the user gathers light and fills a blade with the light's energy, attacking the target on the next turn.", -1, 0, 7)
       .attr(SunlightChargeAttr, ChargeAnim.SOLAR_BLADE_CHARGING, "is glowing!")
