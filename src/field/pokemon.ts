@@ -1185,7 +1185,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             const bonusCrit = new Utils.BooleanHolder(false);
             if (applyAbAttrs(BonusCritAbAttr, this, null, bonusCrit)) {
               if (bonusCrit.value)
-                critLevel.value += 2;
+                critLevel.value += 1;
             }
             if (source.getTag(BattlerTagType.CRIT_BOOST))
               critLevel.value += 2;
