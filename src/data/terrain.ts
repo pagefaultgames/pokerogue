@@ -3,6 +3,7 @@ import Move from "./move";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { IncrementMovePriorityAbAttr, applyAbAttrs } from "./ability";
+import { ProtectAttr } from "./move";
 
 export enum TerrainType {
   NONE,
@@ -50,9 +51,12 @@ export class Terrain {
   isMoveTerrainCancelled(user: Pokemon, move: Move): boolean {
     switch (this.terrainType) {
       case TerrainType.PSYCHIC:
-        const priority = new Utils.IntegerHolder(move.priority);
-        applyAbAttrs(IncrementMovePriorityAbAttr, user, null, move, priority);
-        return priority.value > 0;
+        if (!move.getAttrs(ProtectAttr).length )
+        {
+          const priority = new Utils.IntegerHolder(move.priority);
+          applyAbAttrs(IncrementMovePriorityAbAttr, user, null, move, priority);
+          return priority.value > 0;
+        }
     }
 
     return false;
