@@ -947,22 +947,22 @@ export class DownloadAbAttr extends PostSummonAbAttr {
   private stats: BattleStat[];
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-	this.enemyDef = 0;
-	this.enemySpDef = 0;
+    this.enemyDef = 0;
+    this.enemySpDef = 0;
 	
-	for (let opponent of pokemon.getOpponents()) {
-	  this.enemyDef += opponent.stats[BattleStat.DEF];
-	  this.enemySpDef += opponent.stats[BattleStat.SPDEF];
+    for (let opponent of pokemon.getOpponents()) {
+      this.enemyDef += opponent.stats[BattleStat.DEF];
+      this.enemySpDef += opponent.stats[BattleStat.SPDEF];
     }
 	
-	if (this.enemyDef < this.enemySpDef)
-	  this.stats = [BattleStat.ATK];
-	else
-	  this.stats = [BattleStat.SPATK];
+    if (this.enemyDef < this.enemySpDef)
+      this.stats = [BattleStat.ATK];
+    else
+      this.stats = [BattleStat.SPATK];
 
-	if (this.enemyDef > 0 && this.enemySpDef > 0) { // only activate if there's actually an enemy to download from
-	  pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, this.stats, 1));
-	  return true;
+    if (this.enemyDef > 0 && this.enemySpDef > 0) { // only activate if there's actually an enemy to download from
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, this.stats, 1));
+      return true;
     }
 	
     return false;
