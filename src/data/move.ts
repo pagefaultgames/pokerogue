@@ -5185,7 +5185,11 @@ export function initMoves() {
     new AttackMove(Moves.AXE_KICK, "Axe Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 120, 90, 10, "The user attacks by kicking up into the air and slamming its heel down upon the target. This may also confuse the target. If it misses, the user takes damage instead.", 30, 0, 9)
       .attr(MissEffectAttr, halveHpMissEffectFunc)
       .attr(ConfuseAttr),
-    new AttackMove(Moves.LAST_RESPECTS, "Last Respects (P)", Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, "The user attacks to avenge its allies. The more defeated allies there are in the user's party, the greater the move's power.", -1, 0, 9)
+    new AttackMove(Moves.LAST_RESPECTS, "Last Respects", Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, "The user attacks to avenge its allies. The more defeated allies there are in the user's party, the greater the move's power.", -1, 0, 9)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => {
+          return user.scene.getParty().reduce((acc, pokemonInParty) => acc + (pokemonInParty.status?.effect == StatusEffect.FAINT ? 1 : 0),
+          1,)
+        })
       .makesContact(false),
     new AttackMove(Moves.LUMINA_CRASH, "Lumina Crash", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, "The user attacks by unleashing a peculiar light that even affects the mind. This also harshly lowers the target's Sp. Def stat.", 100, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2),
