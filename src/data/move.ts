@@ -2511,10 +2511,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     return new Promise(resolve => {
   	// Check if the move category is not STATUS or if the switch out condition is not met
     if (move.category !== MoveCategory.STATUS && !this.getSwitchOutCondition()(user, target, move)) {
-  	  //Apply effects that need to be executed before switch out
-  	  //For example, applying poison or any other status condition
-      applyPostDefendAbAttrs(PostDefendContactApplyStatusEffectAbAttr, target, user, move);
-  	  //Resolve the Promise after the switch out is complete
+  	  //Apply effects before switch out i.e. poison point, flame body, etc
+      applyPostDefendAbAttrs(PostDefendContactApplyStatusEffectAbAttr, target, user, new PokemonMove(move.id), null);
       return resolve(false);
     }
   
@@ -2522,8 +2520,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   	// This ensures that the switch out only happens when the conditions are met
 	  const switchOutTarget = this.user ? user : target;
 	  if (switchOutTarget instanceof PlayerPokemon) { 
-	  // Switch out logic for PlayerPokemon
-	  // This includes applying any necessary effects before switching out
 	  	if (switchOutTarget.hp) {
 	  	  applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
 	  	  (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true));
@@ -2546,7 +2542,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  	user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot), false, this.batonPass, false));
 	  }
 	  else { 
-	  // Switch out logic for everything else
+	    // Switch out logic for everything else
 	  	switchOutTarget.setVisible(false);
 	  
 	  	if (switchOutTarget.hp) {
