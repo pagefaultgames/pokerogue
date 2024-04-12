@@ -1180,7 +1180,7 @@ export class BlockCritAbAttr extends AbAttr {
 }
 
 export class BonusCritAbAttr extends AbAttr {
-  apply(pokemon: Pokemon, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     (args[0] as Utils.BooleanHolder).value = true;
     return true;
   }
