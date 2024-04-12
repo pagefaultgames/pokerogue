@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "902-female.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 86,
+				"h": 86
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 86,
+						"h": 51
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 86,
+						"h": 51
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 86,
+						"h": 51
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:dad3964d81332e0c087ab5f0cb6deb8b:32e49e3ce0a6dfd7f659f430e882003a:16072dc598107c41afadd9df4d7c27da$"
+	}
+}

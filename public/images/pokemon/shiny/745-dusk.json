@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "745-dusk.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 64,
+				"h": 64
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 60,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 60,
+						"h": 64
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 60,
+						"h": 64
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:6481f78a6ec2327c73bf966e2871344f:b52e0db3d9f666d98ff7c72636a38918:f96e92a2ce42a9e5bff6f4093ce148d5$"
+	}
+}

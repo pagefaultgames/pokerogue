@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "1017-cornerstone-mask-tera.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 94,
+				"h": 94
+			},
+			"scale": 0.333,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 2,
+						"w": 94,
+						"h": 92
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 94,
+						"h": 92
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:33c1ac8f12234ff41459d7738281c92f:c40781d9ba7317d9195c41c46a2b386c:19983e2c44c76def68513841019a938a$"
+	}
+}

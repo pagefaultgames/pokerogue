@@ -1,0 +1,125 @@
+{
+	"textures": [
+		{
+			"image": "egg_icons.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 64,
+				"h": 15
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 14,
+						"w": 13,
+						"h": 14
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 13,
+						"h": 14
+					}
+				},
+				{
+					"filename": "1",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 14,
+						"w": 13,
+						"h": 14
+					},
+					"frame": {
+						"x": 13,
+						"y": 0,
+						"w": 13,
+						"h": 14
+					}
+				},
+				{
+					"filename": "2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 14,
+						"w": 13,
+						"h": 14
+					},
+					"frame": {
+						"x": 26,
+						"y": 0,
+						"w": 13,
+						"h": 14
+					}
+				},
+				{
+					"filename": "3",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 14,
+						"w": 13,
+						"h": 14
+					},
+					"frame": {
+						"x": 39,
+						"y": 0,
+						"w": 13,
+						"h": 14
+					}
+				},
+				{
+					"filename": "manaphy",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 14,
+						"y": 13,
+						"w": 12,
+						"h": 15
+					},
+					"frame": {
+						"x": 52,
+						"y": 0,
+						"w": 12,
+						"h": 15
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:5bdeccfea3b20316b6f997ded4917832:9d7fd6a01652d18587263aea89256028:9ca79c86befa783c0f0fdd62dae4f950$"
+	}
+}

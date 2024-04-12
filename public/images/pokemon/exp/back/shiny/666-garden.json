@@ -1,0 +1,104 @@
+{
+	"textures": [
+		{
+			"image": "666-garden.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 137,
+				"h": 137
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 67,
+						"h": 68
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 67,
+						"h": 68
+					}
+				},
+				{
+					"filename": "0002.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 16,
+						"y": 1,
+						"w": 42,
+						"h": 69
+					},
+					"frame": {
+						"x": 67,
+						"y": 0,
+						"w": 42,
+						"h": 69
+					}
+				},
+				{
+					"filename": "0004.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 16,
+						"y": 1,
+						"w": 42,
+						"h": 69
+					},
+					"frame": {
+						"x": 0,
+						"y": 68,
+						"w": 42,
+						"h": 69
+					}
+				},
+				{
+					"filename": "0003.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 3,
+						"w": 67,
+						"h": 68
+					},
+					"frame": {
+						"x": 42,
+						"y": 69,
+						"w": 67,
+						"h": 68
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:b8e1d103e0e6ac306d2c8f447067ec3c:8483540406726b13fa42ad566b4f6991:f13a1a8fa0a411aa91fccb833ac8719c$"
+	}
+}

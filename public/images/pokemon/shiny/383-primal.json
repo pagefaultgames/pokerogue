@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "383-primal.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 81,
+				"h": 81
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 81,
+						"h": 78
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 81,
+						"h": 78
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 81,
+						"h": 78
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:c2640f96b82054d1c3d50c90f0337508:d72c34f5a61b1b5e5c9d0c73d3a84461:97b50b2ac263a2d9f2fa2fd9fac91483$"
+	}
+}

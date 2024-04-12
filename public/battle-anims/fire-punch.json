@@ -1,0 +1,1209 @@
+{
+  "id": 7,
+  "graphic": "PRAS- Elemental Punch",
+  "frames": [
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -64,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 161,
+        "y": -68,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 119,
+        "y": -91.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 84.5,
+        "y": -56,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 128.5,
+        "y": -29,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      }
+    ],
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -64,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 148.5,
+        "y": -71,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 112,
+        "y": -80,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 97,
+        "y": -49.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 133.5,
+        "y": -38.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      }
+    ],
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -64,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 135.5,
+        "y": -74,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 105,
+        "y": -68.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 109.5,
+        "y": -43,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 138,
+        "y": -48.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      }
+    ],
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -64,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 123,
+        "y": -77,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 98.5,
+        "y": -56.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 122.5,
+        "y": -36.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 143,
+        "y": -58,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      }
+    ],
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -64,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 110.5,
+        "y": -73.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 110,
+        "y": -49.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 135,
+        "y": -49,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 136,
+        "y": -73,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      }
+    ],
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -64,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 121,
+        "y": -71,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 111.5,
+        "y": -60.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 127.5,
+        "y": -61.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 119.5,
+        "y": -52.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      }
+    ],
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -62.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "tone": [
+          120,
+          -100,
+          -100,
+          0
+        ],
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 119,
+        "y": -61,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 114.5,
+        "y": -57.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 124.5,
+        "y": -57.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 120,
+        "y": -65,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 121,
+        "y": -63.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 20,
+        "opacity": 130,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 121,
+        "y": -57,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 0,
+        "opacity": 100,
+        "priority": 1,
+        "focus": 1
+      }
+    ],
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -64,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "tone": [
+          255,
+          -100,
+          -100,
+          0
+        ],
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 119,
+        "y": -61,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 114.5,
+        "y": -57.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 124.5,
+        "y": -57.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 120,
+        "y": -65,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 121,
+        "y": -63.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 20,
+        "opacity": 130,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 121,
+        "y": -57,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      }
+    ],
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -65.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "tone": [
+          255,
+          -100,
+          -100,
+          0
+        ],
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 113,
+        "y": -66,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 118,
+        "y": -58.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 133.5,
+        "y": -55,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 130.5,
+        "y": -66,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 3,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 121.5,
+        "y": -63,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 20,
+        "opacity": 130,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 121,
+        "y": -57,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 0,
+        "opacity": 100,
+        "priority": 1,
+        "focus": 1
+      }
+    ],
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -64,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "tone": [
+          255,
+          -100,
+          -100,
+          0
+        ],
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 112,
+        "y": -70,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 4,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 117.5,
+        "y": -53,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 4,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 136,
+        "y": -55,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 4,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 134,
+        "y": -72,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 4,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 122.5,
+        "y": -77.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 4,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      }
+    ],
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -65,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "tone": [
+          255,
+          -100,
+          -100,
+          0
+        ],
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 105.5,
+        "y": -75,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 4,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 110,
+        "y": -48.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 4,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 144,
+        "y": -49,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 4,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 135,
+        "y": -79.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 4,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 119,
+        "y": -92.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 4,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      }
+    ],
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -64,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "tone": [
+          255,
+          -100,
+          -100,
+          0
+        ],
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 100.5,
+        "y": -85.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 5,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 103,
+        "y": -40.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 5,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 156,
+        "y": -42,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 5,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 145,
+        "y": -89.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 5,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 121,
+        "y": -105.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 5,
+        "opacity": 255,
+        "priority": 1,
+        "focus": 1
+      }
+    ],
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -64,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "tone": [
+          120,
+          -50,
+          -50,
+          0
+        ],
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 100.5,
+        "y": -85.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 5,
+        "opacity": 100,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 103,
+        "y": -40.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 5,
+        "opacity": 100,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 156,
+        "y": -42,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 5,
+        "opacity": 100,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 145,
+        "y": -89.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 5,
+        "opacity": 100,
+        "priority": 1,
+        "focus": 1
+      },
+      {
+        "x": 121,
+        "y": -105.5,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 2,
+        "graphicFrame": 5,
+        "opacity": 100,
+        "priority": 1,
+        "focus": 1
+      }
+    ],
+    [
+      {
+        "x": 0,
+        "y": 0,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 0,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 2
+      },
+      {
+        "x": 128,
+        "y": -64,
+        "zoomX": 100,
+        "zoomY": 100,
+        "visible": true,
+        "target": 1,
+        "graphicFrame": 0,
+        "opacity": 255,
+        "locked": true,
+        "priority": 1,
+        "focus": 1
+      }
+    ]
+  ],
+  "frameTimedEvents": {
+    "0": [
+      {
+        "frameIndex": 0,
+        "resourceName": "PRSFX- Fire Punch3.wav",
+        "volume": 100,
+        "pitch": 80,
+        "eventType": "AnimTimedSoundEvent"
+      }
+    ],
+    "6": [
+      {
+        "frameIndex": 6,
+        "resourceName": "PRSFX- Fire Punch1.wav",
+        "volume": 100,
+        "pitch": 100,
+        "eventType": "AnimTimedSoundEvent"
+      }
+    ],
+    "7": [
+      {
+        "frameIndex": 7,
+        "resourceName": "PRSFX- Fire Punch2.wav",
+        "volume": 100,
+        "pitch": 100,
+        "eventType": "AnimTimedSoundEvent"
+      }
+    ]
+  },
+  "position": 1,
+  "hue": 0
+}

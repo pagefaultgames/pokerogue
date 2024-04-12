@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "drake.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 80,
+				"h": 80
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 52,
+						"h": 80
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 52,
+						"h": 80
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 52,
+						"h": 80
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:ab839b552ffcc3287f53ab18712cb16e:0b87cfabbc44144897dbfe41c9644bd0:a85cf9ca87f7c2612880db71c2f41cca$"
+	}
+}

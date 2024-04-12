@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "800-dawn-wings.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 96,
+				"h": 96
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 91
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 96,
+						"h": 91
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 96,
+						"h": 91
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:1b35074bb8a5fe04295ff82b041cf049:ab38c77b203ae16842d6be5fa70f0ff0:5d9e71e9d82374f2bcb9c9d3a3a5c61e$"
+	}
+}

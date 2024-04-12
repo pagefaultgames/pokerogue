@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "1017-teal-mask-tera.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 96,
+				"h": 96
+			},
+			"scale": 0.333,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 0,
+						"w": 94,
+						"h": 96
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 94,
+						"h": 96
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:46c5307225fee0ace2c1e637ebc20c5b:b5288f0e4ffc7614f30c6b606d36647b:9f6debc3cc730be60b9cc5260e70873a$"
+	}
+}

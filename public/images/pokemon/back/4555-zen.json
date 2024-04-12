@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "4555-zen.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 65,
+				"h": 65
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 44,
+						"h": 65
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 44,
+						"h": 65
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 44,
+						"h": 65
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:31b44475616ec6baa2a3d7657c2f9fa5:a90609913ddc2a122594d26dff057e0e:5630203bcc2290911ce0a76ee0deae65$"
+	}
+}

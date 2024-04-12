@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "676-kabuki.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 70,
+				"h": 70
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 58,
+						"h": 70
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 58,
+						"h": 70
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 58,
+						"h": 70
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:ef8ecfc1b406aa668e3f8daf0dfbaae7:08eecd31f557298e1570ec3490acffe2:c3cad56aa65d2ee971ceebc435a14ee6$"
+	}
+}

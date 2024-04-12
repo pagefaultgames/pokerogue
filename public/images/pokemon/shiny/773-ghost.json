@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "773-ghost.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 83,
+				"h": 83
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 65,
+						"h": 83
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 65,
+						"h": 83
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 65,
+						"h": 83
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:fe2e08e6724a07036bade9ab05c6af56:1a60bfa9e46e3161feb18e403be27198:dff8d338685b93339ecf30f1d807fbe6$"
+	}
+}

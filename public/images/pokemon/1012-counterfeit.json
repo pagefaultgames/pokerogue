@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "1012-counterfeit.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 58,
+				"h": 58
+			},
+			"scale": 0.5,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 19,
+						"y": 24,
+						"w": 58,
+						"h": 48
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 58,
+						"h": 48
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:b3f10c32e234bfa5d1a806e9ee9e3a0b:919eaf891e6b250243e26f663942e9f9:58aa324a420f40a9ba665ff341db146f$"
+	}
+}

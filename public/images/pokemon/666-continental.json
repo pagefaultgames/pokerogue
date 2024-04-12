@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "666-continental.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 67,
+				"h": 67
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 67,
+						"h": 67
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 67,
+						"h": 67
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 67,
+						"h": 67
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:70eae64f87d7226958d0443e262bab16:5ea86607863e872365dc956f4d819752:23aaac2256d564b9d8a58d7de70397c3$"
+	}
+}

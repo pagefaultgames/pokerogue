@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "flint.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 76,
+				"h": 76
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 33,
+						"h": 76
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 33,
+						"h": 76
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 33,
+						"h": 76
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:c45265366b9c12c783d9e5665a8923e6:f5a393826ba0efa119cb758ff0aa2491:b0c7193bc2babfb51dd6f481a819daab$"
+	}
+}

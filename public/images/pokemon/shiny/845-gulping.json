@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "845-gulping.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 73,
+				"h": 73
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 58,
+						"h": 73
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 58,
+						"h": 73
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 58,
+						"h": 73
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:e9de5b1e445eebc7eb837bcc40fe8ff3:1bc3cc6e1fad699223e7b2ba8c0a67ea:a5fde5939a9e6a99ebd3b4b3cc8bf71b$"
+	}
+}

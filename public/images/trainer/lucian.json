@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "lucian.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 77,
+				"h": 77
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 30,
+						"h": 77
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 30,
+						"h": 77
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 30,
+						"h": 77
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:f34a3bf9f7a44b59a1aa1e4e88a04c51:e859343f97697ed9fbe2fd4b9e26d245:49df0cbe2043bad7e85962a978c957f6$"
+	}
+}

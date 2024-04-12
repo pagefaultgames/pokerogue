@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "676-debutante.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 68,
+				"h": 68
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 57,
+						"h": 68
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 57,
+						"h": 68
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 57,
+						"h": 68
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:76ef75ea5c9561531c220cdb7f78934d:6f39eb82deb32d251df708f5d4edc9f1:bf2f862a1c8881133f9f3ffbf44602fa$"
+	}
+}

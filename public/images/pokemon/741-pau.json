@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "741-pau.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 54,
+				"h": 54
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 47,
+						"h": 54
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 47,
+						"h": 54
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 47,
+						"h": 54
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:8fd43d43dfe629d933d848206070033b:ddb4d7d49e5e2a3239a19a5321f9cf55:28fad3255609da679fe90f9f0fa31d1d$"
+	}
+}

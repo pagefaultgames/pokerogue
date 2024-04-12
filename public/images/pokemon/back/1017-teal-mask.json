@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "1017-teal-mask.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 69,
+				"h": 69
+			},
+			"scale": 0.333,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 16,
+						"y": 13,
+						"w": 63,
+						"h": 69
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 63,
+						"h": 69
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:ce7cabfa645b047f34b0146b0cfc374a:dbadf0e1f776005fbb94fe344d04d448:89536aff40ae7e467064a0913e09a678$"
+	}
+}

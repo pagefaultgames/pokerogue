@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "773-flying.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 85,
+				"h": 85
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 63,
+						"h": 85
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 63,
+						"h": 85
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 63,
+						"h": 85
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:83a0896fc0ed07f694a33e1bc0900242:190004df40d8b08f47e7831125ef0c35:fd9cc965ca8a0f017385425d924045d6$"
+	}
+}

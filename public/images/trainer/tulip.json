@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "tulip.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 78,
+				"h": 78
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 33,
+						"h": 78
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 33,
+						"h": 78
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 33,
+						"h": 78
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:00a18dc03933bbd16a7c8f01a1bb0216:e1a63617b36e5efe2ad298fcf54bbd73:2624b87116e4e39e524835c64171e585$"
+	}
+}
