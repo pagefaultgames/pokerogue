@@ -1084,7 +1084,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.CRIT_BOOST:
       return new CritBoostTag(tagType, sourceMove);
     case BattlerTagType.ALWAYS_CRIT:
-      return new AlwaysCritTag(tagType, sourceMove);
+      return new AlwaysCritTag(sourceMove);
     case BattlerTagType.NO_CRIT:
       return new BattlerTag(tagType, BattlerTagLapseType.AFTER_MOVE, turnCount, sourceMove);
     case BattlerTagType.IGNORE_ACCURACY:
