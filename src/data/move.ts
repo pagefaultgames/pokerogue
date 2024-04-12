@@ -2044,6 +2044,27 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
+export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const type = (args[0] as Utils.IntegerHolder);
+
+    const iv_val = Math.floor(((user.ivs[Stat.HP] & 1)
+      +(user.ivs[Stat.ATK] & 1) * 2
+      +(user.ivs[Stat.DEF] & 1) * 4
+      +(user.ivs[Stat.SPD] & 1) * 8
+      +(user.ivs[Stat.SPATK] & 1) * 16
+      +(user.ivs[Stat.SPDEF] & 1) * 32) * 15/63);
+    
+    type.value = [
+      Type.FIGHTING, Type.FLYING, Type.POISON, Type.GROUND,
+      Type.ROCK, Type.BUG, Type.GHOST, Type.STEEL,
+      Type.FIRE, Type.WATER, Type.GRASS, Type.ELECTRIC,
+      Type.PSYCHIC, Type.ICE, Type.DRAGON, Type.DARK][iv_val];
+
+    return true;
+  }
+}
+
 export class VariableMoveTypeMultiplierAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return false;
@@ -3647,7 +3668,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.MOONLIGHT, "Moonlight", Type.FAIRY, -1, 5, "The user restores its own HP. The amount of HP regained varies with the weather.", -1, 0, 2)
       .attr(PlantHealAttr)
       .triageMove(),
-    new AttackMove(Moves.HIDDEN_POWER, "Hidden Power (P)", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, "A unique attack that varies in type depending on the Pokémon using it.", -1, 0, 2),
+    new AttackMove(Moves.HIDDEN_POWER, "Hidden Power", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, "A unique attack that varies in type depending on the Pokémon using it.", -1, 0, 2)
+      .attr(HiddenPowerTypeAttr),
     new AttackMove(Moves.CROSS_CHOP, "Cross Chop", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 80, 5, "The user delivers a double chop with its forearms crossed. Critical hits land more easily.", -1, 0, 2)
       .attr(HighCritAttr),
     new AttackMove(Moves.TWISTER, "Twister", Type.DRAGON, MoveCategory.SPECIAL, 40, 100, 20, "The user whips up a vicious tornado to tear at opposing Pokémon. This may also make them flinch.", 20, 0, 2)
