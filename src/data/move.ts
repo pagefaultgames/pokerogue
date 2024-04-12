@@ -1484,7 +1484,6 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
     power.value *= this.powerMultiplierFunc(user, target, move);
-    console.log(`Power multiplier is current: ${this.powerMultiplierFunc(user, target, move)}`)
     return true;
   }
 }
