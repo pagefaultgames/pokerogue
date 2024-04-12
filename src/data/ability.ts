@@ -385,15 +385,15 @@ export class PostDefendAbAttr extends AbAttr {
 }
 
 export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
-
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const pranksterStatus = attacker.getAbility().id === Abilities.PRANKSTER && move.getMove().category === MoveCategory.STATUS;
-
-    if ((move.getMove().priority > 0 || pranksterStatus) && !cancelled.value && !move.getMove().isMultiTarget()) {
-      cancelled.value = true;
-      return true;
-    }
-
+      const attackPriority = new Utils.IntegerHolder(move.getMove().priority);
+      applyAbAttrs(IncrementMovePriorityAbAttr, attacker, null, move.getMove(), attackPriority);
+  
+      if(attackPriority.value > 0 && !move.getMove().isMultiTarget()) {
+        cancelled.value = true;
+        return true;
+      }
+    
     return false;
   }
 }
@@ -1193,7 +1193,6 @@ export class IncrementMovePriorityAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (!this.moveIncrementFunc(pokemon, args[0] as Move))
       return false;
-      
     (args[1] as Utils.IntegerHolder).value += this.increaseAmount;
     return true;
   }
