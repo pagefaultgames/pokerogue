@@ -1688,9 +1688,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.gender !== Gender.GENDERLESS && pokemon.gender === (this.gender === Gender.MALE ? Gender.FEMALE : Gender.MALE);
   }
 
-  canSetStatus(effect: StatusEffect, quiet: boolean = false): boolean {
+  canSetStatus(effect: StatusEffect, quiet: boolean = false, overrideStatus: boolean = false): boolean {
     if (effect !== StatusEffect.FAINT) {
-      if (this.status)
+      if (overrideStatus ? this.status?.effect === effect : this.status)
         return false;
       if (this.isGrounded() && this.scene.arena.terrain?.terrainType === TerrainType.MISTY)
         return false;
