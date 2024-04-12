@@ -1224,6 +1224,7 @@ export class ElectroShotChargeAttr extends ChargeAttr {
   private statIncreaseApplied: boolean;
   constructor() {
     super(ChargeAnim.ELECTRO_SHOT_CHARGING, 'absorbed electricity!', null, true);
+		// Add a flag because ChargeAttr skills use themselves twice instead of once over one-to-two turns
     this.statIncreaseApplied = false;
   }
 
@@ -1231,21 +1232,23 @@ export class ElectroShotChargeAttr extends ChargeAttr {
     return new Promise(resolve => {
       const weatherType = user.scene.arena.weather?.weatherType;
       if (!user.scene.arena.weather?.isEffectSuppressed(user.scene) && (weatherType === WeatherType.RAIN || weatherType === WeatherType.HEAVY_RAIN)) {
-        // Apply the SPATK increase if the move is used in the rain
+				// Apply the SPATK increase every call when used in the rain
 				const statChangeAttr = new StatChangeAttr(BattleStat.SPATK, 1, true);
         statChangeAttr.apply(user, target, move, args);
+				// After the SPATK is raised, execute the move resolution e.g. deal damage
         resolve(false);
 			}
       else {
         if (!this.statIncreaseApplied) {
-          // Apply the SPATK increase only if it hasn't been applied before
+          // Apply the SPATK increase only if it hasn't been applied before e.g. on the first turn charge up animation
           const statChangeAttr = new StatChangeAttr(BattleStat.SPATK, 1, true);
           statChangeAttr.apply(user, target, move, args);
+					// Set the flag to true so that on the following turn it doesn't raise SPATK a second time
           this.statIncreaseApplied = true;
         }
         super.apply(user, target, move, args).then(result => {
           if (!result) {
-            // On the second turn, reset the statIncreaseApplied flag
+            // On the second turn, reset the statIncreaseApplied flag without applying the SPATK increase
             this.statIncreaseApplied = false;
           }
           resolve(result);
