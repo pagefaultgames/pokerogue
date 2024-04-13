@@ -2195,8 +2195,8 @@ export function initAbilities() {
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPD, 1)
       .ignorable(),
     new Ability(Abilities.RIVALRY, "Rivalry", "Becomes competitive and deals more damage to Pokémon of the same gender, but deals less to Pokémon of the opposite gender.", 4)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => user.gender !== Gender.GENDERLESS && user.gender === target.gender, 1.25)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => user.gender !== Gender.GENDERLESS && user.gender !== target.gender, 0.75),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => user.gender !== Gender.GENDERLESS && target.gender !== Gender.GENDERLESS && user.gender === target.gender, 1.25)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => user.gender !== Gender.GENDERLESS && target.gender !== Gender.GENDERLESS && user.gender !== target.gender, 0.75),
     new Ability(Abilities.STEADFAST, "Steadfast", "The Pokémon's determination boosts the Speed stat each time the Pokémon flinches.", 4)
       .attr(FlinchStatChangeAbAttr, BattleStat.SPD, 1),
     new Ability(Abilities.SNOW_CLOAK, "Snow Cloak", "Boosts evasiveness in a hailstorm.", 4)
