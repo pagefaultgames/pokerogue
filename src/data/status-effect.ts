@@ -51,7 +51,7 @@ export function getStatusEffectObtainText(statusEffect: StatusEffect, sourceText
   return '';
 }
 
-export function getStatusEffectActivationText(statusEffect: StatusEffect, pokemon: Pokemon): string {
+export function getStatusEffectActivationText(statusEffect: StatusEffect): string {
   switch (statusEffect) {
     case StatusEffect.POISON:
     case StatusEffect.TOXIC:
