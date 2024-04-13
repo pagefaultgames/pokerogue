@@ -955,6 +955,34 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class DownloadAbAttr extends PostSummonAbAttr {
+  private enemyDef: integer;
+  private enemySpDef: integer;
+  private stats: BattleStat[];
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    this.enemyDef = 0;
+    this.enemySpDef = 0;
+	
+    for (let opponent of pokemon.getOpponents()) {
+      this.enemyDef += opponent.stats[BattleStat.DEF];
+      this.enemySpDef += opponent.stats[BattleStat.SPDEF];
+    }
+	
+    if (this.enemyDef < this.enemySpDef)
+      this.stats = [BattleStat.ATK];
+    else
+      this.stats = [BattleStat.SPATK];
+
+    if (this.enemyDef > 0 && this.enemySpDef > 0) { // only activate if there's actually an enemy to download from
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, this.stats, 1));
+      return true;
+    }
+	
+    return false;
+  }
+}
+
 export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
   private weatherType: WeatherType;
 
@@ -1159,6 +1187,13 @@ export class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
 }
 
 export class BlockCritAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    (args[0] as Utils.BooleanHolder).value = true;
+    return true;
+  }
+}
+
+export class BonusCritAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     (args[0] as Utils.BooleanHolder).value = true;
     return true;
@@ -1754,7 +1789,25 @@ export class MoveAbilityBypassAbAttr extends AbAttr {
   }
 }
 
-export class ProtectAbilityAbAttr extends AbAttr {
+export class UncopiableAbilityAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+}
+
+export class UnsuppressableAbilityAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+}
+
+export class UnswappableAbilityAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+}
+
+export class NoTransformAbilityAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
@@ -2002,7 +2055,8 @@ export function initAbilities() {
     new Ability(Abilities.SHIELD_DUST, "Shield Dust (N)", "This Pokémon's dust blocks the additional effects of attacks taken.", 3)
       .ignorable(),
     new Ability(Abilities.OWN_TEMPO, "Own Tempo", "This Pokémon has its own tempo, and that prevents it from becoming confused.", 3)
-      .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED),
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED)
+      .ignorable(),
     new Ability(Abilities.SUCTION_CUPS, "Suction Cups (N)", "This Pokémon uses suction cups to stay in one spot to negate all moves and items that force switching out.", 3)
       .ignorable(),
     new Ability(Abilities.INTIMIDATE, "Intimidate", "The Pokémon intimidates opposing Pokémon upon entering battle, lowering their Attack stat.", 3)
@@ -2011,11 +2065,11 @@ export function initAbilities() {
       .attr(ArenaTrapAbAttr),
     new Ability(Abilities.ROUGH_SKIN, "Rough Skin", "This Pokémon inflicts damage with its rough skin to the attacker on contact.", 3)
       .attr(PostDefendContactDamageAbAttr, 8)
-      .ignorable()
       .bypassFaint(),
     new Ability(Abilities.WONDER_GUARD, "Wonder Guard", "Its mysterious power only lets supereffective moves hit the Pokémon.", 3)
       .attr(NonSuperEffectiveImmunityAbAttr)
-      .attr(ProtectAbilityAbAttr)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.LEVITATE, "Levitate", "By floating in the air, the Pokémon receives full immunity to all Ground-type moves.", 3)
       .attr(TypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(BattlerTagType.IGNORE_FLYING) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY))
@@ -2044,7 +2098,8 @@ export function initAbilities() {
       .attr(ProtectStatAbAttr, BattleStat.ACC)
       .attr(DoubleBattleChanceAbAttr)
       .ignorable(),
-    new Ability(Abilities.TRACE, "Trace (N)", "When it enters a battle, the Pokémon copies an opposing Pokémon's Ability.", 3),
+    new Ability(Abilities.TRACE, "Trace (N)", "When it enters a battle, the Pokémon copies an opposing Pokémon's Ability.", 3)
+      .attr(UncopiableAbilityAbAttr),
     new Ability(Abilities.HUGE_POWER, "Huge Power", "Doubles the Pokémon's Attack stat.", 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 2),
     new Ability(Abilities.POISON_POINT, "Poison Point", "Contact with the Pokémon may poison the attacker.", 3)
@@ -2098,13 +2153,14 @@ export function initAbilities() {
       .attr(PostDefendContactApplyTagChanceAbAttr, 30, BattlerTagType.INFATUATED),
     new Ability(Abilities.PLUS, "Plus (N)", "Boosts the Sp. Atk stat of the Pokémon if an ally with the Plus or Minus Ability is also in battle.", 3),
     new Ability(Abilities.MINUS, "Minus (N)", "Boosts the Sp. Atk stat of the Pokémon if an ally with the Plus or Minus Ability is also in battle.", 3),
-    new Ability(Abilities.FORECAST, "Forecast (N)", "The Pokémon transforms with the weather to change its type to Water, Fire, or Ice.", 3),
+    new Ability(Abilities.FORECAST, "Forecast (N)", "The Pokémon transforms with the weather to change its type to Water, Fire, or Ice.", 3)
+      .attr(UncopiableAbilityAbAttr),
     new Ability(Abilities.STICKY_HOLD, "Sticky Hold", "Items held by the Pokémon are stuck fast and cannot be removed by other Pokémon.", 3)
       .attr(BlockItemTheftAbAttr)
       .bypassFaint()
       .ignorable(),
     new Ability(Abilities.SHED_SKIN, "Shed Skin", "The Pokémon may heal its own status conditions by shedding its skin.", 3)
-	  .conditionalAttr(pokemon => !Utils.randSeedInt(3), PostTurnResetStatusAbAttr),
+      .conditionalAttr(pokemon => !Utils.randSeedInt(3), PostTurnResetStatusAbAttr),
     new Ability(Abilities.GUTS, "Guts", "It's so gutsy that having a status condition boosts the Pokémon's Attack stat.", 3)
       .attr(BypassBurnDamageReductionAbAttr)
       .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5),
@@ -2172,7 +2228,8 @@ export function initAbilities() {
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 1.25)
       .attr(TypeImmunityHealAbAttr, Type.WATER)
       .ignorable(),
-    new Ability(Abilities.DOWNLOAD, "Download (N)", "Compares an opposing Pokémon's Defense and Sp. Def stats before raising its own Attack or Sp. Atk stat—whichever will be more effective.", 4),
+    new Ability(Abilities.DOWNLOAD, "Download", "Compares an opposing Pokémon's Defense and Sp. Def stats before raising its own Attack or Sp. Atk stat—whichever will be more effective.", 4)
+      .attr(DownloadAbAttr),
     new Ability(Abilities.IRON_FIST, "Iron Fist", "Powers up punching moves.", 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PUNCHING_MOVE), 1.2),
     new Ability(Abilities.POISON_HEAL, "Poison Heal (N)", "Restores HP if the Pokémon is poisoned instead of losing HP.", 4),
@@ -2205,7 +2262,8 @@ export function initAbilities() {
     new Ability(Abilities.MOLD_BREAKER, "Mold Breaker", "Moves can be used on the target regardless of its Abilities.", 4)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' breaks the mold!'))
       .attr(MoveAbilityBypassAbAttr),
-    new Ability(Abilities.SUPER_LUCK, "Super Luck (N)", "The Pokémon is so lucky that the critical-hit ratios of its moves are boosted.", 4),
+    new Ability(Abilities.SUPER_LUCK, "Super Luck (P)", "The Pokémon is so lucky that the critical-hit ratios of its moves are boosted.", 4)
+      .attr(BonusCritAbAttr),
     new Ability(Abilities.AFTERMATH, "Aftermath", "Damages the attacker if it contacts the Pokémon with a finishing hit.", 4)
       .attr(PostFaintContactDamageAbAttr,4)
       .bypassFaint(),
@@ -2239,10 +2297,13 @@ export function initAbilities() {
     new Ability(Abilities.RECKLESS, "Reckless", "Powers up moves that have recoil damage.", 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.getAttrs(RecoilAttr).length && move.id !== Moves.STRUGGLE, 1.2),
     new Ability(Abilities.MULTITYPE, "Multitype (N)", "Changes the Pokémon's type to match the Plate or Z-Crystal it holds.", 4)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.FLOWER_GIFT, "Flower Gift (P)", "Boosts the Attack and Sp. Def stats of itself and allies in harsh sunlight.", 4)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), BattleStatMultiplierAbAttr, BattleStat.SPDEF, 1.5)
+      .attr(UncopiableAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.BAD_DREAMS, "Bad Dreams (N)", "Reduces the HP of sleeping opposing Pokémon.", 4),
     new Ability(Abilities.PICKPOCKET, "Pickpocket", "Steals an item from an attacker that made direct contact.", 5)
@@ -2303,9 +2364,11 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.ANALYTIC, "Analytic (N)", "Boosts move power when the Pokémon moves last.", 5),
     new Ability(Abilities.ILLUSION, "Illusion (N)", "Comes out disguised as the Pokémon in the party's last spot.", 5)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr),
     new Ability(Abilities.IMPOSTER, "Imposter", "The Pokémon transforms itself into the Pokémon it's facing.", 5)
-      .attr(PostSummonTransformAbAttr),
+      .attr(PostSummonTransformAbAttr)
+      .attr(UncopiableAbilityAbAttr),
     new Ability(Abilities.INFILTRATOR, "Infiltrator (N)", "Passes through the opposing Pokémon's barrier, substitute, and the like and strikes.", 5),
     new Ability(Abilities.MUMMY, "Mummy (N)", "Contact with the Pokémon changes the attacker's Ability to Mummy.", 5),
     new Ability(Abilities.MOXIE, "Moxie", "The Pokémon shows moxie, and that boosts the Attack stat after knocking out any Pokémon.", 5)
@@ -2332,7 +2395,10 @@ export function initAbilities() {
     new Ability(Abilities.ZEN_MODE, "Zen Mode", "Changes the Pokémon's shape when HP is half or less.", 5)
       .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() >= 0.5 ? 0 : 1)
       .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() >= 0.5 ? 0 : 1)
-      .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() >= 0.5 ? 0 : 1),
+      .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() >= 0.5 ? 0 : 1)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.VICTORY_STAR, "Victory Star (N)", "Boosts the accuracy of its allies and itself.", 5),
     new Ability(Abilities.TURBOBLAZE, "Turboblaze", "Moves can be used on the target regardless of its Abilities.", 5)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is radiating a blazing aura!'))
@@ -2362,13 +2428,16 @@ export function initAbilities() {
     new Ability(Abilities.SWEET_VEIL, "Sweet Veil (N)", "Prevents itself and ally Pokémon from falling asleep.", 6)
       .ignorable(),
     new Ability(Abilities.STANCE_CHANGE, "Stance Change", "The Pokémon changes its form to Blade Forme when it uses an attack move and changes to Shield Forme when it uses King's Shield.", 6)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.GALE_WINGS, "Gale Wings", "Gives priority to Flying-type moves when the Pokémon's HP is full.", 6)
       .attr(IncrementMovePriorityAbAttr, (pokemon, move) => pokemon.getHpRatio() === 1 && move.type === Type.FLYING),
     new Ability(Abilities.MEGA_LAUNCHER, "Mega Launcher", "Powers up aura and pulse moves.", 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5),
     new Ability(Abilities.GRASS_PELT, "Grass Pelt", "Boosts the Pokémon's Defense stat on Grassy Terrain.", 6)
-      .conditionalAttr(getTerrainCondition(TerrainType.GRASSY), BattleStatMultiplierAbAttr, BattleStat.DEF, 1.5),
+      .conditionalAttr(getTerrainCondition(TerrainType.GRASSY), BattleStatMultiplierAbAttr, BattleStat.DEF, 1.5)
+      .ignorable(),
     new Ability(Abilities.SYMBIOSIS, "Symbiosis (N)", "The Pokémon passes its item to an ally that has used up an item.", 6),
     new Ability(Abilities.TOUGH_CLAWS, "Tough Claws", "Powers up moves that make direct contact.", 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 1.3),
@@ -2404,7 +2473,9 @@ export function initAbilities() {
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER, BattleStat.DEF, 2),
     new Ability(Abilities.MERCILESS, "Merciless (N)", "The Pokémon's attacks become critical hits if the target is poisoned.", 7),
     new Ability(Abilities.SHIELDS_DOWN, "Shields Down (N)", "When its HP becomes half or less, the Pokémon's shell breaks and it becomes aggressive.", 7)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.STAKEOUT, "Stakeout (N)", "Doubles the damage dealt to the target's replacement if the target switches out.", 7),
     new Ability(Abilities.WATER_BUBBLE, "Water Bubble", "Lowers the power of Fire-type moves done to the Pokémon and prevents the Pokémon from getting a burn.", 7)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
@@ -2430,17 +2501,28 @@ export function initAbilities() {
       .attr(PostBattleInitFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
       .attr(PostSummonFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
       .attr(PostTurnFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.DISGUISE, "Disguise (N)", "Once per battle, the shroud that covers the Pokémon can protect it from an attack.", 7)
-      .ignorable()
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr)
+      .attr(NoTransformAbilityAbAttr)
+      .ignorable(),
     new Ability(Abilities.BATTLE_BOND, "Battle Bond (N)", "Defeating an opposing Pokémon strengthens the Pokémon's bond with its Trainer, and it becomes Ash-Greninja. Water Shuriken gets more powerful.", 7)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.POWER_CONSTRUCT, "Power Construct (N)", "Other Cells gather to aid when its HP becomes half or less. Then the Pokémon changes its form to Complete Forme.", 7)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.CORROSION, "Corrosion (N)", "The Pokémon can poison the target even if it's a Steel or Poison type.", 7),
     new Ability(Abilities.COMATOSE, "Comatose (N)", "It's always drowsing and will never wake up. It can attack without waking up.", 7)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.QUEENLY_MAJESTY, "Queenly Majesty", "Its majesty pressures the opposing Pokémon, making it unable to attack using priority moves.", 7)
       .attr(FieldPriorityMoveImmunityAbAttr)
       .ignorable(),
@@ -2458,8 +2540,10 @@ export function initAbilities() {
       .attr(PostKnockOutStatChangeAbAttr, BattleStat.SPATK, 1),
     new Ability(Abilities.TANGLING_HAIR, "Tangling Hair", "Contact with the Pokémon lowers the attacker's Speed stat.", 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), BattleStat.SPD, -1, false),
-    new Ability(Abilities.RECEIVER, "Receiver (N)", "The Pokémon copies the Ability of a defeated ally.", 7),
-    new Ability(Abilities.POWER_OF_ALCHEMY, "Power of Alchemy (N)", "The Pokémon copies the Ability of a defeated ally.", 7),
+    new Ability(Abilities.RECEIVER, "Receiver (N)", "The Pokémon copies the Ability of a defeated ally.", 7)
+      .attr(UncopiableAbilityAbAttr),
+    new Ability(Abilities.POWER_OF_ALCHEMY, "Power of Alchemy (N)", "The Pokémon copies the Ability of a defeated ally.", 7)
+      .attr(UncopiableAbilityAbAttr),
     new Ability(Abilities.BEAST_BOOST, "Beast Boost", "The Pokémon boosts its most proficient stat each time it knocks out a Pokémon.", 7)
       .attr(PostVictoryStatChangeAbAttr, p => {
         const battleStats = Utils.getEnumValues(BattleStat).slice(0, -3).map(s => s as BattleStat);
@@ -2475,7 +2559,9 @@ export function initAbilities() {
         return highestBattleStatIndex;
       }, 1),
     new Ability(Abilities.RKS_SYSTEM, "RKS System (N)", "Changes the Pokémon's type to match the memory disc it holds.", 7)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.ELECTRIC_SURGE, "Electric Surge", "Turns the ground into Electric Terrain when the Pokémon enters a battle.", 7)
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC),
@@ -2507,7 +2593,8 @@ export function initAbilities() {
     new Ability(Abilities.MIRROR_ARMOR, "Mirror Armor (N)", "Bounces back only the stat-lowering effects that the Pokémon receives.", 8)
       .ignorable(),
     new Ability(Abilities.GULP_MISSILE, "Gulp Missile (N)", "When the Pokémon uses Surf or Dive, it will come back with prey. When it takes damage, it will spit out the prey to attack.", 8)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UnsuppressableAbilityAbAttr)
+      .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.STALWART, "Stalwart (N)", "Ignores the effects of opposing Pokémon's Abilities and moves that draw in moves.", 8),
     new Ability(Abilities.STEAM_ENGINE, "Steam Engine", "Boosts the Pokémon's Speed stat drastically if hit by a Fire- or Water-type move.", 8)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.FIRE || move.type === Type.WATER, BattleStat.SPD, 6),
@@ -2523,7 +2610,10 @@ export function initAbilities() {
     new Ability(Abilities.RIPEN, "Ripen", "Ripens Berries and doubles their effect.", 8)
       .attr(DoubleBerryEffectAbAttr),
     new Ability(Abilities.ICE_FACE, "Ice Face (N)", "The Pokémon's ice head can take a physical attack as a substitute, but the attack also changes the Pokémon's appearance. The ice will be restored when it hails.", 8)
-      .attr(ProtectAbilityAbAttr)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr)
+      .attr(NoTransformAbilityAbAttr)
       .ignorable(),
     new Ability(Abilities.POWER_SPOT, "Power Spot (N)", "Just being next to the Pokémon powers up moves.", 8),
     new Ability(Abilities.MIMICRY, "Mimicry (N)", "Changes the Pokémon's type depending on the terrain.", 8),
@@ -2533,13 +2623,18 @@ export function initAbilities() {
     new Ability(Abilities.WANDERING_SPIRIT, "Wandering Spirit (N)", "The Pokémon exchanges Abilities with a Pokémon that hits it with a move that makes direct contact.", 8),
     new Ability(Abilities.GORILLA_TACTICS, "Gorilla Tactics (N)", "Boosts the Pokémon's Attack stat but only allows the use of the first selected move.", 8),
     new Ability(Abilities.NEUTRALIZING_GAS, "Neutralizing Gas (N)", "If the Pokémon with Neutralizing Gas is in the battle, the effects of all Pokémon's Abilities will be nullified or will not be triggered.", 8)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.PASTEL_VEIL, "Pastel Veil", "Protects the Pokémon and its ally Pokémon from being poisoned.", 8)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.HUNGER_SWITCH, "Hunger Switch", "The Pokémon changes its form, alternating between its Full Belly Mode and Hangry Mode after the end of each turn.", 8)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1)
-      .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 1 : 0),
+      .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 1 : 0)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.QUICK_DRAW, "Quick Draw (N)", "Enables the Pokémon to move first occasionally.", 8),
     new Ability(Abilities.UNSEEN_FIST, "Unseen Fist (N)", "If the Pokémon uses moves that make direct contact, it can attack the target even if the target protects itself.", 8),
     new Ability(Abilities.CURIOUS_MEDICINE, "Curious Medicine (N)", "When the Pokémon enters a battle, it scatters medicine from its shell, which removes all stat changes from allies.", 8),
@@ -2553,10 +2648,16 @@ export function initAbilities() {
       .attr(PostVictoryStatChangeAbAttr, BattleStat.SPATK, 1),
     new Ability(Abilities.AS_ONE_GLASTRIER, "As One", "This Ability combines the effects of both Calyrex's Unnerve Ability and Glastrier's Chilling Neigh Ability.", 8)
       .attr(PreventBerryUseAbAttr)
-      .attr(PostVictoryStatChangeAbAttr, BattleStat.ATK, 1),
+      .attr(PostVictoryStatChangeAbAttr, BattleStat.ATK, 1)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.AS_ONE_SPECTRIER, "As One", "This Ability combines the effects of both Calyrex's Unnerve Ability and Spectrier's Grim Neigh Ability.", 8)
       .attr(PreventBerryUseAbAttr)
-      .attr(PostVictoryStatChangeAbAttr, BattleStat.SPATK, 1),
+      .attr(PostVictoryStatChangeAbAttr, BattleStat.SPATK, 1)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.LINGERING_AROMA, "Lingering Aroma (N)", "Contact with the Pokémon changes the attacker's Ability to Lingering Aroma.", 9),
     new Ability(Abilities.SEED_SOWER, "Seed Sower", "Turns the ground into Grassy Terrain when the Pokémon is hit by an attack.", 9)
       .attr(PostDefendTerrainChangeAbAttr, TerrainType.GRASSY),
@@ -2580,37 +2681,45 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, Type.ROCK),
     new Ability(Abilities.WIND_POWER, "Wind Power (N)", "The Pokémon becomes charged when it is hit by a wind move, boosting the power of the next Electric-type move the Pokémon uses.", 9),
     new Ability(Abilities.ZERO_TO_HERO, "Zero to Hero (N)", "The Pokémon transforms into its Hero Form when it switches out.", 9)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr)
+      .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.COMMANDER, "Commander (N)", "When the Pokémon enters a battle, it goes inside the mouth of an ally Dondozo if one is on the field. The Pokémon then issues commands from there.", 9)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr),
     new Ability(Abilities.ELECTROMORPHOSIS, "Electromorphosis (N)", "The Pokémon becomes charged when it takes damage, boosting the power of the next Electric-type move the Pokémon uses.", 9),
     new Ability(Abilities.PROTOSYNTHESIS, "Protosynthesis", "Boosts the Pokémon's most proficient stat in harsh sunlight or if the Pokémon is holding Booster Energy.", 9)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), PostSummonAddBattlerTagAbAttr, BattlerTagType.PROTOSYNTHESIS, 0, true)
       .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.PROTOSYNTHESIS, 0, WeatherType.SUNNY, WeatherType.HARSH_SUN)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.QUARK_DRIVE, "Quark Drive", "Boosts the Pokémon's most proficient stat on Electric Terrain or if the Pokémon is holding Booster Energy.", 9)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), PostSummonAddBattlerTagAbAttr, BattlerTagType.QUARK_DRIVE, 0, true)
       .attr(PostTerrainChangeAddBattlerTagAttr, BattlerTagType.QUARK_DRIVE, 0, TerrainType.ELECTRIC)
-      .attr(ProtectAbilityAbAttr),
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.GOOD_AS_GOLD, "Good as Gold (P)", "A body of pure, solid gold gives the Pokémon full immunity to other Pokémon's status moves.", 9)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().category === MoveCategory.STATUS)
       .ignorable(),
     new Ability(Abilities.VESSEL_OF_RUIN, "Vessel of Ruin (N)", "The power of the Pokémon's ruinous vessel lowers the Sp. Atk stats of all Pokémon except itself.", 9)
       .ignorable(),
-    new Ability(Abilities.SWORD_OF_RUIN, "Sword of Ruin (N)", "The power of the Pokémon's ruinous sword lowers the Defense stats of all Pokémon except itself.", 9),
+    new Ability(Abilities.SWORD_OF_RUIN, "Sword of Ruin (N)", "The power of the Pokémon's ruinous sword lowers the Defense stats of all Pokémon except itself.", 9)
+      .ignorable(),
     new Ability(Abilities.TABLETS_OF_RUIN, "Tablets of Ruin (N)", "The power of the Pokémon's ruinous wooden tablets lowers the Attack stats of all Pokémon except itself.", 9)
       .ignorable(),
-    new Ability(Abilities.BEADS_OF_RUIN, "Beads of Ruin (N)", "The power of the Pokémon's ruinous beads lowers the Sp. Def stats of all Pokémon except itself.", 9),
+    new Ability(Abilities.BEADS_OF_RUIN, "Beads of Ruin (N)", "The power of the Pokémon's ruinous beads lowers the Sp. Def stats of all Pokémon except itself.", 9)
+      .ignorable(),
     new Ability(Abilities.ORICHALCUM_PULSE, "Orichalcum Pulse", "Turns the sunlight harsh when the Pokémon enters a battle. The ancient pulse thrumming through the Pokémon also boosts its Attack stat in harsh sunlight.", 9)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY)
-      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), BattleStatMultiplierAbAttr, BattleStat.ATK, 4 / 3)
-      .attr(ProtectAbilityAbAttr),
+      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), BattleStatMultiplierAbAttr, BattleStat.ATK, 4 / 3),
     new Ability(Abilities.HADRON_ENGINE, "Hadron Engine", "Turns the ground into Electric Terrain when the Pokémon enters a battle. The futuristic engine within the Pokémon also boosts its Sp. Atk stat on Electric Terrain.", 9)
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC)
-      .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), BattleStatMultiplierAbAttr, BattleStat.SPATK, 4 / 3)
-      .attr(ProtectAbilityAbAttr),
+      .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), BattleStatMultiplierAbAttr, BattleStat.SPATK, 4 / 3),
     new Ability(Abilities.OPPORTUNIST, "Opportunist (N)", "If an opponent's stat is boosted, the Pokémon seizes the opportunity to boost the same stat for itself.", 9),
     new Ability(Abilities.CUD_CHEW, "Cud Chew (N)", "When the Pokémon eats a Berry, it will regurgitate that Berry at the end of the next turn and eat it one more time.", 9),
     new Ability(Abilities.SHARPNESS, "Sharpness", "Powers up slicing moves.", 9)
@@ -2631,19 +2740,40 @@ export function initAbilities() {
     new Ability(Abilities.HOSPITALITY, "Hospitality (N)", "When the Pokémon enters a battle, it showers its ally with hospitality, restoring a small amount of the ally's HP.", 9),
     new Ability(Abilities.TOXIC_CHAIN, "Toxic Chain (N)", "The power of the Pokémon's toxic chain may badly poison any target the Pokémon hits with a move.", 9),
     new Ability(Abilities.EMBODY_ASPECT_TEAL, "Embody Aspect", "The Pokémon's heart fills with memories, causing the Teal Mask to shine and the Pokémon's Speed stat to be boosted.", 9)
-      .attr(PostBattleInitStatChangeAbAttr, BattleStat.SPD, 1, true),
+      .attr(PostBattleInitStatChangeAbAttr, BattleStat.SPD, 1, true)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.EMBODY_ASPECT_WELLSPRING, "Embody Aspect", "The Pokémon's heart fills with memories, causing the Wellspring Mask to shine and the Pokémon's Sp. Def stat to be boosted.", 9)
-      .attr(PostBattleInitStatChangeAbAttr, BattleStat.SPDEF, 1, true),
+      .attr(PostBattleInitStatChangeAbAttr, BattleStat.SPDEF, 1, true)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.EMBODY_ASPECT_HEARTHFLAME, "Embody Aspect", "The Pokémon's heart fills with memories, causing the Hearthflame Mask to shine and the Pokémon's Attack stat to be boosted.", 9)
-      .attr(PostBattleInitStatChangeAbAttr, BattleStat.ATK, 1, true),
+      .attr(PostBattleInitStatChangeAbAttr, BattleStat.ATK, 1, true)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.EMBODY_ASPECT_CORNERSTONE, "Embody Aspect", "The Pokémon's heart fills with memories, causing the Cornerstone Mask to shine and the Pokémon's Defense stat to be boosted.", 9)
-      .attr(PostBattleInitStatChangeAbAttr, BattleStat.DEF, 1, true),
+      .attr(PostBattleInitStatChangeAbAttr, BattleStat.DEF, 1, true)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.TERA_SHIFT, "Tera Shift", "When the Pokémon enters a battle, it absorbs the energy around itself and transforms into its Terastal Form.", 9)
-      .attr(PostSummonFormChangeAbAttr, p => p.getFormKey() ? 0 : 1),
+      .attr(PostSummonFormChangeAbAttr, p => p.getFormKey() ? 0 : 1)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
+      .attr(UnsuppressableAbilityAbAttr)
+      .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.TERA_SHELL, "Tera Shell (N)", "The Pokémon's shell contains the powers of each type. All damage-dealing moves that hit the Pokémon when its HP is full will not be very effective.", 9)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
       .ignorable(),
-    new Ability(Abilities.TERAFORM_ZERO, "Teraform Zero (N)", "When Terapagos changes into its Stellar Form, it uses its hidden powers to eliminate all effects of weather and terrain, reducing them to zero.", 9),
+    new Ability(Abilities.TERAFORM_ZERO, "Teraform Zero (N)", "When Terapagos changes into its Stellar Form, it uses its hidden powers to eliminate all effects of weather and terrain, reducing them to zero.", 9)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr),
     new Ability(Abilities.POISON_PUPPETEER, "Poison Puppeteer (N)", "Pokémon poisoned by Pecharunt's moves will also become confused.", 9)
-      .attr(ProtectAbilityAbAttr)
+      .attr(UncopiableAbilityAbAttr)
+      .attr(UnswappableAbilityAbAttr)
   );
 }
