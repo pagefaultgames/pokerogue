@@ -784,103 +784,103 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 return true;
               }
             });
-            const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
-            const candyCount = starterData.candyCount;
-            const passiveAttr = starterData.passiveAttr;
-            if (passiveAttr & PassiveAttr.UNLOCKED) {
-              if (!(passiveAttr & PassiveAttr.ENABLED)) {
-                options.push({
-                  label: 'Enable Passive',
-                  handler: () => {
-                    starterData.passiveAttr |= PassiveAttr.ENABLED;
-                    ui.setMode(Mode.STARTER_SELECT);
-                    this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined);
-                    return true;
-                  }
-                });
-              } else {
-                options.push({
-                  label: 'Disable Passive',
-                  handler: () => {
-                    starterData.passiveAttr ^= PassiveAttr.ENABLED;
-                    ui.setMode(Mode.STARTER_SELECT);
-                    this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined);
-                    return true;
-                  }
-                });
-              }
-            }
-            const showUseCandies = () => {
-              const options = [];
-              if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
-                const passiveCost = getPassiveCandyCount(speciesStarters[this.lastSpecies.speciesId]);
-                options.push({
-                  label: `x${passiveCost} Unlock Passive (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
-                  handler: () => {
-                    if (candyCount >= passiveCost) {
-                      starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
-                      starterData.candyCount -= passiveCost;
-                      this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
-                      this.scene.gameData.saveSystem().then(success => {
-                        if (!success)
-                          return this.scene.reset(true);
-                      });
-                      ui.setMode(Mode.STARTER_SELECT);
-                      this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined);
-                      return true;
-                    }
-                    return false;
-                  },
-                  item: 'candy',
-                  itemArgs: starterColors[this.lastSpecies.speciesId]
-                });
-              }
-              const valueReduction = starterData.valueReduction;
-              if (valueReduction < 2) {
-                const reductionCost = getValueReductionCandyCounts(speciesStarters[this.lastSpecies.speciesId])[valueReduction];
-                options.push({
-                  label: `x${reductionCost} Reduce Cost`,
-                  handler: () => {
-                    if (candyCount >= reductionCost) {
-                      starterData.valueReduction++;
-                      starterData.candyCount -= reductionCost;
-                      this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
-                      this.scene.gameData.saveSystem().then(success => {
-                        if (!success)
-                          return this.scene.reset(true);
-                      });
-                      this.updateStarterValueLabel(this.cursor);
-                      this.tryUpdateValue(0);
-                      ui.setMode(Mode.STARTER_SELECT);
-                      this.scene.playSound('buy');
-                      return true;
-                    }
-                    return false;
-                  },
-                  item: 'candy',
-                  itemArgs: starterColors[this.lastSpecies.speciesId]
-                });
-              }
+          }
+          const starterData = this.scene.gameData.starterData[this.lastSpecies.speciesId];
+          const candyCount = starterData.candyCount;
+          const passiveAttr = starterData.passiveAttr;
+          if (passiveAttr & PassiveAttr.UNLOCKED) {
+            if (!(passiveAttr & PassiveAttr.ENABLED)) {
               options.push({
-                label: 'Cancel',
+                label: 'Enable Passive',
                 handler: () => {
+                  starterData.passiveAttr |= PassiveAttr.ENABLED;
                   ui.setMode(Mode.STARTER_SELECT);
+                  this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined);
                   return true;
                 }
               });
-              ui.setModeWithoutClear(Mode.OPTION_SELECT, {
-                options: options,
-                yOffset: 47
+            } else {
+              options.push({
+                label: 'Disable Passive',
+                handler: () => {
+                  starterData.passiveAttr ^= PassiveAttr.ENABLED;
+                  ui.setMode(Mode.STARTER_SELECT);
+                  this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined);
+                  return true;
+                }
               });
-            };
+            }
+          }
+          const showUseCandies = () => {
+            const options = [];
+            if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
+              const passiveCost = getPassiveCandyCount(speciesStarters[this.lastSpecies.speciesId]);
+              options.push({
+                label: `x${passiveCost} Unlock Passive (${allAbilities[starterPassiveAbilities[this.lastSpecies.speciesId]].name})`,
+                handler: () => {
+                  if (candyCount >= passiveCost) {
+                    starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
+                    starterData.candyCount -= passiveCost;
+                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.scene.gameData.saveSystem().then(success => {
+                      if (!success)
+                        return this.scene.reset(true);
+                    });
+                    ui.setMode(Mode.STARTER_SELECT);
+                    this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined);
+                    return true;
+                  }
+                  return false;
+                },
+                item: 'candy',
+                itemArgs: starterColors[this.lastSpecies.speciesId]
+              });
+            }
+            const valueReduction = starterData.valueReduction;
+            if (valueReduction < 2) {
+              const reductionCost = getValueReductionCandyCounts(speciesStarters[this.lastSpecies.speciesId])[valueReduction];
+              options.push({
+                label: `x${reductionCost} Reduce Cost`,
+                handler: () => {
+                  if (candyCount >= reductionCost) {
+                    starterData.valueReduction++;
+                    starterData.candyCount -= reductionCost;
+                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.scene.gameData.saveSystem().then(success => {
+                      if (!success)
+                        return this.scene.reset(true);
+                    });
+                    this.updateStarterValueLabel(this.cursor);
+                    this.tryUpdateValue(0);
+                    ui.setMode(Mode.STARTER_SELECT);
+                    this.scene.playSound('buy');
+                    return true;
+                  }
+                  return false;
+                },
+                item: 'candy',
+                itemArgs: starterColors[this.lastSpecies.speciesId]
+              });
+            }
             options.push({
-              label: 'Use Candies',
+              label: 'Cancel',
               handler: () => {
-                ui.setMode(Mode.STARTER_SELECT).then(() => showUseCandies());
+                ui.setMode(Mode.STARTER_SELECT);
                 return true;
               }
             });
-          }
+            ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+              options: options,
+              yOffset: 47
+            });
+          };
+          options.push({
+            label: 'Use Candies',
+            handler: () => {
+              ui.setMode(Mode.STARTER_SELECT).then(() => showUseCandies());
+              return true;
+            }
+          });
           options.push({
             label: 'Cancel',
             handler: () => {
