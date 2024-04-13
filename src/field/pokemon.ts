@@ -1159,11 +1159,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         else {
           if (source.findTag(t => t instanceof TypeBoostTag && (t as TypeBoostTag).boostedType === type))
             power.value *= 1.5;
-          const arenaAttackTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(type, this.isGrounded());
+          const arenaAttackTypeMultiplier = this.scene.arena.getAttackTypeMultiplier(type, source.isGrounded());
           if (this.scene.arena.getTerrainType() === TerrainType.GRASSY && this.isGrounded() && type === Type.GROUND && move.moveTarget === MoveTarget.ALL_NEAR_OTHERS)
             power.value /= 2;
-          else if (this.scene.arena.getTerrainType() === TerrainType.ELECTRIC && source.isGrounded() && type === Type.ELECTRIC)
-            power.value *= 1.3;
           applyMoveAttrs(VariablePowerAttr, source, this, move, power);
           this.scene.applyModifiers(PokemonMultiHitModifier, source.isPlayer(), source, new Utils.IntegerHolder(0), power);
           if (!typeless) {
