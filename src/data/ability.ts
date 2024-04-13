@@ -2126,7 +2126,7 @@ export function initAbilities() {
       .bypassFaint()
       .ignorable(),
     new Ability(Abilities.SHED_SKIN, "Shed Skin", "The Pokémon may heal its own status conditions by shedding its skin.", 3)
-	  .conditionalAttr(pokemon => !Utils.randSeedInt(3), PostTurnResetStatusAbAttr),
+      .conditionalAttr(pokemon => !Utils.randSeedInt(3), PostTurnResetStatusAbAttr),
     new Ability(Abilities.GUTS, "Guts", "It's so gutsy that having a status condition boosts the Pokémon's Attack stat.", 3)
       .attr(BypassBurnDamageReductionAbAttr)
       .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5),
