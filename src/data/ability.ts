@@ -572,6 +572,47 @@ export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
   }
 }
 
+export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
+  constructor() {
+    super();
+  }
+  
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.getAbility().hasAttr(UnswappableAbilityAbAttr)) {
+      const tempAbilityId = attacker.getAbility().id;
+      attacker.summonData.ability = pokemon.getAbility().id;
+      pokemon.summonData.ability = tempAbilityId;
+      return true;
+    }
+    
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, ` swapped\nabilities with its target!`);
+  }
+}
+
+export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
+  constructor() {
+    super();
+  }
+  
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && !attacker.getAbility().hasAttr(PostDefendAbilityGiveAbAttr)) {
+      attacker.summonData.ability = pokemon.getAbility().id;
+
+      return true;
+    }
+    
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, ` gave its target\n${abilityName}!`);
+  }
+}
+
 export class PreAttackAbAttr extends AbAttr {
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -829,7 +870,7 @@ class PostVictoryStatChangeAbAttr extends PostVictoryAbAttr {
 }
 
 export class PostKnockOutAbAttr extends AbAttr {
-  applyPostKnockOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPostKnockOut(pokemon: Pokemon, passive: boolean, knockedOut: Pokemon, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -845,13 +886,29 @@ export class PostKnockOutStatChangeAbAttr extends PostKnockOutAbAttr {
     this.levels = levels;
   }
 
-  applyPostKnockOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+  applyPostKnockOut(pokemon: Pokemon, passive: boolean, knockedOut: Pokemon, args: any[]): boolean | Promise<boolean> {
     const stat = typeof this.stat === 'function'
       ? this.stat(pokemon)
       : this.stat;
     pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ stat ], this.levels));
     
     return true;
+  }
+}
+
+export class CopyFaintedAllyAbilityAbAttr extends PostKnockOutAbAttr {
+  constructor() {
+    super();
+  }
+
+  applyPostKnockOut(pokemon: Pokemon, passive: boolean, knockedOut: Pokemon, args: any[]): boolean | Promise<boolean> {
+    if (pokemon.isPlayer() === knockedOut.isPlayer() && !knockedOut.getAbility().hasAttr(UncopiableAbilityAbAttr)) {
+      pokemon.summonData.ability = knockedOut.getAbility().id;
+      pokemon.scene.queueMessage(getPokemonMessage(knockedOut, `'s ${allAbilities[knockedOut.getAbility().id].name} was taken over!`));
+      return true;
+    }
+    
+    return false;
   }
 }
 
@@ -1015,6 +1072,27 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
       return pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
 
     return false;
+  }
+}
+
+export class TraceAbAttr extends PostSummonAbAttr {
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    const targets = pokemon.getOpponents();
+    let target: Pokemon;
+    if (targets.length > 1)
+      pokemon.scene.executeWithSeedOffset(() => target = Utils.randSeedItem(targets), pokemon.scene.currentBattle.waveIndex);
+    else
+      target = targets[0];
+
+    // Wonder Guard is normally uncopiable so has the attribute, but trace specifically can copy it
+    if (target.getAbility().hasAttr(UncopiableAbilityAbAttr) && target.getAbility().id !== Abilities.WONDER_GUARD)
+      return false;
+
+    pokemon.summonData.ability = target.getAbility().id;
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` traced ${target.name}'s\n${allAbilities[target.getAbility().id].name}!`));
+
+    return true;
   }
 }
 
@@ -1900,8 +1978,8 @@ export function applyPostAttackAbAttrs(attrType: { new(...args: any[]): PostAtta
 }
 
 export function applyPostKnockOutAbAttrs(attrType: { new(...args: any[]): PostKnockOutAbAttr },
-  pokemon: Pokemon, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostKnockOutAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostKnockOut(pokemon, passive, args), args);
+  pokemon: Pokemon, knockedOut: Pokemon, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostKnockOutAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostKnockOut(pokemon, passive, knockedOut, args), args);
 } 
 
 export function applyPostVictoryAbAttrs(attrType: { new(...args: any[]): PostVictoryAbAttr },
@@ -2085,7 +2163,8 @@ export function initAbilities() {
       .attr(ProtectStatAbAttr, BattleStat.ACC)
       .attr(DoubleBattleChanceAbAttr)
       .ignorable(),
-    new Ability(Abilities.TRACE, "Trace (N)", "When it enters a battle, the Pokémon copies an opposing Pokémon's Ability.", 3)
+    new Ability(Abilities.TRACE, "Trace", "When it enters a battle, the Pokémon copies an opposing Pokémon's Ability.", 3)
+      .attr(TraceAbAttr)
       .attr(UncopiableAbilityAbAttr),
     new Ability(Abilities.HUGE_POWER, "Huge Power", "Doubles the Pokémon's Attack stat.", 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 2),
@@ -2356,7 +2435,9 @@ export function initAbilities() {
       .attr(PostSummonTransformAbAttr)
       .attr(UncopiableAbilityAbAttr),
     new Ability(Abilities.INFILTRATOR, "Infiltrator (N)", "Passes through the opposing Pokémon's barrier, substitute, and the like and strikes.", 5),
-    new Ability(Abilities.MUMMY, "Mummy (N)", "Contact with the Pokémon changes the attacker's Ability to Mummy.", 5),
+    new Ability(Abilities.MUMMY, "Mummy", "Contact with the Pokémon changes the attacker's Ability to Mummy.", 5)
+      .attr(PostDefendAbilityGiveAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.MOXIE, "Moxie", "The Pokémon shows moxie, and that boosts the Attack stat after knocking out any Pokémon.", 5)
       .attr(PostVictoryStatChangeAbAttr, BattleStat.ATK, 1),
     new Ability(Abilities.JUSTIFIED, "Justified", "Being hit by a Dark-type move boosts the Attack stat of the Pokémon, for justice.", 5)
@@ -2524,9 +2605,11 @@ export function initAbilities() {
       .attr(PostKnockOutStatChangeAbAttr, BattleStat.SPATK, 1),
     new Ability(Abilities.TANGLING_HAIR, "Tangling Hair", "Contact with the Pokémon lowers the attacker's Speed stat.", 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), BattleStat.SPD, -1, false),
-    new Ability(Abilities.RECEIVER, "Receiver (N)", "The Pokémon copies the Ability of a defeated ally.", 7)
+    new Ability(Abilities.RECEIVER, "Receiver", "The Pokémon copies the Ability of a defeated ally.", 7)
+      .attr(CopyFaintedAllyAbilityAbAttr)
       .attr(UncopiableAbilityAbAttr),
-    new Ability(Abilities.POWER_OF_ALCHEMY, "Power of Alchemy (N)", "The Pokémon copies the Ability of a defeated ally.", 7)
+    new Ability(Abilities.POWER_OF_ALCHEMY, "Power of Alchemy", "The Pokémon copies the Ability of a defeated ally.", 7)
+      .attr(CopyFaintedAllyAbilityAbAttr)
       .attr(UncopiableAbilityAbAttr),
     new Ability(Abilities.BEAST_BOOST, "Beast Boost", "The Pokémon boosts its most proficient stat each time it knocks out a Pokémon.", 7)
       .attr(PostVictoryStatChangeAbAttr, p => {
@@ -2604,7 +2687,9 @@ export function initAbilities() {
     new Ability(Abilities.SCREEN_CLEANER, "Screen Cleaner (N)", "When the Pokémon enters a battle, the effects of Light Screen, Reflect, and Aurora Veil are nullified for both opposing and ally Pokémon.", 8),
     new Ability(Abilities.STEELY_SPIRIT, "Steely Spirit (N)", "Powers up ally Pokémon's Steel-type moves.", 8),
     new Ability(Abilities.PERISH_BODY, "Perish Body (N)", "When hit by a move that makes direct contact, the Pokémon and the attacker will faint after three turns unless they switch out of battle.", 8),
-    new Ability(Abilities.WANDERING_SPIRIT, "Wandering Spirit (N)", "The Pokémon exchanges Abilities with a Pokémon that hits it with a move that makes direct contact.", 8),
+    new Ability(Abilities.WANDERING_SPIRIT, "Wandering Spirit (P)", "The Pokémon exchanges Abilities with a Pokémon that hits it with a move that makes direct contact.", 8)
+      .attr(PostDefendAbilitySwapAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.GORILLA_TACTICS, "Gorilla Tactics (N)", "Boosts the Pokémon's Attack stat but only allows the use of the first selected move.", 8),
     new Ability(Abilities.NEUTRALIZING_GAS, "Neutralizing Gas (N)", "If the Pokémon with Neutralizing Gas is in the battle, the effects of all Pokémon's Abilities will be nullified or will not be triggered.", 8)
       .attr(UncopiableAbilityAbAttr)
@@ -2642,7 +2727,9 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr),
-    new Ability(Abilities.LINGERING_AROMA, "Lingering Aroma (N)", "Contact with the Pokémon changes the attacker's Ability to Lingering Aroma.", 9),
+    new Ability(Abilities.LINGERING_AROMA, "Lingering Aroma", "Contact with the Pokémon changes the attacker's Ability to Lingering Aroma.", 9)
+      .attr(PostDefendAbilityGiveAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.SEED_SOWER, "Seed Sower", "Turns the ground into Grassy Terrain when the Pokémon is hit by an attack.", 9)
       .attr(PostDefendTerrainChangeAbAttr, TerrainType.GRASSY),
     new Ability(Abilities.THERMAL_EXCHANGE, "Thermal Exchange (P)", "Boosts the Attack stat when the Pokémon is hit by a Fire-type move. The Pokémon also cannot be burned.", 9)
