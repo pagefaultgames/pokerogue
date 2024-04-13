@@ -2797,7 +2797,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
         }
       }
     } else
-    this.end();
+      this.end();
   }
 }
 
