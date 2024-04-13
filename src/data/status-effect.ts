@@ -51,19 +51,26 @@ export function getStatusEffectObtainText(statusEffect: StatusEffect, sourceText
   return '';
 }
 
-export function getStatusEffectActivationText(statusEffect: StatusEffect): string {
+export function getStatusEffectActivationText(statusEffect: StatusEffect, pokemon: Pokemon): string {
   switch (statusEffect) {
     case StatusEffect.POISON:
     case StatusEffect.TOXIC:
-      return ' is hurt\nby poison!';
+      // Placeholder, idk how to fix this, too new to typeScript, but it functions as normal anyway because of the pokemon && clause always returning the else value
+      if (pokemon && pokemon.getAbility().id === Abilities.POISON_HEAL) {
+        console.log("Poison Heal ability detected");
+        return ' had its HP restored!';
+      } else {
+        console.log("No Poison Heal ability detected");
+        return ' is hurt by poison!';
+      }
     case StatusEffect.PARALYSIS:
-      return ' is paralyzed!\nIt can\'t move!';
+      return ' is paralyzed! It can\'t move!';
     case StatusEffect.SLEEP:
       return ' is fast asleep.';
     case StatusEffect.FREEZE:
-      return ' is\nfrozen solid!';
+      return ' is frozen solid!';
     case StatusEffect.BURN:
-      return ' is hurt\nby its burn!';
+      return ' is hurt by its burn!';
   }
 
   return '';
