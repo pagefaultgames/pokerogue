@@ -57,6 +57,7 @@ import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameModes, gameModes } from "./game-mode";
 import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
+import i18next from './plugins/i18n';
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -173,12 +174,12 @@ export class TitlePhase extends Phase {
     const options: OptionSelectItem[] = [];
     if (loggedInUser.lastSessionSlot > -1) {
       options.push({
-        label: 'Continue',
+        label: i18next.t('menu:continue'),
         handler: () => this.loadSaveSlot(this.lastSessionData ? -1 : loggedInUser.lastSessionSlot)
       });
     }
     options.push({
-      label: 'New Game',
+      label: i18next.t('menu:newGame'),
       handler: () => {
         const setModeAndEnd = (gameMode: GameModes) => {
           this.gameMode = gameMode;
@@ -204,14 +205,14 @@ export class TitlePhase extends Phase {
             });
           }
           options.push({
-            label: 'Cancel',
+            label: i18next.t('menu:cancel'),
             handler: () => {
               this.scene.clearPhaseQueue();
               this.scene.pushPhase(new TitlePhase(this.scene));
               super.end();
             }
           });
-          this.scene.ui.showText('Select a game mode.', null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
+          this.scene.ui.showText(i18next.t("menu:selectGameMode"), null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
         } else {
           this.gameMode = GameModes.CLASSIC;
           this.scene.ui.setMode(Mode.MESSAGE);
@@ -221,7 +222,7 @@ export class TitlePhase extends Phase {
       }
     },
     {
-      label: 'Load Game',
+      label: i18next.t('menu:loadGame'),
       handler: () => this.scene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
         (slotId: integer) => {
           if (slotId === -1)
@@ -231,7 +232,7 @@ export class TitlePhase extends Phase {
       )
     },
     {
-      label: 'Daily Run (Beta)',
+      label: i18next.t('menu:dailyRun'),
       handler: () => this.initDailyRun(),
       keepOpen: true
     });
@@ -1294,7 +1295,7 @@ export class SwitchSummonPhase extends SummonPhase {
       if (!this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedPokemon.id)) {
         const batonPassModifier = this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
           && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id) as SwitchEffectTransferModifier;
-        if (batonPassModifier)
+        if (batonPassModifier && !this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier && (m as SwitchEffectTransferModifier).pokemonId === switchedPokemon.id))
           this.scene.tryTransferHeldItemModifier(batonPassModifier, switchedPokemon, false, false);
       }
     }
@@ -1568,7 +1569,17 @@ export class CommandPhase extends FieldPhase {
           const moveId = !useStruggle ? cursor > -1 ? playerPokemon.getMoveset()[cursor].moveId : Moves.NONE : Moves.STRUGGLE;
           const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
           const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
-          if (!moveId)
+          if (moveId) {
+            const move = playerPokemon.getMoveset()[cursor];
+            if (move.getName().endsWith(' (N)')) {
+              this.scene.ui.setMode(Mode.MESSAGE);
+              this.scene.ui.showText(`${move.getName().slice(0, -4)} is not yet implemented and cannot be selected.`, null, () => {
+                this.scene.ui.clearText();
+                this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+              }, null, true);
+              return;
+            }
+          } else
             turnCommand.targets = [ this.fieldIndex ];
           console.log(moveTargets, playerPokemon.name);
           if (moveTargets.targets.length <= 1 || moveTargets.multiple)
@@ -4092,16 +4103,22 @@ export class SelectModifierPhase extends BattlePhase {
       }
 
       const applyModifier = (modifier: Modifier, playSound: boolean = false) => {
-        this.scene.addModifier(modifier, false, playSound);
+        const result = this.scene.addModifier(modifier, false, playSound);
         if (cost) {
           this.scene.money -= cost;
           this.scene.updateMoneyText();
           this.scene.playSound('buy');
           (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
         } else {
-          this.scene.ui.clearText();
-          this.scene.ui.setMode(Mode.MESSAGE);
-          super.end();
+          const doEnd = () => {
+            this.scene.ui.clearText();
+            this.scene.ui.setMode(Mode.MESSAGE);
+            super.end();
+          };
+          if (result instanceof Promise)
+            result.then(() => doEnd());
+          else
+            doEnd();
         }
       };
 

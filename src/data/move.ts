@@ -12,7 +12,7 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { ProtectAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr } from "./ability";
+import { ProtectAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
@@ -810,6 +810,19 @@ export class HitHealAttr extends MoveEffectAttr {
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     return Math.floor(Math.max((1 - user.getHpRatio()) - 0.33, 0) * ((move.power / 5) / 4));
+  }
+}
+
+export class StrengthSapHealAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, MoveEffectTrigger.HIT);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
+      target.stats[Stat.ATK] * (Math.max(2, 2 + target.summonData.battleStats[BattleStat.ATK]) / Math.max(2, 2 - target.summonData.battleStats[BattleStat.ATK])),
+      getPokemonMessage(user, ` regained\nhealth!`), false, true));
+    return true;
   }
 }
 
@@ -2031,6 +2044,27 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
+export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const type = (args[0] as Utils.IntegerHolder);
+
+    const iv_val = Math.floor(((user.ivs[Stat.HP] & 1)
+      +(user.ivs[Stat.ATK] & 1) * 2
+      +(user.ivs[Stat.DEF] & 1) * 4
+      +(user.ivs[Stat.SPD] & 1) * 8
+      +(user.ivs[Stat.SPATK] & 1) * 16
+      +(user.ivs[Stat.SPDEF] & 1) * 32) * 15/63);
+    
+    type.value = [
+      Type.FIGHTING, Type.FLYING, Type.POISON, Type.GROUND,
+      Type.ROCK, Type.BUG, Type.GHOST, Type.STEEL,
+      Type.FIRE, Type.WATER, Type.GRASS, Type.ELECTRIC,
+      Type.PSYCHIC, Type.ICE, Type.DRAGON, Type.DARK][iv_val];
+
+    return true;
+  }
+}
+
 export class VariableMoveTypeMultiplierAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return false;
@@ -2266,6 +2300,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.PROTECTED:
       case BattlerTagType.FLYING:
       case BattlerTagType.CRIT_BOOST:
+      case BattlerTagType.ALWAYS_CRIT:
         return 5;
     }
   }
@@ -2375,6 +2410,21 @@ export class EndureAttr extends ProtectAttr {
 export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.IGNORE_ACCURACY, true, false, 2);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    user.scene.queueMessage(getPokemonMessage(user, ` took aim\nat ${target.name}!`));
+
+    return true;
+  }
+}
+
+export class AlwaysCritsAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.ALWAYS_CRIT, true, false, 2);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2500,61 +2550,72 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
 export class ForceSwitchOutAttr extends MoveEffectAttr {
   private user: boolean;
   private batonPass: boolean;
-
+  
   constructor(user?: boolean, batonPass?: boolean) {
     super(false, MoveEffectTrigger.HIT, true);
-
     this.user = !!user;
     this.batonPass = !!batonPass;
   }
-
+  
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-      if (move.category !== MoveCategory.STATUS && !this.getSwitchOutCondition()(user, target, move))
-        return resolve(false);
-      const switchOutTarget = this.user ? user : target;
-      if (switchOutTarget instanceof PlayerPokemon) {
-        if (switchOutTarget.hp) {
-          applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
-          (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true));
-        }
-        else
-          resolve(false);
-        return;
-      } else if (user.scene.currentBattle.battleType) {
-        switchOutTarget.resetTurnData();
-        switchOutTarget.resetSummonData();
-        switchOutTarget.hideInfo();
-        switchOutTarget.setVisible(false);
-        switchOutTarget.scene.field.remove(switchOutTarget);
-        user.scene.triggerPokemonFormChange(switchOutTarget, SpeciesFormChangeActiveTrigger, true);
-
-        if (switchOutTarget.hp)
-          user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot), false, this.batonPass, false));
-      } else {
-        switchOutTarget.setVisible(false);
-        
-        if (switchOutTarget.hp) {
-          switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
-          switchOutTarget.scene.field.remove(switchOutTarget);
-          user.scene.queueMessage(getPokemonMessage(switchOutTarget, ' fled!'), null, true, 500);
-        }
-
-        if (!switchOutTarget.getAlly()?.isActive(true)) {
-          user.scene.clearEnemyHeldItemModifiers();
-
-          if (switchOutTarget.hp) {
-            user.scene.pushPhase(new BattleEndPhase(user.scene));
-            user.scene.pushPhase(new NewBattlePhase(user.scene));
-          }
-        }
-      }
-
-      resolve(true);
-    });
-  }
-
-  getCondition(): MoveConditionFunc {
+  	// Check if the move category is not STATUS or if the switch out condition is not met
+    if (move.category !== MoveCategory.STATUS && !this.getSwitchOutCondition()(user, target, move)) {
+  	  //Apply effects before switch out i.e. poison point, flame body, etc
+      applyPostDefendAbAttrs(PostDefendContactApplyStatusEffectAbAttr, target, user, new PokemonMove(move.id), null);
+      return resolve(false);
+    }
+  
+  	// Move the switch out logic inside the conditional block
+  	// This ensures that the switch out only happens when the conditions are met
+	  const switchOutTarget = this.user ? user : target;
+	  if (switchOutTarget instanceof PlayerPokemon) { 
+	  	if (switchOutTarget.hp) {
+	  	  applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
+	  	  (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true));
+	  	}
+	  	else {
+	  	  resolve(false);
+	  	}
+	  	return;
+	  }
+	  else if (user.scene.currentBattle.battleType) {
+	  	// Switch out logic for the battle type
+	  	switchOutTarget.resetTurnData();
+	  	switchOutTarget.resetSummonData();
+	  	switchOutTarget.hideInfo();
+	  	switchOutTarget.setVisible(false);
+	  	switchOutTarget.scene.field.remove(switchOutTarget);
+	  	user.scene.triggerPokemonFormChange(switchOutTarget, SpeciesFormChangeActiveTrigger, true);
+	  
+	  	if (switchOutTarget.hp)
+	  	user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot), false, this.batonPass, false));
+	  }
+	  else { 
+	    // Switch out logic for everything else
+	  	switchOutTarget.setVisible(false);
+	  
+	  	if (switchOutTarget.hp) {
+	  	  switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
+	  	  switchOutTarget.scene.field.remove(switchOutTarget);
+	  	  user.scene.queueMessage(getPokemonMessage(switchOutTarget, ' fled!'), null, true, 500);
+	  	}
+	  
+	  	if (!switchOutTarget.getAlly()?.isActive(true)) {
+	  	  user.scene.clearEnemyHeldItemModifiers();
+		  
+	  	  if (switchOutTarget.hp) {
+	  	  	user.scene.pushPhase(new BattleEndPhase(user.scene));
+	  	  	user.scene.pushPhase(new NewBattlePhase(user.scene));
+	  	  }
+	  	}
+	  }
+	  
+	  resolve(true);
+	  });
+	}
+  
+	getCondition(): MoveConditionFunc {
     return (user, target, move) => move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move);
   }
 
@@ -3450,7 +3511,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.REST, "Rest", Type.PSYCHIC, -1, 5, "The user goes to sleep for two turns. This fully restores the user's HP and heals any status conditions.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
-      .condition((user, target, move) => user.getHpRatio() < 1 && user.canSetStatus(StatusEffect.SLEEP, true))
+      .condition((user, target, move) => user.getHpRatio() < 1 && user.canSetStatus(StatusEffect.SLEEP, true, true))
       .triageMove(),
     new AttackMove(Moves.ROCK_SLIDE, "Rock Slide", Type.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, "Large boulders are hurled at opposing Pokémon to inflict damage. This may also make the opposing Pokémon flinch.", 30, 0, 1)
       .attr(FlinchAttr)
@@ -3669,7 +3730,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.MOONLIGHT, "Moonlight", Type.FAIRY, -1, 5, "The user restores its own HP. The amount of HP regained varies with the weather.", -1, 0, 2)
       .attr(PlantHealAttr)
       .triageMove(),
-    new AttackMove(Moves.HIDDEN_POWER, "Hidden Power (P)", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, "A unique attack that varies in type depending on the Pokémon using it.", -1, 0, 2),
+    new AttackMove(Moves.HIDDEN_POWER, "Hidden Power", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, "A unique attack that varies in type depending on the Pokémon using it.", -1, 0, 2)
+      .attr(HiddenPowerTypeAttr),
     new AttackMove(Moves.CROSS_CHOP, "Cross Chop", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 80, 5, "The user delivers a double chop with its forearms crossed. Critical hits land more easily.", -1, 0, 2)
       .attr(HighCritAttr),
     new AttackMove(Moves.TWISTER, "Twister", Type.DRAGON, MoveCategory.SPECIAL, 40, 100, 20, "The user whips up a vicious tornado to tear at opposing Pokémon. This may also make them flinch.", 20, 0, 2)
@@ -4479,7 +4541,7 @@ export function initMoves() {
     new StatusMove(Moves.TOPSY_TURVY, "Topsy-Turvy", Type.DARK, -1, 20, "All stat changes affecting the target turn topsy-turvy and become the opposite of what they were.", -1, 0, 6)
       .attr(InvertStatsAttr),
     new AttackMove(Moves.DRAINING_KISS, "Draining Kiss", Type.FAIRY, MoveCategory.SPECIAL, 50, 100, 10, "The user steals the target's HP with a kiss. The user's HP is restored by over half of the damage taken by the target.", -1, 0, 6)
-      .attr(HitHealAttr)
+      .attr(HitHealAttr, 0.75)
       .makesContact()
       .triageMove(),
     new StatusMove(Moves.CRAFTY_SHIELD, "Crafty Shield (N)", Type.FAIRY, -1, 10, "The user protects itself and its allies from status moves with a mysterious power. This does not stop moves that do damage.", -1, 3, 6)
@@ -4653,8 +4715,10 @@ export function initMoves() {
       .attr(HealAttr, 0.5, true, false)
       .triageMove(),
     new AttackMove(Moves.HIGH_HORSEPOWER, "High Horsepower", Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, "The user fiercely attacks the target using its entire body.", -1, 0, 7),
-    new StatusMove(Moves.STRENGTH_SAP, "Strength Sap (P)", Type.GRASS, 100, 10, "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat.", 100, 0, 7)
+    new StatusMove(Moves.STRENGTH_SAP, "Strength Sap", Type.GRASS, 100, 10, "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat.", 100, 0, 7)
+      .attr(StrengthSapHealAttr)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
+      .condition((user, target, move) => target.summonData.battleStats[BattleStat.ATK] > -6)
       .triageMove(),
     new AttackMove(Moves.SOLAR_BLADE, "Solar Blade", Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, "In this two-turn attack, the user gathers light and fills a blade with the light's energy, attacking the target on the next turn.", -1, 0, 7)
       .attr(SunlightChargeAttr, ChargeAnim.SOLAR_BLADE_CHARGING, "is glowing!")
@@ -4666,7 +4730,8 @@ export function initMoves() {
     new StatusMove(Moves.TOXIC_THREAD, "Toxic Thread", Type.POISON, 100, 20, "The user shoots poisonous threads to poison the target and lower the target's Speed stat.", 100, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .attr(StatChangeAttr, BattleStat.SPD, -1),
-    new SelfStatusMove(Moves.LASER_FOCUS, "Laser Focus (N)", Type.NORMAL, -1, 30, "The user concentrates intensely. The attack on the next turn always results in a critical hit.", -1, 0, 7),
+    new SelfStatusMove(Moves.LASER_FOCUS, "Laser Focus", Type.NORMAL, -1, 30, "The user concentrates intensely. The attack on the next turn always results in a critical hit.", -1, 0, 7)
+      .attr(AddBattlerTagAttr, BattlerTagType.ALWAYS_CRIT, true, false),
     new StatusMove(Moves.GEAR_UP, "Gear Up", Type.STEEL, -1, 20, "The user engages its gears to raise the Attack and Sp. Atk stats of ally Pokémon with the Plus or Minus Ability.", -1, 0, 7)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, false, (user, target, move) => [ Abilities.PLUS, Abilities.MINUS ].includes(target.getAbility().id) || (target.canApplyPassive() && [ Abilities.PLUS, Abilities.MINUS ].includes(target.getPassiveAbility().id)))
       .target(MoveTarget.USER_AND_ALLIES)
@@ -5156,7 +5221,11 @@ export function initMoves() {
     new AttackMove(Moves.AXE_KICK, "Axe Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 120, 90, 10, "The user attacks by kicking up into the air and slamming its heel down upon the target. This may also confuse the target. If it misses, the user takes damage instead.", 30, 0, 9)
       .attr(MissEffectAttr, halveHpMissEffectFunc)
       .attr(ConfuseAttr),
-    new AttackMove(Moves.LAST_RESPECTS, "Last Respects (P)", Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, "The user attacks to avenge its allies. The more defeated allies there are in the user's party, the greater the move's power.", -1, 0, 9)
+    new AttackMove(Moves.LAST_RESPECTS, "Last Respects", Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, "The user attacks to avenge its allies. The more defeated allies there are in the user's party, the greater the move's power.", -1, 0, 9)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => {
+          return user.scene.getParty().reduce((acc, pokemonInParty) => acc + (pokemonInParty.status?.effect == StatusEffect.FAINT ? 1 : 0),
+          1,)
+        })
       .makesContact(false),
     new AttackMove(Moves.LUMINA_CRASH, "Lumina Crash", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, "The user attacks by unleashing a peculiar light that even affects the mind. This also harshly lowers the target's Sp. Def stat.", 100, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2),
