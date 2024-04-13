@@ -2760,44 +2760,43 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
       if (!cancelled.value) {
         this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect)));
 
-        let healing: integer = 0;
-        let damage: integer = 0;
+        let netEffect = 0;  // This variable now handles both healing and damage
+        const isHealing = pokemon.getAbility().id === Abilities.POISON_HEAL;
 
-        // Determine the amount of healing or damage based on the status effect
         switch (pokemon.status.effect) {
           case StatusEffect.POISON:
-            // If the Pokémon has the ability Poison Heal, heal instead of taking damage
-            if (pokemon.getAbility().id === Abilities.POISON_HEAL)
-              healing = Math.max(pokemon.getMaxHp() >> 3, 1);
-            else // Otherwise, take damage as usual
-              damage = Math.max(pokemon.getMaxHp() >> 3, 1);
+          case StatusEffect.TOXIC:
+            if (isHealing) {
+              netEffect = Math.max(pokemon.getMaxHp() >> 3, 1);  // Healing logic
+            } else {
+              // Toxic damage increases over time, Poison does not
+              netEffect = (pokemon.status.effect === StatusEffect.TOXIC) ?
+                Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1) : // Applies if Toxic
+                Math.max(pokemon.getMaxHp() >> 3, 1);  // Damage logic for Poison otherwise
+            }
             break;
-          case StatusEffect.TOXIC: // Follow same logic from Poison, but with Toxic's damage formula
-            if (pokemon.getAbility().id === Abilities.POISON_HEAL)
-              healing = Math.max(pokemon.getMaxHp() >> 3, 1);
-            else
-              damage = Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1);
-            break;
-          case StatusEffect.BURN: // For the burn status effect, always take damage
-            damage = Math.max(pokemon.getMaxHp() >> 4, 1);
+          case StatusEffect.BURN:
+            netEffect = Math.max(pokemon.getMaxHp() >> 4, 1);  // Burn always causes damage
             break;
         }
-        // Apply that healing or damage to the Pokémon's HP
-        if (healing > 0) {
-          this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.heal(healing), HitResult.HEAL);
-          new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => this.end());
-          pokemon.updateInfo();
-        } else if (damage > 0) {
-          this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage));
-          new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => this.end());
+
+        if (netEffect > 0) {
+          if (isHealing) {
+            this.scene.damageNumberHandler.add(pokemon, pokemon.heal(netEffect), HitResult.HEAL);
+          } else {
+            this.scene.damageNumberHandler.add(pokemon, pokemon.damage(netEffect));
+          }
+
+          const animType = CommonAnim.POISON + (pokemon.status.effect - 1);
+          new CommonBattleAnim(animType, pokemon).play(this.scene, () => this.end());
           pokemon.updateInfo();
         } else {
-          // End the phase if the healing or damage is cancelled
-          this.end();
+          this.end();  // End the phase if no net effect to apply
         }
       }
-    } else
+    } else {
       this.end();
+    }
   }
 }
 
