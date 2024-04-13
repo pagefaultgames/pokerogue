@@ -1407,7 +1407,7 @@ export function initSpecies() {
       new PokemonForm("Origin Forme", "origin", Type.WATER, Type.DRAGON, 6.3, 659, Abilities.PRESSURE, Abilities.NONE, Abilities.TELEPATHY, 680, 90, 100, 100, 150, 120, 120, 3, 0, 340),
     ),
     new PokemonSpecies(Species.HEATRAN, "Heatran", 4, true, false, false, "Lava Dome Pokémon", Type.FIRE, Type.STEEL, 1.7, 430, Abilities.FLASH_FIRE, Abilities.NONE, Abilities.FLAME_BODY, 600, 91, 90, 106, 130, 106, 77, 3, 100, 300, GrowthRate.SLOW, 50, false),
-    new PokemonSpecies(Species.REGIGIGAS, "Regigigas", 4, false, true, false, "Colossal Pokémon", Type.NORMAL, null, 3.7, 420, Abilities.SLOW_START, Abilities.NONE, Abilities.NONE, 670, 110, 160, 110, 80, 110, 100, 3, 0, 335, GrowthRate.SLOW, null, false),
+    new PokemonSpecies(Species.REGIGIGAS, "Regigigas", 4, false, true, false, "Colossal Pokémon", Type.NORMAL, null, 3.7, 420, Abilities.SLOW_START, Abilities.NONE, Abilities.NORMALIZE, 670, 110, 160, 110, 80, 110, 100, 3, 0, 335, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.GIRATINA, "Giratina", 4, false, true, false, "Renegade Pokémon", Type.GHOST, Type.DRAGON, 4.5, 750, Abilities.PRESSURE, Abilities.NONE, Abilities.TELEPATHY, 680, 150, 100, 120, 100, 120, 90, 3, 0, 340, GrowthRate.SLOW, null, false, true,
       new PokemonForm("Altered Forme", "altered", Type.GHOST, Type.DRAGON, 4.5, 750, Abilities.PRESSURE, Abilities.NONE, Abilities.TELEPATHY, 680, 150, 100, 120, 100, 120, 90, 3, 0, 340),
       new PokemonForm("Origin Forme", "origin", Type.GHOST, Type.DRAGON, 6.9, 650, Abilities.LEVITATE, Abilities.NONE, Abilities.NONE, 680, 150, 120, 100, 120, 100, 90, 3, 0, 340),
