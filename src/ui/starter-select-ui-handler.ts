@@ -342,7 +342,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.hiddenAbilityIcons = new Array(81).fill(null).map((_, i) => {
       const x = (i % 9) * 18;
       const y = Math.floor(i / 9) * 18;
-      const ret = this.scene.add.image(x + 163, y + 15, 'ha_star');
+      const ret = this.scene.add.image(x + 163, y + 16, 'ha_capsule');
       ret.setOrigin(0, 0);
       ret.setScale(0.5);
       ret.setVisible(false);
