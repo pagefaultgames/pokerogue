@@ -39,6 +39,11 @@
         );
       });
     }
+
+    window.addEventListener('beforeinstallprompt', e => {
+      // Prevent invasive install prompt (users are still able to install as an app)
+      e.preventDefault();
+    });
   </script>
 </head>
 
