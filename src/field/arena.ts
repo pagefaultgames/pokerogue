@@ -518,13 +518,22 @@ export class Arena {
   }
 
   removeTag(tagType: ArenaTagType, side: ArenaTagSide = ArenaTagSide.BOTH): boolean {
-    const tags = this.tags;
-    const tag = tags.find(t => t.tagType === tagType && t.side === side);
-    if (tag) {
-      tag.onRemove(this);
-      tags.splice(tags.indexOf(tag), 1);
-    }
-    return !!tag;
+    const tags = this.tags
+    if(side == ArenaTagSide.BOTH){
+        tags.filter(t => (t.tagType == tagType)).forEach(t => {
+          t.onRemove(this);
+          tags.splice(tags.indexOf(t), 1);
+        })
+        return true;
+    } 
+    else {
+      const tag = tags.find(t => t.tagType === tagType && t.side === side);
+      if (tag) {
+        tag.onRemove(this);
+        tags.splice(tags.indexOf(tag), 1);
+      }
+      return !!tag;
+    } 
   }
 
   removeAllTags(): void {
