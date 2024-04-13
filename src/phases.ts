@@ -2759,27 +2759,45 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
 
       if (!cancelled.value) {
         this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect)));
+
+        let healing: integer = 0;
         let damage: integer = 0;
+
+        // Determine the amount of healing or damage based on the status effect
         switch (pokemon.status.effect) {
           case StatusEffect.POISON:
-            damage = Math.max(pokemon.getMaxHp() >> 3, 1);
+            // If the Pokémon has the ability Poison Heal, heal instead of taking damage
+            if (pokemon.getAbility().id === Abilities.POISON_HEAL)
+              healing = Math.max(pokemon.getMaxHp() >> 3, 1);
+            else // Otherwise, take damage as usual
+              damage = Math.max(pokemon.getMaxHp() >> 3, 1);
             break;
-          case StatusEffect.TOXIC:
-            damage = Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1);
+          case StatusEffect.TOXIC: // Follow same logic from Poison, but with Toxic's damage formula
+            if (pokemon.getAbility().id === Abilities.POISON_HEAL)
+              healing = Math.max(pokemon.getMaxHp() >> 3, 1);
+            else
+              damage = Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1);
             break;
-          case StatusEffect.BURN:
+          case StatusEffect.BURN: // For the burn status effect, always take damage
             damage = Math.max(pokemon.getMaxHp() >> 4, 1);
             break;
         }
-        if (damage) {
-          this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage));
+        // Apply that healing or damage to the Pokémon's HP
+        if (healing > 0) {
+          this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.heal(healing), HitResult.HEAL);
+          new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => this.end());
           pokemon.updateInfo();
+        } else if (damage > 0) {
+          this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage));
+          new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => this.end());
+          pokemon.updateInfo();
+        } else {
+          // End the phase if the healing or damage is cancelled
+          this.end();
         }
-        new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => this.end());
-      } else
-        this.end();
+      }
     } else
-      this.end();
+    this.end();
   }
 }
 
