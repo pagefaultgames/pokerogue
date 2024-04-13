@@ -25,6 +25,7 @@ import { speciesEggMoves } from "../data/egg-moves";
 import { TitlePhase } from "../phases";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
+import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -874,13 +875,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               yOffset: 47
             });
           };
-          options.push({
-            label: 'Use Candies',
-            handler: () => {
-              ui.setMode(Mode.STARTER_SELECT).then(() => showUseCandies());
-              return true;
-            }
-          });
+          if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
+            options.push({
+              label: 'Use Candies',
+              handler: () => {
+                ui.setMode(Mode.STARTER_SELECT).then(() => showUseCandies());
+                return true;
+              }
+            });
+          }
           options.push({
             label: 'Cancel',
             handler: () => {
