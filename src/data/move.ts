@@ -2957,7 +2957,7 @@ export class AbilityCopyAttr extends MoveEffectAttr {
 
     user.scene.queueMessage(getPokemonMessage(user, ` copied the `) + getPokemonMessage(target, `'s\n${allAbilities[target.getAbility().id].name}!`));
     
-    if (this.copyToPartner && user.scene.currentBattle?.double) {
+    if (this.copyToPartner && user.scene.currentBattle?.double && user.getAlly().hp) {
       user.getAlly().summonData.ability = target.getAbility().id;
       user.getAlly().scene.queueMessage(getPokemonMessage(user.getAlly(), ` copied the `) + getPokemonMessage(target, `'s\n${allAbilities[target.getAbility().id].name}!`));
     }
@@ -2969,7 +2969,7 @@ export class AbilityCopyAttr extends MoveEffectAttr {
     return (user, target, move) => {
       let ret = !target.getAbility().hasAttr(UncopiableAbilityAbAttr) && !user.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
       if (this.copyToPartner && user.scene.currentBattle?.double)
-        ret = ret && !user.getAlly().getAbility().hasAttr(UnsuppressableAbilityAbAttr);
+        ret = ret && (!user.getAlly().hp || !user.getAlly().getAbility().hasAttr(UnsuppressableAbilityAbAttr));
       else
         ret = ret && user.getAbility().id !== target.getAbility().id;
       return ret;
