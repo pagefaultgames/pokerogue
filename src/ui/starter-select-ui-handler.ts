@@ -222,52 +222,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonGrowthRateText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGrowthRateText);
 
-    this.type1Icon = this.scene.add.sprite(8, 98, 'types');
-    this.type1Icon.setScale(0.5);
-    this.type1Icon.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.type1Icon);
-
-    this.type2Icon = this.scene.add.sprite(26, 98, 'types');
-    this.type2Icon.setScale(0.5);
-    this.type2Icon.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.type2Icon);
-
-    this.pokemonCandyIcon = this.scene.add.sprite(1, 12, 'items', 'candy');
-    this.pokemonCandyIcon.setScale(0.5);
-    this.pokemonCandyIcon.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.pokemonCandyIcon);
-
-    this.pokemonCandyOverlayIcon = this.scene.add.sprite(1, 12, 'items', 'candy_overlay');
-    this.pokemonCandyOverlayIcon.setScale(0.5);
-    this.pokemonCandyOverlayIcon.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.pokemonCandyOverlayIcon);
-
-    this.pokemonCandyCountText = addTextObject(this.scene, 14, 18, 'x0', TextStyle.WINDOW_ALT, { fontSize: '56px' });
-    this.pokemonCandyCountText.setOrigin(0, 0);
-    this.starterSelectContainer.add(this.pokemonCandyCountText);
-
-    this.pokemonCaughtHatchedContainer = this.scene.add.container(2, 25);
-    this.pokemonCaughtHatchedContainer.setScale(0.5);
-    this.starterSelectContainer.add(this.pokemonCaughtHatchedContainer);
-
-    const pokemonCaughtIcon = this.scene.add.sprite(1, 0, 'items', 'pb');
-    pokemonCaughtIcon.setOrigin(0, 0);
-    pokemonCaughtIcon.setScale(0.75);
-    this.pokemonCaughtHatchedContainer.add(pokemonCaughtIcon);
-
-    this.pokemonCaughtCountText = addTextObject(this.scene, 24, 4, '0', TextStyle.SUMMARY_ALT);
-    this.pokemonCaughtCountText.setOrigin(0, 0);
-    this.pokemonCaughtHatchedContainer.add(this.pokemonCaughtCountText);
-
-    const pokemonHatchedIcon = this.scene.add.sprite(1, 14, 'items', 'mystery_egg');
-    pokemonHatchedIcon.setOrigin(0, 0);
-    pokemonHatchedIcon.setScale(0.75);
-    this.pokemonCaughtHatchedContainer.add(pokemonHatchedIcon);
-
-    this.pokemonHatchedCountText = addTextObject(this.scene, 24, 19, '0', TextStyle.SUMMARY_ALT);
-    this.pokemonHatchedCountText.setOrigin(0, 0);
-    this.pokemonCaughtHatchedContainer.add(this.pokemonHatchedCountText);
-
     this.pokemonGenderText = addTextObject(this.scene, 96, 112, '', TextStyle.SUMMARY_ALT);
     this.pokemonGenderText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGenderText);
@@ -429,6 +383,52 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.pokemonSprite = this.scene.add.sprite(53, 63, `pkmn__sub`);
     this.starterSelectContainer.add(this.pokemonSprite);
+
+    this.type1Icon = this.scene.add.sprite(8, 98, 'types');
+    this.type1Icon.setScale(0.5);
+    this.type1Icon.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.type1Icon);
+
+    this.type2Icon = this.scene.add.sprite(26, 98, 'types');
+    this.type2Icon.setScale(0.5);
+    this.type2Icon.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.type2Icon);
+
+    this.pokemonCandyIcon = this.scene.add.sprite(1, 12, 'items', 'candy');
+    this.pokemonCandyIcon.setScale(0.5);
+    this.pokemonCandyIcon.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.pokemonCandyIcon);
+
+    this.pokemonCandyOverlayIcon = this.scene.add.sprite(1, 12, 'items', 'candy_overlay');
+    this.pokemonCandyOverlayIcon.setScale(0.5);
+    this.pokemonCandyOverlayIcon.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.pokemonCandyOverlayIcon);
+
+    this.pokemonCandyCountText = addTextObject(this.scene, 14, 18, 'x0', TextStyle.WINDOW_ALT, { fontSize: '56px' });
+    this.pokemonCandyCountText.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.pokemonCandyCountText);
+
+    this.pokemonCaughtHatchedContainer = this.scene.add.container(2, 25);
+    this.pokemonCaughtHatchedContainer.setScale(0.5);
+    this.starterSelectContainer.add(this.pokemonCaughtHatchedContainer);
+
+    const pokemonCaughtIcon = this.scene.add.sprite(1, 0, 'items', 'pb');
+    pokemonCaughtIcon.setOrigin(0, 0);
+    pokemonCaughtIcon.setScale(0.75);
+    this.pokemonCaughtHatchedContainer.add(pokemonCaughtIcon);
+
+    this.pokemonCaughtCountText = addTextObject(this.scene, 24, 4, '0', TextStyle.SUMMARY_ALT);
+    this.pokemonCaughtCountText.setOrigin(0, 0);
+    this.pokemonCaughtHatchedContainer.add(this.pokemonCaughtCountText);
+
+    const pokemonHatchedIcon = this.scene.add.sprite(1, 14, 'items', 'mystery_egg');
+    pokemonHatchedIcon.setOrigin(0, 0);
+    pokemonHatchedIcon.setScale(0.75);
+    this.pokemonCaughtHatchedContainer.add(pokemonHatchedIcon);
+
+    this.pokemonHatchedCountText = addTextObject(this.scene, 24, 19, '0', TextStyle.SUMMARY_ALT);
+    this.pokemonHatchedCountText.setOrigin(0, 0);
+    this.pokemonCaughtHatchedContainer.add(this.pokemonHatchedCountText);
 
     this.pokemonMovesContainer = this.scene.add.container(102, 16);
     this.pokemonMovesContainer.setScale(0.5);
