@@ -2247,7 +2247,7 @@ export function initAbilities() {
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 1.5)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
     new Ability(Abilities.QUICK_FEET, "Quick Feet", "Boosts the Speed stat if the Pokémon has a status condition.", 4)
-      .conditionalAttr(pokemon => pokemon.status.effect === StatusEffect.PARALYSIS, BattleStatMultiplierAbAttr, BattleStat.SPD, 4)
+      .conditionalAttr(pokemon => pokemon.status.effect === StatusEffect.PARALYSIS, BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.SPD, 1.5),
     new Ability(Abilities.NORMALIZE, "Normalize", "All the Pokémon's moves become Normal type. The power of those moves is boosted a little.", 4)
       .attr(MoveTypeChangeAttr, Type.NORMAL, 1.2, (user, target, move) => move.id !== Moves.HIDDEN_POWER && move.id !== Moves.WEATHER_BALL && 
