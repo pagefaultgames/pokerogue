@@ -630,19 +630,10 @@ export class MoveTypeChangeAttr extends PreAttackAbAttr {
   }
 
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
-    console.log("LOOOK HERE")
-    console.log(this.condition(pokemon, defender, move.getMove()))
     if (this.condition(pokemon, defender, move.getMove())) {
-      console.log("START HERE");
-      console.log(args);
-      console.log("blah");
       const type = (args[0] as Utils.IntegerHolder);
       type.value = this.newType;
-      console.log("blah3");
       (args[1] as Utils.NumberHolder).value *= this.powerMultiplier;
-      console.log("blah4)");
-      console.log(args);
-      console.log("blah2");
       return true;
     }
 
