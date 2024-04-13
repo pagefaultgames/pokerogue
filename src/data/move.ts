@@ -2513,7 +2513,6 @@ export class RemoveArenaTagAttr extends MoveEffectAttr {
     this.tagTypes = tagTypes;
     this.selfSideTarget = selfSideTarget;
     this.side = side;
-
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2521,15 +2520,12 @@ export class RemoveArenaTagAttr extends MoveEffectAttr {
       return false;
     if (move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) {
       for (let tagType of this.tagTypes)
-        if (this.side != ArenaTagSide.BOTH)
-          {
+        if (this.side != ArenaTagSide.BOTH){
             user.scene.arena.removeTag(tagType, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
-          }
-        else
-          {
-            user.scene.arena.removeTag(tagType, ArenaTagSide.PLAYER);
-            user.scene.arena.removeTag(tagType, ArenaTagSide.ENEMY);
-          } 
+        } 
+	else {
+            user.scene.arena.removeTag(tagType, ArenaTagSide.BOTH);
+        } 
       return true;
     }
     return false;
