@@ -2121,15 +2121,30 @@ export class MissEffectAttr extends MoveAttr {
   }
 }
 
-const halveHpMissEffectFunc = (user: Pokemon, move: Move) => {
+export class NoEffectAttr extends MoveAttr {
+  private noEffectFunc: UserMoveConditionFunc;
+
+  constructor(noEffectFunc: UserMoveConditionFunc) {
+    super();
+
+    this.noEffectFunc = noEffectFunc;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    this.noEffectFunc(user, move);
+    return true;
+  }
+}
+
+const crashDamageFunc = (user: Pokemon, move: Move) => {
   const cancelled = new Utils.BooleanHolder(false);
   applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
   if (cancelled.value)
     return false;
   
-  const damage = user.damage(Math.floor(user.getMaxHp() / 2));
-  if (damage)
-    user.scene.damageNumberHandler.add(user, damage, HitResult.OTHER);
+  user.damageAndUpdate(Math.floor(user.getMaxHp() / 2), HitResult.OTHER, false, true);
+  user.scene.queueMessage(getPokemonMessage(user, ' kept going\nand crashed!'));
+  
   return true;
 };
 
@@ -3142,7 +3157,8 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.MEGA_KICK, "Mega Kick", Type.NORMAL, MoveCategory.PHYSICAL, 120, 75, 5, "The target is attacked by a kick launched with muscle-packed power.", -1, 0, 1),
     new AttackMove(Moves.JUMP_KICK, "Jump Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, "The user jumps up high, then strikes with a kick. If the kick misses, the user hurts itself.", -1, 0, 1)
-      .attr(MissEffectAttr, halveHpMissEffectFunc)
+      .attr(MissEffectAttr, crashDamageFunc)
+      .attr(NoEffectAttr, crashDamageFunc)
       .condition(failOnGravityCondition),
     new AttackMove(Moves.ROLLING_KICK, "Rolling Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 85, 15, "The user lashes out with a quick, spinning kick. This may also make the target flinch.", 30, 0, 1)
       .attr(FlinchAttr),
@@ -3417,7 +3433,8 @@ export function initMoves() {
       .attr(HealAttr, 0.5)
       .triageMove(),
     new AttackMove(Moves.HIGH_JUMP_KICK, "High Jump Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 130, 90, 10, "The target is attacked with a knee kick from a jump. If it misses, the user is hurt instead.", -1, 0, 1)
-      .attr(MissEffectAttr, halveHpMissEffectFunc)
+      .attr(MissEffectAttr, crashDamageFunc)
+      .attr(NoEffectAttr, crashDamageFunc)
       .condition(failOnGravityCondition),
     new StatusMove(Moves.GLARE, "Glare", Type.NORMAL, 100, 30, "The user intimidates the target with the pattern on its belly to cause paralysis.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
@@ -5183,7 +5200,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.SILK_TRAP, "Silk Trap", Type.BUG, -1, 10, "The user spins a silken trap, protecting itself from damage while lowering the Speed stat of any attacker that makes direct contact.", -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP),
     new AttackMove(Moves.AXE_KICK, "Axe Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 120, 90, 10, "The user attacks by kicking up into the air and slamming its heel down upon the target. This may also confuse the target. If it misses, the user takes damage instead.", 30, 0, 9)
-      .attr(MissEffectAttr, halveHpMissEffectFunc)
+      .attr(MissEffectAttr, crashDamageFunc)
+      .attr(NoEffectAttr, crashDamageFunc)
       .attr(ConfuseAttr),
     new AttackMove(Moves.LAST_RESPECTS, "Last Respects", Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, "The user attacks to avenge its allies. The more defeated allies there are in the user's party, the greater the move's power.", -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, target, move) => {
@@ -5339,7 +5357,8 @@ export function initMoves() {
     new AttackMove(Moves.ALLURING_VOICE, "Alluring Voice (P)", Type.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, "The user attacks the target using its angelic voice. This also confuses the target if its stats have been boosted during the turn.", -1, 0, 9),
     new AttackMove(Moves.TEMPER_FLARE, "Temper Flare (P)", Type.FIRE, MoveCategory.PHYSICAL, 75, 100, 10, "Spurred by desperation, the user attacks the target. This move's power is doubled if the user's previous move failed.", -1, 0, 9),
     new AttackMove(Moves.SUPERCELL_SLAM, "Supercell Slam", Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 95, 15, "The user electrifies its body and drops onto the target to inflict damage. If this move misses, the user takes damage instead.", -1, 0, 9)
-      .attr(MissEffectAttr, halveHpMissEffectFunc),
+      .attr(MissEffectAttr, crashDamageFunc)
+      .attr(NoEffectAttr, crashDamageFunc),
     new AttackMove(Moves.PSYCHIC_NOISE, "Psychic Noise (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 75, 100, 10, "The user attacks the target with unpleasant sound waves. For two turns, the target is prevented from recovering HP through moves, Abilities, or held items.", -1, 0, 9)
       .soundBased(),
     new AttackMove(Moves.UPPER_HAND, "Upper Hand (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, "The user reacts to the target's movement and strikes with the heel of its palm, making the target flinch. This move fails if the target is not readying a priority move.", -1, 3, 9),
