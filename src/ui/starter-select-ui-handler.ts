@@ -1480,7 +1480,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   updateStarterValueLabel(cursor: integer): void {
-    const speciesId = this.genSpecies[this.genCursor][cursor].speciesId;
+    const speciesId = this.genSpecies[this.getGenCursorWithScroll()][cursor].speciesId;
     const baseStarterValue = speciesStarters[speciesId];
     const starterValue = this.scene.gameData.getSpeciesStarterValue(speciesId);
     let valueStr = starterValue.toString();
