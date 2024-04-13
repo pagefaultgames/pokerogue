@@ -44,7 +44,7 @@ import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
-import { GameDataType, PlayerGender, SessionSaveData } from "./system/game-data";
+import { DexAttr, GameDataType, PlayerGender, SessionSaveData } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue } from "./data/dialogue";
@@ -175,7 +175,10 @@ export class TitlePhase extends Phase {
     if (loggedInUser.lastSessionSlot > -1) {
       options.push({
         label: i18next.t('menu:continue'),
-        handler: () => this.loadSaveSlot(this.lastSessionData ? -1 : loggedInUser.lastSessionSlot)
+        handler: () => {
+          this.loadSaveSlot(this.lastSessionData ? -1 : loggedInUser.lastSessionSlot);
+          return true;
+        }
       });
     }
     options.push({
@@ -188,20 +191,29 @@ export class TitlePhase extends Phase {
           this.end();
         };
         if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
-          const options = [
+          const options: OptionSelectItem[] = [
             {
               label: gameModes[GameModes.CLASSIC].getName(),
-              handler: () => setModeAndEnd(GameModes.CLASSIC)
+              handler: () => {
+                setModeAndEnd(GameModes.CLASSIC);
+                return true;
+              }
             },
             {
               label: gameModes[GameModes.ENDLESS].getName(),
-              handler: () => setModeAndEnd(GameModes.ENDLESS)
+              handler: () => {
+                setModeAndEnd(GameModes.ENDLESS);
+                return true;
+              }
             }
           ];
           if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
             options.push({
               label: gameModes[GameModes.SPLICED_ENDLESS].getName(),
-              handler: () => setModeAndEnd(GameModes.SPLICED_ENDLESS)
+              handler: () => {
+                setModeAndEnd(GameModes.SPLICED_ENDLESS);
+                return true;
+              }
             });
           }
           options.push({
@@ -210,6 +222,7 @@ export class TitlePhase extends Phase {
               this.scene.clearPhaseQueue();
               this.scene.pushPhase(new TitlePhase(this.scene));
               super.end();
+              return true;
             }
           });
           this.scene.ui.showText(i18next.t("menu:selectGameMode"), null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
@@ -219,21 +232,27 @@ export class TitlePhase extends Phase {
           this.scene.ui.clearText();
           this.end();
         }
+        return true;
       }
     },
     {
       label: i18next.t('menu:loadGame'),
-      handler: () => this.scene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
-        (slotId: integer) => {
-          if (slotId === -1)
-            return this.showOptions();
-          this.loadSaveSlot(slotId);
-        }
-      )
+      handler: () => {
+        this.scene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
+          (slotId: integer) => {
+            if (slotId === -1)
+              return this.showOptions();
+            this.loadSaveSlot(slotId);
+          });
+        return true;
+      }
     },
     {
       label: i18next.t('menu:dailyRun'),
-      handler: () => this.initDailyRun(),
+      handler: () => {
+        this.initDailyRun();
+        return true;
+      },
       keepOpen: true
     });
     const config: OptionSelectConfig = {
@@ -377,6 +396,7 @@ export class SelectGenderPhase extends Phase {
               this.scene.gameData.gender = PlayerGender.MALE;
               this.scene.gameData.saveSetting(Setting.Player_Gender, 0);
               this.scene.gameData.saveSystem().then(() => this.end());
+              return true;
             }
           },
           {
@@ -385,6 +405,7 @@ export class SelectGenderPhase extends Phase {
               this.scene.gameData.gender = PlayerGender.FEMALE;
               this.scene.gameData.saveSetting(Setting.Player_Gender, 1);
               this.scene.gameData.saveSystem().then(() => this.end());
+              return true;
             }
           }
         ]
@@ -437,6 +458,10 @@ export class SelectStarterPhase extends Phase {
           const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
           const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starterProps.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
           starterPokemon.tryPopulateMoveset(starter.moveset);
+          if (starter.passive)
+            starterPokemon.passive = true;
+          if (starter.variant && starter.dexAttr & DexAttr.SHINY)
+            starterPokemon.variant = starter.variant;
           if (starter.pokerus)
             starterPokemon.pokerus = true;
           if (this.scene.gameMode.isSplicedOnly)

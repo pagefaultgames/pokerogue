@@ -55,7 +55,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public species: PokemonSpecies;
   public formIndex: integer;
   public abilityIndex: integer;
+  public passive: boolean; 
   public shiny: boolean;
+  public variant: integer;
   public pokeball: PokeballType;
   protected battleInfo: BattleInfo;
   public level: integer;
@@ -127,6 +129,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.hp = dataSource.hp;
       this.stats = dataSource.stats;
       this.ivs = dataSource.ivs;
+      this.passive = !!dataSource.passive;
+      this.variant = dataSource.variant || 0;
       this.nature = dataSource.nature || 0 as Nature;
       this.natureOverride = dataSource.natureOverride !== undefined ? dataSource.natureOverride : -1;
       this.moveset = dataSource.moveset;
@@ -727,7 +731,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   canApplyPassive(): boolean {
-    return this.isBoss();
+    return this.passive || this.isBoss();
   }
 
   canApplyAbility(passive: boolean = false): boolean {
@@ -1237,8 +1241,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (this.scene.arena.terrain?.terrainType === TerrainType.MISTY && this.isGrounded() && type === Type.DRAGON)
             damage.value = Math.floor(damage.value / 2);
 
-          applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
-
           const fixedDamage = new Utils.IntegerHolder(0);
           applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
           if (!isTypeImmune && fixedDamage.value) {
@@ -1246,8 +1248,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             isCritical = false;
             result = HitResult.EFFECTIVE;
           }
-
-          console.log('damage', damage.value, move.name, power.value, sourceAtk, targetDef);
           
           if (!result) {
             if (!typeMultiplier.value)
@@ -1274,6 +1274,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (!this.isPlayer())
               this.scene.applyModifiers(EnemyDamageReducerModifier, false, damage);
           }
+
+          applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
+
+          console.log('damage', damage.value, move.name, power.value, sourceAtk, targetDef);
 
           if (damage.value) {
             if (this.getHpRatio() === 1)
@@ -2156,7 +2160,7 @@ export class PlayerPokemon extends Pokemon {
   }
 
   tryPopulateMoveset(moveset: StarterMoveset): boolean {
-    if (!this.getSpeciesForm().validateStarterMoveset(moveset, this.scene.gameData.starterEggMoveData[this.species.getRootSpeciesId()]))
+    if (!this.getSpeciesForm().validateStarterMoveset(moveset, this.scene.gameData.starterData[this.species.getRootSpeciesId()].eggMoves))
       return false;
 
     this.moveset = moveset.map(m => new PokemonMove(m));
