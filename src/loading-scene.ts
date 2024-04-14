@@ -3,6 +3,7 @@ import { Biome } from "./data/enums/biome";
 import { TrainerType } from "./data/enums/trainer-type";
 import { trainerConfigs } from "./data/trainer-config";
 import { getBiomeHasProps } from "./field/arena";
+import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
 import { SceneBase } from "./scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import * as Utils from "./utils";
@@ -10,6 +11,8 @@ import * as Utils from "./utils";
 export class LoadingScene extends SceneBase {
   constructor() {
     super('loading');
+
+    Phaser.Plugins.PluginCache.register('Loader', CacheBustedLoaderPlugin, 'load');
   }
 
   preload() {
@@ -58,6 +61,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage('achv_bar_3', 'ui');
     this.loadImage('achv_bar_4', 'ui');
     this.loadImage('shiny_star', 'ui', 'shiny.png');
+    this.loadImage('ha_capsule', 'ui', 'ha_capsule.png');
     this.loadImage('icon_spliced', 'ui');
     this.loadImage('icon_tera', 'ui');
     this.loadImage('type_tera', 'ui');

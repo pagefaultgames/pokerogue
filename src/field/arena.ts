@@ -337,7 +337,7 @@ export class Arena {
       weatherMultiplier = this.weather.getAttackTypeMultiplier(attackType);
 
     let terrainMultiplier = 1;
-    if (this.terrain && !grounded)
+    if (this.terrain && grounded)
       terrainMultiplier = this.terrain.getAttackTypeMultiplier(attackType);
 
     return weatherMultiplier * terrainMultiplier;

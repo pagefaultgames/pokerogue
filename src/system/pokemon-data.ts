@@ -17,7 +17,9 @@ export default class PokemonData {
   public species: Species;
   public formIndex: integer;
   public abilityIndex: integer;
+  public passive: boolean;
   public shiny: boolean;
+  public variant: integer;
   public pokeball: PokeballType;
   public level: integer;
   public exp: integer;
@@ -53,7 +55,9 @@ export default class PokemonData {
     this.species = sourcePokemon ? sourcePokemon.species.speciesId : source.species;
     this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
     this.abilityIndex = source.abilityIndex;
+    this.passive = source.passive;
     this.shiny = source.shiny;
+    this.variant = source.variant;
     this.pokeball = source.pokeball;
     this.level = source.level;
     this.exp = source.exp;

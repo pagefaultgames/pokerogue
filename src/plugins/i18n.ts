@@ -20,6 +20,9 @@ i18next.init({
   lng: DEFAULT_LANGUAGE_OVERRIDE ? DEFAULT_LANGUAGE_OVERRIDE : 'en',
   fallbackLng: 'en',
   debug: true,
+  interpolation: {
+    escapeValue: false,
+  },
   resources: {
     en: {
       menu: enMenu,

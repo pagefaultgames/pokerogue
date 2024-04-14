@@ -312,3 +312,13 @@ export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
 
   return Math.ceil(Math.sqrt(2 * drp2 + 4 * dgp2 + 3 * dbp2 + t * (drp2 - dbp2) / 256));
 }
+
+export function rgbHexToRgba(hex: string) {
+  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i);
+  return {
+      r: parseInt(color[1], 16),
+      g: parseInt(color[2], 16),
+      b: parseInt(color[3], 16),
+      a: 255
+  };
+}
