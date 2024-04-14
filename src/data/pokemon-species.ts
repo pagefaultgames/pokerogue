@@ -11,6 +11,7 @@ import { StarterMoveset } from '../system/game-data';
 import { speciesEggMoves } from './egg-moves';
 import { PartyMemberStrength } from "./enums/party-member-strength";
 import { GameMode } from '../game-mode';
+import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 
 export enum Region {
   NORMAL,
@@ -380,6 +381,55 @@ export abstract class PokemonSpeciesForm {
     if (ignorePlay)
       cry.stop();
     return cry;
+  }
+
+  generateCandyColors(scene: BattleScene): integer[][] {
+    const sourceTexture = scene.textures.get(this.getSpriteKey(false));
+
+    const sourceFrame = sourceTexture.frames[sourceTexture.firstFrame];
+    const sourceImage = sourceTexture.getSourceImage() as HTMLImageElement;
+
+    const canvas = document.createElement('canvas');
+
+    const spriteColors: integer[][] = [];
+
+    const context = canvas.getContext('2d');
+    const frame = sourceFrame;
+    canvas.width = frame.width;
+    canvas.height = frame.height;
+    context.drawImage(sourceImage, frame.cutX, frame.cutY, frame.width, frame.height, 0, 0, frame.width, frame.height);
+    const imageData = context.getImageData(frame.cutX, frame.cutY, frame.width, frame.height);
+    const pixelData = imageData.data;
+
+    for (let i = 0; i < pixelData.length; i += 4) {
+      if (pixelData[i + 3]) {
+        const pixel = pixelData.slice(i, i + 4);
+        const [ r, g, b, a ] = pixel; 
+        if (!spriteColors.find(c => c[0] === r && c[1] === g && c[2] === b))
+          spriteColors.push([ r, g, b, a ]);
+      }
+    }
+
+    const pixelColors = [];
+    for (let i = 0; i < pixelData.length; i += 4) {
+      const total = pixelData.slice(i, i + 3).reduce((total: integer, value: integer) => total + value, 0);
+      if (!total)
+        continue;
+      pixelColors.push(argbFromRgba({ r: pixelData[i], g: pixelData[i + 1], b: pixelData[i + 2], a: pixelData[i + 3] }));
+    }
+    
+    let paletteColors: Map<number, number>;
+
+    const originalRandom = Math.random;
+    Math.random = () => Phaser.Math.RND.realInRange(0, 1);
+    
+    scene.executeWithSeedOffset(() => {
+      paletteColors = QuantizerCelebi.quantize(pixelColors, 2);
+    }, 0, 'This result should not vary');
+
+    Math.random = originalRandom;
+
+    return Array.from(paletteColors.keys()).map(c => Object.values(rgbaFromArgb(c)) as integer[]);
   }
 }
 
@@ -1567,7 +1617,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.ALOMOMOLA, "Alomomola", 5, false, false, false, "Caring Pokémon", Type.WATER, null, 1.2, 31.6, Abilities.HEALER, Abilities.HYDRATION, Abilities.REGENERATOR, 470, 165, 75, 80, 40, 45, 65, 75, 70, 165, GrowthRate.FAST, 50, false),
     new PokemonSpecies(Species.JOLTIK, "Joltik", 5, false, false, false, "Attaching Pokémon", Type.BUG, Type.ELECTRIC, 0.1, 0.6, Abilities.COMPOUND_EYES, Abilities.UNNERVE, Abilities.SWARM, 319, 50, 47, 50, 57, 50, 65, 190, 50, 64, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.GALVANTULA, "Galvantula", 5, false, false, false, "EleSpider Pokémon", Type.BUG, Type.ELECTRIC, 0.8, 14.3, Abilities.COMPOUND_EYES, Abilities.UNNERVE, Abilities.SWARM, 472, 70, 77, 60, 97, 60, 108, 75, 50, 165, GrowthRate.MEDIUM_FAST, 50, false),
-    new PokemonSpecies(Species.FERROSEED, "Ferroseed", 5, false, false, false, "Thorn Seed Pokémon", Type.GRASS, Type.STEEL, 0.6, 18.8, Abilities.IRON_BARBS, Abilities.NONE, Abilities.NONE, 305, 44, 50, 91, 24, 86, 10, 255, 50, 61, GrowthRate.MEDIUM_FAST, 50, false),
+    new PokemonSpecies(Species.FERROSEED, "Ferroseed", 5, false, false, false, "Thorn Seed Pokémon", Type.GRASS, Type.STEEL, 0.6, 18.8, Abilities.IRON_BARBS, Abilities.NONE, Abilities.IRON_BARBS, 305, 44, 50, 91, 24, 86, 10, 255, 50, 61, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.FERROTHORN, "Ferrothorn", 5, false, false, false, "Thorn Pod Pokémon", Type.GRASS, Type.STEEL, 1, 110, Abilities.IRON_BARBS, Abilities.NONE, Abilities.ANTICIPATION, 489, 74, 94, 131, 54, 116, 20, 90, 50, 171, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.KLINK, "Klink", 5, false, false, false, "Gear Pokémon", Type.STEEL, null, 0.3, 21, Abilities.PLUS, Abilities.MINUS, Abilities.CLEAR_BODY, 300, 40, 55, 70, 45, 60, 30, 130, 50, 60, GrowthRate.MEDIUM_SLOW, null, false),
     new PokemonSpecies(Species.KLANG, "Klang", 5, false, false, false, "Gear Pokémon", Type.STEEL, null, 0.6, 51, Abilities.PLUS, Abilities.MINUS, Abilities.CLEAR_BODY, 440, 60, 80, 95, 70, 85, 50, 60, 50, 154, GrowthRate.MEDIUM_SLOW, null, false),
@@ -3058,8 +3108,8 @@ export const starterPassiveAbilities = {
   [Species.CHARMANDER]: Abilities.INTIMIDATE,
   [Species.SQUIRTLE]: Abilities.DAUNTLESS_SHIELD,
   [Species.CATERPIE]: Abilities.MAGICIAN,
-  [Species.WEEDLE]: Abilities.POISON_TOUCH,
-  [Species.PIDGEY]: Abilities.TECHNICIAN,
+  [Species.WEEDLE]: Abilities.TECHNICIAN,
+  [Species.PIDGEY]: Abilities.GALE_WINGS,
   [Species.RATTATA]: Abilities.STRONG_JAW,
   [Species.SPEAROW]: Abilities.MOXIE,
   [Species.EKANS]: Abilities.ROUGH_SKIN,
@@ -3070,14 +3120,14 @@ export const starterPassiveAbilities = {
   [Species.ZUBAT]: Abilities.WIND_RIDER,
   [Species.ODDISH]: Abilities.LINGERING_AROMA,
   [Species.PARAS]: Abilities.POISON_HEAL,
-  [Species.VENONAT]: Abilities.TECHNICIAN,
+  [Species.VENONAT]: Abilities.SWARM,
   [Species.DIGLETT]: Abilities.STURDY,
   [Species.MEOWTH]: Abilities.NORMALIZE,
   [Species.PSYDUCK]: Abilities.SIMPLE,
-  [Species.MANKEY]: Abilities.STAMINA,
-  [Species.GROWLITHE]: Abilities.BALL_FETCH,
+  [Species.MANKEY]: Abilities.IRON_FIST,
+  [Species.GROWLITHE]: Abilities.SPEED_BOOST,
   [Species.POLIWAG]: Abilities.WATER_BUBBLE,
-  [Species.ABRA]: Abilities.TECHNICIAN,
+  [Species.ABRA]: Abilities.OPPORTUNIST,
   [Species.MACHOP]: Abilities.IRON_FIST,
   [Species.BELLSPROUT]: Abilities.CORROSION,
   [Species.TENTACOOL]: Abilities.INNARDS_OUT,
@@ -3103,7 +3153,7 @@ export const starterPassiveAbilities = {
   [Species.TANGELA]: Abilities.TANGLING_HAIR,
   [Species.KANGASKHAN]: Abilities.IRON_FIST,
   [Species.HORSEA]: Abilities.DRIZZLE,
-  [Species.GOLDEEN]: Abilities.VOLT_ABSORB,
+  [Species.GOLDEEN]: Abilities.MULTISCALE,
   [Species.STARYU]: Abilities.REGENERATOR,
   [Species.SCYTHER]: Abilities.SPEED_BOOST,
   [Species.PINSIR]: Abilities.SAP_SIPPER,
@@ -3139,7 +3189,7 @@ export const starterPassiveAbilities = {
   [Species.HOPPIP]: Abilities.PRANKSTER,
   [Species.AIPOM]: Abilities.SCRAPPY,
   [Species.SUNKERN]: Abilities.DROUGHT,
-  [Species.YANMA]: Abilities.TECHNICIAN,
+  [Species.YANMA]: Abilities.INFILTRATOR,
   [Species.WOOPER]: Abilities.SIMPLE,
   [Species.MURKROW]: Abilities.DEFIANT,
   [Species.MISDREAVUS]: Abilities.DAZZLING,
@@ -3154,7 +3204,7 @@ export const starterPassiveAbilities = {
   [Species.HERACROSS]: Abilities.QUICK_FEET,
   [Species.SNEASEL]: Abilities.MOXIE,
   [Species.TEDDIURSA]: Abilities.GLUTTONY,
-  [Species.SLUGMA]: Abilities.DESOLATE_LAND,
+  [Species.SLUGMA]: Abilities.DROUGHT,
   [Species.SWINUB]: Abilities.SLUSH_RUSH,
   [Species.CORSOLA]: Abilities.STORM_DRAIN,
   [Species.REMORAID]: Abilities.SKILL_LINK,
@@ -3166,7 +3216,7 @@ export const starterPassiveAbilities = {
   [Species.SMEARGLE]: Abilities.TRACE,
   [Species.TYROGUE]: Abilities.STAMINA,
   [Species.SMOOCHUM]: Abilities.CUTE_CHARM,
-  [Species.ELEKID]: Abilities.ADAPTABILITY,
+  [Species.ELEKID]: Abilities.IRON_FIST,
   [Species.MAGBY]: Abilities.CONTRARY,
   [Species.MILTANK]: Abilities.GLUTTONY,
   [Species.RAIKOU]: Abilities.FLARE_BOOST,
@@ -3192,7 +3242,7 @@ export const starterPassiveAbilities = {
   [Species.SLAKOTH]: Abilities.GUTS,
   [Species.NINCADA]: Abilities.OVERCOAT,
   [Species.WHISMUR]: Abilities.PUNK_ROCK,
-  [Species.MAKUHITA]: Abilities.CONTRARY,
+  [Species.MAKUHITA]: Abilities.STAMINA,
   [Species.AZURILL]: Abilities.UNNERVE,
   [Species.NOSEPASS]: Abilities.LEVITATE,
   [Species.SKITTY]: Abilities.SCRAPPY,
@@ -3217,10 +3267,10 @@ export const starterPassiveAbilities = {
   [Species.SWABLU]: Abilities.WHITE_SMOKE,
   [Species.ZANGOOSE]: Abilities.SUPER_LUCK,
   [Species.SEVIPER]: Abilities.MOLD_BREAKER,
-  [Species.LUNATONE]: Abilities.SHADOW_SHIELD,
-  [Species.SOLROCK]: Abilities.FULL_METAL_BODY,
+  [Species.LUNATONE]: Abilities.FAIRY_AURA,
+  [Species.SOLROCK]: Abilities.DROUGHT,
   [Species.BARBOACH]: Abilities.BALL_FETCH,
-  [Species.CORPHISH]: Abilities.WATER_BUBBLE,
+  [Species.CORPHISH]: Abilities.TOUGH_CLAWS,
   [Species.BALTOY]: Abilities.OWN_TEMPO,
   [Species.LILEEP]: Abilities.WATER_ABSORB,
   [Species.ANORITH]: Abilities.WATER_ABSORB,
@@ -3237,7 +3287,7 @@ export const starterPassiveAbilities = {
   [Species.CLAMPERL]: Abilities.SIMPLE,
   [Species.RELICANTH]: Abilities.SOLID_ROCK,
   [Species.LUVDISC]: Abilities.PICKUP,
-  [Species.BAGON]: Abilities.GALE_WINGS,
+  [Species.BAGON]: Abilities.BERSERK,
   [Species.BELDUM]: Abilities.IRON_FIST,
   [Species.REGIROCK]: Abilities.REGENERATOR,
   [Species.REGICE]: Abilities.ICE_SCALES,
@@ -3251,7 +3301,7 @@ export const starterPassiveAbilities = {
   [Species.DEOXYS]: Abilities.STICKY_HOLD,
   [Species.TURTWIG]: Abilities.HARVEST,
   [Species.CHIMCHAR]: Abilities.DEFIANT,
-  [Species.PIPLUP]: Abilities.BATTLE_ARMOR,
+  [Species.PIPLUP]: Abilities.SLUSH_RUSH,
   [Species.STARLY]: Abilities.ROCK_HEAD,
   [Species.BIDOOF]: Abilities.NEUROFORCE,
   [Species.KRICKETOT]: Abilities.SOUNDPROOF,
@@ -3286,7 +3336,7 @@ export const starterPassiveAbilities = {
   [Species.FINNEON]: Abilities.DRIZZLE,
   [Species.MANTYKE]: Abilities.STORM_DRAIN,
   [Species.SNOVER]: Abilities.SNOW_CLOAK,
-  [Species.ROTOM]: Abilities.ELECTRIC_SURGE,
+  [Species.ROTOM]: Abilities.MOTOR_DRIVE,
   [Species.UXIE]: Abilities.ILLUSION,
   [Species.MESPRIT]: Abilities.MOODY,
   [Species.AZELF]: Abilities.NEUROFORCE,
@@ -3304,7 +3354,7 @@ export const starterPassiveAbilities = {
   [Species.VICTINI]: Abilities.SUPER_LUCK,
   [Species.SNIVY]: Abilities.MULTISCALE,
   [Species.TEPIG]: Abilities.SAND_RUSH,
-  [Species.OSHAWOTT]: Abilities.LIGHTNING_ROD,
+  [Species.OSHAWOTT]: Abilities.MOLD_BREAKER,
   [Species.PATRAT]: Abilities.STAKEOUT,
   [Species.LILLIPUP]: Abilities.BALL_FETCH,
   [Species.PURRLOIN]: Abilities.DEFIANT,
@@ -3325,8 +3375,8 @@ export const starterPassiveAbilities = {
   [Species.SEWADDLE]: Abilities.SHARPNESS,
   [Species.VENIPEDE]: Abilities.INTIMIDATE,
   [Species.COTTONEE]: Abilities.MISTY_SURGE,
-  [Species.PETILIL]: Abilities.ORICHALCUM_PULSE,
-  [Species.BASCULIN]: Abilities.ROCK_HEAD,
+  [Species.PETILIL]: Abilities.DROUGHT,
+  [Species.BASCULIN]: Abilities.OPPORTUNIST,
   [Species.SANDILE]: Abilities.STRONG_JAW,
   [Species.DARUMAKA]: Abilities.IRON_FIST,
   [Species.MARACTUS]: Abilities.IRON_BARBS,
@@ -3346,14 +3396,14 @@ export const starterPassiveAbilities = {
   [Species.DEERLING]: Abilities.JUSTIFIED,
   [Species.EMOLGA]: Abilities.WIND_POWER,
   [Species.KARRABLAST]: Abilities.NO_GUARD,
-  [Species.FOONGUS]: Abilities.ADAPTABILITY,
+  [Species.FOONGUS]: Abilities.MIMICRY,
   [Species.FRILLISH]: Abilities.MUMMY,
   [Species.ALOMOMOLA]: Abilities.MULTISCALE,
   [Species.JOLTIK]: Abilities.VOLT_ABSORB,
   [Species.FERROSEED]: Abilities.SKILL_LINK,
   [Species.KLINK]: Abilities.STEELWORKER,
   [Species.TYNAMO]: Abilities.SWIFT_SWIM,
-  [Species.ELGYEM]: Abilities.COMMANDER,
+  [Species.ELGYEM]: Abilities.SHADOW_TAG,
   [Species.LITWICK]: Abilities.SOUL_HEART,
   [Species.AXEW]: Abilities.SHEER_FORCE,
   [Species.CUBCHOO]: Abilities.INTIMIDATE,
@@ -3362,7 +3412,7 @@ export const starterPassiveAbilities = {
   [Species.STUNFISK]: Abilities.STORM_DRAIN,
   [Species.MIENFOO]: Abilities.NO_GUARD,
   [Species.DRUDDIGON]: Abilities.INTIMIDATE,
-  [Species.GOLETT]: Abilities.JUSTIFIED,
+  [Species.GOLETT]: Abilities.SHADOW_SHIELD,
   [Species.PAWNIARD]: Abilities.SHARPNESS,
   [Species.BOUFFALANT]: Abilities.THICK_FAT,
   [Species.RUFFLET]: Abilities.RECKLESS,
@@ -3380,7 +3430,7 @@ export const starterPassiveAbilities = {
   [Species.ZEKROM]: Abilities.HADRON_ENGINE,
   [Species.LANDORUS]: Abilities.PRANKSTER,
   [Species.KYUREM]: Abilities.SNOW_WARNING,
-  [Species.KELDEO]: Abilities.HUGE_POWER,
+  [Species.KELDEO]: Abilities.SHARPNESS,
   [Species.MELOETTA]: Abilities.PUNK_ROCK,
   [Species.GENESECT]: Abilities.MEGA_LAUNCHER,
   [Species.CHESPIN]: Abilities.IRON_BARBS,
@@ -3407,7 +3457,7 @@ export const starterPassiveAbilities = {
   [Species.AMAURA]: Abilities.SERENE_GRACE,
   [Species.HAWLUCHA]: Abilities.RECKLESS,
   [Species.DEDENNE]: Abilities.SIMPLE,
-  [Species.CARBINK]: Abilities.OBLIVIOUS,
+  [Species.CARBINK]: Abilities.SOLID_ROCK,
   [Species.GOOMY]: Abilities.POISON_HEAL,
   [Species.KLEFKI]: Abilities.TRIAGE,
   [Species.PHANTUMP]: Abilities.UNNERVE,
@@ -3425,7 +3475,7 @@ export const starterPassiveAbilities = {
   [Species.POPPLIO]: Abilities.PUNK_ROCK,
   [Species.PIKIPEK]: Abilities.ANGER_POINT,
   [Species.YUNGOOS]: Abilities.HUGE_POWER,
-  [Species.GRUBBIN]: Abilities.GALVANIZE,
+  [Species.GRUBBIN]: Abilities.SPEED_BOOST,
   [Species.CRABRAWLER]: Abilities.REFRIGERATE,
   [Species.ORICORIO]: Abilities.ADAPTABILITY,
   [Species.CUTIEFLY]: Abilities.FRIEND_GUARD,
@@ -3442,7 +3492,7 @@ export const starterPassiveAbilities = {
   [Species.COMFEY]: Abilities.FRIEND_GUARD,
   [Species.ORANGURU]: Abilities.HOSPITALITY,
   [Species.PASSIMIAN]: Abilities.COSTAR,
-  [Species.WIMPOD]: Abilities.BATTLE_ARMOR,
+  [Species.WIMPOD]: Abilities.TINTED_LENS,
   [Species.SANDYGAST]: Abilities.DAUNTLESS_SHIELD,
   [Species.PYUKUMUKU]: Abilities.IRON_BARBS,
   [Species.TYPE_NULL]: Abilities.ADAPTABILITY,
@@ -3465,7 +3515,7 @@ export const starterPassiveAbilities = {
   [Species.PHEROMOSA]: Abilities.MOXIE,
   [Species.XURKITREE]: Abilities.LIGHTNING_ROD,
   [Species.CELESTEELA]: Abilities.CHLOROPHYLL,
-  [Species.KARTANA]: Abilities.INTREPID_SWORD,
+  [Species.KARTANA]: Abilities.SHARPNESS,
   [Species.GUZZLORD]: Abilities.GLUTTONY,
   [Species.NECROZMA]: Abilities.BEAST_BOOST,
   [Species.MAGEARNA]: Abilities.STEELY_SPIRIT,
@@ -3479,7 +3529,7 @@ export const starterPassiveAbilities = {
   [Species.SCORBUNNY]: Abilities.RECKLESS,
   [Species.SOBBLE]: Abilities.MIMICRY,
   [Species.SKWOVET]: Abilities.HONEY_GATHER,
-  [Species.ROOKIDEE]: Abilities.JUSTIFIED,
+  [Species.ROOKIDEE]: Abilities.IRON_BARBS,
   [Species.BLIPBUG]: Abilities.TINTED_LENS,
   [Species.NICKIT]: Abilities.INTIMIDATE,
   [Species.GOSSIFLEUR]: Abilities.STORM_DRAIN,
@@ -3512,7 +3562,7 @@ export const starterPassiveAbilities = {
   [Species.ARCTOVISH]: Abilities.STRONG_JAW,
   [Species.DURALUDON]: Abilities.MEGA_LAUNCHER,
   [Species.DREEPY]: Abilities.PARENTAL_BOND,
-  [Species.ZACIAN]: Abilities.SHARPNESS,
+  [Species.ZACIAN]: Abilities.GUARD_DOG,
   [Species.ZAMAZENTA]: Abilities.GUARD_DOG,
   [Species.ETERNATUS]: Abilities.SUPREME_OVERLORD,
   [Species.KUBFU]: Abilities.IRON_FIST,
@@ -3535,7 +3585,7 @@ export const starterPassiveAbilities = {
   [Species.SMOLIV]: Abilities.RIPEN,
   [Species.SQUAWKABILLY]: Abilities.GALE_WINGS,
   [Species.NACLI]: Abilities.EARTH_EATER,
-  [Species.CHARCADET]: Abilities.CONTRARY,
+  [Species.CHARCADET]: Abilities.MIRROR_ARMOR,
   [Species.TADBULB]: Abilities.TRANSISTOR,
   [Species.WATTREL]: Abilities.GALE_WINGS,
   [Species.MASCHIFF]: Abilities.STRONG_JAW,
@@ -3562,15 +3612,15 @@ export const starterPassiveAbilities = {
   [Species.TATSUGIRI]: Abilities.WATER_BUBBLE,
   [Species.GREAT_TUSK]: Abilities.INTIMIDATE,
   [Species.SCREAM_TAIL]: Abilities.PIXILATE,
-  [Species.BRUTE_BONNET]: Abilities.ADAPTABILITY,
+  [Species.BRUTE_BONNET]: Abilities.BEAST_BOOST,
   [Species.FLUTTER_MANE]: Abilities.DAZZLING,
-  [Species.SLITHER_WING]: Abilities.SCRAPPY,
+  [Species.SLITHER_WING]: Abilities.MOXIE,
   [Species.SANDY_SHOCKS]: Abilities.EARTH_EATER,
-  [Species.IRON_TREADS]: Abilities.STEAM_ENGINE,
+  [Species.IRON_TREADS]: Abilities.BULLETPROOF,
   [Species.IRON_BUNDLE]: Abilities.SNOW_WARNING,
   [Species.IRON_HANDS]: Abilities.IRON_FIST,
   [Species.IRON_JUGULIS]: Abilities.NO_GUARD,
-  [Species.IRON_MOTH]: Abilities.TINTED_LENS,
+  [Species.IRON_MOTH]: Abilities.LEVITATE,
   [Species.IRON_THORNS]: Abilities.SAND_STREAM,
   [Species.FRIGIBAX]: Abilities.THICK_FAT,
   [Species.GIMMIGHOUL]: Abilities.SUPER_LUCK,
@@ -3585,7 +3635,7 @@ export const starterPassiveAbilities = {
   [Species.WALKING_WAKE]: Abilities.BEAST_BOOST,
   [Species.IRON_LEAVES]: Abilities.SHARPNESS,
   [Species.POLTCHAGEIST]: Abilities.FLAME_BODY,
-  [Species.OKIDOGI]: Abilities.STICKY_HOLD,
+  [Species.OKIDOGI]: Abilities.INTIMIDATE,
   [Species.MUNKIDORI]: Abilities.PRANKSTER,
   [Species.FEZANDIPITI]: Abilities.DAZZLING,
   [Species.OGERPON]: Abilities.DISGUISE,

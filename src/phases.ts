@@ -2,7 +2,7 @@ import BattleScene, { STARTER_FORM_OVERRIDE, STARTER_SPECIES_OVERRIDE, bypassLog
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, FixedDamageAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -30,7 +30,7 @@ import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, get
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { CheckTrappedAbAttr, MoveAbilityBypassAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr } from "./data/ability";
+import { CheckTrappedAbAttr, MoveAbilityBypassAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs } from "./data/ability";
 import { Abilities } from "./data/enums/abilities";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
@@ -44,7 +44,7 @@ import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
-import { GameDataType, PlayerGender, SessionSaveData } from "./system/game-data";
+import { DexAttr, GameDataType, PlayerGender, SessionSaveData } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue } from "./data/dialogue";
@@ -175,7 +175,10 @@ export class TitlePhase extends Phase {
     if (loggedInUser.lastSessionSlot > -1) {
       options.push({
         label: i18next.t('menu:continue'),
-        handler: () => this.loadSaveSlot(this.lastSessionData ? -1 : loggedInUser.lastSessionSlot)
+        handler: () => {
+          this.loadSaveSlot(this.lastSessionData ? -1 : loggedInUser.lastSessionSlot);
+          return true;
+        }
       });
     }
     options.push({
@@ -188,20 +191,29 @@ export class TitlePhase extends Phase {
           this.end();
         };
         if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
-          const options = [
+          const options: OptionSelectItem[] = [
             {
               label: gameModes[GameModes.CLASSIC].getName(),
-              handler: () => setModeAndEnd(GameModes.CLASSIC)
+              handler: () => {
+                setModeAndEnd(GameModes.CLASSIC);
+                return true;
+              }
             },
             {
               label: gameModes[GameModes.ENDLESS].getName(),
-              handler: () => setModeAndEnd(GameModes.ENDLESS)
+              handler: () => {
+                setModeAndEnd(GameModes.ENDLESS);
+                return true;
+              }
             }
           ];
           if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
             options.push({
               label: gameModes[GameModes.SPLICED_ENDLESS].getName(),
-              handler: () => setModeAndEnd(GameModes.SPLICED_ENDLESS)
+              handler: () => {
+                setModeAndEnd(GameModes.SPLICED_ENDLESS);
+                return true;
+              }
             });
           }
           options.push({
@@ -210,6 +222,7 @@ export class TitlePhase extends Phase {
               this.scene.clearPhaseQueue();
               this.scene.pushPhase(new TitlePhase(this.scene));
               super.end();
+              return true;
             }
           });
           this.scene.ui.showText(i18next.t("menu:selectGameMode"), null, () => this.scene.ui.setOverlayMode(Mode.OPTION_SELECT, { options: options }));
@@ -219,21 +232,27 @@ export class TitlePhase extends Phase {
           this.scene.ui.clearText();
           this.end();
         }
+        return true;
       }
     },
     {
       label: i18next.t('menu:loadGame'),
-      handler: () => this.scene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
-        (slotId: integer) => {
-          if (slotId === -1)
-            return this.showOptions();
-          this.loadSaveSlot(slotId);
-        }
-      )
+      handler: () => {
+        this.scene.ui.setOverlayMode(Mode.SAVE_SLOT, SaveSlotUiMode.LOAD,
+          (slotId: integer) => {
+            if (slotId === -1)
+              return this.showOptions();
+            this.loadSaveSlot(slotId);
+          });
+        return true;
+      }
     },
     {
       label: i18next.t('menu:dailyRun'),
-      handler: () => this.initDailyRun(),
+      handler: () => {
+        this.initDailyRun();
+        return true;
+      },
       keepOpen: true
     });
     const config: OptionSelectConfig = {
@@ -377,6 +396,7 @@ export class SelectGenderPhase extends Phase {
               this.scene.gameData.gender = PlayerGender.MALE;
               this.scene.gameData.saveSetting(Setting.Player_Gender, 0);
               this.scene.gameData.saveSystem().then(() => this.end());
+              return true;
             }
           },
           {
@@ -385,6 +405,7 @@ export class SelectGenderPhase extends Phase {
               this.scene.gameData.gender = PlayerGender.FEMALE;
               this.scene.gameData.saveSetting(Setting.Player_Gender, 1);
               this.scene.gameData.saveSystem().then(() => this.end());
+              return true;
             }
           }
         ]
@@ -437,6 +458,10 @@ export class SelectStarterPhase extends Phase {
           const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
           const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starterProps.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
           starterPokemon.tryPopulateMoveset(starter.moveset);
+          if (starter.passive)
+            starterPokemon.passive = true;
+          if (starter.variant && starter.dexAttr & DexAttr.SHINY)
+            starterPokemon.variant = starter.variant;
           if (starter.pokerus)
             starterPokemon.pokerus = true;
           if (this.scene.gameMode.isSplicedOnly)
@@ -2130,6 +2155,8 @@ export class MovePhase extends BattlePhase {
     });
 
     const doMove = () => {
+      this.pokemon.turnData.acted = true; // Record that the move was attempted, even if it fails
+      
       this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
 	    
       if (!this.followUp && this.canMove() && !this.cancelled) {
@@ -2294,7 +2321,7 @@ export class MoveEffectPhase extends PokemonPhase {
         const hitCount = new Utils.IntegerHolder(1);
         // Assume single target for multi hit
         applyMoveAttrs(MultiHitAttr, user, this.getTarget(), this.move.getMove(), hitCount);
-        if (this.move.getMove() instanceof AttackMove)
+        if (this.move.getMove() instanceof AttackMove && !this.move.getMove().getAttrs(FixedDamageAttr).length)
           this.scene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, hitCount, new Utils.IntegerHolder(0));
         user.turnData.hitsLeft = user.turnData.hitCount = hitCount.value;
       }
@@ -2605,6 +2632,7 @@ export class StatChangePhase extends PokemonPhase {
       for (let stat of filteredStats)
         pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
       
+      applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget)
       this.end();
     };
 
@@ -2950,7 +2978,7 @@ export class FaintPhase extends PokemonPhase {
     }
 
     const alivePlayField = this.scene.getField(true);
-    alivePlayField.forEach(p => applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p));
+    alivePlayField.forEach(p => applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p, pokemon));
     if (pokemon.turnData?.attacksReceived?.length) {
       const defeatSource = this.scene.getPokemonById(pokemon.turnData.attacksReceived[0].sourceId);
       if (defeatSource?.isOnField())
