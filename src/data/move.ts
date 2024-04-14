@@ -5453,7 +5453,8 @@ export function initMoves() {
       .attr(DoublePowerChanceAttr),
     new StatusMove(Moves.BURNING_BULWARK, "Burning Bulwark", Type.FIRE, -1, 10, "The user's intensely hot fur protects it from attacks and also burns any attacker that makes direct contact with it.", 100, 4, 9)
       .attr(ProtectAttr, BattlerTagType.BURNING_BULWARK),
-    new AttackMove(Moves.THUNDERCLAP, "Thunderclap (P)", Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 5, "This move enables the user to attack first with a jolt of electricity. This move fails if the target is not readying an attack.", -1, 1, 9),
+    new AttackMove(Moves.THUNDERCLAP, "Thunderclap", Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 5, "This move enables the user to attack first with a jolt of electricity. This move fails if the target is not readying an attack.", -1, 1, 9)
+      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].category !== MoveCategory.STATUS),
     new AttackMove(Moves.MIGHTY_CLEAVE, "Mighty Cleave", Type.ROCK, MoveCategory.PHYSICAL, 95, 100, 5, "The user wields the light that has accumulated atop its head to cleave the target. This move hits even if the target protects itself.", -1, 0, 9)
       .ignoresProtect(),
     new AttackMove(Moves.TACHYON_CUTTER, "Tachyon Cutter", Type.STEEL, MoveCategory.SPECIAL, 50, -1, 10, "The user attacks by launching particle blades at the target twice in a row. This attack never misses.", -1, 0, 9)
