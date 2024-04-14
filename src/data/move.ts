@@ -3028,6 +3028,7 @@ export class TransformAttr extends MoveEffectAttr {
 
       user.summonData.speciesForm = target.getSpeciesForm();
       user.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
+      user.summonData.ability = target.getAbility().id;
       user.summonData.gender = target.getGender();
       user.summonData.fusionGender = target.getFusionGender();
       user.summonData.stats = [ user.stats[Stat.HP] ].concat(target.stats.slice(1));

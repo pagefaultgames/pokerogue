@@ -1111,6 +1111,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
 
     pokemon.summonData.speciesForm = target.getSpeciesForm();
     pokemon.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
+    pokemon.summonData.ability = target.getAbility().id;
     pokemon.summonData.gender = target.getGender();
     pokemon.summonData.fusionGender = target.getFusionGender();
     pokemon.summonData.stats = [ pokemon.stats[Stat.HP] ].concat(target.stats.slice(1));

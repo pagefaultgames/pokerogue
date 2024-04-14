@@ -716,8 +716,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (OPP_ABILITY_OVERRIDE && !this.isPlayer())
       return allAbilities[OPP_ABILITY_OVERRIDE];
     if (this.isFusion())
-      return allAbilities[this.getFusionSpeciesForm().getAbility(this.fusionAbilityIndex)];
-    let abilityId = this.getSpeciesForm().getAbility(this.abilityIndex);
+      return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
+    let abilityId = this.getSpeciesForm(ignoreOverride).getAbility(this.abilityIndex);
     if (abilityId === Abilities.NONE)
       abilityId = this.species.ability1;
     return allAbilities[abilityId];
