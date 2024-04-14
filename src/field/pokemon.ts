@@ -2818,6 +2818,7 @@ export class PokemonBattleSummonData {
 
 export class PokemonTurnData {
   public flinched: boolean;
+  public acted: boolean;
   public hitCount: integer;
   public hitsLeft: integer;
   public damageDealt: integer = 0;

@@ -4165,7 +4165,8 @@ export function initMoves() {
       }),
     new StatusMove(Moves.WORRY_SEED, "Worry Seed", Type.GRASS, 100, 10, "A seed that causes worry is planted on the target. It prevents sleep by making the target's Ability Insomnia.", -1, 0, 4)
       .attr(AbilityChangeAttr, Abilities.INSOMNIA),
-    new AttackMove(Moves.SUCKER_PUNCH, "Sucker Punch (P)", Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, "This move enables the user to attack first. This move fails if the target is not readying an attack.", -1, 1, 4),
+    new AttackMove(Moves.SUCKER_PUNCH, "Sucker Punch", Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, "This move enables the user to attack first. This move fails if the target is not readying an attack.", -1, 1, 4)
+      .condition((user, target, move) => !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].category !== MoveCategory.STATUS),
     new StatusMove(Moves.TOXIC_SPIKES, "Toxic Spikes", Type.POISON, -1, 20, "The user lays a trap of poison spikes at the feet of the opposing team. The spikes will poison opposing Pokémon that switch into battle.", -1, 0, 4)
       .attr(AddArenaTrapTagAttr, ArenaTagType.TOXIC_SPIKES)
       .target(MoveTarget.ENEMY_SIDE),

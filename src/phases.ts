@@ -2155,6 +2155,8 @@ export class MovePhase extends BattlePhase {
     });
 
     const doMove = () => {
+      this.pokemon.turnData.acted = true; // Record that the move was attempted, even if it fails
+      
       this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
 	    
       if (!this.followUp && this.canMove() && !this.cancelled) {
