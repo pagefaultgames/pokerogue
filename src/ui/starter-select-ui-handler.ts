@@ -163,6 +163,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private startCursorObj: Phaser.GameObjects.NineSlice;
   private starterValueLabels: Phaser.GameObjects.Text[];
   private shinyIcons: Phaser.GameObjects.Image[];
+  private hiddenAbilityIcons: Phaser.GameObjects.Image[];
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -375,6 +376,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const x = (i % 9) * 18;
       const y = Math.floor(i / 9) * 18;
       const ret = this.scene.add.image(x + 163, y + 11, 'shiny_star');
+      ret.setOrigin(0, 0);
+      ret.setScale(0.5);
+      ret.setVisible(false);
+      this.starterSelectContainer.add(ret);
+      return ret;
+    });
+
+    this.hiddenAbilityIcons = new Array(81).fill(null).map((_, i) => {
+      const x = (i % 9) * 18;
+      const y = Math.floor(i / 9) * 18;
+      const ret = this.scene.add.image(x + 163, y + 16, 'ha_capsule');
       ret.setOrigin(0, 0);
       ret.setScale(0.5);
       ret.setVisible(false);
@@ -1106,6 +1118,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.updateStarterValueLabel(s);
         this.starterValueLabels[s].setVisible(slotVisible);
         this.shinyIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.dexData[speciesId].caughtAttr & DexAttr.SHINY));
+        this.hiddenAbilityIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.dexData[speciesId].caughtAttr & DexAttr.ABILITY_HIDDEN));
       }
     } else {
       changed = super.setCursor(cursor);
