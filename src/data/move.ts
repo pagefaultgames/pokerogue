@@ -2530,9 +2530,11 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
 
 export class RemoveScreensAttr extends MoveEffectAttr {
 
+  private targetBothSides: boolean;
 
-  constructor() {
+  constructor(targetBothSides: boolean = false) {
     super(true, MoveEffectTrigger.PRE_APPLY);
+    this.targetBothSides = targetBothSides;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2540,9 +2542,20 @@ export class RemoveScreensAttr extends MoveEffectAttr {
     if (!super.apply(user, target, move, args))
       return false;
 
-    user.scene.arena.removeTagOnSide(ArenaTagType.REFLECT, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
-    user.scene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
-    user.scene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+    if(this.targetBothSides){
+      user.scene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaTagSide.PLAYER);
+      user.scene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.PLAYER);
+      user.scene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaTagSide.PLAYER);
+
+      user.scene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaTagSide.ENEMY);
+      user.scene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.ENEMY);
+      user.scene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaTagSide.ENEMY);
+    }
+    else{
+      user.scene.arena.removeTagOnSide(ArenaTagType.REFLECT, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+      user.scene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+      user.scene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+    }
 
     return true;
 
@@ -4203,7 +4216,8 @@ export function initMoves() {
     new StatusMove(Moves.DEFOG, "Defog", Type.FLYING, -1, 15, "A strong wind blows away the target's barriers such as Reflect or Light Screen. This also lowers the target's evasiveness.", -1, 0, 4)
       .attr(StatChangeAttr, BattleStat.EVA, -1)
       .attr(ClearWeatherAttr, WeatherType.FOG)
-      .attr(ClearTerrainAttr),
+      .attr(ClearTerrainAttr)
+      .attr(RemoveScreensAttr, true),
     new StatusMove(Moves.TRICK_ROOM, "Trick Room", Type.PSYCHIC, -1, 5, "The user creates a bizarre area in which slower Pokémon get to move first for five turns.", -1, -7, 4)
       .attr(AddArenaTagAttr, ArenaTagType.TRICK_ROOM, 5)
       .ignoresProtect()
