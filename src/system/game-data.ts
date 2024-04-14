@@ -43,6 +43,11 @@ export enum PlayerGender {
   FEMALE
 }
 
+export enum Passive {
+  UNLOCKED = 1,
+  ENABLED = 2
+}
+
 export function getDataTypeKey(dataType: GameDataType, slotId: integer = 0): string {
   switch (dataType) {
     case GameDataType.SYSTEM:
@@ -64,8 +69,7 @@ interface SystemSaveData {
   secretId: integer;
   gender: PlayerGender;
   dexData: DexData;
-  starterMoveData: StarterMoveData;
-  starterEggMoveData: StarterEggMoveData;
+  starterData: StarterData;
   gameStats: GameStats;
   unlocks: Unlocks;
   achvUnlocks: AchvUnlocks;
@@ -145,16 +149,25 @@ export interface DexAttrProps {
 
 export type StarterMoveset = [ Moves ] | [ Moves, Moves ] | [ Moves, Moves, Moves ] | [ Moves, Moves, Moves, Moves ];
 
-export interface StarterMoveData {
-  [key: integer]: StarterMoveset | StarterFormMoveData
-}
-
 export interface StarterFormMoveData {
   [key: integer]: StarterMoveset
 }
 
-export interface StarterEggMoveData {
-  [key: integer]: integer
+export interface StarterMoveData {
+  [key: integer]: StarterMoveset | StarterFormMoveData
+}
+
+export interface StarterDataEntry {
+  moveset: StarterMoveset | StarterFormMoveData; 
+  eggMoves: integer;
+  candyCount: integer;
+  passiveAttr: integer;
+  variantAttr: integer;
+  valueReduction: integer;
+}
+
+export interface StarterData {
+  [key: integer]: StarterDataEntry
 }
 
 export interface TutorialFlags {
@@ -167,7 +180,12 @@ const systemShortKeys = {
   natureAttr: '$na',
   seenCount: '$s' ,
   caughtCount: '$c',
-  ivs: '$i'
+  ivs: '$i',
+  moveset: '$m',
+  eggMoves: '$em',
+  candyCount: '$cc',
+  passive: '$p',
+  valueReduction: '$vr'
 };
 
 export class GameData {
@@ -181,9 +199,7 @@ export class GameData {
   public dexData: DexData;
   private defaultDexData: DexData;
 
-  public starterMoveData: StarterMoveData;
-
-  public starterEggMoveData: StarterEggMoveData;
+  public starterData: StarterData;
 
   public gameStats: GameStats;
 
@@ -200,8 +216,7 @@ export class GameData {
     this.loadSettings();
     this.trainerId = Utils.randSeedInt(65536);
     this.secretId = Utils.randSeedInt(65536);
-    this.starterMoveData = {};
-    this.starterEggMoveData = {};
+    this.starterData = {};
     this.gameStats = new GameStats();
     this.unlocks = {
       [Unlockables.ENDLESS_MODE]: false,
@@ -218,7 +233,7 @@ export class GameData {
     };
     this.eggs = [];
     this.initDexData();
-    this.initEggMoveData();
+    this.initStarterData();
   }
 
   public saveSystem(): Promise<boolean> {
@@ -234,8 +249,7 @@ export class GameData {
           secretId: this.secretId,
           gender: this.gender,
           dexData: this.dexData,
-          starterMoveData: this.starterMoveData,
-          starterEggMoveData: this.starterEggMoveData,
+          starterData: this.starterData,
           gameStats: this.gameStats,
           unlocks: this.unlocks,
           achvUnlocks: this.achvUnlocks,
@@ -297,17 +311,24 @@ export class GameData {
 
           this.saveSetting(Setting.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
 
-          this.starterMoveData = systemData.starterMoveData || {};
-          
-          this.starterEggMoveData = {};
-          this.initEggMoveData();
+          const initStarterData = !systemData.starterData;
 
-          if (systemData.starterEggMoveData) {
-            for (let key of Object.keys(systemData.starterEggMoveData)) {
-              if (this.starterEggMoveData.hasOwnProperty(key))
-                this.starterEggMoveData[key] = systemData.starterEggMoveData[key];
+          if (initStarterData) {
+            this.initStarterData();
+
+            if (systemData['starterMoveData']) {
+              const starterMoveData = systemData['starterMoveData'];
+              for (let s of Object.keys(starterMoveData))
+                this.starterData[s].moveset = starterMoveData[s];
             }
-          }
+
+            if (systemData['starterEggMoveData']) {
+              const starterEggMoveData = systemData['starterEggMoveData'];
+              for (let s of Object.keys(starterEggMoveData))
+                this.starterData[s].eggMoves = starterEggMoveData[s];
+            }
+          } else
+            this.starterData = systemData.starterData;
 
           if (systemData.gameStats)
             this.gameStats = systemData.gameStats;
@@ -347,6 +368,16 @@ export class GameData {
           this.dexData = Object.assign(this.dexData, systemData.dexData);
           this.consolidateDexData(this.dexData);
           this.defaultDexData = null;
+
+          if (initStarterData) {
+            const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
+            for (let s of starterIds) {
+              this.starterData[s].candyCount += this.dexData[s].caughtCount;
+              this.starterData[s].candyCount += this.dexData[s].hatchedCount * 2;
+              if (this.dexData[s].caughtAttr & DexAttr.SHINY)
+                this.starterData[s].candyCount += 4;
+            }
+          }
 
           resolve(true);
         } catch (err) {
@@ -388,7 +419,7 @@ export class GameData {
         return ret;
       }
 
-      return k.endsWith('Attr') && k !== 'natureAttr' ? BigInt(v) : v;
+      return k.endsWith('Attr') && ![ 'natureAttr', 'passiveAttr', 'variantAttr' ].includes(k) ? BigInt(v) : v;
     }) as SystemSaveData;
   }
 
@@ -906,15 +937,23 @@ export class GameData {
     this.dexData = data;
   }
 
-  private initEggMoveData(): void {
-    const data: StarterEggMoveData = {};
-    
-    const starterSpeciesIds = Object.keys(speciesEggMoves).map(k => parseInt(k) as Species);
+  private initStarterData(): void {
+    const starterData: StarterData = {};
 
-    for (let speciesId of starterSpeciesIds)
-      data[speciesId] = 0;
+    const starterSpeciesIds = Object.keys(speciesStarters).map(k => parseInt(k) as Species);
 
-    this.starterEggMoveData = data;
+    for (let speciesId of starterSpeciesIds) {
+      starterData[speciesId] = {
+        moveset: null,
+        eggMoves: 0,
+        candyCount: 0,
+        passiveAttr: 0,
+        variantAttr: 0,
+        valueReduction: 0
+      };
+    }
+
+    this.starterData = starterData;
   }
 
   setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true): void {
@@ -943,6 +982,10 @@ export class GameData {
       pokemon.formIndex = formIndex;
       dexEntry.caughtAttr |= dexAttr;
       dexEntry.natureAttr |= Math.pow(2, pokemon.nature + 1);
+      
+      const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
+      const newCatch = !caughtAttr;
+
       if (incrementCount) {
         if (!fromEgg) {
           dexEntry.caughtCount++;
@@ -963,11 +1006,11 @@ export class GameData {
           if (pokemon.isShiny())
             this.gameStats.shinyPokemonHatched++;
         }
+
+        if (!hasPrevolution)
+          this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
       }
-
-      const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
-      const newCatch = !caughtAttr;
-
+    
       const checkPrevolution = () => {
         if (hasPrevolution) {
           const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
@@ -984,6 +1027,11 @@ export class GameData {
     });
   }
 
+  addStarterCandy(species: PokemonSpecies, count: integer): void {
+    this.scene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
+    this.starterData[species.speciesId].candyCount += count;
+  }
+
   setEggMoveUnlocked(species: PokemonSpecies, eggMoveIndex: integer): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const speciesId = species.speciesId;
@@ -992,17 +1040,17 @@ export class GameData {
         return;
       }
 
-      if (!this.starterEggMoveData.hasOwnProperty(speciesId))
-        this.starterEggMoveData[speciesId] = 0;
+      if (!this.starterData[speciesId].eggMoves)
+        this.starterData[speciesId].eggMoves = 0;
 
       const value = Math.pow(2, eggMoveIndex);
 
-      if (this.starterEggMoveData[speciesId] & value) {
+      if (this.starterData[speciesId].eggMoves & value) {
         resolve(false);
         return;
       }
 
-      this.starterEggMoveData[speciesId] |= value;
+      this.starterData[speciesId].eggMoves |= value;
 
       this.scene.playSound('level_up_fanfare');
       this.scene.ui.showText(`${eggMoveIndex === 3 ? 'Rare ' : ''}Egg Move unlocked: ${allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name}`, null, () => resolve(true), null, true);
@@ -1094,7 +1142,6 @@ export class GameData {
   getSpeciesStarterValue(speciesId: Species): number {
     const baseValue = speciesStarters[speciesId];
     let value = baseValue;
-    const caughtHatchedCount = this.dexData[speciesId].caughtCount + this.dexData[speciesId].hatchedCount;
 
     const decrementValue = (value: number) => {
       if (value > 1)
@@ -1104,44 +1151,8 @@ export class GameData {
       return value;
     }
 
-    let thresholdA: integer;
-    let thresholdB: integer;
-
-    switch (baseValue) {
-      case 1:
-        [ thresholdA, thresholdB ] = [ 25, 100 ];
-        break;
-      case 2:
-        [ thresholdA, thresholdB ] = [ 20, 70 ];
-        break;
-      case 3:
-        [ thresholdA, thresholdB ] = [ 15, 50 ];
-        break;
-      case 4:
-        [ thresholdA, thresholdB ] = [ 10, 30 ];
-        break;
-      case 5:
-        [ thresholdA, thresholdB ] = [ 8, 25 ];
-        break;
-      case 6:
-        [ thresholdA, thresholdB ] = [ 5, 15 ];
-        break;
-      case 7:
-        [ thresholdA, thresholdB ] = [ 4, 12 ];
-        break;
-      case 8:
-        [ thresholdA, thresholdB ] = [ 3, 10 ];
-        break;
-      default:
-        [ thresholdA, thresholdB ] = [ 2, 5 ];
-        break;
-    }
-
-    if (caughtHatchedCount >= thresholdA) {
+    for (let v = 0; v < this.starterData[speciesId].valueReduction; v++)
       value = decrementValue(value);
-      if (caughtHatchedCount >= thresholdB)
-        value = decrementValue(value);
-    }
 
     return value;
   }
