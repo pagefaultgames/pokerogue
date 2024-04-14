@@ -2260,6 +2260,7 @@ export class PlayerPokemon extends Pokemon {
       if (newEvolution.condition.predicate(this)) {
         const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature);
         newPokemon.natureOverride = this.natureOverride;
+        newPokemon.moveset = this.moveset.slice();
         newPokemon.fusionSpecies = this.fusionSpecies;
         newPokemon.fusionFormIndex = this.fusionFormIndex;
         newPokemon.fusionAbilityIndex = this.fusionAbilityIndex;
