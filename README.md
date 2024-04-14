@@ -51,7 +51,7 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
   - Squip (Paid Commissions)
   - Contributions by Someonealive-QN
 
-### UI
+### 🎨 UI
   - GAMEFREAK
   - LJ Birdman
 
@@ -94,5 +94,5 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
   - mangalos810
   - Involuntary-Twitch
 
-### Move Animations
+### 🎨 Move Animations
   - Pokémon Reborn

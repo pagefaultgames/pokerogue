@@ -109,7 +109,7 @@ export abstract class Modifier {
     return true;
   }
 
-  abstract apply(args: any[]): boolean;
+  abstract apply(args: any[]): boolean | Promise<boolean>;
 }
 
 export abstract class PersistentModifier extends Modifier {
@@ -1203,10 +1203,10 @@ export class FusePokemonModifier extends ConsumablePokemonModifier {
     return super.shouldApply(args) && args[1] instanceof PlayerPokemon && this.fusePokemonId === (args[1] as PlayerPokemon).id;
   }
 
-  apply(args: any[]): boolean {
-    (args[0] as PlayerPokemon).fuse(args[1] as PlayerPokemon);
-
-    return true;
+  apply(args: any[]): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      (args[0] as PlayerPokemon).fuse(args[1] as PlayerPokemon).then(() => resolve(true));
+    });
   }
 }
 

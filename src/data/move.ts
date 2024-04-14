@@ -12,8 +12,9 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { ProtectAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr } from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr } from "./ability";
 import { Abilities } from "./enums/abilities";
+import { allAbilities } from './ability';
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
@@ -21,6 +22,7 @@ import { TerrainType } from "./terrain";
 import { SpeciesFormChangeActiveTrigger } from "./pokemon-forms";
 import { Species } from "./enums/species";
 import { ModifierPoolType } from "#app/modifier/modifier-type";
+import { Command } from "../ui/command-ui-handler";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -810,6 +812,19 @@ export class HitHealAttr extends MoveEffectAttr {
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     return Math.floor(Math.max((1 - user.getHpRatio()) - 0.33, 0) * ((move.power / 5) / 4));
+  }
+}
+
+export class StrengthSapHealAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, MoveEffectTrigger.HIT);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
+      target.stats[Stat.ATK] * (Math.max(2, 2 + target.summonData.battleStats[BattleStat.ATK]) / Math.max(2, 2 - target.summonData.battleStats[BattleStat.ATK])),
+      getPokemonMessage(user, ` regained\nhealth!`), false, true));
+    return true;
   }
 }
 
@@ -2031,6 +2046,27 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
+export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const type = (args[0] as Utils.IntegerHolder);
+
+    const iv_val = Math.floor(((user.ivs[Stat.HP] & 1)
+      +(user.ivs[Stat.ATK] & 1) * 2
+      +(user.ivs[Stat.DEF] & 1) * 4
+      +(user.ivs[Stat.SPD] & 1) * 8
+      +(user.ivs[Stat.SPATK] & 1) * 16
+      +(user.ivs[Stat.SPDEF] & 1) * 32) * 15/63);
+    
+    type.value = [
+      Type.FIGHTING, Type.FLYING, Type.POISON, Type.GROUND,
+      Type.ROCK, Type.BUG, Type.GHOST, Type.STEEL,
+      Type.FIRE, Type.WATER, Type.GRASS, Type.ELECTRIC,
+      Type.PSYCHIC, Type.ICE, Type.DRAGON, Type.DARK][iv_val];
+
+    return true;
+  }
+}
+
 export class VariableMoveTypeMultiplierAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return false;
@@ -2087,15 +2123,30 @@ export class MissEffectAttr extends MoveAttr {
   }
 }
 
-const halveHpMissEffectFunc = (user: Pokemon, move: Move) => {
+export class NoEffectAttr extends MoveAttr {
+  private noEffectFunc: UserMoveConditionFunc;
+
+  constructor(noEffectFunc: UserMoveConditionFunc) {
+    super();
+
+    this.noEffectFunc = noEffectFunc;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    this.noEffectFunc(user, move);
+    return true;
+  }
+}
+
+const crashDamageFunc = (user: Pokemon, move: Move) => {
   const cancelled = new Utils.BooleanHolder(false);
   applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
   if (cancelled.value)
     return false;
   
-  const damage = user.damage(Math.floor(user.getMaxHp() / 2));
-  if (damage)
-    user.scene.damageNumberHandler.add(user, damage, HitResult.OTHER);
+  user.damageAndUpdate(Math.floor(user.getMaxHp() / 2), HitResult.OTHER, false, true);
+  user.scene.queueMessage(getPokemonMessage(user, ' kept going\nand crashed!'));
+  
   return true;
 };
 
@@ -2266,6 +2317,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.PROTECTED:
       case BattlerTagType.FLYING:
       case BattlerTagType.CRIT_BOOST:
+      case BattlerTagType.ALWAYS_CRIT:
         return 5;
     }
   }
@@ -2387,6 +2439,21 @@ export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
   }
 }
 
+export class AlwaysCritsAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.ALWAYS_CRIT, true, false, 2);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    user.scene.queueMessage(getPokemonMessage(user, ` took aim\nat ${target.name}!`));
+
+    return true;
+  }
+}
+
 export class FaintCountdownAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.PERISH_SONG, false, true, 4);
@@ -2466,61 +2533,72 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
 export class ForceSwitchOutAttr extends MoveEffectAttr {
   private user: boolean;
   private batonPass: boolean;
-
+  
   constructor(user?: boolean, batonPass?: boolean) {
     super(false, MoveEffectTrigger.HIT, true);
-
     this.user = !!user;
     this.batonPass = !!batonPass;
   }
-
+  
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-      if (move.category !== MoveCategory.STATUS && !this.getSwitchOutCondition()(user, target, move))
-        return resolve(false);
-      const switchOutTarget = this.user ? user : target;
-      if (switchOutTarget instanceof PlayerPokemon) {
-        if (switchOutTarget.hp) {
-          applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
-          (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true));
-        }
-        else
-          resolve(false);
-        return;
-      } else if (user.scene.currentBattle.battleType) {
-        switchOutTarget.resetTurnData();
-        switchOutTarget.resetSummonData();
-        switchOutTarget.hideInfo();
-        switchOutTarget.setVisible(false);
-        switchOutTarget.scene.field.remove(switchOutTarget);
-        user.scene.triggerPokemonFormChange(switchOutTarget, SpeciesFormChangeActiveTrigger, true);
-
-        if (switchOutTarget.hp)
-          user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot), false, this.batonPass, false));
-      } else {
-        switchOutTarget.setVisible(false);
-        
-        if (switchOutTarget.hp) {
-          switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
-          switchOutTarget.scene.field.remove(switchOutTarget);
-          user.scene.queueMessage(getPokemonMessage(switchOutTarget, ' fled!'), null, true, 500);
-        }
-
-        if (!switchOutTarget.getAlly()?.isActive(true)) {
-          user.scene.clearEnemyHeldItemModifiers();
-
-          if (switchOutTarget.hp) {
-            user.scene.pushPhase(new BattleEndPhase(user.scene));
-            user.scene.pushPhase(new NewBattlePhase(user.scene));
-          }
-        }
-      }
-
-      resolve(true);
-    });
-  }
-
-  getCondition(): MoveConditionFunc {
+  	// Check if the move category is not STATUS or if the switch out condition is not met
+    if (move.category !== MoveCategory.STATUS && !this.getSwitchOutCondition()(user, target, move)) {
+  	  //Apply effects before switch out i.e. poison point, flame body, etc
+      applyPostDefendAbAttrs(PostDefendContactApplyStatusEffectAbAttr, target, user, new PokemonMove(move.id), null);
+      return resolve(false);
+    }
+  
+  	// Move the switch out logic inside the conditional block
+  	// This ensures that the switch out only happens when the conditions are met
+	  const switchOutTarget = this.user ? user : target;
+	  if (switchOutTarget instanceof PlayerPokemon) { 
+	  	if (switchOutTarget.hp) {
+	  	  applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
+	  	  (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true));
+	  	}
+	  	else {
+	  	  resolve(false);
+	  	}
+	  	return;
+	  }
+	  else if (user.scene.currentBattle.battleType) {
+	  	// Switch out logic for the battle type
+	  	switchOutTarget.resetTurnData();
+	  	switchOutTarget.resetSummonData();
+	  	switchOutTarget.hideInfo();
+	  	switchOutTarget.setVisible(false);
+	  	switchOutTarget.scene.field.remove(switchOutTarget);
+	  	user.scene.triggerPokemonFormChange(switchOutTarget, SpeciesFormChangeActiveTrigger, true);
+	  
+	  	if (switchOutTarget.hp)
+	  	user.scene.unshiftPhase(new SwitchSummonPhase(user.scene, switchOutTarget.getFieldIndex(), user.scene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot), false, this.batonPass, false));
+	  }
+	  else { 
+	    // Switch out logic for everything else
+	  	switchOutTarget.setVisible(false);
+	  
+	  	if (switchOutTarget.hp) {
+	  	  switchOutTarget.hideInfo().then(() => switchOutTarget.destroy());
+	  	  switchOutTarget.scene.field.remove(switchOutTarget);
+	  	  user.scene.queueMessage(getPokemonMessage(switchOutTarget, ' fled!'), null, true, 500);
+	  	}
+	  
+	  	if (!switchOutTarget.getAlly()?.isActive(true)) {
+	  	  user.scene.clearEnemyHeldItemModifiers();
+		  
+	  	  if (switchOutTarget.hp) {
+	  	  	user.scene.pushPhase(new BattleEndPhase(user.scene));
+	  	  	user.scene.pushPhase(new NewBattlePhase(user.scene));
+	  	  }
+	  	}
+	  }
+	  
+	  resolve(true);
+	  });
+	}
+  
+	getCondition(): MoveConditionFunc {
     return (user, target, move) => move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move);
   }
 
@@ -2838,6 +2916,91 @@ export class SketchAttr extends MoveEffectAttr {
   }
 }
 
+export class AbilityChangeAttr extends MoveEffectAttr {
+  public ability: Abilities;
+
+  constructor(ability: Abilities, selfTarget?: boolean) {
+    super(selfTarget, MoveEffectTrigger.HIT);
+
+    this.ability = ability;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    (this.selfTarget ? user : target).summonData.ability = this.ability;
+
+    user.scene.queueMessage('The ' + getPokemonMessage((this.selfTarget ? user : target), ` acquired\n${allAbilities[this.ability].name}!`));
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => !(this.selfTarget ? user : target).getAbility().hasAttr(UnsuppressableAbilityAbAttr) && (this.selfTarget ? user : target).getAbility().id !== this.ability;
+  }
+}
+
+export class AbilityCopyAttr extends MoveEffectAttr {
+  public copyToPartner: boolean;
+
+  constructor(copyToPartner: boolean = false) {
+    super(false, MoveEffectTrigger.HIT);
+
+    this.copyToPartner = copyToPartner;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    user.summonData.ability = target.getAbility().id;
+
+    user.scene.queueMessage(getPokemonMessage(user, ` copied the `) + getPokemonMessage(target, `'s\n${allAbilities[target.getAbility().id].name}!`));
+    
+    if (this.copyToPartner && user.scene.currentBattle?.double && user.getAlly().hp) {
+      user.getAlly().summonData.ability = target.getAbility().id;
+      user.getAlly().scene.queueMessage(getPokemonMessage(user.getAlly(), ` copied the `) + getPokemonMessage(target, `'s\n${allAbilities[target.getAbility().id].name}!`));
+    }
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => {
+      let ret = !target.getAbility().hasAttr(UncopiableAbilityAbAttr) && !user.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
+      if (this.copyToPartner && user.scene.currentBattle?.double)
+        ret = ret && (!user.getAlly().hp || !user.getAlly().getAbility().hasAttr(UnsuppressableAbilityAbAttr));
+      else
+        ret = ret && user.getAbility().id !== target.getAbility().id;
+      return ret;
+    };
+  }
+}
+
+export class AbilityGiveAttr extends MoveEffectAttr {
+  public copyToPartner: boolean;
+
+  constructor() {
+    super(false, MoveEffectTrigger.HIT);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    target.summonData.ability = user.getAbility().id;
+
+    user.scene.queueMessage('The' + getPokemonMessage(target, `\nacquired ${allAbilities[user.getAbility().id].name}!`));
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => !user.getAbility().hasAttr(UncopiableAbilityAbAttr) && !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && user.getAbility().id !== target.getAbility().id;
+  }
+}
+
 export class SwitchAbilitiesAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args))
@@ -2847,13 +3010,13 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
     user.summonData.ability = target.getAbility().id;
     target.summonData.ability = tempAbilityId;
 
-    user.scene.queueMessage(getPokemonMessage(user, ` swapped\nAbilities with its target!`));
+    user.scene.queueMessage(getPokemonMessage(user, ` swapped\nabilities with its target!`));
 
     return true;
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !target.getAbility().hasAttr(ProtectAbilityAbAttr);
+    return (user, target, move) => !user.getAbility().hasAttr(UnswappableAbilityAbAttr) && !target.getAbility().hasAttr(UnswappableAbilityAbAttr);
   }
 }
 
@@ -2865,6 +3028,7 @@ export class TransformAttr extends MoveEffectAttr {
 
       user.summonData.speciesForm = target.getSpeciesForm();
       user.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
+      user.summonData.ability = target.getAbility().id;
       user.summonData.gender = target.getGender();
       user.summonData.fusionGender = target.getFusionGender();
       user.summonData.stats = [ user.stats[Stat.HP] ].concat(target.stats.slice(1));
@@ -3081,7 +3245,8 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.MEGA_KICK, "Mega Kick", Type.NORMAL, MoveCategory.PHYSICAL, 120, 75, 5, "The target is attacked by a kick launched with muscle-packed power.", -1, 0, 1),
     new AttackMove(Moves.JUMP_KICK, "Jump Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, "The user jumps up high, then strikes with a kick. If the kick misses, the user hurts itself.", -1, 0, 1)
-      .attr(MissEffectAttr, halveHpMissEffectFunc)
+      .attr(MissEffectAttr, crashDamageFunc)
+      .attr(NoEffectAttr, crashDamageFunc)
       .condition(failOnGravityCondition),
     new AttackMove(Moves.ROLLING_KICK, "Rolling Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 85, 15, "The user lashes out with a quick, spinning kick. This may also make the target flinch.", 30, 0, 1)
       .attr(FlinchAttr),
@@ -3356,7 +3521,8 @@ export function initMoves() {
       .attr(HealAttr, 0.5)
       .triageMove(),
     new AttackMove(Moves.HIGH_JUMP_KICK, "High Jump Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 130, 90, 10, "The target is attacked with a knee kick from a jump. If it misses, the user is hurt instead.", -1, 0, 1)
-      .attr(MissEffectAttr, halveHpMissEffectFunc)
+      .attr(MissEffectAttr, crashDamageFunc)
+      .attr(NoEffectAttr, crashDamageFunc)
       .condition(failOnGravityCondition),
     new StatusMove(Moves.GLARE, "Glare", Type.NORMAL, 100, 30, "The user intimidates the target with the pattern on its belly to cause paralysis.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
@@ -3416,7 +3582,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.REST, "Rest", Type.PSYCHIC, -1, 5, "The user goes to sleep for two turns. This fully restores the user's HP and heals any status conditions.", -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
-      .condition((user, target, move) => user.status?.effect !== StatusEffect.SLEEP && user.getHpRatio() < 1)
+      .condition((user, target, move) => user.getHpRatio() < 1 && user.canSetStatus(StatusEffect.SLEEP, true, true))
       .triageMove(),
     new AttackMove(Moves.ROCK_SLIDE, "Rock Slide", Type.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, "Large boulders are hurled at opposing Pokémon to inflict damage. This may also make the opposing Pokémon flinch.", 30, 0, 1)
       .attr(FlinchAttr)
@@ -3634,7 +3800,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.MOONLIGHT, "Moonlight", Type.FAIRY, -1, 5, "The user restores its own HP. The amount of HP regained varies with the weather.", -1, 0, 2)
       .attr(PlantHealAttr)
       .triageMove(),
-    new AttackMove(Moves.HIDDEN_POWER, "Hidden Power (P)", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, "A unique attack that varies in type depending on the Pokémon using it.", -1, 0, 2),
+    new AttackMove(Moves.HIDDEN_POWER, "Hidden Power", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, "A unique attack that varies in type depending on the Pokémon using it.", -1, 0, 2)
+      .attr(HiddenPowerTypeAttr),
     new AttackMove(Moves.CROSS_CHOP, "Cross Chop", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 80, 5, "The user delivers a double chop with its forearms crossed. Critical hits land more easily.", -1, 0, 2)
       .attr(HighCritAttr),
     new AttackMove(Moves.TWISTER, "Twister", Type.DRAGON, MoveCategory.SPECIAL, 40, 100, 20, "The user whips up a vicious tornado to tear at opposing Pokémon. This may also make them flinch.", 20, 0, 2)
@@ -3700,9 +3867,10 @@ export function initMoves() {
     new AttackMove(Moves.FACADE, "Facade", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, "This attack move doubles its power if the user is poisoned, burned, or paralyzed.", -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.status
         && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1),
-    new AttackMove(Moves.FOCUS_PUNCH, "Focus Punch (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, "The user focuses its mind before launching a punch. This move fails if the user is hit before it is used.", -1, -3, 3)
+    new AttackMove(Moves.FOCUS_PUNCH, "Focus Punch", Type.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, "The user focuses its mind before launching a punch. This move fails if the user is hit before it is used.", -1, -3, 3)
       .punchingMove()
-      .ignoresVirtual(),
+      .ignoresVirtual()
+      .condition((user, target, move) => !user.turnData.attacksReceived.find(r => r.damage)),
     new AttackMove(Moves.SMELLING_SALTS, "Smelling Salts", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 10, "This attack's power is doubled when used on a target with paralysis. This also cures the target's paralysis, however.", -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS),
@@ -3715,7 +3883,8 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.TRICK, "Trick (N)", Type.PSYCHIC, 100, 10, "The user catches the target off guard and swaps its held item with its own.", -1, 0, 3),
-    new StatusMove(Moves.ROLE_PLAY, "Role Play (N)", Type.PSYCHIC, -1, 10, "The user mimics the target completely, copying the target's Ability.", -1, 0, 3),
+    new StatusMove(Moves.ROLE_PLAY, "Role Play", Type.PSYCHIC, -1, 10, "The user mimics the target completely, copying the target's Ability.", -1, 0, 3)
+      .attr(AbilityCopyAttr),
     new SelfStatusMove(Moves.WISH, "Wish (N)", Type.NORMAL, -1, 10, "One turn after this move is used, the user's or its replacement's HP is restored by half the user's max HP.", -1, 0, 3)
       .triageMove(),
     new SelfStatusMove(Moves.ASSIST, "Assist", Type.NORMAL, -1, 20, "The user hurriedly and randomly uses a move among those known by ally Pokémon.", -1, 0, 3)
@@ -3727,7 +3896,8 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], -1, true),
     new SelfStatusMove(Moves.MAGIC_COAT, "Magic Coat (N)", Type.PSYCHIC, -1, 15, "Moves like Leech Seed and moves that inflict status conditions are blocked by a barrier and reflected back to the user of those moves.", -1, 4, 3),
     new SelfStatusMove(Moves.RECYCLE, "Recycle (N)", Type.NORMAL, -1, 10, "The user recycles a held item that has been used in battle so it can be used again.", -1, 0, 3),
-    new AttackMove(Moves.REVENGE, "Revenge (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, "This attack move's power is doubled if the user has been hurt by the opponent in the same turn.", -1, -4, 3),
+    new AttackMove(Moves.REVENGE, "Revenge", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, "This attack move's power is doubled if the user has been hurt by the opponent in the same turn.", -1, -4, 3)
+      .attr(TurnDamagedDoublePowerAttr),
     new AttackMove(Moves.BRICK_BREAK, "Brick Break (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, "The user attacks with a swift chop. It can also break barriers, such as Light Screen and Reflect.", -1, 0, 3),
     new StatusMove(Moves.YAWN, "Yawn", Type.NORMAL, -1, 10, "The user lets loose a huge yawn that lulls the target into falling asleep on the next turn.", -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
@@ -3997,8 +4167,10 @@ export function initMoves() {
         });
         return uniqueUsedMoveIds.size >= movesetMoveIds.length - 1;
       }),
-    new StatusMove(Moves.WORRY_SEED, "Worry Seed (N)", Type.GRASS, 100, 10, "A seed that causes worry is planted on the target. It prevents sleep by making the target's Ability Insomnia.", -1, 0, 4),
-    new AttackMove(Moves.SUCKER_PUNCH, "Sucker Punch (P)", Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, "This move enables the user to attack first. This move fails if the target is not readying an attack.", -1, 1, 4),
+    new StatusMove(Moves.WORRY_SEED, "Worry Seed", Type.GRASS, 100, 10, "A seed that causes worry is planted on the target. It prevents sleep by making the target's Ability Insomnia.", -1, 0, 4)
+      .attr(AbilityChangeAttr, Abilities.INSOMNIA),
+    new AttackMove(Moves.SUCKER_PUNCH, "Sucker Punch", Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, "This move enables the user to attack first. This move fails if the target is not readying an attack.", -1, 1, 4)
+      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].category !== MoveCategory.STATUS),
     new StatusMove(Moves.TOXIC_SPIKES, "Toxic Spikes", Type.POISON, -1, 20, "The user lays a trap of poison spikes at the feet of the opposing team. The spikes will poison opposing Pokémon that switch into battle.", -1, 0, 4)
       .attr(AddArenaTrapTagAttr, ArenaTagType.TOXIC_SPIKES)
       .target(MoveTarget.ENEMY_SIDE),
@@ -4246,8 +4418,10 @@ export function initMoves() {
       .ballBombMove(),
     new AttackMove(Moves.FOUL_PLAY, "Foul Play", Type.DARK, MoveCategory.PHYSICAL, 95, 100, 15, "The user turns the target's power against it. The higher the target's Attack stat, the greater the damage it deals.", -1, 0, 5)
       .attr(TargetAtkUserAtkAttr),
-    new StatusMove(Moves.SIMPLE_BEAM, "Simple Beam (N)", Type.NORMAL, 100, 15, "The user's mysterious psychic wave changes the target's Ability to Simple.", -1, 0, 5),
-    new StatusMove(Moves.ENTRAINMENT, "Entrainment (N)", Type.NORMAL, 100, 15, "The user dances with an odd rhythm that compels the target to mimic it, making the target's Ability the same as the user's.", -1, 0, 5),
+    new StatusMove(Moves.SIMPLE_BEAM, "Simple Beam", Type.NORMAL, 100, 15, "The user's mysterious psychic wave changes the target's Ability to Simple.", -1, 0, 5)
+      .attr(AbilityChangeAttr, Abilities.SIMPLE),
+    new StatusMove(Moves.ENTRAINMENT, "Entrainment", Type.NORMAL, 100, 15, "The user dances with an odd rhythm that compels the target to mimic it, making the target's Ability the same as the user's.", -1, 0, 5)
+      .attr(AbilityGiveAttr),
     new StatusMove(Moves.AFTER_YOU, "After You (N)", Type.NORMAL, -1, 15, "The user helps the target and makes it use its move right after the user.", -1, 0, 5)
       .ignoresProtect(),
     new AttackMove(Moves.ROUND, "Round (P)", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, "The user attacks the target with a song. Others can join in the Round to increase the power of the attack.", -1, 0, 5)
@@ -4443,7 +4617,7 @@ export function initMoves() {
     new StatusMove(Moves.TOPSY_TURVY, "Topsy-Turvy", Type.DARK, -1, 20, "All stat changes affecting the target turn topsy-turvy and become the opposite of what they were.", -1, 0, 6)
       .attr(InvertStatsAttr),
     new AttackMove(Moves.DRAINING_KISS, "Draining Kiss", Type.FAIRY, MoveCategory.SPECIAL, 50, 100, 10, "The user steals the target's HP with a kiss. The user's HP is restored by over half of the damage taken by the target.", -1, 0, 6)
-      .attr(HitHealAttr)
+      .attr(HitHealAttr, 0.75)
       .makesContact()
       .triageMove(),
     new StatusMove(Moves.CRAFTY_SHIELD, "Crafty Shield (N)", Type.FAIRY, -1, 10, "The user protects itself and its allies from status moves with a mysterious power. This does not stop moves that do damage.", -1, 3, 6)
@@ -4617,8 +4791,10 @@ export function initMoves() {
       .attr(HealAttr, 0.5, true, false)
       .triageMove(),
     new AttackMove(Moves.HIGH_HORSEPOWER, "High Horsepower", Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, "The user fiercely attacks the target using its entire body.", -1, 0, 7),
-    new StatusMove(Moves.STRENGTH_SAP, "Strength Sap (P)", Type.GRASS, 100, 10, "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat.", 100, 0, 7)
+    new StatusMove(Moves.STRENGTH_SAP, "Strength Sap", Type.GRASS, 100, 10, "The user restores its HP by the same amount as the target's Attack stat. It also lowers the target's Attack stat.", 100, 0, 7)
+      .attr(StrengthSapHealAttr)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
+      .condition((user, target, move) => target.summonData.battleStats[BattleStat.ATK] > -6)
       .triageMove(),
     new AttackMove(Moves.SOLAR_BLADE, "Solar Blade", Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, "In this two-turn attack, the user gathers light and fills a blade with the light's energy, attacking the target on the next turn.", -1, 0, 7)
       .attr(SunlightChargeAttr, ChargeAnim.SOLAR_BLADE_CHARGING, "is glowing!")
@@ -4630,7 +4806,8 @@ export function initMoves() {
     new StatusMove(Moves.TOXIC_THREAD, "Toxic Thread", Type.POISON, 100, 20, "The user shoots poisonous threads to poison the target and lower the target's Speed stat.", 100, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .attr(StatChangeAttr, BattleStat.SPD, -1),
-    new SelfStatusMove(Moves.LASER_FOCUS, "Laser Focus (N)", Type.NORMAL, -1, 30, "The user concentrates intensely. The attack on the next turn always results in a critical hit.", -1, 0, 7),
+    new SelfStatusMove(Moves.LASER_FOCUS, "Laser Focus", Type.NORMAL, -1, 30, "The user concentrates intensely. The attack on the next turn always results in a critical hit.", -1, 0, 7)
+      .attr(AddBattlerTagAttr, BattlerTagType.ALWAYS_CRIT, true, false),
     new StatusMove(Moves.GEAR_UP, "Gear Up", Type.STEEL, -1, 20, "The user engages its gears to raise the Attack and Sp. Atk stats of ally Pokémon with the Plus or Minus Ability.", -1, 0, 7)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, false, (user, target, move) => [ Abilities.PLUS, Abilities.MINUS ].includes(target.getAbility().id) || (target.canApplyPassive() && [ Abilities.PLUS, Abilities.MINUS ].includes(target.getPassiveAbility().id)))
       .target(MoveTarget.USER_AND_ALLIES)
@@ -4688,7 +4865,8 @@ export function initMoves() {
     new AttackMove(Moves.PULVERIZING_PANCAKE, "Pulverizing Pancake (P)", Type.NORMAL, MoveCategory.PHYSICAL, 210, -1, 1, "Z-Power brings out the true capabilities of the user, Snorlax. The Pokémon moves its enormous body energetically and attacks the target with full force.", -1, 0, 7),
     new SelfStatusMove(Moves.EXTREME_EVOBOOST, "Extreme Evoboost", Type.NORMAL, -1, 1, "After obtaining Z-Power, the user, Eevee, gets energy from its evolved friends and boosts its stats sharply.", 100, 0, 7)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 2, true),
-    new AttackMove(Moves.GENESIS_SUPERNOVA, "Genesis Supernova (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 185, -1, 1, "After obtaining Z-Power, the user, Mew, attacks the target with full force. The terrain will be charged with psychic energy.", -1, 0, 7),
+    new AttackMove(Moves.GENESIS_SUPERNOVA, "Genesis Supernova", Type.PSYCHIC, MoveCategory.SPECIAL, 185, -1, 1, "After obtaining Z-Power, the user, Mew, attacks the target with full force. The terrain will be charged with psychic energy.", -1, 0, 7)
+      .attr(TerrainChangeAttr, TerrainType.PSYCHIC),
     /* End Unused */
     new AttackMove(Moves.SHELL_TRAP, "Shell Trap (P)", Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, "The user sets a shell trap. If the user is hit by a physical move, the trap will explode and inflict damage on opposing Pokémon.", -1, -3, 7)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -4736,6 +4914,7 @@ export function initMoves() {
       .attr(ClearTerrainAttr)
       .makesContact(false),
     new AttackMove(Moves.CLANGOROUS_SOULBLAZE, "Clangorous Soulblaze (P)", Type.DRAGON, MoveCategory.SPECIAL, 185, -1, 1, "After obtaining Z-Power, the user, Kommo-o, attacks the opposing Pokémon with full force. This move boosts the user's stats.", 100, 0, 7)
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     /* End Unused */
@@ -4876,8 +5055,9 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.APPLE_ACID, "Apple Acid", Type.GRASS, MoveCategory.SPECIAL, 80, 100, 10, "The user attacks the target with an acidic liquid created from tart apples. This also lowers the target's Sp. Def stat.", 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1),
-    new AttackMove(Moves.GRAV_APPLE, "Grav Apple (P)", Type.GRASS, MoveCategory.PHYSICAL, 80, 100, 10, "The user inflicts damage by dropping an apple from high above. This also lowers the target's Defense stat.", 100, 0, 8)
+    new AttackMove(Moves.GRAV_APPLE, "Grav Apple", Type.GRASS, MoveCategory.PHYSICAL, 80, 100, 10, "The user inflicts damage by dropping an apple from high above. This also lowers the target's Defense stat.", 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.DEF, -1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTag(ArenaTagType.GRAVITY) ? 1.5 : 1)
       .makesContact(false),
     new AttackMove(Moves.SPIRIT_BREAK, "Spirit Break", Type.FAIRY, MoveCategory.PHYSICAL, 75, 100, 15, "The user attacks the target with so much force that it could break the target's spirit. This also lowers the target's Sp. Atk stat.", 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.SPATK, -1),
@@ -4945,7 +5125,7 @@ export function initMoves() {
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new StatusMove(Moves.JUNGLE_HEALING, "Jungle Healing (P)", Type.GRASS, -1, 10, "The user becomes one with the jungle, restoring HP and healing any status conditions of itself and its ally Pokémon in battle.", -1, 0, 8)
-      .attr(HealAttr, 0.25)
+      .attr(HealAttr, 0.25, true, false)
       .target(MoveTarget.USER_AND_ALLIES),
     new AttackMove(Moves.WICKED_BLOW, "Wicked Blow", Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, "The user, having mastered the Dark style, strikes the target with a fierce blow. This attack always results in a critical hit.", -1, 0, 8)
       .attr(CritOnlyAttr)
@@ -5118,9 +5298,14 @@ export function initMoves() {
     new SelfStatusMove(Moves.SILK_TRAP, "Silk Trap", Type.BUG, -1, 10, "The user spins a silken trap, protecting itself from damage while lowering the Speed stat of any attacker that makes direct contact.", -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP),
     new AttackMove(Moves.AXE_KICK, "Axe Kick", Type.FIGHTING, MoveCategory.PHYSICAL, 120, 90, 10, "The user attacks by kicking up into the air and slamming its heel down upon the target. This may also confuse the target. If it misses, the user takes damage instead.", 30, 0, 9)
-      .attr(MissEffectAttr, halveHpMissEffectFunc)
+      .attr(MissEffectAttr, crashDamageFunc)
+      .attr(NoEffectAttr, crashDamageFunc)
       .attr(ConfuseAttr),
-    new AttackMove(Moves.LAST_RESPECTS, "Last Respects (P)", Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, "The user attacks to avenge its allies. The more defeated allies there are in the user's party, the greater the move's power.", -1, 0, 9)
+    new AttackMove(Moves.LAST_RESPECTS, "Last Respects", Type.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, "The user attacks to avenge its allies. The more defeated allies there are in the user's party, the greater the move's power.", -1, 0, 9)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => {
+          return user.scene.getParty().reduce((acc, pokemonInParty) => acc + (pokemonInParty.status?.effect == StatusEffect.FAINT ? 1 : 0),
+          1,)
+        })
       .makesContact(false),
     new AttackMove(Moves.LUMINA_CRASH, "Lumina Crash", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, "The user attacks by unleashing a peculiar light that even affects the mind. This also harshly lowers the target's Sp. Def stat.", 100, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2),
@@ -5150,7 +5335,8 @@ export function initMoves() {
       .attr(LapseBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.THUNDER_CAGE, BattlerTagType.SEEDED ], true)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new StatusMove(Moves.DOODLE, "Doodle (N)", Type.NORMAL, 100, 10, "The user captures the very essence of the target in a sketch. This changes the Abilities of the user and its ally Pokémon to that of the target.", -1, 0, 9),
+    new StatusMove(Moves.DOODLE, "Doodle", Type.NORMAL, 100, 10, "The user captures the very essence of the target in a sketch. This changes the Abilities of the user and its ally Pokémon to that of the target.", -1, 0, 9)
+      .attr(AbilityCopyAttr, true),
     new SelfStatusMove(Moves.FILLET_AWAY, "Fillet Away", Type.NORMAL, -1, 10, "The user sharply boosts its Attack, Sp. Atk, and Speed stats by using its own HP.", -1, 0, 9)
       .attr(CutHpStatBoostAttr, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], 2, 2),
     new AttackMove(Moves.KOWTOW_CLEAVE, "Kowtow Cleave", Type.DARK, MoveCategory.PHYSICAL, 85, -1, 10, "The user slashes at the target after kowtowing to make the target let down its guard. This attack never misses.", -1, 0, 9)
@@ -5176,8 +5362,10 @@ export function initMoves() {
     new AttackMove(Moves.HYDRO_STEAM, "Hydro Steam (P)", Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, "The user blasts the target with boiling-hot water. This move's power is not lowered in harsh sunlight but rather boosted by 50 percent.", -1, 0, 9),
     new AttackMove(Moves.RUINATION, "Ruination", Type.DARK, MoveCategory.SPECIAL, 1, 90, 10, "The user summons a ruinous disaster. This cuts the target's HP in half.", -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
-    new AttackMove(Moves.COLLISION_COURSE, "Collision Course (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, "The user transforms and crashes to the ground, causing a massive prehistoric explosion. This move's power is boosted more than usual if it's a supereffective hit.", -1, 0, 9),
-    new AttackMove(Moves.ELECTRO_DRIFT, "Electro Drift (P)", Type.ELECTRIC, MoveCategory.SPECIAL, 100, 100, 5, "The user races forward at ultrafast speeds, piercing its target with futuristic electricity. This move's power is boosted more than usual if it's a supereffective hit.", -1, 0, 9)
+    new AttackMove(Moves.COLLISION_COURSE, "Collision Course", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, "The user transforms and crashes to the ground, causing a massive prehistoric explosion. This move's power is boosted more than usual if it's a supereffective hit.", -1, 0, 9)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type) >= 2 ? 5461/4096 : 1),
+    new AttackMove(Moves.ELECTRO_DRIFT, "Electro Drift", Type.ELECTRIC, MoveCategory.SPECIAL, 100, 100, 5, "The user races forward at ultrafast speeds, piercing its target with futuristic electricity. This move's power is boosted more than usual if it's a supereffective hit.", -1, 0, 9)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type) >= 2 ? 5461/4096 : 1)
       .makesContact(),
     new SelfStatusMove(Moves.SHED_TAIL, "Shed Tail (N)", Type.NORMAL, -1, 10, "The user creates a substitute for itself using its own HP before switching places with a party Pokémon in waiting.", -1, 0, 9),
     new StatusMove(Moves.CHILLY_RECEPTION, "Chilly Reception", Type.ICE, -1, 10, "The user tells a chillingly bad joke before switching places with a party Pokémon in waiting. This summons a snowstorm lasting five turns.", -1, 0, 9)
@@ -5210,7 +5398,11 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(Moves.DOUBLE_SHOCK, "Double Shock (P)", Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, "The user discharges all the electricity from its body to perform a high-damage attack. After using this move, the user will no longer be Electric type.", -1, 0, 9),
     new AttackMove(Moves.GIGATON_HAMMER, "Gigaton Hammer (P)", Type.STEEL, MoveCategory.PHYSICAL, 160, 100, 5, "The user swings its whole body around to attack with its huge hammer. This move can't be used twice in a row.", -1, 0, 9)
-      .makesContact(false),
+      .makesContact(false)
+      .condition((user, target, move) => {
+        const turnMove = user.getLastXMoves(1);
+        return !turnMove.length || turnMove[0].move !== move.id || turnMove[0].result !== MoveResult.SUCCESS;
+      }), // TODO Add Instruct/Encore interaction
     new AttackMove(Moves.COMEUPPANCE, "Comeuppance", Type.DARK, MoveCategory.PHYSICAL, 1, 100, 10, "The user retaliates with much greater force against the opponent that last inflicted damage on it.", -1, 0, 9)
       .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)
       .target(MoveTarget.ATTACKER),
@@ -5233,7 +5425,11 @@ export function initMoves() {
     new AttackMove(Moves.MAGICAL_TORQUE, "Magical Torque", Type.FAIRY, MoveCategory.PHYSICAL, 100, 100, 10, "The user revs their fae-like engine into the target. This may also confuse the target.", 30, 0, 9)
       .attr(ConfuseAttr)
       .makesContact(false),
-    new AttackMove(Moves.BLOOD_MOON, "Blood Moon (P)", Type.NORMAL, MoveCategory.SPECIAL, 140, 100, 5, "The user unleashes the full brunt of its spirit from a full moon that shines as red as blood. This move can't be used twice in a row.", -1, 0, 9),
+    new AttackMove(Moves.BLOOD_MOON, "Blood Moon (P)", Type.NORMAL, MoveCategory.SPECIAL, 140, 100, 5, "The user unleashes the full brunt of its spirit from a full moon that shines as red as blood. This move can't be used twice in a row.", -1, 0, 9)
+      .condition((user, target, move) => {
+        const turnMove = user.getLastXMoves(1);
+        return !turnMove.length || turnMove[0].move !== move.id || turnMove[0].result !== MoveResult.SUCCESS;
+      }), // TODO Add Instruct/Encore interaction
     new AttackMove(Moves.MATCHA_GOTCHA, "Matcha Gotcha", Type.GRASS, MoveCategory.SPECIAL, 80, 90, 15, "The user fires a blast of tea that it mixed. The user's HP is restored by up to half the damage taken by the target. This may also leave the target with a burn.", 20, 0, 9)
       .attr(HitHealAttr)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
@@ -5257,11 +5453,13 @@ export function initMoves() {
       .attr(DoublePowerChanceAttr),
     new StatusMove(Moves.BURNING_BULWARK, "Burning Bulwark", Type.FIRE, -1, 10, "The user's intensely hot fur protects it from attacks and also burns any attacker that makes direct contact with it.", 100, 4, 9)
       .attr(ProtectAttr, BattlerTagType.BURNING_BULWARK),
-    new AttackMove(Moves.THUNDERCLAP, "Thunderclap (P)", Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 5, "This move enables the user to attack first with a jolt of electricity. This move fails if the target is not readying an attack.", -1, 1, 9),
+    new AttackMove(Moves.THUNDERCLAP, "Thunderclap", Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 5, "This move enables the user to attack first with a jolt of electricity. This move fails if the target is not readying an attack.", -1, 1, 9)
+      .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].category !== MoveCategory.STATUS),
     new AttackMove(Moves.MIGHTY_CLEAVE, "Mighty Cleave", Type.ROCK, MoveCategory.PHYSICAL, 95, 100, 5, "The user wields the light that has accumulated atop its head to cleave the target. This move hits even if the target protects itself.", -1, 0, 9)
       .ignoresProtect(),
     new AttackMove(Moves.TACHYON_CUTTER, "Tachyon Cutter", Type.STEEL, MoveCategory.SPECIAL, 50, -1, 10, "The user attacks by launching particle blades at the target twice in a row. This attack never misses.", -1, 0, 9)
-      .attr(MultiHitAttr, MultiHitType._2),
+      .attr(MultiHitAttr, MultiHitType._2)
+      .slicingMove(),
     new AttackMove(Moves.HARD_PRESS, "Hard Press", Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, "The target is crushed with an arm, a claw, or the like to inflict damage. The more HP the target has left, the greater the move's power.", -1, 0, 9)
       .attr(OpponentHighHpPowerAttr),
     new StatusMove(Moves.DRAGON_CHEER, "Dragon Cheer (P)", Type.DRAGON, -1, 15, "The user raises its allies' morale with a draconic cry so that their future attacks have a heightened chance of landing critical hits. This rouses Dragon types more.", 100, 0, 9)
@@ -5270,7 +5468,8 @@ export function initMoves() {
     new AttackMove(Moves.ALLURING_VOICE, "Alluring Voice (P)", Type.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, "The user attacks the target using its angelic voice. This also confuses the target if its stats have been boosted during the turn.", -1, 0, 9),
     new AttackMove(Moves.TEMPER_FLARE, "Temper Flare (P)", Type.FIRE, MoveCategory.PHYSICAL, 75, 100, 10, "Spurred by desperation, the user attacks the target. This move's power is doubled if the user's previous move failed.", -1, 0, 9),
     new AttackMove(Moves.SUPERCELL_SLAM, "Supercell Slam", Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 95, 15, "The user electrifies its body and drops onto the target to inflict damage. If this move misses, the user takes damage instead.", -1, 0, 9)
-      .attr(MissEffectAttr, halveHpMissEffectFunc),
+      .attr(MissEffectAttr, crashDamageFunc)
+      .attr(NoEffectAttr, crashDamageFunc),
     new AttackMove(Moves.PSYCHIC_NOISE, "Psychic Noise (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 75, 100, 10, "The user attacks the target with unpleasant sound waves. For two turns, the target is prevented from recovering HP through moves, Abilities, or held items.", -1, 0, 9)
       .soundBased(),
     new AttackMove(Moves.UPPER_HAND, "Upper Hand (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, "The user reacts to the target's movement and strikes with the heel of its palm, making the target flinch. This move fails if the target is not readying a priority move.", -1, 3, 9),

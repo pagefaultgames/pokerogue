@@ -2,7 +2,7 @@ import Phaser, { Time } from 'phaser';
 import UI, { Mode } from './ui/ui';
 import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from './phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './field/pokemon';
-import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies } from './data/pokemon-species';
+import PokemonSpecies, { PokemonSpeciesFilter, allSpecies, getPokemonSpecies, initSpecies, speciesStarters } from './data/pokemon-species';
 import * as Utils from './utils';
 import { Modifier, ModifierBar, ConsumablePokemonModifier, ConsumableModifier, PokemonHpRestoreModifier, HealingBoosterModifier, PersistentModifier, PokemonHeldItemModifier, ModifierPredicate, DoubleBattleChanceBoosterModifier, FusePokemonModifier, PokemonFormChangeItemModifier, TerastallizeModifier } from './modifier/modifier';
 import { PokeballType } from './data/pokeball';
@@ -57,6 +57,7 @@ import { initTouchControls } from './touch-controls';
 import { UiTheme } from './enums/ui-theme';
 import CacheBustedLoaderPlugin from './plugins/cache-busted-loader-plugin';
 import { SceneBase } from './scene-base';
+import CandyBar from './ui/candy-bar';
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -80,6 +81,11 @@ export const startingWave = STARTING_WAVE_OVERRIDE || 1;
 
 const expSpriteKeys: string[] = [];
 const repeatInputDelayMillis = 250;
+
+export let starterColors: StarterColors;
+interface StarterColors {
+	[key: string]: [string, string]
+}
 
 export enum Button {
 	UP,
@@ -142,6 +148,7 @@ export default class BattleScene extends SceneBase {
 	public pbTrayEnemy: PokeballTray;
 	public abilityBar: AbilityBar;
 	public partyExpBar: PartyExpBar;
+	public candyBar: CandyBar;
 	public arenaBg: Phaser.GameObjects.Sprite;
 	public arenaBgTransition: Phaser.GameObjects.Sprite;
 	public arenaPlayer: ArenaBase;
@@ -359,6 +366,10 @@ export default class BattleScene extends SceneBase {
 		this.partyExpBar.setup();
 		this.fieldUI.add(this.partyExpBar);
 
+		this.candyBar = new CandyBar(this);
+		this.candyBar.setup();
+		this.fieldUI.add(this.candyBar);
+
 		this.waveCountText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
 		this.waveCountText.setOrigin(1, 0);
 		this.fieldUI.add(this.waveCountText);
@@ -440,7 +451,8 @@ export default class BattleScene extends SceneBase {
 		Promise.all([
 			Promise.all(loadPokemonAssets),
 			initCommonAnims().then(() => loadCommonAnimAssets(this, true)),
-			Promise.all([ Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE ].map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(this, defaultMoves, true))
+			Promise.all([ Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE ].map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(this, defaultMoves, true)),
+			this.initStarterColors()
 		]).then(() => {
 			this.pushPhase(new LoginPhase(this));
 			this.pushPhase(new TitlePhase(this));
@@ -472,12 +484,53 @@ export default class BattleScene extends SceneBase {
 		this.updateScoreText();
 	}
 
-	initExpSprites(): void {
-		if (expSpriteKeys.length)
-			return;
-		fetch('./exp_sprites.json').then(res => res.json()).then(keys => {
-			if (Array.isArray(keys))
-				expSpriteKeys.push(...keys);
+	initExpSprites(): Promise<void> {
+		return new Promise(resolve => {
+			if (expSpriteKeys.length)
+				return resolve();
+			fetch('./exp-sprites.json').then(res => res.json()).then(keys => {
+				if (Array.isArray(keys))
+					expSpriteKeys.push(...keys);
+				resolve();
+			});
+		});
+	}
+
+	initStarterColors(): Promise<void> {
+		return new Promise(resolve => {
+			if (starterColors)
+				return resolve();
+
+			fetch('./starter-colors.json').then(res => res.json()).then(sc => {
+				starterColors = {};
+				Object.keys(sc).forEach(key => {
+					starterColors[key] = sc[key];
+				});
+
+				/*const loadPokemonAssets: Promise<void>[] = [];
+
+				for (let s of Object.keys(speciesStarters)) {
+					const species = getPokemonSpecies(parseInt(s));
+					loadPokemonAssets.push(species.loadAssets(this, false, 0, false));
+				}
+	
+				Promise.all(loadPokemonAssets).then(() => {
+					const starterCandyColors = {};
+					const rgbaToHexFunc = (r, g, b) => [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+		
+					for (let s of Object.keys(speciesStarters)) {
+						const species = getPokemonSpecies(parseInt(s));
+						
+						starterCandyColors[species.speciesId] = species.generateCandyColors(this).map(c => rgbaToHexFunc(c[0], c[1], c[2]));
+					}
+		
+					console.log(JSON.stringify(starterCandyColors));
+
+					resolve();
+				});*/
+
+				resolve();
+			});
 		});
 	}
 
@@ -1075,6 +1128,7 @@ export default class BattleScene extends SceneBase {
 		this.scoreText.setY(this.moneyText.y + 10);
 		const offsetY = (this.scoreText.visible ? this.scoreText : this.moneyText).y + 15;
 		this.partyExpBar.setY(offsetY);
+		this.candyBar.setY(offsetY + 15);
 		this.ui?.achvBar.setY(this.game.canvas.height / 6 + offsetY);
 	}
 
@@ -1558,6 +1612,7 @@ export default class BattleScene extends SceneBase {
 			const soundName = modifier.type.soundName;
 			this.validateAchvs(ModifierAchv, modifier);
 			const modifiersToRemove: PersistentModifier[] = [];
+			const modifierPromises: Promise<boolean>[] = [];
 			if (modifier instanceof PersistentModifier) {
 				if (modifier instanceof TerastallizeModifier)
 					modifiersToRemove.push(...(this.findModifiers(m => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId)));
@@ -1596,11 +1651,14 @@ export default class BattleScene extends SceneBase {
 						} else if (modifier instanceof FusePokemonModifier)
 							args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
 							
-						if (modifier.shouldApply(args))
-							modifier.apply(args);
+						if (modifier.shouldApply(args)) {
+							const result = modifier.apply(args);
+							if (result instanceof Promise)
+								modifierPromises.push(result);
+						}
 					}
 					
-					return Promise.allSettled(this.party.map(p => p.updateInfo(instant))).then(() => resolve());
+					return Promise.allSettled([this.party.map(p => p.updateInfo(instant)), ...modifierPromises]).then(() => resolve());
 				} else {
 					const args = [ this ];
 					if (modifier.shouldApply(args))

@@ -5,7 +5,7 @@ import * as Utils from "../utils";
 import { addWindow } from "./ui-theme";
 import MessageUiHandler from "./message-ui-handler";
 import { GameDataType } from "../system/game-data";
-import { OptionSelectConfig } from "./abstact-option-select-ui-handler";
+import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { updateUserInfo } from "../account";
 
@@ -99,6 +99,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                 callback(i);
                 ui.revertMode();
                 ui.showText(null, 0);
+                return true;
               }
             };
           }).concat([{
@@ -106,6 +107,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             handler: () => {
               ui.revertMode();
               ui.showText(null, 0);
+              return true;
             }
           }]),
           xOffset: 98
@@ -117,7 +119,10 @@ export default class MenuUiHandler extends MessageUiHandler {
     if (Utils.isLocal) {
       manageDataOptions.push({
         label: 'Import Session',
-        handler: () => confirmSlot('Select a slot to import to.', () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId)),
+        handler: () => {
+          confirmSlot('Select a slot to import to.', () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
+          return true;
+        },
         keepOpen: true
       });
     }
@@ -137,25 +142,35 @@ export default class MenuUiHandler extends MessageUiHandler {
               i => dataSlots.indexOf(i) > -1,
               slotId => this.scene.gameData.tryExportData(GameDataType.SESSION, slotId));
           });
+        return true;
       },
       keepOpen: true
     });
     if (Utils.isLocal) {
       manageDataOptions.push({
         label: 'Import Data',
-        handler: () => this.scene.gameData.importData(GameDataType.SYSTEM),
+        handler: () => {
+          this.scene.gameData.importData(GameDataType.SYSTEM);
+          return true;
+        },
         keepOpen: true
       });
     }
     manageDataOptions.push(
       {
         label: 'Export Data',
-        handler: () => this.scene.gameData.tryExportData(GameDataType.SYSTEM),
+        handler: () => {
+          this.scene.gameData.tryExportData(GameDataType.SYSTEM);
+          return true;
+        },
         keepOpen: true
       },
       {
         label: 'Cancel',
-        handler: () => this.scene.ui.revertMode()
+        handler: () => {
+          this.scene.ui.revertMode();
+          return true;
+        }
       }
     );
 
@@ -164,25 +179,37 @@ export default class MenuUiHandler extends MessageUiHandler {
       options: manageDataOptions
     };
 
-    const communityOptions = [
+    const communityOptions: OptionSelectItem[] = [
       {
         label: 'Wiki',
-        handler: () => window.open(wikiUrl, '_blank').focus(),
+        handler: () => {
+          window.open(wikiUrl, '_blank').focus();
+          return true;
+        },
         keepOpen: true
       },
       {
         label: 'Discord',
-        handler: () => window.open(discordUrl, '_blank').focus(),
+        handler: () => {
+          window.open(discordUrl, '_blank').focus();
+          return true;
+        },
         keepOpen: true
       },
       {
         label: 'GitHub',
-        handler: () => window.open(githubUrl, '_blank').focus(),
+        handler: () => {
+          window.open(githubUrl, '_blank').focus();
+          return true;
+        },
         keepOpen: true
       },
       {
         label: 'Cancel',
-        handler: () => this.scene.ui.revertMode()
+        handler: () => {
+          this.scene.ui.revertMode();
+          return true;
+        }
       }
     ];
 

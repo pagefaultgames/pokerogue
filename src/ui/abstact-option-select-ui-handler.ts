@@ -4,6 +4,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
+import { argbFromRgba } from "@material/material-color-utilities";
 
 export interface OptionSelectConfig {
   xOffset?: number;
@@ -16,9 +17,11 @@ export interface OptionSelectConfig {
 
 export interface OptionSelectItem {
   label: string;
-  handler: Function;
+  handler: () => boolean;
   keepOpen?: boolean;
   overrideSound?: boolean;
+  item?: string;
+  itemArgs?: any[]
 }
 
 const scrollUpLabel = '↑';
@@ -28,6 +31,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected optionSelectContainer: Phaser.GameObjects.Container;
   protected optionSelectBg: Phaser.GameObjects.NineSlice;
   protected optionSelectText: Phaser.GameObjects.Text;
+  protected optionSelectIcons: Phaser.GameObjects.Sprite[];
 
   protected config: OptionSelectConfig;
 
@@ -58,6 +62,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.optionSelectBg.setOrigin(1, 1);
     this.optionSelectContainer.add(this.optionSelectBg);
 
+    this.optionSelectIcons = [];
+
     this.setCursor(0);
   }
 
@@ -66,8 +72,12 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     if (this.optionSelectText)
       this.optionSelectText.destroy();
+    if (this.optionSelectIcons?.length) {
+      this.optionSelectIcons.map(i => i.destroy());
+      this.optionSelectIcons.splice(0, this.optionSelectIcons.length);
+    }
 
-    this.optionSelectText = addTextObject(this.scene, 0, 0, options.map(o => o.label).join('\n'), TextStyle.WINDOW, { maxLines: options.length });
+    this.optionSelectText = addTextObject(this.scene, 0, 0, options.map(o => o.item ? `    ${o.label}` : o.label).join('\n'), TextStyle.WINDOW, { maxLines: options.length });
     this.optionSelectText.setLineSpacing(12);
     this.optionSelectContainer.add(this.optionSelectText);
     this.optionSelectContainer.setPosition((this.scene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
@@ -80,6 +90,31 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.optionSelectBg.height = this.getWindowHeight();
 
     this.optionSelectText.setPositionRelative(this.optionSelectBg, 16, 9);
+
+    options.forEach((option: OptionSelectItem, i: integer) => {
+      if (option.item) {
+        const itemIcon = this.scene.add.sprite(0, 0, 'items', option.item);
+        itemIcon.setScale(0.5);
+        this.optionSelectIcons.push(itemIcon);
+
+        this.optionSelectContainer.add(itemIcon);
+
+        itemIcon.setPositionRelative(this.optionSelectText, 6, 7 + 16 * i);
+
+        if (option.item === 'candy') {
+          const itemOverlayIcon = this.scene.add.sprite(0, 0, 'items', 'candy_overlay');
+          itemOverlayIcon.setScale(0.5);
+          this.optionSelectIcons.push(itemOverlayIcon);
+
+          this.optionSelectContainer.add(itemOverlayIcon);
+
+          itemOverlayIcon.setPositionRelative(this.optionSelectText, 6, 7 + 16 * i);
+
+          itemIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[0])));
+          itemOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[1])));
+        }
+      }
+    });
   }
 
   show(args: any[]): boolean {
@@ -132,10 +167,12 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
           return false;
       }
       const option = this.config.options[this.cursor + (this.scrollCursor - (this.scrollCursor ? 1 : 0))];
-      option.handler();
-      if (!option.keepOpen)
-        this.clear();
-      playSound = !option.overrideSound;
+      if (option.handler()) {
+        if (!option.keepOpen)
+          this.clear();
+        playSound = !option.overrideSound;
+      } else
+        ui.playError();
     } else {
       switch (button) {
         case Button.UP:
@@ -182,12 +219,12 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       if (optionStartIndex)
         options.unshift({
           label: scrollUpLabel,
-          handler: () => { }
+          handler: () => true
         });
       if (optionEndIndex < optionsScrollTotal)
         options.push({
           label: scrollDownLabel,
-          handler: () => { }
+          handler: () => true
         });
     }
 
