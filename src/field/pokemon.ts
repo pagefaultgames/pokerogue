@@ -1186,7 +1186,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
             this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);
             const bonusCrit = new Utils.BooleanHolder(false);
-            if (applyAbAttrs(BonusCritAbAttr, this, null, bonusCrit)) {
+            if (applyAbAttrs(BonusCritAbAttr, source, null, bonusCrit)) {
               if (bonusCrit.value)
                 critLevel.value += 1;
             }
