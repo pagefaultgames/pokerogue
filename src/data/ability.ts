@@ -788,24 +788,32 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   }
 }
 
-export class PostAttackContactApplyStatusEffectAbAttr extends PostAttackAbAttr {
+export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
+  private contactRequired: boolean;
   private chance: integer;
   private effects: StatusEffect[];
 
-  constructor(chance: integer, ...effects: StatusEffect[]) {
+  constructor(contactRequired: boolean, chance: integer, ...effects: StatusEffect[]) {
     super();
 
+    this.contactRequired = contactRequired;
     this.chance = chance;
     this.effects = effects;
   }
 
   applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
+    if (pokemon != attacker && (!this.contactRequired || move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
       return attacker.trySetStatus(effect, true);
     }
 
     return false;
+  }
+}
+
+export class PostAttackContactApplyStatusEffectAbAttr extends PostAttackApplyStatusEffectAbAttr {
+  constructor(chance: integer, ...effects: StatusEffect[]) {
+    super(true, chance, ...effects);
   }
 }
 
@@ -2808,7 +2816,8 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.SUPERSWEET_SYRUP, "Supersweet Syrup (N)", "A sickly sweet scent spreads across the field the first time the Pokémon enters a battle, lowering the evasiveness of opposing Pokémon.", 9),
     new Ability(Abilities.HOSPITALITY, "Hospitality (N)", "When the Pokémon enters a battle, it showers its ally with hospitality, restoring a small amount of the ally's HP.", 9),
-    new Ability(Abilities.TOXIC_CHAIN, "Toxic Chain (N)", "The power of the Pokémon's toxic chain may badly poison any target the Pokémon hits with a move.", 9),
+    new Ability(Abilities.TOXIC_CHAIN, "Toxic Chain", "The power of the Pokémon's toxic chain may badly poison any target the Pokémon hits with a move.", 9)
+      .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC),
     new Ability(Abilities.EMBODY_ASPECT_TEAL, "Embody Aspect", "The Pokémon's heart fills with memories, causing the Teal Mask to shine and the Pokémon's Speed stat to be boosted.", 9)
       .attr(PostBattleInitStatChangeAbAttr, BattleStat.SPD, 1, true)
       .attr(UncopiableAbilityAbAttr)
