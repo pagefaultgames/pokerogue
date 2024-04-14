@@ -1946,6 +1946,23 @@ export class TeraBlastCategoryAttr extends VariableMoveCategoryAttr {
   }
 }
 
+export class HydroSteamPowerAttr extends MovePowerMultiplierAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const currentWeather = user.scene.arena.weather?.weatherType;
+    const isSunny = currentWeather === WeatherType.SUNNY;
+    const power = args[0] as Utils.NumberHolder;
+
+    if (isSunny) {
+      if (user.getAbility().id === Abilities.NORMALIZE)
+        power.value *= 1.5; // If user changes the move type, and it's sunny then function as 1.5
+      else
+        power.value *= 3; // If it's sunny but the move type is still water, multiply it by 3 because Sunny halves Water move damage
+    }
+
+    return true;
+  }
+}
+
 export class ShellSideArmCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = (args[0] as Utils.IntegerHolder);
@@ -5360,7 +5377,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1)  
       .slicingMove(),
     new AttackMove(Moves.HYDRO_STEAM, "Hydro Steam", Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, "The user blasts the target with boiling-hot water. This move's power is not lowered in harsh sunlight but rather boosted by 50 percent.", -1, 0, 9)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 3 : 1),
+      .attr(HydroSteamPowerAttr),
     new AttackMove(Moves.RUINATION, "Ruination", Type.DARK, MoveCategory.SPECIAL, 1, 90, 10, "The user summons a ruinous disaster. This cuts the target's HP in half.", -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.COLLISION_COURSE, "Collision Course", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, "The user transforms and crashes to the ground, causing a massive prehistoric explosion. This move's power is boosted more than usual if it's a supereffective hit.", -1, 0, 9)
