@@ -82,6 +82,7 @@ type AbAttrCondition = (pokemon: Pokemon) => boolean;
 
 type PokemonAttackCondition = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type PokemonDefendCondition = (target: Pokemon, user: Pokemon, move: Move) => boolean;
+type PokemonStatChangeCondition = (target: Pokemon, statsChanged: BattleStat[], levels: integer) => boolean;
 
 export abstract class AbAttr {
   public showAbility: boolean;
@@ -385,6 +386,12 @@ export class PostDefendAbAttr extends AbAttr {
   }
 }
 
+export class PostStatChangeAbAttr extends AbAttr {
+  applyPostStatChange(pokemon: Pokemon, statsChanged: BattleStat[], levelChanged: integer, selfTarget: boolean, args: any[]): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
 export class MoveImmunityAbAttr extends PreDefendAbAttr {
   private immuneCondition: PreDefendAbAttrCondition;
 
@@ -611,6 +618,29 @@ export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return getPokemonMessage(pokemon, ` gave its target\n${abilityName}!`);
+  }
+}
+
+export class PostStatChangeStatChangeAbAttr extends PostStatChangeAbAttr {
+  private condition: PokemonStatChangeCondition;
+  private statsToChange: BattleStat[];
+  private levels: integer;
+
+  constructor(condition: PokemonStatChangeCondition, statsToChange: BattleStat[], levels: integer) {
+    super(true);
+
+    this.condition = condition;
+    this.statsToChange = statsToChange;
+    this.levels = levels;
+  }
+
+  applyPostStatChange(pokemon: Pokemon, statsChanged: BattleStat[], levelsChanged: integer, selfTarget: boolean, args: any[]): boolean {
+    if (this.condition(pokemon, statsChanged, levelsChanged) && !selfTarget) {
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, (pokemon).getBattlerIndex(), true, this.statsToChange, this.levels));
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -2036,6 +2066,11 @@ export function applyPreStatChangeAbAttrs(attrType: { new(...args: any[]): PreSt
   return applyAbAttrsInternal<PreStatChangeAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPreStatChange(pokemon, passive, stat, cancelled, args), args);
 }
 
+export function applyPostStatChangeAbAttrs(attrType: { new(...args: any[]): PostStatChangeAbAttr },
+  pokemon: Pokemon, stats: BattleStat[], levels: integer, selfTarget: boolean, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostStatChangeAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostStatChange(pokemon, stats, levels, selfTarget, args), args);
+}
+
 export function applyPreSetStatusAbAttrs(attrType: { new(...args: any[]): PreSetStatusAbAttr },
   pokemon: Pokemon, effect: StatusEffect, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void> {
   const simulated = args.length > 1 && args[1];
@@ -2419,7 +2454,8 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.UNNERVE, "Unnerve", "Unnerves opposing Pokémon and makes them unable to eat Berries.", 5)
       .attr(PreventBerryUseAbAttr),
-    new Ability(Abilities.DEFIANT, "Defiant (N)", "Boosts the Pokémon's Attack stat sharply when its stats are lowered.", 5),
+    new Ability(Abilities.DEFIANT, "Defiant", "Boosts the Pokémon's Attack stat sharply when its stats are lowered.", 5)
+      .attr(PostStatChangeStatChangeAbAttr, (target, statsChanged, levels) => levels < 0, [BattleStat.ATK], 2),
     new Ability(Abilities.DEFEATIST, "Defeatist", "Halves the Pokémon's Attack and Sp. Atk stats when its HP becomes half or less.", 5)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 0.5)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 0.5)
