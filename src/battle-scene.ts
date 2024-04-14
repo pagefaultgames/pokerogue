@@ -55,7 +55,6 @@ import PokemonInfoContainer from './ui/pokemon-info-container';
 import { biomeDepths } from './data/biomes';
 import { initTouchControls } from './touch-controls';
 import { UiTheme } from './enums/ui-theme';
-import CacheBustedLoaderPlugin from './plugins/cache-busted-loader-plugin';
 import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
 
@@ -214,8 +213,6 @@ export default class BattleScene extends SceneBase {
 		this.phaseQueuePrepend = [];
 		this.phaseQueuePrependSpliceIndex = -1;
 		this.nextCommandPhaseQueue = [];
-
-		Phaser.Plugins.PluginCache.register('Loader', CacheBustedLoaderPlugin, 'load');
 	}
 
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
