@@ -42,15 +42,15 @@ export interface Starter {
 function getPassiveCandyCount(baseValue: integer): integer {
   switch (baseValue) {
     case 1:
-      return 100;
-    case 2:
-      return 75;
-    case 3:
       return 50;
+    case 2:
+      return 45;
+    case 3:
+      return 40;
     case 4:
-      return 40
-    case 5:
       return 30;
+    case 5:
+      return 25;
     case 6:
       return 20;
     case 7:
@@ -63,15 +63,15 @@ function getPassiveCandyCount(baseValue: integer): integer {
 function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
   switch (baseValue) {
     case 1:
-      return [ 50, 150 ];
+      return [ 30, 75];
     case 2:
-      return [ 30, 100 ];
+      return [ 25, 60 ];
     case 3:
-      return [ 25, 75 ];
+      return [ 20, 50 ];
     case 4:
-      return [ 20, 60 ];
+      return [ 15, 40 ];
     case 5:
-      return [ 15, 50 ];
+      return [ 12, 35 ];
     case 6:
       return [ 10, 30 ];
     case 7:
