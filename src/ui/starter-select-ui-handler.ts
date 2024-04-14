@@ -1212,12 +1212,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}`);
         this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry.hatchedCount}`);
         this.pokemonCaughtHatchedContainer.setVisible(true);
-        this.pokemonCandyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
-        this.pokemonCandyIcon.setVisible(true);
-        this.pokemonCandyOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
-        this.pokemonCandyOverlayIcon.setVisible(true);
-        this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
-        this.pokemonCandyCountText.setVisible(true);
+        if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
+          this.pokemonCaughtHatchedContainer.setY(16);
+          [ this.pokemonCandyIcon, this.pokemonCandyOverlayIcon, this.pokemonCandyCountText ].map(c => c.setVisible(false));
+        } else {
+          this.pokemonCaughtHatchedContainer.setY(25);
+          this.pokemonCandyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
+          this.pokemonCandyIcon.setVisible(true);
+          this.pokemonCandyOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
+          this.pokemonCandyOverlayIcon.setVisible(true);
+          this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
+          this.pokemonCandyCountText.setVisible(true);
+        }
         this.iconAnimHandler.addOrUpdate(this.starterSelectGenIconContainers[species.generation - 1].getAt(this.genSpecies[species.generation - 1].indexOf(species)) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.PASSIVE);
 
         let starterIndex = -1;
