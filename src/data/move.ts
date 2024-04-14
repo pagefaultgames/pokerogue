@@ -2790,7 +2790,7 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
               moveId = Moves.ICE_BEAM;
               break;
             case Biome.VOLCANO:
-              moveId = Moves.LAVA_PLUME;
+              moveId = Moves.FLAMETHROWER;
               break;
             case Biome.GRAVEYARD
               || Biome.RUINS
@@ -2828,18 +2828,8 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
           break;
       }
       
-      const moveTargets = getMoveTargets(user, moveId);
-      if (!moveTargets.targets.length) {
-        resolve(false);
-        return;
-      }
-      const targets = moveTargets.multiple || moveTargets.targets.length === 1
-        ? moveTargets.targets
-        : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
-          ? [ target.getBattlerIndex() ]
-          : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-      user.getMoveQueue().push({ move: moveId, targets: targets, ignorePP: true });
-      user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(moveId, 0, 0, true), true));
+      user.getMoveQueue().push({ move: moveId, targets: [target.getBattlerIndex()], ignorePP: true });
+      user.scene.unshiftPhase(new MovePhase(user.scene, user, [target.getBattlerIndex()], new PokemonMove(moveId, 0, 0, true), true));
       initMoveAnim(moveId).then(() => {
         loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
