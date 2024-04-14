@@ -12,8 +12,9 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { UnswappableAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr } from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr } from "./ability";
 import { Abilities } from "./enums/abilities";
+import { allAbilities } from './ability';
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
@@ -2914,6 +2915,91 @@ export class SketchAttr extends MoveEffectAttr {
   }
 }
 
+export class AbilityChangeAttr extends MoveEffectAttr {
+  public ability: Abilities;
+
+  constructor(ability: Abilities, selfTarget?: boolean) {
+    super(selfTarget, MoveEffectTrigger.HIT);
+
+    this.ability = ability;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    (this.selfTarget ? user : target).summonData.ability = this.ability;
+
+    user.scene.queueMessage('The ' + getPokemonMessage((this.selfTarget ? user : target), ` acquired\n${allAbilities[this.ability].name}!`));
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => !(this.selfTarget ? user : target).getAbility().hasAttr(UnsuppressableAbilityAbAttr) && (this.selfTarget ? user : target).getAbility().id !== this.ability;
+  }
+}
+
+export class AbilityCopyAttr extends MoveEffectAttr {
+  public copyToPartner: boolean;
+
+  constructor(copyToPartner: boolean = false) {
+    super(false, MoveEffectTrigger.HIT);
+
+    this.copyToPartner = copyToPartner;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    user.summonData.ability = target.getAbility().id;
+
+    user.scene.queueMessage(getPokemonMessage(user, ` copied the `) + getPokemonMessage(target, `'s\n${allAbilities[target.getAbility().id].name}!`));
+    
+    if (this.copyToPartner && user.scene.currentBattle?.double && user.getAlly().hp) {
+      user.getAlly().summonData.ability = target.getAbility().id;
+      user.getAlly().scene.queueMessage(getPokemonMessage(user.getAlly(), ` copied the `) + getPokemonMessage(target, `'s\n${allAbilities[target.getAbility().id].name}!`));
+    }
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => {
+      let ret = !target.getAbility().hasAttr(UncopiableAbilityAbAttr) && !user.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
+      if (this.copyToPartner && user.scene.currentBattle?.double)
+        ret = ret && (!user.getAlly().hp || !user.getAlly().getAbility().hasAttr(UnsuppressableAbilityAbAttr));
+      else
+        ret = ret && user.getAbility().id !== target.getAbility().id;
+      return ret;
+    };
+  }
+}
+
+export class AbilityGiveAttr extends MoveEffectAttr {
+  public copyToPartner: boolean;
+
+  constructor() {
+    super(false, MoveEffectTrigger.HIT);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    target.summonData.ability = user.getAbility().id;
+
+    user.scene.queueMessage('The' + getPokemonMessage(target, `\nacquired ${allAbilities[user.getAbility().id].name}!`));
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => !user.getAbility().hasAttr(UncopiableAbilityAbAttr) && !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && user.getAbility().id !== target.getAbility().id;
+  }
+}
+
 export class SwitchAbilitiesAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args))
@@ -2923,7 +3009,7 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
     user.summonData.ability = target.getAbility().id;
     target.summonData.ability = tempAbilityId;
 
-    user.scene.queueMessage(getPokemonMessage(user, ` swapped\nAbilities with its target!`));
+    user.scene.queueMessage(getPokemonMessage(user, ` swapped\nabilities with its target!`));
 
     return true;
   }
@@ -3794,7 +3880,8 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.TRICK, "Trick (N)", Type.PSYCHIC, 100, 10, "The user catches the target off guard and swaps its held item with its own.", -1, 0, 3),
-    new StatusMove(Moves.ROLE_PLAY, "Role Play (N)", Type.PSYCHIC, -1, 10, "The user mimics the target completely, copying the target's Ability.", -1, 0, 3),
+    new StatusMove(Moves.ROLE_PLAY, "Role Play", Type.PSYCHIC, -1, 10, "The user mimics the target completely, copying the target's Ability.", -1, 0, 3)
+      .attr(AbilityCopyAttr),
     new SelfStatusMove(Moves.WISH, "Wish (N)", Type.NORMAL, -1, 10, "One turn after this move is used, the user's or its replacement's HP is restored by half the user's max HP.", -1, 0, 3)
       .triageMove(),
     new SelfStatusMove(Moves.ASSIST, "Assist", Type.NORMAL, -1, 20, "The user hurriedly and randomly uses a move among those known by ally Pokémon.", -1, 0, 3)
@@ -4076,7 +4163,8 @@ export function initMoves() {
         });
         return uniqueUsedMoveIds.size >= movesetMoveIds.length - 1;
       }),
-    new StatusMove(Moves.WORRY_SEED, "Worry Seed (N)", Type.GRASS, 100, 10, "A seed that causes worry is planted on the target. It prevents sleep by making the target's Ability Insomnia.", -1, 0, 4),
+    new StatusMove(Moves.WORRY_SEED, "Worry Seed", Type.GRASS, 100, 10, "A seed that causes worry is planted on the target. It prevents sleep by making the target's Ability Insomnia.", -1, 0, 4)
+      .attr(AbilityChangeAttr, Abilities.INSOMNIA),
     new AttackMove(Moves.SUCKER_PUNCH, "Sucker Punch (P)", Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, "This move enables the user to attack first. This move fails if the target is not readying an attack.", -1, 1, 4),
     new StatusMove(Moves.TOXIC_SPIKES, "Toxic Spikes", Type.POISON, -1, 20, "The user lays a trap of poison spikes at the feet of the opposing team. The spikes will poison opposing Pokémon that switch into battle.", -1, 0, 4)
       .attr(AddArenaTrapTagAttr, ArenaTagType.TOXIC_SPIKES)
@@ -4325,8 +4413,10 @@ export function initMoves() {
       .ballBombMove(),
     new AttackMove(Moves.FOUL_PLAY, "Foul Play", Type.DARK, MoveCategory.PHYSICAL, 95, 100, 15, "The user turns the target's power against it. The higher the target's Attack stat, the greater the damage it deals.", -1, 0, 5)
       .attr(TargetAtkUserAtkAttr),
-    new StatusMove(Moves.SIMPLE_BEAM, "Simple Beam (N)", Type.NORMAL, 100, 15, "The user's mysterious psychic wave changes the target's Ability to Simple.", -1, 0, 5),
-    new StatusMove(Moves.ENTRAINMENT, "Entrainment (N)", Type.NORMAL, 100, 15, "The user dances with an odd rhythm that compels the target to mimic it, making the target's Ability the same as the user's.", -1, 0, 5),
+    new StatusMove(Moves.SIMPLE_BEAM, "Simple Beam", Type.NORMAL, 100, 15, "The user's mysterious psychic wave changes the target's Ability to Simple.", -1, 0, 5)
+      .attr(AbilityChangeAttr, Abilities.SIMPLE),
+    new StatusMove(Moves.ENTRAINMENT, "Entrainment", Type.NORMAL, 100, 15, "The user dances with an odd rhythm that compels the target to mimic it, making the target's Ability the same as the user's.", -1, 0, 5)
+      .attr(AbilityGiveAttr),
     new StatusMove(Moves.AFTER_YOU, "After You (N)", Type.NORMAL, -1, 15, "The user helps the target and makes it use its move right after the user.", -1, 0, 5)
       .ignoresProtect(),
     new AttackMove(Moves.ROUND, "Round (P)", Type.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, "The user attacks the target with a song. Others can join in the Round to increase the power of the attack.", -1, 0, 5)
@@ -5237,7 +5327,8 @@ export function initMoves() {
       .attr(LapseBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.THUNDER_CAGE, BattlerTagType.SEEDED ], true)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new StatusMove(Moves.DOODLE, "Doodle (N)", Type.NORMAL, 100, 10, "The user captures the very essence of the target in a sketch. This changes the Abilities of the user and its ally Pokémon to that of the target.", -1, 0, 9),
+    new StatusMove(Moves.DOODLE, "Doodle", Type.NORMAL, 100, 10, "The user captures the very essence of the target in a sketch. This changes the Abilities of the user and its ally Pokémon to that of the target.", -1, 0, 9)
+      .attr(AbilityCopyAttr, true),
     new SelfStatusMove(Moves.FILLET_AWAY, "Fillet Away", Type.NORMAL, -1, 10, "The user sharply boosts its Attack, Sp. Atk, and Speed stats by using its own HP.", -1, 0, 9)
       .attr(CutHpStatBoostAttr, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], 2, 2),
     new AttackMove(Moves.KOWTOW_CLEAVE, "Kowtow Cleave", Type.DARK, MoveCategory.PHYSICAL, 85, -1, 10, "The user slashes at the target after kowtowing to make the target let down its guard. This attack never misses.", -1, 0, 9)
