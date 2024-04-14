@@ -2822,6 +2822,7 @@ export class PokemonTurnData {
   public hitsLeft: integer;
   public damageDealt: integer = 0;
   public attacksReceived: AttackMoveResult[] = [];
+  public successfullyActed: boolean;
 }
 
 export enum AiType {
