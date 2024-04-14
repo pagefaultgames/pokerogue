@@ -386,7 +386,7 @@ export class PostDefendAbAttr extends AbAttr {
 }
 
 export class PostStatChangeAbAttr extends AbAttr {
-  applyPostStatChange(pokemon: Pokemon, statsChanged: BattleStat[], levelChanged: integer, args: any[]): boolean | Promise<boolean> {
+  applyPostStatChange(pokemon: Pokemon, statsChanged: BattleStat[], levelChanged: integer, selfTarget: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
@@ -633,8 +633,8 @@ export class PostStatChangeStatChangeAbAttr extends PostStatChangeAbAttr {
     this.levels = levels;
   }
 
-  applyPostStatChange(pokemon: Pokemon, statsChanged: BattleStat[], levelsChanged: integer, args: any[]): boolean {
-    if (this.condition(pokemon, statsChanged, levelsChanged)) {
+  applyPostStatChange(pokemon: Pokemon, statsChanged: BattleStat[], levelsChanged: integer, selfTarget: boolean, args: any[]): boolean {
+    if (this.condition(pokemon, statsChanged, levelsChanged) && !selfTarget) {
       pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, (pokemon).getBattlerIndex(), true, this.statsToChange, this.levels));
       return true;
     }
@@ -2033,8 +2033,8 @@ export function applyPreStatChangeAbAttrs(attrType: { new(...args: any[]): PreSt
 }
 
 export function applyPostStatChangeAbAttrs(attrType: { new(...args: any[]): PostStatChangeAbAttr },
-  pokemon: Pokemon, stats: BattleStat[], levels: integer, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostStatChangeAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostStatChange(pokemon, stats, levels, args), args);
+  pokemon: Pokemon, stats: BattleStat[], levels: integer, selfTarget: boolean, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostStatChangeAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostStatChange(pokemon, stats, levels, selfTarget, args), args);
 }
 
 export function applyPreSetStatusAbAttrs(attrType: { new(...args: any[]): PreSetStatusAbAttr },
