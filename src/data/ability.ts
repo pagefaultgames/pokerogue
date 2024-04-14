@@ -8,6 +8,7 @@ import { Weather, WeatherType } from "./weather";
 import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
+import { Gender } from "./gender";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, allMoves } from "./move";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -657,6 +658,30 @@ export class MoveTypeChangePowerMultiplierAbAttr extends VariableMoveTypeAbAttr 
   }
 }
 
+export class MoveTypeChangeAttr extends PreAttackAbAttr {
+  private newType: Type;
+  private powerMultiplier: number;
+  private condition: PokemonAttackCondition;
+
+  constructor(newType: Type, powerMultiplier: number, condition: PokemonAttackCondition){
+    super(true);
+    this.newType = newType;
+    this.powerMultiplier = powerMultiplier;
+    this.condition = condition;
+  }
+
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+    if (this.condition(pokemon, defender, move.getMove())) {
+      const type = (args[0] as Utils.IntegerHolder);
+      type.value = this.newType;
+      (args[1] as Utils.NumberHolder).value *= this.powerMultiplier;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
   private condition: PokemonAttackCondition;
   private powerMultiplier: number;
@@ -788,24 +813,32 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   }
 }
 
-export class PostAttackContactApplyStatusEffectAbAttr extends PostAttackAbAttr {
+export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
+  private contactRequired: boolean;
   private chance: integer;
   private effects: StatusEffect[];
 
-  constructor(chance: integer, ...effects: StatusEffect[]) {
+  constructor(contactRequired: boolean, chance: integer, ...effects: StatusEffect[]) {
     super();
 
+    this.contactRequired = contactRequired;
     this.chance = chance;
     this.effects = effects;
   }
 
   applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
+    if (pokemon != attacker && (!this.contactRequired || move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
       return attacker.trySetStatus(effect, true);
     }
 
     return false;
+  }
+}
+
+export class PostAttackContactApplyStatusEffectAbAttr extends PostAttackApplyStatusEffectAbAttr {
+  constructor(chance: integer, ...effects: StatusEffect[]) {
+    super(true, chance, ...effects);
   }
 }
 
@@ -1111,6 +1144,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
 
     pokemon.summonData.speciesForm = target.getSpeciesForm();
     pokemon.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
+    pokemon.summonData.ability = target.getAbility().id;
     pokemon.summonData.gender = target.getGender();
     pokemon.summonData.fusionGender = target.getFusionGender();
     pokemon.summonData.stats = [ pokemon.stats[Stat.HP] ].concat(target.stats.slice(1));
@@ -2271,7 +2305,9 @@ export function initAbilities() {
     new Ability(Abilities.MOTOR_DRIVE, "Motor Drive", "Boosts its Speed stat if hit by an Electric-type move instead of taking damage.", 4)
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPD, 1)
       .ignorable(),
-    new Ability(Abilities.RIVALRY, "Rivalry (N)", "Becomes competitive and deals more damage to Pokémon of the same gender, but deals less to Pokémon of the opposite gender.", 4),
+    new Ability(Abilities.RIVALRY, "Rivalry", "Becomes competitive and deals more damage to Pokémon of the same gender, but deals less to Pokémon of the opposite gender.", 4)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => user.gender !== Gender.GENDERLESS && target.gender !== Gender.GENDERLESS && user.gender === target.gender, 1.25)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => user.gender !== Gender.GENDERLESS && target.gender !== Gender.GENDERLESS && user.gender !== target.gender, 0.75),
     new Ability(Abilities.STEADFAST, "Steadfast", "The Pokémon's determination boosts the Speed stat each time the Pokémon flinches.", 4)
       .attr(FlinchStatChangeAbAttr, BattleStat.SPD, 1),
     new Ability(Abilities.SNOW_CLOAK, "Snow Cloak", "Boosts evasiveness in a hailstorm.", 4)
@@ -2313,9 +2349,10 @@ export function initAbilities() {
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 1.5)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
     new Ability(Abilities.QUICK_FEET, "Quick Feet", "Boosts the Speed stat if the Pokémon has a status condition. Ignores Speed loss from paralysis.", 4)
-      .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.SPD, 1.5)
-      .attr(IgnoreParalysisSpeedLossAbAttr),
-    new Ability(Abilities.NORMALIZE, "Normalize (N)", "All the Pokémon's moves become Normal type. The power of those moves is boosted a little.", 4),
+      .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.SPD, 1.5),
+    new Ability(Abilities.NORMALIZE, "Normalize", "All the Pokémon's moves become Normal type. The power of those moves is boosted a little.", 4)
+      .attr(MoveTypeChangeAttr, Type.NORMAL, 1.2, (user, target, move) => move.id !== Moves.HIDDEN_POWER && move.id !== Moves.WEATHER_BALL && 
+            move.id !== Moves.NATURAL_GIFT && move.id !== Moves.JUDGMENT && move.id !== Moves.TECHNO_BLAST),
     new Ability(Abilities.SNIPER, "Sniper (N)", "Powers up moves if they become critical hits when attacking.", 4),
     new Ability(Abilities.MAGIC_GUARD, "Magic Guard", "The Pokémon only takes damage from attacks.", 4)
       .attr(BlockNonDirectDamageAbAttr),
@@ -2561,7 +2598,8 @@ export function initAbilities() {
       .condition(getWeatherCondition(WeatherType.HAIL)),
     new Ability(Abilities.LONG_REACH, "Long Reach", "The Pokémon uses its moves without making contact with the target.", 7)
       .attr(IgnoreContactAbAttr),
-    new Ability(Abilities.LIQUID_VOICE, "Liquid Voice (N)", "All sound-based moves become Water-type moves.", 7),
+    new Ability(Abilities.LIQUID_VOICE, "Liquid Voice", "All sound-based moves become Water-type moves.", 7)
+      .attr(MoveTypeChangeAttr, Type.WATER, 1, (user, target, move) => move.hasFlag(MoveFlags.SOUND_BASED)),
     new Ability(Abilities.TRIAGE, "Triage", "Gives priority to a healing move.", 7)
       .attr(IncrementMovePriorityAbAttr, (pokemon, move) => move.hasFlag(MoveFlags.TRIAGE_MOVE), 3),
     new Ability(Abilities.GALVANIZE, "Galvanize", "Normal-type moves become Electric-type moves. The power of those moves is boosted a little.", 7)
@@ -2811,7 +2849,8 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.SUPERSWEET_SYRUP, "Supersweet Syrup (N)", "A sickly sweet scent spreads across the field the first time the Pokémon enters a battle, lowering the evasiveness of opposing Pokémon.", 9),
     new Ability(Abilities.HOSPITALITY, "Hospitality (N)", "When the Pokémon enters a battle, it showers its ally with hospitality, restoring a small amount of the ally's HP.", 9),
-    new Ability(Abilities.TOXIC_CHAIN, "Toxic Chain (N)", "The power of the Pokémon's toxic chain may badly poison any target the Pokémon hits with a move.", 9),
+    new Ability(Abilities.TOXIC_CHAIN, "Toxic Chain", "The power of the Pokémon's toxic chain may badly poison any target the Pokémon hits with a move.", 9)
+      .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC),
     new Ability(Abilities.EMBODY_ASPECT_TEAL, "Embody Aspect", "The Pokémon's heart fills with memories, causing the Teal Mask to shine and the Pokémon's Speed stat to be boosted.", 9)
       .attr(PostBattleInitStatChangeAbAttr, BattleStat.SPD, 1, true)
       .attr(UncopiableAbilityAbAttr)
