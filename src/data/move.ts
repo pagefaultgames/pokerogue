@@ -5074,8 +5074,8 @@ export function initMoves() {
     new AttackMove(Moves.DRAGON_HAMMER, "Dragon Hammer", Type.DRAGON, MoveCategory.PHYSICAL, 90, 100, 15, "The user uses its body like a hammer to attack the target and inflict damage.", -1, 0, 7),
     new AttackMove(Moves.BRUTAL_SWING, "Brutal Swing", Type.DARK, MoveCategory.PHYSICAL, 60, 100, 20, "The user swings its body around violently to inflict damage on everything in its vicinity.", -1, 0, 7)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new StatusMove(Moves.AURORA_VEIL, "Aurora Veil", Type.ICE, -1, 20, "This move reduces damage from physical and special moves for five turns. This can be used only in a hailstorm.", -1, 0, 7)
-      .condition((user, target, move) => user.scene.arena.weather?.weatherType === WeatherType.HAIL && !user.scene.arena.weather?.isEffectSuppressed(user.scene))
+    new StatusMove(Moves.AURORA_VEIL, "Aurora Veil", Type.ICE, -1, 20, "This move reduces damage from physical and special moves for five turns. This can be used only when it is snowing.", -1, 0, 7)
+      .condition((user, target, move) => (user.scene.arena.weather?.weatherType === WeatherType.HAIL || user.scene.arena.weather?.weatherType === WeatherType.SNOW) && !user.scene.arena.weather?.isEffectSuppressed(user.scene))
       .attr(AddArenaTagAttr, ArenaTagType.AURORA_VEIL, 5, true)
       .target(MoveTarget.USER_SIDE),
     /* Unused */
