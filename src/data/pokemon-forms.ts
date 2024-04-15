@@ -549,6 +549,22 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.WISHIWASHI, '', 'school', new SpeciesFormChangeManualTrigger(), true),
     new SpeciesFormChange(Species.WISHIWASHI, 'school', '', new SpeciesFormChangeManualTrigger(), true)
   ],
+  [Species.MINIOR]: [
+    new SpeciesFormChange(Species.MINIOR, 'red-meteor', 'red', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'red', 'red-meteor', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'orange-meteor', 'orange', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'orange', 'orange-meteor', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'yellow-meteor', 'yellow', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'yellow', 'yellow-meteor', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'green-meteor', 'green', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'green', 'green-meteor', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'blue-meteor', 'blue', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'blue', 'blue-meteor', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'indigo-meteor', 'indigo', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'indigo', 'indigo-meteor', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'violet-meteor', 'violet', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'violet', 'violet-meteor', new SpeciesFormChangeManualTrigger(), true)
+  ],
   [Species.NECROZMA]: [
     new SpeciesFormChange(Species.NECROZMA, '', 'dawn-wings', new SpeciesFormChangeItemTrigger(FormChangeItem.N_LUNARIZER)),
     new SpeciesFormChange(Species.NECROZMA, '', 'dusk-mane', new SpeciesFormChangeItemTrigger(FormChangeItem.N_SOLARIZER))

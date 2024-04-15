@@ -936,6 +936,8 @@ export default class BattleScene extends SceneBase {
 			case Species.TATSUGIRI:
 			case Species.PALDEA_TAUROS:
 				return Utils.randSeedInt(species.forms.length);
+			case Species.MINIOR:
+				return Utils.randSeedInt(6);
 			case Species.MEOWSTIC:
 			case Species.INDEEDEE:
 			case Species.BASCULEGION:
