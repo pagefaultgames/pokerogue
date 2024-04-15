@@ -108,7 +108,7 @@ export class Weather {
     for (let pokemon of field) {
       let suppressWeatherEffectAbAttr = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr).find(() => true) as SuppressWeatherEffectAbAttr;
       if (!suppressWeatherEffectAbAttr)
-        suppressWeatherEffectAbAttr = pokemon.canApplyPassive() ? pokemon.getPassiveAbility().getAttrs(SuppressWeatherEffectAbAttr).find(() => true) as SuppressWeatherEffectAbAttr : null;
+        suppressWeatherEffectAbAttr = pokemon.hasPassive() ? pokemon.getPassiveAbility().getAttrs(SuppressWeatherEffectAbAttr).find(() => true) as SuppressWeatherEffectAbAttr : null;
       if (suppressWeatherEffectAbAttr && (!this.isImmutable() || suppressWeatherEffectAbAttr.affectsImmutable))
         return true;
     }
