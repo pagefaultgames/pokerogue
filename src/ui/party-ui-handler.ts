@@ -550,6 +550,8 @@ export default class PartyUiHandler extends MessageUiHandler {
     let formChangeItemModifiers: PokemonFormChangeItemModifier[];
 
     if (this.partyUiMode !== PartyUiMode.MOVE_MODIFIER && this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_MODIFIER && (this.transferMode || this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER)) {
+      this.options.push(PartyOption.SUMMARY); // Unconsequential option first
+      
       switch (this.partyUiMode) {
         case PartyUiMode.SWITCH:
         case PartyUiMode.FAINT_SWITCH:
@@ -589,8 +591,6 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.options.push(PartyOption.RELEASE);
           break;
       }
-
-      this.options.push(PartyOption.SUMMARY);
 
       if (pokemon.pauseEvolutions && pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId))
         this.options.push(PartyOption.UNPAUSE_EVOLUTION);
