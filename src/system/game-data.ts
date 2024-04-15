@@ -184,7 +184,7 @@ const systemShortKeys = {
   ivs: '$i',
   moveset: '$m',
   eggMoves: '$em',
-  candyCount: '$cc',
+  candyCount: '$x',
   passive: '$p',
   valueReduction: '$vr'
 };

@@ -1298,7 +1298,7 @@ export default class BattleScene extends SceneBase {
    * or not. It will only return true once, until the key is released and pressed down
    * again. 
    */
-  gamepadButtonJustDown(button: Phaser.Input.Gamepad.Button) : boolean {
+	gamepadButtonJustDown(button: Phaser.Input.Gamepad.Button) : boolean {
 		if (!button)
 			return false;
 
