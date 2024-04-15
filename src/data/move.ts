@@ -3490,7 +3490,8 @@ export function initMoves() {
     new AttackMove(Moves.WATER_GUN, "Water Gun", Type.WATER, MoveCategory.SPECIAL, 40, 100, 25, "The target is blasted with a forceful shot of water.", -1, 0, 1),
     new AttackMove(Moves.HYDRO_PUMP, "Hydro Pump", Type.WATER, MoveCategory.SPECIAL, 110, 80, 5, "The target is blasted by a huge volume of water launched under great pressure.", -1, 0, 1),
     new AttackMove(Moves.SURF, "Surf", Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, "The user attacks everything around it by swamping its surroundings with a giant wave.", -1, 0, 1)
-      .target(MoveTarget.ALL_NEAR_OTHERS),
+      .target(MoveTarget.ALL_NEAR_OTHERS)
+      .attr(HitsTagAttr, BattlerTagType.UNDERWATER, true),
     new AttackMove(Moves.ICE_BEAM, "Ice Beam", Type.ICE, MoveCategory.SPECIAL, 90, 100, 10, "The target is struck with an icy-cold beam of energy. This may also leave the target frozen.", 10, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.FREEZE),
     new AttackMove(Moves.BLIZZARD, "Blizzard", Type.ICE, MoveCategory.SPECIAL, 110, 70, 5, "A howling blizzard is summoned to strike opposing Pokémon. This may also leave the opposing Pokémon frozen.", 10, 0, 1)
@@ -4003,7 +4004,8 @@ export function initMoves() {
     new AttackMove(Moves.ROCK_SMASH, "Rock Smash", Type.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 15, "The user attacks with a punch. This may also lower the target's Defense stat.", 50, 0, 2)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
     new AttackMove(Moves.WHIRLPOOL, "Whirlpool", Type.WATER, MoveCategory.SPECIAL, 35, 85, 15, "The user traps the target in a violent swirling whirlpool for four to five turns.", 100, 0, 2)
-      .attr(TrapAttr, BattlerTagType.WHIRLPOOL),
+      .attr(TrapAttr, BattlerTagType.WHIRLPOOL)
+      .attr(HitsTagAttr, BattlerTagType.UNDERWATER, true),
     new AttackMove(Moves.BEAT_UP, "Beat Up (N)", Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, "The user gets all party Pokémon to attack the target. The more party Pokémon, the greater the number of attacks.", -1, 0, 2)
       .makesContact(false),
     new AttackMove(Moves.FAKE_OUT, "Fake Out", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 10, "This attack hits first and makes the target flinch. It only works the first turn each time the user enters battle.", 100, 3, 3)
@@ -4093,7 +4095,7 @@ export function initMoves() {
     new AttackMove(Moves.SECRET_POWER, "Secret Power (P)", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, "The additional effects of this attack depend upon where it was used.", 30, 0, 3)
       .makesContact(false),
     new AttackMove(Moves.DIVE, "Dive", Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, "Diving on the first turn, the user floats up and attacks on the next turn.", -1, 0, 3)
-      .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, 'hid\nunderwater!', BattlerTagType.UNDERGROUND)
+      .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, 'hid\nunderwater!', BattlerTagType.UNDERWATER)
       .ignoresVirtual(),
     new AttackMove(Moves.ARM_THRUST, "Arm Thrust", Type.FIGHTING, MoveCategory.PHYSICAL, 15, 100, 20, "The user lets loose a flurry of open-palmed arm thrusts that hit two to five times in a row.", -1, 0, 3)
       .attr(MultiHitAttr),
