@@ -2830,44 +2830,44 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
             case Biome.TOWN:
               moveId = Moves.TRI_ATTACK;
               break;
-            case Biome.PLAINS
-              || Biome.GRASS
-              || Biome.TALL_GRASS
-              || Biome.MEADOW
-              || Biome.FOREST
-              || Biome.JUNGLE:
+            case Biome.PLAINS:
+            case Biome.GRASS:
+            case Biome.TALL_GRASS:
+            case Biome.MEADOW:
+            case Biome.FOREST:
+            case Biome.JUNGLE:
               moveId = Moves.ENERGY_BALL;
               break;
-            case Biome.SEA
-              || Biome.SWAMP
-              || Biome.BEACH
-              || Biome.LAKE
-              || Biome.SEABED
-              || Biome.ISLAND:
+            case Biome.SEA:
+            case Biome.SWAMP:
+            case Biome.BEACH:
+            case Biome.LAKE:
+            case Biome.SEABED:
+            case Biome.ISLAND:
               moveId = Moves.HYDRO_PUMP;
               break;
             case Biome.MOUNTAIN:
               moveId = Moves.AIR_SLASH;
               break;
-            case Biome.BADLANDS
-              || Biome.DESERT
-              || Biome.WASTELAND
-              || Biome.CONSTRUCTION_SITE:
+            case Biome.BADLANDS:
+            case Biome.DESERT:
+            case Biome.WASTELAND:
+            case Biome.CONSTRUCTION_SITE:
               moveId = Moves.EARTH_POWER;
               break;
             case Biome.CAVE:
               moveId = Moves.POWER_GEM;
               break;
-            case Biome.ICE_CAVE
-              || Biome.SNOWY_FOREST:
+            case Biome.ICE_CAVE:
+            case Biome.SNOWY_FOREST:
               moveId = Moves.ICE_BEAM;
               break;
             case Biome.VOLCANO:
               moveId = Moves.FLAMETHROWER;
               break;
-            case Biome.GRAVEYARD
-              || Biome.RUINS
-              || Biome.TEMPLE:
+            case Biome.GRAVEYARD:
+            case Biome.RUINS:
+            case Biome.TEMPLE:
               moveId = Moves.SHADOW_BALL;
               break;
             case Biome.DOJO:
@@ -2876,10 +2876,12 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
             case Biome.FAIRY_CAVE:
               moveId = Moves.MOONBLAST;
               break;
-            case Biome.ABYSS
-              || Biome.SPACE
-              || Biome.END:
+            case Biome.ABYSS:
+            case Biome.SPACE:
               moveId = Moves.DARK_PULSE;
+              break;
+            case Biome.END:
+              moveId = Moves.ETERNABEAM;
               break;
           }
           break;
