@@ -215,7 +215,7 @@ export default class BattleScene extends SceneBase {
     [Button.CYCLE_NATURE]: 2, // square
     [Button.SPEED_UP]: 10, // L3
     [Button.SLOW_DOWN]: 11 // R3
-  }
+  };
   public gamepadButtonStates: boolean[] = new Array(17).fill(false);
 
 	public rngCounter: integer = 0;
@@ -1299,24 +1299,22 @@ export default class BattleScene extends SceneBase {
    * again. 
    */
   gamepadButtonJustDown(button: Phaser.Input.Gamepad.Button) : boolean {
+		if (!button)
+			return false;
 
-    if (!button) return;
+		let ret = false;
+		if (button.pressed) {
+			if (!this.gamepadButtonStates[button.index])
+				ret = true;
+			this.gamepadButtonStates[button.index] = true;
+		} else
+			this.gamepadButtonStates[button.index] = false;
 
-    let returnValue = false;
-    if (button.pressed) {
-      if (!this.gamepadButtonStates[button.index]) {
-        returnValue = true;
-      }
-      this.gamepadButtonStates[button.index] = true;
-    } else {
-      this.gamepadButtonStates[button.index] = false;
-    }
-
-    return returnValue;
+		return ret;
   }
 
 	buttonJustPressed(button: Button): boolean {
-    const gamepad = this.input.gamepad?.gamepads[0];
+		const gamepad = this.input.gamepad?.gamepads[0];
 		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustDown(k)) || this.gamepadButtonJustDown(gamepad?.buttons[this.gamepadKeyConfig[button]]);
 	}
 
