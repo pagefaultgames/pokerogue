@@ -3569,7 +3569,8 @@ export function initMoves() {
       .attr(StatusMoveTypeImmunityAttr, Type.GROUND),
     new AttackMove(Moves.THUNDER, "Thunder", Type.ELECTRIC, MoveCategory.SPECIAL, 110, 70, 10, "A wicked thunderbolt is dropped on the target to inflict damage. This may also leave the target with paralysis.", 30, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
-      .attr(ThunderAccuracyAttr),
+      .attr(ThunderAccuracyAttr)
+      .attr(HitsTagAttr, BattlerTagType.FLYING, false),
     new AttackMove(Moves.ROCK_THROW, "Rock Throw", Type.ROCK, MoveCategory.PHYSICAL, 50, 90, 15, "The user picks up and throws a small rock at the target to attack.", -1, 0, 1)
       .makesContact(false),
     new AttackMove(Moves.EARTHQUAKE, "Earthquake", Type.GROUND, MoveCategory.PHYSICAL, 100, 100, 10, "The user sets off an earthquake that strikes every Pokémon around it.", -1, 0, 1)
