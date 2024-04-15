@@ -535,8 +535,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.MELOETTA, 'pirouette', 'aria', new SpeciesFormChangeActiveTrigger(false), true)
   ],
   [Species.AEGISLASH]: [
-    new SpeciesFormChange(Species.AEGISLASH, 'blade', 'shield', new SpeciesFormChangePreMoveTrigger(Moves.KINGS_SHIELD), true, new SpeciesFormChangeCondition(p => p.getAbility().id === Abilities.STANCE_CHANGE)),
-    new SpeciesFormChange(Species.AEGISLASH, 'shield', 'blade', new SpeciesFormChangePreMoveTrigger(m => allMoves[m].category !== MoveCategory.STATUS), true, new SpeciesFormChangeCondition(p => p.getAbility().id === Abilities.STANCE_CHANGE)),
+    new SpeciesFormChange(Species.AEGISLASH, 'blade', 'shield', new SpeciesFormChangePreMoveTrigger(Moves.KINGS_SHIELD), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
+    new SpeciesFormChange(Species.AEGISLASH, 'shield', 'blade', new SpeciesFormChangePreMoveTrigger(m => allMoves[m].category !== MoveCategory.STATUS), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
     new SpeciesFormChange(Species.AEGISLASH, 'blade', 'shield', new SpeciesFormChangeActiveTrigger(false), true)
   ],
   [Species.DIANCIE]: [

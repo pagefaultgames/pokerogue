@@ -275,7 +275,7 @@ export default class Move {
   checkFlag(flag: MoveFlags, user: Pokemon, target: Pokemon): boolean {
     switch (flag) {
       case MoveFlags.MAKES_CONTACT:
-        if ((user.canApplyAbility() && user.getAbility().hasAttr(IgnoreContactAbAttr)) || (user.canApplyAbility(true) && user.getPassiveAbility().hasAttr(IgnoreContactAbAttr)))
+        if (user.hasAbilityWithAttr(IgnoreContactAbAttr))
           return false;
         break;
     }
@@ -2828,46 +2828,48 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
         case TerrainType.NONE:
           switch (user.scene.arena.biomeType) {
             case Biome.TOWN:
+            case Biome.METROPOLIS:
+            case Biome.SLUM:
               moveId = Moves.TRI_ATTACK;
               break;
-            case Biome.PLAINS
-              || Biome.GRASS
-              || Biome.TALL_GRASS
-              || Biome.MEADOW
-              || Biome.FOREST
-              || Biome.JUNGLE:
+            case Biome.PLAINS:
+            case Biome.GRASS:
+            case Biome.TALL_GRASS:
+            case Biome.MEADOW:
+            case Biome.FOREST:
+            case Biome.JUNGLE:
               moveId = Moves.ENERGY_BALL;
               break;
-            case Biome.SEA
-              || Biome.SWAMP
-              || Biome.BEACH
-              || Biome.LAKE
-              || Biome.SEABED
-              || Biome.ISLAND:
+            case Biome.SEA:
+            case Biome.SWAMP:
+            case Biome.BEACH:
+            case Biome.LAKE:
+            case Biome.SEABED:
+            case Biome.ISLAND:
               moveId = Moves.HYDRO_PUMP;
               break;
             case Biome.MOUNTAIN:
               moveId = Moves.AIR_SLASH;
               break;
-            case Biome.BADLANDS
-              || Biome.DESERT
-              || Biome.WASTELAND
-              || Biome.CONSTRUCTION_SITE:
+            case Biome.BADLANDS:
+            case Biome.DESERT:
+            case Biome.WASTELAND:
+            case Biome.CONSTRUCTION_SITE:
               moveId = Moves.EARTH_POWER;
               break;
             case Biome.CAVE:
               moveId = Moves.POWER_GEM;
               break;
-            case Biome.ICE_CAVE
-              || Biome.SNOWY_FOREST:
+            case Biome.ICE_CAVE:
+            case Biome.SNOWY_FOREST:
               moveId = Moves.ICE_BEAM;
               break;
             case Biome.VOLCANO:
               moveId = Moves.FLAMETHROWER;
               break;
-            case Biome.GRAVEYARD
-              || Biome.RUINS
-              || Biome.TEMPLE:
+            case Biome.GRAVEYARD:
+            case Biome.RUINS:
+            case Biome.TEMPLE:
               moveId = Moves.SHADOW_BALL;
               break;
             case Biome.DOJO:
@@ -2876,10 +2878,19 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
             case Biome.FAIRY_CAVE:
               moveId = Moves.MOONBLAST;
               break;
-            case Biome.ABYSS
-              || Biome.SPACE
-              || Biome.END:
+            case Biome.ABYSS:
+            case Biome.SPACE:
               moveId = Moves.DARK_PULSE;
+              break;
+            case Biome.FACTORY:
+            case Biome.LABORATORY:
+              moveId = Moves.FLASH_CANNON;
+              break;
+            case Biome.POWER_PLANT:
+              moveId = Moves.THUNDERBOLT;
+              break;
+            case Biome.END:
+              moveId = Moves.ETERNABEAM;
               break;
           }
           break;
@@ -4849,9 +4860,9 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 2, true)
       .ignoresVirtual(),
     new StatusMove(Moves.MAGNETIC_FLUX, "Magnetic Flux", Type.ELECTRIC, -1, 20, "The user manipulates magnetic fields, which raises the Defense and Sp. Def stats of ally Pokémon with the Plus or Minus Ability.", -1, 0, 6)
-      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, false, (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS].find(a => a === user.getAbility().id || (user.canApplyPassive() && a === user.getPassiveAbility().id)))
+      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, false, (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS].find(a => target.hasAbility(a, false)))
       .target(MoveTarget.USER_AND_ALLIES)
-      .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => a === p.getAbility().id || (user.canApplyPassive() && a === user.getPassiveAbility().id)))),
+      .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => p.hasAbility(a, false)))),
     new StatusMove(Moves.HAPPY_HOUR, "Happy Hour (N)", Type.NORMAL, -1, 30, "Using Happy Hour doubles the amount of prize money received after battle.", -1, 0, 6) // No animation
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ELECTRIC_TERRAIN, "Electric Terrain", Type.ELECTRIC, -1, 10, "The user electrifies the ground for five turns, powering up Electric-type moves. Pokémon on the ground no longer fall asleep.", -1, 0, 6)
@@ -4979,9 +4990,9 @@ export function initMoves() {
     new SelfStatusMove(Moves.LASER_FOCUS, "Laser Focus", Type.NORMAL, -1, 30, "The user concentrates intensely. The attack on the next turn always results in a critical hit.", -1, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.ALWAYS_CRIT, true, false),
     new StatusMove(Moves.GEAR_UP, "Gear Up", Type.STEEL, -1, 20, "The user engages its gears to raise the Attack and Sp. Atk stats of ally Pokémon with the Plus or Minus Ability.", -1, 0, 7)
-      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, false, (user, target, move) => [ Abilities.PLUS, Abilities.MINUS ].includes(target.getAbility().id) || (target.canApplyPassive() && [ Abilities.PLUS, Abilities.MINUS ].includes(target.getPassiveAbility().id)))
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 1, false, (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS].find(a => target.hasAbility(a, false)))
       .target(MoveTarget.USER_AND_ALLIES)
-      .condition((user, target, move) => !![ user, user.getAlly() ].find(p => p && [ Abilities.PLUS, Abilities.MINUS ].includes(p.getAbility().id) || (target.canApplyPassive() && [ Abilities.PLUS, Abilities.MINUS ].includes(target.getPassiveAbility().id)))),
+      .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => p.hasAbility(a, false)))),
     new AttackMove(Moves.THROAT_CHOP, "Throat Chop (P)", Type.DARK, MoveCategory.PHYSICAL, 80, 100, 15, "The user attacks the target's throat, and the resultant suffering prevents the target from using moves that emit sound for two turns.", 100, 0, 7),
     new AttackMove(Moves.POLLEN_PUFF, "Pollen Puff (P)", Type.BUG, MoveCategory.SPECIAL, 90, 100, 15, "The user attacks the enemy with a pollen puff that explodes. If the target is an ally, it gives the ally a pollen puff that restores its HP instead.", -1, 0, 7)
       .ballBombMove(),
