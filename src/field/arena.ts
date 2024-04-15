@@ -541,6 +541,16 @@ export class Arena {
     return !!tag;
   }
 
+  removeTagOnSide(tagType: ArenaTagType, side: ArenaTagSide): boolean {
+    const tag = this.getTagOnSide(tagType, side);
+    if (tag) {
+      tag.onRemove(this);
+      this.tags.splice(this.tags.indexOf(tag), 1);
+    }
+    return !!tag;
+  }
+  
+  
   removeAllTags(): void {
     while (this.tags.length) {
       this.tags[0].onRemove(this);

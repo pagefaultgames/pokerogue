@@ -2531,6 +2531,40 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   }
 }
 
+export class RemoveScreensAttr extends MoveEffectAttr {
+
+  private targetBothSides: boolean;
+
+  constructor(targetBothSides: boolean = false) {
+    super(true, MoveEffectTrigger.PRE_APPLY);
+    this.targetBothSides = targetBothSides;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    if(this.targetBothSides){
+      user.scene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaTagSide.PLAYER);
+      user.scene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.PLAYER);
+      user.scene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaTagSide.PLAYER);
+
+      user.scene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaTagSide.ENEMY);
+      user.scene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.ENEMY);
+      user.scene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaTagSide.ENEMY);
+    }
+    else{
+      user.scene.arena.removeTagOnSide(ArenaTagType.REFLECT, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+      user.scene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+      user.scene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+    }
+
+    return true;
+
+  }
+}
+
 export class ForceSwitchOutAttr extends MoveEffectAttr {
   private user: boolean;
   private batonPass: boolean;
@@ -3993,7 +4027,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.RECYCLE, "Recycle (N)", Type.NORMAL, -1, 10, "The user recycles a held item that has been used in battle so it can be used again.", -1, 0, 3),
     new AttackMove(Moves.REVENGE, "Revenge", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, "This attack move's power is doubled if the user has been hurt by the opponent in the same turn.", -1, -4, 3)
       .attr(TurnDamagedDoublePowerAttr),
-    new AttackMove(Moves.BRICK_BREAK, "Brick Break (P)", Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, "The user attacks with a swift chop. It can also break barriers, such as Light Screen and Reflect.", -1, 0, 3),
+    new AttackMove(Moves.BRICK_BREAK, "Brick Break", Type.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, "The user attacks with a swift chop. It can also break barriers, such as Light Screen and Reflect.", -1, 0, 3)
+        .attr(RemoveScreensAttr),
     new StatusMove(Moves.YAWN, "Yawn", Type.NORMAL, -1, 10, "The user lets loose a huge yawn that lulls the target into falling asleep on the next turn.", -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, move) => !target.status),
@@ -4369,7 +4404,8 @@ export function initMoves() {
     new StatusMove(Moves.DEFOG, "Defog", Type.FLYING, -1, 15, "A strong wind blows away the target's barriers such as Reflect or Light Screen. This also lowers the target's evasiveness.", -1, 0, 4)
       .attr(StatChangeAttr, BattleStat.EVA, -1)
       .attr(ClearWeatherAttr, WeatherType.FOG)
-      .attr(ClearTerrainAttr),
+      .attr(ClearTerrainAttr)
+      .attr(RemoveScreensAttr, true),
     new StatusMove(Moves.TRICK_ROOM, "Trick Room", Type.PSYCHIC, -1, 5, "The user creates a bizarre area in which slower Pokémon get to move first for five turns.", -1, -7, 4)
       .attr(AddArenaTagAttr, ArenaTagType.TRICK_ROOM, 5)
       .ignoresProtect()
@@ -4967,8 +5003,9 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.FLEUR_CANNON, "Fleur Cannon", Type.FAIRY, MoveCategory.SPECIAL, 130, 90, 5, "The user unleashes a strong beam. The attack's recoil harshly lowers the user's Sp. Atk stat.", 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
-    new AttackMove(Moves.PSYCHIC_FANGS, "Psychic Fangs (P)", Type.PSYCHIC, MoveCategory.PHYSICAL, 85, 100, 10, "The user bites the target with its psychic capabilities. This can also destroy Light Screen and Reflect.", -1, 0, 7)
-      .bitingMove(),
+    new AttackMove(Moves.PSYCHIC_FANGS, "Psychic Fangs", Type.PSYCHIC, MoveCategory.PHYSICAL, 85, 100, 10, "The user bites the target with its psychic capabilities. This can also destroy Light Screen and Reflect.", -1, 0, 7)
+      .bitingMove()
+      .attr(RemoveScreensAttr),
     new AttackMove(Moves.STOMPING_TANTRUM, "Stomping Tantrum (P)", Type.GROUND, MoveCategory.PHYSICAL, 75, 100, 10, "Driven by frustration, the user attacks the target. If the user's previous move has failed, the power of this move doubles.", -1, 0, 7),
     new AttackMove(Moves.SHADOW_BONE, "Shadow Bone", Type.GHOST, MoveCategory.PHYSICAL, 85, 100, 10, "The user attacks by beating the target with a bone that contains a spirit. This may also lower the target's Defense stat.", 20, 0, 7)
       .attr(StatChangeAttr, BattleStat.DEF, -1)
@@ -5445,8 +5482,9 @@ export function initMoves() {
     new AttackMove(Moves.AQUA_STEP, "Aqua Step", Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, "The user toys with the target and attacks it using light and fluid dance steps. This also boosts the user's Speed stat.", 100, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
       .danceMove(),
-    new AttackMove(Moves.RAGING_BULL, "Raging Bull (P)", Type.NORMAL, MoveCategory.PHYSICAL, 90, 100, 10, "The user performs a tackle like a raging bull. This move's type depends on the user's form. It can also break barriers, such as Light Screen and Reflect.", -1, 0, 9)
-      .attr(RagingBullTypeAttr),
+    new AttackMove(Moves.RAGING_BULL, "Raging Bull", Type.NORMAL, MoveCategory.PHYSICAL, 90, 100, 10, "The user performs a tackle like a raging bull. This move's type depends on the user's form. It can also break barriers, such as Light Screen and Reflect.", -1, 0, 9)
+      .attr(RagingBullTypeAttr)
+      .attr(RemoveScreensAttr),
     new AttackMove(Moves.MAKE_IT_RAIN, "Make It Rain", Type.STEEL, MoveCategory.SPECIAL, 120, 100, 5, "The user attacks by throwing out a mass of coins. This also lowers the user's Sp. Atk stat. Money is earned after the battle.", -1, 0, 9)
       .attr(MoneyAttr)
       .attr(StatChangeAttr, BattleStat.SPATK, -1, true, null, true, true)
