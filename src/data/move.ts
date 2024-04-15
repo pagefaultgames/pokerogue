@@ -4616,6 +4616,7 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.SMACK_DOWN, "Smack Down", Type.ROCK, MoveCategory.PHYSICAL, 50, 100, 15, "The user throws a stone or similar projectile to attack the target. A flying Pokémon will fall to the ground when it's hit.", 100, 0, 5)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 5)
+      .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .makesContact(false),
     new AttackMove(Moves.STORM_THROW, "Storm Throw", Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, "The user strikes the target with a fierce blow. This attack always results in a critical hit.", -1, 0, 5)
       .attr(CritOnlyAttr),
