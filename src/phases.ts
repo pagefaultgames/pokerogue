@@ -30,7 +30,7 @@ import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, get
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { CheckTrappedAbAttr, MoveAbilityBypassAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr } from "./data/ability";
+import { CheckTrappedAbAttr, MoveAbilityBypassAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs } from "./data/ability";
 import { Abilities } from "./data/enums/abilities";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
@@ -376,6 +376,16 @@ export class UnavailablePhase extends Phase {
       this.scene.unshiftPhase(new LoginPhase(this.scene, true));
       this.end();
     });
+  }
+}
+
+export class OutdatedPhase extends Phase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start(): void {
+    this.scene.ui.setMode(Mode.OUTDATED);
   }
 }
 
@@ -2190,7 +2200,7 @@ export class MovePhase extends BattlePhase {
         for (let opponent of targetedOpponents) {
           if (this.move.ppUsed === this.move.getMove().pp)
             break;
-          if ((opponent.canApplyAbility() && opponent.getAbility().hasAttr(IncreasePpAbAttr)) || (opponent.canApplyAbility(true) && opponent.getPassiveAbility().hasAttr(IncreasePpAbAttr)))
+          if (opponent.hasAbilityWithAttr(IncreasePpAbAttr))
             this.move.ppUsed = Math.min(this.move.ppUsed + 1, this.move.getMovePp());
         }
       }
@@ -2389,7 +2399,7 @@ export class MoveEffectPhase extends PokemonPhase {
                       }
                       Utils.executeIf(!isProtected && !chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT && (!attr.firstHitOnly || firstHit),
                         user, target, this.move.getMove()).then(() => {
-                          return Utils.executeIf(!target.isFainted(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult).then(() => {
+                          return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult).then(() => {
                             if (!user.isPlayer() && this.move.getMove() instanceof AttackMove)
                               user.scene.applyModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
                           })).then(() => {
@@ -2632,6 +2642,7 @@ export class StatChangePhase extends PokemonPhase {
       for (let stat of filteredStats)
         pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
       
+      applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget)
       this.end();
     };
 
