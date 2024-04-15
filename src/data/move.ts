@@ -2828,66 +2828,106 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
         case TerrainType.NONE:
           switch (user.scene.arena.biomeType) {
             case Biome.TOWN:
-            case Biome.METROPOLIS:
-            case Biome.SLUM:
               moveId = Moves.TRI_ATTACK;
               break;
+            case Biome.METROPOLIS:
+              moveId = Moves.DARK_PULSE;
+              break;
+            case Biome.SLUM:
+              moveId = Moves.SLUDGE_BOMB;
+              break;
             case Biome.PLAINS:
+              moveId = Moves.ROUND;
+              break;
             case Biome.GRASS:
+              moveId = Moves.GRASS_KNOT;
+              break;
             case Biome.TALL_GRASS:
+              moveId = Moves.POLLEN_PUFF;
+              break;
             case Biome.MEADOW:
+              moveId = Moves.GIGA_DRAIN;
+              break;
             case Biome.FOREST:
+              moveId = Moves.BUG_BUZZ;
+              break;
             case Biome.JUNGLE:
-              moveId = Moves.ENERGY_BALL;
+              moveId = Moves.LEAF_STORM;
               break;
             case Biome.SEA:
-            case Biome.SWAMP:
-            case Biome.BEACH:
-            case Biome.LAKE:
-            case Biome.SEABED:
-            case Biome.ISLAND:
               moveId = Moves.HYDRO_PUMP;
+              break;
+            case Biome.SWAMP:
+              moveId = Moves.MUD_BOMB;
+              break;
+            case Biome.BEACH:
+              moveId = Moves.SCALD;
+              break;
+            case Biome.LAKE:
+              moveId = Moves.BUBBLE_BEAM;
+              break;
+            case Biome.SEABED:
+              moveId = Moves.BRINE;
+              break;
+            case Biome.ISLAND:
+              moveId = Moves.LEAF_TORNADO;
               break;
             case Biome.MOUNTAIN:
               moveId = Moves.AIR_SLASH;
               break;
             case Biome.BADLANDS:
-            case Biome.DESERT:
-            case Biome.WASTELAND:
-            case Biome.CONSTRUCTION_SITE:
               moveId = Moves.EARTH_POWER;
+              break;
+            case Biome.DESERT:
+              moveId = Moves.SCORCHING_SANDS;
+              break;
+            case Biome.WASTELAND:
+              moveId = Moves.DRAGON_PULSE;
+              break;
+            case Biome.CONSTRUCTION_SITE:
+              moveId = Moves.STEEL_BEAM;
               break;
             case Biome.CAVE:
               moveId = Moves.POWER_GEM;
               break;
             case Biome.ICE_CAVE:
-            case Biome.SNOWY_FOREST:
               moveId = Moves.ICE_BEAM;
               break;
+            case Biome.SNOWY_FOREST:
+              moveId = Moves.FROST_BREATH;
+              break;
             case Biome.VOLCANO:
-              moveId = Moves.FLAMETHROWER;
+              moveId = Moves.LAVA_PLUME;
               break;
             case Biome.GRAVEYARD:
-            case Biome.RUINS:
-            case Biome.TEMPLE:
               moveId = Moves.SHADOW_BALL;
               break;
+            case Biome.RUINS:
+              moveId = Moves.ANCIENT_POWER;
+              break;
+            case Biome.TEMPLE:
+              moveId = Moves.EXTRASENSORY;
+              break;
             case Biome.DOJO:
-              moveId = Moves.AURA_SPHERE;
+              moveId = Moves.FOCUS_BLAST;
               break;
             case Biome.FAIRY_CAVE:
-              moveId = Moves.MOONBLAST;
+              moveId = Moves.ALLURING_VOICE;
               break;
             case Biome.ABYSS:
+              moveId = Moves.OMINOUS_WIND;
+              break;
             case Biome.SPACE:
-              moveId = Moves.DARK_PULSE;
+              moveId = Moves.DRACO_METEOR;
               break;
             case Biome.FACTORY:
-            case Biome.LABORATORY:
               moveId = Moves.FLASH_CANNON;
               break;
+            case Biome.LABORATORY:
+              moveId = Moves.ZAP_CANNON;
+              break;
             case Biome.POWER_PLANT:
-              moveId = Moves.THUNDERBOLT;
+              moveId = Moves.CHARGE_BEAM;
               break;
             case Biome.END:
               moveId = Moves.ETERNABEAM;
