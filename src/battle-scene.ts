@@ -198,6 +198,26 @@ export default class BattleScene extends SceneBase {
 	// (i.e. by holding down a button) at a time
 	private movementButtonLock: Button;
 
+  // using a dualshock controller as a map
+  private gamepadKeyConfig = {
+    [Button.UP]: 12, // up
+    [Button.DOWN]: 13, // down
+    [Button.LEFT]: 14, // left
+    [Button.RIGHT]: 15, // right
+    [Button.SUBMIT]: 17, // touchpad
+    [Button.ACTION]: 0, // X
+    [Button.CANCEL]: 1, // O
+    [Button.MENU]: 9, // options
+    [Button.CYCLE_SHINY]: 5, // RB
+    [Button.CYCLE_FORM]: 4, // LB
+    [Button.CYCLE_GENDER]: 6, // LT
+    [Button.CYCLE_ABILITY]: 7, // RT
+    [Button.CYCLE_NATURE]: 2, // square
+    [Button.SPEED_UP]: 10, // L3
+    [Button.SLOW_DOWN]: 11 // R3
+  }
+  public gamepadButtonStates: boolean[] = new Array(17).fill(false);
+
 	public rngCounter: integer = 0;
 	public rngSeedOverride: string = '';
 	public rngOffset: integer = 0;
@@ -1273,8 +1293,31 @@ export default class BattleScene extends SceneBase {
 			navigator.vibrate(vibrationLength || 10);		
 	}
 
+  /**
+   * gamepadButtonJustDown returns true if @param button has just been pressed down
+   * or not. It will only return true once, until the key is released and pressed down
+   * again. 
+   */
+  gamepadButtonJustDown(button: Phaser.Input.Gamepad.Button) : boolean {
+
+    if (!button) return;
+
+    let returnValue = false;
+    if (button.pressed) {
+      if (!this.gamepadButtonStates[button.index]) {
+        returnValue = true;
+      }
+      this.gamepadButtonStates[button.index] = true;
+    } else {
+      this.gamepadButtonStates[button.index] = false;
+    }
+
+    return returnValue;
+  }
+
 	buttonJustPressed(button: Button): boolean {
-		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustDown(k));
+    const gamepad = this.input.gamepad?.gamepads[0];
+		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustDown(k)) || this.gamepadButtonJustDown(gamepad?.buttons[this.gamepadKeyConfig[button]]);
 	}
 
 	/**
@@ -1286,7 +1329,7 @@ export default class BattleScene extends SceneBase {
 		if (this.movementButtonLock !== null && this.movementButtonLock !== button) {
 			return false;
 		}
-		if (this.buttonKeys[button].every(k => k.isUp)) {
+		if (this.buttonKeys[button].every(k => k.isUp) && this.gamepadButtonStates.every(b => b == false)) {
 			this.movementButtonLock = null;
 			return false;
 		}
