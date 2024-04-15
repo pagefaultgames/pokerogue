@@ -27,6 +27,7 @@ import { Moves } from "../data/enums/moves";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
+import { OutdatedPhase, UnavailablePhase } from "#app/phases";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -269,6 +270,10 @@ export class GameData {
             .then(error => {
               this.scene.ui.savingIcon.hide();
               if (error) {
+                if (error.startsWith('client version out of date')) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new OutdatedPhase(this.scene));
+                }
                 console.error(error);
                 return resolve(false);
               }

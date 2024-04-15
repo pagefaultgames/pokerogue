@@ -379,6 +379,16 @@ export class UnavailablePhase extends Phase {
   }
 }
 
+export class OutdatedPhase extends Phase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start(): void {
+    this.scene.ui.setMode(Mode.OUTDATED);
+  }
+}
+
 export class SelectGenderPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
