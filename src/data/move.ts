@@ -2017,6 +2017,45 @@ export class RagingBullTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
+export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.OGERPON)) {
+      const form = user.species.speciesId === Species.OGERPON ? user.formIndex : user.fusionSpecies.formIndex;
+      const type = (args[0] as Utils.IntegerHolder);
+
+      switch (form) {
+        case 1: // Wellspring Mask
+          type.value = Type.WATER;
+          break;
+        case 2: // Hearthflame Mask
+          type.value = Type.FIRE;
+          break;
+        case 3: // Cornerstone Mask
+          type.value = Type.ROCK;
+          break;
+        case 4: // Teal Mask Tera
+          type.value = Type.GRASS;
+          break;
+        case 5: // Wellspring Mask Tera
+          type.value = Type.WATER;
+          break;
+        case 6: // Hearthflame Mask Tera
+          type.value = Type.FIRE;
+          break;
+        case 7: // Cornerstone Mask Tera
+          type.value = Type.ROCK;
+          break;
+        default:
+          type.value = Type.GRASS;
+          break;
+      }
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
@@ -5572,7 +5611,8 @@ export function initMoves() {
     new AttackMove(Moves.SYRUP_BOMB, "Syrup Bomb (P)", Type.GRASS, MoveCategory.SPECIAL, 60, 85, 10, "The user sets off an explosion of sticky candy syrup, which coats the target and causes the target's Speed stat to drop each turn for three turns.", -1, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPD, -1) //Temporary
       .ballBombMove(),
-    new AttackMove(Moves.IVY_CUDGEL, "Ivy Cudgel (P)", Type.GRASS, MoveCategory.PHYSICAL, 100, 100, 10, "The user strikes with an ivy-wrapped cudgel. This move's type changes depending on the mask worn by the user, and it has a heightened chance of landing a critical hit.", -1, 0, 9)
+    new AttackMove(Moves.IVY_CUDGEL, "Ivy Cudgel", Type.GRASS, MoveCategory.PHYSICAL, 100, 100, 10, "The user strikes with an ivy-wrapped cudgel. This move's type changes depending on the mask worn by the user, and it has a heightened chance of landing a critical hit.", -1, 0, 9)
+      .attr(IvyCudgelTypeAttr)
       .attr(HighCritAttr)
       .makesContact(false),
     new AttackMove(Moves.ELECTRO_SHOT, "Electro Shot", Type.ELECTRIC, MoveCategory.SPECIAL, 130, 100, 10, "The user gathers electricity on the first turn, boosting its Sp. Atk stat, then fires a high-voltage shot on the next turn. The shot will be fired immediately in rain.", 100, 0, 9)
