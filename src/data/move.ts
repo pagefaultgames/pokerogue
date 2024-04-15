@@ -2640,6 +2640,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  	// Switch out logic for the battle type
 	  	switchOutTarget.resetTurnData();
 	  	switchOutTarget.resetSummonData();
+      // Decrement turns in play by one to account for the turns being incremented at the end of the current turn
+      switchOutTarget.battleSummonData.turnCount --;
 	  	switchOutTarget.hideInfo();
 	  	switchOutTarget.setVisible(false);
 	  	switchOutTarget.scene.field.remove(switchOutTarget);
