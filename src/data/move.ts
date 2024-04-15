@@ -3446,6 +3446,7 @@ export function initMoves() {
     new AttackMove(Moves.WING_ATTACK, "Wing Attack", Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 35, "The target is struck with large, imposing wings spread wide to inflict damage.", -1, 0, 1),
     new StatusMove(Moves.WHIRLWIND, "Whirlwind", Type.NORMAL, -1, 20, "The target is blown away, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon.", -1, -6, 1)
       .attr(ForceSwitchOutAttr)
+      .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .hidesTarget()
       .windMove(),
     new AttackMove(Moves.FLY, "Fly", Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, "The user flies up into the sky and then strikes its target on the next turn.", -1, 0, 1)
@@ -3540,7 +3541,8 @@ export function initMoves() {
     new AttackMove(Moves.WATER_GUN, "Water Gun", Type.WATER, MoveCategory.SPECIAL, 40, 100, 25, "The target is blasted with a forceful shot of water.", -1, 0, 1),
     new AttackMove(Moves.HYDRO_PUMP, "Hydro Pump", Type.WATER, MoveCategory.SPECIAL, 110, 80, 5, "The target is blasted by a huge volume of water launched under great pressure.", -1, 0, 1),
     new AttackMove(Moves.SURF, "Surf", Type.WATER, MoveCategory.SPECIAL, 90, 100, 15, "The user attacks everything around it by swamping its surroundings with a giant wave.", -1, 0, 1)
-      .target(MoveTarget.ALL_NEAR_OTHERS),
+      .target(MoveTarget.ALL_NEAR_OTHERS)
+      .attr(HitsTagAttr, BattlerTagType.UNDERWATER, true),
     new AttackMove(Moves.ICE_BEAM, "Ice Beam", Type.ICE, MoveCategory.SPECIAL, 90, 100, 10, "The target is struck with an icy-cold beam of energy. This may also leave the target frozen.", 10, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.FREEZE),
     new AttackMove(Moves.BLIZZARD, "Blizzard", Type.ICE, MoveCategory.SPECIAL, 110, 70, 5, "A howling blizzard is summoned to strike opposing Pokémon. This may also leave the opposing Pokémon frozen.", 10, 0, 1)
@@ -3619,7 +3621,8 @@ export function initMoves() {
       .attr(StatusMoveTypeImmunityAttr, Type.GROUND),
     new AttackMove(Moves.THUNDER, "Thunder", Type.ELECTRIC, MoveCategory.SPECIAL, 110, 70, 10, "A wicked thunderbolt is dropped on the target to inflict damage. This may also leave the target with paralysis.", 30, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
-      .attr(ThunderAccuracyAttr),
+      .attr(ThunderAccuracyAttr)
+      .attr(HitsTagAttr, BattlerTagType.FLYING, false),
     new AttackMove(Moves.ROCK_THROW, "Rock Throw", Type.ROCK, MoveCategory.PHYSICAL, 50, 90, 15, "The user picks up and throws a small rock at the target to attack.", -1, 0, 1)
       .makesContact(false),
     new AttackMove(Moves.EARTHQUAKE, "Earthquake", Type.GROUND, MoveCategory.PHYSICAL, 100, 100, 10, "The user sets off an earthquake that strikes every Pokémon around it.", -1, 0, 1)
@@ -3629,6 +3632,7 @@ export function initMoves() {
     new AttackMove(Moves.FISSURE, "Fissure", Type.GROUND, MoveCategory.PHYSICAL, -1, 30, 5, "The user opens up a fissure in the ground and drops the target in. The target faints instantly if this attack hits.", -1, 0, 1)
       .attr(OneHitKOAttr)
       .attr(OneHitKOAccuracyAttr)
+      .attr(HitsTagAttr, BattlerTagType.UNDERGROUND, false)
       .makesContact(false),
     new AttackMove(Moves.DIG, "Dig", Type.GROUND, MoveCategory.PHYSICAL, 80, 100, 10, "The user burrows into the ground, then attacks on the next turn.", -1, 0, 1)
       .attr(ChargeAttr, ChargeAnim.DIG_CHARGING, 'dug a hole!', BattlerTagType.UNDERGROUND)
@@ -3982,6 +3986,7 @@ export function initMoves() {
     new AttackMove(Moves.MAGNITUDE, "Magnitude", Type.GROUND, MoveCategory.PHYSICAL, -1, 100, 30, "The user attacks everything around it with a ground-shaking quake. Its power varies.", -1, 0, 2)
       .attr(PreMoveMessageAttr, magnitudeMessageFunc)
       .attr(MagnitudePowerAttr)
+      .attr(HitsTagAttr, BattlerTagType.UNDERGROUND, true)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.DYNAMIC_PUNCH, "Dynamic Punch", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 50, 5, "The user punches the target with full, concentrated power. This confuses the target if it hits.", 100, 0, 2)
@@ -4050,7 +4055,8 @@ export function initMoves() {
     new AttackMove(Moves.ROCK_SMASH, "Rock Smash", Type.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 15, "The user attacks with a punch. This may also lower the target's Defense stat.", 50, 0, 2)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
     new AttackMove(Moves.WHIRLPOOL, "Whirlpool", Type.WATER, MoveCategory.SPECIAL, 35, 85, 15, "The user traps the target in a violent swirling whirlpool for four to five turns.", 100, 0, 2)
-      .attr(TrapAttr, BattlerTagType.WHIRLPOOL),
+      .attr(TrapAttr, BattlerTagType.WHIRLPOOL)
+      .attr(HitsTagAttr, BattlerTagType.UNDERWATER, true),
     new AttackMove(Moves.BEAT_UP, "Beat Up (N)", Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, "The user gets all party Pokémon to attack the target. The more party Pokémon, the greater the number of attacks.", -1, 0, 2)
       .makesContact(false),
     new AttackMove(Moves.FAKE_OUT, "Fake Out", Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 10, "This attack hits first and makes the target flinch. It only works the first turn each time the user enters battle.", 100, 3, 3)
@@ -4140,7 +4146,7 @@ export function initMoves() {
     new AttackMove(Moves.SECRET_POWER, "Secret Power (P)", Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, "The additional effects of this attack depend upon where it was used.", 30, 0, 3)
       .makesContact(false),
     new AttackMove(Moves.DIVE, "Dive", Type.WATER, MoveCategory.PHYSICAL, 80, 100, 10, "Diving on the first turn, the user floats up and attacks on the next turn.", -1, 0, 3)
-      .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, 'hid\nunderwater!', BattlerTagType.UNDERGROUND)
+      .attr(ChargeAttr, ChargeAnim.DIVE_CHARGING, 'hid\nunderwater!', BattlerTagType.UNDERWATER)
       .ignoresVirtual(),
     new AttackMove(Moves.ARM_THRUST, "Arm Thrust", Type.FIGHTING, MoveCategory.PHYSICAL, 15, 100, 20, "The user lets loose a flurry of open-palmed arm thrusts that hit two to five times in a row.", -1, 0, 3)
       .attr(MultiHitAttr),
@@ -4750,6 +4756,7 @@ export function initMoves() {
     new AttackMove(Moves.HURRICANE, "Hurricane", Type.FLYING, MoveCategory.SPECIAL, 110, 70, 10, "The user attacks by wrapping its opponent in a fierce wind that flies up into the sky. This may also confuse the target.", 30, 0, 5)
       .attr(ThunderAccuracyAttr)
       .attr(ConfuseAttr)
+      .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .windMove(),
     new AttackMove(Moves.HEAD_CHARGE, "Head Charge", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, "The user charges its head into its target, using its powerful guard hair. This also damages the user a little.", -1, 0, 5)
       .attr(RecoilAttr),
@@ -4929,6 +4936,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(Moves.THOUSAND_ARROWS, "Thousand Arrows", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, "This move also hits opposing Pokémon that are in the air. Those Pokémon are knocked down to the ground.", 100, 0, 6)
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
+      .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.THOUSAND_WAVES, "Thousand Waves", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, "The user attacks with a wave that crawls along the ground. Those it hits can't flee from battle.", -1, 0, 6)
