@@ -3395,6 +3395,7 @@ export function initMoves() {
     new AttackMove(Moves.WING_ATTACK, "Wing Attack", Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 35, "The target is struck with large, imposing wings spread wide to inflict damage.", -1, 0, 1),
     new StatusMove(Moves.WHIRLWIND, "Whirlwind", Type.NORMAL, -1, 20, "The target is blown away, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon.", -1, -6, 1)
       .attr(ForceSwitchOutAttr)
+      .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .hidesTarget()
       .windMove(),
     new AttackMove(Moves.FLY, "Fly", Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, "The user flies up into the sky and then strikes its target on the next turn.", -1, 0, 1)
