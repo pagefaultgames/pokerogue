@@ -4705,6 +4705,7 @@ export function initMoves() {
     new AttackMove(Moves.HURRICANE, "Hurricane", Type.FLYING, MoveCategory.SPECIAL, 110, 70, 10, "The user attacks by wrapping its opponent in a fierce wind that flies up into the sky. This may also confuse the target.", 30, 0, 5)
       .attr(ThunderAccuracyAttr)
       .attr(ConfuseAttr)
+      .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .windMove(),
     new AttackMove(Moves.HEAD_CHARGE, "Head Charge", Type.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, "The user charges its head into its target, using its powerful guard hair. This also damages the user a little.", -1, 0, 5)
       .attr(RecoilAttr),
@@ -4884,6 +4885,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(Moves.THOUSAND_ARROWS, "Thousand Arrows", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, "This move also hits opposing Pokémon that are in the air. Those Pokémon are knocked down to the ground.", 100, 0, 6)
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
+      .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.THOUSAND_WAVES, "Thousand Waves", Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, "The user attacks with a wave that crawls along the ground. Those it hits can't flee from battle.", -1, 0, 6)
