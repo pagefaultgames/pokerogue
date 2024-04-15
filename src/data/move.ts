@@ -2828,16 +2828,16 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
         case TerrainType.NONE:
           switch (user.scene.arena.biomeType) {
             case Biome.TOWN:
-              moveId = Moves.TRI_ATTACK;
+              moveId = Moves.ROUND;
               break;
             case Biome.METROPOLIS:
-              moveId = Moves.DARK_PULSE;
+              moveId = Moves.TRI_ATTACK;
               break;
             case Biome.SLUM:
               moveId = Moves.SLUDGE_BOMB;
               break;
             case Biome.PLAINS:
-              moveId = Moves.ROUND;
+              moveId = Moves.SILVER_WIND;
               break;
             case Biome.GRASS:
               moveId = Moves.GRASS_KNOT;
