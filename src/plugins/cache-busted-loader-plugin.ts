@@ -16,13 +16,10 @@ export default class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin 
     }
 
     addFile(file): void {
-        if (ignoredFiles.includes(file?.key))
-            return;
-
         if (!Array.isArray(file))
-            file = [ file ]
-
-        if (cacheBuster)
+            file = [ file ];
+    
+        if (!ignoredFiles.includes(file?.key) && cacheBuster)
             file.forEach(item => item.url += '?v=' + cacheBuster);
 
         super.addFile(file);
