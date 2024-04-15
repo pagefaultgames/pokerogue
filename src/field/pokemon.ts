@@ -698,6 +698,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         types.splice(flyingIndex, 1);
     }
 
+    if (forDefend && (this.getTag(BattlerTagType.GROUNDED) || this.scene.arena.getTag(ArenaTagType.GRAVITY))) {
+      const flyingIndex = types.indexOf(Type.FLYING);
+      if (flyingIndex > -1)
+        types.splice(flyingIndex, 1);
+    }
+
     if (!types.length)
       types.push(Type.NORMAL);
 

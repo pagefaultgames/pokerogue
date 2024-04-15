@@ -4315,7 +4315,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true),
     new SelfStatusMove(Moves.ROOST, "Roost", Type.FLYING, -1, 5, "The user lands and rests its body. This move restores the user's HP by up to half of its max HP.", -1, 0, 4)
       .attr(HealAttr, 0.5)
-      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, true, false, 1)
+      .attr(AddBattlerTagAttr, BattlerTagType.GROUNDED, true, false, 1)
       .triageMove(),
     new StatusMove(Moves.GRAVITY, "Gravity", Type.PSYCHIC, -1, 5, "This move enables Flying-type Pokémon or Pokémon with the Levitate Ability to be hit by Ground-type moves. Moves that involve flying can't be used.", -1, 0, 4)
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
