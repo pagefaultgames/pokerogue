@@ -14,6 +14,7 @@ export enum WeatherType {
   RAIN,
   SANDSTORM,
   HAIL,
+  SNOW,
   FOG,
   HEAVY_RAIN,
   HARSH_SUN,
@@ -127,6 +128,8 @@ export function getWeatherStartMessage(weatherType: WeatherType): string {
       return 'A sandstorm brewed!';
     case WeatherType.HAIL:
       return 'It started to hail!';
+    case WeatherType.SNOW:
+      return 'It started to snow!';
     case WeatherType.FOG:
       return 'A thick fog emerged!'
     case WeatherType.HEAVY_RAIN:
@@ -150,6 +153,8 @@ export function getWeatherLapseMessage(weatherType: WeatherType): string {
       return 'The sandstorm rages.';
     case WeatherType.HAIL:
       return 'Hail continues to fall.';
+    case WeatherType.SNOW:
+      return 'The snow is falling down.';
     case WeatherType.FOG:
       return 'The fog continues.';
     case WeatherType.HEAVY_RAIN:
@@ -184,6 +189,8 @@ export function getWeatherClearMessage(weatherType: WeatherType): string {
       return 'The sandstorm subsided.';
     case WeatherType.HAIL:
       return 'The hail stopped.';
+    case WeatherType.SNOW:
+      return 'The snow stopped.';
     case WeatherType.FOG:
       return 'The fog disappeared.'
     case WeatherType.HEAVY_RAIN:
