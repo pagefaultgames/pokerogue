@@ -23,7 +23,7 @@ export class LoadingScene extends SceneBase {
         this.load['cacheBuster'] = buildIdMatch[1];
     }
 
-    this.load.video('intro_dark', 'images/intro_dark.webm', true);
+    this.load.video('intro_dark', 'images/intro_dark.mp4', true);
 
     this.loadImage('loading_bg', 'arenas');
     this.loadImage('logo', '');

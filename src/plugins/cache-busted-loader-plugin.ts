@@ -1,5 +1,7 @@
 let cacheBuster = '';
 
+const ignoredFiles = [ 'intro_dark' ];
+
 export default class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin {
     constructor(scene: Phaser.Scene) {
         super(scene)
@@ -17,7 +19,8 @@ export default class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin 
         if (!Array.isArray(file))
             file = [ file ];
     
-        file.forEach(item => item.url += '?v=' + cacheBuster);
+        if (!ignoredFiles.includes(file?.key) && cacheBuster)
+            file.forEach(item => item.url += '?v=' + cacheBuster);
 
         super.addFile(file);
     }
