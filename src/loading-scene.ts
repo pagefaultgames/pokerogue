@@ -23,6 +23,8 @@ export class LoadingScene extends SceneBase {
         this.load['cacheBuster'] = buildIdMatch[1];
     }
 
+    this.load.video('intro_dark', 'images/intro_dark.mp4', true);
+
     this.loadImage('loading_bg', 'arenas');
     this.loadImage('logo', '');
 
@@ -250,6 +252,8 @@ export class LoadingScene extends SceneBase {
   }
 
   loadLoadingScreen() {
+    const loadingGraphics: any[] = [];
+
     const bg = this.add.image(0, 0, '');
     bg.setOrigin(0, 0);
     bg.setScale(6);
@@ -294,6 +298,10 @@ export class LoadingScene extends SceneBase {
     });
     assetText.setOrigin(0.5, 0.5);
 
+    const intro = this.add.video(0, 0);
+    intro.setOrigin(0, 0);
+    intro.setScale(3);
+
     this.load.on("progress", (value: string) => {
       const parsedValue = parseFloat(value);
       percentText.setText(`${Math.floor(parsedValue * 100)}%`);
@@ -305,28 +313,46 @@ export class LoadingScene extends SceneBase {
     this.load.on("fileprogress", file => {
       assetText.setText(`Loading asset: ${file.key}`);
     });
+    
+    loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText);
 
-    this.load.on('filecomplete', key => {
-      switch (key) {
-        case 'loading_bg':
-          bg.setVisible(true);
-          bg.setTexture('loading_bg');
-          break;
-        case 'logo':
-          logo.setVisible(true);
-          logo.setTexture('logo');
-          break;
-      }
-    });
+    loadingGraphics.map(g => g.setVisible(false));
 
-    this.load.on("complete", () => {
+    const destroyLoadingAssets = () => {
+      intro.destroy();
       bg.destroy();
       logo.destroy();
       progressBar.destroy();
       progressBox.destroy();
       percentText.destroy();
       assetText.destroy();
+    };
+
+    this.load.on('filecomplete', key => {
+      switch (key) {
+        case 'intro_dark':
+          intro.load('intro_dark');
+          intro.on('complete', () => {
+            this.tweens.add({
+              targets: intro,
+              duration: 500,
+              alpha: 0,
+              ease: 'Sine.easeIn'
+            });
+            loadingGraphics.map(g => g.setVisible(true));
+          });
+          intro.play();
+          break;
+        case 'loading_bg':
+          bg.setTexture('loading_bg');
+          break;
+        case 'logo':
+          logo.setTexture('logo');
+          break;
+      }
     });
+
+    this.load.on("complete", () => destroyLoadingAssets());
   }
 
   get gameHeight() {
