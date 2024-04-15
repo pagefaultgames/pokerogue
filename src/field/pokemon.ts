@@ -734,7 +734,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     while (pokemonPrevolutions.hasOwnProperty(starterSpeciesId))
       starterSpeciesId = pokemonPrevolutions[starterSpeciesId];
     return allAbilities[starterPassiveAbilities[starterSpeciesId]];
-  }
+  } 
 
   hasPassive(): boolean {
     return this.passive || this.isBoss();

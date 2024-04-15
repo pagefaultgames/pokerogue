@@ -1103,3 +1103,4 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
   }
 }
+ 

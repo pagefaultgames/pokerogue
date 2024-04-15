@@ -5708,4 +5708,4 @@ export function initMoves() {
     new AttackMove(Moves.MALIGNANT_CHAIN, "Malignant Chain", Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, "The user pours toxins into the target by wrapping them in a toxic, corrosive chain. This may also leave the target badly poisoned.", 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
   );
-}
+} 
