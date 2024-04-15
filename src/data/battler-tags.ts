@@ -1077,6 +1077,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new TerrainHighestStatBoostTag(tagType, Abilities.QUARK_DRIVE, TerrainType.ELECTRIC);
     case BattlerTagType.FLYING:
     case BattlerTagType.UNDERGROUND:
+    case BattlerTagType.UNDERWATER:
     case BattlerTagType.HIDDEN:
       return new HideSpriteTag(tagType, turnCount, sourceMove);
     case BattlerTagType.FIRE_BOOST:
