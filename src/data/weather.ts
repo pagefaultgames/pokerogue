@@ -299,11 +299,6 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
         { weatherType: WeatherType.RAIN, weight: 1 }
       ];
       break;
-    case Biome.MOUNTAIN:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 1 }
-      ];
-      break;
     case Biome.BADLANDS:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
@@ -321,6 +316,8 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
       break;
     case Biome.ICE_CAVE:
       weatherPool = [
+        { weatherType: WeatherType.NONE, weight: 3 },
+        { weatherType: WeatherType.SNOW, weight: 4 },
         { weatherType: WeatherType.HAIL, weight: 1 }
       ];
       break;
@@ -341,20 +338,25 @@ export function getRandomWeatherType(arena: any /* Importing from arena causes a
         { weatherType: WeatherType.FOG, weight: 1 }
       ];
       break;
-    case Biome.RUINS:
+    case Biome.JUNGLE:
       weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 4 }
+        { weatherType: WeatherType.NONE, weight: 8 },
+        { weatherType: WeatherType.RAIN, weight: 2 }
       ];
       break;
-    case Biome.WASTELAND:
+    case Biome.SNOWY_FOREST:
       weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 4 }
+        { weatherType: WeatherType.SNOW, weight: 7 },
+        { weatherType: WeatherType.HAIL, weight: 1 }
       ];
       break;
-    case Biome.ABYSS:
+    case Biome.ISLAND:
       weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 4 }
+        { weatherType: WeatherType.NONE, weight: 5 },
+        { weatherType: WeatherType.RAIN, weight: 1 },
       ];
+      if (hasSun)
+        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
       break;
   }
 
