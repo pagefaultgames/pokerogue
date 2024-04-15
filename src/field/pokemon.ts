@@ -850,10 +850,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         return true;
       });
     } else
-      levelMoves = this.getSpeciesForm().getLevelMoves();
+      levelMoves = this.getSpeciesForm(true).getLevelMoves();
     if (this.fusionSpecies) {
       const evolutionLevelMoves = levelMoves.slice(0, Math.max(levelMoves.findIndex(lm => !!lm[0]), 0));
-      const fusionLevelMoves = this.getFusionSpeciesForm().getLevelMoves();
+      const fusionLevelMoves = this.getFusionSpeciesForm(true).getLevelMoves();
       const newLevelMoves: LevelMoves = [];
       while (levelMoves.length && levelMoves[0][0] < startingLevel)
         levelMoves.shift();
@@ -1186,7 +1186,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             applyMoveAttrs(HighCritAttr, source, this, move, critLevel);
             this.scene.applyModifiers(TempBattleStatBoosterModifier, source.isPlayer(), TempBattleStat.CRIT, critLevel);
             const bonusCrit = new Utils.BooleanHolder(false);
-            if (applyAbAttrs(BonusCritAbAttr, this, null, bonusCrit)) {
+            if (applyAbAttrs(BonusCritAbAttr, source, null, bonusCrit)) {
               if (bonusCrit.value)
                 critLevel.value += 1;
             }
@@ -2260,6 +2260,7 @@ export class PlayerPokemon extends Pokemon {
       if (newEvolution.condition.predicate(this)) {
         const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature);
         newPokemon.natureOverride = this.natureOverride;
+        newPokemon.moveset = this.moveset.slice();
         newPokemon.fusionSpecies = this.fusionSpecies;
         newPokemon.fusionFormIndex = this.fusionFormIndex;
         newPokemon.fusionAbilityIndex = this.fusionAbilityIndex;

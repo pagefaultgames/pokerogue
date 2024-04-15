@@ -23,6 +23,7 @@ import { SpeciesFormChangeActiveTrigger } from "./pokemon-forms";
 import { Species } from "./enums/species";
 import { ModifierPoolType } from "#app/modifier/modifier-type";
 import { Command } from "../ui/command-ui-handler";
+import { Biome } from "./enums/biome";
 
 export enum MoveCategory {
   PHYSICAL,
@@ -2745,6 +2746,98 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
   }
 }
 
+export class NaturePowerAttr extends OverrideMoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise(resolve => {
+      var moveId;
+      switch (user.scene.arena.getTerrainType()) {
+        // this allows terrains to 'override' the biome move
+        case TerrainType.NONE:
+          switch (user.scene.arena.biomeType) {
+            case Biome.TOWN:
+              moveId = Moves.TRI_ATTACK;
+              break;
+            case Biome.PLAINS
+              || Biome.GRASS
+              || Biome.TALL_GRASS
+              || Biome.MEADOW
+              || Biome.FOREST
+              || Biome.JUNGLE:
+              moveId = Moves.ENERGY_BALL;
+              break;
+            case Biome.SEA
+              || Biome.SWAMP
+              || Biome.BEACH
+              || Biome.LAKE
+              || Biome.SEABED
+              || Biome.ISLAND:
+              moveId = Moves.HYDRO_PUMP;
+              break;
+            case Biome.MOUNTAIN:
+              moveId = Moves.AIR_SLASH;
+              break;
+            case Biome.BADLANDS
+              || Biome.DESERT
+              || Biome.WASTELAND
+              || Biome.CONSTRUCTION_SITE:
+              moveId = Moves.EARTH_POWER;
+              break;
+            case Biome.CAVE:
+              moveId = Moves.POWER_GEM;
+              break;
+            case Biome.ICE_CAVE
+              || Biome.SNOWY_FOREST:
+              moveId = Moves.ICE_BEAM;
+              break;
+            case Biome.VOLCANO:
+              moveId = Moves.FLAMETHROWER;
+              break;
+            case Biome.GRAVEYARD
+              || Biome.RUINS
+              || Biome.TEMPLE:
+              moveId = Moves.SHADOW_BALL;
+              break;
+            case Biome.DOJO:
+              moveId = Moves.AURA_SPHERE;
+              break;
+            case Biome.FAIRY_CAVE:
+              moveId = Moves.MOONBLAST;
+              break;
+            case Biome.ABYSS
+              || Biome.SPACE
+              || Biome.END:
+              moveId = Moves.DARK_PULSE;
+              break;
+          }
+          break;
+        case TerrainType.MISTY:
+          moveId = Moves.MOONBLAST;
+          break;
+        case TerrainType.ELECTRIC:
+          moveId = Moves.THUNDERBOLT;
+          break;
+        case TerrainType.GRASSY:
+          moveId = Moves.ENERGY_BALL;
+          break;
+        case TerrainType.PSYCHIC:
+          moveId = Moves.PSYCHIC;
+          break;
+        default:
+          // Just in case there's no match
+          moveId = Moves.TRI_ATTACK;
+          break;
+      }
+      
+      user.getMoveQueue().push({ move: moveId, targets: [target.getBattlerIndex()], ignorePP: true });
+      user.scene.unshiftPhase(new MovePhase(user.scene, user, [target.getBattlerIndex()], new PokemonMove(moveId, 0, 0, true), true));
+      initMoveAnim(moveId).then(() => {
+        loadMoveAnimAssets(user.scene, [ moveId ], true)
+          .then(() => resolve(true));
+      });
+    });
+  }
+}
+
 const lastMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
   const copiableMove = user.scene.currentBattle.lastMove;
 
@@ -3875,7 +3968,9 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1)
       .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS),
     new SelfStatusMove(Moves.FOLLOW_ME, "Follow Me (N)", Type.NORMAL, -1, 20, "The user draws attention to itself, making all targets take aim only at the user.", -1, 2, 3),
-    new StatusMove(Moves.NATURE_POWER, "Nature Power (N)", Type.NORMAL, -1, 20, "This attack makes use of nature's power. Its effects vary depending on the user's environment.", -1, 0, 3),
+    new StatusMove(Moves.NATURE_POWER, "Nature Power", Type.NORMAL, -1, 20, "This attack makes use of nature's power. Its effects vary depending on the user's environment.", -1, 0, 3)
+      .attr(NaturePowerAttr)
+      .ignoresVirtual(),
     new SelfStatusMove(Moves.CHARGE, "Charge (P)", Type.ELECTRIC, -1, 20, "The user boosts the power of the Electric move it uses on the next turn. This also raises the user's Sp. Def stat.", -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, 1, true),
     new StatusMove(Moves.TAUNT, "Taunt (N)", Type.DARK, 100, 20, "The target is taunted into a rage that allows it to use only attack moves for three turns.", -1, 0, 3),

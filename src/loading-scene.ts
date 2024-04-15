@@ -3,6 +3,7 @@ import { Biome } from "./data/enums/biome";
 import { TrainerType } from "./data/enums/trainer-type";
 import { trainerConfigs } from "./data/trainer-config";
 import { getBiomeHasProps } from "./field/arena";
+import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
 import { SceneBase } from "./scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import * as Utils from "./utils";
@@ -10,6 +11,8 @@ import * as Utils from "./utils";
 export class LoadingScene extends SceneBase {
   constructor() {
     super('loading');
+
+    Phaser.Plugins.PluginCache.register('Loader', CacheBustedLoaderPlugin, 'load');
   }
 
   preload() {

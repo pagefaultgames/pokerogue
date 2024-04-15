@@ -2563,7 +2563,8 @@ export function initAbilities() {
     new Ability(Abilities.BULLETPROOF, "Bulletproof", "Protects the Pokémon from some ball and bomb moves.", 6)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.BALLBOMB_MOVE))
       .ignorable(),
-    new Ability(Abilities.COMPETITIVE, "Competitive (N)", "Boosts the Sp. Atk stat sharply when a stat is lowered.", 6),
+    new Ability(Abilities.COMPETITIVE, "Competitive", "Boosts the Sp. Atk stat sharply when a stat is lowered.", 6)
+      .attr(PostStatChangeStatChangeAbAttr, (target, statsChanged, levels) => levels < 0, [BattleStat.SPATK], 2),
     new Ability(Abilities.STRONG_JAW, "Strong Jaw", "The Pokémon's strong jaw boosts the power of its biting moves.", 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.BITING_MOVE), 1.5),
     new Ability(Abilities.REFRIGERATE, "Refrigerate", "Normal-type moves become Ice-type moves. The power of those moves is boosted a little.", 6)
