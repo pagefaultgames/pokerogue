@@ -384,6 +384,20 @@ export class PostDefendAbAttr extends AbAttr {
   }
 }
 
+export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+      const attackPriority = new Utils.IntegerHolder(move.getMove().priority);
+      applyAbAttrs(IncrementMovePriorityAbAttr, attacker, null, move.getMove(), attackPriority);
+  
+      if(attackPriority.value > 0 && !move.getMove().isMultiTarget()) {
+        cancelled.value = true;
+        return true;
+      }
+    
+    return false;
+  }
+}
+
 export class MoveImmunityAbAttr extends PreDefendAbAttr {
   private immuneCondition: PreDefendAbAttrCondition;
 
@@ -2591,7 +2605,8 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr),
-    new Ability(Abilities.QUEENLY_MAJESTY, "Queenly Majesty (N)", "Its majesty pressures the opposing Pokémon, making it unable to attack using priority moves.", 7)
+    new Ability(Abilities.QUEENLY_MAJESTY, "Queenly Majesty", "Its majesty pressures the opposing Pokémon, making it unable to attack using priority moves.", 7)
+      .attr(FieldPriorityMoveImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.INNARDS_OUT, "Innards Out (N)", "Damages the attacker landing the finishing hit by the amount equal to its last HP.", 7),
     new Ability(Abilities.DANCER, "Dancer (N)", "When another Pokémon uses a dance move, it can use a dance move following it regardless of its Speed.", 7),
@@ -2600,7 +2615,8 @@ export function initAbilities() {
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 0.5)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.type === Type.FIRE, 2)
       .ignorable(),
-    new Ability(Abilities.DAZZLING, "Dazzling (N)", "Surprises the opposing Pokémon, making it unable to attack using priority moves.", 7)
+    new Ability(Abilities.DAZZLING, "Dazzling", "Surprises the opposing Pokémon, making it unable to attack using priority moves.", 7)
+      .attr(FieldPriorityMoveImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.SOUL_HEART, "Soul-Heart", "Boosts its Sp. Atk stat every time a Pokémon faints.", 7)
       .attr(PostKnockOutStatChangeAbAttr, BattleStat.SPATK, 1),
@@ -2798,7 +2814,8 @@ export function initAbilities() {
     new Ability(Abilities.SUPREME_OVERLORD, "Supreme Overlord (N)", "When the Pokémon enters a battle, its Attack and Sp. Atk stats are slightly boosted for each of the allies in its party that have already been defeated.", 9),
     new Ability(Abilities.COSTAR, "Costar (N)", "When the Pokémon enters a battle, it copies an ally's stat changes.", 9),
     new Ability(Abilities.TOXIC_DEBRIS, "Toxic Debris (N)", "Scatters poison spikes at the feet of the opposing team when the Pokémon takes damage from physical moves.", 9),
-    new Ability(Abilities.ARMOR_TAIL, "Armor Tail (N)", "The mysterious tail covering the Pokémon's head makes opponents unable to use priority moves against the Pokémon or its allies.", 9)
+    new Ability(Abilities.ARMOR_TAIL, "Armor Tail", "The mysterious tail covering the Pokémon's head makes opponents unable to use priority moves against the Pokémon or its allies.", 9)
+      .attr(FieldPriorityMoveImmunityAbAttr)  
       .ignorable(),
     new Ability(Abilities.EARTH_EATER, "Earth Eater", "If hit by a Ground-type move, the Pokémon has its HP restored instead of taking damage.", 9)
       .attr(TypeImmunityHealAbAttr, Type.GROUND)
