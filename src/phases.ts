@@ -2190,7 +2190,7 @@ export class MovePhase extends BattlePhase {
         for (let opponent of targetedOpponents) {
           if (this.move.ppUsed === this.move.getMove().pp)
             break;
-          if ((opponent.canApplyAbility() && opponent.getAbility().hasAttr(IncreasePpAbAttr)) || (opponent.canApplyAbility(true) && opponent.getPassiveAbility().hasAttr(IncreasePpAbAttr)))
+          if (opponent.hasAbilityWithAttr(IncreasePpAbAttr))
             this.move.ppUsed = Math.min(this.move.ppUsed + 1, this.move.getMovePp());
         }
       }

@@ -799,7 +799,7 @@ export class TruantTag extends AbilityBattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if ((!pokemon.canApplyAbility() || pokemon.getAbility().id !== Abilities.TRUANT) && (!pokemon.canApplyAbility(true) || pokemon.getPassiveAbility().id !== Abilities.TRUANT))
+    if (!pokemon.hasAbility(Abilities.TRUANT))
       return super.lapse(pokemon, lapseType);
     const passive = pokemon.getAbility().id !== Abilities.TRUANT;
 
@@ -827,7 +827,7 @@ export class SlowStartTag extends AbilityBattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if ((!pokemon.canApplyAbility() || pokemon.getAbility().id !== this.ability) && (!pokemon.canApplyAbility(true) || pokemon.getPassiveAbility().id !== this.ability))
+    if (!pokemon.hasAbility(this.ability))
       this.turnCount = 1;
 
     return super.lapse(pokemon, lapseType);
