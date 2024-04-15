@@ -777,6 +777,7 @@ export class PlantHealAttr extends WeatherHealAttr {
       case WeatherType.RAIN:
       case WeatherType.SANDSTORM:
       case WeatherType.HAIL:
+      case WeatherType.SNOW:
       case WeatherType.HEAVY_RAIN:
         return 0.25;
       default:
@@ -1756,6 +1757,7 @@ export class AntiSunlightPowerDecreaseAttr extends VariablePowerAttr {
         case WeatherType.RAIN:
         case WeatherType.SANDSTORM:
         case WeatherType.HAIL:
+        case WeatherType.SNOW:
         case WeatherType.HEAVY_RAIN:
           power.value *= 0.5;
           return true;
@@ -1905,7 +1907,7 @@ export class BlizzardAccuracyAttr extends VariableAccuracyAttr {
     if (!user.scene.arena.weather?.isEffectSuppressed(user.scene)) {
       const accuracy = args[0] as Utils.NumberHolder;
       const weatherType = user.scene.arena.weather?.weatherType || WeatherType.NONE;
-      if (weatherType === WeatherType.HAIL) {
+      if (weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW) {
         accuracy.value = -1;
         return true;
       }
@@ -2074,6 +2076,7 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
           type.value = Type.ROCK;
           break;
         case WeatherType.HAIL:
+        case WeatherType.SNOW:
           type.value = Type.ICE;
           break;
         default:
@@ -4199,7 +4202,7 @@ export function initMoves() {
       .attr(FlinchAttr),
     new AttackMove(Moves.WEATHER_BALL, "Weather Ball", Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, "This attack move varies in power and type depending on the weather.", -1, 0, 3)
       .attr(WeatherBallTypeAttr)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1)
       .ballBombMove(),
     new StatusMove(Moves.AROMATHERAPY, "Aromatherapy (N)", Type.GRASS, -1, 5, "The user releases a soothing scent that heals all status conditions affecting the user's party.", -1, 0, 3)
       .target(MoveTarget.USER_AND_ALLIES),
@@ -5601,13 +5604,13 @@ export function initMoves() {
       .makesContact(),
     new SelfStatusMove(Moves.SHED_TAIL, "Shed Tail (N)", Type.NORMAL, -1, 10, "The user creates a substitute for itself using its own HP before switching places with a party Pokémon in waiting.", -1, 0, 9),
     new StatusMove(Moves.CHILLY_RECEPTION, "Chilly Reception", Type.ICE, -1, 10, "The user tells a chillingly bad joke before switching places with a party Pokémon in waiting. This summons a snowstorm lasting five turns.", -1, 0, 9)
-      .attr(WeatherChangeAttr, WeatherType.HAIL) // Set to Hail for now, if Snow is added in the future, change this
+      .attr(WeatherChangeAttr, WeatherType.SNOW)
       .attr(ForceSwitchOutAttr, true, false)
       .target(MoveTarget.BOTH_SIDES),
     new SelfStatusMove(Moves.TIDY_UP, "Tidy Up (P)", Type.NORMAL, -1, 10, "The user tidies up and removes the effects of Spikes, Stealth Rock, Sticky Web, Toxic Spikes, and Substitute. This also boosts the user's Attack and Speed stats.", 100, 0, 9)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPD ], 1, true),
     new StatusMove(Moves.SNOWSCAPE, "Snowscape", Type.ICE, -1, 10, "The user summons a snowstorm lasting five turns. This boosts the Defense stats of Ice types.", -1, 0, 9)
-      .attr(WeatherChangeAttr, WeatherType.HAIL) // Set to Hail for now, if Snow is added in the future, change this
+      .attr(WeatherChangeAttr, WeatherType.SNOW)
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.POUNCE, "Pounce", Type.BUG, MoveCategory.PHYSICAL, 50, 100, 20, "The user attacks by pouncing on the target. This also lowers the target's Speed stat.", 100, 0, 9)
       .attr(StatChangeAttr, BattleStat.SPD, -1),
