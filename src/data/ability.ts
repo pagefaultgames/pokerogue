@@ -1155,6 +1155,8 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
 export class TraceAbAttr extends PostSummonAbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     const targets = pokemon.getOpponents();
+    if (!targets.length)
+      return false;
     let target: Pokemon;
     if (targets.length > 1)
       pokemon.scene.executeWithSeedOffset(() => target = Utils.randSeedItem(targets), pokemon.scene.currentBattle.waveIndex);
