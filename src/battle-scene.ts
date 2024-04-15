@@ -128,6 +128,7 @@ export default class BattleScene extends SceneBase {
 	public moveAnimations: boolean = true;
 	public hpBarSpeed: integer = 0;
 	public fusionPaletteSwaps: boolean = true;
+	public gamepadSupport: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
 	
@@ -1298,8 +1299,8 @@ export default class BattleScene extends SceneBase {
    * or not. It will only return true once, until the key is released and pressed down
    * again. 
    */
-  gamepadButtonJustDown(button: Phaser.Input.Gamepad.Button) : boolean {
-		if (!button)
+	gamepadButtonJustDown(button: Phaser.Input.Gamepad.Button) : boolean {
+		if (!button || !this.gamepadSupport)
 			return false;
 
 		let ret = false;

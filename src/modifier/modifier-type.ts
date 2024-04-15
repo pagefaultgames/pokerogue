@@ -19,6 +19,7 @@ import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from '../system/v
 import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from '../data/pokemon-forms';
 import { ModifierTier } from './modifier-tier';
 import { Nature, getNatureName, getNatureStatMultiplier } from '#app/data/nature';
+import { Species } from "../data/enums/species";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -555,6 +556,8 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
     (pokemon: PlayerPokemon) => {
       if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) && !!pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger)
         && (fc.trigger as SpeciesFormChangeItemTrigger).item === this.formChangeItem))
+        return null;
+      else if (pokemon.species.speciesId === Species.SHAYMIN && formChangeItem === FormChangeItem.GRACIDEA) //allow Shaymin to accept Gracidea anytime
         return null;
 
       return PartyUiHandler.NoEffectMessage;
