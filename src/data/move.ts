@@ -5305,7 +5305,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, -1),
     new AttackMove(Moves.POWER_TRIP, Type.DARK, MoveCategory.PHYSICAL, 20, 100, 10, -1, 0, 7)
       .attr(StatChangeCountPowerAttr),
-    new AttackMove(Moves.BURN_UP, "Burn Up", Type.FIRE, MoveCategory.SPECIAL, 130, 100, 5, "To inflict massive damage, the user burns itself out. After using this move, the user will no longer be Fire type.", -1, 0, 7)
+    new AttackMove(Moves.BURN_UP, "Burn Up", Type.FIRE, MoveCategory.SPECIAL, 130, 100, 5, -1, 0, 7)
       .condition((user) => {
         const userTypes = user.getTypes(true);
         return userTypes.includes(Type.FIRE);
@@ -5998,7 +5998,7 @@ export function initMoves() {
       .attr(HitHealAttr)
       .slicingMove()
       .triageMove(),
-    new AttackMove(Moves.DOUBLE_SHOCK, "Double Shock", Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, "The user discharges all the electricity from its body to perform a high-damage attack. After using this move, the user will no longer be Electric type.", -1, 0, 9)
+    new AttackMove(Moves.DOUBLE_SHOCK, "Double Shock", Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
     .condition((user) => {
       const userTypes = user.getTypes(true);
       return userTypes.includes(Type.ELECTRIC);
