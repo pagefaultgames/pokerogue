@@ -4416,7 +4416,7 @@ export function initMoves() {
       .makesContact(false),
     new StatusMove(Moves.PSYCHO_SHIFT, i18next.t('move:psychoShift.name'), Type.PSYCHIC, 100, 10, i18next.t('move:psychoShift.effect'), -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
-      .condition((user, target, move) => user.status?.effect === StatusEffect.BURN || user.status?.effect === StatusEffect.POISON || user.status?.effect === StatusEffect.TOXIC || user.status?.effect === StatusEffect.PARALYSIS),,
+      .condition((user, target, move) => user.status?.effect === StatusEffect.BURN || user.status?.effect === StatusEffect.POISON || user.status?.effect === StatusEffect.TOXIC || user.status?.effect === StatusEffect.PARALYSIS),
     new AttackMove(Moves.TRUMP_CARD, i18next.t('move:trumpCard.name'), Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, i18next.t('move:trumpCard.effect'), -1, 0, 4)
       .makesContact(),
     new StatusMove(Moves.HEAL_BLOCK, i18next.t('move:healBlock.name'), Type.PSYCHIC, 100, 15, i18next.t('move:healBlock.effect'), -1, 0, 4)
