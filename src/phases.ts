@@ -2761,7 +2761,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
         this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect)));
 
         let netEffect = 0;  // This variable now handles both healing and damage
-        const isHealing = pokemon.getAbility().id === Abilities.POISON_HEAL || pokemon.getPassive().id === Abilities.POISON_HEAL; // Added check for both Ability and the new Passives
+        const isHealing = pokemon.getAbility().id === Abilities.POISON_HEAL || pokemon.hasPassive().id === Abilities.POISON_HEAL; // Added check for both Ability and the new Passives
 
         switch (pokemon.status.effect) {
           case StatusEffect.POISON:
