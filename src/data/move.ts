@@ -3304,11 +3304,8 @@ export class DiscourageFrequentUseAttr extends MoveAttr {
 export class ForestsCurseAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-      console.log("apply", super.apply(user, target, move, args))
-      if (!super.apply(user, target, move, args)) {
-        console.log("teste")
+      if (!super.apply(user, target, move, args) || target.isOfType(Type.GRASS) || target.isTerastallized()) 
         return resolve(false);
-      }
       
 
       let targetTypes = target.getTypes()
