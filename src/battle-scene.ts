@@ -128,6 +128,7 @@ export default class BattleScene extends SceneBase {
 	public moveAnimations: boolean = true;
 	public hpBarSpeed: integer = 0;
 	public fusionPaletteSwaps: boolean = true;
+	public gamepadSupport: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
 	
@@ -197,6 +198,26 @@ export default class BattleScene extends SceneBase {
 	// movementButtonLock ensures only a single movement key is firing repeated inputs
 	// (i.e. by holding down a button) at a time
 	private movementButtonLock: Button;
+
+  // using a dualshock controller as a map
+  private gamepadKeyConfig = {
+    [Button.UP]: 12, // up
+    [Button.DOWN]: 13, // down
+    [Button.LEFT]: 14, // left
+    [Button.RIGHT]: 15, // right
+    [Button.SUBMIT]: 17, // touchpad
+    [Button.ACTION]: 0, // X
+    [Button.CANCEL]: 1, // O
+    [Button.MENU]: 9, // options
+    [Button.CYCLE_SHINY]: 5, // RB
+    [Button.CYCLE_FORM]: 4, // LB
+    [Button.CYCLE_GENDER]: 6, // LT
+    [Button.CYCLE_ABILITY]: 7, // RT
+    [Button.CYCLE_NATURE]: 2, // square
+    [Button.SPEED_UP]: 10, // L3
+    [Button.SLOW_DOWN]: 11 // R3
+  };
+  public gamepadButtonStates: boolean[] = new Array(17).fill(false);
 
 	public rngCounter: integer = 0;
 	public rngSeedOverride: string = '';
@@ -936,6 +957,8 @@ export default class BattleScene extends SceneBase {
 			case Species.TATSUGIRI:
 			case Species.PALDEA_TAUROS:
 				return Utils.randSeedInt(species.forms.length);
+			case Species.MINIOR:
+				return Utils.randSeedInt(6);
 			case Species.MEOWSTIC:
 			case Species.INDEEDEE:
 			case Species.BASCULEGION:
@@ -1243,14 +1266,19 @@ export default class BattleScene extends SceneBase {
 		} else if (this.ui?.getHandler() instanceof StarterSelectUiHandler) {
 			if (this.buttonJustPressed(Button.CYCLE_SHINY)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_SHINY);
+        this.setLastProcessedMovementTime(Button.CYCLE_SHINY);
 			} else if (this.buttonJustPressed(Button.CYCLE_FORM)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_FORM);
+        this.setLastProcessedMovementTime(Button.CYCLE_FORM);
 			} else if (this.buttonJustPressed(Button.CYCLE_GENDER)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_GENDER);
+        this.setLastProcessedMovementTime(Button.CYCLE_GENDER);
 			} else if (this.buttonJustPressed(Button.CYCLE_ABILITY)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_ABILITY);
+        this.setLastProcessedMovementTime(Button.CYCLE_ABILITY);
 			} else if (this.buttonJustPressed(Button.CYCLE_NATURE)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_NATURE);
+        this.setLastProcessedMovementTime(Button.CYCLE_NATURE);
 			} else
 				return;
 		}	else if (this.buttonJustPressed(Button.SPEED_UP)) {
@@ -1271,8 +1299,29 @@ export default class BattleScene extends SceneBase {
 			navigator.vibrate(vibrationLength || 10);		
 	}
 
+  /**
+   * gamepadButtonJustDown returns true if @param button has just been pressed down
+   * or not. It will only return true once, until the key is released and pressed down
+   * again. 
+   */
+	gamepadButtonJustDown(button: Phaser.Input.Gamepad.Button) : boolean {
+		if (!button || !this.gamepadSupport)
+			return false;
+
+		let ret = false;
+		if (button.pressed) {
+			if (!this.gamepadButtonStates[button.index])
+				ret = true;
+			this.gamepadButtonStates[button.index] = true;
+		} else
+			this.gamepadButtonStates[button.index] = false;
+
+		return ret;
+  }
+
 	buttonJustPressed(button: Button): boolean {
-		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustDown(k));
+		const gamepad = this.input.gamepad?.gamepads[0];
+		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustDown(k)) || this.gamepadButtonJustDown(gamepad?.buttons[this.gamepadKeyConfig[button]]);
 	}
 
 	/**
@@ -1284,7 +1333,7 @@ export default class BattleScene extends SceneBase {
 		if (this.movementButtonLock !== null && this.movementButtonLock !== button) {
 			return false;
 		}
-		if (this.buttonKeys[button].every(k => k.isUp)) {
+		if (this.buttonKeys[button].every(k => k.isUp) && this.gamepadButtonStates.every(b => b == false)) {
 			this.movementButtonLock = null;
 			return false;
 		}

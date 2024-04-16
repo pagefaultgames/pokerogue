@@ -379,6 +379,16 @@ export class UnavailablePhase extends Phase {
   }
 }
 
+export class OutdatedPhase extends Phase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start(): void {
+    this.scene.ui.setMode(Mode.OUTDATED);
+  }
+}
+
 export class SelectGenderPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -2190,7 +2200,7 @@ export class MovePhase extends BattlePhase {
         for (let opponent of targetedOpponents) {
           if (this.move.ppUsed === this.move.getMove().pp)
             break;
-          if ((opponent.canApplyAbility() && opponent.getAbility().hasAttr(IncreasePpAbAttr)) || (opponent.canApplyAbility(true) && opponent.getPassiveAbility().hasAttr(IncreasePpAbAttr)))
+          if (opponent.hasAbilityWithAttr(IncreasePpAbAttr))
             this.move.ppUsed = Math.min(this.move.ppUsed + 1, this.move.getMovePp());
         }
       }
@@ -2389,7 +2399,7 @@ export class MoveEffectPhase extends PokemonPhase {
                       }
                       Utils.executeIf(!isProtected && !chargeEffect, () => applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.HIT && (!attr.firstHitOnly || firstHit),
                         user, target, this.move.getMove()).then(() => {
-                          return Utils.executeIf(!target.isFainted(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult).then(() => {
+                          return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult).then(() => {
                             if (!user.isPlayer() && this.move.getMove() instanceof AttackMove)
                               user.scene.applyModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
                           })).then(() => {

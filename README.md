@@ -55,6 +55,9 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
   - GAMEFREAK
   - LJ Birdman
 
+### 🎨 Pagefault Games Intro
+  - Spectremint
+
 ### 🎨 Game Logo
   - Gonstar (Paid Commission)
 

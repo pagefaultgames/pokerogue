@@ -114,8 +114,10 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
                     ui.showText(null, 0);
                   }, false, 0, 19, 2000);
                 });
-              } else
+              } else if (this.sessionSlots[this.cursor].hasData === false)
                 saveAndCallback();
+              else
+                return false;
               break;
           }
           success = true;
@@ -210,7 +212,6 @@ class SessionSlot extends Phaser.GameObjects.Container {
     super(scene, 0, slotId * 56);
 
     this.slotId = slotId;
-    this.hasData = false;
     
     this.setup();
   }
@@ -282,6 +283,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     return new Promise<boolean>(resolve => {
       this.scene.gameData.getSession(this.slotId).then(async sessionData => {
         if (!sessionData) {
+          this.hasData = false;
           this.loadingLabel.setText('Empty');
           resolve(false);
           return;

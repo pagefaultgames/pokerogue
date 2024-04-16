@@ -34,6 +34,7 @@ import SaveSlotSelectUiHandler from './save-slot-select-ui-handler';
 import TitleUiHandler from './title-ui-handler';
 import SavingIconHandler from './saving-icon-handler';
 import UnavailableModalUiHandler from './unavailable-modal-ui-handler';
+import OutdatedModalUiHandler from './outdated-modal-ui-handler';
 
 export enum Mode {
   MESSAGE,
@@ -63,7 +64,8 @@ export enum Mode {
   LOGIN_FORM,
   REGISTRATION_FORM,
   LOADING,
-  UNAVAILABLE
+  UNAVAILABLE,
+  OUTDATED
 };
 
 const transitionModes = [
@@ -90,7 +92,8 @@ const noTransitionModes = [
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
-  Mode.UNAVAILABLE
+  Mode.UNAVAILABLE,
+  Mode.OUTDATED
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -141,7 +144,8 @@ export default class UI extends Phaser.GameObjects.Container {
       new LoginFormUiHandler(scene),
       new RegistrationFormUiHandler(scene),
       new LoadingModalUiHandler(scene),
-      new UnavailableModalUiHandler(scene)
+      new UnavailableModalUiHandler(scene),
+      new OutdatedModalUiHandler(scene)
     ];
   }
 
