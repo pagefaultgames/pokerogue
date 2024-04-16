@@ -1,7 +1,7 @@
 import { Abilities } from "./enums/abilities";
 import BattleScene, { AnySound } from '../battle-scene';
 import { GrowthRate } from './exp';
-import { WildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from './pokemon-evolutions';
+import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from './pokemon-evolutions';
 import { Species } from './enums/species';
 import { Type } from './type';
 import { LevelMoves, pokemonFormLevelMoves, pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves, pokemonSpeciesLevelMoves } from './pokemon-level-moves';
