@@ -938,6 +938,32 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 }
 
+export class PsychoShiftEffectAttr extends MoveEffectAttr {
+  constructor() {
+    super(false, MoveEffectTrigger.HIT);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const statusToApply: StatusEffect = user.status?.effect;
+
+    user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
+    user.resetStatus();
+    user.updateInfo();
+
+    if (target.status) {
+      return false;
+    }
+    if (!target.status || (target.status.effect === statusToApply && move.chance < 0))
+      return target.trySetStatus(statusToApply, true);
+    
+    return false;
+  }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+    return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(user.status?.effect, true) ? Math.floor(move.chance * -0.1) : 0;
+  }
+}
+
 export class StealHeldItemChanceAttr extends MoveEffectAttr {
   private chance: number;
 
@@ -4387,7 +4413,9 @@ export function initMoves() {
     new StatusMove(Moves.EMBARGO, "Embargo (N)", Type.DARK, 100, 15, "This move prevents the target from using its held item for five turns. Its Trainer is also prevented from using items on it.", -1, 0, 4),
     new AttackMove(Moves.FLING, "Fling (N)", Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, "The user flings its held item at the target to attack. This move's power and effects depend on the item.", -1, 0, 4)
       .makesContact(false),
-    new StatusMove(Moves.PSYCHO_SHIFT, "Psycho Shift (N)", Type.PSYCHIC, 100, 10, "Using its psychic power of suggestion, the user transfers its status conditions to the target.", -1, 0, 4),
+    new StatusMove(Moves.PSYCHO_SHIFT, "Psycho Shift", Type.PSYCHIC, 100, 10, "Using its psychic power of suggestion, the user transfers its status conditions to the target.", -1, 0, 4)
+      .attr(PsychoShiftEffectAttr)
+      .condition((user, target, move) => user.status?.effect === StatusEffect.BURN || user.status?.effect === StatusEffect.POISON || user.status?.effect === StatusEffect.TOXIC || user.status?.effect === StatusEffect.PARALYSIS),
     new AttackMove(Moves.TRUMP_CARD, "Trump Card (N)", Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, "The fewer PP this move has, the greater its power.", -1, 0, 4)
       .makesContact(),
     new StatusMove(Moves.HEAL_BLOCK, "Heal Block (N)", Type.PSYCHIC, 100, 15, "For five turns, the user prevents the opposing team from using any moves, Abilities, or held items that recover HP.", -1, 0, 4)
