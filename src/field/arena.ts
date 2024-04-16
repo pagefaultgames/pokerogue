@@ -166,6 +166,20 @@ export class Arena {
             return 2;
         }
         break;
+      case Species.ROTOM:
+        switch (this.biomeType) {
+          case Biome.VOLCANO:
+            return 1;
+          case Biome.SEA:
+            return 2;
+          case Biome.ICE_CAVE:
+            return 3;
+          case Biome.MOUNTAIN:
+            return 4;
+          case Biome.TALL_GRASS:
+            return 5;
+        }
+        break;
       case Species.SCATTERBUG:
       case Species.SPEWPA:
       case Species.VIVILLON:
@@ -337,7 +351,7 @@ export class Arena {
       weatherMultiplier = this.weather.getAttackTypeMultiplier(attackType);
 
     let terrainMultiplier = 1;
-    if (this.terrain && !grounded)
+    if (this.terrain && grounded)
       terrainMultiplier = this.terrain.getAttackTypeMultiplier(attackType);
 
     return weatherMultiplier * terrainMultiplier;
@@ -527,6 +541,16 @@ export class Arena {
     return !!tag;
   }
 
+  removeTagOnSide(tagType: ArenaTagType, side: ArenaTagSide): boolean {
+    const tag = this.getTagOnSide(tagType, side);
+    if (tag) {
+      tag.onRemove(this);
+      this.tags.splice(this.tags.indexOf(tag), 1);
+    }
+    return !!tag;
+  }
+  
+  
   removeAllTags(): void {
     while (this.tags.length) {
       this.tags[0].onRemove(this);

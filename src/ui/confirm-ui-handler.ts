@@ -20,11 +20,17 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
         options: [
           {
             label: 'Yes',
-            handler: args[0]
+            handler: () => {
+              args[0]();
+              return true;
+            }
           },
           {
             label: 'No',
-            handler: args[1]
+            handler: () => {
+              args[1]();
+              return true;
+            }
           }
         ],
         delay: args.length >= 6 && args[5] !== null ? args[5] as integer : 0
