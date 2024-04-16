@@ -11,7 +11,6 @@ import BallUiHandler from './ball-ui-handler';
 import SummaryUiHandler from './summary-ui-handler';
 import StarterSelectUiHandler from './starter-select-ui-handler';
 import EvolutionSceneHandler from './evolution-scene-handler';
-import BiomeSelectUiHandler from './biome-select-ui-handler';
 import TargetSelectUiHandler from './target-select-ui-handler';
 import SettingsUiHandler from './settings-ui-handler';
 import { TextStyle, addTextObject } from './text';
@@ -47,7 +46,6 @@ export enum Mode {
   SAVE_SLOT,
   PARTY,
   SUMMARY,
-  BIOME_SELECT,
   STARTER_SELECT,
   EVOLUTION_SCENE,
   EGG_HATCH_SCENE,
@@ -127,7 +125,6 @@ export default class UI extends Phaser.GameObjects.Container {
       new SaveSlotSelectUiHandler(scene),
       new PartyUiHandler(scene),
       new SummaryUiHandler(scene),
-      new BiomeSelectUiHandler(scene),
       new StarterSelectUiHandler(scene),
       new EvolutionSceneHandler(scene),
       new EggHatchSceneHandler(scene),
