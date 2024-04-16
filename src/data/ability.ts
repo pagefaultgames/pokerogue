@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, Explosive, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, allMoves } from "./move";
+import Move, { AttackMove, ExplosiveAttr, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, allMoves } from "./move";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -403,7 +403,7 @@ export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
 export class ExplosiveMoveImmunityAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
   
-      if(move.getMove().getAttrs(Explosive).length) {
+      if(move.getMove().getAttrs(ExplosiveAttr).length) {
         cancelled.value = true;
         return true;
       }
@@ -837,7 +837,6 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
 
 export class ContinuousResetStatusAbAttr extends AbAttr {
   private immuneEffects: StatusEffect[];
-  private curedStatus: StatusEffect;
 
   constructor(...immuneEffects: StatusEffect[]) {
     super();
@@ -847,17 +846,14 @@ export class ContinuousResetStatusAbAttr extends AbAttr {
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     if (this.immuneEffects.includes(pokemon.status?.effect)) {
-      this.curedStatus=pokemon.status.effect;
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status?.effect)));
       pokemon.resetStatus();
+      pokemon.updateInfo();
       return true;
     }
     return false;
   }
-
-  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-      return getPokemonMessage(pokemon, getStatusEffectHealText(this.curedStatus));
-  }
-
+  
 }
 
 export class PostAttackAbAttr extends AbAttr {

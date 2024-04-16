@@ -1165,7 +1165,7 @@ export class ClearTerrainAttr extends MoveEffectAttr {
   }
 }
 
-export class Explosive extends MoveAttr {
+export class ExplosiveAttr extends MoveAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const cancelled = new Utils.BooleanHolder(false);
@@ -3689,7 +3689,7 @@ export function initMoves() {
       .attr(CopyMoveAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.SELF_DESTRUCT, "Self-Destruct", Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, "The user attacks everything around it by causing an explosion. The user faints upon using this move.", -1, 0, 1)
-      .attr(Explosive)
+      .attr(ExplosiveAttr)
       .attr(SacrificialAttr)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
@@ -3780,7 +3780,7 @@ export function initMoves() {
     new AttackMove(Moves.CRABHAMMER, "Crabhammer", Type.WATER, MoveCategory.PHYSICAL, 100, 90, 10, "The target is hammered with a large pincer. Critical hits land more easily.", -1, 0, 1)
       .attr(HighCritAttr),
     new AttackMove(Moves.EXPLOSION, "Explosion", Type.NORMAL, MoveCategory.PHYSICAL, 250, 100, 5, "The user attacks everything around it by causing a tremendous explosion. The user faints upon using this move.", -1, 0, 1)
-      .attr(Explosive)
+      .attr(ExplosiveAttr)
       .attr(SacrificialAttr)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
@@ -5114,7 +5114,7 @@ export function initMoves() {
     new AttackMove(Moves.TEN_MILLION_VOLT_THUNDERBOLT, "10,000,000 Volt Thunderbolt (P)", Type.ELECTRIC, MoveCategory.SPECIAL, 195, -1, 1, "The user, Pikachu wearing a cap, powers up a jolt of electricity using its Z-Power and unleashes it. Critical hits land more easily.", -1, 0, 7),
     /* End Unused */
     new AttackMove(Moves.MIND_BLOWN, "Mind Blown", Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, "The user attacks everything around it by causing its own head to explode. This also damages the user.", -1, 0, 7)
-      .attr(Explosive)
+      .attr(ExplosiveAttr)
       .attr(HalfHpAttackAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.PLASMA_FISTS, "Plasma Fists (P)", Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 15, "The user attacks with electrically charged fists. This move changes Normal-type moves to Electric-type moves.", -1, 0, 7)
@@ -5310,7 +5310,7 @@ export function initMoves() {
       .attr(ShellSideArmCategoryAttr)
       .attr(StatusEffectAttr, StatusEffect.POISON),
     new AttackMove(Moves.MISTY_EXPLOSION, "Misty Explosion", Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, "The user attacks everything around it and faints upon using this move. This move's power is increased on Misty Terrain.", -1, 0, 8)
-      .attr(Explosive)
+      .attr(ExplosiveAttr)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.MISTY && target.isGrounded() ? 1.5 : 1)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.GRASSY_GLIDE, "Grassy Glide (P)", Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, "Gliding on the ground, the user attacks the target. This move always goes first on Grassy Terrain.", -1, 0, 8),
