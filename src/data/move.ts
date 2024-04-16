@@ -960,15 +960,17 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const statusToApply: StatusEffect = user.status?.effect;
 
-    user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
-    user.resetStatus();
-    user.updateInfo();
-
     if (target.status) {
       return false;
     }
     if (!target.status || (target.status.effect === statusToApply && move.chance < 0))
-      return target.trySetStatus(statusToApply, true);
+      var statusAfflictResult = target.trySetStatus(statusToApply, true);
+      if (statusAfflictResult) {
+        user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
+        user.resetStatus();
+        user.updateInfo();
+      }
+      return statusAfflictResult;
     
     return false;
   }
@@ -4471,7 +4473,13 @@ export function initMoves() {
       .unimplemented(),
     new StatusMove(Moves.PSYCHO_SHIFT, Type.PSYCHIC, 100, 10, -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
-      .condition((user, target, move) => user.status?.effect === StatusEffect.BURN || user.status?.effect === StatusEffect.POISON || user.status?.effect === StatusEffect.TOXIC || user.status?.effect === StatusEffect.PARALYSIS),
+      .condition((user, target, move) => (user.status?.effect === StatusEffect.BURN
+        || user.status?.effect === StatusEffect.POISON
+        || user.status?.effect === StatusEffect.TOXIC
+        || user.status?.effect === StatusEffect.PARALYSIS
+        || user.status?.effect === StatusEffect.SLEEP)
+        && target.canSetStatus(user.status?.effect)
+        ),
     new AttackMove(Moves.TRUMP_CARD, Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, -1, 0, 4)
       .makesContact()
       .unimplemented(),
