@@ -1,4 +1,13 @@
-export const move = {
+interface MoveTranslationEntry {
+  name: string,
+  effect: string
+}
+
+interface MoveTranslations {
+  [key: string]: MoveTranslationEntry
+}
+
+export const move: MoveTranslations = {
   "pound": {
     name: "Pound",
     effect: "The target is physically pounded with a long tail, a foreleg, or the like."
