@@ -1823,8 +1823,6 @@ export class PresentPowerAttr extends VariablePowerAttr {
     else if (80 < powerSeed && powerSeed <= 100) {
       target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
       Math.max(Math.floor(target.getMaxHp() / 4), 1), getPokemonMessage(target, ' regained\nhealth!'), true));
-
-      console.log("MAX: ", target.getMaxHp(), " HEAL: ", target.getMaxHp() / 4);
     }
 
     return true;
