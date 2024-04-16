@@ -3998,7 +3998,8 @@ export function initMoves() {
     new AttackMove(Moves.RETURN, "Return", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, "This full-power attack grows more powerful the more the user likes its Trainer.", -1, 0, 2)
       .attr(FriendshipPowerAttr),
     new AttackMove(Moves.PRESENT, "Present", Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, "The user attacks by giving the target a gift with a hidden trap. It restores HP sometimes, however.", -1, 0, 2)
-      .attr(PresentPowerAttr),
+      .attr(PresentPowerAttr)
+      .makesContact(false),
     new AttackMove(Moves.FRUSTRATION, "Frustration", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, "This full-power attack grows more powerful the less the user likes its Trainer.", -1, 0, 2)
       .attr(FriendshipPowerAttr, true),
     new StatusMove(Moves.SAFEGUARD, "Safeguard (N)", Type.NORMAL, -1, 25, "The user creates a protective field that prevents status conditions for five turns.", -1, 0, 2)
