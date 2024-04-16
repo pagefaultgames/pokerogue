@@ -939,6 +939,32 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 }
 
+export class PsychoShiftEffectAttr extends MoveEffectAttr {
+  constructor() {
+    super(false, MoveEffectTrigger.HIT);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const statusToApply: StatusEffect = user.status?.effect;
+
+    user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
+    user.resetStatus();
+    user.updateInfo();
+
+    if (target.status) {
+      return false;
+    }
+    if (!target.status || (target.status.effect === statusToApply && move.chance < 0))
+      return target.trySetStatus(statusToApply, true);
+    
+    return false;
+  }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+    return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(user.status?.effect, true) ? Math.floor(move.chance * -0.1) : 0;
+  }
+}
+
 export class StealHeldItemChanceAttr extends MoveEffectAttr {
   private chance: number;
 
@@ -4388,7 +4414,9 @@ export function initMoves() {
     new StatusMove(Moves.EMBARGO, i18next.t('move:embargo.name'), Type.DARK, 100, 15, i18next.t('move:embargo.effect'), -1, 0, 4),
     new AttackMove(Moves.FLING, i18next.t('move:fling.name'), Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, i18next.t('move:fling.effect'), -1, 0, 4)
       .makesContact(false),
-    new StatusMove(Moves.PSYCHO_SHIFT, i18next.t('move:psychoShift.name'), Type.PSYCHIC, 100, 10, i18next.t('move:psychoShift.effect'), -1, 0, 4),
+    new StatusMove(Moves.PSYCHO_SHIFT, i18next.t('move:psychoShift.name'), Type.PSYCHIC, 100, 10, i18next.t('move:psychoShift.effect'), -1, 0, 4)
+      .attr(PsychoShiftEffectAttr)
+      .condition((user, target, move) => user.status?.effect === StatusEffect.BURN || user.status?.effect === StatusEffect.POISON || user.status?.effect === StatusEffect.TOXIC || user.status?.effect === StatusEffect.PARALYSIS),,
     new AttackMove(Moves.TRUMP_CARD, i18next.t('move:trumpCard.name'), Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, i18next.t('move:trumpCard.effect'), -1, 0, 4)
       .makesContact(),
     new StatusMove(Moves.HEAL_BLOCK, i18next.t('move:healBlock.name'), Type.PSYCHIC, 100, 15, i18next.t('move:healBlock.effect'), -1, 0, 4)
