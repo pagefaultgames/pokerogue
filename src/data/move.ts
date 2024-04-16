@@ -3955,7 +3955,7 @@ export function initMoves() {
     new AttackMove(Moves.ZAP_CANNON, i18next.t('move:zapCannon.name'), Type.ELECTRIC, MoveCategory.SPECIAL, 120, 50, 5, i18next.t('move:zapCannon.effect'), 100, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .ballBombMove(),
-    new StatusMove(Moves.FORESIGHT, i18next.t('move:foresight.name'), Type.NORMAL, -1, 40, i18next.t('move:foresight.name'), -1, 0, 2),
+    new StatusMove(Moves.FORESIGHT, i18next.t('move:foresight.name'), Type.NORMAL, -1, 40, i18next.t('move:foresight.effect'), -1, 0, 2),
     new SelfStatusMove(Moves.DESTINY_BOND, i18next.t('move:destinyBond.name'), Type.GHOST, -1, 5, i18next.t('move:destinyBond.effect'), -1, 0, 2)
       .ignoresProtect()
       .condition(failOnBossCondition),
@@ -4096,7 +4096,7 @@ export function initMoves() {
     new AttackMove(Moves.MIRROR_COAT, i18next.t('move:mirrorCoat.name'), Type.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 20, i18next.t('move:mirrorCoat.effect'), -1, -5, 2)
       .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.SPECIAL, 2)
       .target(MoveTarget.ATTACKER),
-    new StatusMove(Moves.PSYCH_UP, i18next.t('move:psychUp.name'), Type.NORMAL, -1, 10, i18next.t('move:psychUp.name'), -1, 0, 2),
+    new StatusMove(Moves.PSYCH_UP, i18next.t('move:psychUp.name'), Type.NORMAL, -1, 10, i18next.t('move:psychUp.effect'), -1, 0, 2),
     new AttackMove(Moves.EXTREME_SPEED, i18next.t('move:extremeSpeed.name'), Type.NORMAL, MoveCategory.PHYSICAL, 80, 100, 5, i18next.t('move:extremeSpeed.effect'), -1, 2, 2),
     new AttackMove(Moves.ANCIENT_POWER, i18next.t('move:ancientPower.name'), Type.ROCK, MoveCategory.SPECIAL, 60, 100, 5, i18next.t('move:ancientPower.effect'), 10, 0, 2)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true),
@@ -4318,7 +4318,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, 2, true),
     new StatusMove(Moves.BLOCK, i18next.t('move:block.name'), Type.NORMAL, -1, 5, i18next.t('move:block.effect'), -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1),
-    new StatusMove(Moves.HOWL, i18next.t('move:howl.name'), Type.NORMAL, -1, 40, i18next.t('move:howl.name'), -1, 0, 3)
+    new StatusMove(Moves.HOWL, i18next.t('move:howl.name'), Type.NORMAL, -1, 40, i18next.t('move:howl.effect'), -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.ATK, 1)
       .soundBased()
       .target(MoveTarget.USER_AND_ALLIES),
@@ -4407,7 +4407,7 @@ export function initMoves() {
       .target(MoveTarget.ATTACKER),
     new AttackMove(Moves.U_TURN, i18next.t('move:uTurn.name'), Type.BUG, MoveCategory.PHYSICAL, 70, 100, 20, i18next.t('move:uTurn.effect'), -1, 0, 4)
       .attr(ForceSwitchOutAttr, true),
-    new AttackMove(Moves.CLOSE_COMBAT, i18next.t('move:closeCombat.name'), Type.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, i18next.t('move:closeCombat.name'), 100, 0, 4)
+    new AttackMove(Moves.CLOSE_COMBAT, i18next.t('move:closeCombat.name'), Type.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, i18next.t('move:closeCombat.effect'), 100, 0, 4)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true),
     new AttackMove(Moves.PAYBACK, i18next.t('move:payback.name'), Type.DARK, MoveCategory.PHYSICAL, 50, 100, 10, i18next.t('move:payback.effect'), -1, 0, 4),
     new AttackMove(Moves.ASSURANCE, i18next.t('move:assurance.name'), Type.DARK, MoveCategory.PHYSICAL, 60, 100, 10, i18next.t('move:assurance.effect'), -1, 0, 4),
