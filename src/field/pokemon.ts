@@ -1299,7 +1299,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
           applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
 
-          if (power.value <= 0) {
+          if (power.value === 0) {
             damage.value = 0;
           }
 
