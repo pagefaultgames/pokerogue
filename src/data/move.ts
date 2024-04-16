@@ -3301,6 +3301,27 @@ export class DiscourageFrequentUseAttr extends MoveAttr {
   }
 }
 
+export class ForestsCurseAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
+    return new Promise(resolve => {
+      console.log("apply", super.apply(user, target, move, args))
+      if (!super.apply(user, target, move, args)) {
+        console.log("teste")
+        return resolve(false);
+      }
+      
+
+      let targetTypes = target.getTypes()
+      targetTypes.push(Type.GRASS)
+      target.summonData.types = targetTypes
+      
+      user.scene.queueMessage(`Grass type was added to the opposing ${target.name}!`);
+
+      resolve(true)
+    });
+  }
+}
+
 export class MoneyAttr extends MoveEffectAttr {
   constructor() {
     super(true, MoveEffectTrigger.HIT);
@@ -4854,7 +4875,8 @@ export function initMoves() {
       .attr(HitHealAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .triageMove(),
-    new StatusMove(Moves.FORESTS_CURSE, "Forest's Curse (N)", Type.GRASS, 100, 20, "The user puts a forest curse on the target. The target is now Grass type as well.", -1, 0, 6),
+    new StatusMove(Moves.FORESTS_CURSE, "Forest's Curse", Type.GRASS, 100, 20, "The user puts a forest curse on the target. The target is now Grass type as well.", -1, 0, 6)
+      .attr(ForestsCurseAttr), // TODO: Update UI to reflect added type
     new AttackMove(Moves.PETAL_BLIZZARD, "Petal Blizzard", Type.GRASS, MoveCategory.PHYSICAL, 90, 100, 15, "The user stirs up a violent petal blizzard and attacks everything around it.", -1, 0, 6)
       .windMove()
       .makesContact(false)
