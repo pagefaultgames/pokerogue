@@ -2132,6 +2132,19 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
+export class MatchUserTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const type = (args[0] as Utils.IntegerHolder);
+
+    const userTypes = user.getTypes();
+    
+    type.value = userTypes[0];
+
+
+    return true;
+  }
+}
+
 export class VariableMoveTypeMultiplierAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return false;
@@ -2728,6 +2741,38 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       ret = ret / 2 + (Phaser.Tweens.Builders.GetEaseFunction('Sine.easeOut')(Math.min(Math.abs(battleStatTotal), 10) / 10) * (battleStatTotal >= 0 ? 10 : -10));
     }
     return ret;
+  }
+}
+
+export class RemoveTypeAttr extends MoveEffectAttr {
+
+  private removedType: Type;
+  private messageCallback: ((user: Pokemon) => void) | undefined;
+
+  constructor(removedType: Type, messageCallback?: (user: Pokemon) => void) {
+    super(true, MoveEffectTrigger.POST_APPLY);
+    this.removedType = removedType;
+    this.messageCallback = messageCallback;
+
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    if(user.isTerastallized && user.getTeraType() == this.removedType) // active tera types cannot be removed
+      return false;
+
+    const userTypes = user.getTypes(true)
+    const modifiedTypes = userTypes.filter(type => type !== this.removedType);
+    user.summonData.types = modifiedTypes;
+
+
+    if (this.messageCallback) {
+      this.messageCallback(user);
+    }
+
+    return true;
   }
 }
 
@@ -5082,8 +5127,15 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, -1),
     new AttackMove(Moves.POWER_TRIP, "Power Trip", Type.DARK, MoveCategory.PHYSICAL, 20, 100, 10, "The user boasts its strength and attacks the target. The more the user's stats are raised, the greater the move's power.", -1, 0, 7)
       .attr(StatChangeCountPowerAttr),
-    new AttackMove(Moves.BURN_UP, "Burn Up (P)", Type.FIRE, MoveCategory.SPECIAL, 130, 100, 5, "To inflict massive damage, the user burns itself out. After using this move, the user will no longer be Fire type.", -1, 0, 7)
-      .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE),
+    new AttackMove(Moves.BURN_UP, "Burn Up", Type.FIRE, MoveCategory.SPECIAL, 130, 100, 5, "To inflict massive damage, the user burns itself out. After using this move, the user will no longer be Fire type.", -1, 0, 7)
+      .condition((user) => {
+        const userTypes = user.getTypes(true);
+        return userTypes.includes(Type.FIRE);
+      })
+      .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
+      .attr(RemoveTypeAttr, Type.FIRE, (user) => {
+        user.scene.queueMessage(getPokemonMessage(user, ` burned itself out!`));
+      }),
     new StatusMove(Moves.SPEED_SWAP, "Speed Swap (N)", Type.PSYCHIC, -1, 10, "The user exchanges Speed stats with the target.", -1, 0, 7),
     new AttackMove(Moves.SMART_STRIKE, "Smart Strike", Type.STEEL, MoveCategory.PHYSICAL, 70, -1, 10, "The user stabs the target with a sharp horn. This attack never misses.", -1, 0, 7),
     new StatusMove(Moves.PURIFY, "Purify (N)", Type.POISON, -1, 20, "The user heals the target's status condition. If the move succeeds, it also restores the user's own HP.", -1, 0, 7)
@@ -5654,7 +5706,14 @@ export function initMoves() {
       .attr(HitHealAttr)
       .slicingMove()
       .triageMove(),
-    new AttackMove(Moves.DOUBLE_SHOCK, "Double Shock (P)", Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, "The user discharges all the electricity from its body to perform a high-damage attack. After using this move, the user will no longer be Electric type.", -1, 0, 9),
+    new AttackMove(Moves.DOUBLE_SHOCK, "Double Shock", Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, "The user discharges all the electricity from its body to perform a high-damage attack. After using this move, the user will no longer be Electric type.", -1, 0, 9)
+    .condition((user) => {
+      const userTypes = user.getTypes(true);
+      return userTypes.includes(Type.ELECTRIC);
+    })
+    .attr(RemoveTypeAttr, Type.ELECTRIC, (user) => {
+      user.scene.queueMessage(getPokemonMessage(user, ` used up all its electricity!`));
+    }),
     new AttackMove(Moves.GIGATON_HAMMER, "Gigaton Hammer (P)", Type.STEEL, MoveCategory.PHYSICAL, 160, 100, 5, "The user swings its whole body around to attack with its huge hammer. This move can't be used twice in a row.", -1, 0, 9)
       .makesContact(false)
       .condition((user, target, move) => {
