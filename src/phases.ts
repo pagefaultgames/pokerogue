@@ -4256,7 +4256,7 @@ export class SelectModifierPhase extends BattlePhase {
     return getPlayerModifierTypeOptions(modifierCount, this.scene.getParty(), this.scene.lockModifierTiers ? this.modifierTiers : undefined);
   }
 
-  addModifier(modifier: Modifier): Promise<void> {
+  addModifier(modifier: Modifier): Promise<boolean> {
     return this.scene.addModifier(modifier, false, true);
   }
 }
