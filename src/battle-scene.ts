@@ -1266,14 +1266,19 @@ export default class BattleScene extends SceneBase {
 		} else if (this.ui?.getHandler() instanceof StarterSelectUiHandler) {
 			if (this.buttonJustPressed(Button.CYCLE_SHINY)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_SHINY);
+        this.setLastProcessedMovementTime(Button.CYCLE_SHINY);
 			} else if (this.buttonJustPressed(Button.CYCLE_FORM)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_FORM);
+        this.setLastProcessedMovementTime(Button.CYCLE_FORM);
 			} else if (this.buttonJustPressed(Button.CYCLE_GENDER)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_GENDER);
+        this.setLastProcessedMovementTime(Button.CYCLE_GENDER);
 			} else if (this.buttonJustPressed(Button.CYCLE_ABILITY)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_ABILITY);
+        this.setLastProcessedMovementTime(Button.CYCLE_ABILITY);
 			} else if (this.buttonJustPressed(Button.CYCLE_NATURE)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_NATURE);
+        this.setLastProcessedMovementTime(Button.CYCLE_NATURE);
 			} else
 				return;
 		}	else if (this.buttonJustPressed(Button.SPEED_UP)) {
