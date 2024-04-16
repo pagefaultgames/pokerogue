@@ -25,10 +25,10 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from '../data/arena-tag';
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { Biome } from "../data/enums/biome";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from '../data/ability';
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs } from '../data/ability';
 import { Abilities } from "#app/data/enums/abilities";
 import PokemonData from '../system/pokemon-data';
-import { BattlerIndex } from '../battle';
+import Battle, { BattlerIndex } from '../battle';
 import { BattleSpec } from "../enums/battle-spec";
 import { Mode } from '../ui/ui';
 import PartyUiHandler, { PartyOption, PartyUiMode } from '../ui/party-ui-handler';
@@ -523,6 +523,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           ret >>= 1;
         break;
       case Stat.DEF:
+        if (this.isOfType(Type.ICE) && this.scene.arena.weather?.weatherType === WeatherType.SNOW)
+          ret *= 1.5;
         break;
       case Stat.SPATK:
         break;
@@ -534,7 +536,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (this.getTag(BattlerTagType.SLOW_START))
           ret >>= 1;
         if (this.status && this.status.effect === StatusEffect.PARALYSIS)
-          ret >>= 2;
+          ret >>= 1;
         break;
     }
     
@@ -692,7 +694,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    if (forDefend && (this.getTag(BattlerTagType.IGNORE_FLYING) || this.scene.arena.getTag(ArenaTagType.GRAVITY))) {
+    if (forDefend && (this.getTag(BattlerTagType.IGNORE_FLYING) || this.scene.arena.getTag(ArenaTagType.GRAVITY) || this.getTag(BattlerTagType.GROUNDED))) {
       const flyingIndex = types.indexOf(Type.FLYING);
       if (flyingIndex > -1)
         types.splice(flyingIndex, 1);
@@ -728,7 +730,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     while (pokemonPrevolutions.hasOwnProperty(starterSpeciesId))
       starterSpeciesId = pokemonPrevolutions[starterSpeciesId];
     return allAbilities[starterPassiveAbilities[starterSpeciesId]];
-  }
+  } 
 
   hasPassive(): boolean {
     return this.passive || this.isBoss();
@@ -1130,7 +1132,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let result: HitResult;
     const move = battlerMove.getMove();
     let damage = new Utils.NumberHolder(0);
-
+    const defendingSidePlayField = this.isPlayer() ? this.scene.getPlayerField() : this.scene.getEnemyField();
+    
     const variableCategory = new Utils.IntegerHolder(move.category);
     applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, variableCategory);
     const moveCategory = variableCategory.value as MoveCategory;
@@ -1172,8 +1175,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         if (!typeless)
           applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, battlerMove, cancelled, typeMultiplier);
-        if (!cancelled.value)
+        if (!cancelled.value) {
           applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, battlerMove, cancelled, typeMultiplier);
+          defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, battlerMove, cancelled, typeMultiplier));
+        }
 
         if (cancelled.value)
           result = HitResult.NO_EFFECT;
@@ -1208,7 +1213,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             }
             if (source.getTag(BattlerTagType.CRIT_BOOST))
               critLevel.value += 2;
-            const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
+            const critChance = [24, 8, 2, 1][Math.max(0, Math.min(critLevel.value, 3))];
             isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !this.scene.randBattleSeedInt(critChance));
             if (isCritical) {
               const blockCrit = new Utils.BooleanHolder(false);
@@ -1294,6 +1299,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
           applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
 
+          if (power.value === 0) {
+            damage.value = 0;
+          }
+
           console.log('damage', damage.value, move.name, power.value, sourceAtk, targetDef);
 
           if (damage.value) {
@@ -1344,8 +1353,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case MoveCategory.STATUS:
         if (!typeless)
           applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, battlerMove, cancelled, typeMultiplier);
-        if (!cancelled.value)
+        if (!cancelled.value) {
           applyPreDefendAbAttrs(MoveImmunityAbAttr, this, source, battlerMove, cancelled, typeMultiplier);
+          defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, battlerMove, cancelled, typeMultiplier));
+        }
         if (!typeMultiplier.value)
           this.scene.queueMessage(`It doesn\'t affect ${this.name}!`);
         result = cancelled.value || !typeMultiplier.value ? HitResult.NO_EFFECT : HitResult.STATUS;
