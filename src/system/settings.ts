@@ -69,6 +69,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.HP_Bar_Speed]: 0,
   [Setting.Fusion_Palette_Swaps]: 1,
   [Setting.Player_Gender]: 0,
+  [Setting.Gamepad_Support]: 0,
   [Setting.Touch_Controls]: 0,
   [Setting.Vibration]: 0
 };

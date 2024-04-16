@@ -15,6 +15,7 @@ splashMessages.push(...[
   'Now with 33% More Salt!',
   'Infinite Fusion at Home!',
   'Broken Egg Moves!',
+  'Magnificent!',
   'Mubstitute!',
   'That\'s Crazy!',
   'Orance Juice!',

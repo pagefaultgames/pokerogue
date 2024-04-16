@@ -2,6 +2,9 @@ import i18next from 'i18next';
 import { menu as enMenu } from '../locales/en/menu';
 import { menu as itMenu } from '../locales/it/menu';
 
+import { move as enMove } from '../locales/en/move';
+import { move as frMove } from '../locales/fr/move';
+
 const DEFAULT_LANGUAGE_OVERRIDE = '';
 
 /**
@@ -26,9 +29,13 @@ i18next.init({
   resources: {
     en: {
       menu: enMenu,
+      move: enMove,
     },
     it: {
       menu: itMenu,
+    },
+    fr: {
+      move: frMove,
     }
   },
 });
@@ -38,6 +45,7 @@ declare module 'i18next' {
   interface CustomTypeOptions {
     resources: {
       menu: typeof enMenu;
+      move: typeof enMove;
     };
   }
 }

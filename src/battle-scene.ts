@@ -1246,7 +1246,6 @@ export default class BattleScene extends SceneBase {
 				case Mode.SAVE_SLOT:
 				case Mode.PARTY:
 				case Mode.SUMMARY:
-				case Mode.BIOME_SELECT:
 				case Mode.STARTER_SELECT:
 				case Mode.CONFIRM:
 				case Mode.OPTION_SELECT:
@@ -1266,14 +1265,19 @@ export default class BattleScene extends SceneBase {
 		} else if (this.ui?.getHandler() instanceof StarterSelectUiHandler) {
 			if (this.buttonJustPressed(Button.CYCLE_SHINY)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_SHINY);
+        this.setLastProcessedMovementTime(Button.CYCLE_SHINY);
 			} else if (this.buttonJustPressed(Button.CYCLE_FORM)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_FORM);
+        this.setLastProcessedMovementTime(Button.CYCLE_FORM);
 			} else if (this.buttonJustPressed(Button.CYCLE_GENDER)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_GENDER);
+        this.setLastProcessedMovementTime(Button.CYCLE_GENDER);
 			} else if (this.buttonJustPressed(Button.CYCLE_ABILITY)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_ABILITY);
+        this.setLastProcessedMovementTime(Button.CYCLE_ABILITY);
 			} else if (this.buttonJustPressed(Button.CYCLE_NATURE)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_NATURE);
+        this.setLastProcessedMovementTime(Button.CYCLE_NATURE);
 			} else
 				return;
 		}	else if (this.buttonJustPressed(Button.SPEED_UP)) {
@@ -1648,8 +1652,9 @@ export default class BattleScene extends SceneBase {
 		return Math.floor(moneyValue / 10) * 10;
 	}
 
-	addModifier(modifier: Modifier, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean): Promise<void> {
+	addModifier(modifier: Modifier, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean): Promise<boolean> {
 		return new Promise(resolve => {
+			let success = false;
 			const soundName = modifier.type.soundName;
 			this.validateAchvs(ModifierAchv, modifier);
 			const modifiersToRemove: PersistentModifier[] = [];
@@ -1659,20 +1664,20 @@ export default class BattleScene extends SceneBase {
 					modifiersToRemove.push(...(this.findModifiers(m => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId)));
 				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual, this)) {
 					if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier)
-						modifier.apply([ this.getPokemonById(modifier.pokemonId), true ]);
+						success = modifier.apply([ this.getPokemonById(modifier.pokemonId), true ]);
 					if (playSound && !this.sound.get(soundName))
 						this.playSound(soundName);
 				} else if (!virtual) {
 					const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
 					this.queueMessage(`The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, null, true);
-					return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant).then(() => resolve());
+					return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant).then(success => resolve(success));
 				}
 				
 				for (let rm of modifiersToRemove)
 					this.removeModifier(rm);
 
 				if (!ignoreUpdate && !virtual)
-					return this.updateModifiers(true, instant).then(() => resolve());
+					return this.updateModifiers(true, instant).then(() => resolve(success));
 			} else if (modifier instanceof ConsumableModifier) {
 				if (playSound && !this.sound.get(soundName))
 					this.playSound(soundName);
@@ -1695,19 +1700,26 @@ export default class BattleScene extends SceneBase {
 						if (modifier.shouldApply(args)) {
 							const result = modifier.apply(args);
 							if (result instanceof Promise)
-								modifierPromises.push(result);
+								modifierPromises.push(result.then(s => success ||= s));
+							else
+								success ||= result;
 						}
 					}
 					
-					return Promise.allSettled([this.party.map(p => p.updateInfo(instant)), ...modifierPromises]).then(() => resolve());
+					return Promise.allSettled([this.party.map(p => p.updateInfo(instant)), ...modifierPromises]).then(() => resolve(success));
 				} else {
 					const args = [ this ];
-					if (modifier.shouldApply(args))
-						modifier.apply(args);
+					if (modifier.shouldApply(args)) {
+						const result = modifier.apply(args);
+						if (result instanceof Promise) {
+							return result.then(success => resolve(success));
+						} else
+							success ||= result;
+					}
 				}
 			}
 
-			resolve();
+			resolve(success);
 		});
 	}
 
