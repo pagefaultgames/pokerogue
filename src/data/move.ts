@@ -12,7 +12,7 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr } from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, ExplosiveMoveImmunityAbAttr } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { allAbilities } from './ability';
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -688,6 +688,27 @@ export class SacrificialAttr extends MoveEffectAttr {
   }
 }
 
+export class HalfHpAttackAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, MoveEffectTrigger.PRE_APPLY);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    user.damageAndUpdate(Math.ceil(user.hp/2), HitResult.OTHER, false, true, true);
+
+    return true;
+  }
+
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    if (user.isBoss())
+      return -20;
+    return Math.ceil(((1 - user.getHpRatio()) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type) - 0.5));
+  }
+}
+
 export enum MultiHitType {
   _2,
   _2_TO_5,
@@ -1141,6 +1162,16 @@ export class ClearTerrainAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return user.scene.arena.trySetTerrain(TerrainType.NONE, true, true);
+  }
+}
+
+export class Explosive extends MoveAttr {
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => {
+      const cancelled = new Utils.BooleanHolder(false);
+      applyAbAttrs(ExplosiveMoveImmunityAbAttr, target, cancelled);
+      return cancelled.value;
+    }
   }
 }
 
@@ -3658,6 +3689,7 @@ export function initMoves() {
       .attr(CopyMoveAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.SELF_DESTRUCT, "Self-Destruct", Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, "The user attacks everything around it by causing an explosion. The user faints upon using this move.", -1, 0, 1)
+      .attr(Explosive)
       .attr(SacrificialAttr)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
@@ -3748,6 +3780,7 @@ export function initMoves() {
     new AttackMove(Moves.CRABHAMMER, "Crabhammer", Type.WATER, MoveCategory.PHYSICAL, 100, 90, 10, "The target is hammered with a large pincer. Critical hits land more easily.", -1, 0, 1)
       .attr(HighCritAttr),
     new AttackMove(Moves.EXPLOSION, "Explosion", Type.NORMAL, MoveCategory.PHYSICAL, 250, 100, 5, "The user attacks everything around it by causing a tremendous explosion. The user faints upon using this move.", -1, 0, 1)
+      .attr(Explosive)
       .attr(SacrificialAttr)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
@@ -4958,6 +4991,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.BANEFUL_BUNKER, "Baneful Bunker", Type.POISON, -1, 10, "In addition to protecting the user from attacks, this move also poisons any attacker that makes direct contact.", -1, 4, 7)
       .attr(ProtectAttr, BattlerTagType.BANEFUL_BUNKER),
     new AttackMove(Moves.SPIRIT_SHACKLE, "Spirit Shackle (P)", Type.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, "The user attacks while simultaneously stitching the target's shadow to the ground to prevent the target from escaping.", -1, 0, 7)
+      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
       .makesContact(false),
     new AttackMove(Moves.DARKEST_LARIAT, "Darkest Lariat", Type.DARK, MoveCategory.PHYSICAL, 85, 100, 10, "The user swings both arms and hits the target. The target's stat changes don't affect this attack's damage.", -1, 0, 7)
       .attr(IgnoreOpponentStatChangesAttr),
@@ -5080,7 +5114,8 @@ export function initMoves() {
     new AttackMove(Moves.TEN_MILLION_VOLT_THUNDERBOLT, "10,000,000 Volt Thunderbolt (P)", Type.ELECTRIC, MoveCategory.SPECIAL, 195, -1, 1, "The user, Pikachu wearing a cap, powers up a jolt of electricity using its Z-Power and unleashes it. Critical hits land more easily.", -1, 0, 7),
     /* End Unused */
     new AttackMove(Moves.MIND_BLOWN, "Mind Blown", Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, "The user attacks everything around it by causing its own head to explode. This also damages the user.", -1, 0, 7)
-      .attr(RecoilAttr, true, 0.5)
+      .attr(Explosive)
+      .attr(HalfHpAttackAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.PLASMA_FISTS, "Plasma Fists (P)", Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 15, "The user attacks with electrically charged fists. This move changes Normal-type moves to Electric-type moves.", -1, 0, 7)
       .punchingMove(),
@@ -5257,7 +5292,7 @@ export function initMoves() {
     new AttackMove(Moves.ETERNABEAM, "Eternabeam", Type.DRAGON, MoveCategory.SPECIAL, 160, 90, 5, "This is Eternatus's most powerful attack in its original form. The user can't move on the next turn.", -1, 0, 8)
       .attr(RechargeAttr),
     new AttackMove(Moves.STEEL_BEAM, "Steel Beam", Type.STEEL, MoveCategory.SPECIAL, 140, 95, 5, "The user fires a beam of steel that it collected from its entire body. This also damages the user.", -1, 0, 8)
-      .attr(RecoilAttr, true, 0.5),
+      .attr(HalfHpAttackAttr),
     new AttackMove(Moves.EXPANDING_FORCE, "Expanding Force (P)", Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, "The user attacks the target with its psychic power. This move's power goes up and damages all opposing Pokémon on Psychic Terrain.", -1, 0, 8),
     new AttackMove(Moves.STEEL_ROLLER, "Steel Roller", Type.STEEL, MoveCategory.PHYSICAL, 130, 100, 5, "The user attacks while destroying the terrain. This move fails when the ground hasn't turned into a terrain.", -1, 0, 8)
       .attr(ClearTerrainAttr)
@@ -5274,7 +5309,9 @@ export function initMoves() {
     new AttackMove(Moves.SHELL_SIDE_ARM, "Shell Side Arm (P)", Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, "This move inflicts physical or special damage, whichever will be more effective. This may also poison the target.", 20, 0, 8)
       .attr(ShellSideArmCategoryAttr)
       .attr(StatusEffectAttr, StatusEffect.POISON),
-    new AttackMove(Moves.MISTY_EXPLOSION, "Misty Explosion (P)", Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, "The user attacks everything around it and faints upon using this move. This move's power is increased on Misty Terrain.", -1, 0, 8)
+    new AttackMove(Moves.MISTY_EXPLOSION, "Misty Explosion", Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, "The user attacks everything around it and faints upon using this move. This move's power is increased on Misty Terrain.", -1, 0, 8)
+      .attr(Explosive)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.MISTY && target.isGrounded() ? 1.5 : 1)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.GRASSY_GLIDE, "Grassy Glide (P)", Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, "Gliding on the ground, the user attacks the target. This move always goes first on Grassy Terrain.", -1, 0, 8),
     new AttackMove(Moves.RISING_VOLTAGE, "Rising Voltage", Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, "The user attacks with electric voltage rising from the ground. This move's power doubles when the target is on Electric Terrain.", -1, 0, 8)
@@ -5542,7 +5579,8 @@ export function initMoves() {
     new AttackMove(Moves.PSYBLADE, "Psyblade", Type.PSYCHIC, MoveCategory.PHYSICAL, 80, 100, 15, "The user rends the target with an ethereal blade. This move's power is boosted by 50 percent if the user is on Electric Terrain.", -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1)  
       .slicingMove(),
-    new AttackMove(Moves.HYDRO_STEAM, "Hydro Steam (P)", Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, "The user blasts the target with boiling-hot water. This move's power is not lowered in harsh sunlight but rather boosted by 50 percent.", -1, 0, 9),
+    new AttackMove(Moves.HYDRO_STEAM, "Hydro Steam", Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, "The user blasts the target with boiling-hot water. This move's power is not lowered in harsh sunlight but rather boosted by 50 percent.", -1, 0, 9)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 1.5 : 1),
     new AttackMove(Moves.RUINATION, "Ruination", Type.DARK, MoveCategory.SPECIAL, 1, 90, 10, "The user summons a ruinous disaster. This cuts the target's HP in half.", -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.COLLISION_COURSE, "Collision Course", Type.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, "The user transforms and crashes to the ground, causing a massive prehistoric explosion. This move's power is boosted more than usual if it's a supereffective hit.", -1, 0, 9)

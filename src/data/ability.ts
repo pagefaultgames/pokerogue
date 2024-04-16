@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, allMoves } from "./move";
+import Move, { AttackMove, Explosive, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, allMoves } from "./move";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -397,6 +397,23 @@ export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
       }
     
     return false;
+  }
+}
+
+export class ExplosiveMoveImmunityAbAttr extends PreDefendAbAttr {
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  
+      if(move.getMove().getAttrs(Explosive).length) {
+        cancelled.value = true;
+        return true;
+      }
+    
+    return false;
+  }
+  
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = true;
+    return true;
   }
 }
 
@@ -816,6 +833,31 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
 
     return false;
   }
+}
+
+export class ContinuousResetStatusAbAttr extends AbAttr {
+  private immuneEffects: StatusEffect[];
+  private curedStatus: StatusEffect;
+
+  constructor(...immuneEffects: StatusEffect[]) {
+    super();
+
+    this.immuneEffects = immuneEffects;
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+    if (this.immuneEffects.includes(pokemon.status?.effect)) {
+      this.curedStatus=pokemon.status.effect;
+      pokemon.resetStatus();
+      return true;
+    }
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+      return getPokemonMessage(pokemon, getStatusEffectHealText(this.curedStatus));
+  }
+
 }
 
 export class PostAttackAbAttr extends AbAttr {
@@ -2163,10 +2205,12 @@ export function initAbilities() {
       .attr(PreDefendFullHpEndureAbAttr)
       .attr(BlockOneHitKOAbAttr)
       .ignorable(),
-    new Ability(Abilities.DAMP, "Damp (N)", "Prevents the use of explosive moves, such as Self-Destruct, by dampening its surroundings.", 3)
+    new Ability(Abilities.DAMP, "Damp", "Prevents the use of explosive moves, such as Self-Destruct, by dampening its surroundings.", 3)
+      .attr(ExplosiveMoveImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.LIMBER, "Limber", "Its limber body protects the Pokémon from paralysis.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
+      .conditionalAttr(pokemon => pokemon.status?.effect==StatusEffect.PARALYSIS, ContinuousResetStatusAbAttr, StatusEffect.PARALYSIS)
       .ignorable(),
     new Ability(Abilities.SAND_VEIL, "Sand Veil", "Boosts the Pokémon's evasiveness in a sandstorm.", 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.EVA, 1.2)
@@ -2191,11 +2235,13 @@ export function initAbilities() {
     new Ability(Abilities.INSOMNIA, "Insomnia", "The Pokémon is suffering from insomnia and cannot fall asleep.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
+      .conditionalAttr(pokemon => pokemon.status?.effect==StatusEffect.SLEEP, ContinuousResetStatusAbAttr, StatusEffect.SLEEP)
       .ignorable(),
     new Ability(Abilities.COLOR_CHANGE, "Color Change", "The Pokémon's type becomes the type of the move used on it.", 3)
       .attr(PostDefendTypeChangeAbAttr),
     new Ability(Abilities.IMMUNITY, "Immunity", "The immune system of the Pokémon prevents it from getting poisoned.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .conditionalAttr(pokemon => pokemon.status?.effect==StatusEffect.POISON||pokemon.status?.effect==StatusEffect.TOXIC, ContinuousResetStatusAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.FLASH_FIRE, "Flash Fire", "Powers up the Pokémon's Fire-type moves if it's hit by one.", 3)
       .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, BattlerTagType.FIRE_BOOST, 1, (pokemon: Pokemon) => !pokemon.status || pokemon.status.effect !== StatusEffect.FREEZE)
@@ -2258,9 +2304,11 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.MAGMA_ARMOR, "Magma Armor", "The Pokémon is covered with hot magma, which prevents the Pokémon from becoming frozen.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.FREEZE)
+      .conditionalAttr(pokemon => pokemon.status?.effect==StatusEffect.FREEZE, ContinuousResetStatusAbAttr, StatusEffect.FREEZE)
       .ignorable(),
     new Ability(Abilities.WATER_VEIL, "Water Veil", "The Pokémon is covered with a water veil, which prevents the Pokémon from getting a burn.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .conditionalAttr(pokemon => pokemon.status?.effect==StatusEffect.BURN, ContinuousResetStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.MAGNET_PULL, "Magnet Pull (N)", "Prevents Steel-type Pokémon from escaping using its magnetic force.", 3)
       /*.attr(ArenaTrapAbAttr)
@@ -2335,6 +2383,7 @@ export function initAbilities() {
     new Ability(Abilities.VITAL_SPIRIT, "Vital Spirit", "The Pokémon is full of vitality, and that prevents it from falling asleep.", 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
+      .conditionalAttr(pokemon => pokemon.status?.effect==StatusEffect.SLEEP, ContinuousResetStatusAbAttr, StatusEffect.SLEEP)
       .ignorable(),
     new Ability(Abilities.WHITE_SMOKE, "White Smoke", "The Pokémon is protected by its white smoke, which prevents other Pokémon from lowering its stats.", 3)
       .attr(ProtectStatAbAttr)
@@ -2396,7 +2445,7 @@ export function initAbilities() {
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 1.5)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
     new Ability(Abilities.QUICK_FEET, "Quick Feet", "Boosts the Speed stat if the Pokémon has a status condition.", 4)
-      .conditionalAttr(pokemon => pokemon.status.effect === StatusEffect.PARALYSIS, BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
+      .conditionalAttr(pokemon => pokemon.status?.effect === StatusEffect.PARALYSIS, BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.SPD, 1.5),
     new Ability(Abilities.NORMALIZE, "Normalize", "All the Pokémon's moves become Normal type. The power of those moves is boosted a little.", 4)
       .attr(MoveTypeChangeAttr, Type.NORMAL, 1.2, (user, target, move) => move.id !== Moves.HIDDEN_POWER && move.id !== Moves.WEATHER_BALL && 
@@ -2642,6 +2691,7 @@ export function initAbilities() {
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(MoveTypePowerBoostAbAttr, Type.WATER, 1)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .conditionalAttr(pokemon => pokemon.status?.effect==StatusEffect.BURN, ContinuousResetStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.STEELWORKER, "Steelworker", "Powers up Steel-type moves.", 7)
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL),
@@ -2792,8 +2842,9 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr),
-    new Ability(Abilities.PASTEL_VEIL, "Pastel Veil", "Protects the Pokémon and its ally Pokémon from being poisoned.", 8)
+    new Ability(Abilities.PASTEL_VEIL, "Pastel Veil (P)", "Protects the Pokémon and its ally Pokémon from being poisoned.", 8)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .conditionalAttr(pokemon => pokemon.status?.effect==StatusEffect.POISON||pokemon.status?.effect==StatusEffect.TOXIC, ContinuousResetStatusAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.HUNGER_SWITCH, "Hunger Switch", "The Pokémon changes its form, alternating between its Full Belly Mode and Hangry Mode after the end of each turn.", 8)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1)
@@ -2832,6 +2883,7 @@ export function initAbilities() {
     new Ability(Abilities.THERMAL_EXCHANGE, "Thermal Exchange", "Boosts the Attack stat when the Pokémon is hit by a Fire-type move. The Pokémon also cannot be burned.", 9)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.FIRE, BattleStat.ATK, 1)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .conditionalAttr(pokemon => pokemon.status?.effect==StatusEffect.BURN, ContinuousResetStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.ANGER_SHELL, "Anger Shell (N)", "When an attack causes its HP to drop to half or less, the Pokémon gets angry. This lowers its Defense and Sp. Def stats but boosts its Attack, Sp. Atk, and Speed stats.", 9),
     new Ability(Abilities.PURIFYING_SALT, "Purifying Salt", "The Pokémon's pure salt protects it from status conditions and halves the damage taken from Ghost-type moves.", 9)
