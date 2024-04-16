@@ -3877,7 +3877,6 @@ export function initMoves() {
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(Moves.SANDSTORM, "Sandstorm", Type.ROCK, -1, 10, "A five-turn sandstorm is summoned to hurt all combatants except Rock, Ground, and Steel types. It raises the Sp. Def stat of Rock types.", -1, 0, 2)
       .attr(WeatherChangeAttr, WeatherType.SANDSTORM)
-      .windMove()
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.GIGA_DRAIN, "Giga Drain", Type.GRASS, MoveCategory.SPECIAL, 75, 100, 10, "A nutrient-draining attack. The user's HP is restored by half the damage taken by the target.", -1, 0, 2)
       .attr(HitHealAttr)
@@ -4046,8 +4045,9 @@ export function initMoves() {
     new StatusMove(Moves.NATURE_POWER, "Nature Power", Type.NORMAL, -1, 20, "This attack makes use of nature's power. Its effects vary depending on the user's environment.", -1, 0, 3)
       .attr(NaturePowerAttr)
       .ignoresVirtual(),
-    new SelfStatusMove(Moves.CHARGE, "Charge (P)", Type.ELECTRIC, -1, 20, "The user boosts the power of the Electric move it uses on the next turn. This also raises the user's Sp. Def stat.", -1, 0, 3)
-      .attr(StatChangeAttr, BattleStat.SPDEF, 1, true),
+    new SelfStatusMove(Moves.CHARGE, "Charge", Type.ELECTRIC, -1, 20, "The user boosts the power of the Electric move it uses on the next turn. This also raises the user's Sp. Def stat.", -1, 0, 3)
+      .attr(StatChangeAttr, BattleStat.SPDEF, 1, true)
+      .attr(AddBattlerTagAttr, BattlerTagType.CHARGED, true, true),
     new StatusMove(Moves.TAUNT, "Taunt (N)", Type.DARK, 100, 20, "The target is taunted into a rage that allows it to use only attack moves for three turns.", -1, 0, 3),
     new StatusMove(Moves.HELPING_HAND, "Helping Hand", Type.NORMAL, -1, 20, "The user assists an ally by boosting the power of that ally's attack.", -1, 5, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
