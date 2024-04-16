@@ -946,15 +946,17 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const statusToApply: StatusEffect = user.status?.effect;
 
-    user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
-    user.resetStatus();
-    user.updateInfo();
-
     if (target.status) {
       return false;
     }
     if (!target.status || (target.status.effect === statusToApply && move.chance < 0))
-      return target.trySetStatus(statusToApply, true);
+      var statusAfflictResult = target.trySetStatus(statusToApply, true);
+      if (statusAfflictResult) {
+        user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
+        user.resetStatus();
+        user.updateInfo();
+      }
+      return statusAfflictResult;
     
     return false;
   }
@@ -4415,7 +4417,13 @@ export function initMoves() {
       .makesContact(false),
     new StatusMove(Moves.PSYCHO_SHIFT, "Psycho Shift", Type.PSYCHIC, 100, 10, "Using its psychic power of suggestion, the user transfers its status conditions to the target.", -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
-      .condition((user, target, move) => user.status?.effect === StatusEffect.BURN || user.status?.effect === StatusEffect.POISON || user.status?.effect === StatusEffect.TOXIC || user.status?.effect === StatusEffect.PARALYSIS),
+      .condition((user, target, move) => (user.status?.effect === StatusEffect.BURN
+        || user.status?.effect === StatusEffect.POISON
+        || user.status?.effect === StatusEffect.TOXIC
+        || user.status?.effect === StatusEffect.PARALYSIS
+        || user.status?.effect === StatusEffect.SLEEP)
+        && target.canSetStatus(user.status?.effect)
+        ),
     new AttackMove(Moves.TRUMP_CARD, "Trump Card (N)", Type.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, "The fewer PP this move has, the greater its power.", -1, 0, 4)
       .makesContact(),
     new StatusMove(Moves.HEAL_BLOCK, "Heal Block (N)", Type.PSYCHIC, 100, 15, "For five turns, the user prevents the opposing team from using any moves, Abilities, or held items that recover HP.", -1, 0, 4)
