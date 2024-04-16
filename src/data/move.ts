@@ -2132,19 +2132,6 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
-export class MatchUserTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const type = (args[0] as Utils.IntegerHolder);
-
-    const userTypes = user.getTypes();
-    
-    type.value = userTypes[0];
-
-
-    return true;
-  }
-}
-
 export class VariableMoveTypeMultiplierAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return false;
