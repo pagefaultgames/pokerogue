@@ -1213,7 +1213,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             }
             if (source.getTag(BattlerTagType.CRIT_BOOST))
               critLevel.value += 2;
-            const critChance = Math.ceil(16 / Math.pow(2, critLevel.value));
+            const critChance = [24, 8, 2, 1][Math.max(0, Math.min(critLevel.value, 3))];
             isCritical = !source.getTag(BattlerTagType.NO_CRIT) && (critChance === 1 || !this.scene.randBattleSeedInt(critChance));
             if (isCritical) {
               const blockCrit = new Utils.BooleanHolder(false);
