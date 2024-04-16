@@ -6,6 +6,7 @@ import { getBiomeHasProps } from "./field/arena";
 import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
 import { SceneBase } from "./scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
+import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
 
 export class LoadingScene extends SceneBase {
@@ -23,7 +24,8 @@ export class LoadingScene extends SceneBase {
         this.load['cacheBuster'] = buildIdMatch[1];
     }
 
-    this.load.video('intro_dark', 'images/intro_dark.mp4', true);
+    if (!isMobile())
+      this.load.video('intro_dark', 'images/intro_dark.mp4', true);
 
     this.loadImage('loading_bg', 'arenas');
     this.loadImage('logo', '');
@@ -316,7 +318,8 @@ export class LoadingScene extends SceneBase {
     
     loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText);
 
-    loadingGraphics.map(g => g.setVisible(false));
+    if (!isMobile())
+      loadingGraphics.map(g => g.setVisible(false));
 
     const destroyLoadingAssets = () => {
       intro.destroy();
