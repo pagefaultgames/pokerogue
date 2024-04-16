@@ -392,7 +392,7 @@ export const move = {
     effect: "The user lunges at the target at a speed that makes it almost invisible. This move always goes first."
   },
   "rage": {
-    name: "Rage (P)",
+    name: "Rage",
     effect: "As long as this move is in use, the power of rage raises the Attack stat each time the user is hit in battle."
   },
   "teleport": {
@@ -452,7 +452,7 @@ export const move = {
     effect: "A wondrous wall of light is put up to reduce damage from special attacks for five turns."
   },
   "haze": {
-    name: "Haze (N)",
+    name: "Haze",
     effect: "The user creates a haze that eliminates every stat change among all the Pokémon engaged in battle."
   },
   "reflect": {
@@ -464,7 +464,7 @@ export const move = {
     effect: "The user takes a deep breath and focuses so that critical hits land more easily."
   },
   "bide": {
-    name: "Bide (N)",
+    name: "Bide",
     effect: "The user endures attacks for two turns, then strikes back to cause double the damage taken."
   },
   "metronome": {
@@ -652,7 +652,7 @@ export const move = {
     effect: "The target is attacked with a slash of claws or blades. Critical hits land more easily."
   },
   "substitute": {
-    name: "Substitute (N)",
+    name: "Substitute",
     effect: "The user creates a substitute for itself using some of its HP. The substitute serves as the user's decoy."
   },
   "struggle": {
@@ -664,7 +664,7 @@ export const move = {
     effect: "It enables the user to permanently learn the move last used by the target. Once used, Sketch disappears."
   },
   "tripleKick": {
-    name: "Triple Kick (P)",
+    name: "Triple Kick",
     effect: "A consecutive three-kick attack that becomes more powerful with each successful hit."
   },
   "thief": {
@@ -692,7 +692,7 @@ export const move = {
     effect: "This attack can be used only if the user is asleep. The harsh noise may also make the target flinch."
   },
   "curse": {
-    name: "Curse (P)",
+    name: "Curse",
     effect: "A move that works differently for the Ghost type than for all other types."
   },
   "flail": {
@@ -700,7 +700,7 @@ export const move = {
     effect: "The user flails about aimlessly to attack. The less HP the user has, the greater the move's power."
   },
   "conversion2": {
-    name: "Conversion 2 (N)",
+    name: "Conversion 2",
     effect: "The user changes its type to make itself resistant to the type of the attack the target used last."
   },
   "aeroblast": {
@@ -768,11 +768,11 @@ export const move = {
     effect: "The user fires an electric blast like a cannon to inflict damage and cause paralysis."
   },
   "foresight": {
-    name: "Foresight (N)",
+    name: "Foresight",
     effect: "Enables a Ghost-type target to be hit by Normal- and Fighting-type attacks. This also enables an evasive target to be hit."
   },
   "destinyBond": {
-    name: "Destiny Bond (N)",
+    name: "Destiny Bond",
     effect: "After using this move, if the user faints, the Pokémon that landed the knockout hit also faints. Its chance of failing rises if it is used in succession."
   },
   "perishSong": {
@@ -856,7 +856,7 @@ export const move = {
     effect: "While it is asleep, the user randomly uses one of the moves it knows."
   },
   "healBell": {
-    name: "Heal Bell (N)",
+    name: "Heal Bell",
     effect: "The user makes a soothing bell chime to heal the status conditions of all the party Pokémon."
   },
   "return": {
@@ -872,7 +872,7 @@ export const move = {
     effect: "This full-power attack grows more powerful the less the user likes its Trainer."
   },
   "safeguard": {
-    name: "Safeguard (N)",
+    name: "Safeguard",
     effect: "The user creates a protective field that prevents status conditions for five turns."
   },
   "painSplit": {
@@ -908,11 +908,11 @@ export const move = {
     effect: "The user compels the target to keep using the move it encored for three turns."
   },
   "pursuit": {
-    name: "Pursuit (P)",
+    name: "Pursuit",
     effect: "The power of this attack move is doubled if it's used on a target that's switching out of battle."
   },
   "rapidSpin": {
-    name: "Rapid Spin (P)",
+    name: "Rapid Spin",
     effect: "A spin attack that can also eliminate such moves as Bind, Wrap, and Leech Seed. This also raises the user's Speed stat."
   },
   "sweetScent": {
@@ -972,7 +972,7 @@ export const move = {
     effect: "A retaliation move that counters any special attack, inflicting double the damage taken."
   },
   "psychUp": {
-    name: "Psych Up (N)",
+    name: "Psych Up",
     effect: "The user hypnotizes itself into copying any stat change made by the target."
   },
   "extremeSpeed": {
@@ -1000,7 +1000,7 @@ export const move = {
     effect: "The user traps the target in a violent swirling whirlpool for four to five turns."
   },
   "beatUp": {
-    name: "Beat Up (N)",
+    name: "Beat Up",
     effect: "The user gets all party Pokémon to attack the target. The more party Pokémon, the greater the number of attacks."
   },
   "fakeOut": {
@@ -1008,19 +1008,19 @@ export const move = {
     effect: "This attack hits first and makes the target flinch. It only works the first turn each time the user enters battle."
   },
   "uproar": {
-    name: "Uproar (P)",
+    name: "Uproar",
     effect: "The user attacks in an uproar for three turns. During that time, no Pokémon can fall asleep."
   },
   "stockpile": {
-    name: "Stockpile (N)",
+    name: "Stockpile",
     effect: "The user charges up power and raises both its Defense and Sp. Def stats. The move can be used three times."
   },
   "spitUp": {
-    name: "Spit Up (N)",
+    name: "Spit Up",
     effect: "The power stored using the move Stockpile is released at once in an attack. The more power is stored, the greater the move's power."
   },
   "swallow": {
-    name: "Swallow (N)",
+    name: "Swallow",
     effect: "The power stored using the move Stockpile is absorbed by the user to heal its HP. Storing more power heals more HP."
   },
   "heatWave": {
@@ -1032,7 +1032,7 @@ export const move = {
     effect: "The user summons a hailstorm lasting five turns. It damages all Pokémon except Ice types."
   },
   "torment": {
-    name: "Torment (N)",
+    name: "Torment",
     effect: "The user torments and enrages the target, making it incapable of using the same move twice in a row."
   },
   "flatter": {
@@ -1060,7 +1060,7 @@ export const move = {
     effect: "This attack's power is doubled when used on a target with paralysis. This also cures the target's paralysis, however."
   },
   "followMe": {
-    name: "Follow Me (N)",
+    name: "Follow Me",
     effect: "The user draws attention to itself, making all targets take aim only at the user."
   },
   "naturePower": {
@@ -1068,11 +1068,11 @@ export const move = {
     effect: "This attack makes use of nature's power. Its effects vary depending on the user's environment."
   },
   "charge": {
-    name: "Charge (P)",
+    name: "Charge",
     effect: "The user boosts the power of the Electric move it uses on the next turn. This also raises the user's Sp. Def stat."
   },
   "taunt": {
-    name: "Taunt (N)",
+    name: "Taunt",
     effect: "The target is taunted into a rage that allows it to use only attack moves for three turns."
   },
   "helpingHand": {
@@ -1080,7 +1080,7 @@ export const move = {
     effect: "The user assists an ally by boosting the power of that ally's attack."
   },
   "trick": {
-    name: "Trick (N)",
+    name: "Trick",
     effect: "The user catches the target off guard and swaps its held item with its own."
   },
   "rolePlay": {
@@ -1088,7 +1088,7 @@ export const move = {
     effect: "The user mimics the target completely, copying the target's Ability."
   },
   "wish": {
-    name: "Wish (N)",
+    name: "Wish",
     effect: "One turn after this move is used, the user's or its replacement's HP is restored by half the user's max HP."
   },
   "assist": {
@@ -1104,11 +1104,11 @@ export const move = {
     effect: "The user attacks the target with great power. However, this also lowers the user's Attack and Defense stats."
   },
   "magicCoat": {
-    name: "Magic Coat (N)",
+    name: "Magic Coat",
     effect: "Moves like Leech Seed and moves that inflict status conditions are blocked by a barrier and reflected back to the user of those moves."
   },
   "recycle": {
-    name: "Recycle (N)",
+    name: "Recycle",
     effect: "The user recycles a held item that has been used in battle so it can be used again."
   },
   "revenge": {
@@ -1124,7 +1124,7 @@ export const move = {
     effect: "The user lets loose a huge yawn that lulls the target into falling asleep on the next turn."
   },
   "knockOff": {
-    name: "Knock Off (P)",
+    name: "Knock Off",
     effect: "The user slaps down the target's held item, and that item can't be used in that battle. The move does more damage if the target has a held item."
   },
   "endeavor": {
@@ -1140,7 +1140,7 @@ export const move = {
     effect: "The user employs its psychic power to exchange Abilities with the target."
   },
   "imprison": {
-    name: "Imprison (N)",
+    name: "Imprison",
     effect: "If opposing Pokémon know any move also known by the user, they are prevented from using it."
   },
   "refresh": {
@@ -1148,15 +1148,15 @@ export const move = {
     effect: "The user rests to cure itself of poisoning, a burn, or paralysis."
   },
   "grudge": {
-    name: "Grudge (N)",
+    name: "Grudge",
     effect: "If the user faints, the user's grudge fully depletes the PP of the opponent's move that knocked it out."
   },
   "snatch": {
-    name: "Snatch (N)",
+    name: "Snatch",
     effect: "The user steals the effects of any attempts to use a healing or stat-changing move."
   },
   "secretPower": {
-    name: "Secret Power (P)",
+    name: "Secret Power",
     effect: "The additional effects of this attack depend upon where it was used."
   },
   "dive": {
@@ -1244,7 +1244,7 @@ export const move = {
     effect: "This attack move varies in power and type depending on the weather."
   },
   "aromatherapy": {
-    name: "Aromatherapy (N)",
+    name: "Aromatherapy",
     effect: "The user releases a soothing scent that heals all status conditions affecting the user's party."
   },
   "fakeTears": {
@@ -1260,7 +1260,7 @@ export const move = {
     effect: "The user attacks the target at full power. The attack's recoil harshly lowers the user's Sp. Atk stat."
   },
   "odorSleuth": {
-    name: "Odor Sleuth (N)",
+    name: "Odor Sleuth",
     effect: "Enables a Ghost-type target to be hit by Normal- and Fighting-type attacks. This also enables an evasive target to be hit."
   },
   "rockTomb": {
@@ -1424,7 +1424,7 @@ export const move = {
     effect: "This move enables Flying-type Pokémon or Pokémon with the Levitate Ability to be hit by Ground-type moves. Moves that involve flying can't be used."
   },
   "miracleEye": {
-    name: "Miracle Eye (N)",
+    name: "Miracle Eye",
     effect: "Enables a Dark-type target to be hit by Psychic-type attacks. This also enables an evasive target to be hit."
   },
   "wakeUpSlap": {
@@ -1448,7 +1448,7 @@ export const move = {
     effect: "If the target's HP is half or less, this attack will hit with double the power."
   },
   "naturalGift": {
-    name: "Natural Gift (N)",
+    name: "Natural Gift",
     effect: "The user draws power to attack by using its held Berry. The Berry determines the move's type and power."
   },
   "feint": {
@@ -1456,11 +1456,11 @@ export const move = {
     effect: "This attack hits a target using a move such as Protect or Detect. This also lifts the effects of those moves."
   },
   "pluck": {
-    name: "Pluck (P)",
+    name: "Pluck",
     effect: "The user pecks the target. If the target is holding a Berry, the user eats it and gains its effect."
   },
   "tailwind": {
-    name: "Tailwind (N)",
+    name: "Tailwind",
     effect: "The user whips up a turbulent whirlwind that ups the Speed stats of the user and its allies for four turns."
   },
   "acupressure": {
@@ -1480,31 +1480,31 @@ export const move = {
     effect: "The user fights the target up close without guarding itself. This also lowers the user's Defense and Sp. Def stats."
   },
   "payback": {
-    name: "Payback (P)",
+    name: "Payback",
     effect: "The user stores power, then attacks. If the user moves after the target, this attack's power will be doubled."
   },
   "assurance": {
-    name: "Assurance (P)",
+    name: "Assurance",
     effect: "If the target has already taken some damage in the same turn, this attack's power is doubled."
   },
   "embargo": {
-    name: "Embargo (N)",
+    name: "Embargo",
     effect: "This move prevents the target from using its held item for five turns. Its Trainer is also prevented from using items on it."
   },
   "fling": {
-    name: "Fling (N)",
+    name: "Fling",
     effect: "The user flings its held item at the target to attack. This move's power and effects depend on the item."
   },
   "psychoShift": {
-    name: "Psycho Shift (N)",
+    name: "Psycho Shift",
     effect: "Using its psychic power of suggestion, the user transfers its status conditions to the target."
   },
   "trumpCard": {
-    name: "Trump Card (N)",
+    name: "Trump Card",
     effect: "The fewer PP this move has, the greater its power."
   },
   "healBlock": {
-    name: "Heal Block (N)",
+    name: "Heal Block",
     effect: "For five turns, the user prevents the opposing team from using any moves, Abilities, or held items that recover HP."
   },
   "wringOut": {
@@ -1512,19 +1512,19 @@ export const move = {
     effect: "The user powerfully wrings the target. The more HP the target has, the greater the move's power."
   },
   "powerTrick": {
-    name: "Power Trick (N)",
+    name: "Power Trick",
     effect: "The user employs its psychic power to switch its Attack stat with its Defense stat."
   },
   "gastroAcid": {
-    name: "Gastro Acid (N)",
+    name: "Gastro Acid",
     effect: "The user hurls up its stomach acids on the target. The fluid eliminates the effect of the target's Ability."
   },
   "luckyChant": {
-    name: "Lucky Chant (N)",
+    name: "Lucky Chant",
     effect: "The user chants an incantation toward the sky, preventing opposing Pokémon from landing critical hits for five turns."
   },
   "meFirst": {
-    name: "Me First (N)",
+    name: "Me First",
     effect: "The user cuts ahead of the target to copy and use the target's intended move with greater power. This move fails if it isn't used first."
   },
   "copycat": {
@@ -1532,15 +1532,15 @@ export const move = {
     effect: "The user mimics the move used immediately before it. The move fails if no other move has been used yet."
   },
   "powerSwap": {
-    name: "Power Swap (N)",
+    name: "Power Swap",
     effect: "The user employs its psychic power to switch changes to its Attack and Sp. Atk stats with the target."
   },
   "guardSwap": {
-    name: "Guard Swap (N)",
+    name: "Guard Swap",
     effect: "The user employs its psychic power to switch changes to its Defense and Sp. Def stats with the target."
   },
   "punishment": {
-    name: "Punishment (N)",
+    name: "Punishment",
     effect: "The more the target has powered up with stat changes, the greater the move's power."
   },
   "lastResort": {
@@ -1560,7 +1560,7 @@ export const move = {
     effect: "The user lays a trap of poison spikes at the feet of the opposing team. The spikes will poison opposing Pokémon that switch into battle."
   },
   "heartSwap": {
-    name: "Heart Swap (N)",
+    name: "Heart Swap",
     effect: "The user employs its psychic power to switch stat changes with the target."
   },
   "aquaRing": {
@@ -1568,7 +1568,7 @@ export const move = {
     effect: "The user envelops itself in a veil made of water. It regains some HP every turn."
   },
   "magnetRise": {
-    name: "Magnet Rise (N)",
+    name: "Magnet Rise",
     effect: "The user levitates using electrically generated magnetism for five turns."
   },
   "flareBlitz": {
@@ -1656,7 +1656,7 @@ export const move = {
     effect: "The user makes the ground under the target erupt with power. This may also lower the target's Sp. Def stat."
   },
   "switcheroo": {
-    name: "Switcheroo (N)",
+    name: "Switcheroo",
     effect: "The user trades held items with the target faster than the eye can follow."
   },
   "gigaImpact": {
@@ -1792,11 +1792,11 @@ export const move = {
     effect: "The user attacks the target with sound waves of deafening chatter. This confuses the target."
   },
   "judgment": {
-    name: "Judgment (P)",
+    name: "Judgment",
     effect: "The user releases countless shots of light at the target. This move's type varies depending on the kind of Plate the user is holding."
   },
   "bugBite": {
-    name: "Bug Bite (P)",
+    name: "Bug Bite",
     effect: "The user bites the target. If the target is holding a Berry, the user eats it and gains its effect."
   },
   "chargeBeam": {
@@ -1840,7 +1840,7 @@ export const move = {
     effect: "The user tears the target along with the space around it. Critical hits land more easily."
   },
   "lunarDance": {
-    name: "Lunar Dance (N)",
+    name: "Lunar Dance",
     effect: "The user faints. In return, the Pokémon taking its place will have its status and HP fully restored."
   },
   "crushGrip": {
@@ -1872,19 +1872,19 @@ export const move = {
     effect: "The user sharpens its claws to boost its Attack stat and accuracy."
   },
   "wideGuard": {
-    name: "Wide Guard (N)",
+    name: "Wide Guard",
     effect: "The user and its allies are protected from wide-ranging attacks for one turn."
   },
   "guardSplit": {
-    name: "Guard Split (N)",
+    name: "Guard Split",
     effect: "The user employs its psychic power to average its Defense and Sp. Def stats with those of the target."
   },
   "powerSplit": {
-    name: "Power Split (N)",
+    name: "Power Split",
     effect: "The user employs its psychic power to average its Attack and Sp. Atk stats with those of the target."
   },
   "wonderRoom": {
-    name: "Wonder Room (N)",
+    name: "Wonder Room",
     effect: "The user creates a bizarre area in which Pokémon's Defense and Sp. Def stats are swapped for five turns."
   },
   "psyshock": {
@@ -1896,19 +1896,19 @@ export const move = {
     effect: "The user drenches the target in a special poisonous liquid. This move's power is doubled if the target is poisoned."
   },
   "autotomize": {
-    name: "Autotomize (P)",
+    name: "Autotomize",
     effect: "The user sheds part of its body to make itself lighter and sharply raise its Speed stat."
   },
   "ragePowder": {
-    name: "Rage Powder (N)",
+    name: "Rage Powder",
     effect: "The user scatters a cloud of irritating powder to draw attention to itself. Opposing Pokémon aim only at the user."
   },
   "telekinesis": {
-    name: "Telekinesis (N)",
+    name: "Telekinesis",
     effect: "The user makes the target float with its psychic power. The target is easier to hit for three turns."
   },
   "magicRoom": {
-    name: "Magic Room (N)",
+    name: "Magic Room",
     effect: "The user creates a bizarre area in which Pokémon's held items lose their effects for five turns."
   },
   "smackDown": {
@@ -1920,7 +1920,7 @@ export const move = {
     effect: "The user strikes the target with a fierce blow. This attack always results in a critical hit."
   },
   "flameBurst": {
-    name: "Flame Burst (P)",
+    name: "Flame Burst",
     effect: "The user attacks the target with a bursting flame. The bursting flame damages Pokémon next to the target as well."
   },
   "sludgeWave": {
@@ -1936,7 +1936,7 @@ export const move = {
     effect: "The user slams into the target with its heavy body. The more the user outweighs the target, the greater the move's power."
   },
   "synchronoise": {
-    name: "Synchronoise (P)",
+    name: "Synchronoise",
     effect: "Using an odd shock wave, the user inflicts damage on any Pokémon of the same type in the area around it."
   },
   "electroBall": {
@@ -1944,7 +1944,7 @@ export const move = {
     effect: "The user hurls an electric orb at the target. The faster the user is than the target, the greater the move's power."
   },
   "soak": {
-    name: "Soak (N)",
+    name: "Soak",
     effect: "The user shoots a torrent of water at the target and changes the target's type to Water."
   },
   "flameCharge": {
@@ -1976,11 +1976,11 @@ export const move = {
     effect: "The user dances with an odd rhythm that compels the target to mimic it, making the target's Ability the same as the user's."
   },
   "afterYou": {
-    name: "After You (N)",
+    name: "After You",
     effect: "The user helps the target and makes it use its move right after the user."
   },
   "round": {
-    name: "Round (P)",
+    name: "Round",
     effect: "The user attacks the target with a song. Others can join in the Round to increase the power of the attack."
   },
   "echoedVoice": {
@@ -1992,7 +1992,7 @@ export const move = {
     effect: "Looking for an opening, the user strikes consistently. The target's stat changes don't affect this attack's damage."
   },
   "clearSmog": {
-    name: "Clear Smog (P)",
+    name: "Clear Smog",
     effect: "The user attacks the target by throwing a clump of special mud. All stat changes are returned to normal."
   },
   "storedPower": {
@@ -2000,11 +2000,11 @@ export const move = {
     effect: "The user attacks the target with stored power. The more the user's stats are raised, the greater the move's power."
   },
   "quickGuard": {
-    name: "Quick Guard (N)",
+    name: "Quick Guard",
     effect: "The user protects itself and its allies from priority moves."
   },
   "allySwitch": {
-    name: "Ally Switch (N)",
+    name: "Ally Switch",
     effect: "The user teleports using a strange power and switches places with one of its allies."
   },
   "scald": {
@@ -2036,15 +2036,15 @@ export const move = {
     effect: "The target is thrown, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon."
   },
   "incinerate": {
-    name: "Incinerate (P)",
+    name: "Incinerate",
     effect: "The user attacks opposing Pokémon with fire. If a Pokémon is holding a certain item, such as a Berry, the item becomes burned up and unusable."
   },
   "quash": {
-    name: "Quash (N)",
+    name: "Quash",
     effect: "The user suppresses the target and makes its move go last."
   },
   "acrobatics": {
-    name: "Acrobatics (P)",
+    name: "Acrobatics",
     effect: "The user nimbly strikes the target. If the user is not holding an item, this attack inflicts massive damage."
   },
   "reflectType": {
@@ -2052,7 +2052,7 @@ export const move = {
     effect: "The user reflects the target's type, making the user the same type as the target."
   },
   "retaliate": {
-    name: "Retaliate (P)",
+    name: "Retaliate",
     effect: "The user gets revenge for a fainted ally. If an ally fainted in the previous turn, this move's power is increased."
   },
   "finalGambit": {
@@ -2060,7 +2060,7 @@ export const move = {
     effect: "The user risks everything to attack its target. The user faints but does damage equal to its HP."
   },
   "bestow": {
-    name: "Bestow (N)",
+    name: "Bestow",
     effect: "The user passes its held item to the target when the target isn't holding an item."
   },
   "inferno": {
@@ -2068,15 +2068,15 @@ export const move = {
     effect: "The user attacks by engulfing the target in an intense fire. This leaves the target with a burn."
   },
   "waterPledge": {
-    name: "Water Pledge (P)",
+    name: "Water Pledge",
     effect: "A column of water hits the target. When used with its fire equivalent, its power increases and a rainbow appears."
   },
   "firePledge": {
-    name: "Fire Pledge (P)",
+    name: "Fire Pledge",
     effect: "A column of fire hits the target. When used with its grass equivalent, its power increases and a vast sea of fire appears."
   },
   "grassPledge": {
-    name: "Grass Pledge (P)",
+    name: "Grass Pledge",
     effect: "A column of grass hits the target. When used with its water equivalent, its power increases and a vast swamp appears."
   },
   "voltSwitch": {
@@ -2180,7 +2180,7 @@ export const move = {
     effect: "The user torches everything around it in an inferno of scarlet flames. This may also leave those it hits with a burn."
   },
   "technoBlast": {
-    name: "Techno Blast (P)",
+    name: "Techno Blast",
     effect: "The user fires a beam of light at its target. The move's type changes depending on the Drive the user holds."
   },
   "relicSong": {
@@ -2228,27 +2228,27 @@ export const move = {
     effect: "With a hot flame on its forehead, the user hurls itself at its target. This lowers the user's Defense, Sp. Def, and Speed stats."
   },
   "fusionFlare": {
-    name: "Fusion Flare (P)",
+    name: "Fusion Flare",
     effect: "The user brings down a giant flame. This move's power is increased when influenced by an enormous lightning bolt."
   },
   "fusionBolt": {
-    name: "Fusion Bolt (P)",
+    name: "Fusion Bolt",
     effect: "The user throws down a giant lightning bolt. This move's power is increased when influenced by an enormous flame."
   },
   "flyingPress": {
-    name: "Flying Press (P)",
+    name: "Flying Press",
     effect: "The user dives down onto the target from the sky. This move is Fighting and Flying type simultaneously."
   },
   "matBlock": {
-    name: "Mat Block (N)",
+    name: "Mat Block",
     effect: "Using a pulled-up mat as a shield, the user protects itself and its allies from damaging moves. This does not stop status moves."
   },
   "belch": {
-    name: "Belch (P)",
+    name: "Belch",
     effect: "The user lets out a damaging belch at the target. The user must eat a held Berry to use this move."
   },
   "rototiller": {
-    name: "Rototiller (N)",
+    name: "Rototiller",
     effect: "Tilling the soil, the user makes it easier for plants to grow. This raises the Attack and Sp. Atk stats of Grass-type Pokémon."
   },
   "stickyWeb": {
@@ -2256,7 +2256,7 @@ export const move = {
     effect: "The user weaves a sticky net around the opposing team, which lowers their Speed stats upon switching into battle."
   },
   "fellStinger": {
-    name: "Fell Stinger (P)",
+    name: "Fell Stinger",
     effect: "When the user knocks out a target with this move, the user's Attack stat rises drastically."
   },
   "phantomForce": {
@@ -2264,7 +2264,7 @@ export const move = {
     effect: "The user vanishes somewhere, then strikes the target on the next turn. This move hits even if the target protects itself."
   },
   "trickOrTreat": {
-    name: "Trick-or-Treat (N)",
+    name: "Trick-or-Treat",
     effect: "The user takes the target trick-or-treating. This adds Ghost type to the target's type."
   },
   "nobleRoar": {
@@ -2272,7 +2272,7 @@ export const move = {
     effect: "Letting out a noble roar, the user intimidates the target and lowers its Attack and Sp. Atk stats."
   },
   "ionDeluge": {
-    name: "Ion Deluge (N)",
+    name: "Ion Deluge",
     effect: "The user disperses electrically charged particles, which changes Normal-type moves to Electric-type moves."
   },
   "parabolicCharge": {
@@ -2280,7 +2280,7 @@ export const move = {
     effect: "The user attacks everything around it. The user's HP is restored by half the damage taken by those hit."
   },
   "forestsCurse": {
-    name: "Forest's Curse (N)",
+    name: "Forest's Curse",
     effect: "The user puts a forest curse on the target. The target is now Grass type as well."
   },
   "petalBlizzard": {
@@ -2308,11 +2308,11 @@ export const move = {
     effect: "The user steals the target's HP with a kiss. The user's HP is restored by over half of the damage taken by the target."
   },
   "craftyShield": {
-    name: "Crafty Shield (N)",
+    name: "Crafty Shield",
     effect: "The user protects itself and its allies from status moves with a mysterious power. This does not stop moves that do damage."
   },
   "flowerShield": {
-    name: "Flower Shield (N)",
+    name: "Flower Shield",
     effect: "The user raises the Defense stats of all Grass-type Pokémon in battle with a mysterious power."
   },
   "grassyTerrain": {
@@ -2324,7 +2324,7 @@ export const move = {
     effect: "This protects Pokémon on the ground from status conditions and halves damage from Dragon-type moves for five turns."
   },
   "electrify": {
-    name: "Electrify (N)",
+    name: "Electrify",
     effect: "If the target is electrified before it uses a move during that turn, the target's move becomes Electric type."
   },
   "playRough": {
@@ -2344,7 +2344,7 @@ export const move = {
     effect: "The user attacks everything around it with the destructive power of a terrible, explosive sound."
   },
   "fairyLock": {
-    name: "Fairy Lock (N)",
+    name: "Fairy Lock",
     effect: "By locking down the battlefield, the user keeps all Pokémon from fleeing during the next turn."
   },
   "kingsShield": {
@@ -2396,7 +2396,7 @@ export const move = {
     effect: "Opposing Pokémon are drenched in an odd poisonous liquid. This lowers the Attack, Sp. Atk, and Speed stats of a poisoned target."
   },
   "powder": {
-    name: "Powder (N)",
+    name: "Powder",
     effect: "The user covers the target in a combustible powder. If the target uses a Fire-type move, the powder explodes and damages the target."
   },
   "geomancy": {
@@ -2408,7 +2408,7 @@ export const move = {
     effect: "The user manipulates magnetic fields, which raises the Defense and Sp. Def stats of ally Pokémon with the Plus or Minus Ability."
   },
   "happyHour": {
-    name: "Happy Hour (N)",
+    name: "Happy Hour",
     effect: "Using Happy Hour doubles the amount of prize money received after battle."
   },
   "electricTerrain": {
@@ -2440,7 +2440,7 @@ export const move = {
     effect: "The user holds back when it attacks, and the target is left with at least 1 HP."
   },
   "infestation": {
-    name: "Infestation (P)",
+    name: "Infestation",
     effect: "The target is infested and attacked for four to five turns. The target can't flee during this time."
   },
   "powerUpPunch": {
@@ -2484,59 +2484,59 @@ export const move = {
     effect: "Using its many arms, the user unleashes a barrage of attacks that ignore the effects of moves like Protect and Detect. But the user's Defense stat falls."
   },
   "breakneckBlitzPhysical": {
-    name: "Breakneck Blitz (N)",
+    name: "Breakneck Blitz",
     effect: "The user builds up its momentum using its Z-Power and crashes into the target at full speed. The power varies, depending on the original move."
   },
   "breakneckBlitzSpecial": {
-    name: "Breakneck Blitz (N)",
+    name: "Breakneck Blitz",
     effect: "Dummy Data"
   },
   "allOutPummelingPhysical": {
-    name: "All-Out Pummeling (N)",
+    name: "All-Out Pummeling",
     effect: "The user rams an energy orb created by its Z-Power into the target with full force. The power varies, depending on the original move."
   },
   "allOutPummelingSpecial": {
-    name: "All-Out Pummeling (N)",
+    name: "All-Out Pummeling",
     effect: "Dummy Data"
   },
   "supersonicSkystrikePhysical": {
-    name: "Supersonic Skystrike (N)",
+    name: "Supersonic Skystrike",
     effect: "The user soars up with its Z-Power and plummets toward the target at full speed. The power varies, depending on the original move."
   },
   "supersonicSkystrikeSpecial": {
-    name: "Supersonic Skystrike (N)",
+    name: "Supersonic Skystrike",
     effect: "Dummy Data"
   },
   "acidDownpourPhysical": {
-    name: "Acid Downpour (N)",
+    name: "Acid Downpour",
     effect: "The user creates a poisonous swamp using its Z-Power and sinks the target into it at full force. The power varies, depending on the original move."
   },
   "acidDownpourSpecial": {
-    name: "Acid Downpour (N)",
+    name: "Acid Downpour",
     effect: "Dummy Data"
   },
   "tectonicRagePhysical": {
-    name: "Tectonic Rage (N)",
+    name: "Tectonic Rage",
     effect: "The user burrows deep into the ground and slams into the target with the full force of its Z-Power. The power varies, depending on the original move."
   },
   "tectonicRageSpecial": {
-    name: "Tectonic Rage (N)",
+    name: "Tectonic Rage",
     effect: "Dummy Data"
   },
   "continentalCrushPhysical": {
-    name: "Continental Crush (N)",
+    name: "Continental Crush",
     effect: "The user summons a huge rock mountain using its Z-Power and drops it onto the target with full force. The power varies, depending on the original move."
   },
   "continentalCrushSpecial": {
-    name: "Continental Crush (N)",
+    name: "Continental Crush",
     effect: "Dummy Data"
   },
   "savageSpinOutPhysical": {
-    name: "Savage Spin-Out (N)",
+    name: "Savage Spin-Out",
     effect: "The user binds the target with full force with threads of silk that the user spits using its Z-Power. The power varies, depending on the original move."
   },
   "savageSpinOutSpecial": {
-    name: "Savage Spin-Out (N)",
+    name: "Savage Spin-Out",
     effect: "Dummy Data"
   },
   "neverEndingNightmarePhysical": {
@@ -2544,91 +2544,91 @@ export const move = {
     effect: "Dummy Data"
   },
   "neverEndingNightmareSpecial": {
-    name: "Never-Ending Nightmare (N)",
+    name: "Never-Ending Nightmare",
     effect: "Dummy Data"
   },
   "corkscrewCrashPhysical": {
-    name: "Corkscrew Crash (N)",
+    name: "Corkscrew Crash",
     effect: "The user spins very fast and rams into the target with the full force of its Z-Power. The power varies, depending on the original move."
   },
   "corkscrewCrashSpecial": {
-    name: "Corkscrew Crash (N)",
+    name: "Corkscrew Crash",
     effect: "Dummy Data"
   },
   "infernoOverdrivePhysical": {
-    name: "Inferno Overdrive (N)",
+    name: "Inferno Overdrive",
     effect: "The user breathes a stream of intense fire toward the target with the full force of its Z-Power. The power varies depending on the original move."
   },
   "infernoOverdriveSpecial": {
-    name: "Inferno Overdrive (N)",
+    name: "Inferno Overdrive",
     effect: "Dummy Data"
   },
   "hydroVortexPhysical": {
-    name: "Hydro Vortex (N)",
+    name: "Hydro Vortex",
     effect: "The user creates a huge whirling current using its Z-Power to swallow the target with full force. The power varies, depending on the original move."
   },
   "hydroVortexSpecial": {
-    name: "Hydro Vortex (N)",
+    name: "Hydro Vortex",
     effect: "Dummy Data"
   },
   "bloomDoomPhysical": {
-    name: "Bloom Doom (N)",
+    name: "Bloom Doom",
     effect: "The user collects energy from plants using its Z-Power and attacks the target with full force. The power varies, depending on the original move."
   },
   "bloomDoomSpecial": {
-    name: "Bloom Doom (N)",
+    name: "Bloom Doom",
     effect: "Dummy Data"
   },
   "gigavoltHavocPhysical": {
-    name: "Gigavolt Havoc (N)",
+    name: "Gigavolt Havoc",
     effect: "The user hits the target with a powerful electric current collected by its Z-Power. The power varies, depending on the original move."
   },
   "gigavoltHavocSpecial": {
-    name: "Gigavolt Havoc (N)",
+    name: "Gigavolt Havoc",
     effect: "Dummy Data"
   },
   "shatteredPsychePhysical": {
-    name: "Shattered Psyche (N)",
+    name: "Shattered Psyche",
     effect: "The user controls the target with its Z-Power and hurts the target with full force. The power varies, depending on the original move."
   },
   "shatteredPsycheSpecial": {
-    name: "Shattered Psyche (N)",
+    name: "Shattered Psyche",
     effect: "Dummy Data"
   },
   "subzeroSlammerPhysical": {
-    name: "Subzero Slammer (N)",
+    name: "Subzero Slammer",
     effect: "The user dramatically drops the temperature using its Z-Power and freezes the target with full force. The power varies, depending on the original move."
   },
   "subzeroSlammerSpecial": {
-    name: "Subzero Slammer (N)",
+    name: "Subzero Slammer",
     effect: "Dummy Data"
   },
   "devastatingDrakePhysical": {
-    name: "Devastating Drake (N)",
+    name: "Devastating Drake",
     effect: "The user materializes its aura using its Z-Power and attacks the target with full force. The power varies, depending on the original move."
   },
   "devastatingDrakeSpecial": {
-    name: "Devastating Drake (N)",
+    name: "Devastating Drake",
     effect: "Dummy Data"
   },
   "blackHoleEclipsePhysical": {
-    name: "Black Hole Eclipse (N)",
+    name: "Black Hole Eclipse",
     effect: "The user gathers dark energy using its Z-Power and sucks the target into it. The power varies, depending on the original move."
   },
   "blackHoleEclipseSpecial": {
-    name: "Black Hole Eclipse (N)",
+    name: "Black Hole Eclipse",
     effect: "Dummy Data"
   },
   "twinkleTacklePhysical": {
-    name: "Twinkle Tackle (N)",
+    name: "Twinkle Tackle",
     effect: "The user creates a very charming space using its Z-Power and totally toys with the target. The power varies, depending on the original move."
   },
   "twinkleTackleSpecial": {
-    name: "Twinkle Tackle (N)",
+    name: "Twinkle Tackle",
     effect: "Dummy Data"
   },
   "catastropika": {
-    name: "Catastropika (N)",
+    name: "Catastropika",
     effect: "The user, Pikachu, surrounds itself with the maximum amount of electricity using its Z-Power and pounces on its target with full force."
   },
   "shoreUp": {
@@ -2644,7 +2644,7 @@ export const move = {
     effect: "In addition to protecting the user from attacks, this move also poisons any attacker that makes direct contact."
   },
   "spiritShackle": {
-    name: "Spirit Shackle (P)",
+    name: "Spirit Shackle",
     effect: "The user attacks while simultaneously stitching the target's shadow to the ground to prevent the target from escaping."
   },
   "darkestLariat": {
@@ -2660,7 +2660,7 @@ export const move = {
     effect: "The user swings and hits with its strong, heavy fist. It lowers the user's Speed, however."
   },
   "floralHealing": {
-    name: "Floral Healing (P)",
+    name: "Floral Healing",
     effect: "The user restores the target's HP by up to half of its max HP. It restores more HP when the terrain is grass."
   },
   "highHorsepower": {
@@ -2680,7 +2680,7 @@ export const move = {
     effect: "The user attacks by pelting the target with leaves."
   },
   "spotlight": {
-    name: "Spotlight (N)",
+    name: "Spotlight",
     effect: "The user shines a spotlight on the target so that only the target will be attacked during the turn."
   },
   "toxicThread": {
@@ -2696,11 +2696,11 @@ export const move = {
     effect: "The user engages its gears to raise the Attack and Sp. Atk stats of ally Pokémon with the Plus or Minus Ability."
   },
   "throatChop": {
-    name: "Throat Chop (P)",
+    name: "Throat Chop",
     effect: "The user attacks the target's throat, and the resultant suffering prevents the target from using moves that emit sound for two turns."
   },
   "pollenPuff": {
-    name: "Pollen Puff (P)",
+    name: "Pollen Puff",
     effect: "The user attacks the enemy with a pollen puff that explodes. If the target is an ally, it gives the ally a pollen puff that restores its HP instead."
   },
   "anchorShot": {
@@ -2724,11 +2724,11 @@ export const move = {
     effect: "The user boasts its strength and attacks the target. The more the user's stats are raised, the greater the move's power."
   },
   "burnUp": {
-    name: "Burn Up (P)",
+    name: "Burn Up",
     effect: "To inflict massive damage, the user burns itself out. After using this move, the user will no longer be Fire type."
   },
   "speedSwap": {
-    name: "Speed Swap (N)",
+    name: "Speed Swap",
     effect: "The user exchanges Speed stats with the target."
   },
   "smartStrike": {
@@ -2736,15 +2736,15 @@ export const move = {
     effect: "The user stabs the target with a sharp horn. This attack never misses."
   },
   "purify": {
-    name: "Purify (N)",
+    name: "Purify",
     effect: "The user heals the target's status condition. If the move succeeds, it also restores the user's own HP."
   },
   "revelationDance": {
-    name: "Revelation Dance (P)",
+    name: "Revelation Dance",
     effect: "The user attacks the target by dancing very hard. The user's type determines the type of this move."
   },
   "coreEnforcer": {
-    name: "Core Enforcer (N)",
+    name: "Core Enforcer",
     effect: "If the Pokémon the user has inflicted damage on have already used their moves, this move eliminates the effect of the target's Ability."
   },
   "tropKick": {
@@ -2752,11 +2752,11 @@ export const move = {
     effect: "The user lands an intense kick of tropical origins on the target. This also lowers the target's Attack stat."
   },
   "instruct": {
-    name: "Instruct (N)",
+    name: "Instruct",
     effect: "The user instructs the target to use the target's last move again."
   },
   "beakBlast": {
-    name: "Beak Blast (P)",
+    name: "Beak Blast",
     effect: "The user first heats up its beak, and then it attacks the target. Making direct contact with the Pokémon while it's heating up its beak results in a burn."
   },
   "clangingScales": {
@@ -2776,31 +2776,31 @@ export const move = {
     effect: "This move reduces damage from physical and special moves for five turns. This can be used only when it is snowing."
   },
   "sinisterArrowRaid": {
-    name: "Sinister Arrow Raid (P)",
+    name: "Sinister Arrow Raid",
     effect: "The user, Decidueye, creates countless arrows using its Z-Power and shoots the target with full force."
   },
   "maliciousMoonsault": {
-    name: "Malicious Moonsault (P)",
+    name: "Malicious Moonsault",
     effect: "The user, Incineroar, strengthens its body using its Z-Power and crashes into the target with full force."
   },
   "oceanicOperetta": {
-    name: "Oceanic Operetta (P)",
+    name: "Oceanic Operetta",
     effect: "The user, Primarina, summons a massive amount of  water using its Z-Power and attacks the target with  full force."
   },
   "guardianOfAlola": {
-    name: "Guardian of Alola (N)",
+    name: "Guardian of Alola",
     effect: "The user, the Land Spirit Pokémon, obtains Alola's energy using its Z-Power and attacks the target with full force. This reduces the target's HP greatly."
   },
   "soulStealing7StarStrike": {
-    name: "Soul-Stealing 7-Star Strike (N)",
+    name: "Soul-Stealing 7-Star Strike",
     effect: "After obtaining Z-Power, the user, Marshadow, punches and kicks the target consecutively with full force."
   },
   "stokedSparksurfer": {
-    name: "Stoked Sparksurfer (P)",
+    name: "Stoked Sparksurfer",
     effect: "After obtaining Z-Power, the user, Alolan Raichu, attacks the target with full force. This move leaves the target with paralysis."
   },
   "pulverizingPancake": {
-    name: "Pulverizing Pancake (P)",
+    name: "Pulverizing Pancake",
     effect: "Z-Power brings out the true capabilities of the user, Snorlax. The Pokémon moves its enormous body energetically and attacks the target with full force."
   },
   "extremeEvoboost": {
@@ -2812,7 +2812,7 @@ export const move = {
     effect: "After obtaining Z-Power, the user, Mew, attacks the target with full force. The terrain will be charged with psychic energy."
   },
   "shellTrap": {
-    name: "Shell Trap (P)",
+    name: "Shell Trap",
     effect: "The user sets a shell trap. If the user is hit by a physical move, the trap will explode and inflict damage on opposing Pokémon."
   },
   "fleurCannon": {
@@ -2824,7 +2824,7 @@ export const move = {
     effect: "The user bites the target with its psychic capabilities. This can also destroy Light Screen and Reflect."
   },
   "stompingTantrum": {
-    name: "Stomping Tantrum (P)",
+    name: "Stomping Tantrum",
     effect: "Driven by frustration, the user attacks the target. If the user's previous move has failed, the power of this move doubles."
   },
   "shadowBone": {
@@ -2844,15 +2844,15 @@ export const move = {
     effect: "The user shoots powerful lasers using the power of a prism. The user can't move on the next turn."
   },
   "spectralThief": {
-    name: "Spectral Thief (P)",
+    name: "Spectral Thief",
     effect: "The user hides in the target's shadow, steals the target's stat boosts, and then attacks."
   },
   "sunsteelStrike": {
-    name: "Sunsteel Strike (P)",
+    name: "Sunsteel Strike",
     effect: "The user slams into the target with the force of a meteor. This move can be used on the target regardless of its Abilities."
   },
   "moongeistBeam": {
-    name: "Moongeist Beam (P)",
+    name: "Moongeist Beam",
     effect: "The user emits a sinister ray to attack the target. This move can be used on the target regardless of its Abilities."
   },
   "tearfulLook": {
@@ -2868,11 +2868,11 @@ export const move = {
     effect: "The user hits the target with the force of nature. It halves the target's HP."
   },
   "multiAttack": {
-    name: "Multi-Attack (P)",
+    name: "Multi-Attack",
     effect: "Cloaking itself in high energy, the user slams into the target. The memory held determines the move's type."
   },
   "tenMillionVoltThunderbolt": {
-    name: "10,000,000 Volt Thunderbolt (P)",
+    name: "10,000,000 Volt Thunderbolt",
     effect: "The user, Pikachu wearing a cap, powers up a jolt of electricity using its Z-Power and unleashes it. Critical hits land more easily."
   },
   "mindBlown": {
@@ -2880,27 +2880,27 @@ export const move = {
     effect: "The user attacks everything around it by causing its own head to explode. This also damages the user."
   },
   "plasmaFists": {
-    name: "Plasma Fists (P)",
+    name: "Plasma Fists",
     effect: "The user attacks with electrically charged fists. This move changes Normal-type moves to Electric-type moves."
   },
   "photonGeyser": {
-    name: "Photon Geyser (P)",
+    name: "Photon Geyser",
     effect: "The user attacks a target with a pillar of light. This move inflicts Attack or Sp. Atk damage—whichever stat is higher for the user."
   },
   "lightThatBurnsTheSky": {
-    name: "Light That Burns the Sky (P)",
+    name: "Light That Burns the Sky",
     effect: "This attack inflicts Attack or Sp. Atk damage—whichever stat is higher for the user, Necrozma. This move ignores the target's Ability."
   },
   "searingSunrazeSmash": {
-    name: "Searing Sunraze Smash (P)",
+    name: "Searing Sunraze Smash",
     effect: "After obtaining Z-Power, the user, Solgaleo, attacks the target with full force. This move can ignore the effect of the target's Ability."
   },
   "menacingMoonrazeMaelstrom": {
-    name: "Menacing Moonraze Maelstrom (P)",
+    name: "Menacing Moonraze Maelstrom",
     effect: "After obtaining Z-Power, the user, Lunala, attacks the target with full force. This move can ignore the effect of the target's Ability."
   },
   "letsSnuggleForever": {
-    name: "Let's Snuggle Forever (P)",
+    name: "Let's Snuggle Forever",
     effect: "After obtaining Z-Power, the user, Mimikyu, punches the target with full force."
   },
   "splinteredStormshards": {
@@ -2908,7 +2908,7 @@ export const move = {
     effect: "After obtaining Z-Power, the user, Lycanroc, attacks the target with full force. This move negates the effect on the battlefield."
   },
   "clangorousSoulblaze": {
-    name: "Clangorous Soulblaze (P)",
+    name: "Clangorous Soulblaze",
     effect: "After obtaining Z-Power, the user, Kommo-o, attacks the opposing Pokémon with full force. This move boosts the user's stats."
   },
   "zippyZap": {
@@ -2952,11 +2952,11 @@ export const move = {
     effect: "The user grows a gigantic stalk that scatters seeds to attack the target. The seeds drain the target's HP every turn."
   },
   "freezyFrost": {
-    name: "Freezy Frost (P)",
+    name: "Freezy Frost",
     effect: "The user attacks with a crystal made of cold frozen haze. It eliminates every stat change among all the Pokémon engaged in battle."
   },
   "sparklySwirl": {
-    name: "Sparkly Swirl (P)",
+    name: "Sparkly Swirl",
     effect: "The user attacks the target by wrapping it with a whirlwind of an overpowering scent. This also heals all status conditions of the user's party."
   },
   "veeveeVolley": {
@@ -2976,7 +2976,7 @@ export const move = {
     effect: "The user unleashes a strong beam from its core. This move deals twice the damage if the target is over level 200."
   },
   "snipeShot": {
-    name: "Snipe Shot (P)",
+    name: "Snipe Shot",
     effect: "The user ignores the effects of opposing Pokémon's moves and Abilities that draw in moves, allowing this move to hit the chosen target."
   },
   "jawLock": {
@@ -2984,7 +2984,7 @@ export const move = {
     effect: "This move prevents the user and the target from switching out until either of them faints. The effect goes away if either of the Pokémon leaves the field."
   },
   "stuffCheeks": {
-    name: "Stuff Cheeks (N)",
+    name: "Stuff Cheeks",
     effect: "The user eats its held Berry, then sharply raises its Defense stat."
   },
   "noRetreat": {
@@ -2992,23 +2992,23 @@ export const move = {
     effect: "This move raises all the user's stats but prevents the user from switching out or fleeing."
   },
   "tarShot": {
-    name: "Tar Shot (P)",
+    name: "Tar Shot",
     effect: "The user pours sticky tar over the target, lowering the target's Speed stat. The target becomes weaker to Fire-type moves."
   },
   "magicPowder": {
-    name: "Magic Powder (N)",
+    name: "Magic Powder",
     effect: "The user scatters a cloud of magic powder that changes the target to Psychic type."
   },
   "dragonDarts": {
-    name: "Dragon Darts (P)",
+    name: "Dragon Darts",
     effect: "The user attacks twice using Dreepy. If there are two targets, this move hits each target once."
   },
   "teatime": {
-    name: "Teatime (N)",
+    name: "Teatime",
     effect: "The user has teatime with all the Pokémon in the battle. Each Pokémon eats its held Berry."
   },
   "octolock": {
-    name: "Octolock (P)",
+    name: "Octolock",
     effect: "The user locks the target in and prevents it from fleeing. This move also lowers the target's Defense and Sp. Def every turn."
   },
   "boltBeak": {
@@ -3020,79 +3020,79 @@ export const move = {
     effect: "The user rends the target with its hard gills. If the user attacks before the target, the power of this move is doubled."
   },
   "courtChange": {
-    name: "Court Change (N)",
+    name: "Court Change",
     effect: "With its mysterious power, the user swaps the effects on either side of the field."
   },
   "maxFlare": {
-    name: "Max Flare (N)",
+    name: "Max Flare",
     effect: "This is a Fire-type attack Dynamax Pokémon use. The user intensifies the sun for five turns."
   },
   "maxFlutterby": {
-    name: "Max Flutterby (N)",
+    name: "Max Flutterby",
     effect: "This is a Bug-type attack Dynamax Pokémon use. This lowers the target's Sp. Atk stat."
   },
   "maxLightning": {
-    name: "Max Lightning (N)",
+    name: "Max Lightning",
     effect: "This is an Electric-type attack Dynamax Pokémon use. The user turns the ground into Electric Terrain for five turns."
   },
   "maxStrike": {
-    name: "Max Strike (N)",
+    name: "Max Strike",
     effect: "This is a Normal-type attack Dynamax Pokémon use. This lowers the target's Speed stat."
   },
   "maxKnuckle": {
-    name: "Max Knuckle (N)",
+    name: "Max Knuckle",
     effect: "This is a Fighting-type attack Dynamax Pokémon use. This raises ally Pokémon's Attack stats."
   },
   "maxPhantasm": {
-    name: "Max Phantasm (N)",
+    name: "Max Phantasm",
     effect: "This is a Ghost-type attack Dynamax Pokémon use. This lowers the target's Defense stat."
   },
   "maxHailstorm": {
-    name: "Max Hailstorm (N)",
+    name: "Max Hailstorm",
     effect: "This is an Ice-type attack Dynamax Pokémon use. The user summons a hailstorm lasting five turns."
   },
   "maxOoze": {
-    name: "Max Ooze (N)",
+    name: "Max Ooze",
     effect: "This is a Poison-type attack Dynamax Pokémon use. This raises ally Pokémon's Sp. Atk stats."
   },
   "maxGeyser": {
-    name: "Max Geyser (N)",
+    name: "Max Geyser",
     effect: "This is a Water-type attack Dynamax Pokémon use. The user summons a heavy rain that falls for five turns."
   },
   "maxAirstream": {
-    name: "Max Airstream (N)",
+    name: "Max Airstream",
     effect: "This is a Flying-type attack Dynamax Pokémon use. This raises ally Pokémon's Speed stats."
   },
   "maxStarfall": {
-    name: "Max Starfall (N)",
+    name: "Max Starfall",
     effect: "This is a Fairy-type attack Dynamax Pokémon use. The user turns the ground into Misty Terrain for five turns."
   },
   "maxWyrmwind": {
-    name: "Max Wyrmwind (N)",
+    name: "Max Wyrmwind",
     effect: "This is a Dragon-type attack Dynamax Pokémon use. This lowers the target's Attack stat."
   },
   "maxMindstorm": {
-    name: "Max Mindstorm (N)",
+    name: "Max Mindstorm",
     effect: "This is a Psychic-type attack Dynamax Pokémon use. The user turns the ground into Psychic Terrain for five turns."
   },
   "maxRockfall": {
-    name: "Max Rockfall (N)",
+    name: "Max Rockfall",
     effect: "This is a Rock-type attack Dynamax Pokémon use. The user summons a sandstorm lasting five turns."
   },
   "maxQuake": {
-    name: "Max Quake (N)",
+    name: "Max Quake",
     effect: "This is a Ground-type attack Dynamax Pokémon use. This raises ally Pokémon's Sp. Def stats."
   },
   "maxDarkness": {
-    name: "Max Darkness (N)",
+    name: "Max Darkness",
     effect: "This is a Dark-type attack Dynamax Pokémon use. This lowers the target's Sp. Def stat."
   },
   "maxOvergrowth": {
-    name: "Max Overgrowth (N)",
+    name: "Max Overgrowth",
     effect: "This is a Grass-type attack Dynamax Pokémon use. The user turns the ground into Grassy Terrain for five turns."
   },
   "maxSteelspike": {
-    name: "Max Steelspike (N)",
+    name: "Max Steelspike",
     effect: "This is a Steel-type attack Dynamax Pokémon use. This raises ally Pokémon's Defense stats."
   },
   "clangorousSoul": {
@@ -3112,7 +3112,7 @@ export const move = {
     effect: "The user plays its drum, controlling the drum's roots to attack the target. This also lowers the target's Speed stat."
   },
   "snapTrap": {
-    name: "Snap Trap (P)",
+    name: "Snap Trap",
     effect: "The user snares the target in a snap trap for four to five turns."
   },
   "pyroBall": {
@@ -3184,7 +3184,7 @@ export const move = {
     effect: "The user fires a beam of steel that it collected from its entire body. This also damages the user."
   },
   "expandingForce": {
-    name: "Expanding Force (P)",
+    name: "Expanding Force",
     effect: "The user attacks the target with its psychic power. This move's power goes up and damages all opposing Pokémon on Psychic Terrain."
   },
   "steelRoller": {
@@ -3192,7 +3192,7 @@ export const move = {
     effect: "The user attacks while destroying the terrain. This move fails when the ground hasn't turned into a terrain."
   },
   "scaleShot": {
-    name: "Scale Shot (P)",
+    name: "Scale Shot",
     effect: "The user attacks by shooting scales two to five times in a row. This move boosts the user's Speed stat but lowers its Defense stat."
   },
   "meteorBeam": {
@@ -3200,15 +3200,15 @@ export const move = {
     effect: "In this two-turn attack, the user gathers space power and boosts its Sp. Atk stat, then attacks the target on the next turn."
   },
   "shellSideArm": {
-    name: "Shell Side Arm (P)",
+    name: "Shell Side Arm",
     effect: "This move inflicts physical or special damage, whichever will be more effective. This may also poison the target."
   },
   "mistyExplosion": {
-    name: "Misty Explosion (P)",
+    name: "Misty Explosion",
     effect: "The user attacks everything around it and faints upon using this move. This move's power is increased on Misty Terrain."
   },
   "grassyGlide": {
-    name: "Grassy Glide (P)",
+    name: "Grassy Glide",
     effect: "Gliding on the ground, the user attacks the target. This move always goes first on Grassy Terrain."
   },
   "risingVoltage": {
@@ -3216,7 +3216,7 @@ export const move = {
     effect: "The user attacks with electric voltage rising from the ground. This move's power doubles when the target is on Electric Terrain."
   },
   "terrainPulse": {
-    name: "Terrain Pulse (P)",
+    name: "Terrain Pulse",
     effect: "The user utilizes the power of the terrain to attack. This move's type and power changes depending on the terrain when it's used."
   },
   "skitterSmack": {
@@ -3224,19 +3224,19 @@ export const move = {
     effect: "The user skitters behind the target to attack. This also lowers the target's Sp. Atk stat."
   },
   "burningJealousy": {
-    name: "Burning Jealousy (P)",
+    name: "Burning Jealousy",
     effect: "The user attacks with energy from jealousy. This leaves all opposing Pokémon that have had their stats boosted during the turn with a burn."
   },
   "lashOut": {
-    name: "Lash Out (P)",
+    name: "Lash Out",
     effect: "The user lashes out to vent its frustration toward the target. If the user's stats were lowered during this turn, the power of this move is doubled."
   },
   "poltergeist": {
-    name: "Poltergeist (P)",
+    name: "Poltergeist",
     effect: "The user attacks the target by controlling the target's item. The move fails if the target doesn't have an item."
   },
   "corrosiveGas": {
-    name: "Corrosive Gas (N)",
+    name: "Corrosive Gas",
     effect: "The user surrounds everything around it with highly acidic gas and melts away items they hold."
   },
   "coaching": {
@@ -3248,7 +3248,7 @@ export const move = {
     effect: "After making its attack, the user rushes back to switch places with a party Pokémon in waiting."
   },
   "tripleAxel": {
-    name: "Triple Axel (P)",
+    name: "Triple Axel",
     effect: "A consecutive three-kick attack that becomes more powerful with each successful hit."
   },
   "dualWingbeat": {
@@ -3260,7 +3260,7 @@ export const move = {
     effect: "The user throws scorching sand at the target to attack. This may also leave the target with a burn."
   },
   "jungleHealing": {
-    name: "Jungle Healing (P)",
+    name: "Jungle Healing",
     effect: "The user becomes one with the jungle, restoring HP and healing any status conditions of itself and its ally Pokémon in battle."
   },
   "wickedBlow": {
@@ -3300,7 +3300,7 @@ export const move = {
     effect: "The user attacks by sending a frightful amount of small ghosts at opposing Pokémon."
   },
   "eerieSpell": {
-    name: "Eerie Spell (P)",
+    name: "Eerie Spell",
     effect: "The user attacks with its tremendous psychic power. This also removes 3 PP from the target's last move."
   },
   "direClaw": {
@@ -3312,7 +3312,7 @@ export const move = {
     effect: "Cloaking itself in psychic energy, the user slams into the target. This also boosts the user's Defense stat."
   },
   "powerShift": {
-    name: "Power Shift (N)",
+    name: "Power Shift",
     effect: "The user swaps its Attack and Defense stats."
   },
   "stoneAxe": {
@@ -3368,7 +3368,7 @@ export const move = {
     effect: "The user makes its skin as hard as an iron shield, sharply boosting its Defense stat."
   },
   "tripleArrows": {
-    name: "Triple Arrows (P)",
+    name: "Triple Arrows",
     effect: "The user kicks, then fires three arrows. This move has a heightened chance of landing a critical hit and may also lower the target's Defense stat or make it flinch."
   },
   "infernalParade": {
@@ -3392,15 +3392,15 @@ export const move = {
     effect: "The user attacks by wrapping opposing Pokémon in fierce winds and searingly hot sand. This may also leave them with a burn."
   },
   "lunarBlessing": {
-    name: "Lunar Blessing (P)",
+    name: "Lunar Blessing",
     effect: "The user receives a blessing from the crescent moon, restoring HP and curing status conditions for itself and its ally Pokémon currently in the battle."
   },
   "takeHeart": {
-    name: "Take Heart (P)",
+    name: "Take Heart",
     effect: "The user lifts its spirits, curing its own status conditions and boosting its Sp. Atk and Sp. Def stats."
   },
   "teraBlast": {
-    name: "Tera Blast (P)",
+    name: "Tera Blast",
     effect: "If the user has Terastallized, it unleashes energy of its Tera Type. This move inflicts damage using the Attack or Sp. Atk stat-whichever is higher for the user."
   },
   "silkTrap": {
@@ -3420,7 +3420,7 @@ export const move = {
     effect: "The user attacks by unleashing a peculiar light that even affects the mind. This also harshly lowers the target's Sp. Def stat."
   },
   "orderUp": {
-    name: "Order Up (P)",
+    name: "Order Up",
     effect: "The user attacks with elegant poise. If the user has a Tatsugiri in its mouth, this move boosts one of the user's stats based on the Tatsugiri's form."
   },
   "jetPunch": {
@@ -3436,7 +3436,7 @@ export const move = {
     effect: "The user spins furiously by straining its legs, inflicting damage on the target. This also harshly lowers the user's Speed stat."
   },
   "populationBomb": {
-    name: "Population Bomb (P)",
+    name: "Population Bomb",
     effect: "The user's fellows gather in droves to perform a combo attack that hits the target one to ten times in a row."
   },
   "iceSpinner": {
@@ -3444,11 +3444,11 @@ export const move = {
     effect: "The user covers its feet in thin ice and twirls around, slamming into the target. This move's spinning motion also destroys the terrain."
   },
   "glaiveRush": {
-    name: "Glaive Rush (P)",
+    name: "Glaive Rush",
     effect: "The user throws its entire body into a reckless charge. After this move is used, attacks on the user cannot miss and will inflict double damage until the user's next turn."
   },
   "revivalBlessing": {
-    name: "Revival Blessing (N)",
+    name: "Revival Blessing",
     effect: "The user bestows a loving blessing, reviving a party Pokémon that has fainted and restoring half that Pokémon's max HP."
   },
   "saltCure": {
@@ -3500,7 +3500,7 @@ export const move = {
     effect: "The user rends the target with an ethereal blade. This move's power is boosted by 50 percent if the user is on Electric Terrain."
   },
   "hydroSteam": {
-    name: "Hydro Steam (P)",
+    name: "Hydro Steam",
     effect: "The user blasts the target with boiling-hot water. This move's power is not lowered in harsh sunlight but rather boosted by 50 percent."
   },
   "ruination": {
@@ -3516,7 +3516,7 @@ export const move = {
     effect: "The user races forward at ultrafast speeds, piercing its target with futuristic electricity. This move's power is boosted more than usual if it's a supereffective hit."
   },
   "shedTail": {
-    name: "Shed Tail (N)",
+    name: "Shed Tail",
     effect: "The user creates a substitute for itself using its own HP before switching places with a party Pokémon in waiting."
   },
   "chillyReception": {
@@ -3524,7 +3524,7 @@ export const move = {
     effect: "The user tells a chillingly bad joke before switching places with a party Pokémon in waiting. This summons a snowstorm lasting five turns."
   },
   "tidyUp": {
-    name: "Tidy Up (P)",
+    name: "Tidy Up",
     effect: "The user tidies up and removes the effects of Spikes, Stealth Rock, Sticky Web, Toxic Spikes, and Substitute. This also boosts the user's Attack and Speed stats."
   },
   "snowscape": {
@@ -3564,11 +3564,11 @@ export const move = {
     effect: "The user focuses its bitter feelings toward the world of the living into a slashing attack. The user's HP is restored by up to half the damage taken by the target."
   },
   "doubleShock": {
-    name: "Double Shock (P)",
+    name: "Double Shock",
     effect: "The user discharges all the electricity from its body to perform a high-damage attack. After using this move, the user will no longer be Electric type."
   },
   "gigatonHammer": {
-    name: "Gigaton Hammer (P)",
+    name: "Gigaton Hammer",
     effect: "The user swings its whole body around to attack with its huge hammer. This move can't be used twice in a row."
   },
   "comeuppance": {
@@ -3600,7 +3600,7 @@ export const move = {
     effect: "The user revs their fae-like engine into the target. This may also confuse the target."
   },
   "bloodMoon": {
-    name: "Blood Moon (P)",
+    name: "Blood Moon",
     effect: "The user unleashes the full brunt of its spirit from a full moon that shines as red as blood. This move can't be used twice in a row."
   },
   "matchaGotcha": {
@@ -3608,7 +3608,7 @@ export const move = {
     effect: "The user fires a blast of tea that it mixed. The user's HP is restored by up to half the damage taken by the target. This may also leave the target with a burn."
   },
   "syrupBomb": {
-    name: "Syrup Bomb (P)",
+    name: "Syrup Bomb",
     effect: "The user sets off an explosion of sticky candy syrup, which coats the target and causes the target's Speed stat to drop each turn for three turns."
   },
   "ivyCudgel": {
@@ -3620,7 +3620,7 @@ export const move = {
     effect: "The user gathers electricity on the first turn, boosting its Sp. Atk stat, then fires a high-voltage shot on the next turn. The shot will be fired immediately in rain."
   },
   "teraStarstorm": {
-    name: "Tera Starstorm (P)",
+    name: "Tera Starstorm",
     effect: "With the power of its crystals, the user bombards and eliminates the target. When used by Terapagos in its Stellar Form, this move damages all opposing Pokémon."
   },
   "fickleBeam": {
@@ -3648,15 +3648,15 @@ export const move = {
     effect: "The target is crushed with an arm, a claw, or the like to inflict damage. The more HP the target has left, the greater the move's power."
   },
   "dragonCheer": {
-    name: "Dragon Cheer (P)",
+    name: "Dragon Cheer",
     effect: "The user raises its allies' morale with a draconic cry so that their future attacks have a heightened chance of landing critical hits. This rouses Dragon types more."
   },
   "alluringVoice": {
-    name: "Alluring Voice (P)",
+    name: "Alluring Voice",
     effect: "The user attacks the target using its angelic voice. This also confuses the target if its stats have been boosted during the turn."
   },
   "temperFlare": {
-    name: "Temper Flare (P)",
+    name: "Temper Flare",
     effect: "Spurred by desperation, the user attacks the target. This move's power is doubled if the user's previous move failed."
   },
   "supercellSlam": {
@@ -3664,11 +3664,11 @@ export const move = {
     effect: "The user electrifies its body and drops onto the target to inflict damage. If this move misses, the user takes damage instead."
   },
   "psychicNoise": {
-    name: "Psychic Noise (P)",
+    name: "Psychic Noise",
     effect: "The user attacks the target with unpleasant sound waves. For two turns, the target is prevented from recovering HP through moves, Abilities, or held items."
   },
   "upperHand": {
-    name: "Upper Hand (P)",
+    name: "Upper Hand",
     effect: "The user reacts to the target's movement and strikes with the heel of its palm, making the target flinch. This move fails if the target is not readying a priority move."
   },
   "malignantChain": {
