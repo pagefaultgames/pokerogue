@@ -1807,6 +1807,30 @@ export class StatChangeCountPowerAttr extends VariablePowerAttr {
   }
 }
 
+export class PresentPowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+
+    const powerSeed = Utils.randSeedInt(100);
+    if (powerSeed <= 40) {
+      (args[0] as Utils.NumberHolder).value = 40;
+    }
+    else if (40 < powerSeed && powerSeed <= 70) {
+      (args[0] as Utils.NumberHolder).value = 80;
+    }
+    else if (70 < powerSeed && powerSeed <= 80) {
+      (args[0] as Utils.NumberHolder).value = 120;
+    }
+    else if (80 < powerSeed && powerSeed <= 100) {
+      target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
+      Math.max(Math.floor(target.getMaxHp() / 4), 1), getPokemonMessage(target, ' regained\nhealth!'), true));
+
+      console.log("MAX: ", target.getMaxHp(), " HEAL: ", target.getMaxHp() / 4);
+    }
+
+    return true;
+  }
+}
+
 export class VariableAtkAttr extends MoveAttr {
   constructor() {
     super();
@@ -3973,8 +3997,8 @@ export function initMoves() {
       .target(MoveTarget.USER_AND_ALLIES),
     new AttackMove(Moves.RETURN, "Return", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, "This full-power attack grows more powerful the more the user likes its Trainer.", -1, 0, 2)
       .attr(FriendshipPowerAttr),
-    new AttackMove(Moves.PRESENT, "Present (N)", Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, "The user attacks by giving the target a gift with a hidden trap. It restores HP sometimes, however.", -1, 0, 2)
-      .makesContact(false),
+    new AttackMove(Moves.PRESENT, "Present", Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, "The user attacks by giving the target a gift with a hidden trap. It restores HP sometimes, however.", -1, 0, 2)
+      .attr(PresentPowerAttr),
     new AttackMove(Moves.FRUSTRATION, "Frustration", Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, "This full-power attack grows more powerful the less the user likes its Trainer.", -1, 0, 2)
       .attr(FriendshipPowerAttr, true),
     new StatusMove(Moves.SAFEGUARD, "Safeguard (N)", Type.NORMAL, -1, 25, "The user creates a protective field that prevents status conditions for five turns.", -1, 0, 2)
