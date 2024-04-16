@@ -1246,7 +1246,6 @@ export default class BattleScene extends SceneBase {
 				case Mode.SAVE_SLOT:
 				case Mode.PARTY:
 				case Mode.SUMMARY:
-				case Mode.BIOME_SELECT:
 				case Mode.STARTER_SELECT:
 				case Mode.CONFIRM:
 				case Mode.OPTION_SELECT:

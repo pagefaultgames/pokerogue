@@ -16,7 +16,7 @@ import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import { EvolutionPhase } from "./evolution-phase";
 import { Phase } from "./phase";
 import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
-import { biomeLinks } from "./data/biomes";
+import { biomeLinks, getBiomeName } from "./data/biomes";
 import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
@@ -1034,9 +1034,26 @@ export class SelectBiomePhase extends BattlePhase {
           .map(b => !Array.isArray(b) ? b : b[0]);
       }, this.scene.currentBattle.waveIndex);
       if (biomes.length > 1 && this.scene.findModifier(m => m instanceof MapModifier)) {
-        this.scene.ui.setMode(Mode.BIOME_SELECT, currentBiome, (biomeIndex: integer) => {
-          this.scene.ui.setMode(Mode.MESSAGE);
-          setNextBiome(biomes[biomeIndex]);
+        let biomeChoices: Biome[];
+        this.scene.executeWithSeedOffset(() => {
+          biomeChoices = (!Array.isArray(biomeLinks[currentBiome])
+            ? [ biomeLinks[currentBiome] as Biome ]
+            : biomeLinks[currentBiome] as (Biome | [Biome, integer])[])
+            .filter((b, i) => !Array.isArray(b) || !Utils.randSeedInt(b[1]))
+            .map(b => Array.isArray(b) ? b[0] : b);
+        }, this.scene.currentBattle.waveIndex);
+        const biomeSelectItems = biomeChoices.map(b => {
+          return {
+            label: getBiomeName(b),
+            handler: () => {
+              this.scene.ui.setMode(Mode.MESSAGE);
+              setNextBiome(b);
+            }
+          };
+        });
+        this.scene.ui.setMode(Mode.OPTION_SELECT, {
+          options: biomeSelectItems,
+          delay: 1000
         });
       } else
         setNextBiome(biomes[Utils.randSeedInt(biomes.length)]);
