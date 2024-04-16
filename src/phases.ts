@@ -4162,10 +4162,15 @@ export class SelectModifierPhase extends BattlePhase {
       const applyModifier = (modifier: Modifier, playSound: boolean = false) => {
         const result = this.scene.addModifier(modifier, false, playSound);
         if (cost) {
-          this.scene.money -= cost;
-          this.scene.updateMoneyText();
-          this.scene.playSound('buy');
-          (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
+          result.then(success => {
+            if (success) {
+              this.scene.money -= cost;
+              this.scene.updateMoneyText();
+              this.scene.playSound('buy');
+              (this.scene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
+            } else
+              this.scene.ui.playError();
+          });
         } else {
           const doEnd = () => {
             this.scene.ui.clearText();
