@@ -2773,6 +2773,38 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 }
 
+export class RemoveTypeAttr extends MoveEffectAttr {
+
+  private removedType: Type;
+  private messageCallback: ((user: Pokemon) => void) | undefined;
+
+  constructor(removedType: Type, messageCallback?: (user: Pokemon) => void) {
+    super(true, MoveEffectTrigger.POST_APPLY);
+    this.removedType = removedType;
+    this.messageCallback = messageCallback;
+
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    if(user.isTerastallized && user.getTeraType() == this.removedType) // active tera types cannot be removed
+      return false;
+
+    const userTypes = user.getTypes(true)
+    const modifiedTypes = userTypes.filter(type => type !== this.removedType);
+    user.summonData.types = modifiedTypes;
+
+
+    if (this.messageCallback) {
+      this.messageCallback(user);
+    }
+
+    return true;
+  }
+}
+
 export class CopyTypeAttr extends MoveEffectAttr {
   constructor() {
     super(true);
@@ -5273,9 +5305,15 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, -1),
     new AttackMove(Moves.POWER_TRIP, Type.DARK, MoveCategory.PHYSICAL, 20, 100, 10, -1, 0, 7)
       .attr(StatChangeCountPowerAttr),
-    new AttackMove(Moves.BURN_UP, Type.FIRE, MoveCategory.SPECIAL, 130, 100, 5, -1, 0, 7)
+    new AttackMove(Moves.BURN_UP, "Burn Up", Type.FIRE, MoveCategory.SPECIAL, 130, 100, 5, "To inflict massive damage, the user burns itself out. After using this move, the user will no longer be Fire type.", -1, 0, 7)
+      .condition((user) => {
+        const userTypes = user.getTypes(true);
+        return userTypes.includes(Type.FIRE);
+      })
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
-      .partial(),
+      .attr(RemoveTypeAttr, Type.FIRE, (user) => {
+        user.scene.queueMessage(getPokemonMessage(user, ` burned itself out!`));
+      }),
     new StatusMove(Moves.SPEED_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 7)
       .unimplemented(),
     new AttackMove(Moves.SMART_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 70, -1, 10, -1, 0, 7),
@@ -5960,8 +5998,14 @@ export function initMoves() {
       .attr(HitHealAttr)
       .slicingMove()
       .triageMove(),
-    new AttackMove(Moves.DOUBLE_SHOCK, Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
-      .partial(),
+    new AttackMove(Moves.DOUBLE_SHOCK, "Double Shock", Type.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, "The user discharges all the electricity from its body to perform a high-damage attack. After using this move, the user will no longer be Electric type.", -1, 0, 9)
+    .condition((user) => {
+      const userTypes = user.getTypes(true);
+      return userTypes.includes(Type.ELECTRIC);
+    })
+    .attr(RemoveTypeAttr, Type.ELECTRIC, (user) => {
+      user.scene.queueMessage(getPokemonMessage(user, ` used up all its electricity!`));
+    }),
     new AttackMove(Moves.GIGATON_HAMMER, Type.STEEL, MoveCategory.PHYSICAL, 160, 100, 5, -1, 0, 9)
       .makesContact(false)
       .condition((user, target, move) => {
