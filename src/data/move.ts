@@ -1749,6 +1749,24 @@ export class TurnDamagedDoublePowerAttr extends VariablePowerAttr {
   }
 }
 
+export class NoHeldItemDoublePowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const heldItems = this.getUserHeldItems(user);
+
+    if (!heldItems.length) {
+      (args[0] as Utils.NumberHolder).value *= 2;
+      return true;
+    }
+
+    return false;
+  }
+
+  getUserHeldItems(user: Pokemon) {
+    return user.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
+      && (m as PokemonHeldItemModifier).pokemonId === user.id, user.isPlayer()) as PokemonHeldItemModifier[];
+  }
+}
+
 const magnitudeMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
   let message: string;
   user.scene.executeWithSeedOffset(() => {
@@ -4874,7 +4892,7 @@ export function initMoves() {
     new StatusMove(Moves.QUASH, Type.DARK, 100, 15, -1, 0, 5)
       .unimplemented(),
     new AttackMove(Moves.ACROBATICS, Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)
-      .partial(),
+      .attr(NoHeldItemDoublePowerAttr),
     new StatusMove(Moves.REFLECT_TYPE, Type.NORMAL, -1, 15, -1, 0, 5)
       .attr(CopyTypeAttr),
     new AttackMove(Moves.RETALIATE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 5, -1, 0, 5)
