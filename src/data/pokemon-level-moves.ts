@@ -203,6 +203,7 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.BEEDRILL]: [
     [ 0, Moves.TWINEEDLE ],
     [ 1, Moves.FURY_ATTACK ],
+    [ 11, Moves.FURY_CUTTER ],
     [ 14, Moves.RAGE ],
     [ 17, Moves.PURSUIT ],
     [ 20, Moves.FOCUS_ENERGY ],

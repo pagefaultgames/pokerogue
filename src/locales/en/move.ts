@@ -3408,6 +3408,138 @@ export const move: MoveTranslations = {
     name: "Take Heart",
     effect: "The user lifts its spirits, curing its own status conditions and boosting its Sp. Atk and Sp. Def stats."
   },
+  "gMaxWildfire": {
+    name: "G-Max Wildfire",
+    effect: "A Fire-type attack that Gigantamax Charizard use. This move continues to deal damage to opponents for four turns."
+  },
+  "gMaxBefuddle": {
+    name: "G-Max Befuddle",
+    effect: "A Bug-type attack that Gigantamax Butterfree use. This move inflicts the poisoned, paralyzed, or asleep status condition on opponents."
+  },
+  "gMaxVoltCrash": {
+    name: "G-Max Volt Crash",
+    effect: "An Electric-type attack that Gigantamax Pikachu use. This move paralyzes opponents."
+  },
+  "gMaxGoldRush": {
+    name: "G-Max Gold Rush",
+    effect: "A Normal-type attack that Gigantamax Meowth use. This move confuses opponents and also earns extra money."
+  },
+  "gMaxChiStrike": {
+    name: "G-Max Chi Strike",
+    effect: "A Fighting-type attack that Gigantamax Machamp use. This move raises the chance of critical hits."
+  },
+  "gMaxTerror": {
+    name: "G-Max Terror",
+    effect: "A Ghost-type attack that Gigantamax Gengar use. This Pokémon steps on the opposing Pokémon's shadow to prevent them from escaping."
+  },
+  "gMaxResonance": {
+    name: "G-Max Resonance",
+    effect: "An Ice-type attack that Gigantamax Lapras use. This move reduces the damage received for five turns."
+  },
+  "gMaxCuddle": {
+    name: "G-Max Cuddle",
+    effect: "A Normal-type attack that Gigantamax Eevee use. This move infatuates opponents."
+  },
+  "gMaxReplenish": {
+    name: "G-Max Replenish",
+    effect: "A Normal-type attack that Gigantamax Snorlax use. This move restores Berries that have been eaten."
+  },
+  "gMaxMalodor": {
+    name: "G-Max Malodor",
+    effect: "A Poison-type attack that Gigantamax Garbodor use. This move poisons opponents."
+  },
+  "gMaxStonesurge": {
+    name: "G-Max Stonesurge",
+    effect: "A Water-type attack that Gigantamax Drednaw use. This move scatters sharp rocks around the field."
+  },
+  "gMaxWindRage": {
+    name: "G-Max Wind Rage",
+    effect: "A Flying-type attack that Gigantamax Corviknight use. This move removes the effects of moves like Reflect and Light Screen."
+  },
+  "gMaxStunShock": {
+    name: "G-Max Stun Shock",
+    effect: "An Electric-type attack that Gigantamax Toxtricity use. This move poisons or paralyzes opponents."
+  },
+  "gMaxFinale": {
+    name: "G-Max Finale",
+    effect: "A Fairy-type attack that Gigantamax Alcremie use. This move heals the HP of allies."
+  },
+  "gMaxDepletion": {
+    name: "G-Max Depletion",
+    effect: "A Dragon-type attack that Gigantamax Duraludon use. Reduces the PP of the last move used."
+  },
+  "gMaxGravitas": {
+    name: "G-Max Gravitas",
+    effect: "A Psychic-type attack that Gigantamax Orbeetle use. This move changes gravity for five turns."
+  },
+  "gMaxVolcalith": {
+    name: "G-Max Volcalith",
+    effect: "A Rock-type attack that Gigantamax Coalossal use. This move continues to deal damage to opponents for four turns."
+  },
+  "gMaxSandblast": {
+    name: "G-Max Sandblast",
+    effect: "A Ground-type attack that Gigantamax Sandaconda use. Opponents are trapped in a raging sandstorm for four to five turns."
+  },
+  "gMaxSnooze": {
+    name: "G-Max Snooze",
+    effect: "A Dark-type attack that Gigantamax Grimmsnarl use. The user lets loose a huge yawn that lulls the targets into falling asleep on the next turn."
+  },
+  "gMaxTartness": {
+    name: "G-Max Tartness",
+    effect: "A Grass-type attack that Gigantamax Flapple use. This move reduces the opponents' evasiveness."
+  },
+  "gMaxSweetness": {
+    name: "G-Max Sweetness",
+    effect: "A Grass-type attack that Gigantamax Appletun use. This move heals the status conditions of allies."
+  },
+  "gMaxSmite": {
+    name: "G-Max Smite",
+    effect: "A Fairy-type attack that Gigantamax Hatterene use. This move confuses opponents."
+  },
+  "gMaxSteelsurge": {
+    name: "G-Max Steelsurge",
+    effect: "A Steel-type attack that Gigantamax Copperajah use. This move scatters sharp spikes around the field."
+  },
+  "gMaxMeltdown": {
+    name: "G-Max Meltdown",
+    effect: "A Steel-type attack that Gigantamax Melmetal use. This move makes opponents incapable of using the same move twice in a row."
+  },
+  "gMaxFoamBurst": {
+    name: "G-Max Foam Burst",
+    effect: "A Water-type attack that Gigantamax Kingler use. This move harshly lowers the Speed of opponents."
+  },
+  "gMaxCentiferno": {
+    name: "G-Max Centiferno",
+    effect: "A Fire-type attack that Gigantamax Centiskorch use. This move traps opponents in flames for four to five turns."
+  },
+  "gMaxVineLash": {
+    name: "G-Max Vine Lash",
+    effect: "A Grass-type attack that Gigantamax Venusaur use. This move continues to deal damage to opponents for four turns."
+  },
+  "gMaxCannonade": {
+    name: "G-Max Cannonade",
+    effect: "A Water-type attack that Gigantamax Blastoise use. This move continues to deal damage to opponents for four turns."
+  },
+  "gMaxDrumSolo": {
+    name: "G-Max Drum Solo",
+    effect: "A Grass-type attack that Gigantamax Rillaboom use. This move can be used on the target regardless of its Abilities."
+  },
+  "gMaxFireball": {
+    name: "G-Max Fireball",
+    effect: "A Fire-type attack that Gigantamax Cinderace use. This move can be used on the target regardless of its Abilities."
+  },
+  "gMaxHydrosnipe": {
+    name: "G-Max Hydrosnipe",
+    effect: "A Water-type attack that Gigantamax Inteleon use. This move can be used on the target regardless of its Abilities."
+  },
+  "gMaxOneBlow": {
+    name: "G-Max One Blow",
+    effect: "A Dark-type attack that Gigantamax Urshifu use. This single-strike move can ignore Max Guard."
+  },
+  "gMaxRapidFlow": {
+    name: "G-Max Rapid Flow",
+    effect: "A Water-type attack that Gigantamax Urshifu use. This rapid-strike move can ignore Max Guard."
+  },
   "teraBlast": {
     name: "Tera Blast",
     effect: "If the user has Terastallized, it unleashes energy of its Tera Type. This move inflicts damage using the Attack or Sp. Atk stat-whichever is higher for the user."

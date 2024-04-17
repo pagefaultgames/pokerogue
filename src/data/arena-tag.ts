@@ -175,7 +175,7 @@ class MudSportTag extends WeakenMoveTypeTag {
   }
 
   onRemove(arena: Arena): void {
-    arena.scene.queueMessage('The effects of MUD SPORT\nhave faded.');
+    arena.scene.queueMessage('The effects of Mud Sport\nhave faded.');
   }
 }
 
@@ -189,7 +189,7 @@ class WaterSportTag extends WeakenMoveTypeTag {
   }
 
   onRemove(arena: Arena): void {
-    arena.scene.queueMessage('The effects of WATER SPORT\nhave faded.');
+    arena.scene.queueMessage('The effects of Water Sport\nhave faded.');
   }
 }
 
