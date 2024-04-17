@@ -16,6 +16,7 @@ import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilit
 import { Abilities } from "./enums/abilities";
 import { allAbilities } from './ability';
 import { PokemonHeldItemModifier } from "../modifier/modifier";
+import { modifierTypes } from '../modifier/modifier-type';
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
@@ -1750,6 +1751,20 @@ export class TurnDamagedDoublePowerAttr extends VariablePowerAttr {
 }
 
 export class NoHeldItemDoublePowerAttr extends VariablePowerAttr {
+  heldItemModifierTypes: (keyof typeof modifierTypes)[] = [
+    'REVIVER_SEED',
+    'BERRY',
+    'SOOTHE_BELL',
+    'GRIP_CLAW',
+    'FOCUS_BAND',
+    'KINGS_ROCK',
+    'LEFTOVERS',
+    'SHELL_BELL',
+    'BATON',
+    'LUCKY_EGG',
+    'GOLDEN_EGG',
+  ];
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const heldItems = this.getUserHeldItems(user);
 
@@ -1761,9 +1776,13 @@ export class NoHeldItemDoublePowerAttr extends VariablePowerAttr {
     return false;
   }
 
+  countsAsHeldItem(item: PokemonHeldItemModifier) {
+    return this.heldItemModifierTypes.includes(item.type.id as keyof typeof modifierTypes);
+  }
+
   getUserHeldItems(user: Pokemon) {
     return user.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
-      && (m as PokemonHeldItemModifier).pokemonId === user.id, user.isPlayer()) as PokemonHeldItemModifier[];
+      && (m as PokemonHeldItemModifier).pokemonId === user.id && this.countsAsHeldItem(m), user.isPlayer()) as PokemonHeldItemModifier[];
   }
 }
 
