@@ -742,6 +742,7 @@ export class EncounterPhase extends BattlePhase {
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
           this.scene.gameData.saveSystem().then(success => {
+            this.scene.disableMenu = false;
             if (!success)
               return this.scene.reset(true);
             this.scene.gameData.saveSession(this.scene, true).then(() => this.doEncounter());
@@ -3304,6 +3305,7 @@ export class ModifierRewardPhase extends BattlePhase {
 
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
+      this.scene.disableMenu = true;
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound('item_fanfare');

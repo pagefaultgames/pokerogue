@@ -132,6 +132,8 @@ export default class BattleScene extends SceneBase {
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
 	
+	public disableMenu: boolean = false;
+
 	public gameData: GameData;
 	public sessionSlotId: integer;
 
@@ -733,6 +735,8 @@ export default class BattleScene extends SceneBase {
 		this.setSeed(SEED_OVERRIDE || Utils.randomString(24));
 		console.log('Seed:', this.seed);
 
+		this.disableMenu = false;
+
 		this.score = 0;
 		this.money = 0;
 
@@ -1234,6 +1238,8 @@ export default class BattleScene extends SceneBase {
 			inputSuccess = this.ui.processInput(Button.CANCEL);
 			this.setLastProcessedMovementTime(Button.CANCEL);
 		} else if (this.buttonJustPressed(Button.MENU)) {
+			if (this.disableMenu)
+				return;
 			switch (this.ui?.getMode()) {
 				case Mode.MESSAGE:
 					if (!(this.ui.getHandler() as MessageUiHandler).pendingPrompt)

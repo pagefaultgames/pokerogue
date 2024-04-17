@@ -670,8 +670,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
     const legendary = this.legendary;
     const mythical = this.mythical;
     return species => {
-      return pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
-        && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution
+      return (pseudoLegendary || legendary || mythical || (!pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
+        && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution))
         && species.pseudoLegendary === pseudoLegendary
         && species.legendary === legendary
         && species.mythical === mythical
