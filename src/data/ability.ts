@@ -202,6 +202,25 @@ export class PreDefendAbAttr extends AbAttr {
   }
 }
 
+export class PreDefendFormChangeAbAttr extends PreDefendAbAttr {
+  private formFunc: (p: Pokemon) => integer;
+
+  constructor(formFunc: ((p: Pokemon) => integer)) {
+    super(true);
+
+    this.formFunc = formFunc;
+  }
+
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const formIndex = this.formFunc(pokemon);
+    if (formIndex !== pokemon.formIndex) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+      return true;
+    }
+
+    return false;
+  }
+}
 export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (pokemon.getHpRatio() < 1 || (args[0] as Utils.NumberHolder).value < pokemon.hp)
@@ -235,7 +254,7 @@ export class StabBoostAbAttr extends AbAttr {
 }
 
 export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
-  private condition: PokemonDefendCondition;
+  protected condition: PokemonDefendCondition;
   private powerMultiplier: number;
 
   constructor(condition: PokemonDefendCondition, powerMultiplier: number) {
@@ -258,6 +277,21 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
 export class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
   constructor(moveType: Type, powerMultiplier: number) {
     super((user, target, move) => move.type === moveType, powerMultiplier);
+  }
+}
+
+export class PreDefendMovePowerToOneAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
+  constructor(condition: PokemonDefendCondition) {
+    super(condition, 1);
+  }
+
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (this.condition(pokemon, attacker, move.getMove())) {
+      (args[0] as Utils.NumberHolder).value = 1;
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -386,6 +420,43 @@ export class PostDefendAbAttr extends AbAttr {
   }
 }
 
+export class PostDefendDisguiseAbAttr extends PostDefendAbAttr {
+
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (pokemon.formIndex == 0 && pokemon.battleData.hitCount != 0 && (move.getMove().category == MoveCategory.SPECIAL || move.getMove().category == MoveCategory.PHYSICAL)) {
+      
+      const recoilDamage = Math.ceil((pokemon.getMaxHp() / 8) - attacker.turnData.damageDealt);
+      if (!recoilDamage)
+        return false;
+      pokemon.damageAndUpdate(recoilDamage, HitResult.OTHER);
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\'s disguise was busted!'));
+      return true;
+    }
+
+    return false;
+  }
+}
+
+export class PostDefendFormChangeAbAttr extends PostDefendAbAttr {
+  private formFunc: (p: Pokemon) => integer;
+
+  constructor(formFunc: ((p: Pokemon) => integer)) {
+    super(true);
+
+    this.formFunc = formFunc;
+  }
+
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    const formIndex = this.formFunc(pokemon);
+    if (formIndex !== pokemon.formIndex) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
       const attackPriority = new Utils.IntegerHolder(move.getMove().priority);
@@ -429,6 +500,26 @@ export class MoveImmunityAbAttr extends PreDefendAbAttr {
   }
 }
 
+export class MoveImmunityStatChangeAbAttr extends MoveImmunityAbAttr {
+  private stat: BattleStat;
+  private levels: integer;
+
+  constructor(immuneCondition: PreDefendAbAttrCondition, stat: BattleStat, levels: integer) {
+    super(immuneCondition);
+    this.stat = stat;
+    this.levels = levels;
+  }
+
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const ret = super.applyPreDefend(pokemon, passive, attacker, move, cancelled, args)
+    if (ret) {
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ this.stat ], this.levels));
+    }
+
+    return ret;
+  }
+}
+
 export class PostDefendStatChangeAbAttr extends PostDefendAbAttr {
   private condition: PokemonDefendCondition;
   private stat: BattleStat;
@@ -450,6 +541,25 @@ export class PostDefendStatChangeAbAttr extends PostDefendAbAttr {
       return true;
     }
 
+    return false;
+  }
+}
+
+export class PostDefendApplyBattlerTagAbAttr extends PostDefendAbAttr {
+  private condition: PokemonDefendCondition;
+  private tagType: BattlerTagType;
+  constructor(condition: PokemonDefendCondition, tagType: BattlerTagType) {
+    super(true);
+
+    this.condition = condition;
+    this.tagType = tagType;
+  }
+
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (this.condition(pokemon, attacker, move.getMove())) {
+      pokemon.addTag(this.tagType, undefined, undefined, pokemon.id);
+      return true;
+    }
     return false;
   }
 }
@@ -2398,7 +2508,7 @@ export function initAbilities() {
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 1.5)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
     new Ability(Abilities.QUICK_FEET, "Quick Feet", "Boosts the Speed stat if the Pokémon has a status condition.", 4)
-      .conditionalAttr(pokemon => pokemon.status.effect === StatusEffect.PARALYSIS, BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
+      .conditionalAttr(pokemon => pokemon.status ? pokemon.status.effect === StatusEffect.PARALYSIS : false, BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.SPD, 1.5),
     new Ability(Abilities.NORMALIZE, "Normalize", "All the Pokémon's moves become Normal type. The power of those moves is boosted a little.", 4)
       .attr(MoveTypeChangeAttr, Type.NORMAL, 1.2, (user, target, move) => move.id !== Moves.HIDDEN_POWER && move.id !== Moves.WEATHER_BALL && 
@@ -2535,7 +2645,9 @@ export function initAbilities() {
       .attr(PostVictoryStatChangeAbAttr, BattleStat.ATK, 1),
     new Ability(Abilities.JUSTIFIED, "Justified", "Being hit by a Dark-type move boosts the Attack stat of the Pokémon, for justice.", 5)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.DARK && move.category !== MoveCategory.STATUS, BattleStat.ATK, 1),
-    new Ability(Abilities.RATTLED, "Rattled (N)", "Dark-, Ghost-, and Bug-type moves scare the Pokémon and boost its Speed stat.", 5),
+    new Ability(Abilities.RATTLED, "Rattled (P)", "Intimidate or being hit by a Dark-, Ghost-, or Bug-type move will scare the Pokémon and boost its Speed stat.", 5)
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS && (move.type === Type.DARK || move.type === Type.BUG ||
+        move.type === Type.GHOST), BattleStat.SPD, 1),
     new Ability(Abilities.MAGIC_BOUNCE, "Magic Bounce (N)", "Reflects status moves instead of getting hit by them.", 5)
       .ignorable(),
     new Ability(Abilities.SAP_SIPPER, "Sap Sipper", "Boosts the Attack stat if hit by a Grass-type move instead of taking damage.", 5)
@@ -2559,7 +2671,8 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr),
-    new Ability(Abilities.VICTORY_STAR, "Victory Star (N)", "Boosts the accuracy of its allies and itself.", 5),
+    new Ability(Abilities.VICTORY_STAR, "Victory Star (P)", "Boosts the accuracy of its allies and itself.", 5)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.1),
     new Ability(Abilities.TURBOBLAZE, "Turboblaze", "Moves can be used on the target regardless of its Abilities.", 5)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is radiating a blazing aura!'))
       .attr(MoveAbilityBypassAbAttr),
@@ -2586,7 +2699,9 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.BITING_MOVE), 1.5),
     new Ability(Abilities.REFRIGERATE, "Refrigerate", "Normal-type moves become Ice-type moves. The power of those moves is boosted a little.", 6)
       .attr(MoveTypeChangePowerMultiplierAbAttr, Type.NORMAL, Type.ICE, 1.2),
-    new Ability(Abilities.SWEET_VEIL, "Sweet Veil (N)", "Prevents itself and ally Pokémon from falling asleep.", 6)
+    new Ability(Abilities.SWEET_VEIL, "Sweet Veil (P)", "Prevents itself and ally Pokémon from falling asleep.", 6)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable(),
     new Ability(Abilities.STANCE_CHANGE, "Stance Change", "The Pokémon changes its form to Blade Forme when it uses an attack move and changes to Shield Forme when it uses King's Shield.", 6)
       .attr(UncopiableAbilityAbAttr)
@@ -2669,7 +2784,13 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr),
-    new Ability(Abilities.DISGUISE, "Disguise (N)", "Once per battle, the shroud that covers the Pokémon can protect it from an attack.", 7)
+    new Ability(Abilities.DISGUISE, "Disguise (P)", "Once per battle, the shroud that covers the Pokémon can protect it from an attack.", 7)
+      .attr(PreDefendMovePowerToOneAbAttr, (target, user, move) => target.formIndex == 0 && target.getAttackTypeEffectiveness(move.type) > 0)
+      .attr(PostSummonFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
+      .attr(PostBattleInitFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
+      .attr(PostDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
+      .attr(PreDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
+      .attr(PostDefendDisguiseAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
@@ -2833,7 +2954,7 @@ export function initAbilities() {
     new Ability(Abilities.SEED_SOWER, "Seed Sower", "Turns the ground into Grassy Terrain when the Pokémon is hit by an attack.", 9)
       .attr(PostDefendTerrainChangeAbAttr, TerrainType.GRASSY),
     new Ability(Abilities.THERMAL_EXCHANGE, "Thermal Exchange", "Boosts the Attack stat when the Pokémon is hit by a Fire-type move. The Pokémon also cannot be burned.", 9)
-      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.FIRE, BattleStat.ATK, 1)
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.FIRE && move.category !== MoveCategory.STATUS, BattleStat.ATK, 1)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.ANGER_SHELL, "Anger Shell (N)", "When an attack causes its HP to drop to half or less, the Pokémon gets angry. This lowers its Defense and Sp. Def stats but boosts its Attack, Sp. Atk, and Speed stats.", 9),
@@ -2844,13 +2965,15 @@ export function initAbilities() {
     new Ability(Abilities.WELL_BAKED_BODY, "Well-Baked Body", "The Pokémon takes no damage when hit by Fire-type moves. Instead, its Defense stat is sharply boosted.", 9)
       .attr(TypeImmunityStatChangeAbAttr, Type.FIRE, BattleStat.DEF, 2)
       .ignorable(),
-    new Ability(Abilities.WIND_RIDER, "Wind Rider (N)", "Boosts the Pokémon's Attack stat if Tailwind takes effect or if the Pokémon is hit by a wind move. The Pokémon also takes no damage from wind moves.", 9)
+    new Ability(Abilities.WIND_RIDER, "Wind Rider (P)", "Boosts the Pokémon's Attack stat if Tailwind takes effect or if the Pokémon is hit by a wind move. The Pokémon also takes no damage from wind moves.", 9)
+      .attr(MoveImmunityStatChangeAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.WIND_MOVE), BattleStat.ATK, 1)
       .ignorable(),
     new Ability(Abilities.GUARD_DOG, "Guard Dog (N)", "Boosts the Pokémon's Attack stat if intimidated. Moves and items that would force the Pokémon to switch out also fail to work.", 9)
       .ignorable(),
     new Ability(Abilities.ROCKY_PAYLOAD, "Rocky Payload", "Powers up Rock-type moves.", 9)
       .attr(MoveTypePowerBoostAbAttr, Type.ROCK),
-    new Ability(Abilities.WIND_POWER, "Wind Power (N)", "The Pokémon becomes charged when it is hit by a wind move, boosting the power of the next Electric-type move the Pokémon uses.", 9),
+    new Ability(Abilities.WIND_POWER, "Wind Power (P)", "The Pokémon becomes charged when it is hit by a wind move, boosting the power of the next Electric-type move the Pokémon uses.", 9)
+      .attr(PostDefendApplyBattlerTagAbAttr, (target, user, move) => move.hasFlag(MoveFlags.WIND_MOVE), BattlerTagType.CHARGED),
     new Ability(Abilities.ZERO_TO_HERO, "Zero to Hero (N)", "The Pokémon transforms into its Hero Form when it switches out.", 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -2859,7 +2982,8 @@ export function initAbilities() {
     new Ability(Abilities.COMMANDER, "Commander (N)", "When the Pokémon enters a battle, it goes inside the mouth of an ally Dondozo if one is on the field. The Pokémon then issues commands from there.", 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr),
-    new Ability(Abilities.ELECTROMORPHOSIS, "Electromorphosis (N)", "The Pokémon becomes charged when it takes damage, boosting the power of the next Electric-type move the Pokémon uses.", 9),
+    new Ability(Abilities.ELECTROMORPHOSIS, "Electromorphosis", "The Pokémon becomes charged when it takes damage, boosting the power of the next Electric-type move the Pokémon uses.", 9)
+      .attr(PostDefendApplyBattlerTagAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattlerTagType.CHARGED),
     new Ability(Abilities.PROTOSYNTHESIS, "Protosynthesis", "Boosts the Pokémon's most proficient stat in harsh sunlight or if the Pokémon is holding Booster Energy.", 9)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), PostSummonAddBattlerTagAbAttr, BattlerTagType.PROTOSYNTHESIS, 0, true)
       .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.PROTOSYNTHESIS, 0, WeatherType.SUNNY, WeatherType.HARSH_SUN)
