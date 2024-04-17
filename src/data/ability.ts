@@ -2704,7 +2704,7 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr),
-    new Ability(Abilities.DISGUISE, "Disguise (T)", "Once per battle, the shroud that covers the Pokémon can protect it from an attack.", 7)
+    new Ability(Abilities.DISGUISE, "Disguise (P)", "Once per battle, the shroud that covers the Pokémon can protect it from an attack.", 7)
       .attr(SetMovePowerToOneAbAttr,  (target, user, move) => target.formIndex == 0)
       .attr(PostTurnFormChangeAbAttr, pokemon => pokemon.battleData.hitCount === 0 ? 0 : 1)
       .attr(PostDefendDisguiseAbAttr)
