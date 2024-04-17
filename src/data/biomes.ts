@@ -44,7 +44,7 @@ export const biomeLinks: BiomeLinks = {
   [Biome.SEA]: [ Biome.SEABED, Biome.ICE_CAVE ],
   [Biome.SWAMP]: [ Biome.GRAVEYARD, Biome.TALL_GRASS ],
   [Biome.BEACH]: [ Biome.SEA, [ Biome.ISLAND, 4 ] ],
-  [Biome.LAKE]: [ Biome.BEACH, Biome.SWAMP ],
+  [Biome.LAKE]: [ Biome.BEACH, Biome.SWAMP, Biome.CONSTRUCTION_SITE ],
   [Biome.SEABED]: [ Biome.CAVE, [ Biome.VOLCANO, 4 ] ],
   [Biome.MOUNTAIN]: [ Biome.VOLCANO, [ Biome.WASTELAND, 3 ] ],
   [Biome.BADLANDS]: [ Biome.DESERT, Biome.MOUNTAIN ],
@@ -66,9 +66,9 @@ export const biomeLinks: BiomeLinks = {
   [Biome.FAIRY_CAVE]: [ Biome.ICE_CAVE, [ Biome.SPACE, 3 ] ],
   [Biome.TEMPLE]: [ Biome.SWAMP, [ Biome.RUINS, 3 ] ],
   [Biome.METROPOLIS]: Biome.SLUM,
-  [Biome.SNOWY_FOREST]: Biome.LAKE,
+  [Biome.SNOWY_FOREST]: [ Biome.FOREST, Biome.LAKE, Biome.MOUNTAIN ],
   [Biome.ISLAND]: Biome.SEA,
-  [Biome.LABORATORY]: Biome.METROPOLIS
+  [Biome.LABORATORY]: Biome.CONSTRUCTION_SITE
 };
 
 export const biomeDepths: BiomeDepths = {};

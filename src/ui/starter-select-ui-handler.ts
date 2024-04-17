@@ -1304,6 +1304,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.dexAttrCursor = 0n;
     this.natureCursor = -1;
 
+    if (species?.forms?.find(f => f.formKey === 'female')) {
+      if (female !== undefined)
+        formIndex = female ? 1 : 0;
+      else if (formIndex !== undefined)
+        female = formIndex === 1;
+    }
+
     if (species) {
       this.dexAttrCursor |= (shiny !== undefined ? !shiny : !(shiny = oldProps.shiny)) ? DexAttr.NON_SHINY : DexAttr.SHINY;
       this.dexAttrCursor |= (female !== undefined ? !female : !(female = oldProps.female)) ? DexAttr.MALE : DexAttr.FEMALE;

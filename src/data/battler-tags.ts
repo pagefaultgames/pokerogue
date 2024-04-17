@@ -1077,6 +1077,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new TerrainHighestStatBoostTag(tagType, Abilities.QUARK_DRIVE, TerrainType.ELECTRIC);
     case BattlerTagType.FLYING:
     case BattlerTagType.UNDERGROUND:
+    case BattlerTagType.UNDERWATER:
     case BattlerTagType.HIDDEN:
       return new HideSpriteTag(tagType, turnCount, sourceMove);
     case BattlerTagType.FIRE_BOOST:
@@ -1093,6 +1094,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new BattlerTag(BattlerTagType.BYPASS_SLEEP, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
     case BattlerTagType.IGNORE_FLYING:
       return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+    case BattlerTagType.GROUNDED:
+      return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount - 1, sourceMove);
     case BattlerTagType.SALT_CURED:
       return new SaltCuredTag(sourceId);
     case BattlerTagType.NONE:
@@ -1100,3 +1103,4 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
   }
 }
+ 
