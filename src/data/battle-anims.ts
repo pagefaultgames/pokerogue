@@ -89,6 +89,7 @@ export enum CommonAnim {
     RAIN,
     SANDSTORM,
     HAIL,
+    SNOW,
     WIND,
     HEAVY_RAIN,
     HARSH_SUN,

@@ -212,6 +212,8 @@ export default class Battle {
     }
 
     randSeedInt(scene: BattleScene, range: integer, min: integer = 0): integer {
+        if (range <= 1)
+            return min;
         let ret: integer;
         const tempRngCounter = scene.rngCounter;
         const tempSeedOverride = scene.rngSeedOverride;
