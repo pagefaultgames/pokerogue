@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import BattleScene, { ABILITY_OVERRIDE, AnySound, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE } from '../battle-scene';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, IgnoreWeatherDebuffAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, starterPassiveAbilities } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -1185,7 +1185,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         else {
           if (source.findTag(t => t instanceof TypeBoostTag && (t as TypeBoostTag).boostedType === type))
             power.value *= 1.5;
-          const arenaAttackTypeMultiplier = (move.id == Moves.HYDRO_STEAM && this.scene.arena.weather.weatherType==WeatherType.SUNNY)?
+          const arenaAttackTypeMultiplier = (this.scene.arena.weather && move.getAttrs(IgnoreWeatherDebuffAttr)?.find(attr => (attr as IgnoreWeatherDebuffAttr).weather === this.scene.arena.weather.weatherType))?
             1 : this.scene.arena.getAttackTypeMultiplier(type, source.isGrounded());
           if (this.scene.arena.getTerrainType() === TerrainType.GRASSY && this.isGrounded() && type === Type.GROUND && move.moveTarget === MoveTarget.ALL_NEAR_OTHERS)
             power.value /= 2;

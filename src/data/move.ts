@@ -1441,6 +1441,16 @@ export class GrowthStatChangeAttr extends StatChangeAttr {
   }
 }
 
+
+export class IgnoreWeatherDebuffAttr extends MoveEffectAttr {
+  public weather: WeatherType;
+  constructor(weather: WeatherType) {
+    super();
+    this.weather=weather;
+  }
+  
+}
+
 export class HalfHpStatMaxAttr extends StatChangeAttr {
   constructor(stat: BattleStat) {
     super(stat, 12, true, null, false);
@@ -5996,6 +6006,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1)  
       .slicingMove(),
     new AttackMove(Moves.HYDRO_STEAM, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
+      .attr(IgnoreWeatherDebuffAttr, WeatherType.SUNNY)
       .partial(),
     new AttackMove(Moves.RUINATION, Type.DARK, MoveCategory.SPECIAL, 1, 90, 10, -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
