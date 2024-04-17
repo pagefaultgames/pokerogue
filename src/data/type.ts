@@ -18,7 +18,8 @@ export enum Type {
   DRAGON,
   DARK,
   FAIRY,
-  STELLAR
+  STELLAR,
+  TYPELESS
 };
 
 export type TypeDamageMultiplier = 0 | 0.25 | 0.5 | 1 | 2 | 4;
@@ -45,6 +46,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.DRAGON:
         case Type.DARK:
         case Type.FAIRY:
+        case Type.TYPELESS:
           return 1;
         case Type.GHOST:
         default:
@@ -68,6 +70,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.ELECTRIC:
         case Type.ICE:
         case Type.DRAGON:
+        case Type.TYPELESS:
           return 1;
         case Type.ROCK:
         case Type.BUG:
@@ -93,6 +96,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.DRAGON:
         case Type.DARK:
         case Type.FAIRY:
+        case Type.TYPELESS:
           return 1;
         case Type.FIGHTING:
         case Type.BUG:
@@ -118,6 +122,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.ICE:
         case Type.DRAGON:
         case Type.DARK:
+        case Type.TYPELESS:
           return 1;
         case Type.FIGHTING:
         case Type.POISON:
@@ -146,6 +151,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.DRAGON:
         case Type.DARK:
         case Type.FAIRY:
+        case Type.TYPELESS:
           return 1;
         case Type.POISON:
         case Type.ROCK:
@@ -171,6 +177,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.DRAGON:
         case Type.DARK:
         case Type.FAIRY:
+        case Type.TYPELESS:
           return 1;
         case Type.NORMAL:
         case Type.FLYING:
@@ -198,6 +205,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.DRAGON:
         case Type.DARK:
         case Type.FAIRY:
+        case Type.TYPELESS:
           return 1;
         case Type.FIGHTING:
         case Type.GROUND:
@@ -223,6 +231,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.ICE:
         case Type.DRAGON:
         case Type.FAIRY:
+        case Type.TYPELESS:
           return 1;
         case Type.POISON:
         case Type.BUG:
@@ -242,6 +251,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.WATER:
         case Type.ELECTRIC:
         case Type.DARK:
+        case Type.TYPELESS:
           return 1;
         case Type.NORMAL:
         case Type.FLYING:
@@ -273,6 +283,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.PSYCHIC:
         case Type.DRAGON:
         case Type.DARK:
+        case Type.TYPELESS:
           return 1;
         case Type.BUG:
         case Type.STEEL:
@@ -301,6 +312,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.DRAGON:
         case Type.DARK:
         case Type.FAIRY:
+        case Type.TYPELESS:
           return 1;
         case Type.STEEL:
         case Type.FIRE:
@@ -327,6 +339,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.DRAGON:
         case Type.DARK:
         case Type.FAIRY:
+        case Type.TYPELESS:
           return 1;
         case Type.GROUND:
         case Type.WATER:
@@ -354,6 +367,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.DRAGON:
         case Type.DARK:
         case Type.FAIRY:
+        case Type.TYPELESS:
           return 1;
         case Type.FLYING:
         case Type.STEEL:
@@ -381,6 +395,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.ICE:
         case Type.DRAGON:
         case Type.FAIRY:
+        case Type.TYPELESS:
           return 1;
         case Type.FIGHTING:
         case Type.PSYCHIC:
@@ -408,6 +423,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.DRAGON:
         case Type.DARK:
         case Type.FAIRY:
+        case Type.TYPELESS:
           return 1;
         case Type.ICE:
           return 0.5;
@@ -431,6 +447,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.STEEL:
         case Type.PSYCHIC:
         case Type.DARK:
+        case Type.TYPELESS:
           return 1;
         case Type.FIRE:
         case Type.WATER:
@@ -458,6 +475,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.ELECTRIC:
         case Type.ICE:
         case Type.DRAGON:
+        case Type.TYPELESS:
           return 1;
         case Type.GHOST:
         case Type.DARK:
@@ -483,6 +501,7 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
         case Type.PSYCHIC:
         case Type.ICE:
         case Type.FAIRY:
+        case Type.TYPELESS:
           return 1;
         case Type.FIGHTING:
         case Type.BUG:
@@ -493,6 +512,8 @@ export function getTypeDamageMultiplier(attackType: integer, defType: integer): 
           return 0;
       }
     case Type.STELLAR:
+      return 1;
+    case Type.TYPELESS:
       return 1;
   } 
 }
@@ -537,6 +558,8 @@ export function getTypeRgb(type: Type): [ integer, integer, integer ] {
       return [ 232, 136, 200 ]; 
     case Type.STELLAR:
       return [ 255, 255, 255 ];
+    case Type.TYPELESS:
+      return [ 104, 160, 144 ];
     default:
       return [ 0, 0, 0 ];
   }
