@@ -4221,12 +4221,12 @@ export function initMoves() {
     new StatusMove(Moves.NATURE_POWER, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(NaturePowerAttr)
       .ignoresVirtual(),
-    new SelfStatusMove(Moves.CHARGE, "Charge", Type.ELECTRIC, -1, 20, "The user boosts the power of the Electric move it uses on the next turn. This also raises the user's Sp. Def stat.", -1, 0, 3)
+    new SelfStatusMove(Moves.CHARGE, Type.ELECTRIC, -1, 20, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.CHARGED, true, true),
-    new StatusMove(Moves.TAUNT, "Taunt", Type.DARK, 100, 20, "The target is taunted into a rage that allows it to use only attack moves for three turns.", -1, 0, 3)
+    new StatusMove(Moves.TAUNT, Type.DARK, 100, 20, -1, 0, 3)
       .unimplemented(),
-    new StatusMove(Moves.HELPING_HAND, "Helping Hand", Type.NORMAL, -1, 20, "The user assists an ally by boosting the power of that ally's attack.", -1, 5, 3)
+    new StatusMove(Moves.HELPING_HAND, Type.NORMAL, -1, 20, -1, 5, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.TRICK, Type.PSYCHIC, 100, 10, -1, 0, 3)
