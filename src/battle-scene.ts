@@ -61,18 +61,18 @@ import CandyBar from './ui/candy-bar';
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
 export const SEED_OVERRIDE = '';
-export const STARTER_SPECIES_OVERRIDE = 778;
-export const STARTER_FORM_OVERRIDE = 1;
-export const STARTING_LEVEL_OVERRIDE = 2000;
+export const STARTER_SPECIES_OVERRIDE = 0;
+export const STARTER_FORM_OVERRIDE = 0;
+export const STARTING_LEVEL_OVERRIDE = 0;
 export const STARTING_WAVE_OVERRIDE = 0;
 export const STARTING_BIOME_OVERRIDE = Biome.TOWN;
 export const STARTING_MONEY_OVERRIDE = 0;
 
-export const ABILITY_OVERRIDE = Abilities.DISGUISE;
-export const MOVE_OVERRIDE = Moves.DRAGON_RAGE;
-export const OPP_SPECIES_OVERRIDE = 778;
-export const OPP_ABILITY_OVERRIDE = Abilities.MOLD_BREAKER;
-export const OPP_MOVE_OVERRIDE = Moves.BITE;
+export const ABILITY_OVERRIDE = Abilities.NONE;
+export const MOVE_OVERRIDE = Moves.NONE;
+export const OPP_SPECIES_OVERRIDE = 0;
+export const OPP_ABILITY_OVERRIDE = Abilities.NONE;
+export const OPP_MOVE_OVERRIDE = Moves.NONE;
 
 const DEBUG_RNG = false;
 
