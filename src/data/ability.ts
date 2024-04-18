@@ -293,7 +293,7 @@ export class PreDefendMovePowerReductionAbAttr extends ReceivedMoveDamageMultipl
           statUsed = 1;
 
       (args[0] as Utils.NumberHolder).value = 1 / (statUsed * attacker.getMaxHp());
-
+      pokemon.battleData.abilityTriggered = true;
       return true;
     }
 
@@ -436,21 +436,18 @@ export class PostDefendDisguiseAbAttr extends PostDefendAbAttr {
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (this.condition(pokemon, attacker, move.getMove())) {
-
       const damageDealt = attacker.turnData.damageDealt;
       const eighthOfMaxHp = Math.ceil(pokemon.getMaxHp() / 8);
       
       let recoilDamage;
-      
       if (damageDealt < eighthOfMaxHp) {
-          recoilDamage = Math.ceil(eighthOfMaxHp - damageDealt);
+          recoilDamage = eighthOfMaxHp - damageDealt;
       } else {
-          recoilDamage = Math.min(damageDealt - eighthOfMaxHp, pokemon.getMaxHp());
+          recoilDamage = Math.max(eighthOfMaxHp - damageDealt, -1*pokemon.getMaxHp()-eighthOfMaxHp);
       }
-           
       if (!recoilDamage) return false;
-      pokemon.battleData.hitCount += 1;
-      pokemon.damageAndUpdate(recoilDamage, HitResult.OTHER);
+
+      pokemon.damageAndUpdate(Math.ceil(recoilDamage), HitResult.OTHER);
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\'s disguise was busted!'));
 
       return true;
@@ -2807,12 +2804,12 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.DISGUISE, "Disguise (P)", "Once per battle, the shroud that covers the Pokémon can protect it from an attack.", 7)
-      .attr(PreDefendMovePowerReductionAbAttr, (target, user, move) => target.battleData.hitCount === 0 && target.getAttackTypeEffectiveness(move.type) > 0)
-      .attr(PostSummonFormChangeAbAttr, p =>  p.getFormKey() == `disguised` && p.battleData.hitCount >= 1 ? 1 : p.getFormKey() == `busted` && p.battleData.hitCount >= 1 ? 1 : 0)
-      .attr(PostBattleInitFormChangeAbAttr, p =>  p.getFormKey() == `disguised` && p.battleData.hitCount >= 1 ? 1 : p.getFormKey() == `busted` && p.battleData.hitCount >= 1 ? 1 : 0)
-      .attr(PostDefendFormChangeAbAttr, p =>  p.getFormKey() == `disguised` && p.battleData.hitCount >= 1 ? 1 : p.getFormKey() == `busted` && p.battleData.hitCount >= 1 ? 1 : 0)
-      .attr(PreDefendFormChangeAbAttr, p =>  p.getFormKey() == `disguised` && p.battleData.hitCount >= 1 ? 1 : p.getFormKey() == `busted` && p.battleData.hitCount >= 1 ? 1 : 0)
-      .attr(PostDefendDisguiseAbAttr, (target, user, move) => target.battleData.hitCount === 1 && (move.category == MoveCategory.SPECIAL || move.category == MoveCategory.PHYSICAL))
+      .attr(PreDefendMovePowerReductionAbAttr, (target, user, move) => target.battleData.abilityTriggered == false && target.getAttackTypeEffectiveness(move.type) > 0)    
+      .attr(PostDefendDisguiseAbAttr, (target, user, move) => target.battleData.abilityTriggered == false && target.turnData.hitCount >= 1 && (move.category == MoveCategory.SPECIAL || move.category == MoveCategory.PHYSICAL))
+      .attr(PostSummonFormChangeAbAttr, p => p.battleData.abilityTriggered == false ? 0 : 1)
+      .attr(PostBattleInitFormChangeAbAttr, p => p.battleData.abilityTriggered == false ? 0 : 1)
+      .attr(PostDefendFormChangeAbAttr, p => p.battleData.abilityTriggered == false ? 0 : 1)
+      .attr(PreDefendFormChangeAbAttr, p => p.battleData.abilityTriggered == false ? 0 : 1)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)

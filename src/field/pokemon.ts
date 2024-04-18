@@ -2843,6 +2843,7 @@ export class PokemonSummonData {
 export class PokemonBattleData {
   public hitCount: integer = 0;
   public endured: boolean = false;
+  public abilityTriggered: boolean = false;
 }
 
 export class PokemonBattleSummonData {
