@@ -51,7 +51,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
       this.tween = this.scene.tweens.add({
         targets: this,
         x: (this.scene.game.canvas.width / 6) - (this.bg.width - 5),
-        duration: 500,
+        duration: 500 / Math.pow(2, pokemon.scene.expGainsSpeed),
         ease: 'Sine.easeOut',
         onComplete: () => {
           this.tween = null;
