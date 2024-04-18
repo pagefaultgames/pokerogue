@@ -2141,10 +2141,8 @@ export class MovePhase extends BattlePhase {
     }
 
     if (!this.followUp) {
-      const abilityEffectsIgnored = new Utils.BooleanHolder(false);
-      this.scene.getField(true).map(p => applyAbAttrs(MoveAbilityBypassAbAttr, p, abilityEffectsIgnored));
-      if (abilityEffectsIgnored.value)
-        this.scene.arena.setIgnoreAbilities(true);
+      if (this.move.getMove().checkFlag(MoveFlags.IGNORE_ABILITIES, this.pokemon, null))
+        this.scene.arena.setIgnoreAbilities();
     } else {
       this.pokemon.turnData.hitsLeft = undefined;
       this.pokemon.turnData.hitCount = undefined;

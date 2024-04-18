@@ -1,9 +1,19 @@
 import i18next from 'i18next';
 import { menu as enMenu } from '../locales/en/menu';
 import { menu as itMenu } from '../locales/it/menu';
+import { menu as frMenu } from '../locales/fr/menu';
 
 import { move as enMove } from '../locales/en/move';
 import { move as frMove } from '../locales/fr/move';
+
+export interface MoveTranslationEntry {
+  name: string,
+  effect: string
+}
+
+export interface MoveTranslations {
+  [key: string]: MoveTranslationEntry
+}
 
 const DEFAULT_LANGUAGE_OVERRIDE = '';
 
@@ -35,6 +45,7 @@ i18next.init({
       menu: itMenu,
     },
     fr: {
+      menu: frMenu,
       move: frMove,
     }
   },

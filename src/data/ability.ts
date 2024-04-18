@@ -2053,13 +2053,35 @@ export class SyncEncounterNatureAbAttr extends AbAttr {
 }
 
 export class MoveAbilityBypassAbAttr extends AbAttr {
+  private moveIgnoreFunc: (pokemon: Pokemon, move: Move) => boolean;
+
+  constructor(moveIgnoreFunc?: (pokemon: Pokemon, move: Move) => boolean) {
+    super(false);
+
+    this.moveIgnoreFunc = moveIgnoreFunc || ((pokemon, move) => true);
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    if (this.moveIgnoreFunc(pokemon, (args[0] as Move))) {
+      cancelled.value = true;
+      return true;
+    }
+    return false;
+  }
+}
+
+export class SuppressFieldAbilitiesAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    cancelled.value = true;
-    return true;
+    const ability = (args[0] as Ability);
+    if (!ability.hasAttr(UnsuppressableAbilityAbAttr) && !ability.hasAttr(SuppressFieldAbilitiesAbAttr)) {
+      cancelled.value = true;
+      return true;
+    }
+    return false;
   }
 }
 
@@ -2931,7 +2953,8 @@ export function initAbilities() {
       .attr(PostDefendAbilitySwapAbAttr)
       .bypassFaint(),
     new Ability(Abilities.GORILLA_TACTICS, "Gorilla Tactics (N)", "Boosts the Pokémon's Attack stat but only allows the use of the first selected move.", 8),
-    new Ability(Abilities.NEUTRALIZING_GAS, "Neutralizing Gas (N)", "If the Pokémon with Neutralizing Gas is in the battle, the effects of all Pokémon's Abilities will be nullified or will not be triggered.", 8)
+    new Ability(Abilities.NEUTRALIZING_GAS, "Neutralizing Gas (P)", "If the Pokémon with Neutralizing Gas is in the battle, the effects of all Pokémon's Abilities will be nullified or will not be triggered.", 8)
+      .attr(SuppressFieldAbilitiesAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr),
@@ -3047,7 +3070,8 @@ export function initAbilities() {
     new Ability(Abilities.EARTH_EATER, "Earth Eater", "If hit by a Ground-type move, the Pokémon has its HP restored instead of taking damage.", 9)
       .attr(TypeImmunityHealAbAttr, Type.GROUND)
       .ignorable(),
-    new Ability(Abilities.MYCELIUM_MIGHT, "Mycelium Might (N)", "The Pokémon will always act more slowly when using status moves, but these moves will be unimpeded by the Ability of the target.", 9),
+    new Ability(Abilities.MYCELIUM_MIGHT, "Mycelium Might (P)", "The Pokémon will always act more slowly when using status moves, but these moves will be unimpeded by the Ability of the target.", 9)
+      .attr(MoveAbilityBypassAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS),
     new Ability(Abilities.MINDS_EYE, "Mind's Eye (N)", "The Pokémon ignores changes to opponents' evasiveness, its accuracy can't be lowered, and it can hit Ghost types with Normal- and Fighting-type moves.", 9)
       .ignorable(),
     new Ability(Abilities.SUPERSWEET_SYRUP, "Supersweet Syrup (N)", "A sickly sweet scent spreads across the field the first time the Pokémon enters a battle, lowering the evasiveness of opposing Pokémon.", 9),
