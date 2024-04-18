@@ -1,11 +1,4 @@
-interface MoveTranslationEntry {
-  name: string,
-  effect: string
-}
-
-interface MoveTranslations {
-  [key: string]: MoveTranslationEntry
-}
+import { MoveTranslations } from "#app/plugins/i18n";
 
 export const move: MoveTranslations = {
   "pound": {
