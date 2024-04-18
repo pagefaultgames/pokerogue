@@ -12,7 +12,7 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr } from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { allAbilities } from './ability';
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -68,7 +68,8 @@ export enum MoveFlags {
   POWDER_MOVE = 2048,
   DANCE_MOVE = 4096,
   WIND_MOVE = 8192,
-  TRIAGE_MOVE = 16384
+  TRIAGE_MOVE = 16384,
+  IGNORE_ABILITIES = 32768
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -286,12 +287,24 @@ export default class Move {
     return this;
   }
 
+  ignoresAbilities(ignoresAbilities?: boolean): this {
+    this.setFlag(MoveFlags.IGNORE_ABILITIES, ignoresAbilities);
+    return this;
+  }
+
   checkFlag(flag: MoveFlags, user: Pokemon, target: Pokemon): boolean {
     switch (flag) {
       case MoveFlags.MAKES_CONTACT:
         if (user.hasAbilityWithAttr(IgnoreContactAbAttr))
           return false;
         break;
+      case MoveFlags.IGNORE_ABILITIES:
+        if (user.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
+          const abilityEffectsIgnored = new Utils.BooleanHolder(false);
+          applyAbAttrs(MoveAbilityBypassAbAttr, user, abilityEffectsIgnored, this);
+          if (abilityEffectsIgnored.value)
+            return true;
+        }
     }
 
     return !!(this.flags & flag);
@@ -5387,8 +5400,10 @@ export function initMoves() {
     new AttackMove(Moves.SPECTRAL_THIEF, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 7)
       .partial(),
     new AttackMove(Moves.SUNSTEEL_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 7)
+      .ignoresAbilities()
       .partial(),
     new AttackMove(Moves.MOONGEIST_BEAM, Type.GHOST, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 7)
+      .ignoresAbilities()
       .partial(),
     new StatusMove(Moves.TEARFUL_LOOK, Type.NORMAL, -1, 20, 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
@@ -5411,15 +5426,16 @@ export function initMoves() {
       .partial(),
     new AttackMove(Moves.PHOTON_GEYSER, Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 7)
       .attr(PhotonGeyserCategoryAttr)
+      .ignoresAbilities()
       .partial(),
     /* Unused */
     new AttackMove(Moves.LIGHT_THAT_BURNS_THE_SKY, Type.PSYCHIC, MoveCategory.SPECIAL, 200, -1, 1, -1, 0, 7)
       .attr(PhotonGeyserCategoryAttr)
-      .partial(),
+      .ignoresAbilities(),
     new AttackMove(Moves.SEARING_SUNRAZE_SMASH, Type.STEEL, MoveCategory.PHYSICAL, 200, -1, 1, -1, 0, 7)
-      .partial(),
+      .ignoresAbilities(),
     new AttackMove(Moves.MENACING_MOONRAZE_MAELSTROM, Type.GHOST, MoveCategory.SPECIAL, 200, -1, 1, -1, 0, 7)
-      .partial(),
+      .ignoresAbilities(),
     new AttackMove(Moves.LETS_SNUGGLE_FOREVER, Type.FAIRY, MoveCategory.PHYSICAL, 190, -1, 1, -1, 0, 7)
       .partial(),
     new AttackMove(Moves.SPLINTERED_STORMSHARDS, Type.ROCK, MoveCategory.PHYSICAL, 190, -1, 1, -1, 0, 7)
