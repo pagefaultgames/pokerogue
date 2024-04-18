@@ -4924,6 +4924,48 @@
 					}
 				},
 				{
+					"filename": "778-busted",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 5,
+						"w": 17,
+						"h": 22
+					},
+					"frame": {
+						"x": 156,
+						"y": 443,
+						"w": 17,
+						"h": 22
+					}
+				},
+				{
+					"filename": "778s-busted",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 5,
+						"w": 17,
+						"h": 22
+					},
+					"frame": {
+						"x": 217,
+						"y": 367,
+						"w": 17,
+						"h": 22
+					}
+				},
+				{
 					"filename": "741s-pompom",
 					"rotated": false,
 					"trimmed": true,
