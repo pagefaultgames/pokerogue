@@ -98,7 +98,8 @@ export enum CommonAnim {
     ELECTRIC_TERRAIN,
     GRASSY_TERRAIN,
     PSYCHIC_TERRAIN,
-    LOCK_ON = 2120
+    LOCK_ON = 2120,
+    INFESTATION
 }
 
 export class AnimConfig {

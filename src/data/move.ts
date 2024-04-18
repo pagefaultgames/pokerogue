@@ -2414,6 +2414,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.SAND_TOMB:
       case BattlerTagType.MAGMA_STORM:
       case BattlerTagType.THUNDER_CAGE:
+      case BattlerTagType.INFESTATION:
         return -3;
       case BattlerTagType.ENCORE:
         return -2;
@@ -4115,7 +4116,18 @@ export function initMoves() {
       .partial(),
     new AttackMove(Moves.RAPID_SPIN, Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, 100, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true)
-      .attr(RemoveBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.THUNDER_CAGE, BattlerTagType.SEEDED ], true)
+      .attr(RemoveBattlerTagAttr, [ 
+        BattlerTagType.BIND,
+        BattlerTagType.WRAP,
+        BattlerTagType.FIRE_SPIN,
+        BattlerTagType.WHIRLPOOL,
+        BattlerTagType.CLAMP,
+        BattlerTagType.SAND_TOMB,
+        BattlerTagType.MAGMA_STORM,
+        BattlerTagType.THUNDER_CAGE,
+        BattlerTagType.SEEDED,
+        BattlerTagType.INFESTATION
+      ], true)
       .partial(),
     new StatusMove(Moves.SWEET_SCENT, Type.NORMAL, 100, 20, -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.EVA, -1)
@@ -5134,6 +5146,7 @@ export function initMoves() {
       .attr(SurviveDamageAttr),
     new AttackMove(Moves.INFESTATION, Type.BUG, MoveCategory.SPECIAL, 20, 100, 20, 100, 0, 6)
       .makesContact()
+      .attr(TrapAttr, BattlerTagType.INFESTATION)
       .partial(),
     new AttackMove(Moves.POWER_UP_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 20, 100, 0, 6)
       .attr(StatChangeAttr, BattleStat.ATK, 1, true)
@@ -5929,7 +5942,18 @@ export function initMoves() {
     new AttackMove(Moves.TRIPLE_DIVE, Type.WATER, MoveCategory.PHYSICAL, 30, 95, 10, -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._3),
     new AttackMove(Moves.MORTAL_SPIN, Type.POISON, MoveCategory.PHYSICAL, 30, 100, 15, 100, 0, 9)
-      .attr(LapseBattlerTagAttr, [ BattlerTagType.BIND, BattlerTagType.WRAP, BattlerTagType.FIRE_SPIN, BattlerTagType.WHIRLPOOL, BattlerTagType.CLAMP, BattlerTagType.SAND_TOMB, BattlerTagType.MAGMA_STORM, BattlerTagType.THUNDER_CAGE, BattlerTagType.SEEDED ], true)
+      .attr(LapseBattlerTagAttr, [
+        BattlerTagType.BIND,
+        BattlerTagType.WRAP,
+        BattlerTagType.FIRE_SPIN,
+        BattlerTagType.WHIRLPOOL,
+        BattlerTagType.CLAMP,
+        BattlerTagType.SAND_TOMB,
+        BattlerTagType.MAGMA_STORM,
+        BattlerTagType.THUNDER_CAGE,
+        BattlerTagType.SEEDED,
+        BattlerTagType.INFESTATION
+      ], true)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.DOODLE, Type.NORMAL, 100, 10, -1, 0, 9)

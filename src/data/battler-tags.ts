@@ -613,6 +613,16 @@ export class ThunderCageTag extends DamagingTrapTag {
   }
 }
 
+export class InfestationTag extends DamagingTrapTag {
+  constructor(turnCount: integer, sourceId: integer) {
+    super(BattlerTagType.INFESTATION, CommonAnim.INFESTATION, turnCount, Moves.INFESTATION, sourceId);
+  }
+
+  getTrapMessage(pokemon: Pokemon): string {
+    return getPokemonMessage(pokemon, ` has been afflicted \nwith an infestation by ${getPokemonPrefix(pokemon.scene.getPokemonById(this.sourceId))}${pokemon.scene.getPokemonById(this.sourceId).name}!`);
+  }
+}
+
 
 export class ProtectedTag extends BattlerTag {
   constructor(sourceMove: Moves, tagType: BattlerTagType = BattlerTagType.PROTECTED) {
@@ -1051,6 +1061,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new MagmaStormTag(turnCount, sourceId);
     case BattlerTagType.THUNDER_CAGE:
       return new ThunderCageTag(turnCount, sourceId);
+    case BattlerTagType.INFESTATION:
+      return new InfestationTag(turnCount, sourceId);
     case BattlerTagType.PROTECTED:
       return new ProtectedTag(sourceMove);
     case BattlerTagType.SPIKY_SHIELD:
