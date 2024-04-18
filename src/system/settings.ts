@@ -1,3 +1,4 @@
+import i18next from "i18next";
 import BattleScene from "../battle-scene";
 import { hasTouchscreen } from "../touch-controls";
 import { updateWindowType } from "../ui/ui-theme";
@@ -22,7 +23,8 @@ export enum Setting {
   Player_Gender = "PLAYER_GENDER",
   Gamepad_Support = "GAMEPAD_SUPPORT",
   Touch_Controls = "TOUCH_CONTROLS",
-  Vibration = "VIBRATION"
+  Vibration = "VIBRATION",
+  Language = "LANGUAGE"
 }
 
 export interface SettingOptions {
@@ -52,7 +54,8 @@ export const settingOptions: SettingOptions = {
   [Setting.Player_Gender]: [ 'Boy', 'Girl' ],
   [Setting.Gamepad_Support]: [ 'Auto', 'Disabled' ],
   [Setting.Touch_Controls]: [ 'Auto', 'Disabled' ],
-  [Setting.Vibration]: [ 'Auto', 'Disabled' ]
+  [Setting.Vibration]: [ 'Auto', 'Disabled' ],
+  [Setting.Language]: [ 'en', 'fr' ]
 };
 
 export const settingDefaults: SettingDefaults = {
@@ -74,10 +77,11 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Player_Gender]: 0,
   [Setting.Gamepad_Support]: 0,
   [Setting.Touch_Controls]: 0,
-  [Setting.Vibration]: 0
+  [Setting.Vibration]: 0,
+  [Setting.Language]: 0
 };
 
-export const reloadSettings: Setting[] = [ Setting.UI_Theme ];
+export const reloadSettings: Setting[] = [ Setting.UI_Theme, Setting.Language ];
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
   switch (setting) {
@@ -150,6 +154,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       break;
     case Setting.Vibration:
       scene.enableVibration = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
+      break;
+    case Setting.Language:
+      i18next.changeLanguage(settingOptions[setting][value]);
       break;
   }
 
