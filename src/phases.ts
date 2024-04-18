@@ -3221,6 +3221,8 @@ export class TrainerVictoryPhase extends BattlePhase {
   }
 
   start() {
+    this.scene.disableMenu = true;
+
     this.scene.playBgm(this.scene.currentBattle.trainer.config.victoryBgm);
 
     this.scene.unshiftPhase(new MoneyRewardPhase(this.scene, this.scene.currentBattle.trainer.config.moneyMultiplier));
@@ -3305,7 +3307,6 @@ export class ModifierRewardPhase extends BattlePhase {
 
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
-      this.scene.disableMenu = true;
       const newModifier = this.modifierType.newModifier();
       this.scene.addModifier(newModifier).then(() => {
         this.scene.playSound('item_fanfare');
