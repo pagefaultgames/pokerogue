@@ -1461,6 +1461,24 @@ export class CutHpStatBoostAttr extends StatChangeAttr {
   }
 }
 
+export class CopyStatsAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    for (let s = 0; s < target.summonData.battleStats.length; s++)
+      user.summonData.battleStats[s] = target.summonData.battleStats[s];
+    if (target.getTag(BattlerTagType.CRIT_BOOST))
+      user.addTag(BattlerTagType.CRIT_BOOST, 0, move.id);
+    else
+      user.removeTag(BattlerTagType.CRIT_BOOST);
+
+    target.scene.queueMessage(getPokemonMessage(user, 'copied\n') + getPokemonMessage(target, `'s stat changes!`));
+
+    return true;
+  }
+}
+
 export class InvertStatsAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args))
@@ -4156,7 +4174,7 @@ export function initMoves() {
       .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.SPECIAL, 2)
       .target(MoveTarget.ATTACKER),
     new StatusMove(Moves.PSYCH_UP, Type.NORMAL, -1, 10, -1, 0, 2)
-      .unimplemented(),
+      .attr(CopyStatsAttr),
     new AttackMove(Moves.EXTREME_SPEED, Type.NORMAL, MoveCategory.PHYSICAL, 80, 100, 5, -1, 2, 2),
     new AttackMove(Moves.ANCIENT_POWER, Type.ROCK, MoveCategory.SPECIAL, 60, 100, 5, 10, 0, 2)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true),
