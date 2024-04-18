@@ -4127,7 +4127,8 @@ export function initMoves() {
         BattlerTagType.THUNDER_CAGE,
         BattlerTagType.SEEDED,
         BattlerTagType.INFESTATION
-      ], true),
+      ], true)
+      .partial(),
     new StatusMove(Moves.SWEET_SCENT, Type.NORMAL, 100, 20, -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.EVA, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -5145,8 +5146,7 @@ export function initMoves() {
       .attr(SurviveDamageAttr),
     new AttackMove(Moves.INFESTATION, Type.BUG, MoveCategory.SPECIAL, 20, 100, 20, 100, 0, 6)
       .makesContact()
-      .attr(TrapAttr, BattlerTagType.INFESTATION)
-      .partial(),
+      .attr(TrapAttr, BattlerTagType.INFESTATION),
     new AttackMove(Moves.POWER_UP_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 20, 100, 0, 6)
       .attr(StatChangeAttr, BattleStat.ATK, 1, true)
       .punchingMove(),
