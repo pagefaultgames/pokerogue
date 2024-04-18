@@ -1475,6 +1475,20 @@ export class InvertStatsAttr extends MoveEffectAttr {
   }
 }
 
+export class ResetStatsAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    for (let s = 0; s < target.summonData.battleStats.length; s++)
+      target.summonData.battleStats[s] = 0;
+
+    target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere eliminated!`));
+
+    return true;
+  }
+}
+
 export class HpSplitAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -3787,7 +3801,7 @@ export function initMoves() {
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.HAZE, Type.ICE, -1, 30, -1, 0, 1)
       .target(MoveTarget.BOTH_SIDES)
-      .unimplemented(),
+      .attr(ResetStatsAttr),
     new StatusMove(Moves.REFLECT, Type.PSYCHIC, -1, 20, -1, 0, 1)
       .attr(AddArenaTagAttr, ArenaTagType.REFLECT, 5, true)
       .target(MoveTarget.USER_SIDE),
@@ -4837,7 +4851,7 @@ export function initMoves() {
     new AttackMove(Moves.CHIP_AWAY, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 5)
       .attr(IgnoreOpponentStatChangesAttr),
     new AttackMove(Moves.CLEAR_SMOG, Type.POISON, MoveCategory.SPECIAL, 50, -1, 15, -1, 0, 5)
-      .partial(),
+      .attr(ResetStatsAttr),
     new AttackMove(Moves.STORED_POWER, Type.PSYCHIC, MoveCategory.SPECIAL, 20, 100, 10, -1, 0, 5)
       .attr(StatChangeCountPowerAttr),
     new StatusMove(Moves.QUICK_GUARD, Type.FIGHTING, -1, 15, -1, 3, 5)
@@ -5453,7 +5467,7 @@ export function initMoves() {
     new AttackMove(Moves.SAPPY_SEED, Type.GRASS, MoveCategory.PHYSICAL, 100, 90, 10, 100, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.SEEDED),
     new AttackMove(Moves.FREEZY_FROST, Type.ICE, MoveCategory.SPECIAL, 100, 90, 10, -1, 0, 7)
-      .partial(),
+      .attr(ResetStatsAttr),
     new AttackMove(Moves.SPARKLY_SWIRL, Type.FAIRY, MoveCategory.SPECIAL, 120, 85, 5, -1, 0, 7)
       .partial(),
     new AttackMove(Moves.VEEVEE_VOLLEY, Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 20, -1, 0, 7)
