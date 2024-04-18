@@ -4127,8 +4127,7 @@ export function initMoves() {
         BattlerTagType.THUNDER_CAGE,
         BattlerTagType.SEEDED,
         BattlerTagType.INFESTATION
-      ], true)
-      .partial(),
+      ], true),
     new StatusMove(Moves.SWEET_SCENT, Type.NORMAL, 100, 20, -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.EVA, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
