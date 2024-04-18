@@ -166,8 +166,8 @@ export class PostBattleInitStatChangeAbAttr extends PostBattleInitAbAttr {
   constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean) {
     super();
 
-    this.stats = typeof (stats) === 'number'
-      ? [stats as BattleStat]
+    this.stats = typeof(stats) === 'number'
+      ? [ stats as BattleStat ]
       : stats as BattleStat[];
     this.levels = levels;
     this.selfTarget = !!selfTarget;
@@ -654,8 +654,8 @@ export class PostDefendCritStatChangeAbAttr extends PostDefendAbAttr {
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [this.stat], this.levels));
-
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [ this.stat ], this.levels));
+    
     return true;
   }
 
