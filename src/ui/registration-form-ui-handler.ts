@@ -2,6 +2,7 @@ import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
+import { TextStyle, addTextObject } from "./text";
 
 export default class RegistrationFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {
@@ -18,6 +19,10 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
 
   getMargin(config?: ModalConfig): [number, number, number, number] {
     return [ 0, 0, 48, 0 ];
+  }
+
+  getButtonTopMargin(): number {
+    return 8;
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
@@ -40,6 +45,14 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
     return super.getReadableErrorMessage(error);
   }
 
+  setup(): void {
+    super.setup();
+
+    const label = addTextObject(this.scene, 10, 87, 'By registering, you confirm you are of 13 years of age or older.', TextStyle.TOOLTIP_CONTENT, { fontSize: '42px' });
+
+    this.modalContainer.add(label);
+  }
+
   show(args: any[]): boolean {
     if (super.show(args)) {
       const config = args[0] as ModalConfig;
@@ -60,11 +73,15 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
           return onFail(this.getReadableErrorMessage('invalid password'));
         if (this.inputs[1].text !== this.inputs[2].text)
           return onFail('Password must match confirm password');
-        Utils.apiPost('account/register', JSON.stringify({ username: this.inputs[0].text, password: this.inputs[1].text }))
+        const contentType = 'application/x-www-form-urlencoded';
+        const headers = {
+          'Content-Type': contentType,
+        };
+        fetch(`${Utils.apiUrl}/account/register`, { method: 'POST', headers: headers, body: `username=${this.inputs[0].text}&password=${this.inputs[1].text}` })
           .then(response => response.text())
           .then(response => {
             if (!response) {
-              Utils.apiPost('account/login', JSON.stringify({ username: this.inputs[0].text, password: this.inputs[1].text }))
+              fetch(`${Utils.apiUrl}/account/login`, { method: 'POST', headers: headers, body: `username=${this.inputs[0].text}&password=${this.inputs[1].text}` })
                 .then(response => {
                   if (!response.ok)
                     return response.text();

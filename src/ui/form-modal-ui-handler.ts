@@ -28,7 +28,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   abstract getFields(): string[];
 
   getHeight(config?: ModalConfig): number {
-    return 20 * this.getFields().length + (this.getModalTitle() ? 26 : 0) + ((config as FormModalConfig)?.errorMessage ? 12 : 0) + 28;
+    return 20 * this.getFields().length + (this.getModalTitle() ? 26 : 0) + ((config as FormModalConfig)?.errorMessage ? 12 : 0) + this.getButtonTopMargin() + 28;
   }
 
   getReadableErrorMessage(error: string): string {
@@ -67,7 +67,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       this.inputs.push(input);
     });
 
-    this.errorMessage = addTextObject(this.scene, 10, (hasTitle ? 31 : 5) + 20 * (fields.length - 1) + 16, '', TextStyle.TOOLTIP_CONTENT);
+    this.errorMessage = addTextObject(this.scene, 10, (hasTitle ? 31 : 5) + 20 * (fields.length - 1) + 16 + this.getButtonTopMargin(), '', TextStyle.TOOLTIP_CONTENT);
     this.errorMessage.setColor(this.getTextColor(TextStyle.SUMMARY_PINK));
     this.errorMessage.setShadowColor(this.getTextColor(TextStyle.SUMMARY_PINK, true));
     this.errorMessage.setVisible(false);
