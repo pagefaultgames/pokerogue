@@ -34,5 +34,3 @@ public/images/character/*/
 src/data/battle-anim-raw-data*.ts
 src/data/battle-anim-data.ts
 
-coverage
-src/battle-scene.ts
