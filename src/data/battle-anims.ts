@@ -79,6 +79,7 @@ export enum CommonAnim {
     MAGMA_STORM,
     CLAMP,
     THUNDER_CAGE,
+    INFESTATION,
     ORDER_UP_CURLY,
     ORDER_UP_DROOPY,
     ORDER_UP_STRETCHY,
@@ -98,8 +99,7 @@ export enum CommonAnim {
     ELECTRIC_TERRAIN,
     GRASSY_TERRAIN,
     PSYCHIC_TERRAIN,
-    LOCK_ON = 2120,
-    INFESTATION
+    LOCK_ON = 2120
 }
 
 export class AnimConfig {
