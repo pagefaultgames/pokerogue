@@ -567,7 +567,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
   ],
   [Species.MIMIKYU]: [
     new SpeciesFormChange(Species.MIMIKYU, 'disguised', 'busted', new SpeciesFormChangeManualTrigger(), true),
-    new SpeciesFormChange(Species.MIMIKYU, 'busted', 'disquised', new SpeciesFormChangeManualTrigger(), true)
+    new SpeciesFormChange(Species.MIMIKYU, 'busted', 'disguised', new SpeciesFormChangeManualTrigger(), true)
   ],
   [Species.NECROZMA]: [
     new SpeciesFormChange(Species.NECROZMA, '', 'dawn-wings', new SpeciesFormChangeItemTrigger(FormChangeItem.N_LUNARIZER)),
