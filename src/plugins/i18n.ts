@@ -1,6 +1,7 @@
 import i18next from 'i18next';
 import { menu as enMenu } from '../locales/en/menu';
 import { menu as itMenu } from '../locales/it/menu';
+import { menu as frMenu } from '../locales/fr/menu';
 
 import { move as enMove } from '../locales/en/move';
 import { move as frMove } from '../locales/fr/move';
@@ -35,6 +36,7 @@ i18next.init({
       menu: itMenu,
     },
     fr: {
+      menu: frMenu,
       move: frMove,
     }
   },
