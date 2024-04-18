@@ -3543,12 +3543,17 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     this.scene.unshiftPhase(new HidePartyExpBarPhase(this.scene));
     pokemon.updateInfo();
 
-    this.scene.partyExpBar.showPokemonExp(pokemon, exp.value).then(() => {
-      if (newLevel > lastLevel)
-        this.end();
-      else
-        setTimeout(() => this.end(), 500);
-    });
+    if (this.scene.showExpGains) {
+      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value).then(() => {
+        if (newLevel > lastLevel)
+          this.end();
+        else
+          setTimeout(() => this.end(), 500);
+      });
+    } else {
+      this.end();
+    }
+
   }
 }
 
