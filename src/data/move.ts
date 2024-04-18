@@ -2929,7 +2929,7 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
         : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
           ? [ target.getBattlerIndex() ]
           : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
-      user.getMoveQueue().push({ move: move.moveId, targets: targets, ignorePP: this.enemyMoveset });
+      user.getMoveQueue().push({ move: move.moveId, targets: targets, ignorePP: true });
       user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, moveset[moveIndex], true));
       return true;
     }
@@ -4117,7 +4117,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.SLEEP_TALK, Type.NORMAL, -1, 10, -1, 0, 2)
       .attr(BypassSleepAttr)
       .attr(RandomMovesetMoveAttr)
-      .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP),
+      .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
+      .ignoresVirtual(),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
       .soundBased()
       .target(MoveTarget.USER_AND_ALLIES)
