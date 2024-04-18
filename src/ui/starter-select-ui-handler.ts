@@ -170,6 +170,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectCallback: StarterSelectCallback;
   private gameMode: GameModes;
 
+  protected blockInput: boolean = false;
+
   constructor(scene: BattleScene) {
     super(scene, Mode.STARTER_SELECT);
   }
@@ -614,6 +616,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   processInput(button: Button): boolean {
+    if (this.blockInput)
+      return false;
+
     const ui = this.getUi();
 
     let success = false;
@@ -633,6 +638,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         success = true;
         this.updateInstructions();
       } else {
+        this.blockInput = true;
         this.scene.clearPhaseQueue();
         this.scene.pushPhase(new TitlePhase(this.scene));
         this.scene.getCurrentPhase().end();
@@ -1631,6 +1637,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     super.clear();
     this.cursor = -1;
     this.starterSelectContainer.setVisible(false);
+    this.blockInput = false;
 
     while (this.starterCursors.length)
       this.popStarter();
