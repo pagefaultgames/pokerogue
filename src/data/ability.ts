@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, allMoves } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, HitHealAttr, StrengthSapHealAttr, allMoves } from "./move";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -517,6 +517,16 @@ export class MoveImmunityStatChangeAbAttr extends MoveImmunityAbAttr {
     }
 
     return ret;
+  }
+}
+
+export class ReverseDrainAbAttr extends PostDefendAbAttr {
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (!!move.getMove().getAttrs(HitHealAttr).length || !!move.getMove().getAttrs(StrengthSapHealAttr).length ) {
+      pokemon.scene.queueMessage(getPokemonMessage(attacker, ` sucked up the liquid ooze!`));
+      return true;
+    }
+    return false;
   }
 }
 
@@ -2484,7 +2494,8 @@ export function initAbilities() {
     new Ability(Abilities.MARVEL_SCALE, "Marvel Scale", "The Pokémon's marvelous scales boost the Defense stat if it has a status condition.", 3)
       .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.DEF, 1.5)
       .ignorable(),
-    new Ability(Abilities.LIQUID_OOZE, "Liquid Ooze (N)", "The oozed liquid has a strong stench, which damages attackers using any draining move.", 3),
+    new Ability(Abilities.LIQUID_OOZE, "Liquid Ooze", "The oozed liquid has a strong stench, which damages attackers using any draining move.", 3)
+      .attr(ReverseDrainAbAttr),
     new Ability(Abilities.OVERGROW, "Overgrow", "Powers up Grass-type moves when the Pokémon's HP is low.", 3)
       .attr(LowHpMoveTypePowerBoostAbAttr, Type.GRASS),
     new Ability(Abilities.BLAZE, "Blaze", "Powers up Fire-type moves when the Pokémon's HP is low.", 3)
