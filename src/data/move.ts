@@ -2150,6 +2150,35 @@ export class RagingBullTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
+export class RevelationDanceTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.ORICORIO)) {
+      const form = user.species.speciesId === Species.ORICORIO ? user.formIndex : user.fusionSpecies.formIndex;
+      const type = (args[0] as Utils.IntegerHolder);
+
+      switch (form) {
+        case 0: // Baile Style
+          type.value = Type.FIRE;
+          break;
+        case 1: // Pom-Pom Style
+          type.value = Type.ELECTRIC;
+          break;
+        case 2: // Pau Style
+          type.value = Type.PSYCHIC;
+          break;
+        case 3: // Sensu Style
+          type.value = Type.GHOST;
+          break;
+        default:
+          break;
+      }
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.OGERPON)) {
@@ -5400,8 +5429,8 @@ export function initMoves() {
       .triageMove()
       .unimplemented(),
     new AttackMove(Moves.REVELATION_DANCE, Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 7)
-      .danceMove()
-      .partial(),
+      .attr(RevelationDanceTypeAttr)
+      .danceMove(),
     new AttackMove(Moves.CORE_ENFORCER, Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 7)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
