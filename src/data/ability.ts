@@ -324,18 +324,69 @@ export class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultip
   }
 }
 
-export class PreDefendMovePowerToOneAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
-  constructor(condition: PokemonDefendCondition) {
-    super(condition, 1);
-  }
-
+/*
+Attribute used for the Disguise ability
+Before getting hit and the ability has not been triggered for the battle nullifies damage from moves.
+*/
+export class PreDefendDisguiseNullifyDamageAbAttr extends PreDefendAbAttr {
+  /**
+ * Sets damage received to 1 and hit result as "Effective". Set ability as triggered.
+ * @param {Pokemon} pokemon Pokemon has the ability
+ * @param {Pokemon} passive N/A
+ * @param {Pokemon} attacker N/A.
+ * @param {PokemonMove} move N/A.
+ * @param {any[]} args 0: Damage dealt to user. 1: Hit result type.
+ * @returns {boolean} true if the function succeeds
+ */
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.condition(pokemon, attacker, move.getMove())) {
+    //If disguise has not been triggered during this battle, and the move will hit the user (User is not inmune and or foe's move failed).
+    if (pokemon.battleData && !pokemon.battleData.abilitiesApplied.includes(Abilities.DISGUISE) && (args[1] as Utils.NumberHolder).value !== HitResult.NO_EFFECT && (args[1] as Utils.NumberHolder).value !== HitResult.FAIL) {
+      //Damage dealt is set to 1 as 0 can cause some issues. This 1 damage is subtracted later.
+      console.log(pokemon.battleData);
       (args[0] as Utils.NumberHolder).value = 1;
+      (args[1] as Utils.NumberHolder).value = HitResult.EFFECTIVE;
       return true;
     }
 
     return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return "Its disguise served it as a decoy!";
+  }
+}
+
+/*
+Attribute used for the Disguise ability
+When the user is hit by confusion, Disguise triggers.
+*/
+export class DisguiseConfusionInteractionAbAttr extends AbAttr {
+  /**
+* Cancels confusion damage and triggers disguise.
+* @param {Pokemon} pokemon Pokemon has the ability
+* @param {Pokemon} passive N/A
+* @param {Utils.BooleanHolder} damageCancelled If true confusion damage is cancelled.
+* @param {any[]} args N/A
+* @returns {boolean} true if the function succeeds
+*/
+  apply(pokemon: Pokemon, passive: boolean, damageCancelled: Utils.BooleanHolder, args: any[]): boolean {
+  //This checks if ability has been triggered during battle, and if the current form is correct.
+    if ((pokemon.battleData && pokemon.battleData.abilitiesApplied.includes(Abilities.DISGUISE)) || pokemon.formIndex === 1) {
+      return false;
+    }
+
+    damageCancelled.value = true;
+    const hpLost = Math.round(pokemon.getMaxHp() / 8);
+    pokemon.damageAndUpdate(hpLost, HitResult.OTHER);
+    pokemon.turnData.damageTaken += hpLost;
+    pokemon.battleData.abilitiesApplied.push(Abilities.DISGUISE);
+    pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+    pokemon.scene.queueMessage("Its disguise served it as a decoy!");
+    return true;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return `${pokemon.name}\'s disguise was busted!`;
   }
 }
 
@@ -466,21 +517,36 @@ export class PostDefendAbAttr extends AbAttr {
   }
 }
 
-export class PostDefendDisguiseAbAttr extends PostDefendAbAttr {
-
+/*
+Attribute used for the Disguise ability
+After getting hit and the ability has not been triggered for the battle inflicts recoil damage on the user.
+*/
+export class PostDefendDisguiseRecoilAbAttr extends PostDefendAbAttr {
+  /**
+ * Inflicts 1/8 user's of max HP as recoil when triggered, and sets ability as triggered for the battle.
+ * @param {Pokemon} pokemon Pokemon has the ability
+ * @param {Pokemon} passive N/A
+ * @param {Pokemon} attacker Pokémon that targeted the ability's user.
+ * @param {HitResult} hitResult The result type of the hit, should be "EFFECTIVE".
+ * @param {any[]} args N/A
+ * @returns {boolean} true if the function succeeds
+ */
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (pokemon.formIndex === 0 && pokemon.battleData.hitCount !== 0 && (move.getMove().category === MoveCategory.SPECIAL || move.getMove().category === MoveCategory.PHYSICAL)) {
-
-      const recoilDamage = Math.ceil((pokemon.getMaxHp() / 8) - attacker.turnData.damageDealt);
-      if (!recoilDamage) {
+    //If ability has not been triggered during the battle and the hit result is effective...
+    if (pokemon.battleData && !pokemon.battleData.abilitiesApplied.includes(Abilities.DISGUISE) && (hitResult === HitResult.EFFECTIVE)) {
+      //damageDealt is taken into account as it is and not just 1 to prevent issues.
+      const damageDealt = attacker.turnData.damageDealt;
+      const hpLost = Math.round(pokemon.getMaxHp() / 8 - damageDealt);
+      if (!hpLost ) {
         return false;
       }
-      pokemon.damageAndUpdate(recoilDamage, HitResult.OTHER);
-      pokemon.turnData.damageTaken += recoilDamage;
+
+      pokemon.damageAndUpdate(hpLost , HitResult.OTHER);
+      pokemon.turnData.damageTaken += hpLost;
+      pokemon.battleData.abilitiesApplied.push(Abilities.DISGUISE);
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, "'s disguise was busted!"));
       return true;
     }
-
     return false;
   }
 }
@@ -3229,6 +3295,16 @@ export class NoFusionAbilityAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Attribute for to not be pushed to the Pokémon battleData.abilityApplied
+ * This is for abilities that have secondary attributes (like Form Change) that could malfunction.
+ * The ability has to be pushed to battleData.abilityApplied in another attribute.
+ */
+export class SpecialOncePerBattleAbilityAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+}
 export class IgnoreTypeImmunityAbAttr extends AbAttr {
   private defenderType: Type;
   private allowedMoveTypes: Type[];
@@ -3374,7 +3450,7 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any
       }
       pokemon.scene.setPhaseQueueSplice();
       const onApplySuccess = () => {
-        if (pokemon.battleData && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
+        if (pokemon.battleData && !pokemon.battleData.abilitiesApplied.includes(ability.id) && !ability.hasAttr(SpecialOncePerBattleAbilityAbAttr)) {
           pokemon.battleData.abilitiesApplied.push(ability.id);
         }
         if (attr.showAbility && !quiet) {
@@ -4175,17 +4251,22 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.DISGUISE, 7)
-      .attr(PreDefendMovePowerToOneAbAttr, (target, user, move) => target.formIndex === 0 && target.getAttackTypeEffectiveness(move.type, user) > 0)
-      .attr(PostSummonFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PostBattleInitFormChangeAbAttr, () => 0)
-      .attr(PostDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PreDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PostDefendDisguiseAbAttr)
+      .attr(DisguiseConfusionInteractionAbAttr)
+      .attr(PreDefendDisguiseNullifyDamageAbAttr)
+      .attr(PostDefendDisguiseRecoilAbAttr)
+      //Disguise has the disguised and busted states. Acording to the state, one can change into the other in certain moments of battle:
+      //Before being hit (both ways), after switch in (busted to disguised), after battle starts (busted to disguised), after being hit (disguised to busted).
+      .attr(PreDefendFormChangeAbAttr, p => p.battleData && !p.battleData.abilitiesApplied.includes(Abilities.DISGUISE) ? 0 : 1)
+      .attr(PostSummonFormChangeAbAttr, p => p.battleData && !p.battleData.abilitiesApplied.includes(Abilities.DISGUISE) ? 0 : 1)
+      .attr(PostBattleInitFormChangeAbAttr, p => p.battleData && !p.battleData.abilitiesApplied.includes(Abilities.DISGUISE) ? 0 : 1)
+      .attr(PostDefendFormChangeAbAttr, p => p.battleData && !p.battleData.abilitiesApplied.includes(Abilities.DISGUISE) ? 0 : 1)
+      //Being a signature ability with form change that triggers once per battle:
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
+      .attr(SpecialOncePerBattleAbilityAbAttr)
       .ignorable()
       .partial(),
     new Ability(Abilities.BATTLE_BOND, 7)
