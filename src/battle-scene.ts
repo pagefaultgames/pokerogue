@@ -17,7 +17,7 @@ import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { initMoves } from './data/move';
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getModifierPoolForType } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import { Abilities } from "./data/enums/abilities";
@@ -37,7 +37,7 @@ import SettingsUiHandler from './ui/settings-ui-handler';
 import MessageUiHandler from './ui/message-ui-handler';
 import { Species } from './data/enums/species';
 import InvertPostFX from './pipelines/invert';
-import { Achv, ModifierAchv, achvs } from './system/achv';
+import { Achv, ModifierAchv, MoneyAchv, achvs } from './system/achv';
 import { Voucher, vouchers } from './system/voucher';
 import { Gender } from './data/gender';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
@@ -795,7 +795,11 @@ export default class BattleScene extends SceneBase {
 		this.trainer.setVisible(true);
 
 		if (reloadI18n) {
-			const localizable: Localizable[] = [ ...allMoves ];
+			const localizable: Localizable[] = [
+				...allSpecies,
+				...allMoves,
+				...Utils.getEnumValues(ModifierPoolType).map(mpt => getModifierPoolForType(mpt)).map(mp => Object.values(mp).flat().map(mt => mt.modifierType).filter(mt => 'localize' in mt).map(lpb => lpb as unknown as Localizable)).flat()
+			];
 			for (let item of localizable)
 				item.localize();
 		}
@@ -889,7 +893,26 @@ export default class BattleScene extends SceneBase {
 		//this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
 
 		if (!waveIndex && lastBattle) {
-			const isNewBiome = !(lastBattle.waveIndex % 10) || (this.gameMode.isDaily && lastBattle.waveIndex === 49);
+			let isNewBiome = !(lastBattle.waveIndex % 10) || ((this.gameMode.hasShortBiomes || this.gameMode.isDaily) && (lastBattle.waveIndex % 50) === 49);
+			if (!isNewBiome && this.gameMode.hasShortBiomes) {
+				let w = lastBattle.waveIndex - ((lastBattle.waveIndex % 10) - 1);
+				let biomeWaves = 1;
+				while (w < lastBattle.waveIndex) {
+					let wasNewBiome = false;
+					this.executeWithSeedOffset(() => {
+						wasNewBiome = !Utils.randSeedInt(6 - biomeWaves);
+					}, w << 4);
+					if (wasNewBiome)
+						biomeWaves = 1;
+					else
+						biomeWaves++;
+					w++;
+				}
+
+				this.executeWithSeedOffset(() => {
+					isNewBiome = !Utils.randSeedInt(6 - biomeWaves);
+				}, lastBattle.waveIndex << 4);
+			}
 			const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
 			this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
 			this.trySpreadPokerus();
@@ -975,6 +998,9 @@ export default class BattleScene extends SceneBase {
 			case Species.DEERLING:
 			case Species.SAWSBUCK:
 			case Species.VIVILLON:
+			case Species.FLABEBE:
+			case Species.FLOETTE:
+			case Species.FLORGES:
 			case Species.ORICORIO:
 			case Species.SQUAWKABILLY:
 			case Species.TATSUGIRI:
@@ -1671,6 +1697,12 @@ export default class BattleScene extends SceneBase {
 			this.nextCommandPhaseQueue.splice(0, this.nextCommandPhaseQueue.length);
 		}
 		this.phaseQueue.push(new TurnInitPhase(this));
+	}
+
+	addMoney(amount: integer): void {
+		this.money = Math.min(this.money + amount, Number.MAX_SAFE_INTEGER);
+		this.updateMoneyText();
+		this.validateAchvs(MoneyAchv);
 	}
 
 	getWaveMoneyAmount(moneyMultiplier: number): integer {

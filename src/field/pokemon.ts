@@ -309,7 +309,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             if (this.shiny) {
               const populateVariantColors = (key: string, back: boolean = false): Promise<void> => {
                 return new Promise(resolve => {
-                  const battleSpritePath = this.getBattleSpriteAtlasPath(back, ignoreOverride);
+                  const battleSpritePath = this.getBattleSpriteAtlasPath(back, ignoreOverride).replace('variant/', '').replace(/_[1-3]$/, '');
                   let variantSet: VariantSet;
                   let config = variantData;
                   battleSpritePath.split('/').map(p => config ? config = config[p] : null);
@@ -326,9 +326,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                 });
               };
               if (this.isPlayer())
-                Promise.all([ populateVariantColors(this.getBattleSpriteKey()), populateVariantColors(this.getBattleSpriteKey(true)) ]).then(() => updateFusionPaletteAndResolve());
+                Promise.all([ populateVariantColors(this.getBattleSpriteKey(false)), populateVariantColors(this.getBattleSpriteKey(true), true) ]).then(() => updateFusionPaletteAndResolve());
               else
-                populateVariantColors(this.getBattleSpriteKey()).then(() => updateFusionPaletteAndResolve());
+                populateVariantColors(this.getBattleSpriteKey(false)).then(() => updateFusionPaletteAndResolve());
             } else
               updateFusionPaletteAndResolve();
           });
@@ -986,11 +986,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     let shinyThreshold = new Utils.IntegerHolder(32);
     if (thresholdOverride === undefined) {
-      if (!this.hasTrainer()) {
-        if (new Date() < new Date('4/22/2024'))
-          shinyThreshold.value *= 3;
+      if (!this.hasTrainer())
         this.scene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
-      }
     } else
       shinyThreshold.value = thresholdOverride;
 
@@ -1828,7 +1825,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           return false;
         break;
       case StatusEffect.FREEZE:
-        if (this.isOfType(Type.ICE))
+        if (this.isOfType(Type.ICE) || [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(this.scene?.arena.weather?.weatherType))
           return false;
         break;
       case StatusEffect.BURN:

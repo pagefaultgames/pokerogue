@@ -1,4 +1,5 @@
 import BattleScene from "../battle-scene";
+import i18next from '../plugins/i18n';
 
 export enum PokeballType {
   POKEBALL,
@@ -30,22 +31,22 @@ export function getPokeballName(type: PokeballType): string {
   let ret: string;
   switch (type) {
     case PokeballType.POKEBALL:
-      ret = 'Poké Ball';
+      ret = i18next.t('pokeball:pokeBall');
       break;
     case PokeballType.GREAT_BALL:
-      ret = 'Great Ball';
+      ret = i18next.t('pokeball:greatBall');
       break;
     case PokeballType.ULTRA_BALL:
-      ret = 'Ultra Ball';
+      ret = i18next.t('pokeball:ultraBall');
       break;
     case PokeballType.ROGUE_BALL:
-      ret = 'Rogue Ball';
+      ret = i18next.t('pokeball:rogueBall');
       break;
     case PokeballType.MASTER_BALL:
-      ret = 'Master Ball';
+      ret = i18next.t('pokeball:masterBall');
       break;
     case PokeballType.LUXURY_BALL:
-      ret = 'Luxury Ball';
+      ret = i18next.t('pokeball:luxuryBall');
       break;
   }
   return ret;
