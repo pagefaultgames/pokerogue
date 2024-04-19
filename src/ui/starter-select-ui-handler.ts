@@ -729,6 +729,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   this.starterGens.push(this.getGenCursorWithScroll());
                   this.starterCursors.push(this.cursor);
                   this.starterAttr.push(this.dexAttrCursor);
+                  this.starterAbilityIndexes.push(this.abilityCursor);
                   this.starterNatures.push(this.natureCursor as unknown as Nature);
                   this.starterMovesets.push(this.starterMoveset.slice(0) as StarterMoveset);
                   if (this.speciesLoaded.get(species.speciesId))
@@ -1420,6 +1421,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
         if (starterIndex > -1) {
           this.starterAttr[starterIndex] = this.dexAttrCursor;
+          this.starterAbilityIndexes[starterIndex] = this.abilityCursor;
           this.starterNatures[starterIndex] = this.natureCursor;
         }
 
@@ -1561,6 +1563,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterGens.pop();
     this.starterCursors.pop();
     this.starterAttr.pop();
+    this.starterAbilityIndexes.pop();
     this.starterNatures.pop();
     this.starterMovesets.pop();
     this.starterCursorObjs[this.starterCursors.length].setVisible(false);
