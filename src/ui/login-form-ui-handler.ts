@@ -62,7 +62,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         const headers = {
           'Content-Type': contentType,
         };
-        fetch(`${Utils.apiUrl}/account/login`, { method: 'POST', headers: headers, body: `username=${this.inputs[0].text}&password=${this.inputs[1].text}` })
+        fetch(`${Utils.apiUrl}/account/login`, { method: 'POST', headers: headers, body: `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}` })
           .then(response => {
             if (!response.ok)
               return response.text();
