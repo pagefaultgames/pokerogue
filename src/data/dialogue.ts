@@ -2162,7 +2162,7 @@ export const trainerTypeDialogue = {
         `@c{shock}After all that… it wasn't enough…?\nYou'll never come back at this rate…`
       ],
       defeat: [
-        `Great, now go home!`
+        `You gave it your best, now let's go home.`
       ]
     }
   ],
