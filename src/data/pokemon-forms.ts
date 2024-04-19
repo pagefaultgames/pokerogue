@@ -565,6 +565,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.MINIOR, 'violet-meteor', 'violet', new SpeciesFormChangeManualTrigger(), true),
     new SpeciesFormChange(Species.MINIOR, 'violet', 'violet-meteor', new SpeciesFormChangeManualTrigger(), true)
   ],
+  [Species.MIMIKYU]: [
+    new SpeciesFormChange(Species.MIMIKYU, 'disguised', 'busted', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MIMIKYU, 'busted', 'disguised', new SpeciesFormChangeManualTrigger(), true)
+  ],
   [Species.NECROZMA]: [
     new SpeciesFormChange(Species.NECROZMA, '', 'dawn-wings', new SpeciesFormChangeItemTrigger(FormChangeItem.N_LUNARIZER)),
     new SpeciesFormChange(Species.NECROZMA, '', 'dusk-mane', new SpeciesFormChangeItemTrigger(FormChangeItem.N_SOLARIZER))

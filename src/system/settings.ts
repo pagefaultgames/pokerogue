@@ -16,6 +16,7 @@ export enum Setting {
   Sprite_Set = "SPRITE_SET",
   Move_Animations = "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
+  EXP_Gains_Speed = "EXP_GAINS_SPEED",
   HP_Bar_Speed = "HP_BAR_SPEED",
   Fusion_Palette_Swaps = "FUSION_PALETTE_SWAPS",
   Player_Gender = "PLAYER_GENDER",
@@ -45,6 +46,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Sprite_Set]: [ 'Consistent', 'Prioritize Animation' ],
   [Setting.Move_Animations]: [ 'Off', 'On' ],
   [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ],
+  [Setting.EXP_Gains_Speed]: [ 'Normal', 'Fast', 'Faster', 'Skip' ],
   [Setting.HP_Bar_Speed]: [ 'Normal', 'Fast', 'Faster', 'Instant' ],
   [Setting.Fusion_Palette_Swaps]: [ 'Off', 'On' ],
   [Setting.Player_Gender]: [ 'Boy', 'Girl' ],
@@ -66,6 +68,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Sprite_Set]: 0,
   [Setting.Move_Animations]: 1,
   [Setting.Show_Stats_on_Level_Up]: 1,
+  [Setting.EXP_Gains_Speed]: 0,
   [Setting.HP_Bar_Speed]: 0,
   [Setting.Fusion_Palette_Swaps]: 1,
   [Setting.Player_Gender]: 0,
@@ -118,6 +121,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       break;
     case Setting.Show_Stats_on_Level_Up:
       scene.showLevelUpStats = settingOptions[setting][value] === 'On';
+      break;
+    case Setting.EXP_Gains_Speed:
+      scene.expGainsSpeed = value;
       break;
     case Setting.HP_Bar_Speed:
       scene.hpBarSpeed = value;

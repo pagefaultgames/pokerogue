@@ -400,7 +400,7 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   public boostPercent: integer;
 
   constructor(moveType: Type, boostPercent: integer) {
-    super(getAttackTypeBoosterItemName(moveType), `Inceases the power of a Pokémon's ${Utils.toReadableString(Type[moveType])}-type moves by 20%`,
+    super(getAttackTypeBoosterItemName(moveType), `Increases the power of a Pokémon's ${Utils.toReadableString(Type[moveType])}-type moves by 20%`,
       (_type, args) => new Modifiers.AttackTypeBoosterModifier(this, (args[0] as Pokemon).id, moveType, boostPercent),
       `${getAttackTypeBoosterItemName(moveType).replace(/[ \-]/g, '_').toLowerCase()}`);
 

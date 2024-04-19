@@ -670,8 +670,9 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
     const legendary = this.legendary;
     const mythical = this.mythical;
     return species => {
-      return pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
-        && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution
+      return (pseudoLegendary || legendary || mythical ||
+        (pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
+        && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution))
         && species.pseudoLegendary === pseudoLegendary
         && species.legendary === legendary
         && species.mythical === mythical
@@ -3233,7 +3234,7 @@ export const starterPassiveAbilities = {
   [Species.ZIGZAGOON]: Abilities.PICKPOCKET,
   [Species.WURMPLE]: Abilities.TINTED_LENS,
   [Species.LOTAD]: Abilities.DRIZZLE,
-  [Species.SEEDOT]: Abilities.DISGUISE,
+  [Species.SEEDOT]: Abilities.EARLY_BIRD,
   [Species.TAILLOW]: Abilities.KEEN_EYE,
   [Species.WINGULL]: Abilities.HYDRATION,
   [Species.RALTS]: Abilities.PSYCHIC_SURGE,
@@ -3408,7 +3409,7 @@ export const starterPassiveAbilities = {
   [Species.AXEW]: Abilities.SHEER_FORCE,
   [Species.CUBCHOO]: Abilities.INTIMIDATE,
   [Species.CRYOGONAL]: Abilities.DAZZLING,
-  [Species.SHELMET]: Abilities.DISGUISE,
+  [Species.SHELMET]: Abilities.TOXIC_DEBRIS,
   [Species.STUNFISK]: Abilities.STORM_DRAIN,
   [Species.MIENFOO]: Abilities.NO_GUARD,
   [Species.DRUDDIGON]: Abilities.INTIMIDATE,
@@ -3638,7 +3639,7 @@ export const starterPassiveAbilities = {
   [Species.OKIDOGI]: Abilities.INTIMIDATE,
   [Species.MUNKIDORI]: Abilities.PRANKSTER,
   [Species.FEZANDIPITI]: Abilities.DAZZLING,
-  [Species.OGERPON]: Abilities.DISGUISE,
+  [Species.OGERPON]: Abilities.UNNERVE,
   [Species.GOUGING_FIRE]: Abilities.BEAST_BOOST,
   [Species.RAGING_BOLT]: Abilities.BEAST_BOOST,
   [Species.IRON_BOULDER]: Abilities.SHARPNESS,
