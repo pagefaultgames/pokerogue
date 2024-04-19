@@ -410,7 +410,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
             const flatBaseColors: integer[] = [];
             const flatVariantColors: number[] = [];
 
-            if ((sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.isShiny() : !!data['shiny'])
+            if ((sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.shiny : !!data['shiny'])
                 && (variantColors = variantColorCache[sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.getSprite().texture.key : data['spriteKey']]) && variantColors.hasOwnProperty(variant)) {
                 const baseColors = Object.keys(variantColors[variant]);
                 for (let c = 0; c < 32; c++) {
