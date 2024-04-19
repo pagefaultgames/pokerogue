@@ -8,7 +8,7 @@ import * as Utils from "../utils";
 import { Moves } from "./enums/moves";
 import { ChargeAttr, MoveFlags, allMoves } from "./move";
 import { Type } from "./type";
-import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, applyAbAttrs, DisguiseConfusionDamageInteractionAbAttr } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { TerrainType } from "./terrain";
@@ -199,8 +199,15 @@ export class ConfusedTag extends BattlerTag {
         const def = pokemon.getBattleStat(Stat.DEF);
         const damage = Math.ceil(((((2 * pokemon.level / 5 + 2) * 40 * atk / def) / 50) + 2) * (pokemon.randSeedInt(15, 85) / 100));
         pokemon.scene.queueMessage('It hurt itself in its\nconfusion!');
-        pokemon.damageAndUpdate(damage);
-        pokemon.battleData.hitCount++;
+
+        const cancelled = new Utils.BooleanHolder(false);
+        applyAbAttrs(DisguiseConfusionDamageInteractionAbAttr, pokemon, cancelled);
+
+        if (!cancelled.value) {
+          pokemon.damageAndUpdate(damage);
+          pokemon.battleData.hitCount++;
+        }
+
         (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
       }
     }
