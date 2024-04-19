@@ -91,6 +91,7 @@ export default class Move implements Localizable {
   public attrs: MoveAttr[];
   private conditions: MoveCondition[];
   private flags: integer;
+  private nameAppend: string;
 
   constructor(id: Moves, type: Type, category: MoveCategory, defaultMoveTarget: MoveTarget, power: integer, accuracy: integer, pp: integer, chance: integer, priority: integer, generation: integer) {
     this.id = id;
@@ -98,6 +99,7 @@ export default class Move implements Localizable {
     const i18nKey = Moves[id].split('_').filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join('') as unknown as string;
 
     this.name = id ? i18next.t(`move:${i18nKey}.name`).toString() : '';
+    this.nameAppend = '';
     this.type = type;
     this.category = category;
     this.moveTarget = defaultMoveTarget;
@@ -122,8 +124,8 @@ export default class Move implements Localizable {
   localize() {
     const i18nKey = Moves[this.id].split('_').filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join('') as unknown as string;
 
-    this.name = this.id ? i18next.t(`move:${i18nKey}.name`).toString() : '';
-    this.effect = this.id ? i18next.t(`move:${i18nKey}.effect`).toString() : '';
+    this.name = this.id ? `${i18next.t(`move:${i18nKey}.name`).toString()}${this.nameAppend}` : '';
+    this.effect = this.id ? `${i18next.t(`move:${i18nKey}.effect`).toString()}${this.nameAppend}` : '';
   }
 
   getAttrs(attrType: { new(...args: any[]): MoveAttr }): MoveAttr[] {
@@ -203,12 +205,12 @@ export default class Move implements Localizable {
   }
   
   partial(): this {
-    this.name += ' (P)';
+    this.nameAppend += ' (P)';
     return this;
   }
 
   unimplemented(): this {
-    this.name += ' (N)';
+    this.nameAppend += ' (N)';
     return this;
   }
 
