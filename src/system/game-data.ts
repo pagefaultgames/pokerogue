@@ -342,6 +342,11 @@ export class GameData {
           } else {
             if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion))
               this.migrateStarterAbilities(systemData);
+            // Migrate ability starter data if empty for caught species
+            Object.keys(systemData.starterData).forEach(sd => {
+              if (systemData.dexData[sd].caughtAttr && !systemData.starterData[sd].abilityAttr)
+                systemData.starterData[sd].abilityAttr = 1;
+            });
             this.starterData = systemData.starterData;
           }
 
