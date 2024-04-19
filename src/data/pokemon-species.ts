@@ -211,7 +211,7 @@ export abstract class PokemonSpeciesForm {
     return `${/_[1-3]$/.test(spriteId) ? 'variant/' : ''}${spriteId}`;
   }
 
-  getSpriteId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
+  getSpriteId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer, back?: boolean): string {
     if (formIndex === undefined || this instanceof PokemonForm)
       formIndex = this.formIndex;
 
@@ -222,10 +222,10 @@ export abstract class PokemonSpeciesForm {
     
     let variantSet: VariantSet;
     let config = variantData;
-    baseSpriteKey.split('__').map(p => config = variantData[p]);
+    `${back ? 'back__' : ''}${baseSpriteKey}`.split('__').map(p => config ? config = config[p] : null);
     variantSet = config as VariantSet;
 
-    return `${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? 'shiny__' : ''}${baseSpriteKey}${shiny && variantSet && variantSet[variant || 0] === 2 ? `_${variant + 1}` : ''}`;
+    return `${back ? 'back__' : ''}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? 'shiny__' : ''}${baseSpriteKey}${shiny && variantSet && variantSet[variant || 0] === 2 ? `_${variant + 1}` : ''}`;
   }
 
   getSpriteKey(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
@@ -386,7 +386,7 @@ export abstract class PokemonSpeciesForm {
           spritePath = `exp/${spritePath}`;
         let variantSet: VariantSet;
         let config = variantData;
-        spritePath.split('/').map(p => config = variantData[p]);
+        spritePath.split('/').map(p => config ? config = config[p] : null);
         variantSet = config as VariantSet;
         if (variantSet && variantSet[variant] === 1) {
           const populateVariantColors = (key: string): Promise<void> => {

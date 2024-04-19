@@ -310,7 +310,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                   const battleSpritePath = this.getBattleSpriteAtlasPath(back, ignoreOverride);
                   let variantSet: VariantSet;
                   let config = variantData;
-                  battleSpritePath.split('/').map(p => config = variantData[p]);
+                  battleSpritePath.split('/').map(p => config ? config = config[p] : null);
                   variantSet = config as VariantSet;
                   if (variantSet && variantSet[this.variant] === 1) {
                     if (variantColorCache.hasOwnProperty(key))
@@ -367,7 +367,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getBattleSpriteId(back?: boolean, ignoreOverride?: boolean): string {
     if (back === undefined)
       back = this.isPlayer();
-    return `${back ? 'back__' : ''}${this.getSpriteId(ignoreOverride)}`;
+    return this.getSpeciesForm(ignoreOverride).getSpriteId(this.getGender(ignoreOverride) === Gender.FEMALE, this.formIndex, this.shiny, this.variant, back);
   }
 
   getSpriteKey(ignoreOverride?: boolean): string {
@@ -385,7 +385,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getFusionBattleSpriteId(back?: boolean, ignoreOverride?: boolean): string {
     if (back === undefined)
       back = this.isPlayer();
-    return `${back ? 'back__' : ''}${this.getFusionSpriteId(ignoreOverride)}`;
+    return this.getFusionSpeciesForm(ignoreOverride).getSpriteId(this.getFusionGender(ignoreOverride) === Gender.FEMALE, this.fusionFormIndex, this.fusionShiny, this.fusionVariant, back);
   }
 
   getFusionBattleSpriteKey(back?: boolean, ignoreOverride?: boolean): string {
