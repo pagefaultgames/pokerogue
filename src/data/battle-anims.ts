@@ -798,6 +798,7 @@ export abstract class BattleAnim {
                             sprite = scene.addPokemonSprite(isUser ? user : target, 0, 0, spriteSource.texture, spriteSource.frame.name, true);
                             [ 'spriteColors', 'fusionSpriteColors' ].map(k => sprite.pipelineData[k] = (isUser ? user : target).getSprite().pipelineData[k]);
                             sprite.setPipelineData('spriteKey', (isUser ? user : target).getSpriteKey());
+                            sprite.setPipelineData('shiny', (isUser ? user : target).isShiny());
                             sprite.setPipelineData('variant', (isUser ? user : target).variant);
                             sprite.setPipelineData('ignoreFieldPos', true);
                             spriteSource.on('animationupdate', (_anim, frame) => sprite.setFrame(frame.textureFrame));

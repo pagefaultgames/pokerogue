@@ -1432,6 +1432,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.assetLoadCancelled = null;
           this.speciesLoaded.set(species.speciesId, true);
           this.pokemonSprite.play(species.getSpriteKey(female, formIndex, shiny, variant));
+          this.pokemonSprite.setPipelineData('shiny', shiny);
           this.pokemonSprite.setPipelineData('variant', variant);
           this.pokemonSprite.setPipelineData('spriteKey', species.getSpriteKey(female, formIndex, shiny, variant));
           this.pokemonSprite.setVisible(!this.statsMode);
