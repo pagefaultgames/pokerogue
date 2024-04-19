@@ -2863,6 +2863,7 @@ export class RemoveTypeAttr extends MoveEffectAttr {
     const userTypes = user.getTypes(true)
     const modifiedTypes = userTypes.filter(type => type !== this.removedType);
     user.summonData.types = modifiedTypes;
+    user.updateInfo();
 
 
     if (this.messageCallback) {
@@ -2883,10 +2884,15 @@ export class CopyTypeAttr extends MoveEffectAttr {
       return false;
 
     user.summonData.types = target.getTypes(true);
+    user.updateInfo();
 
     user.scene.queueMessage(getPokemonMessage(user, `'s type\nchanged to match ${target.name}'s!`));
 
     return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => target.getTypes()[0] !== Type.UNKNOWN;
   }
 }
 
@@ -2902,10 +2908,59 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
     const biomeType = user.scene.arena.getTypeForBiome();
 
     user.summonData.types = [ biomeType ];
+    user.updateInfo();
 
     user.scene.queueMessage(getPokemonMessage(user, ` transformed\ninto the ${Utils.toReadableString(Type[biomeType])} type!`));
 
     return true;
+  }
+}
+
+export class ChangeTypeAttr extends MoveEffectAttr {
+  private type: Type;
+
+  constructor(type: Type) {
+    super(false, MoveEffectTrigger.HIT);
+
+    this.type = type;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    target.summonData.types = [this.type];
+    target.updateInfo();
+
+    user.scene.queueMessage(getPokemonMessage(target, ` transformed\ninto the ${Utils.toReadableString(Type[this.type])} type!`));
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => !target.isTerastallized() && !target.hasAbility(Abilities.MULTITYPE) && !target.hasAbility(Abilities.RKS_SYSTEM) && !(target.getTypes().length === 1 && target.getTypes()[0] === this.type);
+  }
+}
+
+export class AddTypeAttr extends MoveEffectAttr {
+  private type: Type;
+
+  constructor(type: Type) {
+    super(false, MoveEffectTrigger.HIT);
+
+    this.type = type;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const types = target.getTypes().slice(0, 2).filter(t => t !== Type.UNKNOWN); // TODO: Figure out some way to actually check if another version of this effect is already applied
+    types.push(this.type);
+    target.summonData.types = types;
+    target.updateInfo();
+
+    user.scene.queueMessage(`${Utils.toReadableString(Type[this.type])} was added to\n` + getPokemonMessage(target, '!'));
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => !target.isTerastallized()&& !target.getTypes().includes(this.type);
   }
 }
 
@@ -4889,7 +4944,7 @@ export function initMoves() {
       .attr(BattleStatRatioPowerAttr, Stat.SPD)
       .ballBombMove(),
     new StatusMove(Moves.SOAK, Type.WATER, 100, 20, -1, 0, 5)
-      .unimplemented(),
+      .attr(ChangeTypeAttr, Type.WATER),
     new AttackMove(Moves.FLAME_CHARGE, Type.FIRE, MoveCategory.PHYSICAL, 50, 100, 20, 100, 0, 5)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true),
     new SelfStatusMove(Moves.COIL, Type.POISON, -1, 20, -1, 0, 5)
@@ -5095,7 +5150,8 @@ export function initMoves() {
       .ignoresProtect()
       .ignoresVirtual(),
     new StatusMove(Moves.TRICK_OR_TREAT, Type.GHOST, 100, 20, -1, 0, 6)
-      .unimplemented(),
+      .attr(AddTypeAttr, Type.GHOST)
+      .partial(),
     new StatusMove(Moves.NOBLE_ROAR, Type.NORMAL, 100, 30, 100, 0, 6)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -1)
       .soundBased(),
@@ -5107,7 +5163,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .triageMove(),
     new StatusMove(Moves.FORESTS_CURSE, Type.GRASS, 100, 20, -1, 0, 6)
-      .unimplemented(),
+      .attr(AddTypeAttr, Type.GRASS)
+      .partial(),
     new AttackMove(Moves.PETAL_BLIZZARD, Type.GRASS, MoveCategory.PHYSICAL, 90, 100, 15, -1, 0, 6)
       .windMove()
       .makesContact(false)
