@@ -551,18 +551,18 @@ export default class BattleScene extends SceneBase {
 
 	hasExpSprite(key: string): boolean {
 		const keyMatch = /^pkmn__?(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?(?:_[1-3])?$/g.exec(key);
-			let k = keyMatch[4];
-			if (keyMatch[2])
-				k += 's';
-			if (keyMatch[1])
-				k += 'b';
-			if (keyMatch[3])
-				k += 'f';
-			if (keyMatch[5])
-				k += keyMatch[5];
-			if (!expSpriteKeys.includes(k))
-				return false;
-			return true;
+		let k = keyMatch[4];
+		if (keyMatch[2])
+			k += 's';
+		if (keyMatch[1])
+			k += 'b';
+		if (keyMatch[3])
+			k += 'f';
+		if (keyMatch[5])
+			k += keyMatch[5];
+		if (!expSpriteKeys.includes(k))
+			return false;
+		return true;
 	}
 
 	setupControls() {

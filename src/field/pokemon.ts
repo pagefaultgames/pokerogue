@@ -162,8 +162,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.shiny === undefined)
         this.trySetShiny();
 
-      if (this.shiny && this.variant === undefined)
-        this.variant = this.generateVariant();
+      if (this.variant === undefined)
+        this.variant = this.shiny ? this.generateVariant() : 0;
 
       if (nature !== undefined)
         this.setNature(nature);
