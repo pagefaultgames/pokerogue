@@ -38,7 +38,7 @@ uniform vec2 size;
 uniform vec2 texSize;
 uniform float yOffset;
 uniform vec4 tone;
-uniform vec4 baseVariantColors[32];
+uniform ivec4 baseVariantColors[32];
 uniform vec4 variantColors[32];
 uniform ivec4 spriteColors[32];
 uniform ivec4 fusionSpriteColors[32];
@@ -159,10 +159,12 @@ vec3 hsv2rgb(vec3 c) {
 void main() {
     vec4 texture = texture2D(uMainSampler[0], outTexCoord);
 
+    ivec4 colorInt = ivec4(int(texture.r * 255.0), int(texture.g * 255.0), int(texture.b * 255.0), int(texture.a * 255.0));
+
     for (int i = 0; i < 32; i++) {
-        if (baseVariantColors[i][3] == 0.0)
+        if (baseVariantColors[i][3] == 0)
             break;
-        if (texture.a > 0.0 && texture.r == baseVariantColors[i].r && texture.g == baseVariantColors[i].g && texture.b == baseVariantColors[i].b) {
+        if (texture.a > 0.0 && colorInt.r == baseVariantColors[i].r && colorInt.g == baseVariantColors[i].g && colorInt.b == baseVariantColors[i].b) {
             texture.rgb = variantColors[i].rgb;
             break;
         }
@@ -171,7 +173,7 @@ void main() {
     for (int i = 0; i < 32; i++) {
         if (spriteColors[i][3] == 0)
             break;
-        if (texture.a > 0.0 && int(texture.r * 255.0) == spriteColors[i].r && int(texture.g * 255.0) == spriteColors[i].g && int(texture.b * 255.0) == spriteColors[i].b) {
+        if (texture.a > 0.0 && colorInt.r == spriteColors[i].r && colorInt.g == spriteColors[i].g && colorInt.b == spriteColors[i].b) {
             vec3 fusionColor = vec3(float(fusionSpriteColors[i].r) / 255.0, float(fusionSpriteColors[i].g) / 255.0, float(fusionSpriteColors[i].b) / 255.0);
             vec3 bg = vec3(float(spriteColors[i].r) / 255.0, float(spriteColors[i].g) / 255.0, float(spriteColors[i].b) / 255.0);
             float gray = (bg.r + bg.g + bg.b) / 3.0;
@@ -405,7 +407,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
             let variantColors;
 
             const emptyColors = [ 0, 0, 0, 0 ];
-            const flatBaseColors: number[] = [];
+            const flatBaseColors: integer[] = [];
             const flatVariantColors: number[] = [];
 
             if ((sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.isShiny() : !!data['shiny'])
@@ -415,7 +417,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
                     if (c < baseColors.length) {
                         const baseColor = Array.from(Object.values(Utils.rgbHexToRgba(baseColors[c])));
                         const variantColor = Array.from(Object.values(Utils.rgbHexToRgba(variantColors[variant][baseColors[c]])));
-                        flatBaseColors.splice(flatBaseColors.length, 0, ...baseColor.map(c => c / 255.0));
+                        flatBaseColors.splice(flatBaseColors.length, 0, ...baseColor);
                         flatVariantColors.splice(flatVariantColors.length, 0, ...variantColor.map(c => c / 255.0));
                     } else {
                         flatBaseColors.splice(flatBaseColors.length, 0, ...emptyColors);
@@ -429,7 +431,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
                 }
             }
 
-            this.set4fv('baseVariantColors', flatBaseColors.flat());
+            this.set4iv('baseVariantColors', flatBaseColors.flat());
             this.set4fv('variantColors', flatVariantColors.flat());
         }
 

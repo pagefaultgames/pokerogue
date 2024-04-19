@@ -143,7 +143,7 @@ body {
 }
 
 #apad .apadRectBtnContainer > .apadSqBtn:not(:first-child) {
-  margin-left: 8px;
+  margin-left: 10%;
 }
 
 #touchControls:not([data-ui-mode='STARTER_SELECT']) #apad .apadRectBtnContainer > #apadCycleNature, #touchControls:not([data-ui-mode='STARTER_SELECT']) #apad .apadSqBtnContainer {
