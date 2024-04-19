@@ -251,7 +251,7 @@ export class EggHatchPhase extends Phase {
       this.pokemon.cry();
       if (isShiny) {
         this.scene.time.delayedCall(Utils.fixedInt(500), () => {
-          this.pokemonShinySparkle.play('sparkle');
+          this.pokemonShinySparkle.play(`sparkle${this.pokemon.variant ? `_${this.pokemon.variant + 1}` : ''}`);
           this.scene.playSound('sparkle');
         });
       }

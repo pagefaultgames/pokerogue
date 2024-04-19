@@ -1,0 +1,83 @@
+{
+	"textures": [
+		{
+			"image": "pokemon_icons_7v.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 52,
+				"h": 52
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "802_1",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 12,
+						"y": 3,
+						"w": 24,
+						"h": 26
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 24,
+						"h": 26
+					}
+				},
+				{
+					"filename": "802_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 12,
+						"y": 3,
+						"w": 24,
+						"h": 26
+					},
+					"frame": {
+						"x": 0,
+						"y": 26,
+						"w": 24,
+						"h": 26
+					}
+				},
+				{
+					"filename": "802_3",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 12,
+						"y": 3,
+						"w": 24,
+						"h": 26
+					},
+					"frame": {
+						"x": 24,
+						"y": 0,
+						"w": 24,
+						"h": 26
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:74b91bf1eff78f89b5fb8a626034b38c:9d9fac3afebd058ddab2bf309dd3f74b:d5975df27e1e94206a68aa1fd3c2c8d0$"
+	}
+}
