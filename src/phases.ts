@@ -1042,13 +1042,15 @@ export class SelectBiomePhase extends BattlePhase {
             .map(b => Array.isArray(b) ? b[0] : b);
         }, this.scene.currentBattle.waveIndex);
         const biomeSelectItems = biomeChoices.map(b => {
-          return {
+          const ret: OptionSelectItem = {
             label: getBiomeName(b),
             handler: () => {
               this.scene.ui.setMode(Mode.MESSAGE);
               setNextBiome(b);
+              return true;
             }
           };
+          return ret;
         });
         this.scene.ui.setMode(Mode.OPTION_SELECT, {
           options: biomeSelectItems,
