@@ -1804,6 +1804,7 @@ export class FirstAttackDoublePowerAttr extends VariablePowerAttr {
   }
 }
 
+
 export class TurnDamagedDoublePowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.turnData.attacksReceived.find(r => r.damage && r.sourceId === target.id)) {
