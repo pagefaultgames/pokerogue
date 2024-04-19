@@ -994,11 +994,13 @@ export class GameData {
       if (noStarterFormKeys.includes(pokemon.getFormKey()))
         pokemon.formIndex = 0;
       const dexAttr = pokemon.getDexAttr();
-      console.log(dexAttr);
       pokemon.formIndex = formIndex;
       dexEntry.caughtAttr |= dexAttr;
-      if (speciesStarters.hasOwnProperty(species.speciesId))
-        this.starterData[species.speciesId].abilityAttr |= Math.pow(2, pokemon.abilityIndex);
+      if (speciesStarters.hasOwnProperty(species.speciesId)) {
+        this.starterData[species.speciesId].abilityAttr |= pokemon.abilityIndex !== 1 || pokemon.species.ability2
+          ? Math.pow(2, pokemon.abilityIndex)
+          : AbilityAttr.ABILITY_HIDDEN;
+      }
       dexEntry.natureAttr |= Math.pow(2, pokemon.nature + 1);
       
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
