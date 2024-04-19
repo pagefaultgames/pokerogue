@@ -16,6 +16,7 @@ import { getBiomeName } from "../data/biomes";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
 import { PlayerGender } from "../system/game-data";
+import { getVariantTint } from "#app/data/variant";
 
 enum Page {
   PROFILE,
@@ -41,7 +42,7 @@ export default class SummaryUiHandler extends UiHandler {
   private pokeball: Phaser.GameObjects.Sprite;
   private levelText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
-  private shinyStar: Phaser.GameObjects.Image;
+  private shinyIcon: Phaser.GameObjects.Image;
   private statusContainer: Phaser.GameObjects.Container;
   private status: Phaser.GameObjects.Image;
   private summaryPageContainer: Phaser.GameObjects.Container;
@@ -116,6 +117,13 @@ export default class SummaryUiHandler extends UiHandler {
     this.splicedIcon.setScale(0.75);
     this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.splicedIcon);
+    
+    this.shinyIcon = this.scene.add.image(0, -54, 'shiny_star');
+    this.shinyIcon.setVisible(false);
+    this.shinyIcon.setOrigin(0, 0);
+    this.shinyIcon.setScale(0.75);
+    this.shinyIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
+    this.summaryContainer.add(this.shinyIcon);
 
     this.pokeball = this.scene.add.sprite(6, -19, 'pb');
     this.pokeball.setOrigin(0, 1);
@@ -129,10 +137,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.genderText.setOrigin(0, 1);
     this.summaryContainer.add(this.genderText);
 
-    this.shinyStar = this.scene.add.image(96, -19, 'shiny_star');
-    this.shinyStar.setOrigin(0, 1);
-    this.shinyStar.setVisible(false);
-    this.summaryContainer.add(this.shinyStar);
+    
 
     this.statusContainer = this.scene.add.container(-106, -16);
 
@@ -217,8 +222,10 @@ export default class SummaryUiHandler extends UiHandler {
     this.numberText.setShadowColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
 
     this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
-    this.pokemonSprite.pipelineData['teraColor'] = getTypeRgb(this.pokemon.getTeraType());
-    this.pokemonSprite.pipelineData['ignoreTimeTint'] = true;
+    this.pokemonSprite.setPipelineData('teraColor', getTypeRgb(this.pokemon.getTeraType()));
+    this.pokemonSprite.setPipelineData('ignoreTimeTint', true);
+    this.pokemonSprite.setPipelineData('spriteKey', this.pokemon.getSpriteKey());
+    this.pokemonSprite.setPipelineData('variant', this.pokemon.variant);
     [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon.summonData?.speciesForm)
@@ -235,15 +242,20 @@ export default class SummaryUiHandler extends UiHandler {
       this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${this.pokemon.species.getName(this.pokemon.formIndex)}/${this.pokemon.fusionSpecies.getName(this.pokemon.fusionFormIndex)}`, true));
       this.splicedIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
     }
+    
+    this.shinyIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0) + 1, 3);
+    this.shinyIcon.setTint(getVariantTint(this.pokemon.getVariant()));
+    this.shinyIcon.setVisible(this.pokemon.isShiny());
+    if (this.shinyIcon.visible) {
+      this.shinyIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${this.pokemon.getVariant() ? ` (${this.pokemon.getVariant() === 2 ? 'Epic' : 'Rare'})` : ''}`, true));
+      this.shinyIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
+    }
 
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
     this.levelText.setText(this.pokemon.level.toString());
     this.genderText.setText(getGenderSymbol(this.pokemon.getGender(true)));
     this.genderText.setColor(getGenderColor(this.pokemon.getGender(true)));
     this.genderText.setShadowColor(getGenderColor(this.pokemon.getGender(true), true));
-
-    this.shinyStar.setX(96 - (this.genderText.text ? 10 : 0));
-    this.shinyStar.setVisible(this.pokemon.isShiny());
 
     switch (this.summaryUiMode) {
       case SummaryUiMode.DEFAULT:

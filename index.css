@@ -142,6 +142,10 @@ body {
   align-self: flex-end;
 }
 
+#apad .apadRectBtnContainer > .apadSqBtn:not(:first-child) {
+  margin-left: 8px;
+}
+
 #touchControls:not([data-ui-mode='STARTER_SELECT']) #apad .apadRectBtnContainer > #apadCycleNature, #touchControls:not([data-ui-mode='STARTER_SELECT']) #apad .apadSqBtnContainer {
   display: none;
 }

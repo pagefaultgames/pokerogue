@@ -1,7 +1,9 @@
 import BattleScene from "../battle-scene";
+import { variantColorCache, variantData } from '#app/data/variant';
 import Pokemon from "../field/pokemon";
 import Trainer from "../field/trainer";
 import FieldSpritePipeline from "./field-sprite";
+import * as Utils from "../utils";
 
 const spriteFragShader = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -36,6 +38,8 @@ uniform vec2 size;
 uniform vec2 texSize;
 uniform float yOffset;
 uniform vec4 tone;
+uniform vec4 baseVariantColors[32];
+uniform vec4 variantColors[32];
 uniform ivec4 spriteColors[32];
 uniform ivec4 fusionSpriteColors[32];
 
@@ -154,6 +158,15 @@ vec3 hsv2rgb(vec3 c) {
 
 void main() {
     vec4 texture = texture2D(uMainSampler[0], outTexCoord);
+
+    for (int i = 0; i < 32; i++) {
+        if (baseVariantColors[i][3] == 0.0)
+            break;
+        if (texture.a > 0.0 && texture.r == baseVariantColors[i].r && texture.g == baseVariantColors[i].g && texture.b == baseVariantColors[i].b) {
+            texture.rgb = variantColors[i].rgb;
+            break;
+        }
+    }
 
     for (int i = 0; i < 32; i++) {
         if (spriteColors[i][3] == 0)
@@ -362,21 +375,64 @@ export default class SpritePipeline extends FieldSpritePipeline {
         this.set1f('yOffset', sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
         this.set4fv('tone', tone);
         this.bindTexture(this.game.textures.get('tera').source[0].glTexture, 1);
+        
         if ((gameObject.scene as BattleScene).fusionPaletteSwaps) {
-            const spriteColors = (ignoreOverride && data['spriteColorsBase']) || data['spriteColors'] || [] as number[][];
-            const fusionSpriteColors = (ignoreOverride && data['fusionSpriteColorsBase']) || data['fusionSpriteColors'] || [] as number[][];
+            const spriteColors = ((ignoreOverride && data['spriteColorsBase']) || data['spriteColors'] || []) as number[][];
+            const fusionSpriteColors = ((ignoreOverride && data['fusionSpriteColorsBase']) || data['fusionSpriteColors'] || []) as number[][];
 
             const emptyColors = [ 0, 0, 0, 0 ];
             const flatSpriteColors: integer[] = [];
             const flatFusionSpriteColors: integer[] = [];
             for (let c = 0; c < 32; c++) {
-                flatSpriteColors.splice(flatSpriteColors.length, 0, c < spriteColors.length ? spriteColors[c] : emptyColors);
-                flatFusionSpriteColors.splice(flatFusionSpriteColors.length, 0, c < fusionSpriteColors.length ? fusionSpriteColors[c] : emptyColors);
+                flatSpriteColors.splice(flatSpriteColors.length, 0, ...(c < spriteColors.length ? spriteColors[c] : emptyColors));
+                flatFusionSpriteColors.splice(flatFusionSpriteColors.length, 0, ...(c < fusionSpriteColors.length ? fusionSpriteColors[c] : emptyColors));
             }
 
             this.set4iv(`spriteColors`, flatSpriteColors.flat());
             this.set4iv(`fusionSpriteColors`, flatFusionSpriteColors.flat());
         }
+    }
+
+    onBatch(gameObject: Phaser.GameObjects.GameObject): void {
+        if (gameObject) {
+            const sprite = (gameObject as Phaser.GameObjects.Sprite);
+            const data = sprite.pipelineData;
+
+            const variant: integer = data.hasOwnProperty('variant')
+                ? data['variant']
+                : sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.variant
+                : 0;
+            let variantColors;
+
+            const emptyColors = [ 0, 0, 0, 0 ];
+            const flatBaseColors: number[] = [];
+            const flatVariantColors: number[] = [];
+
+            if ((variantColors = variantColorCache[sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.getSprite().texture.key : data['spriteKey']]) && variantColors.hasOwnProperty(variant)) {
+                const baseColors = Object.keys(variantColors[variant]);
+                for (let c = 0; c < 32; c++) {
+                    if (c < baseColors.length) {
+                        const baseColor = Array.from(Object.values(Utils.rgbHexToRgba(baseColors[c])));
+                        const variantColor = Array.from(Object.values(Utils.rgbHexToRgba(variantColors[variant][baseColors[c]])));
+                        flatBaseColors.splice(flatBaseColors.length, 0, ...baseColor.map(c => c / 255.0));
+                        flatVariantColors.splice(flatVariantColors.length, 0, ...variantColor.map(c => c / 255.0));
+                    } else {
+                        flatBaseColors.splice(flatBaseColors.length, 0, ...emptyColors);
+                        flatVariantColors.splice(flatVariantColors.length, 0, ...emptyColors);
+                    }
+                }
+            } else {
+                for (let c = 0; c < 32; c++) {
+                    flatBaseColors.splice(flatBaseColors.length, 0, ...emptyColors);
+                    flatVariantColors.splice(flatVariantColors.length, 0, ...emptyColors);
+                }
+            }
+
+            this.set4fv('baseVariantColors', flatBaseColors.flat());
+            this.set4fv('variantColors', flatVariantColors.flat());
+        }
+
+        super.onBatch(gameObject);
     }
 
     batchQuad(gameObject: Phaser.GameObjects.GameObject, x0: number, y0: number, x1: number, y1: number, x2: number, y2: number, x3: number, y3: number,

@@ -65,6 +65,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage('achv_bar_3', 'ui');
     this.loadImage('achv_bar_4', 'ui');
     this.loadImage('shiny_star', 'ui', 'shiny.png');
+    this.loadImage('shiny_star_small', 'ui', 'shiny_small.png');
     this.loadImage('ha_capsule', 'ui', 'ha_capsule.png');
     this.loadImage('icon_spliced', 'ui');
     this.loadImage('icon_tera', 'ui');
@@ -162,6 +163,8 @@ export class LoadingScene extends SceneBase {
     this.loadImage(`pkmn__sub`, 'pokemon', 'sub.png');
     this.loadAtlas('battle_stats', 'effects');
     this.loadAtlas('shiny', 'effects');
+    this.loadAtlas('shiny_2', 'effects');
+    this.loadAtlas('shiny_3', 'effects');
     this.loadImage('tera', 'effects');
     this.loadAtlas('pb_particles', 'effects');
     this.loadImage('evo_sparkle', 'effects');
@@ -191,8 +194,10 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage('egg_list_bg', 'ui');
 
-    for (let i = 0; i < 10; i++)
+    for (let i = 0; i < 10; i++) {
       this.loadAtlas(`pokemon_icons_${i}`, '');
+      this.loadAtlas(`pokemon_icons_${i}v`, '');
+    }
 
     this.loadSe('select');
     this.loadSe('menu_open');
@@ -254,8 +259,6 @@ export class LoadingScene extends SceneBase {
   }
 
   loadLoadingScreen() {
-    const mobile = isMobile();
-
     const loadingGraphics: any[] = [];
 
     const bg = this.add.image(0, 0, '');
@@ -320,8 +323,7 @@ export class LoadingScene extends SceneBase {
     
     loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText);
 
-    if (!mobile)
-      loadingGraphics.map(g => g.setVisible(false));
+    loadingGraphics.map(g => g.setVisible(false));
 
     const destroyLoadingAssets = () => {
       intro.destroy();
@@ -350,13 +352,11 @@ export class LoadingScene extends SceneBase {
           break;
         case 'loading_bg':
           bg.setTexture('loading_bg');
-          if (mobile)
-            bg.setVisible(true);
+          //bg.setVisible(true);
           break;
         case 'logo':
           logo.setTexture('logo');
-          if (mobile)
-            logo.setVisible(true);
+          //logo.setVisible(true);
           break;
       }
     });
