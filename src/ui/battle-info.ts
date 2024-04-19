@@ -80,7 +80,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.ownedIcon = this.scene.add.sprite(0, 0, 'icon_owned');
       this.ownedIcon.setVisible(false);
       this.ownedIcon.setOrigin(0, 0);
-      this.ownedIcon.setPositionRelative(this.nameText, 0, 11.5);
+      this.ownedIcon.setPositionRelative(this.nameText, 0, 11.75);
       this.add(this.ownedIcon);
     }
 
@@ -197,7 +197,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       const dexEntry = pokemon.scene.gameData.dexData[pokemon.species.speciesId];
       this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
       const dexAttr = pokemon.getDexAttr();
-      if ((dexEntry.caughtAttr & dexAttr) < dexAttr)
+      if ((dexEntry.caughtAttr & dexAttr) < dexAttr || !(pokemon.scene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr & Math.pow(2, pokemon.abilityIndex)))
         this.ownedIcon.setTint(0x808080);
 
       if (this.boss)
