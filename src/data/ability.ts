@@ -1024,25 +1024,23 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
 export class StenchAbAttr extends PostAttackAbAttr {
   private contactRequired: boolean;
   private chance: integer;
-  private effects: BattlerTagType[];
+  private effects: BattlerTagType;
 
-  constructor(contactRequired: boolean, chance: integer, ...effects: BattlerTagType[]) {
+  constructor(contactRequired: boolean, chance: integer) {
     super();
 
     this.contactRequired = contactRequired;
     this.chance = chance;
-    this.effects = effects;
+
   }
 
   applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (pokemon != attacker && (!this.contactRequired || move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
-      const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
-
 
       const flinchAttr = move.getMove().findAttr(attr => attr instanceof FlinchAttr);
+      
       if (!flinchAttr) 
-        return attacker.addTag(effect);
-
+        return attacker.addTag(BattlerTagType.FLINCHED);
 
     }
 
@@ -2345,7 +2343,7 @@ export const allAbilities = [ new Ability(Abilities.NONE, "-", "", 3) ];
 export function initAbilities() {
   allAbilities.push(
     new Ability(Abilities.STENCH, "Stench", "By releasing stench when attacking, this Pokémon may cause the target to flinch.", 3)
-      .attr(StenchAbAttr, false, 10, BattlerTagType.FLINCHED),
+      .attr(StenchAbAttr, false, 10),
     new Ability(Abilities.DRIZZLE, "Drizzle", "The Pokémon makes it rain when it enters a battle.", 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN),
