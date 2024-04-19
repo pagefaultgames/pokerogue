@@ -1,0 +1,377 @@
+{
+	"textures": [
+		{
+			"image": "pokemon_icons_6v.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 98,
+				"h": 98
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "709_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 2,
+						"w": 27,
+						"h": 27
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 27,
+						"h": 27
+					}
+				},
+				{
+					"filename": "709_3",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 2,
+						"w": 27,
+						"h": 27
+					},
+					"frame": {
+						"x": 0,
+						"y": 27,
+						"w": 27,
+						"h": 27
+					}
+				},
+				{
+					"filename": "706_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 4,
+						"w": 26,
+						"h": 26
+					},
+					"frame": {
+						"x": 27,
+						"y": 0,
+						"w": 26,
+						"h": 26
+					}
+				},
+				{
+					"filename": "706_3",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 4,
+						"w": 26,
+						"h": 26
+					},
+					"frame": {
+						"x": 0,
+						"y": 54,
+						"w": 26,
+						"h": 26
+					}
+				},
+				{
+					"filename": "708_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 6,
+						"w": 27,
+						"h": 23
+					},
+					"frame": {
+						"x": 53,
+						"y": 0,
+						"w": 27,
+						"h": 23
+					}
+				},
+				{
+					"filename": "700_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 4,
+						"w": 24,
+						"h": 25
+					},
+					"frame": {
+						"x": 27,
+						"y": 26,
+						"w": 24,
+						"h": 25
+					}
+				},
+				{
+					"filename": "705_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 12,
+						"y": 5,
+						"w": 17,
+						"h": 24
+					},
+					"frame": {
+						"x": 80,
+						"y": 0,
+						"w": 17,
+						"h": 24
+					}
+				},
+				{
+					"filename": "708_3",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 6,
+						"w": 27,
+						"h": 23
+					},
+					"frame": {
+						"x": 53,
+						"y": 23,
+						"w": 27,
+						"h": 23
+					}
+				},
+				{
+					"filename": "705_3",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 12,
+						"y": 5,
+						"w": 17,
+						"h": 24
+					},
+					"frame": {
+						"x": 80,
+						"y": 24,
+						"w": 17,
+						"h": 24
+					}
+				},
+				{
+					"filename": "704_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 13,
+						"w": 14,
+						"h": 16
+					},
+					"frame": {
+						"x": 0,
+						"y": 80,
+						"w": 14,
+						"h": 16
+					}
+				},
+				{
+					"filename": "704_3",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 13,
+						"w": 14,
+						"h": 16
+					},
+					"frame": {
+						"x": 14,
+						"y": 80,
+						"w": 14,
+						"h": 16
+					}
+				},
+				{
+					"filename": "700_3",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 4,
+						"w": 24,
+						"h": 25
+					},
+					"frame": {
+						"x": 51,
+						"y": 46,
+						"w": 24,
+						"h": 25
+					}
+				},
+				{
+					"filename": "711_1",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 4,
+						"w": 23,
+						"h": 25
+					},
+					"frame": {
+						"x": 75,
+						"y": 48,
+						"w": 23,
+						"h": 25
+					}
+				},
+				{
+					"filename": "711_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 4,
+						"w": 23,
+						"h": 25
+					},
+					"frame": {
+						"x": 28,
+						"y": 51,
+						"w": 23,
+						"h": 25
+					}
+				},
+				{
+					"filename": "710_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 19,
+						"h": 21
+					},
+					"frame": {
+						"x": 28,
+						"y": 76,
+						"w": 19,
+						"h": 21
+					}
+				},
+				{
+					"filename": "711_3",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 4,
+						"w": 23,
+						"h": 25
+					},
+					"frame": {
+						"x": 51,
+						"y": 71,
+						"w": 23,
+						"h": 25
+					}
+				},
+				{
+					"filename": "710_3",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 19,
+						"h": 21
+					},
+					"frame": {
+						"x": 74,
+						"y": 73,
+						"w": 19,
+						"h": 21
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:b682406f79e7df984a96ddb5f1a9dfc7:0621da2b4f2764ccfa8f63d5fdbeaf91:8a74f769af240f74b0e67390bbb36c14$"
+	}
+}

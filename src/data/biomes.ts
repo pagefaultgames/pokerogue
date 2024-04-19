@@ -44,7 +44,7 @@ export const biomeLinks: BiomeLinks = {
   [Biome.SEA]: [ Biome.SEABED, Biome.ICE_CAVE ],
   [Biome.SWAMP]: [ Biome.GRAVEYARD, Biome.TALL_GRASS ],
   [Biome.BEACH]: [ Biome.SEA, [ Biome.ISLAND, 4 ] ],
-  [Biome.LAKE]: [ Biome.BEACH, Biome.SWAMP ],
+  [Biome.LAKE]: [ Biome.BEACH, Biome.SWAMP, Biome.CONSTRUCTION_SITE ],
   [Biome.SEABED]: [ Biome.CAVE, [ Biome.VOLCANO, 4 ] ],
   [Biome.MOUNTAIN]: [ Biome.VOLCANO, [ Biome.WASTELAND, 3 ] ],
   [Biome.BADLANDS]: [ Biome.DESERT, Biome.MOUNTAIN ],
@@ -66,9 +66,9 @@ export const biomeLinks: BiomeLinks = {
   [Biome.FAIRY_CAVE]: [ Biome.ICE_CAVE, [ Biome.SPACE, 3 ] ],
   [Biome.TEMPLE]: [ Biome.SWAMP, [ Biome.RUINS, 3 ] ],
   [Biome.METROPOLIS]: Biome.SLUM,
-  [Biome.SNOWY_FOREST]: Biome.LAKE,
+  [Biome.SNOWY_FOREST]: [ Biome.FOREST, Biome.LAKE, Biome.MOUNTAIN ],
   [Biome.ISLAND]: Biome.SEA,
-  [Biome.LABORATORY]: Biome.METROPOLIS
+  [Biome.LABORATORY]: Biome.CONSTRUCTION_SITE
 };
 
 export const biomeDepths: BiomeDepths = {};
@@ -1844,7 +1844,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     [BiomePoolTier.RARE]: [],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
-    [BiomePoolTier.BOSS]: [ TrainerType.BRAWLY, TrainerType.KORRINA, TrainerType.BEA ],
+    [BiomePoolTier.BOSS]: [ TrainerType.BRAWLY, TrainerType.KORRINA, TrainerType.BEA, TrainerType.MAYLENE ],
     [BiomePoolTier.BOSS_RARE]: [],
     [BiomePoolTier.BOSS_SUPER_RARE]: [],
     [BiomePoolTier.BOSS_ULTRA_RARE]: []
@@ -4144,7 +4144,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ],
     [ Species.MIME_JR, Type.PSYCHIC, Type.FAIRY, [ ]
     ],
-    [ Species.HAPPINY, Type.NORMAL, -1, []
+    [ Species.HAPPINY, Type.NORMAL, -1, [ ]
     ],
     [ Species.CHATOT, Type.NORMAL, Type.FLYING, [
         [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ]
@@ -6057,7 +6057,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
         [ Biome.SEABED, BiomePoolTier.BOSS ]
       ]
     ],
-    [ Species.TOXEL, Type.ELECTRIC, Type.POISON, []
+    [ Species.TOXEL, Type.ELECTRIC, Type.POISON, [ ]
     ],
     [ Species.TOXTRICITY, Type.ELECTRIC, Type.POISON, [
         [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],
@@ -7406,6 +7406,10 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ],
     [ TrainerType.CRASHER_WAKE, [
         [ Biome.LAKE, BiomePoolTier.BOSS ]
+      ]
+    ],
+    [ TrainerType.MAYLENE, [
+        [ Biome.DOJO, BiomePoolTier.BOSS ]
       ]
     ],
     [ TrainerType.FANTINA, [

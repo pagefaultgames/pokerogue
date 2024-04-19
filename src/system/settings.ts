@@ -16,9 +16,11 @@ export enum Setting {
   Sprite_Set = "SPRITE_SET",
   Move_Animations = "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
+  EXP_Gains_Speed = "EXP_GAINS_SPEED",
   HP_Bar_Speed = "HP_BAR_SPEED",
   Fusion_Palette_Swaps = "FUSION_PALETTE_SWAPS",
   Player_Gender = "PLAYER_GENDER",
+  Gamepad_Support = "GAMEPAD_SUPPORT",
   Touch_Controls = "TOUCH_CONTROLS",
   Vibration = "VIBRATION"
 }
@@ -44,9 +46,11 @@ export const settingOptions: SettingOptions = {
   [Setting.Sprite_Set]: [ 'Consistent', 'Prioritize Animation' ],
   [Setting.Move_Animations]: [ 'Off', 'On' ],
   [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ],
+  [Setting.EXP_Gains_Speed]: [ 'Normal', 'Fast', 'Faster', 'Skip' ],
   [Setting.HP_Bar_Speed]: [ 'Normal', 'Fast', 'Faster', 'Instant' ],
   [Setting.Fusion_Palette_Swaps]: [ 'Off', 'On' ],
   [Setting.Player_Gender]: [ 'Boy', 'Girl' ],
+  [Setting.Gamepad_Support]: [ 'Auto', 'Disabled' ],
   [Setting.Touch_Controls]: [ 'Auto', 'Disabled' ],
   [Setting.Vibration]: [ 'Auto', 'Disabled' ]
 };
@@ -64,9 +68,11 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Sprite_Set]: 0,
   [Setting.Move_Animations]: 1,
   [Setting.Show_Stats_on_Level_Up]: 1,
+  [Setting.EXP_Gains_Speed]: 0,
   [Setting.HP_Bar_Speed]: 0,
   [Setting.Fusion_Palette_Swaps]: 1,
   [Setting.Player_Gender]: 0,
+  [Setting.Gamepad_Support]: 0,
   [Setting.Touch_Controls]: 0,
   [Setting.Vibration]: 0
 };
@@ -116,6 +122,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     case Setting.Show_Stats_on_Level_Up:
       scene.showLevelUpStats = settingOptions[setting][value] === 'On';
       break;
+    case Setting.EXP_Gains_Speed:
+      scene.expGainsSpeed = value;
+      break;
     case Setting.HP_Bar_Speed:
       scene.hpBarSpeed = value;
       break;
@@ -129,6 +138,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
         scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? 'm' : 'f', female ? 'f' : 'm'));
       } else
         return false;
+      break;
+    case Setting.Gamepad_Support:
+      scene.gamepadSupport = settingOptions[setting][value] !== 'Disabled';
       break;
     case Setting.Touch_Controls:
       scene.enableTouchControls = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();

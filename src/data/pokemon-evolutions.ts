@@ -968,8 +968,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.COSMOEM, 43, null, null)
   ],
   [Species.COSMOEM]: [
-    new SpeciesEvolution(Species.SOLGALEO, 53, null, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType !== Biome.SPACE && p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), null),
-    new SpeciesEvolution(Species.LUNALA, 53, null, new SpeciesEvolutionCondition(p => p.scene.arena.biomeType !== Biome.SPACE && p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), null)
+    new SpeciesEvolution(Species.SOLGALEO, 53, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), null),
+    new SpeciesEvolution(Species.LUNALA, 53, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.NIGHT), null)
   ],
   [Species.MELTAN]: [
     new SpeciesEvolution(Species.MELMETAL, 48, null, null)

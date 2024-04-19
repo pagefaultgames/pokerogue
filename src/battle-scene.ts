@@ -57,6 +57,7 @@ import { initTouchControls } from './touch-controls';
 import { UiTheme } from './enums/ui-theme';
 import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
+import { Variant, variantData } from './data/variant';
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -100,6 +101,7 @@ export enum Button {
 	CYCLE_GENDER,
 	CYCLE_ABILITY,
 	CYCLE_NATURE,
+	CYCLE_VARIANT,
 	SPEED_UP,
 	SLOW_DOWN
 }
@@ -126,11 +128,15 @@ export default class BattleScene extends SceneBase {
 	public windowType: integer = 0;
 	public experimentalSprites: boolean = false;
 	public moveAnimations: boolean = true;
+	public expGainsSpeed: integer = 0;
 	public hpBarSpeed: integer = 0;
 	public fusionPaletteSwaps: boolean = true;
+	public gamepadSupport: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
 	
+	public disableMenu: boolean = false;
+
 	public gameData: GameData;
 	public sessionSlotId: integer;
 
@@ -198,6 +204,27 @@ export default class BattleScene extends SceneBase {
 	// (i.e. by holding down a button) at a time
 	private movementButtonLock: Button;
 
+  // using a dualshock controller as a map
+  private gamepadKeyConfig = {
+    [Button.UP]: 12, // up
+    [Button.DOWN]: 13, // down
+    [Button.LEFT]: 14, // left
+    [Button.RIGHT]: 15, // right
+    [Button.SUBMIT]: 17, // touchpad
+    [Button.ACTION]: 0, // X
+    [Button.CANCEL]: 1, // O
+    [Button.MENU]: 9, // options
+    [Button.CYCLE_SHINY]: 5, // RB
+    [Button.CYCLE_FORM]: 4, // LB
+    [Button.CYCLE_GENDER]: 6, // LT
+    [Button.CYCLE_ABILITY]: 7, // RT
+    [Button.CYCLE_NATURE]: 2, // square
+    [Button.CYCLE_VARIANT]: 3, // triangle
+    [Button.SPEED_UP]: 10, // L3
+    [Button.SLOW_DOWN]: 11 // R3
+  };
+  public gamepadButtonStates: boolean[] = new Array(17).fill(false);
+
 	public rngCounter: integer = 0;
 	public rngSeedOverride: string = '';
 	public rngOffset: integer = 0;
@@ -218,24 +245,15 @@ export default class BattleScene extends SceneBase {
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
 		if (experimental === undefined)
 			experimental = this.experimentalSprites;
-		if (experimental) {
-			const keyMatch = /^pkmn__(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?$/g.exec(key);
-			let k = keyMatch[4];
-			if (keyMatch[2])
-				k += 's';
-			if (keyMatch[1])
-				k += 'b';
-			if (keyMatch[3])
-				k += 'f';
-			if (keyMatch[5])
-				k += keyMatch[5];
-			if (!expSpriteKeys.includes(k))
-				experimental = false;
-		}
-		this.load.atlas(key, `images/pokemon/${experimental ? 'exp/' : ''}${atlasPath}.png`,  `images/pokemon/${experimental ? 'exp/' : ''}${atlasPath}.json`);
+		let variant = atlasPath.includes('variant/');
+		if (experimental)
+			experimental = this.hasExpSprite(key);
+		if (variant)
+			atlasPath = atlasPath.replace('variant/', '');
+		this.load.atlas(key, `images/pokemon/${variant ? 'variant/' : ''}${experimental ? 'exp/' : ''}${atlasPath}.png`,  `images/pokemon/${variant ? 'variant/' : ''}${experimental ? 'exp/' : ''}${atlasPath}.json`);
 	}
 
-	preload() {
+	async preload() {
 		if (DEBUG_RNG) {
 			const scene = this;
 			const originalRealInRange = Phaser.Math.RND.realInRange;
@@ -251,6 +269,8 @@ export default class BattleScene extends SceneBase {
 		}
 		
 		populateAnims();
+
+		await fetch('./images/pokemon/variant/_masterlist.json').then(res => res.json()).then(v => Object.keys(v).forEach(k => variantData[k] = v[k]));
 	}
 
 	create() {
@@ -481,15 +501,13 @@ export default class BattleScene extends SceneBase {
 		this.updateScoreText();
 	}
 
-	initExpSprites(): Promise<void> {
-		return new Promise(resolve => {
-			if (expSpriteKeys.length)
-				return resolve();
-			fetch('./exp-sprites.json').then(res => res.json()).then(keys => {
-				if (Array.isArray(keys))
-					expSpriteKeys.push(...keys);
-				resolve();
-			});
+	async initExpSprites(): Promise<void> {
+		if (expSpriteKeys.length)
+			return;
+		fetch('./exp-sprites.json').then(res => res.json()).then(keys => {
+			if (Array.isArray(keys))
+				expSpriteKeys.push(...keys);
+			Promise.resolve();
 		});
 	}
 
@@ -531,6 +549,22 @@ export default class BattleScene extends SceneBase {
 		});
 	}
 
+	hasExpSprite(key: string): boolean {
+		const keyMatch = /^pkmn__?(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?(?:_[1-3])?$/g.exec(key);
+		let k = keyMatch[4];
+		if (keyMatch[2])
+			k += 's';
+		if (keyMatch[1])
+			k += 'b';
+		if (keyMatch[3])
+			k += 'f';
+		if (keyMatch[5])
+			k += keyMatch[5];
+		if (!expSpriteKeys.includes(k))
+			return false;
+		return true;
+	}
+
 	setupControls() {
 		const keyCodes = Phaser.Input.Keyboard.KeyCodes;
 		const keyConfig = {
@@ -547,6 +581,7 @@ export default class BattleScene extends SceneBase {
 			[Button.CYCLE_GENDER]: [keyCodes.G],
 			[Button.CYCLE_ABILITY]: [keyCodes.E],
 			[Button.CYCLE_NATURE]: [keyCodes.N],
+			[Button.CYCLE_VARIANT]: [keyCodes.V],
 			[Button.SPEED_UP]: [keyCodes.PLUS],
 			[Button.SLOW_DOWN]: [keyCodes.MINUS]
 		};
@@ -607,8 +642,8 @@ export default class BattleScene extends SceneBase {
 		return findInParty(this.getParty()) || findInParty(this.getEnemyParty());
 	}
 
-	addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
-		const pokemon = new PlayerPokemon(this, species, level, abilityIndex, formIndex, gender, shiny, ivs, nature, dataSource);
+	addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
+		const pokemon = new PlayerPokemon(this, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
 		if (postProcess)
 			postProcess(pokemon);
 		pokemon.init();
@@ -711,6 +746,8 @@ export default class BattleScene extends SceneBase {
 		
 		this.setSeed(SEED_OVERRIDE || Utils.randomString(24));
 		console.log('Seed:', this.seed);
+
+		this.disableMenu = false;
 
 		this.score = 0;
 		this.money = 0;
@@ -1213,6 +1250,8 @@ export default class BattleScene extends SceneBase {
 			inputSuccess = this.ui.processInput(Button.CANCEL);
 			this.setLastProcessedMovementTime(Button.CANCEL);
 		} else if (this.buttonJustPressed(Button.MENU)) {
+			if (this.disableMenu)
+				return;
 			switch (this.ui?.getMode()) {
 				case Mode.MESSAGE:
 					if (!(this.ui.getHandler() as MessageUiHandler).pendingPrompt)
@@ -1225,7 +1264,6 @@ export default class BattleScene extends SceneBase {
 				case Mode.SAVE_SLOT:
 				case Mode.PARTY:
 				case Mode.SUMMARY:
-				case Mode.BIOME_SELECT:
 				case Mode.STARTER_SELECT:
 				case Mode.CONFIRM:
 				case Mode.OPTION_SELECT:
@@ -1245,14 +1283,22 @@ export default class BattleScene extends SceneBase {
 		} else if (this.ui?.getHandler() instanceof StarterSelectUiHandler) {
 			if (this.buttonJustPressed(Button.CYCLE_SHINY)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_SHINY);
+        this.setLastProcessedMovementTime(Button.CYCLE_SHINY);
 			} else if (this.buttonJustPressed(Button.CYCLE_FORM)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_FORM);
+        this.setLastProcessedMovementTime(Button.CYCLE_FORM);
 			} else if (this.buttonJustPressed(Button.CYCLE_GENDER)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_GENDER);
+        this.setLastProcessedMovementTime(Button.CYCLE_GENDER);
 			} else if (this.buttonJustPressed(Button.CYCLE_ABILITY)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_ABILITY);
+        this.setLastProcessedMovementTime(Button.CYCLE_ABILITY);
 			} else if (this.buttonJustPressed(Button.CYCLE_NATURE)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_NATURE);
+        this.setLastProcessedMovementTime(Button.CYCLE_NATURE);
+			} else if (this.buttonJustPressed(Button.CYCLE_VARIANT)) {
+				inputSuccess = this.ui.processInput(Button.CYCLE_VARIANT);
+				this.setLastProcessedMovementTime(Button.CYCLE_VARIANT);
 			} else
 				return;
 		}	else if (this.buttonJustPressed(Button.SPEED_UP)) {
@@ -1273,8 +1319,29 @@ export default class BattleScene extends SceneBase {
 			navigator.vibrate(vibrationLength || 10);		
 	}
 
+  /**
+   * gamepadButtonJustDown returns true if @param button has just been pressed down
+   * or not. It will only return true once, until the key is released and pressed down
+   * again. 
+   */
+	gamepadButtonJustDown(button: Phaser.Input.Gamepad.Button) : boolean {
+		if (!button || !this.gamepadSupport)
+			return false;
+
+		let ret = false;
+		if (button.pressed) {
+			if (!this.gamepadButtonStates[button.index])
+				ret = true;
+			this.gamepadButtonStates[button.index] = true;
+		} else
+			this.gamepadButtonStates[button.index] = false;
+
+		return ret;
+  }
+
 	buttonJustPressed(button: Button): boolean {
-		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustDown(k));
+		const gamepad = this.input.gamepad?.gamepads[0];
+		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustDown(k)) || this.gamepadButtonJustDown(gamepad?.buttons[this.gamepadKeyConfig[button]]);
 	}
 
 	/**
@@ -1286,7 +1353,7 @@ export default class BattleScene extends SceneBase {
 		if (this.movementButtonLock !== null && this.movementButtonLock !== button) {
 			return false;
 		}
-		if (this.buttonKeys[button].every(k => k.isUp)) {
+		if (this.buttonKeys[button].every(k => k.isUp) && this.gamepadButtonStates.every(b => b == false)) {
 			this.movementButtonLock = null;
 			return false;
 		}
@@ -1606,8 +1673,9 @@ export default class BattleScene extends SceneBase {
 		return Math.floor(moneyValue / 10) * 10;
 	}
 
-	addModifier(modifier: Modifier, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean): Promise<void> {
+	addModifier(modifier: Modifier, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean): Promise<boolean> {
 		return new Promise(resolve => {
+			let success = false;
 			const soundName = modifier.type.soundName;
 			this.validateAchvs(ModifierAchv, modifier);
 			const modifiersToRemove: PersistentModifier[] = [];
@@ -1617,20 +1685,20 @@ export default class BattleScene extends SceneBase {
 					modifiersToRemove.push(...(this.findModifiers(m => m instanceof TerastallizeModifier && m.pokemonId === modifier.pokemonId)));
 				if ((modifier as PersistentModifier).add(this.modifiers, !!virtual, this)) {
 					if (modifier instanceof PokemonFormChangeItemModifier || modifier instanceof TerastallizeModifier)
-						modifier.apply([ this.getPokemonById(modifier.pokemonId), true ]);
+						success = modifier.apply([ this.getPokemonById(modifier.pokemonId), true ]);
 					if (playSound && !this.sound.get(soundName))
 						this.playSound(soundName);
 				} else if (!virtual) {
 					const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
 					this.queueMessage(`The stack for this item is full.\n You will receive ${defaultModifierType.name} instead.`, null, true);
-					return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant).then(() => resolve());
+					return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant).then(success => resolve(success));
 				}
 				
 				for (let rm of modifiersToRemove)
 					this.removeModifier(rm);
 
 				if (!ignoreUpdate && !virtual)
-					return this.updateModifiers(true, instant).then(() => resolve());
+					return this.updateModifiers(true, instant).then(() => resolve(success));
 			} else if (modifier instanceof ConsumableModifier) {
 				if (playSound && !this.sound.get(soundName))
 					this.playSound(soundName);
@@ -1653,19 +1721,26 @@ export default class BattleScene extends SceneBase {
 						if (modifier.shouldApply(args)) {
 							const result = modifier.apply(args);
 							if (result instanceof Promise)
-								modifierPromises.push(result);
+								modifierPromises.push(result.then(s => success ||= s));
+							else
+								success ||= result;
 						}
 					}
 					
-					return Promise.allSettled([this.party.map(p => p.updateInfo(instant)), ...modifierPromises]).then(() => resolve());
+					return Promise.allSettled([this.party.map(p => p.updateInfo(instant)), ...modifierPromises]).then(() => resolve(success));
 				} else {
 					const args = [ this ];
-					if (modifier.shouldApply(args))
-						modifier.apply(args);
+					if (modifier.shouldApply(args)) {
+						const result = modifier.apply(args);
+						if (result instanceof Promise) {
+							return result.then(success => resolve(success));
+						} else
+							success ||= result;
+					}
 				}
 			}
 
-			resolve();
+			resolve(success);
 		});
 	}
 
