@@ -985,7 +985,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               const natures = this.scene.gameData.getNaturesForAttr(this.speciesStarterDexEntry.natureAttr);
               const natureIndex = natures.indexOf(this.natureCursor);
               const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
-              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, newNature, undefined);
+              this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, newNature, undefined);
               success = true;
             }
             break;
