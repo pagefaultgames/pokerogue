@@ -1024,7 +1024,6 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
 export class StenchAbAttr extends PostAttackAbAttr {
   private contactRequired: boolean;
   private chance: integer;
-  private effects: BattlerTagType;
 
   constructor(contactRequired: boolean, chance: integer) {
     super();
