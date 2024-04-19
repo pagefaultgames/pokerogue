@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, allMoves } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, allMoves } from "./move";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -993,6 +993,60 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
 export class PostAttackContactApplyStatusEffectAbAttr extends PostAttackApplyStatusEffectAbAttr {
   constructor(chance: integer, ...effects: StatusEffect[]) {
     super(true, chance, ...effects);
+  }
+}
+
+export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
+  private contactRequired: boolean;
+  private chance: integer;
+  private effects: BattlerTagType[];
+
+  constructor(contactRequired: boolean, chance: integer, ...effects: BattlerTagType[]) {
+    super();
+
+    this.contactRequired = contactRequired;
+    this.chance = chance;
+    this.effects = effects;
+  }
+
+  applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (pokemon != attacker && (!this.contactRequired || move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
+      const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
+
+
+      return attacker.addTag(effect);
+    }
+
+    return false;
+  }
+}
+
+export class StenchAbAttr extends PostAttackAbAttr {
+  private contactRequired: boolean;
+  private chance: integer;
+  private effects: BattlerTagType[];
+
+  constructor(contactRequired: boolean, chance: integer, ...effects: BattlerTagType[]) {
+    super();
+
+    this.contactRequired = contactRequired;
+    this.chance = chance;
+    this.effects = effects;
+  }
+
+  applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (pokemon != attacker && (!this.contactRequired || move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
+      const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
+
+
+      const flinchAttr = move.getMove().findAttr(attr => attr instanceof FlinchAttr);
+      if (!flinchAttr) 
+        return attacker.addTag(effect);
+
+
+    }
+
+    return false;
   }
 }
 
@@ -2290,7 +2344,8 @@ export const allAbilities = [ new Ability(Abilities.NONE, "-", "", 3) ];
 
 export function initAbilities() {
   allAbilities.push(
-    new Ability(Abilities.STENCH, "Stench (N)", "By releasing stench when attacking, this Pokémon may cause the target to flinch.", 3),
+    new Ability(Abilities.STENCH, "Stench", "By releasing stench when attacking, this Pokémon may cause the target to flinch.", 3)
+      .attr(StenchAbAttr, false, 10, BattlerTagType.FLINCHED),
     new Ability(Abilities.DRIZZLE, "Drizzle", "The Pokémon makes it rain when it enters a battle.", 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN),
