@@ -2317,7 +2317,7 @@ export const allAbilities = [ new Ability(Abilities.NONE, "-", "", 3) ];
 export function initAbilities() {
   allAbilities.push(
     new Ability(Abilities.STENCH, "Stench", "By releasing stench when attacking, this Pokémon may cause the target to flinch.", 3)
-      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => move.getMove().findAttr(attr => attr instanceof FlinchAttr) == undefined ? 10 : 0, BattlerTagType.FLINCHED),
+      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.getMove().findAttr(attr => attr instanceof FlinchAttr) ? 10 : 0, BattlerTagType.FLINCHED),
     new Ability(Abilities.DRIZZLE, "Drizzle", "The Pokémon makes it rain when it enters a battle.", 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN),
