@@ -31,7 +31,6 @@ import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
 import { CheckTrappedAbAttr, MoveAbilityBypassAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs } from "./data/ability";
-import { Abilities } from "./data/enums/abilities";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -44,7 +43,7 @@ import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
-import { DexAttr, GameDataType, PlayerGender, SessionSaveData } from "./system/game-data";
+import { DexAttr, PlayerGender, SessionSaveData } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue } from "./data/dialogue";
@@ -159,6 +158,7 @@ export class TitlePhase extends Phase {
     this.scene.gameData.getSession(loggedInUser.lastSessionSlot).then(sessionData => {
       if (sessionData) {
         this.lastSessionData = sessionData;
+        console.log(sessionData);
         const biomeKey = getBiomeKey(sessionData.arena.biome);
         const bgTexture = `${biomeKey}_bg`;
         this.scene.arenaBg.setTexture(bgTexture);
@@ -306,7 +306,7 @@ export class TitlePhase extends Phase {
           const starterGender = starter.species.malePercent !== null
             ? !starterProps.female ? Gender.MALE : Gender.FEMALE
             : Gender.GENDERLESS;
-          const starterPokemon = this.scene.addPlayerPokemon(starter.species, startingLevel, starterProps.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, undefined, starter.nature);
+          const starterPokemon = this.scene.addPlayerPokemon(starter.species, startingLevel, starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, undefined, starter.nature);
           starterPokemon.setVisible(false);
           party.push(starterPokemon);
           loadPokemonAssets.push(starterPokemon.loadAssets());
@@ -466,12 +466,10 @@ export class SelectStarterPhase extends Phase {
             ? !starterProps.female ? Gender.MALE : Gender.FEMALE
             : Gender.GENDERLESS;
           const starterIvs = this.scene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-          const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starterProps.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterIvs, starter.nature);
+          const starterPokemon = this.scene.addPlayerPokemon(starter.species, this.scene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
           starterPokemon.tryPopulateMoveset(starter.moveset);
           if (starter.passive)
             starterPokemon.passive = true;
-          if (starter.variant && starter.dexAttr & DexAttr.SHINY)
-            starterPokemon.variant = starter.variant;
           if (starter.pokerus)
             starterPokemon.pokerus = true;
           if (this.scene.gameMode.isSplicedOnly)
@@ -742,6 +740,7 @@ export class EncounterPhase extends BattlePhase {
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
           this.scene.gameData.saveSystem().then(success => {
+            this.scene.disableMenu = false;
             if (!success)
               return this.scene.reset(true);
             this.scene.gameData.saveSession(this.scene, true).then(() => this.doEncounter());
@@ -2140,10 +2139,8 @@ export class MovePhase extends BattlePhase {
     }
 
     if (!this.followUp) {
-      const abilityEffectsIgnored = new Utils.BooleanHolder(false);
-      this.scene.getField(true).map(p => applyAbAttrs(MoveAbilityBypassAbAttr, p, abilityEffectsIgnored));
-      if (abilityEffectsIgnored.value)
-        this.scene.arena.setIgnoreAbilities(true);
+      if (this.move.getMove().checkFlag(MoveFlags.IGNORE_ABILITIES, this.pokemon, null))
+        this.scene.arena.setIgnoreAbilities();
     } else {
       this.pokemon.turnData.hitsLeft = undefined;
       this.pokemon.turnData.hitCount = undefined;
@@ -3220,6 +3217,8 @@ export class TrainerVictoryPhase extends BattlePhase {
   }
 
   start() {
+    this.scene.disableMenu = true;
+
     this.scene.playBgm(this.scene.currentBattle.trainer.config.victoryBgm);
 
     this.scene.unshiftPhase(new MoneyRewardPhase(this.scene, this.scene.currentBattle.trainer.config.moneyMultiplier));
@@ -3540,12 +3539,17 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     this.scene.unshiftPhase(new HidePartyExpBarPhase(this.scene));
     pokemon.updateInfo();
 
-    this.scene.partyExpBar.showPokemonExp(pokemon, exp.value).then(() => {
-      if (newLevel > lastLevel)
-        this.end();
-      else
-        setTimeout(() => this.end(), 500);
-    });
+    if (this.scene.expGainsSpeed < 3) {
+      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value).then(() => {
+        if (newLevel > lastLevel)
+          this.end();
+        else
+          setTimeout(() => this.end(), 500 / Math.pow(2, this.scene.expGainsSpeed));
+      });
+    } else {
+      this.end();
+    }
+
   }
 }
 

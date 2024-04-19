@@ -32,6 +32,10 @@ export abstract class ModalUiHandler extends UiHandler {
 
   abstract getButtonLabels(config?: ModalConfig): string[];
 
+  getButtonTopMargin(): number {
+    return 0;
+  }
+
   setup() {
     const ui = this.getUi();
     
@@ -52,6 +56,8 @@ export abstract class ModalUiHandler extends UiHandler {
 
     const buttonLabels = this.getButtonLabels();
 
+    const buttonTopMargin = this.getButtonTopMargin();
+
     for (let label of buttonLabels) {
       const buttonLabel = addTextObject(this.scene, 0, 8, label, TextStyle.TOOLTIP_CONTENT);
       buttonLabel.setOrigin(0.5, 0.5);
@@ -60,7 +66,7 @@ export abstract class ModalUiHandler extends UiHandler {
       buttonBg.setOrigin(0.5, 0);
       buttonBg.setInteractive(new Phaser.Geom.Rectangle(0, 0, buttonBg.width, buttonBg.height), Phaser.Geom.Rectangle.Contains);
 
-      const buttonContainer = this.scene.add.container(0, 0);
+      const buttonContainer = this.scene.add.container(0, buttonTopMargin);
 
       this.buttonBgs.push(buttonBg);
       this.buttonContainers.push(buttonContainer);

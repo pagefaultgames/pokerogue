@@ -1,11 +1,4 @@
-interface MoveTranslationEntry {
-  name: string,
-  effect: string
-}
-
-interface MoveTranslations {
-  [key: string]: MoveTranslationEntry
-}
+import { MoveTranslations } from "#app/plugins/i18n";
 
 export const move: MoveTranslations = {
   "pound": {
@@ -2549,8 +2542,8 @@ export const move: MoveTranslations = {
     effect: "Dummy Data"
   },
   "neverEndingNightmarePhysical": {
-    name: "Deep-seated grudges summoned by the user's Z-Power trap the target. The power varies, depending on the original move.",
-    effect: "Dummy Data"
+    name: "Never-Ending Nightmare",
+    effect: "Deep-seated grudges summoned by the user's Z-Power trap the target. The power varies, depending on the original move."
   },
   "neverEndingNightmareSpecial": {
     name: "Never-Ending Nightmare",

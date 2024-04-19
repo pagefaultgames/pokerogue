@@ -28,6 +28,7 @@ import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
 import { OutdatedPhase, UnavailablePhase } from "#app/phases";
+import { Variant } from "#app/data/variant";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -135,17 +136,23 @@ export const DexAttr = {
   SHINY: 2n,
   MALE: 4n,
   FEMALE: 8n,
-  ABILITY_1: 16n,
-  ABILITY_2: 32n,
-  ABILITY_HIDDEN: 64n,
+  DEFAULT_VARIANT: 16n,
+  VARIANT_2: 32n,
+  VARIANT_3: 64n,
   DEFAULT_FORM: 128n
 }
 
 export interface DexAttrProps {
   shiny: boolean;
   female: boolean;
-  abilityIndex: integer;
+  variant: Variant;
   formIndex: integer;
+}
+
+export const AbilityAttr = {
+  ABILITY_1: 1,
+  ABILITY_2: 2,
+  ABILITY_HIDDEN: 4
 }
 
 export type StarterMoveset = [ Moves ] | [ Moves, Moves ] | [ Moves, Moves, Moves ] | [ Moves, Moves, Moves, Moves ];
@@ -162,8 +169,8 @@ export interface StarterDataEntry {
   moveset: StarterMoveset | StarterFormMoveData; 
   eggMoves: integer;
   candyCount: integer;
+  abilityAttr: integer;
   passiveAttr: integer;
-  variantAttr: integer;
   valueReduction: integer;
 }
 
@@ -332,8 +339,11 @@ export class GameData {
               for (let s of Object.keys(starterEggMoveData))
                 this.starterData[s].eggMoves = starterEggMoveData[s];
             }
-          } else
+          } else {
+            if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion))
+              this.migrateStarterAbilities(systemData);
             this.starterData = systemData.starterData;
+          }
 
           if (systemData.gameStats)
             this.gameStats = systemData.gameStats;
@@ -424,7 +434,7 @@ export class GameData {
         return ret;
       }
 
-      return k.endsWith('Attr') && ![ 'natureAttr', 'passiveAttr', 'variantAttr' ].includes(k) ? BigInt(v) : v;
+      return k.endsWith('Attr') && ![ 'natureAttr', 'abilityAttr', 'passiveAttr' ].includes(k) ? BigInt(v) : v;
     }) as SystemSaveData;
   }
 
@@ -919,7 +929,7 @@ export class GameData {
       Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY
     ];
 
-    const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.ABILITY_1 | DexAttr.DEFAULT_FORM;
+    const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.DEFAULT_VARIANT | DexAttr.DEFAULT_FORM;
 
     const defaultStarterNatures: Nature[] = [];
 
@@ -952,8 +962,8 @@ export class GameData {
         moveset: null,
         eggMoves: 0,
         candyCount: 0,
+        abilityAttr: 0,
         passiveAttr: 0,
-        variantAttr: 0,
         valueReduction: 0
       };
     }
@@ -986,6 +996,11 @@ export class GameData {
       const dexAttr = pokemon.getDexAttr();
       pokemon.formIndex = formIndex;
       dexEntry.caughtAttr |= dexAttr;
+      if (speciesStarters.hasOwnProperty(species.speciesId)) {
+        this.starterData[species.speciesId].abilityAttr |= pokemon.abilityIndex !== 1 || pokemon.species.ability2
+          ? Math.pow(2, pokemon.abilityIndex)
+          : AbilityAttr.ABILITY_HIDDEN;
+      }
       dexEntry.natureAttr |= Math.pow(2, pokemon.nature + 1);
       
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
@@ -1013,7 +1028,7 @@ export class GameData {
         }
 
         if (!hasPrevolution)
-          this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
+          this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant || 0) : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
       }
     
       const checkPrevolution = () => {
@@ -1097,13 +1112,17 @@ export class GameData {
     return starterCount;
   }
 
-  getSpeciesDefaultDexAttr(species: PokemonSpecies, forSeen: boolean = false): bigint {
+  getSpeciesDefaultDexAttr(species: PokemonSpecies, forSeen: boolean = false, optimistic: boolean = false): bigint {
     let ret = 0n;
     const dexEntry = this.dexData[species.speciesId];
     const attr = dexEntry.caughtAttr;
-    ret |= attr & DexAttr.NON_SHINY || !(attr & DexAttr.SHINY) ? DexAttr.NON_SHINY : DexAttr.SHINY;
+    ret |= optimistic
+      ? attr & DexAttr.SHINY ? DexAttr.SHINY : DexAttr.NON_SHINY
+      : attr & DexAttr.NON_SHINY || !(attr & DexAttr.SHINY) ? DexAttr.NON_SHINY : DexAttr.SHINY;
     ret |= attr & DexAttr.MALE || !(attr & DexAttr.FEMALE) ? DexAttr.MALE : DexAttr.FEMALE;
-    ret |= attr & DexAttr.ABILITY_1 || (!(attr & DexAttr.ABILITY_2) && !(attr & DexAttr.ABILITY_HIDDEN)) ? DexAttr.ABILITY_1 : attr & DexAttr.ABILITY_2 ? DexAttr.ABILITY_2 : DexAttr.ABILITY_HIDDEN;
+    ret |= optimistic
+      ? attr & DexAttr.SHINY ? attr & DexAttr.VARIANT_3 ? DexAttr.VARIANT_3 : attr & DexAttr.VARIANT_2 ? DexAttr.VARIANT_2 : DexAttr.DEFAULT_VARIANT : DexAttr.DEFAULT_VARIANT
+      : attr & DexAttr.DEFAULT_VARIANT ? DexAttr.DEFAULT_VARIANT : attr & DexAttr.VARIANT_2 ? DexAttr.VARIANT_2 : attr & DexAttr.VARIANT_3 ? DexAttr.VARIANT_3 : DexAttr.DEFAULT_VARIANT;
     ret |= this.getFormAttr(this.getFormIndex(attr));
     return ret;
   }
@@ -1111,15 +1130,20 @@ export class GameData {
   getSpeciesDexAttrProps(species: PokemonSpecies, dexAttr: bigint): DexAttrProps {
     const shiny = !(dexAttr & DexAttr.NON_SHINY);
     const female = !(dexAttr & DexAttr.MALE);
-    const abilityIndex = dexAttr & DexAttr.ABILITY_1 ? 0 : !species.ability2 || dexAttr & DexAttr.ABILITY_2 ? 1 : 2;
+    const variant = dexAttr & DexAttr.DEFAULT_VARIANT ? 0 : dexAttr & DexAttr.VARIANT_2 ? 1 : dexAttr & DexAttr.VARIANT_3 ? 2 : 0;
     const formIndex = this.getFormIndex(dexAttr);
 
     return {
       shiny,
       female,
-      abilityIndex,
+      variant,
       formIndex
     };
+  }
+
+  getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies): integer {
+    const abilityAttr = this.starterData[species.speciesId].abilityAttr;
+    return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 
   getSpeciesDefaultNature(species: PokemonSpecies): Nature {
@@ -1182,6 +1206,26 @@ export class GameData {
         entry.hatchedCount = 0;
       if (!entry.hasOwnProperty('natureAttr') || (entry.caughtAttr && !entry.natureAttr))
         entry.natureAttr = this.defaultDexData[k].natureAttr || Math.pow(2, Utils.randInt(25, 1));
+    }
+  }
+
+  migrateStarterAbilities(systemData: SystemSaveData): void {
+    const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
+    const starterData = systemData.starterData;
+    const dexData = systemData.dexData;
+    for (let s of starterIds) {
+      const dexAttr = dexData[s].caughtAttr;
+      starterData[s].abilityAttr = (dexAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
+        | (dexAttr & DexAttr.VARIANT_2 ? AbilityAttr.ABILITY_2 : 0)
+        | (dexAttr & DexAttr.VARIANT_3 ? AbilityAttr.ABILITY_HIDDEN : 0);
+      if (dexAttr) {
+        if (!(dexAttr & DexAttr.DEFAULT_VARIANT))
+          dexData[s].caughtAttr ^= DexAttr.DEFAULT_VARIANT;
+        if (dexAttr & DexAttr.VARIANT_2)
+          dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
+        if (dexAttr & DexAttr.VARIANT_3)
+          dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
+      }
     }
   }
 }

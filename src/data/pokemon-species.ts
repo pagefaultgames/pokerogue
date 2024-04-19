@@ -1,5 +1,7 @@
 import { Abilities } from "./enums/abilities";
 import BattleScene, { AnySound } from '../battle-scene';
+import { Variant, variantColorCache } from './variant';
+import { variantData } from './variant';
 import { GrowthRate } from './exp';
 import { SpeciesWildEvolutionDelay, pokemonEvolutions, pokemonPrevolutions } from './pokemon-evolutions';
 import { Species } from './enums/species';
@@ -12,6 +14,7 @@ import { speciesEggMoves } from './egg-moves';
 import { PartyMemberStrength } from "./enums/party-member-strength";
 import { GameMode } from '../game-mode';
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
+import { VariantSet } from './variant';
 
 export enum Region {
   NORMAL,
@@ -203,36 +206,48 @@ export abstract class PokemonSpeciesForm {
     return ret;
   }
 
-  getSpriteAtlasPath(female: boolean, formIndex?: integer, shiny?: boolean): string {
-    return this.getSpriteId(female, formIndex, shiny).replace(/\_{2}/g, '/');
+  getSpriteAtlasPath(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
+    const spriteId = this.getSpriteId(female, formIndex, shiny, variant).replace(/\_{2}/g, '/');
+    return `${/_[1-3]$/.test(spriteId) ? 'variant/' : ''}${spriteId}`;
   }
 
-  getSpriteId(female: boolean, formIndex?: integer, shiny?: boolean): string {
+  getSpriteId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer, back?: boolean): string {
     if (formIndex === undefined || this instanceof PokemonForm)
       formIndex = this.formIndex;
 
     const formSpriteKey = this.getFormSpriteKey(formIndex);
     const showGenderDiffs = this.genderDiffs && female && ![ SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX ].find(k => formSpriteKey === k);
-    return `${shiny ? 'shiny__' : ''}${showGenderDiffs ? 'female__' : ''}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ''}`;
+
+    const baseSpriteKey = `${showGenderDiffs ? 'female__' : ''}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ''}`;
+    
+    let variantSet: VariantSet;
+    let config = variantData;
+    `${back ? 'back__' : ''}${baseSpriteKey}`.split('__').map(p => config ? config = config[p] : null);
+    variantSet = config as VariantSet;
+
+    return `${back ? 'back__' : ''}${shiny && (!variantSet || (!variant && !variantSet[variant || 0])) ? 'shiny__' : ''}${baseSpriteKey}${shiny && variantSet && variantSet[variant || 0] === 2 ? `_${variant + 1}` : ''}`;
   }
 
-  getSpriteKey(female: boolean, formIndex?: integer, shiny?: boolean): string {
-    return `pkmn__${this.getSpriteId(female, formIndex, shiny)}`;
+  getSpriteKey(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
+    return `pkmn__${this.getSpriteId(female, formIndex, shiny, variant)}`;
   }
 
   abstract getFormSpriteKey(formIndex?: integer): string;
 
-  getIconAtlasKey(formIndex?: integer): string {
-    return `pokemon_icons_${this.generation}`;
+  getIconAtlasKey(formIndex?: integer, shiny?: boolean, variant?: integer): string {
+    const isVariant = shiny && variantData[this.speciesId] && variantData[this.speciesId][variant];
+    return `pokemon_icons_${this.generation}${isVariant ? 'v' : ''}`;
   }
 
-  getIconId(female: boolean, formIndex?: integer, shiny?: boolean): string {
+  getIconId(female: boolean, formIndex?: integer, shiny?: boolean, variant?: integer): string {
     if (formIndex === undefined)
       formIndex = this.formIndex;
 
     let ret = this.speciesId.toString();
 
-    if (shiny)
+    const isVariant = shiny && variantData[this.speciesId] && variantData[this.speciesId][variant];
+
+    if (shiny && !isVariant)
       ret += 's';
     
     switch (this.speciesId) {
@@ -259,6 +274,9 @@ export abstract class PokemonSpeciesForm {
           break;
       }
     }
+
+    if (isVariant)
+      ret += `_${variant + 1}`;
 
     return ret;
   }
@@ -345,23 +363,45 @@ export abstract class PokemonSpeciesForm {
     return true;
   }
 
-  loadAssets(scene: BattleScene, female: boolean, formIndex?: integer, shiny?: boolean, startLoad?: boolean): Promise<void> {
+  loadAssets(scene: BattleScene, female: boolean, formIndex?: integer, shiny?: boolean, variant?: Variant, startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
-      const spriteKey = this.getSpriteKey(female, formIndex, shiny);
+      const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant);
       scene.load.audio(this.getCryKey(formIndex), `audio/cry/${this.getCryKey(formIndex)}.m4a`);
-      scene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny));
+      scene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant));
       scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
         // Ignore warnings for missing frames, because there will be a lot
         console.warn = () => {};
-        const frameNames = scene.anims.generateFrameNames(this.getSpriteKey(female, formIndex, shiny), { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
+        const frameNames = scene.anims.generateFrameNames(spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 400 });
         console.warn = originalWarn;
         scene.anims.create({
-          key: this.getSpriteKey(female, formIndex, shiny),
+          key: this.getSpriteKey(female, formIndex, shiny, variant),
           frames: frameNames,
           frameRate: 12,
           repeat: -1
         });
+        let spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant);
+        const useExpSprite = scene.experimentalSprites && scene.hasExpSprite(spriteKey);
+        if (useExpSprite)
+          spritePath = `exp/${spritePath}`;
+        let variantSet: VariantSet;
+        let config = variantData;
+        spritePath.split('/').map(p => config ? config = config[p] : null);
+        variantSet = config as VariantSet;
+        if (variantSet && variantSet[variant] === 1) {
+          const populateVariantColors = (key: string): Promise<void> => {
+            return new Promise(resolve => {
+              if (variantColorCache.hasOwnProperty(key))
+                return resolve();
+              fetch(`./images/pokemon/variant/${spritePath}.json`).then(res => res.json()).then(c => {
+                variantColorCache[key] = c;
+                resolve();
+              });
+            });
+          };
+          populateVariantColors(spriteKey).then(() => resolve());
+          return;
+        }
         resolve();
       });
       if (startLoad) {
@@ -670,8 +710,9 @@ export default class PokemonSpecies extends PokemonSpeciesForm {
     const legendary = this.legendary;
     const mythical = this.mythical;
     return species => {
-      return pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
-        && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution
+      return (pseudoLegendary || legendary || mythical ||
+        (pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
+        && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution))
         && species.pseudoLegendary === pseudoLegendary
         && species.legendary === legendary
         && species.mythical === mythical
@@ -3233,7 +3274,7 @@ export const starterPassiveAbilities = {
   [Species.ZIGZAGOON]: Abilities.PICKPOCKET,
   [Species.WURMPLE]: Abilities.TINTED_LENS,
   [Species.LOTAD]: Abilities.DRIZZLE,
-  [Species.SEEDOT]: Abilities.DISGUISE,
+  [Species.SEEDOT]: Abilities.EARLY_BIRD,
   [Species.TAILLOW]: Abilities.KEEN_EYE,
   [Species.WINGULL]: Abilities.HYDRATION,
   [Species.RALTS]: Abilities.PSYCHIC_SURGE,
@@ -3408,7 +3449,7 @@ export const starterPassiveAbilities = {
   [Species.AXEW]: Abilities.SHEER_FORCE,
   [Species.CUBCHOO]: Abilities.INTIMIDATE,
   [Species.CRYOGONAL]: Abilities.DAZZLING,
-  [Species.SHELMET]: Abilities.DISGUISE,
+  [Species.SHELMET]: Abilities.TOXIC_DEBRIS,
   [Species.STUNFISK]: Abilities.STORM_DRAIN,
   [Species.MIENFOO]: Abilities.NO_GUARD,
   [Species.DRUDDIGON]: Abilities.INTIMIDATE,
@@ -3638,7 +3679,7 @@ export const starterPassiveAbilities = {
   [Species.OKIDOGI]: Abilities.INTIMIDATE,
   [Species.MUNKIDORI]: Abilities.PRANKSTER,
   [Species.FEZANDIPITI]: Abilities.DAZZLING,
-  [Species.OGERPON]: Abilities.DISGUISE,
+  [Species.OGERPON]: Abilities.UNNERVE,
   [Species.GOUGING_FIRE]: Abilities.BEAST_BOOST,
   [Species.RAGING_BOLT]: Abilities.BEAST_BOOST,
   [Species.IRON_BOULDER]: Abilities.SHARPNESS,

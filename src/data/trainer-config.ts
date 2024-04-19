@@ -846,6 +846,8 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RAYQUAZA ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 3);
       p.pokeball = PokeballType.MASTER_BALL;
+      p.shiny = true;
+      p.variant = 1;
     }))
     .setGenModifiersFunc(party => {
       const starter = party[0];
@@ -862,6 +864,8 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RAYQUAZA ], TrainerSlot.TRAINER, true, p => {
       p.setBoss();
       p.pokeball = PokeballType.MASTER_BALL;
+      p.shiny = true;
+      p.variant = 1;
       p.formIndex = 1;
     }))
     .setGenModifiersFunc(party => {

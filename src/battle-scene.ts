@@ -57,6 +57,7 @@ import { initTouchControls } from './touch-controls';
 import { UiTheme } from './enums/ui-theme';
 import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
+import { Variant, variantData } from './data/variant';
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -100,6 +101,7 @@ export enum Button {
 	CYCLE_GENDER,
 	CYCLE_ABILITY,
 	CYCLE_NATURE,
+	CYCLE_VARIANT,
 	SPEED_UP,
 	SLOW_DOWN
 }
@@ -126,12 +128,15 @@ export default class BattleScene extends SceneBase {
 	public windowType: integer = 0;
 	public experimentalSprites: boolean = false;
 	public moveAnimations: boolean = true;
+	public expGainsSpeed: integer = 0;
 	public hpBarSpeed: integer = 0;
 	public fusionPaletteSwaps: boolean = true;
 	public gamepadSupport: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
 	
+	public disableMenu: boolean = false;
+
 	public gameData: GameData;
 	public sessionSlotId: integer;
 
@@ -214,6 +219,7 @@ export default class BattleScene extends SceneBase {
     [Button.CYCLE_GENDER]: 6, // LT
     [Button.CYCLE_ABILITY]: 7, // RT
     [Button.CYCLE_NATURE]: 2, // square
+    [Button.CYCLE_VARIANT]: 3, // triangle
     [Button.SPEED_UP]: 10, // L3
     [Button.SLOW_DOWN]: 11 // R3
   };
@@ -239,24 +245,15 @@ export default class BattleScene extends SceneBase {
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
 		if (experimental === undefined)
 			experimental = this.experimentalSprites;
-		if (experimental) {
-			const keyMatch = /^pkmn__(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?$/g.exec(key);
-			let k = keyMatch[4];
-			if (keyMatch[2])
-				k += 's';
-			if (keyMatch[1])
-				k += 'b';
-			if (keyMatch[3])
-				k += 'f';
-			if (keyMatch[5])
-				k += keyMatch[5];
-			if (!expSpriteKeys.includes(k))
-				experimental = false;
-		}
-		this.load.atlas(key, `images/pokemon/${experimental ? 'exp/' : ''}${atlasPath}.png`,  `images/pokemon/${experimental ? 'exp/' : ''}${atlasPath}.json`);
+		let variant = atlasPath.includes('variant/');
+		if (experimental)
+			experimental = this.hasExpSprite(key);
+		if (variant)
+			atlasPath = atlasPath.replace('variant/', '');
+		this.load.atlas(key, `images/pokemon/${variant ? 'variant/' : ''}${experimental ? 'exp/' : ''}${atlasPath}.png`,  `images/pokemon/${variant ? 'variant/' : ''}${experimental ? 'exp/' : ''}${atlasPath}.json`);
 	}
 
-	preload() {
+	async preload() {
 		if (DEBUG_RNG) {
 			const scene = this;
 			const originalRealInRange = Phaser.Math.RND.realInRange;
@@ -272,6 +269,8 @@ export default class BattleScene extends SceneBase {
 		}
 		
 		populateAnims();
+
+		await fetch('./images/pokemon/variant/_masterlist.json').then(res => res.json()).then(v => Object.keys(v).forEach(k => variantData[k] = v[k]));
 	}
 
 	create() {
@@ -502,15 +501,13 @@ export default class BattleScene extends SceneBase {
 		this.updateScoreText();
 	}
 
-	initExpSprites(): Promise<void> {
-		return new Promise(resolve => {
-			if (expSpriteKeys.length)
-				return resolve();
-			fetch('./exp-sprites.json').then(res => res.json()).then(keys => {
-				if (Array.isArray(keys))
-					expSpriteKeys.push(...keys);
-				resolve();
-			});
+	async initExpSprites(): Promise<void> {
+		if (expSpriteKeys.length)
+			return;
+		fetch('./exp-sprites.json').then(res => res.json()).then(keys => {
+			if (Array.isArray(keys))
+				expSpriteKeys.push(...keys);
+			Promise.resolve();
 		});
 	}
 
@@ -552,6 +549,22 @@ export default class BattleScene extends SceneBase {
 		});
 	}
 
+	hasExpSprite(key: string): boolean {
+		const keyMatch = /^pkmn__?(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?(?:_[1-3])?$/g.exec(key);
+		let k = keyMatch[4];
+		if (keyMatch[2])
+			k += 's';
+		if (keyMatch[1])
+			k += 'b';
+		if (keyMatch[3])
+			k += 'f';
+		if (keyMatch[5])
+			k += keyMatch[5];
+		if (!expSpriteKeys.includes(k))
+			return false;
+		return true;
+	}
+
 	setupControls() {
 		const keyCodes = Phaser.Input.Keyboard.KeyCodes;
 		const keyConfig = {
@@ -568,6 +581,7 @@ export default class BattleScene extends SceneBase {
 			[Button.CYCLE_GENDER]: [keyCodes.G],
 			[Button.CYCLE_ABILITY]: [keyCodes.E],
 			[Button.CYCLE_NATURE]: [keyCodes.N],
+			[Button.CYCLE_VARIANT]: [keyCodes.V],
 			[Button.SPEED_UP]: [keyCodes.PLUS],
 			[Button.SLOW_DOWN]: [keyCodes.MINUS]
 		};
@@ -628,8 +642,8 @@ export default class BattleScene extends SceneBase {
 		return findInParty(this.getParty()) || findInParty(this.getEnemyParty());
 	}
 
-	addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
-		const pokemon = new PlayerPokemon(this, species, level, abilityIndex, formIndex, gender, shiny, ivs, nature, dataSource);
+	addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
+		const pokemon = new PlayerPokemon(this, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
 		if (postProcess)
 			postProcess(pokemon);
 		pokemon.init();
@@ -732,6 +746,8 @@ export default class BattleScene extends SceneBase {
 		
 		this.setSeed(SEED_OVERRIDE || Utils.randomString(24));
 		console.log('Seed:', this.seed);
+
+		this.disableMenu = false;
 
 		this.score = 0;
 		this.money = 0;
@@ -1234,6 +1250,8 @@ export default class BattleScene extends SceneBase {
 			inputSuccess = this.ui.processInput(Button.CANCEL);
 			this.setLastProcessedMovementTime(Button.CANCEL);
 		} else if (this.buttonJustPressed(Button.MENU)) {
+			if (this.disableMenu)
+				return;
 			switch (this.ui?.getMode()) {
 				case Mode.MESSAGE:
 					if (!(this.ui.getHandler() as MessageUiHandler).pendingPrompt)
@@ -1278,6 +1296,9 @@ export default class BattleScene extends SceneBase {
 			} else if (this.buttonJustPressed(Button.CYCLE_NATURE)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_NATURE);
         this.setLastProcessedMovementTime(Button.CYCLE_NATURE);
+			} else if (this.buttonJustPressed(Button.CYCLE_VARIANT)) {
+				inputSuccess = this.ui.processInput(Button.CYCLE_VARIANT);
+				this.setLastProcessedMovementTime(Button.CYCLE_VARIANT);
 			} else
 				return;
 		}	else if (this.buttonJustPressed(Button.SPEED_UP)) {

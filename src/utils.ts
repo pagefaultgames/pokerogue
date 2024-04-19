@@ -322,3 +322,7 @@ export function rgbHexToRgba(hex: string) {
       a: 255
   };
 }
+
+export function rgbaToInt(rgba: integer[]): integer {
+  return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
+}
