@@ -998,10 +998,11 @@ export class PostAttackContactApplyStatusEffectAbAttr extends PostAttackApplySta
 
 export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
   private contactRequired: boolean;
-  private chance: integer;
+  private chance: (user: Pokemon, target: Pokemon, move: PokemonMove) => integer;
   private effects: BattlerTagType[];
 
-  constructor(contactRequired: boolean, chance: integer, ...effects: BattlerTagType[]) {
+  
+  constructor(contactRequired: boolean, chance: (user: Pokemon, target: Pokemon, move: PokemonMove) =>  integer, ...effects: BattlerTagType[]) {
     super();
 
     this.contactRequired = contactRequired;
@@ -1010,37 +1011,11 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
   }
 
   applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (pokemon != attacker && (!this.contactRequired || move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
+    if (pokemon != attacker && (!this.contactRequired || move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance(attacker, pokemon, move) && !pokemon.status) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
 
 
       return attacker.addTag(effect);
-    }
-
-    return false;
-  }
-}
-
-export class StenchAbAttr extends PostAttackAbAttr {
-  private contactRequired: boolean;
-  private chance: integer;
-
-  constructor(contactRequired: boolean, chance: integer) {
-    super();
-
-    this.contactRequired = contactRequired;
-    this.chance = chance;
-
-  }
-
-  applyPostAttack(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (pokemon != attacker && (!this.contactRequired || move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status) {
-
-      const flinchAttr = move.getMove().findAttr(attr => attr instanceof FlinchAttr);
-      
-      if (!flinchAttr) 
-        return attacker.addTag(BattlerTagType.FLINCHED);
-
     }
 
     return false;
@@ -2342,7 +2317,7 @@ export const allAbilities = [ new Ability(Abilities.NONE, "-", "", 3) ];
 export function initAbilities() {
   allAbilities.push(
     new Ability(Abilities.STENCH, "Stench", "By releasing stench when attacking, this Pokémon may cause the target to flinch.", 3)
-      .attr(StenchAbAttr, false, 10),
+      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => move.getMove().findAttr(attr => attr instanceof FlinchAttr) == undefined ? 10 : 0, BattlerTagType.FLINCHED),
     new Ability(Abilities.DRIZZLE, "Drizzle", "The Pokémon makes it rain when it enters a battle.", 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN),
