@@ -1783,6 +1783,18 @@ export class FirstAttackDoublePowerAttr extends VariablePowerAttr {
   }
 }
 
+export class LastAttackDoublePowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    console.log(target.getLastXMoves(1), target.scene.currentBattle.turn);
+    if (target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn)) {
+      (args[0] as Utils.NumberHolder).value *= 2;
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class TurnDamagedDoublePowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.turnData.attacksReceived.find(r => r.damage && r.sourceId === target.id)) {
@@ -4552,7 +4564,7 @@ export function initMoves() {
     new AttackMove(Moves.CLOSE_COMBAT, Type.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, 100, 0, 4)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true),
     new AttackMove(Moves.PAYBACK, Type.DARK, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 4)
-      .partial(),
+      .attr(LastAttackDoublePowerAttr),
     new AttackMove(Moves.ASSURANCE, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 4)
       .partial(),
     new StatusMove(Moves.EMBARGO, Type.DARK, 100, 15, -1, 0, 4)
