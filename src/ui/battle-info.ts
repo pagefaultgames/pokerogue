@@ -40,6 +40,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
   private hpNumbersContainer: Phaser.GameObjects.Container;
   private type1Icon: Phaser.GameObjects.Sprite;
   private type2Icon: Phaser.GameObjects.Sprite;
+  private type3Icon: Phaser.GameObjects.Sprite;
   private expBar: Phaser.GameObjects.Image;
   
   public expMaskRect: Phaser.GameObjects.Graphics;
@@ -137,6 +138,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.type2Icon.setOrigin(0, 0);
     this.add(this.type2Icon);
 
+    this.type3Icon = this.scene.add.sprite(player ? -154 : 0, player ? -17 : -15.5, `pbinfo_${player ? 'player' : 'enemy'}_type`);
+    this.type3Icon.setOrigin(0, 0);
+    this.add(this.type3Icon);
+
     if (this.player) {
       this.hpNumbersContainer = this.scene.add.container(-15, 10);
       this.add(this.hpNumbersContainer);
@@ -221,8 +226,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.type1Icon.setTexture(`pbinfo_${this.player ? 'player' : 'enemy'}_type${types.length > 1 ? '1' : ''}`);
     this.type1Icon.setFrame(Type[types[0]].toLowerCase());
     this.type2Icon.setVisible(types.length > 1);
+    this.type3Icon.setVisible(types.length > 2);
     if (types.length > 1)
       this.type2Icon.setFrame(Type[types[1]].toLowerCase());
+    if (types.length > 2)
+      this.type3Icon.setFrame(Type[types[2]].toLowerCase());
 
     if (this.player) {
       this.expMaskRect.x = (pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate)) * 510;
@@ -249,7 +257,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     const offsetElements = [ this.nameText, this.genderText, this.teraIcon, this.splicedIcon, this.shinyIcon, this.statusIndicator, this.levelContainer ];
     offsetElements.forEach(el => el.y += 1.5 * (mini ? -1 : 1));
 
-    [ this.type1Icon, this.type2Icon ].forEach(el => {
+    [ this.type1Icon, this.type2Icon, this.type3Icon ].forEach(el => {
       el.x += 4 * (mini ? 1 : -1);
       el.y += -8 * (mini ? 1 : -1);
     });
@@ -346,8 +354,11 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.type1Icon.setTexture(`pbinfo_${this.player ? 'player' : 'enemy'}_type${types.length > 1 ? '1' : ''}`);
       this.type1Icon.setFrame(Type[types[0]].toLowerCase());
       this.type2Icon.setVisible(types.length > 1);
+      this.type3Icon.setVisible(types.length > 2);
       if (types.length > 1)
         this.type2Icon.setFrame(Type[types[1]].toLowerCase());
+      if (types.length > 2)
+        this.type3Icon.setFrame(Type[types[2]].toLowerCase());
 
       const updateHpFrame = () => {
         const hpFrame = this.hpBar.scaleX > 0.5 ? 'high' : this.hpBar.scaleX > 0.25 ? 'medium' : 'low';
