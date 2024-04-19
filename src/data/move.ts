@@ -5554,7 +5554,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.PLASMA_FISTS, Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 15, -1, 0, 7)
       .punchingMove()
-      .partial(),
+      .attr(AddArenaTagAttr, ArenaTagType.PLASMA_FISTS),
     new AttackMove(Moves.PHOTON_GEYSER, Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 7)
       .attr(PhotonGeyserCategoryAttr)
       .ignoresAbilities()
