@@ -2352,7 +2352,7 @@ export function initAbilities() {
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.INFATUATED)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, "Cloud Nine", "Eliminates the effects of weather.", 3)
-      .attr(SuppressWeatherEffectAbAttr),
+      .attr(SuppressWeatherEffectAbAttr, true),
     new Ability(Abilities.COMPOUND_EYES, "Compound Eyes", "The Pokémon's compound eyes boost its accuracy.", 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 1.3),
     new Ability(Abilities.INSOMNIA, "Insomnia", "The Pokémon is suffering from insomnia and cannot fall asleep.", 3)
