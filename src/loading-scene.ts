@@ -8,12 +8,14 @@ import { SceneBase } from "./scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
+import { initI18n } from "./plugins/i18n";
 
 export class LoadingScene extends SceneBase {
   constructor() {
     super('loading');
 
     Phaser.Plugins.PluginCache.register('Loader', CacheBustedLoaderPlugin, 'load');
+    initI18n();
   }
 
   preload() {

@@ -24,7 +24,7 @@ import { Species } from "./enums/species";
 import { ModifierPoolType } from "#app/modifier/modifier-type";
 import { Command } from "../ui/command-ui-handler";
 import { Biome } from "./enums/biome";
-import i18next from '../plugins/i18n';
+import i18next, { Localizable } from '../plugins/i18n';
 
 export enum MoveCategory {
   PHYSICAL,
@@ -75,7 +75,7 @@ export enum MoveFlags {
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
 
-export default class Move {
+export default class Move implements Localizable {
   public id: Moves;
   public name: string;
   public type: Type;
@@ -97,14 +97,14 @@ export default class Move {
 
     const i18nKey = Moves[id].split('_').filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join('') as unknown as string;
 
-    this.name = id ? i18next.t(`move:${i18nKey}.name`) as string : '';
+    this.name = id ? i18next.t(`move:${i18nKey}.name`).toString() : '';
     this.type = type;
     this.category = category;
     this.moveTarget = defaultMoveTarget;
     this.power = power;
     this.accuracy = accuracy;
     this.pp = pp;
-    this.effect = id ? i18next.t(`move:${i18nKey}.effect`) as string : '';
+    this.effect = id ? i18next.t(`move:${i18nKey}.effect`).toString() : '';
     this.chance = chance;
     this.priority = priority;
     this.generation = generation;
@@ -117,6 +117,13 @@ export default class Move {
       this.setFlag(MoveFlags.IGNORE_PROTECT, true);
     if (category === MoveCategory.PHYSICAL)
       this.setFlag(MoveFlags.MAKES_CONTACT, true);
+  }
+
+  localize() {
+    const i18nKey = Moves[this.id].split('_').filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join('') as unknown as string;
+
+    this.name = this.id ? i18next.t(`move:${i18nKey}.name`).toString() : '';
+    this.effect = this.id ? i18next.t(`move:${i18nKey}.effect`).toString() : '';
   }
 
   getAttrs(attrType: { new(...args: any[]): MoveAttr }): MoveAttr[] {
