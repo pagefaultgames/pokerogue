@@ -21,7 +21,7 @@ export function updateUserInfo(): Promise<[boolean, integer]> {
       loggedInUser = { username: 'Guest', lastSessionSlot: lastSessionSlot };
       return resolve([ true, 200 ]);
     }
-    Utils.apiFetch('account/info').then(response => {
+    Utils.apiFetch('account/info', true).then(response => {
       if (!response.ok) {
         resolve([ false, response.status ]);
         return;

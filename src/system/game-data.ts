@@ -407,7 +407,7 @@ export class GameData {
       }
 
       if (!bypassLogin) {
-        Utils.apiFetch(`savedata/get?datatype=${GameDataType.SYSTEM}`)
+        Utils.apiFetch(`savedata/get?datatype=${GameDataType.SYSTEM}`, true)
           .then(response => response.text())
           .then(response => {
             if (!response.length || response[0] !== '{') {
@@ -578,7 +578,7 @@ export class GameData {
       };
 
       if (!bypassLogin) {
-        Utils.apiFetch(`savedata/get?datatype=${GameDataType.SESSION}&slot=${slotId}`)
+        Utils.apiFetch(`savedata/get?datatype=${GameDataType.SESSION}&slot=${slotId}`, true)
           .then(response => response.text())
           .then(async response => {
             if (!response.length || response[0] !== '{') {
@@ -707,7 +707,7 @@ export class GameData {
       updateUserInfo().then(success => {
         if (success !== null && !success)
           return resolve(false);
-        Utils.apiFetch(`savedata/delete?datatype=${GameDataType.SESSION}&slot=${slotId}`).then(response => {
+        Utils.apiFetch(`savedata/delete?datatype=${GameDataType.SESSION}&slot=${slotId}`, true).then(response => {
           if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
             return resolve(true);
@@ -795,7 +795,7 @@ export class GameData {
         link.remove();
       };
       if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-        Utils.apiFetch(`savedata/get?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}`)
+        Utils.apiFetch(`savedata/get?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}`, true)
           .then(response => response.text())
           .then(response => {
             if (!response.length || response[0] !== '{') {

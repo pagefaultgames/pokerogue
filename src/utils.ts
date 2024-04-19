@@ -233,11 +233,15 @@ export function getCookie(cName: string): string {
   return '';
 }
 
-export function apiFetch(path: string): Promise<Response> {
+export function apiFetch(path: string, authed: boolean = false): Promise<Response> {
   return new Promise((resolve, reject) => {
-    const sId = getCookie(sessionIdKey);
-    const headers = sId ? { 'Authorization': sId } : {};
-    fetch(`${apiUrl}/${path}`, { headers: headers })
+    const request = {};
+    if (authed) {
+      const sId = getCookie(sessionIdKey);
+      if (sId)
+        request['headers'] = { 'Authorization': sId };
+    }
+    fetch(`${apiUrl}/${path}`, request)
       .then(response => resolve(response))
       .catch(err => reject(err));
   });
