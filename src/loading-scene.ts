@@ -259,6 +259,8 @@ export class LoadingScene extends SceneBase {
   }
 
   loadLoadingScreen() {
+    const mobile = isMobile();
+
     const loadingGraphics: any[] = [];
 
     const bg = this.add.image(0, 0, '');
@@ -323,7 +325,8 @@ export class LoadingScene extends SceneBase {
     
     loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText);
 
-    loadingGraphics.map(g => g.setVisible(false));
+    if (!mobile)
+      loadingGraphics.map(g => g.setVisible(false));
 
     const destroyLoadingAssets = () => {
       intro.destroy();
@@ -352,11 +355,13 @@ export class LoadingScene extends SceneBase {
           break;
         case 'loading_bg':
           bg.setTexture('loading_bg');
-          //bg.setVisible(true);
+          if (mobile)
+            bg.setVisible(true);
           break;
         case 'logo':
           logo.setTexture('logo');
-          //logo.setVisible(true);
+          if (mobile)
+            logo.setVisible(true);
           break;
       }
     });
