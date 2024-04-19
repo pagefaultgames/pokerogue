@@ -134,6 +134,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.stats = dataSource.stats;
       this.ivs = dataSource.ivs;
       this.passive = !!dataSource.passive;
+      if (this.variant === undefined)
+        this.variant = 0;
       this.nature = dataSource.nature || 0 as Nature;
       this.natureOverride = dataSource.natureOverride !== undefined ? dataSource.natureOverride : -1;
       this.moveset = dataSource.moveset;
@@ -147,7 +149,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionFormIndex = dataSource.fusionFormIndex;
       this.fusionAbilityIndex = dataSource.fusionAbilityIndex;
       this.fusionShiny = dataSource.fusionShiny;
-      this.fusionVariant = dataSource.fusionVariant;
+      this.fusionVariant = dataSource.fusionVariant || 0;
       this.fusionGender = dataSource.fusionGender;
     } else {
       this.id = Utils.randSeedInt(4294967296);
