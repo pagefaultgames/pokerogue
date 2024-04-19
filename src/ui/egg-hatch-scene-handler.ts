@@ -49,5 +49,6 @@ export default class EggHatchSceneHandler extends UiHandler {
   clear() {
     super.clear();
     this.eggHatchContainer.removeAll(true);
+    this.getUi().hideTooltip();
   }
 }
