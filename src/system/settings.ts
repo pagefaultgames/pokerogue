@@ -3,12 +3,15 @@ import BattleScene from "../battle-scene";
 import { hasTouchscreen } from "../touch-controls";
 import { updateWindowType } from "../ui/ui-theme";
 import { PlayerGender } from "./game-data";
+import { Mode } from "#app/ui/ui";
+import SettingsUiHandler from "#app/ui/settings-ui-handler";
 
 export enum Setting {
   Game_Speed = "GAME_SPEED",
   Master_Volume = "MASTER_VOLUME",
   BGM_Volume = "BGM_VOLUME",
   SE_Volume = "SE_VOLUME",
+  Language = "LANGUAGE",
   Damage_Numbers = "DAMAGE_NUMBERS",
   UI_Theme = "UI_THEME",
   Window_Type = "WINDOW_TYPE",
@@ -23,8 +26,7 @@ export enum Setting {
   Player_Gender = "PLAYER_GENDER",
   Gamepad_Support = "GAMEPAD_SUPPORT",
   Touch_Controls = "TOUCH_CONTROLS",
-  Vibration = "VIBRATION",
-  Language = "LANGUAGE"
+  Vibration = "VIBRATION"
 }
 
 export interface SettingOptions {
@@ -40,6 +42,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Master_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.BGM_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.SE_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
+  [Setting.Language]: [ 'English', 'Change' ],
   [Setting.Damage_Numbers]: [ 'Off', 'Simple', 'Fancy' ],
   [Setting.UI_Theme]: [ 'Default', 'Legacy' ],
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
@@ -54,8 +57,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Player_Gender]: [ 'Boy', 'Girl' ],
   [Setting.Gamepad_Support]: [ 'Auto', 'Disabled' ],
   [Setting.Touch_Controls]: [ 'Auto', 'Disabled' ],
-  [Setting.Vibration]: [ 'Auto', 'Disabled' ],
-  [Setting.Language]: [ 'en', 'fr' ]
+  [Setting.Vibration]: [ 'Auto', 'Disabled' ]
 };
 
 export const settingDefaults: SettingDefaults = {
@@ -63,6 +65,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Master_Volume]: 5,
   [Setting.BGM_Volume]: 10,
   [Setting.SE_Volume]: 10,
+  [Setting.Language]: 0,
   [Setting.Damage_Numbers]: 0,
   [Setting.UI_Theme]: 0,
   [Setting.Window_Type]: 0,
@@ -77,8 +80,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Player_Gender]: 0,
   [Setting.Gamepad_Support]: 0,
   [Setting.Touch_Controls]: 0,
-  [Setting.Vibration]: 0,
-  [Setting.Language]: 0
+  [Setting.Vibration]: 0
 };
 
 export const reloadSettings: Setting[] = [ Setting.UI_Theme, Setting.Language ];
@@ -156,7 +158,37 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       scene.enableVibration = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
       break;
     case Setting.Language:
-      i18next.changeLanguage(settingOptions[setting][value]);
+      if (value) {
+        if (scene.ui) {
+          const cancelHandler = () => {
+            scene.ui.revertMode();
+            (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(Object.values(Setting).indexOf(Setting.Language), 0, true);
+          };
+          const changeLocaleHandler = (locale: string) => {
+            i18next.changeLanguage(locale);
+            localStorage.setItem('prLang', locale);
+            cancelHandler();
+            scene.reset(true, false, true);
+          };
+          scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+            options: [
+              {
+                label: 'English',
+                handler: () => changeLocaleHandler('en')
+              },
+              {
+                label: 'French',
+                handler: () => changeLocaleHandler('fr')
+              },
+              {
+                label: 'Cancel',
+                handler: () => cancelHandler()
+              }
+            ]
+          });
+          return false;
+        }
+      }
       break;
   }
 

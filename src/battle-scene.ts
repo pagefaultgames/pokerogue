@@ -15,7 +15,7 @@ import { GameData, PlayerGender } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
-import { } from "./data/move";
+import { allMoves } from "./data/move";
 import { initMoves } from './data/move';
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
@@ -57,6 +57,7 @@ import { initTouchControls } from './touch-controls';
 import { UiTheme } from './enums/ui-theme';
 import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
+import { Localizable } from './plugins/i18n';
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -458,7 +459,7 @@ export default class BattleScene extends SceneBase {
 			hideOnComplete: true
 		});
 
-		this.reset();
+		this.reset(false, false, true);
 
 		const ui = new UI(this);
 		this.uiContainer.add(ui);
@@ -727,7 +728,7 @@ export default class BattleScene extends SceneBase {
 		return this.currentBattle.randSeedInt(this, range, min);
 	}
 
-	reset(clearScene: boolean = false, clearData: boolean = false): void {
+	reset(clearScene: boolean = false, clearData: boolean = false, reloadI18n: boolean = false): void {
 		if (clearData)
 			this.gameData = new GameData(this);
 
@@ -780,7 +781,13 @@ export default class BattleScene extends SceneBase {
 
 		this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
 		this.trainer.setPosition(406, 186);
-		this.trainer.setVisible(true)
+		this.trainer.setVisible(true);
+
+		if (reloadI18n) {
+			const localizable: Localizable[] = [ ...allMoves ];
+			for (let item of localizable)
+				item.localize();
+		}
 
 		if (clearScene) {
 			this.fadeOutBgm(250, false);
