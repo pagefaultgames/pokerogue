@@ -455,6 +455,37 @@ export class GravityTag extends ArenaTag {
   }
 }
 
+export class ChangeAllMovesOfOneTypeTag extends ArenaTag {
+private matchType: Type;
+private newType: Type;
+    constructor(tagType: ArenaTagType, turnCount: integer, type1: Type, type2: Type, sourceId: integer) {
+        super(tagType, turnCount, sourceId);
+        this.matchType = type1;
+        this.newType = type2;
+    }
+    apply(arena: Arena, args: any[]): boolean {
+
+      if ((args[0].value as Type) === this.matchType) {
+          (args[0] as Utils.IntegerHolder).value = 12
+          // this needs to be replaced with a way to convert this.newtype into the equivalent integer value.
+          // for now it works because only plasma fists uses this logic.
+          return true;
+      }
+      return false;
+  }
+}
+
+class PlasmaFistsTag extends ChangeAllMovesOfOneTypeTag {
+    constructor(turnCount: integer) {
+        super(ArenaTagType.PLASMA_FISTS, 1, Type.NORMAL, Type.ELECTRIC, Moves.PLASMA_FISTS);
+    }
+    onAdd(arena: Arena): void {
+        arena.scene.queueMessage("A deluge of ions showers the battlefield!");
+    }
+    onRemove(arena: Arena): void {
+        }
+}
+
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
   switch (tagType) {
     case ArenaTagType.MIST:
@@ -484,5 +515,7 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
       return new LightScreenTag(turnCount, sourceId, side);
     case ArenaTagType.AURORA_VEIL:
       return new AuroraVeilTag(turnCount, sourceId, side);
+    case ArenaTagType.PLASMA_FISTS:
+      return new PlasmaFistsTag();
   }
 }
