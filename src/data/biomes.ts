@@ -4144,7 +4144,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
     ],
     [ Species.MIME_JR, Type.PSYCHIC, Type.FAIRY, [ ]
     ],
-    [ Species.HAPPINY, Type.NORMAL, -1, []
+    [ Species.HAPPINY, Type.NORMAL, -1, [ ]
     ],
     [ Species.CHATOT, Type.NORMAL, Type.FLYING, [
         [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ]
@@ -6057,7 +6057,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
         [ Biome.SEABED, BiomePoolTier.BOSS ]
       ]
     ],
-    [ Species.TOXEL, Type.ELECTRIC, Type.POISON, []
+    [ Species.TOXEL, Type.ELECTRIC, Type.POISON, [ ]
     ],
     [ Species.TOXTRICITY, Type.ELECTRIC, Type.POISON, [
         [ Biome.SLUM, BiomePoolTier.RARE, [ TimeOfDay.DUSK, TimeOfDay.NIGHT ] ],

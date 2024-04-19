@@ -613,6 +613,16 @@ export class ThunderCageTag extends DamagingTrapTag {
   }
 }
 
+export class InfestationTag extends DamagingTrapTag {
+  constructor(turnCount: integer, sourceId: integer) {
+    super(BattlerTagType.INFESTATION, CommonAnim.INFESTATION, turnCount, Moves.INFESTATION, sourceId);
+  }
+
+  getTrapMessage(pokemon: Pokemon): string {
+    return getPokemonMessage(pokemon, ` has been afflicted \nwith an infestation by ${getPokemonPrefix(pokemon.scene.getPokemonById(this.sourceId))}${pokemon.scene.getPokemonById(this.sourceId).name}!`);
+  }
+}
+
 
 export class ProtectedTag extends BattlerTag {
   constructor(sourceMove: Moves, tagType: BattlerTagType = BattlerTagType.PROTECTED) {
@@ -922,11 +932,15 @@ export class HideSpriteTag extends BattlerTag {
 
 export class TypeBoostTag extends BattlerTag {
   public boostedType: Type;
+  public boostValue: number;
+  public oneUse: boolean;
 
-  constructor(tagType: BattlerTagType, sourceMove: Moves, boostedType: Type) {
+  constructor(tagType: BattlerTagType, sourceMove: Moves, boostedType: Type, boostValue: number, oneUse: boolean) {
     super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
 
     this.boostedType = boostedType;
+    this.boostValue = boostValue;
+    this.oneUse = oneUse;
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1047,6 +1061,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new MagmaStormTag(turnCount, sourceId);
     case BattlerTagType.THUNDER_CAGE:
       return new ThunderCageTag(turnCount, sourceId);
+    case BattlerTagType.INFESTATION:
+      return new InfestationTag(turnCount, sourceId);
     case BattlerTagType.PROTECTED:
       return new ProtectedTag(sourceMove);
     case BattlerTagType.SPIKY_SHIELD:
@@ -1081,7 +1097,7 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
     case BattlerTagType.HIDDEN:
       return new HideSpriteTag(tagType, turnCount, sourceMove);
     case BattlerTagType.FIRE_BOOST:
-      return new TypeBoostTag(tagType, sourceMove, Type.FIRE);
+      return new TypeBoostTag(tagType, sourceMove, Type.FIRE, 1.5, false);
     case BattlerTagType.CRIT_BOOST:
       return new CritBoostTag(tagType, sourceMove);
     case BattlerTagType.ALWAYS_CRIT:
@@ -1098,6 +1114,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount - 1, sourceMove);
     case BattlerTagType.SALT_CURED:
       return new SaltCuredTag(sourceId);
+    case BattlerTagType.CHARGED:
+      return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

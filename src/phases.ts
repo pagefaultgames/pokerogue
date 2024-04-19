@@ -742,6 +742,7 @@ export class EncounterPhase extends BattlePhase {
       this.scene.ui.setMode(Mode.MESSAGE).then(() => {
         if (!this.loaded) {
           this.scene.gameData.saveSystem().then(success => {
+            this.scene.disableMenu = false;
             if (!success)
               return this.scene.reset(true);
             this.scene.gameData.saveSession(this.scene, true).then(() => this.doEncounter());
@@ -2140,10 +2141,8 @@ export class MovePhase extends BattlePhase {
     }
 
     if (!this.followUp) {
-      const abilityEffectsIgnored = new Utils.BooleanHolder(false);
-      this.scene.getField(true).map(p => applyAbAttrs(MoveAbilityBypassAbAttr, p, abilityEffectsIgnored));
-      if (abilityEffectsIgnored.value)
-        this.scene.arena.setIgnoreAbilities(true);
+      if (this.move.getMove().checkFlag(MoveFlags.IGNORE_ABILITIES, this.pokemon, null))
+        this.scene.arena.setIgnoreAbilities();
     } else {
       this.pokemon.turnData.hitsLeft = undefined;
       this.pokemon.turnData.hitCount = undefined;
@@ -3220,6 +3219,8 @@ export class TrainerVictoryPhase extends BattlePhase {
   }
 
   start() {
+    this.scene.disableMenu = true;
+
     this.scene.playBgm(this.scene.currentBattle.trainer.config.victoryBgm);
 
     this.scene.unshiftPhase(new MoneyRewardPhase(this.scene, this.scene.currentBattle.trainer.config.moneyMultiplier));
@@ -3540,12 +3541,17 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     this.scene.unshiftPhase(new HidePartyExpBarPhase(this.scene));
     pokemon.updateInfo();
 
-    this.scene.partyExpBar.showPokemonExp(pokemon, exp.value).then(() => {
-      if (newLevel > lastLevel)
-        this.end();
-      else
-        setTimeout(() => this.end(), 500);
-    });
+    if (this.scene.expGainsSpeed < 3) {
+      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value).then(() => {
+        if (newLevel > lastLevel)
+          this.end();
+        else
+          setTimeout(() => this.end(), 500 / Math.pow(2, this.scene.expGainsSpeed));
+      });
+    } else {
+      this.end();
+    }
+
   }
 }
 
