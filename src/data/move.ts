@@ -4574,7 +4574,7 @@ export function initMoves() {
     new AttackMove(Moves.CLOSE_COMBAT, Type.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, 100, 0, 4)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true),
     new AttackMove(Moves.PAYBACK, Type.DARK, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 4)
-      .partial(),
+    .attr(MovePowerMultiplierAttr, (user, target, move) => target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.BALL ? 2 : 1),  
     new AttackMove(Moves.ASSURANCE, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 4)
       .partial(),
     new StatusMove(Moves.EMBARGO, Type.DARK, 100, 15, -1, 0, 4)
