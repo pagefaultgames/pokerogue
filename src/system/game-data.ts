@@ -45,6 +45,12 @@ export enum PlayerGender {
   FEMALE
 }
 
+export enum RivalGender {
+  UNSET,
+  MALE,
+  FEMALE
+}
+
 export enum Passive {
   UNLOCKED = 1,
   ENABLED = 2
@@ -70,6 +76,7 @@ interface SystemSaveData {
   trainerId: integer;
   secretId: integer;
   gender: PlayerGender;
+  rivalGender: RivalGender;
   dexData: DexData;
   starterData: StarterData;
   gameStats: GameStats;
@@ -203,6 +210,7 @@ export class GameData {
   public secretId: integer;
 
   public gender: PlayerGender;
+  public rivalGender: RivalGender;
   
   public dexData: DexData;
   private defaultDexData: DexData;
@@ -256,6 +264,7 @@ export class GameData {
           trainerId: this.trainerId,
           secretId: this.secretId,
           gender: this.gender,
+          rivalGender: this.rivalGender,
           dexData: this.dexData,
           starterData: this.starterData,
           gameStats: this.gameStats,
@@ -320,8 +329,10 @@ export class GameData {
           this.secretId = systemData.secretId;
 
           this.gender = systemData.gender;
+          this.rivalGender = systemData.rivalGender;
 
           this.saveSetting(Setting.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
+          this.saveSetting(Setting.Rival_Gender, systemData.rivalGender === RivalGender.FEMALE ? 1 : 0);
 
           const initStarterData = !systemData.starterData;
 

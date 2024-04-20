@@ -1,7 +1,7 @@
 import BattleScene from "../battle-scene";
 import { hasTouchscreen } from "../touch-controls";
 import { updateWindowType } from "../ui/ui-theme";
-import { PlayerGender } from "./game-data";
+import { PlayerGender, RivalGender } from "./game-data";
 
 export enum Setting {
   Game_Speed = "GAME_SPEED",
@@ -20,6 +20,7 @@ export enum Setting {
   HP_Bar_Speed = "HP_BAR_SPEED",
   Fusion_Palette_Swaps = "FUSION_PALETTE_SWAPS",
   Player_Gender = "PLAYER_GENDER",
+  Rival_Gender = "RIVAL_GENDER",
   Gamepad_Support = "GAMEPAD_SUPPORT",
   Touch_Controls = "TOUCH_CONTROLS",
   Vibration = "VIBRATION"
@@ -50,6 +51,7 @@ export const settingOptions: SettingOptions = {
   [Setting.HP_Bar_Speed]: [ 'Normal', 'Fast', 'Faster', 'Instant' ],
   [Setting.Fusion_Palette_Swaps]: [ 'Off', 'On' ],
   [Setting.Player_Gender]: [ 'Boy', 'Girl' ],
+  [Setting.Rival_Gender]: ['Boy', 'Girl' ],
   [Setting.Gamepad_Support]: [ 'Auto', 'Disabled' ],
   [Setting.Touch_Controls]: [ 'Auto', 'Disabled' ],
   [Setting.Vibration]: [ 'Auto', 'Disabled' ]
@@ -72,6 +74,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.HP_Bar_Speed]: 0,
   [Setting.Fusion_Palette_Swaps]: 1,
   [Setting.Player_Gender]: 0,
+  [Setting.Rival_Gender]: 1,
   [Setting.Gamepad_Support]: 0,
   [Setting.Touch_Controls]: 0,
   [Setting.Vibration]: 0
@@ -136,6 +139,13 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
         const female = settingOptions[setting][value] === 'Girl';
         scene.gameData.gender = female ? PlayerGender.FEMALE : PlayerGender.MALE;
         scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? 'm' : 'f', female ? 'f' : 'm'));
+      } else
+        return false;
+      break;
+    case Setting.Rival_Gender:
+      if (scene.gameData) {
+        const female = settingOptions[setting][value] === 'Girl';
+        scene.gameData.rivalGender = female ? RivalGender.FEMALE : RivalGender.MALE;
       } else
         return false;
       break;
