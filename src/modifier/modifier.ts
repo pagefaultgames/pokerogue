@@ -1438,6 +1438,46 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier {
+  private accuracyAmount: integer;
+
+  constructor(type: ModifierTypes.PokemonMoveAccuracyBoosterModifierType, pokemonId: integer, accuracy: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+    this.accuracyAmount = accuracy;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    if (modifier instanceof PokemonMoveAccuracyBoosterModifier) {
+      const pokemonAccuracyBoosterModifier = modifier as PokemonMoveAccuracyBoosterModifier;
+      return pokemonAccuracyBoosterModifier.accuracyAmount === this.accuracyAmount;
+    }
+    return false;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonMoveAccuracyBoosterModifier(this.type as ModifierTypes.PokemonMoveAccuracyBoosterModifierType, this.pokemonId, this.accuracyAmount, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.accuracyAmount);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.NumberHolder;
+  }
+
+  apply(args: any[]): boolean {
+    const moveAccuracy = (args[1] as Utils.IntegerHolder);
+    moveAccuracy.value = Math.min(moveAccuracy.value + this.accuracyAmount, 100);
+
+    return true;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 3;
+  }
+}
+
 export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierTypes.PokemonMultiHitModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);

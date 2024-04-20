@@ -502,6 +502,12 @@ export class PokemonFriendshipBoosterModifierType extends PokemonHeldItemModifie
   }
 }
 
+export class PokemonMoveAccuracyBoosterModifierType extends PokemonHeldItemModifierType {
+  constructor(name: string, amount: integer, iconImage?: string, group?: string, soundName?: string) {
+    super(name, `Increases move accuracy by ${amount} (up to 100)`, (_type, args) => new Modifiers.PokemonMoveAccuracyBoosterModifier(this, (args[0] as Pokemon).id, amount), iconImage, group, soundName);
+  }
+}
+
 export class PokemonMultiHitModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, iconImage?: string) {
     super(name, `Attacks hit one additional time at the cost of a 60/75/82.5% power reduction per stack respectively`, (type, args) => new Modifiers.PokemonMultiHitModifier(type as PokemonMultiHitModifierType, (args[0] as Pokemon).id), iconImage);
@@ -887,6 +893,7 @@ export const modifierTypes = {
   LOCK_CAPSULE: () => new ModifierType('Lock Capsule', 'Allows you to lock item rarities when rerolling items', (type, _args) => new Modifiers.LockModifierTiersModifier(type), 'lock_capsule'),
 
   GRIP_CLAW: () => new ContactHeldItemTransferChanceModifierType('Grip Claw', 10),
+  WIDE_LENS: () => new PokemonMoveAccuracyBoosterModifierType('Wide Lens', 5, 'wide_lens'),
 
   MULTI_LENS: () => new PokemonMultiHitModifierType('Multi Lens', 'zoom_lens'),
 
@@ -1056,6 +1063,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.SHELL_BELL, 3),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 4),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
+    new WeightedModifierType(modifierTypes.WIDE_LENS, 4),
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 8),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),
@@ -1113,6 +1121,7 @@ const trainerModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 2),
     new WeightedModifierType(modifierTypes.LUCKY_EGG, 4),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 1),
+    new WeightedModifierType(modifierTypes.WIDE_LENS, 1),
   ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 1),
