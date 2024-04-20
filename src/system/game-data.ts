@@ -2,7 +2,7 @@ import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { SpeciesFormKey, allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
-import { Species } from "../data/enums/species";
+import { Species, defaultStarterSpecies } from "../data/enums/species";
 import * as Utils from "../utils";
 import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
@@ -922,30 +922,18 @@ export class GameData {
       };
     }
 
-    const defaultStarters: Species[] = [
-      Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
-      Species.CHIKORITA, Species.CYNDAQUIL, Species.TOTODILE,
-      Species.TREECKO, Species.TORCHIC, Species.MUDKIP,
-      Species.TURTWIG, Species.CHIMCHAR, Species.PIPLUP,
-      Species.SNIVY, Species.TEPIG, Species.OSHAWOTT,
-      Species.CHESPIN, Species.FENNEKIN, Species.FROAKIE,
-      Species.ROWLET, Species.LITTEN, Species.POPPLIO,
-      Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE,
-      Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY
-    ];
-
     const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.DEFAULT_VARIANT | DexAttr.DEFAULT_FORM;
 
     const defaultStarterNatures: Nature[] = [];
 
     this.scene.executeWithSeedOffset(() => {
       const neutralNatures = [ Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY ];
-      for (let s = 0; s < defaultStarters.length; s++)
+      for (let s = 0; s < defaultStarterSpecies.length; s++)
         defaultStarterNatures.push(Utils.randSeedItem(neutralNatures));
     }, 0, 'default');
 
-    for (let ds = 0; ds < defaultStarters.length; ds++) {
-      let entry = data[defaultStarters[ds]] as DexEntry;
+    for (let ds = 0; ds < defaultStarterSpecies.length; ds++) {
+      let entry = data[defaultStarterSpecies[ds]] as DexEntry;
       entry.seenAttr = defaultStarterAttr;
       entry.caughtAttr = defaultStarterAttr;
       entry.natureAttr = Math.pow(2, defaultStarterNatures[ds] + 1);

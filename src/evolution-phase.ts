@@ -115,7 +115,10 @@ export class EvolutionPhase extends Phase {
 
         [ this.pokemonEvoSprite, this.pokemonEvoTintSprite ].map(sprite => {
           sprite.play(evolvedPokemon.getSpriteKey(true));
-          sprite.pipelineData['ignoreTimeTint'] = true;
+          sprite.setPipelineData('ignoreTimeTint', true);
+          sprite.setPipelineData('spriteKey', evolvedPokemon.getSpriteKey());
+          sprite.setPipelineData('shiny', evolvedPokemon.shiny);
+          sprite.setPipelineData('variant', evolvedPokemon.variant);
           [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
             if (evolvedPokemon.summonData?.speciesForm)
               k += 'Base';

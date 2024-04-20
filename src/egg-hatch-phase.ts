@@ -246,6 +246,9 @@ export class EggHatchPhase extends Phase {
     this.eggContainer.setVisible(false);
     this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
     this.pokemonSprite.pipelineData['ignoreTimeTint'] = true;
+    this.pokemonSprite.setPipelineData('spriteKey', this.pokemon.getSpriteKey());
+    this.pokemonSprite.setPipelineData('shiny', this.pokemon.shiny);
+    this.pokemonSprite.setPipelineData('variant', this.pokemon.variant);
     this.pokemonSprite.setVisible(true);
     this.scene.time.delayedCall(Utils.fixedInt(250), () => {
       this.pokemon.cry();
