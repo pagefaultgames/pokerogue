@@ -1344,6 +1344,21 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class PlusMinusAbAttr extends PostSummonAbAttr {
+  public active : boolean = false;
+  constructor() {
+    super(false);
+  }
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    if(!![ pokemon.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS].find(a => p.hasAbility(a, false)))) {
+      this.active = true;
+      return true;
+    }
+    this.active = false;
+    return false;
+  }
+}
+
 export class PreSwitchOutAbAttr extends AbAttr {
   constructor() {
     super(true);
@@ -2467,8 +2482,12 @@ export function initAbilities() {
       .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 0.8),
     new Ability(Abilities.CUTE_CHARM, "Cute Charm", "Contact with the Pokémon may cause infatuation.", 3)
       .attr(PostDefendContactApplyTagChanceAbAttr, 30, BattlerTagType.INFATUATED),
-    new Ability(Abilities.PLUS, "Plus (N)", "Boosts the Sp. Atk stat of the Pokémon if an ally with the Plus or Minus Ability is also in battle.", 3),
-    new Ability(Abilities.MINUS, "Minus (N)", "Boosts the Sp. Atk stat of the Pokémon if an ally with the Plus or Minus Ability is also in battle.", 3),
+    new Ability(Abilities.PLUS, "Plus", "Boosts the Sp. Atk stat of the Pokémon if an ally with the Plus or Minus Ability is also in battle.", 3)
+      .attr(PlusMinusAbAttr)
+      .conditionalAttr(PlusMinusAbAttr.active, BattleStatMultiplierAbAttr, BattleStat.SPATK, 1.5),
+    new Ability(Abilities.MINUS, "Minus", "Boosts the Sp. Atk stat of the Pokémon if an ally with the Plus or Minus Ability is also in battle.", 3)
+      .attr(PlusMinusAbAttr)
+      .conditionalAttr(PlusMinusAbAttr.active, BattleStatMultiplierAbAttr, BattleStat.SPATK, 1.5),
     new Ability(Abilities.FORECAST, "Forecast (N)", "The Pokémon transforms with the weather to change its type to Water, Fire, or Ice.", 3)
       .attr(UncopiableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
