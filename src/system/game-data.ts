@@ -567,6 +567,8 @@ export class GameData {
 
   getSession(slotId: integer): Promise<SessionSaveData> {
     return new Promise(async (resolve, reject) => {
+      if (slotId < 0)
+        return resolve(null);
       const handleSessionData = async (sessionDataStr: string) => {
         try {
           const sessionData = this.parseSessionData(sessionDataStr);
