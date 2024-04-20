@@ -665,12 +665,14 @@ export class SurviveDamageAttr extends ModifiedDamageAttr {
 export class RecoilAttr extends MoveEffectAttr {
   private useHp: boolean;
   private damageRatio: number;
+  private unblockable: boolean;
 
-  constructor(useHp?: boolean, damageRatio?: number) {
+  constructor(useHp: boolean = false, damageRatio: number = 0.25, unblockable: boolean = false) {
     super(true);
 
     this.useHp = useHp;
-    this.damageRatio = (damageRatio !== undefined ? damageRatio : 0.25) || 0.25;
+    this.damageRatio = damageRatio;
+    this.unblockable = unblockable;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -678,7 +680,8 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
 
     const cancelled = new Utils.BooleanHolder(false);
-    applyAbAttrs(BlockRecoilDamageAttr, user, cancelled);
+    if (!this.unblockable)
+      applyAbAttrs(BlockRecoilDamageAttr, user, cancelled);
 
     if (cancelled.value)
       return false;
@@ -4073,7 +4076,7 @@ export function initMoves() {
       .attr(RecoilAttr)
       .unimplemented(),
     new AttackMove(Moves.STRUGGLE, Type.NORMAL, MoveCategory.PHYSICAL, 50, -1, 1, -1, 0, 1)
-      .attr(RecoilAttr, true)
+      .attr(RecoilAttr, true, 0.25, true)
       .attr(TypelessAttr)
       .ignoresVirtual()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
