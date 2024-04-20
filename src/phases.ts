@@ -2477,10 +2477,11 @@ export class MoveEffectPhase extends PokemonPhase {
     const moveAccuracy = new Utils.NumberHolder(this.move.getMove().accuracy);
 
     applyMoveAttrs(VariableAccuracyAttr, user, target, this.move.getMove(), moveAccuracy);
-    user.scene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
 
     if (moveAccuracy.value === -1)
       return true;
+
+    user.scene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
 
     if (this.scene.arena.weather?.weatherType === WeatherType.FOG)
       moveAccuracy.value = Math.floor(moveAccuracy.value * 0.9);
