@@ -1702,10 +1702,11 @@ export class BattleStatRatioPowerAttr extends VariablePowerAttr {
       // Gyro ball uses a specific formula
       let userSpeed = user.getStat(this.stat);
       if (userSpeed < 1) {
-        // Prevent division by zero
-        userSpeed = 1;
-      }
-      let bp = Math.min(150, 25 * target.getStat(this.stat) / userSpeed + 1);
+        // Gen 6+ always have 1 base power
+        power.value = 1;
+        return true;
+      } 
+      let bp = Math.floor(Math.min(150, 25 * target.getStat(this.stat) / userSpeed + 1));
       power.value = bp;
       return true;
     }
