@@ -323,6 +323,27 @@
 						"w": 17,
 						"h": 28
 					}
+				},
+				{
+					"filename": "967_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 8,
+						"w": 22,
+						"h": 21
+					},
+					"frame": {
+						"x": 50,
+						"y": 84,
+						"w": 22,
+						"h": 21
+					}
 				}
 			]
 		}
@@ -330,6 +351,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:c6b17c9f254492406ec134473a5155e9:b921355fb3643fcb7efe6ff5df6d6df4:3ec5c0bc286c296cfb7fa30a8b06f3da$"
+		"smartupdate": "$TexturePacker:SmartUpdate:9683a313d5ac18db632fb677a38ed11c:8e6ba9eced08bb11299aadeb742c10ba:3ec5c0bc286c296cfb7fa30a8b06f3da$"
 	}
 }
