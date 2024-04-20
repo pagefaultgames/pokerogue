@@ -374,8 +374,8 @@ export const move: MoveTranslations = {
     effect: "Une faible vague télékinétique frappe la cible, ce qui peut aussi la plonger dans la confusion."
   },
   "psychic": {
-    name: "Champ Psychique",
-    effect: "Pendant cinq tours, les Pokémon au sol ne peuvent plus subir d’attaques prioritaires et la puissance des capacités de type Psy augmente."
+    name: "Psyko",
+    effect: "Une puissante force télékinétique frappe la cible, ce qui peut aussi faire baisser sa Défense Spéciale."
   },
   "hypnosis": {
     name: "Hypnose",
@@ -650,8 +650,8 @@ export const move: MoveTranslations = {
     effect: "Une vilaine morsure d’incisives qui réduit de moitié les PV de la cible."
   },
   "slash": {
-    name: "Lame d'Air",
-    effect: "Le lanceur attaque avec une lame d’air capable de fendre le ciel, ce qui peut aussi apeurer la cible (30% de chances)."
+    name: "Tranche",
+    effect: "Le lanceur donne un coup de griffe ou de faux. Taux de critiques élevé."
   },
   "substitute": {
     name: "Clonage",
