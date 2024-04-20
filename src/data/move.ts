@@ -1698,8 +1698,17 @@ export class BattleStatRatioPowerAttr extends VariablePowerAttr {
     const statThresholds = [ 0.25, 1 / 3, 0.5, 1, -1 ];
     let statThresholdPowers = [ 150, 120, 80, 60, 40 ];
 
-    if (this.invert)
-      statThresholdPowers = statThresholdPowers.reverse();
+    if (this.invert) {
+      // Gyro ball uses a specific formula
+      let userSpeed = user.getStat(this.stat);
+      if (userSpeed < 1) {
+        // Prevent division by zero
+        userSpeed = 1;
+      }
+      let bp = Math.min(150, 25 * target.getStat(this.stat) / userSpeed + 1);
+      power.value = bp;
+      return true;
+    }
 
     let w = 0;
     while (w < statThresholds.length - 1 && statRatio > statThresholds[w]) {
