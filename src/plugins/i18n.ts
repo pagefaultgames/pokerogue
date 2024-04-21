@@ -9,6 +9,8 @@ import { move as frMove } from '../locales/fr/move';
 import { pokeball as enPokeball } from '../locales/en/pokeball';
 import { pokeball as frPokeball } from '../locales/fr/pokeball';
 
+import { pokemon as enPokemon } from '../locales/en/pokemons';
+
 export interface MoveTranslationEntry {
   name: string,
   effect: string
@@ -54,6 +56,7 @@ export function initI18n(): void {
         menu: enMenu,
         move: enMove,
         pokeball: enPokeball,
+        pokemon: enPokemon,
       },
       it: {
         menu: itMenu,
