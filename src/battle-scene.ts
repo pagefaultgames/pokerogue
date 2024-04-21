@@ -655,7 +655,7 @@ export default class BattleScene extends SceneBase {
 		if (OPP_SPECIES_OVERRIDE)
 			species = getPokemonSpecies(OPP_SPECIES_OVERRIDE);
 		const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
-		if (boss) {
+		if (boss && !dataSource) {
 			const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
 
 			for (let s = 0; s < pokemon.ivs.length; s++)
