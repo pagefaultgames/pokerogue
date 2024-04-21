@@ -1473,7 +1473,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.PORYGON_Z, "Porygon-Z", 4, false, false, false, "Virtual Pokémon", Type.NORMAL, null, 0.9, 34, Abilities.ADAPTABILITY, Abilities.DOWNLOAD, Abilities.ANALYTIC, 535, 85, 80, 70, 135, 75, 90, 30, 50, 268, GrowthRate.MEDIUM_FAST, null, false),
     new PokemonSpecies(Species.GALLADE, "Gallade", 4, false, false, false, "Blade Pokémon", Type.PSYCHIC, Type.FIGHTING, 1.6, 52, Abilities.STEADFAST, Abilities.SHARPNESS, Abilities.JUSTIFIED, 518, 68, 125, 65, 65, 115, 80, 45, 35, 259, GrowthRate.SLOW, 100, false, true,
       new PokemonForm("Normal", "", Type.PSYCHIC, Type.FIGHTING, 1.6, 52, Abilities.STEADFAST, Abilities.SHARPNESS, Abilities.JUSTIFIED, 518, 68, 125, 65, 65, 115, 80, 45, 35, 259),
-      new PokemonForm("Mega", SpeciesFormKey.MEGA, Type.PSYCHIC, Type.FIGHTING, 1.6, 56.4, Abilities.INNER_FOCUS, Abilities.INNER_FOCUS, Abilities.INNER_FOCUS, 618, 68, 165, 95, 65, 115, 110, 45, 35, 259),
+      new PokemonForm("Mega", SpeciesFormKey.MEGA, Type.PSYCHIC, Type.FIGHTING, 1.6, 56.4, Abilities.SHARPNESS, Abilities.SHARPNESS, Abilities.SHARPNESS, 618, 68, 165, 95, 65, 115, 110, 45, 35, 259),
     ),
     new PokemonSpecies(Species.PROBOPASS, "Probopass", 4, false, false, false, "Compass Pokémon", Type.ROCK, Type.STEEL, 1.4, 340, Abilities.STURDY, Abilities.MAGNET_PULL, Abilities.SAND_FORCE, 525, 60, 55, 145, 75, 150, 40, 60, 70, 184, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.DUSKNOIR, "Dusknoir", 4, false, false, false, "Gripper Pokémon", Type.GHOST, null, 2.2, 106.6, Abilities.PRESSURE, Abilities.NONE, Abilities.FRISK, 525, 45, 100, 135, 65, 135, 45, 45, 35, 263, GrowthRate.FAST, 50, false),

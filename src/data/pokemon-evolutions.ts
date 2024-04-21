@@ -917,7 +917,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.TRUMBEAK, 14, null, null)
   ],
   [Species.TRUMBEAK]: [
-    new SpeciesEvolution(Species.TOUCANNON, 36, null, null)
+    new SpeciesEvolution(Species.TOUCANNON, 28, null, null)
   ],
   [Species.YUNGOOS]: [
     new SpeciesEvolution(Species.GUMSHOOS, 20, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), SpeciesWildEvolutionDelay.SHORT)
