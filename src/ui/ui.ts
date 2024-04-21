@@ -34,6 +34,7 @@ import TitleUiHandler from './title-ui-handler';
 import SavingIconHandler from './saving-icon-handler';
 import UnavailableModalUiHandler from './unavailable-modal-ui-handler';
 import OutdatedModalUiHandler from './outdated-modal-ui-handler';
+import SessionReloadModalUiHandler from './session-reload-modal-ui-handler';
 
 export enum Mode {
   MESSAGE,
@@ -62,6 +63,7 @@ export enum Mode {
   LOGIN_FORM,
   REGISTRATION_FORM,
   LOADING,
+  SESSION_RELOAD,
   UNAVAILABLE,
   OUTDATED
 };
@@ -90,6 +92,7 @@ const noTransitionModes = [
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
+  Mode.SESSION_RELOAD,
   Mode.UNAVAILABLE,
   Mode.OUTDATED
 ];
@@ -141,6 +144,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new LoginFormUiHandler(scene),
       new RegistrationFormUiHandler(scene),
       new LoadingModalUiHandler(scene),
+      new SessionReloadModalUiHandler(scene),
       new UnavailableModalUiHandler(scene),
       new OutdatedModalUiHandler(scene)
     ];

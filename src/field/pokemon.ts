@@ -1832,7 +1832,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           return false;
         break;
       case StatusEffect.FREEZE:
-        if (this.isOfType(Type.ICE))
+        if (this.isOfType(Type.ICE) || [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(this.scene?.arena.weather?.weatherType))
           return false;
         break;
       case StatusEffect.BURN:

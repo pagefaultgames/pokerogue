@@ -10919,8 +10919,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.CHESPIN]: [
     [ 1, Moves.TACKLE ],
-    [ 1, Moves.VINE_WHIP ],
     [ 1, Moves.GROWL ],
+    [ 1, Moves.VINE_WHIP ],
     [ 8, Moves.ROLLOUT ],
     [ 11, Moves.BITE ],
     [ 15, Moves.LEECH_SEED ],
@@ -10934,8 +10934,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   ],
   [Species.QUILLADIN]: [
     [ 1, Moves.TACKLE ],
-    [ 1, Moves.VINE_WHIP ],
     [ 1, Moves.GROWL ],
+    [ 1, Moves.VINE_WHIP ],
     [ 8, Moves.ROLLOUT ],
     [ 11, Moves.BITE ],
     [ 15, Moves.LEECH_SEED ],

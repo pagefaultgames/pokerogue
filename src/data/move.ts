@@ -2493,6 +2493,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
           return -5;
       case BattlerTagType.SEEDED:
       case BattlerTagType.SALT_CURED:
+      case BattlerTagType.CURSED:
       case BattlerTagType.FRENZY:
       case BattlerTagType.TRAPPED:
       case BattlerTagType.BIND:
@@ -2524,6 +2525,34 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     if (chance < 0)
       chance = 100;
     return Math.floor(this.getTagTargetBenefitScore(user, target, move) * (chance / 100));
+  }
+}
+
+export class CurseAttr extends MoveEffectAttr {
+  
+  apply(user: Pokemon, target: Pokemon, move:Move, args: any[]): boolean {
+    // Determine the correct target based on the user's type
+    if (!user.getTypes(true).includes(Type.GHOST)) {
+      // For non-Ghost types, target the user itself
+      target = user;
+    }
+
+    if (user.getTypes(true).includes(Type.GHOST)) {
+      if (target.getTag(BattlerTagType.CURSED)) {
+        user.scene.queueMessage('But it failed!');
+        return false;
+      }
+      let curseRecoilDamage = Math.floor(user.getMaxHp() / 2);
+      user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, false, true, true);
+      user.scene.queueMessage(getPokemonMessage(user, ' cut its own HP!'));
+      target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
+      return true;
+    } else {
+      target = user;
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [BattleStat.ATK, BattleStat.DEF], 1));
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [BattleStat.SPD], -1));
+      return true;
+    }
   }
 }
 
@@ -5132,6 +5161,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, 1, true)
       .danceMove(),
     new AttackMove(Moves.FREEZE_SHOCK, Type.ICE, MoveCategory.PHYSICAL, 140, 90, 5, 30, 0, 5)
+      .attr(ChargeAttr, ChargeAnim.FREEZE_SHOCK_CHARGING, 'became cloaked\nin a freezing light!')
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .makesContact(false),
     new AttackMove(Moves.ICE_BURN, Type.ICE, MoveCategory.SPECIAL, 140, 90, 5, 30, 0, 5)
