@@ -1443,7 +1443,7 @@ export const move: MoveTranslations = {
   },
   "healingWish": {
     name: "Voeu Soin",
-    effect: "Un soin qui permet au lanceur de récupérer jusqu’à la moitié de ses PV max."
+    effect: "Le lanceur tombe K.O. pour soigner les altérations de statut et les PV du Pokémon qui viendra le remplacer sur le terrain."
   },
   "brine": {
     name: "Saumure",
