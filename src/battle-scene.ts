@@ -975,6 +975,9 @@ export default class BattleScene extends SceneBase {
 			case Species.DEERLING:
 			case Species.SAWSBUCK:
 			case Species.VIVILLON:
+			case Species.FLABEBE:
+			case Species.FLOETTE:
+			case Species.FLORGES:
 			case Species.ORICORIO:
 			case Species.SQUAWKABILLY:
 			case Species.TATSUGIRI:
