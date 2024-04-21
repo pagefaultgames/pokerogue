@@ -96,9 +96,6 @@ export default class Move implements Localizable {
   constructor(id: Moves, type: Type, category: MoveCategory, defaultMoveTarget: MoveTarget, power: integer, accuracy: integer, pp: integer, chance: integer, priority: integer, generation: integer) {
     this.id = id;
 
-    const i18nKey = Moves[id].split('_').filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join('') as unknown as string;
-
-    this.name = id ? i18next.t(`move:${i18nKey}.name`).toString() : '';
     this.nameAppend = '';
     this.type = type;
     this.category = category;
@@ -106,7 +103,6 @@ export default class Move implements Localizable {
     this.power = power;
     this.accuracy = accuracy;
     this.pp = pp;
-    this.effect = id ? i18next.t(`move:${i18nKey}.effect`).toString() : '';
     this.chance = chance;
     this.priority = priority;
     this.generation = generation;
@@ -119,9 +115,11 @@ export default class Move implements Localizable {
       this.setFlag(MoveFlags.IGNORE_PROTECT, true);
     if (category === MoveCategory.PHYSICAL)
       this.setFlag(MoveFlags.MAKES_CONTACT, true);
+
+    this.localize();
   }
 
-  localize() {
+  localize(): void {
     const i18nKey = Moves[this.id].split('_').filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join('') as unknown as string;
 
     this.name = this.id ? `${i18next.t(`move:${i18nKey}.name`).toString()}${this.nameAppend}` : '';
@@ -6162,7 +6160,7 @@ export function initMoves() {
       .slicingMove(),
     new AttackMove(Moves.HYDRO_STEAM, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
       .partial(),
-    new AttackMove(Moves.RUINATION, Type.DARK, MoveCategory.SPECIAL, 1, 90, 10, -1, 0, 9)
+    new AttackMove(Moves.RUINATION, Type.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.COLLISION_COURSE, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type) >= 2 ? 5461/4096 : 1),

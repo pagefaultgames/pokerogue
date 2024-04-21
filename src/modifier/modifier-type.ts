@@ -142,7 +142,7 @@ class AddPokeballModifierType extends ModifierType implements Localizable {
     this.count = count;
   }
 
-  localize() {
+  localize(): void {
     this.name = `${this.count}x ${getPokeballName(this.pokeballType)}`;
     this.description = `Receive ${getPokeballName(this.pokeballType)} x${this.count}\nCatch Rate: ${getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : 'Certain'}`;
   }
