@@ -2295,6 +2295,7 @@ export class MovePhase extends BattlePhase {
           this.cancelled = activated;
           break;
       }
+      
       if (activated) {
         this.scene.queueMessage(getPokemonMessage(this.pokemon, getStatusEffectActivationText(this.pokemon.status.effect)));
         this.scene.unshiftPhase(new CommonAnimPhase(this.scene, this.pokemon.getBattlerIndex(), undefined, CommonAnim.POISON + (this.pokemon.status.effect - 1)));
@@ -2317,6 +2318,7 @@ export class MovePhase extends BattlePhase {
 
   showMoveText(): void {
     if (this.move.getMove().getAttrs(ChargeAttr).length) {
+      this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
       const lastMove = this.pokemon.getLastXMoves() as TurnMove[];
       if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER)
         return;
