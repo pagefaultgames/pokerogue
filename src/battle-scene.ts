@@ -17,7 +17,7 @@ import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { initMoves } from './data/move';
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getModifierPoolForType } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import { Abilities } from "./data/enums/abilities";
@@ -795,7 +795,10 @@ export default class BattleScene extends SceneBase {
 		this.trainer.setVisible(true);
 
 		if (reloadI18n) {
-			const localizable: Localizable[] = [ ...allMoves ];
+			const localizable: Localizable[] = [
+				...allMoves,
+				...Utils.getEnumValues(ModifierPoolType).map(mpt => getModifierPoolForType(mpt)).map(mp => Object.values(mp).flat().map(mt => mt.modifierType).filter(mt => 'localize' in mt).map(lpb => lpb as unknown as Localizable)).flat()
+			];
 			for (let item of localizable)
 				item.localize();
 		}
