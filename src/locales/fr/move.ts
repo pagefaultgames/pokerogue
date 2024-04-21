@@ -1,6 +1,6 @@
-import { MoveTranslations } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/plugins/i18n";
 
-export const move: MoveTranslations = {
+export const move: MoveTranslationEntries = {
   "pound": {
     name: "Écras'Face",
     effect: "Le lanceur écrase la cible avec l’un de ses membres, tels qu’une de ses pattes avant ou sa longue queue."
