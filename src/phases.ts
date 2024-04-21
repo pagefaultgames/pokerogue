@@ -794,7 +794,8 @@ export class EncounterPhase extends BattlePhase {
         pokemon.resetBattleData();
     }
 
-    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
+    if (!this.loaded)
+      this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
@@ -3419,6 +3420,8 @@ export class GameOverPhase extends BattlePhase {
 
   handleClearSession(): void {
     this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
+      if (!success[0])
+        return this.scene.reset(true);
       this.scene.time.delayedCall(1000, () => {
         let firstClear = false;
         if (this.victory && success[1]) {
@@ -4326,7 +4329,7 @@ export class EggLapsePhase extends Phase {
 
     const eggsToHatch: Egg[] = this.scene.gameData.eggs.filter((egg: Egg) => {
       return --egg.hatchWaves < 1
-    })
+    });
 
     if (eggsToHatch.length) {
       this.scene.queueMessage('Oh?');
