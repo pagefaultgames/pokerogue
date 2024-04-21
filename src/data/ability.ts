@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, allMoves } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, allMoves, OneHitKOAttr } from "./move";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -1578,7 +1578,7 @@ function getAnticipationCondition(): AbAttrCondition {
             return true;
           }
           // move is a OHKO
-          if ([Moves.FISSURE, Moves.SHEER_COLD, Moves.GUILLOTINE, Moves.HORN_DRILL].includes(move.getMove().id)) {
+          if (move.getMove().findAttr(attr => attr instanceof OneHitKOAttr)) {
             return true;
           }
           // edge case for hidden power, type is computed
