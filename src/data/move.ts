@@ -3585,6 +3585,8 @@ export class FirstMoveCondition extends MoveCondition {
   }
 }
 
+const sameTypeCondition: MoveConditionFunc = (user, target, move) => user.getTypes().some(item => target.getTypes().includes(item));
+
 export type MoveTargetSet = {
   targets: BattlerIndex[];
   multiple: boolean;
@@ -4961,7 +4963,7 @@ export function initMoves() {
       .attr(CompareWeightPowerAttr),
     new AttackMove(Moves.SYNCHRONOISE, Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .partial(),
+      .condition(sameTypeCondition),
     new AttackMove(Moves.ELECTRO_BALL, Type.ELECTRIC, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 5)
       .attr(BattleStatRatioPowerAttr, Stat.SPD)
       .ballBombMove(),
