@@ -2533,15 +2533,14 @@ export class CurseAttr extends MoveEffectAttr {
       // For non-Ghost types, target the user itself
       target = user;
     }
-    console.log(user, target);
 
     if (user.getTypes(true).includes(Type.GHOST)) {
       if (target.getTag(BattlerTagType.CURSED)) {
         user.scene.queueMessage('But it failed!');
         return false;
       }
-      let selfHarmDamage = Math.floor(user.getMaxHp() / 2);
-      user.damageAndUpdate(selfHarmDamage, HitResult.OTHER, false, true, true);
+      let curseRecoilDamage = Math.floor(user.getMaxHp() / 2);
+      user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, false, true, true);
       user.scene.queueMessage(getPokemonMessage(user, ' cut its own HP!'));
       target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
       return true;
