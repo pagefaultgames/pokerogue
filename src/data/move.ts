@@ -5648,8 +5648,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .partial(),
     new StatusMove(Moves.MAGIC_POWDER, Type.PSYCHIC, 100, 20, -1, 0, 8)
-      .powderMove()
-      .unimplemented(),
+      .attr(ChangeTypeAttr, Type.PSYCHIC)
+      .powderMove(),
     new AttackMove(Moves.DRAGON_DARTS, Type.DRAGON, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false)
