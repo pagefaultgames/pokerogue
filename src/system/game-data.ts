@@ -1,6 +1,6 @@
 import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
-import { pokemonPrevolutions } from "../data/pokemon-evolutions";
+import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
 import PokemonSpecies, { SpeciesFormKey, allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import { Species, defaultStarterSpecies } from "../data/enums/species";
 import * as Utils from "../utils";
@@ -28,7 +28,7 @@ import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
 import { OutdatedPhase, UnavailablePhase } from "#app/phases";
-import { Variant } from "#app/data/variant";
+import { Variant, variantData } from "#app/data/variant";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -339,9 +339,12 @@ export class GameData {
               for (let s of Object.keys(starterEggMoveData))
                 this.starterData[s].eggMoves = starterEggMoveData[s];
             }
+
+            this.migrateStarterAbilities(systemData);
           } else {
             if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion))
               this.migrateStarterAbilities(systemData);
+            this.fixVariantData(systemData);
             // Migrate ability starter data if empty for caught species
             Object.keys(systemData.starterData).forEach(sd => {
               if (systemData.dexData[sd].caughtAttr && !systemData.starterData[sd].abilityAttr)
@@ -1220,6 +1223,47 @@ export class GameData {
           dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
         if (dexAttr & DexAttr.VARIANT_3)
           dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
+      }
+    }
+  }
+
+  fixVariantData(systemData: SystemSaveData): void {
+    const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
+    const starterData = systemData.starterData;
+    const dexData = systemData.dexData;
+    if (starterIds.find(id => (dexData[id].caughtAttr & DexAttr.VARIANT_2 || dexData[id].caughtAttr & DexAttr.VARIANT_3) && !variantData[id])) {
+      for (let s of starterIds) {
+        const species = getPokemonSpecies(s);
+        if (variantData[s]) {
+          const tempCaughtAttr = dexData[s].caughtAttr;
+          let seenVariant2 = false;
+          let seenVariant3 = false;
+          let checkEvoSpecies = (es: Species) => {
+            seenVariant2 ||= !!(dexData[es].seenAttr & DexAttr.VARIANT_2);
+            seenVariant3 ||= !!(dexData[es].seenAttr & DexAttr.VARIANT_3);
+            if (pokemonEvolutions.hasOwnProperty(es)) {
+              for (let pe of pokemonEvolutions[es])
+                checkEvoSpecies(pe.speciesId);
+            }
+          };
+          checkEvoSpecies(s);
+          if (dexData[s].caughtAttr & DexAttr.VARIANT_2 && !seenVariant2)
+            dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
+          if (dexData[s].caughtAttr & DexAttr.VARIANT_3 && !seenVariant3)
+            dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
+          starterData[s].abilityAttr = (tempCaughtAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
+            | (tempCaughtAttr & DexAttr.VARIANT_2 && species.ability2 ? AbilityAttr.ABILITY_2 : 0)
+            | (tempCaughtAttr & DexAttr.VARIANT_3 && species.abilityHidden ? AbilityAttr.ABILITY_HIDDEN : 0);
+        } else {
+          const tempCaughtAttr = dexData[s].caughtAttr;
+          if (dexData[s].caughtAttr & DexAttr.VARIANT_2)
+            dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
+          if (dexData[s].caughtAttr & DexAttr.VARIANT_3)
+            dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
+          starterData[s].abilityAttr = (tempCaughtAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
+            | (tempCaughtAttr & DexAttr.VARIANT_2 && species.ability2 ? AbilityAttr.ABILITY_2 : 0)
+            | (tempCaughtAttr & DexAttr.VARIANT_3 && species.abilityHidden ? AbilityAttr.ABILITY_HIDDEN : 0);
+        }
       }
     }
   }
