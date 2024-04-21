@@ -2682,7 +2682,7 @@ export function initAbilities() {
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 0.5)
       .condition((pokemon) => pokemon.getHpRatio() <= 0.5),
     new Ability(Abilities.CURSED_BODY, "Cursed Body", "May disable a move used on the Pokémon.", 5)
-      .attr(PostDefendMoveDisableAbAttr, 100),
+      .attr(PostDefendMoveDisableAbAttr, 30),
     new Ability(Abilities.HEALER, "Healer (N)", "Sometimes heals an ally's status condition.", 5),
     new Ability(Abilities.FRIEND_GUARD, "Friend Guard (N)", "Reduces damage done to allies.", 5)
       .ignorable(),
