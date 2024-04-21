@@ -5132,7 +5132,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, 1, true)
       .danceMove(),
     new AttackMove(Moves.FREEZE_SHOCK, Type.ICE, MoveCategory.PHYSICAL, 140, 90, 5, 30, 0, 5)
-      .attr(ChargeAttr, ChargeAnim.ICE_BURN_CHARGING, 'became cloaked\nin a freezing light!')
+      .attr(ChargeAttr, ChargeAnim.FREEZE_SHOCK_CHARGING, 'became cloaked\nin a freezing light!')
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .makesContact(false),
     new AttackMove(Moves.ICE_BURN, Type.ICE, MoveCategory.SPECIAL, 140, 90, 5, 30, 0, 5)
