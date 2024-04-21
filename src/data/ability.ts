@@ -2092,6 +2092,9 @@ export class SuppressFieldAbilitiesAbAttr extends AbAttr {
   }
 }
 
+
+export class AlwaysHitAbAttr extends AbAttr { }
+
 export class UncopiableAbilityAbAttr extends AbAttr {
   constructor() {
     super(false);
@@ -2573,7 +2576,9 @@ export function initAbilities() {
     new Ability(Abilities.SNIPER, "Sniper (N)", "Powers up moves if they become critical hits when attacking.", 4),
     new Ability(Abilities.MAGIC_GUARD, "Magic Guard", "The Pokémon only takes damage from attacks.", 4)
       .attr(BlockNonDirectDamageAbAttr),
-    new Ability(Abilities.NO_GUARD, "No Guard (N)", "The Pokémon employs no-guard tactics to ensure incoming and outgoing attacks always land.", 4),
+    new Ability(Abilities.NO_GUARD, "No Guard", "The Pokémon employs no-guard tactics to ensure incoming and outgoing attacks always land.", 4)
+      .attr(AlwaysHitAbAttr)
+      .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.STALL, "Stall (N)", "The Pokémon moves after all other Pokémon do.", 4),
     new Ability(Abilities.TECHNICIAN, "Technician", "Powers up the Pokémon's weaker moves.", 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.power <= 60, 1.5),
