@@ -4135,10 +4135,10 @@ export function initMoves() {
       .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
       .soundBased(),
     new StatusMove(Moves.CURSE, Type.GHOST, -1, 10, -1, 0, 2)
-    .attr(StatChangeAttr, BattleStat.SPD, -1, true)
-    .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], 1, true)
-    .target(MoveTarget.USER)
-    .partial(),
+      .attr(StatChangeAttr, BattleStat.SPD, -1, true)
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], 1, true)
+      .target(MoveTarget.USER)
+      .partial(),
     new AttackMove(Moves.FLAIL, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 2)
       .attr(LowHpPowerAttr),
     new StatusMove(Moves.CONVERSION_2, Type.NORMAL, -1, 30, -1, 0, 2)
