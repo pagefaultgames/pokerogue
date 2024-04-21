@@ -6,6 +6,9 @@ import { menu as frMenu } from '../locales/fr/menu';
 import { move as enMove } from '../locales/en/move';
 import { move as frMove } from '../locales/fr/move';
 
+import { pokeball as enPokeball } from '../locales/en/pokeball';
+import { pokeball as frPokeball } from '../locales/fr/pokeball';
+
 export interface MoveTranslationEntry {
   name: string,
   effect: string
@@ -50,6 +53,7 @@ export function initI18n(): void {
       en: {
         menu: enMenu,
         move: enMove,
+        pokeball: enPokeball,
       },
       it: {
         menu: itMenu,
@@ -57,6 +61,7 @@ export function initI18n(): void {
       fr: {
         menu: frMenu,
         move: frMove,
+        pokeball: frPokeball,
       }
     },
   });
@@ -68,6 +73,7 @@ declare module 'i18next' {
     resources: {
       menu: typeof enMenu;
       move: typeof enMove;
+      pokeball: typeof enPokeball;
     };
   }
 }
