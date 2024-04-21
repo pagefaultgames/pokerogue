@@ -1468,7 +1468,7 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
 
   apply(args: any[]): boolean {
     const moveAccuracy = (args[1] as Utils.IntegerHolder);
-    moveAccuracy.value = Math.min(moveAccuracy.value + this.accuracyAmount, 100);
+    moveAccuracy.value = Math.min(moveAccuracy.value + this.accuracyAmount * this.getStackCount(), 100);
 
     return true;
   }
