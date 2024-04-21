@@ -794,7 +794,8 @@ export class EncounterPhase extends BattlePhase {
         pokemon.resetBattleData();
     }
 
-    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
+    if (!this.loaded)
+      this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
