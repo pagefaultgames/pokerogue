@@ -1104,11 +1104,19 @@ export class EatBerryAttr extends MoveEffectAttr {
   protected chosenBerry: BerryModifier;
   constructor() {
     super(true, MoveEffectTrigger.HIT);
+    this.chosenBerry = undefined;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args))
       return false;
+
+    if(this.chosenBerry === undefined) { // if no berry has been provided, pick a random berry from their inventory 
+      const heldBerries = this.getTargetHeldBerries(target);
+      if(heldBerries.length <= 0)
+        return false;
+      this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+    }
 
     getBerryEffectFunc(this.chosenBerry.berryType)(target);
 
@@ -4690,8 +4698,7 @@ export function initMoves() {
       .makesContact(false)
       .ignoresProtect(),
     new AttackMove(Moves.PLUCK, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 4)
-      .attr(StealEatBerryAttr)
-      .partial(),
+      .attr(StealEatBerryAttr),
     new StatusMove(Moves.TAILWIND, Type.FLYING, -1, 15, -1, 0, 4)
       .windMove()
       .target(MoveTarget.USER_SIDE)
@@ -4927,8 +4934,7 @@ export function initMoves() {
     new AttackMove(Moves.JUDGMENT, Type.NORMAL, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 4)
       .partial(),
     new AttackMove(Moves.BUG_BITE, Type.BUG, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 4)
-      .attr(StealEatBerryAttr)
-      .partial(),
+      .attr(StealEatBerryAttr),
     new AttackMove(Moves.CHARGE_BEAM, Type.ELECTRIC, MoveCategory.SPECIAL, 50, 90, 10, 70, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPATK, 1, true),
     new AttackMove(Moves.WOOD_HAMMER, Type.GRASS, MoveCategory.PHYSICAL, 120, 100, 15, -1, 0, 4)
@@ -5713,8 +5719,8 @@ export function initMoves() {
       .makesContact(false)
       .partial(),
     new StatusMove(Moves.TEATIME, Type.NORMAL, -1, 10, -1, 0, 8)
-      .target(MoveTarget.ALL)
-      .attr(EatBerryAttr),
+      .attr(EatBerryAttr)
+      .target(MoveTarget.ALL),
     new StatusMove(Moves.OCTOLOCK, Type.FIGHTING, 100, 15, -1, 0, 8)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1)
       .partial(),
