@@ -379,6 +379,33 @@ export class UnavailablePhase extends Phase {
   }
 }
 
+export class ReloadSessionPhase extends Phase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start(): void {
+    this.scene.ui.setMode(Mode.SESSION_RELOAD);
+
+    let delayElapsed = false;
+    let loaded = false;
+
+    this.scene.time.delayedCall(Utils.fixedInt(1500), () => {
+      if (loaded)
+        this.end();
+      else
+        delayElapsed = true;
+    });
+
+    this.scene.gameData.loadSystem().then(() => {
+      if (delayElapsed)
+        this.end();
+      else
+        loaded = true;
+    });
+  }
+}
+
 export class OutdatedPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);

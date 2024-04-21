@@ -27,7 +27,7 @@ import { Moves } from "../data/enums/moves";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
-import { OutdatedPhase, UnavailablePhase } from "#app/phases";
+import { OutdatedPhase, ReloadSessionPhase, UnavailablePhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
@@ -280,6 +280,9 @@ export class GameData {
                 if (error.startsWith('client version out of date')) {
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new OutdatedPhase(this.scene));
+                } else if (error.startsWith('session out of date')) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
                 }
                 console.error(error);
                 return resolve(false);
@@ -340,7 +343,7 @@ export class GameData {
                 this.starterData[s].eggMoves = starterEggMoveData[s];
             }
 
-            this.migrateStarterAbilities(systemData);
+            this.migrateStarterAbilities(systemData, this.starterData);
           } else {
             if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion))
               this.migrateStarterAbilities(systemData);
@@ -551,6 +554,10 @@ export class GameData {
             .then(response => response.text())
             .then(error => {
               if (error) {
+                if (error.startsWith('session out of date')) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+                }
                 console.error(error);
                 return resolve(false);
               }
@@ -1207,9 +1214,9 @@ export class GameData {
     }
   }
 
-  migrateStarterAbilities(systemData: SystemSaveData): void {
+  migrateStarterAbilities(systemData: SystemSaveData, initialStarterData?: StarterData): void {
     const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
-    const starterData = systemData.starterData;
+    const starterData = initialStarterData || systemData.starterData;
     const dexData = systemData.dexData;
     for (let s of starterIds) {
       const dexAttr = dexData[s].caughtAttr;
