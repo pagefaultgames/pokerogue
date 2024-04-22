@@ -2304,7 +2304,10 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
 export class OneHitKOAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const accuracy = args[0] as Utils.NumberHolder;
-    accuracy.value = 30 + 70 * Math.min(target.level / user.level, 0.5) * 2;
+    if (user.level < target.level)
+      accuracy.value = 0;
+    else
+      accuracy.value = Math.min(Math.max(30 + 100 * (1 - target.level / user.level), 0), 100);
     return true;
   }
 }
