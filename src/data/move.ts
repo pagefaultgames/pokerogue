@@ -96,9 +96,6 @@ export default class Move implements Localizable {
   constructor(id: Moves, type: Type, category: MoveCategory, defaultMoveTarget: MoveTarget, power: integer, accuracy: integer, pp: integer, chance: integer, priority: integer, generation: integer) {
     this.id = id;
 
-    const i18nKey = Moves[id].split('_').filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join('') as unknown as string;
-
-    this.name = id ? i18next.t(`move:${i18nKey}.name`).toString() : '';
     this.nameAppend = '';
     this.type = type;
     this.category = category;
@@ -106,7 +103,6 @@ export default class Move implements Localizable {
     this.power = power;
     this.accuracy = accuracy;
     this.pp = pp;
-    this.effect = id ? i18next.t(`move:${i18nKey}.effect`).toString() : '';
     this.chance = chance;
     this.priority = priority;
     this.generation = generation;
@@ -119,9 +115,11 @@ export default class Move implements Localizable {
       this.setFlag(MoveFlags.IGNORE_PROTECT, true);
     if (category === MoveCategory.PHYSICAL)
       this.setFlag(MoveFlags.MAKES_CONTACT, true);
+
+    this.localize();
   }
 
-  localize() {
+  localize(): void {
     const i18nKey = Moves[this.id].split('_').filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join('') as unknown as string;
 
     this.name = this.id ? `${i18next.t(`move:${i18nKey}.name`).toString()}${this.nameAppend}` : '';
@@ -665,12 +663,14 @@ export class SurviveDamageAttr extends ModifiedDamageAttr {
 export class RecoilAttr extends MoveEffectAttr {
   private useHp: boolean;
   private damageRatio: number;
+  private unblockable: boolean;
 
-  constructor(useHp?: boolean, damageRatio?: number) {
+  constructor(useHp: boolean = false, damageRatio: number = 0.25, unblockable: boolean = false) {
     super(true);
 
     this.useHp = useHp;
-    this.damageRatio = (damageRatio !== undefined ? damageRatio : 0.25) || 0.25;
+    this.damageRatio = damageRatio;
+    this.unblockable = unblockable;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -678,7 +678,8 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
 
     const cancelled = new Utils.BooleanHolder(false);
-    applyAbAttrs(BlockRecoilDamageAttr, user, cancelled);
+    if (!this.unblockable)
+      applyAbAttrs(BlockRecoilDamageAttr, user, cancelled);
 
     if (cancelled.value)
       return false;
@@ -1707,8 +1708,18 @@ export class BattleStatRatioPowerAttr extends VariablePowerAttr {
     const statThresholds = [ 0.25, 1 / 3, 0.5, 1, -1 ];
     let statThresholdPowers = [ 150, 120, 80, 60, 40 ];
 
-    if (this.invert)
-      statThresholdPowers = statThresholdPowers.reverse();
+    if (this.invert) {
+      // Gyro ball uses a specific formula
+      let userSpeed = user.getStat(this.stat);
+      if (userSpeed < 1) {
+        // Gen 6+ always have 1 base power
+        power.value = 1;
+        return true;
+      } 
+      let bp = Math.floor(Math.min(150, 25 * target.getStat(this.stat) / userSpeed + 1));
+      power.value = bp;
+      return true;
+    }
 
     let w = 0;
     while (w < statThresholds.length - 1 && statRatio > statThresholds[w]) {
@@ -2480,6 +2491,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
           return -5;
       case BattlerTagType.SEEDED:
       case BattlerTagType.SALT_CURED:
+      case BattlerTagType.CURSED:
       case BattlerTagType.FRENZY:
       case BattlerTagType.TRAPPED:
       case BattlerTagType.BIND:
@@ -2511,6 +2523,34 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     if (chance < 0)
       chance = 100;
     return Math.floor(this.getTagTargetBenefitScore(user, target, move) * (chance / 100));
+  }
+}
+
+export class CurseAttr extends MoveEffectAttr {
+  
+  apply(user: Pokemon, target: Pokemon, move:Move, args: any[]): boolean {
+    // Determine the correct target based on the user's type
+    if (!user.getTypes(true).includes(Type.GHOST)) {
+      // For non-Ghost types, target the user itself
+      target = user;
+    }
+
+    if (user.getTypes(true).includes(Type.GHOST)) {
+      if (target.getTag(BattlerTagType.CURSED)) {
+        user.scene.queueMessage('But it failed!');
+        return false;
+      }
+      let curseRecoilDamage = Math.floor(user.getMaxHp() / 2);
+      user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, false, true, true);
+      user.scene.queueMessage(getPokemonMessage(user, ' cut its own HP!'));
+      target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
+      return true;
+    } else {
+      target = user;
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [BattleStat.ATK, BattleStat.DEF], 1));
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [BattleStat.SPD], -1));
+      return true;
+    }
   }
 }
 
@@ -4063,7 +4103,7 @@ export function initMoves() {
       .attr(RecoilAttr)
       .unimplemented(),
     new AttackMove(Moves.STRUGGLE, Type.NORMAL, MoveCategory.PHYSICAL, 50, -1, 1, -1, 0, 1)
-      .attr(RecoilAttr, true)
+      .attr(RecoilAttr, true, 0.25, true)
       .attr(TypelessAttr)
       .ignoresVirtual()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
@@ -5119,6 +5159,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, 1, true)
       .danceMove(),
     new AttackMove(Moves.FREEZE_SHOCK, Type.ICE, MoveCategory.PHYSICAL, 140, 90, 5, 30, 0, 5)
+      .attr(ChargeAttr, ChargeAnim.FREEZE_SHOCK_CHARGING, 'became cloaked\nin a freezing light!')
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .makesContact(false),
     new AttackMove(Moves.ICE_BURN, Type.ICE, MoveCategory.SPECIAL, 140, 90, 5, 30, 0, 5)
@@ -5521,7 +5562,7 @@ export function initMoves() {
       .bitingMove()
       .attr(RemoveScreensAttr),
     new AttackMove(Moves.STOMPING_TANTRUM, Type.GROUND, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 7)
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.getLastXMoves(2)[1]?.result == MoveResult.MISS || user.getLastXMoves(2)[1]?.result == MoveResult.FAIL ? 2 : 1),
     new AttackMove(Moves.SHADOW_BONE, Type.GHOST, MoveCategory.PHYSICAL, 85, 100, 10, 20, 0, 7)
       .attr(StatChangeAttr, BattleStat.DEF, -1)
       .makesContact(false),
@@ -5634,8 +5675,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .partial(),
     new StatusMove(Moves.MAGIC_POWDER, Type.PSYCHIC, 100, 20, -1, 0, 8)
-      .powderMove()
-      .unimplemented(),
+      .attr(ChangeTypeAttr, Type.PSYCHIC)
+      .powderMove(),
     new AttackMove(Moves.DRAGON_DARTS, Type.DRAGON, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false)
@@ -6119,7 +6160,7 @@ export function initMoves() {
       .slicingMove(),
     new AttackMove(Moves.HYDRO_STEAM, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
       .partial(),
-    new AttackMove(Moves.RUINATION, Type.DARK, MoveCategory.SPECIAL, 1, 90, 10, -1, 0, 9)
+    new AttackMove(Moves.RUINATION, Type.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.COLLISION_COURSE, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type) >= 2 ? 5461/4096 : 1),
@@ -6241,7 +6282,7 @@ export function initMoves() {
     new AttackMove(Moves.ALLURING_VOICE, Type.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 9)
       .partial(),
     new AttackMove(Moves.TEMPER_FLARE, Type.FIRE, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 9)
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.getLastXMoves(2)[1]?.result == MoveResult.MISS || user.getLastXMoves(2)[1]?.result == MoveResult.FAIL ? 2 : 1),
     new AttackMove(Moves.SUPERCELL_SLAM, Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 95, 15, -1, 0, 9)
       .attr(MissEffectAttr, crashDamageFunc)
       .attr(NoEffectAttr, crashDamageFunc),

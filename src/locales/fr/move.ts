@@ -1,6 +1,6 @@
-import { MoveTranslations } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/plugins/i18n";
 
-export const move: MoveTranslations = {
+export const move: MoveTranslationEntries = {
   "pound": {
     name: "Écras'Face",
     effect: "Le lanceur écrase la cible avec l’un de ses membres, tels qu’une de ses pattes avant ou sa longue queue."
@@ -374,8 +374,8 @@ export const move: MoveTranslations = {
     effect: "Une faible vague télékinétique frappe la cible, ce qui peut aussi la plonger dans la confusion."
   },
   "psychic": {
-    name: "Champ Psychique",
-    effect: "Pendant cinq tours, les Pokémon au sol ne peuvent plus subir d’attaques prioritaires et la puissance des capacités de type Psy augmente."
+    name: "Psyko",
+    effect: "Une puissante force télékinétique frappe la cible, ce qui peut aussi faire baisser sa Défense Spéciale."
   },
   "hypnosis": {
     name: "Hypnose",
@@ -650,8 +650,8 @@ export const move: MoveTranslations = {
     effect: "Une vilaine morsure d’incisives qui réduit de moitié les PV de la cible."
   },
   "slash": {
-    name: "Lame d'Air",
-    effect: "Le lanceur attaque avec une lame d’air capable de fendre le ciel, ce qui peut aussi apeurer la cible (30% de chances)."
+    name: "Tranche",
+    effect: "Le lanceur donne un coup de griffe ou de faux. Taux de critiques élevé."
   },
   "substitute": {
     name: "Clonage",
@@ -1443,7 +1443,7 @@ export const move: MoveTranslations = {
   },
   "healingWish": {
     name: "Voeu Soin",
-    effect: "Un soin qui permet au lanceur de récupérer jusqu’à la moitié de ses PV max."
+    effect: "Le lanceur tombe K.O. pour soigner les altérations de statut et les PV du Pokémon qui viendra le remplacer sur le terrain."
   },
   "brine": {
     name: "Saumure",

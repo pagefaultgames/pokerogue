@@ -9,7 +9,8 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, allMoves, OneHitKOAttr } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, allMoves } from "./move";
+import { ArenaTagSide } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -541,6 +542,29 @@ export class PostDefendStatChangeAbAttr extends PostDefendAbAttr {
       return true;
     }
 
+    return false;
+  }
+}
+
+export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
+  private condition: PokemonDefendCondition;
+  private tagType: ArenaTrapTag;
+
+  constructor(condition: PokemonDefendCondition, tagType: ArenaTagType) {
+    super(true);
+
+    this.condition = condition;
+    this.tagType = tagType;
+  }
+
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (this.condition(pokemon, attacker, move.getMove())) {
+      const tag = pokemon.scene.arena.getTag(this.tagType) as ArenaTrapTag;
+      if (!pokemon.scene.arena.getTag(this.tagType) || tag.layers < tag.maxLayers) {
+        pokemon.scene.arena.addTag(this.tagType, 0, undefined, pokemon.id, pokemon.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
+        return true;
+      }
+    }
     return false;
   }
 }
@@ -2129,6 +2153,9 @@ export class SuppressFieldAbilitiesAbAttr extends AbAttr {
   }
 }
 
+
+export class AlwaysHitAbAttr extends AbAttr { }
+
 export class UncopiableAbilityAbAttr extends AbAttr {
   constructor() {
     super(false);
@@ -2478,6 +2505,7 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SANDSTORM)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SANDSTORM),
     new Ability(Abilities.PRESSURE, "Pressure", "By putting pressure on the opposing Pokémon, it raises their PP usage.", 3)
+      .attr(IncreasePpAbAttr)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' is exerting its Pressure!')),
     new Ability(Abilities.THICK_FAT, "Thick Fat", "The Pokémon is protected by a layer of thick fat, which halves the damage taken from Fire- and Ice-type moves.", 3)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
@@ -2609,7 +2637,9 @@ export function initAbilities() {
     new Ability(Abilities.SNIPER, "Sniper (N)", "Powers up moves if they become critical hits when attacking.", 4),
     new Ability(Abilities.MAGIC_GUARD, "Magic Guard", "The Pokémon only takes damage from attacks.", 4)
       .attr(BlockNonDirectDamageAbAttr),
-    new Ability(Abilities.NO_GUARD, "No Guard (N)", "The Pokémon employs no-guard tactics to ensure incoming and outgoing attacks always land.", 4),
+    new Ability(Abilities.NO_GUARD, "No Guard", "The Pokémon employs no-guard tactics to ensure incoming and outgoing attacks always land.", 4)
+      .attr(AlwaysHitAbAttr)
+      .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.STALL, "Stall (N)", "The Pokémon moves after all other Pokémon do.", 4),
     new Ability(Abilities.TECHNICIAN, "Technician", "Powers up the Pokémon's weaker moves.", 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.power <= 60, 1.5),
@@ -3130,7 +3160,9 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SLICING_MOVE), 1.5),
     new Ability(Abilities.SUPREME_OVERLORD, "Supreme Overlord (N)", "When the Pokémon enters a battle, its Attack and Sp. Atk stats are slightly boosted for each of the allies in its party that have already been defeated.", 9),
     new Ability(Abilities.COSTAR, "Costar (N)", "When the Pokémon enters a battle, it copies an ally's stat changes.", 9),
-    new Ability(Abilities.TOXIC_DEBRIS, "Toxic Debris (N)", "Scatters poison spikes at the feet of the opposing team when the Pokémon takes damage from physical moves.", 9),
+    new Ability(Abilities.TOXIC_DEBRIS, "Toxic Debris", "Scatters poison spikes at the feet of the opposing team when the Pokémon takes damage from physical moves.", 9)
+      .attr(PostDefendApplyArenaTrapTagAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, ArenaTagType.TOXIC_SPIKES)
+      .bypassFaint(),
     new Ability(Abilities.ARMOR_TAIL, "Armor Tail", "The mysterious tail covering the Pokémon's head makes opponents unable to use priority moves against the Pokémon or its allies.", 9)
       .attr(FieldPriorityMoveImmunityAbAttr)  
       .ignorable(),
