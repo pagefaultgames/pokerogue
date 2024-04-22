@@ -762,6 +762,25 @@ export class HealAttr extends MoveEffectAttr {
   }
 }
 
+export class StatusCureAttr extends MoveEffectAttr {
+  private message: string;
+
+  constructor(message: string) {
+    super();
+
+    this.message = message;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+  }
+
+  addHealPhase(target: Pokemon, healRatio: number) {
+    target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(), 0, this.message, true, false));
+  }
+}
+
 export class SacrificialFullRestoreAttr extends SacrificialAttr {
   constructor() {
     super();
@@ -4219,9 +4238,9 @@ export function initMoves() {
       .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
       .ignoresVirtual(),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
+      .attr(StatusCureAttr, "A bell chimed!")
       .soundBased()
-      .target(MoveTarget.USER_AND_ALLIES)
-      .unimplemented(),
+      .target(MoveTarget.BOTH_SIDES),
     new AttackMove(Moves.RETURN, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 2)
       .attr(FriendshipPowerAttr),
     new AttackMove(Moves.PRESENT, Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, -1, 0, 2)
