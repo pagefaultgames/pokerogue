@@ -1653,17 +1653,16 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
       for (let move of opponent.moveset) {
         if (move.getMove() instanceof StatusMove) {
           movePower = 1;
+        } else if (move.getMove().hasFlag(MoveFlags.OHKO_Move)) {
+          movePower = 150;
+        } else if (move.getMove().id === Moves.COUNTER || move.getMove().id === Moves.MIRROR_COAT || move.getMove().id === Moves.METAL_BURST) {
+          movePower = 120;
+        } else if (move.getMove().power === -1) {
+          movePower = 80;
         } else {
-          if (move.getMove().hasFlag(MoveFlags.OHKO_Move)) {
-            movePower = 150;
-          } else if (move.getMove().id === Moves.COUNTER || move.getMove().id === Moves.MIRROR_COAT || move.getMove().id === Moves.METAL_BURST) {
-            movePower = 120;
-          } else if (move.getMove().power === -1) {
-            movePower = 80;
-          } else {
-            movePower = move.getMove().power;
-          }
+          movePower = move.getMove().power;
         }
+        
         if (movePower > maxPowerSeen) {
           maxPowerSeen = movePower;
           maxMove = move.getName();          
