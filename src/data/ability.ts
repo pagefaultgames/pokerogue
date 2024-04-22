@@ -10,7 +10,7 @@ import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
 import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves } from "./move";
-import { ArenaTagSide } from "./arena-tag";
+import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -558,7 +558,7 @@ export class PostDefendStatChangeAbAttr extends PostDefendAbAttr {
 
 export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
   private condition: PokemonDefendCondition;
-  private tagType: ArenaTrapTag;
+  private tagType: ArenaTagType;
 
   constructor(condition: PokemonDefendCondition, tagType: ArenaTagType) {
     super(true);

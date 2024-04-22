@@ -845,7 +845,7 @@ export class HitHealAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const healAmount = Math.max(Math.floor(user.turnData.damageDealt * this.healRatio), 1);
-    const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr);
+    const reverseDrain = user.hasAbilityWithAttr(ReverseDrainAbAttr);
     user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
       !reverseDrain ? healAmount : healAmount * -1,
       !reverseDrain ? getPokemonMessage(target, ` had its\nenergy drained!`) : undefined,
@@ -865,7 +865,7 @@ export class StrengthSapHealAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const healAmount = target.stats[Stat.ATK] * (Math.max(2, 2 + target.summonData.battleStats[BattleStat.ATK]) / Math.max(2, 2 - target.summonData.battleStats[BattleStat.ATK]));
-    const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr);
+    const reverseDrain = user.hasAbilityWithAttr(ReverseDrainAbAttr);
     user.scene.unshiftPhase(new PokemonHealPhase(user.scene, user.getBattlerIndex(),
       !reverseDrain ? healAmount : healAmount * -1,
       !reverseDrain ? getPokemonMessage(user, ` regained\nhealth!`) : undefined,
