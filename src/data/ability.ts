@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -1640,6 +1640,54 @@ function getAnticipationCondition(): AbAttrCondition {
   };
 }
 
+export class ForewarnAbAttr extends PostSummonAbAttr {
+  constructor() {
+    super(true);
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    let maxPowerSeen = 0;
+    let maxMove = "";
+    let movePower = 0;
+    for (let opponent of pokemon.getOpponents()) {
+      for (let move of opponent.moveset) {
+        if (move.getMove() instanceof StatusMove) {
+          movePower = 1;
+        } else {
+          if (move.getMove().hasFlag(MoveFlags.OHKO_Move)) {
+            movePower = 150;
+          } else if (move.getMove().id === Moves.COUNTER || move.getMove().id === Moves.MIRROR_COAT || move.getMove().id === Moves.METAL_BURST) {
+            movePower = 120;
+          } else if (move.getMove().power === -1) {
+            movePower = 80;
+          } else {
+            movePower = move.getMove().power;
+          }
+        }
+        if (movePower > maxPowerSeen) {
+          maxPowerSeen = movePower;
+          maxMove = move.getName();          
+        }
+      }
+    }
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " was forewarned about " + maxMove + "!"));
+    return true;
+  }
+}
+
+export class FriskAbAttr extends PostSummonAbAttr {
+  constructor() {
+    super(true);
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    for (let opponent of pokemon.getOpponents()) {
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, " frisked " + opponent.name + "\'s " + opponent.getAbility().name + "!"));
+    }
+    return true;
+  }
+}
+
 export class PostWeatherChangeAbAttr extends AbAttr {
   applyPostWeatherChange(pokemon: Pokemon, passive: boolean, weather: WeatherType, args: any[]): boolean {
     return false;
@@ -2669,7 +2717,8 @@ export function initAbilities() {
       .bypassFaint(),
     new Ability(Abilities.ANTICIPATION, "Anticipation", "The Pokémon can sense an opposing Pokémon's dangerous moves.", 4)
       .conditionalAttr(getAnticipationCondition(), PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' shuddered!')),
-    new Ability(Abilities.FOREWARN, "Forewarn (N)", "When it enters a battle, the Pokémon can tell one of the moves an opposing Pokémon has.", 4),
+    new Ability(Abilities.FOREWARN, "Forewarn", "When it enters a battle, the Pokémon can tell one of the moves an opposing Pokémon has.", 4)
+      .attr(ForewarnAbAttr),
     new Ability(Abilities.UNAWARE, "Unaware", "When attacking, the Pokémon ignores the target Pokémon's stat changes.", 4)
       .attr(IgnoreOpponentStatChangesAbAttr)
       .ignorable(),
@@ -2695,7 +2744,8 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SNOW)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SNOW),
     new Ability(Abilities.HONEY_GATHER, "Honey Gather (N)", "The Pokémon may gather Honey after a battle.", 4),
-    new Ability(Abilities.FRISK, "Frisk (N)", "When it enters a battle, the Pokémon can check an opposing Pokémon's held item.", 4),
+    new Ability(Abilities.FRISK, "Frisk", "When it enters a battle, the Pokémon can check an opposing Pokémon's ability.", 4)
+      .attr(FriskAbAttr),
     new Ability(Abilities.RECKLESS, "Reckless", "Powers up moves that have recoil damage.", 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.getAttrs(RecoilAttr).length && move.id !== Moves.STRUGGLE, 1.2),
     new Ability(Abilities.MULTITYPE, "Multitype (N)", "Changes the Pokémon's type to match the Plate or Z-Crystal it holds.", 4)
