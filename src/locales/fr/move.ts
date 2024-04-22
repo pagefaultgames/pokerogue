@@ -1,6 +1,6 @@
-import { MoveTranslations } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/plugins/i18n";
 
-export const move: MoveTranslations = {
+export const move: MoveTranslationEntries = {
   "pound": {
     name: "Écras'Face",
     effect: "Le lanceur écrase la cible avec l’un de ses membres, tels qu’une de ses pattes avant ou sa longue queue."
@@ -1443,7 +1443,7 @@ export const move: MoveTranslations = {
   },
   "healingWish": {
     name: "Voeu Soin",
-    effect: "Un soin qui permet au lanceur de récupérer jusqu’à la moitié de ses PV max."
+    effect: "Le lanceur tombe K.O. pour soigner les altérations de statut et les PV du Pokémon qui viendra le remplacer sur le terrain."
   },
   "brine": {
     name: "Saumure",

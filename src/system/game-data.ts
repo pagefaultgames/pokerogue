@@ -1,7 +1,7 @@
 import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
-import PokemonSpecies, { SpeciesFormKey, allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import { Species, defaultStarterSpecies } from "../data/enums/species";
 import * as Utils from "../utils";
 import PokemonData from "./pokemon-data";
@@ -27,7 +27,7 @@ import { Moves } from "../data/enums/moves";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
-import { OutdatedPhase, UnavailablePhase } from "#app/phases";
+import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
@@ -280,6 +280,9 @@ export class GameData {
                 if (error.startsWith('client version out of date')) {
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new OutdatedPhase(this.scene));
+                } else if (error.startsWith('session out of date')) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
                 }
                 console.error(error);
                 return resolve(false);
@@ -340,7 +343,7 @@ export class GameData {
                 this.starterData[s].eggMoves = starterEggMoveData[s];
             }
 
-            this.migrateStarterAbilities(systemData);
+            this.migrateStarterAbilities(systemData, this.starterData);
           } else {
             if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion))
               this.migrateStarterAbilities(systemData);
@@ -551,6 +554,10 @@ export class GameData {
             .then(response => response.text())
             .then(error => {
               if (error) {
+                if (error.startsWith('session out of date')) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+                }
                 console.error(error);
                 return resolve(false);
               }
@@ -715,9 +722,19 @@ export class GameData {
         Utils.apiFetch(`savedata/delete?datatype=${GameDataType.SESSION}&slot=${slotId}`, true).then(response => {
           if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
-            return resolve(true);
+            resolve(true);
           }
-          resolve(false);
+          return response.text();
+        }).then(error => {
+          if (error) {
+            if (error.startsWith('session out of date')) {
+              this.scene.clearPhaseQueue();
+              this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+            }
+            console.error(error);
+            resolve(false);
+          }
+          resolve(true);
         });
       });
     });
@@ -735,12 +752,19 @@ export class GameData {
           return resolve([false, false]);
         const sessionData = this.getSessionSaveData(scene);
         Utils.apiPost(`savedata/clear?slot=${slotId}`, JSON.stringify(sessionData)).then(response => {
-          if (response.ok) {
+          if (response.ok)
             loggedInUser.lastSessionSlot = -1;
-            return response.json();
+          return response.json();
+        }).then(jsonResponse => {
+          if (!jsonResponse.error)
+            return resolve([true, jsonResponse.success as boolean]);
+          if (jsonResponse && jsonResponse.error.startsWith('session out of date')) {
+            this.scene.clearPhaseQueue();
+            this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
           }
+          console.error(jsonResponse);
           resolve([false, false]);
-        }).then(jsonResponse => resolve([true, jsonResponse.success as boolean]));
+        });
       });
     });
   }
@@ -1207,9 +1231,9 @@ export class GameData {
     }
   }
 
-  migrateStarterAbilities(systemData: SystemSaveData): void {
+  migrateStarterAbilities(systemData: SystemSaveData, initialStarterData?: StarterData): void {
     const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
-    const starterData = systemData.starterData;
+    const starterData = initialStarterData || systemData.starterData;
     const dexData = systemData.dexData;
     for (let s of starterIds) {
       const dexAttr = dexData[s].caughtAttr;

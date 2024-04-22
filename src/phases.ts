@@ -379,6 +379,33 @@ export class UnavailablePhase extends Phase {
   }
 }
 
+export class ReloadSessionPhase extends Phase {
+  constructor(scene: BattleScene) {
+    super(scene);
+  }
+
+  start(): void {
+    this.scene.ui.setMode(Mode.SESSION_RELOAD);
+
+    let delayElapsed = false;
+    let loaded = false;
+
+    this.scene.time.delayedCall(Utils.fixedInt(1500), () => {
+      if (loaded)
+        this.end();
+      else
+        delayElapsed = true;
+    });
+
+    this.scene.gameData.loadSystem().then(() => {
+      if (delayElapsed)
+        this.end();
+      else
+        loaded = true;
+    });
+  }
+}
+
 export class OutdatedPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
@@ -767,7 +794,8 @@ export class EncounterPhase extends BattlePhase {
         pokemon.resetBattleData();
     }
 
-    this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
+    if (!this.loaded)
+      this.scene.arena.trySetWeather(getRandomWeatherType(this.scene.arena), false);
 
     const enemyField = this.scene.getEnemyField();
     this.scene.tweens.add({
@@ -2267,6 +2295,7 @@ export class MovePhase extends BattlePhase {
           this.cancelled = activated;
           break;
       }
+      
       if (activated) {
         this.scene.queueMessage(getPokemonMessage(this.pokemon, getStatusEffectActivationText(this.pokemon.status.effect)));
         this.scene.unshiftPhase(new CommonAnimPhase(this.scene, this.pokemon.getBattlerIndex(), undefined, CommonAnim.POISON + (this.pokemon.status.effect - 1)));
@@ -2289,6 +2318,7 @@ export class MovePhase extends BattlePhase {
 
   showMoveText(): void {
     if (this.move.getMove().getAttrs(ChargeAttr).length) {
+      this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
       const lastMove = this.pokemon.getLastXMoves() as TurnMove[];
       if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER)
         return;
@@ -3284,10 +3314,7 @@ export class MoneyRewardPhase extends BattlePhase {
 
     this.scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
-    this.scene.money += moneyAmount.value;
-    this.scene.updateMoneyText();
-
-    this.scene.validateAchvs(MoneyAchv);
+    this.scene.addMoney(moneyAmount.value);
 
     this.scene.ui.showText(`You got ₽${moneyAmount.value.toLocaleString('en-US')}\nfor winning!`, null, () => this.end(), null, true);
   }
@@ -3392,6 +3419,8 @@ export class GameOverPhase extends BattlePhase {
 
   handleClearSession(): void {
     this.scene.gameData.tryClearSession(this.scene, this.scene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
+      if (!success[0])
+        return this.scene.reset(true);
       this.scene.time.delayedCall(1000, () => {
         let firstClear = false;
         if (this.victory && success[1]) {
@@ -3767,11 +3796,15 @@ export class PokemonHealPhase extends CommonAnimPhase {
     const hasMessage = !!this.message;
     let lastStatusEffect = StatusEffect.NONE;
 
-    if (!fullHp) {
+    if (!fullHp || this.hpHealed < 0) {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       if (!this.revive)
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
+      if (healAmount.value < 0) {
+        pokemon.damageAndUpdate(healAmount.value * -1, HitResult.HEAL);
+        healAmount.value = 0;
+      }
       // Prevent healing to full if specified (in case of healing tokens so Sturdy doesn't cause a softlock)
       if (this.preventFullHeal && pokemon.hp + healAmount.value >= pokemon.getMaxHp())
         healAmount.value = (pokemon.getMaxHp() - pokemon.hp) - 1;
@@ -4299,7 +4332,7 @@ export class EggLapsePhase extends Phase {
 
     const eggsToHatch: Egg[] = this.scene.gameData.eggs.filter((egg: Egg) => {
       return --egg.hatchWaves < 1
-    })
+    });
 
     if (eggsToHatch.length) {
       this.scene.queueMessage('Oh?');

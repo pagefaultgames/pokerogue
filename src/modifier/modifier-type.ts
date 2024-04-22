@@ -19,6 +19,7 @@ import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from '../system/v
 import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from '../data/pokemon-forms';
 import { ModifierTier } from './modifier-tier';
 import { Nature, getNatureName, getNatureStatMultiplier } from '#app/data/nature';
+import { Localizable } from '#app/plugins/i18n';
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -131,10 +132,19 @@ export interface GeneratedPersistentModifierType {
   getPregenArgs(): any[];
 }
 
-class AddPokeballModifierType extends ModifierType {
+class AddPokeballModifierType extends ModifierType implements Localizable {
+  private pokeballType: PokeballType;
+  private count: integer;
+
   constructor(pokeballType: PokeballType, count: integer, iconImage?: string) {
-    super(`${count}x ${getPokeballName(pokeballType)}`, `Receive ${getPokeballName(pokeballType)} x${count}\nCatch Rate: ${getPokeballCatchMultiplier(pokeballType) > -1 ? `${getPokeballCatchMultiplier(pokeballType)}x` : 'Certain'}`,
-      (_type, _args) => new Modifiers.AddPokeballModifier(this, pokeballType, count), iconImage, 'pb', 'pb_bounce_1');
+    super('', '', (_type, _args) => new Modifiers.AddPokeballModifier(this, pokeballType, count), iconImage, 'pb', 'pb_bounce_1');
+    this.pokeballType = pokeballType;
+    this.count = count;
+  }
+
+  localize(): void {
+    this.name = `${this.count}x ${getPokeballName(this.pokeballType)}`;
+    this.description = `Receive ${getPokeballName(this.pokeballType)} x${this.count}\nCatch Rate: ${getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : 'Certain'}`;
   }
 }
 

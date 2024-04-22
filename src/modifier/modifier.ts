@@ -1578,9 +1578,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
     
-    scene.money += moneyAmount.value;
-    scene.updateMoneyText();
-    scene.validateAchvs(MoneyAchv);
+    scene.addMoney(moneyAmount.value);
 
     return true;
   }
@@ -1627,9 +1625,7 @@ export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
     const scene = (args[0] as Pokemon).scene;
     const moneyAmount = new Utils.IntegerHolder(Math.floor((args[1] as Utils.IntegerHolder).value * (0.5 * this.getStackCount())));
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
-    scene.money += moneyAmount.value;
-    scene.updateMoneyText();
-    scene.validateAchvs(MoneyAchv);
+    scene.addMoney(moneyAmount.value);
 
     return true;
   }
@@ -1651,9 +1647,7 @@ export class MoneyInterestModifier extends PersistentModifier {
   apply(args: any[]): boolean {
     const scene = args[0] as BattleScene;
     const interestAmount = Math.floor(scene.money * 0.1 * this.getStackCount());
-    scene.money += interestAmount;
-    scene.updateMoneyText();
-    scene.validateAchvs(MoneyAchv);
+    scene.addMoney(interestAmount);
 
     scene.queueMessage(`You received interest of ₽${interestAmount.toLocaleString('en-US')}\nfrom the ${this.type.name}!`, null, true);
 
