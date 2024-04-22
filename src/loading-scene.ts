@@ -198,7 +198,8 @@ export class LoadingScene extends SceneBase {
 
     for (let i = 0; i < 10; i++) {
       this.loadAtlas(`pokemon_icons_${i}`, '');
-      this.loadAtlas(`pokemon_icons_${i}v`, '');
+      if (i)
+        this.loadAtlas(`pokemon_icons_${i}v`, '');
     }
 
     this.loadSe('select');

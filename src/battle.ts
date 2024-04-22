@@ -157,10 +157,8 @@ export default class Battle {
         const moneyAmount = new Utils.IntegerHolder(scene.currentBattle.moneyScattered);
         scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
-        scene.money += moneyAmount.value;
-        scene.updateMoneyText();
-    
-        scene.validateAchvs(MoneyAchv);
+        scene.addMoney(moneyAmount.value);
+        
         scene.queueMessage(`You picked up ₽${moneyAmount.value.toLocaleString('en-US')}!`, null, true);
 
         scene.currentBattle.moneyScattered = 0;

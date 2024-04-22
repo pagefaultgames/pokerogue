@@ -19,6 +19,7 @@ import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from '../system/v
 import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from '../data/pokemon-forms';
 import { ModifierTier } from './modifier-tier';
 import { Nature, getNatureName, getNatureStatMultiplier } from '#app/data/nature';
+import { Localizable } from '#app/plugins/i18n';
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -131,10 +132,19 @@ export interface GeneratedPersistentModifierType {
   getPregenArgs(): any[];
 }
 
-class AddPokeballModifierType extends ModifierType {
+class AddPokeballModifierType extends ModifierType implements Localizable {
+  private pokeballType: PokeballType;
+  private count: integer;
+
   constructor(pokeballType: PokeballType, count: integer, iconImage?: string) {
-    super(`${count}x ${getPokeballName(pokeballType)}`, `Receive ${getPokeballName(pokeballType)} x${count}\nCatch Rate: ${getPokeballCatchMultiplier(pokeballType) > -1 ? `${getPokeballCatchMultiplier(pokeballType)}x` : 'Certain'}`,
-      (_type, _args) => new Modifiers.AddPokeballModifier(this, pokeballType, count), iconImage, 'pb', 'pb_bounce_1');
+    super('', '', (_type, _args) => new Modifiers.AddPokeballModifier(this, pokeballType, count), iconImage, 'pb', 'pb_bounce_1');
+    this.pokeballType = pokeballType;
+    this.count = count;
+  }
+
+  localize(): void {
+    this.name = `${this.count}x ${getPokeballName(this.pokeballType)}`;
+    this.description = `Receive ${getPokeballName(this.pokeballType)} x${this.count}\nCatch Rate: ${getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : 'Certain'}`;
   }
 }
 
@@ -499,6 +509,12 @@ export class PokemonExpBoosterModifierType extends PokemonHeldItemModifierType {
 export class PokemonFriendshipBoosterModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, iconImage?: string) {
     super(name,'Increases friendship gain per victory by 50%', (_type, args) => new Modifiers.PokemonFriendshipBoosterModifier(this, (args[0] as Pokemon).id), iconImage);
+  }
+}
+
+export class PokemonMoveAccuracyBoosterModifierType extends PokemonHeldItemModifierType {
+  constructor(name: string, amount: integer, iconImage?: string, group?: string, soundName?: string) {
+    super(name, `Increases move accuracy by ${amount} (up to 100)`, (_type, args) => new Modifiers.PokemonMoveAccuracyBoosterModifier(this, (args[0] as Pokemon).id, amount), iconImage, group, soundName);
   }
 }
 
@@ -887,6 +903,7 @@ export const modifierTypes = {
   LOCK_CAPSULE: () => new ModifierType('Lock Capsule', 'Allows you to lock item rarities when rerolling items', (type, _args) => new Modifiers.LockModifierTiersModifier(type), 'lock_capsule'),
 
   GRIP_CLAW: () => new ContactHeldItemTransferChanceModifierType('Grip Claw', 10),
+  WIDE_LENS: () => new PokemonMoveAccuracyBoosterModifierType('Wide Lens', 5, 'wide_lens'),
 
   MULTI_LENS: () => new PokemonMultiHitModifierType('Multi Lens', 'zoom_lens'),
 
@@ -1056,6 +1073,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.SHELL_BELL, 3),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 4),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
+    new WeightedModifierType(modifierTypes.WIDE_LENS, 4),
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 8),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),
@@ -1113,6 +1131,7 @@ const trainerModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 2),
     new WeightedModifierType(modifierTypes.LUCKY_EGG, 4),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 1),
+    new WeightedModifierType(modifierTypes.WIDE_LENS, 1),
   ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
   [ModifierTier.MASTER]: [
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 1),

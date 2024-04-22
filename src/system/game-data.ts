@@ -1,8 +1,8 @@
 import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
-import { pokemonPrevolutions } from "../data/pokemon-evolutions";
-import PokemonSpecies, { SpeciesFormKey, allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
-import { Species } from "../data/enums/species";
+import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
+import { Species, defaultStarterSpecies } from "../data/enums/species";
 import * as Utils from "../utils";
 import PokemonData from "./pokemon-data";
 import PersistentModifierData from "./modifier-data";
@@ -27,8 +27,8 @@ import { Moves } from "../data/enums/moves";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
-import { OutdatedPhase, UnavailablePhase } from "#app/phases";
-import { Variant } from "#app/data/variant";
+import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
+import { Variant, variantData } from "#app/data/variant";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
 
@@ -280,6 +280,9 @@ export class GameData {
                 if (error.startsWith('client version out of date')) {
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new OutdatedPhase(this.scene));
+                } else if (error.startsWith('session out of date')) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
                 }
                 console.error(error);
                 return resolve(false);
@@ -339,9 +342,12 @@ export class GameData {
               for (let s of Object.keys(starterEggMoveData))
                 this.starterData[s].eggMoves = starterEggMoveData[s];
             }
+
+            this.migrateStarterAbilities(systemData, this.starterData);
           } else {
             if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion))
               this.migrateStarterAbilities(systemData);
+            this.fixVariantData(systemData);
             // Migrate ability starter data if empty for caught species
             Object.keys(systemData.starterData).forEach(sd => {
               if (systemData.dexData[sd].caughtAttr && !systemData.starterData[sd].abilityAttr)
@@ -548,6 +554,10 @@ export class GameData {
             .then(response => response.text())
             .then(error => {
               if (error) {
+                if (error.startsWith('session out of date')) {
+                  this.scene.clearPhaseQueue();
+                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+                }
                 console.error(error);
                 return resolve(false);
               }
@@ -567,6 +577,8 @@ export class GameData {
 
   getSession(slotId: integer): Promise<SessionSaveData> {
     return new Promise(async (resolve, reject) => {
+      if (slotId < 0)
+        return resolve(null);
       const handleSessionData = async (sessionDataStr: string) => {
         try {
           const sessionData = this.parseSessionData(sessionDataStr);
@@ -710,9 +722,19 @@ export class GameData {
         Utils.apiFetch(`savedata/delete?datatype=${GameDataType.SESSION}&slot=${slotId}`, true).then(response => {
           if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
-            return resolve(true);
+            resolve(true);
           }
-          resolve(false);
+          return response.text();
+        }).then(error => {
+          if (error) {
+            if (error.startsWith('session out of date')) {
+              this.scene.clearPhaseQueue();
+              this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+            }
+            console.error(error);
+            resolve(false);
+          }
+          resolve(true);
         });
       });
     });
@@ -730,12 +752,19 @@ export class GameData {
           return resolve([false, false]);
         const sessionData = this.getSessionSaveData(scene);
         Utils.apiPost(`savedata/clear?slot=${slotId}`, JSON.stringify(sessionData)).then(response => {
-          if (response.ok) {
+          if (response.ok)
             loggedInUser.lastSessionSlot = -1;
-            return response.json();
+          return response.json();
+        }).then(jsonResponse => {
+          if (!jsonResponse.error)
+            return resolve([true, jsonResponse.success as boolean]);
+          if (jsonResponse && jsonResponse.error.startsWith('session out of date')) {
+            this.scene.clearPhaseQueue();
+            this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
           }
+          console.error(jsonResponse);
           resolve([false, false]);
-        }).then(jsonResponse => resolve([true, jsonResponse.success as boolean]));
+        });
       });
     });
   }
@@ -922,30 +951,18 @@ export class GameData {
       };
     }
 
-    const defaultStarters: Species[] = [
-      Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
-      Species.CHIKORITA, Species.CYNDAQUIL, Species.TOTODILE,
-      Species.TREECKO, Species.TORCHIC, Species.MUDKIP,
-      Species.TURTWIG, Species.CHIMCHAR, Species.PIPLUP,
-      Species.SNIVY, Species.TEPIG, Species.OSHAWOTT,
-      Species.CHESPIN, Species.FENNEKIN, Species.FROAKIE,
-      Species.ROWLET, Species.LITTEN, Species.POPPLIO,
-      Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE,
-      Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY
-    ];
-
     const defaultStarterAttr = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.DEFAULT_VARIANT | DexAttr.DEFAULT_FORM;
 
     const defaultStarterNatures: Nature[] = [];
 
     this.scene.executeWithSeedOffset(() => {
       const neutralNatures = [ Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY ];
-      for (let s = 0; s < defaultStarters.length; s++)
+      for (let s = 0; s < defaultStarterSpecies.length; s++)
         defaultStarterNatures.push(Utils.randSeedItem(neutralNatures));
     }, 0, 'default');
 
-    for (let ds = 0; ds < defaultStarters.length; ds++) {
-      let entry = data[defaultStarters[ds]] as DexEntry;
+    for (let ds = 0; ds < defaultStarterSpecies.length; ds++) {
+      let entry = data[defaultStarterSpecies[ds]] as DexEntry;
       entry.seenAttr = defaultStarterAttr;
       entry.caughtAttr = defaultStarterAttr;
       entry.natureAttr = Math.pow(2, defaultStarterNatures[ds] + 1);
@@ -1214,9 +1231,9 @@ export class GameData {
     }
   }
 
-  migrateStarterAbilities(systemData: SystemSaveData): void {
+  migrateStarterAbilities(systemData: SystemSaveData, initialStarterData?: StarterData): void {
     const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
-    const starterData = systemData.starterData;
+    const starterData = initialStarterData || systemData.starterData;
     const dexData = systemData.dexData;
     for (let s of starterIds) {
       const dexAttr = dexData[s].caughtAttr;
@@ -1230,6 +1247,47 @@ export class GameData {
           dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
         if (dexAttr & DexAttr.VARIANT_3)
           dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
+      }
+    }
+  }
+
+  fixVariantData(systemData: SystemSaveData): void {
+    const starterIds = Object.keys(this.starterData).map(s => parseInt(s) as Species);
+    const starterData = systemData.starterData;
+    const dexData = systemData.dexData;
+    if (starterIds.find(id => (dexData[id].caughtAttr & DexAttr.VARIANT_2 || dexData[id].caughtAttr & DexAttr.VARIANT_3) && !variantData[id])) {
+      for (let s of starterIds) {
+        const species = getPokemonSpecies(s);
+        if (variantData[s]) {
+          const tempCaughtAttr = dexData[s].caughtAttr;
+          let seenVariant2 = false;
+          let seenVariant3 = false;
+          let checkEvoSpecies = (es: Species) => {
+            seenVariant2 ||= !!(dexData[es].seenAttr & DexAttr.VARIANT_2);
+            seenVariant3 ||= !!(dexData[es].seenAttr & DexAttr.VARIANT_3);
+            if (pokemonEvolutions.hasOwnProperty(es)) {
+              for (let pe of pokemonEvolutions[es])
+                checkEvoSpecies(pe.speciesId);
+            }
+          };
+          checkEvoSpecies(s);
+          if (dexData[s].caughtAttr & DexAttr.VARIANT_2 && !seenVariant2)
+            dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
+          if (dexData[s].caughtAttr & DexAttr.VARIANT_3 && !seenVariant3)
+            dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
+          starterData[s].abilityAttr = (tempCaughtAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
+            | (tempCaughtAttr & DexAttr.VARIANT_2 && species.ability2 ? AbilityAttr.ABILITY_2 : 0)
+            | (tempCaughtAttr & DexAttr.VARIANT_3 && species.abilityHidden ? AbilityAttr.ABILITY_HIDDEN : 0);
+        } else {
+          const tempCaughtAttr = dexData[s].caughtAttr;
+          if (dexData[s].caughtAttr & DexAttr.VARIANT_2)
+            dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
+          if (dexData[s].caughtAttr & DexAttr.VARIANT_3)
+            dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
+          starterData[s].abilityAttr = (tempCaughtAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
+            | (tempCaughtAttr & DexAttr.VARIANT_2 && species.ability2 ? AbilityAttr.ABILITY_2 : 0)
+            | (tempCaughtAttr & DexAttr.VARIANT_3 && species.abilityHidden ? AbilityAttr.ABILITY_HIDDEN : 0);
+        }
       }
     }
   }

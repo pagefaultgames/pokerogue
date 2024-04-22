@@ -336,10 +336,14 @@ export default class MenuUiHandler extends MessageUiHandler {
         case Button.UP:
           if (this.cursor)
             success = this.setCursor(this.cursor - 1);
+          else
+            success = this.setCursor(this.menuOptions.length - 1);
           break;
         case Button.DOWN:
           if (this.cursor + 1 < this.menuOptions.length)
             success = this.setCursor(this.cursor + 1);
+          else
+            success = this.setCursor(0);
           break;
       }
     }

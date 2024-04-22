@@ -82,7 +82,11 @@ export class EggHatchPhase extends Phase {
       this.eggContainer.add(this.eggLightraysOverlay);
       this.eggHatchContainer.add(this.eggContainer);
 
-      const getPokemonSprite = () => this.scene.add.sprite(this.eggHatchBg.displayWidth / 2, this.eggHatchBg.displayHeight / 2, `pkmn__sub`);
+      const getPokemonSprite = () => {
+        const ret = this.scene.add.sprite(this.eggHatchBg.displayWidth / 2, this.eggHatchBg.displayHeight / 2, `pkmn__sub`);
+        ret.setPipeline(this.scene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], ignoreTimeTint: true });
+        return ret;
+      };
 
       this.eggHatchContainer.add((this.pokemonSprite = getPokemonSprite()));
 
@@ -245,7 +249,10 @@ export class EggHatchPhase extends Phase {
       this.scene.validateAchv(achvs.HATCH_SHINY);
     this.eggContainer.setVisible(false);
     this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
-    this.pokemonSprite.pipelineData['ignoreTimeTint'] = true;
+    this.pokemonSprite.setPipelineData('ignoreTimeTint', true);
+    this.pokemonSprite.setPipelineData('spriteKey', this.pokemon.getSpriteKey());
+    this.pokemonSprite.setPipelineData('shiny', this.pokemon.shiny);
+    this.pokemonSprite.setPipelineData('variant', this.pokemon.variant);
     this.pokemonSprite.setVisible(true);
     this.scene.time.delayedCall(Utils.fixedInt(250), () => {
       this.pokemon.cry();
