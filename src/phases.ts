@@ -2,7 +2,7 @@ import BattleScene, { STARTER_FORM_OVERRIDE, STARTER_SPECIES_OVERRIDE, bypassLog
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, FixedDamageAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, FixedDamageAttr, OneHitKOAccuracyAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -30,20 +30,20 @@ import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, get
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { CheckTrappedAbAttr, MoveAbilityBypassAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr } from "./data/ability";
+import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
 import { BattleSpec } from "./enums/battle-spec";
 import { Species } from "./data/enums/species";
-import { HealAchv, LevelAchv, MoneyAchv, achvs } from "./system/achv";
+import { HealAchv, LevelAchv, achvs } from "./system/achv";
 import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
 import { TrainerType } from "./data/enums/trainer-type";
 import { EggHatchPhase } from "./egg-hatch-phase";
 import { Egg } from "./data/egg";
 import { vouchers } from "./system/voucher";
 import { loggedInUser, updateUserInfo } from "./account";
-import { DexAttr, PlayerGender, SessionSaveData } from "./system/game-data";
+import { PlayerGender, SessionSaveData } from "./system/game-data";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
 import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
 import { battleSpecDialogue, getCharVariantFromDialogue } from "./data/dialogue";
@@ -2295,6 +2295,7 @@ export class MovePhase extends BattlePhase {
           this.cancelled = activated;
           break;
       }
+      
       if (activated) {
         this.scene.queueMessage(getPokemonMessage(this.pokemon, getStatusEffectActivationText(this.pokemon.status.effect)));
         this.scene.unshiftPhase(new CommonAnimPhase(this.scene, this.pokemon.getBattlerIndex(), undefined, CommonAnim.POISON + (this.pokemon.status.effect - 1)));
@@ -2317,6 +2318,7 @@ export class MovePhase extends BattlePhase {
 
   showMoveText(): void {
     if (this.move.getMove().getAttrs(ChargeAttr).length) {
+      this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
       const lastMove = this.pokemon.getLastXMoves() as TurnMove[];
       if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER)
         return;
@@ -2512,12 +2514,15 @@ export class MoveEffectPhase extends PokemonPhase {
     if (moveAccuracy.value === -1)
       return true;
 
-    user.scene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
+    const isOhko = !!this.move.getMove().getAttrs(OneHitKOAccuracyAttr).length;
+
+    if (!isOhko)
+      user.scene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
 
     if (this.scene.arena.weather?.weatherType === WeatherType.FOG)
       moveAccuracy.value = Math.floor(moveAccuracy.value * 0.9);
 
-    if (!this.move.getMove().getAttrs(OneHitKOAttr).length && this.scene.arena.getTag(ArenaTagType.GRAVITY))
+    if (!isOhko && this.scene.arena.getTag(ArenaTagType.GRAVITY))
       moveAccuracy.value = Math.floor(moveAccuracy.value * 1.67);
       
     const userAccuracyLevel = new Utils.IntegerHolder(user.summonData.battleStats[BattleStat.ACC]);
@@ -3312,10 +3317,7 @@ export class MoneyRewardPhase extends BattlePhase {
 
     this.scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
-    this.scene.money += moneyAmount.value;
-    this.scene.updateMoneyText();
-
-    this.scene.validateAchvs(MoneyAchv);
+    this.scene.addMoney(moneyAmount.value);
 
     this.scene.ui.showText(`You got ₽${moneyAmount.value.toLocaleString('en-US')}\nfor winning!`, null, () => this.end(), null, true);
   }
@@ -3797,11 +3799,15 @@ export class PokemonHealPhase extends CommonAnimPhase {
     const hasMessage = !!this.message;
     let lastStatusEffect = StatusEffect.NONE;
 
-    if (!fullHp) {
+    if (!fullHp || this.hpHealed < 0) {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       if (!this.revive)
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
+      if (healAmount.value < 0) {
+        pokemon.damageAndUpdate(healAmount.value * -1, HitResult.HEAL);
+        healAmount.value = 0;
+      }
       // Prevent healing to full if specified (in case of healing tokens so Sturdy doesn't cause a softlock)
       if (this.preventFullHeal && pokemon.hp + healAmount.value >= pokemon.getMaxHp())
         healAmount.value = (pokemon.getMaxHp() - pokemon.hp) - 1;
