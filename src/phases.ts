@@ -702,7 +702,7 @@ export class EncounterPhase extends BattlePhase {
       }
 
       if (!this.loaded)
-        this.scene.gameData.setPokemonSeen(enemyPokemon);
+        this.scene.gameData.setPokemonSeen(enemyPokemon, true, battle.battleType === BattleType.TRAINER);
 
       if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
         if (this.scene.gameMode.isClassic && (battle.battleSpec === BattleSpec.FINAL_BOSS || this.scene.gameMode.isWaveFinal(battle.waveIndex))) {

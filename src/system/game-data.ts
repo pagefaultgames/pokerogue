@@ -993,13 +993,13 @@ export class GameData {
     this.starterData = starterData;
   }
 
-  setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true): void {
+  setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true, trainer: boolean = false): void {
     const dexEntry = this.dexData[pokemon.species.speciesId];
     dexEntry.seenAttr |= pokemon.getDexAttr();
     if (incrementCount) {
       dexEntry.seenCount++;
       this.gameStats.pokemonSeen++;
-      if (pokemon.isShiny())
+      if (!trainer && pokemon.isShiny())
         this.gameStats.shinyPokemonSeen++;
     }
   }
