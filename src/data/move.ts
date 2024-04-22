@@ -4287,7 +4287,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new SelfStatusMove(Moves.BATON_PASS, Type.NORMAL, -1, 40, -1, 0, 2)
       .attr(ForceSwitchOutAttr, true, true)
-      .hidesUser(),
+      .hidesUser()
+      .partial(),
     new StatusMove(Moves.ENCORE, Type.NORMAL, 100, 5, -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
       .condition((user, target, move) => new EncoreTag(user.id).canAdd(target)),
