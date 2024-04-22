@@ -2249,7 +2249,10 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
 
 export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const currentTerrain = user.scene.arena.getTerrainType()
+    if(user.isGrounded)
+      return false;
+
+    const currentTerrain = user.scene.arena.getTerrainType();
     const type = (args[0] as Utils.IntegerHolder);
 
     switch (currentTerrain) {
