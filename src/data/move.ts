@@ -1,6 +1,6 @@
 import { Moves } from "./enums/moves";
 import { ChargeAnim, MoveChargeAnim, initMoveAnim, loadMoveAnimAssets } from "./battle-anims";
-import { BattleEndPhase, MovePhase, NewBattlePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
+import { BattleEndPhase, MovePhase, NewBattlePhase, PartyEffectPhase, PartyStatusCurePhase, PokemonHealPhase, StatChangePhase, SwitchSummonPhase } from "../phases";
 import { BattleStat, getBattleStatName } from "./battle-stat";
 import { EncoreTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
@@ -50,7 +50,8 @@ export enum MoveTarget {
   ALL,
   USER_SIDE,
   ENEMY_SIDE,
-  BOTH_SIDES
+  BOTH_SIDES,
+  PARTY
 }
 
 export enum MoveFlags {
@@ -764,20 +765,26 @@ export class HealAttr extends MoveEffectAttr {
 
 export class StatusCureAttr extends MoveEffectAttr {
   private message: string;
+  private abilityCondition: Abilities;
 
-  constructor(message: string) {
+  constructor(message: string, abilityCondition: Abilities) {
     super();
 
     this.message = message;
+    this.abilityCondition = abilityCondition;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args))
       return false;
+
+    if (move.moveTarget === MoveTarget.PARTY) {
+      this.addCurePhase(user);
+    }
   }
 
-  addHealPhase(target: Pokemon, healRatio: number) {
-    target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(), 0, this.message, true, false));
+  addCurePhase(user: Pokemon) {
+    user.scene.unshiftPhase(new PartyStatusCurePhase(user.scene, user, this.message, this.abilityCondition));
   }
 }
 
@@ -3618,6 +3625,7 @@ export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
 
   switch (moveTarget) {
     case MoveTarget.USER:
+    case MoveTarget.PARTY:
       set = [ user];
       break;
     case MoveTarget.NEAR_OTHER:
@@ -4238,9 +4246,9 @@ export function initMoves() {
       .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
       .ignoresVirtual(),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
-      .attr(StatusCureAttr, "A bell chimed!")
+      .attr(StatusCureAttr, "A bell chimed!", Abilities.SOUNDPROOF)
       .soundBased()
-      .target(MoveTarget.BOTH_SIDES),
+      .target(MoveTarget.PARTY),
     new AttackMove(Moves.RETURN, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 2)
       .attr(FriendshipPowerAttr),
     new AttackMove(Moves.PRESENT, Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, -1, 0, 2)
@@ -4509,8 +4517,8 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1)
       .ballBombMove(),
     new StatusMove(Moves.AROMATHERAPY, Type.GRASS, -1, 5, -1, 0, 3)
-      .target(MoveTarget.USER_AND_ALLIES)
-      .unimplemented(),
+      .attr(StatusCureAttr, "A soothing aroma wafted through the area!", Abilities.SAP_SIPPER)
+      .target(MoveTarget.PARTY),
     new StatusMove(Moves.FAKE_TEARS, Type.DARK, 100, 20, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2),
     new AttackMove(Moves.AIR_CUTTER, Type.FLYING, MoveCategory.SPECIAL, 60, 95, 25, -1, 0, 3)
