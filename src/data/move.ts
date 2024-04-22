@@ -69,7 +69,8 @@ export enum MoveFlags {
   DANCE_MOVE = 4096,
   WIND_MOVE = 8192,
   TRIAGE_MOVE = 16384,
-  IGNORE_ABILITIES = 32768
+  IGNORE_ABILITIES = 32768,
+  OHKO_Move = 65536
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -231,6 +232,11 @@ export default class Move implements Localizable {
 
   ignoresVirtual(ignoresVirtual?: boolean): this {
     this.setFlag(MoveFlags.IGNORE_VIRTUAL, ignoresVirtual);
+    return this;
+  }
+
+  OHKOMove(ohko?: boolean): this {
+    this.setFlag(MoveFlags.OHKO_Move, ohko);
     return this;
   }
 
@@ -3709,7 +3715,8 @@ export function initMoves() {
     new AttackMove(Moves.VISE_GRIP, Type.NORMAL, MoveCategory.PHYSICAL, 55, 100, 30, -1, 0, 1),
     new AttackMove(Moves.GUILLOTINE, Type.NORMAL, MoveCategory.PHYSICAL, 200, 30, 5, -1, 0, 1)
       .attr(OneHitKOAttr)
-      .attr(OneHitKOAccuracyAttr),
+      .attr(OneHitKOAccuracyAttr)
+      .OHKOMove(),
     new AttackMove(Moves.RAZOR_WIND, Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 1)
       .attr(ChargeAttr, ChargeAnim.RAZOR_WIND_CHARGING, 'whipped\nup a whirlwind!')
       .attr(HighCritAttr)
@@ -3758,7 +3765,8 @@ export function initMoves() {
       .attr(MultiHitAttr),
     new AttackMove(Moves.HORN_DRILL, Type.NORMAL, MoveCategory.PHYSICAL, 200, 30, 5, -1, 0, 1)
       .attr(OneHitKOAttr)
-      .attr(OneHitKOAccuracyAttr),
+      .attr(OneHitKOAccuracyAttr)
+      .OHKOMove(),
     new AttackMove(Moves.TACKLE, Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
     new AttackMove(Moves.BODY_SLAM, Type.NORMAL, MoveCategory.PHYSICAL, 85, 100, 15, 30, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
@@ -3914,7 +3922,8 @@ export function initMoves() {
       .attr(OneHitKOAttr)
       .attr(OneHitKOAccuracyAttr)
       .attr(HitsTagAttr, BattlerTagType.UNDERGROUND, false)
-      .makesContact(false),
+      .makesContact(false)
+      .OHKOMove(),
     new AttackMove(Moves.DIG, Type.GROUND, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 1)
       .attr(ChargeAttr, ChargeAnim.DIG_CHARGING, 'dug a hole!', BattlerTagType.UNDERGROUND)
       .ignoresVirtual(),
@@ -4575,7 +4584,8 @@ export function initMoves() {
       .makesContact(false),
     new AttackMove(Moves.SHEER_COLD, Type.ICE, MoveCategory.SPECIAL, 200, 30, 5, -1, 0, 3)
       .attr(OneHitKOAttr)
-      .attr(OneHitKOAccuracyAttr),
+      .attr(OneHitKOAccuracyAttr)
+      .OHKOMove(),
     new AttackMove(Moves.MUDDY_WATER, Type.WATER, MoveCategory.SPECIAL, 90, 85, 10, 30, 0, 3)
       .attr(StatChangeAttr, BattleStat.ACC, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -4757,6 +4767,10 @@ export function initMoves() {
     new SelfStatusMove(Moves.AQUA_RING, Type.WATER, -1, 20, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.AQUA_RING, true, true),
     new SelfStatusMove(Moves.MAGNET_RISE, Type.ELECTRIC, -1, 10, -1, 0, 4)
+      .attr(AddBattlerTagAttr, BattlerTagType.MAGNET_RISEN, true, true)
+      .condition((user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY) && 
+      !user.getTag(BattlerTagType.IGNORE_FLYING) && !user.getTag(BattlerTagType.INGRAIN) &&
+      !user.getTag(BattlerTagType.MAGNET_RISEN))
       .unimplemented(),
     new AttackMove(Moves.FLARE_BLITZ, Type.FIRE, MoveCategory.PHYSICAL, 120, 100, 15, 10, 0, 4)
       .attr(RecoilAttr, false, 0.33)
