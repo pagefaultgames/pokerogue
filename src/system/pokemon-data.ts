@@ -10,6 +10,7 @@ import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "../data/trainer-config";
 import { Moves } from "../data/enums/moves";
+import { Variant } from "#app/data/variant";
 
 export default class PokemonData {
   public id: integer;
@@ -19,7 +20,7 @@ export default class PokemonData {
   public abilityIndex: integer;
   public passive: boolean;
   public shiny: boolean;
-  public variant: integer;
+  public variant: Variant;
   public pokeball: PokeballType;
   public level: integer;
   public exp: integer;
@@ -42,6 +43,7 @@ export default class PokemonData {
   public fusionFormIndex: integer;
   public fusionAbilityIndex: integer;
   public fusionShiny: boolean;
+  public fusionVariant: Variant;
   public fusionGender: Gender;
 
   public boss: boolean;
@@ -81,6 +83,7 @@ export default class PokemonData {
     this.fusionFormIndex = source.fusionFormIndex;
     this.fusionAbilityIndex = source.fusionAbilityIndex;
     this.fusionShiny = source.fusionShiny;
+    this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
 
     if (!forHistory)
@@ -115,7 +118,7 @@ export default class PokemonData {
   toPokemon(scene: BattleScene, battleType?: BattleType, partyMemberIndex: integer = 0, double: boolean = false): Pokemon {
     const species = getPokemonSpecies(this.species);
     const ret: Pokemon = this.player
-      ? scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature, this)
+      ? scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this)
       : scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
     if (this.summonData)
       ret.primeSummonData(this.summonData);

@@ -1082,3 +1082,15 @@ export enum Species {
   PALDEA_WOOPER = 8194,
   BLOODMOON_URSALUNA = 8901,
 };
+
+export const defaultStarterSpecies: Species[] = [
+  Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE,
+  Species.CHIKORITA, Species.CYNDAQUIL, Species.TOTODILE,
+  Species.TREECKO, Species.TORCHIC, Species.MUDKIP,
+  Species.TURTWIG, Species.CHIMCHAR, Species.PIPLUP,
+  Species.SNIVY, Species.TEPIG, Species.OSHAWOTT,
+  Species.CHESPIN, Species.FENNEKIN, Species.FROAKIE,
+  Species.ROWLET, Species.LITTEN, Species.POPPLIO,
+  Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE,
+  Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY
+];

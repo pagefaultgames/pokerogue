@@ -1,4 +1,6 @@
-export const menu = {
+import { SimpleTranslationEntries } from "#app/plugins/i18n";
+
+export const menu: SimpleTranslationEntries = {
     "cancel": "Annulla",
     "continue": "Continua",
     "newGame": "Nuova Partita",

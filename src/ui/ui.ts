@@ -11,7 +11,6 @@ import BallUiHandler from './ball-ui-handler';
 import SummaryUiHandler from './summary-ui-handler';
 import StarterSelectUiHandler from './starter-select-ui-handler';
 import EvolutionSceneHandler from './evolution-scene-handler';
-import BiomeSelectUiHandler from './biome-select-ui-handler';
 import TargetSelectUiHandler from './target-select-ui-handler';
 import SettingsUiHandler from './settings-ui-handler';
 import { TextStyle, addTextObject } from './text';
@@ -34,6 +33,8 @@ import SaveSlotSelectUiHandler from './save-slot-select-ui-handler';
 import TitleUiHandler from './title-ui-handler';
 import SavingIconHandler from './saving-icon-handler';
 import UnavailableModalUiHandler from './unavailable-modal-ui-handler';
+import OutdatedModalUiHandler from './outdated-modal-ui-handler';
+import SessionReloadModalUiHandler from './session-reload-modal-ui-handler';
 
 export enum Mode {
   MESSAGE,
@@ -46,7 +47,6 @@ export enum Mode {
   SAVE_SLOT,
   PARTY,
   SUMMARY,
-  BIOME_SELECT,
   STARTER_SELECT,
   EVOLUTION_SCENE,
   EGG_HATCH_SCENE,
@@ -63,7 +63,9 @@ export enum Mode {
   LOGIN_FORM,
   REGISTRATION_FORM,
   LOADING,
-  UNAVAILABLE
+  SESSION_RELOAD,
+  UNAVAILABLE,
+  OUTDATED
 };
 
 const transitionModes = [
@@ -90,7 +92,9 @@ const noTransitionModes = [
   Mode.LOGIN_FORM,
   Mode.REGISTRATION_FORM,
   Mode.LOADING,
-  Mode.UNAVAILABLE
+  Mode.SESSION_RELOAD,
+  Mode.UNAVAILABLE,
+  Mode.OUTDATED
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -124,7 +128,6 @@ export default class UI extends Phaser.GameObjects.Container {
       new SaveSlotSelectUiHandler(scene),
       new PartyUiHandler(scene),
       new SummaryUiHandler(scene),
-      new BiomeSelectUiHandler(scene),
       new StarterSelectUiHandler(scene),
       new EvolutionSceneHandler(scene),
       new EggHatchSceneHandler(scene),
@@ -141,7 +144,9 @@ export default class UI extends Phaser.GameObjects.Container {
       new LoginFormUiHandler(scene),
       new RegistrationFormUiHandler(scene),
       new LoadingModalUiHandler(scene),
-      new UnavailableModalUiHandler(scene)
+      new SessionReloadModalUiHandler(scene),
+      new UnavailableModalUiHandler(scene),
+      new OutdatedModalUiHandler(scene)
     ];
   }
 

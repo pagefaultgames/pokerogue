@@ -56,7 +56,8 @@ export const trainerTypeDialogue = {
         `I'll show you the ropes of how to really use Pokémon!`,
         `A serious battle starts from a serious beginning! Are you sure you're ready?`,
         `You're only young once. And you only get one shot at a given battle. Soon, you'll be nothing but a memory.`,
-        `You'd better go easy on me, OK? Though I'll be seriously fighting!`
+        `You'd better go easy on me, OK? Though I'll be seriously fighting!`,
+        `School is boring. I've got nothing to do. Yawn. I'm only battling to kill the time.`
       ],
       victory: [
         `That was impressive! I've got a lot to learn.`,
@@ -66,7 +67,8 @@ export const trainerTypeDialogue = {
         `You actually taught me a lesson! You're pretty amazing!`,
         `Seriously, I lost. That is, like, seriously depressing, but you were seriously cool.`,
         `I don't need memories like this. Deleting memory…`,
-        `Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.`
+        `Hey! I told you to go easy on me! Still, you're pretty cool when you're serious.`,
+        `I'm actually getting tired of battling… There's gotta be something new to do…`
       ]
     }
   ],
@@ -78,9 +80,14 @@ export const trainerTypeDialogue = {
         `Hmm, do you discipline your Pokémon? Pampering them too much is no good.`,
       ],
       victory: [
-        `I am happy! Happy, I tell you! Don't look at me like that!`,
-        `You don't seem to need any tips for training good Pokémon.`,
-        `The hardest part of this job is saying farewell to Pokémon.`,
+        `It is important to nurture and train each Pokémon's characteristics.`,
+        `Unlike my diabolical self, these are some good Pokémon.`,
+        `Too much praise can spoil both Pokémon and people.`,
+      ],
+      defeat:[
+        `You should not get angry at your Pokémon, even if you lose a battle.`,
+        `Right? Pretty good Pokémon, huh? I'm suited to raising things.`,
+        `No matter how much you love your Pokémon, you still have to discipline them when they misbehave.`
       ]
     },
     {
@@ -93,6 +100,11 @@ export const trainerTypeDialogue = {
         `Ugh… It wasn't supposed to be like this. Did I administer the wrong blend?`,
         `How could that happen to my Pokémon… What are you feeding your Pokémon?`,
         `If I lose, that tells you I was just killing time. It doesn't damage my ego at all.`
+      ],
+      defeat: [
+        `This proves my Pokémon have accepted my love.`,
+        `The real trick behind training good Pokémon is catching good Pokémon.`,
+        `Pokémon will be strong or weak depending on how you raise them.`
       ]
     }
   ],
@@ -165,6 +177,12 @@ export const trainerTypeDialogue = {
         `What?! But I'm a battling genius!`,
         `Of course, you are the main character!`,
         `OK! OK! You could be an Ace Trainer!`
+      ],
+      defeat: [
+        `I am devoting my body and soul to Pokémon battles!`,
+        `All within my expectations… Nothing to be surprised about…`,
+        `I thought I'd grow up to be a frail person who looked like they would break if you squeezed them too hard.`,
+        `Of course I'm strong and don't lose. It's important that I win gracefully.`
       ]
     }
   ],
@@ -189,7 +207,12 @@ export const trainerTypeDialogue = {
         `We may have lost this round, but our bond remains unbreakable!`,
         `Our twin spirit won't be dimmed for long.`,
         `We'll come back stronger as a dynamic duo!`
-      ]
+      ],
+      defeat: [
+        `Twin power reigns supreme!`,
+        `Two hearts, one triumph!`,
+        `Double the smiles, double the victory dance!`
+      ],
     }
   ],
   [TrainerType.CYCLIST]: [
@@ -248,6 +271,10 @@ export const trainerTypeDialogue = {
       victory: [
         `It doesn't matter to the vastness of nature whether I win or lose…`,
         `Something like this is pretty trivial compared to the stifling feelings of city life.`
+      ],
+      defeat: [
+        `I won the battle. But victory is nothing compared to the vastness of nature…`,
+        `I'm sure how you feel is not so bad if you compare it to my anxiety attacks…`
       ]
     }
   ],
@@ -296,23 +323,46 @@ export const trainerTypeDialogue = {
   [TrainerType.WORKER]: [
     {
       encounter: [
-        `I'll show you we can break you. We've been training in the field!`,
+        `It bothers me that people always misunderstand me. I'm a lot more pure than everyone thinks.`
+      ],
+      victory: [
+        `I really don't want my skin to burn, so I want to stay in the shade while I work.`,
+      ]
+    },
+    {
+      encounter: [
         `It bothers me that people always misunderstand me. 
         $I'm a lot more pure than everyone thinks.`
       ],
       victory: [
-        `How strange… How could this be… I shouldn't have been outmuscled.`,
         `I really don't want my skin to burn, so I want to stay in the shade while I work.`
+      ],
+      defeat: [
+        `My body and mind aren't necessarily always in sync.`
       ]
-    }
+    },
+    {
+      encounter: [
+        `I'll show you we can break you. We've been training in the field!`
+      ],
+      victory: [
+        `How strange… How could this be… I shouldn't have been outmuscled.`,
+      ]
+    },
   ],
   [TrainerType.HEX_MANIAC]: [
     {
       encounter: [
         `I normally only ever listen to classical music, but if I lose, I think I shall try a bit of new age!`,
+        `I grow stronger with each tear I cry.`
       ],
       victory: [
         `Is this the dawning of the age of Aquarius?`,
+        `Now I can get even stronger. I grow with every grudge.`
+      ],
+      defeat: [
+        `New age simply refers to twentieth century classical composers, right?`,
+        `Don't get hung up on sadness or frustration. You can use your grudges to motivate yourself.`
       ]
     }
   ],
@@ -335,6 +385,36 @@ export const trainerTypeDialogue = {
       victory: [
         `The weight of justice feels heavier than ever…`,
         `The shadows of defeat linger in the precinct.`
+      ]
+    }
+  ],
+  [TrainerType.BEAUTY]: [
+    {
+      encounter: [
+        `My last ever battle… That's the way I'd like us to view this match…`
+      ],
+      victory: [
+        `It's been fun… Let's have another last battle again someday…`
+      ]
+    }
+  ],
+  [TrainerType.BAKER]: [
+    {
+      encounter: [
+        `Hope you're ready to taste defeat!`
+      ],
+      victory: [
+        `I'll bake a comeback.`
+      ]
+    }
+  ],
+  [TrainerType.BIKER]: [
+    {
+      encounter: [
+        `Time to rev up and leave you in the dust!`
+      ],
+      victory: [
+        `I'll tune up for the next race.`
       ]
     }
   ],
@@ -393,17 +473,20 @@ export const trainerTypeDialogue = {
     encounter: [
       `Ah, the weather is lovely here…\nOh, a battle? Very well then.`,
       `My Pokémon battling skills rival that of my flower arranging skills.`,
-      `Oh, I hope the pleasant aroma of my Pokémon doesn't put me to sleep again…`
+      `Oh, I hope the pleasant aroma of my Pokémon doesn't put me to sleep again…`,
+      `Seeing flowers in a garden is so soothing.`
     ],
     victory: [
       `Oh! I concede defeat.`,
       `That match was most delightful.`,
-      `Ah, it appears it is my loss…`
+      `Ah, it appears it is my loss…`,
+      `Oh, my goodness.`
     ],
     defeat: [
       `I was afraid I would doze off…`,
       `Oh my, it seems my Grass Pokémon overwhelmed you.`,
-      `That battle was such a soothing experience.`
+      `That battle was such a soothing experience.`,
+      `Oh… Is that all?`
     ]
   },
   [TrainerType.JANINE]: {
@@ -1723,12 +1806,17 @@ export const trainerTypeDialogue = {
     encounter: [
       `M'hm… If I win this battle, I feel like I can draw a picture unlike any before it. 
       $OK! I can hear my battle muse loud and clear. Let's get straight to it!`,
+      `Of course, I'm really proud of all of my Pokémon! 
+      $Well now… Let's get right to it!`
     ],
     victory: [
       `Is it over? Has my muse abandoned me?`,
+      `Hmm… It's over! You're incredible!`
     ],
     defeat: [
       `Wow… It's beautiful somehow, isn't it…`,
+      `Sometimes I hear people say something was an ugly win. 
+      $I think if you're trying your best, any win is beautiful.`
     ]
   },
   [TrainerType.ELESA]: {
@@ -2043,6 +2131,9 @@ export const trainerTypeDialogue = {
         $@c{smile_wave}I also got you another one of these!\n@c{smile_wave_wink}No need to thank me~.
         $@c{angry_mopen}This is the last one, though! You won't be getting anymore freebies from me after this!
         $@c{smile_wave}Keep at it!`
+      ],
+      defeat: [
+        `It's OK to lose sometimes…`
       ]
     }
   ],
@@ -2069,6 +2160,9 @@ export const trainerTypeDialogue = {
       ],
       victory: [
         `@c{shock}After all that… it wasn't enough…?\nYou'll never come back at this rate…`
+      ],
+      defeat: [
+        `You gave it your best, now let's go home.`
       ]
     }
   ],
@@ -2101,6 +2195,9 @@ export const trainerTypeDialogue = {
       ],
       victory: [
         `@c{neutral}What…@d{64} What are you?`
+      ],
+      defeat: [
+        `$@c{smile}You should be proud of how far you made it.`
       ]
     }
   ],
@@ -2119,6 +2216,11 @@ export const trainerTypeDialogue = {
       ],
       victory: [
         `@c{neutral}…`
+      ]
+    },
+    {
+      defeat: [
+        `$@c{smile_ehalf}…`
       ]
     }
   ],

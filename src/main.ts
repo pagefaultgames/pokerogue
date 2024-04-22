@@ -44,6 +44,7 @@ const config: Phaser.Types.Core.GameConfig = {
 		touch: {
 			target: 'app'
 		},
+		gamepad: true
 	},
 	dom: {
 		createContainer: true

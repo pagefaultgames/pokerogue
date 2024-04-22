@@ -1,13 +1,17 @@
+import i18next from "i18next";
 import BattleScene from "../battle-scene";
 import { hasTouchscreen } from "../touch-controls";
 import { updateWindowType } from "../ui/ui-theme";
 import { PlayerGender } from "./game-data";
+import { Mode } from "#app/ui/ui";
+import SettingsUiHandler from "#app/ui/settings-ui-handler";
 
 export enum Setting {
   Game_Speed = "GAME_SPEED",
   Master_Volume = "MASTER_VOLUME",
   BGM_Volume = "BGM_VOLUME",
   SE_Volume = "SE_VOLUME",
+  Language = "LANGUAGE",
   Damage_Numbers = "DAMAGE_NUMBERS",
   UI_Theme = "UI_THEME",
   Window_Type = "WINDOW_TYPE",
@@ -16,9 +20,11 @@ export enum Setting {
   Sprite_Set = "SPRITE_SET",
   Move_Animations = "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
+  EXP_Gains_Speed = "EXP_GAINS_SPEED",
   HP_Bar_Speed = "HP_BAR_SPEED",
   Fusion_Palette_Swaps = "FUSION_PALETTE_SWAPS",
   Player_Gender = "PLAYER_GENDER",
+  Gamepad_Support = "GAMEPAD_SUPPORT",
   Touch_Controls = "TOUCH_CONTROLS",
   Vibration = "VIBRATION"
 }
@@ -36,6 +42,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Master_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.BGM_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.SE_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
+  [Setting.Language]: [ 'English', 'Change' ],
   [Setting.Damage_Numbers]: [ 'Off', 'Simple', 'Fancy' ],
   [Setting.UI_Theme]: [ 'Default', 'Legacy' ],
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
@@ -44,9 +51,11 @@ export const settingOptions: SettingOptions = {
   [Setting.Sprite_Set]: [ 'Consistent', 'Prioritize Animation' ],
   [Setting.Move_Animations]: [ 'Off', 'On' ],
   [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ],
+  [Setting.EXP_Gains_Speed]: [ 'Normal', 'Fast', 'Faster', 'Skip' ],
   [Setting.HP_Bar_Speed]: [ 'Normal', 'Fast', 'Faster', 'Instant' ],
   [Setting.Fusion_Palette_Swaps]: [ 'Off', 'On' ],
   [Setting.Player_Gender]: [ 'Boy', 'Girl' ],
+  [Setting.Gamepad_Support]: [ 'Auto', 'Disabled' ],
   [Setting.Touch_Controls]: [ 'Auto', 'Disabled' ],
   [Setting.Vibration]: [ 'Auto', 'Disabled' ]
 };
@@ -56,6 +65,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Master_Volume]: 5,
   [Setting.BGM_Volume]: 10,
   [Setting.SE_Volume]: 10,
+  [Setting.Language]: 0,
   [Setting.Damage_Numbers]: 0,
   [Setting.UI_Theme]: 0,
   [Setting.Window_Type]: 0,
@@ -64,14 +74,16 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Sprite_Set]: 0,
   [Setting.Move_Animations]: 1,
   [Setting.Show_Stats_on_Level_Up]: 1,
+  [Setting.EXP_Gains_Speed]: 0,
   [Setting.HP_Bar_Speed]: 0,
   [Setting.Fusion_Palette_Swaps]: 1,
   [Setting.Player_Gender]: 0,
+  [Setting.Gamepad_Support]: 0,
   [Setting.Touch_Controls]: 0,
   [Setting.Vibration]: 0
 };
 
-export const reloadSettings: Setting[] = [ Setting.UI_Theme ];
+export const reloadSettings: Setting[] = [ Setting.UI_Theme, Setting.Language ];
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
   switch (setting) {
@@ -116,6 +128,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     case Setting.Show_Stats_on_Level_Up:
       scene.showLevelUpStats = settingOptions[setting][value] === 'On';
       break;
+    case Setting.EXP_Gains_Speed:
+      scene.expGainsSpeed = value;
+      break;
     case Setting.HP_Bar_Speed:
       scene.hpBarSpeed = value;
       break;
@@ -130,6 +145,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       } else
         return false;
       break;
+    case Setting.Gamepad_Support:
+      scene.gamepadSupport = settingOptions[setting][value] !== 'Disabled';
+      break;
     case Setting.Touch_Controls:
       scene.enableTouchControls = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
       const touchControls = document.getElementById('touchControls');
@@ -138,6 +156,39 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       break;
     case Setting.Vibration:
       scene.enableVibration = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
+      break;
+    case Setting.Language:
+      if (value) {
+        if (scene.ui) {
+          const cancelHandler = () => {
+            scene.ui.revertMode();
+            (scene.ui.getHandler() as SettingsUiHandler).setOptionCursor(Object.values(Setting).indexOf(Setting.Language), 0, true);
+          };
+          const changeLocaleHandler = (locale: string) => {
+            i18next.changeLanguage(locale);
+            localStorage.setItem('prLang', locale);
+            cancelHandler();
+            scene.reset(true, false, true);
+          };
+          scene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+            options: [
+              {
+                label: 'English',
+                handler: () => changeLocaleHandler('en')
+              },
+              {
+                label: 'French',
+                handler: () => changeLocaleHandler('fr')
+              },
+              {
+                label: 'Cancel',
+                handler: () => cancelHandler()
+              }
+            ]
+          });
+          return false;
+        }
+      }
       break;
   }
 

@@ -15,6 +15,7 @@ import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim
 import { pokemonEvolutions } from "../data/pokemon-evolutions";
 import { addWindow } from "./ui-theme";
 import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
+import { getVariantTint } from "#app/data/variant";
 
 const defaultMessage = 'Choose a Pokémon.';
 
@@ -899,9 +900,10 @@ class PartySlot extends Phaser.GameObjects.Container {
     }
 
     if (this.pokemon.isShiny()) {
-      const shinyStar = this.scene.add.image(0, 0, 'shiny_star');
+      const shinyStar = this.scene.add.image(0, 0, 'shiny_star_small');
       shinyStar.setOrigin(0, 0);
-      shinyStar.setPositionRelative(slotName, -8, 2);
+      shinyStar.setPositionRelative(slotName, -9, 3);
+      shinyStar.setTint(getVariantTint(this.pokemon.getVariant()));
 
       slotInfoContainer.add(shinyStar);
     }

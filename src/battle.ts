@@ -157,10 +157,8 @@ export default class Battle {
         const moneyAmount = new Utils.IntegerHolder(scene.currentBattle.moneyScattered);
         scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
-        scene.money += moneyAmount.value;
-        scene.updateMoneyText();
-    
-        scene.validateAchvs(MoneyAchv);
+        scene.addMoney(moneyAmount.value);
+        
         scene.queueMessage(`You picked up ₽${moneyAmount.value.toLocaleString('en-US')}!`, null, true);
 
         scene.currentBattle.moneyScattered = 0;
@@ -212,6 +210,8 @@ export default class Battle {
     }
 
     randSeedInt(scene: BattleScene, range: integer, min: integer = 0): integer {
+        if (range <= 1)
+            return min;
         let ret: integer;
         const tempRngCounter = scene.rngCounter;
         const tempSeedOverride = scene.rngSeedOverride;

@@ -233,11 +233,15 @@ export function getCookie(cName: string): string {
   return '';
 }
 
-export function apiFetch(path: string): Promise<Response> {
+export function apiFetch(path: string, authed: boolean = false): Promise<Response> {
   return new Promise((resolve, reject) => {
-    const sId = getCookie(sessionIdKey);
-    const headers = sId ? { 'Authorization': sId } : {};
-    fetch(`${apiUrl}/${path}`, { headers: headers })
+    const request = {};
+    if (authed) {
+      const sId = getCookie(sessionIdKey);
+      if (sId)
+        request['headers'] = { 'Authorization': sId };
+    }
+    fetch(`${apiUrl}/${path}`, request)
       .then(response => resolve(response))
       .catch(err => reject(err));
   });
@@ -321,4 +325,8 @@ export function rgbHexToRgba(hex: string) {
       b: parseInt(color[3], 16),
       a: 255
   };
+}
+
+export function rgbaToInt(rgba: integer[]): integer {
+  return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
 }
