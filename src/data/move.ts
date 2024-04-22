@@ -763,7 +763,7 @@ export class HealAttr extends MoveEffectAttr {
   }
 }
 
-export class StatusCureAttr extends MoveEffectAttr {
+export class PartyStatusCureAttr extends MoveEffectAttr {
   private message: string;
   private abilityCondition: Abilities;
 
@@ -778,12 +778,10 @@ export class StatusCureAttr extends MoveEffectAttr {
     if (!super.apply(user, target, move, args))
       return false;
 
-    if (move.moveTarget === MoveTarget.PARTY) {
-      this.addCurePhase(user);
-    }
+    this.addPartyCurePhase(user);
   }
 
-  addCurePhase(user: Pokemon) {
+  addPartyCurePhase(user: Pokemon) {
     user.scene.unshiftPhase(new PartyStatusCurePhase(user.scene, user, this.message, this.abilityCondition));
   }
 }
@@ -4246,7 +4244,7 @@ export function initMoves() {
       .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
       .ignoresVirtual(),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
-      .attr(StatusCureAttr, "A bell chimed!", Abilities.SOUNDPROOF)
+      .attr(PartyStatusCureAttr, "A bell chimed!", Abilities.SOUNDPROOF)
       .soundBased()
       .target(MoveTarget.PARTY),
     new AttackMove(Moves.RETURN, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 2)
@@ -4517,7 +4515,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1)
       .ballBombMove(),
     new StatusMove(Moves.AROMATHERAPY, Type.GRASS, -1, 5, -1, 0, 3)
-      .attr(StatusCureAttr, "A soothing aroma wafted through the area!", Abilities.SAP_SIPPER)
+      .attr(PartyStatusCureAttr, "A soothing aroma wafted through the area!", Abilities.SAP_SIPPER)
       .target(MoveTarget.PARTY),
     new StatusMove(Moves.FAKE_TEARS, Type.DARK, 100, 20, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2),
