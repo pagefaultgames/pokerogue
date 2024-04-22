@@ -15,7 +15,7 @@ import { ArenaTagType } from "./enums/arena-tag-type";
 import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, PreventBerryUseAbAttr, BlockItemTheftAbAttr } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { allAbilities } from './ability';
-import { PokemonHeldItemModifier, BerryModifier } from "../modifier/modifier";
+import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
@@ -1120,9 +1120,14 @@ export class EatBerryAttr extends MoveEffectAttr {
 
     getBerryEffectFunc(this.chosenBerry.berryType)(target);
 
-    if (!--this.chosenBerry.stackCount)
-      target.scene.removeModifier(this.chosenBerry);
-    target.scene.updateModifiers(target.isPlayer());
+    const preserve = new Utils.BooleanHolder(false);
+    target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve);
+
+    if (!preserve.value){
+      if (!--this.chosenBerry.stackCount)
+        target.scene.removeModifier(this.chosenBerry);
+      target.scene.updateModifiers(target.isPlayer());
+}
 
     return true;
   }
