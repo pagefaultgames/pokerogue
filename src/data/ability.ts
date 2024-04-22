@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, allMoves } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, allMoves } from "./move";
 import { ArenaTagSide } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -1593,6 +1593,43 @@ function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
   };
 }
 
+function getAnticipationCondition(): AbAttrCondition {
+  return (pokemon: Pokemon) => {
+    for (let opponent of pokemon.getOpponents()) {
+        for (let move of opponent.moveset) {
+          // move is super effective
+          if (move.getMove() instanceof AttackMove && pokemon.getAttackTypeEffectiveness(move.getMove().type) >= 2) {
+            return true;
+          }
+          // move is a OHKO
+          if (move.getMove().findAttr(attr => attr instanceof OneHitKOAttr)) {
+            return true;
+          }
+          // edge case for hidden power, type is computed
+          if (move.getMove().id === Moves.HIDDEN_POWER) {
+            const iv_val = Math.floor(((opponent.ivs[Stat.HP] & 1)
+              +(opponent.ivs[Stat.ATK] & 1) * 2
+              +(opponent.ivs[Stat.DEF] & 1) * 4
+              +(opponent.ivs[Stat.SPD] & 1) * 8
+              +(opponent.ivs[Stat.SPATK] & 1) * 16
+              +(opponent.ivs[Stat.SPDEF] & 1) * 32) * 15/63);
+            
+            const type = [
+              Type.FIGHTING, Type.FLYING, Type.POISON, Type.GROUND,
+              Type.ROCK, Type.BUG, Type.GHOST, Type.STEEL,
+              Type.FIRE, Type.WATER, Type.GRASS, Type.ELECTRIC,
+              Type.PSYCHIC, Type.ICE, Type.DRAGON, Type.DARK][iv_val];
+
+            if (pokemon.getAttackTypeEffectiveness(type) >= 2) {
+              return true;
+            }
+          }
+        }
+    }
+    return false;
+  };
+}
+
 export class PostWeatherChangeAbAttr extends AbAttr {
   applyPostWeatherChange(pokemon: Pokemon, passive: boolean, weather: WeatherType, args: any[]): boolean {
     return false;
@@ -2619,7 +2656,8 @@ export function initAbilities() {
     new Ability(Abilities.AFTERMATH, "Aftermath", "Damages the attacker if it contacts the Pokémon with a finishing hit.", 4)
       .attr(PostFaintContactDamageAbAttr,4)
       .bypassFaint(),
-    new Ability(Abilities.ANTICIPATION, "Anticipation (N)", "The Pokémon can sense an opposing Pokémon's dangerous moves.", 4),
+    new Ability(Abilities.ANTICIPATION, "Anticipation", "The Pokémon can sense an opposing Pokémon's dangerous moves.", 4)
+      .conditionalAttr(getAnticipationCondition(), PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' shuddered!')),
     new Ability(Abilities.FOREWARN, "Forewarn (N)", "When it enters a battle, the Pokémon can tell one of the moves an opposing Pokémon has.", 4),
     new Ability(Abilities.UNAWARE, "Unaware", "When attacking, the Pokémon ignores the target Pokémon's stat changes.", 4)
       .attr(IgnoreOpponentStatChangesAbAttr)
