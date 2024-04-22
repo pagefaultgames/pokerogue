@@ -5863,8 +5863,10 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .partial(),
     new AttackMove(Moves.MISTY_EXPLOSION, Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 8)
-      .target(MoveTarget.ALL_NEAR_OTHERS)
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1)
+      .attr(SacrificialAttr)
+      .makesContact(false)
+      .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.GRASSY_GLIDE, Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, -1, 0, 8)
       .partial(),
     new AttackMove(Moves.RISING_VOLTAGE, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 8)
