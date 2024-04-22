@@ -3314,10 +3314,7 @@ export class MoneyRewardPhase extends BattlePhase {
 
     this.scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
-    this.scene.money += moneyAmount.value;
-    this.scene.updateMoneyText();
-
-    this.scene.validateAchvs(MoneyAchv);
+    this.scene.addMoney(moneyAmount.value);
 
     this.scene.ui.showText(`You got ₽${moneyAmount.value.toLocaleString('en-US')}\nfor winning!`, null, () => this.end(), null, true);
   }

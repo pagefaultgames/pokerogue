@@ -37,7 +37,7 @@ import SettingsUiHandler from './ui/settings-ui-handler';
 import MessageUiHandler from './ui/message-ui-handler';
 import { Species } from './data/enums/species';
 import InvertPostFX from './pipelines/invert';
-import { Achv, ModifierAchv, achvs } from './system/achv';
+import { Achv, ModifierAchv, MoneyAchv, achvs } from './system/achv';
 import { Voucher, vouchers } from './system/voucher';
 import { Gender } from './data/gender';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
@@ -1678,6 +1678,12 @@ export default class BattleScene extends SceneBase {
 			this.nextCommandPhaseQueue.splice(0, this.nextCommandPhaseQueue.length);
 		}
 		this.phaseQueue.push(new TurnInitPhase(this));
+	}
+
+	addMoney(amount: integer): void {
+		this.money = Math.min(this.money + amount, Number.MAX_SAFE_INTEGER);
+		this.updateMoneyText();
+		this.validateAchvs(MoneyAchv);
 	}
 
 	getWaveMoneyAmount(moneyMultiplier: number): integer {
