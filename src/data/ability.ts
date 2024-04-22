@@ -3074,7 +3074,8 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
-    new Ability(Abilities.QUICK_DRAW, "Quick Draw (N)", "Enables the Pokémon to move first occasionally.", 8),
+    new Ability(Abilities.QUICK_DRAW, "Quick Draw", "Enables the Pokémon to move first occasionally.", 8)
+      .attr(IncrementMovePriorityAbAttr, (pokemon, move) => Math.random() <= 1/3),
     new Ability(Abilities.UNSEEN_FIST, "Unseen Fist (N)", "If the Pokémon uses moves that make direct contact, it can attack the target even if the target protects itself.", 8),
     new Ability(Abilities.CURIOUS_MEDICINE, "Curious Medicine (N)", "When the Pokémon enters a battle, it scatters medicine from its shell, which removes all stat changes from allies.", 8),
     new Ability(Abilities.TRANSISTOR, "Transistor", "Powers up Electric-type moves.", 8)
