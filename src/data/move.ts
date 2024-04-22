@@ -789,6 +789,22 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
   }
 }
 
+export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
+  public weather: WeatherType;
+  constructor(weather: WeatherType){
+    super();
+    this.weather=weather;
+  }
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    (args[0] as Utils.IntegerHolder).value = 1;
+
+    return true;
+  }
+  getCondition(): MoveCondition | MoveConditionFunc {
+      return (user, target, move) => user.scene.arena.weather?.weatherType==this.weather;
+  }
+}
+
 export abstract class WeatherHealAttr extends HealAttr {
   constructor() {
     super(0.5);
@@ -2869,6 +2885,9 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (!player && !user.scene.currentBattle.battleType) {
         if (this.batonPass)
+          return false;
+        //U-turn et al should not switch a wild mon out, but a player's Dragon Tail can
+        if (!(user instanceof PlayerPokemon) && move.category !== MoveCategory.STATUS)
           return false;
         // Don't allow wild opponents to flee on the boss stage since it can ruin a run early on
         if (!(user.scene.currentBattle.waveIndex % 10))
@@ -5439,8 +5458,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.BANEFUL_BUNKER, Type.POISON, -1, 10, -1, 4, 7)
       .attr(ProtectAttr, BattlerTagType.BANEFUL_BUNKER),
     new AttackMove(Moves.SPIRIT_SHACKLE, Type.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 7)
-      .makesContact(false)
-      .partial(),
+      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
+      .makesContact(false),
     new AttackMove(Moves.DARKEST_LARIAT, Type.DARK, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 7)
       .attr(IgnoreOpponentStatChangesAttr),
     new AttackMove(Moves.SPARKLING_ARIA, Type.WATER, MoveCategory.SPECIAL, 90, 100, 10, -1, 0, 7)
@@ -6161,7 +6180,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1)  
       .slicingMove(),
     new AttackMove(Moves.HYDRO_STEAM, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
-      .partial(),
+      .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY),
     new AttackMove(Moves.RUINATION, Type.DARK, MoveCategory.SPECIAL, 1, 90, 10, -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.COLLISION_COURSE, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9)
