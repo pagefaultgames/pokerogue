@@ -2301,6 +2301,14 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
   }
 }
 
+export class FlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const multiplier = args[0] as Utils.NumberHolder;
+    multiplier.value *= target.getAttackTypeEffectiveness(Type.FLYING);
+    return true;
+  }
+}
+
 export class OneHitKOAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const accuracy = args[0] as Utils.NumberHolder;
@@ -5204,7 +5212,8 @@ export function initMoves() {
       .makesContact(false)
       .partial(),
     new AttackMove(Moves.FLYING_PRESS, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, -1, 0, 6)
-      .partial(),
+      .attr(FlyingTypeMultiplierAttr)
+      .condition(failOnGravityCondition),
     new StatusMove(Moves.MAT_BLOCK, Type.FIGHTING, -1, 10, -1, 0, 6)
       .unimplemented(),
     new AttackMove(Moves.BELCH, Type.POISON, MoveCategory.SPECIAL, 120, 90, 10, -1, 0, 6)
