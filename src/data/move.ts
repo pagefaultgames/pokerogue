@@ -834,6 +834,25 @@ export class SandHealAttr extends WeatherHealAttr {
   }
 }
 
+export class BoostHealAttr extends HealAttr {
+  private normalHealRatio?: number;
+  private boostedHealRatio?: number;
+  private condition?: MoveConditionFunc;
+
+  constructor(normalHealRatio?: number, boostedHealRatio?: number, showAnim?: boolean, selfTarget?: boolean, condition?: MoveConditionFunc) {
+    super(normalHealRatio, showAnim, selfTarget);
+    this.normalHealRatio = normalHealRatio;
+    this.boostedHealRatio = boostedHealRatio;
+    this.condition = condition;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const healRatio = this.condition(user, target, move) ? this.boostedHealRatio : this.normalHealRatio;
+    this.addHealPhase(target, healRatio);
+    return true;
+  }
+}
+
 export class HitHealAttr extends MoveEffectAttr {
   private healRatio: number;
 
@@ -5459,9 +5478,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, -1, true)
       .punchingMove(),
     new StatusMove(Moves.FLORAL_HEALING, Type.FAIRY, -1, 10, -1, 0, 7)
-      .attr(HealAttr, 0.5, true, false)
-      .triageMove()
-      .partial(),
+      .attr(BoostHealAttr, 0.5, 2/3, true, false, (user, target, move) => user.scene.arena.terrain?.terrainType === TerrainType.GRASSY)
+      .triageMove(),
     new AttackMove(Moves.HIGH_HORSEPOWER, Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),
     new StatusMove(Moves.STRENGTH_SAP, Type.GRASS, 100, 10, 100, 0, 7)
       .attr(StrengthSapHealAttr)
