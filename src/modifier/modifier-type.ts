@@ -928,8 +928,8 @@ export const modifierTypes = {
   BATON: () => new PokemonHeldItemModifierType('Baton', 'Allows passing along effects when switching Pokémon, which also bypasses traps',
     (type, args) => new Modifiers.SwitchEffectTransferModifier(type, (args[0] as Pokemon).id), 'stick'),
 
-  SHINY_CHARM: () => new ModifierType('Shiny Charm', 'Dramatically increases the chance of a wild Pokémon being Shiny.', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
-  ABILITY_CHARM: () => new ModifierType('Ability Charm', 'Dramatically increases the chance of a wild Pokémon having a Hidden Ability.', (type, _args) => new Modifiers.HiddenAbilityRateBoosterModifier(type)),
+  SHINY_CHARM: () => new ModifierType('Shiny Charm', 'Dramatically increases the chance of a wild Pokémon being Shiny', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
+  ABILITY_CHARM: () => new ModifierType('Ability Charm', 'Dramatically increases the chance of a wild Pokémon having a Hidden Ability', (type, _args) => new Modifiers.HiddenAbilityRateBoosterModifier(type)),
 
   IV_SCANNER: () => new ModifierType('IV Scanner', 'Allows scanning the IVs of wild Pokémon. 2 IVs are revealed per stack. The best IVs are shown first.', (type, _args) => new Modifiers.IvScannerModifier(type), 'scanner'),
 
