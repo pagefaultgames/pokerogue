@@ -78,6 +78,7 @@ export enum CommonAnim {
     CURSE,
     MAGMA_STORM,
     CLAMP,
+    SNAP_TRAP,
     THUNDER_CAGE,
     INFESTATION,
     ORDER_UP_CURLY,

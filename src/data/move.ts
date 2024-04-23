@@ -2511,6 +2511,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.CLAMP:
       case BattlerTagType.SAND_TOMB:
       case BattlerTagType.MAGMA_STORM:
+      case BattlerTagType.SNAP_TRAP:
       case BattlerTagType.THUNDER_CAGE:
       case BattlerTagType.INFESTATION:
         return -3;
@@ -4313,6 +4314,7 @@ export function initMoves() {
         BattlerTagType.CLAMP,
         BattlerTagType.SAND_TOMB,
         BattlerTagType.MAGMA_STORM,
+        BattlerTagType.SNAP_TRAP,
         BattlerTagType.THUNDER_CAGE,
         BattlerTagType.SEEDED,
         BattlerTagType.INFESTATION
@@ -5784,7 +5786,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .makesContact(false),
     new AttackMove(Moves.SNAP_TRAP, Type.GRASS, MoveCategory.PHYSICAL, 35, 100, 15, 100, 0, 8)
-      .partial(),
+      .attr(TrapAttr, BattlerTagType.SNAP_TRAP),
     new AttackMove(Moves.PYRO_BALL, Type.FIRE, MoveCategory.PHYSICAL, 120, 90, 5, 10, 0, 8)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
@@ -6147,6 +6149,7 @@ export function initMoves() {
         BattlerTagType.CLAMP,
         BattlerTagType.SAND_TOMB,
         BattlerTagType.MAGMA_STORM,
+        BattlerTagType.SNAP_TRAP,
         BattlerTagType.THUNDER_CAGE,
         BattlerTagType.SEEDED,
         BattlerTagType.INFESTATION
