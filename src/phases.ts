@@ -1049,7 +1049,8 @@ export class SelectBiomePhase extends BattlePhase {
     };
 
     if ((this.scene.gameMode.isClassic && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex + 9))
-      || (this.scene.gameMode.isDaily && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)))
+      || (this.scene.gameMode.isDaily && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex))
+      || (this.scene.gameMode.hasShortBiomes && !(this.scene.currentBattle.waveIndex % 50)))
       setNextBiome(Biome.END);
     else if (this.scene.gameMode.hasRandomBiomes)
       setNextBiome(this.generateNextBiome());
@@ -1086,8 +1087,10 @@ export class SelectBiomePhase extends BattlePhase {
         });
       } else
         setNextBiome(biomes[Utils.randSeedInt(biomes.length)]);
-    } else
+    } else if (biomeLinks.hasOwnProperty(currentBiome))
       setNextBiome(biomeLinks[currentBiome] as Biome);
+    else
+      setNextBiome(this.generateNextBiome());
   }
 
   generateNextBiome(): Biome {

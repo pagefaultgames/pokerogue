@@ -1782,7 +1782,7 @@ export function initSpecies() {
       new PokemonForm("Fancy Pattern", "fancy", Type.BUG, null, 0.3, 2.5, Abilities.SHIELD_DUST, Abilities.COMPOUND_EYES, Abilities.FRIEND_GUARD, 200, 38, 35, 40, 27, 25, 35, 255, 70, 40, false, ""),
       new PokemonForm("Poké Ball Pattern", "poke-ball", Type.BUG, null, 0.3, 2.5, Abilities.SHIELD_DUST, Abilities.COMPOUND_EYES, Abilities.FRIEND_GUARD, 200, 38, 35, 40, 27, 25, 35, 255, 70, 40, false, ""),
     ),
-    new PokemonSpecies(Species.SPEWPA, 6, false, false, false, "Scatterdust Pokémon", Type.BUG, null, 0.3, 8.4, Abilities.SHED_SKIN, Abilities.NONE, Abilities.FRIEND_GUARD, 213, 45, 22, 60, 27, 30, 29, 120, 70, 75, GrowthRate.MEDIUM_FAST, 50, false, false,
+    new PokemonSpecies(Species.SPEWPA, 6, false, false, false, "Scatterdust Pokémon", Type.BUG, null, 0.3, 8.4, Abilities.SHED_SKIN, Abilities.SHED_SKIN, Abilities.FRIEND_GUARD, 213, 45, 22, 60, 27, 30, 29, 120, 70, 75, GrowthRate.MEDIUM_FAST, 50, false, false,
       new PokemonForm("Meadow Pattern", "meadow", Type.BUG, null, 0.3, 8.4, Abilities.SHED_SKIN, Abilities.NONE, Abilities.FRIEND_GUARD, 213, 45, 22, 60, 27, 30, 29, 120, 70, 75, false, ""),
       new PokemonForm("Icy Snow Pattern", "icy-snow", Type.BUG, null, 0.3, 8.4, Abilities.SHED_SKIN, Abilities.NONE, Abilities.FRIEND_GUARD, 213, 45, 22, 60, 27, 30, 29, 120, 70, 75, false, ""),
       new PokemonForm("Polar Pattern", "polar", Type.BUG, null, 0.3, 8.4, Abilities.SHED_SKIN, Abilities.NONE, Abilities.FRIEND_GUARD, 213, 45, 22, 60, 27, 30, 29, 120, 70, 75, false, ""),

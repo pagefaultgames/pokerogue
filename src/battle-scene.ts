@@ -893,7 +893,26 @@ export default class BattleScene extends SceneBase {
 		//this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
 
 		if (!waveIndex && lastBattle) {
-			const isNewBiome = !(lastBattle.waveIndex % 10) || (this.gameMode.isDaily && lastBattle.waveIndex === 49);
+			let isNewBiome = !(lastBattle.waveIndex % 10) || ((this.gameMode.hasShortBiomes || this.gameMode.isDaily) && (lastBattle.waveIndex % 50) === 49);
+			if (!isNewBiome && this.gameMode.hasShortBiomes) {
+				let w = lastBattle.waveIndex - ((lastBattle.waveIndex % 10) - 1);
+				let biomeWaves = 1;
+				while (w < lastBattle.waveIndex) {
+					let wasNewBiome = false;
+					this.executeWithSeedOffset(() => {
+						wasNewBiome = !Utils.randSeedInt(6 - biomeWaves);
+					}, w << 4);
+					if (wasNewBiome)
+						biomeWaves = 1;
+					else
+						biomeWaves++;
+					w++;
+				}
+
+				this.executeWithSeedOffset(() => {
+					isNewBiome = !Utils.randSeedInt(6 - biomeWaves);
+				}, lastBattle.waveIndex << 4);
+			}
 			const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
 			this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
 			this.trySpreadPokerus();
