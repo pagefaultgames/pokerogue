@@ -2450,7 +2450,7 @@ export class MoveEffectPhase extends PokemonPhase {
                         user, target, this.move.getMove()).then(() => {
                           return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult).then(() => {
                             if (!user.isPlayer() && this.move.getMove() instanceof AttackMove)
-                              user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
+                              user.scene.applyModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
                           })).then(() => {
                             applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move, hitResult).then(() => {
                               if (this.move.getMove() instanceof AttackMove)
