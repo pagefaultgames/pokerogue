@@ -2765,6 +2765,8 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
+    let moveChance = this.getMoveChance(user,target,move,this.selfTarget);
+    if (moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance)
       if (move.category !== MoveCategory.STATUS || !user.scene.arena.getTag(this.tagType))
         return true;
       const tag = user.scene.arena.getTag(this.tagType) as ArenaTrapTag;
