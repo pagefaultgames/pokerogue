@@ -536,19 +536,28 @@ export class PostDefendStatChangeAbAttr extends PostDefendAbAttr {
   private stat: BattleStat;
   private levels: integer;
   private selfTarget: boolean;
+  private allOthers: boolean;
 
-  constructor(condition: PokemonDefendCondition, stat: BattleStat, levels: integer, selfTarget: boolean = true) {
+  constructor(condition: PokemonDefendCondition, stat: BattleStat, levels: integer, selfTarget: boolean = true, allOthers: boolean = false) {
     super(true);
 
     this.condition = condition;
     this.stat = stat;
     this.levels = levels;
     this.selfTarget = selfTarget;
+    this.allOthers = allOthers;
   }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (this.condition(pokemon, attacker, move.getMove())) {
-      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, (this.selfTarget ? pokemon : attacker).getBattlerIndex(), true, [ this.stat ], this.levels));
+      if (this.allOthers) {
+        let otherPokemon = pokemon.getAlly() ? pokemon.getOpponents().concat([ pokemon.getAlly() ]) : pokemon.getOpponents();
+        for (let other of otherPokemon) {
+          other.scene.unshiftPhase(new StatChangePhase(other.scene, (other).getBattlerIndex(), false, [ this.stat ], this.levels));
+        }
+        return true;
+      }
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, (this.selfTarget ? pokemon : attacker).getBattlerIndex(), this.selfTarget, [ this.stat ], this.levels));
       return true;
     }
 
@@ -3044,7 +3053,8 @@ export function initAbilities() {
       .attr(PostSummonStatChangeAbAttr, BattleStat.DEF, 1, true),
     new Ability(Abilities.LIBERO, "Libero (N)", "Changes the Pokémon's type to the type of the move it's about to use.", 8),
     new Ability(Abilities.BALL_FETCH, "Ball Fetch (N)", "The Pokémon will fetch the Poké Ball from the first failed throw of the battle.", 8),
-    new Ability(Abilities.COTTON_DOWN, "Cotton Down (N)", "When the Pokémon is hit by an attack, it scatters cotton fluff around and lowers the Speed stat of all Pokémon except itself.", 8),
+    new Ability(Abilities.COTTON_DOWN, "Cotton Down", "When the Pokémon is hit by an attack, it scatters cotton fluff around and lowers the Speed stat of all Pokémon except itself.", 8)
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.SPD, -1, false, true),
     new Ability(Abilities.PROPELLER_TAIL, "Propeller Tail (N)", "Ignores the effects of opposing Pokémon's Abilities and moves that draw in moves.", 8),
     new Ability(Abilities.MIRROR_ARMOR, "Mirror Armor (N)", "Bounces back only the stat-lowering effects that the Pokémon receives.", 8)
       .ignorable(),
