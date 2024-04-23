@@ -1245,6 +1245,28 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
+  private healRatio: number;
+  private showAnim: boolean;
+
+  constructor(healRatio: number, showAnim?: boolean,) {
+    super();
+
+    this.healRatio = healRatio || 1;
+    this.showAnim = !!showAnim;
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    if (pokemon.getAlly()) {
+      let target = pokemon.getAlly()
+      target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
+      Math.max(Math.floor(pokemon.getMaxHp() * this.healRatio), 1), getPokemonMessage(target, ` drank down all the\nmatcha that ${pokemon.name} made!`), true, !this.showAnim));
+      return true;
+    }
+    return false;
+  }
+}
+
 export class DownloadAbAttr extends PostSummonAbAttr {
   private enemyDef: integer;
   private enemySpDef: integer;
@@ -3185,7 +3207,8 @@ export function initAbilities() {
     new Ability(Abilities.MINDS_EYE, "Mind's Eye (N)", "The Pokémon ignores changes to opponents' evasiveness, its accuracy can't be lowered, and it can hit Ghost types with Normal- and Fighting-type moves.", 9)
       .ignorable(),
     new Ability(Abilities.SUPERSWEET_SYRUP, "Supersweet Syrup (N)", "A sickly sweet scent spreads across the field the first time the Pokémon enters a battle, lowering the evasiveness of opposing Pokémon.", 9),
-    new Ability(Abilities.HOSPITALITY, "Hospitality (N)", "When the Pokémon enters a battle, it showers its ally with hospitality, restoring a small amount of the ally's HP.", 9),
+    new Ability(Abilities.HOSPITALITY, "Hospitality", "When the Pokémon enters a battle, it showers its ally with hospitality, restoring a small amount of the ally's HP.", 9)
+      .attr(PostSummonAllyHealAbAttr, 1/8),
     new Ability(Abilities.TOXIC_CHAIN, "Toxic Chain", "The power of the Pokémon's toxic chain may badly poison any target the Pokémon hits with a move.", 9)
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC),
     new Ability(Abilities.EMBODY_ASPECT_TEAL, "Embody Aspect", "The Pokémon's heart fills with memories, causing the Teal Mask to shine and the Pokémon's Speed stat to be boosted.", 9)
