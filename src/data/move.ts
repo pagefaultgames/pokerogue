@@ -3867,7 +3867,7 @@ export function initMoves() {
     new AttackMove(Moves.ACID, Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(Moves.EMBER, Type.FIRE, MoveCategory.SPECIAL, 40, 100, 25, 100, 0, 1)
+    new AttackMove(Moves.EMBER, Type.FIRE, MoveCategory.SPECIAL, 40, 100, 25, 10, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new AttackMove(Moves.FLAMETHROWER, Type.FIRE, MoveCategory.SPECIAL, 90, 100, 15, 10, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.BURN),
