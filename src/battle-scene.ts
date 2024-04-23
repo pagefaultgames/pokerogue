@@ -1976,9 +1976,27 @@ export default class BattleScene extends SceneBase {
 		return (player ? this.modifiers : this.enemyModifiers).find(m => (modifierFilter as ModifierPredicate)(m));
 	}
 
+	applyShuffledModifiers(scene: BattleScene, modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
+		let modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
+		scene.executeWithSeedOffset(() => {
+			const shuffleModifiers = mods => {
+				if (mods.length < 1)
+					return mods;
+				const rand = Math.floor(Utils.randSeedInt(mods.length));
+				return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
+			};
+			modifiers = shuffleModifiers(modifiers);
+		}, scene.currentBattle.turn << 4, scene.waveSeed);
+		return this.applyModifiersInternal(modifiers, player, args);
+	}
+
 	applyModifiers(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
-		const appliedModifiers: PersistentModifier[] = [];
 		const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
+		return this.applyModifiersInternal(modifiers, player, args);
+	}
+
+	applyModifiersInternal(modifiers: PersistentModifier[], player: boolean, args: any[]): PersistentModifier[] {
+		const appliedModifiers: PersistentModifier[] = [];
 		for (let modifier of modifiers) {
 			if (modifier.apply(args)) {
 				console.log('Applied', modifier.type.name, !player ? '(enemy)' : '');
