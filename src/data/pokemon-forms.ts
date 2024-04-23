@@ -7,6 +7,9 @@ import { Species } from "./enums/species";
 import { StatusEffect } from "./status-effect";
 import { MoveCategory, allMoves } from "./move";
 import { Abilities } from "./enums/abilities";
+import { WeatherType } from "./weather";
+import { UnsuppressableAbilityAbAttr } from "./ability";
+import { Ability } from "pokenode-ts";
 
 export enum FormChangeItem {
   NONE,
@@ -228,6 +231,43 @@ export class SpeciesFormChangeActiveTrigger extends SpeciesFormChangeTrigger {
   }
 }
 
+//checks the current weather in battle to determine form
+export class SpeciesFormChangeWeatherTrigger  extends SpeciesFormChangeTrigger {
+  public weatherType: WeatherType[];
+  public invert: boolean;
+  
+  constructor(weatherType: WeatherType | WeatherType[], invert:boolean = false){
+    super();
+    if(!Array.isArray(weatherType))
+      weatherType = [weatherType];
+    
+    this.weatherType = weatherType;
+    this.invert = invert;
+  }
+
+  canChange(pokemon: Pokemon): boolean {
+    if(!pokemon.scene.arena.weather){
+      return this.weatherType.indexOf(WeatherType.NONE) > -1 !== this.invert;
+    }
+    return this.weatherType.indexOf(pokemon.scene.arena.weather.weatherType) > -1 !== this.invert;
+  }
+}
+
+export class SpeciesFormChangeAbilitySuppressionTrigger extends SpeciesFormChangeTrigger {
+  public ability : Abilities  
+  public invert: boolean;
+  
+  constructor(ability : Abilities, invert:boolean = false){
+    super();
+    this.ability = ability
+    this.invert = invert;
+  }
+  
+  canChange(pokemon: Pokemon): boolean {
+    return pokemon.hasAbility(this.ability) !== this.invert;
+  }
+}
+
 export class SpeciesFormChangeStatusEffectTrigger extends SpeciesFormChangeTrigger {
   public statusEffects: StatusEffect[];
   public invert: boolean;
@@ -284,6 +324,7 @@ export class SpeciesFormChangePostMoveTrigger extends SpeciesFormChangeMoveTrigg
   }
 }
 
+//Trigger for subforms having their own species form change that aren't interchangable, string check for the forms to match
 export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
   private formKey: string;
 
@@ -296,6 +337,7 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
     return this.formKey === pokemon.species.forms[pokemon.scene.getSpeciesFormIndex(pokemon.species, pokemon.gender, pokemon.getNature(), true)].formKey;
   }
 }
+
 
 export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: SpeciesFormChange, preName: string): string {
   const isMega = formChange.formKey.indexOf(SpeciesFormKey.MEGA) > -1;
@@ -674,6 +716,29 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.GALAR_DARMANITAN]: [
     new SpeciesFormChange(Species.GALAR_DARMANITAN, '', 'zen', new SpeciesFormChangeManualTrigger(), true),
     new SpeciesFormChange(Species.GALAR_DARMANITAN, 'zen', '', new SpeciesFormChangeManualTrigger(), true)
+  ],
+  [Species.CASTFORM]: [
+    //change to fire
+    new SpeciesFormChange(Species.CASTFORM, '', 'sunny', new SpeciesFormChangeWeatherTrigger([WeatherType.HARSH_SUN, WeatherType.SUNNY]), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.FORECAST))),    
+    new SpeciesFormChange(Species.CASTFORM, 'rainy', 'sunny', new SpeciesFormChangeWeatherTrigger([WeatherType.HARSH_SUN, WeatherType.SUNNY]), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.FORECAST))),    
+    new SpeciesFormChange(Species.CASTFORM, 'snowy', 'sunny', new SpeciesFormChangeWeatherTrigger([WeatherType.HARSH_SUN, WeatherType.SUNNY]), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.FORECAST))),
+    //change to water
+    new SpeciesFormChange(Species.CASTFORM, '', 'rainy', new SpeciesFormChangeWeatherTrigger([WeatherType.HEAVY_RAIN, WeatherType.RAIN]), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.FORECAST))),
+    new SpeciesFormChange(Species.CASTFORM, 'sunny', 'rainy', new SpeciesFormChangeWeatherTrigger([WeatherType.HEAVY_RAIN, WeatherType.RAIN]), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.FORECAST))),
+    new SpeciesFormChange(Species.CASTFORM, 'snowy', 'rainy', new SpeciesFormChangeWeatherTrigger([WeatherType.HEAVY_RAIN, WeatherType.RAIN]), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.FORECAST))),//loving in the moonlight    
+    //change to ice
+    new SpeciesFormChange(Species.CASTFORM, '', 'snowy', new SpeciesFormChangeWeatherTrigger([WeatherType.SNOW, WeatherType.HAIL]), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.FORECAST))),
+    new SpeciesFormChange(Species.CASTFORM, 'sunny', 'snowy', new SpeciesFormChangeWeatherTrigger([WeatherType.SNOW, WeatherType.HAIL]), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.FORECAST))),
+    new SpeciesFormChange(Species.CASTFORM, 'rainy', 'snowy', new SpeciesFormChangeWeatherTrigger([WeatherType.SNOW, WeatherType.HAIL]), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.FORECAST))),//having a wonderful time    
+    //change to normal
+    new SpeciesFormChange(Species.CASTFORM, 'sunny', '', new SpeciesFormChangeWeatherTrigger([WeatherType.FOG, WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS]), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.FORECAST))),
+    new SpeciesFormChange(Species.CASTFORM, 'rainy', '', new SpeciesFormChangeWeatherTrigger([WeatherType.FOG, WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS]), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.FORECAST))),
+    new SpeciesFormChange(Species.CASTFORM, 'snowy', '', new SpeciesFormChangeWeatherTrigger([WeatherType.FOG, WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS]), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.FORECAST)))
+  ],
+  [Species.CHERRIM]:[
+    //the seasonal depression pokemon
+    new SpeciesFormChange(Species.CHERRIM, 'overcast', 'sunshine', new SpeciesFormChangeWeatherTrigger([WeatherType.HARSH_SUN, WeatherType.SUNNY]), true),    
+    new SpeciesFormChange(Species.CHERRIM, 'sunshine', 'overcast', new SpeciesFormChangeWeatherTrigger([WeatherType.HARSH_SUN, WeatherType.SUNNY], true), true)
   ]
 };
 

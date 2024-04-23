@@ -14,6 +14,7 @@ import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { TrainerType } from "../data/enums/trainer-type";
 import { BattlerIndex } from "../battle";
 import { Moves } from "../data/enums/moves";
+import { SpeciesFormChangeWeatherTrigger } from "../data/pokemon-forms";
 import { TimeOfDay } from "../data/enums/time-of-day";
 import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
@@ -303,8 +304,16 @@ export class Arena {
     }
 
     this.scene.getField(true).filter(p => p.isOnField()).map(pokemon => {
-      pokemon.findAndRemoveTags(t => 'weatherTypes' in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather));
+      pokemon.findAndRemoveTags(t => 'weatherTypes' in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather));      
       applyPostWeatherChangeAbAttrs(PostWeatherChangeAbAttr, pokemon, weather);
+
+      if(this.weather){
+        this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger, false );
+      }
+      else{
+        this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger, true );
+      }
+      //
     });
     
     return true;
