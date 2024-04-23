@@ -2493,7 +2493,7 @@ export function initAbilities() {
     new Ability(Abilities.FLASH_FIRE, "Flash Fire", "Powers up the Pokémon's Fire-type moves if it's hit by one.", 3)
       .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, BattlerTagType.FIRE_BOOST, 1, (pokemon: Pokemon) => !pokemon.status || pokemon.status.effect !== StatusEffect.FREEZE)
       .ignorable(),
-    new Ability(Abilities.SHIELD_DUST, "Shield Dust", "This Pokémon's dust blocks the additional effects of attacks taken.", 3)
+    new Ability(Abilities.SHIELD_DUST, "Shield Dust (P)", "This Pokémon's dust blocks the additional effects of attacks taken.", 3)
       .attr(IgnoreMoveEffectsAbAttr)
       .ignorable(),
     new Ability(Abilities.OWN_TEMPO, "Own Tempo", "This Pokémon has its own tempo, and that prevents it from becoming confused.", 3)
@@ -2529,7 +2529,7 @@ export function initAbilities() {
       .attr(RedirectTypeMoveAbAttr, Type.ELECTRIC)
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPATK, 1)
       .ignorable(),
-    new Ability(Abilities.SERENE_GRACE, "Serene Grace", "Boosts the likelihood of additional effects occurring when attacking.", 3)
+    new Ability(Abilities.SERENE_GRACE, "Serene Grace (P)", "Boosts the likelihood of additional effects occurring when attacking.", 3)
       .attr(MoveEffectChanceMultiplierAbAttr, 2),
     new Ability(Abilities.SWIFT_SWIM, "Swift Swim", "Boosts the Pokémon's Speed stat in rain.", 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
