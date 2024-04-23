@@ -145,6 +145,10 @@ export class FlinchedTag extends BattlerTag {
     applyAbAttrs(FlinchEffectAbAttr, pokemon, null);
   }
 
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.isMax();
+  }
+
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     super.lapse(pokemon, lapseType);
 
@@ -368,6 +372,9 @@ export class EncoreTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
+    if (pokemon.isMax())
+      return false;
+    
     const lastMoves = pokemon.getLastXMoves(1);
     if (!lastMoves.length)
       return false;
