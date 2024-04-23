@@ -70,7 +70,7 @@ export const STARTING_WAVE_OVERRIDE = 0;
 export const STARTING_BIOME_OVERRIDE = Biome.TOWN;
 export const STARTING_MONEY_OVERRIDE = 0;
 
-export const ABILITY_OVERRIDE = Abilities.NONE;
+export const ABILITY_OVERRIDE = Abilities.SUPERSWEET_SYRUP;
 export const MOVE_OVERRIDE = Moves.NONE;
 export const OPP_SPECIES_OVERRIDE = 0;
 export const OPP_ABILITY_OVERRIDE = Abilities.NONE;
