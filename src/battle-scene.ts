@@ -1978,15 +1978,15 @@ export default class BattleScene extends SceneBase {
 
 	applyShuffledModifiers(scene: BattleScene, modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
 		let modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
-		if (modifiers.length > 1) {
-			scene.executeWithSeedOffset(() => {
-				const shuffleModifiers = mods => {
-					const rand = Math.floor(Utils.randSeedInt(mods.length));
-					return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
-				};
-				modifiers = shuffleModifiers(modifiers);
-			}, scene.currentBattle.turn << 4, scene.waveSeed);
-		}
+		scene.executeWithSeedOffset(() => {
+			const shuffleModifiers = mods => {
+				if (mods.length < 1)
+					return mods;
+				const rand = Math.floor(Utils.randSeedInt(mods.length));
+				return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
+			};
+			modifiers = shuffleModifiers(modifiers);
+		}, scene.currentBattle.turn << 4, scene.waveSeed);
 		return this.applyModifiersInternal(modifiers, player, args);
 	}
 
