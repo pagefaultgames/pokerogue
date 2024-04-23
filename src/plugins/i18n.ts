@@ -1,12 +1,15 @@
 import i18next from 'i18next';
 import { menu as enMenu } from '../locales/en/menu';
+import { menu as esMenu } from '../locales/es/menu';
 import { menu as itMenu } from '../locales/it/menu';
 import { menu as frMenu } from '../locales/fr/menu';
 
 import { move as enMove } from '../locales/en/move';
+import { move as esMove } from '../locales/es/move';
 import { move as frMove } from '../locales/fr/move';
 
 import { pokeball as enPokeball } from '../locales/en/pokeball';
+import { pokeball as esPokeball } from '../locales/es/pokeball';
 import { pokeball as frPokeball } from '../locales/fr/pokeball';
 
 import { pokemon as enPokemon } from '../locales/en/pokemon';
@@ -62,6 +65,11 @@ export function initI18n(): void {
         move: enMove,
         pokeball: enPokeball,
         pokemon: enPokemon,
+      },
+      es: {
+        menu: esMenu,
+        move: esMove,
+        pokeball: esPokeball,
       },
       it: {
         menu: itMenu,
