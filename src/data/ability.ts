@@ -2762,7 +2762,7 @@ export function initAbilities() {
       .condition((pokemon) => pokemon.getHpRatio() <= 0.5),
     new Ability(Abilities.CURSED_BODY, "Cursed Body (N)", "May disable a move used on the Pokémon.", 5),
     new Ability(Abilities.HEALER, "Healer", "Sometimes heals an ally's status condition.", 5)
-      .conditionalAttr(pokemon => pokemon.getAlly() && !Utils.randSeedInt(1), PostTurnResetStatusAbAttr, true),
+      .conditionalAttr(pokemon => pokemon.getAlly() && Utils.randSeedInt(10) < 3, PostTurnResetStatusAbAttr, true),
     new Ability(Abilities.FRIEND_GUARD, "Friend Guard (N)", "Reduces damage done to allies.", 5)
       .ignorable(),
     new Ability(Abilities.WEAK_ARMOR, "Weak Armor", "Physical attacks to the Pokémon lower its Defense stat but sharply raise its Speed stat.", 5)
