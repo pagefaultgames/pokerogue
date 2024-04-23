@@ -2765,37 +2765,29 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
 }
 
 export class RemoveArenaTrapAttr extends MoveEffectAttr {
+  private arenaTarget : ArenaTagSide;  
 
-  private targetBothSides: boolean;
-
-  constructor(targetBothSides: boolean = false) {
+  constructor(arenaTarget: ArenaTagSide = ArenaTagSide.PLAYER) {
     super(true, MoveEffectTrigger.PRE_APPLY);
-    this.targetBothSides = targetBothSides;
+    this.arenaTarget = arenaTarget;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-
     if (!super.apply(user, target, move, args))
       return false;
 
-    if(this.targetBothSides){
+    if((target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY ==  this.arenaTarget) || this.arenaTarget == ArenaTagSide.BOTH){
       user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
       user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER);
-
+    }
+    if(((!target.isPlayer()) ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY ==  this.arenaTarget) || this.arenaTarget == ArenaTagSide.BOTH){
       user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY);
       user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.ENEMY);
       user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.ENEMY);
       user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.ENEMY);
     }
-    else {
-      user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-      user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-      user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-      user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-    }
-
     return true;
   }
 }
@@ -4893,8 +4885,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.EVA, -1)
       .attr(ClearWeatherAttr, WeatherType.FOG)
       .attr(ClearTerrainAttr)
-      .attr(RemoveScreensAttr, true)
-      .attr(RemoveArenaTrapAttr, true),
+      .attr(RemoveScreensAttr, false)
+      .attr(RemoveArenaTrapAttr, ArenaTagSide.BOTH),
     new StatusMove(Moves.TRICK_ROOM, Type.PSYCHIC, -1, 5, -1, -7, 4)
       .attr(AddArenaTagAttr, ArenaTagType.TRICK_ROOM, 5)
       .ignoresProtect()
