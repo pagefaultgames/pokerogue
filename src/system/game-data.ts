@@ -985,7 +985,7 @@ export class GameData {
         moveset: null,
         eggMoves: 0,
         candyCount: 0,
-        abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILTIY_1 : 0,
+        abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
         passiveAttr: 0,
         valueReduction: 0
       };
