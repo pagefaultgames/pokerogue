@@ -1947,16 +1947,25 @@ export class PresentPowerAttr extends VariablePowerAttr {
   }
 }
 
-export class HealTargetAllyAttr extends VariablePowerAttr {
+export class ConditionalHealAttr extends VariablePowerAttr {
+  private callback: (user: Pokemon, target: Pokemon, move: Move) => boolean;
+  private healRatio: number;
+
+  constructor(callback: (user: Pokemon, target: Pokemon, move: Move) => boolean, healRatio?: number, showAnim?: boolean, selfTarget?: boolean) {
+    super();
+    this.callback = callback;
+    this.healRatio = healRatio;
+  }
+ 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
 
-    if((user.isPlayer() && target.isPlayer()) || (!user.isPlayer() && !target.isPlayer())){
+    if (this.callback(user, target, move)) {
       (args[0] as Utils.NumberHolder).value = 0;
       target.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
-      Math.max(Math.floor(target.getMaxHp() / 2), 1), getPokemonMessage(target, ' regained\nhealth!'), true));
+      Math.max(Math.floor(target.getMaxHp() * this.healRatio), 1), getPokemonMessage(target, ' regained\nhealth!'), true));
       return true;  
     }
-
+    
     return false;
   }
 }
@@ -5451,7 +5460,7 @@ export function initMoves() {
     new AttackMove(Moves.THROAT_CHOP, Type.DARK, MoveCategory.PHYSICAL, 80, 100, 15, 100, 0, 7)
       .partial(),
     new AttackMove(Moves.POLLEN_PUFF, Type.BUG, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 7)
-      .attr(HealTargetAllyAttr)
+      .attr(ConditionalHealAttr, (user, target, move) => (!user.isPlayer() && !target.isPlayer()) || (user.isPlayer() && target.isPlayer()) ? true : false, 0.5, true, false)
       .ballBombMove(),
     new AttackMove(Moves.ANCHOR_SHOT, Type.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, -1, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1),
