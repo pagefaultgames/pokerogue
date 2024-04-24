@@ -1268,6 +1268,28 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class PostSummonClearAllyStatsAbAttr extends PostSummonAbAttr {
+
+  constructor() {
+    super();
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    const target = pokemon.getAlly();
+    if (target?.isActive(true)) {
+
+      for (let s = 0; s < target.summonData.battleStats.length; s++)
+        target.summonData.battleStats[s] = 0;
+
+      target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere eliminated!`));
+
+      return true;
+    }
+    
+    return false;
+  }
+}
+
 export class DownloadAbAttr extends PostSummonAbAttr {
   private enemyDef: integer;
   private enemySpDef: integer;
@@ -3099,7 +3121,8 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.QUICK_DRAW, "Quick Draw (N)", "Enables the Pokémon to move first occasionally.", 8),
     new Ability(Abilities.UNSEEN_FIST, "Unseen Fist (N)", "If the Pokémon uses moves that make direct contact, it can attack the target even if the target protects itself.", 8),
-    new Ability(Abilities.CURIOUS_MEDICINE, "Curious Medicine (N)", "When the Pokémon enters a battle, it scatters medicine from its shell, which removes all stat changes from allies.", 8),
+    new Ability(Abilities.CURIOUS_MEDICINE, "Curious Medicine", "When the Pokémon enters a battle, it scatters medicine from its shell, which removes all stat changes from allies.", 8)
+      .attr(PostSummonClearAllyStatsAbAttr),
     new Ability(Abilities.TRANSISTOR, "Transistor", "Powers up Electric-type moves.", 8)
       .attr(MoveTypePowerBoostAbAttr, Type.ELECTRIC),
     new Ability(Abilities.DRAGONS_MAW, "Dragon's Maw", "Powers up Dragon-type moves.", 8)
@@ -3207,7 +3230,8 @@ export function initAbilities() {
       .attr(MoveAbilityBypassAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS),
     new Ability(Abilities.MINDS_EYE, "Mind's Eye (N)", "The Pokémon ignores changes to opponents' evasiveness, its accuracy can't be lowered, and it can hit Ghost types with Normal- and Fighting-type moves.", 9)
       .ignorable(),
-    new Ability(Abilities.SUPERSWEET_SYRUP, "Supersweet Syrup (N)", "A sickly sweet scent spreads across the field the first time the Pokémon enters a battle, lowering the evasiveness of opposing Pokémon.", 9),
+    new Ability(Abilities.SUPERSWEET_SYRUP, "Supersweet Syrup", "A sickly sweet scent spreads across the field the first time the Pokémon enters a battle, lowering the evasiveness of opposing Pokémon.", 9)
+        .attr(PostSummonStatChangeAbAttr, BattleStat.EVA, -1, false),
     new Ability(Abilities.HOSPITALITY, "Hospitality", "When the Pokémon enters a battle, it showers its ally with hospitality, restoring a small amount of the ally's HP.", 9)
       .attr(PostSummonAllyHealAbAttr, 4, true),
     new Ability(Abilities.TOXIC_CHAIN, "Toxic Chain", "The power of the Pokémon's toxic chain may badly poison any target the Pokémon hits with a move.", 9)
