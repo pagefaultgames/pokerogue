@@ -1620,6 +1620,16 @@ export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
   }
 }
 
+export class PreSwitchOutWeatherChangeAbAttr extends PreSwitchOutAbAttr {
+  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    if (pokemon.scene.arena.weather?.isImmutable()) {
+      return pokemon.scene.arena.weather?.isAbilityOnField(pokemon.scene) ? false : pokemon.scene.arena.trySetWeather(WeatherType.NONE, true);
+    }
+
+    return false;
+    }
+}
+
 export class PreStatChangeAbAttr extends AbAttr {
   applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -3320,12 +3330,15 @@ export function initAbilities() {
       .unimplemented(),
     new Ability(Abilities.PRIMORDIAL_SEA, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
+      .attr(PreSwitchOutWeatherChangeAbAttr)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN),
     new Ability(Abilities.DESOLATE_LAND, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
+      .attr(PreSwitchOutWeatherChangeAbAttr)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN),
     new Ability(Abilities.DELTA_STREAM, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
+      .attr(PreSwitchOutWeatherChangeAbAttr)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS),
     new Ability(Abilities.STAMINA, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.DEF, 1),

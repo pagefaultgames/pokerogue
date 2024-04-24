@@ -7,6 +7,7 @@ import * as Utils from "../utils";
 import BattleScene from "../battle-scene";
 import { SuppressWeatherEffectAbAttr } from "./ability";
 import { TerrainType } from "./terrain";
+import { Abilities } from "./enums/abilities";
 
 export enum WeatherType {
   NONE,
@@ -115,6 +116,39 @@ export class Weather {
     }
 
     return false;
+  }
+
+  isAbilityOnField(scene: BattleScene): boolean {
+    const field = scene.getField(true);
+    let abilitiesOnField = 0;
+
+    for (let pokemon of field) {
+      let ability = pokemon.getAbility();
+      switch (this.weatherType) {
+        case WeatherType.HARSH_SUN:
+          if (ability.id === Abilities.DESOLATE_LAND)
+            abilitiesOnField++
+          if (pokemon.hasPassive() && pokemon.getPassiveAbility().id === Abilities.DESOLATE_LAND)
+            abilitiesOnField++
+          break;
+        case WeatherType.HEAVY_RAIN:
+          if (ability.id === Abilities.PRIMORDIAL_SEA)
+            abilitiesOnField++
+          if (pokemon.hasPassive() && pokemon.getPassiveAbility().id === Abilities.PRIMORDIAL_SEA)
+            abilitiesOnField++
+          break;
+        case WeatherType.STRONG_WINDS:
+          if (ability.id === Abilities.DELTA_STREAM)
+            abilitiesOnField++
+          if (pokemon.hasPassive() && pokemon.getPassiveAbility().id === Abilities.DELTA_STREAM)
+            abilitiesOnField++
+          break;
+        default:
+          break;
+      }
+    }
+
+    return abilitiesOnField > 1;
   }
 }
 
