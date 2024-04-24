@@ -626,7 +626,6 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.LUMINEON, 31, null, null)
   ],
   [Species.MANTYKE]: [
-    new SpeciesEvolution(Species.MANTINE, 1, null, new SpeciesEvolutionCondition(p => !!p.scene.getParty().find(p => p.species.speciesId === Species.REMORAID)), SpeciesWildEvolutionDelay.MEDIUM),
     new SpeciesEvolution(Species.MANTINE, 32, null, new SpeciesEvolutionCondition(p => !!p.scene.gameData.dexData[Species.REMORAID].caughtAttr), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.SNOVER]: [
