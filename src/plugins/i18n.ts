@@ -13,9 +13,11 @@ import { pokeball as esPokeball } from '../locales/es/pokeball';
 import { pokeball as frPokeball } from '../locales/fr/pokeball';
 
 import { pokemon as enPokemon } from '../locales/en/pokemon';
+import { pokemon as esPokemon } from '../locales/es/pokemon';
 import { pokemon as frPokemon } from '../locales/fr/pokemon';
 
 import { commandUiHandler as enCommandUiHandler } from '../locales/en/command-ui-handler';
+import { commandUiHandler as esCommandUiHandler } from '../locales/es/command-ui-handler';
 import { commandUiHandler as frCommandUiHandler } from '../locales/fr/command-ui-handler';
 
 export interface SimpleTranslationEntries {
@@ -75,9 +77,8 @@ export function initI18n(): void {
         menu: esMenu,
         move: esMove,
         pokeball: esPokeball,
-      },
-      it: {
-        menu: itMenu,
+        pokemon: esPokemon,
+        commandUiHandler: esCommandUiHandler,
       },
       fr: {
         menu: frMenu,
@@ -85,7 +86,10 @@ export function initI18n(): void {
         pokeball: frPokeball,
         pokemon: frPokemon,
         commandUiHandler: frCommandUiHandler,
-      }
+      },
+      it: {
+        menu: itMenu,
+      },
     },
   });
 }
