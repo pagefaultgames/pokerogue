@@ -796,7 +796,7 @@ export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
     this.weather=weather;
   }
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = 1;
+    (args[0] as Utils.IntegerHolder).value = Math.max((args[0] as Utils.IntegerHolder).value, 1);
 
     return true;
   }
@@ -6180,7 +6180,8 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1)  
       .slicingMove(),
     new AttackMove(Moves.HYDRO_STEAM, Type.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
-      .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY),
+      .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 1.5 : 1),
     new AttackMove(Moves.RUINATION, Type.DARK, MoveCategory.SPECIAL, 1, 90, 10, -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.COLLISION_COURSE, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9)
