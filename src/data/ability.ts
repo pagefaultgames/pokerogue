@@ -1653,7 +1653,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
       for (let move of opponent.moveset) {
         if (move.getMove() instanceof StatusMove) {
           movePower = 1;
-        } else if (move.getMove().hasFlag(MoveFlags.OHKO_Move)) {
+        } else if (move.getMove().findAttr(attr => attr instanceof OneHitKOAttr)) {
           movePower = 150;
         } else if (move.getMove().id === Moves.COUNTER || move.getMove().id === Moves.MIRROR_COAT || move.getMove().id === Moves.METAL_BURST) {
           movePower = 120;
