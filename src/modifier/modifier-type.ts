@@ -213,7 +213,7 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
         return null;
       }), iconImage, 'revive');
 
-    this.description = `Revive one Pokémon and restore ${restorePercent}% HP.`;
+    this.description = `Revives one Pokémon and restores ${restorePercent}% HP`;
     this.selectFilter = (pokemon: PlayerPokemon) => {
       if (pokemon.hp)
         return PartyUiHandler.NoEffectMessage;
@@ -224,7 +224,7 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
 
 export class PokemonStatusHealModifierType extends PokemonModifierType {
   constructor(name: string) {
-    super(name, `Heal any status ailment for one Pokémon.`,
+    super(name, `Heals any status ailment for one Pokémon`,
       ((_type, args) => new Modifiers.PokemonStatusHealModifier(this, (args[0] as PlayerPokemon).id)),
       ((pokemon: PlayerPokemon) => {
         if (!pokemon.hp || !pokemon.status)
