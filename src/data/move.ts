@@ -3096,7 +3096,7 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
           : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
       user.getMoveQueue().push({ move: moveId, targets: targets, ignorePP: true });
       user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(moveId, 0, 0, true), true));
-      initMoveAnim(moveId).then(() => {
+      initMoveAnim(user.scene, moveId).then(() => {
         loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
       });
@@ -3239,7 +3239,7 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
       
       user.getMoveQueue().push({ move: moveId, targets: [target.getBattlerIndex()], ignorePP: true });
       user.scene.unshiftPhase(new MovePhase(user.scene, user, [target.getBattlerIndex()], new PokemonMove(moveId, 0, 0, true), true));
-      initMoveAnim(moveId).then(() => {
+      initMoveAnim(user.scene, moveId).then(() => {
         loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
       });

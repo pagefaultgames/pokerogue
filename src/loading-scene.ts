@@ -19,12 +19,7 @@ export class LoadingScene extends SceneBase {
   }
 
   preload() {
-    const indexFile = Array.from(document.querySelectorAll('script')).map(s => s.src).find(s => /\/index/.test(s));
-    if (indexFile) {
-      const buildIdMatch = /index\-(.*?)\.js$/.exec(indexFile);
-      if (buildIdMatch)
-        this.load['cacheBuster'] = buildIdMatch[1];
-    }
+    this.load['manifest'] = this.game['manifest'];
 
     if (!isMobile())
       this.load.video('intro_dark', 'images/intro_dark.mp4', true);

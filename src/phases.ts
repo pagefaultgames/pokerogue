@@ -2613,7 +2613,7 @@ export class MoveAnimTestPhase extends BattlePhase {
     } else if (player)
       console.log(Moves[moveId]);
 
-    initMoveAnim(moveId).then(() => {
+    initMoveAnim(this, moveId).then(() => {
       loadMoveAnimAssets(this.scene, [ moveId ], true)
         .then(() => {
           new MoveAnim(moveId, player ? this.scene.getPlayerPokemon() : this.scene.getEnemyPokemon(), (player !== (allMoves[moveId] instanceof SelfStatusMove) ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon()).getBattlerIndex()).play(this.scene, () => {
@@ -3675,7 +3675,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
 
     if (emptyMoveIndex > -1) {
       pokemon.setMove(emptyMoveIndex, this.moveId);
-      initMoveAnim(this.moveId).then(() => {
+      initMoveAnim(this, this.moveId).then(() => {
         loadMoveAnimAssets(this.scene, [ this.moveId ], true)
           .then(() => {
             this.scene.ui.setMode(messageMode).then(() => {
