@@ -18,9 +18,9 @@ import { Moves } from "./enums/moves";
 import { TerrainType } from "./terrain";
 import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import { Abilities } from "./enums/abilities";
-import i18next from "#app/plugins/i18n.js";
+import i18next, { Localizable } from "#app/plugins/i18n.js";
 
-export class Ability {
+export class Ability implements Localizable {
   public id: Abilities;
   public name: string;
   public description: string;
@@ -32,14 +32,16 @@ export class Ability {
 
   constructor(id: Abilities, generation: integer) {
     this.id = id;
-
-    const i18nKey = Abilities[id].split('_').filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join('') as string;
-
-    this.name = id ? i18next.t(`ability:${i18nKey}.name`) as string : '';
-    this.description = id ? i18next.t(`ability:${i18nKey}.description`) as string : '';
     this.generation = generation;
     this.attrs = [];
     this.conditions = [];
+  }
+
+  localize(): void {
+    const i18nKey = Abilities[this.id].split('_').filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join('') as string;
+
+    this.name = this.id ? i18next.t(`ability:${i18nKey}.name`) as string : '';
+    this.description = this.id ? i18next.t(`ability:${i18nKey}.description`) as string : '';
   }
 
   getAttrs(attrType: { new(...args: any[]): AbAttr }): AbAttr[] {
