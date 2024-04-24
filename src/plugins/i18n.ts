@@ -13,11 +13,17 @@ import { pokeball as esPokeball } from '../locales/es/pokeball';
 import { pokeball as frPokeball } from '../locales/fr/pokeball';
 
 import { pokemon as enPokemon } from '../locales/en/pokemon';
+import { pokemon as esPokemon } from '../locales/es/pokemon';
 import { pokemon as frPokemon } from '../locales/fr/pokemon';
+
+import { commandUiHandler as enCommandUiHandler } from '../locales/en/command-ui-handler';
+import { commandUiHandler as esCommandUiHandler } from '../locales/es/command-ui-handler';
+import { commandUiHandler as frCommandUiHandler } from '../locales/fr/command-ui-handler';
 
 export interface SimpleTranslationEntries {
   [key: string]: string
 }
+
 
 export interface MoveTranslationEntry {
   name: string,
@@ -65,21 +71,25 @@ export function initI18n(): void {
         move: enMove,
         pokeball: enPokeball,
         pokemon: enPokemon,
+        commandUiHandler: enCommandUiHandler,
       },
       es: {
         menu: esMenu,
         move: esMove,
         pokeball: esPokeball,
-      },
-      it: {
-        menu: itMenu,
+        pokemon: esPokemon,
+        commandUiHandler: esCommandUiHandler,
       },
       fr: {
         menu: frMenu,
         move: frMove,
         pokeball: frPokeball,
         pokemon: frPokemon,
-      }
+        commandUiHandler: frCommandUiHandler,
+      },
+      it: {
+        menu: itMenu,
+      },
     },
   });
 }
@@ -92,6 +102,7 @@ declare module 'i18next' {
       move: typeof enMove;
       pokeball: typeof enPokeball;
       pokemon: typeof enPokemon;
+      commandUiHandler: typeof enCommandUiHandler;
     };
   }
 }
