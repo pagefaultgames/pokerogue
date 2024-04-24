@@ -1185,7 +1185,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     }
 
     if (this.player) {
-      this.scene.ui.showText(`Go! ${this.getPokemon().name}!`);
+      this.scene.ui.showText(i18next.t('menu:playerGo', {pokemonName: this.getPokemon().name}));
       if (this.player)
          this.scene.pbTray.hide();
       this.scene.trainer.setTexture(`trainer_${this.scene.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back_pb`);
