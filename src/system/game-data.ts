@@ -347,7 +347,7 @@ export class GameData {
           } else {
             if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion))
               this.migrateStarterAbilities(systemData);
-            this.fixVariantData(systemData);
+            //this.fixVariantData(systemData);
             this.fixStarterData(systemData);
             // Migrate ability starter data if empty for caught species
             Object.keys(systemData.starterData).forEach(sd => {
