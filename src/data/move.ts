@@ -2301,6 +2301,14 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
   }
 }
 
+export class FlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const multiplier = args[0] as Utils.NumberHolder;
+    multiplier.value *= target.getAttackTypeEffectiveness(Type.FLYING);
+    return true;
+  }
+}
+
 export class OneHitKOAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const accuracy = args[0] as Utils.NumberHolder;
@@ -2511,6 +2519,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.CLAMP:
       case BattlerTagType.SAND_TOMB:
       case BattlerTagType.MAGMA_STORM:
+      case BattlerTagType.SNAP_TRAP:
       case BattlerTagType.THUNDER_CAGE:
       case BattlerTagType.INFESTATION:
         return -3;
@@ -3095,7 +3104,7 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
           : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
       user.getMoveQueue().push({ move: moveId, targets: targets, ignorePP: true });
       user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(moveId, 0, 0, true), true));
-      initMoveAnim(moveId).then(() => {
+      initMoveAnim(user.scene, moveId).then(() => {
         loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
       });
@@ -3238,7 +3247,7 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
       
       user.getMoveQueue().push({ move: moveId, targets: [target.getBattlerIndex()], ignorePP: true });
       user.scene.unshiftPhase(new MovePhase(user.scene, user, [target.getBattlerIndex()], new PokemonMove(moveId, 0, 0, true), true));
-      initMoveAnim(moveId).then(() => {
+      initMoveAnim(user.scene, moveId).then(() => {
         loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
       });
@@ -4313,6 +4322,7 @@ export function initMoves() {
         BattlerTagType.CLAMP,
         BattlerTagType.SAND_TOMB,
         BattlerTagType.MAGMA_STORM,
+        BattlerTagType.SNAP_TRAP,
         BattlerTagType.THUNDER_CAGE,
         BattlerTagType.SEEDED,
         BattlerTagType.INFESTATION
@@ -5202,7 +5212,8 @@ export function initMoves() {
       .makesContact(false)
       .partial(),
     new AttackMove(Moves.FLYING_PRESS, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, -1, 0, 6)
-      .partial(),
+      .attr(FlyingTypeMultiplierAttr)
+      .condition(failOnGravityCondition),
     new StatusMove(Moves.MAT_BLOCK, Type.FIGHTING, -1, 10, -1, 0, 6)
       .unimplemented(),
     new AttackMove(Moves.BELCH, Type.POISON, MoveCategory.SPECIAL, 120, 90, 10, -1, 0, 6)
@@ -5784,7 +5795,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .makesContact(false),
     new AttackMove(Moves.SNAP_TRAP, Type.GRASS, MoveCategory.PHYSICAL, 35, 100, 15, 100, 0, 8)
-      .partial(),
+      .attr(TrapAttr, BattlerTagType.SNAP_TRAP),
     new AttackMove(Moves.PYRO_BALL, Type.FIRE, MoveCategory.PHYSICAL, 120, 90, 5, 10, 0, 8)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
@@ -6147,6 +6158,7 @@ export function initMoves() {
         BattlerTagType.CLAMP,
         BattlerTagType.SAND_TOMB,
         BattlerTagType.MAGMA_STORM,
+        BattlerTagType.SNAP_TRAP,
         BattlerTagType.THUNDER_CAGE,
         BattlerTagType.SEEDED,
         BattlerTagType.INFESTATION

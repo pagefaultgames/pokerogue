@@ -275,7 +275,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   loadAssets(ignoreOverride: boolean = true): Promise<void> {
     return new Promise(resolve => {
       const moveIds = this.getMoveset().map(m => m.getMove().id);
-      Promise.allSettled(moveIds.map(m => initMoveAnim(m)))
+      Promise.allSettled(moveIds.map(m => initMoveAnim(this.scene, m)))
         .then(() => {
           loadMoveAnimAssets(this.scene, moveIds);
           this.getSpeciesForm().loadAssets(this.scene, this.getGender() === Gender.FEMALE, this.formIndex, this.shiny, this.variant);
@@ -317,7 +317,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
                   if (variantSet && variantSet[this.variant] === 1) {
                     if (variantColorCache.hasOwnProperty(key))
                       return resolve();
-                    fetch(`./images/pokemon/variant/${battleSpritePath}.json`).then(res => res.json()).then(c => {
+                    this.scene.cachedFetch(`./images/pokemon/variant/${battleSpritePath}.json`).then(res => res.json()).then(c => {
                       variantColorCache[key] = c;
                       resolve();
                     });

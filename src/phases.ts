@@ -2613,7 +2613,7 @@ export class MoveAnimTestPhase extends BattlePhase {
     } else if (player)
       console.log(Moves[moveId]);
 
-    initMoveAnim(moveId).then(() => {
+    initMoveAnim(this.scene, moveId).then(() => {
       loadMoveAnimAssets(this.scene, [ moveId ], true)
         .then(() => {
           new MoveAnim(moveId, player ? this.scene.getPlayerPokemon() : this.scene.getEnemyPokemon(), (player !== (allMoves[moveId] instanceof SelfStatusMove) ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon()).getBattlerIndex()).play(this.scene, () => {
@@ -2665,11 +2665,20 @@ export class StatChangePhase extends PokemonPhase {
   start() {
     const pokemon = this.getPokemon();
 
-    if (!pokemon.isActive(true))
-      return this.end();
+    let random = false;
 
     const allStats = Utils.getEnumValues(BattleStat);
-    const filteredStats = this.stats.map(s => s !== BattleStat.RAND ? s : allStats[pokemon.randSeedInt(BattleStat.SPD + 1)]).filter(stat => {
+    if (this.stats.length === 1 && this.stats[0] === BattleStat.RAND) {
+      this.stats[0] = this.getRandomStat();
+      random = true;
+    }
+
+    this.aggregateStatChanges(random);
+
+    if (!pokemon.isActive(true))
+      return this.end();
+    
+    const filteredStats = this.stats.map(s => s !== BattleStat.RAND ? s : this.getRandomStat()).filter(stat => {
       const cancelled = new Utils.BooleanHolder(false);
 
       if (!this.selfTarget && this.levels < 0)
@@ -2750,11 +2759,62 @@ export class StatChangePhase extends PokemonPhase {
       end();
   }
 
+  getRandomStat(): BattleStat {
+    const allStats = Utils.getEnumValues(BattleStat);
+    return allStats[this.getPokemon().randSeedInt(BattleStat.SPD + 1)];
+  }
+
+  aggregateStatChanges(random: boolean = false): void {
+    const isAccEva = [ BattleStat.ACC, BattleStat.EVA ].some(s => this.stats.includes(s));
+    let existingPhase: StatChangePhase;
+    if (this.stats.length === 1) {
+      while ((existingPhase = (this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex && p.stats.length === 1
+        && (p.stats[0] === this.stats[0] || (random && p.stats[0] === BattleStat.RAND))
+        && p.selfTarget === this.selfTarget && p.showMessage === this.showMessage && p.ignoreAbilities === this.ignoreAbilities) as StatChangePhase))) {
+        if (existingPhase.stats[0] === BattleStat.RAND) {
+          existingPhase.stats[0] = this.getRandomStat();
+          if (existingPhase.stats[0] !== this.stats[0])
+            continue;
+        }
+        this.levels += existingPhase.levels;
+       
+        if (!this.scene.tryRemovePhase(p => p === existingPhase))
+          break;
+      }
+    }
+    while ((existingPhase = (this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex && p.selfTarget === this.selfTarget
+      && ([ BattleStat.ACC, BattleStat.EVA ].some(s => p.stats.includes(s)) === isAccEva)
+      && p.levels === this.levels && p.showMessage === this.showMessage && p.ignoreAbilities === this.ignoreAbilities) as StatChangePhase))) {
+      this.stats.push(...existingPhase.stats);
+      if (!this.scene.tryRemovePhase(p => p === existingPhase))
+        break;
+    }
+  }
+
   getStatChangeMessages(stats: BattleStat[], levels: integer, relLevels: integer[]): string[] {
     const messages: string[] = [];
-    
-    for (let s = 0; s < stats.length; s++)
-      messages.push(getPokemonMessage(this.getPokemon(), `'s ${getBattleStatName(stats[s])} ${getBattleStatLevelChangeDescription(Math.abs(relLevels[s]), levels >= 1)}!`));
+
+    const relLevelStatIndexes = {};
+    for (let rl = 0; rl < relLevels.length; rl++) {
+      const relLevel = relLevels[rl];
+      if (!relLevelStatIndexes[relLevel])
+        relLevelStatIndexes[relLevel] = [];
+      relLevelStatIndexes[relLevel].push(rl);
+    }
+
+    Object.keys(relLevelStatIndexes).forEach(rl => {
+      const relLevelStats = stats.filter((_, i) => relLevelStatIndexes[rl].includes(i));
+      let statsFragment = '';
+
+      if (relLevelStats.length > 1) {
+        statsFragment = relLevelStats.length >= 5
+          ? 'stats'
+          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(', ')}, and ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
+      } else
+        statsFragment = getBattleStatName(relLevelStats[0]);
+      messages.push(getPokemonMessage(this.getPokemon(), `'s ${statsFragment} ${getBattleStatLevelChangeDescription(Math.abs(parseInt(rl)), levels >= 1)}!`));
+    });
+
     return messages;
   }
 }
@@ -3675,7 +3735,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
 
     if (emptyMoveIndex > -1) {
       pokemon.setMove(emptyMoveIndex, this.moveId);
-      initMoveAnim(this.moveId).then(() => {
+      initMoveAnim(this.scene, this.moveId).then(() => {
         loadMoveAnimAssets(this.scene, [ this.moveId ], true)
           .then(() => {
             this.scene.ui.setMode(messageMode).then(() => {

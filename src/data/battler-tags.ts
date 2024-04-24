@@ -614,6 +614,16 @@ export class MagmaStormTag extends DamagingTrapTag {
   }
 }
 
+export class SnapTrapTag extends DamagingTrapTag {
+  constructor(turnCount: integer, sourceId: integer) {
+    super(BattlerTagType.SNAP_TRAP, CommonAnim.SNAP_TRAP, turnCount, Moves.SNAP_TRAP, sourceId);
+  }
+
+  getTrapMessage(pokemon: Pokemon): string {
+    return getPokemonMessage(pokemon, ` got trapped\nby a snap trap!`);
+  }
+}
+
 export class ThunderCageTag extends DamagingTrapTag {
   constructor(turnCount: integer, sourceId: integer) {
     super(BattlerTagType.THUNDER_CAGE, CommonAnim.THUNDER_CAGE, turnCount, Moves.THUNDER_CAGE, sourceId);
@@ -1103,6 +1113,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new SandTombTag(turnCount, sourceId);
     case BattlerTagType.MAGMA_STORM:
       return new MagmaStormTag(turnCount, sourceId);
+    case BattlerTagType.SNAP_TRAP:
+      return new SnapTrapTag(turnCount, sourceId);
     case BattlerTagType.THUNDER_CAGE:
       return new ThunderCageTag(turnCount, sourceId);
     case BattlerTagType.INFESTATION:
