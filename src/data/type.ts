@@ -537,8 +537,6 @@ export function getTypeRgb(type: Type): [ integer, integer, integer ] {
       return [ 232, 136, 200 ]; 
     case Type.STELLAR:
       return [ 255, 255, 255 ];
-    case Type.UNKNOWN:
-      return [ 104, 160, 144 ];
     default:
       return [ 0, 0, 0 ];
   }
