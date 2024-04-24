@@ -2765,6 +2765,7 @@ export class StatChangePhase extends PokemonPhase {
   }
 
   aggregateStatChanges(random: boolean = false): void {
+    const isAccEva = [ BattleStat.ACC, BattleStat.EVA ].some(s => this.stats.includes(s));
     let existingPhase: StatChangePhase;
     if (this.stats.length === 1) {
       while ((existingPhase = (this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex && p.stats.length === 1
@@ -2781,8 +2782,9 @@ export class StatChangePhase extends PokemonPhase {
           break;
       }
     }
-    while ((existingPhase = (this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex && p.selfTarget === this.selfTarget && p.levels === this.levels
-      && p.showMessage === this.showMessage && p.ignoreAbilities === this.ignoreAbilities) as StatChangePhase))) {
+    while ((existingPhase = (this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex && p.selfTarget === this.selfTarget
+      && ([ BattleStat.ACC, BattleStat.EVA ].some(s => p.stats.includes(s)) === isAccEva)
+      && p.levels === this.levels && p.showMessage === this.showMessage && p.ignoreAbilities === this.ignoreAbilities) as StatChangePhase))) {
       this.stats.push(...existingPhase.stats);
       if (!this.scene.tryRemovePhase(p => p === existingPhase))
         break;
@@ -2804,9 +2806,11 @@ export class StatChangePhase extends PokemonPhase {
       const relLevelStats = stats.filter((_, i) => relLevelStatIndexes[rl].includes(i));
       let statsFragment = '';
 
-      if (relLevelStats.length > 1)
-        statsFragment = `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(', ')}, and ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
-      else
+      if (relLevelStats.length > 1) {
+        statsFragment = relLevelStats.length >= 5
+          ? 'stats'
+          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(', ')}, and ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
+      } else
         statsFragment = getBattleStatName(relLevelStats[0]);
       messages.push(getPokemonMessage(this.getPokemon(), `'s ${statsFragment} ${getBattleStatLevelChangeDescription(Math.abs(parseInt(rl)), levels >= 1)}!`));
     });
