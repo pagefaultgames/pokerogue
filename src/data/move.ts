@@ -1951,7 +1951,7 @@ export class ConditionalHealAttr extends VariablePowerAttr {
   private callback: (user: Pokemon, target: Pokemon, move: Move) => boolean;
   private healRatio: number;
 
-  constructor(callback: (user: Pokemon, target: Pokemon, move: Move) => boolean, healRatio?: number, showAnim?: boolean, selfTarget?: boolean) {
+  constructor(callback: (user: Pokemon, target: Pokemon, move: Move) => boolean, healRatio?: number) {
     super();
     this.callback = callback;
     this.healRatio = healRatio;
@@ -5460,7 +5460,7 @@ export function initMoves() {
     new AttackMove(Moves.THROAT_CHOP, Type.DARK, MoveCategory.PHYSICAL, 80, 100, 15, 100, 0, 7)
       .partial(),
     new AttackMove(Moves.POLLEN_PUFF, Type.BUG, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 7)
-      .attr(ConditionalHealAttr, (user, target, move) => (!user.isPlayer() && !target.isPlayer()) || (user.isPlayer() && target.isPlayer()) ? true : false, 0.5, true, false)
+      .attr(ConditionalHealAttr, (user, target, move) => (!user.isPlayer() && !target.isPlayer()) || (user.isPlayer() && target.isPlayer()) ? true : false, 0.5)
       .ballBombMove(),
     new AttackMove(Moves.ANCHOR_SHOT, Type.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, -1, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1),
