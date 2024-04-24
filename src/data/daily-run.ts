@@ -60,12 +60,12 @@ export function getDailyRunStarters(scene: BattleScene, seed: string): Starter[]
 function getDailyRunStarter(scene: BattleScene, starterSpeciesForm: PokemonSpeciesForm, startingLevel: integer): Starter {
   const starterSpecies = starterSpeciesForm instanceof PokemonSpecies ? starterSpeciesForm : getPokemonSpecies(starterSpeciesForm.speciesId);
   const formIndex = starterSpeciesForm instanceof PokemonSpecies ? undefined : starterSpeciesForm.formIndex;
-  const pokemon = new PlayerPokemon(scene, starterSpecies, startingLevel, undefined, formIndex, undefined, undefined, undefined, undefined, undefined);
+  const pokemon = new PlayerPokemon(scene, starterSpecies, startingLevel, undefined, formIndex, undefined, undefined, undefined, undefined, undefined, undefined);
   const starter: Starter = {
     species: starterSpecies,
     dexAttr: pokemon.getDexAttr(),
+    abilityIndex: pokemon.abilityIndex,
     passive: false,
-    variant: 0,
     nature: pokemon.getNature(),
     pokerus: pokemon.pokerus
   };

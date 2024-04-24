@@ -22,11 +22,13 @@ export default class SettingsUiHandler extends UiHandler {
   private cursorObj: Phaser.GameObjects.NineSlice;
 
   private reloadRequired: boolean;
+  private reloadI18n: boolean;
 
   constructor(scene: BattleScene, mode?: Mode) {
     super(scene, mode);
 
     this.reloadRequired = false;
+    this.reloadI18n = false;
   }
 
   setup() {
@@ -197,8 +199,11 @@ export default class SettingsUiHandler extends UiHandler {
 
     if (save) {
       this.scene.gameData.saveSetting(setting, cursor)
-      if (reloadSettings.includes(setting))
+      if (reloadSettings.includes(setting)) {
         this.reloadRequired = true;
+        if (setting === Setting.Language)
+          this.reloadI18n = true;
+      }
     }
 
     return true;
@@ -234,7 +239,7 @@ export default class SettingsUiHandler extends UiHandler {
     this.eraseCursor();
     if (this.reloadRequired) {
       this.reloadRequired = false;
-      this.scene.reset(true);
+      this.scene.reset(true, false, true);
     } 
   }
 

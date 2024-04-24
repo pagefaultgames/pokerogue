@@ -65,7 +65,7 @@ export class MistTag extends ArenaTag {
     super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    arena.scene.queueMessage(getPokemonMessage(source, `'s team became\nshrowded in mist!`));
+    arena.scene.queueMessage(getPokemonMessage(source, `'s team became\nshrouded in mist!`));
   }
 
   apply(arena: Arena, args: any[]): boolean {
@@ -175,7 +175,7 @@ class MudSportTag extends WeakenMoveTypeTag {
   }
 
   onRemove(arena: Arena): void {
-    arena.scene.queueMessage('The effects of MUD SPORT\nhave faded.');
+    arena.scene.queueMessage('The effects of Mud Sport\nhave faded.');
   }
 }
 
@@ -189,7 +189,7 @@ class WaterSportTag extends WeakenMoveTypeTag {
   }
 
   onRemove(arena: Arena): void {
-    arena.scene.queueMessage('The effects of WATER SPORT\nhave faded.');
+    arena.scene.queueMessage('The effects of Water Sport\nhave faded.');
   }
 }
 

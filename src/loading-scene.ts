@@ -8,21 +8,18 @@ import { SceneBase } from "./scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
 import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
+import { initI18n } from "./plugins/i18n";
 
 export class LoadingScene extends SceneBase {
   constructor() {
     super('loading');
 
     Phaser.Plugins.PluginCache.register('Loader', CacheBustedLoaderPlugin, 'load');
+    initI18n();
   }
 
   preload() {
-    const indexFile = Array.from(document.querySelectorAll('script')).map(s => s.src).find(s => /\/index/.test(s));
-    if (indexFile) {
-      const buildIdMatch = /index\-(.*?)\.js$/.exec(indexFile);
-      if (buildIdMatch)
-        this.load['cacheBuster'] = buildIdMatch[1];
-    }
+    this.load['manifest'] = this.game['manifest'];
 
     if (!isMobile())
       this.load.video('intro_dark', 'images/intro_dark.mp4', true);
@@ -65,6 +62,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage('achv_bar_3', 'ui');
     this.loadImage('achv_bar_4', 'ui');
     this.loadImage('shiny_star', 'ui', 'shiny.png');
+    this.loadImage('shiny_star_small', 'ui', 'shiny_small.png');
     this.loadImage('ha_capsule', 'ui', 'ha_capsule.png');
     this.loadImage('icon_spliced', 'ui');
     this.loadImage('icon_tera', 'ui');
@@ -162,6 +160,8 @@ export class LoadingScene extends SceneBase {
     this.loadImage(`pkmn__sub`, 'pokemon', 'sub.png');
     this.loadAtlas('battle_stats', 'effects');
     this.loadAtlas('shiny', 'effects');
+    this.loadAtlas('shiny_2', 'effects');
+    this.loadAtlas('shiny_3', 'effects');
     this.loadImage('tera', 'effects');
     this.loadAtlas('pb_particles', 'effects');
     this.loadImage('evo_sparkle', 'effects');
@@ -191,8 +191,11 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage('egg_list_bg', 'ui');
 
-    for (let i = 0; i < 10; i++)
+    for (let i = 0; i < 10; i++) {
       this.loadAtlas(`pokemon_icons_${i}`, '');
+      if (i)
+        this.loadAtlas(`pokemon_icons_${i}v`, '');
+    }
 
     this.loadSe('select');
     this.loadSe('menu_open');

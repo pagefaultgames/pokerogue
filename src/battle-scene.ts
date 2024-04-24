@@ -15,9 +15,9 @@ import { GameData, PlayerGender } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
 import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
-import { } from "./data/move";
+import { allMoves } from "./data/move";
 import { initMoves } from './data/move';
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave } from './modifier/modifier-type';
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getModifierPoolForType } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import { Abilities } from "./data/enums/abilities";
@@ -37,7 +37,7 @@ import SettingsUiHandler from './ui/settings-ui-handler';
 import MessageUiHandler from './ui/message-ui-handler';
 import { Species } from './data/enums/species';
 import InvertPostFX from './pipelines/invert';
-import { Achv, ModifierAchv, achvs } from './system/achv';
+import { Achv, ModifierAchv, MoneyAchv, achvs } from './system/achv';
 import { Voucher, vouchers } from './system/voucher';
 import { Gender } from './data/gender';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
@@ -57,6 +57,8 @@ import { initTouchControls } from './touch-controls';
 import { UiTheme } from './enums/ui-theme';
 import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
+import { Variant, variantData } from './data/variant';
+import { Localizable } from './plugins/i18n';
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -100,6 +102,7 @@ export enum Button {
 	CYCLE_GENDER,
 	CYCLE_ABILITY,
 	CYCLE_NATURE,
+	CYCLE_VARIANT,
 	SPEED_UP,
 	SLOW_DOWN
 }
@@ -126,12 +129,15 @@ export default class BattleScene extends SceneBase {
 	public windowType: integer = 0;
 	public experimentalSprites: boolean = false;
 	public moveAnimations: boolean = true;
+	public expGainsSpeed: integer = 0;
 	public hpBarSpeed: integer = 0;
 	public fusionPaletteSwaps: boolean = true;
 	public gamepadSupport: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
 	
+	public disableMenu: boolean = false;
+
 	public gameData: GameData;
 	public sessionSlotId: integer;
 
@@ -214,6 +220,7 @@ export default class BattleScene extends SceneBase {
     [Button.CYCLE_GENDER]: 6, // LT
     [Button.CYCLE_ABILITY]: 7, // RT
     [Button.CYCLE_NATURE]: 2, // square
+    [Button.CYCLE_VARIANT]: 3, // triangle
     [Button.SPEED_UP]: 10, // L3
     [Button.SLOW_DOWN]: 11 // R3
   };
@@ -239,24 +246,15 @@ export default class BattleScene extends SceneBase {
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
 		if (experimental === undefined)
 			experimental = this.experimentalSprites;
-		if (experimental) {
-			const keyMatch = /^pkmn__(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?$/g.exec(key);
-			let k = keyMatch[4];
-			if (keyMatch[2])
-				k += 's';
-			if (keyMatch[1])
-				k += 'b';
-			if (keyMatch[3])
-				k += 'f';
-			if (keyMatch[5])
-				k += keyMatch[5];
-			if (!expSpriteKeys.includes(k))
-				experimental = false;
-		}
-		this.load.atlas(key, `images/pokemon/${experimental ? 'exp/' : ''}${atlasPath}.png`,  `images/pokemon/${experimental ? 'exp/' : ''}${atlasPath}.json`);
+		let variant = atlasPath.includes('variant/');
+		if (experimental)
+			experimental = this.hasExpSprite(key);
+		if (variant)
+			atlasPath = atlasPath.replace('variant/', '');
+		this.load.atlas(key, `images/pokemon/${variant ? 'variant/' : ''}${experimental ? 'exp/' : ''}${atlasPath}.png`,  `images/pokemon/${variant ? 'variant/' : ''}${experimental ? 'exp/' : ''}${atlasPath}.json`);
 	}
 
-	preload() {
+	async preload() {
 		if (DEBUG_RNG) {
 			const scene = this;
 			const originalRealInRange = Phaser.Math.RND.realInRange;
@@ -272,6 +270,8 @@ export default class BattleScene extends SceneBase {
 		}
 		
 		populateAnims();
+
+		await this.cachedFetch('./images/pokemon/variant/_masterlist.json').then(res => res.json()).then(v => Object.keys(v).forEach(k => variantData[k] = v[k]));
 	}
 
 	create() {
@@ -455,7 +455,7 @@ export default class BattleScene extends SceneBase {
 			hideOnComplete: true
 		});
 
-		this.reset();
+		this.reset(false, false, true);
 
 		const ui = new UI(this);
 		this.uiContainer.add(ui);
@@ -468,8 +468,8 @@ export default class BattleScene extends SceneBase {
 
 		Promise.all([
 			Promise.all(loadPokemonAssets),
-			initCommonAnims().then(() => loadCommonAnimAssets(this, true)),
-			Promise.all([ Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE ].map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(this, defaultMoves, true)),
+			initCommonAnims(this).then(() => loadCommonAnimAssets(this, true)),
+			Promise.all([ Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE ].map(m => initMoveAnim(this, m))).then(() => loadMoveAnimAssets(this, defaultMoves, true)),
 			this.initStarterColors()
 		]).then(() => {
 			this.pushPhase(new LoginPhase(this));
@@ -502,16 +502,24 @@ export default class BattleScene extends SceneBase {
 		this.updateScoreText();
 	}
 
-	initExpSprites(): Promise<void> {
-		return new Promise(resolve => {
-			if (expSpriteKeys.length)
-				return resolve();
-			fetch('./exp-sprites.json').then(res => res.json()).then(keys => {
-				if (Array.isArray(keys))
-					expSpriteKeys.push(...keys);
-				resolve();
-			});
+	async initExpSprites(): Promise<void> {
+		if (expSpriteKeys.length)
+			return;
+		this.cachedFetch('./exp-sprites.json').then(res => res.json()).then(keys => {
+			if (Array.isArray(keys))
+				expSpriteKeys.push(...keys);
+			Promise.resolve();
 		});
+	}
+
+	cachedFetch(url: string, init?: RequestInit): Promise<Response> {
+		const manifest = this.game['manifest'];
+		if (manifest) {
+			const timestamp = manifest[`/${url.replace('./', '')}`];
+			if (timestamp)
+				url += `?t=${timestamp}`;
+		}
+		return fetch(url, init);
 	}
 
 	initStarterColors(): Promise<void> {
@@ -519,7 +527,7 @@ export default class BattleScene extends SceneBase {
 			if (starterColors)
 				return resolve();
 
-			fetch('./starter-colors.json').then(res => res.json()).then(sc => {
+			this.cachedFetch('./starter-colors.json').then(res => res.json()).then(sc => {
 				starterColors = {};
 				Object.keys(sc).forEach(key => {
 					starterColors[key] = sc[key];
@@ -552,6 +560,22 @@ export default class BattleScene extends SceneBase {
 		});
 	}
 
+	hasExpSprite(key: string): boolean {
+		const keyMatch = /^pkmn__?(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?(?:_[1-3])?$/g.exec(key);
+		let k = keyMatch[4];
+		if (keyMatch[2])
+			k += 's';
+		if (keyMatch[1])
+			k += 'b';
+		if (keyMatch[3])
+			k += 'f';
+		if (keyMatch[5])
+			k += keyMatch[5];
+		if (!expSpriteKeys.includes(k))
+			return false;
+		return true;
+	}
+
 	setupControls() {
 		const keyCodes = Phaser.Input.Keyboard.KeyCodes;
 		const keyConfig = {
@@ -568,6 +592,7 @@ export default class BattleScene extends SceneBase {
 			[Button.CYCLE_GENDER]: [keyCodes.G],
 			[Button.CYCLE_ABILITY]: [keyCodes.E],
 			[Button.CYCLE_NATURE]: [keyCodes.N],
+			[Button.CYCLE_VARIANT]: [keyCodes.V],
 			[Button.SPEED_UP]: [keyCodes.PLUS],
 			[Button.SLOW_DOWN]: [keyCodes.MINUS]
 		};
@@ -628,8 +653,8 @@ export default class BattleScene extends SceneBase {
 		return findInParty(this.getParty()) || findInParty(this.getEnemyParty());
 	}
 
-	addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
-		const pokemon = new PlayerPokemon(this, species, level, abilityIndex, formIndex, gender, shiny, ivs, nature, dataSource);
+	addPlayerPokemon(species: PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PlayerPokemon) => void): PlayerPokemon {
+		const pokemon = new PlayerPokemon(this, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
 		if (postProcess)
 			postProcess(pokemon);
 		pokemon.init();
@@ -640,7 +665,7 @@ export default class BattleScene extends SceneBase {
 		if (OPP_SPECIES_OVERRIDE)
 			species = getPokemonSpecies(OPP_SPECIES_OVERRIDE);
 		const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
-		if (boss) {
+		if (boss && !dataSource) {
 			const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
 
 			for (let s = 0; s < pokemon.ivs.length; s++)
@@ -724,7 +749,7 @@ export default class BattleScene extends SceneBase {
 		return this.currentBattle.randSeedInt(this, range, min);
 	}
 
-	reset(clearScene: boolean = false, clearData: boolean = false): void {
+	reset(clearScene: boolean = false, clearData: boolean = false, reloadI18n: boolean = false): void {
 		if (clearData)
 			this.gameData = new GameData(this);
 
@@ -732,6 +757,8 @@ export default class BattleScene extends SceneBase {
 		
 		this.setSeed(SEED_OVERRIDE || Utils.randomString(24));
 		console.log('Seed:', this.seed);
+
+		this.disableMenu = false;
 
 		this.score = 0;
 		this.money = 0;
@@ -775,7 +802,17 @@ export default class BattleScene extends SceneBase {
 
 		this.trainer.setTexture(`trainer_${this.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back`);
 		this.trainer.setPosition(406, 186);
-		this.trainer.setVisible(true)
+		this.trainer.setVisible(true);
+
+		if (reloadI18n) {
+			const localizable: Localizable[] = [
+				...allSpecies,
+				...allMoves,
+				...Utils.getEnumValues(ModifierPoolType).map(mpt => getModifierPoolForType(mpt)).map(mp => Object.values(mp).flat().map(mt => mt.modifierType).filter(mt => 'localize' in mt).map(lpb => lpb as unknown as Localizable)).flat()
+			];
+			for (let item of localizable)
+				item.localize();
+		}
 
 		if (clearScene) {
 			this.fadeOutBgm(250, false);
@@ -866,7 +903,26 @@ export default class BattleScene extends SceneBase {
 		//this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
 
 		if (!waveIndex && lastBattle) {
-			const isNewBiome = !(lastBattle.waveIndex % 10) || (this.gameMode.isDaily && lastBattle.waveIndex === 49);
+			let isNewBiome = !(lastBattle.waveIndex % 10) || ((this.gameMode.hasShortBiomes || this.gameMode.isDaily) && (lastBattle.waveIndex % 50) === 49);
+			if (!isNewBiome && this.gameMode.hasShortBiomes && (newWaveIndex % 10) < 9) {
+				let w = lastBattle.waveIndex - ((lastBattle.waveIndex % 10) - 1);
+				let biomeWaves = 1;
+				while (w < lastBattle.waveIndex) {
+					let wasNewBiome = false;
+					this.executeWithSeedOffset(() => {
+						wasNewBiome = !Utils.randSeedInt(6 - biomeWaves);
+					}, w << 4);
+					if (wasNewBiome)
+						biomeWaves = 1;
+					else
+						biomeWaves++;
+					w++;
+				}
+
+				this.executeWithSeedOffset(() => {
+					isNewBiome = !Utils.randSeedInt(6 - biomeWaves);
+				}, lastBattle.waveIndex << 4);
+			}
 			const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
 			this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
 			this.trySpreadPokerus();
@@ -952,6 +1008,9 @@ export default class BattleScene extends SceneBase {
 			case Species.DEERLING:
 			case Species.SAWSBUCK:
 			case Species.VIVILLON:
+			case Species.FLABEBE:
+			case Species.FLOETTE:
+			case Species.FLORGES:
 			case Species.ORICORIO:
 			case Species.SQUAWKABILLY:
 			case Species.TATSUGIRI:
@@ -1234,6 +1293,8 @@ export default class BattleScene extends SceneBase {
 			inputSuccess = this.ui.processInput(Button.CANCEL);
 			this.setLastProcessedMovementTime(Button.CANCEL);
 		} else if (this.buttonJustPressed(Button.MENU)) {
+			if (this.disableMenu)
+				return;
 			switch (this.ui?.getMode()) {
 				case Mode.MESSAGE:
 					if (!(this.ui.getHandler() as MessageUiHandler).pendingPrompt)
@@ -1278,6 +1339,9 @@ export default class BattleScene extends SceneBase {
 			} else if (this.buttonJustPressed(Button.CYCLE_NATURE)) {
 				inputSuccess = this.ui.processInput(Button.CYCLE_NATURE);
         this.setLastProcessedMovementTime(Button.CYCLE_NATURE);
+			} else if (this.buttonJustPressed(Button.CYCLE_VARIANT)) {
+				inputSuccess = this.ui.processInput(Button.CYCLE_VARIANT);
+				this.setLastProcessedMovementTime(Button.CYCLE_VARIANT);
 			} else
 				return;
 		}	else if (this.buttonJustPressed(Button.SPEED_UP)) {
@@ -1645,6 +1709,12 @@ export default class BattleScene extends SceneBase {
 		this.phaseQueue.push(new TurnInitPhase(this));
 	}
 
+	addMoney(amount: integer): void {
+		this.money = Math.min(this.money + amount, Number.MAX_SAFE_INTEGER);
+		this.updateMoneyText();
+		this.validateAchvs(MoneyAchv);
+	}
+
 	getWaveMoneyAmount(moneyMultiplier: number): integer {
 		const waveIndex = this.currentBattle.waveIndex;
 		const waveSetIndex = Math.ceil(waveIndex / 10) - 1;
@@ -1916,9 +1986,27 @@ export default class BattleScene extends SceneBase {
 		return (player ? this.modifiers : this.enemyModifiers).find(m => (modifierFilter as ModifierPredicate)(m));
 	}
 
+	applyShuffledModifiers(scene: BattleScene, modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
+		let modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
+		scene.executeWithSeedOffset(() => {
+			const shuffleModifiers = mods => {
+				if (mods.length < 1)
+					return mods;
+				const rand = Math.floor(Utils.randSeedInt(mods.length));
+				return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
+			};
+			modifiers = shuffleModifiers(modifiers);
+		}, scene.currentBattle.turn << 4, scene.waveSeed);
+		return this.applyModifiersInternal(modifiers, player, args);
+	}
+
 	applyModifiers(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
-		const appliedModifiers: PersistentModifier[] = [];
 		const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
+		return this.applyModifiersInternal(modifiers, player, args);
+	}
+
+	applyModifiersInternal(modifiers: PersistentModifier[], player: boolean, args: any[]): PersistentModifier[] {
+		const appliedModifiers: PersistentModifier[] = [];
 		for (let modifier of modifiers) {
 			if (modifier.apply(args)) {
 				console.log('Applied', modifier.type.name, !player ? '(enemy)' : '');
