@@ -348,6 +348,7 @@ export class GameData {
             if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion))
               this.migrateStarterAbilities(systemData);
             this.fixVariantData(systemData);
+            this.fixStarterData(systemData);
             // Migrate ability starter data if empty for caught species
             Object.keys(systemData.starterData).forEach(sd => {
               if (systemData.dexData[sd].caughtAttr && !systemData.starterData[sd].abilityAttr)
@@ -984,7 +985,7 @@ export class GameData {
         moveset: null,
         eggMoves: 0,
         candyCount: 0,
-        abilityAttr: 0,
+        abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILTIY_1 : 0,
         passiveAttr: 0,
         valueReduction: 0
       };
@@ -1290,5 +1291,10 @@ export class GameData {
         }
       }
     }
+  }
+  
+  fixStarterData(systemData: SystemSaveData): void {
+    for (let starterId of defaultStarterSpecies)
+      systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
   }
 }
