@@ -1309,6 +1309,14 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
     if (!pokemon.scene.arena.weather?.isImmutable())
       return pokemon.scene.arena.trySetWeather(this.weatherType, true);
 
+    if (pokemon.scene.arena.weather?.isImmutable())
+      switch (this.weatherType) {
+        case WeatherType.HEAVY_RAIN:
+        case WeatherType.HARSH_SUN:
+        case WeatherType.STRONG_WINDS:
+          return pokemon.scene.arena.trySetWeather(this.weatherType, true);
+      }      
+
     return false;
   }
 }
