@@ -1436,6 +1436,16 @@ export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
   }
 }
 
+export class PreSwitchOutWeatherChangeAbAttr extends PreSwitchOutAbAttr {
+  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    if (pokemon.scene.arena.weather?.isImmutable()) {
+      return pokemon.scene.arena.weather?.isAbilityOnField(pokemon.scene) ? false : pokemon.scene.arena.trySetWeather(WeatherType.NONE, true);
+    }
+
+    return false;
+    }
+}
+
 export class PreStatChangeAbAttr extends AbAttr {
   applyPreStatChange(pokemon: Pokemon, passive: boolean, stat: BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -2896,12 +2906,15 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.PRIMORDIAL_SEA, "Primordial Sea", "The Pokémon changes the weather to nullify Fire-type attacks.", 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
+      .attr(PreSwitchOutWeatherChangeAbAttr)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN),
     new Ability(Abilities.DESOLATE_LAND, "Desolate Land", "The Pokémon changes the weather to nullify Water-type attacks.", 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
+      .attr(PreSwitchOutWeatherChangeAbAttr)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN),
     new Ability(Abilities.DELTA_STREAM, "Delta Stream", "The Pokémon changes the weather to eliminate all of the Flying type's weaknesses.", 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
+      .attr(PreSwitchOutWeatherChangeAbAttr)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS),
     new Ability(Abilities.STAMINA, "Stamina", "Boosts the Defense stat when hit by an attack.", 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.DEF, 1),
