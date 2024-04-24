@@ -3857,6 +3857,12 @@ export class PokemonHealPhase extends CommonAnimPhase {
       return;
     }
 
+    if (pokemon.getTag(HealBlockTag)) {
+        this.scene.queueMessage(getPokemonMessage(pokemon, ' was prevented from healing!'));
+        super.end();
+        return;
+    }
+
     const fullHp = pokemon.getHpRatio() >= 1;
 
     const hasMessage = !!this.message;

@@ -52,5 +52,6 @@ export enum BattlerTagType {
   SALT_CURED = "SALT_CURED",
   CURSED = "CURSED",
   CHARGED = "CHARGED",
+  HEAL_BLOCKED = "HEAL_BLOCKED",
   GROUNDED = "GROUNDED"
 }

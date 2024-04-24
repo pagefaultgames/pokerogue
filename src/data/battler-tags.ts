@@ -1071,6 +1071,24 @@ export class CursedTag extends BattlerTag {
   }
 }
 
+export class HealBlockTag extends BattlerTag {
+    constructor(turnCount : integer, sourceMove : Moves) {
+        super(BattlerTagType.HEAL_BLOCKED, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+    }
+    
+    onAdd(pokemon: Pokemon) {
+        super.onAdd(pokemon);
+    
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' was prevented from healing!'));    
+    }
+    
+    onRemove(pokemon: Pokemon): void {
+        super.onRemove(pokemon);
+
+        pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\'s ' + super.getMoveName() + ' wore off!'));
+    }
+}
+
 export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourceMove: Moves, sourceId: integer): BattlerTag {
   switch (tagType) {
     case BattlerTagType.RECHARGING:
@@ -1174,6 +1192,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new CursedTag(sourceId);
     case BattlerTagType.CHARGED:
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
+    case BattlerTagType.HEAL_BLOCKED:
+      return new HealBlockTag(turnCount, sourceMove);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

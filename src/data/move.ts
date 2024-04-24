@@ -4727,7 +4727,7 @@ export function initMoves() {
       .unimplemented(),
     new StatusMove(Moves.HEAL_BLOCK, Type.PSYCHIC, 100, 15, -1, 0, 4)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCKED, false, true, 5),
     new AttackMove(Moves.WRING_OUT, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 4)
       .attr(OpponentHighHpPowerAttr)
       .makesContact(),
@@ -6320,7 +6320,7 @@ export function initMoves() {
       .attr(NoEffectAttr, crashDamageFunc),
     new AttackMove(Moves.PSYCHIC_NOISE, Type.PSYCHIC, MoveCategory.SPECIAL, 75, 100, 10, -1, 0, 9)
       .soundBased()
-      .partial(),
+      .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCKED, false, true, 2),
     new AttackMove(Moves.UPPER_HAND, Type.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, -1, 3, 9)
       .partial(),
     new AttackMove(Moves.MALIGNANT_CHAIN, Type.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
