@@ -246,6 +246,13 @@ export default class MenuUiHandler extends MessageUiHandler {
     let success = false;
     let error = false;
 
+    const returnToTitle = () => {
+      ui.setOverlayMode(Mode.CONFIRM, () => this.scene.reset(true), () => {
+        ui.revertMode();
+        ui.showText(null, 0);
+      }, false, -98);
+    }
+
     if (button === Button.ACTION) {
       let adjustedCursor = this.cursor;
       for (let imo of this.ignoredMenuOptions) {
@@ -295,14 +302,10 @@ export default class MenuUiHandler extends MessageUiHandler {
         case MenuOptions.RETURN_TO_TITLE:
           if (this.scene.currentBattle) {
             success = true;
-            ui.showText('You will lose any progress since the beginning of the battle. Proceed?', null, () => {
-              ui.setOverlayMode(Mode.CONFIRM, () => this.scene.reset(true), () => {
-                ui.revertMode();
-                ui.showText(null, 0);
-              }, false, -98);
-            });
-          } else
-            error = true;
+            ui.showText('You will lose any progress since the beginning of the battle. Proceed?', null, returnToTitle);
+          } else {
+            returnToTitle();
+          }
           break;
         case MenuOptions.LOG_OUT:
           success = true;
