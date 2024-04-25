@@ -2834,6 +2834,7 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.SPECIAL && user.status?.effect === StatusEffect.BURN, 1.5),
     new Ability(Abilities.HARVEST, 5),
     new Ability(Abilities.TELEPATHY, 5)
+      .unimplemented()
       .ignorable(),
     new Ability(Abilities.MOODY, 5)
       .attr(MoodyAbAttr),
