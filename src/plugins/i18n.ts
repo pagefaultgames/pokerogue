@@ -3,11 +3,13 @@ import { menu as enMenu } from '../locales/en/menu';
 import { menu as esMenu } from '../locales/es/menu';
 import { menu as itMenu } from '../locales/it/menu';
 import { menu as frMenu } from '../locales/fr/menu';
+import { menu as deMenu } from '../locales/de/menu';
 
 import { menuUiHandler as enMenuUiHandler } from '../locales/en/menu-ui-handler.js';
 import { menuUiHandler as esMenuUiHandler } from '../locales/es/menu-ui-handler.js';
 import { menuUiHandler as frMenuUiHandler } from '../locales/fr/menu-ui-handler.js';
 import { menuUiHandler as itMenuUiHandler } from '../locales/it/menu-ui-handler.js';
+import { menuUiHandler as deMenuUiHandler } from '../locales/de/menu-ui-handler.js';
 
 import { move as enMove } from '../locales/en/move';
 import { move as esMove } from '../locales/es/move';
@@ -20,6 +22,7 @@ import { ability as frAbility } from '../locales/fr/ability';
 import { pokeball as enPokeball } from '../locales/en/pokeball';
 import { pokeball as esPokeball } from '../locales/es/pokeball';
 import { pokeball as frPokeball } from '../locales/fr/pokeball';
+import { pokeball as dePokeball } from '../locales/de/pokeball';
 
 import { pokemon as enPokemon } from '../locales/en/pokemon';
 import { pokemon as esPokemon } from '../locales/es/pokemon';
@@ -29,10 +32,12 @@ import { pokemonStat as enPokemonStat } from '../locales/en/pokemon-stat';
 import { pokemonStat as esPokemonStat } from '../locales/es/pokemon-stat';
 import { pokemonStat as frPokemonStat } from '../locales/fr/pokemon-stat';
 import { pokemonStat as itPokemonStat } from '../locales/it/pokemon-stat';
+import { pokemonStat as dePokemonStat } from '../locales/de/pokemon-stat';
 
 import { commandUiHandler as enCommandUiHandler } from '../locales/en/command-ui-handler';
 import { commandUiHandler as esCommandUiHandler } from '../locales/es/command-ui-handler';
 import { commandUiHandler as frCommandUiHandler } from '../locales/fr/command-ui-handler';
+import { commandUiHandler as deCommandUiHandler } from '../locales/de/command-ui-handler';
 
 export interface SimpleTranslationEntries {
   [key: string]: string
@@ -79,6 +84,9 @@ export function initI18n(): void {
    * Q: How do I add a new namespace?
    * A: To add a new namespace, create a new file in each language folder with the translations.
    *    Then update the `resources` field in the init() call and the CustomTypeOptions interface.
+   * 
+   * Q: How do I make a language selectable in the settings?
+   * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
    */
 
   i18next.init({
@@ -124,6 +132,13 @@ export function initI18n(): void {
         menuUiHandler: itMenuUiHandler,
         pokemonStat: itPokemonStat,
       },
+      de: {
+        menu: deMenu,
+        menuUiHandler: deMenuUiHandler,
+        pokeball: dePokeball,
+        pokemonStat: dePokemonStat,
+        commandUiHandler: deCommandUiHandler,
+      }
     },
   });
 }
