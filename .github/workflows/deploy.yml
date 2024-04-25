@@ -29,5 +29,5 @@ jobs:
       - name: Deploy build on server
         if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
         run: | 
-          rsync --del -vrm dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DESTINATION_DIR }}
+          rsync --del --no-times -vrm dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DESTINATION_DIR }}
           ssh -t ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "~/prmanifest --inpath ${{ secrets.DESTINATION_DIR }} --outpath ${{ secrets.DESTINATION_DIR }}/manifest.json"
