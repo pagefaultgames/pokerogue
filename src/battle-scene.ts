@@ -21,6 +21,7 @@ import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesF
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import { Abilities } from "./data/enums/abilities";
+import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';
 import { GameMode, GameModes, gameModes } from './game-mode';
 import FieldSpritePipeline from './pipelines/field-sprite';
@@ -271,7 +272,7 @@ export default class BattleScene extends SceneBase {
 		
 		populateAnims();
 
-		await fetch('./images/pokemon/variant/_masterlist.json').then(res => res.json()).then(v => Object.keys(v).forEach(k => variantData[k] = v[k]));
+		await this.cachedFetch('./images/pokemon/variant/_masterlist.json').then(res => res.json()).then(v => Object.keys(v).forEach(k => variantData[k] = v[k]));
 	}
 
 	create() {
@@ -468,8 +469,8 @@ export default class BattleScene extends SceneBase {
 
 		Promise.all([
 			Promise.all(loadPokemonAssets),
-			initCommonAnims().then(() => loadCommonAnimAssets(this, true)),
-			Promise.all([ Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE ].map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(this, defaultMoves, true)),
+			initCommonAnims(this).then(() => loadCommonAnimAssets(this, true)),
+			Promise.all([ Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE ].map(m => initMoveAnim(this, m))).then(() => loadMoveAnimAssets(this, defaultMoves, true)),
 			this.initStarterColors()
 		]).then(() => {
 			this.pushPhase(new LoginPhase(this));
@@ -505,11 +506,21 @@ export default class BattleScene extends SceneBase {
 	async initExpSprites(): Promise<void> {
 		if (expSpriteKeys.length)
 			return;
-		fetch('./exp-sprites.json').then(res => res.json()).then(keys => {
+		this.cachedFetch('./exp-sprites.json').then(res => res.json()).then(keys => {
 			if (Array.isArray(keys))
 				expSpriteKeys.push(...keys);
 			Promise.resolve();
 		});
+	}
+
+	cachedFetch(url: string, init?: RequestInit): Promise<Response> {
+		const manifest = this.game['manifest'];
+		if (manifest) {
+			const timestamp = manifest[`/${url.replace('./', '')}`];
+			if (timestamp)
+				url += `?t=${timestamp}`;
+		}
+		return fetch(url, init);
 	}
 
 	initStarterColors(): Promise<void> {
@@ -517,7 +528,7 @@ export default class BattleScene extends SceneBase {
 			if (starterColors)
 				return resolve();
 
-			fetch('./starter-colors.json').then(res => res.json()).then(sc => {
+			this.cachedFetch('./starter-colors.json').then(res => res.json()).then(sc => {
 				starterColors = {};
 				Object.keys(sc).forEach(key => {
 					starterColors[key] = sc[key];
@@ -798,6 +809,7 @@ export default class BattleScene extends SceneBase {
 			const localizable: Localizable[] = [
 				...allSpecies,
 				...allMoves,
+				...allAbilities,
 				...Utils.getEnumValues(ModifierPoolType).map(mpt => getModifierPoolForType(mpt)).map(mp => Object.values(mp).flat().map(mt => mt.modifierType).filter(mt => 'localize' in mt).map(lpb => lpb as unknown as Localizable)).flat()
 			];
 			for (let item of localizable)

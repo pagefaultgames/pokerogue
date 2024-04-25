@@ -272,7 +272,7 @@ export class GameData {
         const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
 
         if (!bypassLogin) {
-          Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData)
+          Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData, undefined, true)
             .then(response => response.text())
             .then(error => {
               this.scene.ui.savingIcon.hide();
@@ -347,7 +347,8 @@ export class GameData {
           } else {
             if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion))
               this.migrateStarterAbilities(systemData);
-            this.fixVariantData(systemData);
+            //this.fixVariantData(systemData);
+            this.fixStarterData(systemData);
             // Migrate ability starter data if empty for caught species
             Object.keys(systemData.starterData).forEach(sd => {
               if (systemData.dexData[sd].caughtAttr && !systemData.starterData[sd].abilityAttr)
@@ -550,7 +551,7 @@ export class GameData {
         const sessionData = this.getSessionSaveData(scene);
 
         if (!bypassLogin) {
-          Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}&slot=${scene.sessionSlotId}`, JSON.stringify(sessionData))
+          Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}&slot=${scene.sessionSlotId}`, JSON.stringify(sessionData), undefined, true)
             .then(response => response.text())
             .then(error => {
               if (error) {
@@ -751,7 +752,7 @@ export class GameData {
         if (success !== null && !success)
           return resolve([false, false]);
         const sessionData = this.getSessionSaveData(scene);
-        Utils.apiPost(`savedata/clear?slot=${slotId}`, JSON.stringify(sessionData)).then(response => {
+        Utils.apiPost(`savedata/clear?slot=${slotId}`, JSON.stringify(sessionData), undefined, true).then(response => {
           if (response.ok)
             loggedInUser.lastSessionSlot = -1;
           return response.json();
@@ -911,7 +912,7 @@ export class GameData {
                     updateUserInfo().then(success => {
                       if (!success)
                         return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
-                      Utils.apiPost(`savedata/update?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}`, dataStr)
+                      Utils.apiPost(`savedata/update?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}`, dataStr, undefined, true)
                         .then(response => response.text())
                         .then(error => {
                           if (error) {
@@ -984,7 +985,7 @@ export class GameData {
         moveset: null,
         eggMoves: 0,
         candyCount: 0,
-        abilityAttr: 0,
+        abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
         passiveAttr: 0,
         valueReduction: 0
       };
@@ -1290,5 +1291,10 @@ export class GameData {
         }
       }
     }
+  }
+  
+  fixStarterData(systemData: SystemSaveData): void {
+    for (let starterId of defaultStarterSpecies)
+      systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
   }
 }
