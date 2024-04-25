@@ -2063,6 +2063,11 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
 
   applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
+      const cancelled = new Utils.BooleanHolder(false);
+      pokemon.scene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled))
+      if (cancelled) {
+        return false;
+      }
       attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
       return true;
     }
