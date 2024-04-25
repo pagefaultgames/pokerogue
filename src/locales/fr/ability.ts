@@ -1193,13 +1193,17 @@ export const ability: AbilityTranslationEntries = {
     name: "Force Fongique",
     description: "Le Pokémon agit toujours plus lentement quand il utilise une capacité de statut, mais il ignore les talents adverses.",
   },
-  hospitality: {
-    name: "Aux Petits Soins",
-    description: "Quand il rejoint le combat, ce Pokémon est aux petits soins avec son allié et restaure quelques PV.",
-  },
   mindsEye: {
     name: "Œil Révélateur",
     description: "Le Pokémon ignore les changements d’Esquive des cibles et peut toucher les Pokémon Spectre avec des capacités Normal ou Combat. Sa Précision ne peut pas baisser.",
+  },
+  supersweetSyrup: {
+    name: "Nectar Mielleux",
+    description: "La première fois que le Pokémon entre au combat, une odeur de nectar sucré se répand sur le terrain, ce qui baisse l’Esquive de l’adversaire.",
+  },
+  hospitality: {
+    name: "Aux Petits Soins",
+    description: "Quand il rejoint le combat, ce Pokémon est aux petits soins avec son allié et restaure quelques PV.",
   },
   embodyAspectTeal: {
     name: "Force Mémorielle",
@@ -1220,10 +1224,6 @@ export const ability: AbilityTranslationEntries = {
   toxicChain: {
     name: "Chaîne Toxique",
     description: "Grâce aux pouvoirs de sa chaine imprégnée de toxines, le Pokémon peut empoisonner gravement sa cible en la touchant avec une capacité.",
-  },
-  supersweetSyrup: {
-    name: "Nectar Mielleux",
-    description: "La première fois que le Pokémon entre au combat, une odeur de nectar sucré se répand sur le terrain, ce qui baisse l’Esquive de l’adversaire.",
   },
   teraShift: {
     name: "Téramorphose",
