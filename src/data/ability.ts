@@ -22,6 +22,8 @@ import i18next, { Localizable } from "#app/plugins/i18n.js";
 
 export class Ability implements Localizable {
   public id: Abilities;
+
+  private nameAppend: string;
   public name: string;
   public description: string;
   public generation: integer;
@@ -32,6 +34,8 @@ export class Ability implements Localizable {
 
   constructor(id: Abilities, generation: integer) {
     this.id = id;
+
+    this.nameAppend = '';
     this.generation = generation;
     this.attrs = [];
     this.conditions = [];
@@ -42,7 +46,7 @@ export class Ability implements Localizable {
   localize(): void {
     const i18nKey = Abilities[this.id].split('_').filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join('') as string;
 
-    this.name = this.id ? i18next.t(`ability:${i18nKey}.name`) as string : '';
+    this.name = this.id ? `${i18next.t(`ability:${i18nKey}.name`) as string}${this.nameAppend}` : '';
     this.description = this.id ? i18next.t(`ability:${i18nKey}.description`) as string : '';
   }
 
@@ -86,12 +90,12 @@ export class Ability implements Localizable {
   }
 
   partial(): this {
-    this.name += ' (P)';
+    this.nameAppend += ' (P)';
     return this;
   }
 
   unimplemented(): this {
-    this.name += ' (N)';
+    this.nameAppend += ' (N)';
     return this;
   }
 }
