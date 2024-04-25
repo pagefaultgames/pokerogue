@@ -8,6 +8,7 @@ import { GameDataType } from "../system/game-data";
 import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { updateUserInfo } from "../account";
+import i18next from '../plugins/i18n';
 
 export enum MenuOptions {
   GAME_SETTINGS,
@@ -62,7 +63,7 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.menuContainer.add(this.menuBg);
 
-    this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => Utils.toReadableString(MenuOptions[o])).join('\n'), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
+    this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join('\n'), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
     this.optionSelectText.setPositionRelative(this.menuBg, 14, 6);
     this.optionSelectText.setLineSpacing(12);
     this.menuContainer.add(this.optionSelectText);
@@ -94,7 +95,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         const config: OptionSelectConfig = {
           options: new Array(3).fill(null).map((_, i) => i).filter(slotFilter).map(i => {
             return {
-              label: `Slot ${i + 1}`,
+              label: i18next.t('menuUiHandler:slot', {slotNumber: i+1}),
               handler: () => {
                 callback(i);
                 ui.revertMode();
@@ -103,7 +104,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               }
             };
           }).concat([{
-            label: 'Cancel',
+            label: i18next.t('menuUiHandler:cancel'),
             handler: () => {
               ui.revertMode();
               ui.showText(null, 0);
@@ -118,16 +119,16 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     if (Utils.isLocal) {
       manageDataOptions.push({
-        label: 'Import Session',
+        label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
-          confirmSlot('Select a slot to import to.', () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
+          confirmSlot(i18next.t("menuUiHandler:importSlotSelect"), () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
           return true;
         },
         keepOpen: true
       });
     }
     manageDataOptions.push({
-      label: 'Export Session',
+      label: i18next.t("menuUiHandler:exportSession"),
       handler: () => {
         const dataSlots: integer[] = [];
         Promise.all(
@@ -138,7 +139,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                 dataSlots.push(slotId);
             })
           })).then(() => {
-            confirmSlot('Select a slot to export from.',
+            confirmSlot(i18next.t("menuUiHandler:exportSlotSelect"),
               i => dataSlots.indexOf(i) > -1,
               slotId => this.scene.gameData.tryExportData(GameDataType.SESSION, slotId));
           });
@@ -148,7 +149,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     });
     if (Utils.isLocal) {
       manageDataOptions.push({
-        label: 'Import Data',
+        label: i18next.t("menuUiHandler:importData"),
         handler: () => {
           this.scene.gameData.importData(GameDataType.SYSTEM);
           return true;
@@ -158,7 +159,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     }
     manageDataOptions.push(
       {
-        label: 'Export Data',
+        label: i18next.t("menuUiHandler:exportData"),
         handler: () => {
           this.scene.gameData.tryExportData(GameDataType.SYSTEM);
           return true;
@@ -166,7 +167,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       },
       {
-        label: 'Cancel',
+        label: i18next.t('menuUiHandler:cancel'),
         handler: () => {
           this.scene.ui.revertMode();
           return true;
@@ -205,7 +206,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true
       },
       {
-        label: 'Cancel',
+        label: i18next.t('menuUiHandler:cancel'),
         handler: () => {
           this.scene.ui.revertMode();
           return true;
@@ -295,7 +296,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         case MenuOptions.RETURN_TO_TITLE:
           if (this.scene.currentBattle) {
             success = true;
-            ui.showText('You will lose any progress since the beginning of the battle. Proceed?', null, () => {
+            ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
               ui.setOverlayMode(Mode.CONFIRM, () => this.scene.reset(true), () => {
                 ui.revertMode();
                 ui.showText(null, 0);
@@ -315,7 +316,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             });
           };
           if (this.scene.currentBattle) {
-            ui.showText('You will lose any progress since the beginning of the battle. Proceed?', null, () => {
+            ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
               ui.setOverlayMode(Mode.CONFIRM, doLogout, () => {
                 ui.revertMode();
                 ui.showText(null, 0);
