@@ -5942,8 +5942,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.ASTRAL_BARRAGE, Type.GHOST, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(Moves.EERIE_SPELL, Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 5, 100, 0, 8)
-      .attr(ReducePpMoveAttr, 3, false)
+    new AttackMove(Moves.EERIE_SPELL, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 5, 100, 0, 8)
+      .attr(ReducePpMoveAttr, 3, true)
       .soundBased(),
     new AttackMove(Moves.DIRE_CLAW, Type.POISON, MoveCategory.PHYSICAL, 80, 100, 15, 50, 0, 8)
       .attr(StatusEffectAttr, StatusEffect.POISON)
