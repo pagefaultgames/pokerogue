@@ -145,6 +145,10 @@ export class FlinchedTag extends BattlerTag {
     applyAbAttrs(FlinchEffectAbAttr, pokemon, null);
   }
 
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.isMax();
+  }
+
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     super.lapse(pokemon, lapseType);
 
@@ -368,6 +372,9 @@ export class EncoreTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
+    if (pokemon.isMax())
+      return false;
+    
     const lastMoves = pokemon.getLastXMoves(1);
     if (!lastMoves.length)
       return false;
@@ -604,6 +611,16 @@ export class MagmaStormTag extends DamagingTrapTag {
 
   getTrapMessage(pokemon: Pokemon): string {
     return getPokemonMessage(pokemon, ` became trapped\nby swirling magma!`);
+  }
+}
+
+export class SnapTrapTag extends DamagingTrapTag {
+  constructor(turnCount: integer, sourceId: integer) {
+    super(BattlerTagType.SNAP_TRAP, CommonAnim.SNAP_TRAP, turnCount, Moves.SNAP_TRAP, sourceId);
+  }
+
+  getTrapMessage(pokemon: Pokemon): string {
+    return getPokemonMessage(pokemon, ` got trapped\nby a snap trap!`);
   }
 }
 
@@ -1096,6 +1113,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new SandTombTag(turnCount, sourceId);
     case BattlerTagType.MAGMA_STORM:
       return new MagmaStormTag(turnCount, sourceId);
+    case BattlerTagType.SNAP_TRAP:
+      return new SnapTrapTag(turnCount, sourceId);
     case BattlerTagType.THUNDER_CAGE:
       return new ThunderCageTag(turnCount, sourceId);
     case BattlerTagType.INFESTATION:

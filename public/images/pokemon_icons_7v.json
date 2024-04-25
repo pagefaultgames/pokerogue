@@ -4,8 +4,8 @@
 			"image": "pokemon_icons_7v.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 80,
-				"h": 80
+				"w": 100,
+				"h": 100
 			},
 			"scale": 1,
 			"frames": [
@@ -45,8 +45,8 @@
 						"h": 26
 					},
 					"frame": {
-						"x": 0,
-						"y": 29,
+						"x": 31,
+						"y": 0,
 						"w": 28,
 						"h": 26
 					}
@@ -66,8 +66,8 @@
 						"h": 26
 					},
 					"frame": {
-						"x": 28,
-						"y": 29,
+						"x": 59,
+						"y": 0,
 						"w": 28,
 						"h": 26
 					}
@@ -88,13 +88,13 @@
 					},
 					"frame": {
 						"x": 31,
-						"y": 0,
+						"y": 26,
 						"w": 25,
 						"h": 22
 					}
 				},
 				{
-					"filename": "802_1",
+					"filename": "756_2",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -102,20 +102,41 @@
 						"h": 30
 					},
 					"spriteSourceSize": {
-						"x": 12,
-						"y": 3,
+						"x": 8,
+						"y": 4,
 						"w": 24,
 						"h": 26
 					},
 					"frame": {
-						"x": 56,
-						"y": 0,
+						"x": 0,
+						"y": 29,
 						"w": 24,
 						"h": 26
 					}
 				},
 				{
-					"filename": "802_2",
+					"filename": "756_3",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 4,
+						"w": 24,
+						"h": 26
+					},
+					"frame": {
+						"x": 0,
+						"y": 55,
+						"w": 24,
+						"h": 26
+					}
+				},
+				{
+					"filename": "802_1",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -136,6 +157,48 @@
 					}
 				},
 				{
+					"filename": "755_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 3,
+						"w": 15,
+						"h": 26
+					},
+					"frame": {
+						"x": 80,
+						"y": 26,
+						"w": 15,
+						"h": 26
+					}
+				},
+				{
+					"filename": "802_2",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 12,
+						"y": 3,
+						"w": 24,
+						"h": 26
+					},
+					"frame": {
+						"x": 24,
+						"y": 48,
+						"w": 24,
+						"h": 26
+					}
+				},
+				{
 					"filename": "802_3",
 					"rotated": false,
 					"trimmed": true,
@@ -150,9 +213,30 @@
 						"h": 26
 					},
 					"frame": {
-						"x": 56,
-						"y": 52,
+						"x": 24,
+						"y": 74,
 						"w": 24,
+						"h": 26
+					}
+				},
+				{
+					"filename": "755_3",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 3,
+						"w": 15,
+						"h": 26
+					},
+					"frame": {
+						"x": 48,
+						"y": 52,
+						"w": 15,
 						"h": 26
 					}
 				},
@@ -171,8 +255,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 0,
-						"y": 55,
+						"x": 48,
+						"y": 78,
 						"w": 24,
 						"h": 22
 					}
@@ -192,8 +276,8 @@
 						"h": 22
 					},
 					"frame": {
-						"x": 24,
-						"y": 55,
+						"x": 63,
+						"y": 52,
 						"w": 24,
 						"h": 22
 					}
@@ -204,6 +288,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:f87860b9bcc6269cb0d1ea2b59a5c866:3b9a5f84cddb0349b5a9decea7728980:d5975df27e1e94206a68aa1fd3c2c8d0$"
+		"smartupdate": "$TexturePacker:SmartUpdate:aaec20c6fdb64053452ab54d2708f7b5:8b53fb3b2348e6ca8e9a2505e8cfcff4:d5975df27e1e94206a68aa1fd3c2c8d0$"
 	}
 }

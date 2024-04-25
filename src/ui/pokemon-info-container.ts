@@ -128,9 +128,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       } else
         this.pokemonGenderText.setVisible(false);
 
-      const ability = pokemon.getAbility(true);
-      const abilityTextStyle = ability.id === pokemon.getSpeciesForm().abilityHidden ? TextStyle.MONEY : TextStyle.WINDOW;
-      this.pokemonAbilityText.setText(ability.name);
+      const abilityTextStyle = pokemon.abilityIndex === (pokemon.species.ability2 ? 2 : 1) ? TextStyle.MONEY : TextStyle.WINDOW;
+      this.pokemonAbilityText.setText(pokemon.getAbility(true).name);
       this.pokemonAbilityText.setColor(getTextColor(abilityTextStyle, false, this.scene.uiTheme));
       this.pokemonAbilityText.setShadowColor(getTextColor(abilityTextStyle, true, this.scene.uiTheme));
 

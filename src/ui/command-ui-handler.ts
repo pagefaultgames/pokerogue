@@ -4,6 +4,7 @@ import { addTextObject, TextStyle } from "./text";
 import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
+import i18next from '../plugins/i18n';
 
 export enum Command {
   FIGHT = 0,
@@ -25,7 +26,12 @@ export default class CommandUiHandler extends UiHandler {
 
   setup() {
     const ui = this.getUi();
-    const commands = [ 'Fight', 'Ball', 'Pokémon', 'Run' ];
+    const commands = [ 
+      i18next.t('commandUiHandler:fight'), 
+      i18next.t('commandUiHandler:ball'), 
+      i18next.t('commandUiHandler:pokemon'), 
+      i18next.t('commandUiHandler:run') 
+    ];
 
     this.commandsContainer = this.scene.add.container(216, -38.7);
     this.commandsContainer.setVisible(false);
@@ -55,7 +61,7 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(1110);
-    messageHandler.showText(`What will\n${commandPhase.getPokemon().name} do?`, 0);
+    messageHandler.showText(i18next.t('commandUiHandler:actionMessage', {pokemonName: commandPhase.getPokemon().name}), 0);
     this.setCursor(this.getCursor());
 
     return true;
