@@ -1000,6 +1000,10 @@ export class GameData {
     if (incrementCount) {
       dexEntry.seenCount++;
       this.gameStats.pokemonSeen++;
+      if (!trainer && pokemon.species.pseudoLegendary || pokemon.species.legendary)
+        this.gameStats.legendaryPokemonSeen++;
+      else if (!trainer && pokemon.species.mythical)
+        this.gameStats.mythicalPokemonSeen++;
       if (!trainer && pokemon.isShiny())
         this.gameStats.shinyPokemonSeen++;
     }
