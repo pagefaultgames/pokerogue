@@ -222,8 +222,8 @@ export class GameData {
   constructor(scene: BattleScene) {
     this.scene = scene;
     this.loadSettings();
-    this.trainerId = Utils.randSeedInt(65536);
-    this.secretId = Utils.randSeedInt(65536);
+    this.trainerId = Utils.randInt(65536);
+    this.secretId = Utils.randInt(65536);
     this.starterData = {};
     this.gameStats = new GameStats();
     this.unlocks = {
@@ -551,7 +551,7 @@ export class GameData {
         const sessionData = this.getSessionSaveData(scene);
 
         if (!bypassLogin) {
-          Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}&slot=${scene.sessionSlotId}`, JSON.stringify(sessionData), undefined, true)
+          Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}&slot=${scene.sessionSlotId}&trainerId=${this.trainerId}&secretId=${this.secretId}`, JSON.stringify(sessionData), undefined, true)
             .then(response => response.text())
             .then(error => {
               if (error) {
@@ -752,7 +752,7 @@ export class GameData {
         if (success !== null && !success)
           return resolve([false, false]);
         const sessionData = this.getSessionSaveData(scene);
-        Utils.apiPost(`savedata/clear?slot=${slotId}`, JSON.stringify(sessionData), undefined, true).then(response => {
+        Utils.apiPost(`savedata/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}`, JSON.stringify(sessionData), undefined, true).then(response => {
           if (response.ok)
             loggedInUser.lastSessionSlot = -1;
           return response.json();
@@ -912,7 +912,7 @@ export class GameData {
                     updateUserInfo().then(success => {
                       if (!success)
                         return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
-                      Utils.apiPost(`savedata/update?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}`, dataStr, undefined, true)
+                      Utils.apiPost(`savedata/update?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}&trainerId=${this.trainerId}&secretId=${this.secretId}`, dataStr, undefined, true)
                         .then(response => response.text())
                         .then(error => {
                           if (error) {
