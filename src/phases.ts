@@ -1049,7 +1049,8 @@ export class SelectBiomePhase extends BattlePhase {
     };
 
     if ((this.scene.gameMode.isClassic && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex + 9))
-      || (this.scene.gameMode.isDaily && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)))
+      || (this.scene.gameMode.isDaily && this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex))
+      || (this.scene.gameMode.hasShortBiomes && !(this.scene.currentBattle.waveIndex % 50)))
       setNextBiome(Biome.END);
     else if (this.scene.gameMode.hasRandomBiomes)
       setNextBiome(this.generateNextBiome());
@@ -1086,8 +1087,10 @@ export class SelectBiomePhase extends BattlePhase {
         });
       } else
         setNextBiome(biomes[Utils.randSeedInt(biomes.length)]);
-    } else
+    } else if (biomeLinks.hasOwnProperty(currentBiome))
       setNextBiome(biomeLinks[currentBiome] as Biome);
+    else
+      setNextBiome(this.generateNextBiome());
   }
 
   generateNextBiome(): Biome {
@@ -1182,7 +1185,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     }
 
     if (this.player) {
-      this.scene.ui.showText(`Go! ${this.getPokemon().name}!`);
+      this.scene.ui.showText(i18next.t('menu:playerGo', {pokemonName: this.getPokemon().name}));
       if (this.player)
          this.scene.pbTray.hide();
       this.scene.trainer.setTexture(`trainer_${this.scene.gameData.gender === PlayerGender.FEMALE ? 'f' : 'm'}_back_pb`);
@@ -2447,7 +2450,7 @@ export class MoveEffectPhase extends PokemonPhase {
                         user, target, this.move.getMove()).then(() => {
                           return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult).then(() => {
                             if (!user.isPlayer() && this.move.getMove() instanceof AttackMove)
-                              user.scene.applyModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
+                              user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
                           })).then(() => {
                             applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move, hitResult).then(() => {
                               if (this.move.getMove() instanceof AttackMove)
@@ -2610,7 +2613,7 @@ export class MoveAnimTestPhase extends BattlePhase {
     } else if (player)
       console.log(Moves[moveId]);
 
-    initMoveAnim(moveId).then(() => {
+    initMoveAnim(this.scene, moveId).then(() => {
       loadMoveAnimAssets(this.scene, [ moveId ], true)
         .then(() => {
           new MoveAnim(moveId, player ? this.scene.getPlayerPokemon() : this.scene.getEnemyPokemon(), (player !== (allMoves[moveId] instanceof SelfStatusMove) ? this.scene.getEnemyPokemon() : this.scene.getPlayerPokemon()).getBattlerIndex()).play(this.scene, () => {
@@ -2662,11 +2665,20 @@ export class StatChangePhase extends PokemonPhase {
   start() {
     const pokemon = this.getPokemon();
 
-    if (!pokemon.isActive(true))
-      return this.end();
+    let random = false;
 
     const allStats = Utils.getEnumValues(BattleStat);
-    const filteredStats = this.stats.map(s => s !== BattleStat.RAND ? s : allStats[pokemon.randSeedInt(BattleStat.SPD + 1)]).filter(stat => {
+    if (this.stats.length === 1 && this.stats[0] === BattleStat.RAND) {
+      this.stats[0] = this.getRandomStat();
+      random = true;
+    }
+
+    this.aggregateStatChanges(random);
+
+    if (!pokemon.isActive(true))
+      return this.end();
+    
+    const filteredStats = this.stats.map(s => s !== BattleStat.RAND ? s : this.getRandomStat()).filter(stat => {
       const cancelled = new Utils.BooleanHolder(false);
 
       if (!this.selfTarget && this.levels < 0)
@@ -2747,11 +2759,62 @@ export class StatChangePhase extends PokemonPhase {
       end();
   }
 
+  getRandomStat(): BattleStat {
+    const allStats = Utils.getEnumValues(BattleStat);
+    return allStats[this.getPokemon().randSeedInt(BattleStat.SPD + 1)];
+  }
+
+  aggregateStatChanges(random: boolean = false): void {
+    const isAccEva = [ BattleStat.ACC, BattleStat.EVA ].some(s => this.stats.includes(s));
+    let existingPhase: StatChangePhase;
+    if (this.stats.length === 1) {
+      while ((existingPhase = (this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex && p.stats.length === 1
+        && (p.stats[0] === this.stats[0] || (random && p.stats[0] === BattleStat.RAND))
+        && p.selfTarget === this.selfTarget && p.showMessage === this.showMessage && p.ignoreAbilities === this.ignoreAbilities) as StatChangePhase))) {
+        if (existingPhase.stats[0] === BattleStat.RAND) {
+          existingPhase.stats[0] = this.getRandomStat();
+          if (existingPhase.stats[0] !== this.stats[0])
+            continue;
+        }
+        this.levels += existingPhase.levels;
+       
+        if (!this.scene.tryRemovePhase(p => p === existingPhase))
+          break;
+      }
+    }
+    while ((existingPhase = (this.scene.findPhase(p => p instanceof StatChangePhase && p.battlerIndex === this.battlerIndex && p.selfTarget === this.selfTarget
+      && ([ BattleStat.ACC, BattleStat.EVA ].some(s => p.stats.includes(s)) === isAccEva)
+      && p.levels === this.levels && p.showMessage === this.showMessage && p.ignoreAbilities === this.ignoreAbilities) as StatChangePhase))) {
+      this.stats.push(...existingPhase.stats);
+      if (!this.scene.tryRemovePhase(p => p === existingPhase))
+        break;
+    }
+  }
+
   getStatChangeMessages(stats: BattleStat[], levels: integer, relLevels: integer[]): string[] {
     const messages: string[] = [];
-    
-    for (let s = 0; s < stats.length; s++)
-      messages.push(getPokemonMessage(this.getPokemon(), `'s ${getBattleStatName(stats[s])} ${getBattleStatLevelChangeDescription(Math.abs(relLevels[s]), levels >= 1)}!`));
+
+    const relLevelStatIndexes = {};
+    for (let rl = 0; rl < relLevels.length; rl++) {
+      const relLevel = relLevels[rl];
+      if (!relLevelStatIndexes[relLevel])
+        relLevelStatIndexes[relLevel] = [];
+      relLevelStatIndexes[relLevel].push(rl);
+    }
+
+    Object.keys(relLevelStatIndexes).forEach(rl => {
+      const relLevelStats = stats.filter((_, i) => relLevelStatIndexes[rl].includes(i));
+      let statsFragment = '';
+
+      if (relLevelStats.length > 1) {
+        statsFragment = relLevelStats.length >= 5
+          ? 'stats'
+          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(', ')}, and ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
+      } else
+        statsFragment = getBattleStatName(relLevelStats[0]);
+      messages.push(getPokemonMessage(this.getPokemon(), `'s ${statsFragment} ${getBattleStatLevelChangeDescription(Math.abs(parseInt(rl)), levels >= 1)}!`));
+    });
+
     return messages;
   }
 }
@@ -3217,8 +3280,8 @@ export class VictoryPhase extends PokemonPhase {
       this.scene.pushPhase(new BattleEndPhase(this.scene));
       if (this.scene.currentBattle.battleType === BattleType.TRAINER)
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));
-      this.scene.pushPhase(new EggLapsePhase(this.scene));
       if (this.scene.gameMode.isEndless || !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
+        this.scene.pushPhase(new EggLapsePhase(this.scene));
         if (this.scene.currentBattle.waveIndex % 10)
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
         else if (this.scene.gameMode.isDaily) {
@@ -3672,7 +3735,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
 
     if (emptyMoveIndex > -1) {
       pokemon.setMove(emptyMoveIndex, this.moveId);
-      initMoveAnim(this.moveId).then(() => {
+      initMoveAnim(this.scene, this.moveId).then(() => {
         loadMoveAnimAssets(this.scene, [ this.moveId ], true)
           .then(() => {
             this.scene.ui.setMode(messageMode).then(() => {

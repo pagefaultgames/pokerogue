@@ -2301,6 +2301,14 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
   }
 }
 
+export class FlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const multiplier = args[0] as Utils.NumberHolder;
+    multiplier.value *= target.getAttackTypeEffectiveness(Type.FLYING);
+    return true;
+  }
+}
+
 export class OneHitKOAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const accuracy = args[0] as Utils.NumberHolder;
@@ -2390,7 +2398,7 @@ export class DisableMoveAttr extends MoveEffectAttr {
   
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      if (target.summonData.disabledMove)
+      if (target.summonData.disabledMove || target.isMax())
         return false;
 
       const moveQueue = target.getLastXMoves();
@@ -2511,6 +2519,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.CLAMP:
       case BattlerTagType.SAND_TOMB:
       case BattlerTagType.MAGMA_STORM:
+      case BattlerTagType.SNAP_TRAP:
       case BattlerTagType.THUNDER_CAGE:
       case BattlerTagType.INFESTATION:
         return -3;
@@ -2810,6 +2819,9 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
+      if (!this.user && target.isMax())
+        return resolve(false);
+
   	// Check if the move category is not STATUS or if the switch out condition is not met
     if (move.category !== MoveCategory.STATUS && !this.getSwitchOutCondition()(user, target, move)) {
   	  //Apply effects before switch out i.e. poison point, flame body, etc
@@ -3092,7 +3104,7 @@ export class RandomMoveAttr extends OverrideMoveEffectAttr {
           : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
       user.getMoveQueue().push({ move: moveId, targets: targets, ignorePP: true });
       user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, new PokemonMove(moveId, 0, 0, true), true));
-      initMoveAnim(moveId).then(() => {
+      initMoveAnim(user.scene, moveId).then(() => {
         loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
       });
@@ -3235,7 +3247,7 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
       
       user.getMoveQueue().push({ move: moveId, targets: [target.getBattlerIndex()], ignorePP: true });
       user.scene.unshiftPhase(new MovePhase(user.scene, user, [target.getBattlerIndex()], new PokemonMove(moveId, 0, 0, true), true));
-      initMoveAnim(moveId).then(() => {
+      initMoveAnim(user.scene, moveId).then(() => {
         loadMoveAnimAssets(user.scene, [ moveId ], true)
           .then(() => resolve(true));
       });
@@ -3573,6 +3585,8 @@ const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.
 
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
 
+const failOnMaxCondition: MoveConditionFunc = (user, target, move) => !target.isMax();
+
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
 function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<void> {
@@ -3808,7 +3822,8 @@ export function initMoves() {
     new AttackMove(Moves.SONIC_BOOM, Type.NORMAL, MoveCategory.SPECIAL, -1, 90, 20, -1, 0, 1)
       .attr(FixedDamageAttr, 20),
     new StatusMove(Moves.DISABLE, Type.NORMAL, 100, 20, -1, 0, 1)
-      .attr(DisableMoveAttr),
+      .attr(DisableMoveAttr)
+      .condition(failOnMaxCondition),
     new AttackMove(Moves.ACID, Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -3844,7 +3859,8 @@ export function initMoves() {
     new AttackMove(Moves.SUBMISSION, Type.FIGHTING, MoveCategory.PHYSICAL, 80, 80, 20, -1, 0, 1)
       .attr(RecoilAttr),
     new AttackMove(Moves.LOW_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 1)
-      .attr(WeightPowerAttr),
+      .attr(WeightPowerAttr)
+      .condition(failOnMaxCondition),
     new AttackMove(Moves.COUNTER, Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, -5, 1)
       .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.PHYSICAL, 2)
       .target(MoveTarget.ATTACKER),
@@ -4306,6 +4322,7 @@ export function initMoves() {
         BattlerTagType.CLAMP,
         BattlerTagType.SAND_TOMB,
         BattlerTagType.MAGMA_STORM,
+        BattlerTagType.SNAP_TRAP,
         BattlerTagType.THUNDER_CAGE,
         BattlerTagType.SEEDED,
         BattlerTagType.INFESTATION
@@ -4900,7 +4917,8 @@ export function initMoves() {
       .target(MoveTarget.ENEMY_SIDE),
     new AttackMove(Moves.GRASS_KNOT, Type.GRASS, MoveCategory.SPECIAL, -1, 100, 20, -1, 0, 4)
       .attr(WeightPowerAttr)
-      .makesContact(),
+      .makesContact()
+      .condition(failOnMaxCondition),
     new AttackMove(Moves.CHATTER, Type.FLYING, MoveCategory.SPECIAL, 65, 100, 20, 100, 0, 4)
       .attr(ConfuseAttr)
       .soundBased(),
@@ -4995,7 +5013,8 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
       .danceMove(),
     new AttackMove(Moves.HEAVY_SLAM, Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 5)
-      .attr(CompareWeightPowerAttr),
+      .attr(CompareWeightPowerAttr)
+      .condition(failOnMaxCondition),
     new AttackMove(Moves.SYNCHRONOISE, Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .partial(),
@@ -5123,7 +5142,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.DEF, -1)
       .slicingMove(),
     new AttackMove(Moves.HEAT_CRASH, Type.FIRE, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 5)
-      .attr(CompareWeightPowerAttr),
+      .attr(CompareWeightPowerAttr)
+      .condition(failOnMaxCondition),
     new AttackMove(Moves.LEAF_TORNADO, Type.GRASS, MoveCategory.SPECIAL, 65, 90, 10, 50, 0, 5)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
     new AttackMove(Moves.STEAMROLLER, Type.BUG, MoveCategory.PHYSICAL, 65, 100, 20, 30, 0, 5)
@@ -5192,7 +5212,8 @@ export function initMoves() {
       .makesContact(false)
       .partial(),
     new AttackMove(Moves.FLYING_PRESS, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, -1, 0, 6)
-      .partial(),
+      .attr(FlyingTypeMultiplierAttr)
+      .condition(failOnGravityCondition),
     new StatusMove(Moves.MAT_BLOCK, Type.FIGHTING, -1, 10, -1, 0, 6)
       .unimplemented(),
     new AttackMove(Moves.BELCH, Type.POISON, MoveCategory.SPECIAL, 120, 90, 10, -1, 0, 6)
@@ -5641,7 +5662,8 @@ export function initMoves() {
     new AttackMove(Moves.PIKA_PAPOW, Type.ELECTRIC, MoveCategory.SPECIAL, -1, -1, 20, -1, 0, 7)
       .attr(FriendshipPowerAttr),
     new AttackMove(Moves.BOUNCY_BUBBLE, Type.WATER, MoveCategory.SPECIAL, 60, 100, 20, -1, 0, 7)
-      .attr(HitHealAttr),
+      .attr(HitHealAttr)
+      .triageMove(),
     new AttackMove(Moves.BUZZY_BUZZ, Type.ELECTRIC, MoveCategory.SPECIAL, 60, 100, 20, 100, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new AttackMove(Moves.SIZZLY_SLIDE, Type.FIRE, MoveCategory.PHYSICAL, 60, 100, 20, 100, 0, 7)
@@ -5774,7 +5796,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .makesContact(false),
     new AttackMove(Moves.SNAP_TRAP, Type.GRASS, MoveCategory.PHYSICAL, 35, 100, 15, 100, 0, 8)
-      .partial(),
+      .attr(TrapAttr, BattlerTagType.SNAP_TRAP),
     new AttackMove(Moves.PYRO_BALL, Type.FIRE, MoveCategory.PHYSICAL, 120, 90, 5, 10, 0, 8)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
@@ -6137,6 +6159,7 @@ export function initMoves() {
         BattlerTagType.CLAMP,
         BattlerTagType.SAND_TOMB,
         BattlerTagType.MAGMA_STORM,
+        BattlerTagType.SNAP_TRAP,
         BattlerTagType.THUNDER_CAGE,
         BattlerTagType.SEEDED,
         BattlerTagType.INFESTATION
