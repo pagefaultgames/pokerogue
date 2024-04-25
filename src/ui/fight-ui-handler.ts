@@ -6,12 +6,14 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { CommandPhase } from "../phases";
+import { MoveCategory } from "#app/data/move.js";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
   private typeIcon: Phaser.GameObjects.Sprite;
   private ppText: Phaser.GameObjects.Text;
   private cursorObj: Phaser.GameObjects.Image;
+  private moveCategoryIcon: Phaser.GameObjects.Sprite;
 
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;
@@ -26,9 +28,14 @@ export default class FightUiHandler extends UiHandler {
     this.movesContainer = this.scene.add.container(18, -38.7);
     ui.add(this.movesContainer);
 
-    this.typeIcon = this.scene.add.sprite((this.scene.game.canvas.width / 6) - 33, -31, 'types', 'unknown');
+    this.typeIcon = this.scene.add.sprite((this.scene.game.canvas.width / 6) - 41, -31, 'types', 'unknown');
     this.typeIcon.setVisible(false);
     ui.add(this.typeIcon);
+
+    this.moveCategoryIcon = this.scene.add.sprite((this.scene.game.canvas.width / 6) - 19, -31, 'categories', 'physical');
+    this.moveCategoryIcon.setVisible(false);
+    ui.add(this.moveCategoryIcon);
+  
 
     this.ppText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 18, -15.5, '    /    ', TextStyle.WINDOW);
     this.ppText.setOrigin(1, 0.5);
@@ -120,16 +127,19 @@ export default class FightUiHandler extends UiHandler {
 
     if (hasMove) {
       const pokemonMove = moveset[cursor];
-      this.typeIcon.setTexture('types', Type[pokemonMove.getMove().type].toLowerCase());
+      this.typeIcon.setTexture('types', Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.65);
+      this.moveCategoryIcon.setTexture('categories', MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(0.8);
 
       const maxPP = pokemonMove.getMovePp();
       const pp = maxPP - pokemonMove.ppUsed;
+      
 
       this.ppText.setText(`${Utils.padInt(pp, 2, '  ')}/${Utils.padInt(maxPP, 2, '  ')}`);
     }
 
     this.typeIcon.setVisible(hasMove);
     this.ppText.setVisible(hasMove);
+    this.moveCategoryIcon.setVisible(hasMove);
 
     this.cursorObj.setPosition(13 + (cursor % 2 === 1 ? 100 : 0), -31 + (cursor >= 2 ? 15 : 0));
 
@@ -151,6 +161,7 @@ export default class FightUiHandler extends UiHandler {
     this.clearMoves();
     this.typeIcon.setVisible(false);
     this.ppText.setVisible(false);
+    this.moveCategoryIcon.setVisible(false);
     this.eraseCursor();
   }
 
