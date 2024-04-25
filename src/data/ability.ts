@@ -1795,7 +1795,7 @@ export class PostTerrainChangeAddBattlerTagAttr extends PostTerrainChangeAbAttr 
   }
 
   applyPostTerrainChange(pokemon: Pokemon, passive: boolean, terrain: TerrainType, args: any[]): boolean {
-    if (!this.terrainTypes.find(t => terrain === terrain))
+    if (!this.terrainTypes.find(t => t === terrain))
       return false;
 
     return pokemon.addTag(this.tagType, this.turnCount);
@@ -1826,6 +1826,23 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
     }
 	
     return false;
+  }
+}
+
+export class MoodyAbAttr extends PostTurnAbAttr {
+  constructor() {
+    super(true);
+  }
+
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    // TODO: Edge case of not choosing to buff or debuff a stat that's already maxed
+    let selectableStats = [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD];
+    let increaseStat = selectableStats[Utils.randInt(selectableStats.length)];
+    selectableStats = selectableStats.filter(s => s !== increaseStat);
+    let decreaseStat = selectableStats[Utils.randInt(selectableStats.length)];
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [increaseStat], 2));
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [decreaseStat], -1));
+    return true;
   }
 }
 
@@ -2821,8 +2838,7 @@ export function initAbilities() {
       .ignorable()
       .unimplemented(),
     new Ability(Abilities.MOODY, 5)
-      .attr(PostTurnStatChangeAbAttr, BattleStat.RAND, 2)
-      .attr(PostTurnStatChangeAbAttr, BattleStat.RAND, -1),
+      .attr(MoodyAbAttr),
     new Ability(Abilities.OVERCOAT, 5)
       .attr(BlockWeatherDamageAttr)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.POWDER_MOVE))
