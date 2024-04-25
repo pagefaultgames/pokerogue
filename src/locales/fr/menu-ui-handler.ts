@@ -7,17 +7,17 @@ export const menuUiHandler: SimpleTranslationEntries = {
     "VOUCHERS": "Coupons",
     "EGG_LIST": "Liste des œufs",
     "EGG_GACHA": "Gacha-œufs",
-    "MANAGE_DATA": "Gestion données",
+    "MANAGE_DATA": "Mes données",
     "COMMUNITY": "Communauté",
     "RETURN_TO_TITLE": "Écran titre",
-    "LOG_OUT": "Se déconnecter",
+    "LOG_OUT": "Déconnexion",
     "slot": "Emplacement {{slotNumber}}",
     "importSession": "Importer session",
-    "importSlotSelect": "Sélectionnez l'emplacement depuis lequel importer.",
+    "importSlotSelect": "Sélectionnez l'emplacement vers lequel importer les données.",
     "exportSession": "Exporter session",
-    "exportSlotSelect": "Sélectionnez l'emplacement vers lequel exporter.",
+    "exportSlotSelect": "Sélectionnez l'emplacement depuis lequel exporter les données.",
     "importData": "Importer données",
     "exportData": "Exporter données",
     "cancel": "Retour",
-    "losingProgressionWarning": "Vous allez perdre votre progression depuis le début du combat. Continuer?"
+    "losingProgressionWarning": "Vous allez perdre votre progression depuis le début du combat. Continuer ?"
 } as const;
