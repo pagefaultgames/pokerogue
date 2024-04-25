@@ -3307,12 +3307,9 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // Null checks can be skipped due to condition function
-
     const lastMove = target.getLastXMoves().find(() => true);
-
     if(lastMove === undefined)
       return false;
-
     const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
     const lastPpUsed = movesetMove.ppUsed;
     movesetMove.ppUsed = Math.min(movesetMove.ppUsed + this.ppDrain, movesetMove.getMovePp());
