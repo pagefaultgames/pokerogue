@@ -271,7 +271,7 @@ export default class BattleScene extends SceneBase {
 		
 		populateAnims();
 
-		await fetch('./images/pokemon/variant/_masterlist.json').then(res => res.json()).then(v => Object.keys(v).forEach(k => variantData[k] = v[k]));
+		await this.cachedFetch('./images/pokemon/variant/_masterlist.json').then(res => res.json()).then(v => Object.keys(v).forEach(k => variantData[k] = v[k]));
 	}
 
 	create() {
@@ -468,8 +468,8 @@ export default class BattleScene extends SceneBase {
 
 		Promise.all([
 			Promise.all(loadPokemonAssets),
-			initCommonAnims().then(() => loadCommonAnimAssets(this, true)),
-			Promise.all([ Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE ].map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(this, defaultMoves, true)),
+			initCommonAnims(this).then(() => loadCommonAnimAssets(this, true)),
+			Promise.all([ Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE ].map(m => initMoveAnim(this, m))).then(() => loadMoveAnimAssets(this, defaultMoves, true)),
 			this.initStarterColors()
 		]).then(() => {
 			this.pushPhase(new LoginPhase(this));
@@ -505,11 +505,21 @@ export default class BattleScene extends SceneBase {
 	async initExpSprites(): Promise<void> {
 		if (expSpriteKeys.length)
 			return;
-		fetch('./exp-sprites.json').then(res => res.json()).then(keys => {
+		this.cachedFetch('./exp-sprites.json').then(res => res.json()).then(keys => {
 			if (Array.isArray(keys))
 				expSpriteKeys.push(...keys);
 			Promise.resolve();
 		});
+	}
+
+	cachedFetch(url: string, init?: RequestInit): Promise<Response> {
+		const manifest = this.game['manifest'];
+		if (manifest) {
+			const timestamp = manifest[`/${url.replace('./', '')}`];
+			if (timestamp)
+				url += `?t=${timestamp}`;
+		}
+		return fetch(url, init);
 	}
 
 	initStarterColors(): Promise<void> {
@@ -517,7 +527,7 @@ export default class BattleScene extends SceneBase {
 			if (starterColors)
 				return resolve();
 
-			fetch('./starter-colors.json').then(res => res.json()).then(sc => {
+			this.cachedFetch('./starter-colors.json').then(res => res.json()).then(sc => {
 				starterColors = {};
 				Object.keys(sc).forEach(key => {
 					starterColors[key] = sc[key];
@@ -893,7 +903,26 @@ export default class BattleScene extends SceneBase {
 		//this.pushPhase(new TrainerMessageTestPhase(this, TrainerType.RIVAL, TrainerType.RIVAL_2, TrainerType.RIVAL_3, TrainerType.RIVAL_4, TrainerType.RIVAL_5, TrainerType.RIVAL_6));
 
 		if (!waveIndex && lastBattle) {
-			const isNewBiome = !(lastBattle.waveIndex % 10) || (this.gameMode.isDaily && lastBattle.waveIndex === 49);
+			let isNewBiome = !(lastBattle.waveIndex % 10) || ((this.gameMode.hasShortBiomes || this.gameMode.isDaily) && (lastBattle.waveIndex % 50) === 49);
+			if (!isNewBiome && this.gameMode.hasShortBiomes && (newWaveIndex % 10) < 9) {
+				let w = lastBattle.waveIndex - ((lastBattle.waveIndex % 10) - 1);
+				let biomeWaves = 1;
+				while (w < lastBattle.waveIndex) {
+					let wasNewBiome = false;
+					this.executeWithSeedOffset(() => {
+						wasNewBiome = !Utils.randSeedInt(6 - biomeWaves);
+					}, w << 4);
+					if (wasNewBiome)
+						biomeWaves = 1;
+					else
+						biomeWaves++;
+					w++;
+				}
+
+				this.executeWithSeedOffset(() => {
+					isNewBiome = !Utils.randSeedInt(6 - biomeWaves);
+				}, lastBattle.waveIndex << 4);
+			}
 			const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
 			this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
 			this.trySpreadPokerus();
@@ -1957,9 +1986,27 @@ export default class BattleScene extends SceneBase {
 		return (player ? this.modifiers : this.enemyModifiers).find(m => (modifierFilter as ModifierPredicate)(m));
 	}
 
+	applyShuffledModifiers(scene: BattleScene, modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
+		let modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
+		scene.executeWithSeedOffset(() => {
+			const shuffleModifiers = mods => {
+				if (mods.length < 1)
+					return mods;
+				const rand = Math.floor(Utils.randSeedInt(mods.length));
+				return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
+			};
+			modifiers = shuffleModifiers(modifiers);
+		}, scene.currentBattle.turn << 4, scene.waveSeed);
+		return this.applyModifiersInternal(modifiers, player, args);
+	}
+
 	applyModifiers(modifierType: { new(...args: any[]): Modifier }, player: boolean = true, ...args: any[]): PersistentModifier[] {
-		const appliedModifiers: PersistentModifier[] = [];
 		const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(m => m instanceof modifierType && m.shouldApply(args));
+		return this.applyModifiersInternal(modifiers, player, args);
+	}
+
+	applyModifiersInternal(modifiers: PersistentModifier[], player: boolean, args: any[]): PersistentModifier[] {
+		const appliedModifiers: PersistentModifier[] = [];
 		for (let modifier of modifiers) {
 			if (modifier.apply(args)) {
 				console.log('Applied', modifier.type.name, !player ? '(enemy)' : '');

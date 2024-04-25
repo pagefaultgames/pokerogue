@@ -65,7 +65,7 @@ export class MistTag extends ArenaTag {
     super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    arena.scene.queueMessage(getPokemonMessage(source, `'s team became\nshrowded in mist!`));
+    arena.scene.queueMessage(getPokemonMessage(source, `'s team became\nshrouded in mist!`));
   }
 
   apply(arena: Arena, args: any[]): boolean {
