@@ -3813,8 +3813,8 @@ export class BerryPhase extends CommonAnimPhase {
             berryModifier.consumed = false;
           this.scene.updateModifiers(this.player);
         }
+        return super.start();
       }
-      return super.start();
     }
 
     this.end();

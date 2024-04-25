@@ -878,7 +878,6 @@ export class BerryModifier extends PokemonHeldItemModifier {
     pokemon.getOpponents().map(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
 
     if (cancelled.value) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is too\nnervous to eat berries!'));
       return false;
     }
 

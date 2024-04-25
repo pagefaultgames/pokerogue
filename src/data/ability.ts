@@ -2802,7 +2802,8 @@ export function initAbilities() {
       .attr(StatChangeMultiplierAbAttr, -1)
       .ignorable(),
     new Ability(Abilities.UNNERVE, 5)
-      .attr(PreventBerryUseAbAttr),
+      .attr(PreventBerryUseAbAttr)
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' prevents eating berries!')),
     new Ability(Abilities.DEFIANT, 5)
       .attr(PostStatChangeStatChangeAbAttr, (target, statsChanged, levels) => levels < 0, [BattleStat.ATK], 2),
     new Ability(Abilities.DEFEATIST, 5)
