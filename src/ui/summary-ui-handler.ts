@@ -376,13 +376,13 @@ export default class SummaryUiHandler extends UiHandler {
             }
             break;
           case Button.LEFT:
-            if(this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
+            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
               break;
             if (this.cursor)
               success = this.setCursor(this.cursor - 1);
             break;
           case Button.RIGHT:
-            if(this.summaryUiMode === SummaryUiMode.LEARN_MOVE){
+            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
               this.setCursor(Page.MOVES); 
               this.moveSelect = true;
               success = true;
@@ -403,11 +403,11 @@ export default class SummaryUiHandler extends UiHandler {
     return success || error;
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: integer, overrideChanged: boolean = false): boolean {
     let changed: boolean;
     
     if (this.moveSelect) {
-      changed = this.moveCursor !== cursor;
+      changed = overrideChanged || this.moveCursor !== cursor;
       if (changed) {
         this.moveCursor = cursor;
 
@@ -499,15 +499,12 @@ export default class SummaryUiHandler extends UiHandler {
             onComplete: () => {
               if (forward){
                 this.populatePageContainer(this.summaryPageContainer); 
-                if(this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
-                  {
-                    this.moveCursorObj = null; 
-                    this.extraMoveRowContainer.setVisible(true);
-                    // Cursor needs to be setted 2 times so it triggers the changed flag to show the move description
-                    this.setCursor(1);
-                    this.setCursor(0);
-                    this.showMoveEffect();
-                  }
+                if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
+                  this.moveCursorObj = null; 
+                  this.extraMoveRowContainer.setVisible(true);
+                  this.setCursor(0, true);
+                  this.showMoveEffect();
+                }
               }
               else
                 this.summaryPageTransitionContainer.x -= 214;
