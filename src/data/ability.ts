@@ -868,6 +868,13 @@ export class MoveTypeChangePowerMultiplierAbAttr extends VariableMoveTypeAbAttr 
   }
 }
 
+export class FieldPreventExplosiveMovesAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+    cancelled.value = true;
+    return true;
+  }
+}
+
 export class MoveTypeChangeAttr extends PreAttackAbAttr {
   private newType: Type;
   private powerMultiplier: number;
@@ -2467,8 +2474,8 @@ export function initAbilities() {
       .attr(BlockOneHitKOAbAttr)
       .ignorable(),
     new Ability(Abilities.DAMP, 3)
-      .ignorable()
-      .unimplemented(),
+      .attr(FieldPreventExplosiveMovesAbAttr)
+      .ignorable(),
     new Ability(Abilities.LIMBER, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
       .ignorable(),
