@@ -8,6 +8,10 @@ import { move as enMove } from '../locales/en/move';
 import { move as esMove } from '../locales/es/move';
 import { move as frMove } from '../locales/fr/move';
 
+import { ability as enAbility } from '../locales/en/ability';
+import { ability as esAbility } from '../locales/es/ability';
+import { ability as frAbility } from '../locales/fr/ability';
+
 import { pokeball as enPokeball } from '../locales/en/pokeball';
 import { pokeball as esPokeball } from '../locales/es/pokeball';
 import { pokeball as frPokeball } from '../locales/fr/pokeball';
@@ -37,6 +41,15 @@ export interface MoveTranslationEntry {
 
 export interface MoveTranslationEntries {
   [key: string]: MoveTranslationEntry
+}
+
+export interface AbilityTranslationEntry {
+  name: string,
+  description: string
+}
+
+export interface AbilityTranslationEntries {
+  [key: string]: AbilityTranslationEntry
 }
 
 export interface Localizable {
@@ -74,6 +87,7 @@ export function initI18n(): void {
       en: {
         menu: enMenu,
         move: enMove,
+        ability: enAbility,
         pokeball: enPokeball,
         pokemon: enPokemon,
         pokemonStat: enPokemonStat,
@@ -82,6 +96,7 @@ export function initI18n(): void {
       es: {
         menu: esMenu,
         move: esMove,
+        ability: esAbility,
         pokeball: esPokeball,
         pokemon: esPokemon,
         pokemonStat: esPokemonStat,
@@ -90,6 +105,7 @@ export function initI18n(): void {
       fr: {
         menu: frMenu,
         move: frMove,
+        ability: frAbility,
         pokeball: frPokeball,
         pokemon: frPokemon,
         pokemonStat: frPokemonStat,
@@ -109,6 +125,7 @@ declare module 'i18next' {
     resources: {
       menu: typeof enMenu;
       move: typeof enMove;
+      ability: typeof enAbility;
       pokeball: typeof enPokeball;
       pokemon: typeof enPokemon;
       pokemonStat: typeof enPokemonStat;
