@@ -887,7 +887,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
     stats.map(s => pokemon.getBattleStat(s)).reduce((highestValue: integer, value: integer, i: integer) => {
       if (value > highestValue) {
         highestStat = stats[i];
-        return highestValue += value;
+        return value;
       }
       return highestValue;
     }, 0);
