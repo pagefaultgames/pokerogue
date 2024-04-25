@@ -2832,10 +2832,11 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.PHYSICAL && (user.status?.effect === StatusEffect.POISON || user.status?.effect === StatusEffect.TOXIC), 1.5),
     new Ability(Abilities.FLARE_BOOST, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.SPECIAL && user.status?.effect === StatusEffect.BURN, 1.5),
-    new Ability(Abilities.HARVEST, 5),
+    new Ability(Abilities.HARVEST, 5)
+      .unimplemented(),
     new Ability(Abilities.TELEPATHY, 5)
-      .unimplemented()
-      .ignorable(),
+      .ignorable()
+      .unimplemented(),
     new Ability(Abilities.MOODY, 5)
       .attr(MoodyAbAttr),
     new Ability(Abilities.OVERCOAT, 5)
