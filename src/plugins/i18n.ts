@@ -10,6 +10,7 @@ import { move as frMove } from '../locales/fr/move';
 
 import { ability as enAbility } from '../locales/en/ability';
 import { ability as esAbility } from '../locales/es/ability';
+import { ability as frAbility } from '../locales/fr/ability';
 
 import { pokeball as enPokeball } from '../locales/en/pokeball';
 import { pokeball as esPokeball } from '../locales/es/pokeball';
@@ -97,6 +98,7 @@ export function initI18n(): void {
       fr: {
         menu: frMenu,
         move: frMove,
+        ability: frAbility,
         pokeball: frPokeball,
         pokemon: frPokemon,
         commandUiHandler: frCommandUiHandler,
