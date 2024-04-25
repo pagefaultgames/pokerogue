@@ -342,6 +342,12 @@ export default class SummaryUiHandler extends UiHandler {
           case Button.DOWN:
             success = this.setCursor(this.moveCursor < 4 ? this.moveCursor + 1 : 0);
             break;
+          case Button.LEFT:
+            this.moveSelect = false;
+            this.setCursor(Page.STATS);        
+            this.hideMoveEffect();
+            success = true;
+            break;
         }
       }
     } else {
@@ -358,6 +364,8 @@ export default class SummaryUiHandler extends UiHandler {
         switch (button) {
           case Button.UP:
           case Button.DOWN:
+            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
+              break;
             const isDown = button === Button.DOWN;
             const party = this.scene.getParty();
             const partyMemberIndex = party.indexOf(this.pokemon);
@@ -368,10 +376,18 @@ export default class SummaryUiHandler extends UiHandler {
             }
             break;
           case Button.LEFT:
+            if(this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
+              break;
             if (this.cursor)
               success = this.setCursor(this.cursor - 1);
             break;
           case Button.RIGHT:
+            if(this.summaryUiMode === SummaryUiMode.LEARN_MOVE){
+              this.setCursor(Page.MOVES); 
+              this.moveSelect = true;
+              success = true;
+              break;
+            }
             if (this.cursor < pages.length - 1)
               success = this.setCursor(this.cursor + 1);
             break;
@@ -449,7 +465,6 @@ export default class SummaryUiHandler extends UiHandler {
           });
         }
       });
-
       if (this.selectedMoveIndex > -1) {
         if (!this.selectedMoveCursorObj) {
           this.selectedMoveCursorObj = this.scene.add.sprite(-2, 0, 'summary_moves_cursor', 'select');
@@ -482,8 +497,18 @@ export default class SummaryUiHandler extends UiHandler {
             x: forward ? '-=214' : '+=214',
             duration: 250,
             onComplete: () => {
-              if (forward)
-                this.populatePageContainer(this.summaryPageContainer);
+              if (forward){
+                this.populatePageContainer(this.summaryPageContainer); 
+                if(this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
+                  {
+                    this.moveCursorObj = null; 
+                    this.extraMoveRowContainer.setVisible(true);
+                    // Cursor needs to be setted 2 times so it triggers the changed flag to show the move description
+                    this.setCursor(1);
+                    this.setCursor(0);
+                    this.showMoveEffect();
+                  }
+              }
               else
                 this.summaryPageTransitionContainer.x -= 214;
               this.summaryPageTransitionContainer.setVisible(false);
@@ -699,6 +724,7 @@ export default class SummaryUiHandler extends UiHandler {
         this.extraMoveRowContainer.add(extraRowText);
 
         if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
+          this.extraMoveRowContainer.setVisible(true);
           const newMoveTypeIcon = this.scene.add.sprite(0, 0, 'types', Type[this.newMove.type].toLowerCase());
           newMoveTypeIcon.setOrigin(0, 1);
           this.extraMoveRowContainer.add(newMoveTypeIcon);
