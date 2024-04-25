@@ -35,6 +35,8 @@ export class Ability implements Localizable {
     this.generation = generation;
     this.attrs = [];
     this.conditions = [];
+
+    this.localize();
   }
 
   localize(): void {
