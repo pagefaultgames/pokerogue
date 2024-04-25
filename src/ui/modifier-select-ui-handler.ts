@@ -285,13 +285,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       ui.showText(options[this.cursor].modifierTypeOption.type.getDescription(this.scene));
     } else if (!cursor) {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
-      ui.showText('Spend money to reroll your item options');
+      ui.showText('Spend money to reroll your item options.');
     } else if (cursor === 1) {
       this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 50, -60);
-      ui.showText('Transfer a held item from one Pokémon to another');
+      ui.showText('Transfer a held item from one Pokémon to another.');
     } else {
       this.cursorObj.setPosition(6, -60);
-      ui.showText('Lock item rarities on reroll (affects reroll cost)');
+      ui.showText('Lock item rarities on reroll (affects reroll cost).');
     }
 
     return ret;
