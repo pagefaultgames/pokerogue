@@ -1951,7 +1951,7 @@ export class ConditionalHealAttr extends VariablePowerAttr {
   private callback: (user: Pokemon, target: Pokemon, move: Move) => boolean;
   private healRatio: number;
 
-  constructor(callback: (user: Pokemon, target: Pokemon, move: Move) => boolean, healRatio?: number) {
+  constructor(callback: (user: Pokemon, target: Pokemon, move: Move) => boolean, healRatio: number = 0.5) {
     super();
     this.callback = callback;
     this.healRatio = healRatio;
