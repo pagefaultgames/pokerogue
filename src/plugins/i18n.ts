@@ -34,6 +34,9 @@ import { commandUiHandler as enCommandUiHandler } from '../locales/en/command-ui
 import { commandUiHandler as esCommandUiHandler } from '../locales/es/command-ui-handler';
 import { commandUiHandler as frCommandUiHandler } from '../locales/fr/command-ui-handler';
 
+import { fightUiHandler as enFightUiHandler } from '../locales/en/fight-ui-handler';
+import { fightUiHandler as frFightUiHandler } from '../locales/fr/fight-ui-handler';
+
 export interface SimpleTranslationEntries {
   [key: string]: string
 }
@@ -71,11 +74,11 @@ export function initI18n(): void {
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
-   * 
+   *
    * Q: How do I add a new language?
    * A: To add a new language, create a new folder in the locales directory with the language code.
    *    Each language folder should contain a file for each namespace (ex. menu.ts) with the translations.
-   * 
+   *
    * Q: How do I add a new namespace?
    * A: To add a new namespace, create a new file in each language folder with the translations.
    *    Then update the `resources` field in the init() call and the CustomTypeOptions interface.
@@ -98,6 +101,7 @@ export function initI18n(): void {
         pokemon: enPokemon,
         pokemonStat: enPokemonStat,
         commandUiHandler: enCommandUiHandler,
+        fightUiHandler: enFightUiHandler,
       },
       es: {
         menu: esMenu,
@@ -118,6 +122,7 @@ export function initI18n(): void {
         pokemon: frPokemon,
         pokemonStat: frPokemonStat,
         commandUiHandler: frCommandUiHandler,
+        fightUiHandler: frFightUiHandler,
       },
       it: {
         menu: itMenu,
@@ -140,6 +145,7 @@ declare module 'i18next' {
       pokemon: typeof enPokemon;
       pokemonStat: typeof enPokemonStat;
       commandUiHandler: typeof enCommandUiHandler;
+      fightUiHandler: typeof enFightUiHandler;
     };
   }
 }
