@@ -4,6 +4,11 @@ import { menu as esMenu } from '../locales/es/menu';
 import { menu as itMenu } from '../locales/it/menu';
 import { menu as frMenu } from '../locales/fr/menu';
 
+import { menuUiHandler as enMenuUiHandler } from '../locales/en/menu-ui-handler.js';
+import { menuUiHandler as esMenuUiHandler } from '../locales/es/menu-ui-handler.js';
+import { menuUiHandler as frMenuUiHandler } from '../locales/fr/menu-ui-handler.js';
+import { menuUiHandler as itMenuUiHandler } from '../locales/it/menu-ui-handler.js';
+
 import { move as enMove } from '../locales/en/move';
 import { move as esMove } from '../locales/es/move';
 import { move as frMove } from '../locales/fr/move';
@@ -86,6 +91,7 @@ export function initI18n(): void {
     resources: {
       en: {
         menu: enMenu,
+        menuUiHandler: enMenuUiHandler,
         move: enMove,
         ability: enAbility,
         pokeball: enPokeball,
@@ -95,6 +101,7 @@ export function initI18n(): void {
       },
       es: {
         menu: esMenu,
+        menuUiHandler: esMenuUiHandler,
         move: esMove,
         ability: esAbility,
         pokeball: esPokeball,
@@ -104,6 +111,7 @@ export function initI18n(): void {
       },
       fr: {
         menu: frMenu,
+        menuUiHandler: frMenuUiHandler,
         move: frMove,
         ability: frAbility,
         pokeball: frPokeball,
@@ -113,6 +121,7 @@ export function initI18n(): void {
       },
       it: {
         menu: itMenu,
+        menuUiHandler: itMenuUiHandler,
         pokemonStat: itPokemonStat,
       },
     },
@@ -124,6 +133,7 @@ declare module 'i18next' {
   interface CustomTypeOptions {
     resources: {
       menu: typeof enMenu;
+      menuUiHandler: typeof enMenuUiHandler;
       move: typeof enMove;
       ability: typeof enAbility;
       pokeball: typeof enPokeball;
