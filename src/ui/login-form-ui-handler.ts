@@ -59,11 +59,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         };
         if (!this.inputs[0].text)
           return onFail(i18next.t('menu:emptyUsername'));
-        const contentType = 'application/x-www-form-urlencoded';
-        const headers = {
-          'Content-Type': contentType,
-        };
-        fetch(`${Utils.apiUrl}/account/login`, { method: 'POST', headers: headers, body: `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}` })
+        Utils.apiPost(`account/login`, `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
           .then(response => {
             if (!response.ok)
               return response.text();
