@@ -2859,7 +2859,7 @@ export function initAbilities() {
       .ignorable()
       .unimplemented(),
     new Ability(Abilities.ANALYTIC, 5)
-      .unimplemented(),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => !!target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command !== Command.FIGHT, 1.3),
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
