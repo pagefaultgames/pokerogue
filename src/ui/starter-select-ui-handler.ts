@@ -97,6 +97,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonGrowthRateText: Phaser.GameObjects.Text;
   private type1Icon: Phaser.GameObjects.Sprite;
   private type2Icon: Phaser.GameObjects.Sprite;
+  private pokemonLuckLabelText: Phaser.GameObjects.Text;
+  private pokemonLuckText: Phaser.GameObjects.Text;
   private pokemonGenderText: Phaser.GameObjects.Text;
   private pokemonUncaughtText: Phaser.GameObjects.Text;
   private pokemonAbilityLabelText: Phaser.GameObjects.Text;
@@ -417,6 +419,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.type2Icon.setScale(0.5);
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
+
+    this.pokemonLuckLabelText = addTextObject(this.scene, 8, 89, 'Luck:', TextStyle.WINDOW_ALT, { fontSize: '56px' });
+    this.pokemonLuckLabelText.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.pokemonLuckLabelText);
+
+    this.pokemonLuckText = addTextObject(this.scene, 8 + this.pokemonLuckLabelText.displayWidth + 2, 89, '0', TextStyle.WINDOW, { fontSize: '56px' });
+    this.pokemonLuckText.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.pokemonLuckText);
 
     this.pokemonCandyIcon = this.scene.add.sprite(1, 12, 'items', 'candy');
     this.pokemonCandyIcon.setScale(0.5);
@@ -1249,6 +1259,12 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       if (this.speciesStarterDexEntry?.caughtAttr) {
         const colorScheme = starterColors[species.speciesId];
 
+        const luck = this.scene.gameData.getDexAttrLuck(this.speciesStarterDexEntry.caughtAttr);
+        this.pokemonLuckText.setVisible(!!luck);
+        this.pokemonLuckText.setText(luck.toString());
+        this.pokemonLuckText.setTint(getVariantTint(Math.min(luck - 1, 2) as Variant));
+        this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
+
         this.pokemonGrowthRateText.setText(Utils.toReadableString(GrowthRate[species.growthRate]));
         this.pokemonGrowthRateText.setColor(getGrowthRateColor(species.growthRate));
         this.pokemonGrowthRateText.setShadowColor(getGrowthRateColor(species.growthRate, true));
@@ -1310,6 +1326,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonGrowthRateLabelText.setVisible(false);
         this.type1Icon.setVisible(false);
         this.type2Icon.setVisible(false);
+        this.pokemonLuckLabelText.setVisible(false);
+        this.pokemonLuckText.setVisible(false);
         this.pokemonUncaughtText.setVisible(true);
         this.pokemonAbilityLabelText.setVisible(false);
         this.pokemonPassiveLabelText.setVisible(false);
@@ -1334,6 +1352,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonGrowthRateLabelText.setVisible(false);
       this.type1Icon.setVisible(false);
       this.type2Icon.setVisible(false);
+      this.pokemonLuckLabelText.setVisible(false);
+      this.pokemonLuckText.setVisible(false);
       this.pokemonUncaughtText.setVisible(!!species);
       this.pokemonAbilityLabelText.setVisible(false);
       this.pokemonPassiveLabelText.setVisible(false);
