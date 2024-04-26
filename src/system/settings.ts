@@ -12,6 +12,7 @@ export enum Setting {
   BGM_Volume = "BGM_VOLUME",
   SE_Volume = "SE_VOLUME",
   Language = "LANGUAGE",
+  Move_Effectiveness = "MOVE_EFFECTIVENESS",
   Damage_Numbers = "DAMAGE_NUMBERS",
   UI_Theme = "UI_THEME",
   Window_Type = "WINDOW_TYPE",
@@ -43,6 +44,7 @@ export const settingOptions: SettingOptions = {
   [Setting.BGM_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.SE_Volume]: new Array(11).fill(null).map((_, i) => i ? (i * 10).toString() : 'Mute'),
   [Setting.Language]: [ 'English', 'Change' ],
+  [Setting.Move_Effectiveness]:['Off','On'],
   [Setting.Damage_Numbers]: [ 'Off', 'Simple', 'Fancy' ],
   [Setting.UI_Theme]: [ 'Default', 'Legacy' ],
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
@@ -66,6 +68,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.BGM_Volume]: 10,
   [Setting.SE_Volume]: 10,
   [Setting.Language]: 0,
+  [Setting.Move_Effectiveness]:0,
   [Setting.Damage_Numbers]: 0,
   [Setting.UI_Theme]: 0,
   [Setting.Window_Type]: 0,
@@ -101,6 +104,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     case Setting.SE_Volume:
       scene.seVolume = value ? parseInt(settingOptions[setting][value]) * 0.01 : 0;
       scene.updateSoundVolume();
+      break;
+    case Setting.Move_Effectiveness:
+      scene.showEffectiveness = settingOptions[setting][value] === 'On';
       break;
     case Setting.Damage_Numbers:
       scene.damageNumbersMode = value;

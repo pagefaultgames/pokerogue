@@ -122,6 +122,7 @@ export default class BattleScene extends SceneBase {
 	public bgmVolume: number = 1;
 	public seVolume: number = 1;
 	public gameSpeed: integer = 1;
+	public showEffectiveness: boolean = false;
 	public damageNumbersMode: integer = 0;
 	public showLevelUpStats: boolean = true;
 	public enableTutorials: boolean = import.meta.env.VITE_BYPASS_TUTORIAL === "1";
@@ -172,6 +173,8 @@ export default class BattleScene extends SceneBase {
 	public pokeballCounts: PokeballCounts;
 	public money: integer;
 	public pokemonInfoContainer: PokemonInfoContainer;
+	public selectedTarget: Pokemon;
+	public newEncounter: boolean = true;
 	private party: PlayerPokemon[];
 	private waveCountText: Phaser.GameObjects.Text;
 	private moneyText: Phaser.GameObjects.Text;
@@ -1423,7 +1426,8 @@ export default class BattleScene extends SceneBase {
 				if (this.ui?.getMode() === Mode.SETTINGS)
 					(this.ui.getHandler() as SettingsUiHandler).show([]);
 			}
-		} else
+		} 
+		else
 			return;
 		if (inputSuccess && this.enableVibration && typeof navigator.vibrate !== 'undefined')
 			navigator.vibrate(vibrationLength || 10);		

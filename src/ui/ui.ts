@@ -198,6 +198,10 @@ export default class UI extends Phaser.GameObjects.Container {
     return this.handlers[Mode.MESSAGE] as BattleMessageUiHandler;
   }
 
+  getFightUiHandler(): FightUiHandler {
+    return this.handlers[Mode.FIGHT] as FightUiHandler;
+  }
+
   processInput(button: Button): boolean {
     if (this.overlayActive)
       return false;

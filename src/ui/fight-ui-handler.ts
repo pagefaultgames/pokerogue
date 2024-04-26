@@ -8,6 +8,8 @@ import * as Utils from "../utils";
 import { CommandPhase } from "../phases";
 import { MoveCategory } from "#app/data/move.js";
 import i18next from '../plugins/i18n';
+import Pokemon from "../field/pokemon.js";
+import { Moves } from "../data/enums/moves.js";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
@@ -72,6 +74,19 @@ export default class FightUiHandler extends UiHandler {
     messageHandler.commandWindow.setVisible(false);
     messageHandler.movesWindowContainer.setVisible(true);
     this.setCursor(this.getCursor());
+    this.displayMoves(this.scene.selectedTarget);
+
+    return true;
+  }
+
+  showTargettedMoves(args: any[]): boolean {
+    super.show(args);
+
+    this.fieldIndex = args.length ? args[0] as integer : 0;
+
+    const messageHandler = this.getUi().getMessageHandler();
+    messageHandler.commandWindow.setVisible(false);
+    messageHandler.movesWindowContainer.setVisible(true);
     this.displayMoves();
 
     return true;
@@ -141,22 +156,9 @@ export default class FightUiHandler extends UiHandler {
       ui.add(this.cursorObj);
     }
 
+    const activePokemon =(this.scene.getCurrentPhase() as CommandPhase).getPokemon()
     const moveset = (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getMoveset();
-
     const hasMove = cursor < moveset.length;
-
-    if (hasMove) {
-      const pokemonMove = moveset[cursor];
-      this.typeIcon.setTexture('types', Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
-      this.moveCategoryIcon.setTexture('categories', MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
-
-      const power = pokemonMove.getMove().power;
-      const maxPP = pokemonMove.getMovePp();
-      const pp = maxPP - pokemonMove.ppUsed;
-
-      this.ppText.setText(`${Utils.padInt(pp, 2, '  ')}/${Utils.padInt(maxPP, 2, '  ')}`);
-      this.powerText.setText(`${power >= 0 ? power : '---'}`);
-    }
 
     this.typeIcon.setVisible(hasMove);
     this.ppLabel.setVisible(hasMove);
@@ -164,18 +166,53 @@ export default class FightUiHandler extends UiHandler {
     this.powerLabel.setVisible(hasMove);
     this.powerText.setVisible(hasMove);
     this.moveCategoryIcon.setVisible(hasMove);
-
     this.cursorObj.setPosition(13 + (cursor % 2 === 1 ? 100 : 0), -31 + (cursor >= 2 ? 15 : 0));
-
+  
+    if (hasMove) {
+      this.updateMovesWindowContainer(activePokemon,cursor)
+    }
     return changed;
   }
 
-  displayMoves() {
-    const moveset = (this.scene.getCurrentPhase() as CommandPhase).getPokemon().getMoveset();
+  displayMoves(pokemon?: Pokemon,move?:Moves) {
+    const actingPokemon =(this.scene.getCurrentPhase() as CommandPhase).getPokemon();
+    const targetPokemon = pokemon || this.scene.getEnemyPokemon();
+    this.setMoveColor(targetPokemon === actingPokemon ? this.scene.getEnemyPokemon() : targetPokemon, actingPokemon,move);
+  }
+  
+  setMoveColor(targetPokemon:Pokemon,actingPokemon:Pokemon,move?:Moves){
+    const moveset = actingPokemon.getMoveset();
     for (let m = 0; m < 4; m++) {
       const moveText = addTextObject(this.scene, m % 2 === 0 ? 0 : 100, m < 2 ? 0 : 16, '-', TextStyle.WINDOW);
-      if (m < moveset.length)
+
+      this.typeIcon.setVisible(true);
+      this.ppText.setVisible(true);
+      this.moveCategoryIcon.setVisible(true);
+
+      if (m < moveset.length){
+        const pokemonMove = moveset[m];
+        if (pokemonMove.moveId===move) {
+          this.updateMovesWindowContainer(actingPokemon,m)
+        }
+
         moveText.setText(moveset[m].getName());
+        const effectiveness = (targetPokemon.getAttackMoveEffectiveness(targetPokemon,pokemonMove))
+        
+        if (this.scene.showEffectiveness) {
+          if (effectiveness === 0) {
+            moveText.setColor(this.getTextColor(TextStyle.ZERO_X_EFFECT)); // No effect
+          } else if (effectiveness === 4) {
+            moveText.setColor(this.getTextColor(TextStyle.FOUR_X_EFFECT)); // x4 Super effective
+          } else if (effectiveness === 2) {
+            moveText.setColor(this.getTextColor(TextStyle.TWO_X_EFFECT));  // x2 effective
+          } else if (effectiveness === 0.5) {
+            moveText.setColor(this.getTextColor(TextStyle.HALF_X_EFFECT)); // x0.5 Not very effective
+          } else if (effectiveness === 0.25) {
+            moveText.setColor(this.getTextColor(TextStyle.QUARTER_X_EFFECT)); // x0.25 Not very effective
+          }
+        }
+        
+      }
       this.movesContainer.add(moveText);
     }
   }
@@ -201,4 +238,27 @@ export default class FightUiHandler extends UiHandler {
       this.cursorObj.destroy();
     this.cursorObj = null;
   }
+
+  setVisible(){
+    this.typeIcon.setVisible(true);
+    this.ppLabel.setVisible(true);
+    this.ppText.setVisible(true);
+    this.powerLabel.setVisible(true);
+    this.powerText.setVisible(true);
+    this.moveCategoryIcon.setVisible(true);
+  }
+
+  updateMovesWindowContainer(actingPokemon:Pokemon,m:integer){
+    const pokemonMove = actingPokemon.getMoveset()[m];
+    this.typeIcon.setTexture('types', Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
+    this.moveCategoryIcon.setTexture('categories', MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
+
+    const power = pokemonMove.getMove().power;
+    const maxPP = pokemonMove.getMovePp();
+    const pp = maxPP - pokemonMove.ppUsed;
+
+    this.ppText.setText(`${Utils.padInt(pp, 2, '  ')}/${Utils.padInt(maxPP, 2, '  ')}`);
+    this.powerText.setText(`${power >= 0 ? power : '---'}`);
+  }
+
 }
