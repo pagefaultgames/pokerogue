@@ -65,7 +65,7 @@ export class MistTag extends ArenaTag {
     super.onAdd(arena);
 
     const source = arena.scene.getPokemonById(this.sourceId);
-    arena.scene.queueMessage(getPokemonMessage(source, `'s team became\nshrowded in mist!`));
+    arena.scene.queueMessage(getPokemonMessage(source, `'s team became\nshrouded in mist!`));
   }
 
   apply(arena: Arena, args: any[]): boolean {
@@ -252,6 +252,7 @@ class SpikesTag extends ArenaTrapTag {
 
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is hurt\nby the spikes!'));
         pokemon.damageAndUpdate(damage, HitResult.OTHER);
+        if (pokemon.turnData) pokemon.turnData.damageTaken += damage;
         return true;
       }
     }
@@ -382,6 +383,7 @@ class StealthRockTag extends ArenaTrapTag {
       const damage = Math.ceil(pokemon.getMaxHp() * damageHpRatio);
       pokemon.scene.queueMessage(`Pointed stones dug into\n${pokemon.name}!`);
       pokemon.damageAndUpdate(damage, HitResult.OTHER);
+      if (pokemon.turnData) pokemon.turnData.damageTaken += damage;
     }
 
     return false;

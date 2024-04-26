@@ -78,6 +78,7 @@ export enum CommonAnim {
     CURSE,
     MAGMA_STORM,
     CLAMP,
+    SNAP_TRAP,
     THUNDER_CAGE,
     INFESTATION,
     ORDER_UP_CURLY,
@@ -423,14 +424,14 @@ export const moveAnims = new Map<Moves, AnimConfig | [AnimConfig, AnimConfig]>()
 export const chargeAnims = new Map<ChargeAnim, AnimConfig | [AnimConfig, AnimConfig]>();
 export const commonAnims = new Map<CommonAnim, AnimConfig>();
 
-export function initCommonAnims(): Promise<void> {
+export function initCommonAnims(scene: BattleScene): Promise<void> {
     return new Promise(resolve => {
         const commonAnimNames = Utils.getEnumKeys(CommonAnim);
         const commonAnimIds = Utils.getEnumValues(CommonAnim);
         const commonAnimFetches = [];
         for (let ca = 0; ca < commonAnimIds.length; ca++) {
             const commonAnimId = commonAnimIds[ca];
-            commonAnimFetches.push(fetch(`./battle-anims/common-${commonAnimNames[ca].toLowerCase().replace(/\_/g, '-')}.json`)
+            commonAnimFetches.push(scene.cachedFetch(`./battle-anims/common-${commonAnimNames[ca].toLowerCase().replace(/\_/g, '-')}.json`)
                 .then(response => response.json())
                 .then(cas => commonAnims.set(commonAnimId, new AnimConfig(cas))));
         }
@@ -438,7 +439,7 @@ export function initCommonAnims(): Promise<void> {
     });
 }
 
-export function initMoveAnim(move: Moves): Promise<void> {
+export function initMoveAnim(scene: BattleScene, move: Moves): Promise<void> {
     return new Promise(resolve => {
         if (moveAnims.has(move)) {
             if (moveAnims.get(move) !== null)
@@ -459,7 +460,7 @@ export function initMoveAnim(move: Moves): Promise<void> {
             const defaultMoveAnim = allMoves[move] instanceof AttackMove ? Moves.TACKLE : allMoves[move] instanceof SelfStatusMove ? Moves.FOCUS_ENERGY : Moves.TAIL_WHIP;
             const moveName = Moves[move].toLowerCase().replace(/\_/g, '-');
             const fetchAnimAndResolve = (move: Moves) => {
-                fetch(`./battle-anims/${moveName}.json`)
+                scene.cachedFetch(`./battle-anims/${moveName}.json`)
                     .then(response => {
                         if (!response.ok) {
                             console.error(`Could not load animation file for move '${moveName}'`, response.status, response.statusText);
@@ -476,7 +477,7 @@ export function initMoveAnim(move: Moves): Promise<void> {
                             populateMoveAnim(move, ba);
                         const chargeAttr = allMoves[move].getAttrs(ChargeAttr).find(() => true) as ChargeAttr || allMoves[move].getAttrs(DelayedAttackAttr).find(() => true) as DelayedAttackAttr;
                         if (chargeAttr)
-                            initMoveChargeAnim(chargeAttr.chargeAnim).then(() => resolve());
+                            initMoveChargeAnim(scene, chargeAttr.chargeAnim).then(() => resolve());
                         else
                             resolve();
                     });
@@ -486,7 +487,7 @@ export function initMoveAnim(move: Moves): Promise<void> {
     });
 }
 
-export function initMoveChargeAnim(chargeAnim: ChargeAnim): Promise<void> {
+export function initMoveChargeAnim(scene: BattleScene, chargeAnim: ChargeAnim): Promise<void> {
     return new Promise(resolve => {
         if (chargeAnims.has(chargeAnim)) {
             if (chargeAnims.get(chargeAnim) !== null)
@@ -501,7 +502,7 @@ export function initMoveChargeAnim(chargeAnim: ChargeAnim): Promise<void> {
             }
         } else {
             chargeAnims.set(chargeAnim, null);
-            fetch(`./battle-anims/${ChargeAnim[chargeAnim].toLowerCase().replace(/\_/g, '-')}.json`)
+            scene.cachedFetch(`./battle-anims/${ChargeAnim[chargeAnim].toLowerCase().replace(/\_/g, '-')}.json`)
                 .then(response => response.json())
                 .then(ca => {
                     if (Array.isArray(ca)) {
@@ -797,7 +798,7 @@ export abstract class BattleAnim {
                             let sprite: Phaser.GameObjects.Sprite;
                             sprite = scene.addPokemonSprite(isUser ? user : target, 0, 0, spriteSource.texture, spriteSource.frame.name, true);
                             [ 'spriteColors', 'fusionSpriteColors' ].map(k => sprite.pipelineData[k] = (isUser ? user : target).getSprite().pipelineData[k]);
-                            sprite.setPipelineData('spriteKey', (isUser ? user : target).getSpriteKey());
+                            sprite.setPipelineData('spriteKey', (isUser ? user : target).getBattleSpriteKey());
                             sprite.setPipelineData('shiny', (isUser ? user : target).shiny);
                             sprite.setPipelineData('variant', (isUser ? user : target).variant);
                             sprite.setPipelineData('ignoreFieldPos', true);

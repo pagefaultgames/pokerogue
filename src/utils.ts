@@ -247,15 +247,17 @@ export function apiFetch(path: string, authed: boolean = false): Promise<Respons
   });
 }
 
-export function apiPost(path: string, data?: any, contentType: string = 'application/json'): Promise<Response> {
+export function apiPost(path: string, data?: any, contentType: string = 'application/json', authed: boolean = false): Promise<Response> {
   return new Promise((resolve, reject) => {
     const headers = {
       'Accept': contentType,
       'Content-Type': contentType,
     };
-    const sId = getCookie(sessionIdKey);
-    if (sId)
-      headers['Authorization'] = sId;
+    if (authed) {
+      const sId = getCookie(sessionIdKey);
+      if (sId)
+        headers['Authorization'] = sId;
+    }
     fetch(`${apiUrl}/${path}`, { method: 'POST', headers: headers, body: data })
       .then(response => resolve(response))
       .catch(err => reject(err));

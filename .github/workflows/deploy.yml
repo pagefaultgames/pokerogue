@@ -28,7 +28,9 @@ jobs:
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
       - name: Deploy build on server
         if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
-        run: rsync -vrm dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DESTINATION_DIR }}
+        run: | 
+          rsync --del --no-times --checksum -vrm dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DESTINATION_DIR }}
+          ssh -t ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "~/prmanifest --inpath ${{ secrets.DESTINATION_DIR }} --outpath ${{ secrets.DESTINATION_DIR }}/manifest.json"
       - name: Purge Cloudflare Cache
         if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
         id: purge-cache
@@ -36,3 +38,7 @@ jobs:
         with:
           cf_auth: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cf_zone: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          files: |
+            https://pokerogue.net/
+            https://pokerogue.net/index.html
+            https://pokerogue.net/manifest.json

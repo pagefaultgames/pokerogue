@@ -6,12 +6,18 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { CommandPhase } from "../phases";
+import { MoveCategory } from "#app/data/move.js";
+import i18next from '../plugins/i18n';
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
   private typeIcon: Phaser.GameObjects.Sprite;
+  private ppLabel: Phaser.GameObjects.Text;
   private ppText: Phaser.GameObjects.Text;
+  private powerLabel: Phaser.GameObjects.Text;
+  private powerText: Phaser.GameObjects.Text;
   private cursorObj: Phaser.GameObjects.Image;
+  private moveCategoryIcon: Phaser.GameObjects.Sprite;
 
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;
@@ -22,18 +28,39 @@ export default class FightUiHandler extends UiHandler {
 
   setup() {
     const ui = this.getUi();
-    
+
     this.movesContainer = this.scene.add.container(18, -38.7);
     ui.add(this.movesContainer);
 
-    this.typeIcon = this.scene.add.sprite((this.scene.game.canvas.width / 6) - 33, -31, 'types', 'unknown');
+    this.typeIcon = this.scene.add.sprite((this.scene.game.canvas.width / 6) - 57, -34, 'types', 'unknown');
     this.typeIcon.setVisible(false);
     ui.add(this.typeIcon);
 
-    this.ppText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 18, -15.5, '    /    ', TextStyle.WINDOW);
+    this.moveCategoryIcon = this.scene.add.sprite((this.scene.game.canvas.width / 6) - 25, -34, 'categories', 'physical');
+    this.moveCategoryIcon.setVisible(false);
+    ui.add(this.moveCategoryIcon);
+
+    this.ppLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -22, 'PP', TextStyle.TOOLTIP_CONTENT);
+    this.ppLabel.setOrigin(0.0, 0.5);
+    this.ppLabel.setVisible(false);
+    this.ppLabel.setText(i18next.t('fightUiHandler:pp'));
+    ui.add(this.ppLabel);
+
+    this.ppText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -22, '--/--', TextStyle.TOOLTIP_CONTENT);
     this.ppText.setOrigin(1, 0.5);
     this.ppText.setVisible(false);
     ui.add(this.ppText);
+
+    this.powerLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 70, -12, 'POWER', TextStyle.TOOLTIP_CONTENT);
+    this.powerLabel.setOrigin(0.0, 0.5);
+    this.powerLabel.setVisible(false);
+    this.powerLabel.setText(i18next.t('fightUiHandler:power'));
+    ui.add(this.powerLabel);
+
+    this.powerText = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 12, -12, '---', TextStyle.TOOLTIP_CONTENT);
+    this.powerText.setOrigin(1, 0.5);
+    this.powerText.setVisible(false);
+    ui.add(this.powerText);
   }
 
   show(args: any[]): boolean {
@@ -120,16 +147,23 @@ export default class FightUiHandler extends UiHandler {
 
     if (hasMove) {
       const pokemonMove = moveset[cursor];
-      this.typeIcon.setTexture('types', Type[pokemonMove.getMove().type].toLowerCase());
+      this.typeIcon.setTexture('types', Type[pokemonMove.getMove().type].toLowerCase()).setScale(0.8);
+      this.moveCategoryIcon.setTexture('categories', MoveCategory[pokemonMove.getMove().category].toLowerCase()).setScale(1.0);
 
+      const power = pokemonMove.getMove().power;
       const maxPP = pokemonMove.getMovePp();
       const pp = maxPP - pokemonMove.ppUsed;
 
       this.ppText.setText(`${Utils.padInt(pp, 2, '  ')}/${Utils.padInt(maxPP, 2, '  ')}`);
+      this.powerText.setText(`${power >= 0 ? power : '---'}`);
     }
 
     this.typeIcon.setVisible(hasMove);
+    this.ppLabel.setVisible(hasMove);
     this.ppText.setVisible(hasMove);
+    this.powerLabel.setVisible(hasMove);
+    this.powerText.setVisible(hasMove);
+    this.moveCategoryIcon.setVisible(hasMove);
 
     this.cursorObj.setPosition(13 + (cursor % 2 === 1 ? 100 : 0), -31 + (cursor >= 2 ? 15 : 0));
 
@@ -150,7 +184,11 @@ export default class FightUiHandler extends UiHandler {
     super.clear();
     this.clearMoves();
     this.typeIcon.setVisible(false);
+    this.ppLabel.setVisible(false);
     this.ppText.setVisible(false);
+    this.powerLabel.setVisible(false);
+    this.powerText.setVisible(false);
+    this.moveCategoryIcon.setVisible(false);
     this.eraseCursor();
   }
 

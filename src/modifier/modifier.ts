@@ -874,14 +874,6 @@ export class BerryModifier extends PokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
 
-    const cancelled = new Utils.BooleanHolder(false);
-    pokemon.getOpponents().map(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
-
-    if (cancelled.value) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is too\nnervous to eat berries!'));
-      return false;
-    }
-
     const preserve = new Utils.BooleanHolder(false);
     pokemon.scene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
 
@@ -1957,7 +1949,7 @@ abstract class EnemyDamageMultiplierModifier extends EnemyPersistentModifier {
 export class EnemyDamageBoosterModifier extends EnemyDamageMultiplierModifier {
   constructor(type: ModifierType, boostPercent: number, stackCount?: integer) {
     //super(type, 1 + ((boostPercent || 10) * 0.01), stackCount);
-    super(type, 1.1, stackCount); // Hardcode multiplier temporarily
+    super(type, 1.05, stackCount); // Hardcode multiplier temporarily
   }
 
   match(modifier: Modifier): boolean {
@@ -1980,7 +1972,7 @@ export class EnemyDamageBoosterModifier extends EnemyDamageMultiplierModifier {
 export class EnemyDamageReducerModifier extends EnemyDamageMultiplierModifier {
   constructor(type: ModifierType, reductionPercent: number, stackCount?: integer) {
     //super(type, 1 - ((reductionPercent || 5) * 0.01), stackCount);
-    super(type, 0.95, stackCount); // Hardcode multiplier temporarily
+    super(type, 0.975, stackCount); // Hardcode multiplier temporarily
   }
 
   match(modifier: Modifier): boolean {
@@ -2112,7 +2104,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
   constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.chance = (chancePercent || 5) / 100;
+    this.chance = (chancePercent || 2.5) / 100;
   }
 
   match(modifier: Modifier) {

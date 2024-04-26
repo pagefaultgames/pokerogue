@@ -1464,7 +1464,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const ability = this.lastSpecies.getAbility(abilityIndex);
         this.pokemonAbilityText.setText(allAbilities[ability].name);
 
-        const isHidden = ability === this.lastSpecies.abilityHidden;
+        const isHidden = abilityIndex === (this.lastSpecies.ability2 ? 2 : 1);
         this.pokemonAbilityText.setColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD));
         this.pokemonAbilityText.setShadowColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD, true));
 
