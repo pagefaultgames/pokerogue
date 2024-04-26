@@ -1519,14 +1519,14 @@ export class ModifierTypeOption {
 
 export function getPartyLuckValue(party: Pokemon[]): integer {
   return Phaser.Math.Clamp(party.map(p => p.isFainted() || !p.isShiny() ? 0 : !p.isFusion() || !p.shiny || !p.fusionShiny ? p.variant + 1 : (p.variant + 1) + (p.fusionVariant + 1))
-    .reduce((total: integer, value: integer) => total += value, 0), 0, 16);
+    .reduce((total: integer, value: integer) => total += value, 0), 0, 14);
 }
 
 export function getLuckString(luckValue: integer): string {
-  return [ 'D', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'A++', 'S', 'S+', 'S++', 'SS', 'SS+', 'SS++', 'SSS' ][luckValue];
+  return [ 'D', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'A++', 'S', 'S+', 'SS', 'SS+', 'SSS' ][luckValue];
 }
 
 export function getLuckTextTint(luckValue: integer): integer {
-  const modifierTier = luckValue ? luckValue > 2 ? luckValue > 5 ? luckValue > 9 ? luckValue > 12 ? ModifierTier.LUXURY : ModifierTier.MASTER : ModifierTier.ROGUE : ModifierTier.ULTRA : ModifierTier.GREAT : ModifierTier.COMMON;
+  const modifierTier = luckValue ? luckValue > 2 ? luckValue > 5 ? luckValue > 9 ? luckValue > 11 ? ModifierTier.LUXURY : ModifierTier.MASTER : ModifierTier.ROGUE : ModifierTier.ULTRA : ModifierTier.GREAT : ModifierTier.COMMON;
   return getModifierTierTextTint(modifierTier);
 }

@@ -1242,7 +1242,7 @@ export default class BattleScene extends SceneBase {
 		})
 		const luckValue = getPartyLuckValue(this.getParty());
 		this.luckText.setText(getLuckString(luckValue));
-		if (luckValue < 16)
+		if (luckValue < 14)
 			this.luckText.setTint(getLuckTextTint(luckValue));
 		else
 			this.luckText.setTint(0x83a55a, 0xee384a, 0x5271cd, 0x7b487b);
