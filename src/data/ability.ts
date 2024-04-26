@@ -453,6 +453,7 @@ export class PostDefendDisguiseAbAttr extends PostDefendAbAttr {
       if (!recoilDamage)
         return false;
       pokemon.damageAndUpdate(recoilDamage, HitResult.OTHER);
+      pokemon.turnData.damageTaken += recoilDamage;
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\'s disguise was busted!'));
       return true;
     }
@@ -733,6 +734,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
       attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+      attacker.turnData.damageTaken += Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio));
       return true;
     }
     
@@ -2070,6 +2072,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
         return false;
       }
       attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+      attacker.turnData.damageTaken += Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio));
       return true;
     }
 
