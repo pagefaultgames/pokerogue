@@ -1230,7 +1230,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (types.find(t => move.isTypeImmune(t)))
       typeMultiplier.value = 0;
 
-    applyMoveAttrs(ExplosiveAttr, source, null, battlerMove.getMove());
     switch (moveCategory) {
       case MoveCategory.PHYSICAL:
       case MoveCategory.SPECIAL:

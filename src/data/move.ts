@@ -738,7 +738,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
 
     const cancelled = new Utils.BooleanHolder(false);
     applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
-    if (!cancelled){
+    if (!cancelled.value){
       user.damageAndUpdate(Math.ceil(user.getMaxHp()/2), HitResult.OTHER, false, true, true);
     }    
     return true;
@@ -748,16 +748,6 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
     if (user.isBoss())
       return -10;
     return Math.ceil(((1 - user.getHpRatio()/2) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type) - 0.5));
-  }
-}
-
-export class ExplosiveAttr extends MoveEffectAttr {
-  getCondition(): MoveCondition | MoveConditionFunc {
-      return (user, target, move) =>{
-        const cancelled = new Utils.BooleanHolder(false);
-        user.scene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled));
-        return !cancelled.value;
-      }
   }
 }
 
@@ -3623,6 +3613,12 @@ const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.i
 
 const failOnMaxCondition: MoveConditionFunc = (user, target, move) => !target.isMax();
 
+const failIfDampCondition: MoveConditionFunc = (user, target, move) => {
+  const cancelled = new Utils.BooleanHolder(false);
+  user.scene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled));
+  return !cancelled.value;
+}
+
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
 function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<void> {
@@ -4038,9 +4034,9 @@ export function initMoves() {
       .attr(CopyMoveAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.SELF_DESTRUCT, Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
-      .attr(ExplosiveAttr)
       .attr(SacrificialAttr)
       .makesContact(false)
+      .condition(failIfDampCondition)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.EGG_BOMB, Type.NORMAL, MoveCategory.PHYSICAL, 100, 75, 10, -1, 0, 1)
       .makesContact(false)
@@ -4129,7 +4125,7 @@ export function initMoves() {
     new AttackMove(Moves.CRABHAMMER, Type.WATER, MoveCategory.PHYSICAL, 100, 90, 10, -1, 0, 1)
       .attr(HighCritAttr),
     new AttackMove(Moves.EXPLOSION, Type.NORMAL, MoveCategory.PHYSICAL, 250, 100, 5, -1, 0, 1)
-      .attr(ExplosiveAttr)
+      .condition(failIfDampCondition)
       .attr(SacrificialAttr)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
@@ -5662,7 +5658,7 @@ export function initMoves() {
       .partial(),
     /* End Unused */
     new AttackMove(Moves.MIND_BLOWN, Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, -1, 0, 7)
-      .attr(ExplosiveAttr)
+      .condition(failIfDampCondition)
       .attr(HalfSacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.PLASMA_FISTS, Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 15, -1, 0, 7)
@@ -5899,10 +5895,10 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .partial(),
     new AttackMove(Moves.MISTY_EXPLOSION, Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 8)
-      .attr(ExplosiveAttr)
       .attr(SacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1)
+      .condition(failIfDampCondition),
     new AttackMove(Moves.GRASSY_GLIDE, Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, -1, 0, 8)
       .partial(),
     new AttackMove(Moves.RISING_VOLTAGE, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 8)
