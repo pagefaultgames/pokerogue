@@ -14,10 +14,12 @@ import { menuUiHandler as deMenuUiHandler } from '../locales/de/menu-ui-handler.
 import { move as enMove } from '../locales/en/move';
 import { move as esMove } from '../locales/es/move';
 import { move as frMove } from '../locales/fr/move';
+import { move as deMove } from '../locales/de/move';
 
 import { ability as enAbility } from '../locales/en/ability';
 import { ability as esAbility } from '../locales/es/ability';
 import { ability as frAbility } from '../locales/fr/ability';
+import { ability as deAbility } from '../locales/de/ability';
 
 import { pokeball as enPokeball } from '../locales/en/pokeball';
 import { pokeball as esPokeball } from '../locales/es/pokeball';
@@ -27,6 +29,7 @@ import { pokeball as dePokeball } from '../locales/de/pokeball';
 import { pokemon as enPokemon } from '../locales/en/pokemon';
 import { pokemon as esPokemon } from '../locales/es/pokemon';
 import { pokemon as frPokemon } from '../locales/fr/pokemon';
+import { pokemon as dePokemon } from '../locales/de/pokemon';
 
 import { pokemonStat as enPokemonStat } from '../locales/en/pokemon-stat';
 import { pokemonStat as esPokemonStat } from '../locales/es/pokemon-stat';
@@ -135,7 +138,10 @@ export function initI18n(): void {
       de: {
         menu: deMenu,
         menuUiHandler: deMenuUiHandler,
+        move: deMove,
+        ability: deAbility,
         pokeball: dePokeball,
+        pokemon: dePokemon,
         pokemonStat: dePokemonStat,
         commandUiHandler: deCommandUiHandler,
       }
