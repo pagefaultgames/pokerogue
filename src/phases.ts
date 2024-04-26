@@ -497,6 +497,7 @@ export class SelectStarterPhase extends Phase {
           starterPokemon.tryPopulateMoveset(starter.moveset);
           if (starter.passive)
             starterPokemon.passive = true;
+          starterPokemon.luck = this.scene.gameData.getDexAttrLuck(this.scene.gameData.dexData[starter.species.speciesId].caughtAttr);
           if (starter.pokerus)
             starterPokemon.pokerus = true;
           if (this.scene.gameMode.isSplicedOnly)

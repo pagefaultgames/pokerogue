@@ -75,6 +75,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public friendship: integer;
   public metLevel: integer;
   public metBiome: Biome | -1;
+  public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
 
@@ -142,6 +143,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.status = dataSource.status;
       this.friendship = dataSource.friendship !== undefined ? dataSource.friendship : this.species.baseFriendship;
       this.metLevel = dataSource.metLevel || 5;
+      this.luck = dataSource.luck;
       this.metBiome = dataSource.metBiome;
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
@@ -189,6 +191,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.generateFusionSpecies();
         }
       }
+
+      this.luck = this.isShiny() ? this.variant + this.fusionVariant : 0;
     }
 
     this.generateName();

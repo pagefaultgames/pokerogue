@@ -36,6 +36,7 @@ export default class PokemonData {
   public friendship: integer;
   public metLevel: integer;
   public metBiome: Biome | -1;
+  public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
 
@@ -75,6 +76,7 @@ export default class PokemonData {
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
+    this.luck = source.luck !== undefined ? source.luck : (source.shiny ? (source.variant + 1) : 0) + (source.fusionShiny ? source.fusionVariant + 1 : 0);
     if (!forHistory)
       this.pauseEvolutions = !!source.pauseEvolutions;
     this.pokerus = !!source.pokerus;
