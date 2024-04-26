@@ -2884,7 +2884,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     return (user, target, move) => move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move);
   }
 
-  public isSelfSwitch(): boolean {
+  isSelfSwitch(): boolean {
     return this.user;
   }
 
