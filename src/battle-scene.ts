@@ -13,11 +13,11 @@ import { Biome } from "./data/enums/biome";
 import { Arena, ArenaBase } from './field/arena';
 import { GameData, PlayerGender } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
-import { TextStyle, addTextObject } from './ui/text';
+import { TextStyle, addBBCodeTextObject, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { initMoves } from './data/move';
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getModifierPoolForType } from './modifier/modifier-type';
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import { Abilities } from "./data/enums/abilities";
@@ -176,6 +176,8 @@ export default class BattleScene extends SceneBase {
 	private waveCountText: Phaser.GameObjects.Text;
 	private moneyText: Phaser.GameObjects.Text;
 	private scoreText: Phaser.GameObjects.Text;
+	private luckLabelText: Phaser.GameObjects.Text;
+	private luckText: Phaser.GameObjects.Text;
 	private modifierBar: ModifierBar;
 	private enemyModifierBar: ModifierBar;
 	private fieldOverlay: Phaser.GameObjects.Rectangle;
@@ -400,6 +402,16 @@ export default class BattleScene extends SceneBase {
 		this.scoreText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, '', TextStyle.PARTY, { fontSize: '54px' });
 		this.scoreText.setOrigin(1, 0);
 		this.fieldUI.add(this.scoreText);
+
+		this.luckText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, '', TextStyle.PARTY, { fontSize: '54px' });
+		this.luckText.setOrigin(1, 0);
+		this.luckText.setVisible(false);
+		this.fieldUI.add(this.luckText);
+
+		this.luckLabelText = addTextObject(this, (this.game.canvas.width / 6) - 2, 0, 'Luck:', TextStyle.PARTY, { fontSize: '54px' });
+		this.luckLabelText.setOrigin(1, 0);
+		this.luckLabelText.setVisible(false);
+		this.fieldUI.add(this.luckLabelText);
 
 		this.updateUIPositions();
 
@@ -805,6 +817,8 @@ export default class BattleScene extends SceneBase {
 
 		this.updateScoreText();
 		this.scoreText.setVisible(false);
+
+		[ this.luckLabelText, this.luckText ].map(t => t.setVisible(false));
 
 		this.newArena(STARTING_BIOME_OVERRIDE || Biome.TOWN);
 
@@ -1220,11 +1234,44 @@ export default class BattleScene extends SceneBase {
 		this.scoreText.setVisible(this.gameMode.isDaily);
 	}
 
+	updateAndShowLuckText(duration: integer): void {
+		const labels = [ this.luckLabelText, this.luckText ];
+		labels.map(t => {
+			t.setAlpha(0);
+			t.setVisible(true);
+		})
+		const luckValue = getPartyLuckValue(this.getParty());
+		this.luckText.setText(getLuckString(luckValue));
+		if (luckValue < 16)
+			this.luckText.setTint(getLuckTextTint(luckValue));
+		else
+			this.luckText.setTint(0x83a55a, 0xee384a, 0x5271cd, 0x7b487b);
+		this.luckLabelText.setX((this.game.canvas.width / 6) - 2 - (this.luckText.displayWidth + 2));
+		this.tweens.add({
+			targets: labels,
+			duration: duration,
+			alpha: 1
+		});
+	}
+
+	hideLuckText(duration: integer): void {
+		const labels = [ this.luckLabelText, this.luckText ];
+		this.tweens.add({
+			targets: labels,
+			duration: duration,
+			alpha: 0,
+			onComplete: () => {
+				labels.map(l => l.setVisible(false));
+			}
+		});
+	}
+
 	updateUIPositions(): void {
 		const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible(this)).length;
 		this.waveCountText.setY(-(this.game.canvas.height / 6) + (enemyModifierCount ? enemyModifierCount <= 12 ? 15 : 24 : 0));
 		this.moneyText.setY(this.waveCountText.y + 10);
 		this.scoreText.setY(this.moneyText.y + 10);
+		[ this.luckLabelText, this.luckText ].map(l => l.setY((this.scoreText.visible ? this.scoreText : this.moneyText).y + 10));
 		const offsetY = (this.scoreText.visible ? this.scoreText : this.moneyText).y + 15;
 		this.partyExpBar.setY(offsetY);
 		this.candyBar.setY(offsetY + 15);

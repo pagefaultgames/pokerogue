@@ -20,6 +20,7 @@ import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from
 import { ModifierTier } from './modifier-tier';
 import { Nature, getNatureName, getNatureStatMultiplier } from '#app/data/nature';
 import { Localizable } from '#app/plugins/i18n';
+import { getModifierTierTextTint } from '#app/ui/text';
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -1428,11 +1429,11 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     if (!upgradeCount)
       upgradeCount = 0;
     if (player && tierValue) {
-      const partyShinyCount = party.filter(p => p.isShiny() && !p.isFainted()).length;
-      const upgradeOdds = Math.floor(32 / ((partyShinyCount + 2) / 2));
+      const partyLuckValue = getPartyLuckValue(party);
+      const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
       let upgraded = false;
       do {
-        upgraded = !Utils.randSeedInt(upgradeOdds);
+        upgraded = Utils.randSeedInt(upgradeOdds) < 4;
         if (upgraded)
           upgradeCount++;
       } while (upgraded);
@@ -1514,4 +1515,18 @@ export class ModifierTypeOption {
     this.upgradeCount = upgradeCount;
     this.cost = Math.round(cost);
   }
+}
+
+export function getPartyLuckValue(party: Pokemon[]): integer {
+  return Phaser.Math.Clamp(party.map(p => p.isFainted() || !p.isShiny() ? 0 : !p.isFusion() || !p.shiny || !p.fusionShiny ? p.variant + 1 : (p.variant + 1) + (p.fusionVariant + 1))
+    .reduce((total: integer, value: integer) => total += value, 0), 0, 16);
+}
+
+export function getLuckString(luckValue: integer): string {
+  return [ 'D', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'A++', 'S', 'S+', 'S++', 'SS', 'SS+', 'SS++', 'SSS' ][luckValue];
+}
+
+export function getLuckTextTint(luckValue: integer): integer {
+  const modifierTier = luckValue ? luckValue > 2 ? luckValue > 5 ? luckValue > 9 ? luckValue > 12 ? ModifierTier.LUXURY : ModifierTier.MASTER : ModifierTier.ROGUE : ModifierTier.ULTRA : ModifierTier.GREAT : ModifierTier.COMMON;
+  return getModifierTierTextTint(modifierTier);
 }

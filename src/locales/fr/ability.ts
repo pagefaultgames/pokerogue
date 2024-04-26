@@ -1061,11 +1061,11 @@ export const ability: AbilityTranslationEntries = {
     name: "Sombre Ruade",
     description: "Quand le Pokémon met un ennemi K.O., il émet un hennissement terrifiant qui augmente son Attaque Spéciale.",
   },
-  asOne: {
+  asOneGlastrier: {
     name: "Osmose Équine",
     description: "Les talents Tension de Sylveroy et Blanche Ruade de Blizzeval sont cumulés.",
   },
-  asOne: {
+  asOneSpectrier: {
     name: "Osmose Équine",
     description: "Les talents Tension de Sylveroy et Sombre Ruade de Spectreval sont cumulés.",
   },

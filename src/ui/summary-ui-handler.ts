@@ -43,6 +43,7 @@ export default class SummaryUiHandler extends UiHandler {
   private levelText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
   private shinyIcon: Phaser.GameObjects.Image;
+  private fusionShinyIcon: Phaser.GameObjects.Image;
   private statusContainer: Phaser.GameObjects.Container;
   private status: Phaser.GameObjects.Image;
   private summaryPageContainer: Phaser.GameObjects.Container;
@@ -125,6 +126,12 @@ export default class SummaryUiHandler extends UiHandler {
     this.shinyIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.shinyIcon);
 
+    this.fusionShinyIcon = this.scene.add.image(0, 0, 'shiny_star_2');
+    this.fusionShinyIcon.setVisible(false);
+    this.fusionShinyIcon.setOrigin(0, 0);
+    this.fusionShinyIcon.setScale(0.75)
+    this.summaryContainer.add(this.fusionShinyIcon);
+
     this.pokeball = this.scene.add.sprite(6, -19, 'pb');
     this.pokeball.setOrigin(0, 1);
     this.summaryContainer.add(this.pokeball);
@@ -136,8 +143,6 @@ export default class SummaryUiHandler extends UiHandler {
     this.genderText = addTextObject(this.scene, 96, -17, '', TextStyle.SUMMARY);
     this.genderText.setOrigin(0, 1);
     this.summaryContainer.add(this.genderText);
-
-    
 
     this.statusContainer = this.scene.add.container(-106, -16);
 
@@ -237,20 +242,34 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.nameText.setText(this.pokemon.name);
 
+    const isFusion = this.pokemon.isFusion();
+
     this.splicedIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + 2, 3);
-    this.splicedIcon.setVisible(!!this.pokemon.fusionSpecies);
+    this.splicedIcon.setVisible(isFusion);
     if (this.splicedIcon.visible) {
       this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${this.pokemon.species.getName(this.pokemon.formIndex)}/${this.pokemon.fusionSpecies.getName(this.pokemon.fusionFormIndex)}`, true));
       this.splicedIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
     }
+
+    const doubleShiny = isFusion && this.pokemon.shiny && this.pokemon.fusionShiny;
+    const baseVariant = !doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant;
     
     this.shinyIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0) + 1, 3);
-    this.shinyIcon.setTint(getVariantTint(this.pokemon.getVariant()));
+    this.shinyIcon.setTexture(`shiny_star${doubleShiny ? '_1' : ''}`);
     this.shinyIcon.setVisible(this.pokemon.isShiny());
+    this.shinyIcon.setTint(getVariantTint(baseVariant));
     if (this.shinyIcon.visible) {
-      this.shinyIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${this.pokemon.getVariant() ? ` (${this.pokemon.getVariant() === 2 ? 'Epic' : 'Rare'})` : ''}`, true));
+      const shinyDescriptor = doubleShiny || baseVariant ?
+        `${baseVariant === 2 ? 'Epic' : baseVariant === 1 ? 'Rare' : 'Common'}${doubleShiny ? `/${this.pokemon.fusionVariant === 2 ? 'Epic' : this.pokemon.fusionVariant === 1 ? 'Rare' : 'Common'}` : ''}`
+        : '';
+      this.shinyIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ''}`, true));
       this.shinyIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
     }
+
+    this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
+    this.fusionShinyIcon.setVisible(doubleShiny);
+    if (isFusion)
+      this.fusionShinyIcon.setTint(getVariantTint(this.pokemon.fusionVariant));
 
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
     this.levelText.setText(this.pokemon.level.toString());

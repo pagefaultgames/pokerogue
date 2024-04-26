@@ -900,12 +900,23 @@ class PartySlot extends Phaser.GameObjects.Container {
     }
 
     if (this.pokemon.isShiny()) {
-      const shinyStar = this.scene.add.image(0, 0, 'shiny_star_small');
+      const doubleShiny = this.pokemon.isFusion() && this.pokemon.shiny && this.pokemon.fusionShiny;
+
+      const shinyStar = this.scene.add.image(0, 0, `shiny_star_small${doubleShiny ? '_1' : ''}`);
       shinyStar.setOrigin(0, 0);
       shinyStar.setPositionRelative(slotName, -9, 3);
-      shinyStar.setTint(getVariantTint(this.pokemon.getVariant()));
+      shinyStar.setTint(getVariantTint(!doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant));
 
       slotInfoContainer.add(shinyStar);
+
+      if (doubleShiny) {
+        const fusionShinyStar = this.scene.add.image(0, 0, `shiny_star_small_2`);
+        fusionShinyStar.setOrigin(0, 0);
+        fusionShinyStar.setPosition(shinyStar.x, shinyStar.y);
+        fusionShinyStar.setTint(getVariantTint(this.pokemon.fusionVariant));
+  
+        slotInfoContainer.add(fusionShinyStar);
+      }
     }
 
     if (partyUiMode !== PartyUiMode.TM_MODIFIER) {
