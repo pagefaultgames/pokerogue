@@ -2662,7 +2662,8 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY),
     new Ability(Abilities.ARENA_TRAP, 3)
-      .attr(ArenaTrapAbAttr),
+      .attr(ArenaTrapAbAttr)
+      .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
