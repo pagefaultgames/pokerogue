@@ -200,6 +200,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         x: this.initialX,
         onComplete: () => {
           this.setVisible(false);
+          this.pokemonShinyIcon.off('pointerover');
+          this.pokemonShinyIcon.off('pointerout');
           (this.scene as BattleScene).ui.hideTooltip();
           resolve();
         }

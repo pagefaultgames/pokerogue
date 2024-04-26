@@ -646,7 +646,11 @@ export default class PartyUiHandler extends MessageUiHandler {
       const option = this.options[this.options.length - (o + 1)];
       let altText = false;
       let optionName: string;
-      if ((this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_MODIFIER && (this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER || this.transferMode)) || option === PartyOption.CANCEL) {
+      if (option === PartyOption.SCROLL_UP)
+        optionName = '↑';
+      else if (option === PartyOption.SCROLL_DOWN)
+        optionName = '↓';
+      else if ((this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_MODIFIER && (this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER || this.transferMode)) || option === PartyOption.CANCEL) {
         switch (option) {
           case PartyOption.MOVE_1:
           case PartyOption.MOVE_2:
@@ -662,11 +666,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               optionName = Utils.toReadableString(PartyOption[option]);
             break;
         }
-      } else if (option === PartyOption.SCROLL_UP)
-        optionName = '↑';
-      else if (option === PartyOption.SCROLL_DOWN)
-        optionName = '↓';
-      else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
+      } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
         const move = learnableLevelMoves[option];
         optionName = allMoves[move].name;
         altText = !pokemon.getSpeciesForm().getLevelMoves().find(plm => plm[1] === move);
