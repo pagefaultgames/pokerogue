@@ -927,14 +927,15 @@ export class StakeoutAbAttr extends MovePowerBoostAbAttr {
       if(user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.POKEMON) // covers hard switching
         return true;
       // find what move the target's slot used this turn and check if it's a switch-in move.
-      const moveId = user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move
-      const targetMove = allMoves[moveId];
-      const usedSwitchMove = targetMove.findAttr(attr => attr instanceof ForceSwitchOutAttr) as ForceSwitchOutAttr;
-
-      if(usedSwitchMove?.isSelfSwitch?.() && target.battleSummonData?.turnCount === 1){ // check if the move switches the user out
-        if(usedSwitchMove.returnUser().id === target.id) // dont activate if the move was used by the target (meaning it hasnt switched out yet)
-          return false;
-        return true;
+      const moveId = user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move
+      if(moveId){
+        const targetMove = allMoves[moveId];
+        const usedSwitchMove = targetMove.findAttr(attr => attr instanceof ForceSwitchOutAttr) as ForceSwitchOutAttr;
+        if(usedSwitchMove && usedSwitchMove.returnUser() && usedSwitchMove?.isSelfSwitch?.() && target.battleSummonData?.turnCount === 1){ // check if the move switches the user out
+          if(usedSwitchMove.returnUser().id === target.id) // dont activate if the move was used by the target (meaning it hasnt switched out yet)
+            return false;
+          return true;
+        }
       }
 
       return false;
@@ -944,6 +945,38 @@ export class StakeoutAbAttr extends MovePowerBoostAbAttr {
   }
 }
 
+export class AnalyticAbAttr extends MovePowerBoostAbAttr {
+  constructor(powerMultiplier: number = 1.3) {
+    const condition: PokemonAttackCondition = (user, target, move) => {
+      const otherPokemons = target.scene.getField(true).filter(pokemon => pokemon.id !== user.id);
+      let fasterPokemon = 0; // increment for each pokemon that has moved before user
+
+      otherPokemons.forEach(pokemon => { 
+
+        let switchMove = false;
+        const moveMatches = pokemon.getLastXMoves(1).find(m => m.turn === pokemon.scene.currentBattle.turn);
+        const prioCommand = user.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()].command !== Command.FIGHT;
+        const moveId = user.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.move?.move
+        if(moveId){
+          const targetMove = allMoves[moveId];
+          const usedSwitchMove = targetMove.findAttr(attr => attr instanceof ForceSwitchOutAttr) as ForceSwitchOutAttr;
+          if(usedSwitchMove && usedSwitchMove.returnUser() && usedSwitchMove?.isSelfSwitch?.() && (pokemon.battleSummonData?.turnCount === 1)){ // check if the target was switched in by a move
+            if(usedSwitchMove.returnUser().id === target.id)
+              switchMove = true;
+          }
+        }
+        if(moveMatches || prioCommand || switchMove) // check to see if they've used a move this round, ball/pokemon/run command, or switched out with a move
+          fasterPokemon++
+      });
+      if(fasterPokemon === otherPokemons.length) // only activate if ALL other pokemon have moved
+        return true; 
+      else
+        return false;
+    };
+
+    super(condition, powerMultiplier);
+  }
+}
 
 export class LowHpMoveTypePowerBoostAbAttr extends MoveTypePowerBoostAbAttr {
   constructor(boostedType: Type) {
@@ -2884,7 +2917,8 @@ export function initAbilities() {
       .ignorable()
       .unimplemented(),
     new Ability(Abilities.ANALYTIC, 5)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => !!target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command !== Command.FIGHT, 1.3),
+      .attr(AnalyticAbAttr),
+      //.attr(MovePowerBoostAbAttr, (user, target, move) => !!target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command !== Command.FIGHT, 1.3),
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
