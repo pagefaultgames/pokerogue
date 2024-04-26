@@ -1020,7 +1020,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
     if (target.status) {
       return false;
     }
-    if (!target.status || (target.status.effect === statusToApply && move.chance < 0)){
+    if (!target.status || (target.status.effect === statusToApply && move.chance < 0)) {
       var statusAfflictResult = target.trySetStatus(statusToApply, true);
       if (statusAfflictResult) {
         user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
