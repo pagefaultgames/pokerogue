@@ -1389,6 +1389,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
             const oneHitKo = result === HitResult.ONE_HIT_KO;
             damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo);
+            this.turnData.damageTaken += damage.value;
             if (isCritical)
               this.scene.queueMessage('A critical hit!');
             this.scene.setPhaseQueueSplice();
@@ -2974,6 +2975,7 @@ export class PokemonTurnData {
   public hitCount: integer;
   public hitsLeft: integer;
   public damageDealt: integer = 0;
+  public damageTaken: integer = 0;
   public attacksReceived: AttackMoveResult[] = [];
 }
 

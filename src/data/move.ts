@@ -695,6 +695,7 @@ export class RecoilAttr extends MoveEffectAttr {
       
     user.damageAndUpdate(recoilDamage, HitResult.OTHER, false, true, true);
     user.scene.queueMessage(getPokemonMessage(user, ' is hit\nwith recoil!'));
+	user.turnData.damageTaken += recoilDamage;
 
     return true;
   }
@@ -714,6 +715,7 @@ export class SacrificialAttr extends MoveEffectAttr {
       return false;
 
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
+	user.turnData.damageTaken += user.hp;
 
     return true;
   }
@@ -850,6 +852,7 @@ export class HitHealAttr extends MoveEffectAttr {
       !reverseDrain ? healAmount : healAmount * -1,
       !reverseDrain ? getPokemonMessage(target, ` had its\nenergy drained!`) : undefined,
       false, true));
+    if (reverseDrain) user.turnData.damageTaken += healAmount;
     return true;
   }
 
@@ -2350,6 +2353,7 @@ const crashDamageFunc = (user: Pokemon, move: Move) => {
   
   user.damageAndUpdate(Math.floor(user.getMaxHp() / 2), HitResult.OTHER, false, true);
   user.scene.queueMessage(getPokemonMessage(user, ' kept going\nand crashed!'));
+  user.turnData.damageTaken += Math.floor(user.getMaxHp() / 2);
   
   return true;
 };
@@ -4699,7 +4703,7 @@ export function initMoves() {
     new AttackMove(Moves.PAYBACK, Type.DARK, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 4)
     .attr(MovePowerMultiplierAttr, (user, target, move) => target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.BALL ? 2 : 1),  
     new AttackMove(Moves.ASSURANCE, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 4)
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.turnData.damageTaken > 0 ? 2 : 1),
     new StatusMove(Moves.EMBARGO, Type.DARK, 100, 15, -1, 0, 4)
       .unimplemented(),
     new AttackMove(Moves.FLING, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
