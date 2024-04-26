@@ -490,7 +490,7 @@ export const move: MoveTranslationEntries = {
     effect: "Un grand coup de langue qui inflige des dégâts à la cible et peut aussi la paralyser (30% de chances)."
   },
   "smog": {
-    name: "Bain de Smog",
+    name: "Purédpois",
     effect: "Le lanceur projette de la boue bizarre sur la cible. Les changements de stats de la cible sont annulés."
   },
   "sludge": {
