@@ -625,6 +625,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.FINNEON]: [
     new SpeciesEvolution(Species.LUMINEON, 31, null, null)
   ],
+  [Species.MANTYKE]: [
+    new SpeciesEvolution(Species.MANTINE, 32, null, new SpeciesEvolutionCondition(p => !!p.scene.gameData.dexData[Species.REMORAID].caughtAttr), SpeciesWildEvolutionDelay.MEDIUM)
+  ],
   [Species.SNOVER]: [
     new SpeciesEvolution(Species.ABOMASNOW, 40, null, null)
   ],
@@ -917,7 +920,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.TRUMBEAK, 14, null, null)
   ],
   [Species.TRUMBEAK]: [
-    new SpeciesEvolution(Species.TOUCANNON, 36, null, null)
+    new SpeciesEvolution(Species.TOUCANNON, 28, null, null)
   ],
   [Species.YUNGOOS]: [
     new SpeciesEvolution(Species.GUMSHOOS, 20, null, new SpeciesEvolutionCondition(p => p.scene.arena.getTimeOfDay() === TimeOfDay.DAY), SpeciesWildEvolutionDelay.SHORT)
@@ -1340,9 +1343,6 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [Species.MIME_JR]: [
     new SpeciesEvolution(Species.GALAR_MR_MIME, 1, null, new SpeciesEvolutionCondition(p => p.moveset.filter(m => m.moveId === Moves.MIMIC).length > 0 && (p.scene.arena.biomeType === Biome.ICE_CAVE || p.scene.arena.biomeType === Biome.SNOWY_FOREST)), SpeciesWildEvolutionDelay.MEDIUM),
     new SpeciesEvolution(Species.MR_MIME, 1, null, new SpeciesEvolutionCondition(p => p.moveset.filter(m => m.moveId === Moves.MIMIC).length > 0), SpeciesWildEvolutionDelay.MEDIUM)
-  ],
-  [Species.MANTYKE]: [
-    new SpeciesEvolution(Species.MANTINE, 1, null, new SpeciesEvolutionCondition(p => !!p.scene.getParty().find(p => p.species.speciesId === Species.REMORAID)), SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.PANSAGE]: [
     new SpeciesEvolution(Species.SIMISAGE, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)

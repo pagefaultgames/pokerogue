@@ -1,7 +1,7 @@
 import BattleScene, { PokeballCounts, bypassLogin } from "../battle-scene";
 import Pokemon, { EnemyPokemon, PlayerPokemon } from "../field/pokemon";
 import { pokemonEvolutions, pokemonPrevolutions } from "../data/pokemon-evolutions";
-import PokemonSpecies, { SpeciesFormKey, allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, noStarterFormKeys, speciesStarters } from "../data/pokemon-species";
 import { Species, defaultStarterSpecies } from "../data/enums/species";
 import * as Utils from "../utils";
 import PokemonData from "./pokemon-data";
@@ -27,7 +27,7 @@ import { Moves } from "../data/enums/moves";
 import { speciesEggMoves } from "../data/egg-moves";
 import { allMoves } from "../data/move";
 import { TrainerVariant } from "../field/trainer";
-import { OutdatedPhase, ReloadSessionPhase, UnavailablePhase } from "#app/phases";
+import { OutdatedPhase, ReloadSessionPhase } from "#app/phases";
 import { Variant, variantData } from "#app/data/variant";
 
 const saveKey = 'x0i2O7WRiANTqPmZ'; // Temporary; secure encryption is not yet necessary
@@ -222,8 +222,8 @@ export class GameData {
   constructor(scene: BattleScene) {
     this.scene = scene;
     this.loadSettings();
-    this.trainerId = Utils.randSeedInt(65536);
-    this.secretId = Utils.randSeedInt(65536);
+    this.trainerId = Utils.randInt(65536);
+    this.secretId = Utils.randInt(65536);
     this.starterData = {};
     this.gameStats = new GameStats();
     this.unlocks = {
@@ -272,7 +272,7 @@ export class GameData {
         const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
 
         if (!bypassLogin) {
-          Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData)
+          Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData, undefined, true)
             .then(response => response.text())
             .then(error => {
               this.scene.ui.savingIcon.hide();
@@ -347,7 +347,8 @@ export class GameData {
           } else {
             if ([ '1.0.0', '1.0.1' ].includes(systemData.gameVersion))
               this.migrateStarterAbilities(systemData);
-            this.fixVariantData(systemData);
+            //this.fixVariantData(systemData);
+            this.fixStarterData(systemData);
             // Migrate ability starter data if empty for caught species
             Object.keys(systemData.starterData).forEach(sd => {
               if (systemData.dexData[sd].caughtAttr && !systemData.starterData[sd].abilityAttr)
@@ -420,6 +421,9 @@ export class GameData {
               if (response.startsWith('failed to open save file')) {
                 this.scene.queueMessage('Save data could not be found. If this is a new account, you can safely ignore this message.', null, true);
                 return resolve(true);
+              } else if (response.indexOf('Too many connections') > -1) {
+                this.scene.queueMessage('Too many people are trying to connect and the server is overloaded. Please try again later.', null, true);
+                return resolve(false);
               }
               console.error(response);
               return resolve(false);
@@ -550,7 +554,7 @@ export class GameData {
         const sessionData = this.getSessionSaveData(scene);
 
         if (!bypassLogin) {
-          Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}&slot=${scene.sessionSlotId}`, JSON.stringify(sessionData))
+          Utils.apiPost(`savedata/update?datatype=${GameDataType.SESSION}&slot=${scene.sessionSlotId}&trainerId=${this.trainerId}&secretId=${this.secretId}`, JSON.stringify(sessionData), undefined, true)
             .then(response => response.text())
             .then(error => {
               if (error) {
@@ -722,9 +726,19 @@ export class GameData {
         Utils.apiFetch(`savedata/delete?datatype=${GameDataType.SESSION}&slot=${slotId}`, true).then(response => {
           if (response.ok) {
             loggedInUser.lastSessionSlot = -1;
-            return resolve(true);
+            resolve(true);
           }
-          resolve(false);
+          return response.text();
+        }).then(error => {
+          if (error) {
+            if (error.startsWith('session out of date')) {
+              this.scene.clearPhaseQueue();
+              this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+            }
+            console.error(error);
+            resolve(false);
+          }
+          resolve(true);
         });
       });
     });
@@ -741,13 +755,20 @@ export class GameData {
         if (success !== null && !success)
           return resolve([false, false]);
         const sessionData = this.getSessionSaveData(scene);
-        Utils.apiPost(`savedata/clear?slot=${slotId}`, JSON.stringify(sessionData)).then(response => {
-          if (response.ok) {
+        Utils.apiPost(`savedata/clear?slot=${slotId}&trainerId=${this.trainerId}&secretId=${this.secretId}`, JSON.stringify(sessionData), undefined, true).then(response => {
+          if (response.ok)
             loggedInUser.lastSessionSlot = -1;
-            return response.json();
+          return response.json();
+        }).then(jsonResponse => {
+          if (!jsonResponse.error)
+            return resolve([true, jsonResponse.success as boolean]);
+          if (jsonResponse && jsonResponse.error.startsWith('session out of date')) {
+            this.scene.clearPhaseQueue();
+            this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
           }
+          console.error(jsonResponse);
           resolve([false, false]);
-        }).then(jsonResponse => resolve([true, jsonResponse.success as boolean]));
+        });
       });
     });
   }
@@ -894,7 +915,7 @@ export class GameData {
                     updateUserInfo().then(success => {
                       if (!success)
                         return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
-                      Utils.apiPost(`savedata/update?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}`, dataStr)
+                      Utils.apiPost(`savedata/update?datatype=${dataType}${dataType === GameDataType.SESSION ? `&slot=${slotId}` : ''}&trainerId=${this.trainerId}&secretId=${this.secretId}`, dataStr, undefined, true)
                         .then(response => response.text())
                         .then(error => {
                           if (error) {
@@ -967,7 +988,7 @@ export class GameData {
         moveset: null,
         eggMoves: 0,
         candyCount: 0,
-        abilityAttr: 0,
+        abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
         passiveAttr: 0,
         valueReduction: 0
       };
@@ -976,13 +997,17 @@ export class GameData {
     this.starterData = starterData;
   }
 
-  setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true): void {
+  setPokemonSeen(pokemon: Pokemon, incrementCount: boolean = true, trainer: boolean = false): void {
     const dexEntry = this.dexData[pokemon.species.speciesId];
     dexEntry.seenAttr |= pokemon.getDexAttr();
     if (incrementCount) {
       dexEntry.seenCount++;
       this.gameStats.pokemonSeen++;
-      if (pokemon.isShiny())
+      if (!trainer && pokemon.species.pseudoLegendary || pokemon.species.legendary)
+        this.gameStats.legendaryPokemonSeen++;
+      else if (!trainer && pokemon.species.mythical)
+        this.gameStats.mythicalPokemonSeen++;
+      if (!trainer && pokemon.isShiny())
         this.gameStats.shinyPokemonSeen++;
     }
   }
@@ -1273,5 +1298,10 @@ export class GameData {
         }
       }
     }
+  }
+  
+  fixStarterData(systemData: SystemSaveData): void {
+    for (let starterId of defaultStarterSpecies)
+      systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
   }
 }
