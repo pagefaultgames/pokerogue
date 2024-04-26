@@ -194,7 +194,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       }
 
-      this.luck = (this.shiny ? (this.variant + 1) : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
+      this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
     }
 
     this.generateName();
@@ -693,7 +693,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getLuck(): integer {
-    return this.luck + this.fusionLuck;
+    return this.luck + (this.isFusion() ? this.fusionLuck : 0);
   }
 
   isFusion(): boolean {
@@ -2111,7 +2111,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (variantColors) {
           const color = Utils.rgbaToInt([r, g, b, a]);
           if (variantColorSet.has(color)) {
-            console.log(color);
             const mappedPixel = variantColorSet.get(color);
             [ r, g, b, a ] = mappedPixel;
           }
@@ -2549,6 +2548,8 @@ export class EnemyPokemon extends Pokemon {
 
       if (this.shiny)
         this.variant = this.generateVariant();
+
+      this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
 
       let prevolution: Species;
       let speciesId = species.speciesId;
