@@ -1205,6 +1205,10 @@ export const ability: AbilityTranslationEntries = {
     name: "Aux Petits Soins",
     description: "Quand il rejoint le combat, ce Pokémon est aux petits soins avec son allié et restaure quelques PV.",
   },
+  toxicChain: {
+    name: "Chaîne Toxique",
+    description: "Grâce aux pouvoirs de sa chaine imprégnée de toxines, le Pokémon peut empoisonner gravement sa cible en la touchant avec une capacité.",
+  },
   embodyAspectTeal: {
     name: "Force Mémorielle",
     description: "Le Pokémon fait briller le Masque Turquoise en puisant dans ses souvenirs, ce qui augmente sa Vitesse.",
@@ -1220,10 +1224,6 @@ export const ability: AbilityTranslationEntries = {
   embodyAspectCornerstone: {
     name: "Force Mémorielle",
     description: "Le Pokémon fait briller le Masque de la Pierre en puisant dans ses souvenirs, ce qui augmente sa Défense.",
-  },
-  toxicChain: {
-    name: "Chaîne Toxique",
-    description: "Grâce aux pouvoirs de sa chaine imprégnée de toxines, le Pokémon peut empoisonner gravement sa cible en la touchant avec une capacité.",
   },
   teraShift: {
     name: "Téramorphose",
