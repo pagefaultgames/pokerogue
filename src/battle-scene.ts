@@ -272,7 +272,7 @@ export default class BattleScene extends SceneBase {
 		
 		populateAnims();
 
-		await this.cachedFetch('./images/pokemon/variant/_masterlist.json').then(res => res.json()).then(v => Object.keys(v).forEach(k => variantData[k] = v[k]));
+		await this.initVariantData();
 	}
 
 	create() {
@@ -511,6 +511,21 @@ export default class BattleScene extends SceneBase {
 				expSpriteKeys.push(...keys);
 			Promise.resolve();
 		});
+	}
+
+	async initVariantData(): Promise<void> {
+		Object.keys(variantData).forEach(key => delete variantData[key]);
+		await this.cachedFetch('./images/pokemon/variant/_masterlist.json').then(res => res.json())
+			.then(v => {
+				Object.keys(v).forEach(k => variantData[k] = v[k]);
+				if (this.experimentalSprites) {
+					const expTree = variantData['exp'];
+					Object.keys(expTree).forEach(ek => {
+						variantData[ek] = expTree[ek];
+					});
+				}
+				Promise.resolve();
+			});
 	}
 
 	cachedFetch(url: string, init?: RequestInit): Promise<Response> {
@@ -817,6 +832,9 @@ export default class BattleScene extends SceneBase {
 		}
 
 		if (clearScene) {
+			// Reload variant data in case sprite set has changed
+			this.initVariantData();
+
 			this.fadeOutBgm(250, false);
 			this.tweens.add({
 				targets: [ this.uiContainer ],

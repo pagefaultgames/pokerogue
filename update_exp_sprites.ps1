@@ -21,4 +21,4 @@ Get-ChildItem -Path '.\public\images\pokemon' -Recurse -Directory | Where-Object
     }
 }
 
-$keys | ConvertTo-Json | Out-File -encoding ASCII .\public\exp_sprites.json
+$keys | ConvertTo-Json | Out-File -encoding ASCII .\public\exp-sprites.json
