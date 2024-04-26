@@ -394,7 +394,7 @@ export abstract class PokemonSpeciesForm {
             return new Promise(resolve => {
               if (variantColorCache.hasOwnProperty(key))
                 return resolve();
-              fetch(`./images/pokemon/variant/${spritePath}.json`).then(res => res.json()).then(c => {
+              scene.cachedFetch(`./images/pokemon/variant/${spritePath}.json`).then(res => res.json()).then(c => {
                 variantColorCache[key] = c;
                 resolve();
               });

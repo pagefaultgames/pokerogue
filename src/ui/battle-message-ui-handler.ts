@@ -50,9 +50,10 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     moveDetailsWindow.setOrigin(0, 1);
     this.movesWindowContainer.add(moveDetailsWindow);
 
-    const commandFightLabels = this.scene.add.image(246, -10, 'command_fight_labels');
-    commandFightLabels.setOrigin(0, 1);
-    this.movesWindowContainer.add(commandFightLabels);
+    // TODO: Maybe remove this asset definitively if it's no longer needed?
+    // const commandFightLabels = this.scene.add.image(246, -10, 'command_fight_labels');
+    // commandFightLabels.setOrigin(0, 1);
+    // this.movesWindowContainer.add(commandFightLabels);
 
     ui.add(this.movesWindowContainer);
 

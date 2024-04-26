@@ -48,7 +48,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Window_Type]: new Array(5).fill(null).map((_, i) => (i + 1).toString()),
   [Setting.Tutorials]: [ 'Off', 'On' ],
   [Setting.Enable_Retries]: [ 'Off', 'On' ],
-  [Setting.Sprite_Set]: [ 'Consistent', 'Prioritize Animation' ],
+  [Setting.Sprite_Set]: [ 'Consistent', 'Mixed Animated' ],
   [Setting.Move_Animations]: [ 'Off', 'On' ],
   [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ],
   [Setting.EXP_Gains_Speed]: [ 'Normal', 'Fast', 'Faster', 'Skip' ],
@@ -83,7 +83,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Vibration]: 0
 };
 
-export const reloadSettings: Setting[] = [ Setting.UI_Theme, Setting.Language ];
+export const reloadSettings: Setting[] = [ Setting.UI_Theme, Setting.Language, Setting.Sprite_Set ];
 
 export function setSetting(scene: BattleScene, setting: Setting, value: integer): boolean {
   switch (setting) {
@@ -177,8 +177,16 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
                 handler: () => changeLocaleHandler('en')
               },
               {
+                label: 'Spanish',
+                handler: () => changeLocaleHandler('es')
+              },
+              {
                 label: 'French',
                 handler: () => changeLocaleHandler('fr')
+              },
+              {
+                label: 'German',
+                handler: () => changeLocaleHandler('de')
               },
               {
                 label: 'Cancel',

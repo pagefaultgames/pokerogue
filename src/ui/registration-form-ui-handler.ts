@@ -74,15 +74,11 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
           return onFail(this.getReadableErrorMessage('invalid password'));
         if (this.inputs[1].text !== this.inputs[2].text)
           return onFail(i18next.t('menu:passwordNotMatchingConfirmPassword'));
-        const contentType = 'application/x-www-form-urlencoded';
-        const headers = {
-          'Content-Type': contentType,
-        };
-        fetch(`${Utils.apiUrl}/account/register`, { method: 'POST', headers: headers, body: `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}` })
+        Utils.apiPost(`account/register`, `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
           .then(response => response.text())
           .then(response => {
             if (!response) {
-              fetch(`${Utils.apiUrl}/account/login`, { method: 'POST', headers: headers, body: `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}` })
+              Utils.apiPost(`account/login`, `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
                 .then(response => {
                   if (!response.ok)
                     return response.text();
