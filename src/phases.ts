@@ -4379,7 +4379,7 @@ export class SelectModifierPhase extends BattlePhase {
         baseValue += tierValues[opt.type.tier];
     } else
       baseValue = 250;
-    return Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount);
+    return Math.min(Math.ceil(this.scene.currentBattle.waveIndex / 10) * baseValue * Math.pow(2, this.rerollCount), Number.MAX_SAFE_INTEGER);
   }
   
   getPoolType(): ModifierPoolType {

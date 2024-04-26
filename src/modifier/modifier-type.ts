@@ -1513,7 +1513,7 @@ export class ModifierTypeOption {
   constructor(type: ModifierType, upgradeCount: integer, cost: number = 0) {
     this.type = type;
     this.upgradeCount = upgradeCount;
-    this.cost = Math.round(cost);
+    this.cost = Math.min(Math.round(cost), Number.MAX_SAFE_INTEGER);
   }
 }
 
