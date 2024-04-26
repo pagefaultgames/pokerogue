@@ -62,6 +62,9 @@ export enum FormChangeItem {
 
   BLUE_ORB = 50,
   RED_ORB,
+  SHARP_METEORITE,
+  HARD_METEORITE,
+  SMOOTH_METEORITE,
   ADAMANT_CRYSTAL,
   LUSTROUS_ORB,
   GRISEOUS_CORE,
@@ -471,6 +474,11 @@ export const pokemonFormChanges: PokemonFormChanges = {
   ],
   [Species.RAYQUAZA]: [
     new SpeciesFormChange(Species.RAYQUAZA, '', SpeciesFormKey.MEGA, new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.RAYQUAZITE), new SpeciesFormChangeMoveLearnedTrigger(Moves.DRAGON_ASCENT)))
+  ],
+  [Species.DEOXYS]: [
+    new SpeciesFormChange(Species.DEOXYS, 'normal', 'attack', new SpeciesFormChangeItemTrigger(FormChangeItem.SHARP_METEORITE)),
+    new SpeciesFormChange(Species.DEOXYS, 'normal', 'defense', new SpeciesFormChangeItemTrigger(FormChangeItem.HARD_METEORITE)),
+    new SpeciesFormChange(Species.DEOXYS, 'normal', 'speed', new SpeciesFormChangeItemTrigger(FormChangeItem.SMOOTH_METEORITE))
   ],
   [Species.LOPUNNY]: [
     new SpeciesFormChange(Species.LOPUNNY, '', SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.LOPUNNITE))

@@ -62,7 +62,11 @@ export class LoadingScene extends SceneBase {
     this.loadImage('achv_bar_3', 'ui');
     this.loadImage('achv_bar_4', 'ui');
     this.loadImage('shiny_star', 'ui', 'shiny.png');
+    this.loadImage('shiny_star_1', 'ui', 'shiny_1.png');
+    this.loadImage('shiny_star_2', 'ui', 'shiny_2.png');
     this.loadImage('shiny_star_small', 'ui', 'shiny_small.png');
+    this.loadImage('shiny_star_small_1', 'ui', 'shiny_small_1.png');
+    this.loadImage('shiny_star_small_2', 'ui', 'shiny_small_2.png');
     this.loadImage('ha_capsule', 'ui', 'ha_capsule.png');
     this.loadImage('icon_spliced', 'ui');
     this.loadImage('icon_tera', 'ui');
