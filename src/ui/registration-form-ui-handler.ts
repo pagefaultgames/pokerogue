@@ -3,14 +3,15 @@ import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
 import { TextStyle, addTextObject } from "./text";
+import i18next from '../plugins/i18n';
 
 export default class RegistrationFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {
-    return 'Register';
+    return i18next.t('menu:register');
   }
 
   getFields(config?: ModalConfig): string[] {
-    return [ 'Username', 'Password', 'Confirm Password' ];
+    return [ i18next.t('menu:username'), i18next.t('menu:password'), i18next.t('menu:confirmPassword') ];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -26,7 +27,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return [ 'Register', 'Back to Login' ];
+    return [ i18next.t('menu:register'), i18next.t('menu:backToLogin') ];
   }
 
   getReadableErrorMessage(error: string): string {
@@ -35,11 +36,11 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
       error = error.slice(0, colonIndex);
     switch (error) {
       case 'invalid username':
-        return 'Username must only contain letters, numbers, or underscores';
+        return i18next.t('menu:invalidRegisterUsername');
       case 'invalid password':
-        return 'Password must be 6 characters or longer';
+        return i18next.t('menu:invalidRegisterPassword');
       case 'failed to add account record':
-        return 'The provided username is already in use';
+        return i18next.t('menu:usernameAlreadyUsed');
     }
 
     return super.getReadableErrorMessage(error);
@@ -48,7 +49,7 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
   setup(): void {
     super.setup();
 
-    const label = addTextObject(this.scene, 10, 87, 'By registering, you confirm you are of 13 years of age or older.', TextStyle.TOOLTIP_CONTENT, { fontSize: '42px' });
+    const label = addTextObject(this.scene, 10, 87, i18next.t('menu:registrationAgeWarning'), TextStyle.TOOLTIP_CONTENT, { fontSize: '42px' });
 
     this.modalContainer.add(label);
   }
@@ -68,20 +69,16 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
           this.scene.ui.playError();
         };
         if (!this.inputs[0].text)
-          return onFail('Username must not be empty');
+          return onFail(i18next.t('menu:emptyUsername'));
         if (!this.inputs[1].text)
           return onFail(this.getReadableErrorMessage('invalid password'));
         if (this.inputs[1].text !== this.inputs[2].text)
-          return onFail('Password must match confirm password');
-        const contentType = 'application/x-www-form-urlencoded';
-        const headers = {
-          'Content-Type': contentType,
-        };
-        fetch(`${Utils.apiUrl}/account/register`, { method: 'POST', headers: headers, body: `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}` })
+          return onFail(i18next.t('menu:passwordNotMatchingConfirmPassword'));
+        Utils.apiPost(`account/register`, `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
           .then(response => response.text())
           .then(response => {
             if (!response) {
-              fetch(`${Utils.apiUrl}/account/login`, { method: 'POST', headers: headers, body: `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}` })
+              Utils.apiPost(`account/login`, `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
                 .then(response => {
                   if (!response.ok)
                     return response.text();

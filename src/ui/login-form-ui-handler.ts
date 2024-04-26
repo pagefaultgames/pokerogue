@@ -2,14 +2,15 @@ import { FormModalUiHandler } from "./form-modal-ui-handler";
 import { ModalConfig } from "./modal-ui-handler";
 import * as Utils from "../utils";
 import { Mode } from "./ui";
+import i18next from '../plugins/i18n';
 
 export default class LoginFormUiHandler extends FormModalUiHandler {
   getModalTitle(config?: ModalConfig): string {
-    return 'Login';
+    return i18next.t('menu:login');
   }
 
   getFields(config?: ModalConfig): string[] {
-    return [ 'Username', 'Password' ];
+    return [ i18next.t('menu:username'), i18next.t('menu:password') ];
   }
 
   getWidth(config?: ModalConfig): number {
@@ -21,7 +22,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   }
 
   getButtonLabels(config?: ModalConfig): string[] {
-    return [ 'Log In', 'Register' ];
+    return [ i18next.t('menu:login'), i18next.t('menu:register') ];
   }
 
   getReadableErrorMessage(error: string): string {
@@ -30,13 +31,13 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       error = error.slice(0, colonIndex);
     switch (error) {
       case 'invalid username':
-        return 'The provided username is invalid';
+        return i18next.t('menu:invalidLoginUsername');
       case 'invalid password':
-        return 'The provided password is invalid';
+        return i18next.t('menu:invalidLoginPassword');
       case 'account doesn\'t exist':
-        return 'The provided user does not exist';
+        return i18next.t('menu:accountNonExistent');
       case 'password doesn\'t match':
-        return 'The provided password does not match';
+        return i18next.t('menu:unmatchingPassword');
     }
 
     return super.getReadableErrorMessage(error);
@@ -57,12 +58,8 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
           this.scene.ui.playError();
         };
         if (!this.inputs[0].text)
-          return onFail('Username must not be empty');
-        const contentType = 'application/x-www-form-urlencoded';
-        const headers = {
-          'Content-Type': contentType,
-        };
-        fetch(`${Utils.apiUrl}/account/login`, { method: 'POST', headers: headers, body: `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}` })
+          return onFail(i18next.t('menu:emptyUsername'));
+        Utils.apiPost(`account/login`, `username=${encodeURIComponent(this.inputs[0].text)}&password=${encodeURIComponent(this.inputs[1].text)}`, 'application/x-www-form-urlencoded')
           .then(response => {
             if (!response.ok)
               return response.text();
