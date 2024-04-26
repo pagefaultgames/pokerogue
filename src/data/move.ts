@@ -2273,14 +2273,13 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
     const type = (args[0] as Utils.IntegerHolder);
 
     const userTypes = user.getTypes(true);
-    console.log(userTypes)
 
-    if(userTypes && userTypes.length > 0 && userTypes.includes(Type.STELLAR)) { // will not change to stellar type
+    if(userTypes.length > 0 && userTypes.includes(Type.STELLAR)) { // will not change to stellar type
       const nonTeraTypes = user.getTypes();
       type.value = nonTeraTypes[0];
       return true; 
     }
-    else if (userTypes && userTypes.length > 0) {
+    else if (userTypes.length > 0) {
       type.value = userTypes[0];
       return true;
     }
