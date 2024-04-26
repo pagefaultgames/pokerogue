@@ -2836,10 +2836,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  	if (switchOutTarget.hp) {
 	  	  applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, switchOutTarget);
 	  	  (switchOutTarget as PlayerPokemon).switchOut(this.batonPass, true).then(() => resolve(true));
-	  	}
-	  	else {
+	  	} else
 	  	  resolve(false);
-	  	}
 	  	return;
 	  }
 	  else if (user.scene.currentBattle.battleType) {

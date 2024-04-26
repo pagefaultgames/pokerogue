@@ -1418,7 +1418,7 @@ export default class BattleScene extends SceneBase {
 
 	playBgm(bgmName?: string, fadeOut?: boolean): void {
 		if (bgmName === undefined)
-			bgmName = this.currentBattle.getBgmOverride(this) || this.arena.bgm;
+			bgmName = this.currentBattle?.getBgmOverride(this) || this.arena?.bgm;
 		if (this.bgm && bgmName === this.bgm.key) {
 			if (!this.bgm.isPlaying) {
 				this.bgm.play({
