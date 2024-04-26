@@ -58,14 +58,20 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.menuContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.scene.game.canvas.width / 6, this.scene.game.canvas.height / 6), Phaser.Geom.Rectangle.Contains);
 
-    this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - 100, 0, 98, (this.scene.game.canvas.height / 6) - 2);
+    const menuMessageText = addTextObject(this.scene, 8, 8, '', TextStyle.WINDOW, { maxLines: 2 });
+    menuMessageText.setWordWrapWidth(1224);
+    menuMessageText.setOrigin(0, 0);
+
+    this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join('\n'), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
+    this.optionSelectText.setLineSpacing(12);
+    
+    this.menuBg = addWindow(this.scene, (this.scene.game.canvas.width / 6) - (this.optionSelectText.displayWidth + 25), 0, this.optionSelectText.displayWidth + 23, (this.scene.game.canvas.height / 6) - 2);
     this.menuBg.setOrigin(0, 0);
+
+    this.optionSelectText.setPositionRelative(this.menuBg, 14, 6);
 
     this.menuContainer.add(this.menuBg);
 
-    this.optionSelectText = addTextObject(this.scene, 0, 0, this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join('\n'), TextStyle.WINDOW, { maxLines: this.menuOptions.length });
-    this.optionSelectText.setPositionRelative(this.menuBg, 14, 6);
-    this.optionSelectText.setLineSpacing(12);
     this.menuContainer.add(this.optionSelectText);
 
     ui.add(this.menuContainer);
@@ -78,9 +84,6 @@ export default class MenuUiHandler extends MessageUiHandler {
     menuMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageBox);
 
-    const menuMessageText = addTextObject(this.scene, 8, 8, '', TextStyle.WINDOW, { maxLines: 2 });
-    menuMessageText.setWordWrapWidth(1224);
-    menuMessageText.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageText);
 
     this.message = menuMessageText;
