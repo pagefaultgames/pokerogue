@@ -85,6 +85,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public fusionShiny: boolean;
   public fusionVariant: Variant;
   public fusionGender: Gender;
+  public fusionLuck: integer;
 
   private summonDataPrimer: PokemonSummonData;
 
@@ -153,6 +154,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.fusionShiny = dataSource.fusionShiny;
       this.fusionVariant = dataSource.fusionVariant || 0;
       this.fusionGender = dataSource.fusionGender;
+      this.fusionLuck = dataSource.fusionLuck;
     } else {
       this.id = Utils.randSeedInt(4294967296);
       this.ivs = ivs || Utils.getIvsFromId(this.id);
@@ -192,7 +194,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       }
 
-      this.luck = this.isShiny() ? this.variant + this.fusionVariant : 0;
+      this.luck = (this.shiny ? (this.variant + 1) : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
     }
 
     this.generateName();
@@ -690,6 +692,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.isFusion() ? this.variant : Math.max(this.variant, this.fusionVariant) as Variant;
   }
 
+  getLuck(): integer {
+    return this.luck + this.fusionLuck;
+  }
+
   isFusion(): boolean {
     return !!this.fusionSpecies;
   }
@@ -1052,6 +1058,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     this.fusionFormIndex = this.scene.getSpeciesFormIndex(this.fusionSpecies, this.fusionGender, this.getNature(), true);
+    this.fusionLuck = this.luck;
 
     this.generateName();
   }
@@ -1062,6 +1069,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.fusionAbilityIndex = 0;
     this.fusionShiny = false;
     this.fusionGender = 0;
+    this.fusionLuck = 0;
 
     this.generateName();
     this.calculateStats();
@@ -2418,6 +2426,7 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionShiny = this.fusionShiny;
         newPokemon.fusionVariant = this.fusionVariant;
         newPokemon.fusionGender = this.fusionGender;
+        newPokemon.fusionLuck = this.fusionLuck;
         this.scene.getParty().push(newPokemon);
         newPokemon.evolve(newEvolution);
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
@@ -2477,6 +2486,7 @@ export class PlayerPokemon extends Pokemon {
       this.fusionShiny = pokemon.shiny;
       this.fusionVariant = pokemon.fusionVariant;
       this.fusionGender = pokemon.gender;
+      this.fusionLuck = pokemon.luck;
 
       this.scene.validateAchv(achvs.SPLICE);
       this.scene.gameData.gameStats.pokemonFused++;

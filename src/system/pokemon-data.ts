@@ -46,6 +46,7 @@ export default class PokemonData {
   public fusionShiny: boolean;
   public fusionVariant: Variant;
   public fusionGender: Gender;
+  public fusionLuck: integer;
 
   public boss: boolean;
 
@@ -76,7 +77,7 @@ export default class PokemonData {
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
-    this.luck = source.luck !== undefined ? source.luck : (source.shiny ? (source.variant + 1) : 0) + (source.fusionShiny ? source.fusionVariant + 1 : 0);
+    this.luck = source.luck !== undefined ? source.luck : (source.shiny ? (source.variant + 1) : 0);
     if (!forHistory)
       this.pauseEvolutions = !!source.pauseEvolutions;
     this.pokerus = !!source.pokerus;
@@ -87,6 +88,7 @@ export default class PokemonData {
     this.fusionShiny = source.fusionShiny;
     this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
+    this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
 
     if (!forHistory)
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);

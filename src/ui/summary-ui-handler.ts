@@ -604,14 +604,14 @@ export default class SummaryUiHandler extends UiHandler {
         if (this.pokemon.isTerastallized())
           profileContainer.add(getTypeIcon(types.length, this.pokemon.getTeraType(), true));
 
-        if (this.pokemon.luck) {
+        if (this.pokemon.getLuck()) {
           const luckLabelText = addTextObject(this.scene, 141, 28, 'Luck:', TextStyle.SUMMARY_ALT);
           luckLabelText.setOrigin(0, 0);
           profileContainer.add(luckLabelText);
           
-          const luckText = addTextObject(this.scene, 141 + luckLabelText.displayWidth + 2, 28, this.pokemon.luck.toString(), TextStyle.SUMMARY);
+          const luckText = addTextObject(this.scene, 141 + luckLabelText.displayWidth + 2, 28, this.pokemon.getLuck().toString(), TextStyle.SUMMARY);
           luckText.setOrigin(0, 0);
-          luckText.setTint(getVariantTint((Math.min(this.pokemon.luck - 1, 2)) as Variant));
+          luckText.setTint(getVariantTint((Math.min(this.pokemon.getLuck() - 1, 2)) as Variant));
           profileContainer.add(luckText);
         }
 
