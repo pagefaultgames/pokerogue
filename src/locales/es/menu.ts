@@ -33,7 +33,7 @@ export const menu: SimpleTranslationEntries = {
     "pokemon": "Pokémon",
     "sendOutPokemon": "¡Adelante, {{pokemonName}}!",
     "attackFailed": "¡Pero ha fallado!",
-    "attackHitsCount": `N.º de golpes: {{hitsTotal}}.`,
+    "attackHitsCount": `N.º de golpes: {{count}}.`,
     "expGain": "{{pokemonName}} ha ganado\n{{exp}} puntos de experiencia.",
     "levelUp": "¡{{pokemonName}} ha subido al \nNv. {{level}}!",
     "learnMove": "¡{{pokemonName}} ha aprendido {{moveName}}!",

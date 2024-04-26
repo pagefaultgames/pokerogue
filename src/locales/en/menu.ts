@@ -49,7 +49,7 @@ export const menu: SimpleTranslationEntries = {
     "pokemon": "Pokémon",
     "sendOutPokemon": "Go! {{pokemonName}}!",
     "attackFailed": "But it failed!",
-    "attackHitsCount": `Hit {{hitsTotal}} time(s)!`,
+    "attackHitsCount": `Hit {{count}} time(s)!`,
     "expGain": "{{pokemonName}} gained\n{{exp}} EXP. Points!",
     "levelUp": "{{pokemonName}} grew to\nLv. {{level}}!",
     "learnMove": "{{pokemonName}} learned\n{{moveName}}!",
