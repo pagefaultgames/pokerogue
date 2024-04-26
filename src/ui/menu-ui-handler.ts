@@ -311,7 +311,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         case MenuOptions.LOG_OUT:
           success = true;
           const doLogout = () => {
-            Utils.apiPost('account/logout', undefined, undefined, true).then(res => {
+            Utils.apiFetch('account/logout', true).then(res => {
               if (!res.ok)
                 console.error(`Log out failed (${res.status}: ${res.statusText})`);
               Utils.setCookie(Utils.sessionIdKey, '');
