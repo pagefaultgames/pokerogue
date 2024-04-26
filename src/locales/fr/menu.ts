@@ -70,7 +70,7 @@ export const menu: SimpleTranslationEntries = {
   "escapeVerbSwitch": "le changement",
   "escapeVerbFlee": "la fuite",
   "notDisabled": "{{moveName}} n’est plus sous entrave !",
-  "skipItemQuestion": "Êtes vous sûr·e de ne pas vouloir prendre d’objet ?",
+  "skipItemQuestion": "Êtes-vous sûr·e de ne pas vouloir prendre d’objet ?",
   "eggHatching": "Oh ?",
   "ivScannerUseQuestion": "Utiliser le Scanner d’IV sur {{pokemonName}} ?",
 } as const;
