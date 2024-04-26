@@ -1,16 +1,16 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const pokemonStat: SimpleTranslationEntries = {
-    "HP": "Max. HP",
-    "HPshortened": "MaxHP",
-    "ATK": "Attack",
-    "ATKshortened": "Atk",
-    "DEF": "Defense",
-    "DEFshortened": "Def",
-    "SPATK": "Sp. Atk",
-    "SPATKshortened": "SpAtk",
-    "SPDEF": "Sp. Def",
-    "SPDEFshortened": "SpDef",
-    "SPD": "Speed",
-    "SPDshortened": "Spd"
+    "HP": "PV",
+    "HPshortened": "PV",
+    "ATK": "Ataque",
+    "ATKshortened": "Ataque",
+    "DEF": "Defensa",
+    "DEFshortened": "Defensa",
+    "SPATK": "At. Esp.",
+    "SPATKshortened": "At. Esp.",
+    "SPDEF": "Def. Esp.",
+    "SPDEFshortened": "Def. Esp.",
+    "SPD": "Velocidad",
+    "SPDshortened": "Veloc."
 } as const;
