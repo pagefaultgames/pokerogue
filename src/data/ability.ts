@@ -869,6 +869,13 @@ export class MoveTypeChangePowerMultiplierAbAttr extends VariableMoveTypeAbAttr 
   }
 }
 
+export class FieldPreventExplosiveMovesAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+    cancelled.value = true;
+    return true;
+  }
+}
+
 export class MoveTypeChangeAttr extends PreAttackAbAttr {
   private newType: Type;
   private powerMultiplier: number;
@@ -2115,6 +2122,11 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
 
   applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
+      const cancelled = new Utils.BooleanHolder(false);
+      pokemon.scene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled))
+      if (cancelled) {
+        return false;
+      }
       attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
       return true;
     }
@@ -2526,8 +2538,8 @@ export function initAbilities() {
       .attr(BlockOneHitKOAbAttr)
       .ignorable(),
     new Ability(Abilities.DAMP, 3)
-      .ignorable()
-      .unimplemented(),
+      .attr(FieldPreventExplosiveMovesAbAttr)
+      .ignorable(),
     new Ability(Abilities.LIMBER, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
       .ignorable(),
@@ -2918,7 +2930,6 @@ export function initAbilities() {
       .unimplemented(),
     new Ability(Abilities.ANALYTIC, 5)
       .attr(AnalyticAbAttr),
-      //.attr(MovePowerBoostAbAttr, (user, target, move) => !!target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command !== Command.FIGHT, 1.3),
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
