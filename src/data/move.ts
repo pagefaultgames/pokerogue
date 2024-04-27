@@ -793,15 +793,13 @@ export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
   public weather: WeatherType;
   constructor(weather: WeatherType){
     super();
-    this.weather=weather;
+    this.weather = weather;
   }
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = Math.max((args[0] as Utils.IntegerHolder).value, 1);
-
+    const weatherModifier=args[0] as Utils.NumberHolder;
+    if (user.scene.arena.weather?.weatherType === this.weather)
+      weatherModifier.value = Math.max(weatherModifier.value, 1);
     return true;
-  }
-  getCondition(): MoveCondition | MoveConditionFunc {
-      return (user, target, move) => user.scene.arena.weather?.weatherType==this.weather;
   }
 }
 
@@ -2887,7 +2885,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         if (this.batonPass)
           return false;
         //U-turn et al should not switch a wild mon out, but a player's Dragon Tail can
-        if (!(user instanceof PlayerPokemon) && move.category !== MoveCategory.STATUS)
+        if (!user.hasTrainer() && move.category !== MoveCategory.STATUS)
           return false;
         // Don't allow wild opponents to flee on the boss stage since it can ruin a run early on
         if (!(user.scene.currentBattle.waveIndex % 10))
