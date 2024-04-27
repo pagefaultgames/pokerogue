@@ -426,11 +426,9 @@ export default class SummaryUiHandler extends UiHandler {
   }
 
   setCursor(cursor: integer, overrideChanged: boolean = false): boolean {
-    let changed: boolean;
+    let changed: boolean = overrideChanged || this.moveCursor !== cursor;
     
     if (this.moveSelect) {
-      changed = overrideChanged || this.moveCursor !== cursor;
-      if (changed) {
         this.moveCursor = cursor;
 
         const selectedMove = this.getSelectedMove();
@@ -462,7 +460,6 @@ export default class SummaryUiHandler extends UiHandler {
             y: `-=${14.83 * (moveDescriptionLineCount - 3)}`
           });
         }
-      }
 
       if (!this.moveCursorObj) {
         this.moveCursorObj = this.scene.add.sprite(-2, 0, 'summary_moves_cursor', 'highlight');
