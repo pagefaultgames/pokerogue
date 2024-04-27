@@ -20,6 +20,7 @@ import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import { Abilities } from "./enums/abilities";
 import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
+import { Species } from "./enums/species";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -1494,6 +1495,23 @@ export class ProtectStatAbAttr extends PreStatChangeAbAttr {
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return getPokemonMessage(pokemon, `'s ${abilityName}\nprevents lowering its ${this.protectedStat !== undefined ? getBattleStatName(this.protectedStat) : 'stats'}!`);
+  }
+}
+
+export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
+  private effects: StatusEffect[];
+
+  constructor(...effects: StatusEffect[]) {
+    super();
+
+    this.effects = effects;
+  }
+
+  applyPostAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if(this.effects.indexOf(args[0]) > -1 && !defender.isFainted()) {
+      return defender.addTag(BattlerTagType.CONFUSED, pokemon.randSeedInt(3,2), move.moveId, defender.id);
+    }
+    return false;
   }
 }
 
@@ -3401,6 +3419,6 @@ export function initAbilities() {
     new Ability(Abilities.POISON_PUPPETEER, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .unimplemented(),
+      .conditionalAttr(pokemon => pokemon.species.speciesId===Species.PECHARUNT,ConfusionOnStatusEffectAbAttr,StatusEffect.POISON,StatusEffect.TOXIC)
   );
 }
