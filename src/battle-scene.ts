@@ -13,7 +13,7 @@ import { Biome } from "./data/enums/biome";
 import { Arena, ArenaBase } from './field/arena';
 import { GameData, PlayerGender } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
-import { TextStyle, addBBCodeTextObject, addTextObject } from './ui/text';
+import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { initMoves } from './data/move';
@@ -249,7 +249,7 @@ export default class BattleScene extends SceneBase {
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
 		if (experimental === undefined)
 			experimental = this.experimentalSprites;
-		let variant = atlasPath.includes('variant/');
+		let variant = atlasPath.includes('variant/') || /_[0-3]$/.test(atlasPath);
 		if (experimental)
 			experimental = this.hasExpSprite(key);
 		if (variant)
