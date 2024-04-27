@@ -4,7 +4,7 @@ import * as Utils from "../utils";
 import { MoveCategory, StatChangeAttr, allMoves } from "./move";
 import { getPokemonMessage } from "../messages";
 import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
-import { MoveEffectPhase, StatChangePhase } from "../phases";
+import {MoveEffectPhase, PokemonHealPhase, StatChangePhase} from "../phases";
 import { StatusEffect } from "./status-effect";
 import { BattlerIndex } from "../battle";
 import { Moves } from "./enums/moves";
@@ -143,6 +143,26 @@ class AuroraVeilTag extends WeakenMoveScreenTag {
 
   onAdd(arena: Arena): void {
     arena.scene.queueMessage(`Aurora Veil reduced the damage of moves${this.side === ArenaTagSide.PLAYER ? '\non your side' : this.side === ArenaTagSide.ENEMY ? '\non the foe\'s side' : ''}.`);
+  }
+}
+
+class WishTag extends ArenaTag {
+  private slot: BattlerIndex;
+  private userName: string;
+  private health: number;
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.WISH, turnCount, Moves.WISH, sourceId, side);
+  }
+  onAdd(arena: Arena): void {
+    const mon = arena.scene.getPokemonById(this.sourceId);
+    this.slot = mon.getBattlerIndex();
+    this.userName = mon.name;
+    this.health = mon.getMaxHp() / 2;
+  }
+  onRemove(arena: Arena): void {
+    const target = arena.scene.getField()[this.slot];
+    arena.scene.unshiftPhase(new PokemonHealPhase(target.scene, target.getBattlerIndex(),
+        Math.max(Math.floor(this.health), 1), this.userName + '\'s wish\ncame true!', true, false));
   }
 }
 
@@ -472,6 +492,8 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
     case ArenaTagType.FUTURE_SIGHT:
     case ArenaTagType.DOOM_DESIRE:
       return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex);
+    case ArenaTagType.WISH:
+      return new WishTag(turnCount, sourceId, side);
     case ArenaTagType.STEALTH_ROCK:
       return new StealthRockTag(sourceId, side);
     case ArenaTagType.STICKY_WEB:
