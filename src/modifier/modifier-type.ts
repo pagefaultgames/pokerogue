@@ -20,6 +20,7 @@ import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from
 import { ModifierTier } from './modifier-tier';
 import { Nature, getNatureName, getNatureStatMultiplier } from '#app/data/nature';
 import { Localizable } from '#app/plugins/i18n';
+import { getModifierTierTextTint } from '#app/ui/text';
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -213,7 +214,7 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
         return null;
       }), iconImage, 'revive');
 
-    this.description = `Revive one Pokémon and restore ${restorePercent}% HP.`;
+    this.description = `Revives one Pokémon and restores ${restorePercent}% HP`;
     this.selectFilter = (pokemon: PlayerPokemon) => {
       if (pokemon.hp)
         return PartyUiHandler.NoEffectMessage;
@@ -224,7 +225,7 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
 
 export class PokemonStatusHealModifierType extends PokemonModifierType {
   constructor(name: string) {
-    super(name, `Heal any status ailment for one Pokémon.`,
+    super(name, `Heals any status ailment for one Pokémon`,
       ((_type, args) => new Modifiers.PokemonStatusHealModifier(this, (args[0] as PlayerPokemon).id)),
       ((pokemon: PlayerPokemon) => {
         if (!pokemon.hp || !pokemon.status)
@@ -1428,11 +1429,11 @@ function getNewModifierTypeOption(party: Pokemon[], poolType: ModifierPoolType, 
     if (!upgradeCount)
       upgradeCount = 0;
     if (player && tierValue) {
-      const partyShinyCount = party.filter(p => p.isShiny() && !p.isFainted()).length;
-      const upgradeOdds = Math.floor(32 / ((partyShinyCount + 2) / 2));
+      const partyLuckValue = getPartyLuckValue(party);
+      const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
       let upgraded = false;
       do {
-        upgraded = !Utils.randSeedInt(upgradeOdds);
+        upgraded = Utils.randSeedInt(upgradeOdds) < 4;
         if (upgraded)
           upgradeCount++;
       } while (upgraded);
@@ -1512,6 +1513,20 @@ export class ModifierTypeOption {
   constructor(type: ModifierType, upgradeCount: integer, cost: number = 0) {
     this.type = type;
     this.upgradeCount = upgradeCount;
-    this.cost = Math.round(cost);
+    this.cost = Math.min(Math.round(cost), Number.MAX_SAFE_INTEGER);
   }
+}
+
+export function getPartyLuckValue(party: Pokemon[]): integer {
+  return Phaser.Math.Clamp(party.map(p => p.isFainted() ? 0 : p.getLuck())
+    .reduce((total: integer, value: integer) => total += value, 0), 0, 14);
+}
+
+export function getLuckString(luckValue: integer): string {
+  return [ 'D', 'C', 'C+', 'B-', 'B', 'B+', 'A-', 'A', 'A+', 'A++', 'S', 'S+', 'SS', 'SS+', 'SSS' ][luckValue];
+}
+
+export function getLuckTextTint(luckValue: integer): integer {
+  const modifierTier = luckValue ? luckValue > 2 ? luckValue > 5 ? luckValue > 9 ? luckValue > 11 ? ModifierTier.LUXURY : ModifierTier.MASTER : ModifierTier.ROGUE : ModifierTier.ULTRA : ModifierTier.GREAT : ModifierTier.COMMON;
+  return getModifierTierTextTint(modifierTier);
 }

@@ -19,6 +19,7 @@ import { TerrainType } from "./terrain";
 import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import { Abilities } from "./enums/abilities";
 import i18next, { Localizable } from "#app/plugins/i18n.js";
+import { Command } from "../ui/command-ui-handler";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -452,6 +453,7 @@ export class PostDefendDisguiseAbAttr extends PostDefendAbAttr {
       if (!recoilDamage)
         return false;
       pokemon.damageAndUpdate(recoilDamage, HitResult.OTHER);
+      pokemon.turnData.damageTaken += recoilDamage;
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\'s disguise was busted!'));
       return true;
     }
@@ -732,6 +734,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
       attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+      attacker.turnData.damageTaken += Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio));
       return true;
     }
     
@@ -865,6 +868,13 @@ export class MoveTypeChangePowerMultiplierAbAttr extends VariableMoveTypeAbAttr 
     }
     
     return false;
+  }
+}
+
+export class FieldPreventExplosiveMovesAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+    cancelled.value = true;
+    return true;
   }
 }
 
@@ -1795,7 +1805,7 @@ export class PostTerrainChangeAddBattlerTagAttr extends PostTerrainChangeAbAttr 
   }
 
   applyPostTerrainChange(pokemon: Pokemon, passive: boolean, terrain: TerrainType, args: any[]): boolean {
-    if (!this.terrainTypes.find(t => terrain === terrain))
+    if (!this.terrainTypes.find(t => t === terrain))
       return false;
 
     return pokemon.addTag(this.tagType, this.turnCount);
@@ -1826,6 +1836,23 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
     }
 	
     return false;
+  }
+}
+
+export class MoodyAbAttr extends PostTurnAbAttr {
+  constructor() {
+    super(true);
+  }
+
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    // TODO: Edge case of not choosing to buff or debuff a stat that's already maxed
+    let selectableStats = [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD];
+    let increaseStat = selectableStats[Utils.randInt(selectableStats.length)];
+    selectableStats = selectableStats.filter(s => s !== increaseStat);
+    let decreaseStat = selectableStats[Utils.randInt(selectableStats.length)];
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [increaseStat], 2));
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [decreaseStat], -1));
+    return true;
   }
 }
 
@@ -2039,7 +2066,13 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
 
   applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) {
+      const cancelled = new Utils.BooleanHolder(false);
+      pokemon.scene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled))
+      if (cancelled) {
+        return false;
+      }
       attacker.damageAndUpdate(Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio)), HitResult.OTHER);
+      attacker.turnData.damageTaken += Math.ceil(attacker.getMaxHp() * (1 / this.damageRatio));
       return true;
     }
 
@@ -2450,8 +2483,8 @@ export function initAbilities() {
       .attr(BlockOneHitKOAbAttr)
       .ignorable(),
     new Ability(Abilities.DAMP, 3)
-      .ignorable()
-      .unimplemented(),
+      .attr(FieldPreventExplosiveMovesAbAttr)
+      .ignorable(),
     new Ability(Abilities.LIMBER, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
       .ignorable(),
@@ -2629,7 +2662,8 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY),
     new Ability(Abilities.ARENA_TRAP, 3)
-      .attr(ArenaTrapAbAttr),
+      .attr(ArenaTrapAbAttr)
+      .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
@@ -2821,8 +2855,7 @@ export function initAbilities() {
       .ignorable()
       .unimplemented(),
     new Ability(Abilities.MOODY, 5)
-      .attr(PostTurnStatChangeAbAttr, BattleStat.RAND, 2)
-      .attr(PostTurnStatChangeAbAttr, BattleStat.RAND, -1),
+      .attr(MoodyAbAttr),
     new Ability(Abilities.OVERCOAT, 5)
       .attr(BlockWeatherDamageAttr)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.POWDER_MOVE))
@@ -2842,7 +2875,7 @@ export function initAbilities() {
       .ignorable()
       .unimplemented(),
     new Ability(Abilities.ANALYTIC, 5)
-      .unimplemented(),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => !!target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command !== Command.FIGHT, 1.3),
     new Ability(Abilities.ILLUSION, 5)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
@@ -2988,7 +3021,7 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .partial(),
     new Ability(Abilities.STAKEOUT, 7)
-      .unimplemented(),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.POKEMON, 2),
     new Ability(Abilities.WATER_BUBBLE, 7)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(MoveTypePowerBoostAbAttr, Type.WATER, 1)
