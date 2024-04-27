@@ -938,7 +938,7 @@ export default class BattleScene extends SceneBase {
 
 		if (!waveIndex && lastBattle) {
 			let isNewBiome = !(lastBattle.waveIndex % 10) || ((this.gameMode.hasShortBiomes || this.gameMode.isDaily) && (lastBattle.waveIndex % 50) === 49);
-			if (!isNewBiome && this.gameMode.hasShortBiomes && (newWaveIndex % 10) < 9) {
+			if (!isNewBiome && this.gameMode.hasShortBiomes && (lastBattle.waveIndex % 10) < 9) {
 				let w = lastBattle.waveIndex - ((lastBattle.waveIndex % 10) - 1);
 				let biomeWaves = 1;
 				while (w < lastBattle.waveIndex) {
