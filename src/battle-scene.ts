@@ -531,10 +531,23 @@ export default class BattleScene extends SceneBase {
 			.then(v => {
 				Object.keys(v).forEach(k => variantData[k] = v[k]);
 				if (this.experimentalSprites) {
-					const expTree = variantData['exp'];
-					Object.keys(expTree).forEach(ek => {
-						variantData[ek] = expTree[ek];
-					});
+					const expVariantData = variantData['exp'];
+					const traverseVariantData = (keys: string[]) => {
+						let variantTree = variantData;
+						let expTree = expVariantData;
+						keys.map((k: string, i: integer) => {
+							if (i < keys.length - 1) {
+								variantTree = variantTree[k];
+								expTree = expTree[k];
+							} else if (variantTree.hasOwnProperty(k) && expTree.hasOwnProperty(k)) {
+								if ([ 'back', 'female' ].includes(k))
+									traverseVariantData(keys.concat(k));
+								else
+									variantTree[k] = expTree[k];
+							}
+						});
+					};
+					Object.keys(expVariantData).forEach(ek => traverseVariantData([ ek ]));
 				}
 				Promise.resolve();
 			});

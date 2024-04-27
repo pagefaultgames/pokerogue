@@ -376,7 +376,10 @@ export default class SummaryUiHandler extends UiHandler {
           success = true;
         }
       } else if (button === Button.CANCEL) {
-        ui.setMode(Mode.PARTY);
+        if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
+          this.hideMoveSelect();
+        else
+          ui.setMode(Mode.PARTY);
         success = true;
       } else {
         const pages = Utils.getEnumValues(Page);
