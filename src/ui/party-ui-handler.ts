@@ -392,13 +392,13 @@ export default class PartyUiHandler extends MessageUiHandler {
           success = this.setCursor(this.cursor < 6 ? this.cursor < slotCount - 1 ? this.cursor + 1 : 6 : 0);
           break;
         case Button.LEFT:
-          if (this.cursor >= this.scene.currentBattle.getBattlerCount() && this.cursor < 6)
+          if (this.cursor >= this.scene.currentBattle.getBattlerCount() && this.cursor <= 6)
             success = this.setCursor(0);
           break;
         case Button.RIGHT:
           const battlerCount = this.scene.currentBattle.getBattlerCount();
           if (slotCount > battlerCount && this.cursor < battlerCount)
-            success = this.setCursor(this.lastCursor < 6 ? this.lastCursor || battlerCount : battlerCount);
+            success = this.setCursor(this.lastCursor < 6 || this.lastCursor ? battlerCount : battlerCount);
           break;
       }
     }
