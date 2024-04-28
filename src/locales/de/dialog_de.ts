@@ -13,7 +13,7 @@ export interface TrainerTypeDialogue {
 }
 
 export const trainerTypeDialogue = {
-  [TrainerType.VOLLTROTTEL]: [
+  [TrainerType.KNIRPS]: [
     {
       encounter: [
         `Ay Junge, willst du kämpfen?`,
