@@ -16,42 +16,42 @@ export enum Tutorial {
 const tutorialHandlers = {
   [Tutorial.Intro]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
-      scene.ui.showText(i18next.t("tutorial:welcomeMessage"), null, () => resolve(), null, true);
+      scene.ui.showText(i18next.t("tutorial:intro"), null, () => resolve(), null, true);
     });
   },
   [Tutorial.Access_Menu]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
       if (scene.enableTouchControls)
         return resolve();
-      scene.showFieldOverlay(1000).then(() => scene.ui.showText(i18next.t("tutorial:menuMessage"), null, () => scene.hideFieldOverlay(1000).then(() => resolve()), null, true));
+      scene.showFieldOverlay(1000).then(() => scene.ui.showText(i18next.t("tutorial:accessMenu"), null, () => scene.hideFieldOverlay(1000).then(() => resolve()), null, true));
     });
   },
   [Tutorial.Menu]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
       scene.gameData.saveTutorialFlag(Tutorial.Access_Menu, true);
-      scene.ui.showText(i18next.t("tutorial:settingsMessage"), null, () => scene.ui.showText('', null, () => resolve()), null, true);
+      scene.ui.showText(i18next.t("tutorial:menu"), null, () => scene.ui.showText('', null, () => resolve()), null, true);
     });
   },
   [Tutorial.Starter_Select]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
-      scene.ui.showText(i18next.t("tutorial:starterChoiceMessage"), null, () => scene.ui.showText('', null, () => resolve()), null, true);
+      scene.ui.showText(i18next.t("tutorial:starterSelect"), null, () => scene.ui.showText('', null, () => resolve()), null, true);
     });
   },
   [Tutorial.Pokerus]:  (scene: BattleScene) => {
     return new Promise<void>(resolve => {
-      scene.ui.showText(i18next.t("tutorial:purpleStarterMessage"), null, () => scene.ui.showText('', null, () => resolve()), null, true);
+      scene.ui.showText(i18next.t("tutorial:pokerus"), null, () => scene.ui.showText('', null, () => resolve()), null, true);
     });
   },
   [Tutorial.Select_Item]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
       scene.ui.setModeWithoutClear(Mode.MESSAGE).then(() => {
-        scene.ui.showText(i18next.t("tutorial:randomItemsMessage"), null, () => scene.ui.showText('', null, () => scene.ui.setModeWithoutClear(Mode.MODIFIER_SELECT).then(() => resolve())), null, true);
+        scene.ui.showText(i18next.t("tutorial:selectItem"), null, () => scene.ui.showText('', null, () => scene.ui.setModeWithoutClear(Mode.MODIFIER_SELECT).then(() => resolve())), null, true);
       });
     });
   },
   [Tutorial.Egg_Gacha]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
-      scene.ui.showText(i18next.t("tutorial:vouchersRedeemMessage"), null, () => scene.ui.showText('', null, () => resolve()), null, true);
+      scene.ui.showText(i18next.t("tutorial:eggGacha"), null, () => scene.ui.showText('', null, () => resolve()), null, true);
     });
   },
 };
