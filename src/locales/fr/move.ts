@@ -390,7 +390,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur se relaxe et allège son corps pour beaucoup augmenter sa Vitesse."
   },
   "quickAttack": {
-    name: "Vive-attaque",
+    name: "Vive-Attaque",
     effect: "Le lanceur fonce sur la cible si rapidement qu’on parvient à peine à le discerner. Frappe en priorité."
   },
   "rage": {
@@ -1090,7 +1090,7 @@ export const move: MoveTranslationEntries = {
     effect: "Imite la cible et copie son talent."
   },
   "wish": {
-    name: "Voeu",
+    name: "Vœu",
     effect: "Un vœu qui permet au lanceur ou au Pokémon entrant sur le terrain au tour suivant de récupérer la moitié des PV max du lanceur."
   },
   "assist": {
@@ -1410,7 +1410,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur projette une aura aquatique sur la cible, et peut la rendre confuse."
   },
   "doomDesire": {
-    name: "Voeu Destructeur",
+    name: "Vœu Destructeur",
     effect: "Le lanceur génère une sphère lumineuse qu’il projette sur l’ennemi deux tours plus tard."
   },
   "psychoBoost": {
@@ -1442,7 +1442,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur effectue une rotation rapide et frappe la cible. Plus la Vitesse du lanceur est basse par rapport à celle de la cible, plus il inflige de dégâts."
   },
   "healingWish": {
-    name: "Voeu Soin",
+    name: "Vœu Soin",
     effect: "Le lanceur tombe K.O. pour soigner les altérations de statut et les PV du Pokémon qui viendra le remplacer sur le terrain."
   },
   "brine": {
@@ -1786,7 +1786,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur fait flotter des pierres autour de la cible qui blessent tout adversaire entrant au combat."
   },
   "grassKnot": {
-    name: "Noeud Herbe",
+    name: "Nœud Herbe",
     effect: "Le lanceur fait des nœuds dans l’herbe pour faire trébucher la cible. Plus la cible est lourde, plus la puissance de cette capacité augmente."
   },
   "chatter": {
@@ -2030,7 +2030,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur emmène l’ennemi dans les airs au premier tour et le lâche dans le vide au second. L’ennemi saisi ne peut pas attaquer."
   },
   "shiftGear": {
-    name: "Chgt Vitesse",
+    name: "Change-Vitesse",
     effect: "Le lanceur fait tourner ses engrenages. Cela augmente son Attaque et augmente beaucoup sa Vitesse."
   },
   "circleThrow": {
@@ -2858,7 +2858,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur attaque avec un rayon de lumière mystérieux. Ignore le talent de la cible."
   },
   "tearfulLook": {
-    name: "Larme à l’Oeil",
+    name: "Larme à l’Œil",
     effect: "Le lanceur regarde la cible avec des yeux remplis de larmes. Celle-ci perd toute combativité et voit son Attaque et son Attaque Spéciale baisser."
   },
   "zingZap": {
@@ -3362,7 +3362,7 @@ export const move: MoveTranslationEntries = {
     effect: "Le lanceur entaille la cible avec ses ailes renforcées par une émanation psychique. Taux de critiques élevé. Cela augmente la Vitesse du lanceur."
   },
   "bitterMalice": {
-    name: "Coeur de Rancoeur",
+    name: "Cœur de Rancœur",
     effect: "Une rancœur glaciale frappe la cible et baisse son Attaque."
   },
   "shelter": {
