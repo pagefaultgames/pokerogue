@@ -1,3 +1,4 @@
+import i18next from "i18next";
 import BattleScene from "../battle-scene";
 import { TrainerType } from "../data/enums/trainer-type";
 import { ModifierTier } from "../modifier/modifier-tier";
@@ -52,13 +53,13 @@ export class Voucher {
 export function getVoucherTypeName(voucherType: VoucherType): string {
   switch (voucherType) {
     case VoucherType.REGULAR:
-      return 'Egg Voucher';
+      return i18next.t('modifierType:VOUCHER_REGULAR.name');
     case VoucherType.PLUS:
-      return 'Egg Voucher Plus';
+      return i18next.t('modifierType:VOUCHER_PLUS.name');
     case VoucherType.PREMIUM:
-      return 'Egg Voucher Premium';
+      return i18next.t('modifierType:VOUCHER_PREMIUM.name');
     case VoucherType.GOLDEN:
-      return 'Egg Voucher Gold';
+      return i18next.t('modifierType:VOUCHER_GOLDEN.name');
   }
 }
 

@@ -6,6 +6,7 @@ import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
+import i18next from "i18next";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -283,7 +284,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 20, (-this.scene.game.canvas.height / 12) - (this.shopOptionsRows.length > 1 ? 6 : 22));
       else
         this.cursorObj.setPosition(sliceWidth * (cursor + 1) + (sliceWidth * 0.5) - 16, (-this.scene.game.canvas.height / 12 - this.scene.game.canvas.height / 32) - (-16 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))));
-      ui.showText(options[this.cursor].modifierTypeOption.type.getDescription(this.scene));
+      // For some reason i18next returns a undefined string or data type, so this is a lazy workaround, needs more investigation
+      if(options[this.cursor].modifierTypeOption.type.getDescription(this.scene)?.includes("undefined")) options[this.cursor].modifierTypeOption.type.setDescription(i18next.t(`modifierType:${options[this.cursor].modifierTypeOption.type.id}.description`));
+      ui.showText(options[this.cursor].modifierTypeOption.type.getDescription(this.scene) || i18next.t(`modifierType:${options[this.cursor].modifierTypeOption.type.id}.description`));
     } else if (!cursor) {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
       ui.showText('Spend money to reroll your item options.');
@@ -455,8 +458,9 @@ class ModifierOption extends Phaser.GameObjects.Container {
       this.itemTint.setTintFill(Phaser.Display.Color.GetColor(255, 192, 255));
       this.itemContainer.add(this.itemTint);
     }
-
-    this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type.name, TextStyle.PARTY, { align: 'center' });
+    // For some reason i18next returns a undefined string or data type, so this is a lazy workaround, needs more investigation
+    if(this.modifierTypeOption.type?.name?.includes("undefined")) this.modifierTypeOption.type.name = i18next.t(`modifierType:${this.modifierTypeOption.type.id}.name`);
+    this.itemText = addTextObject(this.scene, 0, 35, this.modifierTypeOption.type.name || i18next.t(`modifierType:${this.modifierTypeOption.type.id}.name`), TextStyle.PARTY, { align: 'center' });
     this.itemText.setOrigin(0.5, 0);
     this.itemText.setAlpha(0);
     this.itemText.setTint(getModifierTierTextTint(this.modifierTypeOption.type.tier));
