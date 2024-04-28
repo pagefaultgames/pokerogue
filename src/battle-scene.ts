@@ -13,7 +13,7 @@ import { Biome } from "./data/enums/biome";
 import { Arena, ArenaBase } from './field/arena';
 import { GameData, PlayerGender } from './system/game-data';
 import StarterSelectUiHandler from './ui/starter-select-ui-handler';
-import { TextStyle, addBBCodeTextObject, addTextObject } from './ui/text';
+import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { initMoves } from './data/move';
@@ -249,7 +249,7 @@ export default class BattleScene extends SceneBase {
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
 		if (experimental === undefined)
 			experimental = this.experimentalSprites;
-		let variant = atlasPath.includes('variant/');
+		let variant = atlasPath.includes('variant/') || /_[0-3]$/.test(atlasPath);
 		if (experimental)
 			experimental = this.hasExpSprite(key);
 		if (variant)
@@ -531,10 +531,23 @@ export default class BattleScene extends SceneBase {
 			.then(v => {
 				Object.keys(v).forEach(k => variantData[k] = v[k]);
 				if (this.experimentalSprites) {
-					const expTree = variantData['exp'];
-					Object.keys(expTree).forEach(ek => {
-						variantData[ek] = expTree[ek];
-					});
+					const expVariantData = variantData['exp'];
+					const traverseVariantData = (keys: string[]) => {
+						let variantTree = variantData;
+						let expTree = expVariantData;
+						keys.map((k: string, i: integer) => {
+							if (i < keys.length - 1) {
+								variantTree = variantTree[k];
+								expTree = expTree[k];
+							} else if (variantTree.hasOwnProperty(k) && expTree.hasOwnProperty(k)) {
+								if ([ 'back', 'female' ].includes(k))
+									traverseVariantData(keys.concat(k));
+								else
+									variantTree[k] = expTree[k];
+							}
+						});
+					};
+					Object.keys(expVariantData).forEach(ek => traverseVariantData([ ek ]));
 				}
 				Promise.resolve();
 			});
@@ -938,7 +951,7 @@ export default class BattleScene extends SceneBase {
 
 		if (!waveIndex && lastBattle) {
 			let isNewBiome = !(lastBattle.waveIndex % 10) || ((this.gameMode.hasShortBiomes || this.gameMode.isDaily) && (lastBattle.waveIndex % 50) === 49);
-			if (!isNewBiome && this.gameMode.hasShortBiomes && (newWaveIndex % 10) < 9) {
+			if (!isNewBiome && this.gameMode.hasShortBiomes && (lastBattle.waveIndex % 10) < 9) {
 				let w = lastBattle.waveIndex - ((lastBattle.waveIndex % 10) - 1);
 				let biomeWaves = 1;
 				while (w < lastBattle.waveIndex) {

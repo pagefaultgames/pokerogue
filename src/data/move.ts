@@ -5503,8 +5503,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.BANEFUL_BUNKER, Type.POISON, -1, 10, -1, 4, 7)
       .attr(ProtectAttr, BattlerTagType.BANEFUL_BUNKER),
     new AttackMove(Moves.SPIRIT_SHACKLE, Type.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 7)
-      .makesContact(false)
-      .partial(),
+      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
+      .makesContact(false),
     new AttackMove(Moves.DARKEST_LARIAT, Type.DARK, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 7)
       .attr(IgnoreOpponentStatChangesAttr),
     new AttackMove(Moves.SPARKLING_ARIA, Type.WATER, MoveCategory.SPECIAL, 90, 100, 10, -1, 0, 7)
@@ -5577,7 +5577,7 @@ export function initMoves() {
       .partial(),
     new AttackMove(Moves.CORE_ENFORCER, Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 7)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .unimplemented(),
+      .partial(),
     new AttackMove(Moves.TROP_KICK, Type.GRASS, MoveCategory.PHYSICAL, 70, 100, 15, 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new StatusMove(Moves.INSTRUCT, Type.PSYCHIC, -1, 15, -1, 0, 7)

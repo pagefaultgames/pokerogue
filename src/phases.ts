@@ -497,6 +497,7 @@ export class SelectStarterPhase extends Phase {
           starterPokemon.tryPopulateMoveset(starter.moveset);
           if (starter.passive)
             starterPokemon.passive = true;
+          starterPokemon.luck = this.scene.gameData.getDexAttrLuck(this.scene.gameData.dexData[starter.species.speciesId].caughtAttr);
           if (starter.pokerus)
             starterPokemon.pokerus = true;
           if (this.scene.gameMode.isSplicedOnly)
@@ -1696,7 +1697,7 @@ export class CommandPhase extends FieldPhase {
         }
         break;
       case Command.BALL:
-        if (this.scene.arena.biomeType === Biome.END && (!this.scene.gameMode.isClassic || this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarters).length - 1)) {
+        if (this.scene.arena.biomeType === Biome.END && (!this.scene.gameMode.isClassic || (this.scene.getEnemyField().filter(p => p.isActive(true)).some(p => !p.scene.gameData.dexData[p.species.speciesId].caughtAttr) && this.scene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarters).length - 1))) {
           this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
           this.scene.ui.setMode(Mode.MESSAGE);
           this.scene.ui.showText(i18next.t('menu:noPokeballForce'), null, () => {

@@ -16,7 +16,7 @@ import { getBiomeName } from "../data/biomes";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
 import { PlayerGender } from "../system/game-data";
-import { getVariantTint } from "#app/data/variant";
+import { Variant, getVariantTint } from "#app/data/variant";
 
 enum Page {
   PROFILE,
@@ -376,7 +376,10 @@ export default class SummaryUiHandler extends UiHandler {
           success = true;
         }
       } else if (button === Button.CANCEL) {
-        ui.setMode(Mode.PARTY);
+        if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
+          this.hideMoveSelect();
+        else
+          ui.setMode(Mode.PARTY);
         success = true;
       } else {
         const pages = Utils.getEnumValues(Page);
@@ -603,6 +606,17 @@ export default class SummaryUiHandler extends UiHandler {
           profileContainer.add(getTypeIcon(1, types[1]));
         if (this.pokemon.isTerastallized())
           profileContainer.add(getTypeIcon(types.length, this.pokemon.getTeraType(), true));
+
+        if (this.pokemon.getLuck()) {
+          const luckLabelText = addTextObject(this.scene, 141, 28, 'Luck:', TextStyle.SUMMARY_ALT);
+          luckLabelText.setOrigin(0, 0);
+          profileContainer.add(luckLabelText);
+          
+          const luckText = addTextObject(this.scene, 141 + luckLabelText.displayWidth + 2, 28, this.pokemon.getLuck().toString(), TextStyle.SUMMARY);
+          luckText.setOrigin(0, 0);
+          luckText.setTint(getVariantTint((Math.min(this.pokemon.getLuck() - 1, 2)) as Variant));
+          profileContainer.add(luckText);
+        }
 
         const ability = this.pokemon.getAbility(true);
 

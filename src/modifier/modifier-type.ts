@@ -1717,7 +1717,7 @@ export class ModifierTypeOption {
 }
 
 export function getPartyLuckValue(party: Pokemon[]): integer {
-  return Phaser.Math.Clamp(party.map(p => p.isFainted() || !p.isShiny() ? 0 : !p.isFusion() || !p.shiny || !p.fusionShiny ? p.variant + 1 : (p.variant + 1) + (p.fusionVariant + 1))
+  return Phaser.Math.Clamp(party.map(p => p.isFainted() ? 0 : p.getLuck())
     .reduce((total: integer, value: integer) => total += value, 0), 0, 14);
 }
 
