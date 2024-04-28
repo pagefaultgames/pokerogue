@@ -2757,6 +2757,16 @@ export class HitsTagAttr extends MoveAttr {
   }
 }
 
+export class ToxicHitAttr extends HitsTagAttr {
+    apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+      if (user.isOfType(Type.POISON)) {
+        this.getTargetBenefitScore(user, target, move)
+        return true;
+      }
+      return false;
+    }
+}
+
 export class AddArenaTagAttr extends MoveEffectAttr {
   public tagType: ArenaTagType;
   public turnCount: integer;
@@ -3969,7 +3979,11 @@ export function initMoves() {
       .ignoresVirtual(),
     new StatusMove(Moves.TOXIC, Type.POISON, 90, 10, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
-      .attr(ToxicAccuracyAttr),
+      .attr(ToxicAccuracyAttr)
+      .attr(ToxicHitAttr, BattlerTagType.FLYING)
+      .attr(ToxicHitAttr, BattlerTagType.UNDERGROUND)
+      .attr(ToxicHitAttr, BattlerTagType.UNDERWATER)
+      .attr(ToxicHitAttr, BattlerTagType.HIDDEN),
     new AttackMove(Moves.CONFUSION, Type.PSYCHIC, MoveCategory.SPECIAL, 50, 100, 25, 10, 0, 1)
       .attr(ConfuseAttr),
     new AttackMove(Moves.PSYCHIC, Type.PSYCHIC, MoveCategory.SPECIAL, 90, 100, 10, 10, 0, 1)
