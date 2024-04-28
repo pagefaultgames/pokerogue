@@ -18,6 +18,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private pokemonNatureLabelText: Phaser.GameObjects.Text;
   private pokemonNatureText: BBCodeText;
   private pokemonShinyIcon: Phaser.GameObjects.Image;
+  private pokemonFusionShinyIcon: Phaser.GameObjects.Image;
   private pokemonMovesContainer: Phaser.GameObjects.Container;
   private pokemonMovesContainers: Phaser.GameObjects.Container[];
   private pokemonMoveBgs: Phaser.GameObjects.NineSlice[];
@@ -114,6 +115,11 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonShinyIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.add(this.pokemonShinyIcon);
 
+    this.pokemonFusionShinyIcon = this.scene.add.image(this.pokemonShinyIcon.x, this.pokemonShinyIcon.y, 'shiny_star_2');
+    this.pokemonFusionShinyIcon.setOrigin(0, 0);
+    this.pokemonFusionShinyIcon.setScale(0.75);
+    this.add(this.pokemonFusionShinyIcon);
+
     this.setVisible(false);
   }
 
@@ -128,20 +134,32 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       } else
         this.pokemonGenderText.setVisible(false);
 
-      const ability = pokemon.getAbility(true);
-      const abilityTextStyle = ability.id === pokemon.getSpeciesForm().abilityHidden ? TextStyle.MONEY : TextStyle.WINDOW;
-      this.pokemonAbilityText.setText(ability.name);
+      const abilityTextStyle = pokemon.abilityIndex === (pokemon.species.ability2 ? 2 : 1) ? TextStyle.MONEY : TextStyle.WINDOW;
+      this.pokemonAbilityText.setText(pokemon.getAbility(true).name);
       this.pokemonAbilityText.setColor(getTextColor(abilityTextStyle, false, this.scene.uiTheme));
       this.pokemonAbilityText.setShadowColor(getTextColor(abilityTextStyle, true, this.scene.uiTheme));
 
       this.pokemonNatureText.setText(getNatureName(pokemon.getNature(), true, false, false, this.scene.uiTheme));
 
-      this.pokemonShinyIcon.setTint(getVariantTint(pokemon.getVariant()));
+      const isFusion = pokemon.isFusion();
+      const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
+      const baseVariant = !doubleShiny ? pokemon.getVariant() : pokemon.variant;
+
+      this.pokemonShinyIcon.setTexture(`shiny_star${doubleShiny ? '_1' : ''}`);
       this.pokemonShinyIcon.setVisible(pokemon.isShiny());
+      this.pokemonShinyIcon.setTint(getVariantTint(baseVariant));
       if (this.pokemonShinyIcon.visible) {
-        this.pokemonShinyIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${pokemon.getVariant() ? ` (${pokemon.getVariant() === 2 ? 'Epic' : 'Rare'})` : ''}`, true));
+        const shinyDescriptor = doubleShiny || baseVariant ?
+        `${baseVariant === 2 ? 'Epic' : baseVariant === 1 ? 'Rare' : 'Common'}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? 'Epic' : pokemon.fusionVariant === 1 ? 'Rare' : 'Common'}` : ''}`
+        : '';
+        this.pokemonShinyIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ''}`, true));
         this.pokemonShinyIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
       }
+  
+      this.pokemonFusionShinyIcon.setPosition(this.pokemonShinyIcon.x, this.pokemonShinyIcon.y);
+      this.pokemonFusionShinyIcon.setVisible(doubleShiny);
+      if (isFusion)
+        this.pokemonFusionShinyIcon.setTint(getVariantTint(pokemon.fusionVariant));
 
       const originalIvs: integer[] = this.scene.gameData.dexData[pokemon.species.speciesId].caughtAttr
       ? this.scene.gameData.dexData[pokemon.species.speciesId].ivs
@@ -201,6 +219,8 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
         x: this.initialX,
         onComplete: () => {
           this.setVisible(false);
+          this.pokemonShinyIcon.off('pointerover');
+          this.pokemonShinyIcon.off('pointerout');
           (this.scene as BattleScene).ui.hideTooltip();
           resolve();
         }

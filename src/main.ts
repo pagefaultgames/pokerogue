@@ -76,7 +76,21 @@ Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative
 
 document.fonts.load('16px emerald').then(() => document.fonts.load('10px pkmnems'));
 
-const game = new Phaser.Game(config);
-game.sound.pauseOnBlur = false;
+let game;
+
+const startGame = () => {
+	game = new Phaser.Game(config);
+	game.sound.pauseOnBlur = false;
+};
+
+fetch('/manifest.json')
+	.then(res => res.json())
+	.then(jsonResponse => {
+		startGame();
+		game['manifest'] = jsonResponse.manifest;
+	}).catch(() => {
+		// Manifest not found (likely local build)
+		startGame();
+	});
 
 export default game;

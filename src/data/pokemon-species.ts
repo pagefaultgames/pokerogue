@@ -394,7 +394,7 @@ export abstract class PokemonSpeciesForm {
             return new Promise(resolve => {
               if (variantColorCache.hasOwnProperty(key))
                 return resolve();
-              fetch(`./images/pokemon/variant/${spritePath}.json`).then(res => res.json()).then(c => {
+              scene.cachedFetch(`./images/pokemon/variant/${spritePath}.json`).then(res => res.json()).then(c => {
                 variantColorCache[key] = c;
                 resolve();
               });
@@ -1710,17 +1710,17 @@ export function initSpecies() {
     new PokemonSpecies(Species.VIRIZION, 5, true, false, false, "Grassland Pokémon", Type.GRASS, Type.FIGHTING, 2, 200, Abilities.JUSTIFIED, Abilities.NONE, Abilities.NONE, 580, 91, 90, 72, 90, 129, 108, 3, 35, 290, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.TORNADUS, 5, true, false, false, "Cyclone Pokémon", Type.FLYING, null, 1.5, 63, Abilities.PRANKSTER, Abilities.NONE, Abilities.DEFIANT, 580, 79, 115, 70, 125, 80, 111, 3, 90, 290, GrowthRate.SLOW, 100, false, true,
       new PokemonForm("Incarnate Forme", "incarnate", Type.FLYING, null, 1.5, 63, Abilities.PRANKSTER, Abilities.NONE, Abilities.DEFIANT, 580, 79, 115, 70, 125, 80, 111, 3, 90, 290),
-      new PokemonForm("Therian Forme", "therian", Type.FLYING, null, 1.4, 63, Abilities.REGENERATOR, Abilities.NONE, Abilities.NONE, 580, 79, 100, 80, 110, 90, 121, 3, 90, 290),
+      new PokemonForm("Therian Forme", "therian", Type.FLYING, null, 1.4, 63, Abilities.REGENERATOR, Abilities.NONE, Abilities.REGENERATOR, 580, 79, 100, 80, 110, 90, 121, 3, 90, 290),
     ),
     new PokemonSpecies(Species.THUNDURUS, 5, true, false, false, "Bolt Strike Pokémon", Type.ELECTRIC, Type.FLYING, 1.5, 61, Abilities.PRANKSTER, Abilities.NONE, Abilities.DEFIANT, 580, 79, 115, 70, 125, 80, 111, 3, 90, 290, GrowthRate.SLOW, 100, false, true,
       new PokemonForm("Incarnate Forme", "incarnate", Type.ELECTRIC, Type.FLYING, 1.5, 61, Abilities.PRANKSTER, Abilities.NONE, Abilities.DEFIANT, 580, 79, 115, 70, 125, 80, 111, 3, 90, 290),
-      new PokemonForm("Therian Forme", "therian", Type.ELECTRIC, Type.FLYING, 3, 61, Abilities.VOLT_ABSORB, Abilities.NONE, Abilities.NONE, 580, 79, 105, 70, 145, 80, 101, 3, 90, 290),
+      new PokemonForm("Therian Forme", "therian", Type.ELECTRIC, Type.FLYING, 3, 61, Abilities.VOLT_ABSORB, Abilities.NONE, Abilities.VOLT_ABSORB, 580, 79, 105, 70, 145, 80, 101, 3, 90, 290),
     ),
     new PokemonSpecies(Species.RESHIRAM, 5, false, true, false, "Vast White Pokémon", Type.DRAGON, Type.FIRE, 3.2, 330, Abilities.TURBOBLAZE, Abilities.NONE, Abilities.NONE, 680, 100, 120, 100, 150, 120, 90, 3, 0, 340, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.ZEKROM, 5, false, true, false, "Deep Black Pokémon", Type.DRAGON, Type.ELECTRIC, 2.9, 345, Abilities.TERAVOLT, Abilities.NONE, Abilities.NONE, 680, 100, 150, 120, 120, 100, 90, 3, 0, 340, GrowthRate.SLOW, null, false),
     new PokemonSpecies(Species.LANDORUS, 5, true, false, false, "Abundance Pokémon", Type.GROUND, Type.FLYING, 1.5, 68, Abilities.SAND_FORCE, Abilities.NONE, Abilities.SHEER_FORCE, 600, 89, 125, 90, 115, 80, 101, 3, 90, 300, GrowthRate.SLOW, 100, false, true,
       new PokemonForm("Incarnate Forme", "incarnate", Type.GROUND, Type.FLYING, 1.5, 68, Abilities.SAND_FORCE, Abilities.NONE, Abilities.SHEER_FORCE, 600, 89, 125, 90, 115, 80, 101, 3, 90, 300),
-      new PokemonForm("Therian Forme", "therian", Type.GROUND, Type.FLYING, 1.3, 68, Abilities.INTIMIDATE, Abilities.NONE, Abilities.NONE, 600, 89, 145, 90, 105, 80, 91, 3, 90, 300),
+      new PokemonForm("Therian Forme", "therian", Type.GROUND, Type.FLYING, 1.3, 68, Abilities.INTIMIDATE, Abilities.NONE, Abilities.INTIMIDATE, 600, 89, 145, 90, 105, 80, 91, 3, 90, 300),
     ),
     new PokemonSpecies(Species.KYUREM, 5, false, true, false, "Boundary Pokémon", Type.DRAGON, Type.ICE, 3, 325, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 660, 125, 130, 90, 130, 90, 95, 3, 0, 330, GrowthRate.SLOW, null, false, true,
       new PokemonForm("Normal", "", Type.DRAGON, Type.ICE, 3, 325, Abilities.PRESSURE, Abilities.NONE, Abilities.NONE, 660, 125, 130, 90, 130, 90, 95, 3, 0, 330),
@@ -1752,8 +1752,8 @@ export function initSpecies() {
     new PokemonSpecies(Species.FROGADIER, 6, false, false, false, "Bubble Frog Pokémon", Type.WATER, null, 0.6, 10.9, Abilities.TORRENT, Abilities.NONE, Abilities.PROTEAN, 405, 54, 63, 52, 83, 56, 97, 45, 70, 142, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(Species.GRENINJA, 6, false, false, false, "Ninja Pokémon", Type.WATER, Type.DARK, 1.5, 40, Abilities.TORRENT, Abilities.NONE, Abilities.PROTEAN, 530, 72, 95, 67, 103, 71, 122, 45, 70, 239, GrowthRate.MEDIUM_SLOW, 87.5, false, false,
       new PokemonForm("Normal", "", Type.WATER, Type.DARK, 1.5, 40, Abilities.TORRENT, Abilities.NONE, Abilities.PROTEAN, 530, 72, 95, 67, 103, 71, 122, 45, 70, 239),
-      new PokemonForm("Battle Bond", "battle-bond", Type.WATER, Type.DARK, 1.5, 40, Abilities.BATTLE_BOND, Abilities.NONE, Abilities.NONE, 530, 72, 95, 67, 103, 71, 122, 45, 70, 239, false, ""),
-      new PokemonForm("Ash", "ash", Type.WATER, Type.DARK, 1.5, 40, Abilities.BATTLE_BOND, Abilities.NONE, Abilities.NONE, 640, 72, 145, 67, 153, 71, 132, 45, 70, 239),
+      new PokemonForm("Battle Bond", "battle-bond", Type.WATER, Type.DARK, 1.5, 40, Abilities.BATTLE_BOND, Abilities.NONE, Abilities.BATTLE_BOND, 530, 72, 95, 67, 103, 71, 122, 45, 70, 239, false, ""),
+      new PokemonForm("Ash", "ash", Type.WATER, Type.DARK, 1.5, 40, Abilities.BATTLE_BOND, Abilities.NONE, Abilities.BATTLE_BOND, 640, 72, 145, 67, 153, 71, 132, 45, 70, 239),
     ),
     new PokemonSpecies(Species.BUNNELBY, 6, false, false, false, "Digging Pokémon", Type.NORMAL, null, 0.4, 5, Abilities.PICKUP, Abilities.CHEEK_POUCH, Abilities.HUGE_POWER, 237, 38, 36, 38, 32, 36, 57, 255, 50, 47, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.DIGGERSBY, 6, false, false, false, "Digging Pokémon", Type.NORMAL, Type.GROUND, 1, 42.4, Abilities.PICKUP, Abilities.CHEEK_POUCH, Abilities.HUGE_POWER, 423, 85, 56, 77, 50, 77, 78, 127, 50, 148, GrowthRate.MEDIUM_FAST, 50, false),
@@ -1782,7 +1782,7 @@ export function initSpecies() {
       new PokemonForm("Fancy Pattern", "fancy", Type.BUG, null, 0.3, 2.5, Abilities.SHIELD_DUST, Abilities.COMPOUND_EYES, Abilities.FRIEND_GUARD, 200, 38, 35, 40, 27, 25, 35, 255, 70, 40, false, ""),
       new PokemonForm("Poké Ball Pattern", "poke-ball", Type.BUG, null, 0.3, 2.5, Abilities.SHIELD_DUST, Abilities.COMPOUND_EYES, Abilities.FRIEND_GUARD, 200, 38, 35, 40, 27, 25, 35, 255, 70, 40, false, ""),
     ),
-    new PokemonSpecies(Species.SPEWPA, 6, false, false, false, "Scatterdust Pokémon", Type.BUG, null, 0.3, 8.4, Abilities.SHED_SKIN, Abilities.NONE, Abilities.FRIEND_GUARD, 213, 45, 22, 60, 27, 30, 29, 120, 70, 75, GrowthRate.MEDIUM_FAST, 50, false, false,
+    new PokemonSpecies(Species.SPEWPA, 6, false, false, false, "Scatterdust Pokémon", Type.BUG, null, 0.3, 8.4, Abilities.SHED_SKIN, Abilities.SHED_SKIN, Abilities.FRIEND_GUARD, 213, 45, 22, 60, 27, 30, 29, 120, 70, 75, GrowthRate.MEDIUM_FAST, 50, false, false,
       new PokemonForm("Meadow Pattern", "meadow", Type.BUG, null, 0.3, 8.4, Abilities.SHED_SKIN, Abilities.NONE, Abilities.FRIEND_GUARD, 213, 45, 22, 60, 27, 30, 29, 120, 70, 75, false, ""),
       new PokemonForm("Icy Snow Pattern", "icy-snow", Type.BUG, null, 0.3, 8.4, Abilities.SHED_SKIN, Abilities.NONE, Abilities.FRIEND_GUARD, 213, 45, 22, 60, 27, 30, 29, 120, 70, 75, false, ""),
       new PokemonForm("Polar Pattern", "polar", Type.BUG, null, 0.3, 8.4, Abilities.SHED_SKIN, Abilities.NONE, Abilities.FRIEND_GUARD, 213, 45, 22, 60, 27, 30, 29, 120, 70, 75, false, ""),
@@ -1970,12 +1970,12 @@ export function initSpecies() {
     new PokemonSpecies(Species.RIBOMBEE, 7, false, false, false, "Bee Fly Pokémon", Type.BUG, Type.FAIRY, 0.2, 0.5, Abilities.HONEY_GATHER, Abilities.SHIELD_DUST, Abilities.SWEET_VEIL, 464, 60, 55, 60, 95, 70, 124, 75, 50, 162, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.ROCKRUFF, 7, false, false, false, "Puppy Pokémon", Type.ROCK, null, 0.5, 9.2, Abilities.KEEN_EYE, Abilities.VITAL_SPIRIT, Abilities.STEADFAST, 280, 45, 65, 40, 30, 40, 60, 190, 50, 56, GrowthRate.MEDIUM_FAST, 50, false, false,
       new PokemonForm("Normal", "", Type.ROCK, null, 0.5, 9.2, Abilities.KEEN_EYE, Abilities.VITAL_SPIRIT, Abilities.STEADFAST, 280, 45, 65, 40, 30, 40, 60, 190, 50, 56),
-      new PokemonForm("Own Tempo", "own-tempo", Type.ROCK, null, 0.5, 9.2, Abilities.OWN_TEMPO, Abilities.NONE, Abilities.NONE, 280, 45, 65, 40, 30, 40, 60, 190, 50, 56, false, ""),
+      new PokemonForm("Own Tempo", "own-tempo", Type.ROCK, null, 0.5, 9.2, Abilities.OWN_TEMPO, Abilities.NONE, Abilities.OWN_TEMPO, 280, 45, 65, 40, 30, 40, 60, 190, 50, 56, false, ""),
     ),
     new PokemonSpecies(Species.LYCANROC, 7, false, false, false, "Wolf Pokémon", Type.ROCK, null, 0.8, 25, Abilities.KEEN_EYE, Abilities.SAND_RUSH, Abilities.STEADFAST, 487, 75, 115, 65, 55, 65, 112, 90, 50, 170, GrowthRate.MEDIUM_FAST, 50, false, false,
       new PokemonForm("Midday Form", "midday", Type.ROCK, null, 0.8, 25, Abilities.KEEN_EYE, Abilities.SAND_RUSH, Abilities.STEADFAST, 487, 75, 115, 65, 55, 65, 112, 90, 50, 170, false, ""),
       new PokemonForm("Midnight Form", "midnight", Type.ROCK, null, 1.1, 25, Abilities.KEEN_EYE, Abilities.VITAL_SPIRIT, Abilities.NO_GUARD, 487, 85, 115, 75, 55, 75, 82, 90, 50, 170),
-      new PokemonForm("Dusk Form", "dusk", Type.ROCK, null, 0.8, 25, Abilities.TOUGH_CLAWS, Abilities.NONE, Abilities.NONE, 487, 75, 117, 65, 55, 65, 110, 90, 50, 170),
+      new PokemonForm("Dusk Form", "dusk", Type.ROCK, null, 0.8, 25, Abilities.TOUGH_CLAWS, Abilities.TOUGH_CLAWS, Abilities.TOUGH_CLAWS, 487, 75, 117, 65, 55, 65, 110, 90, 50, 170),
     ),
     new PokemonSpecies(Species.WISHIWASHI, 7, false, false, false, "Small Fry Pokémon", Type.WATER, null, 0.2, 0.3, Abilities.SCHOOLING, Abilities.NONE, Abilities.NONE, 175, 45, 20, 20, 25, 25, 40, 60, 50, 61, GrowthRate.FAST, 50, false, false,
       new PokemonForm("Solo Form", "", Type.WATER, null, 0.2, 0.3, Abilities.SCHOOLING, Abilities.NONE, Abilities.NONE, 175, 45, 20, 20, 25, 25, 40, 60, 50, 61),
@@ -2295,7 +2295,7 @@ export function initSpecies() {
     new PokemonSpecies(Species.OVERQWIL, 8, false, false, false, "Pin Cluster Pokémon", Type.DARK, Type.POISON, 2.5, 60.5, Abilities.POISON_POINT, Abilities.SWIFT_SWIM, Abilities.INTIMIDATE, 510, 85, 115, 95, 65, 65, 85, 135, 50, 179, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(Species.ENAMORUS, 8, true, false, false, "Love-Hate Pokémon", Type.FAIRY, Type.FLYING, 1.6, 48, Abilities.CUTE_CHARM, Abilities.NONE, Abilities.CONTRARY, 580, 74, 115, 70, 135, 80, 106, 3, 50, 116, GrowthRate.SLOW, 0, false, true,
       new PokemonForm("Incarnate Forme", "incarnate", Type.FAIRY, Type.FLYING, 1.6, 48, Abilities.CUTE_CHARM, Abilities.NONE, Abilities.CONTRARY, 580, 74, 115, 70, 135, 80, 106, 3, 50, 116),
-      new PokemonForm("Therian Forme", "therian", Type.FAIRY, Type.FLYING, 1.6, 48, Abilities.OVERCOAT, Abilities.NONE, Abilities.NONE, 580, 74, 115, 110, 135, 100, 46, 3, 50, 116),
+      new PokemonForm("Therian Forme", "therian", Type.FAIRY, Type.FLYING, 1.6, 48, Abilities.OVERCOAT, Abilities.NONE, Abilities.OVERCOAT, 580, 74, 115, 110, 135, 100, 46, 3, 50, 116),
     ),
     new PokemonSpecies(Species.SPRIGATITO, 9, false, false, false, "Grass Cat Pokémon", Type.GRASS, null, 0.4, 4.1, Abilities.OVERGROW, Abilities.NONE, Abilities.PROTEAN, 310, 40, 61, 54, 45, 45, 65, 45, 50, 62, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(Species.FLORAGATO, 9, false, false, false, "Grass Cat Pokémon", Type.GRASS, null, 0.9, 12.2, Abilities.OVERGROW, Abilities.NONE, Abilities.PROTEAN, 410, 61, 80, 63, 60, 63, 83, 45, 50, 144, GrowthRate.MEDIUM_SLOW, 87.5, false),
