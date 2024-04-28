@@ -214,7 +214,7 @@ export default class BattleScene extends SceneBase {
     [Button.DOWN]: 13, // down
     [Button.LEFT]: 14, // left
     [Button.RIGHT]: 15, // right
-    [Button.SUBMIT]: [17, 8] // touchpad (ps4) back button (xbox ps4/5)
+	[Button.SUBMIT]: 8, //  back button (xbox ps4/5)
     [Button.ACTION]: 0, // X
     [Button.CANCEL]: 1, // O
     [Button.MENU]: 9, // options
