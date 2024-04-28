@@ -939,8 +939,9 @@ export class MoveChanceBoostAbAttr extends VariableMoveChanceAbAttr {
   }
 
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+    if ((args[0] as Utils.NumberHolder).value == 100 || (args[0] as Utils.NumberHolder).value == -1)
+        return false;
     (args[0] as Utils.NumberHolder).value *= this.chanceMultiplier;
-
     return true;
   }
 }
