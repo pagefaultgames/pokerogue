@@ -13,22 +13,22 @@ export interface TrainerTypeDialogue {
 }
 
 export const trainerTypeDialogue = {
-  [TrainerType.YOUNGSTER]: [
+  [TrainerType.VOLLTROTTEL]: [
     {
       encounter: [
-        `Hey, wanna battle?`,
-        `Are you a new trainer too?`,
-        `Hey, I haven't seen you before. Let's battle!`,
-        `I just lost, so I'm trying to find more Pokémon.\nWait! You look weak! Come on, let's battle!`,
-        `Have we met or not? I don't really remember. Well, I guess it's nice to meet you anyway!`,
-        `All right! Let's go!`,
-        `All right! Here I come! I'll show you my power!`,
-        `Haw haw haw... I'll show you how hawesome my Pokémon are!`,
-        `No need to waste time saying hello. Bring it on whenever you're ready!`,
-        `Don't let your guard down, or you may be crying when a kid beats you.`,
-        `I've raised my Pokémon with great care. You're not allowed to hurt them!`,
-        `Glad you made it! It won't be an easy job from here.`,
-        `The battles continue forever! Welcome to the world with no end!`
+        `Ay Junge, willst du kämpfen?`,
+        `Hä? Bist du neu? Du musst doch deine Seiten auf 0 halten.`,
+        `Hey, dich kenne ich nicht. Lass doch kämpfen!`,
+        `Junge, wie konnte ich verlieren? Ich verliere doch nicht.\nWarte! Du siehst schwach aus! Lass kämpfen!`,
+        `Kennen wir uns? Ich weiß es nicht mehr genau.\nNaja, beim Kampf lernt man sich gut kennen!`,
+        `Geil! Lass uns kämpfen!`,
+        `Ay! Junge! Komm her! Ich küsse dein Auge!`,
+        `Boah... Digga ich habe wirklich die besten Pokémon. Warte ich zeig's dir.`,
+        `Nö, "Hallöchen" will ich nicht hören. Lass uns loslegen!`,
+        `Haha, du siehst voll lost aus. Ist aber egal, du verlierst sowieso gleich.`,
+        `Digga, deine Pokémon sehen so müde aus. Peinlich so...`,
+        `Brudi! Geil, dass du hier bist. Ab jetzt wird's aber nicht so einfach.`,
+        `Der Spaß hört nie auf! Ewiger Kampf für immer!`
       ],
       victory: [
         `Wow! You're strong!`,
