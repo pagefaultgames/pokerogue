@@ -840,6 +840,13 @@ export class VariableMovePowerAbAttr extends PreAttackAbAttr {
   }
 }
 
+export class VariableMoveChanceAbAttr extends PreAttackAbAttr {
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+    //const chance = args[0] as Utils.NumberHolder;
+    return false;
+  }
+}
+
 export class VariableMoveTypeAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     //const power = args[0] as Utils.IntegerHolder;
@@ -920,6 +927,21 @@ export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
     }
 
     return false;
+  }
+}
+
+export class MoveChanceBoostAbAttr extends VariableMoveChanceAbAttr {
+  private chanceMultiplier: number;
+
+  constructor(chanceMultiplier: number) {
+    super(true);
+    this.chanceMultiplier = chanceMultiplier;
+  }
+
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+    (args[0] as Utils.NumberHolder).value *= this.chanceMultiplier;
+
+    return true;
   }
 }
 
@@ -2559,7 +2581,7 @@ export function initAbilities() {
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPATK, 1)
       .ignorable(),
     new Ability(Abilities.SERENE_GRACE, 3)
-      .unimplemented(),
+      .attr(MoveChanceBoostAbAttr, 2),
     new Ability(Abilities.SWIFT_SWIM, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.RAIN, WeatherType.HEAVY_RAIN)),
