@@ -45,11 +45,11 @@ import { commandUiHandler as deCommandUiHandler } from '../locales/de/command-ui
 import { fightUiHandler as enFightUiHandler } from '../locales/en/fight-ui-handler';
 import { fightUiHandler as frFightUiHandler } from '../locales/fr/fight-ui-handler';
 
-import { tutorial as enTutorial } from '../locales/en/tutorial.js';
-import { tutorial as esTutorial } from '../locales/es/tutorial.js';
-import { tutorial as frTutorial } from '../locales/fr/tutorial.js';
-import { tutorial as itTutorial} from '../locales/it/tutorial.js';
-import { tutorial as deTutorial } from '../locales/de/tutorial.js';
+import { tutorial as enTutorial } from '../locales/en/tutorial';
+import { tutorial as esTutorial } from '../locales/es/tutorial';
+import { tutorial as frTutorial } from '../locales/fr/tutorial';
+import { tutorial as itTutorial} from '../locales/it/tutorial';
+import { tutorial as deTutorial } from '../locales/de/tutorial';
 
 export interface SimpleTranslationEntries {
   [key: string]: string
