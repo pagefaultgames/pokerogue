@@ -75,7 +75,7 @@ export interface Localizable {
 const DEFAULT_LANGUAGE_OVERRIDE = '';
 
 export function initI18n(): void {
-  let lang = navigator.language;
+  let lang = 'en';
 
   if (localStorage.getItem('prLang'))
     lang = localStorage.getItem('prLang');
