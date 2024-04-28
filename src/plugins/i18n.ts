@@ -45,6 +45,19 @@ import { commandUiHandler as deCommandUiHandler } from '../locales/de/command-ui
 import { fightUiHandler as enFightUiHandler } from '../locales/en/fight-ui-handler';
 import { fightUiHandler as frFightUiHandler } from '../locales/fr/fight-ui-handler';
 
+import { modifierType  as enModifierType } from '../locales/en/modifier-type';
+import { modifierType as esModifierType } from '../locales/es/modifier-type';
+
+import { modifier as enModifier } from '../locales/en/modifier';
+import { modifier as esModifier } from '../locales/es/modifier';
+
+import { type as enType } from '../locales/en/type';
+
+import { nature as enNature } from '../locales/en/nature';
+import { nature as esNature } from '../locales/es/nature';
+
+import { berry as enBerry } from '../locales/en/berry';
+
 export interface SimpleTranslationEntries {
   [key: string]: string
 }
@@ -66,6 +79,24 @@ export interface AbilityTranslationEntry {
 
 export interface AbilityTranslationEntries {
   [key: string]: AbilityTranslationEntry
+}
+
+export interface ModifierTypeTranslationEntry {
+  name: string,
+  description: string
+}
+
+export interface ModifierTypeTranslationEntries {
+  [key: string]: ModifierTypeTranslationEntry
+}
+
+export interface BerryTranslationEntry {
+  name: string,
+  description: string
+}
+
+export interface BerryTranslationEntries {
+  [key: string]: BerryTranslationEntry
 }
 
 export interface Localizable {
@@ -113,6 +144,11 @@ export function initI18n(): void {
         pokemonStat: enPokemonStat,
         commandUiHandler: enCommandUiHandler,
         fightUiHandler: enFightUiHandler,
+        modifierType: enModifierType,
+        modifier: enModifier,
+        type: enType,
+        nature: enNature,
+        berry: enBerry
       },
       es: {
         menu: esMenu,
@@ -123,6 +159,9 @@ export function initI18n(): void {
         pokemon: esPokemon,
         pokemonStat: esPokemonStat,
         commandUiHandler: esCommandUiHandler,
+        modifierType: esModifierType,
+        modifier: esModifier,
+        nature: esNature
       },
       fr: {
         menu: frMenu,
@@ -167,6 +206,11 @@ declare module 'i18next' {
       pokemonStat: typeof enPokemonStat;
       commandUiHandler: typeof enCommandUiHandler;
       fightUiHandler: typeof enFightUiHandler;
+      modifierType: typeof enModifierType;
+      modifier: typeof enModifier;
+      type: typeof enType;
+      nature: typeof enNature;
+      berry: typeof enBerry;
     };
   }
 }
