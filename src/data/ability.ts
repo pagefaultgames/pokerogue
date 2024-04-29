@@ -340,7 +340,11 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   }
 
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if ((move.getMove() instanceof AttackMove || move.getMove().getAttrs(StatusMoveTypeImmunityAttr).find(attr => (attr as StatusMoveTypeImmunityAttr).immuneType === this.immuneType)) && move.getMove().type === this.immuneType) {
+
+    const target = move.getMove().moveTarget;
+    const targetsField = target === MoveTarget.ENEMY_SIDE || target === MoveTarget.USER_SIDE || target === MoveTarget.BOTH_SIDES; // should not activate on moves like spikes or grassy terrain
+
+    if ((!targetsField || move.getMove().getAttrs(StatusMoveTypeImmunityAttr).find(attr => (attr as StatusMoveTypeImmunityAttr).immuneType === this.immuneType)) && move.getMove().type === this.immuneType) {
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
