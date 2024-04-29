@@ -138,6 +138,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
 
     this.scene.showFieldOverlay(750);
+    this.scene.updateAndShowLuckText(750);
 
     let i = 0;
     
@@ -363,6 +364,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.eraseCursor();
 
     this.scene.hideFieldOverlay(250);
+    this.scene.hideLuckText(750);
 
     const options = this.options.concat(this.shopOptionsRows.flat());
     this.options.splice(0, this.options.length);

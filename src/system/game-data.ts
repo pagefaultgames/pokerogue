@@ -421,6 +421,9 @@ export class GameData {
               if (response.startsWith('failed to open save file')) {
                 this.scene.queueMessage('Save data could not be found. If this is a new account, you can safely ignore this message.', null, true);
                 return resolve(true);
+              } else if (response.indexOf('Too many connections') > -1) {
+                this.scene.queueMessage('Too many people are trying to connect and the server is overloaded. Please try again later.', null, true);
+                return resolve(false);
               }
               console.error(response);
               return resolve(false);
@@ -1184,6 +1187,10 @@ export class GameData {
 
   getSpeciesDefaultNatureAttr(species: PokemonSpecies): integer {
     return Math.pow(2, this.getSpeciesDefaultNature(species));
+  }
+
+  getDexAttrLuck(dexAttr: bigint): integer {
+    return dexAttr & DexAttr.SHINY ? dexAttr & DexAttr.VARIANT_3 ? 3 : dexAttr & DexAttr.VARIANT_2 ? 2 : 1 : 0;
   }
 
   getNaturesForAttr(natureAttr: integer): Nature[] {
