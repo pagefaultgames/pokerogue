@@ -76,6 +76,8 @@ export const MOVE_OVERRIDE = Moves.NONE;
 export const OPP_SPECIES_OVERRIDE = 0;
 export const OPP_ABILITY_OVERRIDE = Abilities.NONE;
 export const OPP_MOVE_OVERRIDE = Moves.NONE;
+export const OPP_SHINY_OVERRIDE = false;
+export const OPP_VARIANT_OVERRIDE = 0;
 
 const DEBUG_RNG = false;
 
@@ -1058,6 +1060,7 @@ export default class BattleScene extends SceneBase {
 			case Species.FLABEBE:
 			case Species.FLOETTE:
 			case Species.FLORGES:
+			case Species.FURFROU:
 			case Species.ORICORIO:
 			case Species.SQUAWKABILLY:
 			case Species.TATSUGIRI:
@@ -1065,6 +1068,8 @@ export default class BattleScene extends SceneBase {
 				return Utils.randSeedInt(species.forms.length);
 			case Species.MINIOR:
 				return Utils.randSeedInt(6);
+			case Species.ALCREMIE:
+				return Utils.randSeedInt(9);
 			case Species.MEOWSTIC:
 			case Species.INDEEDEE:
 			case Species.BASCULEGION:
