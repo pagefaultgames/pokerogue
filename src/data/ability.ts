@@ -929,31 +929,6 @@ export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
   }
 }
 
-export class StakeoutAbAttr extends MovePowerBoostAbAttr {
-  constructor(powerMultiplier: number = 2) {
-    const condition: PokemonAttackCondition = (user, target, move) => {
-      
-      if(user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.POKEMON) // covers hard switching
-        return true;
-      // find what move the target's slot used this turn and check if it's a switch-in move.
-      const moveId = user.scene.currentBattle.turnCommands[target.getBattlerIndex()]?.move?.move
-      if(moveId){
-        const targetMove = allMoves[moveId];
-        const usedSwitchMove = targetMove.findAttr(attr => attr instanceof ForceSwitchOutAttr) as ForceSwitchOutAttr;
-        if(usedSwitchMove && usedSwitchMove.returnUser() && usedSwitchMove?.isSelfSwitch?.() && target.battleSummonData?.turnCount === 1){ // check if the move switches the user out
-          if(usedSwitchMove.returnUser().id === target.id) // dont activate if the move was used by the target (meaning it hasnt switched out yet)
-            return false;
-          return true;
-        }
-      }
-
-      return false;
-    };
-
-    super(condition, powerMultiplier);
-  }
-}
-
 export class AnalyticAbAttr extends MovePowerBoostAbAttr {
   constructor(powerMultiplier: number = 1.3) {
     const condition: PokemonAttackCondition = (user, target, move) => {
@@ -3079,7 +3054,7 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .partial(),
     new Ability(Abilities.STAKEOUT, 7)
-      .attr(StakeoutAbAttr),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.POKEMON || target.battleSummonData.turnCount === 0, 2),
     new Ability(Abilities.WATER_BUBBLE, 7)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(MoveTypePowerBoostAbAttr, Type.WATER, 1)
