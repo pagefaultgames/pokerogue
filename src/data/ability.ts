@@ -304,18 +304,27 @@ export class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultip
   }
 }
 
-export class PreDefendMovePowerToOneAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
+export class PreDefendReceivedMoveNullifierAbAttr extends PreDefendAbAttr {
+  protected condition: PokemonDefendCondition;
+
   constructor(condition: PokemonDefendCondition) {
-    super(condition, 1);
+    super();
+
+    this.condition = condition;
   }
 
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.condition(pokemon, attacker, move.getMove())) {
+    if (this.condition(pokemon, attacker, move.getMove()) && (args[1] as Utils.NumberHolder).value != HitResult.NO_EFFECT && (args[1] as Utils.NumberHolder).value != HitResult.FAIL) {
       (args[0] as Utils.NumberHolder).value = 1;
+      (args[1] as Utils.NumberHolder).value = HitResult.EFFECTIVE;
       return true;
     }
 
     return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return `Its disguise served it as a decoy!`;
   }
 }
 
@@ -445,20 +454,32 @@ export class PostDefendAbAttr extends AbAttr {
 }
 
 export class PostDefendDisguiseAbAttr extends PostDefendAbAttr {
+  protected condition: PokemonDefendCondition;
+
+  constructor(condition: PokemonDefendCondition) {
+    super(true);
+    this.condition = condition;
+  }
 
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (pokemon.formIndex == 0 && pokemon.battleData.hitCount != 0 && (move.getMove().category == MoveCategory.SPECIAL || move.getMove().category == MoveCategory.PHYSICAL)) {
-      
-      const recoilDamage = Math.ceil((pokemon.getMaxHp() / 8) - attacker.turnData.damageDealt);
-      if (!recoilDamage)
-        return false;
+ 
+    if (this.condition(pokemon, attacker, move.getMove()) && (hitResult == HitResult.EFFECTIVE)) {
+    
+      const damageDealt = attacker.turnData.damageDealt;
+      let recoilDamage = Math.round(pokemon.getMaxHp() / 8 - damageDealt);
+      if (!recoilDamage) return false;
+
       pokemon.damageAndUpdate(recoilDamage, HitResult.OTHER);
+      pokemon.battleData.abilityTriggered = true;
       pokemon.turnData.damageTaken += recoilDamage;
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, '\'s disguise was busted!'));
+
       return true;
     }
-
     return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return `${pokemon.name}\'s disguise was busted!`;
   }
 }
 
@@ -1573,6 +1594,27 @@ export class BlockNonDirectDamageAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     cancelled.value = true;
     return true;
+  }
+}
+
+export class DisguiseConfusionDamageInteractionAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    
+    if(pokemon.battleData.abilityTriggered == false){
+
+    cancelled.value = true;
+    pokemon.damageAndUpdate(Math.round(pokemon.getMaxHp() / 8), HitResult.OTHER);
+    pokemon.battleData.abilityTriggered = true;
+    pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+    pokemon.scene.queueMessage(`Its disguise served it as a decoy!`);
+    return true;
+    }
+
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return `${pokemon.name}\'s disguise was busted!`;
   }
 }
 
@@ -3052,12 +3094,13 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.DISGUISE, 7)
-      .attr(PreDefendMovePowerToOneAbAttr, (target, user, move) => target.formIndex == 0 && target.getAttackTypeEffectiveness(move.type) > 0)
-      .attr(PostSummonFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PostBattleInitFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PostDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PreDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
-      .attr(PostDefendDisguiseAbAttr)
+      .attr(DisguiseConfusionDamageInteractionAbAttr)
+      .attr(PreDefendReceivedMoveNullifierAbAttr, (target, user, move) => target.battleData.abilityTriggered == false)
+      .attr(PostDefendDisguiseAbAttr, (target, user, move) => target.battleData.abilityTriggered == false)
+      .attr(PreDefendFormChangeAbAttr, p => p.battleData.abilityTriggered == false ? 0 : 1)
+      .attr(PostSummonFormChangeAbAttr, p => p.battleData.abilityTriggered == false ? 0 : 1)
+      .attr(PostBattleInitFormChangeAbAttr, p => p.battleData.abilityTriggered == false ? 0 : 1)
+      .attr(PostDefendFormChangeAbAttr, p => p.battleData.abilityTriggered == false ? 0 : 1)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
