@@ -1420,10 +1420,9 @@ export class SwitchSummonPhase extends SummonPhase {
     super.onEnd();
 
     const pokemon = this.getPokemon();
-  
-    const moveId = pokemon.scene.currentBattle.turnCommands[this.fieldIndex]?.move?.move
+    const moveId = pokemon.scene.currentBattle.turnCommands[this.fieldIndex]?.move?.move;
     const lastUsedMove = moveId ? allMoves[moveId] : undefined;
-    
+
     // Compensate for turn spent summoning
     if (pokemon.scene.currentBattle.turnCommands[this.fieldIndex]?.command === Command.POKEMON || !!lastUsedMove?.findAttr(attr => attr instanceof ForceSwitchOutAttr)) //check if hard switch OR pivot move was used
       pokemon.battleSummonData.turnCount--;
