@@ -888,6 +888,58 @@ export class PreAttackAbAttr extends AbAttr {
   }
 }
 
+export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
+  private chanceMultiplier: number;
+ 
+  constructor(chanceMultiplier?: number){
+    super(true);
+    this.chanceMultiplier = chanceMultiplier;
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    
+      if((args[0] as Utils.NumberHolder).value >=1) {
+
+      (args[0] as Utils.NumberHolder).value *= this.chanceMultiplier;
+      (args[0] as Utils.NumberHolder).value = Math.min((args[0] as Utils.NumberHolder).value, 100)
+
+      return true;
+      }
+
+      return false;
+  }
+}
+
+
+export class IgnoreMoveEffectsAbAttr extends PreDefendAbAttr {
+
+  applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+  
+      if((args[0] as Utils.NumberHolder).value >=1) {
+      (args[0] as Utils.NumberHolder).value = 0;
+      return true;
+      }
+
+      return false;
+  }
+
+}
+
+/*export class SheerForceIgnoredAbilities extends PreAttackAbAttr {
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
+     const ability = defender.getAbility().id
+    if (move.getMove().chance >= 1 && (
+       ability == Abilities.COLOR_CHANGE || ability == Abilities.PICKPOCKET ||
+      ability == Abilities.WIMP_OUT || ability == Abilities.EMERGENCY_EXIT ||
+      ability == Abilities.BERSERK || ability == Abilities.ANGER_SHELL
+      )){
+        (args[0] as Utils.BooleanHolder).value = true;
+      return true;
+    }
+    return false;
+  }
+}*/
+
 export class VariableMovePowerAbAttr extends PreAttackAbAttr {
   applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean {
     //const power = args[0] as Utils.NumberHolder;
@@ -2644,8 +2696,8 @@ export function initAbilities() {
       .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, BattlerTagType.FIRE_BOOST, 1, (pokemon: Pokemon) => !pokemon.status || pokemon.status.effect !== StatusEffect.FREEZE)
       .ignorable(),
     new Ability(Abilities.SHIELD_DUST, 3)
-      .ignorable()
-      .unimplemented(),
+      .attr(IgnoreMoveEffectsAbAttr)
+      .ignorable(),
     new Ability(Abilities.OWN_TEMPO, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED)
       .ignorable(),
@@ -2682,7 +2734,7 @@ export function initAbilities() {
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPATK, 1)
       .ignorable(),
     new Ability(Abilities.SERENE_GRACE, 3)
-      .unimplemented(),
+      .attr(MoveEffectChanceMultiplierAbAttr, 2),
     new Ability(Abilities.SWIFT_SWIM, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.RAIN, WeatherType.HEAVY_RAIN)),
@@ -2936,7 +2988,8 @@ export function initAbilities() {
     new Ability(Abilities.PICKPOCKET, 5)
       .attr(PostDefendStealHeldItemAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT)),
     new Ability(Abilities.SHEER_FORCE, 5)
-      .unimplemented(),
+    .attr(MovePowerBoostAbAttr, (user, target, move) => move.chance >= 1, 5461/4096)
+    .attr(MoveEffectChanceMultiplierAbAttr, 0),
     new Ability(Abilities.CONTRARY, 5)
       .attr(StatChangeMultiplierAbAttr, -1)
       .ignorable(),
