@@ -8,7 +8,7 @@ export enum BattleStat {
   SPD,
   ACC,
   EVA,
-  CRIT
+  RAND
 }
 
 export function getBattleStatName(stat: BattleStat) {
@@ -27,8 +27,6 @@ export function getBattleStatName(stat: BattleStat) {
       return i18next.t('pokemonStat:ACC');
     case BattleStat.EVA:
       return i18next.t('pokemonStat:EVA');
-    case BattleStat.CRIT:
-      return i18next.t('pokemonStat:CRIT');
     default:
       return '???';
   }
