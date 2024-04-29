@@ -2915,27 +2915,44 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
 
       if (!cancelled.value) {
         this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect)));
-        let damage: integer = 0;
+
+        let netEffect = 0;  // This variable now handles both healing and damage
+        const isHealing = pokemon.hasAbility(Abilities.POISON_HEAL); // Added check for both Ability and the new Passives
+
         switch (pokemon.status.effect) {
           case StatusEffect.POISON:
-            damage = Math.max(pokemon.getMaxHp() >> 3, 1);
-            break;
           case StatusEffect.TOXIC:
-            damage = Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1);
+            if (isHealing) {
+              netEffect = Math.max(pokemon.getMaxHp() >> 3, 1);  // Healing logic
+            } else {
+              // Toxic damage increases over time, Poison does not
+              netEffect = (pokemon.status.effect === StatusEffect.TOXIC) ?
+                Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1) : // Applies if Toxic
+              Math.max(pokemon.getMaxHp() >> 3, 1);  // Damage logic for Poison otherwise
+            }
             break;
           case StatusEffect.BURN:
-            damage = Math.max(pokemon.getMaxHp() >> 4, 1);
+            netEffect = Math.max(pokemon.getMaxHp() >> 4, 1);  // Burn always causes damage
             break;
         }
-        if (damage) {
-          this.scene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage));
+
+        if (netEffect > 0) {
+          if (isHealing) {
+            this.scene.damageNumberHandler.add(pokemon, pokemon.heal(netEffect), HitResult.HEAL);
+          } else {
+            this.scene.damageNumberHandler.add(pokemon, pokemon.damage(netEffect));
+          }
+
+          const animType = CommonAnim.POISON + (pokemon.status.effect - 1);
+          new CommonBattleAnim(animType, pokemon).play(this.scene, () => this.end());
           pokemon.updateInfo();
+        } else {
+          this.end();  // End the phase if no net effect to apply
         }
-        new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(this.scene, () => this.end());
-      } else
-        this.end();
-    } else
+      }
+    } else {
       this.end();
+    }
   }
 }
 

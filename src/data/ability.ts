@@ -2716,9 +2716,8 @@ export function initAbilities() {
       .attr(DownloadAbAttr),
     new Ability(Abilities.IRON_FIST, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PUNCHING_MOVE), 1.2),
-    new Ability(Abilities.POISON_HEAL, 4)
-      .unimplemented(),
-    new Ability(Abilities.ADAPTABILITY, 4)
+    new Ability(Abilities.POISON_HEAL, "Poison Heal (P)", "Restores HP if the Pokémon is poisoned instead of losing HP.", 4),
+    new Ability(Abilities.ADAPTABILITY, "Adaptability", "Powers up moves of the same type as the Pokémon.", 4)
       .attr(StabBoostAbAttr),
     new Ability(Abilities.SKILL_LINK, 4)
       .attr(MaxMultiHitAbAttr),
