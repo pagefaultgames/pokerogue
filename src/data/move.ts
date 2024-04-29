@@ -3606,12 +3606,27 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
 }
 
 export class ReducePpMoveAttr extends MoveEffectAttr {
+
+  private ppDrain;
+  private failOverride;
+
+  constructor(ppDrain: number = 4, failOverride: boolean = false ) {
+    super(true);
+    this.ppDrain = ppDrain;
+    this.failOverride = failOverride;
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // Null checks can be skipped due to condition function
     const lastMove = target.getLastXMoves().find(() => true);
+    if(lastMove === undefined)
+      return false;
     const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
     const lastPpUsed = movesetMove.ppUsed;
-    movesetMove.ppUsed = Math.min(movesetMove.ppUsed + 4, movesetMove.getMovePp());
+    movesetMove.ppUsed = Math.min(movesetMove.ppUsed + this.ppDrain, movesetMove.getMovePp());
+    if(movesetMove.ppUsed < 0)
+      movesetMove.ppUsed = 0;
+
     user.scene.queueMessage(`It reduced the PP of ${getPokemonMessage(target, `'s\n${movesetMove.getName()} by ${movesetMove.ppUsed - lastPpUsed}!`)}`);
 
     return true;
@@ -3619,6 +3634,8 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
+      if(this.failOverride)
+        return true; // prevents move failing if no pp would be reduced
       const lastMove = target.getLastXMoves().find(() => true);
       if (lastMove) {
         const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
@@ -6258,8 +6275,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new StatusMove(Moves.JUNGLE_HEALING, Type.GRASS, -1, 10, -1, 0, 8)
       .attr(HealAttr, 0.25, true, false)
-      .target(MoveTarget.USER_AND_ALLIES)
-      .partial(),
+      .attr(HealStatusEffectAttr, false, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.FREEZE, StatusEffect.SLEEP)
+      .target(MoveTarget.USER_AND_ALLIES),
     new AttackMove(Moves.WICKED_BLOW, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
       .attr(CritOnlyAttr)
       .punchingMove(),
@@ -6284,8 +6301,8 @@ export function initMoves() {
     new AttackMove(Moves.ASTRAL_BARRAGE, Type.GHOST, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.EERIE_SPELL, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 5, 100, 0, 8)
-      .soundBased()
-      .partial(),
+      .attr(ReducePpMoveAttr, 3, true)
+      .soundBased(),
     new AttackMove(Moves.DIRE_CLAW, Type.POISON, MoveCategory.PHYSICAL, 80, 100, 15, 50, 0, 8)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
