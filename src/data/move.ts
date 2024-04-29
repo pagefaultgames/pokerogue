@@ -1085,6 +1085,38 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
   }
 }
 
+export class RemoveHeldBerryAttr extends MoveEffectAttr {
+  constructor() {
+    super(false, MoveEffectTrigger.HIT);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      const heldBerries = this.getTargetHeldBerries(target).filter(b => b.getTransferrable(false))
+
+      if (!heldBerries.length) {
+        return resolve(false);
+      }
+
+      const removedBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+      const couldRemoveBerry = target.scene.removeModifier(removedBerry, true);
+
+      if (!couldRemoveBerry) {
+        return resolve(false);
+      }
+
+      target.scene.updateModifiers(target.isPlayer(), false)
+      user.scene.queueMessage(getPokemonMessage(user, ` burned\n${target.name}'s ${getBerryName(removedBerry.berryType)}!`));
+      resolve(true);
+    });
+  }
+
+  getTargetHeldBerries(target: Pokemon): BerryModifier[] {
+    return target.scene.findModifiers(m => m instanceof BerryModifier
+      && (m as BerryModifier).pokemonId === target.id, target.isPlayer()) as BerryModifier[];
+  }
+}
+
 export class RemoveHeldItemAttr extends MoveEffectAttr {
   private chance: number;
 
@@ -5118,7 +5150,7 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr),
     new AttackMove(Moves.INCINERATE, Type.FIRE, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .partial(),
+      .attr(RemoveHeldBerryAttr),
     new StatusMove(Moves.QUASH, Type.DARK, 100, 15, -1, 0, 5)
       .unimplemented(),
     new AttackMove(Moves.ACROBATICS, Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)
