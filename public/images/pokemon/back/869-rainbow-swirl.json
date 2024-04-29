@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "869-rainbow-swirl.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 55,
+				"h": 55
+			},
+			"scale": 0.333,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 30,
+						"y": 20,
+						"w": 36,
+						"h": 55
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 36,
+						"h": 55
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:3be6ab13976cde5a336b4186625bf386:e472d87a989050125ac960a9e53d8c77:5efb62c1b2c8ccb825172755b6a5956b$"
+	}
+}

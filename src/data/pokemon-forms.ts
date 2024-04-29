@@ -62,6 +62,9 @@ export enum FormChangeItem {
 
   BLUE_ORB = 50,
   RED_ORB,
+  SHARP_METEORITE,
+  HARD_METEORITE,
+  SMOOTH_METEORITE,
   ADAMANT_CRYSTAL,
   LUSTROUS_ORB,
   GRISEOUS_CORE,
@@ -472,6 +475,11 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.RAYQUAZA]: [
     new SpeciesFormChange(Species.RAYQUAZA, '', SpeciesFormKey.MEGA, new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.RAYQUAZITE), new SpeciesFormChangeMoveLearnedTrigger(Moves.DRAGON_ASCENT)))
   ],
+  [Species.DEOXYS]: [
+    new SpeciesFormChange(Species.DEOXYS, 'normal', 'attack', new SpeciesFormChangeItemTrigger(FormChangeItem.SHARP_METEORITE)),
+    new SpeciesFormChange(Species.DEOXYS, 'normal', 'defense', new SpeciesFormChangeItemTrigger(FormChangeItem.HARD_METEORITE)),
+    new SpeciesFormChange(Species.DEOXYS, 'normal', 'speed', new SpeciesFormChangeItemTrigger(FormChangeItem.SMOOTH_METEORITE))
+  ],
   [Species.LOPUNNY]: [
     new SpeciesFormChange(Species.LOPUNNY, '', SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.LOPUNNITE))
   ],
@@ -535,8 +543,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.MELOETTA, 'pirouette', 'aria', new SpeciesFormChangeActiveTrigger(false), true)
   ],
   [Species.AEGISLASH]: [
-    new SpeciesFormChange(Species.AEGISLASH, 'blade', 'shield', new SpeciesFormChangePreMoveTrigger(Moves.KINGS_SHIELD), true, new SpeciesFormChangeCondition(p => p.getAbility().id === Abilities.STANCE_CHANGE)),
-    new SpeciesFormChange(Species.AEGISLASH, 'shield', 'blade', new SpeciesFormChangePreMoveTrigger(m => allMoves[m].category !== MoveCategory.STATUS), true, new SpeciesFormChangeCondition(p => p.getAbility().id === Abilities.STANCE_CHANGE)),
+    new SpeciesFormChange(Species.AEGISLASH, 'blade', 'shield', new SpeciesFormChangePreMoveTrigger(Moves.KINGS_SHIELD), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
+    new SpeciesFormChange(Species.AEGISLASH, 'shield', 'blade', new SpeciesFormChangePreMoveTrigger(m => allMoves[m].category !== MoveCategory.STATUS), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
     new SpeciesFormChange(Species.AEGISLASH, 'blade', 'shield', new SpeciesFormChangeActiveTrigger(false), true)
   ],
   [Species.DIANCIE]: [
@@ -548,6 +556,26 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.WISHIWASHI]: [
     new SpeciesFormChange(Species.WISHIWASHI, '', 'school', new SpeciesFormChangeManualTrigger(), true),
     new SpeciesFormChange(Species.WISHIWASHI, 'school', '', new SpeciesFormChangeManualTrigger(), true)
+  ],
+  [Species.MINIOR]: [
+    new SpeciesFormChange(Species.MINIOR, 'red-meteor', 'red', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'red', 'red-meteor', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'orange-meteor', 'orange', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'orange', 'orange-meteor', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'yellow-meteor', 'yellow', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'yellow', 'yellow-meteor', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'green-meteor', 'green', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'green', 'green-meteor', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'blue-meteor', 'blue', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'blue', 'blue-meteor', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'indigo-meteor', 'indigo', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'indigo', 'indigo-meteor', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'violet-meteor', 'violet', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MINIOR, 'violet', 'violet-meteor', new SpeciesFormChangeManualTrigger(), true)
+  ],
+  [Species.MIMIKYU]: [
+    new SpeciesFormChange(Species.MIMIKYU, 'disguised', 'busted', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.MIMIKYU, 'busted', 'disguised', new SpeciesFormChangeManualTrigger(), true)
   ],
   [Species.NECROZMA]: [
     new SpeciesFormChange(Species.NECROZMA, '', 'dawn-wings', new SpeciesFormChangeItemTrigger(FormChangeItem.N_LUNARIZER)),
@@ -602,7 +630,15 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.GRIMMSNARL, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.ALCREMIE]: [
-    new SpeciesFormChange(Species.ALCREMIE, 'vanilla-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(Species.ALCREMIE, 'vanilla-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'ruby-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'matcha-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'mint-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'lemon-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'salted-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'ruby-swirl', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'caramel-swirl', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'rainbow-swirl', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.MORPEKO]: [
     new SpeciesFormChange(Species.MORPEKO, 'full-belly', 'hangry', new SpeciesFormChangeManualTrigger(), true),

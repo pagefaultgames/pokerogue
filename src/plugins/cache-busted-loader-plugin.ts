@@ -1,24 +1,29 @@
-let cacheBuster = '';
+let manifest: object;
 
 export default class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin {
     constructor(scene: Phaser.Scene) {
         super(scene)
     }
 
-    get cacheBuster() {
-        return cacheBuster
+    get manifest() {
+        return manifest;
     }
 
-    set cacheBuster(version) {
-        cacheBuster = version
+    set manifest(manifestObj: object) {
+        manifest = manifestObj;
     }
 
     addFile(file): void {
         if (!Array.isArray(file))
-            file = [ file ]
-
-        if (cacheBuster)
-            file.forEach(item => item.url += '?v=' + cacheBuster);
+            file = [ file ];
+    
+        file.forEach(item => {
+            if (manifest) {
+                const timestamp = manifest[`/${item.url.replace(/\/\//g, '/')}` ];
+                if (timestamp)
+                    item.url += `?t=${timestamp}`;
+            }
+        });
 
         super.addFile(file);
     }

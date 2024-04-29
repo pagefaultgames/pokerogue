@@ -16,6 +16,7 @@ import { getBiomeName } from "../data/biomes";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
 import { PlayerGender } from "../system/game-data";
+import { Variant, getVariantTint } from "#app/data/variant";
 
 enum Page {
   PROFILE,
@@ -41,7 +42,8 @@ export default class SummaryUiHandler extends UiHandler {
   private pokeball: Phaser.GameObjects.Sprite;
   private levelText: Phaser.GameObjects.Text;
   private genderText: Phaser.GameObjects.Text;
-  private shinyStar: Phaser.GameObjects.Image;
+  private shinyIcon: Phaser.GameObjects.Image;
+  private fusionShinyIcon: Phaser.GameObjects.Image;
   private statusContainer: Phaser.GameObjects.Container;
   private status: Phaser.GameObjects.Image;
   private summaryPageContainer: Phaser.GameObjects.Container;
@@ -116,6 +118,19 @@ export default class SummaryUiHandler extends UiHandler {
     this.splicedIcon.setScale(0.75);
     this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.splicedIcon);
+    
+    this.shinyIcon = this.scene.add.image(0, -54, 'shiny_star');
+    this.shinyIcon.setVisible(false);
+    this.shinyIcon.setOrigin(0, 0);
+    this.shinyIcon.setScale(0.75);
+    this.shinyIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
+    this.summaryContainer.add(this.shinyIcon);
+
+    this.fusionShinyIcon = this.scene.add.image(0, 0, 'shiny_star_2');
+    this.fusionShinyIcon.setVisible(false);
+    this.fusionShinyIcon.setOrigin(0, 0);
+    this.fusionShinyIcon.setScale(0.75)
+    this.summaryContainer.add(this.fusionShinyIcon);
 
     this.pokeball = this.scene.add.sprite(6, -19, 'pb');
     this.pokeball.setOrigin(0, 1);
@@ -128,11 +143,6 @@ export default class SummaryUiHandler extends UiHandler {
     this.genderText = addTextObject(this.scene, 96, -17, '', TextStyle.SUMMARY);
     this.genderText.setOrigin(0, 1);
     this.summaryContainer.add(this.genderText);
-
-    this.shinyStar = this.scene.add.image(96, -19, 'shiny_star');
-    this.shinyStar.setOrigin(0, 1);
-    this.shinyStar.setVisible(false);
-    this.summaryContainer.add(this.shinyStar);
 
     this.statusContainer = this.scene.add.container(-106, -16);
 
@@ -217,8 +227,11 @@ export default class SummaryUiHandler extends UiHandler {
     this.numberText.setShadowColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
 
     this.pokemonSprite.play(this.pokemon.getSpriteKey(true));
-    this.pokemonSprite.pipelineData['teraColor'] = getTypeRgb(this.pokemon.getTeraType());
-    this.pokemonSprite.pipelineData['ignoreTimeTint'] = true;
+    this.pokemonSprite.setPipelineData('teraColor', getTypeRgb(this.pokemon.getTeraType()));
+    this.pokemonSprite.setPipelineData('ignoreTimeTint', true);
+    this.pokemonSprite.setPipelineData('spriteKey', this.pokemon.getSpriteKey());
+    this.pokemonSprite.setPipelineData('shiny', this.pokemon.shiny);
+    this.pokemonSprite.setPipelineData('variant', this.pokemon.variant);
     [ 'spriteColors', 'fusionSpriteColors' ].map(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon.summonData?.speciesForm)
@@ -229,21 +242,40 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.nameText.setText(this.pokemon.name);
 
+    const isFusion = this.pokemon.isFusion();
+
     this.splicedIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + 2, 3);
-    this.splicedIcon.setVisible(!!this.pokemon.fusionSpecies);
+    this.splicedIcon.setVisible(isFusion);
     if (this.splicedIcon.visible) {
       this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${this.pokemon.species.getName(this.pokemon.formIndex)}/${this.pokemon.fusionSpecies.getName(this.pokemon.fusionFormIndex)}`, true));
       this.splicedIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
     }
+
+    const doubleShiny = isFusion && this.pokemon.shiny && this.pokemon.fusionShiny;
+    const baseVariant = !doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant;
+    
+    this.shinyIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0) + 1, 3);
+    this.shinyIcon.setTexture(`shiny_star${doubleShiny ? '_1' : ''}`);
+    this.shinyIcon.setVisible(this.pokemon.isShiny());
+    this.shinyIcon.setTint(getVariantTint(baseVariant));
+    if (this.shinyIcon.visible) {
+      const shinyDescriptor = doubleShiny || baseVariant ?
+        `${baseVariant === 2 ? 'Epic' : baseVariant === 1 ? 'Rare' : 'Common'}${doubleShiny ? `/${this.pokemon.fusionVariant === 2 ? 'Epic' : this.pokemon.fusionVariant === 1 ? 'Rare' : 'Common'}` : ''}`
+        : '';
+      this.shinyIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `Shiny${shinyDescriptor ? ` (${shinyDescriptor})` : ''}`, true));
+      this.shinyIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
+    }
+
+    this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
+    this.fusionShinyIcon.setVisible(doubleShiny);
+    if (isFusion)
+      this.fusionShinyIcon.setTint(getVariantTint(this.pokemon.fusionVariant));
 
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
     this.levelText.setText(this.pokemon.level.toString());
     this.genderText.setText(getGenderSymbol(this.pokemon.getGender(true)));
     this.genderText.setColor(getGenderColor(this.pokemon.getGender(true)));
     this.genderText.setShadowColor(getGenderColor(this.pokemon.getGender(true), true));
-
-    this.shinyStar.setX(96 - (this.genderText.text ? 10 : 0));
-    this.shinyStar.setVisible(this.pokemon.isShiny());
 
     switch (this.summaryUiMode) {
       case SummaryUiMode.DEFAULT:
@@ -329,6 +361,12 @@ export default class SummaryUiHandler extends UiHandler {
           case Button.DOWN:
             success = this.setCursor(this.moveCursor < 4 ? this.moveCursor + 1 : 0);
             break;
+          case Button.LEFT:
+            this.moveSelect = false;
+            this.setCursor(Page.STATS);        
+            this.hideMoveEffect();
+            success = true;
+            break;
         }
       }
     } else {
@@ -338,13 +376,18 @@ export default class SummaryUiHandler extends UiHandler {
           success = true;
         }
       } else if (button === Button.CANCEL) {
-        ui.setMode(Mode.PARTY);
+        if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
+          this.hideMoveSelect();
+        else
+          ui.setMode(Mode.PARTY);
         success = true;
       } else {
         const pages = Utils.getEnumValues(Page);
         switch (button) {
           case Button.UP:
           case Button.DOWN:
+            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
+              break;
             const isDown = button === Button.DOWN;
             const party = this.scene.getParty();
             const partyMemberIndex = party.indexOf(this.pokemon);
@@ -355,10 +398,18 @@ export default class SummaryUiHandler extends UiHandler {
             }
             break;
           case Button.LEFT:
+            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
+              break;
             if (this.cursor)
               success = this.setCursor(this.cursor - 1);
             break;
           case Button.RIGHT:
+            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
+              this.setCursor(Page.MOVES); 
+              this.moveSelect = true;
+              success = true;
+              break;
+            }
             if (this.cursor < pages.length - 1)
               success = this.setCursor(this.cursor + 1);
             break;
@@ -374,11 +425,11 @@ export default class SummaryUiHandler extends UiHandler {
     return success || error;
   }
 
-  setCursor(cursor: integer): boolean {
+  setCursor(cursor: integer, overrideChanged: boolean = false): boolean {
     let changed: boolean;
     
     if (this.moveSelect) {
-      changed = this.moveCursor !== cursor;
+      changed = overrideChanged || this.moveCursor !== cursor;
       if (changed) {
         this.moveCursor = cursor;
 
@@ -436,7 +487,6 @@ export default class SummaryUiHandler extends UiHandler {
           });
         }
       });
-
       if (this.selectedMoveIndex > -1) {
         if (!this.selectedMoveCursorObj) {
           this.selectedMoveCursorObj = this.scene.add.sprite(-2, 0, 'summary_moves_cursor', 'select');
@@ -469,8 +519,15 @@ export default class SummaryUiHandler extends UiHandler {
             x: forward ? '-=214' : '+=214',
             duration: 250,
             onComplete: () => {
-              if (forward)
-                this.populatePageContainer(this.summaryPageContainer);
+              if (forward){
+                this.populatePageContainer(this.summaryPageContainer); 
+                if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
+                  this.moveCursorObj = null; 
+                  this.extraMoveRowContainer.setVisible(true);
+                  this.setCursor(0, true);
+                  this.showMoveEffect();
+                }
+              }
               else
                 this.summaryPageTransitionContainer.x -= 214;
               this.summaryPageTransitionContainer.setVisible(false);
@@ -549,6 +606,17 @@ export default class SummaryUiHandler extends UiHandler {
           profileContainer.add(getTypeIcon(1, types[1]));
         if (this.pokemon.isTerastallized())
           profileContainer.add(getTypeIcon(types.length, this.pokemon.getTeraType(), true));
+
+        if (this.pokemon.getLuck()) {
+          const luckLabelText = addTextObject(this.scene, 141, 28, 'Luck:', TextStyle.SUMMARY_ALT);
+          luckLabelText.setOrigin(0, 0);
+          profileContainer.add(luckLabelText);
+          
+          const luckText = addTextObject(this.scene, 141 + luckLabelText.displayWidth + 2, 28, this.pokemon.getLuck().toString(), TextStyle.SUMMARY);
+          luckText.setOrigin(0, 0);
+          luckText.setTint(getVariantTint((Math.min(this.pokemon.getLuck() - 1, 2)) as Variant));
+          profileContainer.add(luckText);
+        }
 
         const ability = this.pokemon.getAbility(true);
 
@@ -686,6 +754,7 @@ export default class SummaryUiHandler extends UiHandler {
         this.extraMoveRowContainer.add(extraRowText);
 
         if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
+          this.extraMoveRowContainer.setVisible(true);
           const newMoveTypeIcon = this.scene.add.sprite(0, 0, 'types', Type[this.newMove.type].toLowerCase());
           newMoveTypeIcon.setOrigin(0, 1);
           this.extraMoveRowContainer.add(newMoveTypeIcon);

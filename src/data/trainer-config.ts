@@ -697,9 +697,9 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.GIOVANNI]: new TrainerConfig(++t).initForGymLeader([ Species.SANDILE, Species.MURKROW, Species.NIDORAN_M, Species.NIDORAN_F ], Type.DARK).setBattleBgm('battle_kanto_gym'),
   [TrainerType.FALKNER]: new TrainerConfig(++t).initForGymLeader([ Species.PIDGEY, Species.HOOTHOOT, Species.DODUO ], Type.FLYING).setBattleBgm('battle_johto_gym'),
   [TrainerType.BUGSY]: new TrainerConfig(++t).initForGymLeader([ Species.SCYTHER, Species.HERACROSS, Species.SHUCKLE, Species.PINSIR ], Type.BUG).setBattleBgm('battle_johto_gym'),
-  [TrainerType.WHITNEY]: new TrainerConfig(++t).initForGymLeader([ Species.CLEFAIRY, Species.MILTANK ], Type.NORMAL).setBattleBgm('battle_johto_gym'),
+  [TrainerType.WHITNEY]: new TrainerConfig(++t).initForGymLeader([ Species.GIRAFARIG, Species.MILTANK ], Type.NORMAL).setBattleBgm('battle_johto_gym'),
   [TrainerType.MORTY]: new TrainerConfig(++t).initForGymLeader([ Species.GASTLY, Species.MISDREAVUS, Species.SABLEYE ], Type.GHOST).setBattleBgm('battle_johto_gym'),
-  [TrainerType.CHUCK]: new TrainerConfig(++t).initForGymLeader([ Species.POLIWRATH, ], Type.FIGHTING).setBattleBgm('battle_johto_gym'),
+  [TrainerType.CHUCK]: new TrainerConfig(++t).initForGymLeader([ Species.POLIWRATH, Species.MANKEY ], Type.FIGHTING).setBattleBgm('battle_johto_gym'),
   [TrainerType.JASMINE]: new TrainerConfig(++t).initForGymLeader([ Species.MAGNEMITE, Species.STEELIX ], Type.STEEL).setBattleBgm('battle_johto_gym'),
   [TrainerType.PRYCE]: new TrainerConfig(++t).initForGymLeader([ Species.SEEL, Species.SWINUB ], Type.ICE).setBattleBgm('battle_johto_gym'),
   [TrainerType.CLAIR]: new TrainerConfig(++t).initForGymLeader([ Species.DRATINI, Species.HORSEA, Species.GYARADOS ], Type.DRAGON).setBattleBgm('battle_johto_gym'),
@@ -846,6 +846,8 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RAYQUAZA ], TrainerSlot.TRAINER, true, p => {
       p.setBoss(true, 3);
       p.pokeball = PokeballType.MASTER_BALL;
+      p.shiny = true;
+      p.variant = 1;
     }))
     .setGenModifiersFunc(party => {
       const starter = party[0];
@@ -862,6 +864,8 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([ Species.RAYQUAZA ], TrainerSlot.TRAINER, true, p => {
       p.setBoss();
       p.pokeball = PokeballType.MASTER_BALL;
+      p.shiny = true;
+      p.variant = 1;
       p.formIndex = 1;
     }))
     .setGenModifiersFunc(party => {

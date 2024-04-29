@@ -3,22 +3,26 @@ import { Biome } from "./data/enums/biome";
 import { TrainerType } from "./data/enums/trainer-type";
 import { trainerConfigs } from "./data/trainer-config";
 import { getBiomeHasProps } from "./field/arena";
+import CacheBustedLoaderPlugin from "./plugins/cache-busted-loader-plugin";
 import { SceneBase } from "./scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "./ui/ui-theme";
+import { isMobile } from "./touch-controls";
 import * as Utils from "./utils";
+import { initI18n } from "./plugins/i18n";
 
 export class LoadingScene extends SceneBase {
   constructor() {
     super('loading');
+
+    Phaser.Plugins.PluginCache.register('Loader', CacheBustedLoaderPlugin, 'load');
+    initI18n();
   }
 
   preload() {
-    const indexFile = Array.from(document.querySelectorAll('script')).map(s => s.src).find(s => /\/index/.test(s));
-    if (indexFile) {
-      const buildIdMatch = /index\-(.*?)\.js$/.exec(indexFile);
-      if (buildIdMatch)
-        this.load['cacheBuster'] = buildIdMatch[1];
-    }
+    this.load['manifest'] = this.game['manifest'];
+
+    if (!isMobile())
+      this.load.video('intro_dark', 'images/intro_dark.mp4', true);
 
     this.loadImage('loading_bg', 'arenas');
     this.loadImage('logo', '');
@@ -58,6 +62,12 @@ export class LoadingScene extends SceneBase {
     this.loadImage('achv_bar_3', 'ui');
     this.loadImage('achv_bar_4', 'ui');
     this.loadImage('shiny_star', 'ui', 'shiny.png');
+    this.loadImage('shiny_star_1', 'ui', 'shiny_1.png');
+    this.loadImage('shiny_star_2', 'ui', 'shiny_2.png');
+    this.loadImage('shiny_star_small', 'ui', 'shiny_small.png');
+    this.loadImage('shiny_star_small_1', 'ui', 'shiny_small_1.png');
+    this.loadImage('shiny_star_small_2', 'ui', 'shiny_small_2.png');
+    this.loadImage('ha_capsule', 'ui', 'ha_capsule.png');
     this.loadImage('icon_spliced', 'ui');
     this.loadImage('icon_tera', 'ui');
     this.loadImage('type_tera', 'ui');
@@ -154,6 +164,8 @@ export class LoadingScene extends SceneBase {
     this.loadImage(`pkmn__sub`, 'pokemon', 'sub.png');
     this.loadAtlas('battle_stats', 'effects');
     this.loadAtlas('shiny', 'effects');
+    this.loadAtlas('shiny_2', 'effects');
+    this.loadAtlas('shiny_3', 'effects');
     this.loadImage('tera', 'effects');
     this.loadAtlas('pb_particles', 'effects');
     this.loadImage('evo_sparkle', 'effects');
@@ -183,8 +195,11 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage('egg_list_bg', 'ui');
 
-    for (let i = 0; i < 10; i++)
+    for (let i = 0; i < 10; i++) {
       this.loadAtlas(`pokemon_icons_${i}`, '');
+      if (i)
+        this.loadAtlas(`pokemon_icons_${i}v`, '');
+    }
 
     this.loadSe('select');
     this.loadSe('menu_open');
@@ -246,6 +261,10 @@ export class LoadingScene extends SceneBase {
   }
 
   loadLoadingScreen() {
+    const mobile = isMobile();
+
+    const loadingGraphics: any[] = [];
+
     const bg = this.add.image(0, 0, '');
     bg.setOrigin(0, 0);
     bg.setScale(6);
@@ -290,6 +309,10 @@ export class LoadingScene extends SceneBase {
     });
     assetText.setOrigin(0.5, 0.5);
 
+    const intro = this.add.video(0, 0);
+    intro.setOrigin(0, 0);
+    intro.setScale(3);
+
     this.load.on("progress", (value: string) => {
       const parsedValue = parseFloat(value);
       percentText.setText(`${Math.floor(parsedValue * 100)}%`);
@@ -301,28 +324,51 @@ export class LoadingScene extends SceneBase {
     this.load.on("fileprogress", file => {
       assetText.setText(`Loading asset: ${file.key}`);
     });
+    
+    loadingGraphics.push(bg, graphics, progressBar, progressBox, logo, percentText, assetText);
 
-    this.load.on('filecomplete', key => {
-      switch (key) {
-        case 'loading_bg':
-          bg.setVisible(true);
-          bg.setTexture('loading_bg');
-          break;
-        case 'logo':
-          logo.setVisible(true);
-          logo.setTexture('logo');
-          break;
-      }
-    });
+    if (!mobile)
+      loadingGraphics.map(g => g.setVisible(false));
 
-    this.load.on("complete", () => {
+    const destroyLoadingAssets = () => {
+      intro.destroy();
       bg.destroy();
       logo.destroy();
       progressBar.destroy();
       progressBox.destroy();
       percentText.destroy();
       assetText.destroy();
+    };
+
+    this.load.on('filecomplete', key => {
+      switch (key) {
+        case 'intro_dark':
+          intro.load('intro_dark');
+          intro.on('complete', () => {
+            this.tweens.add({
+              targets: intro,
+              duration: 500,
+              alpha: 0,
+              ease: 'Sine.easeIn'
+            });
+            loadingGraphics.map(g => g.setVisible(true));
+          });
+          intro.play();
+          break;
+        case 'loading_bg':
+          bg.setTexture('loading_bg');
+          if (mobile)
+            bg.setVisible(true);
+          break;
+        case 'logo':
+          logo.setTexture('logo');
+          if (mobile)
+            logo.setVisible(true);
+          break;
+      }
     });
+
+    this.load.on("complete", () => destroyLoadingAssets());
   }
 
   get gameHeight() {

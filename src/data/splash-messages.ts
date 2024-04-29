@@ -15,6 +15,7 @@ splashMessages.push(...[
   'Now with 33% More Salt!',
   'Infinite Fusion at Home!',
   'Broken Egg Moves!',
+  'Magnificent!',
   'Mubstitute!',
   'That\'s Crazy!',
   'Orance Juice!',
@@ -32,5 +33,6 @@ splashMessages.push(...[
   'Also Try Emerald Rogue!',
   'Also Try Radical Red!',
   'Eevee Expo!',
-  'YNOproject!'
+  'YNOproject!',
+  'Shh, don\'t tell Sam!'
 ]);

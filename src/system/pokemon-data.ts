@@ -10,6 +10,7 @@ import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "../data/trainer-config";
 import { Moves } from "../data/enums/moves";
+import { Variant } from "#app/data/variant";
 
 export default class PokemonData {
   public id: integer;
@@ -17,7 +18,9 @@ export default class PokemonData {
   public species: Species;
   public formIndex: integer;
   public abilityIndex: integer;
+  public passive: boolean;
   public shiny: boolean;
+  public variant: Variant;
   public pokeball: PokeballType;
   public level: integer;
   public exp: integer;
@@ -33,6 +36,7 @@ export default class PokemonData {
   public friendship: integer;
   public metLevel: integer;
   public metBiome: Biome | -1;
+  public luck: integer;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
 
@@ -40,7 +44,9 @@ export default class PokemonData {
   public fusionFormIndex: integer;
   public fusionAbilityIndex: integer;
   public fusionShiny: boolean;
+  public fusionVariant: Variant;
   public fusionGender: Gender;
+  public fusionLuck: integer;
 
   public boss: boolean;
 
@@ -53,7 +59,9 @@ export default class PokemonData {
     this.species = sourcePokemon ? sourcePokemon.species.speciesId : source.species;
     this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
     this.abilityIndex = source.abilityIndex;
+    this.passive = source.passive;
     this.shiny = source.shiny;
+    this.variant = source.variant;
     this.pokeball = source.pokeball;
     this.level = source.level;
     this.exp = source.exp;
@@ -69,6 +77,7 @@ export default class PokemonData {
     this.friendship = source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
+    this.luck = source.luck !== undefined ? source.luck : (source.shiny ? (source.variant + 1) : 0);
     if (!forHistory)
       this.pauseEvolutions = !!source.pauseEvolutions;
     this.pokerus = !!source.pokerus;
@@ -77,7 +86,9 @@ export default class PokemonData {
     this.fusionFormIndex = source.fusionFormIndex;
     this.fusionAbilityIndex = source.fusionAbilityIndex;
     this.fusionShiny = source.fusionShiny;
+    this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
+    this.fusionLuck = source.fusionLuck !== undefined ? source.fusionLuck : (source.fusionShiny ? source.fusionVariant + 1 : 0);
 
     if (!forHistory)
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
@@ -111,7 +122,7 @@ export default class PokemonData {
   toPokemon(scene: BattleScene, battleType?: BattleType, partyMemberIndex: integer = 0, double: boolean = false): Pokemon {
     const species = getPokemonSpecies(this.species);
     const ret: Pokemon = this.player
-      ? scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.ivs, this.nature, this)
+      ? scene.addPlayerPokemon(species, this.level, this.abilityIndex, this.formIndex, this.gender, this.shiny, this.variant, this.ivs, this.nature, this)
       : scene.addEnemyPokemon(species, this.level, battleType === BattleType.TRAINER ? !double || !(partyMemberIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER : TrainerSlot.NONE, this.boss, this);
     if (this.summonData)
       ret.primeSummonData(this.summonData);

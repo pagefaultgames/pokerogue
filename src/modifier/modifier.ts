@@ -874,14 +874,6 @@ export class BerryModifier extends PokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
 
-    const cancelled = new Utils.BooleanHolder(false);
-    pokemon.getOpponents().map(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
-
-    if (cancelled.value) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is too\nnervous to eat berries!'));
-      return false;
-    }
-
     const preserve = new Utils.BooleanHolder(false);
     pokemon.scene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
 
@@ -1001,9 +993,11 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
       if (this.fainted || this.healStatus)
         pokemon.resetStatus();
       pokemon.hp = Math.min(pokemon.hp + Math.max(Math.ceil(Math.max(Math.floor((this.restorePercent * 0.01) * pokemon.getMaxHp()), restorePoints)), 1), pokemon.getMaxHp());
+      
+      return true;
     }
 
-    return true;
+    return false;
   }
 }
 
@@ -1436,6 +1430,46 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier {
+  private accuracyAmount: integer;
+
+  constructor(type: ModifierTypes.PokemonMoveAccuracyBoosterModifierType, pokemonId: integer, accuracy: integer, stackCount?: integer) {
+    super(type, pokemonId, stackCount);
+    this.accuracyAmount = accuracy;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    if (modifier instanceof PokemonMoveAccuracyBoosterModifier) {
+      const pokemonAccuracyBoosterModifier = modifier as PokemonMoveAccuracyBoosterModifier;
+      return pokemonAccuracyBoosterModifier.accuracyAmount === this.accuracyAmount;
+    }
+    return false;
+  }
+
+  clone(): PersistentModifier {
+    return new PokemonMoveAccuracyBoosterModifier(this.type as ModifierTypes.PokemonMoveAccuracyBoosterModifierType, this.pokemonId, this.accuracyAmount, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat(this.accuracyAmount);
+  }
+
+  shouldApply(args: any[]): boolean {
+    return super.shouldApply(args) && args.length === 2 && args[1] instanceof Utils.NumberHolder;
+  }
+
+  apply(args: any[]): boolean {
+    const moveAccuracy = (args[1] as Utils.IntegerHolder);
+    moveAccuracy.value = Math.min(moveAccuracy.value + this.accuracyAmount * this.getStackCount(), 100);
+
+    return true;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): integer {
+    return 3;
+  }
+}
+
 export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
   constructor(type: ModifierTypes.PokemonMultiHitModifierType, pokemonId: integer, stackCount?: integer) {
     super(type, pokemonId, stackCount);
@@ -1536,9 +1570,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
     
-    scene.money += moneyAmount.value;
-    scene.updateMoneyText();
-    scene.validateAchvs(MoneyAchv);
+    scene.addMoney(moneyAmount.value);
 
     return true;
   }
@@ -1585,9 +1617,7 @@ export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
     const scene = (args[0] as Pokemon).scene;
     const moneyAmount = new Utils.IntegerHolder(Math.floor((args[1] as Utils.IntegerHolder).value * (0.5 * this.getStackCount())));
     scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
-    scene.money += moneyAmount.value;
-    scene.updateMoneyText();
-    scene.validateAchvs(MoneyAchv);
+    scene.addMoney(moneyAmount.value);
 
     return true;
   }
@@ -1609,9 +1639,7 @@ export class MoneyInterestModifier extends PersistentModifier {
   apply(args: any[]): boolean {
     const scene = args[0] as BattleScene;
     const interestAmount = Math.floor(scene.money * 0.1 * this.getStackCount());
-    scene.money += interestAmount;
-    scene.updateMoneyText();
-    scene.validateAchvs(MoneyAchv);
+    scene.addMoney(interestAmount);
 
     scene.queueMessage(`You received interest of ₽${interestAmount.toLocaleString('en-US')}\nfrom the ${this.type.name}!`, null, true);
 
@@ -1921,7 +1949,7 @@ abstract class EnemyDamageMultiplierModifier extends EnemyPersistentModifier {
 export class EnemyDamageBoosterModifier extends EnemyDamageMultiplierModifier {
   constructor(type: ModifierType, boostPercent: number, stackCount?: integer) {
     //super(type, 1 + ((boostPercent || 10) * 0.01), stackCount);
-    super(type, 1.1, stackCount); // Hardcode multiplier temporarily
+    super(type, 1.05, stackCount); // Hardcode multiplier temporarily
   }
 
   match(modifier: Modifier): boolean {
@@ -1944,7 +1972,7 @@ export class EnemyDamageBoosterModifier extends EnemyDamageMultiplierModifier {
 export class EnemyDamageReducerModifier extends EnemyDamageMultiplierModifier {
   constructor(type: ModifierType, reductionPercent: number, stackCount?: integer) {
     //super(type, 1 - ((reductionPercent || 5) * 0.01), stackCount);
-    super(type, 0.95, stackCount); // Hardcode multiplier temporarily
+    super(type, 0.975, stackCount); // Hardcode multiplier temporarily
   }
 
   match(modifier: Modifier): boolean {
@@ -2076,7 +2104,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
   constructor(type: ModifierType, chancePercent: number, stackCount?: integer) {
     super(type, stackCount);
 
-    this.chance = (chancePercent || 5) / 100;
+    this.chance = (chancePercent || 2.5) / 100;
   }
 
   match(modifier: Modifier) {

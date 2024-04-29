@@ -233,25 +233,31 @@ export function getCookie(cName: string): string {
   return '';
 }
 
-export function apiFetch(path: string): Promise<Response> {
+export function apiFetch(path: string, authed: boolean = false): Promise<Response> {
   return new Promise((resolve, reject) => {
-    const sId = getCookie(sessionIdKey);
-    const headers = sId ? { 'Authorization': sId } : {};
-    fetch(`${apiUrl}/${path}`, { headers: headers })
+    const request = {};
+    if (authed) {
+      const sId = getCookie(sessionIdKey);
+      if (sId)
+        request['headers'] = { 'Authorization': sId };
+    }
+    fetch(`${apiUrl}/${path}`, request)
       .then(response => resolve(response))
       .catch(err => reject(err));
   });
 }
 
-export function apiPost(path: string, data?: any, contentType: string = 'application/json'): Promise<Response> {
+export function apiPost(path: string, data?: any, contentType: string = 'application/json', authed: boolean = false): Promise<Response> {
   return new Promise((resolve, reject) => {
     const headers = {
       'Accept': contentType,
       'Content-Type': contentType,
     };
-    const sId = getCookie(sessionIdKey);
-    if (sId)
-      headers['Authorization'] = sId;
+    if (authed) {
+      const sId = getCookie(sessionIdKey);
+      if (sId)
+        headers['Authorization'] = sId;
+    }
     fetch(`${apiUrl}/${path}`, { method: 'POST', headers: headers, body: data })
       .then(response => resolve(response))
       .catch(err => reject(err));
@@ -311,4 +317,18 @@ export function deltaRgb(rgb1: integer[], rgb2: integer[]): integer {
   const t = (r1 + r2) / 2;
 
   return Math.ceil(Math.sqrt(2 * drp2 + 4 * dgp2 + 3 * dbp2 + t * (drp2 - dbp2) / 256));
+}
+
+export function rgbHexToRgba(hex: string) {
+  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i);
+  return {
+      r: parseInt(color[1], 16),
+      g: parseInt(color[2], 16),
+      b: parseInt(color[3], 16),
+      a: 255
+  };
+}
+
+export function rgbaToInt(rgba: integer[]): integer {
+  return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
 }
