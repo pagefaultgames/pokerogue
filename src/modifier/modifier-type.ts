@@ -9,7 +9,7 @@ import { tmPoolTiers, tmSpecies } from '../data/tms';
 import { Type } from '../data/type';
 import PartyUiHandler, { PokemonMoveSelectFilter, PokemonSelectFilter } from '../ui/party-ui-handler';
 import * as Utils from '../utils';
-import { TempBattleStat, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
+import { TempBattleStat, getTempBattleStatBoosterIconName, getTempBattleStatBoosterItemName, getTempBattleStatName } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectDescription, getBerryName } from '../data/berry';
 import { Unlockables } from '../system/unlockables';
 import { StatusEffect, getStatusEffectDescriptor } from '../data/status-effect';
@@ -19,7 +19,7 @@ import { VoucherType, getVoucherTypeIcon, getVoucherTypeName } from '../system/v
 import { FormChangeItem, SpeciesFormChangeItemTrigger, pokemonFormChanges } from '../data/pokemon-forms';
 import { ModifierTier } from './modifier-tier';
 import { Nature, getNatureName, getNatureStatMultiplier } from '#app/data/nature';
-import { Localizable } from '#app/plugins/i18n';
+import i18next, { Localizable } from '#app/plugins/i18n';
 import { getModifierTierTextTint } from '#app/ui/text';
 
 const outputModifierData = false;
@@ -59,6 +59,10 @@ export class ModifierType {
 
   getDescription(scene: BattleScene): string {
     return this.description;
+  }
+
+  setDescription(description: string): void {
+    this.description = description;
   }
 
   setTier(tier: ModifierTier): void {
@@ -145,14 +149,22 @@ class AddPokeballModifierType extends ModifierType implements Localizable {
 
   localize(): void {
     this.name = `${this.count}x ${getPokeballName(this.pokeballType)}`;
-    this.description = `Receive ${getPokeballName(this.pokeballType)} x${this.count}\nCatch Rate: ${getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : 'Certain'}`;
+    this.description = `${i18next.t("modifier:recieveModifier", { modifier: getPokeballName(this.pokeballType), amount: this.count.toString() })}\n${i18next.t("modifier:catchRate", { multiplier: getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : '100%' })}`;
   }
 }
 
 class AddVoucherModifierType extends ModifierType {
+  private voucherType: VoucherType;
+  private count: integer;
   constructor(voucherType: VoucherType, count: integer) {
-    super(`${count}x ${getVoucherTypeName(voucherType)}`, `Receive ${getVoucherTypeName(voucherType)} x${count}`,
+    super('', '',
       (_type, _args) => new Modifiers.AddVoucherModifier(this, voucherType, count), getVoucherTypeIcon(voucherType), 'voucher');
+    this.voucherType = voucherType;
+    this.count = count;
+  }
+  localize(): void {
+    this.name = `${this.count}x ${getVoucherTypeName(this.voucherType)}`;
+    this.description = i18next.t('modifier:recieveModifier', { modifier: getVoucherTypeName(this.voucherType), amount: this.count.toString() });
   }
 }
 
@@ -179,6 +191,10 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
       return null;
     }, iconImage, group, soundName);
   }
+  localize(): void {
+    this.name = i18next.t(`modifierType:${this.name}.name`);
+    this.description = i18next.t(`modifierType:${this.id}.description`);
+  }
 
   newModifier(...args: any[]): Modifiers.PokemonHeldItemModifier {
     return super.newModifier(...args) as Modifiers.PokemonHeldItemModifier;
@@ -191,7 +207,7 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
   protected healStatus: boolean;
 
   constructor(name: string, restorePoints: integer, restorePercent: integer, healStatus: boolean = false, newModifierFunc?: NewModifierFunc, selectFilter?: PokemonSelectFilter, iconImage?: string, group?: string) {
-    super(name, restorePoints ? `Restores ${restorePoints} HP or ${restorePercent}% HP for one Pokémon, whichever is higher` : `Fully restores HP for one Pokémon${healStatus ? ' and heals any status ailment' : ''}`,
+    super(name, '',
       newModifierFunc || ((_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, this.restorePercent, this.healStatus, false)),
     selectFilter || ((pokemon: PlayerPokemon) => {
       if (!pokemon.hp || (pokemon.hp >= pokemon.getMaxHp() && (!this.healStatus || !pokemon.status)))
@@ -199,9 +215,17 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
       return null;
     }), iconImage, group || 'potion');
 
+
     this.restorePoints = restorePoints;
     this.restorePercent = restorePercent;
     this.healStatus = healStatus;
+    this.localize();
+  }
+
+  localize(): void {
+
+    this.description = this.restorePoints ? i18next.t("modifier:hpRestore", { restorePoints: this.restorePoints, restorePercent: this.restorePercent }) : (this.healStatus ? i18next.t("modifierType:FULL_RESTORE.description") : i18next.t("modifierType:MAX_POTION.description"));
+
   }
 }
 
@@ -213,25 +237,33 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
           return PartyUiHandler.NoEffectMessage;
         return null;
       }), iconImage, 'revive');
-
-    this.description = `Revives one Pokémon and restores ${restorePercent}% HP`;
+    this.restorePercent = restorePercent;
+    this.localize()
     this.selectFilter = (pokemon: PlayerPokemon) => {
       if (pokemon.hp)
         return PartyUiHandler.NoEffectMessage;
       return null;
     };
   }
+
+  localize(): void {
+    this.description =  i18next.t("modifier:revive", { restorePercent: this.restorePercent });
+  }
 }
 
 export class PokemonStatusHealModifierType extends PokemonModifierType {
   constructor(name: string) {
-    super(name, `Heals any status ailment for one Pokémon`,
+    super(name, '',
       ((_type, args) => new Modifiers.PokemonStatusHealModifier(this, (args[0] as PlayerPokemon).id)),
       ((pokemon: PlayerPokemon) => {
         if (!pokemon.hp || !pokemon.status)
           return PartyUiHandler.NoEffectMessage;
         return null;
-      }));
+      }), 'full_heal');
+      this.localize();
+  }
+  localize(): void {
+    this.description = i18next.t("modifierType:FULL_HEAL.description");
   }
 }
 
@@ -250,7 +282,7 @@ export class PokemonPpRestoreModifierType extends PokemonMoveModifierType {
   protected restorePoints: integer;
 
   constructor(name: string, restorePoints: integer, iconImage?: string) {
-    super(name, `Restores ${restorePoints > -1 ? restorePoints : 'all'} PP for one Pokémon move`, (_type, args) => new Modifiers.PokemonPpRestoreModifier(this, (args[0] as PlayerPokemon).id, (args[1] as integer), this.restorePoints),
+    super(name, '', (_type, args) => new Modifiers.PokemonPpRestoreModifier(this, (args[0] as PlayerPokemon).id, (args[1] as integer), this.restorePoints),
       (_pokemon: PlayerPokemon) => {
       return null;
     }, (pokemonMove: PokemonMove) => {
@@ -258,8 +290,16 @@ export class PokemonPpRestoreModifierType extends PokemonMoveModifierType {
         return PartyUiHandler.NoEffectMessage;
       return null;
     }, iconImage, 'ether');
-
+    
     this.restorePoints = restorePoints;
+    this.localize()
+  }
+
+  localize(): void {
+    if (this.restorePoints > -1)
+      this.description = i18next.t("modifier:ppRestore", { restorePoints: this.restorePoints });
+    else
+      this.description = i18next.t("modifierType:MAX_ETHER.description");
   }
 }
 
@@ -267,7 +307,7 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
   protected restorePoints: integer;
 
   constructor(name: string, restorePoints: integer, iconImage?: string) {
-    super(name, `Restores ${restorePoints > -1 ? restorePoints : 'all'} PP for all of one Pokémon's moves`, (_type, args) => new Modifiers.PokemonAllMovePpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints),
+    super(name, '', (_type, args) => new Modifiers.PokemonAllMovePpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints),
       (pokemon: PlayerPokemon) => {
         if (!pokemon.getMoveset().filter(m => m.ppUsed).length)
           return PartyUiHandler.NoEffectMessage;
@@ -275,6 +315,14 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
       }, iconImage, 'elixir');
 
     this.restorePoints = restorePoints;
+    this.localize();
+  }
+
+  localize(): void {
+    if (this.restorePoints > -1)
+      this.description = i18next.t("modifier:ppRestoreAll", { restorePoints: this.restorePoints });
+    else
+      this.description = i18next.t("modifierType:MAX_ELIXIR.description");
   }
 }
 
@@ -293,13 +341,16 @@ export class PokemonPpUpModifierType extends PokemonMoveModifierType {
 
     this.upPoints = upPoints;
   }
+  localize(): void {
+    this.description = i18next.t("modifier:ppUp", { upPoints: this.upPoints });
+  }
 }
 
 export class PokemonNatureChangeModifierType extends PokemonModifierType {
   protected nature: Nature;
 
   constructor(nature: Nature) {
-    super(`${getNatureName(nature)} Mint`, `Changes a Pokémon\'s nature to ${getNatureName(nature, true, true, true)}`, ((_type, args) => new Modifiers.PokemonNatureChangeModifier(this, (args[0] as PlayerPokemon).id, this.nature)),
+    super(`${i18next.t("modifierType:MINT.name",{ nature: getNatureName(nature) })}`, i18next.t("modifier:mint", { nature:getNatureName(nature, true, true, true) }), ((_type, args) => new Modifiers.PokemonNatureChangeModifier(this, (args[0] as PlayerPokemon).id, this.nature)),
       ((pokemon: PlayerPokemon) => {
         if (pokemon.getNature() === this.nature)
           return PartyUiHandler.NoEffectMessage;
@@ -324,11 +375,15 @@ export class RememberMoveModifierType extends PokemonModifierType {
 export class DoubleBattleChanceBoosterModifierType extends ModifierType {
   public battleCount: integer;
 
-  constructor(name: string, battleCount: integer) {
+  constructor(name: string, battleCount: integer, iconImage?: string) {
     super(name, `Doubles the chance of an encounter being a double battle for ${battleCount} battles`, (_type, _args) => new Modifiers.DoubleBattleChanceBoosterModifier(this, this.battleCount),
-      null, 'lure');
+      iconImage, 'lure');
 
     this.battleCount = battleCount;
+  }
+
+  localize(): void {
+    this.description = i18next.t("modifier:lure", { battleCount: this.battleCount });
   }
 }
 
@@ -337,9 +392,9 @@ export class TempBattleStatBoosterModifierType extends ModifierType implements G
 
   constructor(tempBattleStat: TempBattleStat) {
     super(getTempBattleStatBoosterItemName(tempBattleStat),
-      `Increases the ${getTempBattleStatName(tempBattleStat)} of all party members by 1 stage for 5 battles`,
+      i18next.t('modifier:tempBattleStatBoost', { tempBattleStat: getTempBattleStatName(tempBattleStat) }),
       (_type, _args) => new Modifiers.TempBattleStatBoosterModifier(this, this.tempBattleStat),
-      getTempBattleStatBoosterItemName(tempBattleStat).replace(/\./g, '').replace(/[ ]/g, '_').toLowerCase());
+      getTempBattleStatBoosterIconName(tempBattleStat));
 
     this.tempBattleStat = tempBattleStat;
   }
@@ -353,9 +408,9 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
   private berryType: BerryType;
 
   constructor(berryType: BerryType) {
-    super(getBerryName(berryType), getBerryEffectDescription(berryType),
+    super(`${i18next.t("modifierType:BERRY.name", { berry: i18next.t(`berry:${getBerryName(berryType)}`)})}`, getBerryEffectDescription(berryType),
       (type, args) => new Modifiers.BerryModifier(type, (args[0] as Pokemon).id, berryType),
-      null, 'berry');
+      `${BerryType[berryType].toLowerCase()}_berry`, 'berry');
     
     this.berryType = berryType;
   }
@@ -368,41 +423,82 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
 function getAttackTypeBoosterItemName(type: Type) {
   switch (type) {
     case Type.NORMAL:
-      return 'Silk Scarf';
+      return i18next.t('modifierType:SILK_SCARF.name');
     case Type.FIGHTING:
-      return 'Black Belt';
+      return i18next.t('modifierType:BLACK_BELT.name');
     case Type.FLYING:
-      return 'Sharp Beak';
+      return i18next.t('modifierType:SHARP_BEAK.name');
     case Type.POISON:
-      return 'Poison Barb';
+      return i18next.t('modifierType:POISON_BARB.name');
     case Type.GROUND:
-      return 'Soft Sand';
+      return i18next.t('modifierType:SOFT_SAND.name');
     case Type.ROCK:
-      return 'Hard Stone';
+      return i18next.t('modifierType:HARD_STONE.name');
     case Type.BUG:
-      return 'Silver Powder';
+      return i18next.t('modifierType:SILVER_POWER.name');
     case Type.GHOST:
-      return 'Spell Tag';
+      return i18next.t('modifierType:SPELL_TAG.name');
     case Type.STEEL:
-      return 'Metal Coat';
+      return i18next.t('modifierType:METAL_COAT.name');
     case Type.FIRE:
-      return 'Charcoal';
+      return i18next.t('modifierType:CHARCOAL.name');
     case Type.WATER:
-      return 'Mystic Water';
+      return i18next.t('modifierType:MYSTIC_WATER.name');
     case Type.GRASS:
-      return 'Miracle Seed';
+      return i18next.t('modifierType:MIRACLE_SEED.name');
     case Type.ELECTRIC:
-      return 'Magnet';
+      return i18next.t('modifierType:MAGNET.name');
     case Type.PSYCHIC:
-      return 'Twisted Spoon';
+      return i18next.t('modifierType:TWISTED_SPOON.name');
     case Type.ICE:
-      return 'Never-Melt Ice'
+      return i18next.t('modifierType:NEVER_MELT_ICE.name');
     case Type.DRAGON:
-      return 'Dragon Fang';
+      return i18next.t('modifierType:DRAGON_FANG.name');
     case Type.DARK:
-      return 'Black Glasses';
+      return i18next.t('modifierType:BLACK_GLASSES.name');
     case Type.FAIRY:
-      return 'Fairy Feather';
+      return i18next.t('modifierType:FAIRY_FEATHER.name');
+  }
+}
+
+function getAttackTypeBoosterItemIconName(type: Type) {
+  switch (type) {
+    case Type.NORMAL:
+      return 'silk_scarf';
+    case Type.FIGHTING:
+      return 'black_belt';
+    case Type.FLYING:
+      return 'sharp_beak';
+    case Type.POISON:
+      return 'poison_barb';
+    case Type.GROUND:
+      return 'soft_sand';
+    case Type.ROCK:
+      return 'hard_stone';
+    case Type.BUG:
+      return 'silver_powder';
+    case Type.GHOST:
+      return 'spell_tag';
+    case Type.STEEL:
+      return 'metal_coat';
+    case Type.FIRE:
+      return 'charcoal';
+    case Type.WATER:
+      return 'mystic_water';
+    case Type.GRASS:
+      return 'miracle_seed';
+    case Type.ELECTRIC:
+      return 'magnet';
+    case Type.PSYCHIC:
+      return 'twisted_spoon';
+    case Type.ICE:
+      return 'never_melt_ice';
+    case Type.DRAGON:
+      return 'dragon_fang';
+    case Type.DARK:
+      return 'black_glasses';
+    case Type.FAIRY:
+      return 'fairy_feather';
   }
 }
 
@@ -411,9 +507,9 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   public boostPercent: integer;
 
   constructor(moveType: Type, boostPercent: integer) {
-    super(getAttackTypeBoosterItemName(moveType), `Increases the power of a Pokémon's ${Utils.toReadableString(Type[moveType])}-type moves by 20%`,
+    super(getAttackTypeBoosterItemName(moveType), i18next.t("modifier:atkTypeBooster", {type: i18next.t(`type:${Utils.toReadableString(Type[moveType]).toLowerCase()}`)}),
       (_type, args) => new Modifiers.AttackTypeBoosterModifier(this, (args[0] as Pokemon).id, moveType, boostPercent),
-      `${getAttackTypeBoosterItemName(moveType).replace(/[ \-]/g, '_').toLowerCase()}`);
+      getAttackTypeBoosterItemIconName(moveType));
 
     this.moveType = moveType;
     this.boostPercent = boostPercent;
@@ -426,31 +522,56 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
 
 export class PokemonLevelIncrementModifierType extends PokemonModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name, `Increases a Pokémon\'s level by 1`, (_type, args) => new Modifiers.PokemonLevelIncrementModifier(this, (args[0] as PlayerPokemon).id),
+    super(name, '', (_type, args) => new Modifiers.PokemonLevelIncrementModifier(this, (args[0] as PlayerPokemon).id),
       (_pokemon: PlayerPokemon) => null, iconImage);
+  }
+
+  localize(): void {
+    this.description = i18next.t("modifierType:RARE_CANDY.description");
   }
 }
 
 export class AllPokemonLevelIncrementModifierType extends ModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name, `Increases all party members' level by 1`, (_type, _args) => new Modifiers.PokemonLevelIncrementModifier(this, -1), iconImage);
+    super(name, '', (_type, _args) => new Modifiers.PokemonLevelIncrementModifier(this, -1), iconImage);
+  }
+  
+  localize(): void {
+    this.description = i18next.t("modifierType:RARER_CANDY.description");
   }
 }
 
 function getBaseStatBoosterItemName(stat: Stat) {
   switch (stat) {
     case Stat.HP:
-      return 'HP Up';
+      return i18next.t('modifierType:HP_UP.name');
     case Stat.ATK:
-      return 'Protein';
+      return i18next.t('modifierType:PROTEIN.name');
     case Stat.DEF:
-      return 'Iron';
+      return i18next.t('modifierType:IRON.name');
     case Stat.SPATK:
-      return 'Calcium';
+      return i18next.t('modifierType:CALCIUM.name');
     case Stat.SPDEF:
-      return 'Zinc';
+      return i18next.t('modifierType:ZINC.name');
     case Stat.SPD:
-      return 'Carbos';
+      return i18next.t('modifierType:CARBOS.name');
+  }
+}
+
+function getBaseStatBoosterID(stat: Stat) {
+  switch (stat) {
+    case Stat.HP:
+      return 'HP_UP';
+    case Stat.ATK:
+      return 'PROTEIN';
+    case Stat.DEF:
+      return 'IRON';
+    case Stat.SPATK:
+      return 'CALCIUM';
+    case Stat.SPDEF:
+      return 'ZINC';
+    case Stat.SPD:
+      return 'CARBOS';
   }
 }
 
@@ -458,7 +579,7 @@ export class PokemonBaseStatBoosterModifierType extends PokemonHeldItemModifierT
   private stat: Stat;
 
   constructor(name: string, stat: Stat, _iconImage?: string) {
-    super(name, `Increases the holder's base ${getStatName(stat)} by 10%. The higher your IVs, the higher the stack limit.`, (_type, args) => new Modifiers.PokemonBaseStatModifier(this, (args[0] as Pokemon).id, this.stat));
+    super(name, i18next.t("modifier:baseStatBoost", { stat: getStatName(stat)}), (_type, args) => new Modifiers.PokemonBaseStatModifier(this, (args[0] as Pokemon).id, this.stat), getBaseStatBoosterID(stat).toLowerCase());
 
     this.stat = stat;
   }
@@ -470,23 +591,38 @@ export class PokemonBaseStatBoosterModifierType extends PokemonHeldItemModifierT
 
 class AllPokemonFullHpRestoreModifierType extends ModifierType {
   constructor(name: string, description?: string, newModifierFunc?: NewModifierFunc, iconImage?: string) {
-    super(name, description || `Restores 100% HP for all Pokémon`, newModifierFunc || ((_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100, false)), iconImage);
+    super(name, description || '', newModifierFunc || ((_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100, false)), iconImage);
+  }
+  localize(): void {
+    this.description = i18next.t("modifierType:SACRED_ASH.description");
   }
 }
 
 class AllPokemonFullReviveModifierType extends AllPokemonFullHpRestoreModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name, `Revives all fainted Pokémon, fully restoring HP`, (_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100, false, true), iconImage);
+    super(name, '', (_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100, false, true), iconImage);
+    this.localize();
+  }
+  localize(): void {
+    this.description = i18next.t("modifierType:SACRED_ASH.description");
   }
 }
 
 export class MoneyRewardModifierType extends ModifierType {
   private moneyMultiplier: number;
+  private moneyMultiplierDescriptor: string;
 
   constructor(name: string, moneyMultiplier: number, moneyMultiplierDescriptor: string, iconImage?: string) {
-    super(name, `Grants a ${moneyMultiplierDescriptor} amount of money (₽{AMOUNT})`, (_type, _args) => new Modifiers.MoneyRewardModifier(this, moneyMultiplier), iconImage, 'money', 'buy');
+    super(name, ``, (_type, _args) => new Modifiers.MoneyRewardModifier(this, moneyMultiplier), iconImage, 'money', 'buy');
 
     this.moneyMultiplier = moneyMultiplier;
+    this.moneyMultiplierDescriptor = moneyMultiplierDescriptor;
+    this.localize();
+  }
+
+  localize(): void {
+    this.name = `${i18next.t(`modifierType:${this.name}.name`)}`;
+    this.description = i18next.t("modifier:moneyReward", { moneyMultiplierDescriptor: i18next.t(`modifier:${this.moneyMultiplierDescriptor}`) });
   }
 
   getDescription(scene: BattleScene): string {
@@ -495,33 +631,61 @@ export class MoneyRewardModifierType extends ModifierType {
 }
 
 export class ExpBoosterModifierType extends ModifierType {
+  private boostPercent: integer;
   constructor(name: string, boostPercent: integer, iconImage?: string) {
-    super(name, `Increases gain of EXP. Points by ${boostPercent}%`, () => new Modifiers.ExpBoosterModifier(this, boostPercent), iconImage);
+    super(name, ``, () => new Modifiers.ExpBoosterModifier(this, boostPercent), iconImage);
+    this.boostPercent = boostPercent;
+    this.localize();
   }
+
+  localize(): void {
+    this.name = `${i18next.t(`modifierType:${this.name}.name`)}`;
+    this.description = `${i18next.t("modifier:expCharm", { boostPercent: this.boostPercent })}`;
+  }
+
 }
 
 export class PokemonExpBoosterModifierType extends PokemonHeldItemModifierType {
+  private boostPercent: integer;
   constructor(name: string, boostPercent: integer, iconImage?: string) {
-    super(name, `Increases the holder's gain of EXP. Points by ${boostPercent}%`, (_type, args) => new Modifiers.PokemonExpBoosterModifier(this, (args[0] as Pokemon).id, boostPercent),
+    super(name, `${i18next.t("modifier:expEgg", { boostPercent })}`, (_type, args) => new Modifiers.PokemonExpBoosterModifier(this, (args[0] as Pokemon).id, boostPercent),
       iconImage);
+    this.boostPercent = boostPercent;
+    this.name = name;
+    this.localize();
+  }
+  localize(): void {
+    this.name = i18next.t(`modifierType:${this.name}.name`);
+    this.description = i18next.t("modifier:expEgg", { boostPercent: this.boostPercent });
+  
   }
 }
 
 export class PokemonFriendshipBoosterModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name,'Increases friendship gain per victory by 50%', (_type, args) => new Modifiers.PokemonFriendshipBoosterModifier(this, (args[0] as Pokemon).id), iconImage);
+    super(name,`${i18next.t("modifierType:SOOTHE_BELL.description")}`, (_type, args) => new Modifiers.PokemonFriendshipBoosterModifier(this, (args[0] as Pokemon).id), iconImage);
   }
 }
 
 export class PokemonMoveAccuracyBoosterModifierType extends PokemonHeldItemModifierType {
+  private amount: integer;
   constructor(name: string, amount: integer, iconImage?: string, group?: string, soundName?: string) {
-    super(name, `Increases move accuracy by ${amount} (maximum 100)`, (_type, args) => new Modifiers.PokemonMoveAccuracyBoosterModifier(this, (args[0] as Pokemon).id, amount), iconImage, group, soundName);
+    super(name, '', (_type, args) => new Modifiers.PokemonMoveAccuracyBoosterModifier(this, (args[0] as Pokemon).id, amount), iconImage, group, soundName);
+    this.amount = amount;
+  }
+  localize(): void {
+    this.description = i18next.t("modifier:moveAccuracyBooster", { amount: this.amount });
+  
   }
 }
 
 export class PokemonMultiHitModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name, `Attacks hit one additional time at the cost of a 60/75/82.5% power reduction per stack respectively.`, (type, args) => new Modifiers.PokemonMultiHitModifier(type as PokemonMultiHitModifierType, (args[0] as Pokemon).id), iconImage);
+    super(name, '', (type, args) => new Modifiers.PokemonMultiHitModifier(type as PokemonMultiHitModifierType, (args[0] as Pokemon).id), iconImage);
+    
+  }
+  localize(): void {
+    this.description = i18next.t("modifier:multiHit");
   }
 }
 
@@ -529,7 +693,7 @@ export class TmModifierType extends PokemonModifierType {
   public moveId: Moves;
 
   constructor(moveId: Moves) {
-    super(`TM${Utils.padInt(Object.keys(tmSpecies).indexOf(moveId.toString()) + 1, 3)} - ${allMoves[moveId].name}`, `Teach ${allMoves[moveId].name} to a Pokémon`, (_type, args) => new Modifiers.TmModifier(this, (args[0] as PlayerPokemon).id),
+    super(`TM${Utils.padInt(Object.keys(tmSpecies).indexOf(moveId.toString()) + 1, 3)} - ${allMoves[moveId].name}`, `${i18next.t("modifier:tm", {move:allMoves[moveId].name })}`, (_type, args) => new Modifiers.TmModifier(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (pokemon.compatibleTms.indexOf(moveId) === -1 || pokemon.getMoveset().filter(m => m?.moveId === moveId).length)
           return PartyUiHandler.NoEffectMessage;
@@ -544,7 +708,7 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
   public evolutionItem: EvolutionItem;
 
   constructor(evolutionItem: EvolutionItem) {
-    super(Utils.toReadableString(EvolutionItem[evolutionItem]), `Causes certain Pokémon to evolve`, (_type, args) => new Modifiers.EvolutionItemModifier(this, (args[0] as PlayerPokemon).id),
+    super('', '', (_type, args) => new Modifiers.EvolutionItemModifier(this, (args[0] as PlayerPokemon).id),
     (pokemon: PlayerPokemon) => {
       if (pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) && pokemonEvolutions[pokemon.species.speciesId].filter(e => e.item === this.evolutionItem
         && (!e.condition || e.condition.predicate(pokemon))).length)
@@ -557,6 +721,12 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
     }, EvolutionItem[evolutionItem].toLowerCase());
 
     this.evolutionItem = evolutionItem;
+    this.localize();
+  }
+
+  localize(): void {
+    this.name = i18next.t(`modifierType:${EvolutionItem[this.evolutionItem]}.name`);
+    this.description = i18next.t("modifier:evolve");
   }
 
   getPregenArgs(): any[] {
@@ -568,7 +738,7 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
   public formChangeItem: FormChangeItem;
 
   constructor(formChangeItem: FormChangeItem) {
-    super(Utils.toReadableString(FormChangeItem[formChangeItem]), `Causes certain Pokémon to change form`, (_type, args) => new Modifiers.PokemonFormChangeItemModifier(this, (args[0] as PlayerPokemon).id, formChangeItem, true),
+    super('', '', (_type, args) => new Modifiers.PokemonFormChangeItemModifier(this, (args[0] as PlayerPokemon).id, formChangeItem, true),
     (pokemon: PlayerPokemon) => {
       if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) && !!pokemonFormChanges[pokemon.species.speciesId].find(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger)
         && (fc.trigger as SpeciesFormChangeItemTrigger).item === this.formChangeItem))
@@ -578,8 +748,13 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
     }, FormChangeItem[formChangeItem].toLowerCase());
 
     this.formChangeItem = formChangeItem;
+    this.localize();
   }
 
+  localize(): void {
+    this.name = i18next.t(`modifierType:${FormChangeItem[this.formChangeItem]}.name`);
+    this.description = i18next.t("modifier:formChange");
+  }
   getPregenArgs(): any[] {
     return [ this.formChangeItem ];
   }
@@ -587,12 +762,15 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
 
 export class FusePokemonModifierType extends PokemonModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name, 'Combines two Pokémon (transfers Ability, splits base stats and types, shares move pool)', (_type, args) => new Modifiers.FusePokemonModifier(this, (args[0] as PlayerPokemon).id, (args[1] as PlayerPokemon).id),
+    super(name, `${i18next.t("modifier:fusePokemon")}`, (_type, args) => new Modifiers.FusePokemonModifier(this, (args[0] as PlayerPokemon).id, (args[1] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (pokemon.isFusion())
           return PartyUiHandler.NoEffectMessage;
         return null;
       }, iconImage);
+  }
+  localize(): void {
+    this.description = i18next.t("modifier:fusePokemon");
   }
 }
 
@@ -705,7 +883,7 @@ export class TerastallizeModifierType extends PokemonHeldItemModifierType implem
   private teraType: Type;
 
   constructor(teraType: Type) {
-    super(`${Utils.toReadableString(Type[teraType])} Tera Shard`, `${Utils.toReadableString(Type[teraType])} Terastallizes the holder for up to 10 battles`, (type, args) => new Modifiers.TerastallizeModifier(type as TerastallizeModifierType, (args[0] as Pokemon).id, teraType), null, 'tera_shard');
+    super(`${i18next.t("modifierType:TERA_SHARD.name", { type: i18next.t(`type:${Utils.toReadableString(Type[teraType])}`)})}`, `${i18next.t("modifier:tera", { type: i18next.t(`type:${Utils.toReadableString(Type[teraType]).toLocaleLowerCase()}`)})}`, (type, args) => new Modifiers.TerastallizeModifier(type as TerastallizeModifierType, (args[0] as Pokemon).id, teraType), `${Utils.toReadableString(Type[teraType]).toLocaleLowerCase()}_tera_shard`, 'tera_shard');
 
     this.teraType = teraType;
   }
@@ -716,26 +894,48 @@ export class TerastallizeModifierType extends PokemonHeldItemModifierType implem
 }
 
 export class ContactHeldItemTransferChanceModifierType extends PokemonHeldItemModifierType {
+  private chancePercent: integer;
   constructor(name: string, chancePercent: integer, iconImage?: string, group?: string, soundName?: string) {
-    super(name, `Upon attacking, there is a ${chancePercent}% chance the foe's held item will be stolen.`, (type, args) => new Modifiers.ContactHeldItemTransferChanceModifier(type, (args[0] as Pokemon).id, chancePercent), iconImage, group, soundName);
+    super(name, '', (type, args) => new Modifiers.ContactHeldItemTransferChanceModifier(type, (args[0] as Pokemon).id, chancePercent), iconImage, group, soundName);
+    this.chancePercent = chancePercent;
+    this.localize();
+  }
+  localize(): void {
+    this.description = i18next.t("modifier:contactItemTransfer", { chancePercent: this.chancePercent });
   }
 }
 
 export class TurnHeldItemTransferModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, iconImage?: string, group?: string, soundName?: string) {
-    super(name, 'Every turn, the holder acquires one held item from the foe.', (type, args) => new Modifiers.TurnHeldItemTransferModifier(type, (args[0] as Pokemon).id), iconImage, group, soundName);
+    super(name, `${i18next.t("modifier:heldItemTransfer")}`, (type, args) => new Modifiers.TurnHeldItemTransferModifier(type, (args[0] as Pokemon).id), iconImage, group, soundName);
+  }
+  localize(): void {
+    this.description = i18next.t("modifier:heldItemTransfer");
+  
   }
 }
 
 export class EnemyAttackStatusEffectChanceModifierType extends ModifierType {
+  private chancePercent: integer;
+  private effect: StatusEffect;
   constructor(name: string, chancePercent: integer, effect: StatusEffect, iconImage?: string) {
-    super(name, `Adds a ${chancePercent}% chance to inflict ${getStatusEffectDescriptor(effect)} with attack moves`, (type, args) => new Modifiers.EnemyAttackStatusEffectChanceModifier(type, effect, chancePercent), iconImage, 'enemy_status_chance')
+    super(name, `${i18next.t("modifier:attackStatusEffect", { chancePercent: chancePercent , effect: getStatusEffectDescriptor(effect) })}`, (type, args) => new Modifiers.EnemyAttackStatusEffectChanceModifier(type, effect, chancePercent), iconImage, 'enemy_status_chance')
+    this.chancePercent = chancePercent;
+    this.effect = effect;
+  }
+  localize(): void {
+    this.description = i18next.t("modifier:attackStatusEffect", { chancePercent: this.chancePercent , effect: getStatusEffectDescriptor(this.effect) });
   }
 }
 
 export class EnemyEndureChanceModifierType extends ModifierType {
+  private chancePercent: integer;
   constructor(name: string, chancePercent: number, iconImage?: string) {
-    super(name, `Adds a ${chancePercent}% chance of enduring a hit`, (type, _args) => new Modifiers.EnemyEndureChanceModifier(type, chancePercent), iconImage, 'enemy_endure');
+    super(name, `${i18next.t("modifier:endureChance", { chancePercent })}`, (type, _args) => new Modifiers.EnemyEndureChanceModifier(type, chancePercent), iconImage, 'enemy_endure');
+    this.chancePercent = chancePercent;
+  }
+  localize(): void {
+    this.description = i18next.t("modifier:endureChance", { chancePercent: this.chancePercent });
   }
 }
 
@@ -766,59 +966,59 @@ export const modifierTypes = {
   ROGUE_BALL: () => new AddPokeballModifierType(PokeballType.ROGUE_BALL, 5, 'rb'),
   MASTER_BALL: () => new AddPokeballModifierType(PokeballType.MASTER_BALL, 1, 'mb'),
 
-  RARE_CANDY: () => new PokemonLevelIncrementModifierType('Rare Candy'),
-  RARER_CANDY: () => new AllPokemonLevelIncrementModifierType('Rarer Candy'),
+  RARE_CANDY: () => new PokemonLevelIncrementModifierType(i18next.t("modifierType:RARE_CANDY.name"), 'rare_candy'),
+  RARER_CANDY: () => new AllPokemonLevelIncrementModifierType(i18next.t("modifierType:RARER_CANDY.name"), 'rarer_candy'),
 
   EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(false),
   RARE_EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(true),
   FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(),
 
-  MEGA_BRACELET: () => new ModifierType('Mega Bracelet', 'Mega Stones become available.', (type, _args) => new Modifiers.MegaEvolutionAccessModifier(type)),
-  DYNAMAX_BAND: () => new ModifierType('Dynamax Band', 'Max Mushrooms become available.', (type, _args) => new Modifiers.GigantamaxAccessModifier(type)),
-  TERA_ORB: () => new ModifierType('Tera Orb', 'Tera Shards become available.', (type, _args) => new Modifiers.TerastallizeAccessModifier(type)),
+  MEGA_BRACELET: () => new ModifierType(i18next.t("modifierType:MEGA_BRACELET.name"), i18next.t("modifierType:MEGA_BRACELET.description"), (type, _args) => new Modifiers.MegaEvolutionAccessModifier(type), 'mega_bracelet'),
+  DYNAMAX_BAND: () => new ModifierType(i18next.t("modifierType:DYNAMAX_BAND.name"), i18next.t("modifierType:DYNAMAX_BAND.description"), (type, _args) => new Modifiers.GigantamaxAccessModifier(type), 'dynamax_band'),
+  TERA_ORB: () => new ModifierType(i18next.t("modifierType:TERA_ORB.name"), i18next.t("modifierType:TERA_ORB.description"), (type, _args) => new Modifiers.TerastallizeAccessModifier(type), "tera_orb"),
 
-  MAP: () => new ModifierType('Map', 'Allows you to choose your destination at a crossroads', (type, _args) => new Modifiers.MapModifier(type)),
+  MAP: () => new ModifierType(i18next.t("modifierType:MAP.name"), i18next.t("modifierType:MAP.description"), (type, _args) => new Modifiers.MapModifier(type), 'map'),
 
-  POTION: () => new PokemonHpRestoreModifierType('Potion', 20, 10),
-  SUPER_POTION: () => new PokemonHpRestoreModifierType('Super Potion', 50, 25),
-  HYPER_POTION: () => new PokemonHpRestoreModifierType('Hyper Potion', 200, 50),
-  MAX_POTION: () => new PokemonHpRestoreModifierType('Max Potion', 0, 100),
-  FULL_RESTORE: () => new PokemonHpRestoreModifierType('Full Restore', 0, 100, true),
+  POTION: () => new PokemonHpRestoreModifierType(i18next.t("modifierType:POTION.name"), 20, 10, undefined ,undefined , undefined, 'potion'),
+  SUPER_POTION: () => new PokemonHpRestoreModifierType(i18next.t("modifierType:SUPER_POTION.name"), 50, 25, undefined, undefined, undefined, 'super_potion'),
+  HYPER_POTION: () => new PokemonHpRestoreModifierType(i18next.t("modifierType:HYPER_POTION.name"), 200, 50, undefined, undefined, undefined, 'hyper_potion'),
+  MAX_POTION: () => new PokemonHpRestoreModifierType(i18next.t("modifierType:MAX_POTION.name"), 0, 100, true, undefined, undefined, 'max_potion'),
+  FULL_RESTORE: () => new PokemonHpRestoreModifierType(i18next.t("modifierType:FULL_RESTORE.name"), 0, 100, true, undefined, undefined, 'full_restore'),
   
-  REVIVE: () => new PokemonReviveModifierType('Revive', 50),
-  MAX_REVIVE: () => new PokemonReviveModifierType('Max Revive', 100),
+  REVIVE: () => new PokemonReviveModifierType(i18next.t("modifierType:REVIVE.name"), 50,"revive"),
+  MAX_REVIVE: () => new PokemonReviveModifierType(i18next.t("modifierType:MAX_REVIVE.name"), 100, "max_revive"),
 
-  FULL_HEAL: () => new PokemonStatusHealModifierType('Full Heal'),
+  FULL_HEAL: () => new PokemonStatusHealModifierType(i18next.t("modifierType:FULL_HEAL.name")),
 
-  SACRED_ASH: () => new AllPokemonFullReviveModifierType('Sacred Ash'),
+  SACRED_ASH: () => new AllPokemonFullReviveModifierType(i18next.t("modifierType:SACRED_ASH.name"), 'sacred_ash'),
 
-  REVIVER_SEED: () => new PokemonHeldItemModifierType('Reviver Seed', 'Revives the holder for 1/2 HP upon fainting',
-    (type, args) => new Modifiers.PokemonInstantReviveModifier(type, (args[0] as Pokemon).id)),
+  REVIVER_SEED: () => new PokemonHeldItemModifierType(i18next.t("modifierType:REVIVER_SEED.name"), i18next.t("modifierType:REVIVER_SEED.description"),
+    (type, args) => new Modifiers.PokemonInstantReviveModifier(type, (args[0] as Pokemon).id), 'reviver_seed'),
 
-  ETHER: () => new PokemonPpRestoreModifierType('Ether', 10),
-  MAX_ETHER: () => new PokemonPpRestoreModifierType('Max Ether', -1),
+  ETHER: () => new PokemonPpRestoreModifierType(i18next.t("modifierType:ETHER.name"), 10, 'ether'),
+  MAX_ETHER: () => new PokemonPpRestoreModifierType(i18next.t("modifierType:MAX_ETHER.name"), -1, 'max_ether'),
 
-  ELIXIR: () => new PokemonAllMovePpRestoreModifierType('Elixir', 10),
-  MAX_ELIXIR: () => new PokemonAllMovePpRestoreModifierType('Max Elixir', -1),
+  ELIXIR: () => new PokemonAllMovePpRestoreModifierType(i18next.t("modifierType:ELIXIR.name"), 10, 'elixir'),
+  MAX_ELIXIR: () => new PokemonAllMovePpRestoreModifierType(i18next.t("modifierType:MAX_ELIXIR.name"), -1, "max_elixir"),
 
-  PP_UP: () => new PokemonPpUpModifierType('PP Up', 1),
-  PP_MAX: () => new PokemonPpUpModifierType('PP Max', 3),
+  PP_UP: () => new PokemonPpUpModifierType(i18next.t("modifierType:PP_UP.name"), 1, 'pp_up'),
+  PP_MAX: () => new PokemonPpUpModifierType(i18next.t("modifierType:PP_MAX"), 3, 'pp_max'),
 
   /*REPEL: () => new DoubleBattleChanceBoosterModifierType('Repel', 5),
   SUPER_REPEL: () => new DoubleBattleChanceBoosterModifierType('Super Repel', 10),
   MAX_REPEL: () => new DoubleBattleChanceBoosterModifierType('Max Repel', 25),*/
 
-  LURE: () => new DoubleBattleChanceBoosterModifierType('Lure', 5),
-  SUPER_LURE: () => new DoubleBattleChanceBoosterModifierType('Super Lure', 10),
-  MAX_LURE: () => new DoubleBattleChanceBoosterModifierType('Max Lure', 25),
+  LURE: () => new DoubleBattleChanceBoosterModifierType(i18next.t("modifierType:LURE"), 5, "lure"),
+  SUPER_LURE: () => new DoubleBattleChanceBoosterModifierType(i18next.t("modifierType:SUPER_LURE"), 10, "super_lure"),
+  MAX_LURE: () => new DoubleBattleChanceBoosterModifierType(i18next.t("modifierType:MAX_LURE"), 25, "max_lure"),
 
   TEMP_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs)
       return new TempBattleStatBoosterModifierType(pregenArgs[0] as TempBattleStat);
-    const randTempBattleStat = Utils.randSeedInt(6) as TempBattleStat;
+    const randTempBattleStat = Utils.randSeedInt(7) as TempBattleStat;
     return new TempBattleStatBoosterModifierType(randTempBattleStat);
   }),
-  DIRE_HIT: () => new TempBattleStatBoosterModifierType(TempBattleStat.CRIT),
+/* Now included in TEMP_STAT_BOOSTER  DIRE_HIT: () => return new TempBattleStatBoosterModifierType(TempBattleStat.CRIT), */
 
   BASE_STAT_BOOSTER: () => new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
     if (pregenArgs) {
@@ -872,91 +1072,91 @@ export const modifierTypes = {
   TM_GREAT: () => new TmModifierTypeGenerator(ModifierTier.GREAT),
   TM_ULTRA: () => new TmModifierTypeGenerator(ModifierTier.ULTRA),
 
-  MEMORY_MUSHROOM: () => new RememberMoveModifierType('Memory Mushroom', 'Recall one Pokémon\'s forgotten move', 'big_mushroom'),
+  MEMORY_MUSHROOM: () => new RememberMoveModifierType(`${i18next.t("modifierType:MEMORY_MUSHROOM.name")}`, `${i18next.t("modifierType:MEMORY_MUSHROOM.description")}`, 'big_mushroom'),
 
-  EXP_SHARE: () => new ModifierType('EXP. All', 'Non-participants receive 20% of a single participant\'s EXP. Points.',
+  EXP_SHARE: () => new ModifierType(`${i18next.t("modifierType:EXP_SHARE.name")}`, `${i18next.t("modifierType:EXP_SHARE.description")}`,
     (type, _args) => new Modifiers.ExpShareModifier(type), 'exp_share'),
-  EXP_BALANCE: () => new ModifierType('EXP. Balance', 'Weighs EXP. Points received from battles towards lower-leveled party members',
-    (type, _args) => new Modifiers.ExpBalanceModifier(type)),
+  EXP_BALANCE: () => new ModifierType(`${i18next.t("modifierType:EXP_BALANCE.name")}`, `${i18next.t("modifierType:EXP_BALANCE.description")}`,
+    (type, _args) => new Modifiers.ExpBalanceModifier(type), 'exp_balance'),
 
-  OVAL_CHARM: () => new ModifierType('Oval Charm', 'When multiple Pokémon participate in a battle, each gets an extra 10% of the total EXP.',
-    (type, _args) => new Modifiers.MultipleParticipantExpBonusModifier(type)),
+  OVAL_CHARM: () => new ModifierType(`${i18next.t("modifierType:OVAL_CHARM.name")}`, `${i18next.t("modifierType:OVAL_CHARM.description")}`,
+    (type, _args) => new Modifiers.MultipleParticipantExpBonusModifier(type), "oval_charm"),
 
-  EXP_CHARM: () => new ExpBoosterModifierType('EXP. Charm', 25),
-  SUPER_EXP_CHARM: () => new ExpBoosterModifierType('Super EXP. Charm', 60),
-  GOLDEN_EXP_CHARM: () => new ExpBoosterModifierType('Golden EXP. Charm', 100),
+  EXP_CHARM: () => new ExpBoosterModifierType('EXP_CHARM', 25, 'exp_charm'),
+  SUPER_EXP_CHARM: () => new ExpBoosterModifierType('SUPER_EXP_CHARM', 60, 'super_exp_charm'),
+  GOLDEN_EXP_CHARM: () => new ExpBoosterModifierType('GOLDEN_EXP_CHARM', 100, 'golden_exp_charm'),
 
-  LUCKY_EGG: () => new PokemonExpBoosterModifierType('Lucky Egg', 40),
-  GOLDEN_EGG: () => new PokemonExpBoosterModifierType('Golden Egg', 100),
+  LUCKY_EGG: () => new PokemonExpBoosterModifierType("LUCKY_EGG", 40, 'lucky_egg'),
+  GOLDEN_EGG: () => new PokemonExpBoosterModifierType("GOLDEN_EGG", 100, 'golden_egg'),
 
-  SOOTHE_BELL: () => new PokemonFriendshipBoosterModifierType('Soothe Bell'),
+  SOOTHE_BELL: () => new PokemonFriendshipBoosterModifierType(`${i18next.t("modifierType:SOOTHE_BELL.name")}`, 'soothe_bell'),
 
-  SOUL_DEW: () => new PokemonHeldItemModifierType('Soul Dew', 'Increases the influence of a Pokémon\'s nature on its stats by 10% (additive)', (type, args) => new Modifiers.PokemonNatureWeightModifier(type, (args[0] as Pokemon).id)),
+  SOUL_DEW: () => new PokemonHeldItemModifierType("SOUL_DEW",`${i18next.t("modifierType:SOUL_DEW.description")}`, (type, args) => new Modifiers.PokemonNatureWeightModifier(type, (args[0] as Pokemon).id), "soul_dew"),
 
-  NUGGET: () => new MoneyRewardModifierType('Nugget', 1, 'small'),
-  BIG_NUGGET: () => new MoneyRewardModifierType('Big Nugget', 2.5, 'moderate'),
-  RELIC_GOLD: () => new MoneyRewardModifierType('Relic Gold', 10, 'large'),
+  NUGGET: () => new MoneyRewardModifierType('NUGGET', 1, 'small'),
+  BIG_NUGGET: () => new MoneyRewardModifierType('BIG_NUGGET', 2.5, 'moderate'),
+  RELIC_GOLD: () => new MoneyRewardModifierType('RELIC_GOLD', 10, 'large'),
 
-  AMULET_COIN: () => new ModifierType('Amulet Coin', 'Increases money rewards by 20%', (type, _args) => new Modifiers.MoneyMultiplierModifier(type)),
-  GOLDEN_PUNCH: () => new PokemonHeldItemModifierType('Golden Punch', 'Grants 50% of damage inflicted as money', (type, args) => new Modifiers.DamageMoneyRewardModifier(type, (args[0] as Pokemon).id)),
-  COIN_CASE: () => new ModifierType('Coin Case', 'After every 10th battle, receive 10% of your money in interest.', (type, _args) => new Modifiers.MoneyInterestModifier(type)),
+  AMULET_COIN: () => new ModifierType(`${i18next.t("modifierType:AMULET_COIN.name")}`,`${i18next.t("modifierType:AMULET_COIN.description")}`, (type, _args) => new Modifiers.MoneyMultiplierModifier(type), "amulet_coin"),
+  GOLDEN_PUNCH: () => new PokemonHeldItemModifierType("GOLDEN_PUNCH",`${i18next.t("modifierType:GOLDEN_PUNCH.description")}`, (type, args) => new Modifiers.DamageMoneyRewardModifier(type, (args[0] as Pokemon).id), "golden_punch"),
+  COIN_CASE: () => new ModifierType(`${i18next.t("modifierType:COIN_CASE.name")}`,`${i18next.t("modifierType:COIN_CASE.description")}`, (type, _args) => new Modifiers.MoneyInterestModifier(type), "coin_case"),
 
-  LOCK_CAPSULE: () => new ModifierType('Lock Capsule', 'Allows you to lock item rarities when rerolling items', (type, _args) => new Modifiers.LockModifierTiersModifier(type), 'lock_capsule'),
+  LOCK_CAPSULE: () => new ModifierType(`${i18next.t("modifierType:LOCK_CAPSULE.name")}`,`${i18next.t("modifierType:LOCK_CAPSULE.description")}`, (type, _args) => new Modifiers.LockModifierTiersModifier(type), 'lock_capsule'),
 
-  GRIP_CLAW: () => new ContactHeldItemTransferChanceModifierType('Grip Claw', 10),
-  WIDE_LENS: () => new PokemonMoveAccuracyBoosterModifierType('Wide Lens', 5, 'wide_lens'),
+  GRIP_CLAW: () => new ContactHeldItemTransferChanceModifierType(`${i18next.t("modifierType:GRIP_CLAW.name")}`, 10, "grip_claw"),
+  WIDE_LENS: () => new PokemonMoveAccuracyBoosterModifierType(`${i18next.t("modifierType:WIDE_LENS.name")}`, 5, 'wide_lens'),
 
-  MULTI_LENS: () => new PokemonMultiHitModifierType('Multi Lens', 'zoom_lens'),
+  MULTI_LENS: () => new PokemonMultiHitModifierType(`${i18next.t("modifierType:MULTI_LENS.name")}`, 'zoom_lens'),
 
-  HEALING_CHARM: () => new ModifierType('Healing Charm', 'Increases the effectiveness of HP restoring moves and items by 10% (excludes Revives)',
+  HEALING_CHARM: () => new ModifierType(`${i18next.t("modifierType:HEALING_CHARM.name")}`,`${i18next.t("modifierType:HEALING_CHARM.description")}`,
     (type, _args) => new Modifiers.HealingBoosterModifier(type, 1.1), 'healing_charm'),
-  CANDY_JAR: () => new ModifierType('Candy Jar', 'Increases the number of levels added by Rare Candy items by 1', (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type)),
+  CANDY_JAR: () => new ModifierType(`${i18next.t("modifierType:CANDY_JAR.name")}`,`${i18next.t("modifierType:CANDY_JAR.description")}`, (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type), "candy_jar"),
 
-  BERRY_POUCH: () => new ModifierType('Berry Pouch', 'Adds a 25% chance that a used berry will not be consumed',
-    (type, _args) => new Modifiers.PreserveBerryModifier(type)),
+  BERRY_POUCH: () => new ModifierType(`${i18next.t("modifierType:BERRY_POUCH.name")}`,`${i18next.t("modifierType:BERRY_POUCH.description")}`,
+    (type, _args) => new Modifiers.PreserveBerryModifier(type), 'berry_pouch'),
 
-  FOCUS_BAND: () => new PokemonHeldItemModifierType('Focus Band', 'Adds a 10% chance to survive with 1 HP after being damaged enough to faint',
-    (type, args) => new Modifiers.SurviveDamageModifier(type, (args[0] as Pokemon).id)),
+  FOCUS_BAND: () => new PokemonHeldItemModifierType(`${i18next.t("modifierType:FOCUS_BAND.name")}`,`${i18next.t("modifierType:FOCUS_BAND.description")}`,
+    (type, args) => new Modifiers.SurviveDamageModifier(type, (args[0] as Pokemon).id), 'focus_band'),
 
-  KINGS_ROCK: () => new PokemonHeldItemModifierType('King\'s Rock', 'Adds a 10% chance an attack move will cause the opponent to flinch',
-    (type, args) => new Modifiers.FlinchChanceModifier(type, (args[0] as Pokemon).id)),
+  KINGS_ROCK: () => new PokemonHeldItemModifierType("KINGS_ROCK",`${i18next.t("modifierType:KINGS_ROCK.description")}`,
+    (type, args) => new Modifiers.FlinchChanceModifier(type, (args[0] as Pokemon).id), 'kings_rock'),
 
-  LEFTOVERS: () => new PokemonHeldItemModifierType('Leftovers', 'Heals 1/16 of a Pokémon\'s maximum HP every turn',
-    (type, args) => new Modifiers.TurnHealModifier(type, (args[0] as Pokemon).id)),
-  SHELL_BELL: () => new PokemonHeldItemModifierType('Shell Bell', 'Heals 1/8 of a Pokémon\'s dealt damage',
-    (type, args) => new Modifiers.HitHealModifier(type, (args[0] as Pokemon).id)),
+  LEFTOVERS: () => new PokemonHeldItemModifierType("LEFTOVERS",`${i18next.t("modifierType:LEFTOVERS.description")}`,
+    (type, args) => new Modifiers.TurnHealModifier(type, (args[0] as Pokemon).id), 'leftovers'),
+  SHELL_BELL: () => new PokemonHeldItemModifierType("SHELL_BELL",`${i18next.t("modifierType:SHELL_BELL.description")}`,
+    (type, args) => new Modifiers.HitHealModifier(type, (args[0] as Pokemon).id), 'shell_bell'),
 
-  BATON: () => new PokemonHeldItemModifierType('Baton', 'Allows passing along effects when switching Pokémon, which also bypasses traps',
+  BATON: () => new PokemonHeldItemModifierType("BATON",`${i18next.t("modifierType:BATON.description")}`,
     (type, args) => new Modifiers.SwitchEffectTransferModifier(type, (args[0] as Pokemon).id), 'stick'),
 
-  SHINY_CHARM: () => new ModifierType('Shiny Charm', 'Dramatically increases the chance of a wild Pokémon being Shiny', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
-  ABILITY_CHARM: () => new ModifierType('Ability Charm', 'Dramatically increases the chance of a wild Pokémon having a Hidden Ability', (type, _args) => new Modifiers.HiddenAbilityRateBoosterModifier(type)),
+  SHINY_CHARM: () => new ModifierType(`${i18next.t("modifierType:SHINY_CHARM.name")}`,`${i18next.t("modifierType:SHINY_CHARM.description")}`, (type, _args) => new Modifiers.ShinyRateBoosterModifier(type), 'shiny_charm'),
+  ABILITY_CHARM: () => new ModifierType(`${i18next.t("modifierType:ABILITY_CHARM.name")}`,`${i18next.t("modifierType:ABILITY_CHARM.description")}`, (type, _args) => new Modifiers.HiddenAbilityRateBoosterModifier(type), 'ability_charm'),
 
-  IV_SCANNER: () => new ModifierType('IV Scanner', 'Allows scanning the IVs of wild Pokémon. 2 IVs are revealed per stack. The best IVs are shown first.', (type, _args) => new Modifiers.IvScannerModifier(type), 'scanner'),
+  IV_SCANNER: () => new ModifierType(`${i18next.t("modifierType:IV_SCANNER.name")}`,`${i18next.t("modifierType:IV_SCANNER.description")}`, (type, _args) => new Modifiers.IvScannerModifier(type), 'scanner'),
 
-  DNA_SPLICERS: () => new FusePokemonModifierType('DNA Splicers'),
+  DNA_SPLICERS: () => new FusePokemonModifierType(`${i18next.t("modifierType:DNA_SPLICERS.name")}`, 'dna_splicers'),
 
-  MINI_BLACK_HOLE: () => new TurnHeldItemTransferModifierType('Mini Black Hole'),
+  MINI_BLACK_HOLE: () => new TurnHeldItemTransferModifierType(`${i18next.t("modifierType:MINI_BLACK_HOLE.name")}`, 'mini_black_hole'),
   
   VOUCHER: () => new AddVoucherModifierType(VoucherType.REGULAR, 1),
   VOUCHER_PLUS: () => new AddVoucherModifierType(VoucherType.PLUS, 1),
   VOUCHER_PREMIUM: () => new AddVoucherModifierType(VoucherType.PREMIUM, 1),
 
-  GOLDEN_POKEBALL: () => new ModifierType(`Golden ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle',
+  GOLDEN_POKEBALL: () => new ModifierType(`${i18next.t("modifierType:GOLDEN_POKEBALL.name")}`,`${i18next.t("modifierType:GOLDEN_POKEBALL.description")}`,
     (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold', null, 'pb_bounce_1'),
 
-  ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Token', 'Increases damage by 5%', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 5), 'wl_item_drop'),
-  ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Protection Token', 'Reduces incoming damage by 2.5%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 2.5), 'wl_guard_spec'),
+  ENEMY_DAMAGE_BOOSTER: () => new ModifierType(`${i18next.t("modifierType:DAMAGE_TOKEN.name")}`,`${i18next.t("modifierType:DAMAGE_TOKEN.description")}`, (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 5), 'wl_item_drop'),
+  ENEMY_DAMAGE_REDUCTION: () => new ModifierType(`${i18next.t("modifierType:PROTECTION_TOKEN.name")}`,`${i18next.t("modifierType:PROTECTION_TOKEN.description")}`, (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 2.5), 'wl_guard_spec'),
   //ENEMY_SUPER_EFFECT_BOOSTER: () => new ModifierType('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new Modifiers.EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_custom_super_effective'),
-  ENEMY_HEAL: () => new ModifierType('Recovery Token', 'Heals 3% of max HP every turn', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 3), 'wl_potion'),
-  ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Poison Token', 10, StatusEffect.POISON, 'wl_antidote'),
-  ENEMY_ATTACK_PARALYZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Paralyze Token', 10, StatusEffect.PARALYSIS, 'wl_paralyze_heal'),
-  ENEMY_ATTACK_SLEEP_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Sleep Token', 10, StatusEffect.SLEEP, 'wl_awakening'),
-  ENEMY_ATTACK_FREEZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Freeze Token', 10, StatusEffect.FREEZE, 'wl_ice_heal'),
-  ENEMY_ATTACK_BURN_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Burn Token', 10, StatusEffect.BURN, 'wl_burn_heal'),
-  ENEMY_STATUS_EFFECT_HEAL_CHANCE: () => new ModifierType('Full Heal Token', 'Adds a 10% chance every turn to heal a status condition', (type, _args) => new Modifiers.EnemyStatusEffectHealChanceModifier(type, 10), 'wl_full_heal'),
+  ENEMY_HEAL: () => new ModifierType(`${i18next.t("modifierType:RECOVERY_TOKEN.name")}`,`${i18next.t("modifierType:RECOVERY_TOKEN.description")}`, (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 3), 'wl_potion'),
+  ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType(`${i18next.t("modifierType:POISON_TOKEN.name")}`, 10, StatusEffect.POISON, 'wl_antidote'),
+  ENEMY_ATTACK_PARALYZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType(`${i18next.t("modifierType:PARALYZE_TOKEN.name")}`, 10, StatusEffect.PARALYSIS, 'wl_paralyze_heal'),
+  ENEMY_ATTACK_SLEEP_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType(`${i18next.t("modifierType:SLEEP_TOKEN.name")}`, 10, StatusEffect.SLEEP, 'wl_awakening'),
+  ENEMY_ATTACK_FREEZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType(`${i18next.t("modifierType:FREEZE_TOKEN.name")}`, 10, StatusEffect.FREEZE, 'wl_ice_heal'),
+  ENEMY_ATTACK_BURN_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType(`${i18next.t("modifierType:BURN_TOKEN.name")}`, 10, StatusEffect.BURN, 'wl_burn_heal'),
+  ENEMY_STATUS_EFFECT_HEAL_CHANCE: () => new ModifierType(`${i18next.t("modifierType:FULL_HEAL_TOKEN.name")}`,`${i18next.t("modifierType:FULL_HEAL_TOKEN.description")}`, (type, _args) => new Modifiers.EnemyStatusEffectHealChanceModifier(type, 10), 'wl_full_heal'),
   ENEMY_ENDURE_CHANCE: () => new EnemyEndureChanceModifierType('Endure Token', 2.5, 'wl_reset_urge'),
-  ENEMY_FUSED_CHANCE: () => new ModifierType('Fusion Token', 'Adds a 1% chance that a wild Pokémon will be a fusion', (type, _args) => new Modifiers.EnemyFusionChanceModifier(type, 1), 'wl_custom_spliced'),
+  ENEMY_FUSED_CHANCE: () => new ModifierType(`${i18next.t("modifierType:FUSION_TOKEN.name")}`,`${i18next.t("modifierType:FUSION_TOKEN.description")}`, (type, _args) => new Modifiers.EnemyFusionChanceModifier(type, 1), 'wl_custom_spliced'),
 };
 
 interface ModifierPool {
@@ -1026,7 +1226,6 @@ const modifierPool: ModifierPool = {
       const thresholdPartyMemberCount = Math.min(party.filter(p => p.hp && p.getMoveset().filter(m => (m.getMove().pp - m.ppUsed) <= 5).length).length, 3);
       return thresholdPartyMemberCount;
     }, 3),
-    new WeightedModifierType(modifierTypes.DIRE_HIT, 4),
     new WeightedModifierType(modifierTypes.SUPER_LURE, 4),
     new WeightedModifierType(modifierTypes.NUGGET, 5),
     new WeightedModifierType(modifierTypes.EVOLUTION_ITEM, (party: Pokemon[]) => {

@@ -1,3 +1,5 @@
+import i18next from "i18next";
+
 export enum BattleStat {
   ATK,
   DEF,
@@ -12,19 +14,19 @@ export enum BattleStat {
 export function getBattleStatName(stat: BattleStat) {
   switch (stat) {
     case BattleStat.ATK:
-      return 'Attack';
+      return i18next.t('pokemonStat:ATK');
     case BattleStat.DEF:
-      return 'Defense';
+      return i18next.t('pokemonStat:DEF');
     case BattleStat.SPATK:
-      return 'Sp. Atk';
+      return i18next.t('pokemonStat:SPATK');
     case BattleStat.SPDEF:
-      return 'Sp. Def';
+      return i18next.t('pokemonStat:SPDEF');
     case BattleStat.SPD:
-      return 'Speed';
+      return i18next.t('pokemonStat:SPD');
     case BattleStat.ACC:
-      return 'Accuracy';
+      return i18next.t('pokemonStat:ACC');
     case BattleStat.EVA:
-      return 'Evasiveness';
+      return i18next.t('pokemonStat:EVA');
     default:
       return '???';
   }
