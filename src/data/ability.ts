@@ -1661,7 +1661,7 @@ export class BlockOneHitKOAbAttr extends AbAttr {
 
 export class IncrementMovePriorityAbAttr extends AbAttr {
   private moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean;
-  private increaseAmount: integer;
+  private increaseAmount: number;
 
   constructor(moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean, increaseAmount = 1) {
     super(true);
@@ -3350,8 +3350,8 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
-    new Ability(Abilities.QUICK_DRAW, 8)
-      .unimplemented(),
+    new Ability(Abilities.QUICK_DRAW, "Quick Draw", "Enables the Pokémon to move first occasionally.", 8)
+      .attr(IncrementMovePriorityAbAttr, (pokemon, move) => move.category !== MoveCategory.STATUS && Math.random() <= 1/3, 0.01),
     new Ability(Abilities.UNSEEN_FIST, 8)
       .unimplemented(),
     new Ability(Abilities.CURIOUS_MEDICINE, 8)
