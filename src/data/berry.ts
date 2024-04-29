@@ -4,7 +4,8 @@ import Pokemon, { HitResult } from "../field/pokemon";
 import { getBattleStatName } from "./battle-stat";
 import { BattleStat } from "./battle-stat";
 import { BattlerTagType } from "./enums/battler-tag-type";
-import { getStatusEffectHealText } from "./status-effect";
+import { Abilities } from "./enums/abilities";
+import { StatusEffect, getStatusEffectHealText } from "./status-effect";
 import * as Utils from "../utils";
 import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } from "./ability";
 
@@ -57,7 +58,13 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
     case BerryType.SITRUS:
       return (pokemon: Pokemon) => pokemon.getHpRatio() < 0.5;
     case BerryType.LUM:
-      return (pokemon: Pokemon) => !!pokemon.status || !!pokemon.getTag(BattlerTagType.CONFUSED);
+      return (pokemon: Pokemon) => {
+        // Check both POISON and TOXIC statuses and the POISON_HEAL ability
+        if ((pokemon.status.effect === StatusEffect.POISON || pokemon.status.effect === StatusEffect.TOXIC) && pokemon.hasAbility(Abilities.POISON_HEAL)) {
+          return false;  // Do not consume the berry
+        }
+        return !!pokemon.status.effect || !!pokemon.getTag(BattlerTagType.CONFUSED);
+      };
     case BerryType.ENIGMA:
       return (pokemon: Pokemon) => !!pokemon.turnData.attacksReceived.filter(a => a.result === HitResult.SUPER_EFFECTIVE).length;
     case BerryType.LIECHI:
