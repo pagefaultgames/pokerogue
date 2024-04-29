@@ -34,6 +34,7 @@ import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, 
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
+import { Abilities } from "./data/enums/abilities";
 import { BattleSpec } from "./enums/battle-spec";
 import { Species } from "./data/enums/species";
 import { HealAchv, LevelAchv, achvs } from "./system/achv";
