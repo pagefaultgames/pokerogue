@@ -2348,6 +2348,20 @@ export class OneHitKOAccuracyAttr extends VariableAccuracyAttr {
   }
 }
 
+export class SheerColdAttr extends OneHitKOAccuracyAttr {
+    apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+        const accuracy = args[0] as Utils.NumberHolder;
+        if (!target.isOfType(Type.ICE)) {
+            if (user.level < target.level)
+                accuracy.value = 0;
+            else
+                accuracy.value = Math.min(Math.max(30 + 100 * (1 - target.level / user.level), 0), 100);
+            return true;
+        }
+        return false;
+    }
+}
+
 export class MissEffectAttr extends MoveAttr {
   private missEffectFunc: UserMoveConditionFunc;
 
@@ -4626,8 +4640,7 @@ export function initMoves() {
       .attr(TrapAttr, BattlerTagType.SAND_TOMB)
       .makesContact(false),
     new AttackMove(Moves.SHEER_COLD, Type.ICE, MoveCategory.SPECIAL, 200, 30, 5, -1, 0, 3)
-      .attr(OneHitKOAttr)
-      .attr(OneHitKOAccuracyAttr),
+      .attr(SheerColdAttr),
     new AttackMove(Moves.MUDDY_WATER, Type.WATER, MoveCategory.SPECIAL, 90, 85, 10, 30, 0, 3)
       .attr(StatChangeAttr, BattleStat.ACC, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
