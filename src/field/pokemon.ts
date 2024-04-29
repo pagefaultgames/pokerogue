@@ -1900,8 +1900,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  resetStatus(): void {
+  resetStatus(revive: boolean = true): void {
     const lastStatus = this.status?.effect;
+    if (!revive && lastStatus === StatusEffect.FAINT) {
+      return;
+    }
     this.status = undefined;
     if (lastStatus === StatusEffect.SLEEP) {
       this.setFrameRate(12);
