@@ -3132,8 +3132,8 @@ export function initAbilities() {
     new Ability(Abilities.HARVEST, 5)
       .unimplemented(),
     new Ability(Abilities.TELEPATHY, 5)
-      .ignorable()
-      .unimplemented(),
+      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon.getAlly() === attacker && move.getMove() instanceof AttackMove)
+      .ignorable(),
     new Ability(Abilities.MOODY, 5)
       .attr(MoodyAbAttr),
     new Ability(Abilities.OVERCOAT, 5)
