@@ -1093,6 +1093,10 @@ export class RemoveHeldBerryAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
     return new Promise<boolean>(resolve => {
+      if (target.hasAbility(Abilities.STICKY_HOLD)) {
+        return resolve(false);
+      }
+      
       const heldBerries = this.getTargetHeldBerries(target).filter(b => b.getTransferrable(false))
 
       if (!heldBerries.length) {
@@ -1100,10 +1104,13 @@ export class RemoveHeldBerryAttr extends MoveEffectAttr {
       }
 
       const removedBerry = heldBerries[user.randSeedInt(heldBerries.length)];
-      const couldRemoveBerry = target.scene.removeModifier(removedBerry, true);
 
-      if (!couldRemoveBerry) {
-        return resolve(false);
+      if (!(--removedBerry.stackCount)) {
+        const couldRemoveBerry = target.scene.removeModifier(removedBerry, true);
+
+        if (!couldRemoveBerry) {
+          return resolve(false);
+        }
       }
 
       target.scene.updateModifiers(target.isPlayer(), false)
