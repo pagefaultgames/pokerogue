@@ -2427,7 +2427,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
           moveHistoryEntry.result = MoveResult.SUCCESS;
           
-          const hitResult = !isProtected ? target.apply(user, this.move) : HitResult.NO_EFFECT;
+          const hitResult = !isProtected ? target.apply(user, this.move, firstHit) : HitResult.NO_EFFECT;
 
           this.scene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
 
@@ -2650,21 +2650,31 @@ export class ShowAbilityPhase extends PokemonPhase {
 export class StatChangePhase extends PokemonPhase {
   private stats: BattleStat[];
   private selfTarget: boolean;
-  private levels: integer;
+  private levels: Utils.IntegerHolder;
   private showMessage: boolean;
   private ignoreAbilities: boolean;
+  private doChangeSynchronously: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer, showMessage: boolean = true, ignoreAbilities: boolean = false) {
+  private relLevels: number[];
+  private filteredStats: BattleStat[];
+
+  /**
+   * @param doChangeSynchronously save the stat changes before the phase gets queued, only tested for use with Moves.SPECTRAL_THIEF
+   */
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, doChangeSynchronously: boolean = false) {
     super(scene, battlerIndex);
 
     this.selfTarget = selfTarget;
     this.stats = stats;
-    this.levels = levels;
+    this.levels = new Utils.IntegerHolder(levels);
     this.showMessage = showMessage;
     this.ignoreAbilities = ignoreAbilities;
+    this.doChangeSynchronously = doChangeSynchronously;
+    if (doChangeSynchronously)
+      this.applyChanges()
   }
 
-  start() {
+  applyChanges() {
     const pokemon = this.getPokemon();
 
     let random = false;
@@ -2683,38 +2693,44 @@ export class StatChangePhase extends PokemonPhase {
     const filteredStats = this.stats.map(s => s !== BattleStat.RAND ? s : this.getRandomStat()).filter(stat => {
       const cancelled = new Utils.BooleanHolder(false);
 
-      if (!this.selfTarget && this.levels < 0)
+      if (!this.selfTarget && this.levels.value < 0)
         this.scene.arena.applyTagsForSide(MistTag, pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY, cancelled);
 
-      if (!cancelled.value && !this.selfTarget && this.levels < 0)
+      if (!cancelled.value && !this.selfTarget && this.levels.value < 0)
         applyPreStatChangeAbAttrs(ProtectStatAbAttr, this.getPokemon(), stat, cancelled);
       
       return !cancelled.value;
     });
 
-    const levels = new Utils.IntegerHolder(this.levels);
-
     if (!this.ignoreAbilities)
-      applyAbAttrs(StatChangeMultiplierAbAttr, pokemon, null, levels);
+      applyAbAttrs(StatChangeMultiplierAbAttr, pokemon, null, this.levels);
 
     const battleStats = this.getPokemon().summonData.battleStats;
-    const relLevels = filteredStats.map(stat => (levels.value >= 1 ? Math.min(battleStats[stat] + levels.value, 6) : Math.max(battleStats[stat] + levels.value, -6)) - battleStats[stat]);
+    this.relLevels = this.filteredStats.map(stat => (this.levels.value >= 1 ? Math.min(battleStats[stat] + this.levels.value, 6) : Math.max(battleStats[stat] + this.levels.value, -6)) - battleStats[stat]);
+
+    for (let stat of this.filteredStats)
+      pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + this.levels.value, 6), -6);
+      
+  }
+
+  start() {
+    const pokemon = this.getPokemon();
+    const levels = this.levels
+    if(!this.doChangeSynchronously)
+      this.applyChanges();
 
     const end = () => {
       if (this.showMessage) {
-        const messages = this.getStatChangeMessages(filteredStats, levels.value, relLevels);
+        const messages = this.getStatChangeMessages(this.filteredStats, levels.value, this.relLevels);
         for (let message of messages)
           this.scene.queueMessage(message);
       }
 
-      for (let stat of filteredStats)
-        pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
-      
-      applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget)
+      applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, this.filteredStats, levels.value, this.selfTarget)
       this.end();
     };
 
-    if (relLevels.filter(l => l).length && this.scene.moveAnimations) {
+    if (this.relLevels.filter(l => l).length && this.scene.moveAnimations) {
       pokemon.enableMask();
       const pokemonMaskSprite = pokemon.maskSprite;
 
@@ -2723,7 +2739,7 @@ export class StatChangePhase extends PokemonPhase {
       const tileWidth = 156 * this.scene.field.scale * pokemon.getSpriteScale();
       const tileHeight = 316 * this.scene.field.scale * pokemon.getSpriteScale();
 
-      const statSprite = this.scene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, 'battle_stats', filteredStats.length > 1 ? 'mix' : BattleStat[filteredStats[0]].toLowerCase());
+      const statSprite = this.scene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, 'battle_stats', this.filteredStats.length > 1 ? 'mix' : BattleStat[this.filteredStats[0]].toLowerCase());
       statSprite.setPipeline(this.scene.fieldSpritePipeline);
       statSprite.setAlpha(0);
       statSprite.setScale(6);

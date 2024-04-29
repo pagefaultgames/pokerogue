@@ -436,6 +436,7 @@ export abstract class MoveAttr {
 
 export enum MoveEffectTrigger {
   PRE_APPLY,
+  PRE_DAMAGE,
   POST_APPLY,
   HIT
 }
@@ -3020,13 +3021,16 @@ export class RemoveScreensAttr extends MoveEffectAttr {
   private targetBothSides: boolean;
 
   constructor(targetBothSides: boolean = false) {
-    super(true, MoveEffectTrigger.PRE_APPLY);
+    super(true, MoveEffectTrigger.PRE_DAMAGE);
     this.targetBothSides = targetBothSides;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
 
     if (!super.apply(user, target, move, args))
+      return false;
+
+    if ((args[0] as Utils.BooleanHolder).value) // isTypeImmune
       return false;
 
     if(this.targetBothSides){
@@ -3046,6 +3050,51 @@ export class RemoveScreensAttr extends MoveEffectAttr {
 
     return true;
 
+  }
+}
+
+export class StealStatBoostsAttr extends MoveEffectAttr {
+
+  constructor() {
+    super(false, MoveEffectTrigger.PRE_DAMAGE);
+  }
+  
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    if ((args[0] as Utils.BooleanHolder).value) // isTypeImmune
+      return false;
+
+    let stoleStats = false;
+    let stolenStatBoosts = target.summonData.battleStats.map(stat => {
+      if (stat > 0) {
+        stoleStats = true;
+        return stat;
+      }
+      return 0;
+    });
+
+    if (!stoleStats)
+      return false;
+
+    // directly set to 0 as opposed to "change" them to ignore abilities
+    for (let s = 0; s < target.summonData.battleStats.length; s++)
+      target.summonData.battleStats[s] = Math.min(target.summonData.battleStats[s], 0);
+    target.scene.queueMessage(getPokemonMessage(target, `'s stat boosts\nwere eliminated!`));
+
+    // accounting for StatChangePhase requiring a list of stats and a single amount to change by
+    let statsByLevel = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []};
+    for (let [stat, boost] of stolenStatBoosts.entries()) {
+      statsByLevel[boost]?.push(stat);
+    }
+    for (let level = 1; level <= 6; level++) {
+      if(statsByLevel[level].empty)
+        continue
+      // stat change must be immediate to be ready for damage calculation
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, statsByLevel[level], level, true, false, true));
+    }
+    return true;
   }
 }
 
@@ -5870,7 +5919,7 @@ export function initMoves() {
     new AttackMove(Moves.PRISMATIC_LASER, Type.PSYCHIC, MoveCategory.SPECIAL, 160, 100, 10, -1, 0, 7)
       .attr(RechargeAttr),
     new AttackMove(Moves.SPECTRAL_THIEF, Type.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 7)
-      .partial(),
+      .attr(StealStatBoostsAttr),
     new AttackMove(Moves.SUNSTEEL_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 7)
       .ignoresAbilities()
       .partial(),
