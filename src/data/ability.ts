@@ -2010,12 +2010,25 @@ export class PostTurnAbAttr extends AbAttr {
 }
 
 export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
+  private allyTarget: boolean;
+  private target: Pokemon;
+
+  constructor(allyTarget: boolean = false) {
+    super(true);
+    this.allyTarget = allyTarget;
+  }
+
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    if (pokemon.status) {
+    if (this.allyTarget) {
+      this.target = pokemon.getAlly();
+    } else {
+      this.target = pokemon;
+    }
+    if (this.target?.status) {
 	
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status?.effect)));
-      pokemon.resetStatus();
-      pokemon.updateInfo();
+      this.target.scene.queueMessage(getPokemonMessage(this.target, getStatusEffectHealText(this.target.status?.effect)));
+      this.target.resetStatus();
+      this.target.updateInfo();
       return true;
     }
 	
@@ -2900,8 +2913,8 @@ export function initAbilities() {
       .attr(DownloadAbAttr),
     new Ability(Abilities.IRON_FIST, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.PUNCHING_MOVE), 1.2),
-    new Ability(Abilities.POISON_HEAL, "Poison Heal (P)", "Restores HP if the Pokémon is poisoned instead of losing HP.", 4),
-    new Ability(Abilities.ADAPTABILITY, "Adaptability", "Powers up moves of the same type as the Pokémon.", 4)
+    new Ability(Abilities.POISON_HEAL,  4),
+    new Ability(Abilities.ADAPTABILITY, 4)
       .attr(StabBoostAbAttr),
     new Ability(Abilities.SKILL_LINK, 4)
       .attr(MaxMultiHitAbAttr),
@@ -3014,7 +3027,7 @@ export function initAbilities() {
       .attr(PostDefendMoveDisableAbAttr, 30)
       .unimplemented(),
     new Ability(Abilities.HEALER, 5)
-      .unimplemented(),
+      .conditionalAttr(pokemon => pokemon.getAlly() && Utils.randSeedInt(10) < 3, PostTurnResetStatusAbAttr, true),
     new Ability(Abilities.FRIEND_GUARD, 5)
       .ignorable()
       .unimplemented(),
