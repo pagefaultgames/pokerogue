@@ -96,7 +96,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       ui.revertMode();
       ui.showText(message, null, () => {
         const config: OptionSelectConfig = {
-          options: new Array(3).fill(null).map((_, i) => i).filter(slotFilter).map(i => {
+          options: new Array(5).fill(null).map((_, i) => i).filter(slotFilter).map(i => {
             return {
               label: i18next.t('menuUiHandler:slot', {slotNumber: i+1}),
               handler: () => {
@@ -135,7 +135,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       handler: () => {
         const dataSlots: integer[] = [];
         Promise.all(
-          new Array(3).fill(null).map((_, i) => {
+          new Array(5).fill(null).map((_, i) => {
             const slotId = i;
             return this.scene.gameData.getSession(slotId).then(data => {
               if (data)
@@ -311,7 +311,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         case MenuOptions.LOG_OUT:
           success = true;
           const doLogout = () => {
-            Utils.apiPost('account/logout', undefined, undefined, true).then(res => {
+            Utils.apiFetch('account/logout', true).then(res => {
               if (!res.ok)
                 console.error(`Log out failed (${res.status}: ${res.statusText})`);
               Utils.setCookie(Utils.sessionIdKey, '');

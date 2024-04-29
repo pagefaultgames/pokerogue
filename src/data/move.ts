@@ -695,6 +695,7 @@ export class RecoilAttr extends MoveEffectAttr {
       
     user.damageAndUpdate(recoilDamage, HitResult.OTHER, false, true, true);
     user.scene.queueMessage(getPokemonMessage(user, ' is hit\nwith recoil!'));
+	user.turnData.damageTaken += recoilDamage;
 
     return true;
   }
@@ -714,6 +715,7 @@ export class SacrificialAttr extends MoveEffectAttr {
       return false;
 
     user.damageAndUpdate(user.hp, HitResult.OTHER, false, true, true);
+	user.turnData.damageTaken += user.hp;
 
     return true;
   }
@@ -736,7 +738,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
 
     const cancelled = new Utils.BooleanHolder(false);
     applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
-    if (!cancelled){
+    if (!cancelled.value){
       user.damageAndUpdate(Math.ceil(user.getMaxHp()/2), HitResult.OTHER, false, true, true);
     }    
     return true;
@@ -746,16 +748,6 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
     if (user.isBoss())
       return -10;
     return Math.ceil(((1 - user.getHpRatio()/2) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type) - 0.5));
-  }
-}
-
-export class ExplosiveAttr extends MoveEffectAttr {
-  getCondition(): MoveCondition | MoveConditionFunc {
-      return (user, target, move) =>{
-        const cancelled = new Utils.BooleanHolder(false);
-        user.scene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled));
-        return !cancelled.value;
-      }
   }
 }
 
@@ -884,6 +876,7 @@ export class HitHealAttr extends MoveEffectAttr {
       !reverseDrain ? healAmount : healAmount * -1,
       !reverseDrain ? getPokemonMessage(target, ` had its\nenergy drained!`) : undefined,
       false, true));
+    if (reverseDrain) user.turnData.damageTaken += healAmount;
     return true;
   }
 
@@ -1027,7 +1020,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
     if (target.status) {
       return false;
     }
-    if (!target.status || (target.status.effect === statusToApply && move.chance < 0))
+    if (!target.status || (target.status.effect === statusToApply && move.chance < 0)) {
       var statusAfflictResult = target.trySetStatus(statusToApply, true);
       if (statusAfflictResult) {
         user.scene.queueMessage(getPokemonMessage(user, getStatusEffectHealText(user.status.effect)));
@@ -1035,6 +1028,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
         user.updateInfo();
       }
       return statusAfflictResult;
+    }
     
     return false;
   }
@@ -2392,6 +2386,7 @@ const crashDamageFunc = (user: Pokemon, move: Move) => {
   
   user.damageAndUpdate(Math.floor(user.getMaxHp() / 2), HitResult.OTHER, false, true);
   user.scene.queueMessage(getPokemonMessage(user, ' kept going\nand crashed!'));
+  user.turnData.damageTaken += Math.floor(user.getMaxHp() / 2);
   
   return true;
 };
@@ -2471,7 +2466,7 @@ export class FrenzyAttr extends MoveEffectAttr {
 
     if (!user.getMoveQueue().length) {
       if (!user.getTag(BattlerTagType.FRENZY)) {
-        const turnCount = user.randSeedIntRange(2, 3);
+        const turnCount = user.randSeedIntRange(1, 2);
         new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
         user.addTag(BattlerTagType.FRENZY, 1, move.id, user.id);
       } else {
@@ -3629,6 +3624,12 @@ const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.i
 
 const failOnMaxCondition: MoveConditionFunc = (user, target, move) => !target.isMax();
 
+const failIfDampCondition: MoveConditionFunc = (user, target, move) => {
+  const cancelled = new Utils.BooleanHolder(false);
+  user.scene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled));
+  return !cancelled.value;
+}
+
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
 function applyMoveAttrsInternal(attrFilter: MoveAttrFilter, user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<void> {
@@ -4044,9 +4045,9 @@ export function initMoves() {
       .attr(CopyMoveAttr)
       .ignoresVirtual(),
     new AttackMove(Moves.SELF_DESTRUCT, Type.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
-      .attr(ExplosiveAttr)
       .attr(SacrificialAttr)
       .makesContact(false)
+      .condition(failIfDampCondition)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.EGG_BOMB, Type.NORMAL, MoveCategory.PHYSICAL, 100, 75, 10, -1, 0, 1)
       .makesContact(false)
@@ -4135,7 +4136,7 @@ export function initMoves() {
     new AttackMove(Moves.CRABHAMMER, Type.WATER, MoveCategory.PHYSICAL, 100, 90, 10, -1, 0, 1)
       .attr(HighCritAttr),
     new AttackMove(Moves.EXPLOSION, Type.NORMAL, MoveCategory.PHYSICAL, 250, 100, 5, -1, 0, 1)
-      .attr(ExplosiveAttr)
+      .condition(failIfDampCondition)
       .attr(SacrificialAttr)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
@@ -4751,7 +4752,7 @@ export function initMoves() {
     new AttackMove(Moves.PAYBACK, Type.DARK, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 4)
     .attr(MovePowerMultiplierAttr, (user, target, move) => target.getLastXMoves(1).find(m => m.turn === target.scene.currentBattle.turn) || user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.BALL ? 2 : 1),  
     new AttackMove(Moves.ASSURANCE, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 4)
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.turnData.damageTaken > 0 ? 2 : 1),
     new StatusMove(Moves.EMBARGO, Type.DARK, 100, 15, -1, 0, 4)
       .unimplemented(),
     new AttackMove(Moves.FLING, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
@@ -5512,8 +5513,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.BANEFUL_BUNKER, Type.POISON, -1, 10, -1, 4, 7)
       .attr(ProtectAttr, BattlerTagType.BANEFUL_BUNKER),
     new AttackMove(Moves.SPIRIT_SHACKLE, Type.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 7)
-      .makesContact(false)
-      .partial(),
+      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1)
+      .makesContact(false),
     new AttackMove(Moves.DARKEST_LARIAT, Type.DARK, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 7)
       .attr(IgnoreOpponentStatChangesAttr),
     new AttackMove(Moves.SPARKLING_ARIA, Type.WATER, MoveCategory.SPECIAL, 90, 100, 10, -1, 0, 7)
@@ -5586,7 +5587,7 @@ export function initMoves() {
       .partial(),
     new AttackMove(Moves.CORE_ENFORCER, Type.DRAGON, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 7)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .unimplemented(),
+      .partial(),
     new AttackMove(Moves.TROP_KICK, Type.GRASS, MoveCategory.PHYSICAL, 70, 100, 15, 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new StatusMove(Moves.INSTRUCT, Type.PSYCHIC, -1, 15, -1, 0, 7)
@@ -5668,7 +5669,7 @@ export function initMoves() {
       .partial(),
     /* End Unused */
     new AttackMove(Moves.MIND_BLOWN, Type.FIRE, MoveCategory.SPECIAL, 150, 100, 5, -1, 0, 7)
-      .attr(ExplosiveAttr)
+      .condition(failIfDampCondition)
       .attr(HalfSacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.PLASMA_FISTS, Type.ELECTRIC, MoveCategory.PHYSICAL, 100, 100, 15, -1, 0, 7)
@@ -5905,10 +5906,10 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .partial(),
     new AttackMove(Moves.MISTY_EXPLOSION, Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 8)
-      .attr(ExplosiveAttr)
       .attr(SacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1)
+      .condition(failIfDampCondition),
     new AttackMove(Moves.GRASSY_GLIDE, Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, -1, 0, 8)
       .partial(),
     new AttackMove(Moves.RISING_VOLTAGE, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 8)
