@@ -2839,7 +2839,6 @@ export class RemoveScreensAttr extends MoveEffectAttr {
 export class ForceSwitchOutAttr extends MoveEffectAttr {
   private user: boolean;
   private batonPass: boolean;
-  private userReference: Pokemon;
   
   constructor(user?: boolean, batonPass?: boolean) {
     super(false, MoveEffectTrigger.POST_APPLY, true);
@@ -2852,7 +2851,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       if (!this.user && target.isMax())
         return resolve(false);
 
-    this.userReference = user;
   	// Check if the move category is not STATUS or if the switch out condition is not met
     if (move.category !== MoveCategory.STATUS && !this.getSwitchOutCondition()(user, target, move)) {
   	  //Apply effects before switch out i.e. poison point, flame body, etc
@@ -2909,14 +2907,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   
 	getCondition(): MoveConditionFunc {
     return (user, target, move) => move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move);
-  }
-
-  isSelfSwitch(): boolean {
-    return this.user;
-  }
-
-  returnUser(): Pokemon {
-    return this.userReference;
   }
 
   getSwitchOutCondition(): MoveConditionFunc {
