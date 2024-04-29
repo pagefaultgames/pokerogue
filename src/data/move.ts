@@ -12,11 +12,11 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr } from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, PreventBerryUseAbAttr, BlockItemTheftAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { allAbilities } from './ability';
-import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { modifierTypes } from '../modifier/modifier-type';
+import { PokemonHeldItemModifier, BerryModifier, PreserveBerryModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
@@ -26,6 +26,7 @@ import { ModifierPoolType } from "#app/modifier/modifier-type";
 import { Command } from "../ui/command-ui-handler";
 import { Biome } from "./enums/biome";
 import i18next, { Localizable } from '../plugins/i18n';
+import { BerryType, BerryEffectFunc, getBerryEffectFunc } from './berry';
 
 export enum MoveCategory {
   PHYSICAL,
@@ -1130,6 +1131,74 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     const heldItems = this.getTargetHeldItems(target);
     return heldItems.length ? -5 : 0;
+  }
+}
+
+export class EatBerryAttr extends MoveEffectAttr {
+  protected chosenBerry: BerryModifier;
+  constructor() {
+    super(true, MoveEffectTrigger.HIT);
+    this.chosenBerry = undefined;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    if(this.chosenBerry === undefined) { // if no berry has been provided, pick a random berry from their inventory 
+      const heldBerries = this.getTargetHeldBerries(target);
+      if(heldBerries.length <= 0)
+        return false;
+      this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+    }
+
+    getBerryEffectFunc(this.chosenBerry.berryType)(target);
+
+    const preserve = new Utils.BooleanHolder(false);
+    target.scene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve);
+
+    if (!preserve.value){
+      if (!--this.chosenBerry.stackCount)
+        target.scene.removeModifier(this.chosenBerry);
+      target.scene.updateModifiers(target.isPlayer());
+}
+
+    return true;
+  }
+
+  getTargetHeldBerries(target: Pokemon): BerryModifier[] {
+    return target.scene.findModifiers(m => m instanceof BerryModifier
+      && (m as BerryModifier).pokemonId === target.id, target.isPlayer()) as BerryModifier[];
+  }
+
+}
+
+export class StealEatBerryAttr extends EatBerryAttr {
+  constructor() {
+    super();
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+
+    const cancelled = new Utils.BooleanHolder(false);
+    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled);
+    if(cancelled.value == true)
+      return false;
+    
+    const heldBerries = this.getTargetHeldBerries(target).filter(i => i.getTransferrable(false));
+
+    if (heldBerries.length) {
+      this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
+
+      if (!--this.chosenBerry.stackCount)
+        target.scene.removeModifier(this.chosenBerry);
+      target.scene.updateModifiers(target.isPlayer());
+
+      user.scene.queueMessage(getPokemonMessage(user, ` stole and ate\n${target.name}'s ${this.chosenBerry.type.name}!`));
+      return super.apply(user, user, move, args);
+    }
+
+    return false;
   }
 }
 
@@ -4817,7 +4886,7 @@ export function initMoves() {
       .makesContact(false)
       .ignoresProtect(),
     new AttackMove(Moves.PLUCK, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 4)
-      .partial(),
+      .attr(StealEatBerryAttr),
     new StatusMove(Moves.TAILWIND, Type.FLYING, -1, 15, -1, 0, 4)
       .windMove()
       .target(MoveTarget.USER_SIDE)
@@ -5054,7 +5123,7 @@ export function initMoves() {
     new AttackMove(Moves.JUDGMENT, Type.NORMAL, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 4)
       .partial(),
     new AttackMove(Moves.BUG_BITE, Type.BUG, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 4)
-      .partial(),
+      .attr(StealEatBerryAttr),
     new AttackMove(Moves.CHARGE_BEAM, Type.ELECTRIC, MoveCategory.SPECIAL, 50, 90, 10, 70, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPATK, 1, true),
     new AttackMove(Moves.WOOD_HAMMER, Type.GRASS, MoveCategory.PHYSICAL, 120, 100, 15, -1, 0, 4)
@@ -5830,7 +5899,11 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, false, 1)
       .bitingMove(),
     new SelfStatusMove(Moves.STUFF_CHEEKS, Type.NORMAL, -1, 10, 100, 0, 8)
-      .unimplemented(),
+      .attr(StatChangeAttr, BattleStat.DEF, 2)
+      .attr(EatBerryAttr)
+      .condition((user, target, move) => target.scene.findModifiers(m => m instanceof BerryModifier
+        && (m as BerryModifier).pokemonId === target.id, target.isPlayer()).length > 0 )
+      .target(MoveTarget.USER),
     new SelfStatusMove(Moves.NO_RETREAT, Type.FIGHTING, -1, 5, 100, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD ], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, true, 1),
@@ -5845,8 +5918,8 @@ export function initMoves() {
       .makesContact(false)
       .partial(),
     new StatusMove(Moves.TEATIME, Type.NORMAL, -1, 10, -1, 0, 8)
-      .target(MoveTarget.ALL)
-      .unimplemented(),
+      .attr(EatBerryAttr)
+      .target(MoveTarget.ALL),
     new StatusMove(Moves.OCTOLOCK, Type.FIGHTING, 100, 15, -1, 0, 8)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1)
       .partial(),
