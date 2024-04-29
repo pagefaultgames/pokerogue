@@ -6224,8 +6224,18 @@ export function initMoves() {
     new AttackMove(Moves.LASH_OUT, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
       .partial(),
     new AttackMove(Moves.POLTERGEIST, Type.GHOST, MoveCategory.PHYSICAL, 110, 90, 5, -1, 0, 8)
-      .makesContact(false)
-      .partial(),
+      .condition((user, target, move) => {
+        const heldItems = target.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === target.id, target.isPlayer())
+        if(heldItems.length === 0)
+          return false;
+        
+        let itemName = heldItems[0]?.type?.name ?? "item";
+        const poltergeistString = ' is about to be attacked by its ' + itemName + '!';
+        target.scene.queueMessage(getPokemonMessage(target, poltergeistString));
+
+        return true;
+      })
+      .makesContact(false),
     new StatusMove(Moves.CORROSIVE_GAS, Type.POISON, 100, 40, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .unimplemented(),
