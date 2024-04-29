@@ -2349,17 +2349,21 @@ export class OneHitKOAccuracyAttr extends VariableAccuracyAttr {
 }
 
 export class SheerColdAttr extends OneHitKOAccuracyAttr {
-    apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-        const accuracy = args[0] as Utils.NumberHolder;
-        if (!target.isOfType(Type.ICE)) {
-            if (user.level < target.level)
-                accuracy.value = 0;
-            else
-                accuracy.value = Math.min(Math.max(30 + 100 * (1 - target.level / user.level), 0), 100);
-            return true;
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const accuracy = args[0] as Utils.NumberHolder;
+    if (!target.isOfType(Type.ICE)) {
+      if (user.level < target.level)
+        accuracy.value = 0;
+      else {
+        if (user.isOfType(Type.ICE))
+          accuracy.value = Math.min(Math.max(30 + 100 * (1 - target.level / user.level), 0), 100);
+        else
+          accuracy.value = Math.min(Math.max(20 + 100 * (1 - target.level / user.level), 0), 100);
         }
-        return false;
+    return true;
     }
+  return false;
+  }
 }
 
 export class MissEffectAttr extends MoveAttr {
