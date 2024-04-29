@@ -940,15 +940,10 @@ export class AnalyticAbAttr extends MovePowerBoostAbAttr {
         let switchMove = false;
         const moveMatches = pokemon.getLastXMoves(1).find(m => m.turn === pokemon.scene.currentBattle.turn);
         const prioCommand = user.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()].command !== Command.FIGHT;
-        const moveId = user.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.move?.move
-        if(moveId){
-          const targetMove = allMoves[moveId];
-          const usedSwitchMove = targetMove.findAttr(attr => attr instanceof ForceSwitchOutAttr) as ForceSwitchOutAttr;
-          if(usedSwitchMove && usedSwitchMove.returnUser() && usedSwitchMove?.isSelfSwitch?.() && (pokemon.battleSummonData?.turnCount === 1)){ // check if the target was switched in by a move
-            if(usedSwitchMove.returnUser().id === target.id)
-              switchMove = true;
-          }
-        }
+        
+        if(target.battleSummonData.turnCount === 0)
+          switchMove = true;
+
         if(moveMatches || prioCommand || switchMove) // check to see if they've used a move this round, ball/pokemon/run command, or switched out with a move
           fasterPokemon++
       });
