@@ -755,8 +755,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         types.splice(flyingIndex, 1);
     }
 
-    if (!types.length)
+    if (!types.length) // become UNKNOWN if no types are present
       types.push(Type.UNKNOWN);
+
+    if (types.length > 1 && types.includes(Type.UNKNOWN)) { // remove UNKNOWN if other types are present
+      const index = types.indexOf(Type.UNKNOWN);
+      if (index !== -1) {
+          types.splice(index, 1);
+      }
+    }
 
     return types;
   }
