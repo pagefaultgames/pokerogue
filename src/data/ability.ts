@@ -825,6 +825,36 @@ export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
   }
 }
 
+export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
+  private chance: integer;
+  private attacker: Pokemon;
+  private move: PokemonMove;
+
+  constructor(chance: integer) {
+    super();
+
+    this.chance = chance;
+  }
+  
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (!attacker.summonData.disabledMove) {
+      if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance) && !attacker.isMax()) {
+        this.attacker = attacker;
+        this.move = move;
+
+        attacker.summonData.disabledMove = move.moveId;
+        attacker.summonData.disabledTurns = 4;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(this.attacker, `'s ${this.move.getName()}\nwas disabled!`);
+  }
+}
+
 export class PostStatChangeStatChangeAbAttr extends PostStatChangeAbAttr {
   private condition: PokemonStatChangeCondition;
   private statsToChange: BattleStat[];
@@ -2868,6 +2898,7 @@ export function initAbilities() {
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 0.5)
       .condition((pokemon) => pokemon.getHpRatio() <= 0.5),
     new Ability(Abilities.CURSED_BODY, 5)
+      .attr(PostDefendMoveDisableAbAttr, 30)
       .unimplemented(),
     new Ability(Abilities.HEALER, 5)
       .unimplemented(),
