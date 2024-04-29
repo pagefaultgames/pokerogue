@@ -2760,7 +2760,6 @@ export class HitsTagAttr extends MoveAttr {
 export class ToxicHitAttr extends HitsTagAttr {
     apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
       if (user.isOfType(Type.POISON)) {
-        this.getTargetBenefitScore(user, target, move)
         return true;
       }
       return false;
