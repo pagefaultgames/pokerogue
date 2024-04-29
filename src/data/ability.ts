@@ -1771,6 +1771,53 @@ function getAnticipationCondition(): AbAttrCondition {
   };
 }
 
+export class ForewarnAbAttr extends PostSummonAbAttr {
+  constructor() {
+    super(true);
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    let maxPowerSeen = 0;
+    let maxMove = "";
+    let movePower = 0;
+    for (let opponent of pokemon.getOpponents()) {
+      for (let move of opponent.moveset) {
+        if (move.getMove() instanceof StatusMove) {
+          movePower = 1;
+        } else if (move.getMove().findAttr(attr => attr instanceof OneHitKOAttr)) {
+          movePower = 150;
+        } else if (move.getMove().id === Moves.COUNTER || move.getMove().id === Moves.MIRROR_COAT || move.getMove().id === Moves.METAL_BURST) {
+          movePower = 120;
+        } else if (move.getMove().power === -1) {
+          movePower = 80;
+        } else {
+          movePower = move.getMove().power;
+        }
+        
+        if (movePower > maxPowerSeen) {
+          maxPowerSeen = movePower;
+          maxMove = move.getName();          
+        }
+      }
+    }
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " was forewarned about " + maxMove + "!"));
+    return true;
+  }
+}
+
+export class FriskAbAttr extends PostSummonAbAttr {
+  constructor() {
+    super(true);
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    for (let opponent of pokemon.getOpponents()) {
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, " frisked " + opponent.name + "\'s " + opponent.getAbility().name + "!"));
+    }
+    return true;
+  }
+}
+
 export class PostWeatherChangeAbAttr extends AbAttr {
   applyPostWeatherChange(pokemon: Pokemon, passive: boolean, weather: WeatherType, args: any[]): boolean {
     return false;
@@ -2839,7 +2886,7 @@ export function initAbilities() {
     new Ability(Abilities.ANTICIPATION, 4)
       .conditionalAttr(getAnticipationCondition(), PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' shuddered!')),
     new Ability(Abilities.FOREWARN, 4)
-      .unimplemented(),
+      .attr(ForewarnAbAttr),
     new Ability(Abilities.UNAWARE, 4)
       .attr(IgnoreOpponentStatChangesAbAttr)
       .ignorable(),
@@ -2868,7 +2915,7 @@ export function initAbilities() {
     new Ability(Abilities.HONEY_GATHER, 4)
       .unimplemented(),
     new Ability(Abilities.FRISK, 4)
-      .unimplemented(),
+      .attr(FriskAbAttr),
     new Ability(Abilities.RECKLESS, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.getAttrs(RecoilAttr).length && move.id !== Moves.STRUGGLE, 1.2),
     new Ability(Abilities.MULTITYPE, 4)
