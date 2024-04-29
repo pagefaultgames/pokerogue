@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import BattleScene, { ABILITY_OVERRIDE, AnySound, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE } from '../battle-scene';
+import BattleScene, { ABILITY_OVERRIDE, AnySound, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../battle-scene';
 import { Variant, VariantSet, variantColorCache } from '#app/data/variant';
 import { variantData } from '#app/data/variant';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
@@ -2549,9 +2549,15 @@ export class EnemyPokemon extends Pokemon {
       this.generateAndPopulateMoveset();
 
       this.trySetShiny();
-
-      if (this.shiny)
+      if (OPP_SHINY_OVERRIDE) {
+        this.shiny = true;
+        this.initShinySparkle();
+      }
+      if (this.shiny) {
         this.variant = this.generateVariant();
+        if (OPP_VARIANT_OVERRIDE)
+          this.variant = OPP_VARIANT_OVERRIDE;
+      }
 
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
 
