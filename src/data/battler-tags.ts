@@ -284,6 +284,10 @@ export class SeedTag extends BattlerTag {
     super(BattlerTagType.SEEDED, BattlerTagLapseType.TURN_END, 1, Moves.LEECH_SEED, sourceId);
   }
 
+  canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.isOfType(Type.GRASS);
+  }
+
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
     
