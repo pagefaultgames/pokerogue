@@ -2278,7 +2278,7 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
 export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const type = (args[0] as Utils.IntegerHolder);
-    switch (user.scene.arena.terrain.terrainType) {
+    switch (user.scene.arena.terrain?.terrainType) {
       case TerrainType.MISTY:
         type.value = Type.FAIRY
         break;
@@ -5929,7 +5929,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1),
     new AttackMove(Moves.TERRAIN_PULSE, Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 8)
       .attr(TerrainPulseTypeAttr)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => (user.scene.arena.terrain.terrainType != TerrainType.NONE)  ? 2 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => ([TerrainType.ELECTRIC, TerrainType.GRASSY, TerrainType.MISTY, TerrainType.PSYCHIC].includes(user.scene.arena.terrain?.terrainType)  ? 2 : 1))
       .pulseMove(),
     new AttackMove(Moves.SKITTER_SMACK, Type.BUG, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.SPATK, -1),
