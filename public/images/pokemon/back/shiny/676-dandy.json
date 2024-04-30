@@ -4,30 +4,30 @@
 			"image": "676-dandy.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 72,
-				"h": 72
+				"w": 66,
+				"h": 66
 			},
-			"scale": 1,
+			"scale": 0.333,
 			"frames": [
 				{
 					"filename": "0001.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 62,
-						"h": 72
+						"w": 96,
+						"h": 96
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 62,
-						"h": 72
+						"x": 20,
+						"y": 14,
+						"w": 56,
+						"h": 66
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 62,
-						"h": 72
+						"w": 56,
+						"h": 66
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:9a72775f436bbda574bf3721630310fb:f01538e7a19ca3d0d2fea48cd27d8a4c:b5a287256e260744fe6660dc2ceefd11$"
+		"smartupdate": "$TexturePacker:SmartUpdate:30c2972a226f8e360e323bea40a8005e:232a9bbcc4dba00a033204f1ec06cffd:b5a287256e260744fe6660dc2ceefd11$"
 	}
 }

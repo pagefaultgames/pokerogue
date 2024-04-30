@@ -4,30 +4,30 @@
 			"image": "676-diamond.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 74,
-				"h": 74
+				"w": 68,
+				"h": 68
 			},
-			"scale": 1,
+			"scale": 0.5,
 			"frames": [
 				{
 					"filename": "0001.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 53,
-						"h": 74
+						"w": 96,
+						"h": 96
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 53,
-						"h": 74
+						"x": 24,
+						"y": 12,
+						"w": 47,
+						"h": 68
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 53,
-						"h": 74
+						"w": 47,
+						"h": 68
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:e054ccb4d021c87a6a02c6728403d87a:c7e104da9393ec52b9e6d37f92fc20d9:88c467fc09249b0d2f579d44eacd528d$"
+		"smartupdate": "$TexturePacker:SmartUpdate:bd55e138e32873b99b7a1a2e237d5278:befb394d45c46c22e2711f4c6d5d9623:88c467fc09249b0d2f579d44eacd528d$"
 	}
 }
