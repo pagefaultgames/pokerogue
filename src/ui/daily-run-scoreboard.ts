@@ -165,7 +165,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
           } else
             this.loadingLabel.setText('No Rankings');
         });
-    });
+    }).catch(err => { console.error("Failed to load daily rankings:\n", err) });
   }
 }
 

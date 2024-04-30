@@ -330,6 +330,8 @@ export class TitlePhase extends Phase {
           this.scene.sessionPlayTime = 0;
           this.end();
         });
+      }).catch(err => {
+        console.error("Failed to load daily run:\n", err);
       });
     });
   }
