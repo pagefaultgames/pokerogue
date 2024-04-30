@@ -542,10 +542,20 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.MELOETTA, 'pirouette', 'aria', new SpeciesFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
     new SpeciesFormChange(Species.MELOETTA, 'pirouette', 'aria', new SpeciesFormChangeActiveTrigger(false), true)
   ],
+  [Species.GRENINJA]: [
+    new SpeciesFormChange(Species.GRENINJA, 'battle-bond', 'ash', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.GRENINJA, 'ash', 'battle-bond', new SpeciesFormChangeManualTrigger(), true)
+  ],
   [Species.AEGISLASH]: [
     new SpeciesFormChange(Species.AEGISLASH, 'blade', 'shield', new SpeciesFormChangePreMoveTrigger(Moves.KINGS_SHIELD), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
     new SpeciesFormChange(Species.AEGISLASH, 'shield', 'blade', new SpeciesFormChangePreMoveTrigger(m => allMoves[m].category !== MoveCategory.STATUS), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
     new SpeciesFormChange(Species.AEGISLASH, 'blade', 'shield', new SpeciesFormChangeActiveTrigger(false), true)
+  ],
+  [Species.ZYGARDE]: [
+    new SpeciesFormChange(Species.ZYGARDE, '50-pc', 'complete', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.ZYGARDE, 'complete', '50-pc', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.ZYGARDE, '10-pc', 'complete', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.ZYGARDE, 'complete', '10-pc', new SpeciesFormChangeManualTrigger(), true)
   ],
   [Species.DIANCIE]: [
     new SpeciesFormChange(Species.DIANCIE, '', SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.DIANCITE))

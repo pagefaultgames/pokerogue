@@ -1148,6 +1148,26 @@ class PostVictoryStatChangeAbAttr extends PostVictoryAbAttr {
   }
 }
 
+export class PostVictoryFormChangeAbAttr extends PostVictoryAbAttr {
+  private formFunc: (p: Pokemon) => integer;
+
+  constructor(formFunc: ((p: Pokemon) => integer)) {
+    super(true);
+
+    this.formFunc = formFunc;
+  }
+
+  applyPostVictory(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    const formIndex = this.formFunc(pokemon);
+    if (formIndex !== pokemon.formIndex) {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class PostKnockOutAbAttr extends AbAttr {
   applyPostKnockOut(pokemon: Pokemon, passive: boolean, knockedOut: Pokemon, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -3067,17 +3087,21 @@ export function initAbilities() {
       .ignorable()
       .partial(),
     new Ability(Abilities.BATTLE_BOND, 7)
+      .attr(PostVictoryFormChangeAbAttr, p => p.getFormKey() ? 2 : 1)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .unimplemented(),
-    new Ability(Abilities.POWER_CONSTRUCT, 7)
+      .partial(),
+    new Ability(Abilities.POWER_CONSTRUCT, 7) // TODO: 10% Power Construct Zygarde isn't accounted for yet. If changed, update Zygarde's getSpeciesFormIndex entry accordingly
+      .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() <= 0.5 ? 4 : 2)
+      .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 ? 4 : 2)
+      .attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 ? 4 : 2)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .unimplemented(),
+      .partial(),
     new Ability(Abilities.CORROSION, 7)
       .unimplemented(),
     new Ability(Abilities.COMATOSE, 7)

@@ -1056,6 +1056,8 @@ export default class BattleScene extends SceneBase {
 			case Species.BASCULIN:
 			case Species.DEERLING:
 			case Species.SAWSBUCK:
+			case Species.FROAKIE:
+			case Species.FROGADIER:
 			case Species.VIVILLON:
 			case Species.FLABEBE:
 			case Species.FLOETTE:
@@ -1066,6 +1068,10 @@ export default class BattleScene extends SceneBase {
 			case Species.TATSUGIRI:
 			case Species.PALDEA_TAUROS:
 				return Utils.randSeedInt(species.forms.length);
+			case Species.GRENINJA:
+				return Utils.randSeedInt(2);
+			case Species.ZYGARDE:
+				return Utils.randSeedInt(3);
 			case Species.MINIOR:
 				return Utils.randSeedInt(6);
 			case Species.ALCREMIE:
