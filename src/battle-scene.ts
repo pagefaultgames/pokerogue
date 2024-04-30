@@ -889,8 +889,6 @@ export default class BattleScene extends SceneBase {
 
 		let battleConfig: FixedBattleConfig = null;
 
-		throw new Error('JLIN not implemented.');
-
 		this.resetSeed(newWaveIndex);
 
 		const playerField = this.getPlayerField();
