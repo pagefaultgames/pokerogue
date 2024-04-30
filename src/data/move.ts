@@ -1189,7 +1189,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
     if (heldBerries.length) {
       this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
 
-      if (!--this.chosenBerry.stackCount)
+      if (this.chosenBerry.stackCount == 1)
         target.scene.removeModifier(this.chosenBerry);
       target.scene.updateModifiers(target.isPlayer());
 
