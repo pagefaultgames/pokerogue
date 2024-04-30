@@ -840,6 +840,33 @@ export class VariableMovePowerAbAttr extends PreAttackAbAttr {
   }
 }
 
+export class PreAttackChangeType  extends PreAttackAbAttr{
+
+  // private originalType: Type[];
+  // private MoveType : Type;
+  private condition: PokemonAttackCondition;
+
+  constructor(condition:PokemonAttackCondition){
+      super(true);
+  //   this.originalType = originalType;
+  //   this.MoveType= moveType;
+     this.condition = condition;
+  }
+
+  applyPreAttack(pokemon: Pokemon, passive: boolean, defender: Pokemon, move: PokemonMove, args: any[]): boolean | Promise<boolean> {
+    if (this.condition(pokemon,defender,move.getMove())){
+      const MoveType = move.getMove().type;
+      const originalType = pokemon.getTypes();
+
+      if (originalType.length !==1 || originalType[0] !== MoveType){
+        pokemon.summonData.types = [MoveType];
+      }
+      return true;
+    }
+    return false;
+  }
+}
+
 export class VariableMoveTypeAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     //const power = args[0] as Utils.IntegerHolder;
@@ -2966,7 +2993,11 @@ export function initAbilities() {
     new Ability(Abilities.CHEEK_POUCH, 6)
       .unimplemented(),
     new Ability(Abilities.PROTEAN, 6)
-      .unimplemented(),
+      .attr(PostSummonMessageAbAttr,(pokemon: Pokemon) => getPokemonMessage(pokemon,' Testing out the text!'))
+      //.attr(,pokemon:Pokemon => getPokemonMessage(pokemon,' Testing out the text!'))
+      .attr(PreAttackChangeType, (target,user,move) => move.category !==MoveCategory.STATUS),
+
+      //.unimplemented(),
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
