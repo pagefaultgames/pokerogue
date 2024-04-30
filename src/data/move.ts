@@ -935,8 +935,17 @@ export class MultiHitAttr extends MoveAttr {
         hitTimes = 3;
         break;
       case MultiHitType._3_INCR:
-        hitTimes = 3;
-        // TODO: Add power increase for every hit
+        {
+          const rand = user.randSeedInt(90);
+          const hitValue = new Utils.IntegerHolder(rand);
+          applyAbAttrs(MaxMultiHitAbAttr, user, null, hitValue);
+          if (hitValue.value >= 81)
+            hitTimes = 1;
+          else if (hitValue.value >= 73)
+            hitTimes = 2;
+          else
+            hitTimes = 3;
+        }
         break;
       case MultiHitType._1_TO_10:
         {
@@ -4185,11 +4194,7 @@ export function initMoves() {
       .ignoresVirtual(),
     new AttackMove(Moves.TRIPLE_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 10, 90, 10, -1, 0, 2)
       .attr(MultiHitAttr, MultiHitType._3_INCR)
-      .attr(MissEffectAttr, (user: Pokemon, move: Move) => {
-        user.turnData.hitsLeft = 1;
-        return true;
-      })
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => (user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0) + 1) == 2 ? 2 : ((user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0) + 1) == 1 ? 1 : 3)),
     new AttackMove(Moves.THIEF, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, -1, 0, 2)
       .attr(StealHeldItemChanceAttr, 0.3),
     new StatusMove(Moves.SPIDER_WEB, Type.BUG, -1, 10, -1, 0, 2)
@@ -5939,11 +5944,7 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr, true, false),
     new AttackMove(Moves.TRIPLE_AXEL, Type.ICE, MoveCategory.PHYSICAL, 20, 90, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._3_INCR)
-      .attr(MissEffectAttr, (user: Pokemon, move: Move) => {
-        user.turnData.hitsLeft = 1;
-        return true;
-      })
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => (user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0) + 1) == 2 ? 2 : ((user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0) + 1) == 1 ? 1 : 3)),
     new AttackMove(Moves.DUAL_WINGBEAT, Type.FLYING, MoveCategory.PHYSICAL, 40, 90, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.SCORCHING_SANDS, Type.GROUND, MoveCategory.SPECIAL, 70, 100, 10, 30, 0, 8)
