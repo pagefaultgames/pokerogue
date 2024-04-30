@@ -3099,8 +3099,8 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
       const moveTargets = getMoveTargets(user, move.moveId);
       if (!moveTargets.targets.length)
         return false;
-      let selectTargets;
-      switch(true){
+      let selectTargets: BattlerIndex[];
+      switch (true) {
         case (moveTargets.multiple || moveTargets.targets.length === 1): {
           selectTargets = moveTargets.targets;
           break;
@@ -3110,7 +3110,7 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
           break;
         }
         default: {
-         moveTargets.targets.splice(moveTargets.targets.indexOf(user.getAlly().getBattlerIndex()))
+         moveTargets.targets.splice(moveTargets.targets.indexOf(user.getAlly().getBattlerIndex()));
          selectTargets =  [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
          break;
         }

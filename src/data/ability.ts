@@ -988,7 +988,7 @@ export class BattleStatMultiplierAbAttr extends AbAttr {
 
   applyBattleStat(pokemon: Pokemon, passive: boolean, battleStat: BattleStat, statValue: Utils.NumberHolder, args: any[]): boolean | Promise<boolean> {
   const move = (args[0] as Move);
-    if (battleStat === this.battleStat && (!this.condition || this.condition(pokemon, null, move))){
+    if (battleStat === this.battleStat && (!this.condition || this.condition(pokemon, null, move))) {
       statValue.value *= this.multiplier;
       return true;
     }
@@ -1405,6 +1405,7 @@ export class TraceAbAttr extends PostSummonAbAttr {
     const targets = pokemon.getOpponents();
     if (!targets.length)
       return false;
+    
     let target: Pokemon;
     if (targets.length > 1)
       pokemon.scene.executeWithSeedOffset(() => target = Utils.randSeedItem(targets), pokemon.scene.currentBattle.waveIndex);
@@ -1430,18 +1431,14 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     const targets = pokemon.getOpponents();
-    let target: Pokemon;
-    
-    if(targets.length < 1){
+    if (!targets.length)
       return false;
-    }
 
-    if (targets.length > 1){
-        pokemon.scene.executeWithSeedOffset(() => target = Utils.randSeedItem(targets), pokemon.scene.currentBattle.waveIndex);
-      }
-    else{
-        target = targets[0];
-      }
+    let target: Pokemon;
+    if (targets.length > 1)
+      pokemon.scene.executeWithSeedOffset(() => target = Utils.randSeedItem(targets), pokemon.scene.currentBattle.waveIndex);
+    else
+      target = targets[0];
 
     pokemon.summonData.speciesForm = target.getSpeciesForm();
     pokemon.summonData.fusionSpeciesForm = target.getFusionSpeciesForm();
