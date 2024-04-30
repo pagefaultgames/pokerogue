@@ -853,7 +853,6 @@ export default class SummaryUiHandler extends UiHandler {
   }
 
   getSelectedMove(): Move {
-    console.log("selected moves")
     if (this.cursor !== Page.MOVES)
       return null;
 
@@ -865,7 +864,6 @@ export default class SummaryUiHandler extends UiHandler {
   }
 
   showMoveSelect() {
-    console.log("show move select")
     this.moveSelect = true;
     this.extraMoveRowContainer.setVisible(true);
     this.selectedMoveIndex = -1;
@@ -874,7 +872,6 @@ export default class SummaryUiHandler extends UiHandler {
   }
 
   hideMoveSelect() {
-    console.log("hide move select")
     if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
       this.moveSelectFunction(4);
       return;
