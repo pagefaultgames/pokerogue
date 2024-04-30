@@ -1,4 +1,6 @@
 import i18next from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+
 import { menu as enMenu } from '../locales/en/menu';
 import { menu as esMenu } from '../locales/es/menu';
 import { menu as itMenu } from '../locales/it/menu';
@@ -55,7 +57,6 @@ export interface SimpleTranslationEntries {
   [key: string]: string
 }
 
-
 export interface MoveTranslationEntry {
   name: string,
   effect: string
@@ -78,10 +79,8 @@ export interface Localizable {
   localize(): void;
 }
 
-const DEFAULT_LANGUAGE_OVERRIDE = '';
-
 export function initI18n(): void {
-  let lang = 'en';
+  let lang = '';
 
   if (localStorage.getItem('prLang'))
     lang = localStorage.getItem('prLang');
@@ -92,18 +91,20 @@ export function initI18n(): void {
    * Q: How do I add a new language?
    * A: To add a new language, create a new folder in the locales directory with the language code.
    *    Each language folder should contain a file for each namespace (ex. menu.ts) with the translations.
+   *    Don't forget to declare new language in `supportedLngs` i18next initializer
    *
    * Q: How do I add a new namespace?
    * A: To add a new namespace, create a new file in each language folder with the translations.
    *    Then update the `resources` field in the init() call and the CustomTypeOptions interface.
-   * 
+   *
    * Q: How do I make a language selectable in the settings?
    * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
    */
 
-  i18next.init({
-    lng: DEFAULT_LANGUAGE_OVERRIDE ? DEFAULT_LANGUAGE_OVERRIDE : lang,
+  i18next.use(LanguageDetector).init({
+    lng: lang,
     fallbackLng: 'en',
+    supportedLngs: ['en', 'es', 'fr', 'it', 'de'],
     debug: true,
     interpolation: {
       escapeValue: false,
