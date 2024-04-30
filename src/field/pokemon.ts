@@ -658,7 +658,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getHpRatio(precise: boolean = false): number {
     return precise
       ? this.hp / this.getMaxHp()
-      : ((this.hp / this.getMaxHp()) * 100) / 100;
+      : Math.round((this.hp / this.getMaxHp()) * 100) / 100;
   }
 
   generateGender(): void {
