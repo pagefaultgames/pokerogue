@@ -227,33 +227,24 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     let uiTheme = (this.scene as BattleScene).uiTheme; // Assuming uiTheme is accessible
 
     // Function to wrap text in color based on comparison
-    const coloredText = (text: string, textStyle: TextStyle) => {
+    const coloredText = (text: string, isBetter: boolean) => {
+      const textStyle: TextStyle = isBetter ? TextStyle.SUMMARY_GREEN : TextStyle.SUMMARY;
       const color = getTextColor(textStyle, false, uiTheme);
       return `[color=${color}][shadow=${getTextColor(textStyle, true, uiTheme)}]${text}[/shadow][/color]`;
     };
 
-    if (value > 30 && value > starterIvs[typeIv])
-      return coloredText('Best', TextStyle.SUMMARY_GREEN);
-    else if (value > 30)
-      return coloredText('Best', TextStyle.SUMMARY);
-    if (value === 30 && value > starterIvs[typeIv])
-      return coloredText('Fantastic', TextStyle.SUMMARY_GREEN);
-    else if (value === 30)
-      return coloredText('Fantastic', TextStyle.SUMMARY);
-    if (value > 20 && value > starterIvs[typeIv])
-      return coloredText('Very Good', TextStyle.SUMMARY_GREEN);
-    else if (value > 20)
-      return coloredText('Very Good', TextStyle.SUMMARY);
-    if (value > 10 && value > starterIvs[typeIv])
-      return coloredText('Pretty Good', TextStyle.SUMMARY_GREEN);
-    else if (value > 10 && value === starterIvs[typeIv])
-      return coloredText('Pretty Good', TextStyle.SUMMARY);
-    if (value > 0 && value > starterIvs[typeIv])
-      return coloredText('Decent', TextStyle.SUMMARY_GREEN);
-    else if (value > 0)
-      return coloredText('Decent', TextStyle.SUMMARY);
+    if (value > 30)
+      return coloredText('Best', value > starterIvs[typeIv]);
+    if (value === 30)
+      return coloredText('Fantastic', value > starterIvs[typeIv]);
+    if (value > 20)
+      return coloredText('Very Good', value > starterIvs[typeIv]);
+    if (value > 10)
+      return coloredText('Pretty Good', value > starterIvs[typeIv]);
+    if (value > 0)
+      return coloredText('Decent', value > starterIvs[typeIv]);
 
-    return coloredText('No Good', TextStyle.SUMMARY);
+    return coloredText('No Good', value > starterIvs[typeIv]);
   }
 
   showNameText(name: string): void {
