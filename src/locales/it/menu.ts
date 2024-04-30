@@ -7,8 +7,8 @@ export const menu: SimpleTranslationEntries = {
     "loadGame": "Carica Partita",
     "dailyRun": "Corsa Giornaliera (Beta)",
     "selectGameMode": "Seleziona una modalità di gioco.",
-    "rankings": "Rankings",
     "dailyRankings": "Daily Rankings",
+    "weeklyRankings": "Weekly Rankings",
     "noRankings": "No Rankings",
     "loading": "Loading…",
     "playersOnline": "Players Online"
