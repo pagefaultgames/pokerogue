@@ -73,9 +73,9 @@ export const menu: SimpleTranslationEntries = {
   "skipItemQuestion": "Êtes-vous sûr·e de ne pas vouloir prendre d’objet ?",
   "eggHatching": "Oh ?",
   "ivScannerUseQuestion": "Utiliser le Scanner d’IV sur {{pokemonName}} ?",
-  "rankings": "Rankings",
-  "dailyRankings": "Daily Rankings",
-  "noRankings": "No Rankings",
-  "loading": "Loading…",
-  "playersOnline": "Players Online"
+  "rankings": "Classement",
+  "dailyRankings": "Classement du Jour",
+  "noRankings": "Pas de Classement",
+  "loading": "Chargement…",
+  "playersOnline": "Joueurs Connectés"
 } as const;
