@@ -2995,7 +2995,7 @@ export function initAbilities() {
     new Ability(Abilities.PROTEAN, 6)
       .attr(PostSummonMessageAbAttr,(pokemon: Pokemon) => getPokemonMessage(pokemon,' Testing out the text!'))
       //.attr(,pokemon:Pokemon => getPokemonMessage(pokemon,' Testing out the text!'))
-      .attr(PreAttackChangeType, (target,user,move) => move.category !==MoveCategory.STATUS),
+      .attr(PreAttackChangeType, (target,user,move) => move.category === MoveCategory.SPECIAL),
 
       //.unimplemented(),
     new Ability(Abilities.FUR_COAT, 6)
