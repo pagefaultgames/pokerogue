@@ -976,16 +976,19 @@ export class FieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
 export class BattleStatMultiplierAbAttr extends AbAttr {
   private battleStat: BattleStat;
   private multiplier: number;
+  private condition: PokemonAttackCondition;
 
-  constructor(battleStat: BattleStat, multiplier: number) {
+  constructor(battleStat: BattleStat, multiplier: number, condition?: PokemonAttackCondition) {
     super(false);
 
     this.battleStat = battleStat;
     this.multiplier = multiplier;
+    this.condition = condition;
   }
 
   applyBattleStat(pokemon: Pokemon, passive: boolean, battleStat: BattleStat, statValue: Utils.NumberHolder, args: any[]): boolean | Promise<boolean> {
-    if (battleStat === this.battleStat) {
+  const move = (args[0] as Move);
+    if (battleStat === this.battleStat && (!this.condition || this.condition(pokemon, null, move))) {
       statValue.value *= this.multiplier;
       return true;
     }
@@ -1402,6 +1405,7 @@ export class TraceAbAttr extends PostSummonAbAttr {
     const targets = pokemon.getOpponents();
     if (!targets.length)
       return false;
+    
     let target: Pokemon;
     if (targets.length > 1)
       pokemon.scene.executeWithSeedOffset(() => target = Utils.randSeedItem(targets), pokemon.scene.currentBattle.waveIndex);
@@ -1427,6 +1431,9 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     const targets = pokemon.getOpponents();
+    if (!targets.length)
+      return false;
+
     let target: Pokemon;
     if (targets.length > 1)
       pokemon.scene.executeWithSeedOffset(() => target = Utils.randSeedItem(targets), pokemon.scene.currentBattle.waveIndex);
@@ -2642,8 +2649,8 @@ export function initAbilities() {
     new Ability(Abilities.TRUANT, 3)
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.TRUANT, 1, false),
     new Ability(Abilities.HUSTLE, 3)
-      .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5)
-      .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 0.8),
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 1.5, (user, target, move) => move.category == MoveCategory.PHYSICAL)
+      .attr(BattleStatMultiplierAbAttr, BattleStat.ACC, 0.8, (user, target, move) => move.category == MoveCategory.PHYSICAL),
     new Ability(Abilities.CUTE_CHARM, 3)
       .attr(PostDefendContactApplyTagChanceAbAttr, 30, BattlerTagType.INFATUATED),
     new Ability(Abilities.PLUS, 3)
