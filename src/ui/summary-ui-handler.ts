@@ -364,9 +364,16 @@ export default class SummaryUiHandler extends UiHandler {
           case Button.LEFT:
             this.moveSelect = false;
             this.setCursor(Page.STATS);        
-            this.hideMoveEffect();
-            success = true;
-            break;
+            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE){
+              this.hideMoveEffect();
+              this.destroyBlinkCursor();
+              success = true;
+              break;
+            } else {
+              this.hideMoveSelect();
+              success = true;
+              break;
+            }
         }
       }
     } else {
@@ -376,11 +383,13 @@ export default class SummaryUiHandler extends UiHandler {
           success = true;
         }
       } else if (button === Button.CANCEL) {
-        if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
+        if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE){
           this.hideMoveSelect();
-        else
+          success = true;
+        } else {
           ui.setMode(Mode.PARTY);
-        success = true;
+          success = true;
+        }
       } else {
         const pages = Utils.getEnumValues(Page);
         switch (button) {
@@ -522,6 +531,11 @@ export default class SummaryUiHandler extends UiHandler {
                   this.moveCursorObj = null; 
                   this.extraMoveRowContainer.setVisible(true);
                   this.setCursor(0, true);
+                  this.showMoveEffect();
+                }
+                else if (this.cursor===Page.MOVES) {
+                  this.moveCursorObj = null; 
+                  this.showMoveSelect();
                   this.showMoveEffect();
                 }
               }
@@ -841,6 +855,7 @@ export default class SummaryUiHandler extends UiHandler {
   }
 
   getSelectedMove(): Move {
+    console.log("selected moves")
     if (this.cursor !== Page.MOVES)
       return null;
 
@@ -852,6 +867,7 @@ export default class SummaryUiHandler extends UiHandler {
   }
 
   showMoveSelect() {
+    console.log("show move select")
     this.moveSelect = true;
     this.extraMoveRowContainer.setVisible(true);
     this.selectedMoveIndex = -1;
@@ -860,6 +876,7 @@ export default class SummaryUiHandler extends UiHandler {
   }
 
   hideMoveSelect() {
+    console.log("hide move select")
     if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
       this.moveSelectFunction(4);
       return;
@@ -868,6 +885,12 @@ export default class SummaryUiHandler extends UiHandler {
     this.moveSelect = false;
     this.extraMoveRowContainer.setVisible(false);
     this.moveDescriptionText.setText('');
+    
+    this.destroyBlinkCursor();
+    this.hideMoveEffect();
+  }
+
+  destroyBlinkCursor(){
     if (this.moveCursorBlinkTimer) {
       this.moveCursorBlinkTimer.destroy();
       this.moveCursorBlinkTimer = null;
@@ -880,8 +903,6 @@ export default class SummaryUiHandler extends UiHandler {
       this.selectedMoveCursorObj.destroy();
       this.selectedMoveCursorObj = null;
     }
-
-    this.hideMoveEffect();
   }
 
   showMoveEffect(instant?: boolean) {
