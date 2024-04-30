@@ -61,5 +61,10 @@ export const menu: SimpleTranslationEntries = {
     "notDisabled": "¡El movimiento {{moveName}}\nya no está anulado!",
     "skipItemQuestion": "¿Estás seguro de que no quieres coger un objeto?",
     "eggHatching": "¿Y esto?",
-    "ivScannerUseQuestion": "¿Quieres usar el Escáner de IVs en {{pokemonName}}?"
+    "ivScannerUseQuestion": "¿Quieres usar el Escáner de IVs en {{pokemonName}}?",
+    "rankings": "Rankings",
+    "dailyRankings": "Daily Rankings",
+    "noRankings": "No Rankings",
+    "loading": "Loading…",
+    "playersOnline": "Players Online"
 } as const;

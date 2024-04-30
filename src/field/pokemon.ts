@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import BattleScene, { ABILITY_OVERRIDE, AnySound, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../battle-scene';
+import BattleScene, { AnySound } from '../battle-scene';
 import { Variant, VariantSet, variantColorCache } from '#app/data/variant';
 import { variantData } from '#app/data/variant';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
@@ -43,6 +43,7 @@ import { Nature, getNatureStatMultiplier } from '../data/nature';
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
 import { TerrainType } from '../data/terrain';
 import { TrainerSlot } from '../data/trainer-config';
+import { ABILITY_OVERRIDE, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../overrides';
 
 export enum FieldPosition {
   CENTER,
