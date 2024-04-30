@@ -4493,7 +4493,7 @@ export function initMoves() {
       .attr(AbilityCopyAttr),
     new SelfStatusMove(Moves.WISH, Type.NORMAL, -1, 10, -1, 0, 3)
       .triageMove()
-      .unimplemented(),
+      .attr(AddArenaTagAttr, ArenaTagType.WISH, 2, true),
     new SelfStatusMove(Moves.ASSIST, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(RandomMovesetMoveAttr, true)
       .ignoresVirtual(),
