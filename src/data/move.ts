@@ -3099,11 +3099,23 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
       const moveTargets = getMoveTargets(user, move.moveId);
       if (!moveTargets.targets.length)
         return false;
-      const targets = moveTargets.multiple || moveTargets.targets.length === 1
-        ? moveTargets.targets
-        : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
-          ? [ target.getBattlerIndex() ]
-          : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
+      let selectTargets: BattlerIndex[];
+      switch (true) {
+        case (moveTargets.multiple || moveTargets.targets.length === 1): {
+          selectTargets = moveTargets.targets;
+          break;
+        }
+        case (moveTargets.targets.indexOf(target.getBattlerIndex()) > -1): {
+          selectTargets = [ target.getBattlerIndex() ];
+          break;
+        }
+        default: {
+         moveTargets.targets.splice(moveTargets.targets.indexOf(user.getAlly().getBattlerIndex()));
+         selectTargets =  [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
+         break;
+        }
+      }     
+      const targets = selectTargets;   
       user.getMoveQueue().push({ move: move.moveId, targets: targets, ignorePP: true });
       user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, moveset[moveIndex], true));
       return true;
@@ -4481,7 +4493,7 @@ export function initMoves() {
       .attr(AbilityCopyAttr),
     new SelfStatusMove(Moves.WISH, Type.NORMAL, -1, 10, -1, 0, 3)
       .triageMove()
-      .unimplemented(),
+      .attr(AddArenaTagAttr, ArenaTagType.WISH, 2, true),
     new SelfStatusMove(Moves.ASSIST, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(RandomMovesetMoveAttr, true)
       .ignoresVirtual(),
