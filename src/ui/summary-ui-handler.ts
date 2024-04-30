@@ -385,7 +385,7 @@ export default class SummaryUiHandler extends UiHandler {
       } else if (button === Button.CANCEL) {
         if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
           this.hideMoveSelect();
-         else 
+        else
           ui.setMode(Mode.PARTY);
         success = true;
       } else {
