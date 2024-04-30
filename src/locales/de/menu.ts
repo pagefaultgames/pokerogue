@@ -59,4 +59,9 @@ export const menu: SimpleTranslationEntries = {
     "escapeVerbSwitch": "auswechseln",
     "escapeVerbFlee": "flucht",
     "notDisabled": "{{moveName}} ist\nnicht mehr deaktiviert!",
+    "rankings": "Rankings",
+    "dailyRankings": "Daily Rankings",
+    "noRankings": "No Rankings",
+    "loading": "Loading…",
+    "playersOnline": "Players Online"
 } as const;
