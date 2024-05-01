@@ -1418,7 +1418,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo);
             this.turnData.damageTaken += damage.value;
             if (isCritical)
-              this.scene.queueMessage(i18next.t('menu:hitResultCriticalHit'));
+              this.scene.queueMessage(i18next.t('battle:hitResultCriticalHit'));
             this.scene.setPhaseQueueSplice();
             if (source.isPlayer()) {
               this.scene.validateAchvs(DamageAchv, damage);
@@ -1436,16 +1436,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (source.turnData.hitsLeft === 1) {
             switch (result) {
               case HitResult.SUPER_EFFECTIVE:
-                this.scene.queueMessage(i18next.t('menu:hitResultSuperEffective'));
+                this.scene.queueMessage(i18next.t('battle:hitResultSuperEffective'));
                 break;
               case HitResult.NOT_VERY_EFFECTIVE:
-                this.scene.queueMessage(i18next.t('menu:hitResultNotVeryEffective'));
+                this.scene.queueMessage(i18next.t('battle:hitResultNotVeryEffective'));
                 break;
               case HitResult.NO_EFFECT:
-                this.scene.queueMessage(i18next.t('menu:hitResultNoEffect', { pokemonName: this.name }));
+                this.scene.queueMessage(i18next.t('battle:hitResultNoEffect', { pokemonName: this.name }));
                 break;
               case HitResult.ONE_HIT_KO:  
-                this.scene.queueMessage(i18next.t('menu:hitResultOneHitKO'));
+                this.scene.queueMessage(i18next.t('battle:hitResultOneHitKO'));
                 break;
             }
           }
@@ -1462,7 +1462,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, battlerMove, cancelled, typeMultiplier));
         }
         if (!typeMultiplier.value)
-          this.scene.queueMessage(i18next.t('menu:hitResultNoEffect', { pokemonName: this.name }));
+          this.scene.queueMessage(i18next.t('battle:hitResultNoEffect', { pokemonName: this.name }));
         result = cancelled.value || !typeMultiplier.value ? HitResult.NO_EFFECT : HitResult.STATUS;
         break;
     }
