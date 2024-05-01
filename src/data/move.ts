@@ -1011,20 +1011,14 @@ export class StatusEffectAttr extends MoveEffectAttr {
 
 export class MultiStatusEffectAttr extends StatusEffectAttr {
   public effects: StatusEffect[];
-  public cureTurn: integer;
-  public overrideStatus: boolean;
 
   constructor(effects: StatusEffect[], selfTarget?: boolean, cureTurn?: integer, overrideStatus?: boolean) {
     super(effects[0], selfTarget, cureTurn, overrideStatus);
-
     this.effects = effects;
-    this.cureTurn = cureTurn;
-    this.overrideStatus = !!overrideStatus;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const statusIndex = Math.floor((Utils.randSeedInt(100)*this.effects.length-1)/100)
-    this.effect = this.effects[statusIndex] as StatusEffect;
+    this.effect = Utils.randSeedItem(this.effects);
     const result = super.apply(user, target, move, args);
     return result;
   }
