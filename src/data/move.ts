@@ -788,10 +788,6 @@ export class HealAttr extends MoveEffectAttr {
 
 
 export class StatusHealAttr extends HealAttr {
-    constructor() {
-        super();
-    }
-
     apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
         user.resetStatus();
         return true;
