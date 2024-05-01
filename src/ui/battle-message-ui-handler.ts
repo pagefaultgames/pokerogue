@@ -210,7 +210,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
         } else
           shownStats = stats;
         for (let s of stats)
-          levelUpStatsValuesText += `${shownStats.indexOf(s) > -1 ? this.getIvDescriptor(ivs[s], s) : '???'}\n`;
+          levelUpStatsValuesText += `${shownStats.indexOf(s) > -1 ? this.getIvDescriptor(ivs[s], s, pokemonId) : '???'}\n`;
         this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
         this.levelUpStatsIncrContent.setVisible(false);
         this.levelUpStatsContainer.setVisible(true);
@@ -223,8 +223,8 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     });
   }
 
-  getIvDescriptor(value: integer, typeIv: integer): string {
-    const starterSpecies = this.scene.getEnemyPokemon().species.getRootSpeciesId(true);
+  getIvDescriptor(value: integer, typeIv: integer, pokemonId: integer): string {
+    const starterSpecies = this.scene.getPokemonById(pokemonId).species.getRootSpeciesId(true);
     const starterIvs: number[] = this.scene.gameData.dexData[starterSpecies].ivs;
     const uiTheme = (this.scene as BattleScene).uiTheme; // Assuming uiTheme is accessible
 
