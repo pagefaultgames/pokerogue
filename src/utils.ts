@@ -258,9 +258,24 @@ export function apiPost(path: string, data?: any, contentType: string = 'applica
       if (sId)
         headers['Authorization'] = sId;
     }
-    fetch(`${apiUrl}/${path}`, { method: 'POST', headers: headers, body: data })
-      .then(response => resolve(response))
-      .catch(err => reject(err));
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      reject(new Error('Request timed out'));
+    }, 8000);
+
+    fetch(`${apiUrl}/${path}`, { method: 'POST', headers: headers, body: data, signal })
+      .then(response => {
+        clearTimeout(timeoutId);
+        resolve(response);
+      })
+      .catch(err => {
+        clearTimeout(timeoutId);
+        reject(err);
+      });
   });
 }
 
