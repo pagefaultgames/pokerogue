@@ -1079,15 +1079,12 @@ export class GameData {
     });
   }
 
-  incrementStarterWinCount(species: PokemonSpecies):void {
-    const speciesWinCount = this.starterData[species.speciesId].winCount;
-  
-    if(Number.isNaN(speciesWinCount)) {
+  incrementStarterWinCount(species: PokemonSpecies): void {
+    if (!this.starterData[species.speciesId].winCount) {
       this.starterData[species.speciesId].winCount = 0;
     }
     
     this.starterData[species.speciesId].winCount++;
-    console.log(this.starterData[species.speciesId].winCount);
   }
 
   addStarterCandy(species: PokemonSpecies, count: integer): void {
