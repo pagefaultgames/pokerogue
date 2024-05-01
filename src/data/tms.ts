@@ -62397,6 +62397,7 @@ export const tmSpecies: TmSpecies = {
     Species.STARAPTOR,
     Species.BIDOOF,
     Species.BIBAREL,
+    Species.KRICKETOT,
     Species.KRICKETUNE,
     Species.SHINX,
     Species.LUXIO,
