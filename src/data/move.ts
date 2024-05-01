@@ -2615,7 +2615,7 @@ export class CurseAttr extends MoveEffectAttr {
       }
       let curseRecoilDamage = Math.floor(user.getMaxHp() / 2);
       user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, false, true, true);
-      user.scene.queueMessage(getPokemonMessage(user, ' cut its own HP!'));
+      user.scene.queueMessage(getPokemonMessage(user, ` cut its own HP\nand laid a curse on the ${target.name}!`));
       target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
       return true;
     } else {
