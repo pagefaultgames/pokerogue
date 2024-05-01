@@ -1,0 +1,179 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Oricorio",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Rattata",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Alola Raticate",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Alola Sandshrew",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Sandslash",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Vulpix",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Ninetales",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Diglett",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Dugtrio",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Meowth",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Alola Persian",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Alola Geodude",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Graveler",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Golem",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Grimer",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Muk",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Bruxish",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Raichu",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Alola Exeggutor",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Alola Marowak",
+        "time": "Dusk, Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Stakataka",
+        "time": "Anytime"
+      },
+      {
+        "name": "Blacephalon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Oricorio",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bruxish",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Raticate",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Alola Raichu",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Alola Sandslash",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Ninetales",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Dugtrio",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Persian",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Alola Golem",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Muk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Exeggutor",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Alola Marowak",
+        "time": "Dusk, Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Stakataka",
+        "time": "Anytime"
+      },
+      {
+        "name": "Blacephalon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Nessa",
+    "team": [
+      "Chewtle",
+      "Arrokuda",
+      "Wimpod"
+    ]
+  }
+]

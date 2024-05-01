@@ -1,0 +1,350 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Ledyba",
+        "time": "Dawn"
+      },
+      {
+        "name": "Ledian",
+        "time": "Dawn"
+      },
+      {
+        "name": "Roselia",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Blitzle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Zebstrika",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cottonee",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Minccino",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Flabebe",
+        "time": "Anytime"
+      },
+      {
+        "name": "Floette",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cutiefly",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ribombee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gossifleur",
+        "time": "Anytime"
+      },
+      {
+        "name": "Eldegoss",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wooloo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dubwool",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Jigglypuff",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wigglytuff",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ponyta",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Rapidash",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Mareep",
+        "time": "Anytime"
+      },
+      {
+        "name": "Flaaffy",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ampharos",
+        "time": "Anytime"
+      },
+      {
+        "name": "Snubbull",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Granbull",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Ralts",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kirlia",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gardevoir",
+        "time": "Anytime"
+      },
+      {
+        "name": "Skitty",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Delcatty",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Glameow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Purugly",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bouffalant",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Oricorio",
+        "time": "Anytime"
+      },
+      {
+        "name": "Smoliv",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Dolliv",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Arboliva",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Tauros",
+        "time": "Anytime"
+      },
+      {
+        "name": "Eevee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Miltank",
+        "time": "Anytime"
+      },
+      {
+        "name": "Volbeat",
+        "time": "Night"
+      },
+      {
+        "name": "Illumise",
+        "time": "Night"
+      },
+      {
+        "name": "Spinda",
+        "time": "Anytime"
+      },
+      {
+        "name": "Applin",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sprigatito",
+        "time": "Anytime"
+      },
+      {
+        "name": "Floragato",
+        "time": "Anytime"
+      },
+      {
+        "name": "Meowscarada",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dipplin",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Chansey",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sylveon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Meloetta",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Tauros",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ledian",
+        "time": "Dawn"
+      },
+      {
+        "name": "Granbull",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Miltank",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gardevoir",
+        "time": "Anytime"
+      },
+      {
+        "name": "Delcatty",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Roserade",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Purugly",
+        "time": "Anytime"
+      },
+      {
+        "name": "Zebstrika",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cinccino",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Bouffalant",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Florges",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ribombee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dubwool",
+        "time": "Anytime"
+      },
+      {
+        "name": "Arboliva",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Blissey",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sylveon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Flapple",
+        "time": "Anytime"
+      },
+      {
+        "name": "Appletun",
+        "time": "Anytime"
+      },
+      {
+        "name": "Meowscarada",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hydrapple",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Meloetta",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hisui Lilligant",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Lenora",
+    "team": [
+      "Kangaskhan",
+      "Deerling",
+      "Audino"
+    ]
+  },
+  {
+    "gym_leader": "Milo",
+    "team": [
+      "Gossifleur",
+      "Applin",
+      "Bounsweet"
+    ]
+  }
+]

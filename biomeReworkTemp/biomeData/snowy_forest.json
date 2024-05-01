@@ -1,0 +1,247 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Sneasel",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Teddiursa",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Ursaring",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Swinub",
+        "time": "Anytime"
+      },
+      {
+        "name": "Piloswine",
+        "time": "Anytime"
+      },
+      {
+        "name": "Snover",
+        "time": "Anytime"
+      },
+      {
+        "name": "Abomasnow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Snom",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Frosmoth",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Eiscue",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Sneasel",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Teddiursa",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Ursaring",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Stantler",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Delibird",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Sandshrew",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Sandslash",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Vulpix",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Ninetales",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Darumaka",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Galar Darmanitan",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Mr Rime",
+        "time": "Anytime"
+      },
+      {
+        "name": "Arctozolt",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Mr Mime",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hisui Sneasel",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Hisui Zorua",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Hisui Zoroark",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Hisui Avalugg",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Glastrier",
+        "time": "Anytime"
+      },
+      {
+        "name": "Chien Pao",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Articuno",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Abomasnow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Frosmoth",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Wyrdeer",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Ursaluna",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Arctozolt",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Sandslash",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alola Ninetales",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Mr Rime",
+        "time": "Anytime"
+      },
+      {
+        "name": "Glastrier",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sneasler",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Chien Pao",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Darmanitan",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Hisui Zoroark",
+        "time": "Dusk, Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Zacian",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Articuno",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Candice",
+    "team": [
+      "Sneasel",
+      "Snover",
+      "Snorunt"
+    ]
+  },
+  {
+    "gym_leader": "Melony",
+    "team": [
+      "Snom",
+      "Galarian Darumaka",
+      "Galarian Mr Mime"
+    ]
+  }
+]

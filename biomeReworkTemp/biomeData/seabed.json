@@ -1,0 +1,336 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Chinchou",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lanturn",
+        "time": "Anytime"
+      },
+      {
+        "name": "Remoraid",
+        "time": "Anytime"
+      },
+      {
+        "name": "Clamperl",
+        "time": "Anytime"
+      },
+      {
+        "name": "Basculin",
+        "time": "Anytime"
+      },
+      {
+        "name": "Frillish",
+        "time": "Anytime"
+      },
+      {
+        "name": "Jellicent",
+        "time": "Anytime"
+      },
+      {
+        "name": "Arrokuda",
+        "time": "Anytime"
+      },
+      {
+        "name": "Barraskewda",
+        "time": "Anytime"
+      },
+      {
+        "name": "Veluza",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Tentacool",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tentacruel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Shellder",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wailmer",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wailord",
+        "time": "Anytime"
+      },
+      {
+        "name": "Luvdisc",
+        "time": "Anytime"
+      },
+      {
+        "name": "Shellos",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gastrodon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Skrelp",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dragalge",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pincurchin",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dondozo",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Qwilfish",
+        "time": "Anytime"
+      },
+      {
+        "name": "Corsola",
+        "time": "Anytime"
+      },
+      {
+        "name": "Octillery",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mantine",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mantyke",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alomomola",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tynamo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Eelektrik",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dhelmise",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Omanyte",
+        "time": "Anytime"
+      },
+      {
+        "name": "Omastar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kabuto",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kabutops",
+        "time": "Anytime"
+      },
+      {
+        "name": "Relicanth",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pyukumuku",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cursola",
+        "time": "Anytime"
+      },
+      {
+        "name": "Arctovish",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Corsola",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hisui Qwilfish",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Feebas",
+        "time": "Anytime"
+      },
+      {
+        "name": "Nihilego",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Lanturn",
+        "time": "Anytime"
+      },
+      {
+        "name": "Qwilfish",
+        "time": "Anytime"
+      },
+      {
+        "name": "Corsola",
+        "time": "Anytime"
+      },
+      {
+        "name": "Octillery",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mantine",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wailord",
+        "time": "Anytime"
+      },
+      {
+        "name": "Huntail",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gorebyss",
+        "time": "Anytime"
+      },
+      {
+        "name": "Luvdisc",
+        "time": "Anytime"
+      },
+      {
+        "name": "Jellicent",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alomomola",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dragalge",
+        "time": "Anytime"
+      },
+      {
+        "name": "Barraskewda",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dondozo",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Omastar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kabutops",
+        "time": "Anytime"
+      },
+      {
+        "name": "Relicanth",
+        "time": "Anytime"
+      },
+      {
+        "name": "Eelektross",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pyukumuku",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dhelmise",
+        "time": "Anytime"
+      },
+      {
+        "name": "Arctovish",
+        "time": "Anytime"
+      },
+      {
+        "name": "Basculegion",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Milotic",
+        "time": "Anytime"
+      },
+      {
+        "name": "Nihilego",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cursola",
+        "time": "Anytime"
+      },
+      {
+        "name": "Overqwil",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Kyogre",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Juan",
+    "team": [
+      "Horsea",
+      "Barboach",
+      "Spheal",
+      "Relicanth"
+    ]
+  }
+]

@@ -1,0 +1,249 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Diglett",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dugtrio",
+        "time": "Anytime"
+      },
+      {
+        "name": "Geodude",
+        "time": "Anytime"
+      },
+      {
+        "name": "Graveler",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cubone",
+        "time": "Night"
+      },
+      {
+        "name": "Marowak",
+        "time": "Night"
+      },
+      {
+        "name": "Rhyhorn",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rhydon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Phanpy",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Donphan",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Drilbur",
+        "time": "Anytime"
+      },
+      {
+        "name": "Excadrill",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mudbray",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mudsdale",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Sandshrew",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sandslash",
+        "time": "Anytime"
+      },
+      {
+        "name": "Numel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Camerupt",
+        "time": "Anytime"
+      },
+      {
+        "name": "Roggenrola",
+        "time": "Anytime"
+      },
+      {
+        "name": "Boldore",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sizzlipede",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Centiskorch",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Cufant",
+        "time": "Anytime"
+      },
+      {
+        "name": "Copperajah",
+        "time": "Anytime"
+      },
+      {
+        "name": "Capsakid",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Scovillain",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Onix",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gligar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Poltchageist",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sinistcha",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Landorus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Okidogi",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Dugtrio",
+        "time": "Anytime"
+      },
+      {
+        "name": "Golem",
+        "time": "Anytime"
+      },
+      {
+        "name": "Marowak",
+        "time": "Night"
+      },
+      {
+        "name": "Donphan",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Rhyperior",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gliscor",
+        "time": "Anytime"
+      },
+      {
+        "name": "Excadrill",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mudsdale",
+        "time": "Anytime"
+      },
+      {
+        "name": "Centiskorch",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Copperajah",
+        "time": "Anytime"
+      },
+      {
+        "name": "Scovillain",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Steelix",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sinistcha",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Landorus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Okidogi",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Groudon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Clay",
+    "team": [
+      "Drilbur",
+      "Sandile",
+      "Golett"
+    ]
+  },
+  {
+    "gym_leader": "Grant",
+    "team": [
+      "Amaura",
+      "Tyrunt"
+    ]
+  }
+]

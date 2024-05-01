@@ -1,0 +1,246 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Jigglypuff",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wigglytuff",
+        "time": "Anytime"
+      },
+      {
+        "name": "Marill",
+        "time": "Anytime"
+      },
+      {
+        "name": "Azumarill",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mawile",
+        "time": "Anytime"
+      },
+      {
+        "name": "Spritzee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Aromatisse",
+        "time": "Anytime"
+      },
+      {
+        "name": "Swirlix",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slurpuff",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cutiefly",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ribombee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Morelull",
+        "time": "Anytime"
+      },
+      {
+        "name": "Shiinotic",
+        "time": "Anytime"
+      },
+      {
+        "name": "Milcery",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alcremie",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Clefairy",
+        "time": "Anytime"
+      },
+      {
+        "name": "Togetic",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ralts",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kirlia",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gardevoir",
+        "time": "Anytime"
+      },
+      {
+        "name": "Carbink",
+        "time": "Anytime"
+      },
+      {
+        "name": "Comfey",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hatenna",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hattrem",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hatterene",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Audino",
+        "time": "Anytime"
+      },
+      {
+        "name": "Eternal Floette",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Diancie",
+        "time": "Anytime"
+      },
+      {
+        "name": "Enamorus",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Wigglytuff",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mawile",
+        "time": "Anytime"
+      },
+      {
+        "name": "Togekiss",
+        "time": "Anytime"
+      },
+      {
+        "name": "Audino",
+        "time": "Anytime"
+      },
+      {
+        "name": "Aromatisse",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slurpuff",
+        "time": "Anytime"
+      },
+      {
+        "name": "Carbink",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ribombee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Shiinotic",
+        "time": "Anytime"
+      },
+      {
+        "name": "Comfey",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hatterene",
+        "time": "Anytime"
+      },
+      {
+        "name": "Alcremie",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Eternal Floette",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Diancie",
+        "time": "Anytime"
+      },
+      {
+        "name": "Enamorus",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Xerneas",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Bede",
+    "team": [
+      "Hatenna",
+      "Galarian Ponyta",
+      "Gardevoir"
+    ]
+  },
+  {
+    "gym_leader": "Opal",
+    "team": [
+      "Milcery",
+      "Togetic",
+      "Galarian Weezing"
+    ]
+  },
+  {
+    "gym_leader": "Valerie",
+    "team": [
+      "Sylveon",
+      "Mawile",
+      "Mr Mime"
+    ]
+  }
+]

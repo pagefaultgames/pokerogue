@@ -1,0 +1,147 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Machop",
+        "time": "Anytime"
+      },
+      {
+        "name": "Machoke",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magnemite",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magneton",
+        "time": "Anytime"
+      },
+      {
+        "name": "Voltorb",
+        "time": "Anytime"
+      },
+      {
+        "name": "Electrode",
+        "time": "Anytime"
+      },
+      {
+        "name": "Timburr",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gurdurr",
+        "time": "Anytime"
+      },
+      {
+        "name": "Klink",
+        "time": "Anytime"
+      },
+      {
+        "name": "Klang",
+        "time": "Anytime"
+      },
+      {
+        "name": "Klinklang",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Bronzor",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bronzong",
+        "time": "Anytime"
+      },
+      {
+        "name": "Klefki",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Porygon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Porygon2",
+        "time": "Anytime"
+      },
+      {
+        "name": "Beldum",
+        "time": "Anytime"
+      },
+      {
+        "name": "Metang",
+        "time": "Anytime"
+      },
+      {
+        "name": "Metagross",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Genesect",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magearna",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Klinklang",
+        "time": "Anytime"
+      },
+      {
+        "name": "Klefki",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Genesect",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magearna",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Byron",
+    "team": [
+      "Shieldon",
+      "Bronzor",
+      "Aggron"
+    ]
+  },
+  {
+    "gym_leader": "Jasmine",
+    "team": [
+      "Magnemite",
+      "Steelix"
+    ]
+  }
+]

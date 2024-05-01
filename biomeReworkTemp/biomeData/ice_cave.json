@@ -1,0 +1,298 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Seel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dewgong",
+        "time": "Anytime"
+      },
+      {
+        "name": "Swinub",
+        "time": "Anytime"
+      },
+      {
+        "name": "Piloswine",
+        "time": "Anytime"
+      },
+      {
+        "name": "Snover",
+        "time": "Anytime"
+      },
+      {
+        "name": "Abomasnow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Vanillite",
+        "time": "Anytime"
+      },
+      {
+        "name": "Vanillish",
+        "time": "Anytime"
+      },
+      {
+        "name": "Vanilluxe",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cubchoo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Beartic",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bergmite",
+        "time": "Anytime"
+      },
+      {
+        "name": "Avalugg",
+        "time": "Anytime"
+      },
+      {
+        "name": "Crabrawler",
+        "time": "Anytime"
+      },
+      {
+        "name": "Snom",
+        "time": "Anytime"
+      },
+      {
+        "name": "Frosmoth",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Sneasel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Snorunt",
+        "time": "Anytime"
+      },
+      {
+        "name": "Glalie",
+        "time": "Anytime"
+      },
+      {
+        "name": "Spheal",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sealeo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Walrein",
+        "time": "Anytime"
+      },
+      {
+        "name": "Eiscue",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cetoddle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cetitan",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Jynx",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lapras",
+        "time": "Anytime"
+      },
+      {
+        "name": "Froslass",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cryogonal",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Delibird",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rotom-Frost",
+        "time": "Anytime"
+      },
+      {
+        "name": "Amaura",
+        "time": "Anytime"
+      },
+      {
+        "name": "Aurorus",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Articuno",
+        "time": "Anytime"
+      },
+      {
+        "name": "Regice",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Dewgong",
+        "time": "Anytime"
+      },
+      {
+        "name": "Glalie",
+        "time": "Anytime"
+      },
+      {
+        "name": "Walrein",
+        "time": "Anytime"
+      },
+      {
+        "name": "Weavile",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mamoswine",
+        "time": "Anytime"
+      },
+      {
+        "name": "Froslass",
+        "time": "Anytime"
+      },
+      {
+        "name": "Vanilluxe",
+        "time": "Anytime"
+      },
+      {
+        "name": "Beartic",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cryogonal",
+        "time": "Anytime"
+      },
+      {
+        "name": "Avalugg",
+        "time": "Anytime"
+      },
+      {
+        "name": "Crabominable",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cetitan",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Jynx",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lapras",
+        "time": "Anytime"
+      },
+      {
+        "name": "Glaceon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Aurorus",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Articuno",
+        "time": "Anytime"
+      },
+      {
+        "name": "Regice",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rotom-Frost",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Kyurem",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Brycen",
+    "team": [
+      "Cryogonal",
+      "Vanillite",
+      "Cubchoo"
+    ]
+  },
+  {
+    "gym_leader": "Grusha",
+    "team": [
+      "Cetoddle",
+      "Alolan Vulpix",
+      "Cubchoo"
+    ]
+  },
+  {
+    "gym_leader": "Pryce",
+    "team": [
+      "Seel",
+      "Swinub"
+    ]
+  },
+  {
+    "gym_leader": "Wulfric",
+    "team": [
+      "Bergmite",
+      "Snover",
+      "Cryogonal"
+    ]
+  }
+]

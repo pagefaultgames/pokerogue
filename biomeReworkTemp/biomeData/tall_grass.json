@@ -1,0 +1,264 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Nidoran F",
+        "time": "Day"
+      },
+      {
+        "name": "Nidorina",
+        "time": "Day"
+      },
+      {
+        "name": "Nidoran M",
+        "time": "Day"
+      },
+      {
+        "name": "Nidorino",
+        "time": "Day"
+      },
+      {
+        "name": "Oddish",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Gloom",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Nincada",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ninjask",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kricketot",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Kricketune",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Fomantis",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lurantis",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bounsweet",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Steenee",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Tsareena",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Nymble",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lokix",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Vulpix",
+        "time": "Anytime"
+      },
+      {
+        "name": "Paras",
+        "time": "Night"
+      },
+      {
+        "name": "Parasect",
+        "time": "Night"
+      },
+      {
+        "name": "Venonat",
+        "time": "Night"
+      },
+      {
+        "name": "Venomoth",
+        "time": "Night"
+      },
+      {
+        "name": "Spinarak",
+        "time": "Night"
+      },
+      {
+        "name": "Ariados",
+        "time": "Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Pinsir",
+        "time": "Anytime"
+      },
+      {
+        "name": "Chikorita",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bayleef",
+        "time": "Anytime"
+      },
+      {
+        "name": "Meganium",
+        "time": "Anytime"
+      },
+      {
+        "name": "Girafarig",
+        "time": "Anytime"
+      },
+      {
+        "name": "Zangoose",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kecleon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tropius",
+        "time": "Anytime"
+      },
+      {
+        "name": "Farigiraf",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Scyther",
+        "time": "Anytime"
+      },
+      {
+        "name": "Shedinja",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rotom-Mow",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Nidoqueen",
+        "time": "Day"
+      },
+      {
+        "name": "Nidoking",
+        "time": "Day"
+      },
+      {
+        "name": "Vileplume",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Ninjask",
+        "time": "Anytime"
+      },
+      {
+        "name": "Zangoose",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kecleon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kricketune",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Lurantis",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tsareena",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Lokix",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Pinsir",
+        "time": "Anytime"
+      },
+      {
+        "name": "Meganium",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bellossom",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Farigiraf",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Rotom-Mow",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Brassius",
+    "team": [
+      "Smoliv",
+      "Shroomish",
+      "Oddish"
+    ]
+  },
+  {
+    "gym_leader": "Gardenia",
+    "team": [
+      "Roselia",
+      "Tangela",
+      "Turtwig"
+    ]
+  },
+  {
+    "gym_leader": "Viola",
+    "team": [
+      "Surskit",
+      "Scatterbug"
+    ]
+  }
+]

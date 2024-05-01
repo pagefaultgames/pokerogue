@@ -1,0 +1,185 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Machop",
+        "time": "Anytime"
+      },
+      {
+        "name": "Machoke",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magnemite",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magneton",
+        "time": "Anytime"
+      },
+      {
+        "name": "Drilbur",
+        "time": "Anytime"
+      },
+      {
+        "name": "Excadrill",
+        "time": "Anytime"
+      },
+      {
+        "name": "Timburr",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gurdurr",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Grimer",
+        "time": "Anytime"
+      },
+      {
+        "name": "Muk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Koffing",
+        "time": "Anytime"
+      },
+      {
+        "name": "Weezing",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rhyhorn",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rhydon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Scraggy",
+        "time": "Anytime"
+      },
+      {
+        "name": "Scrafty",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Onix",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hitmonlee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hitmonchan",
+        "time": "Anytime"
+      },
+      {
+        "name": "Perrserker",
+        "time": "Dusk"
+      },
+      {
+        "name": "Duraludon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Meowth",
+        "time": "Dusk"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Ditto",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hitmontop",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Cobalion",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Machamp",
+        "time": "Anytime"
+      },
+      {
+        "name": "Conkeldurr",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Perrserker",
+        "time": "Dusk"
+      },
+      {
+        "name": "Archaludon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Cobalion",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Chuck",
+    "team": [
+      "Poliwrath",
+      "Mankey"
+    ]
+  },
+  {
+    "gym_leader": "Lt. Surge",
+    "team": [
+      "Voltorb",
+      "Pikachu",
+      "Electabuzz"
+    ]
+  },
+  {
+    "gym_leader": "Wattson",
+    "team": [
+      "Magnemite",
+      "Voltorb",
+      "Electrike"
+    ]
+  }
+]

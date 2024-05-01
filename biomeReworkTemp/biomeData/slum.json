@@ -1,0 +1,160 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Rattata",
+        "time": "Anytime"
+      },
+      {
+        "name": "Raticate",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grimer",
+        "time": "Anytime"
+      },
+      {
+        "name": "Muk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Koffing",
+        "time": "Anytime"
+      },
+      {
+        "name": "Weezing",
+        "time": "Anytime"
+      },
+      {
+        "name": "Patrat",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Watchog",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Trubbish",
+        "time": "Anytime"
+      },
+      {
+        "name": "Garbodor",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Burmy",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wormadam",
+        "time": "Anytime"
+      },
+      {
+        "name": "Stunky",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Skuntank",
+        "time": "Dusk, Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Toxtricity",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Obstagoon",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Varoom",
+        "time": "Anytime"
+      },
+      {
+        "name": "Revavroom",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Zigzagoon",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Galar Linoone",
+        "time": "Dusk, Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Muk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Weezing",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wormadam",
+        "time": "Anytime"
+      },
+      {
+        "name": "Skuntank",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Watchog",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Garbodor",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Toxtricity",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Obstagoon",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Revavroom",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Galar Weezing",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Piers",
+    "team": [
+      "Galarian Zigzagoon",
+      "Scraggy",
+      "Inkay"
+    ]
+  }
+]

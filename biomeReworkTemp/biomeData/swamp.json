@@ -1,0 +1,314 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Ekans",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Arbok",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Poliwag",
+        "time": "Anytime"
+      },
+      {
+        "name": "Poliwhirl",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wooper",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Quagsire",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Lotad",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Lombre",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Gulpin",
+        "time": "Anytime"
+      },
+      {
+        "name": "Swalot",
+        "time": "Anytime"
+      },
+      {
+        "name": "Shellos",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gastrodon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tympole",
+        "time": "Anytime"
+      },
+      {
+        "name": "Palpitoad",
+        "time": "Anytime"
+      },
+      {
+        "name": "Seismitoad",
+        "time": "Anytime"
+      },
+      {
+        "name": "Clodsire",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Paldea Wooper",
+        "time": "Dusk, Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Ekans",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Arbok",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Psyduck",
+        "time": "Anytime"
+      },
+      {
+        "name": "Golduck",
+        "time": "Anytime"
+      },
+      {
+        "name": "Barboach",
+        "time": "Anytime"
+      },
+      {
+        "name": "Whiscash",
+        "time": "Anytime"
+      },
+      {
+        "name": "Skorupi",
+        "time": "Anytime"
+      },
+      {
+        "name": "Drapion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Croagunk",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Toxicroak",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Stunfisk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mareanie",
+        "time": "Anytime"
+      },
+      {
+        "name": "Toxapex",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Totodile",
+        "time": "Anytime"
+      },
+      {
+        "name": "Croconaw",
+        "time": "Anytime"
+      },
+      {
+        "name": "Feraligatr",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mudkip",
+        "time": "Anytime"
+      },
+      {
+        "name": "Marshtomp",
+        "time": "Anytime"
+      },
+      {
+        "name": "Swampert",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Politoed",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Slowpoke",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Galar Slowbro",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Galar Stunfisk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hisui Sliggoo",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Hisui Goodra",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Azelf",
+        "time": "Anytime"
+      },
+      {
+        "name": "Poipole",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Arbok",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Poliwrath",
+        "time": "Anytime"
+      },
+      {
+        "name": "Quagsire",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Ludicolo",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Swalot",
+        "time": "Anytime"
+      },
+      {
+        "name": "Whiscash",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gastrodon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Seismitoad",
+        "time": "Anytime"
+      },
+      {
+        "name": "Stunfisk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Toxapex",
+        "time": "Anytime"
+      },
+      {
+        "name": "Clodsire",
+        "time": "Dusk, Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Feraligatr",
+        "time": "Anytime"
+      },
+      {
+        "name": "Politoed",
+        "time": "Anytime"
+      },
+      {
+        "name": "Swampert",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Azelf",
+        "time": "Anytime"
+      },
+      {
+        "name": "Naganadel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Slowbro",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Galar Slowking",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Galar Stunfisk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hisui Goodra",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Janine",
+    "team": [
+      "Venonat",
+      "Spinarak",
+      "Zubat"
+    ]
+  },
+  {
+    "gym_leader": "Roxie",
+    "team": [
+      "Venipede",
+      "Trubbish",
+      "Skorupi"
+    ]
+  }
+]

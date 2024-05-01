@@ -1,0 +1,287 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Caterpie",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Metapod",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Weedle",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Kakuna",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Pidgey",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rattata",
+        "time": "Anytime"
+      },
+      {
+        "name": "Spearow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sentret",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Hoothoot",
+        "time": "Night"
+      },
+      {
+        "name": "Ledyba",
+        "time": "Dawn"
+      },
+      {
+        "name": "Spinarak",
+        "time": "Night"
+      },
+      {
+        "name": "Hoppip",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Sunkern",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Poochyena",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Zigzagoon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wurmple",
+        "time": "Anytime"
+      },
+      {
+        "name": "Silcoon",
+        "time": "Day"
+      },
+      {
+        "name": "Cascoon",
+        "time": "Night"
+      },
+      {
+        "name": "Taillow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Starly",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Bidoof",
+        "time": "Anytime"
+      },
+      {
+        "name": "Patrat",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Lillipup",
+        "time": "Anytime"
+      },
+      {
+        "name": "Purrloin",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Pidove",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Cottonee",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Fletchling",
+        "time": "Anytime"
+      },
+      {
+        "name": "Scatterbug",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Spewpa",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Yungoos",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Skwovet",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Blipbug",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Wooloo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lechonk",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Ekans",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Nidoran F",
+        "time": "Day"
+      },
+      {
+        "name": "Nidoran M",
+        "time": "Day"
+      },
+      {
+        "name": "Oddish",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Paras",
+        "time": "Night"
+      },
+      {
+        "name": "Venonat",
+        "time": "Night"
+      },
+      {
+        "name": "Meowth",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Bellsprout",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Spinarak",
+        "time": "Dusk"
+      },
+      {
+        "name": "Poochyena",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Lotad",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Seedot",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Shroomish",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Nincada",
+        "time": "Anytime"
+      },
+      {
+        "name": "Whismur",
+        "time": "Anytime"
+      },
+      {
+        "name": "Skitty",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Kricketot",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Combee",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Cherubi",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Patrat",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Venipede",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Minccino",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Pawmi",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Fidough",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Abra",
+        "time": "Anytime"
+      },
+      {
+        "name": "Surskit",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rookidee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tandemaus",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Eevee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ralts",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Ditto",
+        "time": "Anytime"
+      }
+    ]
+  }
+]

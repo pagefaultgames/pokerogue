@@ -1,0 +1,306 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Tentacool",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tentacruel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slowpoke",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Slowbro",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Magikarp",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gyarados",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wingull",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Pelipper",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Buizel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Floatzel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Finneon",
+        "time": "Night"
+      },
+      {
+        "name": "Lumineon",
+        "time": "Night"
+      },
+      {
+        "name": "Inkay",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Malamar",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Cramorant",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Finizen",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Palafin",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Poliwag",
+        "time": "Anytime"
+      },
+      {
+        "name": "Poliwhirl",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slowpoke",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Slowbro",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Shellder",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Horsea",
+        "time": "Anytime"
+      },
+      {
+        "name": "Seadra",
+        "time": "Anytime"
+      },
+      {
+        "name": "Goldeen",
+        "time": "Anytime"
+      },
+      {
+        "name": "Seaking",
+        "time": "Anytime"
+      },
+      {
+        "name": "Staryu",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Starmie",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Chinchou",
+        "time": "Night"
+      },
+      {
+        "name": "Lanturn",
+        "time": "Night"
+      },
+      {
+        "name": "Carvanha",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Sharpedo",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Wailmer",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wailord",
+        "time": "Anytime"
+      },
+      {
+        "name": "Panpour",
+        "time": "Anytime"
+      },
+      {
+        "name": "Simipour",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wattrel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kilowattrel",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Lapras",
+        "time": "Anytime"
+      },
+      {
+        "name": "Piplup",
+        "time": "Anytime"
+      },
+      {
+        "name": "Prinplup",
+        "time": "Anytime"
+      },
+      {
+        "name": "Empoleon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Popplio",
+        "time": "Anytime"
+      },
+      {
+        "name": "Brionne",
+        "time": "Anytime"
+      },
+      {
+        "name": "Primarina",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Kingdra",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rotom-Wash",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tirtouga",
+        "time": "Anytime"
+      },
+      {
+        "name": "Carracosta",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Tentacruel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pelipper",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Sharpedo",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Floatzel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lumineon",
+        "time": "Night"
+      },
+      {
+        "name": "Simipour",
+        "time": "Anytime"
+      },
+      {
+        "name": "Malamar",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Cramorant",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Kilowattrel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Palafin",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Kingdra",
+        "time": "Anytime"
+      },
+      {
+        "name": "Empoleon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Primarina",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Rotom-Wash",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Lugia",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Marlon",
+    "team": [
+      "Wailmer",
+      "Frillish",
+      "Tirtouga"
+    ]
+  }
+]

@@ -1,0 +1,221 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Shellder",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Krabby",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kingler",
+        "time": "Anytime"
+      },
+      {
+        "name": "Staryu",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Starmie",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Corphish",
+        "time": "Anytime"
+      },
+      {
+        "name": "Crawdaunt",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dwebble",
+        "time": "Anytime"
+      },
+      {
+        "name": "Crustle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Binacle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Barbaracle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mareanie",
+        "time": "Anytime"
+      },
+      {
+        "name": "Toxapex",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wiglett",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wugtrio",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Burmy",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wormadam",
+        "time": "Anytime"
+      },
+      {
+        "name": "Clauncher",
+        "time": "Anytime"
+      },
+      {
+        "name": "Clawitzer",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sandygast",
+        "time": "Anytime"
+      },
+      {
+        "name": "Palossand",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Quaxly",
+        "time": "Anytime"
+      },
+      {
+        "name": "Quaxwell",
+        "time": "Anytime"
+      },
+      {
+        "name": "Quaquaval",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tatsugiri",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Tirtouga",
+        "time": "Anytime"
+      },
+      {
+        "name": "Carracosta",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Keldeo",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Cloyster",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Kingler",
+        "time": "Anytime"
+      },
+      {
+        "name": "Starmie",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Crawdaunt",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wormadam",
+        "time": "Anytime"
+      },
+      {
+        "name": "Crustle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Barbaracle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Clawitzer",
+        "time": "Anytime"
+      },
+      {
+        "name": "Toxapex",
+        "time": "Anytime"
+      },
+      {
+        "name": "Palossand",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Carracosta",
+        "time": "Anytime"
+      },
+      {
+        "name": "Quaquaval",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Keldeo",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Kofu",
+    "team": [
+      "Veluza",
+      "Wiglett",
+      "Wingull"
+    ]
+  },
+  {
+    "gym_leader": "Misty",
+    "team": [
+      "Staryu",
+      "Psyduck"
+    ]
+  }
+]

@@ -1,0 +1,269 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Drowzee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hypno",
+        "time": "Anytime"
+      },
+      {
+        "name": "Natu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Xatu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Unown",
+        "time": "Anytime"
+      },
+      {
+        "name": "Spoink",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grumpig",
+        "time": "Anytime"
+      },
+      {
+        "name": "Baltoy",
+        "time": "Anytime"
+      },
+      {
+        "name": "Claydol",
+        "time": "Anytime"
+      },
+      {
+        "name": "Elgyem",
+        "time": "Anytime"
+      },
+      {
+        "name": "Beheeyem",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Abra",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kadabra",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sigilyph",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tinkatink",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tinkatuff",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tinkaton",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Mr Mime",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wobbuffet",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gothita",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gothorita",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gothitelle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Stonjourner",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Espeon",
+        "time": "Day"
+      },
+      {
+        "name": "Archen",
+        "time": "Anytime"
+      },
+      {
+        "name": "Archeops",
+        "time": "Anytime"
+      },
+      {
+        "name": "Runerigus",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Galar Yamask",
+        "time": "Dusk, Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Registeel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Fezandipiti",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Alakazam",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hypno",
+        "time": "Anytime"
+      },
+      {
+        "name": "Xatu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grumpig",
+        "time": "Anytime"
+      },
+      {
+        "name": "Claydol",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sigilyph",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gothitelle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Beheeyem",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tinkaton",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Mr Mime",
+        "time": "Anytime"
+      },
+      {
+        "name": "Espeon",
+        "time": "Day"
+      },
+      {
+        "name": "Wobbuffet",
+        "time": "Anytime"
+      },
+      {
+        "name": "Archeops",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Registeel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Runerigus",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Fezandipiti",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Koraidon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Liza",
+    "team": [
+      "Lunatone",
+      "Spoink",
+      "Baltoy",
+      "Gardevoir"
+    ]
+  },
+  {
+    "gym_leader": "Sabrina",
+    "team": [
+      "Abra",
+      "Mr Mime",
+      "Espeon"
+    ]
+  },
+  {
+    "gym_leader": "Tate",
+    "team": [
+      "Solrock",
+      "Natu",
+      "Chimecho",
+      "Gallade"
+    ]
+  },
+  {
+    "gym_leader": "Tulip",
+    "team": [
+      "Girafarig",
+      "Flittle",
+      "Ralts"
+    ]
+  }
+]

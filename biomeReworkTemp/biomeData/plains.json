@@ -1,0 +1,414 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Zubat",
+        "time": "Night"
+      },
+      {
+        "name": "Golbat",
+        "time": "Night"
+      },
+      {
+        "name": "Meowth",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Persian",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Sentret",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Furret",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Poochyena",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Mightyena",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Zigzagoon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Linoone",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bidoof",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bibarel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Yungoos",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Gumshoos",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Skwovet",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Greedent",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Lechonk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Oinkologne",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Pidgey",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pidgeotto",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pidgeot",
+        "time": "Anytime"
+      },
+      {
+        "name": "Spearow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Fearow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pikachu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mankey",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Primeape",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Doduo",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Dodrio",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Poochyena",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Mightyena",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Starly",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Staravia",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Staraptor",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Pidove",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Tranquill",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Unfezant",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Fletchling",
+        "time": "Anytime"
+      },
+      {
+        "name": "Fletchinder",
+        "time": "Anytime"
+      },
+      {
+        "name": "Talonflame",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rockruff",
+        "time": "Day"
+      },
+      {
+        "name": "Lycanroc",
+        "time": "Day"
+      },
+      {
+        "name": "Pawmi",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Pawmo",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Pawmot",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Annihilape",
+        "time": "Dusk, Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Abra",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kadabra",
+        "time": "Anytime"
+      },
+      {
+        "name": "Shinx",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Luxio",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Luxray",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Buneary",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lopunny",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rookidee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Corvisquire",
+        "time": "Anytime"
+      },
+      {
+        "name": "Corviknight",
+        "time": "Anytime"
+      },
+      {
+        "name": "Paldea Tauros",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Farfetchd",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lickitung",
+        "time": "Anytime"
+      },
+      {
+        "name": "Chansey",
+        "time": "Anytime"
+      },
+      {
+        "name": "Eevee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Snorlax",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dunsparce",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dudunsparce",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Ditto",
+        "time": "Anytime"
+      },
+      {
+        "name": "Latias",
+        "time": "Anytime"
+      },
+      {
+        "name": "Latios",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Persian",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Dodrio",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Furret",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Mightyena",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Linoone",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bibarel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lopunny",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gumshoos",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Greedent",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Oinkologne",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Farfetchd",
+        "time": "Anytime"
+      },
+      {
+        "name": "Snorlax",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lickilicky",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lycanroc",
+        "time": "Day"
+      },
+      {
+        "name": "Pawmot",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Dudunsparce",
+        "time": "Anytime"
+      },
+      {
+        "name": "Paldea Tauros",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Latias",
+        "time": "Anytime"
+      },
+      {
+        "name": "Latios",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Cheren",
+    "team": [
+      "Lillipup",
+      "Minccino",
+      "Patrat"
+    ]
+  },
+  {
+    "gym_leader": "Chili",
+    "team": [
+      "Pansear",
+      "Darumaka",
+      "Heatmor"
+    ]
+  },
+  {
+    "gym_leader": "Cilan",
+    "team": [
+      "Pansage",
+      "Cottonee",
+      "Petilil"
+    ]
+  },
+  {
+    "gym_leader": "Cress",
+    "team": [
+      "Panpour",
+      "Basculin",
+      "Tympole"
+    ]
+  }
+]

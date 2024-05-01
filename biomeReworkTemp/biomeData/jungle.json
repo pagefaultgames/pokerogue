@@ -1,0 +1,447 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Spinarak",
+        "time": "Night"
+      },
+      {
+        "name": "Ariados",
+        "time": "Night"
+      },
+      {
+        "name": "Aipom",
+        "time": "Anytime"
+      },
+      {
+        "name": "Shroomish",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Vespiquen",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Cherubi",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Cherrim",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Purrloin",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Liepard",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Blitzle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Zebstrika",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sewaddle",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Swadloon",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Leavanny",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Foongus",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Amoonguss",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Pikipek",
+        "time": "Anytime"
+      },
+      {
+        "name": "Trumbeak",
+        "time": "Anytime"
+      },
+      {
+        "name": "Toucannon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Exeggcute",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Tangela",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Spinarak",
+        "time": "Dusk"
+      },
+      {
+        "name": "Ariados",
+        "time": "Dusk"
+      },
+      {
+        "name": "Tropius",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Combee",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Pansage",
+        "time": "Anytime"
+      },
+      {
+        "name": "Simisage",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pansear",
+        "time": "Anytime"
+      },
+      {
+        "name": "Simisear",
+        "time": "Anytime"
+      },
+      {
+        "name": "Panpour",
+        "time": "Anytime"
+      },
+      {
+        "name": "Simipour",
+        "time": "Anytime"
+      },
+      {
+        "name": "Joltik",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galvantula",
+        "time": "Anytime"
+      },
+      {
+        "name": "Litleo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pyroar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pancham",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Pangoro",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Fomantis",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lurantis",
+        "time": "Anytime"
+      },
+      {
+        "name": "Komala",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Falinks",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Scyther",
+        "time": "Anytime"
+      },
+      {
+        "name": "Yanma",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slakoth",
+        "time": "Anytime"
+      },
+      {
+        "name": "Vigoroth",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slaking",
+        "time": "Anytime"
+      },
+      {
+        "name": "Seviper",
+        "time": "Anytime"
+      },
+      {
+        "name": "Carnivine",
+        "time": "Anytime"
+      },
+      {
+        "name": "Snivy",
+        "time": "Anytime"
+      },
+      {
+        "name": "Servine",
+        "time": "Anytime"
+      },
+      {
+        "name": "Serperior",
+        "time": "Anytime"
+      },
+      {
+        "name": "Foongus",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Amoonguss",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Oranguru",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Passimian",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Grookey",
+        "time": "Anytime"
+      },
+      {
+        "name": "Thwackey",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rillaboom",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Ponyta",
+        "time": "Dawn"
+      },
+      {
+        "name": "Galar Rapidash",
+        "time": "Dawn"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Kangaskhan",
+        "time": "Anytime"
+      },
+      {
+        "name": "Chatot",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kleavor",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Virizion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Buzzwole",
+        "time": "Anytime"
+      },
+      {
+        "name": "Zarude",
+        "time": "Anytime"
+      },
+      {
+        "name": "Munkidori",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Exeggutor",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Breloom",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Seviper",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tropius",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Cherrim",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Ambipom",
+        "time": "Anytime"
+      },
+      {
+        "name": "Carnivine",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tangrowth",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Yanmega",
+        "time": "Anytime"
+      },
+      {
+        "name": "Leavanny",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Amoonguss",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Galvantula",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pyroar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pangoro",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Toucannon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lurantis",
+        "time": "Anytime"
+      },
+      {
+        "name": "Komala",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Falinks",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Kangaskhan",
+        "time": "Anytime"
+      },
+      {
+        "name": "Scizor",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slaking",
+        "time": "Anytime"
+      },
+      {
+        "name": "Leafeon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Serperior",
+        "time": "Anytime"
+      },
+      {
+        "name": "Amoonguss",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Rillaboom",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Rapidash",
+        "time": "Dawn"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Virizion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Buzzwole",
+        "time": "Anytime"
+      },
+      {
+        "name": "Zarude",
+        "time": "Anytime"
+      },
+      {
+        "name": "Munkidori",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Kleavor",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Ramos",
+    "team": [
+      "Skiddo",
+      "Hoppip",
+      "Bellsprout"
+    ]
+  }
+]

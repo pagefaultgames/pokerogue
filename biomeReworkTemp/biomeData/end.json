@@ -1,0 +1,106 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Great Tusk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Scream Tail",
+        "time": "Anytime"
+      },
+      {
+        "name": "Brute Bonnet",
+        "time": "Anytime"
+      },
+      {
+        "name": "Flutter Mane",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slither Wing",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sandy Shocks",
+        "time": "Anytime"
+      },
+      {
+        "name": "Iron Treads",
+        "time": "Anytime"
+      },
+      {
+        "name": "Iron Bundle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Iron Hands",
+        "time": "Anytime"
+      },
+      {
+        "name": "Iron Jugulis",
+        "time": "Anytime"
+      },
+      {
+        "name": "Iron Moth",
+        "time": "Anytime"
+      },
+      {
+        "name": "Iron Thorns",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Roaring Moon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Iron Valiant",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Walking Wake",
+        "time": "Anytime"
+      },
+      {
+        "name": "Iron Leaves",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gouging Fire",
+        "time": "Anytime"
+      },
+      {
+        "name": "Raging Bolt",
+        "time": "Anytime"
+      },
+      {
+        "name": "Iron Boulder",
+        "time": "Anytime"
+      },
+      {
+        "name": "Iron Crown",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Eternatus",
+        "time": "Anytime"
+      }
+    ]
+  }
+]

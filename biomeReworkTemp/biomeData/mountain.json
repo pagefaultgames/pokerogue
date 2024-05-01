@@ -1,0 +1,492 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Pidgey",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pidgeotto",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pidgeot",
+        "time": "Anytime"
+      },
+      {
+        "name": "Spearow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Fearow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rhyhorn",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Rhydon",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Taillow",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Swellow",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Aron",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Lairon",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Aggron",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Swablu",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Altaria",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Starly",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Staravia",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Staraptor",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Pidove",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Tranquill",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Unfezant",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Roggenrola",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Boldore",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Fletchling",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Fletchinder",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Talonflame",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Skiddo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gogoat",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Machop",
+        "time": "Anytime"
+      },
+      {
+        "name": "Machoke",
+        "time": "Anytime"
+      },
+      {
+        "name": "Geodude",
+        "time": "Anytime"
+      },
+      {
+        "name": "Graveler",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rhyhorn",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Rhydon",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Natu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Xatu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slugma",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magcargo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Aron",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Lairon",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Aggron",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Roggenrola",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Boldore",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Rufflet",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Braviary",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Vullaby",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Mandibuzz",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Rookidee",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Corvisquire",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Corviknight",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Nacli",
+        "time": "Anytime"
+      },
+      {
+        "name": "Naclstack",
+        "time": "Anytime"
+      },
+      {
+        "name": "Garganacl",
+        "time": "Anytime"
+      },
+      {
+        "name": "Flittle",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Espathra",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Bombirdier",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Murkrow",
+        "time": "Night"
+      },
+      {
+        "name": "Skarmory",
+        "time": "Anytime"
+      },
+      {
+        "name": "Torchic",
+        "time": "Anytime"
+      },
+      {
+        "name": "Combusken",
+        "time": "Anytime"
+      },
+      {
+        "name": "Blaziken",
+        "time": "Anytime"
+      },
+      {
+        "name": "Spoink",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grumpig",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hawlucha",
+        "time": "Anytime"
+      },
+      {
+        "name": "Klawf",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Larvitar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pupitar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cranidos",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rampardos",
+        "time": "Anytime"
+      },
+      {
+        "name": "Shieldon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bastiodon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gible",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gabite",
+        "time": "Anytime"
+      },
+      {
+        "name": "Garchomp",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rotom-Fan",
+        "time": "Anytime"
+      },
+      {
+        "name": "Archeops",
+        "time": "Anytime"
+      },
+      {
+        "name": "Axew",
+        "time": "Anytime"
+      },
+      {
+        "name": "Fraxure",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Tornadus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ting Lu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ogerpon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Pidgeot",
+        "time": "Anytime"
+      },
+      {
+        "name": "Fearow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Skarmory",
+        "time": "Anytime"
+      },
+      {
+        "name": "Swellow",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Aggron",
+        "time": "Anytime"
+      },
+      {
+        "name": "Altaria",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Staraptor",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Unfezant",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Braviary",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Mandibuzz",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Talonflame",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Gogoat",
+        "time": "Anytime"
+      },
+      {
+        "name": "Corviknight",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Garganacl",
+        "time": "Anytime"
+      },
+      {
+        "name": "Espathra",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Blaziken",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rampardos",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bastiodon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hawlucha",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hisui Braviary",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Rotom-Fan",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tornadus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ting Lu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ogerpon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Ho Oh",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Falkner",
+    "team": [
+      "Pidgey",
+      "Hoothoot",
+      "Doduo"
+    ]
+  },
+  {
+    "gym_leader": "Skyla",
+    "team": [
+      "Ducklett",
+      "Woobat",
+      "Rufflet"
+    ]
+  },
+  {
+    "gym_leader": "Winona",
+    "team": [
+      "Swablu",
+      "Wingull",
+      "Tropius",
+      "Skarmory"
+    ]
+  }
+]

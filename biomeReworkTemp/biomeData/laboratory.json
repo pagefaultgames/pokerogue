@@ -1,0 +1,171 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Magnemite",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magneton",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grimer",
+        "time": "Anytime"
+      },
+      {
+        "name": "Muk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Voltorb",
+        "time": "Anytime"
+      },
+      {
+        "name": "Electrode",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bronzor",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bronzong",
+        "time": "Anytime"
+      },
+      {
+        "name": "Klink",
+        "time": "Anytime"
+      },
+      {
+        "name": "Klang",
+        "time": "Anytime"
+      },
+      {
+        "name": "Klinklang",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Solosis",
+        "time": "Anytime"
+      },
+      {
+        "name": "Duosion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Reuniclus",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Ditto",
+        "time": "Anytime"
+      },
+      {
+        "name": "Porygon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Porygon2",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Rotom",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Type Null",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Muk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Electrode",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bronzong",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magnezone",
+        "time": "Anytime"
+      },
+      {
+        "name": "Porygon Z",
+        "time": "Anytime"
+      },
+      {
+        "name": "Reuniclus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Klinklang",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Zygarde",
+        "time": "Anytime"
+      },
+      {
+        "name": "Silvally",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Mewtwo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Miraidon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Giovanni",
+    "team": [
+      "Sandile",
+      "Murkrow",
+      "Nidoran M",
+      "Nidoran F"
+    ]
+  }
+]

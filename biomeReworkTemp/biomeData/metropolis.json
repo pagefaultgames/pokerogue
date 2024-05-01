@@ -1,0 +1,237 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Rattata",
+        "time": "Anytime"
+      },
+      {
+        "name": "Raticate",
+        "time": "Anytime"
+      },
+      {
+        "name": "Houndour",
+        "time": "Night"
+      },
+      {
+        "name": "Houndoom",
+        "time": "Night"
+      },
+      {
+        "name": "Zigzagoon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Linoone",
+        "time": "Anytime"
+      },
+      {
+        "name": "Patrat",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Watchog",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Lillipup",
+        "time": "Anytime"
+      },
+      {
+        "name": "Herdier",
+        "time": "Anytime"
+      },
+      {
+        "name": "Stoutland",
+        "time": "Anytime"
+      },
+      {
+        "name": "Yamper",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Boltund",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Pikachu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Glameow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Purugly",
+        "time": "Anytime"
+      },
+      {
+        "name": "Patrat",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Watchog",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Furfrou",
+        "time": "Anytime"
+      },
+      {
+        "name": "Espurr",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Meowstic",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Indeedee",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Fidough",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dachsbun",
+        "time": "Anytime"
+      },
+      {
+        "name": "Squawkabilly",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Morpeko",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Tandemaus",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Maushold",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Varoom",
+        "time": "Anytime"
+      },
+      {
+        "name": "Revavroom",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Ditto",
+        "time": "Anytime"
+      },
+      {
+        "name": "Eevee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Smeargle",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Castform",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Stoutland",
+        "time": "Anytime"
+      },
+      {
+        "name": "Furfrou",
+        "time": "Anytime"
+      },
+      {
+        "name": "Meowstic",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Boltund",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Dachsbun",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Castform",
+        "time": "Anytime"
+      },
+      {
+        "name": "Maushold",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Revavroom",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Iono",
+    "team": [
+      "Tadbulb",
+      "Wattrel",
+      "Voltorb"
+    ]
+  },
+  {
+    "gym_leader": "Larry",
+    "team": [
+      "Starly",
+      "Dunsparce",
+      "Komala"
+    ]
+  },
+  {
+    "gym_leader": "Norman",
+    "team": [
+      "Slakoth",
+      "Spinda",
+      "Chansey",
+      "Kangaskhan"
+    ]
+  },
+  {
+    "gym_leader": "Whitney",
+    "team": [
+      "Clefairy",
+      "Miltank"
+    ]
+  }
+]

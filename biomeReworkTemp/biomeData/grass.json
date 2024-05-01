@@ -1,0 +1,157 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Hoppip",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Skiploom",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Sunkern",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Seedot",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Nuzleaf",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Shroomish",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Breloom",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Cottonee",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Petilil",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Combee",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Vespiquen",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Cherubi",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Cherrim",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Foongus",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Amoonguss",
+        "time": "Dusk, Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Bulbasaur",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ivysaur",
+        "time": "Anytime"
+      },
+      {
+        "name": "Venusaur",
+        "time": "Anytime"
+      },
+      {
+        "name": "Growlithe",
+        "time": "Anytime"
+      },
+      {
+        "name": "Turtwig",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grotle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Torterra",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Sudowoodo",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Jumpluff",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Sunflora",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Whimsicott",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Venusaur",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sudowoodo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Torterra",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Erika",
+    "team": [
+      "Oddish",
+      "Bellsprout",
+      "Tangela",
+      "Hoppip"
+    ]
+  }
+]

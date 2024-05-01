@@ -1,0 +1,286 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Mankey",
+        "time": "Anytime"
+      },
+      {
+        "name": "Primeape",
+        "time": "Anytime"
+      },
+      {
+        "name": "Makuhita",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hariyama",
+        "time": "Anytime"
+      },
+      {
+        "name": "Meditite",
+        "time": "Anytime"
+      },
+      {
+        "name": "Medicham",
+        "time": "Anytime"
+      },
+      {
+        "name": "Stufful",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bewear",
+        "time": "Anytime"
+      },
+      {
+        "name": "Clobbopus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grapploct",
+        "time": "Anytime"
+      },
+      {
+        "name": "Annihilape",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Croagunk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Toxicroak",
+        "time": "Anytime"
+      },
+      {
+        "name": "Scraggy",
+        "time": "Anytime"
+      },
+      {
+        "name": "Scrafty",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mienfoo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mienshao",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Hitmonlee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hitmonchan",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lucario",
+        "time": "Anytime"
+      },
+      {
+        "name": "Throh",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sawk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pancham",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pangoro",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Hitmontop",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gallade",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Farfetchd",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Terrakion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kubfu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Zapdos",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Hitmonlee",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hitmonchan",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hariyama",
+        "time": "Anytime"
+      },
+      {
+        "name": "Medicham",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lucario",
+        "time": "Anytime"
+      },
+      {
+        "name": "Toxicroak",
+        "time": "Anytime"
+      },
+      {
+        "name": "Throh",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sawk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Scrafty",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mienshao",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bewear",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grapploct",
+        "time": "Anytime"
+      },
+      {
+        "name": "Annihilape",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Hitmontop",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gallade",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pangoro",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Terrakion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sirfetchd",
+        "time": "Anytime"
+      },
+      {
+        "name": "Urshifu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hisui Decidueye",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Zamazenta",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Zapdos",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Brawly",
+    "team": [
+      "Machop",
+      "Makuhita"
+    ]
+  },
+  {
+    "gym_leader": "Maylene",
+    "team": [
+      "Lucario",
+      "Meditite",
+      "Chimchar"
+    ]
+  },
+  {
+    "gym_leader": "Korrina",
+    "team": [
+      "Hawlucha",
+      "Lucario",
+      "Mienfoo"
+    ]
+  },
+  {
+    "gym_leader": "Bea",
+    "team": [
+      "Galarian Farfetchd",
+      "Machop",
+      "Clobbopus"
+    ]
+  }
+]

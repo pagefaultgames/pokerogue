@@ -1,0 +1,246 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Sandshrew",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sandslash",
+        "time": "Anytime"
+      },
+      {
+        "name": "Trapinch",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Cacnea",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Cacturne",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Hippopotas",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Hippowdon",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Skorupi",
+        "time": "Anytime"
+      },
+      {
+        "name": "Drapion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sandile",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Krokorok",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Krookodile",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Silicobra",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sandaconda",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rellor",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Rabsca",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Sandile",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Krokorok",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Krookodile",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Maractus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Helioptile",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Bramblin",
+        "time": "Anytime"
+      },
+      {
+        "name": "Brambleghast",
+        "time": "Anytime"
+      },
+      {
+        "name": "Orthworm",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Vibrava",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Flygon",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Darumaka",
+        "time": "Anytime"
+      },
+      {
+        "name": "Darmanitan",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Lileep",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cradily",
+        "time": "Anytime"
+      },
+      {
+        "name": "Anorith",
+        "time": "Anytime"
+      },
+      {
+        "name": "Armaldo",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Regirock",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pheromosa",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Sandslash",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cacturne",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Hippowdon",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Drapion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Krookodile",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Darmanitan",
+        "time": "Anytime"
+      },
+      {
+        "name": "Maractus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Heliolisk",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Sandaconda",
+        "time": "Anytime"
+      },
+      {
+        "name": "Brambleghast",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rabsca",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Cradily",
+        "time": "Anytime"
+      },
+      {
+        "name": "Armaldo",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Regirock",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pheromosa",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Gordie",
+    "team": [
+      "Rolycoly",
+      "Stonjourner",
+      "Binacle"
+    ]
+  }
+]

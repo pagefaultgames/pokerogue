@@ -1,0 +1,315 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Larvitar",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Pupitar",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Tyranitar",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Vibrava",
+        "time": "Anytime"
+      },
+      {
+        "name": "Flygon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bagon",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Shelgon",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Salamence",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Gible",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gabite",
+        "time": "Anytime"
+      },
+      {
+        "name": "Garchomp",
+        "time": "Anytime"
+      },
+      {
+        "name": "Axew",
+        "time": "Anytime"
+      },
+      {
+        "name": "Fraxure",
+        "time": "Anytime"
+      },
+      {
+        "name": "Haxorus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Goomy",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Sliggoo",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Goodra",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Jangmo O",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Hakamo O",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Kommo O",
+        "time": "Dawn, Day"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Swablu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Altaria",
+        "time": "Anytime"
+      },
+      {
+        "name": "Deino",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Zweilous",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Hydreigon",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Drampa",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cyclizar",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Dratini",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dragonair",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dragonite",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dreepy",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Drakloak",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Dragapult",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Frigibax",
+        "time": "Anytime"
+      },
+      {
+        "name": "Arctibax",
+        "time": "Anytime"
+      },
+      {
+        "name": "Baxcalibur",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Aerodactyl",
+        "time": "Anytime"
+      },
+      {
+        "name": "Druddigon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tyrunt",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tyrantrum",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dracozolt",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dracovish",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Regidrago",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Dragonite",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tyranitar",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Flygon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Salamence",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Garchomp",
+        "time": "Anytime"
+      },
+      {
+        "name": "Haxorus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Goodra",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Drampa",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kommo O",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Dragapult",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Baxcalibur",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Aerodactyl",
+        "time": "Anytime"
+      },
+      {
+        "name": "Druddigon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tyrantrum",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dracozolt",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dracovish",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Regidrago",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Dialga",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Clair",
+    "team": [
+      "Dratini",
+      "Horsea",
+      "Gyarados"
+    ]
+  },
+  {
+    "gym_leader": "Drayden",
+    "team": [
+      "Druddigon",
+      "Axew",
+      "Deino"
+    ]
+  },
+  {
+    "gym_leader": "Raihan",
+    "team": [
+      "Duraludon",
+      "Turtonator",
+      "Goomy"
+    ]
+  }
+]

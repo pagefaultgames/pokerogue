@@ -1,0 +1,508 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Butterfree",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Beedrill",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Venonat",
+        "time": "Night"
+      },
+      {
+        "name": "Venomoth",
+        "time": "Night"
+      },
+      {
+        "name": "Bellsprout",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Weepinbell",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Spinarak",
+        "time": "Night"
+      },
+      {
+        "name": "Ariados",
+        "time": "Night"
+      },
+      {
+        "name": "Pineco",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Forretress",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Beautifly",
+        "time": "Day"
+      },
+      {
+        "name": "Dustox",
+        "time": "Night"
+      },
+      {
+        "name": "Seedot",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Nuzleaf",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Shroomish",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Breloom",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Combee",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Vespiquen",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Venipede",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Whirlipede",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Scolipede",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Petilil",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Deerling",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Sawsbuck",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Vivillon",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Tarountula",
+        "time": "Anytime"
+      },
+      {
+        "name": "Spidops",
+        "time": "Anytime"
+      },
+      {
+        "name": "Nymble",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lokix",
+        "time": "Anytime"
+      },
+      {
+        "name": "Shroodle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grafaiai",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Ekans",
+        "time": "Anytime"
+      },
+      {
+        "name": "Arbok",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hoothoot",
+        "time": "Night"
+      },
+      {
+        "name": "Noctowl",
+        "time": "Night"
+      },
+      {
+        "name": "Spinarak",
+        "time": "Dusk"
+      },
+      {
+        "name": "Ariados",
+        "time": "Dusk"
+      },
+      {
+        "name": "Teddiursa",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ursaring",
+        "time": "Anytime"
+      },
+      {
+        "name": "Roselia",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Burmy",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wormadam",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mothim",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Pansage",
+        "time": "Anytime"
+      },
+      {
+        "name": "Simisage",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sewaddle",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Swadloon",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Leavanny",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Rockruff",
+        "time": "Night"
+      },
+      {
+        "name": "Lycanroc",
+        "time": "Night"
+      },
+      {
+        "name": "Dottler",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Orbeetle",
+        "time": "Dusk, Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Exeggcute",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Scyther",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Heracross",
+        "time": "Anytime"
+      },
+      {
+        "name": "Stantler",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Treecko",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grovyle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sceptile",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tropius",
+        "time": "Anytime"
+      },
+      {
+        "name": "Karrablast",
+        "time": "Anytime"
+      },
+      {
+        "name": "Shelmet",
+        "time": "Anytime"
+      },
+      {
+        "name": "Chespin",
+        "time": "Anytime"
+      },
+      {
+        "name": "Quilladin",
+        "time": "Anytime"
+      },
+      {
+        "name": "Chesnaught",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rowlet",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dartrix",
+        "time": "Anytime"
+      },
+      {
+        "name": "Decidueye",
+        "time": "Anytime"
+      },
+      {
+        "name": "Squawkabilly",
+        "time": "Anytime"
+      },
+      {
+        "name": "Toedscool",
+        "time": "Anytime"
+      },
+      {
+        "name": "Toedscruel",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Durant",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bloodmoon Ursaluna",
+        "time": "Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Kartana",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wo Chien",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Venomoth",
+        "time": "Night"
+      },
+      {
+        "name": "Victreebel",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Noctowl",
+        "time": "Night"
+      },
+      {
+        "name": "Ariados",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Forretress",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Beautifly",
+        "time": "Day"
+      },
+      {
+        "name": "Dustox",
+        "time": "Night"
+      },
+      {
+        "name": "Shiftry",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Breloom",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Wormadam",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mothim",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Vespiquen",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Simisage",
+        "time": "Anytime"
+      },
+      {
+        "name": "Scolipede",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Lilligant",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Sawsbuck",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Orbeetle",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Spidops",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lokix",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grafaiai",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Heracross",
+        "time": "Anytime"
+      },
+      {
+        "name": "Stantler",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Sceptile",
+        "time": "Anytime"
+      },
+      {
+        "name": "Escavalier",
+        "time": "Anytime"
+      },
+      {
+        "name": "Accelgor",
+        "time": "Anytime"
+      },
+      {
+        "name": "Durant",
+        "time": "Anytime"
+      },
+      {
+        "name": "Chesnaught",
+        "time": "Anytime"
+      },
+      {
+        "name": "Decidueye",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lycanroc",
+        "time": "Night"
+      },
+      {
+        "name": "Toedscruel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bloodmoon Ursaluna",
+        "time": "Night"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Kartana",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wo Chien",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Calyrex",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Bugsy",
+    "team": [
+      "Scyther",
+      "Heracross",
+      "Shuckle",
+      "Pinsir"
+    ]
+  },
+  {
+    "gym_leader": "Burgh",
+    "team": [
+      "Sewaddle",
+      "Shelmet",
+      "Karrablast"
+    ]
+  },
+  {
+    "gym_leader": "Katy",
+    "team": [
+      "Nymble",
+      "Tarountula",
+      "Heracross"
+    ]
+  }
+]

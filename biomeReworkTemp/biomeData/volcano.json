@@ -1,0 +1,395 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Vulpix",
+        "time": "Anytime"
+      },
+      {
+        "name": "Growlithe",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ponyta",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rapidash",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slugma",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magcargo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Numel",
+        "time": "Anytime"
+      },
+      {
+        "name": "Camerupt",
+        "time": "Anytime"
+      },
+      {
+        "name": "Salandit",
+        "time": "Anytime"
+      },
+      {
+        "name": "Salazzle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rolycoly",
+        "time": "Anytime"
+      },
+      {
+        "name": "Carkol",
+        "time": "Anytime"
+      },
+      {
+        "name": "Coalossal",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Magmar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Torkoal",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pansear",
+        "time": "Anytime"
+      },
+      {
+        "name": "Simisear",
+        "time": "Anytime"
+      },
+      {
+        "name": "Heatmor",
+        "time": "Anytime"
+      },
+      {
+        "name": "Turtonator",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Charmander",
+        "time": "Anytime"
+      },
+      {
+        "name": "Charmeleon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Charizard",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cyndaquil",
+        "time": "Anytime"
+      },
+      {
+        "name": "Quilava",
+        "time": "Anytime"
+      },
+      {
+        "name": "Typhlosion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Chimchar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Monferno",
+        "time": "Anytime"
+      },
+      {
+        "name": "Infernape",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tepig",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pignite",
+        "time": "Anytime"
+      },
+      {
+        "name": "Emboar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Fennekin",
+        "time": "Anytime"
+      },
+      {
+        "name": "Braixen",
+        "time": "Anytime"
+      },
+      {
+        "name": "Delphox",
+        "time": "Anytime"
+      },
+      {
+        "name": "Litten",
+        "time": "Anytime"
+      },
+      {
+        "name": "Torracat",
+        "time": "Anytime"
+      },
+      {
+        "name": "Incineroar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Scorbunny",
+        "time": "Anytime"
+      },
+      {
+        "name": "Raboot",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cinderace",
+        "time": "Anytime"
+      },
+      {
+        "name": "Charcadet",
+        "time": "Anytime"
+      },
+      {
+        "name": "Armarouge",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Flareon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rotom-Heat",
+        "time": "Anytime"
+      },
+      {
+        "name": "Larvesta",
+        "time": "Anytime"
+      },
+      {
+        "name": "Volcarona",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hisui Growlithe",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Entei",
+        "time": "Anytime"
+      },
+      {
+        "name": "Heatran",
+        "time": "Anytime"
+      },
+      {
+        "name": "Volcanion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Chi Yu",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Ninetales",
+        "time": "Anytime"
+      },
+      {
+        "name": "Arcanine",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rapidash",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magcargo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Camerupt",
+        "time": "Anytime"
+      },
+      {
+        "name": "Torkoal",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magmortar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Simisear",
+        "time": "Anytime"
+      },
+      {
+        "name": "Heatmor",
+        "time": "Anytime"
+      },
+      {
+        "name": "Salazzle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Turtonator",
+        "time": "Anytime"
+      },
+      {
+        "name": "Coalossal",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Charizard",
+        "time": "Anytime"
+      },
+      {
+        "name": "Flareon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Typhlosion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Infernape",
+        "time": "Anytime"
+      },
+      {
+        "name": "Emboar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Volcarona",
+        "time": "Anytime"
+      },
+      {
+        "name": "Delphox",
+        "time": "Anytime"
+      },
+      {
+        "name": "Incineroar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cinderace",
+        "time": "Anytime"
+      },
+      {
+        "name": "Armarouge",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Moltres",
+        "time": "Anytime"
+      },
+      {
+        "name": "Entei",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rotom-Heat",
+        "time": "Anytime"
+      },
+      {
+        "name": "Heatran",
+        "time": "Anytime"
+      },
+      {
+        "name": "Volcanion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Chi Yu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hisui Arcanine",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Reshiram",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Blaine",
+    "team": [
+      "Growlithe",
+      "Ponyta",
+      "Magmar"
+    ]
+  },
+  {
+    "gym_leader": "Flannery",
+    "team": [
+      "Slugma",
+      "Torkoal",
+      "Numel"
+    ]
+  },
+  {
+    "gym_leader": "Kabu",
+    "team": [
+      "Sizzlipede",
+      "Vulpix",
+      "Torkoal"
+    ]
+  }
+]

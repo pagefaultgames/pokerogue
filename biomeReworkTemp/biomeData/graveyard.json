@@ -1,0 +1,259 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Gastly",
+        "time": "Anytime"
+      },
+      {
+        "name": "Haunter",
+        "time": "Anytime"
+      },
+      {
+        "name": "Shuppet",
+        "time": "Anytime"
+      },
+      {
+        "name": "Banette",
+        "time": "Anytime"
+      },
+      {
+        "name": "Duskull",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dusclops",
+        "time": "Anytime"
+      },
+      {
+        "name": "Drifloon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Drifblim",
+        "time": "Anytime"
+      },
+      {
+        "name": "Litwick",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lampent",
+        "time": "Anytime"
+      },
+      {
+        "name": "Phantump",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pumpkaboo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Greavard",
+        "time": "Anytime"
+      },
+      {
+        "name": "Houndstone",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Cubone",
+        "time": "Anytime"
+      },
+      {
+        "name": "Marowak",
+        "time": "Anytime"
+      },
+      {
+        "name": "Yamask",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cofagrigus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sinistea",
+        "time": "Anytime"
+      },
+      {
+        "name": "Polteageist",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Misdreavus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mimikyu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Fuecoco",
+        "time": "Anytime"
+      },
+      {
+        "name": "Crocalor",
+        "time": "Anytime"
+      },
+      {
+        "name": "Skeledirge",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ceruledge",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Spiritomb",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Marshadow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Spectrier",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Gengar",
+        "time": "Anytime"
+      },
+      {
+        "name": "Marowak",
+        "time": "Dawn, Day, Dusk"
+      },
+      {
+        "name": "Banette",
+        "time": "Anytime"
+      },
+      {
+        "name": "Drifblim",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mismagius",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dusknoir",
+        "time": "Anytime"
+      },
+      {
+        "name": "Chandelure",
+        "time": "Anytime"
+      },
+      {
+        "name": "Trevenant",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gourgeist",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mimikyu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Polteageist",
+        "time": "Anytime"
+      },
+      {
+        "name": "Houndstone",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Skeledirge",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ceruledge",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Marshadow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Spectrier",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hisui Typhlosion",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Giratina",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Allister",
+    "team": [
+      "Galarian Yamask",
+      "Galarian Corsola",
+      "Gastly"
+    ]
+  },
+  {
+    "gym_leader": "Morty",
+    "team": [
+      "Gastly",
+      "Misdreavus",
+      "Sableye"
+    ]
+  },
+  {
+    "gym_leader": "Ryme",
+    "team": [
+      "Greavard",
+      "Shuppet",
+      "Mimikyu"
+    ]
+  }
+]

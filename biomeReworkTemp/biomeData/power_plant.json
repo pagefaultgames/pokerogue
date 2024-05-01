@@ -1,0 +1,283 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Pikachu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magnemite",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magneton",
+        "time": "Anytime"
+      },
+      {
+        "name": "Voltorb",
+        "time": "Anytime"
+      },
+      {
+        "name": "Electrode",
+        "time": "Anytime"
+      },
+      {
+        "name": "Electrike",
+        "time": "Anytime"
+      },
+      {
+        "name": "Manectric",
+        "time": "Anytime"
+      },
+      {
+        "name": "Shinx",
+        "time": "Anytime"
+      },
+      {
+        "name": "Luxio",
+        "time": "Anytime"
+      },
+      {
+        "name": "Luxray",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dedenne",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grubbin",
+        "time": "Anytime"
+      },
+      {
+        "name": "Charjabug",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pawmi",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pawmo",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pawmot",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tadbulb",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bellibolt",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Electabuzz",
+        "time": "Anytime"
+      },
+      {
+        "name": "Plusle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Minun",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pachirisu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Emolga",
+        "time": "Anytime"
+      },
+      {
+        "name": "Togedemaru",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Mareep",
+        "time": "Anytime"
+      },
+      {
+        "name": "Flaaffy",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Jolteon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hisui Voltorb",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Raikou",
+        "time": "Anytime"
+      },
+      {
+        "name": "Thundurus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Xurkitree",
+        "time": "Anytime"
+      },
+      {
+        "name": "Zeraora",
+        "time": "Anytime"
+      },
+      {
+        "name": "Regieleki",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Raichu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Manectric",
+        "time": "Anytime"
+      },
+      {
+        "name": "Luxray",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magnezone",
+        "time": "Anytime"
+      },
+      {
+        "name": "Electivire",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dedenne",
+        "time": "Anytime"
+      },
+      {
+        "name": "Vikavolt",
+        "time": "Anytime"
+      },
+      {
+        "name": "Togedemaru",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pawmot",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bellibolt",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Jolteon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ampharos",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Zapdos",
+        "time": "Anytime"
+      },
+      {
+        "name": "Raikou",
+        "time": "Anytime"
+      },
+      {
+        "name": "Thundurus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Xurkitree",
+        "time": "Anytime"
+      },
+      {
+        "name": "Zeraora",
+        "time": "Anytime"
+      },
+      {
+        "name": "Regieleki",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hisui Electrode",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Zekrom",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Clemont",
+    "team": [
+      "Helioptile",
+      "Magnemite",
+      "Emolga"
+    ]
+  },
+  {
+    "gym_leader": "Elesa",
+    "team": [
+      "Emolga",
+      "Blitzle",
+      "Joltik"
+    ]
+  },
+  {
+    "gym_leader": "Volkner",
+    "team": [
+      "Shinx",
+      "Chinchou",
+      "Rotom"
+    ]
+  }
+]

@@ -1,0 +1,234 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Murkrow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Houndour",
+        "time": "Anytime"
+      },
+      {
+        "name": "Houndoom",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sableye",
+        "time": "Anytime"
+      },
+      {
+        "name": "Purrloin",
+        "time": "Anytime"
+      },
+      {
+        "name": "Liepard",
+        "time": "Anytime"
+      },
+      {
+        "name": "Pawniard",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bisharp",
+        "time": "Anytime"
+      },
+      {
+        "name": "Nickit",
+        "time": "Anytime"
+      },
+      {
+        "name": "Thievul",
+        "time": "Anytime"
+      },
+      {
+        "name": "Impidimp",
+        "time": "Anytime"
+      },
+      {
+        "name": "Morgrem",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grimmsnarl",
+        "time": "Anytime"
+      },
+      {
+        "name": "Maschiff",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mabosstiff",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kingambit",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Absol",
+        "time": "Anytime"
+      },
+      {
+        "name": "Spiritomb",
+        "time": "Anytime"
+      },
+      {
+        "name": "Zorua",
+        "time": "Anytime"
+      },
+      {
+        "name": "Zoroark",
+        "time": "Anytime"
+      },
+      {
+        "name": "Deino",
+        "time": "Anytime"
+      },
+      {
+        "name": "Zweilous",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hydreigon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Umbreon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Darkrai",
+        "time": "Anytime"
+      },
+      {
+        "name": "Guzzlord",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Moltres",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Houndoom",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sableye",
+        "time": "Anytime"
+      },
+      {
+        "name": "Absol",
+        "time": "Anytime"
+      },
+      {
+        "name": "Honchkrow",
+        "time": "Anytime"
+      },
+      {
+        "name": "Spiritomb",
+        "time": "Anytime"
+      },
+      {
+        "name": "Liepard",
+        "time": "Anytime"
+      },
+      {
+        "name": "Zoroark",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hydreigon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Thievul",
+        "time": "Anytime"
+      },
+      {
+        "name": "Grimmsnarl",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mabosstiff",
+        "time": "Anytime"
+      },
+      {
+        "name": "Kingambit",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Umbreon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Darkrai",
+        "time": "Anytime"
+      },
+      {
+        "name": "Guzzlord",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hisui Samurott",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Palkia",
+        "time": "Anytime"
+      },
+      {
+        "name": "Yveltal",
+        "time": "Anytime"
+      },
+      {
+        "name": "Galar Moltres",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Marnie",
+    "team": [
+      "Impidimp",
+      "Purrloin",
+      "Morpeko"
+    ]
+  }
+]

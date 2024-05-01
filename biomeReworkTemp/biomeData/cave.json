@@ -1,0 +1,289 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Zubat",
+        "time": "Anytime"
+      },
+      {
+        "name": "Golbat",
+        "time": "Anytime"
+      },
+      {
+        "name": "Paras",
+        "time": "Anytime"
+      },
+      {
+        "name": "Parasect",
+        "time": "Anytime"
+      },
+      {
+        "name": "Teddiursa",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ursaring",
+        "time": "Anytime"
+      },
+      {
+        "name": "Whismur",
+        "time": "Anytime"
+      },
+      {
+        "name": "Loudred",
+        "time": "Anytime"
+      },
+      {
+        "name": "Exploud",
+        "time": "Anytime"
+      },
+      {
+        "name": "Roggenrola",
+        "time": "Anytime"
+      },
+      {
+        "name": "Boldore",
+        "time": "Anytime"
+      },
+      {
+        "name": "Woobat",
+        "time": "Anytime"
+      },
+      {
+        "name": "Swoobat",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bunnelby",
+        "time": "Anytime"
+      },
+      {
+        "name": "Diggersby",
+        "time": "Anytime"
+      },
+      {
+        "name": "Nacli",
+        "time": "Anytime"
+      },
+      {
+        "name": "Naclstack",
+        "time": "Anytime"
+      },
+      {
+        "name": "Garganacl",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Geodude",
+        "time": "Anytime"
+      },
+      {
+        "name": "Graveler",
+        "time": "Anytime"
+      },
+      {
+        "name": "Makuhita",
+        "time": "Anytime"
+      },
+      {
+        "name": "Hariyama",
+        "time": "Anytime"
+      },
+      {
+        "name": "Nosepass",
+        "time": "Anytime"
+      },
+      {
+        "name": "Noibat",
+        "time": "Anytime"
+      },
+      {
+        "name": "Noivern",
+        "time": "Anytime"
+      },
+      {
+        "name": "Rockruff",
+        "time": "Dusk"
+      },
+      {
+        "name": "Lycanroc",
+        "time": "Dusk"
+      },
+      {
+        "name": "Wimpod",
+        "time": "Anytime"
+      },
+      {
+        "name": "Golisopod",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Onix",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ferroseed",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ferrothorn",
+        "time": "Anytime"
+      },
+      {
+        "name": "Carbink",
+        "time": "Anytime"
+      },
+      {
+        "name": "Glimmet",
+        "time": "Anytime"
+      },
+      {
+        "name": "Glimmora",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Shuckle",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Uxie",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Parasect",
+        "time": "Anytime"
+      },
+      {
+        "name": "Onix",
+        "time": "Anytime"
+      },
+      {
+        "name": "Crobat",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ursaring",
+        "time": "Anytime"
+      },
+      {
+        "name": "Exploud",
+        "time": "Anytime"
+      },
+      {
+        "name": "Probopass",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gigalith",
+        "time": "Anytime"
+      },
+      {
+        "name": "Swoobat",
+        "time": "Anytime"
+      },
+      {
+        "name": "Diggersby",
+        "time": "Anytime"
+      },
+      {
+        "name": "Noivern",
+        "time": "Anytime"
+      },
+      {
+        "name": "Golisopod",
+        "time": "Anytime"
+      },
+      {
+        "name": "Garganacl",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Shuckle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Ferrothorn",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lycanroc",
+        "time": "Dusk"
+      },
+      {
+        "name": "Glimmora",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Uxie",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Terapagos",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Brock",
+    "team": [
+      "Geodude",
+      "Onix"
+    ]
+  },
+  {
+    "gym_leader": "Roark",
+    "team": [
+      "Cranidos",
+      "Larvitar",
+      "Geodude"
+    ]
+  },
+  {
+    "gym_leader": "Roxanne",
+    "team": [
+      "Geodude",
+      "Nosepass"
+    ]
+  }
+]

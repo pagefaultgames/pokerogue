@@ -1,0 +1,210 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Gastly",
+        "time": "Anytime"
+      },
+      {
+        "name": "Haunter",
+        "time": "Anytime"
+      },
+      {
+        "name": "Natu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Xatu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Duskull",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dusclops",
+        "time": "Anytime"
+      },
+      {
+        "name": "Yamask",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cofagrigus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Golett",
+        "time": "Anytime"
+      },
+      {
+        "name": "Golurk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Honedge",
+        "time": "Anytime"
+      },
+      {
+        "name": "Doublade",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Cubone",
+        "time": "Anytime"
+      },
+      {
+        "name": "Marowak",
+        "time": "Anytime"
+      },
+      {
+        "name": "Baltoy",
+        "time": "Anytime"
+      },
+      {
+        "name": "Claydol",
+        "time": "Anytime"
+      },
+      {
+        "name": "Chimecho",
+        "time": "Anytime"
+      },
+      {
+        "name": "Chingling",
+        "time": "Anytime"
+      },
+      {
+        "name": "Skorupi",
+        "time": "Anytime"
+      },
+      {
+        "name": "Drapion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Litwick",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lampent",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Gimmighoul",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gholdengo",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Hoopa",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tapu Koko",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tapu Lele",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tapu Bulu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tapu Fini",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Chimecho",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cofagrigus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Golurk",
+        "time": "Anytime"
+      },
+      {
+        "name": "Aegislash",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Gholdengo",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Hoopa",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tapu Koko",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tapu Lele",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tapu Bulu",
+        "time": "Anytime"
+      },
+      {
+        "name": "Tapu Fini",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Regigigas",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Fantina",
+    "team": [
+      "Misdreavus",
+      "Drifloon",
+      "Spiritomb"
+    ]
+  }
+]

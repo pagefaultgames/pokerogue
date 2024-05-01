@@ -1,0 +1,215 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Clefairy",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lunatone",
+        "time": "Night"
+      },
+      {
+        "name": "Solrock",
+        "time": "Day"
+      },
+      {
+        "name": "Bronzor",
+        "time": "Anytime"
+      },
+      {
+        "name": "Bronzong",
+        "time": "Anytime"
+      },
+      {
+        "name": "Munna",
+        "time": "Anytime"
+      },
+      {
+        "name": "Musharna",
+        "time": "Anytime"
+      },
+      {
+        "name": "Minior",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Baltoy",
+        "time": "Anytime"
+      },
+      {
+        "name": "Claydol",
+        "time": "Anytime"
+      },
+      {
+        "name": "Elgyem",
+        "time": "Anytime"
+      },
+      {
+        "name": "Beheeyem",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Beldum",
+        "time": "Anytime"
+      },
+      {
+        "name": "Metang",
+        "time": "Anytime"
+      },
+      {
+        "name": "Metagross",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sigilyph",
+        "time": "Anytime"
+      },
+      {
+        "name": "Solosis",
+        "time": "Anytime"
+      },
+      {
+        "name": "Duosion",
+        "time": "Anytime"
+      },
+      {
+        "name": "Reuniclus",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Porygon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Porygon2",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Cresselia",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cosmog",
+        "time": "Anytime"
+      },
+      {
+        "name": "Cosmoem",
+        "time": "Anytime"
+      },
+      {
+        "name": "Celesteela",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Clefable",
+        "time": "Anytime"
+      },
+      {
+        "name": "Lunatone",
+        "time": "Night"
+      },
+      {
+        "name": "Solrock",
+        "time": "Day"
+      },
+      {
+        "name": "Bronzong",
+        "time": "Anytime"
+      },
+      {
+        "name": "Musharna",
+        "time": "Anytime"
+      },
+      {
+        "name": "Reuniclus",
+        "time": "Anytime"
+      },
+      {
+        "name": "Minior",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Metagross",
+        "time": "Anytime"
+      },
+      {
+        "name": "Porygon Z",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Cresselia",
+        "time": "Anytime"
+      },
+      {
+        "name": "Celesteela",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Ultra Rare",
+    "species": [
+      {
+        "name": "Rayquaza",
+        "time": "Anytime"
+      },
+      {
+        "name": "Solgaleo",
+        "time": "Day"
+      },
+      {
+        "name": "Lunala",
+        "time": "Night"
+      },
+      {
+        "name": "Necrozma",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Olympia",
+    "team": [
+      "Espurr",
+      "Sigilyph",
+      "Slowking"
+    ]
+  }
+]

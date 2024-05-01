@@ -1,0 +1,282 @@
+[
+  {
+    "rarity": "Common",
+    "species": [
+      {
+        "name": "Psyduck",
+        "time": "Anytime"
+      },
+      {
+        "name": "Golduck",
+        "time": "Anytime"
+      },
+      {
+        "name": "Goldeen",
+        "time": "Anytime"
+      },
+      {
+        "name": "Seaking",
+        "time": "Anytime"
+      },
+      {
+        "name": "Magikarp",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gyarados",
+        "time": "Anytime"
+      },
+      {
+        "name": "Marill",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Azumarill",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Lotad",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Lombre",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Ducklett",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Swanna",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Chewtle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Drednaw",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Uncommon",
+    "species": [
+      {
+        "name": "Slowpoke",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slowbro",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wooper",
+        "time": "Anytime"
+      },
+      {
+        "name": "Quagsire",
+        "time": "Anytime"
+      },
+      {
+        "name": "Surskit",
+        "time": "Anytime"
+      },
+      {
+        "name": "Masquerain",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wishiwashi",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dewpider",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Araquanid",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Flamigo",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Rare",
+    "species": [
+      {
+        "name": "Squirtle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Wartortle",
+        "time": "Anytime"
+      },
+      {
+        "name": "Blastoise",
+        "time": "Anytime"
+      },
+      {
+        "name": "Oshawott",
+        "time": "Anytime"
+      },
+      {
+        "name": "Dewott",
+        "time": "Anytime"
+      },
+      {
+        "name": "Samurott",
+        "time": "Anytime"
+      },
+      {
+        "name": "Froakie",
+        "time": "Anytime"
+      },
+      {
+        "name": "Frogadier",
+        "time": "Anytime"
+      },
+      {
+        "name": "Greninja",
+        "time": "Anytime"
+      },
+      {
+        "name": "Sobble",
+        "time": "Anytime"
+      },
+      {
+        "name": "Drizzile",
+        "time": "Anytime"
+      },
+      {
+        "name": "Inteleon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Super Rare",
+    "species": [
+      {
+        "name": "Vaporeon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slowking",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Ultra Rare",
+    "species": [
+      {
+        "name": "Suicune",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mesprit",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss",
+    "species": [
+      {
+        "name": "Golduck",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slowbro",
+        "time": "Anytime"
+      },
+      {
+        "name": "Seaking",
+        "time": "Anytime"
+      },
+      {
+        "name": "Gyarados",
+        "time": "Anytime"
+      },
+      {
+        "name": "Azumarill",
+        "time": "Dusk, Night"
+      },
+      {
+        "name": "Masquerain",
+        "time": "Anytime"
+      },
+      {
+        "name": "Swanna",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Wishiwashi",
+        "time": "Anytime"
+      },
+      {
+        "name": "Araquanid",
+        "time": "Dawn, Day"
+      },
+      {
+        "name": "Drednaw",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Rare",
+    "species": [
+      {
+        "name": "Blastoise",
+        "time": "Anytime"
+      },
+      {
+        "name": "Vaporeon",
+        "time": "Anytime"
+      },
+      {
+        "name": "Slowking",
+        "time": "Anytime"
+      },
+      {
+        "name": "Samurott",
+        "time": "Anytime"
+      },
+      {
+        "name": "Greninja",
+        "time": "Anytime"
+      },
+      {
+        "name": "Inteleon",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "rarity": "Boss Super Rare",
+    "species": [
+      {
+        "name": "Suicune",
+        "time": "Anytime"
+      },
+      {
+        "name": "Mesprit",
+        "time": "Anytime"
+      }
+    ]
+  },
+  {
+    "gym_leader": "Crasher_Wake",
+    "team": [
+      "Buizel",
+      "Magikarp",
+      "Piplup"
+    ]
+  }
+]
