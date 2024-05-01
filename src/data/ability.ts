@@ -2961,8 +2961,14 @@ export function initAbilities() {
       .ignorable()
       .unimplemented(),
     new Ability(Abilities.FLOWER_VEIL, 6)
+      .conditionalAttr(p => (p.isOfType(Type.GRASS)), StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .conditionalAttr(p => (p.isOfType(Type.GRASS)), StatusEffectImmunityAbAttr, StatusEffect.FREEZE)
+      .conditionalAttr(p => (p.isOfType(Type.GRASS)), StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
+      .conditionalAttr(p => (p.isOfType(Type.GRASS)), StatusEffectImmunityAbAttr, StatusEffect.POISON)
+      .conditionalAttr(p => (p.isOfType(Type.GRASS)), StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .conditionalAttr(p => (p.isOfType(Type.GRASS)), StatusEffectImmunityAbAttr, StatusEffect.TOXIC)
       .ignorable()
-      .unimplemented(),
+      .partial(),
     new Ability(Abilities.CHEEK_POUCH, 6)
       .unimplemented(),
     new Ability(Abilities.PROTEAN, 6)
@@ -3042,11 +3048,16 @@ export function initAbilities() {
       .attr(PostBattleInitFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostTurnFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
+      .conditionalAttr(p => (p.formIndex < 7), StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .conditionalAttr(p => (p.formIndex < 7), StatusEffectImmunityAbAttr, StatusEffect.FREEZE)
+      .conditionalAttr(p => (p.formIndex < 7), StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
+      .conditionalAttr(p => (p.formIndex < 7), StatusEffectImmunityAbAttr, StatusEffect.POISON)
+      .conditionalAttr(p => (p.formIndex < 7), StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .conditionalAttr(p => (p.formIndex < 7), StatusEffectImmunityAbAttr, StatusEffect.TOXIC)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
-      .attr(NoFusionAbilityAbAttr)
-      .partial(),
+      .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.STAKEOUT, 7)
       .attr(MovePowerBoostAbAttr, (user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.POKEMON, 2),
     new Ability(Abilities.WATER_BUBBLE, 7)
@@ -3112,10 +3123,17 @@ export function initAbilities() {
     new Ability(Abilities.CORROSION, 7)
       .unimplemented(),
     new Ability(Abilities.COMATOSE, 7)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.FREEZE)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(StatusEffectImmunityAbAttr, StatusEffect.TOXIC)
+      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().id == Moves.YAWN)
+      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon == attacker && move.getMove().id == Moves.REST)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
-      .attr(UnsuppressableAbilityAbAttr)
-      .unimplemented(),
+      .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.QUEENLY_MAJESTY, 7)
       .attr(FieldPriorityMoveImmunityAbAttr)
       .ignorable(),
