@@ -674,9 +674,7 @@ export default class SummaryUiHandler extends UiHandler {
         const stats = Utils.getEnumValues(Stat) as Stat[];
 
         stats.forEach((stat, s) => {
-          const statName = stat !== Stat.HP
-            ? getStatName(stat)
-            : 'HP';
+          const statName = getStatName(stat);
           const rowIndex = s % 3;
           const colIndex = Math.floor(s / 3);
 
