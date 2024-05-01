@@ -1009,6 +1009,25 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 }
 
+export class MultiStatusEffectAttr extends StatusEffectAttr {
+  public effects: StatusEffect[];
+
+  constructor(effects: StatusEffect[], selfTarget?: boolean, cureTurn?: integer, overrideStatus?: boolean) {
+    super(effects[0], selfTarget, cureTurn, overrideStatus);
+    this.effects = effects;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    this.effect = Utils.randSeedItem(this.effects);
+    const result = super.apply(user, target, move, args);
+    return result;
+  }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+    return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(this.effect, true) ? Math.floor(move.chance * -0.1) : 0;
+  }
+}
+
 export class PsychoShiftEffectAttr extends MoveEffectAttr {
   constructor() {
     super(false, MoveEffectTrigger.HIT);
@@ -1552,6 +1571,8 @@ export class CopyStatsAttr extends MoveEffectAttr {
     else
       user.removeTag(BattlerTagType.CRIT_BOOST);
 
+    user.updateInfo();
+
     target.scene.queueMessage(getPokemonMessage(user, 'copied\n') + getPokemonMessage(target, `'s stat changes!`));
 
     return true;
@@ -1566,6 +1587,8 @@ export class InvertStatsAttr extends MoveEffectAttr {
     for (let s = 0; s < target.summonData.battleStats.length; s++)
       target.summonData.battleStats[s] *= -1;
 
+    user.updateInfo();
+
     target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere all reversed!`));
 
     return true;
@@ -1579,6 +1602,8 @@ export class ResetStatsAttr extends MoveEffectAttr {
 
     for (let s = 0; s < target.summonData.battleStats.length; s++)
       target.summonData.battleStats[s] = 0;
+
+    user.updateInfo();
 
     target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere eliminated!`));
 
@@ -3099,11 +3124,23 @@ export class RandomMovesetMoveAttr extends OverrideMoveEffectAttr {
       const moveTargets = getMoveTargets(user, move.moveId);
       if (!moveTargets.targets.length)
         return false;
-      const targets = moveTargets.multiple || moveTargets.targets.length === 1
-        ? moveTargets.targets
-        : moveTargets.targets.indexOf(target.getBattlerIndex()) > -1
-          ? [ target.getBattlerIndex() ]
-          : [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
+      let selectTargets: BattlerIndex[];
+      switch (true) {
+        case (moveTargets.multiple || moveTargets.targets.length === 1): {
+          selectTargets = moveTargets.targets;
+          break;
+        }
+        case (moveTargets.targets.indexOf(target.getBattlerIndex()) > -1): {
+          selectTargets = [ target.getBattlerIndex() ];
+          break;
+        }
+        default: {
+         moveTargets.targets.splice(moveTargets.targets.indexOf(user.getAlly().getBattlerIndex()));
+         selectTargets =  [ moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ];
+         break;
+        }
+      }     
+      const targets = selectTargets;   
       user.getMoveQueue().push({ move: move.moveId, targets: targets, ignorePP: true });
       user.scene.unshiftPhase(new MovePhase(user.scene, user, targets, moveset[moveIndex], true));
       return true;
@@ -4170,9 +4207,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.CONVERSION, Type.NORMAL, -1, 30, -1, 0, 1)
       .attr(FirstMoveTypeAttr),
     new AttackMove(Moves.TRI_ATTACK, Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, 20, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
-      .attr(StatusEffectAttr, StatusEffect.BURN)
-      .attr(StatusEffectAttr, StatusEffect.FREEZE),
+    .attr(MultiStatusEffectAttr, [StatusEffect.BURN, StatusEffect.FREEZE, StatusEffect.PARALYSIS]),
     new AttackMove(Moves.SUPER_FANG, Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 10, -1, 0, 1)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.SLASH, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 1)
@@ -4499,7 +4534,7 @@ export function initMoves() {
       .attr(AbilityCopyAttr),
     new SelfStatusMove(Moves.WISH, Type.NORMAL, -1, 10, -1, 0, 3)
       .triageMove()
-      .unimplemented(),
+      .attr(AddArenaTagAttr, ArenaTagType.WISH, 2, true),
     new SelfStatusMove(Moves.ASSIST, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(RandomMovesetMoveAttr, true)
       .ignoresVirtual(),
@@ -5986,9 +6021,7 @@ export function initMoves() {
       .soundBased()
       .attr(ReducePpMoveAttr, 3, false),
     new AttackMove(Moves.DIRE_CLAW, Type.POISON, MoveCategory.PHYSICAL, 80, 100, 15, 50, 0, 8)
-      .attr(StatusEffectAttr, StatusEffect.POISON)
-      .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
-      .attr(StatusEffectAttr, StatusEffect.SLEEP),
+      .attr(MultiStatusEffectAttr, [StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP]),
     new AttackMove(Moves.PSYSHIELD_BASH, Type.PSYCHIC, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.DEF, 1, true),
     new SelfStatusMove(Moves.POWER_SHIFT, Type.NORMAL, -1, 10, 100, 0, 8)

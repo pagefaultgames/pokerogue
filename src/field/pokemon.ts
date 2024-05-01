@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import BattleScene, { ABILITY_OVERRIDE, AnySound, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../battle-scene';
+import BattleScene, { AnySound } from '../battle-scene';
 import { Variant, VariantSet, variantColorCache } from '#app/data/variant';
 import { variantData } from '#app/data/variant';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
@@ -43,6 +43,7 @@ import { Nature, getNatureStatMultiplier } from '../data/nature';
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
 import { TerrainType } from '../data/terrain';
 import { TrainerSlot } from '../data/trainer-config';
+import { ABILITY_OVERRIDE, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../overrides';
 
 export enum FieldPosition {
   CENTER,
@@ -657,7 +658,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getHpRatio(precise: boolean = false): number {
     return precise
       ? this.hp / this.getMaxHp()
-      : ((this.hp / this.getMaxHp()) * 100) / 100;
+      : Math.round((this.hp / this.getMaxHp()) * 100) / 100;
   }
 
   generateGender(): void {
@@ -1178,6 +1179,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.battleInfo.updateInfo(this, instant);
   }
 
+  toggleStats(visible: boolean): void {
+    this.battleInfo.toggleStats(visible);
+  }
+
   addExp(exp: integer) {
     const maxExpLevel = this.scene.getMaxExpLevel();
     const initialExp = this.exp;
@@ -1619,6 +1624,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.summonData.tags.push(tag);
     if (this instanceof PlayerPokemon && source.summonData.battleStats.find(bs => bs === 6))
       this.scene.validateAchv(achvs.TRANSFER_MAX_BATTLE_STAT);
+    this.updateInfo();
   }
 
   getMoveHistory(): TurnMove[] {
@@ -1919,6 +1925,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.summonDataPrimer = null;
     }
+    this.updateInfo();
   }
 
   resetBattleData(): void {

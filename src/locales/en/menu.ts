@@ -78,4 +78,9 @@ export const menu: SimpleTranslationEntries = {
     "skipItemQuestion": "Are you sure you want to skip taking an item?",
     "eggHatching": "Oh?",
     "ivScannerUseQuestion": "Use IV Scanner on {{pokemonName}}?",
+    "rankings": "Rankings",
+    "dailyRankings": "Daily Rankings",
+    "noRankings": "No Rankings",
+    "loading": "Loading…",
+    "playersOnline": "Players Online"
 } as const;
