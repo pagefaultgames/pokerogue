@@ -1438,7 +1438,7 @@ export default class BattleScene extends SceneBase {
 		} else {
 			let pressed = false;
 			if (this.buttonJustReleased(Button.STATS) || (pressed = this.buttonJustPressed(Button.STATS))) {
-				for (let p of this.getField().filter(p => p))
+				for (let p of this.getField().filter(p => p?.isActive(true)))
 					p.toggleStats(pressed);
 				if (pressed)
 					this.setLastProcessedMovementTime(Button.STATS);
