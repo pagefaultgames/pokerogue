@@ -1080,6 +1080,13 @@ export class GameData {
   }
 
   incrementStarterWinCount(species: PokemonSpecies): void {
+    const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
+
+    if (hasPrevolution) {
+      this.incrementStarterWinCount(getPokemonSpecies(pokemonPrevolutions[species.speciesId]));
+      return;
+    }
+    
     if (!this.starterData[species.speciesId].winCount) {
       this.starterData[species.speciesId].winCount = 0;
     }
