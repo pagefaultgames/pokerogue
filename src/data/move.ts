@@ -2861,6 +2861,24 @@ export class RemoveScreensAttr extends MoveEffectAttr {
   }
 }
 
+export class RemoveEntryHazardsAttr extends MoveEffectAttr {
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    let arenaSide = user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+
+    user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, arenaSide);
+    user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, arenaSide);
+    user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, arenaSide);
+    user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, arenaSide);
+
+    return true
+  }
+}
+
 export class ForceSwitchOutAttr extends MoveEffectAttr {
   private user: boolean;
   private batonPass: boolean;
@@ -4397,7 +4415,7 @@ export function initMoves() {
         BattlerTagType.SEEDED,
         BattlerTagType.INFESTATION
       ], true)
-      .partial(),
+      .attr(RemoveEntryHazardsAttr),
     new StatusMove(Moves.SWEET_SCENT, Type.NORMAL, 100, 20, -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.EVA, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
