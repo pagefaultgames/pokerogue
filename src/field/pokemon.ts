@@ -1624,6 +1624,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.summonData.tags.push(tag);
     if (this instanceof PlayerPokemon && source.summonData.battleStats.find(bs => bs === 6))
       this.scene.validateAchv(achvs.TRANSFER_MAX_BATTLE_STAT);
+    this.updateInfo();
   }
 
   getMoveHistory(): TurnMove[] {
@@ -1924,6 +1925,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.summonDataPrimer = null;
     }
+    this.updateInfo();
   }
 
   resetBattleData(): void {
