@@ -456,6 +456,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return 1;
   }
 
+  getHeldItems(): PokemonHeldItemModifier[] {
+    if (!this.scene)
+      return [];
+    return this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === this.id, this.isPlayer()) as PokemonHeldItemModifier[];
+   }
+
   updateScale(): void {
     this.setScale(this.getSpriteScale());
   }
