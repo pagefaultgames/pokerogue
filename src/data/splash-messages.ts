@@ -33,6 +33,5 @@ splashMessages.push(...[
   'Also Try Emerald Rogue!',
   'Also Try Radical Red!',
   'Eevee Expo!',
-  'YNOproject!',
-  'Shh, don\'t tell Sam!'
+  'YNOproject!'
 ]);

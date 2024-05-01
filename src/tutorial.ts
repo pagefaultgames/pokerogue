@@ -1,6 +1,7 @@
 import BattleScene from "./battle-scene";
 import AwaitableUiHandler from "./ui/awaitable-ui-handler";
 import { Mode } from "./ui/ui";
+import i18next from './plugins/i18n';
 
 export enum Tutorial {
   Intro = "INTRO",
@@ -8,6 +9,7 @@ export enum Tutorial {
   Menu = "MENU",
   Starter_Select = "STARTER_SELECT",
   Pokerus = "POKERUS",
+  Stat_Change = "STAT_CHANGE",
   Select_Item = "SELECT_ITEM",
   Egg_Gacha = "EGG_GACHA"
 }
@@ -15,63 +17,47 @@ export enum Tutorial {
 const tutorialHandlers = {
   [Tutorial.Intro]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
-      scene.ui.showText(`Welcome to PokéRogue! This is a battle-focused Pokémon fangame with roguelite elements.
-                        $This game is not monetized and we claim no ownership of Pokémon nor of the copyrighted assets used.
-                        $The game is a work in progress, but fully playable.\nFor bug reports, please use the Discord community.
-                        $If the game runs slowly, please ensure 'Hardware Acceleration' is turned on in your browser settings.`, null, () => resolve(), null, true);
+      scene.ui.showText(i18next.t("tutorial:intro"), null, () => resolve(), null, true);
     });
   },
   [Tutorial.Access_Menu]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
       if (scene.enableTouchControls)
         return resolve();
-      scene.showFieldOverlay(1000).then(() => scene.ui.showText(`To access the menu, press M or Escape while awaiting input.\nThe menu contains settings and various features.`, null, () => scene.hideFieldOverlay(1000).then(() => resolve()), null, true));
+      scene.showFieldOverlay(1000).then(() => scene.ui.showText(i18next.t("tutorial:accessMenu"), null, () => scene.hideFieldOverlay(1000).then(() => resolve()), null, true));
     });
   },
   [Tutorial.Menu]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
       scene.gameData.saveTutorialFlag(Tutorial.Access_Menu, true);
-      scene.ui.showText(`From this menu you can access the settings.
-                        $From the settings you can change game speed, window style, and other options.
-                        $There are also various other features here, so be sure to check them all!`, null, () => scene.ui.showText('', null, () => resolve()), null, true);
+      scene.ui.showText(i18next.t("tutorial:menu"), null, () => scene.ui.showText('', null, () => resolve()), null, true);
     });
   },
   [Tutorial.Starter_Select]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
-      scene.ui.showText(`From this screen, you can select your starters.\nThese are your initial party members.
-                        $Each starter has a value. Your party can have up to\n6 members as long as the total does not exceed 10.
-                        $You can also select gender, ability, and form depending on\nthe variants you've caught or hatched.
-                        $The IVs for a species are also the best of every one you've\ncaught or hatched, so try to get lots of the same species!`, null, () => scene.ui.showText('', null, () => resolve()), null, true);
+      scene.ui.showText(i18next.t("tutorial:starterSelect"), null, () => scene.ui.showText('', null, () => resolve()), null, true);
     });
   },
   [Tutorial.Pokerus]:  (scene: BattleScene) => {
     return new Promise<void>(resolve => {
-      scene.ui.showText(`A daily random 3 selectable starters have a purple border.
-                        $If you see a starter you own with one of these,\ntry adding it to your party. Be sure to check its summary!`, null, () => scene.ui.showText('', null, () => resolve()), null, true);
+      scene.ui.showText(i18next.t("tutorial:pokerus"), null, () => scene.ui.showText('', null, () => resolve()), null, true);
+    });
+  },
+  [Tutorial.Stat_Change]: (scene: BattleScene) => {
+    return new Promise<void>(resolve => {
+      scene.showFieldOverlay(1000).then(() => scene.ui.showText(i18next.t("tutorial:statChange"), null, () => scene.ui.showText('', null, () => scene.hideFieldOverlay(1000).then(() => resolve())), null, true));
     });
   },
   [Tutorial.Select_Item]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
       scene.ui.setModeWithoutClear(Mode.MESSAGE).then(() => {
-        scene.ui.showText(`After every battle, you are given a choice of 3 random items.\nYou may only pick one.
-                          $These range from consumables, to Pokémon held items, to passive permanent items.
-                          $Most non-consumable item effects will stack in various ways.
-                          $Some items will only show up if they can be used, such as evolution items.
-                          $You can also transfer held items between Pokémon using the transfer option.
-                          $The transfer option will appear in the bottom right once you have obtained a held item.
-                          $You may purchase consumable items with money, and a larger variety will be available the further you get.
-                          $Be sure to buy these before you pick your random item, as it will progress to the next battle once you do.`, null, () => scene.ui.showText('', null, () => scene.ui.setModeWithoutClear(Mode.MODIFIER_SELECT).then(() => resolve())), null, true);
+        scene.ui.showText(i18next.t("tutorial:selectItem"), null, () => scene.ui.showText('', null, () => scene.ui.setModeWithoutClear(Mode.MODIFIER_SELECT).then(() => resolve())), null, true);
       });
     });
   },
   [Tutorial.Egg_Gacha]: (scene: BattleScene) => {
     return new Promise<void>(resolve => {
-      scene.ui.showText(`From this screen, you can redeem your vouchers for\nPokémon eggs.
-                        $Eggs have to be hatched and get closer to hatching after\nevery battle. Rarer eggs take longer to hatch.
-                        $Hatched Pokémon also won't be added to your party, they will\nbe added to your starters.
-                        $Pokémon hatched from eggs generally have better IVs than\nwild Pokémon.
-                        $Some Pokémon can only even be obtained from eggs.
-                        $There are 3 different machines to pull from with different\nbonuses, so pick the one that suits you best!`, null, () => scene.ui.showText('', null, () => resolve()), null, true);
+      scene.ui.showText(i18next.t("tutorial:eggGacha"), null, () => scene.ui.showText('', null, () => resolve()), null, true);
     });
   },
 };

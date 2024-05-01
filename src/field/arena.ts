@@ -18,8 +18,7 @@ import { TimeOfDay } from "../data/enums/time-of-day";
 import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
-
-const WEATHER_OVERRIDE = WeatherType.NONE;
+import { WEATHER_OVERRIDE } from '../overrides';
 
 export class Arena {
   public scene: BattleScene;

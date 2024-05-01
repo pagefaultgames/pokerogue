@@ -1189,6 +1189,10 @@ export class GameData {
     return Math.pow(2, this.getSpeciesDefaultNature(species));
   }
 
+  getDexAttrLuck(dexAttr: bigint): integer {
+    return dexAttr & DexAttr.SHINY ? dexAttr & DexAttr.VARIANT_3 ? 3 : dexAttr & DexAttr.VARIANT_2 ? 2 : 1 : 0;
+  }
+
   getNaturesForAttr(natureAttr: integer): Nature[] {
     let ret: Nature[] = [];
     for (let n = 0; n < 25; n++) {
