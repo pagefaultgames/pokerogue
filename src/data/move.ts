@@ -437,6 +437,25 @@ export enum MoveEffectTrigger {
   HIT
 }
 
+export class VariablePriorityAttr extends MoveAttr {
+
+  private priorityChangeFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
+
+  constructor(priorityChangeFunc: (user: Pokemon, target: Pokemon, move: Move) => number) {
+    super();
+
+    this.priorityChangeFunc = priorityChangeFunc;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[])
+  {
+    console.log(`Checking dynamic priority for move ${move}`);
+    (args[0] as Utils.NumberHolder).value = this.priorityChangeFunc(user, target, move);
+    console.log(`Returned Priority ${args[0].value}`);
+    return true;
+  }
+}
+
 export class MoveEffectAttr extends MoveAttr {
   public trigger: MoveEffectTrigger;
   public firstHitOnly: boolean;
@@ -5936,7 +5955,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1)
       .condition(failIfDampCondition),
     new AttackMove(Moves.GRASSY_GLIDE, Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, -1, 0, 8)
-      .partial(),
+      .attr(VariablePriorityAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.GRASSY && user.isGrounded() ? 1 : 0),
     new AttackMove(Moves.RISING_VOLTAGE, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1),
     new AttackMove(Moves.TERRAIN_PULSE, Type.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 8)

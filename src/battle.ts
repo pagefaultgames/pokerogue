@@ -28,6 +28,7 @@ export enum BattlerIndex {
 
 export interface TurnCommand {
     command: Command;
+    priority?: integer;
     cursor?: integer;
     move?: QueuedMove;
     targets?: BattlerIndex[];

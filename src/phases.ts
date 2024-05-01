@@ -2,7 +2,7 @@ import BattleScene, { bypassLogin, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, FixedDamageAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, FixedDamageAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariablePriorityAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -1932,10 +1932,61 @@ export class TurnStartPhase extends FieldPhase {
     super.start();
 
     const field = this.scene.getField();
+    // Battle index of all the pokemon in the scene, ordered by speed,
+    // or inverted speed in if the scene is under distorsion.
     const order = this.getOrder();
 
     const moveOrder = order.slice(0);
 
+    // Set the priority of the different move command
+    for (let _battlerIndex of moveOrder) {
+      let command = this.scene.currentBattle.turnCommands[_battlerIndex];
+      
+      if(command.command === Command.FIGHT) {
+        // The command Priority is the Command of the Move
+        let source = this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === _battlerIndex);
+        let target = null;
+        let move = allMoves[command.move.move];
+        
+        const movePriority = new Utils.NumberHolder(move.priority);
+        applyMoveAttrs(VariablePriorityAttr, source, target, move, movePriority);
+        applyAbAttrs(IncrementMovePriorityAbAttr, source, null, move, movePriority);
+        command.priority = movePriority.value;
+      }
+      else {
+        // The command Priority is +6
+        command.priority = 6;
+      }
+    } 
+    
+
+    moveOrder.sort((a, b) => {
+      // Comparison of the priority Brackets
+      const priorityComp = this.scene.currentBattle.turnCommands[b].priority - this.scene.currentBattle.turnCommands[a].priority;
+      const speedOrderComp = order.indexOf(a) - order.indexOf(b);
+      // 
+      return Math.sign(priorityComp == 0 ? speedOrderComp : priorityComp);
+    });
+
+    // Logging Battle Order:
+    /*
+    let orderInTurn = 1
+    for (let _battlerIndex of moveOrder) {
+      const pokemon = field[_battlerIndex];
+      const command = this.scene.currentBattle.turnCommands[_battlerIndex];
+
+      if(command.command === Command.FIGHT) {
+        console.log(`${orderInTurn} : ${pokemon.name} - ${allMoves[command.move.move].name} - (${command.priority},  ${pokemon.getBattleStat(Stat.SPD)})`);
+      }
+      else {
+        console.log(`${orderInTurn} : ${pokemon.name} - ${command.command} - (${command.priority},  ${pokemon.getBattleStat(Stat.SPD)})`);
+      }
+        
+      orderInTurn += 1;
+    }*/
+
+    
+    /* Old Command Priority Comparison 
     moveOrder.sort((a, b) => {
       const aCommand = this.scene.currentBattle.turnCommands[a];
       const bCommand = this.scene.currentBattle.turnCommands[b];
@@ -1957,13 +2008,13 @@ export class TurnStartPhase extends FieldPhase {
         
         if (aPriority.value !== bPriority.value)
           return aPriority.value < bPriority.value ? 1 : -1;
-      }
+      } 
       
       const aIndex = order.indexOf(a);
       const bIndex = order.indexOf(b);
 
       return aIndex < bIndex ? -1 : aIndex > bIndex ? 1 : 0;
-    });
+    }); */
 
     for (let o of moveOrder) {
 
