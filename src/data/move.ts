@@ -2821,7 +2821,9 @@ export class AddArenaTagAttr extends MoveEffectAttr {
       return false;
 
     if (move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) {
-      user.scene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+      const side =  (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+      user.scene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, side);
+      console.log(`Adding tag ${this.tagType} to the side ${side} for ${this.turnCount} turns`);
       return true;
     }
 
@@ -2829,8 +2831,8 @@ export class AddArenaTagAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return this.failOnOverlap
-      ? (user, target, move) => !user.scene.arena.getTagOnSide(this.tagType, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)
+    return this.failOnOverlap ? 
+      (user, target, move) => !user.scene.arena.getTagOnSide(this.tagType, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)
       : null;
   }
 }
@@ -4780,8 +4782,9 @@ export function initMoves() {
       .partial(),
     new StatusMove(Moves.TAILWIND, Type.FLYING, -1, 15, -1, 0, 4)
       .windMove()
-      .target(MoveTarget.USER_SIDE)
-      .unimplemented(),
+      .attr(AddArenaTagAttr, ArenaTagType.TAILWIND, 4, true)
+      .target(MoveTarget.USER_SIDE),
+      // .unimplemented(),
     new StatusMove(Moves.ACUPRESSURE, Type.NORMAL, -1, 30, -1, 0, 4)
       .attr(StatChangeAttr, BattleStat.RAND, 2)
       .target(MoveTarget.USER_OR_NEAR_ALLY),

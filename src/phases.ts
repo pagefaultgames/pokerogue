@@ -1941,7 +1941,8 @@ export class TurnStartPhase extends FieldPhase {
     // Set the priority of the different move command
     for (let _battlerIndex of moveOrder) {
       let command = this.scene.currentBattle.turnCommands[_battlerIndex];
-      
+
+      command.priority = 6; // Default Command priority for non battling actions
       if(command.command === Command.FIGHT) {
         // The command Priority is the Command of the Move
         let source = this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === _battlerIndex);
@@ -1953,13 +1954,9 @@ export class TurnStartPhase extends FieldPhase {
         applyAbAttrs(IncrementMovePriorityAbAttr, source, null, move, movePriority);
         command.priority = movePriority.value;
       }
-      else {
-        // The command Priority is +6
-        command.priority = 6;
-      }
     } 
     
-
+    
     moveOrder.sort((a, b) => {
       // Comparison of the priority Brackets
       const priorityComp = this.scene.currentBattle.turnCommands[b].priority - this.scene.currentBattle.turnCommands[a].priority;

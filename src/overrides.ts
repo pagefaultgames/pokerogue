@@ -14,10 +14,10 @@ export const STARTING_MONEY_OVERRIDE = 0;
 export const WEATHER_OVERRIDE = WeatherType.NONE;
 
 export const ABILITY_OVERRIDE = Abilities.NONE;
-export const MOVE_OVERRIDE = Moves.NONE;
+export const MOVE_OVERRIDE = Moves.TAILWIND;
 export const OPP_SPECIES_OVERRIDE = 0;
 export const OPP_ABILITY_OVERRIDE = Abilities.NONE;
-export const OPP_MOVE_OVERRIDE = Moves.NONE;
+export const OPP_MOVE_OVERRIDE = Moves.TAILWIND;
 
 export const OPP_SHINY_OVERRIDE = false;
 export const OPP_VARIANT_OVERRIDE = 0;

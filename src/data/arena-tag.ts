@@ -77,6 +77,24 @@ export class MistTag extends ArenaTag {
   }
 }
 
+
+export class TailwindTag extends ArenaTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.TAILWIND, turnCount, Moves.TAILWIND, sourceId, side);
+  }
+
+  onAdd(arena: Arena): void {
+    const sideDescriptor = this.side === ArenaTagSide.PLAYER ? '\non your side' : (this.side === ArenaTagSide.ENEMY ? '\non the foe\'s side' : '');
+    arena.scene.queueMessage(`The tail wind blew from behind ${sideDescriptor}.`);
+  }
+
+  onRemove(arena: Arena): void {
+    const sideDescriptor = this.side === ArenaTagSide.PLAYER ? '\non your side' : (this.side === ArenaTagSide.ENEMY ? '\non the foe\'s side' : '');
+    arena.scene.queueMessage(`The tail wind behind ${sideDescriptor} faded.`);
+  }
+}
+
+
 export class WeakenMoveScreenTag extends ArenaTag {
   constructor(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide) {
     super(tagType, turnCount, sourceMove, sourceId, side);
@@ -513,5 +531,7 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
       return new LightScreenTag(turnCount, sourceId, side);
     case ArenaTagType.AURORA_VEIL:
       return new AuroraVeilTag(turnCount, sourceId, side);
+    case ArenaTagType.TAILWIND:
+      return new TailwindTag(turnCount, sourceId, side);
   }
 }
