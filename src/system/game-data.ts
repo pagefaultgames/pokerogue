@@ -275,17 +275,22 @@ export class GameData {
           Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData, undefined, true)
             .then(response => response.text())
             .then(error => {
-              this.scene.ui.savingIcon.hide();
               if (error) {
+                console.error(error);
                 if (error.startsWith('client version out of date')) {
+                  this.scene.ui.savingIcon.hide();
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new OutdatedPhase(this.scene));
+                  return resolve(false);
                 } else if (error.startsWith('session out of date')) {
+                  this.scene.ui.savingIcon.hide();
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+                  return resolve(false);
                 }
-                console.error(error);
-                return resolve(false);
+                console.log(`Retrying...`);
+                this.scene.ui.savingIcon.retry();
+                return this.saveSystem().then(resolve);
               }
               resolve(true);
             });
@@ -558,12 +563,14 @@ export class GameData {
             .then(response => response.text())
             .then(error => {
               if (error) {
+                console.error(error);
                 if (error.startsWith('session out of date')) {
                   this.scene.clearPhaseQueue();
                   this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
+                  return resolve(false);
                 }
-                console.error(error);
-                return resolve(false);
+                console.log(`Retrying...`);
+                return this.saveSession(this.scene, skipVerification).then(resolve);
               }
               console.debug('Session data saved');
               resolve(true);
