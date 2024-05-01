@@ -1082,12 +1082,13 @@ export class GameData {
   incrementStarterWinCount(species: PokemonSpecies):void {
     const speciesWinCount = this.starterData[species.speciesId].winCount;
   
-      if(Number.isNaN(speciesWinCount))
-        this.starterData[species.speciesId].winCount = 0;
-      
-      this.starterData[species.speciesId].winCount++;
-      console.log(this.starterData[species.speciesId].winCount);
+    if(Number.isNaN(speciesWinCount)) {
+      this.starterData[species.speciesId].winCount = 0;
     }
+    
+    this.starterData[species.speciesId].winCount++;
+    console.log(this.starterData[species.speciesId].winCount);
+  }
 
   addStarterCandy(species: PokemonSpecies, count: integer): void {
     this.scene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
