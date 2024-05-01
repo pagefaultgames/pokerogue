@@ -1337,7 +1337,7 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
 
   const options = [
     [
-      new ModifierTypeOption(modifierTypes.PP_MAX(), 0, baseCost * 0.2),
+      new ModifierTypeOption(modifierTypes.POTION(), 0, baseCost * 0.2),
       new ModifierTypeOption(modifierTypes.ETHER(), 0, baseCost * 0.4),
       new ModifierTypeOption(modifierTypes.REVIVE(), 0, baseCost * 2)
     ],
