@@ -1204,6 +1204,34 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
   }
 }
 
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+    const pokemon = this.selfTarget ? user : target;
+    const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+
+    for(let p of party) {
+      if(p.isActive() && p != user) {
+
+      }
+      if(p.status && p.status.effect != StatusEffect.FAINT)
+      {
+        p.resetStatus();
+        p.updateInfo();        
+      }
+    }
+
+    return true;
+  }
+
+  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+    let score = user.status ? 2 : -5;
+    for(let p of party) {
+      score += p.status ? 0 : 10;
+    }
+    return user.status ? 10 : 0;
+  }
+}
+
 export class BypassSleepAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.status?.effect === StatusEffect.SLEEP) {
@@ -4363,9 +4391,9 @@ export function initMoves() {
       .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
       .ignoresVirtual(),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
+      .attr(HealStatusInPartyAttr)
       .soundBased()
-      .target(MoveTarget.USER_AND_ALLIES)
-      .unimplemented(),
+      .target(MoveTarget.USER_AND_ALLIES),
     new AttackMove(Moves.RETURN, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 2)
       .attr(FriendshipPowerAttr),
     new AttackMove(Moves.PRESENT, Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, -1, 0, 2)
@@ -4636,7 +4664,7 @@ export function initMoves() {
       .ballBombMove(),
     new StatusMove(Moves.AROMATHERAPY, Type.GRASS, -1, 5, -1, 0, 3)
       .target(MoveTarget.USER_AND_ALLIES)
-      .unimplemented(),
+      .attr(HealStatusInPartyAttr),
     new StatusMove(Moves.FAKE_TEARS, Type.DARK, 100, 20, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2),
     new AttackMove(Moves.AIR_CUTTER, Type.FLYING, MoveCategory.SPECIAL, 60, 95, 25, -1, 0, 3)
