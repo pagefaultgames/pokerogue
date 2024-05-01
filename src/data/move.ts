@@ -1009,6 +1009,25 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 }
 
+export class MultiStatusEffectAttr extends StatusEffectAttr {
+  public effects: StatusEffect[];
+
+  constructor(effects: StatusEffect[], selfTarget?: boolean, cureTurn?: integer, overrideStatus?: boolean) {
+    super(effects[0], selfTarget, cureTurn, overrideStatus);
+    this.effects = effects;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    this.effect = Utils.randSeedItem(this.effects);
+    const result = super.apply(user, target, move, args);
+    return result;
+  }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+    return !(this.selfTarget ? user : target).status && (this.selfTarget ? user : target).canSetStatus(this.effect, true) ? Math.floor(move.chance * -0.1) : 0;
+  }
+}
+
 export class PsychoShiftEffectAttr extends MoveEffectAttr {
   constructor() {
     super(false, MoveEffectTrigger.HIT);
@@ -1552,6 +1571,8 @@ export class CopyStatsAttr extends MoveEffectAttr {
     else
       user.removeTag(BattlerTagType.CRIT_BOOST);
 
+    user.updateInfo();
+
     target.scene.queueMessage(getPokemonMessage(user, 'copied\n') + getPokemonMessage(target, `'s stat changes!`));
 
     return true;
@@ -1566,6 +1587,8 @@ export class InvertStatsAttr extends MoveEffectAttr {
     for (let s = 0; s < target.summonData.battleStats.length; s++)
       target.summonData.battleStats[s] *= -1;
 
+    user.updateInfo();
+
     target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere all reversed!`));
 
     return true;
@@ -1579,6 +1602,8 @@ export class ResetStatsAttr extends MoveEffectAttr {
 
     for (let s = 0; s < target.summonData.battleStats.length; s++)
       target.summonData.battleStats[s] = 0;
+
+    user.updateInfo();
 
     target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere eliminated!`));
 
@@ -4164,9 +4189,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.CONVERSION, Type.NORMAL, -1, 30, -1, 0, 1)
       .attr(FirstMoveTypeAttr),
     new AttackMove(Moves.TRI_ATTACK, Type.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, 20, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
-      .attr(StatusEffectAttr, StatusEffect.BURN)
-      .attr(StatusEffectAttr, StatusEffect.FREEZE),
+    .attr(MultiStatusEffectAttr, [StatusEffect.BURN, StatusEffect.FREEZE, StatusEffect.PARALYSIS]),
     new AttackMove(Moves.SUPER_FANG, Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 10, -1, 0, 1)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.SLASH, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 1)
@@ -5980,9 +6003,7 @@ export function initMoves() {
       .soundBased()
       .partial(),
     new AttackMove(Moves.DIRE_CLAW, Type.POISON, MoveCategory.PHYSICAL, 80, 100, 15, 50, 0, 8)
-      .attr(StatusEffectAttr, StatusEffect.POISON)
-      .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
-      .attr(StatusEffectAttr, StatusEffect.SLEEP),
+      .attr(MultiStatusEffectAttr, [StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP]),
     new AttackMove(Moves.PSYSHIELD_BASH, Type.PSYCHIC, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.DEF, 1, true),
     new SelfStatusMove(Moves.POWER_SHIFT, Type.NORMAL, -1, 10, 100, 0, 8)
