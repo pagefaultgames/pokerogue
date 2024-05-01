@@ -663,7 +663,10 @@ export default class PartyUiHandler extends MessageUiHandler {
           case PartyOption.MOVE_2:
           case PartyOption.MOVE_3:
           case PartyOption.MOVE_4:
-            optionName = pokemon.moveset[option - PartyOption.MOVE_1].getName();
+            const move = pokemon.moveset[option - PartyOption.MOVE_1];
+            const maxPP = move.getMovePp();
+            const currPP = maxPP - move.ppUsed;
+            optionName = `${move.getName()} ${currPP}/${maxPP}`;
             break;
           default:
             if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {
