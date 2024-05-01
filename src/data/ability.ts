@@ -679,6 +679,19 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   }
 }
 
+export class EffectSporeAbAttr extends PostDefendContactApplyStatusEffectAbAttr {
+  constructor() {
+    super(10, StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP);
+  }
+
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    if (attacker.hasAbility(Abilities.OVERCOAT) || attacker.isOfType(Type.GRASS)) {
+      return false;
+    }
+    return super.applyPostDefend(pokemon, passive, attacker, move, hitResult, args);
+  }
+}
+
 export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
   private chance: integer;
   private tagType: BattlerTagType;
@@ -2572,7 +2585,7 @@ export function initAbilities() {
       .attr(TypeImmunityAbAttr, Type.GROUND, (pokemon: Pokemon) => !pokemon.getTag(BattlerTagType.IGNORE_FLYING) && !pokemon.scene.arena.getTag(ArenaTagType.GRAVITY) && !pokemon.getTag(BattlerTagType.GROUNDED))
       .ignorable(),
     new Ability(Abilities.EFFECT_SPORE, 3)
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 10, StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP),
+      .attr(EffectSporeAbAttr),
     new Ability(Abilities.SYNCHRONIZE, 3)
       .attr(SyncEncounterNatureAbAttr)
       .unimplemented(),
