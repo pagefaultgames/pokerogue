@@ -77,5 +77,10 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "Classement de la Semaine",
   "noRankings": "Pas de Classement",
   "loading": "Chargement…",
-  "playersOnline": "Joueurs Connectés"
+  "playersOnline": "Joueurs Connectés",
+  "hitResultCriticalHit": "Coup critique!",
+  "hitResultSuperEffective": "C'est super efficace!",
+  "hitResultNotVeryEffective": "Ce n'est pas très efficace…",
+  "hitResultNoEffect": "Ça n'affecte pas {{pokemonName}}…",
+  "hitResultOneHitKO": "K.O. en un coup!"
 } as const;

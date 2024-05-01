@@ -66,5 +66,10 @@ export const menu: SimpleTranslationEntries = {
     "weeklyRankings": "Weekly Rankings",
     "noRankings": "No Rankings",
     "loading": "Loading…",
-    "playersOnline": "Players Online"
+    "playersOnline": "Players Online",
+    "hitResultCriticalHit": "A critical hit!",
+    "hitResultSuperEffective": "It's super effective!",
+    "hitResultNotVeryEffective": "It's not very effective…",
+    "hitResultNoEffect": "It doesn't affect {{pokemonName}}!",
+    "hitResultOneHitKO": "It's a one-hit KO!"
 } as const;
