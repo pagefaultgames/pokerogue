@@ -128,6 +128,7 @@ export interface DexEntry {
   seenCount: integer;
   caughtCount: integer;
   hatchedCount: integer;
+  winCount: integer;
   ivs: integer[];
 }
 
@@ -951,7 +952,7 @@ export class GameData {
 
     for (let species of allSpecies) {
       data[species.speciesId] = {
-        seenAttr: 0n, caughtAttr: 0n, natureAttr: 0, seenCount: 0, caughtCount: 0, hatchedCount: 0, ivs: [ 0, 0, 0, 0, 0, 0 ]
+        seenAttr: 0n, caughtAttr: 0n, natureAttr: 0, seenCount: 0, caughtCount: 0, hatchedCount: 0, winCount: 1, ivs: [ 0, 0, 0, 0, 0, 0 ]
       };
     }
 

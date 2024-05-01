@@ -170,6 +170,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterValueLabels: Phaser.GameObjects.Text[];
   private shinyIcons: Phaser.GameObjects.Image[][];
   private hiddenAbilityIcons: Phaser.GameObjects.Image[];
+  private classicWinIcons: Phaser.GameObjects.Image[];
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -399,6 +400,17 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const x = (i % 9) * 18;
       const y = Math.floor(i / 9) * 18;
       const ret = this.scene.add.image(x + 163, y + 16, 'ha_capsule');
+      ret.setOrigin(0, 0);
+      ret.setScale(0.5);
+      ret.setVisible(false);
+      this.starterSelectContainer.add(ret);
+      return ret;
+    });
+
+    this.classicWinIcons = new Array(81).fill(null).map((_, i) => {
+      const x = (i % 9) * 18;
+      const y = Math.floor(i / 9) * 18;
+      const ret = this.scene.add.image(x + 152, y + 16, 'champion_ribbon');
       ret.setOrigin(0, 0);
       ret.setScale(0.5);
       ret.setVisible(false);
@@ -1176,6 +1188,8 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.shinyIcons[s][v].setTint(getVariantTint(speciesVariants[v] === DexAttr.DEFAULT_VARIANT ? 0 : speciesVariants[v] === DexAttr.VARIANT_2 ? 1 : 2));
         }
         this.hiddenAbilityIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
+        // this.classicWinIcons[s].setVisible(slotVisible);
+        this.classicWinIcons[s].setVisible(slotVisible && this.scene.gameData.dexData[speciesId].winCount > 0);
       }
     } else {
       changed = super.setCursor(cursor);
