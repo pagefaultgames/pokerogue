@@ -1,7 +1,7 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const pokemonStat: SimpleTranslationEntries = {
-    "HP": "PS",
+    "HP": "PS Max",
     "HPshortened": "PS",
     "ATK": "Attacco",
     "ATKshortened": "Att",
