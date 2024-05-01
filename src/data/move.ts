@@ -5520,9 +5520,6 @@ export function initMoves() {
     /* End Unused */
     new SelfStatusMove(Moves.SHORE_UP, Type.GROUND, -1, 5, -1, 0, 7)
       .attr(SandHealAttr)
-      .attr(HealStatusEffectAttr, true, StatusEffect.POISON)
-      .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS)
-      .attr(HealStatusEffectAttr, true, StatusEffect.SLEEP)
       .triageMove(),
     new AttackMove(Moves.FIRST_IMPRESSION, Type.BUG, MoveCategory.PHYSICAL, 90, 100, 10, -1, 2, 7)
       .condition(new FirstMoveCondition()),
