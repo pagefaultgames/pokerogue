@@ -2671,7 +2671,6 @@ export class StatChangePhase extends PokemonPhase {
 
     let random = false;
 
-    const allStats = Utils.getEnumValues(BattleStat);
     if (this.stats.length === 1 && this.stats[0] === BattleStat.RAND) {
       this.stats[0] = this.getRandomStat();
       random = true;
@@ -2712,8 +2711,11 @@ export class StatChangePhase extends PokemonPhase {
       for (let stat of filteredStats)
         pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
       
-      applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget)
-      this.end();
+      applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget);
+
+      pokemon.updateInfo();
+
+      handleTutorial(this.scene, Tutorial.Stat_Change).then(() => super.end());
     };
 
     if (relLevels.filter(l => l).length && this.scene.moveAnimations) {
@@ -3337,7 +3339,7 @@ export class TrainerVictoryPhase extends BattlePhase {
     const trainerType = this.scene.currentBattle.trainer.config.trainerType;
     if (vouchers.hasOwnProperty(TrainerType[trainerType])) {
       if (!this.scene.validateVoucher(vouchers[TrainerType[trainerType]]) && this.scene.currentBattle.trainer.config.isBoss)
-        this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.VOUCHER));
+        this.scene.unshiftPhase(new ModifierRewardPhase(this.scene, [ modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM ][vouchers[TrainerType[trainerType]].voucherType]));
     }
 
     this.scene.ui.showText(i18next.t('menu:trainerDefeated', { trainerName: this.scene.currentBattle.trainer.getName(TrainerSlot.NONE, true) }), null, () => {
