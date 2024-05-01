@@ -186,7 +186,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       ? args[4] as PokemonMoveSelectFilter
       : PartyUiHandler.FilterAllMoves;
     this.tmMoveId = args.length > 5 && args[5] ? args[5] : Moves.NONE;
-    this.showMovePp = args.length > 6 && args[6] ? args[6] : false;
+    this.showMovePp = args.length > 6 && args[6];
 
     this.partyContainer.setVisible(true);
     this.partyBg.setTexture(`party_bg${this.scene.currentBattle.double ? '_double' : ''}`);
