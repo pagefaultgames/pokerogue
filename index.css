@@ -150,6 +150,10 @@ body {
   display: none;
 }
 
+#touchControls:not([data-ui-mode='COMMAND']):not([data-ui-mode='FIGHT']):not([data-ui-mode='BALL']):not([data-ui-mode='TARGET_SELECT']) #apad #apadStats {
+  display: none;
+}
+
 #apad .apadRectBtnContainer + .apadSqBtnContainer {
   top: calc(var(--controls-size) * -1.9);
   left: calc(var(--controls-size) * -0.9);

@@ -62,8 +62,8 @@ export const menu: SimpleTranslationEntries = {
     "skipItemQuestion": "¿Estás seguro de que no quieres coger un objeto?",
     "eggHatching": "¿Y esto?",
     "ivScannerUseQuestion": "¿Quieres usar el Escáner de IVs en {{pokemonName}}?",
-    "rankings": "Rankings",
     "dailyRankings": "Daily Rankings",
+    "weeklyRankings": "Weekly Rankings",
     "noRankings": "No Rankings",
     "loading": "Loading…",
     "playersOnline": "Players Online"

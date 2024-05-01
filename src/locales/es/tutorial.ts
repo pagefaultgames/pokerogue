@@ -20,6 +20,10 @@ export const tutorial: SimpleTranslationEntries = {
     "pokerus": `A daily random 3 selectable starters have a purple border.
     $If you see a starter you own with one of these,\ntry adding it to your party. Be sure to check its summary!`,
 
+    "statChange": `Stat changes persist across battles as long as your Pokémon aren't recalled.
+    $Your Pokémon are recalled before a trainer battle and before entering a new biome.
+    $You can also view the stat changes for the Pokémon on the field by holding C or Shift.`,
+
     "selectItem": `After every battle, you are given a choice of 3 random items.\nYou may only pick one.
     $These range from consumables, to Pokémon held items, to passive permanent items.
     $Most non-consumable item effects will stack in various ways.

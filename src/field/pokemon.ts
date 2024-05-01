@@ -1179,6 +1179,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.battleInfo.updateInfo(this, instant);
   }
 
+  toggleStats(visible: boolean): void {
+    this.battleInfo.toggleStats(visible);
+  }
+
   addExp(exp: integer) {
     const maxExpLevel = this.scene.getMaxExpLevel();
     const initialExp = this.exp;
@@ -1620,6 +1624,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.summonData.tags.push(tag);
     if (this instanceof PlayerPokemon && source.summonData.battleStats.find(bs => bs === 6))
       this.scene.validateAchv(achvs.TRANSFER_MAX_BATTLE_STAT);
+    this.updateInfo();
   }
 
   getMoveHistory(): TurnMove[] {
@@ -1920,6 +1925,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       this.summonDataPrimer = null;
     }
+    this.updateInfo();
   }
 
   resetBattleData(): void {

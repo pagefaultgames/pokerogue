@@ -39,15 +39,21 @@ export class LoadingScene extends SceneBase {
     }
     this.loadAtlas('namebox', 'ui');
     this.loadImage('pbinfo_player', 'ui');
+    this.loadImage('pbinfo_player_stats', 'ui');
     this.loadImage('pbinfo_player_mini', 'ui');
+    this.loadImage('pbinfo_player_mini_stats', 'ui');
     this.loadAtlas('pbinfo_player_type', 'ui');
     this.loadAtlas('pbinfo_player_type1', 'ui');
     this.loadAtlas('pbinfo_player_type2', 'ui');
     this.loadImage('pbinfo_enemy_mini', 'ui');
+    this.loadImage('pbinfo_enemy_mini_stats', 'ui');
     this.loadImage('pbinfo_enemy_boss', 'ui');
+    this.loadImage('pbinfo_enemy_boss_stats', 'ui');
     this.loadAtlas('pbinfo_enemy_type', 'ui');
     this.loadAtlas('pbinfo_enemy_type1', 'ui');
     this.loadAtlas('pbinfo_enemy_type2', 'ui');
+    this.loadAtlas('pbinfo_stat', 'ui');
+    this.loadAtlas('pbinfo_stat_numbers', 'ui');
     this.loadImage('overlay_lv', 'ui');
     this.loadAtlas('numbers', 'ui');
     this.loadAtlas('numbers_red', 'ui');
