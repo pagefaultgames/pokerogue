@@ -1080,18 +1080,13 @@ export class GameData {
   }
 
   incrementStarterWinCount(species: PokemonSpecies): void {
-    const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
+    const speciesIdToIncrement: Species = species.getRootSpeciesId();
 
-    if (hasPrevolution) {
-      this.incrementStarterWinCount(getPokemonSpecies(pokemonPrevolutions[species.speciesId]));
-      return;
+    if (!this.starterData[speciesIdToIncrement].winCount) {
+      this.starterData[speciesIdToIncrement].winCount = 0;
     }
     
-    if (!this.starterData[species.speciesId].winCount) {
-      this.starterData[species.speciesId].winCount = 0;
-    }
-    
-    this.starterData[species.speciesId].winCount++;
+    this.starterData[speciesIdToIncrement].winCount++;
   }
 
   addStarterCandy(species: PokemonSpecies, count: integer): void {
