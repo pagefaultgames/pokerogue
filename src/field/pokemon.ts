@@ -2680,7 +2680,7 @@ export class EnemyPokemon extends Pokemon {
             for (let mt of moveTargets[move.id]) {
               const target = this.scene.getField()[mt];
               let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
-              if (move.name.endsWith(' (N)'))
+              if (move.name.endsWith(' (N)') || !move.applyConditions(this, target, move))
                 targetScore = -20;
               else if (move instanceof AttackMove) {
                 const effectiveness = target.getAttackMoveEffectiveness(this, pokemonMove);

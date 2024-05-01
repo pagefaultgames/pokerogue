@@ -3645,6 +3645,20 @@ export class MoneyAttr extends MoveEffectAttr {
   }
 }
 
+export class LastResortAttr extends MoveAttr {
+  getCondition(): MoveConditionFunc {
+    return (user: Pokemon, target: Pokemon, move: Move) => {
+      const uniqueUsedMoveIds = new Set<Moves>();
+      const movesetMoveIds = user.getMoveset().map(m => m.moveId);
+      user.getMoveHistory().map(m => {
+        if (m.move !== move.id && movesetMoveIds.find(mm => mm === m.move))
+          uniqueUsedMoveIds.add(m.move);
+      });
+      return uniqueUsedMoveIds.size >= movesetMoveIds.length - 1;
+    };
+  }
+}
+
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
 
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
@@ -4836,15 +4850,7 @@ export function initMoves() {
     new AttackMove(Moves.PUNISHMENT, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 4)
       .unimplemented(),
     new AttackMove(Moves.LAST_RESORT, Type.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, -1, 0, 4)
-      .condition((user, target, move) => {
-        const uniqueUsedMoveIds = new Set<Moves>();
-        const movesetMoveIds = user.getMoveset().map(m => m.moveId);
-        user.getMoveHistory().map(m => {
-          if (m.move !== move.id && movesetMoveIds.find(mm => mm === m.move))
-            uniqueUsedMoveIds.add(m.move);
-        });
-        return uniqueUsedMoveIds.size >= movesetMoveIds.length - 1;
-      }),
+      .attr(LastResortAttr),
     new StatusMove(Moves.WORRY_SEED, Type.GRASS, 100, 10, -1, 0, 4)
       .attr(AbilityChangeAttr, Abilities.INSOMNIA),
     new AttackMove(Moves.SUCKER_PUNCH, Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, -1, 1, 4)
