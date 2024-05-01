@@ -4095,7 +4095,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     this.scene.pokemonInfoContainer.show(pokemon, true);
 
-    this.scene.gameData.updateSpeciesDexIvs(pokemon.species.speciesId, pokemon.ivs);
+    this.scene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
       
     this.scene.ui.showText(i18next.t('menu:pokemonCaught', { pokemonName: pokemon.name }), null, () => {
       const end = () => {
