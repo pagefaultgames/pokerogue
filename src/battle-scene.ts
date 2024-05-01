@@ -617,7 +617,7 @@ export default class BattleScene extends SceneBase {
 			[Button.ACTION]: [keyCodes.SPACE, keyCodes.ENTER, keyCodes.Z],
 			[Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
 			[Button.MENU]: [keyCodes.ESC, keyCodes.M],
-			[Button.STATS]: [keyCodes.C],
+			[Button.STATS]: [keyCodes.SHIFT, keyCodes.C],
 			[Button.CYCLE_SHINY]: [keyCodes.R],
 			[Button.CYCLE_FORM]: [keyCodes.F],
 			[Button.CYCLE_GENDER]: [keyCodes.G],
@@ -1437,7 +1437,7 @@ export default class BattleScene extends SceneBase {
 			}
 		} else {
 			let pressed = false;
-			if (this.buttonJustReleased(Button.STATS) || (pressed = this.buttonJustPressed(Button.STATS))) {
+			if (this.ui && (this.buttonJustReleased(Button.STATS) || (pressed = this.buttonJustPressed(Button.STATS)))) {
 				for (let p of this.getField().filter(p => p?.isActive(true)))
 					p.toggleStats(pressed);
 				if (pressed)
