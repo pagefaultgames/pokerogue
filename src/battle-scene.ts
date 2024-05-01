@@ -205,8 +205,8 @@ export default class BattleScene extends SceneBase {
 		[Button.SUBMIT]: 17, // touchpad
 		[Button.ACTION]: 0, // X
 		[Button.CANCEL]: 1, // O
-		[Button.MENU]: 8, // share
-		[Button.STATS]: 9, // options
+		[Button.MENU]: 9, // options
+		[Button.STATS]: 8, // share
 		[Button.CYCLE_SHINY]: 5, // RB
 		[Button.CYCLE_FORM]: 4, // LB
 		[Button.CYCLE_GENDER]: 6, // LT
