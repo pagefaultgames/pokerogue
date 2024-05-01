@@ -1179,10 +1179,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.battleInfo.updateInfo(this, instant);
   }
 
-  toggleStats(visible: boolean): void {
-    this.battleInfo.toggleStats(visible);
-  }
-
   addExp(exp: integer) {
     const maxExpLevel = this.scene.getMaxExpLevel();
     const initialExp = this.exp;

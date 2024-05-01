@@ -25,10 +25,6 @@ export const tutorial: SimpleTranslationEntries = {
     $violet. Si un starter que vous possédez l’a, essayez de
     $ l’ajouter à votre équipe. Vérifiez bien son résumé !`,
 
-    "statChange": `Stat changes persist across battles as long as your Pokémon aren't recalled.
-    $Your Pokémon are recalled before a trainer battle and before entering a new biome.
-    $You can also view the stat changes for the Pokémon on the field by holding shift.`,
-
     "selectItem": `Après chaque combat, vous avez le choix entre 3 objets\ntirés au sort. Vous ne pouvez en prendre qu’un.
     $Cela peut être des objets consommables, des objets à\nfaire tenir, ou des objets passifs aux effets permanents.
     $La plupart des effets des objets non-consommables se cumuleront de diverses manières.
