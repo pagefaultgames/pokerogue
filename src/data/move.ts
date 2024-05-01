@@ -3706,6 +3706,19 @@ export class FirstMoveCondition extends MoveCondition {
   }
 }
 
+export class hitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const multiplier = args[0] as Utils.NumberHolder;
+    if (!user.getTypes().some(type => target.getTypes().includes(type))){
+      multiplier.value = 0;
+      return true;
+    }
+    return false;
+  }
+}
+
+const unknownTypeCondition: MoveConditionFunc = (user, target, move) => !user.getTypes().includes(Type.UNKNOWN);
+
 export type MoveTargetSet = {
   targets: BattlerIndex[];
   multiple: boolean;
@@ -5087,7 +5100,8 @@ export function initMoves() {
       .condition(failOnMaxCondition),
     new AttackMove(Moves.SYNCHRONOISE, Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .partial(),
+      .condition(unknownTypeCondition)
+      .attr(hitsSameTypeAttr),
     new AttackMove(Moves.ELECTRO_BALL, Type.ELECTRIC, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 5)
       .attr(BattleStatRatioPowerAttr, Stat.SPD)
       .ballBombMove(),
