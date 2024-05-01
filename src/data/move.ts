@@ -2333,7 +2333,7 @@ export class IceNoEffectTypeMultiplierAttr extends VariableMoveTypeMultiplierAtt
    apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
     if (target.isOfType(Type.ICE)) {
-      multiplier.value *= 0; // Increased twice because initial reduction against water
+      multiplier.value = 0;
       return true;
     }
     return false;
@@ -4653,7 +4653,8 @@ export function initMoves() {
     new AttackMove(Moves.SAND_TOMB, Type.GROUND, MoveCategory.PHYSICAL, 35, 85, 15, 100, 0, 3)
       .attr(TrapAttr, BattlerTagType.SAND_TOMB)
       .makesContact(false),
-      new AttackMove(Moves.SHEER_COLD, Type.ICE, MoveCategory.SPECIAL, 200, 20, 5, -1, 0, 3)
+    new AttackMove(Moves.SHEER_COLD, Type.ICE, MoveCategory.SPECIAL, 200, 20, 5, -1, 0, 3)
+      .attr(OneHitKOAttr)
       .attr(IceNoEffectTypeMultiplierAttr)
       .attr(SheerColdAttr),
     new AttackMove(Moves.MUDDY_WATER, Type.WATER, MoveCategory.SPECIAL, 90, 85, 10, 30, 0, 3)
