@@ -13,7 +13,7 @@ export default class SavingIconHandler extends Phaser.GameObjects.Container {
 
   setup(): void {
     this.icon = this.scene.add.sprite(0, 0, 'saving_icon');
-    this.icon.setOrigin(1, 1);
+    this.icon.setOrigin(0.5, 0.5);
 
     this.add(this.icon);
 
@@ -48,6 +48,24 @@ export default class SavingIconHandler extends Phaser.GameObjects.Container {
   
     this.setVisible(true);
     this.shown = true;
+  }
+
+  retry(): void {
+    this.setAlpha(1);
+    this.setVisible(true);
+    this.shown = true;
+
+    this.animActive = true;
+
+    this.scene.tweens.add({
+      targets: this,
+      rotation: 360,
+      repeat: Infinity,
+      duration: Utils.fixedInt(60000),
+      ease: 'Linear'
+    });
+  
+    this.setVisible(true);
   }
 
   hide(): void {
