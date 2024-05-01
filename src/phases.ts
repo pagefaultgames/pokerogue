@@ -3499,6 +3499,10 @@ export class GameOverPhase extends BattlePhase {
           if (this.scene.gameMode.isClassic) {
             firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
             this.scene.gameData.gameStats.sessionsWon++;
+            for (let pokemon of this.scene.getParty()) {
+              const speciesId = getPokemonSpecies(pokemon.species.speciesId)
+              this.scene.gameData.incrementStarterWinCount(speciesId);
+            }
           } else if (this.scene.gameMode.isDaily && success[1])
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
         }

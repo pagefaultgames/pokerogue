@@ -128,7 +128,6 @@ export interface DexEntry {
   seenCount: integer;
   caughtCount: integer;
   hatchedCount: integer;
-  winCount: integer;
   ivs: integer[];
 }
 
@@ -173,6 +172,7 @@ export interface StarterDataEntry {
   abilityAttr: integer;
   passiveAttr: integer;
   valueReduction: integer;
+  winCount: integer;
 }
 
 export interface StarterData {
@@ -952,7 +952,7 @@ export class GameData {
 
     for (let species of allSpecies) {
       data[species.speciesId] = {
-        seenAttr: 0n, caughtAttr: 0n, natureAttr: 0, seenCount: 0, caughtCount: 0, hatchedCount: 0, winCount: 0, ivs: [ 0, 0, 0, 0, 0, 0 ]
+        seenAttr: 0n, caughtAttr: 0n, natureAttr: 0, seenCount: 0, caughtCount: 0, hatchedCount: 0, ivs: [ 0, 0, 0, 0, 0, 0 ]
       };
     }
 
@@ -991,7 +991,8 @@ export class GameData {
         candyCount: 0,
         abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
         passiveAttr: 0,
-        valueReduction: 0
+        valueReduction: 0,
+        winCount: 0
       };
     }
 
@@ -1077,6 +1078,16 @@ export class GameData {
         checkPrevolution();
     });
   }
+
+  incrementStarterWinCount(species: PokemonSpecies):void {
+    const speciesWinCount = this.starterData[species.speciesId].winCount;
+  
+      if(Number.isNaN(speciesWinCount))
+        this.starterData[species.speciesId].winCount = 0;
+      
+      this.starterData[species.speciesId].winCount++;
+      console.log(this.starterData[species.speciesId].winCount);
+    }
 
   addStarterCandy(species: PokemonSpecies, count: integer): void {
     this.scene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
