@@ -1188,7 +1188,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             this.shinyIcons[s][v].setTint(getVariantTint(speciesVariants[v] === DexAttr.DEFAULT_VARIANT ? 0 : speciesVariants[v] === DexAttr.VARIANT_2 ? 1 : 2));
         }
         this.hiddenAbilityIcons[s].setVisible(slotVisible && !!this.scene.gameData.dexData[speciesId].caughtAttr && !!(this.scene.gameData.starterData[speciesId].abilityAttr & 4));
-        // this.classicWinIcons[s].setVisible(slotVisible);
         this.classicWinIcons[s].setVisible(slotVisible && this.scene.gameData.dexData[speciesId].winCount > 0);
       }
     } else {
