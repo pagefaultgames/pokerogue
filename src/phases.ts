@@ -4341,7 +4341,6 @@ export class SelectModifierPhase extends BattlePhase {
           const isTmModifier = modifierType instanceof TmModifierType;
           const isRememberMoveModifier = modifierType instanceof RememberMoveModifierType;
           const isPpRestoreModifier = modifierType instanceof PokemonPpRestoreModifierType;
-            //|| modifierType instanceof PokemonPpUpModifierType;
           const partyUiMode = isMoveModifier ? PartyUiMode.MOVE_MODIFIER
             : isTmModifier ? PartyUiMode.TM_MODIFIER
             : isRememberMoveModifier ? PartyUiMode.REMEMBER_MOVE_MODIFIER
