@@ -1986,11 +1986,31 @@ export class HitCountPowerAttr extends VariablePowerAttr {
   }
 }
 
+const countPositiveStats = (pokemon: Pokemon): number => {
+  return pokemon.summonData.battleStats.reduce((total, stat) => stat > 0 && stat ? total + stat : total, 0);
+}
+
 export class StatChangeCountPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const positiveStats: number = user.summonData.battleStats.reduce((total, stat) => stat > 0 && stat ? total + stat : total, 0);
+    const positiveStats: number = countPositiveStats(user);
 
     (args[0] as Utils.NumberHolder).value += positiveStats * 20;
+
+    return true;
+  }
+}
+
+export class PunishmentPowerAttr extends VariablePowerAttr {
+  PUNISHMENT_MIN_BASE_POWER = 60;
+  PUNISHMENT_MAX_BASE_POWER = 200;
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const positiveStats: number = countPositiveStats(target);
+
+    (args[0] as Utils.NumberHolder).value = Math.min(
+      this.PUNISHMENT_MAX_BASE_POWER,
+      this.PUNISHMENT_MIN_BASE_POWER + positiveStats * 20
+    );
 
     return true;
   }
@@ -4821,7 +4841,8 @@ export function initMoves() {
     new StatusMove(Moves.GUARD_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 4)
       .unimplemented(),
     new AttackMove(Moves.PUNISHMENT, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 4)
-      .unimplemented(),
+      .attr(PunishmentPowerAttr)
+      .makesContact(),
     new AttackMove(Moves.LAST_RESORT, Type.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, -1, 0, 4)
       .condition((user, target, move) => {
         const uniqueUsedMoveIds = new Set<Moves>();
