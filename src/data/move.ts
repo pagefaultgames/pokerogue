@@ -901,6 +901,35 @@ export class StrengthSapHealAttr extends MoveEffectAttr {
   }
 }
 
+export class ResetStatusAttr extends MoveEffectAttr {
+  private singleEffect: StatusEffect;
+
+  constructor(selfTarget?: boolean, singleEffect?: StatusEffect) {
+    super(selfTarget === undefined || selfTarget);
+
+    this.singleEffect = singleEffect;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const pokemon = this.selfTarget ? user : target;
+    if (!!pokemon.status && pokemon.status?.effect !== StatusEffect.FAINT && 
+      (this.singleEffect === undefined || pokemon.status?.effect === this.singleEffect)) {
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectHealText(pokemon.status?.effect)));
+      pokemon.resetStatus();
+      pokemon.updateInfo();
+      
+      return true;
+    }
+    return false;
+  }
+}
+
+/* TODO: Heal Bell / Aromatherapy / Sparkly Swirl Attr
+export class ResetPartyStatusAttr extends MoveEffectAttr {
+
+}
+*/
+
 export class MultiHitAttr extends MoveAttr {
   private multiHitType: MultiHitType;
 
@@ -4388,9 +4417,10 @@ export function initMoves() {
       .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
       .ignoresVirtual(),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
+      .attr(ResetStatusAttr, false)
       .soundBased()
       .target(MoveTarget.USER_AND_ALLIES)
-      .unimplemented(),
+      .partial(),
     new AttackMove(Moves.RETURN, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 2)
       .attr(FriendshipPowerAttr),
     new AttackMove(Moves.PRESENT, Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, -1, 0, 2)
@@ -4660,8 +4690,9 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1)
       .ballBombMove(),
     new StatusMove(Moves.AROMATHERAPY, Type.GRASS, -1, 5, -1, 0, 3)
+      .attr(ResetStatusAttr, false)
       .target(MoveTarget.USER_AND_ALLIES)
-      .unimplemented(),
+      .partial(),
     new StatusMove(Moves.FAKE_TEARS, Type.DARK, 100, 20, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2),
     new AttackMove(Moves.AIR_CUTTER, Type.FLYING, MoveCategory.SPECIAL, 60, 95, 25, -1, 0, 3)
@@ -5644,8 +5675,10 @@ export function initMoves() {
       .unimplemented(),
     new AttackMove(Moves.SMART_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 70, -1, 10, -1, 0, 7),
     new StatusMove(Moves.PURIFY, Type.POISON, -1, 20, -1, 0, 7)
-      .triageMove()
-      .unimplemented(),
+      .attr(HealAttr, 0.5)
+      .attr(ResetStatusAttr, false)
+      .condition((user, target, move) => !!target.status)
+      .triageMove(),
     new AttackMove(Moves.REVELATION_DANCE, Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 7)
       .danceMove()
       .partial(),
@@ -5787,6 +5820,8 @@ export function initMoves() {
     new AttackMove(Moves.FREEZY_FROST, Type.ICE, MoveCategory.SPECIAL, 100, 90, 10, -1, 0, 7)
       .attr(ResetStatsAttr),
     new AttackMove(Moves.SPARKLY_SWIRL, Type.FAIRY, MoveCategory.SPECIAL, 120, 85, 5, -1, 0, 7)
+      .attr(ResetStatusAttr, false)
+      .target(MoveTarget.USER_AND_ALLIES)
       .partial(),
     new AttackMove(Moves.VEEVEE_VOLLEY, Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 20, -1, 0, 7)
       .attr(FriendshipPowerAttr),
@@ -6013,8 +6048,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.BURN),
     new StatusMove(Moves.JUNGLE_HEALING, Type.GRASS, -1, 10, -1, 0, 8)
       .attr(HealAttr, 0.25, true, false)
-      .target(MoveTarget.USER_AND_ALLIES)
-      .partial(),
+      .attr(ResetStatusAttr, false)
+      .target(MoveTarget.USER_AND_ALLIES),
     new AttackMove(Moves.WICKED_BLOW, Type.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
       .attr(CritOnlyAttr)
       .punchingMove(),
@@ -6110,12 +6145,12 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.LUNAR_BLESSING, Type.PSYCHIC, -1, 5, -1, 0, 8)
       .attr(HealAttr, 0.25)
+      .attr(ResetStatusAttr, false)
       .target(MoveTarget.USER_AND_ALLIES)
-      .triageMove()
-      .partial(),
+      .triageMove(),
     new SelfStatusMove(Moves.TAKE_HEART, Type.PSYCHIC, -1, 10, -1, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF ], 1, true)
-      .partial(),
+      .attr(ResetStatusAttr, true),
     /* Unused
     new AttackMove(Moves.G_MAX_WILDFIRE, Type.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)

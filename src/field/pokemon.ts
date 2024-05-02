@@ -44,7 +44,7 @@ import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMov
 import { TerrainType } from '../data/terrain';
 import { TrainerSlot } from '../data/trainer-config';
 import { BerryType } from '../data/berry';
-import { ABILITY_OVERRIDE, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../overrides';
+import { ABILITY_OVERRIDE, MOVE_OVERRIDE, STATUS_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_STATUS_OVERRIDE, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../overrides';
 import i18next from '../plugins/i18n';
 
 export enum FieldPosition {
@@ -168,6 +168,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.formIndex === undefined)
         this.formIndex = this.scene.getSpeciesFormIndex(species, this.gender, this.nature, this.isPlayer());
 
+      if (STATUS_OVERRIDE && this.isPlayer())
+        this.trySetStatus(STATUS_OVERRIDE, false);
+      if (OPP_STATUS_OVERRIDE && !this.isPlayer())
+        this.trySetStatus(OPP_STATUS_OVERRIDE, false);
+      
       if (this.shiny === undefined)
         this.trySetShiny();
 
