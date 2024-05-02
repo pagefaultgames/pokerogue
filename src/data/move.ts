@@ -1325,10 +1325,13 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
           user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true });
           if (this.sameTurn)
             user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], user.moveset.find(m => m.moveId === move.id), true), this.followUpPriority);
+          user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
           resolve(true);
         });
-      } else
+      } else {
+        user.lapseTag(BattlerTagType.CHARGING);
         resolve(false);
+      }
     });
   }
 

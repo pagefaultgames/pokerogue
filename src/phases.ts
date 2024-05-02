@@ -1686,6 +1686,8 @@ export class CommandPhase extends FieldPhase {
           console.log(moveTargets, playerPokemon.name);
           if (moveTargets.targets.length <= 1 || moveTargets.multiple)
             turnCommand.move.targets = moveTargets.targets;
+          else if(playerPokemon.getTag(BattlerTagType.CHARGING) && playerPokemon.getMoveQueue().length >= 1)
+            turnCommand.move.targets = playerPokemon.getMoveQueue()[0].targets;
           else
             this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
           this.scene.currentBattle.turnCommands[this.fieldIndex] = turnCommand;
@@ -2327,13 +2329,14 @@ export class MovePhase extends BattlePhase {
 
   showMoveText(): void {
     if (this.move.getMove().getAttrs(ChargeAttr).length) {
-      this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
       const lastMove = this.pokemon.getLastXMoves() as TurnMove[];
-      if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER)
+      if (!lastMove.length || lastMove[0].move !== this.move.getMove().id || lastMove[0].result !== MoveResult.OTHER){
+        this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
         return;
+      }
     }
 
-    if (this.pokemon.getTag(BattlerTagType.RECHARGING|| BattlerTagType.INTERRUPTED))
+    if (this.pokemon.getTag(BattlerTagType.RECHARGING || BattlerTagType.INTERRUPTED))
       return;
     
     this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
