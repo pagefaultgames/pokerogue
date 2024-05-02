@@ -2457,12 +2457,17 @@ export class PlayerPokemon extends Pokemon {
 
   private handleSpecialEvolutions(evolution: SpeciesFormEvolution) {
     const isFusion = evolution instanceof FusionSpeciesFormEvolution;
-    if ((!isFusion ? this.species : this.fusionSpecies).speciesId === Species.NINCADA && evolution.speciesId === Species.NINJASK) {
-      const newEvolution = pokemonEvolutions[this.species.speciesId][1];
+    
+    const evoSpecies = (!isFusion ? this.species : this.fusionSpecies)
+    if (evoSpecies.speciesId === Species.NINCADA && evolution.speciesId === Species.NINJASK) {
+      const newEvolution = pokemonEvolutions[evoSpecies.speciesId][1];      
+      
       if (newEvolution.condition.predicate(this)) {
         const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, undefined, this.shiny, this.variant, this.ivs, this.nature);
         newPokemon.natureOverride = this.natureOverride;
         newPokemon.moveset = this.moveset.slice();
+        newPokemon.luck = this.luck;
+
         newPokemon.fusionSpecies = this.fusionSpecies;
         newPokemon.fusionFormIndex = this.fusionFormIndex;
         newPokemon.fusionAbilityIndex = this.fusionAbilityIndex;
@@ -2470,8 +2475,9 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionVariant = this.fusionVariant;
         newPokemon.fusionGender = this.fusionGender;
         newPokemon.fusionLuck = this.fusionLuck;
+
         this.scene.getParty().push(newPokemon);
-        newPokemon.evolve(newEvolution);
+        newPokemon.evolve(!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution));
         const modifiers = this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier
           && (m as PokemonHeldItemModifier).pokemonId === this.id, true) as PokemonHeldItemModifier[];
         modifiers.forEach(m => {
