@@ -3,6 +3,7 @@ import { Abilities } from "./data/enums/abilities";
 import { Biome } from "./data/enums/biome";
 import { Moves } from "./data/enums/moves";
 import { WeatherType } from "./data/weather";
+import { StatusEffect } from "./data/status-effect"
 
 export const SEED_OVERRIDE = '';
 export const STARTER_SPECIES_OVERRIDE = 0;
@@ -15,9 +16,11 @@ export const WEATHER_OVERRIDE = WeatherType.NONE;
 
 export const ABILITY_OVERRIDE = Abilities.NONE;
 export const MOVE_OVERRIDE = Moves.NONE;
+export const STATUS_OVERRIDE = StatusEffect.NONE;
 export const OPP_SPECIES_OVERRIDE = 0;
 export const OPP_ABILITY_OVERRIDE = Abilities.NONE;
 export const OPP_MOVE_OVERRIDE = Moves.NONE;
+export const OPP_STATUS_OVERRIDE = StatusEffect.NONE;
 
 export const OPP_SHINY_OVERRIDE = false;
 export const OPP_VARIANT_OVERRIDE = 0;
