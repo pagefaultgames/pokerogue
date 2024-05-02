@@ -2961,7 +2961,7 @@ export function initAbilities() {
       .ignorable()
       .unimplemented(),
     new Ability(Abilities.FLOWER_VEIL, 6)
-      .conditionalAttr(p => (p.isOfType(Type.GRASS)), StatusEffectImmunityAbAttr, StatusEffect.BURN, StatusEffect.FREEZE, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.SLEEP, StatusEffect.TOXIC)
+      .conditionalAttr(p => (p.isOfType(Type.GRASS)), StatusEffectImmunityAbAttr)
       .ignorable()
       .partial(),
     new Ability(Abilities.CHEEK_POUCH, 6)
@@ -3043,7 +3043,7 @@ export function initAbilities() {
       .attr(PostBattleInitFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostTurnFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
-      .conditionalAttr(p => (p.formIndex < 7), StatusEffectImmunityAbAttr, StatusEffect.BURN, StatusEffect.FREEZE, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.SLEEP, StatusEffect.TOXIC)
+      .conditionalAttr(p => (p.formIndex < 7), StatusEffectImmunityAbAttr)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
@@ -3113,7 +3113,7 @@ export function initAbilities() {
     new Ability(Abilities.CORROSION, 7)
       .unimplemented(),
     new Ability(Abilities.COMATOSE, 7)
-      .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN, StatusEffect.FREEZE, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.SLEEP, StatusEffect.TOXIC)
+      .attr(StatusEffectImmunityAbAttr)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().id == Moves.YAWN)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon == attacker && move.getMove().id == Moves.REST)
       .attr(UncopiableAbilityAbAttr)
