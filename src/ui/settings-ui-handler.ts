@@ -1,10 +1,11 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene from "../battle-scene";
 import { Setting, reloadSettings, settingDefaults, settingOptions } from "../system/settings";
 import { hasTouchscreen, isMobile } from "../touch-controls";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
+import {Button} from "#app/inputHandler";
 
 export default class SettingsUiHandler extends UiHandler {
   private settingsContainer: Phaser.GameObjects.Container;

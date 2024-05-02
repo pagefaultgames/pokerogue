@@ -1,4 +1,4 @@
-import { Button, default as BattleScene } from '../battle-scene';
+import { default as BattleScene } from '../battle-scene';
 import UiHandler from './ui-handler';
 import BattleMessageUiHandler from './battle-message-ui-handler';
 import CommandUiHandler from './command-ui-handler';
@@ -35,6 +35,7 @@ import SavingIconHandler from './saving-icon-handler';
 import UnavailableModalUiHandler from './unavailable-modal-ui-handler';
 import OutdatedModalUiHandler from './outdated-modal-ui-handler';
 import SessionReloadModalUiHandler from './session-reload-modal-ui-handler';
+import {Button} from "#app/inputHandler";
 
 export enum Mode {
   MESSAGE,

@@ -1,4 +1,4 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene from "../battle-scene";
 import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption } from "../modifier/modifier-type";
 import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
 import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
@@ -6,6 +6,7 @@ import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
+import {Button} from "#app/inputHandler";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 

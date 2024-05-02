@@ -1,4 +1,4 @@
-import Phaser, { Time } from 'phaser';
+import Phaser from 'phaser';
 import UI, { Mode } from './ui/ui';
 import { NextEncounterPhase, NewBiomeEncounterPhase, SelectBiomePhase, MessagePhase, TurnInitPhase, ReturnPhase, LevelCapPhase, ShowTrainerPhase, LoginPhase, MovePhase, TitlePhase, SwitchPhase } from './phases';
 import Pokemon, { PlayerPokemon, EnemyPokemon } from './field/pokemon';
@@ -54,17 +54,13 @@ import CharSprite from './ui/char-sprite';
 import DamageNumberHandler from './field/damage-number-handler';
 import PokemonInfoContainer from './ui/pokemon-info-container';
 import { biomeDepths } from './data/biomes';
-import { initTouchControls } from './touch-controls';
 import { UiTheme } from './enums/ui-theme';
 import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
 import { Variant, variantData } from './data/variant';
 import { Localizable } from './plugins/i18n';
 import { STARTING_WAVE_OVERRIDE, OPP_SPECIES_OVERRIDE, SEED_OVERRIDE, STARTING_BIOME_OVERRIDE } from './overrides';
-import pad_generic from "./configs/pad_generic";
-import pad_unlicensedSNES from "./configs/pad_unlicensedSNES";
-import pad_xbox360 from "./configs/pad_xbox360";
-import pad_dualshock from "./configs/pad_dualshock";
+
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -79,26 +75,6 @@ interface StarterColors {
 	[key: string]: [string, string]
 }
 
-export enum Button {
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT,
-	SUBMIT,
-	ACTION,
-	CANCEL,
-	MENU,
-	STATS,
-	CYCLE_SHINY,
-	CYCLE_FORM,
-	CYCLE_GENDER,
-	CYCLE_ABILITY,
-	CYCLE_NATURE,
-	CYCLE_VARIANT,
-	SPEED_UP,
-	SLOW_DOWN
-}
-
 export interface PokeballCounts {
 	[pb: string]: integer;
 }
@@ -107,6 +83,7 @@ export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound
 
 export default class BattleScene extends SceneBase {
 	public rexUI: UIPlugin;
+	public inputHandler: InputHandler;
 
 	public sessionPlayTime: integer = null;
 	public masterVolume: number = 0.5;
@@ -193,13 +170,10 @@ export default class BattleScene extends SceneBase {
 	private bgmCache: Set<string> = new Set();
 	private playTimeTimer: Phaser.Time.TimerEvent;
 	
-	private buttonKeys: Phaser.Input.Keyboard.Key[][];
-	private isButtonPressing: boolean;
 	private lastProcessedButtonPressTimes: Map<Button, number> = new Map();
 	// movementButtonLock ensures only a single movement key is firing repeated inputs
 	// (i.e. by holding down a button) at a time
 	private movementButtonLock: Button;
-	private mappedPad;
 
 	public rngCounter: integer = 0;
 	public rngSeedOverride: string = '';
@@ -243,7 +217,7 @@ export default class BattleScene extends SceneBase {
 				return ret;
 			};
 		}
-		
+
 		populateAnims();
 
 		await this.initVariantData();
@@ -253,12 +227,9 @@ export default class BattleScene extends SceneBase {
 		initGameSpeed.apply(this);
 
 		this.gameData = new GameData(this);
+		this.checkInputs();
 
 		addUiThemeOverrides(this);
-
-		this.setupControls();
-		this.checkInputGamepad();
-		this.checkInputKeyboard();
 
 		this.load.setBaseURL();
 
@@ -273,6 +244,15 @@ export default class BattleScene extends SceneBase {
 
 	update() {
 		this.ui?.update();
+	}
+
+	checkInputs() {
+		this.inputHandler.events.on('gamepad_directiondown', (event) => {
+			console.log('event:', event);
+		});
+		this.inputHandler.events.on('gamepad_buttondown', (event) => {
+			console.log('event:', event);
+		});
 	}
 
 	launchBattle() {
@@ -588,42 +568,6 @@ export default class BattleScene extends SceneBase {
 		if (!expSpriteKeys.includes(k))
 			return false;
 		return true;
-	}
-
-	setupControls() {
-		const keyCodes = Phaser.Input.Keyboard.KeyCodes;
-		const keyConfig = {
-			[Button.UP]: [keyCodes.UP, keyCodes.W],
-			[Button.DOWN]: [keyCodes.DOWN, keyCodes.S],
-			[Button.LEFT]: [keyCodes.LEFT, keyCodes.A],
-			[Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
-			[Button.SUBMIT]: [keyCodes.ENTER],
-			[Button.ACTION]: [keyCodes.SPACE, keyCodes.ENTER, keyCodes.Z],
-			[Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
-			[Button.MENU]: [keyCodes.ESC, keyCodes.M],
-			[Button.STATS]: [keyCodes.SHIFT, keyCodes.C],
-			[Button.CYCLE_SHINY]: [keyCodes.R],
-			[Button.CYCLE_FORM]: [keyCodes.F],
-			[Button.CYCLE_GENDER]: [keyCodes.G],
-			[Button.CYCLE_ABILITY]: [keyCodes.E],
-			[Button.CYCLE_NATURE]: [keyCodes.N],
-			[Button.CYCLE_VARIANT]: [keyCodes.V],
-			[Button.SPEED_UP]: [keyCodes.PLUS],
-			[Button.SLOW_DOWN]: [keyCodes.MINUS]
-		};
-		const mobileKeyConfig = {};
-		this.buttonKeys = [];
-		for (let b of Utils.getEnumValues(Button)) {
-			const keys: Phaser.Input.Keyboard.Key[] = [];
-			if (keyConfig.hasOwnProperty(b)) {
-				for (let k of keyConfig[b])
-					keys.push(this.input.keyboard.addKey(k, false));
-				mobileKeyConfig[Button[b]] = keys[0];
-			}
-			this.buttonKeys[b] = keys;
-		}
-
-		initTouchControls(mobileKeyConfig);
 	}
 
 	getParty(): PlayerPokemon[] {
@@ -1327,23 +1271,6 @@ export default class BattleScene extends SceneBase {
 		return biomes[Utils.randSeedInt(biomes.length)];
 	}
 
-    mapGamepad(id) {
-        id = id.toLowerCase();
-        let padConfig = pad_generic;
-
-        if (id.includes('081f') && id.includes('e401')) {
-            padConfig = pad_unlicensedSNES;
-        }
-        else if (id.includes('xbox') && id.includes('360')) {
-            padConfig = pad_xbox360;
-        }
-        else if (id.includes('054c')) {
-            padConfig = pad_dualshock;
-        }
-
-        return padConfig;
-    }
-
 	button_up() {
 		const inputSuccess = this.ui.processInput(Button.UP);
 		const vibrationLength = 5;
@@ -1524,100 +1451,6 @@ export default class BattleScene extends SceneBase {
 				this.button_stats(false);
 				break
 		}
-	}
-
-	checkInputKeyboard() {
-		this.buttonKeys.forEach((row, index) => {
-			for (const key of row) {
-				key.on('down', () => {
-					if (!this.isButtonPressing) {
-						this.isButtonPressing = true;
-						this.key_down(index);
-					}
-				});
-				key.on('up', () => {
-					if (this.isButtonPressing) {
-						this.isButtonPressing = false;
-						this.key_up(index);
-					}
-				});
-			}
-		})
-	}
-	checkInputGamepad() {
-		this.input.gamepad.once('connected', function (pad) {
-			const gamepadID = pad.id.toLowerCase();
-			this.scene.mappedPad = this.scene.mapGamepad(gamepadID);
-		});
-
-		this.input.gamepad.on('down', function (gamepad, button) {
-			if (!this.scene.mappedPad) return;
-			let inputSuccess;
-			let vibrationLength;
-			switch(button.index) {
-				case this.scene.mappedPad.gamepadMapping.LC_N:
-					[inputSuccess, vibrationLength] = this.scene.button_up();
-					break;
-				case this.scene.mappedPad.gamepadMapping.LC_S:
-					[inputSuccess, vibrationLength] = this.scene.button_down();
-					break;
-				case this.scene.mappedPad.gamepadMapping.LC_W:
-					[inputSuccess, vibrationLength] = this.scene.button_left();
-					break
-				case this.scene.mappedPad.gamepadMapping.LC_E:
-					[inputSuccess, vibrationLength] = this.scene.button_right();
-					break
-				case this.scene.mappedPad.gamepadMapping.TOUCH:
-					inputSuccess = this.scene.button_touch();
-					break
-				case this.scene.mappedPad.gamepadMapping.RC_S:
-					inputSuccess = this.scene.button_action();
-					break;
-				case this.scene.mappedPad.gamepadMapping.RC_E:
-					inputSuccess = this.scene.button_cancel();
-					break
-				case this.scene.mappedPad.gamepadMapping.SELECT:
-					this.scene.button_stats(true);
-					break
-				case this.scene.mappedPad.gamepadMapping.START:
-					inputSuccess = this.scene.button_menu();
-					break
-				case this.scene.mappedPad.gamepadMapping.RB:
-					inputSuccess = this.scene.button_cycle_option(Button.CYCLE_SHINY);
-					break
-				case this.scene.mappedPad.gamepadMapping.LB:
-					inputSuccess = this.scene.button_cycle_option(Button.CYCLE_FORM);
-					break
-				case this.scene.mappedPad.gamepadMapping.LT:
-					inputSuccess = this.scene.button_cycle_option(Button.CYCLE_GENDER);
-					break
-				case this.scene.mappedPad.gamepadMapping.RT:
-					inputSuccess = this.scene.button_cycle_option(Button.CYCLE_ABILITY);
-					break;
-				case this.scene.mappedPad.gamepadMapping.RC_W:
-					inputSuccess = this.scene.button_cycle_option(Button.CYCLE_NATURE);
-					break
-				case this.scene.mappedPad.gamepadMapping.RC_N:
-					inputSuccess = this.scene.button_cycle_option(Button.CYCLE_VARIANT);
-					break
-				case this.scene.mappedPad.gamepadMapping.LS:
-					this.scene.button_speed_up();
-					break
-				case this.scene.mappedPad.gamepadMapping.RS:
-					this.scene.button_speed_down();
-					break
-			}
-			if (inputSuccess && this.scene.enableVibration && typeof navigator.vibrate !== 'undefined')
-				navigator.vibrate(vibrationLength);
-		});
-
-		this.input.gamepad.on('up', function (gamepad, button) {
-			switch(button.index) {
-				case this.scene.mappedPad.gamepadMapping.SELECT:
-					this.scene.button_stats(false);
-					break
-			}
-		});
 	}
 
 

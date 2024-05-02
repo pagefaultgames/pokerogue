@@ -8,6 +8,7 @@ import InputTextPlugin from 'phaser3-rex-plugins/plugins/inputtext-plugin.js';
 import BBCodeText from 'phaser3-rex-plugins/plugins/bbcodetext';
 import TransitionImagePackPlugin from 'phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js';
 import { LoadingScene } from './loading-scene';
+import {InputHandler} from "./inputHandler";
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.WEBGL,
@@ -35,6 +36,10 @@ const config: Phaser.Types.Core.GameConfig = {
 			key: 'rexUI',
 			plugin: UIPlugin,
 			mapping: 'rexUI'
+		}, {
+			key: 'inputHandler',
+			plugin: InputHandler,
+			mapping: 'inputHandler'
 		}]
 	},
 	input: {
