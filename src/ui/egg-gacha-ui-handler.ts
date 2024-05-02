@@ -10,8 +10,7 @@ import { addWindow } from "./ui-theme";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { EggTier } from "../data/enums/egg-type";
 import {Button} from "../enums/buttons";
-
-const defaultText = 'Select a machine.';
+import i18next from '../plugins/i18n';
 
 export default class EggGachaUiHandler extends MessageUiHandler {
   private eggGachaContainer: Phaser.GameObjects.Container;
@@ -33,6 +32,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   private cursorObj: Phaser.GameObjects.Image;
   private transitioning: boolean;
   private transitionCancelled: boolean;
+  private defaultText: string;
 
   constructor(scene: BattleScene) {
     super(scene, Mode.EGG_GACHA);
@@ -43,6 +43,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.gachaInfoContainers = [];
 
     this.voucherCountLabels = [];
+    this.defaultText = i18next.t('egg:selectMachine');
   }
 
   setup() {
@@ -151,8 +152,27 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaOptionSelectBg.setOrigin(1, 1);
     this.eggGachaOptionsContainer.add(this.eggGachaOptionSelectBg);
 
-    const optionText = addTextObject(this.scene, 0, 0, '    x1    1 Pull\n    x10  10 Pulls\n    x1     5 Pulls\n    x1    10 Pulls\n    x1    25 Pulls\nCancel', TextStyle.WINDOW);
-    optionText.setLineSpacing(12);
+    const pullOptions = [
+      { multiplier: 'x1', description: `1 ${i18next.t('egg:pull')}` },
+      { multiplier: 'x10', description: `10 ${i18next.t('egg:pulls')}` },
+      { multiplier: 'x1', description: `5 ${i18next.t('egg:pulls')}` },
+      { multiplier: 'x1', description: `10 ${i18next.t('egg:pulls')}` },
+      { multiplier: 'x1', description: `25 ${i18next.t('egg:pulls')}` }
+    ];
+
+    const pullOptionsText = pullOptions.map(option => `     ${option.multiplier.padEnd(4)} ${option.description}`).join('\n');
+
+    const optionText = addTextObject(
+      this.scene,
+      0,
+      0,
+      `${pullOptionsText}\n${i18next.t('menu:cancel')}`,
+      TextStyle.WINDOW,
+    );
+
+    optionText.setLineSpacing(28);
+    optionText.setFontSize('80px');
+
     this.eggGachaOptionsContainer.add(optionText);
 
     optionText.setPositionRelative(this.eggGachaOptionSelectBg, 16, 9);
@@ -223,7 +243,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
-    this.getUi().showText(defaultText, 0);
+    this.getUi().showText(this.defaultText, 0);
 
     this.setGachaCursor(1);
 
@@ -474,7 +494,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
   showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void {
     if (!text)
-      text = defaultText;
+      text = this.defaultText;
     
     if (text?.indexOf('\n') === -1) {
       this.eggGachaMessageBox.setSize(320, 32);
@@ -490,7 +510,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   showError(text: string): void {
-    this.showText(text, null, () => this.showText(defaultText), Utils.fixedInt(1500));
+    this.showText(text, null, () => this.showText(this.defaultText), Utils.fixedInt(1500));
   }
 
   setTransitioning(transitioning: boolean): void {
@@ -526,27 +546,27 @@ export default class EggGachaUiHandler extends MessageUiHandler {
               case 0:
                 if (!this.scene.gameData.voucherCounts[VoucherType.REGULAR]) {
                   error = true;
-                  this.showError('You don\'t have enough vouchers!');
+                  this.showError(i18next.t('egg:notEnoughVouchers'));
                 } else if (this.scene.gameData.eggs.length < 99) {
                   this.consumeVouchers(VoucherType.REGULAR, 1);
                   this.pull();
                   success = true;
                 } else {
                   error = true;
-                  this.showError('You have too many eggs!');
+                  this.showError(i18next.t('egg:tooManyEggs'));
                 }
                 break;
               case 2:
                 if (!this.scene.gameData.voucherCounts[VoucherType.PLUS]) {
                   error = true;
-                  this.showError('You don\'t have enough vouchers!');
+                  this.showError(i18next.t('egg:notEnoughVouchers'));
                 } else if (this.scene.gameData.eggs.length < 95) {
                   this.consumeVouchers(VoucherType.PLUS, 1);
                   this.pull(5);
                   success = true;
                 } else {
                   error = true;
-                  this.showError('You have too many eggs!');
+                  this.showError(i18next.t('egg:tooManyEggs'));
                 }
                 break;
               case 1:
@@ -554,7 +574,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                 if ((this.cursor === 1 && this.scene.gameData.voucherCounts[VoucherType.REGULAR] < 10)
                   || (this.cursor === 3 && !this.scene.gameData.voucherCounts[VoucherType.PREMIUM])) {
                   error = true;
-                  this.showError('You don\'t have enough vouchers!');
+                  this.showError(i18next.t('egg:notEnoughVouchers'));
                 } else if (this.scene.gameData.eggs.length < 90) {
                   if (this.cursor === 3)
                     this.consumeVouchers(VoucherType.PREMIUM, 1);
@@ -564,20 +584,20 @@ export default class EggGachaUiHandler extends MessageUiHandler {
                   success = true;
                 } else {
                   error = true;
-                  this.showError('You have too many eggs!');
+                  this.showError(i18next.t('egg:tooManyEggs'));
                 }
                 break;
               case 4:
                 if (!this.scene.gameData.voucherCounts[VoucherType.GOLDEN]) {
                   error = true;
-                  this.showError('You don\'t have enough vouchers!');
+                  this.showError(i18next.t('egg:notEnoughVouchers'));
                 } else if (this.scene.gameData.eggs.length < 75) {
                   this.consumeVouchers(VoucherType.GOLDEN, 1);
                   this.pull(25);
                   success = true;
                 } else {
                   error = true;
-                  this.showError('You have too many eggs!');
+                  this.showError(i18next.t('egg:tooManyEggs'));
                 }
                 break;
               case 5:
