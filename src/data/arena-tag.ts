@@ -482,6 +482,20 @@ export class GravityTag extends ArenaTag {
   }
 }
 
+class TailwindTag extends ArenaTag {
+  constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide) {
+    super(ArenaTagType.TAILWIND, turnCount, Moves.TAILWIND, sourceId, side);
+  }
+
+  onAdd(arena: Arena): void {
+    arena.scene.queueMessage(`The Tailwind blew from behind${this.side === ArenaTagSide.PLAYER ? '\nyour' : this.side === ArenaTagSide.ENEMY ? '\nthe opposing' : ''} team!`);
+  }
+
+  onRemove(arena: Arena): void {
+    arena.scene.queueMessage(`${this.side === ArenaTagSide.PLAYER ? 'Your' : this.side === ArenaTagSide.ENEMY ? 'The opposing' : ''} team's Tailwind petered out!`);
+  }
+}
+
 export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, targetIndex?: BattlerIndex, side: ArenaTagSide = ArenaTagSide.BOTH): ArenaTag {
   switch (tagType) {
     case ArenaTagType.MIST:
@@ -513,5 +527,7 @@ export function getArenaTag(tagType: ArenaTagType, turnCount: integer, sourceMov
       return new LightScreenTag(turnCount, sourceId, side);
     case ArenaTagType.AURORA_VEIL:
       return new AuroraVeilTag(turnCount, sourceId, side);
+    case ArenaTagType.TAILWIND:
+      return new TailwindTag(turnCount, sourceId, side);
   }
 }
