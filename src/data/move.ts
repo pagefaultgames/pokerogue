@@ -557,7 +557,7 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = Math.floor(target.hp / 2);
+    (args[0] as Utils.IntegerHolder).value = Math.max(Math.floor(target.hp / 2), 1);
 
     return true;
   }
@@ -2615,7 +2615,7 @@ export class CurseAttr extends MoveEffectAttr {
       }
       let curseRecoilDamage = Math.floor(user.getMaxHp() / 2);
       user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, false, true, true);
-      user.scene.queueMessage(getPokemonMessage(user, ' cut its own HP!'));
+      user.scene.queueMessage(getPokemonMessage(user, ` cut its own HP\nand laid a curse on the ${target.name}!`));
       target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
       return true;
     } else {
@@ -3612,6 +3612,23 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
   }
 }
 
+export class SuppressAbilitiesAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    target.summonData.abilitySuppressed = true;
+
+    target.scene.queueMessage(getPokemonMessage(target, ` ability\nwas suppressed!`));
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
+  }
+}
+
 export class TransformAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -3660,6 +3677,20 @@ export class MoneyAttr extends MoveEffectAttr {
     user.scene.currentBattle.moneyScattered += user.scene.getWaveMoneyAmount(0.2);
     user.scene.queueMessage("Coins were scattered everywhere!")
     return true;
+  }
+}
+
+export class LastResortAttr extends MoveAttr {
+  getCondition(): MoveConditionFunc {
+    return (user: Pokemon, target: Pokemon, move: Move) => {
+      const uniqueUsedMoveIds = new Set<Moves>();
+      const movesetMoveIds = user.getMoveset().map(m => m.moveId);
+      user.getMoveHistory().map(m => {
+        if (m.move !== move.id && movesetMoveIds.find(mm => mm === m.move))
+          uniqueUsedMoveIds.add(m.move);
+      });
+      return uniqueUsedMoveIds.size >= movesetMoveIds.length - 1;
+    };
   }
 }
 
@@ -3723,6 +3754,19 @@ export class FirstMoveCondition extends MoveCondition {
     return this.apply(user, target, move) ? 10 : -20;
   }
 }
+
+export class hitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const multiplier = args[0] as Utils.NumberHolder;
+    if (!user.getTypes().some(type => target.getTypes().includes(type))){
+      multiplier.value = 0;
+      return true;
+    }
+    return false;
+  }
+}
+
+const unknownTypeCondition: MoveConditionFunc = (user, target, move) => !user.getTypes().includes(Type.UNKNOWN);
 
 export type MoveTargetSet = {
   targets: BattlerIndex[];
@@ -4779,8 +4823,8 @@ export function initMoves() {
       .partial(),
     new StatusMove(Moves.TAILWIND, Type.FLYING, -1, 15, -1, 0, 4)
       .windMove()
-      .target(MoveTarget.USER_SIDE)
-      .unimplemented(),
+      .attr(AddArenaTagAttr, ArenaTagType.TAILWIND, 4, true)
+      .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ACUPRESSURE, Type.NORMAL, -1, 30, -1, 0, 4)
       .attr(StatChangeAttr, BattleStat.RAND, 2)
       .target(MoveTarget.USER_OR_NEAR_ALLY),
@@ -4822,7 +4866,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.POWER_TRICK, Type.PSYCHIC, -1, 10, -1, 0, 4)
       .unimplemented(),
     new StatusMove(Moves.GASTRO_ACID, Type.POISON, 100, 10, -1, 0, 4)
-      .unimplemented(),
+      .attr(SuppressAbilitiesAttr),
     new StatusMove(Moves.LUCKY_CHANT, Type.NORMAL, -1, 30, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.NO_CRIT, false, false, 5)
       .target(MoveTarget.USER_SIDE)
@@ -4841,15 +4885,7 @@ export function initMoves() {
     new AttackMove(Moves.PUNISHMENT, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 4)
       .unimplemented(),
     new AttackMove(Moves.LAST_RESORT, Type.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, -1, 0, 4)
-      .condition((user, target, move) => {
-        const uniqueUsedMoveIds = new Set<Moves>();
-        const movesetMoveIds = user.getMoveset().map(m => m.moveId);
-        user.getMoveHistory().map(m => {
-          if (m.move !== move.id && movesetMoveIds.find(mm => mm === m.move))
-            uniqueUsedMoveIds.add(m.move);
-        });
-        return uniqueUsedMoveIds.size >= movesetMoveIds.length - 1;
-      }),
+      .attr(LastResortAttr),
     new StatusMove(Moves.WORRY_SEED, Type.GRASS, 100, 10, -1, 0, 4)
       .attr(AbilityChangeAttr, Abilities.INSOMNIA),
     new AttackMove(Moves.SUCKER_PUNCH, Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, -1, 1, 4)
@@ -5105,7 +5141,8 @@ export function initMoves() {
       .condition(failOnMaxCondition),
     new AttackMove(Moves.SYNCHRONOISE, Type.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS)
-      .partial(),
+      .condition(unknownTypeCondition)
+      .attr(hitsSameTypeAttr),
     new AttackMove(Moves.ELECTRO_BALL, Type.ELECTRIC, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 5)
       .attr(BattleStatRatioPowerAttr, Stat.SPD)
       .ballBombMove(),
@@ -5175,7 +5212,7 @@ export function initMoves() {
     new StatusMove(Moves.QUASH, Type.DARK, 100, 15, -1, 0, 5)
       .unimplemented(),
     new AttackMove(Moves.ACROBATICS, Type.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => Math.max(1, 2 - 0.2 * user.getHeldItems().reduce((v, m) => v + m.stackCount, 0))),
     new StatusMove(Moves.REFLECT_TYPE, Type.NORMAL, -1, 15, -1, 0, 5)
       .attr(CopyTypeAttr),
     new AttackMove(Moves.RETALIATE, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 5, -1, 0, 5)
@@ -5305,7 +5342,7 @@ export function initMoves() {
     new StatusMove(Moves.MAT_BLOCK, Type.FIGHTING, -1, 10, -1, 0, 6)
       .unimplemented(),
     new AttackMove(Moves.BELCH, Type.POISON, MoveCategory.SPECIAL, 120, 90, 10, -1, 0, 6)
-      .partial(),
+      .condition((user, target, move) => user.battleData.berriesEaten.length > 0),
     new StatusMove(Moves.ROTOTILLER, Type.GROUND, -1, 10, 100, 0, 6)
       .target(MoveTarget.ALL)
       .unimplemented(),
@@ -6336,8 +6373,7 @@ export function initMoves() {
       }), // TODO Add Instruct/Encore interaction
     new AttackMove(Moves.COMEUPPANCE, Type.DARK, MoveCategory.PHYSICAL, 1, 100, 10, -1, 0, 9)
       .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)
-      .target(MoveTarget.ATTACKER)
-      .partial(),
+      .target(MoveTarget.ATTACKER),
     new AttackMove(Moves.AQUA_CUTTER, Type.WATER, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 9)
       .attr(HighCritAttr)
       .slicingMove()

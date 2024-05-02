@@ -5,6 +5,7 @@ import * as Utils from "../utils";
 import MessageUiHandler from "./message-ui-handler";
 import { getStatName, Stat } from "../data/pokemon-stat";
 import { addWindow } from "./ui-theme";
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 export default class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsContainer: Phaser.GameObjects.Container;
@@ -209,7 +210,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
         } else
           shownStats = stats;
         for (let s of stats)
-          levelUpStatsValuesText += `${shownStats.indexOf(s) > -1 ? this.getIvDescriptor(ivs[s], s) : '???'}\n`;
+          levelUpStatsValuesText += `${shownStats.indexOf(s) > -1 ? this.getIvDescriptor(ivs[s], s, pokemonId) : '???'}\n`;
         this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
         this.levelUpStatsIncrContent.setVisible(false);
         this.levelUpStatsContainer.setVisible(true);
@@ -222,9 +223,10 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     });
   }
 
-  getIvDescriptor(value: integer, typeIv: integer): string {
-    let starterIvs: number[] = this.scene.gameData.dexData[this.scene.getEnemyPokemon().species.speciesId].ivs;
-    let uiTheme = (this.scene as BattleScene).uiTheme; // Assuming uiTheme is accessible
+  getIvDescriptor(value: integer, typeIv: integer, pokemonId: integer): string {
+    const starterSpecies = this.scene.getPokemonById(pokemonId).species.getRootSpeciesId(true);
+    const starterIvs: number[] = this.scene.gameData.dexData[starterSpecies].ivs;
+    const uiTheme = (this.scene as BattleScene).uiTheme; // Assuming uiTheme is accessible
 
     // Function to wrap text in color based on comparison
     const coloredText = (text: string, isBetter: boolean) => {

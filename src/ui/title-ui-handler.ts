@@ -65,6 +65,9 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
         this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
         if (this.splashMessage === battleCountSplashMessage)
           this.splashMessageText.setText(battleCountSplashMessage.replace('{COUNT}', stats.battleCount.toLocaleString('en-US')));
+      })
+      .catch(err => {
+        console.error("Failed to fetch title stats:\n", err);
       });
   }
 

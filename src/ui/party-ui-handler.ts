@@ -90,6 +90,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private selectFilter: PokemonSelectFilter | PokemonModifierTransferSelectFilter;
   private moveSelectFilter: PokemonMoveSelectFilter;
   private tmMoveId: Moves;
+  private showMovePp: boolean;
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -185,6 +186,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       ? args[4] as PokemonMoveSelectFilter
       : PartyUiHandler.FilterAllMoves;
     this.tmMoveId = args.length > 5 && args[5] ? args[5] : Moves.NONE;
+    this.showMovePp = args.length > 6 && args[6];
 
     this.partyContainer.setVisible(true);
     this.partyBg.setTexture(`party_bg${this.scene.currentBattle.double ? '_double' : ''}`);
@@ -663,7 +665,14 @@ export default class PartyUiHandler extends MessageUiHandler {
           case PartyOption.MOVE_2:
           case PartyOption.MOVE_3:
           case PartyOption.MOVE_4:
-            optionName = pokemon.moveset[option - PartyOption.MOVE_1].getName();
+            const move = pokemon.moveset[option - PartyOption.MOVE_1];
+            if(this.showMovePp) {
+              const maxPP = move.getMovePp();
+              const currPP = maxPP - move.ppUsed;
+              optionName = `${move.getName()} ${currPP}/${maxPP}`;
+            } else {
+              optionName = move.getName();
+            }
             break;
           default:
             if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {
