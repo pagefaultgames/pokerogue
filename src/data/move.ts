@@ -2582,6 +2582,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.INGRAIN:
       case BattlerTagType.IGNORE_ACCURACY:
       case BattlerTagType.AQUA_RING:
+      case BattlerTagType.STOCKPILE:
         return 3;
       case BattlerTagType.PROTECTED:
       case BattlerTagType.FLYING:
@@ -4509,8 +4510,15 @@ export function initMoves() {
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       .partial(),
     // mareksison/redmaverick616 starts working here
+    /**
+     * need to find a way to remove stat changes when stockpile is used
+     * need to find a way to remove stockpile when the relevant moves are used
+     */
     new SelfStatusMove(Moves.STOCKPILE, Type.NORMAL, -1, 20, -1, 0, 3)
-      .unimplemented(),
+      .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILE, true, false, 0, 10)
+      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, true)
+      .target(MoveTarget.USER)
+      .partial(),
     new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
       .unimplemented(),
     new SelfStatusMove(Moves.SWALLOW, Type.NORMAL, -1, 10, -1, 0, 3)
