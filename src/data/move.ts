@@ -3594,6 +3594,25 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
   }
 }
 
+export class SuppressAbilitiesAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    target.summonData.abilitySuppressed = true;
+
+    target.scene.queueMessage(getPokemonMessage(target, ` ability\nwas suppressed!`));
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
+  }
+}
+
+
+
 export class TransformAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -4831,7 +4850,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.POWER_TRICK, Type.PSYCHIC, -1, 10, -1, 0, 4)
       .unimplemented(),
     new StatusMove(Moves.GASTRO_ACID, Type.POISON, 100, 10, -1, 0, 4)
-      .unimplemented(),
+      .attr(SuppressAbilitiesAttr),
     new StatusMove(Moves.LUCKY_CHANT, Type.NORMAL, -1, 30, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.NO_CRIT, false, false, 5)
       .target(MoveTarget.USER_SIDE)
