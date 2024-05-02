@@ -761,6 +761,12 @@ export class ContactBurnProtectedTag extends ProtectedTag {
   }
 }
 
+export class BounceTag extends BattlerTag {
+  constructor(sourceMove: Moves, tagType: BattlerTagType = BattlerTagType.BOUNCE) {
+    super(tagType, BattlerTagLapseType.CUSTOM, 0, sourceMove);
+  }
+}
+
 export class EnduringTag extends BattlerTag {
   constructor(sourceMove: Moves) {
     super(BattlerTagType.ENDURING, BattlerTagLapseType.TURN_END, 0, sourceMove);
@@ -1178,6 +1184,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new CursedTag(sourceId);
     case BattlerTagType.CHARGED:
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
+    case BattlerTagType.BOUNCE:
+      return new BounceTag(sourceMove);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

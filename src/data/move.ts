@@ -69,7 +69,9 @@ export enum MoveFlags {
   DANCE_MOVE = 4096,
   WIND_MOVE = 8192,
   TRIAGE_MOVE = 16384,
-  IGNORE_ABILITIES = 32768
+  IGNORE_ABILITIES = 32768,
+  MAGIC_COAT_MOVE = 65536
+
 }
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -291,6 +293,11 @@ export default class Move implements Localizable {
 
   triageMove(triageMove?: boolean): this {
     this.setFlag(MoveFlags.TRIAGE_MOVE, triageMove);
+    return this;
+  }
+
+  magicCoatMove(magicCoatMove?: boolean): this {
+    this.setFlag(MoveFlags.MAGIC_COAT_MOVE, magicCoatMove);
     return this;
   }
 
@@ -3868,7 +3875,8 @@ export function initMoves() {
       .attr(FixedDamageAttr, 20),
     new StatusMove(Moves.DISABLE, Type.NORMAL, 100, 20, -1, 0, 1)
       .attr(DisableMoveAttr)
-      .condition(failOnMaxCondition),
+      .condition(failOnMaxCondition)
+      .magicCoatMove(),
     new AttackMove(Moves.ACID, Type.POISON, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -3980,6 +3988,7 @@ export function initMoves() {
       .attr(ChargeAttr, ChargeAnim.DIG_CHARGING, 'dug a hole!', BattlerTagType.UNDERGROUND)
       .ignoresVirtual(),
     new StatusMove(Moves.TOXIC, Type.POISON, 90, 10, -1, 0, 1)
+      .magicCoatMove()
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
       .attr(ToxicAccuracyAttr),
     new AttackMove(Moves.CONFUSION, Type.PSYCHIC, MoveCategory.SPECIAL, 50, 100, 25, 10, 0, 1)
@@ -4018,7 +4027,8 @@ export function initMoves() {
     new StatusMove(Moves.SMOKESCREEN, Type.NORMAL, 100, 20, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.ACC, -1),
     new StatusMove(Moves.CONFUSE_RAY, Type.GHOST, 100, 10, -1, 0, 1)
-      .attr(ConfuseAttr),
+      .attr(ConfuseAttr)
+      .magicCoatMove(),
     new SelfStatusMove(Moves.WITHDRAW, Type.WATER, -1, 40, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, 1, true),
     new SelfStatusMove(Moves.DEFENSE_CURL, Type.NORMAL, -1, 40, -1, 0, 1)
@@ -4221,7 +4231,8 @@ export function initMoves() {
     new StatusMove(Moves.COTTON_SPORE, Type.GRASS, 100, 40, -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.SPD, -2)
       .powderMove()
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .magicCoatMove(),
     new AttackMove(Moves.REVERSAL, Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 2)
       .attr(LowHpPowerAttr),
     new StatusMove(Moves.SPITE, Type.GHOST, 100, 10, -1, 0, 2)
@@ -4290,6 +4301,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.ENDURE, Type.NORMAL, -1, 10, -1, 4, 2)
       .attr(EndureAttr),
     new StatusMove(Moves.CHARM, Type.FAIRY, 100, 20, -1, 0, 2)
+      .magicCoatMove()
       .attr(StatChangeAttr, BattleStat.ATK, -2),
     new AttackMove(Moves.ROLLOUT, Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, 0, 2)
       .attr(ConsecutiveUseDoublePowerAttr, 5, true, true, Moves.DEFENSE_CURL),
@@ -4311,6 +4323,7 @@ export function initMoves() {
     new StatusMove(Moves.MEAN_LOOK, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1),
     new StatusMove(Moves.ATTRACT, Type.NORMAL, 100, 15, -1, 0, 2)
+      .magicCoatMove()
       .attr(AddBattlerTagAttr, BattlerTagType.INFATUATED)
       .condition((user, target, move) => user.isOppositeGender(target)),
     new SelfStatusMove(Moves.SLEEP_TALK, Type.NORMAL, -1, 10, -1, 0, 2)
@@ -4502,7 +4515,7 @@ export function initMoves() {
     new AttackMove(Moves.SUPERPOWER, Type.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, 100, 0, 3)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], -1, true),
     new SelfStatusMove(Moves.MAGIC_COAT, Type.PSYCHIC, -1, 15, -1, 4, 3)
-      .unimplemented(),
+        .attr(AddBattlerTagAttr, BattlerTagType.BOUNCE),
     new SelfStatusMove(Moves.RECYCLE, Type.NORMAL, -1, 10, -1, 0, 3)
       .unimplemented(),
     new AttackMove(Moves.REVENGE, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, -4, 3)
@@ -4655,6 +4668,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.IRON_DEFENSE, Type.STEEL, -1, 15, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.DEF, 2, true),
     new StatusMove(Moves.BLOCK, Type.NORMAL, -1, 5, -1, 0, 3)
+      .magicCoatMove()
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1),
     new StatusMove(Moves.HOWL, Type.NORMAL, -1, 40, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.ATK, 1)
@@ -4814,6 +4828,7 @@ export function initMoves() {
     new AttackMove(Moves.SUCKER_PUNCH, Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, -1, 1, 4)
       .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].category !== MoveCategory.STATUS),
     new StatusMove(Moves.TOXIC_SPIKES, Type.POISON, -1, 20, -1, 0, 4)
+      .magicCoatMove()
       .attr(AddArenaTrapTagAttr, ArenaTagType.TOXIC_SPIKES)
       .target(MoveTarget.ENEMY_SIDE),
     new StatusMove(Moves.HEART_SWAP, Type.PSYCHIC, -1, 10, -1, 0, 4)
@@ -4920,7 +4935,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.EVA, -1)
       .attr(ClearWeatherAttr, WeatherType.FOG)
       .attr(ClearTerrainAttr)
-      .attr(RemoveScreensAttr, true),
+      .attr(RemoveScreensAttr, true)
+      .magicCoatMove(),
     new StatusMove(Moves.TRICK_ROOM, Type.PSYCHIC, -1, 5, -1, -7, 4)
       .attr(AddArenaTagAttr, ArenaTagType.TRICK_ROOM, 5)
       .ignoresProtect()
@@ -4958,10 +4974,12 @@ export function initMoves() {
     new StatusMove(Moves.CAPTIVATE, Type.NORMAL, 100, 20, -1, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPATK, -2)
       .condition((user, target, move) => target.isOppositeGender(user))
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .magicCoatMove(),
     new StatusMove(Moves.STEALTH_ROCK, Type.ROCK, -1, 20, -1, 0, 4)
       .attr(AddArenaTrapTagAttr, ArenaTagType.STEALTH_ROCK)
-      .target(MoveTarget.ENEMY_SIDE),
+      .target(MoveTarget.ENEMY_SIDE)
+      .magicCoatMove(),
     new AttackMove(Moves.GRASS_KNOT, Type.GRASS, MoveCategory.SPECIAL, -1, 100, 20, -1, 0, 4)
       .attr(WeightPowerAttr)
       .makesContact()
@@ -5005,7 +5023,8 @@ export function initMoves() {
       .attr(TrapAttr, BattlerTagType.MAGMA_STORM),
     new StatusMove(Moves.DARK_VOID, Type.DARK, 50, 10, -1, 0, 4)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .magicCoatMove(),
     new AttackMove(Moves.SEED_FLARE, Type.GRASS, MoveCategory.SPECIAL, 120, 85, 5, 40, 0, 4)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1),
     new AttackMove(Moves.OMINOUS_WIND, Type.GHOST, MoveCategory.SPECIAL, 60, 100, 5, 10, 0, 4)
@@ -5392,6 +5411,7 @@ export function initMoves() {
     new StatusMove(Moves.HOLD_HANDS, Type.NORMAL, -1, 40, -1, 0, 6)
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.BABY_DOLL_EYES, Type.FAIRY, 100, 30, -1, 1, 6)
+      .magicCoatMove()
       .attr(StatChangeAttr, BattleStat.ATK, -1),
     new AttackMove(Moves.NUZZLE, Type.ELECTRIC, MoveCategory.PHYSICAL, 20, 100, 20, 100, 0, 6)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
@@ -5931,6 +5951,7 @@ export function initMoves() {
       .partial(),
     new StatusMove(Moves.CORROSIVE_GAS, Type.POISON, 100, 40, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_OTHERS)
+      .magicCoatMove()
       .unimplemented(),
     new StatusMove(Moves.COACHING, Type.FIGHTING, -1, 10, 100, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], 1)

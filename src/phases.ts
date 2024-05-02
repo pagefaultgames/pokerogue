@@ -21,7 +21,7 @@ import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
+import { BattlerTagLapseType, BounceTag, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
 import { getPokemonMessage } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
@@ -2262,11 +2262,16 @@ export class MovePhase extends BattlePhase {
       // Assume conditions affecting targets only apply to moves with a single target
       let success = this.move.getMove().applyConditions(this.pokemon, targets[0], this.move.getMove());
       let failedText = null;
+      const isBounced = this.move.getMove().hasFlag(MoveFlags.MAGIC_COAT_MOVE) && targets[0].findTags(t => t instanceof BounceTag).find(t => targets[0].lapseTag(t.tagType));
       if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
         success = false;
       else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.move.getMove())) {
         success = false;
         failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
+      } else if (success && isBounced) {
+        this.showFailedText(this.pokemon.getOpponentDescriptor() + "\nbounced the move back!");
+        this.targets = [this.pokemon.getBattlerIndex()];
+        this.pokemon = targets[0];
       }
       if (success)
         this.scene.unshiftPhase(this.getEffectPhase());
