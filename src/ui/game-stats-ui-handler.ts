@@ -6,7 +6,7 @@ import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
-import {Button} from "#app/inputHandler";
+import {Button} from "#app/inputsController";
 
 interface DisplayStat {
   label?: string;

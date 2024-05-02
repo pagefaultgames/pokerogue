@@ -4,7 +4,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
-import {Button} from "#app/inputHandler";
+import {Button} from "#app/inputsController";
 
 const itemRows = 4;
 const itemCols = 17;

@@ -2,7 +2,7 @@ import BattleScene from "../battle-scene";
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
-import {Button} from "#app/inputHandler";
+import {Button} from "#app/inputsController";
 
 export default class EvolutionSceneHandler extends MessageUiHandler {
   public evolutionContainer: Phaser.GameObjects.Container;

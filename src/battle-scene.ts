@@ -60,7 +60,7 @@ import CandyBar from './ui/candy-bar';
 import { Variant, variantData } from './data/variant';
 import { Localizable } from './plugins/i18n';
 import { STARTING_WAVE_OVERRIDE, OPP_SPECIES_OVERRIDE, SEED_OVERRIDE, STARTING_BIOME_OVERRIDE } from './overrides';
-import {Button, InputHandler} from "#app/inputHandler";
+import {Button, InputsController} from "#app/inputsController";
 
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
@@ -84,7 +84,7 @@ export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound
 
 export default class BattleScene extends SceneBase {
 	public rexUI: UIPlugin;
-	public inputHandler: InputHandler;
+	public inputController: InputsController;
 
 	public sessionPlayTime: integer = null;
 	public masterVolume: number = 0.5;
@@ -205,7 +205,7 @@ export default class BattleScene extends SceneBase {
 	}
 
 	async preload() {
-        this.load.scenePlugin('inputHandler', InputHandler);
+        this.load.scenePlugin('inputController', InputsController);
 		if (DEBUG_RNG) {
 			const scene = this;
 			const originalRealInRange = Phaser.Math.RND.realInRange;
@@ -249,13 +249,13 @@ export default class BattleScene extends SceneBase {
 	}
 
 	listenInputs() {
-		this.inputHandler.events.on('input_down', (event) => {
+		this.inputController.events.on('input_down', (event) => {
 			const actions = this.getActionsKeyDown();
 			const [inputSuccess, vibrationLength] = actions[event.button]();
 			if (inputSuccess && this.enableVibration && typeof navigator.vibrate !== 'undefined')
 				navigator.vibrate(vibrationLength);
 		}, this);
-		this.inputHandler.events.on('input_up', (event) => {
+		this.inputController.events.on('input_up', (event) => {
 			const actions = this.getActionsKeyUp();
 			if (!actions.hasOwnProperty(event.button)) return;
 			const [inputSuccess, vibrationLength] = actions[event.button]();

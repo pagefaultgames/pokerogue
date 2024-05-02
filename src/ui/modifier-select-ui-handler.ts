@@ -6,7 +6,7 @@ import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
-import {Button} from "#app/inputHandler";
+import {Button} from "#app/inputsController";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 

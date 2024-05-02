@@ -5,7 +5,7 @@ import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import i18next from '../plugins/i18n';
-import {Button} from "#app/inputHandler";
+import {Button} from "#app/inputsController";
 
 export enum Command {
   FIGHT = 0,

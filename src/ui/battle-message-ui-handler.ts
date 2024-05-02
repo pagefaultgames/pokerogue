@@ -6,7 +6,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { getStatName, Stat } from "../data/pokemon-stat";
 import { addWindow } from "./ui-theme";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import {Button} from "#app/inputHandler";
+import {Button} from "#app/inputsController";
 
 export default class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsContainer: Phaser.GameObjects.Container;

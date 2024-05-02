@@ -1,7 +1,7 @@
 import BattleScene from "../battle-scene";
 import AbstractOptionSelectUiHandler, { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { Mode } from "./ui";
-import {Button} from "#app/inputHandler";
+import {Button} from "#app/inputsController";
 
 export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
   private switchCheck: boolean;

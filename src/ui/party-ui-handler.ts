@@ -16,7 +16,7 @@ import { pokemonEvolutions } from "../data/pokemon-evolutions";
 import { addWindow } from "./ui-theme";
 import { SpeciesFormChangeItemTrigger } from "../data/pokemon-forms";
 import { getVariantTint } from "#app/data/variant";
-import {Button} from "#app/inputHandler";
+import {Button} from "#app/inputsController";
 
 const defaultMessage = 'Choose a Pokémon.';
 

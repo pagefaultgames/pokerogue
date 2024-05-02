@@ -9,7 +9,7 @@ import { getPokemonSpecies } from "../data/pokemon-species";
 import { addWindow } from "./ui-theme";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { EggTier } from "../data/enums/egg-type";
-import {Button} from "#app/inputHandler";
+import {Button} from "#app/inputsController";
 
 const defaultText = 'Select a machine.';
 

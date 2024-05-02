@@ -2,7 +2,7 @@ import BattleScene from "../battle-scene";
 import { EggHatchPhase } from "../egg-hatch-phase";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
-import {Button} from "#app/inputHandler";
+import {Button} from "#app/inputsController";
 
 export default class EggHatchSceneHandler extends UiHandler {
   public eggHatchContainer: Phaser.GameObjects.Container;

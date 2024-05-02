@@ -35,7 +35,7 @@ import SavingIconHandler from './saving-icon-handler';
 import UnavailableModalUiHandler from './unavailable-modal-ui-handler';
 import OutdatedModalUiHandler from './outdated-modal-ui-handler';
 import SessionReloadModalUiHandler from './session-reload-modal-ui-handler';
-import {Button} from "#app/inputHandler";
+import {Button} from "#app/inputsController";
 
 export enum Mode {
   MESSAGE,

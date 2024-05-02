@@ -27,7 +27,7 @@ export enum Button {
     SLOW_DOWN
 }
 
-export class InputHandler extends Phaser.Plugins.ScenePlugin {
+export class InputsController extends Phaser.Plugins.ScenePlugin {
 	private game: Phaser.Game;
 	private buttonKeys;
 	private gamepads;
