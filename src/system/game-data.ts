@@ -169,6 +169,7 @@ export interface StarterDataEntry {
   moveset: StarterMoveset | StarterFormMoveData; 
   eggMoves: integer;
   candyCount: integer;
+  friendship: integer;
   abilityAttr: integer;
   passiveAttr: integer;
   valueReduction: integer;
@@ -988,6 +989,7 @@ export class GameData {
         moveset: null,
         eggMoves: 0,
         candyCount: 0,
+        friendship: 0,
         abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
         passiveAttr: 0,
         valueReduction: 0
@@ -1035,6 +1037,7 @@ export class GameData {
       
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
       const newCatch = !caughtAttr;
+      const hasNewAttr = (caughtAttr & dexAttr) !== dexAttr;
 
       if (incrementCount) {
         if (!fromEgg) {
@@ -1057,7 +1060,7 @@ export class GameData {
             this.gameStats.shinyPokemonHatched++;
         }
 
-        if (!hasPrevolution)
+        if (!hasPrevolution && (!pokemon.scene.gameMode.isDaily || hasNewAttr))
           this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant || 0) : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
       }
     

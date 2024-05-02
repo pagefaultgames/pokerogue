@@ -367,8 +367,8 @@ export abstract class PokemonSpeciesForm {
   loadAssets(scene: BattleScene, female: boolean, formIndex?: integer, shiny?: boolean, variant?: Variant, startLoad?: boolean): Promise<void> {
     return new Promise(resolve => {
       const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant);
-      scene.load.audio(this.getCryKey(formIndex), `audio/cry/${this.getCryKey(formIndex)}.m4a`);
       scene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant));
+      scene.load.audio(this.getCryKey(formIndex), `audio/cry/${this.getCryKey(formIndex)}.m4a`);
       scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
         // Ignore warnings for missing frames, because there will be a lot
@@ -3155,6 +3155,30 @@ export const noStarterFormKeys: string[] = [
   SpeciesFormKey.GIGANTAMAX_SINGLE,
   SpeciesFormKey.ETERNAMAX
 ].map(k => k.toString());
+
+export function getStarterValueFriendshipCap(value: integer): integer {
+  switch (value) {
+    case 1:
+      return 20;
+    case 2:
+      return 40;
+    case 3:
+      return 60;
+    case 4:
+      return 100;
+    case 5:
+      return 140;
+    case 6:
+      return 200;
+    case 7:
+      return 280;
+    case 8:
+    case 9:
+      return 450;
+    default:
+      return 600;
+  }
+}
 
 export const starterPassiveAbilities = {
   [Species.BULBASAUR]: Abilities.SOLAR_POWER,
