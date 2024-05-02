@@ -11,6 +11,7 @@ interface RankingEntry {
   wave: integer
 }
 
+// Don't forget to update translations when adding a new category
 enum ScoreboardCategory {
   DAILY,
   WEEKLY
@@ -40,7 +41,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     const titleWindow = addWindow(this.scene, 0, 0, 114, 18, false, false, null, null, WindowVariant.THIN);
     this.add(titleWindow);
 
-    this.titleLabel = addTextObject(this.scene, titleWindow.displayWidth / 2, titleWindow.displayHeight / 2, i18next.t('menu:dailyRankings'), TextStyle.WINDOW, { fontSize: '64px' });
+    this.titleLabel = addTextObject(this.scene, titleWindow.displayWidth / 2, titleWindow.displayHeight / 2, i18next.t('menu:loading'), TextStyle.WINDOW, { fontSize: '64px' });
     this.titleLabel.setOrigin(0.5, 0.5);
     this.add(this.titleLabel);
 
@@ -156,7 +157,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
         .then(jsonResponse => {
           this.page = page;
           this.category = category;
-          this.titleLabel.setText(`${Utils.toReadableString(ScoreboardCategory[category])} ${i18next.t("menu:rankings")}`);
+          this.titleLabel.setText(`${i18next.t(`menu:${ScoreboardCategory[category].toLowerCase()}Rankings`)}`);
           this.prevPageButton.setAlpha(page > 1 ? 1 : 0.5);
           this.nextPageButton.setAlpha(page < this.pageCount ? 1 : 0.5);
           this.pageNumberLabel.setText(page.toString());

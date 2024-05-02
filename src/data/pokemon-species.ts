@@ -138,9 +138,9 @@ export abstract class PokemonSpeciesForm {
       this.genderDiffs = genderDiffs;
   }
 
-  getRootSpeciesId(): Species {
+  getRootSpeciesId(forStarter: boolean = false): Species {
     let ret = this.speciesId;
-    while (pokemonPrevolutions.hasOwnProperty(ret))
+    while (pokemonPrevolutions.hasOwnProperty(ret) && (!forStarter || !speciesStarters.hasOwnProperty(ret)))
       ret = pokemonPrevolutions[ret];
     return ret;
   }

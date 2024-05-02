@@ -43,7 +43,9 @@ import { Nature, getNatureStatMultiplier } from '../data/nature';
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
 import { TerrainType } from '../data/terrain';
 import { TrainerSlot } from '../data/trainer-config';
+import { BerryType } from '../data/berry';
 import { ABILITY_OVERRIDE, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../overrides';
+import i18next from '../plugins/i18n';
 
 export enum FieldPosition {
   CENTER,
@@ -454,6 +456,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return 1.5;
     return 1;
   }
+
+  getHeldItems(): PokemonHeldItemModifier[] {
+    if (!this.scene)
+      return [];
+    return this.scene.findModifiers(m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === this.id, this.isPlayer()) as PokemonHeldItemModifier[];
+   }
 
   updateScale(): void {
     this.setScale(this.getSpriteScale());
@@ -1410,7 +1418,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             damage.value = this.damageAndUpdate(damage.value, result as DamageResult, isCritical, oneHitKo, oneHitKo);
             this.turnData.damageTaken += damage.value;
             if (isCritical)
-              this.scene.queueMessage('A critical hit!');
+              this.scene.queueMessage(i18next.t('battle:hitResultCriticalHit'));
             this.scene.setPhaseQueueSplice();
             if (source.isPlayer()) {
               this.scene.validateAchvs(DamageAchv, damage);
@@ -1428,16 +1436,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           if (source.turnData.hitsLeft === 1) {
             switch (result) {
               case HitResult.SUPER_EFFECTIVE:
-                this.scene.queueMessage('It\'s super effective!');
+                this.scene.queueMessage(i18next.t('battle:hitResultSuperEffective'));
                 break;
               case HitResult.NOT_VERY_EFFECTIVE:
-                this.scene.queueMessage('It\'s not very effective…');
+                this.scene.queueMessage(i18next.t('battle:hitResultNotVeryEffective'));
                 break;
               case HitResult.NO_EFFECT:
-                this.scene.queueMessage(`It doesn\'t affect ${this.name}!`);
+                this.scene.queueMessage(i18next.t('battle:hitResultNoEffect', { pokemonName: this.name }));
                 break;
               case HitResult.ONE_HIT_KO:  
-                this.scene.queueMessage('It\'s a one-hit KO!');
+                this.scene.queueMessage(i18next.t('battle:hitResultOneHitKO'));
                 break;
             }
           }
@@ -1454,7 +1462,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           defendingSidePlayField.forEach((p) => applyPreDefendAbAttrs(FieldPriorityMoveImmunityAbAttr, p, source, battlerMove, cancelled, typeMultiplier));
         }
         if (!typeMultiplier.value)
-          this.scene.queueMessage(`It doesn\'t affect ${this.name}!`);
+          this.scene.queueMessage(i18next.t('battle:hitResultNoEffect', { pokemonName: this.name }));
         result = cancelled.value || !typeMultiplier.value ? HitResult.NO_EFFECT : HitResult.STATUS;
         break;
     }
@@ -2673,7 +2681,7 @@ export class EnemyPokemon extends Pokemon {
             for (let mt of moveTargets[move.id]) {
               const target = this.scene.getField()[mt];
               let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
-              if (move.name.endsWith(' (N)'))
+              if (move.name.endsWith(' (N)') || !move.applyConditions(this, target, move))
                 targetScore = -20;
               else if (move instanceof AttackMove) {
                 const effectiveness = target.getAttackMoveEffectiveness(this, pokemonMove);
@@ -2993,6 +3001,7 @@ export class PokemonSummonData {
 export class PokemonBattleData {
   public hitCount: integer = 0;
   public endured: boolean = false;
+  public berriesEaten: BerryType[] = [];
 }
 
 export class PokemonBattleSummonData {
