@@ -1087,7 +1087,7 @@ export class GameData {
     }
     
     if(this.starterData[speciesIdToIncrement].winCount === 0 || !this.starterData[speciesIdToIncrement].winCount)
-      this.scene.gameData.gameStats.ribbonsOwned = 100;
+      this.scene.gameData.gameStats.ribbonsOwned++;
 
     const ribbonsInStats: integer = this.scene.gameData.gameStats.ribbonsOwned;
 
