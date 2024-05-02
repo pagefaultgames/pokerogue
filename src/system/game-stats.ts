@@ -6,6 +6,7 @@ export class GameStats {
   public battles: integer;
   public classicSessionsPlayed: integer;
   public sessionsWon: integer;
+  public ribbonsOwned: integer;
   public dailyRunSessionsPlayed: integer;
   public dailyRunSessionsWon: integer;
   public endlessSessionsPlayed: integer;
@@ -40,6 +41,7 @@ export class GameStats {
     this.battles = source?.battles || 0;
     this.classicSessionsPlayed = source?.classicSessionsPlayed || 0;
     this.sessionsWon = source?.sessionsWon || 0;
+    this.ribbonsOwned = source?.ribbonsOwned || 0;
     this.dailyRunSessionsPlayed = source?.dailyRunSessionsPlayed || 0;
     this.dailyRunSessionsWon = source?.dailyRunSessionsWon || 0;
     this.endlessSessionsPlayed = source?.endlessSessionsPlayed || 0;

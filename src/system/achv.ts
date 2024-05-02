@@ -51,9 +51,9 @@ export class Achv {
   }
 
   getTier(): AchvTier {
-    if (this.score >= 150)
-      return AchvTier.MASTER;
     if (this.score >= 100)
+      return AchvTier.MASTER;
+    if (this.score >= 75)
       return AchvTier.ROGUE;
     if (this.score >= 50)
       return AchvTier.ULTRA;
@@ -70,6 +70,16 @@ export class MoneyAchv extends Achv {
     super(name, `Accumulate a total of ₽${moneyAmount.toLocaleString('en-US')}`, iconImage, score, (scene: BattleScene, _args: any[]) => scene.money >= this.moneyAmount);
 
     this.moneyAmount = moneyAmount;
+  }
+}
+
+export class RibbonAchv extends Achv {
+  private ribbonAmount: integer;
+
+  constructor(name: string, ribbonAmount: integer, iconImage: string, score: integer) {
+    super(name, `Accumulate a total of ${ribbonAmount.toLocaleString('en-US')} Ribbons`, iconImage, score, (scene: BattleScene, _args: any[]) => scene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount);
+
+    this.ribbonAmount = ribbonAmount;
   }
 }
 
@@ -142,7 +152,12 @@ export const achvs = {
   HATCH_SHINY: new Achv('Shiny Egg', 'Hatch a shiny Pokémon from an egg', 'golden_mystic_ticket', 100).setSecret(),
   HIDDEN_ABILITY: new Achv('Hidden Potential', 'Catch a Pokémon with a hidden ability', 'ability_charm', 75),
   PERFECT_IVS: new Achv('Certificate of Authenticity', 'Get perfect IVs on a Pokémon', 'blunder_policy', 100),
-  CLASSIC_VICTORY: new Achv('Undefeated', 'Beat the game in classic mode', 'relic_crown', 150)
+  CLASSIC_VICTORY: new Achv('Undefeated', 'Beat the game in classic mode', 'relic_crown', 150),
+  _10_RIBBONS: new RibbonAchv('Pokémon League Champ.', 10, 'bronze_ribbon', 10),
+  _25_RIBBONS: new RibbonAchv('Great League Champ.', 25, 'great_ribbon', 25).setSecret(true),
+  _50_RIBBONS: new RibbonAchv('Ultra League Champ.', 50, 'ultra_ribbon', 50).setSecret(true),
+  _75_RIBBONS: new RibbonAchv('Rogue League Champ.', 75, 'rogue_ribbon', 75).setSecret(true),
+  _100_RIBBONS: new RibbonAchv('Master League Champ.', 100, 'master_ribbon', 100).setSecret(true)
 };
 
 {
