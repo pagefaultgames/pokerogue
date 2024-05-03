@@ -2018,6 +2018,18 @@ export class PresentPowerAttr extends VariablePowerAttr {
   }
 }
 
+export class KnockOffPowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if(target.getHeldItems().length > 0){
+      (args[0] as Utils.NumberHolder).value *= 1.5;
+      console.log(args[0])
+      return true; 
+    }
+    console.log(args[0])
+    return false;
+  }
+}
+
 export class VariableAtkAttr extends MoveAttr {
   constructor() {
     super();
@@ -4580,6 +4592,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, move) => !target.status),
     new AttackMove(Moves.KNOCK_OFF, Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
+      .attr(KnockOffPowerAttr)
       .partial(),
     new AttackMove(Moves.ENDEAVOR, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 3)
       .attr(MatchHpAttr)
