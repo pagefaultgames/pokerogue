@@ -8,8 +8,6 @@ import InputTextPlugin from 'phaser3-rex-plugins/plugins/inputtext-plugin.js';
 import BBCodeText from 'phaser3-rex-plugins/plugins/bbcodetext';
 import TransitionImagePackPlugin from 'phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin.js';
 import { LoadingScene } from './loading-scene';
-import {InputsController} from "#app/inputs-controller";
-import {UiInputs} from "#app/ui-inputs";
 
 
 // Catch global errors and display them in an alert so users can report the issue.
@@ -54,14 +52,6 @@ const config: Phaser.Types.Core.GameConfig = {
 			key: 'rexUI',
 			plugin: UIPlugin,
 			mapping: 'rexUI'
-		}, {
-			key: 'InputsController',
-			plugin: InputsController,
-			mapping: 'inputsController'
-		}, {
-			key: 'UiInputs',
-			plugin: UiInputs,
-			mapping: 'uiInputs'
 		}]
 	},
 	input: {

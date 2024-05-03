@@ -1,25 +1,25 @@
 import Phaser from "phaser";
 import {Mode} from "./ui/ui";
-import {Button} from "./inputs-controller";
+import {Button, InputsController} from "./inputs-controller";
 import MessageUiHandler from "./ui/message-ui-handler";
 import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
 import {Setting, settingOptions} from "./system/settings";
 import SettingsUiHandler from "./ui/settings-ui-handler";
 
 
-export class UiInputs extends Phaser.Plugins.ScenePlugin {
-    private game: Phaser.Game;
+export class UiInputs {
     private scene: Phaser.Scene;
     private events;
+    private inputsController;
 
-    constructor(scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager, pluginKey: string) {
-        super(scene, pluginManager, pluginKey);
-        this.game = pluginManager.game;
+    constructor(scene: Phaser.Scene, inputsController: InputsController) {
         this.scene = scene;
+        this.inputsController = inputsController;
+        this.init();
     }
 
-    boot() {
-        this.events = this.scene.inputsController.events;
+    init() {
+        this.events = this.inputsController.events;
         this.listenInputs();
     }
 

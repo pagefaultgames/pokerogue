@@ -29,8 +29,7 @@ export enum Button {
 
 const repeatInputDelayMillis = 250;
 
-export class InputsController extends Phaser.Plugins.ScenePlugin {
-    private game: Phaser.Game;
+export class InputsController {
     private buttonKeys: Phaser.Input.Keyboard.Key[][];
     private gamepads: Array<string> = new Array();
     private scene: Phaser.Scene;
@@ -41,9 +40,7 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
     private interactions: Map<Button, Map<string, boolean>> = new Map();
     private time: Time;
 
-    constructor(scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager, pluginKey: string) {
-        super(scene, pluginManager, pluginKey);
-        this.game = pluginManager.game;
+    constructor(scene: Phaser.Scene) {
         this.scene = scene;
         this.time = this.scene.time;
         this.buttonKeys = [];
@@ -56,30 +53,29 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
         }
         // We don't want the menu key to be repeated
         delete this.interactions[Button.MENU];
+        this.init();
     }
 
-    boot() {
-        this.eventEmitter = this.systems.events;
+    init() {
         this.events = new Phaser.Events.EventEmitter();
-        this.game.events.on(Phaser.Core.Events.STEP, this.update, this);
 
-        if (typeof this.systems.input.gamepad !== 'undefined') {
-            this.systems.input.gamepad.on('connected', function (thisGamepad) {
+        if (typeof this.scene.input.gamepad !== 'undefined') {
+            this.scene.input.gamepad.on('connected', function (thisGamepad) {
                 this.refreshGamepads();
                 this.setupGamepad(thisGamepad);
             }, this);
 
             // Check to see if the gamepad has already been setup by the browser
-            this.systems.input.gamepad.refreshPads();
-            if (this.systems.input.gamepad.total) {
+            this.scene.input.gamepad.refreshPads();
+            if (this.scene.input.gamepad.total) {
                 this.refreshGamepads();
                 for (const thisGamepad of this.gamepads) {
-                    this.systems.input.gamepad.emit('connected', thisGamepad);
+                    this.scene.input.gamepad.emit('connected', thisGamepad);
                 }
             }
 
-            this.systems.input.gamepad.on('down', this.gamepadButtonDown, this);
-            this.systems.input.gamepad.on('up', this.gamepadButtonUp, this);
+            this.scene.input.gamepad.on('down', this.gamepadButtonDown, this);
+            this.scene.input.gamepad.on('up', this.gamepadButtonUp, this);
         }
 
         // Keyboard
@@ -109,7 +105,7 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
 
     refreshGamepads(): void {
         // Sometimes, gamepads are undefined. For some reason.
-        this.gamepads = this.systems.input.gamepad.gamepads.filter(function (el) {
+        this.gamepads = this.scene.input.gamepad.gamepads.filter(function (el) {
             return el != null;
         });
 
@@ -191,7 +187,7 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
             const keys: Phaser.Input.Keyboard.Key[] = [];
             if (keyConfig.hasOwnProperty(b)) {
                 for (let k of keyConfig[b])
-                    keys.push(this.systems.input.keyboard.addKey(k, false));
+                    keys.push(this.scene.input.keyboard.addKey(k, false));
                 mobileKeyConfig[Button[b]] = keys[0];
             }
             this.buttonKeys[b] = keys;

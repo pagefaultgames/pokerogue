@@ -84,6 +84,8 @@ export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound
 
 export default class BattleScene extends SceneBase {
 	public rexUI: UIPlugin;
+    public inputController: InputsController;
+    public uiInputs: UiInputs;
 
 	public sessionPlayTime: integer = null;
 	public masterVolume: number = 0.5;
@@ -176,7 +178,6 @@ export default class BattleScene extends SceneBase {
 
 	constructor() {
 		super('battle');
-        Phaser.Plugins.PluginCache.register('UiInputs', UiInputs, 'uiInputs');
 
 		initSpecies();
 		initMoves();
@@ -221,6 +222,8 @@ export default class BattleScene extends SceneBase {
 
 	create() {
 		initGameSpeed.apply(this);
+        this.inputController = new InputsController(this);
+        this.uiInputs = new UiInputs(this, this.inputController);
 
 		this.gameData = new GameData(this);
 
@@ -238,6 +241,7 @@ export default class BattleScene extends SceneBase {
 	}
 
 	update() {
+        this.inputController.update();
 		this.ui?.update();
 	}
 
