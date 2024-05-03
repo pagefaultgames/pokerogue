@@ -210,9 +210,8 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 }
 
 export const sessionIdKey = 'pokerogue_sessionId';
-export const isLocal = window.location.hostname === 'localhost';
-export const serverUrl = isLocal ? 'http://localhost:8001' : '';
-export const apiUrl = isLocal ? serverUrl : 'api';
+export const isLocal = import.meta.env.VITE_ENVIRONMENT === 'local';
+export const apiUrl = import.meta.env.VITE_API_BASE_URL || (!isLocal ? 'api' : '');
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
