@@ -93,7 +93,11 @@ export enum Button {
 	CYCLE_NATURE,
 	CYCLE_VARIANT,
 	SPEED_UP,
-	SLOW_DOWN
+	SLOW_DOWN,
+	LEFT_STICK_UP,
+	LEFT_STICK_DOWN,
+	LEFT_STICK_LEFT,
+	LEFT_STICK_RIGHT
 }
 
 export interface PokeballCounts {
@@ -221,6 +225,7 @@ export default class BattleScene extends SceneBase {
 	public rngCounter: integer = 0;
 	public rngSeedOverride: string = '';
 	public rngOffset: integer = 0;
+	private analogStickThreshold = 0.5;
 
 	constructor() {
 		super('battle');
@@ -1447,8 +1452,66 @@ export default class BattleScene extends SceneBase {
 		}
 		if (inputSuccess && this.enableVibration && typeof navigator.vibrate !== 'undefined')
 			navigator.vibrate(vibrationLength || 10);		
+
+		if(this.gamepadSupport){
+			this.handleAnalogStick();
+		}
 	}
 
+	private analogStickDirections = {
+		[Button.LEFT_STICK_UP]: false,
+		[Button.LEFT_STICK_DOWN]: false,
+		[Button.LEFT_STICK_LEFT]: false,
+		[Button.LEFT_STICK_RIGHT]: false
+	  };
+	  
+	handleAnalogStick(): void {
+		const gamepad = this.input.gamepad?.gamepads[0];
+		if (!gamepad)
+			return;
+		
+		const leftStickX = gamepad.leftStick.x;
+		const leftStickY = gamepad.leftStick.y;
+		
+		if (Math.abs(leftStickX) > Math.abs(leftStickY)) {
+			if (leftStickX < -this.analogStickThreshold) {
+			// Left analog stick moved to the left
+				this.handleAnalogStickDirection(Button.LEFT_STICK_LEFT, Button.LEFT);
+			} else if (leftStickX > this.analogStickThreshold) {
+			// Left analog stick moved to the right
+				this.handleAnalogStickDirection(Button.LEFT_STICK_RIGHT, Button.RIGHT);
+			} else {
+			// Left analog stick is in the neutral position horizontally
+				this.analogStickDirections[Button.LEFT_STICK_LEFT] = false;
+				this.analogStickDirections[Button.LEFT_STICK_RIGHT] = false;
+			}
+		} else {
+			if (leftStickY < -this.analogStickThreshold) {
+			// Left analog stick moved up
+				this.handleAnalogStickDirection(Button.LEFT_STICK_UP, Button.UP);
+			} else if (leftStickY > this.analogStickThreshold) {
+			// Left analog stick moved down
+				this.handleAnalogStickDirection(Button.LEFT_STICK_DOWN, Button.DOWN);
+			} else {
+			// Left analog stick is in the neutral position vertically
+				this.analogStickDirections[Button.LEFT_STICK_UP] = false;
+				this.analogStickDirections[Button.LEFT_STICK_DOWN] = false;
+			}
+		}
+	}
+	
+	private handleAnalogStickDirection(analogStickButton: Button, direction: Button): void {
+		if (!this.analogStickDirections[analogStickButton]) {
+			// First button press
+			this.ui.processInput(direction);
+			this.setLastProcessedMovementTime(analogStickButton);
+			this.analogStickDirections[analogStickButton] = true;
+		} else if (this.repeatInputDurationJustPassed(analogStickButton)) {
+			// Subsequent holds
+			this.ui.processInput(direction);
+			this.setLastProcessedMovementTime(analogStickButton);
+		}
+	}
   /**
    * gamepadButtonJustDown returns true if @param button has just been pressed down
    * or not. It will only return true once, until the key is released and pressed down
@@ -1498,15 +1561,22 @@ export default class BattleScene extends SceneBase {
 	 */
 	repeatInputDurationJustPassed(button: Button): boolean {
 		if (this.movementButtonLock !== null && this.movementButtonLock !== button) {
-			return false;
+		  return false;
 		}
-		if (this.buttonKeys[button].every(k => k.isUp) && this.gamepadButtonStates.every(b => b == false)) {
-			this.movementButtonLock = null;
-			return false;
+	  
+		const isAnalogStickButton = button >= Button.LEFT_STICK_UP && button <= Button.LEFT_STICK_RIGHT;
+		const isButtonPressed = isAnalogStickButton || this.buttonKeys[button]?.some(k => k.isDown);
+	  
+		if (!isButtonPressed && this.gamepadButtonStates.every(b => b == false)) {
+		  this.movementButtonLock = null;
+		  return false;
 		}
+	  
 		if (this.time.now - this.lastProcessedButtonPressTimes.get(button) >= repeatInputDelayMillis) {
-			return true;
+		  return true;
 		}
+	  
+		return false;
 	}
 
 	setLastProcessedMovementTime(button: Button) {
