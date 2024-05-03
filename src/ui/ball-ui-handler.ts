@@ -1,11 +1,12 @@
 import { CommandPhase } from "../phases";
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene from "../battle-scene";
 import { getPokeballName } from "../data/pokeball";
 import { addTextObject, TextStyle } from "./text";
 import { Command } from "./command-ui-handler";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
+import {Button} from "#app/inputs-controller";
 
 export default class BallUiHandler extends UiHandler {
   private pokeballSelectContainer: Phaser.GameObjects.Container;

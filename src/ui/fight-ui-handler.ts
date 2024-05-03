@@ -1,4 +1,4 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene from "../battle-scene";
 import { addTextObject, TextStyle } from "./text";
 import { Type } from "../data/type";
 import { Command } from "./command-ui-handler";
@@ -8,6 +8,7 @@ import * as Utils from "../utils";
 import { CommandPhase } from "../phases";
 import { MoveCategory } from "#app/data/move.js";
 import i18next from '../plugins/i18n';
+import {Button} from "#app/inputs-controller";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
