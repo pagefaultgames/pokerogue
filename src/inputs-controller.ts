@@ -1,10 +1,10 @@
 import Phaser, {Time} from "phaser";
 import * as Utils from "./utils";
 import {initTouchControls} from './touch-controls';
-import pad_generic from "#app/configs/pad_generic";
-import pad_unlicensedSNES from "#app/configs/pad_unlicensedSNES";
-import pad_xbox360 from "#app/configs/pad_xbox360";
-import pad_dualshock from "#app/configs/pad_dualshock";
+import pad_generic from "./configs/pad_generic";
+import pad_unlicensedSNES from "./configs/pad_unlicensedSNES";
+import pad_xbox360 from "./configs/pad_xbox360";
+import pad_dualshock from "./configs/pad_dualshock";
 
 
 export enum Button {

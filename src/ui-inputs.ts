@@ -1,10 +1,10 @@
 import Phaser from "phaser";
-import UI, {Mode} from "./ui/ui";
-import {Button} from "#app/inputs-controller";
-import MessageUiHandler from "#app/ui/message-ui-handler";
-import StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
-import {Setting, settingOptions} from "#app/system/settings";
-import SettingsUiHandler from "#app/ui/settings-ui-handler";
+import {Mode} from "./ui/ui";
+import {Button} from "./inputs-controller";
+import MessageUiHandler from "./ui/message-ui-handler";
+import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
+import {Setting, settingOptions} from "./system/settings";
+import SettingsUiHandler from "./ui/settings-ui-handler";
 
 
 export class UiInputs extends Phaser.Plugins.ScenePlugin {
@@ -16,10 +16,10 @@ export class UiInputs extends Phaser.Plugins.ScenePlugin {
         super(scene, pluginManager, pluginKey);
         this.game = pluginManager.game;
         this.scene = scene;
-        this.events = this.scene.inputController.events
     }
 
     boot() {
+        this.events = this.scene.inputsController.events;
         this.listenInputs();
     }
 

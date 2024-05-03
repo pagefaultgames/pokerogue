@@ -1,7 +1,7 @@
 import BattleScene from "../battle-scene";
 import { TextStyle, getTextColor } from "./text";
 import UI, { Mode } from "./ui";
-import {Button} from "#app/inputs-controller";
+import {Button} from "../inputs-controller";
 
 export default abstract class UiHandler {
   protected scene: BattleScene;

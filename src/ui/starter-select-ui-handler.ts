@@ -27,7 +27,7 @@ import { argbFromRgba } from "@material/material-color-utilities";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint } from "#app/data/variant";
-import {Button} from "#app/inputs-controller";
+import {Button} from "../inputs-controller";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 

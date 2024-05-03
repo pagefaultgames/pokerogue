@@ -8,7 +8,7 @@ import * as Utils from "../utils";
 import { CommandPhase } from "../phases";
 import { MoveCategory } from "#app/data/move.js";
 import i18next from '../plugins/i18n';
-import {Button} from "#app/inputs-controller";
+import {Button} from "../inputs-controller";
 
 export default class FightUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;

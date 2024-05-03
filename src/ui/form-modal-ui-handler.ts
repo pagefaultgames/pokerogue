@@ -6,7 +6,7 @@ import { WindowVariant, addWindow } from "./ui-theme";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import * as Utils from "../utils";
 import i18next from '../plugins/i18n';
-import {Button} from "#app/inputs-controller";
+import {Button} from "../inputs-controller";
 
 export interface FormModalConfig extends ModalConfig {
   errorMessage?: string;
