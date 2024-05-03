@@ -20,6 +20,7 @@ export enum Setting {
   Sprite_Set = "SPRITE_SET",
   Move_Animations = "MOVE_ANIMATIONS",
   Show_Stats_on_Level_Up = "SHOW_LEVEL_UP_STATS",
+  Disable_IV_Scanner = "DISABLE_IV_SCANNER",
   EXP_Gains_Speed = "EXP_GAINS_SPEED",
   HP_Bar_Speed = "HP_BAR_SPEED",
   Fusion_Palette_Swaps = "FUSION_PALETTE_SWAPS",
@@ -51,6 +52,7 @@ export const settingOptions: SettingOptions = {
   [Setting.Sprite_Set]: [ 'Consistent', 'Mixed Animated' ],
   [Setting.Move_Animations]: [ 'Off', 'On' ],
   [Setting.Show_Stats_on_Level_Up]: [ 'Off', 'On' ],
+  [Setting.Disable_IV_Scanner]: [ 'On', 'Off' ],
   [Setting.EXP_Gains_Speed]: [ 'Normal', 'Fast', 'Faster', 'Skip' ],
   [Setting.HP_Bar_Speed]: [ 'Normal', 'Fast', 'Faster', 'Instant' ],
   [Setting.Fusion_Palette_Swaps]: [ 'Off', 'On' ],
@@ -74,6 +76,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Sprite_Set]: 0,
   [Setting.Move_Animations]: 1,
   [Setting.Show_Stats_on_Level_Up]: 1,
+  [Setting.Disable_IV_Scanner]: 1,
   [Setting.EXP_Gains_Speed]: 0,
   [Setting.HP_Bar_Speed]: 0,
   [Setting.Fusion_Palette_Swaps]: 1,
@@ -127,6 +130,9 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
       break;
     case Setting.Show_Stats_on_Level_Up:
       scene.showLevelUpStats = settingOptions[setting][value] === 'On';
+      break;
+    case Setting.Disable_IV_Scanner:
+      scene.disableIVScanner = settingOptions[setting][value] === 'On';
       break;
     case Setting.EXP_Gains_Speed:
       scene.expGainsSpeed = value;
