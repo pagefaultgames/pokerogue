@@ -200,7 +200,7 @@ export default class BattleScene extends SceneBase {
 		this.load.atlas(key, `images/pokemon/${variant ? 'variant/' : ''}${experimental ? 'exp/' : ''}${atlasPath}.png`,  `images/pokemon/${variant ? 'variant/' : ''}${experimental ? 'exp/' : ''}${atlasPath}.json`);
 	}
 
-	async preload() {
+    async preload() {
         this.load.scenePlugin('inputController', InputsController);
         this.load.scenePlugin('uiInputs', UiInputs);
 		if (DEBUG_RNG) {

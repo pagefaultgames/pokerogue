@@ -19,7 +19,7 @@ export class UiInputs extends Phaser.Plugins.ScenePlugin {
         this.events = this.scene.inputController.events
     }
 
-	boot() {
+    boot() {
         this.listenInputs();
     }
 
@@ -41,7 +41,7 @@ export class UiInputs extends Phaser.Plugins.ScenePlugin {
         }, this);
     }
 
-	getActionsKeyDown() {
+    getActionsKeyDown() {
         const actions = {};
         actions[Button.UP] = () => this.buttonDirection(Button.UP);
         actions[Button.DOWN] = () => this.buttonDirection(Button.DOWN);
@@ -61,31 +61,31 @@ export class UiInputs extends Phaser.Plugins.ScenePlugin {
         actions[Button.SPEED_UP] = () => this.buttonSpeedChange();
         actions[Button.SLOW_DOWN] = () => this.buttonSpeedChange(false);
         return actions;
-	}
+    }
 
-	getActionsKeyUp() {
+    getActionsKeyUp() {
         const actions = {};
         actions[Button.STATS] = () => this.buttonStats(false);
         return actions;
-	}
+    }
 
-	buttonDirection(direction): Array<boolean | number> {
+    buttonDirection(direction): Array<boolean | number> {
         const inputSuccess = this.scene.ui.processInput(direction);
         const vibrationLength = 5;
         return [inputSuccess, vibrationLength];
-	}
+    }
 
-	buttonAb(button): Array<boolean | number> {
+    buttonAb(button): Array<boolean | number> {
         const inputSuccess = this.scene.ui.processInput(button);
         return [inputSuccess, 0];
-	}
+    }
 
-	buttonTouch(): Array<boolean | number> {
+    buttonTouch(): Array<boolean | number> {
         const inputSuccess = this.scene.ui.processInput(Button.SUBMIT) || this.scene.ui.processInput(Button.ACTION);
         return [inputSuccess, 0];
-	}
+    }
 
-	buttonStats(pressed = true): Array<boolean | number> {
+    buttonStats(pressed = true): Array<boolean | number> {
         if (pressed) {
             for (let p of this.scene.getField().filter(p => p?.isActive(true)))
                 p.toggleStats(true);
@@ -94,9 +94,9 @@ export class UiInputs extends Phaser.Plugins.ScenePlugin {
                 p.toggleStats(false);
         }
         return [true, 0];
-	}
+    }
 
-	buttonMenu(): Array<boolean | number> {
+    buttonMenu(): Array<boolean | number> {
         let inputSuccess;
         if (this.scene.disableMenu)
             return [true, 0];
@@ -129,17 +129,17 @@ export class UiInputs extends Phaser.Plugins.ScenePlugin {
                 return [true, 0];
         }
         return [inputSuccess, 0];
-	}
+    }
 
-	buttonCycleOption(button): Array<boolean | number> {
+    buttonCycleOption(button): Array<boolean | number> {
         let inputSuccess;
         if (this.scene.ui?.getHandler() instanceof StarterSelectUiHandler) {
             inputSuccess = this.scene.ui.processInput(button);
         }
         return [inputSuccess, 0];
-	}
+    }
 
-	buttonSpeedChange(up= true): Array<boolean | number> {
+    buttonSpeedChange(up = true): Array<boolean | number> {
         if (up) {
             if (this.scene.gameSpeed < 5) {
                 this.scene.gameData.saveSetting(Setting.Game_Speed, settingOptions[Setting.Game_Speed].indexOf(`${this.scene.gameSpeed}x`) + 1);
@@ -154,6 +154,6 @@ export class UiInputs extends Phaser.Plugins.ScenePlugin {
                 (this.scene.ui.getHandler() as SettingsUiHandler).show([]);
         }
         return [0, 0];
-	}
+    }
 
 }

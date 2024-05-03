@@ -1,4 +1,4 @@
-import Phaser, { Time } from "phaser";
+import Phaser, {Time} from "phaser";
 import * as Utils from "./utils";
 import {initTouchControls} from './touch-controls';
 import pad_generic from "#app/configs/pad_generic";
@@ -26,19 +26,20 @@ export enum Button {
     SPEED_UP,
     SLOW_DOWN
 }
+
 const repeatInputDelayMillis = 250;
 
 export class InputsController extends Phaser.Plugins.ScenePlugin {
-	private game: Phaser.Game;
-	private buttonKeys: Phaser.Input.Keyboard.Key[][];
-	private gamepads: Array<string> = new Array();
-	private scene: Phaser.Scene;
+    private game: Phaser.Game;
+    private buttonKeys: Phaser.Input.Keyboard.Key[][];
+    private gamepads: Array<string> = new Array();
+    private scene: Phaser.Scene;
 
-	// buttonLock ensures only a single movement key is firing repeated inputs
-	// (i.e. by holding down a button) at a time
-	private buttonLock: Button;
-	private interactions: Map<Button, Map<string, boolean>> = new Map();
-	private time: Time;
+    // buttonLock ensures only a single movement key is firing repeated inputs
+    // (i.e. by holding down a button) at a time
+    private buttonLock: Button;
+    private interactions: Map<Button, Map<string, boolean>> = new Map();
+    private time: Time;
 
     constructor(scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager, pluginKey: string) {
         super(scene, pluginManager, pluginKey);
@@ -57,7 +58,7 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
         delete this.interactions[Button.MENU];
     }
 
-	boot() {
+    boot() {
         this.eventEmitter = this.systems.events;
         this.events = new Phaser.Events.EventEmitter();
         this.game.events.on(Phaser.Core.Events.STEP, this.update, this);
@@ -79,13 +80,13 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
 
             this.systems.input.gamepad.on('down', this.gamepadButtonDown, this);
             this.systems.input.gamepad.on('up', this.gamepadButtonUp, this);
-		}
+        }
 
-		// Keyboard
-		this.setupKeyboardControls();
-	}
+        // Keyboard
+        this.setupKeyboardControls();
+    }
 
-	update() {
+    update() {
         for (const b of Utils.getEnumValues(Button)) {
             if (!this.interactions.hasOwnProperty(b)) continue;
             if (this.repeatInputDurationJustPassed(b)) {
@@ -96,17 +97,17 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
                 this.setLastProcessedMovementTime(b);
             }
         }
-	}
+    }
 
-	setupGamepad(thisGamepad): void {
+    setupGamepad(thisGamepad): void {
         let gamepadID = thisGamepad.id.toLowerCase();
         const mappedPad = this.mapGamepad(gamepadID);
         this.player = {
             'mapping': mappedPad.gamepadMapping,
         }
-	}
+    }
 
-	refreshGamepads() :void {
+    refreshGamepads(): void {
         // Sometimes, gamepads are undefined. For some reason.
         this.gamepads = this.systems.input.gamepad.gamepads.filter(function (el) {
             return el != null;
@@ -115,9 +116,9 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
         for (const [index, thisGamepad] of this.gamepads.entries()) {
             thisGamepad.index = index; // Overwrite the gamepad index, in case we had undefined gamepads earlier
         }
-	}
+    }
 
-	getActionGamepadMapping() {
+    getActionGamepadMapping() {
         const gamepadMapping = {};
         gamepadMapping[this.player.mapping.LC_N] = Button.UP;
         gamepadMapping[this.player.mapping.LC_S] = Button.DOWN;
@@ -138,9 +139,9 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
         gamepadMapping[this.player.mapping.RS] = Button.SLOW_DOWN;
 
         return gamepadMapping;
-	}
+    }
 
-	gamepadButtonDown(pad, button, value): void {
+    gamepadButtonDown(pad, button, value): void {
         const actionMapping = this.getActionGamepadMapping();
         const buttonDown = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
         if (buttonDown !== undefined) {
@@ -150,9 +151,9 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
             });
             this.setLastProcessedMovementTime(buttonDown);
         }
-	}
+    }
 
-	gamepadButtonUp(pad, button, value): void {
+    gamepadButtonUp(pad, button, value): void {
         const actionMapping = this.getActionGamepadMapping();
         const buttonUp = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
         if (buttonUp !== undefined) {
@@ -162,9 +163,9 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
             });
             this.delLastProcessedMovementTime(buttonUp);
         }
-	}
+    }
 
-	setupKeyboardControls(): void {
+    setupKeyboardControls(): void {
         const keyCodes = Phaser.Input.Keyboard.KeyCodes;
         const keyConfig = {
             [Button.UP]: [keyCodes.UP, keyCodes.W],
@@ -198,9 +199,9 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
 
         initTouchControls(mobileKeyConfig);
         this.listenInputKeyboard();
-	}
+    }
 
-	listenInputKeyboard(): void {
+    listenInputKeyboard(): void {
         this.buttonKeys.forEach((row, index) => {
             for (const key of row) {
                 key.on('down', () => {
@@ -219,7 +220,7 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
                 });
             }
         });
-	}
+    }
 
     mapGamepad(id) {
         id = id.toLowerCase();
@@ -227,23 +228,21 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
 
         if (id.includes('081f') && id.includes('e401')) {
             padConfig = pad_unlicensedSNES;
-        }
-        else if (id.includes('xbox') && id.includes('360')) {
+        } else if (id.includes('xbox') && id.includes('360')) {
             padConfig = pad_xbox360;
-        }
-        else if (id.includes('054c')) {
+        } else if (id.includes('054c')) {
             padConfig = pad_dualshock;
         }
 
         return padConfig;
     }
 
-	/**
-	 * repeatInputDurationJustPassed returns true if @param button has been held down long
-	 * enough to fire a repeated input. A button must claim the buttonLock before
-	 * firing a repeated input - this is to prevent multiple buttons from firing repeatedly.
-	 */
-	repeatInputDurationJustPassed(button: Button): boolean {
+    /**
+     * repeatInputDurationJustPassed returns true if @param button has been held down long
+     * enough to fire a repeated input. A button must claim the buttonLock before
+     * firing a repeated input - this is to prevent multiple buttons from firing repeatedly.
+     */
+    repeatInputDurationJustPassed(button: Button): boolean {
         if (this.buttonLock === null || this.buttonLock !== button) {
             return false;
         }
@@ -251,17 +250,17 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
             this.buttonLock = null;
             return true;
         }
-	}
+    }
 
-	setLastProcessedMovementTime(button: Button): void {
+    setLastProcessedMovementTime(button: Button): void {
         if (!this.interactions.hasOwnProperty(button)) return;
         this.buttonLock = button;
         this.interactions[button].pressTime = this.time.now;
-	}
+    }
 
-	delLastProcessedMovementTime(button: Button): void {
+    delLastProcessedMovementTime(button: Button): void {
         if (!this.interactions.hasOwnProperty(button)) return;
         this.buttonLock = null;
         this.interactions[button].pressTime = null;
-	}
+    }
 }
