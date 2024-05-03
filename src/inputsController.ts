@@ -98,7 +98,7 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
 		}
 	}
 
-	setupGamepad(thisGamepad) {
+	setupGamepad(thisGamepad): void {
 		let gamepadID = thisGamepad.id.toLowerCase();
 		const mappedPad = this.mapGamepad(gamepadID);
 		this.player = {
@@ -106,7 +106,7 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
 		}
 	}
 
-	refreshGamepads() {
+	refreshGamepads() :void {
 		// Sometimes, gamepads are undefined. For some reason.
 		this.gamepads = this.systems.input.gamepad.gamepads.filter(function (el) {
 			return el != null;
@@ -139,7 +139,8 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
 
 		return gamepadMapping;
 	}
-	gamepadButtonDown(pad, button, value) {
+
+	gamepadButtonDown(pad, button, value): void {
 		const actionMapping = this.getActionGamepadMapping();
 		const buttonDown = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
 		if (buttonDown !== undefined) {
@@ -151,7 +152,7 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
 		}
 	}
 
-	gamepadButtonUp(pad, button, value) {
+	gamepadButtonUp(pad, button, value): void {
 		const actionMapping = this.getActionGamepadMapping();
 		const buttonUp = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
 		if (buttonUp !== undefined) {
@@ -163,7 +164,7 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
 		}
 	}
 
-	setupKeyboardControls() {
+	setupKeyboardControls(): void {
 		const keyCodes = Phaser.Input.Keyboard.KeyCodes;
 		const keyConfig = {
 			[Button.UP]: [keyCodes.UP, keyCodes.W],
@@ -199,7 +200,7 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
 		this.listenInputKeyboard();
 	}
 
-	listenInputKeyboard() {
+	listenInputKeyboard(): void {
 		this.buttonKeys.forEach((row, index) => {
 			for (const key of row) {
 				key.on('down', () => {
@@ -252,13 +253,13 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
 		}
 	}
 
-	setLastProcessedMovementTime(button: Button) {
+	setLastProcessedMovementTime(button: Button): void {
 		if (!this.interactions.hasOwnProperty(button)) return;
 		this.buttonLock = button;
 		this.interactions[button].pressTime = this.time.now;
 	}
 
-	delLastProcessedMovementTime(button: Button) {
+	delLastProcessedMovementTime(button: Button): void {
 		if (!this.interactions.hasOwnProperty(button)) return;
 		this.buttonLock = null;
 		this.interactions[button].pressTime = null;
