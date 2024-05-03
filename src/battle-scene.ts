@@ -251,6 +251,7 @@ export default class BattleScene extends SceneBase {
 	listenInputs() {
 		this.inputController.events.on('input_down', (event) => {
 			const actions = this.getActionsKeyDown();
+			if (!actions.hasOwnProperty(event.button)) return;
 			const [inputSuccess, vibrationLength] = actions[event.button]();
 			if (inputSuccess && this.enableVibration && typeof navigator.vibrate !== 'undefined')
 				navigator.vibrate(vibrationLength);
@@ -1280,53 +1281,26 @@ export default class BattleScene extends SceneBase {
 		return biomes[Utils.randSeedInt(biomes.length)];
 	}
 
-	button_up() {
-		const inputSuccess = this.ui.processInput(Button.UP);
+	buttonDirection(direction) {
+		const inputSuccess = this.ui.processInput(direction);
 		const vibrationLength = 5;
-		this.setLastProcessedMovementTime(Button.UP);
+		this.setLastProcessedMovementTime(direction);
 		return [inputSuccess, vibrationLength];
 	}
 
-	button_down() {
-		const inputSuccess = this.ui.processInput(Button.DOWN);
-		const vibrationLength = 5;
-		this.setLastProcessedMovementTime(Button.DOWN);
-		return [inputSuccess, vibrationLength];
+	buttonAb(button) {
+		const inputSuccess = this.ui.processInput(button);
+		this.setLastProcessedMovementTime(button);
+		return [inputSuccess, 0];
 	}
 
-	button_left() {
-		const inputSuccess = this.ui.processInput(Button.LEFT);
-		const vibrationLength = 5;
-		this.setLastProcessedMovementTime(Button.LEFT);
-		return [inputSuccess, vibrationLength];
-	}
-
-	button_right() {
-		const inputSuccess = this.ui.processInput(Button.RIGHT);
-		const vibrationLength = 5;
-		this.setLastProcessedMovementTime(Button.RIGHT);
-		return [inputSuccess, vibrationLength];
-	}
-
-	button_touch() {
+	buttonTouch() {
 		const inputSuccess = this.ui.processInput(Button.SUBMIT) || this.ui.processInput(Button.ACTION);
 		this.setLastProcessedMovementTime(Button.SUBMIT);
 		return [inputSuccess, 0];
 	}
 
-	button_action() {
-		const inputSuccess = this.ui.processInput(Button.ACTION);
-		this.setLastProcessedMovementTime(Button.ACTION);
-		return [inputSuccess, 0];
-	}
-
-	button_cancel() {
-		const inputSuccess = this.ui.processInput(Button.CANCEL);
-		this.setLastProcessedMovementTime(Button.CANCEL);
-		return [inputSuccess, 0];
-	}
-
-	button_stats(pressed = true) {
+	buttonStats(pressed = true) {
 		if (pressed) {
 			for (let p of this.getField().filter(p => p?.isActive(true)))
 				p.toggleStats(true);
@@ -1338,14 +1312,14 @@ export default class BattleScene extends SceneBase {
 		return [0, 0];
 	}
 
-	button_menu() {
+	buttonMenu() {
 		let inputSuccess;
 		if (this.disableMenu)
-			return;
+			return [0, 0];
 		switch (this.ui?.getMode()) {
 			case Mode.MESSAGE:
 				if (!(this.ui.getHandler() as MessageUiHandler).pendingPrompt)
-					return;
+					return [0, 0];
 			case Mode.TITLE:
 			case Mode.COMMAND:
 			case Mode.FIGHT:
@@ -1368,12 +1342,12 @@ export default class BattleScene extends SceneBase {
 				inputSuccess = true;
 				break;
 			default:
-				return;
+				return [0, 0];
 		}
 		return [inputSuccess, 0];
 	}
 
-	button_cycle_option(button) {
+	buttonCycleOption(button) {
 		let inputSuccess;
 		if (this.ui?.getHandler() instanceof StarterSelectUiHandler) {
 			inputSuccess = this.ui.processInput(button);
@@ -1382,17 +1356,18 @@ export default class BattleScene extends SceneBase {
 		return [inputSuccess, 0];
 	}
 
-	button_speed_up() {
-		if (this.gameSpeed < 5) {
-			this.gameData.saveSetting(Setting.Game_Speed, settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) + 1);
-			if (this.ui?.getMode() === Mode.SETTINGS)
-				(this.ui.getHandler() as SettingsUiHandler).show([]);
+	buttonSpeedChange(up= true) {
+		if (up) {
+			console.log('speed up');
+			if (this.gameSpeed < 5) {
+				this.gameData.saveSetting(Setting.Game_Speed, settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) + 1);
+				if (this.ui?.getMode() === Mode.SETTINGS)
+					(this.ui.getHandler() as SettingsUiHandler).show([]);
+			}
+			return [0, 0];
 		}
-		return [0, 0];
-	}
-
-	button_speed_down() {
 		if (this.gameSpeed > 1) {
+			console.log('speed down');
 			this.gameData.saveSetting(Setting.Game_Speed, Math.max(settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) - 1, 0));
 			if (this.ui?.getMode() === Mode.SETTINGS)
 				(this.ui.getHandler() as SettingsUiHandler).show([]);
@@ -1402,29 +1377,29 @@ export default class BattleScene extends SceneBase {
 
 	getActionsKeyDown() {
 		const actions = {};
-		actions[Button.UP] = () => this.button_up();
-		actions[Button.DOWN] = () => this.button_down();
-		actions[Button.LEFT] = () => this.button_left();
-		actions[Button.RIGHT] = () => this.button_right();
-		actions[Button.SUBMIT] = () => this.button_touch();
-		actions[Button.ACTION] = () => this.button_action();
-		actions[Button.CANCEL] = () => this.button_cancel();
-		actions[Button.MENU] = () => this.button_menu();
-		actions[Button.STATS] = () => this.button_stats(true);
-		actions[Button.CYCLE_SHINY] = () => this.button_cycle_option(Button.CYCLE_SHINY);
-		actions[Button.CYCLE_FORM] = () => this.button_cycle_option(Button.CYCLE_FORM);
-		actions[Button.CYCLE_GENDER] = () => this.button_cycle_option(Button.CYCLE_GENDER);
-		actions[Button.CYCLE_ABILITY] = () => this.button_cycle_option(Button.CYCLE_ABILITY);
-		actions[Button.CYCLE_NATURE] = () => this.button_cycle_option(Button.CYCLE_NATURE);
-		actions[Button.CYCLE_VARIANT] = () => this.button_cycle_option(Button.CYCLE_VARIANT);
-		actions[Button.SPEED_UP] = () => this.button_speed_up();
-		actions[Button.SLOW_DOWN] = () => this.button_speed_down();
+		actions[Button.UP] = () => this.buttonDirection(Button.UP);
+		actions[Button.DOWN] = () => this.buttonDirection(Button.DOWN);
+		actions[Button.LEFT] = () => this.buttonDirection(Button.LEFT);
+		actions[Button.RIGHT] = () => this.buttonDirection(Button.RIGHT);
+		actions[Button.SUBMIT] = () => this.buttonTouch();
+		actions[Button.ACTION] = () => this.buttonAb(Button.ACTION);
+		actions[Button.CANCEL] = () => this.buttonAb(Button.CANCEL);
+		actions[Button.MENU] = () => this.buttonMenu();
+		actions[Button.STATS] = () => this.buttonStats(true);
+		actions[Button.CYCLE_SHINY] = () => this.buttonCycleOption(Button.CYCLE_SHINY);
+		actions[Button.CYCLE_FORM] = () => this.buttonCycleOption(Button.CYCLE_FORM);
+		actions[Button.CYCLE_GENDER] = () => this.buttonCycleOption(Button.CYCLE_GENDER);
+		actions[Button.CYCLE_ABILITY] = () => this.buttonCycleOption(Button.CYCLE_ABILITY);
+		actions[Button.CYCLE_NATURE] = () => this.buttonCycleOption(Button.CYCLE_NATURE);
+		actions[Button.CYCLE_VARIANT] = () => this.buttonCycleOption(Button.CYCLE_VARIANT);
+		actions[Button.SPEED_UP] = () => this.buttonSpeedChange();
+		actions[Button.SLOW_DOWN] = () => this.buttonSpeedChange(false);
 		return actions;
 	}
 
 	getActionsKeyUp() {
 		const actions = {};
-		actions[Button.STATS] = () => this.button_stats(false);
+		actions[Button.STATS] = () => this.buttonStats(false);
 		return actions;
 	}
 
