@@ -33,6 +33,7 @@ import { pokeball as enPokeball } from '../locales/en/pokeball';
 import { pokeball as esPokeball } from '../locales/es/pokeball';
 import { pokeball as frPokeball } from '../locales/fr/pokeball';
 import { pokeball as dePokeball } from '../locales/de/pokeball';
+import { pokeball as itPokeball } from '../locales/it/pokeball';
 
 import { pokemon as enPokemon } from '../locales/en/pokemon';
 import { pokemon as esPokemon } from '../locales/es/pokemon';
@@ -49,6 +50,7 @@ import { commandUiHandler as enCommandUiHandler } from '../locales/en/command-ui
 import { commandUiHandler as esCommandUiHandler } from '../locales/es/command-ui-handler';
 import { commandUiHandler as frCommandUiHandler } from '../locales/fr/command-ui-handler';
 import { commandUiHandler as deCommandUiHandler } from '../locales/de/command-ui-handler';
+import { commandUiHandler as itCommandUiHandler } from '../locales/it/command-ui-handler';
 
 import { fightUiHandler as enFightUiHandler } from '../locales/en/fight-ui-handler';
 import { fightUiHandler as esFightUiHandler } from '../locales/es/fight-ui-handler';
@@ -165,6 +167,8 @@ export function initI18n(): void {
         pokemonStat: itPokemonStat,
         fightUiHandler: itFightUiHandler,
         tutorial: itTutorial,
+        commandUiHandler: itCommandUiHandler,
+        pokeball: itPokeball,
       },
       de: {
         menu: deMenu,
