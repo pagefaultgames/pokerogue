@@ -1247,7 +1247,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // 2nd argument is for MoveTypeChangePowerMultiplierAbAttr
     applyAbAttrs(VariableMoveTypeAbAttr, source, null, variableType, typeChangeMovePowerMultiplier);
     applyPreAttackAbAttrs(MoveTypeChangeAttr, source, this, battlerMove, variableType, typeChangeMovePowerMultiplier);
-    applyPreAttackAbAttrs(PreAttackChangeType,source,null,battlerMove,)
+    applyPreAttackAbAttrs(PreAttackChangeType,source,this,battlerMove,)
     const type = variableType.value as Type;
     const types = this.getTypes(true, true);
 
@@ -3044,12 +3044,13 @@ export class PokemonSummonData {
 export class PokemonBattleData {
   public hitCount: integer = 0;
   public endured: boolean = false;
-  public berriesEaten: BerryType[] = [];
+  public berriesEaten: BerryType[] = []; 
 }
 
 export class PokemonBattleSummonData {
   public turnCount: integer = 1;
   public moveHistory: TurnMove[] = [];
+  public abilityTriggeredThisSwitch: boolean = false;
 }
 
 export class PokemonTurnData {

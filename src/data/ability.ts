@@ -860,14 +860,13 @@ export class PreAttackChangeType  extends PreAttackAbAttr{
     this.condition = condition;
   }
   applyPreAttack(pokemon:Pokemon,passive:boolean,defender:Pokemon,move:PokemonMove): boolean{
-    console.log("Made it here within the function!!")
-    //console.log(pokemon.battleData.hitCount)
-    console.log(this.condition(pokemon,defender,move.getMove()))
     const MoveType = move.getMove().type;
     const originalType = pokemon.getTypes();
+
     if (this.condition(pokemon,defender,move.getMove())){
-      if (originalType.length > 1 || !pokemon.isOfType(MoveType)){
+      if (originalType.length > 1 || originalType[0] !== MoveType){
         pokemon.summonData.types = [MoveType];
+        pokemon.battleSummonData.abilityTriggeredThisSwitch = true;
         pokemon.updateInfo();
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` tranformed\ninto the ${Utils.toReadableString(Type[MoveType])} type!`));
       }
@@ -3001,9 +3000,7 @@ export function initAbilities() {
     new Ability(Abilities.CHEEK_POUCH, 6)
       .unimplemented(),
     new Ability(Abilities.PROTEAN, 6)
-      .attr(PreAttackChangeType,(user,target,move) => move.name !== 'Struggle' && !user.isTerastallized()), 
-      //.attr(PostSummonMessageAbAttr,(pokemon: Pokemon) => getPokemonMessage(pokemon,' Testing out the text!'))
-      //.unimplemented(),
+      .attr(PreAttackChangeType,(user,target,move) => move.name !== 'Struggle' && !user.isTerastallized() && user.battleSummonData.abilityTriggeredThisSwitch === false), 
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -3224,7 +3221,7 @@ export function initAbilities() {
     new Ability(Abilities.DAUNTLESS_SHIELD, 8)
       .attr(PostSummonStatChangeAbAttr, BattleStat.DEF, 1, true),
     new Ability(Abilities.LIBERO, 8)
-      .unimplemented(),
+    .attr(PreAttackChangeType,(user,target,move) => move.name !== 'Struggle' && !user.isTerastallized() && user.battleSummonData.abilityTriggeredThisSwitch === false),
     new Ability(Abilities.BALL_FETCH, 8)
       .unimplemented(),
     new Ability(Abilities.COTTON_DOWN, 8)
