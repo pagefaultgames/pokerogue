@@ -84,8 +84,8 @@ export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound
 
 export default class BattleScene extends SceneBase {
 	public rexUI: UIPlugin;
-    public inputController: InputsController;
-    public uiInputs: UiInputs;
+	public inputController: InputsController;
+	public uiInputs: UiInputs;
 
 	public sessionPlayTime: integer = null;
 	public masterVolume: number = 0.5;
@@ -200,30 +200,30 @@ export default class BattleScene extends SceneBase {
 		this.load.atlas(key, `images/pokemon/${variant ? 'variant/' : ''}${experimental ? 'exp/' : ''}${atlasPath}.png`,  `images/pokemon/${variant ? 'variant/' : ''}${experimental ? 'exp/' : ''}${atlasPath}.json`);
 	}
 
-    async preload() {
-        if (DEBUG_RNG) {
-            const scene = this;
-            const originalRealInRange = Phaser.Math.RND.realInRange;
-            Phaser.Math.RND.realInRange = function (min: number, max: number): number {
-                const ret = originalRealInRange.apply(this, [ min, max ]);
-                const args = [ 'RNG', ++scene.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
-                args.push(`seed: ${scene.rngSeedOverride || scene.waveSeed || scene.seed}`);
-                if (scene.rngOffset)
-                    args.push(`offset: ${scene.rngOffset}`);
-                console.log(...args);
-                return ret;
-            };
-        }
+	async preload() {
+		if (DEBUG_RNG) {
+			const scene = this;
+			const originalRealInRange = Phaser.Math.RND.realInRange;
+			Phaser.Math.RND.realInRange = function (min: number, max: number): number {
+				const ret = originalRealInRange.apply(this, [ min, max ]);
+				const args = [ 'RNG', ++scene.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
+				args.push(`seed: ${scene.rngSeedOverride || scene.waveSeed || scene.seed}`);
+				if (scene.rngOffset)
+					args.push(`offset: ${scene.rngOffset}`);
+				console.log(...args);
+				return ret;
+			};
+		}
 
-        populateAnims();
+		populateAnims();
 
-        await this.initVariantData();
-    }
+		await this.initVariantData();
+	}
 
 	create() {
 		initGameSpeed.apply(this);
-        this.inputController = new InputsController(this);
-        this.uiInputs = new UiInputs(this, this.inputController);
+		this.inputController = new InputsController(this);
+		this.uiInputs = new UiInputs(this, this.inputController);
 
 		this.gameData = new GameData(this);
 
@@ -241,7 +241,7 @@ export default class BattleScene extends SceneBase {
 	}
 
 	update() {
-        this.inputController.update();
+		this.inputController.update();
 		this.ui?.update();
 	}
 
