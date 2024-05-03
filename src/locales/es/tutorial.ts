@@ -6,40 +6,44 @@ export const tutorial: SimpleTranslationEntries = {
     $los recursos con copyright utilizados.
     $El juego está en proceso, pero es completamente jugable.\nPara reportar bugs, por favor, hazlo en nuestra
     $comunidad de Discord.
-    $Si el juego va lento, por favor, asegúrate de que tienes activada la opción 'Aceleración de gráficos' en los
+    $Si el juego va lento, por favor, asegúrate de que tengas activada la opción 'Aceleración de gráficos' en los
     $ajustes de tu navegador.`,
     
-    "accessMenu": `To access the menu, press M or Escape while awaiting input.\nThe menu contains settings and various features.`,
+    "accessMenu": `Para acceder al menú, pulsa M o Escape cuando\ntengas el control.
+    $El menú contiene la configuración y otras funciones.`,
     
-    "menu": `From this menu you can access the settings.
-    $From the settings you can change game speed, window style, and other options.
-    $There are also various other features here, so be sure to check them all!`,
+    "menu": `Desde este menú podrás acceder a la configuración.
+    $Podrás cambiar la velocidad del juego, el estilo de la ventana y demás.
+    $Hay más opciones, ¡así que pruébalas todas!`,
 
-    "starterSelect": `From this screen, you can select your starters.\nThese are your initial party members.
-    $Each starter has a value. Your party can have up to\n6 members as long as the total does not exceed 10.
-    $You can also select gender, ability, and form depending on\nthe variants you've caught or hatched.
-    $The IVs for a species are also the best of every one you've\ncaught or hatched, so try to get lots of the same species!`,
+    "starterSelect": `En esta pantalla podrás elegir tus iniciales. Estos serán tus\nmiembros de equipo al comenzar la partida.
+    $Cada inicial tiene un valor. Tu equipo puede contener hasta 6\nmiembros mientras el valor total no pase de 10.
+    $También puedes elegir su género, habilidad y forma\ndependiendo de las variantes que hayas conseguido.
+    $Los IVs de los iniciales corresponderán al valor más alto de\nlos Pokémon de la misma especie que hayas obtenido.
+    $¡Así que intenta conseguir muchos Pokémon de la misma\nespecie!`,
 
-    "pokerus": `A daily random 3 selectable starters have a purple border.
-    $If you see a starter you own with one of these,\ntry adding it to your party. Be sure to check its summary!`,
+    "pokerus": `Cada día, 3 iniciales aleatorios tendrán un borde morado.
+    $Si ves un inicial que tengas con este borde, prueba a\nañadirlo a tu equipo. ¡No olvides revisar sus datos!`,
 
-    "statChange": `Stat changes persist across battles as long as your Pokémon aren't recalled.
-    $Your Pokémon are recalled before a trainer battle and before entering a new biome.
-    $You can also view the stat changes for the Pokémon on the field by holding C or Shift.`,
+    "statChange": `Los cambios de estadísticas se mantienen entre combates\nmientras que el Pokémon no vuelva a la Poké Ball.
+    $Tus Pokémon vuelven a sus Poké Balls antes de combates contra entrenadores y de entrar a un nuevo bioma.
+    $También puedes ver los cambios de estadísticas del Pokémon en campo manteniendo pulsado C o Shift.`,
 
-    "selectItem": `After every battle, you are given a choice of 3 random items.\nYou may only pick one.
-    $These range from consumables, to Pokémon held items, to passive permanent items.
-    $Most non-consumable item effects will stack in various ways.
-    $Some items will only show up if they can be used, such as evolution items.
-    $You can also transfer held items between Pokémon using the transfer option.
-    $The transfer option will appear in the bottom right once you have obtained a held item.
-    $You may purchase consumable items with money, and a larger variety will be available the further you get.
-    $Be sure to buy these before you pick your random item, as it will progress to the next battle once you do.`,
+    "selectItem": `Tras cada combate, tendrás la opción de elegir entre tres objetos aleatorios. Solo podrás escoger uno.
+    $Estos objetos pueden ser consumibles, objetos equipables u objetos pasivos permanentes (hasta acabar la partida).
+    $La mayoría de los efectos de objetos no consumibles se acumularán de varias maneras.
+    $Algunos objetos solo aparecerán si pueden ser utilizados, como las piedras evolutivas.
+    $También puedes transferir objetos equipados entre Pokémon utilizando la opción de transferir.
+    $La opción de transferir aparecerá en la parte inferior derecha una vez hayas obtenido un objeto equipable.
+    $También puedes comprar objetos consumibles con dinero y su variedad irá aumentando según tu avance.
+    $Asegúrate de comprar antes de escoger un objeto aleatorio, ya que se avanzará al siguiente combate.`,
 
-    "eggGacha": `From this screen, you can redeem your vouchers for\nPokémon eggs.
-    $Eggs have to be hatched and get closer to hatching after\nevery battle. Rarer eggs take longer to hatch.
-    $Hatched Pokémon also won't be added to your party, they will\nbe added to your starters.
-    $Pokémon hatched from eggs generally have better IVs than\nwild Pokémon.
-    $Some Pokémon can only even be obtained from eggs.
-    $There are 3 different machines to pull from with different\nbonuses, so pick the one that suits you best!`,
+    "eggGacha": `En esta pantalla podrás canjear tus vales por huevos\nde Pokémon.
+    $Los huevos deben eclosionar y estarán más cerca de\nhacerlo tras cada combate.
+    $Los huevos más raros tardarán más en eclosionar.
+    $Los Pokémon que hayan salido del huevo no se\nañadirán a tu equipo, pero sí a tus iniciales.
+    $Los Pokémon salidos de un huevo suelen tener mejores\nIVs que los Pokémon salvajes.
+    $Algunos Pokémon solo pueden ser obtenidos de huevos.
+    $Hay 3 máquinas diferentes entre las que elegir, cada\nuna con zdiferentes bonificaciones.
+    $¡Así que escoge la que más te interese!`,
 } as const;

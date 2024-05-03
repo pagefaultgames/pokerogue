@@ -41,4 +41,7 @@ export const menu: SimpleTranslationEntries = {
     "loading": "Loading…",
     "playersOnline": "Players Online",
     "empty":"Empty",
+    "yes":"Yes",
+    "no":"No",
+    "confirmStartTeam":'Begin with these Pokémon?',
 } as const;

@@ -36,4 +36,7 @@ export const menu: SimpleTranslationEntries = {
   "loading": "Chargement…",
   "playersOnline": "Joueurs Connectés",
   "empty":"Empty",
+  "yes":"Yes",
+  "no":"No",
+  "confirmStartTeam":'Begin with these Pokémon?',
 } as const;
