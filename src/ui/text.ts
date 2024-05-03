@@ -19,6 +19,7 @@ export enum TextStyle {
   SUMMARY_PINK,
   SUMMARY_GOLD,
   SUMMARY_GRAY,
+  SUMMARY_GREEN,
   MONEY,
   SETTINGS_LABEL,
   SETTINGS_SELECTED,
@@ -82,6 +83,7 @@ function getTextStyleOptions(style: TextStyle, uiTheme: UiTheme, extraStyleOptio
     case TextStyle.SUMMARY_PINK:
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.SUMMARY_GRAY:
+    case TextStyle.SUMMARY_GREEN:
     case TextStyle.WINDOW:
     case TextStyle.WINDOW_ALT:
     case TextStyle.MESSAGE:
@@ -160,6 +162,8 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
       return !shadow ? '#e8e8a8' : '#a0a060';
     case TextStyle.SUMMARY_GRAY:
       return !shadow ? '#a0a0a0' : '#636363';
+    case TextStyle.SUMMARY_GREEN:
+      return !shadow ? '#78c850' : '#306850';
     case TextStyle.SETTINGS_LABEL:
       return !shadow ? '#f8b050' : '#c07800';
     case TextStyle.SETTINGS_SELECTED:
