@@ -1,4 +1,4 @@
-import BattleScene, { starterColors } from "../battle-scene";
+import BattleScene, { Button, starterColors } from "../battle-scene";
 import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
@@ -27,7 +27,6 @@ import { argbFromRgba } from "@material/material-color-utilities";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint } from "#app/data/variant";
-import {Button} from "#app/inputs-controller";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 

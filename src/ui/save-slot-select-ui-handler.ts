@@ -1,4 +1,4 @@
-import BattleScene from "../battle-scene";
+import BattleScene, { Button } from "../battle-scene";
 import { gameModes } from "../game-mode";
 import { SessionSaveData } from "../system/game-data";
 import { TextStyle, addTextObject } from "./text";
@@ -8,7 +8,6 @@ import * as Utils from "../utils";
 import PokemonData from "../system/pokemon-data";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import MessageUiHandler from "./message-ui-handler";
-import {Button} from "#app/inputs-controller";
 
 const sessionSlotCount = 5;
 
