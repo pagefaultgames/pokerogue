@@ -163,6 +163,29 @@ export class FlinchedTag extends BattlerTag {
   }
 }
 
+export class InterruptedTag extends BattlerTag {
+  constructor(sourceMove: Moves){
+    super(BattlerTagType.INTERRUPTED, BattlerTagLapseType.PRE_MOVE, 0, sourceMove)
+  }
+
+  canAdd(pokemon: Pokemon): boolean {
+    return !!pokemon.getTag(BattlerTagType.FLYING)
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.getMoveQueue().shift()
+    pokemon.pushMoveHistory({move: Moves.NONE, result: MoveResult.OTHER})
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    super.lapse(pokemon, lapseType);
+    (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
+    return true 
+  }
+}
+
 export class ConfusedTag extends BattlerTag {
   constructor(turnCount: integer, sourceMove: Moves) {
     super(BattlerTagType.CONFUSED, BattlerTagLapseType.MOVE, turnCount, sourceMove);
@@ -365,6 +388,12 @@ export class FrenzyTag extends BattlerTag {
     super.onRemove(pokemon);
 
     pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
+  }
+}
+
+export class ChargingTag extends BattlerTag {
+  constructor(sourceMove: Moves, sourceId: integer) {
+    super(BattlerTagType.CHARGING, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
   }
 }
 
@@ -1081,6 +1110,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new RechargingTag(sourceMove);
     case BattlerTagType.FLINCHED:
       return new FlinchedTag(sourceMove);
+    case BattlerTagType.INTERRUPTED:
+      return new InterruptedTag(sourceMove);
     case BattlerTagType.CONFUSED:
       return new ConfusedTag(turnCount, sourceMove);
     case BattlerTagType.INFATUATED:
@@ -1091,6 +1122,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new NightmareTag();
     case BattlerTagType.FRENZY:
       return new FrenzyTag(sourceMove, sourceId);
+    case BattlerTagType.CHARGING:
+      return new ChargingTag(sourceMove, sourceId);
     case BattlerTagType.ENCORE:
       return new EncoreTag(sourceId);
     case BattlerTagType.HELPING_HAND:

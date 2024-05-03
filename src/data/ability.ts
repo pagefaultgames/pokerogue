@@ -919,8 +919,8 @@ export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
   private condition: PokemonAttackCondition;
   private powerMultiplier: number;
 
-  constructor(condition: PokemonAttackCondition, powerMultiplier: number) {
-    super(true);
+  constructor(condition: PokemonAttackCondition, powerMultiplier: number, showAbility: boolean = true) {
+    super(showAbility);
     this.condition = condition;
     this.powerMultiplier = powerMultiplier;
   }
@@ -2725,7 +2725,7 @@ export function initAbilities() {
       .attr(TypeImmunityStatChangeAbAttr, Type.ELECTRIC, BattleStat.SPD, 1)
       .ignorable(),
     new Ability(Abilities.RIVALRY, 4)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => user.gender !== Gender.GENDERLESS && target.gender !== Gender.GENDERLESS && user.gender === target.gender, 1.25)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => user.gender !== Gender.GENDERLESS && target.gender !== Gender.GENDERLESS && user.gender === target.gender, 1.25, true)
       .attr(MovePowerBoostAbAttr, (user, target, move) => user.gender !== Gender.GENDERLESS && target.gender !== Gender.GENDERLESS && user.gender !== target.gender, 0.75),
     new Ability(Abilities.STEADFAST, 4)
       .attr(FlinchStatChangeAbAttr, BattleStat.SPD, 1),

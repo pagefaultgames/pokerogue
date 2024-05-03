@@ -557,7 +557,7 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    (args[0] as Utils.IntegerHolder).value = Math.floor(target.hp / 2);
+    (args[0] as Utils.IntegerHolder).value = Math.max(Math.floor(target.hp / 2), 1);
 
     return true;
   }
@@ -1325,10 +1325,13 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
           user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true });
           if (this.sameTurn)
             user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], user.moveset.find(m => m.moveId === move.id), true), this.followUpPriority);
+          user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
           resolve(true);
         });
-      } else
+      } else {
+        user.lapseTag(BattlerTagType.CHARGING);
         resolve(false);
+      }
     });
   }
 
@@ -1770,13 +1773,13 @@ export class BattleStatRatioPowerAttr extends VariablePowerAttr {
 
     if (this.invert) {
       // Gyro ball uses a specific formula
-      let userSpeed = user.getStat(this.stat);
+      let userSpeed = user.getBattleStat(this.stat);
       if (userSpeed < 1) {
         // Gen 6+ always have 1 base power
         power.value = 1;
         return true;
       } 
-      let bp = Math.floor(Math.min(150, 25 * target.getStat(this.stat) / userSpeed + 1));
+      let bp = Math.floor(Math.min(150, 25 * target.getBattleStat(this.stat) / userSpeed + 1));
       power.value = bp;
       return true;
     }
@@ -3594,6 +3597,23 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
   }
 }
 
+export class SuppressAbilitiesAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    target.summonData.abilitySuppressed = true;
+
+    target.scene.queueMessage(getPokemonMessage(target, ` ability\nwas suppressed!`));
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
+  }
+}
+
 export class TransformAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
@@ -3642,6 +3662,20 @@ export class MoneyAttr extends MoveEffectAttr {
     user.scene.currentBattle.moneyScattered += user.scene.getWaveMoneyAmount(0.2);
     user.scene.queueMessage("Coins were scattered everywhere!")
     return true;
+  }
+}
+
+export class LastResortAttr extends MoveAttr {
+  getCondition(): MoveConditionFunc {
+    return (user: Pokemon, target: Pokemon, move: Move) => {
+      const uniqueUsedMoveIds = new Set<Moves>();
+      const movesetMoveIds = user.getMoveset().map(m => m.moveId);
+      user.getMoveHistory().map(m => {
+        if (m.move !== move.id && movesetMoveIds.find(mm => mm === m.move))
+          uniqueUsedMoveIds.add(m.move);
+      });
+      return uniqueUsedMoveIds.size >= movesetMoveIds.length - 1;
+    };
   }
 }
 
@@ -4774,8 +4808,8 @@ export function initMoves() {
       .partial(),
     new StatusMove(Moves.TAILWIND, Type.FLYING, -1, 15, -1, 0, 4)
       .windMove()
-      .target(MoveTarget.USER_SIDE)
-      .unimplemented(),
+      .attr(AddArenaTagAttr, ArenaTagType.TAILWIND, 4, true)
+      .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ACUPRESSURE, Type.NORMAL, -1, 30, -1, 0, 4)
       .attr(StatChangeAttr, BattleStat.RAND, 2)
       .target(MoveTarget.USER_OR_NEAR_ALLY),
@@ -4817,7 +4851,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.POWER_TRICK, Type.PSYCHIC, -1, 10, -1, 0, 4)
       .unimplemented(),
     new StatusMove(Moves.GASTRO_ACID, Type.POISON, 100, 10, -1, 0, 4)
-      .unimplemented(),
+      .attr(SuppressAbilitiesAttr),
     new StatusMove(Moves.LUCKY_CHANT, Type.NORMAL, -1, 30, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.NO_CRIT, false, false, 5)
       .target(MoveTarget.USER_SIDE)
@@ -4836,15 +4870,7 @@ export function initMoves() {
     new AttackMove(Moves.PUNISHMENT, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 4)
       .unimplemented(),
     new AttackMove(Moves.LAST_RESORT, Type.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, -1, 0, 4)
-      .condition((user, target, move) => {
-        const uniqueUsedMoveIds = new Set<Moves>();
-        const movesetMoveIds = user.getMoveset().map(m => m.moveId);
-        user.getMoveHistory().map(m => {
-          if (m.move !== move.id && movesetMoveIds.find(mm => mm === m.move))
-            uniqueUsedMoveIds.add(m.move);
-        });
-        return uniqueUsedMoveIds.size >= movesetMoveIds.length - 1;
-      }),
+      .attr(LastResortAttr),
     new StatusMove(Moves.WORRY_SEED, Type.GRASS, 100, 10, -1, 0, 4)
       .attr(AbilityChangeAttr, Abilities.INSOMNIA),
     new AttackMove(Moves.SUCKER_PUNCH, Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, -1, 1, 4)
@@ -5083,6 +5109,8 @@ export function initMoves() {
       .unimplemented(),
     new AttackMove(Moves.SMACK_DOWN, Type.ROCK, MoveCategory.PHYSICAL, 50, 100, 15, 100, 0, 5)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 5)
+      .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
+      .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING])
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .makesContact(false),
     new AttackMove(Moves.STORM_THROW, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
@@ -5446,6 +5474,8 @@ export function initMoves() {
     new AttackMove(Moves.THOUSAND_ARROWS, Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, 100, 0, 6)
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
+      .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
+      .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING])
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.THOUSAND_WAVES, Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
@@ -6332,8 +6362,7 @@ export function initMoves() {
       }), // TODO Add Instruct/Encore interaction
     new AttackMove(Moves.COMEUPPANCE, Type.DARK, MoveCategory.PHYSICAL, 1, 100, 10, -1, 0, 9)
       .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)
-      .target(MoveTarget.ATTACKER)
-      .partial(),
+      .target(MoveTarget.ATTACKER),
     new AttackMove(Moves.AQUA_CUTTER, Type.WATER, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 9)
       .attr(HighCritAttr)
       .slicingMove()

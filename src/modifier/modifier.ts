@@ -1111,9 +1111,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
       pokemon.levelExp = 0;
     }
 
-    const friendshipIncrease = new Utils.IntegerHolder(5);
-    pokemon.scene.applyModifier(PokemonFriendshipBoosterModifier, true, pokemon, friendshipIncrease);
-    pokemon.friendship = Math.min(pokemon.friendship + friendshipIncrease.value, 255);
+    pokemon.addFriendship(5);
 
     pokemon.scene.unshiftPhase(new LevelUpPhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), pokemon.level - levelCount.value, pokemon.level));
 
@@ -1392,13 +1390,14 @@ export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
   }
   
   apply(args: any[]): boolean {
-    (args[1] as Utils.IntegerHolder).value *= 1 + 0.5 * this.getStackCount();
+    const friendship = args[1] as Utils.IntegerHolder;
+    friendship.value = Math.floor(friendship.value * (1 + 0.5 * this.getStackCount()));
 
     return true;
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
-    return 5;
+    return 3;
   }
 }
 
