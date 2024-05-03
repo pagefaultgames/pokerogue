@@ -21,6 +21,7 @@ import { Abilities } from "./enums/abilities";
 import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
 import PokemonSpecies from "./pokemon-species";
+import { BattleType } from "#app/battle.js";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -3356,8 +3357,8 @@ export function initAbilities() {
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .attr(PreSwitchOutFormChangeAbAttr, p => p.getFormKey() ? 1 : 0)
-      .attr(PostBattleInitFormChangeAbAttr, p => p.battleData.switchesMade === 0 ? 0 : 1)
-      .attr(PostSummonFormChangeAbAttr,p => p.battleData.switchesMade === 0 ? 0 : 1),
+      .attr(PostBattleInitFormChangeAbAttr, p => p.battleData.switchesMade === 0 && p.scene.currentBattle.battleType === BattleType.TRAINER ? 0 : 1)
+      .attr(PostSummonFormChangeAbAttr,p => p.battleData.switchesMade === 0 && p.scene.currentBattle.battleType === BattleType.TRAINER? 0 : 1),
     new Ability(Abilities.COMMANDER, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
