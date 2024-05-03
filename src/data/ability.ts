@@ -841,20 +841,27 @@ export class VariableMovePowerAbAttr extends PreAttackAbAttr {
 }
 
 export class PreAttackChangeType  extends PreAttackAbAttr{
-  applyPreAttack(pokemon:Pokemon,passive:boolean,defender:Pokemon,move:PokemonMove): boolean {
-      const MoveType = move.getMove().type;
-      const originalType = pokemon.getTypes();
-
+  private condition: PokemonAttackCondition;
+  constructor (condition:PokemonAttackCondition){
+    super(true);
+    this.condition = condition;
+  }
+  applyPreAttack(pokemon:Pokemon,passive:boolean,defender:Pokemon,move:PokemonMove): boolean{
+    console.log("Made it here within the function!!")
+    //console.log(pokemon.battleData.hitCount)
+    console.log(this.condition(pokemon,defender,move.getMove()))
+    const MoveType = move.getMove().type;
+    const originalType = pokemon.getTypes();
+    if (this.condition(pokemon,defender,move.getMove())){
       if (originalType.length > 1 || !pokemon.isOfType(MoveType)){
         pokemon.summonData.types = [MoveType];
         pokemon.updateInfo();
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` tranformed\ninto the ${Utils.toReadableString(Type[MoveType])} type!`));
-        return true;
       }
-      return false;
     }
-  }
-
+    return false;
+    }
+ }
 export class VariableMoveTypeAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     //const power = args[0] as Utils.IntegerHolder;
@@ -1139,21 +1146,6 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   }
 }
 
-export class PostAttackChangeType  extends PostAttackAbAttr{
-  applyPostAttack(pokemon:Pokemon,passive:boolean,defender:Pokemon,move:PokemonMove): boolean  {
-    //if (this.condition(pokemon,defender,move.getMove())){
-      const MoveType = move.getMove().type;
-      const originalType = pokemon.getTypes();
-
-      if (originalType.length > 1 || !pokemon.isOfType(MoveType)){
-        pokemon.summonData.types = [MoveType];
-        pokemon.updateInfo();
-        pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` tranformed\ninto the ${Utils.toReadableString(Type[MoveType])} type!`));
-        return true;
-      }
-      return false;
-    }
-  }
 export class PostVictoryAbAttr extends AbAttr {
   applyPostVictory(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -2996,8 +2988,8 @@ export function initAbilities() {
     new Ability(Abilities.CHEEK_POUCH, 6)
       .unimplemented(),
     new Ability(Abilities.PROTEAN, 6)
+      .attr(PreAttackChangeType,(user,target,move) => move.name !== 'Struggle' && !user.isTerastallized()), 
       //.attr(PostSummonMessageAbAttr,(pokemon: Pokemon) => getPokemonMessage(pokemon,' Testing out the text!'))
-      .attr(PreAttackChangeType),
       //.unimplemented(),
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
