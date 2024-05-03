@@ -2022,10 +2022,9 @@ export class KnockOffPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if(target.getHeldItems().length > 0){
       (args[0] as Utils.NumberHolder).value *= 1.5;
-      console.log(args[0])
       return true; 
     }
-    console.log(args[0])
+    
     return false;
   }
 }
