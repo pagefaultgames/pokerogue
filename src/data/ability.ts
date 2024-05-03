@@ -884,10 +884,12 @@ export class VariableMovePowerAbAttr extends PreAttackAbAttr {
 
 export class PreAttackChangeType  extends PreAttackAbAttr{
   private condition: PokemonAttackCondition;
-  constructor (condition:PokemonAttackCondition){
+  
+  constructor (condition:PokemonAttackCondition) {
     super(true);
     this.condition = condition;
   }
+  
   applyPreAttack(pokemon:Pokemon,passive:boolean,defender:Pokemon,move:PokemonMove): boolean{
     const MoveType = move.getMove().type;
     const originalType = pokemon.getTypes();
