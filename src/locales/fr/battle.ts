@@ -18,7 +18,7 @@ export const battle: SimpleTranslationEntries = {
   "hitResultSuperEffective": "C’est super efficace !",
   "hitResultNotVeryEffective": "Ce n’est pas très efficace…",
   "hitResultNoEffect": "Ça n’affecte pas {{pokemonName}}…",
-  "hitResultOneHitKO": "K.O. en un coup!",
+  "hitResultOneHitKO": "K.O. en un coup !",
   "attackFailed": "Mais cela échoue !",
   "attackHitsCount": `Touché {{count}} fois !`,
   "expGain": "{{pokemonName}} gagne\n{{exp}} Points d’Exp !",
