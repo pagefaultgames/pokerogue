@@ -170,11 +170,6 @@ export default class BattleScene extends SceneBase {
 	private bgmResumeTimer: Phaser.Time.TimerEvent;
 	private bgmCache: Set<string> = new Set();
 	private playTimeTimer: Phaser.Time.TimerEvent;
-	
-	private lastProcessedButtonPressTimes: Map<Button, number> = new Map();
-	// movementButtonLock ensures only a single movement key is firing repeated inputs
-	// (i.e. by holding down a button) at a time
-	private movementButtonLock: Button;
 
 	public rngCounter: integer = 0;
 	public rngSeedOverride: string = '';
@@ -248,7 +243,7 @@ export default class BattleScene extends SceneBase {
 		this.ui?.update();
 	}
 
-	listenInputs() {
+	listenInputs(): void {
 		this.inputController.events.on('input_down', (event) => {
 			const actions = this.getActionsKeyDown();
 			if (!actions.hasOwnProperty(event.button)) return;
@@ -1281,45 +1276,41 @@ export default class BattleScene extends SceneBase {
 		return biomes[Utils.randSeedInt(biomes.length)];
 	}
 
-	buttonDirection(direction) {
+	buttonDirection(direction): Array<boolean | number> {
 		const inputSuccess = this.ui.processInput(direction);
 		const vibrationLength = 5;
-		this.setLastProcessedMovementTime(direction);
 		return [inputSuccess, vibrationLength];
 	}
 
-	buttonAb(button) {
+	buttonAb(button): Array<boolean | number> {
 		const inputSuccess = this.ui.processInput(button);
-		this.setLastProcessedMovementTime(button);
 		return [inputSuccess, 0];
 	}
 
-	buttonTouch() {
+	buttonTouch(): Array<boolean | number> {
 		const inputSuccess = this.ui.processInput(Button.SUBMIT) || this.ui.processInput(Button.ACTION);
-		this.setLastProcessedMovementTime(Button.SUBMIT);
 		return [inputSuccess, 0];
 	}
 
-	buttonStats(pressed = true) {
+	buttonStats(pressed = true): Array<boolean | number> {
 		if (pressed) {
 			for (let p of this.getField().filter(p => p?.isActive(true)))
 				p.toggleStats(true);
-				this.setLastProcessedMovementTime(Button.STATS);
 		} else {
 			for (let p of this.getField().filter(p => p?.isActive(true)))
 				p.toggleStats(false);
 		}
-		return [0, 0];
+		return [true, 0];
 	}
 
-	buttonMenu() {
+	buttonMenu(): Array<boolean | number> {
 		let inputSuccess;
 		if (this.disableMenu)
-			return [0, 0];
+			return [true, 0];
 		switch (this.ui?.getMode()) {
 			case Mode.MESSAGE:
 				if (!(this.ui.getHandler() as MessageUiHandler).pendingPrompt)
-					return [0, 0];
+					return [true, 0];
 			case Mode.TITLE:
 			case Mode.COMMAND:
 			case Mode.FIGHT:
@@ -1342,23 +1333,21 @@ export default class BattleScene extends SceneBase {
 				inputSuccess = true;
 				break;
 			default:
-				return [0, 0];
+				return [true, 0];
 		}
 		return [inputSuccess, 0];
 	}
 
-	buttonCycleOption(button) {
+	buttonCycleOption(button): Array<boolean | number> {
 		let inputSuccess;
 		if (this.ui?.getHandler() instanceof StarterSelectUiHandler) {
 			inputSuccess = this.ui.processInput(button);
-			this.setLastProcessedMovementTime(button);
 		}
 		return [inputSuccess, 0];
 	}
 
-	buttonSpeedChange(up= true) {
+	buttonSpeedChange(up= true): Array<boolean | number> {
 		if (up) {
-			console.log('speed up');
 			if (this.gameSpeed < 5) {
 				this.gameData.saveSetting(Setting.Game_Speed, settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) + 1);
 				if (this.ui?.getMode() === Mode.SETTINGS)
@@ -1367,7 +1356,6 @@ export default class BattleScene extends SceneBase {
 			return [0, 0];
 		}
 		if (this.gameSpeed > 1) {
-			console.log('speed down');
 			this.gameData.saveSetting(Setting.Game_Speed, Math.max(settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) - 1, 0));
 			if (this.ui?.getMode() === Mode.SETTINGS)
 				(this.ui.getHandler() as SettingsUiHandler).show([]);
@@ -1401,12 +1389,6 @@ export default class BattleScene extends SceneBase {
 		const actions = {};
 		actions[Button.STATS] = () => this.buttonStats(false);
 		return actions;
-	}
-
-
-	setLastProcessedMovementTime(button: Button) {
-		this.lastProcessedButtonPressTimes.set(button, this.time.now);
-		this.movementButtonLock = button;
 	}
 
 	isBgmPlaying(): boolean {
