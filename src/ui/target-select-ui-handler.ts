@@ -5,7 +5,7 @@ import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { getMoveTargets } from "../data/move";
-import {Button} from "#app/inputsController";
+import {Button} from "#app/inputs-controller";
 
 export type TargetSelectCallback = (cursor: integer) => void;
 

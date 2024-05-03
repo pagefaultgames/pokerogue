@@ -8,7 +8,7 @@ import * as Utils from "../utils";
 import PokemonData from "../system/pokemon-data";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import MessageUiHandler from "./message-ui-handler";
-import {Button} from "#app/inputsController";
+import {Button} from "#app/inputs-controller";
 
 const sessionSlotCount = 5;
 

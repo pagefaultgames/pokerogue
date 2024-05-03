@@ -60,7 +60,8 @@ import CandyBar from './ui/candy-bar';
 import { Variant, variantData } from './data/variant';
 import { Localizable } from './plugins/i18n';
 import { STARTING_WAVE_OVERRIDE, OPP_SPECIES_OVERRIDE, SEED_OVERRIDE, STARTING_BIOME_OVERRIDE } from './overrides';
-import {Button, InputsController} from "#app/inputsController";
+import {InputsController} from "./inputs-controller";
+import {UiInputs} from "./ui-inputs";
 
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
@@ -85,6 +86,7 @@ export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound
 export default class BattleScene extends SceneBase {
 	public rexUI: UIPlugin;
 	public inputController: InputsController;
+	public uiInputs: UiInputs;
 
 	public sessionPlayTime: integer = null;
 	public masterVolume: number = 0.5;
@@ -201,6 +203,7 @@ export default class BattleScene extends SceneBase {
 
 	async preload() {
         this.load.scenePlugin('inputController', InputsController);
+        this.load.scenePlugin('uiInputs', UiInputs);
 		if (DEBUG_RNG) {
 			const scene = this;
 			const originalRealInRange = Phaser.Math.RND.realInRange;
@@ -224,7 +227,6 @@ export default class BattleScene extends SceneBase {
 		initGameSpeed.apply(this);
 
 		this.gameData = new GameData(this);
-		this.listenInputs();
 
 		addUiThemeOverrides(this);
 
@@ -241,23 +243,6 @@ export default class BattleScene extends SceneBase {
 
 	update() {
 		this.ui?.update();
-	}
-
-	listenInputs(): void {
-		this.inputController.events.on('input_down', (event) => {
-			const actions = this.getActionsKeyDown();
-			if (!actions.hasOwnProperty(event.button)) return;
-			const [inputSuccess, vibrationLength] = actions[event.button]();
-			if (inputSuccess && this.enableVibration && typeof navigator.vibrate !== 'undefined')
-				navigator.vibrate(vibrationLength);
-		}, this);
-		this.inputController.events.on('input_up', (event) => {
-			const actions = this.getActionsKeyUp();
-			if (!actions.hasOwnProperty(event.button)) return;
-			const [inputSuccess, vibrationLength] = actions[event.button]();
-			if (inputSuccess && this.enableVibration && typeof navigator.vibrate !== 'undefined')
-				navigator.vibrate(vibrationLength);
-		}, this);
 	}
 
 	launchBattle() {
@@ -1274,121 +1259,6 @@ export default class BattleScene extends SceneBase {
 		}
 
 		return biomes[Utils.randSeedInt(biomes.length)];
-	}
-
-	buttonDirection(direction): Array<boolean | number> {
-		const inputSuccess = this.ui.processInput(direction);
-		const vibrationLength = 5;
-		return [inputSuccess, vibrationLength];
-	}
-
-	buttonAb(button): Array<boolean | number> {
-		const inputSuccess = this.ui.processInput(button);
-		return [inputSuccess, 0];
-	}
-
-	buttonTouch(): Array<boolean | number> {
-		const inputSuccess = this.ui.processInput(Button.SUBMIT) || this.ui.processInput(Button.ACTION);
-		return [inputSuccess, 0];
-	}
-
-	buttonStats(pressed = true): Array<boolean | number> {
-		if (pressed) {
-			for (let p of this.getField().filter(p => p?.isActive(true)))
-				p.toggleStats(true);
-		} else {
-			for (let p of this.getField().filter(p => p?.isActive(true)))
-				p.toggleStats(false);
-		}
-		return [true, 0];
-	}
-
-	buttonMenu(): Array<boolean | number> {
-		let inputSuccess;
-		if (this.disableMenu)
-			return [true, 0];
-		switch (this.ui?.getMode()) {
-			case Mode.MESSAGE:
-				if (!(this.ui.getHandler() as MessageUiHandler).pendingPrompt)
-					return [true, 0];
-			case Mode.TITLE:
-			case Mode.COMMAND:
-			case Mode.FIGHT:
-			case Mode.BALL:
-			case Mode.TARGET_SELECT:
-			case Mode.SAVE_SLOT:
-			case Mode.PARTY:
-			case Mode.SUMMARY:
-			case Mode.STARTER_SELECT:
-			case Mode.CONFIRM:
-			case Mode.OPTION_SELECT:
-				this.ui.setOverlayMode(Mode.MENU);
-				inputSuccess = true;
-				break;
-			case Mode.MENU:
-			case Mode.SETTINGS:
-			case Mode.ACHIEVEMENTS:
-				this.ui.revertMode();
-				this.playSound('select');
-				inputSuccess = true;
-				break;
-			default:
-				return [true, 0];
-		}
-		return [inputSuccess, 0];
-	}
-
-	buttonCycleOption(button): Array<boolean | number> {
-		let inputSuccess;
-		if (this.ui?.getHandler() instanceof StarterSelectUiHandler) {
-			inputSuccess = this.ui.processInput(button);
-		}
-		return [inputSuccess, 0];
-	}
-
-	buttonSpeedChange(up= true): Array<boolean | number> {
-		if (up) {
-			if (this.gameSpeed < 5) {
-				this.gameData.saveSetting(Setting.Game_Speed, settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) + 1);
-				if (this.ui?.getMode() === Mode.SETTINGS)
-					(this.ui.getHandler() as SettingsUiHandler).show([]);
-			}
-			return [0, 0];
-		}
-		if (this.gameSpeed > 1) {
-			this.gameData.saveSetting(Setting.Game_Speed, Math.max(settingOptions[Setting.Game_Speed].indexOf(`${this.gameSpeed}x`) - 1, 0));
-			if (this.ui?.getMode() === Mode.SETTINGS)
-				(this.ui.getHandler() as SettingsUiHandler).show([]);
-		}
-		return [0, 0];
-	}
-
-	getActionsKeyDown() {
-		const actions = {};
-		actions[Button.UP] = () => this.buttonDirection(Button.UP);
-		actions[Button.DOWN] = () => this.buttonDirection(Button.DOWN);
-		actions[Button.LEFT] = () => this.buttonDirection(Button.LEFT);
-		actions[Button.RIGHT] = () => this.buttonDirection(Button.RIGHT);
-		actions[Button.SUBMIT] = () => this.buttonTouch();
-		actions[Button.ACTION] = () => this.buttonAb(Button.ACTION);
-		actions[Button.CANCEL] = () => this.buttonAb(Button.CANCEL);
-		actions[Button.MENU] = () => this.buttonMenu();
-		actions[Button.STATS] = () => this.buttonStats(true);
-		actions[Button.CYCLE_SHINY] = () => this.buttonCycleOption(Button.CYCLE_SHINY);
-		actions[Button.CYCLE_FORM] = () => this.buttonCycleOption(Button.CYCLE_FORM);
-		actions[Button.CYCLE_GENDER] = () => this.buttonCycleOption(Button.CYCLE_GENDER);
-		actions[Button.CYCLE_ABILITY] = () => this.buttonCycleOption(Button.CYCLE_ABILITY);
-		actions[Button.CYCLE_NATURE] = () => this.buttonCycleOption(Button.CYCLE_NATURE);
-		actions[Button.CYCLE_VARIANT] = () => this.buttonCycleOption(Button.CYCLE_VARIANT);
-		actions[Button.SPEED_UP] = () => this.buttonSpeedChange();
-		actions[Button.SLOW_DOWN] = () => this.buttonSpeedChange(false);
-		return actions;
-	}
-
-	getActionsKeyUp() {
-		const actions = {};
-		actions[Button.STATS] = () => this.buttonStats(false);
-		return actions;
 	}
 
 	isBgmPlaying(): boolean {

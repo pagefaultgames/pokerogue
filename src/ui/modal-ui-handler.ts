@@ -3,7 +3,7 @@ import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { WindowVariant, addWindow } from "./ui-theme";
-import {Button} from "#app/inputsController";
+import {Button} from "#app/inputs-controller";
 
 export interface ModalConfig {
   buttonActions: Function[];
