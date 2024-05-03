@@ -115,7 +115,10 @@ export class SpeciesFormChange {
       formIndexes.push(pokemon.fusionFormIndex);
     }   
 
-    const formMatch = [true, true];
+    const formMatch = [true];
+    if (pokemon.isFusion())
+      formMatch.push(true);
+
     for (let i = 0; i < speciesArray.length; ++i) {
       const species = speciesArray[i];
       const formIndex = formIndexes[i];

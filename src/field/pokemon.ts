@@ -1660,8 +1660,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   changeForm(formChange: SpeciesFormChange): Promise<void> {
+    const matchesBase = this.species.speciesId == formChange.speciesId;
+
     return new Promise(resolve => {
-      this.formIndex = Math.max(this.species.forms.findIndex(f => f.formKey === formChange.formKey), 0);
+      const newFormIndex = Math.max((matchesBase ? this.species : this.fusionSpecies).forms.findIndex(f => f.formKey === formChange.formKey), 0);
+      if (matchesBase)
+        this.formIndex = newFormIndex;
+      else
+        this.fusionFormIndex = newFormIndex;
+
       this.generateName();
       const abilityCount = this.getSpeciesForm().getAbilityCount();
       if (this.abilityIndex >= abilityCount) // Shouldn't happen
