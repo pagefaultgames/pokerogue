@@ -1573,7 +1573,7 @@ export class CopyStatsAttr extends MoveEffectAttr {
       user.addTag(BattlerTagType.CRIT_BOOST, 0, move.id);
     else
       user.removeTag(BattlerTagType.CRIT_BOOST);
-
+    target.updateInfo();
     user.updateInfo();
 
     target.scene.queueMessage(getPokemonMessage(user, 'copied\n') + getPokemonMessage(target, `'s stat changes!`));
@@ -1589,7 +1589,7 @@ export class InvertStatsAttr extends MoveEffectAttr {
 
     for (let s = 0; s < target.summonData.battleStats.length; s++)
       target.summonData.battleStats[s] *= -1;
-
+    target.updateInfo();
     user.updateInfo();
 
     target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere all reversed!`));
@@ -1605,7 +1605,7 @@ export class ResetStatsAttr extends MoveEffectAttr {
 
     for (let s = 0; s < target.summonData.battleStats.length; s++)
       target.summonData.battleStats[s] = 0;
-
+    target.updateInfo();
     user.updateInfo();
 
     target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere eliminated!`));
