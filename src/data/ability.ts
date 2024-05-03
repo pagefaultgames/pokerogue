@@ -897,7 +897,7 @@ export class PreAttackChangeType  extends PreAttackAbAttr{
     if (this.condition(pokemon,defender,move.getMove())){
       if (originalType.length > 1 || originalType[0] !== MoveType){
         pokemon.summonData.types = [MoveType];
-        pokemon.battleSummonData.abilityTriggeredThisSwitch = true;
+        pokemon.battleSummonData.abilityTriggered = true;
         pokemon.updateInfo();
         pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` tranformed\ninto the ${Utils.toReadableString(Type[MoveType])} type!`));
       }
@@ -3053,7 +3053,7 @@ export function initAbilities() {
     new Ability(Abilities.CHEEK_POUCH, 6)
       .unimplemented(),
     new Ability(Abilities.PROTEAN, 6)
-      .attr(PreAttackChangeType,(user,target,move) => move.name !== 'Struggle' && !user.isTerastallized() && user.battleSummonData.abilityTriggeredThisSwitch === false), 
+      .attr(PreAttackChangeType,(user,target,move) => move.name !== 'Struggle' && !user.isTerastallized() && user.battleSummonData.abilityTriggered === false), 
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
