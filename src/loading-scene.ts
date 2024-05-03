@@ -223,6 +223,7 @@ export class LoadingScene extends SceneBase {
     this.loadSe('sparkle');
     this.loadSe('restore');
     this.loadSe('shine');
+    this.loadSe('shing');
     this.loadSe('charge');
     this.loadSe('beam');
     this.loadSe('upgrade');
