@@ -683,6 +683,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
   ],
   [Species.PALAFIN]: [
     new SpeciesFormChange(Species.PALAFIN, 'zero', 'hero', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.PALAFIN, 'hero', 'zero', new SpeciesFormChangeManualTrigger(), true),
   ],
   [Species.OGERPON]: [
     new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'wellspring-mask', new SpeciesFormChangeItemTrigger(FormChangeItem.WELLSPRING_MASK)),

@@ -1950,19 +1950,20 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
   }
 }
 
-export class ZeroToHeroAbAttr extends PreSwitchOutAbAttr {
-     // .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() <= 0.9 ? 1 : 0)
-      //.attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.9 ? 1 : 0)
-      //.attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.9 ? 1 : 0)
+export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
+  private formFunc: (p: Pokemon) => integer;
+
       constructor(formFunc: ((p: Pokemon) => integer)) {
         super();
     
-        //this.formFunc = formFunc;
+        this.formFunc = formFunc;
       }
 
   applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+    console.log(pokemon.getFormKey())
 
-    if (1 !== pokemon.formIndex && pokemon.species.name == "Palafin") {
+    const formIndex = this.formFunc(pokemon);
+    if (formIndex !== pokemon.formIndex) {
       pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
       return true;
     }
@@ -3354,7 +3355,9 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .attr(ZeroToHeroAbAttr, p => true ? 1 : 0),
+      .attr(PreSwitchOutFormChangeAbAttr, p => p.getFormKey() ? 1 : 0)
+      .attr(PostBattleInitFormChangeAbAttr, p => p.battleData.switchesMade === 0 ? 0 : 1)
+      .attr(PostSummonFormChangeAbAttr,p => p.battleData.switchesMade === 0 ? 0 : 1),
     new Ability(Abilities.COMMANDER, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
