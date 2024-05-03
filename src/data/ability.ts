@@ -1,8 +1,8 @@
-import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
+import Pokemon, { EnemyPokemon, HitResult, PlayerPokemon, PokemonMove } from "../field/pokemon";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import { BattleEndPhase, CheckSwitchPhase, NewBattlePhase, PokemonHealPhase, ReturnPhase, ShowAbilityPhase, StatChangePhase, SwitchPhase, SwitchSummonPhase } from "../phases";
 import { getPokemonMessage, getPokemonPrefix } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag } from "./battler-tags";
@@ -443,9 +443,59 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
   }
 }
 
+export class PostDamageAbAttr extends AbAttr {
+  applyPostDamage(pokemon: Pokemon, initialPokemonHpRatio: number, passive: boolean): boolean | Promise<boolean> {
+    return false;
+  }
+}
+
 export class PostDefendAbAttr extends AbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean | Promise<boolean> {
     return false;
+  }
+}
+
+type HpThresholdCondition = (postMovePokemon: Pokemon, initialPokemonHpRatio: integer) => boolean;
+
+export class PostDamageForcedSwitchAbAttr extends PostDamageAbAttr {
+  private condition: HpThresholdCondition;
+
+  constructor(condition?: HpThresholdCondition) {
+    super();
+
+    this.condition = condition;
+  }
+
+  applyPostDamage(pokemon: Pokemon, initialPokemonHpRatio: number, passive: boolean): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      if (this.condition(pokemon, initialPokemonHpRatio) && pokemon.isPlayer()) {
+        // Player's pokemon
+        applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, pokemon);
+        pokemon.scene.unshiftPhase(new SwitchPhase(pokemon.scene, pokemon.getFieldIndex(), true, true));
+        resolve(true);
+      } else if (this.condition(pokemon, initialPokemonHpRatio) && !pokemon.hasTrainer()) {
+        // Wild pokemon
+        pokemon.hideInfo().then(() => pokemon.destroy());
+	  	  pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' fled!'), null, true, 500);
+        pokemon.scene.pushPhase(new BattleEndPhase(pokemon.scene));
+	  	  pokemon.scene.pushPhase(new NewBattlePhase(pokemon.scene));
+        resolve(true);
+      } else if (this.condition(pokemon, initialPokemonHpRatio) && pokemon.hasTrainer()) {
+        // Enemy trainer pokemon
+        pokemon.updateInfo();
+        pokemon.scene.pushPhase(new SwitchSummonPhase(pokemon.scene, pokemon.getFieldIndex(), pokemon.scene.currentBattle.trainer.getNextSummonIndex((pokemon as EnemyPokemon).trainerSlot), false, false, false));
+        
+        pokemon.resetTurnData();
+        pokemon.resetSummonData();
+        pokemon.hideInfo();
+        pokemon.setVisible(false);
+        pokemon.scene.field.remove(pokemon);
+        
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    });
   }
 }
 
@@ -2777,6 +2827,11 @@ export function applyPostDefendAbAttrs(attrType: { new(...args: any[]): PostDefe
   return applyAbAttrsInternal<PostDefendAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostDefend(pokemon, passive, attacker, move, hitResult, args), args);
 }
 
+export function applyPostDamageAbAttrs(attrType: { new(...args: any[]): PostDamageAbAttr },
+  pokemon: Pokemon, initialPokemonHpRatio: integer, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostDamageAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostDamage(pokemon, initialPokemonHpRatio, passive), args);
+}
+
 export function applyBattleStatMultiplierAbAttrs(attrType: { new(...args: any[]): BattleStatMultiplierAbAttr },
   pokemon: Pokemon, battleStat: BattleStat, statValue: Utils.NumberHolder, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<BattleStatMultiplierAbAttr>(attrType, pokemon, (attr, passive) => attr.applyBattleStat(pokemon, passive, battleStat, statValue, args), args);
@@ -3436,9 +3491,9 @@ export function initAbilities() {
     new Ability(Abilities.STAMINA, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
-      .unimplemented(),
+      .attr(PostDamageForcedSwitchAbAttr, (postMovePokemon, initialPokemonHpRatio) => initialPokemonHpRatio > 0.5 && postMovePokemon.getHpRatio() <= 0.5),
     new Ability(Abilities.EMERGENCY_EXIT, 7)
-      .unimplemented(),
+      .attr(PostDamageForcedSwitchAbAttr, (postMovePokemon, initialPokemonHpRatio) => initialPokemonHpRatio > 0.5 && postMovePokemon.getHpRatio() <= 0.5),
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER && move.category !== MoveCategory.STATUS, BattleStat.DEF, 2),
     new Ability(Abilities.MERCILESS, 7)
