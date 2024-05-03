@@ -37,7 +37,7 @@ import PartyUiHandler, { PartyOption, PartyUiMode } from '../ui/party-ui-handler
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
 import { LevelMoves } from '../data/pokemon-level-moves';
 import { DamageAchv, achvs } from '../system/achv';
-import { DexAttr, StarterMoveset } from '../system/game-data';
+import { DexAttr, StarterDataEntry, StarterMoveset } from '../system/game-data';
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from '@material/material-color-utilities';
 import { Nature, getNatureStatMultiplier } from '../data/nature';
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
@@ -2370,9 +2370,13 @@ export class PlayerPokemon extends Pokemon {
 
   addFriendship(friendship: integer): void {
     const starterSpeciesId = this.species.getRootSpeciesId();
-    const starterData = this.scene.gameData.starterData[starterSpeciesId];
+    const fusionStarterSpeciesId = this.isFusion() ? this.fusionSpecies.getRootSpeciesId() : 0;
+    const starterData = [
+      this.scene.gameData.starterData[starterSpeciesId],
+      fusionStarterSpeciesId ? this.scene.gameData.starterData[fusionStarterSpeciesId] : null
+    ].filter(d => d);
     const amount = new Utils.IntegerHolder(friendship);
-    const starterAmount = new Utils.IntegerHolder(friendship * (this.scene.gameMode.isClassic ? 2 : 1));
+    const starterAmount = new Utils.IntegerHolder(Math.floor(friendship * (this.scene.gameMode.isClassic ? 2 : 1) / (fusionStarterSpeciesId ? 2 : 1)));
     if (amount.value > 0) {
       this.scene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
       this.scene.applyModifier(PokemonFriendshipBoosterModifier, true, this, starterAmount);
@@ -2380,14 +2384,18 @@ export class PlayerPokemon extends Pokemon {
       this.friendship = Math.min(this.friendship + amount.value, 255);
       if (this.friendship === 255)
         this.scene.validateAchv(achvs.MAX_FRIENDSHIP);
-      starterData.friendship = (starterData.friendship || 0) + starterAmount.value;
-      if (starterData.friendship >= getStarterValueFriendshipCap(speciesStarters[starterSpeciesId])) {
-        this.scene.gameData.addStarterCandy(getPokemonSpecies(starterSpeciesId), 1);
-        starterData.friendship = 0;
-      }
+      starterData.forEach((sd: StarterDataEntry, i: integer) => {
+        const speciesId = !i ? starterSpeciesId : fusionStarterSpeciesId as Species;
+        sd.friendship = (sd.friendship || 0) + starterAmount.value;
+        if (sd.friendship >= getStarterValueFriendshipCap(speciesStarters[speciesId])) {
+          this.scene.gameData.addStarterCandy(getPokemonSpecies(speciesId), 1);
+          sd.friendship = 0;
+        }
+      });
     } else {
       this.friendship = Math.max(this.friendship + amount.value, 0);
-      starterData.friendship = Math.max((starterData.friendship || 0) + starterAmount.value, 0);
+      for (let sd of starterData)
+        sd.friendship = Math.max((sd.friendship || 0) + starterAmount.value, 0);
     }
   }
   
