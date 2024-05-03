@@ -4443,7 +4443,6 @@ export function initMoves() {
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(ResetPartyStatusAttr, false)
       .soundBased()
-      .partial(),
     new AttackMove(Moves.RETURN, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 2)
       .attr(FriendshipPowerAttr),
     new AttackMove(Moves.PRESENT, Type.NORMAL, MoveCategory.PHYSICAL, -1, 90, 15, -1, 0, 2)
