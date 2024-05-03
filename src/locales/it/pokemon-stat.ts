@@ -5,7 +5,7 @@ export const pokemonStat: SimpleTranslationEntries = {
     "HPshortened": "PS",
     "ATK": "Attacco",
     "ATKshortened": "Att",
-    "DEF": "Difensa",
+    "DEF": "Difesa",
     "DEFshortened": "Dif",
     "SPATK": "Att. Sp.",
     "SPATKshortened": "AttSp",
