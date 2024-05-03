@@ -1,7 +1,7 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage, getPokemonPrefix } from "../messages";
-import Pokemon, { MoveResult, HitResult } from "../field/pokemon";
+import Pokemon, { MoveResult, HitResult, TurnMove } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
@@ -160,6 +160,34 @@ export class FlinchedTag extends BattlerTag {
 
   getDescriptor(): string {
     return 'flinching';
+  }
+}
+
+export class InterruptedTag extends BattlerTag {
+
+
+  constructor(sourceMove: Moves){
+    super(BattlerTagType.INTERRUPTED, BattlerTagLapseType.PRE_MOVE, 0, sourceMove)
+  }
+
+  canAdd(pokemon: Pokemon): boolean {
+
+    console.log(pokemon.getLastXMoves())
+    const prevMove = pokemon.getLastXMoves(1)
+    return prevMove.length && prevMove[0].move === (Moves.FLY || Moves.BOUNCE)
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.getMoveQueue().shift()
+    pokemon.pushMoveHistory({move: Moves.NONE, result: MoveResult.OTHER})
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    super.lapse(pokemon, lapseType);
+    (pokemon.scene.getCurrentPhase() as MovePhase).cancel();
+    return true 
   }
 }
 
@@ -1081,6 +1109,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new RechargingTag(sourceMove);
     case BattlerTagType.FLINCHED:
       return new FlinchedTag(sourceMove);
+    case BattlerTagType.INTERRUPTED:
+      return new InterruptedTag(sourceMove);
     case BattlerTagType.CONFUSED:
       return new ConfusedTag(turnCount, sourceMove);
     case BattlerTagType.INFATUATED:

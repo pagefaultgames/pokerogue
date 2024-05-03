@@ -2333,7 +2333,7 @@ export class MovePhase extends BattlePhase {
         return;
     }
 
-    if (this.pokemon.getTag(BattlerTagType.RECHARGING))
+    if (this.pokemon.getTag(BattlerTagType.RECHARGING|| BattlerTagType.INTERRUPTED))
       return;
     
     this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
