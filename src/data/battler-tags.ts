@@ -164,17 +164,14 @@ export class FlinchedTag extends BattlerTag {
 }
 
 export class InterruptedTag extends BattlerTag {
-
-
   constructor(sourceMove: Moves){
     super(BattlerTagType.INTERRUPTED, BattlerTagLapseType.PRE_MOVE, 0, sourceMove)
   }
 
   canAdd(pokemon: Pokemon): boolean {
 
-    console.log(pokemon.getLastXMoves())
     const prevMove = pokemon.getLastXMoves(1)
-    return prevMove.length && prevMove[0].move === (Moves.FLY || Moves.BOUNCE)
+    return prevMove.length && (prevMove[0].move === Moves.FLY || prevMove[0].move === Moves.BOUNCE)
   }
 
   onAdd(pokemon: Pokemon): void {
