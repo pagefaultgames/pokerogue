@@ -924,11 +924,36 @@ export class ResetStatusAttr extends MoveEffectAttr {
   }
 }
 
-/* TODO: Heal Bell / Aromatherapy / Sparkly Swirl Attr
-export class ResetPartyStatusAttr extends MoveEffectAttr {
 
+export class ResetPartyStatusAttr extends MoveEffectAttr {
+  constructor(selfTarget: boolean, onHitTrigger: boolean) {
+    super(selfTarget, onHitTrigger ? MoveEffectTrigger.HIT : MoveEffectTrigger.POST_APPLY);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const party = user.isPlayer() ? user.scene.getParty() : user.scene.getEnemyParty();
+
+    switch(move.id) {
+      case Moves.HEAL_BELL:
+        user.scene.queueMessage("A bell chimed!");
+        break;
+      case Moves.AROMATHERAPY:
+        user.scene.queueMessage("A soothing aroma wafted through the area!");
+        break;
+      case Moves.SPARKLY_SWIRL:
+      default:
+        break;
+    }
+
+    for (let p of party) {
+      if (!!p.status && p.status?.effect !== StatusEffect.FAINT) {
+        user.scene.queueMessage(getPokemonMessage(p, getStatusEffectHealText(p.status?.effect)));
+        p.resetStatus();
+        p.updateInfo();
+      }
+    }
+  }
 }
-*/
 
 export class MultiHitAttr extends MoveAttr {
   private multiHitType: MultiHitType;
@@ -4417,9 +4442,8 @@ export function initMoves() {
       .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
       .ignoresVirtual(),
     new StatusMove(Moves.HEAL_BELL, Type.NORMAL, -1, 5, -1, 0, 2)
-      .attr(ResetStatusAttr, false)
+      .attr(ResetPartyStatusAttr, true, false)
       .soundBased()
-      .target(MoveTarget.USER_AND_ALLIES)
       .partial(),
     new AttackMove(Moves.RETURN, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 2)
       .attr(FriendshipPowerAttr),
@@ -4690,9 +4714,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => [WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN].includes(user.scene.arena.weather?.weatherType) && !user.scene.arena.weather?.isEffectSuppressed(user.scene) ? 2 : 1)
       .ballBombMove(),
     new StatusMove(Moves.AROMATHERAPY, Type.GRASS, -1, 5, -1, 0, 3)
-      .attr(ResetStatusAttr, false)
-      .target(MoveTarget.USER_AND_ALLIES)
-      .partial(),
+      .attr(ResetPartyStatusAttr, true, false),
     new StatusMove(Moves.FAKE_TEARS, Type.DARK, 100, 20, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2),
     new AttackMove(Moves.AIR_CUTTER, Type.FLYING, MoveCategory.SPECIAL, 60, 95, 25, -1, 0, 3)
@@ -5820,9 +5842,7 @@ export function initMoves() {
     new AttackMove(Moves.FREEZY_FROST, Type.ICE, MoveCategory.SPECIAL, 100, 90, 10, -1, 0, 7)
       .attr(ResetStatsAttr),
     new AttackMove(Moves.SPARKLY_SWIRL, Type.FAIRY, MoveCategory.SPECIAL, 120, 85, 5, -1, 0, 7)
-      .attr(ResetStatusAttr, false)
-      .target(MoveTarget.USER_AND_ALLIES)
-      .partial(),
+      .attr(ResetPartyStatusAttr, false, true),
     new AttackMove(Moves.VEEVEE_VOLLEY, Type.NORMAL, MoveCategory.PHYSICAL, -1, -1, 20, -1, 0, 7)
       .attr(FriendshipPowerAttr),
     new AttackMove(Moves.DOUBLE_IRON_BASH, Type.STEEL, MoveCategory.PHYSICAL, 60, 100, 5, 30, 0, 7)
