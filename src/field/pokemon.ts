@@ -2473,7 +2473,7 @@ export class PlayerPokemon extends Pokemon {
       if (newEvolution.condition.predicate(this)) {
         const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, undefined, this.shiny, this.variant, this.ivs, this.nature);
         newPokemon.natureOverride = this.natureOverride;
-        newPokemon.moveset = this.moveset.slice();
+        newPokemon.moveset = this.copyMoveset();
         newPokemon.luck = this.luck;
 
         newPokemon.fusionSpecies = this.fusionSpecies;
@@ -2582,6 +2582,15 @@ export class PlayerPokemon extends Pokemon {
       this.updateInfo(true).then(() => resolve());
       this.updateFusionPalette();
     });
+  }
+
+  /** Returns a deep copy of this Pokemon's moveset array */
+  copyMoveset(): PokemonMove[] {
+    let newMoveset = [];
+    this.moveset.forEach(move => 
+      newMoveset.push(new PokemonMove(move.moveId, 0, move.ppUp, move.virtual)));
+
+    return newMoveset;
   }
 }
 
