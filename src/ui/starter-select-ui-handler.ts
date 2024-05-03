@@ -27,6 +27,7 @@ import { argbFromRgba } from "@material/material-color-utilities";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint } from "#app/data/variant";
+import i18next from "i18next";
 import {Button} from "../inputs-controller";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
@@ -1654,7 +1655,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.clearText();
     };
 
-    ui.showText('Begin with these Pokémon?', null, () => {
+    ui.showText(i18next.t("menu:confirmStartTeam"), null, () => {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
         const startRun = (gameMode: GameModes) => {
           this.scene.gameMode = gameModes[gameMode];
