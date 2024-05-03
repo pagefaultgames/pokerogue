@@ -574,6 +574,10 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
         && (fc.trigger as SpeciesFormChangeItemTrigger).item === this.formChangeItem))
         return null;
 
+      if (pokemon.isFusion() && pokemonFormChanges.hasOwnProperty(pokemon.fusionSpecies.speciesId) && !!pokemonFormChanges[pokemon.fusionSpecies.speciesId].find(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger)
+        && (fc.trigger as SpeciesFormChangeItemTrigger).item === this.formChangeItem))
+        return null;
+
       return PartyUiHandler.NoEffectMessage;
     }, FormChangeItem[formChangeItem].toLowerCase());
 
@@ -686,7 +690,10 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
 
       const formChangeItemPool = party.filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId)).map(p => {
-        const formChanges = pokemonFormChanges[p.species.speciesId];
+        let formChanges = pokemonFormChanges[p.species.speciesId];
+        if(p.isFusion())
+          formChanges = formChanges.concat(pokemonFormChanges[p.fusionSpecies.speciesId]);
+
         return formChanges.filter(fc => ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) || party[0].scene.getModifiers(Modifiers.MegaEvolutionAccessModifier).length)
           && ((fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1 && fc.formKey.indexOf(SpeciesFormKey.ETERNAMAX) === -1) || party[0].scene.getModifiers(Modifiers.GigantamaxAccessModifier).length))
           .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)

@@ -7,6 +7,7 @@ import { Species } from "./enums/species";
 import { StatusEffect } from "./status-effect";
 import { MoveCategory, allMoves } from "./move";
 import { Abilities } from "./enums/abilities";
+import { PokemonSpecies } from "pokenode-ts";
 
 export enum FormChangeItem {
   NONE,
@@ -105,29 +106,43 @@ export class SpeciesFormChange {
     this.conditions = conditions;
   }
 
-  canChange(pokemon: Pokemon): boolean {
-    if (pokemon.species.speciesId !== this.speciesId)
-      return false;
+  canChange(pokemon: Pokemon): boolean {    
+    const speciesArray = [pokemon.species];
+    const formIndexes = [pokemon.formIndex];
 
-    if (!pokemon.species.forms.length)
-      return false;
+		if (pokemon.isFusion()) {
+			speciesArray.push(pokemon.fusionSpecies);
+      formIndexes.push(pokemon.fusionFormIndex);
+    }   
 
-    const formKeys = pokemon.species.forms.map(f => f.formKey);
-    if (formKeys[pokemon.formIndex] !== this.preFormKey)
-      return false;
-
-    if (formKeys[pokemon.formIndex] === this.formKey)
-      return false;
-
-    for (let condition of this.conditions) {
-      if (!condition.predicate(pokemon))
-        return false;
+    const formMatch = [true, true];
+    for (let i = 0; i < speciesArray.length; ++i) {
+      const species = speciesArray[i];
+      const formIndex = formIndexes[i];
+      
+      if (species.speciesId !== this.speciesId)
+        formMatch[i] = false;
+  
+      if (!species.forms.length)
+        formMatch[i] = false;
+  
+      const formKeys = species.forms.map(f => f.formKey);
+      if (formKeys[formIndex] !== this.preFormKey)
+        formMatch[i] = false;
+  
+      if (formKeys[formIndex] === this.formKey)
+        formMatch[i] = false;
+  
+      for (let condition of this.conditions) {
+        if (!condition.predicate(pokemon))
+          formMatch[i] = false;
+      }
+  
+      if (!this.trigger.canChange(pokemon))
+        formMatch[i] = false;
     }
 
-    if (!this.trigger.canChange(pokemon))
-      return false;
-
-    return true;
+    return formMatch.some(x => x);
   }
 
   findTrigger(triggerType: { new(...args: any[]): SpeciesFormChangeTrigger }): SpeciesFormChangeTrigger {
@@ -304,7 +319,7 @@ export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: Specie
   const isMega = formChange.formKey.indexOf(SpeciesFormKey.MEGA) > -1;
   const isGmax = formChange.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1;
   const isEmax = formChange.formKey.indexOf('eternamax') > -1;
-  const isRevert = !isMega && formChange.formKey === pokemon.species.forms[0].formKey;
+  const isRevert = !isMega && ((!!pokemon.species.forms.length && formChange.formKey === pokemon.species.forms[0].formKey) || (pokemon.isFusion() && pokemon.fusionSpecies.forms[0].formKey));
   const prefix = !pokemon.isPlayer() ? pokemon.hasTrainer() ? 'Foe ' : 'Wild ' : 'Your ';
   if (isMega)
     return `${prefix}${preName} mega-evolved\ninto ${pokemon.name}!`;
