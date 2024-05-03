@@ -3376,7 +3376,11 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
     }
     const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
     const lastPpUsed = movesetMove.ppUsed;
+<<<<<<< Updated upstream
     if (!lastMove || lastPpUsed < 1) {
+=======
+    if (lastPpUsed < 1) {
+>>>>>>> Stashed changes
       return false;
     }
     else {
