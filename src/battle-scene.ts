@@ -93,11 +93,7 @@ export enum Button {
 	CYCLE_NATURE,
 	CYCLE_VARIANT,
 	SPEED_UP,
-	SLOW_DOWN,
-	LEFT_STICK_UP,
-	LEFT_STICK_DOWN,
-	LEFT_STICK_LEFT,
-	LEFT_STICK_RIGHT
+	SLOW_DOWN
 }
 
 export interface PokeballCounts {
@@ -1459,10 +1455,10 @@ export default class BattleScene extends SceneBase {
 	}
 
 	private analogStickDirections = {
-		[Button.LEFT_STICK_UP]: false,
-		[Button.LEFT_STICK_DOWN]: false,
-		[Button.LEFT_STICK_LEFT]: false,
-		[Button.LEFT_STICK_RIGHT]: false
+		[Button.UP]: false,
+		[Button.DOWN]: false,
+		[Button.LEFT]: false,
+		[Button.RIGHT]: false
 	  };
 	  
 	handleAnalogStick(): void {
@@ -1476,40 +1472,40 @@ export default class BattleScene extends SceneBase {
 		if (Math.abs(leftStickX) > Math.abs(leftStickY)) {
 			if (leftStickX < -this.analogStickThreshold) {
 			// Left analog stick moved to the left
-				this.handleAnalogStickDirection(Button.LEFT_STICK_LEFT, Button.LEFT);
+				this.handleAnalogStickDirection(Button.LEFT);
 			} else if (leftStickX > this.analogStickThreshold) {
 			// Left analog stick moved to the right
-				this.handleAnalogStickDirection(Button.LEFT_STICK_RIGHT, Button.RIGHT);
+				this.handleAnalogStickDirection(Button.RIGHT);
 			} else {
 			// Left analog stick is in the neutral position horizontally
-				this.analogStickDirections[Button.LEFT_STICK_LEFT] = false;
-				this.analogStickDirections[Button.LEFT_STICK_RIGHT] = false;
+				this.analogStickDirections[Button.LEFT] = false;
+				this.analogStickDirections[Button.RIGHT] = false;
 			}
 		} else {
 			if (leftStickY < -this.analogStickThreshold) {
 			// Left analog stick moved up
-				this.handleAnalogStickDirection(Button.LEFT_STICK_UP, Button.UP);
+				this.handleAnalogStickDirection(Button.UP);
 			} else if (leftStickY > this.analogStickThreshold) {
 			// Left analog stick moved down
-				this.handleAnalogStickDirection(Button.LEFT_STICK_DOWN, Button.DOWN);
+				this.handleAnalogStickDirection(Button.DOWN);
 			} else {
 			// Left analog stick is in the neutral position vertically
-				this.analogStickDirections[Button.LEFT_STICK_UP] = false;
-				this.analogStickDirections[Button.LEFT_STICK_DOWN] = false;
+				this.analogStickDirections[Button.UP] = false;
+				this.analogStickDirections[Button.DOWN] = false;
 			}
 		}
 	}
 	
-	private handleAnalogStickDirection(analogStickButton: Button, direction: Button): void {
-		if (!this.analogStickDirections[analogStickButton]) {
+	private handleAnalogStickDirection(button: Button): void {
+		if (!this.analogStickDirections[button]) {
 			// First button press
-			this.ui.processInput(direction);
-			this.setLastProcessedMovementTime(analogStickButton);
-			this.analogStickDirections[analogStickButton] = true;
-		} else if (this.repeatInputDurationJustPassed(analogStickButton)) {
+			this.ui.processInput(button);
+			this.setLastProcessedMovementTime(button);
+			this.analogStickDirections[button] = true;
+		} else if (this.repeatInputDurationJustPassed(button)) {
 			// Subsequent holds
-			this.ui.processInput(direction);
-			this.setLastProcessedMovementTime(analogStickButton);
+			this.ui.processInput(button);
+			this.setLastProcessedMovementTime(button);
 		}
 	}
   /**
@@ -1534,7 +1530,7 @@ export default class BattleScene extends SceneBase {
 
 	buttonJustPressed(button: Button): boolean {
 		const gamepad = this.input.gamepad?.gamepads[0];
-		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustDown(k)) || this.gamepadButtonJustDown(gamepad?.buttons[this.gamepadKeyConfig[button]]);
+		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustDown(k)) || this.gamepadButtonJustDown(gamepad?.buttons[this.gamepadKeyConfig[button]])
 	}
 
 	/**
@@ -1564,8 +1560,8 @@ export default class BattleScene extends SceneBase {
 		  return false;
 		}
 	  
-		const isAnalogStickButton = button >= Button.LEFT_STICK_UP && button <= Button.LEFT_STICK_RIGHT;
-		const isButtonPressed = isAnalogStickButton || this.buttonKeys[button]?.some(k => k.isDown);
+		const analogStickHeld = this.analogStickDirections[button];
+		const isButtonPressed = analogStickHeld || this.buttonKeys[button]?.some(k => k.isDown);
 	  
 		if (!isButtonPressed && this.gamepadButtonStates.every(b => b == false)) {
 		  this.movementButtonLock = null;
