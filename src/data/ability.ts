@@ -3274,7 +3274,7 @@ export function initAbilities() {
     new Ability(Abilities.DAUNTLESS_SHIELD, 8)
       .attr(PostSummonStatChangeAbAttr, BattleStat.DEF, 1, true),
     new Ability(Abilities.LIBERO, 8)
-    .attr(PreAttackChangeType,(user,target,move) => move.name !== 'Struggle' && !user.isTerastallized() && user.battleSummonData.abilityTriggeredThisSwitch === false),
+    .attr(PreAttackChangeType,(user,target,move) => move.name !== 'Struggle' && !user.isTerastallized() && user.battleSummonData.abilityTriggered === false),
     new Ability(Abilities.BALL_FETCH, 8)
       .unimplemented(),
     new Ability(Abilities.COTTON_DOWN, 8)
