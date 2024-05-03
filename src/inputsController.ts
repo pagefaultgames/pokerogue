@@ -53,8 +53,8 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
 				isPressed: false,
 			}
 		}
+		// We don't want the menu key to be repeated
 		delete this.interactions[Button.MENU];
-		delete this.interactions[Button.SUBMIT];
     }
 
 	boot() {
@@ -172,7 +172,7 @@ export class InputsController extends Phaser.Plugins.ScenePlugin {
 			[Button.LEFT]: [keyCodes.LEFT, keyCodes.A],
 			[Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
 			[Button.SUBMIT]: [keyCodes.ENTER],
-			[Button.ACTION]: [keyCodes.SPACE, keyCodes.ENTER, keyCodes.Z],
+			[Button.ACTION]: [keyCodes.SPACE, keyCodes.Z],
 			[Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
 			[Button.MENU]: [keyCodes.ESC, keyCodes.M],
 			[Button.STATS]: [keyCodes.SHIFT, keyCodes.C],
