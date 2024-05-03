@@ -1325,13 +1325,10 @@ export class ChargeAttr extends OverrideMoveEffectAttr {
           user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true });
           if (this.sameTurn)
             user.scene.pushMovePhase(new MovePhase(user.scene, user, [ target.getBattlerIndex() ], user.moveset.find(m => m.moveId === move.id), true), this.followUpPriority);
-          user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
           resolve(true);
         });
-      } else {
-        user.lapseTag(BattlerTagType.CHARGING);
+      } else
         resolve(false);
-      }
     });
   }
 
@@ -1773,13 +1770,13 @@ export class BattleStatRatioPowerAttr extends VariablePowerAttr {
 
     if (this.invert) {
       // Gyro ball uses a specific formula
-      let userSpeed = user.getBattleStat(this.stat);
+      let userSpeed = user.getStat(this.stat);
       if (userSpeed < 1) {
         // Gen 6+ always have 1 base power
         power.value = 1;
         return true;
       } 
-      let bp = Math.floor(Math.min(150, 25 * target.getBattleStat(this.stat) / userSpeed + 1));
+      let bp = Math.floor(Math.min(150, 25 * target.getStat(this.stat) / userSpeed + 1));
       power.value = bp;
       return true;
     }
@@ -3679,6 +3676,22 @@ export class LastResortAttr extends MoveAttr {
   }
 }
 
+export class VariableTargetAttr extends MoveAttr {
+  private targetChangeFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
+
+  constructor(targetChange: (user: Pokemon, target: Pokemon, move: Move) => number) {
+    super();
+
+    this.targetChangeFunc = targetChange;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const targetVal = args[0] as Utils.NumberHolder;
+    targetVal.value = this.targetChangeFunc(user, target, move);
+    return true;
+  }
+}
+
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
 
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
@@ -3759,7 +3772,11 @@ export type MoveTargetSet = {
 }
 
 export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
-  const moveTarget = move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
+
+  const variableTarget = new Utils.NumberHolder(0);
+  user.getOpponents().forEach(p => applyMoveAttrs(VariableTargetAttr, user, p, allMoves[move], variableTarget));
+
+  const moveTarget = allMoves[move].getAttrs(VariableTargetAttr).length ? variableTarget.value : move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
   const opponents = user.getOpponents();
   
   let set: Pokemon[] = [];
@@ -4808,8 +4825,8 @@ export function initMoves() {
       .partial(),
     new StatusMove(Moves.TAILWIND, Type.FLYING, -1, 15, -1, 0, 4)
       .windMove()
-      .attr(AddArenaTagAttr, ArenaTagType.TAILWIND, 4, true)
-      .target(MoveTarget.USER_SIDE),
+      .target(MoveTarget.USER_SIDE)
+      .unimplemented(),
     new StatusMove(Moves.ACUPRESSURE, Type.NORMAL, -1, 30, -1, 0, 4)
       .attr(StatChangeAttr, BattleStat.RAND, 2)
       .target(MoveTarget.USER_OR_NEAR_ALLY),
@@ -5109,8 +5126,6 @@ export function initMoves() {
       .unimplemented(),
     new AttackMove(Moves.SMACK_DOWN, Type.ROCK, MoveCategory.PHYSICAL, 50, 100, 15, 100, 0, 5)
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, false, false, 5)
-      .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
-      .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING])
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .makesContact(false),
     new AttackMove(Moves.STORM_THROW, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
@@ -5474,8 +5489,6 @@ export function initMoves() {
     new AttackMove(Moves.THOUSAND_ARROWS, Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, 100, 0, 6)
       .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
-      .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
-      .attr(RemoveBattlerTagAttr, [BattlerTagType.FLYING])
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.THOUSAND_WAVES, Type.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
@@ -5956,7 +5969,8 @@ export function initMoves() {
     new AttackMove(Moves.STEEL_BEAM, Type.STEEL, MoveCategory.SPECIAL, 140, 95, 5, -1, 0, 8)
       .attr(HalfSacrificialAttr),
     new AttackMove(Moves.EXPANDING_FORCE, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 8)
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 1.5 : 1)
+      .attr(VariableTargetAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 6 : 3),
     new AttackMove(Moves.STEEL_ROLLER, Type.STEEL, MoveCategory.PHYSICAL, 130, 100, 5, -1, 0, 8)
       .attr(ClearTerrainAttr)
       .condition((user, target, move) => !!user.scene.arena.terrain),
@@ -6362,7 +6376,8 @@ export function initMoves() {
       }), // TODO Add Instruct/Encore interaction
     new AttackMove(Moves.COMEUPPANCE, Type.DARK, MoveCategory.PHYSICAL, 1, 100, 10, -1, 0, 9)
       .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)
-      .target(MoveTarget.ATTACKER),
+      .target(MoveTarget.ATTACKER)
+      .partial(),
     new AttackMove(Moves.AQUA_CUTTER, Type.WATER, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 9)
       .attr(HighCritAttr)
       .slicingMove()
