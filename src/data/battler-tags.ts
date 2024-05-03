@@ -1,7 +1,7 @@
 import { CommonAnim, CommonBattleAnim } from "./battle-anims";
 import { CommonAnimPhase, MoveEffectPhase, MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
 import { getPokemonMessage, getPokemonPrefix } from "../messages";
-import Pokemon, { MoveResult, HitResult, TurnMove } from "../field/pokemon";
+import Pokemon, { MoveResult, HitResult, } from "../field/pokemon";
 import { Stat, getStatName } from "./pokemon-stat";
 import { StatusEffect } from "./status-effect";
 import * as Utils from "../utils";
@@ -169,9 +169,7 @@ export class InterruptedTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-
-    const prevMove = pokemon.getLastXMoves(1)
-    return prevMove.length && (prevMove[0].move === Moves.FLY || prevMove[0].move === Moves.BOUNCE)
+    return !!pokemon.getTag(BattlerTagType.FLYING)
   }
 
   onAdd(pokemon: Pokemon): void {
