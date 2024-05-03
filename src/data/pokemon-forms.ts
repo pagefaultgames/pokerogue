@@ -681,6 +681,9 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.ENAMORUS]: [
     new SpeciesFormChange(Species.ENAMORUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItem.REVEAL_GLASS))
   ],
+  [Species.PALAFIN]: [
+    new SpeciesFormChange(Species.PALAFIN, 'zero', 'hero', new SpeciesFormChangeManualTrigger(), true),
+  ],
   [Species.OGERPON]: [
     new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'wellspring-mask', new SpeciesFormChangeItemTrigger(FormChangeItem.WELLSPRING_MASK)),
     new SpeciesFormChange(Species.OGERPON, 'teal-mask', 'hearthflame-mask', new SpeciesFormChangeItemTrigger(FormChangeItem.HEARTHFLAME_MASK)),

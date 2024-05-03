@@ -20,6 +20,7 @@ import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import { Abilities } from "./enums/abilities";
 import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
+import PokemonSpecies from "./pokemon-species";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -1949,6 +1950,27 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
   }
 }
 
+export class ZeroToHeroAbAttr extends PreSwitchOutAbAttr {
+     // .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() <= 0.9 ? 1 : 0)
+      //.attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.9 ? 1 : 0)
+      //.attr(PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.9 ? 1 : 0)
+      constructor(formFunc: ((p: Pokemon) => integer)) {
+        super();
+    
+        //this.formFunc = formFunc;
+      }
+
+  applyPreSwitchOut(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
+
+    if (1 !== pokemon.formIndex && pokemon.species.name == "Palafin") {
+      pokemon.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class PostBiomeChangeAbAttr extends AbAttr { }
 
 export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
@@ -3332,7 +3354,7 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      .unimplemented(),
+      .attr(ZeroToHeroAbAttr, p => true ? 1 : 0),
     new Ability(Abilities.COMMANDER, 9)
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
