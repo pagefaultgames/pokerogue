@@ -19,9 +19,10 @@ export const menu: SimpleTranslationEntries = {
     "boyOrGirl": "¿Eres un chico o una chica?",
     "boy": "Chico",
     "girl": "Chica",
-    "dailyRankings": "Daily Rankings",
-    "weeklyRankings": "Weekly Rankings",
-    "noRankings": "No Rankings",
-    "loading": "Loading…",
-    "playersOnline": "Players Online"
+    "dailyRankings": "Rankings diarios",
+    "weeklyRankings": "Rankings semanales",
+    "noRankings": "Sin rankings",
+    "loading": "Cargando…",
+    "playersOnline": "Jugadores en línea",
+    "empty":"Vacío",
 } as const;

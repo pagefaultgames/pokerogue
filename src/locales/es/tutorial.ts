@@ -1,10 +1,13 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const tutorial: SimpleTranslationEntries = {
-    "intro": `Welcome to PokéRogue! This is a battle-focused Pokémon fangame with roguelite elements.
-    $This game is not monetized and we claim no ownership of Pokémon nor of the copyrighted assets used.
-    $The game is a work in progress, but fully playable.\nFor bug reports, please use the Discord community.
-    $If the game runs slowly, please ensure 'Hardware Acceleration' is turned on in your browser settings.`,
+    "intro": `¡Bienvenido/a a PokéRogue! Este es un fangame de Pokémon centrado en el combate con elementos roguelite.
+    $Este juego no está monetizado y no reclamamos ningún derecho de propiedad sobre Pokémon ni sobre ninguno de
+    $los recursos con copyright utilizados.
+    $El juego está en proceso, pero es completamente jugable.\nPara reportar bugs, por favor, hazlo en nuestra
+    $comunidad de Discord.
+    $Si el juego va lento, por favor, asegúrate de que tienes activada la opción 'Aceleración de gráficos' en los
+    $ajustes de tu navegador.`,
     
     "accessMenu": `To access the menu, press M or Escape while awaiting input.\nThe menu contains settings and various features.`,
     
