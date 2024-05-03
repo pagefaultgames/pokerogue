@@ -260,6 +260,7 @@ export default class BattleScene extends SceneBase {
 		field.setScale(6);
 
 		this.field = field;
+
 		const fieldUI = this.add.container(0, this.game.canvas.height);
 		fieldUI.setDepth(1);
 		fieldUI.setScale(6);
