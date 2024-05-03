@@ -2956,7 +2956,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       if (!player && !user.scene.currentBattle.battleType) {
         if (this.batonPass)
           return false;
-        if (move.category == MoveCategory.STATUS && !user.hasAbilityWithAttr(RunSuccessAbAttr))
+        // Don't let wild opponents flee with Teleport unless they have a workaround ability.
+        if (user.getTag(BattlerTagType.TRAPPED) && move.id == Moves.TELEPORT && !user.hasAbilityWithAttr(RunSuccessAbAttr))
           return false;
         // Don't allow wild opponents to flee on the boss stage since it can ruin a run early on
         if (!(user.scene.currentBattle.waveIndex % 10))
