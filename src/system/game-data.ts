@@ -1060,7 +1060,7 @@ export class GameData {
             this.gameStats.shinyPokemonHatched++;
         }
 
-        if (!hasPrevolution && (!pokemon.scene.gameMode.isDaily || hasNewAttr))
+        if (!hasPrevolution && (!pokemon.scene.gameMode.isDaily || hasNewAttr || fromEgg))
           this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant || 0) : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
       }
     

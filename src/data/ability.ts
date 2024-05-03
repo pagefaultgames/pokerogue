@@ -1630,6 +1630,27 @@ export class BonusCritAbAttr extends AbAttr {
   }
 }
 
+export class MultCritAbAttr extends AbAttr {
+  public multAmount: number;
+
+  constructor(multAmount: number) {
+    super(true);
+
+    this.multAmount = multAmount;
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const critMult = args[0] as Utils.NumberHolder;
+    if (critMult.value > 1){
+      critMult.value *= this.multAmount;
+      return true;
+    }
+
+    return false;
+  }
+}
+
+
 export class BlockNonDirectDamageAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     cancelled.value = true;
@@ -2797,7 +2818,7 @@ export function initAbilities() {
       .attr(MoveTypeChangeAttr, Type.NORMAL, 1.2, (user, target, move) => move.id !== Moves.HIDDEN_POWER && move.id !== Moves.WEATHER_BALL && 
             move.id !== Moves.NATURAL_GIFT && move.id !== Moves.JUDGMENT && move.id !== Moves.TECHNO_BLAST),
     new Ability(Abilities.SNIPER, 4)
-      .unimplemented(),
+      .attr(MultCritAbAttr, 1.5),
     new Ability(Abilities.MAGIC_GUARD, 4)
       .attr(BlockNonDirectDamageAbAttr),
     new Ability(Abilities.NO_GUARD, 4)
