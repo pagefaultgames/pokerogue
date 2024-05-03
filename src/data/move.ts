@@ -3676,6 +3676,7 @@ export class LastResortAttr extends MoveAttr {
   }
 }
 
+export class VariableTargetAttr extends MoveAttr {
   private targetChangeFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
 
   constructor(targetChange: (user: Pokemon, target: Pokemon, move: Move) => number) {
