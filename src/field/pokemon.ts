@@ -3061,7 +3061,7 @@ export class PokemonBattleData {
 export class PokemonBattleSummonData {
   public turnCount: integer = 1;
   public moveHistory: TurnMove[] = [];
-  public abilityTriggeredThisSwitch: boolean = false;
+  public abilityTriggered: boolean = false;
 }
 
 export class PokemonTurnData {
