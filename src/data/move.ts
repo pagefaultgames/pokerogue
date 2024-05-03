@@ -2767,6 +2767,21 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
   }
 }
 
+export class StockpileAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.STOCKPILE, true, false, 0, 10)
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    user.scene.queueMessage(getPokemonMessage(target, `\nstockpiled resources.`));
+
+    return true;
+  }
+}
+
 export class HitsTagAttr extends MoveAttr {
   public tagType: BattlerTagType;
   public doubleDamage: boolean;
@@ -4517,7 +4532,6 @@ export function initMoves() {
     new SelfStatusMove(Moves.STOCKPILE, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILE, true, false, 0, 10)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, true)
-      .target(MoveTarget.USER)
       .partial(),
     new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
       .unimplemented(),
