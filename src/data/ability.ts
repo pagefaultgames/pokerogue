@@ -901,8 +901,9 @@ export class PreAttackChangeType  extends PreAttackAbAttr{
       }
     }
     return false;
-    }
- }
+  }
+}
+ 
 export class VariableMoveTypeAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     //const power = args[0] as Utils.IntegerHolder;
