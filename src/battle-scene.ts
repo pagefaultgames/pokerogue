@@ -203,24 +203,24 @@ export default class BattleScene extends SceneBase {
     async preload() {
         this.load.scenePlugin('inputController', InputsController);
         this.load.scenePlugin('uiInputs', UiInputs);
-		if (DEBUG_RNG) {
-			const scene = this;
-			const originalRealInRange = Phaser.Math.RND.realInRange;
-			Phaser.Math.RND.realInRange = function (min: number, max: number): number {
-				const ret = originalRealInRange.apply(this, [ min, max ]);
-				const args = [ 'RNG', ++scene.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
-				args.push(`seed: ${scene.rngSeedOverride || scene.waveSeed || scene.seed}`);
-				if (scene.rngOffset)
-					args.push(`offset: ${scene.rngOffset}`);
-				console.log(...args);
-				return ret;
-			};
-		}
+        if (DEBUG_RNG) {
+            const scene = this;
+            const originalRealInRange = Phaser.Math.RND.realInRange;
+            Phaser.Math.RND.realInRange = function (min: number, max: number): number {
+                const ret = originalRealInRange.apply(this, [ min, max ]);
+                const args = [ 'RNG', ++scene.rngCounter, ret / (max - min), `min: ${min} / max: ${max}` ];
+                args.push(`seed: ${scene.rngSeedOverride || scene.waveSeed || scene.seed}`);
+                if (scene.rngOffset)
+                    args.push(`offset: ${scene.rngOffset}`);
+                console.log(...args);
+                return ret;
+            };
+        }
 
-		populateAnims();
+        populateAnims();
 
-		await this.initVariantData();
-	}
+        await this.initVariantData();
+    }
 
 	create() {
 		initGameSpeed.apply(this);
