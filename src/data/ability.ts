@@ -1822,6 +1822,29 @@ export class MultCritAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Attribute used by Merciless
+ * Guarantees a critical hit if the target is poisoned, except if target prevents critical hits.
+ */
+export class CritIfTargetPoisonedAbAttr extends AbAttr {
+  /**
+   * Multiplies the base additional effect chance by the given multiplier.
+   * @param {Pokemon} pokemon N/A
+   * @param {boolean} passive N/A
+   * @param {cancelled} cancelled N/A 
+   * @param {any[]} args args[0]: BooleanHolder, If true critical hit is guaranteed. args[1]: Target Pokémon.
+   * @returns {boolean} true if function succeeds.
+   */
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const target = (args[1] as Pokemon);
+    if(target.status)
+    if(!(target.status.effect === StatusEffect.TOXIC || target.status.effect === StatusEffect.POISON))
+      return false;
+
+    (args[0] as Utils.BooleanHolder).value = true;
+    return true;
+  }
+}
 
 export class BlockNonDirectDamageAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
@@ -3442,7 +3465,7 @@ export function initAbilities() {
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER && move.category !== MoveCategory.STATUS, BattleStat.DEF, 2),
     new Ability(Abilities.MERCILESS, 7)
-      .unimplemented(),
+      .attr(CritIfTargetPoisonedAbAttr),
     new Ability(Abilities.SHIELDS_DOWN, 7)
       .attr(PostBattleInitFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
