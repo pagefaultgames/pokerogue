@@ -580,6 +580,35 @@ export class PostDefendStatChangeAbAttr extends PostDefendAbAttr {
   }
 }
 
+export class PostDefendHpGatedStatChangeAbAttr extends PostDefendAbAttr {
+  private condition: PokemonDefendCondition;
+  private hpGate: number;
+  private stat: BattleStat;
+  private levels: integer;
+  private selfTarget: boolean;
+
+  constructor(condition: PokemonDefendCondition, hpGate: number, stat: BattleStat, levels: integer, selfTarget: boolean = true) {
+    super(true);
+
+    this.condition = condition;
+    this.hpGate = hpGate;
+    this.stat = stat;
+    this.levels = levels;
+    this.selfTarget = selfTarget;
+  }
+
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    const hpGateFlat: integer = Math.ceil(pokemon.getMaxHp() * this.hpGate)
+    const lastAttackReceived = pokemon.turnData.attacksReceived[pokemon.turnData.attacksReceived.length - 1]
+    if (this.condition(pokemon, attacker, move.getMove()) && (pokemon.hp <= hpGateFlat && (pokemon.hp + lastAttackReceived.damage) > hpGateFlat)) {
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, (this.selfTarget ? pokemon : attacker).getBattlerIndex(), true, [ this.stat ], this.levels));
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
   private condition: PokemonDefendCondition;
   private tagType: ArenaTagType;
@@ -3091,7 +3120,7 @@ export function initAbilities() {
     new Ability(Abilities.STEELWORKER, 7)
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL),
     new Ability(Abilities.BERSERK, 7)
-      .unimplemented(),
+      .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, BattleStat.SPD, 1),
     new Ability(Abilities.SLUSH_RUSH, 7)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW)),
@@ -3327,7 +3356,11 @@ export function initAbilities() {
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.ANGER_SHELL, 9)
-      .unimplemented(),
+      .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, BattleStat.ATK, 1)
+      .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, BattleStat.SPATK, 1)
+      .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, BattleStat.SPD, 1)
+      .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, BattleStat.DEF, -1)
+      .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, BattleStat.SPDEF, -1),
     new Ability(Abilities.PURIFYING_SALT, 9)
       .attr(StatusEffectImmunityAbAttr)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.GHOST, 0.5)
