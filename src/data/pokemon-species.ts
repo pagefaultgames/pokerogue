@@ -3372,7 +3372,7 @@ export const starterPassiveAbilities = {
   [Species.LATIAS]: Abilities.SOUL_HEART,
   [Species.LATIOS]: Abilities.TINTED_LENS,
   [Species.KYOGRE]: Abilities.HYDRATION,
-  [Species.GROUDON]: Abilities.FLAME_BODY,
+  [Species.GROUDON]: Abilities.PROTOSYNTHESIS,
   [Species.RAYQUAZA]: Abilities.UNNERVE,
   [Species.JIRACHI]: Abilities.COMATOSE,
   [Species.DEOXYS]: Abilities.PROTEAN,
