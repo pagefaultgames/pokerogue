@@ -1,100 +1,16 @@
 import BattleScene, {bypassLogin, startingWave} from "./battle-scene";
-import {
-  DamageResult,
-  default as Pokemon,
-  EnemyPokemon,
-  FieldPosition,
-  HitResult,
-  MoveResult,
-  PlayerPokemon,
-  PokemonMove,
-  TurnMove
-} from "./field/pokemon";
+import {DamageResult, default as Pokemon, EnemyPokemon, FieldPosition, HitResult, MoveResult, PlayerPokemon, PokemonMove, TurnMove} from "./field/pokemon";
 import * as Utils from './utils';
 import {Moves} from "./data/enums/moves";
-import {
-  allMoves,
-  applyFilteredMoveAttrs,
-  applyMoveAttrs,
-  AttackMove,
-  BypassSleepAttr,
-  ChargeAttr,
-  CopyMoveAttr,
-  FixedDamageAttr,
-  ForceSwitchOutAttr,
-  getMoveTargets,
-  HealStatusEffectAttr,
-  HitsTagAttr,
-  IgnoreOpponentStatChangesAttr,
-  MissEffectAttr,
-  MoveAttr,
-  MoveEffectAttr,
-  MoveEffectTrigger,
-  MoveFlags,
-  MoveTarget,
-  MoveTargetSet,
-  MultiHitAttr,
-  NoEffectAttr,
-  OneHitKOAccuracyAttr,
-  OverrideMoveEffectAttr,
-  PreMoveMessageAttr,
-  SelfStatusMove,
-  VariableAccuracyAttr
-} from "./data/move";
+import {allMoves, applyFilteredMoveAttrs, applyMoveAttrs, AttackMove, BypassSleepAttr, ChargeAttr, CopyMoveAttr, FixedDamageAttr, ForceSwitchOutAttr, getMoveTargets, HealStatusEffectAttr, HitsTagAttr, IgnoreOpponentStatChangesAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveEffectTrigger, MoveFlags, MoveTarget, MoveTargetSet, MultiHitAttr, NoEffectAttr, OneHitKOAccuracyAttr, OverrideMoveEffectAttr, PreMoveMessageAttr, SelfStatusMove, VariableAccuracyAttr} from "./data/move";
 import {Mode} from './ui/ui';
 import {Command} from "./ui/command-ui-handler";
 import {Stat} from "./data/pokemon-stat";
-import {
-  BerryModifier,
-  ContactHeldItemTransferChanceModifier,
-  EnemyAttackStatusEffectChanceModifier,
-  EnemyPersistentModifier,
-  EnemyStatusEffectHealChanceModifier,
-  EnemyTurnHealModifier,
-  ExpBalanceModifier,
-  ExpBoosterModifier,
-  ExpShareModifier,
-  ExtraModifierModifier,
-  FlinchChanceModifier,
-  HealingBoosterModifier,
-  HitHealModifier,
-  IvScannerModifier,
-  LapsingPersistentModifier,
-  LapsingPokemonHeldItemModifier,
-  MapModifier,
-  Modifier,
-  MoneyInterestModifier,
-  MoneyMultiplierModifier,
-  MultipleParticipantExpBonusModifier,
-  PersistentModifier,
-  PokemonExpBoosterModifier,
-  PokemonFriendshipBoosterModifier,
-  PokemonHeldItemModifier,
-  PokemonInstantReviveModifier,
-  PokemonMoveAccuracyBoosterModifier,
-  PokemonMultiHitModifier,
-  SwitchEffectTransferModifier,
-  TempBattleStatBoosterModifier,
-  TurnHealModifier,
-  TurnHeldItemTransferModifier
-} from "./modifier/modifier";
+import {BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, HealingBoosterModifier, HitHealModifier, IvScannerModifier, LapsingPersistentModifier, LapsingPokemonHeldItemModifier, MapModifier, Modifier, MoneyInterestModifier, MoneyMultiplierModifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonFriendshipBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, PokemonMoveAccuracyBoosterModifier, PokemonMultiHitModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier} from "./modifier/modifier";
 import PartyUiHandler, {PartyOption, PartyUiMode} from "./ui/party-ui-handler";
-import {
-  doPokeballBounceAnim,
-  getPokeballAtlasKey,
-  getPokeballCatchMultiplier,
-  getPokeballTintColor,
-  PokeballType
-} from "./data/pokeball";
+import {doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType} from "./data/pokeball";
 import {CommonAnim, CommonBattleAnim, initMoveAnim, loadMoveAnimAssets, MoveAnim} from "./data/battle-anims";
-import {
-  getStatusEffectActivationText,
-  getStatusEffectCatchRateMultiplier,
-  getStatusEffectHealText,
-  getStatusEffectObtainText,
-  getStatusEffectOverlapText,
-  StatusEffect
-} from "./data/status-effect";
+import {getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText, StatusEffect} from "./data/status-effect";
 import {SummaryUiMode} from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
 import {EvolutionPhase} from "./evolution-phase";
@@ -103,96 +19,18 @@ import {BattleStat, getBattleStatLevelChangeDescription, getBattleStatName} from
 import {biomeLinks, getBiomeName} from "./data/biomes";
 import {Biome} from "./data/enums/biome";
 import {ModifierTier} from "./modifier/modifier-tier";
-import {
-  FusePokemonModifierType,
-  getDailyRunStarterModifiers,
-  getEnemyBuffModifierForWave,
-  getModifierType,
-  getPlayerModifierTypeOptions,
-  getPlayerShopModifierTypeOptionsForWave,
-  ModifierPoolType,
-  ModifierType,
-  ModifierTypeFunc,
-  ModifierTypeOption,
-  modifierTypes,
-  PokemonModifierType,
-  PokemonMoveModifierType,
-  regenerateModifierPoolThresholds,
-  RememberMoveModifierType,
-  TmModifierType
-} from "./modifier/modifier-type";
+import {FusePokemonModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, modifierTypes, PokemonModifierType, PokemonMoveModifierType, regenerateModifierPoolThresholds, RememberMoveModifierType, TmModifierType} from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import {
-  BattlerTag,
-  BattlerTagLapseType,
-  BounceTag,
-  EncoreTag,
-  HideSpriteTag as HiddenTag,
-  ProtectedTag,
-  TrappedTag
-} from "./data/battler-tags";
+import {BattlerTag, BattlerTagLapseType, BounceTag, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag} from "./data/battler-tags";
 import {BattlerTagType} from "./data/enums/battler-tag-type";
 import {getPokemonMessage} from "./messages";
 import {Starter} from "./ui/starter-select-ui-handler";
 import {Gender} from "./data/gender";
-import {
-  getRandomWeatherType,
-  getTerrainBlockMessage,
-  getWeatherDamageMessage,
-  getWeatherLapseMessage,
-  Weather,
-  WeatherType
-} from "./data/weather";
+import {getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage, Weather, WeatherType} from "./data/weather";
 import {TempBattleStat} from "./data/temp-battle-stat";
 import {ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag} from "./data/arena-tag";
 import {ArenaTagType} from "./data/enums/arena-tag-type";
-import {
-  AlwaysHitAbAttr,
-  applyAbAttrs,
-  applyBattleStatMultiplierAbAttrs,
-  applyCheckTrappedAbAttrs,
-  applyPostAttackAbAttrs,
-  applyPostBattleAbAttrs,
-  applyPostBattleInitAbAttrs,
-  applyPostDefendAbAttrs,
-  applyPostFaintAbAttrs,
-  applyPostKnockOutAbAttrs,
-  applyPostStatChangeAbAttrs,
-  applyPostSummonAbAttrs,
-  applyPostTurnAbAttrs,
-  applyPostVictoryAbAttrs,
-  applyPostWeatherLapseAbAttrs,
-  applyPreStatChangeAbAttrs,
-  applyPreSwitchOutAbAttrs,
-  applyPreWeatherEffectAbAttrs,
-  BattleStatMultiplierAbAttr,
-  BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, MagicBounceAbAttr,
-  CheckTrappedAbAttr,
-  IgnoreOpponentStatChangesAbAttr,
-  IncreasePpAbAttr,
-  IncrementMovePriorityAbAttr,
-  PostAttackAbAttr,
-  PostBattleAbAttr,
-  PostBattleInitAbAttr,
-  PostBiomeChangeAbAttr,
-  PostDefendAbAttr,
-  PostFaintAbAttr,
-  PostKnockOutAbAttr,
-  PostStatChangeAbAttr,
-  PostSummonAbAttr,
-  PostTurnAbAttr,
-  PostVictoryAbAttr,
-  PostWeatherLapseAbAttr,
-  PreSwitchOutAbAttr,
-  PreventBerryUseAbAttr,
-  PreWeatherDamageAbAttr,
-  ProtectStatAbAttr,
-  RedirectMoveAbAttr,
-  RunSuccessAbAttr,
-  StatChangeMultiplierAbAttr,
-  SuppressWeatherEffectAbAttr,
-  SyncEncounterNatureAbAttr
-} from "./data/ability";
+import {AlwaysHitAbAttr, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostBattleInitAbAttrs, applyPostDefendAbAttrs, applyPostFaintAbAttrs, applyPostKnockOutAbAttrs, applyPostStatChangeAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostVictoryAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, MagicBounceAbAttr, CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, IncreasePpAbAttr, IncrementMovePriorityAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostBattleInitAbAttr, PostBiomeChangeAbAttr, PostDefendAbAttr, PostFaintAbAttr, PostKnockOutAbAttr, PostStatChangeAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostVictoryAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreventBerryUseAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr} from "./data/ability";
 import {getUnlockableName, Unlockables} from "./system/unlockables";
 import {getBiomeKey} from "./field/arena";
 import {BattlerIndex, BattleType, TurnCommand} from "./battle";
@@ -207,13 +45,7 @@ import {vouchers} from "./system/voucher";
 import {loggedInUser, updateUserInfo} from "./account";
 import {PlayerGender, SessionSaveData} from "./system/game-data";
 import {addPokeballCaptureStars, addPokeballOpenParticles} from "./field/anims";
-import {
-  SpeciesFormChangeActiveTrigger,
-  SpeciesFormChangeManualTrigger,
-  SpeciesFormChangeMoveLearnedTrigger,
-  SpeciesFormChangePostMoveTrigger,
-  SpeciesFormChangePreMoveTrigger
-} from "./data/pokemon-forms";
+import {SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger} from "./data/pokemon-forms";
 import {battleSpecDialogue, getCharVariantFromDialogue} from "./data/dialogue";
 import ModifierSelectUiHandler, {SHOP_OPTIONS_ROW_LIMIT} from "./ui/modifier-select-ui-handler";
 import {Setting} from "./system/settings";
