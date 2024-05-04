@@ -90,6 +90,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private selectFilter: PokemonSelectFilter | PokemonModifierTransferSelectFilter;
   private moveSelectFilter: PokemonMoveSelectFilter;
   private tmMoveId: Moves;
+  private showMovePp: boolean;
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -185,6 +186,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       ? args[4] as PokemonMoveSelectFilter
       : PartyUiHandler.FilterAllMoves;
     this.tmMoveId = args.length > 5 && args[5] ? args[5] : Moves.NONE;
+    this.showMovePp = args.length > 6 && args[6];
 
     this.partyContainer.setVisible(true);
     this.partyBg.setTexture(`party_bg${this.scene.currentBattle.double ? '_double' : ''}`);
@@ -383,6 +385,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       }
 
       const slotCount = this.partySlots.length;
+      const battlerCount = this.scene.currentBattle.getBattlerCount();
 
       switch (button) {
         case Button.UP:
@@ -392,14 +395,20 @@ export default class PartyUiHandler extends MessageUiHandler {
           success = this.setCursor(this.cursor < 6 ? this.cursor < slotCount - 1 ? this.cursor + 1 : 6 : 0);
           break;
         case Button.LEFT:
-          if (this.cursor >= this.scene.currentBattle.getBattlerCount() && this.cursor < 6)
+          if (this.cursor >= battlerCount && this.cursor <= 6)
             success = this.setCursor(0);
           break;
         case Button.RIGHT:
-          const battlerCount = this.scene.currentBattle.getBattlerCount();
-          if (slotCount > battlerCount && this.cursor < battlerCount)
-            success = this.setCursor(this.lastCursor < 6 ? this.lastCursor || battlerCount : battlerCount);
+          if (slotCount === battlerCount){
+            success = this.setCursor(6);
           break;
+          } else if (battlerCount >= 2 && slotCount > battlerCount && this.getCursor() === 0 && this.lastCursor === 1){
+            success = this.setCursor(2);
+          break;
+          } else if (slotCount > battlerCount && this.cursor < battlerCount){
+            success = this.setCursor(this.lastCursor < 6 ? this.lastCursor ||  battlerCount : battlerCount);
+          break;
+          }
       }
     }
 
@@ -656,7 +665,14 @@ export default class PartyUiHandler extends MessageUiHandler {
           case PartyOption.MOVE_2:
           case PartyOption.MOVE_3:
           case PartyOption.MOVE_4:
-            optionName = pokemon.moveset[option - PartyOption.MOVE_1].getName();
+            const move = pokemon.moveset[option - PartyOption.MOVE_1];
+            if(this.showMovePp) {
+              const maxPP = move.getMovePp();
+              const currPP = maxPP - move.ppUsed;
+              optionName = `${move.getName()} ${currPP}/${maxPP}`;
+            } else {
+              optionName = move.getName();
+            }
             break;
           default:
             if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {

@@ -60,22 +60,9 @@ import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
 import { Variant, variantData } from './data/variant';
 import { Localizable } from './plugins/i18n';
+import { STARTING_WAVE_OVERRIDE, OPP_SPECIES_OVERRIDE, SEED_OVERRIDE, STARTING_BIOME_OVERRIDE } from './overrides';
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
-
-export const SEED_OVERRIDE = '';
-export const STARTER_SPECIES_OVERRIDE = 0;
-export const STARTER_FORM_OVERRIDE = 0;
-export const STARTING_LEVEL_OVERRIDE = 0;
-export const STARTING_WAVE_OVERRIDE = 0;
-export const STARTING_BIOME_OVERRIDE = Biome.TOWN;
-export const STARTING_MONEY_OVERRIDE = 0;
-
-export const ABILITY_OVERRIDE = Abilities.NONE;
-export const MOVE_OVERRIDE = Moves.NONE;
-export const OPP_SPECIES_OVERRIDE = 0;
-export const OPP_ABILITY_OVERRIDE = Abilities.NONE;
-export const OPP_MOVE_OVERRIDE = Moves.NONE;
 
 const DEBUG_RNG = false;
 
@@ -98,6 +85,7 @@ export enum Button {
 	ACTION,
 	CANCEL,
 	MENU,
+	STATS,
 	CYCLE_SHINY,
 	CYCLE_FORM,
 	CYCLE_GENDER,
@@ -209,25 +197,26 @@ export default class BattleScene extends SceneBase {
 	private movementButtonLock: Button;
 
   // using a dualshock controller as a map
-  private gamepadKeyConfig = {
-    [Button.UP]: 12, // up
-    [Button.DOWN]: 13, // down
-    [Button.LEFT]: 14, // left
-    [Button.RIGHT]: 15, // right
-    [Button.SUBMIT]: 17, // touchpad
-    [Button.ACTION]: 0, // X
-    [Button.CANCEL]: 1, // O
-    [Button.MENU]: 9, // options
-    [Button.CYCLE_SHINY]: 5, // RB
-    [Button.CYCLE_FORM]: 4, // LB
-    [Button.CYCLE_GENDER]: 6, // LT
-    [Button.CYCLE_ABILITY]: 7, // RT
-    [Button.CYCLE_NATURE]: 2, // square
-    [Button.CYCLE_VARIANT]: 3, // triangle
-    [Button.SPEED_UP]: 10, // L3
-    [Button.SLOW_DOWN]: 11 // R3
-  };
-  public gamepadButtonStates: boolean[] = new Array(17).fill(false);
+	private gamepadKeyConfig = {
+		[Button.UP]: 12, // up
+		[Button.DOWN]: 13, // down
+		[Button.LEFT]: 14, // left
+		[Button.RIGHT]: 15, // right
+		[Button.SUBMIT]: 17, // touchpad
+		[Button.ACTION]: 0, // X
+		[Button.CANCEL]: 1, // O
+		[Button.MENU]: 9, // options
+		[Button.STATS]: 8, // share
+		[Button.CYCLE_SHINY]: 5, // RB
+		[Button.CYCLE_FORM]: 4, // LB
+		[Button.CYCLE_GENDER]: 6, // LT
+		[Button.CYCLE_ABILITY]: 7, // RT
+		[Button.CYCLE_NATURE]: 2, // square
+		[Button.CYCLE_VARIANT]: 3, // triangle
+		[Button.SPEED_UP]: 10, // L3
+		[Button.SLOW_DOWN]: 11 // R3
+	};
+	public gamepadButtonStates: boolean[] = new Array(17).fill(false);
 
 	public rngCounter: integer = 0;
 	public rngSeedOverride: string = '';
@@ -531,10 +520,23 @@ export default class BattleScene extends SceneBase {
 			.then(v => {
 				Object.keys(v).forEach(k => variantData[k] = v[k]);
 				if (this.experimentalSprites) {
-					const expTree = variantData['exp'];
-					Object.keys(expTree).forEach(ek => {
-						variantData[ek] = expTree[ek];
-					});
+					const expVariantData = variantData['exp'];
+					const traverseVariantData = (keys: string[]) => {
+						let variantTree = variantData;
+						let expTree = expVariantData;
+						keys.map((k: string, i: integer) => {
+							if (i < keys.length - 1) {
+								variantTree = variantTree[k];
+								expTree = expTree[k];
+							} else if (variantTree.hasOwnProperty(k) && expTree.hasOwnProperty(k)) {
+								if ([ 'back', 'female' ].includes(k))
+									traverseVariantData(keys.concat(k));
+								else
+									variantTree[k] = expTree[k];
+							}
+						});
+					};
+					Object.keys(expVariantData).forEach(ek => traverseVariantData([ ek ]));
 				}
 				Promise.resolve();
 			});
@@ -615,6 +617,7 @@ export default class BattleScene extends SceneBase {
 			[Button.ACTION]: [keyCodes.SPACE, keyCodes.ENTER, keyCodes.Z],
 			[Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
 			[Button.MENU]: [keyCodes.ESC, keyCodes.M],
+			[Button.STATS]: [keyCodes.SHIFT, keyCodes.C],
 			[Button.CYCLE_SHINY]: [keyCodes.R],
 			[Button.CYCLE_FORM]: [keyCodes.F],
 			[Button.CYCLE_GENDER]: [keyCodes.G],
@@ -1041,17 +1044,26 @@ export default class BattleScene extends SceneBase {
 			case Species.BASCULIN:
 			case Species.DEERLING:
 			case Species.SAWSBUCK:
+			case Species.FROAKIE:
+			case Species.FROGADIER:
 			case Species.VIVILLON:
 			case Species.FLABEBE:
 			case Species.FLOETTE:
 			case Species.FLORGES:
+			case Species.FURFROU:
 			case Species.ORICORIO:
 			case Species.SQUAWKABILLY:
 			case Species.TATSUGIRI:
 			case Species.PALDEA_TAUROS:
 				return Utils.randSeedInt(species.forms.length);
+			case Species.GRENINJA:
+				return Utils.randSeedInt(2);
+			case Species.ZYGARDE:
+				return Utils.randSeedInt(3);
 			case Species.MINIOR:
 				return Utils.randSeedInt(6);
+			case Species.ALCREMIE:
+				return Utils.randSeedInt(9);
 			case Species.MEOWSTIC:
 			case Species.INDEEDEE:
 			case Species.BASCULEGION:
@@ -1423,8 +1435,16 @@ export default class BattleScene extends SceneBase {
 				if (this.ui?.getMode() === Mode.SETTINGS)
 					(this.ui.getHandler() as SettingsUiHandler).show([]);
 			}
-		} else
-			return;
+		} else {
+			let pressed = false;
+			if (this.ui && (this.buttonJustReleased(Button.STATS) || (pressed = this.buttonJustPressed(Button.STATS)))) {
+				for (let p of this.getField().filter(p => p?.isActive(true)))
+					p.toggleStats(pressed);
+				if (pressed)
+					this.setLastProcessedMovementTime(Button.STATS);
+			} else
+				return;
+		}
 		if (inputSuccess && this.enableVibration && typeof navigator.vibrate !== 'undefined')
 			navigator.vibrate(vibrationLength || 10);		
 	}
@@ -1434,7 +1454,7 @@ export default class BattleScene extends SceneBase {
    * or not. It will only return true once, until the key is released and pressed down
    * again. 
    */
-	gamepadButtonJustDown(button: Phaser.Input.Gamepad.Button) : boolean {
+	gamepadButtonJustDown(button: Phaser.Input.Gamepad.Button): boolean {
 		if (!button || !this.gamepadSupport)
 			return false;
 
@@ -1452,6 +1472,23 @@ export default class BattleScene extends SceneBase {
 	buttonJustPressed(button: Button): boolean {
 		const gamepad = this.input.gamepad?.gamepads[0];
 		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustDown(k)) || this.gamepadButtonJustDown(gamepad?.buttons[this.gamepadKeyConfig[button]]);
+	}
+
+	/**
+   * gamepadButtonJustUp returns true if @param button has just been released
+   * or not. It will only return true once, until the key is released and pressed down
+   * again.
+   */
+	gamepadButtonJustUp(button: Phaser.Input.Gamepad.Button): boolean {
+		if (!button || !this.gamepadSupport)
+			return false;
+
+		return !this.gamepadButtonStates[button.index];
+  }
+
+	buttonJustReleased(button: Button): boolean {
+		const gamepad = this.input.gamepad?.gamepads[0];
+		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustUp(k)) || this.gamepadButtonJustUp(gamepad?.buttons[this.gamepadKeyConfig[button]]);
 	}
 
 	/**

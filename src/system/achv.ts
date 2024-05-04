@@ -7,6 +7,7 @@ export enum AchvTier {
   COMMON,
   GREAT,
   ULTRA,
+  ROGUE,
   MASTER
 }
 
@@ -50,8 +51,10 @@ export class Achv {
   }
 
   getTier(): AchvTier {
-    if (this.score >= 100)
+    if (this.score >= 150)
       return AchvTier.MASTER;
+    if (this.score >= 100)
+      return AchvTier.ROGUE;
     if (this.score >= 50)
       return AchvTier.ULTRA;
     if (this.score >= 25)

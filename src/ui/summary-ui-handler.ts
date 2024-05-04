@@ -364,9 +364,16 @@ export default class SummaryUiHandler extends UiHandler {
           case Button.LEFT:
             this.moveSelect = false;
             this.setCursor(Page.STATS);        
-            this.hideMoveEffect();
-            success = true;
-            break;
+            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE){
+              this.hideMoveEffect();
+              this.destroyBlinkCursor();
+              success = true;
+              break;
+            } else {
+              this.hideMoveSelect();
+              success = true;
+              break;
+            }
         }
       }
     } else {
@@ -426,16 +433,15 @@ export default class SummaryUiHandler extends UiHandler {
   }
 
   setCursor(cursor: integer, overrideChanged: boolean = false): boolean {
-    let changed: boolean;
+    let changed: boolean = overrideChanged || this.moveCursor !== cursor;
     
     if (this.moveSelect) {
-      changed = overrideChanged || this.moveCursor !== cursor;
-      if (changed) {
         this.moveCursor = cursor;
 
         const selectedMove = this.getSelectedMove();
 
         if (selectedMove) {
+          this.moveDescriptionText.setY(84);
           this.movePowerText.setText(selectedMove.power >= 0 ? selectedMove.power.toString() : '---');
           this.moveAccuracyText.setText(selectedMove.accuracy >= 0 ? selectedMove.accuracy.toString() : '---');
           this.moveCategoryIcon.setFrame(MoveCategory[selectedMove.category].toLowerCase());
@@ -452,7 +458,6 @@ export default class SummaryUiHandler extends UiHandler {
         }
 
         if (moveDescriptionLineCount > 3) {
-          this.moveDescriptionText.setY(84);
           this.descriptionScrollTween = this.scene.tweens.add({
             targets: this.moveDescriptionText,
             delay: Utils.fixedInt(2000),
@@ -462,7 +467,6 @@ export default class SummaryUiHandler extends UiHandler {
             y: `-=${14.83 * (moveDescriptionLineCount - 3)}`
           });
         }
-      }
 
       if (!this.moveCursorObj) {
         this.moveCursorObj = this.scene.add.sprite(-2, 0, 'summary_moves_cursor', 'highlight');
@@ -525,6 +529,11 @@ export default class SummaryUiHandler extends UiHandler {
                   this.moveCursorObj = null; 
                   this.extraMoveRowContainer.setVisible(true);
                   this.setCursor(0, true);
+                  this.showMoveEffect();
+                }
+                else if (this.cursor===Page.MOVES) {
+                  this.moveCursorObj = null; 
+                  this.showMoveSelect();
                   this.showMoveEffect();
                 }
               }
@@ -871,6 +880,12 @@ export default class SummaryUiHandler extends UiHandler {
     this.moveSelect = false;
     this.extraMoveRowContainer.setVisible(false);
     this.moveDescriptionText.setText('');
+    
+    this.destroyBlinkCursor();
+    this.hideMoveEffect();
+  }
+
+  destroyBlinkCursor(){
     if (this.moveCursorBlinkTimer) {
       this.moveCursorBlinkTimer.destroy();
       this.moveCursorBlinkTimer = null;
@@ -883,8 +898,6 @@ export default class SummaryUiHandler extends UiHandler {
       this.selectedMoveCursorObj.destroy();
       this.selectedMoveCursorObj = null;
     }
-
-    this.hideMoveEffect();
   }
 
   showMoveEffect(instant?: boolean) {

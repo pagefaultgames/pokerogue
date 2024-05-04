@@ -27,6 +27,7 @@ import { argbFromRgba } from "@material/material-color-utilities";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint } from "#app/data/variant";
+import i18next from "i18next";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -203,7 +204,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.shinyOverlay);
 
     const starterContainerWindow = addWindow(this.scene, 141, 1, 178, 178);
-    
+
     this.starterSelectContainer.add(addWindow(this.scene, 107, 1, 34, 58));
     this.starterSelectContainer.add(addWindow(this.scene, 107, 59, 34, 91));
     this.starterSelectContainer.add(addWindow(this.scene, 107, 145, 34, 34, true));
@@ -318,7 +319,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.genCursorObj.setVisible(false);
     this.genCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.genCursorObj);
-    
+
     this.valueLimitLabel = addTextObject(this.scene, 124, 150, '0/10', TextStyle.TOOLTIP_CONTENT);
     this.valueLimitLabel.setOrigin(0.5, 0);
     this.starterSelectContainer.add(this.valueLimitLabel);
@@ -333,7 +334,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.startCursorObj);
 
     const starterSpecies: Species[] = [];
-    
+
     for (let g = 0; g < this.starterSelectGenIconContainers.length; g++) {
       let s = 0;
       this.genSpecies.push([]);
@@ -498,7 +499,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     const eggMovesLabel = addTextObject(this.scene, -46, 0, 'Egg Moves', TextStyle.WINDOW_ALT);
     eggMovesLabel.setOrigin(0.5, 0);
-    
+
     this.pokemonEggMovesContainer.add(eggMovesLabel);
 
     for (let m = 0; m < 4; m++) {
@@ -552,7 +553,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           species = getPokemonSpecies(randomSpeciesId);
           pokerusCursor = this.genSpecies[species.generation - 1].indexOf(species);
         };
-        
+
         let dupe = false;
 
         do {
@@ -1049,7 +1050,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         }
       }
     }
-  
+
     if (success)
       ui.playSelect();
     else if (error)
@@ -1086,7 +1087,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.scene.gameData.starterData[speciesId].moveset = this.starterMoveset.slice(0) as StarterMoveset;
     this.setSpeciesDetails(this.lastSpecies, undefined, undefined, undefined, undefined, undefined, undefined, false);
   }
-  
+
   updateInstructions(): void {
     let instructionLines = [ ];
     let cycleInstructionLines = [];
@@ -1212,7 +1213,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   setGenMode(genMode: boolean): boolean {
     this.genCursorObj.setVisible(genMode && !this.startCursorObj.visible);
     this.cursorObj.setVisible(!genMode && !this.startCursorObj.visible);
-    
+
     if (genMode !== this.genMode) {
       this.genMode = genMode;
 
@@ -1311,7 +1312,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
           const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
           props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-          
+
           this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.variant, defaultAbilityIndex, defaultNature);
         }
 
@@ -1319,7 +1320,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
         this.pokemonSprite.clearTint();
-        if (this.pokerusCursors.find((cursor: integer, i: integer) => cursor === this.cursor && this.pokerusGens[i] === this.genCursor))
+        if (this.pokerusCursors.find((cursor: integer, i: integer) => cursor === this.cursor && this.pokerusGens[i] === this.getGenCursorWithScroll()))
           handleTutorial(this.scene, Tutorial.Pokerus);
       } else {
         this.pokemonGrowthRateText.setText('');
@@ -1341,7 +1342,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
         const defaultNature = this.scene.gameData.getSpeciesDefaultNature(species);
         const props = this.scene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-        
+
         this.setSpeciesDetails(species, props.shiny, props.formIndex, props.female, props.variant, defaultAbilityIndex, defaultNature, true);
         this.pokemonSprite.setTint(0x808080);
       }
@@ -1507,7 +1508,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               this.speciesStarterMoves.push(speciesEggMoves[species.speciesId][em]);
           }
         }
-        
+
         const speciesMoveData = this.scene.gameData.starterData[species.speciesId].moveset;
         let moveData: StarterMoveset = speciesMoveData
           ? Array.isArray(speciesMoveData)
@@ -1653,7 +1654,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.clearText();
     };
 
-    ui.showText('Begin with these Pokémon?', null, () => {
+    ui.showText(i18next.t("menu:confirmStartTeam"), null, () => {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
         const startRun = (gameMode: GameModes) => {
           this.scene.gameMode = gameModes[gameMode];
@@ -1696,7 +1697,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.statsContainer.updateIvs(null);
     }
   }
-  
+
   showStats(): void {
     if (!this.speciesStarterDexEntry)
       return;
