@@ -3796,7 +3796,8 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr)
       .attr(HitsTagAttr, BattlerTagType.FLYING, false)
       .hidesTarget()
-      .windMove(),
+      .windMove()
+      .magicCoatMove(),
     new AttackMove(Moves.FLY, Type.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
       .attr(ChargeAttr, ChargeAnim.FLY_CHARGING, 'flew\nup high!', BattlerTagType.FLYING)
       .condition(failOnGravityCondition)
@@ -3817,7 +3818,8 @@ export function initMoves() {
     new AttackMove(Moves.ROLLING_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 60, 85, 15, 30, 0, 1)
       .attr(FlinchAttr),
     new StatusMove(Moves.SAND_ATTACK, Type.GROUND, 100, 15, -1, 0, 1)
-      .attr(StatChangeAttr, BattleStat.ACC, -1),
+      .attr(StatChangeAttr, BattleStat.ACC, -1)
+      .magicCoatMove(),
     new AttackMove(Moves.HEADBUTT, Type.NORMAL, MoveCategory.PHYSICAL, 70, 100, 15, 30, 0, 1)
       .attr(FlinchAttr),
     new AttackMove(Moves.HORN_ATTACK, Type.NORMAL, MoveCategory.PHYSICAL, 65, 100, 25, -1, 0, 1),
@@ -3841,7 +3843,8 @@ export function initMoves() {
       .attr(RecoilAttr, false, 0.33),
     new StatusMove(Moves.TAIL_WHIP, Type.NORMAL, 100, 30, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, -1)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .magicCoatMove(),
     new AttackMove(Moves.POISON_STING, Type.POISON, MoveCategory.PHYSICAL, 15, 100, 35, 30, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .makesContact(false),
@@ -3854,24 +3857,29 @@ export function initMoves() {
       .makesContact(false),
     new StatusMove(Moves.LEER, Type.NORMAL, 100, 30, 100, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, -1)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .magicCoatMove(),
     new AttackMove(Moves.BITE, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, 30, 0, 1)
       .attr(FlinchAttr)
       .bitingMove(),
     new StatusMove(Moves.GROWL, Type.NORMAL, 100, 40, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
       .soundBased()
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .magicCoatMove(),
     new StatusMove(Moves.ROAR, Type.NORMAL, -1, 20, -1, -6, 1)
       .attr(ForceSwitchOutAttr)
       .soundBased()
-      .hidesTarget(),
+      .hidesTarget()
+      .magicCoatMove(),
     new StatusMove(Moves.SING, Type.NORMAL, 55, 15, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
-      .soundBased(),
+      .soundBased()
+      .magicCoatMove(),
     new StatusMove(Moves.SUPERSONIC, Type.NORMAL, 55, 20, -1, 0, 1)
       .attr(ConfuseAttr)
-      .soundBased(),
+      .soundBased()
+      .magicCoatMove(),
     new AttackMove(Moves.SONIC_BOOM, Type.NORMAL, MoveCategory.SPECIAL, -1, 90, 20, -1, 0, 1)
       .attr(FixedDamageAttr, 20),
     new StatusMove(Moves.DISABLE, Type.NORMAL, 100, 20, -1, 0, 1)
@@ -3929,7 +3937,8 @@ export function initMoves() {
       .triageMove(),
     new StatusMove(Moves.LEECH_SEED, Type.GRASS, 90, 10, -1, 0, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.SEEDED)
-      .condition((user, target, move) => !target.getTag(BattlerTagType.SEEDED) && !target.isOfType(Type.GRASS)),
+      .condition((user, target, move) => !target.getTag(BattlerTagType.SEEDED) && !target.isOfType(Type.GRASS))
+      .magicCoatMove(),
     new SelfStatusMove(Moves.GROWTH, Type.NORMAL, -1, 20, -1, 0, 1)
       .attr(GrowthStatChangeAttr),
     new AttackMove(Moves.RAZOR_LEAF, Type.GRASS, MoveCategory.PHYSICAL, 55, 95, 25, -1, 0, 1)
@@ -3943,13 +3952,16 @@ export function initMoves() {
       .ignoresVirtual(),
     new StatusMove(Moves.POISON_POWDER, Type.POISON, 75, 35, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.POISON)
-      .powderMove(),
+      .powderMove()
+      .magicCoatMove(),
     new StatusMove(Moves.STUN_SPORE, Type.GRASS, 75, 30, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
-      .powderMove(),
+      .powderMove()
+      .magicCoatMove(),
     new StatusMove(Moves.SLEEP_POWDER, Type.GRASS, 75, 15, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
-      .powderMove(),
+      .powderMove()
+      .magicCoatMove(),
     new AttackMove(Moves.PETAL_DANCE, Type.GRASS, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 1)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
@@ -3958,7 +3970,8 @@ export function initMoves() {
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(Moves.STRING_SHOT, Type.BUG, 95, 40, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPD, -2)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .magicCoatMove(),
     new AttackMove(Moves.DRAGON_RAGE, Type.DRAGON, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 1)
       .attr(FixedDamageAttr, 40),
     new AttackMove(Moves.FIRE_SPIN, Type.FIRE, MoveCategory.SPECIAL, 35, 85, 15, 100, 0, 1)
@@ -3969,7 +3982,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new StatusMove(Moves.THUNDER_WAVE, Type.ELECTRIC, 90, 20, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
-      .attr(StatusMoveTypeImmunityAttr, Type.GROUND),
+      .attr(StatusMoveTypeImmunityAttr, Type.GROUND)
+      .magicCoatMove(),
     new AttackMove(Moves.THUNDER, Type.ELECTRIC, MoveCategory.SPECIAL, 110, 70, 10, 30, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .attr(ThunderAccuracyAttr)
@@ -3997,7 +4011,8 @@ export function initMoves() {
     new AttackMove(Moves.PSYCHIC, Type.PSYCHIC, MoveCategory.SPECIAL, 90, 100, 10, 10, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPDEF, -1),
     new StatusMove(Moves.HYPNOSIS, Type.PSYCHIC, 60, 20, -1, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.SLEEP),
+      .attr(StatusEffectAttr, StatusEffect.SLEEP)
+      .magicCoatMove(),
     new SelfStatusMove(Moves.MEDITATE, Type.PSYCHIC, -1, 40, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.ATK, 1, true),
     new SelfStatusMove(Moves.AGILITY, Type.PSYCHIC, -1, 30, -1, 0, 1)
@@ -4015,7 +4030,8 @@ export function initMoves() {
       .ignoresVirtual(),
     new StatusMove(Moves.SCREECH, Type.NORMAL, 85, 40, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.DEF, -2)
-      .soundBased(),
+      .soundBased()
+      .magicCoatMove(),
     new SelfStatusMove(Moves.DOUBLE_TEAM, Type.NORMAL, -1, 15, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.EVA, 1, true),
     new SelfStatusMove(Moves.RECOVER, Type.NORMAL, -1, 5, -1, 0, 1)
@@ -4026,7 +4042,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.MINIMIZE, Type.NORMAL, -1, 10, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.EVA, 2, true),
     new StatusMove(Moves.SMOKESCREEN, Type.NORMAL, 100, 20, -1, 0, 1)
-      .attr(StatChangeAttr, BattleStat.ACC, -1),
+      .attr(StatChangeAttr, BattleStat.ACC, -1)
+      .magicCoatMove(),
     new StatusMove(Moves.CONFUSE_RAY, Type.GHOST, 100, 10, -1, 0, 1)
       .attr(ConfuseAttr)
       .magicCoatMove(),
@@ -4094,7 +4111,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.AMNESIA, Type.PSYCHIC, -1, 20, -1, 0, 1)
       .attr(StatChangeAttr, BattleStat.SPDEF, 2, true),
     new StatusMove(Moves.KINESIS, Type.PSYCHIC, 80, 15, -1, 0, 1)
-      .attr(StatChangeAttr, BattleStat.ACC, -1),
+      .attr(StatChangeAttr, BattleStat.ACC, -1)
+      .magicCoatMove(),
     new SelfStatusMove(Moves.SOFT_BOILED, Type.NORMAL, -1, 5, -1, 0, 1)
       .attr(HealAttr, 0.5)
       .triageMove(),
@@ -4103,14 +4121,16 @@ export function initMoves() {
       .attr(NoEffectAttr, crashDamageFunc)
       .condition(failOnGravityCondition),
     new StatusMove(Moves.GLARE, Type.NORMAL, 100, 30, -1, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
+      .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
+      .magicCoatMove(),
     new AttackMove(Moves.DREAM_EATER, Type.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 15, -1, 0, 1)
       .attr(HitHealAttr)
       .condition((user, target, move) => target.status?.effect === StatusEffect.SLEEP)
       .triageMove(),
     new StatusMove(Moves.POISON_GAS, Type.POISON, 90, 40, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.POISON)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .magicCoatMove(),
     new AttackMove(Moves.BARRAGE, Type.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, 0, 1)
       .attr(MultiHitAttr)
       .makesContact(false)
@@ -4119,7 +4139,8 @@ export function initMoves() {
       .attr(HitHealAttr)
       .triageMove(),
     new StatusMove(Moves.LOVELY_KISS, Type.NORMAL, 75, 10, -1, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.SLEEP),
+      .attr(StatusEffectAttr, StatusEffect.SLEEP)
+      .magicCoatMove(),
     new AttackMove(Moves.SKY_ATTACK, Type.FLYING, MoveCategory.PHYSICAL, 140, 90, 5, 30, 0, 1)
       .attr(ChargeAttr, ChargeAnim.SKY_ATTACK_CHARGING, 'is glowing!')
       .attr(HighCritAttr)
@@ -4137,9 +4158,11 @@ export function initMoves() {
       .punchingMove(),
     new StatusMove(Moves.SPORE, Type.GRASS, 100, 15, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
-      .powderMove(),
+      .powderMove()
+      .magicCoatMove(),
     new StatusMove(Moves.FLASH, Type.NORMAL, 100, 20, -1, 0, 1)
-      .attr(StatChangeAttr, BattleStat.ACC, -1),
+      .attr(StatChangeAttr, BattleStat.ACC, -1)
+      .magicCoatMove(),
     new AttackMove(Moves.PSYWAVE, Type.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 15, -1, 0, 1)
       .attr(RandomLevelDamageAttr),
     new SelfStatusMove(Moves.SPLASH, Type.NORMAL, -1, 40, -1, 0, 1)
@@ -4204,7 +4227,8 @@ export function initMoves() {
     new AttackMove(Moves.THIEF, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 25, -1, 0, 2)
       .attr(StealHeldItemChanceAttr, 0.3),
     new StatusMove(Moves.SPIDER_WEB, Type.BUG, -1, 10, -1, 0, 2)
-      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1),
+      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1)
+      .magicCoatMove(),
     new StatusMove(Moves.MIND_READER, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(IgnoreAccuracyAttr),
     new StatusMove(Moves.NIGHTMARE, Type.GHOST, 100, 15, -1, 0, 2)
@@ -4237,7 +4261,8 @@ export function initMoves() {
     new AttackMove(Moves.REVERSAL, Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 2)
       .attr(LowHpPowerAttr),
     new StatusMove(Moves.SPITE, Type.GHOST, 100, 10, -1, 0, 2)
-      .attr(ReducePpMoveAttr),
+      .attr(ReducePpMoveAttr)
+      .magicCoatMove(),
     new AttackMove(Moves.POWDER_SNOW, Type.ICE, MoveCategory.SPECIAL, 40, 100, 25, 10, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -4246,10 +4271,12 @@ export function initMoves() {
     new AttackMove(Moves.MACH_PUNCH, Type.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 30, -1, 1, 2)
       .punchingMove(),
     new StatusMove(Moves.SCARY_FACE, Type.NORMAL, 100, 10, -1, 0, 2)
-      .attr(StatChangeAttr, BattleStat.SPD, -2),
+      .attr(StatChangeAttr, BattleStat.SPD, -2)
+      .magicCoatMove(),
     new AttackMove(Moves.FEINT_ATTACK, Type.DARK, MoveCategory.PHYSICAL, 60, -1, 20, -1, 0, 2),
     new StatusMove(Moves.SWEET_KISS, Type.FAIRY, 75, 10, -1, 0, 2)
-      .attr(ConfuseAttr),
+      .attr(ConfuseAttr)
+      .magicCoatMove(),
     new SelfStatusMove(Moves.BELLY_DRUM, Type.NORMAL, -1, 10, -1, 0, 2)
       .attr(HalfHpStatMaxAttr, BattleStat.ATK),
     new AttackMove(Moves.SLUDGE_BOMB, Type.POISON, MoveCategory.SPECIAL, 90, 100, 10, 30, 0, 2)
@@ -4267,6 +4294,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .ballBombMove(),
     new StatusMove(Moves.FORESIGHT, Type.NORMAL, -1, 40, -1, 0, 2)
+      .magicCoatMove()
       .unimplemented(),
     new SelfStatusMove(Moves.DESTINY_BOND, Type.GHOST, -1, 5, -1, 0, 2)
       .ignoresProtect()
@@ -4310,7 +4338,8 @@ export function initMoves() {
       .attr(SurviveDamageAttr),
     new StatusMove(Moves.SWAGGER, Type.NORMAL, 85, 15, -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.ATK, 2)
-      .attr(ConfuseAttr),
+      .attr(ConfuseAttr)
+      .magicCoatMove(),
     new SelfStatusMove(Moves.MILK_DRINK, Type.NORMAL, -1, 5, -1, 0, 2)
       .attr(HealAttr, 0.5)
       .triageMove(),
@@ -4322,7 +4351,8 @@ export function initMoves() {
     new AttackMove(Moves.STEEL_WING, Type.STEEL, MoveCategory.PHYSICAL, 70, 90, 25, 10, 0, 2)
       .attr(StatChangeAttr, BattleStat.DEF, 1, true),
     new StatusMove(Moves.MEAN_LOOK, Type.NORMAL, -1, 5, -1, 0, 2)
-      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1),
+      .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1)
+      .magicCoatMove(),
     new StatusMove(Moves.ATTRACT, Type.NORMAL, 100, 15, -1, 0, 2)
       .magicCoatMove()
       .attr(AddBattlerTagAttr, BattlerTagType.INFATUATED)
@@ -4370,7 +4400,8 @@ export function initMoves() {
       .hidesUser(),
     new StatusMove(Moves.ENCORE, Type.NORMAL, 100, 5, -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
-      .condition((user, target, move) => new EncoreTag(user.id).canAdd(target)),
+      .condition((user, target, move) => new EncoreTag(user.id).canAdd(target))
+      .magicCoatMove(),
     new AttackMove(Moves.PURSUIT, Type.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, 0, 2)
       .partial(),
     new AttackMove(Moves.RAPID_SPIN, Type.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, 100, 0, 2)
@@ -4391,7 +4422,8 @@ export function initMoves() {
       .partial(),
     new StatusMove(Moves.SWEET_SCENT, Type.NORMAL, 100, 20, -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.EVA, -1)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .magicCoatMove(),
     new AttackMove(Moves.IRON_TAIL, Type.STEEL, MoveCategory.PHYSICAL, 100, 75, 15, 30, 0, 2)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
     new AttackMove(Moves.METAL_CLAW, Type.STEEL, MoveCategory.PHYSICAL, 50, 95, 35, 10, 0, 2)
@@ -4469,12 +4501,15 @@ export function initMoves() {
       .attr(WeatherChangeAttr, WeatherType.HAIL)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.TORMENT, Type.DARK, 100, 15, -1, 0, 3)
+      .magicCoatMove()
       .unimplemented(),
     new StatusMove(Moves.FLATTER, Type.DARK, 100, 15, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPATK, 1)
-      .attr(ConfuseAttr),
+      .attr(ConfuseAttr)
+      .magicCoatMove(),
     new StatusMove(Moves.WILL_O_WISP, Type.FIRE, 85, 15, -1, 0, 3)
-      .attr(StatusEffectAttr, StatusEffect.BURN),
+      .attr(StatusEffectAttr, StatusEffect.BURN)
+      .magicCoatMove(),
     new StatusMove(Moves.MEMENTO, Type.DARK, 100, 10, -1, 0, 3)
       .attr(SacrificialAttr)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -2),
@@ -4497,6 +4532,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPDEF, 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.CHARGED, true, true),
     new StatusMove(Moves.TAUNT, Type.DARK, 100, 20, -1, 0, 3)
+      .magicCoatMove()
       .unimplemented(),
     new StatusMove(Moves.HELPING_HAND, Type.NORMAL, -1, 20, -1, 5, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
@@ -4525,7 +4561,8 @@ export function initMoves() {
         .attr(RemoveScreensAttr),
     new StatusMove(Moves.YAWN, Type.NORMAL, -1, 10, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
-      .condition((user, target, move) => !target.status),
+      .condition((user, target, move) => !target.status)
+      .magicCoatMove(),
     new AttackMove(Moves.KNOCK_OFF, Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
       .partial(),
     new AttackMove(Moves.ENDEAVOR, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 3)
@@ -4564,7 +4601,8 @@ export function initMoves() {
       .ballBombMove(),
     new StatusMove(Moves.FEATHER_DANCE, Type.FLYING, 100, 15, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.ATK, -2)
-      .danceMove(),
+      .danceMove()
+      .magicCoatMove(),
     new StatusMove(Moves.TEETER_DANCE, Type.NORMAL, 100, 20, -1, 0, 3)
       .attr(ConfuseAttr)
       .danceMove()
@@ -4608,7 +4646,8 @@ export function initMoves() {
       .target(MoveTarget.USER_AND_ALLIES)
       .unimplemented(),
     new StatusMove(Moves.FAKE_TEARS, Type.DARK, 100, 20, -1, 0, 3)
-      .attr(StatChangeAttr, BattleStat.SPDEF, -2),
+      .attr(StatChangeAttr, BattleStat.SPDEF, -2)
+      .magicCoatMove(),
     new AttackMove(Moves.AIR_CUTTER, Type.FLYING, MoveCategory.SPECIAL, 60, 95, 25, -1, 0, 3)
       .attr(HighCritAttr)
       .slicingMove()
@@ -4618,6 +4657,7 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPATK, -2, true)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE),
     new StatusMove(Moves.ODOR_SLEUTH, Type.NORMAL, -1, 40, -1, 0, 3)
+      .magicCoatMove()
       .unimplemented(),
     new AttackMove(Moves.ROCK_TOMB, Type.ROCK, MoveCategory.PHYSICAL, 60, 95, 15, 100, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
@@ -4627,13 +4667,16 @@ export function initMoves() {
       .windMove(),
     new StatusMove(Moves.METAL_SOUND, Type.STEEL, 85, 40, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.SPDEF, -2)
-      .soundBased(),
+      .soundBased()
+      .magicCoatMove(),
     new StatusMove(Moves.GRASS_WHISTLE, Type.GRASS, 55, 15, -1, 0, 3)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
-      .soundBased(),
+      .soundBased()
+      .magicCoatMove(),
     new StatusMove(Moves.TICKLE, Type.NORMAL, 100, 20, -1, 0, 3)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
-      .attr(StatChangeAttr, BattleStat.DEF, -1),
+      .attr(StatChangeAttr, BattleStat.DEF, -1)
+      .magicCoatMove(),
     new SelfStatusMove(Moves.COSMIC_POWER, Type.PSYCHIC, -1, 20, -1, 0, 3)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, true),
     new AttackMove(Moves.WATER_SPOUT, Type.WATER, MoveCategory.SPECIAL, 150, 100, 5, -1, 0, 3)
@@ -4727,6 +4770,7 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(Moves.MIRACLE_EYE, Type.PSYCHIC, -1, 40, -1, 0, 4)
+      .magicCoatMove()
       .unimplemented(),
     new AttackMove(Moves.WAKE_UP_SLAP, Type.FIGHTING, MoveCategory.PHYSICAL, 70, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.SLEEP ? 2 : 1)
@@ -4771,6 +4815,7 @@ export function initMoves() {
     new AttackMove(Moves.ASSURANCE, Type.DARK, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.turnData.damageTaken > 0 ? 2 : 1),
     new StatusMove(Moves.EMBARGO, Type.DARK, 100, 15, -1, 0, 4)
+      .magicCoatMove()
       .unimplemented(),
     new AttackMove(Moves.FLING, Type.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
       .makesContact(false)
@@ -4789,6 +4834,7 @@ export function initMoves() {
       .unimplemented(),
     new StatusMove(Moves.HEAL_BLOCK, Type.PSYCHIC, 100, 15, -1, 0, 4)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .magicCoatMove()
       .unimplemented(),
     new AttackMove(Moves.WRING_OUT, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 4)
       .attr(OpponentHighHpPowerAttr)
@@ -4796,6 +4842,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.POWER_TRICK, Type.PSYCHIC, -1, 10, -1, 0, 4)
       .unimplemented(),
     new StatusMove(Moves.GASTRO_ACID, Type.POISON, 100, 10, -1, 0, 4)
+      .magicCoatMove()
       .unimplemented(),
     new StatusMove(Moves.LUCKY_CHANT, Type.NORMAL, -1, 30, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.NO_CRIT, false, false, 5)
@@ -4825,7 +4872,8 @@ export function initMoves() {
         return uniqueUsedMoveIds.size >= movesetMoveIds.length - 1;
       }),
     new StatusMove(Moves.WORRY_SEED, Type.GRASS, 100, 10, -1, 0, 4)
-      .attr(AbilityChangeAttr, Abilities.INSOMNIA),
+      .attr(AbilityChangeAttr, Abilities.INSOMNIA)
+      .magicCoatMove(),
     new AttackMove(Moves.SUCKER_PUNCH, Type.DARK, MoveCategory.PHYSICAL, 70, 100, 5, -1, 1, 4)
       .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].category !== MoveCategory.STATUS),
     new StatusMove(Moves.TOXIC_SPIKES, Type.POISON, -1, 20, -1, 0, 4)
@@ -5060,6 +5108,7 @@ export function initMoves() {
       .unimplemented(),
     new StatusMove(Moves.TELEKINESIS, Type.PSYCHIC, -1, 15, -1, 0, 5)
       .condition(failOnGravityCondition)
+      .magicCoatMove()
       .unimplemented(),
     new StatusMove(Moves.MAGIC_ROOM, Type.PSYCHIC, -1, 10, -1, 0, 5)
       .ignoresProtect()
@@ -5089,7 +5138,8 @@ export function initMoves() {
       .attr(BattleStatRatioPowerAttr, Stat.SPD)
       .ballBombMove(),
     new StatusMove(Moves.SOAK, Type.WATER, 100, 20, -1, 0, 5)
-      .attr(ChangeTypeAttr, Type.WATER),
+      .attr(ChangeTypeAttr, Type.WATER)
+      .magicCoatMove(),
     new AttackMove(Moves.FLAME_CHARGE, Type.FIRE, MoveCategory.PHYSICAL, 50, 100, 20, 100, 0, 5)
       .attr(StatChangeAttr, BattleStat.SPD, 1, true),
     new SelfStatusMove(Moves.COIL, Type.POISON, -1, 20, -1, 0, 5)
@@ -5102,9 +5152,11 @@ export function initMoves() {
     new AttackMove(Moves.FOUL_PLAY, Type.DARK, MoveCategory.PHYSICAL, 95, 100, 15, -1, 0, 5)
       .attr(TargetAtkUserAtkAttr),
     new StatusMove(Moves.SIMPLE_BEAM, Type.NORMAL, 100, 15, -1, 0, 5)
-      .attr(AbilityChangeAttr, Abilities.SIMPLE),
+      .attr(AbilityChangeAttr, Abilities.SIMPLE)
+      .magicCoatMove(),
     new StatusMove(Moves.ENTRAINMENT, Type.NORMAL, 100, 15, -1, 0, 5)
-      .attr(AbilityGiveAttr),
+      .attr(AbilityGiveAttr)
+      .magicCoatMove(),
     new StatusMove(Moves.AFTER_YOU, Type.NORMAL, -1, 15, -1, 0, 5)
       .ignoresProtect()
       .unimplemented(),
@@ -5136,7 +5188,8 @@ export function initMoves() {
     new StatusMove(Moves.HEAL_PULSE, Type.PSYCHIC, -1, 10, -1, 0, 5)
       .attr(HealAttr, 0.5, false, false)
       .pulseMove()
-      .triageMove(),
+      .triageMove()
+      .magicCoatMove(),
     new AttackMove(Moves.HEX, Type.GHOST, MoveCategory.SPECIAL, 65, 100, 10, -1, 0, 5)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status ? 2 : 1),
     new AttackMove(Moves.SKY_DROP, Type.FLYING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
@@ -5299,10 +5352,12 @@ export function initMoves() {
       .ignoresVirtual(),
     new StatusMove(Moves.TRICK_OR_TREAT, Type.GHOST, 100, 20, -1, 0, 6)
       .attr(AddTypeAttr, Type.GHOST)
+      .magicCoatMove()
       .partial(),
     new StatusMove(Moves.NOBLE_ROAR, Type.NORMAL, 100, 30, 100, 0, 6)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -1)
-      .soundBased(),
+      .soundBased()
+      .magicCoatMove(),
     new StatusMove(Moves.ION_DELUGE, Type.ELECTRIC, -1, 25, -1, 1, 6)
       .target(MoveTarget.BOTH_SIDES)
       .unimplemented(),
@@ -5312,6 +5367,7 @@ export function initMoves() {
       .triageMove(),
     new StatusMove(Moves.FORESTS_CURSE, Type.GRASS, 100, 20, -1, 0, 6)
       .attr(AddTypeAttr, Type.GRASS)
+      .magicCoatMove()
       .partial(),
     new AttackMove(Moves.PETAL_BLIZZARD, Type.GRASS, MoveCategory.PHYSICAL, 90, 100, 15, -1, 0, 6)
       .windMove()
@@ -5326,9 +5382,11 @@ export function initMoves() {
     new StatusMove(Moves.PARTING_SHOT, Type.DARK, 100, 20, 100, 0, 6)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -1)
       .attr(ForceSwitchOutAttr, true, false)
-      .soundBased(),
+      .soundBased()
+      .magicCoatMove(),
     new StatusMove(Moves.TOPSY_TURVY, Type.DARK, -1, 20, -1, 0, 6)
-      .attr(InvertStatsAttr),
+      .attr(InvertStatsAttr)
+      .magicCoatMove(),
     new AttackMove(Moves.DRAINING_KISS, Type.FAIRY, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 6)
       .attr(HitHealAttr, 0.75)
       .makesContact()
@@ -5362,7 +5420,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.KINGS_SHIELD, Type.STEEL, -1, 10, -1, 4, 6)
       .attr(ProtectAttr, BattlerTagType.KINGS_SHIELD),
     new StatusMove(Moves.PLAY_NICE, Type.NORMAL, -1, 20, 100, 0, 6)
-      .attr(StatChangeAttr, BattleStat.ATK, -1),
+      .attr(StatChangeAttr, BattleStat.ATK, -1)
+      .magicCoatMove(),
     new StatusMove(Moves.CONFIDE, Type.NORMAL, -1, 20, 100, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPATK, -1)
       .soundBased(),
@@ -5385,12 +5444,15 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.SPDEF, 1)
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(Moves.EERIE_IMPULSE, Type.ELECTRIC, 100, 15, -1, 0, 6)
-      .attr(StatChangeAttr, BattleStat.SPATK, -2),
+      .attr(StatChangeAttr, BattleStat.SPATK, -2)
+      .magicCoatMove(),
     new StatusMove(Moves.VENOM_DRENCH, Type.POISON, 100, 20, 100, 0, 6)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], -1, false, (user, target, move) => target.status?.effect === StatusEffect.POISON)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .magicCoatMove(),
     new StatusMove(Moves.POWDER, Type.BUG, 100, 20, -1, 1, 6)
       .powderMove()
+      .magicCoatMove()
       .unimplemented(),
     new SelfStatusMove(Moves.GEOMANCY, Type.FAIRY, -1, 10, -1, 0, 6)
       .attr(ChargeAttr, ChargeAnim.GEOMANCY_CHARGING, "is charging its power!")
@@ -5550,13 +5612,15 @@ export function initMoves() {
     new StatusMove(Moves.FLORAL_HEALING, Type.FAIRY, -1, 10, -1, 0, 7)
       .attr(HealAttr, 0.5, true, false)
       .triageMove()
+      .magicCoatMove()
       .partial(),
     new AttackMove(Moves.HIGH_HORSEPOWER, Type.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),
     new StatusMove(Moves.STRENGTH_SAP, Type.GRASS, 100, 10, 100, 0, 7)
       .attr(StrengthSapHealAttr)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
       .condition((user, target, move) => target.summonData.battleStats[BattleStat.ATK] > -6)
-      .triageMove(),
+      .triageMove()
+      .magicCoatMove(),
     new AttackMove(Moves.SOLAR_BLADE, Type.GRASS, MoveCategory.PHYSICAL, 125, 100, 10, -1, 0, 7)
       .attr(SunlightChargeAttr, ChargeAnim.SOLAR_BLADE_CHARGING, "is glowing!")
       .attr(AntiSunlightPowerDecreaseAttr)
@@ -5564,10 +5628,12 @@ export function initMoves() {
     new AttackMove(Moves.LEAFAGE, Type.GRASS, MoveCategory.PHYSICAL, 40, 100, 40, -1, 0, 7)
       .makesContact(false),
     new StatusMove(Moves.SPOTLIGHT, Type.NORMAL, -1, 15, -1, 3, 7)
+      .magicCoatMove()
       .unimplemented(),
     new StatusMove(Moves.TOXIC_THREAD, Type.POISON, 100, 20, 100, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.POISON)
-      .attr(StatChangeAttr, BattleStat.SPD, -1),
+      .attr(StatChangeAttr, BattleStat.SPD, -1)
+      .magicCoatMove(),
     new SelfStatusMove(Moves.LASER_FOCUS, Type.NORMAL, -1, 30, -1, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.ALWAYS_CRIT, true, false),
     new StatusMove(Moves.GEAR_UP, Type.STEEL, -1, 20, -1, 0, 7)
@@ -5604,6 +5670,7 @@ export function initMoves() {
     new AttackMove(Moves.SMART_STRIKE, Type.STEEL, MoveCategory.PHYSICAL, 70, -1, 10, -1, 0, 7),
     new StatusMove(Moves.PURIFY, Type.POISON, -1, 20, -1, 0, 7)
       .triageMove()
+      .magicCoatMove()
       .unimplemented(),
     new AttackMove(Moves.REVELATION_DANCE, Type.NORMAL, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 7)
       .danceMove()
@@ -5680,7 +5747,8 @@ export function initMoves() {
       .partial(),
     new StatusMove(Moves.TEARFUL_LOOK, Type.NORMAL, -1, 20, 100, 0, 7)
       .attr(StatChangeAttr, BattleStat.ATK, -1)
-      .attr(StatChangeAttr, BattleStat.SPATK, -1),
+      .attr(StatChangeAttr, BattleStat.SPATK, -1)
+      .magicCoatMove(),
     new AttackMove(Moves.ZING_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 80, 100, 10, 30, 0, 7)
       .attr(FlinchAttr),
     new AttackMove(Moves.NATURES_MADNESS, Type.FAIRY, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 7)
@@ -5774,10 +5842,12 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, true, true, 1),
     new StatusMove(Moves.TAR_SHOT, Type.ROCK, 100, 15, 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
+      .magicCoatMove()
       .partial(),
     new StatusMove(Moves.MAGIC_POWDER, Type.PSYCHIC, 100, 20, -1, 0, 8)
       .attr(ChangeTypeAttr, Type.PSYCHIC)
-      .powderMove(),
+      .powderMove()
+      .magicCoatMove(),
     new AttackMove(Moves.DRAGON_DARTS, Type.DRAGON, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false)
