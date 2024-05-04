@@ -1530,7 +1530,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.starterMoveset.push(...availableStarterMoves.filter(sm => this.starterMoveset.indexOf(sm) === -1).slice(0, 4 - this.starterMoveset.length));
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex);
-        this.pokemonFormText.setText(species?.forms[formIndex]?.formKey.toLocaleUpperCase());
+        
+        const formText = species?.forms[formIndex]?.formKey.split('-');
+        for (let i = 0; i < formText?.length; i++)
+          formText[i] = formText[i].charAt(0).toUpperCase() + formText[i].substring(1);
+
+        this.pokemonFormText.setText(formText?.join(' '));
+
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
         this.pokemonAbilityText.setText('');
