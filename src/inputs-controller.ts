@@ -34,6 +34,7 @@ export class InputsController {
         }
         // We don't want the menu key to be repeated
         delete this.interactions[Button.MENU];
+        delete this.interactions[Button.STATS];
         this.init();
     }
 
@@ -68,7 +69,7 @@ export class InputsController {
             if (!this.interactions.hasOwnProperty(b)) continue;
             if (this.repeatInputDurationJustPassed(b)) {
                 this.events.emit('input_down', {
-                    controller_type: 'keyboard',
+                    controller_type: 'repeated',
                     button: b,
                 });
                 this.setLastProcessedMovementTime(b);
