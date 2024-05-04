@@ -2717,7 +2717,7 @@ export class StatChangePhase extends PokemonPhase {
       for (let stat of filteredStats)
         pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
       
-      if (levels.value > 0)
+      if (levels.value > 0 && !this.ignoreAbilities)
         for (let opponent of pokemon.getOpponents())
           applyAbAttrs(StatChangeThiefAbAttr, opponent, null, this.stats, levels.value);
       
