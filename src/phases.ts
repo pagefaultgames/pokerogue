@@ -2474,14 +2474,17 @@ export class MoveEffectPhase extends PokemonPhase {
                           return Utils.executeIf(!target.isFainted() || target.canApplyAbility(), () => applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult).then(() => {
                             if (!user.isPlayer() && this.move.getMove() instanceof AttackMove)
                               user.scene.applyShuffledModifiers(this.scene, EnemyAttackStatusEffectChanceModifier, false, target);
-                          })).then(() => {
+                          })).then(() => 
                             applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move, hitResult).then(() => {
                               if (this.move.getMove() instanceof AttackMove)
                                 this.scene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target.getFieldIndex());
-                              resolve();
-                            });
-                          });
+                            })
+                          );
                         })
+                      ).then(() => Utils.executeIf(!chargeEffect, () => applyFilteredMoveAttrs(
+                        (attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_HIT
+                          && (!attr.firstHitOnly || firstHit), user, target, this.move.getMove()
+                        ))
                       ).then(() => resolve());
                     });
                   } else 
@@ -3592,13 +3595,15 @@ export class SwitchPhase extends BattlePhase {
   protected fieldIndex: integer;
   private isModal: boolean;
   private doReturn: boolean;
+  private batonPass: boolean;
 
-  constructor(scene: BattleScene, fieldIndex: integer, isModal: boolean, doReturn: boolean) {
+  constructor(scene: BattleScene, fieldIndex: integer, isModal: boolean, doReturn: boolean, batonPass: boolean = false) {
     super(scene);
 
     this.fieldIndex = fieldIndex;
     this.isModal = isModal;
     this.doReturn = doReturn;
+    this.batonPass = batonPass;
   }
 
   start() {
@@ -3613,7 +3618,7 @@ export class SwitchPhase extends BattlePhase {
 
     this.scene.ui.setMode(Mode.PARTY, this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH, fieldIndex, (slotIndex: integer, option: PartyOption) => {
       if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6)
-        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON));
+        this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, fieldIndex, slotIndex, this.doReturn, option === PartyOption.PASS_BATON || this.batonPass));
       this.scene.ui.setMode(Mode.MESSAGE).then(() => super.end());
     }, PartyUiHandler.FilterNonFainted);
   }

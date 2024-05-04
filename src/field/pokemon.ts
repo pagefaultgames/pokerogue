@@ -17,7 +17,7 @@ import { initMoveAnim, loadMoveAnimAssets } from '../data/battle-anims';
 import { Status, StatusEffect, getRandomStatus } from '../data/status-effect';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from '../data/pokemon-evolutions';
 import { reverseCompatibleTms, tmSpecies } from '../data/tms';
-import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase } from '../phases';
+import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchPhase } from '../phases';
 import { BattleStat } from '../data/battle-stat';
 import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
 import { BattlerTagType } from "../data/enums/battler-tag-type";
@@ -30,10 +30,8 @@ import { Biome } from "../data/enums/biome";
 import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr } from '../data/ability';
 import { Abilities } from "#app/data/enums/abilities";
 import PokemonData from '../system/pokemon-data';
-import Battle, { BattlerIndex } from '../battle';
+import { BattlerIndex } from '../battle';
 import { BattleSpec } from "../enums/battle-spec";
-import { Mode } from '../ui/ui';
-import PartyUiHandler, { PartyOption, PartyUiMode } from '../ui/party-ui-handler';
 import SoundFade from 'phaser3-rex-plugins/plugins/soundfade';
 import { LevelMoves } from '../data/pokemon-level-moves';
 import { DamageAchv, achvs } from '../system/achv';
@@ -2390,22 +2388,8 @@ export class PlayerPokemon extends Pokemon {
 
   switchOut(batonPass: boolean, removeFromField: boolean = false): Promise<void> {
     return new Promise(resolve => {
-      this.resetTurnData();
-      if (!batonPass)
-        this.resetSummonData();
-      this.hideInfo();
-      this.setVisible(false);
-      
-      this.scene.ui.setMode(Mode.PARTY, PartyUiMode.FAINT_SWITCH, this.getFieldIndex(), (slotIndex: integer, option: PartyOption) => {
-        if (slotIndex >= this.scene.currentBattle.getBattlerCount() && slotIndex < 6)
-          this.scene.unshiftPhase(new SwitchSummonPhase(this.scene, this.getFieldIndex(), slotIndex, false, batonPass));
-        if (removeFromField) {
-          this.setVisible(false);
-          this.scene.field.remove(this);
-          this.scene.triggerPokemonFormChange(this, SpeciesFormChangeActiveTrigger, true);
-        }
-        this.scene.ui.setMode(Mode.MESSAGE).then(() => resolve());
-      }, PartyUiHandler.FilterNonFainted);
+      this.scene.unshiftPhase(new SwitchPhase(this.scene, this.getFieldIndex(), true, removeFromField, batonPass));
+      resolve()
     });
   }
 
