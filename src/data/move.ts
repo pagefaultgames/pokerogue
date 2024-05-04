@@ -4736,8 +4736,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .soundBased(),
     new StatusMove(Moves.TICKLE, Type.NORMAL, 100, 20, -1, 0, 3)
-      .attr(StatChangeAttr, BattleStat.ATK, -1)
-      .attr(StatChangeAttr, BattleStat.DEF, -1),
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], -1),
     new SelfStatusMove(Moves.COSMIC_POWER, Type.PSYCHIC, -1, 20, -1, 0, 3)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, true),
     new AttackMove(Moves.WATER_SPOUT, Type.WATER, MoveCategory.SPECIAL, 150, 100, 5, -1, 0, 3)
@@ -5777,8 +5776,7 @@ export function initMoves() {
       .ignoresAbilities()
       .partial(),
     new StatusMove(Moves.TEARFUL_LOOK, Type.NORMAL, -1, 20, 100, 0, 7)
-      .attr(StatChangeAttr, BattleStat.ATK, -1)
-      .attr(StatChangeAttr, BattleStat.SPATK, -1),
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -1),
     new AttackMove(Moves.ZING_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 80, 100, 10, 30, 0, 7)
       .attr(FlinchAttr),
     new AttackMove(Moves.NATURES_MADNESS, Type.FAIRY, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 7)
@@ -5957,8 +5955,7 @@ export function initMoves() {
     new AttackMove(Moves.BODY_PRESS, Type.FIGHTING, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 8)
       .attr(DefAtkAttr),
     new StatusMove(Moves.DECORATE, Type.FAIRY, -1, 15, 100, 0, 8)
-      .attr(StatChangeAttr, BattleStat.ATK, 2)
-      .attr(StatChangeAttr, BattleStat.SPATK, 2),
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 2),
     new AttackMove(Moves.DRUM_BEATING, Type.GRASS, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .makesContact(false),
