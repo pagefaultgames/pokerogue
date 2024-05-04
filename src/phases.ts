@@ -3220,19 +3220,22 @@ export class VictoryPhase extends PokemonPhase {
     const expShareModifier = this.scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
     const expBalanceModifier = this.scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
     const multipleParticipantExpBonusModifier = this.scene.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
-    const expPartyMembers = party.filter(p => p.hp && p.level < this.scene.getMaxExpLevel());
+    const nonFaintedPartyMembers = party.filter(p => p.hp);
+    const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < this.scene.getMaxExpLevel());
     const partyMemberExp = [];
 
     if (participantIds.size) {
       let expValue = this.getPokemon().getExpValue();
       if (this.scene.currentBattle.battleType === BattleType.TRAINER)
         expValue = Math.floor(expValue * 1.5);
-      for (let partyMember of expPartyMembers) {
+      for (let partyMember of nonFaintedPartyMembers) {
         const pId = partyMember.id;
         const participated = participantIds.has(pId);
         if (participated)
           partyMember.addFriendship(2);
-        else if (!expShareModifier) {
+        if (!expPartyMembers.includes(partyMember))
+          continue;
+        if (!participated && !expShareModifier) {
           partyMemberExp.push(0);
           continue;
         }
