@@ -1332,13 +1332,15 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
       statChangePhases.push(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.levels));
     else {
       for (let opponent of pokemon.getOpponents()) {
-        const hasIntimidateImmunity: boolean = (this.intimidate && (opponent.hasAbilityWithAttr(IntimidateImmunityAbAttr)))
-        const overwritesIntimidate: boolean = (this.intimidate && (opponent.hasAbilityWithAttr(OverwriteIntimidateStatChangeAbAttr)))
-        if (hasIntimidateImmunity)
-          intimidateImmune.push(opponent);
-        else if (overwritesIntimidate)
-          applyAbAttrs(OverwriteIntimidateStatChangeAbAttr, opponent, null);
-        else
+        const cancelled = new Utils.BooleanHolder(false)
+        if (this.intimidate) {
+          if (opponent.hasAbilityWithAttr(IntimidateImmunityAbAttr)) {
+            cancelled.value = true;
+            intimidateImmune.push(opponent);
+          }
+          applyAbAttrs(PostIntimidateStatChangeAbAttr, opponent, cancelled)
+        }
+        if (!cancelled.value)
           statChangePhases.push(new StatChangePhase(pokemon.scene, opponent.getBattlerIndex(), false, this.stats, this.levels));
       }
     }
@@ -1380,18 +1382,21 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
   }
 }
 
-export class OverwriteIntimidateStatChangeAbAttr extends AbAttr { 
+export class PostIntimidateStatChangeAbAttr extends AbAttr { 
   private stats: BattleStat[];
   private levels: integer;
+  private overwrites: boolean;
 
-  constructor(stats: BattleStat[], levels: integer) {
-    super()
+  constructor(stats: BattleStat[], levels: integer, overwrites?: boolean) {
+    super(true)
     this.stats = stats
     this.levels = levels
+    this.overwrites = !!overwrites
   }
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     pokemon.scene.pushPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, this.stats, this.levels));
+    cancelled.value = this.overwrites;
     return true;
   }
 }
@@ -3024,7 +3029,7 @@ export function initAbilities() {
     new Ability(Abilities.RATTLED, 5)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS && (move.type === Type.DARK || move.type === Type.BUG ||
         move.type === Type.GHOST), BattleStat.SPD, 1)
-      .attr(OverwriteIntimidateStatChangeAbAttr, [BattleStat.SPD], 1),
+      .attr(PostIntimidateStatChangeAbAttr, [BattleStat.SPD], 1),
     new Ability(Abilities.MAGIC_BOUNCE, 5)
       .ignorable()
       .unimplemented(),
@@ -3409,7 +3414,7 @@ export function initAbilities() {
       .ignorable()
       .partial(),
     new Ability(Abilities.GUARD_DOG, 9)
-      .attr(OverwriteIntimidateStatChangeAbAttr, [BattleStat.ATK], 1)
+      .attr(PostIntimidateStatChangeAbAttr, [BattleStat.ATK], 1, true)
       .attr(ForceSwitchOutImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.ROCKY_PAYLOAD, 9)
