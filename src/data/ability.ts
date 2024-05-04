@@ -2104,6 +2104,13 @@ export class StatChangeMultiplierAbAttr extends AbAttr {
   }
 }
 
+export class StatChangeThiefAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, (args[0] as BattleStat[]), (args[1] as integer)));
+    return true;
+  }
+}
+
 export class BypassBurnDamageReductionAbAttr extends AbAttr {
   constructor() {
     super(false);
@@ -3484,7 +3491,7 @@ export function initAbilities() {
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), BattleStatMultiplierAbAttr, BattleStat.SPATK, 4 / 3),
     new Ability(Abilities.OPPORTUNIST, 9)
-      .unimplemented(),
+      .attr(StatChangeThiefAbAttr),
     new Ability(Abilities.CUD_CHEW, 9)
       .unimplemented(),
     new Ability(Abilities.SHARPNESS, 9)
