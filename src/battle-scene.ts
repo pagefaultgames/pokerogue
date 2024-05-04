@@ -85,6 +85,7 @@ export enum Button {
 	ACTION,
 	CANCEL,
 	MENU,
+	STATS,
 	CYCLE_SHINY,
 	CYCLE_FORM,
 	CYCLE_GENDER,
@@ -196,25 +197,26 @@ export default class BattleScene extends SceneBase {
 	private movementButtonLock: Button;
 
   // using a dualshock controller as a map
-  private gamepadKeyConfig = {
-    [Button.UP]: 12, // up
-    [Button.DOWN]: 13, // down
-    [Button.LEFT]: 14, // left
-    [Button.RIGHT]: 15, // right
-    [Button.SUBMIT]: 17, // touchpad
-    [Button.ACTION]: 0, // X
-    [Button.CANCEL]: 1, // O
-    [Button.MENU]: 9, // options
-    [Button.CYCLE_SHINY]: 5, // RB
-    [Button.CYCLE_FORM]: 4, // LB
-    [Button.CYCLE_GENDER]: 6, // LT
-    [Button.CYCLE_ABILITY]: 7, // RT
-    [Button.CYCLE_NATURE]: 2, // square
-    [Button.CYCLE_VARIANT]: 3, // triangle
-    [Button.SPEED_UP]: 10, // L3
-    [Button.SLOW_DOWN]: 11 // R3
-  };
-  public gamepadButtonStates: boolean[] = new Array(17).fill(false);
+	private gamepadKeyConfig = {
+		[Button.UP]: 12, // up
+		[Button.DOWN]: 13, // down
+		[Button.LEFT]: 14, // left
+		[Button.RIGHT]: 15, // right
+		[Button.SUBMIT]: 17, // touchpad
+		[Button.ACTION]: 0, // X
+		[Button.CANCEL]: 1, // O
+		[Button.MENU]: 9, // options
+		[Button.STATS]: 8, // share
+		[Button.CYCLE_SHINY]: 5, // RB
+		[Button.CYCLE_FORM]: 4, // LB
+		[Button.CYCLE_GENDER]: 6, // LT
+		[Button.CYCLE_ABILITY]: 7, // RT
+		[Button.CYCLE_NATURE]: 2, // square
+		[Button.CYCLE_VARIANT]: 3, // triangle
+		[Button.SPEED_UP]: 10, // L3
+		[Button.SLOW_DOWN]: 11 // R3
+	};
+	public gamepadButtonStates: boolean[] = new Array(17).fill(false);
 
 	public rngCounter: integer = 0;
 	public rngSeedOverride: string = '';
@@ -615,6 +617,7 @@ export default class BattleScene extends SceneBase {
 			[Button.ACTION]: [keyCodes.SPACE, keyCodes.ENTER, keyCodes.Z],
 			[Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
 			[Button.MENU]: [keyCodes.ESC, keyCodes.M],
+			[Button.STATS]: [keyCodes.SHIFT, keyCodes.C],
 			[Button.CYCLE_SHINY]: [keyCodes.R],
 			[Button.CYCLE_FORM]: [keyCodes.F],
 			[Button.CYCLE_GENDER]: [keyCodes.G],
@@ -1432,8 +1435,16 @@ export default class BattleScene extends SceneBase {
 				if (this.ui?.getMode() === Mode.SETTINGS)
 					(this.ui.getHandler() as SettingsUiHandler).show([]);
 			}
-		} else
-			return;
+		} else {
+			let pressed = false;
+			if (this.ui && (this.buttonJustReleased(Button.STATS) || (pressed = this.buttonJustPressed(Button.STATS)))) {
+				for (let p of this.getField().filter(p => p?.isActive(true)))
+					p.toggleStats(pressed);
+				if (pressed)
+					this.setLastProcessedMovementTime(Button.STATS);
+			} else
+				return;
+		}
 		if (inputSuccess && this.enableVibration && typeof navigator.vibrate !== 'undefined')
 			navigator.vibrate(vibrationLength || 10);		
 	}
@@ -1443,7 +1454,7 @@ export default class BattleScene extends SceneBase {
    * or not. It will only return true once, until the key is released and pressed down
    * again. 
    */
-	gamepadButtonJustDown(button: Phaser.Input.Gamepad.Button) : boolean {
+	gamepadButtonJustDown(button: Phaser.Input.Gamepad.Button): boolean {
 		if (!button || !this.gamepadSupport)
 			return false;
 
@@ -1461,6 +1472,23 @@ export default class BattleScene extends SceneBase {
 	buttonJustPressed(button: Button): boolean {
 		const gamepad = this.input.gamepad?.gamepads[0];
 		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustDown(k)) || this.gamepadButtonJustDown(gamepad?.buttons[this.gamepadKeyConfig[button]]);
+	}
+
+	/**
+   * gamepadButtonJustUp returns true if @param button has just been released
+   * or not. It will only return true once, until the key is released and pressed down
+   * again.
+   */
+	gamepadButtonJustUp(button: Phaser.Input.Gamepad.Button): boolean {
+		if (!button || !this.gamepadSupport)
+			return false;
+
+		return !this.gamepadButtonStates[button.index];
+  }
+
+	buttonJustReleased(button: Button): boolean {
+		const gamepad = this.input.gamepad?.gamepads[0];
+		return this.buttonKeys[button].some(k => Phaser.Input.Keyboard.JustUp(k)) || this.gamepadButtonJustUp(gamepad?.buttons[this.gamepadKeyConfig[button]]);
 	}
 
 	/**
