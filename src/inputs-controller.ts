@@ -7,6 +7,19 @@ import pad_xbox360 from "./configs/pad_xbox360";
 import pad_dualshock from "./configs/pad_dualshock";
 import {Button} from "./enums/buttons";
 
+export interface GamepadMapping {
+    [key: string]: number;
+}
+
+export interface GamepadConfig {
+    padID: string;
+    padType: string;
+    gamepadMapping: GamepadMapping;
+}
+
+export interface ActionGamepadMapping {
+    [key: string]: Button;
+}
 
 const repeatInputDelayMillis = 250;
 
@@ -20,6 +33,7 @@ export class InputsController {
     private buttonLock: Button;
     private interactions: Map<Button, Map<string, boolean>> = new Map();
     private time: Time;
+    private player: Map<String, GamepadMapping> = new Map();
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -38,7 +52,7 @@ export class InputsController {
         this.init();
     }
 
-    init() {
+    init(): void {
         this.events = new Phaser.Events.EventEmitter();
 
         if (typeof this.scene.input.gamepad !== 'undefined') {
@@ -64,7 +78,7 @@ export class InputsController {
         this.setupKeyboardControls();
     }
 
-    update() {
+    update(): void {
         for (const b of Utils.getEnumValues(Button)) {
             if (!this.interactions.hasOwnProperty(b)) continue;
             if (this.repeatInputDurationJustPassed(b)) {
@@ -77,12 +91,10 @@ export class InputsController {
         }
     }
 
-    setupGamepad(thisGamepad): void {
+    setupGamepad(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
         let gamepadID = thisGamepad.id.toLowerCase();
         const mappedPad = this.mapGamepad(gamepadID);
-        this.player = {
-            'mapping': mappedPad.gamepadMapping,
-        }
+        this.player['mapping'] = mappedPad.gamepadMapping;
     }
 
     refreshGamepads(): void {
@@ -96,7 +108,7 @@ export class InputsController {
         }
     }
 
-    getActionGamepadMapping() {
+    getActionGamepadMapping(): ActionGamepadMapping {
         const gamepadMapping = {};
         gamepadMapping[this.player.mapping.LC_N] = Button.UP;
         gamepadMapping[this.player.mapping.LC_S] = Button.DOWN;
@@ -119,7 +131,7 @@ export class InputsController {
         return gamepadMapping;
     }
 
-    gamepadButtonDown(pad, button, value): void {
+    gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
         const actionMapping = this.getActionGamepadMapping();
         const buttonDown = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
         if (buttonDown !== undefined) {
@@ -131,7 +143,7 @@ export class InputsController {
         }
     }
 
-    gamepadButtonUp(pad, button, value): void {
+    gamepadButtonUp(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
         const actionMapping = this.getActionGamepadMapping();
         const buttonUp = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
         if (buttonUp !== undefined) {
@@ -200,19 +212,18 @@ export class InputsController {
         });
     }
 
-    mapGamepad(id) {
+    mapGamepad(id: string): GamepadConfig {
         id = id.toLowerCase();
-        let padConfig = pad_generic;
 
         if (id.includes('081f') && id.includes('e401')) {
-            padConfig = pad_unlicensedSNES;
+            return pad_unlicensedSNES;
         } else if (id.includes('xbox') && id.includes('360')) {
-            padConfig = pad_xbox360;
+            return pad_xbox360;
         } else if (id.includes('054c')) {
-            padConfig = pad_dualshock;
+            return pad_dualshock;
         }
 
-        return padConfig;
+        return pad_generic;
     }
 
     /**
