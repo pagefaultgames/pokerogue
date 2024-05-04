@@ -827,13 +827,16 @@ export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
-  constructor() {
+  private ability: Abilities;
+
+  constructor(ability: Abilities) {
     super();
+    this.ability = ability;
   }
   
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && !attacker.getAbility().hasAttr(PostDefendAbilityGiveAbAttr)) {
-      attacker.summonData.ability = pokemon.getAbility().id;
+      attacker.summonData.ability = this.ability;
 
       return true;
     }
@@ -1982,13 +1985,19 @@ export class MoodyAbAttr extends PostTurnAbAttr {
   }
 
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    // TODO: Edge case of not choosing to buff or debuff a stat that's already maxed
     let selectableStats = [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD];
-    let increaseStat = selectableStats[Utils.randInt(selectableStats.length)];
-    selectableStats = selectableStats.filter(s => s !== increaseStat);
-    let decreaseStat = selectableStats[Utils.randInt(selectableStats.length)];
-    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [increaseStat], 2));
-    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [decreaseStat], -1));
+    let increaseStatArray = selectableStats.filter(s => pokemon.summonData.battleStats[s] < 6);
+    let decreaseStatArray = selectableStats.filter(s => pokemon.summonData.battleStats[s] > -6);
+
+    if (increaseStatArray.length > 0) {
+      let increaseStat = increaseStatArray[Utils.randInt(increaseStatArray.length)];
+      decreaseStatArray = decreaseStatArray.filter(s => s !== increaseStat);
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [increaseStat], 2));
+    }
+    if (decreaseStatArray.length > 0) {
+      let decreaseStat = selectableStats[Utils.randInt(selectableStats.length)];
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [decreaseStat], -1));
+    }
     return true;
   }
 }
@@ -3023,7 +3032,7 @@ export function initAbilities() {
     new Ability(Abilities.INFILTRATOR, 5)
       .unimplemented(),
     new Ability(Abilities.MUMMY, 5)
-      .attr(PostDefendAbilityGiveAbAttr)
+      .attr(PostDefendAbilityGiveAbAttr, Abilities.MUMMY)
       .bypassFaint(),
     new Ability(Abilities.MOXIE, 5)
       .attr(PostVictoryStatChangeAbAttr, BattleStat.ATK, 1),
@@ -3395,7 +3404,7 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.LINGERING_AROMA, 9)
-      .attr(PostDefendAbilityGiveAbAttr)
+      .attr(PostDefendAbilityGiveAbAttr, Abilities.LINGERING_AROMA)
       .bypassFaint(),
     new Ability(Abilities.SEED_SOWER, 9)
       .attr(PostDefendTerrainChangeAbAttr, TerrainType.GRASSY),

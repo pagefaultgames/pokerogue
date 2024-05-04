@@ -1496,6 +1496,23 @@ export class StatChangeAttr extends MoveEffectAttr {
   }
 }
 
+export class AcupressureStatChangeAttr extends MoveEffectAttr {
+  constructor() {
+    super();
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    let randStats = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD, BattleStat.ACC, BattleStat.EVA ];
+    randStats = randStats.filter(s => target.summonData.battleStats[s] < 6);
+    if (randStats.length > 0) {
+      let boostStat = [randStats[Utils.randInt(randStats.length)]];
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, target.getBattlerIndex(), this.selfTarget, boostStat, 2));
+      return true;
+    }
+    return false;
+  }  
+}
+
 export class GrowthStatChangeAttr extends StatChangeAttr {
   constructor() {
     super([ BattleStat.ATK, BattleStat.SPATK ], 1, true);
@@ -4823,7 +4840,7 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.TAILWIND, 4, true)
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ACUPRESSURE, Type.NORMAL, -1, 30, -1, 0, 4)
-      .attr(StatChangeAttr, BattleStat.RAND, 2)
+      .attr(AcupressureStatChangeAttr)
       .target(MoveTarget.USER_OR_NEAR_ALLY),
     new AttackMove(Moves.METAL_BURST, Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
       .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)

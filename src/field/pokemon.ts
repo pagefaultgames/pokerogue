@@ -43,8 +43,8 @@ import { Nature, getNatureStatMultiplier } from '../data/nature';
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
 import { TerrainType } from '../data/terrain';
 import { TrainerSlot } from '../data/trainer-config';
+import { ABILITY_OVERRIDE, MOVE_OVERRIDE, MOVE_OVERRIDE_2, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_MOVE_OVERRIDE_2, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../overrides';
 import { BerryType } from '../data/berry';
-import { ABILITY_OVERRIDE, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../overrides';
 import i18next from '../plugins/i18n';
 
 export enum FieldPosition {
@@ -725,6 +725,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.moveset[0] = new PokemonMove(MOVE_OVERRIDE, Math.min(this.moveset[0].ppUsed, allMoves[MOVE_OVERRIDE].pp));
     else if (OPP_MOVE_OVERRIDE && !this.isPlayer())
       this.moveset[0] = new PokemonMove(OPP_MOVE_OVERRIDE, Math.min(this.moveset[0].ppUsed, allMoves[OPP_MOVE_OVERRIDE].pp));
+    if (MOVE_OVERRIDE_2 && this.isPlayer())
+      this.moveset[1] = new PokemonMove(MOVE_OVERRIDE_2, Math.min(this.moveset[1].ppUsed, allMoves[MOVE_OVERRIDE_2].pp));
+    else if (OPP_MOVE_OVERRIDE_2 && !this.isPlayer())
+      this.moveset[1] = new PokemonMove(OPP_MOVE_OVERRIDE_2, Math.min(this.moveset[1].ppUsed, allMoves[OPP_MOVE_OVERRIDE_2].pp));
+
 
     return ret;
   }
@@ -2474,9 +2479,10 @@ export class PlayerPokemon extends Pokemon {
       if (newEvolution.condition.predicate(this)) {
         const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, undefined, this.shiny, this.variant, this.ivs, this.nature);
         newPokemon.natureOverride = this.natureOverride;
+        newPokemon.passive = this.passive;
+        newPokemon.moveset = this.moveset.slice();
         newPokemon.moveset = this.copyMoveset();
         newPokemon.luck = this.luck;
-
         newPokemon.fusionSpecies = this.fusionSpecies;
         newPokemon.fusionFormIndex = this.fusionFormIndex;
         newPokemon.fusionAbilityIndex = this.fusionAbilityIndex;
