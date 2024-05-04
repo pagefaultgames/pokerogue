@@ -2,7 +2,7 @@ import BattleScene, { bypassLogin, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, FixedDamageAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, FixedDamageAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -2400,7 +2400,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
       const targetHitChecks = Object.fromEntries(targets.map(p => [ p.getBattlerIndex(), this.hitCheck(p) ]));
       const activeTargets = targets.map(t => t.isActive(true));
-      if (!activeTargets.length || (!this.move.getMove().isMultiTarget() && !targetHitChecks[this.targets[0]])) {
+      if (!activeTargets.length || (!this.move.getMove().getAttrs(VariableTargetAttr).length && !this.move.getMove().isMultiTarget() && !targetHitChecks[this.targets[0]])) {
         user.turnData.hitCount = 1;
         user.turnData.hitsLeft = 1;
         if (activeTargets.length) {
