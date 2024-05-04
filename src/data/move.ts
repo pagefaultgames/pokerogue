@@ -986,13 +986,11 @@ export class ChangeMultiHitTypeAttr extends MoveAttr {
 
 export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.GRENINJA) && user.hasAbility(Abilities.BATTLE_BOND)) {
-      if ((user.species.speciesId === Species.GRENINJA ? user.formIndex : user.fusionSpecies.formIndex) == 2) {
-        (args[0] as Utils.IntegerHolder).value = MultiHitType._3
-        return true;
-      }
-      return false;
+    if (user.species.speciesId == Species.GRENINJA && user.hasAbility(Abilities.BATTLE_BOND) && user.formIndex == 2) {
+      (args[0] as Utils.IntegerHolder).value = MultiHitType._3
+      return true;
     }
+    return false;
   }
 }
 
@@ -2072,13 +2070,11 @@ export class KnockOffPowerAttr extends VariablePowerAttr {
 
 export class WaterShurikenPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.GRENINJA) && user.hasAbility(Abilities.BATTLE_BOND)) {
-      if ((user.species.speciesId === Species.GRENINJA ? user.formIndex : user.fusionSpecies.formIndex) == 2) {
-        (args[0] as Utils.IntegerHolder).value = 20
-        return true;
-      }
-      return false;
+    if (user.species.speciesId == Species.GRENINJA && user.hasAbility(Abilities.BATTLE_BOND) && user.formIndex == 2) {
+      (args[0] as Utils.IntegerHolder).value = 20
+      return true;
     }
+    return false;
   }
 }
 
