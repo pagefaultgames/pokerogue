@@ -2410,19 +2410,24 @@ export class MoveEffectPhase extends PokemonPhase {
 
       let isBounced: BattlerTag | boolean = false;
       for (let opponent of targets) {
-        isBounced = this.move.getMove().hasFlag(MoveFlags.MAGIC_COAT_MOVE) && (targets[0].findTags(t => t instanceof BounceTag).find(t => targets[0].lapseTag(t.tagType)) || opponent.hasAbilityWithAttr(MagicBounceAbAttr));
+        isBounced = this.move.getMove().hasFlag(MoveFlags.MAGIC_COAT_MOVE) && (opponent.findTags(t => t instanceof BounceTag).find(t => opponent.lapseTag(t.tagType)) || opponent.hasAbilityWithAttr(MagicBounceAbAttr));
         if (isBounced) {
-          this.scene.queueMessage(getPokemonMessage(targets[0], '\nbounced the move back!'));
+          this.scene.queueMessage(getPokemonMessage(opponent, '\nbounced the move back!'));
           const tempTargets = targets;
-          this.targets = getMoveTargets(tempTargets[0], this.move.moveId).targets;
-          targets = [];
-          for (let index of this.targets){
-            const target = this.scene.getField()[index];
-            if (target)
-              targets.push(target);
+          if (this.move.getMove().isMultiTarget()){
+            this.targets = getMoveTargets(tempTargets[0], this.move.moveId).targets;
+            targets = [];
+            for (let index of this.targets){
+              const target = this.scene.getField()[index];
+              if (target)
+                targets.push(target);
+            }
+          } else {
+            this.targets = [user.getBattlerIndex()];
+            targets = [user];
           }
           user = tempTargets[0];
-          if (!this.move.getMove().applyConditions(user, targets[0], this.move.getMove())) {
+          if (!this.move.getMove().applyConditions(user, opponent, this.move.getMove())) {
             this.scene.queueMessage(i18next.t('menu:attackFailed'));
             return this.end();
           }
