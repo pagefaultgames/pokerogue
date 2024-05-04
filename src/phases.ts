@@ -2414,8 +2414,13 @@ export class MoveEffectPhase extends PokemonPhase {
         if (isBounced) {
           this.scene.queueMessage(getPokemonMessage(targets[0], '\nbounced the move back!'));
           const tempTargets = targets;
-          targets = [user];
-          this.targets = [user.getBattlerIndex()];
+          this.targets = getMoveTargets(tempTargets[0], this.move.moveId).targets;
+          targets = [];
+          for (let index of this.targets){
+            const target = this.scene.getField()[index];
+            if (target)
+              targets.push(target);
+          }
           user = tempTargets[0];
           if (!this.move.getMove().applyConditions(user, targets[0], this.move.getMove())) {
             this.scene.queueMessage(i18next.t('menu:attackFailed'));
