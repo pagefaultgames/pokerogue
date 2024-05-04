@@ -8,6 +8,7 @@ import * as Utils from "../utils";
 import PokemonData from "../system/pokemon-data";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import MessageUiHandler from "./message-ui-handler";
+import i18next from "i18next";
 
 const sessionSlotCount = 5;
 
@@ -258,7 +259,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
   async setupWithData(data: SessionSaveData) {
     this.remove(this.loadingLabel, true);
 
-    const gameModeLabel = addTextObject(this.scene, 8, 5, `${gameModes[data.gameMode].getName()} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
+    const gameModeLabel = addTextObject(this.scene, 8, 5, `${gameModes[data.gameMode]?.getName() || 'Unknown'} - Wave ${data.waveIndex}`, TextStyle.WINDOW);
     this.add(gameModeLabel);
 
     const timestampLabel = addTextObject(this.scene, 8, 19, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
@@ -314,7 +315,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
       this.scene.gameData.getSession(this.slotId).then(async sessionData => {
         if (!sessionData) {
           this.hasData = false;
-          this.loadingLabel.setText('Empty');
+          this.loadingLabel.setText(i18next.t("menu:empty"));
           resolve(false);
           return;
         }

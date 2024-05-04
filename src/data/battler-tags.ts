@@ -984,6 +984,19 @@ export class HideSpriteTag extends BattlerTag {
   }
 }
 
+export class TypeImmuneTag extends BattlerTag {
+  public immuneType: Type;
+  constructor(tagType: BattlerTagType, sourceMove: Moves, immuneType: Type, length: number) {
+    super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
+  }
+}
+
+export class MagnetRisenTag extends TypeImmuneTag {
+  constructor(tagType: BattlerTagType, sourceMove: Moves) {
+    super(tagType, sourceMove, Type.GROUND, 5);
+  }
+}
+
 export class TypeBoostTag extends BattlerTag {
   public boostedType: Type;
   public boostValue: number;
@@ -1211,6 +1224,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new CursedTag(sourceId);
     case BattlerTagType.CHARGED:
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
+    case BattlerTagType.MAGNET_RISEN:
+      return new MagnetRisenTag(tagType, sourceMove);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

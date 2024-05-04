@@ -685,7 +685,7 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
 
     const recoilDamage = Math.max(Math.floor((!this.useHp ? user.turnData.damageDealt : user.getMaxHp()) * this.damageRatio),
-      !this.useHp && user.turnData.damageDealt ? 1 : 0);
+      user.turnData.damageDealt ? 1 : 0);
     if (!recoilDamage)
       return false;
 
@@ -1496,6 +1496,23 @@ export class StatChangeAttr extends MoveEffectAttr {
   }
 }
 
+export class AcupressureStatChangeAttr extends MoveEffectAttr {
+  constructor() {
+    super();
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    let randStats = [ BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD, BattleStat.ACC, BattleStat.EVA ];
+    randStats = randStats.filter(s => target.summonData.battleStats[s] < 6);
+    if (randStats.length > 0) {
+      let boostStat = [randStats[Utils.randInt(randStats.length)]];
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, target.getBattlerIndex(), this.selfTarget, boostStat, 2));
+      return true;
+    }
+    return false;
+  }  
+}
+
 export class GrowthStatChangeAttr extends StatChangeAttr {
   constructor() {
     super([ BattleStat.ATK, BattleStat.SPATK ], 1, true);
@@ -1573,7 +1590,7 @@ export class CopyStatsAttr extends MoveEffectAttr {
       user.addTag(BattlerTagType.CRIT_BOOST, 0, move.id);
     else
       user.removeTag(BattlerTagType.CRIT_BOOST);
-
+    target.updateInfo();
     user.updateInfo();
 
     target.scene.queueMessage(getPokemonMessage(user, 'copied\n') + getPokemonMessage(target, `'s stat changes!`));
@@ -1589,7 +1606,7 @@ export class InvertStatsAttr extends MoveEffectAttr {
 
     for (let s = 0; s < target.summonData.battleStats.length; s++)
       target.summonData.battleStats[s] *= -1;
-
+    target.updateInfo();
     user.updateInfo();
 
     target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere all reversed!`));
@@ -1605,7 +1622,7 @@ export class ResetStatsAttr extends MoveEffectAttr {
 
     for (let s = 0; s < target.summonData.battleStats.length; s++)
       target.summonData.battleStats[s] = 0;
-
+    target.updateInfo();
     user.updateInfo();
 
     target.scene.queueMessage(getPokemonMessage(target, `'s stat changes\nwere eliminated!`));
@@ -2018,6 +2035,17 @@ export class PresentPowerAttr extends VariablePowerAttr {
     }
 
     return true;
+  }
+}
+
+export class KnockOffPowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if(target.getHeldItems().length > 0){
+      (args[0] as Utils.NumberHolder).value *= 1.5;
+      return true; 
+    }
+    
+    return false;
   }
 }
 
@@ -4602,6 +4630,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, move) => !target.status),
     new AttackMove(Moves.KNOCK_OFF, Type.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
+      .attr(KnockOffPowerAttr)
       .partial(),
     new AttackMove(Moves.ENDEAVOR, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 3)
       .attr(MatchHpAttr)
@@ -4830,7 +4859,7 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.TAILWIND, 4, true)
       .target(MoveTarget.USER_SIDE),
     new StatusMove(Moves.ACUPRESSURE, Type.NORMAL, -1, 30, -1, 0, 4)
-      .attr(StatChangeAttr, BattleStat.RAND, 2)
+      .attr(AcupressureStatChangeAttr)
       .target(MoveTarget.USER_OR_NEAR_ALLY),
     new AttackMove(Moves.METAL_BURST, Type.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
       .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)
@@ -4902,6 +4931,10 @@ export function initMoves() {
     new SelfStatusMove(Moves.AQUA_RING, Type.WATER, -1, 20, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.AQUA_RING, true, true),
     new SelfStatusMove(Moves.MAGNET_RISE, Type.ELECTRIC, -1, 10, -1, 0, 4)
+      .attr(AddBattlerTagAttr, BattlerTagType.MAGNET_RISEN, true, true)
+      .condition((user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY) && 
+      !user.getTag(BattlerTagType.IGNORE_FLYING) && !user.getTag(BattlerTagType.INGRAIN) &&
+      !user.getTag(BattlerTagType.MAGNET_RISEN))
       .unimplemented(),
     new AttackMove(Moves.FLARE_BLITZ, Type.FIRE, MoveCategory.PHYSICAL, 120, 100, 15, 10, 0, 4)
       .attr(RecoilAttr, false, 0.33)
@@ -5451,7 +5484,7 @@ export function initMoves() {
     new StatusMove(Moves.EERIE_IMPULSE, Type.ELECTRIC, 100, 15, -1, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPATK, -2),
     new StatusMove(Moves.VENOM_DRENCH, Type.POISON, 100, 20, 100, 0, 6)
-      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], -1, false, (user, target, move) => target.status?.effect === StatusEffect.POISON)
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], -1, false, (user, target, move) => target.status?.effect === StatusEffect.POISON || target.status?.effect === StatusEffect.TOXIC)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.POWDER, Type.BUG, 100, 20, -1, 1, 6)
       .powderMove()
@@ -6436,6 +6469,7 @@ export function initMoves() {
     new AttackMove(Moves.THUNDERCLAP, Type.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 5, -1, 1, 9)
       .condition((user, target, move) => user.scene.currentBattle.turnCommands[target.getBattlerIndex()].command === Command.FIGHT && !target.turnData.acted && allMoves[user.scene.currentBattle.turnCommands[target.getBattlerIndex()].move.move].category !== MoveCategory.STATUS),
     new AttackMove(Moves.MIGHTY_CLEAVE, Type.ROCK, MoveCategory.PHYSICAL, 95, 100, 5, -1, 0, 9)
+      .slicingMove()
       .ignoresProtect(),
     new AttackMove(Moves.TACHYON_CUTTER, Type.STEEL, MoveCategory.SPECIAL, 50, -1, 10, -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._2)

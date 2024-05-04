@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove } from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -580,6 +580,35 @@ export class PostDefendStatChangeAbAttr extends PostDefendAbAttr {
   }
 }
 
+export class PostDefendHpGatedStatChangeAbAttr extends PostDefendAbAttr {
+  private condition: PokemonDefendCondition;
+  private hpGate: number;
+  private stats: BattleStat[];
+  private levels: integer;
+  private selfTarget: boolean;
+
+  constructor(condition: PokemonDefendCondition, hpGate: number, stats: BattleStat[], levels: integer, selfTarget: boolean = true) {
+    super(true);
+
+    this.condition = condition;
+    this.hpGate = hpGate;
+    this.stats = stats;
+    this.levels = levels;
+    this.selfTarget = selfTarget;
+  }
+
+  applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    const hpGateFlat: integer = Math.ceil(pokemon.getMaxHp() * this.hpGate)
+    const lastAttackReceived = pokemon.turnData.attacksReceived[pokemon.turnData.attacksReceived.length - 1]
+    if (this.condition(pokemon, attacker, move.getMove()) && (pokemon.hp <= hpGateFlat && (pokemon.hp + lastAttackReceived.damage) > hpGateFlat)) {
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, (this.selfTarget ? pokemon : attacker).getBattlerIndex(), true, this.stats, this.levels));
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
   private condition: PokemonDefendCondition;
   private tagType: ArenaTagType;
@@ -798,13 +827,16 @@ export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
-  constructor() {
+  private ability: Abilities;
+
+  constructor(ability: Abilities) {
     super();
+    this.ability = ability;
   }
   
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
     if (move.getMove().checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && !attacker.getAbility().hasAttr(PostDefendAbilityGiveAbAttr)) {
-      attacker.summonData.ability = pokemon.getAbility().id;
+      attacker.summonData.ability = this.ability;
 
       return true;
     }
@@ -1609,6 +1641,27 @@ export class BonusCritAbAttr extends AbAttr {
   }
 }
 
+export class MultCritAbAttr extends AbAttr {
+  public multAmount: number;
+
+  constructor(multAmount: number) {
+    super(true);
+
+    this.multAmount = multAmount;
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const critMult = args[0] as Utils.NumberHolder;
+    if (critMult.value > 1){
+      critMult.value *= this.multAmount;
+      return true;
+    }
+
+    return false;
+  }
+}
+
+
 export class BlockNonDirectDamageAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     cancelled.value = true;
@@ -1733,6 +1786,53 @@ function getAnticipationCondition(): AbAttrCondition {
     }
     return false;
   };
+}
+
+export class ForewarnAbAttr extends PostSummonAbAttr {
+  constructor() {
+    super(true);
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    let maxPowerSeen = 0;
+    let maxMove = "";
+    let movePower = 0;
+    for (let opponent of pokemon.getOpponents()) {
+      for (let move of opponent.moveset) {
+        if (move.getMove() instanceof StatusMove) {
+          movePower = 1;
+        } else if (move.getMove().findAttr(attr => attr instanceof OneHitKOAttr)) {
+          movePower = 150;
+        } else if (move.getMove().id === Moves.COUNTER || move.getMove().id === Moves.MIRROR_COAT || move.getMove().id === Moves.METAL_BURST) {
+          movePower = 120;
+        } else if (move.getMove().power === -1) {
+          movePower = 80;
+        } else {
+          movePower = move.getMove().power;
+        }
+        
+        if (movePower > maxPowerSeen) {
+          maxPowerSeen = movePower;
+          maxMove = move.getName();          
+        }
+      }
+    }
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, " was forewarned about " + maxMove + "!"));
+    return true;
+  }
+}
+
+export class FriskAbAttr extends PostSummonAbAttr {
+  constructor() {
+    super(true);
+  }
+
+  applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    for (let opponent of pokemon.getOpponents()) {
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, " frisked " + opponent.name + "\'s " + opponent.getAbility().name + "!"));
+    }
+    return true;
+  }
 }
 
 export class PostWeatherChangeAbAttr extends AbAttr {
@@ -1885,13 +1985,19 @@ export class MoodyAbAttr extends PostTurnAbAttr {
   }
 
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    // TODO: Edge case of not choosing to buff or debuff a stat that's already maxed
     let selectableStats = [BattleStat.ATK, BattleStat.DEF, BattleStat.SPATK, BattleStat.SPDEF, BattleStat.SPD];
-    let increaseStat = selectableStats[Utils.randInt(selectableStats.length)];
-    selectableStats = selectableStats.filter(s => s !== increaseStat);
-    let decreaseStat = selectableStats[Utils.randInt(selectableStats.length)];
-    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [increaseStat], 2));
-    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [decreaseStat], -1));
+    let increaseStatArray = selectableStats.filter(s => pokemon.summonData.battleStats[s] < 6);
+    let decreaseStatArray = selectableStats.filter(s => pokemon.summonData.battleStats[s] > -6);
+
+    if (increaseStatArray.length > 0) {
+      let increaseStat = increaseStatArray[Utils.randInt(increaseStatArray.length)];
+      decreaseStatArray = decreaseStatArray.filter(s => s !== increaseStat);
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [increaseStat], 2));
+    }
+    if (decreaseStatArray.length > 0) {
+      let decreaseStat = selectableStats[Utils.randInt(selectableStats.length)];
+      pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, [decreaseStat], -1));
+    }
     return true;
   }
 }
@@ -2776,7 +2882,7 @@ export function initAbilities() {
       .attr(MoveTypeChangeAttr, Type.NORMAL, 1.2, (user, target, move) => move.id !== Moves.HIDDEN_POWER && move.id !== Moves.WEATHER_BALL && 
             move.id !== Moves.NATURAL_GIFT && move.id !== Moves.JUDGMENT && move.id !== Moves.TECHNO_BLAST),
     new Ability(Abilities.SNIPER, 4)
-      .unimplemented(),
+      .attr(MultCritAbAttr, 1.5),
     new Ability(Abilities.MAGIC_GUARD, 4)
       .attr(BlockNonDirectDamageAbAttr),
     new Ability(Abilities.NO_GUARD, 4)
@@ -2804,7 +2910,7 @@ export function initAbilities() {
     new Ability(Abilities.ANTICIPATION, 4)
       .conditionalAttr(getAnticipationCondition(), PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, ' shuddered!')),
     new Ability(Abilities.FOREWARN, 4)
-      .unimplemented(),
+      .attr(ForewarnAbAttr),
     new Ability(Abilities.UNAWARE, 4)
       .attr(IgnoreOpponentStatChangesAbAttr)
       .ignorable(),
@@ -2833,7 +2939,7 @@ export function initAbilities() {
     new Ability(Abilities.HONEY_GATHER, 4)
       .unimplemented(),
     new Ability(Abilities.FRISK, 4)
-      .unimplemented(),
+      .attr(FriskAbAttr),
     new Ability(Abilities.RECKLESS, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.getAttrs(RecoilAttr).length && move.id !== Moves.STRUGGLE, 1.2),
     new Ability(Abilities.MULTITYPE, 4)
@@ -2926,7 +3032,7 @@ export function initAbilities() {
     new Ability(Abilities.INFILTRATOR, 5)
       .unimplemented(),
     new Ability(Abilities.MUMMY, 5)
-      .attr(PostDefendAbilityGiveAbAttr)
+      .attr(PostDefendAbilityGiveAbAttr, Abilities.MUMMY)
       .bypassFaint(),
     new Ability(Abilities.MOXIE, 5)
       .attr(PostVictoryStatChangeAbAttr, BattleStat.ATK, 1),
@@ -3070,7 +3176,7 @@ export function initAbilities() {
     new Ability(Abilities.STEELWORKER, 7)
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL),
     new Ability(Abilities.BERSERK, 7)
-      .unimplemented(),
+      .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [BattleStat.SPATK], 1),
     new Ability(Abilities.SLUSH_RUSH, 7)
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .condition(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW)),
@@ -3259,6 +3365,7 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => getPokemonMessage(pokemon, '\'s Neutralizing Gas filled the area!'))
       .partial(),
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
@@ -3297,7 +3404,7 @@ export function initAbilities() {
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr),
     new Ability(Abilities.LINGERING_AROMA, 9)
-      .attr(PostDefendAbilityGiveAbAttr)
+      .attr(PostDefendAbilityGiveAbAttr, Abilities.LINGERING_AROMA)
       .bypassFaint(),
     new Ability(Abilities.SEED_SOWER, 9)
       .attr(PostDefendTerrainChangeAbAttr, TerrainType.GRASSY),
@@ -3306,7 +3413,8 @@ export function initAbilities() {
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.ANGER_SHELL, 9)
-      .unimplemented(),
+      .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], 1)
+      .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [ BattleStat.DEF, BattleStat.SPDEF ], -1),
     new Ability(Abilities.PURIFYING_SALT, 9)
       .attr(StatusEffectImmunityAbAttr)
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.GHOST, 0.5)
