@@ -3707,6 +3707,22 @@ export class LastResortAttr extends MoveAttr {
   }
 }
 
+export class VariableTargetAttr extends MoveAttr {
+  private targetChangeFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
+
+  constructor(targetChange: (user: Pokemon, target: Pokemon, move: Move) => number) {
+    super();
+
+    this.targetChangeFunc = targetChange;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const targetVal = args[0] as Utils.NumberHolder;
+    targetVal.value = this.targetChangeFunc(user, target, move);
+    return true;
+  }
+}
+
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
 
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
@@ -3787,7 +3803,10 @@ export type MoveTargetSet = {
 }
 
 export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
-  const moveTarget = move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
+  const variableTarget = new Utils.NumberHolder(0);
+  user.getOpponents().forEach(p => applyMoveAttrs(VariableTargetAttr, user, p, allMoves[move], variableTarget));
+
+  const moveTarget = allMoves[move].getAttrs(VariableTargetAttr).length ? variableTarget.value : move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
   const opponents = user.getOpponents();
   
   let set: Pokemon[] = [];
@@ -5989,7 +6008,8 @@ export function initMoves() {
     new AttackMove(Moves.STEEL_BEAM, Type.STEEL, MoveCategory.SPECIAL, 140, 95, 5, -1, 0, 8)
       .attr(HalfSacrificialAttr),
     new AttackMove(Moves.EXPANDING_FORCE, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 8)
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 1.5 : 1)
+      .attr(VariableTargetAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 6 : 3),
     new AttackMove(Moves.STEEL_ROLLER, Type.STEEL, MoveCategory.PHYSICAL, 130, 100, 5, -1, 0, 8)
       .attr(ClearTerrainAttr)
       .condition((user, target, move) => !!user.scene.arena.terrain),
