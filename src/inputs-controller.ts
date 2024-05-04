@@ -5,27 +5,8 @@ import pad_generic from "./configs/pad_generic";
 import pad_unlicensedSNES from "./configs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/pad_xbox360";
 import pad_dualshock from "./configs/pad_dualshock";
+import {Button} from "./enums/buttons";
 
-
-export enum Button {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-    SUBMIT,
-    ACTION,
-    CANCEL,
-    MENU,
-    STATS,
-    CYCLE_SHINY,
-    CYCLE_FORM,
-    CYCLE_GENDER,
-    CYCLE_ABILITY,
-    CYCLE_NATURE,
-    CYCLE_VARIANT,
-    SPEED_UP,
-    SLOW_DOWN
-}
 
 const repeatInputDelayMillis = 250;
 

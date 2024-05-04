@@ -17,7 +17,7 @@ import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
 import { PlayerGender } from "../system/game-data";
 import { Variant, getVariantTint } from "#app/data/variant";
-import {Button} from "../inputs-controller";
+import {Button} from "../enums/buttons";
 
 enum Page {
   PROFILE,

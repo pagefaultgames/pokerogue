@@ -6,7 +6,7 @@ import MessageUiHandler from "./message-ui-handler";
 import { EGG_SEED, Egg, GachaType, getEggGachaTypeDescriptor, getEggHatchWavesMessage, getEggDescriptor } from "../data/egg";
 import * as Utils from "../utils";
 import { addWindow } from "./ui-theme";
-import {Button} from "../inputs-controller";
+import {Button} from "../enums/buttons";
 
 export default class EggListUiHandler extends MessageUiHandler {
   private eggListContainer: Phaser.GameObjects.Container;

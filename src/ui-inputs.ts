@@ -1,10 +1,11 @@
 import Phaser from "phaser";
 import {Mode} from "./ui/ui";
-import {Button, InputsController} from "./inputs-controller";
+import {InputsController} from "./inputs-controller";
 import MessageUiHandler from "./ui/message-ui-handler";
 import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
 import {Setting, settingOptions} from "./system/settings";
 import SettingsUiHandler from "./ui/settings-ui-handler";
+import {Button} from "./enums/buttons";
 
 
 export class UiInputs {

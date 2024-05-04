@@ -28,7 +28,7 @@ import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint } from "#app/data/variant";
 import i18next from "i18next";
-import {Button} from "../inputs-controller";
+import {Button} from "../enums/buttons";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 

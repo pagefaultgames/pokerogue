@@ -9,7 +9,7 @@ import PokemonData from "../system/pokemon-data";
 import { PokemonHeldItemModifier } from "../modifier/modifier";
 import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";
-import {Button} from "../inputs-controller";
+import {Button} from "../enums/buttons";
 
 const sessionSlotCount = 5;
 
