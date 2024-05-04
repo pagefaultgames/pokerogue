@@ -4391,8 +4391,8 @@ export const biomeTrainerPools: BiomeTrainerPools = {
       ]
     ],
     [ Species.SHAYMIN, Type.GRASS, -1, [
-      [ Biome.MEADOW, BiomePoolTier.BOSS_ULTRA_RARE ]
-    ]
+        [ Biome.MEADOW, BiomePoolTier.BOSS_ULTRA_RARE ]
+      ]
     ],
     [ Species.ARCEUS, Type.NORMAL, -1, [ ]
     ],
