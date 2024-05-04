@@ -2661,8 +2661,9 @@ export class StatChangePhase extends PokemonPhase {
   private levels: integer;
   private showMessage: boolean;
   private ignoreAbilities: boolean;
+  private ignoreOpportunist: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer, showMessage: boolean = true, ignoreAbilities: boolean = false) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, ignoreOpportunist: boolean = false) {
     super(scene, battlerIndex);
 
     this.selfTarget = selfTarget;
@@ -2670,6 +2671,7 @@ export class StatChangePhase extends PokemonPhase {
     this.levels = levels;
     this.showMessage = showMessage;
     this.ignoreAbilities = ignoreAbilities;
+    this.ignoreOpportunist = ignoreOpportunist;
   }
 
   start() {
@@ -2717,7 +2719,7 @@ export class StatChangePhase extends PokemonPhase {
       for (let stat of filteredStats)
         pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
       
-      if (levels.value > 0 && !this.ignoreAbilities)
+      if (levels.value > 0 && !this.ignoreOpportunist)
         for (let opponent of pokemon.getOpponents())
           applyAbAttrs(StatChangeThiefAbAttr, opponent, null, this.stats, levels.value);
       
