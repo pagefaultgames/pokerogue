@@ -2731,8 +2731,8 @@ export class EnemyPokemon extends Pokemon {
             let targetScores: integer[] = [];
 
             for (let mt of moveTargets[move.id]) {
-              // Prevent a target score from being calculated when there isn't a target
-              if (mt === -1)
+              // Prevent a target score from being calculated when the target is whoever attacks the user
+              if (mt === BattlerIndex.ATTACKER)
                 break;
 
               const target = this.scene.getField()[mt];
@@ -2806,10 +2806,10 @@ export class EnemyPokemon extends Pokemon {
     });
 
     if (!sortedBenefitScores.length) {
-      // Set target to -1 when using a counter move
+      // Set target to BattlerIndex.ATTACKER when using a counter move
       // This is the same as when the player does so
       if (!!move.findAttr(attr => attr instanceof CounterDamageAttr))
-        return [-1];
+        return [BattlerIndex.ATTACKER];
       
       return [];
     }
