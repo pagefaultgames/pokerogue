@@ -756,7 +756,7 @@ export enum MultiHitType {
   _2_TO_5,
   _3,
   _3_INCR,
-  _1_TO_10
+  _1_TO_10,
 }
 
 export class HealAttr extends MoveEffectAttr {
@@ -912,7 +912,9 @@ export class MultiHitAttr extends MoveAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let hitTimes: integer;
-    switch (this.multiHitType) {
+    const hitType = new Utils.IntegerHolder(this.multiHitType)
+    applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType)
+    switch (hitType.value) {
       case MultiHitType._2_TO_5:
         {
           const rand = user.randSeedInt(16);
@@ -972,6 +974,25 @@ export class MultiHitAttr extends MoveAttr {
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     return -5;
+  }
+}
+
+export class ChangeMultiHitTypeAttr extends MoveAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    //const hitType = args[0] as Utils.NumberHolder;
+    return false;
+  }
+}
+
+export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.GRENINJA) && user.hasAbility(Abilities.BATTLE_BOND)) {
+      if ((user.species.speciesId === Species.GRENINJA ? user.formIndex : user.fusionSpecies.formIndex) == 2) {
+        (args[0] as Utils.IntegerHolder).value = MultiHitType._3
+        return true;
+      }
+      return false;
+    }
   }
 }
 
@@ -2046,6 +2067,18 @@ export class KnockOffPowerAttr extends VariablePowerAttr {
     }
     
     return false;
+  }
+}
+
+export class WaterShurikenPowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.GRENINJA) && user.hasAbility(Abilities.BATTLE_BOND)) {
+      if ((user.species.speciesId === Species.GRENINJA ? user.formIndex : user.fusionSpecies.formIndex) == 2) {
+        (args[0] as Utils.IntegerHolder).value = 20
+        return true;
+      }
+      return false;
+    }
   }
 }
 
@@ -5473,7 +5506,9 @@ export function initMoves() {
     new AttackMove(Moves.HYPERSPACE_HOLE, Type.PSYCHIC, MoveCategory.SPECIAL, 80, -1, 5, -1, 0, 6)
       .ignoresProtect(),
     new AttackMove(Moves.WATER_SHURIKEN, Type.WATER, MoveCategory.SPECIAL, 15, 100, 20, -1, 1, 6)
-      .attr(MultiHitAttr),
+      .attr(MultiHitAttr)
+      .attr(WaterShurikenPowerAttr)
+      .attr(WaterShurikenMultiHitTypeAttr),
     new AttackMove(Moves.MYSTICAL_FIRE, Type.FIRE, MoveCategory.SPECIAL, 75, 100, 10, 100, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPATK, -1),
     new SelfStatusMove(Moves.SPIKY_SHIELD, Type.GRASS, -1, 10, -1, 4, 6)
