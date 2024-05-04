@@ -241,7 +241,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.shinyOverlay.setVisible(this.pokemon.isShiny());
 
-    const colorScheme = starterColors[this.pokemon.species.speciesId];
+    const colorScheme = starterColors[this.pokemon.species.getRootSpeciesId()];
     this.candyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
     this.candyOverlay.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
 
@@ -278,7 +278,7 @@ export default class SummaryUiHandler extends UiHandler {
     if (!currentFriendship || currentFriendship === undefined)
       currentFriendship = 0;
 
-    const friendshipCap = getStarterValueFriendshipCap(speciesStarters[this.pokemon.species.speciesId]);
+    const friendshipCap = getStarterValueFriendshipCap(speciesStarters[this.pokemon.species.getRootSpeciesId()]);
     const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
 
     if (this.candyShadow.visible) {
