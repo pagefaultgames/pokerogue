@@ -2301,6 +2301,8 @@ export class NoFusionAbilityAbAttr extends AbAttr {
   }
 }
 
+export class MagicBounceAbAttr extends AbAttr { }
+
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
   return new Promise(resolve => {
@@ -2925,7 +2927,7 @@ export function initAbilities() {
       .partial(),
     new Ability(Abilities.MAGIC_BOUNCE, 5)
       .ignorable()
-      .unimplemented(),
+      .attr(MagicBounceAbAttr),
     new Ability(Abilities.SAP_SIPPER, 5)
       .attr(TypeImmunityStatChangeAbAttr, Type.GRASS, BattleStat.ATK, 1)
       .ignorable(),
