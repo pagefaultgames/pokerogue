@@ -1332,13 +1332,14 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
       statChangePhases.push(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.levels));
     else {
       for (let opponent of pokemon.getOpponents()) {
-        const respectsAbilities: boolean = !pokemon.hasAbilityWithAttr(MoveAbilityBypassAbAttr)
-        const hasIntimidateImmunity: boolean = (this.intimidate && (opponent.hasAbilityWithAttr(IntimidateImmunityAbAttr) && respectsAbilities))
-        const invertsIntimidate: boolean = (this.intimidate && (opponent.hasAbilityWithAttr(InvertIntimidateAbAttr) && respectsAbilities))
-        if (!hasIntimidateImmunity)
-          statChangePhases.push(new StatChangePhase(pokemon.scene, opponent.getBattlerIndex(), false, this.stats, invertsIntimidate ? -this.levels : this.levels));
-        else                
-        intimidateImmune.push(opponent);
+        const hasIntimidateImmunity: boolean = (this.intimidate && (opponent.hasAbilityWithAttr(IntimidateImmunityAbAttr)))
+        const overwritesIntimidate: boolean = (this.intimidate && (opponent.hasAbilityWithAttr(OverwriteIntimidateStatChangeAbAttr)))
+        if (hasIntimidateImmunity)
+          intimidateImmune.push(opponent);
+        else if (overwritesIntimidate)
+          applyAbAttrs(OverwriteIntimidateStatChangeAbAttr, opponent, null);
+        else
+          statChangePhases.push(new StatChangePhase(pokemon.scene, opponent.getBattlerIndex(), false, this.stats, this.levels));
       }
     }
 
@@ -1376,6 +1377,22 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
     }
     
     return false;
+  }
+}
+
+export class OverwriteIntimidateStatChangeAbAttr extends AbAttr { 
+  private stats: BattleStat[];
+  private levels: integer;
+
+  constructor(stats: BattleStat[], levels: integer) {
+    super()
+    this.stats = stats
+    this.levels = levels
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    pokemon.scene.pushPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, this.stats, this.levels));
+    return true;
   }
 }
 
@@ -2267,8 +2284,6 @@ export class FlinchStatChangeAbAttr extends FlinchEffectAbAttr {
 
 export class IncreasePpAbAttr extends AbAttr { }
 
-export class InvertIntimidateAbAttr extends AbAttr { }
-
 export class IntimidateImmunityAbAttr extends AbAttr { }
 
 export class ForceSwitchOutImmunityAbAttr extends AbAttr { }
@@ -3009,7 +3024,7 @@ export function initAbilities() {
     new Ability(Abilities.RATTLED, 5)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS && (move.type === Type.DARK || move.type === Type.BUG ||
         move.type === Type.GHOST), BattleStat.SPD, 1)
-      .partial(),
+      .attr(OverwriteIntimidateStatChangeAbAttr, [BattleStat.SPD], 1),
     new Ability(Abilities.MAGIC_BOUNCE, 5)
       .ignorable()
       .unimplemented(),
@@ -3394,7 +3409,7 @@ export function initAbilities() {
       .ignorable()
       .partial(),
     new Ability(Abilities.GUARD_DOG, 9)
-      .attr(InvertIntimidateAbAttr)
+      .attr(OverwriteIntimidateStatChangeAbAttr, [BattleStat.ATK], 1)
       .attr(ForceSwitchOutImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.ROCKY_PAYLOAD, 9)
