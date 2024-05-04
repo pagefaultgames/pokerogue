@@ -1505,6 +1505,26 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   }
 }
 
+export class ResetStatusAbAttr extends AbAttr {
+  private immuneEffects: StatusEffect[];
+
+  constructor(...immuneEffects: StatusEffect[]) {
+    super();
+
+    this.immuneEffects = immuneEffects;
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+    if (pokemon.status && this.immuneEffects.includes(pokemon.status?.effect)){
+      pokemon.resetStatus();
+      pokemon.updateInfo();
+      return true;
+    }
+    return false;
+  }
+
+}
+
 export class PreSwitchOutAbAttr extends AbAttr {
   constructor() {
     super(true);
@@ -2633,6 +2653,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.LIMBER, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
+      .attr(ResetStatusAbAttr, StatusEffect.PARALYSIS)
       .ignorable(),
     new Ability(Abilities.SAND_VEIL, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.EVA, 1.2)
@@ -2657,14 +2678,16 @@ export function initAbilities() {
     new Ability(Abilities.INSOMNIA, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
+      .attr(ResetStatusAbAttr, StatusEffect.SLEEP)
       .ignorable(),
     new Ability(Abilities.COLOR_CHANGE, 3)
       .attr(PostDefendTypeChangeAbAttr),
     new Ability(Abilities.IMMUNITY, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .attr(ResetStatusAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.FLASH_FIRE, 3)
-      .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, BattlerTagType.FIRE_BOOST, 1, (pokemon: Pokemon) => !pokemon.status || pokemon.status.effect !== StatusEffect.FREEZE)
+      .attr(TypeImmunityAddBattlerTagAbAttr, Type.FIRE, BattlerTagType.FIRE_BOOST, 1, (pokemon: Pokemon) => !pokemon.status || pokemon.getStatusEffect() !== StatusEffect.FREEZE)
       .ignorable(),
     new Ability(Abilities.SHIELD_DUST, 3)
       .ignorable()
@@ -2728,9 +2751,11 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.MAGMA_ARMOR, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.FREEZE)
+      .attr(ResetStatusAbAttr, StatusEffect.FREEZE)
       .ignorable(),
     new Ability(Abilities.WATER_VEIL, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .attr(ResetStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.MAGNET_PULL, 3)
       /*.attr(ArenaTrapAbAttr)
@@ -2813,6 +2838,7 @@ export function initAbilities() {
     new Ability(Abilities.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
+      .attr(ResetStatusAbAttr, StatusEffect.SLEEP)
       .ignorable(),
     new Ability(Abilities.WHITE_SMOKE, 3)
       .attr(ProtectStatAbAttr)
@@ -2876,7 +2902,7 @@ export function initAbilities() {
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 1.5)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
     new Ability(Abilities.QUICK_FEET, 4)
-      .conditionalAttr(pokemon => pokemon.status ? pokemon.status.effect === StatusEffect.PARALYSIS : false, BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
+      .conditionalAttr(pokemon => pokemon.status ? pokemon.getStatusEffect() === StatusEffect.PARALYSIS : false, BattleStatMultiplierAbAttr, BattleStat.SPD, 2)
       .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.SPD, 1.5),
     new Ability(Abilities.NORMALIZE, 4)
       .attr(MoveTypeChangeAttr, Type.NORMAL, 1.2, (user, target, move) => move.id !== Moves.HIDDEN_POWER && move.id !== Moves.WEATHER_BALL && 
@@ -2992,9 +3018,9 @@ export function initAbilities() {
       .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getHpRatio() === 1, 0.5)
       .ignorable(),
     new Ability(Abilities.TOXIC_BOOST, 5)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.PHYSICAL && (user.status?.effect === StatusEffect.POISON || user.status?.effect === StatusEffect.TOXIC), 1.5),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.PHYSICAL && ([StatusEffect.POISON, StatusEffect.TOXIC].includes(user.getStatusEffect())), 1.5),
     new Ability(Abilities.FLARE_BOOST, 5)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.SPECIAL && user.status?.effect === StatusEffect.BURN, 1.5),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.SPECIAL && user.getStatusEffect() === StatusEffect.BURN, 1.5),
     new Ability(Abilities.HARVEST, 5)
       .unimplemented(),
     new Ability(Abilities.TELEPATHY, 5)
@@ -3172,6 +3198,7 @@ export function initAbilities() {
       .attr(ReceivedTypeDamageMultiplierAbAttr, Type.FIRE, 0.5)
       .attr(MoveTypePowerBoostAbAttr, Type.WATER, 1)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .attr(ResetStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.STEELWORKER, 7)
       .attr(MoveTypePowerBoostAbAttr, Type.STEEL),
@@ -3369,7 +3396,8 @@ export function initAbilities() {
       .partial(),
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
-      .ignorable(),
+      .ignorable()
+      .partial(),
     new Ability(Abilities.HUNGER_SWITCH, 8)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 0 : 1)
       .attr(PostTurnFormChangeAbAttr, p => p.getFormKey ? 1 : 0)
@@ -3411,6 +3439,7 @@ export function initAbilities() {
     new Ability(Abilities.THERMAL_EXCHANGE, 9)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.FIRE && move.category !== MoveCategory.STATUS, BattleStat.ATK, 1)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .attr(ResetStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.ANGER_SHELL, 9)
       .attr(PostDefendHpGatedStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [ BattleStat.ATK, BattleStat.SPATK, BattleStat.SPD ], 1)
