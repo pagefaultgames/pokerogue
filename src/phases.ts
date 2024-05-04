@@ -2416,6 +2416,10 @@ export class MoveEffectPhase extends PokemonPhase {
           const tempTargets = targets;
           targets = [user];
           user = tempTargets[0];
+          if (!this.move.getMove().applyConditions(targets[0], targets[0], this.move.getMove())) {
+            this.scene.queueMessage(i18next.t('menu:attackFailed'));
+            return this.end();
+          }
           break;
         }
       }
