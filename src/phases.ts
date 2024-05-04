@@ -1,63 +1,231 @@
-import BattleScene, { bypassLogin, startingWave } from "./battle-scene";
-import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
+import BattleScene, {bypassLogin, startingWave} from "./battle-scene";
+import {
+  DamageResult,
+  default as Pokemon,
+  EnemyPokemon,
+  FieldPosition,
+  HitResult,
+  MoveResult,
+  PlayerPokemon,
+  PokemonMove,
+  TurnMove
+} from "./field/pokemon";
 import * as Utils from './utils';
-import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, FixedDamageAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr } from "./data/move";
-import { Mode } from './ui/ui';
-import { Command } from "./ui/command-ui-handler";
-import { Stat } from "./data/pokemon-stat";
-import { BerryModifier, ContactHeldItemTransferChanceModifier, EnemyAttackStatusEffectChanceModifier, EnemyPersistentModifier, EnemyStatusEffectHealChanceModifier, EnemyTurnHealModifier, ExpBalanceModifier, ExpBoosterModifier, ExpShareModifier, ExtraModifierModifier, FlinchChanceModifier, FusePokemonModifier, HealingBoosterModifier, HitHealModifier, LapsingPersistentModifier, MapModifier, Modifier, MultipleParticipantExpBonusModifier, PersistentModifier, PokemonExpBoosterModifier, PokemonHeldItemModifier, PokemonInstantReviveModifier, SwitchEffectTransferModifier, TempBattleStatBoosterModifier, TurnHealModifier, TurnHeldItemTransferModifier, MoneyMultiplierModifier, MoneyInterestModifier, IvScannerModifier, PokemonFriendshipBoosterModifier, LapsingPokemonHeldItemModifier, PokemonMultiHitModifier, PokemonMoveAccuracyBoosterModifier } from "./modifier/modifier";
-import PartyUiHandler, { PartyOption, PartyUiMode } from "./ui/party-ui-handler";
-import { doPokeballBounceAnim, getPokeballAtlasKey, getPokeballCatchMultiplier, getPokeballTintColor, PokeballType } from "./data/pokeball";
-import { CommonAnim, CommonBattleAnim, MoveAnim, initMoveAnim, loadMoveAnimAssets } from "./data/battle-anims";
-import { StatusEffect, getStatusEffectActivationText, getStatusEffectCatchRateMultiplier, getStatusEffectHealText, getStatusEffectObtainText, getStatusEffectOverlapText } from "./data/status-effect";
-import { SummaryUiMode } from "./ui/summary-ui-handler";
+import {Moves} from "./data/enums/moves";
+import {
+  allMoves,
+  applyFilteredMoveAttrs,
+  applyMoveAttrs,
+  AttackMove,
+  BypassSleepAttr,
+  ChargeAttr,
+  CopyMoveAttr,
+  FixedDamageAttr,
+  ForceSwitchOutAttr,
+  getMoveTargets,
+  HealStatusEffectAttr,
+  HitsTagAttr,
+  IgnoreOpponentStatChangesAttr,
+  MissEffectAttr,
+  MoveAttr,
+  MoveEffectAttr,
+  MoveEffectTrigger,
+  MoveFlags,
+  MoveTarget,
+  MoveTargetSet,
+  MultiHitAttr,
+  NoEffectAttr,
+  OneHitKOAccuracyAttr,
+  OverrideMoveEffectAttr,
+  PreMoveMessageAttr,
+  SelfStatusMove,
+  VariableAccuracyAttr
+} from "./data/move";
+import {Mode} from './ui/ui';
+import {Command} from "./ui/command-ui-handler";
+import {Stat} from "./data/pokemon-stat";
+import {
+  BerryModifier,
+  ContactHeldItemTransferChanceModifier,
+  EnemyAttackStatusEffectChanceModifier,
+  EnemyPersistentModifier,
+  EnemyStatusEffectHealChanceModifier,
+  EnemyTurnHealModifier,
+  ExpBalanceModifier,
+  ExpBoosterModifier,
+  ExpShareModifier,
+  ExtraModifierModifier,
+  FlinchChanceModifier,
+  HealingBoosterModifier,
+  HitHealModifier,
+  IvScannerModifier,
+  LapsingPersistentModifier,
+  LapsingPokemonHeldItemModifier,
+  MapModifier,
+  Modifier,
+  MoneyInterestModifier,
+  MoneyMultiplierModifier,
+  MultipleParticipantExpBonusModifier,
+  PersistentModifier,
+  PokemonExpBoosterModifier,
+  PokemonFriendshipBoosterModifier,
+  PokemonHeldItemModifier,
+  PokemonInstantReviveModifier,
+  PokemonMoveAccuracyBoosterModifier,
+  PokemonMultiHitModifier,
+  SwitchEffectTransferModifier,
+  TempBattleStatBoosterModifier,
+  TurnHealModifier,
+  TurnHeldItemTransferModifier
+} from "./modifier/modifier";
+import PartyUiHandler, {PartyOption, PartyUiMode} from "./ui/party-ui-handler";
+import {
+  doPokeballBounceAnim,
+  getPokeballAtlasKey,
+  getPokeballCatchMultiplier,
+  getPokeballTintColor,
+  PokeballType
+} from "./data/pokeball";
+import {CommonAnim, CommonBattleAnim, initMoveAnim, loadMoveAnimAssets, MoveAnim} from "./data/battle-anims";
+import {
+  getStatusEffectActivationText,
+  getStatusEffectCatchRateMultiplier,
+  getStatusEffectHealText,
+  getStatusEffectObtainText,
+  getStatusEffectOverlapText,
+  StatusEffect
+} from "./data/status-effect";
+import {SummaryUiMode} from "./ui/summary-ui-handler";
 import EvolutionSceneHandler from "./ui/evolution-scene-handler";
-import { EvolutionPhase } from "./evolution-phase";
-import { Phase } from "./phase";
-import { BattleStat, getBattleStatLevelChangeDescription, getBattleStatName } from "./data/battle-stat";
-import { biomeLinks, getBiomeName } from "./data/biomes";
-import { Biome } from "./data/enums/biome";
-import { ModifierTier } from "./modifier/modifier-tier";
-import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
+import {EvolutionPhase} from "./evolution-phase";
+import {Phase} from "./phase";
+import {BattleStat, getBattleStatLevelChangeDescription, getBattleStatName} from "./data/battle-stat";
+import {biomeLinks, getBiomeName} from "./data/biomes";
+import {Biome} from "./data/enums/biome";
+import {ModifierTier} from "./modifier/modifier-tier";
+import {
+  FusePokemonModifierType,
+  getDailyRunStarterModifiers,
+  getEnemyBuffModifierForWave,
+  getModifierType,
+  getPlayerModifierTypeOptions,
+  getPlayerShopModifierTypeOptionsForWave,
+  ModifierPoolType,
+  ModifierType,
+  ModifierTypeFunc,
+  ModifierTypeOption,
+  modifierTypes,
+  PokemonModifierType,
+  PokemonMoveModifierType,
+  regenerateModifierPoolThresholds,
+  RememberMoveModifierType,
+  TmModifierType
+} from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTagLapseType, BounceTag, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
-import { BattlerTagType } from "./data/enums/battler-tag-type";
-import { getPokemonMessage } from "./messages";
-import { Starter } from "./ui/starter-select-ui-handler";
-import { Gender } from "./data/gender";
-import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, getWeatherDamageMessage, getWeatherLapseMessage } from "./data/weather";
-import { TempBattleStat } from "./data/temp-battle-stat";
-import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
-import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr } from "./data/ability";
-import { Unlockables, getUnlockableName } from "./system/unlockables";
-import { getBiomeKey } from "./field/arena";
-import { BattleType, BattlerIndex, TurnCommand } from "./battle";
-import { BattleSpec } from "./enums/battle-spec";
-import { Species } from "./data/enums/species";
-import { HealAchv, LevelAchv, achvs } from "./system/achv";
-import { TrainerSlot, trainerConfigs } from "./data/trainer-config";
-import { TrainerType } from "./data/enums/trainer-type";
-import { EggHatchPhase } from "./egg-hatch-phase";
-import { Egg } from "./data/egg";
-import { vouchers } from "./system/voucher";
-import { loggedInUser, updateUserInfo } from "./account";
-import { PlayerGender, SessionSaveData } from "./system/game-data";
-import { addPokeballCaptureStars, addPokeballOpenParticles } from "./field/anims";
-import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeManualTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangePreMoveTrigger } from "./data/pokemon-forms";
-import { battleSpecDialogue, getCharVariantFromDialogue } from "./data/dialogue";
-import ModifierSelectUiHandler, { SHOP_OPTIONS_ROW_LIMIT } from "./ui/modifier-select-ui-handler";
-import { Setting } from "./system/settings";
-import { Tutorial, handleTutorial } from "./tutorial";
-import { TerrainType } from "./data/terrain";
-import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select-ui-handler";
-import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
-import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
-import { GameModes, gameModes } from "./game-mode";
-import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
+import {
+  BattlerTag,
+  BattlerTagLapseType,
+  BounceTag,
+  EncoreTag,
+  HideSpriteTag as HiddenTag,
+  ProtectedTag,
+  TrappedTag
+} from "./data/battler-tags";
+import {BattlerTagType} from "./data/enums/battler-tag-type";
+import {getPokemonMessage} from "./messages";
+import {Starter} from "./ui/starter-select-ui-handler";
+import {Gender} from "./data/gender";
+import {
+  getRandomWeatherType,
+  getTerrainBlockMessage,
+  getWeatherDamageMessage,
+  getWeatherLapseMessage,
+  Weather,
+  WeatherType
+} from "./data/weather";
+import {TempBattleStat} from "./data/temp-battle-stat";
+import {ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag} from "./data/arena-tag";
+import {ArenaTagType} from "./data/enums/arena-tag-type";
+import {
+  AlwaysHitAbAttr,
+  applyAbAttrs,
+  applyBattleStatMultiplierAbAttrs,
+  applyCheckTrappedAbAttrs,
+  applyPostAttackAbAttrs,
+  applyPostBattleAbAttrs,
+  applyPostBattleInitAbAttrs,
+  applyPostDefendAbAttrs,
+  applyPostFaintAbAttrs,
+  applyPostKnockOutAbAttrs,
+  applyPostStatChangeAbAttrs,
+  applyPostSummonAbAttrs,
+  applyPostTurnAbAttrs,
+  applyPostVictoryAbAttrs,
+  applyPostWeatherLapseAbAttrs,
+  applyPreStatChangeAbAttrs,
+  applyPreSwitchOutAbAttrs,
+  applyPreWeatherEffectAbAttrs,
+  BattleStatMultiplierAbAttr,
+  BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, MagicBounceAbAttr,
+  CheckTrappedAbAttr,
+  IgnoreOpponentStatChangesAbAttr,
+  IncreasePpAbAttr,
+  IncrementMovePriorityAbAttr,
+  PostAttackAbAttr,
+  PostBattleAbAttr,
+  PostBattleInitAbAttr,
+  PostBiomeChangeAbAttr,
+  PostDefendAbAttr,
+  PostFaintAbAttr,
+  PostKnockOutAbAttr,
+  PostStatChangeAbAttr,
+  PostSummonAbAttr,
+  PostTurnAbAttr,
+  PostVictoryAbAttr,
+  PostWeatherLapseAbAttr,
+  PreSwitchOutAbAttr,
+  PreventBerryUseAbAttr,
+  PreWeatherDamageAbAttr,
+  ProtectStatAbAttr,
+  RedirectMoveAbAttr,
+  RunSuccessAbAttr,
+  StatChangeMultiplierAbAttr,
+  SuppressWeatherEffectAbAttr,
+  SyncEncounterNatureAbAttr
+} from "./data/ability";
+import {getUnlockableName, Unlockables} from "./system/unlockables";
+import {getBiomeKey} from "./field/arena";
+import {BattlerIndex, BattleType, TurnCommand} from "./battle";
+import {BattleSpec} from "./enums/battle-spec";
+import {Species} from "./data/enums/species";
+import {achvs, HealAchv, LevelAchv} from "./system/achv";
+import {trainerConfigs, TrainerSlot} from "./data/trainer-config";
+import {TrainerType} from "./data/enums/trainer-type";
+import {EggHatchPhase} from "./egg-hatch-phase";
+import {Egg} from "./data/egg";
+import {vouchers} from "./system/voucher";
+import {loggedInUser, updateUserInfo} from "./account";
+import {PlayerGender, SessionSaveData} from "./system/game-data";
+import {addPokeballCaptureStars, addPokeballOpenParticles} from "./field/anims";
+import {
+  SpeciesFormChangeActiveTrigger,
+  SpeciesFormChangeManualTrigger,
+  SpeciesFormChangeMoveLearnedTrigger,
+  SpeciesFormChangePostMoveTrigger,
+  SpeciesFormChangePreMoveTrigger
+} from "./data/pokemon-forms";
+import {battleSpecDialogue, getCharVariantFromDialogue} from "./data/dialogue";
+import ModifierSelectUiHandler, {SHOP_OPTIONS_ROW_LIMIT} from "./ui/modifier-select-ui-handler";
+import {Setting} from "./system/settings";
+import {handleTutorial, Tutorial} from "./tutorial";
+import {TerrainType} from "./data/terrain";
+import {OptionSelectConfig, OptionSelectItem} from "./ui/abstact-option-select-ui-handler";
+import {SaveSlotUiMode} from "./ui/save-slot-select-ui-handler";
+import {fetchDailyRunSeed, getDailyRunStarters} from "./data/daily-run";
+import {GameModes, gameModes} from "./game-mode";
+import {getPokemonSpecies, speciesStarters} from "./data/pokemon-species";
 import i18next from './plugins/i18n';
-import { STARTER_FORM_OVERRIDE, STARTER_SPECIES_OVERRIDE } from './overrides';
+import {STARTER_FORM_OVERRIDE, STARTER_SPECIES_OVERRIDE} from './overrides';
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -81,13 +249,13 @@ export class LoginPhase extends Phase {
         if (!statusCode || statusCode === 400) {
           if (this.showText)
             this.scene.ui.showText(i18next.t('menu:logInOrCreateAccount'));
-
+    
           this.scene.playSound('menu_open');
 
           const loadData = () => {
             updateUserInfo().then(() => this.scene.gameData.loadSystem().then(() => this.end()));
           };
-
+      
           this.scene.ui.setMode(Mode.LOGIN_FORM, {
             buttonActions: [
               () => {
@@ -132,7 +300,7 @@ export class LoginPhase extends Phase {
 
     if (!this.scene.gameData.gender)
       this.scene.unshiftPhase(new SelectGenderPhase(this.scene));
-
+    
     handleTutorial(this.scene, Tutorial.Intro).then(() => super.end());
   }
 }
@@ -312,7 +480,7 @@ export class TitlePhase extends Phase {
           party.push(starterPokemon);
           loadPokemonAssets.push(starterPokemon.loadAssets());
         }
-
+        
         regenerateModifierPoolThresholds(party, ModifierPoolType.DAILY_STARTER);
         const modifiers: Modifier[] = Array(3).fill(null).map(() => modifierTypes.EXP_SHARE().withIdFromFunc(modifierTypes.EXP_SHARE).newModifier())
           .concat(Array(3).fill(null).map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()))
@@ -421,7 +589,7 @@ export class SelectGenderPhase extends Phase {
   constructor(scene: BattleScene) {
     super(scene);
   }
-
+  
   start(): void {
     super.start();
 
@@ -718,11 +886,11 @@ export class EncounterPhase extends BattlePhase {
           enemyPokemon.updateScale();
         }
       }
-
+      
       totalBst += enemyPokemon.getSpeciesForm().baseTotal;
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
-
+  
       console.log(enemyPokemon.name, enemyPokemon.species.speciesId, enemyPokemon.stats);
     });
 
@@ -845,7 +1013,7 @@ export class EncounterPhase extends BattlePhase {
       const trainer = this.scene.currentBattle.trainer;
       trainer.untint(100, 'Sine.easeOut');
       trainer.playAnim();
-
+      
       const doSummon = () => {
         this.scene.currentBattle.started = true;
         this.scene.playBgm(undefined);
@@ -864,7 +1032,7 @@ export class EncounterPhase extends BattlePhase {
         else
           doTrainerSummon();
       };
-
+      
       const encounterMessages = this.scene.currentBattle.trainer.getEncounterMessages();
 
       if (!encounterMessages?.length)
@@ -921,7 +1089,7 @@ export class EncounterPhase extends BattlePhase {
           this.scene.pushPhase(new ReturnPhase(this.scene, 1));
         this.scene.pushPhase(new ToggleDoublePositionPhase(this.scene, false));
       }
-
+     
       if (this.scene.currentBattle.waveIndex > startingWave && this.scene.currentBattle.battleType !== BattleType.TRAINER) {
         this.scene.pushPhase(new CheckSwitchPhase(this.scene, 0, this.scene.currentBattle.double));
         if (this.scene.currentBattle.double && availablePartyMembers.length > 1)
@@ -977,7 +1145,7 @@ export class NextEncounterPhase extends EncounterPhase {
         this.scene.arenaNextEnemy.setVisible(false);
         if (this.scene.lastEnemyTrainer)
           this.scene.lastEnemyTrainer.destroy();
-
+        
         if (!this.tryOverrideForBattleSpec())
           this.doEncounterCommon();
       }
@@ -1869,7 +2037,7 @@ export class EnemyCommandPhase extends FieldPhase {
         if (partyMemberScores.length) {
           const matchupScores = opponents.map(opp => enemyPokemon.getMatchupScore(opp));
           const matchupScore = matchupScores.reduce((total, score) => total += score, 0) / matchupScores.length;
-
+          
           const sortedPartyMemberScores = trainer.getSortedPartyMemberMatchupScores(partyMemberScores);
 
           const switchMultiplier = 1 - (battle.enemySwitchCounter ? Math.pow(0.1, (1 / battle.enemySwitchCounter)) : 0);
@@ -1879,7 +2047,7 @@ export class EnemyCommandPhase extends FieldPhase {
 
             battle.turnCommands[this.fieldIndex + BattlerIndex.ENEMY] =
               { command: Command.POKEMON, cursor: index, args: [ false ] };
-
+            
             battle.enemySwitchCounter++;
 
             return this.end();
@@ -1954,11 +2122,11 @@ export class TurnStartPhase extends FieldPhase {
 
 		    applyAbAttrs(IncrementMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === a), null, aMove, aPriority);
         applyAbAttrs(IncrementMovePriorityAbAttr, this.scene.getField().find(p => p?.isActive() && p.getBattlerIndex() === b), null, bMove, bPriority);
-
+        
         if (aPriority.value !== bPriority.value)
           return aPriority.value < bPriority.value ? 1 : -1;
       }
-
+      
       const aIndex = order.indexOf(a);
       const bIndex = order.indexOf(b);
 
@@ -2026,10 +2194,10 @@ export class TurnEndPhase extends FieldPhase {
     super.start();
 
     this.scene.currentBattle.incrementTurn(this.scene);
-
+    
     const handlePokemon = (pokemon: Pokemon) => {
       pokemon.lapseTags(BattlerTagLapseType.TURN_END);
-
+      
       if (pokemon.summonData.disabledMove && !--pokemon.summonData.disabledTurns) {
         this.scene.pushPhase(new MessagePhase(this.scene, i18next.t('menu:notDisabled', { moveName: allMoves[pokemon.summonData.disabledMove].name })));
         pokemon.summonData.disabledMove = Moves.NONE;
@@ -2059,7 +2227,7 @@ export class TurnEndPhase extends FieldPhase {
     };
 
     this.executeForAll(handlePokemon);
-
+      
     this.scene.arena.lapseTags();
 
     if (this.scene.arena.weather && !this.scene.arena.weather.lapse())
@@ -2217,9 +2385,9 @@ export class MovePhase extends BattlePhase {
 
     const doMove = () => {
       this.pokemon.turnData.acted = true; // Record that the move was attempted, even if it fails
-
+      
       this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
-
+	    
       if (!this.followUp && this.canMove() && !this.cancelled) {
         this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
       }
@@ -2234,7 +2402,7 @@ export class MovePhase extends BattlePhase {
 
       if (this.move.moveId)
         this.showMoveText();
-
+      
       if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {
         moveQueue.shift();
         this.cancel();
@@ -2262,16 +2430,11 @@ export class MovePhase extends BattlePhase {
       // Assume conditions affecting targets only apply to moves with a single target
       let success = this.move.getMove().applyConditions(this.pokemon, targets[0], this.move.getMove());
       let failedText = null;
-      const isBounced = this.move.getMove().hasFlag(MoveFlags.MAGIC_COAT_MOVE) && targets[0].findTags(t => t instanceof BounceTag).find(t => targets[0].lapseTag(t.tagType));
       if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
         success = false;
       else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.move.getMove())) {
         success = false;
         failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
-      } else if (success && isBounced) {
-        this.showFailedText(this.pokemon.getOpponentDescriptor() + "\nbounced the move back!");
-        this.targets = [this.pokemon.getBattlerIndex()];
-        this.pokemon = targets[0];
       }
       if (success)
         this.scene.unshiftPhase(this.getEffectPhase());
@@ -2279,7 +2442,7 @@ export class MovePhase extends BattlePhase {
         this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
         this.showFailedText(failedText);
       }
-
+      
       this.end();
     };
 
@@ -2287,7 +2450,7 @@ export class MovePhase extends BattlePhase {
       this.pokemon.status.incrementTurn();
       let activated = false;
       let healed = false;
-
+      
       switch (this.pokemon.status.effect) {
         case StatusEffect.PARALYSIS:
           if (!this.pokemon.randSeedInt(4)) {
@@ -2307,7 +2470,7 @@ export class MovePhase extends BattlePhase {
           this.cancelled = activated;
           break;
       }
-
+      
       if (activated) {
         this.scene.queueMessage(getPokemonMessage(this.pokemon, getStatusEffectActivationText(this.pokemon.status.effect)));
         this.scene.unshiftPhase(new CommonAnimPhase(this.scene, this.pokemon.getBattlerIndex(), undefined, CommonAnim.POISON + (this.pokemon.status.effect - 1)));
@@ -2338,7 +2501,7 @@ export class MovePhase extends BattlePhase {
 
     if (this.pokemon.getTag(BattlerTagType.RECHARGING))
       return;
-
+    
     this.scene.queueMessage(getPokemonMessage(this.pokemon, ` used\n${this.move.getName()}!`), 500);
     applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents().find(() => true), this.move.getMove());
   }
@@ -2358,7 +2521,7 @@ export class MovePhase extends BattlePhase {
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
   protected targets: BattlerIndex[];
-
+  
   constructor(scene: BattleScene, battlerIndex: BattlerIndex, targets: BattlerIndex[], move: PokemonMove) {
     super(scene, battlerIndex);
 
@@ -2369,8 +2532,8 @@ export class MoveEffectPhase extends PokemonPhase {
   start() {
     super.start();
 
-    const user = this.getUserPokemon();
-    const targets = this.getTargets();
+    let user = this.getUserPokemon();
+    let targets = this.getTargets();
 
     if (!user?.isOnField())
       return super.end();
@@ -2382,7 +2545,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
       if (overridden.value)
         return this.end();
-
+      
       user.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
 
       if (user.turnData.hitsLeft === undefined) {
@@ -2413,12 +2576,24 @@ export class MoveEffectPhase extends PokemonPhase {
         return this.end();
       }
 
+      let isBounced: BattlerTag | boolean = false;
+      for (let opponent of targets) {
+        isBounced = this.move.getMove().hasFlag(MoveFlags.MAGIC_COAT_MOVE) && (targets[0].findTags(t => t instanceof BounceTag).find(t => targets[0].lapseTag(t.tagType)) || opponent.hasAbilityWithAttr(MagicBounceAbAttr));
+        if (isBounced) {
+          this.scene.queueMessage(getPokemonMessage(targets[0], '\nbounced the move back!'));
+          const tempTargets = targets;
+          targets = [user];
+          user = tempTargets[0];
+          break;
+        }
+      }
+
       const applyAttrs: Promise<void>[] = [];
 
       // Move animation only needs one target
       new MoveAnim(this.move.getMove().id as Moves, user, this.getTarget()?.getBattlerIndex()).play(this.scene, () => {
         for (let target of targets) {
-          if (!targetHitChecks[target.getBattlerIndex()]) {
+          if (!targetHitChecks[target.getBattlerIndex()] && !isBounced) {
             user.turnData.hitCount = 1;
             user.turnData.hitsLeft = 1;
             this.scene.queueMessage(getPokemonMessage(user, '\'s\nattack missed!'));
