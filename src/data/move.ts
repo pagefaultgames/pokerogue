@@ -15,7 +15,7 @@ import { ArenaTagType } from "./enums/arena-tag-type";
 import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { allAbilities } from './ability';
-import { PokemonHeldItemModifier, TempBattleStatBoosterModifier } from "../modifier/modifier";
+import { PokemonHeldItemModifier } from "../modifier/modifier";
 import { BattlerIndex } from "../battle";
 import { Stat } from "./pokemon-stat";
 import { TerrainType } from "./terrain";
