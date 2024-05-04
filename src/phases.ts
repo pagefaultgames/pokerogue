@@ -192,32 +192,53 @@ export class TitlePhase extends Phase {
           this.scene.ui.clearText();
           this.end();
         };
-        if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
-          const options: OptionSelectItem[] = [
-            {
-              label: gameModes[GameModes.CLASSIC].getName(),
-              handler: () => {
-                setModeAndEnd(GameModes.CLASSIC);
-                return true;
-              }
-            },
-            {
-              label: gameModes[GameModes.ENDLESS].getName(),
-              handler: () => {
-                setModeAndEnd(GameModes.ENDLESS);
-                return true;
-              }
+        const options: OptionSelectItem[] = [
+          {
+            label: gameModes[GameModes.CLASSIC].getName(),
+            handler: () => {
+              setModeAndEnd(GameModes.CLASSIC);
+              return true;
             }
-          ];
-          if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
-            options.push({
-              label: gameModes[GameModes.SPLICED_ENDLESS].getName(),
-              handler: () => {
-                setModeAndEnd(GameModes.SPLICED_ENDLESS);
-                return true;
-              }
-            });
           }
+        ];
+        if (this.scene.gameData.unlocks[Unlockables.NUZLOCKE_MODE] || true) {
+          options.push({
+            label: gameModes[GameModes.NUZLOCKE].getName(),
+            handler: () => {
+              this.scene.playSound('274');
+              setModeAndEnd(GameModes.NUZLOCKE);
+              return true;
+            }
+          });
+        }
+        if (this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
+          options.push({
+            label: gameModes[GameModes.ENDLESS].getName(),
+            handler: () => {
+              setModeAndEnd(GameModes.ENDLESS);
+              return true;
+            }
+          });
+        }
+        if (this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]) {
+          options.push({
+            label: gameModes[GameModes.SPLICED_ENDLESS].getName(),
+            handler: () => {
+              setModeAndEnd(GameModes.SPLICED_ENDLESS);
+              return true;
+            }
+          });
+        }
+        if (this.scene.gameData.unlocks[Unlockables.GAUNTLET_MODE]) {
+          options.push({
+            label: gameModes[GameModes.GAUNTLET].getName(),
+            handler: () => {
+              setModeAndEnd(GameModes.GAUNTLET);
+              return true;
+            }
+          });
+        }
+        if (options.length > 1) {
           options.push({
             label: i18next.t('menu:cancel'),
             handler: () => {
@@ -513,7 +534,11 @@ export class SelectStarterPhase extends Phase {
         Promise.all(loadPokemonAssets).then(() => {
           SoundFade.fadeOut(this.scene, this.scene.sound.get('menu'), 500, true);
           this.scene.time.delayedCall(500, () => this.scene.playBgm());
-          if (this.scene.gameMode.isClassic)
+          if (this.scene.gameMode.isNuzlocke) {
+            this.scene.gameData.gameStats.nuzlockeSessionsPlayed++;
+            this.scene.addModifier(modifierTypes.MAP().withIdFromFunc(modifierTypes.MAP).newModifier(), true, false, false, true);
+            this.scene.updateModifiers(true, true);
+          } else if (this.scene.gameMode.isClassic)
             this.scene.gameData.gameStats.classicSessionsPlayed++;
           else
             this.scene.gameData.gameStats.endlessSessionsPlayed++;
@@ -677,6 +702,8 @@ export class EncounterPhase extends BattlePhase {
 
   start() {
     super.start();
+
+    this.scene.updateGameInfo();
 
     this.scene.initSession();
 
@@ -1395,7 +1422,10 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
     if (switchedPokemon) {
-      party[this.slotIndex] = this.lastPokemon;
+      if (!this.scene.gameMode.isNuzlocke || this.doReturn)
+        party[this.slotIndex] = this.lastPokemon;
+      else
+        party.splice(this.slotIndex, 1);
       party[this.fieldIndex] = switchedPokemon;
       const showTextAndSummon = () => {
         this.scene.ui.showText(this.player ?
@@ -3162,12 +3192,15 @@ export class FaintPhase extends PokemonPhase {
         pokemon.addFriendship(-10);
       pokemon.hideInfo();
       this.scene.playSound('faint');
+        
       this.scene.tweens.add({
         targets: pokemon,
         duration: 500,
         y: pokemon.y + 150,
         ease: 'Sine.easeIn',
         onComplete: () => {
+          this.scene.faintCount++;
+
           pokemon.setVisible(false);
           pokemon.y -= 150;
           pokemon.trySetStatus(StatusEffect.FAINT);
@@ -3181,7 +3214,7 @@ export class FaintPhase extends PokemonPhase {
           this.end();
         }
       });
-    });
+    }, pokemon.isPlayer() && this.scene.gameMode.isNuzlocke);
   }
 
   tryOverrideForBattleSpec(): boolean {
@@ -3214,6 +3247,7 @@ export class VictoryPhase extends PokemonPhase {
     super.start();
 
     this.scene.gameData.gameStats.pokemonDefeated++;
+    this.scene.victoryCount++;
 
     const participantIds = this.scene.currentBattle.playerParticipantIds;
     const party = this.scene.getParty();
@@ -3526,6 +3560,8 @@ export class GameOverPhase extends BattlePhase {
 
   handleUnlocks(): void {
     if (this.victory && this.scene.gameMode.isClassic) {
+      if (!this.scene.gameData.unlocks[Unlockables.NUZLOCKE_MODE] && this.scene.victoryCount >= 250 && !this.scene.reviveCount)
+        this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.NUZLOCKE_MODE));
       if (!this.scene.gameData.unlocks[Unlockables.ENDLESS_MODE])
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.ENDLESS_MODE));
       if (this.scene.getParty().filter(p => p.fusionSpecies).length && !this.scene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE])
@@ -4130,6 +4166,13 @@ export class AttemptCapturePhase extends PokemonPhase {
         });
       };
       Promise.all([ pokemon.hideInfo(), this.scene.gameData.setPokemonCaught(pokemon) ]).then(() => {
+        if (this.scene.gameMode.isNuzlocke && this.scene.currentBattle.waveIndex % 10 !== 1) {
+          this.scene.ui.setMode(Mode.MESSAGE).then(() => {
+            removePokemon();
+            end();
+          });
+          return;
+        }
         if (this.scene.getParty().length === 6) {
           const promptRelease = () => {
             this.scene.ui.showText(`Your party is full.\nRelease a Pokémon to make room for ${pokemon.name}?`, null, () => {
@@ -4291,7 +4334,7 @@ export class SelectModifierPhase extends BattlePhase {
           modifierType = typeOptions[cursor].type;
           break;
         default:
-          const shopOptions = getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1));
+          const shopOptions = getPlayerShopModifierTypeOptionsForWave(this.scene.currentBattle.waveIndex, this.scene.getWaveMoneyAmount(1), this.scene.gameMode);
           const shopOption = shopOptions[rowCursor > 2 || shopOptions.length <= SHOP_OPTIONS_ROW_LIMIT ? cursor : cursor + SHOP_OPTIONS_ROW_LIMIT];
           modifierType = shopOption.type;
           cost = shopOption.cost;

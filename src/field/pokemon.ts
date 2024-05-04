@@ -1702,17 +1702,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return cry;
   }
 
-  faintCry(callback: Function): void {
+  faintCry(callback: Function, forPermadeath: boolean = false): void {
     if (this.fusionSpecies)
-      return this.fusionFaintCry(callback);
+      return this.fusionFaintCry(callback, forPermadeath);
 
     const key = this.getSpeciesForm().getCryKey(this.formIndex);
-    let i = 0;
     let rate = 0.85;
-    const cry = this.scene.playSound(key, { rate: rate }) as AnySound;
+    const cry = (!forPermadeath
+      ? this.scene.playSound(key, { rate: rate })
+      : this.scene.playSoundWithoutBgm(key, Utils.fixedInt(2500), { rate: rate })) as AnySound;
     const sprite = this.getSprite();
     const tintSprite = this.getTintSprite();
 
+    const decayRate = !forPermadeath ? 0.99 : 0.98;
     const delay = Math.max(this.scene.sound.get(key).totalDuration * 50, 25);
 
     let frameProgress = 0;
@@ -1721,11 +1723,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     sprite.anims.pause();
     tintSprite.anims.pause();
 
+    if (forPermadeath)
+      this.tint(0, 0.325, Utils.fixedInt(1500), 'Sine.easeIn');
+
     let faintCryTimer = this.scene.time.addEvent({
       delay: Utils.fixedInt(delay),
       repeat: -1,
       callback: () => {
-        ++i;
         frameThreshold = sprite.anims.msPerFrame / rate;
         frameProgress += delay;
         while (frameProgress > frameThreshold) {
@@ -1736,7 +1740,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           frameProgress -= frameThreshold;
         }
         if (cry && !cry.pendingRemove) {
-          rate *= 0.99;
+          rate *= decayRate;
           cry.setRate(rate);
         } else {
           faintCryTimer.destroy();
@@ -1759,13 +1763,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
-  private fusionFaintCry(callback: Function): void {
+  private fusionFaintCry(callback: Function, forPermadeath: boolean = false): void {
     const key = this.getSpeciesForm().getCryKey(this.formIndex);
     let i = 0;
     let rate = 0.85;
-    let cry = this.scene.playSound(key, { rate: rate }) as AnySound;
+    let cry = (!forPermadeath
+      ? this.scene.playSound(key, { rate: rate })
+      : this.scene.playSoundWithoutBgm(key, Utils.fixedInt(2000), { rate: rate })) as AnySound;
     const sprite = this.getSprite();
     const tintSprite = this.getTintSprite();
+
+    const decayRate = !forPermadeath ? 0.99 : 0.98;
     let duration = cry.totalDuration * 1000;
 
     let fusionCry = this.scene.playSound(this.getFusionSpeciesForm().getCryKey(this.fusionFormIndex), { rate: rate }) as AnySound;
@@ -1782,12 +1790,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     while (durationProgress < transitionThreshold) {
       ++i;
       durationProgress += delay * rate;
-      rate *= 0.99;
+      rate *= decayRate;
     }
 
     transitionIndex = i;
 
-    i = 0;
     rate = 0.85;
 
     let frameProgress = 0;
@@ -1796,11 +1803,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     sprite.anims.pause();
     tintSprite.anims.pause();
 
+    if (forPermadeath)
+      this.tint(0, 0.325, Utils.fixedInt(1500), 'Sine.easeIn');
+
     let faintCryTimer = this.scene.time.addEvent({
       delay: Utils.fixedInt(delay),
       repeat: -1,
       callback: () => {
-        ++i;
         frameThreshold = sprite.anims.msPerFrame / rate;
         frameProgress += delay;
         while (frameProgress > frameThreshold) {
@@ -1815,7 +1824,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           fusionCry = this.scene.playSound(this.getFusionSpeciesForm().getCryKey(this.fusionFormIndex), Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0), rate: rate }));
           SoundFade.fadeIn(this.scene, fusionCry, Utils.fixedInt(Math.ceil((duration / rate) * 0.2)), this.scene.masterVolume * this.scene.seVolume, 0);
         }
-        rate *= 0.99;
+        rate *= decayRate;
         if (cry && !cry.pendingRemove)
           cry.setRate(rate);
         if (fusionCry && !fusionCry.pendingRemove)

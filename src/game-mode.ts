@@ -11,16 +11,23 @@ export enum GameModes {
   CLASSIC,
   ENDLESS,
   SPLICED_ENDLESS,
-  DAILY
+  DAILY,
+  NUZLOCKE,
+  GAUNTLET
 }
 
 interface GameModeConfig {
   isClassic?: boolean;
   isEndless?: boolean;
   isDaily?: boolean;
+  isNuzlocke?: boolean;
+  hasNoHeals?: boolean;
+  hasNoReturns?: boolean;
   hasTrainers?: boolean;
   hasFixedBattles?: boolean;
   hasNoShop?: boolean;
+  hasStrictLevelCap?: boolean;
+  hasPassiveHeals?: boolean;
   hasShortBiomes?: boolean;
   hasRandomBiomes?: boolean;
   hasRandomBosses?: boolean;
@@ -32,9 +39,14 @@ export class GameMode implements GameModeConfig {
   public isClassic: boolean;
   public isEndless: boolean;
   public isDaily: boolean;
+  public isNuzlocke: boolean;
+  public hasNoHeals: boolean;
+  public hasNoReturns: boolean;
   public hasTrainers: boolean;
   public hasFixedBattles: boolean;
   public hasNoShop: boolean;
+  public hasStrictLevelCap: boolean;
+  public hasPassiveHeals: boolean;
   public hasShortBiomes: boolean;
   public hasRandomBiomes: boolean;
   public hasRandomBosses: boolean;
@@ -132,9 +144,11 @@ export class GameMode implements GameModeConfig {
   isWaveFinal(waveIndex: integer): boolean {
     switch (this.modeId) {
       case GameModes.CLASSIC:
+      case GameModes.NUZLOCKE:
         return waveIndex === 200;
       case GameModes.ENDLESS:
       case GameModes.SPLICED_ENDLESS:
+      case GameModes.GAUNTLET:
         return !(waveIndex % 250);
       case GameModes.DAILY:
         return waveIndex === 50;
@@ -154,9 +168,11 @@ export class GameMode implements GameModeConfig {
     switch (this.modeId) {
       case GameModes.CLASSIC:
       case GameModes.DAILY:
+      case GameModes.NUZLOCKE:
         return !isBoss ? 18 : 6;
       case GameModes.ENDLESS:
       case GameModes.SPLICED_ENDLESS:
+      case GameModes.GAUNTLET:
         return !isBoss ? 12 : 4;
     }
   }
@@ -171,6 +187,10 @@ export class GameMode implements GameModeConfig {
         return 'Endless (Spliced)';
       case GameModes.DAILY:
         return 'Daily Run';
+      case GameModes.NUZLOCKE:
+        return 'Nuzlocke';
+      case GameModes.GAUNTLET:
+        return 'Gauntlet';
     }
   }
 }
@@ -179,5 +199,7 @@ export const gameModes = Object.freeze({
   [GameModes.CLASSIC]: new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasFixedBattles: true }),
   [GameModes.ENDLESS]: new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true }),
   [GameModes.SPLICED_ENDLESS]: new GameMode(GameModes.SPLICED_ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true, isSplicedOnly: true }),
-  [GameModes.DAILY]: new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true })
+  [GameModes.DAILY]: new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true }),
+  [GameModes.NUZLOCKE]: new GameMode(GameModes.NUZLOCKE, { isClassic: true, isNuzlocke: true, hasStrictLevelCap: true, hasTrainers: true, hasFixedBattles: true }),
+  [GameModes.GAUNTLET]: new GameMode(GameModes.GAUNTLET, { isEndless: true, hasNoHeals: true, hasNoReturns: true, hasPassiveHeals: true, hasShortBiomes: true, hasRandomBosses: true })
 });

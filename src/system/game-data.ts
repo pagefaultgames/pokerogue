@@ -94,6 +94,9 @@ export interface SessionSaveData {
   pokeballCounts: PokeballCounts;
   money: integer;
   score: integer;
+  victoryCount: integer;
+  faintCount: integer;
+  reviveCount: integer;
   waveIndex: integer;
   battleType: BattleType;
   trainer: TrainerData;
@@ -538,6 +541,9 @@ export class GameData {
       pokeballCounts: scene.pokeballCounts,
       money: scene.money,
       score: scene.score,
+      victoryCount: scene.victoryCount,
+      faintCount: scene.faintCount,
+      reviveCount: scene.reviveCount,
       waveIndex: scene.currentBattle.waveIndex,
       battleType: scene.currentBattle.battleType,
       trainer: scene.currentBattle.battleType == BattleType.TRAINER ? new TrainerData(scene.currentBattle.trainer) : null,

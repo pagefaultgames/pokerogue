@@ -20,7 +20,6 @@ import { initMoves } from './data/move';
 import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
-import { Abilities } from "./data/enums/abilities";
 import { allAbilities } from "./data/ability";
 import Battle, { BattleType, FixedBattleConfig, fixedBattles } from './battle';
 import { GameMode, GameModes, gameModes } from './game-mode';
@@ -53,7 +52,7 @@ import PokemonSpriteSparkleHandler from './field/pokemon-sprite-sparkle-handler'
 import CharSprite from './ui/char-sprite';
 import DamageNumberHandler from './field/damage-number-handler';
 import PokemonInfoContainer from './ui/pokemon-info-container';
-import { biomeDepths } from './data/biomes';
+import { biomeDepths, getBiomeName } from './data/biomes';
 import { initTouchControls } from './touch-controls';
 import { UiTheme } from './enums/ui-theme';
 import { SceneBase } from './scene-base';
@@ -153,6 +152,9 @@ export default class BattleScene extends SceneBase {
 	public arena: Arena;
 	public gameMode: GameMode;
 	public score: integer;
+	public victoryCount: integer;
+	public faintCount: integer;
+	public reviveCount: integer;
 	public lockModifierTiers: boolean;
 	public trainer: Phaser.GameObjects.Sprite;
 	public lastEnemyTrainer: Trainer;
@@ -233,6 +235,7 @@ export default class BattleScene extends SceneBase {
 		this.phaseQueuePrepend = [];
 		this.phaseQueuePrependSpliceIndex = -1;
 		this.nextCommandPhaseQueue = [];
+		this.updateGameInfo();
 	}
 
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
@@ -837,6 +840,8 @@ export default class BattleScene extends SceneBase {
 		this.trainer.setPosition(406, 186);
 		this.trainer.setVisible(true);
 
+		this.updateGameInfo();
+
 		if (reloadI18n) {
 			const localizable: Localizable[] = [
 				...allSpecies,
@@ -960,7 +965,7 @@ export default class BattleScene extends SceneBase {
 					isNewBiome = !Utils.randSeedInt(6 - biomeWaves);
 				}, lastBattle.waveIndex << 4);
 			}
-			const resetArenaState = isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+			const resetArenaState = (isNewBiome || this.currentBattle.battleType === BattleType.TRAINER || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) && !this.gameMode.hasNoReturns;
 			this.getEnemyParty().forEach(enemyPokemon => enemyPokemon.destroy());
 			this.trySpreadPokerus();
 			if (!isNewBiome && (newWaveIndex % 10) == 5)
@@ -1625,10 +1630,10 @@ export default class BattleScene extends SceneBase {
 		}
 	}
 
-	playSoundWithoutBgm(soundName: string, pauseDuration?: integer): AnySound {
+	playSoundWithoutBgm(soundName: string, pauseDuration?: integer, config?: object): AnySound {
 		this.bgmCache.add(soundName);
 		const resumeBgm = this.pauseBgm();
-		this.playSound(soundName);
+		this.playSound(soundName, config);
 		const sound = this.sound.get(soundName) as AnySound;
 		if (this.bgmResumeTimer)
 			this.bgmResumeTimer.destroy();
@@ -2182,5 +2187,17 @@ export default class BattleScene extends SceneBase {
 		}
 
 		return false;
+	}
+
+	updateGameInfo(): void {
+		const gameInfo = {
+			gameMode: this.currentBattle ? this.gameMode.getName() : 'Title',
+			biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
+			wave: this.currentBattle?.waveIndex || 0,
+			party: this.party ? this.party.map(p => {
+				return { name: p.name, level: p.level };
+			}) : []
+		};
+		(window as any).gameInfo = gameInfo;
 	}
 }

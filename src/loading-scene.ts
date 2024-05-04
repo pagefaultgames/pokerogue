@@ -249,6 +249,9 @@ export class LoadingScene extends SceneBase {
     this.loadSe('gacha_running');
     this.loadSe('gacha_dispense');
 
+    // Nuzleaf
+    this.loadSe('274', '', '../cry/274.m4a');
+
     this.loadSe('PRSFX- Transform', 'battle_anims');
 
     this.loadBgm('menu');

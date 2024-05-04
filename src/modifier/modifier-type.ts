@@ -3,7 +3,7 @@ import { AttackMove, allMoves } from '../data/move';
 import { Moves } from "../data/enums/moves";
 import { PokeballType, getPokeballCatchMultiplier, getPokeballName } from '../data/pokeball';
 import Pokemon, { EnemyPokemon, PlayerPokemon, PokemonMove } from '../field/pokemon';
-import { EvolutionItem, SpeciesFriendshipEvolutionCondition, pokemonEvolutions } from '../data/pokemon-evolutions';
+import { EvolutionItem, pokemonEvolutions } from '../data/pokemon-evolutions';
 import { Stat, getStatName } from '../data/pokemon-stat';
 import { tmPoolTiers, tmSpecies } from '../data/tms';
 import { Type } from '../data/type';
@@ -21,6 +21,7 @@ import { ModifierTier } from './modifier-tier';
 import { Nature, getNatureName, getNatureStatMultiplier } from '#app/data/nature';
 import { Localizable } from '#app/plugins/i18n';
 import { getModifierTierTextTint } from '#app/ui/text';
+import { GameMode } from '#app/game-mode';
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -427,7 +428,11 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
 export class PokemonLevelIncrementModifierType extends PokemonModifierType {
   constructor(name: string, iconImage?: string) {
     super(name, `Increases a Pokémon\'s level by 1`, (_type, args) => new Modifiers.PokemonLevelIncrementModifier(this, (args[0] as PlayerPokemon).id),
-      (_pokemon: PlayerPokemon) => null, iconImage);
+      (pokemon: PlayerPokemon) => {
+        if (pokemon.scene.gameMode.hasStrictLevelCap && pokemon.level >= pokemon.scene.getMaxExpLevel())
+          return PartyUiHandler.NoEffectMessage;
+        return null;
+      }, iconImage);
   }
 }
 
@@ -995,14 +1000,20 @@ const modifierPool: ModifierPool = {
       return statusEffectPartyMemberCount * 6;
     }, 18),
     new WeightedModifierType(modifierTypes.REVIVE, (party: Pokemon[]) => {
+      if (party[0].scene.gameMode.isNuzlocke)
+        return 0;
       const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
       return faintedPartyMemberCount * 9;
     }, 3),
     new WeightedModifierType(modifierTypes.MAX_REVIVE, (party: Pokemon[]) => {
+      if (party[0].scene.gameMode.isNuzlocke)
+        return 0;
       const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
       return faintedPartyMemberCount * 3;
     }, 9),
     new WeightedModifierType(modifierTypes.SACRED_ASH, (party: Pokemon[]) => {
+      if (party[0].scene.gameMode.isNuzlocke)
+        return 0;
       return party.filter(p => p.isFainted()).length >= Math.ceil(party.length / 2) ? 1 : 0;
     }, 1),
     new WeightedModifierType(modifierTypes.HYPER_POTION, (party: Pokemon[]) => {
@@ -1053,7 +1064,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.MINT, 4),
     new WeightedModifierType(modifierTypes.RARE_EVOLUTION_ITEM, (party: Pokemon[]) => Math.min(Math.ceil(party[0].scene.currentBattle.waveIndex / 15) * 4, 32), 32),
     new WeightedModifierType(modifierTypes.AMULET_COIN, 3),
-    new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
+    new WeightedModifierType(modifierTypes.REVIVER_SEED, (party: Pokemon[]) => party[0].scene.gameMode.isNuzlocke ? 8 : 4, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, 5),
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 8),
@@ -1331,7 +1342,7 @@ export function getPlayerModifierTypeOptions(count: integer, party: PlayerPokemo
   return options;
 }
 
-export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer): ModifierTypeOption[] {
+export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer, gameMode: GameMode): ModifierTypeOption[] {
   if (!(waveIndex % 10))
     return [];
 
@@ -1339,7 +1350,7 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
     [
       new ModifierTypeOption(modifierTypes.POTION(), 0, baseCost * 0.2),
       new ModifierTypeOption(modifierTypes.ETHER(), 0, baseCost * 0.4),
-      new ModifierTypeOption(modifierTypes.REVIVE(), 0, baseCost * 2)
+      !gameMode.isNuzlocke ? new ModifierTypeOption(modifierTypes.REVIVE(), 0, baseCost * 2) : null
     ],
     [
       new ModifierTypeOption(modifierTypes.SUPER_POTION(), 0, baseCost * 0.45),
@@ -1351,7 +1362,7 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
     ],
     [
       new ModifierTypeOption(modifierTypes.HYPER_POTION(), 0, baseCost * 0.8),
-      new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0, baseCost * 2.75)
+      !gameMode.isNuzlocke ? new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0, baseCost * 2.75) : null
     ],
     [
       new ModifierTypeOption(modifierTypes.MAX_POTION(), 0, baseCost * 1.5),
@@ -1361,10 +1372,10 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, base
       new ModifierTypeOption(modifierTypes.FULL_RESTORE(), 0, baseCost * 2.25)
     ],
     [
-      new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 10)
+      !gameMode.isNuzlocke ? new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 10) : null
     ]
   ];
-  return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
+  return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat().filter(o => o);
 }
 
 export function getEnemyBuffModifierForWave(tier: ModifierTier, enemyModifiers: Modifiers.PersistentModifier[], scene: BattleScene): Modifiers.EnemyPersistentModifier {

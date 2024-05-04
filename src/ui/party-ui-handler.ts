@@ -475,6 +475,10 @@ export default class PartyUiHandler extends MessageUiHandler {
       }
       this.optionsCursorObj.setPosition(8 - this.optionsBg.displayWidth, -19 - (16 * ((this.options.length - 1) - this.optionsCursor)));
     } else {
+      if (cursor < this.scene.currentBattle.getBattlerCount()) {
+        while (cursor < 6 && !this.partySlots[cursor].visible)
+          cursor++;
+      }
       changed = this.cursor !== cursor;
       if (changed) {
         this.lastCursor = this.cursor;
@@ -972,6 +976,9 @@ class PartySlot extends Phaser.GameObjects.Container {
 
       slotInfoContainer.add(slotTmLabel);
     }
+
+    if ((this.scene as BattleScene).gameMode.isNuzlocke && this.pokemon.isFainted())
+      this.setVisible(false);
   }
 
   select(): void {

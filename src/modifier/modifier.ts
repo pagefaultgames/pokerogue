@@ -885,7 +885,14 @@ export class BerryModifier extends PokemonHeldItemModifier {
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
-    return 10;
+    switch (this.berryType) {
+      case BerryType.LUM:
+      case BerryType.LEPPA:
+      case BerryType.SITRUS:
+      case BerryType.ENIGMA:
+        return 2;
+    }
+    return 3;
   }
 }
 
@@ -987,6 +994,8 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
     if (!pokemon.hp === this.fainted) {
+      if (this.fainted)
+        pokemon.scene.reviveCount++;
       let restorePoints = this.restorePoints;
       if (!this.fainted)
         restorePoints = Math.floor(restorePoints * (args[1] as number));
