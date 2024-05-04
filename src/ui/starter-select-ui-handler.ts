@@ -27,6 +27,7 @@ import { argbFromRgba } from "@material/material-color-utilities";
 import { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { pokemonPrevolutions } from "#app/data/pokemon-evolutions";
 import { Variant, getVariantTint } from "#app/data/variant";
+import i18next from "i18next";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -127,6 +128,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
   private statsContainer: StatsContainer;
+  private pokemonFormText: Phaser.GameObjects.Text;
 
   private genMode: boolean;
   private statsMode: boolean;
@@ -432,6 +434,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonCandyIcon.setScale(0.5);
     this.pokemonCandyIcon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonCandyIcon);
+
+    this.pokemonFormText = addTextObject(this.scene, 6, 42, 'Form', TextStyle.WINDOW_ALT, { fontSize: '42px' });
+    this.pokemonFormText.setOrigin(0, 0);
+    this.starterSelectContainer.add(this.pokemonFormText);
 
     this.pokemonCandyOverlayIcon = this.scene.add.sprite(1, 12, 'items', 'candy_overlay');
     this.pokemonCandyOverlayIcon.setScale(0.5);
@@ -1287,6 +1293,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonCandyOverlayIcon.setVisible(true);
           this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
           this.pokemonCandyCountText.setVisible(true);
+          this.pokemonFormText.setVisible(true);
         }
         this.iconAnimHandler.addOrUpdate(this.starterSelectGenIconContainers[species.generation - 1].getAt(this.genSpecies[species.generation - 1].indexOf(species)) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.PASSIVE);
 
@@ -1336,6 +1343,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonCandyIcon.setVisible(false);
         this.pokemonCandyOverlayIcon.setVisible(false);
         this.pokemonCandyCountText.setVisible(false);
+        this.pokemonFormText.setVisible(false);
 
         const defaultDexAttr = this.scene.gameData.getSpeciesDefaultDexAttr(species, true, true);
         const defaultAbilityIndex = this.scene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
@@ -1362,6 +1370,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonCandyIcon.setVisible(false);
       this.pokemonCandyOverlayIcon.setVisible(false);
       this.pokemonCandyCountText.setVisible(false);
+      this.pokemonFormText.setVisible(false);
 
       this.setSpeciesDetails(species, false, 0, false, 0, 0, 0);
       this.pokemonSprite.clearTint();
@@ -1521,6 +1530,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.starterMoveset.push(...availableStarterMoves.filter(sm => this.starterMoveset.indexOf(sm) === -1).slice(0, 4 - this.starterMoveset.length));
 
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex);
+        
+        const formText = species?.forms[formIndex]?.formKey.split('-');
+        for (let i = 0; i < formText?.length; i++)
+          formText[i] = formText[i].charAt(0).toUpperCase() + formText[i].substring(1);
+
+        this.pokemonFormText.setText(formText?.join(' '));
+
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
       } else {
         this.pokemonAbilityText.setText('');
@@ -1653,7 +1669,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.clearText();
     };
 
-    ui.showText('Begin with these Pokémon?', null, () => {
+    ui.showText(i18next.t("menu:confirmStartTeam"), null, () => {
       ui.setModeWithoutClear(Mode.CONFIRM, () => {
         const startRun = (gameMode: GameModes) => {
           this.scene.gameMode = gameModes[gameMode];
