@@ -12,7 +12,7 @@ export const battle: SimpleTranslationEntries = {
   "switchQuestion": "Voulez-vous changer\n{{pokemonName}} ?",
   "trainerDefeated": `Vous avez battu\n{{trainerName}} !`,
   "pokemonCaught": "Vous avez attrapé {{pokemonName}} !",
-  "pokemon": "Pokémon",
+  "pokemon": "de Pokémon",
   "sendOutPokemon": "{{pokemonName}} ! Go !",
   "hitResultCriticalHit": "Coup critique !",
   "hitResultSuperEffective": "C’est super efficace !",
