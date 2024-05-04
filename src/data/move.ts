@@ -2887,8 +2887,13 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-      if (!this.user && (target.isMax()))
-        return resolve(false);
+
+    const cancelled = new Utils.BooleanHolder(false);
+    if (!this.user)
+      applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, cancelled)
+    
+    if ((!this.user && target.isMax()) || cancelled.value)
+      return resolve(false);
 
   	// Check if the move category is not STATUS or if the switch out condition is not met
     if (move.category !== MoveCategory.STATUS && !this.getSwitchOutCondition()(user, target, move)) {
@@ -2943,18 +2948,15 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  resolve(true);
 	  });
 	}
-  
+
 	getCondition(): MoveConditionFunc {
-    return (user, target, move) => move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move);
+    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
   }
 
   getSwitchOutCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
-
-      if (!this.user && target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr))
-        return false;
 
       if (!player && !user.scene.currentBattle.battleType) {
         if (this.batonPass)

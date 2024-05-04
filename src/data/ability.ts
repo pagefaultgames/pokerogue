@@ -1269,6 +1269,36 @@ export class IgnoreOpponentStatChangesAbAttr extends AbAttr {
   }
 }
 
+export class IntimidateImmunityAbAttr extends AbAttr { 
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = true;
+    return true;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s Attack was not lowered!`);
+  }
+}
+
+export class PostIntimidateStatChangeAbAttr extends AbAttr { 
+  private stats: BattleStat[];
+  private levels: integer;
+  private overwrites: boolean;
+
+  constructor(stats: BattleStat[], levels: integer, overwrites?: boolean) {
+    super(true)
+    this.stats = stats
+    this.levels = levels
+    this.overwrites = !!overwrites
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    pokemon.scene.pushPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, this.stats, this.levels));
+    cancelled.value = this.overwrites;
+    return true;
+  }
+}
+
 export class PostSummonAbAttr extends AbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -1321,40 +1351,28 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
       : stats as BattleStat[];
     this.levels = levels;
     this.selfTarget = !!selfTarget;
-    this.intimidate = intimidate
+    this.intimidate = !!intimidate;
   }
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    const statChangePhases: StatChangePhase[] = [];
-    const intimidateImmune: Pokemon[] = []
-
-    if (this.selfTarget)
-      statChangePhases.push(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.levels));
-    else {
-      for (let opponent of pokemon.getOpponents()) {
-        const cancelled = new Utils.BooleanHolder(false)
-        if (this.intimidate) {
-          if (opponent.hasAbilityWithAttr(IntimidateImmunityAbAttr)) {
-            cancelled.value = true;
-            intimidateImmune.push(opponent);
-          }
-          applyAbAttrs(PostIntimidateStatChangeAbAttr, opponent, cancelled)
-        }
-        if (!cancelled.value)
-          statChangePhases.push(new StatChangePhase(pokemon.scene, opponent.getBattlerIndex(), false, this.stats, this.levels));
+    if (this.selfTarget) {
+      pokemon.scene.pushPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.levels));
+      return true;
+    }
+    for (let opponent of pokemon.getOpponents()) {
+      const cancelled = new Utils.BooleanHolder(false)
+      if (this.intimidate) {
+        applyAbAttrs(IntimidateImmunityAbAttr, opponent, cancelled);
+        applyAbAttrs(PostIntimidateStatChangeAbAttr, opponent, cancelled);
+      }
+      if (!cancelled.value) {
+        const statChangePhase = new StatChangePhase(pokemon.scene, opponent.getBattlerIndex(), false, this.stats, this.levels);
+        if (!statChangePhase.getPokemon().summonData)
+          pokemon.scene.pushPhase(statChangePhase); // TODO: This causes the ability bar to be shown at the wrong time
+        else
+          pokemon.scene.unshiftPhase(statChangePhase);
       }
     }
-
-    for (let statChangePhase of statChangePhases) {
-      if (!this.selfTarget && !statChangePhase.getPokemon().summonData)
-        pokemon.scene.pushPhase(statChangePhase); // TODO: This causes the ability bar to be shown at the wrong time
-      else
-        pokemon.scene.unshiftPhase(statChangePhase);
-    }
-
-    for (let opponent of intimidateImmune)
-      pokemon.scene.queueMessage(getPokemonMessage(opponent, ` can't be Intimidated!`));
-   
     return true;
   }
 }
@@ -1379,25 +1397,6 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
     }
     
     return false;
-  }
-}
-
-export class PostIntimidateStatChangeAbAttr extends AbAttr { 
-  private stats: BattleStat[];
-  private levels: integer;
-  private overwrites: boolean;
-
-  constructor(stats: BattleStat[], levels: integer, overwrites?: boolean) {
-    super(true)
-    this.stats = stats
-    this.levels = levels
-    this.overwrites = !!overwrites
-  }
-
-  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    pokemon.scene.pushPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, this.stats, this.levels));
-    cancelled.value = this.overwrites;
-    return true;
   }
 }
 
@@ -2289,9 +2288,16 @@ export class FlinchStatChangeAbAttr extends FlinchEffectAbAttr {
 
 export class IncreasePpAbAttr extends AbAttr { }
 
-export class IntimidateImmunityAbAttr extends AbAttr { }
+export class ForceSwitchOutImmunityAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = true;
+    return true;
+  }
 
-export class ForceSwitchOutImmunityAbAttr extends AbAttr { }
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${abilityName} prevents it from being switched out!`)
+  }
+}
 
 export class ReduceBerryUseThresholdAbAttr extends AbAttr {
   constructor() {
