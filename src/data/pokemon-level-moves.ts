@@ -15330,6 +15330,8 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
   [Species.LECHONK]: [
     [ 1, Moves.TACKLE ],
     [ 1, Moves.TAIL_WHIP ],
+    [ 1, Moves.EERIE_SPELL ],
+    [ 1, Moves.SPITE ],
     [ 5, Moves.DISARMING_VOICE ],
     [ 8, Moves.ECHOED_VOICE ],
     [ 12, Moves.MUD_SHOT ],

@@ -3390,13 +3390,38 @@ export class CopyMoveAttr extends OverrideMoveEffectAttr {
 }
 
 export class ReducePpMoveAttr extends MoveEffectAttr {
+  public reduction: integer
+  public causesMoveToFail: boolean
+
+  constructor(reduction: integer, causesMoveToFail: boolean) {
+    super(false, MoveEffectTrigger.POST_APPLY);
+    
+    this.reduction = reduction;
+    this.causesMoveToFail = causesMoveToFail;
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    // Null checks can be skipped due to condition function
     const lastMove = target.getLastXMoves().find(() => true);
+    if (!lastMove) {
+      return false;
+    }
     const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
     const lastPpUsed = movesetMove.ppUsed;
-    movesetMove.ppUsed = Math.min(movesetMove.ppUsed + 4, movesetMove.getMovePp());
-    user.scene.queueMessage(`It reduced the PP of ${getPokemonMessage(target, `'s\n${movesetMove.getName()} by ${movesetMove.ppUsed - lastPpUsed}!`)}`);
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+    if (!lastMove || lastPpUsed < 1) {
+=======
+    if (lastPpUsed < 1) {
+>>>>>>> Stashed changes
+=======
+    if (lastPpUsed < 1) {
+>>>>>>> Stashed changes
+      return false;
+    }
+    else {
+      movesetMove.ppUsed = Math.min(movesetMove.ppUsed + this.reduction, movesetMove.getMovePp());
+      user.scene.queueMessage(`It reduced the PP of ${getPokemonMessage(target, `'s\n${movesetMove.getName()} by ${movesetMove.ppUsed - lastPpUsed}!`)}`);
+    }
 
     return true;
   }
@@ -3408,6 +3433,7 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
         const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
         return !!movesetMove?.getPpRatio();
       }
+      if (!this.causesMoveToFail) {return true;}
       return false;
     };
   }
@@ -4323,7 +4349,7 @@ export function initMoves() {
     new AttackMove(Moves.REVERSAL, Type.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 2)
       .attr(LowHpPowerAttr),
     new StatusMove(Moves.SPITE, Type.GHOST, 100, 10, -1, 0, 2)
-      .attr(ReducePpMoveAttr),
+      .attr(ReducePpMoveAttr, 4, true),
     new AttackMove(Moves.POWDER_SNOW, Type.ICE, MoveCategory.SPECIAL, 40, 100, 25, 10, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -6078,7 +6104,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.EERIE_SPELL, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 5, 100, 0, 8)
       .soundBased()
-      .partial(),
+      .attr(ReducePpMoveAttr, 3, false),
     new AttackMove(Moves.DIRE_CLAW, Type.POISON, MoveCategory.PHYSICAL, 80, 100, 15, 50, 0, 8)
       .attr(MultiStatusEffectAttr, [StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP]),
     new AttackMove(Moves.PSYSHIELD_BASH, Type.PSYCHIC, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8)
