@@ -1030,7 +1030,7 @@ export default class BattleScene extends SceneBase {
 			return 5;
 
 		let isBoss: boolean;
-		if (forceBoss || (species && (species.pseudoLegendary || species.legendary || species.mythical)))
+		if (forceBoss || (species && (species.subLegendary || species.legendary || species.mythical)))
 			isBoss = true;
 		else {
 			this.executeWithSeedOffset(() => {

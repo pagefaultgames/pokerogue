@@ -1005,7 +1005,7 @@ export class GameData {
     if (incrementCount) {
       dexEntry.seenCount++;
       this.gameStats.pokemonSeen++;
-      if (!trainer && pokemon.species.pseudoLegendary || pokemon.species.legendary)
+      if (!trainer && pokemon.species.subLegendary || pokemon.species.legendary)
         this.gameStats.legendaryPokemonSeen++;
       else if (!trainer && pokemon.species.mythical)
         this.gameStats.mythicalPokemonSeen++;
@@ -1043,7 +1043,7 @@ export class GameData {
         if (!fromEgg) {
           dexEntry.caughtCount++;
           this.gameStats.pokemonCaught++;
-          if (pokemon.species.pseudoLegendary || pokemon.species.legendary)
+          if (pokemon.species.subLegendary || pokemon.species.legendary)
             this.gameStats.legendaryPokemonCaught++;
           else if (pokemon.species.mythical)
             this.gameStats.mythicalPokemonCaught++;
@@ -1052,7 +1052,7 @@ export class GameData {
         } else {
           dexEntry.hatchedCount++;
           this.gameStats.pokemonHatched++;
-          if (pokemon.species.pseudoLegendary || pokemon.species.legendary)
+          if (pokemon.species.subLegendary || pokemon.species.legendary)
             this.gameStats.legendaryPokemonHatched++;
           else if (pokemon.species.mythical)
             this.gameStats.mythicalPokemonHatched++;

@@ -194,7 +194,7 @@ export default class Battle {
                     return 'battle_final';
                 return 'battle_final_encounter';
             }
-            if (pokemon.species.legendary || pokemon.species.pseudoLegendary || pokemon.species.mythical) {
+            if (pokemon.species.legendary || pokemon.species.subLegendary || pokemon.species.mythical) {
                 if (pokemon.species.speciesId === Species.REGIROCK || pokemon.species.speciesId === Species.REGICE || pokemon.species.speciesId === Species.REGISTEEL || pokemon.species.speciesId === Species.REGIGIGAS || pokemon.species.speciesId === Species.REGIELEKI || pokemon.species.speciesId === Species.REGIDRAGO)
                     return 'battle_legendary_regis';
                 if (pokemon.species.speciesId === Species.COBALION || pokemon.species.speciesId === Species.TERRAKION || pokemon.species.speciesId === Species.VIRIZION || pokemon.species.speciesId === Species.TORNADUS || pokemon.species.speciesId === Species.THUNDURUS || pokemon.species.speciesId === Species.LANDORUS || pokemon.species.speciesId === Species.KELDEO || pokemon.species.speciesId === Species.MELOETTA || pokemon.species.speciesId === Species.GENESECT)

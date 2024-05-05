@@ -4112,7 +4112,10 @@ export class AttemptCapturePhase extends PokemonPhase {
     if (speciesForm.abilityHidden && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1)
       this.scene.validateAchv(achvs.HIDDEN_ABILITY);
 
-    if (pokemon.species.pseudoLegendary || pokemon.species.legendary)
+    if (pokemon.species.subLegendary)
+      this.scene.validateAchv(achvs.CATCH_SUB_LEGENDARY);
+
+    if (pokemon.species.legendary)
       this.scene.validateAchv(achvs.CATCH_LEGENDARY);
 
     if (pokemon.species.mythical)
