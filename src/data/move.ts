@@ -445,7 +445,9 @@ export abstract class MoveAttr {
 export enum MoveEffectTrigger {
   PRE_APPLY,
   POST_APPLY,
-  HIT
+  HIT,
+  /** Triggers one time after all target effects have applied */
+  POST_TARGET,
 }
 
 export class MoveEffectAttr extends MoveAttr {
@@ -738,19 +740,33 @@ export class SacrificialAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used for moves which cut the user's Max HP in half.
+ * Triggers using POST_TARGET.
+ */
 export class HalfSacrificialAttr extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.PRE_APPLY);
+    super(true, MoveEffectTrigger.POST_TARGET);
   }
 
+  /**
+   * Cut's the user's Max HP in half and displays the appropriate recoil message
+   * @param user Pokemon that used the move
+   * @param target N/A
+   * @param move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args))
       return false;
 
     const cancelled = new Utils.BooleanHolder(false);
+    // Check to see if the Pokemon has an ability that blocks non-direct damage
     applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
     if (!cancelled.value){
       user.damageAndUpdate(Math.ceil(user.getMaxHp()/2), HitResult.OTHER, false, true, true);
+      user.scene.queueMessage(getPokemonMessage(user, ' cut its own HP to power up its move!')); // Queue recoil message
     }    
     return true;
   }
@@ -3809,6 +3825,9 @@ const failOnMaxCondition: MoveConditionFunc = (user, target, move) => !target.is
 const failIfDampCondition: MoveConditionFunc = (user, target, move) => {
   const cancelled = new Utils.BooleanHolder(false);
   user.scene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled));
+  // Queue a message if an ability prevented usage of the move
+  if (cancelled.value)
+    user.scene.queueMessage(getPokemonMessage(user, ` cannot use ${move.name}!`));
   return !cancelled.value;
 }
 
