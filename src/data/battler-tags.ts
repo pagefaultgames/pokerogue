@@ -544,6 +544,25 @@ export class DrowsyTag extends BattlerTag {
   }
 }
 
+export class TauntedTag extends BattlerTag {
+
+  constructor(sourceId: integer, turnCount: integer) {
+    super(BattlerTagType.TAUNTED, BattlerTagLapseType.PRE_MOVE, turnCount, Moves.TAUNT, sourceId);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' fell for\nthe taunt!'));
+  }
+
+  onRemove(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' shook off\nthe taunt!'),null, null, null, true);
+  }
+}
+
 export abstract class DamagingTrapTag extends TrappedTag {
   private commonAnim: CommonAnim;
 
@@ -1226,6 +1245,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
     case BattlerTagType.MAGNET_RISEN:
       return new MagnetRisenTag(tagType, sourceMove);
+    case BattlerTagType.TAUNTED:
+      return new TauntedTag(sourceId, turnCount);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
