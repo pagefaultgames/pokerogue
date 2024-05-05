@@ -3646,8 +3646,7 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     let newLevel: integer;
     pokemon.addExp(exp.value);
     newLevel = pokemon.level;
-    const isLevelUp = newLevel > lastLevel;
-    if (isLevelUp) {
+    if (newLevel > lastLevel) {
       this.scene.unshiftPhase(new LevelUpPhase(this.scene, this.partyMemberIndex, lastLevel, newLevel));
     }
     this.scene.unshiftPhase(new HidePartyExpBarPhase(this.scene));
@@ -3656,15 +3655,15 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     if (this.scene.expParty === 2) {
         this.end();
     } else if (this.scene.expParty === 1) {
-      if (isLevelUp) {
-        this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, isLevelUp, this.scene.expParty === 1).then(() => {
+      if (newLevel > lastLevel) {
+        this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === 1).then(() => {
             setTimeout(() => this.end(), 200 / Math.pow(2, this.scene.expGainsSpeed));
         });
       } else {
         this.end();
       }
     } else if (this.scene.expGainsSpeed < 3) {
-      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, isLevelUp, this.scene.expParty === 1).then(() => {
+      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === 1).then(() => {
           setTimeout(() => this.end(), 500 / Math.pow(2, this.scene.expGainsSpeed));
       });
     } else {

@@ -29,7 +29,7 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
     this.shown = false;
   }
 
-  showPokemonExp(pokemon: Pokemon, expValue: integer, isLevelUp: boolean, showOnlyLevelUp: boolean): Promise<void> {
+  showPokemonExp(pokemon: Pokemon, expValue: integer, showOnlyLevelUp: boolean): Promise<void> {
     return new Promise<void>(resolve => {
       if (this.shown)
         return resolve();
