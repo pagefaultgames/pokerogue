@@ -2647,7 +2647,8 @@ export function initAbilities() {
       .condition(getWeatherCondition(WeatherType.SANDSTORM))
       .ignorable(),
     new Ability(Abilities.STATIC, 3)
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.PARALYSIS),
+      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.PARALYSIS)
+      .bypassFaint(),
     new Ability(Abilities.VOLT_ABSORB, 3)
       .attr(TypeImmunityHealAbAttr, Type.ELECTRIC)
       .ignorable(),
@@ -2729,7 +2730,8 @@ export function initAbilities() {
     new Ability(Abilities.HUGE_POWER, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 2),
     new Ability(Abilities.POISON_POINT, 3)
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON),
+      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON)
+      .bypassFaint(),
     new Ability(Abilities.INNER_FOCUS, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.FLINCHED)
       .ignorable(),
@@ -2761,7 +2763,8 @@ export function initAbilities() {
     new Ability(Abilities.EARLY_BIRD, 3)
       .attr(ReduceStatusEffectDurationAbAttr, StatusEffect.SLEEP),
     new Ability(Abilities.FLAME_BODY, 3)
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.BURN),
+      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.BURN)
+      .bypassFaint(),
     new Ability(Abilities.RUN_AWAY, 3)
       .attr(RunSuccessAbAttr),
     new Ability(Abilities.KEEN_EYE, 3)
