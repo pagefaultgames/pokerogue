@@ -2216,6 +2216,36 @@ export class VariableMoveTypeAttr extends MoveAttr {
   }
 }
 
+export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.GENESECT)) {
+      const form = user.species.speciesId === Species.GENESECT ? user.formIndex : user.fusionSpecies.formIndex;
+      const type = (args[0] as Utils.IntegerHolder);
+
+      switch (form) {
+        case 1: // Shock Drive
+          type.value = Type.ELECTRIC;
+          break;
+        case 2: // Burn Drive
+          type.value = Type.FIRE;
+          break;
+        case 3: // Chill Drive
+          type.value = Type.ICE;
+          break;
+        case 4: // Douse Drive
+          type.value = Type.WATER;
+          break;
+        default:
+          type.value = Type.NORMAL;
+          break;
+      }
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.MORPEKO)) {
@@ -5333,7 +5363,7 @@ export function initMoves() {
       .ballBombMove()
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.TECHNO_BLAST, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 5)
-      .partial(),
+      .attr(TechnoBlastTypeAttr),
     new AttackMove(Moves.RELIC_SONG, Type.NORMAL, MoveCategory.SPECIAL, 75, 100, 10, 10, 0, 5)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .soundBased()
