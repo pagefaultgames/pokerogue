@@ -2427,7 +2427,13 @@ export class NoFusionAbilityAbAttr extends AbAttr {
   }
 }
 
-export class MagicBounceAbAttr extends AbAttr { }
+export class MagicBounceAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    (args[0] as Utils.BooleanHolder).value = true;
+
+    return true;
+  }
+}
 
 function applyAbAttrsInternal<TAttr extends AbAttr>(attrType: { new(...args: any[]): TAttr },
   pokemon: Pokemon, applyFunc: AbAttrApplyFunc<TAttr>, args: any[], isAsync: boolean = false, showAbilityInstant: boolean = false, quiet: boolean = false, passive: boolean = false): Promise<void> {
