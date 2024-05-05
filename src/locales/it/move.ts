@@ -2647,7 +2647,7 @@ export const move: MoveTranslationEntries = {
   },
   "spiritShackle": {
     name: "Cucitura d'Ombra",
-    effect: "Applica l'effetto "Sostituzione vietata" sul bersaglio."
+    effect: "Chi la usa attacca il bersaglio e fissa la sua ombra a terra impedendogli di fuggire."
   },
   "darkestLariat": {
     name: "Braccioteso",
@@ -2851,11 +2851,11 @@ export const move: MoveTranslationEntries = {
   },
   "sunsteelStrike": {
     name: "Astrocarica",
-    effect: "Attacca ignorando le abilità passive che riducono i danni. Attacca ignorando le abilità passive del bersaglio che impediscono i brutti colpi. Ignora l'effetto "Resistenza a colpo micidiale" del bersaglio."
+    effect: "Chi la usa travolge il bersaglio con la potenza di una meteora. Questo attacco ignora l'abilità del bersaglio."
   },
   "moongeistBeam": {
     name: "Raggio d'Ombra",
-    effect: "Attacca ignorando le abilità passive che riducono i danni. Attacca ignorando le abilità pasive del bersaglio che impediscono i brutti colpi. Ignora l'effetto "Resistenza a colpo micidiale" del bersaglio."
+    effect: "Chi la usa proietta sul bersaglio un misterioso raggio di luce. Questo attacco ignora l'abilità del bersaglio."
   },
   "tearfulLook": {
     name: "Occhionilucidi",
