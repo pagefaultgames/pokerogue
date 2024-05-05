@@ -40,7 +40,11 @@ export default class PartyExpBar extends Phaser.GameObjects.Container {
       this.add(this.pokemonIcon);
 
       if (showOnlyLevelUp) {
-        this.expText.setText(`Lv. UP : ${newLevel.toString()}`);
+        if (newLevel > 200) {
+          this.expText.setText('Lv. UP');
+        } else {
+          this.expText.setText(`Lv. UP : ${newLevel.toString()}`);
+        }
       } else {
         this.expText.setText(`+${expValue.toString()}`);
       }
