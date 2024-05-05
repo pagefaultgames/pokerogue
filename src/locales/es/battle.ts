@@ -24,7 +24,7 @@ export const battle: SimpleTranslationEntries = {
   "expGain": "{{pokemonName}} ha ganado\n{{exp}} puntos de experiencia.",
   "levelUp": "¡{{pokemonName}} ha subido al \nNv. {{level}}!",
   "learnMove": "¡{{pokemonName}} ha aprendido {{moveName}}!",
-  "learnMovePrompt": "{{pokemonName}} quiere aprender {{moveName}}.",
+  "learnMovePrompt": "{{pokemonName}} quiere aprender\n{{moveName}}.",
   "learnMoveLimitReached": "Pero, {{pokemonName}} ya conoce\ncuatro movimientos.",
   "learnMoveReplaceQuestion": "¿Quieres sustituir uno de sus movimientos por {{moveName}}?",
   "learnMoveStopTeaching": "¿Prefieres que no aprenda\n{{moveName}}?",
