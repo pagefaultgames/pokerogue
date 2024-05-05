@@ -1274,13 +1274,17 @@ export class IgnoreOpponentStatChangesAbAttr extends AbAttr {
 }
 
 export class IntimidateImmunityAbAttr extends AbAttr { 
+  constructor() {
+    super(false);
+  }
+
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     cancelled.value = true;
     return true;
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, `'s Attack was not lowered!`);
+    return getPokemonMessage(pokemon, `'s ${abilityName} prevented it from being Intimidated!`);
   }
 }
 
@@ -1348,7 +1352,7 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
   private intimidate: boolean;
 
   constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, intimidate?: boolean) {
-    super();
+    super(false);
 
     this.stats = typeof(stats) === 'number'
       ? [ stats as BattleStat ]
@@ -1359,6 +1363,7 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
   }
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    queueShowAbility(pokemon, passive);  // TODO: Better solution than manually showing the ability here
     if (this.selfTarget) {
       pokemon.scene.pushPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.levels));
       return true;
@@ -1371,10 +1376,7 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
       }
       if (!cancelled.value) {
         const statChangePhase = new StatChangePhase(pokemon.scene, opponent.getBattlerIndex(), false, this.stats, this.levels);
-        if (!statChangePhase.getPokemon().summonData)
-          pokemon.scene.pushPhase(statChangePhase); // TODO: This causes the ability bar to be shown at the wrong time
-        else
-          pokemon.scene.unshiftPhase(statChangePhase);
+        pokemon.scene.unshiftPhase(statChangePhase);
       }
     }
     return true;
