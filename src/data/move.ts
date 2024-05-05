@@ -12,7 +12,7 @@ import * as Utils from "../utils";
 import { WeatherType } from "./weather";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
-import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr } from "./ability";
+import { UnswappableAbilityAbAttr, UncopiableAbilityAbAttr, UnsuppressableAbilityAbAttr, NoTransformAbilityAbAttr, BlockRecoilDamageAttr, BlockOneHitKOAbAttr, IgnoreContactAbAttr, MaxMultiHitAbAttr, applyAbAttrs, BlockNonDirectDamageAbAttr, applyPreSwitchOutAbAttrs, PreSwitchOutAbAttr, applyPostDefendAbAttrs, PostDefendContactApplyStatusEffectAbAttr, MoveAbilityBypassAbAttr, ReverseDrainAbAttr, FieldPreventExplosiveMovesAbAttr, ForceSwitchOutImmunityAbAttr } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { allAbilities } from './ability';
 import { PokemonHeldItemModifier } from "../modifier/modifier";
@@ -326,6 +326,13 @@ export default class Move implements Localizable {
     return true;
   }
 
+  getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
+    let failedText = null;
+    for (let attr of this.attrs)
+      failedText = attr.getFailedText(user, target, move, cancelled);
+    return failedText;
+  }
+
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     let score = 0;
 
@@ -419,6 +426,10 @@ export abstract class MoveAttr {
   }
 
   getCondition(): MoveCondition | MoveConditionFunc {
+    return null;
+  }
+
+  getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
     return null;
   }
 
@@ -2964,16 +2975,14 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): Promise<boolean> {
     return new Promise(resolve => {
-      if (!this.user && target.isMax())
-        return resolve(false);
-
+    
   	// Check if the move category is not STATUS or if the switch out condition is not met
-    if (move.category !== MoveCategory.STATUS && !this.getSwitchOutCondition()(user, target, move)) {
+    if (!this.getCondition()(user, target, move)) {
   	  //Apply effects before switch out i.e. poison point, flame body, etc
       applyPostDefendAbAttrs(PostDefendContactApplyStatusEffectAbAttr, target, user, new PokemonMove(move.id), null);
       return resolve(false);
     }
-  
+
   	// Move the switch out logic inside the conditional block
   	// This ensures that the switch out only happens when the conditions are met
 	  const switchOutTarget = this.user ? user : target;
@@ -3020,15 +3029,23 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 	  resolve(true);
 	  });
 	}
-  
+
 	getCondition(): MoveConditionFunc {
-    return (user, target, move) => move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move);
+    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
+  }
+
+  getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
+    applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, cancelled);
+    return null;
   }
 
   getSwitchOutCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const switchOutTarget = (this.user ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
+      
+      if (!this.user && move.category == MoveCategory.STATUS && (target.hasAbilityWithAttr(ForceSwitchOutImmunityAbAttr) || target.isMax()))
+        return false;
 
       if (!player && !user.scene.currentBattle.battleType) {
         if (this.batonPass)
