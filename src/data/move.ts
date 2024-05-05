@@ -4420,7 +4420,7 @@ export function initMoves() {
       .attr(LowHpPowerAttr),
     new StatusMove(Moves.SPITE, Type.GHOST, 100, 10, -1, 0, 2)
       .attr(ReducePpMoveAttr),
-    new AttackMove(Moves.POWDER_SNOW, Type.ICE, MoveCategory.SPECIAL, 40, 100, 25, 100, 0, 2)
+    new AttackMove(Moves.POWDER_SNOW, Type.ICE, MoveCategory.SPECIAL, 40, 100, 25, 10, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.FREEZE)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new SelfStatusMove(Moves.PROTECT, Type.NORMAL, -1, 10, -1, 4, 2)
