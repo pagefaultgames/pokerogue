@@ -3531,7 +3531,8 @@ export function initAbilities() {
       .attr(MoveAbilityBypassAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS)
       .partial(),
     new Ability(Abilities.MINDS_EYE, 9)
-      .ignorable()
+      .attr(IgnoreTypeImmunityAbAttr, Type.GHOST, [Type.NORMAL, Type.FIGHTING])
+      .ignorable() // TODO: evasiveness bypass should not be ignored, but accuracy immunity should
       .unimplemented(),
     new Ability(Abilities.SUPERSWEET_SYRUP, 9)
       .unimplemented(),
