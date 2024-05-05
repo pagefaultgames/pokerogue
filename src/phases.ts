@@ -1179,14 +1179,26 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     this.preSummon();
   }
 
+  /**
+  * Sends out a Pokemon before the battle begins and shows the appropriate messages
+  */
   preSummon(): void {
     const partyMember = this.getPokemon();
+    // If the Pokemon about to be sent out is fainted, switch to the first non-fainted Pokemon
     if (partyMember.isFainted()) {
+      console.warn("The Pokemon about to be sent out is fainted. Attempting to resolve...");
       const party = this.getParty();
-      const nonFaintedIndex = party.slice(this.partyMemberIndex).findIndex(p => !p.isFainted()) + this.partyMemberIndex;
-      const nonFaintedPartyMember = party[nonFaintedIndex];
-      party[nonFaintedIndex] = partyMember;
-      party[this.partyMemberIndex] = nonFaintedPartyMember;
+      
+      // Find the first non-fainted Pokemon index above the current one
+      const nonFaintedIndex = party.findIndex((p, i) => i > this.partyMemberIndex && !p.isFainted());
+      if (nonFaintedIndex === -1) {
+        console.error("Party Details:\n", party);
+        throw new Error("All available Pokemon were fainted!");
+      }
+
+      // Swaps the fainted Pokemon and the first non-fainted Pokemon in the party
+      [party[this.partyMemberIndex], party[nonFaintedIndex]] = [party[nonFaintedIndex], party[this.partyMemberIndex]]; 
+      console.warn("Swapped %s %O with %s %O", partyMember?.name, partyMember, party[0]?.name, party[0]);
     }
 
     if (this.player) {
