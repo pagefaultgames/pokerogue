@@ -14,7 +14,7 @@ import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBooste
 import { PokeballType } from '../data/pokeball';
 import { Gender } from '../data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from '../data/battle-anims';
-import { Status, StatusEffect } from '../data/status-effect';
+import { Status, StatusEffect, getRandomStatus } from '../data/status-effect';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from '../data/pokemon-evolutions';
 import { reverseCompatibleTms, tmSpecies } from '../data/tms';
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase } from '../phases';
@@ -1904,6 +1904,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs(ReduceStatusEffectDurationAbAttr, this, null, effect, statusCureTurn);
 
       this.setFrameRate(4);
+
+      // If the user is invulnerable, lets remove their invulnerability when they fall asleep
+      const invulnerableTags = [
+        BattlerTagType.UNDERGROUND,
+        BattlerTagType.UNDERWATER,
+        BattlerTagType.HIDDEN,
+        BattlerTagType.FLYING
+      ];
+
+      const tag = invulnerableTags.find((t) => this.getTag(t));
+
+      if (tag) {
+        this.removeTag(tag);
+        this.getMoveQueue().pop();
+      }
     }
 
     this.status = new Status(effect, 0, statusCureTurn?.value);
@@ -2542,6 +2557,10 @@ export class PlayerPokemon extends Pokemon {
     this.generateCompatibleTms();
   }
 
+  /**
+  * Returns a Promise to fuse two PlayerPokemon together
+  * @param pokemon The PlayerPokemon to fuse to this one
+  */
   fuse(pokemon: PlayerPokemon): Promise<void> {
     return new Promise(resolve => {
       this.fusionSpecies = pokemon.species;
@@ -2555,8 +2574,25 @@ export class PlayerPokemon extends Pokemon {
       this.scene.validateAchv(achvs.SPLICE);
       this.scene.gameData.gameStats.pokemonFused++;
 
+      // Store the average HP% that each Pokemon has
+      const newHpPercent = ((pokemon.hp / pokemon.stats[Stat.HP]) + (this.hp / this.stats[Stat.HP])) / 2;
+
       this.generateName();
       this.calculateStats();
+      
+      // Set this Pokemon's HP to the average % of both fusion components
+      this.hp = Math.round(this.stats[Stat.HP] * newHpPercent);
+      if (!this.isFainted()) {
+        // If this Pokemon hasn't fainted, make sure the HP wasn't set over the new maximum
+        this.hp = Math.min(this.hp, this.stats[Stat.HP]);
+        this.status = getRandomStatus(this.status, pokemon.status); // Get a random valid status between the two
+      }
+      else if (!pokemon.isFainted()) {
+        // If this Pokemon fainted but the other hasn't, make sure the HP wasn't set to zero
+        this.hp = Math.max(this.hp, 1);
+        this.status = pokemon.status; // Inherit the other Pokemon's status
+      }
+
       this.generateCompatibleTms();
       this.updateInfo(true);
       const fusedPartyMemberIndex = this.scene.getParty().indexOf(pokemon);
