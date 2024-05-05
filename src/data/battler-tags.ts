@@ -68,6 +68,12 @@ export class BattlerTag {
       ? allMoves[this.sourceMove].name
       : null;
   }
+
+  loadTag(source: BattlerTag | any): void {
+    this.turnCount = source.turnCount;
+    this.sourceMove = source.sourceMove;
+    this.sourceId = source.sourceId;
+  }
 }
 
 export interface WeatherBattlerTag {
@@ -299,6 +305,11 @@ export class SeedTag extends BattlerTag {
     super(BattlerTagType.SEEDED, BattlerTagLapseType.TURN_END, 1, Moves.LEECH_SEED, sourceId);
   }
 
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.sourceIndex = source.sourceIndex;
+  }
+
   canAdd(pokemon: Pokemon): boolean {
     return !pokemon.isOfType(Type.GRASS);
   }
@@ -402,6 +413,11 @@ export class EncoreTag extends BattlerTag {
 
   constructor(sourceId: integer) {
     super(BattlerTagType.ENCORE, BattlerTagLapseType.AFTER_MOVE, 3, Moves.ENCORE, sourceId);
+  }
+
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.moveId = source.moveId as Moves;
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -551,6 +567,11 @@ export abstract class DamagingTrapTag extends TrappedTag {
     super(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove, sourceId);
 
     this.commonAnim = commonAnim;
+  }
+
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.commonAnim = source.commonAnim as CommonAnim;
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -709,6 +730,11 @@ export class ContactDamageProtectedTag extends ProtectedTag {
     this.damageRatio = damageRatio;
   }
 
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.damageRatio = source.damageRatio;
+  }
+
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = super.lapse(pokemon, lapseType);
 
@@ -733,6 +759,12 @@ export class ContactStatChangeProtectedTag extends ProtectedTag {
 
     this.stat = stat;
     this.levels = levels;
+  }
+
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.stat = source.stat as BattleStat;
+    this.levels = source.levels;
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -855,6 +887,11 @@ export class AbilityBattlerTag extends BattlerTag {
 
     this.ability = ability;
   }
+
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.ability = source.ability as Abilities;
+  }
 }
 
 export class TruantTag extends AbilityBattlerTag {
@@ -912,6 +949,12 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
     super(tagType, ability, BattlerTagLapseType.CUSTOM, 1);
   }
 
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.stat = source.stat as Stat;
+    this.multiplier = this.multiplier;
+  }
+
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
@@ -953,6 +996,11 @@ export class WeatherHighestStatBoostTag extends HighestStatBoostTag implements W
     super(tagType, ability);
     this.weatherTypes = weatherTypes;
   }
+
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.weatherTypes = source.weatherTypes.map(w => w as WeatherType);
+  }
 }
 
 export class TerrainHighestStatBoostTag extends HighestStatBoostTag implements TerrainBattlerTag {
@@ -961,6 +1009,11 @@ export class TerrainHighestStatBoostTag extends HighestStatBoostTag implements T
   constructor(tagType: BattlerTagType, ability: Abilities, ...terrainTypes: TerrainType[]) {
     super(tagType, ability);
     this.terrainTypes = terrainTypes;
+  }
+
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.terrainTypes = source.terrainTypes.map(w => w as TerrainType);
   }
 }
 
@@ -989,6 +1042,11 @@ export class TypeImmuneTag extends BattlerTag {
   constructor(tagType: BattlerTagType, sourceMove: Moves, immuneType: Type, length: number) {
     super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
   }
+
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.immuneType = source.immuneType as Type;
+  }
 }
 
 export class MagnetRisenTag extends TypeImmuneTag {
@@ -1008,6 +1066,11 @@ export class TypeBoostTag extends BattlerTag {
     this.boostedType = boostedType;
     this.boostValue = boostValue;
     this.oneUse = oneUse;
+  }
+
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.boostedType = source.boostedType as Type;
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1056,6 +1119,11 @@ export class SaltCuredTag extends BattlerTag {
     super(BattlerTagType.SALT_CURED, BattlerTagLapseType.TURN_END, 1, Moves.SALT_CURE, sourceId);
   }
 
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.sourceIndex = source.sourceIndex;
+  }
+
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
     
@@ -1089,6 +1157,11 @@ export class CursedTag extends BattlerTag {
 
   constructor(sourceId: integer) {
     super(BattlerTagType.CURSED, BattlerTagLapseType.TURN_END, 1, Moves.CURSE, sourceId);
+  }
+
+  loadTag(source: BattlerTag | any): void {
+    super.loadTag(source);
+    this.sourceIndex = source.sourceIndex;
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1231,4 +1304,10 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
   }
 }
- 
+
+export function loadBattlerTag(source: BattlerTag | any): BattlerTag {
+  const tag = getBattlerTag(source.tagType, source.turnCount, source.sourceMove, source.sourceId);
+  tag.loadTag(source);
+  return tag;
+}
+

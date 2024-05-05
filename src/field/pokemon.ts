@@ -3186,4 +3186,8 @@ export class PokemonMove {
   getName(): string {
     return this.getMove().name;
   }
+
+  static loadMove(source: PokemonMove | any): PokemonMove {
+    return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.virtual);
+  }
 }
