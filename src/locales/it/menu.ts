@@ -20,7 +20,7 @@ export const menu: SimpleTranslationEntries = {
     "emptyUsername": "L'username non può essere vuoto",
     "invalidLoginUsername": "L'username scelto non è valido",
     "invalidRegisterUsername": "L'username può contenere lettere, numeri o underscore",
-    "invalidLoginPassword": "La password sceltra non è valida",
+    "invalidLoginPassword": "La password scelta non è valida",
     "invalidRegisterPassword": "La Password deve avere 6 o più caratteri",
     "usernameAlreadyUsed": "L'username scelto è già in uso",
     "accountNonExistent": "L'username inserito non è valido",
