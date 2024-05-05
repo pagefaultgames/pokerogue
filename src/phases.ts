@@ -1559,6 +1559,11 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
+    if (this.scene.battleStyle === 1) {
+        super.end();
+        return;
+    }
+
     this.scene.ui.showText(i18next.t('battle:switchQuestion', { pokemonName: this.useName ? pokemon.name : i18next.t('battle:pokemon') }), null, () => {
       this.scene.ui.setMode(Mode.CONFIRM, () => {
         this.scene.ui.setMode(Mode.MESSAGE);
