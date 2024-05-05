@@ -1,5 +1,5 @@
 import BattleScene, { Button, starterColors } from "../battle-scene";
-import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters, starterPassiveAbilities } from "../data/pokemon-species";
+import PokemonSpecies, { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, speciesStarters, starterPassiveAbilities, getStarterValueFriendshipCap } from "../data/pokemon-species";
 import { Species } from "../data/enums/species";
 import { TextStyle, addBBCodeTextObject, addTextObject } from "./text";
 import { Mode } from "./ui";
@@ -118,6 +118,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonEggMoveBgs: Phaser.GameObjects.NineSlice[];
   private pokemonEggMoveLabels: Phaser.GameObjects.Text[];
   private pokemonCandyIcon: Phaser.GameObjects.Sprite;
+  private pokemonCandyDarknessOverlay: Phaser.GameObjects.Sprite;
   private pokemonCandyOverlayIcon: Phaser.GameObjects.Sprite;
   private pokemonCandyCountText: Phaser.GameObjects.Text;
   private pokemonCaughtHatchedContainer: Phaser.GameObjects.Container;
@@ -430,7 +431,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonLuckText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonLuckText);
 
-    this.pokemonCandyIcon = this.scene.add.sprite(1, 12, 'items', 'candy');
+    this.pokemonCandyIcon = this.scene.add.sprite(4.5, 18, 'candy');
     this.pokemonCandyIcon.setScale(0.5);
     this.pokemonCandyIcon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonCandyIcon);
@@ -439,10 +440,18 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonFormText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonFormText);
 
-    this.pokemonCandyOverlayIcon = this.scene.add.sprite(1, 12, 'items', 'candy_overlay');
+    this.pokemonCandyOverlayIcon = this.scene.add.sprite(4.5, 18, 'candy_overlay');
     this.pokemonCandyOverlayIcon.setScale(0.5);
     this.pokemonCandyOverlayIcon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonCandyOverlayIcon);
+
+    this.pokemonCandyDarknessOverlay = this.scene.add.sprite(4.5, 18, 'candy');
+    this.pokemonCandyDarknessOverlay.setScale(0.5);
+    this.pokemonCandyDarknessOverlay.setOrigin(0, 0);
+    this.pokemonCandyDarknessOverlay.setTint(0x000000);
+    this.pokemonCandyDarknessOverlay.setAlpha(0.5);
+    this.pokemonCandyDarknessOverlay.setInteractive(new Phaser.Geom.Rectangle(0, 0, 16, 16), Phaser.Geom.Rectangle.Contains);
+    this.starterSelectContainer.add(this.pokemonCandyDarknessOverlay);
 
     this.pokemonCandyCountText = addTextObject(this.scene, 14, 18, 'x0', TextStyle.WINDOW_ALT, { fontSize: '56px' });
     this.pokemonCandyCountText.setOrigin(0, 0);
@@ -1284,16 +1293,32 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonCaughtHatchedContainer.setVisible(true);
         if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
           this.pokemonCaughtHatchedContainer.setY(16);
-          [ this.pokemonCandyIcon, this.pokemonCandyOverlayIcon, this.pokemonCandyCountText ].map(c => c.setVisible(false));
+          [ this.pokemonCandyIcon, this.pokemonCandyOverlayIcon, this.pokemonCandyDarknessOverlay, this.pokemonCandyCountText ].map(c => c.setVisible(false));
         } else {
           this.pokemonCaughtHatchedContainer.setY(25);
           this.pokemonCandyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
           this.pokemonCandyIcon.setVisible(true);
           this.pokemonCandyOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
           this.pokemonCandyOverlayIcon.setVisible(true);
+          this.pokemonCandyDarknessOverlay.setVisible(true);
           this.pokemonCandyCountText.setText(`x${this.scene.gameData.starterData[species.speciesId].candyCount}`);
           this.pokemonCandyCountText.setVisible(true);
           this.pokemonFormText.setVisible(true);
+
+          var currentFriendship = this.scene.gameData.starterData[this.lastSpecies.speciesId].friendship;
+          if (!currentFriendship || currentFriendship === undefined)
+            currentFriendship = 0;
+
+          const friendshipCap = getStarterValueFriendshipCap(speciesStarters[this.lastSpecies.speciesId]);
+          const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
+
+          if (this.pokemonCandyDarknessOverlay.visible) {
+            this.pokemonCandyDarknessOverlay.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${currentFriendship}/${friendshipCap}`, true));
+            this.pokemonCandyDarknessOverlay.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
+          }
+
+          this.pokemonCandyDarknessOverlay.setCrop(0,0,16, candyCropY);
+          this.pokemonCandyDarknessOverlay.setCrop(0,0,16, candyCropY);
         }
         this.iconAnimHandler.addOrUpdate(this.starterSelectGenIconContainers[species.generation - 1].getAt(this.genSpecies[species.generation - 1].indexOf(species)) as Phaser.GameObjects.Sprite, PokemonIconAnimMode.PASSIVE);
 
@@ -1342,6 +1367,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonCaughtHatchedContainer.setVisible(false);
         this.pokemonCandyIcon.setVisible(false);
         this.pokemonCandyOverlayIcon.setVisible(false);
+        this.pokemonCandyDarknessOverlay.setVisible(false);
         this.pokemonCandyCountText.setVisible(false);
         this.pokemonFormText.setVisible(false);
 
@@ -1369,6 +1395,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonCaughtHatchedContainer.setVisible(false);
       this.pokemonCandyIcon.setVisible(false);
       this.pokemonCandyOverlayIcon.setVisible(false);
+      this.pokemonCandyDarknessOverlay.setVisible(false);
       this.pokemonCandyCountText.setVisible(false);
       this.pokemonFormText.setVisible(false);
 
