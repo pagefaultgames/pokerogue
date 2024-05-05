@@ -2216,6 +2216,36 @@ export class VariableMoveTypeAttr extends MoveAttr {
   }
 }
 
+export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.GENESECT)) {
+      const form = user.species.speciesId === Species.GENESECT ? user.formIndex : user.fusionSpecies.formIndex;
+      const type = (args[0] as Utils.IntegerHolder);
+
+      switch (form) {
+        case 1: // Shock Drive
+          type.value = Type.ELECTRIC;
+          break;
+        case 2: // Burn Drive
+          type.value = Type.FIRE;
+          break;
+        case 3: // Chill Drive
+          type.value = Type.ICE;
+          break;
+        case 4: // Douse Drive
+          type.value = Type.WATER;
+          break;
+        default:
+          type.value = Type.NORMAL;
+          break;
+      }
+      return true;
+    }
+
+    return false;
+  }
+}
+
 export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if ([user.species.speciesId, user.fusionSpecies?.speciesId].includes(Species.MORPEKO)) {
@@ -3707,6 +3737,22 @@ export class LastResortAttr extends MoveAttr {
   }
 }
 
+export class VariableTargetAttr extends MoveAttr {
+  private targetChangeFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
+
+  constructor(targetChange: (user: Pokemon, target: Pokemon, move: Move) => number) {
+    super();
+
+    this.targetChangeFunc = targetChange;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const targetVal = args[0] as Utils.NumberHolder;
+    targetVal.value = this.targetChangeFunc(user, target, move);
+    return true;
+  }
+}
+
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !user.scene.arena.getTag(ArenaTagType.GRAVITY);
 
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
@@ -3787,7 +3833,10 @@ export type MoveTargetSet = {
 }
 
 export function getMoveTargets(user: Pokemon, move: Moves): MoveTargetSet {
-  const moveTarget = move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
+  const variableTarget = new Utils.NumberHolder(0);
+  user.getOpponents().forEach(p => applyMoveAttrs(VariableTargetAttr, user, p, allMoves[move], variableTarget));
+
+  const moveTarget = allMoves[move].getAttrs(VariableTargetAttr).length ? variableTarget.value : move ? allMoves[move].moveTarget : move === undefined ? MoveTarget.NEAR_ENEMY : [];
   const opponents = user.getOpponents();
   
   let set: Pokemon[] = [];
@@ -4717,8 +4766,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .soundBased(),
     new StatusMove(Moves.TICKLE, Type.NORMAL, 100, 20, -1, 0, 3)
-      .attr(StatChangeAttr, BattleStat.ATK, -1)
-      .attr(StatChangeAttr, BattleStat.DEF, -1),
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], -1),
     new SelfStatusMove(Moves.COSMIC_POWER, Type.PSYCHIC, -1, 20, -1, 0, 3)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, true),
     new AttackMove(Moves.WATER_SPOUT, Type.WATER, MoveCategory.SPECIAL, 150, 100, 5, -1, 0, 3)
@@ -5315,7 +5363,7 @@ export function initMoves() {
       .ballBombMove()
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(Moves.TECHNO_BLAST, Type.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 5)
-      .partial(),
+      .attr(TechnoBlastTypeAttr),
     new AttackMove(Moves.RELIC_SONG, Type.NORMAL, MoveCategory.SPECIAL, 75, 100, 10, 10, 0, 5)
       .attr(StatusEffectAttr, StatusEffect.SLEEP)
       .soundBased()
@@ -5758,8 +5806,7 @@ export function initMoves() {
       .ignoresAbilities()
       .partial(),
     new StatusMove(Moves.TEARFUL_LOOK, Type.NORMAL, -1, 20, 100, 0, 7)
-      .attr(StatChangeAttr, BattleStat.ATK, -1)
-      .attr(StatChangeAttr, BattleStat.SPATK, -1),
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], -1),
     new AttackMove(Moves.ZING_ZAP, Type.ELECTRIC, MoveCategory.PHYSICAL, 80, 100, 10, 30, 0, 7)
       .attr(FlinchAttr),
     new AttackMove(Moves.NATURES_MADNESS, Type.FAIRY, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 7)
@@ -5938,8 +5985,7 @@ export function initMoves() {
     new AttackMove(Moves.BODY_PRESS, Type.FIGHTING, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 8)
       .attr(DefAtkAttr),
     new StatusMove(Moves.DECORATE, Type.FAIRY, -1, 15, 100, 0, 8)
-      .attr(StatChangeAttr, BattleStat.ATK, 2)
-      .attr(StatChangeAttr, BattleStat.SPATK, 2),
+      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPATK ], 2),
     new AttackMove(Moves.DRUM_BEATING, Type.GRASS, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.SPD, -1)
       .makesContact(false),
@@ -5989,7 +6035,8 @@ export function initMoves() {
     new AttackMove(Moves.STEEL_BEAM, Type.STEEL, MoveCategory.SPECIAL, 140, 95, 5, -1, 0, 8)
       .attr(HalfSacrificialAttr),
     new AttackMove(Moves.EXPANDING_FORCE, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 8)
-      .partial(),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 1.5 : 1)
+      .attr(VariableTargetAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 6 : 3),
     new AttackMove(Moves.STEEL_ROLLER, Type.STEEL, MoveCategory.PHYSICAL, 130, 100, 5, -1, 0, 8)
       .attr(ClearTerrainAttr)
       .condition((user, target, move) => !!user.scene.arena.terrain),
