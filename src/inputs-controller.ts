@@ -115,8 +115,8 @@ export class InputsController {
         gamepadMapping[this.player.mapping.LC_W] = Button.LEFT;
         gamepadMapping[this.player.mapping.LC_E] = Button.RIGHT;
         gamepadMapping[this.player.mapping.TOUCH] = Button.SUBMIT;
-        gamepadMapping[this.player.mapping.RC_S] = Button.ACTION;
-        gamepadMapping[this.player.mapping.RC_E] = Button.CANCEL;
+        gamepadMapping[this.player.mapping.RC_S] = this.scene.abSwapped ? Button.CANCEL : Button.ACTION;
+        gamepadMapping[this.player.mapping.RC_E] = this.scene.abSwapped ? Button.ACTION : Button.CANCEL;
         gamepadMapping[this.player.mapping.SELECT] = Button.STATS;
         gamepadMapping[this.player.mapping.START] = Button.MENU;
         gamepadMapping[this.player.mapping.RB] = Button.CYCLE_SHINY;
@@ -163,8 +163,8 @@ export class InputsController {
             [Button.LEFT]: [keyCodes.LEFT, keyCodes.A],
             [Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
             [Button.SUBMIT]: [keyCodes.ENTER],
-            [Button.ACTION]: [keyCodes.SPACE, keyCodes.Z],
-            [Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
+            [Button.ACTION]: [keyCodes.SPACE, this.scene.abSwapped ? keyCodes.X : keyCodes.Z],
+            [Button.CANCEL]: [keyCodes.BACKSPACE, this.scene.abSwapped ? keyCodes.Z : keyCodes.X],
             [Button.MENU]: [keyCodes.ESC, keyCodes.M],
             [Button.STATS]: [keyCodes.SHIFT, keyCodes.C],
             [Button.CYCLE_SHINY]: [keyCodes.R],

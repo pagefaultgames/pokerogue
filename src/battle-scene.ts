@@ -106,7 +106,8 @@ export default class BattleScene extends SceneBase {
 	public gamepadSupport: boolean = true;
 	public enableTouchControls: boolean = false;
 	public enableVibration: boolean = false;
-	
+	public abSwapped: boolean = false;
+
 	public disableMenu: boolean = false;
 
 	public gameData: GameData;
@@ -187,15 +188,6 @@ export default class BattleScene extends SceneBase {
 		this.phaseQueuePrepend = [];
 		this.phaseQueuePrependSpliceIndex = -1;
 		this.nextCommandPhaseQueue = [];
-	}
-
-	/**
-	 * Conditionally swaps the ACTION and CANCEL button
-	 * @param standard When true, uses the default values
-	 */
-	setGamepadConfirm(standard: boolean) {
-		this.gamepadKeyConfig[Button.ACTION] = standard ? 0 : 1;
-		this.gamepadKeyConfig[Button.CANCEL] = standard ? 1 : 0;
 	}
 
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
