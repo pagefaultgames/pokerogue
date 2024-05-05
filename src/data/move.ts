@@ -2716,8 +2716,8 @@ export class CurseAttr extends MoveEffectAttr {
       target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
       return true;
     } else {
-      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [BattleStat.ATK, BattleStat.DEF], 1));
-      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [BattleStat.SPD], -1));
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF], 1));
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [BattleStat.SPD], -1));
       return true;
     }
   }
