@@ -2421,9 +2421,8 @@ export class MoveEffectPhase extends PokemonPhase {
         isBounced = this.move.getMove().hasFlag(MoveFlags.MAGIC_COAT_MOVE) && (opponent.findTags(t => t instanceof MagicCoatTag).find(t => opponent.lapseTag(t.tagType)) || targetHasMagicBounce.value);
         if (isBounced) {
           this.scene.queueMessage(getPokemonMessage(opponent, '\nbounced the move back!'));
-          const tempTargets = targets;
           if (this.move.getMove().isMultiTarget()){
-            this.targets = getMoveTargets(tempTargets[0], this.move.moveId).targets;
+            this.targets = getMoveTargets(opponent, this.move.moveId).targets;
             targets = [];
             for (let index of this.targets){
               const target = this.scene.getField()[index];
@@ -2434,7 +2433,7 @@ export class MoveEffectPhase extends PokemonPhase {
             this.targets = [user.getBattlerIndex()];
             targets = [user];
           }
-          user = tempTargets[0];
+          user = opponent;
           if (!this.move.getMove().applyConditions(user, opponent, this.move.getMove())) {
             this.scene.queueMessage(i18next.t('menu:attackFailed'));
             return this.end();
