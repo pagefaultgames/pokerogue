@@ -1,4 +1,4 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene from "../battle-scene";
 import { TextStyle, addTextObject, getTextColor } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
@@ -6,6 +6,7 @@ import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { DexAttr, GameData } from "../system/game-data";
 import { speciesStarters } from "../data/pokemon-species";
+import {Button} from "../enums/buttons";
 
 interface DisplayStat {
   label?: string;
