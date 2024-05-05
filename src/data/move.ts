@@ -2857,10 +2857,9 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-      if (move.category !== MoveCategory.STATUS || !user.scene.arena.getTagOnSide(this.tagType, side))
+      if (move.category !== MoveCategory.STATUS || !user.scene.arena.getTagOnSide(this.tagType, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY))
         return true;
-      const tag = user.scene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
+      const tag = user.scene.arena.getTag(this.tagType) as ArenaTrapTag;
       return tag.layers < tag.maxLayers;
     };
   }
