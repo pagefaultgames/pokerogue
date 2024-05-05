@@ -1,4 +1,4 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene from "../battle-scene";
 import { Mode } from "./ui";
 import { TextStyle, addTextObject, getEggTierTextTint } from "./text";
 import MessageUiHandler from "./message-ui-handler";
@@ -9,6 +9,7 @@ import { getPokemonSpecies } from "../data/pokemon-species";
 import { addWindow } from "./ui-theme";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { EggTier } from "../data/enums/egg-type";
+import {Button} from "../enums/buttons";
 
 const defaultText = 'Select a machine.';
 
