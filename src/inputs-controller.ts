@@ -110,6 +110,7 @@ export class InputsController {
 
     getActionGamepadMapping(): ActionGamepadMapping {
         const gamepadMapping = {};
+        if (!this.player?.mapping) return gamepadMapping;
         gamepadMapping[this.player.mapping.LC_N] = Button.UP;
         gamepadMapping[this.player.mapping.LC_S] = Button.DOWN;
         gamepadMapping[this.player.mapping.LC_W] = Button.LEFT;
