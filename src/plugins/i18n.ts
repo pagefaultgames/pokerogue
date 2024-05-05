@@ -23,6 +23,7 @@ import { move as enMove } from '../locales/en/move';
 import { move as esMove } from '../locales/es/move';
 import { move as frMove } from '../locales/fr/move';
 import { move as deMove } from '../locales/de/move';
+import { move as itMove } from '../locales/it/move';
 
 import { ability as enAbility } from '../locales/en/ability';
 import { ability as esAbility } from '../locales/es/ability';
@@ -169,6 +170,7 @@ export function initI18n(): void {
         tutorial: itTutorial,
         commandUiHandler: itCommandUiHandler,
         pokeball: itPokeball,
+        move: itMove,
       },
       de: {
         menu: deMenu,
