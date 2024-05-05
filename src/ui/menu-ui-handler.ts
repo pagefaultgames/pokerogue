@@ -125,7 +125,6 @@ export default class MenuUiHandler extends MessageUiHandler {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
-          this.scene.inputController.modalOpen = true;
           confirmSlot(i18next.t("menuUiHandler:importSlotSelect"), () => true, slotId => this.scene.gameData.importData(GameDataType.SESSION, slotId));
           return true;
         },
@@ -156,7 +155,6 @@ export default class MenuUiHandler extends MessageUiHandler {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
-          this.scene.inputController.modalOpen = true;
           this.scene.gameData.importData(GameDataType.SYSTEM);
           return true;
         },
@@ -190,7 +188,6 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: 'Wiki',
         handler: () => {
-          this.scene.inputController.modalOpen = true;
           window.open(wikiUrl, '_blank').focus();
           return true;
         },
@@ -199,7 +196,6 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: 'Discord',
         handler: () => {
-          this.scene.inputController.modalOpen = true;
           window.open(discordUrl, '_blank').focus();
           return true;
         },
@@ -208,7 +204,6 @@ export default class MenuUiHandler extends MessageUiHandler {
       {
         label: 'GitHub',
         handler: () => {
-          this.scene.inputController.modalOpen = true;
           window.open(githubUrl, '_blank').focus();
           return true;
         },

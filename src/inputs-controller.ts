@@ -34,7 +34,6 @@ export class InputsController {
     private interactions: Map<Button, Map<string, boolean>> = new Map();
     private time: Time;
     private player: Map<String, GamepadMapping> = new Map();
-    public modalOpen: boolean = false;
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -55,6 +54,10 @@ export class InputsController {
 
     init(): void {
         this.events = new Phaser.Events.EventEmitter();
+		// Handle the game losing focus
+		this.scene.game.events.on(Phaser.Core.Events.BLUR, () => {
+			this.loseFocus()
+		})
 
         if (typeof this.scene.input.gamepad !== 'undefined') {
             this.scene.input.gamepad.on('connected', function (thisGamepad) {
@@ -79,12 +82,11 @@ export class InputsController {
         this.setupKeyboardControls();
     }
 
+    loseFocus(): void {
+        this.deactivatePressedKey();
+    }
+
     update(): void {
-        if (this.modalOpen) {
-            this.modalOpen = false;
-            this.deactivatePressedKey();
-            return;
-        }
         for (const b of Utils.getEnumValues(Button)) {
             if (!this.interactions.hasOwnProperty(b)) continue;
             if (this.repeatInputDurationJustPassed(b) && this.interactions[b].isPressed) {
