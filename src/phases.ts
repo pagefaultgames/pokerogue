@@ -2308,18 +2308,21 @@ export class MovePhase extends BattlePhase {
 
       // Assume conditions affecting targets only apply to moves with a single target
       let success = this.move.getMove().applyConditions(this.pokemon, targets[0], this.move.getMove());
-      let failedText = null;
+      let cancelled = new Utils.BooleanHolder(false);
+      let failedText = this.move.getMove().getFailedText(this.pokemon, targets[0], this.move.getMove(), cancelled);
       if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
         success = false;
       else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, this.move.getMove())) {
         success = false;
-        failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
+        if (failedText == null)
+          failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
       }
       if (success)
         this.scene.unshiftPhase(this.getEffectPhase());
       else {
         this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
-        this.showFailedText(failedText);
+        if (!cancelled.value)
+          this.showFailedText(failedText);
       }
       
       this.end();
@@ -2521,6 +2524,9 @@ export class MoveEffectPhase extends PokemonPhase {
             });
           }));
         }
+        // Trigger effect which should only apply one time after all targeted effects have already applied
+        applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_TARGET,
+              user, null, this.move.getMove())
         Promise.allSettled(applyAttrs).then(() => this.end());
       });
     });
@@ -2869,7 +2875,7 @@ export class StatChangePhase extends PokemonPhase {
       if (relLevelStats.length > 1) {
         statsFragment = relLevelStats.length >= 5
           ? 'stats'
-          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(', ')}, and ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
+          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(', ')}${relLevelStats.length > 2 ? ',' : ''} and ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
       } else
         statsFragment = getBattleStatName(relLevelStats[0]);
       messages.push(getPokemonMessage(this.getPokemon(), `'s ${statsFragment} ${getBattleStatLevelChangeDescription(Math.abs(parseInt(rl)), levels >= 1)}!`));
@@ -4145,7 +4151,10 @@ export class AttemptCapturePhase extends PokemonPhase {
     if (speciesForm.abilityHidden && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1)
       this.scene.validateAchv(achvs.HIDDEN_ABILITY);
 
-    if (pokemon.species.pseudoLegendary || pokemon.species.legendary)
+    if (pokemon.species.subLegendary)
+      this.scene.validateAchv(achvs.CATCH_SUB_LEGENDARY);
+
+    if (pokemon.species.legendary)
       this.scene.validateAchv(achvs.CATCH_LEGENDARY);
 
     if (pokemon.species.mythical)

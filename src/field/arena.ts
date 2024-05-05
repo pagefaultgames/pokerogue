@@ -106,7 +106,7 @@ export class Arena {
       
       ret = getPokemonSpecies(species);
 
-      if (ret.pseudoLegendary || ret.legendary || ret.mythical) {
+      if (ret.subLegendary || ret.legendary || ret.mythical) {
         switch (true) {
           case (ret.baseTotal >= 720):
             regen = level < 90;
@@ -492,7 +492,7 @@ export class Arena {
 	}
 
   addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide = ArenaTagSide.BOTH, targetIndex?: BattlerIndex): boolean {
-    const existingTag = this.getTag(tagType);
+    const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
       existingTag.onOverlap(this);
       return false;

@@ -20,6 +20,9 @@ export class GameStats {
   public pokemonDefeated: integer;
   public pokemonCaught: integer;
   public pokemonHatched: integer;
+  public subLegendaryPokemonSeen: integer;
+  public subLegendaryPokemonCaught: integer;
+  public subLegendaryPokemonHatched: integer;
   public legendaryPokemonSeen: integer;
   public legendaryPokemonCaught: integer;
   public legendaryPokemonHatched: integer;
@@ -56,6 +59,10 @@ export class GameStats {
     this.pokemonDefeated = source?.pokemonDefeated || 0;
     this.pokemonCaught = source?.pokemonCaught || 0;
     this.pokemonHatched = source?.pokemonHatched || 0;
+    // Currently handled by migration
+    this.subLegendaryPokemonSeen = source?.subLegendaryPokemonSeen;
+    this.subLegendaryPokemonCaught = source?.subLegendaryPokemonCaught;
+    this.subLegendaryPokemonHatched = source?.subLegendaryPokemonHatched;
     this.legendaryPokemonSeen = source?.legendaryPokemonSeen || 0;
     this.legendaryPokemonCaught = source?.legendaryPokemonCaught || 0;
     this.legendaryPokemonHatched = source?.legendaryPokemonHatched || 0;

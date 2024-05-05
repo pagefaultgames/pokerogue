@@ -133,7 +133,7 @@ export class GameMode implements GameModeConfig {
 
   getOverrideSpecies(waveIndex: integer): PokemonSpecies {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
-      const allFinalBossSpecies = allSpecies.filter(s => (s.pseudoLegendary || s.legendary || s.mythical)
+      const allFinalBossSpecies = allSpecies.filter(s => (s.subLegendary || s.legendary || s.mythical)
         && s.baseTotal >= 600 && s.speciesId !== Species.ETERNATUS && s.speciesId !== Species.ARCEUS);
       return Utils.randSeedItem(allFinalBossSpecies);
     }

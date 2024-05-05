@@ -1913,6 +1913,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs(ReduceStatusEffectDurationAbAttr, this, null, effect, statusCureTurn);
 
       this.setFrameRate(4);
+
+      // If the user is invulnerable, lets remove their invulnerability when they fall asleep
+      const invulnerableTags = [
+        BattlerTagType.UNDERGROUND,
+        BattlerTagType.UNDERWATER,
+        BattlerTagType.HIDDEN,
+        BattlerTagType.FLYING
+      ];
+
+      const tag = invulnerableTags.find((t) => this.getTag(t));
+
+      if (tag) {
+        this.removeTag(tag);
+        this.getMoveQueue().pop();
+      }
     }
 
     this.status = new Status(effect, 0, statusCureTurn?.value);
