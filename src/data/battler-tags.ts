@@ -1071,6 +1071,8 @@ export class TypeBoostTag extends BattlerTag {
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.boostedType = source.boostedType as Type;
+    this.boostValue = source.boostValue;
+    this.oneUse = source.oneUse;
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
