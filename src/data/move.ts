@@ -2977,7 +2977,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     return new Promise(resolve => {
     
   	// Check if the move category is not STATUS or if the switch out condition is not met
-    if (!this.getCondition()(user, target, move)) {
+    if (!this.getSwitchOutCondition()(user, target, move)) {
   	  //Apply effects before switch out i.e. poison point, flame body, etc
       applyPostDefendAbAttrs(PostDefendContactApplyStatusEffectAbAttr, target, user, new PokemonMove(move.id), null);
       return resolve(false);
