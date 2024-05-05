@@ -181,6 +181,10 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
                 handler: () => changeLocaleHandler('es')
               },
               {
+                label: 'Italian',
+                handler: () => changeLocaleHandler('it')
+              },
+              {
                 label: 'French',
                 handler: () => changeLocaleHandler('fr')
               },
