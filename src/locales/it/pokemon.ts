@@ -1039,7 +1039,7 @@ export const pokemon: SimpleTranslationEntries = {
     "alola_persian": "Persian",
     "alola_geodude": "Geodude",
     "alola_graveler": "Graveler",
-    "alola_golem": "Golem di Alola",
+    "alola_golem": "Golem",
     "alola_grimer": "Grimer",
     "alola_muk": "Muk",
     "alola_exeggutor": "Exeggutor",
