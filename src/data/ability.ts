@@ -2104,6 +2104,13 @@ export class StatChangeMultiplierAbAttr extends AbAttr {
   }
 }
 
+export class StatChangeCopyAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+    pokemon.scene.unshiftPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, (args[0] as BattleStat[]), (args[1] as integer), true, false, false));
+    return true;
+  }
+}
+
 export class BypassBurnDamageReductionAbAttr extends AbAttr {
   constructor() {
     super(false);
@@ -3217,8 +3224,7 @@ export function initAbilities() {
       .attr(UncopiableAbilityAbAttr)
       .attr(UnswappableAbilityAbAttr)
       .attr(UnsuppressableAbilityAbAttr)
-      .attr(NoFusionAbilityAbAttr)
-      .partial(),
+      .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.POWER_CONSTRUCT, 7) // TODO: 10% Power Construct Zygarde isn't accounted for yet. If changed, update Zygarde's getSpeciesFormIndex entry accordingly
       .attr(PostBattleInitFormChangeAbAttr, p => p.getHpRatio() <= 0.5 ? 4 : 2)
       .attr(PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 ? 4 : 2)
@@ -3484,7 +3490,7 @@ export function initAbilities() {
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), BattleStatMultiplierAbAttr, BattleStat.SPATK, 4 / 3),
     new Ability(Abilities.OPPORTUNIST, 9)
-      .unimplemented(),
+      .attr(StatChangeCopyAbAttr),
     new Ability(Abilities.CUD_CHEW, 9)
       .unimplemented(),
     new Ability(Abilities.SHARPNESS, 9)

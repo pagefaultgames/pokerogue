@@ -336,8 +336,8 @@ export class Arena {
     return this.weather && !this.weather.isEffectSuppressed(this.scene) && this.weather.isMoveWeatherCancelled(move);
   }
 
-  isMoveTerrainCancelled(user: Pokemon, move: Move) {
-    return this.terrain && this.terrain.isMoveTerrainCancelled(user, move);
+  isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move) {
+    return this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
   }
 
   getTerrainType() : TerrainType {
