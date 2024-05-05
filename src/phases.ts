@@ -3656,14 +3656,14 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
         this.end();
     } else if (this.scene.expParty === 1) {
       if (newLevel > lastLevel) {
-        this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === 1).then(() => {
+        this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === 1, newLevel).then(() => {
             setTimeout(() => this.end(), 200 / Math.pow(2, this.scene.expGainsSpeed));
         });
       } else {
         this.end();
       }
     } else if (this.scene.expGainsSpeed < 3) {
-      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === 1).then(() => {
+      this.scene.partyExpBar.showPokemonExp(pokemon, exp.value, this.scene.expParty === 1, newLevel).then(() => {
           setTimeout(() => this.end(), 500 / Math.pow(2, this.scene.expGainsSpeed));
       });
     } else {
