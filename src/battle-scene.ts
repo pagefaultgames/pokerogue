@@ -1671,11 +1671,13 @@ export default class BattleScene extends SceneBase {
 				return 13.122;
 			case 'battle_unova_gym':
 				return 19.145;
-			case 'battle_legendary':
+			case 'battle_legendary_regis': //B2W2 Legendary Titan Battle
+				return 49.500;
+			case 'battle_legendary_unova': //BW Unova Legendary Battle
 				return 13.855;
-			case 'battle_legendary_k':
+			case 'battle_legendary_kyurem': //BW Kyurem Battle
 				return 18.314;
-			case 'battle_legendary_rz':
+			case 'battle_legendary_res_zek': //BW Reshiram & Zekrom Battle
 				return 18.329;
 			case 'battle_rival':
 				return 13.689;
