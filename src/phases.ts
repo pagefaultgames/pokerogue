@@ -2839,7 +2839,7 @@ export class StatChangePhase extends PokemonPhase {
       if (relLevelStats.length > 1) {
         statsFragment = relLevelStats.length >= 5
           ? 'stats'
-          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(', ')}, and ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
+          : `${relLevelStats.slice(0, -1).map(s => getBattleStatName(s)).join(', ')}${relLevelStats.length > 2 ? ',' : ''} and ${getBattleStatName(relLevelStats[relLevelStats.length - 1])}`;
       } else
         statsFragment = getBattleStatName(relLevelStats[0]);
       messages.push(getPokemonMessage(this.getPokemon(), `'s ${statsFragment} ${getBattleStatLevelChangeDescription(Math.abs(parseInt(rl)), levels >= 1)}!`));
