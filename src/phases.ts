@@ -1189,7 +1189,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       console.warn("The Pokemon about to be sent out is fainted. Attempting to resolve...");
       const party = this.getParty();
       
-      const nonFaintedIndex = party.findIndex(x => !x.isFainted()); // Find the first non-fainted Pokemon index
+      // Find the first non-fainted Pokemon index above the current one
+      const nonFaintedIndex = party.findIndex((p, i) => i > this.partyMemberIndex && !p.isFainted());
       if (nonFaintedIndex === -1) {
         console.error("Party Details:\n", party);
         throw new Error("All available Pokemon were fainted!");
@@ -2281,7 +2282,7 @@ export class MovePhase extends BattlePhase {
       let failedText = this.move.getMove().getFailedText(this.pokemon, targets[0], this.move.getMove(), cancelled);
       if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
         success = false;
-      else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.move.getMove())) {
+      else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, this.move.getMove())) {
         success = false;
         if (failedText == null)
           failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);

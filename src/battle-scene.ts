@@ -235,6 +235,15 @@ export default class BattleScene extends SceneBase {
 		this.nextCommandPhaseQueue = [];
 	}
 
+	/**
+	 * Conditionally swaps the ACTION and CANCEL button
+	 * @param standard When true, uses the default values
+	 */
+	setGamepadConfirm(standard: boolean) {
+		this.gamepadKeyConfig[Button.ACTION] = standard ? 0 : 1;
+		this.gamepadKeyConfig[Button.CANCEL] = standard ? 1 : 0;
+	}
+
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
 		if (experimental === undefined)
 			experimental = this.experimentalSprites;
@@ -1671,11 +1680,13 @@ export default class BattleScene extends SceneBase {
 				return 13.122;
 			case 'battle_unova_gym':
 				return 19.145;
-			case 'battle_legendary':
+			case 'battle_legendary_regis': //B2W2 Legendary Titan Battle
+				return 49.500;
+			case 'battle_legendary_unova': //BW Unova Legendary Battle
 				return 13.855;
-			case 'battle_legendary_k':
+			case 'battle_legendary_kyurem': //BW Kyurem Battle
 				return 18.314;
-			case 'battle_legendary_rz':
+			case 'battle_legendary_res_zek': //BW Reshiram & Zekrom Battle
 				return 18.329;
 			case 'battle_rival':
 				return 13.689;
