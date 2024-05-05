@@ -2705,24 +2705,17 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 export class CurseAttr extends MoveEffectAttr {
   
   apply(user: Pokemon, target: Pokemon, move:Move, args: any[]): boolean {
-    // Determine the correct target based on the user's type
-    if (!user.getTypes(true).includes(Type.GHOST)) {
-      // For non-Ghost types, target the user itself
-      target = user;
-    }
-
     if (user.getTypes(true).includes(Type.GHOST)) {
       if (target.getTag(BattlerTagType.CURSED)) {
         user.scene.queueMessage('But it failed!');
         return false;
       }
-      let curseRecoilDamage = Math.floor(user.getMaxHp() / 2);
+      let curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
       user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, false, true, true);
       user.scene.queueMessage(getPokemonMessage(user, ` cut its own HP\nand laid a curse on the ${target.name}!`));
       target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
       return true;
     } else {
-      target = user;
       user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [BattleStat.ATK, BattleStat.DEF], 1));
       user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [BattleStat.SPD], -1));
       return true;
@@ -4405,10 +4398,9 @@ export function initMoves() {
       .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
       .soundBased(),
     new StatusMove(Moves.CURSE, Type.GHOST, -1, 10, -1, 0, 2)
-      .attr(StatChangeAttr, BattleStat.SPD, -1, true)
-      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], 1, true)
-      .target(MoveTarget.USER)
-      .partial(),
+      .attr(CurseAttr)
+      .target(MoveTarget.RANDOM_NEAR_ENEMY)
+      .ignoresProtect(true),
     new AttackMove(Moves.FLAIL, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 2)
       .attr(LowHpPowerAttr),
     new StatusMove(Moves.CONVERSION_2, Type.NORMAL, -1, 30, -1, 0, 2)
