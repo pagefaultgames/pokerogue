@@ -29,6 +29,7 @@ import { ability as enAbility } from '../locales/en/ability';
 import { ability as esAbility } from '../locales/es/ability';
 import { ability as frAbility } from '../locales/fr/ability';
 import { ability as deAbility } from '../locales/de/ability';
+import { ability as itAbility } from '../locales/it/ability';
 
 import { pokeball as enPokeball } from '../locales/en/pokeball';
 import { pokeball as esPokeball } from '../locales/es/pokeball';
@@ -171,6 +172,7 @@ export function initI18n(): void {
         commandUiHandler: itCommandUiHandler,
         pokeball: itPokeball,
         move: itMove,
+        ability: itAbility,
       },
       de: {
         menu: deMenu,
