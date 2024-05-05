@@ -235,6 +235,15 @@ export default class BattleScene extends SceneBase {
 		this.nextCommandPhaseQueue = [];
 	}
 
+	/**
+	 * Conditionally swaps the ACTION and CANCEL button
+	 * @param standard When true, uses the default values
+	 */
+	setGamepadConfirm(standard: boolean) {
+		this.gamepadKeyConfig[Button.ACTION] = standard ? 0 : 1;
+		this.gamepadKeyConfig[Button.CANCEL] = standard ? 1 : 0;
+	}
+
 	loadPokemonAtlas(key: string, atlasPath: string, experimental?: boolean) {
 		if (experimental === undefined)
 			experimental = this.experimentalSprites;
