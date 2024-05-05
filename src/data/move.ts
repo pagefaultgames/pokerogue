@@ -327,10 +327,12 @@ export default class Move implements Localizable {
   }
 
   getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
-    let failedText = null;
-    for (let attr of this.attrs)
-      failedText = attr.getFailedText(user, target, move, cancelled);
-    return failedText;
+    for (let attr of this.attrs) {
+      let failedText = attr.getFailedText(user, target, move, cancelled);
+      if (failedText !== null)
+        return failedText;
+    }
+    return null;
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
@@ -3035,8 +3037,9 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
-    applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, cancelled);
-    return null;
+    const blockedByAbility = new Utils.BooleanHolder(false);
+    applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, blockedByAbility);
+    return blockedByAbility.value ? getPokemonMessage(target, ` can't be switched out!`) : null;
   }
 
   getSwitchOutCondition(): MoveConditionFunc {
