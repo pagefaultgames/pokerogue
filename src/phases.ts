@@ -2494,6 +2494,9 @@ export class MoveEffectPhase extends PokemonPhase {
             });
           }));
         }
+        // Trigger effect which should only apply one time after all targeted effects have already applied
+        applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_TARGET,
+              user, null, this.move.getMove())
         Promise.allSettled(applyAttrs).then(() => this.end());
       });
     });
