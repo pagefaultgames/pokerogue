@@ -54,6 +54,10 @@ export class InputsController {
 
     init(): void {
         this.events = new Phaser.Events.EventEmitter();
+		// Handle the game losing focus
+		this.scene.game.events.on(Phaser.Core.Events.BLUR, () => {
+			this.loseFocus()
+		})
 
         if (typeof this.scene.input.gamepad !== 'undefined') {
             this.scene.input.gamepad.on('connected', function (thisGamepad) {
@@ -78,10 +82,14 @@ export class InputsController {
         this.setupKeyboardControls();
     }
 
+    loseFocus(): void {
+        this.deactivatePressedKey();
+    }
+
     update(): void {
         for (const b of Utils.getEnumValues(Button)) {
             if (!this.interactions.hasOwnProperty(b)) continue;
-            if (this.repeatInputDurationJustPassed(b)) {
+            if (this.repeatInputDurationJustPassed(b) && this.interactions[b].isPressed) {
                 this.events.emit('input_down', {
                     controller_type: 'repeated',
                     button: b,
@@ -166,8 +174,8 @@ export class InputsController {
             [Button.LEFT]: [keyCodes.LEFT, keyCodes.A],
             [Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
             [Button.SUBMIT]: [keyCodes.ENTER],
-            [Button.ACTION]: [keyCodes.SPACE, this.scene.abSwapped ? keyCodes.X : keyCodes.Z],
-            [Button.CANCEL]: [keyCodes.BACKSPACE, this.scene.abSwapped ? keyCodes.Z : keyCodes.X],
+            [Button.ACTION]: [keyCodes.SPACE, keyCodes.Z],
+            [Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
             [Button.MENU]: [keyCodes.ESC, keyCodes.M],
             [Button.STATS]: [keyCodes.SHIFT, keyCodes.C],
             [Button.CYCLE_SHINY]: [keyCodes.R],
@@ -248,11 +256,22 @@ export class InputsController {
         if (!this.interactions.hasOwnProperty(button)) return;
         this.buttonLock = button;
         this.interactions[button].pressTime = this.time.now;
+        this.interactions[button].isPressed = true;
     }
 
     delLastProcessedMovementTime(button: Button): void {
         if (!this.interactions.hasOwnProperty(button)) return;
         this.buttonLock = null;
         this.interactions[button].pressTime = null;
+        this.interactions[button].isPressed = false;
+    }
+
+    deactivatePressedKey(): void {
+        this.buttonLock = null;
+        for (const b of Utils.getEnumValues(Button)) {
+            if (!this.interactions.hasOwnProperty(b)) return;
+            this.interactions[b].pressTime = null;
+            this.interactions[b].isPressed = false;
+        }
     }
 }

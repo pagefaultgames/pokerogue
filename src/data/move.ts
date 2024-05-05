@@ -327,10 +327,12 @@ export default class Move implements Localizable {
   }
 
   getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
-    let failedText = null;
-    for (let attr of this.attrs)
-      failedText = attr.getFailedText(user, target, move, cancelled);
-    return failedText;
+    for (let attr of this.attrs) {
+      let failedText = attr.getFailedText(user, target, move, cancelled);
+      if (failedText !== null)
+        return failedText;
+    }
+    return null;
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
@@ -445,7 +447,9 @@ export abstract class MoveAttr {
 export enum MoveEffectTrigger {
   PRE_APPLY,
   POST_APPLY,
-  HIT
+  HIT,
+  /** Triggers one time after all target effects have applied */
+  POST_TARGET,
 }
 
 export class MoveEffectAttr extends MoveAttr {
@@ -738,19 +742,33 @@ export class SacrificialAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute used for moves which cut the user's Max HP in half.
+ * Triggers using POST_TARGET.
+ */
 export class HalfSacrificialAttr extends MoveEffectAttr {
   constructor() {
-    super(true, MoveEffectTrigger.PRE_APPLY);
+    super(true, MoveEffectTrigger.POST_TARGET);
   }
 
+  /**
+   * Cut's the user's Max HP in half and displays the appropriate recoil message
+   * @param user Pokemon that used the move
+   * @param target N/A
+   * @param move Move with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args))
       return false;
 
     const cancelled = new Utils.BooleanHolder(false);
+    // Check to see if the Pokemon has an ability that blocks non-direct damage
     applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
     if (!cancelled.value){
       user.damageAndUpdate(Math.ceil(user.getMaxHp()/2), HitResult.OTHER, false, true, true);
+      user.scene.queueMessage(getPokemonMessage(user, ' cut its own HP to power up its move!')); // Queue recoil message
     }    
     return true;
   }
@@ -2703,26 +2721,19 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 export class CurseAttr extends MoveEffectAttr {
   
   apply(user: Pokemon, target: Pokemon, move:Move, args: any[]): boolean {
-    // Determine the correct target based on the user's type
-    if (!user.getTypes(true).includes(Type.GHOST)) {
-      // For non-Ghost types, target the user itself
-      target = user;
-    }
-
     if (user.getTypes(true).includes(Type.GHOST)) {
       if (target.getTag(BattlerTagType.CURSED)) {
         user.scene.queueMessage('But it failed!');
         return false;
       }
-      let curseRecoilDamage = Math.floor(user.getMaxHp() / 2);
+      let curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
       user.damageAndUpdate(curseRecoilDamage, HitResult.OTHER, false, true, true);
       user.scene.queueMessage(getPokemonMessage(user, ` cut its own HP\nand laid a curse on the ${target.name}!`));
       target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
       return true;
     } else {
-      target = user;
-      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [BattleStat.ATK, BattleStat.DEF], 1));
-      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), this.selfTarget, [BattleStat.SPD], -1));
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [BattleStat.ATK, BattleStat.DEF], 1));
+      user.scene.unshiftPhase(new StatChangePhase(user.scene, user.getBattlerIndex(), true, [BattleStat.SPD], -1));
       return true;
     }
   }
@@ -2977,7 +2988,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     return new Promise(resolve => {
     
   	// Check if the move category is not STATUS or if the switch out condition is not met
-    if (!this.getCondition()(user, target, move)) {
+    if (!this.getSwitchOutCondition()(user, target, move)) {
   	  //Apply effects before switch out i.e. poison point, flame body, etc
       applyPostDefendAbAttrs(PostDefendContactApplyStatusEffectAbAttr, target, user, new PokemonMove(move.id), null);
       return resolve(false);
@@ -3035,8 +3046,9 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getFailedText(user: Pokemon, target: Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null {
-    applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, cancelled);
-    return null;
+    const blockedByAbility = new Utils.BooleanHolder(false);
+    applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, blockedByAbility);
+    return blockedByAbility.value ? getPokemonMessage(target, ` can't be switched out!`) : null;
   }
 
   getSwitchOutCondition(): MoveConditionFunc {
@@ -3809,6 +3821,9 @@ const failOnMaxCondition: MoveConditionFunc = (user, target, move) => !target.is
 const failIfDampCondition: MoveConditionFunc = (user, target, move) => {
   const cancelled = new Utils.BooleanHolder(false);
   user.scene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled));
+  // Queue a message if an ability prevented usage of the move
+  if (cancelled.value)
+    user.scene.queueMessage(getPokemonMessage(user, ` cannot use ${move.name}!`));
   return !cancelled.value;
 }
 
@@ -4402,10 +4417,8 @@ export function initMoves() {
       .condition((user, target, move) => user.status?.effect === StatusEffect.SLEEP)
       .soundBased(),
     new StatusMove(Moves.CURSE, Type.GHOST, -1, 10, -1, 0, 2)
-      .attr(StatChangeAttr, BattleStat.SPD, -1, true)
-      .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.DEF ], 1, true)
-      .target(MoveTarget.USER)
-      .partial(),
+      .attr(CurseAttr)
+      .ignoresProtect(true),
     new AttackMove(Moves.FLAIL, Type.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 2)
       .attr(LowHpPowerAttr),
     new StatusMove(Moves.CONVERSION_2, Type.NORMAL, -1, 30, -1, 0, 2)
@@ -6249,8 +6262,7 @@ export function initMoves() {
       .partial(),
     new SelfStatusMove(Moves.TAKE_HEART, Type.PSYCHIC, -1, 10, -1, 0, 8)
       .attr(StatChangeAttr, [ BattleStat.SPATK, BattleStat.SPDEF ], 1, true)
-      .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN)
-      .condition((user, target, move) => user.status && (user.status.effect === StatusEffect.PARALYSIS || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.BURN)),
+      .attr(HealStatusEffectAttr, true, StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP),
     /* Unused
     new AttackMove(Moves.G_MAX_WILDFIRE, Type.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)

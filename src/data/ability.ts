@@ -2356,7 +2356,7 @@ export class IncreasePpAbAttr extends AbAttr { }
 
 export class ForceSwitchOutImmunityAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` can't be switched out!`))
+    cancelled.value = true;
     return true;
   }
 }

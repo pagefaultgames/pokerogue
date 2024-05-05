@@ -2278,7 +2278,7 @@ export class MovePhase extends BattlePhase {
 
       // Assume conditions affecting targets only apply to moves with a single target
       let success = this.move.getMove().applyConditions(this.pokemon, targets[0], this.move.getMove());
-      let cancelled = new Utils.BooleanHolder(true);
+      let cancelled = new Utils.BooleanHolder(false);
       let failedText = this.move.getMove().getFailedText(this.pokemon, targets[0], this.move.getMove(), cancelled);
       if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
         success = false;
@@ -2494,6 +2494,9 @@ export class MoveEffectPhase extends PokemonPhase {
             });
           }));
         }
+        // Trigger effect which should only apply one time after all targeted effects have already applied
+        applyFilteredMoveAttrs((attr: MoveAttr) => attr instanceof MoveEffectAttr && (attr as MoveEffectAttr).trigger === MoveEffectTrigger.POST_TARGET,
+              user, null, this.move.getMove())
         Promise.allSettled(applyAttrs).then(() => this.end());
       });
     });
