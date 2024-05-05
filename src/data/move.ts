@@ -4249,7 +4249,7 @@ export function initMoves() {
       .attr(SacrificialAttr)
       .makesContact(false)
       .condition(failIfDampCondition)
-      .target(MoveTarget.ALL_NEAR_OTHERS),
+      .target(MoveTarget.ALL),
     new AttackMove(Moves.EGG_BOMB, Type.NORMAL, MoveCategory.PHYSICAL, 100, 75, 10, -1, 0, 1)
       .makesContact(false)
       .ballBombMove(),
@@ -4340,7 +4340,7 @@ export function initMoves() {
       .condition(failIfDampCondition)
       .attr(SacrificialAttr)
       .makesContact(false)
-      .target(MoveTarget.ALL_NEAR_OTHERS),
+      .target(MoveTarget.ALL),
     new AttackMove(Moves.FURY_SWIPES, Type.NORMAL, MoveCategory.PHYSICAL, 18, 80, 15, -1, 0, 1)
       .attr(MultiHitAttr),
     new AttackMove(Moves.BONEMERANG, Type.GROUND, MoveCategory.PHYSICAL, 50, 90, 10, -1, 0, 1)
@@ -6108,7 +6108,7 @@ export function initMoves() {
       .partial(),
     new AttackMove(Moves.MISTY_EXPLOSION, Type.FAIRY, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 8)
       .attr(SacrificialAttr)
-      .target(MoveTarget.ALL_NEAR_OTHERS)
+      .target(MoveTarget.ALL)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.scene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1)
       .condition(failIfDampCondition),
     new AttackMove(Moves.GRASSY_GLIDE, Type.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, -1, 0, 8)
