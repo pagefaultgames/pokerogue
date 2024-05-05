@@ -2665,8 +2665,8 @@ export function initAbilities() {
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.SUCTION_CUPS, 3)
-      .ignorable()
-      .unimplemented(),
+      .attr(ForceSwitchOutImmunityAbAttr)  
+      .ignorable(),
     new Ability(Abilities.INTIMIDATE, 3)
       .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, -1, false, true),
     new Ability(Abilities.SHADOW_TAG, 3)
