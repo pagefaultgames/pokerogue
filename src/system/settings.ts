@@ -151,7 +151,7 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
     case Setting.Gamepad_Support:
       scene.gamepadSupport = settingOptions[setting][value] !== 'Disabled';
       break;
-    case Setting.Swap_A_and_B:debugger;
+    case Setting.Swap_A_and_B:
       scene.setGamepadConfirm(settingOptions[setting][value] !== 'Enabled');
       break;
     case Setting.Touch_Controls:
