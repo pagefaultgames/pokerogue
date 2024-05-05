@@ -14,7 +14,7 @@ import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBooste
 import { PokeballType } from '../data/pokeball';
 import { Gender } from '../data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from '../data/battle-anims';
-import { Status, StatusEffect } from '../data/status-effect';
+import { Status, StatusEffect, getRandomStatus } from '../data/status-effect';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from '../data/pokemon-evolutions';
 import { reverseCompatibleTms, tmSpecies } from '../data/tms';
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase } from '../phases';
@@ -43,8 +43,8 @@ import { Nature, getNatureStatMultiplier } from '../data/nature';
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
 import { TerrainType } from '../data/terrain';
 import { TrainerSlot } from '../data/trainer-config';
+import { ABILITY_OVERRIDE, MOVE_OVERRIDE, MOVE_OVERRIDE_2, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_MOVE_OVERRIDE_2, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../overrides';
 import { BerryType } from '../data/berry';
-import { ABILITY_OVERRIDE, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../overrides';
 import i18next from '../plugins/i18n';
 
 export enum FieldPosition {
@@ -725,6 +725,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.moveset[0] = new PokemonMove(MOVE_OVERRIDE, Math.min(this.moveset[0].ppUsed, allMoves[MOVE_OVERRIDE].pp));
     else if (OPP_MOVE_OVERRIDE && !this.isPlayer())
       this.moveset[0] = new PokemonMove(OPP_MOVE_OVERRIDE, Math.min(this.moveset[0].ppUsed, allMoves[OPP_MOVE_OVERRIDE].pp));
+    if (MOVE_OVERRIDE_2 && this.isPlayer())
+      this.moveset[1] = new PokemonMove(MOVE_OVERRIDE_2, Math.min(this.moveset[1].ppUsed, allMoves[MOVE_OVERRIDE_2].pp));
+    else if (OPP_MOVE_OVERRIDE_2 && !this.isPlayer())
+      this.moveset[1] = new PokemonMove(OPP_MOVE_OVERRIDE_2, Math.min(this.moveset[1].ppUsed, allMoves[OPP_MOVE_OVERRIDE_2].pp));
+
 
     return ret;
   }
@@ -2474,9 +2479,10 @@ export class PlayerPokemon extends Pokemon {
       if (newEvolution.condition.predicate(this)) {
         const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, undefined, this.shiny, this.variant, this.ivs, this.nature);
         newPokemon.natureOverride = this.natureOverride;
+        newPokemon.passive = this.passive;
+        newPokemon.moveset = this.moveset.slice();
         newPokemon.moveset = this.copyMoveset();
         newPokemon.luck = this.luck;
-
         newPokemon.fusionSpecies = this.fusionSpecies;
         newPokemon.fusionFormIndex = this.fusionFormIndex;
         newPokemon.fusionAbilityIndex = this.fusionAbilityIndex;
@@ -2536,6 +2542,10 @@ export class PlayerPokemon extends Pokemon {
     this.generateCompatibleTms();
   }
 
+  /**
+  * Returns a Promise to fuse two PlayerPokemon together
+  * @param pokemon The PlayerPokemon to fuse to this one
+  */
   fuse(pokemon: PlayerPokemon): Promise<void> {
     return new Promise(resolve => {
       this.fusionSpecies = pokemon.species;
@@ -2549,8 +2559,25 @@ export class PlayerPokemon extends Pokemon {
       this.scene.validateAchv(achvs.SPLICE);
       this.scene.gameData.gameStats.pokemonFused++;
 
+      // Store the average HP% that each Pokemon has
+      const newHpPercent = ((pokemon.hp / pokemon.stats[Stat.HP]) + (this.hp / this.stats[Stat.HP])) / 2;
+
       this.generateName();
       this.calculateStats();
+      
+      // Set this Pokemon's HP to the average % of both fusion components
+      this.hp = Math.round(this.stats[Stat.HP] * newHpPercent);
+      if (!this.isFainted()) {
+        // If this Pokemon hasn't fainted, make sure the HP wasn't set over the new maximum
+        this.hp = Math.min(this.hp, this.stats[Stat.HP]);
+        this.status = getRandomStatus(this.status, pokemon.status); // Get a random valid status between the two
+      }
+      else if (!pokemon.isFainted()) {
+        // If this Pokemon fainted but the other hasn't, make sure the HP wasn't set to zero
+        this.hp = Math.max(this.hp, 1);
+        this.status = pokemon.status; // Inherit the other Pokemon's status
+      }
+
       this.generateCompatibleTms();
       this.updateInfo(true);
       const fusedPartyMemberIndex = this.scene.getParty().indexOf(pokemon);
@@ -2731,8 +2758,8 @@ export class EnemyPokemon extends Pokemon {
             let targetScores: integer[] = [];
 
             for (let mt of moveTargets[move.id]) {
-              // Prevent a target score from being calculated when there isn't a target
-              if (mt === -1)
+              // Prevent a target score from being calculated when the target is whoever attacks the user
+              if (mt === BattlerIndex.ATTACKER)
                 break;
 
               const target = this.scene.getField()[mt];
@@ -2806,10 +2833,10 @@ export class EnemyPokemon extends Pokemon {
     });
 
     if (!sortedBenefitScores.length) {
-      // Set target to -1 when using a counter move
+      // Set target to BattlerIndex.ATTACKER when using a counter move
       // This is the same as when the player does so
       if (!!move.findAttr(attr => attr instanceof CounterDamageAttr))
-        return [-1];
+        return [BattlerIndex.ATTACKER];
       
       return [];
     }

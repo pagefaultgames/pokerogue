@@ -2,7 +2,7 @@ import BattleScene, { bypassLogin, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
-import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, FixedDamageAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr } from "./data/move";
+import { allMoves, applyMoveAttrs, BypassSleepAttr, ChargeAttr, applyFilteredMoveAttrs, HitsTagAttr, MissEffectAttr, MoveAttr, MoveEffectAttr, MoveFlags, MultiHitAttr, OverrideMoveEffectAttr, VariableAccuracyAttr, MoveTarget, OneHitKOAttr, getMoveTargets, MoveTargetSet, MoveEffectTrigger, CopyMoveAttr, AttackMove, SelfStatusMove, DelayedAttackAttr, RechargeAttr, PreMoveMessageAttr, HealStatusEffectAttr, IgnoreOpponentStatChangesAttr, NoEffectAttr, FixedDamageAttr, OneHitKOAccuracyAttr, ForceSwitchOutAttr, VariableTargetAttr } from "./data/move";
 import { Mode } from './ui/ui';
 import { Command } from "./ui/command-ui-handler";
 import { Stat } from "./data/pokemon-stat";
@@ -30,7 +30,7 @@ import { Weather, WeatherType, getRandomWeatherType, getTerrainBlockMessage, get
 import { TempBattleStat } from "./data/temp-battle-stat";
 import { ArenaTagSide, ArenaTrapTag, MistTag, TrickRoomTag } from "./data/arena-tag";
 import { ArenaTagType } from "./data/enums/arena-tag-type";
-import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr } from "./data/ability";
+import { CheckTrappedAbAttr, IgnoreOpponentStatChangesAbAttr, PostAttackAbAttr, PostBattleAbAttr, PostDefendAbAttr, PostSummonAbAttr, PostTurnAbAttr, PostWeatherLapseAbAttr, PreSwitchOutAbAttr, PreWeatherDamageAbAttr, ProtectStatAbAttr, RedirectMoveAbAttr, RunSuccessAbAttr, StatChangeMultiplierAbAttr, SuppressWeatherEffectAbAttr, SyncEncounterNatureAbAttr, applyAbAttrs, applyCheckTrappedAbAttrs, applyPostAttackAbAttrs, applyPostBattleAbAttrs, applyPostDefendAbAttrs, applyPostSummonAbAttrs, applyPostTurnAbAttrs, applyPostWeatherLapseAbAttrs, applyPreStatChangeAbAttrs, applyPreSwitchOutAbAttrs, applyPreWeatherEffectAbAttrs, BattleStatMultiplierAbAttr, applyBattleStatMultiplierAbAttrs, IncrementMovePriorityAbAttr, applyPostVictoryAbAttrs, PostVictoryAbAttr, applyPostBattleInitAbAttrs, PostBattleInitAbAttr, BlockNonDirectDamageAbAttr as BlockNonDirectDamageAbAttr, applyPostKnockOutAbAttrs, PostKnockOutAbAttr, PostBiomeChangeAbAttr, applyPostFaintAbAttrs, PostFaintAbAttr, IncreasePpAbAttr, PostStatChangeAbAttr, applyPostStatChangeAbAttrs, AlwaysHitAbAttr, PreventBerryUseAbAttr, StatChangeCopyAbAttr } from "./data/ability";
 import { Unlockables, getUnlockableName } from "./system/unlockables";
 import { getBiomeKey } from "./field/arena";
 import { BattleType, BattlerIndex, TurnCommand } from "./battle";
@@ -57,6 +57,7 @@ import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameModes, gameModes } from "./game-mode";
 import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import i18next from './plugins/i18n';
+import { Abilities } from "./data/enums/abilities";
 import { STARTER_FORM_OVERRIDE, STARTER_SPECIES_OVERRIDE } from './overrides';
 
 export class LoginPhase extends Phase {
@@ -1178,14 +1179,25 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     this.preSummon();
   }
 
+  /**
+  * Sends out a Pokemon before the battle begins and shows the appropriate messages
+  */
   preSummon(): void {
     const partyMember = this.getPokemon();
+    // If the Pokemon about to be sent out is fainted, switch to the first non-fainted Pokemon
     if (partyMember.isFainted()) {
+      console.warn("The Pokemon about to be sent out is fainted. Attempting to resolve...");
       const party = this.getParty();
-      const nonFaintedIndex = party.slice(this.partyMemberIndex).findIndex(p => !p.isFainted()) + this.partyMemberIndex;
-      const nonFaintedPartyMember = party[nonFaintedIndex];
-      party[nonFaintedIndex] = partyMember;
-      party[this.partyMemberIndex] = nonFaintedPartyMember;
+      
+      const nonFaintedIndex = party.findIndex(x => !x.isFainted()); // Find the first non-fainted Pokemon index
+      if (nonFaintedIndex === -1) {
+        console.error("Party Details:\n", party);
+        throw new Error("All available Pokemon were fainted!");
+      }
+
+      // Swaps the fainted Pokemon and the first non-fainted Pokemon in the party
+      [party[this.partyMemberIndex], party[nonFaintedIndex]] = [party[nonFaintedIndex], party[this.partyMemberIndex]]; 
+      console.warn("Swapped %s %O with %s %O", partyMember?.name, partyMember, party[0]?.name, party[0]);
     }
 
     if (this.player) {
@@ -1729,7 +1741,7 @@ export class CommandPhase extends FieldPhase {
             }, null, true);
           } else if (cursor < 5) {
             const targetPokemon = this.scene.getEnemyField().find(p => p.isActive(true));
-            if (targetPokemon.isBoss() && targetPokemon.bossSegmentIndex >= 1 && cursor < PokeballType.MASTER_BALL) {
+            if (targetPokemon.isBoss() && targetPokemon.bossSegmentIndex >= 1 && !targetPokemon.hasAbility(Abilities.WONDER_GUARD, false, true) && cursor < PokeballType.MASTER_BALL) {
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
               this.scene.ui.setMode(Mode.MESSAGE);
               this.scene.ui.showText(i18next.t('battle:noPokeballStrong'), null, () => {
@@ -2399,7 +2411,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
       const targetHitChecks = Object.fromEntries(targets.map(p => [ p.getBattlerIndex(), this.hitCheck(p) ]));
       const activeTargets = targets.map(t => t.isActive(true));
-      if (!activeTargets.length || (!this.move.getMove().isMultiTarget() && !targetHitChecks[this.targets[0]])) {
+      if (!activeTargets.length || (!this.move.getMove().getAttrs(VariableTargetAttr).length && !this.move.getMove().isMultiTarget() && !targetHitChecks[this.targets[0]])) {
         user.turnData.hitCount = 1;
         user.turnData.hitsLeft = 1;
         if (activeTargets.length) {
@@ -2660,8 +2672,9 @@ export class StatChangePhase extends PokemonPhase {
   private levels: integer;
   private showMessage: boolean;
   private ignoreAbilities: boolean;
+  private canBeCopied: boolean;
 
-  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer, showMessage: boolean = true, ignoreAbilities: boolean = false) {
+  constructor(scene: BattleScene, battlerIndex: BattlerIndex, selfTarget: boolean, stats: BattleStat[], levels: integer, showMessage: boolean = true, ignoreAbilities: boolean = false, canBeCopied: boolean = true) {
     super(scene, battlerIndex);
 
     this.selfTarget = selfTarget;
@@ -2669,6 +2682,7 @@ export class StatChangePhase extends PokemonPhase {
     this.levels = levels;
     this.showMessage = showMessage;
     this.ignoreAbilities = ignoreAbilities;
+    this.canBeCopied = canBeCopied;
   }
 
   start() {
@@ -2716,8 +2730,12 @@ export class StatChangePhase extends PokemonPhase {
       for (let stat of filteredStats)
         pokemon.summonData.battleStats[stat] = Math.max(Math.min(pokemon.summonData.battleStats[stat] + levels.value, 6), -6);
       
+      if (levels.value > 0 && this.canBeCopied)
+        for (let opponent of pokemon.getOpponents())
+          applyAbAttrs(StatChangeCopyAbAttr, opponent, null, this.stats, levels.value);
+      
       applyPostStatChangeAbAttrs(PostStatChangeAbAttr, pokemon, filteredStats, this.levels, this.selfTarget);
-
+      
       pokemon.updateInfo();
 
       handleTutorial(this.scene, Tutorial.Stat_Change).then(() => super.end());
@@ -3219,19 +3237,22 @@ export class VictoryPhase extends PokemonPhase {
     const expShareModifier = this.scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
     const expBalanceModifier = this.scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
     const multipleParticipantExpBonusModifier = this.scene.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
-    const expPartyMembers = party.filter(p => p.hp && p.level < this.scene.getMaxExpLevel());
+    const nonFaintedPartyMembers = party.filter(p => p.hp);
+    const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < this.scene.getMaxExpLevel());
     const partyMemberExp = [];
 
     if (participantIds.size) {
       let expValue = this.getPokemon().getExpValue();
       if (this.scene.currentBattle.battleType === BattleType.TRAINER)
         expValue = Math.floor(expValue * 1.5);
-      for (let partyMember of expPartyMembers) {
+      for (let partyMember of nonFaintedPartyMembers) {
         const pId = partyMember.id;
         const participated = participantIds.has(pId);
         if (participated)
           partyMember.addFriendship(2);
-        else if (!expShareModifier) {
+        if (!expPartyMembers.includes(partyMember))
+          continue;
+        if (!participated && !expShareModifier) {
           partyMemberExp.push(0);
           continue;
         }
@@ -4340,7 +4361,7 @@ export class SelectModifierPhase extends BattlePhase {
           const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
           const isTmModifier = modifierType instanceof TmModifierType;
           const isRememberMoveModifier = modifierType instanceof RememberMoveModifierType;
-          const isPpRestoreModifier = modifierType instanceof PokemonPpRestoreModifierType;
+          const isPpRestoreModifier = (modifierType instanceof PokemonPpRestoreModifierType || modifierType instanceof PokemonPpUpModifierType);
           const partyUiMode = isMoveModifier ? PartyUiMode.MOVE_MODIFIER
             : isTmModifier ? PartyUiMode.TM_MODIFIER
             : isRememberMoveModifier ? PartyUiMode.REMEMBER_MOVE_MODIFIER

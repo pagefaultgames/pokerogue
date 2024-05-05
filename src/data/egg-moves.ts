@@ -115,7 +115,7 @@ export const speciesEggMoves = {
   [Species.PHANPY]: [ Moves.SHORE_UP, Moves.HEAD_SMASH, Moves.MOUNTAIN_GALE, Moves.VOLT_TACKLE ],
   [Species.STANTLER]: [ Moves.HORN_LEECH, Moves.HIGH_JUMP_KICK, Moves.BULK_UP, Moves.HEAD_CHARGE ],
   [Species.SMEARGLE]: [ Moves.BATON_PASS, Moves.BURNING_BULWARK, Moves.SALT_CURE, Moves.SPORE ],
-  [Species.TYROGUE]: [ Moves.MACH_PUNCH, Moves.WICKED_TORQUE, Moves.METEOR_MASH, Moves.COLLISION_COURSE ],
+  [Species.TYROGUE]: [ Moves.VICTORY_DANCE, Moves.WICKED_TORQUE, Moves.METEOR_MASH, Moves.COLLISION_COURSE ],
   [Species.SMOOCHUM]: [ Moves.EXPANDING_FORCE, Moves.AURA_SPHERE, Moves.FREEZY_FROST, Moves.TAKE_HEART ],
   [Species.ELEKID]: [ Moves.DRAIN_PUNCH, Moves.TIDY_UP, Moves.ICE_HAMMER, Moves.PLASMA_FISTS ],
   [Species.MAGBY]: [ Moves.STORED_POWER, Moves.EARTH_POWER, Moves.ARMOR_CANNON, Moves.FLEUR_CANNON ],
