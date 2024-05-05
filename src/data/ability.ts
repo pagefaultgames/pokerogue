@@ -21,6 +21,7 @@ import { Abilities } from "./enums/abilities";
 import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
 import Battle from "#app/battle.js";
+import { ability } from "#app/locales/en/ability.js";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -2353,12 +2354,8 @@ export class IncreasePpAbAttr extends AbAttr { }
 
 export class ForceSwitchOutImmunityAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    cancelled.value = true;
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` can't be switched out!`))
     return true;
-  }
-
-  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
-    return getPokemonMessage(pokemon, `'s ${abilityName} prevents it from being switched out!`)
   }
 }
 

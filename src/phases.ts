@@ -2277,18 +2277,21 @@ export class MovePhase extends BattlePhase {
 
       // Assume conditions affecting targets only apply to moves with a single target
       let success = this.move.getMove().applyConditions(this.pokemon, targets[0], this.move.getMove());
-      let failedText = null;
+      let cancelled = new Utils.BooleanHolder(true);
+      let failedText = this.move.getMove().getFailedText(this.pokemon, targets[0], this.move.getMove(), cancelled);
       if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
         success = false;
       else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.move.getMove())) {
         success = false;
-        failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
+        if (failedText == null)
+          failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
       }
       if (success)
         this.scene.unshiftPhase(this.getEffectPhase());
       else {
         this.pokemon.pushMoveHistory({ move: this.move.moveId, targets: this.targets, result: MoveResult.FAIL, virtual: this.move.virtual });
-        this.showFailedText(failedText);
+        if (!cancelled.value)
+          this.showFailedText(failedText);
       }
       
       this.end();
