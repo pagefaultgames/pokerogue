@@ -1189,7 +1189,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       console.warn("The Pokemon about to be sent out is fainted. Attempting to resolve...");
       const party = this.getParty();
       
-      const nonFaintedIndex = party.findIndex(x => !x.isFainted()); // Find the first non-fainted Pokemon index
+      // Find the first non-fainted Pokemon index above the current one
+      const nonFaintedIndex = party.findIndex((p, i) => i > this.partyMemberIndex && !p.isFainted());
       if (nonFaintedIndex === -1) {
         console.error("Party Details:\n", party);
         throw new Error("All available Pokemon were fainted!");
