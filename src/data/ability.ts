@@ -549,8 +549,9 @@ export class MoveImmunityStatChangeAbAttr extends MoveImmunityAbAttr {
 
 export class ReverseDrainAbAttr extends PostDefendAbAttr {
   applyPostDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    if (!!move.getMove().getAttrs(HitHealAttr).length || !!move.getMove().getAttrs(StrengthSapHealAttr).length ) {
-      pokemon.scene.queueMessage(getPokemonMessage(attacker, ` sucked up the liquid ooze!`));
+    const isDrain = args.some(arg => typeof arg === 'object' && 'seedDrain' in arg && !!arg['seedDrain']);
+    if (!!move.getMove().getAttrs(HitHealAttr).length || !!move.getMove().getAttrs(StrengthSapHealAttr).length || isDrain) {
+      pokemon.scene.queueMessage(getPokemonMessage(attacker, ' sucked up the liquid ooze!'));
       return true;
     }
     return false;
@@ -2870,7 +2871,8 @@ export function initAbilities() {
       .conditionalAttr(pokemon => !!pokemon.status, BattleStatMultiplierAbAttr, BattleStat.DEF, 1.5)
       .ignorable(),
     new Ability(Abilities.LIQUID_OOZE, 3)
-      .attr(ReverseDrainAbAttr),
+      .attr(ReverseDrainAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.OVERGROW, 3)
       .attr(LowHpMoveTypePowerBoostAbAttr, Type.GRASS),
     new Ability(Abilities.BLAZE, 3)

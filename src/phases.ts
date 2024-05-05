@@ -3901,15 +3901,11 @@ export class PokemonHealPhase extends CommonAnimPhase {
     const hasMessage = !!this.message;
     let lastStatusEffect = StatusEffect.NONE;
 
-    if (!fullHp || this.hpHealed < 0) {
+    if (!fullHp) {
       const hpRestoreMultiplier = new Utils.IntegerHolder(1);
       if (!this.revive)
         this.scene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
-      if (healAmount.value < 0) {
-        pokemon.damageAndUpdate(healAmount.value * -1, HitResult.HEAL);
-        healAmount.value = 0;
-      }
       // Prevent healing to full if specified (in case of healing tokens so Sturdy doesn't cause a softlock)
       if (this.preventFullHeal && pokemon.hp + healAmount.value >= pokemon.getMaxHp())
         healAmount.value = (pokemon.getMaxHp() - pokemon.hp) - 1;

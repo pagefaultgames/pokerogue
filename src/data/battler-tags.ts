@@ -8,7 +8,7 @@ import * as Utils from "../utils";
 import { Moves } from "./enums/moves";
 import { ChargeAttr, MoveFlags, allMoves } from "./move";
 import { Type } from "./type";
-import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs } from "./ability";
+import { BlockNonDirectDamageAbAttr, FlinchEffectAbAttr, ReverseDrainAbAttr, applyAbAttrs, applyPostDefendAbAttrs } from "./ability";
 import { Abilities } from "./enums/abilities";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { TerrainType } from "./terrain";
@@ -294,6 +294,7 @@ export class InfatuatedTag extends BattlerTag {
 
 export class SeedTag extends BattlerTag {
   private sourceIndex: integer;
+  private sourceMove: Moves;
 
   constructor(sourceId: integer) {
     super(BattlerTagType.SEEDED, BattlerTagLapseType.TURN_END, 1, Moves.LEECH_SEED, sourceId);
@@ -307,7 +308,9 @@ export class SeedTag extends BattlerTag {
     super.onAdd(pokemon);
     
     pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' was seeded!'));
-    this.sourceIndex = pokemon.scene.getPokemonById(this.sourceId).getBattlerIndex();
+    const source = pokemon.scene.getPokemonById(this.sourceId);
+    this.sourceIndex = source.getBattlerIndex();
+    this.sourceMove = source.getLastXMoves(1).shift().move;
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -322,12 +325,11 @@ export class SeedTag extends BattlerTag {
         if (!cancelled.value) {
           pokemon.scene.unshiftPhase(new CommonAnimPhase(pokemon.scene, source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.LEECH_SEED));
 
+          const move = source.getMoveset().find(m => m.moveId === this.sourceMove);
           const damage = pokemon.damageAndUpdate(Math.max(Math.floor(pokemon.getMaxHp() / 8), 1));
-          const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr);
-          pokemon.scene.unshiftPhase(new PokemonHealPhase(pokemon.scene, source.getBattlerIndex(),
-            !reverseDrain ? damage : damage * -1,
-            !reverseDrain ? getPokemonMessage(pokemon, '\'s health is\nsapped by Leech Seed!') : getPokemonMessage(source, '\'s Leech Seed\nsucked up the liquid ooze!'),
-            false, true));
+          pokemon.scene.queueMessage(getPokemonMessage(pokemon, `'s health is\nsapped by ${move.getName()}!`));
+          pokemon.drain(source, damage, '');
+          applyPostDefendAbAttrs(ReverseDrainAbAttr, pokemon, source, move, HitResult.STATUS, { seedDrain: true });
         }
       }
     }
