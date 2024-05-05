@@ -21,7 +21,7 @@ import { Biome } from "./data/enums/biome";
 import { ModifierTier } from "./modifier/modifier-tier";
 import { FusePokemonModifierType, ModifierPoolType, ModifierType, ModifierTypeFunc, ModifierTypeOption, PokemonModifierType, PokemonMoveModifierType, PokemonPpRestoreModifierType, PokemonPpUpModifierType, RememberMoveModifierType, TmModifierType, getDailyRunStarterModifiers, getEnemyBuffModifierForWave, getModifierType, getPlayerModifierTypeOptions, getPlayerShopModifierTypeOptionsForWave, modifierTypes, regenerateModifierPoolThresholds } from "./modifier/modifier-type";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { BattlerTag, BattlerTagLapseType, BounceTag, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
+import { BattlerTag, BattlerTagLapseType, MagicCoatTag, EncoreTag, HideSpriteTag as HiddenTag, ProtectedTag, TrappedTag } from "./data/battler-tags";
 import { BattlerTagType } from "./data/enums/battler-tag-type";
 import { getPokemonMessage } from "./messages";
 import { Starter } from "./ui/starter-select-ui-handler";
@@ -2416,7 +2416,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
       let isBounced: BattlerTag | boolean = false;
       for (let opponent of targets) {
-        isBounced = this.move.getMove().hasFlag(MoveFlags.MAGIC_COAT_MOVE) && (opponent.findTags(t => t instanceof BounceTag).find(t => opponent.lapseTag(t.tagType)) || opponent.hasAbilityWithAttr(MagicBounceAbAttr));
+        isBounced = this.move.getMove().hasFlag(MoveFlags.MAGIC_COAT_MOVE) && (opponent.findTags(t => t instanceof MagicCoatTag).find(t => opponent.lapseTag(t.tagType)) || opponent.hasAbilityWithAttr(MagicBounceAbAttr));
         if (isBounced) {
           this.scene.queueMessage(getPokemonMessage(opponent, '\nbounced the move back!'));
           const tempTargets = targets;

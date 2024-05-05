@@ -56,5 +56,5 @@ export enum BattlerTagType {
   CHARGED = "CHARGED",
   GROUNDED = "GROUNDED",
   MAGNET_RISEN = "MAGNET_RISEN",
-  BOUNCE = "BOUNCE"
+  MAGIC_COAT = "MAGIC_COAT"
 }

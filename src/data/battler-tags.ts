@@ -790,9 +790,15 @@ export class ContactBurnProtectedTag extends ProtectedTag {
   }
 }
 
-export class BounceTag extends BattlerTag {
-  constructor(sourceMove: Moves, tagType: BattlerTagType = BattlerTagType.BOUNCE) {
+export class MagicCoatTag extends BattlerTag {
+  constructor(sourceMove: Moves, tagType: BattlerTagType = BattlerTagType.MAGIC_COAT) {
     super(tagType, BattlerTagLapseType.CUSTOM, 0, sourceMove);
+  }
+
+  onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' shrouded\nitself with Magic Coat!'));
   }
 }
 
@@ -1232,8 +1238,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
     case BattlerTagType.MAGNET_RISEN:
       return new MagnetRisenTag(tagType, sourceMove);
-    case BattlerTagType.BOUNCE:
-      return new BounceTag(sourceMove);
+    case BattlerTagType.MAGIC_COAT:
+      return new MagicCoatTag(sourceMove);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
