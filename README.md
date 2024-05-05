@@ -102,3 +102,7 @@ Check out our [Trello Board](https://trello.com/b/z10B703R/pokerogue-board) to s
 
 ### 🎨 Move Animations
   - Pokémon Reborn
+  ### 🎨 Move Animations
+  - Pokémon Reborn
+  ### 🎨 Move Animations
+  - Pokémon Reborn
