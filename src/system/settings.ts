@@ -25,7 +25,7 @@ export enum Setting {
   Fusion_Palette_Swaps = "FUSION_PALETTE_SWAPS",
   Player_Gender = "PLAYER_GENDER",
   Gamepad_Support = "GAMEPAD_SUPPORT",
-  Swap_A_and_B = "SWAP_A_B",
+  Swap_A_and_B = "SWAP_A_B", // Swaps which gamepad button handles ACTION and CANCEL
   Touch_Controls = "TOUCH_CONTROLS",
   Vibration = "VIBRATION"
 }
@@ -81,7 +81,7 @@ export const settingDefaults: SettingDefaults = {
   [Setting.Fusion_Palette_Swaps]: 1,
   [Setting.Player_Gender]: 0,
   [Setting.Gamepad_Support]: 0,
-  [Setting.Swap_A_and_B]: 1,
+  [Setting.Swap_A_and_B]: 1, // Set to 'Disabled' by default
   [Setting.Touch_Controls]: 0,
   [Setting.Vibration]: 0
 };
