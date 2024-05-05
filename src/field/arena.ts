@@ -492,7 +492,7 @@ export class Arena {
 	}
 
   addTag(tagType: ArenaTagType, turnCount: integer, sourceMove: Moves, sourceId: integer, side: ArenaTagSide = ArenaTagSide.BOTH, targetIndex?: BattlerIndex): boolean {
-    const existingTag = this.getTagOnSide(tagType, side);
+    const existingTag = this.getTag(tagType);
     if (existingTag) {
       existingTag.onOverlap(this);
       return false;

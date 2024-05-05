@@ -2824,7 +2824,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
   public tagType: ArenaTagType;
   public turnCount: integer;
   private failOnOverlap: boolean;
-  public selfSideTarget: boolean;
+  private selfSideTarget: boolean;
 
   constructor(tagType: ArenaTagType, turnCount?: integer, failOnOverlap: boolean = false, selfSideTarget: boolean = false) {
     super(true, MoveEffectTrigger.POST_APPLY, true);
@@ -2857,7 +2857,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      if (move.category !== MoveCategory.STATUS || !user.scene.arena.getTagOnSide(this.tagType, (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY))
+      if (move.category !== MoveCategory.STATUS || !user.scene.arena.getTag(this.tagType))
         return true;
       const tag = user.scene.arena.getTag(this.tagType) as ArenaTrapTag;
       return tag.layers < tag.maxLayers;
