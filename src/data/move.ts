@@ -4446,8 +4446,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.ENDURE, Type.NORMAL, -1, 10, -1, 4, 2)
       .attr(EndureAttr),
     new StatusMove(Moves.CHARM, Type.FAIRY, 100, 20, -1, 0, 2)
-      .magicCoatMove()
-      .attr(StatChangeAttr, BattleStat.ATK, -2),
+      .attr(StatChangeAttr, BattleStat.ATK, -2)
+      .magicCoatMove(),
     new AttackMove(Moves.ROLLOUT, Type.ROCK, MoveCategory.PHYSICAL, 30, 90, 20, -1, 0, 2)
       .attr(ConsecutiveUseDoublePowerAttr, 5, true, true, Moves.DEFENSE_CURL),
     new AttackMove(Moves.FALSE_SWIPE, Type.NORMAL, MoveCategory.PHYSICAL, 40, 100, 40, -1, 0, 2)
@@ -5539,7 +5539,8 @@ export function initMoves() {
       .magicCoatMove(),
     new StatusMove(Moves.CONFIDE, Type.NORMAL, -1, 20, 100, 0, 6)
       .attr(StatChangeAttr, BattleStat.SPATK, -1)
-      .soundBased(),
+      .soundBased()
+      .magicCoatMove(),
     new AttackMove(Moves.DIAMOND_STORM, Type.ROCK, MoveCategory.PHYSICAL, 100, 95, 5, 50, 0, 6)
       .attr(StatChangeAttr, BattleStat.DEF, 2, true)
       .makesContact(false)
