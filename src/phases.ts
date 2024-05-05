@@ -2280,7 +2280,7 @@ export class MovePhase extends BattlePhase {
       let failedText = null;
       if (success && this.scene.arena.isMoveWeatherCancelled(this.move.getMove()))
         success = false;
-      else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.move.getMove())) {
+      else if (success && this.scene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, this.move.getMove())) {
         success = false;
         failedText = getTerrainBlockMessage(targets[0], this.scene.arena.terrain.terrainType);
       }
