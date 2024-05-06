@@ -19,9 +19,13 @@ export const menu: SimpleTranslationEntries = {
     "boyOrGirl": "¿Eres un chico o una chica?",
     "boy": "Chico",
     "girl": "Chica",
-    "dailyRankings": "Daily Rankings",
-    "weeklyRankings": "Weekly Rankings",
-    "noRankings": "No Rankings",
-    "loading": "Loading…",
-    "playersOnline": "Players Online"
+    "dailyRankings": "Rankings Diarios",
+    "weeklyRankings": "Rankings Semanales",
+    "noRankings": "Sin Rankings",
+    "loading": "Cargando…",
+    "playersOnline": "Jugadores en Línea",
+    "empty":"Vacío",
+    "yes":"Sí",
+    "no":"No",
+    "confirmStartTeam":'¿Comenzar con estos Pokémon?',
 } as const;
