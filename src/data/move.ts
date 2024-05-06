@@ -407,14 +407,6 @@ export class SelfStatusMove extends Move {
   }
 }
 
-export class StockpileMove extends SelfStatusMove {
-  constructor(id: Moves, type: Type, accuracy: integer, pp: integer, chance: integer, priority: integer, generation: integer) {
-    super(id, type, accuracy, pp, chance, priority, generation);
-  }
-
-  // add a function for shifting conditions
-}
-
 export abstract class MoveAttr {
   public selfTarget: boolean;
 
@@ -638,6 +630,52 @@ export class RandomLevelDamageAttr extends FixedDamageAttr {
 
   getDamage(user: Pokemon, target: Pokemon, move: Move): number {
     return Math.max(Math.floor(user.level * (user.randSeedIntRange(50, 150) * 0.01)), 1);
+  }
+}
+export class StockpileDamageAttr extends FixedDamageAttr {
+  constructor() {
+    super(0);
+  }
+
+  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+    let ret = super.getTargetBenefitScore(user, target, move);
+
+    let attackScore = 0;
+
+    const effectiveness = target.getAttackTypeEffectiveness(Type.NORMAL);
+    attackScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
+    if (attackScore) {
+      const spAtk = new Utils.IntegerHolder(user.getBattleStat(Stat.SPATK, target));
+      applyMoveAttrs(VariableAtkAttr, user, target, move, spAtk);
+      if (spAtk.value > user.getBattleStat(Stat.ATK, target)) {
+        const statRatio = user.getBattleStat(Stat.ATK, target) / spAtk.value;
+        if (statRatio <= 0.75)
+          attackScore *= 2;
+        else if (statRatio <= 0.875)
+          attackScore *= 1.5;
+      }
+      
+      const power = new Utils.NumberHolder(this.getPower(user, target, move));
+      applyMoveAttrs(VariablePowerAttr, user, target, move, power);
+
+      attackScore += Math.floor(power.value / 5);
+    }
+
+    ret -= attackScore;
+
+    return ret;
+  }
+
+  getPower(user: Pokemon, target: Pokemon, move: Move): number {
+    if (!!user.getTag(BattlerTagType.STOCKPILE_THREE)){
+      return 300;
+    } else if (!!user.getTag(BattlerTagType.STOCKPILE_TWO)){
+      return 200;
+    } else if (!!user.getTag(BattlerTagType.STOCKPILE_ONE)){
+      return 100;
+    } else {
+      return 0;
+    }
   }
 }
 
@@ -2854,52 +2892,6 @@ export class StockpileThreeAttr extends AddBattlerTagAttr {
   }
 }
 
-export class StockpileAttr extends AddBattlerTagAttr {
-
-  constructor() {
-    super(BattlerTagType.STOCKPILE_THREE, true, true, 0, 10);
-  }
-
-  getStockpile(stacks: integer = 1): MoveConditionFunc {
-    let stockpileType = BattlerTagType.STOCKPILE_ONE;
-    switch (stacks) {
-      case 2:
-        stockpileType = BattlerTagType.STOCKPILE_TWO;
-        break;
-      case 3:
-        stockpileType = BattlerTagType.STOCKPILE_THREE;
-        break;
-      default:
-    }
-    return (user, target, move) => !user.getTag(stockpileType);
-  };
-
-  setStockpile(user: Pokemon, target: Pokemon, move: Move){
-    const getStockpileOne = this.getStockpile(1);
-    const getStockpileTwo = this.getStockpile(2);
-    if (getStockpileOne(user, target, move) && !getStockpileTwo(user, target, move)) {
-      // if there's only 1 stockpile, give 2nd stockpile
-      this.tagType = BattlerTagType.STOCKPILE_TWO;
-    } else if (!getStockpileOne(user, target, move)) {
-      // if there's no stockpile, give 1st stockpile
-      this.tagType = BattlerTagType.STOCKPILE_ONE;
-    } else {
-      // tagType stays as STOCKPILE_THREE
-      // if there's 2 stockpile, then we give 3rd stockpile
-      // if there's 3 stockpile, then move fails
-    }
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args))
-      return false;
-
-    user.scene.queueMessage(getPokemonMessage(target, `\nstockpiled resources.`));
-
-    return true;
-  }
-}
-
 export class HitsTagAttr extends MoveAttr {
   public tagType: BattlerTagType;
   public doubleDamage: boolean;
@@ -4648,7 +4640,9 @@ export function initMoves() {
      * need to find a way to remove stockpile when the relevant moves are used
      */
     new SelfStatusMove(Moves.STOCKPILE, Type.NORMAL, -1, 20, -1, 0, 3)
-      .attr(StockpileAttr)
+      .attr(StockpileOneAttr)
+      .attr(StockpileTwoAttr)
+      .attr(StockpileThreeAttr)
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, true)
       .partial(),
     new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
