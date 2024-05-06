@@ -1,4 +1,4 @@
-import BattleScene, { bypassLogin, startingWave } from "./battle-scene";
+import BattleScene, { AnySound, bypassLogin, startingWave } from "./battle-scene";
 import { default as Pokemon, PlayerPokemon, EnemyPokemon, PokemonMove, MoveResult, DamageResult, FieldPosition, HitResult, TurnMove } from "./field/pokemon";
 import * as Utils from './utils';
 import { Moves } from "./data/enums/moves";
@@ -3446,8 +3446,40 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
   }
 }
 
+export class RibbonModifierRewardPhase extends ModifierRewardPhase {
+  private pokemon: Pokemon;
+  private cry: AnySound;
+  constructor(scene: BattleScene, modifierTypeFunc: ModifierTypeFunc, pokemon: Pokemon) {
+    super(scene, modifierTypeFunc);
+
+    this.pokemon = pokemon;
+  }
+
+  doReward(): Promise<void> {
+    return new Promise<void>(resolve => {
+      const newModifier = this.modifierType.newModifier();
+      this.scene.addModifier(newModifier).then(() => {
+        this.scene.gameData.saveSystem().then(success => {
+          if (success) {
+            this.pokemon.cry(null, this.scene);
+            this.scene.ui.setMode(Mode.MESSAGE);
+            this.scene.arenaBg.setVisible(false);
+            this.scene.ui.fadeIn(250).then(() => {
+              this.scene.ui.showText(`${this.pokemon.name} conquered classic for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
+                resolve();
+              }, null, true, 1500);
+            });
+          } else
+            this.scene.reset(true);
+        });
+      });
+    })
+  }
+}
+
 export class GameOverPhase extends BattlePhase {
   private victory: boolean;
+  private firstRibbons: Pokemon[] = [];
 
   constructor(scene: BattleScene, victory?: boolean) {
     super(scene);
@@ -3500,10 +3532,10 @@ export class GameOverPhase extends BattlePhase {
             firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
             this.scene.gameData.gameStats.sessionsWon++;
             for (let pokemon of this.scene.getParty()) {
-              this.awardRibbon(pokemon.species);
+              this.awardRibbon(pokemon);
 
               if (pokemon.species.getRootSpeciesId() != pokemon.species.getRootSpeciesId(true)) {
-                this.awardRibbon(pokemon.species, true);
+                this.awardRibbon(pokemon, true);
               }
             }
           } else if (this.scene.gameMode.isDaily && success[1])
@@ -3517,8 +3549,12 @@ export class GameOverPhase extends BattlePhase {
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
           this.handleUnlocks();
-          if (this.victory && !firstClear && success[1])
+          if (this.victory && !firstClear && success[1]) {
+            for (let pokemon of this.firstRibbons) {
+              this.scene.unshiftPhase(new RibbonModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS, pokemon));
+            }
             this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
+          }
           this.scene.reset();
           this.scene.unshiftPhase(new TitlePhase(this.scene));
           this.end();
@@ -3538,12 +3574,12 @@ export class GameOverPhase extends BattlePhase {
     }
   }
 
-  awardRibbon(species: PokemonSpecies, forStarter: boolean = false): void {
-    const speciesId = getPokemonSpecies(species.speciesId)
+  awardRibbon(pokemon: Pokemon, forStarter: boolean = false): void {
+    const speciesId = getPokemonSpecies(pokemon.species.speciesId)
     const speciesRibbonCount = this.scene.gameData.incrementRibbonCount(speciesId, forStarter);
     // first time classic win, award voucher
     if (speciesRibbonCount === 1) {
-      this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.VOUCHER));
+      this.firstRibbons.push(pokemon);
     }
   }
 }
