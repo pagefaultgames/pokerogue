@@ -270,7 +270,6 @@ export default class SummaryUiHandler extends UiHandler {
     this.pokemon.cry();
 
     this.nameText.setText(this.pokemon.name);
-    this.newName = this.pokemon.name;
 
     const isFusion = this.pokemon.isFusion();
 
@@ -345,7 +344,7 @@ export default class SummaryUiHandler extends UiHandler {
       this.status.setFrame(this.pokemon.status ? StatusEffect[this.pokemon.status.effect].toLowerCase() : 'pokerus');
     } else
       this.hideStatus(!fromSummary);
-
+    
     return true;
   }
 
@@ -425,9 +424,10 @@ export default class SummaryUiHandler extends UiHandler {
       if (button === Button.SUBMIT) {
         this.pokemon.name = this.newName;
         this.hideRenamePokemon();
+        success = true;
       } else if (button === Button.CANCEL) {
-        this.newName = this.pokemon.name;
         this.hideRenamePokemon();
+        success = true;
       }
     } else {
       if (button === Button.ACTION) {
@@ -924,9 +924,13 @@ export default class SummaryUiHandler extends UiHandler {
 
   showRenamePokemon() {
     this.renamePokemon = true;
+    this.newName = this.pokemon.name;
+    this.isCapitalized = true;
   }
   hideRenamePokemon() {
     this.renamePokemon = false;
+    this.newName = this.pokemon.name;
+    this.isCapitalized = true;
   }
   
   showMoveSelect() {
@@ -1012,6 +1016,11 @@ export default class SummaryUiHandler extends UiHandler {
         this.selectedMoveCursorObj = null;
       }
       this.hideMoveEffect(true);
+    }
+    if (this.renamePokemon) {
+      this.renamePokemon = false;
+      this.newName = this.pokemon.name;
+      this.isCapitalized = true;
     }
     this.summaryContainer.setVisible(false);
     this.summaryPageContainer.setVisible(false);
