@@ -647,6 +647,50 @@ export class RandomLevelDamageAttr extends FixedDamageAttr {
     return Math.max(Math.floor(user.level * (user.randSeedIntRange(50, 150) * 0.01)), 1);
   }
 }
+export class StockpileDamageAttr extends FixedDamageAttr {
+  constructor() {
+    super(0);
+  }
+
+  getDamage(user: Pokemon, target: Pokemon, move: Move): integer {
+    let ret = super.getTargetBenefitScore(user, target, move);
+
+    let attackScore = 0;
+
+    const effectiveness = target.getAttackTypeEffectiveness(Type.NORMAL);
+    attackScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
+    if (attackScore) {
+      const spAtk = new Utils.IntegerHolder(user.getBattleStat(Stat.SPATK, target));
+      applyMoveAttrs(VariableAtkAttr, user, target, move, spAtk);
+      if (spAtk.value > user.getBattleStat(Stat.ATK, target)) {
+        const statRatio = user.getBattleStat(Stat.ATK, target) / spAtk.value;
+        if (statRatio <= 0.75)
+          attackScore *= 2;
+        else if (statRatio <= 0.875)
+          attackScore *= 1.5;
+      }
+      
+      const power = new Utils.NumberHolder(this.getPower(user, target, move));
+      applyMoveAttrs(VariablePowerAttr, user, target, move, power);
+
+      attackScore += Math.floor(power.value / 5);
+    }
+
+    return attackScore;
+  }
+
+  getPower(user: Pokemon, target: Pokemon, move: Move): number {
+    if (!!user.getTag(BattlerTagType.STOCKPILE_THREE)){
+      return 300;
+    } else if (!!user.getTag(BattlerTagType.STOCKPILE_TWO)){
+      return 200;
+    } else if (!!user.getTag(BattlerTagType.STOCKPILE_ONE)){
+      return 100;
+    } else {
+      return 0;
+    }
+  }
+}
 
 export class ModifiedDamageAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2701,6 +2745,9 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       case BattlerTagType.INGRAIN:
       case BattlerTagType.IGNORE_ACCURACY:
       case BattlerTagType.AQUA_RING:
+      case BattlerTagType.STOCKPILE_ONE:
+      case BattlerTagType.STOCKPILE_TWO:
+      case BattlerTagType.STOCKPILE_THREE:
         return 3;
       case BattlerTagType.PROTECTED:
       case BattlerTagType.FLYING:
@@ -2873,6 +2920,83 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
       return false;
 
     user.scene.queueMessage(getPokemonMessage(target, `\nwill faint in ${this.turnCountMin - 1} turns.`));
+
+    return true;
+  }
+}
+
+export class StockpileOneAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.STOCKPILE_ONE, true, true, 20, 20);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    user.scene.queueMessage(getPokemonMessage(target, `\nstockpiled 1.`));
+
+    return true;
+  }
+}
+
+export class StockpileTwoAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.STOCKPILE_TWO, true, true, 20, 20);
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => (!user.getTag(this.tagType) && !!user.getTag(BattlerTagType.STOCKPILE_ONE));
+  }
+
+  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+    if (!super.canApply(user, target, move, args))
+      return false;
+
+    const canApplyStockpileTwo = this.getCondition();
+
+    return canApplyStockpileTwo(user, target, move);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    if (!this.canApply(user, target, move, args))
+      return false;
+
+    user.scene.queueMessage(getPokemonMessage(target, `\nstockpiled 2.`));
+
+    return true;
+  }
+}
+
+export class StockpileThreeAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.STOCKPILE_THREE, true, true, 20, 20);
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => (!user.getTag(this.tagType) && !!user.getTag(BattlerTagType.STOCKPILE_TWO));
+  }
+
+  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
+    if (!super.canApply(user, target, move, args))
+      return false;
+
+    const canApplyStockpileThree = this.getCondition();
+
+    return canApplyStockpileThree(user, target, move);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    if (!this.canApply(user, target, move, args))
+      return false;
+
+    user.scene.queueMessage(getPokemonMessage(target, `\nstockpiled 3.`));
 
     return true;
   }
@@ -4647,10 +4771,20 @@ export function initMoves() {
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       .partial(),
     // mareksison/redmaverick616 starts working here
+    /**
+     * need to find a way to remove stat changes when stockpile is used
+     * need to find a way to remove stockpile when the relevant moves are used
+     */
     new SelfStatusMove(Moves.STOCKPILE, Type.NORMAL, -1, 20, -1, 0, 3)
-      .unimplemented(),
+      .attr(StockpileOneAttr)
+      .attr(StockpileTwoAttr)
+      .attr(StockpileThreeAttr)
+      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, true)
+      .partial(),
     new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
-      .unimplemented(),
+      .attr(StockpileDamageAttr)
+      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true)
+      .partial(),
     new SelfStatusMove(Moves.SWALLOW, Type.NORMAL, -1, 10, -1, 0, 3)
       .triageMove()
       .unimplemented(),
