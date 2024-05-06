@@ -113,27 +113,6 @@ const filterableTypes = {
   FAIRY: 17
 }
 
-type filters = {
-  NORMAL: boolean,
-  FIRE: boolean,
-  WATER: boolean,
-  ELECTRIC: boolean,
-  GRASS: boolean,
-  ICE: boolean,
-  FIGHTING: boolean,
-  POISON: boolean,
-  GROUND: boolean,
-  FLYING: boolean,
-  PSYCHIC: boolean,
-  BUG: boolean,
-  ROCK: boolean,
-  GHOST: boolean,
-  DRAGON: boolean,
-  DARK: boolean,
-  STEEL: boolean,
-  FAIRY: boolean
-}
-
 const gens = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX' ];
 
 export default class StarterSelectUiHandler extends MessageUiHandler {
@@ -231,7 +210,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
-  private filterObj: filters = {
+  private filterObj = {
     NORMAL: false,
     FIRE: false,
     WATER: false,
@@ -1310,7 +1289,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.genSpecies[g].forEach((species, s) => {
         const type1 = Type[species.type1];
         const type2 = Type[species.type2];
-        // If all filters are eoff then show all specifies
+        // If all filters are off then show all specifies
         const alpha = noFilters ? 1 
         : this.filterObj[type1] || this.filterObj[type2]
           ? 1 
