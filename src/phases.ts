@@ -2921,32 +2921,27 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
         this.scene.queueMessage(getPokemonMessage(pokemon, getStatusEffectActivationText(pokemon.status.effect)));
 
         let netEffect = 0;  // This variable now handles both healing and damage
-        const isHealing = pokemon.hasAbility(Abilities.POISON_HEAL); // Added check for both Ability and the new Passives
 
         switch (pokemon.status.effect) {
           case StatusEffect.POISON:
           case StatusEffect.TOXIC:
-            if (isHealing) {
+            if (pokemon.hasAbility(Abilities.POISON_HEAL)) {  // Directly check here
               netEffect = Math.max(pokemon.getMaxHp() >> 3, 1);  // Healing logic
+              this.scene.damageNumberHandler.add(pokemon, pokemon.heal(netEffect), HitResult.HEAL); // Apply healing
             } else {
-              // Toxic damage increases over time, Poison does not
-              netEffect = (pokemon.status.effect === StatusEffect.TOXIC) ?
+              netEffect = (pokemon.status.effect === StatusEffect.TOXIC) ? // Toxic damage increases over time, Poison does not
                 Math.max(Math.floor((pokemon.getMaxHp() / 16) * pokemon.status.turnCount), 1) : // Applies if Toxic
-              Math.max(pokemon.getMaxHp() >> 3, 1);  // Damage logic for Poison otherwise
+              Math.max(pokemon.getMaxHp() >> 3, 1); // Damage logic for Poison otherwise
+              this.scene.damageNumberHandler.add(pokemon, pokemon.damage(netEffect)); // Apply damage, this is built in now so that the Poison Heal ability isn't indiscriminate
             }
             break;
           case StatusEffect.BURN:
-            netEffect = Math.max(pokemon.getMaxHp() >> 4, 1);  // Burn always causes damage
+            netEffect = Math.max(pokemon.getMaxHp() >> 4, 1);
+            this.scene.damageNumberHandler.add(pokemon, pokemon.damage(netEffect)); // Apply damage, same as above
             break;
         }
 
-        if (netEffect > 0) {
-          if (isHealing) {
-            this.scene.damageNumberHandler.add(pokemon, pokemon.heal(netEffect), HitResult.HEAL);
-          } else {
-            this.scene.damageNumberHandler.add(pokemon, pokemon.damage(netEffect));
-          }
-
+        if (netEffect > 0) { // Just a check for poison to play the bubbly animation, damage moved to above
           const animType = CommonAnim.POISON + (pokemon.status.effect - 1);
           new CommonBattleAnim(animType, pokemon).play(this.scene, () => this.end());
           pokemon.updateInfo();
