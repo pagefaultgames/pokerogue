@@ -822,7 +822,7 @@ export class HealAttr extends MoveEffectAttr {
   }
 }
 
-export class StockpileHealAttr extends HealAttr {
+export class SwallowHealAttr extends HealAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const s = this.getStockpiles(user);
 
@@ -2171,7 +2171,7 @@ export class WaterShurikenPowerAttr extends VariablePowerAttr {
   }
 }
 
-export class StockpilePowerAttr extends VariablePowerAttr {
+export class SpitUpPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as Utils.NumberHolder;
 
@@ -2988,80 +2988,42 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
   }
 }
 
-export class StockpileOneAttr extends AddBattlerTagAttr {
-  constructor() {
-    super(BattlerTagType.STOCKPILE_ONE, true, true, 20, 20);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args))
-      return false;
-
-    user.scene.queueMessage(getPokemonMessage(target, `\nstockpiled 1.`));
-
-    return true;
-  }
-}
-
-export class StockpileTwoAttr extends AddBattlerTagAttr {
-  constructor() {
-    super(BattlerTagType.STOCKPILE_TWO, true, true, 20, 20);
-  }
-
-  getCondition(): MoveConditionFunc {
-    return (user, target, move) => (!user.getTag(this.tagType) && !!user.getTag(BattlerTagType.STOCKPILE_ONE));
-  }
-
-  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
-    if (!super.canApply(user, target, move, args))
-      return false;
-
-    const canApplyStockpileTwo = this.getCondition();
-
-    return canApplyStockpileTwo(user, target, move);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args))
-      return false;
-
-    if (!this.canApply(user, target, move, args))
-      return false;
-
-    user.scene.queueMessage(getPokemonMessage(target, `\nstockpiled 2.`));
-
-    return true;
-  }
-}
-
-export class StockpileThreeAttr extends AddBattlerTagAttr {
+export class StockpileAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.STOCKPILE_THREE, true, true, 20, 20);
   }
 
-  getCondition(): MoveConditionFunc {
-    return (user, target, move) => (!user.getTag(this.tagType) && !!user.getTag(BattlerTagType.STOCKPILE_TWO));
-  }
-
-  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
-    if (!super.canApply(user, target, move, args))
-      return false;
-
-    const canApplyStockpileThree = this.getCondition();
-
-    return canApplyStockpileThree(user, target, move);
-  }
-
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const stock = this.getStockpiles(user);
+    let stockType = BattlerTagType.STOCKPILE_THREE;
+
+    switch (stock){
+      case 0:
+        stockType = BattlerTagType.STOCKPILE_ONE;
+        break;
+      case 1:
+        stockType = BattlerTagType.STOCKPILE_TWO;
+    }
+
     if (!super.apply(user, target, move, args))
       return false;
 
-    if (!this.canApply(user, target, move, args))
-      return false;
-
-    user.scene.queueMessage(getPokemonMessage(target, `\nstockpiled 3.`));
+    user.scene.queueMessage(getPokemonMessage(target, `\nstockpiled ${stock+1}.`));
 
     return true;
+  }
+
+  getStockpiles(user: Pokemon): integer {
+    let s = 0;
+    const stock = [BattlerTagType.STOCKPILE_ONE, BattlerTagType.STOCKPILE_TWO, BattlerTagType.STOCKPILE_THREE];
+
+    for (let x = 0 ; x < stock.length ; x++){
+      if (user.getTag(stock[x])){
+        s++;
+      }
+    }
+
+    return s;
   }
 }
 
@@ -4834,13 +4796,11 @@ export function initMoves() {
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       .partial(),
     new SelfStatusMove(Moves.STOCKPILE, Type.NORMAL, -1, 20, -1, 0, 3)
-      .attr(StockpileOneAttr)
-      .attr(StockpileTwoAttr)
-      .attr(StockpileThreeAttr)
+      .attr(StockpileAttr)
       .attr(StockpileStatChangeAttr, 'Stockpile')
       .partial(),
     new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
-      .attr(StockpilePowerAttr)
+      .attr(SpitUpPowerAttr)
       .attr(StockpileStatChangeAttr, 'Spit-Up')
       .attr(RemoveBattlerTagAttr, [ 
         BattlerTagType.STOCKPILE_ONE,
@@ -4849,14 +4809,14 @@ export function initMoves() {
       ], true)
       .partial(),
     new SelfStatusMove(Moves.SWALLOW, Type.NORMAL, -1, 10, -1, 0, 3)
-      .triageMove()
-      .attr(StockpileHealAttr, 1)
+      .attr(SwallowHealAttr, 1)
       .attr(StockpileStatChangeAttr, 'Swallow')
       .attr(RemoveBattlerTagAttr, [ 
         BattlerTagType.STOCKPILE_ONE,
         BattlerTagType.STOCKPILE_TWO,
         BattlerTagType.STOCKPILE_THREE,
       ], true)
+      .triageMove()
       .partial(),
     new AttackMove(Moves.HEAT_WAVE, Type.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 10, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
