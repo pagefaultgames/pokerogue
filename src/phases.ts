@@ -55,7 +55,7 @@ import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select
 import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameModes, gameModes } from "./game-mode";
-import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
+import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./data/pokemon-species";
 import i18next from './plugins/i18n';
 import { STARTER_FORM_OVERRIDE, STARTER_SPECIES_OVERRIDE } from './overrides';
 
@@ -3447,12 +3447,12 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
 }
 
 export class RibbonModifierRewardPhase extends ModifierRewardPhase {
-  private pokemon: Pokemon;
-  private cry: AnySound;
-  constructor(scene: BattleScene, modifierTypeFunc: ModifierTypeFunc, pokemon: Pokemon) {
+  private species: PokemonSpecies;
+
+  constructor(scene: BattleScene, modifierTypeFunc: ModifierTypeFunc, species: PokemonSpecies) {
     super(scene, modifierTypeFunc);
 
-    this.pokemon = pokemon;
+    this.species = species;
   }
 
   doReward(): Promise<void> {
@@ -3461,11 +3461,12 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
       this.scene.addModifier(newModifier).then(() => {
         this.scene.gameData.saveSystem().then(success => {
           if (success) {
-            this.pokemon.cry(null, this.scene);
+            // this.species.cry(this.scene);
+            this.scene.playSound('level_up_fanfare');
             this.scene.ui.setMode(Mode.MESSAGE);
             this.scene.arenaBg.setVisible(false);
             this.scene.ui.fadeIn(250).then(() => {
-              this.scene.ui.showText(`${this.pokemon.name} conquered classic for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
+              this.scene.ui.showText(`${this.species.name} beat classic for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
                 resolve();
               }, null, true, 1500);
             });
@@ -3479,7 +3480,7 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
 
 export class GameOverPhase extends BattlePhase {
   private victory: boolean;
-  private firstRibbons: Pokemon[] = [];
+  private firstRibbons: PokemonSpecies[] = [];
 
   constructor(scene: BattleScene, victory?: boolean) {
     super(scene);
@@ -3550,8 +3551,8 @@ export class GameOverPhase extends BattlePhase {
           this.scene.ui.clearText();
           this.handleUnlocks();
           if (this.victory && !firstClear && success[1]) {
-            for (let pokemon of this.firstRibbons) {
-              this.scene.unshiftPhase(new RibbonModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS, pokemon));
+            for (let species of this.firstRibbons) {
+              this.scene.unshiftPhase(new RibbonModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS, species));
             }
             this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
           }
@@ -3579,7 +3580,7 @@ export class GameOverPhase extends BattlePhase {
     const speciesRibbonCount = this.scene.gameData.incrementRibbonCount(speciesId, forStarter);
     // first time classic win, award voucher
     if (speciesRibbonCount === 1) {
-      this.firstRibbons.push(pokemon);
+      this.firstRibbons.push(getPokemonSpecies(pokemon.species.getRootSpeciesId(forStarter)));
     }
   }
 }
