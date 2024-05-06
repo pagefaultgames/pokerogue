@@ -2275,6 +2275,24 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   }
 }
 
+export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
+  constructor() {
+    super ();
+  }
+
+  applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
+    console.log(args);
+    let damage = args[0];
+    attacker.damageAndUpdate((damage), HitResult.OTHER);
+    attacker.turnData.damageTaken += damage;
+    return true;
+  } 
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${abilityName} hurt\nits attacker!`);
+  }
+}
+
 export class RedirectMoveAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     if (this.canRedirect(args[0] as Moves)) {
@@ -3316,7 +3334,8 @@ export function initAbilities() {
       .attr(FieldPriorityMoveImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.INNARDS_OUT, 7)
-      .unimplemented(),
+      .attr(PostFaintHPDamageAbAttr)
+      .bypassFaint(),
     new Ability(Abilities.DANCER, 7)
       .unimplemented(),
     new Ability(Abilities.BATTERY, 7)
