@@ -57,6 +57,7 @@ import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameModes, gameModes } from "./game-mode";
 import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import i18next from './plugins/i18n';
+import { Abilities } from "./data/enums/abilities";
 import { STARTER_FORM_OVERRIDE, STARTER_SPECIES_OVERRIDE } from './overrides';
 
 export class LoginPhase extends Phase {
@@ -1729,7 +1730,7 @@ export class CommandPhase extends FieldPhase {
             }, null, true);
           } else if (cursor < 5) {
             const targetPokemon = this.scene.getEnemyField().find(p => p.isActive(true));
-            if (targetPokemon.isBoss() && targetPokemon.bossSegmentIndex >= 1 && cursor < PokeballType.MASTER_BALL) {
+            if (targetPokemon.isBoss() && targetPokemon.bossSegmentIndex >= 1 && !targetPokemon.hasAbility(Abilities.WONDER_GUARD, false, true) && cursor < PokeballType.MASTER_BALL) {
               this.scene.ui.setMode(Mode.COMMAND, this.fieldIndex);
               this.scene.ui.setMode(Mode.MESSAGE);
               this.scene.ui.showText(i18next.t('battle:noPokeballStrong'), null, () => {
@@ -3219,19 +3220,22 @@ export class VictoryPhase extends PokemonPhase {
     const expShareModifier = this.scene.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
     const expBalanceModifier = this.scene.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
     const multipleParticipantExpBonusModifier = this.scene.findModifier(m => m instanceof MultipleParticipantExpBonusModifier) as MultipleParticipantExpBonusModifier;
-    const expPartyMembers = party.filter(p => p.hp && p.level < this.scene.getMaxExpLevel());
+    const nonFaintedPartyMembers = party.filter(p => p.hp);
+    const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < this.scene.getMaxExpLevel());
     const partyMemberExp = [];
 
     if (participantIds.size) {
       let expValue = this.getPokemon().getExpValue();
       if (this.scene.currentBattle.battleType === BattleType.TRAINER)
         expValue = Math.floor(expValue * 1.5);
-      for (let partyMember of expPartyMembers) {
+      for (let partyMember of nonFaintedPartyMembers) {
         const pId = partyMember.id;
         const participated = participantIds.has(pId);
         if (participated)
           partyMember.addFriendship(2);
-        else if (!expShareModifier) {
+        if (!expPartyMembers.includes(partyMember))
+          continue;
+        if (!participated && !expShareModifier) {
           partyMemberExp.push(0);
           continue;
         }

@@ -441,6 +441,7 @@ export default class SummaryUiHandler extends UiHandler {
         const selectedMove = this.getSelectedMove();
 
         if (selectedMove) {
+          this.moveDescriptionText.setY(84);
           this.movePowerText.setText(selectedMove.power >= 0 ? selectedMove.power.toString() : '---');
           this.moveAccuracyText.setText(selectedMove.accuracy >= 0 ? selectedMove.accuracy.toString() : '---');
           this.moveCategoryIcon.setFrame(MoveCategory[selectedMove.category].toLowerCase());
@@ -457,7 +458,6 @@ export default class SummaryUiHandler extends UiHandler {
         }
 
         if (moveDescriptionLineCount > 3) {
-          this.moveDescriptionText.setY(84);
           this.descriptionScrollTween = this.scene.tweens.add({
             targets: this.moveDescriptionText,
             delay: Utils.fixedInt(2000),

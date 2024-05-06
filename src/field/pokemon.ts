@@ -4,7 +4,7 @@ import { Variant, VariantSet, variantColorCache } from '#app/data/variant';
 import { variantData } from '#app/data/variant';
 import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from '../ui/battle-info';
 import { Moves } from "../data/enums/moves";
-import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr } from "../data/move";
+import Move, { HighCritAttr, HitsTagAttr, applyMoveAttrs, FixedDamageAttr, VariableAtkAttr, VariablePowerAttr, allMoves, MoveCategory, TypelessAttr, CritOnlyAttr, getMoveTargets, OneHitKOAttr, MultiHitAttr, StatusMoveTypeImmunityAttr, MoveTarget, VariableDefAttr, AttackMove, ModifiedDamageAttr, VariableMoveTypeMultiplierAttr, IgnoreOpponentStatChangesAttr, SacrificialAttr, VariableMoveTypeAttr, VariableMoveCategoryAttr, CounterDamageAttr } from "../data/move";
 import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
 import * as Utils from '../utils';
 import { Type, TypeDamageMultiplier, getTypeDamageMultiplier, getTypeRgb } from '../data/type';
@@ -43,8 +43,8 @@ import { Nature, getNatureStatMultiplier } from '../data/nature';
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
 import { TerrainType } from '../data/terrain';
 import { TrainerSlot } from '../data/trainer-config';
+import { ABILITY_OVERRIDE, MOVE_OVERRIDE, MOVE_OVERRIDE_2, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_MOVE_OVERRIDE_2, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../overrides';
 import { BerryType } from '../data/berry';
-import { ABILITY_OVERRIDE, MOVE_OVERRIDE, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE } from '../overrides';
 import i18next from '../plugins/i18n';
 
 export enum FieldPosition {
@@ -725,6 +725,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.moveset[0] = new PokemonMove(MOVE_OVERRIDE, Math.min(this.moveset[0].ppUsed, allMoves[MOVE_OVERRIDE].pp));
     else if (OPP_MOVE_OVERRIDE && !this.isPlayer())
       this.moveset[0] = new PokemonMove(OPP_MOVE_OVERRIDE, Math.min(this.moveset[0].ppUsed, allMoves[OPP_MOVE_OVERRIDE].pp));
+    if (MOVE_OVERRIDE_2 && this.isPlayer())
+      this.moveset[1] = new PokemonMove(MOVE_OVERRIDE_2, Math.min(this.moveset[1].ppUsed, allMoves[MOVE_OVERRIDE_2].pp));
+    else if (OPP_MOVE_OVERRIDE_2 && !this.isPlayer())
+      this.moveset[1] = new PokemonMove(OPP_MOVE_OVERRIDE_2, Math.min(this.moveset[1].ppUsed, allMoves[OPP_MOVE_OVERRIDE_2].pp));
+
 
     return ret;
   }
@@ -2474,9 +2479,10 @@ export class PlayerPokemon extends Pokemon {
       if (newEvolution.condition.predicate(this)) {
         const newPokemon = this.scene.addPlayerPokemon(this.species, this.level, this.abilityIndex, this.formIndex, undefined, this.shiny, this.variant, this.ivs, this.nature);
         newPokemon.natureOverride = this.natureOverride;
+        newPokemon.passive = this.passive;
+        newPokemon.moveset = this.moveset.slice();
         newPokemon.moveset = this.copyMoveset();
         newPokemon.luck = this.luck;
-
         newPokemon.fusionSpecies = this.fusionSpecies;
         newPokemon.fusionFormIndex = this.fusionFormIndex;
         newPokemon.fusionAbilityIndex = this.fusionAbilityIndex;
@@ -2731,6 +2737,10 @@ export class EnemyPokemon extends Pokemon {
             let targetScores: integer[] = [];
 
             for (let mt of moveTargets[move.id]) {
+              // Prevent a target score from being calculated when the target is whoever attacks the user
+              if (mt === BattlerIndex.ATTACKER)
+                break;
+
               const target = this.scene.getField()[mt];
               let targetScore = move.getUserBenefitScore(this, target, move) + move.getTargetBenefitScore(this, target, move) * (mt < BattlerIndex.ENEMY === this.isPlayer() ? 1 : -1);
               if (move.name.endsWith(' (N)') || !move.applyConditions(this, target, move))
@@ -2801,8 +2811,14 @@ export class EnemyPokemon extends Pokemon {
       return scoreA < scoreB ? 1 : scoreA > scoreB ? -1 : 0;
     });
 
-    if (!sortedBenefitScores.length)
+    if (!sortedBenefitScores.length) {
+      // Set target to BattlerIndex.ATTACKER when using a counter move
+      // This is the same as when the player does so
+      if (!!move.findAttr(attr => attr instanceof CounterDamageAttr))
+        return [BattlerIndex.ATTACKER];
+      
       return [];
+    }
 
     let targetWeights = sortedBenefitScores.map(s => s[1]);
     const lowestWeight = targetWeights[targetWeights.length - 1];
