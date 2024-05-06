@@ -1700,18 +1700,18 @@ export class CommandPhase extends FieldPhase {
         }
         else if (cursor < playerPokemon.getMoveset().length) {
           const move = playerPokemon.getMoveset()[cursor];
-            this.scene.ui.setMode(Mode.MESSAGE);
+          this.scene.ui.setMode(Mode.MESSAGE);
 
-            // Decides between a Disabled, Not Implemented, or No PP translation message
-            const errorMessage = 
-              playerPokemon.summonData.disabledMove === move.moveId ? 'battle:moveDisabled' : 
-              move.getName().endsWith(' (N)') ? 'battle:moveNotImplemented' : 'battle:moveNoPP';
-            const moveName = move.getName().replace(' (N)', ''); // Trims off the indicator
+          // Decides between a Disabled, Not Implemented, or No PP translation message
+          const errorMessage = 
+            playerPokemon.summonData.disabledMove === move.moveId ? 'battle:moveDisabled' : 
+            move.getName().endsWith(' (N)') ? 'battle:moveNotImplemented' : 'battle:moveNoPP';
+          const moveName = move.getName().replace(' (N)', ''); // Trims off the indicator
 
-            this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
-              this.scene.ui.clearText();
-              this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
-            }, null, true);
+          this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
+            this.scene.ui.clearText();
+            this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+          }, null, true);
         }
         break;
       case Command.BALL:
