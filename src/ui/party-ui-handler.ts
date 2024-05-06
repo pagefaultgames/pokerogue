@@ -95,7 +95,6 @@ export default class PartyUiHandler extends MessageUiHandler {
   private moveSelectFilter: PokemonMoveSelectFilter;
   private tmMoveId: Moves;
   private showMovePp: boolean;
-  private slots: Map<number, number> = new Map();
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -292,11 +291,8 @@ export default class PartyUiHandler extends MessageUiHandler {
                     this.scene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
                     break;
                 }
-              } else if (this.cursor) {
-                this.doSwitch(this.cursor, option);
-                // (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor, option === PartyOption.PASS_BATON, option);
-              }
-
+              } else if (this.cursor)
+                (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.cursor, option === PartyOption.PASS_BATON);
             }
             if (this.partyUiMode !== PartyUiMode.MODIFIER && this.partyUiMode !== PartyUiMode.TM_MODIFIER && this.partyUiMode !== PartyUiMode.MOVE_MODIFIER)
               ui.playSelect();
@@ -374,11 +370,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         } else if (this.partyUiMode === PartyUiMode.FAINT_SWITCH)
           ui.playError();
         else if (this.cursor === 6) {
-            console.log('done');
-          if (this.slots[PartyOption.SEND_OUT_1])
-            (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.slots[PartyOption.SEND_OUT_1], false, PartyOption.SEND_OUT_1);
-          if (this.slots[PartyOption.SEND_OUT_2])
-            (this.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, this.slots[PartyOption.SEND_OUT_2], false, PartyOption.SEND_OUT_2);
+          console.log('DONE');
         } else
           return this.processInput(Button.CANCEL);
         return true;
@@ -541,7 +533,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   showOptions() {
-    if (this.cursor === 6 || this.cursor === 7)
+    if (this.cursor === 6)
       return;
     
     this.optionsMode = true;
@@ -758,11 +750,6 @@ export default class PartyUiHandler extends MessageUiHandler {
   clearTransfer(): void {
     this.transferMode = false;
     this.partySlots[this.transferCursor].setTransfer(false);
-  }
-
-  doSwitch(slotIndex: integer, target: integer): void {
-    if (target !== PartyOption.SEND_OUT_1 && target !== PartyOption.SEND_OUT_2) return;
-    this.slots[target] = slotIndex;
   }
 
   doRelease(slotIndex: integer): void {
