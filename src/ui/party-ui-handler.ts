@@ -36,6 +36,8 @@ export enum PartyUiMode {
 export enum PartyOption {
   CANCEL = -1,
   SEND_OUT,
+  SEND_OUT_1,
+  SEND_OUT_2,
   PASS_BATON,
   APPLY,
   TEACH,
@@ -51,7 +53,7 @@ export enum PartyOption {
   MOVE_1 = 3000,
   MOVE_2,
   MOVE_3,
-  MOVE_4
+  MOVE_4,
 }
 
 export type PartySelectCallback = (cursor: integer, option: PartyOption) => void;
@@ -70,6 +72,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private partySlotsContainer: Phaser.GameObjects.Container;
   private partySlots: PartySlot[];
   private partyCancelButton: PartyCancelButton;
+  private partyDoneButton: PartyDoneButton;
   private partyMessageBox: Phaser.GameObjects.NineSlice;
 
   private optionsMode: boolean;
@@ -153,10 +156,13 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.message = partyMessageText;
 
-    const partyCancelButton = new PartyCancelButton(this.scene, 291, -16);
+    const partyCancelButton = new PartyCancelButton(this.scene, 291, -9);
+    const partyDoneButton = new PartyDoneButton(this.scene, 291, -26);
     partyContainer.add(partyCancelButton);
+    partyContainer.add(partyDoneButton);
 
     this.partyCancelButton = partyCancelButton;
+    this.partyDoneButton = partyDoneButton;
 
     this.optionsContainer = this.scene.add.container((this.scene.game.canvas.width / 6) - 1, -1);
     partyContainer.add(this.optionsContainer);
@@ -363,7 +369,9 @@ export default class PartyUiHandler extends MessageUiHandler {
           ui.playSelect();
         } else if (this.partyUiMode === PartyUiMode.FAINT_SWITCH)
           ui.playError();
-        else
+        else if (this.cursor === 6) {
+          console.log('DONE');
+        } else
           return this.processInput(Button.CANCEL);
         return true;
       } else if (button === Button.CANCEL) {
@@ -390,26 +398,27 @@ export default class PartyUiHandler extends MessageUiHandler {
 
       switch (button) {
         case Button.UP:
-          success = this.setCursor(this.cursor ? this.cursor < 6 ? this.cursor - 1 : slotCount - 1 : 6);
+          if (this.cursor === 7) success = this.setCursor(6);
+          else success = this.setCursor(this.cursor ? this.cursor < 6 ? this.cursor - 1 : slotCount - 1 : 7);
           break;
         case Button.DOWN:
-          success = this.setCursor(this.cursor < 6 ? this.cursor < slotCount - 1 ? this.cursor + 1 : 6 : 0);
+          if (this.cursor === 6) success = this.setCursor(7);
+          else success = this.setCursor(this.cursor < 6 ? this.cursor < slotCount - 1 ? this.cursor + 1 : 6 : 0);
           break;
         case Button.LEFT:
-          if (this.cursor >= battlerCount && this.cursor <= 6)
+          if (this.cursor >= battlerCount && this.cursor <= 7)
             success = this.setCursor(0);
           break;
         case Button.RIGHT:
           if (slotCount === battlerCount){
             success = this.setCursor(6);
-          break;
+            break;
           } else if (battlerCount >= 2 && slotCount > battlerCount && this.getCursor() === 0 && this.lastCursor === 1){
             success = this.setCursor(2);
           break;
-          } else if (slotCount > battlerCount && this.cursor < battlerCount){
+          } else if (slotCount > battlerCount && this.cursor < battlerCount)
             success = this.setCursor(this.lastCursor < 6 ? this.lastCursor ||  battlerCount : battlerCount);
           break;
-          }
       }
     }
 
@@ -425,6 +434,8 @@ export default class PartyUiHandler extends MessageUiHandler {
     if (this.cursor < 6 && this.cursor >= party.length)
       this.cursor = party.length - 1;
     else if (this.cursor === 6)
+      this.partyDoneButton.select();
+    else if (this.cursor === 7)
       this.partyCancelButton.select();
 
     for (let p in party) {
@@ -482,12 +493,24 @@ export default class PartyUiHandler extends MessageUiHandler {
         this.cursor = cursor;
         if (this.lastCursor < 6)
           this.partySlots[this.lastCursor].deselect();
-        else if (this.lastCursor === 6)
+        else if (this.lastCursor === 6){
           this.partyCancelButton.deselect();
-        if (cursor < 6)
+        } else if (this.lastCursor === 7){
+          this.partyDoneButton.deselect();
+        }
+        if (cursor < 6) {
           this.partySlots[cursor].select();
-        else if (cursor === 6)
+          this.partyCancelButton.deselect();
+          this.partyDoneButton.deselect();
+        }
+        else if (cursor === 6){
+          this.partyCancelButton.deselect();
+          this.partyDoneButton.select();
+        }
+        else if (cursor === 7) {
+          this.partyDoneButton.deselect();
           this.partyCancelButton.select();
+        }
       }
     }
 
@@ -567,6 +590,8 @@ export default class PartyUiHandler extends MessageUiHandler {
         case PartyUiMode.POST_BATTLE_SWITCH:
           if (this.cursor >= this.scene.currentBattle.getBattlerCount()) {
             this.options.push(PartyOption.SEND_OUT);
+            this.options.push(PartyOption.SEND_OUT_1);
+            this.options.push(PartyOption.SEND_OUT_2);
             if (this.partyUiMode !== PartyUiMode.FAINT_SWITCH
                 && this.scene.findModifier(m => m instanceof SwitchEffectTransferModifier
                   && (m as SwitchEffectTransferModifier).pokemonId === this.scene.getPlayerField()[this.fieldIndex].id))
@@ -1057,5 +1082,53 @@ class PartyCancelButton extends Phaser.GameObjects.Container {
 
     this.partyCancelBg.setFrame('party_cancel');
     this.partyCancelPb.setFrame('party_pb');
+  }
+}
+
+class PartyDoneButton extends Phaser.GameObjects.Container {
+  private selected: boolean;
+
+  private partyDoneBg: Phaser.GameObjects.Sprite;
+  private partyDonePb: Phaser.GameObjects.Sprite;
+
+  constructor(scene: BattleScene, x: number, y: number) {
+    super(scene, x, y);
+
+    this.setup();
+  }
+
+  setup() {
+    const partyDoneBg = this.scene.add.sprite(0, 0, 'party_cancel');
+    this.add(partyDoneBg);
+
+    this.partyDoneBg = partyDoneBg;
+
+    const partyDonePb = this.scene.add.sprite(-17, 0, 'party_pb');
+    this.add(partyDonePb);
+
+    this.partyDonePb = partyDonePb;
+
+    const partyCancelText = addTextObject(this.scene, -7, -6, 'Done', TextStyle.PARTY);
+    this.add(partyCancelText);
+  }
+
+  select() {
+    if (this.selected)
+      return;
+
+    this.selected = true;
+
+    this.partyDoneBg.setFrame(`party_cancel_sel`);
+    this.partyDonePb.setFrame('party_pb_sel');
+  }
+
+  deselect() {
+    if (!this.selected)
+      return;
+
+    this.selected = false;
+
+    this.partyDoneBg.setFrame('party_cancel');
+    this.partyDonePb.setFrame('party_pb');
   }
 }

@@ -1936,8 +1936,10 @@ export class SelectTargetPhase extends PokemonPhase {
       if (cursor === -1) {
         this.scene.currentBattle.turnCommands[this.fieldIndex] = null;
         this.scene.unshiftPhase(new CommandPhase(this.scene, this.fieldIndex));
-      } else
-        turnCommand.targets = [ cursor ];
+      } else {
+        turnCommand.targets = [cursor];
+        this.scene.hasFreeSwitch = false;
+      }
       if (turnCommand.command === Command.BALL && this.fieldIndex)
         this.scene.currentBattle.turnCommands[this.fieldIndex - 1].skip = true;
       this.end();
