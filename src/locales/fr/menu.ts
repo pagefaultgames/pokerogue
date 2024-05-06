@@ -34,5 +34,8 @@ export const menu: SimpleTranslationEntries = {
   "weeklyRankings": "Classement de la Semaine",
   "noRankings": "Pas de Classement",
   "loading": "Chargement…",
-  "playersOnline": "Joueurs Connectés"
+  "playersOnline": "Joueurs Connectés",
+  "empty":"Vide",
+  "yes":"Oui",
+  "no":"Non",
 } as const;

@@ -31,6 +31,8 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas('bg', 'ui');
     this.loadImage('command_fight_labels', 'ui');
     this.loadAtlas('prompt', 'ui');
+    this.loadImage('candy', 'ui');
+    this.loadImage('candy_overlay', 'ui');
     this.loadImage('cursor', 'ui');
     this.loadImage('cursor_reverse', 'ui');
     for (let wv of Utils.getEnumValues(WindowVariant)) {
@@ -224,6 +226,7 @@ export class LoadingScene extends SceneBase {
     this.loadSe('sparkle');
     this.loadSe('restore');
     this.loadSe('shine');
+    this.loadSe('shing');
     this.loadSe('charge');
     this.loadSe('beam');
     this.loadSe('upgrade');

@@ -21,21 +21,25 @@ import { battle as deBattle } from '../locales/de/battle';
 
 import { move as enMove } from '../locales/en/move';
 import { move as esMove } from '../locales/es/move';
+import { move as itMove } from '../locales/it/move';
 import { move as frMove } from '../locales/fr/move';
 import { move as deMove } from '../locales/de/move';
 
 import { ability as enAbility } from '../locales/en/ability';
 import { ability as esAbility } from '../locales/es/ability';
+import { ability as itAbility } from '../locales/it/ability';
 import { ability as frAbility } from '../locales/fr/ability';
 import { ability as deAbility } from '../locales/de/ability';
 
 import { pokeball as enPokeball } from '../locales/en/pokeball';
 import { pokeball as esPokeball } from '../locales/es/pokeball';
+import { pokeball as itPokeball } from '../locales/it/pokeball';
 import { pokeball as frPokeball } from '../locales/fr/pokeball';
 import { pokeball as dePokeball } from '../locales/de/pokeball';
 
 import { pokemon as enPokemon } from '../locales/en/pokemon';
 import { pokemon as esPokemon } from '../locales/es/pokemon';
+import { pokemon as itPokemon } from '../locales/it/pokemon';
 import { pokemon as frPokemon } from '../locales/fr/pokemon';
 import { pokemon as dePokemon } from '../locales/de/pokemon';
 
@@ -47,6 +51,7 @@ import { pokemonStat as dePokemonStat } from '../locales/de/pokemon-stat';
 
 import { commandUiHandler as enCommandUiHandler } from '../locales/en/command-ui-handler';
 import { commandUiHandler as esCommandUiHandler } from '../locales/es/command-ui-handler';
+import { commandUiHandler as itCommandUiHandler } from '../locales/it/command-ui-handler';
 import { commandUiHandler as frCommandUiHandler } from '../locales/fr/command-ui-handler';
 import { commandUiHandler as deCommandUiHandler } from '../locales/de/command-ui-handler';
 
@@ -61,6 +66,12 @@ import { tutorial as esTutorial } from '../locales/es/tutorial';
 import { tutorial as frTutorial } from '../locales/fr/tutorial';
 import { tutorial as itTutorial} from '../locales/it/tutorial';
 import { tutorial as deTutorial } from '../locales/de/tutorial';
+
+import { starterSelectUiHandler as enStarterSelectUiHandler } from '../locales/en/starter-select-ui-handler';
+import { starterSelectUiHandler as esStarterSelectUiHandler } from '../locales/es/starter-select-ui-handler';
+import { starterSelectUiHandler as frStarterSelectUiHandler } from '../locales/fr/starter-select-ui-handler';
+import { starterSelectUiHandler as itStarterSelectUiHandler} from '../locales/it/starter-select-ui-handler';
+import { starterSelectUiHandler as deStarterSelectUiHandler } from '../locales/de/starter-select-ui-handler';
 
 export interface SimpleTranslationEntries {
   [key: string]: string
@@ -131,6 +142,7 @@ export function initI18n(): void {
         commandUiHandler: enCommandUiHandler,
         fightUiHandler: enFightUiHandler,
         tutorial: enTutorial,
+        starterSelectUiHandler: enStarterSelectUiHandler
       },
       es: {
         menu: esMenu,
@@ -144,6 +156,7 @@ export function initI18n(): void {
         commandUiHandler: esCommandUiHandler,
         fightUiHandler: esFightUiHandler,
         tutorial: esTutorial,
+        starterSelectUiHandler: esStarterSelectUiHandler
       },
       fr: {
         menu: frMenu,
@@ -157,14 +170,21 @@ export function initI18n(): void {
         commandUiHandler: frCommandUiHandler,
         fightUiHandler: frFightUiHandler,
         tutorial: frTutorial,
+        starterSelectUiHandler: frStarterSelectUiHandler
       },
       it: {
         menu: itMenu,
         menuUiHandler: itMenuUiHandler,
         battle: itBattle,
+        move: itMove,
+        ability: itAbility,
+        pokeball: itPokeball,
+        pokemon: itPokemon,
         pokemonStat: itPokemonStat,
+        commandUiHandler: itCommandUiHandler,
         fightUiHandler: itFightUiHandler,
         tutorial: itTutorial,
+        starterSelectUiHandler: itStarterSelectUiHandler
       },
       de: {
         menu: deMenu,
@@ -178,6 +198,7 @@ export function initI18n(): void {
         commandUiHandler: deCommandUiHandler,
         fightUiHandler: deFightUiHandler,
         tutorial: deTutorial,
+        starterSelectUiHandler: deStarterSelectUiHandler
       }
     },
   });
@@ -198,6 +219,7 @@ declare module 'i18next' {
       commandUiHandler: typeof enCommandUiHandler;
       fightUiHandler: typeof enFightUiHandler;
       tutorial: typeof enTutorial;
+      starterSelectUiHandler: typeof enStarterSelectUiHandler;
     };
   }
 }
