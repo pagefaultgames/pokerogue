@@ -1680,21 +1680,13 @@ export class CommandPhase extends FieldPhase {
     switch (command) {
       case Command.FIGHT:
         let useStruggle = false;
-        if (cursor === -1 || playerPokemon.trySelectMove(cursor, args[0] as boolean) || (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)) {
+        if (cursor === -1 || 
+            playerPokemon.trySelectMove(cursor, args[0] as boolean) || 
+           (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)) {          
           const moveId = !useStruggle ? cursor > -1 ? playerPokemon.getMoveset()[cursor].moveId : Moves.NONE : Moves.STRUGGLE;
           const turnCommand: TurnCommand = { command: Command.FIGHT, cursor: cursor, move: { move: moveId, targets: [], ignorePP: args[0] }, args: args };
           const moveTargets: MoveTargetSet = args.length < 3 ? getMoveTargets(playerPokemon, moveId) : args[2];
-          if (moveId) {
-            const move = playerPokemon.getMoveset()[cursor];
-            if (move.getName().endsWith(' (N)')) {
-              this.scene.ui.setMode(Mode.MESSAGE);
-              this.scene.ui.showText(i18next.t('battle:moveNotImplemented', { moveName: move.getName().slice(0, -4) }), null, () => {
-                this.scene.ui.clearText();
-                this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
-              }, null, true);
-              return;
-            }
-          } else
+          if (!moveId)
             turnCommand.targets = [ this.fieldIndex ];
           console.log(moveTargets, playerPokemon.name);
           if (moveTargets.targets.length <= 1 || moveTargets.multiple)
@@ -1705,15 +1697,21 @@ export class CommandPhase extends FieldPhase {
             this.scene.unshiftPhase(new SelectTargetPhase(this.scene, this.fieldIndex));
           this.scene.currentBattle.turnCommands[this.fieldIndex] = turnCommand;
           success = true;
-        } else if (cursor < playerPokemon.getMoveset().length) {
+        }
+        else if (cursor < playerPokemon.getMoveset().length) {
           const move = playerPokemon.getMoveset()[cursor];
-          if (playerPokemon.summonData.disabledMove === move.moveId) {
-            this.scene.ui.setMode(Mode.MESSAGE);
-            this.scene.ui.showText(i18next.t('battle:moveDisabled', { moveName: move.getName() }), null, () => {
-              this.scene.ui.clearText();
-              this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
-            }, null, true);
-          }
+          this.scene.ui.setMode(Mode.MESSAGE);
+
+          // Decides between a Disabled, Not Implemented, or No PP translation message
+          const errorMessage = 
+            playerPokemon.summonData.disabledMove === move.moveId ? 'battle:moveDisabled' : 
+            move.getName().endsWith(' (N)') ? 'battle:moveNotImplemented' : 'battle:moveNoPP';
+          const moveName = move.getName().replace(' (N)', ''); // Trims off the indicator
+
+          this.scene.ui.showText(i18next.t(errorMessage, { moveName: moveName }), null, () => {
+            this.scene.ui.clearText();
+            this.scene.ui.setMode(Mode.FIGHT, this.fieldIndex);
+          }, null, true);
         }
         break;
       case Command.BALL:

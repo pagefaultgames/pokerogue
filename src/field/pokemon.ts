@@ -27,7 +27,7 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from '../data/arena-tag';
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { Biome } from "../data/enums/biome";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr } from '../data/ability';
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr } from '../data/ability';
 import { Abilities } from "#app/data/enums/abilities";
 import PokemonData from '../system/pokemon-data';
 import Battle, { BattlerIndex } from '../battle';
@@ -880,7 +880,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getAttackMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
     const typeless = !!move.getMove().getAttrs(TypelessAttr).length;
-    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.getMove().type));
+    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.getMove().type, source));
     const cancelled = new Utils.BooleanHolder(false);
     if (!typeless)
       applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, typeMultiplier, true);
@@ -889,11 +889,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (!cancelled.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
   }
 
-  getAttackTypeEffectiveness(moveType: Type): TypeDamageMultiplier {
+  getAttackTypeEffectiveness(moveType: Type, source?: Pokemon): TypeDamageMultiplier {
     if (moveType === Type.STELLAR)
       return this.isTerastallized() ? 2 : 1;
     const types = this.getTypes(true, true);
-    let multiplier =  getTypeDamageMultiplier(moveType, types[0]) * (types.length > 1 ? getTypeDamageMultiplier(moveType, types[1]) : 1) * (types.length > 2 ? getTypeDamageMultiplier(moveType, types[2]) : 1) as TypeDamageMultiplier;
+
+    const ignorableImmunities = source?.getAbility()?.getAttrs(IgnoreTypeImmunityAbAttr) || [];
+    const cancelled = new Utils.BooleanHolder(false);
+
+    let multiplier = types.map(defType => 
+      ignorableImmunities.some(attr => attr.apply(source, false, cancelled, [moveType, defType]))
+      ? 1
+      : getTypeDamageMultiplier(moveType, defType)
+    ).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
+
     // Handle strong winds lowering effectiveness of types super effective against pure flying
     if (this.scene.arena.weather?.weatherType === WeatherType.STRONG_WINDS && !this.scene.arena.weather.isEffectSuppressed(this.scene) && multiplier >= 2 && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(moveType, Type.FLYING) === 2)
       multiplier /= 2;
@@ -904,12 +913,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const types = this.getTypes(true);
     const enemyTypes = pokemon.getTypes(true, true);
     const outspeed = (this.isActive(true) ? this.getBattleStat(Stat.SPD, pokemon) : this.getStat(Stat.SPD)) <= pokemon.getBattleStat(Stat.SPD, this);
-    let atkScore = pokemon.getAttackTypeEffectiveness(types[0]) * (outspeed ? 1.25 : 1);
-    let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0]), 0.25);
+    let atkScore = pokemon.getAttackTypeEffectiveness(types[0], this) * (outspeed ? 1.25 : 1);
+    let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0], pokemon), 0.25);
     if (types.length > 1)
-      atkScore *= pokemon.getAttackTypeEffectiveness(types[1]);
+      atkScore *= pokemon.getAttackTypeEffectiveness(types[1], this);
     if (enemyTypes.length > 1)
-      defScore *= (1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1]), 0.25));
+      defScore *= (1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1], pokemon), 0.25));
     let hpDiffRatio = this.getHpRatio() + (1 - pokemon.getHpRatio());
     if (outspeed)
       hpDiffRatio = Math.min(hpDiffRatio * 1.5, 1);
@@ -1262,7 +1271,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const cancelled = new Utils.BooleanHolder(false);
     const typeless = !!move.getAttrs(TypelessAttr).length;
     const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => types.includes((attr as StatusMoveTypeImmunityAttr).immuneType)))
-      ? this.getAttackTypeEffectiveness(type)
+      ? this.getAttackTypeEffectiveness(type, source)
       : 1);
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
     if (typeless)
@@ -3172,7 +3181,7 @@ export class PokemonMove {
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
     if (this.moveId && pokemon.summonData?.disabledMove === this.moveId)
       return false;
-    return ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1;
+    return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(' (N)');
   }
 
   getMove(): Move {
