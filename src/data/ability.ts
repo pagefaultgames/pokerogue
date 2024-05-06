@@ -3346,7 +3346,7 @@ export function initAbilities() {
       .ignorable()
       .unimplemented(),
     new Ability(Abilities.SUPERSWEET_SYRUP, 9)
-        .unimplemented(),
+      .unimplemented(),
     new Ability(Abilities.HOSPITALITY, 9)
       .attr(PostSummonAllyHealAbAttr, 4, true),
     new Ability(Abilities.TOXIC_CHAIN, 9)
