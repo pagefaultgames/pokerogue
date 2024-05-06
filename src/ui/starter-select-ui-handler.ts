@@ -836,7 +836,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           if (passiveAttr & PassiveAttr.UNLOCKED) {
             if (!(passiveAttr & PassiveAttr.ENABLED)) {
               options.push({
-                label: 'Enable Passive',
+                label: i18next.t("menu:enablePassive"),
                 handler: () => {
                   starterData.passiveAttr |= PassiveAttr.ENABLED;
                   ui.setMode(Mode.STARTER_SELECT);
@@ -846,7 +846,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
               });
             } else {
               options.push({
-                label: 'Disable Passive',
+                label: i18next.t("menu:disablePassive"),
                 handler: () => {
                   starterData.passiveAttr ^= PassiveAttr.ENABLED;
                   ui.setMode(Mode.STARTER_SELECT);

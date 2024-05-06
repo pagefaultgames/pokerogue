@@ -63,5 +63,7 @@ export const menu: SimpleTranslationEntries = {
     "cycleGender": 'G: Cycle Gender',
     "cycleAbility": 'E: Cycle Ability',
     "cycleNature": 'N: Cycle Nature',
-    "cycleVariant": 'V: Cycle Variant'
+    "cycleVariant": 'V: Cycle Variant',
+    "enablePassive": "Enable Passive",
+    "disablePassive": "Disable Passive"
 } as const;
