@@ -20,6 +20,8 @@ import { SpeciesFormChangeManualTrigger } from "./pokemon-forms";
 import { Abilities } from "./enums/abilities";
 import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
+import Battle from "#app/battle.js";
+import { ability } from "#app/locales/en/ability.js";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -247,7 +249,7 @@ export class PreDefendFormChangeAbAttr extends PreDefendAbAttr {
 }
 export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (pokemon.getHpRatio() < 1 || (args[0] as Utils.NumberHolder).value < pokemon.hp)
+    if (pokemon.getMaxHp() <= 1 && (pokemon.getHpRatio() < 1 || (args[0] as Utils.NumberHolder).value < pokemon.hp))
       return false;
 
     return pokemon.addTag(BattlerTagType.STURDY, 1);
@@ -1271,6 +1273,40 @@ export class IgnoreOpponentStatChangesAbAttr extends AbAttr {
   }
 }
 
+export class IntimidateImmunityAbAttr extends AbAttr { 
+  constructor() {
+    super(false);
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = true;
+    return true;
+  }
+
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
+    return getPokemonMessage(pokemon, `'s ${abilityName} prevented it from being Intimidated!`);
+  }
+}
+
+export class PostIntimidateStatChangeAbAttr extends AbAttr { 
+  private stats: BattleStat[];
+  private levels: integer;
+  private overwrites: boolean;
+
+  constructor(stats: BattleStat[], levels: integer, overwrites?: boolean) {
+    super(true)
+    this.stats = stats
+    this.levels = levels
+    this.overwrites = !!overwrites
+  }
+
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    pokemon.scene.pushPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), false, this.stats, this.levels));
+    cancelled.value = this.overwrites;
+    return true;
+  }
+}
+
 export class PostSummonAbAttr extends AbAttr {
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean> {
     return false;
@@ -1313,34 +1349,36 @@ export class PostSummonStatChangeAbAttr extends PostSummonAbAttr {
   private stats: BattleStat[];
   private levels: integer;
   private selfTarget: boolean;
+  private intimidate: boolean;
 
-  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean) {
-    super();
+  constructor(stats: BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, intimidate?: boolean) {
+    super(false);
 
     this.stats = typeof(stats) === 'number'
       ? [ stats as BattleStat ]
       : stats as BattleStat[];
     this.levels = levels;
     this.selfTarget = !!selfTarget;
+    this.intimidate = !!intimidate;
   }
 
   applyPostSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    const statChangePhases: StatChangePhase[] = [];
-
-    if (this.selfTarget)
-      statChangePhases.push(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.levels));
-    else {
-      for (let opponent of pokemon.getOpponents())
-        statChangePhases.push(new StatChangePhase(pokemon.scene, opponent.getBattlerIndex(), false, this.stats, this.levels));
+    queueShowAbility(pokemon, passive);  // TODO: Better solution than manually showing the ability here
+    if (this.selfTarget) {
+      pokemon.scene.pushPhase(new StatChangePhase(pokemon.scene, pokemon.getBattlerIndex(), true, this.stats, this.levels));
+      return true;
     }
-
-    for (let statChangePhase of statChangePhases) {
-      if (!this.selfTarget && !statChangePhase.getPokemon().summonData)
-        pokemon.scene.pushPhase(statChangePhase); // TODO: This causes the ability bar to be shown at the wrong time
-      else
+    for (let opponent of pokemon.getOpponents()) {
+      const cancelled = new Utils.BooleanHolder(false)
+      if (this.intimidate) {
+        applyAbAttrs(IntimidateImmunityAbAttr, opponent, cancelled);
+        applyAbAttrs(PostIntimidateStatChangeAbAttr, opponent, cancelled);
+      }
+      if (!cancelled.value) {
+        const statChangePhase = new StatChangePhase(pokemon.scene, opponent.getBattlerIndex(), false, this.stats, this.levels);
         pokemon.scene.unshiftPhase(statChangePhase);
+      }
     }
-   
     return true;
   }
 }
@@ -2316,6 +2354,13 @@ export class FlinchStatChangeAbAttr extends FlinchEffectAbAttr {
 
 export class IncreasePpAbAttr extends AbAttr { }
 
+export class ForceSwitchOutImmunityAbAttr extends AbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    cancelled.value = true;
+    return true;
+  }
+}
+
 export class ReduceBerryUseThresholdAbAttr extends AbAttr {
   constructor() {
     super();
@@ -2647,7 +2692,8 @@ export function initAbilities() {
       .condition(getWeatherCondition(WeatherType.SANDSTORM))
       .ignorable(),
     new Ability(Abilities.STATIC, 3)
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.PARALYSIS),
+      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.PARALYSIS)
+      .bypassFaint(),
     new Ability(Abilities.VOLT_ABSORB, 3)
       .attr(TypeImmunityHealAbAttr, Type.ELECTRIC)
       .ignorable(),
@@ -2656,6 +2702,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.OBLIVIOUS, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.INFATUATED)
+      .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
       .attr(SuppressWeatherEffectAbAttr, true),
@@ -2678,12 +2725,13 @@ export function initAbilities() {
       .unimplemented(),
     new Ability(Abilities.OWN_TEMPO, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED)
+      .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.SUCTION_CUPS, 3)
-      .ignorable()
-      .unimplemented(),
+      .attr(ForceSwitchOutImmunityAbAttr)  
+      .ignorable(),
     new Ability(Abilities.INTIMIDATE, 3)
-      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, -1),
+      .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, -1, false, true),
     new Ability(Abilities.SHADOW_TAG, 3)
       .attr(ArenaTrapAbAttr),
     new Ability(Abilities.ROUGH_SKIN, 3)
@@ -2729,9 +2777,11 @@ export function initAbilities() {
     new Ability(Abilities.HUGE_POWER, 3)
       .attr(BattleStatMultiplierAbAttr, BattleStat.ATK, 2),
     new Ability(Abilities.POISON_POINT, 3)
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON),
+      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON)
+      .bypassFaint(),
     new Ability(Abilities.INNER_FOCUS, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.FLINCHED)
+      .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.MAGMA_ARMOR, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.FREEZE)
@@ -2761,7 +2811,8 @@ export function initAbilities() {
     new Ability(Abilities.EARLY_BIRD, 3)
       .attr(ReduceStatusEffectDurationAbAttr, StatusEffect.SLEEP),
     new Ability(Abilities.FLAME_BODY, 3)
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.BURN),
+      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.BURN)
+      .bypassFaint(),
     new Ability(Abilities.RUN_AWAY, 3)
       .attr(RunSuccessAbAttr),
     new Ability(Abilities.KEEN_EYE, 3)
@@ -2928,8 +2979,9 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.SLOW_START, 4)
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.SLOW_START, 5),
-    new Ability(Abilities.SCRAPPY, 4)
-      .unimplemented(),
+    new Ability(Abilities.SCRAPPY, 4)  
+      .attr(IntimidateImmunityAbAttr)
+      .partial(),
     new Ability(Abilities.STORM_DRAIN, 4)
       .attr(RedirectTypeMoveAbAttr, Type.WATER)
       .attr(TypeImmunityStatChangeAbAttr, Type.WATER, BattleStat.SPATK, 1)
@@ -3048,7 +3100,7 @@ export function initAbilities() {
     new Ability(Abilities.RATTLED, 5)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS && (move.type === Type.DARK || move.type === Type.BUG ||
         move.type === Type.GHOST), BattleStat.SPD, 1)
-      .partial(),
+      .attr(PostIntimidateStatChangeAbAttr, [BattleStat.SPD], 1),
     new Ability(Abilities.MAGIC_BOUNCE, 5)
       .ignorable()
       .unimplemented(),
@@ -3433,8 +3485,9 @@ export function initAbilities() {
       .ignorable()
       .partial(),
     new Ability(Abilities.GUARD_DOG, 9)
-      .ignorable()
-      .unimplemented(),
+      .attr(PostIntimidateStatChangeAbAttr, [BattleStat.ATK], 1, true)
+      .attr(ForceSwitchOutImmunityAbAttr)
+      .ignorable(),
     new Ability(Abilities.ROCKY_PAYLOAD, 9)
       .attr(MoveTypePowerBoostAbAttr, Type.ROCK),
     new Ability(Abilities.WIND_POWER, 9)

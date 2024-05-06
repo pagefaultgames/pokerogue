@@ -1,4 +1,4 @@
-import BattleScene, { Button, starterColors } from "../battle-scene";
+import BattleScene, { starterColors } from "../battle-scene";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
@@ -19,6 +19,7 @@ import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
 import { PlayerGender } from "../system/game-data";
 import { Variant, getVariantTint } from "#app/data/variant";
+import {Button} from "../enums/buttons";
 
 enum Page {
   PROFILE,
