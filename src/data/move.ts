@@ -4812,7 +4812,6 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       .partial(),
-    // mareksison/redmaverick616 starts working here
     new SelfStatusMove(Moves.STOCKPILE, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(StockpileOneAttr)
       .attr(StockpileTwoAttr)
@@ -4838,7 +4837,6 @@ export function initMoves() {
         BattlerTagType.STOCKPILE_THREE,
       ], true)
       .partial(),
-    // mareksison/redmaverick616 ends working here
     new AttackMove(Moves.HEAT_WAVE, Type.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 10, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
