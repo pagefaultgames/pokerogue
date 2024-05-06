@@ -3172,7 +3172,7 @@ export class PokemonMove {
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
     if (this.moveId && pokemon.summonData?.disabledMove === this.moveId)
       return false;
-    return ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1;
+    return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(' (N)');
   }
 
   getMove(): Move {

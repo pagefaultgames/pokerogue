@@ -33,6 +33,7 @@ export const battle: SimpleTranslationEntries = {
   "learnMoveForgetSuccess": "{{pokemonName}} ha dimenticato la mossa\n{{moveName}}.",
   "levelCapUp": "Il livello massimo\nè aumentato a {{levelCap}}!",
   "moveNotImplemented": "{{moveName}} non è ancora implementata e non può essere selezionata.",
+  "moveNoPP": "There's no PP left for\nthis move!",
   "moveDisabled": "{{moveName}} è disabilitata!",
   "noPokeballForce": "Una forza misteriosa\nimpedisce l'uso dell Poké Ball.",
   "noPokeballTrainer": "Non puoi catturare\nPokémon di altri allenatori!",
