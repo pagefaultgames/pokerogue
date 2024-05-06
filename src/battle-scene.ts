@@ -17,7 +17,7 @@ import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { initMoves } from './data/move';
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from './modifier/modifier-type';
+import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue, modifierTypes, getModifierType } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import { Abilities } from "./data/enums/abilities";
@@ -59,7 +59,7 @@ import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
 import { Variant, variantData } from './data/variant';
 import { Localizable } from './plugins/i18n';
-import { STARTING_WAVE_OVERRIDE, OPP_SPECIES_OVERRIDE, SEED_OVERRIDE, STARTING_BIOME_OVERRIDE } from './overrides';
+import { STARTING_WAVE_OVERRIDE, OPP_SPECIES_OVERRIDE, SEED_OVERRIDE, STARTING_BIOME_OVERRIDE, OPP_MODIFIER_OVERRIDE, OPP_MODIFIER_QTY_OVERRIDE } from './overrides';
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 
@@ -1720,6 +1720,24 @@ export default class BattleScene extends SceneBase {
 		});
 	}
 
+	getEnemyModifiersOverride(): Array<string> {
+		// if no override, do nothing
+		if (!OPP_MODIFIER_OVERRIDE || OPP_MODIFIER_OVERRIDE.length === 0) return;
+		const ret = [];
+		// we loop through all the modifier name given in the override file
+		for (const [index, modifierName] of OPP_MODIFIER_OVERRIDE.entries()) {
+			// if the modifier does not exist, we skip it
+			if (!modifierTypes.hasOwnProperty(modifierName)) continue;
+			// We get how many modifiers, if none given, default to 1
+			const qty = OPP_MODIFIER_QTY_OVERRIDE[index] || 1
+			// for example, if qty is 2, we create an array of size 2 with the modifier on each slot
+			for (const i of [...Array(qty).keys()]) {
+				ret.push(modifierName);
+			}
+		}
+		return ret;
+	}
+
 	generateEnemyModifiers(): Promise<void> {
 		return new Promise(resolve => {
 			if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS)
@@ -1739,6 +1757,17 @@ export default class BattleScene extends SceneBase {
 			}
 
 			party.forEach((enemyPokemon: EnemyPokemon, i: integer) => {
+				// we get the modifiers override for the opponent
+				const modifiersOverride = this.getEnemyModifiersOverride();
+				// if we have some modifiers override, apply them to the opponent
+				if (modifiersOverride?.length) {
+					// we delete all previous modifiers to avoid stack of override
+					this.clearEnemyModifiers();
+					for (const m of modifiersOverride) {
+						this.addEnemyModifier(getModifierType(modifierTypes[m]).newModifier(enemyPokemon) as PersistentModifier, true, true);
+					}
+					this.updateModifiers(false).then(() => resolve());
+				}
 				const isBoss = enemyPokemon.isBoss() || (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer.config.isBoss);
 				let upgradeChance = 32;
 				if (isBoss)
@@ -1762,6 +1791,12 @@ export default class BattleScene extends SceneBase {
 
 			this.updateModifiers(false).then(() => resolve());
 		});
+	}
+
+	clearEnemyModifiers(): void {
+		for (let m of this.enemyModifiers)
+			this.enemyModifiers.splice(this.enemyModifiers.indexOf(m), 1);
+		this.updateModifiers(false).then(() => this.updateUIPositions());
 	}
 
 	clearEnemyHeldItemModifiers(): void {
