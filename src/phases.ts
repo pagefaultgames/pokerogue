@@ -1779,7 +1779,7 @@ export class CommandPhase extends FieldPhase {
           const trapped = new Utils.BooleanHolder(false);
           const batonPass = isSwitch && args[0] as boolean;
           if (!batonPass)
-            enemyField.forEach(enemyPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trapped));
+            enemyField.forEach(enemyPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, playerPokemon, trapped));
           if (batonPass || (!trapTag && !trapped.value)) {
             this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
               ? { command: Command.POKEMON, cursor: cursor, args: args }
@@ -1877,7 +1877,7 @@ export class EnemyCommandPhase extends FieldPhase {
 
       const trapTag = enemyPokemon.findTag(t => t instanceof TrappedTag) as TrappedTag;
       const trapped = new Utils.BooleanHolder(false);
-      opponents.forEach(playerPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, playerPokemon, trapped));
+      opponents.forEach(playerPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, playerPokemon, enemyPokemon, trapped));
       if (!trapTag && !trapped.value) {
         const partyMemberScores = trainer.getPartyMemberMatchupScores(enemyPokemon.trainerSlot, true);
 

@@ -2190,19 +2190,36 @@ export class CheckTrappedAbAttr extends AbAttr {
     super(false);
   }
   
-  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
+  applyCheckTrapped(pokemon: Pokemon, target: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean> {
     return false;
   }
 }
 
 export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
-  applyCheckTrapped(pokemon: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, args: any[]): boolean {
+  applyCheckTrapped(pokemon: Pokemon, target: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, args: any[]): boolean {
     trapped.value = true;
     return true;
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return getPokemonMessage(pokemon, `\'s ${abilityName}\nprevents switching!`);
+  }
+}
+
+export class ConditionalArenaTrapAbAttr extends ArenaTrapAbAttr {
+  private condition: (opponent: Pokemon) => boolean;
+
+  constructor(condition: (opponent: Pokemon) => boolean) {
+    super();
+    this.condition = condition;
+  }
+
+  applyCheckTrapped(pokemon: Pokemon, opponent: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, args: any[]): boolean {
+    if (this.condition(opponent)) {
+      trapped.value = true;
+      return true;
+    }
+    return false;
   }
 }
 
@@ -2638,8 +2655,8 @@ export function applyPostTerrainChangeAbAttrs(attrType: { new(...args: any[]): P
 }
 
 export function applyCheckTrappedAbAttrs(attrType: { new(...args: any[]): CheckTrappedAbAttr },
-  pokemon: Pokemon, trapped: Utils.BooleanHolder, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, passive, trapped, args), args, true);
+  pokemon: Pokemon, target: Pokemon, trapped: Utils.BooleanHolder, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<CheckTrappedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyCheckTrapped(pokemon, target, passive, trapped, args), args, true);
 }
 
 export function applyPostBattleAbAttrs(attrType: { new(...args: any[]): PostBattleAbAttr },
@@ -2733,7 +2750,7 @@ export function initAbilities() {
     new Ability(Abilities.INTIMIDATE, 3)
       .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, -1, false, true),
     new Ability(Abilities.SHADOW_TAG, 3)
-      .attr(ArenaTrapAbAttr),
+      .attr(ConditionalArenaTrapAbAttr, (opponent: Pokemon) => !opponent.isOfType(Type.GHOST)),
     new Ability(Abilities.ROUGH_SKIN, 3)
       .attr(PostDefendContactDamageAbAttr, 8)
       .bypassFaint(),
@@ -2790,9 +2807,7 @@ export function initAbilities() {
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.MAGNET_PULL, 3)
-      /*.attr(ArenaTrapAbAttr)
-      .condition((pokemon: Pokemon) => pokemon.getOpponent()?.isOfType(Type.STEEL))*/
-      .unimplemented(),
+      .attr(ConditionalArenaTrapAbAttr, (opponent: Pokemon) => opponent.isOfType(Type.STEEL)),
     new Ability(Abilities.SOUNDPROOF, 3)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.getMove().hasFlag(MoveFlags.SOUND_BASED))
       .ignorable(),
@@ -2866,7 +2881,7 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY),
     new Ability(Abilities.ARENA_TRAP, 3)
-      .attr(ArenaTrapAbAttr)
+      .attr(ConditionalArenaTrapAbAttr, (opponent: Pokemon) => opponent.isGrounded())
       .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
