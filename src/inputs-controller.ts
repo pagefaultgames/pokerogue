@@ -31,6 +31,7 @@ export class InputsController {
     // buttonLock ensures only a single movement key is firing repeated inputs
     // (i.e. by holding down a button) at a time
     private buttonLock: Button;
+    private buttonLock2: Button;
     private interactions: Map<Button, Map<string, boolean>> = new Map();
     private time: Time;
     private player: Map<String, GamepadMapping> = new Map();
@@ -54,6 +55,10 @@ export class InputsController {
 
     init(): void {
         this.events = new Phaser.Events.EventEmitter();
+		// Handle the game losing focus
+		this.scene.game.events.on(Phaser.Core.Events.BLUR, () => {
+			this.loseFocus()
+		})
 
         if (typeof this.scene.input.gamepad !== 'undefined') {
             this.scene.input.gamepad.on('connected', function (thisGamepad) {
@@ -78,10 +83,15 @@ export class InputsController {
         this.setupKeyboardControls();
     }
 
+    loseFocus(): void {
+        this.deactivatePressedKey();
+    }
+
     update(): void {
-        for (const b of Utils.getEnumValues(Button)) {
+        // reversed to let the cancel button have a kinda priority on the action button
+        for (const b of Utils.getEnumValues(Button).reverse()) {
             if (!this.interactions.hasOwnProperty(b)) continue;
-            if (this.repeatInputDurationJustPassed(b)) {
+            if (this.repeatInputDurationJustPassed(b) && this.interactions[b].isPressed) {
                 this.events.emit('input_down', {
                     controller_type: 'repeated',
                     button: b,
@@ -166,8 +176,8 @@ export class InputsController {
             [Button.LEFT]: [keyCodes.LEFT, keyCodes.A],
             [Button.RIGHT]: [keyCodes.RIGHT, keyCodes.D],
             [Button.SUBMIT]: [keyCodes.ENTER],
-            [Button.ACTION]: [keyCodes.SPACE, this.scene.abSwapped ? keyCodes.X : keyCodes.Z],
-            [Button.CANCEL]: [keyCodes.BACKSPACE, this.scene.abSwapped ? keyCodes.Z : keyCodes.X],
+            [Button.ACTION]: [keyCodes.SPACE, keyCodes.Z],
+            [Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
             [Button.MENU]: [keyCodes.ESC, keyCodes.M],
             [Button.STATS]: [keyCodes.SHIFT, keyCodes.C],
             [Button.CYCLE_SHINY]: [keyCodes.R],
@@ -235,24 +245,50 @@ export class InputsController {
      * firing a repeated input - this is to prevent multiple buttons from firing repeatedly.
      */
     repeatInputDurationJustPassed(button: Button): boolean {
-        if (this.buttonLock === null || this.buttonLock !== button) {
-            return false;
-        }
+        if (!this.isButtonLocked(button)) return false;
         if (this.time.now - this.interactions[button].pressTime >= repeatInputDelayMillis) {
-            this.buttonLock = null;
             return true;
         }
     }
 
     setLastProcessedMovementTime(button: Button): void {
         if (!this.interactions.hasOwnProperty(button)) return;
-        this.buttonLock = button;
+        this.setButtonLock(button);
         this.interactions[button].pressTime = this.time.now;
+        this.interactions[button].isPressed = true;
     }
 
     delLastProcessedMovementTime(button: Button): void {
         if (!this.interactions.hasOwnProperty(button)) return;
-        this.buttonLock = null;
+        this.releaseButtonLock(button);
         this.interactions[button].pressTime = null;
+        this.interactions[button].isPressed = false;
+    }
+
+    deactivatePressedKey(): void {
+        this.releaseButtonLock(this.buttonLock);
+        this.releaseButtonLock(this.buttonLock2);
+        for (const b of Utils.getEnumValues(Button)) {
+            if (!this.interactions.hasOwnProperty(b)) return;
+            this.interactions[b].pressTime = null;
+            this.interactions[b].isPressed = false;
+        }
+    }
+
+    isButtonLocked(button: Button): boolean {
+        return (this.buttonLock === button || this.buttonLock2 === button);
+    }
+
+    setButtonLock(button: Button): void {
+        if (this.buttonLock === button || this.buttonLock2 === button) return;
+        if (this.buttonLock === button) this.buttonLock2 = button;
+        else if (this.buttonLock2 === button) this.buttonLock = button;
+        else if(!!this.buttonLock) this.buttonLock2 = button;
+        else this.buttonLock = button;
+    }
+
+    releaseButtonLock(button: Button): void {
+        if (this.buttonLock === button) this.buttonLock = null;
+        else if (this.buttonLock2 === button) this.buttonLock2 = null;
     }
 }
