@@ -14,12 +14,12 @@ import { AttackTypeBoosterModifier, DamageMoneyRewardModifier, EnemyDamageBooste
 import { PokeballType } from '../data/pokeball';
 import { Gender } from '../data/gender';
 import { initMoveAnim, loadMoveAnimAssets } from '../data/battle-anims';
-import { Status, StatusEffect } from '../data/status-effect';
+import { Status, StatusEffect, getRandomStatus } from '../data/status-effect';
 import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEvolutionCondition, FusionSpeciesFormEvolution } from '../data/pokemon-evolutions';
 import { reverseCompatibleTms, tmSpecies } from '../data/tms';
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase } from '../phases';
 import { BattleStat } from '../data/battle-stat';
-import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
+import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
 import { BattlerTagType } from "../data/enums/battler-tag-type";
 import { Species } from '../data/enums/species';
 import { WeatherType } from '../data/weather';
@@ -27,7 +27,7 @@ import { TempBattleStat } from '../data/temp-battle-stat';
 import { ArenaTagSide, WeakenMoveScreenTag, WeakenMoveTypeTag } from '../data/arena-tag';
 import { ArenaTagType } from "../data/enums/arena-tag-type";
 import { Biome } from "../data/enums/biome";
-import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr } from '../data/ability';
+import { Ability, AbAttr, BattleStatMultiplierAbAttr, BlockCritAbAttr, BonusCritAbAttr, BypassBurnDamageReductionAbAttr, FieldPriorityMoveImmunityAbAttr, FieldVariableMovePowerAbAttr, IgnoreOpponentStatChangesAbAttr, MoveImmunityAbAttr, MoveTypeChangeAttr, NonSuperEffectiveImmunityAbAttr, PreApplyBattlerTagAbAttr, PreDefendFullHpEndureAbAttr, ReceivedMoveDamageMultiplierAbAttr, ReduceStatusEffectDurationAbAttr, StabBoostAbAttr, StatusEffectImmunityAbAttr, TypeImmunityAbAttr, VariableMovePowerAbAttr, VariableMoveTypeAbAttr, WeightMultiplierAbAttr, allAbilities, applyAbAttrs, applyBattleStatMultiplierAbAttrs, applyPostDefendAbAttrs, applyPreApplyBattlerTagAbAttrs, applyPreAttackAbAttrs, applyPreDefendAbAttrs, applyPreSetStatusAbAttrs, UnsuppressableAbilityAbAttr, SuppressFieldAbilitiesAbAttr, NoFusionAbilityAbAttr, MultCritAbAttr, IgnoreTypeImmunityAbAttr } from '../data/ability';
 import { Abilities } from "#app/data/enums/abilities";
 import PokemonData from '../system/pokemon-data';
 import Battle, { BattlerIndex } from '../battle';
@@ -600,7 +600,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           ret >>= 1;
         break;
     }
-    
+
+    const highestStatBoost = this.findTag(t => t instanceof HighestStatBoostTag && (t as HighestStatBoostTag).stat === stat) as HighestStatBoostTag;
+    if (highestStatBoost)
+      ret *= highestStatBoost.multiplier;
+
     return Math.floor(ret);
   }
 
@@ -774,8 +778,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         types.splice(flyingIndex, 1);
     }
 
-    if (!types.length)
+    if (!types.length) // become UNKNOWN if no types are present
       types.push(Type.UNKNOWN);
+
+    if (types.length > 1 && types.includes(Type.UNKNOWN)) { // remove UNKNOWN if other types are present
+      const index = types.indexOf(Type.UNKNOWN);
+      if (index !== -1) {
+          types.splice(index, 1);
+      }
+    }
 
     return types;
   }
@@ -876,7 +887,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getAttackMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier {
     const typeless = !!move.getMove().getAttrs(TypelessAttr).length;
-    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.getMove().type));
+    const typeMultiplier = new Utils.NumberHolder(this.getAttackTypeEffectiveness(move.getMove().type, source));
     const cancelled = new Utils.BooleanHolder(false);
     if (!typeless)
       applyPreDefendAbAttrs(TypeImmunityAbAttr, this, source, move, cancelled, typeMultiplier, true);
@@ -885,11 +896,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (!cancelled.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
   }
 
-  getAttackTypeEffectiveness(moveType: Type): TypeDamageMultiplier {
+  getAttackTypeEffectiveness(moveType: Type, source?: Pokemon): TypeDamageMultiplier {
     if (moveType === Type.STELLAR)
       return this.isTerastallized() ? 2 : 1;
     const types = this.getTypes(true, true);
-    let multiplier =  getTypeDamageMultiplier(moveType, types[0]) * (types.length > 1 ? getTypeDamageMultiplier(moveType, types[1]) : 1) * (types.length > 2 ? getTypeDamageMultiplier(moveType, types[2]) : 1) as TypeDamageMultiplier;
+
+    const ignorableImmunities = source?.getAbility()?.getAttrs(IgnoreTypeImmunityAbAttr) || [];
+    const cancelled = new Utils.BooleanHolder(false);
+
+    let multiplier = types.map(defType => 
+      ignorableImmunities.some(attr => attr.apply(source, false, cancelled, [moveType, defType]))
+      ? 1
+      : getTypeDamageMultiplier(moveType, defType)
+    ).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
+
     // Handle strong winds lowering effectiveness of types super effective against pure flying
     if (this.scene.arena.weather?.weatherType === WeatherType.STRONG_WINDS && !this.scene.arena.weather.isEffectSuppressed(this.scene) && multiplier >= 2 && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(moveType, Type.FLYING) === 2)
       multiplier /= 2;
@@ -900,12 +920,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const types = this.getTypes(true);
     const enemyTypes = pokemon.getTypes(true, true);
     const outspeed = (this.isActive(true) ? this.getBattleStat(Stat.SPD, pokemon) : this.getStat(Stat.SPD)) <= pokemon.getBattleStat(Stat.SPD, this);
-    let atkScore = pokemon.getAttackTypeEffectiveness(types[0]) * (outspeed ? 1.25 : 1);
-    let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0]), 0.25);
+    let atkScore = pokemon.getAttackTypeEffectiveness(types[0], this) * (outspeed ? 1.25 : 1);
+    let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0], pokemon), 0.25);
     if (types.length > 1)
-      atkScore *= pokemon.getAttackTypeEffectiveness(types[1]);
+      atkScore *= pokemon.getAttackTypeEffectiveness(types[1], this);
     if (enemyTypes.length > 1)
-      defScore *= (1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1]), 0.25));
+      defScore *= (1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1], pokemon), 0.25));
     let hpDiffRatio = this.getHpRatio() + (1 - pokemon.getHpRatio());
     if (outspeed)
       hpDiffRatio = Math.min(hpDiffRatio * 1.5, 1);
@@ -1258,7 +1278,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const cancelled = new Utils.BooleanHolder(false);
     const typeless = !!move.getAttrs(TypelessAttr).length;
     const typeMultiplier = new Utils.NumberHolder(!typeless && (moveCategory !== MoveCategory.STATUS || move.getAttrs(StatusMoveTypeImmunityAttr).find(attr => types.includes((attr as StatusMoveTypeImmunityAttr).immuneType)))
-      ? this.getAttackTypeEffectiveness(type)
+      ? this.getAttackTypeEffectiveness(type, source)
       : 1);
     applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
     if (typeless)
@@ -1904,6 +1924,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs(ReduceStatusEffectDurationAbAttr, this, null, effect, statusCureTurn);
 
       this.setFrameRate(4);
+
+      // If the user is invulnerable, lets remove their invulnerability when they fall asleep
+      const invulnerableTags = [
+        BattlerTagType.UNDERGROUND,
+        BattlerTagType.UNDERWATER,
+        BattlerTagType.HIDDEN,
+        BattlerTagType.FLYING
+      ];
+
+      const tag = invulnerableTags.find((t) => this.getTag(t));
+
+      if (tag) {
+        this.removeTag(tag);
+        this.getMoveQueue().pop();
+      }
     }
 
     this.status = new Status(effect, 0, statusCureTurn?.value);
@@ -2542,6 +2577,10 @@ export class PlayerPokemon extends Pokemon {
     this.generateCompatibleTms();
   }
 
+  /**
+  * Returns a Promise to fuse two PlayerPokemon together
+  * @param pokemon The PlayerPokemon to fuse to this one
+  */
   fuse(pokemon: PlayerPokemon): Promise<void> {
     return new Promise(resolve => {
       this.fusionSpecies = pokemon.species;
@@ -2555,8 +2594,25 @@ export class PlayerPokemon extends Pokemon {
       this.scene.validateAchv(achvs.SPLICE);
       this.scene.gameData.gameStats.pokemonFused++;
 
+      // Store the average HP% that each Pokemon has
+      const newHpPercent = ((pokemon.hp / pokemon.stats[Stat.HP]) + (this.hp / this.stats[Stat.HP])) / 2;
+
       this.generateName();
       this.calculateStats();
+      
+      // Set this Pokemon's HP to the average % of both fusion components
+      this.hp = Math.round(this.stats[Stat.HP] * newHpPercent);
+      if (!this.isFainted()) {
+        // If this Pokemon hasn't fainted, make sure the HP wasn't set over the new maximum
+        this.hp = Math.min(this.hp, this.stats[Stat.HP]);
+        this.status = getRandomStatus(this.status, pokemon.status); // Get a random valid status between the two
+      }
+      else if (!pokemon.isFainted()) {
+        // If this Pokemon fainted but the other hasn't, make sure the HP wasn't set to zero
+        this.hp = Math.max(this.hp, 1);
+        this.status = pokemon.status; // Inherit the other Pokemon's status
+      }
+
       this.generateCompatibleTms();
       this.updateInfo(true);
       const fusedPartyMemberIndex = this.scene.getParty().indexOf(pokemon);
@@ -3132,7 +3188,7 @@ export class PokemonMove {
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
     if (this.moveId && pokemon.summonData?.disabledMove === this.moveId)
       return false;
-    return ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1;
+    return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(' (N)');
   }
 
   getMove(): Move {

@@ -476,7 +476,7 @@ export abstract class PokemonSpeciesForm {
 
 export default class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   public name: string;
-  public pseudoLegendary: boolean;
+  public subLegendary: boolean;
   public legendary: boolean;
   public mythical: boolean;
   public species: string;
@@ -486,7 +486,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   public canChangeForm: boolean;
   public forms: PokemonForm[];
 
-  constructor(id: Species, generation: integer, pseudoLegendary: boolean, legendary: boolean, mythical: boolean, species: string,
+  constructor(id: Species, generation: integer, subLegendary: boolean, legendary: boolean, mythical: boolean, species: string,
     type1: Type, type2: Type, height: number, weight: number, ability1: Abilities, ability2: Abilities, abilityHidden: Abilities,
     baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer,
     catchRate: integer, baseFriendship: integer, baseExp: integer, growthRate: GrowthRate, malePercent: number,
@@ -496,7 +496,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     this.speciesId = id;
     this.formIndex = 0;
     this.generation = generation;
-    this.pseudoLegendary = pseudoLegendary;
+    this.subLegendary = subLegendary;
     this.legendary = legendary;
     this.mythical = mythical;
     this.species = species;
@@ -712,14 +712,14 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   getCompatibleFusionSpeciesFilter(): PokemonSpeciesFilter {
     const hasEvolution = pokemonEvolutions.hasOwnProperty(this.speciesId);
     const hasPrevolution = pokemonPrevolutions.hasOwnProperty(this.speciesId);
-    const pseudoLegendary = this.pseudoLegendary;
+    const pseudoLegendary = this.subLegendary;
     const legendary = this.legendary;
     const mythical = this.mythical;
     return species => {
       return (pseudoLegendary || legendary || mythical ||
         (pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
         && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution))
-        && species.pseudoLegendary === pseudoLegendary
+        && species.subLegendary === pseudoLegendary
         && species.legendary === legendary
         && species.mythical === mythical
         && (this.isTrainerForbidden() || !species.isTrainerForbidden());
