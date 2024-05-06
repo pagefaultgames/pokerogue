@@ -55,7 +55,7 @@ import { OptionSelectConfig, OptionSelectItem } from "./ui/abstact-option-select
 import { SaveSlotUiMode } from "./ui/save-slot-select-ui-handler";
 import { fetchDailyRunSeed, getDailyRunStarters } from "./data/daily-run";
 import { GameModes, gameModes } from "./game-mode";
-import { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
+import PokemonSpecies, { getPokemonSpecies, speciesStarters } from "./data/pokemon-species";
 import i18next from './plugins/i18n';
 import { STARTER_FORM_OVERRIDE, STARTER_SPECIES_OVERRIDE } from './overrides';
 
@@ -3500,8 +3500,11 @@ export class GameOverPhase extends BattlePhase {
             firstClear = this.scene.validateAchv(achvs.CLASSIC_VICTORY);
             this.scene.gameData.gameStats.sessionsWon++;
             for (let pokemon of this.scene.getParty()) {
-              const speciesId = getPokemonSpecies(pokemon.species.speciesId)
-              this.scene.gameData.incrementStarterWinCount(speciesId);
+              this.awardRibbon(pokemon.species);
+
+              if (pokemon.species.getRootSpeciesId() != pokemon.species.getRootSpeciesId(true)) {
+                this.awardRibbon(pokemon.species, true);
+              }
             }
           } else if (this.scene.gameMode.isDaily && success[1])
             this.scene.gameData.gameStats.dailyRunSessionsWon++;
@@ -3532,6 +3535,16 @@ export class GameOverPhase extends BattlePhase {
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.SPLICED_ENDLESS_MODE));
       if (!this.scene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE])
         this.scene.unshiftPhase(new UnlockPhase(this.scene, Unlockables.MINI_BLACK_HOLE));
+    }
+  }
+
+  awardRibbon(species: PokemonSpecies, forStarter: boolean = false): void {
+    const speciesId = getPokemonSpecies(species.speciesId)
+    const speciesRibbonCount = this.scene.gameData.incrementRibbonCount(speciesId, forStarter);
+    // first time classic win, award voucher
+    if (speciesRibbonCount === 1) {
+      const rootSpeciesId = species.getRootSpeciesId(true);
+      this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS));
     }
   }
 }

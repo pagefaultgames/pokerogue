@@ -1079,8 +1079,8 @@ export class GameData {
     });
   }
 
-  incrementStarterWinCount(species: PokemonSpecies): void {
-    const speciesIdToIncrement: Species = species.getRootSpeciesId();
+  incrementRibbonCount(species: PokemonSpecies, forStarter: boolean = false): integer {
+    const speciesIdToIncrement: Species = species.getRootSpeciesId(forStarter);
 
     if (!this.starterData[speciesIdToIncrement].winCount) {
       this.starterData[speciesIdToIncrement].winCount = 0;
@@ -1102,8 +1102,7 @@ export class GameData {
     if(ribbonsInStats >= 10)
       this.scene.validateAchv(achvs._10_RIBBONS);
 
-    this.starterData[speciesIdToIncrement].winCount++;
-
+    return this.starterData[speciesIdToIncrement].winCount++;
   }
 
   addStarterCandy(species: PokemonSpecies, count: integer): void {
