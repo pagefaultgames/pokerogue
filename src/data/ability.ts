@@ -2483,11 +2483,11 @@ export class IgnoreTypeImmunityAbAttr extends AbAttr {
   }
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.defenderType !== (args[1] as Type)) {
-      return false;
+    if (this.defenderType === (args[1] as Type)) {
+      cancelled.value = this.allowedMoveTypes.some(type => type === (args[0] as Type));
     }
 
-    return this.allowedMoveTypes.some(type => type === (args[0] as Type));
+    return cancelled.value;
   }
 }
 
@@ -3588,7 +3588,8 @@ export function initAbilities() {
       .partial(),
     new Ability(Abilities.MINDS_EYE, 9)
       .attr(IgnoreTypeImmunityAbAttr, Type.GHOST, [Type.NORMAL, Type.FIGHTING])
-      .ignorable(), // TODO: evasiveness bypass should not be ignored, but accuracy immunity should
+      .ignorable() // TODO: evasiveness bypass should not be ignored, but accuracy immunity should
+      .partial(),
     new Ability(Abilities.SUPERSWEET_SYRUP, 9)
       .unimplemented(),
     new Ability(Abilities.HOSPITALITY, 9)
