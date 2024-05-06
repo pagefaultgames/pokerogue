@@ -4,30 +4,30 @@
 			"image": "676-debutante.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 68,
-				"h": 68
+				"w": 62,
+				"h": 62
 			},
-			"scale": 1,
+			"scale": 0.333,
 			"frames": [
 				{
 					"filename": "0001.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 57,
-						"h": 68
+						"w": 96,
+						"h": 96
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 57,
-						"h": 68
+						"x": 25,
+						"y": 18,
+						"w": 51,
+						"h": 62
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 57,
-						"h": 68
+						"w": 51,
+						"h": 62
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:76ef75ea5c9561531c220cdb7f78934d:6f39eb82deb32d251df708f5d4edc9f1:bf2f862a1c8881133f9f3ffbf44602fa$"
+		"smartupdate": "$TexturePacker:SmartUpdate:ba172ad89c93e6e6f36f621c38e54754:7c9d0d13f309221141cd334833e412a5:bf2f862a1c8881133f9f3ffbf44602fa$"
 	}
 }
