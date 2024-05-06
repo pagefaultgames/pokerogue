@@ -4,30 +4,30 @@
 			"image": "676-la-reine.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 69,
-				"h": 69
+				"w": 63,
+				"h": 63
 			},
-			"scale": 1,
+			"scale": 0.5,
 			"frames": [
 				{
 					"filename": "0001.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 55,
-						"h": 69
+						"w": 96,
+						"h": 96
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 55,
-						"h": 69
+						"x": 23,
+						"y": 17,
+						"w": 49,
+						"h": 63
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 55,
-						"h": 69
+						"w": 49,
+						"h": 63
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:d209428aca72f49f1e9ee3e97f1c18ab:c56ae957d7acb10c7373b842af3a8786:b99821e87dffda3297dd25a224a9029f$"
+		"smartupdate": "$TexturePacker:SmartUpdate:81b2b5d853a3d2527630ca0b2fea6569:98097941483e509b7962c50b179d132f:b99821e87dffda3297dd25a224a9029f$"
 	}
 }
