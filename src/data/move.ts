@@ -6182,7 +6182,8 @@ export function initMoves() {
     new AttackMove(Moves.THUNDEROUS_KICK, Type.FIGHTING, MoveCategory.PHYSICAL, 90, 100, 10, 100, 0, 8)
       .attr(StatChangeAttr, BattleStat.DEF, -1),
     new AttackMove(Moves.GLACIAL_LANCE, Type.ICE, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 8)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .makesContact(false),
     new AttackMove(Moves.ASTRAL_BARRAGE, Type.GHOST, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(Moves.EERIE_SPELL, Type.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 5, 100, 0, 8)
