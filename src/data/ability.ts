@@ -2215,7 +2215,7 @@ export class ConditionalArenaTrapAbAttr extends ArenaTrapAbAttr {
   }
 
   applyCheckTrapped(pokemon: Pokemon, opponent: Pokemon, passive: boolean, trapped: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.condition(opponent)) {
+    if (this.condition(opponent) && !opponent.isOfType(Type.GHOST)) {
       trapped.value = true;
       return true;
     }
@@ -2750,7 +2750,7 @@ export function initAbilities() {
     new Ability(Abilities.INTIMIDATE, 3)
       .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, -1, false, true),
     new Ability(Abilities.SHADOW_TAG, 3)
-      .attr(ConditionalArenaTrapAbAttr, (opponent: Pokemon) => !opponent.isOfType(Type.GHOST)),
+      .attr(ConditionalArenaTrapAbAttr, (opponent: Pokemon) => true),
     new Ability(Abilities.ROUGH_SKIN, 3)
       .attr(PostDefendContactDamageAbAttr, 8)
       .bypassFaint(),
