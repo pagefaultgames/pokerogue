@@ -2281,7 +2281,6 @@ export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   }
 
   applyPostFaint(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, args: any[]): boolean {
-    console.log(args);
     let damage = args[0];
     attacker.damageAndUpdate((damage), HitResult.OTHER);
     attacker.turnData.damageTaken += damage;
