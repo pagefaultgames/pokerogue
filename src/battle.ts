@@ -157,10 +157,8 @@ export default class Battle {
         const moneyAmount = new Utils.IntegerHolder(scene.currentBattle.moneyScattered);
         scene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
 
-        scene.money += moneyAmount.value;
-        scene.updateMoneyText();
-    
-        scene.validateAchvs(MoneyAchv);
+        scene.addMoney(moneyAmount.value);
+        
         scene.queueMessage(`You picked up ₽${moneyAmount.value.toLocaleString('en-US')}!`, null, true);
 
         scene.currentBattle.moneyScattered = 0;
@@ -196,12 +194,18 @@ export default class Battle {
                     return 'battle_final';
                 return 'battle_final_encounter';
             }
-            if (pokemon.species.legendary || pokemon.species.pseudoLegendary || pokemon.species.mythical) {
+            if (pokemon.species.legendary || pokemon.species.subLegendary || pokemon.species.mythical) {
+                if (pokemon.species.speciesId === Species.REGIROCK || pokemon.species.speciesId === Species.REGICE || pokemon.species.speciesId === Species.REGISTEEL || pokemon.species.speciesId === Species.REGIGIGAS || pokemon.species.speciesId === Species.REGIELEKI || pokemon.species.speciesId === Species.REGIDRAGO)
+                    return 'battle_legendary_regis';
+                if (pokemon.species.speciesId === Species.COBALION || pokemon.species.speciesId === Species.TERRAKION || pokemon.species.speciesId === Species.VIRIZION || pokemon.species.speciesId === Species.TORNADUS || pokemon.species.speciesId === Species.THUNDURUS || pokemon.species.speciesId === Species.LANDORUS || pokemon.species.speciesId === Species.KELDEO || pokemon.species.speciesId === Species.MELOETTA || pokemon.species.speciesId === Species.GENESECT)
+                    return 'battle_legendary_unova';
+                if (pokemon.species.speciesId === Species.RESHIRAM || pokemon.species.speciesId === Species.ZEKROM)
+                    return 'battle_legendary_res_zek';
                 if (pokemon.species.speciesId === Species.KYUREM)
-                    return 'battle_legendary_k';
+                    return 'battle_legendary_kyurem';
                 if (pokemon.species.legendary)
-                    return 'battle_legendary_rz';
-                return 'battle_legendary';
+                    return 'battle_legendary_res_zek';
+                return 'battle_legendary_unova';
             }
         }
 
