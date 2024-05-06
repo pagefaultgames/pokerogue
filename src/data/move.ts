@@ -809,9 +809,40 @@ export class HealAttr extends MoveEffectAttr {
       Math.max(Math.floor(target.getMaxHp() * healRatio), 1), getPokemonMessage(target, ' regained\nhealth!'), true, !this.showAnim));
   }
 
+  getHealRatio(h: number = -1){
+    if (h > 0)
+      this.healRatio = h;
+
+    return this.healRatio;
+  }
+
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     let score = ((1 - (this.selfTarget ? user : target).getHpRatio()) * 20) - this.healRatio * 10;
     return Math.round(score / (1 - this.healRatio / 2));
+  }
+}
+
+export class StockpileHealAttr extends HealAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const s = this.getStockpiles(user);
+
+    this.getHealRatio(s > 2 ? 1 : (s * 0.25));
+
+    super.apply(user, target, move, args);
+    return true;
+  }
+
+  getStockpiles(user: Pokemon): integer {
+    let s = 0;
+    const stock = [BattlerTagType.STOCKPILE_ONE, BattlerTagType.STOCKPILE_TWO, BattlerTagType.STOCKPILE_THREE];
+
+    for (let x = 0 ; x < stock.length ; x++){
+      if (user.getTag(stock[x])){
+        s++;
+      }
+    }
+
+    return s;
   }
 }
 
@@ -1587,18 +1618,26 @@ export class StockpileStatChangeAttr extends StatChangeAttr {
     super([ BattleStat.ATK, BattleStat.SPATK ], l, true);
   }
 
-  // apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
-  //   if (!super.apply(user, target, move, args) || (this.condition && !this.condition(user, target, move)))
-  //     return false;
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    if (!super.apply(user, target, move, args))
+      return false;
+    
+    this.levels = this.levels < 0 ? (this.getStockpiles(user) * -1) : 1;
+    return true;
+  }
 
-  //   if (move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) {
-  //     const levels = this.getLevels(user);
-  //     user.scene.unshiftPhase(new StatChangePhase(user.scene, (this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, levels, this.showMessage));
-  //     return true;
-  //   }
+  getStockpiles(user: Pokemon): integer {
+    let s = 0;
+    const stock = [BattlerTagType.STOCKPILE_ONE, BattlerTagType.STOCKPILE_TWO, BattlerTagType.STOCKPILE_THREE];
 
-  //   return false;
-  // }
+    for (let x = 0 ; x < stock.length ; x++){
+      if (user.getTag(stock[x])){
+        s++;
+      }
+    }
+
+    return s;
+  }
 }
 
 export class HalfHpStatMaxAttr extends StatChangeAttr {
@@ -4774,10 +4813,6 @@ export function initMoves() {
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       .partial(),
     // mareksison/redmaverick616 starts working here
-    /**
-     * need to find a way to remove stat changes when stockpile is used
-     * need to find a way to remove stockpile when the relevant moves are used
-     */
     new SelfStatusMove(Moves.STOCKPILE, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(StockpileOneAttr)
       .attr(StockpileTwoAttr)
@@ -4787,11 +4822,22 @@ export function initMoves() {
     new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
       .attr(StockpilePowerAttr)
       .attr(StockpileStatChangeAttr, 'Spit-Up')
+      .attr(RemoveBattlerTagAttr, [ 
+        BattlerTagType.STOCKPILE_ONE,
+        BattlerTagType.STOCKPILE_TWO,
+        BattlerTagType.STOCKPILE_THREE,
+      ], true)
       .partial(),
     new SelfStatusMove(Moves.SWALLOW, Type.NORMAL, -1, 10, -1, 0, 3)
       .triageMove()
+      .attr(StockpileHealAttr, 1)
       .attr(StockpileStatChangeAttr, 'Swallow')
-      .unimplemented(),
+      .attr(RemoveBattlerTagAttr, [ 
+        BattlerTagType.STOCKPILE_ONE,
+        BattlerTagType.STOCKPILE_TWO,
+        BattlerTagType.STOCKPILE_THREE,
+      ], true)
+      .partial(),
     // mareksison/redmaverick616 ends working here
     new AttackMove(Moves.HEAT_WAVE, Type.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 10, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
