@@ -3323,7 +3323,7 @@ export const move: MoveTranslationEntries = {
   },
   "springtideStorm": {
     name: "Springtide Storm",
-    effect: "The user attacks by wrapping opposing PokÃ©mon in fierce winds brimming with love and hate. This may also lower their Attack stats."
+    effect: "The user attacks by wrapping opposing Pokémon in fierce winds brimming with love and hate. This may also lower their Attack stats."
   },
   "mysticalPower": {
     name: "Mystical Power",
@@ -3383,19 +3383,19 @@ export const move: MoveTranslationEntries = {
   },
   "bleakwindStorm": {
     name: "Bleakwind Storm",
-    effect: "The user attacks with savagely cold winds that cause both body and spirit to tremble. This may also lower the Speed stats of opposing PokÃ©mon."
+    effect: "The user attacks with savagely cold winds that cause both body and spirit to tremble. This may also lower the Speed stats of opposing Pokémon."
   },
   "wildboltStorm": {
     name: "Wildbolt Storm",
-    effect: "The user summons a thunderous tempest and savagely attacks with lightning and wind. This may also leave opposing PokÃ©mon with paralysis."
+    effect: "The user summons a thunderous tempest and savagely attacks with lightning and wind. This may also leave opposing Pokémon with paralysis."
   },
   "sandsearStorm": {
     name: "Sandsear Storm",
-    effect: "The user attacks by wrapping opposing PokÃ©mon in fierce winds and searingly hot sand. This may also leave them with a burn."
+    effect: "The user attacks by wrapping opposing Pokémon in fierce winds and searingly hot sand. This may also leave them with a burn."
   },
   "lunarBlessing": {
     name: "Lunar Blessing",
-    effect: "The user receives a blessing from the crescent moon, restoring HP and curing status conditions for itself and its ally PokÃ©mon currently in the battle."
+    effect: "The user receives a blessing from the crescent moon, restoring HP and curing status conditions for itself and its ally Pokémon currently in the battle."
   },
   "takeHeart": {
     name: "Take Heart",
@@ -3423,7 +3423,7 @@ export const move: MoveTranslationEntries = {
   },
   "gMaxTerror": {
     name: "G-Max Terror",
-    effect: "A Ghost-type attack that Gigantamax Gengar use. This PokÃ©mon steps on the opposing PokÃ©mon's shadow to prevent them from escaping."
+    effect: "A Ghost-type attack that Gigantamax Gengar use. This Pokémon steps on the opposing Pokémon's shadow to prevent them from escaping."
   },
   "gMaxResonance": {
     name: "G-Max Resonance",
@@ -3583,7 +3583,7 @@ export const move: MoveTranslationEntries = {
   },
   "revivalBlessing": {
     name: "Revival Blessing",
-    effect: "The user bestows a loving blessing, reviving a party PokÃ©mon that has fainted and restoring half that PokÃ©mon's max HP."
+    effect: "The user bestows a loving blessing, reviving a party Pokémon that has fainted and restoring half that Pokémon's max HP."
   },
   "saltCure": {
     name: "Salt Cure",
@@ -3595,11 +3595,11 @@ export const move: MoveTranslationEntries = {
   },
   "mortalSpin": {
     name: "Mortal Spin",
-    effect: "The user performs a spin attack that can also eliminate the effects of such moves as Bind, Wrap, and Leech Seed. This also poisons opposing PokÃ©mon."
+    effect: "The user performs a spin attack that can also eliminate the effects of such moves as Bind, Wrap, and Leech Seed. This also poisons opposing Pokémon."
   },
   "doodle": {
     name: "Doodle",
-    effect: "The user captures the very essence of the target in a sketch. This changes the Abilities of the user and its ally PokÃ©mon to that of the target."
+    effect: "The user captures the very essence of the target in a sketch. This changes the Abilities of the user and its ally Pokémon to that of the target."
   },
   "filletAway": {
     name: "Fillet Away",
@@ -3651,11 +3651,11 @@ export const move: MoveTranslationEntries = {
   },
   "shedTail": {
     name: "Shed Tail",
-    effect: "The user creates a substitute for itself using its own HP before switching places with a party PokÃ©mon in waiting."
+    effect: "The user creates a substitute for itself using its own HP before switching places with a party Pokémon in waiting."
   },
   "chillyReception": {
     name: "Chilly Reception",
-    effect: "The user tells a chillingly bad joke before switching places with a party PokÃ©mon in waiting. This summons a snowstorm lasting five turns."
+    effect: "The user tells a chillingly bad joke before switching places with a party Pokémon in waiting. This summons a snowstorm lasting five turns."
   },
   "tidyUp": {
     name: "Tidy Up",
@@ -3755,7 +3755,7 @@ export const move: MoveTranslationEntries = {
   },
   "teraStarstorm": {
     name: "Tera Starstorm",
-    effect: "With the power of its crystals, the user bombards and eliminates the target. When used by Terapagos in its Stellar Form, this move damages all opposing PokÃ©mon."
+    effect: "With the power of its crystals, the user bombards and eliminates the target. When used by Terapagos in its Stellar Form, this move damages all opposing Pokémon."
   },
   "fickleBeam": {
     name: "Fickle Beam",
