@@ -6,77 +6,88 @@ import { menu as esMenu } from '../locales/es/menu';
 import { menu as itMenu } from '../locales/it/menu';
 import { menu as frMenu } from '../locales/fr/menu';
 import { menu as deMenu } from '../locales/de/menu';
-import { menu as cnMenu } from '../locales/cn/menu';
+import { menu as chsMenu } from '../locales/chs/menu';
+import { menu as chtMenu } from '../locales/cht/menu';
 
 import { menuUiHandler as enMenuUiHandler } from '../locales/en/menu-ui-handler.js';
 import { menuUiHandler as esMenuUiHandler } from '../locales/es/menu-ui-handler.js';
 import { menuUiHandler as frMenuUiHandler } from '../locales/fr/menu-ui-handler.js';
 import { menuUiHandler as itMenuUiHandler } from '../locales/it/menu-ui-handler.js';
 import { menuUiHandler as deMenuUiHandler } from '../locales/de/menu-ui-handler.js';
-import { menuUiHandler as cnMenuUiHandler } from '../locales/cn/menu-ui-handler.js';
+import { menuUiHandler as chsMenuUiHandler } from '../locales/chs/menu-ui-handler.js';
+import { menuUiHandler as chtMenuUiHandler } from '../locales/cht/menu-ui-handler.js';
 
 import { battle as enBattle } from '../locales/en/battle';
 import { battle as esBattle } from '../locales/es/battle';
 import { battle as itBattle } from '../locales/it/battle';
 import { battle as frBattle } from '../locales/fr/battle';
 import { battle as deBattle } from '../locales/de/battle';
-import { battle as cnBattle } from '../locales/cn/battle';
+import { battle as chsBattle } from '../locales/chs/battle';
+import { battle as chtBattle } from '../locales/cht/battle';
 
 import { move as enMove } from '../locales/en/move';
 import { move as esMove } from '../locales/es/move';
 import { move as itMove } from '../locales/it/move';
 import { move as frMove } from '../locales/fr/move';
 import { move as deMove } from '../locales/de/move';
-import { move as cnMove } from '../locales/cn/move';
+import { move as chsMove } from '../locales/chs/move';
+import { move as chtMove } from '../locales/cht/move';
 
 import { ability as enAbility } from '../locales/en/ability';
 import { ability as esAbility } from '../locales/es/ability';
 import { ability as itAbility } from '../locales/it/ability';
 import { ability as frAbility } from '../locales/fr/ability';
 import { ability as deAbility } from '../locales/de/ability';
-import { ability as cnAbility } from '../locales/cn/ability';
+import { ability as chsAbility } from '../locales/chs/ability';
+import { ability as chtAbility } from '../locales/cht/ability';
 
 import { pokeball as enPokeball } from '../locales/en/pokeball';
 import { pokeball as esPokeball } from '../locales/es/pokeball';
 import { pokeball as itPokeball } from '../locales/it/pokeball';
 import { pokeball as frPokeball } from '../locales/fr/pokeball';
 import { pokeball as dePokeball } from '../locales/de/pokeball';
-import { pokeball as cnPokeball } from '../locales/cn/pokeball';
+import { pokeball as chsPokeball } from '../locales/chs/pokeball';
+import { pokeball as chtPokeball } from '../locales/cht/pokeball';
 
 import { pokemon as enPokemon } from '../locales/en/pokemon';
 import { pokemon as esPokemon } from '../locales/es/pokemon';
 import { pokemon as itPokemon } from '../locales/it/pokemon';
 import { pokemon as frPokemon } from '../locales/fr/pokemon';
 import { pokemon as dePokemon } from '../locales/de/pokemon';
-import { pokemon as cnPokemon } from '../locales/cn/pokemon';
+import { pokemon as chsPokemon } from '../locales/chs/pokemon';
+import { pokemon as chtPokemon } from '../locales/cht/pokemon';
 
 import { pokemonStat as enPokemonStat } from '../locales/en/pokemon-stat';
 import { pokemonStat as esPokemonStat } from '../locales/es/pokemon-stat';
 import { pokemonStat as frPokemonStat } from '../locales/fr/pokemon-stat';
 import { pokemonStat as itPokemonStat } from '../locales/it/pokemon-stat';
 import { pokemonStat as dePokemonStat } from '../locales/de/pokemon-stat';
-import { pokemonStat as cnPokemonStat } from '../locales/cn/pokemon-stat';
+import { pokemonStat as chsPokemonStat } from '../locales/chs/pokemon-stat';
+import { pokemonStat as chtPokemonStat } from '../locales/cht/pokemon-stat';
 
 import { commandUiHandler as enCommandUiHandler } from '../locales/en/command-ui-handler';
 import { commandUiHandler as esCommandUiHandler } from '../locales/es/command-ui-handler';
 import { commandUiHandler as itCommandUiHandler } from '../locales/it/command-ui-handler';
 import { commandUiHandler as frCommandUiHandler } from '../locales/fr/command-ui-handler';
 import { commandUiHandler as deCommandUiHandler } from '../locales/de/command-ui-handler';
-import { commandUiHandler as cnCommandUiHandler } from '../locales/cn/command-ui-handler';
+import { commandUiHandler as chsCommandUiHandler } from '../locales/chs/command-ui-handler';
+import { commandUiHandler as chtCommandUiHandler } from '../locales/cht/command-ui-handler';
 
 import { fightUiHandler as enFightUiHandler } from '../locales/en/fight-ui-handler';
 import { fightUiHandler as esFightUiHandler } from '../locales/es/fight-ui-handler';
 import { fightUiHandler as frFightUiHandler } from '../locales/fr/fight-ui-handler';
 import { fightUiHandler as itFightUiHandler } from '../locales/it/fight-ui-handler';
 import { fightUiHandler as deFightUiHandler } from '../locales/de/fight-ui-handler';
-import { fightUiHandler as cnFightUiHandler } from '../locales/cn/fight-ui-handler';
+import { fightUiHandler as chsFightUiHandler } from '../locales/chs/fight-ui-handler';
+import { fightUiHandler as chtFightUiHandler } from '../locales/cht/fight-ui-handler';
 
 import { tutorial as enTutorial } from '../locales/en/tutorial';
 import { tutorial as esTutorial } from '../locales/es/tutorial';
 import { tutorial as frTutorial } from '../locales/fr/tutorial';
 import { tutorial as itTutorial} from '../locales/it/tutorial';
 import { tutorial as deTutorial } from '../locales/de/tutorial';
-import { tutorial as cnTutorial } from '../locales/cn/tutorial';
+import { tutorial as chsTutorial } from '../locales/chs/tutorial';
+import { tutorial as chtTutorial } from '../locales/cht/tutorial';
 
 export interface SimpleTranslationEntries {
   [key: string]: string
@@ -129,7 +140,7 @@ export function initI18n(): void {
   i18next.use(LanguageDetector).init({
     lng: lang,
     fallbackLng: 'en',
-    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'cn'],
+    supportedLngs: ['en', 'es', 'fr', 'it', 'de', 'chs', 'cht'],
     debug: true,
     interpolation: {
       escapeValue: false,
@@ -200,18 +211,31 @@ export function initI18n(): void {
         fightUiHandler: deFightUiHandler,
         tutorial: deTutorial,
       },
-      cn: {
-        menu: cnMenu,
-        menuUiHandler: cnMenuUiHandler,
-        battle: cnBattle,
-        move: cnMove,
-        ability: cnAbility,
-        pokeball: cnPokeball,
-        pokemon: cnPokemon,
-        pokemonStat: cnPokemonStat,
-        commandUiHandler: cnCommandUiHandler,
-        fightUiHandler: cnFightUiHandler,
-        tutorial: cnTutorial,
+      chs: {
+        menu: chsMenu,
+        menuUiHandler: chsMenuUiHandler,
+        battle: chsBattle,
+        move: chsMove,
+        ability: chsAbility,
+        pokeball: chsPokeball,
+        pokemon: chsPokemon,
+        pokemonStat: chsPokemonStat,
+        commandUiHandler: chsCommandUiHandler,
+        fightUiHandler: chsFightUiHandler,
+        tutorial: chsTutorial,
+      },
+      cht: {
+        menu: chtMenu,
+        menuUiHandler: chtMenuUiHandler,
+        battle: chtBattle,
+        move: chtMove,
+        ability: chtAbility,
+        pokeball: chtPokeball,
+        pokemon: chtPokemon,
+        pokemonStat: chtPokemonStat,
+        commandUiHandler: chtCommandUiHandler,
+        fightUiHandler: chtFightUiHandler,
+        tutorial: chtTutorial,
       }
     },
   });
