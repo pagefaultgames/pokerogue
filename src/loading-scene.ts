@@ -31,6 +31,8 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas('bg', 'ui');
     this.loadImage('command_fight_labels', 'ui');
     this.loadAtlas('prompt', 'ui');
+    this.loadImage('candy', 'ui');
+    this.loadImage('candy_overlay', 'ui');
     this.loadImage('cursor', 'ui');
     this.loadImage('cursor_reverse', 'ui');
     for (let wv of Utils.getEnumValues(WindowVariant)) {
@@ -67,6 +69,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage('achv_bar_2', 'ui');
     this.loadImage('achv_bar_3', 'ui');
     this.loadImage('achv_bar_4', 'ui');
+    this.loadImage('achv_bar_5', 'ui');
     this.loadImage('shiny_star', 'ui', 'shiny.png');
     this.loadImage('shiny_star_1', 'ui', 'shiny_1.png');
     this.loadImage('shiny_star_2', 'ui', 'shiny_2.png');
@@ -222,6 +225,7 @@ export class LoadingScene extends SceneBase {
     this.loadSe('sparkle');
     this.loadSe('restore');
     this.loadSe('shine');
+    this.loadSe('shing');
     this.loadSe('charge');
     this.loadSe('beam');
     this.loadSe('upgrade');
