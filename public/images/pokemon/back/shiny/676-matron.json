@@ -4,30 +4,30 @@
 			"image": "676-matron.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 68,
-				"h": 68
+				"w": 62,
+				"h": 62
 			},
-			"scale": 1,
+			"scale": 0.333,
 			"frames": [
 				{
 					"filename": "0001.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 53,
-						"h": 68
+						"w": 96,
+						"h": 96
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 53,
-						"h": 68
+						"x": 26,
+						"y": 18,
+						"w": 47,
+						"h": 62
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 53,
-						"h": 68
+						"w": 47,
+						"h": 62
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:262f28877dc9ef9e7920282c4b36b8dd:18b55adc9c377d1b24d6b236e1f39177:020798583d07c479020bb0af34cf8bb6$"
+		"smartupdate": "$TexturePacker:SmartUpdate:6c9b45763eb4fedb5ec7099762f23606:884e9813686e91cf2a2cd9f51652a875:020798583d07c479020bb0af34cf8bb6$"
 	}
 }

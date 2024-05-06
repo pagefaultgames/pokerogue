@@ -4,30 +4,30 @@
 			"image": "676-pharaoh.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 69,
-				"h": 69
+				"w": 63,
+				"h": 63
 			},
-			"scale": 1,
+			"scale": 0.5,
 			"frames": [
 				{
 					"filename": "0001.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 52,
-						"h": 69
+						"w": 96,
+						"h": 96
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 52,
-						"h": 69
+						"x": 25,
+						"y": 17,
+						"w": 46,
+						"h": 63
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 52,
-						"h": 69
+						"w": 46,
+						"h": 63
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:85c709f8538d07088a17e53a7c85afa0:623b4bc6698ef1a984b6bad42e68115b:904b7ab6f57249c96beea4b5f72deb53$"
+		"smartupdate": "$TexturePacker:SmartUpdate:bdf2959fe7e2556fe6d031d7de04fc6c:fbff7f59a6ed25ee3eef955cbb3b9a56:904b7ab6f57249c96beea4b5f72deb53$"
 	}
 }
