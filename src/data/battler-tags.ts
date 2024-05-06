@@ -920,7 +920,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
     stats.map(s => pokemon.getBattleStat(s)).reduce((highestValue: integer, value: integer, i: integer) => {
       if (value > highestValue) {
         highestStat = stats[i];
-        return highestValue += value;
+        return value;
       }
       return highestValue;
     }, 0);
@@ -981,6 +981,19 @@ export class HideSpriteTag extends BattlerTag {
       duration: Utils.getFrameMs(2),
       onComplete: () => pokemon.setVisible(true)
     });
+  }
+}
+
+export class TypeImmuneTag extends BattlerTag {
+  public immuneType: Type;
+  constructor(tagType: BattlerTagType, sourceMove: Moves, immuneType: Type, length: number) {
+    super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
+  }
+}
+
+export class MagnetRisenTag extends TypeImmuneTag {
+  constructor(tagType: BattlerTagType, sourceMove: Moves) {
+    super(tagType, sourceMove, Type.GROUND, 5);
   }
 }
 
@@ -1211,6 +1224,8 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
       return new CursedTag(sourceId);
     case BattlerTagType.CHARGED:
       return new TypeBoostTag(tagType, sourceMove, Type.ELECTRIC, 2, true);
+    case BattlerTagType.MAGNET_RISEN:
+      return new MagnetRisenTag(tagType, sourceMove);
     case BattlerTagType.NONE:
     default:
         return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);

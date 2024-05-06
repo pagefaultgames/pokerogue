@@ -1,6 +1,8 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene from "../battle-scene";
 import AbstractOptionSelectUiHandler, { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { Mode } from "./ui";
+import i18next from "i18next";
+import {Button} from "../enums/buttons";
 
 export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
   private switchCheck: boolean;
@@ -19,14 +21,14 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
       const config: OptionSelectConfig = {
         options: [
           {
-            label: 'Yes',
+            label: i18next.t("menu:yes"),
             handler: () => {
               args[0]();
               return true;
             }
           },
           {
-            label: 'No',
+            label: i18next.t("menu:no"),
             handler: () => {
               args[1]();
               return true;
