@@ -2171,9 +2171,12 @@ export class DoubleBerryEffectAbAttr extends AbAttr {
 
 export class PreventBerryUseAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    cancelled.value = true;
-
-    return true;
+    if (!Utils.randSeedInt(2)) {
+      cancelled.value = true;
+      return true;
+    }
+    
+    return false;
   }
 }
 
