@@ -3544,7 +3544,7 @@ export class GameOverPhase extends BattlePhase {
     // first time classic win, award voucher
     if (speciesRibbonCount === 1) {
       const rootSpeciesId = species.getRootSpeciesId(true);
-      this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS));
+      this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.VOUCHER));
     }
   }
 }

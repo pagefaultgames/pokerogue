@@ -1102,7 +1102,7 @@ export class GameData {
     if(ribbonsInStats >= 10)
       this.scene.validateAchv(achvs._10_RIBBONS);
 
-    return this.starterData[speciesIdToIncrement].winCount++;
+    return ++this.starterData[speciesIdToIncrement].winCount;
   }
 
   addStarterCandy(species: PokemonSpecies, count: integer): void {
