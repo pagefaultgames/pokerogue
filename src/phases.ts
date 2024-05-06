@@ -2254,7 +2254,10 @@ export class MovePhase extends BattlePhase {
       
       if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {
         moveQueue.shift();
+        if (this.move.moveId === 153 || this.move.moveId === 120 || this.move.moveId === 802){ //Currently all explosions, AKA, kamikaze-attacks. There might be a better way to do it except to hardcode it, but i haven't found how yet.
+        } else {
         this.cancel();
+      }
       }
 
       if (this.cancelled) {
