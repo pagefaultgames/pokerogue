@@ -2977,9 +2977,17 @@ export function initAbilities() {
       .attr(IgnoreOpponentStatChangesAbAttr)
       .ignorable(),
     new Ability(Abilities.TINTED_LENS, 4)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type) <= 0.5, 2),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => {
+        const variableType = new Utils.IntegerHolder(move.type);
+        applyMoveAttrs(VariableMoveTypeAttr, user, target, move, variableType);
+        return target.getAttackTypeEffectiveness(variableType.value) <= 0.5;
+      }, 2),
     new Ability(Abilities.FILTER, 4)
-      .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getAttackTypeEffectiveness(move.type) >= 2, 0.75)
+      .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => {
+        const variableType = new Utils.IntegerHolder(move.type);
+        applyMoveAttrs(VariableMoveTypeAttr, user, target, move, variableType);
+        return target.getAttackTypeEffectiveness(move.type) >= 2;
+      }, 0.75)
       .ignorable(),
     new Ability(Abilities.SLOW_START, 4)
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.SLOW_START, 5),
@@ -2994,7 +3002,11 @@ export function initAbilities() {
       .attr(BlockWeatherDamageAttr, WeatherType.HAIL)
       .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.HAIL, WeatherType.SNOW),
     new Ability(Abilities.SOLID_ROCK, 4)
-      .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getAttackTypeEffectiveness(move.type) >= 2, 0.75)
+      .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => {
+        const variableType = new Utils.IntegerHolder(move.type);
+        applyMoveAttrs(VariableMoveTypeAttr, user, target, move, variableType);
+        return target.getAttackTypeEffectiveness(move.type) >= 2;
+      }, 0.75)
       .ignorable(),
     new Ability(Abilities.SNOW_WARNING, 4)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SNOW)
