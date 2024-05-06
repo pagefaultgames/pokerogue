@@ -367,7 +367,7 @@ export class AttackMove extends Move {
 
     let attackScore = 0;
 
-    const effectiveness = target.getAttackTypeEffectiveness(this.type);
+    const effectiveness = target.getAttackTypeEffectiveness(this.type, user);
     attackScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
     if (attackScore) {
       if (this.category === MoveCategory.PHYSICAL) {
@@ -738,7 +738,7 @@ export class SacrificialAttr extends MoveEffectAttr {
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     if (user.isBoss())
       return -20;
-    return Math.ceil(((1 - user.getHpRatio()) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type) - 0.5));
+    return Math.ceil(((1 - user.getHpRatio()) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, user) - 0.5));
   }
 }
 
@@ -776,7 +776,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     if (user.isBoss())
       return -10;
-    return Math.ceil(((1 - user.getHpRatio()/2) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type) - 0.5));
+    return Math.ceil(((1 - user.getHpRatio()/2) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, user) - 0.5));
   }
 }
 
@@ -2476,7 +2476,7 @@ export class WaterSuperEffectTypeMultiplierAttr extends VariableMoveTypeMultipli
 export class FlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as Utils.NumberHolder;
-    multiplier.value *= target.getAttackTypeEffectiveness(Type.FLYING);
+    multiplier.value *= target.getAttackTypeEffectiveness(Type.FLYING, user);
     return true;
   }
 }
@@ -6453,9 +6453,9 @@ export function initMoves() {
     new AttackMove(Moves.RUINATION, Type.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(Moves.COLLISION_COURSE, Type.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type) >= 2 ? 5461/4096 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) >= 2 ? 5461/4096 : 1),
     new AttackMove(Moves.ELECTRO_DRIFT, Type.ELECTRIC, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 9)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type) >= 2 ? 5461/4096 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) >= 2 ? 5461/4096 : 1)
       .makesContact(),
     new SelfStatusMove(Moves.SHED_TAIL, Type.NORMAL, -1, 10, -1, 0, 9)
       .unimplemented(),
