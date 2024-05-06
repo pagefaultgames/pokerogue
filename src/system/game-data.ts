@@ -169,6 +169,7 @@ export interface StarterDataEntry {
   moveset: StarterMoveset | StarterFormMoveData; 
   eggMoves: integer;
   candyCount: integer;
+  friendship: integer;
   abilityAttr: integer;
   passiveAttr: integer;
   valueReduction: integer;
@@ -357,8 +358,11 @@ export class GameData {
             this.starterData = systemData.starterData;
           }
 
-          if (systemData.gameStats)
+          if (systemData.gameStats) {
+            if (systemData.gameStats.legendaryPokemonCaught !== undefined && systemData.gameStats.subLegendaryPokemonCaught === undefined)
+              this.fixLegendaryStats(systemData);
             this.gameStats = systemData.gameStats;
+          }
 
           if (systemData.unlocks) {
             for (let key of Object.keys(systemData.unlocks)) {
@@ -988,6 +992,7 @@ export class GameData {
         moveset: null,
         eggMoves: 0,
         candyCount: 0,
+        friendship: 0,
         abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
         passiveAttr: 0,
         valueReduction: 0
@@ -1003,7 +1008,9 @@ export class GameData {
     if (incrementCount) {
       dexEntry.seenCount++;
       this.gameStats.pokemonSeen++;
-      if (!trainer && pokemon.species.pseudoLegendary || pokemon.species.legendary)
+      if (!trainer && pokemon.species.subLegendary)
+        this.gameStats.subLegendaryPokemonSeen++;
+      else if (!trainer && pokemon.species.legendary)
         this.gameStats.legendaryPokemonSeen++;
       else if (!trainer && pokemon.species.mythical)
         this.gameStats.mythicalPokemonSeen++;
@@ -1035,12 +1042,15 @@ export class GameData {
       
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
       const newCatch = !caughtAttr;
+      const hasNewAttr = (caughtAttr & dexAttr) !== dexAttr;
 
       if (incrementCount) {
         if (!fromEgg) {
           dexEntry.caughtCount++;
           this.gameStats.pokemonCaught++;
-          if (pokemon.species.pseudoLegendary || pokemon.species.legendary)
+          if (pokemon.species.subLegendary)
+            this.gameStats.subLegendaryPokemonCaught++;
+          else if (pokemon.species.legendary)
             this.gameStats.legendaryPokemonCaught++;
           else if (pokemon.species.mythical)
             this.gameStats.mythicalPokemonCaught++;
@@ -1049,7 +1059,9 @@ export class GameData {
         } else {
           dexEntry.hatchedCount++;
           this.gameStats.pokemonHatched++;
-          if (pokemon.species.pseudoLegendary || pokemon.species.legendary)
+          if (pokemon.species.subLegendary)
+            this.gameStats.subLegendaryPokemonHatched++;
+          else if (pokemon.species.legendary)
             this.gameStats.legendaryPokemonHatched++;
           else if (pokemon.species.mythical)
             this.gameStats.mythicalPokemonHatched++;
@@ -1057,7 +1069,7 @@ export class GameData {
             this.gameStats.shinyPokemonHatched++;
         }
 
-        if (!hasPrevolution)
+        if (!hasPrevolution && (!pokemon.scene.gameMode.isDaily || hasNewAttr || fromEgg))
           this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant || 0) : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
       }
     
@@ -1189,6 +1201,10 @@ export class GameData {
     return Math.pow(2, this.getSpeciesDefaultNature(species));
   }
 
+  getDexAttrLuck(dexAttr: bigint): integer {
+    return dexAttr & DexAttr.SHINY ? dexAttr & DexAttr.VARIANT_3 ? 3 : dexAttr & DexAttr.VARIANT_2 ? 2 : 1 : 0;
+  }
+
   getNaturesForAttr(natureAttr: integer): Nature[] {
     let ret: Nature[] = [];
     for (let n = 0; n < 25; n++) {
@@ -1303,5 +1319,23 @@ export class GameData {
   fixStarterData(systemData: SystemSaveData): void {
     for (let starterId of defaultStarterSpecies)
       systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
+  }
+
+  fixLegendaryStats(systemData: SystemSaveData): void {
+    systemData.gameStats.subLegendaryPokemonSeen = 0;
+    systemData.gameStats.subLegendaryPokemonCaught = 0;
+    systemData.gameStats.subLegendaryPokemonHatched = 0;
+    allSpecies.filter(s => s.subLegendary).forEach(s => {
+      const dexEntry = systemData.dexData[s.speciesId];
+      systemData.gameStats.subLegendaryPokemonSeen += dexEntry.seenCount;
+      systemData.gameStats.legendaryPokemonSeen = Math.max(systemData.gameStats.legendaryPokemonSeen - dexEntry.seenCount, 0);
+      systemData.gameStats.subLegendaryPokemonCaught += dexEntry.caughtCount;
+      systemData.gameStats.legendaryPokemonCaught = Math.max(systemData.gameStats.legendaryPokemonCaught - dexEntry.caughtCount, 0);
+      systemData.gameStats.subLegendaryPokemonHatched += dexEntry.hatchedCount;
+      systemData.gameStats.legendaryPokemonHatched = Math.max(systemData.gameStats.legendaryPokemonHatched - dexEntry.hatchedCount, 0);
+    });
+    systemData.gameStats.subLegendaryPokemonSeen = Math.max(systemData.gameStats.subLegendaryPokemonSeen, systemData.gameStats.subLegendaryPokemonCaught);
+    systemData.gameStats.legendaryPokemonSeen = Math.max(systemData.gameStats.legendaryPokemonSeen, systemData.gameStats.legendaryPokemonCaught);
+    systemData.gameStats.mythicalPokemonSeen = Math.max(systemData.gameStats.mythicalPokemonSeen, systemData.gameStats.mythicalPokemonCaught);
   }
 }

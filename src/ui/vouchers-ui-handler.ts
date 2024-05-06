@@ -1,9 +1,10 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene from "../battle-scene";
 import { Voucher, getVoucherTypeIcon, getVoucherTypeName, vouchers } from "../system/voucher";
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import {Button} from "../enums/buttons";
 
 const itemRows = 4;
 const itemCols = 17;

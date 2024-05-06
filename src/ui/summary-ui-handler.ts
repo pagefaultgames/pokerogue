@@ -1,8 +1,10 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene, { starterColors } from "../battle-scene";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import * as Utils from "../utils";
 import { PlayerPokemon } from "../field/pokemon";
+import { default as PokemonSpecies, PokemonSpeciesForm, SpeciesFormKey, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm, getStarterValueFriendshipCap, speciesStarters, starterPassiveAbilities } from '../data/pokemon-species';
+import { argbFromRgba } from "@material/material-color-utilities";
 import { Type, getTypeRgb } from "../data/type";
 import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "./text";
 import Move, { MoveCategory } from "../data/move";
@@ -16,7 +18,8 @@ import { getBiomeName } from "../data/biomes";
 import { Nature, getNatureStatMultiplier } from "../data/nature";
 import { loggedInUser } from "../account";
 import { PlayerGender } from "../system/game-data";
-import { getVariantTint } from "#app/data/variant";
+import { Variant, getVariantTint } from "#app/data/variant";
+import {Button} from "../enums/buttons";
 
 enum Page {
   PROFILE,
@@ -44,6 +47,9 @@ export default class SummaryUiHandler extends UiHandler {
   private genderText: Phaser.GameObjects.Text;
   private shinyIcon: Phaser.GameObjects.Image;
   private fusionShinyIcon: Phaser.GameObjects.Image;
+  private candyShadow: Phaser.GameObjects.Sprite;
+  private candyIcon: Phaser.GameObjects.Sprite;
+  private candyOverlay: Phaser.GameObjects.Sprite;
   private statusContainer: Phaser.GameObjects.Container;
   private status: Phaser.GameObjects.Image;
   private summaryPageContainer: Phaser.GameObjects.Container;
@@ -136,6 +142,20 @@ export default class SummaryUiHandler extends UiHandler {
     this.pokeball.setOrigin(0, 1);
     this.summaryContainer.add(this.pokeball);
 
+    this.candyShadow = this.scene.add.sprite(13, -140, 'candy');
+    this.candyShadow.setTint(0x141414)
+    this.candyShadow.setScale(0.8);
+    this.candyShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 16, 16), Phaser.Geom.Rectangle.Contains);
+    this.summaryContainer.add(this.candyShadow);
+
+    this.candyIcon = this.scene.add.sprite(13, -140, 'candy');
+    this.candyIcon.setScale(0.8);
+    this.summaryContainer.add(this.candyIcon);
+
+    this.candyOverlay = this.scene.add.sprite(13, -140, 'candy_overlay');
+    this.candyOverlay.setScale(0.8);
+    this.summaryContainer.add(this.candyOverlay);
+
     this.levelText = addTextObject(this.scene, 36, -17, '', TextStyle.SUMMARY_ALT);
     this.levelText.setOrigin(0, 1);
     this.summaryContainer.add(this.levelText);
@@ -222,6 +242,10 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.shinyOverlay.setVisible(this.pokemon.isShiny());
 
+    const colorScheme = starterColors[this.pokemon.species.getRootSpeciesId()];
+    this.candyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
+    this.candyOverlay.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
+
     this.numberText.setText(Utils.padInt(this.pokemon.species.speciesId, 4));
     this.numberText.setColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
     this.numberText.setShadowColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true));
@@ -250,6 +274,21 @@ export default class SummaryUiHandler extends UiHandler {
       this.splicedIcon.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${this.pokemon.species.getName(this.pokemon.formIndex)}/${this.pokemon.fusionSpecies.getName(this.pokemon.fusionFormIndex)}`, true));
       this.splicedIcon.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
     }
+
+    var currentFriendship = this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].friendship;
+    if (!currentFriendship || currentFriendship === undefined)
+      currentFriendship = 0;
+
+    const friendshipCap = getStarterValueFriendshipCap(speciesStarters[this.pokemon.species.getRootSpeciesId()]);
+    const candyCropY = 16 - (16 * (currentFriendship / friendshipCap));
+
+    if (this.candyShadow.visible) {
+      this.candyShadow.on('pointerover', () => (this.scene as BattleScene).ui.showTooltip(null, `${currentFriendship}/${friendshipCap}`, true));
+      this.candyShadow.on('pointerout', () => (this.scene as BattleScene).ui.hideTooltip());
+    }
+
+    this.candyIcon.setCrop(0,candyCropY,16, 16);
+    this.candyOverlay.setCrop(0,candyCropY,16, 16);
 
     const doubleShiny = isFusion && this.pokemon.shiny && this.pokemon.fusionShiny;
     const baseVariant = !doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant;
@@ -364,9 +403,16 @@ export default class SummaryUiHandler extends UiHandler {
           case Button.LEFT:
             this.moveSelect = false;
             this.setCursor(Page.STATS);        
-            this.hideMoveEffect();
-            success = true;
-            break;
+            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE){
+              this.hideMoveEffect();
+              this.destroyBlinkCursor();
+              success = true;
+              break;
+            } else {
+              this.hideMoveSelect();
+              success = true;
+              break;
+            }
         }
       }
     } else {
@@ -376,7 +422,10 @@ export default class SummaryUiHandler extends UiHandler {
           success = true;
         }
       } else if (button === Button.CANCEL) {
-        ui.setMode(Mode.PARTY);
+        if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE)
+          this.hideMoveSelect();
+        else
+          ui.setMode(Mode.PARTY);
         success = true;
       } else {
         const pages = Utils.getEnumValues(Page);
@@ -423,16 +472,15 @@ export default class SummaryUiHandler extends UiHandler {
   }
 
   setCursor(cursor: integer, overrideChanged: boolean = false): boolean {
-    let changed: boolean;
+    let changed: boolean = overrideChanged || this.moveCursor !== cursor;
     
     if (this.moveSelect) {
-      changed = overrideChanged || this.moveCursor !== cursor;
-      if (changed) {
         this.moveCursor = cursor;
 
         const selectedMove = this.getSelectedMove();
 
         if (selectedMove) {
+          this.moveDescriptionText.setY(84);
           this.movePowerText.setText(selectedMove.power >= 0 ? selectedMove.power.toString() : '---');
           this.moveAccuracyText.setText(selectedMove.accuracy >= 0 ? selectedMove.accuracy.toString() : '---');
           this.moveCategoryIcon.setFrame(MoveCategory[selectedMove.category].toLowerCase());
@@ -449,7 +497,6 @@ export default class SummaryUiHandler extends UiHandler {
         }
 
         if (moveDescriptionLineCount > 3) {
-          this.moveDescriptionText.setY(84);
           this.descriptionScrollTween = this.scene.tweens.add({
             targets: this.moveDescriptionText,
             delay: Utils.fixedInt(2000),
@@ -459,7 +506,6 @@ export default class SummaryUiHandler extends UiHandler {
             y: `-=${14.83 * (moveDescriptionLineCount - 3)}`
           });
         }
-      }
 
       if (!this.moveCursorObj) {
         this.moveCursorObj = this.scene.add.sprite(-2, 0, 'summary_moves_cursor', 'highlight');
@@ -522,6 +568,11 @@ export default class SummaryUiHandler extends UiHandler {
                   this.moveCursorObj = null; 
                   this.extraMoveRowContainer.setVisible(true);
                   this.setCursor(0, true);
+                  this.showMoveEffect();
+                }
+                else if (this.cursor===Page.MOVES) {
+                  this.moveCursorObj = null; 
+                  this.showMoveSelect();
                   this.showMoveEffect();
                 }
               }
@@ -603,6 +654,17 @@ export default class SummaryUiHandler extends UiHandler {
           profileContainer.add(getTypeIcon(1, types[1]));
         if (this.pokemon.isTerastallized())
           profileContainer.add(getTypeIcon(types.length, this.pokemon.getTeraType(), true));
+
+        if (this.pokemon.getLuck()) {
+          const luckLabelText = addTextObject(this.scene, 141, 28, 'Luck:', TextStyle.SUMMARY_ALT);
+          luckLabelText.setOrigin(0, 0);
+          profileContainer.add(luckLabelText);
+          
+          const luckText = addTextObject(this.scene, 141 + luckLabelText.displayWidth + 2, 28, this.pokemon.getLuck().toString(), TextStyle.SUMMARY);
+          luckText.setOrigin(0, 0);
+          luckText.setTint(getVariantTint((Math.min(this.pokemon.getLuck() - 1, 2)) as Variant));
+          profileContainer.add(luckText);
+        }
 
         const ability = this.pokemon.getAbility(true);
 
@@ -857,6 +919,12 @@ export default class SummaryUiHandler extends UiHandler {
     this.moveSelect = false;
     this.extraMoveRowContainer.setVisible(false);
     this.moveDescriptionText.setText('');
+    
+    this.destroyBlinkCursor();
+    this.hideMoveEffect();
+  }
+
+  destroyBlinkCursor(){
     if (this.moveCursorBlinkTimer) {
       this.moveCursorBlinkTimer.destroy();
       this.moveCursorBlinkTimer = null;
@@ -869,8 +937,6 @@ export default class SummaryUiHandler extends UiHandler {
       this.selectedMoveCursorObj.destroy();
       this.selectedMoveCursorObj = null;
     }
-
-    this.hideMoveEffect();
   }
 
   showMoveEffect(instant?: boolean) {

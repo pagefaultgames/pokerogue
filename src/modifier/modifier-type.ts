@@ -1058,7 +1058,6 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 8),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
-    new WeightedModifierType(modifierTypes.SOOTHE_BELL, (party: Pokemon[]) => party.find(p => (pokemonEvolutions.hasOwnProperty(p.species.speciesId) && pokemonEvolutions[p.species.speciesId].find(e => e.condition && e.condition instanceof SpeciesFriendshipEvolutionCondition)) || p.moveset.find(m => m.moveId === Moves.RETURN)) ? 16 : 0, 16),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 2),
     new WeightedModifierType(modifierTypes.IV_SCANNER, 4),
     new WeightedModifierType(modifierTypes.EXP_CHARM, 8),
@@ -1078,6 +1077,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 8),
     //new WeightedModifierType(modifierTypes.OVAL_CHARM, 6),
+    new WeightedModifierType(modifierTypes.SOOTHE_BELL, 4),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, 6),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
@@ -1151,7 +1151,7 @@ const enemyBuffModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ENEMY_ATTACK_FREEZE_CHANCE, 2),
     new WeightedModifierType(modifierTypes.ENEMY_ATTACK_BURN_CHANCE, 2),
     new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 10),
-    new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 10000),
+    new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 5),
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1)
   ].map(m => { m.setTier(ModifierTier.COMMON); return m; }),
   [ModifierTier.GREAT]: [
@@ -1162,12 +1162,12 @@ const enemyBuffModifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1)
   ].map(m => { m.setTier(ModifierTier.GREAT); return m; }),
   [ModifierTier.ULTRA]: [
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_HEAL, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 300)
+    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_HEAL, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 10),
+    new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 5)
   ].map(m => { m.setTier(ModifierTier.ULTRA); return m; }),
   [ModifierTier.ROGUE]: [ ].map(m => { m.setTier(ModifierTier.ROGUE); return m; }),
   [ModifierTier.MASTER]: [ ].map(m => { m.setTier(ModifierTier.MASTER); return m; })
@@ -1518,7 +1518,7 @@ export class ModifierTypeOption {
 }
 
 export function getPartyLuckValue(party: Pokemon[]): integer {
-  return Phaser.Math.Clamp(party.map(p => p.isFainted() || !p.isShiny() ? 0 : !p.isFusion() || !p.shiny || !p.fusionShiny ? p.variant + 1 : (p.variant + 1) + (p.fusionVariant + 1))
+  return Phaser.Math.Clamp(party.map(p => p.isFainted() ? 0 : p.getLuck())
     .reduce((total: integer, value: integer) => total += value, 0), 0, 14);
 }
 
