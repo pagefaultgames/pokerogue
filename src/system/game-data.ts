@@ -1086,20 +1086,20 @@ export class GameData {
       this.starterData[speciesIdToIncrement].winCount = 0;
     }
     
-    if(this.starterData[speciesIdToIncrement].winCount === 0 || !this.starterData[speciesIdToIncrement].winCount)
+    if (!this.starterData[speciesIdToIncrement].winCount)
       this.scene.gameData.gameStats.ribbonsOwned++;
 
     const ribbonsInStats: integer = this.scene.gameData.gameStats.ribbonsOwned;
 
-    if(ribbonsInStats >= 100)
+    if (ribbonsInStats >= 100)
       this.scene.validateAchv(achvs._100_RIBBONS);
-    if(ribbonsInStats >= 75)
+    if (ribbonsInStats >= 75)
       this.scene.validateAchv(achvs._75_RIBBONS);
-    if(ribbonsInStats >= 50)
+    if (ribbonsInStats >= 50)
       this.scene.validateAchv(achvs._50_RIBBONS);
-    if(ribbonsInStats >= 25)
+    if (ribbonsInStats >= 25)
       this.scene.validateAchv(achvs._25_RIBBONS);
-    if(ribbonsInStats >= 10)
+    if (ribbonsInStats >= 10)
       this.scene.validateAchv(achvs._10_RIBBONS);
 
     return ++this.starterData[speciesIdToIncrement].winCount;
