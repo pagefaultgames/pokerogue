@@ -1,4 +1,4 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene from "../battle-scene";
 import { getPlayerShopModifierTypeOptionsForWave, ModifierTypeOption } from "../modifier/modifier-type";
 import { getPokeballAtlasKey, PokeballType } from "../data/pokeball";
 import { addTextObject, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
@@ -6,6 +6,7 @@ import AwaitableUiHandler from "./awaitable-ui-handler";
 import { Mode } from "./ui";
 import { LockModifierTiersModifier, PokemonHeldItemModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
+import {Button} from "../enums/buttons";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 6;
 
@@ -138,6 +139,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
 
     this.scene.showFieldOverlay(750);
+    this.scene.updateAndShowLuckText(750);
 
     let i = 0;
     
@@ -285,13 +287,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       ui.showText(options[this.cursor].modifierTypeOption.type.getDescription(this.scene));
     } else if (!cursor) {
       this.cursorObj.setPosition(6, this.lockRarityButtonContainer.visible ? -72 : -60);
-      ui.showText('Spend money to reroll your item options');
+      ui.showText('Spend money to reroll your item options.');
     } else if (cursor === 1) {
       this.cursorObj.setPosition((this.scene.game.canvas.width / 6) - 50, -60);
-      ui.showText('Transfer a held item from one Pokémon to another');
+      ui.showText('Transfer a held item from one Pokémon to another.');
     } else {
       this.cursorObj.setPosition(6, -60);
-      ui.showText('Lock item rarities on reroll (affects reroll cost)');
+      ui.showText('Lock item rarities on reroll (affects reroll cost).');
     }
 
     return ret;
@@ -363,6 +365,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.eraseCursor();
 
     this.scene.hideFieldOverlay(250);
+    this.scene.hideLuckText(750);
 
     const options = this.options.concat(this.shopOptionsRows.flat());
     this.options.splice(0, this.options.length);

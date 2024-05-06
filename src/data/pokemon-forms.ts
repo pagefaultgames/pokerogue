@@ -62,6 +62,9 @@ export enum FormChangeItem {
 
   BLUE_ORB = 50,
   RED_ORB,
+  SHARP_METEORITE,
+  HARD_METEORITE,
+  SMOOTH_METEORITE,
   ADAMANT_CRYSTAL,
   LUSTROUS_ORB,
   GRISEOUS_CORE,
@@ -79,7 +82,11 @@ export enum FormChangeItem {
   SHADOW_REINS_OF_UNITY,
   WELLSPRING_MASK,
   HEARTHFLAME_MASK,
-  CORNERSTONE_MASK
+  CORNERSTONE_MASK,
+  SHOCK_DRIVE,
+  BURN_DRIVE,
+  CHILL_DRIVE,
+  DOUSE_DRIVE
 }
 
 export type SpeciesFormChangeConditionPredicate = (p: Pokemon) => boolean;
@@ -472,6 +479,11 @@ export const pokemonFormChanges: PokemonFormChanges = {
   [Species.RAYQUAZA]: [
     new SpeciesFormChange(Species.RAYQUAZA, '', SpeciesFormKey.MEGA, new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.RAYQUAZITE), new SpeciesFormChangeMoveLearnedTrigger(Moves.DRAGON_ASCENT)))
   ],
+  [Species.DEOXYS]: [
+    new SpeciesFormChange(Species.DEOXYS, 'normal', 'attack', new SpeciesFormChangeItemTrigger(FormChangeItem.SHARP_METEORITE)),
+    new SpeciesFormChange(Species.DEOXYS, 'normal', 'defense', new SpeciesFormChangeItemTrigger(FormChangeItem.HARD_METEORITE)),
+    new SpeciesFormChange(Species.DEOXYS, 'normal', 'speed', new SpeciesFormChangeItemTrigger(FormChangeItem.SMOOTH_METEORITE))
+  ],
   [Species.LOPUNNY]: [
     new SpeciesFormChange(Species.LOPUNNY, '', SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.LOPUNNITE))
   ],
@@ -534,10 +546,26 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.MELOETTA, 'pirouette', 'aria', new SpeciesFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
     new SpeciesFormChange(Species.MELOETTA, 'pirouette', 'aria', new SpeciesFormChangeActiveTrigger(false), true)
   ],
+  [Species.GENESECT]: [
+    new SpeciesFormChange(Species.GENESECT, '', 'shock', new SpeciesFormChangeItemTrigger(FormChangeItem.SHOCK_DRIVE)),
+    new SpeciesFormChange(Species.GENESECT, '', 'burn', new SpeciesFormChangeItemTrigger(FormChangeItem.BURN_DRIVE)),
+    new SpeciesFormChange(Species.GENESECT, '', 'chill', new SpeciesFormChangeItemTrigger(FormChangeItem.CHILL_DRIVE)),
+    new SpeciesFormChange(Species.GENESECT, '', 'douse', new SpeciesFormChangeItemTrigger(FormChangeItem.DOUSE_DRIVE))
+  ],
+  [Species.GRENINJA]: [
+    new SpeciesFormChange(Species.GRENINJA, 'battle-bond', 'ash', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.GRENINJA, 'ash', 'battle-bond', new SpeciesFormChangeManualTrigger(), true)
+  ],
   [Species.AEGISLASH]: [
     new SpeciesFormChange(Species.AEGISLASH, 'blade', 'shield', new SpeciesFormChangePreMoveTrigger(Moves.KINGS_SHIELD), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
     new SpeciesFormChange(Species.AEGISLASH, 'shield', 'blade', new SpeciesFormChangePreMoveTrigger(m => allMoves[m].category !== MoveCategory.STATUS), true, new SpeciesFormChangeCondition(p => p.hasAbility(Abilities.STANCE_CHANGE))),
     new SpeciesFormChange(Species.AEGISLASH, 'blade', 'shield', new SpeciesFormChangeActiveTrigger(false), true)
+  ],
+  [Species.ZYGARDE]: [
+    new SpeciesFormChange(Species.ZYGARDE, '50-pc', 'complete', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.ZYGARDE, 'complete', '50-pc', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.ZYGARDE, '10-pc', 'complete', new SpeciesFormChangeManualTrigger(), true),
+    new SpeciesFormChange(Species.ZYGARDE, 'complete', '10-pc', new SpeciesFormChangeManualTrigger(), true)
   ],
   [Species.DIANCIE]: [
     new SpeciesFormChange(Species.DIANCIE, '', SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.DIANCITE))
@@ -622,7 +650,15 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.GRIMMSNARL, '', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.ALCREMIE]: [
-    new SpeciesFormChange(Species.ALCREMIE, 'vanilla-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(Species.ALCREMIE, 'vanilla-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'ruby-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'matcha-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'mint-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'lemon-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'salted-cream', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'ruby-swirl', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'caramel-swirl', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
+    new SpeciesFormChange(Species.ALCREMIE, 'rainbow-swirl', SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
   ],
   [Species.MORPEKO]: [
     new SpeciesFormChange(Species.MORPEKO, 'full-belly', 'hangry', new SpeciesFormChangeManualTrigger(), true),

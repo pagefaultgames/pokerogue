@@ -9,27 +9,27 @@
 	<meta property="og:type" content="website" />
 	<meta property="og:description" content="A Pokémon fangame heavily inspired by the roguelite genre. Battle endlessly while gathering stacking items, exploring many different biomes, and reaching Pokémon stats you never thought possible." />
 	<meta property="og:image" content="https://pokerogue.net/logo512.png" />
-	<link rel="apple-touch-icon" href="/logo512.png" />
-	<link rel="shortcut icon" type="image/png" href="/logo512.png" />
+	<link rel="apple-touch-icon" href="./logo512.png" />
+	<link rel="shortcut icon" type="image/png" href="./logo512.png" />
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 	<style type="text/css">
 		@font-face {
 			font-family: 'emerald';
-			src: url('/fonts/pokemon-emerald-pro.ttf') format('truetype');
+			src: url('./fonts/pokemon-emerald-pro.ttf') format('truetype');
 		}
 
 		@font-face {
 			font-family: 'pkmnems';
-			src: url('/fonts/pkmnems.ttf') format('truetype');
+			src: url('./fonts/pkmnems.ttf') format('truetype');
 		}
 	</style>
-	<link rel="stylesheet" type="text/css" href="index.css" />
-	<link rel="manifest" href="/manifest.webmanifest">
+	<link rel="stylesheet" type="text/css" href="./index.css" />
+	<link rel="manifest" href="./manifest.webmanifest">
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function () {
-        navigator.serviceWorker.register("/service-worker.js").then(
+        navigator.serviceWorker.register("./service-worker.js").then(
           function (registration) {
             console.log("ServiceWorker registration successful");
           },
@@ -74,6 +74,9 @@
 				<div id="apadCycleVariant" class="apadSqBtn apadBtn" data-key="CYCLE_VARIANT">
 					<text class="apadLabel apadLabelSmall">V</text>
 				</div>
+				<div id="apadStats" class="apadRectBtn apadBtn" data-key="STATS">
+					<text class="apadLabel apadLabelSmall">C</text>
+				</div>
 				<div id="apadMenu" class="apadRectBtn apadBtn" data-key="MENU">
 					<text class="apadLabel apadLabelSmall">Menu</text>
 				</div>
@@ -94,9 +97,9 @@
 			</div>
 		</div>
 	</div>
-	<script type="module" src="src/main.ts"></script>
-	<script src="src/touch-controls.js" type="module"></script>
-	<script src="src/debug.js" type="module"></script>
+	<script type="module" src="./src/main.ts"></script>
+	<script src="./src/touch-controls.js" type="module"></script>
+	<script src="./src/debug.js" type="module"></script>
 </body>
 
 </html>
