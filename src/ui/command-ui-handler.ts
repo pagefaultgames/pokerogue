@@ -17,6 +17,7 @@ export enum Command {
 export default class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
   private cursorObj: Phaser.GameObjects.Image;
+  private freeSwitchText: Phaser.GameObjects.Text;
 
   protected fieldIndex: integer = 0;
   protected cursor2: integer = 0;
@@ -42,6 +43,21 @@ export default class CommandUiHandler extends UiHandler {
       const commandText = addTextObject(this.scene, c % 2 === 0 ? 0 : 55.8, c < 2 ? 0 : 16, commands[c], TextStyle.WINDOW);
       this.commandsContainer.add(commandText);
     }
+
+    this.freeSwitchText = addTextObject(this.scene, -45, 25, '', TextStyle.WINDOW, {fontSize: '48px', color: '#A8E4A0'});
+    this.freeSwitchText.setVisible(false);
+    this.commandsContainer.add(this.freeSwitchText);
+  }
+
+  updateFreeSwitchText(): void {
+      if (!this.scene.currentBattle?.turn) return;
+      if (this.scene.hasFreeSwitch) {
+          this.freeSwitchText.setText('Free Switch');
+          this.freeSwitchText.setVisible(true);
+      } else {
+          this.freeSwitchText.setText('');
+          this.freeSwitchText.setVisible(false);
+      }
   }
 
   show(args: any[]): boolean {
@@ -64,6 +80,7 @@ export default class CommandUiHandler extends UiHandler {
     messageHandler.message.setWordWrapWidth(1110);
     messageHandler.showText(i18next.t('commandUiHandler:actionMessage', {pokemonName: commandPhase.getPokemon().name}), 0);
     this.setCursor(this.getCursor());
+    this.updateFreeSwitchText();
 
     return true;
   }

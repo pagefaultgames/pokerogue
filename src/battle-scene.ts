@@ -163,6 +163,8 @@ export default class BattleScene extends SceneBase {
 	public waveCycleOffset: integer;
 	public offsetGym: boolean;
 
+	public hasFreeSwitch: boolean;
+
 	public damageNumberHandler: DamageNumberHandler
 	private spriteSparkleHandler: PokemonSpriteSparkleHandler;
 
