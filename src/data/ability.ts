@@ -3219,7 +3219,7 @@ export function initAbilities() {
       .unimplemented(),
     new Ability(Abilities.UNSEEN_FIST, 8)
       .unimplemented(),
-    new Ability(Abilities.CURIOUS_MEDICINE, "Curious Medicine", "When the Pokémon enters a battle, it scatters medicine from its shell, which removes all stat changes from allies.", 8)
+    new Ability(Abilities.CURIOUS_MEDICINE, 8)
       .attr(PostSummonClearAllyStatsAbAttr),
     new Ability(Abilities.TRANSISTOR, 8)
       .attr(MoveTypePowerBoostAbAttr, Type.ELECTRIC),
@@ -3345,8 +3345,8 @@ export function initAbilities() {
     new Ability(Abilities.MINDS_EYE, 9)
       .ignorable()
       .unimplemented(),
-    new Ability(Abilities.SUPERSWEET_SYRUP, "Supersweet Syrup", "A sickly sweet scent spreads across the field the first time the Pokémon enters a battle, lowering the evasiveness of opposing Pokémon.", 9)
-        .attr(PostSummonStatChangeAbAttr, BattleStat.EVA, -1, false),
+    new Ability(Abilities.SUPERSWEET_SYRUP, 9)
+        .unimplemented(),
     new Ability(Abilities.HOSPITALITY, 9)
       .attr(PostSummonAllyHealAbAttr, 4, true),
     new Ability(Abilities.TOXIC_CHAIN, 9)
