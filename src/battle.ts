@@ -133,7 +133,6 @@ export default class Battle {
 
     incrementTurn(scene: BattleScene): void {
         this.turn++;
-        scene.hasFreeSwitch = this.turn === 1;
         this.turnCommands = Object.fromEntries(Utils.getEnumValues(BattlerIndex).map(bt => [ bt, null ]));
         this.battleSeedState = null;
     }
