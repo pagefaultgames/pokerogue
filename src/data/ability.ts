@@ -3081,7 +3081,8 @@ export function initAbilities() {
       .attr(BattleStatMultiplierAbAttr, BattleStat.SPATK, 0.5)
       .condition((pokemon) => pokemon.getHpRatio() <= 0.5),
     new Ability(Abilities.CURSED_BODY, 5)
-      .attr(PostDefendMoveDisableAbAttr, 30),
+      .attr(PostDefendMoveDisableAbAttr, 30)
+      .bypassFaint(),
     new Ability(Abilities.HEALER, 5)
       .unimplemented(),
     new Ability(Abilities.FRIEND_GUARD, 5)
