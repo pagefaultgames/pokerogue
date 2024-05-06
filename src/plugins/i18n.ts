@@ -67,6 +67,12 @@ import { tutorial as frTutorial } from '../locales/fr/tutorial';
 import { tutorial as itTutorial} from '../locales/it/tutorial';
 import { tutorial as deTutorial } from '../locales/de/tutorial';
 
+import { starterSelectUiHandler as enStarterSelectUiHandler } from '../locales/en/starter-select-ui-handler';
+import { starterSelectUiHandler as esStarterSelectUiHandler } from '../locales/es/starter-select-ui-handler';
+import { starterSelectUiHandler as frStarterSelectUiHandler } from '../locales/fr/starter-select-ui-handler';
+import { starterSelectUiHandler as itStarterSelectUiHandler} from '../locales/it/starter-select-ui-handler';
+import { starterSelectUiHandler as deStarterSelectUiHandler } from '../locales/de/starter-select-ui-handler';
+
 export interface SimpleTranslationEntries {
   [key: string]: string
 }
@@ -136,6 +142,7 @@ export function initI18n(): void {
         commandUiHandler: enCommandUiHandler,
         fightUiHandler: enFightUiHandler,
         tutorial: enTutorial,
+        starterSelectUiHandler: enStarterSelectUiHandler
       },
       es: {
         menu: esMenu,
@@ -149,6 +156,7 @@ export function initI18n(): void {
         commandUiHandler: esCommandUiHandler,
         fightUiHandler: esFightUiHandler,
         tutorial: esTutorial,
+        starterSelectUiHandler: esStarterSelectUiHandler
       },
       fr: {
         menu: frMenu,
@@ -162,6 +170,7 @@ export function initI18n(): void {
         commandUiHandler: frCommandUiHandler,
         fightUiHandler: frFightUiHandler,
         tutorial: frTutorial,
+        starterSelectUiHandler: frStarterSelectUiHandler
       },
       it: {
         menu: itMenu,
@@ -175,6 +184,7 @@ export function initI18n(): void {
         commandUiHandler: itCommandUiHandler,
         fightUiHandler: itFightUiHandler,
         tutorial: itTutorial,
+        starterSelectUiHandler: itStarterSelectUiHandler
       },
       de: {
         menu: deMenu,
@@ -188,6 +198,7 @@ export function initI18n(): void {
         commandUiHandler: deCommandUiHandler,
         fightUiHandler: deFightUiHandler,
         tutorial: deTutorial,
+        starterSelectUiHandler: deStarterSelectUiHandler
       }
     },
   });
@@ -208,6 +219,7 @@ declare module 'i18next' {
       commandUiHandler: typeof enCommandUiHandler;
       fightUiHandler: typeof enFightUiHandler;
       tutorial: typeof enTutorial;
+      starterSelectUiHandler: typeof enStarterSelectUiHandler;
     };
   }
 }
