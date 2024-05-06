@@ -2925,7 +2925,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
         switch (pokemon.status.effect) {
           case StatusEffect.POISON:
           case StatusEffect.TOXIC:
-            if (pokemon.hasAbility(Abilities.POISON_HEAL)) {  // Directly check here
+            if (pokemon.hasAbility(Abilities.POISON_HEAL)) {  // Directly check for both ability and passives, hasAbility covers them both
               netEffect = Math.max(pokemon.getMaxHp() >> 3, 1);  // Healing logic
               this.scene.damageNumberHandler.add(pokemon, pokemon.heal(netEffect), HitResult.HEAL); // Apply healing
             } else {
@@ -2941,7 +2941,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
             break;
         }
 
-        if (netEffect > 0) { // Just a check for poison to play the bubbly animation, damage moved to above
+        if (netEffect > 0) { // If poison-based damage was taken, play the corresponding animation
           const animType = CommonAnim.POISON + (pokemon.status.effect - 1);
           new CommonBattleAnim(animType, pokemon).play(this.scene, () => this.end());
           pokemon.updateInfo();
