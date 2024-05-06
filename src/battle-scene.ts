@@ -1725,8 +1725,8 @@ export default class BattleScene extends SceneBase {
 
 	getEnemyModifiersOverride(): Array<string> {
 		// if no override, do nothing
-		if (!OPP_MODIFIER_OVERRIDE || OPP_MODIFIER_OVERRIDE.length === 0) return;
 		const ret = [];
+		if (!OPP_MODIFIER_OVERRIDE || OPP_MODIFIER_OVERRIDE.length === 0) return ret;
 		// we loop through all the modifier name given in the override file
 		for (const [index, modifierName] of OPP_MODIFIER_OVERRIDE.entries()) {
 			// if the modifier does not exist, we skip it

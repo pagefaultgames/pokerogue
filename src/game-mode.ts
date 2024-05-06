@@ -64,8 +64,8 @@ export class GameMode implements GameModeConfig {
 
   getModifierOverride(): Modifier[] {
     // if no override, do nothing
-    if (!STARTING_MODIFIER_OVERRIDE || STARTING_MODIFIER_OVERRIDE.length === 0) return;
     const modifiers: Modifier[] = new Array();
+    if (!STARTING_MODIFIER_OVERRIDE || STARTING_MODIFIER_OVERRIDE.length === 0) return modifiers;
     // we loop through all the modifier name given in the override file
     for (const [index, modifierName] of STARTING_MODIFIER_OVERRIDE.entries()) {
       // if the modifier does not exist, we skip it
