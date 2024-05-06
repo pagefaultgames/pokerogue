@@ -1094,3 +1094,13 @@ export const defaultStarterSpecies: Species[] = [
   Species.GROOKEY, Species.SCORBUNNY, Species.SOBBLE,
   Species.SPRIGATITO, Species.FUECOCO, Species.QUAXLY
 ];
+
+if(Boolean(import.meta.env.VITE_ACTIVATE_ALL_POKEMON_STARTERS)){
+  console.log('je suis passé')
+  defaultStarterSpecies.length = 0;
+  for (const value in Species) {
+    if (isNaN(Number(value))) {
+      defaultStarterSpecies.push(Species[value as keyof typeof Species]);
+    }
+  }
+}

@@ -166,7 +166,7 @@ export interface StarterMoveData {
 }
 
 export interface StarterDataEntry {
-  moveset: StarterMoveset | StarterFormMoveData; 
+  moveset: StarterMoveset | StarterFormMoveData;
   eggMoves: integer;
   candyCount: integer;
   friendship: integer;
@@ -204,7 +204,7 @@ export class GameData {
   public secretId: integer;
 
   public gender: PlayerGender;
-  
+
   public dexData: DexData;
   private defaultDexData: DexData;
 
@@ -315,7 +315,7 @@ export class GameData {
           console.debug(systemData);
 
           /*const versions = [ this.scene.game.config.gameVersion, data.gameVersion || '0.0.0' ];
-          
+
           if (versions[0] !== versions[1]) {
             const [ versionNumbers, oldVersionNumbers ] = versions.map(ver => ver.split('.').map(v => parseInt(v)));
           }*/
@@ -372,7 +372,7 @@ export class GameData {
             for (let a of Object.keys(systemData.achvUnlocks)) {
               if (achvs.hasOwnProperty(a))
                 this.achvUnlocks[a] = systemData.achvUnlocks[a];
-            } 
+            }
           }
 
           if (systemData.voucherUnlocks) {
@@ -856,7 +856,7 @@ export class GameData {
     let saveFile: any = document.getElementById('saveFile');
     if (saveFile)
       saveFile.remove();
-  
+
     saveFile = document.createElement('input');
     saveFile.id = 'saveFile';
     saveFile.type = 'file';
@@ -1034,7 +1034,7 @@ export class GameData {
           : AbilityAttr.ABILITY_HIDDEN;
       }
       dexEntry.natureAttr |= Math.pow(2, pokemon.nature + 1);
-      
+
       const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
       const newCatch = !caughtAttr;
       const hasNewAttr = (caughtAttr & dexAttr) !== dexAttr;
@@ -1063,7 +1063,7 @@ export class GameData {
         if (!hasPrevolution && (!pokemon.scene.gameMode.isDaily || hasNewAttr || fromEgg))
           this.addStarterCandy(species, (1 * (pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant || 0) : 1)) * (fromEgg || pokemon.isBoss() ? 2 : 1));
       }
-    
+
       const checkPrevolution = () => {
         if (hasPrevolution) {
           const prevolutionSpecies = pokemonPrevolutions[species.speciesId];
@@ -1235,7 +1235,7 @@ export class GameData {
   getFormAttr(formIndex: integer): bigint {
     return BigInt(Math.pow(2, 7 + formIndex));
   }
-  
+
   consolidateDexData(dexData: DexData): void {
     for (let k of Object.keys(dexData)) {
       const entry = dexData[k] as DexEntry;
@@ -1308,7 +1308,9 @@ export class GameData {
   }
   
   fixStarterData(systemData: SystemSaveData): void {
-    for (let starterId of defaultStarterSpecies)
-      systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
-  }
+    if(!Boolean(import.meta.env.VITE_ACTIVATE_ALL_POKEMON_STARTERS)){
+        for (let starterId of defaultStarterSpecies)
+          systemData.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
+      }
+    }
 }
