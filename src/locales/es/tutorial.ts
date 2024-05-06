@@ -10,9 +10,9 @@ export const tutorial: SimpleTranslationEntries = {
     $ajustes de tu navegador.`,
     
     "accessMenu": `Para acceder al menú, pulsa M o Escape cuando\ntengas el control.
-    $El menú contiene la configuración y otras funciones.`,
+    $El menú contiene los ajustes y otras funciones.`,
     
-    "menu": `Desde este menú podrás acceder a la configuración.
+    "menu": `Desde este menú podrás acceder a los ajustes.
     $Podrás cambiar la velocidad del juego, el estilo de la ventana y demás.
     $Hay más opciones, ¡así que pruébalas todas!`,
 

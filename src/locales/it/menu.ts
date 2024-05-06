@@ -43,5 +43,4 @@ export const menu: SimpleTranslationEntries = {
     "empty":"Vuoto",
     "yes":"Si",
     "no":"No",
-    "confirmStartTeam":'Vuoi iniziare con questi Pokémon?',
 } as const;
