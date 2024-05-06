@@ -33,6 +33,7 @@ export const battle: SimpleTranslationEntries = {
   "learnMoveForgetSuccess": "{{pokemonName}} oublie comment\nutiliser {{moveName}}.",
   "levelCapUp": "La limite de niveau\na été augmentée à {{levelCap}} !",
   "moveNotImplemented": "{{moveName}} n’est pas encore implémenté et ne peut pas être sélectionné.",
+  "moveNoPP": "There's no PP left for\nthis move!",
   "moveDisabled": "{{moveName}} est sous entrave !",
   "noPokeballForce": "Une force mystérieuse\nempêche l’utilisation des Poké Balls.",
   "noPokeballTrainer": "Le Dresseur détourne la Ball\nVoler, c’est mal !",

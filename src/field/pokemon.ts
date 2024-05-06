@@ -19,7 +19,7 @@ import { pokemonEvolutions, pokemonPrevolutions, SpeciesFormEvolution, SpeciesEv
 import { reverseCompatibleTms, tmSpecies } from '../data/tms';
 import { DamagePhase, FaintPhase, LearnMovePhase, ObtainStatusEffectPhase, StatChangePhase, SwitchSummonPhase } from '../phases';
 import { BattleStat } from '../data/battle-stat';
-import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
+import { BattlerTag, BattlerTagLapseType, EncoreTag, HelpingHandTag, HighestStatBoostTag, TypeBoostTag, getBattlerTag } from '../data/battler-tags';
 import { BattlerTagType } from "../data/enums/battler-tag-type";
 import { Species } from '../data/enums/species';
 import { WeatherType } from '../data/weather';
@@ -600,7 +600,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           ret >>= 1;
         break;
     }
-    
+
+    const highestStatBoost = this.findTag(t => t instanceof HighestStatBoostTag && (t as HighestStatBoostTag).stat === stat) as HighestStatBoostTag;
+    if (highestStatBoost)
+      ret *= highestStatBoost.multiplier;
+
     return Math.floor(ret);
   }
 
@@ -1913,6 +1917,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs(ReduceStatusEffectDurationAbAttr, this, null, effect, statusCureTurn);
 
       this.setFrameRate(4);
+
+      // If the user is invulnerable, lets remove their invulnerability when they fall asleep
+      const invulnerableTags = [
+        BattlerTagType.UNDERGROUND,
+        BattlerTagType.UNDERWATER,
+        BattlerTagType.HIDDEN,
+        BattlerTagType.FLYING
+      ];
+
+      const tag = invulnerableTags.find((t) => this.getTag(t));
+
+      if (tag) {
+        this.removeTag(tag);
+        this.getMoveQueue().pop();
+      }
     }
 
     this.status = new Status(effect, 0, statusCureTurn?.value);
@@ -3162,7 +3181,7 @@ export class PokemonMove {
   isUsable(pokemon: Pokemon, ignorePp?: boolean): boolean {
     if (this.moveId && pokemon.summonData?.disabledMove === this.moveId)
       return false;
-    return ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1;
+    return (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) && !this.getMove().name.endsWith(' (N)');
   }
 
   getMove(): Move {
