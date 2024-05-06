@@ -2483,11 +2483,11 @@ export class IgnoreTypeImmunityAbAttr extends AbAttr {
   }
 
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    if (this.defenderType === (args[1] as Type)) {
-      cancelled.value = this.allowedMoveTypes.some(type => type === (args[0] as Type));
+    if (this.defenderType === (args[1] as Type) && this.allowedMoveTypes.some(type => type === (args[0] as Type))) {
+      cancelled.value = true;
+      return true;
     }
-
-    return cancelled.value;
+    return false;
   }
 }
 
