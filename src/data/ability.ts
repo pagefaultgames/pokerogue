@@ -302,7 +302,7 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
 
 export class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
   constructor(moveType: Type, powerMultiplier: number) {
-    super((user, target, move) => move.type === moveType, powerMultiplier);
+    super((user, target, move) => move.getType(user, target) === moveType, powerMultiplier);
   }
 }
 
@@ -333,12 +333,10 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   }
 
   applyPreDefend(pokemon: Pokemon, passive: boolean, attacker: Pokemon, move: PokemonMove, cancelled: Utils.BooleanHolder, args: any[]): boolean {
-    const variableType = new Utils.IntegerHolder(move.getMove().type);
-    applyMoveAttrs(VariableMoveTypeAttr, attacker, pokemon, move.getMove(), variableType);
     if ((
       (move.getMove() instanceof AttackMove) || 
       (!!move.getMove().getAttrs(StatusMoveTypeImmunityAttr).find(attr => (attr as StatusMoveTypeImmunityAttr).immuneType === this.immuneType))
-    ) && (variableType.value === this.immuneType)) {
+    ) && (move.getMove().getType(attacker, pokemon) === this.immuneType)) {
       (args[0] as Utils.NumberHolder).value = 0;
       return true;
     }
@@ -976,7 +974,7 @@ export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
 
 export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
   constructor(boostedType: Type, powerMultiplier?: number) {
-    super((pokemon, defender, move) => move.type === boostedType, powerMultiplier || 1.5);
+    super((pokemon, defender, move) => move.getType(pokemon, defender) === boostedType, powerMultiplier || 1.5);
   }
 }
 
@@ -1020,7 +1018,7 @@ export class FieldMovePowerBoostAbAttr extends FieldVariableMovePowerAbAttr {
 
 export class FieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
   constructor(boostedType: Type, powerMultiplier?: number) {
-    super((pokemon, defender, move) => move.type === boostedType, powerMultiplier || 1.5);
+    super((pokemon, defender, move) => move.getType(pokemon, defender) === boostedType, powerMultiplier || 1.5);
   }
 }
 
@@ -1719,10 +1717,10 @@ export class BlockOneHitKOAbAttr extends AbAttr {
 }
 
 export class IncrementMovePriorityAbAttr extends AbAttr {
-  private moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean;
+  private moveIncrementFunc: (user: Pokemon, move: Move) => boolean;
   private increaseAmount: integer;
 
-  constructor(moveIncrementFunc: (pokemon: Pokemon, move: Move) => boolean, increaseAmount = 1) {
+  constructor(moveIncrementFunc: (user: Pokemon, move: Move) => boolean, increaseAmount = 1) {
     super(true);
 
     this.moveIncrementFunc = moveIncrementFunc;
@@ -2977,17 +2975,9 @@ export function initAbilities() {
       .attr(IgnoreOpponentStatChangesAbAttr)
       .ignorable(),
     new Ability(Abilities.TINTED_LENS, 4)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => {
-        const variableType = new Utils.IntegerHolder(move.type);
-        applyMoveAttrs(VariableMoveTypeAttr, user, target, move, variableType);
-        return target.getAttackTypeEffectiveness(variableType.value) <= 0.5;
-      }, 2),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.getType(user, target)) <= 0.5, 2),
     new Ability(Abilities.FILTER, 4)
-      .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => {
-        const variableType = new Utils.IntegerHolder(move.type);
-        applyMoveAttrs(VariableMoveTypeAttr, user, target, move, variableType);
-        return target.getAttackTypeEffectiveness(move.type) >= 2;
-      }, 0.75)
+      .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => target.getAttackTypeEffectiveness(move.getType(user, target)) >= 2, 0.75)
       .ignorable(),
     new Ability(Abilities.SLOW_START, 4)
       .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.SLOW_START, 5),
@@ -3002,11 +2992,7 @@ export function initAbilities() {
       .attr(BlockWeatherDamageAttr, WeatherType.HAIL)
       .attr(PostWeatherLapseHealAbAttr, 1, WeatherType.HAIL, WeatherType.SNOW),
     new Ability(Abilities.SOLID_ROCK, 4)
-      .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => {
-        const variableType = new Utils.IntegerHolder(move.type);
-        applyMoveAttrs(VariableMoveTypeAttr, user, target, move, variableType);
-        return target.getAttackTypeEffectiveness(move.type) >= 2;
-      }, 0.75)
+      .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => target.getAttackTypeEffectiveness(move.getType(user, target)) >= 2, 0.75)
       .ignorable(),
     new Ability(Abilities.SNOW_WARNING, 4)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SNOW)
@@ -3112,10 +3098,10 @@ export function initAbilities() {
     new Ability(Abilities.MOXIE, 5)
       .attr(PostVictoryStatChangeAbAttr, BattleStat.ATK, 1),
     new Ability(Abilities.JUSTIFIED, 5)
-      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.DARK && move.category !== MoveCategory.STATUS, BattleStat.ATK, 1),
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.getType(user, target) === Type.DARK && move.category !== MoveCategory.STATUS, BattleStat.ATK, 1),
     new Ability(Abilities.RATTLED, 5)
-      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS && (move.type === Type.DARK || move.type === Type.BUG ||
-        move.type === Type.GHOST), BattleStat.SPD, 1)
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS && (move.getType(user, target) === Type.DARK || move.getType(user, target) === Type.BUG ||
+        move.getType(user, target) === Type.GHOST), BattleStat.SPD, 1)
       .attr(PostIntimidateStatChangeAbAttr, [BattleStat.SPD], 1),
     new Ability(Abilities.MAGIC_BOUNCE, 5)
       .ignorable()
@@ -3229,7 +3215,7 @@ export function initAbilities() {
     new Ability(Abilities.EMERGENCY_EXIT, 7)
       .unimplemented(),
     new Ability(Abilities.WATER_COMPACTION, 7)
-      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.WATER, BattleStat.DEF, 2),
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.getType(user, target) === Type.WATER, BattleStat.DEF, 2),
     new Ability(Abilities.MERCILESS, 7)
       .unimplemented(),
     new Ability(Abilities.SHIELDS_DOWN, 7)
@@ -3274,7 +3260,7 @@ export function initAbilities() {
       .attr(UnsuppressableAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr),
     new Ability(Abilities.DISGUISE, 7)
-      .attr(PreDefendMovePowerToOneAbAttr, (target, user, move) => target.formIndex == 0 && target.getAttackTypeEffectiveness(move.type) > 0)
+      .attr(PreDefendMovePowerToOneAbAttr, (target, user, move) => target.formIndex == 0 && target.getAttackTypeEffectiveness(move.getType(user, target)) > 0)
       .attr(PostSummonFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
       .attr(PostBattleInitFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
       .attr(PostDefendFormChangeAbAttr, p => p.battleData.hitCount === 0 ? 0 : 1)
@@ -3320,7 +3306,7 @@ export function initAbilities() {
       .unimplemented(),
     new Ability(Abilities.FLUFFY, 7)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 0.5)
-      .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.type === Type.FIRE, 2)
+      .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.getType(user, target) === Type.FIRE, 2)
       .ignorable(),
     new Ability(Abilities.DAZZLING, 7)
       .attr(FieldPriorityMoveImmunityAbAttr)
@@ -3372,9 +3358,9 @@ export function initAbilities() {
     new Ability(Abilities.SHADOW_SHIELD, 7)
       .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getHpRatio() === 1, 0.5),
     new Ability(Abilities.PRISM_ARMOR, 7)
-      .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getAttackTypeEffectiveness(move.type) >= 2, 0.75),
+      .attr(ReceivedMoveDamageMultiplierAbAttr,(target, user, move) => target.getAttackTypeEffectiveness(move.getType(user, target)) >= 2, 0.75),
     new Ability(Abilities.NEUROFORCE, 7)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type) >= 2, 1.25),
+      .attr(MovePowerBoostAbAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.getType(user, target)) >= 2, 1.25),
     new Ability(Abilities.INTREPID_SWORD, 8)
       .attr(PostSummonStatChangeAbAttr, BattleStat.ATK, 1, true),
     new Ability(Abilities.DAUNTLESS_SHIELD, 8)
@@ -3398,7 +3384,7 @@ export function initAbilities() {
     new Ability(Abilities.STALWART, 8)
       .unimplemented(),
     new Ability(Abilities.STEAM_ENGINE, 8)
-      .attr(PostDefendStatChangeAbAttr, (target, user, move) => (move.type === Type.FIRE || move.type === Type.WATER) && move.category !== MoveCategory.STATUS, BattleStat.SPD, 6),
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => (move.getType(user, target) === Type.FIRE || move.getType(user, target) === Type.WATER) && move.category !== MoveCategory.STATUS, BattleStat.SPD, 6),
     new Ability(Abilities.PUNK_ROCK, 8)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SOUND_BASED), 1.3)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.hasFlag(MoveFlags.SOUND_BASED), 0.5)
@@ -3483,7 +3469,7 @@ export function initAbilities() {
     new Ability(Abilities.SEED_SOWER, 9)
       .attr(PostDefendTerrainChangeAbAttr, TerrainType.GRASSY),
     new Ability(Abilities.THERMAL_EXCHANGE, 9)
-      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.type === Type.FIRE && move.category !== MoveCategory.STATUS, BattleStat.ATK, 1)
+      .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.getType(user, target) === Type.FIRE && move.category !== MoveCategory.STATUS, BattleStat.ATK, 1)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.ANGER_SHELL, 9)
