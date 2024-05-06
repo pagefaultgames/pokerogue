@@ -647,50 +647,6 @@ export class RandomLevelDamageAttr extends FixedDamageAttr {
     return Math.max(Math.floor(user.level * (user.randSeedIntRange(50, 150) * 0.01)), 1);
   }
 }
-export class StockpileDamageAttr extends FixedDamageAttr {
-  constructor() {
-    super(0);
-  }
-
-  getDamage(user: Pokemon, target: Pokemon, move: Move): integer {
-    let ret = super.getTargetBenefitScore(user, target, move);
-
-    let attackScore = 0;
-
-    const effectiveness = target.getAttackTypeEffectiveness(Type.NORMAL);
-    attackScore = Math.pow(effectiveness - 1, 2) * effectiveness < 1 ? -2 : 2;
-    if (attackScore) {
-      const spAtk = new Utils.IntegerHolder(user.getBattleStat(Stat.SPATK, target));
-      applyMoveAttrs(VariableAtkAttr, user, target, move, spAtk);
-      if (spAtk.value > user.getBattleStat(Stat.ATK, target)) {
-        const statRatio = user.getBattleStat(Stat.ATK, target) / spAtk.value;
-        if (statRatio <= 0.75)
-          attackScore *= 2;
-        else if (statRatio <= 0.875)
-          attackScore *= 1.5;
-      }
-      
-      const power = new Utils.NumberHolder(this.getPower(user, target, move));
-      applyMoveAttrs(VariablePowerAttr, user, target, move, power);
-
-      attackScore += Math.floor(power.value / 5);
-    }
-
-    return attackScore;
-  }
-
-  getPower(user: Pokemon, target: Pokemon, move: Move): number {
-    if (!!user.getTag(BattlerTagType.STOCKPILE_THREE)){
-      return 300;
-    } else if (!!user.getTag(BattlerTagType.STOCKPILE_TWO)){
-      return 200;
-    } else if (!!user.getTag(BattlerTagType.STOCKPILE_ONE)){
-      return 100;
-    } else {
-      return 0;
-    }
-  }
-}
 
 export class ModifiedDamageAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -853,9 +809,40 @@ export class HealAttr extends MoveEffectAttr {
       Math.max(Math.floor(target.getMaxHp() * healRatio), 1), getPokemonMessage(target, ' regained\nhealth!'), true, !this.showAnim));
   }
 
+  getHealRatio(h: number = -1){
+    if (h > 0)
+      this.healRatio = h;
+
+    return this.healRatio;
+  }
+
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
     let score = ((1 - (this.selfTarget ? user : target).getHpRatio()) * 20) - this.healRatio * 10;
     return Math.round(score / (1 - this.healRatio / 2));
+  }
+}
+
+export class StockpileHealAttr extends HealAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const s = this.getStockpiles(user);
+
+    this.getHealRatio(s > 2 ? 1 : (s * 0.25));
+
+    super.apply(user, target, move, args);
+    return true;
+  }
+
+  getStockpiles(user: Pokemon): integer {
+    let s = 0;
+    const stock = [BattlerTagType.STOCKPILE_ONE, BattlerTagType.STOCKPILE_TWO, BattlerTagType.STOCKPILE_THREE];
+
+    for (let x = 0 ; x < stock.length ; x++){
+      if (user.getTag(stock[x])){
+        s++;
+      }
+    }
+
+    return s;
   }
 }
 
@@ -1620,6 +1607,39 @@ export class GrowthStatChangeAttr extends StatChangeAttr {
   }
 }
 
+export class StockpileStatChangeAttr extends StatChangeAttr {
+  constructor(move: string = "Stockpile") {
+    let l = 1;
+
+    if (move === "Spit-Up" || move === "Swallow"){
+      l = -1;
+    }
+
+    super([ BattleStat.ATK, BattleStat.SPATK ], l, true);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean | Promise<boolean> {
+    if (!super.apply(user, target, move, args))
+      return false;
+    
+    this.levels = this.levels < 0 ? (this.getStockpiles(user) * -1) : 1;
+    return true;
+  }
+
+  getStockpiles(user: Pokemon): integer {
+    let s = 0;
+    const stock = [BattlerTagType.STOCKPILE_ONE, BattlerTagType.STOCKPILE_TWO, BattlerTagType.STOCKPILE_THREE];
+
+    for (let x = 0 ; x < stock.length ; x++){
+      if (user.getTag(stock[x])){
+        s++;
+      }
+    }
+
+    return s;
+  }
+}
+
 export class HalfHpStatMaxAttr extends StatChangeAttr {
   constructor(stat: BattleStat) {
     super(stat, 12, true, null, false);
@@ -2148,6 +2168,28 @@ export class WaterShurikenPowerAttr extends VariablePowerAttr {
       return true;
     }
     return false;
+  }
+}
+
+export class StockpilePowerAttr extends VariablePowerAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const power = args[0] as Utils.NumberHolder;
+
+    power.value = this.getPower(user, target, move);
+
+    return true;
+  }
+
+  getPower(user: Pokemon, target: Pokemon, move: Move): number {
+    if (!!user.getTag(BattlerTagType.STOCKPILE_THREE)){
+      return 300;
+    } else if (!!user.getTag(BattlerTagType.STOCKPILE_TWO)){
+      return 200;
+    } else if (!!user.getTag(BattlerTagType.STOCKPILE_ONE)){
+      return 100;
+    } else {
+      return 0;
+    }
   }
 }
 
@@ -4791,25 +4833,31 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       .partial(),
-    // mareksison/redmaverick616 starts working here
-    /**
-     * need to find a way to remove stat changes when stockpile is used
-     * need to find a way to remove stockpile when the relevant moves are used
-     */
     new SelfStatusMove(Moves.STOCKPILE, Type.NORMAL, -1, 20, -1, 0, 3)
       .attr(StockpileOneAttr)
       .attr(StockpileTwoAttr)
       .attr(StockpileThreeAttr)
-      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, true)
+      .attr(StockpileStatChangeAttr, 'Stockpile')
       .partial(),
     new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
-      .attr(StockpileDamageAttr)
-      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true)
+      .attr(StockpilePowerAttr)
+      .attr(StockpileStatChangeAttr, 'Spit-Up')
+      .attr(RemoveBattlerTagAttr, [ 
+        BattlerTagType.STOCKPILE_ONE,
+        BattlerTagType.STOCKPILE_TWO,
+        BattlerTagType.STOCKPILE_THREE,
+      ], true)
       .partial(),
     new SelfStatusMove(Moves.SWALLOW, Type.NORMAL, -1, 10, -1, 0, 3)
       .triageMove()
-      .unimplemented(),
-    // mareksison/redmaverick616 ends working here
+      .attr(StockpileHealAttr, 1)
+      .attr(StockpileStatChangeAttr, 'Swallow')
+      .attr(RemoveBattlerTagAttr, [ 
+        BattlerTagType.STOCKPILE_ONE,
+        BattlerTagType.STOCKPILE_TWO,
+        BattlerTagType.STOCKPILE_THREE,
+      ], true)
+      .partial(),
     new AttackMove(Moves.HEAT_WAVE, Type.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 10, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
