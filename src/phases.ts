@@ -1788,7 +1788,7 @@ export class CommandPhase extends FieldPhase {
           if (!batonPass)
             enemyField.forEach(enemyPokemon => applyCheckTrappedAbAttrs(CheckTrappedAbAttr, enemyPokemon, trapped));
           if (batonPass || (!trapTag && !trapped.value)) {
-            this.scene.currentBattle.turnCommands[this.fieldIndex] = isSwitch
+            this.scene.currentBattle.turnCommands[args[1]] = isSwitch
               ? { command: Command.POKEMON, cursor: cursor, args: args }
               : { command: Command.RUN };
             success = true;
@@ -1955,10 +1955,14 @@ export class TurnStartPhase extends FieldPhase {
   start() {
     super.start();
 
+
     const field = this.scene.getField();
     const order = this.getOrder();
-
     const moveOrder = order.slice(0);
+
+    console.log('field', field);
+    console.log('moveOrder', moveOrder);
+    // if (this.scene.currentBattle.turn === 1 && field.)
 
     moveOrder.sort((a, b) => {
       const aCommand = this.scene.currentBattle.turnCommands[a];
