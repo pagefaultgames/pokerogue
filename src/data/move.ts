@@ -637,7 +637,7 @@ export class StockpileDamageAttr extends FixedDamageAttr {
     super(0);
   }
 
-  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer {
+  getDamage(user: Pokemon, target: Pokemon, move: Move): integer {
     let ret = super.getTargetBenefitScore(user, target, move);
 
     let attackScore = 0;
@@ -661,9 +661,7 @@ export class StockpileDamageAttr extends FixedDamageAttr {
       attackScore += Math.floor(power.value / 5);
     }
 
-    ret -= attackScore;
-
-    return ret;
+    return attackScore;
   }
 
   getPower(user: Pokemon, target: Pokemon, move: Move): number {
@@ -4646,7 +4644,9 @@ export function initMoves() {
       .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], 1, true)
       .partial(),
     new AttackMove(Moves.SPIT_UP, Type.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
-      .unimplemented(),
+      .attr(StockpileDamageAttr)
+      .attr(StatChangeAttr, [ BattleStat.DEF, BattleStat.SPDEF ], -1, true)
+      .partial(),
     new SelfStatusMove(Moves.SWALLOW, Type.NORMAL, -1, 10, -1, 0, 3)
       .triageMove()
       .unimplemented(),
