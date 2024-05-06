@@ -2472,7 +2472,7 @@ export class NoFusionAbilityAbAttr extends AbAttr {
   }
 }
 
-export class StallAbAttr extends AbAttr {
+export class ActLastAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
@@ -2480,6 +2480,17 @@ export class StallAbAttr extends AbAttr {
   apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
     args[0].value = true;
     return true;
+  }
+}
+
+export class MyceliumMightAbAttr extends ActLastAbAttr {
+  apply(pokemon: Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean {
+    const command = pokemon.scene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
+    if (command.move && allMoves[command.move.move].category === MoveCategory.STATUS) {
+      args[0].value = true;
+      return true;
+    }
+    return false;
   }
 }
 
@@ -2958,7 +2969,7 @@ export function initAbilities() {
       .attr(AlwaysHitAbAttr)
       .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.STALL, 4)
-      .attr(StallAbAttr),
+      .attr(ActLastAbAttr),
     new Ability(Abilities.TECHNICIAN, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.power <= 60, 1.5),
     new Ability(Abilities.LEAF_GUARD, 4)
@@ -3574,7 +3585,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.MYCELIUM_MIGHT, 9)
       .attr(MoveAbilityBypassAbAttr, (pokemon, move: Move) => move.category === MoveCategory.STATUS)
-      .partial(),
+      .attr(MyceliumMightAbAttr),
     new Ability(Abilities.MINDS_EYE, 9)
       .ignorable()
       .unimplemented(),
