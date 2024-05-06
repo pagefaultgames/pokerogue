@@ -73,6 +73,12 @@ import { starterSelectUiHandler as frStarterSelectUiHandler } from '../locales/f
 import { starterSelectUiHandler as itStarterSelectUiHandler} from '../locales/it/starter-select-ui-handler';
 import { starterSelectUiHandler as deStarterSelectUiHandler } from '../locales/de/starter-select-ui-handler';
 
+import { nature as enNature } from '../locales/en/nature';
+import { nature as esNature } from '../locales/es/nature';
+import { nature as frNature } from '../locales/fr/nature';
+import { nature as itNature} from '../locales/it/nature';
+import { nature as deNature } from '../locales/de/nature';
+
 export interface SimpleTranslationEntries {
   [key: string]: string
 }
@@ -142,7 +148,8 @@ export function initI18n(): void {
         commandUiHandler: enCommandUiHandler,
         fightUiHandler: enFightUiHandler,
         tutorial: enTutorial,
-        starterSelectUiHandler: enStarterSelectUiHandler
+        starterSelectUiHandler: enStarterSelectUiHandler,
+        nature: enNature
       },
       es: {
         menu: esMenu,
@@ -156,7 +163,8 @@ export function initI18n(): void {
         commandUiHandler: esCommandUiHandler,
         fightUiHandler: esFightUiHandler,
         tutorial: esTutorial,
-        starterSelectUiHandler: esStarterSelectUiHandler
+        starterSelectUiHandler: esStarterSelectUiHandler,
+        nature: esNature
       },
       fr: {
         menu: frMenu,
@@ -170,7 +178,8 @@ export function initI18n(): void {
         commandUiHandler: frCommandUiHandler,
         fightUiHandler: frFightUiHandler,
         tutorial: frTutorial,
-        starterSelectUiHandler: frStarterSelectUiHandler
+        starterSelectUiHandler: frStarterSelectUiHandler,
+        nature: frNature
       },
       it: {
         menu: itMenu,
@@ -184,7 +193,8 @@ export function initI18n(): void {
         commandUiHandler: itCommandUiHandler,
         fightUiHandler: itFightUiHandler,
         tutorial: itTutorial,
-        starterSelectUiHandler: itStarterSelectUiHandler
+        starterSelectUiHandler: itStarterSelectUiHandler,
+        nature: itNature
       },
       de: {
         menu: deMenu,
@@ -198,7 +208,8 @@ export function initI18n(): void {
         commandUiHandler: deCommandUiHandler,
         fightUiHandler: deFightUiHandler,
         tutorial: deTutorial,
-        starterSelectUiHandler: deStarterSelectUiHandler
+        starterSelectUiHandler: deStarterSelectUiHandler,
+        nature: deNature
       }
     },
   });
@@ -220,6 +231,7 @@ declare module 'i18next' {
       fightUiHandler: typeof enFightUiHandler;
       tutorial: typeof enTutorial;
       starterSelectUiHandler: typeof enStarterSelectUiHandler;
+      nature: typeof enNature;
     };
   }
 }
