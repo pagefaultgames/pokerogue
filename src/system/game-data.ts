@@ -173,6 +173,7 @@ export interface StarterDataEntry {
   abilityAttr: integer;
   passiveAttr: integer;
   valueReduction: integer;
+  classicWinCount: integer;
 }
 
 export interface StarterData {
@@ -194,7 +195,8 @@ const systemShortKeys = {
   eggMoves: '$em',
   candyCount: '$x',
   passive: '$p',
-  valueReduction: '$vr'
+  valueReduction: '$vr',
+  classicWinCount: '$wc'
 };
 
 export class GameData {
@@ -248,58 +250,52 @@ export class GameData {
   public saveSystem(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       this.scene.ui.savingIcon.show();
-      updateUserInfo().then(response => {
-        if (!response[0]) {
-          this.scene.ui.savingIcon.hide();
-          return resolve(false);
-        }
-        const data: SystemSaveData = {
-          trainerId: this.trainerId,
-          secretId: this.secretId,
-          gender: this.gender,
-          dexData: this.dexData,
-          starterData: this.starterData,
-          gameStats: this.gameStats,
-          unlocks: this.unlocks,
-          achvUnlocks: this.achvUnlocks,
-          voucherUnlocks: this.voucherUnlocks,
-          voucherCounts: this.voucherCounts,
-          eggs: this.eggs.map(e => new EggData(e)),
-          gameVersion: this.scene.game.config.gameVersion,
-          timestamp: new Date().getTime()
-        };
+      const data: SystemSaveData = {
+        trainerId: this.trainerId,
+        secretId: this.secretId,
+        gender: this.gender,
+        dexData: this.dexData,
+        starterData: this.starterData,
+        gameStats: this.gameStats,
+        unlocks: this.unlocks,
+        achvUnlocks: this.achvUnlocks,
+        voucherUnlocks: this.voucherUnlocks,
+        voucherCounts: this.voucherCounts,
+        eggs: this.eggs.map(e => new EggData(e)),
+        gameVersion: this.scene.game.config.gameVersion,
+        timestamp: new Date().getTime()
+      };
 
-        const maxIntAttrValue = Math.pow(2, 31);
-        const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
+      const maxIntAttrValue = Math.pow(2, 31);
+      const systemData = JSON.stringify(data, (k: any, v: any) => typeof v === 'bigint' ? v <= maxIntAttrValue ? Number(v) : v.toString() : v);
 
-        if (!bypassLogin) {
-          Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData, undefined, true)
-            .then(response => response.text())
-            .then(error => {
-              this.scene.ui.savingIcon.hide();
-              if (error) {
-                if (error.startsWith('client version out of date')) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new OutdatedPhase(this.scene));
-                } else if (error.startsWith('session out of date')) {
-                  this.scene.clearPhaseQueue();
-                  this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
-                }
-                console.error(error);
-                return resolve(false);
+      if (!bypassLogin) {
+        Utils.apiPost(`savedata/update?datatype=${GameDataType.SYSTEM}`, systemData, undefined, true)
+          .then(response => response.text())
+          .then(error => {
+            this.scene.ui.savingIcon.hide();
+            if (error) {
+              if (error.startsWith('client version out of date')) {
+                this.scene.clearPhaseQueue();
+                this.scene.unshiftPhase(new OutdatedPhase(this.scene));
+              } else if (error.startsWith('session out of date')) {
+                this.scene.clearPhaseQueue();
+                this.scene.unshiftPhase(new ReloadSessionPhase(this.scene));
               }
-              resolve(true);
-            });
-        } else {
-          localStorage.setItem('data_bak', localStorage.getItem('data'));
+              console.error(error);
+              return resolve(false);
+            }
+            resolve(true);
+          });
+      } else {
+        localStorage.setItem('data_bak', localStorage.getItem('data'));
 
-          localStorage.setItem('data', btoa(systemData));
+        localStorage.setItem('data', btoa(systemData));
 
-          this.scene.ui.savingIcon.hide();
+        this.scene.ui.savingIcon.hide();
 
-          resolve(true);
-        }
-      });
+        resolve(true);
+      }
     });
   }
 
@@ -995,7 +991,8 @@ export class GameData {
         friendship: 0,
         abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
         passiveAttr: 0,
-        valueReduction: 0
+        valueReduction: 0,
+        classicWinCount: 0
       };
     }
 
@@ -1087,6 +1084,32 @@ export class GameData {
       } else
         checkPrevolution();
     });
+  }
+
+  incrementRibbonCount(species: PokemonSpecies, forStarter: boolean = false): integer {
+    const speciesIdToIncrement: Species = species.getRootSpeciesId(forStarter);
+
+    if (!this.starterData[speciesIdToIncrement].classicWinCount) {
+      this.starterData[speciesIdToIncrement].classicWinCount = 0;
+    }
+    
+    if (!this.starterData[speciesIdToIncrement].classicWinCount)
+      this.scene.gameData.gameStats.ribbonsOwned++;
+
+    const ribbonsInStats: integer = this.scene.gameData.gameStats.ribbonsOwned;
+
+    if (ribbonsInStats >= 100)
+      this.scene.validateAchv(achvs._100_RIBBONS);
+    if (ribbonsInStats >= 75)
+      this.scene.validateAchv(achvs._75_RIBBONS);
+    if (ribbonsInStats >= 50)
+      this.scene.validateAchv(achvs._50_RIBBONS);
+    if (ribbonsInStats >= 25)
+      this.scene.validateAchv(achvs._25_RIBBONS);
+    if (ribbonsInStats >= 10)
+      this.scene.validateAchv(achvs._10_RIBBONS);
+
+    return ++this.starterData[speciesIdToIncrement].classicWinCount;
   }
 
   addStarterCandy(species: PokemonSpecies, count: integer): void {
