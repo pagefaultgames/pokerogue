@@ -144,9 +144,16 @@ class AddPokeballModifierType extends ModifierType implements Localizable {
   }
 
   localize(): void {
+    // TODO: Actually use i18n to localize this description.
     this.name = `${this.count}x ${getPokeballName(this.pokeballType)}`;
-    this.description = `Receive ${getPokeballName(this.pokeballType)} x${this.count}\nCatch Rate: ${getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : 'Certain'}`;
+    this.description = `Receive ${getPokeballName(this.pokeballType)} x${this.count} (Inventory: {AMOUNT}) \nCatch Rate: ${getPokeballCatchMultiplier(this.pokeballType) > -1 ? `${getPokeballCatchMultiplier(this.pokeballType)}x` : 'Certain'}`;
   }
+  
+  getDescription(scene: BattleScene): string {
+    this.localize();
+    return this.description.replace('{AMOUNT}', scene.pokeballCounts[this.pokeballType].toString());
+  }
+
 }
 
 class AddVoucherModifierType extends ModifierType {
