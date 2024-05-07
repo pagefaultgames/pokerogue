@@ -2966,6 +2966,42 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   }
 }
 
+export class RemoveArenaTrapAttr extends MoveEffectAttr {
+
+  private targetBothSides: boolean;
+
+  constructor(targetBothSides: boolean = false) {
+    super(true, MoveEffectTrigger.PRE_APPLY);
+    this.targetBothSides = targetBothSides;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+
+    if (!super.apply(user, target, move, args))
+      return false;
+
+    if(this.targetBothSides){
+      user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER);
+      user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
+      user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
+      user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER);
+
+      user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY);
+      user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.ENEMY);
+      user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.ENEMY);
+      user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.ENEMY);
+    }
+    else {
+      user.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
+      user.scene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
+      user.scene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
+      user.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
+    }
+
+    return true;
+  }
+}
+
 export class RemoveScreensAttr extends MoveEffectAttr {
 
   private targetBothSides: boolean;
@@ -4609,7 +4645,7 @@ export function initMoves() {
         BattlerTagType.SEEDED,
         BattlerTagType.INFESTATION
       ], true)
-      .partial(),
+      .attr(RemoveArenaTrapAttr),
     new StatusMove(Moves.SWEET_SCENT, Type.NORMAL, 100, 20, -1, 0, 2)
       .attr(StatChangeAttr, BattleStat.EVA, -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -5151,7 +5187,8 @@ export function initMoves() {
       .attr(StatChangeAttr, BattleStat.EVA, -1)
       .attr(ClearWeatherAttr, WeatherType.FOG)
       .attr(ClearTerrainAttr)
-      .attr(RemoveScreensAttr, true),
+      .attr(RemoveScreensAttr, false)
+      .attr(RemoveArenaTrapAttr, true),
     new StatusMove(Moves.TRICK_ROOM, Type.PSYCHIC, -1, 5, -1, -7, 4)
       .attr(AddArenaTagAttr, ArenaTagType.TRICK_ROOM, 5)
       .ignoresProtect()
@@ -6452,6 +6489,7 @@ export function initMoves() {
         BattlerTagType.INFESTATION
       ], true)
       .attr(StatusEffectAttr, StatusEffect.POISON)
+      .attr(RemoveArenaTrapAttr)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(Moves.DOODLE, Type.NORMAL, 100, 10, -1, 0, 9)
       .attr(AbilityCopyAttr, true),
@@ -6495,7 +6533,7 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new SelfStatusMove(Moves.TIDY_UP, Type.NORMAL, -1, 10, 100, 0, 9)
       .attr(StatChangeAttr, [ BattleStat.ATK, BattleStat.SPD ], 1, true)
-      .partial(),
+      .attr(RemoveArenaTrapAttr),
     new StatusMove(Moves.SNOWSCAPE, Type.ICE, -1, 10, -1, 0, 9)
       .attr(WeatherChangeAttr, WeatherType.SNOW)
       .target(MoveTarget.BOTH_SIDES),
