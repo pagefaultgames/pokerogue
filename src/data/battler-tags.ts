@@ -69,6 +69,11 @@ export class BattlerTag {
       : null;
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * This is meant to be inherited from by any battler tag with custom attributes
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     this.turnCount = source.turnCount;
     this.sourceMove = source.sourceMove;
@@ -305,6 +310,10 @@ export class SeedTag extends BattlerTag {
     super(BattlerTagType.SEEDED, BattlerTagLapseType.TURN_END, 1, Moves.LEECH_SEED, sourceId);
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.sourceIndex = source.sourceIndex;
@@ -415,6 +424,10 @@ export class EncoreTag extends BattlerTag {
     super(BattlerTagType.ENCORE, BattlerTagLapseType.AFTER_MOVE, 3, Moves.ENCORE, sourceId);
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.moveId = source.moveId as Moves;
@@ -569,6 +582,10 @@ export abstract class DamagingTrapTag extends TrappedTag {
     this.commonAnim = commonAnim;
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.commonAnim = source.commonAnim as CommonAnim;
@@ -730,6 +747,10 @@ export class ContactDamageProtectedTag extends ProtectedTag {
     this.damageRatio = damageRatio;
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.damageRatio = source.damageRatio;
@@ -761,6 +782,10 @@ export class ContactStatChangeProtectedTag extends ProtectedTag {
     this.levels = levels;
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.stat = source.stat as BattleStat;
@@ -888,6 +913,10 @@ export class AbilityBattlerTag extends BattlerTag {
     this.ability = ability;
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.ability = source.ability as Abilities;
@@ -949,6 +978,10 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
     super(tagType, ability, BattlerTagLapseType.CUSTOM, 1);
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.stat = source.stat as Stat;
@@ -997,6 +1030,10 @@ export class WeatherHighestStatBoostTag extends HighestStatBoostTag implements W
     this.weatherTypes = weatherTypes;
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.weatherTypes = source.weatherTypes.map(w => w as WeatherType);
@@ -1011,6 +1048,10 @@ export class TerrainHighestStatBoostTag extends HighestStatBoostTag implements T
     this.terrainTypes = terrainTypes;
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.terrainTypes = source.terrainTypes.map(w => w as TerrainType);
@@ -1043,6 +1084,10 @@ export class TypeImmuneTag extends BattlerTag {
     super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove);
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.immuneType = source.immuneType as Type;
@@ -1068,6 +1113,10 @@ export class TypeBoostTag extends BattlerTag {
     this.oneUse = oneUse;
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.boostedType = source.boostedType as Type;
@@ -1121,6 +1170,10 @@ export class SaltCuredTag extends BattlerTag {
     super(BattlerTagType.SALT_CURED, BattlerTagLapseType.TURN_END, 1, Moves.SALT_CURE, sourceId);
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.sourceIndex = source.sourceIndex;
@@ -1161,6 +1214,10 @@ export class CursedTag extends BattlerTag {
     super(BattlerTagType.CURSED, BattlerTagLapseType.TURN_END, 1, Moves.CURSE, sourceId);
   }
 
+  /**
+  * When given a battler tag or json representing one, load the data for it.
+  * @param {BattlerTag | any} source A battler tag
+  */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.sourceIndex = source.sourceIndex;
@@ -1307,6 +1364,11 @@ export function getBattlerTag(tagType: BattlerTagType, turnCount: integer, sourc
   }
 }
 
+/**
+* When given a battler tag or json representing one, creates an actual BattlerTag object with the same data.
+* @param {BattlerTag | any} source A battler tag
+* @return {BattlerTag} The valid battler tag
+*/
 export function loadBattlerTag(source: BattlerTag | any): BattlerTag {
   const tag = getBattlerTag(source.tagType, source.turnCount, source.sourceMove, source.sourceId);
   tag.loadTag(source);
