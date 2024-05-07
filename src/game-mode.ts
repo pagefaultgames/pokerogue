@@ -5,7 +5,7 @@ import { Species } from "./data/enums/species";
 import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
 import * as Utils from "./utils";
-import { STARTING_BIOME_OVERRIDE, STARTING_LEVEL_OVERRIDE, STARTING_MONEY_OVERRIDE } from './overrides';
+import * as Overrides from './overrides';
 
 export enum GameModes {
   CLASSIC,
@@ -46,8 +46,8 @@ export class GameMode implements GameModeConfig {
   }
 
   getStartingLevel(): integer {
-    if (STARTING_LEVEL_OVERRIDE)
-      return STARTING_LEVEL_OVERRIDE;
+    if (Overrides.STARTING_LEVEL_OVERRIDE)
+      return Overrides.STARTING_LEVEL_OVERRIDE;
     switch (this.modeId) {
       case GameModes.DAILY:
         return 20;
@@ -57,7 +57,7 @@ export class GameMode implements GameModeConfig {
   }
 
   getStartingMoney(): integer {
-    return STARTING_MONEY_OVERRIDE || 1000;
+    return Overrides.STARTING_MONEY_OVERRIDE || 1000;
   }
 
   getStartingBiome(scene: BattleScene): Biome {
@@ -65,7 +65,7 @@ export class GameMode implements GameModeConfig {
       case GameModes.DAILY:
         return scene.generateRandomBiome(this.getWaveForDifficulty(1));
       default:
-        return STARTING_BIOME_OVERRIDE || Biome.TOWN;
+        return Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN;
     }
   }
 

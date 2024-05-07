@@ -43,7 +43,7 @@ import { Nature, getNatureStatMultiplier } from '../data/nature';
 import { SpeciesFormChange, SpeciesFormChangeActiveTrigger, SpeciesFormChangeMoveLearnedTrigger, SpeciesFormChangePostMoveTrigger, SpeciesFormChangeStatusEffectTrigger } from '../data/pokemon-forms';
 import { TerrainType } from '../data/terrain';
 import { TrainerSlot } from '../data/trainer-config';
-import { ABILITY_OVERRIDE, MOVE_OVERRIDE, MOVE_OVERRIDE_2, OPP_ABILITY_OVERRIDE, OPP_MOVE_OVERRIDE, OPP_MOVE_OVERRIDE_2, OPP_PASSIVE_ABILITY_OVERRIDE, OPP_SHINY_OVERRIDE, OPP_VARIANT_OVERRIDE, PASSIVE_ABILITY_OVERRIDE } from '../overrides';
+import * as Overrides from '../overrides';
 import { BerryType } from '../data/berry';
 import i18next from '../plugins/i18n';
 
@@ -725,15 +725,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       ? this.summonData.moveset
       : this.moveset;
 
-    if (MOVE_OVERRIDE && this.isPlayer())
-      this.moveset[0] = new PokemonMove(MOVE_OVERRIDE, Math.min(this.moveset[0].ppUsed, allMoves[MOVE_OVERRIDE].pp));
-    else if (OPP_MOVE_OVERRIDE && !this.isPlayer())
-      this.moveset[0] = new PokemonMove(OPP_MOVE_OVERRIDE, Math.min(this.moveset[0].ppUsed, allMoves[OPP_MOVE_OVERRIDE].pp));
-    if (MOVE_OVERRIDE_2 && this.isPlayer())
-      this.moveset[1] = new PokemonMove(MOVE_OVERRIDE_2, Math.min(this.moveset[1].ppUsed, allMoves[MOVE_OVERRIDE_2].pp));
-    else if (OPP_MOVE_OVERRIDE_2 && !this.isPlayer())
-      this.moveset[1] = new PokemonMove(OPP_MOVE_OVERRIDE_2, Math.min(this.moveset[1].ppUsed, allMoves[OPP_MOVE_OVERRIDE_2].pp));
-
+    const overideArray: Array<Moves> = this.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.OPP_MOVESET_OVERRIDE;
+    if (overideArray.length > 0) {
+      overideArray.forEach((move: Moves, index: number) => {
+        this.moveset[index] = new PokemonMove(move, Math.min(this.moveset[index].ppUsed, allMoves[move].pp))
+      });
+    }
 
     return ret;
   }
@@ -798,10 +795,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getAbility(ignoreOverride?: boolean): Ability {
     if (!ignoreOverride && this.summonData?.ability)
       return allAbilities[this.summonData.ability];
-    if (ABILITY_OVERRIDE && this.isPlayer())
-      return allAbilities[ABILITY_OVERRIDE];
-    if (OPP_ABILITY_OVERRIDE && !this.isPlayer())
-      return allAbilities[OPP_ABILITY_OVERRIDE];
+    if (Overrides.ABILITY_OVERRIDE && this.isPlayer())
+      return allAbilities[Overrides.ABILITY_OVERRIDE];
+    if (Overrides.OPP_ABILITY_OVERRIDE && !this.isPlayer())
+      return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
     if (this.isFusion())
       return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
     let abilityId = this.getSpeciesForm(ignoreOverride).getAbility(this.abilityIndex);
@@ -811,10 +808,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getPassiveAbility(): Ability {
-    if (PASSIVE_ABILITY_OVERRIDE && this.isPlayer())
-      return allAbilities[PASSIVE_ABILITY_OVERRIDE];
-    if (OPP_PASSIVE_ABILITY_OVERRIDE && !this.isPlayer())
-      return allAbilities[OPP_PASSIVE_ABILITY_OVERRIDE];
+    if (Overrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer())
+      return allAbilities[Overrides.PASSIVE_ABILITY_OVERRIDE];
+    if (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE && !this.isPlayer())
+      return allAbilities[Overrides.OPP_PASSIVE_ABILITY_OVERRIDE];
 
     let starterSpeciesId = this.species.speciesId;
     while (pokemonPrevolutions.hasOwnProperty(starterSpeciesId))
@@ -823,7 +820,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   } 
 
   hasPassive(): boolean {
-    if ((PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && this.isPlayer()) || (OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && !this.isPlayer()))
+    if ((Overrides.PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && this.isPlayer()) || (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE && !this.isPlayer()))
       return true;
     return this.passive || this.isBoss();
   }
@@ -2692,14 +2689,14 @@ export class EnemyPokemon extends Pokemon {
       this.generateAndPopulateMoveset();
 
       this.trySetShiny();
-      if (OPP_SHINY_OVERRIDE) {
+      if (Overrides.OPP_SHINY_OVERRIDE) {
         this.shiny = true;
         this.initShinySparkle();
       }
       if (this.shiny) {
         this.variant = this.generateVariant();
-        if (OPP_VARIANT_OVERRIDE)
-          this.variant = OPP_VARIANT_OVERRIDE;
+        if (Overrides.OPP_VARIANT_OVERRIDE)
+          this.variant = Overrides.OPP_VARIANT_OVERRIDE;
       }
 
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);

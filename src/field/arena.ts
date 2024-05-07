@@ -18,7 +18,7 @@ import { TimeOfDay } from "../data/enums/time-of-day";
 import { Terrain, TerrainType } from "../data/terrain";
 import { PostTerrainChangeAbAttr, PostWeatherChangeAbAttr, applyPostTerrainChangeAbAttrs, applyPostWeatherChangeAbAttrs } from "../data/ability";
 import Pokemon from "./pokemon";
-import { WEATHER_OVERRIDE } from '../overrides';
+import * as Overrides from '../overrides';
 
 export class Arena {
   public scene: BattleScene;
@@ -282,8 +282,8 @@ export class Arena {
 
   trySetWeather(weather: WeatherType, hasPokemonSource: boolean): boolean {
     // override hook for debugging
-    if (WEATHER_OVERRIDE)
-      return this.trySetWeatherOverride(WEATHER_OVERRIDE);
+    if (Overrides.WEATHER_OVERRIDE)
+      return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE);
     
     if (this.weather?.weatherType === (weather || undefined))
       return false;

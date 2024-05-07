@@ -59,7 +59,7 @@ import { SceneBase } from './scene-base';
 import CandyBar from './ui/candy-bar';
 import { Variant, variantData } from './data/variant';
 import { Localizable } from './plugins/i18n';
-import { STARTING_WAVE_OVERRIDE, OPP_SPECIES_OVERRIDE, SEED_OVERRIDE, STARTING_BIOME_OVERRIDE, DOUBLE_BATTLE_OVERRIDE } from './overrides';
+import * as Overrides from './overrides';
 import {InputsController} from "./inputs-controller";
 import {UiInputs} from "./ui-inputs";
 
@@ -67,7 +67,7 @@ export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
 const DEBUG_RNG = false;
 
-export const startingWave = STARTING_WAVE_OVERRIDE || 1;
+export const startingWave = Overrides.STARTING_WAVE_OVERRIDE || 1;
 
 const expSpriteKeys: string[] = [];
 
@@ -612,8 +612,8 @@ export default class BattleScene extends SceneBase {
 	}
 
 	addEnemyPokemon(species: PokemonSpecies, level: integer, trainerSlot: TrainerSlot, boss: boolean = false, dataSource?: PokemonData, postProcess?: (enemyPokemon: EnemyPokemon) => void): EnemyPokemon {
-		if (OPP_SPECIES_OVERRIDE)
-			species = getPokemonSpecies(OPP_SPECIES_OVERRIDE);
+		if (Overrides.OPP_SPECIES_OVERRIDE)
+			species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
 		const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
 		if (boss && !dataSource) {
 			const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
@@ -705,7 +705,7 @@ export default class BattleScene extends SceneBase {
 
 		this.gameMode = gameModes[GameModes.CLASSIC];
 		
-		this.setSeed(SEED_OVERRIDE || Utils.randomString(24));
+		this.setSeed(Overrides.SEED_OVERRIDE || Utils.randomString(24));
 		console.log('Seed:', this.seed);
 
 		this.disableMenu = false;
@@ -742,7 +742,7 @@ export default class BattleScene extends SceneBase {
 
 		[ this.luckLabelText, this.luckText ].map(t => t.setVisible(false));
 
-		this.newArena(STARTING_BIOME_OVERRIDE || Biome.TOWN);
+		this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN);
 
 		this.arenaBgTransition.setPosition(0, 0);
 		this.arenaPlayer.setPosition(300, 0);
@@ -842,7 +842,7 @@ export default class BattleScene extends SceneBase {
 		} else if (!battleConfig)
 			newDouble = !!double;
 
-		if (DOUBLE_BATTLE_OVERRIDE)
+		if (Overrides.DOUBLE_BATTLE_OVERRIDE)
 			newDouble = true;
 
 		const lastBattle = this.currentBattle;

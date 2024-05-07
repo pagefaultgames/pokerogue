@@ -58,7 +58,7 @@ import { GameModes, gameModes } from "./game-mode";
 import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm, speciesStarters } from "./data/pokemon-species";
 import i18next from './plugins/i18n';
 import { Abilities } from "./data/enums/abilities";
-import { STARTER_FORM_OVERRIDE, STARTER_SPECIES_OVERRIDE } from './overrides';
+import * as Overrides from './overrides';
 
 export class LoginPhase extends Phase {
   private showText: boolean;
@@ -487,12 +487,12 @@ export class SelectStarterPhase extends Phase {
         const party = this.scene.getParty();
         const loadPokemonAssets: Promise<void>[] = [];
         starters.forEach((starter: Starter, i: integer) => {
-          if (!i && STARTER_SPECIES_OVERRIDE)
-            starter.species = getPokemonSpecies(STARTER_SPECIES_OVERRIDE as Species);
+          if (!i && Overrides.STARTER_SPECIES_OVERRIDE)
+            starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE as Species);
           const starterProps = this.scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
           let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
-          if (!i && STARTER_SPECIES_OVERRIDE)
-            starterFormIndex = STARTER_FORM_OVERRIDE;
+          if (!i && Overrides.STARTER_SPECIES_OVERRIDE)
+            starterFormIndex = Overrides.STARTER_FORM_OVERRIDE;
           const starterGender = starter.species.malePercent !== null
             ? !starterProps.female ? Gender.MALE : Gender.FEMALE
             : Gender.GENDERLESS;
