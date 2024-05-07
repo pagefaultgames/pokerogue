@@ -13,6 +13,7 @@ export const STARTING_BIOME_OVERRIDE = Biome.TOWN;
 export const STARTING_MONEY_OVERRIDE = 0;
 export const WEATHER_OVERRIDE = WeatherType.NONE;
 export const DOUBLE_BATTLE_OVERRIDE = false;
+export const STARTING_HELD_ITEMS_OVERRIDE = ['REVIVER_SEED'];
 
 export const ABILITY_OVERRIDE = Abilities.NONE;
 export const PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
@@ -23,6 +24,7 @@ export const OPP_ABILITY_OVERRIDE = Abilities.NONE;
 export const OPP_PASSIVE_ABILITY_OVERRIDE = Abilities.NONE;
 export const OPP_MOVE_OVERRIDE = Moves.NONE;
 export const OPP_MOVE_OVERRIDE_2 = Moves.NONE;
+export const OPP_HELD_ITEMS_OVERRIDE = ['LUCKY_EGG'];
 
 export const OPP_SHINY_OVERRIDE = false;
 export const OPP_VARIANT_OVERRIDE = 0;
