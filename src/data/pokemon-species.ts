@@ -16,6 +16,7 @@ import { GameMode } from '../game-mode';
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import { VariantSet } from './variant';
 import i18next, { Localizable } from '../plugins/i18n';
+import { Stat } from "./pokemon-stat";
 
 export enum Region {
   NORMAL,
@@ -190,6 +191,15 @@ export abstract class PokemonSpeciesForm {
     }
 
     return false;
+  }
+
+  /**
+   * Gets the species' base stat amount for the given stat.
+   * @param stat  The desired stat.
+   * @returns The species' base stat amount.
+   */
+  getBaseStat(stat: Stat): integer {
+    return this.baseStats[stat]
   }
 
   getBaseExp(): integer {
