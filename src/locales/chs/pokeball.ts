@@ -2,9 +2,9 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const pokeball: SimpleTranslationEntries = {
     "pokeBall": "精灵球",
-    "greatBall": "Great Ball",
-    "ultraBall": "Ultra Ball",
+    "greatBall": "超级球",
+    "ultraBall": "高级球",
     "rogueBall": "Rogue Ball",
-    "masterBall": "Master Ball",
-    "luxuryBall": "Luxury Ball",
+    "masterBall": "大师球",
+    "luxuryBall": "豪华球",
 } as const;
