@@ -1176,7 +1176,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           for (let i = 0; i < 3; i++) {
             const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][i];
             if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)'))
-              movePool.push([moveId, Math.min(this.level * 0.5, 40)]);
+              movePool.push([moveId, Math.min(this.level * 0.5, 30)]);
           }
           const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][3];
           if (this.level >= 60 && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(' (N)')) // No rare egg moves before level 60
@@ -1190,6 +1190,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       weightMultiplier += 0.7;
     if (this.isBoss())
       weightMultiplier += 0.4;
+
+    // Weight towards higher power moves, by reducing the power of moves below the highest power.
+    // Caps max power at 90 to avoid something like hyper beam ruining the stats.
+    // This is a pretty soft weighting factor, although it is scaled with the weight multiplier.
+    let maxPower = Math.min(movePool.reduce((v, m) => Math.max(allMoves[m[0]].power, v), 40), 90);
+    movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].category === MoveCategory.STATUS ? 1 : Math.max(Math.min(allMoves[m[0]].power/maxPower, 1), 0.5))]);
 
     const baseWeights: [Moves, number][] = movePool.map(m => [m[0], Math.ceil(Math.pow(m[1], weightMultiplier)*100)]);
 
@@ -1218,9 +1224,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     while (movePool.length > 1 && this.moveset.length < 4) {
       if (this.hasTrainer()) {
-        // Sqrt the weight of any damaging moves with overlapping types
+        // Sqrt the weight of any damaging moves with overlapping types. This is about a 0.05 - 0.1 multiplier.
         // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights double if STAB.
-        // Status moves remain unchanged on weight
+        // Status moves remain unchanged on weight, this encourages 1-2
         movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo.moveId)).map(m => [m[0], this.moveset.some(mo => mo.getMove().category !== MoveCategory.STATUS && mo.getMove().type === allMoves[m[0]].type) ? Math.ceil(Math.sqrt(m[1])) : allMoves[m[0]].category !== MoveCategory.STATUS ? Math.ceil(m[1]/Math.max(Math.pow(4, this.moveset.filter(mo => mo.getMove().power > 1).length)/8,0.5) * (this.isOfType(allMoves[m[0]].type) ? 2 : 1)) : m[1]]);
       } else { // Non-trainer pokemon just use normal weights
         movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo.moveId));
