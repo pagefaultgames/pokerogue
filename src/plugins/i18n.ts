@@ -7,10 +7,7 @@ import { esConfig } from '#app/locales/es/config.js';
 import { frConfig } from '#app/locales/fr/config.js';
 import { itConfig } from '#app/locales/it/config.js';
 import { chsConfig } from '#app/locales/chs/config.js';
-<<<<<<< HEAD
 import { chtConfig } from '#app/locales/cht/config.js';
-=======
->>>>>>> new1/main
 
 export interface SimpleTranslationEntries {
   [key: string]: string

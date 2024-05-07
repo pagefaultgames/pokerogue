@@ -563,11 +563,7 @@ export const pokemon: SimpleTranslationEntries = {
     "scrafty": "头巾混混",
     "sigilyph": "象征鸟",
     "yamask": "哭哭面具",
-<<<<<<< HEAD
-    "cofagrigus": "迭失棺",
-=======
     "cofagrigus": "死神棺",
->>>>>>> new1/main
     "tirtouga": "原盖海龟",
     "carracosta": "肋骨海龟",
     "archen": "始祖小鸟",
@@ -598,11 +594,7 @@ export const pokemon: SimpleTranslationEntries = {
     "amoonguss": "败露球菇",
     "frillish": "轻飘飘",
     "jellicent": "胖嘟嘟",
-<<<<<<< HEAD
-    "alomomola": "保姆曼波",
-=======
     "alomomola": "保母曼波",
->>>>>>> new1/main
     "joltik": "电电虫",
     "galvantula": "电蜘蛛",
     "ferroseed": "种子铁球",
@@ -683,11 +675,7 @@ export const pokemon: SimpleTranslationEntries = {
     "skiddo": "坐骑小羊",
     "gogoat": "坐骑山羊",
     "pancham": "顽皮熊猫",
-<<<<<<< HEAD
-    "pangoro": "霸道熊猫",
-=======
     "pangoro": "流氓熊猫",
->>>>>>> new1/main
     "furfrou": "多丽米亚",
     "espurr": "妙喵",
     "meowstic": "超能妙喵",
@@ -772,11 +760,7 @@ export const pokemon: SimpleTranslationEntries = {
     "salandit": "夜盗火蜥",
     "salazzle": "焰后蜥",
     "stufful": "童偶熊",
-<<<<<<< HEAD
-    "bewear": "穿着熊",
-=======
     "bewear": "穿著熊",
->>>>>>> new1/main
     "bounsweet": "甜竹竹",
     "steenee": "甜舞妮",
     "tsareena": "甜冷美后",
@@ -794,11 +778,7 @@ export const pokemon: SimpleTranslationEntries = {
     "komala": "树枕尾熊",
     "turtonator": "爆焰龟兽",
     "togedemaru": "托戈德玛尔",
-<<<<<<< HEAD
-    "mimikyu": "谜拟丘",
-=======
     "mimikyu": "谜拟Ｑ",
->>>>>>> new1/main
     "bruxish": "磨牙彩皮鱼",
     "drampa": "老翁龙",
     "dhelmise": "破破舵轮",
@@ -847,13 +827,8 @@ export const pokemon: SimpleTranslationEntries = {
     "blipbug": "索侦虫",
     "dottler": "天罩虫",
     "orbeetle": "以欧路普",
-<<<<<<< HEAD
-    "nickit": "狡小狐",
-    "thievul": "猾大狐",
-=======
     "nickit": "偷儿狐",
     "thievul": "狐大盗",
->>>>>>> new1/main
     "gossifleur": "幼棉棉",
     "eldegoss": "白蓬蓬",
     "wooloo": "毛辫羊",
@@ -873,11 +848,7 @@ export const pokemon: SimpleTranslationEntries = {
     "cramorant": "古月鸟",
     "arrokuda": "刺梭鱼",
     "barraskewda": "戽斗尖梭",
-<<<<<<< HEAD
-    "toxel": "电音婴",
-=======
     "toxel": "毒电婴",
->>>>>>> new1/main
     "toxtricity": "颤弦蝾螈",
     "sizzlipede": "烧火蚣",
     "centiskorch": "焚焰蚣",
@@ -896,11 +867,7 @@ export const pokemon: SimpleTranslationEntries = {
     "cursola": "魔灵珊瑚",
     "sirfetchd": "葱游兵",
     "mr_rime": "踏冰人偶",
-<<<<<<< HEAD
-    "runerigus": "迭失板",
-=======
     "runerigus": "死神板",
->>>>>>> new1/main
     "milcery": "小仙奶",
     "alcremie": "霜奶仙",
     "falinks": "列阵兵",
@@ -1059,65 +1026,6 @@ export const pokemon: SimpleTranslationEntries = {
     "iron_crown": "铁头壳",
     "terapagos": "太乐巴戈斯",
     "pecharunt": "桃歹郎",
-<<<<<<< HEAD
-    "alola_rattata": "小拉达",
-    "alola_raticate": "拉达",
-    "alola_raichu": "雷丘",
-    "alola_sandshrew": "穿山鼠",
-    "alola_sandslash": "穿山王",
-    "alola_vulpix": "六尾",
-    "alola_ninetales": "九尾",
-    "alola_diglett": "地鼠",
-    "alola_dugtrio": "三地鼠",
-    "alola_meowth": "喵喵",
-    "alola_persian": "猫老大",
-    "alola_geodude": "小拳石",
-    "alola_graveler": "隆隆石",
-    "alola_golem": "隆隆岩",
-    "alola_grimer": "臭泥",
-    "alola_muk": "臭臭泥",
-    "alola_exeggutor": "椰蛋树",
-    "alola_marowak": "嘎啦嘎啦",
-    "eternal_floette": "花叶蒂",
-    "galar_meowth": "喵喵",
-    "galar_ponyta": "小火马",
-    "galar_rapidash": "烈焰马",
-    "galar_slowpoke": "呆呆兽",
-    "galar_slowbro": "呆壳兽",
-    "galar_farfetchd": "大葱鸭",
-    "galar_weezing": "双弹瓦斯",
-    "galar_mr_mime": "魔墙人偶",
-    "galar_articuno": "急冻鸟",
-    "galar_zapdos": "闪电鸟",
-    "galar_moltres": "火焰鸟",
-    "galar_slowking": "呆呆王",
-    "galar_corsola": "太阳珊瑚",
-    "galar_zigzagoon": "蛇纹熊",
-    "galar_linoone": "直冲熊",
-    "galar_darumaka": "火红不倒翁",
-    "galar_darmanitan": "达摩狒狒",
-    "galar_yamask": "哭哭面具",
-    "galar_stunfisk": "泥巴鱼",
-    "hisui_growlithe": "卡蒂狗",
-    "hisui_arcanine": "风速狗",
-    "hisui_voltorb": "霹雳电球",
-    "hisui_electrode": "顽皮雷弹",
-    "hisui_typhlosion": "火暴兽",
-    "hisui_qwilfish": "千针鱼",
-    "hisui_sneasel": "狃拉",
-    "hisui_samurott": "大剑鬼",
-    "hisui_lilligant": "裙儿小姐",
-    "hisui_zorua": "索罗亚",
-    "hisui_zoroark": "索罗亚克",
-    "hisui_braviary": "勇士雄鹰",
-    "hisui_sliggoo": "黏美儿",
-    "hisui_goodra": "黏美龙",
-    "hisui_avalugg": "冰岩怪",
-    "hisui_decidueye": "狙射树枭",
-    "paldea_tauros": "肯泰罗",
-    "paldea_wooper": "乌波",
-    "bloodmoon_ursaluna": "月月熊",
-=======
     "alola_rattata": "阿罗拉拉达",
     "alola_raticate": "阿罗拉拉达",
     "alola_raichu": "阿罗拉雷丘",
@@ -1175,5 +1083,4 @@ export const pokemon: SimpleTranslationEntries = {
     "paldea_tauros": "帕底亚肯泰罗",
     "paldea_wooper": "帕底亚乌波",
     "bloodmoon_ursaluna": "血月月月熊",
->>>>>>> new1/main
 } as const;
