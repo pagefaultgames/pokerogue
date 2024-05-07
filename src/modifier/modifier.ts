@@ -19,7 +19,7 @@ import { VoucherType } from '../system/voucher';
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from '../data/pokemon-forms';
 import { Nature } from '#app/data/nature';
 import { BattlerTagType } from '#app/data/enums/battler-tag-type';
-import { STARTING_HELD_ITEMS_OVERRIDE } from "./overrides";
+import { STARTING_HELD_ITEMS_OVERRIDE } from "../overrides";
 import { modifierTypes } from "./modifier-type";
 
 type ModifierType = ModifierTypes.ModifierType;
