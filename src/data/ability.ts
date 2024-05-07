@@ -3608,7 +3608,8 @@ export function initAbilities() {
       .attr(IgnoreTypeImmunityAbAttr, Type.GHOST, [Type.NORMAL, Type.FIGHTING])
       .ignorable(), // TODO: evasiveness bypass should not be ignored, but accuracy immunity should
     new Ability(Abilities.SUPERSWEET_SYRUP, 9)
-      .unimplemented(),
+      .attr(PostSummonStatChangeAbAttr, BattleStat.EVA, -1)
+      .condition(getOncePerBattleCondition(Abilities.SUPERSWEET_SYRUP)),
     new Ability(Abilities.HOSPITALITY, 9)
       .attr(PostSummonAllyHealAbAttr, 4, true),
     new Ability(Abilities.TOXIC_CHAIN, 9)
