@@ -3133,6 +3133,7 @@ export class PokemonBattleData {
   public hitCount: integer = 0;
   public endured: boolean = false;
   public berriesEaten: BerryType[] = [];
+  public abilitiesApplied: Abilities[] = [];
 }
 
 export class PokemonBattleSummonData {
