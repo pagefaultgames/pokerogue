@@ -19,7 +19,7 @@ import { VoucherType } from '../system/voucher';
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from '../data/pokemon-forms';
 import { Nature } from '#app/data/nature';
 import { BattlerTagType } from '#app/data/enums/battler-tag-type';
-import { STARTING_MODIFIER_OVERRIDE, STARTING_MODIFIER_QTY_OVERRIDE, OPP_HELD_ITEMS_OVERRIDE, STARTING_HELD_ITEMS_OVERRIDE } from "../overrides";
+import { STARTING_MODIFIER_OVERRIDE, STARTING_MODIFIER_QTY_OVERRIDE, OPP_HELD_ITEMS_OVERRIDE, STARTING_HELD_ITEMS_OVERRIDE, OPP_MODIFIER_OVERRIDE, OPP_MODIFIER_QTY_OVERRIDE } from "../overrides";
 import { modifierTypes } from "./modifier-type";
 
 type ModifierType = ModifierTypes.ModifierType;
@@ -2179,31 +2179,39 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
   }
 }
 
-export function getModifierOverride(): Modifier[] {
+export function modifiersOverride(scene: Phaser.Scene, player: boolean = true): void {
   // if no override, do nothing
-  const modifiers: Modifier[] = new Array();
-  if (!STARTING_MODIFIER_OVERRIDE || STARTING_MODIFIER_OVERRIDE.length === 0) return modifiers;
+  const modifierOverride = player ? STARTING_MODIFIER_OVERRIDE : OPP_MODIFIER_OVERRIDE;
+  const modifierQtyOverride = player ? STARTING_MODIFIER_QTY_OVERRIDE : OPP_MODIFIER_QTY_OVERRIDE;
+  if (!modifierOverride || modifierOverride.length === 0 || !scene) return;
+  if (!player) {
+    scene.enemyModifiers = [];
+  }
   // we loop through all the modifier name given in the override file
-  for (const [index, modifierName] of STARTING_MODIFIER_OVERRIDE.entries()) {
+  for (const [index, modifierName] of modifierOverride.entries()) {
     // if the modifier does not exist, we skip it
     if (!modifierTypes.hasOwnProperty(modifierName)) continue;
     const modifierType = modifierTypes[modifierName]();
     // We get how many modifiers, if none given, default to 1
-    const qty = STARTING_MODIFIER_QTY_OVERRIDE[index] || 1
+    const qty = modifierQtyOverride[index] || 1
     for (const i of [...Array(qty).keys()]) {
       // for example, if qty is 2, we create an array of size 2 with the modifier on each slot
-      modifiers.push(modifierType.withIdFromFunc(modifierTypes[modifierName]).newModifier());
+      const modifier = modifierType.withIdFromFunc(modifierTypes[modifierName]).newModifier();
+      if (player) {
+          scene.addModifier(modifier as PersistentModifier, true, false, false, true);
+      } else {
+          scene.addEnemyModifier(modifier as PersistentModifier, true, true);
+      }
     }
   }
-  return modifiers;
 }
 
-export function startingItemHeldsOverride(pokemon: Pokemon): Modifier[] {
-  const ret: Modifier[] = new Array();
-    // if no override, do nothing
-  if (!STARTING_HELD_ITEMS_OVERRIDE || STARTING_HELD_ITEMS_OVERRIDE.length === 0) return ret;
-    // we loop through all the itemName given in the override file
-  for (const itemName of STARTING_HELD_ITEMS_OVERRIDE) {
+export function itemHeldsOverride(scene: Phaser.Scene, pokemon: Pokemon, player: boolean = true): void {
+  const heldItemsOverride = player ? STARTING_HELD_ITEMS_OVERRIDE : OPP_HELD_ITEMS_OVERRIDE;
+  // if no override, do nothing
+  if (!heldItemsOverride || heldItemsOverride.length === 0 || !scene) return;
+  // we loop through all the itemName given in the override file
+  for (const itemName of heldItemsOverride) {
       // if the item does not exist, we skip it
       if (!modifierTypes.hasOwnProperty(itemName)) continue;
       // we retrieve the item in the list
@@ -2214,28 +2222,10 @@ export function startingItemHeldsOverride(pokemon: Pokemon): Modifier[] {
       itemModifier.pokemonId = pokemon.id;
       // we say how many items we want
       itemModifier.stackCount = 1;
-      ret.push(itemModifier);
+      if (player) {
+          scene.addModifier(itemModifier as PokemonHeldItemModifier, true, false, false, true);
+      } else {
+          scene.addEnemyModifier(itemModifier as PokemonHeldItemModifier, true, true);
+      }
   }
-  return ret;
-}
-
-export function opponentItemHeldsOverride(pokemon: Pokemon): Modifier[] {
-  const ret: Modifier[] = new Array();
-    // if no override, do nothing
-  if (!OPP_HELD_ITEMS_OVERRIDE || OPP_HELD_ITEMS_OVERRIDE.length === 0) return ret;
-    // we loop through all the itemName given in the override file
-  for (const itemName of OPP_HELD_ITEMS_OVERRIDE) {
-      // if the item does not exist, we skip it
-      if (!modifierTypes.hasOwnProperty(itemName)) continue;
-      // we retrieve the item in the list
-      const modifierType = modifierTypes[itemName]();
-      // we create the item
-      const itemModifier = modifierType.withIdFromFunc(modifierTypes[itemName]).newModifier((pokemon) as PersistentModifier) as PokemonHeldItemModifier;
-      // we assign the created item to the pokemon
-      itemModifier.pokemonId = pokemon.id;
-      // we say how many items we want
-      itemModifier.stackCount = 1;
-      ret.push(itemModifier);
-  }
-  return ret;
 }
