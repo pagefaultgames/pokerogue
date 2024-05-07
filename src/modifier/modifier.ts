@@ -2180,30 +2180,28 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
 }
 
 export function modifiersOverride(scene: Phaser.Scene, player: boolean = true): void {
-  // if no override, do nothing
   const modifierOverride = player ? STARTING_MODIFIER_OVERRIDE : OPP_MODIFIER_OVERRIDE;
-  const modifierQtyOverride = player ? STARTING_MODIFIER_QTY_OVERRIDE : OPP_MODIFIER_QTY_OVERRIDE;
+  // if no override, do nothing
   if (!modifierOverride || modifierOverride.length === 0 || !scene) return;
+  // if it's the opponent, we clear all his current modifiers to avoid stacking
   if (!player) {
     scene.enemyModifiers = [];
   }
   // we loop through all the modifier name given in the override file
-  for (const [index, modifierName] of modifierOverride.entries()) {
+  modifierOverride.forEach(item => {
+    const modifierName = item[0];
+    const qty = item[1] || 1;
     // if the modifier does not exist, we skip it
-    if (!modifierTypes.hasOwnProperty(modifierName)) continue;
+    if (!modifierTypes.hasOwnProperty(modifierName)) return;
     const modifierType = modifierTypes[modifierName]();
-    // We get how many modifiers, if none given, default to 1
-    const qty = modifierQtyOverride[index] || 1
-    for (const i of [...Array(qty).keys()]) {
-      // for example, if qty is 2, we create an array of size 2 with the modifier on each slot
-      const modifier = modifierType.withIdFromFunc(modifierTypes[modifierName]).newModifier();
-      if (player) {
-          scene.addModifier(modifier as PersistentModifier, true, false, false, true);
-      } else {
-          scene.addEnemyModifier(modifier as PersistentModifier, true, true);
-      }
+    const modifier = modifierType.withIdFromFunc(modifierTypes[modifierName]).newModifier() as PersistentModifier;
+    modifier.stackCount = qty;
+    if (player) {
+        scene.addModifier(modifier as PersistentModifier, true, false, false, true);
+    } else {
+        scene.addEnemyModifier(modifier as PersistentModifier, true, true);
     }
-  }
+  });
 }
 
 export function itemHeldsOverride(scene: Phaser.Scene, pokemon: Pokemon, player: boolean = true): void {
@@ -2211,9 +2209,11 @@ export function itemHeldsOverride(scene: Phaser.Scene, pokemon: Pokemon, player:
   // if no override, do nothing
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !scene) return;
   // we loop through all the itemName given in the override file
-  for (const itemName of heldItemsOverride) {
+  heldItemsOverride.forEach(item => {
+      const itemName = item[0];
+      const qty = item[1] || 1;
       // if the item does not exist, we skip it
-      if (!modifierTypes.hasOwnProperty(itemName)) continue;
+      if (!modifierTypes.hasOwnProperty(itemName)) return;
       // we retrieve the item in the list
       const modifierType = modifierTypes[itemName]();
       // we create the item
@@ -2221,11 +2221,11 @@ export function itemHeldsOverride(scene: Phaser.Scene, pokemon: Pokemon, player:
       // we assign the created item to the pokemon
       itemModifier.pokemonId = pokemon.id;
       // we say how many items we want
-      itemModifier.stackCount = 1;
+      itemModifier.stackCount = qty;
       if (player) {
           scene.addModifier(itemModifier as PokemonHeldItemModifier, true, false, false, true);
       } else {
           scene.addEnemyModifier(itemModifier as PokemonHeldItemModifier, true, true);
       }
-  }
+  });
 }
