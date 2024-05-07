@@ -10,6 +10,7 @@ import { pokemon } from "./pokemon";
 import { pokemonStat } from "./pokemon-stat";
 import { starterSelectUiHandler } from "./starter-select-ui-handler";
 import { tutorial } from "./tutorial";
+import { splashMessages } from "./splash-messages"
 
 
 export const esConfig = {
@@ -24,5 +25,6 @@ export const esConfig = {
     pokemonStat: pokemonStat,
     pokemon: pokemon,
     starterSelectUiHandler: starterSelectUiHandler,
-    tutorial: tutorial
+    tutorial: tutorial,
+    splashMessages: splashMessages
 }
