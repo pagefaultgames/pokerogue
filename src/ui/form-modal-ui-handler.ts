@@ -1,10 +1,12 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene from "../battle-scene";
 import { ModalConfig, ModalUiHandler } from "./modal-ui-handler";
 import { Mode } from "./ui";
 import { TextStyle, addTextInputObject, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import * as Utils from "../utils";
+import i18next from '../plugins/i18n';
+import {Button} from "../enums/buttons";
 
 export interface FormModalConfig extends ModalConfig {
   errorMessage?: string;
@@ -55,7 +57,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
       const inputBg = addWindow(this.scene, 0, 0, 80, 16, false, false, 0, 0, WindowVariant.XTHIN);
 
-      const isPassword = field.includes('Password');
+      const isPassword = field.includes(i18next.t("menu:password")) || field.includes(i18next.t("menu:confirmPassword"));
       const input = addTextInputObject(this.scene, 4, -2, 440, 116, TextStyle.TOOLTIP_CONTENT, { type: isPassword ? 'password' : 'text', maxLength: isPassword ? 64 : 16 });
       input.setOrigin(0, 0);
 

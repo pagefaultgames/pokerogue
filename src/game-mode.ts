@@ -1,10 +1,11 @@
 import { fixedBattles } from "./battle";
-import BattleScene, { STARTING_BIOME_OVERRIDE, STARTING_LEVEL_OVERRIDE, STARTING_MONEY_OVERRIDE } from "./battle-scene";
+import BattleScene from "./battle-scene";
 import { Biome } from "./data/enums/biome";
 import { Species } from "./data/enums/species";
 import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
 import * as Utils from "./utils";
+import { STARTING_BIOME_OVERRIDE, STARTING_LEVEL_OVERRIDE, STARTING_MONEY_OVERRIDE } from './overrides';
 
 export enum GameModes {
   CLASSIC,
@@ -20,6 +21,7 @@ interface GameModeConfig {
   hasTrainers?: boolean;
   hasFixedBattles?: boolean;
   hasNoShop?: boolean;
+  hasShortBiomes?: boolean;
   hasRandomBiomes?: boolean;
   hasRandomBosses?: boolean;
   isSplicedOnly?: boolean;
@@ -33,6 +35,7 @@ export class GameMode implements GameModeConfig {
   public hasTrainers: boolean;
   public hasFixedBattles: boolean;
   public hasNoShop: boolean;
+  public hasShortBiomes: boolean;
   public hasRandomBiomes: boolean;
   public hasRandomBosses: boolean;
   public isSplicedOnly: boolean;
@@ -118,7 +121,7 @@ export class GameMode implements GameModeConfig {
 
   getOverrideSpecies(waveIndex: integer): PokemonSpecies {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
-      const allFinalBossSpecies = allSpecies.filter(s => (s.pseudoLegendary || s.legendary || s.mythical)
+      const allFinalBossSpecies = allSpecies.filter(s => (s.subLegendary || s.legendary || s.mythical)
         && s.baseTotal >= 600 && s.speciesId !== Species.ETERNATUS && s.speciesId !== Species.ARCEUS);
       return Utils.randSeedItem(allFinalBossSpecies);
     }
@@ -174,7 +177,7 @@ export class GameMode implements GameModeConfig {
 
 export const gameModes = Object.freeze({
   [GameModes.CLASSIC]: new GameMode(GameModes.CLASSIC, { isClassic: true, hasTrainers: true, hasFixedBattles: true }),
-  [GameModes.ENDLESS]: new GameMode(GameModes.ENDLESS, { isEndless: true, hasRandomBiomes: true, hasRandomBosses: true }),
-  [GameModes.SPLICED_ENDLESS]: new GameMode(GameModes.SPLICED_ENDLESS, { isEndless: true, hasRandomBiomes: true, hasRandomBosses: true, isSplicedOnly: true }),
+  [GameModes.ENDLESS]: new GameMode(GameModes.ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true }),
+  [GameModes.SPLICED_ENDLESS]: new GameMode(GameModes.SPLICED_ENDLESS, { isEndless: true, hasShortBiomes: true, hasRandomBosses: true, isSplicedOnly: true }),
   [GameModes.DAILY]: new GameMode(GameModes.DAILY, { isDaily: true, hasTrainers: true, hasNoShop: true })
 });

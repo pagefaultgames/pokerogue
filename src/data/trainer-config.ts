@@ -212,7 +212,7 @@ export class TrainerConfig {
     this.battleBgm = 'battle_trainer';
     this.victoryBgm = 'victory_trainer';
     this.partyTemplates = [ trainerPartyTemplates.TWO_AVG ];
-    this.speciesFilter = species => (allowLegendaries || (!species.legendary && !species.pseudoLegendary && !species.mythical)) && !species.isTrainerForbidden();
+    this.speciesFilter = species => (allowLegendaries || (!species.legendary && !species.subLegendary && !species.mythical)) && !species.isTrainerForbidden();
   }
 
   getKey(): string {
@@ -509,7 +509,7 @@ function getRandomPartyMemberFunc(speciesPool: Species[], trainerSlot: TrainerSl
 
 function getSpeciesFilterRandomPartyMemberFunc(speciesFilter: PokemonSpeciesFilter, trainerSlot: TrainerSlot = TrainerSlot.TRAINER, allowLegendaries?: boolean, postProcess?: (EnemyPokemon: EnemyPokemon) => void): PartyMemberFunc {
   const originalSpeciesFilter = speciesFilter;
-  speciesFilter = (species: PokemonSpecies) => (allowLegendaries || (!species.legendary && !species.pseudoLegendary && !species.mythical)) && !species.isTrainerForbidden() && originalSpeciesFilter(species);
+  speciesFilter = (species: PokemonSpecies) => (allowLegendaries || (!species.legendary && !species.subLegendary && !species.mythical)) && !species.isTrainerForbidden() && originalSpeciesFilter(species);
   return (scene: BattleScene, level: integer, strength: PartyMemberStrength) => {
     const ret = scene.addEnemyPokemon(getPokemonSpecies(scene.randomSpecies(scene.currentBattle.waveIndex, level, false, speciesFilter).getTrainerSpeciesForLevel(level, true, strength)), level, trainerSlot, undefined, undefined, postProcess);
     return ret;
@@ -697,9 +697,9 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.GIOVANNI]: new TrainerConfig(++t).initForGymLeader([ Species.SANDILE, Species.MURKROW, Species.NIDORAN_M, Species.NIDORAN_F ], Type.DARK).setBattleBgm('battle_kanto_gym'),
   [TrainerType.FALKNER]: new TrainerConfig(++t).initForGymLeader([ Species.PIDGEY, Species.HOOTHOOT, Species.DODUO ], Type.FLYING).setBattleBgm('battle_johto_gym'),
   [TrainerType.BUGSY]: new TrainerConfig(++t).initForGymLeader([ Species.SCYTHER, Species.HERACROSS, Species.SHUCKLE, Species.PINSIR ], Type.BUG).setBattleBgm('battle_johto_gym'),
-  [TrainerType.WHITNEY]: new TrainerConfig(++t).initForGymLeader([ Species.CLEFAIRY, Species.MILTANK ], Type.NORMAL).setBattleBgm('battle_johto_gym'),
+  [TrainerType.WHITNEY]: new TrainerConfig(++t).initForGymLeader([ Species.GIRAFARIG, Species.MILTANK ], Type.NORMAL).setBattleBgm('battle_johto_gym'),
   [TrainerType.MORTY]: new TrainerConfig(++t).initForGymLeader([ Species.GASTLY, Species.MISDREAVUS, Species.SABLEYE ], Type.GHOST).setBattleBgm('battle_johto_gym'),
-  [TrainerType.CHUCK]: new TrainerConfig(++t).initForGymLeader([ Species.POLIWRATH, ], Type.FIGHTING).setBattleBgm('battle_johto_gym'),
+  [TrainerType.CHUCK]: new TrainerConfig(++t).initForGymLeader([ Species.POLIWRATH, Species.MANKEY ], Type.FIGHTING).setBattleBgm('battle_johto_gym'),
   [TrainerType.JASMINE]: new TrainerConfig(++t).initForGymLeader([ Species.MAGNEMITE, Species.STEELIX ], Type.STEEL).setBattleBgm('battle_johto_gym'),
   [TrainerType.PRYCE]: new TrainerConfig(++t).initForGymLeader([ Species.SEEL, Species.SWINUB ], Type.ICE).setBattleBgm('battle_johto_gym'),
   [TrainerType.CLAIR]: new TrainerConfig(++t).initForGymLeader([ Species.DRATINI, Species.HORSEA, Species.GYARADOS ], Type.DRAGON).setBattleBgm('battle_johto_gym'),

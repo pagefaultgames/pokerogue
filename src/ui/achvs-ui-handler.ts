@@ -1,9 +1,10 @@
-import BattleScene, { Button } from "../battle-scene";
+import BattleScene from "../battle-scene";
 import { Achv, achvs } from "../system/achv";
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import { addWindow } from "./ui-theme";
+import {Button} from "../enums/buttons";
 
 export default class AchvsUiHandler extends MessageUiHandler {
   private achvsContainer: Phaser.GameObjects.Container;

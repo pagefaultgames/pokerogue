@@ -1,6 +1,6 @@
-import { MoveTranslations } from "#app/plugins/i18n";
+import { MoveTranslationEntries } from "#app/plugins/i18n";
 
-export const move: MoveTranslations = {
+export const move: MoveTranslationEntries = {
   "pound": {
     name: "Pound",
     effect: "The target is physically pounded with a long tail, a foreleg, or the like."

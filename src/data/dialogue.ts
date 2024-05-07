@@ -1453,7 +1453,7 @@ export const trainerTypeDialogue = {
       `I thought that you would be able to get this far. Let's get this started.`
     ],
     victory: [
-      `You got me. You are magneficent!`,
+      `You got me. You are magnificent!`,
       `I never expected another trainer to beat me… I'm surprised.`
     ],
     defeat: [

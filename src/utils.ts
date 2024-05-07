@@ -62,6 +62,11 @@ export function padInt(value: integer, length: integer, padWith?: string): strin
   return valueStr;
 }
 
+/**
+* Returns a random integer between min and min + range
+* @param range The amount of possible numbers
+* @param min The starting number
+*/
 export function randInt(range: integer, min: integer = 0): integer {
   if (range === 1)
     return min;
@@ -74,6 +79,11 @@ export function randSeedInt(range: integer, min: integer = 0): integer {
   return Phaser.Math.RND.integerInRange(min, (range - 1) + min);
 }
 
+/**
+* Returns a random integer between min and max (non-inclusive)
+* @param min The lowest number
+* @param max The highest number
+*/
 export function randIntRange(min: integer, max: integer): integer {
   return randInt(max - min, min);
 }
@@ -216,7 +226,7 @@ export const apiUrl = isLocal ? serverUrl : 'api';
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
-  expiration.setTime(new Date().getTime() + 3600000 * 24 * 7);
+  expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
   document.cookie = `${cName}=${cValue};SameSite=Strict;path=/;expires=${expiration.toUTCString()}`;
 }
 
@@ -233,25 +243,31 @@ export function getCookie(cName: string): string {
   return '';
 }
 
-export function apiFetch(path: string): Promise<Response> {
+export function apiFetch(path: string, authed: boolean = false): Promise<Response> {
   return new Promise((resolve, reject) => {
-    const sId = getCookie(sessionIdKey);
-    const headers = sId ? { 'Authorization': sId } : {};
-    fetch(`${apiUrl}/${path}`, { headers: headers })
+    const request = {};
+    if (authed) {
+      const sId = getCookie(sessionIdKey);
+      if (sId)
+        request['headers'] = { 'Authorization': sId };
+    }
+    fetch(`${apiUrl}/${path}`, request)
       .then(response => resolve(response))
       .catch(err => reject(err));
   });
 }
 
-export function apiPost(path: string, data?: any, contentType: string = 'application/json'): Promise<Response> {
+export function apiPost(path: string, data?: any, contentType: string = 'application/json', authed: boolean = false): Promise<Response> {
   return new Promise((resolve, reject) => {
     const headers = {
       'Accept': contentType,
       'Content-Type': contentType,
     };
-    const sId = getCookie(sessionIdKey);
-    if (sId)
-      headers['Authorization'] = sId;
+    if (authed) {
+      const sId = getCookie(sessionIdKey);
+      if (sId)
+        headers['Authorization'] = sId;
+    }
     fetch(`${apiUrl}/${path}`, { method: 'POST', headers: headers, body: data })
       .then(response => resolve(response))
       .catch(err => reject(err));

@@ -249,7 +249,7 @@ export async function printPokemon() {
       Math.max(abilities.indexOf(pokemon.abilities.find(a => a.slot === 3)?.ability.name), 0)
     ];
 
-    const pokemonSpecies = new PokemonSpecies(dexId, species.names.find(n => n.language.name === 'en').name, generationIndex, species.is_legendary && baseTotal < 660, species.is_legendary && baseTotal >= 660, species.is_mythical,
+    const pokemonSpecies = new PokemonSpecies(dexId, generationIndex, species.is_legendary && baseTotal < 660, species.is_legendary && baseTotal >= 660, species.is_mythical,
       species.genera.find(g => g.language.name === 'en')?.genus, type1 as Type, type2 > -1 ? type2 as Type : null, pokemon.height / 10, pokemon.weight / 10, ability1 as Abilities, ability2 as Abilities, abilityHidden as Abilities,
       baseTotal, baseStats[0], baseStats[1], baseStats[2], baseStats[3], baseStats[4], baseStats[5], species.capture_rate, species.base_happiness, pokemon.base_experience, growthRateMap[species.growth_rate.name],
       species.gender_rate < 9 ? 100 - (species.gender_rate * 12.5) : null, species.has_gender_differences, species.forms_switchable);
@@ -340,7 +340,7 @@ export async function printPokemon() {
     const speciesKey = (pokemonSpecies as any).key as string;
 
     enumStr += `  ${speciesKey}${pokemonSpecies.speciesId >= 2000 ? ` = ${pokemonSpecies.speciesId}` : ''},\n`;
-    pokemonSpeciesStr += `    new PokemonSpecies(Species.${speciesKey}, "${pokemonSpecies.name}", ${pokemonSpecies.generation}, ${pokemonSpecies.pseudoLegendary}, ${pokemonSpecies.legendary}, ${pokemonSpecies.mythical}, "${pokemonSpecies.species}", Type.${Type[pokemonSpecies.type1]}, ${pokemonSpecies.type2 ? `Type.${Type[pokemonSpecies.type2]}` : 'null'}, ${pokemonSpecies.height}, ${pokemonSpecies.weight}, Abilities.${Abilities[pokemonSpecies.ability1]}, Abilities.${Abilities[pokemonSpecies.ability2]}, Abilities.${Abilities[pokemonSpecies.abilityHidden]}, ${pokemonSpecies.baseTotal}, ${pokemonSpecies.baseStats[0]}, ${pokemonSpecies.baseStats[1]}, ${pokemonSpecies.baseStats[2]}, ${pokemonSpecies.baseStats[3]}, ${pokemonSpecies.baseStats[4]}, ${pokemonSpecies.baseStats[5]}, ${pokemonSpecies.catchRate}, ${pokemonSpecies.baseFriendship}, ${pokemonSpecies.baseExp}, GrowthRate.${GrowthRate[pokemonSpecies.growthRate]}, ${pokemonSpecies.malePercent}, ${pokemonSpecies.genderDiffs}`;
+    pokemonSpeciesStr += `    new PokemonSpecies(Species.${speciesKey}, "${pokemonSpecies.name}", ${pokemonSpecies.generation}, ${pokemonSpecies.subLegendary}, ${pokemonSpecies.legendary}, ${pokemonSpecies.mythical}, "${pokemonSpecies.species}", Type.${Type[pokemonSpecies.type1]}, ${pokemonSpecies.type2 ? `Type.${Type[pokemonSpecies.type2]}` : 'null'}, ${pokemonSpecies.height}, ${pokemonSpecies.weight}, Abilities.${Abilities[pokemonSpecies.ability1]}, Abilities.${Abilities[pokemonSpecies.ability2]}, Abilities.${Abilities[pokemonSpecies.abilityHidden]}, ${pokemonSpecies.baseTotal}, ${pokemonSpecies.baseStats[0]}, ${pokemonSpecies.baseStats[1]}, ${pokemonSpecies.baseStats[2]}, ${pokemonSpecies.baseStats[3]}, ${pokemonSpecies.baseStats[4]}, ${pokemonSpecies.baseStats[5]}, ${pokemonSpecies.catchRate}, ${pokemonSpecies.baseFriendship}, ${pokemonSpecies.baseExp}, GrowthRate.${GrowthRate[pokemonSpecies.growthRate]}, ${pokemonSpecies.malePercent}, ${pokemonSpecies.genderDiffs}`;
     if (pokemonSpecies.forms.length > 1) {
       pokemonSpeciesStr += `, ${pokemonSpecies.canChangeForm},`;
       for (let form of pokemonSpecies.forms)
