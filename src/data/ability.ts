@@ -2113,7 +2113,7 @@ export class FetchBallAbAttr extends PostTurnAbAttr {
   }
   applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     let lastUsed = pokemon.scene.currentBattle.lastUsedPokeball;
-    if(lastUsed != null) {
+    if(lastUsed != null && pokemon.isPlayer) {
       pokemon.scene.pokeballCounts[lastUsed]++;
       pokemon.scene.currentBattle.lastUsedPokeball = null;
       pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` found a\n${getPokeballName(lastUsed)}!`));
