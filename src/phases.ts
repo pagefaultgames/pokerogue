@@ -3487,7 +3487,6 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
       this.scene.addModifier(newModifier).then(() => {
         this.scene.gameData.saveSystem().then(success => {
           if (success) {
-            // this.species.cry(this.scene);
             this.scene.playSound('level_up_fanfare');
             this.scene.ui.setMode(Mode.MESSAGE);
             this.scene.arenaBg.setVisible(false);
@@ -3577,9 +3576,8 @@ export class GameOverPhase extends BattlePhase {
           this.scene.ui.clearText();
           this.handleUnlocks();
           if (this.victory && !firstClear && success[1]) {
-            for (let species of this.firstRibbons) {
+            for (let species of this.firstRibbons)
               this.scene.unshiftPhase(new RibbonModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS, species));
-            }
             this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
           }
           this.scene.reset();

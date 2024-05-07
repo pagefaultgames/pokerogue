@@ -173,7 +173,7 @@ export interface StarterDataEntry {
   abilityAttr: integer;
   passiveAttr: integer;
   valueReduction: integer;
-  winCount: integer;
+  classicWinCount: integer;
 }
 
 export interface StarterData {
@@ -195,7 +195,8 @@ const systemShortKeys = {
   eggMoves: '$em',
   candyCount: '$x',
   passive: '$p',
-  valueReduction: '$vr'
+  valueReduction: '$vr',
+  classicWinCount: '$wc'
 };
 
 export class GameData {
@@ -997,7 +998,7 @@ export class GameData {
         abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
         passiveAttr: 0,
         valueReduction: 0,
-        winCount: 0
+        classicWinCount: 0
       };
     }
 
@@ -1094,11 +1095,11 @@ export class GameData {
   incrementRibbonCount(species: PokemonSpecies, forStarter: boolean = false): integer {
     const speciesIdToIncrement: Species = species.getRootSpeciesId(forStarter);
 
-    if (!this.starterData[speciesIdToIncrement].winCount) {
-      this.starterData[speciesIdToIncrement].winCount = 0;
+    if (!this.starterData[speciesIdToIncrement].classicWinCount) {
+      this.starterData[speciesIdToIncrement].classicWinCount = 0;
     }
     
-    if (!this.starterData[speciesIdToIncrement].winCount)
+    if (!this.starterData[speciesIdToIncrement].classicWinCount)
       this.scene.gameData.gameStats.ribbonsOwned++;
 
     const ribbonsInStats: integer = this.scene.gameData.gameStats.ribbonsOwned;
@@ -1114,7 +1115,7 @@ export class GameData {
     if (ribbonsInStats >= 10)
       this.scene.validateAchv(achvs._10_RIBBONS);
 
-    return ++this.starterData[speciesIdToIncrement].winCount;
+    return ++this.starterData[speciesIdToIncrement].classicWinCount;
   }
 
   addStarterCandy(species: PokemonSpecies, count: integer): void {
