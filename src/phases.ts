@@ -4152,6 +4152,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       scale: 1
     });
     
+    this.scene.currentBattle.lastUsedPokeball = this.pokeballType;
     this.removePb();
     this.end();
   }
