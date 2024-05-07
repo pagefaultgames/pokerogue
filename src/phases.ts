@@ -2252,9 +2252,7 @@ export class MovePhase extends BattlePhase {
       
       if ((moveQueue.length && moveQueue[0].move === Moves.NONE) || !targets.length) {
         moveQueue.shift();
-        if (!(this.move.moveId in [Moves.SELF_DESTRUCT,Moves.EXPLOSION,Moves.MISTY_EXPLOSION])){
-          this.cancel();
-      }
+        this.cancel();
       }
 
       if (this.cancelled) {
