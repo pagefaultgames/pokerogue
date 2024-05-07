@@ -62,6 +62,11 @@ export function padInt(value: integer, length: integer, padWith?: string): strin
   return valueStr;
 }
 
+/**
+* Returns a random integer between min and min + range
+* @param range The amount of possible numbers
+* @param min The starting number
+*/
 export function randInt(range: integer, min: integer = 0): integer {
   if (range === 1)
     return min;
@@ -74,6 +79,11 @@ export function randSeedInt(range: integer, min: integer = 0): integer {
   return Phaser.Math.RND.integerInRange(min, (range - 1) + min);
 }
 
+/**
+* Returns a random integer between min and max (non-inclusive)
+* @param min The lowest number
+* @param max The highest number
+*/
 export function randIntRange(min: integer, max: integer): integer {
   return randInt(max - min, min);
 }
@@ -216,7 +226,7 @@ export const apiUrl = isLocal ? serverUrl : 'api';
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
-  expiration.setTime(new Date().getTime() + 3600000 * 24 * 7);
+  expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3/*7*/);
   document.cookie = `${cName}=${cValue};SameSite=Strict;path=/;expires=${expiration.toUTCString()}`;
 }
 
