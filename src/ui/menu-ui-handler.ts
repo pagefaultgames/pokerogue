@@ -1,4 +1,4 @@
-import BattleScene, { Button, bypassLogin } from "../battle-scene";
+import BattleScene, { bypassLogin } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
@@ -9,6 +9,7 @@ import { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui
 import { Tutorial, handleTutorial } from "../tutorial";
 import { updateUserInfo } from "../account";
 import i18next from '../plugins/i18n';
+import {Button} from "../enums/buttons";
 
 export enum MenuOptions {
   GAME_SETTINGS,
