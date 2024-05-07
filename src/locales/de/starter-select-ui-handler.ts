@@ -7,13 +7,13 @@ import { SimpleTranslationEntries } from "#app/plugins/i18n";
  */
 export const starterSelectUiHandler: SimpleTranslationEntries = {
     "confirmStartTeam":'Mit diesen Pokémon starten?',
-    "growthRate": "Growth Rate:",
+    "growthRate": "Wachstumsrate:",
     "ability": "Fähigkeit:",
     "passive": "Passiv:",
     "nature": "Natur:",
     "eggMoves": 'Ei-Attacken',
     "start": "Start",
-    "addToParty": "Add to Party", 
+    "addToParty": "Zum Team hinzufügen", 
     "toggleIVs": 'Toggle IVs',
     "manageMoves": 'Verwalte Attacken',
     "useCandies": 'Use Candies',

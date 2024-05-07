@@ -4,8 +4,8 @@ export const tutorial: SimpleTranslationEntries = {
     "intro": `Willkommen zu PokéRogue! Dies ist ein kampforientiertes Pokémon-Fangame mit Roguelite-Elementen.
     $Dieses Spiel ist nicht monetarisiert und wir erheben keinen Anspruch auf das Eigentum von Pokémon oder an 
     $den verwendeten urheberrechtlich geschützten Inhalten.
-    $Das Spiel ist noch in Entwicklung, aber voll spielbar.\nFür Fehlerbereichte bitte die Discord-Communit benutzen.
-    $Falls das Spiel langsam läuft, prüfe ob die 'Hardware Beschleuningung' in den Browsereinstellungen aktiviert sind.`,
+    $Das Spiel ist noch in Entwicklung, aber voll spielbar.\nFür Fehlerbereichte bitte die Discord-Community benutzen.
+    $Falls das Spiel langsam läuft, prüfe ob die 'Hardware Beschleuningung' in deinen Browsereinstellungen aktiviert sind.`,
     
     "accessMenu": `To access the menu, press M or Escape while awaiting input.\nThe menu contains settings and various features.`,
     
