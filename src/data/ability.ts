@@ -22,6 +22,7 @@ import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
 import Battle from "#app/battle.js";
 import { ability } from "#app/locales/en/ability.js";
+import { PokeballType, getPokeballName } from "./pokeball";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -2276,6 +2277,22 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
   }
 }
 
+export class FetchBallAbAttr extends PostTurnAbAttr {
+  constructor() {
+    super();
+  }
+  applyPostTurn(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    let lastUsed = pokemon.scene.currentBattle.lastUsedPokeball;
+    if(lastUsed != null) {
+      pokemon.scene.pokeballCounts[lastUsed]++;
+      pokemon.scene.currentBattle.lastUsedPokeball = null;
+      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ` found a\n${getPokeballName(lastUsed)}!`));
+      return true;
+    }
+    return false;
+  }
+}
+
 export class PostBiomeChangeAbAttr extends AbAttr { }
 
 export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
@@ -2643,7 +2660,6 @@ export class SuppressFieldAbilitiesAbAttr extends AbAttr {
     return false;
   }
 }
-
 
 export class AlwaysHitAbAttr extends AbAttr { }
 
@@ -3627,7 +3643,7 @@ export function initAbilities() {
     new Ability(Abilities.LIBERO, 8)
       .unimplemented(),
     new Ability(Abilities.BALL_FETCH, 8)
-      .unimplemented(),
+      .attr(FetchBallAbAttr),
     new Ability(Abilities.COTTON_DOWN, 8)
       .attr(PostDefendStatChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, BattleStat.SPD, -1, false, true)
       .bypassFaint(),
