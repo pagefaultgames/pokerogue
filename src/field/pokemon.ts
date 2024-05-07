@@ -902,7 +902,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const types = this.getTypes(true, true);
 
     let multiplier = types.map(defType => {
-      if (source && source.hasAbilityWithAttr(IgnoreTypeImmunityAbAttr)) {
+      if (source) {
         const ignoreImmunity = new Utils.BooleanHolder(false);
         applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, moveType, defType);
         if (ignoreImmunity.value)
