@@ -3575,10 +3575,11 @@ export class GameOverPhase extends BattlePhase {
           this.scene.clearPhaseQueue();
           this.scene.ui.clearText();
           this.handleUnlocks();
-          if (this.victory && !firstClear && success[1]) {
+          if (this.victory && success[1]) {
             for (let species of this.firstRibbons)
               this.scene.unshiftPhase(new RibbonModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PLUS, species));
-            this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
+            if (!firstClear)
+              this.scene.unshiftPhase(new GameOverModifierRewardPhase(this.scene, modifierTypes.VOUCHER_PREMIUM));
           }
           this.scene.reset();
           this.scene.unshiftPhase(new TitlePhase(this.scene));
