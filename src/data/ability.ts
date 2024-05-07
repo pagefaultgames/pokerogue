@@ -2,7 +2,7 @@ import Pokemon, { HitResult, PokemonMove } from "../field/pokemon";
 import { Type } from "./type";
 import * as Utils from "../utils";
 import { BattleStat, getBattleStatName } from "./battle-stat";
-import { PokemonHealPhase, ShowAbilityPhase, StatChangePhase } from "../phases";
+import {MovePhase, PokemonHealPhase, ShowAbilityPhase, StatChangePhase} from "../phases";
 import { getPokemonMessage } from "../messages";
 import { Weather, WeatherType } from "./weather";
 import { BattlerTag } from "./battler-tags";
@@ -22,6 +22,7 @@ import i18next, { Localizable } from "#app/plugins/i18n.js";
 import { Command } from "../ui/command-ui-handler";
 import Battle from "#app/battle.js";
 import { ability } from "#app/locales/en/ability.js";
+import {BattlerIndex} from "#app/battle";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -2126,6 +2127,30 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
   }
 }
 
+export class PostMoveUsedAbAttr extends AbAttr {
+    applyPostMoveUsed(pokemon: Pokemon, move: PokemonMove, source: Pokemon, args: any[]): boolean | Promise<boolean> {
+        return false;
+    }
+}
+
+export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
+  applyPostMoveUsed(dancer: Pokemon, move: PokemonMove, source: Pokemon, args: any[]): boolean | Promise<boolean> {
+    const selfDance: Moves[] = [ Moves.DRAGON_DANCE, Moves.SWORDS_DANCE,
+      Moves.TEETER_DANCE, Moves.VICTORY_DANCE, Moves.QUIVER_DANCE, Moves.CLANGOROUS_SOUL, Moves.LUNAR_DANCE];
+    const attackingDance: Moves[] = [ Moves.AQUA_STEP, Moves.PETAL_DANCE, Moves.FIERY_DANCE, Moves.REVELATION_DANCE, Moves.FEATHER_DANCE];
+    if (source.getBattlerIndex() !== dancer.getBattlerIndex()) {
+      if (attackingDance.includes(move.getMove().id)) {
+        const target= source.getBattlerIndex() === BattlerIndex.PLAYER || BattlerIndex.PLAYER_2 ?
+            dancer.scene.getEnemyPokemon().getBattlerIndex() : BattlerIndex.ATTACKER;
+        dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, [target], move));
+      } else if (selfDance.includes(move.getMove().id)) {
+        dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, [dancer.getBattlerIndex()], move));
+      }
+    }
+    return true;
+  }
+}
+
 export class StatChangeMultiplierAbAttr extends AbAttr {
   private multiplier: integer;
 
@@ -2573,6 +2598,11 @@ export function applyPreDefendAbAttrs(attrType: { new(...args: any[]): PreDefend
 export function applyPostDefendAbAttrs(attrType: { new(...args: any[]): PostDefendAbAttr },
   pokemon: Pokemon, attacker: Pokemon, move: PokemonMove, hitResult: HitResult, ...args: any[]): Promise<void> {
   return applyAbAttrsInternal<PostDefendAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostDefend(pokemon, passive, attacker, move, hitResult, args), args);
+}
+
+export function applyPostMoveUsedAbAttrs(attrType: { new(...args: any[]): PostMoveUsedAbAttr },
+  pokemon: Pokemon, move: PokemonMove, source: Pokemon, ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostMoveUsedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostMoveUsed(pokemon, move, source, args), args);
 }
 
 export function applyBattleStatMultiplierAbAttrs(attrType: { new(...args: any[]): BattleStatMultiplierAbAttr },
@@ -3318,7 +3348,7 @@ export function initAbilities() {
     new Ability(Abilities.INNARDS_OUT, 7)
       .unimplemented(),
     new Ability(Abilities.DANCER, 7)
-      .unimplemented(),
+      .attr(PostDancingMoveAbAttr),
     new Ability(Abilities.BATTERY, 7)
       .unimplemented(),
     new Ability(Abilities.FLUFFY, 7)
