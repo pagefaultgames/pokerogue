@@ -5,9 +5,7 @@ import { Species } from "./data/enums/species";
 import PokemonSpecies, { allSpecies } from "./data/pokemon-species";
 import { Arena } from "./field/arena";
 import * as Utils from "./utils";
-import { STARTING_BIOME_OVERRIDE, STARTING_LEVEL_OVERRIDE, STARTING_MODIFIER_OVERRIDE, STARTING_MODIFIER_QTY_OVERRIDE, STARTING_MONEY_OVERRIDE } from './overrides';
-import { Modifier } from "./modifier/modifier";
-import { modifierTypes } from "./modifier/modifier-type";
+import { STARTING_BIOME_OVERRIDE, STARTING_LEVEL_OVERRIDE, STARTING_MONEY_OVERRIDE } from './overrides';
 
 export enum GameModes {
   CLASSIC,
@@ -60,25 +58,6 @@ export class GameMode implements GameModeConfig {
 
   getStartingMoney(): integer {
     return STARTING_MONEY_OVERRIDE || 1000;
-  }
-
-  getModifierOverride(): Modifier[] {
-    // if no override, do nothing
-    const modifiers: Modifier[] = new Array();
-    if (!STARTING_MODIFIER_OVERRIDE || STARTING_MODIFIER_OVERRIDE.length === 0) return modifiers;
-    // we loop through all the modifier name given in the override file
-    for (const [index, modifierName] of STARTING_MODIFIER_OVERRIDE.entries()) {
-      // if the modifier does not exist, we skip it
-      if (!modifierTypes.hasOwnProperty(modifierName)) continue;
-      const modifierType = modifierTypes[modifierName]();
-      // We get how many modifiers, if none given, default to 1
-      const qty = STARTING_MODIFIER_QTY_OVERRIDE[index] || 1
-      for (const i of [...Array(qty).keys()]) {
-        // for example, if qty is 2, we create an array of size 2 with the modifier on each slot
-        modifiers.push(modifierType.withIdFromFunc(modifierTypes[modifierName]).newModifier());
-      }
-    }
-    return modifiers;
   }
 
   getStartingBiome(scene: BattleScene): Biome {

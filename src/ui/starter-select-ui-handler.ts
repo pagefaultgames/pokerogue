@@ -1702,15 +1702,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const startRun = (gameMode: GameModes) => {
           this.scene.gameMode = gameModes[gameMode];
           this.scene.money = this.scene.gameMode.getStartingMoney();
-          // we get the modifiers override
-          const modifiersOverride = this.scene.gameMode.getModifierOverride();
-          // if we have some modifiers override, apply them to the player
-          if (modifiersOverride?.length) {
-            for (const m of modifiersOverride) {
-              this.scene.addModifier(m, true, false, false, true);
-            }
-            this.scene.updateModifiers(true, true);
-          }
           ui.setMode(Mode.STARTER_SELECT);
           const thisObj = this;
           const originalStarterSelectCallback = this.starterSelectCallback;

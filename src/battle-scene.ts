@@ -615,6 +615,16 @@ export default class BattleScene extends SceneBase {
 		if (OPP_SPECIES_OVERRIDE)
 			species = getPokemonSpecies(OPP_SPECIES_OVERRIDE);
 		const pokemon = new EnemyPokemon(this, species, level, trainerSlot, boss, dataSource);
+		// we get the modifiers override for the opponent
+		const modifiersOverride = this.getEnemyModifiersOverride();
+		// if we have some modifiers override, apply them to the opponent
+		if (modifiersOverride?.length) {
+			// we delete all previous modifiers to avoid stack of override
+			this.enemyModifiers = [];
+			for (const m of modifiersOverride) {
+				this.addEnemyModifier(getModifierType(modifierTypes[m]).newModifier(pokemon) as PersistentModifier, true, true);
+			}
+		}
 		if (boss && !dataSource) {
 			const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
 
@@ -1760,17 +1770,6 @@ export default class BattleScene extends SceneBase {
 			}
 
 			party.forEach((enemyPokemon: EnemyPokemon, i: integer) => {
-				// we get the modifiers override for the opponent
-				const modifiersOverride = this.getEnemyModifiersOverride();
-				// if we have some modifiers override, apply them to the opponent
-				if (modifiersOverride?.length) {
-					// we delete all previous modifiers to avoid stack of override
-					this.clearEnemyModifiers();
-					for (const m of modifiersOverride) {
-						this.addEnemyModifier(getModifierType(modifierTypes[m]).newModifier(enemyPokemon) as PersistentModifier, true, true);
-					}
-					this.updateModifiers(false).then(() => resolve());
-				}
 				const isBoss = enemyPokemon.isBoss() || (this.currentBattle.battleType === BattleType.TRAINER && this.currentBattle.trainer.config.isBoss);
 				let upgradeChance = 32;
 				if (isBoss)
@@ -1794,12 +1793,6 @@ export default class BattleScene extends SceneBase {
 
 			this.updateModifiers(false).then(() => resolve());
 		});
-	}
-
-	clearEnemyModifiers(): void {
-		for (let m of this.enemyModifiers)
-			this.enemyModifiers.splice(this.enemyModifiers.indexOf(m), 1);
-		this.updateModifiers(false).then(() => this.updateUIPositions());
 	}
 
 	clearEnemyHeldItemModifiers(): void {
