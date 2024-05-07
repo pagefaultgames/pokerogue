@@ -3491,7 +3491,7 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
             this.scene.ui.setMode(Mode.MESSAGE);
             this.scene.arenaBg.setVisible(false);
             this.scene.ui.fadeIn(250).then(() => {
-              this.scene.ui.showText(`${this.species.name} beat classic for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
+              this.scene.ui.showText(`${this.species.name} beat ${this.scene.gameMode.getName()} Mode for the first time!\nYou received ${newModifier.type.name}!`, null, () => {
                 resolve();
               }, null, true, 1500);
             });
