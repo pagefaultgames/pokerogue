@@ -173,6 +173,7 @@ export interface StarterDataEntry {
   abilityAttr: integer;
   passiveAttr: integer;
   valueReduction: integer;
+  classicWinCount: integer;
 }
 
 export interface StarterData {
@@ -194,7 +195,8 @@ const systemShortKeys = {
   eggMoves: '$em',
   candyCount: '$x',
   passive: '$p',
-  valueReduction: '$vr'
+  valueReduction: '$vr',
+  classicWinCount: '$wc'
 };
 
 export class GameData {
@@ -995,7 +997,8 @@ export class GameData {
         friendship: 0,
         abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
         passiveAttr: 0,
-        valueReduction: 0
+        valueReduction: 0,
+        classicWinCount: 0
       };
     }
 
@@ -1087,6 +1090,32 @@ export class GameData {
       } else
         checkPrevolution();
     });
+  }
+
+  incrementRibbonCount(species: PokemonSpecies, forStarter: boolean = false): integer {
+    const speciesIdToIncrement: Species = species.getRootSpeciesId(forStarter);
+
+    if (!this.starterData[speciesIdToIncrement].classicWinCount) {
+      this.starterData[speciesIdToIncrement].classicWinCount = 0;
+    }
+    
+    if (!this.starterData[speciesIdToIncrement].classicWinCount)
+      this.scene.gameData.gameStats.ribbonsOwned++;
+
+    const ribbonsInStats: integer = this.scene.gameData.gameStats.ribbonsOwned;
+
+    if (ribbonsInStats >= 100)
+      this.scene.validateAchv(achvs._100_RIBBONS);
+    if (ribbonsInStats >= 75)
+      this.scene.validateAchv(achvs._75_RIBBONS);
+    if (ribbonsInStats >= 50)
+      this.scene.validateAchv(achvs._50_RIBBONS);
+    if (ribbonsInStats >= 25)
+      this.scene.validateAchv(achvs._25_RIBBONS);
+    if (ribbonsInStats >= 10)
+      this.scene.validateAchv(achvs._10_RIBBONS);
+
+    return ++this.starterData[speciesIdToIncrement].classicWinCount;
   }
 
   addStarterCandy(species: PokemonSpecies, count: integer): void {
