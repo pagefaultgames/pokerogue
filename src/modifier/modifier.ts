@@ -19,7 +19,7 @@ import { VoucherType } from '../system/voucher';
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from '../data/pokemon-forms';
 import { Nature } from '#app/data/nature';
 import { BattlerTagType } from '#app/data/enums/battler-tag-type';
-import { OPP_HELD_ITEMS_OVERRIDE, STARTING_HELD_ITEMS_OVERRIDE } from "../overrides";
+import { STARTING_MODIFIER_OVERRIDE, STARTING_MODIFIER_QTY_OVERRIDE, OPP_HELD_ITEMS_OVERRIDE, STARTING_HELD_ITEMS_OVERRIDE } from "../overrides";
 import { modifierTypes } from "./modifier-type";
 
 type ModifierType = ModifierTypes.ModifierType;
@@ -2177,6 +2177,25 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
   getMaxStackCount(scene: BattleScene): integer {
     return 10;
   }
+}
+
+export function getModifierOverride(): Modifier[] {
+  // if no override, do nothing
+  const modifiers: Modifier[] = new Array();
+  if (!STARTING_MODIFIER_OVERRIDE || STARTING_MODIFIER_OVERRIDE.length === 0) return modifiers;
+  // we loop through all the modifier name given in the override file
+  for (const [index, modifierName] of STARTING_MODIFIER_OVERRIDE.entries()) {
+    // if the modifier does not exist, we skip it
+    if (!modifierTypes.hasOwnProperty(modifierName)) continue;
+    const modifierType = modifierTypes[modifierName]();
+    // We get how many modifiers, if none given, default to 1
+    const qty = STARTING_MODIFIER_QTY_OVERRIDE[index] || 1
+    for (const i of [...Array(qty).keys()]) {
+      // for example, if qty is 2, we create an array of size 2 with the modifier on each slot
+      modifiers.push(modifierType.withIdFromFunc(modifierTypes[modifierName]).newModifier());
+    }
+  }
+  return modifiers;
 }
 
 export function startingItemHeldsOverride(pokemon: Pokemon): Modifier[] {
