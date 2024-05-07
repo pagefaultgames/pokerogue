@@ -2,6 +2,7 @@ import { ability } from "./ability";
 import { battle } from "./battle";
 import { commandUiHandler } from "./command-ui-handler";
 import { fightUiHandler } from "./fight-ui-handler";
+import { growth } from "./growth";
 import { menu } from "./menu";
 import { menuUiHandler } from "./menu-ui-handler";
 import { move } from "./move";
@@ -24,5 +25,6 @@ export const esConfig = {
     pokemonStat: pokemonStat,
     pokemon: pokemon,
     starterSelectUiHandler: starterSelectUiHandler,
-    tutorial: tutorial
+    tutorial: tutorial,
+    growth: growth
 }
