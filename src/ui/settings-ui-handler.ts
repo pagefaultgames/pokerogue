@@ -122,6 +122,7 @@ export default class SettingsUiHandler extends UiHandler {
 
   processInput(button: Button): boolean {
     const ui = this.getUi();
+    const rowsToDisplay = 9;
 
     let success = false;
 
@@ -137,14 +138,22 @@ export default class SettingsUiHandler extends UiHandler {
               success = this.setCursor(this.cursor - 1);
             else
               success = this.setScrollCursor(this.scrollCursor - 1);
+          } else {
+              const successA = this.setCursor(rowsToDisplay - 1);
+              const successB = this.setScrollCursor(this.optionValueLabels.length - rowsToDisplay);
+              success = successA && successB;
           }
           break;
         case Button.DOWN:
-          if (cursor < this.optionValueLabels.length) {
-            if (this.cursor < 8)
+          if (cursor < this.optionValueLabels.length - 1) {
+            if (this.cursor < rowsToDisplay - 1)
               success = this.setCursor(this.cursor + 1);
-            else if (this.scrollCursor < this.optionValueLabels.length - 9)
+            else if (this.scrollCursor < this.optionValueLabels.length - rowsToDisplay)
               success = this.setScrollCursor(this.scrollCursor + 1);
+          } else {
+              const successA = this.setCursor(0);
+              const successB = this.setScrollCursor(0);
+              success = successA && successB;
           }
           break;
         case Button.LEFT:
