@@ -7,12 +7,6 @@ import { esConfig } from '#app/locales/es/config.js';
 import { frConfig } from '#app/locales/fr/config.js';
 import { itConfig } from '#app/locales/it/config.js';
 
-import { growth as enGrowth } from '../locales/en/growth';
-import { growth as esGrowth } from '../locales/es/growth';
-import { growth as frGrowth } from '../locales/fr/growth';
-import { growth as itGrowth } from '../locales/it/growth';
-import { growth as deGrowth } from '../locales/de/growth';
-
 export interface SimpleTranslationEntries {
   [key: string]: string
 }
@@ -71,80 +65,19 @@ export function initI18n(): void {
     },
     resources: {
       en: {
-        menu: enMenu,
-        menuUiHandler: enMenuUiHandler,
-        battle: enBattle,
-        move: enMove,
-        ability: enAbility,
-        pokeball: enPokeball,
-        pokemon: enPokemon,
-        pokemonStat: enPokemonStat,
-        commandUiHandler: enCommandUiHandler,
-        fightUiHandler: enFightUiHandler,
-        tutorial: enTutorial,
-        starterSelectUiHandler: enStarterSelectUiHandler,
-        growth: enGrowth
-        
+        ...enConfig
       },
       es: {
-        menu: esMenu,
-        menuUiHandler: esMenuUiHandler,
-        battle: esBattle,
-        move: esMove,
-        ability: esAbility,
-        pokeball: esPokeball,
-        pokemon: esPokemon,
-        pokemonStat: esPokemonStat,
-        commandUiHandler: esCommandUiHandler,
-        fightUiHandler: esFightUiHandler,
-        tutorial: esTutorial,
-        starterSelectUiHandler: esStarterSelectUiHandler,
-        growth: esGrowth
+        ...esConfig
       },
       fr: {
-        menu: frMenu,
-        menuUiHandler: frMenuUiHandler,
-        battle: frBattle,
-        move: frMove,
-        ability: frAbility,
-        pokeball: frPokeball,
-        pokemon: frPokemon,
-        pokemonStat: frPokemonStat,
-        commandUiHandler: frCommandUiHandler,
-        fightUiHandler: frFightUiHandler,
-        tutorial: frTutorial,
-        starterSelectUiHandler: frStarterSelectUiHandler,
-        growth: frGrowth
+        ...frConfig
       },
       it: {
-        menu: itMenu,
-        menuUiHandler: itMenuUiHandler,
-        battle: itBattle,
-        move: itMove,
-        ability: itAbility,
-        pokeball: itPokeball,
-        pokemon: itPokemon,
-        pokemonStat: itPokemonStat,
-        commandUiHandler: itCommandUiHandler,
-        fightUiHandler: itFightUiHandler,
-        tutorial: itTutorial,
-        starterSelectUiHandler: itStarterSelectUiHandler,
-        growth: itGrowth
+        ...itConfig
       },
       de: {
-        menu: deMenu,
-        menuUiHandler: deMenuUiHandler,
-        battle: deBattle,
-        move: deMove,
-        ability: deAbility,
-        pokeball: dePokeball,
-        pokemon: dePokemon,
-        pokemonStat: dePokemonStat,
-        commandUiHandler: deCommandUiHandler,
-        fightUiHandler: deFightUiHandler,
-        tutorial: deTutorial,
-        starterSelectUiHandler: deStarterSelectUiHandler,
-        growth: deGrowth
+        ...deConfig
       }
     },
   });
@@ -154,19 +87,19 @@ export function initI18n(): void {
 declare module 'i18next' {
   interface CustomTypeOptions {
     resources: {
-      menu: typeof enMenu;
-      menuUiHandler: typeof enMenuUiHandler;
-      move: typeof enMove;
-      battle: typeof enBattle,
-      ability: typeof enAbility;
-      pokeball: typeof enPokeball;
-      pokemon: typeof enPokemon;
-      pokemonStat: typeof enPokemonStat;
-      commandUiHandler: typeof enCommandUiHandler;
-      fightUiHandler: typeof enFightUiHandler;
-      tutorial: typeof enTutorial;
-      starterSelectUiHandler: typeof enStarterSelectUiHandler;
-      growth: typeof enGrowth;
+      menu: SimpleTranslationEntries;
+      menuUiHandler: SimpleTranslationEntries;
+      move: MoveTranslationEntries;
+      battle: SimpleTranslationEntries,
+      ability: AbilityTranslationEntries;
+      pokeball: SimpleTranslationEntries;
+      pokemon: SimpleTranslationEntries;
+      pokemonStat: SimpleTranslationEntries;
+      commandUiHandler: SimpleTranslationEntries;
+      fightUiHandler: SimpleTranslationEntries;
+      tutorial: SimpleTranslationEntries;
+      starterSelectUiHandler: SimpleTranslationEntries;
+      growth: SimpleTranslationEntries;
     };
   }
 }
