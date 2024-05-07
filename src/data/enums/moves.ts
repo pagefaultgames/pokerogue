@@ -1,59 +1,114 @@
 export enum Moves {
   NONE,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Pound_(move) | Source} */
   POUND,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Karate_Chop_(move) | Source} */
   KARATE_CHOP,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Double_Slap_(move) | Source} */
   DOUBLE_SLAP,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Comet_Punch_(move) | Source} */
   COMET_PUNCH,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Mega_Punch_(move) | Source} */
   MEGA_PUNCH,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Pay_Day_(move) | Source} */
   PAY_DAY,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Fire_Punch_(move) | Source} */
   FIRE_PUNCH,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Ice_Punch_(move) | Source} */
   ICE_PUNCH,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Thunder_Punch_(move) | Source} */
   THUNDER_PUNCH,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Scratch_(move) | Source} */
   SCRATCH,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Vise_Grip_(move) | Source} */
   VISE_GRIP,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Guillotine_(move) | Source} */
   GUILLOTINE,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Razor_Wind_(move) | Source} */
   RAZOR_WIND,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Swords_Dance_(move) | Source} */
   SWORDS_DANCE,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Cut_(move) | Source} */
   CUT,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Gust_(move) | Source} */
   GUST,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Wing_Attack_(move) | Source} */
   WING_ATTACK,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Whirlwind_(move) | Source} */
   WHIRLWIND,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Fly_(move) | Source} */
   FLY,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Bind_(move) | Source} */
   BIND,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Slam_(move) | Source} */
   SLAM,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Vine_Whip_(move) | Source} */
   VINE_WHIP,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Stomp_(move) | Source} */
   STOMP,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Double_Kick_(move) | Source} */
   DOUBLE_KICK,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Mega_Kick_(move) | Source} */
   MEGA_KICK,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Jump_Kick_(move) | Source} */
   JUMP_KICK,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Rolling_Kick_(move) | Source} */
   ROLLING_KICK,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Sand_Attack_(move) | Source} */
   SAND_ATTACK,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Headbutt_(move) | Source} */
   HEADBUTT,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Horn_Attack_(move) | Source} */
   HORN_ATTACK,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Fury_Attack_(move) | Source} */
   FURY_ATTACK,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Horn_Drill_(move) | Source} */
   HORN_DRILL,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Tackle_(move) | Source} */
   TACKLE,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Body_Slam_(move) | Source} */
   BODY_SLAM,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Wrap_(move) | Source} */
   WRAP,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Take_Down_(move) | Source} */
   TAKE_DOWN,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Thrash_(move) | Source} */
   THRASH,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Double_Edge_(move) | Source} */
   DOUBLE_EDGE,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Tail_Whip_(move) | Source} */
   TAIL_WHIP,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Poison_Sting_(move) | Source} */
   POISON_STING,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Twineedle_(move) | Source} */
   TWINEEDLE,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Pin_Missile_(move) | Source} */
   PIN_MISSILE,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Leer_(move) | Source} */
   LEER,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Bite_(move) | Source} */
   BITE,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Growl_(move) | Source} */
   GROWL,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Roar_(move) | Source} */
   ROAR,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Sing_(move) | Source} */
   SING,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Supersonic_(move) | Source} */
   SUPERSONIC,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Sonic_Boom_(move) | Source} */
   SONIC_BOOM,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Disable_(move) | Source} */
   DISABLE,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Acid_(move) | Source} */
   ACID,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Ember_(move) | Source} */
   EMBER,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Flamethrower_(move) | Source} */
   FLAMETHROWER,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Mist_(move) | Source} */
   MIST,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Water_Gun_(move) | Source} */
   WATER_GUN,
   HYDRO_PUMP,
   SURF,
