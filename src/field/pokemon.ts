@@ -1320,11 +1320,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         else {
           let typeBoost = source.findTag(t => t instanceof TypeBoostTag && (t as TypeBoostTag).boostedType === type) as TypeBoostTag;
           if (typeBoost) {
-            console.log("AAAAAAAAA");
             power.value *= typeBoost.boostValue;
             if (typeBoost.oneUse) {
-              console.log(typeBoost.tagType);
-              console.log(source);
               source.removeTag(typeBoost.tagType);
             }
           }
