@@ -85,7 +85,7 @@ function getValueReductionCandyCounts(baseValue: integer): [integer, integer] {
   }
 }
 
-const tabX = [172, 259];
+const tabX = [174, 259];
 
 const tabs = {
   POKEMON: 0,
@@ -1448,10 +1448,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     if(0 > tabNumber || tabNumber >= tabX.length) 
       return false
 
+      const offTint = 0xD3D3D3;
+      const onTint = 0x000000;
+
     this.tabCursor = tabNumber;
     this.tabCursorObj.setX(tabX[tabNumber]);
-    this.tabWindowObjs.forEach((tabWindowObj) => tabWindowObj.setAlpha(0.5));
-    this.tabWindowObjs[tabNumber].setAlpha(1);
+    this.tabWindowObjs.forEach((tabWindowObj) => tabWindowObj.setTint(offTint));
+    this.tabWindowObjs[tabNumber].setTint(onTint);
 
     return true;
   }
