@@ -1004,7 +1004,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.REVIVE, (party: Pokemon[]) => {
       const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
       return faintedPartyMemberCount * 9;
-    }, 3),
+    }, 27),
     new WeightedModifierType(modifierTypes.MAX_REVIVE, (party: Pokemon[]) => {
       const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
       return faintedPartyMemberCount * 3;
