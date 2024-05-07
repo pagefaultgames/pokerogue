@@ -8,15 +8,14 @@ import { Stat } from "../data/pokemon-stat";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from '../data/type';
 import { EvolutionPhase } from '../evolution-phase';
-import { FusionSpeciesFormEvolution, pokemonEvolutions } from '../data/pokemon-evolutions';
+import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from '../data/pokemon-evolutions';
 import { getPokemonMessage } from '../messages';
 import * as Utils from "../utils";
 import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
 import { StatusEffect, getStatusEffectHealText } from '../data/status-effect';
-import { MoneyAchv, achvs } from '../system/achv';
+import { achvs } from '../system/achv';
 import { VoucherType } from '../system/voucher';
-import { PreventBerryUseAbAttr, applyAbAttrs } from '../data/ability';
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from '../data/pokemon-forms';
 import { Nature } from '#app/data/nature';
 import { BattlerTagType } from '#app/data/enums/battler-tag-type';
@@ -1090,6 +1089,13 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
     pokemon.natureOverride = this.nature;
+    let speciesId = pokemon.species.speciesId;
+    pokemon.scene.gameData.dexData[speciesId].natureAttr |= Math.pow(2, this.nature + 1);
+
+    while (pokemonPrevolutions.hasOwnProperty(speciesId)) {
+      speciesId = pokemonPrevolutions[speciesId];
+      pokemon.scene.gameData.dexData[speciesId].natureAttr |= Math.pow(2, this.nature + 1);
+    }
 
     return true;
   }
