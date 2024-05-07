@@ -2185,7 +2185,7 @@ export class MovePhase extends BattlePhase {
     console.log(Moves[this.move.moveId]);
 
     if (!this.canMove()) {
-      if (this.move.moveId && this.pokemon.summonData.disabledMove === this.move.moveId)
+      if (this.move.moveId && this.pokemon.summonData?.disabledMove === this.move.moveId)
         this.scene.queueMessage(`${this.move.getName()} is disabled!`);
       return this.end();
     }
@@ -2292,9 +2292,14 @@ export class MovePhase extends BattlePhase {
         if (!cancelled.value)
           this.showFailedText(failedText);
       }
-      this.scene.getPlayerField().forEach(pokemon => {
-        applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon);
-      })
+      if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !this.followUp) {
+        this.scene.getPlayerField().forEach(pokemon => {
+          applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
+        })
+        this.scene.getEnemyParty().forEach(pokemon => {
+          applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
+        })
+      }
 
       this.end();
     };

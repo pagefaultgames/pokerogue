@@ -9,7 +9,7 @@ import { BattlerTag } from "./battler-tags";
 import { BattlerTagType } from "./enums/battler-tag-type";
 import { StatusEffect, getStatusEffectDescriptor, getStatusEffectHealText } from "./status-effect";
 import { Gender } from "./gender";
-import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove } from "./move";
+import Move, { AttackMove, MoveCategory, MoveFlags, MoveTarget, RecoilAttr, StatusMoveTypeImmunityAttr, FlinchAttr, OneHitKOAttr, HitHealAttr, StrengthSapHealAttr, allMoves, StatusMove, SelfStatusMove} from "./move";
 import { ArenaTagSide, ArenaTrapTag } from "./arena-tag";
 import { ArenaTagType } from "./enums/arena-tag-type";
 import { Stat } from "./pokemon-stat";
@@ -2128,26 +2128,28 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
 }
 
 export class PostMoveUsedAbAttr extends AbAttr {
-    applyPostMoveUsed(pokemon: Pokemon, move: PokemonMove, source: Pokemon, args: any[]): boolean | Promise<boolean> {
+    applyPostMoveUsed(pokemon: Pokemon, move: PokemonMove, source: Pokemon, targets: BattlerIndex[], args: any[]): boolean | Promise<boolean> {
         return false;
     }
 }
 
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
-  applyPostMoveUsed(dancer: Pokemon, move: PokemonMove, source: Pokemon, args: any[]): boolean | Promise<boolean> {
-    const selfDance: Moves[] = [ Moves.DRAGON_DANCE, Moves.SWORDS_DANCE,
-      Moves.TEETER_DANCE, Moves.VICTORY_DANCE, Moves.QUIVER_DANCE, Moves.CLANGOROUS_SOUL, Moves.LUNAR_DANCE];
-    const attackingDance: Moves[] = [ Moves.AQUA_STEP, Moves.PETAL_DANCE, Moves.FIERY_DANCE, Moves.REVELATION_DANCE, Moves.FEATHER_DANCE];
+  applyPostMoveUsed(dancer: Pokemon, move: PokemonMove, source: Pokemon, targets: BattlerIndex[], args: any[]): boolean | Promise<boolean> {
     if (source.getBattlerIndex() !== dancer.getBattlerIndex()) {
-      if (attackingDance.includes(move.getMove().id)) {
-        const target= source.getBattlerIndex() === BattlerIndex.PLAYER || BattlerIndex.PLAYER_2 ?
-            dancer.scene.getEnemyPokemon().getBattlerIndex() : BattlerIndex.ATTACKER;
-        dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, [target], move));
-      } else if (selfDance.includes(move.getMove().id)) {
-        dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, [dancer.getBattlerIndex()], move));
+      if (move.getMove() instanceof AttackMove || move instanceof StatusMove) {
+        const target = this.getTarget(dancer, source, targets);
+        dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, target, move, true));
+      } else if (move.getMove() instanceof SelfStatusMove) {
+        dancer.scene.unshiftPhase(new MovePhase(dancer.scene, dancer, [dancer.getBattlerIndex()], move, true));
       }
     }
     return true;
+  }
+
+  getTarget(dancer: Pokemon, source: Pokemon, targets: BattlerIndex[]) : BattlerIndex[] {
+    if (dancer.isPlayer())
+      return source.isPlayer() ? targets : [source.getBattlerIndex()];
+    return source.isPlayer() ? [source.getBattlerIndex()] : targets;
   }
 }
 
@@ -2601,8 +2603,8 @@ export function applyPostDefendAbAttrs(attrType: { new(...args: any[]): PostDefe
 }
 
 export function applyPostMoveUsedAbAttrs(attrType: { new(...args: any[]): PostMoveUsedAbAttr },
-  pokemon: Pokemon, move: PokemonMove, source: Pokemon, ...args: any[]): Promise<void> {
-  return applyAbAttrsInternal<PostMoveUsedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostMoveUsed(pokemon, move, source, args), args);
+  pokemon: Pokemon, move: PokemonMove, source: Pokemon, targets: BattlerIndex[], ...args: any[]): Promise<void> {
+  return applyAbAttrsInternal<PostMoveUsedAbAttr>(attrType, pokemon, (attr, passive) => attr.applyPostMoveUsed(pokemon, move, source, targets, args), args);
 }
 
 export function applyBattleStatMultiplierAbAttrs(attrType: { new(...args: any[]): BattleStatMultiplierAbAttr },
