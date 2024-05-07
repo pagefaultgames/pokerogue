@@ -1,11 +1,11 @@
 import i18next from "../plugins/i18n";
 
-export function getbattleCountSplashMessage(): string {
+export function getBattleCountSplashMessage(): string {
   return `{COUNT} ${i18next.t('splashMessages:battlesWon')}`;
 }
 
 export function getSplashMessages(): string[] {
-  const splashMessages = Array(10).fill(getbattleCountSplashMessage());
+  const splashMessages = Array(10).fill(getBattleCountSplashMessage());
   splashMessages.push(...[
     i18next.t('splashMessages:joinTheDiscord'),
     i18next.t('splashMessages:infiniteLevel'),

@@ -4,7 +4,7 @@ import OptionSelectUiHandler from "./option-select-ui-handler";
 import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
-import { getbattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
+import { getBattleCountSplashMessage, getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
@@ -63,8 +63,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       .then(request => request.json())
       .then(stats => {
         this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
-        if (this.splashMessage === getbattleCountSplashMessage())
-          this.splashMessageText.setText(getbattleCountSplashMessage().replace('{COUNT}', stats.battleCount.toLocaleString('en-US')));
+        if (this.splashMessage === getBattleCountSplashMessage())
+          this.splashMessageText.setText(getBattleCountSplashMessage().replace('{COUNT}', stats.battleCount.toLocaleString('en-US')));
       })
       .catch(err => {
         console.error("Failed to fetch title stats:\n", err);
@@ -76,9 +76,6 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     if (ret) {
       this.splashMessage = Utils.randItem(getSplashMessages());
-      console.log(getSplashMessages())
-      console.log("------")
-      console.log(this.splashMessage)
       this.splashMessageText.setText(this.splashMessage.replace('{COUNT}', '?'));
 
       const ui = this.getUi();
