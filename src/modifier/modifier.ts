@@ -19,7 +19,7 @@ import { VoucherType } from '../system/voucher';
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from '../data/pokemon-forms';
 import { Nature } from '#app/data/nature';
 import { BattlerTagType } from '#app/data/enums/battler-tag-type';
-import { STARTING_HELD_ITEMS_OVERRIDE } from "../overrides";
+import { OPP_HELD_ITEMS_OVERRIDE, STARTING_HELD_ITEMS_OVERRIDE } from "../overrides";
 import { modifierTypes } from "./modifier-type";
 
 type ModifierType = ModifierTypes.ModifierType;
@@ -2185,6 +2185,27 @@ export function startingItemHeldsOverride(pokemon: Pokemon): Modifier[] {
   if (!STARTING_HELD_ITEMS_OVERRIDE || STARTING_HELD_ITEMS_OVERRIDE.length === 0) return ret;
     // we loop through all the itemName given in the override file
   for (const itemName of STARTING_HELD_ITEMS_OVERRIDE) {
+      // if the item does not exist, we skip it
+      if (!modifierTypes.hasOwnProperty(itemName)) continue;
+      // we retrieve the item in the list
+      const modifierType = modifierTypes[itemName]();
+      // we create the item
+      const itemModifier = modifierType.withIdFromFunc(modifierTypes[itemName]).newModifier((pokemon) as PersistentModifier) as PokemonHeldItemModifier;
+      // we assign the created item to the pokemon
+      itemModifier.pokemonId = pokemon.id;
+      // we say how many items we want
+      itemModifier.stackCount = 1;
+      ret.push(itemModifier);
+  }
+  return ret;
+}
+
+export function opponentItemHeldsOverride(pokemon: Pokemon): Modifier[] {
+  const ret: Modifier[] = new Array();
+    // if no override, do nothing
+  if (!OPP_HELD_ITEMS_OVERRIDE || OPP_HELD_ITEMS_OVERRIDE.length === 0) return ret;
+    // we loop through all the itemName given in the override file
+  for (const itemName of OPP_HELD_ITEMS_OVERRIDE) {
       // if the item does not exist, we skip it
       if (!modifierTypes.hasOwnProperty(itemName)) continue;
       // we retrieve the item in the list
