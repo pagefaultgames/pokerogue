@@ -1,42 +1,42 @@
 import { SimpleTranslationEntries } from "#app/plugins/i18n";
 
 export const tutorial: SimpleTranslationEntries = {
-    "intro": `Welcome to PokéRogue! This is a battle-focused Pokémon fangame with roguelite elements.
-    $This game is not monetized and we claim no ownership of Pokémon nor of the copyrighted assets used.
-    $The game is a work in progress, but fully playable.\nFor bug reports, please use the Discord community.
-    $If the game runs slowly, please ensure 'Hardware Acceleration' is turned on in your browser settings.`,
+    "intro": `欢迎来到PokéRogue!这是一款以战斗为重点,融合了Roguelite元素的口袋妖怪粉丝游戏.
+    $这款游戏未进行货币化，我们不对口袋妖怪以及使用的受版权保护的资源提出所有权要求.
+    $这款游戏仍在开发中，但已完全可玩.\n如需报告错误，请使用 Discord 社区.
+    $如果游戏运行缓慢，请确保在浏览器设置中开启'硬件加速'.`,
     
-    "accessMenu": `To access the menu, press M or Escape while awaiting input.\nThe menu contains settings and various features.`,
+    "accessMenu": `要访问菜单，请在等待输入时按 M 键或 Esc 键。\n菜单中包含设置和各种功能。`,
     
-    "menu": `From this menu you can access the settings.
-    $From the settings you can change game speed, window style, and other options.
-    $There are also various other features here, so be sure to check them all!`,
+    "menu": `通过这个菜单，你可以访问设置。
+    $在设置中，你可以更改游戏速度、窗口样式和其他选项。
+    $这里还有其他各种功能，所以一定要全部查看！`,
 
-    "starterSelect": `From this screen, you can select your starters.\nThese are your initial party members.
-    $Each starter has a value. Your party can have up to\n6 members as long as the total does not exceed 10.
-    $You can also select gender, ability, and form depending on\nthe variants you've caught or hatched.
-    $The IVs for a species are also the best of every one you've\ncaught or hatched, so try to get lots of the same species!`,
+    "starterSelect": `从这个屏幕上，你可以选择你的初始小队成员。
+    $每个初始成员都有一个值。你的队伍最多可以有\n6个成员，只要总值不超过10。
+    $你还可以根据你捕获或孵化的变体来选择性别、能力和形态。
+    $一个物种的IVs也是你捕获或孵化的每一个成员中最好的，所以尽量多捕获相同图鉴！`,
 
-    "pokerus": `A daily random 3 selectable starters have a purple border.
-    $If you see a starter you own with one of these,\ntry adding it to your party. Be sure to check its summary!`,
+    "pokerus": `每天随机的3个可选择的初始小队成员会有紫色边框。
+    $如果你看到自己拥有的初始成员中有一个有紫色边框的，\n试着将其加入到你的队伍中。记得查看其摘要！`,
 
-    "statChange": `Stat changes persist across battles as long as your Pokémon aren't recalled.
-    $Your Pokémon are recalled before a trainer battle and before entering a new biome.
-    $You can also view the stat changes for the Pokémon on the field by holding C or Shift.`,
+    "statChange": `属性变化在战斗之间会持续存在，只要你的口袋妖怪不被召回。
+    $在与训练师战斗之前和进入新的宝可梦战斗前，你的口袋妖怪会被召回。
+    $你还可以通过按住 C 键或 Shift 键查看场上口袋妖怪的属性变化。`,
 
-    "selectItem": `After every battle, you are given a choice of 3 random items.\nYou may only pick one.
-    $These range from consumables, to Pokémon held items, to passive permanent items.
-    $Most non-consumable item effects will stack in various ways.
-    $Some items will only show up if they can be used, such as evolution items.
-    $You can also transfer held items between Pokémon using the transfer option.
-    $The transfer option will appear in the bottom right once you have obtained a held item.
-    $You may purchase consumable items with money, and a larger variety will be available the further you get.
-    $Be sure to buy these before you pick your random item, as it will progress to the next battle once you do.`,
+    "selectItem": `每次战斗后，你将获得3个随机物品的选择。\n你只能选择一个。
+    $这些物品从消耗品，到口袋妖怪持有物品，再到被动永久物品。
+    $大多数非消耗品的效果会以各种方式叠加。
+    $有些物品只有在可以使用的情况下才会出现，例如进化物品。
+    $你还可以使用转移选项在口袋妖怪之间转移持有物品。
+    $一旦你获得持有物品，转移选项会出现在右下角。
+    $你可以用金钱购买消耗品，而且随着进度的推进，会有更多种类的物品可供选择。
+    $确保在选择随机物品之前购买这些，因为一旦你选择，游戏将继续到下一场战斗。`,
 
-    "eggGacha": `From this screen, you can redeem your vouchers for\nPokémon eggs.
-    $Eggs have to be hatched and get closer to hatching after\nevery battle. Rarer eggs take longer to hatch.
-    $Hatched Pokémon also won't be added to your party, they will\nbe added to your starters.
-    $Pokémon hatched from eggs generally have better IVs than\nwild Pokémon.
-    $Some Pokémon can only even be obtained from eggs.
-    $There are 3 different machines to pull from with different\nbonuses, so pick the one that suits you best!`,
+    "eggGacha": `从这个屏幕上，你可以兑换你的优惠券以获取\n口袋妖怪蛋。
+    $蛋需要孵化，并且在每次战斗后会加快孵化。稀有的蛋需要更长时间孵化。
+    $孵化出来的口袋妖怪不会添加到你的队伍中，它们将\n被添加到你的初始小队中。
+    $从蛋中孵化的口袋妖怪通常比野生口袋妖怪有更好的IVs。
+    $有些口袋妖怪只能通过孵化蛋来获得。
+    $这里有3台不同的机器可以抽取不同的\n奖励，所以选择最适合你的那台吧！`,
 } as const;
