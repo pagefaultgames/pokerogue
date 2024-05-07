@@ -3419,7 +3419,8 @@ export function initAbilities() {
     new Ability(Abilities.LIBERO, 8)
       .unimplemented(),
     new Ability(Abilities.BALL_FETCH, 8)
-      .attr(FetchBallAbAttr),
+      .attr(FetchBallAbAttr)
+      .condition(getOncePerBattleCondition(Abilities.BALL_FETCH)),
     new Ability(Abilities.COTTON_DOWN, 8)
       .unimplemented(),
     new Ability(Abilities.PROPELLER_TAIL, 8)
