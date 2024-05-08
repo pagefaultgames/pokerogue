@@ -13,6 +13,7 @@ import StarterSelectUiHandler from './starter-select-ui-handler';
 import EvolutionSceneHandler from './evolution-scene-handler';
 import TargetSelectUiHandler from './target-select-ui-handler';
 import SettingsUiHandler from './settings-ui-handler';
+import SettingsGamepadUiHandler from "./settings-gamepad-ui-handler";
 import { TextStyle, addTextObject } from './text';
 import AchvBar from './achv-bar';
 import MenuUiHandler from './menu-ui-handler';
@@ -56,6 +57,7 @@ export enum Mode {
   MENU,
   MENU_OPTION_SELECT,
   SETTINGS,
+  SETTINGS_GAMEPAD,
   ACHIEVEMENTS,
   GAME_STATS,
   VOUCHERS,
@@ -137,6 +139,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new MenuUiHandler(scene),
       new OptionSelectUiHandler(scene, Mode.MENU_OPTION_SELECT),
       new SettingsUiHandler(scene),
+      new SettingsGamepadUiHandler(scene),
       new AchvsUiHandler(scene),
       new GameStatsUiHandler(scene),
       new VouchersUiHandler(scene),

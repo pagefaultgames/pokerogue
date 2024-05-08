@@ -1,13 +1,13 @@
 import BattleScene from "../battle-scene";
-import { Setting, reloadSettings, settingDefaults, settingOptions } from "../system/settings";
 import { hasTouchscreen, isMobile } from "../touch-controls";
 import { TextStyle, addTextObject } from "./text";
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import {Button} from "../enums/buttons";
+import {SettingGamepad, settingGamepadDefaults, settingGamepadOptions} from "../system/settings-gamepad";
 
-export default class SettingsUiHandler extends UiHandler {
+export default class SettingsGamepadUiHandler extends UiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
   private optionsContainer: Phaser.GameObjects.Container;
 
@@ -42,11 +42,11 @@ export default class SettingsUiHandler extends UiHandler {
     const headerBg = addWindow(this.scene, 0, 0, (this.scene.game.canvas.width / 6) - 2, 24);
     headerBg.setOrigin(0, 0);
 
-    const headerText = addTextObject(this.scene, 0, 0, 'General', TextStyle.SETTINGS_SELECTED);
+    const headerText = addTextObject(this.scene, 0, 0, 'General', TextStyle.SETTINGS_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
-    const gamepadText = addTextObject(this.scene, 0, 0, 'Gamepad', TextStyle.SETTINGS_LABEL);
+    const gamepadText = addTextObject(this.scene, 0, 0, 'Gamepad', TextStyle.SETTINGS_SELECTED);
     gamepadText.setOrigin(0, 0);
     gamepadText.setPositionRelative(headerBg, 50, 4);
 
@@ -58,18 +58,16 @@ export default class SettingsUiHandler extends UiHandler {
     this.settingLabels = [];
     this.optionValueLabels = [];
 
-    Object.keys(Setting).forEach((setting, s) => {
+    Object.keys(SettingGamepad).forEach((setting, s) => {
       let settingName = setting.replace(/\_/g, ' ');
-      if (reloadSettings.includes(Setting[setting]))
-        settingName += ' (Requires Reload)';
 
       this.settingLabels[s] = addTextObject(this.scene, 8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
       this.settingLabels[s].setOrigin(0, 0);
 
       this.optionsContainer.add(this.settingLabels[s]);
 
-      this.optionValueLabels.push(settingOptions[Setting[setting]].map((option, o) => {
-        const valueLabel = addTextObject(this.scene, 0, 0, option, settingDefaults[Setting[setting]] === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
+      this.optionValueLabels.push(settingGamepadOptions[SettingGamepad[setting]].map((option, o) => {
+        const valueLabel = addTextObject(this.scene, 0, 0, option, settingGamepadDefaults[SettingGamepad[setting]] === o ? TextStyle.SETTINGS_SELECTED : TextStyle.WINDOW);
         valueLabel.setOrigin(0, 0);
 
         this.optionsContainer.add(valueLabel);
@@ -92,7 +90,7 @@ export default class SettingsUiHandler extends UiHandler {
       }
     });
 
-    this.optionCursors = Object.values(settingDefaults);
+    this.optionCursors = Object.values(settingGamepadDefaults);
 
     this.settingsContainer.add(headerBg);
     this.settingsContainer.add(headerText);
@@ -113,7 +111,7 @@ export default class SettingsUiHandler extends UiHandler {
     
     const settings: object = localStorage.hasOwnProperty('settings') ? JSON.parse(localStorage.getItem('settings')) : {};
 
-    Object.keys(settingDefaults).forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting) ? settings[setting] : settingDefaults[setting]));
+    Object.keys(settingGamepadDefaults).forEach((setting, s) => this.setOptionCursor(s, settings.hasOwnProperty(setting) ? settings[setting] : settingGamepadDefaults[setting]));
 
     this.settingsContainer.setVisible(true);
     this.setCursor(0);
@@ -161,11 +159,10 @@ export default class SettingsUiHandler extends UiHandler {
             success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
           break;
         case Button.LB:
-          this.scene.ui.setMode(Mode.SETTINGS_GAMEPAD)
-            success = true;
-          break;
+          this.scene.ui.setMode(Mode.SETTINGS)
+          success = true;
         case Button.RB:
-          this.scene.ui.setMode(Mode.SETTINGS_GAMEPAD)
+          this.scene.ui.setMode(Mode.SETTINGS)
           success = true;
           break;
       }
@@ -192,12 +189,7 @@ export default class SettingsUiHandler extends UiHandler {
   }
 
   setOptionCursor(settingIndex: integer, cursor: integer, save?: boolean): boolean {
-    const setting = Setting[Object.keys(Setting)[settingIndex]];
-
-    if (setting === Setting.Touch_Controls && cursor && hasTouchscreen() && isMobile()) {
-      this.getUi().playError();
-      return false;
-    }
+    const setting = SettingGamepad[Object.keys(SettingGamepad)[settingIndex]];
 
     const lastCursor = this.optionCursors[settingIndex];
 
@@ -213,11 +205,6 @@ export default class SettingsUiHandler extends UiHandler {
 
     if (save) {
       this.scene.gameData.saveSetting(setting, cursor)
-      if (reloadSettings.includes(setting)) {
-        this.reloadRequired = true;
-        if (setting === Setting.Language)
-          this.reloadI18n = true;
-      }
     }
 
     return true;

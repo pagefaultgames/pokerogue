@@ -24,8 +24,6 @@ export enum Setting {
   HP_Bar_Speed = "HP_BAR_SPEED",
   Fusion_Palette_Swaps = "FUSION_PALETTE_SWAPS",
   Player_Gender = "PLAYER_GENDER",
-  Gamepad_Support = "GAMEPAD_SUPPORT",
-  Swap_A_and_B = "SWAP_A_B", // Swaps which gamepad button handles ACTION and CANCEL
   Touch_Controls = "TOUCH_CONTROLS",
   Vibration = "VIBRATION"
 }
@@ -56,8 +54,6 @@ export const settingOptions: SettingOptions = {
   [Setting.HP_Bar_Speed]: [ 'Normal', 'Fast', 'Faster', 'Instant' ],
   [Setting.Fusion_Palette_Swaps]: [ 'Off', 'On' ],
   [Setting.Player_Gender]: [ 'Boy', 'Girl' ],
-  [Setting.Gamepad_Support]: [ 'Auto', 'Disabled' ],
-  [Setting.Swap_A_and_B]: [ 'Enabled', 'Disabled' ],
   [Setting.Touch_Controls]: [ 'Auto', 'Disabled' ],
   [Setting.Vibration]: [ 'Auto', 'Disabled' ]
 };
@@ -80,8 +76,6 @@ export const settingDefaults: SettingDefaults = {
   [Setting.HP_Bar_Speed]: 0,
   [Setting.Fusion_Palette_Swaps]: 1,
   [Setting.Player_Gender]: 0,
-  [Setting.Gamepad_Support]: 0,
-  [Setting.Swap_A_and_B]: 1, // Set to 'Disabled' by default
   [Setting.Touch_Controls]: 0,
   [Setting.Vibration]: 0
 };
@@ -147,12 +141,6 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
         scene.trainer.setTexture(scene.trainer.texture.key.replace(female ? 'm' : 'f', female ? 'f' : 'm'));
       } else
         return false;
-      break;
-    case Setting.Gamepad_Support:
-      scene.gamepadSupport = settingOptions[setting][value] !== 'Disabled';
-      break;
-    case Setting.Swap_A_and_B:
-      scene.abSwapped = settingOptions[setting][value] !== 'Disabled';
       break;
     case Setting.Touch_Controls:
       scene.enableTouchControls = settingOptions[setting][value] !== 'Disabled' && hasTouchscreen();
