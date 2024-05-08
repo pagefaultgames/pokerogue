@@ -1669,6 +1669,7 @@ export class CommandPhase extends FieldPhase {
   start() {
     super.start();
 
+    this.scene.updateGameInfo();
     if (this.fieldIndex) {
       const allyCommand = this.scene.currentBattle.turnCommands[this.fieldIndex - 1];
       if (allyCommand.command === Command.BALL || allyCommand.command === Command.RUN)
@@ -3350,20 +3351,24 @@ export class VictoryPhase extends PokemonPhase {
         this.scene.pushPhase(new TrainerVictoryPhase(this.scene));
       if (this.scene.gameMode.isEndless || !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex)) {
         this.scene.pushPhase(new EggLapsePhase(this.scene));
-        if (this.scene.currentBattle.waveIndex % 10)
+        if (this.scene.currentBattle.waveIndex % 10) {
           this.scene.pushPhase(new SelectModifierPhase(this.scene));
+        }
         else if (this.scene.gameMode.isDaily) {
           this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.EXP_CHARM));
           if (this.scene.currentBattle.waveIndex > 10 && !this.scene.gameMode.isWaveFinal(this.scene.currentBattle.waveIndex))
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_POKEBALL));
         } else {
           const superExpWave = !this.scene.gameMode.isEndless ? (this.scene.offsetGym ? 0 : 20) : 10;
-          if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex === 10)
+          if (this.scene.gameMode.isEndless && this.scene.currentBattle.waveIndex === 10){
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.EXP_SHARE));
-          if (this.scene.currentBattle.waveIndex <= 750 && (this.scene.currentBattle.waveIndex <= 500 || (this.scene.currentBattle.waveIndex % 30) === superExpWave))
+          }
+          if (this.scene.currentBattle.waveIndex <= 750 && (this.scene.currentBattle.waveIndex <= 500 || (this.scene.currentBattle.waveIndex % 30) === superExpWave)){
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, (this.scene.currentBattle.waveIndex % 30) !== superExpWave || this.scene.currentBattle.waveIndex > 250 ? modifierTypes.EXP_CHARM : modifierTypes.SUPER_EXP_CHARM));
-          if (this.scene.currentBattle.waveIndex <= 150 && !(this.scene.currentBattle.waveIndex % 50))
+          }
+          if (this.scene.currentBattle.waveIndex <= 150 && !(this.scene.currentBattle.waveIndex % 50)){
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, modifierTypes.GOLDEN_POKEBALL));
+          }
           if (this.scene.gameMode.isEndless && !(this.scene.currentBattle.waveIndex % 50)) {
             this.scene.pushPhase(new ModifierRewardPhase(this.scene, !(this.scene.currentBattle.waveIndex % 250) ? modifierTypes.VOUCHER_PREMIUM : modifierTypes.VOUCHER_PLUS));
             this.scene.pushPhase(new AddEnemyBuffModifierPhase(this.scene));
@@ -4441,6 +4446,7 @@ export class SelectModifierPhase extends BattlePhase {
 
       return !cost;
     };
+    this.scene.updateGameInfo(typeOptions);
     this.scene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer(), typeOptions, modifierSelectCallback, this.getRerollCost(typeOptions, this.scene.lockModifierTiers));
   }
 

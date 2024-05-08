@@ -17,7 +17,7 @@ import { TextStyle, addTextObject } from './ui/text';
 import { Moves } from "./data/enums/moves";
 import { allMoves } from "./data/move";
 import { initMoves } from './data/move';
-import { ModifierPoolType, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from './modifier/modifier-type';
+import { ModifierPoolType, ModifierTypeOption, getDefaultModifierTypeForTier, getEnemyModifierTypesForWave, getLuckString, getLuckTextTint, getModifierPoolForType, getPartyLuckValue } from './modifier/modifier-type';
 import AbilityBar from './ui/ability-bar';
 import { BlockItemTheftAbAttr, DoubleBattleChanceAbAttr, IncrementMovePriorityAbAttr, applyAbAttrs, initAbilities } from './data/ability';
 import { allAbilities } from "./data/ability";
@@ -43,7 +43,7 @@ import { Gender } from './data/gender';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
 import { addUiThemeOverrides } from './ui/ui-theme';
 import PokemonData from './system/pokemon-data';
-import { Nature } from './data/nature';
+import { Nature, getNatureName } from './data/nature';
 import { SpeciesFormChangeTimeOfDayTrigger, SpeciesFormChangeTrigger, pokemonFormChanges } from './data/pokemon-forms';
 import { FormChangePhase, QuietFormChangePhase } from './form-change-phase';
 import { BattleSpec } from './enums/battle-spec';
@@ -1939,15 +1939,36 @@ export default class BattleScene extends SceneBase {
 		return false;
 	}
 
-	updateGameInfo(): void {
+	updateGameInfo(rewards: ModifierTypeOption[] = null): void {
+		const getPartyInfo = (pokemon: Pokemon): any => {
+			return {
+				name: pokemon.name,
+				level: pokemon.level,
+				moves: pokemon.isPlayer() ? pokemon.moveset.map(move => {
+					return {
+						name: move.getName(),
+						ppLeft: move.getMovePp() - move.ppUsed,
+						totalPp: move.getMovePp()
+					};
+				}) : [],
+				nature: getNatureName(pokemon.nature, false, false, true),
+				ability: pokemon.getAbility().name,
+				hiddenAbility: pokemon.getPassiveAbility().name,
+				pokedexEntry: pokemon.species.speciesId.toString(),
+				stats: pokemon.isPlayer() ?  pokemon.stats.map(p => p) : [],
+				ivs: pokemon.isPlayer() ? pokemon.ivs.map(p => p): [],
+			};
+		};
+
 		const gameInfo = {
 			gameMode: this.currentBattle ? this.gameMode.getName() : 'Title',
 			biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : '',
 			wave: this.currentBattle?.waveIndex || 0,
-			party: this.party ? this.party.map(p => {
-				return { name: p.name, level: p.level };
-			}) : []
+			party: this.party ? this.party.map(getPartyInfo) : [],
+			enemy: this.getEnemyField() ? this.getEnemyField().map(getPartyInfo) : [],
+			rewards: rewards ? rewards.map(r => r.type.name) : [],
 		};
 		(window as any).gameInfo = gameInfo;
+		console.log(gameInfo);
 	}
 }
