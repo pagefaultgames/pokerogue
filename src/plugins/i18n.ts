@@ -1,71 +1,11 @@
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-import { menu as enMenu } from '../locales/en/menu';
-import { menu as esMenu } from '../locales/es/menu';
-import { menu as itMenu } from '../locales/it/menu';
-import { menu as frMenu } from '../locales/fr/menu';
-import { menu as deMenu } from '../locales/de/menu';
-
-import { menuUiHandler as enMenuUiHandler } from '../locales/en/menu-ui-handler.js';
-import { menuUiHandler as esMenuUiHandler } from '../locales/es/menu-ui-handler.js';
-import { menuUiHandler as frMenuUiHandler } from '../locales/fr/menu-ui-handler.js';
-import { menuUiHandler as itMenuUiHandler } from '../locales/it/menu-ui-handler.js';
-import { menuUiHandler as deMenuUiHandler } from '../locales/de/menu-ui-handler.js';
-
-import { battle as enBattle } from '../locales/en/battle';
-import { battle as esBattle } from '../locales/es/battle';
-import { battle as itBattle } from '../locales/it/battle';
-import { battle as frBattle } from '../locales/fr/battle';
-import { battle as deBattle } from '../locales/de/battle';
-
-import { move as enMove } from '../locales/en/move';
-import { move as esMove } from '../locales/es/move';
-import { move as itMove } from '../locales/it/move';
-import { move as frMove } from '../locales/fr/move';
-import { move as deMove } from '../locales/de/move';
-
-import { ability as enAbility } from '../locales/en/ability';
-import { ability as esAbility } from '../locales/es/ability';
-import { ability as itAbility } from '../locales/it/ability';
-import { ability as frAbility } from '../locales/fr/ability';
-import { ability as deAbility } from '../locales/de/ability';
-
-import { pokeball as enPokeball } from '../locales/en/pokeball';
-import { pokeball as esPokeball } from '../locales/es/pokeball';
-import { pokeball as itPokeball } from '../locales/it/pokeball';
-import { pokeball as frPokeball } from '../locales/fr/pokeball';
-import { pokeball as dePokeball } from '../locales/de/pokeball';
-
-import { pokemon as enPokemon } from '../locales/en/pokemon';
-import { pokemon as esPokemon } from '../locales/es/pokemon';
-import { pokemon as itPokemon } from '../locales/it/pokemon';
-import { pokemon as frPokemon } from '../locales/fr/pokemon';
-import { pokemon as dePokemon } from '../locales/de/pokemon';
-
-import { pokemonStat as enPokemonStat } from '../locales/en/pokemon-stat';
-import { pokemonStat as esPokemonStat } from '../locales/es/pokemon-stat';
-import { pokemonStat as frPokemonStat } from '../locales/fr/pokemon-stat';
-import { pokemonStat as itPokemonStat } from '../locales/it/pokemon-stat';
-import { pokemonStat as dePokemonStat } from '../locales/de/pokemon-stat';
-
-import { commandUiHandler as enCommandUiHandler } from '../locales/en/command-ui-handler';
-import { commandUiHandler as esCommandUiHandler } from '../locales/es/command-ui-handler';
-import { commandUiHandler as itCommandUiHandler } from '../locales/it/command-ui-handler';
-import { commandUiHandler as frCommandUiHandler } from '../locales/fr/command-ui-handler';
-import { commandUiHandler as deCommandUiHandler } from '../locales/de/command-ui-handler';
-
-import { fightUiHandler as enFightUiHandler } from '../locales/en/fight-ui-handler';
-import { fightUiHandler as esFightUiHandler } from '../locales/es/fight-ui-handler';
-import { fightUiHandler as frFightUiHandler } from '../locales/fr/fight-ui-handler';
-import { fightUiHandler as itFightUiHandler } from '../locales/it/fight-ui-handler';
-import { fightUiHandler as deFightUiHandler } from '../locales/de/fight-ui-handler';
-
-import { tutorial as enTutorial } from '../locales/en/tutorial';
-import { tutorial as esTutorial } from '../locales/es/tutorial';
-import { tutorial as frTutorial } from '../locales/fr/tutorial';
-import { tutorial as itTutorial} from '../locales/it/tutorial';
-import { tutorial as deTutorial } from '../locales/de/tutorial';
+import { deConfig } from '#app/locales/de/config.js';
+import { enConfig } from '#app/locales/en/config.js';
+import { esConfig } from '#app/locales/es/config.js';
+import { frConfig } from '#app/locales/fr/config.js';
+import { itConfig } from '#app/locales/it/config.js';
 
 export interface SimpleTranslationEntries {
   [key: string]: string
@@ -125,69 +65,19 @@ export function initI18n(): void {
     },
     resources: {
       en: {
-        menu: enMenu,
-        menuUiHandler: enMenuUiHandler,
-        battle: enBattle,
-        move: enMove,
-        ability: enAbility,
-        pokeball: enPokeball,
-        pokemon: enPokemon,
-        pokemonStat: enPokemonStat,
-        commandUiHandler: enCommandUiHandler,
-        fightUiHandler: enFightUiHandler,
-        tutorial: enTutorial,
+        ...enConfig
       },
       es: {
-        menu: esMenu,
-        menuUiHandler: esMenuUiHandler,
-        battle: esBattle,
-        move: esMove,
-        ability: esAbility,
-        pokeball: esPokeball,
-        pokemon: esPokemon,
-        pokemonStat: esPokemonStat,
-        commandUiHandler: esCommandUiHandler,
-        fightUiHandler: esFightUiHandler,
-        tutorial: esTutorial,
+        ...esConfig
       },
       fr: {
-        menu: frMenu,
-        menuUiHandler: frMenuUiHandler,
-        battle: frBattle,
-        move: frMove,
-        ability: frAbility,
-        pokeball: frPokeball,
-        pokemon: frPokemon,
-        pokemonStat: frPokemonStat,
-        commandUiHandler: frCommandUiHandler,
-        fightUiHandler: frFightUiHandler,
-        tutorial: frTutorial,
+        ...frConfig
       },
       it: {
-        menu: itMenu,
-        menuUiHandler: itMenuUiHandler,
-        battle: itBattle,
-        move: itMove,
-        ability: itAbility,
-        pokeball: itPokeball,
-        pokemon: itPokemon,
-        pokemonStat: itPokemonStat,
-        commandUiHandler: itCommandUiHandler,
-        fightUiHandler: itFightUiHandler,
-        tutorial: itTutorial,
+        ...itConfig
       },
       de: {
-        menu: deMenu,
-        menuUiHandler: deMenuUiHandler,
-        battle: deBattle,
-        move: deMove,
-        ability: deAbility,
-        pokeball: dePokeball,
-        pokemon: dePokemon,
-        pokemonStat: dePokemonStat,
-        commandUiHandler: deCommandUiHandler,
-        fightUiHandler: deFightUiHandler,
-        tutorial: deTutorial,
+        ...deConfig
       }
     },
   });
@@ -197,17 +87,18 @@ export function initI18n(): void {
 declare module 'i18next' {
   interface CustomTypeOptions {
     resources: {
-      menu: typeof enMenu;
-      menuUiHandler: typeof enMenuUiHandler;
-      move: typeof enMove;
-      battle: typeof enBattle,
-      ability: typeof enAbility;
-      pokeball: typeof enPokeball;
-      pokemon: typeof enPokemon;
-      pokemonStat: typeof enPokemonStat;
-      commandUiHandler: typeof enCommandUiHandler;
-      fightUiHandler: typeof enFightUiHandler;
-      tutorial: typeof enTutorial;
+      menu: SimpleTranslationEntries;
+      menuUiHandler: SimpleTranslationEntries;
+      move: MoveTranslationEntries;
+      battle: SimpleTranslationEntries,
+      ability: AbilityTranslationEntries;
+      pokeball: SimpleTranslationEntries;
+      pokemon: SimpleTranslationEntries;
+      pokemonStat: SimpleTranslationEntries;
+      commandUiHandler: SimpleTranslationEntries;
+      fightUiHandler: SimpleTranslationEntries;
+      tutorial: SimpleTranslationEntries;
+      starterSelectUiHandler: SimpleTranslationEntries;
     };
   }
 }
