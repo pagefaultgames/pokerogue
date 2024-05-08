@@ -3206,6 +3206,14 @@ export class PokemonMove {
     return allMoves[this.moveId];
   }
 
+  /**
+   * Sets {@link ppUsed} for this move and ensures the value does not exceed {@link getMovePp}
+   * @param {number} count Amount of PP to use
+   */
+  usePp(count: number = 1) {
+    this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
+  }
+
   getMovePp(): integer {
     return this.getMove().pp + this.ppUp * Math.max(Math.floor(this.getMove().pp / 5), 1);
   }
