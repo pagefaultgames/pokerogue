@@ -908,14 +908,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return this.isTerastallized() ? 2 : 1;
     const types = this.getTypes(true, true);
 
-    const ignorableImmunities = source?.getAbility()?.getAttrs(IgnoreTypeImmunityAbAttr) || [];
-    const cancelled = new Utils.BooleanHolder(false);
+    let multiplier = types.map(defType => {
+      if (source) {
+        const ignoreImmunity = new Utils.BooleanHolder(false);
+        applyAbAttrs(IgnoreTypeImmunityAbAttr, source, ignoreImmunity, moveType, defType);
+        if (ignoreImmunity.value)
+          return 1;
+      }
 
-    let multiplier = types.map(defType => 
-      ignorableImmunities.some(attr => attr.apply(source, false, cancelled, [moveType, defType]))
-      ? 1
-      : getTypeDamageMultiplier(moveType, defType)
-    ).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
+      return getTypeDamageMultiplier(moveType, defType);
+    }).reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
 
     // Handle strong winds lowering effectiveness of types super effective against pure flying
     if (this.scene.arena.weather?.weatherType === WeatherType.STRONG_WINDS && !this.scene.arena.weather.isEffectSuppressed(this.scene) && multiplier >= 2 && this.isOfType(Type.FLYING) && getTypeDamageMultiplier(moveType, Type.FLYING) === 2)
