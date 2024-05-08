@@ -44,7 +44,7 @@ export class Voucher {
       case VoucherType.PREMIUM:
         return AchvTier.ULTRA;
       case VoucherType.GOLDEN:
-        return AchvTier.MASTER;
+        return AchvTier.ROGUE;
     }
   }
 }

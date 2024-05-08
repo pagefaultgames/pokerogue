@@ -4,30 +4,30 @@
 			"image": "676-kabuki.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 71,
-				"h": 71
+				"w": 65,
+				"h": 65
 			},
-			"scale": 1,
+			"scale": 0.333,
 			"frames": [
 				{
 					"filename": "0001.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 55,
-						"h": 71
+						"w": 96,
+						"h": 96
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 55,
-						"h": 71
+						"x": 23,
+						"y": 15,
+						"w": 49,
+						"h": 65
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 55,
-						"h": 71
+						"w": 49,
+						"h": 65
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:5bd5ad9678c59b2b1d85a6af103ba1ba:2f6c7f2792f64728b478333fc2c65138:c3cad56aa65d2ee971ceebc435a14ee6$"
+		"smartupdate": "$TexturePacker:SmartUpdate:517d96cd6baa5b7616a51e8c4fed7a55:0a0f239ab3df60459410fab5eba8a4e6:c3cad56aa65d2ee971ceebc435a14ee6$"
 	}
 }

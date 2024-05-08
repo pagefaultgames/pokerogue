@@ -8,15 +8,14 @@ import { Stat } from "../data/pokemon-stat";
 import { addTextObject, TextStyle } from "../ui/text";
 import { Type } from '../data/type';
 import { EvolutionPhase } from '../evolution-phase';
-import { FusionSpeciesFormEvolution, pokemonEvolutions } from '../data/pokemon-evolutions';
+import { FusionSpeciesFormEvolution, pokemonEvolutions, pokemonPrevolutions } from '../data/pokemon-evolutions';
 import { getPokemonMessage } from '../messages';
 import * as Utils from "../utils";
 import { TempBattleStat } from '../data/temp-battle-stat';
 import { BerryType, getBerryEffectFunc, getBerryPredicate } from '../data/berry';
 import { StatusEffect, getStatusEffectHealText } from '../data/status-effect';
-import { MoneyAchv, achvs } from '../system/achv';
+import { achvs } from '../system/achv';
 import { VoucherType } from '../system/voucher';
-import { PreventBerryUseAbAttr, applyAbAttrs } from '../data/ability';
 import { FormChangeItem, SpeciesFormChangeItemTrigger } from '../data/pokemon-forms';
 import { Nature } from '#app/data/nature';
 import { BattlerTagType } from '#app/data/enums/battler-tag-type';
@@ -874,14 +873,6 @@ export class BerryModifier extends PokemonHeldItemModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
 
-    const cancelled = new Utils.BooleanHolder(false);
-    pokemon.getOpponents().map(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
-
-    if (cancelled.value) {
-      pokemon.scene.queueMessage(getPokemonMessage(pokemon, ' is too\nnervous to eat berries!'));
-      return false;
-    }
-
     const preserve = new Utils.BooleanHolder(false);
     pokemon.scene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
 
@@ -1098,6 +1089,13 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
   apply(args: any[]): boolean {
     const pokemon = args[0] as Pokemon;
     pokemon.natureOverride = this.nature;
+    let speciesId = pokemon.species.speciesId;
+    pokemon.scene.gameData.dexData[speciesId].natureAttr |= Math.pow(2, this.nature + 1);
+
+    while (pokemonPrevolutions.hasOwnProperty(speciesId)) {
+      speciesId = pokemonPrevolutions[speciesId];
+      pokemon.scene.gameData.dexData[speciesId].natureAttr |= Math.pow(2, this.nature + 1);
+    }
 
     return true;
   }
@@ -1119,9 +1117,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
       pokemon.levelExp = 0;
     }
 
-    const friendshipIncrease = new Utils.IntegerHolder(5);
-    pokemon.scene.applyModifier(PokemonFriendshipBoosterModifier, true, pokemon, friendshipIncrease);
-    pokemon.friendship = Math.min(pokemon.friendship + friendshipIncrease.value, 255);
+    pokemon.addFriendship(5);
 
     pokemon.scene.unshiftPhase(new LevelUpPhase(pokemon.scene, pokemon.scene.getParty().indexOf(pokemon), pokemon.level - levelCount.value, pokemon.level));
 
@@ -1400,13 +1396,14 @@ export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
   }
   
   apply(args: any[]): boolean {
-    (args[1] as Utils.IntegerHolder).value *= 1 + 0.5 * this.getStackCount();
+    const friendship = args[1] as Utils.IntegerHolder;
+    friendship.value = Math.floor(friendship.value * (1 + 0.5 * this.getStackCount()));
 
     return true;
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): integer {
-    return 5;
+    return 3;
   }
 }
 

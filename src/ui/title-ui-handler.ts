@@ -5,6 +5,7 @@ import { Mode } from "./ui";
 import * as Utils from "../utils";
 import { TextStyle, addTextObject } from "./text";
 import { battleCountSplashMessage, splashMessages } from "../data/splash-messages";
+import i18next from "i18next";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   private titleContainer: Phaser.GameObjects.Container;
@@ -37,7 +38,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     this.titleContainer.add(this.dailyRunScoreboard);
 
-    this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 90, '? Players Online', TextStyle.MESSAGE, { fontSize: '54px' });
+    this.playerCountLabel = addTextObject(this.scene, (this.scene.game.canvas.width / 6) - 2, (this.scene.game.canvas.height / 6) - 90, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, { fontSize: '54px' });
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
 
@@ -61,9 +62,12 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     Utils.apiFetch(`game/titlestats`)
       .then(request => request.json())
       .then(stats => {
-        this.playerCountLabel.setText(`${stats.playerCount} Players Online`);
+        this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
         if (this.splashMessage === battleCountSplashMessage)
           this.splashMessageText.setText(battleCountSplashMessage.replace('{COUNT}', stats.battleCount.toLocaleString('en-US')));
+      })
+      .catch(err => {
+        console.error("Failed to fetch title stats:\n", err);
       });
   }
 
@@ -80,7 +84,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
       this.updateTitleStats();
 
-      this.titleStatsTimer = setInterval(() => this.updateTitleStats(), 10000);
+      this.titleStatsTimer = setInterval(() => this.updateTitleStats(), 30000);
 
       this.scene.tweens.add({
         targets: [ this.titleContainer, ui.getMessageHandler().bg ],
