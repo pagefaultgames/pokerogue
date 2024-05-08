@@ -198,7 +198,7 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
   protected healStatus: boolean;
 
   constructor(name: string, restorePoints: integer, restorePercent: integer, healStatus: boolean = false, newModifierFunc?: NewModifierFunc, selectFilter?: PokemonSelectFilter, iconImage?: string, group?: string) {
-    super(name, restorePoints ? `Restores ${restorePoints} HP or ${restorePercent}% HP for one Pokémon, whichever is higher` : `Fully restores HP for one Pokémon${healStatus ? ' and heals any status ailment' : ''}`,
+    super(name, restorePoints ? `Restores ${restorePoints} HP or ${restorePercent}% HP for one Pokémon, whichever is higher.` : `Fully restores HP for one Pokémon${healStatus ? ' and heals any status ailment.' : '.'}`,
       newModifierFunc || ((_type, args) => new Modifiers.PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints, this.restorePercent, this.healStatus, false)),
     selectFilter || ((pokemon: PlayerPokemon) => {
       if (!pokemon.hp || (pokemon.hp >= pokemon.getMaxHp() && (!this.healStatus || !pokemon.status)))
@@ -221,7 +221,7 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
         return null;
       }), iconImage, 'revive');
 
-    this.description = `Revives one Pokémon and restores ${restorePercent}% HP`;
+    this.description = `Revives one Pokémon and restores ${restorePercent}% HP.`;
     this.selectFilter = (pokemon: PlayerPokemon) => {
       if (pokemon.hp)
         return PartyUiHandler.NoEffectMessage;
@@ -232,7 +232,7 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
 
 export class PokemonStatusHealModifierType extends PokemonModifierType {
   constructor(name: string) {
-    super(name, `Heals any status ailment for one Pokémon`,
+    super(name, `Heals any status ailment for one Pokémon.`,
       ((_type, args) => new Modifiers.PokemonStatusHealModifier(this, (args[0] as PlayerPokemon).id)),
       ((pokemon: PlayerPokemon) => {
         if (!pokemon.hp || !pokemon.status)
@@ -257,7 +257,7 @@ export class PokemonPpRestoreModifierType extends PokemonMoveModifierType {
   protected restorePoints: integer;
 
   constructor(name: string, restorePoints: integer, iconImage?: string) {
-    super(name, `Restores ${restorePoints > -1 ? restorePoints : 'all'} PP for one Pokémon move`, (_type, args) => new Modifiers.PokemonPpRestoreModifier(this, (args[0] as PlayerPokemon).id, (args[1] as integer), this.restorePoints),
+    super(name, `Restores ${restorePoints > -1 ? restorePoints : 'all'} PP for one Pokémon move.`, (_type, args) => new Modifiers.PokemonPpRestoreModifier(this, (args[0] as PlayerPokemon).id, (args[1] as integer), this.restorePoints),
       (_pokemon: PlayerPokemon) => {
       return null;
     }, (pokemonMove: PokemonMove) => {
@@ -274,7 +274,7 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
   protected restorePoints: integer;
 
   constructor(name: string, restorePoints: integer, iconImage?: string) {
-    super(name, `Restores ${restorePoints > -1 ? restorePoints : 'all'} PP for all of one Pokémon's moves`, (_type, args) => new Modifiers.PokemonAllMovePpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints),
+    super(name, `Restores ${restorePoints > -1 ? restorePoints : 'all'} PP for all of one Pokémon's moves.`, (_type, args) => new Modifiers.PokemonAllMovePpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints),
       (pokemon: PlayerPokemon) => {
         if (!pokemon.getMoveset().filter(m => m.ppUsed).length)
           return PartyUiHandler.NoEffectMessage;
@@ -289,7 +289,7 @@ export class PokemonPpUpModifierType extends PokemonMoveModifierType {
   protected upPoints: integer;
 
   constructor(name: string, upPoints: integer, iconImage?: string) {
-    super(name, `Permanently increases PP for one Pokémon move by ${upPoints} for every 5 maximum PP (maximum 3)`, (_type, args) => new Modifiers.PokemonPpUpModifier(this, (args[0] as PlayerPokemon).id, (args[1] as integer), this.upPoints),
+    super(name, `Permanently increases PP for one Pokémon move by ${upPoints} for every 5 maximum PP (maximum 3).`, (_type, args) => new Modifiers.PokemonPpUpModifier(this, (args[0] as PlayerPokemon).id, (args[1] as integer), this.upPoints),
       (_pokemon: PlayerPokemon) => {
       return null;
     }, (pokemonMove: PokemonMove) => {
@@ -332,7 +332,7 @@ export class DoubleBattleChanceBoosterModifierType extends ModifierType {
   public battleCount: integer;
 
   constructor(name: string, battleCount: integer) {
-    super(name, `Doubles the chance of an encounter being a double battle for ${battleCount} battles`, (_type, _args) => new Modifiers.DoubleBattleChanceBoosterModifier(this, this.battleCount),
+    super(name, `Doubles the chance of an encounter being a double battle for ${battleCount} battles.`, (_type, _args) => new Modifiers.DoubleBattleChanceBoosterModifier(this, this.battleCount),
       null, 'lure');
 
     this.battleCount = battleCount;
@@ -344,7 +344,7 @@ export class TempBattleStatBoosterModifierType extends ModifierType implements G
 
   constructor(tempBattleStat: TempBattleStat) {
     super(getTempBattleStatBoosterItemName(tempBattleStat),
-      `Increases the ${getTempBattleStatName(tempBattleStat)} of all party members by 1 stage for 5 battles`,
+      `Increases the ${getTempBattleStatName(tempBattleStat)} of all party members by 1 stage for 5 battles.`,
       (_type, _args) => new Modifiers.TempBattleStatBoosterModifier(this, this.tempBattleStat),
       getTempBattleStatBoosterItemName(tempBattleStat).replace(/\./g, '').replace(/[ ]/g, '_').toLowerCase());
 
@@ -418,7 +418,7 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
   public boostPercent: integer;
 
   constructor(moveType: Type, boostPercent: integer) {
-    super(getAttackTypeBoosterItemName(moveType), `Increases the power of a Pokémon's ${Utils.toReadableString(Type[moveType])}-type moves by 20%`,
+    super(getAttackTypeBoosterItemName(moveType), `Increases the power of a Pokémon's ${Utils.toReadableString(Type[moveType])}-type moves by 20%.`,
       (_type, args) => new Modifiers.AttackTypeBoosterModifier(this, (args[0] as Pokemon).id, moveType, boostPercent),
       `${getAttackTypeBoosterItemName(moveType).replace(/[ \-]/g, '_').toLowerCase()}`);
 
@@ -433,14 +433,14 @@ export class AttackTypeBoosterModifierType extends PokemonHeldItemModifierType i
 
 export class PokemonLevelIncrementModifierType extends PokemonModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name, `Increases a Pokémon\'s level by 1`, (_type, args) => new Modifiers.PokemonLevelIncrementModifier(this, (args[0] as PlayerPokemon).id),
+    super(name, `Increases a Pokémon\'s level by 1.`, (_type, args) => new Modifiers.PokemonLevelIncrementModifier(this, (args[0] as PlayerPokemon).id),
       (_pokemon: PlayerPokemon) => null, iconImage);
   }
 }
 
 export class AllPokemonLevelIncrementModifierType extends ModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name, `Increases all party members' level by 1`, (_type, _args) => new Modifiers.PokemonLevelIncrementModifier(this, -1), iconImage);
+    super(name, `Increases all party members' level by 1.`, (_type, _args) => new Modifiers.PokemonLevelIncrementModifier(this, -1), iconImage);
   }
 }
 
@@ -483,7 +483,7 @@ class AllPokemonFullHpRestoreModifierType extends ModifierType {
 
 class AllPokemonFullReviveModifierType extends AllPokemonFullHpRestoreModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name, `Revives all fainted Pokémon, fully restoring HP`, (_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100, false, true), iconImage);
+    super(name, `Revives all fainted Pokémon, fully restoring HP.`, (_type, _args) => new Modifiers.PokemonHpRestoreModifier(this, -1, 0, 100, false, true), iconImage);
   }
 }
 
@@ -491,7 +491,7 @@ export class MoneyRewardModifierType extends ModifierType {
   private moneyMultiplier: number;
 
   constructor(name: string, moneyMultiplier: number, moneyMultiplierDescriptor: string, iconImage?: string) {
-    super(name, `Grants a ${moneyMultiplierDescriptor} amount of money (₽{AMOUNT})`, (_type, _args) => new Modifiers.MoneyRewardModifier(this, moneyMultiplier), iconImage, 'money', 'buy');
+    super(name, `Grants a ${moneyMultiplierDescriptor} amount of money (₽{AMOUNT}).`, (_type, _args) => new Modifiers.MoneyRewardModifier(this, moneyMultiplier), iconImage, 'money', 'buy');
 
     this.moneyMultiplier = moneyMultiplier;
   }
@@ -503,26 +503,26 @@ export class MoneyRewardModifierType extends ModifierType {
 
 export class ExpBoosterModifierType extends ModifierType {
   constructor(name: string, boostPercent: integer, iconImage?: string) {
-    super(name, `Increases gain of EXP. Points by ${boostPercent}%`, () => new Modifiers.ExpBoosterModifier(this, boostPercent), iconImage);
+    super(name, `Increases gain of EXP. Points by ${boostPercent}%.`, () => new Modifiers.ExpBoosterModifier(this, boostPercent), iconImage);
   }
 }
 
 export class PokemonExpBoosterModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, boostPercent: integer, iconImage?: string) {
-    super(name, `Increases the holder's gain of EXP. Points by ${boostPercent}%`, (_type, args) => new Modifiers.PokemonExpBoosterModifier(this, (args[0] as Pokemon).id, boostPercent),
+    super(name, `Increases the holder's gain of EXP. Points by ${boostPercent}%.`, (_type, args) => new Modifiers.PokemonExpBoosterModifier(this, (args[0] as Pokemon).id, boostPercent),
       iconImage);
   }
 }
 
 export class PokemonFriendshipBoosterModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, iconImage?: string) {
-    super(name,'Increases friendship gain per victory by 50%', (_type, args) => new Modifiers.PokemonFriendshipBoosterModifier(this, (args[0] as Pokemon).id), iconImage);
+    super(name,'Increases friendship gain per victory by 50%.', (_type, args) => new Modifiers.PokemonFriendshipBoosterModifier(this, (args[0] as Pokemon).id), iconImage);
   }
 }
 
 export class PokemonMoveAccuracyBoosterModifierType extends PokemonHeldItemModifierType {
   constructor(name: string, amount: integer, iconImage?: string, group?: string, soundName?: string) {
-    super(name, `Increases move accuracy by ${amount} (maximum 100)`, (_type, args) => new Modifiers.PokemonMoveAccuracyBoosterModifier(this, (args[0] as Pokemon).id, amount), iconImage, group, soundName);
+    super(name, `Increases move accuracy by ${amount} (maximum 100).`, (_type, args) => new Modifiers.PokemonMoveAccuracyBoosterModifier(this, (args[0] as Pokemon).id, amount), iconImage, group, soundName);
   }
 }
 
@@ -536,7 +536,7 @@ export class TmModifierType extends PokemonModifierType {
   public moveId: Moves;
 
   constructor(moveId: Moves) {
-    super(`TM${Utils.padInt(Object.keys(tmSpecies).indexOf(moveId.toString()) + 1, 3)} - ${allMoves[moveId].name}`, `Teach ${allMoves[moveId].name} to a Pokémon`, (_type, args) => new Modifiers.TmModifier(this, (args[0] as PlayerPokemon).id),
+    super(`TM${Utils.padInt(Object.keys(tmSpecies).indexOf(moveId.toString()) + 1, 3)} - ${allMoves[moveId].name}`, `Teach ${allMoves[moveId].name} to a Pokémon.`, (_type, args) => new Modifiers.TmModifier(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (pokemon.compatibleTms.indexOf(moveId) === -1 || pokemon.getMoveset().filter(m => m?.moveId === moveId).length)
           return PartyUiHandler.NoEffectMessage;
@@ -879,11 +879,11 @@ export const modifierTypes = {
   TM_GREAT: () => new TmModifierTypeGenerator(ModifierTier.GREAT),
   TM_ULTRA: () => new TmModifierTypeGenerator(ModifierTier.ULTRA),
 
-  MEMORY_MUSHROOM: () => new RememberMoveModifierType('Memory Mushroom', 'Recall one Pokémon\'s forgotten move', 'big_mushroom'),
+  MEMORY_MUSHROOM: () => new RememberMoveModifierType('Memory Mushroom', 'Recall one Pokémon\'s forgotten move.', 'big_mushroom'),
 
   EXP_SHARE: () => new ModifierType('EXP. All', 'Non-participants receive 20% of a single participant\'s EXP. Points.',
     (type, _args) => new Modifiers.ExpShareModifier(type), 'exp_share'),
-  EXP_BALANCE: () => new ModifierType('EXP. Balance', 'Weighs EXP. Points received from battles towards lower-leveled party members',
+  EXP_BALANCE: () => new ModifierType('EXP. Balance', 'Weighs EXP. Points received from battles towards lower-leveled party members.',
     (type, _args) => new Modifiers.ExpBalanceModifier(type)),
 
   OVAL_CHARM: () => new ModifierType('Oval Charm', 'When multiple Pokémon participate in a battle, each gets an extra 10% of the total EXP.',
@@ -898,46 +898,46 @@ export const modifierTypes = {
 
   SOOTHE_BELL: () => new PokemonFriendshipBoosterModifierType('Soothe Bell'),
 
-  SOUL_DEW: () => new PokemonHeldItemModifierType('Soul Dew', 'Increases the influence of a Pokémon\'s nature on its stats by 10% (additive)', (type, args) => new Modifiers.PokemonNatureWeightModifier(type, (args[0] as Pokemon).id)),
+  SOUL_DEW: () => new PokemonHeldItemModifierType('Soul Dew', 'Increases the influence of a Pokémon\'s nature on its stats by 10% (additive).', (type, args) => new Modifiers.PokemonNatureWeightModifier(type, (args[0] as Pokemon).id)),
 
   NUGGET: () => new MoneyRewardModifierType('Nugget', 1, 'small'),
   BIG_NUGGET: () => new MoneyRewardModifierType('Big Nugget', 2.5, 'moderate'),
   RELIC_GOLD: () => new MoneyRewardModifierType('Relic Gold', 10, 'large'),
 
-  AMULET_COIN: () => new ModifierType('Amulet Coin', 'Increases money rewards by 20%', (type, _args) => new Modifiers.MoneyMultiplierModifier(type)),
-  GOLDEN_PUNCH: () => new PokemonHeldItemModifierType('Golden Punch', 'Grants 50% of damage inflicted as money', (type, args) => new Modifiers.DamageMoneyRewardModifier(type, (args[0] as Pokemon).id)),
+  AMULET_COIN: () => new ModifierType('Amulet Coin', 'Increases money rewards by 20%.', (type, _args) => new Modifiers.MoneyMultiplierModifier(type)),
+  GOLDEN_PUNCH: () => new PokemonHeldItemModifierType('Golden Punch', 'Grants 50% of damage inflicted as money.', (type, args) => new Modifiers.DamageMoneyRewardModifier(type, (args[0] as Pokemon).id)),
   COIN_CASE: () => new ModifierType('Coin Case', 'After every 10th battle, receive 10% of your money in interest.', (type, _args) => new Modifiers.MoneyInterestModifier(type)),
 
-  LOCK_CAPSULE: () => new ModifierType('Lock Capsule', 'Allows you to lock item rarities when rerolling items', (type, _args) => new Modifiers.LockModifierTiersModifier(type), 'lock_capsule'),
+  LOCK_CAPSULE: () => new ModifierType('Lock Capsule', 'Allows you to lock item rarities when rerolling items.', (type, _args) => new Modifiers.LockModifierTiersModifier(type), 'lock_capsule'),
 
   GRIP_CLAW: () => new ContactHeldItemTransferChanceModifierType('Grip Claw', 10),
   WIDE_LENS: () => new PokemonMoveAccuracyBoosterModifierType('Wide Lens', 5, 'wide_lens'),
 
   MULTI_LENS: () => new PokemonMultiHitModifierType('Multi Lens', 'zoom_lens'),
 
-  HEALING_CHARM: () => new ModifierType('Healing Charm', 'Increases the effectiveness of HP restoring moves and items by 10% (excludes Revives)',
+  HEALING_CHARM: () => new ModifierType('Healing Charm', 'Increases the effectiveness of HP restoring moves and items by 10% (excludes Revives).',
     (type, _args) => new Modifiers.HealingBoosterModifier(type, 1.1), 'healing_charm'),
-  CANDY_JAR: () => new ModifierType('Candy Jar', 'Increases the number of levels added by Rare Candy items by 1', (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type)),
+  CANDY_JAR: () => new ModifierType('Candy Jar', 'Increases the number of levels added by Rare Candy items by 1.', (type, _args) => new Modifiers.LevelIncrementBoosterModifier(type)),
 
-  BERRY_POUCH: () => new ModifierType('Berry Pouch', 'Adds a 25% chance that a used berry will not be consumed',
+  BERRY_POUCH: () => new ModifierType('Berry Pouch', 'Adds a 25% chance that a used berry will not be consumed.',
     (type, _args) => new Modifiers.PreserveBerryModifier(type)),
 
-  FOCUS_BAND: () => new PokemonHeldItemModifierType('Focus Band', 'Adds a 10% chance to survive with 1 HP after being damaged enough to faint',
+  FOCUS_BAND: () => new PokemonHeldItemModifierType('Focus Band', 'Adds a 10% chance to survive with 1 HP after being damaged enough to faint.',
     (type, args) => new Modifiers.SurviveDamageModifier(type, (args[0] as Pokemon).id)),
 
-  KINGS_ROCK: () => new PokemonHeldItemModifierType('King\'s Rock', 'Adds a 10% chance an attack move will cause the opponent to flinch',
+  KINGS_ROCK: () => new PokemonHeldItemModifierType('King\'s Rock', 'Adds a 10% chance an attack move will cause the opponent to flinch.',
     (type, args) => new Modifiers.FlinchChanceModifier(type, (args[0] as Pokemon).id)),
 
-  LEFTOVERS: () => new PokemonHeldItemModifierType('Leftovers', 'Heals 1/16 of a Pokémon\'s maximum HP every turn',
+  LEFTOVERS: () => new PokemonHeldItemModifierType('Leftovers', 'Heals 1/16 of a Pokémon\'s maximum HP every turn.',
     (type, args) => new Modifiers.TurnHealModifier(type, (args[0] as Pokemon).id)),
-  SHELL_BELL: () => new PokemonHeldItemModifierType('Shell Bell', 'Heals 1/8 of a Pokémon\'s dealt damage',
+  SHELL_BELL: () => new PokemonHeldItemModifierType('Shell Bell', 'Heals 1/8 of a Pokémon\'s dealt damage.',
     (type, args) => new Modifiers.HitHealModifier(type, (args[0] as Pokemon).id)),
 
-  BATON: () => new PokemonHeldItemModifierType('Baton', 'Allows passing along effects when switching Pokémon, which also bypasses traps',
+  BATON: () => new PokemonHeldItemModifierType('Baton', 'Allows passing along effects when switching Pokémon, which also bypasses traps.',
     (type, args) => new Modifiers.SwitchEffectTransferModifier(type, (args[0] as Pokemon).id), 'stick'),
 
-  SHINY_CHARM: () => new ModifierType('Shiny Charm', 'Dramatically increases the chance of a wild Pokémon being Shiny', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
-  ABILITY_CHARM: () => new ModifierType('Ability Charm', 'Dramatically increases the chance of a wild Pokémon having a Hidden Ability', (type, _args) => new Modifiers.HiddenAbilityRateBoosterModifier(type)),
+  SHINY_CHARM: () => new ModifierType('Shiny Charm', 'Dramatically increases the chance of a wild Pokémon being Shiny.', (type, _args) => new Modifiers.ShinyRateBoosterModifier(type)),
+  ABILITY_CHARM: () => new ModifierType('Ability Charm', 'Dramatically increases the chance of a wild Pokémon having a Hidden Ability.', (type, _args) => new Modifiers.HiddenAbilityRateBoosterModifier(type)),
 
   IV_SCANNER: () => new ModifierType('IV Scanner', 'Allows scanning the IVs of wild Pokémon. 2 IVs are revealed per stack. The best IVs are shown first.', (type, _args) => new Modifiers.IvScannerModifier(type), 'scanner'),
 
@@ -949,21 +949,21 @@ export const modifierTypes = {
   VOUCHER_PLUS: () => new AddVoucherModifierType(VoucherType.PLUS, 1),
   VOUCHER_PREMIUM: () => new AddVoucherModifierType(VoucherType.PREMIUM, 1),
 
-  GOLDEN_POKEBALL: () => new ModifierType(`Golden ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle',
+  GOLDEN_POKEBALL: () => new ModifierType(`Golden ${getPokeballName(PokeballType.POKEBALL)}`, 'Adds 1 extra item option at the end of every battle.',
     (type, _args) => new Modifiers.ExtraModifierModifier(type), 'pb_gold', null, 'pb_bounce_1'),
 
-  ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Token', 'Increases damage by 5%', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 5), 'wl_item_drop'),
-  ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Protection Token', 'Reduces incoming damage by 2.5%', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 2.5), 'wl_guard_spec'),
+  ENEMY_DAMAGE_BOOSTER: () => new ModifierType('Damage Token', 'Increases damage by 5%.', (type, _args) => new Modifiers.EnemyDamageBoosterModifier(type, 5), 'wl_item_drop'),
+  ENEMY_DAMAGE_REDUCTION: () => new ModifierType('Protection Token', 'Reduces incoming damage by 2.5%.', (type, _args) => new Modifiers.EnemyDamageReducerModifier(type, 2.5), 'wl_guard_spec'),
   //ENEMY_SUPER_EFFECT_BOOSTER: () => new ModifierType('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new Modifiers.EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_custom_super_effective'),
-  ENEMY_HEAL: () => new ModifierType('Recovery Token', 'Heals 3% of max HP every turn', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 3), 'wl_potion'),
+  ENEMY_HEAL: () => new ModifierType('Recovery Token', 'Heals 3% of max HP every turn.', (type, _args) => new Modifiers.EnemyTurnHealModifier(type, 3), 'wl_potion'),
   ENEMY_ATTACK_POISON_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Poison Token', 10, StatusEffect.POISON, 'wl_antidote'),
   ENEMY_ATTACK_PARALYZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Paralyze Token', 10, StatusEffect.PARALYSIS, 'wl_paralyze_heal'),
   ENEMY_ATTACK_SLEEP_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Sleep Token', 10, StatusEffect.SLEEP, 'wl_awakening'),
   ENEMY_ATTACK_FREEZE_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Freeze Token', 10, StatusEffect.FREEZE, 'wl_ice_heal'),
   ENEMY_ATTACK_BURN_CHANCE: () => new EnemyAttackStatusEffectChanceModifierType('Burn Token', 10, StatusEffect.BURN, 'wl_burn_heal'),
-  ENEMY_STATUS_EFFECT_HEAL_CHANCE: () => new ModifierType('Full Heal Token', 'Adds a 10% chance every turn to heal a status condition', (type, _args) => new Modifiers.EnemyStatusEffectHealChanceModifier(type, 10), 'wl_full_heal'),
+  ENEMY_STATUS_EFFECT_HEAL_CHANCE: () => new ModifierType('Full Heal Token', 'Adds a 10% chance every turn to heal a status condition.', (type, _args) => new Modifiers.EnemyStatusEffectHealChanceModifier(type, 10), 'wl_full_heal'),
   ENEMY_ENDURE_CHANCE: () => new EnemyEndureChanceModifierType('Endure Token', 2.5, 'wl_reset_urge'),
-  ENEMY_FUSED_CHANCE: () => new ModifierType('Fusion Token', 'Adds a 1% chance that a wild Pokémon will be a fusion', (type, _args) => new Modifiers.EnemyFusionChanceModifier(type, 1), 'wl_custom_spliced'),
+  ENEMY_FUSED_CHANCE: () => new ModifierType('Fusion Token', 'Adds a 1% chance that a wild Pokémon will be a fusion.', (type, _args) => new Modifiers.EnemyFusionChanceModifier(type, 1), 'wl_custom_spliced'),
 };
 
 interface ModifierPool {

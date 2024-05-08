@@ -29,24 +29,24 @@ export function getBerryName(berryType: BerryType) {
 export function getBerryEffectDescription(berryType: BerryType) {
   switch (berryType) {
     case BerryType.SITRUS:
-      return 'Restores 25% HP if HP is below 50%';
+      return 'Restores 25% HP if HP is below 50%.';
     case BerryType.LUM:
-      return 'Cures any non-volatile status condition and confusion';
+      return 'Cures any non-volatile status condition and confusion.';
     case BerryType.ENIGMA:
-      return 'Restores 25% HP if hit by a super effective move';
+      return 'Restores 25% HP if hit by a super effective move.';
     case BerryType.LIECHI:
     case BerryType.GANLON:
     case BerryType.PETAYA:
     case BerryType.APICOT:
     case BerryType.SALAC:
       const stat = (berryType - BerryType.LIECHI) as BattleStat;
-      return `Raises ${getBattleStatName(stat)} if HP is below 25%`;
+      return `Raises ${getBattleStatName(stat)} if HP is below 25%.`;
     case BerryType.LANSAT:
-      return 'Raises critical hit ratio if HP is below 25%';
+      return 'Raises critical hit ratio if HP is below 25%.';
     case BerryType.STARF:
-      return 'Sharply raises a random stat if HP is below 25%';
+      return 'Sharply raises a random stat if HP is below 25%.';
     case BerryType.LEPPA:
-      return 'Restores 10 PP to a move if its PP reaches 0';
+      return 'Restores 10 PP to a move if its PP reaches 0.';
   }
 }
 
