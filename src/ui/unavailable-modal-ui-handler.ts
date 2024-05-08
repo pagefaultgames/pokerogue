@@ -44,23 +44,23 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
   }
 
   tryReconnect(): void {
-        updateUserInfo().then(response => {
-          if (response[0] || [200, 400].includes(response[1])) {
-            clearInterval(this.reconnectTimer);
-            this.reconnectTimer = null;
-	    this.reconnectInterval = 5000;
-            this.scene.playSound('pb_bounce_1');
-            this.reconnectCallback();
-          }
-	  else {
-	    clearInterval(this.reconnectTimer);
-	    this.reconnectInterval *= 2;
-	    if (this.reconnectInterval >= 60000) {
-		    this.reconnectInterval = 60000; // 1 minute maximum delay.
-	    }
-	    this.reconnectTimer = setInterval(this.tryReconnect, this.reconnectInterval);
-	  }
-        });
+    updateUserInfo().then(response => {
+      if (response[0] || [200, 400].includes(response[1])) {
+        clearInterval(this.reconnectTimer);
+        this.reconnectTimer = null;
+        this.reconnectInterval = 5000;
+        this.scene.playSound('pb_bounce_1');
+        this.reconnectCallback();
+      }
+      else {
+        clearInterval(this.reconnectTimer);
+        this.reconnectInterval *= 2;
+        if (this.reconnectInterval > 60000) {
+          this.reconnectInterval = 60000; // 1 minute maximum delay.
+        }
+        this.reconnectTimer = setTimeout(this.tryReconnect, this.reconnectInterval);
+      }
+    });
   }
 
   show(args: any[]): boolean {
