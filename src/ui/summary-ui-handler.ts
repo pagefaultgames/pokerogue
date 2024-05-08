@@ -291,6 +291,8 @@ export default class SummaryUiHandler extends UiHandler {
 
     if(this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0 && this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0)
       this.championRibbon.setVisible(true);
+    else
+      this.championRibbon.setVisible(false);
 
     var currentFriendship = this.scene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].friendship;
     if (!currentFriendship || currentFriendship === undefined)
