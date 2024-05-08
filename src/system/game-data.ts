@@ -1189,7 +1189,7 @@ export class GameData {
     return ret;
   }
 
-  getSpeciesDexAttrProps(species: PokemonSpecies, dexAttr: bigint): DexAttrProps {
+  getSpeciesDexAttrProps(_species: PokemonSpecies, dexAttr: bigint): DexAttrProps {
     const shiny = !(dexAttr & DexAttr.NON_SHINY);
     const female = !(dexAttr & DexAttr.MALE);
     const variant = dexAttr & DexAttr.DEFAULT_VARIANT ? 0 : dexAttr & DexAttr.VARIANT_2 ? 1 : dexAttr & DexAttr.VARIANT_3 ? 2 : 0;

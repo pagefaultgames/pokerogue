@@ -142,7 +142,7 @@ export class InputsController {
         return gamepadMapping;
     }
 
-    gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
+    gamepadButtonDown(_pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, _value: number): void {
         if (!this.scene.gamepadSupport) return;
         const actionMapping = this.getActionGamepadMapping();
         const buttonDown = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
@@ -155,7 +155,7 @@ export class InputsController {
         }
     }
 
-    gamepadButtonUp(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
+    gamepadButtonUp(_pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, _value: number): void {
         if (!this.scene.gamepadSupport) return;
         const actionMapping = this.getActionGamepadMapping();
         const buttonUp = actionMapping.hasOwnProperty(button.index) && actionMapping[button.index];
