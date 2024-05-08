@@ -217,7 +217,6 @@ export default class Battle {
     randSeedInt(scene: BattleScene, range: integer, min: integer = 0): integer {
         if (range <= 1)
             return min;
-        let ret: integer;
         const tempRngCounter = scene.rngCounter;
         const tempSeedOverride = scene.rngSeedOverride;
         const state = Phaser.Math.RND.state();
@@ -229,12 +228,11 @@ export default class Battle {
         }
         scene.rngCounter = this.rngCounter++;
         scene.rngSeedOverride = this.battleSeed;
-        ret = Utils.randSeedInt(range, min);
         this.battleSeedState = Phaser.Math.RND.state();
         Phaser.Math.RND.state(state);
         scene.rngCounter = tempRngCounter;
         scene.rngSeedOverride = tempSeedOverride;
-        return ret;
+        return Utils.randSeedInt(range, min);
     }
 }
 

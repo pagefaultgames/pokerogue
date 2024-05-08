@@ -27,9 +27,7 @@ export class FormChangePhase extends EvolutionPhase {
   }
 
   setMode(): Promise<void> {
-    if (!this.modal)
-      return super.setMode();
-    return this.scene.ui.setOverlayMode(Mode.EVOLUTION_SCENE);
+    return this.modal ? this.scene.ui.setOverlayMode(Mode.EVOLUTION_SCENE) : super.setMode();
   }
 
   doEvolution(): void {
