@@ -155,6 +155,12 @@ export default class SettingsUiHandler extends UiHandler {
           if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1)
             success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
           break;
+        case Button.LB:
+          console.log('lb');
+          break;
+        case Button.RB:
+          console.log('rb');
+          break;
       }
     }
 

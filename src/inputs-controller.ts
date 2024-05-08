@@ -130,8 +130,8 @@ export class InputsController {
         gamepadMapping[this.player.mapping.RC_E] = this.scene.abSwapped ? Button.ACTION : Button.CANCEL;
         gamepadMapping[this.player.mapping.SELECT] = Button.STATS;
         gamepadMapping[this.player.mapping.START] = Button.MENU;
-        gamepadMapping[this.player.mapping.RB] = Button.CYCLE_SHINY;
-        gamepadMapping[this.player.mapping.LB] = Button.CYCLE_FORM;
+        gamepadMapping[this.player.mapping.RB] = Button.RB;
+        gamepadMapping[this.player.mapping.LB] = Button.LB;
         gamepadMapping[this.player.mapping.LT] = Button.CYCLE_GENDER;
         gamepadMapping[this.player.mapping.RT] = Button.CYCLE_ABILITY;
         gamepadMapping[this.player.mapping.RC_W] = Button.CYCLE_NATURE;
@@ -180,8 +180,8 @@ export class InputsController {
             [Button.CANCEL]: [keyCodes.BACKSPACE, keyCodes.X],
             [Button.MENU]: [keyCodes.ESC, keyCodes.M],
             [Button.STATS]: [keyCodes.SHIFT, keyCodes.C],
-            [Button.CYCLE_SHINY]: [keyCodes.R],
-            [Button.CYCLE_FORM]: [keyCodes.F],
+            [Button.RB]: [keyCodes.R],
+            [Button.LB]: [keyCodes.F],
             [Button.CYCLE_GENDER]: [keyCodes.G],
             [Button.CYCLE_ABILITY]: [keyCodes.E],
             [Button.CYCLE_NATURE]: [keyCodes.N],

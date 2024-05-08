@@ -969,7 +969,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         const row = Math.floor(this.cursor / 9);
         const props = this.scene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor);
         switch (button) {
-          case Button.CYCLE_SHINY:
+          case Button.RB:
             if (this.canCycleShiny) {
               this.setSpeciesDetails(this.lastSpecies, !props.shiny, undefined, undefined, props.shiny ? 0 : undefined, undefined, undefined);
               if (this.dexAttrCursor & DexAttr.SHINY)
@@ -978,7 +978,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 success = true;
             }
             break;
-          case Button.CYCLE_FORM:
+          case Button.LB:
             if (this.canCycleForm) {
               const formCount = this.lastSpecies.forms.length;
               let newFormIndex = props.formIndex;
