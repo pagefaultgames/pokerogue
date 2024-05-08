@@ -2,6 +2,7 @@ import BattleScene from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
 import * as Utils from "../utils";
+import i18next from "i18next";
 
 interface RankingEntry {
   rank: integer,
@@ -10,6 +11,7 @@ interface RankingEntry {
   wave: integer
 }
 
+// Don't forget to update translations when adding a new category
 enum ScoreboardCategory {
   DAILY,
   WEEKLY
@@ -39,7 +41,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     const titleWindow = addWindow(this.scene, 0, 0, 114, 18, false, false, null, null, WindowVariant.THIN);
     this.add(titleWindow);
 
-    this.titleLabel = addTextObject(this.scene, titleWindow.displayWidth / 2, titleWindow.displayHeight / 2, 'Daily Rankings', TextStyle.WINDOW, { fontSize: '64px' });
+    this.titleLabel = addTextObject(this.scene, titleWindow.displayWidth / 2, titleWindow.displayHeight / 2, i18next.t('menu:loading'), TextStyle.WINDOW, { fontSize: '64px' });
     this.titleLabel.setOrigin(0.5, 0.5);
     this.add(this.titleLabel);
 
@@ -141,7 +143,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
   update(category: ScoreboardCategory = this.category, page: integer = this.page) {
     this.rankingsContainer.removeAll(true);
 
-    this.loadingLabel.setText('Loading…');
+    this.loadingLabel.setText(i18next.t('menu:loading'));
     this.loadingLabel.setVisible(true);
 
     if (category !== this.category)
@@ -155,7 +157,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
         .then(jsonResponse => {
           this.page = page;
           this.category = category;
-          this.titleLabel.setText(`${Utils.toReadableString(ScoreboardCategory[category])} Rankings`);
+          this.titleLabel.setText(`${i18next.t(`menu:${ScoreboardCategory[category].toLowerCase()}Rankings`)}`);
           this.prevPageButton.setAlpha(page > 1 ? 1 : 0.5);
           this.nextPageButton.setAlpha(page < this.pageCount ? 1 : 0.5);
           this.pageNumberLabel.setText(page.toString());
@@ -163,9 +165,9 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
             this.loadingLabel.setVisible(false);
             this.updateRankings(jsonResponse);
           } else
-            this.loadingLabel.setText('No Rankings');
+            this.loadingLabel.setText(i18next.t('menu:noRankings'));
         });
-    });
+    }).catch(err => { console.error("Failed to load daily rankings:\n", err) });
   }
 }
 

@@ -4,30 +4,30 @@
 			"image": "676-heart.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 72,
-				"h": 72
+				"w": 66,
+				"h": 66
 			},
-			"scale": 1,
+			"scale": 0.5,
 			"frames": [
 				{
 					"filename": "0001.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 54,
-						"h": 72
+						"w": 96,
+						"h": 96
 					},
 					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 54,
-						"h": 72
+						"x": 24,
+						"y": 14,
+						"w": 48,
+						"h": 66
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 54,
-						"h": 72
+						"w": 48,
+						"h": 66
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:adb921bf32ae497738fbecc12e2aab07:421a40542b16cdb2cc154c85e963b40d:e11d4dd16bff2ef69bc5ca683c44ca7c$"
+		"smartupdate": "$TexturePacker:SmartUpdate:6a000209d8789ed27cdd0700711ccc27:75157608bd339b63c9a7ce68e259b3b7:e11d4dd16bff2ef69bc5ca683c44ca7c$"
 	}
 }

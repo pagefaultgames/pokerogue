@@ -77,8 +77,6 @@ export function getEggHatchWavesMessage(hatchWaves: integer): string {
 }
 
 export function getEggGachaTypeDescriptor(scene: BattleScene, egg: Egg): string {
-  if (egg.isManaphyEgg())
-    return '';
   switch (egg.gachaType) {
     case GachaType.LEGENDARY:
       return `Legendary Rate Up (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(scene, egg.timestamp)).getName()})`;
