@@ -149,7 +149,7 @@ export function setSetting(scene: BattleScene, setting: Setting, value: integer)
         return false;
       break;
     case Setting.Gamepad_Support:
-      scene.gamepadSupport = settingOptions[setting][value] !== 'Disabled';
+      scene.inputController.setGamepadSupport(settingOptions[setting][value] !== 'Disabled');
       break;
     case Setting.Swap_A_and_B:
       scene.abSwapped = settingOptions[setting][value] !== 'Disabled';
